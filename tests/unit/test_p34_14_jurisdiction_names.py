@@ -29,18 +29,20 @@ UNMAPPED_TEXT = (
 )
 
 # The five surfaces that show a jurisdiction name — each consumes the shared
-# lookup and carries the unmapped-code flag (AC1/AC3/AC5).
+# lookup and carries the unmapped-code flag (AC1/AC3/AC5). P35.45 renamed the
+# per-dossier route templates to the catch-all [...path] form (nested
+# canonical slug paths); the batch's binding rows moved with them.
 SURFACES = {
-    "web/src/pages/dossier/[slug].astro": "JD-03",
-    "web/src/pages/dossier/[slug]/print.astro": "JD-07",
+    "web/src/pages/dossier/[...path].astro": "JD-03",
+    "web/src/pages/dossier/[...path]/print.astro": "JD-07",
     "web/src/pages/dossier/index.astro": "JD-04",
     "web/src/pages/search.astro": "JD-05",
     "web/src/pages/index.astro": "JD-06",
 }
 
 COMBINES_PAGES = {
-    "web/src/pages/dossier/[slug].astro": "JD-01",
-    "web/src/pages/dossier/[slug]/print.astro": "JD-02",
+    "web/src/pages/dossier/[...path].astro": "JD-01",
+    "web/src/pages/dossier/[...path]/print.astro": "JD-02",
 }
 
 
@@ -156,13 +158,13 @@ def test_mixed_buckets_carry_the_recorded_pairs() -> None:
 def test_jd_batch_rows_exist_pending_and_hash_pinned() -> None:
     rows = _batch_rows()
     expected = {
-        "JD-01": ("/dossier/[slug]/", COMBINES_TEXT),
-        "JD-02": ("/dossier/[slug]/print/", COMBINES_TEXT),
-        "JD-03": ("/dossier/[slug]/", UNMAPPED_TEXT),
+        "JD-01": ("/dossier/[...path]/", COMBINES_TEXT),
+        "JD-02": ("/dossier/[...path]/print/", COMBINES_TEXT),
+        "JD-03": ("/dossier/[...path]/", UNMAPPED_TEXT),
         "JD-04": ("/dossier/", UNMAPPED_TEXT),
         "JD-05": ("/search/", UNMAPPED_TEXT),
         "JD-06": ("/", UNMAPPED_TEXT),
-        "JD-07": ("/dossier/[slug]/print/", UNMAPPED_TEXT),
+        "JD-07": ("/dossier/[...path]/print/", UNMAPPED_TEXT),
     }
     for rid, (page, text) in expected.items():
         assert rid in rows, f"{rid} missing from batch-01 (B-2)"
@@ -201,8 +203,8 @@ def test_every_name_surface_goes_through_the_lookup() -> None:
         assert "displayJurisdiction" in src, f"{page} no longer names jurisdictions"
     # Titles/H1s lead with the name: the subject-label code suffix is rewritten.
     for page in (
-        "web/src/pages/dossier/[slug].astro",
-        "web/src/pages/dossier/[slug]/print.astro",
+        "web/src/pages/dossier/[...path].astro",
+        "web/src/pages/dossier/[...path]/print.astro",
         "web/src/pages/dossier/index.astro",
         "web/src/pages/search.astro",
         "web/src/pages/index.astro",

@@ -425,6 +425,17 @@ class PlacementEngine:
         dossier/jurisdiction surfaces (P35.44)."""
         return self._rows.get(jkey)
 
+    def jurisdiction_rows(self) -> Mapping[str, Mapping[str, Any]]:
+        """Every registry row by jkey — the canonical jurisdiction set the
+        P35.45 dossier roll-up keys off. Read-only (the callers build views;
+        they never mutate the verified registry)."""
+        return self._rows
+
+    def ancestor_chains(self) -> Mapping[str, tuple[str, ...]]:
+        """Every key's recorded root-first chain — ``ancestor_chain`` for the
+        whole registry in one read (P35.45's slug-path derivation)."""
+        return self._ancestors
+
     def ancestor_chain(self, jkey: str) -> tuple[str, ...]:
         """The root-first canonical chain ending at ``jkey`` (empty for
         non-registry keys) — the roll-up ancestor list dossier artifacts emit."""

@@ -89,6 +89,7 @@ from .release_pages import (
     release_stamp_view,
     releases_index,
     tombstone_page,
+    unplaced_page,
 )
 from .search_index import (
     INDEX_DESCRIPTOR_FILE,
@@ -704,10 +705,44 @@ def build_release(
         if (export_dir / "web" / "evidence.json").exists()
         else {"artifacts": [], "claim_views": []}
     )
-    dossiers = (
-        _read_json(export_dir / "web" / "dossiers.json")
-        if (export_dir / "web" / "dossiers.json").exists()
-        else []
+    # P35.45: the per-dossier artifact set — ``web/dossiers/<slug-path>.json``
+    # — supersedes the monolithic ``web/dossiers.json``. Both are readable:
+    # a P35.45+ export emits the directory (``index.json`` is the v2 index,
+    # not a dossier), an older export emits the monolith.
+    dossiers_dir = export_dir / "web" / "dossiers"
+    if dossiers_dir.is_dir():
+        dossiers = sorted(
+            (_read_json(p) for p in dossiers_dir.rglob("*.json") if p.name != "index.json"),
+            key=lambda d: str(d.get("slug_path") or d.get("slug") or ""),
+        )
+    elif (export_dir / "web" / "dossiers.json").exists():
+        dossiers = _read_json(export_dir / "web" / "dossiers.json")
+    else:
+        dossiers = []
+    # The jkey → slug-path map the record lists and the record jurisdiction
+    # blocks resolve through — absent on a pre-P35.45 export (the record's
+    # declared ``id`` then keys the lists, exactly as before).
+    jurisdiction_slug_paths: dict[str, str] = {}
+    jurisdiction_display: dict[str, dict[str, str]] = {}
+    key_map_path = export_dir / "web" / "jurisdiction_key_map.json"
+    if key_map_path.is_file():
+        for e in _read_json(key_map_path).get("entries") or []:
+            sp = str(e.get("slug_path") or "")
+            if not sp:
+                continue
+            jurisdiction_slug_paths[str(e.get("jkey"))] = sp
+            jurisdiction_display[sp] = {
+                "name": str(e.get("display_name") or e.get("name") or sp),
+                "jkey": str(e.get("jkey") or ""),
+            }
+    jurisdiction_display["unplaced"] = {
+        "name": "Not yet placed",
+        "jkey": "",
+    }
+    unplaced_report = (
+        _read_json(export_dir / "web" / "unplaced.json")
+        if (export_dir / "web" / "unplaced.json").is_file()
+        else None
     )
 
     # --- pass 1: projection roots per compartment --------------------------- #
@@ -717,7 +752,11 @@ def build_release(
         dropped: dict[str, int] = {}
         for row in _iter_unique_site_rows(export_dir / comp / "sites.jsonl", dropped):
             record = record_from_site_row(
-                row, compartment=comp, license_id=comps[comp], claim_index=claim_index
+                row,
+                compartment=comp,
+                license_id=comps[comp],
+                claim_index=claim_index,
+                jurisdiction_slug_paths=jurisdiction_slug_paths,
             )
             cb.record_digests.append(record_digest(record))
         cb.site_rows_read = int(dropped.get("rows_read") or 0)
@@ -854,7 +893,11 @@ def build_release(
         search_rows: list[dict[str, Any]] = []
         for row in _iter_unique_site_rows(export_dir / comp / "sites.jsonl", {}):
             record = record_from_site_row(
-                row, compartment=comp, license_id=comps[comp], claim_index=claim_index
+                row,
+                compartment=comp,
+                license_id=comps[comp],
+                claim_index=claim_index,
+                jurisdiction_slug_paths=jurisdiction_slug_paths,
             ).bind(
                 pub,
                 release_label=release_label,
@@ -883,12 +926,24 @@ def build_release(
                     "json_path": json_rel,
                     "claim_ids": [a.claim_id for a in record.claim_anchors],
                     "jurisdiction": record.jurisdiction.get("id"),
+                    # P35.45: the canonical key + slug path ride the index row
+                    # — the jurisdiction lists group on the slug path.
+                    "jkey": record.jurisdiction.get("jkey"),
+                    "slug_path": record.jurisdiction.get("slug_path"),
                     "label": record.label.get("text"),
                 }
             )
             cb.index_rows.append(index_lines[-1])
             cb.kinds[et] = cb.kinds.get(et, 0) + 1
-            jur = str(record.jurisdiction.get("id") or "unreported")
+            # P35.45: the record list groups on the dossier slug path
+            # (``usa/ca/verdin-county-06037``) — an unplaced record files
+            # under ``unplaced``; a pre-keyed export falls back to the
+            # declared id, exactly the old shape.
+            jur = str(
+                record.jurisdiction.get("slug_path")
+                or record.jurisdiction.get("id")
+                or "unreported"
+            )
             cb.jurisdictions[jur] = cb.jurisdictions.get(jur, 0) + 1
             total_records += 1
             # P32.14 (SIG-FIND-003): one normalized index row per eligible
@@ -900,7 +955,14 @@ def build_release(
                     "entity_id": eid,
                     "entity_type": et,
                     "label": record.label.get("text"),
-                    "jurisdiction": record.jurisdiction.get("id"),
+                    # P35.45: the canonical placement key is the jurisdiction
+                    # facet — the declared ``id`` stays the fallback so a
+                    # pre-keyed export's facet shape is unchanged.
+                    "jurisdiction": (
+                        record.jurisdiction.get("jkey")
+                        or record.jurisdiction.get("id")
+                        or "unreported"
+                    ),
                     "location_kind": ("public-point" if row.get("geometry") else "no-public-point"),
                     "source_id": str(row.get("source_id") or ""),
                     "technology": str(row.get("technology") or ""),
@@ -969,6 +1031,10 @@ def build_release(
                 record_count=len(cb.index_rows),
                 kinds=cb.kinds,
                 jurisdictions=cb.jurisdictions,
+                jurisdiction_names={
+                    jur: (jurisdiction_display.get(jur) or {"name": jur})["name"]
+                    for jur in cb.jurisdictions
+                },
                 stamp=release_stamp,
             ),
             compartment=comp,
@@ -1005,10 +1071,15 @@ def build_release(
                     compartment=comp,
                     licence=comps[comp],
                 )
-        # jurisdiction indexes
+        # jurisdiction indexes — P35.45: grouped on the dossier slug path
+        # (``usa/ca/verdin-county-06037``), the same segment the dossier
+        # route and the record's ``slug_path`` carry; unplaced records land
+        # under ``unplaced``, a pre-keyed export on the declared ``id``.
         by_jur: dict[str, list[dict[str, Any]]] = {}
         for r in index_lines:
-            by_jur.setdefault(str(r["jurisdiction"] or "unreported"), []).append(
+            by_jur.setdefault(
+                str(r.get("slug_path") or r["jurisdiction"] or "unreported"), []
+            ).append(
                 {
                     "entity_id": r["entity_id"],
                     "entity_type": r["entity_type"],
@@ -1026,6 +1097,8 @@ def build_release(
                         publication_id=pub,
                         compartment=comp,
                         jurisdiction=jur,
+                        jurisdiction_name=(jurisdiction_display.get(jur) or {"name": jur})["name"],
+                        jkey=(jurisdiction_display.get(jur) or {"jkey": ""})["jkey"],
                         page=page,
                         page_count=page_count,
                         items=chunk,
@@ -1073,9 +1146,13 @@ def build_release(
         evidence_count += 1
 
     # --- released dossier overviews ------------------------------------------ #
+    # P35.45: one page per keyed dossier at its canonical
+    # ``dossier/<slug-path>/`` route — the same nested path the
+    # ``jurisdiction/`` record lists use. A pre-P35.45 export's flat ``slug``
+    # dossiers land at their old routes unchanged.
     dossier_count = 0
     for dossier in dossiers:
-        slug = dossier_slug(dossier)
+        slug = str(dossier.get("slug_path") or dossier_slug(dossier))
         emit(
             f"r/{pub}/dossier/{slug}/index.html",
             dossier_page(
@@ -1088,6 +1165,19 @@ def build_release(
             licence="CC-BY-4.0",
         )
         dossier_count += 1
+    # P35.45 (K4 §5.4): the unplaced report — an honest data-quality page at
+    # ``dossier/unplaced/``, never folded into a guessed jurisdiction.
+    if unplaced_report is not None:
+        emit(
+            f"r/{pub}/dossier/unplaced/index.html",
+            unplaced_page(
+                unplaced_report,
+                publication_id=pub,
+                stamp=release_stamp,
+            ),
+            compartment="web",
+            licence="CC-BY-4.0",
+        )
 
     # --- release landing + descriptor (both covered by the manifest) --------- #
     # Completeness over an empty corpus is not evaluable (P34.36 / F5

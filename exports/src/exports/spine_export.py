@@ -43,6 +43,8 @@ from __future__ import annotations
 
 import gzip
 import json
+import sys
+import time
 import uuid
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field, replace
@@ -97,7 +99,7 @@ from tasks.vocabulary import Disposition
 from policy import disclosure as policy_disclosure
 from policy import withdrawals as policy_withdrawals
 
-from . import analytics, dossier_sources, provo, source_licences
+from . import analytics, dossier_keys, dossier_sources, provo, source_licences
 from . import column_registry as CR
 from . import compartments as C
 from . import placement as _placement
@@ -2578,6 +2580,7 @@ def _watch(
     generated_at: str,
     placement: _placement.PlacementEngine | None,
     lane_by_source: Mapping[str, Mapping[str, Any]],
+    keyed_places: Sequence[Mapping[str, str]] | None = None,
 ) -> dict[str, Any]:
     """Surface 7 — the ``sig/watch/2`` envelope (P35.43 / K7 WX-01 / F-481).
 
@@ -2586,12 +2589,20 @@ def _watch(
     emits the versioned envelope — an empty ``items`` list still carries the
     per-place coverage block (SIG-WATCH-D04). The dossier-index jurisdictions
     seed the coverage rows so every rendered place shows its own last-checked.
+
+    P35.45: under a bound placement run the caller passes ``keyed_places`` —
+    the canonical ``{key: jkey, slug: slug_path}`` page set — so the coverage
+    rows name the same keys the dossiers occupy.
     """
     as_of = date.fromisoformat(dataset.as_of[:10]) if dataset.as_of else date.today()
-    dossier_places = [
-        {"key": str(j.jurisdiction), "slug": jurisdiction_slug(str(j.jurisdiction))}
-        for j in dataset.jurisdictions
-    ]
+    dossier_places = (
+        [dict(p) for p in keyed_places]
+        if keyed_places is not None
+        else [
+            {"key": str(j.jurisdiction), "slug": jurisdiction_slug(str(j.jurisdiction))}
+            for j in dataset.jurisdictions
+        ]
+    )
     return build_watch_payload(
         raw,
         as_of=as_of,
@@ -2884,6 +2895,7 @@ def _coverage_gaps(
     *,
     entity_label_by_id: Mapping[str, str],
     site_jurisdiction: Mapping[str, str],
+    subject_key: str | None = None,
 ) -> list[dict[str, Any]]:
     """Evidence-backed dossier gaps (P32.17, SIG-DOS-001): negative-space
     ``coverage_record`` rows become first-class gaps with their absence kind and
@@ -2917,7 +2929,10 @@ def _coverage_gaps(
             "kind": kind,
             # P35.18 (JUR-02a): ``jurisdiction`` is the declared-scheme bucket
             # key — the subject id slugs the KEY, never a bare value.
-            "subject_id": subject or f"jurisdiction:{jurisdiction_slug(jurisdiction)}",
+            # P35.45: keyed dossiers pass ``subject_key`` so the emitted id is
+            # the canonical ``jurisdiction:<jkey>`` form, never a slug.
+            "subject_id": subject
+            or f"jurisdiction:{subject_key or jurisdiction_slug(jurisdiction)}",
             "predicate_id": predicate,
             "note": "Recorded negative-space coverage finding (§32.1).",
         }
@@ -3079,6 +3094,992 @@ def _dossier_index(dossiers: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]
         }
         for d in dossiers
     ]
+
+
+# --------------------------------------------------------------------------- #
+# P35.45 — keyed dossiers, index v2, the unplaced report, the migration maps   #
+# --------------------------------------------------------------------------- #
+
+DOSSIER_SCHEMA_V2 = "sig.dossier/2"
+DOSSIER_INDEX_SCHEMA_V2 = "sig.dossier-index/2"
+JURISDICTION_KEY_MAP_SCHEMA = "sig.jurisdiction-key-map/1"
+SLUG_HISTORY_SCHEMA = "sig.jurisdiction-slug-history/1"
+UNPLACED_REPORT_SCHEMA = "sig.unplaced-report/1"
+DBRIGHT_REREVIEW_SCHEMA = "sig.dbright-rereview/1"
+
+_DBRIGHT_LICENSE = "LicenseRef-OperatorAccepted-DBRight"
+
+#: The publication engine's code vocabulary (``policy/data/jurisdictions.toml``
+#: + ``jurisdiction_adapters.toml``) predates ISO keying — the UK sits under
+#: ``UK`` there while D-K4-7's wire ``jurisdictionCode`` is the ISO alpha-2
+#: ``GB``. One named alias, applied loudly (the dossier reports the code
+#: actually evaluated); an unmapped country still lands on the conservative
+#: default.
+_PUBLICATION_CODE_ALIAS: dict[str, str] = {"GB": "UK"}
+
+
+def _publication_block(country_a2: str | None) -> dict[str, Any]:
+    """The dossier's D-K4-7 publication posture.
+
+    ``jurisdictionCode`` is the COUNTRY's ISO alpha-2 — never the leaf's
+    code, never a guessed value. A country with no publication adapter
+    evaluates under the conservative profile: public-employee names are
+    withheld (``publication_permitted``'s unknown-jurisdiction default),
+    never invented and never exposed.
+    """
+    from policy.jurisdiction import adapters as _adapters
+    from policy.publication import publication_permitted
+
+    code = str(country_a2 or "")
+    eval_code = _PUBLICATION_CODE_ALIAS.get(code, code)
+    adapter = _adapters().get(eval_code)
+    names_ok = publication_permitted(eval_code, eval_code, is_public_employee_name=True)
+    return {
+        "jurisdictionCode": code or None,
+        "publication_jurisdiction": eval_code,
+        "adapter_code": adapter.code if adapter is not None else None,
+        "profile": adapter.publication_profile if adapter is not None else None,
+        "conservative_default": adapter is None,
+        "public_employee_names_publishable": names_ok,
+        "note": (
+            None
+            if adapter is not None
+            else (
+                "no publication adapter for this country — the conservative "
+                "profile applies and public-employee names are withheld (D-K4-7)"
+            )
+        ),
+    }
+
+
+def _chain_links(
+    info: dossier_keys.KeyedJurisdiction,
+    keyed: dossier_keys.KeyedRegistry,
+) -> list[dict[str, Any]]:
+    """The root-first breadcrumb rows — name + path per ancestor (the
+    page's breadcrumb and the index's parent display read the same list)."""
+    rows: list[dict[str, Any]] = []
+    for a in info.chain:
+        kj = keyed.keys.get(a)
+        rows.append(
+            {
+                "jkey": a,
+                "name": kj.name if kj is not None else a,
+                "level": kj.level if kj is not None else None,
+                "slug_path": kj.slug_path if kj is not None else None,
+            }
+        )
+    return rows
+
+
+def _nonsite_place_keys(
+    packets: Sequence[Mapping[str, Any]] | None,
+    rows: Sequence[Mapping[str, Any]],
+) -> set[str]:
+    """D-K4-3's "any US place with non-site evidence": research-dossier
+    packet jurisdictions resolved through ``lookup@1`` at municipality level.
+    An unmatched or ambiguous name mints NOTHING — the honest absence, never
+    a guessed place. Only US places qualify (the decision's own scope)."""
+    from .jurisdictions import lookup
+
+    out: set[str] = set()
+    for packet in packets or ():
+        name = str(packet.get("jurisdiction") or "").strip()
+        if not name:
+            continue
+        hits = lookup(rows, name, level="municipality")
+        if len(hits) != 1:
+            continue
+        jkey = str(hits[0]["jkey"])
+        row = next((r for r in rows if str(r["jkey"]) == jkey), None)
+        parent = row.get("parent") if row else None
+        # Only US Census places — the row's parent is a US admin-1 key.
+        if isinstance(parent, str) and parent.startswith("iso3166-2:US-"):
+            out.add(jkey)
+    return out
+
+
+def _freshness_bounds(acc: dossier_sources._DossierAcc) -> dict[str, Any]:
+    """Newest last-seen / oldest first-seen over the dossier's sighted claims
+    (the same instants the source rows carry — never re-derived)."""
+    first = min(
+        (s.first_seen_at for rows in acc.claims.values() for s in rows if s.first_seen_at),
+        default=None,
+    )
+    last = max(
+        (s.last_seen_at for rows in acc.claims.values() for s in rows if s.last_seen_at),
+        default=None,
+    )
+    return {
+        "oldest_first_seen": first.isoformat() if first else None,
+        "newest_last_seen": last.isoformat() if last else None,
+    }
+
+
+def _techs_of(acc: dossier_sources._DossierAcc) -> list[str] | str:
+    """The dossier's declared technology slugs — ``"not typed yet"`` unless
+    a placed record carries a resolved technology (the index's honest cell)."""
+    techs: set[str] = set()
+    for sacc in acc.by_source.values():
+        for subj in sacc.placed_subjects:
+            techs.update(sacc.techs.get(subj) or ())
+    return sorted(techs) if techs else "not typed yet"
+
+
+def _keyed_dossier_docs(
+    dataset: ShapedDataset,
+    as_of: str,
+    belief: datetime | None,
+    *,
+    plan: dossier_sources.DossierContributionPlan,
+    keyed: dossier_keys.KeyedRegistry,
+    pages: Mapping[str, str],
+    accountability_links: Sequence[Mapping[str, Any]],
+    coverage_rows: Sequence[Mapping[str, Any]],
+    entity_label_by_id: Mapping[str, str],
+    source_names: Mapping[str, str],
+) -> list[dict[str, Any]]:
+    """The P35.45 keyed dossier set — one doc per D-K4-3 page key.
+
+    Figures read the shared contribution accumulation (the placed leg), the
+    section/gap/governance scaffolding rides the frozen ``Dossier`` contract,
+    and ``rollup``/``children`` carry the conserved parent↔child arithmetic:
+    a parent's placed count is its own leaf records plus every registry
+    child's placed count — asserted, never re-derived downstream.
+    """
+    echo = _as_of_echo(as_of, belief)
+    # deployment subject → leaf dossier key — the governance chain attributes
+    # to the dossier the deployment was actually placed under.
+    leaf_of: dict[str, str] = {}
+    for key, acc in plan.dossiers.items():
+        if key == dossier_keys.UNPLACED:
+            continue
+        for s in acc.leaf_subjects:
+            leaf_of[s] = key
+    gov_by_key: dict[str, dict[str, list[Mapping[str, Any]]]] = {}
+    for link in accountability_links:
+        gov_key = leaf_of.get(str(link.get("deployment_id")))
+        if gov_key is None:
+            continue  # unproven placement → unattributed, never guessed
+        gov_by_key.setdefault(gov_key, {}).setdefault(str(link.get("chain_role") or ""), []).append(
+            link
+        )
+
+    docs: list[dict[str, Any]] = []
+    for jkey in sorted(pages):
+        info = keyed.keys[jkey]
+        acc = plan.dossiers.get(jkey) or dossier_sources._DossierAcc(key=jkey)
+        placed_n = len(acc.placed_subjects)
+        leaf_n = len(acc.leaf_subjects)
+        appearing_n = len(acc.subjects)
+        by_role = gov_by_key.get(jkey, {})
+
+        # Sections — the §39.2 twelve, populated from the placed leg.
+        gov_rows: dict[str, list[dict[str, Any]]] = {}
+        for role, section_id, label in _GOVERNANCE_SEGMENTS:
+            for link in by_role.get(role, ()):
+                gov_rows.setdefault(section_id, []).append(_governance_row(link, label))
+        sections: list[dict[str, Any]] = []
+        for section_id in _DOSSIER_SECTIONS:
+            section: dict[str, Any] = {"section_id": section_id}
+            srows: list[dict[str, Any]] = []
+            if section_id == "what_is_deployed":
+                srows.append(
+                    {
+                        "label": "Geolocated site observations",
+                        "value": len(acc.placed_point_subjects),
+                        "note": (
+                            "Observation-level records placed here by point — "
+                            "not a resolved device census (SIG-RECON-058)."
+                        ),
+                    }
+                )
+            elif section_id == "where_the_hardware_is":
+                srows.append(
+                    {
+                        "label": "Published records placed here",
+                        "value": placed_n,
+                        "note": (
+                            "Distinct records whose placement chain contains "
+                            "this key (placed leg, K4 §5.2)."
+                        ),
+                    }
+                )
+                srows.append(
+                    {
+                        "label": "…placed only at this level",
+                        "value": leaf_n,
+                        "note": "Chain leaf is this key — the additive roll-up term.",
+                    }
+                )
+                if appearing_n != placed_n:
+                    srows.append(
+                        {
+                            "label": "Also appearing (declared here)",
+                            "value": appearing_n - placed_n,
+                            "note": (
+                                "Records that DECLARED this jurisdiction but "
+                                "placed elsewhere — the disagreement stays "
+                                "visible on both sides."
+                            ),
+                        }
+                    )
+            elif section_id == "how_we_know_this":
+                names = sorted(str(source_names.get(sid) or sid) for sid in acc.by_source)
+                srows.append(
+                    {
+                        "label": "Sources",
+                        "value": ", ".join(names) or "(none recorded)",
+                    }
+                )
+            srows.extend(gov_rows.get(section_id, ()))
+            if srows:
+                section["rows"] = srows
+            sections.append(section)
+
+        # Gaps — the recorded coverage absences attributed to this dossier's
+        # placed subjects, plus the conflicted-subjects row. subject_id is
+        # re-keyed to the canonical ``jurisdiction:<jkey>`` form (P35.45).
+        placed_subject_scope = {s: jkey for s in acc.placed_subjects}
+        gaps = _coverage_gaps(
+            jkey,
+            coverage_rows,
+            entity_label_by_id=entity_label_by_id,
+            site_jurisdiction=placed_subject_scope,
+            subject_key=jkey,
+        )
+        conflicted = {
+            s
+            for sacc in acc.by_source.values()
+            for s in sacc.conflicted
+            if s in acc.placed_subjects
+        }
+        if conflicted:
+            gaps.append(
+                {
+                    "label": "Subjects with conflicting coordinate evidence",
+                    "kind": "UNRESOLVED",
+                    "subject_id": f"jurisdiction:{jkey}",
+                    "predicate_id": "camera_latitude",
+                }
+            )
+
+        child_keys = list(keyed.children.get(jkey) or ())
+        children: list[dict[str, Any]] = [
+            {
+                "jkey": c,
+                "slug_path": keyed.keys[c].slug_path,
+                "name": keyed.keys[c].name,
+                "level": keyed.keys[c].level,
+                "records": len(
+                    (plan.dossiers.get(c) or dossier_sources._DossierAcc(key=c)).placed_subjects
+                ),
+                "records_placed_only_here": len(
+                    (plan.dossiers.get(c) or dossier_sources._DossierAcc(key=c)).leaf_subjects
+                ),
+                "page": c in pages,
+                "href": (f"/dossier/{keyed.keys[c].slug_path}/" if c in pages else "/map/"),
+            }
+            for c in child_keys
+        ]
+        # SIG-JUR-D07's roll-up conservation, realised under keyed dossiers:
+        # every placed record's chain ends at exactly ONE leaf, so the placed
+        # total partitions as own-leaf + Σ over the leaf keys this dossier's
+        # members land at. NOT Σ children.records — a record whose chain
+        # spans two registry siblings (a county and a place under one state)
+        # counts on both, and a record whose leaf is not a registry child
+        # of this key (a US place's registry parent is the state while its
+        # located chain passes through the county) still belongs below.
+        leaf_rows: list[dict[str, Any]] = []
+        for leaf_jkey, subs in sorted(acc.leaf_members.items()):
+            leaf_info = keyed.keys.get(leaf_jkey)
+            leaf_rows.append(
+                {
+                    "jkey": leaf_jkey,
+                    "name": (leaf_info.name if leaf_info is not None else leaf_jkey),
+                    "slug_path": (leaf_info.slug_path if leaf_info is not None else None),
+                    "records": len(subs),
+                    "page": leaf_jkey in pages,
+                }
+            )
+        below_n = sum(int(r["records"]) for r in leaf_rows)
+        conserved = placed_n == leaf_n + below_n
+
+        by_source_placed = {
+            sid: len(sacc.placed_subjects)
+            for sid, sacc in sorted(acc.by_source.items())
+            if sacc.placed_subjects
+        }
+        overlap = sum(by_source_placed.values()) != placed_n
+        parent = keyed.keys.get(info.parent) if info.parent else None
+
+        doc: dict[str, Any] = {
+            "schema": DOSSIER_SCHEMA_V2,
+            "kind": "inventory_overview",
+            "slug": info.slug_path,
+            "slug_path": info.slug_path,
+            "subject_label": (f"Surveillance infrastructure — {keyed.display_name(jkey)}"),
+            # The canonical key is the machine identity; ``name``/``display``
+            # carry what a person reads (K4 §5.2 — name first, code secondary).
+            "jurisdiction": jkey,
+            "jurisdiction_key": jkey,
+            "jurisdictionCode": info.country_a2,
+            "level": info.level,
+            "name": info.name,
+            "display_name": keyed.display_name(jkey),
+            "display": {
+                "name": info.name,
+                "parent_name": parent.name if parent is not None else None,
+                "level": info.level,
+                "code": info.code,
+                "scheme": info.scheme,
+            },
+            "parent_jkey": info.parent,
+            "parent_slug_path": parent.slug_path if parent is not None else None,
+            "chain": _chain_links(info, keyed),
+            "boundary_vintage": info.vintage,
+            "registry_note": info.note,
+            "page_threshold_basis": pages[jkey],
+            "placement_rules": _placement.PLACEMENT_RULESET,
+            "publication": _publication_block(info.country_a2),
+            "asOf": echo,
+            "rulesetVersion": SHAPING_SCHEMA_VERSION,
+            "sections": sections,
+            "gaps": gaps,
+            "source_families": sorted(acc.by_source),
+            "sources": [
+                {
+                    "source_id": sid,
+                    "name": str(source_names.get(sid) or sid),
+                    "records": len(sacc.subjects),
+                    "records_placed": len(sacc.placed_subjects),
+                }
+                for sid, sacc in sorted(
+                    acc.by_source.items(), key=lambda kv: (-len(kv[1].placed_subjects), kv[0])
+                )
+            ],
+            "rollup": {
+                "records": placed_n,
+                "records_placed_only_here": leaf_n,
+                "records_placed_below": below_n,
+                "records_appearing": appearing_n,
+                # The leaf-key partition: every placed member's chain ends at
+                # exactly one leaf — this dossier itself or one of these.
+                "by_leaf": leaf_rows,
+                "children": [
+                    {"jkey": c["jkey"], "slug_path": c["slug_path"], "records": c["records"]}
+                    for c in children
+                ],
+                "by_source": by_source_placed,
+                # The by_source legs overlap when a record's sources differ —
+                # the same honesty the sig.dossier-sources/1 sum_rule carries.
+                "by_source_sum_rule": "distinct" if overlap else "sum",
+                "conserved": conserved,
+                "note": (
+                    "records == records_placed_only_here + records_placed_below "
+                    "(Σ by_leaf.records) — each placed record's chain ends at "
+                    "exactly one leaf, so the leaf partition is conserved by "
+                    "construction. The children table lists registry children "
+                    "with each child's own placed total — a record counts on "
+                    "every chain ancestor, so child totals never sum."
+                ),
+            },
+            "children": children,
+            "disagreements": {
+                "declared_here_located_elsewhere": sum(acc.located_elsewhere_pairs.values()),
+                "located_here_declared_elsewhere": sum(acc.declared_elsewhere_pairs.values()),
+            },
+            "links": {
+                "self": f"/dossier/{info.slug_path}/",
+                "print": (
+                    f"/dossier/{info.slug_path}/print/"
+                    if info.level in dossier_sources.RUNS_FILE_LEVELS
+                    else None
+                ),
+                "json": f"/dossier/{info.slug_path}.json",
+                "sources": f"web/dossier_sources/{info.slug_path}.json",
+                "map": "/map/",
+                "provenance": info.slug_path,
+                "record_list": None,  # release-bound — no latest tree exists at export time
+            },
+            "authorization": dict(_UNKNOWN_AUTHORIZATION),
+            "termination": dict(_UNKNOWN_TERMINATION),
+            "legal_regime": {**_UNKNOWN_LEGAL_REGIME, "disclosure_duties": []},
+        }
+        if by_role:
+            doc["governance_chain"] = _governance_chain_field(jkey, by_role)
+        docs.append(doc)
+    return docs
+
+
+def _dossier_index_v2(
+    docs: Sequence[Mapping[str, Any]],
+    *,
+    plan: dossier_sources.DossierContributionPlan,
+    keyed: dossier_keys.KeyedRegistry,
+    pages: Mapping[str, str],
+    release: Mapping[str, Any],
+    as_of: str,
+    generated_at: str,
+    boundary_pack: Mapping[str, Any] | None,
+    measurement: Mapping[str, Any] | None,
+) -> dict[str, Any]:
+    """``web/dossiers/index.json`` — the ``sig.dossier-index/2`` index.
+
+    One row per page dossier carrying parity with its dossier JSON (the same
+    accumulated numbers — never a second pass). ``unplaced`` is a SIBLING
+    block, never a dossier row: the report is excluded from jurisdiction
+    counts and place facets by construction (K4 §5.2).
+    """
+    rows: list[dict[str, Any]] = []
+    by_key = {str(d["jurisdiction_key"]): d for d in docs}
+    for jkey in sorted(pages):
+        info = keyed.keys[jkey]
+        doc = by_key[jkey]
+        acc = plan.dossiers.get(jkey) or dossier_sources._DossierAcc(key=jkey)
+        srcs = doc["sources"]
+        parent = keyed.keys.get(info.parent) if info.parent else None
+        kids = doc["children"]
+        rows.append(
+            {
+                "slug": info.slug_path,
+                "slug_path": info.slug_path,
+                "jkey": jkey,
+                "jurisdiction": jkey,
+                "jurisdictionCode": info.country_a2,
+                "subject_label": doc["subject_label"],
+                "name": info.name,
+                "display_name": doc["display_name"],
+                "parent_name": parent.name if parent is not None else None,
+                "parent_jkey": info.parent,
+                "parent_slug_path": parent.slug_path if parent is not None else None,
+                "level": info.level,
+                "code": info.code,
+                "scheme": info.scheme,
+                "asOf": doc["asOf"],
+                "records": len(acc.placed_subjects),
+                "records_placed_only_here": len(acc.leaf_subjects),
+                "located": {
+                    "by_point": len(acc.placed_point_subjects),
+                    "of": len(acc.placed_subjects),
+                },
+                "sources": {
+                    "count": len(acc.by_source),
+                    "top": [s["name"] for s in srcs[:3]],
+                },
+                "evidence_types": {
+                    "site_observations": len(acc.placed_subjects),
+                    "other_classes": {
+                        "not_evaluated": (
+                            "no evidence-class vocabulary beyond site "
+                            "observations lands on dossiers yet (I8)"
+                        )
+                    },
+                },
+                "technology": _techs_of(acc),
+                "open_questions": len(doc["gaps"]),
+                "disagreements": doc["disagreements"],
+                "freshness": _freshness_bounds(acc),
+                "children": {
+                    "count": len(kids),
+                    "with_records": sum(1 for k in kids if k["records"] > 0),
+                    "pages": sum(1 for k in kids if k["page"]),
+                },
+                "page_threshold_basis": pages[jkey],
+            }
+        )
+    unplaced_acc = plan.dossiers.get(dossier_keys.UNPLACED)
+    unplaced_n = len(unplaced_acc.subjects) if unplaced_acc is not None else 0
+    return {
+        "schema": DOSSIER_INDEX_SCHEMA_V2,
+        "release": dict(release),
+        "as_of": as_of,
+        "generated_at": generated_at,
+        "placement_rules": _placement.PLACEMENT_RULESET,
+        "boundary_pack": boundary_pack or {},
+        "dossiers": rows,
+        # SIBLING, never a row: "Not yet placed" is a data-quality state — it
+        # joins neither the jurisdiction count nor the place facet.
+        "unplaced": {
+            "slug_path": dossier_keys.UNPLACED,
+            "href": "/dossier/unplaced/",
+            "report": "web/unplaced.json",
+            "records": unplaced_n,
+            "excluded_from": [
+                "jurisdiction counts",
+                "the place facet",
+                "canonical jurisdiction rows",
+            ],
+        },
+        "counts": {
+            "jurisdictions": len(rows),
+            "dossier_pages": len(rows),
+            "unplaced_records": unplaced_n,
+        },
+        "notes": [
+            "unplaced is a data-quality report, not a jurisdiction — it is "
+            "counted separately, never in the jurisdiction total",
+            "per dossier, records == records_placed_only_here + "
+            "records_placed_below (Σ by_leaf.records) — each placed record's "
+            "chain ends at exactly one leaf, so the leaf partition is "
+            "conserved by construction",
+        ],
+        "measurement": measurement,
+    }
+
+
+#: The closed ``placement_check`` → reason text the unplaced report prints —
+#: every reason a record can land on the report carries its honest definition.
+_UNPLACED_REASON_DEFS: dict[str, str] = {
+    "no_location_evidence": ("nothing was declared and no usable point exists (R7)"),
+    "no_point": ("no usable point geometry, and no declared key to fall back to (R5)"),
+    "coordinates_conflicted": (
+        "the record's own coordinate evidence conflicts — the shaping "
+        "envelope refuses a single point"
+    ),
+    "outside_all_boundaries": ("the point falls outside every boundary in the verified pack (R6)"),
+    "name_unmatched": ("the declared name matched no registry row (lookup@1, R8)"),
+    "name_ambiguous": (
+        "the declared name matched several registry rows — ambiguity is "
+        "recorded, never resolved by a guess (R8)"
+    ),
+    "not_evaluated": (
+        "the deeper levels were never evaluated for this record — a partial "
+        "verdict, honestly marked"
+    ),
+    "axis_swap_suspected": (
+        "the recorded point looks axis-swapped; the point was withheld rather than re-drawn (R3)"
+    ),
+    "sign_flip_suspected": (
+        "the recorded point looks sign-flipped; the point was withheld rather than re-drawn (R3)"
+    ),
+    "null_island": ("the recorded point is (0,0) — rejected (R1)"),
+    "invalid_point": ("the recorded point is out of range — rejected (R1)"),
+    "point_rejected:null_island": ("the recorded point is (0,0) — rejected (R1)"),
+    "point_rejected:invalid_point": ("the recorded point is out of range — rejected (R1)"),
+    "outside_declared": ("located outside the declared boundary (R4)"),
+    "outside_declared_country": ("located across a country border (R4)"),
+    "on_boundary": ("the point sits on a shared boundary — lowest-code tie-break (R2)"),
+    "consistent": ("located consistently with the declared key (R2)"),
+}
+
+#: K4 §5.5's header — the verbatim honest framing the page prints (carried,
+#: never paraphrased: the design marks it agent-drafted, so it rides the
+#: artifact where the copy batch pins it).
+UNPLACED_HEADER = (
+    "These records are published, but SIG cannot yet say which jurisdiction "
+    "they belong to. This is a data-quality list, not a place."
+)
+
+#: What would move a record off the report — one honest fix per check
+#: (the unplaced page's "what would fix it" column, K4 §5.5).
+_UNPLACED_FIXES: dict[str, str] = {
+    "no_location_evidence": ("a verifiable location claim or a canonical declared key places it"),
+    "no_point": ("a usable point, or a canonical declared key, places it"),
+    "coordinates_conflicted": ("resolving the record's own conflicting coordinates places it"),
+    "outside_all_boundaries": ("a point inside a verified boundary, or a declared key, places it"),
+    "name_unmatched": ("a declared name the registry knows places it"),
+    "name_ambiguous": ("a more specific declaration (parent context) places it"),
+    "not_evaluated": ("re-running placement under the full ruleset evaluates it"),
+    "axis_swap_suspected": ("confirming or correcting the coordinate order places it"),
+    "sign_flip_suspected": ("confirming or correcting the coordinate sign places it"),
+    "null_island": ("a non-zero point, or a declared key, places it"),
+    "invalid_point": ("an in-range point, or a declared key, places it"),
+    "point_rejected:null_island": ("a non-zero point, or a declared key, places it"),
+    "point_rejected:invalid_point": ("an in-range point, or a declared key, places it"),
+    "outside_declared": ("a declaration matching the located place places it"),
+    "outside_declared_country": ("a declaration matching the located country places it"),
+    "on_boundary": ("evidence naming one side of the shared boundary places it"),
+    "consistent": ("already placed consistently — this row never lists it"),
+}
+
+
+def _unplaced_report(
+    plan: dossier_sources.DossierContributionPlan,
+    *,
+    release: Mapping[str, Any],
+    as_of: str,
+    generated_at: str,
+    boundary_pack: Mapping[str, Any] | None,
+) -> dict[str, Any]:
+    """``web/unplaced.json`` — the "Not yet placed" data-quality report.
+
+    Reads the shared accumulation's ``unplaced`` sentinel dossier — the same
+    subjects/reasons the ``sig.dossier-sources/1`` unplaced artifact carries.
+    Count conservation: ``records == Σ by_reason`` and each source's reasons
+    sum to its own record count (one check per record).
+    """
+    acc = plan.dossiers.get(dossier_keys.UNPLACED)
+    by_reason: dict[str, int] = {}
+    reason_sources: dict[str, set[str]] = {}
+    by_source: list[dict[str, Any]] = []
+    records = 0
+    if acc is not None:
+        records = len(acc.subjects)
+        for sid, sacc in sorted(acc.by_source.items()):
+            reasons = {c: n for c, n in sorted(sacc.checks.items())}
+            for c, n in reasons.items():
+                by_reason[c] = by_reason.get(c, 0) + n
+                reason_sources.setdefault(c, set()).add(sid)
+            by_source.append(
+                {
+                    "source_id": sid,
+                    "records": len(sacc.subjects),
+                    "top_reasons": [
+                        {"reason": c, "records": n} for c, n in sorted(reasons.items())
+                    ],
+                }
+            )
+    return {
+        "schema": UNPLACED_REPORT_SCHEMA,
+        "release": dict(release),
+        "as_of": as_of,
+        "generated_at": generated_at,
+        "placement_rules": _placement.PLACEMENT_RULESET,
+        "boundary_pack": boundary_pack or {},
+        "kind": "data_quality_report",
+        "name": "Not yet placed",
+        # K4 §5.5's header, carried verbatim — the page renders this string.
+        "header": UNPLACED_HEADER,
+        "note": (
+            "This is a data-quality report, not a jurisdiction and not a "
+            "place. It names WHY each record could not be placed under the "
+            "recorded placement@1 checks — a record is never guessed into a "
+            "jurisdiction. It is excluded from jurisdiction counts, the "
+            "place facet, and the canonical jurisdiction rows."
+        ),
+        "records": records,
+        "by_reason": dict(sorted(by_reason.items())),
+        # K4 §5.5's table rows — reason, records, share of the report total,
+        # the sources the reason appears under (linked by id), and the honest
+        # "what would fix it" note.
+        "reason_rows": [
+            {
+                "reason": reason,
+                "records": n,
+                "share_percent": round(100 * n / records, 1) if records else None,
+                "sources": sorted(reason_sources.get(reason, ())),
+                "definition": _UNPLACED_REASON_DEFS.get(
+                    reason, "placement@1 check (vocabulary: closed)"
+                ),
+                "fix": _UNPLACED_FIXES.get(reason, "a placement check naming a key places it"),
+            }
+            for reason, n in sorted(by_reason.items())
+        ],
+        "by_source": by_source,
+        "reason_definitions": {
+            check: _UNPLACED_REASON_DEFS.get(check, "placement@1 check (vocabulary: closed)")
+            for check in sorted(by_reason)
+        },
+        "check_vocabulary": list(_placement.PLACEMENT_CHECKS),
+        "methodology": (
+            "placement@1 evaluates every published record against the "
+            "verified boundary pack: point-in-polygon first (with rejection "
+            "and suspect-swap guards), then the declared key, then the "
+            "name lookup. A record reaches this report when every honest "
+            "route fails — the reason names which rule exhausted it. "
+            "Reasons are per (record, source) slices: a multi-source record "
+            "counts once per source, matching the dossier-sources artifacts."
+        ),
+        # K4 §5.5 links — both to LIVE public routes: the research queue the
+        # report's tasks file under, and the corrections log re-keyed pages
+        # land in. Never `/intake/` or `/queue/` — the intake receiver is
+        # deliberately non-operational and `/queue/` is not a route.
+        "correction": {
+            "corrections": "/corrections/",
+            "research_queue": "/research-queue/",
+            "note": (
+                "A record here is placed nowhere — correcting its declared "
+                "jurisdiction or contributing a verifiable location moves it "
+                "off this report in the next release."
+            ),
+        },
+        # K4 §5.5 download slot — the per-compartment unplaced slice ships
+        # with the per-dossier downloads row (DSRC-03); the slot is present
+        # and honest, the files are not emitted yet.
+        "downloads": {
+            "status": "not_emitted",
+            "note": (
+                "Per-compartment downloads of this report are not emitted yet "
+                "— they land with the per-dossier downloads work (DSRC-03), "
+                "after the attribution and egress gates pass."
+            ),
+            "items": [],
+        },
+        "excluded_from": [
+            "jurisdiction counts",
+            "'N jurisdictions' copy",
+            "the place facet",
+            "canonical jurisdiction rows",
+        ],
+    }
+
+
+def _jurisdiction_key_map(
+    keyed: dossier_keys.KeyedRegistry,
+    *,
+    boundary_pack: Mapping[str, Any] | None,
+    generated_at: str,
+) -> dict[str, Any]:
+    """``web/jurisdiction_key_map.json`` — every registry key → its dossier
+    slug path (the single lookup the map, the release record lists, and the
+    search facet resolve through — never a re-derived slug)."""
+    return {
+        "schema": JURISDICTION_KEY_MAP_SCHEMA,
+        "generated_at": generated_at,
+        "boundary_pack": boundary_pack or {},
+        "unplaced_slug_path": dossier_keys.UNPLACED,
+        "entries": [
+            {
+                "jkey": info.jkey,
+                "slug_path": info.slug_path,
+                "name": info.name,
+                "display_name": keyed.display_name(info.jkey),
+                "level": info.level,
+                "parent": info.parent,
+                "chain": list(info.chain),
+                "country_code": info.country_a2,
+                "code": info.code,
+                "scheme": info.scheme,
+                "vintage": info.vintage,
+            }
+            for info in sorted(keyed.keys.values(), key=lambda i: i.jkey)
+        ],
+    }
+
+
+#: The §8.1 migration seed — the 55 published flat slugs and where each goes.
+#: ``first_release``/``last_release`` are honestly ``null`` (the pre-history
+#: releases never recorded them); the rows are append-only from here.
+_SLUG_HISTORY_SEED: list[dict[str, Any]] = [
+    *(
+        {
+            "slug": st,
+            "kind": "moved",
+            "successor": f"iso3166-2:US-{st.upper()}",
+            "note": "US state dossier — one referent; now at /dossier/usa/<st>/",
+            "first_release": None,
+            "last_release": None,
+        }
+        for st in (
+            "al az ca co dc fl ga hi ia il ks ky la ma md mo nc ny or pa sd tn tx ut va wa"
+        ).split()
+    ),
+    {
+        "slug": "id",
+        "kind": "split",
+        "successor": ["iso3166-2:US-ID", "iso3166-1:ID"],
+        "note": ("this page combined Idaho (US) and Indonesia — they are now separate dossiers"),
+        "first_release": None,
+        "last_release": None,
+    },
+    {
+        "slug": "mn",
+        "kind": "split",
+        "successor": ["iso3166-2:US-MN", "iso3166-1:MN"],
+        "note": ("this page combined Minnesota (US) and Mongolia — they are now separate dossiers"),
+        "first_release": None,
+        "last_release": None,
+    },
+    *(
+        {
+            "slug": sub,
+            "kind": "moved",
+            "successor": f"iso3166-2:{sub.upper()}",
+            "note": "ISO 3166-2 dossier — now at /dossier/<a3>/<sub>/",
+            "first_release": None,
+            "last_release": None,
+        }
+        for sub in (
+            "au-act au-qld au-vic ca-ab ca-bc ca-mb ca-on co-met gb-eng gb-nir gb-sct ie-dl"
+        ).split()
+    ),
+    *(
+        {
+            "slug": a2,
+            "kind": "moved",
+            "successor": f"iso3166-1:{a2.upper()}",
+            "note": "country dossier — now at /dossier/<a3>/",
+            "first_release": None,
+            "last_release": None,
+        }
+        for a2 in "be de gb hk jp my nz ps pt sa th".split()
+    ),
+    {
+        "slug": "bd",
+        "kind": "corrected",
+        "successor": "iso3166-1:SG",
+        "note": (
+            "records were mislabelled Bangladesh — they are located in "
+            "Singapore; this is a correction page, not a rename"
+        ),
+        "first_release": None,
+        "last_release": None,
+    },
+    {
+        "slug": "nl",
+        "kind": "corrected",
+        "successor": "iso3166-1:BE",
+        "note": (
+            "records were mislabelled Netherlands — they are located in "
+            "Belgium; this is a correction page, not a rename"
+        ),
+        "first_release": None,
+        "last_release": None,
+    },
+    {
+        "slug": "us",
+        "kind": "moved",
+        "successor": "iso3166-1:US",
+        "note": "this page used to show only country-level registry records",
+        "first_release": None,
+        "last_release": None,
+    },
+    {
+        "slug": "unresolved",
+        "kind": "moved",
+        "successor": "unplaced",
+        "note": (
+            "the unresolved bucket is now the 'Not yet placed' data-quality "
+            "report — most records formerly here are now placed by location"
+        ),
+        "first_release": None,
+        "last_release": None,
+    },
+]
+
+
+def _slug_history(
+    keyed: dossier_keys.KeyedRegistry,
+    *,
+    generated_at: str,
+    prior: Sequence[Mapping[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """``web/jurisdiction_slug_history.json`` — the append-only slug map.
+
+    Seeded with K4 §8.1's 55 rows (the published flat dossier set) plus one
+    ``moved`` row per registry key's P35.18-era ``jurisdiction_slug`` form —
+    the slug the pre-P35.45 keyed export already published (``iso3166-2-us-ok``),
+    so every URL ever emitted resolves. ``prior`` rows (a previous export's
+    history) carry forward verbatim — append-only, never rewritten.
+    """
+    rows: list[dict[str, Any]] = [dict(r) for r in (prior or ())] + [
+        dict(r) for r in _SLUG_HISTORY_SEED
+    ]
+    seen = {str(r["slug"]) for r in rows}
+    for jkey, info in sorted(keyed.keys.items()):
+        legacy = jurisdiction_slug(jkey)
+        if legacy in seen or legacy == info.slug_path:
+            continue
+        seen.add(legacy)
+        rows.append(
+            {
+                "slug": legacy,
+                "kind": "moved",
+                "successor": jkey,
+                "note": "the P35.18-era flat key slug → the canonical slug path",
+                "first_release": None,
+                "last_release": None,
+            }
+        )
+    return {
+        "schema": SLUG_HISTORY_SCHEMA,
+        "generated_at": generated_at,
+        "rows": rows,
+    }
+
+
+def _legacy_slug_map(keyed: dossier_keys.KeyedRegistry) -> dict[str, str]:
+    """``old slug → jkey`` for every UNAMBIGUOUS successor — the research-queue
+    re-key map. Split/corrected rows are excluded: a card naming ``id`` can
+    never be silently re-homed to one of two places."""
+    out: dict[str, str] = {}
+    for row in _SLUG_HISTORY_SEED:
+        succ = row.get("successor")
+        if row.get("kind") == "moved" and isinstance(succ, str) and succ != "unplaced":
+            out[str(row["slug"])] = succ
+    for jkey in keyed.keys:
+        out.setdefault(jurisdiction_slug(jkey), jkey)
+    return out
+
+
+def _rekey_queue_cards(
+    cards: Sequence[Mapping[str, Any]],
+    slug_map: Mapping[str, str],
+    keyed: dossier_keys.KeyedRegistry,
+) -> list[dict[str, Any]]:
+    """Re-key ``jurisdiction:<slug>`` subject ids to ``jurisdiction:<jkey>``
+    (P35.45). A resolvable card keeps its legacy id under
+    ``legacy_subject_id`` (the mapping is retained, never erased); an
+    unresolvable card stays as recorded — never silently resolved."""
+    out: list[dict[str, Any]] = []
+    for card in cards:
+        card = dict(card)
+        sid = str(card.get("subject_id") or "")
+        if sid.startswith("jurisdiction:"):
+            tail = sid.split(":", 1)[1]
+            if tail in keyed.keys:
+                pass  # already canonical
+            elif tail in slug_map:
+                card["legacy_subject_id"] = sid
+                card["subject_id"] = f"jurisdiction:{slug_map[tail]}"
+            elif tail:
+                # Unmappable — recorded on the card, never silently resolved
+                # and never dropped (the row's own id stays its identity).
+                card["rekey_note"] = (
+                    "no canonical jurisdiction key maps this legacy subject — recorded unchanged"
+                )
+        jur = str(card.get("jurisdiction") or "")
+        if jur and jur not in keyed.keys and jur in slug_map:
+            card["legacy_jurisdiction"] = jur
+            card["jurisdiction"] = slug_map[jur]
+        out.append(card)
+    return out
+
+
+def _dbright_rereview(
+    rows_by_compartment: Mapping[str, Sequence[Any]],
+) -> dict[str, Any] | None:
+    """``web/dbright_rereview.json`` — the US-located DBRight re-review list
+    (P35.45 / E4). REPORT ONLY: it names the (record, source, located key)
+    rows whose slice carries the operator-accepted DBRight licence and whose
+    placement located them under ``iso3166-1:US`` — the input to a future
+    human rights review. It changes no ``ingestion_permitted``, no rights
+    decision, and no publication gate."""
+    rows: list[dict[str, Any]] = []
+    for comp in sorted(rows_by_compartment):
+        for row in rows_by_compartment[comp]:
+            data = row.data
+            if str(data.get("spdx") or "") != _DBRIGHT_LICENSE:
+                continue
+            chain = [str(k) for k in data.get("jurisdiction_chain") or ()]
+            if not chain or chain[0] != "iso3166-1:US":
+                continue
+            rows.append(
+                {
+                    "entity_id": str(data.get("entity_id") or ""),
+                    "source_id": str(data.get("source_id") or ""),
+                    "located_jkey": str(data.get("jurisdiction_key") or "") or None,
+                    "chain": chain,
+                    "placement_check": str(data.get("placement_check") or "") or None,
+                    "compartment": comp,
+                }
+            )
+    if not rows:
+        return None
+    rows.sort(key=lambda r: (r["source_id"], r["entity_id"]))
+    return {
+        "schema": DBRIGHT_REREVIEW_SCHEMA,
+        "report_only": True,
+        "note": (
+            "US-located records whose slice carries "
+            "LicenseRef-OperatorAccepted-DBRight — the re-review LIST for the "
+            "E4 rights pass. Nothing here changes a rights decision, an "
+            "ingestion gate, or a publication gate."
+        ),
+        "rows": rows,
+        "records": len(rows),
+    }
 
 
 # P35.18 (JUR-02a): the only slugging this module performs on the jurisdiction
@@ -3762,25 +4763,163 @@ def build_spine_export(
         ]
         map_placements = {r.record_id: r for r in placement.place_many(map_inputs)}
 
+    # --- P35.44 (R11-K13-DSRC-01 / K5 §3, TRANSP-040): the shared
+    # dossier↔source contribution accumulation — computed BEFORE the
+    # surfaces now: the P35.45 keyed dossiers read the SAME placed/leaf
+    # accumulation the dossier-sources artifacts and the contributions[]
+    # mirror carry (one computation, three surfaces). A spine missing
+    # ``v_claim_sightings`` yields an empty sighting set — the dossier
+    # artifacts still emit with honest zero/null states (T14).
+    contribution_plan = dossier_sources.accumulate_dossier_contributions(
+        sightings_rows=list(raw.get("claim_sightings") or []),
+        site_rows=[
+            (comp, row.source_id, row.data)
+            for comp, comp_rows in slices.rows_by_compartment.items()
+            for row in comp_rows
+        ],
+        run_rows=list(raw.get("transparency_runs") or []),
+        contradictions=m_contradictions,
+        weight_rows=analytics._claim_weight_rows(raw),
+        lineage_rows=list(raw.get("claim_lineage") or []),
+        release={
+            "label": build_spec.release_id(),
+            "publication_id": None,
+            "as_of_world": dataset.as_of,
+        },
+        ruleset_version=build_spec.ruleset_version,
+        as_of=dataset.as_of,
+        placement=placement,
+    )
+
+    # --- P35.45 (JUR-03, K4 §5): the keyed dossier set ------------------------
+    # Under a bound placement run, dossiers key on the canonical registry:
+    # ``group_by_key`` roll-ups over the recorded chains, D-K4-3 page
+    # thresholds applied verbatim, per-dossier ``web/dossiers/<slug-path>.json``
+    # files + the ``sig.dossier-index/2`` index, the ``unplaced`` data-quality
+    # report, the key map + append-only slug history, the US-located DBRight
+    # re-review list, and a measured build cost. Without a run the legacy
+    # flat declared-bucket dossiers emit unchanged (honest degrade).
+    keyed = contribution_plan.keyed if placement is not None else None
+    dossier_pages: dict[str, str] = {}
+    dossier_docs: list[dict[str, Any]] = []
+    dossier_index_doc: dict[str, Any] | None = None
+    unplaced_doc: dict[str, Any] | None = None
+    key_map_doc: dict[str, Any] | None = None
+    slug_history_doc: dict[str, Any] | None = None
+    dbright_doc: dict[str, Any] | None = None
+    dossier_measurement: dict[str, Any] | None = None
+    if placement is not None and keyed is not None:
+        registry_rows = list(placement.jurisdiction_rows().values())
+        nonsite_keys = _nonsite_place_keys(dossier_packets, registry_rows)
+        placed_counts = {k: len(a.placed_subjects) for k, a in contribution_plan.dossiers.items()}
+        dossier_pages = dossier_keys.page_keys(keyed, placed_counts, nonsite_keys)
+        pack_view = {
+            "pack_id": (placement.pack_manifest or {}).get("pack_id"),
+            "boundaries_root": (placement.pack_manifest or {}).get("boundaries_root"),
+            "vintages": dict(
+                sorted(((placement.pack_manifest or {}).get("vintages") or {}).items())
+            ),
+        }
+        _t0 = time.monotonic()
+        import resource as _resource
+
+        _rss0 = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
+        dossier_docs = _keyed_dossier_docs(
+            dataset,
+            dataset.as_of,
+            belief,
+            plan=contribution_plan,
+            keyed=keyed,
+            pages=dossier_pages,
+            accountability_links=m_acct_links,
+            coverage_rows=m_coverage,
+            entity_label_by_id={
+                eid: lbl.label for eid, lbl in label_registry.items() if lbl.label is not None
+            },
+            source_names=source_names,
+        )
+        dossier_index_doc = _dossier_index_v2(
+            dossier_docs,
+            plan=contribution_plan,
+            keyed=keyed,
+            pages=dossier_pages,
+            release={
+                "label": build_spec.release_id(),
+                "publication_id": None,
+                "as_of_world": dataset.as_of,
+            },
+            as_of=dataset.as_of,
+            generated_at=generated_at,
+            boundary_pack=pack_view,
+            measurement=None,  # filled below — the measured block covers the whole emit
+        )
+        unplaced_doc = _unplaced_report(
+            contribution_plan,
+            release={
+                "label": build_spec.release_id(),
+                "publication_id": None,
+                "as_of_world": dataset.as_of,
+            },
+            as_of=dataset.as_of,
+            generated_at=generated_at,
+            boundary_pack=pack_view,
+        )
+        key_map_doc = _jurisdiction_key_map(
+            keyed, boundary_pack=pack_view, generated_at=generated_at
+        )
+        slug_history_doc = _slug_history(keyed, generated_at=generated_at)
+        dbright_doc = _dbright_rereview(slices.rows_by_compartment)
+        _rss1 = _resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss
+        dossier_measurement = {
+            "scope": "keyed dossier docs + index + unplaced report + key maps (in-process emit)",
+            "wall_seconds": round(time.monotonic() - _t0, 3),
+            # ru_maxrss is BYTES on macOS, KiB on Linux (release.measure_build
+            # normalises the same way) — a peak, not a delta; the dossier emit
+            # shares the process heap so no per-dossier attribution is claimed.
+            "peak_rss_bytes": (_rss1 if sys.platform == "darwin" else _rss1 * 1024),
+            "dossier_pages": len(dossier_docs),
+            "registry_keys": len(keyed.keys),
+            "unplaced_records": (
+                len(contribution_plan.dossiers[dossier_keys.UNPLACED].subjects)
+                if dossier_keys.UNPLACED in contribution_plan.dossiers
+                else 0
+            ),
+        }
+        dossier_index_doc["measurement"] = dossier_measurement
+
     # --- the ten P27.1-contract web surfaces ------------------------------------
     # The statements lane map is derived BEFORE the surfaces so the watch's
     # evidence links pass the identical J3 §5.3 upstream gate (P35.43 — one
     # lane derivation feeds statements, provenance AND the watch, never two).
     stmt_source_registry = load_source_registry()
     lane_by_source = _claim_lane_map(raw, stmt_source_registry)
-    dossiers = _dossiers(
-        dataset,
-        dataset.as_of,
-        belief,
-        accountability_links=m_acct_links,
-        coverage_rows=m_coverage,
-        entity_label_by_id={
-            eid: lbl.label for eid, lbl in label_registry.items() if lbl.label is not None
-        },
+    dossiers = (
+        []
+        if keyed is not None
+        else _dossiers(
+            dataset,
+            dataset.as_of,
+            belief,
+            accountability_links=m_acct_links,
+            coverage_rows=m_coverage,
+            entity_label_by_id={
+                eid: lbl.label for eid, lbl in label_registry.items() if lbl.label is not None
+            },
+        )
     )
     surfaces: dict[str, Any] = {
-        "dossier_index": _dossier_index(dossiers),
-        "dossiers": dossiers,
+        # P35.45: under a bound placement run the flat ``dossier_index``/
+        # ``dossiers`` monoliths are NOT emitted — the keyed
+        # ``web/dossiers/<slug-path>.json`` + ``web/dossiers/index.json``
+        # (sig.dossier-index/2) set below replaces them.
+        **(
+            {}
+            if keyed is not None
+            else {
+                "dossier_index": _dossier_index(dossiers),
+                "dossiers": dossiers,
+            }
+        ),
         "map": _map_layer(
             dataset,
             resolved=resolved_counts,
@@ -3816,10 +4955,22 @@ def build_spine_export(
             generated_at=generated_at,
             placement=placement,
             lane_by_source=lane_by_source,
+            keyed_places=(
+                [
+                    {"key": jkey, "slug": keyed.keys[jkey].slug_path}
+                    for jkey in sorted(dossier_pages)
+                ]
+                if keyed is not None
+                else None
+            ),
         ),
         "evidence": _evidence(raw, dataset.as_of),
         "corrections": _corrections(raw),
-        "research_queue": _research_queue(raw),
+        "research_queue": (
+            _rekey_queue_cards(_research_queue(raw), _legacy_slug_map(keyed), keyed)
+            if keyed is not None
+            else _research_queue(raw)
+        ),
     }
     web_artifacts: dict[str, bytes] = {}
     for name, payload in surfaces.items():
@@ -3897,6 +5048,41 @@ def build_spine_export(
         f"{_WEB_DIR}/watch.json": SCHEMA_WATCH,
     }
     web_counts: dict[str, tuple[int, int | None]] = {}
+    # --- P35.45: the keyed dossier artifact set (placement-bound only) -----
+    # ``web/dossiers/<slug-path>.json`` per D-K4-3 page + the v2 index, the
+    # ``unplaced`` report, the key map + append-only slug history, and the
+    # DBRight re-review list — all SIG-derived framing → CC-BY-4.0. Emitted
+    # AFTER the licence/compartment/schema dicts exist so each path is
+    # manifest-labelled like every other web artifact.
+    if keyed is not None:
+        for doc in dossier_docs:
+            path = f"{_WEB_DIR}/dossiers/{doc['slug_path']}.json"
+            web_artifacts[path] = _web_bytes(doc)
+            web_licenses[path] = _SIG_SPDX
+            web_compartments[path] = _WEB_COMPARTMENT
+            web_schemas[path] = DOSSIER_SCHEMA_V2
+        for path, payload, schema in (
+            (f"{_WEB_DIR}/dossiers/index.json", dossier_index_doc, DOSSIER_INDEX_SCHEMA_V2),
+            (f"{_WEB_DIR}/unplaced.json", unplaced_doc, UNPLACED_REPORT_SCHEMA),
+            (f"{_WEB_DIR}/jurisdiction_key_map.json", key_map_doc, JURISDICTION_KEY_MAP_SCHEMA),
+            (
+                f"{_WEB_DIR}/jurisdiction_slug_history.json",
+                slug_history_doc,
+                SLUG_HISTORY_SCHEMA,
+            ),
+        ):
+            if payload is None:
+                continue
+            web_artifacts[path] = _web_bytes(payload)
+            web_licenses[path] = _SIG_SPDX
+            web_compartments[path] = _WEB_COMPARTMENT
+            web_schemas[path] = schema
+        if dbright_doc is not None:
+            path = f"{_WEB_DIR}/dbright_rereview.json"
+            web_artifacts[path] = _web_bytes(dbright_doc)
+            web_licenses[path] = _SIG_SPDX
+            web_compartments[path] = _WEB_COMPARTMENT
+            web_schemas[path] = DBRIGHT_REREVIEW_SCHEMA
     for art in analytics.build_analytics(
         dataset,
         raw,
@@ -3910,6 +5096,21 @@ def build_spine_export(
         # the same placement run's scheme-qualified keys (P35.19) the map layer
         # already consumes; absent a run they key on the declared buckets.
         placements=map_placements,
+        # P35.45: keyed dossier provenance scopes — slug_path → the claims
+        # backing THAT dossier's records (the shared accumulation's own
+        # sighting set, never a second derivation).
+        dossier_scope_claims=(
+            {
+                contribution_plan.slug_path(jkey): (
+                    frozenset(contribution_plan.dossiers[jkey].claims)
+                    if jkey in contribution_plan.dossiers
+                    else frozenset()
+                )
+                for jkey in dossier_pages
+            }
+            if keyed is not None
+            else None
+        ),
     ):
         web_artifacts[art.path] = _web_bytes(art.payload)
         web_licenses[art.path] = art.license
@@ -4104,32 +5305,6 @@ def build_spine_export(
     site_source_ids: set[str] = set()
     for site in dataset.sites:
         site_source_ids.update(site.source_ids)
-    # --- P35.44 (R11-K13-DSRC-01 / K5 §3, TRANSP-040): the shared
-    # dossier↔source contribution accumulation — computed BEFORE the
-    # transparency emit so ``contributions[]`` lands on the source rows from
-    # the same numbers the dossier artifacts carry (never a second pass). A
-    # spine missing ``v_claim_sightings`` yields an empty sighting set — the
-    # dossier artifacts still emit with honest zero/null states (T14).
-    contribution_plan = dossier_sources.accumulate_dossier_contributions(
-        sightings_rows=list(raw.get("claim_sightings") or []),
-        site_rows=[
-            (comp, row.source_id, row.data)
-            for comp, comp_rows in slices.rows_by_compartment.items()
-            for row in comp_rows
-        ],
-        run_rows=list(raw.get("transparency_runs") or []),
-        contradictions=m_contradictions,
-        weight_rows=analytics._claim_weight_rows(raw),
-        lineage_rows=list(raw.get("claim_lineage") or []),
-        release={
-            "label": build_spec.release_id(),
-            "publication_id": None,
-            "as_of_world": dataset.as_of,
-        },
-        ruleset_version=build_spec.ruleset_version,
-        as_of=dataset.as_of,
-        placement=placement,
-    )
     transparency_artifacts = emit_transparency_artifacts(
         raw,
         claims=list(claims or ()),

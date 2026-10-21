@@ -52,6 +52,10 @@ const MATERIAL_NUMERAL_RE = new RegExp(
 );
 /** Byte-identical to COMPARTMENT_STREAM_RE in src/lib/figures.ts (pinned by test). */
 const COMPARTMENT_STREAM_RE = /^[a-z0-9_]+\/(sites|statements|record_claims)\.jsonl$/;
+/** Byte-identical to PER_DOSSIER_RE in src/lib/figures.ts (pinned by test):
+ * the P35.45 per-dossier artifacts — `web/dossiers/<slug-path>.json` — the
+ * index document itself excepted (it carries no dossier record). */
+const PER_DOSSIER_RE = /^web\/dossiers\/[a-z0-9-]+(\/[a-z0-9-]+)*\.json$/;
 
 /** The J3 §5.4 named page classes → dist globs. */
 const PAGE_CLASSES = [
@@ -97,7 +101,11 @@ function listedArtifacts() {
 }
 
 function isListed(path, listed) {
-  return listed.has(path) || COMPARTMENT_STREAM_RE.test(path);
+  return (
+    listed.has(path) ||
+    COMPARTMENT_STREAM_RE.test(path) ||
+    (PER_DOSSIER_RE.test(path) && path !== "web/dossiers/index.json")
+  );
 }
 
 function loadAllowlist() {

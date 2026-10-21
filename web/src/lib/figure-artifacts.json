@@ -19,6 +19,10 @@
     "transparency/captures.jsonl",
     "transparency/issues.jsonl",
     "transparency/freshness.jsonl",
-    "transparency/counts.json"
+    "transparency/counts.json",
+    "web/dossiers/index.json",
+    "web/unplaced.json",
+    "web/jurisdiction_key_map.json",
+    "web/jurisdiction_slug_history.json"
   ]
 }

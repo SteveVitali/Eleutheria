@@ -28,7 +28,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { DOSSIERS } from "./dossier-fixture";
 import { JURISDICTION_DOSSIERS } from "./dossier-jurisdiction-fixture";
-import { applyPublicationPolicy } from "./dossier";
+import { applyPublicationPolicy, unplacedPath } from "./dossier";
 import type { Dossier, TerminationInput } from "./dossier";
 import { RESEARCH_PORTFOLIO_FIXTURE } from "./research-dossier-fixture";
 import {
@@ -172,23 +172,47 @@ export function getDossiers(): Dossier[] {
   if (dataSource() === "fixtures") {
     return DOSSIERS.map((d) => applyPublicationPolicy(d));
   }
-  const path = `${exportDir()}/web/dossiers.json`;
-  let raw: string;
-  try {
-    raw = readFileSync(path, "utf-8");
-  } catch (cause) {
-    throw new Error(
-      `SIG_DATA_SOURCE=export but the export dossier bundle is missing: ${path}. ` +
-        `Run \`sig-exports build --jurisdiction <j> --out <dir>\` first ` +
-        `(see docs/build/tools/run_okc.sh).`,
-      { cause },
+  // P35.45: the per-dossier artifact set — `web/dossiers/<slug-path>.json`
+  // (nested paths mirroring the canonical jurisdiction chain) — supersedes
+  // the `web/dossiers.json` monolith, which a pre-P35.45 export still emits.
+  // Both are read; the directory wins when it exists.
+  const dir = `${exportDir()}/web/dossiers`;
+  let exportDossiers: Dossier[];
+  if (existsSync(dir)) {
+    const files: string[] = [];
+    const walk = (sub: string): void => {
+      for (const entry of readdirSync(`${dir}${sub}`, { withFileTypes: true })) {
+        if (entry.isDirectory()) walk(`${sub}/${entry.name}`);
+        else if (entry.name.endsWith(".json") && entry.name !== "index.json") {
+          files.push(`${sub}/${entry.name}`);
+        }
+      }
+    };
+    walk("");
+    exportDossiers = dropWithdrawn(
+      files
+        .sort()
+        .map((f) => JSON.parse(readFileSync(`${dir}${f}`, "utf-8")) as Dossier),
     );
+  } else {
+    const path = `${exportDir()}/web/dossiers.json`;
+    let raw: string;
+    try {
+      raw = readFileSync(path, "utf-8");
+    } catch (cause) {
+      throw new Error(
+        `SIG_DATA_SOURCE=export but the export dossier bundle is missing: ${path}. ` +
+          `Run \`sig-exports build --jurisdiction <j> --out <dir>\` first ` +
+          `(see docs/build/tools/run_okc.sh).`,
+        { cause },
+      );
+    }
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      throw new Error(`${path}: expected a JSON array of dossiers, got ${typeof parsed}`);
+    }
+    exportDossiers = dropWithdrawn(parsed as Dossier[]);
   }
-  const parsed: unknown = JSON.parse(raw);
-  if (!Array.isArray(parsed)) {
-    throw new Error(`${path}: expected a JSON array of dossiers, got ${typeof parsed}`);
-  }
-  const exportDossiers = dropWithdrawn(parsed as Dossier[]);
   // The export carries the real jurisdiction (OKC). The FR/BE dossiers are the
   // SIG-PUB-017 publication-adapter *demonstrations* the shell ships regardless of
   // data source (they show the jurisdiction-conditional withholding, not export
@@ -488,10 +512,56 @@ export function getResearchQueue(): ResearchTaskCard[] {
   );
 }
 
-/** Surface 1 — the dossier index / national landing list (§39.2). Export: `web/dossier_index.json`. */
-export type DossierIndexRow = Pick<Dossier, "slug" | "subject_label" | "jurisdiction" | "asOf">;
+/** Surface 1 — the dossier index / national landing list (§39.2). Export: `web/dossiers/index.json` (v2) or `web/dossier_index.json` (v1). */
+export type DossierIndexRow = Pick<Dossier, "slug" | "subject_label" | "jurisdiction" | "asOf"> & {
+  // P35.45 (`sig.dossier-index/2`): a keyed index row carries the canonical
+  // identity + roll-up. All optional so a v1 row (or a fixture) still fits.
+  jkey?: string;
+  name?: string;
+  display_name?: string;
+  level?: string;
+  parent_name?: string | null;
+  records?: number;
+  records_placed_only_here?: number;
+  records_appearing?: number;
+  conserved?: boolean;
+};
+
+/** The unplaced sibling block the v2 index carries (`unplaced` in `sig.dossier-index/2`). */
+export interface UnplacedIndexEntry {
+  slug_path: string;
+  href: string;
+  report: string;
+  records: number;
+  excluded_from?: string[];
+}
+
+/** The index's `unplaced` sibling — null on fixtures or a v1 export. */
+export function getUnplacedIndexEntry(): UnplacedIndexEntry | null {
+  if (dataSource() === "fixtures") {
+    return {
+      slug_path: "unplaced",
+      href: unplacedPath(),
+      report: "web/unplaced.json",
+      records: 0,
+    };
+  }
+  const v2path = `${exportDir()}/web/dossiers/index.json`;
+  if (!existsSync(v2path)) return null;
+  const parsed = JSON.parse(readFileSync(v2path, "utf-8")) as {
+    unplaced?: UnplacedIndexEntry;
+  };
+  return parsed.unplaced ?? null;
+}
 
 export function getDossierIndex(): DossierIndexRow[] {
+  const demoRows = () =>
+    jurisdictionDemos().map((d) => ({
+      slug: d.slug,
+      subject_label: d.subject_label,
+      jurisdiction: d.jurisdiction,
+      asOf: d.asOf,
+    }));
   if (dataSource() === "fixtures") {
     return [...DOSSIERS, ...JURISDICTION_DOSSIERS].map((d) => ({
       slug: d.slug,
@@ -500,20 +570,26 @@ export function getDossierIndex(): DossierIndexRow[] {
       asOf: d.asOf,
     }));
   }
+  // P35.45: the canonical `web/dossiers/index.json` (`sig.dossier-index/2`)
+  // supersedes the flat `web/dossier_index.json` — a placement-bound export
+  // emits only the v2 form; a pre-keyed export still emits v1.
+  const v2path = `${exportDir()}/web/dossiers/index.json`;
+  if (existsSync(v2path)) {
+    const parsed = JSON.parse(readFileSync(v2path, "utf-8")) as {
+      schema?: string;
+      dossiers?: DossierIndexRow[];
+    };
+    if (!Array.isArray(parsed.dossiers)) {
+      throw new Error(`${v2path}: expected a sig.dossier-index/2 object with .dossiers`);
+    }
+    return [...dropWithdrawn(parsed.dossiers), ...demoRows()];
+  }
   return readExportArtifact("dossier_index.json", (p, path) => {
     const rows = dropWithdrawn(requireArray(p, path) as DossierIndexRow[]);
     // The export emits the real jurisdictions; the SIG-PUB-017 FR/BE demonstration
     // dossiers ship regardless of data source (as getDossiers appends them), so the
     // index echoes them too and the surface is identical in both modes.
-    return [
-      ...rows,
-      ...jurisdictionDemos().map((d) => ({
-        slug: d.slug,
-        subject_label: d.subject_label,
-        jurisdiction: d.jurisdiction,
-        asOf: d.asOf,
-      })),
-    ];
+    return [...rows, ...demoRows()];
   });
 }
 
@@ -528,7 +604,10 @@ export function getDossierIndex(): DossierIndexRow[] {
  */
 export interface DossierArtifactRef {
   artifact: string;
-  index: number;
+  /** The array index the pointer prefixes; `null` when the artifact IS the
+   * dossier record (a `web/dossiers/<slug-path>.json` per-dossier file —
+   * P35.45), so the figure pointer is rooted at the document itself. */
+  index: number | null;
 }
 
 export function getDossierArtifactRef(slug: string): DossierArtifactRef | null {
@@ -536,11 +615,20 @@ export function getDossierArtifactRef(slug: string): DossierArtifactRef | null {
     const i = DOSSIERS.findIndex((d) => d.slug === slug);
     return i >= 0 ? { artifact: "web/dossiers.json", index: i } : null;
   }
-  const raw = readExportArtifact("dossiers.json", (p, path) =>
-    requireArray(p, path),
-  ) as { slug?: unknown }[];
-  const i = raw.findIndex((d) => d.slug === slug);
-  if (i >= 0) return { artifact: "web/dossiers.json", index: i };
+  // P35.45: a placement-bound export ships one file per dossier —
+  // `web/dossiers/<slug-path>.json` — whose slug IS the nested slug path.
+  const dossierDir = `${exportDir()}/web/dossiers`;
+  const perDossier = `${dossierDir}/${slug}.json`;
+  if (existsSync(perDossier)) {
+    return { artifact: `web/dossiers/${slug}.json`, index: null };
+  }
+  if (!existsSync(dossierDir)) {
+    const raw = readExportArtifact("dossiers.json", (p, path) =>
+      requireArray(p, path),
+    ) as { slug?: unknown }[];
+    const i = raw.findIndex((d) => d.slug === slug);
+    if (i >= 0) return { artifact: "web/dossiers.json", index: i };
+  }
   // The SIG-PUB-017 demonstration dossiers live in the optional presentation
   // overlay (never a public build input — see getDossiers).
   const demos = readPresentation<{ slug?: unknown }[]>("jurisdiction_dossiers", []);
@@ -549,11 +637,15 @@ export function getDossierArtifactRef(slug: string): DossierArtifactRef | null {
 }
 
 /**
- * `jurisdiction label → compartment` for every site row the export carries —
+ * `jurisdiction key → compartment` for every site row the export carries —
  * the dossier-class record-list target (`/r/<pub>/c/<comp>/jurisdiction/<j>/`)
- * resolves its compartment from this map. Fixtures mode yields the empty map
- * (no release is ever bound to a fixture build → the target is a named
- * absence, never a dead link).
+ * resolves its compartment from this map. P35.45: a placement-bound export
+ * writes `jurisdiction.jkey` + `jurisdiction.slug_path` on each site row; the
+ * map is keyed by BOTH so a dossier page can look up its compartment by the
+ * canonical key (`dossier.jurisdiction` on a `sig.dossier/2` row) or by the
+ * slug path, while pre-keyed exports keep their declared-id key. Fixtures
+ * mode yields the empty map (no release is ever bound to a fixture build →
+ * the target is a named absence, never a dead link).
  */
 export function getJurisdictionCompartments(): Map<string, string> {
   const out = new Map<string, string>();
@@ -565,13 +657,190 @@ export function getJurisdictionCompartments(): Map<string, string> {
     for (const line of readFileSync(p, "utf-8").split("\n")) {
       const t = line.trim();
       if (!t) continue;
-      const row = JSON.parse(t) as { jurisdiction?: unknown };
-      if (typeof row.jurisdiction === "string" && row.jurisdiction && !out.has(row.jurisdiction)) {
-        out.set(row.jurisdiction, entry);
+      const row = JSON.parse(t) as {
+        jurisdiction?: unknown;
+        jurisdiction_key?: unknown;
+        jurisdiction_slug_path?: unknown;
+      };
+      const j = row.jurisdiction;
+      const jkey =
+        typeof row.jurisdiction_key === "string" && row.jurisdiction_key
+          ? row.jurisdiction_key
+          : j && typeof j === "object" && typeof (j as { jkey?: unknown }).jkey === "string"
+            ? ((j as { jkey: string }).jkey)
+            : null;
+      const slugPath =
+        typeof row.jurisdiction_slug_path === "string" && row.jurisdiction_slug_path
+          ? row.jurisdiction_slug_path
+          : j && typeof j === "object" && typeof (j as { slug_path?: unknown }).slug_path === "string"
+            ? ((j as { slug_path: string }).slug_path)
+            : null;
+      const declared = typeof j === "string" && j ? j : null;
+      for (const key of [jkey, slugPath, declared]) {
+        if (key && !out.has(key)) out.set(key, entry);
       }
     }
   }
   return out;
+}
+
+// --------------------------------------------------------------------------- //
+// P35.45 (K4 §5, `sig.unplaced-report/1`, `sig.jurisdiction-key-map/1`,
+// `sig.jurisdiction-slug-history/1`): the canonical keyed jurisdiction
+// artifacts. All absent on a pre-keyed export or fixtures build — each getter
+// reads the honest absence, never fabricates the report.
+// --------------------------------------------------------------------------- //
+
+/**
+ * One row of the canonical jurisdiction key map
+ * (`sig.jurisdiction-key-map/1`): jkey → its display facts + slug path.
+ */
+export interface JurisdictionKeyMapRow {
+  jkey: string;
+  name?: string;
+  display_name?: string;
+  level?: string;
+  slug_path?: string;
+  parent_jkey?: string | null;
+}
+
+/** The unplaced data-quality report (`sig.unplaced-report/1`). */
+export interface UnplacedReport {
+  schema: string;
+  kind?: string;
+  name?: string;
+  /** K4 §5.5's verbatim header sentence — rendered as the page lede. */
+  header?: string;
+  note?: string;
+  as_of?: string;
+  records?: number;
+  /** reason → record count (reasons are per (record, source) slices). */
+  by_reason?: Record<string, number>;
+  /** The §5.5 table rows — reason, records, share, sources, fix. */
+  reason_rows?: {
+    reason: string;
+    records: number;
+    /** Percentage of the report total (0–100, 1 decimal). */
+    share_percent?: number | null;
+    sources?: string[];
+    definition?: string;
+    fix?: string;
+  }[];
+  by_source?: {
+    source_id: string;
+    records: number;
+    top_reasons?: { reason: string; records: number }[];
+  }[];
+  /** reason → its honest definition. */
+  reason_definitions?: Record<string, string>;
+  check_vocabulary?: string[];
+  methodology?: string;
+  correction?: { corrections?: string; research_queue?: string; note?: string };
+  /** The per-compartment download slot — named absence until DSRC-03 fills it. */
+  downloads?: { status?: string; note?: string; items?: unknown[] };
+  excluded_from?: string[];
+  [key: string]: unknown;
+}
+
+/** The jurisdiction key map (jkey → row), or null when absent. */
+export function getJurisdictionKeyMap(): Map<string, JurisdictionKeyMapRow> | null {
+  if (dataSource() === "fixtures") return null;
+  const path = `${exportDir()}/web/jurisdiction_key_map.json`;
+  if (!existsSync(path)) return null;
+  const parsed = JSON.parse(readFileSync(path, "utf-8")) as {
+    jurisdictions?: JurisdictionKeyMapRow[];
+    entries?: JurisdictionKeyMapRow[];
+    rows?: JurisdictionKeyMapRow[];
+  };
+  const rows = parsed.jurisdictions ?? parsed.entries ?? parsed.rows ?? [];
+  const out = new Map<string, JurisdictionKeyMapRow>();
+  for (const r of rows) if (r && typeof r.jkey === "string") out.set(r.jkey, r);
+  return out;
+}
+
+/** jkey → slug path, or null when the export is not placement-bound. */
+export function getJurisdictionSlugPaths(): Map<string, string> | null {
+  const m = getJurisdictionKeyMap();
+  if (m === null) return null;
+  const out = new Map<string, string>();
+  for (const [jkey, row] of m) {
+    if (typeof row.slug_path === "string" && row.slug_path) out.set(jkey, row.slug_path);
+  }
+  return out;
+}
+
+/** The unplaced report document, or null when the export carries none
+ * (a pre-keyed export — fixtures mode returns the honest empty report). */
+export function getUnplacedReport(): UnplacedReport | null {
+  if (dataSource() === "fixtures") {
+    return {
+      schema: "sig.unplaced-report/1",
+      kind: "data_quality_report",
+      name: "Not yet placed",
+      // K4 §5.5's verbatim header — the same string the export emits.
+      header:
+        "These records are published, but SIG cannot yet say which jurisdiction " +
+        "they belong to. This is a data-quality list, not a place.",
+      note:
+        "This is a data-quality report, not a jurisdiction and not a place. " +
+        "It names WHY each record could not be placed — a record is never " +
+        "guessed into a jurisdiction. (Demo data — every fixture record is placed.)",
+      records: 0,
+      by_reason: {},
+      reason_rows: [],
+      by_source: [],
+      reason_definitions: {},
+      correction: {
+        corrections: "/corrections/",
+        research_queue: "/research-queue/",
+        note:
+          "A record here is placed nowhere — correcting its declared " +
+          "jurisdiction or contributing a verifiable location moves it off " +
+          "this report in the next release.",
+      },
+      downloads: {
+        status: "not_emitted",
+        note:
+          "Per-compartment downloads of this report are not emitted yet — " +
+          "they land with the per-dossier downloads work.",
+        items: [],
+      },
+      excluded_from: [
+        "jurisdiction counts",
+        "the place facet",
+        "canonical jurisdiction rows",
+      ],
+    };
+  }
+  const path = `${exportDir()}/web/unplaced.json`;
+  if (!existsSync(path)) return null;
+  return JSON.parse(readFileSync(path, "utf-8")) as UnplacedReport;
+}
+
+/**
+ * One append-only slug-history row (`sig.jurisdiction-slug-history/1`): an old
+ * flat slug → its resolution under the canonical tree (moved / split /
+ * corrected). Drives the back-compat stubs at the old `/dossier/<slug>/` URLs.
+ * `successor` is a jkey, a jkey list (split), or `"unplaced"`.
+ */
+export interface SlugHistoryRow {
+  slug: string;
+  kind: "moved" | "split" | "corrected" | string;
+  successor?: string | string[];
+  note?: string;
+  first_release?: string | null;
+  last_release?: string | null;
+  [key: string]: unknown;
+}
+
+export function getSlugHistory(): SlugHistoryRow[] {
+  if (dataSource() === "fixtures") return [];
+  const path = `${exportDir()}/web/jurisdiction_slug_history.json`;
+  if (!existsSync(path)) return [];
+  const parsed = JSON.parse(readFileSync(path, "utf-8")) as {
+    rows?: SlugHistoryRow[];
+  };
+  return parsed.rows ?? [];
 }
 
 /**

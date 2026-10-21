@@ -29,8 +29,18 @@ import { artifactHref, defineFigures } from "../../../lib/figures";
 import { dossierFigureSpecs, figureSpecMap } from "../../../lib/dossier-figures";
 import { defaultDescription } from "../../../lib/meta";
 
+// P35.45 (D-K4-3 / K4 §5.3): print/CSV/runs mint ONLY for country + admin-1
+// dossiers — the registry levels `country` and `state_province`
+// (RUNS_FILE_LEVELS in exports/dossier_sources.py). A legacy flat dossier
+// carries no `level` and keeps its print page; a keyed dossier whose level is
+// county/municipality mints none — the dossier's `links.print` names the same
+// set, so no link dangles.
+const PRINT_LEVELS = new Set(["country", "state_province"]);
+
 export function getStaticPaths() {
-  return getDossiers().map((d) => ({ params: { slug: d.slug }, props: { dossier: d } }));
+  return getDossiers()
+    .filter((d) => d.level === undefined || PRINT_LEVELS.has(d.level))
+    .map((d) => ({ params: { path: d.slug }, props: { dossier: d } }));
 }
 
 const { dossier } = Astro.props;
@@ -38,7 +48,20 @@ validateDossier(dossier);
 
 // P34.14 (QW-8, F-105): the print form leads with the place's name too, code
 // secondary — a printed ID/MN dossier still discloses its mix (K4 NEW-1).
-const jurisdiction = displayJurisdiction(dossier.jurisdiction);
+// P35.45: a keyed dossier carries its own registry name (jkey secondary).
+const jurisdiction = dossier.display_name || dossier.name
+  ? {
+      name: dossier.display_name ?? dossier.name ?? dossier.jurisdiction,
+      code: dossier.jurisdiction_key ?? null,
+      label: dossier.jurisdiction_key
+        ? `${dossier.display_name ?? dossier.name} (${dossier.jurisdiction_key})`
+        : (dossier.display_name ?? dossier.name ?? dossier.jurisdiction),
+      known: true,
+      combines: null,
+    }
+  : displayJurisdiction(dossier.jurisdiction);
+// Keyed subject_labels already lead with the place name; a legacy "… — CODE"
+// label is rewritten name-first (JD batch pins the display contract).
 const pageTitle = dossierDisplayTitle(dossier.subject_label, dossier.jurisdiction);
 const combinesList = jurisdiction.combines ? jurisdiction.combines.join(" and ") : null;
 
@@ -61,7 +84,10 @@ for (let i = 0; i < dossier.sections.length; i += SECTIONS_PER_PAGE) {
 // The print page's figures[] registry — the print variant ids; no "How we know
 // this" panel on this surface → the provenance target is a named absence.
 const ref = getDossierArtifactRef(dossier.slug);
-const compartment = getJurisdictionCompartments().get(dossier.jurisdiction) ?? null;
+const compartment =
+  getJurisdictionCompartments().get(dossier.jurisdiction_key ?? dossier.jurisdiction) ??
+  getJurisdictionCompartments().get(dossier.slug) ??
+  null;
 const recordList =
   stamp && compartment
     ? `r/${stamp.publicationId}/c/${compartment}/jurisdiction/${dossier.slug}/`
@@ -114,7 +140,7 @@ const specMap = figureSpecMap(FIGURES);
         (copy-batch row MD-01) so the print document carries its own meta
         description, plus the shared favicon. */}
     <meta name="description" content={defaultDescription(`${pageTitle} — SIG dossier (print)`)} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
     <link rel="canonical" href={new URL(dossierPath(dossier.slug), Astro.site ?? "https://surveillancegraph.org").href} />
     {stamp && <meta name="sig-release" content={stamp.metaContent} />}
     {stamp && <link rel="describedby" type="application/json" href={stamp.describedby} />}
@@ -140,7 +166,7 @@ const specMap = figureSpecMap(FIGURES);
               <p class="sig-dossier-combines" data-testid="dossier-combines" data-copy="JD-02">This dossier combines {combinesList}.</p>
             )}
             {!jurisdiction.known && (
-              <p class="sig-dossier-unmapped" data-testid="dossier-jurisdiction-unmapped" data-copy="JD-07">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href="/research-queue/">research queue</a>.</p>
+              <p class="sig-dossier-unmapped" data-testid="dossier-jurisdiction-unmapped" data-copy="JD-07">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href={withBase("research-queue/")}>research queue</a>.</p>
             )}
             <IncompletenessBanner dossier={dossier} spec={specMap.get("banner")} />
             <section aria-labelledby="print-summary-gaps">

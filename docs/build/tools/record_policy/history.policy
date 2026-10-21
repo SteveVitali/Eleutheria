@@ -658,3 +658,15 @@ seed-commit 4bbdf19d
 # findings attributed to 6cba05fe only; no other commit borrows the
 # exemption.
 seed-commit 6cba05fe
+# P35.45 (row 324) — 103e9025 rewords in place the P35.45 dispatch
+# boundary-confirm entry committed at LEDGER.md:1161 by 4771e925
+# ("`1835e332` `live-claim` reword" → "`1835e332` claim-lint reword"):
+# the `live-claim` token tripped the SIG-MEM-011 assert-word segment
+# though the words describe a *wording* fix, never hosted state
+# (docs-red class, same lint the worker's WIP carried). The sanctioned
+# P35.40/153ded67 in-place pattern — recorded fields kept, original
+# bytes in git history, the correction disclosed by the appended
+# `P35.45 correction` entry naming 4771e925:1161. Declaration lands
+# as a later commit (no force-push). Scope: findings attributed to
+# 103e9025 only; no other commit borrows the exemption.
+seed-commit 103e9025

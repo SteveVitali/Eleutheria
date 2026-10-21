@@ -53,6 +53,7 @@ import {
   getMapSites,
   getMapDensityBins,
   getCompartmentTileSources,
+  getJurisdictionSlugPaths,
   getLatestReleaseTarget,
   getEntityCompartments,
   releasedRecordHref,
@@ -129,8 +130,19 @@ const CONTESTED_BY_JURISDICTION = new Map(
     contestedCount(j.assetIds, ASSET_BY_ID),
   ]),
 );
+// P35.45: a canonical jurisdiction key resolves to its SLUG PATH through the
+// export's key map (`usa/ca`), never a re-derived slug; a key whose dossier is
+// under the publication threshold links nowhere — never a 404. The flat
+// `jurisdictionSlug` fallback keeps pre-keyed exports and fixtures working.
+const SLUG_PATHS = (() => {
+  try {
+    return getJurisdictionSlugPaths() ?? new Map<string, string>();
+  } catch {
+    return new Map<string, string>();
+  }
+})();
 const dossierSlugFor = (jurisdiction: string): string | null => {
-  const slug = jurisdictionSlug(jurisdiction);
+  const slug = SLUG_PATHS.get(jurisdiction) ?? jurisdictionSlug(jurisdiction);
   return DOSSIER_SLUGS.has(slug) ? slug : null;
 };
 

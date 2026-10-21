@@ -330,6 +330,49 @@
      the batch as recorded history, bound nowhere. Added 2026-10-20. -->
 | HW-14 | component/HowWeKnowThis | {sourcesLabel} | c76bf4273da8a66ef3e5d7e354a5e50b2cf8d1e658319638cbc50a17def3a77e | pending |
 
+<!-- P35.45 (catch-all dossier routes): the per-dossier route pattern
+     renamed /dossier/[slug]/… → /dossier/[...path]/… when dossiers moved
+     to nested canonical slug paths. The JD sentence TEXT is unchanged —
+     these are the same bindings under the new pattern; the /dossier/[slug]/
+     rows above stay as recorded history, bound nowhere. The ids are
+     page-scoped, so the same ids under the new page cells are new
+     (page,id) pairs, not reuse. Appended 2026-10-21. -->
+| JD-01 | /dossier/[...path]/ | This dossier combines {combinesList}. | a4ca28564fa4004f5cf5dc38b14730e16b0d6a863ec7680b97e32bd3ede366ea | pending |
+| JD-02 | /dossier/[...path]/print/ | This dossier combines {combinesList}. | a4ca28564fa4004f5cf5dc38b14730e16b0d6a863ec7680b97e32bd3ede366ea | pending |
+| JD-03 | /dossier/[...path]/ | A jurisdiction code SIG has not yet named is on this page — flag it in the research queue. | 5796d1b02c7514d060d2f1553ec48464f0676894c92f8f30cbf8ade25e2b2258 | pending |
+| JD-07 | /dossier/[...path]/print/ | A jurisdiction code SIG has not yet named is on this page — flag it in the research queue. | 5796d1b02c7514d060d2f1553ec48464f0676894c92f8f30cbf8ade25e2b2258 | pending |
+| JD-08 | /dossier/[...path]/print/ | — release {stamp.label} · built {stamp.builtAt} from code {stamp.commit8} · {stamp.publicationShort} · release.json | 5e2a7fe0a6c2991e3711d64e685def5db74972ab0aa49e796177ad4ffceea986 | pending |
+| D-01 | /dossier/[...path]/ | Inventory overview — built automatically from published claims. | ee00817e7e86538f49bdefbfc0ab4747ee294dee782aecfbcd8bd2ee2ec20231 | pending |
+| D-02 | /dossier/[...path]/ | The evidence-complete reviewed-portfolio form is being built. | c61a4c41d6e183b4f2433f0ab7ab1c0bffe582e5de59b59a38c4689da2853f1c | pending |
+
+<!-- P35.45 (multi-level dossiers): DI-04 is superseded — the index now
+     covers every registry level, so the sentence names them. DI-04 stays
+     in the batch as recorded history, bound nowhere; the element binds
+     DI-07 in its position. Appended 2026-10-21. -->
+| DI-07 | /dossier/ | This index lists every jurisdiction SIG has researched to a publishable standard — at every level the registry records: country, state or province, county, and place. | a8d431a55b3e987cf0a8e37f7046e0f2b1435b05ed2969c32ba624b8c81198dc | pending |
+
+<!-- P35.45 (unplaced report): the /dossier/unplaced/ sentences — a new UP
+     namespace, pinned verbatim with their {…} placeholders like every
+     {expr}-carrying row. Appended 2026-10-21. -->
+| UP-01 | /dossier/[...path]/ | {report.name ?? "Not yet placed"} — a data-quality report, not a jurisdiction and not a place. | 42778e01f84f00708471957565622d3750fe08eefa2a7580bff9b74cefbcc864 | pending |
+| UP-02 | /dossier/[...path]/ | {report.records ?? 0} published record {(report.records ?? 0) === 1 ? "": "s"} could not be placed under the recorded placement checks. {(report.records ?? 0) === 0 ? "Every published record carries a placement chain.": "Each is listed by reason below — none is guessed into a jurisdiction."} | 9211178c0969bc012baf7aa1170cc20629b33670aac25395c09a3a9d61d6b8a5 | pending |
+| UP-03 | /dossier/[...path]/ | This report is excluded from: {report.excluded_from!.join(", ")}. | cd45061793c1fc75a1f555a813a4f1a2f6d333e587dc0c92fdde3f081d8aa3ff | pending |
+| UP-04 | /dossier/[...path]/ | {report.correction.note} {report.correction.intake && ( Report a correction )} | 9a48c976ebb5e544dd39b9c9e89d90c8369e8ecd138579d6c065c7bdb8a1c189 | pending |
+
+<!-- P35.45 (unplaced report, second pass): UP-04 is superseded — the
+     correction sentence now links the two routes the report names
+     (/corrections/ + /research-queue/); the /intake/ link pointed at the
+     deliberately non-operational receiver and /queue/ is not a route.
+     UP-04 stays in the batch as recorded history, bound nowhere; the
+     element binds UP-06 in its position. UP-05 pins the K4 §5.5 header
+     placeholder, UP-08 pins the verbatim sentence that placeholder
+     carries (literal under exports/spine_export.py), UP-07 pins the
+     downloads named-absence. Appended 2026-10-21. -->
+| UP-05 | /dossier/[...path]/ | {report.header} | 17a80950feca0da88459d8373f91af997808f985d237529b23d9e4e34f2e5bce | pending |
+| UP-06 | /dossier/[...path]/ | {report.correction.note} {report.correction.corrections && ( The corrections log )} {report.correction.research_queue && ( and the research queue take the fixes. )} | b2bc7157e4f11cc008c6aec106abcf38e25806b27240422885ee3af3505b98a1 | pending |
+| UP-07 | /dossier/[...path]/ | Per-compartment downloads of this report are not emitted yet — they land with the per-dossier downloads work. | cebfc5a1aa8b3408e0040628c10ce2d537f91b7f395420f59385c04c9b11bc24 | pending |
+| UP-08 | exports/spine_export.py | These records are published, but SIG cannot yet say which jurisdiction they belong to. This is a data-quality list, not a place. | c59d2b38a7ac4c3b27132fbdac7cd2f1bc8ede69b86fc7c8d4d07b39e346f16e | pending |
+
 ## Confirmation log
 
 <!-- The operator's verbatim confirmation lands here at the copy-batch sitting:

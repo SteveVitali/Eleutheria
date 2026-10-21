@@ -18,8 +18,11 @@ Reads:
   first/last run ids, the sighting run/month sets and the establishing-link
   count the §3.3 ``run_level_only`` check reads.
 * the licence-sliced site rows (``_slice_sites`` output): the dossier membership
-  — declared bucket ∪ placement chain ancestors ∪ ``unresolved`` for unplaced
-  records (K4 §5.3 roll-up: place → county → admin-1 → country).
+  — declared bucket ∪ placement chain ancestors (K4 §5.3 roll-up: place →
+  county → admin-1 → country). P35.45: chain-less records file under the
+  ``unplaced`` data-quality sentinel — never a guessed home — and registry
+  keys mint multi-segment slug paths (``usa/ca/verdin-county-06037``) via
+  ``dossier_keys``.
 * ``transparency_runs`` — the run status/finish instants the "latest complete
   run" rule reads (K5 §3.1: only ``ok`` completions).
 * ``materialized_contradictions`` — contradiction records placed through their
@@ -46,6 +49,7 @@ from typing import Any
 from policy.transparency import TRANSPARENCY_RUN_VIEW_COLUMNS, iso_utc
 
 from . import analytics
+from . import dossier_keys as _dk
 from .formats import _gzip0
 from .jurisdictions import jurisdiction_slug
 from .placement import PLACEMENT_RULESET
@@ -294,6 +298,16 @@ class _SourceAcc:
     """The per-(dossier key, source) accumulation."""
 
     subjects: set[str] = field(default_factory=set)
+    #: P35.45: the placed leg — subjects whose recorded chain contains this
+    #: key (the dossier's ``records`` count; ``subjects`` stays the
+    #: declared-or-placed "appearing" set).
+    placed_subjects: set[str] = field(default_factory=set)
+    #: Subjects whose chain LEAF is this key — "records placed only here",
+    #: the roll-up's additive term (parent = own leaf + Σ children placed).
+    leaf_subjects: set[str] = field(default_factory=set)
+    #: Placed-leg subjects this source located by point — the per-source
+    #: leg of the dossier's ``records_located_by_point`` figure.
+    placed_point_subjects: set[str] = field(default_factory=set)
     compartments: set[str] = field(default_factory=set)
     entity_types: dict[str, str] = field(default_factory=dict)
     techs: dict[str, set[str]] = field(default_factory=dict)
@@ -320,6 +334,23 @@ class _DossierAcc:
 
     key: str
     subjects: dict[str, set[str]] = field(default_factory=dict)  # subject → sources
+    #: subject → sources — the placed leg (chain membership). ``records``
+    #: on the dossier page is ``len(placed_subjects)`` (K4 §5.2 "published
+    #: observation-level records placed here").
+    placed_subjects: dict[str, set[str]] = field(default_factory=dict)
+    #: subjects whose chain leaf is this key — the additive roll-up term.
+    leaf_subjects: set[str] = field(default_factory=set)
+    #: P35.45: leaf jkey → the placed members whose chain ends at that leaf
+    #: AND carries this key (every member except this dossier's own leaf
+    #: rows). The roll-up's leaf partition: ``records == leaf + Σ over these
+    #: leaf keys' member counts`` — exact under placement@1 even when a
+    #: record's recorded chain spans registry siblings (a place and its
+    #: containing county are both registry children of the state, yet a
+    #: point-placed record's chain lists both).
+    leaf_members: dict[str, set[str]] = field(default_factory=dict)
+    #: Placed-leg subjects whose basis is ``point_in_polygon`` — the
+    #: dossier's "n of N located by point" numerator (distinct subjects).
+    placed_point_subjects: set[str] = field(default_factory=set)
     compartments: set[str] = field(default_factory=set)
     claims: dict[str, list[_Sighting]] = field(default_factory=dict)  # claim → (source) rows
     by_source: dict[str, _SourceAcc] = field(default_factory=dict)
@@ -353,12 +384,33 @@ class DossierContributionPlan:
     lineage_by_claim: dict[str, str] | None
     as_of_date: date
     engine: Any = None  # exports.placement.PlacementEngine | None
+    #: P35.45: the keyed registry (None pre-placement) + the
+    #: ``dossier-key -> slug_path`` map every artifact path resolves through.
+    keyed: _dk.KeyedRegistry | None = None
+    slug_paths: dict[str, str] = field(default_factory=dict)
+
+    def slug_path(self, key: str) -> str:
+        """The dossier artifact/URL path for a membership key — the registry
+        slug path for canonical keys, ``unplaced`` for the sentinel, and the
+        flat ``jurisdiction_slug`` for a non-registry declared bucket (the
+        honest named bucket, never a guessed path)."""
+        cached = self.slug_paths.get(key)
+        if cached is not None:
+            return cached
+        if key == _dk.UNPLACED:
+            path = _dk.UNPLACED
+        elif self.keyed is not None and key in self.keyed.keys:
+            path = self.keyed.keys[key].slug_path
+        else:
+            path = jurisdiction_slug(key)
+        self.slug_paths[key] = path
+        return path
 
     def render(
         self,
         transparency_artifacts: Mapping[str, bytes],
     ) -> dict[str, bytes]:
-        """Emit ``web/dossier_sources/<slug>.json`` (+ ``.runs.jsonl.gz``).
+        """Emit ``web/dossier_sources/<slug-path>.json`` (+ ``.runs.jsonl.gz``).
 
         ``transparency_artifacts`` is the emit_transparency_artifacts output —
         the sources.json/freshness/issues rows supply the registry display
@@ -369,7 +421,7 @@ class DossierContributionPlan:
         out: dict[str, bytes] = {}
         for key in sorted(self.dossiers):
             acc = self.dossiers[key]
-            slug = jurisdiction_slug(key)
+            slug = self.slug_path(key)
             doc = self._dossier_doc(acc, slug, source_rows, freshness, issues)
             path = f"{WEB_DIR}/{slug}.json"
             out[path] = (
@@ -393,8 +445,50 @@ class DossierContributionPlan:
         freshness: Mapping[str, Mapping[str, Any]],
         issues: Mapping[str, list[str]],
     ) -> dict[str, Any]:
+        info = self.keyed.keys.get(acc.key) if self.keyed is not None else None
         jrow = self.engine.jurisdiction_row(acc.key) if self.engine is not None else None
-        level = str(jrow.get("level")) if jrow and jrow.get("level") else None
+        if acc.key == _dk.UNPLACED:
+            # "Not yet placed" is a data-quality state, never a place — the
+            # report says so in its own name and carries no registry fields.
+            jurisdiction: dict[str, Any] = {
+                "jkey": None,
+                "slug_path": _dk.UNPLACED,
+                "name": "Not yet placed (data-quality report)",
+                "level": None,
+                "chain": [],
+                "boundary_vintage": None,
+                "unplaced": True,
+            }
+            level = None
+        elif info is not None:
+            jurisdiction = {
+                "jkey": acc.key,
+                "slug_path": slug,
+                "name": info.name,
+                "level": info.level,
+                "chain": [a for a in info.chain if a != acc.key],
+                "boundary_vintage": info.vintage,
+            }
+            level = info.level
+        else:
+            # A non-registry declared bucket: the slug stays the flat honest
+            # bucket (P35.18-style), named by its own key — never a guessed
+            # registry row.
+            level = str(jrow.get("level")) if jrow and jrow.get("level") else None
+            jurisdiction = {
+                "jkey": acc.key,
+                "slug_path": slug,
+                "name": str(jrow.get("name")) if jrow and jrow.get("name") else acc.key,
+                "level": level,
+                "chain": (
+                    [a for a in self.engine.ancestor_chain(acc.key) if a != acc.key]
+                    if self.engine is not None
+                    else []
+                ),
+                "boundary_vintage": (
+                    str(jrow.get("vintage")) if jrow and jrow.get("vintage") else None
+                ),
+            }
         runs_level = level in RUNS_FILE_LEVELS
         path = f"{WEB_DIR}/{slug}.json"
 
@@ -424,20 +518,7 @@ class DossierContributionPlan:
         return {
             "schema": SCHEMA,
             "release": self.release,
-            "jurisdiction": {
-                "jkey": acc.key,
-                "slug_path": slug,
-                "name": str(jrow.get("name")) if jrow and jrow.get("name") else acc.key,
-                "level": level,
-                "chain": (
-                    [a for a in self.engine.ancestor_chain(acc.key) if a != acc.key]
-                    if self.engine is not None
-                    else []
-                ),
-                "boundary_vintage": (
-                    str(jrow.get("vintage")) if jrow and jrow.get("vintage") else None
-                ),
-            },
+            "jurisdiction": jurisdiction,
             "definitions": _DEFINITIONS,
             "totals": totals,
             "provenance_summary": {
@@ -513,7 +594,13 @@ class DossierContributionPlan:
         for claim_rows in acc.claims.values():
             claims_by_pred[claim_rows[0].predicate_id] += 1
         return {
+            # ``records`` stays the declared-or-placed "appearing" count the
+            # K5 definitions name; the dossier page's headline is
+            # ``records_placed`` (K4 §5.2 "records placed here").
             "records": len(acc.subjects),
+            "records_placed": len(acc.placed_subjects),
+            "records_placed_only_here": len(acc.leaf_subjects),
+            "records_located_by_point": len(acc.placed_point_subjects),
             "located_by_point": located_pairs,
             "placed_by_declared": declared_pairs,
             "claims": len(acc.claims),
@@ -559,8 +646,19 @@ class DossierContributionPlan:
 
         figures: list[dict[str, Any]] = []
         for figure_id, label, field_name, pointer in (
-            ("records", "Records", "records", "/totals/records"),
-            ("fig-map", "Records drawn on the map", "located_by_point", "/totals/located_by_point"),
+            ("records", "Records (appearing)", "records", "/totals/records"),
+            (
+                "records_placed",
+                "Records placed here",
+                "records_placed",
+                "/totals/records_placed",
+            ),
+            (
+                "fig-map",
+                "Records drawn on the map",
+                "records_located_by_point",
+                "/totals/records_located_by_point",
+            ),
             ("claims", "Claims", "claims", "/totals/claims"),
             (
                 "declared_here_located_elsewhere",
@@ -686,6 +784,9 @@ class DossierContributionPlan:
                 "attribution": licence.get("attribution"),
             },
             "records": len(sacc.subjects),
+            "records_placed": len(sacc.placed_subjects),
+            "records_placed_only_here": len(sacc.leaf_subjects),
+            "records_located_by_point": len(sacc.placed_point_subjects),
             "share": (round(len(sacc.subjects) / len(acc.subjects), 4) if acc.subjects else 0),
             "located_by_point": sacc.basis.get("point_in_polygon", 0),
             "placed_by_declared": sacc.basis.get("declared", 0) + sacc.basis.get("name_lookup", 0),
@@ -760,7 +861,22 @@ _DEFINITIONS: dict[str, str] = {
         "distinct published observation-level records (subjects) appearing in "
         "this dossier — through their declared bucket or any ancestor of their "
         "placement chain (K4 §5.3 roll-up); never a resolved device census "
-        "(SIG-RECON-058)"
+        "(SIG-RECON-058). P35.45: 'appearing' = declared OR placed; the "
+        "dossier page's headline count is records_placed"
+    ),
+    "records_placed": (
+        "distinct records whose recorded placement chain contains this "
+        "dossier's key (the placed leg — K4 §5.2 'published observation-level "
+        "records placed here'); parent = own leaf + Σ children, conserved "
+        "by construction"
+    ),
+    "records_placed_only_here": (
+        "distinct records whose placement chain LEAF is this key — placed "
+        "at exactly this level, the additive roll-up term"
+    ),
+    "records_located_by_point": (
+        "distinct placed-leg records whose placement basis is "
+        "point_in_polygon — 'n of N located' on the dossier page"
     ),
     "located_by_point": (
         "record×source slices whose placement basis is point_in_polygon — the "
@@ -933,9 +1049,18 @@ def accumulate_dossier_contributions(
         source = str(data.get("source_id") or "")
         declared = str(data.get("jurisdiction") or _UNRESOLVED)
         chain = [str(x) for x in (data.get("jurisdiction_chain") or ())]
-        keys = {declared, *chain}
-        if placement_bound and not chain:
-            keys.add(_UNRESOLVED)
+        leaf = str(data.get("jurisdiction_key") or "") or None
+        chain_set = frozenset(chain)
+        if placement_bound:
+            # group_by_key (P35.45): placed leg = every chain ancestor; a
+            # chain-less record files under the ``unplaced`` data-quality
+            # sentinel — never ``unresolved`` as if it were a place, never a
+            # guessed home. The declared bucket joins only when it names a
+            # real key (the disagreement keeps both sides visible).
+            placed_keys, declared_keys, _leaf = _dk.group_by_key(data)
+            keys = set(placed_keys) | set(declared_keys)
+        else:
+            keys = {declared, *chain}
         if not subject:
             continue
         for key in sorted(keys):
@@ -949,6 +1074,22 @@ def accumulate_dossier_contributions(
             sacc.compartments.add(str(compartment))
             acc.compartments.add(str(compartment))
             acc.subjects.setdefault(subject, set()).add(source)
+            if key in chain_set:
+                sacc.placed_subjects.add(subject)
+                acc.placed_subjects.setdefault(subject, set()).add(source)
+                if leaf == key:
+                    sacc.leaf_subjects.add(subject)
+                    acc.leaf_subjects.add(subject)
+                elif leaf is not None:
+                    acc.leaf_members.setdefault(leaf, set()).add(subject)
+            elif not placement_bound:
+                # A pre-placement export: the declared bucket IS the record's
+                # placement (no chain exists to distinguish), so every member
+                # is placed — and leaf — at its own bucket.
+                sacc.placed_subjects.add(subject)
+                acc.placed_subjects.setdefault(subject, set()).add(source)
+                sacc.leaf_subjects.add(subject)
+                acc.leaf_subjects.add(subject)
             et = str(data.get("entity_type") or "")
             if et:
                 sacc.entity_types[subject] = et
@@ -964,6 +1105,13 @@ def accumulate_dossier_contributions(
                     sacc.checks[str(check)] += 1
                 if str(data.get("point_status") or "") == "conflicted":
                     sacc.conflicted.add(subject)
+            if (
+                placement_bound
+                and key in chain_set
+                and str(data.get("placement_basis") or "") == "point_in_polygon"
+            ):
+                sacc.placed_point_subjects.add(subject)
+                acc.placed_point_subjects.add(subject)
             record_subjects.setdefault((key, source), set()).add(subject)
             # The both-sides disagreement reading (placement.build_report's
             # rule): outside_declared* checks place a (declared → located)
@@ -1042,11 +1190,45 @@ def accumulate_dossier_contributions(
                 if claim_ids & own:
                     sacc.contradictions.add(cid)
 
+    # --- the keyed registry + slug paths (P35.45) -----------------------------
+    keyed: _dk.KeyedRegistry | None = None
+    if placement_bound:
+        rows_map = (
+            placement.jurisdiction_rows()
+            if hasattr(placement, "jurisdiction_rows")
+            else {
+                str(r["jkey"]): r
+                for k in dossiers
+                if (r := placement.jurisdiction_row(k)) is not None
+            }
+        )
+        chains = (
+            placement.ancestor_chains()
+            if hasattr(placement, "ancestor_chains")
+            else {k: tuple(placement.ancestor_chain(k)) for k in rows_map}
+        )
+        keyed = _dk.keyed_registry(list(rows_map.values()), chains)
+
     # --- the source-side mirror (TRANSP-040: the same numbers) ---------------
+    plan_stub = DossierContributionPlan(
+        contributions_by_source={},
+        dossiers=dossiers,
+        runs_by_source=runs_by_source,
+        latest_ok_run=latest_ok_run,
+        run_level_only=run_level_only,
+        placement_bound=placement_bound,
+        release=dict(release),
+        ruleset_version=ruleset_version,
+        weight_rows=[dict(r) for r in weight_rows],
+        lineage_by_claim=None,
+        as_of_date=date.fromisoformat(str(as_of)[:10]) if as_of else date.today(),
+        engine=placement,
+        keyed=keyed,
+    )
     contributions: dict[str, list[dict[str, Any]]] = {}
     for key in sorted(dossiers):
         acc = dossiers[key]
-        slug = jurisdiction_slug(key)
+        slug = plan_stub.slug_path(key)
         for sid in sorted(acc.by_source):
             sacc = acc.by_source[sid]
             claims = sacc.claims
@@ -1056,9 +1238,10 @@ def accumulate_dossier_contributions(
             last_at = max((s.last_seen_at for s in claims.values() if s.last_seen_at), default=None)
             contributions.setdefault(sid, []).append(
                 {
-                    "dossier_jkey": key,
+                    "dossier_jkey": key if key != _dk.UNPLACED else _dk.UNPLACED,
                     "dossier_slug": slug,
                     "records": len(sacc.subjects),
+                    "records_placed": len(sacc.placed_subjects),
                     "claims": len(claims),
                     "first_seen_at": iso_utc(first_at),
                     # §3.3: under run_level_only the dossier row names
@@ -1080,20 +1263,11 @@ def accumulate_dossier_contributions(
             str(r[0]): str(r[1]) for r in lineage_rows if len(r) >= 2 and r[0] is not None
         }
     as_of_date = date.fromisoformat(str(as_of)[:10]) if as_of else date.today()
-    return DossierContributionPlan(
-        contributions_by_source=contributions,
-        dossiers=dossiers,
-        runs_by_source=runs_by_source,
-        latest_ok_run=latest_ok_run,
-        run_level_only=run_level_only,
-        placement_bound=placement_bound,
-        release=dict(release),
-        ruleset_version=ruleset_version,
-        weight_rows=weight_norm,
-        lineage_by_claim=lineage_by_claim,
-        as_of_date=as_of_date,
-        engine=placement,
-    )
+    plan_stub.weight_rows = weight_norm
+    plan_stub.lineage_by_claim = lineage_by_claim
+    plan_stub.as_of_date = as_of_date
+    plan_stub.contributions_by_source = contributions
+    return plan_stub
 
 
 __all__ = [

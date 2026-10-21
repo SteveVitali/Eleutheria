@@ -1,0 +1,570 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The local dossier — the project's primary public artifact (§39.2). Static-first,
+// zero client JS (SIG-UI-036/037). One page is pre-generated per publishable
+// jurisdiction, addressed by its canonical SLUG PATH (P35.45, K4 §5.2):
+// `/dossier/usa/` (country), `/dossier/usa/ca/` (admin-1),
+// `/dossier/usa/ca/verdin-county-06037/` (county/place). The route also emits
+//   - `/dossier/unplaced/` — the "Not yet placed" data-quality report
+//     (`sig.unplaced-report/1`): honest placement failure reasons, never a
+//     jurisdiction dossier;
+//   - one stub per `sig.jurisdiction-slug-history/1` row — an old flat slug
+//     explains where its records went (moved → the canonical path with a
+//     canonical link; split → an honest multiple-choice page; corrected → the
+//     correction note, never a silent rename).
+// The dossier renders all twelve §39.2 sections in order (SIG-UI-010), the
+// incompleteness banner (SIG-UI-012), "what we don't know" in the summary AND
+// its section (SIG-UI-011), every material figure expandable to its
+// reconciliation (SIG-UI-014), the three action blocks (SIG-UI-014a) with the
+// derived next_decision_date shown wherever the expiry is (SIG-UI-014b), and
+// unknown Appendix-B values rendered explicitly (SIG-UI-015). The
+// citation/permalink (SIG-UI-035) comes from the base layout.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import IncompletenessBanner from "../../components/IncompletenessBanner.astro";
+import WhatWeDontKnow from "../../components/WhatWeDontKnow.astro";
+import DossierSection from "../../components/DossierSection.astro";
+import ActionBlocks from "../../components/ActionBlocks.astro";
+import Figure from "../../components/Figure.astro";
+import { applyPublicationPolicy, dossierLang, dossierJsonPath, dossierPath, dossierPrintPath, sectionTitlesFor, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG, unplacedPath } from "../../lib/dossier";
+import type { Dossier } from "../../lib/dossier";
+import { getDossierArtifactRef, getDossiers, getDossierProvenance, getJurisdictionCompartments, getJurisdictionKeyMap, getSlugHistory, getUnplacedReport } from "../../lib/data";
+import type { SlugHistoryRow, UnplacedReport } from "../../lib/data";
+import { getReleaseStamp } from "../../lib/release-stamp";
+import { displayJurisdiction, dossierDisplayTitle } from "../../lib/jurisdictions";
+// P35.37 (SIG-TRANSP-013, J3 §5.4, UXR-34): the dossier's ONE figures[] registry —
+// every material number (banner count, section figures, numeral rows, the
+// notice window, numeral-bearing gaps) carries artifact + pointer + the
+// dossier-class link targets (record list + provenance + per-source slices).
+import { artifactHref, defineFigures, dossierTargets } from "../../lib/figures";
+import { dossierFigureSpecs, figureSpecMap } from "../../lib/dossier-figures";
+import { withBase } from "../../lib/paths";
+
+interface StubTarget {
+  label: string;
+  href: string;
+}
+interface StubProps {
+  kind: "stub";
+  history: SlugHistoryRow;
+  targets: StubTarget[];
+}
+interface UnplacedProps {
+  kind: "unplaced";
+  report: UnplacedReport;
+}
+interface DossierProps {
+  kind: "dossier";
+  dossier: Dossier;
+}
+type PageProps = StubProps | UnplacedProps | DossierProps;
+
+export function getStaticPaths() {
+  const dossierPaths = getDossiers().map((d) => ({
+    params: { path: d.slug },
+    props: { kind: "dossier", dossier: d } satisfies DossierProps,
+  }));
+  const taken = new Set(dossierPaths.map((p) => p.params.path));
+  const out: {
+    params: { path: string };
+    props: PageProps;
+  }[] = [...dossierPaths];
+
+  // The unplaced data-quality report — a sibling of every dossier, never one
+  // of them (excluded from jurisdiction counts by construction, K4 §5.2).
+  const report = getUnplacedReport();
+  if (report !== null && !taken.has("unplaced")) {
+    out.push({
+      params: { path: "unplaced" },
+      props: { kind: "unplaced", report },
+    });
+    taken.add("unplaced");
+  }
+
+  // Back-compat stubs — every old flat slug resolves through the append-only
+  // history (K4 §8.1). A slug a live dossier already serves is skipped: the
+  // dossier wins, the stub never shadows it.
+  const keyMap = getJurisdictionKeyMap();
+  const hrefFor = (jkey: string): StubTarget | null => {
+    if (jkey === "unplaced") {
+      return { label: "Not yet placed — the data-quality report", href: unplacedPath() };
+    }
+    const row = keyMap?.get(jkey);
+    if (row?.slug_path) {
+      return {
+        label: row.display_name ?? row.name ?? jkey,
+        href: dossierPath(row.slug_path),
+      };
+    }
+    return null;
+  };
+  for (const row of getSlugHistory()) {
+    if (taken.has(row.slug)) continue;
+    const successors = Array.isArray(row.successor)
+      ? row.successor
+      : row.successor !== undefined
+        ? [row.successor]
+        : [];
+    const targets = successors
+      .map((j) => hrefFor(String(j)))
+      .filter((t): t is StubTarget => t !== null);
+    out.push({
+      params: { path: row.slug },
+      props: { kind: "stub", history: row, targets },
+    });
+    taken.add(row.slug);
+  }
+  return out;
+}
+
+const props = Astro.props as PageProps;
+---
+
+{props.kind === "stub" && (
+  <BaseLayout
+    title={`Moved — /dossier/${props.history.slug}/`}
+    path={dossierPath(props.history.slug)}
+  >
+    <p class="sig-lede" data-testid="dossier-stub">
+      {props.history.kind === "split"
+        ? "This dossier page covered more than one place. SIG's dossiers are now organised by canonical jurisdiction — each place has its own page."
+        : props.history.kind === "corrected"
+          ? "This dossier page was corrected: its records belonged to a different jurisdiction. The page moved to the correct place — the correction is recorded, never a silent rename."
+          : "This dossier moved. SIG's dossiers are now organised by canonical jurisdiction — the same records, at the canonical address."}
+    </p>
+    {props.history.note && <p data-testid="dossier-stub-note">{props.history.note}</p>}
+    {props.targets.length > 0 ? (
+      <ul data-testid="dossier-stub-targets">
+        {props.targets.map((t) => (
+          <li><a href={t.href}>{t.label}</a></li>
+        ))}
+      </ul>
+    ) : (
+      <p>
+        The successor dossier is not published in this build — see the{" "}
+        <a href={withBase("dossier/")}>dossier index</a>.
+      </p>
+    )}
+  </BaseLayout>
+)}
+
+{props.kind === "unplaced" && (() => {
+const report = props.report;
+// Every material numeral on this page is a registered figure (J3 §5.4) —
+// `web/unplaced.json` is the manifest-listed artifact each count derives from.
+const reasonSlug = (s: string): string => s.replace(/_/g, "-");
+const upTargets = () =>
+  dossierTargets({ recordList: null, provenanceHref: null, perSourceSlices: null });
+const upSpec = (partial: {
+  id: string;
+  value: number;
+  pointer: string;
+  definition: string;
+}) => ({
+  ...partial,
+  class: "dossier" as const,
+  artifact: "web/unplaced.json",
+  href: artifactHref("web/unplaced.json"),
+  breakdown: `#fig-${partial.id}`,
+  targets: upTargets(),
+});
+// The §5.5 by-reason rows — a keyed export emits `reason_rows` (records +
+// share + linked sources + "what would fix it"); a v1 fixture export only
+// carries `by_reason`, so fall back with the same shapes.
+const reasonRows =
+  report.reason_rows && report.reason_rows.length
+    ? report.reason_rows
+    : Object.entries(report.by_reason ?? {}).map(([reason, n]) => ({
+        reason,
+        records: n,
+        share_percent: null as number | null,
+        sources: [] as string[],
+        definition: report.reason_definitions?.[reason],
+        fix: undefined as string | undefined,
+      }));
+// `by_reason` is always emitted beside `reason_rows`, so a reason's records
+// figure can always point at the keyed map; the share figure exists only when
+// `reason_rows` does (the v1 fallback carries records only).
+const UP_FIGURES = defineFigures("dossier-unplaced", [
+  upSpec({ id: "unplaced-records", value: report.records ?? 0, pointer: "/records", definition: "#unplaced-count" }),
+  ...reasonRows.flatMap((r, ri) => [
+    upSpec({
+      id: `reason-${reasonSlug(r.reason)}`,
+      value: r.records,
+      pointer: `/by_reason/${r.reason}`,
+      definition: "#unplaced-reasons",
+    }),
+    ...(r.share_percent != null
+      ? [
+          upSpec({
+            id: `reason-${reasonSlug(r.reason)}-share`,
+            value: r.share_percent,
+            pointer: `/reason_rows/${ri}/share_percent`,
+            definition: "#unplaced-reasons",
+          }),
+        ]
+      : []),
+  ]),
+  ...(report.by_source ?? []).flatMap((s, si) => [
+    upSpec({
+      id: `source-${si}-records`,
+      value: s.records,
+      pointer: `/by_source/${si}/records`,
+      definition: "#unplaced-sources",
+    }),
+    ...(s.top_reasons ?? []).map((r, ri) =>
+      upSpec({
+        id: `source-${si}-reason-${ri}`,
+        value: r.records,
+        pointer: `/by_source/${si}/top_reasons/${ri}/records`,
+        definition: "#unplaced-sources",
+      }),
+    ),
+  ]),
+]);
+const upFig = (id: string) => UP_FIGURES.find((f) => f.id === id)!;
+const sources = report.by_source ?? [];
+return (
+  <BaseLayout
+    title="Not yet placed — data-quality report"
+    path={unplacedPath()}
+    provenanceName="unplaced report"
+  >
+    <p class="sig-dossier-kind" data-testid="unplaced-kind" data-copy="UP-01">
+      {report.name ?? "Not yet placed"} — a data-quality report, not a
+      jurisdiction and not a place.
+    </p>
+    {report.header && (
+      <p class="sig-lede" data-testid="unplaced-header" data-copy="UP-05">{report.header}</p>
+    )}
+    {report.note && <p class="sig-lede" data-testid="unplaced-note">{report.note}</p>}
+    <p data-testid="unplaced-count" id="unplaced-count" data-copy="UP-02">
+      <strong><Figure figure={upFig("unplaced-records")} order="inline">{report.records ?? 0}</Figure></strong> published record
+      {(report.records ?? 0) === 1 ? "" : "s"} could not be placed under the
+      recorded placement checks. {(report.records ?? 0) === 0
+        ? "Every published record carries a placement chain."
+        : "Each is listed by reason below — none is guessed into a jurisdiction."}
+    </p>
+    {report.methodology && (
+      <section aria-labelledby="unplaced-method">
+        <h2 id="unplaced-method">How placement works</h2>
+        <p>{report.methodology}</p>
+      </section>
+    )}
+    {reasonRows.length > 0 && (
+      <section aria-labelledby="unplaced-reasons">
+        <h2 id="unplaced-reasons">By reason</h2>
+        <table class="sig-table" data-testid="unplaced-reasons">
+          <thead>
+            <tr>
+              <th>Reason</th><th>Records</th><th>Share</th>
+              <th>What it means</th><th>Sources</th><th>What would fix it</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reasonRows.map((r) => (
+              <tr>
+                <td><code>{r.reason}</code></td>
+                <td><Figure figure={upFig(`reason-${reasonSlug(r.reason)}`)} order="inline">{r.records}</Figure></td>
+                <td>
+                  {r.share_percent != null ? (
+                    <Figure figure={upFig(`reason-${reasonSlug(r.reason)}-share`)} order="inline">{r.share_percent}%</Figure>
+                  ) : (
+                    "—"
+                  )}
+                </td>
+                <td>{r.definition ?? report.reason_definitions?.[r.reason] ?? ""}</td>
+                <td>
+                  {(r.sources ?? []).map((sid, si) => (
+                    <>
+                      {si > 0 && ", "}
+                      <a href={withBase("sources/")}><code>{sid}</code></a>
+                    </>
+                  ))}
+                </td>
+                <td>
+                  {r.fix ?? ""}{" "}
+                  <a href={withBase("research-queue/")}>research queue</a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    )}
+    {sources.length > 0 && (
+      <section aria-labelledby="unplaced-sources">
+        <h2 id="unplaced-sources">By source</h2>
+        <table class="sig-table" data-testid="unplaced-sources">
+          <thead>
+            <tr><th>Source</th><th>Records</th><th>Top reasons</th></tr>
+          </thead>
+          <tbody>
+            {sources.map((s, si) => (
+              <tr>
+                <td><code>{s.source_id}</code></td>
+                <td><Figure figure={upFig(`source-${si}-records`)} order="inline">{s.records}</Figure></td>
+                <td>
+                  {(s.top_reasons ?? []).map((r, ri) => (
+                    <>
+                      {ri > 0 && ", "}
+                      {r.reason} (<Figure figure={upFig(`source-${si}-reason-${ri}`)} order="inline">{r.records}</Figure>)
+                    </>
+                  ))}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    )}
+    {(report.excluded_from?.length ?? 0) > 0 && (
+      <p class="sig-table-note" data-testid="unplaced-excluded" data-copy="UP-03">
+        This report is excluded from: {report.excluded_from!.join(", ")}.
+      </p>
+    )}
+    {report.downloads && (
+      <section aria-labelledby="unplaced-downloads">
+        <h2 id="unplaced-downloads">Downloads</h2>
+        {(report.downloads.items?.length ?? 0) > 0 ? (
+          <ul>
+            {report.downloads.items!.map((item) => (
+              <li>{JSON.stringify(item)}</li>
+            ))}
+          </ul>
+        ) : (
+          <p class="sig-table-note" data-testid="unplaced-downloads" data-copy="UP-07">
+            Per-compartment downloads of this report are not emitted yet —
+            they land with the per-dossier downloads work.
+          </p>
+        )}
+      </section>
+    )}
+    {report.correction && (
+      <p class="sig-table-note" data-testid="unplaced-correction" data-copy="UP-06">
+        {report.correction.note}{" "}
+        {report.correction.corrections && (
+          <span>The <a href={withBase(report.correction.corrections)}>corrections log</a></span>
+        )}
+        {" "}
+        {report.correction.research_queue && (
+          <span>and the <a href={withBase(report.correction.research_queue)}>research queue</a> take the fixes.</span>
+        )}
+      </p>
+    )}
+  </BaseLayout>
+);})()}
+
+{props.kind === "dossier" && (() => {
+// Apply the jurisdiction-conditional publication policy in the build-time data path
+// (SIG-PUB-017, §44): a public-employee name that may not be published under the
+// dossier's regime (FR-GDPR / BE-GDPR) is withheld before any HTML is emitted. This
+// can only ever WITHHOLD (Part VIII §0.7).
+const dossier = applyPublicationPolicy(props.dossier);
+// Enforce the §39.2 section contract at build time (SIG-UI-010): a mis-ordered or
+// incomplete dossier fails the build rather than shipping.
+validateDossier(dossier);
+const lang = dossierLang(dossier);
+const SECTION_TITLES = sectionTitlesFor(lang);
+// P34.14 (QW-8, F-105): the place's NAME leads — the code stays, secondary
+// (`label` is "Name (CODE)"). A physically mixed bucket says which two places
+// it combines (K4 NEW-1); an unmapped code fails loud with the task link.
+// P35.45: a keyed dossier carries its own registry name — use it (name first,
+// the jkey secondary) instead of the flat-code lookup.
+const jurisdiction = dossier.display_name || dossier.name
+  ? {
+      name: dossier.display_name ?? dossier.name ?? dossier.jurisdiction,
+      code: dossier.jurisdiction_key ?? null,
+      label: dossier.jurisdiction_key
+        ? `${dossier.display_name ?? dossier.name} (${dossier.jurisdiction_key})`
+        : (dossier.display_name ?? dossier.name ?? dossier.jurisdiction),
+      known: true,
+      combines: null,
+    }
+  : displayJurisdiction(dossier.jurisdiction);
+// Keyed subject_labels already lead with the place name ("… — Verdin County")
+// and pass through unchanged; a legacy "… — CODE" label is rewritten name-first.
+const pageTitle = dossierDisplayTitle(dossier.subject_label, dossier.jurisdiction);
+const combinesList = jurisdiction.combines ? jurisdiction.combines.join(" and ") : null;
+// ED-41: the dossier's "How we know this" derives from its OWN evidence set — the
+// per-dossier provenance row the export emitted for this slug. `undefined` (no
+// emitted row) renders the site-wide summary labelled site-wide, never site
+// totals under the dossier's name.
+const provenance = getDossierProvenance(dossier.slug);
+
+// The figure-evidence registry. `ref` names the dossier's position in its
+// manifest-listed artifact; the record-list target (`/r/<pub>/c/<comp>/…`)
+// resolves only when a release is bound AND the jurisdiction's compartment is
+// known — else the named absence renders, never a dead link.
+const ref = getDossierArtifactRef(dossier.slug);
+const stamp = getReleaseStamp();
+const compartment =
+  getJurisdictionCompartments().get(dossier.jurisdiction_key ?? dossier.jurisdiction) ??
+  getJurisdictionCompartments().get(dossier.slug) ??
+  null;
+const recordList =
+  stamp && compartment
+    ? `r/${stamp.publicationId}/c/${compartment}/jurisdiction/${dossier.slug}/`
+    : null;
+const FIGURES = defineFigures(
+  `dossier/${dossier.slug}`,
+  dossierFigureSpecs(dossier, "page", {
+    ref,
+    recordList,
+    provenanceHref: "#hwkt-heading",
+    artifactHref: ref ? artifactHref(ref.artifact) : "",
+  }),
+);
+if (FIGURES.length === 0) {
+  throw new Error(
+    `dossier "${dossier.slug}": no figure registry — the dossier has no record ` +
+      `in a manifest-listed artifact (SIG-TRANSP-013)`,
+  );
+}
+const specMap = figureSpecMap(FIGURES);
+return (
+<BaseLayout
+  title={pageTitle}
+  path={dossierPath(dossier.slug)}
+  lang={lang}
+  provenance={provenance}
+  provenanceName={`${jurisdiction.name} dossier`}
+  provenancePointerBase={`/surfaces/dossiers/${dossier.slug}`}
+  recordPath={recordList ? withBase(recordList) : undefined}
+>
+  {/* P35.45: the ancestor breadcrumb — the canonical chain this dossier
+      sits under (country → admin-1 → county → place), every ancestor its
+      own dossier page. */}
+  {(dossier.chain?.length ?? 0) > 1 && (
+    <nav aria-label="Dossier ancestors" class="sig-dossier-breadcrumb" data-testid="dossier-breadcrumb">
+      <ol>
+        {dossier.chain!.map((link, i) => (
+          <li>
+            {i < dossier.chain!.length - 1 && link.slug_path ? (
+              <a href={dossierPath(link.slug_path)}>{link.name ?? link.jkey}</a>
+            ) : (
+              <span aria-current="page">{link.name ?? link.jkey}</span>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )}
+  <p class="sig-dossier-jurisdiction" data-testid="dossier-jurisdiction">{jurisdiction.label}</p>
+  {dossier.level && (
+    <p class="sig-dossier-level" data-testid="dossier-level">
+      {dossier.level}
+      {dossier.boundary_vintage && <> · boundary vintage {dossier.boundary_vintage}</>}
+    </p>
+  )}
+  {combinesList && (
+    <p class="sig-dossier-combines" data-testid="dossier-combines" data-copy="JD-01">This dossier combines {combinesList}.</p>
+  )}
+  {!jurisdiction.known && (
+    <p class="sig-dossier-unmapped" data-testid="dossier-jurisdiction-unmapped" data-copy="JD-03">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href={withBase("research-queue/")}>research queue</a>.</p>
+  )}
+  <p class="sig-dossier-kind" data-testid="dossier-kind" data-copy="D-01 D-02">
+    Inventory overview — built automatically from published claims. The
+    evidence-complete reviewed-portfolio form is being built.
+  </p>
+
+  <IncompletenessBanner dossier={dossier} spec={specMap.get("banner")} />
+
+  <section class="sig-dossier-summary" aria-labelledby="summary-gaps-heading">
+    <h2 id="summary-gaps-heading">What we don't know (summary)</h2>
+    <p>
+      This is a headline, not an appendix. The full record is below; here is what SIG
+      cannot yet tell you about this deployment.
+    </p>
+    <WhatWeDontKnow gaps={dossier.gaps} variant="summary" specs={specMap} />
+  </section>
+
+  <p class="sig-dossier-actions">
+    {/* P35.45 (D-K4-3): print mints only for country + admin-1 dossiers —
+        a keyed dossier's `links.print` names the minted set (absent on
+        legacy dossiers, which keep the link). */}
+    {(dossier.links === undefined || dossier.links?.print) && (
+      <>
+        <a href={dossierPrintPath(dossier.slug)} data-testid="print-link">Print / PDF version</a>
+        {" · "}
+      </>
+    )}
+    <a href={dossierJsonPath(dossier.slug)} data-testid="api-link">JSON (API form)</a>
+  </p>
+
+  {dossier.sections.map((section) => {
+    const action = SECTION_ACTION_BLOCKS[section.section_id];
+    const noRecord =
+      section.section_id !== "what_we_dont_know" && sectionIsEmpty(section) && !action;
+    return (
+      <section aria-labelledby={`sec-${section.section_id}`} data-testid="dossier-section" data-section-id={section.section_id}>
+        <h2 id={`sec-${section.section_id}`}>{SECTION_TITLES[section.section_id]}</h2>
+        {section.section_id === "what_we_dont_know" ? (
+          <WhatWeDontKnow gaps={dossier.gaps} variant="section" specs={specMap} />
+        ) : (
+          <DossierSection section={section} specs={specMap} />
+        )}
+        {action && <ActionBlocks dossier={dossier} which={action} specs={specMap} />}
+        {noRecord && (
+          <p class="sig-no-record" data-testid="section-no-record" data-copy="DS-01">{NO_RECORD_IN_SIG}</p>
+        )}
+      </section>
+    );
+  })}
+
+  {/* P35.45 (K4 §5.2): the roll-up — child dossiers with their placed counts,
+      the disagreement pair, and the conservation note. Children without a
+      page (under the D-K4-3 threshold) are named absences — never dead links. */}
+  {((dossier.children?.length ?? 0) > 0 || dossier.rollup) && (
+    <section aria-labelledby="rollup-heading" data-testid="dossier-rollup">
+      <h2 id="rollup-heading">Child jurisdictions</h2>
+      {(dossier.children?.length ?? 0) > 0 ? (
+        <ul data-testid="dossier-children">
+          {dossier.children!.map((c, ci) => (
+            <li data-jkey={c.jkey}>
+              {c.page && c.slug_path ? (
+                <a href={dossierPath(c.slug_path)}>{c.name ?? c.jkey}</a>
+              ) : (
+                <span>{c.name ?? c.jkey} <em>(no dossier — below the publication threshold)</em></span>
+              )}
+              {typeof c.records === "number" && specMap.get(`child-${ci}`) && (
+                <> — <Figure figure={specMap.get(`child-${ci}`)!} order="inline">{c.records}</Figure> record{c.records === 1 ? "" : "s"}</>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No registry children carry records here.</p>
+      )}
+      {dossier.rollup?.note && (
+        <p class="sig-table-note" data-testid="dossier-conservation">{dossier.rollup.note}</p>
+      )}
+      {(dossier.disagreements?.declared_here_located_elsewhere ?? 0) +
+        (dossier.disagreements?.located_here_declared_elsewhere ?? 0) > 0 && (
+        <p class="sig-table-note" data-testid="dossier-disagreements">
+          {specMap.get("disagreement-declared-here-located-elsewhere") && (
+            <>
+              <Figure figure={specMap.get("disagreement-declared-here-located-elsewhere")!} order="inline">
+                {dossier.disagreements!.declared_here_located_elsewhere}
+              </Figure>{" "}
+              record{(dossier.disagreements!.declared_here_located_elsewhere) === 1 ? "" : "s"} declared
+              this jurisdiction but located elsewhere;{" "}
+            </>
+          )}
+          {specMap.get("disagreement-located-here-declared-elsewhere") && (
+            <>
+              <Figure figure={specMap.get("disagreement-located-here-declared-elsewhere")!} order="inline">
+                {dossier.disagreements!.located_here_declared_elsewhere}
+              </Figure>{" "}
+              declared elsewhere but located here
+            </>
+          )}{" "}
+          — the disagreement stays visible on both sides.
+        </p>
+      )}
+    </section>
+  )}
+</BaseLayout>
+);})()}

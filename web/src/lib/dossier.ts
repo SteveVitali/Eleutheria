@@ -255,6 +255,55 @@ export interface Dossier {
    * §43.8 publication adapter. Defaults to "US" so the existing dossier is unchanged.
    */
   jurisdictionCode?: string;
+
+  // --- P35.45 (K4 §5.2): the keyed dossier fields ---------------------------
+  // A `sig.dossier/2` artifact carries the canonical jurisdiction identity +
+  // the roll-up the page renders. All optional — a pre-P35.45 dossier (or a
+  // fixture) carries none of them and renders the flat form unchanged.
+  /** The canonical scheme-qualified jurisdiction key (`iso3166-2:US-CA`). */
+  jurisdiction_key?: string | null;
+  /** The canonical nested URL path (`usa/ca`) — equals `slug` on keyed dossiers. */
+  slug_path?: string;
+  /** The registry row's level (country / state_province / county / municipality). */
+  level?: string;
+  /** The registry name ("California") — the display-first label. */
+  name?: string;
+  /** Name + ancestor names ("California, United States"). */
+  display_name?: string;
+  /** The parent registry key + its slug path (the breadcrumb link). */
+  parent_jkey?: string | null;
+  parent_slug_path?: string | null;
+  /** Root-first breadcrumb rows (jkey/name/slug_path per ancestor, self last). */
+  chain?: { jkey: string; name?: string; slug_path?: string }[];
+  /** The child dossiers (registry children), each with its page flag. */
+  children?: {
+    jkey: string;
+    name?: string;
+    slug_path?: string;
+    records?: number;
+    page?: boolean;
+  }[];
+  /** The conserved roll-up: placed / leaf-only / appearing counts. */
+  rollup?: {
+    records?: number;
+    records_placed_only_here?: number;
+    records_appearing?: number;
+    conserved?: boolean;
+    note?: string;
+  };
+  /** The declared-vs-located disagreement pair, kept visible on both sides. */
+  disagreements?: {
+    declared_here_located_elsewhere?: number;
+    located_here_declared_elsewhere?: number;
+  };
+  /** The dossier's link block (record list, sources artifact, map). */
+  links?: Record<string, string | null>;
+  /** The boundary vintage the placement chain was verified against. */
+  boundary_vintage?: string | null;
+  /** The verbatim D-K4-3 basis that minted this page. */
+  page_threshold_basis?: string;
+  /** The artifact's schema id (`sig.dossier/2`). */
+  schema?: string;
 }
 
 /** The BCP-47 language tag for a dossier (defaults to English). */
@@ -365,9 +414,15 @@ export function applyPublicationPolicy(
   };
 }
 
-/** The canonical page path for a dossier (trailing slash — SIG-UI-035). */
+/** The canonical page path for a dossier (trailing slash — SIG-UI-035).
+ * `slug` may be a multi-segment slug path (`usa/ca`) — P35.45. */
 export function dossierPath(slug: string): string {
   return `/dossier/${slug}/`;
+}
+
+/** The page path for the unplaced data-quality report (P35.45). */
+export function unplacedPath(): string {
+  return dossierPath("unplaced");
 }
 
 /** The canonical path of a dossier's print export. */
@@ -634,6 +689,15 @@ export function renderDossierJson(
     ...(release ? { release } : {}),
     ...(release ? { licence: { id: DOSSIER_LICENCE_ID, compartment: "web" } } : {}),
     jurisdiction: dossier.jurisdiction,
+    // P35.45 (`sig.dossier/2` rows): the canonical identity rides the JSON
+    // twin too — jkey, slug path, level, ancestor chain.
+    ...(dossier.jurisdiction_key ? { jurisdiction_key: dossier.jurisdiction_key } : {}),
+    ...(dossier.slug_path ? { slug_path: dossier.slug_path } : {}),
+    ...(dossier.level ? { level: dossier.level } : {}),
+    ...(dossier.name ? { name: dossier.name } : {}),
+    ...(dossier.display_name ? { display_name: dossier.display_name } : {}),
+    ...(dossier.chain ? { chain: dossier.chain } : {}),
+    ...(dossier.rollup ? { rollup: dossier.rollup } : {}),
     as_of_world: dossier.asOf.as_of_world,
     as_of_belief: dossier.asOf.as_of_belief,
     ruleset_version: dossier.rulesetVersion,

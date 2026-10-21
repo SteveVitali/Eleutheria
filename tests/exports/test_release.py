@@ -230,6 +230,206 @@ def _disposition(kind: TargetKind, tid: str, disp: Disposition, seq: int = 0):
 
 
 # --------------------------------------------------------------------------- #
+# P35.45 — the release tree under keyed dossiers: records file under          #
+# ``jurisdiction/<slug-path>/``, dossier pages mint at ``dossier/<path>/``,    #
+# the honest unplaced report lives at ``dossier/unplaced/``, and old           #
+# ``unresolved`` routes never mint again.                                     #
+# --------------------------------------------------------------------------- #
+
+
+def _placed_site_row(
+    i: int,
+    source: str,
+    spdx: str,
+    *,
+    jkey: str | None,
+    chain: list[str],
+    check: str = "consistent",
+    juris: str = "iso3166-2:US-CA",
+) -> dict:
+    """A site row carrying the placement@1 block a P35.45 export emits."""
+    row = _site_row(i, source, spdx, juris)
+    row["jurisdiction_key"] = jkey
+    row["jurisdiction_chain"] = chain
+    row["placement_basis"] = "point_in_polygon" if jkey else "none"
+    row["placement_check"] = check
+    row["declared_scheme"] = "us.state_abbr"
+    row["declared_value"] = "CA"
+    row["boundary_vintage"] = "tiger-2025"
+    return row
+
+
+def _keyed_dossier_doc(slug_path: str, jkey: str, name: str, level: str = "country") -> dict:
+    return {
+        "schema": "sig.dossier/2",
+        "asOf": {
+            "as_of_world": "2026-09-27",
+            "as_of_belief": "2026-09-27",
+            "belief_pinned": False,
+        },
+        "jurisdiction": jkey,
+        "jurisdiction_key": jkey,
+        "slug": slug_path,
+        "slug_path": slug_path,
+        "level": level,
+        "name": name,
+        "display_name": name,
+        "rulesetVersion": "p27.3/1.0.0",
+        "sections": [{"section_id": "at_a_glance"}],
+        "gaps": [],
+    }
+
+
+def _write_keyed_export(root: Path) -> Path:
+    """A placement-bound export shape: per-dossier ``web/dossiers/`` docs, the
+    jurisdiction key map, and the unplaced report — no flat monolith."""
+    _write_export(root, n_records=2, two_compartments=True)
+    (root / "web" / "dossiers.json").unlink()
+
+    # src_a row 0: placed at the county leaf; row 1: chainless → unplaced.
+    a_rows = [
+        _placed_site_row(
+            0,
+            "src_a",
+            "CC-BY-4.0",
+            jkey="us.census.geoid.county:06037",
+            chain=[
+                "iso3166-1:US",
+                "iso3166-2:US-CA",
+                "us.census.geoid.county:06037",
+            ],
+        ),
+        _placed_site_row(
+            1,
+            "src_a",
+            "CC-BY-4.0",
+            jkey=None,
+            chain=[],
+            check="null_island",
+            juris="unresolved",
+        ),
+    ]
+    (root / "sig_graph" / "sites.jsonl").write_text(
+        "".join(json.dumps(r) + "\n" for r in a_rows), encoding="utf-8"
+    )
+    osm_rows = [
+        _placed_site_row(
+            0,
+            "src_osm",
+            "ODbL-1.0",
+            jkey="iso3166-2:US-CA",
+            chain=["iso3166-1:US", "iso3166-2:US-CA"],
+        ),
+        _placed_site_row(
+            1,
+            "src_osm",
+            "ODbL-1.0",
+            jkey="iso3166-2:US-CA",
+            chain=["iso3166-1:US", "iso3166-2:US-CA"],
+        ),
+    ]
+    (root / "osm_physical" / "sites.jsonl").write_text(
+        "".join(json.dumps(r) + "\n" for r in osm_rows), encoding="utf-8"
+    )
+
+    dossiers_dir = root / "web" / "dossiers"
+    (dossiers_dir / "usa" / "ca").mkdir(parents=True)
+    for doc in (
+        _keyed_dossier_doc("usa", "iso3166-1:US", "United States"),
+        _keyed_dossier_doc("usa/ca", "iso3166-2:US-CA", "California", "state_province"),
+        _keyed_dossier_doc(
+            "usa/ca/verdin-county-06037",
+            "us.census.geoid.county:06037",
+            "Verdin County",
+            "county",
+        ),
+    ):
+        (dossiers_dir / f"{doc['slug_path']}.json").write_text(json.dumps(doc), encoding="utf-8")
+    (root / "web" / "jurisdiction_key_map.json").write_text(
+        json.dumps(
+            {
+                "schema": "sig.jurisdiction-key-map/1",
+                "entries": [
+                    {
+                        "jkey": "iso3166-1:US",
+                        "slug_path": "usa",
+                        "name": "United States",
+                        "display_name": "United States",
+                    },
+                    {
+                        "jkey": "iso3166-2:US-CA",
+                        "slug_path": "usa/ca",
+                        "name": "California",
+                        "display_name": "California, United States",
+                    },
+                    {
+                        "jkey": "us.census.geoid.county:06037",
+                        "slug_path": "usa/ca/verdin-county-06037",
+                        "name": "Verdin County",
+                        "display_name": "Verdin County, California, United States",
+                    },
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    (root / "web" / "unplaced.json").write_text(
+        json.dumps(
+            {
+                "schema": "sig.unplaced-report/1",
+                "kind": "data_quality_report",
+                "name": "Not yet placed",
+                "records": 1,
+                "by_reason": {"null_island": 1},
+                "excluded_from": ["jurisdiction counts"],
+            }
+        ),
+        encoding="utf-8",
+    )
+    return root
+
+
+def test_release_files_records_under_canonical_slug_paths(tmp_path: Path) -> None:
+    """K4 §5.4: the record list tree keys on the dossier slug path — the
+    county record lists under ``jurisdiction/usa/ca/verdin-county-06037/``,
+    the chainless record under ``jurisdiction/unplaced/`` (never the legacy
+    ``unresolved`` bucket)."""
+    export = _write_keyed_export(tmp_path / "export")
+    out = _build(tmp_path, export)
+    tree = set(_tree_bytes(out.out_dir))
+    pub = out.publication_id
+    assert f"r/{pub}/c/sig_graph/jurisdiction/usa/ca/verdin-county-06037/1/index.html" in tree
+    assert f"r/{pub}/c/sig_graph/jurisdiction/unplaced/1/index.html" in tree
+    assert f"r/{pub}/c/osm_physical/jurisdiction/usa/ca/1/index.html" in tree
+    assert not any("/jurisdiction/unresolved/" in p for p in tree)
+
+
+def test_release_unplaced_report_page_and_slug_path_record(tmp_path: Path) -> None:
+    """The honest data-quality page mints at ``dossier/unplaced/`` inside the
+    release tree, and the chainless record's own page carries the
+    ``unplaced`` slug_path — never a guessed jurisdiction."""
+    export = _write_keyed_export(tmp_path / "export")
+    out = _build(tmp_path, export)
+    tree = _tree_bytes(out.out_dir)
+    pub = out.publication_id
+    page = f"r/{pub}/dossier/unplaced/index.html"
+    assert page in tree
+    body = tree[page].decode("utf-8")
+    assert "Not yet placed" in body and "data-quality" in body
+    # The placed dossier pages mint at their slug paths.
+    assert f"r/{pub}/dossier/usa/ca/verdin-county-06037/index.html" in tree
+    assert f"r/{pub}/dossier/usa/index.html" in tree
+    # The record's jurisdiction block carries the canonical slug path.
+    rec = [p for p in tree if p.startswith(f"r/{pub}/c/sig_graph/entity/") and p.endswith(".json")]
+    rows = [json.loads(tree[p]) for p in rec]
+    unplaced_rec = next(r for r in rows if r["entity_id"] == "ent-src_a-1")
+    assert unplaced_rec["jurisdiction"]["slug_path"] == "unplaced"
+    placed_rec = next(r for r in rows if r["entity_id"] == "ent-src_a-0")
+    assert placed_rec["jurisdiction"]["slug_path"] == "usa/ca/verdin-county-06037"
+    assert placed_rec["jurisdiction"]["jkey"] == "us.census.geoid.county:06037"
+
+
+# --------------------------------------------------------------------------- #
 # AC1 — identical inputs ⇒ identical namespace AND bytes                      #
 # --------------------------------------------------------------------------- #
 
