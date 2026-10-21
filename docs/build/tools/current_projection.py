@@ -637,21 +637,26 @@ def render_markdown(projection: dict) -> tuple[str, dict[str, str]]:
 
     dom_lines = ["| domain | latest recorded evidence | assessments |", "|---|---|---|"]
     for d in projection["evidence_domains"]:
+        # Cells render committed-record values verbatim — code spans mark them
+        # as literals so the SIG-MEM-011 live-claim lint (which strips code
+        # spans) never reads a quoted record cell or token as a fresh
+        # production-state assertion added by a regen diff (P35.45).
         rec = (
             "; ".join(
-                f"{r['unit']}: {_verify_cell(r['value'])[:60]} ({r['recorded'][:60]})"
+                f"`{r['unit']}: {_verify_cell(r['value'])[:60].replace('`', '')} "
+                f"({r['recorded'][:60].replace('`', '')})`"
                 for r in d["recorded_baseline"]
             )
             or "—"
         )
         av = (
             "; ".join(
-                f"{a['requirement']}={a['verdict']} ({a['assessed_at']})"
+                f"`{a['requirement']}={a['verdict']} ({a['assessed_at']})`"
                 for a in d["assessment_verdicts"]
             )
             or "—"
         )
-        dom_lines.append(f"| {d['domain']} | {rec} | {av} |")
+        dom_lines.append(f"| `{d['domain']}` | {rec} | {av} |")
     sections.append(("domains", dom_lines))
 
     fun_lines = ["| unit | recorded value | domain · date · evidence |", "|---|---|---|"]
@@ -672,8 +677,11 @@ def render_markdown(projection: dict) -> tuple[str, dict[str, str]]:
         "|---|---|---|---|---|",
     ]
     for a in projection["coverage"]["assessments"]:
+        # `domain`/`verdict` are vocabulary tokens (`hosted`, `D-R10-LIVE-1` in
+        # MET-ENGINEERED(…), …) — code-span them so a repaginated row is never
+        # read as a fresh production-state claim (SIG-MEM-011; P35.45).
         cov_lines.append(
-            f"| {a['requirement_id']} | {a['domain']} | {a['verdict']} | "
+            f"| {a['requirement_id']} | `{a['domain']}` | `{a['verdict']}` | "
             f"{a['assessed_at']} | {a['supersedes'] or '—'} |"
         )
     cov_lines.append(
