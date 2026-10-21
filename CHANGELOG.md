@@ -24,6 +24,34 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Resolver input truth — valid time, declared directness, and
+  tolerance-aware dissent** (P35.27 / row 306; R11-L3-CP9 + CONF-05;
+  owns F-519; cites SIG-RECON-053, SIG-STORE-015, SIG-EPIS-017/018,
+  SIG-RECON-006 Phase 1.2, SIG-RECON-014, SIG-RECON-020) — the resolver's
+  inputs are now truthful on every read path. `Claim` carries the declared
+  `valid_period` bounds (Phase 1.2's overlap test was vacuous on the
+  materializer path — it never read them) and the connector-DECLARED
+  directness, distinguished from the `connector_default_D2` sink default
+  via `claim.assertion_map_basis`; the effective directness is the weaker
+  of declaration and the (genre × predicate) matrix — a declaration may
+  weaken (a `D6` non-probative stamp is honoured) but never strengthen.
+  Within-tolerance pooled disagreement is disclosed as the `contested`
+  dissent signal — `contested_claim_ids` recorded, joined into
+  `dissenting_claim_ids`, `MINOR_DISAGREEMENT` agreement — never silently
+  absorbed (F-519: 0 dissent in 19,121 sampled resolutions) and never a
+  contradiction: the four-state `contradiction_state` vocabulary is
+  unchanged (SIG-STORE-015). `input_digest` covers the new inputs so a
+  re-perioded or re-graded claim mints a superseding decision
+  append-only. `materialize.read_claim_groups` and both
+  `api.store_pg` readers supply the same truthful inputs;
+  `reconcile rematerialize-report` is the read-only before/after
+  state-distribution dry-run naming every delta class
+  (`temporal-deconflicted`, `directness-reweighted`,
+  `tolerance-de-escalated`, …). `RESOLVER_VERSION` → `p08.1/1.2.0`,
+  ruleset → `2026.3` (+`RESOLVED_CONTENDED_TOLERANCE`), the L3 rebuild
+  sample is repinned. The production rematerialize + `/status/`
+  API-basis notice are QUEUED OM-20 legs — none ran
+  (`live_verification=false`).
 - **Role edges, honest time, and recorded supersession** (P35.26 / row
   305; R11-L3-CP7 + CONF-06; owns F-521; cites SIG-TRUST-003,
   SIG-ONTO-028, SIG-ONTO-029/030/032, SIG-EPIS-029, GQ-07/GQ-15;
