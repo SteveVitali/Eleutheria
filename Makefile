@@ -71,7 +71,7 @@ check: lint format-check typecheck test verify-gen
 ## judge in CI.
 ci-local: sync
 	$(MAKE) lint format-check typecheck
-	SIG_REQUIRE_DB_TESTS=1 TESTCONTAINERS_RYUK_DISABLED=true $(MAKE) test-par
+	SIG_REQUIRE_DB_TESTS=1 TESTCONTAINERS_RYUK_DISABLED=true $(MAKE) test
 	$(MAKE) test-sqitch-roundtrip
 	$(MAKE) verify-gen
 	$(MAKE) docs-check

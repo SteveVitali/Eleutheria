@@ -1064,21 +1064,22 @@ def _web_step(name_fragment: str) -> dict:
     return steps[0]
 
 
-def test_python_job_partitions_the_test_step() -> None:
-    """D1: the `python` job's Test step runs `make test-par` and keeps the
-    fail-closed env the serial step carried (SIG_REQUIRE_DB_TESTS + the armed
-    GCP needle); the command seam stays out of both surfaces."""
+def test_python_job_test_step_is_serial_while_paused() -> None:
+    """D1 pause (OM-18): the `python` job's Test step is back on `make test`
+    — the partitioned runner hit the contract's two-repair-round stop line
+    on one contention-flaky test (runs/P35.41a.md). The machinery and table
+    stay committed; the step keeps its fail-closed env (SIG_REQUIRE_DB_TESTS
+    + the armed GCP needle), and the command seam stays out of both
+    surfaces. When the operator answers 'continue', this test pins the
+    re-arming (`make test-par` here and in ci-local)."""
     job = _doc(CI_YML)["jobs"]["python"]
-    assert any("make test-par" in r for r in _runs(job)), (
-        "the python job must run `make test-par` (P35.41a D1)"
-    )
-    env = _step_env(job, "make test-par")
+    env = _step_env(job, "make test")
     assert env.get("SIG_REQUIRE_DB_TESTS") == "1", (
-        "the partitioned Test step must keep SIG_REQUIRE_DB_TESTS=1 — the "
-        "DB suite must never silently skip under partitioning"
+        "the serial Test step must keep SIG_REQUIRE_DB_TESTS=1 — the DB "
+        "suite must never silently skip"
     )
     assert env.get("SIG_GCP_PROJECT") == "${{ vars.SIG_GCP_PROJECT }}", (
-        "the partitioned Test step must keep the armed GCP leak-check needle"
+        "the Test step must keep the armed GCP leak-check needle"
     )
     for surface in (CI_YML, MAKEFILE):
         assert "PYTEST_PARTITIONS_CMD" not in surface.read_text(), (
@@ -1087,21 +1088,22 @@ def test_python_job_partitions_the_test_step() -> None:
         )
 
 
-def test_make_test_par_is_the_ci_and_local_form() -> None:
-    """`make test-par` exists, dispatches the committed runner, `make test`
-    stays serial, and `make ci-local` reaches the partitioned form."""
+def test_make_test_par_exists_but_ci_is_serial_while_paused() -> None:
+    """`make test-par` still exists and dispatches the committed runner (the
+    machinery is proven, not deleted), `make test` stays the serial gate,
+    and `make ci-local` runs the serial form while the OM-18 pause holds."""
     import re
 
     text = MAKEFILE.read_text()
     assert re.search(
         r"^test-par:\n\tuv run python scripts/ci/pytest_partitions\.py run", text, re.M
-    ), "the `test-par` target must run scripts/ci/pytest_partitions.py run"
+    ), "the `test-par` target must keep scripts/ci/pytest_partitions.py run"
     assert re.search(r"^test:\n\tuv run pytest\n", text, re.M), (
         "`make test` must stay the serial gate"
     )
-    assert re.search(r"^\$\(MAKE\) test-par$", text, re.M) or re.search(
-        r"\$\(MAKE\) test-par\b", text
-    ), "`make ci-local` must reach `make test-par`"
+    assert re.search(r"^\$\(MAKE\) test$", text, re.M) or re.search(
+        r"\$\(MAKE\) test\b", text
+    ), "`make ci-local` runs the serial form while the D1 pause holds"
     for path in ("scripts/ci/pytest_partitions.py", "scripts/ci/pytest_partitions.txt"):
         assert (REPO_ROOT / path).is_file(), f"{path} must exist"
 
