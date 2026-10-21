@@ -420,6 +420,9 @@ def test_the_real_eff_zip_parses_to_per_agency_aggregates() -> None:
     predicates = {r.get("predicate_id") for r in rows if r.get("record_kind") == "claim"}
     assert predicates <= {
         "deployment_exists",
+        # P35.26 / SIG-TRUST-003: the dataset publisher — provenance, never an
+        # operational role.
+        "published_by",
         # P31.6 / ADR-113: the release's stated vendor + the NVLS pooled-lookup
         # edge (the partner is the release's vendor constant — never an
         # enumerated per-agency partner list, SIG-INGEST-043c).
@@ -442,6 +445,70 @@ def test_the_real_eff_zip_parses_to_per_agency_aggregates() -> None:
         and r.get("predicate_id") == "sharing_partner_degree"
     )
     assert degree["value"] == 270
+
+
+def test_the_real_eff_zip_claims_carry_the_coverage_window() -> None:
+    """P35.26 / SIG-ONTO-030/032: every claim the release grounds carries the
+    covered valid-time window the release itself evidences (2016–2017) — the
+    honest bound, never a fabricated date."""
+    zip_bytes = (_FIX / "eff_release_2016_2017.zip").read_bytes()
+    conn = DataDrivenConnector()
+    captures = InMemoryCaptureStore()
+    capture = captures.put(
+        zip_bytes,
+        media_type="application/zip",
+        source_uri="https://www.eff.org/files/2020/01/28/alpr_2016-2017_update.zip",
+    )
+    ctx = RunContext(
+        source=dataclasses.replace(get(DATA_DRIVEN_SOURCE_ID), ingestion_permitted=True),
+        run=IngestRun("data_driven", "1.0.0", "deadbeef", "r1", vocab_version(), ()),
+        captures=captures,
+        claim_sink=InMemoryClaimSink(),
+        parameters={"targets": []},
+    )
+    parsed = conn.parse(ctx, capture)
+    rows = conn.normalize(ctx, conn.extract(ctx, parsed))
+    claims = _claims(rows)
+    assert claims
+    for c in claims:
+        assert c["valid_from"] == "2016-01-01"
+        assert c["valid_to"] == "2018-01-01"
+        assert c["valid_from_kind"] == "exact"
+        assert c["valid_to_kind"] == "exact"
+        assert c["valid_edtf"] == "2016/2017"
+        assert c["observed_at"]  # the upstream release date — historical
+
+
+def test_the_real_eff_zip_emits_publisher_provenance_not_an_operator() -> None:
+    """P35.26 / SIG-TRUST-003: `published_by` names the dataset publisher per
+    agency — the PUBLISHER role stays provenance; no operational-role claim
+    (operator/owner/access) is minted for the publisher."""
+    zip_bytes = (_FIX / "eff_release_2016_2017.zip").read_bytes()
+    conn = DataDrivenConnector()
+    captures = InMemoryCaptureStore()
+    capture = captures.put(
+        zip_bytes,
+        media_type="application/zip",
+        source_uri="https://www.eff.org/files/2020/01/28/alpr_2016-2017_update.zip",
+    )
+    ctx = RunContext(
+        source=dataclasses.replace(get(DATA_DRIVEN_SOURCE_ID), ingestion_permitted=True),
+        run=IngestRun("data_driven", "1.0.0", "deadbeef", "r1", vocab_version(), ()),
+        captures=captures,
+        claim_sink=InMemoryClaimSink(),
+        parameters={"targets": []},
+    )
+    parsed = conn.parse(ctx, capture)
+    rows = conn.normalize(ctx, conn.extract(ctx, parsed))
+    claims = _claims(rows)
+    pubs = [c for c in claims if c["predicate_id"] == "published_by"]
+    subjects = {c["subject_id"] for c in claims if c["predicate_id"] == "deployment_exists"}
+    assert {p["subject_id"] for p in pubs} == subjects
+    for p in pubs:
+        assert p["value"] == "EFF & MuckRock — Data Driven (2018)"
+        assert p["granularity"] == "agency_aggregate"
+    # The publisher role never leaks into an operational predicate.
+    assert not {"operator", "camera_operator", "operates"} & {c["predicate_id"] for c in claims}
 
 
 def test_shadow_over_fixture_has_zero_diffs() -> None:

@@ -231,8 +231,12 @@ def _seed_spine(cur) -> dict[str, str]:
             value_geom=f"SRID=4326;POINT(0 {i * 0.0000001})",
         )
 
-    # GQ-15: one undated edge, one epoch-start edge, one live duplicate
-    a, b, c, d = (_entity(cur) for _ in range(4))
+    # GQ-15: undated edges + one live duplicate. The epoch-start edge this seed
+    # used to plant can no longer be written — P35.26's
+    # `relationship_no_epoch_zero` CHECK rejects a 1970-01-01 bound at write
+    # (the probe's epoch detector remains as the guard for pre-existing hosted
+    # rows while the NOT VALID constraint awaits its named VALIDATE leg).
+    a, b = (_entity(cur) for _ in range(2))
     for _ in range(2):  # duplicate (a→b operates) — undated, counted twice
         cur.execute(
             "INSERT INTO relationship(from_entity,to_entity,edge_type,direction,"
@@ -240,12 +244,6 @@ def _seed_spine(cur) -> dict[str, str]:
             "tstzrange(NULL,NULL), %s)",
             (a, b, op_claim),
         )
-    cur.execute(
-        "INSERT INTO relationship(from_entity,to_entity,edge_type,direction,"
-        "valid_period,valid_from_kind,evidence_claim) VALUES(%s,%s,'operates','forward',"
-        "tstzrange('1970-01-01',NULL),'exact',%s)",
-        (c, d, op_claim),
-    )
 
     # GQ-13: one resolution over two disagreeing claims, uncontested, no dissent
     res_subj = _entity(cur)
@@ -327,7 +325,7 @@ def test_m_run_over_seeded_spine(conn) -> None:
     assert rows["GQ-07"]["measured"] == 1  # "Flock Safety" literal
     assert rows["GQ-11"]["measured"] == 1  # one violating layer pair
     assert rows["GQ-13"]["measured"] == 1  # one uncontested disagreement
-    assert rows["GQ-15"]["measured"] == 4  # 2 undated + 1 epoch + 1 duplicate
+    assert rows["GQ-15"]["measured"] == 3  # 2 undated + 1 duplicate; epoch is unwritable (P35.26)
     assert rows["GQ-18"]["measured"] == 1.0  # every claim is capture-bound
     assert rows["GQ-21"]["measured"] == 1.0  # the one deployment has an operator
     assert rows["GQ-24"]["measured"] == 1  # the seeded inferential auto-write

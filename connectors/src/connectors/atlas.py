@@ -48,6 +48,7 @@ from __future__ import annotations
 
 import csv
 import io
+import json
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -289,6 +290,37 @@ def _category_column(header: Iterable[str]) -> str | None:
 # --- CSV parsing + canary -----------------------------------------------------
 
 
+def _upstream_modified_at(ctx: RunContext, capture: CaptureRef, parsed: Any) -> str | None:
+    """The upstream change date (P35.26 / SIG-ONTO-030) — provenance, never a
+    validity guess.
+
+    Order of truth: the document's own ``editingInfo.lastEditDate`` (the ArcGIS
+    service's recorded last-edit stamp — epoch milliseconds upstream emits,
+    or an ISO string), else the response ``Last-Modified`` header the OCFL
+    capture sidecar records (``OcflCaptureStore.metadata`` — absent on the
+    in-memory store, which records ``None`` rather than a fetch timestamp).
+    """
+    if isinstance(parsed, Mapping):
+        info = parsed.get("editingInfo")
+        if isinstance(info, Mapping) and info.get("lastEditDate") is not None:
+            raw = info["lastEditDate"]
+            try:
+                # ArcGIS emits epoch *milliseconds*.
+                return datetime.fromtimestamp(int(raw) / 1000, tz=UTC).isoformat()
+            except (TypeError, ValueError, OverflowError, OSError):
+                return str(raw)
+    meta = getattr(ctx.captures, "metadata", None)
+    if callable(meta):
+        try:
+            headers = (meta(capture.digest) or {}).get("headers") or {}
+        except Exception:  # a store without the sidecar — never a parse fail
+            headers = {}
+        for name in ("Last-Modified", "last-modified", "LAST-MODIFIED"):
+            if headers.get(name):
+                return str(headers[name])
+    return None
+
+
 def parse_csv(data: bytes) -> dict[str, Any]:
     """Parse the Atlas adoption CSV into a header + list of row dicts.
 
@@ -435,8 +467,28 @@ class AtlasConnector(Connector):
 
     # -- interpretation (pure functions of the capture) --
     def parse(self, ctx: RunContext, capture: CaptureRef) -> Any:
-        """Structure the captured Atlas CSV (header + row dicts)."""
-        return parse_csv(ctx.captures.get(capture.digest))
+        """Structure the captured Atlas CSV (header + row dicts).
+
+        P35.26: the upstream change date rides the parsed payload as
+        ``upstream_modified_at`` — ArcGIS ``editingInfo.lastEditDate`` when the
+        captured document carries it, else the response's ``Last-Modified``
+        header recorded on the capture's metadata sidecar (the OCFL store
+        persists response headers — a store without the sidecar records
+        ``None``, never a fabricated date). Provenance only: it is an upstream
+        *edit* stamp, never a claim ``valid_from``.
+        """
+        data = ctx.captures.get(capture.digest)
+        parsed = parse_csv(data)
+        try:
+            doc = json.loads(data)  # an ArcGIS layer-info JSON target
+        except (ValueError, UnicodeDecodeError):
+            doc = None
+        if isinstance(doc, dict) and isinstance(doc.get("editingInfo"), Mapping):
+            parsed["editingInfo"] = doc["editingInfo"]
+        upstream = _upstream_modified_at(ctx, capture, parsed)
+        if upstream is not None:
+            parsed["upstream_modified_at"] = upstream
+        return parsed
 
     def extract(self, ctx: RunContext, parsed: Any) -> list[Mapping[str, Any]]:
         """Raw adoption records with locators, preserving raw values (P2).
@@ -480,6 +532,9 @@ class AtlasConnector(Connector):
                     "record_kind": "atlas_row",
                     "agency": agency,
                     "category": category,
+                    # P35.26 / SIG-ONTO-030: the upstream change date rides each
+                    # row as recorded provenance — never a claim `valid_from`.
+                    "upstream_modified_at": parsed.get("upstream_modified_at"),
                     "attribution_links": [
                         {"column": c, "value": str(row[c]).strip()}
                         for c in cols["attribution_columns"]
@@ -574,6 +629,9 @@ class AtlasConnector(Connector):
             "raw_context": raw.get("context", {}),
             "attribution_links": list(raw.get("attribution_links", [])),
         }
+        if raw.get("upstream_modified_at"):
+            # P35.26: the upstream change date — provenance on the claim row.
+            row["upstream_modified_at"] = raw["upstream_modified_at"]
         if raw.get("raw_evidence_component"):
             # Recorded upstream but unrecognised (loss) — keep it for provenance.
             row["raw_evidence_component"] = raw["raw_evidence_component"]

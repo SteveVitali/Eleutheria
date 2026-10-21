@@ -65,6 +65,31 @@ def build_parser() -> argparse.ArgumentParser:
     edges.add_argument("--subject", default=None, help="restrict to one subject entity id")
     edges.add_argument("--role", default=None, help="optional role to SET ROLE to")
 
+    role_edges = sub.add_parser(
+        "materialize-role-edges",
+        help="materialize organisation-role edges + explicit operator_unknown states "
+        "(P35.26 / R11-L3-CP7, SIG-TRUST-003/SIG-ONTO-028): dated edges, recorded "
+        "supersession, no epoch-zero placeholders — append-only, idempotent",
+    )
+    role_edges.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    role_edges.add_argument("--jurisdiction", default=None, help="jurisdiction token filter")
+    role_edges.add_argument("--subject", default=None, help="restrict to one subject entity id")
+    role_edges.add_argument(
+        "--slot", default=None, help="restrict to one role slot (e.g. operator, vendor)"
+    )
+    role_edges.add_argument(
+        "--after-subject",
+        default=None,
+        help="resume cursor — only subjects with entity_id > this uuid",
+    )
+    role_edges.add_argument("--limit", type=int, default=None, help="cap claims read (bounded run)")
+    role_edges.add_argument("--role", default=None, help="optional role to SET ROLE to")
+    role_edges.add_argument(
+        "--apply",
+        action="store_true",
+        help="write the edges (default is a dry-run — the queued hosted leg reviews first)",
+    )
+
     contradictions = sub.add_parser(
         "materialize-contradictions",
         help="run §29 reconciliation + the §28 resolver over the resolved spine and WRITE the "
@@ -131,6 +156,8 @@ def main(argv: list[str] | None = None) -> int:
         return _materialize(args)
     if args.command == "materialize-edges":
         return _materialize_edges(args)
+    if args.command == "materialize-role-edges":
+        return _materialize_role_edges(args)
     if args.command == "materialize-contradictions":
         return _materialize_contradictions(args)
     parser.print_help()
@@ -176,6 +203,29 @@ def _materialize_edges(args: argparse.Namespace) -> int:
         jurisdiction=args.jurisdiction,
         subject=args.subject,
         role=args.role,
+    )
+    print(json.dumps(summary.as_dict(), indent=2))
+    return 0
+
+
+def _materialize_role_edges(args: argparse.Namespace) -> int:
+    """Materialize role edges + explicit-unknown states into the spine (P35.26).
+
+    Default is a DRY RUN — the queued hosted leg reviews the computed
+    insert/close counts before ``--apply`` writes (the same review posture the
+    lineage-rematerialize runner took).
+    """
+    from .materialize import materialize_role_edges_from_dsn
+
+    summary = materialize_role_edges_from_dsn(
+        args.dsn,
+        jurisdiction=args.jurisdiction,
+        subject=args.subject,
+        slot=args.slot,
+        after_subject=args.after_subject,
+        limit=args.limit,
+        role=args.role,
+        dry_run=not args.apply,
     )
     print(json.dumps(summary.as_dict(), indent=2))
     return 0

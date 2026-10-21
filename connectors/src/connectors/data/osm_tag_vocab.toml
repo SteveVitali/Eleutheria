@@ -12,7 +12,16 @@
 # 2026.10.13: P35.14a / SIG-GEO-005 — [mobility] `mobile`/`vehicle`/`drone`
 # remapped onto registered Mobility members (redeployable / vehicle_mounted /
 # airborne); the unregistered `mobile` literal is gone.
-version = "2026.10.13"
+# 2026.10.18: P35.26 / SIG-TRUST-003 — `publisher_label` added: the connector
+# emits a `published_by` provenance claim per element (the dataset publisher,
+# never an operational role); element `timestamp` is stamped `observed_at` on
+# tag claims (the upstream change date, P35.26 honest-time).
+version = "2026.10.18"
+
+# P35.26 / SIG-TRUST-003: the dataset publisher, emitted as a `published_by`
+# provenance claim per element — recorded as PUBLISHER, never an operational
+# role (a publisher is not an operator).
+publisher_label = "OpenStreetMap contributors"
 
 # The selection predicate: an element is an in-scope surveillance asset iff it
 # carries this tag (§23.2, 99.7% ALPR coverage).

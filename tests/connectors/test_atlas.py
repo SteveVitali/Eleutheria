@@ -13,6 +13,7 @@ the P04.1 framework and its pure helpers are tested directly.
 from __future__ import annotations
 
 import dataclasses
+import json
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -136,6 +137,42 @@ def test_only_deployment_exists_is_written_at_family_granularity() -> None:
         assert c["value"] is True
         assert c["granularity"] == "family"
         assert c["technology_family"] and "-unspecified" not in c["technology_family"]
+
+
+# --- P35.26: the upstream change date rides as provenance ----------------------
+
+
+def _bare_ctx() -> RunContext:
+    return RunContext(
+        source=dataclasses.replace(get(_ATLAS_SOURCE_ID), ingestion_permitted=True),
+        run=IngestRun("atlas", "1.0.0", "deadbeef", "r1", vocab_version(), ()),
+        captures=InMemoryCaptureStore(),
+        claim_sink=InMemoryClaimSink(),
+        parameters={"targets": []},
+    )
+
+
+def test_parse_records_editinginfo_last_edit_date() -> None:
+    """SIG-ONTO-030: an ArcGIS layer-info document's `editingInfo.lastEditDate`
+    (epoch milliseconds) is captured as `upstream_modified_at` provenance."""
+    ctx = _bare_ctx()
+    doc = json.dumps({"editingInfo": {"lastEditDate": 1718924400000}}).encode()
+    capture = ctx.captures.put(doc, media_type="application/json", source_uri="https://x/layer/0")
+    parsed = AtlasConnector().parse(ctx, capture)
+    assert parsed["upstream_modified_at"].startswith("2024-06-2")  # epoch-ms → ISO
+
+
+def test_parse_records_no_upstream_date_when_the_capture_carries_none() -> None:
+    """No editingInfo + no capture-sidecar `Last-Modified` (the in-memory
+    store) → `upstream_modified_at` stays absent — never a fabricated date."""
+    ctx = _bare_ctx()
+    capture = ctx.captures.put(
+        _fixture_bytes("adoption_feed.csv"),
+        media_type="text/csv",
+        source_uri="https://x/feed.csv",
+    )
+    parsed = AtlasConnector().parse(ctx, capture)
+    assert "upstream_modified_at" not in parsed
 
 
 def test_category_maps_to_a_sig_family() -> None:

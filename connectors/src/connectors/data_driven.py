@@ -248,6 +248,15 @@ class ReleaseManifest:
     source_documents_block_automation: bool = True
     source_document_link_count: int = 0
     retention_window_columns: Mapping[str, Any] = None  # type: ignore[assignment]
+    #: P35.26 / SIG-ONTO-030/032: the release's covered valid-time window
+    #: (2016–2017 for the EFF ALPR release — the window the DATA covers, the
+    #: honest valid period of every claim the release grounds).
+    coverage_from: str | None = None
+    coverage_to: str | None = None
+    coverage_edtf: str | None = None
+    #: The release's publisher label — emitted as `published_by` provenance
+    #: (PUBLISHER role, never an operational role).
+    publisher_label: str | None = None
 
     def __post_init__(self) -> None:
         if not str(self.version).strip():
@@ -270,7 +279,7 @@ class ReleaseManifest:
 
     def provenance(self) -> dict[str, Any]:
         """The per-release provenance stamped onto every claim (P1–P3, SIG-INGEST-043b)."""
-        return {
+        out: dict[str, Any] = {
             "release_id": self.release_id,
             "release_version": self.version,
             "release_digest": self.digest,
@@ -281,6 +290,17 @@ class ReleaseManifest:
             "source_documents_block_automation": self.source_documents_block_automation,
             "source_document_link_count": self.source_document_link_count,
         }
+        # P35.26 / SIG-ONTO-030/032: the covered window rides every claim as
+        # its valid period (2016–2017 for the EFF release — evidenced by the
+        # release itself, never a fabricated bound).
+        if self.coverage_from and self.coverage_to:
+            out["valid_from"] = self.coverage_from
+            out["valid_to"] = self.coverage_to
+            out["valid_from_kind"] = "exact"
+            out["valid_to_kind"] = "exact"
+            if self.coverage_edtf:
+                out["valid_edtf"] = self.coverage_edtf
+        return out
 
 
 def parse_release(data: bytes) -> dict[str, Any]:
@@ -372,6 +392,12 @@ def _release_from_eff_zip(data: bytes, *, source_uri: str) -> dict[str, Any]:
                 vocab().get("source_documents_block_automation", True)
             ),
             "source_document_link_count": int(vocab().get("source_document_link_count", 0)),
+            # P35.26: the release's covered valid-time window + its publisher
+            # label — vocab data, never a code constant.
+            "coverage_from": cfg.get("coverage_from"),
+            "coverage_to": cfg.get("coverage_to"),
+            "coverage_edtf": cfg.get("coverage_edtf"),
+            "publisher_label": cfg.get("publisher_label"),
             "columns": upstream_columns,
             "agencies": agencies,
         }
@@ -391,6 +417,12 @@ def _manifest_from(release: Mapping[str, Any]) -> ReleaseManifest:
         ),
         source_document_link_count=int(release.get("source_document_link_count", 0)),
         retention_window_columns=dict(release.get("retention_window_columns", {})),
+        coverage_from=(str(release["coverage_from"]) if release.get("coverage_from") else None),
+        coverage_to=(str(release["coverage_to"]) if release.get("coverage_to") else None),
+        coverage_edtf=(str(release["coverage_edtf"]) if release.get("coverage_edtf") else None),
+        publisher_label=(
+            str(release["publisher_label"]) if release.get("publisher_label") else None
+        ),
     )
 
 
@@ -543,6 +575,10 @@ class DataDrivenConnector(Connector):
                     "raw": dict(row),
                     "provenance": manifest.provenance(),
                     "retention_window_columns": dict(manifest.retention_window_columns or {}),
+                    # P35.26 / SIG-TRUST-003: the dataset publisher — emitted
+                    # as a `published_by` provenance claim (PUBLISHER role,
+                    # never an operational role).
+                    "publisher_label": manifest.publisher_label,
                 }
             )
         return out
@@ -575,6 +611,21 @@ class DataDrivenConnector(Connector):
             **prov,
         }
         rows: list[dict[str, Any]] = []
+
+        # P35.26 / SIG-TRUST-003: the dataset publisher is recorded provenance —
+        # a `published_by` claim (PUBLISHER role — literal, never an operational
+        # entity-ref). The publisher is the EFF & MuckRock release, NOT the
+        # release's stated vendor: roles are asserted only as evidenced.
+        publisher = raw.get("publisher_label")
+        if publisher:
+            rows.append(
+                self._claim(
+                    base,
+                    "published_by",
+                    value=str(publisher),
+                    raw_value=str(publisher),
+                )
+            )
 
         # deployment_exists — a non-Flock vendor deployment (historical).
         if agg.vendor:

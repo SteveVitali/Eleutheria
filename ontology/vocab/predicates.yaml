@@ -5995,6 +5995,48 @@ predicates:
     subscription: D6
     recommendation: D6
   object_kind: literal
+- predicate_id: published_by
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    The publisher of the source dataset this subject's claims derive from —
+    PUBLISHER provenance, never an operational role. P35.26 / SIG-TRUST-003:
+    the publisher label is recorded as `published_by` (the generic sibling of
+    `camera_registry_publisher` for non-registry sources — e.g. "OpenStreetMap
+    contributors", "EFF & MuckRock — Data Driven (2018)"); it never evidences
+    camera operation, ownership, vendor or access status, and — a provenance
+    role — never mints an organisation entity-ref (ADR-112/ADR-122).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/published_by
+  volatility_class: GLACIAL
+  half_life: 10y
+  resolution_strategy: max_support
+  # P35.26 assessment: a published-artifact genre IS the publication itself
+  # (osm_node_set / community_map / camera_registry D2); the connector run's
+  # source-registry attribution records the publisher label (connector_run D3);
+  # an official statement can name it (D3); all other genres non-probative (D6).
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D2
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D2
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D2
+    contract: D6
+    official_statement: D3
+    template: D6
+    subscription: D6
+    recommendation: D6
+  object_kind: literal
 - predicate_id: count_scope
   vocab_version: 1.0.0
   value_datatype: string

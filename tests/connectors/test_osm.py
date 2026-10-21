@@ -265,6 +265,51 @@ def test_snapshot_asset_first_observed_is_never_the_creation_timestamp() -> None
         assert asset["first_observed"] is None
 
 
+# --- P35.26: honest observation time + publisher provenance -------------------
+
+
+def test_tag_claims_carry_the_element_timestamp_as_observed_at() -> None:
+    # SIG-ONTO-030: the upstream change date of this element version — never
+    # the fetch timestamp (a re-fetched unchanged element keeps its real date).
+    _, claims = _run_over("overpass_snapshot.json")
+    asset_type = _one(claims, osm_id=1001, predicate_id="asset_type")
+    assert asset_type["observed_at"] == "2024-12-15T10:00:00Z"
+
+
+def test_operator_absent_claim_is_dated_and_first_class() -> None:
+    # SIG-ONTO-028: node 1001 carries no operator/operator:wikidata tag — the
+    # absence is an evidenced, dated state, not a missing claim.
+    _, claims = _run_over("overpass_snapshot.json")
+    absent = _one(claims, osm_id=1001, predicate_id="operator_absent")
+    assert absent["value"] is True
+    assert absent["observed_at"] == "2024-12-15T10:00:00Z"
+
+
+def test_element_with_an_operator_tag_gets_no_absence_claim() -> None:
+    _, claims = _run_over("overpass_snapshot.json")
+    # way 2002 carries `operator` — the absence state is NOT asserted for it.
+    assert not [
+        c for c in claims if c.get("osm_id") == 2002 and c.get("predicate_id") == "operator_absent"
+    ]
+    op = _one(claims, osm_id=2002, predicate_id="operator_stated")
+    assert op["observed_at"] == "2025-01-02T12:00:00Z"
+
+
+def test_published_by_claim_records_the_dataset_publisher() -> None:
+    # SIG-TRUST-003: one `published_by` provenance claim per element —
+    # PUBLISHER role (literal, never an operational entity-ref), so a
+    # publishing-only source can never mint an operator edge.
+    _, claims = _run_over("overpass_snapshot.json")
+    expected = {
+        f"osm:{a['osm_element_type']}/{a['osm_element_id']}" for a in physical_asset_rows(claims)
+    }
+    pubs = [c for c in claims if c.get("predicate_id") == "published_by"]
+    assert {p["subject_id"] for p in pubs} == expected
+    for p in pubs:
+        assert p["value"] == "OpenStreetMap contributors"
+        assert p["observed_at"]  # dated by the element version, not the run
+
+
 # --- AC3: deletion via snapshot diffing; mapping event != street removal ------
 
 

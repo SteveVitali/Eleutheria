@@ -210,6 +210,9 @@ def test_materialize_keeps_its_own_read_scope(conn: object) -> None:
         "vocab_rationale",
         "vocab_confidence",
         "inference.derived_fact",
+        # P35.26: the role-edge table — materializer reads+inserts (INSERT is
+        # granted by the role_edges change); never public.
+        "entity_role",
     ):
         assert conn.execute(
             "SELECT has_table_privilege('sig_materialize', %s, 'SELECT')", (table,)

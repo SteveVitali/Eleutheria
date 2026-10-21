@@ -40,6 +40,9 @@ MATERIALIZED = (
     "review_item",
     # P31.2 (ADR-109): the WORM run-completion backfill appends completions as this role.
     "ingest_run_completion",
+    # P35.26 (ADR-214): the role-edge table — INSERT+SELECT only; sys_period
+    # closure goes through the SECURITY DEFINER close functions (EXECUTE).
+    "entity_role",
 )
 SPINE = ("claim", "claim_evidence", "evidence_artifact", "evidence_capture", "entity")
 

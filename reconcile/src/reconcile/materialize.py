@@ -51,6 +51,13 @@ from db.occurrences import (
     observation_instant,
     occurrence_lateral,
 )
+from db.organization_roles import (
+    ABSENCE_PREDICATES,
+    ENTITY_REF_ROLES,
+    ROLE_OF_PREDICATE,
+    UNKNOWN_STATE_FOR_ROLE,
+    role_slot,
+)
 
 from .contradiction import materialize as materialize_contradiction_entity
 from .model import Contradiction
@@ -84,6 +91,12 @@ __all__ = [
     "materialize_contradictions",
     "materialize_contradictions_from_dsn",
     "read_materialized_contradictions",
+    # P35.26 — role edges + explicit-unknown states (R11-L3-CP7)
+    "RoleMaterializeSummary",
+    "materialize_role_edges",
+    "materialize_role_edges_from_dsn",
+    "read_materialized_role_edges",
+    "operator_state",
 ]
 
 #: §10.7 support axis → the resolution table's ``confidence`` vocabulary. The support
@@ -817,6 +830,11 @@ class EdgeMaterializeSummary:
     inserted: int = 0
     skipped_existing: int = 0
     skipped_unmapped: int = 0
+    #: Live rows sys_period-closed because this pass's row for the same
+    #: (from,to,kind) carries a different digest — recorded succession (P35.26).
+    superseded: int = 0
+    #: Live rows closed because no claim set evidences their edge any more.
+    closed_stale: int = 0
     contradictions: int = 0
     asymmetry_tasks: int = 0
     by_access_kind: dict[str, int] = field(default_factory=dict)
@@ -833,6 +851,8 @@ class EdgeMaterializeSummary:
             "inserted": self.inserted,
             "skipped_existing": self.skipped_existing,
             "skipped_unmapped": self.skipped_unmapped,
+            "superseded": self.superseded,
+            "closed_stale": self.closed_stale,
             "contradictions": self.contradictions,
             "asymmetry_tasks": self.asymmetry_tasks,
             "by_access_kind": dict(sorted(self.by_access_kind.items())),
@@ -892,7 +912,9 @@ def read_sharing_observations(
                 from_org=str(subject_id),
                 to_org=str(object_entity),
                 access_kind=access_kind,
-                observed_at=_as_date(observed_at) if observed_at else date(1970, 1, 1),
+                # P35.26 / SIG-ONTO-030: an undated claim is UNDATED — never the
+                # 1970-01-01 placeholder the pre-fix path wrote.
+                observed_at=_as_date(observed_at) if observed_at else None,
                 from_single_snapshot=True,
                 evidence=None,
                 claim_id=str(claim_id),
@@ -918,6 +940,7 @@ def edge_input_digest(row: dict[str, Any]) -> str:
         "valid_from_kind": row["valid_from_kind"],
         "valid_to_kind": row["valid_to_kind"],
         "asserted_by": row["asserted_by"],
+        "observed_at": row["observed_at"],
         "evidence_claims": sorted(row["evidence_claims"]),
     }
     payload = json.dumps(stable, sort_keys=True, ensure_ascii=False, default=str)
@@ -954,7 +977,11 @@ def edge_row(reconciled: ReconciledEdge) -> dict[str, Any] | None:
         "edge_type": reconciled.access_kind,
         "access_kind": reconciled.access_kind,
         "direction": reconciled.direction,
-        "valid_from_kind": reconciled.valid_from_kind,
+        # P35.26 / SIG-ONTO-030: an edge with no evidenced date is explicitly
+        # `undated` (its valid_period is unbounded), never the reconciler's
+        # snapshot-start kind and never an epoch bound; a dated edge keeps the
+        # reconciler's start kind (SIG-RECON-036 — a snapshot never proves a start).
+        "valid_from_kind": reconciled.valid_from_kind if observed_at else "undated",
         # A single-snapshot edge proves the current state, not when it ends
         # (SIG-ONTO-044): ongoing, never inferred.
         "valid_to_kind": "ongoing",
@@ -969,15 +996,21 @@ def edge_row(reconciled: ReconciledEdge) -> dict[str, Any] | None:
 
 
 def _insert_relationship(conn: Any, row: dict[str, Any]) -> bool:
-    """INSERT one relationship edge, idempotent on ``input_digest``. True iff inserted."""
+    """INSERT one relationship edge, idempotent on ``input_digest``. True iff inserted.
+
+    ``observed_at=None`` writes an UNBOUNDED ``valid_period`` + NULL
+    ``observed_at`` — the explicit undated edge (P35.26 / SIG-ONTO-030), never
+    an epoch bound. ``supersedes`` (P35.26) links the recorded succession to
+    the live row this row replaces.
+    """
     observed = row["observed_at"]
     result = conn.execute(
         "INSERT INTO relationship"
         "(from_entity, to_entity, edge_type, access_kind, direction, "
         " valid_period, valid_from_kind, valid_to_kind, asserted_by, observed_at, "
-        " evidence_claim, input_digest) "
+        " evidence_claim, input_digest, supersedes) "
         "VALUES (%s, %s, %s, %s, %s, "
-        " tstzrange(%s::timestamptz, NULL, '[)'), %s, %s, %s, %s::timestamptz, %s, %s) "
+        " tstzrange(%s::timestamptz, NULL, '[)'), %s, %s, %s, %s::timestamptz, %s, %s, %s) "
         "ON CONFLICT (input_digest) WHERE input_digest IS NOT NULL "
         "DO NOTHING RETURNING relationship_id",
         (
@@ -993,9 +1026,58 @@ def _insert_relationship(conn: Any, row: dict[str, Any]) -> bool:
             observed,
             row["evidence_claim"],
             row["input_digest"],
+            row.get("supersedes"),
         ),
     ).fetchone()
     return result is not None
+
+
+def _live_relationship_edges(
+    conn: Any, *, subjects: list[str]
+) -> dict[tuple[str, str, str], list[dict[str, Any]]]:
+    """The live (``upper_inf(sys_period)``) materialized edges keyed by ``(from,to,type)``.
+
+    Scoped to the subject entities this pass actually read — a ``--subject`` /
+    ``--jurisdiction`` filtered run never touches another subject's edges.
+    """
+    if not subjects:
+        return {}
+    rows = conn.execute(
+        "SELECT relationship_id::text, from_entity::text, to_entity::text, edge_type, "
+        "       input_digest, lower(sys_period) "
+        "  FROM relationship "
+        " WHERE upper_inf(sys_period) AND input_digest IS NOT NULL "
+        "   AND from_entity = ANY(%s::uuid[])"
+        " ORDER BY from_entity, to_entity, edge_type, sys_period",
+        (subjects,),
+    ).fetchall()
+    out: dict[tuple[str, str, str], list[dict[str, Any]]] = {}
+    for rid, frm, to, kind, digest, sys_lower in rows:
+        out.setdefault((str(frm), str(to), str(kind)), []).append(
+            {
+                "relationship_id": str(rid),
+                "input_digest": digest,
+                "sys_lower": sys_lower,
+            }
+        )
+    return out
+
+
+def _close_relationship_ids(conn: Any, ids: list[str]) -> int:
+    """Close the sys_period of live relationship rows (the sanctioned mutation).
+
+    ``close_superseded_relationships`` is SECURITY DEFINER (the role_edges
+    sqitch change): the caller keeps an INSERT-only posture, and only rows
+    still live are closed — a re-run over an already-closed set is +0.
+    Returns the number of rows actually closed.
+    """
+    if not ids:
+        return 0
+    rows = conn.execute(
+        "SELECT relationship_id::text FROM close_superseded_relationships(%s::uuid[])",
+        (ids,),
+    ).fetchall()
+    return len(rows)
 
 
 def materialize_sharing_edges(
@@ -1024,17 +1106,49 @@ def materialize_sharing_edges(
     reconciliation = reconcile_sharing(observations)
 
     inserted = skipped_existing = skipped_unmapped = 0
+    superseded = closed_stale = 0
     by_kind: dict[str, int] = {}
+
+    # P35.26 / GQ-15: supersession is a RECORDED edge succession. Live rows for
+    # the subjects this pass read whose digest differs from the pass's row (or
+    # whose edge no claim set evidences any more) have their sys_period closed
+    # by ``close_superseded_relationships`` — the one sanctioned temporal
+    # mutation, never an in-place edit — and the new row's ``supersedes`` links
+    # the predecessor. Scope: only ``from_entity`` subjects this pass read.
+    read_subjects = sorted({o.from_org for o in observations if _is_uuid(o.from_org)})
+    live = _live_relationship_edges(conn, subjects=read_subjects)
+
+    desired_keys: set[tuple[str, str, str]] = set()
     for reconciled in reconciliation.edges:
         row = edge_row(reconciled)
         if row is None:
             skipped_unmapped += 1
             continue
+        key = (row["from_entity"], row["to_entity"], row["edge_type"])
+        desired_keys.add(key)
+        live_rows = live.get(key, [])
+        # The live row with a DIFFERENT digest is a superseded version of this
+        # edge — close it and link the succession.
+        predecessors = [r for r in live_rows if r["input_digest"] != row["input_digest"]]
+        if predecessors:
+            # Deterministic link: the most recently opened predecessor.
+            predecessors.sort(key=lambda r: r["sys_lower"], reverse=True)
+            row["supersedes"] = predecessors[0]["relationship_id"]
+            closed = _close_relationship_ids(conn, [r["relationship_id"] for r in predecessors])
+            superseded += closed
         if _insert_relationship(conn, row):
             inserted += 1
             by_kind[reconciled.access_kind] = by_kind.get(reconciled.access_kind, 0) + 1
         else:
             skipped_existing += 1
+
+    # A live edge for a read subject whose (from,to,type) this pass produced
+    # nothing for is stale — its evidence set is gone; close it.
+    stale_ids = [
+        r["relationship_id"] for key, rows in live.items() if key not in desired_keys for r in rows
+    ]
+    if stale_ids:
+        closed_stale = _close_relationship_ids(conn, stale_ids)
 
     return EdgeMaterializeSummary(
         considered_claims=considered,
@@ -1043,6 +1157,8 @@ def materialize_sharing_edges(
         inserted=inserted,
         skipped_existing=skipped_existing,
         skipped_unmapped=skipped_unmapped,
+        superseded=superseded,
+        closed_stale=closed_stale,
         contradictions=len(reconciliation.contradictions),
         asymmetry_tasks=len(reconciliation.tasks),
         by_access_kind=by_kind,
@@ -1057,6 +1173,10 @@ def read_materialized_edges(conn: Any, *, role: str | None = None) -> list[dict[
     shaping envelope. Read-only; deterministically ordered; every edge carries its
     access kind, direction, corroboration, temporal-bound kinds, and its backing
     ``evidence_claim`` (provenance). Never returns an unevidenced edge.
+
+    P35.26: only LIVE rows (``upper_inf(sys_period)``) — a superseded edge stays
+    in the table as recorded succession history but is not part of the current
+    network dataset (0 live duplicates per (from,to,kind), GQ-15).
     """
     if role:
         conn.execute(f"SET ROLE {role}")
@@ -1065,7 +1185,7 @@ def read_materialized_edges(conn: Any, *, role: str | None = None) -> list[dict[
         "       valid_from_kind, valid_to_kind, asserted_by::text, "
         "       lower(valid_period), evidence_claim::text, relationship_id::text "
         "  FROM relationship "
-        " WHERE input_digest IS NOT NULL "
+        " WHERE input_digest IS NOT NULL AND upper_inf(sys_period) "
         " ORDER BY from_entity, to_entity, access_kind, relationship_id"
     ).fetchall()
     edges: list[dict[str, Any]] = []
@@ -1474,3 +1594,745 @@ def materialize_contradictions_from_dsn(dsn: str, **kwargs: Any) -> Contradictio
         return materialize_contradictions(conn, **kwargs)
     finally:
         conn.close()
+
+
+# ============================================================================
+# P35.26 — Materialize organisation-role edges + explicit-unknown states.
+#
+# The ``entity_role`` table (the ``role_edges`` sqitch change) is the stored,
+# evidenced, DATED role-edge record: who operates / owns / vendors / funds /
+# accesses the subject, WHEN the evidence says the role held (``valid_period``
+# + closed bound-kind vocabulary), and which claim supersedes which (the
+# ``supersedes`` / ``superseded_by_claim`` succession chain — SIG-EPIS-029).
+#
+# The honest-posture rules this materializer encodes:
+#
+# * **Roles come only from evidence (SIG-TRUST-003).** A ``entity_role`` row is
+#   written only from a live tier-0 claim carrying ``object_entity`` under a
+#   predicate the canonical taxonomy maps to an operational role
+#   (``db.organization_roles.ROLE_OF_PREDICATE`` ∩ ``ENTITY_REF_ROLES``).
+#   Provenance-role claims (``camera_registry_publisher``, ``published_by``) are
+#   literal — they NEVER mint a role edge, so a publisher can never read as an
+#   operator.
+# * **Operator absence is a first-class state (SIG-ONTO-028).** An
+#   ``operator_absent`` claim materializes an ``operator_unknown`` row —
+#   ``actor_id`` NULL, evidenced by the absence claim — not a fabricated actor
+#   and not missing data. The unknown state competes for the operator SLOT: a
+#   later operator claim supersedes it, a later absence claim supersedes an
+#   operator edge (same succession machinery).
+# * **Dated edges, never the epoch placeholder (SIG-ONTO-030/032).** An edge's
+#   ``valid_period`` lower is the earliest evidenced bound across its claims
+#   (``valid_period`` lower, else ``observed_at``); a claim with no evidenced
+#   date produces an UNBOUNDED period + ``valid_from_kind='undated'`` — the
+#   explicit undated marker, never ``1970-01-01`` (the CHECK rejects an
+#   epoch-zero write regardless).
+# * **Supersession is a recorded edge succession (SIG-EPIS-029).** Two drivers:
+#   (a) WITHIN one claim lineage (``claim_lineage.source_id``, P35.25 — a claim
+#   with no lineage row is its own lineage): successive DISTINCT states of the
+#   same (subject, slot) are the source's successive statements — the earlier
+#   episode's edge closes at the later claim's date and
+#   ``superseded_by_claim`` names it; (b) explicit corrections: a claim's
+#   ``revises_claim``/``retraction_of`` closes the revised claim's state at the
+#   corrector's date. Cross-LINEAGE disagreement stays concurrent — both edges
+#   live, never silently reconciled (§3.1). Open (current) episodes of the same
+#   state merge their evidence across lineages into one corroborated edge;
+#   closed episodes stay per-lineage rows (distinct ended spans are distinct
+#   facts).
+# * **Append-only + idempotent (+0).** Only ``INSERT`` plus the
+#   SECURITY-DEFINER ``close_superseded_entity_roles`` sys_period close (the
+#   sanctioned temporal mutation — the caller keeps INSERT-only posture). A
+#   live row whose ``input_digest`` no longer matches closes as a superseded
+#   version; a re-run over unchanged claims is +0.
+# ============================================================================
+
+#: Predicates whose entity_ref claims materialize role edges — the operational
+#: roles only (provenance roles are literal provenance, never edges).
+_ROLE_EDGE_PREDICATES: tuple[str, ...] = tuple(
+    sorted(p for p, r in ROLE_OF_PREDICATE.items() if r in ENTITY_REF_ROLES)
+)
+_ABSENCE_PREDICATES: tuple[str, ...] = tuple(sorted(ABSENCE_PREDICATES))
+
+
+@dataclass(frozen=True)
+class RoleMaterializeSummary:
+    """The outcome of one role-edge materialization pass — every slot accounted for."""
+
+    considered_claims: int = 0
+    subjects: int = 0
+    slots: int = 0
+    inserted: int = 0
+    skipped_existing: int = 0
+    #: Live rows sys_period-closed as superseded versions (belief succession)
+    #: or as states whose evidence is gone.
+    superseded: int = 0
+    closed_stale: int = 0
+    #: ``operator_unknown`` marker rows written this pass.
+    unknown_states: int = 0
+    dry_run: bool = False
+    by_role: dict[str, int] = field(default_factory=dict)
+
+    @property
+    def written(self) -> int:
+        return self.inserted
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "considered_claims": self.considered_claims,
+            "subjects": self.subjects,
+            "slots": self.slots,
+            "inserted": self.inserted,
+            "skipped_existing": self.skipped_existing,
+            "superseded": self.superseded,
+            "closed_stale": self.closed_stale,
+            "unknown_states": self.unknown_states,
+            "dry_run": self.dry_run,
+            "by_role": dict(sorted(self.by_role.items())),
+        }
+
+
+@dataclass(frozen=True)
+class _RoleClaim:
+    """One live tier-0 claim bearing on a subject's role state."""
+
+    claim_id: str
+    subject_id: str
+    slot: str  # the competition slot ('operator', 'vendor', …)
+    state: tuple[str, str | None]  # ('actor', object_entity) | ('unknown', None)
+    role: str  # the entity_role.role value this claim evidences
+    order_dt: datetime  # ordering instant: valid_lower | observed_at | sys_lower
+    evid_dt: datetime | None  # evidenced bound date (valid_lower | observed_at), never sys
+    valid_upper: datetime | None  # evidenced upper bound, if the claim carries one
+    observed_at: datetime | None
+    asserted_by: str | None
+    revises_claim: str | None
+    retraction_of: str | None
+    lineage: str  # claim_lineage.source_id; a claim with no row is its own lineage
+
+
+@dataclass
+class _RoleEpisode:
+    """A contiguous run of one state inside one claim lineage."""
+
+    state: tuple[str, str | None]
+    role: str
+    lineage: str
+    claims: list[_RoleClaim]
+    close_dt: datetime | None = None
+    close_kind: str = "exact"
+    close_claim: str | None = None
+
+
+def _read_role_claims(
+    conn: Any,
+    *,
+    jurisdiction: str | None = None,
+    subject: str | None = None,
+    slot: str | None = None,
+    after_subject: str | None = None,
+    limit: int | None = None,
+) -> tuple[dict[tuple[str, str], list[_RoleClaim]], int]:
+    """Read the role-bearing claims, grouped by ``(subject_id, slot)``."""
+    where = [
+        "c.sensitivity_tier = 0",
+        "upper_inf(c.sys_period)",
+        "("
+        "  (c.object_entity IS NOT NULL AND c.predicate_id = ANY(%s::text[]))"
+        "  OR (c.value_bool IS TRUE AND c.predicate_id = ANY(%s::text[]))"
+        ")",
+    ]
+    params: list[Any] = [_role_predicates_for_slot(slot), list(_ABSENCE_PREDICATES)]
+    if subject:
+        where.append("c.subject_id = %s")
+        params.append(subject)
+    if jurisdiction:
+        where.append(
+            "c.subject_id IN (SELECT entity_id FROM entity_identifier WHERE value ILIKE %s)"
+        )
+        params.append(f"%{jurisdiction}%")
+    if after_subject:
+        # subject_id is text; uuid-shaped subjects order identically under a
+        # plain text comparison — never cast the column (a non-uuid subject
+        # would abort the whole scan).
+        where.append("c.subject_id > %s")
+        params.append(after_subject)
+
+    # claim_lineage is additive (P35.25); probe like read_claim_groups — a
+    # spine without it resolves every claim to its own lineage.
+    probe = conn.execute("SELECT to_regclass('public.claim_lineage')").fetchone()
+    lineage_join = (
+        "  LEFT JOIN claim_lineage cl ON cl.claim_id = c.claim_id " if probe and probe[0] else " "
+    )
+    lineage_col = "cl.source_id" if probe and probe[0] else "NULL"
+
+    rows = conn.execute(
+        "SELECT c.claim_id::text, c.subject_id::text, c.predicate_id, c.object_entity::text,"
+        "       lower(c.valid_period), upper(c.valid_period),"
+        "       c.observed_at, lower(c.sys_period),"
+        "       c.asserted_by::text, c.revises_claim::text, c.retraction_of::text,"
+        f"      {lineage_col}"
+        "  FROM claim c "
+        + lineage_join
+        + " WHERE "
+        + " AND ".join(where)
+        + " ORDER BY c.subject_id, c.claim_id"
+        + (" LIMIT %s" if limit else ""),
+        tuple(params + ([limit] if limit else [])),
+    ).fetchall()
+
+    groups: dict[tuple[str, str], list[_RoleClaim]] = {}
+    considered = 0
+    for r in rows:
+        considered += 1
+        (
+            claim_id,
+            subj,
+            pred,
+            obj,
+            v_lower,
+            v_upper,
+            observed,
+            sys_lower,
+            asserted,
+            revises,
+            retracts,
+            source_id,
+        ) = r
+        pred = str(pred)
+        if pred in ABSENCE_PREDICATES:
+            slot_name = str(ABSENCE_PREDICATES[pred])
+            state: tuple[str, str | None] = ("unknown", None)
+            role_name = UNKNOWN_STATE_FOR_ROLE[slot_name]
+        else:
+            role_enum = ROLE_OF_PREDICATE.get(pred)
+            if role_enum is None or role_enum not in ENTITY_REF_ROLES or obj is None:
+                continue  # provenance roles / unmapped predicates never edge
+            role_name = str(role_enum)
+            slot_name = role_slot(role_name)
+            state = ("actor", str(obj))
+        if slot is not None and slot_name != slot:
+            continue
+        evid = v_lower or observed
+        order = evid or sys_lower
+        if not _is_uuid(str(subj)):
+            # entity_role.entity_id is an entity FK — a non-uuid subject
+            # (e.g. an `osm:node/…` literal subject) can never bind a role
+            # edge; its claim stays evidence, the edge simply does not exist.
+            continue
+        groups.setdefault((str(subj), slot_name), []).append(
+            _RoleClaim(
+                claim_id=str(claim_id),
+                subject_id=str(subj),
+                slot=slot_name,
+                state=state,
+                role=role_name,
+                order_dt=order,
+                evid_dt=evid,
+                valid_upper=v_upper,
+                observed_at=observed,
+                asserted_by=None if asserted is None else str(asserted),
+                revises_claim=None if revises is None else str(revises),
+                retraction_of=None if retracts is None else str(retracts),
+                lineage=str(source_id) if source_id else f"claim:{claim_id}",
+            )
+        )
+    return groups, considered
+
+
+def _role_predicates_for_slot(slot: str | None) -> list[str]:
+    """The role predicates to read — all, or just those mapping to ``slot``."""
+    if slot is None:
+        return list(_ROLE_EDGE_PREDICATES)
+    return [p for p in _ROLE_EDGE_PREDICATES if role_slot(str(ROLE_OF_PREDICATE[p])) == slot]
+
+
+def _episodes(claims: list[_RoleClaim]) -> list[_RoleEpisode]:
+    """Succession episodes for one (subject, slot): within-lineage state runs,
+    closed by later same-lineage states or explicit revises/retraction claims.
+    """
+    by_lineage: dict[str, list[_RoleClaim]] = {}
+    for c in claims:
+        by_lineage.setdefault(c.lineage, []).append(c)
+
+    episodes: list[_RoleEpisode] = []
+    for lineage, lclaims in sorted(by_lineage.items()):
+        lclaims.sort(key=lambda c: (c.order_dt, c.claim_id))
+        lineage_eps: list[_RoleEpisode] = []
+        for c in lclaims:
+            if lineage_eps and lineage_eps[-1].state == c.state:
+                lineage_eps[-1].claims.append(c)
+            else:
+                lineage_eps.append(
+                    _RoleEpisode(state=c.state, role=c.role, lineage=lineage, claims=[c])
+                )
+        # Within-lineage succession: a later DISTINCT state closes the earlier
+        # episode at the later claim's date — the source's own statement moved
+        # on (recorded, never silent — superseded_by_claim names it).
+        for prior, nxt in zip(lineage_eps, lineage_eps[1:], strict=False):
+            first = nxt.claims[0]
+            prior.close_dt = first.evid_dt or first.order_dt
+            prior.close_kind = "exact" if first.evid_dt else "before"
+            prior.close_claim = first.claim_id
+        episodes.extend(lineage_eps)
+
+    # Explicit corrections: a claim's revises_claim/retraction_of closes the
+    # state its target evidenced — cross-lineage, at the corrector's date.
+    targets: dict[str, _RoleEpisode] = {}
+    for ep in episodes:
+        for c in ep.claims:
+            targets[c.claim_id] = ep
+    for c in claims:
+        for target in (c.revises_claim, c.retraction_of):
+            tgt_ep = targets.get(target) if target else None
+            if tgt_ep is None:
+                continue
+            close_dt = c.evid_dt or c.order_dt
+            if close_dt <= min(cc.order_dt for cc in tgt_ep.claims):
+                continue  # a "correction" that pre-dates the claim corrects nothing
+            if tgt_ep.close_dt is None or close_dt < tgt_ep.close_dt:
+                tgt_ep.close_dt = close_dt
+                tgt_ep.close_kind = "exact" if c.evid_dt else "before"
+                tgt_ep.close_claim = c.claim_id
+    return episodes
+
+
+def _role_edge_input_digest(row: dict[str, Any]) -> str:
+    """sha256 over a role edge's reproducible content — the +0 idempotency key."""
+    stable = {
+        "entity_id": row["entity_id"],
+        "actor_id": row["actor_id"],
+        "role": row["role"],
+        "valid_lower": row["valid_lower"],
+        "valid_upper": row["valid_upper"],
+        "valid_from_kind": row["valid_from_kind"],
+        "valid_to_kind": row["valid_to_kind"],
+        "observed_at": row["observed_at"],
+        "asserted_by": row["asserted_by"],
+        "superseded_by_claim": row["superseded_by_claim"],
+        "evidence_claims": sorted(row["evidence_claims"]),
+    }
+    payload = json.dumps(stable, sort_keys=True, ensure_ascii=False, default=str)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _episode_row(
+    subject: str,
+    slot: str,
+    state: tuple[str, str | None],
+    claims: list[_RoleClaim],
+    *,
+    close_dt: datetime | None,
+    close_kind: str,
+    close_claim: str | None,
+) -> dict[str, Any]:
+    """Map one episode (or one merged open-episode group) onto an entity_role row."""
+    role = slot if state[0] == "actor" else UNKNOWN_STATE_FOR_ROLE[slot]
+    actor = state[1] if state[0] == "actor" else None
+    evid_lowers = [c.evid_dt for c in claims if c.evid_dt is not None]
+    valid_lower = min(evid_lowers) if evid_lowers else None
+    bounded_uppers = [c.valid_upper for c in claims if c.valid_upper is not None]
+    evid_upper = max(bounded_uppers) if bounded_uppers else None
+
+    if close_dt is not None and (evid_upper is None or close_dt < evid_upper):
+        valid_upper, to_kind = close_dt, close_kind
+    elif evid_upper is not None:
+        valid_upper, to_kind = evid_upper, "exact"
+    else:
+        valid_upper, to_kind = None, "ongoing"
+
+    observed = max((c.observed_at for c in claims if c.observed_at), default=None)
+    asserted_by = min((c.asserted_by for c in claims if c.asserted_by), default=None)
+    eclaims = sorted(c.claim_id for c in claims)
+    row: dict[str, Any] = {
+        "entity_id": subject,
+        "actor_id": actor,
+        "role": role,
+        "valid_lower": valid_lower,
+        "valid_upper": valid_upper,
+        "valid_from_kind": "exact" if valid_lower else "undated",
+        "valid_to_kind": to_kind,
+        "observed_at": observed,
+        "asserted_by": asserted_by,
+        "evidence_claim": eclaims[0],
+        "evidence_claims": eclaims,
+        "superseded_by_claim": close_claim,
+    }
+    row["input_digest"] = _role_edge_input_digest(row)
+    return row
+
+
+def _desired_role_rows(subject: str, slot: str, claims: list[_RoleClaim]) -> list[dict[str, Any]]:
+    """The desired entity_role rows for one (subject, slot) — the materializer's
+    derived truth. Each row carries ``_chain_pred`` (the row object its state
+    succeeds, when the succession is a timeline move, not a re-version)."""
+    episodes = _episodes(claims)
+
+    # Open same-state episodes merge ACROSS lineages into one corroborated
+    # edge; closed episodes stay per-lineage (distinct ended spans).
+    open_groups: dict[tuple[str, str | None], list[_RoleEpisode]] = {}
+    closed_eps: list[_RoleEpisode] = []
+    for ep in episodes:
+        if ep.close_dt is None:
+            open_groups.setdefault(ep.state, []).append(ep)
+        else:
+            closed_eps.append(ep)
+
+    rows: list[dict[str, Any]] = []
+    row_of_episode: dict[int, dict[str, Any]] = {}
+
+    def _pred_of(ep: _RoleEpisode, lineage_eps: list[_RoleEpisode]) -> dict[str, Any] | None:
+        idx = lineage_eps.index(ep)
+        if idx == 0:
+            return None
+        return row_of_episode.get(id(lineage_eps[idx - 1]))
+
+    # Index episodes back to their lineage chains for predecessor wiring.
+    lineage_chains: dict[str, list[_RoleEpisode]] = {}
+    for ep in episodes:
+        lineage_chains.setdefault(ep.lineage, []).append(ep)
+
+    # Closed episodes first. Ordering: each lineage's episodes in chain order
+    # (a predecessor ALWAYS precedes its successor — a flat time sort could tie
+    # on equal order_dt and emit a successor before the row it supersedes);
+    # lineages themselves sorted by name keeps the whole pass deterministic.
+    del closed_eps
+    for lineage in sorted(lineage_chains):
+        for ep in lineage_chains[lineage]:
+            if ep.close_dt is None:
+                continue
+            row = _episode_row(
+                subject,
+                slot,
+                ep.state,
+                ep.claims,
+                close_dt=ep.close_dt,
+                close_kind=ep.close_kind,
+                close_claim=ep.close_claim,
+            )
+            pred = _pred_of(ep, lineage_chains[lineage])
+            if pred is not None:
+                row["_chain_pred"] = pred
+            row_of_episode[id(ep)] = row
+            rows.append(row)
+
+    # Merged open groups — the current corroborated state rows.
+    for state, eps in sorted(open_groups.items(), key=lambda kv: (kv[0][0], kv[0][1] or "")):
+        merged_claims = sorted((c for ep in eps for c in ep.claims), key=lambda c: c.claim_id)
+        row = _episode_row(
+            subject, slot, state, merged_claims, close_dt=None, close_kind="exact", close_claim=None
+        )
+        # The timeline predecessor: the member lineages' immediately-prior
+        # closed episodes; the one with the latest close wins (deterministic).
+        preds: list[tuple[Any, dict[str, Any]]] = []
+        for ep in eps:
+            chain = lineage_chains[ep.lineage]
+            idx = chain.index(ep)
+            if idx == 0:
+                continue
+            prev = chain[idx - 1]
+            if prev.close_dt is not None and id(prev) in row_of_episode:
+                preds.append((prev.close_dt, row_of_episode[id(prev)]))
+        if preds:
+            preds.sort(key=lambda t: (t[0], t[1]["input_digest"]))
+            row["_chain_pred"] = preds[-1][1]
+        rows.append(row)
+
+    return rows
+
+
+def _live_role_rows(
+    conn: Any, *, subjects: list[str]
+) -> dict[tuple[str, str], list[dict[str, Any]]]:
+    """Live entity_role rows for the read subjects, keyed by ``(entity_id, slot)``."""
+    if not subjects:
+        return {}
+    rows = conn.execute(
+        "SELECT entity_role_id::text, entity_id::text, actor_id::text, role,"
+        "       input_digest, superseded_by_claim::text, lower(sys_period)"
+        "  FROM entity_role"
+        " WHERE entity_id = ANY(%s::uuid[]) AND upper_inf(sys_period)"
+        " ORDER BY entity_id, role, sys_period",
+        (subjects,),
+    ).fetchall()
+    out: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    for rid, ent, actor, role, digest, close_claim, sys_lower in rows:
+        out.setdefault((str(ent), role_slot(role)), []).append(
+            {
+                "entity_role_id": str(rid),
+                "entity_id": str(ent),
+                "actor_id": None if actor is None else str(actor),
+                "role": str(role),
+                "input_digest": digest,
+                "superseded_by_claim": None if close_claim is None else str(close_claim),
+                "sys_lower": sys_lower,
+            }
+        )
+    return out
+
+
+def _insert_entity_role(conn: Any, row: dict[str, Any]) -> tuple[str | None, bool]:
+    """INSERT one entity_role row, idempotent on ``input_digest``.
+
+    Returns ``(entity_role_id, inserted)`` — ``inserted`` True only when this
+    call wrote the row. On a digest conflict the LIVE row's id is returned with
+    ``inserted=False`` so chain successors can still link; a digest that exists
+    only on a closed row returns ``(None, False)`` — history is not revived.
+    """
+    result = conn.execute(
+        "INSERT INTO entity_role"
+        "(entity_id, actor_id, role, valid_period, valid_from_kind, valid_to_kind,"
+        " observed_at, asserted_by, evidence_claim, superseded_by_claim, supersedes,"
+        " input_digest)"
+        " VALUES (%s, %s, %s, tstzrange(%s::timestamptz, %s::timestamptz, '[)'),"
+        " %s, %s, %s::timestamptz, %s, %s, %s, %s, %s)"
+        " ON CONFLICT (input_digest) WHERE input_digest IS NOT NULL"
+        " DO NOTHING RETURNING entity_role_id",
+        (
+            row["entity_id"],
+            row["actor_id"],
+            row["role"],
+            row["valid_lower"],
+            row["valid_upper"],
+            row["valid_from_kind"],
+            row["valid_to_kind"],
+            row["observed_at"],
+            row["asserted_by"],
+            row["evidence_claim"],
+            row["superseded_by_claim"],
+            row.get("supersedes"),
+            row["input_digest"],
+        ),
+    ).fetchone()
+    if result is not None:
+        return str(result[0]), True
+    existing = conn.execute(
+        "SELECT entity_role_id::text FROM entity_role"
+        " WHERE input_digest = %s AND upper_inf(sys_period)",
+        (row["input_digest"],),
+    ).fetchone()
+    return (None if existing is None else str(existing[0])), False
+
+
+def _close_entity_role_ids(conn: Any, ids: list[str]) -> int:
+    """Close the sys_period of live entity_role rows (the sanctioned mutation)."""
+    if not ids:
+        return 0
+    rows = conn.execute(
+        "SELECT entity_role_id::text FROM close_superseded_entity_roles(%s::uuid[])",
+        (ids,),
+    ).fetchall()
+    return len(rows)
+
+
+def materialize_role_edges(
+    conn: Any,
+    *,
+    jurisdiction: str | None = None,
+    subject: str | None = None,
+    slot: str | None = None,
+    after_subject: str | None = None,
+    limit: int | None = None,
+    role: str | None = None,
+    dry_run: bool = False,
+) -> RoleMaterializeSummary:
+    """Materialize organisation-role edges + explicit-unknown states (P35.26).
+
+    Reads role-bearing claims, builds the per-(subject, slot) succession
+    model, and writes append-only, idempotent ``entity_role`` rows —
+    ``dry_run=True`` computes the identical summary while writing nothing (the
+    queued hosted leg's review posture). A re-run over unchanged claims is +0.
+    """
+    if role:
+        conn.execute(f"SET ROLE {role}")
+
+    groups, considered = _read_role_claims(
+        conn,
+        jurisdiction=jurisdiction,
+        subject=subject,
+        slot=slot,
+        after_subject=after_subject,
+        limit=limit,
+    )
+    subjects = sorted({s for s, _s in groups})
+    live = _live_role_rows(conn, subjects=subjects)
+
+    inserted = skipped_existing = superseded = closed_stale = unknown_states = 0
+    by_role: dict[str, int] = {}
+
+    for (subj, slot_name), claims in sorted(groups.items()):
+        desired = _desired_role_rows(subj, slot_name, claims)
+        live_rows = live.get((subj, slot_name), [])
+        live_by_digest = {r["input_digest"]: r for r in live_rows if r["input_digest"]}
+
+        # Belief supersession: a live row matching a desired row's logical edge
+        # (same entity/actor/role/close-claim) with a different digest is its
+        # superseded version — close it and the new row links to it.
+        logical_of_live = {
+            (
+                r["entity_id"],
+                r["actor_id"],
+                r["role"],
+                r["superseded_by_claim"],
+            ): r
+            for r in live_rows
+        }
+        close_ids: list[str] = []
+        matched_live: set[str] = set()
+        for row in desired:
+            key = (
+                row["entity_id"],
+                row["actor_id"],
+                row["role"],
+                row["superseded_by_claim"],
+            )
+            live_match = logical_of_live.get(key)
+            if (
+                live_match is not None
+                and live_match["input_digest"] != row["input_digest"]
+                and live_match["entity_role_id"] not in matched_live
+            ):
+                matched_live.add(live_match["entity_role_id"])
+                close_ids.append(live_match["entity_role_id"])
+                row["supersedes"] = live_match["entity_role_id"]
+
+        desired_digests = {r["input_digest"] for r in desired}
+        for r in live_rows:
+            if r["input_digest"] in desired_digests or r["entity_role_id"] in matched_live:
+                continue
+            close_ids.append(r["entity_role_id"])  # stale — no evidence left
+
+        if not dry_run and close_ids:
+            n = _close_entity_role_ids(conn, close_ids)
+            superseded += len(matched_live)
+            closed_stale += n - len(matched_live)
+        elif dry_run:
+            superseded += len(matched_live)
+            closed_stale += len(close_ids) - len(matched_live)
+
+        # Wire timeline succession: a desired row's `_chain_pred` links to the
+        # row (live or just-inserted) its state succeeds.
+        id_by_row: dict[int, str] = {
+            id(r): live_by_digest[r["input_digest"]]["entity_role_id"]
+            for r in desired
+            if r["input_digest"] in live_by_digest
+        }
+        for row in desired:
+            pred = row.get("_chain_pred")
+            if pred is not None and "supersedes" not in row:
+                pred_id = id_by_row.get(id(pred))
+                if pred_id is not None:
+                    row["supersedes"] = pred_id
+            if dry_run:
+                if row["input_digest"] in live_by_digest:
+                    skipped_existing += 1
+                else:
+                    inserted += 1
+                continue
+            new_id, did_insert = _insert_entity_role(conn, row)
+            if new_id is None:
+                # A closed row already carries this exact content — history is
+                # not revived; the superseding row stands.
+                skipped_existing += 1
+                continue
+            id_by_row[id(row)] = new_id
+            if did_insert:
+                inserted += 1
+                by_role[row["role"]] = by_role.get(row["role"], 0) + 1
+                if row["actor_id"] is None:
+                    unknown_states += 1
+            else:
+                skipped_existing += 1
+
+    return RoleMaterializeSummary(
+        considered_claims=considered,
+        subjects=len(subjects),
+        slots=len(groups),
+        inserted=inserted,
+        skipped_existing=skipped_existing,
+        superseded=superseded,
+        closed_stale=closed_stale,
+        unknown_states=unknown_states,
+        dry_run=dry_run,
+        by_role=by_role,
+    )
+
+
+def materialize_role_edges_from_dsn(dsn: str, **kwargs: Any) -> RoleMaterializeSummary:
+    """Open an autocommit connection from ``dsn`` and materialize role edges (CLI)."""
+    import psycopg  # available via the sig-db dependency (driver stays in `db`)
+
+    conn = psycopg.connect(dsn, autocommit=True)
+    try:
+        return materialize_role_edges(conn, **kwargs)
+    finally:
+        conn.close()
+
+
+def read_materialized_role_edges(conn: Any, *, role: str | None = None) -> list[dict[str, Any]]:
+    """Read the live materialized ``entity_role`` rows (the current role-edge set).
+
+    Only ``upper_inf(sys_period)`` rows — a superseded version stays in the
+    table as recorded succession history (queryable through ``supersedes``)
+    but is not part of the current role graph.
+    """
+    if role:
+        conn.execute(f"SET ROLE {role}")
+    rows = conn.execute(
+        "SELECT entity_role_id::text, entity_id::text, actor_id::text, role,"
+        "       lower(valid_period), upper(valid_period), valid_from_kind, valid_to_kind,"
+        "       observed_at, asserted_by::text, evidence_claim::text,"
+        "       supersedes::text, superseded_by_claim::text"
+        "  FROM entity_role"
+        " WHERE input_digest IS NOT NULL AND upper_inf(sys_period)"
+        " ORDER BY entity_id, role, actor_id NULLS LAST, entity_role_id"
+    ).fetchall()
+    out: list[dict[str, Any]] = []
+    for r in rows:
+        out.append(
+            {
+                "entity_role_id": r[0],
+                "entity_id": r[1],
+                "actor_id": r[2],
+                "role": r[3],
+                "valid_from": r[4].isoformat() if isinstance(r[4], (datetime, date)) else None,
+                "valid_to": r[5].isoformat() if isinstance(r[5], (datetime, date)) else None,
+                "valid_from_kind": r[6],
+                "valid_to_kind": r[7],
+                "observed_at": r[8].isoformat() if isinstance(r[8], (datetime, date)) else None,
+                "asserted_by": r[9],
+                "evidence_claim": r[10],
+                "supersedes": r[11],
+                "superseded_by_claim": r[12],
+            }
+        )
+    return out
+
+
+def operator_state(conn: Any, entity_id: str, *, role: str | None = None) -> dict[str, Any]:
+    """A subject's explicit operator state (SIG-ONTO-028).
+
+    ``{"state": "operator", "actors": [...]}`` when live operator edges exist;
+    ``{"state": "operator_unknown", ...}`` when the explicit-unknown marker row
+    is live; ``{"state": "not_asserted"}`` when the slot carries neither — the
+    distinction between *evidenced-absent* and *never-asked* stays honest.
+    """
+    if role:
+        conn.execute(f"SET ROLE {role}")
+    rows = conn.execute(
+        "SELECT actor_id::text, role, evidence_claim::text FROM entity_role"
+        " WHERE entity_id = %s AND upper_inf(sys_period)"
+        "   AND role IN ('operator', 'operator_unknown')"
+        " ORDER BY role, actor_id NULLS LAST",
+        (entity_id,),
+    ).fetchall()
+    actors = sorted({str(r[0]) for r in rows if r[0] is not None and r[1] == "operator"})
+    unknown = [str(r[2]) for r in rows if r[1] == "operator_unknown"]
+    if actors:
+        return {"entity_id": str(entity_id), "state": "operator", "actors": actors}
+    if unknown:
+        return {
+            "entity_id": str(entity_id),
+            "state": "operator_unknown",
+            "actors": [],
+            "evidence_claim": unknown[0],
+        }
+    return {"entity_id": str(entity_id), "state": "not_asserted", "actors": []}

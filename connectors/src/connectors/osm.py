@@ -567,6 +567,11 @@ class OSMConnector(Connector):
                     "osm_id": int(clean["id"]),
                     "osm_version": int(clean["version"]),
                     "changeset": clean.get("changeset"),
+                    # P35.26 / SIG-ONTO-030: the upstream change date for this
+                    # version — the tag claims' honest `observed_at` (never the
+                    # fetch timestamp: an unchanged element re-fetched keeps its
+                    # real last-modified date).
+                    "element_timestamp": clean.get("timestamp"),
                     "raw_tags": dict(tags),
                     "geometry": geometry_descriptor(clean),
                 }
@@ -647,9 +652,30 @@ class OSMConnector(Connector):
                         "predicate_id": "operator_absent",
                         "value": True,
                         "raw_value": None,  # P2: the absence is the fact
+                        "observed_at": raw.get("element_timestamp"),
                     }
                 )
             )
+
+        # P35.26 / SIG-TRUST-003: the dataset publisher is recorded provenance —
+        # a `published_by` claim (PUBLISHER role — literal, never an operational
+        # entity-ref), so every OSM subject's publisher reads as PUBLISHER, and
+        # a publishing-only source can never mint an operator edge.
+        rows.append(
+            _stamp(
+                {
+                    "record_kind": "claim",
+                    "subject_id": ref.subject_id,
+                    "osm_type": ref.osm_type,
+                    "osm_id": ref.osm_id,
+                    "osm_version": int(raw["osm_version"]),
+                    "predicate_id": "published_by",
+                    "value": vocab()["publisher_label"],
+                    "raw_value": vocab()["publisher_label"],
+                    "observed_at": raw.get("element_timestamp"),
+                }
+            )
+        )
 
         # P35.66 (SIG-PUB-005/013): the residential-parcel screen runs on the
         # asset's device point (``point``/``center`` descriptors); every other
@@ -714,6 +740,9 @@ class OSMConnector(Connector):
             "predicate_id": predicate,
             "osm_key": key,
             "raw_value": raw_value,  # P2: the raw value is always preserved
+            # P35.26 / SIG-ONTO-030: the upstream change date of this element
+            # version — the honest observation time of the tag state.
+            "observed_at": raw.get("element_timestamp"),
         }
         if key not in vocab()["raw_value_only_keys"]:
             row["value_set"] = list(values)
@@ -741,6 +770,7 @@ class OSMConnector(Connector):
                 "predicate_id": "unmapped_surveillance_tag",
                 "osm_key": key,
                 "raw_value": value,
+                "observed_at": raw.get("element_timestamp"),
                 "research_task": unmapped_tag_task(ref.subject_id, key, value),
             }
         )

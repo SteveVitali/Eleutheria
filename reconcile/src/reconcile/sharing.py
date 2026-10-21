@@ -57,7 +57,10 @@ class SharingObservation:
     from_org: str
     to_org: str
     access_kind: str
-    observed_at: date
+    #: The date the attesting snapshot observed this edge — ``None`` when the
+    #: claim carries no evidenced date (P35.26 / SIG-ONTO-030): undated stays
+    #: undated, never a fabricated epoch bound.
+    observed_at: date | None
     from_single_snapshot: bool = True
     evidence: Evidence | None = None
     claim_id: str = ""
