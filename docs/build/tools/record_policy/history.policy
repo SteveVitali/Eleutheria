@@ -646,3 +646,15 @@ seed-commit 153ded67
 # as a later commit (no force-push). Scope: findings attributed to
 # 4bbdf19d only; no other commit borrows the exemption.
 seed-commit 4bbdf19d
+# P35.44 (row 323) — 6cba05fe compacts in place the PHASE LOG restart/
+# resume entry committed at LEDGER.md:1157 by ad1a90d4 (1,743 B →
+# 1,147 B): the appended line tipped the orient recipe to 49,322 B >
+# 48 KiB (docs-red on run 39631435376, BM-ORIENT-01 V11). The
+# sanctioned P35.40/153ded67 in-place pattern — every recorded field
+# kept; git history carries the original bytes; the full arc lives in
+# runs/P35.44.md "Orient-probe repair". The correction is disclosed by
+# the appended `P35.44 correction` entry naming ad1a90d4:1157.
+# Declaration lands as a later commit (no force-push). Scope:
+# findings attributed to 6cba05fe only; no other commit borrows the
+# exemption.
+seed-commit 6cba05fe
