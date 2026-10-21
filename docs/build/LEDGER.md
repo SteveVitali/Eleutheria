@@ -9,10 +9,10 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key ≤ 256 B; the generated `returnPass:` id list rides the B3 V2 bound (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus:   IN_PROGRESS                           # P35.42 landed (321); P35.41 live leg still QUEUED
-nextTicket:      P35.43                              # row 322
-lastCompleted:   P35.42                              # row 321
-blockedOn:       (nothing)                           # #340@2a5d276 CI 5/5 green
+projectStatus:   IN_PROGRESS                           # P35.43 landed (322); P35.41 live leg still QUEUED
+nextTicket:      P35.44                              # row 323
+lastCompleted:   P35.43                              # row 322
+blockedOn:       (nothing)                           # #341@a38f650 CI 5/5 green
 pauseRequested:  false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
@@ -22,13 +22,13 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.42-citation-block-and-release-id     # base r11/P35.41a-…
+chainTip:        r11/P35.43-watch-producer-v1     # base r11/P35.42-…
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # restored 20:55Z after the Opus repair interval (STACK-CARRY-1)
-updatedAt:       2026-10-21T08:39Z
+updatedAt:       2026-10-21T11:34Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1148,3 +1148,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-21 — P35.42 dispatch boundary-confirm — `ci: pass #339@6e2a629` 5/5 head-bound (run 39559616699: python 15m56s partitioned, web 8m48s reuse-hit; `logs/ci-P35.42-pre-dispatch.json`) · P35.41a post-closeout folded here per D5 — final record head `6e2a6292` green on attempt 1, tracemalloc repair + re-arm landed, reuse fail-closed on mid-session image roll · stack pass · dispatching P35.42 (321 — citation block + release id; no gate) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-21 — P35.42 ticket — `ci: pass #340@2a5d276` 5/5 head-bound (run 39568528783: python 17m10s partitioned, web 15m10s, composed 3m22s, docs 1m21s, security 32s; `logs/ci-P35.42-pr340.json` — stack pass) · row 321 — citation block + release id on every page (F-399 wired; verbatim J3 §8.2 sentence + interim wording; SIG-TRANSP-023 citation-half) · detail `runs/P35.42.md` · heads `150cc071`→`2a5d2763` · chainTip → r11/P35.42-… · next → P35.43 (322) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-21 — P35.43 dispatch boundary-confirm — `ci: pass #340@ba96c6b` 5/5 head-bound (run 39574828516: python 19m25s partitioned, web 15m03s run-mode; `logs/ci-P35.43-pre-dispatch.json`) · stack pass · P35.42 record head folded per D5 · dispatching P35.43 (322 — watch producer v1; no gate) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-21 — P35.43 ticket — `ci: pass #341@a38f650` 5/5 head-bound (run 39590187597: python 13m9s partitioned, web 13m38s, composed 3m8s, docs 1m27s, security 23s; `logs/ci-P35.43-pr341.json` — stack #340…#325 pass, no waived red) · row 322 — watch producer v1 (`exports/watch.py` derives the six K7 §5.2 kinds from publishable claim rows → `sig.watch-item/1` items inside `sig/watch/2` with the coverage block; §5.3 placement, unplaced honest, federal under `iso3166-1:US`; `upper_bound` never a deadline; evidence links gated by the shared J3 §5.3 lane map; `getWatch()` dual-shape bridge; F-481) · detail `runs/P35.43.md` · heads `d65f3d81` impl → `a38f6506` CHANGELOG-entry repair (impl head's changelog-gate; spine_export is a public-behaviour path) → closeout records this commit · `make check` 10,017/2/5 — the recorded environmental class, the one diff-caused future-date literal fixed in-flight · chainTip → r11/P35.43-… · next → P35.44 (323) · harness: devin-desktop/swe-2-high/subagent
