@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "1aedaecf170456d35e26f073642f24698d09ed9d",
+  "input_commit": "326bd2e036af9f418316bfeb738b29995a66abdd",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "c7bbae3987492f7c131c5d9f468ae687e54f938d9ee391145e1e94f8e0201e8c"
+      "sha256": "a366774624441f07e5f1ef86c2260c068352c1aea171d272df8d78ce31ca7e57"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -865,12 +865,16 @@
       "sha256": "25ae6a665cc454f4c42bdc0113e7eb0a32c2c18c013e359ef76a212149ff5f75"
     },
     {
+      "path": "docs/adr/ADR-219-partitioned-pytest-and-fixture-mode-lighthouse-reuse.md",
+      "sha256": "e85cc701ec951acad2e038e04032962c3ef88877e3c326a5bc5ebac4e1ded13f"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "c21240c23bd7b8e9383b52249fc229bee992295a27fa030d995241564d32f037"
+      "sha256": "7305e0beb7e67e16d07dd4ba70597aad20197fe3945017dc17d39e699790dd27"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "e088edac46dbdea859dd69d76ac9e03487238471ed4e843030bd5f0c57022e7b"
+      "sha256": "0a76bf68363327b65fa06eeebc9deba45019529a0fa1f74eb501a0b176899346"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -882,7 +886,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "111f0bf175a79b700c9d59b150e48ef5588484b1f1b6970cb022fd65e9b1d47a"
+      "sha256": "d9f145177f805faad57340bd0284133cef7f712942cd48097ebacb954f777839"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -2091,6 +2095,10 @@
     {
       "path": "docs/build/runs/P35.41.md",
       "sha256": "ff746ca702fcf9481c080989c1d4d92ae409dce9cbdb6595b950af00fcbf8ef5"
+    },
+    {
+      "path": "docs/build/runs/P35.41a.md",
+      "sha256": "6578ad0d932cd0874d5468cbb4bf2888af3612a13b69fab14cecb21003e5d012"
     },
     {
       "path": "docs/build/runs/P35.5.md",
