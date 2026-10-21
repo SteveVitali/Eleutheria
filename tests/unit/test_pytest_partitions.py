@@ -283,23 +283,21 @@ def test_check_rejects_bad_tables(tmp_path, partitions, dirs, needle) -> None:
     assert needle in proc.stderr, proc.stderr
 
 
-def test_makefile_test_par_exists_and_ci_is_serial_while_paused() -> None:
-    """The wiring half of D1 under the OM-18 pause: `make test-par` still
-    exists and dispatches the runner, while `ci-local` and the `python`
-    job's Test step sit on the serial `make test` pending the operator's
-    answer (runs/P35.41a.md). The step keeps its env block."""
+def test_makefile_reaches_test_par_and_ci_yml_uses_it() -> None:
+    """The wiring half of D1: `make test-par` exists, `ci-local` runs it, and
+    the `python` job's Test step is `make test-par` with its env block."""
     text = (REPO_ROOT / "Makefile").read_text()
     assert "\ntest-par:" in text
     assert "scripts/ci/pytest_partitions.py run" in text
     ci_local = text.split("ci-local:", 1)[1].split("\n\n", 1)[0]
-    assert "$(MAKE) test" in ci_local
-    assert "$(MAKE) test-par" not in ci_local
+    assert "$(MAKE) test-par" in ci_local
+    assert "$(MAKE) test\n" not in ci_local.replace("$(MAKE) test-par", "")
     import yaml
 
     job = yaml.safe_load((REPO_ROOT / ".github" / "workflows" / "ci.yml").read_text())["jobs"][
         "python"
     ]
-    step = next(s for s in job["steps"] if s.get("run") == "make test")
+    step = next(s for s in job["steps"] if s.get("run") == "make test-par")
     env = step.get("env") or {}
     assert env.get("SIG_REQUIRE_DB_TESTS") == "1"
     assert env.get("TESTCONTAINERS_RYUK_DISABLED") == "true"

@@ -22,6 +22,7 @@ through ``ingest_run_capture`` and ``PgClaimSink``, is
 
 from __future__ import annotations
 
+import gc
 import json
 import tracemalloc
 from collections.abc import Mapping, Sequence
@@ -451,9 +452,22 @@ def test_a_target_limit_bounds_the_slice_and_completes_partial(
 
 
 def test_memory_is_bounded_by_one_capture(permitted_source, ingest_run) -> None:  # type: ignore[no-untyped-def]
-    """A bounded live run keeps no claim and one artifact per stage (measured)."""
+    """A bounded live run keeps no claim and one artifact per stage (measured).
 
-    def peak(bounded: bool, pages: int) -> tuple[int, RunReport, ArtifactStore]:
+    P35.41a: the metric is the CURRENT traced bytes read at a pinned point —
+    after ``gc.collect()`` once ``run`` has returned — i.e. exactly what the
+    run retains, which is what "keeps no claim / one artifact per stage"
+    means. The previous form read ``get_traced_memory``'s PEAK, whose value
+    depends on transient allocator spikes that are timing- and
+    contention-sensitive: on the ubuntu-24.04 CI image the 400-page
+    unbounded peak repeatedly came back BELOW the 40-page one (a negative
+    "growth"), failing the ratio on otherwise-correct code in both serial
+    and partitioned runs (and on an untouched base head — environmental,
+    not a code regression). Retained bytes at a fixed point are monotone
+    in pages by construction, so the comparison is deterministic.
+    """
+
+    def retained(bounded: bool, pages: int) -> tuple[int, RunReport, ArtifactStore]:
         store = ArtifactStore(keep_history=not bounded)
         ctx = RunContext(
             source=permitted_source,
@@ -467,24 +481,33 @@ def test_memory_is_bounded_by_one_capture(permitted_source, ingest_run) -> None:
         )
         tracemalloc.start()
         report = run(PagedConnector(), ctx)
-        _, top = tracemalloc.get_traced_memory()
+        # Pin the point: force cyclic collection, then read what the run
+        # still retains — report entries, CaptureRefs, and (unbounded only)
+        # every claim and stage artifact.
+        gc.collect()
+        current, _peak = tracemalloc.get_traced_memory()
         tracemalloc.stop()
-        return top, report, store
+        return current, report, store
 
-    small_peak, _, _ = peak(True, 40)
-    big_peak, bounded, store = peak(True, 400)
-    unbounded_peak, full, _ = peak(False, 400)
+    # Warm up before measuring: the first traced run pays one-time costs
+    # (first-touch imports, interned keys, allocator structures) into its
+    # retained count, which would bias the 40-page baseline downward.
+    retained(True, 8)
+    small_kept, _, _ = retained(True, 40)
+    big_kept, bounded, store = retained(True, 400)
+    unbounded_kept, full, _ = retained(False, 400)
     assert bounded.claims == [] and bounded.claim_count == full.claim_count == 400 * 15
     assert len(store._by_key) == len(Stage)  # one artifact per stage, not one per capture
     # 10x the pages: with the capture store external (as the OCFL store on disk/GCS
     # is), the bounded run grows only by its per-page bookkeeping (a CaptureRef and
     # a report entry per page), while the unbounded one also retains every claim and
     # every stage artifact of every page.
-    unbounded_small, _, _ = peak(False, 40)
-    bounded_growth = (big_peak - small_peak) / 360
-    unbounded_growth = (unbounded_peak - unbounded_small) / 360
+    unbounded_small, _, _ = retained(False, 40)
+    bounded_growth = (big_kept - small_kept) / 360
+    unbounded_growth = (unbounded_kept - unbounded_small) / 360
     print(
-        f"per-page peak growth: bounded {bounded_growth:.0f} B, unbounded {unbounded_growth:.0f} B"
+        f"per-page retained growth: bounded {bounded_growth:.0f} B, "
+        f"unbounded {unbounded_growth:.0f} B"
     )
     assert bounded_growth < unbounded_growth / 5
 

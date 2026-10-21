@@ -259,11 +259,8 @@ jobs:
       # ubuntu-24.04 ships a running Docker daemon; SIG_REQUIRE_DB_TESTS turns a
       # missing daemon into a failure so the RLS/append-only suite can never
       # silently skip. Ryuk is disabled — the fixtures clean up explicitly.
-      # P35.41a (D1) pause: back on the serial gate while the OM-18
-      # stop-and-ask on the partitioned runner's one contention-flaky test
-      # stands (runs/P35.41a.md); the machinery + table stay committed.
       - name: Test
-        run: make test
+        run: make test-par
         env:
           SIG_REQUIRE_DB_TESTS: "1"
           TESTCONTAINERS_RYUK_DISABLED: "true"
