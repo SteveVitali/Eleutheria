@@ -63,6 +63,39 @@ def test_public_exposes_full_metadata_and_excerpt() -> None:
     assert rep["bytes_available"] is True
 
 
+# --- P35.31 (F-400): the upstream URI is a public-tier fact only ----------------
+
+
+def test_source_uri_publishes_only_for_the_public_tier() -> None:
+    """SIG-TRANSP-020: the upstream URL of a restricted or sealed capture is
+    not itself a public fact — the field is ABSENT from their representations,
+    not nulled."""
+    public = public_representation(_meta(StorageTier.PUBLIC))
+    assert public["source_uri"] == "urn:sig:source:portal:x"
+    for tier in (StorageTier.RESTRICTED, StorageTier.SEALED):
+        rep = public_representation(_meta(tier))
+        assert "source_uri" not in rep, tier
+        assert "urn:sig:source" not in repr(rep)
+
+
+def test_every_representation_names_its_tier_basis() -> None:
+    """A served tier labels how it was produced; a tightened row also names
+    the stored value it tightened — never a silent upgrade."""
+    rep = public_representation(_meta(StorageTier.RESTRICTED))
+    assert rep["tier"] == "restricted" and rep["tier_basis"] == "recorded"
+    assert "recorded_tier" not in rep
+    tightened = dataclasses.replace(
+        _meta(StorageTier.SEALED),
+        tier_basis="derived_at_read",
+        recorded_tier="public",
+    )
+    rep = public_representation(tightened)
+    assert rep["tier"] == "sealed"
+    assert rep["tier_basis"] == "derived_at_read"
+    assert rep["recorded_tier"] == "public"
+    assert set(rep) <= SEALED_PUBLIC_FIELDS  # the labels stay inside the allowlist
+
+
 def test_bytes_available_only_where_bytes_are_public() -> None:
     """P34.25: bytes availability is claimed only for a public-tier capture
     proven byte-bearing ('actual'); every other combination is False with a

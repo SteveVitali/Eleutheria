@@ -1211,3 +1211,107 @@ def test_internal_build_flag_restores_the_full_surface(tmp_path: Path) -> None:
     assert (dist / "curate" / "index.html").is_file()
     assert (dist / "releases" / "index.html").is_file()
     assert (dist / "research-dossier" / "index.html").is_file()
+
+
+# --- P35.31 / SIG-TRANSP-022: the publish secret gate (J4 S-1's block clause) ---
+
+#: A planted JWT-shaped secret. One hit anywhere in the publish set aborts the
+#: publish — no override flag exists, and the refusal names file + pattern
+#: CLASS, never the matched value.
+_JWT_SPECIMEN = (
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+    ".eyJzdWIiOiIxIn0.dBjftJeZ4CVPmB92K27uhbUJU1p1r_wW1gFWFOEjXk"
+)
+
+
+def test_secret_gate_scans_every_file_in_the_publish_set(tmp_path: Path) -> None:
+    dist = tmp_path / "dist"
+    dist.mkdir()
+    (dist / "index.html").write_text("<html>clean</html>", encoding="utf-8")
+    P.assert_publish_set_secret_free(dist)  # a clean tree passes
+    (dist / "leak.txt").write_text(f"token={_JWT_SPECIMEN}", encoding="utf-8")
+    with pytest.raises(P.PublishError, match="jwt"):
+        P.assert_publish_set_secret_free(dist)
+
+
+def test_secret_gate_refusal_names_file_and_class_never_the_value(tmp_path: Path) -> None:
+    tree = tmp_path / "tree"
+    tree.mkdir()
+    (tree / "data.json").write_text(f'{{"k": "{_JWT_SPECIMEN}"}}', encoding="utf-8")
+    with pytest.raises(P.PublishError) as exc:
+        P.assert_publish_set_secret_free(tree)
+    msg = str(exc.value)
+    assert "data.json" in msg and "jwt" in msg
+    assert _JWT_SPECIMEN not in msg  # the refusal never echoes the secret
+
+
+def test_publish_web_refuses_a_secret_in_dist_before_any_write(tmp_path: Path) -> None:
+    """SIG-TRANSP-022: a secret-shaped value anywhere in the publish set aborts
+    — before the release record, before any remote sync, in --apply AND dry-run."""
+    store = _FakeSiteStore()
+    dist = _public_dist(tmp_path)
+    (dist / "dossier" / "index.html").write_text(
+        f"<html><body>ok {_JWT_SPECIMEN}</body></html>", encoding="utf-8"
+    )
+    with pytest.raises(P.PublishError, match="secret-shaped"):
+        P.run_publish_web(
+            dist=dist,
+            apply=True,
+            bucket=store.bucket(),
+            allowlist_path=_ALLOWLIST_PATH,
+            git_commit="c0ffee",
+            now="2026-10-03T00:00:00Z",
+            absent_verify=_ok_absent_verify,
+        )
+    assert store.put_calls == [] and store.delete_calls == []
+    assert not (dist / P.RELEASE_RECORD).exists()  # refused before the record
+    # Dry-run refuses identically — a warning is never a pass.
+    with pytest.raises(P.PublishError, match="secret-shaped"):
+        P.run_publish_web(
+            dist=dist,
+            apply=False,
+            bucket=store.bucket(),
+            allowlist_path=_ALLOWLIST_PATH,
+            git_commit="c0ffee",
+            now="2026-10-03T00:00:00Z",
+        )
+
+
+def test_publish_web_refuses_a_secret_in_the_release_tree(tmp_path: Path) -> None:
+    store = _FakeSiteStore()
+    dist = _public_dist(tmp_path)
+    release = tmp_path / "release-tree"
+    (release / "r").mkdir(parents=True)
+    (release / "r" / "x.json").write_text(f'{{"leak": "{_JWT_SPECIMEN}"}}', encoding="utf-8")
+    with pytest.raises(P.PublishError, match="secret-shaped"):
+        P.run_publish_web(
+            dist=dist,
+            apply=True,
+            bucket=store.bucket(),
+            allowlist_path=_ALLOWLIST_PATH,
+            git_commit="c0ffee",
+            now="2026-10-03T00:00:00Z",
+            release_tree=release,
+            absent_verify=_ok_absent_verify,
+        )
+    assert store.put_calls == [] and not (dist / P.RELEASE_RECORD).exists()
+
+
+def test_publish_web_refuses_a_secret_in_the_export_tree(tmp_path: Path) -> None:
+    store = _FakeSiteStore()
+    dist = _public_dist(tmp_path)
+    export = tmp_path / "export-tree"
+    export.mkdir()
+    (export / "data.csv").write_text(f"id,note\n1,{_JWT_SPECIMEN}\n", encoding="utf-8")
+    with pytest.raises(P.PublishError, match="secret-shaped"):
+        P.run_publish_web(
+            dist=dist,
+            apply=True,
+            bucket=store.bucket(),
+            allowlist_path=_ALLOWLIST_PATH,
+            git_commit="c0ffee",
+            now="2026-10-03T00:00:00Z",
+            export_tree=export,
+            absent_verify=_ok_absent_verify,
+        )
+    assert store.put_calls == [] and not (dist / P.RELEASE_RECORD).exists()

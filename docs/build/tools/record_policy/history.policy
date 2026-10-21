@@ -536,3 +536,13 @@ seed-commit 66ac4ac7
 # (git history carries the original byte). Declaration lands as a later
 # commit (no force-push). Scope: findings attributed to cf120045 only.
 seed-commit cf120045
+# P35.31 (row 309) — e77c18d1 compacts the two just-appended PHASE LOG
+# entries in place (the correction + post-closeout record) so the orient
+# probe's last-3 window fits 48 KiB after the 084f8043 docs leg flagged
+# orient 49,162 > 49,152 — the sanctioned P36.9b/P35.25/P35.26
+# (0a55c334/8bb8d260/cf120045) in-place pattern; no record dropped (git
+# history carries the original bytes and the full arc is recorded in
+# runs/P35.31.md). Declaration lands as a later commit (no force-push).
+# Scope: findings attributed to e77c18d1 only; no other commit borrows
+# the exemption.
+seed-commit e77c18d1

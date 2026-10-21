@@ -612,3 +612,97 @@ def test_a_malformed_candidate_identifier_quarantines(clean_dsn: str) -> None:
     assert sink.report.inserted == 0 and sink.report.quarantined == 1
     with psycopg.connect(clean_dsn, autocommit=True) as conn:
         assert _one("SELECT reason FROM assertion_quarantine", conn) == "missing_required_field"
+
+
+# --- P35.31 / NEW-2 (F-400): the capture storage tier derives, never constant ---
+
+
+def test_lane_derivation_is_fail_closed_without_a_resolver() -> None:
+    """No Docker needed: an unresourced sink derives ``sealed`` — the pre-fix
+    'public' constant is gone; absent evidence never defaults public."""
+    from db.claim_sink import PgClaimSink
+
+    sink = PgClaimSink(object(), connector_name="t", connector_version="0")  # type: ignore[arg-type]
+    assert sink._lane_and_custody("src:any") == ("sealed", "REFERENCE")
+
+
+def test_lane_derivation_matrix_over_the_interim_basis() -> None:
+    """No Docker needed: the resolver fields drive the tier through the shared
+    ``policy.transparency`` vocabulary — never a hand-rolled map."""
+    from db.claim_sink import PgClaimSink
+
+    def sink_for(fields: dict[str, Any] | None) -> Any:
+        return PgClaimSink(  # type: ignore[arg-type]
+            object(),
+            connector_name="t",
+            connector_version="0",
+            lane_resolver=lambda _sid: fields,
+        )
+
+    # Unreviewed → unknown lane → sealed; the registry's custody posture is
+    # what the source stub records.
+    assert sink_for({"custody_posture": "MIRROR"})._lane_and_custody("s") == ("sealed", "MIRROR")
+    # LINK custody + reviewed open rights → link-only → restricted.
+    link = {
+        "custody_posture": "LINK",
+        "spdx": "CC0-1.0",
+        "redistributable": "yes",
+        "reviewed": True,
+    }
+    assert sink_for(link)._lane_and_custody("s") == ("restricted", "LINK")
+    # A recorded refusal seals even where the licence text looks open.
+    refused = dict(link) | {"refused": True}
+    assert sink_for(refused)._lane_and_custody("s") == ("sealed", "LINK")
+    # raw-ok reaches public ONLY when a Part VIII class is evidenced clear.
+    raw = dict(link) | {"custody_posture": "MIRROR"}
+    assert sink_for(raw)._lane_and_custody("s") == ("sealed", "MIRROR")
+    assert sink_for(dict(raw) | {"part_viii_class": "clear"})._lane_and_custody("s") == (
+        "public",
+        "MIRROR",
+    )
+    assert sink_for(dict(raw) | {"part_viii_class": "P8-1"})._lane_and_custody("s") == (
+        "sealed",
+        "MIRROR",
+    )
+    # An unrecognised custody never lands as-is — REFERENCE placeholder — and
+    # the lane cannot read a posture so raw-ok + unevidenced P8 seals.
+    odd = dict(link) | {"custody_posture": "BANANA"}
+    assert sink_for(odd)._lane_and_custody("s") == ("sealed", "REFERENCE")
+
+
+def test_actual_capture_records_the_derived_tier(clean_dsn: str) -> None:
+    """The written ``evidence_capture.storage_tier`` is the derived tier — a
+    link-only source records ``restricted``, an unevidenced one ``sealed``,
+    never the 'public' constant (NEW-2 first half)."""
+    cap = _capture(b"lane-csv", "https://example/lane.csv", _T1)
+    sink = _sink(
+        clean_dsn,
+        lane_resolver=lambda _sid: {
+            "custody_posture": "LINK",
+            "spdx": "CC0-1.0",
+            "redistributable": "yes",
+            "reviewed": True,
+        },
+    )
+    sink.assert_claims([_claim("cam:lane", "sig.p32_2.count", 1)], capture=cap)
+    assert sink.report.inserted == 1
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        tiers = {
+            r[0]
+            for r in conn.execute("SELECT DISTINCT storage_tier FROM evidence_capture").fetchall()
+        }
+        assert tiers == {"restricted"}  # the actual AND the synthetic capture rows
+
+
+def test_actual_capture_without_lane_evidence_records_sealed(clean_dsn: str) -> None:
+    """Fail closed end-to-end: no resolver → every capture row seals."""
+    cap = _capture(b"nolane", "https://example/nolane.csv", _T1)
+    sink = _sink(clean_dsn)
+    sink.assert_claims([_claim("cam:nolane", "sig.p32_2.count", 1)], capture=cap)
+    assert sink.report.inserted == 1
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        tiers = {
+            r[0]
+            for r in conn.execute("SELECT DISTINCT storage_tier FROM evidence_capture").fetchall()
+        }
+        assert tiers == {"sealed"}
