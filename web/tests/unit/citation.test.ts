@@ -5,10 +5,17 @@
 import { describe, expect, it } from "vitest";
 import {
   beliefPinnedPermalink,
+  citationBlock,
   citationText,
+  interimCitationSentence,
+  isImmutableReleasePath,
+  publicationShort,
   releasePermalink,
   releaseCitationText,
+  REPRODUCIBLE_PHRASE,
 } from "../../src/lib/citation";
+import type { ReleaseContext } from "../../src/lib/citation";
+import { joinBase, withBase } from "../../src/lib/paths";
 import {
   AS_OF,
   DEVICE_COUNT_BELIEF_CLAIMS,
@@ -94,5 +101,122 @@ describe("reproducible after a correction (SIG-TIME-008)", () => {
     expect(resolveAsOfBelief(corrected, pinnedBelief)).toBe(before);
     // But a reader who follows the *current* belief sees the correction.
     expect(resolveAsOfBelief(corrected, "2026-09-30")).toBe(40);
+  });
+});
+
+// P35.42 (SIG-TRANSP-023, J3 §8.2; F-07/F-099/F-101/F-390/F-399; DR-C3-14):
+// the citation block's render model — BaseLayout passes the release context
+// on every page, the verbatim cite sentence carries the release id beside the
+// as-of pair, and the reproducibility phrase is a RENDER RULE over immutable
+// /s/<pub>/ or /r/<pub>/ URLs only.
+describe("the citation block model (P35.42, SIG-TRANSP-023, J3 §8.2)", () => {
+  const PUB = "p-" + "cd".repeat(32);
+  const RELEASE: ReleaseContext = {
+    publicationId: PUB,
+    label: "sig-2026-10-15.1",
+    recordPath: "/dossier/al/",
+  };
+  const block = (release: ReleaseContext | null, path = INPUT.path) =>
+    citationBlock({ ...INPUT, path, release });
+
+  it("a page lacking the release context fails its render (F-399)", () => {
+    // `release` is required — omitting it is the defect this row closes.
+    expect(() =>
+      citationBlock({ ...INPUT, release: undefined } as never),
+    ).toThrow(/release context is required/);
+  });
+
+  it("an explicit null is the honest development state — no release is fabricated", () => {
+    const b = block(null);
+    expect(b.mode).toBe("unreleased");
+    expect(b.citeSentence).toBeNull();
+    expect(b.citeUrl).toBeNull();
+    expect(b.releaseId).toBeNull();
+    expect(b.reproducible).toBe(false);
+    expect(b.interimSentence).toBeNull();
+  });
+
+  it("interim: a mutable recordPath yields the verbatim cite sentence + the verbatim J3 interim sentence", () => {
+    const b = block(RELEASE);
+    expect(b.mode).toBe("interim");
+    expect(b.citeSentence).toBe(
+      `Cite: ${INPUT.title}, SIG release p-cdcdcdcd… ` +
+        `(data as of ${AS_OF.as_of_world}, belief ${AS_OF.as_of_belief}, ` +
+        `ruleset ${RULESET_VERSION})`,
+    );
+    expect(b.interimSentence).toBe(
+      "This page is the latest view of release sig-2026-10-15.1; " +
+        "an immutable citable copy is not yet published.",
+    );
+    expect(b.citeUrl).toBeNull();
+    expect(b.reproducible).toBe(false);
+    // DR-C3-14: the release id sits beside the as-of pair.
+    expect(b.releaseId).toBe("sig-2026-10-15.1");
+  });
+
+  it("immutable: a /r/<pub>/ recordPath yields the cite sentence with the snapshot URL + the phrase", () => {
+    const recordPath = `/r/${PUB}/c/sig_graph/jurisdiction/al/`;
+    const b = block({ ...RELEASE, recordPath });
+    expect(b.mode).toBe("immutable");
+    expect(b.citeUrl).toBe(`https://surveillancegraph.org${recordPath}`);
+    expect(b.citeSentence).toBe(
+      `Cite: ${INPUT.title}, SIG release p-cdcdcdcd… ` +
+        `(data as of ${AS_OF.as_of_world}, belief ${AS_OF.as_of_belief}, ` +
+        `ruleset ${RULESET_VERSION}), https://surveillancegraph.org${recordPath}`,
+    );
+    expect(b.reproducible).toBe(true);
+    expect(b.interimSentence).toBeNull();
+  });
+
+  it("immutable: a /s/<pub>/ snapshot path flips the same wording", () => {
+    const b = block({ ...RELEASE, recordPath: `/s/${PUB}/dossier/al/` });
+    expect(b.mode).toBe("immutable");
+    expect(b.reproducible).toBe(true);
+  });
+
+  it("the reproducibility phrase never appears over a mutable URL — the render rule, not a flag", () => {
+    for (const recordPath of [
+      "/dossier/al/",
+      "/",
+      "/methodology/",
+      `/r/not-a-publication/c/x/`,
+      `/r/${PUB.slice(0, 20)}/c/x/`, // half-formed namespace
+      `/s/${PUB.slice(0, 20)}/dossier/al/`,
+      `r/${PUB}/c/sig_graph/`, // missing leading slash — not namespaced
+      `/releases/${PUB}/`,
+      `/entity/agency/okcpd/?as_of_world=x`,
+    ]) {
+      const b = block({ ...RELEASE, recordPath });
+      expect(b.mode).toBe("interim");
+      expect(b.reproducible).toBe(false);
+      expect(b.citeUrl).toBeNull();
+      expect(b.citeSentence ?? "").not.toContain(REPRODUCIBLE_PHRASE);
+      expect(b.interimSentence).not.toBeNull();
+    }
+  });
+
+  it("the withBase() chain: every default recordPath is base-joined — a /s/<pub>/ base makes the page's own path immutable", () => {
+    // BaseLayout's default is `withBase(path)`: under the root base the page's
+    // path is mutable (interim); under a /s/<pub>/ snapshot base the SAME call
+    // yields an immutable path — the wording flips with zero template edits
+    // (UXR-25, P36.66a's configured-base seam).
+    expect(isImmutableReleasePath(joinBase("/", "/dossier/al/"))).toBe(false);
+    expect(isImmutableReleasePath(joinBase(`/s/${PUB}/`, "/dossier/al/"))).toBe(true);
+    expect(withBase("/dossier/al/")).toBe("/dossier/al/");
+    // An explicit released-record path (a dossier's /r/<pub>/ record) is
+    // immutable under either base.
+    const recordPath = joinBase("/", `r/${PUB}/c/sig_graph/jurisdiction/al/`);
+    expect(isImmutableReleasePath(recordPath)).toBe(true);
+  });
+
+  it("the interim sentence is verbatim J3 §8.2 wording — never improvised", () => {
+    expect(interimCitationSentence("sig-2026-10-15.1")).toBe(
+      "This page is the latest view of release sig-2026-10-15.1; " +
+        "an immutable citable copy is not yet published.",
+    );
+  });
+
+  it("publicationShort matches the release stamp's slice (one abbreviation convention)", () => {
+    expect(publicationShort(PUB)).toBe("p-cdcdcdcd…");
   });
 });

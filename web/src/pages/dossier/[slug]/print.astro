@@ -16,8 +16,10 @@ import IncompletenessBanner from "../../../components/IncompletenessBanner.astro
 import WhatWeDontKnow from "../../../components/WhatWeDontKnow.astro";
 import DossierSection from "../../../components/DossierSection.astro";
 import ActionBlocks from "../../../components/ActionBlocks.astro";
-import { SECTION_TITLES, dossierPath, dossierPermalink, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG } from "../../../lib/dossier";
+import { SECTION_TITLES, dossierPath, dossierPermalink, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG, DOSSIER_LICENCE_ID } from "../../../lib/dossier";
 import type { Section } from "../../../lib/dossier";
+import { citationBlock, REPRODUCIBLE_PHRASE } from "../../../lib/citation";
+import { withBase } from "../../../lib/paths";
 import { getDossierArtifactRef, getDossiers, getJurisdictionCompartments } from "../../../lib/data";
 import { getReleaseStamp } from "../../../lib/release-stamp";
 import { displayJurisdiction, dossierDisplayTitle } from "../../../lib/jurisdictions";
@@ -64,6 +66,26 @@ const recordList =
   stamp && compartment
     ? `r/${stamp.publicationId}/c/${compartment}/jurisdiction/${dossier.slug}/`
     : null;
+
+// P35.42 (SIG-TRANSP-023, J3 §8.2, F-101): the print document's citation line
+// renders the SAME contract as the on-page block — the cite sentence, the
+// release id, the conditional reproducibility/interim wording and the licence
+// — not a second hand-written block. The dossier's released record path is the
+// immutable form; absent one the interim sentence prints.
+const printCite = citationBlock({
+  path: dossierPath(dossier.slug),
+  title: pageTitle,
+  asOf: dossier.asOf,
+  rulesetVersion: dossier.rulesetVersion,
+  ...(origin ? { origin } : {}),
+  release: stamp
+    ? {
+        publicationId: stamp.publicationId,
+        label: stamp.label,
+        recordPath: withBase(recordList ?? dossierPath(dossier.slug)),
+      }
+    : null,
+});
 const FIGURES = defineFigures(
   `dossier/${dossier.slug}/print`,
   dossierFigureSpecs(dossier, "print", {
@@ -161,6 +183,17 @@ const specMap = figureSpecMap(FIGURES);
               <code>{stamp.publicationShort}</code> ·{" "}
               <a href={stamp.describedby}>release.json</a>
             </span>
+          )}
+          {/* P35.42 (SIG-TRANSP-023, F-101): the cite sentence, the
+              conditional reproducibility/interim wording and the licence the
+              print page lacked — rendered from the shared citationBlock
+              contract, so every printed page is self-citing. */}
+          {printCite.citeSentence && (
+            <p class="sig-print-footer__cite" data-testid="print-cite">
+              {printCite.citeSentence}.
+              {printCite.reproducible && <> — {REPRODUCIBLE_PHRASE}.</>}{" "}
+              {printCite.interimSentence} Licence: {DOSSIER_LICENCE_ID}.
+            </p>
           )}
         </footer>
       </div>

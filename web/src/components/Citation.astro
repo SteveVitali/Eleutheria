@@ -3,12 +3,28 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// The citation affordance every page carries (SIG-UI-035, SIG-TIME-008). The link
-// records BOTH as-of axes and the ruleset version in its query string — it is a
-// link, not an immutable pin (P34.11 / QW-5: no "permalink"/"reproducible" claim
-// before true /s/ release pins exist). Rendered as plain text + a copyable block —
-// no JavaScript.
-import { beliefPinnedPermalink, citationText, releasePermalink, releaseCitationText } from "../lib/citation";
+// The citation affordance every page carries (SIG-UI-035, SIG-TIME-008;
+// P35.42 — SIG-TRANSP-023's citation-block half, the J3 §8.2 contract).
+//
+// `BaseLayout` passes the release context on EVERY page (the F-399 fix): the
+// block shows the verbatim J3 §8.2 cite sentence — "Cite: <title>, SIG release
+// <pub-short> (data as of <as_of_world>, belief <as_of_belief>, ruleset <r>),
+// <snapshot URL>" — with the release id beside the as-of pair (DR-C3-14). The
+// phrase "reproducible after SIG corrects itself" appears ONLY over an
+// immutable `/s/<pub>/` or `/r/<pub>/` URL (the render rule — `citationBlock`
+// derives it from the recordPath, never a template flag); until snapshots
+// exist (TX-13b / P36.66a+b) the block says — verbatim the J3 interim wording —
+// "This page is the latest view of release <data release id>; an immutable
+// citable copy is not yet published." Rendered as plain text — no JavaScript.
+import {
+  beliefPinnedPermalink,
+  citationBlock,
+  citationText,
+  publicationShort,
+  releaseCitationText,
+  REPRODUCIBLE_PHRASE,
+} from "../lib/citation";
+import type { ReleaseContext } from "../lib/citation";
 import { AS_OF, RULESET_VERSION } from "../lib/fixtures";
 import type { AsOfEcho } from "../lib/fixtures";
 
@@ -17,9 +33,14 @@ interface Props {
   title: string;
   asOf?: AsOfEcho;
   rulesetVersion?: string;
-  /** P32.13 (SIG-FIND-001/002): when the page backs a released record, the
-   * citation-grade form is the immutable release URL. */
-  release?: { publicationId: string; recordPath: string };
+  /**
+   * P35.42 (SIG-TRANSP-023, F-399): the build's release context — REQUIRED on
+   * every page that renders the block (a template omitting it fails
+   * `astro check`; `citationBlock` throws on `undefined`). `null` only when
+   * the build binds no release — the honest development state, never a
+   * fabricated one.
+   */
+  release: ReleaseContext | null;
 }
 
 const { path, title, release } = Astro.props;
@@ -30,33 +51,64 @@ const rulesetVersion = Astro.props.rulesetVersion ?? RULESET_VERSION;
 const input = { path, title, asOf, rulesetVersion, ...(Astro.site ? { origin: Astro.site.origin } : {}) };
 const permalink = beliefPinnedPermalink(input);
 const cite = citationText(input);
-const releaseInput = release
-  ? { publicationId: release.publicationId, recordPath: release.recordPath, title, asOf, rulesetVersion, ...(Astro.site ? { origin: Astro.site.origin } : {}) }
-  : null;
-const releaseLink = releaseInput ? releasePermalink(releaseInput) : null;
-const releaseCite = releaseInput ? releaseCitationText(releaseInput) : null;
+const block = citationBlock({ ...input, release });
+// The reporting-register citation (SIG-UI-043) names the release form when the
+// cited URL is immutable; otherwise the factual "Retrieved from" line over the
+// page's own link — a retrieval statement, never a pinning promise.
+const releaseCite =
+  block.mode === "immutable" && release
+    ? releaseCitationText({
+        publicationId: release.publicationId,
+        recordPath: release.recordPath,
+        title,
+        asOf,
+        rulesetVersion,
+        ...(Astro.site ? { origin: Astro.site.origin } : {}),
+      })
+    : null;
 ---
 
 <section class="sig-cite" data-testid="citation" aria-labelledby="cite-heading">
   <h2 id="cite-heading">Cite this page</h2>
-  {releaseLink && releaseCite ? (
-    <p>
-      Immutable release citation (the released bytes never change):{" "}
-      <a
-        class="sig-cite__permalink"
-        data-testid="release-permalink"
-        rel="bookmark"
-        href={releaseLink}
-        >{releaseLink}</a
-      >
-    </p>
-    <p class="sig-cite__text" data-testid="release-citation-text">{releaseCite}</p>
-    <p class="sig-cite__legacy">
-      Historical-selector URL (legacy — resolved through the release
-      compatibility index, never an immutable citation):{" "}
-      <a data-testid="permalink" href={permalink}>{permalink}</a>
-    </p>
-  ) : (
+  {block.mode === "immutable" && (
+    <>
+      <p class="sig-cite__sentence" data-testid="cite-sentence" data-immutable="true">
+        Cite: {title}, SIG release{" "}
+        <code>{publicationShort(release!.publicationId)}</code> (data as of{" "}
+        {asOf.as_of_world}, belief {asOf.as_of_belief}, ruleset {rulesetVersion}),{" "}
+        <a
+          class="sig-cite__permalink"
+          data-testid="citation-immutable"
+          rel="bookmark"
+          href={block.citeUrl}
+          >{block.citeUrl}</a
+        >{" "}
+        — {REPRODUCIBLE_PHRASE}.
+      </p>
+      <p class="sig-cite__legacy">
+        Historical-selector URL (legacy — resolved through the release
+        compatibility index, never an immutable citation):{" "}
+        <a data-testid="permalink" href={permalink}>{permalink}</a>
+      </p>
+    </>
+  )}
+  {block.mode === "interim" && (
+    <>
+      <p class="sig-cite__sentence" data-testid="cite-sentence">{block.citeSentence}.</p>
+      <p class="sig-cite__interim" data-testid="citation-interim">{block.interimSentence}</p>
+      <p data-copy="CC-01">
+        Link (records the as-of pair and ruleset of this build):{" "}
+        <a
+          class="sig-cite__permalink"
+          data-testid="permalink"
+          rel="bookmark"
+          href={permalink}
+          >{permalink}</a
+        >
+      </p>
+    </>
+  )}
+  {block.mode === "unreleased" && (
     <p data-copy="CC-01">
       Link (records the as-of pair and ruleset of this build):{" "}
       <a
@@ -71,7 +123,10 @@ const releaseCite = releaseInput ? releaseCitationText(releaseInput) : null;
   <p>
     As of world <time datetime={asOf.as_of_world}>{asOf.as_of_world}</time>,
     belief <time datetime={asOf.as_of_belief}>{asOf.as_of_belief}</time>;
-    ruleset <code>{rulesetVersion}</code>.
+    ruleset <code>{rulesetVersion}</code>
+    {block.releaseId && (
+      <>; release <code data-testid="citation-release-id">{block.releaseId}</code></>
+    )}.
   </p>
-  <p class="sig-cite__text" data-testid="citation-text">{cite}</p>
+  <p class="sig-cite__text" data-testid="citation-text">{releaseCite ?? cite}</p>
 </section>

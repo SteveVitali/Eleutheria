@@ -26,6 +26,7 @@ import { displayJurisdiction, dossierDisplayTitle } from "../../lib/jurisdiction
 // dossier-class link targets (record list + provenance + per-source slices).
 import { artifactHref, defineFigures } from "../../lib/figures";
 import { dossierFigureSpecs, figureSpecMap } from "../../lib/dossier-figures";
+import { withBase } from "../../lib/paths";
 
 export function getStaticPaths() {
   return getDossiers().map((d) => ({ params: { slug: d.slug }, props: { dossier: d } }));
@@ -89,6 +90,7 @@ const specMap = figureSpecMap(FIGURES);
   provenance={provenance}
   provenanceName={`${jurisdiction.label} dossier`}
   provenancePointerBase={`/surfaces/dossiers/${dossier.slug}`}
+  recordPath={recordList ? withBase(recordList) : undefined}
 >
   <p class="sig-dossier-jurisdiction" data-testid="dossier-jurisdiction">{jurisdiction.label}</p>
   {combinesList && (
