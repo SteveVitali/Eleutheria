@@ -74,6 +74,12 @@ from datetime import UTC, date, datetime
 from typing import Any
 
 import psycopg
+from evidence.claim_identity import (
+    PAYLOAD_VERSION,
+    PredicateClass,
+)
+from evidence.claim_identity import claim_digest as _claim_digest
+from evidence.claim_identity import temporal_class as _predicate_class_of
 
 from .assertion import (
     ASSERTION_MAP_ID,
@@ -106,9 +112,22 @@ _log = logging.getLogger(__name__)
 
 #: Columns excluded from the reproducibility payload (SIG-INGEST-003, SIG-EVID-017):
 #: the generated id and the two DB-controlled time columns. Kept byte-identical to
-#: ``evidence.ingest_run.NON_DETERMINISTIC_COLUMNS`` without importing it (``db`` is
-#: a leaf package; no new dependency edge).
+#: the pre-P35.22 serialisation's excluded columns — the generated/transaction
+#: fields the whole-row digest always skipped (``db`` mirrors the list rather
+#: than importing it; no new dependency edge).
 _NON_DETERMINISTIC = frozenset({"claim_id", "sys_period", "recorded_at"})
+
+# P35.22 / F-504: claim identity moved to the shared ``evidence.claim_identity``
+# function — volatile acquisition fields (row position, page/capture URL,
+# capture digest, fetch time, upstream version counters) leave the digest base,
+# the temporal qualifier stays in identity only for the registry's ``obs``
+# (windowed/interval) class, ``value_json`` is canonicalised, and the digest is
+# sealed by ``payload_version`` (``claim.payload_version`` records it).
+# ``content_digest`` below delegates so emitter-side and sink-side minting run
+# ONE function; the legacy whole-row serialisation survives as
+# ``legacy_row_digest`` for the correction-apply paths' stored-row pin
+# (``intake_apply.claim_state_digest`` — recorded proposals must still verify
+# byte-identically; it is a staleness pin, not the claim identity).
 
 #: Conservative epistemic defaults for a connector-asserted claim whose dict does
 #: not declare them (documented in ADR-059). A connector emits candidate evidence,
@@ -152,14 +171,55 @@ DEFAULT_COMMIT_CHUNK_SIZE = 10_000
 DEFAULT_INSERT_BATCH_SIZE = 2_000
 
 
-def content_digest(claim: Mapping[str, Any]) -> str:
-    """The sha256 over a claim's reproducible payload (its idempotency key).
+def predicate_temporal_class(conn: Any, predicate_id: str) -> PredicateClass:
+    """The predicate's registry identity class — ``obs`` or ``ref`` (P35.22).
 
-    Drops the non-deterministic columns and renders the rest with sorted keys, so
-    two runs of a pinned connector over pinned inputs digest identically — the same
-    rule the connector reproducibility fingerprint uses (SIG-INGEST-003).
+    Read from ``vocab_predicate`` (``is_windowed`` or an interval
+    ``resolution_strategy`` = the observational/windowed family); never inferred
+    from a record's shape. An id with no registry row is ``ref`` — it never
+    reaches minting anyway (``unknown_predicate`` quarantine upstream).
+    Module-level so the correction/recovery apply paths resolve the SAME class
+    the sink mints under.
     """
-    stable = {k: v for k, v in claim.items() if k not in _NON_DETERMINISTIC}
+    row = conn.execute(
+        "SELECT resolution_strategy, is_windowed FROM vocab_predicate WHERE predicate_id = %s",
+        (predicate_id,),
+    ).fetchone()
+    if row is None:
+        return "ref"
+    if hasattr(row, "keys"):
+        return _predicate_class_of(
+            resolution_strategy=str(row["resolution_strategy"]),
+            is_windowed=bool(row["is_windowed"]),
+        )
+    return _predicate_class_of(resolution_strategy=str(row[0]), is_windowed=bool(row[1]))
+
+
+def content_digest(claim: Mapping[str, Any], *, temporal_class: PredicateClass = "ref") -> str:
+    """The claim identity digest — ``evidence.claim_identity.claim_digest``.
+
+    P35.22 (F-504, SIG-INGEST-003/004): the digest covers only what the claim
+    IS — the stable semantic fields — not where it was seen (row position, page
+    URL, capture digest, fetch date, upstream version counters) or when it was
+    sighted (capture time; the ``ref`` predicate's temporal qualifier). The
+    ``obs``/``ref`` class is resolved from ``vocab_predicate`` by the sink;
+    callers passing no class get ``ref`` (identical for any record that carries
+    no temporal qualifier).
+    """
+    return _claim_digest(claim, temporal_class=temporal_class)
+
+
+def legacy_row_digest(claim_row: Mapping[str, Any]) -> str:
+    """The pre-P35.22 whole-row sha256 — the correction-apply staleness pin only.
+
+    ``intake_apply.claim_state_digest`` and the recovery applier pin a stored
+    claim ROW's exact column state into correction proposals recorded before a
+    rewrite applies; those pins MUST stay byte-identical to what was recorded,
+    so they keep the old serialisation (every column minus the generated/
+    transaction fields) rather than the identity projection. This is NOT a
+    claim-identity path — it never feeds minting.
+    """
+    stable = {k: v for k, v in claim_row.items() if k not in _NON_DETERMINISTIC}
     payload = json.dumps(stable, sort_keys=True, ensure_ascii=False, default=str)
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
@@ -449,7 +509,7 @@ _INSERT_CLAIMS = (
     " assertion_rationale, derived_from_claim_ids, revises_claim, retraction_of,"
     " correction_reason,"
     " extraction_id, ingest_run_id, rights_id, sensitivity_tier, content_digest,"
-    " assertion_map_id, assertion_map_basis) "
+    " assertion_map_id, assertion_map_basis, payload_version) "
     "SELECT r.subject_id::uuid, r.predicate_id, r.object_entity::uuid,"
     " r.object_type, r.value_kind::value_kind, r.value_text,"
     " COALESCE(r.value_int::numeric, r.value_float::float8::numeric), r.value_bool::boolean,"
@@ -467,7 +527,7 @@ _INSERT_CLAIMS = (
     " r.revises_claim::uuid, r.retraction_of::uuid, r.correction_reason,"
     " r.extraction_id::uuid, r.run_id::uuid, r.rights_id::uuid,"
     " r.sensitivity_tier::smallint, r.content_digest,"
-    " r.assertion_map_id, r.assertion_map_basis "
+    " r.assertion_map_id, r.assertion_map_basis, r.payload_version "
     "FROM unnest(%s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
     " %s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
     " %s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
@@ -475,7 +535,7 @@ _INSERT_CLAIMS = (
     " %s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
     " %s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
     " %s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
-    " %s::text[], %s::text[]) WITH ORDINALITY AS r("
+    " %s::text[], %s::text[], %s::text[]) WITH ORDINALITY AS r("
     " subject_id, predicate_id, object_entity, object_type, value_kind, value_text,"
     " value_int, value_float, value_bool, value_json, unit, raw_value, raw_context,"
     " normalization_id, normalization_version, valid_from, valid_to, valid_edtf,"
@@ -484,7 +544,7 @@ _INSERT_CLAIMS = (
     " claim_directness, artifact_integrity, legacy_source_tier, claim_polarity, rank,"
     " review_status, assertion_rationale, derived, revises_claim, retraction_of,"
     " correction_reason, extraction_id, run_id, rights_id, sensitivity_tier,"
-    " content_digest, assertion_map_id, assertion_map_basis, ord) "
+    " content_digest, assertion_map_id, assertion_map_basis, payload_version, ord) "
     "ORDER BY r.ord "
     "ON CONFLICT (content_digest) WHERE content_digest IS NOT NULL "
     "DO NOTHING RETURNING claim_id, content_digest"
@@ -771,6 +831,10 @@ class PgClaimSink:
         # map").
         self._rights_by_key: dict[tuple[str, str, str | None, str | None], str] = {}
         self._known_predicates: set[str] = set()
+        # P35.22: the registry's obs/ref class per predicate — resolved lazily
+        # from ``vocab_predicate`` (never guessed) so the claim digest carries
+        # the temporal qualifier only where the registry declares it identity.
+        self._temporal_classes: dict[str, PredicateClass] = {}
         # Registered artifact genres, lazily read from vocab_artifact_genre —
         # the closed genre vocabulary (P35.14a).
         self._known_genres: set[str] | None = None
@@ -950,6 +1014,21 @@ class PgClaimSink:
                 "through the ontology registry, never through the sink"
             )
         self._known_predicates.update(found)
+
+    def _predicate_temporal_class(self, predicate: str) -> PredicateClass:
+        """The predicate's registry identity class — ``obs`` or ``ref``.
+
+        P35.22 / F-504: read from ``vocab_predicate`` (``is_windowed`` or an
+        interval ``resolution_strategy`` = the observational/windowed family);
+        never inferred from the record's shape. An id with no registry row is
+        ``ref`` — it never reaches minting anyway (``unknown_predicate``
+        quarantine upstream in the chunk write). Cached per sink.
+        """
+        cached = self._temporal_classes.get(predicate)
+        if cached is None:
+            cached = predicate_temporal_class(self._conn, predicate)
+            self._temporal_classes[predicate] = cached
+        return cached
 
     def _registered_genres(self) -> set[str]:
         """The closed artifact-genre vocabulary (``vocab_artifact_genre``, P35.14a)."""
@@ -1577,7 +1656,9 @@ class PgClaimSink:
             typed.defaulted["object_type"] = "object_resolver"
         self._staged.append(
             _Staged(
-                digest=content_digest(claim),
+                digest=content_digest(
+                    claim, temporal_class=self._predicate_temporal_class(predicate)
+                ),
                 subject=subject,
                 subject_type=subject_type,
                 predicate=predicate,
@@ -1799,7 +1880,7 @@ class PgClaimSink:
             rows = self._conn.execute(
                 _INSERT_CLAIMS,
                 (
-                    # --- 44 staged arrays, the WITH ORDINALITY order ---
+                    # --- 45 staged arrays, the WITH ORDINALITY order ---
                     [entity_ids[(SUBJECT_SCHEME, s.subject)] for s in part],
                     [s.predicate for s in part],
                     [
@@ -1858,6 +1939,9 @@ class PgClaimSink:
                         )
                         for s in part
                     ],
+                    # P35.22: the payload-normalisation version that produced
+                    # this row's digest (evidence.claim_identity.PAYLOAD_VERSION).
+                    [PAYLOAD_VERSION] * len(part),
                 ),
             ).fetchall()
             if not rows:

@@ -24,10 +24,18 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from typing import Any
 
+from evidence.claim_identity import PredicateClass
 from evidence.ingest_run import canonical_claim_tuple, claim_set_fingerprint
 
+from .claim_identity_ingest import predicate_temporal_classes
 from .pipeline import run_post_capture
 from .stages import CaptureRef, Connector, RunContext
+
+
+def _registry_classes() -> dict[str, PredicateClass]:
+    """The predicate registry's ``obs``/``ref`` map (P35.22 — the class is
+    registry-read, never guessed, and replay compares what the sink mints)."""
+    return predicate_temporal_classes()
 
 
 def replay(
@@ -49,9 +57,20 @@ def replay(
     return claims
 
 
-def replay_fingerprint(claims: list[dict[str, Any]]) -> str:
-    """The order-independent fingerprint of a replayed claim set (SIG-INGEST-003/017)."""
-    return claim_set_fingerprint([dict(c) for c in claims])
+def replay_fingerprint(
+    claims: list[dict[str, Any]],
+    *,
+    classes: dict[str, PredicateClass] | None = None,
+) -> str:
+    """The order-independent fingerprint of a replayed claim set (SIG-INGEST-003/017).
+
+    P35.22: fingerprinted under the same identity projection the sink mints —
+    ``classes`` is the registry's predicate → ``obs``/``ref`` map (loaded from
+    the committed predicate registry when not passed).
+    """
+    if classes is None:
+        classes = _registry_classes()
+    return claim_set_fingerprint([dict(c) for c in claims], classes=classes)
 
 
 @dataclass
@@ -148,15 +167,27 @@ class ShadowDiff:
 def diff_claim_sets(
     current: list[dict[str, Any]],
     new: list[dict[str, Any]],
+    *,
+    classes: dict[str, PredicateClass] | None = None,
 ) -> ShadowDiff:
     """Diff two claim sets by canonical value (SIG-INGEST-019).
 
-    Identity is the canonical claim tuple, which excludes the generated id and
-    transaction time (SIG-INGEST-003), so churn in those never registers as a
-    change but a genuinely altered derived value does.
+    Identity is the canonical claim tuple — the P35.22 identity projection:
+    the generated id, transaction time, volatile acquisition fields, and (for
+    ``ref`` predicates) the temporal qualifier never register as a change, but a
+    genuinely altered derived value or an ``obs``-class window does. ``classes``
+    is the registry's predicate → ``obs``/``ref`` map (registry-loaded when not
+    passed).
     """
-    current_by_key = {canonical_claim_tuple(c): c for c in current}
-    new_by_key = {canonical_claim_tuple(c): c for c in new}
+    if classes is None:
+        classes = _registry_classes()
+
+    def key(claim: dict[str, Any]) -> bytes:
+        predicate = str(claim.get("predicate_id") or claim.get("predicate") or "")
+        return canonical_claim_tuple(claim, temporal_class=classes.get(predicate, "ref"))
+
+    current_by_key = {key(c): c for c in current}
+    new_by_key = {key(c): c for c in new}
     added = [c for k, c in new_by_key.items() if k not in current_by_key]
     removed = [c for k, c in current_by_key.items() if k not in new_by_key]
     unchanged = [c for k, c in new_by_key.items() if k in current_by_key]

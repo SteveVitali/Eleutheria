@@ -54,6 +54,7 @@ from datetime import UTC, datetime
 from typing import Any, Protocol
 
 import psycopg
+from evidence.claim_identity import PAYLOAD_VERSION
 from policy.eligibility import (
     Disposition,
     ReasonCategory,
@@ -67,7 +68,7 @@ from psycopg.types.range import Range
 
 from policy import intake as pint
 
-from .claim_sink import content_digest
+from .claim_sink import content_digest, legacy_row_digest, predicate_temporal_class
 from .dispositions import DISPOSITION_TABLE, record_disposition
 from .identity_guard import CURATOR_HANDLE_SCHEME, resolve_identities
 
@@ -165,6 +166,7 @@ _CLAIM_CASTS: dict[str, str] = {
     "content_digest": "%s",
     "assertion_map_id": "%s",
     "assertion_map_basis": "%s",
+    "payload_version": "%s",
 }
 
 
@@ -214,10 +216,15 @@ class IntakeApplicationStore(Protocol):
 # record still on the spine.
 # --------------------------------------------------------------------------- #
 def claim_state_digest(claim_row: dict[str, Any]) -> str:
-    """The proposal's ``claim_digest``: the content digest over the claim row's
-    deterministic payload (``claim_id``/``sys_period``/``recorded_at``
-    excluded — the same rule as :func:`db.claim_sink.content_digest`)."""
-    return content_digest(claim_row)
+    """The proposal's ``claim_digest``: the WHOLE-ROW staleness pin — every
+    deterministic column minus ``claim_id``/``sys_period``/``recorded_at``.
+
+    P35.22: this stays :func:`db.claim_sink.legacy_row_digest` — the pin verifies
+    the stored row is byte-identical to what the reviewer saw, and proposals
+    recorded before the identity change MUST still verify. It is NOT the claim
+    identity (the P35.22 projection); it never feeds minting.
+    """
+    return legacy_row_digest(claim_row)
 
 
 def claim_evidence_digest(rows: Any) -> str:
@@ -685,7 +692,15 @@ class PgIntakeApplicationStore:
             "assertion_map_id": None,
             "assertion_map_basis": None,
         }
-        payload["content_digest"] = claim_state_digest(payload)
+        # P35.22: the new claim mints under the IDENTITY digest (not the
+        # whole-row pin) — volatile acquisition columns stay out, the
+        # predicate's registry class governs the temporal qualifier, and
+        # payload_version records the normalisation.
+        payload["payload_version"] = PAYLOAD_VERSION
+        payload["content_digest"] = content_digest(
+            payload,
+            temporal_class=predicate_temporal_class(self._conn, predicate_id),
+        )
         cols = list(payload)
         params = []
         for c in cols:

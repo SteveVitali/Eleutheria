@@ -186,7 +186,12 @@ def golden_digest(run_key: str, record: Mapping[str, Any]) -> str:
     from connectors.accountability import vocab_version as _acc_vv
     from connectors.dot_511 import vocab_version as _dot_vv
     from connectors.procurement import vocab_version as _proc_vv
-    from db.claim_sink import content_digest
+
+    # P35.22: the golden digests were computed under the pre-P35.22 whole-row
+    # scheme — `legacy_row_digest` reproduces it byte-for-byte so the goldens
+    # still verify the RECORDS are unchanged since the base commit (the new
+    # claim identity is `content_digest`; it mints different digests by design).
+    from db.claim_sink import legacy_row_digest as content_digest
 
     if "axis_order" in record or "geometry_defect" in record:
         record = {k: v for k, v in record.items() if k not in ("axis_order", "geometry_defect")}

@@ -46,7 +46,18 @@ import json
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from db.claim_sink import SUBJECT_SCHEME, PgClaimSink, content_digest
+# P35.22: the legacy targets' stored ``content_digest`` was minted under the
+# pre-P35.22 whole-row scheme — ``legacy_row_digest`` reproduces it verbatim.
+# A packet may also target a row minted since the change, so each record is
+# located under EITHER scheme (``_target_digest_candidates``) — the spine is
+# addressed by both digests, never by a guessed id.
+from db.claim_sink import (
+    SUBJECT_SCHEME,
+    PgClaimSink,
+    content_digest,
+    legacy_row_digest,
+    predicate_temporal_class,
+)
 from reconcile.count_scope import ORIGIN_SEED_FIXTURE, CountScope, derive_approximate_sum
 
 PACKET_SCHEMA = "sig.seed-correction-packet/1"
@@ -363,8 +374,29 @@ def correction_packet() -> dict[str, Any]:
 # --------------------------------------------------------------------------- #
 
 
+def _target_digest_candidates(conn: Any, record: Mapping[str, Any]) -> list[str]:
+    """Every digest the stored target could have been minted under.
+
+    The real seed rows carry pre-P35.22 whole-row digests; rows minted since
+    carry the claim-identity digest (predicate temporal class from the
+    registry). Locating by BOTH keeps a packet addressable regardless of which
+    scheme minted its target — either is the row's recorded identity, never a
+    recomputed/rewritten one.
+    """
+    candidates = [legacy_row_digest(dict(record))]
+    predicate_id = record.get("predicate_id")
+    temporal_class = predicate_temporal_class(conn, str(predicate_id)) if predicate_id else "ref"
+    identity = content_digest(dict(record), temporal_class=temporal_class)
+    if identity != candidates[0]:
+        candidates.append(identity)
+    return candidates
+
+
 def _target_digests(corrections: Sequence[Mapping[str, Any]]) -> list[str]:
-    return [content_digest(dict(c["target_record"])) for c in corrections]
+    """The legacy (pre-P35.22) digests of the correction targets — for packet
+    inspection and historical pin comparison; apply locates via
+    ``_target_digest_candidates`` (either scheme)."""
+    return [legacy_row_digest(dict(c["target_record"])) for c in corrections]
 
 
 def _apply_one(conn: Any, sink: PgClaimSink, correction: Mapping[str, Any]) -> dict[str, Any]:
@@ -377,10 +409,11 @@ def _apply_one(conn: Any, sink: PgClaimSink, correction: Mapping[str, Any]) -> d
     a mid-way stop converges to the same final state.
     """
     cid = str(correction["correction_id"])
-    digest = content_digest(dict(correction["target_record"]))
+    digest_candidates = _target_digest_candidates(conn, correction["target_record"])
     rows = conn.execute(
-        "SELECT claim_id::text, upper_inf(sys_period) AS open FROM claim WHERE content_digest=%s",
-        (digest,),
+        "SELECT claim_id::text, upper_inf(sys_period) AS open "
+        "FROM claim WHERE content_digest = ANY(%s)",
+        (digest_candidates,),
     ).fetchall()
     replacements = [dict(r) for r in correction["replacement_records"]]
     reason = str(correction["correction_reason"])
@@ -391,13 +424,15 @@ def _apply_one(conn: Any, sink: PgClaimSink, correction: Mapping[str, Any]) -> d
         return {
             "correction_id": cid,
             "outcome": "no_target",
-            "target_digest": digest,
+            "target_digest": digest_candidates[0],
         }
     if len(rows) > 1:
         return {
             "correction_id": cid,
             "outcome": "error",
-            "detail": f"ambiguous target: {len(rows)} rows match digest {digest[:12]}…",
+            "detail": (
+                f"ambiguous target: {len(rows)} rows match digest {digest_candidates[0][:12]}…"
+            ),
         }
     claim_id = str(rows[0][0])
     still_open = bool(rows[0][1])
@@ -419,7 +454,7 @@ def _apply_one(conn: Any, sink: PgClaimSink, correction: Mapping[str, Any]) -> d
     return {
         "correction_id": cid,
         "outcome": "applied" if still_open else "already_applied",
-        "target_digest": digest,
+        "target_digest": digest_candidates[0],
         "target_claim_id": claim_id,
         "belief_closed": still_open,
         "replacement_inserted": landed,
@@ -456,18 +491,18 @@ def apply_packet(
     if dry_run:
         with psycopg.connect(dsn, autocommit=True) as conn:
             for c in corrections:
-                digest = content_digest(dict(c["target_record"]))
+                digest_candidates = _target_digest_candidates(conn, c["target_record"])
                 row = conn.execute(
                     "SELECT count(*) AS n, count(*) FILTER (WHERE upper_inf(sys_period)) AS open "
-                    "FROM claim WHERE content_digest=%s",
-                    (digest,),
+                    "FROM claim WHERE content_digest = ANY(%s)",
+                    (digest_candidates,),
                 ).fetchone()
                 n, open_n = (int(row[0]), int(row[1])) if row else (0, 0)
                 report["corrections"].append(
                     {
                         "correction_id": c["correction_id"],
                         "outcome": "would_apply" if open_n else "no_current_target",
-                        "target_digest": digest,
+                        "target_digest": digest_candidates[0],
                         "matching_rows": n,
                     }
                 )

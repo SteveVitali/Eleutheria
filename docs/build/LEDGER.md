@@ -9,10 +9,10 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key ≤ 256 B; the generated `returnPass:` id list rides the B3 V2 bound (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus:   IN_PROGRESS                           # P35.20b landed (301); boundary-source capture stays queued (HG-03 + OM-19)
-nextTicket:      P35.22                              # row 302 — truthful claim identity
-lastCompleted:   P35.20b                             # row 301 (freshness + map suppression)
-blockedOn:       CI fail on #299@19ed46d (docs)       # waived ancestor red; #316 head 3397c38 5/5 green (run 39091179953)
+projectStatus:   IN_PROGRESS                           # P35.22 landed (302); live legs L2/L3 queued (OM-20 + next scheduled runs)
+nextTicket:      P35.24                              # row 303 — truthful subject keys + re-keying
+lastCompleted:   P35.22                              # row 302 (truthful claim identity)
+blockedOn:       CI fail on #299@19ed46d (docs)       # waived ancestor red; #317 head 0c5be9d8 5/5 green (run 39103555541)
 pauseRequested:  false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
@@ -22,7 +22,7 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.20b-freshness-classes-and-map-table-suppression # PR #316 (base r11/P35.20a-…)
+chainTip:        r11/P35.22-truthful-claim-identity # PR #317 (base r11/P35.20b-…)
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
@@ -1060,3 +1060,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-18 — P35.20a dispatch boundary-confirm — `ci: pass #315@fcae82e` — record head 5/5 green head-bound (run 39082309681); the prior boundary head `4909c141` on #314 also read green · pre-dispatch stack re-read 2026-10-18T00:38Z verbatim: `blockedOn: CI fail on #299@19ed46d (docs)` — the operator-waived ancestor red, baseline · every pushed head verbatim in `runs/P35.20a.md` (`136eaf81` → `df829d80` → `77bcbc43` → `fcae82eb`) · the corrected numbers stay QUEUED to the next export/release — no production mutation · P35.20a CLOSED → next → P35.20b (301) dispatch · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-18 — P35.20b ticket — `ci: pass #316@3397c38` · `runs/P35.20b.md` · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-18 — P35.20b dispatch boundary-confirm — closeout head `2526dd46` 5/5 green head-bound (`ci: pass #316@2526dd4` — run 39092858725; `reports/ci/p35_20b_pr316.json` refreshed 03:28Z) · stack verbatim `blockedOn: CI fail on #299@19ed46d (docs)` waived baseline · P35.20b CLOSED → next → P35.22 (302) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-18 — P35.22 ticket — `ci: pass #317@6ff028e` · `runs/P35.22.md` · legs L2/L3 QUEUED to OM-20 conditional (next scheduled runs + `/status/` notice + dedup-parity report) · harness: devin-desktop/swe-2-high/subagent

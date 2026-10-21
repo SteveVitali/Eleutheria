@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "d04407a5222612282ecd3f7be91961b195f310e7",
+  "input_commit": "81acaf4f662d771465800f5fe1fe6e6ed704aafa",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "9ac24365956d6eea162a3bda669037838f1bc761bd823dd1df677a2d95262b93"
+      "sha256": "582fbeba1012bc46e72368e97837d80aecfdb03a291f359aee349fa5429adcb0"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -246,7 +246,7 @@
     },
     {
       "path": "docs/adr/ADR-059-the-capstone-spine-wiring-pgclaimsink-pgreadstore-and-compute-on-read.md",
-      "sha256": "b797722ea4eca95c43f0afd1217fddb7f0bc6050bb03fe14009dedee793c0ff4"
+      "sha256": "13c5945af8a65464641d7138da2ce5fa60ecb19d48e1e748c26d3405d5b62dfd"
     },
     {
       "path": "docs/adr/ADR-060-the-resolver-p08-1-retro-fitted-record.md",
@@ -833,20 +833,24 @@
       "sha256": "40f3f8c6491906dc7a52044b84cbf015ba25917f4d01360e6768ba2d692e940e"
     },
     {
+      "path": "docs/adr/ADR-211-truthful-claim-identity-volatile-fields-leave-the-digest.md",
+      "sha256": "ac33cac1f7a3f017495d3930bb017c981385e7323b14b7a6ef54c545dbb9b59e"
+    },
+    {
       "path": "docs/adr/ADR-218-live-claim-lint-carried-record-provenance.md",
       "sha256": "25ae6a665cc454f4c42bdc0113e7eb0a32c2c18c013e359ef76a212149ff5f75"
     },
     {
       "path": "docs/adr/README.md",
-      "sha256": "c36f410891404370e019aa20cfbd195de0a55a703d6316b9616f133066b6d88f"
+      "sha256": "b8f375427408060bc205dd183884a67497bbea6ca6d3265b99d01c7f774f949c"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "89ba0627d5165f3d09e5f20256a20a75c3e286150e14802ac9b96eee62d77b94"
+      "sha256": "346d8f22f1e22e2de73f02f7c2afc18009250e44a3884df064add9fa4325564b"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "59f52576b8098a431dd9b93f6b433eeb6c361c054a90ab71f857786abd862579"
+      "sha256": "4b3d82e748af53d4ed60b3352126ae212d65601933d1b7ca17ee7701d7b9e8b8"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -854,7 +858,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "bd9cf5900c624a9fcf54a3fffa4e16e65187716d8c8ed6ed69ad38bada1cbaaa"
+      "sha256": "28926baaadaad97822089c2fffd3ac6507f5e50096c19f05182ece05009579d8"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -1975,6 +1979,10 @@
     {
       "path": "docs/build/runs/P35.20b.md",
       "sha256": "463f577fac4d211ee854cf8b926229763ba41fb47d8ae435d99866919681e509"
+    },
+    {
+      "path": "docs/build/runs/P35.22.md",
+      "sha256": "c15c50c771d4aa7e8126d2cdf55f380946ed9e1bcb37168d86a0de1242a924f4"
     },
     {
       "path": "docs/build/runs/P35.28.md",
