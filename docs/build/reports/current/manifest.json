@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "598171624afe753a5777c9a7cca300a393ecdabc",
+  "input_commit": "1aedaecf170456d35e26f073642f24698d09ed9d",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -882,7 +882,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "abfe89af03f282b761cd2d3d61a9ed4f6a08b25f122a5054e3efe9992e4cd80f"
+      "sha256": "111f0bf175a79b700c9d59b150e48ef5588484b1f1b6970cb022fd65e9b1d47a"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -2294,7 +2294,7 @@
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
-      "sha256": "b51abedc3627aecc2a31390c855f96c5f4b7aad4ddd5785ed29e255df3ee9ab6"
+      "sha256": "addb5a6fab72077a788471bd04c1b4edf6537b9a198958ca0fb2118c6328f1d7"
     },
     {
       "path": "docs/tickets/161_P32.1__baseline-and-memory-audit.md",
@@ -2947,6 +2947,10 @@
     {
       "path": "docs/tickets/320_P35.41__freshness-semantics-v2.md",
       "sha256": "c3de6b05394b6a7c87689efaaf55f959818cd8dc72cddadce5d473fa1486767d"
+    },
+    {
+      "path": "docs/tickets/320a_P35.41a__ci-wait-phase-1-partitioned-pytest-and-perf-reuse.md",
+      "sha256": "27e5a086a45332845ac12dffe73140690b5ab444812f1b4f252d80d961be573f"
     },
     {
       "path": "docs/tickets/321_P35.42__citation-block-and-release-id.md",
