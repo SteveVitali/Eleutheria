@@ -861,6 +861,31 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   export bundle builds end to end. No ingestion-permission flip,
   no gate tick, no spine mutation.
 
+- **Watch producer v1** (P35.43 / row 322; R11-K13-WX-01; owner none —
+  served SIG-UI-026/027/027a + SIG-UI-014b; cites SIG-UI-008,
+  SIG-UI-050/ADR-134, the J3 §5.3 lane table, D-K7-4/D-K7-5 pending;
+  K7 §8 draft SIG-WATCH-D01…D10 are design refs, not stamped; owned
+  finding F-481) — `web/watch.json` is no longer the empty surface:
+  `exports/watch.py` derives the six K7 §5.2 kinds
+  (`renewal_deadline`, `contract_expiry`, `solicitation_deadline`,
+  `agenda_item`, `legislative_action`, `grant_period_end`) from
+  publishable claim-spine rows and emits the versioned
+  `sig/watch/2` envelope with `sig.watch-item/1` items — one alert
+  date with `date_kind` + `date_certainty` (an `upper_bound` expiry
+  is never labelled a deadline), §5.3 placement (unplaced is a
+  data-quality bucket, never a guessed place; federal items sit
+  under `iso3166-1:US`), evidence links gated by the shared
+  statements lane map, `contested`, `first_seen`/`last_checked`, and
+  a per-place coverage block so an empty result always arrives with
+  its coverage statement. A read-only `watch_subject_counts` query
+  sizes the emission; `analytics._decision_point` reads the produced
+  items and the renewal date reuses `_next_decision_date` — one
+  derivation, never a second formula. `getWatch()` bridges the v2
+  envelope back to the legacy item shape until the surface rows
+  consume it natively. No production mutation, no spine write —
+  the artifact ships with the next export under that row's
+  authority.
+
 ### Changed
 
 - **Citation block and release id on every page** (P35.42 / row 321;
