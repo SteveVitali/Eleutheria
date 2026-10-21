@@ -41,6 +41,7 @@ database. :func:`run_spine_export` is the thin executor that opens the snapshot.
 
 from __future__ import annotations
 
+import gzip
 import json
 import uuid
 from collections.abc import Mapping, Sequence
@@ -96,7 +97,7 @@ from tasks.vocabulary import Disposition
 from policy import disclosure as policy_disclosure
 from policy import withdrawals as policy_withdrawals
 
-from . import analytics, provo, source_licences
+from . import analytics, dossier_sources, provo, source_licences
 from . import column_registry as CR
 from . import compartments as C
 from . import placement as _placement
@@ -515,6 +516,10 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
     # the publishable claims on the five §5.2 subject families + the read-only
     # sizing count, defined in ``exports/watch.py`` beside the derivation.
     **WATCH_QUERIES,
+    # P35.44 (R11-K13-DSRC-01 / K5 §3.1): the dossier-contribution read — the
+    # publishable-gated sighting aggregate over ``v_claim_sightings``, defined
+    # in ``exports/dossier_sources.py`` beside the accumulation that reads it.
+    **dossier_sources.DOSSIER_SOURCES_QUERIES,
 }
 
 
@@ -577,6 +582,9 @@ def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, A
                 .replace("{PUB_TASK_GATE}", task_gate)
                 .replace("{PUB_ARTIFACT_GATE}", artifact_gate)
                 .replace("{CAPTURE_SEAL_GATE}", seal_gate)
+                # P35.44: the sighting-link bound — same belief bound the
+                # claim_source CTE applies to eligible occurrences.
+                .replace("{SIGHTING_BOUND}", occ_bound)
                 .replace("upper_inf(c.sys_period)", belief_filter)
             )
             cur.execute(final, tuple([belief] * final.count("%s")) or None)
@@ -4096,17 +4104,71 @@ def build_spine_export(
     site_source_ids: set[str] = set()
     for site in dataset.sites:
         site_source_ids.update(site.source_ids)
-    for path, data in emit_transparency_artifacts(
+    # --- P35.44 (R11-K13-DSRC-01 / K5 §3, TRANSP-040): the shared
+    # dossier↔source contribution accumulation — computed BEFORE the
+    # transparency emit so ``contributions[]`` lands on the source rows from
+    # the same numbers the dossier artifacts carry (never a second pass). A
+    # spine missing ``v_claim_sightings`` yields an empty sighting set — the
+    # dossier artifacts still emit with honest zero/null states (T14).
+    contribution_plan = dossier_sources.accumulate_dossier_contributions(
+        sightings_rows=list(raw.get("claim_sightings") or []),
+        site_rows=[
+            (comp, row.source_id, row.data)
+            for comp, comp_rows in slices.rows_by_compartment.items()
+            for row in comp_rows
+        ],
+        run_rows=list(raw.get("transparency_runs") or []),
+        contradictions=m_contradictions,
+        weight_rows=analytics._claim_weight_rows(raw),
+        lineage_rows=list(raw.get("claim_lineage") or []),
+        release={
+            "label": build_spec.release_id(),
+            "publication_id": None,
+            "as_of_world": dataset.as_of,
+        },
+        ruleset_version=build_spec.ruleset_version,
+        as_of=dataset.as_of,
+        placement=placement,
+    )
+    transparency_artifacts = emit_transparency_artifacts(
         raw,
         claims=list(claims or ()),
         cadence_sources=cadence_sources,
         scheduler_drift=scheduler_drift,
         site_source_ids=site_source_ids,
         at=transparency_at,
-    ).items():
+        contributions_by_source=contribution_plan.contributions_by_source,
+    )
+    for path, data in transparency_artifacts.items():
         web_artifacts[path] = data
         web_licenses[path] = _SIG_SPDX
         web_compartments[path] = _META_COMPARTMENT
+    # The dossier contribution artifacts render AFTER sources.json exists —
+    # the dossier source rows read the emitted registry fields back so both
+    # surfaces show one derivation (TRANSP-040).
+    for path, data in contribution_plan.render(transparency_artifacts).items():
+        web_artifacts[path] = data
+        web_licenses[path] = _SIG_SPDX
+        web_compartments[path] = _WEB_COMPARTMENT
+        if path.endswith(".json"):
+            web_schemas[path] = dossier_sources.SCHEMA
+        elif path.endswith(".runs.jsonl.gz"):
+            # Row-stream manifest metadata (J3 §6.5): the row count +
+            # distinct contributing sources, read back from the emitted
+            # bytes — never a parallel derivation.
+            try:
+                run_rows = [
+                    json.loads(line)
+                    for line in gzip.decompress(data).decode("utf-8").splitlines()
+                    if line.strip()
+                ]
+            except (OSError, ValueError):
+                run_rows = []
+            web_counts[path] = (
+                len(run_rows),
+                len({str(r.get("source_id")) for r in run_rows if r.get("source_id")}) or None,
+            )
+            web_schemas[path] = dossier_sources.RUNS_ROW_SCHEMA
 
     # --- per-compartment PMTiles (ODbL attribution on the OSM layer) ------------
     tile_renderers: dict[str, str] = {}
@@ -4318,7 +4380,11 @@ def _extended_manifest(
                     name=Path(path).name,
                     path=path,
                     media_type=(
-                        "application/x-ndjson" if path.endswith(".jsonl") else "application/json"
+                        "application/x-ndjson"
+                        if path.endswith(".jsonl")
+                        else "application/gzip"
+                        if path.endswith(".gz")
+                        else "application/json"
                     ),
                     compartment=compartments_for.get(path, _WEB_COMPARTMENT),
                     license=labels.get(path, _SIG_SPDX),

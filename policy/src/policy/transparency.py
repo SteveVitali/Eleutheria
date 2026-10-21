@@ -986,6 +986,32 @@ TRANSPARENCY_SOURCE_VIEW_COLUMNS: tuple[str, ...] = (
     "last_capture_at",
 )
 
+#: The columns ``v_claim_sightings`` may carry (P35.44 / DSRC-01, K5 §3.1):
+#: the establishing-link edge list the dossier/source contribution aggregate
+#: reads — one row per claim×``claim_evidence``(role ``establishes``)×capture
+#: ×artifact, exposing only what the aggregate's publication gates and
+#: first/last-seen computation need. The view is ``sig_export``-only — the
+#: artifact, not the view, is the publication boundary: raw locators, excerpts,
+#: evidence content/digests, OCFL object identifiers, capture URLs and every
+#: other never-exported field stay off the list.
+CLAIM_SIGHTING_VIEW_COLUMNS: tuple[str, ...] = (
+    "claim_id",
+    "subject_id",
+    "object_entity",
+    "predicate_id",
+    "sensitivity_tier",
+    "rights_id",
+    "sys_period",
+    "capture_id",
+    "role",
+    "binding_status",
+    "bound_at",
+    "artifact_id",
+    "source_id",
+    "run_id",
+    "retrieved_at",
+)
+
 
 # ---------------------------------------------------------------------------
 # The bounded free-text scrub (S-2 + S-5 + S-7 in one pass)

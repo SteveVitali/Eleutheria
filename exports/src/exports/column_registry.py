@@ -141,7 +141,7 @@ def column_registry() -> dict[str, ResourceSpec]:
     """
     from . import bundle as _bundle
     from . import bundle_io as _bio
-    from . import placement, shaping, source_licences, statements, transparency
+    from . import dossier_sources, placement, shaping, source_licences, statements, transparency
     from . import spine_export as _se
 
     registry: dict[str, ResourceSpec] = {}
@@ -341,6 +341,19 @@ def column_registry() -> dict[str, ResourceSpec]:
     )
     reg(
         _spec(
+            "dossier_source_runs",
+            "Dossier source run rows",
+            "The ``sig.dossier-source-run/1`` rows inside a dossier's "
+            "``*.runs.jsonl.gz`` — one row per (source, run) with the "
+            "first-seen/re-sighted claim counts and first-seen record counts "
+            "for the dossier (P35.44 / K5 §3.2).",
+            dossier_sources.DOSSIER_SOURCE_RUN_SPECS,
+            kind="table",
+            schema_id=dossier_sources.RUNS_ROW_SCHEMA,
+        )
+    )
+    reg(
+        _spec(
             "source_licence_table",
             "Sources & licences table",
             "The ``sig.source-licence-table/1`` rows inside ``web/sources.json`` — "
@@ -463,6 +476,10 @@ def resource_for_path(path: str) -> str | None:
         return "coverage"
     if path == "web/sites.json":
         return "sites"
+    if path.startswith("web/dossier_sources/") and path.endswith(".runs.jsonl.gz"):
+        # The gzipped JSONL run stream — a row resource despite the double
+        # extension (P35.44 / K5 §3.2).
+        return "dossier_source_runs"
     if path == "transparency/sources.json":
         # A row-bearing document (``sig.source-row/1`` rows) carried
         # under a .json extension — it IS the transparency_sources resource.
