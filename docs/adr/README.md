@@ -219,6 +219,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-216](ADR-216-network-edge-dates-evidence-and-literal-partners.md) | Honest network edges: dates, evidence, literal partners, degree (P35.30) | P35.30 (Round 11 / P35 sub-round 11B, manifest row | accepted |
 | [ADR-217](ADR-217-iri-base-on-the-owned-domain-alias-map-and-compat-note.md) | IRI base on the owned domain, the append-only alias map, and the compat note (P35.38b) | P35.38b (Round 11 / P35 sub-round 11B, manifest row 317, | Accepted |
 | [ADR-218](ADR-218-live-claim-lint-carried-record-provenance.md) | Live-claim lint: listed, verified provenance for carried records | P35.16 (orchestrator repair on `r11/P35.16-geometry-defects-at-ingest`, PR #309) | accepted |
+| [ADR-219](ADR-219-partitioned-pytest-and-fixture-mode-lighthouse-reuse.md) | Partitioned pytest and fixture-mode Lighthouse pass reuse (P35.41a) | P35.41a (CI wait, phase 1, on `r11/P35.41a-ci-wait-phase-1`) | accepted |
 
 ## Notes
 

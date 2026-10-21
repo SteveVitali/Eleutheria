@@ -56,8 +56,8 @@ Every Python package is `<pkg>/src/<pkg>/…` and exposes a CLI: `uv run python 
 
 | File | Lines | Purpose |
 |---|---|---|
-| `Makefile` | ~120 | the single source of build/test/gen commands — humans and CI run the same targets |
-| `.github/workflows/ci.yml` | ~205 | CI: the `python` job mirrors `make check`; the `web` job runs `npm run check` |
+| `Makefile` | ~120 | the single source of build/test/gen commands — humans and CI run the same targets (the `python` CI job runs the same suite partitioned via `make test-par`) |
+| `.github/workflows/ci.yml` | ~205 | CI: the `python` job runs `make check`'s suite partitioned via `make test-par` (P35.41a); the `web` job runs `npm run check` |
 | `connectors/src/connectors/loader.py` | ~170 | the fail-closed ingestion gate (`assert_loadable`, `ingestion_permitted`) |
 | `ontology/src/ontology/generate.py` | ~550 | ontology generation; canonicalises graphs (`to_canonical_graph`) |
 | `db/src/db/claim_sink.py` | ~1860 | `PgClaimSink` — insert-only, chunk-batched writes to the claim spine |
@@ -72,7 +72,8 @@ Every Python package is `<pkg>/src/<pkg>/…` and exposes a CLI: `uv run python 
 
 | command | what it runs |
 |---|---|
-| `make check` | `lint` → `format-check` → `typecheck` → `test` (pytest) → `verify-gen` — the fast local gate; the `python` CI job's commands |
+| `make check` | `lint` → `format-check` → `typecheck` → `test` (pytest) → `verify-gen` — the fast local gate; the `python` CI job runs the same suite partitioned via `make test-par` |
+| `make test-par` | the partitioned pytest runner (`scripts/ci/pytest_partitions.py`) — four concurrent pytest processes over the committed table `scripts/ci/pytest_partitions.txt`; what the `python` CI job's Test step runs |
 | `make ci-local` | all five CI jobs locally: the `SIG_REQUIRE_DB_TESTS=1` suite, `docs-check` + history/trailer range checks, the scans, composed `tests/e2e` with web deps, and the web check + perf (P34.1, SIG-ENG-046) |
 | `make test-db` | `SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/db` — the claim-spine DB suite (**needs Docker**) |
 | `SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/e2e` | the composed-stack e2e (**needs Docker**) |

@@ -34,6 +34,7 @@ tests/
 | command | what it runs |
 |---|---|
 | `uv run pytest` | the whole non-Docker suite (part of `make check`) |
+| `make test-par` | the same suite partitioned — four concurrent pytest processes over `scripts/ci/pytest_partitions.txt` (P35.41a); the `python` CI job's Test step runs this |
 | `uv run pytest tests/<pkg>` | one package's tests |
 | `uv run pytest tests/unit/test_package_layout.py -q` | a single test file |
 | `make test-db` | `SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/db` (**needs Docker**) |
