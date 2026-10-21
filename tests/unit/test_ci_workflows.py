@@ -1101,9 +1101,9 @@ def test_make_test_par_exists_but_ci_is_serial_while_paused() -> None:
     assert re.search(r"^test:\n\tuv run pytest\n", text, re.M), (
         "`make test` must stay the serial gate"
     )
-    assert re.search(r"^\$\(MAKE\) test$", text, re.M) or re.search(
-        r"\$\(MAKE\) test\b", text
-    ), "`make ci-local` runs the serial form while the D1 pause holds"
+    assert re.search(r"^\$\(MAKE\) test$", text, re.M) or re.search(r"\$\(MAKE\) test\b", text), (
+        "`make ci-local` runs the serial form while the D1 pause holds"
+    )
     for path in ("scripts/ci/pytest_partitions.py", "scripts/ci/pytest_partitions.txt"):
         assert (REPO_ROOT / path).is_file(), f"{path} must exist"
 
