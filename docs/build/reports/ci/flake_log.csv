@@ -27,3 +27,14 @@ date,pr,head_sha,check,flake_id,run_id,attempt,outcome
 2026-10-20T20:21,337,c965d6fb,web,DOCKERHUB-RATE-1,39466140022,2,success (rerun from the operator account 19:55Z)
 2026-10-20T20:21,337,c965d6fb,python,DOCKERHUB-RATE-3,39466140022,1,failure
 2026-10-20T20:21,337,c965d6fb,python,DOCKERHUB-RATE-3,39466140022,2,success (rerun from the operator account 19:55Z)
+2026-10-21T00:16,338,1aedaecf,python,TRACEMALLOC-PEAK-1,39520363036,1,success
+2026-10-21T02:39,339,6cd72121,python,TRACEMALLOC-PEAK-1,39534265940,1,failure (partition-4 leg; 400-page unbounded peak below the 40-page peak)
+2026-10-21T02:54,339,b016dd8c,python,TRACEMALLOC-PEAK-1,39535629010,1,failure (partition-3 leg; same test after the warm-up rebalance)
+2026-10-21T03:16,339,395c583f,python,TRACEMALLOC-PEAK-1,39537692813,1,failure (partitioned; records-only head)
+2026-10-21T03:39,339,7030c495,python,TRACEMALLOC-PEAK-1,39539771573,1,failure (serial make test on the OM-18 revert head — same test)
+2026-10-21T04:36,339,3d131545,python,TRACEMALLOC-PEAK-1,39544956055,1,failure (serial; same test)
+2026-10-21T04:07,338,1aedaecf,python,TRACEMALLOC-PEAK-1,39520363036,2,failure (same-head probe rerun by this ticket — environmental drift proven)
+2026-10-21T04:51,338,1aedaecf,python,TRACEMALLOC-PEAK-1,39520363036,3,failure (operator-triggered rerun; same test)
+2026-10-21T05:25,338,1aedaecf,python,TRACEMALLOC-PEAK-1,39520363036,4,success (last authorized rerun — intermittent environmental flake confirmed; test since repaired to a deterministic retained-bytes measurement in P35.41a)
+2026-10-21T05:25,339,9197da78,docs,RECORDED-CI-INFLIGHT-1,39549439729,1,failure (verify-recorded-ci ran while the base-head re-run 39520363036 a4 was still in flight — conclusion None vs the recorded pass; not a content defect)
+2026-10-21T06:01,339,9197da78,docs,RECORDED-CI-INFLIGHT-1,39549439729,2,success (rerun after the probe concluded — 5/5 green head-bound)

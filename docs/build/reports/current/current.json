@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "3d13154528b31ef1c6067cf1dbd4155fe010da91",
+  "input_commit": "9197da789d976c4ee26792c37e453e5a7f159872",
   "manifest_inputs": 1083,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.41a",
-    "lastCompleted": "P35.41",
+    "nextTicket": "P35.42",
+    "lastCompleted": "P35.41a",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.57,P35.67,P36.12",
@@ -17,21 +17,21 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.41-freshness-semantics-v2",
+    "chainTip": "r11/P35.41a-ci-wait-phase-1",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-21T00:54Z"
+    "updatedAt": "2026-10-21T06:30Z"
   },
   "counts": {
-    "obligations": 172,
-    "owed": 96,
-    "open": 93,
+    "obligations": 175,
+    "owed": 99,
+    "open": 96,
     "partial": 3,
     "terminal": 76,
-    "events": 665,
+    "events": 668,
     "transitions": 39,
     "coverage_assessments": 312,
     "coverage_historical_rows": 820,
@@ -8874,6 +8874,147 @@
           "anchor": {
             "row_line": 1358,
             "row_sha256": "491322af4679756fc606fe437b811424d01077a6856d6bb9ea085880fb4f21f3",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.41a-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.41a-1:e0",
+      "kind": "V",
+      "owner": "the orchestrator",
+      "landing": "the dispatch boundary after the fourth ticket row following P35.41a — the measured after-state over P35.42..P35.45 (per-ticket runs/billed/python+web medians, reuse hit rate, partition imbalance) is recorded in that boundary's PHASE LOG detail and quoted to the operator for D6",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "Measured after-state of the CI-wait phase 1 (P35.41a, ADR-219) over the next four ticket rows after it (P35.42, P35.43, P35.44, P35.45 at authoring): per ticket — PR runs, billed minutes (ceil(job s/60), final attempts), `python` and `web` job medians, wall clock per waited head split code vs records-only, the `ci-perf-reuse` hit rate on records-only heads and the partition imbalance (max/min partition seconds from the summary line) — and any partition-only failures, against the measured baseline (last 20 tickets: mean 295 / median 312 billed, 8.3 PR runs; P35.37–P35.40: 343, 206, 340, 324) and the projection (≈ −31 %; ≈ 20 → 15 min per code head, ≈ 20 → 10 per records-only head)",
+      "unblocked_by": "owner: the orchestrator · trigger: the dispatch boundary after the fourth ticket row following P35.41a",
+      "verify": "Actions API reads only (runs + jobs, no logs saved), the method of AC 10; the numbers recorded in that boundary's PHASE LOG entry detail (`runs/<ID>.md` of the fourth ticket) and quoted to the operator for D6",
+      "proxy": "P35.41a's AC 10 table (H1/H2/H3 against the P35.37–P35.40 baseline)",
+      "line": 1370,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.41a-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.41a-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.41a",
+          "owner": "the orchestrator",
+          "landing": "the dispatch boundary after the fourth ticket row following P35.41a — the measured after-state over P35.42..P35.45 (per-ticket runs/billed/python+web medians, reuse hit rate, partition imbalance) is recorded in that boundary's PHASE LOG detail and quoted to the operator for D6",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P35.41a.md",
+            "docs/adr/ADR-219-partitioned-pytest-and-fixture-mode-lighthouse-reuse.md"
+          ],
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "9197da789d976c4ee26792c37e453e5a7f159872",
+          "reason": "migration anchor appended by P35.41a (row 320a) for the deferral row it added — the after-state needs four tickets landed on the new CI; AC 10 gives only the three proof heads",
+          "anchor": {
+            "row_line": 1370,
+            "row_sha256": "43b2123ca05671882d7697e94c673d020c1adc3ebf169104f5fe53ab1960c20e",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.41a-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.41a-2:e0",
+      "kind": "V",
+      "owner": "the operator's merge + the orchestrator's next boundary read",
+      "landing": "the first merge into main that contains P35.41a's commits — the push run completes with all five jobs success, python on make test-par (four partitions, nproc printed) and web's Performance budgets running (reuse never applies to push)",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "The first `push` run of `ci.yml` on `main` that carries P35.41a completes with all five jobs `success`, its `python` job running `make test-par` (four partitions, `nproc` printed) and its `web` job running `Performance budgets` (reuse never applies to `push`)",
+      "unblocked_by": "owner: the operator's merge + the orchestrator's next boundary read · trigger: the first merge into `main` that contains P35.41a's commits",
+      "verify": "`gh run list --workflow ci.yml --branch main --event push` shows the run; its jobs read `success`; the `web` log shows `ci-perf-run` (event push)",
+      "proxy": "the PR runs H1/H3 of P35.41a ran the same steps on the merge ref",
+      "line": 1371,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.41a-2:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.41a-2",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.41a",
+          "owner": "the operator's merge + the orchestrator's next boundary read",
+          "landing": "the first merge into main that contains P35.41a's commits — the push run completes with all five jobs success, python on make test-par (four partitions, nproc printed) and web's Performance budgets running (reuse never applies to push)",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P35.41a.md",
+            ".github/workflows/ci.yml"
+          ],
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "9197da789d976c4ee26792c37e453e5a7f159872",
+          "reason": "migration anchor appended by P35.41a (row 320a) for the deferral row it added — main receives the row only via the operator's merge (mergePolicy OPERATOR); no agent merges",
+          "anchor": {
+            "row_line": 1371,
+            "row_sha256": "81be60a344d6a3ff04e2e508b2fc793b1fac3d5df5297912618e78939425f139",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.41a-3",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.41a-3:e0",
+      "kind": "F",
+      "owner": "an operator-decided insert after D-P35.41a-1",
+      "landing": "the operator's D6 answer on the measured after-state — phase-2 candidates (a)-(e) as scoped; Round 11 CI wait/cost only, not a GATE-G5 blocker",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "CI wait, phase 2 candidates (contract § Out of scope): (a) a `python` records mode — on records-only heads run only the record readers found by a dynamic audit (an `open` audit hook inherited through `PYTEST_CURRENT_TEST`), plus a full run per gate; (b) the export-mode Lighthouse as its own job or with its URL set de-duplicated against `check:perf`; (c) a unique concurrency group for `push` to `main`, so every landed head gets a completed run (145 of 155 October push runs were replaced while pending); (d) `workflow_dispatch` + a full-run reader once `main` carries `ci.yml`; (e) dropping the duplicate `tests/e2e` run from `python` (`composed` runs a superset)",
+      "unblocked_by": "owner: an operator-decided insert after D-P35.41a-1 · trigger: the operator's D6 answer on the measured after-state · scope: Round 11 CI wait/cost only — not a GATE-G5 blocker",
+      "verify": "the phase-2 insert's own ACs",
+      "proxy": "phase 1 (P35.41a) in place",
+      "line": 1372,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.41a-3:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.41a-3",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.41a",
+          "owner": "an operator-decided insert after D-P35.41a-1",
+          "landing": "the operator's D6 answer on the measured after-state — phase-2 candidates (a)-(e) as scoped; Round 11 CI wait/cost only, not a GATE-G5 blocker",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/320a_P35.41a__ci-wait-phase-1-partitioned-pytest-and-perf-reuse.md",
+            "docs/adr/ADR-219-partitioned-pytest-and-fixture-mode-lighthouse-reuse.md"
+          ],
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "9197da789d976c4ee26792c37e453e5a7f159872",
+          "reason": "migration anchor appended by P35.41a (row 320a) for the deferral row it added — phase 2 awaits the D-P35.41a-1 measurement; (b)/(c) change gate semantics and need an ADR + the operator's word",
+          "anchor": {
+            "row_line": 1372,
+            "row_sha256": "59e23f89f364dd2e15ae1602355ca5d0848c10facd6fb27007f8afecd9e092b5",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -19356,10 +19497,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "6fe412c06a1ec4b9c9949faa302a58899a955771a3f30ffa09dca34e0c546d37",
+  "manifest_sha256": "d4fab60f7540ba4d5fd2b8272fc5f325842b016b7258a0d89da15baa2d7dddc9",
   "current_md": {
     "lines": 63,
-    "bytes": 15605,
+    "bytes": 15599,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
