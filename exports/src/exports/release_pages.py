@@ -28,11 +28,25 @@ from html import escape
 from typing import Any
 from urllib.parse import quote, urlencode
 
+from policy.labels import KIND_WORDS, hash4, kind_for
+
 from .published_record import EvidenceRef, PublishedRecord
 
 
 def _e(v: Any) -> str:
     return escape("" if v is None else str(v), quote=True)
+
+
+def _typed_fallback_label(entity_type: Any, entity_id: Any) -> str:
+    """P35.29 (L-2/D-K2-5): the typed fallback — kind words + short hash.
+
+    Retires the old ``Unnamed <type>`` string: a label is never "unnamed",
+    it is a typed word plus the entity's hash4 — never an identifier.
+    """
+    kind = kind_for(str(entity_type) if entity_type else None, None)
+    word = KIND_WORDS.get(kind, "Record")
+    eid = str(entity_id or "")
+    return f"{word} #{hash4(eid)}" if eid else word
 
 
 # --------------------------------------------------------------------------- #
@@ -424,7 +438,9 @@ def record_page(
     )
 
     cov = record.coverage
-    label_txt = record.label.get("text") or f"Unnamed {record.entity_type}"
+    label_txt = record.label.get("text") or _typed_fallback_label(
+        record.entity_type, record.entity_id
+    )
     title = f"{label_txt} · {record.entity_type}"
     cite_url = record.href or ""
     access_th = "<th>Access edge</th>" if show_access else ""
@@ -481,7 +497,9 @@ Machine-readable: <a href="{_e(record.json_href)}"><code>{_e(record.json_href)}<
 
 
 def _record_li(item: Mapping[str, Any], *, publication_id: str, compartment: str) -> str:
-    label = item.get("label") or f"Unnamed {item.get('entity_type')}"
+    label = item.get("label") or _typed_fallback_label(
+        item.get("entity_type"), item.get("entity_id")
+    )
     # P34.34a: site-root-absolute — the browse/jurisdiction pages sit three
     # levels under the compartment root, where ../../entity/… resolved to the
     # browse/ subtree (C4 NEW-1).
@@ -1231,7 +1249,10 @@ def search_page(
 
     rows: list[str] = []
     for hit in result.get("results") or []:
-        label = hit.get("label") or f"Unnamed {_e(hit.get('record_key'))}"
+        # P35.29 (L-2): the typed fallback — never "Unnamed", never an id.
+        label = hit.get("label") or _typed_fallback_label(
+            hit.get("entity_type"), hit.get("entity_id")
+        )
         jur = hit.get("jurisdiction") or "unreported"
         loc = hit.get("location") or ""
         srcs = ", ".join(str(s) for s in (hit.get("sources") or []))

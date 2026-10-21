@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "d432df040a2dbc8620d2e6af1fdb9a9e17895952",
+  "input_commit": "ebf505595d57d2ebfdb1c6463c14ef56deadca35",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "fd01968a8905b68354c2ee6c9b411fd8e05aa81d91c29ae28ecc35e23c54de4b"
+      "sha256": "99cd5cf8d44ec2cd00a99a3f82399a0af18018a82cecf2b5e233f6f83ba77df0"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -849,20 +849,24 @@
       "sha256": "9b94e5bf2ccc6654bf546d679f250e291295a8f8f2f4141487253dc22a61dec0"
     },
     {
+      "path": "docs/adr/ADR-215-shared-entity-labels-slugs-hashes.md",
+      "sha256": "c73a3b30d31a08529003ea9e6094462b2b63e22e50f880f8890ece2aa72a59fd"
+    },
+    {
       "path": "docs/adr/ADR-218-live-claim-lint-carried-record-provenance.md",
       "sha256": "25ae6a665cc454f4c42bdc0113e7eb0a32c2c18c013e359ef76a212149ff5f75"
     },
     {
       "path": "docs/adr/README.md",
-      "sha256": "9b2fa7378a4578618b198e4ce0b5cbf5615ecc71474e3596d94c931895741f90"
+      "sha256": "1cff3647bce3bae1f63992a887fbe19d65d2fd04f65edce873e20a990447727b"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "a9f089e1c712246f5c313214e2be51880d3b4892e59dc4a01188375b5e8466cd"
+      "sha256": "27b00e16585c2d62b083fd42bc60fe2ece62968047df166f4453c8757e167b50"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "2fc7070cbbaba91e841bb512bd6630219067c5d8597adb893fa17f2a156ceef3"
+      "sha256": "760564a32e6204bc2efe8baa26c2c66eea8968b7f3e6fa74ddd0b6bd2bb91c1d"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -870,7 +874,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "0713060aa1003d9ed0fb51e52b5ac147377dd3f69ae0c38310cce85d698c467d"
+      "sha256": "0cf73457e1c2272882f713ad29cdf1cb230722c4c00804845141915d804d3a43"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -2015,6 +2019,10 @@
     {
       "path": "docs/build/runs/P35.28.md",
       "sha256": "2ff5dd2151e644c9d5dcb3ead15c6e479516d7f4b09c7707ac58629cc229d6b6"
+    },
+    {
+      "path": "docs/build/runs/P35.29.md",
+      "sha256": "838170e435d116e41d8dbc6256b993c6f139c2446c370125c9a8224181302152"
     },
     {
       "path": "docs/build/runs/P35.3.md",

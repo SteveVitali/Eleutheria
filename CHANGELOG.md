@@ -24,6 +24,31 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Shared entity labels, slugs and hashes — the `sig.entity-label/1`
+  registry** (P35.29 / row 307; R11-K13-GX-01; cites A-10 (the operator's
+  recorded answer, `b + c`), ADR-159, SIG-PUB-008, K2 §3 L-1…L-7,
+  SIG-UI-D20–D25, SIG-IDENT-031/032, UXR-17 draft; ADR-215) — one
+  derivation everywhere. `policy.labels` is the leaf-package module:
+  `LabelFacts` in, `EntityLabel` out — label, descriptor, `label_basis`
+  (closed `source_name|source_title|key_name|slug_name|derived|fallback`
+  vocabulary), slug, Crockford-base32 hash, canonical
+  `/entity/<type>/<name-slug>--<hash>/` URL, and the Part VIII `part8`
+  verdict. The person-name screen is injected at every call site
+  (`resolution.partner_identity.natural_person_signal`) and runs over
+  every label input including literal procurement parties. The export now
+  emits `labels/<compartment>.jsonl` — one derivation per publishable
+  entity, filed under the compartment its label-input claims license to.
+  Every consumer reads the registry/module instead of re-deriving: site
+  rows, map assets, network nodes, dossier jurisdiction attribution,
+  published-record label basis, release pages, and the API label path —
+  the cached-canonical-name/connector-key/`Unnamed <type>` fallbacks are
+  retired for typed `#{hash4}` fallbacks, never identifiers. A-10 renders
+  as: registry-allowed organisations labelled; every other organisation a
+  typed `label_state: "not_yet_reviewed"` row (null label/slug/hash — the
+  state visible, the label not); withheld and person entities emit no row
+  at all. Deterministic disambiguation (`· {place}` → `· {source}` →
+  `#{hash4}`) runs over the emitted set so no two public entities of a
+  kind share a full display label.
 - **Resolver input truth — valid time, declared directness, and
   tolerance-aware dissent** (P35.27 / row 306; R11-L3-CP9 + CONF-05;
   owns F-519; cites SIG-RECON-053, SIG-STORE-015, SIG-EPIS-017/018,

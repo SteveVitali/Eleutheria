@@ -505,6 +505,8 @@ def _row_dict(row: tuple, publication_id: str, compartment: str, matched: list[s
     (record_key, entity_id, entity_type, label, jur, loc, src, _claims, _ls) = row
     return {
         "record_key": record_key,
+        "entity_id": entity_id,
+        "entity_type": entity_type,
         "href": f"/r/{publication_id}/c/{compartment}/entity/{entity_type}/{entity_id}/",
         "json_href": f"/r/{publication_id}/c/{compartment}/entity/{entity_type}/{entity_id}.json",
         "label": label or None,

@@ -109,6 +109,7 @@ from policy.eligibility import (
     claim_publication_decision,
     organization_publication_decision,
 )
+from policy.labels import LabelFacts, derive_label
 from policy.rights import RightsRecord
 from psycopg import sql
 from psycopg_pool import ConnectionPool, PoolTimeout
@@ -119,6 +120,7 @@ from reconcile.materialize import (
 from reconcile.resolve import RESOLVE, Claim, declared_directness
 from reconcile.ruleset import Ruleset
 from reconcile.snapshot_diff import Capture
+from resolution.partner_identity import natural_person_signal
 
 from .store import (
     SEARCH_DEFAULT_LIMIT,
@@ -247,18 +249,23 @@ SEARCH_SQL = _SEARCH_MATCH + " ORDER BY e.entity_id LIMIT %(limit)s"
 SEARCH_AFTER_SQL = (
     _SEARCH_MATCH + "   AND e.entity_id > %(after)s::uuid ORDER BY e.entity_id LIMIT %(limit)s"
 )
-# The labels for a whole page, set-based: the same rule as ``_label_for`` (the
-# organization's cached name, else the entity's first identifier by scheme) —
-# BUT a label is itself protected output (D-P31.5-2): an ineligible entity's
-# cached name must never reach this surface even if the match missed it.
-_SEARCH_LABELS_SQL = (
-    "SELECT ids.entity_id, CASE WHEN "
-    + entity_eligible_sql("ids.entity_id")
-    + " THEN COALESCE(NULLIF(o.cached_canonical_name, ''), ("
-    "   SELECT ei.value FROM entity_identifier ei"
-    "    WHERE ei.entity_id = ids.entity_id ORDER BY ei.scheme LIMIT 1)) END"
+# The label inputs for a whole page, set-based (P35.29, K2 §3/L-1): the page's
+# entities with their type, org cache and subject key — the derivation itself
+# runs in ``policy.labels`` per row, the SAME module the exporter consumes.
+# Eligibility stays the SQL gate (D-P31.5-2): an ineligible entity yields NO
+# row — its label never reaches this surface even if the match missed it.
+_SEARCH_FACTS_SQL = (
+    "SELECT ids.entity_id, e.entity_type, o.cached_canonical_name,"
+    "       (SELECT ei2.value FROM entity_identifier ei2"
+    "         WHERE ei2.entity_id = ids.entity_id"
+    "           AND ei2.scheme = 'sig.connector.subject'"
+    "         ORDER BY ei2.value LIMIT 1),"
+    "       ei.scheme, ei.value"
     "  FROM unnest(%s::uuid[]) AS ids(entity_id)"
+    "  LEFT JOIN entity e ON e.entity_id = ids.entity_id"
     "  LEFT JOIN organization o ON o.entity_id = ids.entity_id"
+    "  LEFT JOIN entity_identifier ei ON ei.entity_id = ids.entity_id"
+    " WHERE " + entity_eligible_sql("ids.entity_id") + " ORDER BY ids.entity_id, ei.scheme"
 )
 # The public sources for a whole page, set-based: ``_source_ids_for_entity`` per id.
 _SEARCH_SOURCES_SQL = (
@@ -707,16 +714,46 @@ class PgReadStore:
         return (str(row[0]) if (decision.permitted and row[0]) else None, decision)
 
     def _label_for(self, entity_id: str) -> str | None:
-        label, decision = self._entity_publication(entity_id)
+        """The shared label (P35.29, K2 §3/L-1): one derivation, never a raw id."""
+        name, decision = self._entity_publication(entity_id)
         if not decision.permitted:
             return None
-        if label:
-            return label
-        ident = self._conn.execute(
-            "SELECT value FROM entity_identifier WHERE entity_id = %s ORDER BY scheme LIMIT 1",
+        return self._derive_label(entity_id, canonical_name=name, permitted=decision.permitted)
+
+    def _derive_label(
+        self,
+        entity_id: str,
+        *,
+        canonical_name: str | None,
+        permitted: bool,
+    ) -> str | None:
+        """``policy.labels`` over this entity's facts — the ONE derivation."""
+        row = self._conn.execute(
+            "SELECT e.entity_type,"
+            "       (SELECT ei.value FROM entity_identifier ei"
+            "         WHERE ei.entity_id = e.entity_id"
+            "           AND ei.scheme = 'sig.connector.subject'"
+            "         ORDER BY ei.value LIMIT 1)"
+            "  FROM entity e WHERE e.entity_id = %s",
             (entity_id,),
         ).fetchone()
-        return None if ident is None else str(ident[0])
+        idents = tuple(
+            (str(r[0]), str(r[1]))
+            for r in self._conn.execute(
+                "SELECT scheme, value FROM entity_identifier  WHERE entity_id = %s ORDER BY scheme",
+                (entity_id,),
+            ).fetchall()
+        )
+        facts = LabelFacts(
+            entity_id=entity_id,
+            entity_key=None if row is None or row[1] is None else str(row[1]),
+            entity_type=None if row is None else str(row[0]),
+            disposition="allow" if permitted else "deny",
+            canonical_name=canonical_name,
+            identifiers=idents,
+        )
+        result = derive_label(facts, person_screen=lambda t: bool(natural_person_signal(t)))
+        return result.label
 
     def _source_ids_for_entity(self, entity_id: str) -> list[str]:
         return [
@@ -1070,8 +1107,37 @@ class PgReadStore:
             labels: dict[str, str | None] = {}
             sources: dict[str, list[str]] = {}
             if ids:
-                for entity_id, label in conn.execute(_SEARCH_LABELS_SQL, (ids,)).fetchall():
-                    labels[str(entity_id)] = None if label is None else str(label)
+                # One set-based join carries the page's label facts + the
+                # identifier candidates (identifier-less entities still row,
+                # with NULL scheme/value — never a second statement per page).
+                facts_by_eid: dict[str, dict[str, Any]] = {}
+                for entity_id, etype, cname, skey, scheme, value in conn.execute(
+                    _SEARCH_FACTS_SQL, (ids,)
+                ).fetchall():
+                    slot = facts_by_eid.setdefault(
+                        str(entity_id),
+                        {
+                            "entity_type": None if etype is None else str(etype),
+                            "canonical_name": None if cname is None else str(cname),
+                            "entity_key": None if skey is None else str(skey),
+                            "identifiers": [],
+                        },
+                    )
+                    if scheme is not None:
+                        slot["identifiers"].append((str(scheme), str(value)))
+                for eid, slot in facts_by_eid.items():
+                    lbl = derive_label(
+                        LabelFacts(
+                            entity_id=eid,
+                            entity_key=slot["entity_key"],
+                            entity_type=slot["entity_type"],
+                            disposition="allow",
+                            canonical_name=slot["canonical_name"],
+                            identifiers=tuple(slot["identifiers"]),
+                        ),
+                        person_screen=lambda t: bool(natural_person_signal(t)),
+                    )
+                    labels[eid] = lbl.label
                 for entity_id, source_id in conn.execute(
                     _SEARCH_SOURCES_SQL, (ids, sorted(SEED_FIXTURE_SOURCE_IDS))
                 ).fetchall():

@@ -58,6 +58,14 @@ from db.dispositions import (
 from db.occurrences import BELIEF_NOW, BELIEF_PARAM, claim_source_cte
 from inference.accountability import read_materialized_accountability_links
 from inference.materialize import read_materialized_coverage
+from policy.labels import (
+    EntityLabel,
+    LabelFacts,
+    derive_label,
+    hash4,
+    kind_for,
+    resolve_disambiguators,
+)
 from policy.licensing import _registry as _license_registry
 from policy.licensing import (
     compute_export_license,
@@ -75,6 +83,7 @@ from reconcile.materialize import (
     read_materialized_resolutions,
 )
 from resolution.camera_sites_pg import read_resolved_site_runs
+from resolution.partner_identity import natural_person_signal
 from tasks.catalog import catalog as _task_catalog
 from tasks.contribution import LeverageLedger
 from tasks.osm_feed import ingest_changesets, leverage_metric_json, parse_changesets
@@ -149,6 +158,78 @@ _DOSSIER_SECTIONS: tuple[str, ...] = (
 #: Each is keyed on a table that a pre-P27.2 / partial spine may not have, so every
 #: one is guarded by ``to_regclass`` before it runs; a missing table is honest
 #: absence (an empty surface), never a fabricated row.
+#: The predicates ``policy.labels`` reads as label candidates (K2 §3.2). The
+#: ``label_facts`` query selects the first publishable value per
+#: (subject, predicate) for exactly this set — no other claim text leaves the
+#: spine for labelling.
+_LABEL_FACT_PREDICATES: tuple[str, ...] = (
+    "agency_name",
+    "asset_operator",
+    "asset_type",
+    "award_date",
+    "bill_external_id",
+    "bill_identifier",
+    "bill_jurisdiction",
+    "bill_session",
+    "bill_status",
+    "bill_status_date",
+    "bill_title",
+    "buyer",
+    "camera_name",
+    "camera_operator",
+    "camera_roadway",
+    "citation",
+    "content_term",
+    "contract_signed_date",
+    "country",
+    "description",
+    "effective_from",
+    "enacting_body",
+    "event_date",
+    "event_epistemic_status",
+    "event_organizations",
+    "event_type",
+    "external_id",
+    "filed_date",
+    "funder",
+    "funding_program_name",
+    "instrument_type",
+    "jurisdiction",
+    "legal_name",
+    "manufacturer",
+    "matched_keyword",
+    "meeting_date",
+    "name",
+    "notice_type",
+    "operator_stated",
+    "ordinance_citation",
+    "organization_identifier",
+    "organization_legal_name",
+    "place_of_performance",
+    "platform",
+    "platform_name",
+    "posted_date",
+    "procurement_state",
+    "program_name",
+    "recipient",
+    "recipient_name",
+    "records_response_status",
+    "request_date",
+    "response_date",
+    "response_status",
+    "seller",
+    "serial_number",
+    "service_name",
+    "session",
+    "signed_date",
+    "source_name",
+    "status",
+    "target_agency",
+    "technology",
+    "title",
+    "vendor",
+)
+
 EXPORT_QUERIES: dict[str, tuple[str, str]] = {
     # (guard-table, SELECT). source_registry names — node labels + PROV agents.
     "source_names": (
@@ -293,6 +374,56 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "   AND upper_inf(c.sys_period)"
         "   AND {PUB_CLAIM_GATE}"
         " ORDER BY c.subject_id, c.raw_value",
+    ),
+    # P35.29 (K2 §3 / A-10, R11-K13-GX-01): the shared ``sig.entity-label/1``
+    # registry inputs. Three seams, each degrading independently:
+    #   * ``label_entities`` — every entity + type + subject key + org columns
+    #     (never gated: the registry itself renders the eligible/typed-review
+    #     state per row; a spine with entities emits rows for all of them).
+    #   * ``label_entity_dispositions`` — the CURRENT effective entity
+    #     disposition per target (``publication_disposition`` is post-P32.5 —
+    #     absent → honest "no dispositions", never a missing entity list).
+    #   * ``label_facts`` — the publishable label-input claims (first value per
+    #     subject+predicate under the same {PUB_CLAIM_GATE}/effective-rights
+    #     semantics as claim_weights) + the rights slot each rides, so the
+    #     emitted row files under the compartment its input claims license to.
+    "label_entities": (
+        "entity",
+        "SELECT e.entity_id::text, e.entity_type,"
+        "       (SELECT ei.value FROM entity_identifier ei"
+        "         WHERE ei.entity_id = e.entity_id"
+        "           AND ei.scheme = 'sig.connector.subject'"
+        "         ORDER BY ei.value LIMIT 1) AS subject_key,"
+        "       e.merged_into::text,"
+        "       o.cached_canonical_name, o.publication_review_required, o.status"
+        "  FROM entity e LEFT JOIN organization o ON o.entity_id = e.entity_id"
+        " ORDER BY e.entity_id",
+    ),
+    "label_entity_dispositions": (
+        "publication_disposition",
+        "SELECT DISTINCT ON (d.target_id) d.target_id, d.disposition::text"
+        "  FROM publication_disposition d"
+        " WHERE d.target_kind = 'entity' AND d.decided_at <= clock_timestamp()"
+        " ORDER BY d.target_id, d.decided_at DESC, d.disposition_seq DESC",
+    ),
+    "label_facts": (
+        "claim",
+        "{EFFECTIVE}SELECT DISTINCT ON (c.subject_id, c.predicate_id)"
+        "       c.subject_id::text, c.predicate_id,"
+        "       COALESCE(c.value_text, c.raw_value::text),"
+        "       cs.source_id, rr.spdx_expression, rr.attribution_text,"
+        "       rr.redistributable, rr.derivative_permitted, rr.terms_url,"
+        "       rr.rights_id"
+        "  FROM claim c"
+        "  LEFT JOIN claim_source cs ON cs.claim_id = c.claim_id"
+        "  LEFT JOIN latest_decision ld"
+        "         ON ld.source_id = cs.source_id AND ld.prior_rights_id = c.rights_id"
+        "  JOIN rights_record rr ON rr.rights_id = COALESCE(ld.rights_id, c.rights_id)"
+        " WHERE c.predicate_id IN (" + ",".join(f"'{p}'" for p in _LABEL_FACT_PREDICATES) + ")"
+        "   AND c.sensitivity_tier = 0"
+        "   AND upper_inf(c.sys_period)"
+        "   AND {PUB_CLAIM_GATE}"
+        " ORDER BY c.subject_id, c.predicate_id, c.observed_at DESC, c.claim_id",
     ),
 }
 
@@ -682,6 +813,7 @@ def _site_row_data(
     rights: Mapping[str, Any],
     *,
     placement: _placement.PlacementResult | None = None,
+    labels: Mapping[str, EntityLabel] | None = None,
 ) -> dict[str, Any]:
     """The per-(site, source, rights) export row — geometry + provenance keys.
 
@@ -701,10 +833,14 @@ def _site_row_data(
         and not (placement is not None and placement.point_withheld)
     ):
         geometry = {"type": "Point", "coordinates": [site.longitude, site.latitude]}
+    # P35.29 (K2 §3/L-1): the public label is the shared registry's derivation
+    # — never the per-slice envelope and never the entity id (L-2).
+    lbl = (labels or {}).get(site.entity_id)
     row = {
         "entity_id": site.entity_id,
         "entity_type": site.entity_type,
-        "label": site.label,
+        "label": (lbl.label if lbl is not None and lbl.label else site.label),
+        "label_basis": (lbl.label_basis if lbl is not None and lbl.label_basis else None),
         # P35.15a / PKG-07: the declared SKOS technology slug (null when
         # unreported/conflicted — the status keeps the honest reason).
         "technology": site.technology,
@@ -752,6 +888,7 @@ def _slice_sites(
     registry: Mapping[str, Any] | None,
     placement: _placement.PlacementEngine | None = None,
     defect_flags: Mapping[str, frozenset[str]] | None = None,
+    labels: Mapping[str, EntityLabel] | None = None,
 ) -> _SiteSlices:
     """Licence-slice every site per (source, rights_id) into per-compartment rows.
 
@@ -857,6 +994,7 @@ def _slice_sites(
                             site,
                             rights,
                             placement=placements.get((source_id, site.entity_id)),
+                            labels=labels,
                         ),
                     )
                 )
@@ -1272,7 +1410,9 @@ def contradictions_visible_metric(
 
 
 def _network_from_materialized(
-    edges: Sequence[Mapping[str, Any]], source_names: Mapping[str, str]
+    edges: Sequence[Mapping[str, Any]],
+    source_names: Mapping[str, str],
+    labels: Mapping[str, EntityLabel] | None = None,
 ) -> dict[str, Any]:
     """Build the §39.4 network surface from the materialized ``relationship`` edges (P28.2).
 
@@ -1290,8 +1430,24 @@ def _network_from_materialized(
             continue
         src = str(e["from_entity"])
         dst = str(e["to_entity"])
-        nodes.setdefault(src, {"id": src, "label": source_names.get(src, src), "type": "agency"})
-        nodes.setdefault(dst, {"id": dst, "label": source_names.get(dst, dst), "type": "partner"})
+        # P35.29 (L-2): node labels come from the shared registry — a raw
+        # entity/source id is never a label (SIG-UI-D20).
+        nodes.setdefault(
+            src,
+            {
+                "id": src,
+                "label": _registry_label(labels or {}, src, "Record"),
+                "type": "agency",
+            },
+        )
+        nodes.setdefault(
+            dst,
+            {
+                "id": dst,
+                "label": source_names.get(dst) or _registry_label(labels or {}, dst, "Partner"),
+                "type": "partner",
+            },
+        )
         out_edges.append(
             {
                 "from": src,
@@ -1349,7 +1505,8 @@ def _map_layer(
         )
         asset: dict[str, Any] = {
             "id": site.entity_id,
-            "label": site.label or site.entity_id,
+            # P35.29 (L-2): the registry label — never the entity id.
+            "label": site.label or f"Surveillance camera #{hash4(site.entity_id)}",
             "jurisdiction": site.jurisdiction,
             # P35.15a / PKG-07: the declared technology slug for the map's
             # facet band; `technologyStatus` keeps an unresolved/conflicted
@@ -1409,7 +1566,11 @@ def _map_layer(
     return {"layers": layers, "assets": assets, "jurisdiction_indicators": indicators}
 
 
-def _network(dataset: ShapedDataset, source_names: Mapping[str, str]) -> dict[str, Any]:
+def _network(
+    dataset: ShapedDataset,
+    source_names: Mapping[str, str],
+    labels: Mapping[str, EntityLabel] | None = None,
+) -> dict[str, Any]:
     """Surface 4 — NetworkNode / NetworkEdge (§39.4). The three §12.2 access-edge
     types are never merged; an unclassifiable edge carries no typed relationship, so
     it is honestly absent from the typed network rather than coerced into one."""
@@ -1421,8 +1582,23 @@ def _network(dataset: ShapedDataset, source_names: Mapping[str, str]) -> dict[st
             continue
         src = edge.subject_id
         dst = edge.partner_ref
-        nodes.setdefault(src, {"id": src, "label": src, "type": "agency"})
-        nodes.setdefault(dst, {"id": dst, "label": source_names.get(dst, dst), "type": "partner"})
+        # P35.29 (L-2): the raw entity/source id is never a node label.
+        nodes.setdefault(
+            src,
+            {
+                "id": src,
+                "label": _registry_label(labels or {}, src, "Agency"),
+                "type": "agency",
+            },
+        )
+        nodes.setdefault(
+            dst,
+            {
+                "id": dst,
+                "label": source_names.get(dst) or _registry_label(labels or {}, dst, "Partner"),
+                "type": "partner",
+            },
+        )
         edges.append(
             {
                 "from": src,
@@ -1821,7 +1997,7 @@ def _dossiers(
     *,
     accountability_links: Sequence[Mapping[str, Any]] = (),
     coverage_rows: Sequence[Mapping[str, Any]] = (),
-    entity_labels: Sequence[Sequence[Any]] = (),
+    entity_label_by_id: Mapping[str, str] | None = None,
 ) -> list[dict[str, Any]]:
     """Surfaces 1 + 2 — the dossier index / per-jurisdiction dossiers (§39.2).
 
@@ -1839,15 +2015,10 @@ def _dossiers(
     """
     echo = _as_of_echo(as_of, belief)
     governance = _governance_by_jurisdiction(dataset, accountability_links)
-    # entity_identifier labels for coverage-row jurisdiction attribution — a row's
-    # ``jurisdiction_id`` is an entity; its display jurisdiction is looked up, never
-    # guessed from the id.
-    entity_label_by_id: dict[str, str] = {}
-    for row in entity_labels:
-        try:
-            entity_label_by_id.setdefault(str(row[0]), str(row[2]))
-        except (TypeError, IndexError):
-            continue
+    # P35.29 (K2 §3/L-1): jurisdiction attribution reads the shared label
+    # registry — a row's ``jurisdiction_id`` entity label is looked up, never
+    # the raw identifier value and never guessed from the id.
+    label_by_id: dict[str, str] = dict(entity_label_by_id or {})
     site_jurisdiction = {str(s.entity_id): s.jurisdiction for s in dataset.sites}
     dossiers: list[dict[str, Any]] = []
     for group in dataset.jurisdictions:
@@ -1900,7 +2071,7 @@ def _dossiers(
         gaps = _coverage_gaps(
             group.jurisdiction,
             coverage_rows,
-            entity_label_by_id=entity_label_by_id,
+            entity_label_by_id=label_by_id,
             site_jurisdiction=site_jurisdiction,
         )
         if group.conflicted_subjects:
@@ -2242,6 +2413,178 @@ def _table(name: str, rows: Sequence[C.ExportRow], *, kind: str, compartment: st
     return C.ExportTable(name=name, rows=tuple(rows), kind=kind, compartment=compartment)
 
 
+# --------------------------------------------------------------------------- #
+# P35.29 (K2 §3 / A-10, R11-K13-GX-01): the shared ``sig.entity-label/1``      #
+# registry. ONE derivation (policy.labels.derive_label) over the export's own  #
+# snapshot — the artifact, map, dossier, network and record surfaces all read  #
+# this registry rather than re-deriving a name (L-1).                          #
+# --------------------------------------------------------------------------- #
+
+#: The disposition vocabulary's denying side (policy.eligibility.DENYING).
+_DENYING_DISPOSITIONS = frozenset({"withhold", "restrict", "withdraw"})
+#: Organisation ``status`` values the shared selector denies on.
+_WITHDRAWN_ORG_STATUSES = frozenset({"withdrawn", "suppressed"})
+
+
+def _org_disposition(
+    review_required: bool, status: str | None, effective: str | None
+) -> str | None:
+    """Render the shared selector's outcome for an organisation (A-10 / D-K2-1).
+
+    Exactly ``db.dispositions.entity_eligible_sql``'s org rule, rendered as a
+    label input rather than a boolean: a current deny disposition or a
+    withdrawn/suppressed org status denies; a recorded ``allow`` or an org
+    without ``publication_review_required`` labels; everything else is the
+    operator-mandated typed ``not_yet_reviewed`` state (``None`` — the label
+    module renders the row; we never silently drop the org).
+    """
+    if effective in _DENYING_DISPOSITIONS or (status or "") in _WITHDRAWN_ORG_STATUSES:
+        return "deny"
+    if effective == "allow" or not review_required:
+        return "allow"
+    return None
+
+
+def _label_registry(
+    raw: Mapping[str, Any],
+    dataset: ShapedDataset,
+    *,
+    retrieval: date,
+    registry: Mapping[str, Any] | None,
+) -> tuple[dict[str, EntityLabel], dict[str, set[str]]]:
+    """Build ``entity_id → EntityLabel`` + ``entity_id → compartment set``.
+
+    Compartment rule (the same law as ``_record_claims``): an entity's rows
+    file under every compartment its label-input claims license to — the
+    label text embeds those claims' literals, so an ODbL-sourced name lands
+    in the ODbL compartment, never co-mingled. Site subjects additionally
+    carry their published-slice licences (the caller augments the returned
+    sets after ``_slice_sites``); an entity with no publishable label inputs
+    defaults to the SIG compartment at emit time (its typed/fallback row is
+    SIG's own derived framing).
+    """
+    dispositions = {str(r[0]): str(r[1]) for r in (raw.get("label_entity_dispositions") or [])}
+    identifiers: dict[str, list[tuple[str, str]]] = {}
+    for row in raw.get("entity_labels") or []:
+        try:
+            identifiers.setdefault(str(row[0]), []).append((str(row[1]), str(row[2])))
+        except (TypeError, IndexError):
+            continue
+    fields: dict[str, dict[str, str]] = {}
+    fact_rights: dict[str, dict[str, RightsRecord]] = {}
+    for row in raw.get("label_facts") or []:
+        try:
+            sid, pred, val = str(row[0]), str(row[1]), row[2]
+            src, spdx, attr = row[3], str(row[4]), str(row[5])
+            redist, deriv, terms, rid = str(row[6]), str(row[7]), row[8], str(row[9])
+        except (TypeError, IndexError):
+            continue
+        if val not in (None, ""):
+            fields.setdefault(sid, {}).setdefault(pred, str(val))
+        if src:
+            fact_rights.setdefault(sid, {})[rid] = RightsRecord(
+                source_id=str(src),
+                spdx=spdx,
+                attribution=attr,
+                redistributable=redist == "yes",
+                derivative_permitted=deriv == "yes",
+                terms_url=str(terms or ""),
+                retrieval_date=retrieval,
+            )
+    site_by_id = {s.entity_id: s for s in dataset.sites}
+    results: list[EntityLabel] = []
+    comps: dict[str, set[str]] = {}
+    for row in raw.get("label_entities") or []:
+        try:
+            eid, etype = str(row[0]), str(row[1])
+            skey = str(row[2]) if row[2] else None
+            merged = row[3]
+            cname = str(row[4]) if row[4] else None
+            review_req = bool(row[5])
+            status = str(row[6]) if row[6] else None
+        except (TypeError, IndexError):
+            continue
+        kind = kind_for(etype, skey)
+        effective = dispositions.get(eid)
+        if merged or kind == "person":
+            disposition: str | None = "deny"
+        elif kind == "org":
+            disposition = _org_disposition(review_req, status, effective)
+        else:
+            disposition = "deny" if effective in _DENYING_DISPOSITIONS else "allow"
+        site = site_by_id.get(eid)
+        extra: dict[str, Any] = {}
+        place: str | None = None
+        if site is not None:
+            if site.technology:
+                extra["technology"] = site.technology
+            if site.jurisdiction_status == "resolved":
+                place = site.jurisdiction
+        facts = LabelFacts(
+            entity_id=eid,
+            entity_key=skey,
+            entity_type=etype,
+            kind=kind,
+            disposition=disposition,
+            canonical_name=cname,
+            place=place,
+            identifiers=tuple(identifiers.get(eid, ())),
+            fields=fields.get(eid, {}),
+            extra=extra,
+        )
+        results.append(
+            derive_label(
+                facts,
+                person_screen=lambda t: bool(natural_person_signal(t)),
+            )
+        )
+        entity_comps = comps.setdefault(eid, set())
+        for rec in (fact_rights.get(eid) or {}).values():
+            if export_refusal_reason(rec, registry) is not None:
+                continue
+            licence = compute_export_license([rec], registry)
+            comp = C.compartment_for_license(licence, None, registry)
+            if comp:
+                entity_comps.add(str(comp))
+    resolved = {r.entity_id: r for r in resolve_disambiguators(results)}
+    return resolved, comps
+
+
+def _label_artifacts(
+    registry: Mapping[str, EntityLabel],
+    entity_comps: Mapping[str, set[str]],
+    *,
+    default_compartment: str,
+) -> dict[str, list[dict[str, Any]]]:
+    """``compartment → sig.entity-label/1 rows`` for ``labels/<comp>.jsonl``.
+
+    A withheld entity emits NO row (no label, no node, no slug — A-10 c);
+    a review-pending organisation emits its typed ``not_yet_reviewed`` row
+    (A-10 b — the state is visible, the label is not). Rows sort by
+    (kind, label, entity_id) for byte-stable output.
+    """
+    by_comp: dict[str, list[dict[str, Any]]] = {}
+    for eid, label in registry.items():
+        if label.label_state == "withheld":
+            continue
+        for comp in entity_comps.get(eid) or {default_compartment}:
+            by_comp.setdefault(comp, []).append(label.row())
+    for rows in by_comp.values():
+        rows.sort(key=lambda r: (r["kind"], r["label"] or "", r["entity_id"]))
+    return by_comp
+
+
+def _registry_label(registry: Mapping[str, EntityLabel], entity_id: str, word: str) -> str:
+    """A node's display label from the registry — never the raw id (L-2/D20)."""
+    lbl = registry.get(entity_id)
+    if lbl is not None:
+        if lbl.label:
+            return lbl.label
+        if lbl.label_state == "not_yet_reviewed":
+            return f"{lbl.descriptor}" if lbl.descriptor else "Organisation · not yet reviewed"
+    return f"{word} #{hash4(entity_id)}"
+
+
 def build_spine_export(
     dataset: ShapedDataset,
     raw: Mapping[str, Any] | None = None,
@@ -2346,6 +2689,14 @@ def build_spine_export(
             by_subject.setdefault(str(row[0]), set()).add(str(row[1]))
         defect_flags = {k: frozenset(v) for k, v in by_subject.items()}
 
+    # --- P35.29 (K2 §3 / A-10): the shared label registry ----------------------
+    # Built ONCE over the export's own snapshot before any surface is drawn —
+    # sites rows, map assets, network nodes, dossier attribution and the
+    # labels/<comp>.jsonl artifact all read this one derivation (L-1).
+    label_registry, label_comps = _label_registry(
+        raw, dataset, retrieval=retrieval, registry=registry
+    )
+
     # --- the licence-critical path: sites sliced per (source, rights) -----------
     slices = _slice_sites(
         claims,
@@ -2355,12 +2706,38 @@ def build_spine_export(
         registry=registry,
         placement=placement,
         defect_flags=defect_flags,
+        labels=label_registry,
     )
     site_rows, site_index, site_exclusions = (
         slices.rows_by_compartment,
         slices.index,
         slices.exclusions,
     )
+    # Sites' published-slice licences join their label-row compartments (the
+    # registry itself only saw label-input claims).
+    for _eid, _lics in slices.licences_by_subject.items():
+        for _lic in _lics:
+            _comp = C.compartment_for_license(_lic, None, registry)
+            if _comp:
+                label_comps.setdefault(_eid, set()).add(str(_comp))
+    # The map/dossier layer reads site.label — stamp the registry's label so
+    # every surface shows the ONE derivation (a withheld/typed-absence site
+    # keeps its shaping label; those subjects are excluded from surfaces).
+    if label_registry:
+        dataset = replace(
+            dataset,
+            sites=tuple(
+                replace(
+                    s,
+                    label=(
+                        label_registry[s.entity_id].label
+                        if s.entity_id in label_registry and label_registry[s.entity_id].label
+                        else s.label
+                    ),
+                )
+                for s in dataset.sites
+            ),
+        )
 
     tables: list[C.ExportTable] = []
     for compartment in sorted(site_rows):
@@ -2413,7 +2790,9 @@ def build_spine_export(
         belief,
         accountability_links=m_acct_links,
         coverage_rows=m_coverage,
-        entity_labels=raw.get("entity_labels") or (),
+        entity_label_by_id={
+            eid: lbl.label for eid, lbl in label_registry.items() if lbl.label is not None
+        },
     )
     surfaces: dict[str, Any] = {
         "dossier_index": _dossier_index(dossiers),
@@ -2427,9 +2806,9 @@ def build_spine_export(
         # The network reads the materialized §29.3 edges (P28.2) when present, else the
         # compute-on-read shaping envelope (the honest fallback for an unmaterialized spine).
         "network": (
-            _network_from_materialized(m_edges, source_names)
+            _network_from_materialized(m_edges, source_names, label_registry)
             if m_edges
-            else _network(dataset, source_names)
+            else _network(dataset, source_names, label_registry)
         ),
         "freshness": _freshness(dataset),
         "coverage": coverage_metrics,
@@ -2546,6 +2925,23 @@ def build_spine_export(
     # for P34.17's interim sources-and-licences page. Row counts are computed
     # from THIS export's slices — never copied from the acceptance narrative.
     comp_licenses = {pt.compartment: pt.license for pt in bundle.placed}
+
+    # --- P35.29 (K2 §3/L-1): the ``sig.entity-label/1`` registry artifact -----
+    # One derivation for every publishable entity, filed per the compartment
+    # its label inputs license to — the single registry every downstream
+    # consumer (API, pages, graph, typeahead) reads instead of re-deriving.
+    for comp, label_rows in sorted(
+        _label_artifacts(
+            label_registry,
+            label_comps,
+            default_compartment=sig_compartment,
+        ).items()
+    ):
+        path = f"labels/{comp}.jsonl"
+        web_artifacts[path] = b"".join(canonical_json(r) for r in label_rows)
+        web_licenses[path] = str(comp_licenses.get(comp, _SIG_SPDX))
+        web_compartments[path] = comp
+
     disclosure = _terms_disclosure_payload(
         slices.rows_by_compartment,
         as_of=dataset.as_of,

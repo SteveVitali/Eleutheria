@@ -260,9 +260,14 @@ def record_from_site_row(
         location = {"kind": "unreported"}
 
     label_text = row.get("label")
+    # P35.29 (K2 §3/L-1): the label is the shared registry's — its basis is the
+    # row's recorded ``label_basis``; a pre-P35.29 row keeps the old vocabulary.
+    label_basis = row.get("label_basis")
     label = {
         "text": str(label_text) if label_text else None,
-        "basis": "source_label" if label_text else "unlabelled",
+        "basis": (
+            str(label_basis) if label_basis else ("source_label" if label_text else "unlabelled")
+        ),
     }
     jurisdiction_id = row.get("jurisdiction")
     jurisdiction: dict[str, Any] = {
