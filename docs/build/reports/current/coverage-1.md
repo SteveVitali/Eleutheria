@@ -9,7 +9,9 @@
 | SIG-CHART-004 | implementation | MET | 2026-10-06 | — |
 | SIG-CHART-005 | implementation | MET | 2026-10-06 | — |
 | SIG-CHART-006 | public | PARTIAL | 2026-10-06 | — |
+| SIG-CHART-006 | public | PARTIAL | 2026-10-21 | SIG-CHART-006:r11-1 |
 | SIG-CHART-007 | public | MET | 2026-10-06 | — |
+| SIG-CHART-007 | public | MET | 2026-10-21 | SIG-CHART-007:r11-1 |
 | SIG-CHART-011 | implementation | MET | 2026-10-06 | — |
 | SIG-CHART-012 | implementation | MET | 2026-10-06 | — |
 | SIG-CHART-014 | implementation | MET-ENGINEERED(D-P21.7-1) | 2026-10-06 | — |
@@ -85,6 +87,7 @@
 | SIG-ENG-046 | implementation | MISSING | 2026-10-01 | — |
 | SIG-ENG-046 | implementation | MET-ENGINEERED(D-P34.1-1) | 2026-10-01 | SIG-ENG-046:r11-1 |
 | SIG-EPIS-001 | implementation | MET | 2026-10-06 | — |
+| SIG-EPIS-001 | implementation | MET | 2026-10-21 | SIG-EPIS-001:r11-1 |
 | SIG-EPIS-002 | implementation | MET | 2026-10-06 | — |
 | SIG-EPIS-003 | implementation | MET | 2026-10-06 | — |
 | SIG-EPIS-004 | implementation | MET | 2026-10-06 | — |
@@ -119,8 +122,5 @@
 | SIG-GEO-007 | implementation | N/A-RATIONALE | 2026-10-01 | — |
 | SIG-GOV-001 | public | WAIVED(ADR-180) | 2026-10-01 | — |
 | SIG-GOV-002 | public | WAIVED(ADR-180) | 2026-10-01 | — |
-| SIG-GOV-003 | public | WAIVED(ADR-186) | 2026-10-01 | — |
-| SIG-GOV-008 | hosted | WAIVED(ADR-181) | 2026-10-01 | — |
-| SIG-GOV-012 | public | WAIVED(ADR-165) | 2026-10-01 | — |
 
 ← back: CURRENT.md · next page: coverage-2.md

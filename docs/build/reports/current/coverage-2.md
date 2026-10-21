@@ -2,6 +2,9 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-GOV-003 | public | WAIVED(ADR-186) | 2026-10-01 | — |
+| SIG-GOV-008 | hosted | WAIVED(ADR-181) | 2026-10-01 | — |
+| SIG-GOV-012 | public | WAIVED(ADR-165) | 2026-10-01 | — |
 | SIG-GOV-013 | public | WAIVED(ADR-165) | 2026-10-01 | — |
 | SIG-GOV-015 | public | WAIVED(ADR-164) | 2026-10-01 | — |
 | SIG-GOV-016 | public | PARTIAL | 2026-10-01 | — |
@@ -119,8 +122,5 @@
 | SIG-SEC-002 | implementation | MET | 2026-10-06 | — |
 | SIG-SEC-003 | public | MISSING | 2026-10-01 | — |
 | SIG-SEC-005 | hosted | PARTIAL | 2026-10-01 | — |
-| SIG-SEC-006 | hosted | PARTIAL | 2026-10-01 | — |
-| SIG-SEC-007 | hosted | MISSING | 2026-10-01 | — |
-| SIG-SEC-008 | hosted | MISSING | 2026-10-01 | — |
 
 ← back: CURRENT.md · next page: coverage-3.md

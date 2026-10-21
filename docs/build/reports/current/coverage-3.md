@@ -2,6 +2,9 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-SEC-006 | hosted | PARTIAL | 2026-10-01 | — |
+| SIG-SEC-007 | hosted | MISSING | 2026-10-01 | — |
+| SIG-SEC-008 | hosted | MISSING | 2026-10-01 | — |
 | SIG-SEC-009 | hosted | MISSING | 2026-10-01 | — |
 | SIG-SEC-010 | hosted | MISSING | 2026-10-01 | — |
 | SIG-SEC-011 | hosted | MISSING | 2026-10-01 | — |

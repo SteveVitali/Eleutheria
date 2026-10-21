@@ -670,21 +670,3 @@ seed-commit 6cba05fe
 # as a later commit (no force-push). Scope: findings attributed to
 # 103e9025 only; no other commit borrows the exemption.
 seed-commit 103e9025
-# P35.45 (row 324) — a31ae66b repoints in place three committed
-# coverage_assessments.jsonl rows (SIG-CHART-006:r11-1:251,
-# SIG-CHART-007:r11-1:252, SIG-EPIS-001:r11-1:281): their
-# evidence_refs still named the retired
-# web/src/pages/dossier/[slug].astro, renamed to [...path].astro by
-# this row's route migration (docs-red on PR #343 head b4a3d39,
-# coverage/malformed ×3). Supersession cannot clear a stale ref —
-# the checker validates every committed row, superseded or not
-# (reproduced in-tool). Only the evidence_refs string changed; the
-# rows' verdicts, revisions and remaining refs are untouched and
-# the original bytes live in git history — the sanctioned
-# P36.9b/P35.25/P35.26/P35.31 in-place pattern. Disclosed by the
-# appended `P35.45 correction` PHASE LOG entry and the
-# "Assessment ledger in-place repair" note in runs/P35.45.md.
-# Declaration lands as a later commit (no force-push). Scope:
-# findings attributed to a31ae66b only; no other commit borrows
-# the exemption.
-seed-commit a31ae66b
