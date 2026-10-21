@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "6c5bd608937e93bed204c8b1879e3782b60c684e",
+  "input_commit": "1835e332a4370a515ff0179e0e28ed68425b1285",
   "manifest_inputs": 1086,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.44",
-    "lastCompleted": "P35.43",
+    "nextTicket": "P35.45",
+    "lastCompleted": "P35.44",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.57,P35.67,P36.12",
@@ -17,7 +17,7 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.43-watch-producer-v1",
+    "chainTip": "r11/P35.44-dossier-contribution-export",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
@@ -19497,10 +19497,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "dea3c11298d75bcf79407b4cd4278866968643de6a223ddb9ec9b414441e586e",
+  "manifest_sha256": "9bfde13b6f4ecd7e454454efe594df1733ce0b75b8812f2ad03b69552fefa6d2",
   "current_md": {
     "lines": 63,
-    "bytes": 15599,
+    "bytes": 15609,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

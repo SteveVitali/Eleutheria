@@ -9,10 +9,10 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key ≤ 256 B; the generated `returnPass:` id list rides the B3 V2 bound (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus:   IN_PROGRESS                           # P35.43 landed (322); P35.41 live leg still QUEUED
-nextTicket:      P35.44                              # row 323
-lastCompleted:   P35.43                              # row 322
-blockedOn:       (nothing)                           # #341@c55a2da CI 5/5 green
+projectStatus:   IN_PROGRESS                           # P35.44 landed (323); P35.41 live leg still QUEUED
+nextTicket:      P35.45                              # row 324
+lastCompleted:   P35.44                              # row 323
+blockedOn:       (nothing)                           # #342@1835e33 CI 5/5 green
 pauseRequested:  false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
@@ -22,7 +22,7 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.43-watch-producer-v1     # base r11/P35.42-…
+chainTip:        r11/P35.44-dossier-contribution-export     # base r11/P35.43-…
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
@@ -1156,3 +1156,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-21 — P35.44 dispatch boundary-confirm — `ci: pass #341@087401c` 5/5 head-bound (run 39604220089; `logs/ci-P35.44-pre-dispatch.json`) · stack pass · P35.43 repair + record heads folded per D5 (`29539f47` kind fix via sanctioned seed-commit mechanism `4bbdf19d`/`62462ed2`) · dispatching P35.44 (323 — dossier contribution export; no gate) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-21 — orchestrator restart + resume (interrupted P35.44) — devin-desktop orchestrator crashed ~14:22Z mid-P35.44; worker died in-flight, uncommitted WIP intact, no drive-lock · operator resumed via verified-state handoff; orient re-verified CURRENT STATE verbatim (`lastCompleted` P35.43 / `nextTicket` P35.44 / `chainTip` r11/P35.43-… / `blockedOn` none) + branch `r11/P35.44-dossier-contribution-export` at `8961100d` (local-only, WIP intact); one `devin acp` pid · `ci-boundary --ticket P35.43 --stack` re-read 14:26Z: `ci: pass #341@087401c` 5/5 head-bound, stack pass (`logs/ci-P35.44-resume-pre-dispatch.json`) · projection `verify` STALE on the untracked run-ledger input — resume regen repairs (P35.28) · chain lock 14:25:57Z · restart isolation probe (§8.5 (3)) PASS — `reports/isolation/dispatch-P35.44.md` · resume: RESUME sub-agent — finish migration + requirements + T1–T14, checks, PR + closeout · `live_verification=false`; no production mutation · **Deferrals:** none by the orchestrator · chainTip → r11/P35.43-… · next → P35.44 (323) dispatch · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-21 — P35.44 correction — ad1a90d4's restart/resume entry (line 1157, 1,743 B) tipped the orient recipe to 49,322 B > 48 KiB (docs-red, run 39631435376) — compacted in place to 1,147 B under the declared corrective-commit mechanism (P35.40/`153ded67` pattern; recorded fields kept, original bytes in git history, full arc in `runs/P35.44.md`) · the `seed-commit` declaration lands in the next commit — findings attributed to this commit only · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-21 — P35.44 ticket — `ci: pass #342@1835e33` 5/5 head-bound (run 39633956802: python/docs/composed/security/web; `logs/ci-P35.44-pr342-repair2.json` — stack #341…#325 pass, no waived red) · row 323 — dossier contribution export (`v_claim_sightings` explicit-column establishes-only view, `sig_export`-only grant; `DOSSIER_SOURCES_QUERIES["claim_sightings"]` under shared gates w/ claim_source attribution; one `DossierContributionPlan` → `sig.dossier-sources/1` dossiers + `contributions[]` mirror; country/admin-1 `.runs.jsonl.gz` + monthly `series`; `run_level_only`/`not_recorded`/`not_evaluable`/`not_typed` honest absences; placement ancestor roll-up) · detail `runs/P35.44.md` · heads `05e6a33a` impl (docs-red 39631435376: orient 49,322 B) → `6cba05fe` orient repair → `6c5bd608` seed-commit declaration (docs-red 39633294839: stale projection + assert segment) → `1835e332` reword + regen → closeout records this commit · `make check` 10,048/5 — the recorded environmental class · chainTip → r11/P35.44-… · next → P35.45 (324) · harness: devin-desktop/swe-2-high/subagent
