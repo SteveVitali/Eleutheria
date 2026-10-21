@@ -29,7 +29,7 @@ import { fileURLToPath } from "node:url";
 import { DOSSIERS } from "./dossier-fixture";
 import { JURISDICTION_DOSSIERS } from "./dossier-jurisdiction-fixture";
 import { applyPublicationPolicy } from "./dossier";
-import type { Dossier } from "./dossier";
+import type { Dossier, TerminationInput } from "./dossier";
 import { RESEARCH_PORTFOLIO_FIXTURE } from "./research-dossier-fixture";
 import {
   assertNoFutureDisplayDates,
@@ -376,12 +376,75 @@ export function getCoverage(): CoverageMetric[] {
   return readExportArtifact("coverage.json", (p, path) => requireArray(p, path) as CoverageMetric[]);
 }
 
-/** Surface 7 — the renewal/contract watch (§39.5). Export: `web/watch.json`. */
+/**
+ * The `sig.watch-item/1` subset this surface consumes (P35.43, `sig/watch/2`).
+ * Only the contract kinds (`renewal_deadline`/`contract_expiry`) carry a
+ * `termination` block and so map back onto the legacy `ContractWatchItem`
+ * contract — the other §5.2 kinds have no renewal watch representation and are
+ * the v2 surface's own concern (the §39.5 render rows land in a later ticket).
+ */
+interface WatchItemV2 {
+  handle?: string;
+  kind?: string;
+  title?: string;
+  date?: string;
+  subjects?: string[];
+  body?: string | null;
+  place?: { key?: string | null } | null;
+  termination?: TerminationInput | null;
+  contested?: boolean;
+}
+
+/** The `sig/watch/2` envelope — `items` is the versioned item list. */
+interface WatchEnvelopeV2 {
+  schema?: string;
+  items?: unknown;
+}
+
+/**
+ * Project one `sig.watch-item/1` onto the legacy `ContractWatchItem` wire —
+ * the bridge that keeps the §39.5 page + subscriptions working on a v2
+ * artifact until the surface rows render v2 natively (P35.43 back-compat).
+ * Non-contract kinds return `null` (no termination semantics to carry).
+ */
+function watchItemToContractRow(item: WatchItemV2): ContractWatchItem | null {
+  const termination = item.termination;
+  if (termination == null) return null;
+  const place = item.place ?? null;
+  return {
+    contract_id: item.subjects?.[0] ?? item.handle ?? "",
+    subject_label: item.body ?? item.title ?? "",
+    jurisdiction: place?.key ?? "unplaced",
+    termination,
+    renewal_window_days: termination.notice_window_days ?? null,
+    approving_body: item.body ?? null,
+    next_scheduled_meeting: null,
+    replacement_procurement: null,
+    contested: item.contested === true,
+  };
+}
+
+/**
+ * Surface 7 — the renewal/contract watch (§39.5). Export: `web/watch.json`.
+ * P35.43 emits the versioned `sig/watch/2` envelope; a pre-P35.43 export emits
+ * the bare `ContractWatchItem[]` — both shapes read to the same row list, and
+ * a kind without a `termination` block simply has no renewal-watch row (the
+ * v1 surface's honest-empty state stays truthful).
+ */
 export function getWatch(): ContractWatchItem[] {
   if (dataSource() === "fixtures") return WATCH_ITEMS;
-  return readExportArtifact("watch.json", (p, path) =>
-    dropWithdrawn(requireArray(p, path) as ContractWatchItem[]),
-  );
+  return readExportArtifact("watch.json", (p, path) => {
+    if (Array.isArray(p)) {
+      return dropWithdrawn(p as ContractWatchItem[]);
+    }
+    const env = p as WatchEnvelopeV2;
+    const items = requireArray(env?.items, `${path}#items`) as WatchItemV2[];
+    return dropWithdrawn(
+      items
+        .map(watchItemToContractRow)
+        .filter((row): row is ContractWatchItem => row !== null),
+    );
+  });
 }
 
 /** Surface 8 — the evidence recommender + viewer (§39.5a/§39.6). Export: `web/evidence.json`. */

@@ -140,6 +140,7 @@ from .transparency import TRANSPARENCY_QUERIES as _TRANSPARENCY_QUERIES
 from .transparency import (
     _rows as _tuples_to_dicts,
 )
+from .watch import SCHEMA_WATCH, WATCH_QUERIES, build_watch_payload
 
 #: The SIG-original derived record: coverage/jurisdiction/freshness/dossier framings
 #: are SIG's own analytical expression, published CC-BY-4.0 (SIG-LIC-005). The
@@ -510,6 +511,10 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
     # reads, and the predicate-registry volatility basis — every row
     # explicit-column, sig_export-facing, scrubbed again at emission.
     **_TRANSPARENCY_QUERIES,
+    # P35.43 (K7 WX-01 / F-481, SIG-WATCH-D01): the watch producer's reads —
+    # the publishable claims on the five §5.2 subject families + the read-only
+    # sizing count, defined in ``exports/watch.py`` beside the derivation.
+    **WATCH_QUERIES,
 }
 
 
@@ -669,11 +674,9 @@ _MATERIALIZED_SEAMS: tuple[tuple[str, str, Any], ...] = (
 #: the empty state then names a REAL cause ("no producer"), never a vague
 #: "research gap".
 DECLARED_UNPRODUCED_READ_KEYS: dict[str, str] = {
-    # §39.5 contract watch — the spine has no materialized contract-watch
-    # producer yet (renewal/decision tracking lands in a later family). The
-    # watch surface reads it and honestly degrades to the "not connected yet"
-    # empty state.
-    "contract_watch": "no_producer",
+    # P35.43 (K7 WX-01 / F-481): ``contract_watch`` is produced — ``watch_claims``
+    # + ``watch_subject_counts`` in WATCH_QUERIES fill the §5.2 derivation; the
+    # old raw key is retired, not re-read.
     # §7 leverage (P34.34a): the changeset feed is not a spine query — the
     # recorded OSM replay XML is bound to the export by the operator/CLI
     # (HG-08: never a live poll). Unbound → the zeroed ledger, the honest
@@ -2560,13 +2563,35 @@ def _coverage_specs() -> tuple[Any, ...]:
 COVERAGE_COLUMN_SPECS = _coverage_specs()
 
 
-def _watch(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
-    """Surface 7 — ContractWatchItem[] (§39.5). Honest absence when the spine has no
-    contracts with a derived notice deadline yet."""
-    out: list[dict[str, Any]] = []
-    for row in raw.get("contract_watch") or []:
-        out.append(dict(row))
-    return out
+def _watch(
+    raw: Mapping[str, Any],
+    *,
+    dataset: ShapedDataset,
+    generated_at: str,
+    placement: _placement.PlacementEngine | None,
+    lane_by_source: Mapping[str, Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Surface 7 — the ``sig/watch/2`` envelope (P35.43 / K7 WX-01 / F-481).
+
+    The §39.5 surface the claim spine now produces: ``exports.watch`` derives
+    the six §5.2 kinds from the publishable ``watch_claims`` read and always
+    emits the versioned envelope — an empty ``items`` list still carries the
+    per-place coverage block (SIG-WATCH-D04). The dossier-index jurisdictions
+    seed the coverage rows so every rendered place shows its own last-checked.
+    """
+    as_of = date.fromisoformat(dataset.as_of[:10]) if dataset.as_of else date.today()
+    dossier_places = [
+        {"key": str(j.jurisdiction), "slug": jurisdiction_slug(str(j.jurisdiction))}
+        for j in dataset.jurisdictions
+    ]
+    return build_watch_payload(
+        raw,
+        as_of=as_of,
+        generated_at=generated_at,
+        dossier_places=dossier_places,
+        placement=placement,
+        lane_by_source=lane_by_source,
+    )
 
 
 def _evidence(raw: Mapping[str, Any], as_of: str) -> dict[str, Any]:
@@ -3730,6 +3755,11 @@ def build_spine_export(
         map_placements = {r.record_id: r for r in placement.place_many(map_inputs)}
 
     # --- the ten P27.1-contract web surfaces ------------------------------------
+    # The statements lane map is derived BEFORE the surfaces so the watch's
+    # evidence links pass the identical J3 §5.3 upstream gate (P35.43 — one
+    # lane derivation feeds statements, provenance AND the watch, never two).
+    stmt_source_registry = load_source_registry()
+    lane_by_source = _claim_lane_map(raw, stmt_source_registry)
     dossiers = _dossiers(
         dataset,
         dataset.as_of,
@@ -3772,7 +3802,13 @@ def build_spine_export(
         ),
         "freshness": _freshness(dataset),
         "coverage": coverage_metrics,
-        "watch": _watch(raw),
+        "watch": _watch(
+            raw,
+            dataset=dataset,
+            generated_at=generated_at,
+            placement=placement,
+            lane_by_source=lane_by_source,
+        ),
         "evidence": _evidence(raw, dataset.as_of),
         "corrections": _corrections(raw),
         "research_queue": _research_queue(raw),
@@ -3790,6 +3826,12 @@ def build_spine_export(
                 if isinstance(r, Mapping):
                     CR.assert_documented("coverage", r.keys())
         web_artifacts[f"{_WEB_DIR}/{name}.json"] = _web_bytes(payload)
+    # P35.43 (SIG-WATCH-D01): the produced watch items feed the decision-point
+    # analytic — the analytic consumes the SAME derived rows the artifact emits
+    # (never a second read path, never a ``contract_watch`` key no query fills).
+    # ``raw`` is the local copy made above; the write is a derivation seam the
+    # P34.20 producer check counts as produced.
+    raw["watch_items"] = surfaces["watch"].get("items", [])
     # P32.17 (SIG-DOS-001/002): reviewed dossier packets compose into the
     # research-dossier portfolio — a separate artifact class from the §39.2
     # inventory overviews above. Emitted only when packets are supplied (the
@@ -3841,7 +3883,11 @@ def build_spine_export(
     web_compartments: dict[str, str] = {}
     # P35.36 (R11-K13-TX-08a): per-artifact schema ids + row/entity counts the
     # manifest carries for the ``sig.*`` row streams (``statements.jsonl``).
-    web_schemas: dict[str, str] = {}
+    web_schemas: dict[str, str] = {
+        # P35.43: the versioned watch envelope declares its schema id in-band
+        # (``schema``) and here, so the manifest names it like the row streams.
+        f"{_WEB_DIR}/watch.json": SCHEMA_WATCH,
+    }
     web_counts: dict[str, tuple[int, int | None]] = {}
     for art in analytics.build_analytics(
         dataset,
@@ -3901,10 +3947,10 @@ def build_spine_export(
     # compartment (the _record_claims placement — an ODbL claim never lands in
     # a CC-BY statements file); the committed source registry is the
     # homepage-fallback input for unbound claims' upstream reference.
-    stmt_source_registry = load_source_registry()
-    # One lane derivation feeds BOTH the statements upstream gate and the
-    # provenance.ttl capture upstreams (P35.38b) — never two derivations.
-    lane_by_source = _claim_lane_map(raw, stmt_source_registry)
+    # The lane derivation was hoisted above the surfaces block (P35.43 — the
+    # watch's evidence links consume the same map); stmt_source_registry +
+    # lane_by_source are already in scope here.
+    _ = stmt_source_registry  # referenced above; kept for readability
     for comp, payload in sorted(
         _statements(
             claims,

@@ -541,7 +541,13 @@ def test_per_source_slice_recomputes_its_own_envelope() -> None:
 
 def test_empty_supplementary_surfaces_emit_honest_absence() -> None:
     export = _build(_site("A", "35.46", "-97.51", "Oklahoma"))
-    assert _web(export, "watch") == []
+    # P35.43 (F-481): the watch emits the versioned sig/watch/2 envelope — an
+    # empty ``items`` list still carries its coverage statement (SIG-WATCH-D04).
+    watch = _web(export, "watch")
+    assert watch["schema"] == "sig/watch/2"
+    assert watch["items"] == []
+    assert watch["coverage"]["items_total"] == 0
+    assert watch["coverage"]["places"], "coverage rows for the dossier places"
     assert _web(export, "corrections") == []
     assert _web(export, "research_queue") == []
     assert _web(export, "evidence") == {"artifacts": [], "claim_views": []}

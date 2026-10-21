@@ -428,47 +428,94 @@ def test_centrality_empty_state_is_honest() -> None:
 # --- the watch decision point ---------------------------------------------------
 
 
-def _watch_row(subject: str, label: str, termination: dict) -> dict:
-    return {"subject_id": subject, "subject_label": label, "termination": termination}
+def _wclaim(
+    cid: str,
+    subject_key: str,
+    predicate: str,
+    *,
+    value_text: str | None = None,
+    value_num: int | None = None,
+    value_bool: bool | None = None,
+    subject_id: str | None = None,
+    source_id: str = "src_a",
+) -> tuple:
+    """A ``watch_claims`` positional row (P35.43 — the producer read the
+    decision-point analytic now consumes through the emitted items). The
+    subject id defaults to a per-key stand-in (distinct subjects never share
+    one)."""
+    return (
+        cid,
+        subject_id or f"ent-{subject_key}",
+        subject_key,
+        subject_key.split(":", 1)[0],
+        predicate,
+        value_text,
+        value_num,
+        value_bool,
+        None,  # value_json
+        value_text,  # raw_value
+        None,  # observed_at
+        "2026-09-01T00:00:00+00",  # recorded_at
+        None,  # revises_claim
+        None,  # retraction_of
+        "reviewed",  # review_status
+        source_id,
+        "CC-BY-4.0",
+    )
 
 
 def test_decision_point_is_the_earliest_derivable_watch_date() -> None:
     export = _export(
         _site("A", "35.46", "-97.51", "Oklahoma"),
         raw_over={
-            "contract_watch": [
-                _watch_row(
-                    "s1",
-                    "Contract 1",
-                    {"expiry_date": "2027-06-30", "auto_renews": True, "notice_window_days": 90},
+            "watch_claims": [
+                # contract:test:c1 auto-renews with a 90-day notice window →
+                # renewal_deadline at expiry − 90d (derived; date asserted below).
+                _wclaim("w1", "contract:test:c1", "buyer", value_text="City One"),
+                _wclaim(
+                    "w2",
+                    "contract:test:c1",
+                    "end_date",
+                    value_text="2027-06-30",  # future-ok: synthetic: SIG-UI-014b fixture
                 ),
-                _watch_row(
-                    "s2",
-                    "Contract 2",
-                    {"expiry_date": "2027-01-31", "auto_renews": False, "notice_window_days": None},
+                _wclaim("w3", "contract:test:c1", "auto_renews", value_bool=True),
+                _wclaim("w4", "contract:test:c1", "notice_window_days", value_num=90),
+                # contract:test:c2 has an end date and no renewal terms →
+                # contract_expiry at that date (upper_bound).
+                _wclaim(
+                    "w5",
+                    "contract:test:c2",
+                    "end_date",
+                    value_text="2027-01-31",  # future-ok: synthetic: SIG-UI-014b fixture
                 ),
-                _watch_row("s3", "Contract 3", {"expiry_date": None}),
+                # contract:test:c3 has no end date → no item at all.
+                _wclaim("w6", "contract:test:c3", "buyer", value_text="City Three"),
             ]
         },
     )
     payload = _analytic(export, "decision_point")
     dp = payload["decision_point"]
     assert dp is not None
-    # SIG-UI-014b: s1 auto-renews → expiry − notice is the decision point
-    # (2027-04-01; future-ok: synthetic: SIG-UI-014b); s2 does not → the expiry
-    # itself (2027-01-31; future-ok: synthetic: SIG-UI-014b); s3 has none → no
+    # SIG-UI-014b: c1 auto-renews → expiry − notice is the decision point
+    # (2027-04-01; future-ok: synthetic: SIG-UI-014b); c2's renewal terms are
+    # unknown → the expiry itself is the latest derivable bound
+    # (2027-01-31; future-ok: synthetic: SIG-UI-014b); c3 emits no item → no
     # derivable date. Earliest wins.
     assert dp["date"] == "2027-01-31"  # future-ok: synthetic: SIG-UI-014b scenario
-    assert dp["subject_id"] == "s2"
-    assert dp["label"] == "Contract 2"
+    assert dp["subject_id"] == "contract:test:c2"
+    assert dp["label"]
     assert payload["rule"]
-    assert "3 contracts" in payload["denominator"]
+    assert "2 contracts" in payload["denominator"]
 
 
 def test_decision_point_is_none_when_no_watch_item_carries_a_derivable_date() -> None:
     export = _export(
         _site("A", "35.46", "-97.51", "Oklahoma"),
-        raw_over={"contract_watch": [_watch_row("s1", "C", {"expiry_date": None})]},
+        raw_over={
+            "watch_claims": [
+                _wclaim("w1", "contract:test:c1", "buyer", value_text="City One"),
+            ]
+        },
     )
     payload = _analytic(export, "decision_point")
     assert payload["decision_point"] is None
@@ -482,12 +529,15 @@ def test_decision_point_derivation_matches_the_web_wire_contract() -> None:
     export = _export(
         _site("A", "35.46", "-97.51", "Oklahoma"),
         raw_over={
-            "contract_watch": [
-                _watch_row(
-                    "s1",
-                    "Contract 1",
-                    {"expiry_date": "2027-06-30", "auto_renews": True, "notice_window_days": 90},
-                )
+            "watch_claims": [
+                _wclaim(
+                    "w1",
+                    "contract:test:c1",
+                    "end_date",
+                    value_text="2027-06-30",  # future-ok: synthetic: SIG-UI-014b fixture
+                ),
+                _wclaim("w2", "contract:test:c1", "auto_renews", value_bool=True),
+                _wclaim("w3", "contract:test:c1", "notice_window_days", value_num=90),
             ]
         },
     )

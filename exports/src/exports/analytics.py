@@ -456,17 +456,25 @@ def _decision_point(
     """
     candidates: list[tuple[str, str, dict[str, Any]]] = []
     n_watch = 0
-    for row in raw.get("contract_watch") or []:
+    # P35.43 (K7 WX-01 / F-481): the analytic consumes the SAME produced watch
+    # items the artifact emits — ``build_spine_export`` writes
+    # ``raw["watch_items"]`` off the sig/watch/2 envelope, so the decision point
+    # can never drift from what the surface renders (the retired
+    # ``contract_watch`` raw key is gone, not silently absent). Contract kinds
+    # carry ``termination``; the §5.2 non-contract kinds have no decision-date
+    # semantics here.
+    for row in raw.get("watch_items") or []:
         if not isinstance(row, Mapping):
             continue
+        termination = row.get("termination")
+        if not isinstance(termination, Mapping):
+            continue
         n_watch += 1
-        termination = row.get("termination") or {}
         decision = _next_decision_date(termination)
         if decision is None:
             continue
-        subject = str(
-            row.get("subject_id") or row.get("contract_id") or row.get("subject_label") or ""
-        )
+        subjects = row.get("subjects") or []
+        subject = str(subjects[0] if subjects else row.get("handle") or "")
         candidates.append(
             (
                 decision,
@@ -474,7 +482,7 @@ def _decision_point(
                 {
                     "decision_type": "renewal",
                     "subject_id": subject,
-                    "label": str(row.get("subject_label") or row.get("contract_id") or subject),
+                    "label": str(row.get("title") or subject),
                     "date": decision,
                 },
             )

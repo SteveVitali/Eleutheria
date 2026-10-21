@@ -51,8 +51,10 @@ _WRITE_RE = re.compile(r"\b(?:raw|shaping_raw)\[\s*[\"']([a-z_][a-z0-9_]*)[\"']\
 #: The web-surface builder modules the check scans — the code that turns raw
 #: export rows into the ``web/*.json`` surfaces. (``audit.py`` queries feed the
 #: audit report, ``search_index.py``'s ``raw`` is a local FTS payload — neither
-#: is a web surface builder.)
-_SCAN_FILES = ("spine_export.py", "analytics.py", "shaping.py")
+#: is a web surface builder.) P35.43 adds ``watch.py`` — the watch producer
+#: reads raw rows like every other surface builder, so its reads are checked
+#: against the same produced-or-declared rule.
+_SCAN_FILES = ("spine_export.py", "analytics.py", "shaping.py", "watch.py")
 
 #: Required web reads: `readExportArtifact("x.json")` and `readAnalytics("x")`.
 _EXPORT_ARTIFACT_RE = re.compile(r'readExportArtifact\(\s*"([a-z_]+\.json)"')
@@ -132,14 +134,20 @@ def test_web_surface_raw_reads_are_produced_or_declared() -> None:
     )
 
 
-def test_contract_watch_is_the_declared_no_producer_key() -> None:
-    """K7 NEW-1 — the watch surface reads `contract_watch`, the spine has no
-    producer for it, and the read is DECLARED (cause class `no_producer`), so
-    the empty watch names its real cause instead of passing silently."""
-    assert "contract_watch" in DECLARED_UNPRODUCED_READ_KEYS
-    assert DECLARED_UNPRODUCED_READ_KEYS["contract_watch"] == "no_producer"
+def test_contract_watch_is_now_produced_not_declared() -> None:
+    """P35.43 (K7 WX-01 / F-481, SIG-WATCH-D01) — the watch producer landed:
+    ``watch_claims`` + ``watch_subject_counts`` are real ``EXPORT_QUERIES``
+    reads and the retired ``contract_watch`` key is neither read nor declared —
+    a surface can never depend on a raw key no query fills again."""
+    assert "watch_claims" in EXPORT_QUERIES
+    assert "watch_subject_counts" in EXPORT_QUERIES
+    assert "contract_watch" not in DECLARED_UNPRODUCED_READ_KEYS
     assert "contract_watch" not in EXPORT_QUERIES
     assert "contract_watch" not in shaping.QUERIES
+    # The raw-key scan covers the producer module itself.
+    watch_src = (_EXPORT_SRC / "watch.py").read_text(encoding="utf-8")
+    unproduced = _read_keys(watch_src) - _produced_keys()
+    assert not unproduced, f"watch.py reads unproduced keys: {sorted(unproduced)}"
 
 
 def test_declared_unproduced_keys_carry_a_cause_class() -> None:
