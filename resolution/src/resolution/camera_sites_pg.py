@@ -149,6 +149,21 @@ _TECH_VALUES_SQL = (
     "   AND c.predicate_id = 'technology'"
 )
 
+# P35.25 (SIG-CONF-014): per-claim identifier namespace + per-source declared
+# independence class. ``id_namespaces`` is read per camera_external_ref CLAIM
+# (a per-claim override on the source default is respected); the source-level
+# declared classes seed infer_lineages — absent tables mean a pre-P35.25 spine,
+# which falls back to honest undeclared rather than crashing.
+_NAMESPACES_SQL = (
+    "SELECT cl.claim_id::text, cl.id_namespace "
+    "  FROM claim_lineage cl WHERE cl.claim_id = ANY(%s::uuid[])"
+)
+_DECLARED_CLASSES_SQL = "SELECT source_id, independence_class FROM source_lineage_current"
+_LINEAGE_PRESENT_SQL = (
+    "SELECT to_regclass('public.claim_lineage') IS NOT NULL "
+    "   AND to_regclass('public.source_lineage_current') IS NOT NULL"
+)
+
 # The append-only review surface the run consumes: camera-site items bind a pair
 # (payload.left/right); review_decision rows are the votes (decided_at is
 # DB-stamped — ordering only, never trusted to be unique).
@@ -297,6 +312,24 @@ def read_camera_records(conn: Any) -> list[CameraRecord]:
             targets[entity] = parts[2]
     if targets:
         out = [replace(r, target_id=targets.get(r.subject_id)) for r in out]
+    # P35.25: the record's declared identifier namespace comes from the
+    # claim_lineage row of the CLAIM that asserted its external ref — a
+    # per-claim override wins over the source default, and a pre-P35.25 spine
+    # leaves every record's namespace None (honest undeclared).
+    if conn.execute(_LINEAGE_PRESENT_SQL).fetchone()[0]:
+        ref_claims = {
+            str(rec.get("camera_external_ref_claim")): subject
+            for subject, rec in by_subject.items()
+            if rec.get("camera_external_ref_claim")
+        }
+        if ref_claims:
+            namespaces: dict[str, str] = {}
+            for claim_id, ns in conn.execute(_NAMESPACES_SQL, (list(ref_claims),)).fetchall():
+                subject = ref_claims.get(str(claim_id))
+                if subject is not None and ns:
+                    namespaces[subject] = str(ns)
+            if namespaces:
+                out = [replace(r, id_namespace=namespaces.get(r.subject_id)) for r in out]
     # P34.18 / ADR-178 (S0 RI-01): the keyed-digest alias projection — retired
     # identifiers inside subject/source/target/claim refs resolve to neutral
     # public ids at this read seam (records keep their recorded ids; this is a
@@ -555,6 +588,14 @@ def materialize_camera_sites(
     floor = threshold if threshold is not None else read_auto_write_threshold()
     recs = list(records) if records is not None else read_camera_records(conn)
     human_items, human_votes = read_human_verdicts(conn)
+    # P35.25: declared source -> independence-class map. None on a pre-P35.25
+    # spine (the legacy measured-only lineage path stands); otherwise every
+    # source resolves to its declared class or the shared ``unclassified``.
+    declared: dict[str, str] | None = None
+    if conn.execute(_LINEAGE_PRESENT_SQL).fetchone()[0]:
+        declared = {
+            str(src): str(cls) for src, cls in conn.execute(_DECLARED_CLASSES_SQL).fetchall()
+        }
     if progress is not None:
         progress("read", len(recs), 0)
     result = resolve_camera_sites(
@@ -564,6 +605,7 @@ def materialize_camera_sites(
         rules=rules,
         human_items=human_items,
         human_votes=human_votes,
+        declared_lineages=declared,
     )
     if progress is not None:
         progress("resolved", len(result.decisions), 0)

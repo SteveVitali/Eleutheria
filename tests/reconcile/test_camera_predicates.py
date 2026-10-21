@@ -53,11 +53,13 @@ def _claim(
     genre: str = "camera_registry",
     observed_at: date = CAPTURED,
     basis: str = CAPTURE_TIME_BASIS,
+    indep: str | None = None,
 ) -> Claim:
     return Claim(
         claim_id=cid,
         subject_id="traffic_camera:dot_511_ok:t:1",
         predicate_id=pred,
+        independence_class=indep,
         value=value,
         reliability="R3",
         integrity="I1",
@@ -224,11 +226,12 @@ def test_values_within_tolerance_corroborate_one_observed_value() -> None:
 
 
 def test_values_beyond_tolerance_stay_unresolved_and_visible() -> None:
-    a = _claim("c-a", 35.4676, source="dot_511_ok")
-    b = _claim("c-b", 35.4776, source="camreg_okc")  # 0.01 deg (~1.1 km) apart
+    # P35.25: a U2 standoff is a standoff between DECLARED-independent classes.
+    a = _claim("c-a", 35.4676, source="dot_511_ok", indep="src:dot_511_ok")
+    b = _claim("c-b", 35.4776, source="camreg_okc", indep="src:camreg_okc")  # ~1.1 km apart
     res = _resolve("camera_latitude", [a, b])
     assert res.resolution_status == "UNRESOLVED"
-    assert res.unresolved_code == "U2"  # one source vs one equal source: a standoff
+    assert res.unresolved_code == "U2"  # one declared class vs one equal: a standoff
     assert res.contradiction_state == "unresolved_conflict"
     assert res.winning_claim_id is None
     assert set(res.considered_claim_ids) == {"c-a", "c-b"}
@@ -237,12 +240,28 @@ def test_values_beyond_tolerance_stay_unresolved_and_visible() -> None:
     assert set(found[0].claim_ids) == {"c-a", "c-b"}
 
 
+def test_undeclared_disagreement_never_reads_as_an_independent_standoff() -> None:
+    # P35.25 (SIG-CONF-014): with no declared lineage both claims collapse into
+    # the shared `unclassified` class — the disagreement is one unclassified
+    # voice vs another, so U2 (equal INDEPENDENT evidence) can never fire; U3
+    # (one voice vs one voice, never resolvable by fiat) is the honest code.
+    a = _claim("c-a", 35.4676, source="dot_511_ok")
+    b = _claim("c-b", 35.4776, source="camreg_okc")
+    res = _resolve("camera_latitude", [a, b])
+    assert res.resolution_status == "UNRESOLVED"
+    assert res.unresolved_code == "U3"
+    assert res.unclassified_claim_ids == ("c-a", "c-b")
+    assert "unclassified" in res.independence_class_ids
+
+
 def test_two_pools_beyond_tolerance_fire_the_absolute_u4() -> None:
-    # Two sources agree (one pool, two classes) and a third is ~1.1 km away: no U2/U3
-    # standoff, so the absolute-tolerance U4 is what keeps the disagreement unresolved.
+    # Two DECLARED-independent sources agree (one pool, two classes) and a third
+    # is ~1.1 km away: no U2/U3 standoff, so the absolute-tolerance U4 is what
+    # keeps the disagreement unresolved. (P35.25: undeclared members would share
+    # the `unclassified` class — the U4 pin needs declared classes on the pool.)
     claims = [
-        _claim("c-a", 35.46760, source="s1"),
-        _claim("c-b", 35.46770, source="s2"),
+        _claim("c-a", 35.46760, source="s1", indep="src:s1"),
+        _claim("c-b", 35.46770, source="s2", indep="src:s2"),
         _claim("c-c", 35.47760, source="s3"),
     ]
     res = _resolve("camera_latitude", claims)
@@ -365,12 +384,15 @@ def _row(
     # SELECT column order of reconcile.materialize.read_claim_groups —
     # the two columns after retrieved_at are the P32.4 occurrence refs
     # (capture_id / bound_at); the four trailing columns are the P32.3
-    # qualifier read-through (count_scope / detail / jurisdiction / origin).
+    # qualifier read-through (count_scope / detail / jurisdiction / origin);
+    # then the P35.25 lineage columns (independence_class, id_namespace,
+    # lineage-derived ancestry, claim-stored derived_from_claim_ids).
     return (
         subject, pred, cid, "value", text, num, None, text, None,  # observed_at NULL
         "R3", "I1", "active", "dot_511_ok", "camera_registry", datetime(2026, 9, 18, 3),
         f"cap-{cid}", datetime(2026, 9, 18, 3),
         count_scope, count_scope_detail, count_scope_jurisdiction, evidence_origin,
+        None, None, None, None,  # P35.25 lineage: undeclared on this stub spine
     )  # fmt: skip
 
 
@@ -391,7 +413,8 @@ def test_materializer_reads_capture_time_and_upserts_vocab_once() -> None:
         conn, as_of=AS_OF, progress=lambda *a: seen.append(a), progress_every=2, batch_size=2
     )
     assert summary.inserted == 5 and summary.resolved == 5 and summary.unresolved == 0
-    assert CAPTURE_TIME_JOIN in conn.sql[0]
+    # sql[0] is the P35.25 claim_lineage presence probe; the claim read follows it.
+    assert any(CAPTURE_TIME_JOIN in s for s in conn.sql)
     # one (strategy, rationale, confidence) triple -> its three vocab upserts happen once.
     assert sum(s.startswith("INSERT INTO vocab_") for s in conn.sql) == 3
     assert seen and seen[0][:2] == (2, 5)

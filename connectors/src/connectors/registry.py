@@ -28,6 +28,7 @@ rather than a guess (SIG-LIC-004).
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import date
 from enum import StrEnum
@@ -107,6 +108,123 @@ RELIABILITY_TIERS: frozenset[str] = frozenset({"R1", "R2", "R3", "R4", "R5", "R6
 VOLATILITY_CLASSES: frozenset[str] = frozenset(
     {"IMMUTABLE", "GLACIAL", "SLOW", "MODERATE", "FAST", "VOLATILE"}
 )
+
+
+class LineageKind(StrEnum):
+    """A source's declared lineage class (P35.25 / R11-L3-CP4, SIG-CONF-014).
+
+    A **closed** vocabulary: ``primary`` (the source's records are its own
+    collection, not a republish of another tracked dataset), ``mirror`` (a
+    byte-faithful or row-faithful copy of an upstream), ``derived`` (reprocessed
+    from upstream records), ``syndicated`` (a synthesis of several upstreams).
+    ``undeclared`` is the honest default for a row carrying no ``[lineage]``
+    block — never a claim of independence (§3.1; an absent declaration MUST
+    NOT read as "independent").
+    """
+
+    PRIMARY = "primary"
+    MIRROR = "mirror"
+    DERIVED = "derived"
+    SYNDICATED = "syndicated"
+    UNDECLARED = "undeclared"
+
+
+#: The independence-class token the resolver uses when no declared lineage
+#: establishes one (SIG-CONF-014): undeclared claims collapse into this shared
+#: pseudo-class so unclassified material NEVER counts as independent
+#: corroboration — two undeclared voices agreeing stay ONE voice until the
+#: registry says otherwise.
+UNCLASSIFIED = "unclassified"
+
+
+@dataclass(frozen=True)
+class SourceLineage:
+    """The ``[sources.<id>.lineage]`` declaration (P35.25 / ADR-213).
+
+    Additive registry metadata: a row without the block parses to the
+    ``undeclared`` default. ``mirror_of``/``derived_from`` name OTHER REGISTRY
+    source ids (validated at load); ``origin`` is the documentary free-text
+    upstream when the upstream is not itself a registered source. A declared
+    ``independence_class`` (``src:<source-id>`` or ``ext:<slug>``) overrides the
+    resolved class — used to collapse several sources onto one upstream when
+    that upstream is not registered under a stable id. Any non-undeclared
+    ``kind`` requires ``evidence`` — a lineage declaration is a claim and
+    names its basis.
+    """
+
+    kind: LineageKind = LineageKind.UNDECLARED
+    #: Free-text upstream when it is not a registry source (e.g. a city's own
+    #: GIS portal a camreg layer republishes).
+    origin: str = ""
+    #: The registry source this row mirrors (kind = mirror).
+    mirror_of: str = ""
+    #: The registry sources this row derives from (kind = derived/syndicated).
+    derived_from: tuple[str, ...] = ()
+    #: Explicit class override — ``src:<id>`` | ``ext:<slug>`` — when the
+    #: resolved class would be wrong (e.g. two sources sharing one
+    #: unregistered upstream declare the same ``ext:`` token).
+    independence_class: str = ""
+    #: The declared identifier namespace this source's upstream references
+    #: live in (``data/id_namespaces.toml`` in ``db``, or ``src:<source-id>``
+    #: for a source-private space). Two ``external_ref`` values compare only
+    #: inside one namespace — a bare equal string across namespaces is never
+    #: shared-upstream evidence (P35.25 NEW-1). Empty = undeclared.
+    id_namespace: str = ""
+    #: The §10.8 collection-method label (SIG-EPIS-028) — feeds method breadth.
+    collection_method: str = ""
+    #: The documentary basis for the declaration (required unless undeclared).
+    evidence: str = ""
+
+
+def resolve_independence_class(record: SourceRecord, records: Mapping[str, SourceRecord]) -> str:
+    """The claim-level independence class a source's claims carry (§10.8).
+
+    Declared rules, transitively resolved, never guessed:
+    ``independence_class`` override → ``mirror_of``'s resolved class →
+    ``derived_from`` resolving to a single distinct root → that root
+    (multi-root derivations are ``unclassified``: a synthesis cannot honestly
+    corroborate any single upstream) → declared kinds with no resolvable
+    upstream are their own root ``src:<self>`` (the upstream is otherwise
+    unrepresented in the graph — a lone voice, which can never corroborate
+    itself anyway) → ``undeclared`` is ``unclassified``.
+    """
+    seen: set[str] = set()
+    cur = record
+    while True:
+        lin = cur.lineage
+        if lin.independence_class:
+            return lin.independence_class
+        if cur.id in seen:
+            return UNCLASSIFIED  # a declared cycle is a defect — never a class
+        seen.add(cur.id)
+        if lin.kind == LineageKind.MIRROR and lin.mirror_of:
+            upstream = records.get(lin.mirror_of)
+            if upstream is None:
+                return UNCLASSIFIED
+            cur = upstream
+            continue
+        if lin.kind in (LineageKind.DERIVED, LineageKind.SYNDICATED) and lin.derived_from:
+            roots = set()
+            for up_id in lin.derived_from:
+                up = records.get(up_id)
+                if up is None:
+                    roots.add(UNCLASSIFIED)
+                    continue
+                up_lin = up.lineage
+                if up_lin.independence_class:
+                    roots.add(up_lin.independence_class)
+                elif up_lin.kind == LineageKind.UNDECLARED:
+                    roots.add(UNCLASSIFIED)
+                else:
+                    roots.add(f"src:{up_id}")
+            if len(roots) == 1:
+                return roots.pop()
+            return UNCLASSIFIED
+        if lin.kind == LineageKind.UNDECLARED:
+            return UNCLASSIFIED
+        # Declared kind with no resolvable registry upstream — the source is
+        # the upstream's only voice in the graph; it is its own root.
+        return f"src:{cur.id}"
 
 
 @dataclass(frozen=True)
@@ -201,6 +319,12 @@ class SourceRecord:
     #: recalibration from observed change rates). A declared class with no
     #: basis fails validation — a class is a claim and carries its evidence.
     volatility_basis: str = ""
+    #: P35.25 (R11-L3-CP4, SIG-CONF-014): the declared lineage — origin /
+    #: mirror_of / derived_from / independence_class — additive metadata, the
+    #: ``undeclared`` default never reading as "independent". Lineage has NO
+    #: effect on ``assert_loadable`` (the loader gate reads permission fields
+    #: only — this is corroboration metadata, not an ingestion input).
+    lineage: SourceLineage = SourceLineage()
 
     def correction_for(self, field: str) -> DateCorrection | None:
         """The declared correction for ``field``, or None."""
@@ -282,6 +406,41 @@ class SourceRecord:
                 f"source {self.id!r} carries a volatility_basis but no "
                 "volatility_class — a basis without a class is dangling (P35.20b)."
             )
+        # P35.25: a lineage declaration is a claim — it names its evidence, and
+        # its upstream references are registry ids, never free text the resolver
+        # could silently misspell. `undeclared` needs nothing (it IS the honest
+        # default); any declared kind with no documentary evidence fails closed.
+        lin = self.lineage
+        if lin.kind != LineageKind.UNDECLARED and not lin.evidence.strip():
+            raise ValueError(
+                f"source {self.id!r} declares lineage kind {lin.kind.value!r} "
+                "with no lineage.evidence — a declaration names its documentary "
+                "basis (P35.25, §3.1); leave the block absent for `undeclared`."
+            )
+        if lin.mirror_of == self.id or self.id in lin.derived_from:
+            raise ValueError(
+                f"source {self.id!r} names itself in mirror_of/derived_from — a "
+                "source is never its own lineage (P35.25)."
+            )
+        if lin.kind == LineageKind.MIRROR and not (lin.mirror_of or lin.origin):
+            raise ValueError(
+                f"source {self.id!r} declares kind=mirror with neither "
+                "mirror_of (a registry source) nor origin (a named upstream) — "
+                "a mirror names what it copies (P35.25)."
+            )
+        if lin.independence_class and not (
+            lin.independence_class == UNCLASSIFIED
+            or lin.independence_class.startswith("src:")
+            or lin.independence_class.startswith("ext:")
+        ):
+            raise ValueError(
+                f"source {self.id!r} declares independence_class "
+                f"{lin.independence_class!r}; the vocabulary is "
+                "'src:<source-id>' | 'ext:<slug>' | 'unclassified' (P35.25)."
+            )
+        # A mirror_of/derived_from reference resolves only against registry
+        # ids; the cross-source existence check runs in ``registry()`` once the
+        # whole table is loaded (fail-closed: a dangling id raises at load).
 
 
 def _rights_from_row(source_id: str, row: dict[str, Any]) -> RightsRecord:
@@ -377,6 +536,42 @@ def _date_corrections_from_row(source_id: str, row: dict[str, Any]) -> tuple[Dat
     return tuple(out)
 
 
+def _lineage_from_row(source_id: str, row: dict[str, Any]) -> SourceLineage:
+    """Parse the optional ``[sources.<id>.lineage]`` sub-table (P35.25).
+
+    Absent block → the ``undeclared`` default (never "independent"). A present
+    block must be a table; its fields validate on :class:`SourceLineage` and in
+    :class:`SourceRecord`'s ``__post_init__``.
+    """
+    raw = row.get("lineage")
+    if raw is None:
+        return SourceLineage()
+    if not isinstance(raw, dict):
+        raise ValueError(
+            f"source {source_id!r}: lineage must be a table "
+            "{kind, origin, mirror_of, derived_from, independence_class, "
+            "collection_method, evidence} (P35.25)"
+        )
+    derived = raw.get("derived_from") or ()
+    if isinstance(derived, str):
+        derived = (derived,)
+    if not isinstance(derived, (list, tuple)):
+        raise ValueError(
+            f"source {source_id!r}: lineage.derived_from must be a list of "
+            "registry source ids (P35.25)"
+        )
+    return SourceLineage(
+        kind=LineageKind(str(raw.get("kind", LineageKind.UNDECLARED.value))),
+        origin=str(raw.get("origin", "")),
+        mirror_of=str(raw.get("mirror_of", "")),
+        derived_from=tuple(str(u) for u in derived),
+        independence_class=str(raw.get("independence_class", "")),
+        id_namespace=str(raw.get("id_namespace", "")),
+        collection_method=str(raw.get("collection_method", "")),
+        evidence=str(raw.get("evidence", "")),
+    )
+
+
 def _record_from_row(source_id: str, row: dict[str, Any]) -> SourceRecord:
     last_verified = row.get("last_verified")
     return SourceRecord(
@@ -407,6 +602,7 @@ def _record_from_row(source_id: str, row: dict[str, Any]) -> SourceRecord:
         date_corrections=_date_corrections_from_row(source_id, row),
         volatility_class=str(row.get("volatility_class", "")),
         volatility_basis=str(row.get("volatility_basis", "")),
+        lineage=_lineage_from_row(source_id, row),
     )
 
 
@@ -419,6 +615,33 @@ def registry() -> dict[str, SourceRecord]:
         if source_id in records:
             raise ValueError(f"duplicate source id in registry: {source_id!r}")
         records[source_id] = _record_from_row(source_id, row)
+    # P35.25: lineage upstream references are registry ids — a dangling
+    # mirror_of/derived_from fails the whole load rather than resolving
+    # "unclassified" for a typo'd declaration (fail-closed, §3.1).
+    for record in records.values():
+        upstreams = ([record.lineage.mirror_of] if record.lineage.mirror_of else []) + list(
+            record.lineage.derived_from
+        )
+        for upstream in upstreams:
+            if upstream not in records:
+                raise ValueError(
+                    f"source {record.id!r}: lineage upstream {upstream!r} is "
+                    "not a registered source — register it or name the upstream "
+                    "in lineage.origin instead (P35.25)"
+                )
+        ns = record.lineage.id_namespace
+        if ns:
+            # The namespace vocabulary is owned by db (the committed
+            # id_namespaces.toml); a private space is `src:<source-id>`.
+            # An undeclared token fails the load — never silently namespaced.
+            from db.lineage import known_namespace  # db is a declared dep
+
+            if not ns.startswith("src:") and not known_namespace(ns):
+                raise ValueError(
+                    f"source {record.id!r}: lineage.id_namespace {ns!r} is not "
+                    "a declared namespace (db/data/id_namespaces.toml) — a "
+                    "source-private space is 'src:<source-id>' (P35.25)"
+                )
     return records
 
 

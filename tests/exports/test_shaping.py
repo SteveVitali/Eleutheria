@@ -46,6 +46,7 @@ def _claim(
     spdx: str = "CC0-1.0",
     redistributable: str = "yes",
     observed_at: date | None = date(2026, 5, 1),
+    independence_class: str | None = None,
 ) -> ShapingClaim:
     raw = raw_value
     if raw is None:
@@ -72,6 +73,7 @@ def _claim(
         effective_derivative_permitted=redistributable,
         effective_attribution="",
         effective_terms_url="",
+        independence_class=independence_class,
     )
 
 
@@ -256,6 +258,152 @@ def test_envelope_deterministic_regardless_of_input_order() -> None:
     a = observation_envelope("camera_jurisdiction", claims)
     b = observation_envelope("camera_jurisdiction", list(reversed(claims)))
     assert a == b
+
+
+# --- P35.25 (SIG-CONF-014): declared-voice accounting ------------------------ #
+# ``n_sources`` counts sources (a mirror inflates it); the disclosure fields
+# count DISTINCT declared independence classes — corroboration truth a copied
+# upstream can never inflate, and undeclared material never reads as
+# independent.
+
+
+def test_mirror_and_original_agreeing_are_one_independence_class() -> None:
+    """Two sources sharing one declared class (a mirror and its original)
+    resolve with n_sources=2 but n_independence_classes=1 — one voice."""
+    env = observation_envelope(
+        "camera_latitude",
+        [
+            _claim(
+                "a1",
+                "s",
+                "camera_latitude",
+                value_text="35.46",
+                source_id="osm",
+                independence_class="src:osm",
+            ),
+            _claim(
+                "a2",
+                "s",
+                "camera_latitude",
+                value_text="35.46",
+                source_id="osm_mirror",
+                independence_class="src:osm",
+            ),
+        ],
+    )
+    assert env.status == ENVELOPE_RESOLVED
+    assert env.n_sources == 2
+    assert env.n_independence_classes == 1
+    assert env.n_unclassified_candidates == 0
+    assert env.as_json()["n_independence_classes"] == 1
+    assert env.as_json()["n_unclassified_candidates"] == 0
+
+
+def test_two_declared_independent_classes_count_as_two() -> None:
+    env = observation_envelope(
+        "camera_latitude",
+        [
+            _claim(
+                "a1",
+                "s",
+                "camera_latitude",
+                value_text="35.46",
+                source_id="dot_511",
+                independence_class="src:dot_511",
+            ),
+            _claim(
+                "a2",
+                "s",
+                "camera_latitude",
+                value_text="35.46",
+                source_id="osm",
+                independence_class="src:osm",
+            ),
+        ],
+    )
+    assert env.n_independence_classes == 2
+    assert env.n_unclassified_candidates == 0
+
+
+def test_undeclared_claims_never_count_as_independence_classes() -> None:
+    """A claim with no lineage row (None — a pre-P35.25 spine) or an explicit
+    ``unclassified`` class is counted as an unclassified candidate, never an
+    independent voice: two undeclared claims agreeing are still ONE voice."""
+    env = observation_envelope(
+        "camera_latitude",
+        [
+            _claim("a1", "s", "camera_latitude", value_text="35.46", source_id="a"),
+            _claim(
+                "a2",
+                "s",
+                "camera_latitude",
+                value_text="35.46",
+                source_id="b",
+                independence_class="unclassified",
+            ),
+        ],
+    )
+    assert env.status == ENVELOPE_RESOLVED
+    assert env.n_independence_classes == 0
+    assert env.n_unclassified_candidates == 2
+
+
+def test_mixed_declared_and_undeclared_discloses_both_counts() -> None:
+    """A declared class plus an undeclared claim: the declared voice counts,
+    the undeclared one is disclosed separately — never merged into the class."""
+    env = observation_envelope(
+        "camera_latitude",
+        [
+            _claim(
+                "a1",
+                "s",
+                "camera_latitude",
+                value_text="35.46",
+                source_id="osm",
+                independence_class="src:osm",
+            ),
+            _claim("a2", "s", "camera_latitude", value_text="35.46", source_id="b"),
+        ],
+    )
+    assert env.n_independence_classes == 1
+    assert env.n_unclassified_candidates == 1
+
+
+def test_independence_classes_count_on_a_conflicted_envelope() -> None:
+    """The counts are honest under conflict too — the modal-winner pick never
+    hides that the disagreement spans two declared classes."""
+    env = observation_envelope(
+        "camera_latitude",
+        [
+            _claim(
+                "a1",
+                "s",
+                "camera_latitude",
+                value_text="40.1",
+                source_id="osm",
+                independence_class="src:osm",
+            ),
+            _claim(
+                "a2",
+                "s",
+                "camera_latitude",
+                value_text="41.2",
+                source_id="atlas",
+                independence_class="src:atlas",
+            ),
+            _claim(
+                "a3",
+                "s",
+                "camera_latitude",
+                value_text="40.1",
+                source_id="osm_mirror",
+                independence_class="src:osm",
+            ),
+        ],
+    )
+    assert env.status == ENVELOPE_CONFLICTED
+    assert env.n_independence_classes == 2
+    assert env.n_unclassified_candidates == 0
 
 
 # --- sites: geometry + tier reduction + dedup framing ----------------------- #

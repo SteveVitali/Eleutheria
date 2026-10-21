@@ -165,6 +165,18 @@ def spine_ctx(conn) -> dict[str, object]:
                 "INSERT INTO claim_evidence(claim_id,capture_id,role) VALUES(%s,%s,'establishes')",
                 (claim, cap),
             )
+            if pid == "camera_external_ref":
+                # P35.25 (SIG-CONF-014): shared upstream refs are evidence only
+                # inside a DECLARED shared namespace — a/b's equal "101" reads
+                # as one upstream row only under a declared id_namespace, so
+                # the fixture declares `dot_511` on the ref claims.
+                cur.execute(
+                    "INSERT INTO claim_lineage"
+                    "(claim_id,source_id,id_namespace,lineage_kind,"
+                    " independence_class,basis) "
+                    "VALUES(%s,%s,'dot_511','primary','src:'||%s,'fixture')",
+                    (claim, source_id, source_id),
+                )
         return subject
 
     # a (s1) ~ b (s2) coincident, shared upstream ref; d/e: one source, two

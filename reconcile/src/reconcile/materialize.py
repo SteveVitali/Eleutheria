@@ -41,7 +41,7 @@ import hashlib
 import json
 import uuid as _uuid
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import UTC, date, datetime
 from typing import Any
 
@@ -199,6 +199,55 @@ CAPTURE_TIME_BASIS = "capture_retrieved_at_latest"
 #: The pre-ADR-104 placeholder for an undated claim with no capture time either.
 _UNDATED = date(1970, 1, 1)
 
+#: P35.25 (SIG-CONF-014): the declared-lineage read. ``claim_lineage`` is an
+#: additive P35.25 table — a spine deployed before the change simply has no
+#: declared lineage, and every claim resolves ``unclassified`` (the honest
+#: default: undeclared material never counts as independent). Present, the
+#: join supplies each claim's declared ``independence_class``/``id_namespace``
+#: and any recovered ``derived_from_claim_ids`` ancestry; a claim whose own
+#: class is undeclared but whose ancestor's is declared inherits the
+#: ANCESTOR's class (a derivation copies its upstream's voice — never a
+#: second independent one).
+_LINEAGE_JOIN = "  LEFT JOIN claim_lineage cl ON cl.claim_id = c.claim_id "
+_LINEAGE_COLS = (
+    "cl.independence_class, cl.id_namespace, cl.derived_from_claim_ids, c.derived_from_claim_ids"
+)
+_NO_LINEAGE_COLS = "NULL, NULL, NULL, c.derived_from_claim_ids"
+_ANCESTOR_CLASS_SQL = (
+    "SELECT claim_id::text, independence_class FROM claim_lineage WHERE claim_id = ANY(%s::uuid[])"
+)
+
+
+def _resolve_lineage(conn: Any, built: list[tuple[Claim, list[str], str | None]]) -> None:
+    """Inherit ancestor independence classes for undeclared derived claims.
+
+    ``built`` holds ``(claim, derived_ids, stored_class)`` triples. A claim
+    with derivation ancestry but no declared class takes the ancestor's class
+    when one ancestor's ``claim_lineage`` row declares a real class (one-hop
+    lookup — deeper chains stay unclassified, never guessed). The result is
+    written back onto the group lists by replacing the Claim values — the
+    frozen dataclass is rebuilt, never mutated.
+    """
+    ancestors: set[str] = set()
+    for claim, derived, stored in built:
+        declared = stored if stored and stored != "unclassified" else claim.independence_class
+        if declared or claim.derived_from_source:
+            continue
+        ancestors.update(derived)
+    if not ancestors:
+        return
+    ancestor_class: dict[str, str] = {}
+    for cid, cls in conn.execute(_ANCESTOR_CLASS_SQL, (sorted(ancestors),)).fetchall():
+        if cls and cls != "unclassified":
+            ancestor_class[str(cid)] = str(cls)
+    for i, (claim, derived, stored) in enumerate(built):
+        declared = stored if stored and stored != "unclassified" else claim.independence_class
+        if declared or claim.derived_from_source:
+            continue
+        inherited = next((ancestor_class[a] for a in sorted(derived) if a in ancestor_class), None)
+        if inherited is not None:
+            built[i] = (replace(claim, independence_class=inherited), derived, stored)
+
 
 def observation_time(observed_at: Any, retrieved_at: Any) -> tuple[date, str]:
     """``(observed_at, basis)`` for the resolver's ``Claim`` (ADR-104).
@@ -273,16 +322,26 @@ def read_claim_groups(
     occ_belief = BELIEF_PARAM if as_of_belief is not None else BELIEF_NOW
     occ_params = [as_of_belief] if as_of_belief is not None else []
 
+    # P35.25: the claim_lineage join runs only where the additive change has
+    # deployed — an un-migrated spine resolves every claim ``unclassified``,
+    # the honest pre-declaration state.
+    lineage_probe = conn.execute("SELECT to_regclass('public.claim_lineage')").fetchone()
+    has_lineage = bool(lineage_probe and lineage_probe[0])
+    lineage_cols = _LINEAGE_COLS if has_lineage else _NO_LINEAGE_COLS
+    lineage_join = _LINEAGE_JOIN if has_lineage else " "
+
     rows = conn.execute(
         "SELECT c.subject_id, c.predicate_id, c.claim_id, c.value_kind, c.value_text, "
         "       c.value_num, c.value_bool, c.raw_value, c.observed_at, c.source_reliability, "
         "       c.artifact_integrity, c.review_status, occ.source_id, occ.artifact_type, "
         "       occ.retrieved_at, occ.capture_id, occ.bound_at, "
         "       q.count_scope, q.count_scope_detail, q.count_scope_jurisdiction, "
-        "       q.evidence_origin "
+        "       q.evidence_origin, "
+        f"       {lineage_cols}"
         "  FROM claim c "
         + occurrence_lateral(occ_belief)
         + COUNT_QUALIFIER_JOIN
+        + lineage_join
         + " WHERE "
         + " AND ".join(where)
         + " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
@@ -290,36 +349,54 @@ def read_claim_groups(
     ).fetchall()
 
     groups: dict[tuple[str, str], list[Claim]] = {}
+    # (claim, derived ids, stored lineage class) — the derived/undeclared
+    # ancestry pass below may inherit the ancestor's declared class.
+    built: list[tuple[Claim, list[str], str | None]] = []
     for r in rows:
         key = (str(r[0]), str(r[1]))
         observed_at, basis = observation_time(r[8], r[14])
-        groups.setdefault(key, []).append(
-            Claim(
-                claim_id=str(r[2]),
-                subject_id=str(r[0]),
-                predicate_id=str(r[1]),
-                value=_value(r[3], r[4], r[5], r[6]),
-                reliability=r[9],
-                integrity=r[10],
-                genre=r[13] or "",
-                observed_at=observed_at,
-                observed_at_basis=basis,
-                observed_instant=observation_instant(r[8], r[14]),
-                occurrence_capture_id=str(r[15]) if r[15] is not None else None,
-                occurrence_retrieved_at=r[14],
-                occurrence_bound_at=r[16],
-                raw_value=r[7] or "",
-                review_status=r[11] or "active",
-                source_id=r[12] or "",
-                count_basis=str(r[1]).removesuffix("_device_count")
-                if str(r[1]).endswith("_device_count")
-                else None,
-                count_scope=r[17],
-                count_scope_detail=r[18],
-                count_scope_jurisdiction=r[19],
-                evidence_origin=r[20],
-            )
+        stored_class = r[21] or None
+        stored_ns = r[22] or None
+        derived_ids = sorted({str(x) for x in (r[23] or ())} | {str(x) for x in (r[24] or ())})
+        claim = Claim(
+            claim_id=str(r[2]),
+            subject_id=str(r[0]),
+            predicate_id=str(r[1]),
+            value=_value(r[3], r[4], r[5], r[6]),
+            reliability=r[9],
+            integrity=r[10],
+            genre=r[13] or "",
+            observed_at=observed_at,
+            observed_at_basis=basis,
+            observed_instant=observation_instant(r[8], r[14]),
+            occurrence_capture_id=str(r[15]) if r[15] is not None else None,
+            occurrence_retrieved_at=r[14],
+            occurrence_bound_at=r[16],
+            raw_value=r[7] or "",
+            review_status=r[11] or "active",
+            source_id=r[12] or "",
+            count_basis=str(r[1]).removesuffix("_device_count")
+            if str(r[1]).endswith("_device_count")
+            else None,
+            count_scope=r[17],
+            count_scope_detail=r[18],
+            count_scope_jurisdiction=r[19],
+            evidence_origin=r[20],
+            independence_class=(
+                stored_class if stored_class and stored_class != "unclassified" else None
+            ),
+            id_namespace=stored_ns,
+            derived_from_claim_ids=tuple(derived_ids),
         )
+        groups.setdefault(key, []).append(claim)
+        built.append((claim, derived_ids, stored_class))
+    # P35.25: undeclared claims carrying derivation ancestry inherit the
+    # ancestor's declared class when one resolves (a derivation is its
+    # upstream's voice — never a second independent one).
+    if has_lineage:
+        _resolve_lineage(conn, built)
+        replaced = {c.claim_id: c for c, _d, _s in built}
+        groups = {k: [replaced.get(m.claim_id, m) for m in ms] for k, ms in groups.items()}
     return groups
 
 
@@ -353,6 +430,10 @@ def resolution_row(resolved: Resolution, *, ruleset: Ruleset) -> dict[str, Any] 
         "n_supporting": len(resolved.supporting_claim_ids),
         "n_dissenting": len(resolved.dissenting_claim_ids),
         "n_independence_classes": len(resolved.independence_class_ids),
+        # P35.25 (SIG-CONF-014): how much of the considered evidence carries no
+        # declared lineage — the ``unclassified`` pseudo-class never counts as
+        # an independent voice, and this count keeps the remainder visible.
+        "n_unclassified_claims": len(resolved.unclassified_claim_ids),
         "rules_fired": list(resolved.rules_fired),
         "resolution_status": resolved.resolution_status,
         "unresolved_code": resolved.unresolved_code,

@@ -115,6 +115,8 @@ __all__ = [
     "declared_device_class",
     "DeviceClassFinding",
     "device_class_findings",
+    "LineageFinding",
+    "UNCLASSIFIED",
     "fold_human_verdicts",
     "infer_duplicate_targets",
     "infer_lineages",
@@ -138,7 +140,12 @@ __all__ = [
 #: 1.2.0 — P35.15a / PKG-07: device class comes from the subject's declared
 #:   `technology` slug first; the substring rules are a legacy-only fallback,
 #:   and declared-vs-substring disagreements are recorded findings.
-CAMERA_SITE_RESOLVER_VERSION = "camera-sites/1.2.0"
+#: 1.3.0 — P35.25 / SIG-CONF-014: declared independence classes seed lineage
+#:   groups (measured coincidence can only union), undeclared sources share the
+#:   `unclassified` voice and can never corroborate, the shared-upstream-ref
+#:   tier requires a declared-namespace match, and undeclared copy unions are
+#:   disclosed as lineage findings (GQ-11).
+CAMERA_SITE_RESOLVER_VERSION = "camera-sites/1.3.0"
 
 _EARTH_RADIUS_M = 6_371_008.8
 
@@ -173,6 +180,13 @@ class CameraRecord:
     latitude: float | None
     longitude: float | None
     external_ref: str | None = None
+    #: P35.25 (SIG-CONF-014, NEW-1): the DECLARED identifier namespace
+    #: ``external_ref`` lives in (``claim_lineage.id_namespace`` — a shared
+    #: upstream id space like ``osm.element``, a source-private ``src:<id>``
+    #: space, or ``undeclared``). The shared-upstream-ref tier credits a ref
+    #: match ONLY inside one declared namespace: a bare equal string across
+    #: namespaces is a coincidence, never shared-upstream evidence.
+    id_namespace: str | None = None
     name: str | None = None
     roadway: str | None = None
     direction: str | None = None
@@ -601,22 +615,59 @@ def _valid_point(r: CameraRecord) -> bool:
 # --------------------------------------------------------------------------- #
 
 
-def infer_lineages(
-    records: Sequence[CameraRecord],
-    coincident_pairs: Iterable[tuple[int, int]],
-    rules: CameraSiteRules,
-) -> dict[str, str]:
-    """Group sources into lineages: republications of one upstream dataset.
+@dataclass(frozen=True)
+class LineageFinding:
+    """A lineage fact the data shows but no declaration backs (P35.25 / GQ-11,
+    SIG-EPIS-029). ``undeclared_overlap`` = two sources measurably republish one
+    upstream with no shared declared class (the copy detector's flag); a
+    ``cross_declared_overlap`` = two sources declared to DIFFERENT classes that
+    measure as copies — the declarations and the data disagree, disclosed both
+    ways (the measured union still stands: one voice, and the contradiction
+    stays visible)."""
 
-    Two sources are one lineage when at least ``lineage_min_pairs`` of their records
-    are coincident AND the coincident records cover at least ``lineage_min_share`` of
-    the smaller source (data-generated, re-derived every run). Returns
-    ``source_id -> lineage_id`` (the lexicographically smallest source of its lineage);
-    a source that mirrors nothing is its own lineage.
-    """
+    kind: str  # undeclared_overlap | cross_declared_overlap
+    sources: tuple[str, str]
+    coincident_pairs: int
+    share: float
+
+
+#: The pseudo-class token undeclared sources resolve to under declared mode —
+#: shared by every undeclared source, so undeclared material is never counted
+#: as independent corroboration (SIG-CONF-014).
+UNCLASSIFIED = "unclassified"
+
+
+def _union_find(
+    records: Sequence[CameraRecord],
+) -> tuple[dict[str, int], Any, Any]:
     size: dict[str, int] = defaultdict(int)
     for r in records:
         size[r.source_id] += 1
+    parent: dict[str, str] = {s: s for s in size}
+
+    def find(x: str) -> str:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(a: str, b: str) -> None:
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            lo, hi = sorted((ra, rb))
+            parent[hi] = lo
+
+    return size, find, union
+
+
+def _measured_unions(
+    records: Sequence[CameraRecord],
+    coincident_pairs: Iterable[tuple[int, int]],
+    rules: CameraSiteRules,
+    size: Mapping[str, int],
+) -> dict[tuple[str, str], tuple[int, float]]:
+    """Source pairs whose measured coincidence meets the lineage rule:
+    ``(sa, sb) -> (coincident pair count, share of the smaller source)``."""
     covered: dict[tuple[str, str], tuple[set[int], set[int]]] = {}
     for i, j in coincident_pairs:
         sa, sb = records[i].source_id, records[j].source_id
@@ -630,14 +681,7 @@ def infer_lineages(
         else:
             left.add(j)
             right.add(i)
-    parent: dict[str, str] = {s: s for s in size}
-
-    def find(x: str) -> str:
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
+    out: dict[tuple[str, str], tuple[int, float]] = {}
     for (sa, sb), (left, right) in sorted(covered.items()):
         pairs = min(len(left), len(right))
         smaller = min(size[sa], size[sb])
@@ -646,11 +690,104 @@ def infer_lineages(
             and smaller
             and pairs / smaller >= rules.lineage_min_share
         ):
-            ra, rb = find(sa), find(sb)
-            if ra != rb:
-                lo, hi = sorted((ra, rb))
-                parent[hi] = lo
-    return {s: find(s) for s in sorted(size)}
+            out[(sa, sb)] = (pairs, pairs / smaller)
+    return out
+
+
+def infer_lineages(
+    records: Sequence[CameraRecord],
+    coincident_pairs: Iterable[tuple[int, int]],
+    rules: CameraSiteRules,
+    *,
+    declared: Mapping[str, str] | None = None,
+) -> dict[str, str]:
+    """Group sources into lineages: republications of one upstream dataset.
+
+    Two sources are one lineage when at least ``lineage_min_pairs`` of their records
+    are coincident AND the coincident records cover at least ``lineage_min_share`` of
+    the smaller source (data-generated, re-derived every run). Returns
+    ``source_id -> lineage_id`` (the lexicographically smallest source of its lineage);
+    a source that mirrors nothing is its own lineage.
+
+    P35.25 (SIG-CONF-014): ``declared`` maps source -> resolved independence
+    class (``db.claim_lineage.independence_class`` / ``source_lineage_current``).
+    When given, the DECLARED classes are the lineage seeds — sources sharing a
+    declared class union even below the measured threshold, and the lineage id
+    is the declared class token, so a mirror/derived source can never read as
+    its own independent voice. A source with no declared class (absent or
+    ``unclassified``) unions into a group only by measured evidence and reports
+    the shared ``unclassified`` token when no declared class anchors the group:
+    undeclared material is one disclosed voice, never independent corroboration.
+    When ``declared`` is ``None`` the legacy measured-only behaviour stands.
+    """
+    lineages, _findings = _infer_lineages(records, coincident_pairs, rules, declared)
+    return lineages
+
+
+def _infer_lineages(
+    records: Sequence[CameraRecord],
+    coincident_pairs: Iterable[tuple[int, int]],
+    rules: CameraSiteRules,
+    declared: Mapping[str, str] | None,
+) -> tuple[dict[str, str], tuple[LineageFinding, ...]]:
+    size, find, union = _union_find(records)
+    measured = _measured_unions(records, coincident_pairs, rules, size)
+
+    findings: list[LineageFinding] = []
+    if declared is not None:
+        # Declared seeds first: sources sharing a declared independence class
+        # are one lineage by declaration, whatever the measured overlap is.
+        by_class: dict[str, list[str]] = defaultdict(list)
+        for s in size:
+            cls = declared.get(s) or UNCLASSIFIED
+            if cls != UNCLASSIFIED:
+                by_class[cls].append(s)
+        for members in by_class.values():
+            for m in members[1:]:
+                union(members[0], m)
+        # GQ-11: a measured copy union with no shared declared class is
+        # detected undeclared copying (or a declared-class contradiction).
+        for (sa, sb), (pairs, share) in measured.items():
+            ca = declared.get(sa) or UNCLASSIFIED
+            cb = declared.get(sb) or UNCLASSIFIED
+            if ca == cb and ca != UNCLASSIFIED:
+                continue  # the declaration already explains this copy
+            kind = (
+                "cross_declared_overlap"
+                if ca != UNCLASSIFIED and cb != UNCLASSIFIED
+                else "undeclared_overlap"
+            )
+            findings.append(
+                LineageFinding(
+                    kind=kind,
+                    sources=(sa, sb),
+                    coincident_pairs=pairs,
+                    share=round(share, 4),
+                )
+            )
+
+    for sa, sb in measured:
+        union(sa, sb)
+
+    if declared is None:
+        return {s: find(s) for s in sorted(size)}, ()
+
+    # Token per group: the shared declared class; conflicting declared classes
+    # inside one measured union keep the smallest token (still ONE voice — the
+    # contradiction is the finding above); a group with no declared class at
+    # all is the shared ``unclassified`` pseudo-lineage.
+    groups: dict[str, list[str]] = defaultdict(list)
+    for s in size:
+        groups[find(s)].append(s)
+    out: dict[str, str] = {}
+    for members in groups.values():
+        classes = sorted(
+            {declared[m] for m in members if declared.get(m) and declared[m] != UNCLASSIFIED}
+        )
+        token = classes[0] if classes else UNCLASSIFIED
+        for m in members:
+            out[m] = token
+    return out, tuple(findings)
 
 
 # --------------------------------------------------------------------------- #
@@ -936,6 +1073,7 @@ class _Assessed:
     unblockable: int
     incompatible_blocked: int
     discarded: int
+    lineage_findings: tuple[LineageFinding, ...] = ()  # P35.25 GQ-11 detections
 
 
 def _neighbour_index(
@@ -980,6 +1118,7 @@ def _assess(
     rules: CameraSiteRules,
     geo_rule: GeoGridRule,
     blocking_context: BlockingContext | None,
+    declared: Mapping[str, str] | None = None,
 ) -> _Assessed:
     block_records = [r.block_record() for r in records]
     index_pairs = validate_geo_rule(block_records, geo_rule, context=blocking_context)
@@ -1002,8 +1141,11 @@ def _assess(
         if d <= rules.candidate_max_m:
             within.append((i, j, d))
 
-    lineages = infer_lineages(
-        records, [(i, j) for i, j, d in within if d <= rules.coincident_m], rules
+    lineages, lineage_findings = _infer_lineages(
+        records,
+        [(i, j) for i, j, d in within if d <= rules.coincident_m],
+        rules,
+        declared,
     )
     neigh = _neighbour_index(records, within, eff)
     classes = [device_class(r, rules) for r in records]
@@ -1018,7 +1160,19 @@ def _assess(
         na = neigh[i][b.source_id]  # a's neighbours in b's source (sorted by distance)
         nb = neigh[j][a.source_id]
         ref_a, ref_b = normalize_ref(a.external_ref), normalize_ref(b.external_ref)
-        ref_equal = ref_a is not None and ref_a == ref_b
+        # P35.25 NEW-1: a shared upstream ref is evidence only inside ONE
+        # declared identifier namespace. The same string under two different
+        # namespaces — or with no declared namespace at all (``undeclared``)
+        # — is a coincidence, never shared-upstream evidence.
+        shared_ns = (
+            a.id_namespace
+            if a.id_namespace
+            and a.id_namespace == b.id_namespace
+            and a.id_namespace != "undeclared"
+            else None
+        )
+        ref_equal = ref_a is not None and ref_a == ref_b and shared_ns is not None
+        ref_match_undeclared = ref_a is not None and ref_a == ref_b and shared_ns is None
         unique_colocation = (
             _count_within(na, rules.colocation_m) == 1
             and _count_within(nb, rules.colocation_m) == 1
@@ -1066,7 +1220,13 @@ def _assess(
             continue
         left_i, right_i = (i, j) if a.subject_id < b.subject_id else (j, i)
         left, right = records[left_i], records[right_i]
-        same_lineage = lineages[a.source_id] == lineages[b.source_id]
+        # P35.25: an ``unclassified`` lineage on either side means the pair's
+        # independence is UNDETERMINED — ``same_lineage`` is then null (unknown),
+        # never asserted true or false on undeclared material.
+        la, lb = lineages[a.source_id], lineages[b.source_id]
+        same_lineage: bool | None = (
+            (la == lb) if la != UNCLASSIFIED and lb != UNCLASSIFIED else None
+        )
         soft = _soft_conflicts(a, b, rules)
         evidence: dict[str, Any] = {
             "rule": rules.label(tier),
@@ -1080,6 +1240,12 @@ def _assess(
                 sorted({t for t in (right.declared_technologies or (right.technology,)) if t}),
             ],
             "shared_upstream_ref": ref_a if ref_equal else None,
+            "ref_match_undeclared": ref_match_undeclared or None,
+            "id_namespaces": [
+                left.id_namespace or "undeclared",
+                right.id_namespace or "undeclared",
+            ],
+            "lineage_ids": [la, lb],
             "names_agree": names_agree(a.name, b.name),
             "unique_within_colocation": unique_colocation,
             "mutual_nearest": mutual_nearest,
@@ -1143,7 +1309,11 @@ def _assess(
                         "row_identical": _row_fingerprint(a) == _row_fingerprint(b),
                         "duplicate_group_root": root,
                         "group_size": len(group_members[root]),
-                        "same_lineage": True,
+                        # P35.25: derived from the resolved lineage map, not
+                        # hardcoded — same-source twins share whatever lineage
+                        # their source resolved to (``unclassified`` included).
+                        "same_lineage": lineages[a.source_id] == lineages[b.source_id],
+                        "lineage_ids": [lineages[a.source_id]],
                         "rules_version": rules.version,
                     },
                     evidence_claims=tuple(sorted(set(left.claim_ids) | set(right.claim_ids))),
@@ -1158,6 +1328,7 @@ def _assess(
         unblockable=unblockable,
         incompatible_blocked=incompatible,
         discarded=discarded,
+        lineage_findings=lineage_findings,
     )
 
 
@@ -1167,11 +1338,24 @@ def assess_pairs(
     rules: CameraSiteRules | None = None,
     geo_rule: GeoGridRule | None = None,
     blocking_context: BlockingContext | None = None,
+    declared: Mapping[str, str] | None = None,
 ) -> tuple[PairAssessment, ...]:
-    """Block and assess every candidate pair of ``records`` (tiers 1/3/4/5; tier 6 dropped)."""
+    """Block and assess every candidate pair of ``records`` (tiers 1/3/4/5; tier 6 dropped).
+
+    ``declared`` is the P35.25 source -> independence-class map (see
+    :func:`infer_lineages`); when given it also gates the shared-upstream-ref
+    namespace evidence and makes ``same_lineage`` truthful about
+    ``unclassified`` material.
+    """
     rs = rules or CameraSiteRules.from_data()
     gr = geo_rule or load_geo_rules()[0]
-    return _assess(records, rules=rs, geo_rule=gr, blocking_context=blocking_context).assessments
+    return _assess(
+        records,
+        rules=rs,
+        geo_rule=gr,
+        blocking_context=blocking_context,
+        declared=declared,
+    ).assessments
 
 
 # --------------------------------------------------------------------------- #
@@ -1584,14 +1768,21 @@ def cluster_summary(
     ``independent_lineages`` counts lineages, not sources, so a mirror of the same
     upstream dataset never counts as a second, independent confirmation
     (hard constraint (c)); ``corroborated`` is true only with two or more lineages.
+
+    P35.25 (SIG-CONF-014): the shared ``unclassified`` pseudo-lineage counts as
+    one voice but is not an established independent lineage — ``corroborated``
+    needs two or more DECLARED lineage ids and ``unclassified_sources``
+    discloses the undeclared membership.
     """
     sources = sorted({m.source_id for m in cluster_members})
     lineage_ids = sorted({lineages.get(s, s) for s in sources})
+    declared_ids = [lid for lid in lineage_ids if lid != UNCLASSIFIED]
     return {
         "size": len(cluster_members),
         "sources": sources,
-        "independent_lineages": len(lineage_ids),
-        "corroborated": len(lineage_ids) >= 2,
+        "independent_lineages": len(declared_ids),
+        "unclassified_sources": sum(1 for s in sources if lineages.get(s, s) == UNCLASSIFIED),
+        "corroborated": len(declared_ids) >= 2,
     }
 
 
@@ -1948,6 +2139,11 @@ class CameraSiteResult:
     device_class_findings: tuple[DeviceClassFinding, ...] = ()
     records_without_declared_technology: int = 0
     mixed_technology_subjects: int = 0
+    #: P35.25 / GQ-11 (SIG-EPIS-029): lineage facts the data shows but no
+    #: declaration backs — measured copy unions between undeclared sources, and
+    #: measured unions CONTRADICTING two declared-independent classes. Empty
+    #: when the run had no declared-lineage map.
+    lineage_findings: tuple[LineageFinding, ...] = ()
 
     @property
     def dedup_ratio(self) -> float:
@@ -1979,6 +2175,19 @@ class CameraSiteResult:
             "mirror_lineages": {
                 k: sorted(v) for k, v in sorted(lineage_groups.items()) if len(v) > 1
             },
+            # P35.25: how much of the run's lineage is declared vs the shared
+            # unclassified voice, and every measured-but-undeclared copy the
+            # detector saw (GQ-11 — disclosed, never silently independent).
+            "unclassified_lineage_sources": sorted(lineage_groups.get(UNCLASSIFIED, [])),
+            "lineage_findings": [
+                {
+                    "kind": f.kind,
+                    "sources": list(f.sources),
+                    "coincident_pairs": f.coincident_pairs,
+                    "share": f.share,
+                }
+                for f in self.lineage_findings
+            ],
         }
 
     def corroboration(self) -> dict[str, int]:
@@ -1988,18 +2197,26 @@ class CameraSiteResult:
         members: dict[str, list[str]] = defaultdict(list)
         for subject, cid in self.clusters.items():
             members[cid].append(subject)
-        corroborated = mirror_only = 0
+        corroborated = mirror_only = unclassified_only = 0
         for ms in members.values():
             if len(ms) < 2:
                 continue
             lineages = {self.lineages.get(self.sources[m], self.sources[m]) for m in ms}
-            if len(lineages) >= 2:
+            # P35.25: ``unclassified`` is one disclosed voice, never an
+            # established independent lineage — corroboration needs two or more
+            # DECLARED lineage ids; a site with no declared voice at all is
+            # counted apart (its independence is unproven, not disproven).
+            declared = lineages - {UNCLASSIFIED}
+            if len(declared) >= 2:
                 corroborated += 1
+            elif not declared:
+                unclassified_only += 1
             else:
                 mirror_only += 1
         return {
             "multi_record_sites_independently_corroborated": corroborated,
             "multi_record_sites_one_lineage_only": mirror_only,
+            "multi_record_sites_unclassified_lineage": unclassified_only,
         }
 
     def summary(self) -> dict[str, Any]:
@@ -2155,6 +2372,7 @@ def run_key(
     gold: CameraGoldSet | None,
     records: Sequence[CameraRecord],
     human_verdicts: Sequence[HumanVerdict] = (),
+    declared_lineages: Mapping[str, str] | None = None,
 ) -> str:
     """The run identity: every input a decision depends on.
 
@@ -2176,6 +2394,14 @@ def run_key(
                 "rules": _rules_digest(rules),
                 "auto": sorted(auto_write_tiers),
                 "gold": None if gold is None else gold.content_digest(),
+                # P35.25 (SIG-CONF-014): the declared independence classes are a
+                # decision input — a lineage backfill/declaration change mints a
+                # NEW run key instead of silently retaining stale corroboration.
+                "declared_lineages": (
+                    None
+                    if declared_lineages is None
+                    else {k: declared_lineages[k] for k in sorted(declared_lineages)}
+                ),
                 "human": [
                     {
                         "left": v.left,
@@ -2228,6 +2454,7 @@ def resolve_camera_sites(
     human_items: Sequence[HumanItem] = (),
     human_votes: Sequence[HumanVote] = (),
     certified_tiers: Iterable[int] = (),
+    declared_lineages: Mapping[str, str] | None = None,
 ) -> CameraSiteResult:
     """One camera-site ER run: block → assess → measure → decide → cluster (pure).
 
@@ -2240,11 +2467,24 @@ def resolve_camera_sites(
     evaluation has certified for auto-write — empty in Round 11 (P34.45,
     ADR-153): every identity-inference tier is review-only no matter what the
     agent/LLM-labelled holdout measures.
+
+    ``declared_lineages`` is the P35.25 source -> independence-class map from
+    ``source_lineage_current``; when given, declared classes seed the lineage
+    groups (measured coincidence can only UNION, never split them), undeclared
+    sources resolve to the shared ``unclassified`` voice, the shared-upstream
+    tier requires a declared namespace match, and GQ-11 copy detections are
+    reported as :class:`LineageFinding` — none of it silently independent.
     """
     verdicts = fold_human_verdicts(human_items, human_votes)
     rs = rules or CameraSiteRules.from_data()
     gr = geo_rule or load_geo_rules()[0]
-    assessed = _assess(records, rules=rs, geo_rule=gr, blocking_context=blocking_context)
+    assessed = _assess(
+        records,
+        rules=rs,
+        geo_rule=gr,
+        blocking_context=blocking_context,
+        declared=declared_lineages,
+    )
     # The auto-write gate measures exactly what WOULD be auto-written: a candidate-tier pair
     # with a soft conflict is routed to review whatever its tier, so it is not scored as
     # that tier (it cannot be a false auto-merge); every other pair scores at its tier.
@@ -2286,6 +2526,7 @@ def resolve_camera_sites(
         gold=gold,
         records=records,
         human_verdicts=verdicts,
+        declared_lineages=declared_lineages,
     )
     # P35.15a / PKG-07: the declared-technology audit — disagreements between a
     # subject's declared slug and the legacy substring class are findings (the
@@ -2333,4 +2574,5 @@ def resolve_camera_sites(
         device_class_findings=findings,
         records_without_declared_technology=undeclared,
         mixed_technology_subjects=mixed,
+        lineage_findings=assessed.lineage_findings,
     )

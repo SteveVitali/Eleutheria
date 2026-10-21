@@ -87,6 +87,9 @@ allow db/sqitch.plan 2026-10-20T00:00:00Z claim_payload_version [coverage_exclus
 # P35.24 (ticket 303): subject_rekey's planned_at is its real `date -u` stamp — future of the
 # pre-commit HEAD only while the line is in flight; past-dated the moment its commit lands.
 allow db/sqitch.plan 2026-10-21T00:00:00Z subject_rekey [claim_payload_version] 2026-10-18T07:43:00Z
+# P35.25 (ticket 304): declared_lineage's planned_at is its real `date -u` stamp — future of the
+# pre-commit HEAD only while the line is in flight; past-dated the moment its commit lands.
+allow db/sqitch.plan 2026-10-22T00:00:00Z declared_lineage [subject_rekey] 2026-10-18T10:43:00Z
 
 # ── connectors/src/connectors/data/sources.toml rights dates (B1 NEW-5; B4 G1 positions) ─────────────────
 # rights_reviewed_on / last_verified / retrieval_date are record dates (R1: never later than the commit).
@@ -485,3 +488,30 @@ seed-commit 56d0b7f9
 # Scope: findings attributed to fabd79b2 only; no other commit borrows the
 # exemption.
 seed-commit fabd79b2
+
+# ── P35.25 ci-field kind repair (recorded 2026-10-18) ─────────────────────
+# e9494c96's pushed PHASE LOG ticket entry carried `ci: pending head-bound
+# read` — unparseable to verify-recorded-ci (run 39123947703) and no verified
+# green #319 head exists to carry (impl ec36344c cancelled; e9494c96 red on
+# coverage-matrix routing + a copy-batch live-claim). 0a55c334 corrects the
+# kind token in place — `ticket` → `correction` (NON_CI_KINDS; the entry
+# carries the ticket record verbatim in the payload and the verified ci lands
+# at the next record entry) — the sanctioned in-place pattern of
+# ef1fb3bf/6fe93216/64648080/21a392ca/49607976/917dd2a5/4ce44ed9/56d0b7f9.
+# The branch rule forbids force-push, so the declaration lands as a later
+# commit rather than a reworded subject.
+# Scope: findings attributed to 0a55c334 only; no other commit borrows the
+# exemption.
+seed-commit 0a55c334
+
+# ── P35.25 orient-budget entry compaction (recorded 2026-10-18) ───────────
+# 9c22c35c went red (run 39125675964): the pushed 703 B PHASE LOG
+# `correction` entry drove the orient probe to 49,465 B > 48 KiB
+# (BM-ORIENT-01). 8bb8d260 compacts the entry in place to 317 B — the
+# P36.9b oversized-entry precedent (no record dropped: the full text is in
+# git history at 0a55c334 and the why is recorded in runs/P35.25.md).
+# Same sanctioned in-place pattern as 56d0b7f9/0a55c334. The branch rule
+# forbids force-push, so the declaration lands as a later commit.
+# Scope: findings attributed to 8bb8d260 only; no other commit borrows the
+# exemption.
+seed-commit 8bb8d260

@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "a7a5d9de2e56f9f2a68bd09de329acd94a674505",
-  "manifest_inputs": 1058,
+  "input_commit": "bd8b54647dddf600a0c49df5fa70b0661823e5c9",
+  "manifest_inputs": 1060,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.25",
-    "lastCompleted": "P35.24",
+    "nextTicket": "P35.26",
+    "lastCompleted": "P35.25",
     "blockedOn": "CI fail on",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.57,P35.67,P36.12",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.57,P35.67,P36.12",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.24-truthful-subject-keys-and-re-keying",
+    "chainTip": "r11/P35.25-declared-lineage-namespaces-independence",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-18T09:02:00Z"
+    "updatedAt": "2026-10-18T11:28:34Z"
   },
   "counts": {
     "obligations": 169,
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 45,
+    "return_pass_rows": 46,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -9082,6 +9082,14 @@
         "gates_cell": "hosted write — QUEUED, not run (`live_verification=false`); OM-20 — the GATE-G4 §4 list names P35.24 verbatim (2026-10-09T17:32Z; expires at the next GATE); INSERTs + sys_period close; AR-3/AR-2 outside the AR-3 freeze",
         "operator_cell": "nothing until the live re-run — plan is the default; `--apply` in-window; rollback forward-only",
         "rerun_cell": "`implement-spec spec=docs/tickets/303_P35.24__truthful-subject-keys-and-re-keying.md live_verification=true` · row 303 landed (PR #318)",
+        "obligations": []
+      },
+      {
+        "key": "P35.25",
+        "obligations_cell": "L1 merge · L2 `lineage-rematerialize --apply` + `/status/` notice (A-20) · L3 every-claim `id_namespace`",
+        "gates_cell": "undeclared",
+        "operator_cell": "QUEUED (`live_verification=false`); OM-20 — the GATE-G4 §4 list names P35.25 verbatim (2026-10-09T17:32Z; expires at the next GATE); INSERT-only; AR-3 + AR-2, excluded AR-3 freeze",
+        "rerun_cell": "nothing until the re-run; rollback forward-only",
         "obligations": []
       }
     ]
@@ -19127,10 +19135,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "0197ea084f5b565a10e24314144c54adb325bdf432223e22b04eee6e8fdbc1a8",
+  "manifest_sha256": "bb670dd9a2c461a75e8c49a07031a54220c80978620d9944fe830c51a2bc675d",
   "current_md": {
     "lines": 63,
-    "bytes": 15620,
+    "bytes": 15625,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

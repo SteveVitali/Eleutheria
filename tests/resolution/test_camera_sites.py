@@ -321,13 +321,111 @@ def test_a_few_coincidences_do_not_make_a_lineage() -> None:
     assert lineages["s1"] != lineages["s2"]
 
 
+# --- P35.25: declared namespaces + declared independence (SIG-CONF-014, GQ-11) ------
+
+
+def test_a_shared_ref_across_namespaces_is_not_tier_1() -> None:
+    # The same string under two DECLARED namespaces is a coincidence — it can
+    # never reach the shared-upstream-ref tier (NEW-1).
+    recs = [
+        _rec("a", "s1", external_ref="51", id_namespace="dot_511_md.camera"),
+        _rec("b", "s2", 0.2, external_ref="51", id_namespace="dot_511_ok.camera"),
+    ]
+    assert {p.tier for p in assess_pairs(recs)} == {3}  # coincident only
+    (p,) = assess_pairs(recs)
+    assert p.evidence["shared_upstream_ref"] is None
+    assert p.evidence["ref_match_undeclared"] is True
+
+
+def test_a_shared_ref_without_a_declared_namespace_is_not_tier_1() -> None:
+    # Equal strings with NO declared namespace on either side are coincidence
+    # too — undeclared is never silently treated as shared upstream.
+    recs = [
+        _rec("a", "s1", external_ref="51"),
+        _rec("b", "s2", 0.2, external_ref="51.0"),
+    ]
+    assert {p.tier for p in assess_pairs(recs)} == {3}
+    declared_undeclared = [
+        _rec("a", "s1", external_ref="51", id_namespace="undeclared"),
+        _rec("b", "s2", 0.2, external_ref="51.0", id_namespace="undeclared"),
+    ]
+    assert {p.tier for p in assess_pairs(declared_undeclared)} == {3}
+
+
+def test_declared_lineage_seeds_one_voice_below_the_measured_threshold() -> None:
+    # Two sources DECLARED to one class union without any measured coincidence;
+    # two declared to different classes stay independent.
+    recs = [_rec(f"r{i}", f"s{i}", i * 5000.0) for i in range(4)]
+    declared = {"s0": "dot_511_upstream", "s1": "dot_511_upstream", "s2": "osm.element"}
+    lineages = infer_lineages(recs, [], RULES, declared=declared)
+    assert lineages["s0"] == lineages["s1"] == "dot_511_upstream"
+    assert lineages["s2"] == "osm.element"
+    assert lineages["s3"] == "unclassified"  # never declared → the unclassified voice
+    site = cluster_summary([recs[0], recs[1]], lineages)
+    assert site["independent_lineages"] == 1 and site["corroborated"] is False
+
+
+def test_undeclared_material_is_one_unclassified_voice_never_corroboration() -> None:
+    # Two sources measured as coincident but with NO declared classes: they
+    # union into the shared ``unclassified`` voice — GQ-11 records the detected
+    # undeclared copying and the pair NEVER counts as independent corroboration.
+    upstream = [_rec(f"u{i}", "dot_511_md", i * 200.0) for i in range(25)]
+    mirror = [_rec(f"m{i}", "camreg_md_mirror", i * 200.0) for i in range(25)]
+    recs = upstream + mirror
+    coincident = [(i, 25 + i) for i in range(25)]
+    declared = {"dot_511_md": "dot_511_upstream"}  # mirror's lineage undeclared
+    lineages = infer_lineages(recs, coincident, RULES, declared=declared)
+    # The mirror still unions into the upstream's declared class by MEASURED
+    # coincidence — one voice — while the finding discloses the undeclared copy.
+    assert lineages["camreg_md_mirror"] == "dot_511_upstream"
+    site = cluster_summary([upstream[0], mirror[0]], lineages)
+    assert site["corroborated"] is False
+
+
+def test_undeclared_pair_is_undetermined_same_lineage_null() -> None:
+    # Neither side has a declared class: ``same_lineage`` is null (undetermined),
+    # never an asserted True or False on unclassified material.
+    recs = [_rec("a", "s1"), _rec("b", "s2", 0.2)]
+    (p,) = assess_pairs(recs, declared={})
+    assert p.evidence["same_lineage"] is None
+    assert p.evidence["lineage_ids"] == ["unclassified", "unclassified"]
+    # With BOTH sides declared to one class, the pair is honestly same-lineage.
+    declared = {"s1": "src:root", "s2": "src:root"}
+    (p2,) = assess_pairs(recs, declared=declared)
+    assert p2.evidence["same_lineage"] is True
+    assert p2.evidence["lineage_ids"] == ["src:root", "src:root"]
+
+
+def test_gq11_findings_disclose_undeclared_and_cross_declared_copies() -> None:
+    upstream = [_rec(f"u{i}", "src_a", i * 200.0) for i in range(25)]
+    undeclared_copy = [_rec(f"m{i}", "src_b", i * 200.0) for i in range(25)]
+    declared_copy = [_rec(f"x{i}", "src_c", i * 200.0) for i in range(25)]
+    recs = upstream + undeclared_copy + declared_copy
+    coincident = [(i, 25 + i) for i in range(25)] + [(i, 50 + i) for i in range(25)]
+    declared = {"src_a": "src:root-a", "src_c": "src:root-c"}  # src_b undeclared
+    lineages = infer_lineages(recs, coincident, RULES, declared=declared)
+    assert lineages["src_a"] == lineages["src_b"] == "src:root-a"
+    # src_c measured as a copy but declared to ANOTHER class — the union stands
+    # (still one voice, the smaller class token) and the contradiction is
+    # disclosed, not hidden.
+    assert lineages["src_c"] == "src:root-a"
+    r = resolve_camera_sites(recs, gold=None, threshold=0.98, declared_lineages=declared)
+    kinds = {(f.kind, f.sources) for f in r.lineage_findings}
+    assert ("undeclared_overlap", ("src_a", "src_b")) in kinds
+    assert ("cross_declared_overlap", ("src_a", "src_c")) in kinds
+
+
 # --- tiers --------------------------------------------------------------------------
 
 
 def test_tiers_shared_ref_coincident_proximate_and_discard() -> None:
+    # P35.25 NEW-1: the shared upstream id is evidence only inside ONE declared
+    # namespace — both records declare ``t.upstream`` here.
     recs = [
-        _rec("a1", "s1", external_ref="51"),
-        _rec("a2", "s2", 3, external_ref="51.0"),  # shared upstream id, one-to-one within 5 m
+        _rec("a1", "s1", external_ref="51", id_namespace="t.upstream"),
+        _rec(
+            "a2", "s2", 3, external_ref="51.0", id_namespace="t.upstream"
+        ),  # shared upstream id, one-to-one within 5 m
         _rec("b1", "s1", 1000),
         _rec("b2", "s2", 1000.4),  # coincident, one-to-one
         _rec("c1", "s1", 2000),
@@ -344,11 +442,21 @@ def test_tiers_shared_ref_coincident_proximate_and_discard() -> None:
 def test_a_distant_shared_ref_needs_agreeing_descriptions() -> None:
     # 30 m apart with a shared row number: not one-to-one within 5 m, so only an agreeing
     # site description makes it the deterministic tier.
-    unnamed = [_rec("f1", "s1", external_ref="9"), _rec("f2", "s2", 30, external_ref="9")]
+    unnamed = [
+        _rec("f1", "s1", external_ref="9", id_namespace="t.upstream"),
+        _rec("f2", "s2", 30, external_ref="9", id_namespace="t.upstream"),
+    ]
     assert {p.tier for p in assess_pairs(unnamed)} == {5}
     named = [
-        _rec("g1", "s1", external_ref="9", name="I-84 at 28th"),
-        _rec("g2", "s2", 30, external_ref="9", name="I-84 AT 28TH"),
+        _rec("g1", "s1", external_ref="9", name="I-84 at 28th", id_namespace="t.upstream"),
+        _rec(
+            "g2",
+            "s2",
+            30,
+            external_ref="9",
+            name="I-84 AT 28TH",
+            id_namespace="t.upstream",
+        ),
     ]
     assert {p.tier for p in assess_pairs(named)} == {1}
 
@@ -362,9 +470,27 @@ def test_colocated_devices_are_never_coincident_tier() -> None:
 
 def test_shared_ref_needs_mutual_nearest_and_disambiguation_when_colocated() -> None:
     # s1 lists three devices at one point; s2's row shares a number with one of them.
-    base = [_rec("x", "s1", external_ref="273", name="SH20B Puhinui Rd West")]
-    others = [_rec("y", "s1", 0.1, external_ref="274"), _rec("z", "s1", 0.2, external_ref="275")]
-    mirror = _rec("w", "s2", 0.05, external_ref="273", name="SH20B Waokauri Creek")
+    base = [
+        _rec(
+            "x",
+            "s1",
+            external_ref="273",
+            name="SH20B Puhinui Rd West",
+            id_namespace="t.upstream",
+        )
+    ]
+    others = [
+        _rec("y", "s1", 0.1, external_ref="274", id_namespace="t.upstream"),
+        _rec("z", "s1", 0.2, external_ref="275", id_namespace="t.upstream"),
+    ]
+    mirror = _rec(
+        "w",
+        "s2",
+        0.05,
+        external_ref="273",
+        name="SH20B Waokauri Creek",
+        id_namespace="t.upstream",
+    )
     tiers = {k: p.tier for k, p in _by_key(assess_pairs([*base, *others, mirror])).items()}
     assert tiers[("w", "x")] != 1  # names disagree and the point is ambiguous
     agreeing = replace(mirror, name="SH20B Puhinui Rd West")

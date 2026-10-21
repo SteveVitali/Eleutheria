@@ -1,0 +1,43 @@
+# sig.id-namespaces/1 — the declared identifier-namespace vocabulary
+# (P35.25 / R11-L3-CP4, SIG-CONF-014; design CP-4 "Declared lineage and
+# independence").
+#
+# An `id_namespace` names the identifier space an upstream reference lives in.
+# Two references compare for equality ONLY inside one namespace: a bare equal
+# string across namespaces is a coincidence, never shared-upstream evidence
+# (the tier-1g defect CP-4 closes — NEW-1).
+#
+# Declared namespaces below are SHARED upstream id spaces — two sources
+# declaring the same one are claiming to mint refs from one vocabulary, which
+# is exactly the claim tier-1g then tests. A source whose refs live in its own
+# private space declares `src:<source-id>` (equal only within that source —
+# never cross-source evidence) and needs no row here.
+#
+# `undeclared` is the honest default for a claim/source carrying no
+# declaration — never a namespace an equal-ref test may join on.
+
+version = "sig.id-namespaces/1"
+
+# The OSM element id space (node/way/relation ids). Camera-registry layers
+# republishing OSM `man_made=surveillance` rows carry these refs verbatim;
+# DeFlock's exports also key rows by OSM element.
+[[namespace]]
+id = "osm.element"
+kind = "upstream_id"
+note = "OpenStreetMap element identifiers (osm.org node/way/relation ids). Sources republishing OSM rows carry the upstream element id — the same id from two such sources IS one upstream row."
+
+# DeFlock's own location ids (its canonical repo's row ids, distinct from the
+# OSM elements many of them annotate).
+[[namespace]]
+id = "deflock.node"
+kind = "upstream_id"
+note = "DeFlock's own location-row identifiers (deflock repo / map layer)."
+
+# The 511 family: state DOT feeds share per-state camera id spaces; a bare
+# `cam-42` means nothing across states or outside the feed that minted it.
+# Individual states declare `dot_511.<state_abbr>` once a target-level
+# namespace lands; the family token alone is never declared cross-source.
+[[namespace]]
+id = "dot_511"
+kind = "upstream_id"
+note = "The 511/ITS camera-feed id space family. State-scoped members (dot_511.md etc.) are declared per-target when their upstreams are registered."

@@ -111,7 +111,7 @@ def camera_spine(conn) -> dict[str, str]:
     }
     ids: dict[str, str] = {}
 
-    def record(key, source, lat, lon, ref, operator):
+    def record(key, source, lat, lon, ref, operator, namespace=None):
         cur.execute("INSERT INTO entity(entity_type) VALUES('deployment') RETURNING entity_id")
         subject = cur.fetchone()[0]
         ids[key] = str(subject)
@@ -134,15 +134,33 @@ def camera_spine(conn) -> dict[str, str]:
                 "INSERT INTO claim_evidence(claim_id,capture_id,role) VALUES(%s,%s,'establishes')",
                 (claim, caps[source]),
             )
+            if pid == "camera_external_ref":
+                # P35.25 (SIG-CONF-014): the record's declared id_namespace lives
+                # on the ref claim's lineage row. Shared upstream ids are
+                # evidence ONLY inside a declared shared namespace — a/b's
+                # equal "101" is one upstream row under `dot_511`; undeclared
+                # (no row) means a bare equal ref never joins.
+                cur.execute(
+                    "INSERT INTO claim_lineage"
+                    "(claim_id,source_id,id_namespace,lineage_kind,"
+                    " independence_class,basis) "
+                    "VALUES(%s,%s,%s,'primary','src:'||%s,'fixture')",
+                    (claim, source, namespace or "undeclared", source),
+                )
 
     dot = "Zed Department of Transportation"
-    record("a", "dot_511_zz", "35.4676000", "-97.5164000", "101", dot)
-    record("b", "camreg_zz_mirror", "35.4676030", "-97.5164010", "101", "community mirror")
-    record("c", "camreg_osm_zz", "35.4703000", "-97.5164000", "77", "OpenStreetMap")
-    record("d", "dot_511_zz", "35.4800000", "-97.5200000", "102", dot)
-    record("e", "dot_511_zz", "35.4800010", "-97.5200000", "103", dot)
+    # a (DOT) ~ b (its community mirror) share the DOT feed's own id space —
+    # the mirror carries the upstream's ids verbatim (the declared `dot_511`
+    # namespace); an equal bare ref in another space would NOT join.
+    record("a", "dot_511_zz", "35.4676000", "-97.5164000", "101", dot, "dot_511")
+    record(
+        "b", "camreg_zz_mirror", "35.4676030", "-97.5164010", "101", "community mirror", "dot_511"
+    )
+    record("c", "camreg_osm_zz", "35.4703000", "-97.5164000", "77", "OpenStreetMap", "osm.element")
+    record("d", "dot_511_zz", "35.4800000", "-97.5200000", "102", dot, "dot_511")
+    record("e", "dot_511_zz", "35.4800010", "-97.5200000", "103", dot, "dot_511")
     record("f", "camreg_zz_flock", "35.4900000", "-97.5300000", "1", "ALPR camera layer")
-    record("g", "dot_511_zz", "35.4900020", "-97.5300000", "104", dot)
+    record("g", "dot_511_zz", "35.4900020", "-97.5300000", "104", dot, "dot_511")
     return ids
 
 

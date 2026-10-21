@@ -213,6 +213,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-210](ADR-210-axis-order-declarations-and-geometry-defect-classes.md) | Per-target axis-order declarations and the closed geometry-defect classes (P35.16) | P35.16 (Round 11 / P35, manifest row R11-DATA-01 — F-322, severity S1) | accepted |
 | [ADR-211](ADR-211-truthful-claim-identity-volatile-fields-leave-the-digest.md) | Truthful claim identity: volatile fields leave the digest (P35.22) | P35.22 (Round 11 / P35 sub-round 11B, manifest row `R11-L3-CP1` — | accepted |
 | [ADR-212](ADR-212-truthful-subject-keys-pinned-field-sets-and-append-only-re-keying.md) | Truthful subject keys: pinned field sets and append-only re-keying (P35.24) | P35.24 (Round 11 / P35 sub-round 11B, manifest row `R11-L3-CP2` — | accepted |
+| [ADR-213](ADR-213-declared-lineage-namespaces-and-independence-classes.md) | Declared lineage, identifier namespaces, and declared independence classes (P35.25) | P35.25 (Round 11 / P35 sub-round 11B, manifest row `R11-L3-CP4`, | accepted |
 | [ADR-218](ADR-218-live-claim-lint-carried-record-provenance.md) | Live-claim lint: listed, verified provenance for carried records | P35.16 (orchestrator repair on `r11/P35.16-geometry-defects-at-ingest`, PR #309) | accepted |
 
 ## Notes
