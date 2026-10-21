@@ -49,6 +49,28 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   at all. Deterministic disambiguation (`· {place}` → `· {source}` →
   `#{hash4}`) runs over the emitted set so no two public entities of a
   kind share a full display label.
+- **Honest network edges — dates, evidence, literal partners, degree**
+  (P35.30 / row 308; R11-K13-GX-02; cites A-10 (`b + c`), ADR-159/215,
+  K2 §7 H-1…H-4, SIG-EXPORT-D21 draft, SIG-INGEST-043c,
+  SIG-TIME-012-class honesty, SIG-IDENT-030; ADR-216) — `network.json`
+  edges now carry their evidence, named: `predicate`/`relation` in words
+  (never a raw slot name), `observed_at` + `date_kind` (the epoch-zero
+  placeholder folds to `undated`, never a synthetic 1970-01-01),
+  `valid_from_kind`/`valid_to_kind`/`valid_to`, `source`/`sources` as
+  display names, a snapshot-as-of-pinned `currency` class (plus `UNDATED`
+  for an unweightable edge), `historical`, `support` derived from the
+  backing claims' declared independence classes (`unclassified` never
+  corroborates — the `WEAKLY_SUPPORTED`/`evidence_count: 1` constants are
+  gone), and the full `claim_ids`/`evidence` set. The materialized and
+  compute-on-read paths share one emitter; publishable claims awaiting a
+  materialized row still emit. Literal partner names join the edge set
+  only past the Part VIII person screen (a person-shaped literal
+  withholds the edge whole); `sharing_partner_degree` claims become node
+  `degree` attributes with their own claim provenance, never drawable
+  edges — rendered in the static "Recorded partner counts" list. Ended
+  and undated edges are visibly marked, faded in the diagram, and out of
+  the default "current" view. No new JavaScript; the richer JSON rides
+  the existing island at its ceiling.
 - **Resolver input truth — valid time, declared directness, and
   tolerance-aware dissent** (P35.27 / row 306; R11-L3-CP9 + CONF-05;
   owns F-519; cites SIG-RECON-053, SIG-STORE-015, SIG-EPIS-017/018,

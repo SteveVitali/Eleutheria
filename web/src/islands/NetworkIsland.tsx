@@ -35,6 +35,8 @@ import type { NetworkNode, NetworkEdge, AccessKind } from "../lib/network";
 import {
   ACCESS_EDGE_STYLES,
   boundedEgoNetwork,
+  edgeTemporal,
+  edgeTemporalMark,
   EGO_EDGE_LIMIT,
   EGO_NODE_LIMIT,
 } from "../lib/network";
@@ -186,6 +188,9 @@ export default function NetworkIsland({
               const b = posOf(e.to);
               if (!a || !b) return null;
               const style = ACCESS_EDGE_STYLES[e.access_kind];
+              // P35.30: an ended/undated edge is drawn faded — marked in the
+              // diagram too, never silently indistinguishable (K2 §7 H-3).
+              const faded = edgeTemporal(e) !== "current";
               return (
                 <line
                   key={`e-${i}`}
@@ -196,6 +201,7 @@ export default function NetworkIsland({
                   stroke="var(--sig-muted, #666)"
                   strokeWidth={2}
                   strokeDasharray={style.dash || undefined}
+                  strokeOpacity={faded ? 0.4 : 1}
                 />
               );
             })}
@@ -251,6 +257,12 @@ export default function NetworkIsland({
                   onClick={() => update({ focus: n.id })}
                 >
                   {n.label} <span className="sig-search-island__kind">{n.type}</span>
+                  {n.degree !== undefined && (
+                    <span className="sig-search-island__kind">
+                      {" "}
+                      · {Array.isArray(n.degree) ? n.degree.join("–") : n.degree} partners recorded
+                    </span>
+                  )}
                 </button>
               </li>
             ))}
@@ -265,10 +277,16 @@ export default function NetworkIsland({
               <ul>
                 {selectedEdges.map((e, i) => {
                   const style = ACCESS_EDGE_STYLES[e.access_kind as AccessKind];
+                  const mark = edgeTemporalMark(e);
                   return (
                     <li key={i}>
                       <span aria-hidden="true">{style.glyph}</span> {labelOf(e.from)} →{" "}
-                      {labelOf(e.to)}: {e.relation} ({style.label}; {e.evidence_count} evidence)
+                      {labelOf(e.to)}: {e.relation} ({style.label}
+                      {e.observed_at ? `; observed ${e.observed_at}` : "; undated"}
+                      {e.source ? `; source: ${e.source}` : ""}
+                      {e.currency ? `; ${String(e.currency).toLowerCase()}` : ""};{" "}
+                      {e.evidence_count} evidence)
+                      {mark && <strong data-testid="edge-temporal-mark"> [{mark}]</strong>}
                       {e.evidence && e.evidence.length > 0 && (
                         <ul className="sig-graph-island__edge-evidence" data-testid="edge-evidence">
                           {e.evidence.map((claim) => (

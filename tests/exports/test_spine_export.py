@@ -1145,7 +1145,11 @@ def test_network_reads_materialized_edges_else_falls_back() -> None:
     network = _web(export, "network")
     assert {n["id"] for n in network["nodes"]} == {"agency:okcpd", "vendor:flock"}
     assert network["edges"][0]["access_kind"] == "configured_access"
-    assert network["edges"][0]["relation"] == "configured_access"
+    # P35.30 (SIG-EXPORT-D21): the relation renders in WORDS — never a raw slot
+    # name — with the whole D21 evidence field set carried on the edge.
+    assert network["edges"][0]["relation"] == "configured access"
+    assert network["edges"][0]["date_kind"] == "undated"
+    assert network["edges"][0]["claim_ids"] == ["c9"]
     assert network["edges"][0]["support"] == "WEAKLY_SUPPORTED"
     # P32.15 (SIG-FIND-004): the backing claim is emitted so the public surface
     # can NAME the support — a bare count was the unexplained-edge smell.

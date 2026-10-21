@@ -247,7 +247,8 @@ class _FakeConn:
             out = []
             for i, p in enumerate(self.stored.values()):
                 # (from,to,edge_type,access_kind,direction,valid_period-lower,vfk,vtk,
-                #  asserted_by,observed_at,evidence_claim,input_digest) as inserted
+                #  asserted_by,observed_at,evidence_claim,input_digest) as inserted;
+                # P35.30's read seam also selects observed_at + upper(valid_period).
                 out.append(
                     (
                         p[0],
@@ -261,6 +262,8 @@ class _FakeConn:
                         date(2026, 5, 1),
                         p[10],
                         f"rel-{i + 1}",
+                        p[9],
+                        None,
                     )
                 )
             return _FakeCursor(out, None)

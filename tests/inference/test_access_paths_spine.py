@@ -39,6 +39,10 @@ def _edge(
         "valid_from": "2026-05-01",
         "evidence_claim": claim,
         "relationship_id": f"rel-{frm}-{to}",
+        # P35.30: read_materialized_edges now also selects observed_at and
+        # upper(valid_period) — the fake must return them in SELECT order.
+        "observed_at": "2026-05-01",
+        "valid_to": None,
     }
 
 
@@ -95,6 +99,10 @@ class _FakeConn:
                     date.fromisoformat(r["valid_from"]),
                     r["evidence_claim"],
                     r["relationship_id"],
+                    # P35.30 columns, in SELECT order (date objects, like the
+                    # real psycopg row — isoformat'd by the reader).
+                    date.fromisoformat(r["observed_at"]),
+                    r["valid_to"],
                 )
             )
         return _FakeCursor(out)

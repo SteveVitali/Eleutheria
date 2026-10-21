@@ -27,7 +27,7 @@
  * this surface presents exactly what that layer computes, never a re-derivation.
  */
 
-import type { Support } from "./epistemic";
+import type { Support, Currency } from "./epistemic";
 
 // --- Nodes + edges ---------------------------------------------------------
 
@@ -36,6 +36,27 @@ export interface NetworkNode {
   label: string;
   /** e.g. "agency" | "vendor" | "rtcc"; opaque to this module. */
   type: string;
+  /**
+   * The label's basis in the closed `sig.entity-label/1` vocabulary (P35.29,
+   * L-3) — `source_name`, `key_name`, `fallback`, … Optional: pre-P35.30
+   * `network.json` artifacts do not carry it.
+   */
+  label_basis?: string | null;
+  /**
+   * The typed label state (P35.29/ADR-159): `"not_yet_reviewed"` marks an
+   * organisation awaiting registry review — the typed state IS the node's
+   * label, never an improvised one.
+   */
+  label_state?: string;
+  /**
+   * A source-stated partner COUNT (P35.30, SIG-INGEST-043c): degree is a node
+   * attribute, never an edge — a count is not a relationship.
+   */
+  degree?: number | number[];
+  /** The claims backing `degree` (provenance travels with the count, §3.1). */
+  degree_claim_ids?: string[];
+  /** When the degree was observed (ISO date), or absent when undated. */
+  degree_observed_at?: string;
 }
 
 // --- The three §12.2 access edge types (SIG-UI-024, SIG-ONTO-042) ----------
@@ -100,6 +121,20 @@ export const ACCESS_EDGE_STYLES: Record<AccessKind, AccessEdgeStyle> = {
  */
 export const MERGE_ACCESS_EDGES_BY_DEFAULT = false;
 
+/**
+ * The currency classes an edge may carry (P35.30): the four §28.3 tiers plus
+ * `UNDATED` — an edge with no evidenced date has no computable currency, so the
+ * class is stated honestly rather than guessed (K2 §5.3's fifth class).
+ */
+export type EdgeCurrency = Currency | "UNDATED";
+
+/**
+ * A bound kind from the relationship vocabulary (`db/deploy/role_edges.sql`):
+ * `exact | ongoing | unknown | before | after | never | undated`. Opaque here —
+ * only `edgeTemporal` interprets it.
+ */
+export type BoundKind = string;
+
 export interface NetworkEdge {
   from: string;
   to: string;
@@ -114,6 +149,86 @@ export interface NetworkEdge {
    * named support is only ever a *count* (§3.1: never an unexplained edge).
    */
   evidence?: string[];
+
+  // --- P35.30 (SIG-EXPORT-D21): dates, temporal state, provenance -----------
+  // All additive-optional — a pre-P35.30 artifact parses unchanged, and the
+  // temporal helpers below treat a missing field as the honest "unknown"
+  // (never a fabricated "current").
+
+  /** The relation words the claim's predicate carries (unslugged; the D21 name). */
+  predicate?: string;
+  /** The reconciler's direction (`a_to_b` / …); opaque. */
+  direction?: string;
+  /** The earliest evidenced observation date (ISO), or `null` when undated. */
+  observed_at?: string | null;
+  /**
+   * `"observed"` when `observed_at` is evidenced, `"undated"` otherwise —
+   * never a fabricated epoch (the 1970 placeholder is folded to `undated` at
+   * export; SIG-TIME-012 class honesty).
+   */
+  date_kind?: "observed" | "undated";
+  /** The valid-time START bound kind; `"unknown"` = never inferred (single-snapshot rule). */
+  valid_from_kind?: BoundKind;
+  /** The valid-time END bound kind — `exact`/`before`/`after` bound an ended edge. */
+  valid_to_kind?: BoundKind;
+  /** The valid-time end date when bounded, else `null`. */
+  valid_to?: string | null;
+  /** The source display names behind the edge's claims, joined for the list line. */
+  source?: string | null;
+  /** The same source names as a list (the machine-readable form). */
+  sources?: string[];
+  /**
+   * The §28.3 currency class derived at export from predicate half-life and
+   * the as-of date — `UNDATED` for an undated edge, `null`/absent when the
+   * predicate registry cannot weight it (honest absence, never a guess).
+   */
+  currency?: EdgeCurrency | null;
+  /**
+   * `true` when the edge's valid time has ended or its currency is HISTORICAL —
+   * excluded from the default current view and visibly marked (K2 §7 H-3).
+   */
+  historical?: boolean;
+  /** The supporting claim ids under the D21 contract name (same set as `evidence`). */
+  claim_ids?: string[];
+}
+
+// --- Edge temporal state (P35.30, K2 §7 H-3 / §5.3) -------------------------
+
+/** The edge's temporal class for the default "current" filter and marking. */
+export const EDGE_TEMPORAL = ["current", "historical", "undated"] as const;
+export type EdgeTemporal = (typeof EDGE_TEMPORAL)[number];
+
+/**
+ * Classify an edge's temporal state for the default "current" view (K2 §7 H-3):
+ *
+ *   - `historical` — the export marked it ended (a bounded `valid_to`, an
+ *     ended bound kind, or a HISTORICAL currency class);
+ *   - `undated` — no evidenced observation date;
+ *   - `current` — dated and not ended.
+ *
+ * A pre-P35.30 edge (no temporal fields) classifies `undated` when it has no
+ * `observed_at` — honest caution, never an assumed "current" — and
+ * `historical` only on the explicit flag.
+ */
+export function edgeTemporal(e: NetworkEdge): EdgeTemporal {
+  if (e.historical === true) return "historical";
+  if (["exact", "before", "after"].includes(e.valid_to_kind ?? "")) return "historical";
+  return e.observed_at ? "current" : "undated";
+}
+
+/** True when the edge belongs in the default "current" view (H-3). */
+export function isCurrentEdge(e: NetworkEdge): boolean {
+  return edgeTemporal(e) === "current";
+}
+
+/** The visible mark for a non-current edge — `null` for a current edge. */
+export function edgeTemporalMark(e: NetworkEdge): string | null {
+  const t = edgeTemporal(e);
+  if (t === "current") return null;
+  if (t === "historical") {
+    return e.valid_to ? `historical — ended ${e.valid_to}` : "historical";
+  }
+  return "undated";
 }
 
 /** An independent on/off flag per access edge type — the three filter separately. */

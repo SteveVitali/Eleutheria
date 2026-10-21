@@ -12,7 +12,6 @@
 // are WITHDRAWN — organisation entity resolution has not passed its gate, so the
 // page publishes no ranking and says why.
 import BaseLayout from "../layouts/BaseLayout.astro";
-import SupportGlyph from "../components/SupportGlyph.astro";
 import EmptyState from "../components/EmptyState.astro";
 import ViewSwitch from "../components/ViewSwitch.astro";
 import {
@@ -20,8 +19,10 @@ import {
   ACCESS_EDGE_STYLES,
   DEFAULT_NETWORK_VIEW,
   boundedEgoNetwork,
+  edgeTemporal,
   EGO_EDGE_LIMIT,
   filterAccessEdges,
+  isCurrentEdge,
   DEFAULT_ACCESS_EDGE_FILTER,
   pathConfidence,
   pathHopCount,
@@ -33,6 +34,7 @@ import {
   pathTemporalStatus,
   SPECULATIVE_HOP_THRESHOLD,
 } from "../lib/network";
+import NetworkEdgeItem from "../components/NetworkEdgeItem.astro";
 import {
   getNetwork,
   getNetworkFocusEntityId,
@@ -50,6 +52,9 @@ const { nodes: NETWORK_NODES, edges: NETWORK_EDGES, accessPaths: ACCESS_PATHS } 
 const FOCUS_ENTITY_ID = getNetworkFocusEntityId();
 
 const labelOf = (id: string) => NETWORK_NODES.find((n) => n.id === id)?.label ?? id;
+
+// The edge list items render through `NetworkEdgeItem` — one component for both
+// the current view and the marked past/undated block (SIG-UI-037 parity).
 
 // The default surface is an ego network with expansion, never a global graph. When the
 // network is empty (a thin/unresearched jurisdiction), there is nothing to centre on —
@@ -124,6 +129,7 @@ others.forEach((n, i) => {
           const a = pos.get(e.from)!;
           const b = pos.get(e.to)!;
           const style = ACCESS_EDGE_STYLES[e.access_kind];
+          const t = edgeTemporal(e);
           return (
             <line
               x1={a.x}
@@ -133,6 +139,8 @@ others.forEach((n, i) => {
               stroke="var(--sig-muted)"
               stroke-width="2"
               stroke-dasharray={style.dash || undefined}
+              stroke-opacity={t === "current" ? 1 : 0.4}
+              data-temporal={t}
             />
           );
         })}
@@ -207,29 +215,31 @@ others.forEach((n, i) => {
       declared_policy: k === "declared_policy",
     });
     const style = ACCESS_EDGE_STYLES[k];
-    const cappedEdges = capRows(edges, EGO_EDGE_LIMIT);
+    // The default "current" view holds dated, not-yet-ended edges only; ended
+    // and undated edges stay listed but visibly marked, out of the current
+    // filter (K2 §7 H-3 — never a present-tense claim about them).
+    const current = edges.filter(isCurrentEdge);
+    const nonCurrent = edges.filter((e) => !isCurrentEdge(e));
+    const cappedEdges = capRows(current, EGO_EDGE_LIMIT);
     return (
       <section class="sig-access-group" data-testid="access-edge-group" data-kind={k}>
         <h3>{style.glyph} {style.label}</h3>
         {edges.length === 0 && <EmptyState surface="accessEdges" />}
         <ul class="sig-edge-list">
-          {cappedEdges.rows.map((e) => (
-            <li data-testid="access-edge" data-kind={e.access_kind}>
-              <strong>{labelOf(e.from)}</strong> {e.relation} <strong>{labelOf(e.to)}</strong>
-              <div><SupportGlyph support={e.support} evidenceCount={e.evidence_count} /></div>
-              {e.evidence && e.evidence.length > 0 && (
-                <details class="sig-edge-evidence" data-testid="access-edge-evidence">
-                  <summary>{e.evidence.length} supporting claim{e.evidence.length === 1 ? "" : "s"}</summary>
-                  <ul>
-                    {e.evidence.map((claim) => (
-                      <li><code>{claim}</code></li>
-                    ))}
-                  </ul>
-                </details>
-              )}
-            </li>
-          ))}
+          {cappedEdges.rows.map((e) => <NetworkEdgeItem edge={e} labelOf={labelOf} />)}
         </ul>
+        {nonCurrent.length > 0 && (
+          <details class="sig-edge-past" data-testid="access-edge-past" data-kind={k}>
+            <summary>
+              {nonCurrent.length} ended or undated {style.label.toLowerCase()} edge
+              {nonCurrent.length === 1 ? "" : "s"} — visibly marked, out of the
+              current view
+            </summary>
+            <ul class="sig-edge-list">
+              {nonCurrent.map((e) => <NetworkEdgeItem edge={e} labelOf={labelOf} />)}
+            </ul>
+          </details>
+        )}
         {cappedEdges.truncated && (
           <p class="sig-table-note" data-testid="access-edge-bounds-note">
             Showing the first {cappedEdges.shown} of {cappedEdges.total} {style.label}
@@ -240,6 +250,35 @@ others.forEach((n, i) => {
       </section>
     );
   })}
+
+  {/* Recorded partner counts — a source-stated partner COUNT is a node
+      attribute, never an edge (P35.30, SIG-INGEST-043c / K2 §7 H-4). The
+      static list carries the same fact the island's node chip shows. */}
+  {NETWORK_NODES.some((n) => n.degree !== undefined) && (
+    <section data-testid="partner-counts">
+      <h2 id="degree-heading">Recorded partner counts</h2>
+      <p data-copy="NW-04">
+        Some sources state a partner <strong>count</strong> without naming the
+        partners — "shared with N agencies". A count is a fact about the
+        entity, not a relationship: it is listed here as a node attribute and
+        is never drawn as an edge (SIG-INGEST-043c).
+      </p>
+      <ul class="sig-degree-list">
+        {NETWORK_NODES.filter((n) => n.degree !== undefined).map((n) => (
+          <li data-testid="degree-node">
+            <strong>{n.label}</strong> — {Array.isArray(n.degree) ? n.degree.join("–") : n.degree}{" "}
+            partner{n.degree === 1 ? "" : "s"} recorded
+            {n.degree_observed_at ? `, observed ${n.degree_observed_at}` : " (undated)"}
+            {n.degree_claim_ids && n.degree_claim_ids.length > 0 && (
+              <span class="sig-path__evidence" data-testid="degree-evidence">
+                {" "}— evidence: {n.degree_claim_ids.join(", ")}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 
   <!-- Access-path closure: full hop list, per-hop evidence, speculative label. -->
   <h2 id="paths-heading">Access-path closure</h2>

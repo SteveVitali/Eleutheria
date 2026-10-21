@@ -229,3 +229,81 @@ describe("edge evidence is carried, not just counted (SIG-FIND-004)", () => {
     }
   });
 });
+
+describe("edge dates, kinds, sources, currency, claim ids (P35.30, SIG-EXPORT-D21)", () => {
+  it("every fixture edge populates all five evidence fields", () => {
+    for (const e of NETWORK_EDGES) {
+      // predicate — the relation in words, never a raw slot name
+      expect(e.predicate).toBeTruthy();
+      expect(e.predicate).not.toContain("_");
+      // observed_at + date_kind — undated is a first-class state
+      expect(e.date_kind === "observed" || e.date_kind === "undated").toBe(true);
+      expect(e.date_kind === "observed" ? !!e.observed_at : e.observed_at == null).toBe(true);
+      // source — the display name, never the raw source id
+      expect(e.source).toBeTruthy();
+      expect(e.source).not.toMatch(/^src[_:]/);
+      // currency — a §28.3 class or the honest UNDATED
+      expect(["CURRENT", "AGING", "STALE", "HISTORICAL", "UNDATED"]).toContain(e.currency);
+      // claim_ids — the named evidence trail
+      expect(Array.isArray(e.claim_ids)).toBe(true);
+      expect(e.claim_ids!.length).toBe(e.evidence_count);
+    }
+  });
+
+  it("edgeTemporal classifies current / historical / undated honestly", async () => {
+    const { edgeTemporal, isCurrentEdge, edgeTemporalMark } = await import(
+      "../../src/lib/network"
+    );
+    const current = NETWORK_EDGES.find((e) => e.observed_at && !e.historical)!;
+    expect(edgeTemporal(current)).toBe("current");
+    expect(isCurrentEdge(current)).toBe(true);
+    expect(edgeTemporalMark(current)).toBeNull();
+
+    // A bounded valid_to / the historical flag marks the edge.
+    const ended = NETWORK_EDGES.find((e) => e.historical === true)!;
+    expect(edgeTemporal(ended)).toBe("historical");
+    expect(isCurrentEdge(ended)).toBe(false);
+    expect(edgeTemporalMark(ended)).toContain("historical");
+    expect(edgeTemporalMark(ended)).toContain(ended.valid_to!);
+
+    // An undated edge is never presented as current — and never invents a date.
+    const undated = NETWORK_EDGES.find((e) => e.date_kind === "undated")!;
+    expect(edgeTemporal(undated)).toBe("undated");
+    expect(isCurrentEdge(undated)).toBe(false);
+    expect(edgeTemporalMark(undated)).toBe("undated");
+    expect(undated.observed_at).toBeNull();
+
+    // An ended bound kind (even without the explicit flag) marks historical.
+    const byKind = { ...current, valid_to_kind: "before" } as (typeof NETWORK_EDGES)[number];
+    expect(edgeTemporal(byKind)).toBe("historical");
+  });
+
+  it("a pre-P35.30 edge (no temporal fields) is undated, never assumed current", async () => {
+    const { edgeTemporal } = await import("../../src/lib/network");
+    const legacy = {
+      from: "a",
+      to: "b",
+      access_kind: "configured_access" as const,
+      relation: "sharing partner",
+      support: "WEAKLY_SUPPORTED" as const,
+      evidence_count: 1,
+    };
+    expect(edgeTemporal(legacy)).toBe("undated");
+  });
+
+  it("degree is a node attribute, never an edge (SIG-INGEST-043c)", () => {
+    const withDegree = NETWORK_NODES.find((n) => n.degree !== undefined)!;
+    expect(withDegree.degree_claim_ids!.length).toBeGreaterThan(0);
+    // No fixture edge draws to a bare count — degree never becomes an edge.
+    for (const e of NETWORK_EDGES) {
+      expect(e.to).not.toBe(String(withDegree.degree));
+    }
+  });
+
+  it("node labels are labels, never raw ids (L-2 / F-106)", () => {
+    for (const n of NETWORK_NODES) {
+      expect(n.label).not.toBe(n.id);
+      expect(n.label.length).toBeGreaterThan(0);
+    }
+  });
+});

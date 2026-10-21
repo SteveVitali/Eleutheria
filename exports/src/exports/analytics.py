@@ -53,7 +53,7 @@ from policy.rights import RightsRecord
 
 from . import compartments as C
 from .jurisdictions import jurisdiction_slug
-from .shaping import ShapedDataset
+from .shaping import SHARING_DEGREE_PREDICATES, ShapedDataset
 
 # --------------------------------------------------------------------------- #
 # Schema ids + the family's compartments                                       #
@@ -333,6 +333,10 @@ def _typed_access_edges(
 
     Materialized §29.3 edges when present, else the compute-on-read shaping
     envelope (the honest fallback for an unmaterialized spine, ADR-101/092).
+
+    P35.30 (SIG-INGEST-043c): a ``sharing_partner_degree`` claim records a
+    partner COUNT — a node attribute, never an edge — so it is excluded from
+    the pair set, matching exactly what ``web/network.json`` draws.
     """
     allowed = set(_ACCESS_KINDS)
     pairs: list[tuple[str, str]] = []
@@ -345,6 +349,8 @@ def _typed_access_edges(
                     claim_ids.add(str(e["evidence_claim"]))
     else:
         for edge in dataset.sharing_edges:
+            if edge.predicate_id in SHARING_DEGREE_PREDICATES:
+                continue
             if edge.access_kind in allowed and edge.partner_ref is not None:
                 pairs.append((edge.subject_id, edge.partner_ref))
                 claim_ids.add(str(edge.claim_id))

@@ -1496,7 +1496,8 @@ def read_materialized_edges(conn: Any, *, role: str | None = None) -> list[dict[
     rows = conn.execute(
         "SELECT from_entity::text, to_entity::text, edge_type, access_kind, direction, "
         "       valid_from_kind, valid_to_kind, asserted_by::text, "
-        "       lower(valid_period), evidence_claim::text, relationship_id::text "
+        "       lower(valid_period), evidence_claim::text, relationship_id::text, "
+        "       observed_at, upper(valid_period) "
         "  FROM relationship "
         " WHERE input_digest IS NOT NULL AND upper_inf(sys_period) "
         " ORDER BY from_entity, to_entity, access_kind, relationship_id"
@@ -1516,6 +1517,12 @@ def read_materialized_edges(conn: Any, *, role: str | None = None) -> list[dict[
                 "valid_from": r[8].isoformat() if isinstance(r[8], (datetime, date)) else None,
                 "evidence_claim": r[9],
                 "relationship_id": r[10],
+                # P35.30 (SIG-EXPORT-D21): the edge's recorded observation date and
+                # its valid-time END bound — the honesty fields the network surface
+                # renders (an undated edge is unbounded, never a 1970 placeholder;
+                # a bounded end is the historical marking's raw input).
+                "observed_at": (r[11].isoformat() if isinstance(r[11], (datetime, date)) else None),
+                "valid_to": (r[12].isoformat() if isinstance(r[12], (datetime, date)) else None),
             }
         )
     return edges

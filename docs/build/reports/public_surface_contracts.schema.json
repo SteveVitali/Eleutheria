@@ -224,7 +224,12 @@
       "properties": {
         "id": { "type": "string" },
         "label": { "type": "string" },
-        "type": { "type": "string", "description": "e.g. agency|vendor|rtcc; opaque." }
+        "type": { "type": "string", "description": "e.g. agency|vendor|rtcc; opaque." },
+        "label_basis": { "type": ["string", "null"], "description": "P35.29 (L-3): the closed sig.entity-label/1 basis vocabulary — source_name|source_title|key_name|slug_name|derived|fallback." },
+        "label_state": { "type": "string", "enum": ["not_yet_reviewed"], "description": "ADR-159 typed review state — rendered, never an improvised label." },
+        "degree": { "type": ["integer", "array"], "description": "P35.30 (SIG-INGEST-043c): a source-stated partner COUNT — a node attribute, never an edge." },
+        "degree_claim_ids": { "type": "array", "items": { "type": "string" }, "description": "The claims backing degree." },
+        "degree_observed_at": { "type": "string", "format": "date", "description": "When the degree was observed." }
       }
     },
     "NetworkEdge": {
@@ -235,7 +240,21 @@
         "to": { "type": "string" },
         "access_kind": { "type": "string", "enum": ["configured_access", "observed_use", "declared_policy"], "description": "The three §12.2 edge types MUST NOT be merged." },
         "relation": { "type": "string" },
-        "evidence_count": { "type": "integer" }
+        "support": { "type": "string", "enum": ["CONFIRMED", "STRONGLY_SUPPORTED", "PROBABLE", "WEAKLY_SUPPORTED", "UNSUPPORTED"], "description": "The §10.7 support level — derived from the backing claim set's declared independence classes (P35.30), never a constant." },
+        "evidence_count": { "type": "integer" },
+        "evidence": { "type": "array", "items": { "type": "string" }, "description": "The supporting claim ids (P32.15, SIG-FIND-004) — the edge names its support, never only counts it." },
+        "predicate": { "type": "string", "description": "P35.30/D21: the relation words the claim predicate carries (unslugged — never a raw slot name)." },
+        "direction": { "type": "string", "description": "The reconciler's direction token (e.g. a_to_b)." },
+        "observed_at": { "type": ["string", "null"], "format": "date", "description": "The earliest evidenced observation date; null when undated." },
+        "date_kind": { "type": "string", "enum": ["observed", "undated"], "description": "undated is first-class — a 1970 placeholder renders undated, never a synthetic date (SIG-TIME-012 class honesty)." },
+        "valid_from_kind": { "type": "string", "enum": ["exact", "ongoing", "unknown", "before", "after", "never", "undated"], "description": "Valid-time START bound kind; unknown = never inferred (the single-snapshot rule)." },
+        "valid_to_kind": { "type": "string", "enum": ["exact", "ongoing", "unknown", "before", "after", "never", "undated"], "description": "Valid-time END bound kind." },
+        "valid_to": { "type": ["string", "null"], "format": "date", "description": "The valid-time end date when bounded." },
+        "source": { "type": ["string", "null"], "description": "The source DISPLAY names behind the edge, joined — never a raw source id." },
+        "sources": { "type": "array", "items": { "type": "string" }, "description": "The same display names as a list." },
+        "currency": { "type": ["string", "null"], "enum": ["CURRENT", "AGING", "STALE", "HISTORICAL", "UNDATED"], "description": "The §28.3 currency class derived at export (UNDATED = no evidenced date; null = unweightable — honest absence)." },
+        "historical": { "type": "boolean", "description": "True when the edge has ended or its currency is HISTORICAL — marked, out of the default current view (K2 §7 H-3)." },
+        "claim_ids": { "type": "array", "items": { "type": "string" }, "description": "The supporting claim ids under the D21 contract name (same set as evidence)." }
       }
     },
     "AccessPath": {
