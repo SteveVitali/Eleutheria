@@ -12,7 +12,7 @@
 projectStatus:   IN_PROGRESS                           # P35.41 landed (320); live leg QUEUED
 nextTicket:      P35.42                              # row 321
 lastCompleted:   P35.41                              # row 320
-blockedOn:       (nothing)                           # #338@aa201318 CI in flight at this write
+blockedOn:       (nothing)                           # #338@5981716 CI 5/5 green
 pauseRequested:  false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
@@ -28,7 +28,7 @@ autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # restored 20:55Z after the Opus repair interval (STACK-CARRY-1)
-updatedAt:       2026-10-20T22:27Z
+updatedAt:       2026-10-21T00:10Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1132,3 +1132,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-20 — P35.41 harness-switch — devin-desktop/claude-opus-5-5-high/orchestrator → devin-desktop/swe-2-high/subagent · operator's words: "switched back to SWE-2 High. Proceed with resumed orchestrate-build drive" · restart probe PASS (`reports/isolation/dispatch-P35.41.md`; control echoed, nonce absent, start 20:54:37Z > record 20:54:30Z) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-20 — P35.41 dispatch boundary-confirm — `ci: pass #337@2d85a16` 5/5 head-bound (run 39491858342; `logs/ci-P35.41-pre-dispatch.json`) · stack pass, no waived red · dispatching P35.41 (320 — freshness semantics v2; deps P35.33+P35.32+P35.20b+P35.34; OM-20 connector roll listed in GATE-G4 §4 → in-ticket pre-authorised, expires GATE-G5) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-20 — P35.41 ticket — `ci: pass #338@3f0646b` 5/5 head-bound (run 39510251505; `reports/ci/p35_41_pr338.json` — stack pass) · row 320 — shared `freshness_verdict` + `evaluated_at`, registry-wide volatility, honest n-of-m staleness, two change dates, cadence disclosure · SIG-TRANSP-007/029/030/031 + 034 release-side MET · detail `runs/P35.41.md` · heads `aa201318`→`32609c5f`→`3f0646b7` · live leg QUEUED `P35.41-freshness-live` (GATE-G4 §4 names P35.41 verbatim; OM-19) · no production mutation · chainTip → r11/P35.41-… · next → P35.42 (321) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-21 — P35.41 post-closeout record — `ci: pass #338@5981716` 5/5 head-bound (run 39516219404: python 31m9s, web 14m55s, composed 3m7s, docs 1m36s, security 33s; boundary re-read 2026-10-21T00:08:42Z `reports/ci/p35_41_pr338.json` — stack pass, no waived red) · heads verbatim `runs/P35.41.md` (`aa201318` impl → `32609c5f` vite lock bump → `3f0646b7` CHANGELOG → `59817162` closeout records) · PR #338 stays open on the stack for operator integration · no production mutation — live leg QUEUED `P35.41-freshness-live` (OM-19) · chainTip → r11/P35.41-… · next → P35.42 (321) · harness: devin-desktop/swe-2-high/subagent
