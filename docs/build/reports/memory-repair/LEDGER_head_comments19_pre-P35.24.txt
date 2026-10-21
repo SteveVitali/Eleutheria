@@ -1,0 +1,1 @@
+<!-- Archived head bytes (BM-LEDGER-08): prior pointer comment (comments13–17 chain) + stale `> - **State.**` line → docs/build/reports/memory-repair/LEDGER_head_comments18_pre-P35.16.txt (sha256 b655ddfc958e…) — P35.16 orient repair (V11). -->

@@ -62,6 +62,7 @@ from functools import cache
 from typing import Any
 from uuid import uuid4
 
+from db.subject_keys import mint_subject_key
 from evidence.digest import multihash
 from resolution.cascade import Candidate, CascadeContext, MatchResult, resolve
 from resolution.identity import Identifier
@@ -446,7 +447,9 @@ class AgencyAggregate:
 
     @property
     def subject_id(self) -> str:
-        return f"data_driven:agency:{self.agency_id}"
+        # P35.24 / ADR-212 (F-506): state-scoped pinned key — two states'
+        # coincidentally-equal agency ids never merge into one subject.
+        return mint_subject_key("data_driven_agency", state=self.state, agency_id=self.agency_id)
 
     @property
     def non_hit_proportion(self) -> float | None:

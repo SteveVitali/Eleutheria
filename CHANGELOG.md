@@ -24,6 +24,33 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Pinned subject keys + append-only re-key machinery** (P35.24 / row
+  303; R11-L3-CP2, CONF-03b; owns F-506 + F-518, metric L2-M07, GQ-04;
+  cites SIG-INGEST-003/004, SIG-IDENT-005/006; ADR-212) — the committed
+  pin registry `db/src/db/data/subject_key_pins.toml`
+  (`sig.subject-key-pins/1`) declares, per subject family, the ordered
+  fields a key composes from, the tenant/state scope rendering, the
+  `key_version`, the distinguish selectors the collision scan re-derives
+  and the split shape collided keys re-key under. Emitters mint through
+  `db.subject_keys.mint_subject_key` (`atlas:` + `data_driven:agency:`
+  gain `us.state_abbr:<state>`, `contract:` gains `tenant:<tenant_id>`,
+  camera keys keep the `traffic_camera:` anchor); the sink validates
+  every pinned-family value against the grammar (drift quarantines) and
+  `dot_511` enforces per-capture key uniqueness — two rows minting one
+  key aborts the target run closed (GQ-04's I-placement). The
+  append-only `sig-db subject-rekey` run (plan by default, `--apply`
+  writes) re-derives collided keys from the live spine, closes each
+  moved claim (`sys_period` end) and appends it under an
+  evidence-derived constituent subject with `revises_claim` +
+  `correction_reason` + `subject_rekey_decision` — INSERT-only, +0 on
+  rerun, unplaced claims reported never guessed. New sqitch change
+  `subject_rekey`: `subject_key_pin` (registry mirror) +
+  `subject_rekey_decision` (immutable decision log) +
+  `claim_evidence(claim_id)` index. The hosted re-key run, the `/status/`
+  API-basis notice (S6 A-20) and the post-run zero-collision
+  verification are queued live legs under OM-19/OM-20 — never executed
+  in the `live_verification=false` invocation.
+
 - **Export-time jurisdiction placement — `placement@1`** (P35.19 / row
   299; JUR-02b, K4 §3.3/§3.4/§5.3, ADR-092 compute-on-read; cites
   SIG-JUR-D03/D04/D05, SIG-IDENT-004, SIG-GEO-008) — a new

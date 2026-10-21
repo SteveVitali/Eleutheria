@@ -1,0 +1,98 @@
+# sig.subject-key-pins/1 — declared subject-key grammar (P35.24 / ADR-212;
+# R11-L3-CP2, CONF-03b, GQ-04/GQ-05; findings F-506/F-518, metric L2-M07).
+#
+# Every connector claim subject mints under the sig.connector.subject scheme.
+# This registry declares, per family: the ordered fields a CURRENT key is
+# composed of, the scope rendering, the legacy arities that still parse
+# (never minted), the distinguish selectors the collision scan re-derives,
+# and the split shape the append-only re-key run uses for collided keys.
+#
+# Scope rendering (kind = "scheme_prefixed"): the scope field renders as TWO
+# segments — literal scheme token + value — so current and legacy values are
+# disjoint by construction. absent = "unscoped" emits the literal `unscoped`
+# when the record carries no scope value; absent = "omit" drops the scope
+# segments and mints the declared legacy shape (single-tenant sources).
+#
+# A segment never contains ':'; mint fails closed otherwise (positional
+# parsing stays unambiguous).
+
+version = "sig.subject-key-pins/1"
+
+# ── Cameras (dot_511.py CameraRegistryEntry) ─────────────────────────────────
+# The identity defect being fixed: the declared camera_ref upstream is not
+# unique per (source, target). The key keeps its §11.8 shape — the truthful
+# fix is (a) per-capture uniqueness enforcement at emit and (b) append-only
+# split of already-collided stored keys into evidence-derived constituents.
+[[pin]]
+id = "traffic_camera"
+family = "traffic_camera:"
+key_version = 1
+fields = ["source_id", "target_id", "camera_ref"]
+uniqueness = "capture"                      # GQ-04: per-capture key uniqueness is enforced at emit
+distinguish = ["predicate:camera_latitude"] # L2-M07: >1 distinct current lat under one key = collided
+split = { discriminator = "coordinate_pair", shape = "suffix_digest" }
+note = "§11.8 — registry camera is a physical_asset; camera_ref must be the registry row's declared ref field, never an incidental first alias."
+
+# ── Atlas of Surveillance agencies (atlas.py) ────────────────────────────────
+# v1 `atlas:<agency>(:<family>)` collided across states (two states' identical
+# agency strings merged). v2 prepends the evidenced state, scheme-qualified.
+[[pin]]
+id = "atlas_agency"
+family = "atlas:"
+key_version = 2
+fields = ["state", "agency"]
+optional_fields = ["family"]
+scope = { field = "state", kind = "scheme_prefixed", scheme = "us.state_abbr", absent = "unscoped" }
+legacy_fields = { "1" = ["agency"], "2" = ["agency", "family"] }
+distinguish = ["context:State"]
+split = { discriminator = "context:State", shape = "current_fields" }
+note = "§11.7 — Atlas agency×family deployment subjects; state comes from the row's context (Atlas CSV State column → claim.raw_context)."
+
+# ── EFF/MuckRock Data Driven agency aggregates (data_driven.py) ──────────────
+# v1 `data_driven:agency:<agency_id>` collided across releases; v2 is
+# state-scoped. Stored v1 rows carry no raw_context state — undecidable
+# claims stay on the legacy key and are reported as unplaced (never guessed).
+[[pin]]
+id = "data_driven_agency"
+family = "data_driven:agency:"
+key_version = 2
+fields = ["state", "agency_id"]
+scope = { field = "state", kind = "scheme_prefixed", scheme = "us.state_abbr", absent = "unscoped" }
+legacy_fields = { "1" = ["agency_id"] }
+distinguish = ["context:state"]
+split = { discriminator = "context:state", shape = "current_fields" }
+note = "§11.2 — per-agency aggregate subjects (organization); bare `data_driven:` stays deliberately unmapped in the entity-type map."
+
+# ── Procurement / Legistar contracts (procurement.py) ────────────────────────
+# The F-506 collision: tenant-platform contract matters minted
+# `contract:<source>:<external_id>` — two tenants' equal external ids merged.
+# v2 inserts `tenant:<tenant_id>`; single-tenant sources keep the legacy
+# shape (absent = "omit"). Stored v1 rows carry no tenant in raw_context —
+# undecidable claims stay unplaced.
+[[pin]]
+id = "contract"
+family = "contract:"
+key_version = 2
+fields = ["source_id", "tenant_id", "external_id"]
+scope = { field = "tenant_id", kind = "scheme_prefixed", scheme = "tenant", absent = "omit" }
+legacy_fields = { "1" = ["external_id"], "2" = ["source_id", "external_id"] }
+distinguish = ["context:tenant_id"]
+split = { discriminator = "context:tenant_id", shape = "current_fields" }
+note = "§11.11 — contract subjects; the agenda path (legistar/civicclerk/primegov) MUST mint the tenant segment like agenda_item: already does. Arity-1 is the slug-shaped seed convention (live_targets.toml) — parses, never minted."
+
+# ── Agenda matters/documents — already tenant-scoped; declared for completeness
+[[pin]]
+id = "agenda_item"
+family = "agenda_item:"
+key_version = 1
+fields = ["source_id", "tenant_id", "external_id"]
+legacy_fields = { "1" = ["external_id"] }
+note = "§11.14 — 'unscoped' is the sentinel for a target without tenant_id (existing convention, unchanged); arity-1 is the slug-shaped seed convention — parses, never minted."
+
+[[pin]]
+id = "agenda_document"
+family = "agenda_document:"
+key_version = 1
+fields = ["source_id", "tenant_id", "external_id"]
+legacy_fields = { "1" = ["external_id"] }
+note = "§11.14 — the matter's captured document; same tenant scoping as agenda_item:; arity-1 parses as the slug seed convention."

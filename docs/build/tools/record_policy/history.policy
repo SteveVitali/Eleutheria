@@ -84,6 +84,9 @@ allow db/sqitch.plan 2026-10-19T00:00:00Z vocab_geometry_defect [vocab_enforceme
 # P35.22 (ticket 302): claim_payload_version's planned_at is its real `date -u` stamp — future of the
 # pre-commit HEAD only while the line is in flight; past-dated the moment its commit lands.
 allow db/sqitch.plan 2026-10-20T00:00:00Z claim_payload_version [coverage_exclusion_disclosure] 2026-10-18T04:19:15Z
+# P35.24 (ticket 303): subject_rekey's planned_at is its real `date -u` stamp — future of the
+# pre-commit HEAD only while the line is in flight; past-dated the moment its commit lands.
+allow db/sqitch.plan 2026-10-21T00:00:00Z subject_rekey [claim_payload_version] 2026-10-18T07:43:00Z
 
 # ── connectors/src/connectors/data/sources.toml rights dates (B1 NEW-5; B4 G1 positions) ─────────────────
 # rights_reviewed_on / last_verified / retrieval_date are record dates (R1: never later than the commit).

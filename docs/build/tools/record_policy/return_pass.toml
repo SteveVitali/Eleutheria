@@ -975,3 +975,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/297_P35.17__jurisdiction-regis
   go = '''pre-authorised: GATE-G4 §4 OM-20 list names P35.17 verbatim ("Approve all 19 (rec.)", 2026-10-09T17:32Z; expires at the next GATE, OM-10)'''
   rerun = '''implement-spec spec=docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md live_verification=true'''
   live_dependants = []
+[[row]]
+key = "P35.24"
+kind = "leg"
+obligations = []
+obligations_cell = '''queued hosted legs: `sig-db subject-rekey --dsn <hosted> --apply` (append-only; count re-derived) + `/status/` basis notice (S6 A-20) + collision artifact'''
+gates_cell = '''hosted write — QUEUED, not run (`live_verification=false`); OM-20 — the GATE-G4 §4 list names P35.24 verbatim (2026-10-09T17:32Z; expires at the next GATE); INSERTs + sys_period close; AR-3/AR-2 outside the AR-3 freeze'''
+operator_cell = '''nothing until the live re-run — plan is the default; `--apply` in-window; rollback forward-only'''
+rerun_cell = '''`implement-spec spec=docs/tickets/303_P35.24__truthful-subject-keys-and-re-keying.md live_verification=true` · row 303 landed (PR #318)'''
+
+  [[row.legs]]
+  id = "P35.24-subject-rekey-live"
+  obligations = []
+  earliest = '''the OM-19 re-run invocation — inside an AR-3 + AR-2 window'''
+  excluded = ["AR-3 freeze"]
+  go = '''pre-authorised: the GATE-G4 §4 list names P35.24 verbatim (2026-10-09T17:32Z; expires at the next GATE)'''
+  rerun = '''implement-spec spec=docs/tickets/303_P35.24__truthful-subject-keys-and-re-keying.md live_verification=true'''
+  live_dependants = ["P35.25"]

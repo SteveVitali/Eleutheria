@@ -101,6 +101,7 @@ from .identity_guard import (
     resolve_identity_batch,
 )
 from .run_completion import SUCCESSFUL_STATUSES, append_completion
+from .subject_keys import validate_subject_value
 from .subject_types import UnmappedSubjectScheme, entity_type_for_subject
 
 #: Name-derived identity schemes — organisations minted from a NAME (global or
@@ -1535,6 +1536,23 @@ class PgClaimSink:
                 Rejection(
                     QuarantineReason.UNKNOWN_SUBJECT_SCHEME,
                     str(exc),
+                    quarantine_payload(
+                        claim, connector_name=self._connector_name, source_id=source_id
+                    ),
+                ),
+                source_id=source_id,
+            )
+            return
+        # P35.24 / ADR-212 (GQ-04): a value under a PINNED subject family must
+        # match the declared grammar — a drifted/malformed key quarantines
+        # (unpinned families pass through; the registry is deliberately partial).
+        grammar_error = validate_subject_value(subject)
+        if grammar_error is not None:
+            self._quarantine(
+                claim,
+                Rejection(
+                    QuarantineReason.UNKNOWN_SUBJECT_SCHEME,
+                    grammar_error,
                     quarantine_payload(
                         claim, connector_name=self._connector_name, source_id=source_id
                     ),

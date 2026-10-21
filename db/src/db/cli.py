@@ -129,6 +129,30 @@ def build_parser() -> argparse.ArgumentParser:
         "print the per-type pending counts and unmapped subjects)",
     )
 
+    rk = sub.add_parser(
+        "subject-rekey",
+        help="plan or apply the append-only subject re-key (P35.24 / ADR-212; "
+        "R11-L3-CP2, CONF-03b): re-derives collided sig.connector.subject keys "
+        "under pinned families from the live spine (never the planning count), "
+        "closes each moved claim (sys_period end) and appends it under an "
+        "evidence-derived constituent subject (revises_claim + "
+        "correction_reason + subject_rekey_decision) — INSERT-only, idempotent "
+        "(+0 on rerun), legacy keys/claims never UPDATEd/DELETEd",
+    )
+    rk.add_argument("--dsn", required=True, help="PostgreSQL DSN for the spine")
+    rk.add_argument(
+        "--apply",
+        action="store_true",
+        help="write the correction claims + decision rows (default: plan only — "
+        "print the collision count + per-key split plan)",
+    )
+    rk.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="bound the run to the first N collided keys (resumable)",
+    )
+
     bench = sub.add_parser(
         "sink-bench",
         help="time PgClaimSink passes over synthetic OSM-shaped claims: claims/min and "
@@ -344,6 +368,17 @@ def _run_typed_identity(args: argparse.Namespace) -> int:
     return 0
 
 
+def _run_subject_rekey(args: argparse.Namespace) -> int:
+    """Plan or apply the append-only subject re-key (P35.24)."""
+    import json
+
+    from .subject_rekey import run
+
+    report = run(args.dsn, apply_mode=args.apply, limit=args.limit)
+    print(json.dumps(report, indent=2, sort_keys=True))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `db` CLI. Returns a process exit code."""
     parser = build_parser()
@@ -356,6 +391,8 @@ def main(argv: list[str] | None = None) -> int:
         return _run_typed_identity(args)
     if args.command == "attribution-corrections":
         return _run_attribution_corrections(args)
+    if args.command == "subject-rekey":
+        return _run_subject_rekey(args)
     if args.command == "sink-bench":
         return _run_sink_bench(args)
     parser.print_help()

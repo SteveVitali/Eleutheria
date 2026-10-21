@@ -63,6 +63,7 @@ from typing import Any
 from urllib.parse import urlencode, urljoin
 
 from db.absence import AbsenceState, coverage_kind_for, render_absence
+from db.subject_keys import mint_subject_key
 from evidence.digest import multihash
 from parsing.classification import (
     ArchiveClassification,
@@ -378,8 +379,21 @@ class Contract:
 
     @property
     def subject_id(self) -> str:
-        """The claim subject id for this contract (source + external id scoped)."""
-        return f"contract:{self.source_id}:{self.external_id}"
+        """The claim subject id for this contract (source + tenant + external id scoped).
+
+        P35.24 / ADR-212 (F-506): a tenant-platform contract carries
+        ``tenant_id`` in the raw row and mints ``tenant:<id>`` in the key —
+        two tenants' coincidentally-equal external ids never merge; a
+        single-tenant source keeps the legacy 2-segment shape (the pin's
+        ``absent = "omit"`` rule).
+        """
+        tenant = str(self.raw.get("tenant_id") or "").strip()
+        return mint_subject_key(
+            "contract",
+            source_id=self.source_id,
+            tenant_id=tenant or None,
+            external_id=self.external_id,
+        )
 
     @property
     def is_cooperative_piggyback(self) -> bool:
@@ -3026,9 +3040,21 @@ class ProcurementConnector(Connector):
         tenant_id = str(target.get("tenant_id") or "")
         jurisdiction = _opt_str(target.get("jurisdiction"))
         external_id = str(target.get("item_id") or _agenda_item_id(item))
-        item_subject = f"agenda_item:{ctx.source.id}:{tenant_id or 'unscoped'}:{external_id}"
+        # P35.24: mint through the declared pin grammar — same byte shape as
+        # the pre-existing convention (tenant or the 'unscoped' sentinel).
+        item_subject = mint_subject_key(
+            "agenda_item",
+            source_id=ctx.source.id,
+            tenant_id=tenant_id or "unscoped",
+            external_id=external_id,
+        )
         doc_url = str(raw["source_uri"])
-        doc_subject = f"agenda_document:{ctx.source.id}:{tenant_id or 'unscoped'}:{external_id}"
+        doc_subject = mint_subject_key(
+            "agenda_document",
+            source_id=ctx.source.id,
+            tenant_id=tenant_id or "unscoped",
+            external_id=external_id,
+        )
         text = str(raw.get("text") or "")
         pages = tuple(str(p) for p in (raw.get("pages") or ()))
         method = str(raw.get("extraction_method") or "")
@@ -3137,7 +3163,15 @@ class ProcurementConnector(Connector):
             )
         ]
         contract_subject = (
-            f"contract:{ctx.source.id}:{external_id}"
+            # P35.24 / ADR-212 (F-506): the tenant segment lands in the key —
+            # legistar/civicclerk/primegov share the external-id space and two
+            # tenants' equal ids merged under the legacy 2-segment shape.
+            mint_subject_key(
+                "contract",
+                source_id=ctx.source.id,
+                tenant_id=tenant_id or None,
+                external_id=external_id,
+            )
             if type_name and any(p in type_name.lower() for p in patterns)
             else None
         )

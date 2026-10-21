@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "81acaf4f662d771465800f5fe1fe6e6ed704aafa",
+  "input_commit": "a7a5d9de2e56f9f2a68bd09de329acd94a674505",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "582fbeba1012bc46e72368e97837d80aecfdb03a291f359aee349fa5429adcb0"
+      "sha256": "bdeeb577503bee474d7b81b6a7d60a0d1386f1d1f07d2a440db3e38eceff34bc"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -837,20 +837,24 @@
       "sha256": "ac33cac1f7a3f017495d3930bb017c981385e7323b14b7a6ef54c545dbb9b59e"
     },
     {
+      "path": "docs/adr/ADR-212-truthful-subject-keys-pinned-field-sets-and-append-only-re-keying.md",
+      "sha256": "40fd97f13528bccc923e211ae33c373e2d6d4ed2ce812b509f0bd4247b08d6f4"
+    },
+    {
       "path": "docs/adr/ADR-218-live-claim-lint-carried-record-provenance.md",
       "sha256": "25ae6a665cc454f4c42bdc0113e7eb0a32c2c18c013e359ef76a212149ff5f75"
     },
     {
       "path": "docs/adr/README.md",
-      "sha256": "b8f375427408060bc205dd183884a67497bbea6ca6d3265b99d01c7f774f949c"
+      "sha256": "868d943e43e3b372fdc94fd1927751395244c0dd98407e5417233fe03321abc8"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "346d8f22f1e22e2de73f02f7c2afc18009250e44a3884df064add9fa4325564b"
+      "sha256": "f4b84b6d973c64f93d783dff72bd35b318ec627c8e36bd05d095cf2d00ce7167"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "4b3d82e748af53d4ed60b3352126ae212d65601933d1b7ca17ee7701d7b9e8b8"
+      "sha256": "e0b2861c799f93511a4c7501fd2864daadad49cefbee3cc116ce7e25773b4271"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -858,7 +862,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "28926baaadaad97822089c2fffd3ac6507f5e50096c19f05182ece05009579d8"
+      "sha256": "cc3eb188220d21ac35950a74eaaf1619e37c85796a4fc6f0b82c2aef98cacc4b"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -1985,6 +1989,10 @@
       "sha256": "c15c50c771d4aa7e8126d2cdf55f380946ed9e1bcb37168d86a0de1242a924f4"
     },
     {
+      "path": "docs/build/runs/P35.24.md",
+      "sha256": "efecf72c175577693f4a45523915b4716d00a9d396f3f4311b58540586cb4e0f"
+    },
+    {
       "path": "docs/build/runs/P35.28.md",
       "sha256": "2ff5dd2151e644c9d5dcb3ead15c6e479516d7f4b09c7707ac58629cc229d6b6"
     },
@@ -2194,7 +2202,7 @@
     },
     {
       "path": "docs/build/tools/record_policy/return_pass.toml",
-      "sha256": "06c5f04902c957e1bc1382854e37a7aad04acd9ce7fa3c32fe3fc9c322a7504f"
+      "sha256": "db301676c6c9f7625f399066bb928f63e5fdc230e2742c0c035aa4564dcfb4ea"
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
