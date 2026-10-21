@@ -37,6 +37,26 @@ test("map counts records, drops empty legend entries, prints no suppressed count
   await expect(suppressed.first()).toBeVisible();
 });
 
+test("figure, titles, and table apply ONE suppression decision + qualified keys (P35.20b, ED-44)", async ({
+  page,
+}) => {
+  await page.goto("/map/");
+  // The figure's SVG <title> for a suppressed cell reads the same suppression
+  // the table prints — "record count suppressed", never the numeric figure.
+  const titles = await page.locator("figure svg title").allTextContents();
+  expect(titles.length).toBeGreaterThan(0);
+  expect(titles.some((t) => t.includes("record count suppressed"))).toBe(true);
+  // And the suppressed figure NEVER appears inside any title.
+  expect(titles.some((t) => /\b2 records?\b/.test(t) && t.includes("suppressed"))).toBe(false);
+  // Jurisdiction cells carry scheme-qualified keys (a "scheme:code" pair or the
+  // honest "unresolved" bucket) — never a bare ambiguous code.
+  const cells = await page.getByTestId("bin-jurisdiction").allTextContents();
+  expect(cells.length).toBeGreaterThan(0);
+  // The mixed-jurisdiction cell discloses its full per-key split — the
+  // plurality label is never presented as the whole cell.
+  await expect(page.getByTestId("bin-jurisdiction-mixed").first()).toBeVisible();
+});
+
 test("contested locations roll up to a count that leads to the dossier (P34.15, K12b NEW-7)", async ({
   page,
 }) => {

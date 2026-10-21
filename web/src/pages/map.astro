@@ -31,7 +31,9 @@ import {
   POINT_LAYER_ID,
   COVERAGE_LAYER_ID,
   DEFAULT_SHARING_EDGE_VIEW,
+  binAriaLabel,
   binCountLabel,
+  binJurisdictionKeys,
   contestedCount,
   coverageEncoding,
   islandPoints,
@@ -75,7 +77,7 @@ const { locatable, jurisdictionIndicators } = partitionByLocatability(MAP_ASSETS
 const boundIndicators = boundedJurisdictionIndicators(jurisdictionIndicators);
 // id → asset, so the indicator list below is linear at national scale (not a find per id).
 const ASSET_BY_ID = new Map(MAP_ASSETS.map((a) => [a.id, a]));
-const maxCount = Math.max(1, ...DENSITY_BINS.map((b) => b.deviceCount));
+const maxCount = Math.max(1, ...DENSITY_BINS.map((b) => b.recordCount));
 const bins = DENSITY_BINS.map((b) => ({ bin: b, render: renderBin(b, maxCount) }));
 
 // Build-time cap so the tabular equivalent stays within budget at national scale
@@ -235,7 +237,7 @@ const mapCitationHref = beliefPinnedPermalink({
           <strong>{c.label}</strong>
           {bound && (
             <span class="sig-layer-control__note">
-              — a single bound control: you cannot show devices without also showing where
+              — a single bound control: you cannot show records without also showing where
               SIG has <em>not</em> looked (SIG-UI-017).
             </span>
           )}
@@ -291,9 +293,10 @@ const mapCitationHref = beliefPinnedPermalink({
             stroke={render.coverage.hatched ? "var(--sig-epi-absence-ink)" : "var(--sig-rule)"}
             stroke-dasharray={render.coverage.hatched ? "3 2" : undefined}
           >
-            <title>{coverageEncoding(bin.coverage).valueSuppressed
-              ? `${bin.jurisdiction}: record count suppressed, coverage ${bin.coverage}`
-              : `${bin.jurisdiction}: ${bin.deviceCount} record(s), coverage ${bin.coverage}`}</title>
+            {/* P35.20b (ED-44): the title reads the SAME suppression decision the
+                table prints — one function (binCountLabel via binAriaLabel), one
+                source of truth; a suppressed figure leaks nowhere. */}
+            <title>{binAriaLabel(bin)}</title>
           </rect>
           <text x={i * cell + cell / 2} y={cell + 12} text-anchor="middle" font-size="9">
             {bin.coverage}
@@ -324,21 +327,39 @@ const mapCitationHref = beliefPinnedPermalink({
       </tr>
     </thead>
     <tbody>
-      {bins.map(({ bin }) => (
+      {bins.map(({ bin }) => {
+        // P35.20b (ED-44): the cell's jurisdiction is the scheme-qualified key
+        // (placement `jurisdiction_key` when bound, else the declared-scheme
+        // bucket); a cell spanning several keys discloses the split so the
+        // plurality label is never mistaken for the whole cell and the per-key
+        // sums reconcile with the dossier geolocated denominators.
+        const keys = binJurisdictionKeys(bin);
+        const mixed = keys.length > 1;
+        return (
         <tr
           data-testid="coverage-bin"
           data-coverage={bin.coverage}
           data-desaturated={coverageEncoding(bin.coverage).desaturated ? "true" : "false"}
           data-hatched={coverageEncoding(bin.coverage).hatched ? "true" : "false"}
           data-reads-as-density={readsAsDensity(bin) ? "true" : "false"}
+          data-jurisdiction-keys={keys.length}
         >
           <th scope="row"><code>{bin.h3}</code></th>
-          <td>{bin.jurisdiction}</td>
+          <td data-testid="bin-jurisdiction">
+            {bin.jurisdiction}
+            {mixed && (
+              <span class="sig-table-note" data-testid="bin-jurisdiction-mixed">
+                {" "}— plurality of {keys.length} jurisdiction keys (
+                {keys.map((k) => `${k}: ${bin.jurisdictionCounts?.[k] ?? 0}`).join(", ")})
+              </span>
+            )}
+          </td>
           <td>{binCountLabel(bin)}</td>
           <td>{coverageEncoding(bin.coverage).label}</td>
           <td>{readsAsDensity(bin) ? "a density signal" : "we don't know (coverage too low)"}</td>
         </tr>
-      ))}
+        );
+      })}
     </tbody>
   </table>
   </div>

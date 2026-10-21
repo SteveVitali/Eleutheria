@@ -114,11 +114,15 @@ def _raw(claims: list[ShapingClaim], **over: object) -> dict:
 
 
 def _dataset(claims: list[ShapingClaim], **over: object):
+    volatility_classes = over.pop("volatility_classes", None)
     return build_shaped_dataset(
         _raw(claims, **over),
         as_of="2026-09-23",
         generated_at="2026-09-23T00:00:00Z",
         spine_label="unit",
+        # P35.20b: tests declare the source volatility classes explicitly (the
+        # ``sources.toml`` seam) — a class is never inferred from the claim mix.
+        volatility_classes=volatility_classes,
     )
 
 
@@ -451,8 +455,9 @@ def test_coverage_metrics_match_the_web_contract() -> None:
 
 def test_source_freshness_rows_and_not_evaluable() -> None:
     # The camera-registry predicates are registered (P30.2a, ADR-104), so their
-    # staleness is evaluable against the registry volatility; a predicate the
-    # ontology registry does not know is still honestly not-evaluable, never faked.
+    # staleness is evaluable against the source's DECLARED volatility class
+    # (P35.20b); a predicate the ontology registry does not know is still
+    # honestly not-evaluable, never faked.
     claims = [
         *_geo("s1", "35.46", "-97.51", "OK"),
         _claim("s1-x", "s1", "unregistered_predicate_x", value_text="v"),
@@ -461,12 +466,13 @@ def test_source_freshness_rows_and_not_evaluable() -> None:
         claims,
         source_stats=[("src_a", 4, datetime(2026, 5, 2), 4)],
         source_runs=[("src_a", datetime(2026, 5, 2), "succeeded")],
+        volatility_classes={"src_a": "SLOW"},
     )
     (src,) = ds.sources
     assert src.freshness.source_id == "src_a"
     assert src.freshness.status == "ok"
     assert src.staleness_not_evaluable == 1  # only the unregistered predicate
-    assert src.volatility_class == "SLOW"  # camera_latitude/longitude (2y) dominate
+    assert src.volatility_class == "SLOW"  # the declared class, never a vote
     row = src.freshness_row()
     assert set(row) == {
         "source",
@@ -474,8 +480,70 @@ def test_source_freshness_rows_and_not_evaluable() -> None:
         "last_content_change",
         "status",
         "stale_entity_count",
+        "staleness_not_evaluable",
         "volatility_class",
     }
+    assert row["staleness_not_evaluable"] == 1
+
+
+def test_undeclared_source_reads_not_evaluable_never_ok() -> None:
+    # P35.20b (ED-43, GQ-15): no declared volatility class → every dated
+    # observation is not_evaluable and the row reads "not_evaluable" — the
+    # 178-"ok"-stale-0 defect class dies; a successful run does NOT rescue it.
+    ds = _dataset(
+        _geo("s1", "35.46", "-97.51", "OK"),
+        source_stats=[("src_a", 3, datetime(2026, 5, 2), 3)],
+        source_runs=[("src_a", datetime(2026, 5, 2), "succeeded")],
+        volatility_classes={},
+    )
+    (src,) = ds.sources
+    row = src.freshness_row()
+    assert row["status"] == "not_evaluable"
+    assert row["volatility_class"] == "not_evaluable"
+    assert row["staleness_not_evaluable"] == 3  # the whole dated set unmeasured
+    assert row["stale_entity_count"] == 0  # and the 0 is never a measured figure
+
+
+def test_shaping_volatility_vocabulary_matches_the_connector_registry() -> None:
+    """The duplicated §28.3 class tuple is pinned to the registry's frozenset —
+    the two copies must never drift (P35.20b)."""
+    from connectors.registry import VOLATILITY_CLASSES
+    from exports.shaping import DECLARED_VOLATILITY_CLASSES
+
+    assert set(DECLARED_VOLATILITY_CLASSES) == set(VOLATILITY_CLASSES)
+
+
+def test_declared_volatility_classes_read_the_committed_registry() -> None:
+    """``declared_volatility_classes()`` serves exactly the sources.toml rows
+    that declared a class — undeclared sources are absent, never defaulted."""
+    from exports.shaping import declared_volatility_classes
+
+    declared = declared_volatility_classes()
+    assert declared  # the registry declares classes for its emit surfaces
+    assert "dot_511_ky" in declared
+    assert declared["dot_511_ky"] == "SLOW"
+    # A source with no declared class is absent from the map — not_evaluable.
+    vocab = {"IMMUTABLE", "GLACIAL", "SLOW", "MODERATE", "FAST", "VOLATILE"}
+    assert all(v in vocab for v in declared_volatility_classes().values())
+
+
+def test_run_only_source_gets_a_not_evaluable_row() -> None:
+    # P35.20b: a source in the run/stats read but with no dated observation
+    # (the non-site evidence class) still gets a row — honest not_evaluable,
+    # never absent-and-implied-fine.
+    ds = _dataset(
+        _geo("s1", "35.46", "-97.51", "OK", source="src_site"),
+        source_stats=[("src_site", 3, datetime(2026, 5, 2), 3), ("src_evid", 12, None, 0)],
+        source_runs=[
+            ("src_site", datetime(2026, 5, 2), "succeeded"),
+            ("src_evid", datetime(2026, 5, 1), "succeeded"),
+        ],
+        volatility_classes={"src_site": "SLOW"},
+    )
+    rows = {s.freshness.source_id: s.freshness_row() for s in ds.sources}
+    assert rows["src_evid"]["status"] == "not_evaluable"
+    assert rows["src_evid"]["last_successful_run"] == "2026-05-01T00:00:00"
+    assert rows["src_site"]["status"] == "ok"
 
 
 def test_an_unrecorded_freshness_date_is_the_explicit_absence_token_never_blank() -> None:
@@ -488,6 +556,9 @@ def test_an_unrecorded_freshness_date_is_the_explicit_absence_token_never_blank(
         _geo("s1", "35.46", "-97.51", "OK"),
         source_stats=[("src_a", 3, None, 0)],
         source_runs=[("src_a", None, "running")],
+        # P35.20b: declared class so staleness is evaluable — the run status
+        # then carries through verbatim rather than being masked not_evaluable.
+        volatility_classes={"src_a": "SLOW"},
     )
     (src,) = ds.sources
     row = src.freshness_row()
@@ -509,6 +580,9 @@ def test_completions_supply_real_freshness_dates_and_status() -> None:
             ("src_a", ok_at, changed_at, "ok"),
             ("b", None, None, "failed"),  # only a failed execution → nothing to show
         ],
+        # P35.20b: declared classes so staleness is evaluable — the run status
+        # then surfaces verbatim.
+        volatility_classes={"src_a": "SLOW", "b": "SLOW"},
     )
     rows = {s.freshness.source_id: s.freshness_row() for s in ds.sources}
     assert rows["src_a"]["last_successful_run"] == ok_at.isoformat()
@@ -532,6 +606,8 @@ def test_a_plus_zero_rerun_does_not_move_last_content_change() -> None:
         source_stats=[("src_a", 3, observed, 3)],
         source_runs=[],
         source_completions=[("src_a", ok_at, None, "partial")],
+        # P35.20b: declared class so the partial-completion status reads verbatim.
+        volatility_classes={"src_a": "SLOW"},
     )
     (src,) = ds.sources
     row = src.freshness_row()

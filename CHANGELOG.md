@@ -473,6 +473,34 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Fixed
 
+- **Freshness honesty + map suppression parity** (P35.20b / row 301,
+  PKG-10 b-half; closes ED-43/ED-44; cites SIG-METRIC-006/007,
+  SIG-RECON-058, SIG-UI-018/037, GQ-15, ADR-104(e), ED-29) — two public
+  number defects corrected ahead of the next export. Every
+  `/data-freshness/` row read `ok` with stale 0 and volatility `unknown`
+  while `staleness_not_evaluable` was computed but never emitted, and 41
+  evidence-bearing non-site sources had no row at all: the emit now
+  carries `staleness_not_evaluable` and the source's **declared** §28.3
+  volatility class — a new basis-required registry field validated
+  against the closed vocabulary (279 `camreg_*`/`dot_511_*` declarations,
+  all `SLOW` under the ADR-104(e) recalibration; every undeclared source
+  reads `not_evaluable`, never a guessed class) — rows cover the union of
+  the all-predicate freshness observations and the run-statistics
+  sources, and a source whose staleness was never evaluated reads
+  `not_evaluable`, never `ok` or a fabricated `stale 0`. And the map's
+  accessible surfaces leaked what the figure suppressed — 601
+  low-coverage cells printed 40,913 records in the table and SVG titles
+  under a "Devices" header while plurality-labelled cells disagreed with
+  dossier jurisdiction counts: one suppression decision
+  (`binCountLabel`) now feeds the figure, the SVG `<title>` text, and the
+  accessible table (a suppressed cell never leaks a count to assistive
+  text); the header reads "Records + where SIG has looked"
+  (SIG-RECON-058 — observation-level records, never a device census);
+  cells key on the placement `jurisdiction_key` with the declared-scheme
+  bucket as fallback, each bin emits its full `jurisdiction_counts` split
+  so per-key sums reconcile with the dossier denominators, and
+  `recordCount` is the canonical wire field with `deviceCount` kept one
+  release cycle as a deprecated alias.
 - **Per-dossier provenance + unclamped, exclusion-disclosed coverage**
   (P35.20a / row 300, PKG-10 a-half; owns F-134, closes ED-41/ED-42; cites
   SIG-METRIC-009/003/006/008, SIG-UI-008/044, SIG-RECON-058) — two public

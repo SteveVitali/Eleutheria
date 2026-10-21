@@ -282,3 +282,34 @@ def test_unlicensed_projects_are_undetermined_not_assumed_permitted() -> None:
     # "no licence" means UNDETERMINED under SIG-LIC-004, not implied permission.
     for sid in ("ringmast4r_flock", "flock_ajith_fyi"):
         assert is_undetermined(get(sid).rights)
+
+
+# --- P35.20b: the declared source volatility class ----------------------------
+
+
+def test_volatility_vocabulary_matches_the_generated_ontology_enum() -> None:
+    """The registry's closed §28.3 class set IS the generated
+    ``PredicateVolatility`` enum — pinned so a vocabulary drift is a red gate,
+    never a silently widened/narrowed class set (P35.20b)."""
+    from connectors.registry import VOLATILITY_CLASSES
+    from support import load_generated_pydantic
+
+    models = load_generated_pydantic()
+    enum_members = {m.value for m in models.PredicateVolatility}
+    assert VOLATILITY_CLASSES == enum_members
+
+
+def test_every_declared_volatility_class_is_valid_and_based() -> None:
+    """A declared class is in vocabulary and names its basis (ADR-104(e)-style
+    provenance); a source with NO declaration is simply undeclared — the
+    freshness surface reads ``not_evaluable`` for it, never a guessed class."""
+    declared = [s for s in sources() if s.volatility_class]
+    # The registry declares classes for a meaningful share (the emit surfaces);
+    # the rest stay honestly undeclared.
+    assert declared
+    for s in declared:
+        # The basis names the recorded evidence for the class — never blank.
+        assert s.volatility_basis.strip(), s.id
+    undeclared = [s for s in sources() if not s.volatility_class]
+    for s in undeclared:
+        assert not s.volatility_basis.strip(), s.id

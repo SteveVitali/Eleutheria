@@ -898,7 +898,17 @@ export function getMapDensityBins(): DensityBin[] {
   if (dataSource() === "export") {
     return readAnalytics("density_bins", (env, path) => {
       if (!Array.isArray(env.bins)) throw new Error(`${path}: expected a "bins" array`);
-      return env.bins as DensityBin[];
+      // P35.20b (ED-44, SIG-RECON-058): `recordCount` is the canonical field; a
+      // pre-P35.20b artifact's `deviceCount` is folded in at this single seam —
+      // the pages never read the deprecated name. The wire's snake_case
+      // `jurisdiction_counts` normalises to `jurisdictionCounts` here too.
+      return (env.bins as (DensityBin & { jurisdiction_counts?: Record<string, number> })[]).map(
+        (b) => ({
+          ...b,
+          recordCount: b.recordCount ?? b.deviceCount ?? 0,
+          jurisdictionCounts: b.jurisdictionCounts ?? b.jurisdiction_counts,
+        }),
+      );
     });
   }
   return DENSITY_BINS;

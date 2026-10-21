@@ -41,6 +41,24 @@ test("freshness table shows a build-time summary band and static sort links (no 
   );
 });
 
+test("a non-evaluable source reads 'not evaluable', never 'ok' or 'stale 0' (P35.20b, ED-43)", async ({
+  page,
+}) => {
+  await page.goto("/data-freshness/");
+  // The honest-absence column exists and the not-evaluable note is disclosed.
+  await expect(page.getByTestId("not-evaluable-note")).toBeVisible();
+  const rows = page.locator(
+    "[data-testid='freshness-row']:has([data-testid='freshness-status']:text('not evaluable'))",
+  );
+  expect(await rows.count()).toBeGreaterThan(0);
+  // A non-evaluable row prints "not evaluable" in the stale-figure cell —
+  // never a number that would read as a measured zero.
+  const staleCell = rows.first().getByTestId("stale-count");
+  await expect(staleCell).toContainText("not evaluable");
+  await expect(staleCell).not.toContainText(/^\s*0\s*$/);
+  await expect(rows.first().getByTestId("volatility-class")).toContainText("not evaluable");
+});
+
 test("navigating to a sort route actually re-orders the table without JS", async ({ page }) => {
   // Sort by status: the pre-rendered /status/ route orders rows by status ascending,
   // so a "degraded" row sorts before every "ok" row.

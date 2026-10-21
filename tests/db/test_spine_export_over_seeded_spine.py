@@ -261,8 +261,17 @@ def test_spine_export_over_seeded_spine(conn, seeded_export) -> None:
     # Density: only the two licence-clean tier-0 subjects bin; the UNDETERMINED
     # subject never pads a cell.
     density = json.loads(export.web_artifacts["web/analytics/density_bins.json"])
-    assert sum(b["deviceCount"] for b in density["bins"]) == 2
-    assert all(set(b) == {"h3", "jurisdiction", "deviceCount", "coverage"} for b in density["bins"])
+    # P35.20b (ED-44): recordCount canonical, deviceCount deprecated alias,
+    # jurisdiction_counts disclosing the full per-key split.
+    assert sum(b["recordCount"] for b in density["bins"]) == 2
+    assert all(
+        set(b)
+        == {"h3", "jurisdiction", "jurisdiction_counts", "recordCount", "deviceCount", "coverage"}
+        for b in density["bins"]
+    )
+    for b in density["bins"]:
+        assert sum(b["jurisdiction_counts"].values()) == b["recordCount"]
+        assert b["jurisdiction"] in b["jurisdiction_counts"]
     # Two licences feed the bins → both source compartments are named.
     assert len(density["source_compartments"]) == 2
     assert "osm_physical" in density["source_compartments"]
