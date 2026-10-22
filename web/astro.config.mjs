@@ -8,6 +8,7 @@ import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync
 import { fileURLToPath } from "node:url";
 import { join, relative, resolve, sep } from "node:path";
 import { resolveTileCopyList } from "./scripts/export-tiles.mjs";
+import { buildManifest, classifyDist, writeManifest } from "./src/lib/page-types.ts";
 
 // P21.5 (deliverable 3, LD-F07/H08) + P30.3 (ADR-106) + P31.15 (ADR-R9-TILES): in
 // `export` mode the static build CONSUMES the rendered vector tiles the export
@@ -167,6 +168,34 @@ function sigChrome() {
   };
 }
 
+// P35.50 (UXK0-1, K0 §4.12 item 1, ADR-155, SIG-UI-041/NEW-4): route discovery —
+// the `astro:build:done` hook walks `dist/**/*.html` and classifies every built
+// route against web/src/lib/page-types.ts. An unclassified route or a route two
+// registry entries claim at equal strength FAILS THE BUILD — a new page is
+// classified before it ships, never silently. The hook also writes
+// `dist/page-types.json` (`sig.page-types-manifest/1`), the discovered-route
+// manifest every e2e/axe sweep iterates instead of a hand-maintained list. It
+// runs LAST so it sees the complete emitted tree (the injected internal routes,
+// the flat 403/410 copies and every generated page alike).
+function sigPageTypes() {
+  return {
+    name: "sig-page-types",
+    hooks: {
+      "astro:build:done": ({ dir }) => {
+        const distDir = fileURLToPath(dir);
+        const { routes, errors } = classifyDist(distDir);
+        if (errors.length > 0) {
+          throw new Error(
+            `page-type registry: ${errors.length} unclassifiable route(s)\n  ${errors.join("\n  ")}`,
+          );
+        }
+        writeManifest(distDir, buildManifest(routes));
+        console.log(`sig-page-types: ${routes.length} route(s) classified`);
+      },
+    },
+  };
+}
+
 // The public SIG web shell (Phase 15). Astro is a zero-JS-by-default static-first
 // framework: with no explicit `client:*` directive on a component, the built page
 // ships no client JavaScript at all (SIG-UI-036). Archivability is therefore
@@ -182,7 +211,7 @@ export default defineConfig({
   // `client:*` directive, which in the public surface is exactly the three named
   // islands (map / network / search). Every other page still ships zero `<script>`
   // (SIG-UI-036/037); each island preserves its no-JS fallback (SIG-UI-050).
-  integrations: [react(), sigExportTiles(), sigInternalRoutes(), sigChrome()],
+  integrations: [react(), sigExportTiles(), sigInternalRoutes(), sigChrome(), sigPageTypes()],
   // The canonical public origin (P27.6 deliverable 4, ADR-093). This is the real
   // custom domain the launch surface is cited at; the belief-pinned permalinks
   // (SIG-UI-035) resolve against it. DNS/TLS cut-over completes in P27.10 — the

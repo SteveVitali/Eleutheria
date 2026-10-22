@@ -8,7 +8,9 @@ import { A11Y_PAGES } from "./pages";
 
 // WCAG 2.2 AA automated checks pass on every page (SIG-UI-037, AC2). axe-core is
 // run with the WCAG 2.0/2.1/2.2 level-A and level-AA rule tags; any violation fails
-// the build. This is the CI a11y gate.
+// the build. This is the CI a11y gate. P35.50: A11Y_PAGES is the DISCOVERED
+// route set (dist/page-types.json), never a hand list — a new route joins the
+// sweep by classification, so no route is ever dropped silently (K0 NEW-4).
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
 for (const path of A11Y_PAGES) {

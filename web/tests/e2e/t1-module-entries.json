@@ -1,0 +1,6 @@
+{
+  "schema": "sig.t1-module-entries/1",
+  "recorded_by": "P35.50",
+  "comment": "The allow-listed `type=\"module\"` script `src` entries a T1 page may load (K0 §4.12 item 2: 'only type=\"module\" scripts whose src is an allow-listed entry'). The mechanism is P35.50's; the entries are the UXK0-4 enhancement-kit rows' — each registers its emitted entry here when it lands. Empty until then: a T1 page shipping ANY script today fails closed.",
+  "entries": []
+}

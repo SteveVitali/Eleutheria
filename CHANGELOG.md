@@ -24,6 +24,36 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Page-type registry + route discovery — every built route is
+  classified T0/T1/T2/T3 or the build fails** (P35.50 / row 328;
+  R11-K13-UXK0-1; owner SIG-UI-036/SIG-UI-037; cites ADR-155,
+  SIG-UI-036, SIG-UI-037, SIG-UI-041, SIG-UI-050)
+  — `web/src/lib/page-types.ts` is the single authority mapping route
+  patterns to their ADR-155 page type (T0 record & print, T1 content,
+  T2 explore, T3 tools) with the owner ticket, the data-contract id
+  and the named no-JS equivalent each type requires. An
+  `astro:build:done` hook walks `dist/**/*.html`, classifies every
+  emitted route — zero matches or a double classification both fail
+  the build — and emits `dist/page-types.json`
+  (`sig.page-types-manifest/1`), the machine manifest the e2e suites
+  now drive from. Generic sweeps (axe WCAG 2.2 AA, shell, chrome,
+  script policy, no-JS parity) iterate the discovered routes instead
+  of hand-maintained lists, so a new route joins every gate by
+  classification and can never be dropped silently. The per-type
+  script policy is enforced in `script-policy.spec.ts`: T0 ships no
+  `<script>` at all; T1 admits only allow-listed `type="module"`
+  entries (`t1-module-entries.json`, empty until UXK0-4 lands one)
+  plus the recorded Astro bootstrap hashes; T2 admits the hashed
+  bootstrap plus content-hashed `/_astro/` module assets; every type
+  forbids `on*=` handler attributes and `javascript:` URLs, and an
+  inline `application/ld+json` block is a violation on every type
+  (JSON-LD stays linked files only, D-J3-7). `nojs-parity.spec.ts`
+  enforces T1 `main`-text equality with JavaScript off minus
+  `[data-enhancement]` subtrees, resolves each T2 route's named no-JS
+  equivalents with JavaScript off, and requires the new
+  `NoJsStateNotice` component to name the static equivalent on
+  stateful `sig.workspace-state/1` URLs opened without JS — the
+  machinery implements ADR-155, it never re-decides it.
 - **Dedup publication fields — `site_id`, `copies[]`,
   `possible_duplicates[]`, `multi_view[]`,
   `n_independent_lineages`, and the SIG-CONF-005 count interval**

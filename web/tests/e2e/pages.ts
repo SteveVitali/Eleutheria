@@ -2,50 +2,139 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// The shell's pages. Kept in one place so
-// the a11y sweep and the no-JS checks cover the same surface.
+// P35.50 (UXK0-1, K0 NEW-4, SIG-UI-041): the e2e/axe sweeps iterate the
+// DISCOVERED route set — every route the build emitted, classified by
+// src/lib/page-types.ts — never a hand-maintained list. The build hook writes
+// `dist/page-types.json` (`sig.page-types-manifest/1`); this module reads that
+// manifest, so the sweeps can never drift from the built site the preview
+// server serves. A missing manifest fails loud: `npm run check` builds before
+// `test:e2e`, and a bare `npx playwright test` against an older dist still
+// iterates the routes that dist actually carries.
+//
+// Semantic subsets (SHELL_PAGES, CHROME_PAGES, FRESHNESS_SORT_PAGES, …) are
+// DERIVED from the manifest's `type` and `chrome` fields — a new route lands
+// in the right sweeps by classification, and the "staging-verified" AC of the
+// contract is the discovered-vs-hand-list count recorded in the run ledger.
 
-// The standard shell-layout pages: each carries the primary nav and the citation
-// affordance (SIG-UI-035). The dossier page is one of these; its PRINT export is a
-// standalone paginated document (no nav/citation by design) and is covered by the
-// a11y sweep below, not here.
-export const SHELL_PAGES = [
-  "/",
-  "/dossier/",
-  "/dossier/oklahoma-city/",
-  // P35.45: the honest unplaced report — a public sibling of the dossier index,
-  // emitted in every mode (fixture exports emit an empty report). T1 content,
-  // zero <script>; excluded from the jurisdiction counts, never a dossier row.
-  "/dossier/unplaced/",
-  "/visual-language/",
-  "/map/",
-  "/network/",
-  "/search/",
-  "/watch/",
-  "/evidence/",
-  "/evidence/active-device-count/",
-  "/evidence/operator-roster-size/",
-  "/research-queue/",
-  "/corrections/",
-  "/contribution-back/",
-  "/dispute/",
-  "/methodology/",
-  "/data-freshness/",
-  "/coverage-metrics/",
-  "/editorial-standards/",
-  "/style-guide/",
-  // P35.38a: the crawler contact/explanation page the User-Agent names
-  // (SIG-INGEST-036 rule 1). T0 — ships zero <script> like every other
-  // non-island public page.
-  "/data-collection/",
-  // P35.39 (TX-10a): the generated data dictionary — a T1 content page,
-  // zero <script>, rendering the export's own dictionary.json.
-  "/data/dictionary/",
-  // P34.17: the interim sources-and-licences page + the status page — public
-  // routes, so the a11y and zero-JS sweeps cover them.
-  "/sources/",
-  "/status/",
-] as const;
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
+export type PageType = "T0" | "T1" | "T2" | "T3";
+
+export interface DiscoveredRoute {
+  path: string;
+  file: string;
+  type: PageType;
+  pattern: string;
+  owner: string;
+  contract: string;
+  chrome: string;
+  internal: boolean;
+}
+
+interface PageTypesManifest {
+  schema: string;
+  routes: DiscoveredRoute[];
+}
+
+const MANIFEST_URL = new URL("../../dist/page-types.json", import.meta.url);
+
+function loadManifest(): PageTypesManifest {
+  let raw: string;
+  try {
+    raw = readFileSync(fileURLToPath(MANIFEST_URL), "utf-8");
+  } catch {
+    throw new Error(
+      `pages.ts: ${fileURLToPath(MANIFEST_URL)} is missing — the e2e suite iterates the discovered routes of the BUILT site; run \`npm run build\` first (the playwright webServer does it for you)`,
+    );
+  }
+  const manifest = JSON.parse(raw) as PageTypesManifest;
+  if (manifest.schema !== "sig.page-types-manifest/1") {
+    throw new Error(
+      `pages.ts: dist/page-types.json schema ${manifest.schema} — expected sig.page-types-manifest/1 (stale dist? rebuild)`,
+    );
+  }
+  return manifest;
+}
+
+const MANIFEST = loadManifest();
+
+/** Every built HTML route, classified — the sweep source of truth. */
+export const DISCOVERED_ROUTES: readonly DiscoveredRoute[] = MANIFEST.routes;
+
+const pathsOf = (pred: (r: DiscoveredRoute) => boolean): string[] =>
+  DISCOVERED_ROUTES.filter(pred).map((r) => r.path);
+
+const typeIs = (t: PageType) => (r: DiscoveredRoute) => r.type === t;
+
+/** Routes by declared page type (the registry's T0/T1/T2/T3 classes). */
+export const T0_PAGES = pathsOf(typeIs("T0"));
+export const T1_PAGES = pathsOf(typeIs("T1"));
+export const T2_PAGES = pathsOf(typeIs("T2"));
+export const T3_PAGES = pathsOf(typeIs("T3"));
+export const PAGES_BY_TYPE: Readonly<Record<PageType, readonly string[]>> = {
+  T0: T0_PAGES,
+  T1: T1_PAGES,
+  T2: T2_PAGES,
+  T3: T3_PAGES,
+};
+
+// ---------------------------------------------------------------------------
+// Derived sweep lists — every one is computed from the discovered set.
+// ---------------------------------------------------------------------------
+
+// The standard shell-layout pages: full chrome (nav + the citation affordance,
+// SIG-UI-035), regardless of page type — T0 dispute/chrome pages, T1 content,
+// T2 explore pages all carry it. The print pages (chrome="print") are
+// standalone documents and the internal routes stay distinguishable via
+// `internal` on DISCOVERED_ROUTES.
+export const SHELL_PAGES = pathsOf((r) => r.chrome === "full");
+export const ALL_PAGES = SHELL_PAGES;
+
+// The chrome-light pages (minimal chrome, noindex): branded error pages and
+// the /terms forwarder.
+export const CHROME_PAGES = pathsOf((r) => r.chrome === "minimal");
+
+// The standalone print documents (T0, paginated layout).
+export const PRINT_PAGES = pathsOf((r) => r.chrome === "print");
+
+// The authenticated curation surface (ADR-068) — every discovered T3 route.
+export const CURATE_PAGES = T3_PAGES;
+// The compare page id is URL-encoded (the item_id carries ':' and '~').
+export const CURATE_COMPARE_PAGE = "/curate/er_match%3Aagency%3Aokcpd~agency%3Aokc-pd/";
+
+// The T2 explore surfaces — the pages that ship island scripts today.
+export const ISLAND_PAGES = T2_PAGES;
+
+// The full a11y surface for the axe sweep: EVERY discovered route (K0 §4.12 —
+// axe on every discovered route; SIG-UI-037 WCAG 2.2 AA everywhere, incl. the
+// T0 print/tombstone pages and the T3 curation pages P21.6 already swept).
+export const A11Y_PAGES = pathsOf(() => true);
+
+// The data-freshness table's pre-rendered static sort routes (P27.7): every
+// discovered route under /data-freshness/ that is not the index itself —
+// sorting is a plain GET to a distinct page, so each emitted sort route must
+// meet WCAG 2.2 AA like the base page.
+export const FRESHNESS_SORT_PAGES = pathsOf(
+  (r) => r.path.startsWith("/data-freshness/") && r.path !== "/data-freshness/",
+);
+
+// The jurisdiction-conditional dossiers (localised, public-employee name
+// withheld — SIG-PUB-017, §44): every discovered non-print dossier route that
+// is not the index, the honest unplaced report, or the worked OKC dossier.
+export const DOSSIER_SLUG = "oklahoma-city";
+export const JURISDICTION_DOSSIER_PAGES = pathsOf(
+  (r) =>
+    r.path.startsWith("/dossier/") &&
+    r.type === "T1" &&
+    !r.path.endsWith("/print/") &&
+    !["/dossier/", "/dossier/unplaced/", `/dossier/${DOSSIER_SLUG}/`].includes(r.path),
+);
+
+// ---------------------------------------------------------------------------
+// Named fixture anchors — routes/params a spec addresses deliberately (these
+// name test fixtures, not sweep membership).
+// ---------------------------------------------------------------------------
 
 // The seven outline surfaces + the required eighth (the corrections log), asserted to
 // exist across the built Phase-15 site (P15.5 deliverable 6 / AC1). Each maps to a
@@ -62,7 +151,6 @@ export const PHASE15_SURFACES = {
 } as const;
 
 // The worked dossier's canonical slug + its derived surfaces (SIG-UI-010..015).
-export const DOSSIER_SLUG = "oklahoma-city";
 export const DOSSIER_PAGE = `/dossier/${DOSSIER_SLUG}/`;
 export const DOSSIER_PRINT = `/dossier/${DOSSIER_SLUG}/print/`;
 export const DOSSIER_JSON = `/dossier/${DOSSIER_SLUG}.json`;
@@ -74,88 +162,11 @@ export const RESEARCH_SLUG = "okc-alpr";
 export const RESEARCH_PAGE = `/research-dossier/${RESEARCH_SLUG}/`;
 export const RESEARCH_JSON = `/research-dossier/${RESEARCH_SLUG}.json`;
 
-// P34.12 (K11 §5.5 / RQ-00, F-113/F-274): the fixture `/task/new/<slug>/`
-// intake pages are RETIRED — they claimed a research task "has been generated"
-// from a gap when nothing had been, and `getStaticPaths` shipped demo fixture
-// pages. There is deliberately no TASK_PAGE in the sweep any more; the real
-// `/task/<handle>/` surface arrives with RQ-03 (K13 §7.1 W2).
-
-export const ALL_PAGES = [...SHELL_PAGES] as const;
-
-// The jurisdiction-conditional dossiers (FR-GDPR / BE-GDPR), localised and with the
-// public-employee name withheld at build time (SIG-PUB-017, §44). Included in the a11y
-// sweep so the localised pages meet WCAG 2.2 AA like every other shell page.
-export const JURISDICTION_DOSSIER_PAGES = [
-  "/dossier/paris-alpr/",
-  "/dossier/brussels-alpr/",
-] as const;
-
-// The authenticated curation surface (P21.6, §34, ADR-068). NOT part of the public
-// zero-JS shell — behind auth and under WCAG 2.2 AA (not the public zero-JS/perf
-// budget). Kept here so the axe sweep covers them like every other page. The compare
-// page id is URL-encoded (the item_id carries ':' and '~').
-export const CURATE_COMPARE_PAGE = "/curate/er_match%3Aagency%3Aokcpd~agency%3Aokc-pd/";
-export const CURATE_PAGES = [
-  "/curate/",
-  CURATE_COMPARE_PAGE,
-  "/curate/contradictions/",
-  "/curate/tasks/",
-  "/curate/submit/",
-  "/curate/revert/",
-] as const;
-
-// The data-freshness table's pre-rendered static sort routes (P27.7): sorting is a
-// plain GET to a distinct page (no client JS), so each sort order must meet WCAG 2.2 AA
-// like the base page. The base `/data-freshness/` is already in SHELL_PAGES.
-// P34.13 (K12b NEW-11, F-17): the "stale" and "volatility" sort routes returned the
-// identical alphabetical table — affordances that do nothing — and are REMOVED until
-// UX9-2 makes a real ordering. Only the working status sort remains pre-rendered.
-export const FRESHNESS_SORT_PAGES = [
-  "/data-freshness/status/",
-] as const;
-
 // The no-op sort routes that must NOT exist in the build (K12b NEW-11) — asserted
-// 404 in the freshness spec.
+// 404 in the freshness spec. (A negative-case list by design: these must stay
+// un-emitted, which is exactly what the discovery hook's fail-closed contract
+// guarantees for the positive direction.)
 export const REMOVED_FRESHNESS_SORT_PAGES = [
   "/data-freshness/stale/",
   "/data-freshness/volatility/",
 ] as const;
-
-// The P34.13 chrome pages (QW-11): branded error pages and the /terms forwarder.
-// They render the shell header/nav but a minimal chrome (no provenance/citation
-// module) and are noindex — in the axe + zero-JS sweeps like every public page.
-export const CHROME_PAGES = [
-  "/404.html",
-  "/403/",
-  "/410/",
-  "/terms/",
-] as const;
-
-// The full a11y surface for the axe sweep: the shell-layout pages,
-// the jurisdiction-conditional dossiers, the standalone dossier print export,
-// the freshness sort routes, and the curation pages (WCAG 2.2 AA everywhere,
-// SIG-UI-037 + P21.6).
-export const A11Y_PAGES = [
-  ...ALL_PAGES,
-  ...JURISDICTION_DOSSIER_PAGES,
-  ...FRESHNESS_SORT_PAGES,
-  ...CHROME_PAGES,
-  DOSSIER_PRINT,
-  ...CURATE_PAGES,
-] as const;
-
-// The three OPT-IN public interactive islands (P27.9, ADR-097). These are the ONLY
-// public pages that ship a hydration `<script>`; every other public page stays
-// zero-JS (SIG-UI-036/037). Each preserves its no-JS fallback (SIG-UI-050).
-export const ISLAND_PAGES = ["/map/", "/network/", "/search/"] as const;
-
-// Every OTHER public page that MUST still ship zero `<script>` (AC2). The `/curate/**`
-// island allowance (ADR-068) is proven separately in curate.nojs.spec.ts; the dossier
-// print export is a standalone document. This is the shell surface minus the islands.
-export const ZERO_JS_PUBLIC_PAGES = [
-  ...ALL_PAGES,
-  ...JURISDICTION_DOSSIER_PAGES,
-  ...FRESHNESS_SORT_PAGES,
-  ...CHROME_PAGES,
-  DOSSIER_PRINT,
-].filter((p) => !(ISLAND_PAGES as readonly string[]).includes(p)) as readonly string[];

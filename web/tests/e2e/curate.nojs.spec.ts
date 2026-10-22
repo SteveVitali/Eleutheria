@@ -8,6 +8,7 @@
 // authenticated curation API. Deciding, dispositioning, submitting and reverting all
 // work without JS.
 import { test, expect } from "@playwright/test";
+import { CURATE_PAGES } from "./pages";
 
 test("the review queue and compare/decide form render + submit without JS", async ({ page }) => {
   await page.goto("/curate/");
@@ -51,9 +52,10 @@ test("the contradiction, task and revert forms are native POST forms", async ({ 
 
 test("no /curate/ page ships client JavaScript despite the island allowance", async ({ page }) => {
   // These pages MAY carry a JS island (keyboard shortcuts/diff views) but the shipped
-  // build uses none, so the forms are guaranteed to work without JS.
-  const paths = ["/curate/", "/curate/submit/", "/curate/contradictions/", "/curate/tasks/", "/curate/revert/"];
-  for (const path of paths) {
+  // build uses none, so the forms are guaranteed to work without JS. P35.50:
+  // the sweep iterates the discovered T3 routes — a new curate page is covered
+  // by classification, never by someone remembering to extend a hand list.
+  for (const path of CURATE_PAGES) {
     const resp = await page.goto(path);
     const html = (await resp?.text()) ?? "";
     expect(html).not.toContain("<script");

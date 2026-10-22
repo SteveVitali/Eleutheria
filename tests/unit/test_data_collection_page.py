@@ -192,7 +192,11 @@ def test_page_states_the_contract_content() -> None:
 
 
 def test_page_sits_in_the_shell_registry() -> None:
-    # The route joins the a11y sweep + zero-JS assertion + shell checks by
-    # being listed in SHELL_PAGES (web/tests/e2e/pages.ts).
-    registry = (REPO_ROOT / "web/tests/e2e/pages.ts").read_text(encoding="utf-8")
-    assert f'"{ROUTE}"' in registry
+    # P35.50: a route joins the a11y sweep + script-policy + shell checks by
+    # CLASSIFICATION, never a hand list — /data-collection/ is registered T1
+    # in the page-type registry and pages.ts derives every sweep from the
+    # emitted page-types manifest (dist/page-types.json).
+    registry = (REPO_ROOT / "web/src/lib/page-types.ts").read_text(encoding="utf-8")
+    assert '"/data-collection/"' in registry
+    pages = (REPO_ROOT / "web/tests/e2e/pages.ts").read_text(encoding="utf-8")
+    assert "page-types.json" in pages and "DISCOVERED_ROUTES" in pages
