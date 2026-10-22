@@ -229,4 +229,81 @@ def test_emitted_row_key_is_stable_across_volatile_fields() -> None:
     a = _claim(row_index=0, page=1)
     b = _claim(row_index=4, page=7)
     assert emitted_row_key(a) == emitted_row_key(b)
+
+
+# --- SIG-INGEST-004 (P35.34): the bound versions seal identity -----------------
+#
+# §21.2 verbatim: "The claim's logical identity MUST include extractor_version
+# and normalizer_version." The withheld amendment would have dropped the MUST;
+# it stands. The sink seals the versions its evidence binding writes (the
+# record's declared extractor_version else the connector's, and the connector's
+# normalizer_version); the emitter side reproduces that seal so the emitted
+# digest is byte-identical to the minted one.
+
+
+def test_binding_version_changes_change_the_emitted_digest() -> None:
+    """Same input under a different extractor/normalizer version → a
+    genuinely new claim id (the MUST's behavioural form)."""
+    record = _claim()
+    v1 = emitted_claim_digest(record, connector_version="1.0.0")
+    v2 = emitted_claim_digest(record, connector_version="2.0.0")
+    assert v1 != v2
+    # And the sealed mint differs from the unsealed (pre-binding) shape.
+    assert v1 != emitted_claim_digest(record)
+
+
+def test_emitted_seal_matches_the_sink_seal() -> None:
+    """Emitter-side and sink-side minting under the same binding versions
+    stay byte-identical — the parity obligation extended to the seal."""
+    classes = predicate_temporal_classes()
+    record = _claim()
+    emitted = emitted_claim_digest(record, classes=classes, connector_version="1.4.2")
+    stored_side = content_digest(
+        record,
+        temporal_class=classes["camera_operator"],
+        extractor_version="1.4.2",
+        normalizer_version="1.4.2",
+    )
+    assert emitted == stored_side
+
+
+def test_record_declared_extractor_version_wins_over_the_connector_default() -> None:
+    """A record that declares its own extractor_version (the evidence map or
+    top-level) seals THAT version — the same precedence the sink's typed
+    binding records (``record.get('extractor_version') or
+    evidence.get('extractor_version') or connector_version``)."""
+    classes = predicate_temporal_classes()
+    record = _claim(extractor_version="special-3.1")
+    emitted = emitted_claim_digest(record, classes=classes, connector_version="1.0.0")
+    stored_side = content_digest(
+        record,
+        temporal_class=classes["camera_operator"],
+        extractor_version="special-3.1",
+        normalizer_version="1.0.0",
+    )
+    assert emitted == stored_side
+    # A different declared version is a different claim.
+    other = _claim(extractor_version="special-4.0")
+    assert emitted_claim_digest(other, classes=classes, connector_version="1.0.0") != emitted
+    # The evidence-map placement carries the same precedence — the emitted
+    # digest seals the declared version, not the connector default.
+    record_ev = _claim(evidence={"extractor_version": "special-3.1"})
+    assert emitted_claim_digest(record_ev, classes=classes, connector_version="1.0.0") == (
+        content_digest(
+            record_ev,
+            temporal_class=classes["camera_operator"],
+            extractor_version="special-3.1",
+            normalizer_version="1.0.0",
+        )
+    )
+
+
+def test_same_version_reingest_rebinds() -> None:
+    """Two re-observations under the SAME bound versions still re-bind — the
+    seal changes nothing about SIG-INGEST-003's volatile-field rule."""
+    a = _claim(row_index=0, page=1)
+    b = _claim(row_index=8, page=3)
+    assert emitted_claim_digest(a, connector_version="x-1") == emitted_claim_digest(
+        b, connector_version="x-1"
+    )
     assert emitted_row_key(a, ordinal=0) != emitted_row_key(a, ordinal=1)

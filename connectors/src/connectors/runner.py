@@ -890,6 +890,13 @@ class FetchRecord:
     fetches: int = 0
     resumed: list[Mapping[str, Any]] = field(default_factory=list)
     logical_run: str | None = None
+    #: Per-egress telemetry (P35.34 / PKG-12, SIG-CONF-009's input): the
+    #: ``PoliteFetcher.per_fetch`` rows verbatim — ``{url, kind, status, bytes,
+    #: fetched_at, duration_ms, outcome}`` with kind ``content``/``robots`` and
+    #: unevidenced fields absent. The report writer scrubs each URL through the
+    #: S-6 lane rules; this record is internal and keeps the raw URL (as
+    #: ``urls`` always has).
+    per_fetch: list[Mapping[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         """A JSON-serialisable dict; content is never included (§3.1, §17)."""
@@ -921,6 +928,7 @@ class FetchRecord:
             "fetches": self.fetches,
             "resumed": [dict(r) for r in self.resumed],
             "logical_run": self.logical_run,
+            "per_fetch": [dict(e) for e in self.per_fetch],
         }
 
 
@@ -978,9 +986,11 @@ class SourceRunReport:
 
 
 #: The record kinds a live run's fetch record reports per document (P26.6/.11/.15).
-#: A live PG run retains only these in memory (P31.4 / ADR-111).
+#: A live PG run retains only these in memory (P31.4 / ADR-111). ``quality_report``
+#: (P35.34 / SIG-CONF-009) carries the upstream's own count at fetch — the
+#: reconciliation pair's raw input — so it lands here too.
 _OUTCOME_RECORD_KINDS = frozenset(
-    {"agenda_document", "portal_document", "bill_query", "ted_eu_slice"}
+    {"agenda_document", "portal_document", "bill_query", "ted_eu_slice", "quality_report"}
 )
 
 
@@ -1206,6 +1216,7 @@ def _run_live(
                 robots_decisions=_robots_decisions(fetcher),
                 robots_disregarded=[dict(d) for d in fetcher.robots_disregarded],
                 content_drift=str(drift),
+                per_fetch=[dict(e) for e in fetcher.per_fetch],
             ),
             capture_dir / "live_runs",
         )
@@ -1230,6 +1241,7 @@ def _run_live(
                 robots_decisions=_robots_decisions(fetcher),
                 robots_disregarded=[dict(d) for d in fetcher.robots_disregarded],
                 politeness_refusal=f"{type(exc).__name__}: {exc}",
+                per_fetch=[dict(e) for e in fetcher.per_fetch],
             ),
             capture_dir / "live_runs",
         )
@@ -1259,11 +1271,26 @@ def _run_live(
         document_outcomes=[
             {
                 "url": r.get("raw_value") or r.get("url"),
+                "source_uri": r.get("source_uri"),
+                "record_kind": r.get("record_kind"),
                 "platform": r.get("platform"),
                 "tenant_id": r.get("tenant_id"),
                 "outcome": r.get("outcome"),
                 "matched_terms": r.get("matched_terms"),
                 "capture_digest": r.get("capture_digest"),
+                # P35.34 / SIG-CONF-009 — the upstream's own count at fetch and
+                # what the run held for that target (the reconciliation pair's
+                # raw inputs; absent fields stay absent, never zero-shaped).
+                "upstream_count": r.get("upstream_count"),
+                "row_count": r.get("row_count"),
+                "entry_count": r.get("entry_count"),
+                "subjects_held": r.get("subjects_held"),
+                "records_emitted": r.get("records_emitted") or r.get("claim_count"),
+                "difference_reason": r.get("difference_reason"),
+                "filtered": r.get("filtered"),
+                "withheld_rows": r.get("withheld_rows"),
+                "truncated": r.get("truncated"),
+                "timed_out": r.get("timed_out"),
                 **(
                     {
                         # P26.11 — the per-jurisdiction × per-family sweep
@@ -1322,6 +1349,7 @@ def _run_live(
         fetches=report.fetches,
         resumed=[dict(r) for r in report.resumed],
         logical_run=getattr(sink, "logical_run", None),
+        per_fetch=[dict(e) for e in fetcher.per_fetch],
     )
     write_fetch_record(fetch_record, capture_dir / "live_runs")
     # P36.74 (WV-10/ADR-188): the probe run's single sig.probe-run/1 record —

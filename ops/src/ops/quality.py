@@ -413,6 +413,78 @@ def eval_gq18(ctx: EvalContext) -> Measurement:
     )
 
 
+def eval_gq19(ctx: EvalContext) -> Measurement:
+    """GQ-19 — upstream count reconciliation (SIG-CONF-009 / C11): the share
+    of recorded reconciliation pairs classified ``unexplained`` (the writer
+    assigns that class only above the 1 % threshold, so the share is the
+    check's fail-rate).
+
+    The recording surface is ``ingest_run_report.upstream_reconciliation``
+    (P35.34 — per-target pairs from the FetchRecord's declared upstream
+    counts plus the run-level pair). The check stays ``report`` mode —
+    promotion to ``enforce`` is CONF-01's placement decision, not this
+    evaluator's. A spine without the P35.34 column, or with zero recorded
+    pairs, is honestly not_evaluable — never a pass.
+    """
+    try:
+        rows = _rows(
+            ctx.conn,
+            """
+            SELECT report_id, source_id, upstream_reconciliation
+            FROM ingest_run_report
+            WHERE upstream_reconciliation IS NOT NULL
+            """,
+        )
+    except Exception:  # noqa: BLE001 — the pre-P35.34 spine answers honestly
+        return _not_evaluable(
+            "GQ-19",
+            "ingest_run_report.upstream_reconciliation is not deployed on this spine",
+        )
+    offered = evaluated = in_range = explained = unexplained = not_eval_pairs = 0
+    offenders: list[dict[str, Any]] = []
+    for row in rows:
+        rec = row.get("upstream_reconciliation")
+        pairs = rec.get("pairs") if isinstance(rec, Mapping) else None
+        for pair in pairs or []:
+            if not isinstance(pair, Mapping):
+                continue
+            offered += 1
+            cls = str(pair.get("classification") or "")
+            if cls == "unexplained":
+                unexplained += 1
+                if len(offenders) < 25:
+                    offenders.append(
+                        {
+                            "report_id": str(row.get("report_id")),
+                            "source_id": row.get("source_id"),
+                            "target": pair.get("target"),
+                            "difference_pct": pair.get("difference_pct"),
+                        }
+                    )
+            elif cls == "explained":
+                explained += 1
+            elif cls == "in_range":
+                in_range += 1
+            else:
+                not_eval_pairs += 1
+            if cls in ("in_range", "explained", "unexplained"):
+                evaluated += 1
+    return Measurement(
+        check_id="GQ-19",
+        offered=offered,
+        evaluated=evaluated,
+        measured=(unexplained / evaluated) if evaluated else None,
+        detail={
+            "reports_with_reconciliation": len(rows),
+            "in_range": in_range,
+            "explained": explained,
+            "unexplained": unexplained,
+            "not_evaluable_pairs": not_eval_pairs,
+            "unexplained_sample": offenders,
+        },
+    )
+
+
 def eval_gq21(ctx: EvalContext) -> Measurement:
     """GQ-21 — accountability join rate: share of deployment entities with an
     operator claim (the procurement-buyer half joins when its surface lands)."""
@@ -730,7 +802,6 @@ SEAM_DEFERRALS: dict[str, str] = {
     "GQ-12": "the lineage/independence-class seam lands with CONF-04 (P35.25)",
     "GQ-16": "the one-resolved join consumes the V6 coverage check (P35.20a/b)",
     "GQ-17": "the R placement consumes the V8 attribution check (P34.21a/b)",
-    "GQ-19": "upstream-count run telemetry lands with PKG-12/TX-04 (P35.32/P35.34)",
     "GQ-20": "the release diff consumes the V14 diff (P35.58)",
     "GQ-23": "collapse tiers do not exist yet (CONF-07a / P35.46)",
     "GQ-25": "collapse/cluster comparisons need CONF-07a (P35.46)",
@@ -749,6 +820,7 @@ SPINE_EVALUATORS: dict[str, Evaluator] = {
     "GQ-13": eval_gq13,
     "GQ-15": eval_gq15,
     "GQ-18": eval_gq18,
+    "GQ-19": eval_gq19,
     "GQ-21": eval_gq21,
     "GQ-24": eval_gq24,
 }

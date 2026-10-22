@@ -69,7 +69,7 @@ from policy.eligibility import (
 
 from policy import intake as pint
 
-from .claim_sink import content_digest, predicate_temporal_class
+from .claim_sink import bound_versions, content_digest, predicate_temporal_class
 from .dispositions import record_disposition
 from .evidence_audit import row_to_dict
 from .identity_guard import CURATOR_HANDLE_SCHEME, resolve_identities
@@ -706,9 +706,16 @@ class PgRecoveryApplier:
         # acquisition columns stay out, the predicate's registry class governs
         # the temporal qualifier, payload_version records the normalisation.
         payload["payload_version"] = PAYLOAD_VERSION
+        # SIG-INGEST-004 / P35.34: seal the versions the superseded claim's
+        # evidence binding recorded — the repair claim re-binds the same
+        # extraction, so its identity carries that extraction's versions (an
+        # unbound asserted claim contributes none).
+        bound_extractor_v, bound_normalizer_v = bound_versions(self._conn, old["claim_id"])
         payload["content_digest"] = content_digest(
             {k: v for k, v in payload.items() if k != "content_digest"},
             temporal_class=predicate_temporal_class(self._conn, str(payload["predicate_id"])),
+            extractor_version=bound_extractor_v,
+            normalizer_version=bound_normalizer_v,
         )
         cols = list(_CLAIM_INSERT_COLUMNS)
         params: list[Any] = []

@@ -382,6 +382,11 @@ def _target_digest_candidates(conn: Any, record: Mapping[str, Any]) -> list[str]
     registry). Locating by BOTH keeps a packet addressable regardless of which
     scheme minted its target — either is the row's recorded identity, never a
     recomputed/rewritten one.
+
+    P35.34 / SIG-INGEST-004: a sink minted post-P35.34 seals the extraction
+    binding's ``(extractor_version, normalizer_version)`` into the digest, so
+    every version pair the spine records is a further candidate scheme —
+    enumerated from ``extraction``, never guessed.
     """
     candidates = [legacy_row_digest(dict(record))]
     predicate_id = record.get("predicate_id")
@@ -389,6 +394,17 @@ def _target_digest_candidates(conn: Any, record: Mapping[str, Any]) -> list[str]
     identity = content_digest(dict(record), temporal_class=temporal_class)
     if identity != candidates[0]:
         candidates.append(identity)
+    for row in conn.execute(
+        "SELECT DISTINCT extractor_version, normalizer_version FROM extraction"
+    ).fetchall():
+        sealed = content_digest(
+            dict(record),
+            temporal_class=temporal_class,
+            extractor_version=row[0],
+            normalizer_version=row[1],
+        )
+        if sealed not in candidates:
+            candidates.append(sealed)
     return candidates
 
 

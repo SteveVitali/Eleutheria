@@ -198,7 +198,13 @@ def predicate_temporal_class(conn: Any, predicate_id: str) -> PredicateClass:
     return _predicate_class_of(resolution_strategy=str(row[0]), is_windowed=bool(row[1]))
 
 
-def content_digest(claim: Mapping[str, Any], *, temporal_class: PredicateClass = "ref") -> str:
+def content_digest(
+    claim: Mapping[str, Any],
+    *,
+    temporal_class: PredicateClass = "ref",
+    extractor_version: str | None = None,
+    normalizer_version: str | None = None,
+) -> str:
     """The claim identity digest — ``evidence.claim_identity.claim_digest``.
 
     P35.22 (F-504, SIG-INGEST-003/004): the digest covers only what the claim
@@ -208,8 +214,52 @@ def content_digest(claim: Mapping[str, Any], *, temporal_class: PredicateClass =
     ``obs``/``ref`` class is resolved from ``vocab_predicate`` by the sink;
     callers passing no class get ``ref`` (identical for any record that carries
     no temporal qualifier).
+
+    P35.34 / SIG-INGEST-004: the identity MUST include ``extractor_version``
+    and ``normalizer_version``. ``PgClaimSink`` passes the versions its
+    evidence binding writes; a correction path passes the versions the
+    superseded claim's binding recorded (:func:`bound_versions`), and a mint
+    with no extraction binding passes none — honestly unsealed.
     """
-    return _claim_digest(claim, temporal_class=temporal_class)
+    return _claim_digest(
+        claim,
+        temporal_class=temporal_class,
+        extractor_version=extractor_version,
+        normalizer_version=normalizer_version,
+    )
+
+
+def bound_versions(conn: Any, claim_id: Any) -> tuple[str | None, str | None]:
+    """The ``(extractor_version, normalizer_version)`` a stored claim's evidence
+    binding records — the versions a correction-minted claim seals into its own
+    identity (SIG-INGEST-004).
+
+    A corrected/re-keyed claim stands on the SAME extraction as the claim it
+    revises: its logical identity carries that extraction's versions, so the
+    corrected row and any re-ingest under the same extractor dedup identically.
+    ``(None, None)`` when no binding exists (a pure asserted claim — no
+    extractor ran, the keys stay honestly absent).
+    """
+    row = conn.execute(
+        "SELECT ce.extractor_version AS bound_extractor,"
+        " e.extractor_version AS extraction_extractor, e.normalizer_version"
+        " FROM claim_evidence ce"
+        " LEFT JOIN extraction e ON e.extraction_id = ce.extraction_id"
+        " WHERE ce.claim_id = %s"
+        " ORDER BY ce.bound_at DESC NULLS LAST LIMIT 1",
+        (claim_id,),
+    ).fetchone()
+    if row is None:
+        return None, None
+    if hasattr(row, "keys"):
+        bound_extractor, extraction_extractor, normalizer = (
+            row["bound_extractor"],
+            row["extraction_extractor"],
+            row["normalizer_version"],
+        )
+    else:
+        bound_extractor, extraction_extractor, normalizer = row[0], row[1], row[2]
+    return bound_extractor or extraction_extractor, normalizer
 
 
 def legacy_row_digest(claim_row: Mapping[str, Any]) -> str:
@@ -1775,8 +1825,17 @@ class PgClaimSink:
             return  # quarantined inside _lineage_for
         self._staged.append(
             _Staged(
+                # SIG-INGEST-004 / P35.34: the identity seals the binding
+                # versions — the extractor version the claim_evidence link
+                # records (the record's declared one, else the connector's)
+                # and the normalizer version the extraction row records —
+                # so a better parser over identical input mints a genuinely
+                # new claim rather than silently re-binding.
                 digest=content_digest(
-                    claim, temporal_class=self._predicate_temporal_class(predicate)
+                    claim,
+                    temporal_class=self._predicate_temporal_class(predicate),
+                    extractor_version=typed.extractor_version or self._connector_version,
+                    normalizer_version=self._connector_version,
                 ),
                 subject=subject,
                 subject_type=subject_type,

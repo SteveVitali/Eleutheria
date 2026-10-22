@@ -9,10 +9,10 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key ≤ 256 B; the generated `returnPass:` id list rides the B3 V2 bound (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus:   IN_PROGRESS                           # P35.33 landed (311); live leg QUEUED
-nextTicket:      P35.34                              # row 312
-lastCompleted:   P35.33                              # row 311
-blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #326@ccbb6a1c 5/5 (39227760200)
+projectStatus:   IN_PROGRESS                           # P35.34 landed (312); live leg QUEUED
+nextTicket:      P35.35                              # row 313
+lastCompleted:   P35.34                              # row 312
+blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #327@362cf6d3 5/5 (39255645721)
 pauseRequested:  false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
@@ -22,13 +22,13 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.33-run-capture-issue-export # base r11/P35.32-…
+chainTip:        r11/P35.34-run-telemetry-and-binding-version-test # base r11/P35.33-…
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-19T09:30Z
+updatedAt:       2026-10-19T12:30Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1096,3 +1096,7 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 
 - 2026-10-19 — P35.33 correction — the `a614a39c` post-closeout record's kind slot parsed `record repair` (not in `phase_log_kinds.txt`; docs-red on `844f34fe`, run 39236656559, `docs-check-ledger` V4). The `dc11099f` repair rewrote the line's kind token to the registered `post-closeout repair` — payload bytes unchanged — which trips the staged-append-only guard: a kind slot is unparseable metadata on the same line and no appended entry can fix it, the P35.1a1 precedent's class; recorded verbatim, not smoothed · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-19 — P35.34 dispatch boundary-confirm — `ci: pass #326@42a74ccd` 5/5 green head-bound (run 39237253105: python 20m41s, web 14m54s, composed 3m7s, docs 2m3s, security 37s; read 10:46:34Z `logs/ci-P35.34-pre-dispatch.json`) · stack verbatim waived `blockedOn` baseline · three record-arc docs-reds recorded verbatim in `runs/P35.33.md` (stale projection ×1, changelog_gate ×1, kind-vocabulary ×1 — repaired forward via registered kinds) · dispatching P35.34 (312 — per-fetch telemetry + SIG-INGEST-004 binding-version test; gate: none; not OM-20) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-19 — P35.34 ticket — `ci: pass #327@9bcf65ef` 5/5 green head-bound (run 39248860522: python 20m51s, web 13m43s, composed 3m15s, docs 1m29s, security 31s; boundary read 12:28:54Z `reports/ci/p35_34_pr327.json` — stack pass except verbatim waived `blockedOn: CI fail on #299@19ed46d (docs)`) · `runs/P35.34.md` · row 312 per-fetch telemetry + upstream-count pair + the SIG-INGEST-004 binding (`sig.claim-payload/2` seals extractor/normalizer versions — the withheld amendment never applied; correction/re-key dedups via `bound_versions`; S-6 scrub at write — host always, URL only on open lanes, else `path_sha256`; `eval_gq19` measures, report mode kept; `D-P35.31-1` keeps owner row 313) · pushed heads verbatim `df7ed1c9` impl (docs-red run 39248647002 — malformed draft stamp + stale projection manifest) → `9bcf65ef` repair + first boundary record 5/5 → closeout/record heads follow · no live legs, no production mutation · chainTip → r11/P35.34-… · next → P35.35 (313) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-19 — P35.34 correction — record head `25e2c880` docs-red (`check_coverage_matrix` SIG-ENG-041 — the landed row's two open verdicts still routed to it: SIG-INGEST-004 open-PARTIAL + SIG-CONF-009 open-MISSING; run 39252949270) → re-verdicts recorded in-place per the matrix convention: SIG-INGEST-004 PARTIAL → MET (implementation required/achieved, the binding tested — versions seal `sig.claim-payload/2`), SIG-CONF-009 MISSING → PARTIAL re-routed to `BL-084` with `achieved_domain: composed-db` (hosted leg + the "once the check is enforced" binding owed — never claimed); matrix re-verified 820 rows/1,694 evidence · `ci:` lands at the next record entry (repair head `a8dd8224` pushed, its head-bound read owed — why: `runs/P35.34.md`) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-19 — P35.34 post-closeout record — `ci: pass #327@362cf6d` 5/5 green head-bound (run 39255645721: python 20m17s, web 14m4s, composed 3m10s, docs 1m53s, security 30s; boundary re-read 13:17:09Z `reports/ci/p35_34_pr327.json` — stack pass except verbatim waived `blockedOn: CI fail on #299@19ed46d (docs)`) · every pushed head verbatim in `runs/P35.34.md` (`df7ed1c9` impl → `9bcf65ef` stamp/projection repair → `25e2c880` closeout → `a8dd8224` matrix re-verdicts → `362cf6d3` kind-slot repair; docs-reds on `df7ed1c9`/`25e2c880`/`a8dd8224` — malformed draft stamp + stale projection, coverage-matrix routing, kind-vocabulary — each repaired forward via registered kinds) · PR #327 stays open on the stack for operator integration · chainTip → r11/P35.34-… · next → P35.35 (313) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-19 — P35.35 dispatch boundary-confirm — `ci: pass #327@438bdd39` 5/5 green head-bound (run 39259060439: python 15m19s, web 13m21s, composed 3m58s, docs 1m49s, security 34s; read 13:41:11Z `logs/ci-P35.35-pre-dispatch.json`) · stack verbatim waived `blockedOn` baseline · docs-red arc recorded verbatim in `runs/P35.34.md` (stamp, coverage-matrix, kind-vocab — repaired forward) · SIG-CONF-009 stays PARTIAL by design (hosted leg + enforcement owed) · dispatching P35.35 (313 — registry lanes + source metadata export; GATE-P B-19/A-8 recorded; not OM-20; owns D-P35.31-1) · harness: devin-desktop/swe-2-high/subagent

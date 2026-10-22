@@ -93,13 +93,24 @@ def test_the_sink_writes_entity_ref_claims_beside_unchanged_text_claims(clean_ds
     from partner_fixtures import golden_digest
 
     records = fixture_records()
+
+    def expected_digest(r: dict[str, Any]) -> str:
+        # P35.34 / SIG-INGEST-004: the sink seals its binding versions into the
+        # digest — the sinks above run the default connector_version "0", and a
+        # record's own declared extractor_version wins, exactly as minted.
+        return content_digest(
+            r,
+            extractor_version=str(r.get("extractor_version") or "0"),
+            normalizer_version="0",
+        )
+
     text = {
-        content_digest(r)
+        expected_digest(r)
         for rows in records.values()
         for r in rows
         if r.get("record_kind", "claim") == "claim" and "object_ref" not in r
     }
-    refs = {content_digest(r) for rows in records.values() for r in rows if "object_ref" in r}
+    refs = {expected_digest(r) for rows in records.values() for r in rows if "object_ref" in r}
     golden = {d for v in json.loads(GOLDEN.read_text())["runs"].values() for d in v}
     # The text claims are the base-commit records — compared with the stamped
     # `vocab_version` normalized back (a §20 vocabulary migration restamps record

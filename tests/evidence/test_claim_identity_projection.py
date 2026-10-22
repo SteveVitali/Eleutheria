@@ -212,3 +212,79 @@ def test_digest_base_is_pure_projection() -> None:
     assert base["qualifiers"] == [{"qualifier_id": "q1"}]
     assert "observed_at" not in base
     assert base["payload_version"] == PAYLOAD_VERSION
+
+
+# --- SIG-INGEST-004 (P35.34): the binding versions are identity ----------------
+#
+# §21.2 verbatim: "The claim's logical identity MUST include extractor_version
+# and normalizer_version." The withheld amendment would have dropped the MUST;
+# it stands — these tests pin its behavioural form (same input, different
+# binding version → a genuinely new claim id, never a silent re-bind).
+
+
+def test_extractor_version_is_identity() -> None:
+    """Same record minted under extractor v1 vs v2 → different digests."""
+    record = _claim()
+    v1 = claim_digest(record, extractor_version="extractor-1.0.0", normalizer_version="norm-1.0.0")
+    v2 = claim_digest(record, extractor_version="extractor-2.0.0", normalizer_version="norm-1.0.0")
+    assert v1 != v2
+
+
+def test_normalizer_version_is_identity() -> None:
+    """Same record minted under normalizer v1 vs v2 → different digests."""
+    record = _claim()
+    v1 = claim_digest(record, extractor_version="extractor-1.0.0", normalizer_version="norm-1.0.0")
+    v2 = claim_digest(record, extractor_version="extractor-1.0.0", normalizer_version="norm-2.0.0")
+    assert v1 != v2
+
+
+def test_same_versions_rebind() -> None:
+    """Unchanged versions over identical input preserve parity — the seal
+    never churns identity on its own."""
+    record = _claim(row_index=0, retrieved_at="2026-10-01T00:00:00Z")
+    again = _claim(row_index=9, retrieved_at="2026-10-19T00:00:00Z")
+    assert claim_digest(record, extractor_version="e-1", normalizer_version="n-1") == claim_digest(
+        again, extractor_version="e-1", normalizer_version="n-1"
+    )
+
+
+def test_sealed_versions_land_in_the_digest_base() -> None:
+    base = digest_base(
+        _claim(),
+        temporal_class="ref",
+        extractor_version="extractor-1.0.0",
+        normalizer_version="norm-1.0.0",
+    )
+    assert base["extractor_version"] == "extractor-1.0.0"
+    assert base["normalizer_version"] == "norm-1.0.0"
+
+
+def test_record_carried_versions_enter_identity() -> None:
+    """A record that itself declares the versions (top-level or under
+    ``evidence``) digests on them — they are content, not volatile
+    acquisition metadata."""
+    a = _claim(extractor_version="e-1")
+    b = _claim(extractor_version="e-2")
+    assert claim_digest(a) != claim_digest(b)
+    c = _claim(evidence={"extractor_version": "e-1"})
+    d = _claim(evidence={"extractor_version": "e-2"})
+    assert claim_digest(c) != claim_digest(d)
+
+
+def test_the_seal_overrides_a_record_carried_value() -> None:
+    """The bound version (what the evidence binding writes) wins over
+    whatever the record happened to carry — the identity names the version
+    actually bound."""
+    record = _claim(extractor_version="carried-e")
+    sealed = claim_digest(record, extractor_version="bound-e")
+    carried = claim_digest(_claim(extractor_version="bound-e"))
+    assert sealed == carried
+    assert sealed != claim_digest(record)
+
+
+def test_unsealed_mint_keeps_the_keys_absent() -> None:
+    """An asserted-origin mint (no extraction binding) seals nothing — the
+    keys stay honestly absent, never a fabricated default."""
+    base = digest_base(_claim(), temporal_class="ref")
+    assert "extractor_version" not in base
+    assert "normalizer_version" not in base

@@ -56,6 +56,19 @@ The composition is declared, not implicit:
   which normalisation produced it — a future change to this function is a
   declared new shape (a new version mints distinct digests by construction),
   never silent drift. Pre-versioning rows carry ``payload_version IS NULL``.
+* **Binding versions are identity (SIG-INGEST-004, P35.34).** The claim's
+  logical identity includes ``extractor_version`` and ``normalizer_version`` —
+  the versions of the code that extracted and normalised the claim, so a
+  better parser over identical input produces genuinely new claim rows
+  rather than silently re-binding. The mint seals the versions the evidence
+  binding records (the record's declared ``extractor_version`` else the
+  connector's; the connector's ``normalizer_version``), under the canonical
+  key names — a caller-supplied seal overrides a record-carried value so the
+  identity names the version actually bound. Paths minting a claim with no
+  extraction binding (asserted-origin corrections) pass none and the keys
+  stay honestly absent. The seal lands for NEW minting only — stored digests
+  are never recomputed or rewritten (``sig.claim-payload/2`` declares the
+  new shape).
 """
 
 from __future__ import annotations
@@ -71,7 +84,9 @@ from typing import Any, Literal
 #: The declared payload-normalisation version. Written onto ``claim.payload_version``
 #: and sealed into the digest base; bump on ANY change to this module's
 #: canonicalisation so a new shape mints distinctly by construction.
-PAYLOAD_VERSION = "sig.claim-payload/1"
+#: ``/2`` (P35.34 / SIG-INGEST-004): the digest base gains the sealed binding
+#: versions (``extractor_version`` / ``normalizer_version``) — a new shape.
+PAYLOAD_VERSION = "sig.claim-payload/2"
 
 #: The two registry predicate classes for identity. ``obs`` — the observational /
 #: windowed family (SIG-RECON-011): the temporal qualifier is part of what the
@@ -309,12 +324,24 @@ def canonical_qualifiers(qualifiers: Any, *, temporal_class: PredicateClass) -> 
     )
 
 
-def digest_base(record: Mapping[str, Any], *, temporal_class: PredicateClass) -> dict[str, Any]:
+def digest_base(
+    record: Mapping[str, Any],
+    *,
+    temporal_class: PredicateClass,
+    extractor_version: str | None = None,
+    normalizer_version: str | None = None,
+) -> dict[str, Any]:
     """The identity projection of one claim record — what the digest covers.
 
     Volatile acquisition keys are dropped at every level, the temporal
     qualifier is class-conditional, ``value_json`` is canonicalised as opaque
     asserted content, and ``payload_version`` seals the scheme.
+
+    ``extractor_version`` / ``normalizer_version`` (P35.34 / SIG-INGEST-004)
+    seal the binding versions into identity under their canonical key names —
+    a supplied seal overrides a record-carried value so the base names the
+    version actually bound, and ``None`` leaves whatever the record carries
+    (a record without the keys mints unsealed — asserted-origin mints).
     """
     base: dict[str, Any] = {}
     for key, value in sorted(record.items(), key=lambda item: str(item[0])):
@@ -337,20 +364,40 @@ def digest_base(record: Mapping[str, Any], *, temporal_class: PredicateClass) ->
                 # Same as _project: an all-volatile sub-mapping is an absent key.
                 continue
             base[str(key)] = projected
+    if extractor_version is not None:
+        base["extractor_version"] = _canonical_scalar(extractor_version)
+    if normalizer_version is not None:
+        base["normalizer_version"] = _canonical_scalar(normalizer_version)
     base["payload_version"] = PAYLOAD_VERSION
     return base
 
 
-def claim_digest(record: Mapping[str, Any], *, temporal_class: PredicateClass = "ref") -> str:
+def claim_digest(
+    record: Mapping[str, Any],
+    *,
+    temporal_class: PredicateClass = "ref",
+    extractor_version: str | None = None,
+    normalizer_version: str | None = None,
+) -> str:
     """The sha256 over a claim record's identity — the ``content_digest``.
 
     ``temporal_class`` is the predicate's registry class (``obs`` keeps the
     temporal qualifier in identity; ``ref`` drops it). Callers that never
     resolve the registry get ``ref`` — identical for any record that carries no
     temporal qualifier, and the conservative merge direction for one that does.
+
+    ``extractor_version`` / ``normalizer_version`` (SIG-INGEST-004) seal the
+    binding versions into identity — the sink passes the versions its
+    extraction/evidence-binding writes; a caller with none to bind leaves
+    them out.
     """
     payload = json.dumps(
-        digest_base(record, temporal_class=temporal_class),
+        digest_base(
+            record,
+            temporal_class=temporal_class,
+            extractor_version=extractor_version,
+            normalizer_version=normalizer_version,
+        ),
         sort_keys=True,
         ensure_ascii=False,
         separators=(",", ":"),
