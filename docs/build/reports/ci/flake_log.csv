@@ -38,3 +38,6 @@ date,pr,head_sha,check,flake_id,run_id,attempt,outcome
 2026-10-21T05:25,338,1aedaecf,python,TRACEMALLOC-PEAK-1,39520363036,4,success (last authorized rerun — intermittent environmental flake confirmed; test since repaired to a deterministic retained-bytes measurement in P35.41a)
 2026-10-21T05:25,339,9197da78,docs,RECORDED-CI-INFLIGHT-1,39549439729,1,failure (verify-recorded-ci ran while the base-head re-run 39520363036 a4 was still in flight — conclusion None vs the recorded pass; not a content defect)
 2026-10-21T06:01,339,9197da78,docs,RECORDED-CI-INFLIGHT-1,39549439729,2,success (rerun after the probe concluded — 5/5 green head-bound)
+2026-10-22T03:13:55Z,345,26ea762db26a164efc0db55ee99d5e812a08522f,security,NPM-AUDIT-503-1,39714878665,1,failure
+2026-10-22T03:13:55Z,345,26ea762db26a164efc0db55ee99d5e812a08522f,security,NPM-AUDIT-503-1,39714878665,2,rerun-requested
+2026-10-22T03:28:20Z,345,26ea762db26a164efc0db55ee99d5e812a08522f,security,NPM-AUDIT-503-1,39714878665,2,rerun-taken (the 03:13:55Z rerun-requested was refused — workflow still in flight; logged pre-execution; this manual gh rerun is the head one actual re-run per B-15)
