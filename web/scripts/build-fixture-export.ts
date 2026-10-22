@@ -18,9 +18,10 @@
  * Run:  node <esbuild-bundled>.mjs <outDir>          (see `npm run export:fixtures`)
  */
 
-import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { MAP_LAYERS, partitionByLocatability } from "../src/lib/map";
 import {
@@ -51,7 +52,25 @@ import { DEFAULT_PROVENANCE } from "../src/lib/provenance";
 import { DOSSIERS } from "../src/lib/dossier-fixture";
 import { JURISDICTION_DOSSIERS } from "../src/lib/dossier-jurisdiction-fixture";
 import { LEVERAGE_METRIC_FIXTURE } from "../src/lib/leverage-fixture";
+import { SOURCES_FIXTURE } from "../src/lib/sources";
+import { TERMS_DISCLOSURE_FIXTURE } from "../src/lib/terms-disclosure";
 import { AS_OF, RULESET_VERSION } from "../src/lib/fixtures";
+
+// The repository root — import.meta.url is NOT stable across the esbuild
+// bundle (`export:fixtures` emits to node_modules/.cache/), so walk up to the
+// uv.lock anchor the data layer's repoRoot() uses.
+function repoRoot(): string {
+  let dir = fileURLToPath(new URL(".", import.meta.url));
+  for (;;) {
+    if (existsSync(join(dir, "uv.lock"))) return dir;
+    const parent = join(dir, "..");
+    if (parent === dir) {
+      throw new Error("repoRoot: walked above the bundle without finding uv.lock");
+    }
+    dir = parent;
+  }
+}
+const REPO_ROOT = repoRoot();
 
 const outDir = process.argv[2];
 if (!outDir) {
@@ -62,8 +81,18 @@ if (!outDir) {
 const webDir = join(outDir, "web");
 mkdirSync(webDir, { recursive: true });
 
+// Every artifact the harness writes — enumerated into the release manifest at
+// the end so export-mode checks (check-figures' manifest verification) see the
+// same listed-artifact set the real `sig-exports build` manifest records.
+const writtenArtifacts: Array<{ path: string; compartment: string; license: string }> = [];
+
 function write(name: string, payload: unknown): void {
   writeFileSync(join(webDir, name), JSON.stringify(payload, null, 2) + "\n", "utf-8");
+  writtenArtifacts.push({
+    path: `web/${name}`,
+    compartment: "sig_graph",
+    license: "CC-BY-4.0",
+  });
 }
 
 // The map's per-compartment PMTiles archives the export-tiles Astro integration copies
@@ -112,31 +141,6 @@ try {
   console.warn(
     "export:fixtures: `sig-exports tiles` could not run — the bundle ships no tile " +
       "archive (SIG_DATA_SOURCE=export builds will fail loud). Run `uv sync` first.",
-  );
-}
-
-// The release manifest at the export-dir ROOT (the same location `sig-exports build
-// --from-spine` writes it, exports/spine_export.py). The site reads its belief-pinned
-// citation defaults (as_of / ruleset) from `reproducibility_inputs` (P27.6, data.ts
-// getSiteMetadata). Only that subset is fixture-derivable; the real manifest also
-// carries checksums + compartment licences + PROV-O. Leave a real `--from-spine`
-// manifest in place when overlaying one.
-if (!existsSync(join(outDir, "manifest.json"))) {
-  writeFileSync(
-    join(outDir, "manifest.json"),
-    JSON.stringify(
-      {
-        reproducibility_inputs: {
-          as_of_snapshot: AS_OF.as_of_world,
-          as_of_belief: AS_OF.as_of_belief,
-          ruleset_version: RULESET_VERSION,
-        },
-        artifacts: tileArtifacts,
-      },
-      null,
-      2,
-    ) + "\n",
-    "utf-8",
   );
 }
 
@@ -275,5 +279,53 @@ write(join("presentation", `jurisdiction_dossiers.json`), JURISDICTION_DOSSIERS)
 
 if (!existsSync(join(webDir, "dossiers.json"))) write("dossiers.json", DOSSIERS);
 if (!existsSync(join(webDir, "leverage.json"))) write("leverage.json", LEVERAGE_METRIC_FIXTURE);
+
+// P35.37 (SIG-TRANSP-013, J3 §5.4): the figure-evidence artifacts —
+// `web/sources.json` (the sig.source-licence-table/1 the /sources/ figures
+// point at; fixture bytes are the committed fixture table) and
+// `web/evaluation.json` (the sig.resolution-eval/1 record — the data layer
+// reads it verbatim in export mode, so an export-mode build exercises the
+// real release-artifact path).
+write("sources.json", { schema: "sig.source-licence-table/1", rows: SOURCES_FIXTURE });
+write(
+  "evaluation.json",
+  JSON.parse(
+    readFileSync(
+      join(REPO_ROOT, "exports", "src", "exports", "data", "resolution_eval.json"),
+      "utf-8",
+    ),
+  ),
+);
+// The express-terms disclosure (sig.terms-disclosure/1) — a figure artifact on
+// /sources/; the data layer reads `web/terms_disclosure.json` in export mode.
+write("terms_disclosure.json", TERMS_DISCLOSURE_FIXTURE);
+
+// The release manifest at the export-dir ROOT (the same location `sig-exports build
+// --from-spine` writes it, exports/spine_export.py) — written LAST so `artifacts`
+// enumerates every file the harness emits: P35.37's figure-evidence check verifies
+// each figure's `data-artifact` against this list in export mode, so a path the
+// manifest does not name fails LOUD. The site reads its belief-pinned citation
+// defaults (as_of / ruleset) from `reproducibility_inputs` (P27.6, data.ts
+// getSiteMetadata). Only that subset is fixture-derivable; the real manifest also
+// carries checksums + compartment licences + PROV-O. Leave a real `--from-spine`
+// manifest in place when overlaying one.
+if (!existsSync(join(outDir, "manifest.json"))) {
+  writeFileSync(
+    join(outDir, "manifest.json"),
+    JSON.stringify(
+      {
+        reproducibility_inputs: {
+          as_of_snapshot: AS_OF.as_of_world,
+          as_of_belief: AS_OF.as_of_belief,
+          ruleset_version: RULESET_VERSION,
+        },
+        artifacts: [...tileArtifacts, ...writtenArtifacts],
+      },
+      null,
+      2,
+    ) + "\n",
+    "utf-8",
+  );
+}
 
 console.log(`fixture export bundle written to ${outDir}`);

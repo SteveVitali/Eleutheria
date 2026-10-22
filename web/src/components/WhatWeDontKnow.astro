@@ -9,17 +9,23 @@
 // the single absence hatch (SIG-UI-007), clickable to a research task — a gap is an
 // invitation, not a dead end. NO_EVIDENCE_FOUND gaps name the sources searched.
 import AbsenceHatch from "./AbsenceHatch.astro";
+import Figure from "./Figure.astro";
 import { ABSENCE_KIND_META } from "../lib/epistemic";
 import { NO_RECORD_IN_SIG } from "../lib/dossier";
 import type { Gap } from "../lib/dossier";
+// P35.37 (SIG-TRANSP-013): a gap label carrying a numeral is a dossier-class
+// figure — the page passes its registry specs keyed `gap-<variant>-<i>`.
+import type { FigureSpec } from "../lib/figures";
 
 interface Props {
   gaps: Gap[];
   /** A short DOM-id-safe discriminator so the summary and section copies differ. */
   variant: string;
+  /** The page's figure registry (id → spec); absent → the pre-P35.37 render. */
+  specs?: ReadonlyMap<string, FigureSpec>;
 }
 
-const { gaps, variant } = Astro.props;
+const { gaps, variant, specs } = Astro.props;
 ---
 
 {gaps.length === 0 && (
@@ -29,27 +35,35 @@ const { gaps, variant } = Astro.props;
   </p>
 )}
 <ul class="sig-gaps" data-testid={`what-we-dont-know-${variant}`}>
-  {gaps.map((g) => (
-    <li class="sig-gaps__item" data-gap-kind={g.kind}>
-      <span class="sig-gaps__label">{g.label}</span>
-      {" "}
-      <AbsenceHatch
-        kind={g.kind}
-        subject_id={g.subject_id}
-        predicate_id={g.predicate_id}
-        predicate_label={g.label}
-      />
-      {g.kind === "NO_EVIDENCE_FOUND" && g.sources_searched && (
-        <>
-          {" "}
-          <span class="sig-gaps__searched">
-            Sources searched: {g.sources_searched.join(", ")}.
-          </span>
-        </>
-      )}
-      {g.note && <span class="sig-gaps__note"> — {g.note}</span>}
-      {" "}
-      <span class="sig-visually-hidden">{ABSENCE_KIND_META[g.kind].meaning}</span>
-    </li>
-  ))}
+  {gaps.map((g, gi) => {
+    const spec = specs?.get(`gap-${variant}-${gi}`);
+    const body = (
+      <>
+        <span class="sig-gaps__label">{g.label}</span>
+        {" "}
+        <AbsenceHatch
+          kind={g.kind}
+          subject_id={g.subject_id}
+          predicate_id={g.predicate_id}
+          predicate_label={g.label}
+        />
+        {g.kind === "NO_EVIDENCE_FOUND" && g.sources_searched && (
+          <>
+            {" "}
+            <span class="sig-gaps__searched">
+              Sources searched: {g.sources_searched.join(", ")}.
+            </span>
+          </>
+        )}
+        {g.note && <span class="sig-gaps__note"> — {g.note}</span>}
+        {" "}
+        <span class="sig-visually-hidden">{ABSENCE_KIND_META[g.kind].meaning}</span>
+      </>
+    );
+    return (
+      <li class="sig-gaps__item" data-gap-kind={g.kind}>
+        {spec ? <Figure figure={spec} order="inline">{body}</Figure> : body}
+      </li>
+    );
+  })}
 </ul>

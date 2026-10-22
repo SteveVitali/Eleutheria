@@ -1,0 +1,88 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The <details> body of a dossier figure — extracted so DossierFigure can wrap
+// it in <Figure> (P35.37's pointer contract) without duplicating the markup.
+// A material dossier figure is ALWAYS expandable to its reconciliation
+// (SIG-UI-014): the summary shows the value, the persistent contested marker
+// (SIG-UI-008), and the support glyph (SIG-UI-003); expanding reveals the rule
+// that fired, a plain-language note, and every competing claim with its source,
+// tier, date, and document link — zero client JS (SIG-UI-036/037).
+import SupportGlyph from "./SupportGlyph.astro";
+import ContestedMarker from "./ContestedMarker.astro";
+import { groupDigits } from "../lib/format";
+import type { Figure } from "../lib/dossier";
+
+interface Props {
+  figure: Figure;
+  /** `value` is an unresolved standoff — no winner to headline. */
+  unresolved: boolean;
+  suffix: string;
+  lb: string;
+}
+
+const { figure, unresolved, suffix, lb } = Astro.props;
+---
+
+<details class="sig-recon" data-testid="dossier-figure" data-figure-key={figure.key} data-unresolved={String(unresolved)}>
+  <summary>
+    <span class="sig-recon__headline">
+      <span class="sig-recon__label">{figure.label}:</span>{" "}
+      <strong>{groupDigits(String(figure.value))}{suffix}</strong>{lb}
+      {unresolved && <> <span class="sig-recon__unresolved" data-testid="figure-unresolved">unresolved — no single value</span></>}
+      {figure.contested && <> <ContestedMarker compact={true} /></>}
+    </span>
+  </summary>
+  <div class="sig-recon__body">
+    <SupportGlyph support={figure.support} evidenceCount={figure.evidenceCount} />
+    <p class="sig-recon__rule">
+      <span class="sig-recon__rule-label">Rule that fired:</span>{" "}
+      <code data-testid="recon-rule">{figure.reconciliation.rule}</code>
+    </p>
+    {figure.reconciliation.note && <p class="sig-recon__note">{figure.reconciliation.note}</p>}
+    <table class="sig-table sig-recon__claims">
+      <caption class="sig-visually-hidden">
+        Competing claims behind {figure.label}, each with its source, tier, date, and document link.
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">Value</th>
+          <th scope="col">Source</th>
+          <th scope="col">Tier</th>
+          <th scope="col">Date</th>
+          <th scope="col">Document</th>
+        </tr>
+      </thead>
+      <tbody>
+        {figure.reconciliation.claims.map((c) => {
+          const winning = c.claimId === figure.reconciliation.winningClaimId;
+          return (
+            <tr data-testid="recon-claim" data-claim-id={c.claimId} data-winning={String(winning)}>
+              <th scope="row">
+                {groupDigits(String(c.value))}{suffix}
+                {winning && <span class="sig-recon__won"> (winning)</span>}
+              </th>
+              <td>{c.source}</td>
+              <td>{c.tier}</td>
+              <td><time datetime={c.date}>{c.date}</time></td>
+              <td>
+                <a href={c.documentUrl} aria-label={`Source document for the ${c.source} claim (${c.value})`}>
+                  document
+                </a>
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+    {figure.reconciliation.claims.map((c) =>
+      c.differentQuantityNote ? (
+        <p class="sig-recon__diff" data-testid="recon-different-quantity">
+          <em>Different quantity:</em> {c.differentQuantityNote}
+        </p>
+      ) : null,
+    )}
+  </div>
+</details>

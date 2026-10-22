@@ -24,6 +24,28 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Figure → evidence pointers** (P35.37 / row 316; R11-K13-TX-09;
+  owner SIG-TRANSP-013; cites SIG-UI-035/044, J3 §5.4 + §12 TX-09,
+  K13 §7 W1 / UXR-34 [design ref], DR-C3-01/DR-C3-03, PKG-10, F-102)
+  — every material number on the public surface now renders through
+  the one `<Figure>` contract: `data-artifact` + `data-pointer`
+  name a manifest-listed release artifact and the JSON pointer into
+  it, a visible "definition"/"source" link line sits beside each
+  value, and the J3 §5.4 per-class targets resolve to real routes
+  or render a named absence — never a dead link. `check-figures`
+  is a new rendered-output gate in `npm run check`: a figure whose
+  artifact is not manifest-listed, whose pointer is malformed,
+  whose id collides, or a material numeral left bare inside a
+  named page class (home, dossier, coverage, freshness, sources,
+  data, status) fails the build; incidental citations are recorded
+  exemptions only. The static `/artifact/<export-path>.json` route
+  serves each figure's downloadable/recomputable evidence file
+  (fail-closed to release-known paths), and two new manifest-listed
+  export artifacts ship — `web/sources.json` (the
+  `sig.source-licence-table/1` table `/sources/` renders) and
+  `web/evaluation.json` (the DR-C3-03 `sig.resolution-eval/1`
+  record — evaluation metrics now come from release bytes, never
+  hard-coded constants).
 - **Per-claim statements files, `upstream_href`, and the one shared
   provenance panel** (P35.36 / row 315; R11-K13-TX-08a; owner
   SIG-TRANSP-011; cites SIG-TRANSP-012/022/025, SIG-UI-028/035,

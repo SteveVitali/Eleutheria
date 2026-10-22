@@ -12,15 +12,22 @@
 //   - legal_regime         → "Policy" (what lever exists here)
 // The consent-agenda flag is first-class: "approved 7–0 after public comment" and
 // "passed unopposed on the consent agenda" are politically opposite facts.
+import Figure from "./Figure.astro";
 import { resolveTermination } from "../lib/dossier";
 import type { Dossier } from "../lib/dossier";
+// P35.37 (SIG-TRANSP-013): the notice-window day count is a dossier-class
+// figure — the page passes its registry spec ("notice-window").
+import type { FigureSpec } from "../lib/figures";
 
 interface Props {
   dossier: Dossier;
   which: "authorization" | "termination" | "legal_regime";
+  /** The page's figure registry (id → spec); absent → the pre-P35.37 render. */
+  specs?: ReadonlyMap<string, FigureSpec>;
 }
 
-const { dossier, which } = Astro.props;
+const { dossier, which, specs } = Astro.props;
+const noticeSpec = specs?.get("notice-window");
 const yesNo = (v: boolean | null): string => (v === null ? "unknown" : v ? "yes" : "no");
 const orUnknown = (v: string | null): string => (v === null ? "unknown" : v);
 const t = resolveTermination(dossier.termination);
@@ -46,7 +53,11 @@ const t = resolveTermination(dossier.termination);
     <dl class="sig-kv">
       <dt>Auto-renews</dt><dd>{yesNo(t.auto_renews)}</dd>
       <dt>Notice window (days)</dt>
-      <dd>{t.notice_window_days === null ? "unknown" : t.notice_window_days}</dd>
+      <dd>{t.notice_window_days === null
+        ? "unknown"
+        : noticeSpec
+          ? <Figure figure={noticeSpec} order="inline">{t.notice_window_days}</Figure>
+          : t.notice_window_days}</dd>
       <dt>Contract expiry</dt><dd><time datetime={t.expiry_date ?? undefined}>{orUnknown(t.expiry_date)}</time></dd>
       <dt>Next decision date</dt>
       <dd data-testid="next-decision-date">

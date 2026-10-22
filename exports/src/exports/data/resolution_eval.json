@@ -1,0 +1,38 @@
+{
+  "schema": "sig.resolution-eval/1",
+  "provisional": true,
+  "disclosure": "Development evidence only — the label sets were produced by an AI model and by agents; no person labelled them.",
+  "deferral": "D-R6.1-EVAL",
+  "metrics": [
+    {
+      "label": "development eval: Cohen's κ between two adjudication passes",
+      "value": "0.714",
+      "against": "the development label set stored in the repository — no record shows those labels were made by a person"
+    },
+    {
+      "label": "auto-write precision floor",
+      "value": "0.980",
+      "against": "the published floor an auto-write rule must clear on its holdout"
+    },
+    {
+      "label": "development eval: B-cubed cluster precision / recall / F1",
+      "value": "P 1.000 · R 0.952 · F1 0.976",
+      "against": "the development holdout clusters (AI-model labels; no person labelled them)"
+    },
+    {
+      "label": "camera sites: Cohen's κ (blind adjudicator vs stored labels)",
+      "value": "0.669",
+      "against": "540 double-adjudicated camera-record pairs (below the 0.70 bar, so that adjudicator is a suggester only and its disagreements go to review)"
+    },
+    {
+      "label": "camera sites: shared-upstream-id rule (1g) holdout precision",
+      "value": "1.000 (70 of 70)",
+      "against": "the 180-pair holdout, labels recorded as agent-checked (95% lower bound 0.948); auto-writes"
+    },
+    {
+      "label": "camera sites: coincident-point rule (3g) holdout precision",
+      "value": "0.986 (69 of 70)",
+      "against": "the 180-pair holdout, labels recorded as agent-checked (95% lower bound 0.923; 0.800 under the AI model's labels); auto-writes"
+    }
+  ]
+}

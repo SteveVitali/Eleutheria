@@ -42,6 +42,7 @@ top_level = [
   "tiles",               # per-compartment PMTiles (export-mode builds only)
   "corrections",
   "coverage-metrics",
+  "artifact",            # /artifact/<export-path>.json — figure-evidence downloads (P35.37)
   "data-collection",     # the crawler contact page (P35.38a, S6c)
   "data-freshness",
   "dispute",
@@ -84,6 +85,7 @@ required = [
   "_astro",
   "corrections",
   "coverage-metrics",
+  "artifact",
   "data-collection",
   "data-freshness",
   "dispute",

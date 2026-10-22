@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "2348e63e82f60597cb7460786b69bac072fb48d7",
-  "manifest_inputs": 1074,
+  "input_commit": "03f5df6fbbcd505469683ef867179e1072a72a60",
+  "manifest_inputs": 1075,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.37",
-    "lastCompleted": "P35.36",
+    "nextTicket": "P35.38b",
+    "lastCompleted": "P35.37",
     "blockedOn": "CI fail on",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.57,P35.67,P36.12",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.36-statements-files-and-provenance-panel-v2",
+    "chainTip": "r11/P35.37-figure-to-evidence-pointers",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-19T23:57Z"
+    "updatedAt": "2026-10-20T05:23Z"
   },
   "counts": {
     "obligations": 170,
@@ -9375,7 +9375,7 @@
           "label": "historical/csv"
         },
         "SIG-CHART-019": {
-          "verdict": "PARTIAL",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
           "evidence": "docs/2_canonical_design_spec.md:487",
           "assessed": "",
           "label": "historical/csv"
@@ -13923,8 +13923,8 @@
           "label": "historical/csv"
         },
         "SIG-TRANSP-013": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/components/Figure.astro;web/src/lib/figures.ts;web/src/lib/dossier-figures.ts;web/scripts/check-figures.mjs;web/src/pages/artifact/[...path].json.ts;exports/src/exports/source_licences.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -19224,10 +19224,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "a70a4f2e60ca080899ef55e3d9923447c0c69d365ab8bc1657ee3da51033d9b9",
+  "manifest_sha256": "373aec081e2646d8988b53efd847591e03238cf9f32cf1763b93fa098ad1b7d5",
   "current_md": {
     "lines": 63,
-    "bytes": 15622,
+    "bytes": 15610,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

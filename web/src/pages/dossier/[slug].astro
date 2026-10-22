@@ -17,8 +17,15 @@ import WhatWeDontKnow from "../../components/WhatWeDontKnow.astro";
 import DossierSection from "../../components/DossierSection.astro";
 import ActionBlocks from "../../components/ActionBlocks.astro";
 import { applyPublicationPolicy, dossierLang, dossierJsonPath, dossierPath, dossierPrintPath, sectionTitlesFor, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG } from "../../lib/dossier";
-import { getDossiers, getDossierProvenance } from "../../lib/data";
+import { getDossierArtifactRef, getDossiers, getDossierProvenance, getJurisdictionCompartments } from "../../lib/data";
+import { getReleaseStamp } from "../../lib/release-stamp";
 import { displayJurisdiction, dossierDisplayTitle } from "../../lib/jurisdictions";
+// P35.37 (SIG-TRANSP-013, J3 §5.4, UXR-34): the dossier's ONE figures[] registry —
+// every material number (banner count, section figures, numeral rows, the
+// notice window, numeral-bearing gaps) carries artifact + pointer + the
+// dossier-class link targets (record list + provenance + per-source slices).
+import { artifactHref, defineFigures } from "../../lib/figures";
+import { dossierFigureSpecs, figureSpecMap } from "../../lib/dossier-figures";
 
 export function getStaticPaths() {
   return getDossiers().map((d) => ({ params: { slug: d.slug }, props: { dossier: d } }));
@@ -45,6 +52,34 @@ const combinesList = jurisdiction.combines ? jurisdiction.combines.join(" and ")
 // emitted row) renders the site-wide summary labelled site-wide, never site
 // totals under the dossier's name.
 const provenance = getDossierProvenance(dossier.slug);
+
+// The figure-evidence registry. `ref` names the dossier's position in its
+// manifest-listed artifact; the record-list target (`/r/<pub>/c/<comp>/…`)
+// resolves only when a release is bound AND the jurisdiction's compartment is
+// known — else the named absence renders, never a dead link.
+const ref = getDossierArtifactRef(dossier.slug);
+const stamp = getReleaseStamp();
+const compartment = getJurisdictionCompartments().get(dossier.jurisdiction) ?? null;
+const recordList =
+  stamp && compartment
+    ? `r/${stamp.publicationId}/c/${compartment}/jurisdiction/${dossier.slug}/`
+    : null;
+const FIGURES = defineFigures(
+  `dossier/${dossier.slug}`,
+  dossierFigureSpecs(dossier, "page", {
+    ref,
+    recordList,
+    provenanceHref: "#hwkt-heading",
+    artifactHref: ref ? artifactHref(ref.artifact) : "",
+  }),
+);
+if (FIGURES.length === 0) {
+  throw new Error(
+    `dossier "${dossier.slug}": no figure registry — the dossier has no record ` +
+      `in a manifest-listed artifact (SIG-TRANSP-013)`,
+  );
+}
+const specMap = figureSpecMap(FIGURES);
 ---
 
 <BaseLayout
@@ -53,6 +88,7 @@ const provenance = getDossierProvenance(dossier.slug);
   lang={lang}
   provenance={provenance}
   provenanceName={`${jurisdiction.label} dossier`}
+  provenancePointerBase={`/surfaces/dossiers/${dossier.slug}`}
 >
   <p class="sig-dossier-jurisdiction" data-testid="dossier-jurisdiction">{jurisdiction.label}</p>
   {combinesList && (
@@ -66,7 +102,7 @@ const provenance = getDossierProvenance(dossier.slug);
     evidence-complete reviewed-portfolio form is being built.
   </p>
 
-  <IncompletenessBanner dossier={dossier} />
+  <IncompletenessBanner dossier={dossier} spec={specMap.get("banner")} />
 
   <section class="sig-dossier-summary" aria-labelledby="summary-gaps-heading">
     <h2 id="summary-gaps-heading">What we don't know (summary)</h2>
@@ -74,7 +110,7 @@ const provenance = getDossierProvenance(dossier.slug);
       This is a headline, not an appendix. The full record is below; here is what SIG
       cannot yet tell you about this deployment.
     </p>
-    <WhatWeDontKnow gaps={dossier.gaps} variant="summary" />
+    <WhatWeDontKnow gaps={dossier.gaps} variant="summary" specs={specMap} />
   </section>
 
   <p class="sig-dossier-actions">
@@ -91,11 +127,11 @@ const provenance = getDossierProvenance(dossier.slug);
       <section aria-labelledby={`sec-${section.section_id}`} data-testid="dossier-section" data-section-id={section.section_id}>
         <h2 id={`sec-${section.section_id}`}>{SECTION_TITLES[section.section_id]}</h2>
         {section.section_id === "what_we_dont_know" ? (
-          <WhatWeDontKnow gaps={dossier.gaps} variant="section" />
+          <WhatWeDontKnow gaps={dossier.gaps} variant="section" specs={specMap} />
         ) : (
-          <DossierSection section={section} />
+          <DossierSection section={section} specs={specMap} />
         )}
-        {action && <ActionBlocks dossier={dossier} which={action} />}
+        {action && <ActionBlocks dossier={dossier} which={action} specs={specMap} />}
         {noRecord && (
           <p class="sig-no-record" data-testid="section-no-record" data-copy="DS-01">{NO_RECORD_IN_SIG}</p>
         )}

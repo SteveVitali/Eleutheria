@@ -10,12 +10,19 @@
 // export's own compartment rows (getSourceLicenceTable), so it can never drift
 // from what the published downloads carry. Static, zero-JS.
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Figure from "../components/Figure.astro";
 import {
   getAttributionCorrections,
   getSourceLicenceTable,
   getTermsDisclosure,
 } from "../lib/data";
 import { fmtInt } from "../lib/format";
+// P35.37 (SIG-TRANSP-013, J3 §5.4, UXR-34): every row count is a per-source
+// <Figure> — artifact web/sources.json (or web/terms_disclosure.json for the
+// express-terms counts), and the /sources/<id>/ coverage target is a named
+// absence until P36.48's route ships.
+import { artifactHref, defineFigures, perSourceTargets, type FigureSpec } from "../lib/figures";
+import { firstNumeral } from "../lib/dossier-figures";
 
 const sources = getSourceLicenceTable();
 const disclosure = getTermsDisclosure();
@@ -23,6 +30,81 @@ const corrections = getAttributionCorrections();
 const correctedOn = corrections?.corrected_on ?? null;
 const correctedCount = sources.filter((s) => s.creditUnderCorrection).length;
 const expressSources = new Set(disclosure.sources.map((s) => s.source_id));
+const basisNumeral = firstNumeral(disclosure.basis.adopted_sentence);
+
+// The ONE figures[] registry for this page (UXR-34).
+const slug = (s: string): string =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const specs: FigureSpec[] = [
+  ...sources.map((s, i) => ({
+    id: `rows-${slug(s.sourceId)}`,
+    class: "per_source" as const,
+    value: s.rows,
+    artifact: "web/sources.json",
+    pointer: `/rows/${i}/rows`,
+    definition: "#licences-heading",
+    href: artifactHref("web/sources.json"),
+    breakdown: `#fig-rows-${slug(s.sourceId)}`,
+    targets: perSourceTargets(s.sourceId),
+  })),
+  ...disclosure.sources.flatMap((s, i) => {
+    const out: FigureSpec[] = [];
+    if (s.public_row_count != null) {
+      out.push({
+        id: `public-${slug(s.source_id)}`,
+        class: "per_source",
+        value: s.public_row_count,
+        artifact: "web/terms_disclosure.json",
+        pointer: `/sources/${i}/public_row_count`,
+        definition: "#express-terms-heading",
+        href: artifactHref("web/terms_disclosure.json"),
+        breakdown: `#fig-public-${slug(s.source_id)}`,
+        targets: perSourceTargets(s.source_id),
+      });
+    }
+    if (s.export_row_count != null && s.export_row_count !== s.public_row_count) {
+      out.push({
+        id: `export-${slug(s.source_id)}`,
+        class: "per_source",
+        value: s.export_row_count,
+        artifact: "web/terms_disclosure.json",
+        pointer: `/sources/${i}/export_row_count`,
+        definition: "#express-terms-heading",
+        href: artifactHref("web/terms_disclosure.json"),
+        breakdown: `#fig-export-${slug(s.source_id)}`,
+        targets: perSourceTargets(s.source_id),
+      });
+    }
+    return out;
+  }),
+  // The operator's verbatim basis sentence carries a row count ("≈8,088
+  // currently public rows") — a material numeral inside recorded words; the
+  // figure wraps the sentence without altering it.
+  ...(() => {
+    const n = basisNumeral;
+    return n === null
+      ? []
+      : [
+          {
+            id: "basis-rows",
+            class: "per_source" as const,
+            value: n,
+            artifact: "web/terms_disclosure.json",
+            pointer: "/basis/adopted_sentence",
+            definition: "#express-terms-heading",
+            href: artifactHref("web/terms_disclosure.json"),
+            breakdown: "#fig-basis-rows",
+            targets: perSourceTargets("the express-terms sources"),
+          },
+        ];
+  })(),
+];
+const FIGURES = defineFigures("sources", specs);
+const fig = (id: string) => {
+  const f = FIGURES.find((x) => x.id === id);
+  if (!f) throw new Error(`sources figures[]: no figure registered as "${id}"`);
+  return f;
+};
 ---
 
 <BaseLayout title="Sources and licences" path="/sources/">
@@ -49,7 +131,7 @@ const expressSources = new Set(disclosure.sources.map((s) => s.source_id));
         <tr data-testid="source-row" data-source-id={s.sourceId} data-credit-status={s.creditUnderCorrection ? "under-correction" : "ok"}>
           <td><code>{s.sourceId}</code></td>
           <td>{s.licenses.join(", ")}</td>
-          <td>{fmtInt(s.rows)}</td>
+          <td><Figure figure={fig(`rows-${slug(s.sourceId)}`)} order="inline" testid="source-rows-figure">{fmtInt(s.rows)}</Figure></td>
           <td>
             {s.creditUnderCorrection ? (
               <span data-notice="N-4" data-testid="credit-notice">Attribution for this source is being corrected; see the source's own terms.</span>
@@ -100,16 +182,22 @@ const expressSources = new Set(disclosure.sources.map((s) => s.source_id));
       <!-- DATA, not drafted copy: the operator's adopted sentence verbatim from
            the sig.terms-disclosure record (the basis itself, B-2 exempt as the
            operator's recorded words). -->
-      <p class="sig-basis">{disclosure.basis.adopted_sentence}</p>
+      {basisNumeral !== null ? (
+        <Figure figure={fig("basis-rows")} order="inline" tag="div">
+          <p class="sig-basis">{disclosure.basis.adopted_sentence}</p>
+        </Figure>
+      ) : (
+        <p class="sig-basis">{disclosure.basis.adopted_sentence}</p>
+      )}
       <ul class="sig-express-sources" aria-labelledby="express-terms-heading">
         {disclosure.sources.map((s) => (
           <li data-testid="express-source" data-source-id={s.source_id}>
             <h3>{s.name} <code>({s.source_id})</code></h3>
             <p>
               <a href={s.terms_url} rel="external" data-copy="SL-17">Terms page</a>
-              {s.public_row_count != null && <> — {fmtInt(s.public_row_count)} <span data-copy="SL-18">public rows</span></>}
+              {s.public_row_count != null && <> — <Figure figure={fig(`public-${slug(s.source_id)}`)} order="inline">{fmtInt(s.public_row_count)}</Figure> <span data-copy="SL-18">public rows</span></>}
               {s.export_row_count != null && s.export_row_count !== s.public_row_count && (
-                <> — {fmtInt(s.export_row_count)} <span data-copy="SL-19">rows in this export</span></>
+                <> — <Figure figure={fig(`export-${slug(s.source_id)}`)} order="inline">{fmtInt(s.export_row_count)}</Figure> <span data-copy="SL-19">rows in this export</span></>
               )}
             </p>
             <details>

@@ -48,6 +48,7 @@ import type { ClaimView, Capture } from "./evidence-viewer";
 import type { CorrectionEntry } from "./corrections";
 import type { ResearchTaskCard, JurisdictionClaim } from "./research-queue";
 import type { ProvenanceSummary } from "./provenance";
+import { DEFAULT_PROVENANCE } from "./provenance";
 import type { HostileReaderReview } from "./editorial";
 import type { CompartmentTileSource } from "./map-tiles";
 import { RELEASE_CATALOG_FIXTURE } from "./releases-fixture";
@@ -64,6 +65,7 @@ import {
   type TermsDisclosure,
 } from "./terms-disclosure";
 import { SOURCES_FIXTURE, sourceLicenceTable, type SourceLicenceRow } from "./sources";
+import { isResolutionEval, type ResolutionEval } from "./resolution-eval";
 import { STATEMENT_FIXTURES } from "./statements-fixture";
 import type { StatementRow } from "./provenance-panel";
 
@@ -440,6 +442,63 @@ export function getDossierIndex(): DossierIndexRow[] {
       })),
     ];
   });
+}
+
+/**
+ * P35.37 (SIG-TRANSP-013, J3 §5.4): where a dossier's record sits inside its
+ * manifest-listed artifact — the `data-artifact` + `data-pointer` the dossier's
+ * figures resolve into. `index` is the dossier's position in the RAW artifact
+ * array (before the withdrawal/policy filters the read path applies): the
+ * pointer names the released bytes, not the filtered view. `null` when the
+ * artifact carries no record for the slug (the registry builder then emits no
+ * dossier figures — the pages assert the registry is non-empty instead).
+ */
+export interface DossierArtifactRef {
+  artifact: string;
+  index: number;
+}
+
+export function getDossierArtifactRef(slug: string): DossierArtifactRef | null {
+  if (dataSource() === "fixtures") {
+    const i = DOSSIERS.findIndex((d) => d.slug === slug);
+    return i >= 0 ? { artifact: "web/dossiers.json", index: i } : null;
+  }
+  const raw = readExportArtifact("dossiers.json", (p, path) =>
+    requireArray(p, path),
+  ) as { slug?: unknown }[];
+  const i = raw.findIndex((d) => d.slug === slug);
+  if (i >= 0) return { artifact: "web/dossiers.json", index: i };
+  // The SIG-PUB-017 demonstration dossiers live in the optional presentation
+  // overlay (never a public build input — see getDossiers).
+  const demos = readPresentation<{ slug?: unknown }[]>("jurisdiction_dossiers", []);
+  const j = demos.findIndex((d) => d.slug === slug);
+  return j >= 0 ? { artifact: "web/presentation/jurisdiction_dossiers.json", index: j } : null;
+}
+
+/**
+ * `jurisdiction label → compartment` for every site row the export carries —
+ * the dossier-class record-list target (`/r/<pub>/c/<comp>/jurisdiction/<j>/`)
+ * resolves its compartment from this map. Fixtures mode yields the empty map
+ * (no release is ever bound to a fixture build → the target is a named
+ * absence, never a dead link).
+ */
+export function getJurisdictionCompartments(): Map<string, string> {
+  const out = new Map<string, string>();
+  if (dataSource() === "fixtures") return out;
+  const root = exportDir();
+  for (const entry of readdirSync(root)) {
+    const p = `${root}/${entry}/sites.jsonl`;
+    if (!existsSync(p)) continue;
+    for (const line of readFileSync(p, "utf-8").split("\n")) {
+      const t = line.trim();
+      if (!t) continue;
+      const row = JSON.parse(t) as { jurisdiction?: unknown };
+      if (typeof row.jurisdiction === "string" && row.jurisdiction && !out.has(row.jurisdiction)) {
+        out.set(row.jurisdiction, entry);
+      }
+    }
+  }
+  return out;
 }
 
 /**
@@ -1110,7 +1169,31 @@ export function getRationaleTemplates(): readonly string[] {
  */
 export function getSourceLicenceTable(): SourceLicenceRow[] {
   if (dataSource() === "fixtures") return SOURCES_FIXTURE;
+  // P35.37 (SIG-TRANSP-013): `web/sources.json` is the manifest-listed artifact
+  // the /sources/ page's figures point at — when the export emits it (P35.37+),
+  // the page renders THE artifact rows (never a re-derivation that could drift);
+  // a pre-P35.37 export falls back to the sites.jsonl aggregation it was built
+  // from (the same computation, honest absence of the artifact).
+  const emitted = `${exportDir()}/web/sources.json`;
+  if (existsSync(emitted)) {
+    const parsed: unknown = JSON.parse(readFileSync(emitted, "utf-8"));
+    if (!isSourceLicenceArtifact(parsed)) {
+      throw new Error(`${emitted}: not a valid sig.source-licence-table/1 artifact`);
+    }
+    return parsed.rows;
+  }
   return sourceLicenceTable(exportDir());
+}
+
+/** The `sig.source-licence-table/1` artifact shape (`web/sources.json`). */
+export interface SourceLicenceArtifact {
+  schema: "sig.source-licence-table/1";
+  rows: SourceLicenceRow[];
+}
+
+function isSourceLicenceArtifact(v: unknown): v is SourceLicenceArtifact {
+  const o = v as { schema?: unknown; rows?: unknown };
+  return o?.schema === "sig.source-licence-table/1" && Array.isArray(o.rows);
 }
 
 // --------------------------------------------------------------------------- //
@@ -1168,6 +1251,113 @@ export function getAttributionCorrections(): AttributionCorrections | null {
 // --- Reference / component-demo pages (SIG-UI-037). These render the API-wire-contract
 // exemplars (not spine surfaces); routed through the data layer so the pages import no
 // fixture module directly. Identical in both modes.
+
+// --------------------------------------------------------------------------- //
+// P35.37 (SIG-TRANSP-013, DR-C3-03): the resolution evaluation — the numbers
+// that measure SIG's own method (§32.5, SIG-METRIC-008b) — is a published
+// release artifact, never a hard-coded TypeScript constant.
+//
+//   - `fixtures` mode — the committed `sig.resolution-eval/1` record
+//     (`exports/src/exports/data/resolution_eval.json`), read through the same
+//     validator (one canonical record — the exporter emits it verbatim).
+//   - `export` mode — `<exportDir>/web/evaluation.json`, the artifact the
+//     exporter writes into the manifest; a missing file fails LOUD (never a
+//     fall-back to the fixture — that would fabricate the eval).
+// --------------------------------------------------------------------------- //
+
+/** The canonical committed eval record the exporter emits verbatim. */
+export const RESOLUTION_EVAL_RECORD_PATH = "exports/src/exports/data/resolution_eval.json";
+
+export function getResolutionEval(): ResolutionEval {
+  if (dataSource() === "fixtures") {
+    const parsed: unknown = JSON.parse(
+      readFileSync(`${repoRoot()}${RESOLUTION_EVAL_RECORD_PATH}`, "utf-8"),
+    );
+    if (!isResolutionEval(parsed)) {
+      throw new Error(`${RESOLUTION_EVAL_RECORD_PATH}: not a valid sig.resolution-eval/1 record`);
+    }
+    return parsed;
+  }
+  return readExportArtifact("evaluation.json", (parsed, path) => {
+    if (!isResolutionEval(parsed)) {
+      throw new Error(`${path}: not a valid sig.resolution-eval/1 artifact`);
+    }
+    return parsed;
+  });
+}
+
+/**
+ * P35.37: the bytes the `/artifact/<export-path>` route serves — the
+ * "downloadable file" / release-artifact link target every figure carries. In
+ * export mode the file is read from the export directory verbatim; in fixtures
+ * mode the same payload is serialised from the data layer (it IS the build's
+ * data artifact — the fixture export harness writes identical bytes).
+ * `null` → the path is not a figure-addressable artifact (the route 404s).
+ */
+export function getReleaseArtifactPayload(artifactPath: string): unknown | null {
+  switch (artifactPath) {
+    case "web/dossier_index.json":
+      return getDossierIndex();
+    case "web/dossiers.json":
+      return getDossiers();
+    case "web/coverage.json":
+      return getCoverage();
+    case "web/freshness.json":
+      return getFreshness();
+    case "web/sources.json":
+      return { schema: "sig.source-licence-table/1", rows: getSourceLicenceTable() };
+    case "web/evaluation.json":
+      return getResolutionEval();
+    case "web/terms_disclosure.json":
+      return getTermsDisclosure();
+    case "web/analytics/density_bins.json":
+      return {
+        schema: "sig/analytics-density-bins/1",
+        as_of: AS_OF.as_of_world,
+        denominator: "the published site records with a releasable tier-0 point",
+        is_population_total: false,
+        source_compartments: ["sig_graph"],
+        grid: "h3",
+        h3_resolution: 3,
+        coverage_rule:
+          "cell coverage = the number of distinct named sources contributing to the cell",
+        bins: getMapDensityBins(),
+      };
+    case "web/analytics/provenance.json": {
+      // The ADR-R9-ANALYTICS envelope the exporter writes — surfaces.site +
+      // surfaces.dossiers — so figure pointers (/surfaces/site/artifact_count)
+      // resolve into the served bytes the same way they do in the release.
+      const site = dataSource() === "fixtures" ? DEFAULT_PROVENANCE : getSiteProvenance();
+      const dossiers = Object.fromEntries(
+        [...DOSSIERS, ...JURISDICTION_DOSSIERS].map((d) => [
+          d.slug,
+          getDossierProvenance(d.slug) ?? DEFAULT_PROVENANCE,
+        ]),
+      );
+      return {
+        schema: "sig/analytics-provenance/1",
+        as_of: AS_OF.as_of_world,
+        denominator: site?.denominator ?? "the published evidence artifacts",
+        is_population_total: false,
+        source_compartments: ["sig_graph"],
+        surfaces: {
+          site: site ?? null,
+          dossiers,
+          corrections: getCorrectionsProvenance() ?? null,
+          research_queue: getResearchQueueProvenance() ?? null,
+        },
+      };
+    }
+    case "web/leverage.json":
+      return getLeverageMetric();
+    case "web/presentation/jurisdiction_dossiers.json":
+      return dataSource() === "fixtures"
+        ? JURISDICTION_DOSSIERS
+        : readPresentation<Dossier[]>("jurisdiction_dossiers", []);
+    default:
+      return null;
+  }
+}
 
 /** The reference map's tabular-equivalent sites. */
 export function getReferenceMapSites(): MapSite[] {

@@ -9,8 +9,15 @@
 // refusing to render if any component is missing (assertProvenanceComplete). Also the
 // home of the public methodology / data-freshness / coverage-metrics links (SIG-UI-034),
 // so those pages are reachable — and linked from every dossier — on every page.
+import Figure from "./Figure.astro";
 import { assertProvenanceComplete, DEFAULT_PROVENANCE, REVIEW_STATUS_LABELS } from "../lib/provenance";
 import type { ProvenanceSummary } from "../lib/provenance";
+// P35.37 (SIG-TRANSP-013, J3 §5.4): the module's counts are material numbers —
+// each is a <Figure> pointing at web/analytics/provenance.json under
+// `pointerBase` (/surfaces/site for the site-wide module; the page's own
+// surfaces/<name> key for a page-scoped module).
+import { artifactHref, defineFigures } from "../lib/figures";
+import { firstNumeral } from "../lib/dossier-figures";
 
 interface Props {
   provenance?: ProvenanceSummary;
@@ -29,17 +36,84 @@ interface Props {
    * renders the generic page line.
    */
   pageName?: string;
+  /**
+   * P35.37: the JSON-pointer base inside `web/analytics/provenance.json` this
+   * module's counts resolve under (default `/surfaces/site`; a page-scoped
+   * module passes its own `surfaces/<name>` key — e.g. `/surfaces/dossiers/<slug>`).
+   */
+  pointerBase?: string;
 }
 
 const provenance = Astro.props.provenance ?? DEFAULT_PROVENANCE;
 const scope = Astro.props.scope ?? "site";
 const pageName = Astro.props.pageName;
+const pointerBase = Astro.props.pointerBase ?? "/surfaces/site";
 // Enforce the six-component contract at build time (SIG-UI-044): a module missing a
 // component fails the build rather than shipping.
 assertProvenanceComplete(provenance);
 
 const tiers = Object.entries(provenance.tier_distribution).sort(([a], [b]) => a.localeCompare(b));
 const range = provenance.date_range;
+
+// The module's figures[] — the three counted components (artifact count,
+// per-tier claim counts, source-independence count) as headline-class figures.
+const HWKT_ARTIFACT = "web/analytics/provenance.json";
+const HWKT_HREF = artifactHref(HWKT_ARTIFACT);
+const hwktSlug = (s: string): string => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const HWKT_FIGURES = defineFigures("hwkt", [
+  {
+    id: "hwkt-artifacts",
+    class: "headline",
+    value: provenance.artifact_count,
+    artifact: HWKT_ARTIFACT,
+    pointer: `${pointerBase}/artifact_count`,
+    definition: "#hwkt-heading",
+    href: HWKT_HREF,
+    breakdown: "#fig-hwkt-artifacts",
+    targets: [],
+  },
+  ...tiers.map(([tier, n]) => ({
+    id: `hwkt-tier-${hwktSlug(tier)}`,
+    class: "headline" as const,
+    value: n,
+    artifact: HWKT_ARTIFACT,
+    pointer: `${pointerBase}/tier_distribution/${tier}`,
+    definition: "#hwkt-heading",
+    href: HWKT_HREF,
+    breakdown: `#fig-hwkt-tier-${hwktSlug(tier)}`,
+    targets: [],
+  })),
+  {
+    id: "hwkt-sources",
+    class: "headline",
+    value: provenance.source_independence_count,
+    artifact: HWKT_ARTIFACT,
+    pointer: `${pointerBase}/source_independence_count`,
+    definition: "#hwkt-heading",
+    href: HWKT_HREF,
+    breakdown: "#fig-hwkt-sources",
+    targets: [],
+  },
+  // The "Counted against" denominator is provenance payload TEXT — an export
+  // may write a count into it ("8 published evidence artifacts") — so a
+  // numeral-bearing denominator gets its own figure over the same pointer.
+  ...(provenance.denominator && firstNumeral(provenance.denominator) !== null
+    ? [
+        {
+          id: "hwkt-denominator",
+          class: "headline" as const,
+          value: firstNumeral(provenance.denominator)!,
+          artifact: HWKT_ARTIFACT,
+          pointer: `${pointerBase}/denominator`,
+          definition: "#hwkt-heading",
+          href: HWKT_HREF,
+          breakdown: "#fig-hwkt-denominator",
+          targets: [],
+        },
+      ]
+    : []),
+]);
+const hwktFig = (id: string) => HWKT_FIGURES.find((f) => f.id === id)!;
 ---
 
 <section class="sig-hwkt" data-testid="how-we-know-this" aria-labelledby="hwkt-heading">
@@ -71,22 +145,30 @@ const range = provenance.date_range;
     </p>
   )}
   {provenance.denominator && (
-    <p class="sig-hwkt__denominator" data-testid="hwkt-denominator" data-copy="HW-09">
-      Counted against: {provenance.denominator}.
-    </p>
+    firstNumeral(provenance.denominator) !== null ? (
+      <Figure figure={hwktFig("hwkt-denominator")} order="inline" tag="div">
+        <p class="sig-hwkt__denominator" data-testid="hwkt-denominator" data-copy="HW-09">
+          Counted against: {provenance.denominator}.
+        </p>
+      </Figure>
+    ) : (
+      <p class="sig-hwkt__denominator" data-testid="hwkt-denominator" data-copy="HW-09">
+        Counted against: {provenance.denominator}.
+      </p>
+    )
   )}
   <dl class="sig-hwkt__grid">
     <div data-testid="hwkt-artifact_count" data-component="artifact_count">
       <dt data-copy="HW-03">Evidence artifacts</dt>
-      <dd>{provenance.artifact_count}</dd>
+      <dd><Figure figure={hwktFig("hwkt-artifacts")} order="inline">{provenance.artifact_count}</Figure></dd>
     </div>
     <div data-testid="hwkt-tier_distribution" data-component="tier_distribution">
       <dt data-copy="HW-04">Claims by evidence tier</dt>
-      <dd>{tiers.map(([tier, n], i) => (<>{i > 0 ? ", " : ""}<span data-tier={tier}>{n}×{tier}</span></>))}</dd>
+      <dd>{tiers.map(([tier, n], i) => (<>{i > 0 ? ", " : ""}<Figure figure={hwktFig(`hwkt-tier-${hwktSlug(tier)}`)} order="inline"><span data-tier={tier}>{n}×{tier}</span></Figure></>))}</dd>
     </div>
     <div data-testid="hwkt-source_independence_count" data-component="source_independence_count">
       <dt data-copy="HW-05">Independent sources</dt>
-      <dd>{provenance.source_independence_count}</dd>
+      <dd><Figure figure={hwktFig("hwkt-sources")} order="inline">{provenance.source_independence_count}</Figure></dd>
     </div>
     <div data-testid="hwkt-date_range" data-component="date_range">
       <dt data-copy="HW-06">Evidence date range</dt>

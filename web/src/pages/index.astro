@@ -13,11 +13,15 @@
 // SIG_DATA_SOURCE=export.
 import BaseLayout from "../layouts/BaseLayout.astro";
 import EmptyState from "../components/EmptyState.astro";
+import Figure from "../components/Figure.astro";
 import { getCoverage, getDossierIndex, getFreshness } from "../lib/data";
 import { assertCoverageMetrics } from "../lib/metrics";
 import { fmtInt, groupDigits } from "../lib/format";
 import { dossierPath } from "../lib/dossier";
 import { displayJurisdiction, dossierDisplayTitle } from "../lib/jurisdictions";
+// P35.37 (SIG-TRANSP-013, J3 §5.4, UXR-34): the page's ONE figures[] registry —
+// every headline number is a <Figure> with a manifest artifact + JSON pointer.
+import { artifactHref, defineFigures, headlineTargets } from "../lib/figures";
 
 const coverage = getCoverage();
 // Enforce the §32.5 honesty constraints at build time: a landing metric with a
@@ -28,6 +32,55 @@ assertCoverageMetrics(coverage);
 const dossierIndex = getDossierIndex();
 const jurisdictions = [...new Set(dossierIndex.map((d) => d.jurisdiction))];
 const sourceCount = getFreshness().length;
+
+// The ONE figures[] registry for this page (UXR-34): headline-class figures —
+// definition anchor + the release artifact (the visible "source" link) + the
+// downloadable file that recomputes it (the /artifact/ route) + the record
+// list where a release is bound (named absence until then).
+// Figure ids are lowercase slug tokens (assertFigureSpec); export metric ids
+// can carry uppercase dimension values ("jurisdiction_NY").
+const slug = (s: string): string =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+const FIGURES = defineFigures("home", [
+  {
+    id: "jurisdictions",
+    class: "headline",
+    value: jurisdictions.length,
+    artifact: "web/dossier_index.json",
+    pointer: "/",
+    definition: "dossier/",
+    href: artifactHref("web/dossier_index.json"),
+    breakdown: "#fig-jurisdictions",
+    targets: headlineTargets({ recordList: null }),
+  },
+  {
+    id: "sources",
+    class: "headline",
+    value: sourceCount,
+    artifact: "web/freshness.json",
+    pointer: "/",
+    definition: "data-freshness/",
+    href: artifactHref("web/freshness.json"),
+    breakdown: "#fig-sources",
+    targets: headlineTargets({ recordList: null }),
+  },
+  ...coverage.map((m, i) => ({
+    id: `cov-${slug(m.id)}`,
+    class: "headline" as const,
+    value: m.value,
+    artifact: "web/coverage.json",
+    pointer: `/${i}/value`,
+    definition: `coverage-metrics/#metric-${slug(m.id)}`,
+    href: artifactHref("web/coverage.json"),
+    breakdown: `#fig-cov-${slug(m.id)}`,
+    targets: headlineTargets({ recordList: null }),
+  })),
+]);
+const fig = (id: string) => {
+  const f = FIGURES.find((x) => x.id === id);
+  if (!f) throw new Error(`home figures[]: no figure registered as "${id}"`);
+  return f;
+};
 
 // The product entry points (SIG-UI-049 / ADR-093): the four surfaces a first-time
 // reader starts from. Kept distinct from the "how to read" epistemic framing below.
@@ -74,25 +127,31 @@ const ENTRY_POINTS: { href: string; title: string; body: string; copy?: string }
     </p>
     <ul class="sig-stat-grid" role="list">
       <li class="sig-stat" data-testid="reach-stat">
-        <span class="sig-stat__value">{fmtInt(jurisdictions.length)}</span>{" "}
-        <span class="sig-stat__label">jurisdictions with a published dossier</span>{" "}
-        <span class="sig-stat__denominator" data-testid="named-denominator">
-          of the jurisdictions SIG has researched to a publishable standard
-        </span>
+        <Figure figure={fig("jurisdictions")} order="inline" testid="reach-figure">
+          <span class="sig-stat__value">{fmtInt(jurisdictions.length)}</span>{" "}
+          <span class="sig-stat__label">jurisdictions with a published dossier</span>{" "}
+          <span class="sig-stat__denominator" data-testid="named-denominator">
+            of the jurisdictions SIG has researched to a publishable standard
+          </span>
+        </Figure>
       </li>
       <li class="sig-stat" data-testid="sources-stat">
-        <span class="sig-stat__value">{fmtInt(sourceCount)}</span>{" "}
-        <span class="sig-stat__label">sources tracked for freshness</span>{" "}
-        <span class="sig-stat__denominator" data-testid="named-denominator">
-          of the sources SIG monitors — not of all sources that exist
-        </span>
+        <Figure figure={fig("sources")} order="inline" testid="sources-figure">
+          <span class="sig-stat__value">{fmtInt(sourceCount)}</span>{" "}
+          <span class="sig-stat__label">sources tracked for freshness</span>{" "}
+          <span class="sig-stat__denominator" data-testid="named-denominator">
+            of the sources SIG monitors — not of all sources that exist
+          </span>
+        </Figure>
       </li>
       {coverage.map((m) => (
         <li class="sig-stat" data-testid="coverage-stat" data-metric-kind={m.kind}>
-          <span class="sig-stat__value">{groupDigits(m.value)}</span>{" "}
-          <span class="sig-stat__label">{m.label}</span>{" "}
-          <span class="sig-stat__denominator" data-testid="named-denominator">{groupDigits(m.denominator)}</span>{" "}
-          <span class="sig-stat__note">{m.population_note}</span>
+          <Figure figure={fig(`cov-${slug(m.id)}`)} order="inline" testid="coverage-figure">
+            <span class="sig-stat__value">{groupDigits(m.value)}</span>{" "}
+            <span class="sig-stat__label">{m.label}</span>{" "}
+            <span class="sig-stat__denominator" data-testid="named-denominator">{groupDigits(m.denominator)}</span>{" "}
+            <span class="sig-stat__note">{m.population_note}</span>
+          </Figure>
         </li>
       ))}
     </ul>
