@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "54e07404ad2d22904fcd994c20bedac0fd2a354f",
+  "input_commit": "a1221da8fdfbbbaf4f97e9899aee89d2ea01c214",
   "manifest_inputs": 1087,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -27,12 +27,12 @@
   },
   "counts": {
     "obligations": 175,
-    "owed": 99,
-    "open": 96,
+    "owed": 98,
+    "open": 95,
     "partial": 3,
-    "terminal": 76,
-    "events": 668,
-    "transitions": 39,
+    "terminal": 77,
+    "events": 669,
+    "transitions": 40,
     "coverage_assessments": 315,
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
@@ -8883,11 +8883,11 @@
     },
     {
       "id": "D-P35.41a-1",
-      "status": "OPEN",
-      "status_source": "event-head D-P35.41a-1:e0",
+      "status": "DONE",
+      "status_source": "event-head D-P35.41a-1:e1",
       "kind": "V",
       "owner": "the orchestrator",
-      "landing": "the dispatch boundary after the fourth ticket row following P35.41a — the measured after-state over P35.42..P35.45 (per-ticket runs/billed/python+web medians, reuse hit rate, partition imbalance) is recorded in that boundary's PHASE LOG detail and quoted to the operator for D6",
+      "landing": "the measured after-state over P35.42..P35.45 lands verbatim — PR runs 5/9/5/6 (mean 6.25 vs 8.3), billed 160/256/165/193 (mean 193.5, ≈ −34 % vs 295), python med ≈19.0 m (−25 % vs 25m26s), web med ≈14.4 m, reuse 5/13 records-only heads, partition imbalance 2.32–2.66×, one partition-only failure — recorded in runs/P35.45.md §D-P35.41a-1 + the P35.46 dispatch boundary PHASE LOG entry, and quoted to the operator for D6",
       "landing_source": "event-head",
       "backlog_home": "BL-085",
       "item": "Measured after-state of the CI-wait phase 1 (P35.41a, ADR-219) over the next four ticket rows after it (P35.42, P35.43, P35.44, P35.45 at authoring): per ticket — PR runs, billed minutes (ceil(job s/60), final attempts), `python` and `web` job medians, wall clock per waited head split code vs records-only, the `ci-perf-reuse` hit rate on records-only heads and the partition imbalance (max/min partition seconds from the summary line) — and any partition-only failures, against the measured baseline (last 20 tickets: mean 295 / median 312 billed, 8.3 PR runs; P35.37–P35.40: 343, 206, 340, 324) and the projection (≈ −31 %; ≈ 20 → 15 min per code head, ≈ 20 → 10 per records-only head)",
@@ -8925,6 +8925,29 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.41a-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P35.41a-1",
+          "seq": 1,
+          "expected_previous_event": "D-P35.41a-1:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P35.45",
+          "owner": "the orchestrator",
+          "landing": "the measured after-state over P35.42..P35.45 lands verbatim — PR runs 5/9/5/6 (mean 6.25 vs 8.3), billed 160/256/165/193 (mean 193.5, ≈ −34 % vs 295), python med ≈19.0 m (−25 % vs 25m26s), web med ≈14.4 m, reuse 5/13 records-only heads, partition imbalance 2.32–2.66×, one partition-only failure — recorded in runs/P35.45.md §D-P35.41a-1 + the P35.46 dispatch boundary PHASE LOG entry, and quoted to the operator for D6",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P35.45.md",
+            "docs/build/LEDGER.md"
+          ],
+          "observed_at": "2026-10-22",
+          "source_commit": "a1221da8fdfbbbaf4f97e9899aee89d2ea01c214",
+          "reason": "the fourth ticket row following P35.41a landed (#343 green head-bound); the orchestrator measured the after-state per the row's method at this dispatch boundary — DEFERRALS-first close",
+          "recorded_at": "2026-10-22"
         }
       ]
     },
@@ -19542,7 +19565,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "28f73ba45cabfa32a3ea1a1edec410a30a305e126fac5539a7b4b8550dc8a842",
+  "manifest_sha256": "21f24dc1bce3f37c3d4e20a944b90d5d3a8f383418cb24ff21c5831c28c7f364",
   "current_md": {
     "lines": 63,
     "bytes": 16364,
