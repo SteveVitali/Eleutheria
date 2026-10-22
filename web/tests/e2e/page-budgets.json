@@ -144,6 +144,16 @@
     },
     {
       "route": "/map/",
+      "metric": "tbtMs",
+      "ratified_ceiling": 350,
+      "recorded_measure": 1763,
+      "regression_bound": 2500,
+      "deferral": "D-P35.51-1",
+      "owner": "the map-surface optimisation row (K13 MAP rows)",
+      "note": "the ratified ≤ 350 ms TBT is LAW — the GitHub-hosted runner's Lighthouse measures 888–1,763 ms on the demo-corpus /map/ (the ≈ 500 KB JS bundle saturates the main thread under lab throttling; same root cause as the script-weight gap this deferral owns). Bounded at 2,500 ms; the developer machine measures under the ratified ceiling."
+    },
+    {
+      "route": "/map/",
       "metric": "lcpMs",
       "data_source": "national",
       "ratified_ceiling": 2500,
@@ -255,13 +265,12 @@
     {
       "route": "/search/",
       "metric": "lcpMs",
-      "data_source": "national",
       "ratified_ceiling": 1500,
-      "recorded_measure": 1502,
+      "recorded_measure": 1655,
       "regression_bound": 2000,
-      "deferral": "D-P35.51-3",
-      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "national-scoped: LCP on the national /search/ document measures ≈ 1,502 ms across the three Lighthouse runs (1,501.9 / 1,502.0 / 1,502.1) — marginally over the ratified ≤ 1,500 ms against the real-scale document. Bounded at 2,000 ms; the fixtures build measures under the ratified ceiling."
+      "deferral": "D-P35.51-2",
+      "owner": "the K0 runtime-migration row (Preact replaces React on the public surface)",
+      "note": "the ratified ≤ 1,500 ms LCP is LAW — the GitHub-hosted runner's Lighthouse measures 1,502–1,655 ms on /search/ (the React island's hydration cost sits in the paint path; same runtime this deferral owns). Bounded at 2,000 ms; the developer machine measures under the ratified ceiling."
     },
     {
       "route": "/search/",

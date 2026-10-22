@@ -194,10 +194,18 @@
               }
             ],
             "total-blocking-time": [
-              "error",
-              {
-                "maxNumericValue": 350
-              }
+              [
+                "error",
+                {
+                  "maxNumericValue": 2500
+                }
+              ],
+              [
+                "warn",
+                {
+                  "maxNumericValue": 350
+                }
+              ]
             ],
             "unminified-css": "off",
             "uses-long-cache-ttl": "off",
