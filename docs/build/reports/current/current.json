@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "85f1cffd7b805857295b09b1018e8251b5c93511",
+  "input_commit": "22f22c46fe952a4540244e93cfed96c2aa5c2f92",
   "manifest_inputs": 1092,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -9056,8 +9056,8 @@
       "backlog_home": "BL-085",
       "item": "The ratified T2-map script ceiling (≤ 360 KiB initial JS, K0 §4.3) versus the measured `/map/` bundle — 500,094 B gzip against 368,640 B ratified, and the driven total transfer 544,512 B gzip vs ≤ 450 KiB: the bundle must come under the ratified ceiling, never the ceiling raised",
       "unblocked_by": "owner: the map-surface optimisation row (K13 MAP rows) · trigger: that row's pick-up — the budget stays law meanwhile",
-      "verify": "`/map/` `jsInitialBytes` ≤ 368,640 B and `totalInitialMaxBytes` ≤ 460,800 B under the wire suite (`budget.spec.ts`); the two `measured_gaps` rows removed in the same change (the stale-row gate forces it)",
-      "proxy": "the gap is recorded in `page-budgets.json` `measured_gaps`, bounded at 524,288/589,824 B and reported every run — a regression past the bound fails",
+      "verify": "`/map/` `jsInitialBytes` ≤ 368,640 B and `totalInitialMaxBytes` ≤ 460,800 B under the wire suite (`budget.spec.ts`); every `measured_gaps` row under this deferral removed in the same change (the stale-row gate forces it)",
+      "proxy": "the gap is recorded in `page-budgets.json` `measured_gaps`, bounded at 524,288/589,824 B plus the fixtures-scoped pan-latency bound (≈ 539 ms vs 200 ms → 1,200 ms) and reported every run — a regression past the bound fails",
       "line": 1373,
       "events": [
         {
@@ -9104,8 +9104,8 @@
       "backlog_home": "BL-085",
       "item": "The ratified T2-search script ceiling (≤ 60 KiB initial JS) versus the measured `/search/` bundle — 72,405–72,853 B gzip against 61,440 B ratified: the island still runs the React runtime (≈ 66 KiB) the K0 budget assumed replaced by Preact + MiniSearch (≈ 11 KB + app)",
       "unblocked_by": "owner: the K0 runtime-migration row (Preact replaces React on the public surface) · trigger: that row's pick-up",
-      "verify": "`/search/` `jsInitialBytes` ≤ 61,440 B under the wire suite; the `measured_gaps` row removed in the same change",
-      "proxy": "recorded in `measured_gaps`, bounded at 81,920 B, reported every run — a regression past the bound fails",
+      "verify": "`/search/` `jsInitialBytes` ≤ 61,440 B under the wire suite; every `measured_gaps` row under this deferral removed in the same change",
+      "proxy": "recorded in `measured_gaps`, bounded at 81,920 B plus the fixtures-scoped keystroke-latency bound (≈ 160 ms vs 100 ms → 300 ms), reported every run — a regression past the bound fails",
       "line": 1374,
       "events": [
         {
@@ -9150,10 +9150,10 @@
       "landing": "every national-scoped measured_gaps row measures under its ratified ceiling in national_budget_leg.sh budgets and is removed in the same change — the real-scale documents, totals, first-view data and interaction latencies all inside the law",
       "landing_source": "event-head",
       "backlog_home": "BL-085",
-      "item": "The real-scale measured gaps the national fixture exposed (SIG-FIND-005 — budgets measured under real-sized state, never only demo data): T2 document ≤ 100 KiB vs ≈ 1.70 MB `/map/` and ≈ 1.77 MB `/network/` national documents (the honest no-JS equivalents at 232,500 invented sites / 6,460 nodes / 405,000 edges), the driven totals (≈ 2.22 MB / ≈ 1.85 MB vs ≤ 450/250 KiB), the `/map/` first-view data (≈ 3.24 MB vs ≤ 1.5 MiB), and the national interaction latencies under 4× throttle (map ≈ 511 ms vs 200 ms, network ≈ 284 ms vs 200 ms, search ≈ 112 ms vs 100 ms)",
+      "item": "The real-scale measured gaps the national fixture exposed (SIG-FIND-005 — budgets measured under real-sized state, never only demo data): T2 document ≤ 100 KiB vs ≈ 1.70 MB `/map/` and ≈ 1.77 MB `/network/` national documents (the honest no-JS equivalents at 232,500 invented sites / 6,460 nodes / 405,000 edges), the driven totals (≈ 2.22 MB / ≈ 1.85 MB vs ≤ 450/250 KiB), the `/map/` first-view data (≈ 3.24 MB vs ≤ 1.5 MiB), the national interaction latencies under 4× throttle (map ≈ 511 ms vs 200 ms, network ≈ 284 ms vs 200 ms, search ≈ 112 ms vs 100 ms), the national Lighthouse LCPs (`/map/` ≈ 3,349 ms vs ≤ 2,500 ms, `/search/` ≈ 1,502 ms vs ≤ 1,500 ms), and the fixtures-mode `/network/` node-select latency on the CI runner (≈ 228 ms vs ≤ 200 ms)",
       "unblocked_by": "owner: the static-equivalent pagination/compaction row (P27.7's deferred table shapes) + the map tiling owner · trigger: those rows' pick-up",
-      "verify": "every national-scoped `measured_gaps` row measures under its ratified ceiling in `national_budget_leg.sh budgets` and is removed in the same change (the stale-row gate forces it)",
-      "proxy": "every overage is recorded in `measured_gaps` with a regression bound (`data_source: \"national\"`: document 1,750,000/1,800,000 B, total 2,250,000/1,900,000 B, first-view 3,500,000 B, latency 1,200/400/200 ms), reported every run",
+      "verify": "every national-scoped `measured_gaps` row measures under its ratified ceiling in `national_budget_leg.sh budgets`/`lighthouse` and is removed in the same change (the stale-row gate forces it)",
+      "proxy": "every overage is recorded in `measured_gaps` with a regression bound (`data_source: \"national\"`: document 1,750,000/1,800,000 B, total 2,250,000/1,900,000 B, first-view 3,500,000 B, latency 1,200/400/200 ms, LCP 4,000/2,000 ms) plus the fixtures-scoped `/network/` latency bound 400 ms, reported every run",
       "line": 1375,
       "events": [
         {
@@ -19711,7 +19711,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "82001e9f5818f7b24a4dbca823886fda2c03739aa282541b310e99b312c7dc53",
+  "manifest_sha256": "6d0f58329059010b72a67e8001f15eda240d77c7453b379c03c671ee80292ace",
   "current_md": {
     "lines": 63,
     "bytes": 16365,
