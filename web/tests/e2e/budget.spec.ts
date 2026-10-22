@@ -415,20 +415,35 @@ test.describe("page-type budgets (SIG-UI-041, SIG-FIND-005, ADR-155)", () => {
       );
       // The ratified ceiling a gap row names: a row byte field directly, the
       // data-per-interaction ceiling for its bytes metric, the map surface's
-      // first-view row, or the latency row.
+      // first-view row, the latency row, or a minScore field (`perfScore`
+      // names `lighthousePerformance`).
+      const GAP_ROW_FIELDS: Record<string, keyof typeof row> = {
+        perfScore: "lighthousePerformance",
+      };
       const ratified =
         gap.metric === "dataPerInteractionBytes"
           ? dataCeiling(row)
           : gap.metric === "firstViewMaxBytes"
             ? (row.dataPerInteraction?.firstViewMaxBytes ?? null)
-            : ((row as unknown as Record<string, unknown>)[gap.metric] as number | null);
+            : ((row as unknown as Record<string, unknown>)[
+                GAP_ROW_FIELDS[gap.metric] ?? gap.metric
+              ] as number | null);
       expect(ratified, `measured_gaps row ${gap.route}/${gap.metric} names no budget metric`).toBe(
         gap.ratified_ceiling,
       );
-      expect(
-        gap.regression_bound,
-        `measured_gaps bound must exceed the ratified ceiling`,
-      ).toBeGreaterThan(gap.ratified_ceiling);
+      if (gap.metric === "perfScore") {
+        // A minScore gap inverts the direction: the bound is a floor BELOW
+        // the ratified floor — the run fails only when the score collapses.
+        expect(
+          gap.regression_bound,
+          `measured_gaps minScore bound must sit below the ratified floor`,
+        ).toBeLessThan(gap.ratified_ceiling);
+      } else {
+        expect(
+          gap.regression_bound,
+          `measured_gaps bound must exceed the ratified ceiling`,
+        ).toBeGreaterThan(gap.ratified_ceiling);
+      }
       expect(
         ["fixtures", "export", "national", undefined],
         `measured_gaps row ${gap.route}/${gap.metric} names an unknown data_source`,
