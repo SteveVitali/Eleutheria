@@ -43,18 +43,6 @@
                 "maxNumericValue": 153600
               }
             ],
-            "categories:performance": [
-              "error",
-              {
-                "minScore": 0.95
-              }
-            ],
-            "categories:accessibility": [
-              "error",
-              {
-                "minScore": 1
-              }
-            ],
             "largest-contentful-paint": [
               "error",
               {
@@ -71,6 +59,18 @@
               "error",
               {
                 "maxNumericValue": 0
+              }
+            ],
+            "categories:performance": [
+              "error",
+              {
+                "minScore": 0.95
+              }
+            ],
+            "categories:accessibility": [
+              "error",
+              {
+                "minScore": 1
               }
             ],
             "unminified-css": "off",
@@ -94,18 +94,6 @@
                 "maxNumericValue": 153600
               }
             ],
-            "categories:performance": [
-              "error",
-              {
-                "minScore": 0.95
-              }
-            ],
-            "categories:accessibility": [
-              "error",
-              {
-                "minScore": 1
-              }
-            ],
             "largest-contentful-paint": [
               "error",
               {
@@ -124,6 +112,18 @@
                 "maxNumericValue": 50
               }
             ],
+            "categories:performance": [
+              "error",
+              {
+                "minScore": 0.95
+              }
+            ],
+            "categories:accessibility": [
+              "error",
+              {
+                "minScore": 1
+              }
+            ],
             "unminified-css": "off",
             "uses-long-cache-ttl": "off",
             "csp-xss": "off"
@@ -134,32 +134,34 @@
           "matchingUrlPattern": ".*/map/.*",
           "assertions": {
             "resource-summary:script:size": [
-              [
-                "error",
-                {
-                  "maxNumericValue": 524288
-                }
-              ],
-              [
-                "warn",
-                {
-                  "maxNumericValue": 368640
-                }
-              ]
+              "error",
+              {
+                "maxNumericValue": 524288
+              }
             ],
             "resource-summary:document:size": [
-              [
-                "error",
-                {
-                  "maxNumericValue": 1750000
-                }
-              ],
-              [
-                "warn",
-                {
-                  "maxNumericValue": 102400
-                }
-              ]
+              "error",
+              {
+                "maxNumericValue": 1750000
+              }
+            ],
+            "largest-contentful-paint": [
+              "error",
+              {
+                "maxNumericValue": 4000
+              }
+            ],
+            "cumulative-layout-shift": [
+              "error",
+              {
+                "maxNumericValue": 0.05
+              }
+            ],
+            "total-blocking-time": [
+              "error",
+              {
+                "maxNumericValue": 2500
+              }
             ],
             "categories:performance": [
               "error",
@@ -173,43 +175,40 @@
                 "minScore": 1
               }
             ],
-            "largest-contentful-paint": [
-              [
-                "error",
-                {
-                  "maxNumericValue": 4000
-                }
-              ],
-              [
-                "warn",
-                {
-                  "maxNumericValue": 2500
-                }
-              ]
-            ],
-            "cumulative-layout-shift": [
-              "error",
-              {
-                "maxNumericValue": 0.05
-              }
-            ],
-            "total-blocking-time": [
-              [
-                "error",
-                {
-                  "maxNumericValue": 2500
-                }
-              ],
-              [
-                "warn",
-                {
-                  "maxNumericValue": 350
-                }
-              ]
-            ],
             "unminified-css": "off",
             "uses-long-cache-ttl": "off",
             "csp-xss": "off"
+          }
+        },
+        {
+          "//": "WARN TWIN of the block above — assertMatrix allows one tuple per audit, so the ratified §4.3 ceilings this route's measured_gaps record report at warn here while the block above keeps the regression bounds as the error gate.",
+          "warnTwin": true,
+          "matchingUrlPattern": ".*/map/.*",
+          "assertions": {
+            "resource-summary:script:size": [
+              "warn",
+              {
+                "maxNumericValue": 368640
+              }
+            ],
+            "resource-summary:document:size": [
+              "warn",
+              {
+                "maxNumericValue": 102400
+              }
+            ],
+            "largest-contentful-paint": [
+              "warn",
+              {
+                "maxNumericValue": 2500
+              }
+            ],
+            "total-blocking-time": [
+              "warn",
+              {
+                "maxNumericValue": 350
+              }
+            ]
           }
         },
         {
@@ -223,29 +222,9 @@
               }
             ],
             "resource-summary:document:size": [
-              [
-                "error",
-                {
-                  "maxNumericValue": 1800000
-                }
-              ],
-              [
-                "warn",
-                {
-                  "maxNumericValue": 102400
-                }
-              ]
-            ],
-            "categories:performance": [
               "error",
               {
-                "minScore": 0.9
-              }
-            ],
-            "categories:accessibility": [
-              "error",
-              {
-                "minScore": 1
+                "maxNumericValue": 1800000
               }
             ],
             "largest-contentful-paint": [
@@ -266,9 +245,34 @@
                 "maxNumericValue": 200
               }
             ],
+            "categories:performance": [
+              "error",
+              {
+                "minScore": 0.9
+              }
+            ],
+            "categories:accessibility": [
+              "error",
+              {
+                "minScore": 1
+              }
+            ],
             "unminified-css": "off",
             "uses-long-cache-ttl": "off",
             "csp-xss": "off"
+          }
+        },
+        {
+          "//": "WARN TWIN of the block above — assertMatrix allows one tuple per audit, so the ratified §4.3 ceilings this route's measured_gaps record report at warn here while the block above keeps the regression bounds as the error gate.",
+          "warnTwin": true,
+          "matchingUrlPattern": ".*/(network|explore)/.*",
+          "assertions": {
+            "resource-summary:document:size": [
+              "warn",
+              {
+                "maxNumericValue": 102400
+              }
+            ]
           }
         },
         {
@@ -276,23 +280,33 @@
           "matchingUrlPattern": ".*/search/.*",
           "assertions": {
             "resource-summary:script:size": [
-              [
-                "error",
-                {
-                  "maxNumericValue": 81920
-                }
-              ],
-              [
-                "warn",
-                {
-                  "maxNumericValue": 61440
-                }
-              ]
+              "error",
+              {
+                "maxNumericValue": 81920
+              }
             ],
             "resource-summary:document:size": [
               "error",
               {
                 "maxNumericValue": 102400
+              }
+            ],
+            "largest-contentful-paint": [
+              "error",
+              {
+                "maxNumericValue": 2000
+              }
+            ],
+            "cumulative-layout-shift": [
+              "error",
+              {
+                "maxNumericValue": 0.02
+              }
+            ],
+            "total-blocking-time": [
+              "error",
+              {
+                "maxNumericValue": 100
               }
             ],
             "categories:performance": [
@@ -307,35 +321,28 @@
                 "minScore": 1
               }
             ],
-            "largest-contentful-paint": [
-              [
-                "error",
-                {
-                  "maxNumericValue": 2000
-                }
-              ],
-              [
-                "warn",
-                {
-                  "maxNumericValue": 1500
-                }
-              ]
-            ],
-            "cumulative-layout-shift": [
-              "error",
-              {
-                "maxNumericValue": 0.02
-              }
-            ],
-            "total-blocking-time": [
-              "error",
-              {
-                "maxNumericValue": 100
-              }
-            ],
             "unminified-css": "off",
             "uses-long-cache-ttl": "off",
             "csp-xss": "off"
+          }
+        },
+        {
+          "//": "WARN TWIN of the block above — assertMatrix allows one tuple per audit, so the ratified §4.3 ceilings this route's measured_gaps record report at warn here while the block above keeps the regression bounds as the error gate.",
+          "warnTwin": true,
+          "matchingUrlPattern": ".*/search/.*",
+          "assertions": {
+            "resource-summary:script:size": [
+              "warn",
+              {
+                "maxNumericValue": 61440
+              }
+            ],
+            "largest-contentful-paint": [
+              "warn",
+              {
+                "maxNumericValue": 1500
+              }
+            ]
           }
         },
         {

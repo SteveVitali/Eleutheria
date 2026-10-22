@@ -152,50 +152,73 @@ const COMMON_OFF = {
   "csp-xss": "off",
 };
 
+/** Budget metric → the Lighthouse audit that asserts it. Interaction latency
+ * and the wire-byte totals are the spec's gate, not lhci's — they never map. */
+const METRIC_AUDITS = {
+  jsInitialBytes: "resource-summary:script:size",
+  documentMaxBytes: "resource-summary:document:size",
+  lcpMs: "largest-contentful-paint",
+  cls: "cumulative-layout-shift",
+  tbtMs: "total-blocking-time",
+};
+
+/** The measured_gaps row that binds for (route, metric, source), preferring a
+ * source-scoped row over the unscoped one — the same precedence as
+ * page-budget-check.ts (`find(scoped) ?? find(unscoped)`). */
+function findGap(route, metric, source) {
+  const matching = (budgets.measured_gaps ?? []).filter(
+    (g) =>
+      g.route === route &&
+      g.metric === metric &&
+      (g.data_source === undefined || g.data_source === source),
+  );
+  return (
+    matching.find((g) => g.data_source === source) ??
+    matching.find((g) => g.data_source === undefined) ??
+    null
+  );
+}
+
 /** The per-metric audit assertions for a budget row (errors, verbatim numbers).
  * `source` scopes measured_gaps the way page-budget-check.ts does — a
- * `"national"`-scoped gap is emitted only in the national twin. */
+ * `"national"`-scoped gap is emitted only in the national twin. assertMatrix
+ * accepts exactly ONE `[level, options]` tuple per audit, so a recorded
+ * measured_gap asserts its regression bound here at error while the sibling
+ * warn block (gapWarnAssertions below) re-asserts the ratified ceiling —
+ * the law is never smoothed. */
 function assertionsFor(row, route, source = "fixtures") {
   const a = {};
-  const gap = (metric) =>
-    (budgets.measured_gaps ?? []).find(
-      (g) =>
-        g.route === route &&
-        g.metric === metric &&
-        (g.data_source === undefined || g.data_source === source),
-    ) ?? null;
-
   const byteAudit = (audit, metric, ceiling) => {
     if (ceiling === null || ceiling === undefined) return;
-    const g = gap(metric);
-    if (g) {
-      // The ratified ceiling reports at warn; the recorded regression bound is
-      // the error gate — both emitted, nothing smoothed.
-      a[audit] = [
-        ["error", { maxNumericValue: g.regression_bound }],
-        ["warn", { maxNumericValue: g.ratified_ceiling }],
-      ];
-    } else {
-      a[audit] = ["error", { maxNumericValue: ceiling }];
-    }
+    const g = findGap(route, metric, source);
+    a[audit] = ["error", { maxNumericValue: g ? g.regression_bound : ceiling }];
   };
-
-  byteAudit("resource-summary:script:size", "jsInitialBytes", row.jsInitialBytes);
-  byteAudit("resource-summary:document:size", "documentMaxBytes", row.documentMaxBytes);
+  for (const [metric, audit] of Object.entries(METRIC_AUDITS)) {
+    byteAudit(audit, metric, row[metric]);
+  }
   if (row.lighthousePerformance !== null) {
     a["categories:performance"] = ["error", { minScore: row.lighthousePerformance }];
   }
   if (row.lighthouseAccessibility !== null) {
     a["categories:accessibility"] = ["error", { minScore: row.lighthouseAccessibility }];
   }
-  // The lab metrics route through the same gap renderer — a recorded
-  // measured_gap (e.g. the national /search/ LCP at ~1,502 ms vs 1,500) keeps
-  // its ratified ceiling as warn with the regression bound as the error gate.
-  byteAudit("largest-contentful-paint", "lcpMs", row.lcpMs);
-  byteAudit("cumulative-layout-shift", "cls", row.cls);
-  byteAudit("total-blocking-time", "tbtMs", row.tbtMs);
   Object.assign(a, COMMON_OFF);
   return a;
+}
+
+/** The warn-level sibling assertions: for every metric on this route with a
+ * recorded measured_gap, the ratified §4.3 ceiling asserted at warn. Returns
+ * null when the route has no gaps that map to a Lighthouse audit (e.g. a
+ * latency-only gap stays the spec's gate entirely). */
+function gapWarnAssertions(row, route, source = "fixtures") {
+  const a = {};
+  for (const [metric, audit] of Object.entries(METRIC_AUDITS)) {
+    const g = findGap(route, metric, source);
+    if (g && row[metric] !== null && row[metric] !== undefined) {
+      a[audit] = ["warn", { maxNumericValue: g.ratified_ceiling }];
+    }
+  }
+  return Object.keys(a).length ? a : null;
 }
 
 /**
@@ -223,21 +246,41 @@ function assertMatrix(source = "fixtures") {
       "^(?:(?!/curate/|/map/|/network/|/explore/|/search/|/dispute/|/print/|/r/|/intake/|/40[0-9]).)*$",
     assertions: assertionsFor(T1, null, source),
   });
-  blocks.push({
-    "//": "T2 map — script ≤ 360 KiB (ratified; the recorded measured gap bounds today's ≈ 497 KB at its regression bound as error, the ratified ceiling as warn — D-P35.51-1), document ≤ 100 KiB, perf ≥ 0.75, a11y 1.0, LCP ≤ 2.5 s, CLS ≤ 0.05, TBT ≤ 350 ms.",
-    matchingUrlPattern: ".*/map/.*",
-    assertions: assertionsFor(budgets.t2Surfaces.map, "/map/", source),
-  });
-  blocks.push({
-    "//": "T2 graph (/network/ today, /explore/ when it lands) — script ≤ 120 KiB, document ≤ 100 KiB, perf ≥ 0.90, a11y 1.0, LCP ≤ 2.0 s, CLS ≤ 0.05, TBT ≤ 200 ms.",
-    matchingUrlPattern: ".*/(network|explore)/.*",
-    assertions: assertionsFor(budgets.t2Surfaces.graph, "/network/", source),
-  });
-  blocks.push({
-    "//": "T2 search — script ≤ 60 KiB (ratified; the recorded measured gap bounds today's ≈ 72 KB React runtime at 80 KiB error — D-P35.51-2), document ≤ 100 KiB, perf ≥ 0.95, a11y 1.0, LCP ≤ 1.5 s, CLS ≤ 0.02, TBT ≤ 100 ms.",
-    matchingUrlPattern: ".*/search/.*",
-    assertions: assertionsFor(budgets.t2Surfaces.search, "/search/", source),
-  });
+  const surfaceBlocks = (note, pattern, row, route) => {
+    blocks.push({
+      "//": note,
+      matchingUrlPattern: pattern,
+      assertions: assertionsFor(row, route, source),
+    });
+    const warn = gapWarnAssertions(row, route, source);
+    if (warn) {
+      blocks.push({
+        "//": `WARN TWIN of the block above — assertMatrix allows one tuple per audit, so the ratified §4.3 ceilings this route's measured_gaps record report at warn here while the block above keeps the regression bounds as the error gate.`,
+        warnTwin: true,
+        matchingUrlPattern: pattern,
+        assertions: warn,
+      });
+    }
+  };
+
+  surfaceBlocks(
+    "T2 map — script ≤ 360 KiB (ratified; the recorded measured gap bounds today's ≈ 497 KB at its regression bound as error, the ratified ceiling as warn — D-P35.51-1), document ≤ 100 KiB, perf ≥ 0.75, a11y 1.0, LCP ≤ 2.5 s, CLS ≤ 0.05, TBT ≤ 350 ms.",
+    ".*/map/.*",
+    budgets.t2Surfaces.map,
+    "/map/",
+  );
+  surfaceBlocks(
+    "T2 graph (/network/ today, /explore/ when it lands) — script ≤ 120 KiB, document ≤ 100 KiB, perf ≥ 0.90, a11y 1.0, LCP ≤ 2.0 s, CLS ≤ 0.05, TBT ≤ 200 ms.",
+    ".*/(network|explore)/.*",
+    budgets.t2Surfaces.graph,
+    "/network/",
+  );
+  surfaceBlocks(
+    "T2 search — script ≤ 60 KiB (ratified; the recorded measured gap bounds today's ≈ 72 KB React runtime at 80 KiB error — D-P35.51-2), document ≤ 100 KiB, perf ≥ 0.95, a11y 1.0, LCP ≤ 1.5 s, CLS ≤ 0.02, TBT ≤ 100 ms.",
+    ".*/search/.*",
+    budgets.t2Surfaces.search,
+    "/search/",
+  );
   blocks.push({
     "//": "T3 curation (/curate/**, ADR-068 unchanged) — a11y 1.0 enforced; performance advisory only; no byte budgets.",
     matchingUrlPattern: ".*/curate/.*",

@@ -7,8 +7,10 @@
 // — never hand-edited. These tests pin the contract the generation must keep:
 // ≥ 1 collect URL per page type (incl. /releases/, a research dossier, an
 // entity-shaped page, /sources/, a print page, a T0 record), error-level
-// performance assertions per type, measured_gaps rendered as
-// [error regression_bound, warn ratified_ceiling] pairs, and the drift gate
+// performance assertions per type, measured_gaps rendered as an error-level
+// regression-bound tuple plus a warn-twin sibling block carrying the ratified
+// ceiling (assertMatrix allows ONE [level, options] tuple per audit), and the
+// drift gate
 // (`check:lhci`) wired into `npm run check`. The byte-for-byte sync itself is
 // `npm run check:lhci` after `build` — a drifted committed file fails there.
 
@@ -29,7 +31,13 @@ const blocks = (rc: any) =>
 const MAP_PATTERN = ".*/map/.*";
 const CURATE_PATTERN = ".*/curate/.*";
 const blockFor = (rc: any, pattern: string) =>
-  rc.ci.assert.assertMatrix.find((b: any) => b.matchingUrlPattern === pattern);
+  rc.ci.assert.assertMatrix.find(
+    (b: any) => b.matchingUrlPattern === pattern && !b.warnTwin,
+  );
+const warnTwinFor = (rc: any, pattern: string) =>
+  rc.ci.assert.assertMatrix.find(
+    (b: any) => b.matchingUrlPattern === pattern && b.warnTwin,
+  );
 
 describe("generated lighthouserc files (gen-lhci.mjs)", () => {
   it("carry the GENERATED marker — never a hand-edited file", () => {
@@ -84,15 +92,40 @@ describe("generated lighthouserc files (gen-lhci.mjs)", () => {
     expect(t3["categories:performance"][0]).toBe("warn"); // ADR-068 advisory floor
   });
 
-  it("renders a measured gap as [error bound, warn ratified] — the law is never smoothed", () => {
+  it("renders a measured gap as [error bound] + a warn-twin sibling — the law is never smoothed", () => {
     const map = blockFor(BASE, MAP_PATTERN).assertions;
     const gap = BUDGETS.measured_gaps.find(
       (g: any) => g.route === "/map/" && g.metric === "jsInitialBytes" && !g.data_source,
     );
     expect(map["resource-summary:script:size"]).toEqual([
-      ["error", { maxNumericValue: gap.regression_bound }],
-      ["warn", { maxNumericValue: gap.ratified_ceiling }],
+      "error",
+      { maxNumericValue: gap.regression_bound },
     ]);
+    // The ratified ceiling keeps reporting at warn in the sibling block —
+    // assertMatrix accepts exactly one [level, options] tuple per audit.
+    const warnTwin = warnTwinFor(BASE, MAP_PATTERN);
+    expect(warnTwin).toBeTruthy();
+    expect(warnTwin.assertions["resource-summary:script:size"]).toEqual([
+      "warn",
+      { maxNumericValue: gap.ratified_ceiling },
+    ]);
+    // Every warn-twin assertion must be a well-formed [level, options] tuple —
+    // the nested-tuple shape crashes @lhci/cli's result sorter.
+    for (const rc of [BASE, NATIONAL, EXPORT_RC]) {
+      for (const b of rc.ci.assert.assertMatrix) {
+        for (const v of Object.values(b.assertions as any)) {
+          if (typeof v === "string") {
+            // normalizeAssertion accepts a bare level string ("off").
+            expect(["off", "warn", "error"]).toContain(v);
+            continue;
+          }
+          const [level, opts] = v as [unknown, unknown];
+          expect(["off", "warn", "error"]).toContain(level);
+          expect(typeof opts).toBe("object");
+          expect(Array.isArray(opts)).toBe(false);
+        }
+      }
+    }
   });
 
   it("the national twin collects the same routes and applies the national-scoped gaps", () => {
@@ -112,9 +145,12 @@ describe("generated lighthouserc files (gen-lhci.mjs)", () => {
         g.data_source === "national",
     );
     expect(baseMapDoc).toEqual(["error", { maxNumericValue: gap.ratified_ceiling }]);
-    expect(natMapDoc).toEqual([
-      ["error", { maxNumericValue: gap.regression_bound }],
-      ["warn", { maxNumericValue: gap.ratified_ceiling }],
+    expect(natMapDoc).toEqual(["error", { maxNumericValue: gap.regression_bound }]);
+    // …and the ratified ceiling reports at warn in the national warn twin.
+    const natWarn = warnTwinFor(NATIONAL, MAP_PATTERN);
+    expect(natWarn.assertions["resource-summary:document:size"]).toEqual([
+      "warn",
+      { maxNumericValue: gap.ratified_ceiling },
     ]);
   });
 
