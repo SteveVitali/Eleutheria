@@ -37,6 +37,7 @@ from .camera_sites import (
     CameraSiteRules,
     HumanItem,
     HumanVote,
+    LineageDeclaration,
     SiteDecision,
     decision_digest,
     load_camera_gold,
@@ -85,9 +86,21 @@ _FIELD = {
 #: The claims a decision cites as its evidence (coordinates + the upstream reference).
 _EVIDENCE_PREDICATES = frozenset({"camera_latitude", "camera_longitude", "camera_external_ref"})
 
+# P35.46 / P35.16: the ``geometry_defect`` markings a subject carries (the
+# ``axis_swap`` flag gates every collapse — a suspected transposed point can
+# never prove a copy). Multi-cardinality like ``technology``: collected as
+# every DISTINCT current value.
+_DEFECT_VALUES_SQL = (
+    "SELECT DISTINCT c.subject_id::text, c.value_text "
+    "  FROM claim c "
+    " WHERE c.sensitivity_tier = 0 AND upper_inf(c.sys_period) "
+    "   AND c.predicate_id = 'geometry_defect'"
+)
+
 _RECORDS_SQL = (
     "SELECT DISTINCT ON (c.subject_id, c.predicate_id) "
     "       c.subject_id::text, c.predicate_id, c.value_text, c.claim_id::text, "
+    "       c.correction_reason, "
     "       occ.source_id, occ.capture_id::text, occ.retrieved_at "
     "  FROM claim c "
     + occurrence_lateral(BELIEF_NOW)
@@ -159,9 +172,22 @@ _NAMESPACES_SQL = (
     "  FROM claim_lineage cl WHERE cl.claim_id = ANY(%s::uuid[])"
 )
 _DECLARED_CLASSES_SQL = "SELECT source_id, independence_class FROM source_lineage_current"
+# P35.46 (ruleset v3): the declaration DETAIL the C1 copy-lineage and C2
+# documentary gates read — kind (mirror/derived = a copy declaration) and the
+# declaration's documentary evidence.
+_DECLARED_DETAILS_SQL = (
+    "SELECT source_id, independence_class, kind, evidence FROM source_lineage_current"
+)
 _LINEAGE_PRESENT_SQL = (
     "SELECT to_regclass('public.claim_lineage') IS NOT NULL "
     "   AND to_regclass('public.source_lineage_current') IS NOT NULL"
+)
+# P35.46 (GQ-23): the latest completed run's demotion rows — the
+# (lineage-or-source, tier) set the next run keeps review-only. Guarded by
+# to_regclass so a pre-v3 spine reads an empty set.
+_DEMOTION_PRESENT_SQL = "SELECT to_regclass('public.camera_site_demotion') IS NOT NULL"
+_DEMOTIONS_SQL = (
+    "SELECT token, tier, reason FROM camera_site_demotion WHERE run_key = %s ORDER BY token"
 )
 
 # The append-only review surface the run consumes: camera-site items bind a pair
@@ -221,12 +247,23 @@ def read_camera_records(conn: Any) -> list[CameraRecord]:
     """
     rows = conn.execute(_RECORDS_SQL, (list(CAMERA_PREDICATES),)).fetchall()
     by_subject: dict[str, dict[str, Any]] = {}
-    for subject, predicate, value, claim_id, source_id, capture_id, retrieved_at in rows:
+    for (
+        subject,
+        predicate,
+        value,
+        claim_id,
+        correction_reason,
+        source_id,
+        capture_id,
+        retrieved_at,
+    ) in rows:
         rec = by_subject.setdefault(subject, {"claims": [], "sources": {}})
         rec[predicate] = value
         rec["sources"][predicate] = source_id
         rec[f"{predicate}_claim"] = claim_id
         rec[f"{predicate}_occurrence"] = (capture_id, retrieved_at)
+        if correction_reason:
+            rec[f"{predicate}_correction"] = correction_reason
         if predicate in _EVIDENCE_PREDICATES:
             rec["claims"].append(claim_id)
     for subject, digest in conn.execute(_DIGESTS_SQL, (list(CAMERA_PREDICATES),)).fetchall():
@@ -237,6 +274,10 @@ def read_camera_records(conn: Any) -> list[CameraRecord]:
         tgt = by_subject.get(subject)
         if tgt is not None and slug:
             tgt.setdefault("technologies", set()).add(str(slug))
+    for subject, defect in conn.execute(_DEFECT_VALUES_SQL).fetchall():
+        tgt = by_subject.get(subject)
+        if tgt is not None and defect:
+            tgt.setdefault("defects", set()).add(str(defect))
 
     # The atomic pair: bind sets of the two selected coordinate claims.
     coord_claims = [
@@ -298,6 +339,12 @@ def read_camera_records(conn: Any) -> list[CameraRecord]:
                 coordinate_capture_id=pair_capture,
                 coordinate_retrieved_at=pair_retrieved_at,
                 declared_technologies=tuple(sorted(rec.get("technologies") or ())),
+                # P35.46: the defect markings and the coordinate pair's own
+                # correction reason — the axis_swap flag that gates collapse.
+                geometry_defects=tuple(sorted(rec.get("defects") or ())),
+                coordinate_correction=(
+                    rec.get("camera_latitude_correction") or rec.get("camera_longitude_correction")
+                ),
                 **{field: rec.get(pred) for pred, field in _FIELD.items()},
             )
         )
@@ -418,6 +465,10 @@ def _decision_row(result: CameraSiteResult, d: SiteDecision) -> tuple[Any, ...]:
             "human_items": [[iid, iv] for iid, iv in d.verdict.items],
             "decided_at": d.verdict.decided_at,
         }
+    # P35.46: the shared site id a merged edge carries (NULL on
+    # possible_duplicate / cannot_link rows — their two sites are the
+    # row's own entities).
+    site_id = ev.get("site_id")
     return (
         result.run_key,
         a.left,
@@ -433,14 +484,15 @@ def _decision_row(result: CameraSiteResult, d: SiteDecision) -> tuple[Any, ...]:
         result.rules_version,
         result.resolver_version,
         decision_digest(result.run_key, d),
+        site_id,
     )
 
 
 _INSERT_MATCH = (
     "INSERT INTO camera_site_match(run_key, left_entity, right_entity, match_tier, tier_label, "
     " relation_type, disposition, disposition_reason, decided_by, match_evidence, "
-    " evidence_claims, ruleset_version, resolver_version, input_digest) "
-    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s::uuid[], %s, %s, %s) "
+    " evidence_claims, ruleset_version, resolver_version, input_digest, site_id) "
+    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s::uuid[], %s, %s, %s, %s) "
     "ON CONFLICT (input_digest) DO NOTHING RETURNING match_id"
 )
 
@@ -591,11 +643,29 @@ def materialize_camera_sites(
     # P35.25: declared source -> independence-class map. None on a pre-P35.25
     # spine (the legacy measured-only lineage path stands); otherwise every
     # source resolves to its declared class or the shared ``unclassified``.
+    # P35.46: the declaration DETAIL (kind + documentary evidence) rides
+    # beside it — the C1 copy-lineage and C2 documentary gates.
     declared: dict[str, str] | None = None
+    declared_details: dict[str, LineageDeclaration] | None = None
     if conn.execute(_LINEAGE_PRESENT_SQL).fetchone()[0]:
-        declared = {
-            str(src): str(cls) for src, cls in conn.execute(_DECLARED_CLASSES_SQL).fetchall()
-        }
+        declared = {}
+        declared_details = {}
+        for src, cls, kind, evidence in conn.execute(_DECLARED_DETAILS_SQL).fetchall():
+            declared[str(src)] = str(cls)
+            declared_details[str(src)] = LineageDeclaration(
+                independence_class=str(cls), kind=str(kind), evidence=str(evidence or "")
+            )
+    # P35.46 (GQ-23): the latest completed run's demotion set — the
+    # (lineage-or-source, tier) pairs this run must keep review-only. Empty
+    # on a pre-v3 spine or a first run.
+    demoted: list[tuple[str, int]] = []
+    if conn.execute(_DEMOTION_PRESENT_SQL).fetchone()[0]:
+        prior_key = _latest_completed_run_key(conn)
+        if prior_key is not None:
+            demoted = [
+                (str(token), int(tier))
+                for token, tier, _reason in conn.execute(_DEMOTIONS_SQL, (prior_key,)).fetchall()
+            ]
     if progress is not None:
         progress("read", len(recs), 0)
     result = resolve_camera_sites(
@@ -606,6 +676,8 @@ def materialize_camera_sites(
         human_items=human_items,
         human_votes=human_votes,
         declared_lineages=declared,
+        declared_details=declared_details,
+        demoted_collapses=demoted,
     )
     if progress is not None:
         progress("resolved", len(result.decisions), 0)
@@ -674,6 +746,64 @@ def materialize_camera_sites(
             ).fetchone()
             is not None
         )
+        # P35.46 (GQ-23/GQ-25): the append-only census + demotion records of
+        # this run — the census row once per run_key, the demotion set the
+        # NEXT run consumes (PK conflicts = +0 on a digest-identical re-run).
+        census = result.derivation_census
+        census_appended = demotions_appended = 0
+        if census is not None:
+            census_appended = (
+                1
+                if conn.execute(
+                    "INSERT INTO camera_site_census(run_key, checked, gq23_failures, "
+                    " origin_distinct_violations, summary) "
+                    "VALUES (%s, %s, %s, %s, %s::jsonb) "
+                    "ON CONFLICT (run_key) DO NOTHING RETURNING run_key",
+                    (
+                        result.run_key,
+                        census.checked,
+                        len(census.failures),
+                        census.origin_distinct_violations,
+                        json.dumps(
+                            {
+                                "failures": [
+                                    {
+                                        "left": f.left,
+                                        "right": f.right,
+                                        "tier": f.tier,
+                                        "token": f.token,
+                                        "reason": f.reason,
+                                    }
+                                    for f in census.failures
+                                ],
+                                "demote_next_run": [list(t) for t in census.demote_next_run],
+                                "origin_distinct_clusters": list(census.origin_distinct_clusters),
+                            },
+                            sort_keys=True,
+                        ),
+                    ),
+                ).fetchone()
+                is not None
+                else 0
+            )
+            reason_by_token = {(f.token, f.tier): f.reason for f in census.failures}
+            for token, tier in census.demote_next_run:
+                demotions_appended += (
+                    1
+                    if conn.execute(
+                        "INSERT INTO camera_site_demotion(run_key, token, tier, reason) "
+                        "VALUES (%s, %s, %s, %s) "
+                        "ON CONFLICT (run_key, token, tier) DO NOTHING RETURNING token",
+                        (
+                            result.run_key,
+                            token,
+                            tier,
+                            reason_by_token.get((token, tier), "gq23_census_failure"),
+                        ),
+                    ).fetchone()
+                    is not None
+                    else 0
+                )
         # One append-only completion/result reference PER EXECUTION (ADR-123):
         # appended whether the run row was new or reused — the "a new execution
         # completed" fact itself is the append-only record. Retry of the same
@@ -701,7 +831,32 @@ def materialize_camera_sites(
         "run_record_inserted": run_inserted,
         "execution_id": execution,
         "execution_appended": execution_appended,
+        "demotions_consumed": len(demoted),
+        "census_recorded": census_appended,
+        "demotions_recorded": demotions_appended,
     }
+
+
+def _latest_completed_run_key(conn: Any) -> str | None:
+    """The run_key of the latest COMPLETED camera-site execution (ADR-123).
+
+    Mirrors the selection ``read_resolved_site_runs`` makes: the latest
+    execution row wins, falling back to the latest ``camera_site_run`` on a
+    spine without execution rows. Used to read the prior run's
+    ``camera_site_demotion`` set (P35.46).
+    """
+    has_exec = conn.execute("SELECT to_regclass('camera_site_execution') IS NOT NULL").fetchone()
+    row = None
+    if has_exec and has_exec[0]:
+        row = conn.execute(
+            "SELECT run_key FROM camera_site_execution "
+            " ORDER BY completed_at DESC, execution_id DESC LIMIT 1"
+        ).fetchone()
+    if row is None:
+        row = conn.execute(
+            "SELECT run_key FROM camera_site_run ORDER BY completed_at DESC, run_key DESC LIMIT 1"
+        ).fetchone()
+    return None if row is None else str(row[0])
 
 
 def materialize_camera_sites_from_dsn(dsn: str, **kwargs: Any) -> dict[str, Any]:

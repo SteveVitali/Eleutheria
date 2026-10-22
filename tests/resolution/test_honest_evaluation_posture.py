@@ -36,12 +36,35 @@ REGISTRY = REPO / "exports/src/exports/data/quality_checks.toml"
 
 def test_v3_interim_ruleset_shape() -> None:
     rules = CameraSiteRules.from_data()
-    assert rules.version == "3.1-interim"
+    assert rules.version == "3"
     assert rules.inferential_tiers == frozenset({3, 4, 5})
-    # Tier 1 is the shared-upstream-ref DERIVATION — still a measured
-    # auto-write candidate; no inferential tier is.
-    assert rules.candidate_auto_write == frozenset({1})
+    # P35.46 (ruleset v3): the COLLAPSE tiers C0–C2 are the only auto-write
+    # candidates — derivation, never inference (C0 rides its own evidence
+    # path outside the candidate list); the inferential tiers stay disjoint.
+    assert rules.collapse_tiers == frozenset({0, 1, 2})
+    assert rules.candidate_auto_write == frozenset({1, 2})
     assert rules.inferential_tiers.isdisjoint(rules.candidate_auto_write)
+
+
+def test_the_collapse_waiver_never_certifies_an_inferential_tier() -> None:
+    """Q-L3-1 = a: SIG-EVAL-004 is waived for C0–C2 only — the waiver reaches
+    exactly the derivation-collapse tiers and nothing else."""
+    measured = {
+        3: TierMeasurement(tier=3, predicted=100, match=100, non_match=0, not_enough_information=0),
+    }
+    auto, decisions = decide_auto_write_tiers(
+        measured,
+        candidate_tiers={1, 2, 3},
+        threshold=0.98,
+        min_pairs=50,
+        inferential_tiers={3, 4, 5},
+        certified_tiers=(),
+        eval_waived_tiers={0, 1, 2},
+    )
+    assert auto == frozenset({1, 2})
+    waived = {d.tier: d for d in decisions}
+    assert waived[1].reason == "eval_waived:gq23_census" and not waived[1].demoted
+    assert waived[3].demoted and waived[3].reason == "no_certifying_evaluation"
 
 
 def test_inferential_tier_never_auto_writes_on_agent_evidence() -> None:
