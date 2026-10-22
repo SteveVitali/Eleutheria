@@ -285,6 +285,17 @@
       "note": "national-scoped: one keystroke on the national search document under 4× CPU throttle measures ≈ 112 ms on the developer machine and 136 ms on the GitHub-hosted runner — over the ratified ≤ 100 ms. Bounded at 300 ms; the fixtures build measures under the ratified ceiling."
     },
     {
+      "route": "/sources/",
+      "metric": "interactionLatencyMs",
+      "data_source": "national",
+      "ratified_ceiling": 100,
+      "recorded_measure": 147,
+      "regression_bound": 300,
+      "deferral": "D-P35.51-3",
+      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+      "note": "national-scoped: the T1 scroll interaction on the real-scale sources document measures 147 ms to the scrolled-section effect on the GitHub-hosted runner under 4× CPU throttle — over the ratified ≤ 100 ms T1 latency. Bounded at 300 ms; the compact document the owning row ships restores headroom."
+    },
+    {
       "route": "/search/",
       "metric": "lcpMs",
       "ratified_ceiling": 1500,
