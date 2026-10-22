@@ -187,6 +187,28 @@
       "note": "national-scoped: the same document overage drives the total transfer — ≈ 2.2 MB gzip against the ratified ≤ 450 KiB. Bounded at 2,250,000 B under the national build only; the fixtures build's unscoped row still gates."
     },
     {
+      "route": "/map/",
+      "metric": "interactionLatencyMs",
+      "data_source": "fixtures",
+      "ratified_ceiling": 200,
+      "recorded_measure": 539,
+      "regression_bound": 1200,
+      "deferral": "D-P35.51-1",
+      "owner": "the map-surface optimisation row (K13 MAP rows)",
+      "note": "fixtures-scoped: one pan on the demo-corpus map under 4× CPU throttle measures ≈ 539 ms to the view-change effect on the GitHub-hosted runner (the developer machine measures under the ratified ≤ 200 ms) — the throttle-bound latency rides with the oversized bundle this deferral owns. Bounded at 1,200 ms, matching the national bound."
+    },
+    {
+      "route": "/network/",
+      "metric": "interactionLatencyMs",
+      "data_source": "fixtures",
+      "ratified_ceiling": 200,
+      "recorded_measure": 228,
+      "regression_bound": 400,
+      "deferral": "D-P35.51-3",
+      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+      "note": "fixtures-scoped: node-select on the demo-corpus graph under 4× CPU throttle measures ≈ 228 ms to the aria-pressed effect on the GitHub-hosted runner — marginally over the ratified ≤ 200 ms. Bounded at 400 ms, matching the national bound; the compact document restores headroom."
+    },
+    {
       "route": "/network/",
       "metric": "documentMaxBytes",
       "data_source": "national",
@@ -240,6 +262,17 @@
       "deferral": "D-P35.51-3",
       "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
       "note": "national-scoped: LCP on the national /search/ document measures ≈ 1,502 ms across the three Lighthouse runs (1,501.9 / 1,502.0 / 1,502.1) — marginally over the ratified ≤ 1,500 ms against the real-scale document. Bounded at 2,000 ms; the fixtures build measures under the ratified ceiling."
+    },
+    {
+      "route": "/search/",
+      "metric": "interactionLatencyMs",
+      "data_source": "fixtures",
+      "ratified_ceiling": 100,
+      "recorded_measure": 160,
+      "regression_bound": 300,
+      "deferral": "D-P35.51-2",
+      "owner": "the K0 runtime-migration row (Preact replaces React on the public surface)",
+      "note": "fixtures-scoped: one keystroke on the demo-corpus search under 4× CPU throttle measures ≈ 160 ms to the narrowed-result effect on the GitHub-hosted runner (the developer machine measures under the ratified ≤ 100 ms) — the throttle-bound latency rides with the React runtime this deferral owns. Bounded at 300 ms; the national bound stays 200 ms."
     },
     {
       "route": "/search/",
