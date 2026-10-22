@@ -465,11 +465,131 @@ def statement_row(
     return row
 
 
+def _statement_specs() -> tuple[Any, ...]:
+    """The ``sig.statement/1`` columns — declared beside ``statement_row``.
+
+    P35.39 (SIG-TRANSP-016 / J3 §6.5): every top-level key the writer emits,
+    typed for the columnar serialisations (a nested block flattens to one
+    canonical-JSON ``object`` column in CSV/Parquet/SQLite and stays nested in
+    JSONL/JSON-LD). The closed vocabularies this module defines ARE the enum
+    sources — never a second list to drift from.
+    """
+    from .column_registry import ColumnSpec as _CS
+
+    return (
+        _CS("schema", "the row's schema id", nullable=False, declared_values=(STATEMENT_SCHEMA,)),
+        _CS("claim_id", "the claim anchor id", nullable=False),
+        _CS("entity_id", "the subject entity id", nullable=False),
+        _CS("predicate_id", "the predicate the claim asserts"),
+        _CS("observed_at", "the claim's recorded observation date", dtype="date"),
+        _CS("source_id", "the registry source the claim came from", nullable=False),
+        _CS(
+            "value",
+            "the closed ``not_published`` token — raw claim literals never publish",
+            nullable=False,
+            declared_values=(VALUE_NOT_PUBLISHED,),
+        ),
+        _CS(
+            "binding_status",
+            "the claim's §5.1 binding state — the ``claim_evidence`` closed "
+            "vocabulary or the named-absence ``not_recorded``",
+            nullable=False,
+            enum_source="linkml:enum:BindingStatus",
+            declared_values=(BINDING_NOT_RECORDED,),
+        ),
+        _CS("binding_role", "the primary binding's §26 evidence role"),
+        _CS("lane", "the source's disclosure lane (S-6 basis for upstream fields)"),
+        _CS("lane_basis", "why the lane holds (the recorded rights decision)"),
+        _CS(
+            "capture",
+            "the primary evidence binding's capture block: capture/artifact ids, "
+            "``retrieved_at`` (the real retrieval instant), digest, byte size, "
+            "media type, storage tier, classification, run id, bound time",
+            dtype="object",
+        ),
+        _CS(
+            "upstream",
+            "the S-6 publication form of the upstream reference: ``status`` in "
+            "``full_url|host_only|no_upstream_url_recorded|withheld_by_policy`` "
+            "plus url/host/path_sha256 as the status allows",
+            dtype="object",
+            nullable=False,
+        ),
+        _CS(
+            "view_original",
+            "the J3 §5.3 label state: ``kind`` (the closed VIEW_ORIGINAL_KINDS "
+            "vocabulary), label, the S-6-safe href (only ``view_at_source`` "
+            "carries one), and the basis note",
+            dtype="object",
+            nullable=False,
+        ),
+        _CS(
+            "extraction",
+            "the bound extraction's method/extractor/review-status block, when recorded",
+            dtype="object",
+        ),
+        _CS(
+            "epistemics",
+            "the claim's epistemic grades: directness (ClaimDirectness), "
+            "reliability (SourceReliability), integrity (ArtifactIntegrity), "
+            "review_status (ReviewStatus) — the generated-ontology enums",
+            dtype="object",
+            nullable=False,
+        ),
+        _CS(
+            "recorded",
+            "the recording activity: the ingest run id and the recorded-at "
+            "instant the spine carries",
+            dtype="object",
+            nullable=False,
+        ),
+        _CS(
+            "supersession",
+            "the revision links: revises_claim / retraction_of and the "
+            "superseded claim's recorded_at",
+            dtype="object",
+            nullable=False,
+        ),
+        _CS(
+            "contradictions",
+            "the recorded contradictions this claim participates in: "
+            "contradiction_ids + competing_claim_ids",
+            dtype="object",
+            nullable=False,
+        ),
+        _CS(
+            "rights",
+            "the row's rights block: spdx, attribution, compartment",
+            dtype="object",
+            nullable=False,
+        ),
+        _CS(
+            "evidence",
+            "every publishable binding: capture_id/artifact_id/role/"
+            "binding_status in the recorded order",
+            dtype="array",
+            nullable=False,
+        ),
+        _CS(
+            "access_kind",
+            "the §12.2 access classification for access-typed claims — "
+            "sparse: absent on ordinary observation claims",
+            enum_source="linkml:enum:AccessKind",
+            declared_values=("unclassified",),
+        ),
+    )
+
+
+#: P35.39 (SIG-TRANSP-016): the ``statements`` resource's column specs.
+STATEMENT_COLUMN_SPECS = _statement_specs()
+
+
 __all__ = [
     "BINDING_DETAIL_COLUMNS",
     "BINDING_NOT_RECORDED",
     "BINDING_STATES",
     "CLAIM_PROVENANCE_COLUMNS",
+    "STATEMENT_COLUMN_SPECS",
     "STATEMENT_SCHEMA",
     "UPSTREAM_FULL_URL",
     "UPSTREAM_HOST_ONLY",

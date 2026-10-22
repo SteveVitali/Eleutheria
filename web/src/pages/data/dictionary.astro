@@ -1,0 +1,120 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The generated data dictionary (P35.39, SIG-TRANSP-016 / J3 §6.5): every emitted
+// data column's description, type, nullability, unit and enum source — rendered
+// from the export's own `dictionary.json`, never a hand-maintained copy, so the
+// human-readable dictionary can never drift from the downloads. The
+// machine-readable metadata (DCAT catalog, PROV-O provenance, Frictionless
+// datapackage, per-resource Table Schemas) is LINKED, never inlined — D-J3-7:
+// no inline <script> or application/ld+json on public pages.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getDataDictionary } from "../../lib/data";
+import { getReleaseStamp } from "../../lib/release-stamp";
+import { withBase } from "../../lib/paths";
+
+const dictionary = getDataDictionary();
+const stamp = getReleaseStamp();
+// The metadata files are release-pipeline artifacts — they resolve only when
+// the site is built against an activated release (the stamp). In a dev build
+// they are named, not linked (a link that cannot resolve is never emitted).
+const metadataBase = stamp ? `releases/${stamp.publicationId}` : null;
+const catalogHref = withBase("releases/catalog.jsonld");
+const provenanceHref = withBase("provenance.jsonld");
+---
+
+<BaseLayout
+  title="Data dictionary"
+  path={withBase("data/dictionary/")}
+  description="The generated data dictionary — every emitted column's description, type, nullability, unit and enum source, plus the linked machine-readable metadata."
+>
+  <p>
+    This dictionary is <strong>generated</strong> beside the export it documents:
+    every column the downloads carry is declared by the code that emits it, and a
+    column with no declaration fails the build. Version{" "}
+    <code>{dictionary.version}</code>, created {dictionary.created}; vocabulary and
+    enum entries resolve from the generated ontology schema{" "}
+    <code>{dictionary.ontology.schema_file}</code> (digest-pinned).
+  </p>
+  <p>
+    Machine-readable forms — linked, never inlined (D-J3-7):{" "}
+    {metadataBase ? (
+      <>
+        <a href={withBase(`${metadataBase}/datapackage.json`)}><code>datapackage.json</code></a> ·{" "}
+        <a href={catalogHref}><code>catalog.jsonld</code> (DCAT&nbsp;v3)</a> ·{" "}
+        <a href={withBase(`${metadataBase}/catalog.jsonld`)}><code>catalog.jsonld</code> for this release</a> ·{" "}
+        <a href={provenanceHref}><code>provenance.jsonld</code> (PROV-O)</a>
+      </>
+    ) : (
+      <>
+        <code>datapackage.json</code> · <code>catalog.jsonld</code> (DCAT&nbsp;v3) ·{" "}
+        <code>provenance.jsonld</code> (PROV-O) — these files are linked when the
+        site builds against an activated release.
+      </>
+    )}
+  </p>
+  {dictionary.resources.map((res) => (
+    <section aria-labelledby={`res-${res.name}`}>
+      <h2 id={`res-${res.name}`}>{res.title} <code>{res.name}</code></h2>
+      <p>{res.description}</p>
+      <p class="mut">
+        Serialisations: <code>{res.paths.join(", ")}</code>
+        {" · "}Table Schema: <code>{res.table_schema}</code>
+        {res.schema && <>{" · "}row schema <code>{res.schema}</code></>}
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Column</th>
+            <th scope="col">Type</th>
+            <th scope="col">Nullable</th>
+            <th scope="col">Unit</th>
+            <th scope="col">Description</th>
+            <th scope="col">Values</th>
+          </tr>
+        </thead>
+        <tbody>
+          {res.columns.map((col) => (
+            <tr>
+              <td><code>{col.name}</code></td>
+              <td><code>{col.type}</code></td>
+              <td>{col.nullable ? "yes" : "no"}</td>
+              <td>{col.unit ? <code>{col.unit}</code> : "—"}</td>
+              <td>{col.description}</td>
+              <td>
+                {col.enum_values
+                  ? col.enum_values.length > 8
+                    ? <>a closed set — see the Table Schema (<code>{col.enum_source}</code>)</>
+                    : <code>{col.enum_values.join(", ")}</code>
+                  : col.enum_source
+                    ? <code>{col.enum_source}</code>
+                    : "—"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  ))}
+  {dictionary.documents.length > 0 && (
+    <section aria-labelledby="documents-heading">
+      <h2 id="documents-heading">Non-columnar documents</h2>
+      <table>
+        <thead>
+          <tr><th scope="col">Path</th><th scope="col">Schema</th><th scope="col">Description</th></tr>
+        </thead>
+        <tbody>
+          {dictionary.documents.map((d) => (
+            <tr>
+              <td><code>{d.path}</code></td>
+              <td>{d.schema ? <code>{d.schema}</code> : "—"}</td>
+              <td>{d.description ?? "—"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )}
+</BaseLayout>

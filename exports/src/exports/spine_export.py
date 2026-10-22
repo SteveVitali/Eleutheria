@@ -60,6 +60,8 @@ from db.occurrences import BELIEF_NOW, BELIEF_PARAM, claim_source_cte
 from inference.accountability import read_materialized_accountability_links
 from inference.materialize import read_materialized_coverage
 from policy.labels import (
+    KINDS,
+    LABEL_BASES,
     EntityLabel,
     LabelFacts,
     derive_label,
@@ -95,6 +97,7 @@ from policy import disclosure as policy_disclosure
 from policy import withdrawals as policy_withdrawals
 
 from . import analytics, provo, source_licences
+from . import column_registry as CR
 from . import compartments as C
 from . import placement as _placement
 from . import statements as _stmt
@@ -110,6 +113,9 @@ from .manifest import (
     sha256_hex,
 )
 from .shaping import (
+    ENVELOPE_CONFLICTED,
+    ENVELOPE_RESOLVED,
+    ENVELOPE_UNREPORTED,
     LAT_PREDICATE,
     LON_PREDICATE,
     SHAPING_SCHEMA_VERSION,
@@ -823,6 +829,11 @@ class SpineExport:
     exclusions: dict[str, Any]
     manifest: Manifest
     tile_renderers: dict[str, str] = field(default_factory=dict)
+    #: P35.39: the release-scope metadata artifacts (``datapackage.json``,
+    #: ``dictionary.json``, ``catalog.jsonld``, ``provenance.jsonld``,
+    #: ``schemas/*.tableschema.json``) regenerated over the extended artifact
+    #: set — they supersede the bundle-scope copies the bundle wrote.
+    metadata_artifacts: dict[str, bytes] = field(default_factory=dict)
 
     def write_to(self, out_dir: Path | str) -> Path:
         """Materialise the whole export under ``out_dir`` (deterministic bytes)."""
@@ -841,7 +852,13 @@ class SpineExport:
         (root / "exclusions.json").write_bytes(
             canonical_json(self.exclusions),
         )
-        # 3) the EXTENDED manifest (bundle + web + provenance + exclusions).
+        # 3) the P35.39 metadata regenerated over the extended artifact set —
+        #    written AFTER the bundle bytes so the release-scope documents win.
+        for path, data in self.metadata_artifacts.items():
+            target = root / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(data)
+        # 4) the EXTENDED manifest (bundle + web + provenance + exclusions + metadata).
         (root / "manifest.json").write_bytes(self.manifest.to_bytes())
         return root
 
@@ -943,6 +960,128 @@ def _site_row_data(
     if placement is not None:
         row.update(placement.sites_columns())
     return row
+
+
+def _sites_specs() -> tuple[Any, ...]:
+    """The ``sites`` table's own columns — the registry spec for the writer above.
+
+    P35.39 (SIG-TRANSP-016 / J3 §6.5): the placement columns ride
+    ``placement.PLACEMENT_COLUMN_SPECS`` (declared beside *that* writer) and the
+    ``_rights``/``rights_*`` block rides ``compartments.RIGHTS_BLOCK_SPECS``.
+    """
+    from .column_registry import ColumnSpec as _CS
+
+    return (
+        _CS("entity_id", "the subject entity id", nullable=False),
+        _CS("entity_type", "the subject's entity type", nullable=False),
+        _CS(
+            "label",
+            "the shared entity-label registry's derivation (never the raw id)",
+        ),
+        _CS(
+            "label_basis",
+            "why the label holds — the closed ``policy.labels.LABEL_BASES`` vocabulary (L-3)",
+            enum_source="export:policy.labels.LABEL_BASES",
+            declared_values=tuple(LABEL_BASES),
+        ),
+        _CS(
+            "technology",
+            "the subject's declared SKOS technology slug (None when unreported or conflicted)",
+            enum_source="linkml:skos:technology",
+        ),
+        _CS(
+            "technology_status",
+            "the technology envelope's status — ``resolved``/``conflicted``/"
+            "``unreported`` (the honest gap is named, never guessed)",
+            enum_source="export:shaping.ENVELOPE",
+            declared_values=(
+                ENVELOPE_RESOLVED,
+                ENVELOPE_CONFLICTED,
+                ENVELOPE_UNREPORTED,
+            ),
+        ),
+        _CS(
+            "jurisdiction",
+            "the declared jurisdiction bucket (legacy column — the placement "
+            "columns carry the verified chain)",
+        ),
+        _CS(
+            "tier",
+            "the subject's sensitivity tier (the published point is tier-reduced)",
+            dtype="integer",
+            nullable=False,
+        ),
+        _CS(
+            "precision",
+            "the declared geometry precision of the emitted point",
+            enum_source="linkml:enum:GeometryPrecision",
+        ),
+        _CS(
+            "point_status",
+            "how the coordinate envelope resolved: ``resolved``/``conflicted``/"
+            "``unreported`` — a conflicted site emits a null geometry, never a "
+            "picked point",
+            nullable=False,
+            enum_source="export:shaping.PointStatus",
+            declared_values=(ENVELOPE_RESOLVED, ENVELOPE_CONFLICTED, ENVELOPE_UNREPORTED),
+        ),
+        _CS(
+            "n_observation_claims",
+            "the site slice's observation-claim count",
+            dtype="integer",
+            nullable=False,
+            unit="count",
+        ),
+        _CS(
+            "n_sources",
+            "the number of sources the slice's claims draw on — "
+            "corroboration-visibility, not a merged record (SIG-RECON-058)",
+            dtype="integer",
+            nullable=False,
+            unit="count",
+        ),
+        _CS(
+            "source_id",
+            "the registry source this slice's claims came from (the "
+            "``source@rights_id`` slice key for multi-rights sources)",
+            nullable=False,
+        ),
+        _CS(
+            "rights_id",
+            "the rights record id governing this slice (SIG-LIC-004a)",
+            nullable=False,
+        ),
+        _CS("spdx", "the slice's effective SPDX licence id", nullable=False),
+        _CS(
+            "claim_ids",
+            "the backing claim anchors (provenance, never raw literals)",
+            dtype="array",
+            nullable=False,
+        ),
+        _CS(
+            "geometry",
+            "the tier-reduced Point geometry the placement ruleset stands "
+            "behind — ``null`` when the point was withheld (R1/R3/R5) or the "
+            "envelope conflicted; a columnar serialisation carries it as "
+            "GeoJSON JSON",
+            dtype="object",
+        ),
+        # The request-surface ``sites`` table may carry this — the
+        # observation-level record marker (SIG-RECON-058) a hand-built
+        # request emits directly.
+        _CS(
+            "observation_level",
+            "the observation record's level marker — ``observation`` for an "
+            "observation-level row (SIG-RECON-058: rows are observations, "
+            "never a resolved census)",
+            enum_source="export:observation_level",
+            declared_values=("observation",),
+        ),
+    )
+
+
+#: P35.39 (SIG-TRANSP-016): the ``sites`` resource's own column specs.
+SITES_COLUMN_SPECS = _sites_specs()
 
 
 @dataclass(frozen=True)
@@ -1185,6 +1324,37 @@ def _record_claims(
     return {
         comp: {"rows": rows, "license": lic_by_comp[comp]} for comp, rows in rows_by_comp.items()
     }
+
+
+def _record_claims_specs() -> tuple[Any, ...]:
+    """The ``record_claims`` stream's columns — beside the writer (P35.39)."""
+    from .column_registry import ColumnSpec as _CS
+
+    return (
+        _CS("claim_id", "the claim anchor id", nullable=False),
+        _CS("entity_id", "the subject entity id", nullable=False),
+        _CS("predicate_id", "the predicate the claim asserts"),
+        _CS("observed_at", "the claim's recorded observation date", dtype="date"),
+        _CS("source_id", "the registry source the claim came from", nullable=False),
+        _CS(
+            "evidence",
+            "the typed capture/artifact locators bound to the claim: "
+            "``{capture_id, artifact_id, role}`` — never raw claim literals",
+            dtype="array",
+            nullable=False,
+        ),
+        _CS(
+            "access_kind",
+            "the §12.2 access classification — sparse: emitted only on "
+            "access-typed claims (the materialized edge's recorded kind wins)",
+            enum_source="linkml:enum:AccessKind",
+            declared_values=("unclassified",),
+        ),
+    )
+
+
+#: P35.39 (SIG-TRANSP-016): the ``record_claims`` resource's column specs.
+RECORD_CLAIMS_COLUMN_SPECS = _record_claims_specs()
 
 
 def _claim_slots(
@@ -2333,6 +2503,62 @@ def _coverage(
     return base
 
 
+def _coverage_specs() -> tuple[Any, ...]:
+    """The ``coverage`` table's columns — the registry spec for the writers here.
+
+    The rows are the web ``CoverageMetric`` contract (§32.5): the shaping
+    path, the materialized path (``coverage_metric_from_materialized``), and
+    the appended resolved-sites / contradictions-visible metrics all emit the
+    same keys; the materialized path adds the excluded-class disclosure.
+    """
+    from .column_registry import ColumnSpec as _CS
+
+    return (
+        _CS("id", "the metric's stable id", nullable=False),
+        _CS(
+            "kind",
+            "the §32.5 metric kind",
+            nullable=False,
+            declared_values=("counted_quantity", "reconciliation_ratio"),
+        ),
+        _CS("label", "what the metric counts", nullable=False),
+        _CS(
+            "value",
+            "the displayed value phrase — always denominator-qualified, never a bare total",
+            nullable=False,
+        ),
+        _CS("denominator", "the NAMED denominator (never reality)", nullable=False),
+        _CS(
+            "population_note",
+            "the §32.5 disclosure that the true population is unknown",
+            nullable=False,
+        ),
+        _CS(
+            "is_population_total",
+            "always ``false`` — a coverage metric is never a population total (SIG-METRIC-009/010)",
+            dtype="boolean",
+            nullable=False,
+            declared_values=("false",),
+        ),
+        _CS(
+            "exclusions",
+            "the excluded-class counts — ``{conflicted, withheld, "
+            "non_publishable, filtered}`` (ED-42; materialized path)",
+            dtype="object",
+        ),
+        _CS(
+            "excluded_total",
+            "the excluded subjects' count — disclosed, never clamped away",
+            dtype="integer",
+            unit="count",
+        ),
+    )
+
+
+#: P35.39 (SIG-TRANSP-016): the ``coverage`` resource's column specs.
+COVERAGE_COLUMN_SPECS = _coverage_specs()
+
+
 def _watch(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
     """Surface 7 — ContractWatchItem[] (§39.5). Honest absence when the spine has no
     contracts with a derived notice deadline yet."""
@@ -3251,6 +3477,57 @@ def _label_artifacts(
     return by_comp
 
 
+def _label_specs() -> tuple[Any, ...]:
+    """The ``labels/<comp>.jsonl`` row fields — the registry spec for the
+    ``sig.entity-label/1`` rows ``EntityLabel.row()`` emits (P35.39)."""
+    from .column_registry import ColumnSpec as _CS
+
+    return (
+        _CS("entity_id", "the entity id", nullable=False),
+        _CS("sig_id", "the canonical SIG identifier", nullable=False),
+        _CS(
+            "kind",
+            "the label kind (the closed ``policy.labels.KINDS`` vocabulary)",
+            nullable=False,
+            enum_source="export:policy.labels.KINDS",
+            declared_values=tuple(KINDS),
+        ),
+        _CS("url_type", "the URL type segment the entity page hangs under"),
+        _CS("label", "the derived display label (None on a withheld/typed-absence row)"),
+        _CS("descriptor", "the ``· <kind>``-style descriptor segment"),
+        _CS(
+            "label_basis",
+            "why the label holds — the closed L-3 vocabulary",
+            enum_source="export:policy.labels.LABEL_BASES",
+            declared_values=tuple(LABEL_BASES),
+        ),
+        _CS("label_source_id", "the source the label's text derives from"),
+        _CS("place_jkey", "the jurisdiction key naming the entity's place"),
+        _CS("slug", "the URL slug"),
+        _CS("hash", "the disambiguating hash4 suffix"),
+        _CS("url", "the entity's page URL path"),
+        _CS("disambiguator", "the disambiguation qualifier text"),
+        _CS("component_id", "the boundary-pack component the entity places under"),
+        _CS(
+            "part8",
+            "whether the row passed the Part VIII screen: ``pass``|``fallback``",
+            nullable=False,
+            declared_values=("pass", "fallback"),
+        ),
+        _CS("subject_key", "the subject key (the kind-prefix source)"),
+        _CS(
+            "label_state",
+            "the typed-absence state: ``not_yet_reviewed`` | ``withheld`` "
+            "(sparse — absent on an ordinary labelled row)",
+            declared_values=("not_yet_reviewed", "withheld"),
+        ),
+    )
+
+
+#: P35.39 (SIG-TRANSP-016): the ``labels`` resource's column specs.
+LABEL_COLUMN_SPECS = _label_specs()
+
+
 def build_spine_export(
     dataset: ShapedDataset,
     raw: Mapping[str, Any] | None = None,
@@ -3501,6 +3778,16 @@ def build_spine_export(
     }
     web_artifacts: dict[str, bytes] = {}
     for name, payload in surfaces.items():
+        # P35.39 (SIG-TRANSP-016): the web payloads that are row surfaces of a
+        # registered resource must carry only declared columns.
+        if name == "freshness" and isinstance(payload, list):
+            for r in payload:
+                if isinstance(r, Mapping):
+                    CR.assert_documented("freshness", r.keys())
+        if name == "coverage" and isinstance(payload, list):
+            for r in payload:
+                if isinstance(r, Mapping):
+                    CR.assert_documented("coverage", r.keys())
         web_artifacts[f"{_WEB_DIR}/{name}.json"] = _web_bytes(payload)
     # P32.17 (SIG-DOS-001/002): reviewed dossier packets compose into the
     # research-dossier portfolio — a separate artifact class from the §39.2
@@ -3599,6 +3886,10 @@ def build_spine_export(
         ).items()
     ):
         path = f"{comp}/record_claims.jsonl"
+        # P35.39 (SIG-TRANSP-016): the emitted record must be registry-covered —
+        # an undeclared field fails the build here, beside its writer.
+        for r in payload["rows"]:
+            CR.assert_documented("record_claims", r)
         web_artifacts[path] = b"".join(canonical_json(r) for r in payload["rows"])
         web_licenses[path] = str(payload["license"])
         web_compartments[path] = comp
@@ -3629,6 +3920,9 @@ def build_spine_export(
         ).items()
     ):
         path = f"{comp}/statements.jsonl"
+        # P35.39 (SIG-TRANSP-016): fail closed on any undeclared emitted column.
+        for r in payload["rows"]:
+            CR.assert_documented("statements", r)
         web_artifacts[path] = b"".join(canonical_json(r) for r in payload["rows"])
         web_licenses[path] = str(payload["license"])
         web_compartments[path] = comp
@@ -3659,6 +3953,9 @@ def build_spine_export(
         ).items()
     ):
         path = f"labels/{comp}.jsonl"
+        # P35.39 (SIG-TRANSP-016): fail closed on any undeclared emitted column.
+        for r in label_rows:
+            CR.assert_documented("labels", r)
         web_artifacts[path] = b"".join(canonical_json(r) for r in label_rows)
         web_licenses[path] = str(comp_licenses.get(comp, _SIG_SPDX))
         web_compartments[path] = comp
@@ -3684,6 +3981,9 @@ def build_spine_export(
     sources_table = source_licences.source_licence_table(
         slices.rows_by_compartment, slices.index, registry=registry
     )
+    # P35.39 (SIG-TRANSP-016): fail closed on any undeclared emitted column.
+    for r in sources_table["rows"]:
+        CR.assert_documented("source_licence_table", r.keys())
     sources_path = f"{_WEB_DIR}/sources.json"
     web_artifacts[sources_path] = _web_bytes(sources_table)
     web_licenses[sources_path] = _SIG_SPDX
@@ -3786,13 +4086,19 @@ def build_spine_export(
         tile_artifacts.append((tile_path, pt.compartment, pt.license, rendered))
 
     # --- the PROV-O lineage (§21.6) --------------------------------------------
-    provenance = _provenance_ttl(
+    _prov_lineage = _provenance_lineage(
         dataset,
         source_names,
         raw.get("claim_binding_detail") or [],
         lane_by_source=lane_by_source,
         release_id=build_spec.release_id(),
         generated_at=generated_at,
+    )
+    provenance = provo.export_lineage(_prov_lineage, fmt="nt").encode("utf-8")
+    # P35.39 (SIG-TRANSP-016 / J3 §6.6): the JSON-LD twin — canonicalised for
+    # byte stability (rdflib json-ld makes no ordering promise).
+    provenance_jsonld = canonical_json(
+        json.loads(provo.export_lineage(_prov_lineage, fmt="json-ld"))
     )
 
     # --- the loud exclusions report --------------------------------------------
@@ -3813,7 +4119,7 @@ def build_spine_export(
         },
     }
 
-    manifest = _extended_manifest(
+    manifest, metadata_artifacts = _extended_manifest(
         bundle,
         web_artifacts=web_artifacts,
         tile_artifacts=tile_artifacts,
@@ -3822,6 +4128,7 @@ def build_spine_export(
         web_schemas=web_schemas,
         web_counts=web_counts,
         provenance=provenance,
+        provenance_jsonld=provenance_jsonld,
         exclusions=exclusions,
     )
     return SpineExport(
@@ -3831,6 +4138,7 @@ def build_spine_export(
         exclusions=exclusions,
         manifest=manifest,
         tile_renderers=tile_renderers,
+        metadata_artifacts=metadata_artifacts,
     )
 
 
@@ -3860,6 +4168,42 @@ def _render_tiles(
     )
 
 
+#: Bundle-level metadata artifacts the spine manifest regenerates over the
+#: FULL artifact set (the bundle's copies only describe the bundle's tables —
+#: the release's dictionary/catalog/datapackage must cover every emitted
+#: column of every artifact, SIG-TRANSP-016).
+_REGENERATED_METADATA = frozenset({"datapackage.json", "dictionary.json", "catalog.jsonld"})
+
+
+def _row_sources_from_bytes(path: str, data: bytes) -> list[str]:
+    """The upstream source ids a row-bearing artifact drew on — read back from
+    the emitted bytes so the descriptor's ``sources`` is the artifact's own
+    truth, never a parallel derivation."""
+    ids: set[str] = set()
+    try:
+        if path.endswith(".jsonl"):
+            for line in data.decode("utf-8").splitlines():
+                if not line.strip():
+                    continue
+                row = json.loads(line)
+                for key in ("source_id", "source", "sourceId", "label_source_id"):
+                    value = row.get(key)
+                    if isinstance(value, str) and value:
+                        ids.add(value)
+        elif path.endswith(".json"):
+            doc = json.loads(data)
+            rows = doc if isinstance(doc, list) else doc.get("rows") or doc.get("sources") or []
+            for row in rows if isinstance(rows, list) else []:
+                if isinstance(row, Mapping):
+                    for key in ("source_id", "source", "sourceId", "label_source_id"):
+                        value = row.get(key)
+                        if isinstance(value, str) and value:
+                            ids.add(value)
+    except (ValueError, UnicodeDecodeError):
+        return []  # a document that doesn't parse as rows asserts no sources
+    return sorted(ids)
+
+
 def _extended_manifest(
     bundle: Bundle,
     *,
@@ -3867,11 +4211,12 @@ def _extended_manifest(
     tile_artifacts: Sequence[tuple[str, str, str, bytes]],
     provenance: bytes,
     exclusions: Mapping[str, Any],
+    provenance_jsonld: bytes | None = None,
     web_licenses: Mapping[str, str] | None = None,
     web_compartments: Mapping[str, str] | None = None,
     web_schemas: Mapping[str, str] | None = None,
     web_counts: Mapping[str, tuple[int, int | None]] | None = None,
-) -> Manifest:
+) -> tuple[Manifest, dict[str, bytes]]:
     """Extend the bundle manifest with the web JSONs, tiles, provenance, exclusions.
 
     Every added artifact carries its checksum + compartment + computed licence, so a
@@ -3880,7 +4225,19 @@ def _extended_manifest(
     row-schema id (``sig.statement/1`` on the statements files) and
     ``web_counts`` the ``(row_count, distinct_entities)`` pair where the
     artifact is a row stream.
+
+    P35.39 (SIG-TRANSP-016 / J3 §6.5–6.6): the bundle-scope metadata artifacts
+    (``datapackage.json``, ``dictionary.json``, ``catalog.jsonld``,
+    ``schemas/*``) are **regenerated over the extended artifact set** — the
+    release's dictionary covers every emitted column of every stream and
+    payload, its datapackage links a Table Schema per registry resource, and
+    its DCAT catalog distributes every listed file. Returns the manifest plus
+    the regenerated metadata bytes (they supersede the bundle-scope copies;
+    ``SpineExport.write_to`` writes them last).
     """
+    from . import dcat as _dcat
+    from . import frictionless as _fl
+
     # Each tile is labelled with the compartment its sites were placed in (and that
     # compartment's licence) — a CC-BY-SA tile is never filed under `sig_graph` (ADR-106).
     tiles = {path: (comp, lic) for path, comp, lic, _ in tile_artifacts}
@@ -3888,7 +4245,11 @@ def _extended_manifest(
     compartments_for = dict(web_compartments or {})
     schemas = dict(web_schemas or {})
     counts = dict(web_counts or {})
-    artifacts: list[Artifact] = list(bundle.manifest.artifacts)
+    artifacts: list[Artifact] = [
+        a
+        for a in bundle.manifest.artifacts
+        if a.path not in _REGENERATED_METADATA and not a.path.startswith(f"{CR.SCHEMAS_DIR}/")
+    ]
     for path in sorted(web_artifacts):
         data = web_artifacts[path]
         if path in tiles:
@@ -3920,6 +4281,8 @@ def _extended_manifest(
                     schema=schemas.get(path),
                 )
             )
+    # --- P35.39: the release-scope metadata, regenerated over every artifact --
+    metadata_bytes: dict[str, bytes] = {}
     artifacts.append(
         Artifact.of(
             name="provenance.ttl",
@@ -3930,6 +4293,18 @@ def _extended_manifest(
             data=provenance,
         )
     )
+    if provenance_jsonld is not None:
+        artifacts.append(
+            Artifact.of(
+                name="provenance.jsonld",
+                path="provenance.jsonld",
+                media_type="application/ld+json",
+                compartment=_META_COMPARTMENT,
+                license=_SIG_SPDX,
+                data=provenance_jsonld,
+            )
+        )
+        metadata_bytes["provenance.jsonld"] = provenance_jsonld
     artifacts.append(
         Artifact.of(
             name="exclusions.json",
@@ -3940,10 +4315,168 @@ def _extended_manifest(
             data=canonical_json(exclusions),
         )
     )
-    return Manifest(build_spec=bundle.build_spec, artifacts=tuple(artifacts))
+
+    artifact_bytes: dict[str, bytes] = dict(bundle.artifact_bytes)
+    artifact_bytes.update(web_artifacts)
+    artifact_bytes["provenance.ttl"] = provenance
+    if provenance_jsonld is not None:
+        artifact_bytes["provenance.jsonld"] = provenance_jsonld
+    artifact_bytes["exclusions.json"] = canonical_json(exclusions)
+
+    paths_by_resource: dict[str, list[str]] = {}
+    documents: list[dict[str, Any]] = []
+    sources_by_resource: dict[str, list[str]] = {}
+    for art in artifacts:
+        res = CR.assert_path_documented(art.path)
+        if res is None:
+            doc: dict[str, Any] = {
+                "path": art.path,
+                "media_type": art.media_type,
+                "compartment": art.compartment,
+                "license": art.license,
+            }
+            if art.schema is not None:
+                doc["schema"] = art.schema
+            documents.append(doc)
+        else:
+            paths_by_resource.setdefault(res, []).append(art.path)
+            for sid in _row_sources_from_bytes(art.path, artifact_bytes[art.path]):
+                if sid not in sources_by_resource.setdefault(res, []):
+                    sources_by_resource[res].append(sid)
+    resources = sorted(paths_by_resource)
+    for srcs in sources_by_resource.values():
+        srcs.sort()
+
+    # A Table Schema for every emitted resource (J3 §6.5).
+    schema_bytes = CR.table_schema_artifacts(resources)
+    metadata_bytes.update(schema_bytes)
+    for path, data in schema_bytes.items():
+        artifacts.append(
+            Artifact.of(
+                name=Path(path).name,
+                path=path,
+                media_type="application/json",
+                compartment=_META_COMPARTMENT,
+                license=_SIG_SPDX,
+                data=data,
+            )
+        )
+
+    # The release-scope datapackage — the bundle's covers only its tables;
+    # this one lists every row-bearing artifact with its Table Schema link and
+    # upstream sources (J1 NEW-11's missing fields).
+    tabular = [
+        a
+        for a in artifacts
+        if CR.resource_for_path(a.path) is not None
+        and a.path not in {e.path for e in bundle.evidence_artifacts}
+    ]
+    schema_by_path = {
+        a.path: CR.table_schema_path(res)
+        for a in tabular
+        if (res := CR.resource_for_path(a.path)) is not None
+    }
+    sources_by_path = {
+        a.path: sources_by_resource.get(CR.resource_for_path(a.path) or "", ()) for a in tabular
+    }
+    dp_bytes = _fl.data_package(
+        tuple(tabular),
+        bundle.build_spec,
+        schema_by_path=schema_by_path,
+        sources_by_path=sources_by_path,
+    )
+    metadata_bytes["datapackage.json"] = dp_bytes
+    artifacts.append(
+        Artifact.of(
+            name="datapackage.json",
+            path="datapackage.json",
+            media_type="application/json",
+            compartment=_META_COMPARTMENT,
+            license=_SIG_SPDX,
+            data=dp_bytes,
+        )
+    )
+
+    # dictionary.json — resource entries + the document listing: every
+    # non-row-bearing artifact, plus the generated schema/descriptor set.
+    dict_documents: list[dict[str, Any]] = [
+        *documents,
+        {
+            "path": "datapackage.json",
+            "media_type": "application/json",
+            "compartment": _META_COMPARTMENT,
+            "license": _SIG_SPDX,
+        },
+        *[
+            {
+                "path": p,
+                "media_type": "application/json",
+                "compartment": _META_COMPARTMENT,
+                "license": _SIG_SPDX,
+                "schema": CR.TABLESCHEMA_PROFILE,
+            }
+            for p in sorted(schema_bytes)
+        ],
+        {
+            "path": "dictionary.json",
+            "media_type": "application/json",
+            "compartment": _META_COMPARTMENT,
+            "license": _SIG_SPDX,
+            "schema": CR.DICTIONARY_SCHEMA,
+        },
+        {
+            "path": "catalog.jsonld",
+            "media_type": "application/ld+json",
+            "compartment": _META_COMPARTMENT,
+            "license": _SIG_SPDX,
+        },
+    ]
+    dict_bytes = canonical_json(
+        CR.dictionary_document(
+            build_spec=bundle.build_spec,
+            resources=resources,
+            paths_by_resource=paths_by_resource,
+            documents=dict_documents,
+            sources_by_resource=sources_by_resource,
+        )
+    )
+    metadata_bytes["dictionary.json"] = dict_bytes
+    artifacts.append(
+        Artifact.of(
+            name="dictionary.json",
+            path="dictionary.json",
+            media_type="application/json",
+            compartment=_META_COMPARTMENT,
+            license=_SIG_SPDX,
+            data=dict_bytes,
+            schema=CR.DICTIONARY_SCHEMA,
+        )
+    )
+    catalog_bytes = _dcat.export_catalog(
+        tuple(artifacts),
+        release_id=bundle.build_spec.release_id(),
+        created=bundle.build_spec.as_of_snapshot.isoformat(),
+        compartments_public={a.compartment for a in artifacts},
+    )
+    metadata_bytes["catalog.jsonld"] = catalog_bytes
+    artifacts.append(
+        Artifact.of(
+            name="catalog.jsonld",
+            path="catalog.jsonld",
+            media_type="application/ld+json",
+            compartment=_META_COMPARTMENT,
+            license=_SIG_SPDX,
+            data=catalog_bytes,
+        )
+    )
+
+    return (
+        Manifest(build_spec=bundle.build_spec, artifacts=tuple(artifacts)),
+        metadata_bytes,
+    )
 
 
-def _provenance_ttl(
+def _provenance_lineage(
     dataset: ShapedDataset,
     source_names: Mapping[str, str],
     binding_detail: Sequence[Sequence[Any]],
@@ -3951,7 +4484,7 @@ def _provenance_ttl(
     lane_by_source: Mapping[str, Mapping[str, Any]],
     release_id: str,
     generated_at: str,
-) -> bytes:
+) -> provo.Lineage:
     """Build the PROV-O lineage for the release (§21.6, SIG-INGEST-016).
 
     Every source the export drew from is a ``prov:Agent``; the export build and
@@ -3969,8 +4502,9 @@ def _provenance_ttl(
     the source-agent + export-run skeleton — honest absence, never a
     fabricated capture.
 
-    Serialised as canonical N-Triples (a valid Turtle subset) so
-    ``provenance.ttl`` is byte-reproducible (SIG-EXPORT-003).
+    ``_provenance_ttl`` serialises it as canonical N-Triples (a valid Turtle
+    subset) and ``_provenance_jsonld`` as canonical JSON-LD — both
+    byte-reproducible (SIG-EXPORT-003).
     """
     source_ids: set[str] = set()
     for site in dataset.sites:
@@ -4060,7 +4594,29 @@ def _provenance_ttl(
         ],
         captures=captures,
     )
-    return (provo.export_lineage(lineage, fmt="nt")).encode("utf-8")
+    return lineage
+
+
+def _provenance_ttl(
+    dataset: ShapedDataset,
+    source_names: Mapping[str, str],
+    binding_detail: Sequence[Sequence[Any]],
+    *,
+    lane_by_source: Mapping[str, Mapping[str, Any]],
+    release_id: str,
+    generated_at: str,
+) -> bytes:
+    return provo.export_lineage(
+        _provenance_lineage(
+            dataset,
+            source_names,
+            binding_detail,
+            lane_by_source=lane_by_source,
+            release_id=release_id,
+            generated_at=generated_at,
+        ),
+        fmt="nt",
+    ).encode("utf-8")
 
 
 def _parse_instant(value: str) -> datetime | None:

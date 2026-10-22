@@ -321,6 +321,337 @@ GATED_SOURCE_ROW_FIELDS: tuple[str, ...] = (
     "published_sites",
 )
 
+#: P35.39 (SIG-TRANSP-016 / J3 §6.5): the column specs for each emitted
+#: stream — declared beside the writers + allow-lists above so a field list
+#: edit and its documentation can never drift apart. The registry aggregates
+#: these; an emitted key with no spec fails the build.
+
+
+def _specs() -> tuple[tuple[Any, ...], ...]:
+    from .column_registry import ColumnSpec as _CS
+
+    run_specs = (
+        _CS("schema", "the row's schema id", nullable=False, declared_values=(RUN_RECORD_SCHEMA,)),
+        _CS("execution_id", "the run-report/execution identifier", nullable=False),
+        _CS("run_id", "the ingest run this execution joined (None on unlinked reports)"),
+        _CS("source_id", "the registry source the run targeted"),
+        _CS("link_basis", "how the report was linked to its ingest run"),
+        _CS("clock_basis", "which clock the run's timings carry"),
+        _CS(
+            "shared_run",
+            "whether the execution shared a run with siblings",
+            dtype="boolean",
+            nullable=False,
+        ),
+        _CS("started_at", "the run's recorded start instant", dtype="datetime"),
+        _CS(
+            "started_basis",
+            "how ``started_at`` was established (``report`` / the C-13 "
+            "``finished_at − duration`` derivation / ``not_recorded``)",
+            nullable=False,
+        ),
+        _CS("finished_at", "the run's recorded finish instant", dtype="datetime"),
+        _CS("duration_seconds", "the recorded run duration", dtype="number", unit="seconds"),
+        _CS(
+            "outcome",
+            "the run's completion outcome (or the typed honest-absence token: "
+            "``not_recorded (shared run)`` / ``not_recorded (no completion recorded)``)",
+            nullable=False,
+        ),
+        _CS("claims_considered", "claims the run evaluated", dtype="integer", unit="count"),
+        _CS("claims_inserted", "claims the run wrote to the spine", dtype="integer", unit="count"),
+        _CS(
+            "claims_duplicate",
+            "claims the run found already present",
+            dtype="integer",
+            unit="count",
+        ),
+        _CS("fetches", "fetch attempts the run made", dtype="integer", unit="count"),
+        _CS("records_emitted", "records the run emitted", dtype="integer", unit="count"),
+        _CS(
+            "rejected",
+            "rejected-record counts by reason class (the closed refusal/quarantine "
+            "vocabularies; unclassifiable reasons fold into ``other_unclassifiable``)",
+            dtype="object",
+        ),
+        _CS(
+            "error_class",
+            "the run's primary error class when it failed (off-vocabulary values "
+            "fold to ``unclassified_error``)",
+        ),
+        _CS("error_classes", "error-class → count map for the run", dtype="object"),
+        _CS(
+            "robots",
+            "per-host robots outcome rows (host + outcome + count; "
+            "``disregarded`` rows carry the GL-GATE-08 decision reference)",
+            dtype="array",
+        ),
+        _CS("rate_limit_events", "recorded rate-limit events", dtype="integer", unit="count"),
+        _CS("disappearances", "recorded target disappearances", dtype="integer", unit="count"),
+        _CS("document_outcomes", "document outcome → count map for the run", dtype="object"),
+        _CS("quota_reached", "whether the run stopped on its quota", dtype="boolean"),
+        _CS("budget_reached", "whether the run stopped on its budget", dtype="boolean"),
+        _CS(
+            "per_fetch",
+            "per-fetch detail rows — only the ``_PER_FETCH_FIELDS`` keys pass "
+            "(fail-closed, PKG-12)",
+            dtype="array",
+        ),
+        _CS(
+            "code_commit",
+            "the code commit the run's image carried (never borrowed across a shared run)",
+        ),
+        _CS("connector_name", "the run's own connector name"),
+        _CS("connector_version", "the run's own connector version"),
+        _CS("recorded_at", "when the record was written", dtype="datetime"),
+    )
+    capture_specs = (
+        _CS(
+            "schema",
+            "the row's schema id",
+            nullable=False,
+            declared_values=(CAPTURE_RECORD_SCHEMA,),
+        ),
+        _CS("run_id", "the ingest run that retrieved the capture"),
+        _CS("source_id", "the registry source the capture belongs to"),
+        _CS(
+            "target",
+            "the S-6 publication form of the capture target (full URL, "
+            "``host#path_sha256:…``, ``sealed`` for sealed-tier captures, or "
+            "``not_recorded``)",
+            nullable=False,
+        ),
+        _CS("state", "the capture state"),
+        _CS("records", "the recorded record count", dtype="integer", unit="count"),
+        _CS("digest", "the capture mark's content digest"),
+        _CS("bytes", "the capture's byte size", dtype="integer", unit="bytes"),
+        _CS("media_type", "the captured content's media type"),
+        _CS(
+            "retrieved_at",
+            "the recorded retrieval instant — the true event time, never the "
+            "export clock (P35.38b)",
+            dtype="datetime",
+        ),
+        _CS("mark_recorded_at", "when the capture mark was recorded", dtype="datetime"),
+        _CS(
+            "classification",
+            "the capture's recorded classification",
+            enum_source="linkml:enum:CaptureClassification",
+        ),
+        _CS(
+            "storage_tier",
+            "the served storage tier — the recorded tier tightened by the "
+            "lane+Part VIII derivation (never a silent public upgrade)",
+            nullable=False,
+        ),
+        _CS("tier_basis", "how the served tier was derived", nullable=False),
+        _CS("lane", "the source's disclosure lane", nullable=False),
+        _CS("lane_basis", "why the lane holds (the recorded rights decision)", nullable=False),
+        _CS(
+            "bytes_retained",
+            "whether SIG retains the capture bytes",
+            dtype="boolean",
+            nullable=False,
+        ),
+        _CS(
+            "redaction_applied", "whether a redaction was applied", dtype="boolean", nullable=False
+        ),
+        _CS(
+            "redacted_derivative",
+            "whether a redacted derivative exists",
+            dtype="boolean",
+            nullable=False,
+        ),
+        _CS("http_status", "the recorded retrieval HTTP status", dtype="integer"),
+        _CS(
+            "changed_vs_prior",
+            "the digest-diff signal versus the prior capture of the same "
+            "target: ``first`` / ``changed`` / ``unchanged`` / "
+            "``not_comparable (no digest)``",
+            nullable=False,
+        ),
+        _CS("shared_run", "whether the capture's run was shared", dtype="boolean", nullable=False),
+    )
+    issue_specs = (
+        _CS(
+            "schema", "the row's schema id", nullable=False, declared_values=(ISSUE_RECORD_SCHEMA,)
+        ),
+        _CS("issue_id", "the issue's stable id", nullable=False),
+        _CS("source_id", "the registry source the issue names", nullable=False),
+        _CS(
+            "issue_class",
+            "the integrity issue class (disappearance, robots change, …)",
+            nullable=False,
+        ),
+        _CS("opened_at", "when the issue opened", dtype="datetime", nullable=False),
+        _CS("last_seen_at", "when the issue was last observed", dtype="datetime"),
+        _CS("closed_at", "when the issue closed (None while open)", dtype="datetime"),
+        _CS("count", "the issue's occurrence count", dtype="integer", unit="count"),
+        _CS("basis", "what evidence the issue stands on", nullable=False),
+    )
+    freshness_specs = (
+        _CS(
+            "schema",
+            "the row's schema id",
+            nullable=False,
+            declared_values=(FRESHNESS_RECORD_SCHEMA,),
+        ),
+        _CS("source_id", "the registry source the row evaluates", nullable=False),
+        _CS(
+            "cadence_rule",
+            "the derived cadence rule (or ``not_scheduled`` / the typed "
+            "``not_recorded (cadence doc unreadable)`` token)",
+            nullable=False,
+        ),
+        _CS(
+            "cadence_basis",
+            "where the cadence declaration lives "
+            "(``ops/cadence.toml`` / ``not_declared`` / ``not_recorded``)",
+            nullable=False,
+        ),
+        _CS("cadence_state", "the declared cadence row's state (enabled/disabled)"),
+        _CS(
+            "scheduled",
+            "whether the source is on an enabled schedule",
+            dtype="boolean",
+            nullable=False,
+        ),
+        _CS(
+            "one_time_load",
+            "whether the source is a declared one-time load",
+            dtype="boolean",
+            nullable=False,
+        ),
+        _CS(
+            "freshness_state",
+            "the cadence-evaluated freshness state at ``evaluated_at``",
+            nullable=False,
+        ),
+        _CS(
+            "run_record_missing",
+            "whether the run record the state cites is missing",
+            dtype="boolean",
+            nullable=False,
+        ),
+        _CS(
+            "evaluated_at",
+            "the release's evaluation instant (the as-of — never the reader's clock, K9 C-4)",
+            dtype="datetime",
+            nullable=False,
+        ),
+        _CS(
+            "last_upstream_change",
+            "``{value, basis}`` — the latest upstream content change the "
+            "capture digests evidence (interim basis, K9 C-6)",
+            dtype="object",
+            nullable=False,
+        ),
+        _CS(
+            "last_sig_records_change",
+            "``{value, basis}`` — when the source's SIG records last changed",
+            dtype="object",
+            nullable=False,
+        ),
+        _CS(
+            "volatility",
+            "``{distribution, unregistered_predicate, basis}`` — the "
+            "predicate-volatility basis over the source's published claims",
+            dtype="object",
+            nullable=False,
+        ),
+        _CS(
+            "staleness",
+            "``{evaluable, not_evaluable, basis}`` — the dated-observation "
+            "staleness inputs (undated observations are never '0 stale')",
+            dtype="object",
+            nullable=False,
+        ),
+    )
+    source_specs = (
+        _CS(
+            "schema", "the row's schema id", nullable=False, declared_values=(SOURCE_RECORD_SCHEMA,)
+        ),
+        _CS("source_id", "the registry source id", nullable=False),
+        _CS("name", "the source's display name (scrubbed)", nullable=False),
+        _CS(
+            "publisher",
+            "the publisher name (``publisher_not_recorded`` until recorded)",
+            nullable=False,
+        ),
+        _CS("publisher_type", "the registry source_kind"),
+        _CS(
+            "lifecycle_state",
+            "the K9 C-1 lifecycle state",
+            nullable=False,
+            enum_source="export:transparency.LIFECYCLE_STATES",
+            declared_values=LIFECYCLE_STATES,
+        ),
+        _CS("status_flags", "the row's status flag set", dtype="array", nullable=False),
+        _CS("lane", "the disclosure lane", nullable=False),
+        _CS("lane_basis", "why the lane holds", nullable=False),
+        _CS("lane_evidence", "the recorded lane evidence (scrubbed)"),
+        _CS("lane_decision_authority", "the recorded decision authority"),
+        _CS("lane_review_needed", "whether the lane decision flags review", dtype="boolean"),
+        _CS(
+            "part_viii_class",
+            "the Part VIII field-screen class token (the payload never publishes)",
+        ),
+        _CS(
+            "licence",
+            "``{spdx, redistributable, derivative_permitted, attribution, "
+            "terms_reviewed, sig_labelled_cc0}`` — the recorded rights fields",
+            dtype="object",
+        ),
+        _CS(
+            "ground_truth",
+            "``{homepage, homepage_host, terms_url}`` — the S-6-scrubbed upstream locators",
+            dtype="object",
+        ),
+        _CS(
+            "cadence",
+            "``{rule, basis, state, scheduled, one_time_load}`` — the cadence block",
+            dtype="object",
+            nullable=False,
+        ),
+        _CS("last_successful_run", "the last completed run's instant", dtype="datetime"),
+        _CS(
+            "last_upstream_change",
+            "``{value, basis}`` — same field names as freshness.jsonl (K9 C-6)",
+            dtype="object",
+            nullable=False,
+        ),
+        _CS(
+            "last_sig_records_change",
+            "``{value, basis}`` — the SIG-records change marker",
+            dtype="object",
+            nullable=False,
+        ),
+        _CS(
+            "published_claims",
+            "the source's published claim count, or ``not_published``",
+            dtype="any",
+            nullable=False,
+        ),
+        _CS(
+            "published_sites",
+            "whether the source names published site records",
+            dtype="boolean",
+            nullable=False,
+        ),
+        _CS(
+            "review",
+            "``{basis, reviewer_role, decided_at, terms_reviewed}`` — the "
+            "recorded rights-decision review block",
+            dtype="object",
+        ),
+        # --- the S-11 gated row's extra fields (GATED_SOURCE_ROW_FIELDS) ------
+        _CS("status", "the gated row's status token (``gated``/``refused``/``withdrawn``)"),
+        _CS("homepage_url", "the gated row's scrubbed homepage host (never the full URL)"),
+        _CS("reason_class", "why the source is gated (closed reason class)"),
+    )
+    return (run_specs, capture_specs, issue_specs, freshness_specs, source_specs)
+
+
 #: The K9 C-1 lifecycle states, in partition precedence order (first
 #: match wins). ``withdrawn`` has no recorded signal yet — a source-level
 #: withdrawal is a gate decision (D-J3-5) the registry does not carry;
@@ -373,6 +704,17 @@ _PER_FETCH_FIELDS = (
     "error_class",
     "outcome",
 )
+
+#: P35.39: the spec tuples land after the vocabularies they cite
+#: (``LIFECYCLE_STATES``) — invoked, not merely defined.
+(
+    RUN_RECORD_SPECS,
+    CAPTURE_RECORD_SPECS,
+    ISSUE_RECORD_SPECS,
+    FRESHNESS_RECORD_SPECS,
+    SOURCE_RECORD_SPECS,
+) = _specs()
+
 
 #: The C-13 honest-absence tokens.
 _NOT_RECORDED = "not_recorded"
@@ -1726,6 +2068,20 @@ def emit_transparency_artifacts(
         at=at,
     )
 
+    # P35.39 (SIG-TRANSP-016 / J3 §6.5): the column registry is fail-closed —
+    # a record field a writer emits that no spec declares refuses the build
+    # beside its writer, on top of the explicit_columns allow-list.
+    from .column_registry import assert_documented
+
+    for _r in run_recs:
+        assert_documented("transparency_runs", _r.keys())
+    for _r in cap_recs:
+        assert_documented("transparency_captures", _r.keys())
+    for _r in issues:
+        assert_documented("transparency_issues", _r.keys())
+    for _r in freshness:
+        assert_documented("transparency_freshness", _r.keys())
+
     artifacts = {
         TRANSPARENCY_RUNS_PATH: _jsonl(run_recs),
         TRANSPARENCY_CAPTURES_PATH: _jsonl(cap_recs),
@@ -1756,6 +2112,8 @@ def emit_transparency_artifacts(
             )
             for sid in sorted(registry_map)
         ]
+        for _r in source_rows:
+            assert_documented("transparency_sources", _r.keys())
         anomalies = (
             set(executions_by_source) | set(captures_by_source) | set(claim_counts) | site_sources
         ) - set(registry_map)
@@ -1779,16 +2137,21 @@ def emit_transparency_artifacts(
 __all__ = [
     "CAPTURE_RECORD_FIELDS",
     "CAPTURE_RECORD_SCHEMA",
+    "CAPTURE_RECORD_SPECS",
     "COUNTS_SCHEMA",
     "FRESHNESS_RECORD_FIELDS",
     "FRESHNESS_RECORD_SCHEMA",
+    "FRESHNESS_RECORD_SPECS",
     "GATED_SOURCE_ROW_FIELDS",
     "ISSUE_RECORD_FIELDS",
     "ISSUE_RECORD_SCHEMA",
+    "ISSUE_RECORD_SPECS",
     "LIFECYCLE_STATES",
     "RUN_RECORD_FIELDS",
     "RUN_RECORD_SCHEMA",
+    "RUN_RECORD_SPECS",
     "SOURCE_RECORD_SCHEMA",
+    "SOURCE_RECORD_SPECS",
     "SOURCE_RIGHTS_COLUMNS",
     "SOURCE_ROW_FIELDS",
     "TRANSPARENCY_CAPTURES_PATH",

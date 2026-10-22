@@ -127,6 +127,10 @@ EXTERNAL_LINK_ROUTES: frozenset[str] = frozenset(
         # emitted at the release-tree root, linked by every stamped page's
         # <link rel="describedby">.
         "release.json",
+        # P35.39 (SIG-TRANSP-016 / J3 §6.6): the DCAT-3 series catalog the
+        # archive pages link with <link rel="alternate" type="application/ld+json">
+        # — an activation overlay object emitted beside releases/catalog.json.
+        "releases/catalog.jsonld",
     }
     | {href.strip("/") for _, href in SITE_NAV}
     | {DISPUTE_HREF.strip("/")}
@@ -267,6 +271,7 @@ def _layout(
     report_href: str | None = None,
     description: str | None = None,
     stamp: Mapping[str, Any] | None = None,
+    alternate_ld: str | None = None,
 ) -> bytes:
     """The shared archive page skeleton (P34.34a): site nav, the title +
     immutable-release stamp, then a footer carrying the dispute/correction
@@ -311,12 +316,20 @@ def _layout(
             f'href="{_e(stamp["describedby"])}">'
         )
         stamp_foot = _stamp_html(stamp)
+    # P35.39 (SIG-TRANSP-016 / J3 §6.6, D-J3-7): the dataset catalog is LINKED,
+    # never inlined — the DCAT JSON-LD document lives in its own file.
+    alt_head = (
+        f'<link rel="alternate" type="application/ld+json" href="{_e(alternate_ld)}">'
+        if alternate_ld
+        else ""
+    )
     html = (
         '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
         f"<title>{_e(title)} — SIG released record</title>"
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
         f"{desc}"
         f"{stamp_head}"
+        f"{alt_head}"
         f"<style>{_STYLE}</style></head><body>"
         f"<header>{_site_nav()}<h1>{_e(title)}</h1>{pub}</header>"
         f"<main>{body}</main>"
@@ -874,6 +887,7 @@ Completeness: {_e(_display_label((entry.get("completeness") or {}).get("state"))
         publication_id=pub,
         licence="per compartment — see the table",
         stamp=stamp,
+        alternate_ld="/releases/catalog.jsonld",
     )
 
 
@@ -922,6 +936,7 @@ release's integrity manifest covers — cite these URLs directly.</p>
         title=f"Release namespace {pub[:15]}…",
         body=body,
         publication_id=pub,
+        alternate_ld="/releases/catalog.jsonld",
         licence="per compartment — see the release landing",
         description=(
             f"Immutable SIG release namespace {pub} — the pinned record "
@@ -964,6 +979,7 @@ Each release is immutable: its bytes never change after activation
         licence="CC-BY-4.0 — this catalog page is SIG metadata; record data "
         "carries its compartment licence",
         stamp=stamp,
+        alternate_ld="/releases/catalog.jsonld",
     )
 
 

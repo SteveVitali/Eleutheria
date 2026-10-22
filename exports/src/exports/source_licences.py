@@ -98,4 +98,54 @@ def source_licence_table(
     return {"schema": SCHEMA, "rows": out}
 
 
-__all__ = ["SCHEMA", "source_licence_table"]
+def _specs() -> tuple[Any, ...]:
+    """The ``sig.source-licence-table/1`` row fields — beside the writer (P35.39)."""
+    from .column_registry import ColumnSpec as _CS
+
+    return (
+        _CS("sourceId", "the registry source id", nullable=False),
+        _CS(
+            "licenses",
+            "the distinct effective SPDX licence ids the source's rows carry",
+            dtype="array",
+            nullable=False,
+        ),
+        _CS(
+            "compartments",
+            "the licence compartments the source's rows are filed under",
+            dtype="array",
+            nullable=False,
+        ),
+        _CS(
+            "rows",
+            "the source's published site-slice rows in this release",
+            dtype="integer",
+            nullable=False,
+            unit="count",
+        ),
+        _CS(
+            "attributionRequired",
+            "whether any of the source's licences requires attribution (E2-12)",
+            dtype="boolean",
+            nullable=False,
+        ),
+        _CS(
+            "attribution",
+            "the effective attribution credit text (None when none is required)",
+        ),
+        _CS("termsUrl", "the source's recorded terms-of-use URL"),
+        _CS(
+            "creditUnderCorrection",
+            "true when the row's credit is under a recorded correction (F-387: "
+            "attribution required but absent, or a known mis-credit)",
+            dtype="boolean",
+            nullable=False,
+        ),
+    )
+
+
+#: P35.39 (SIG-TRANSP-016/033): the ``web/sources.json`` rows' column specs.
+SOURCE_LICENCE_COLUMN_SPECS = _specs()
+
+
+__all__ = ["SCHEMA", "SOURCE_LICENCE_COLUMN_SPECS", "source_licence_table"]

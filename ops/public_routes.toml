@@ -44,6 +44,7 @@ top_level = [
   "coverage-metrics",
   "artifact",            # /artifact/<export-path>.json — figure-evidence downloads (P35.37)
   "data-collection",     # the crawler contact page (P35.38a, S6c)
+  "data",                # /data/dictionary/ — the generated data dictionary (P35.39, TX-10a)
   "data-freshness",
   "dispute",
   "dossier",
