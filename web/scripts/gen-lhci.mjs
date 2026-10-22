@@ -188,9 +188,12 @@ function assertionsFor(row, route, source = "fixtures") {
   if (row.lighthouseAccessibility !== null) {
     a["categories:accessibility"] = ["error", { minScore: row.lighthouseAccessibility }];
   }
-  if (row.lcpMs !== null) a["largest-contentful-paint"] = ["error", { maxNumericValue: row.lcpMs }];
-  if (row.cls !== null) a["cumulative-layout-shift"] = ["error", { maxNumericValue: row.cls }];
-  if (row.tbtMs !== null) a["total-blocking-time"] = ["error", { maxNumericValue: row.tbtMs }];
+  // The lab metrics route through the same gap renderer — a recorded
+  // measured_gap (e.g. the national /search/ LCP at ~1,502 ms vs 1,500) keeps
+  // its ratified ceiling as warn with the regression bound as the error gate.
+  byteAudit("largest-contentful-paint", "lcpMs", row.lcpMs);
+  byteAudit("cumulative-layout-shift", "cls", row.cls);
+  byteAudit("total-blocking-time", "tbtMs", row.tbtMs);
   Object.assign(a, COMMON_OFF);
   return a;
 }

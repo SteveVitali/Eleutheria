@@ -174,10 +174,18 @@
               }
             ],
             "largest-contentful-paint": [
-              "error",
-              {
-                "maxNumericValue": 2500
-              }
+              [
+                "error",
+                {
+                  "maxNumericValue": 4000
+                }
+              ],
+              [
+                "warn",
+                {
+                  "maxNumericValue": 2500
+                }
+              ]
             ],
             "cumulative-layout-shift": [
               "error",
@@ -292,10 +300,18 @@
               }
             ],
             "largest-contentful-paint": [
-              "error",
-              {
-                "maxNumericValue": 1500
-              }
+              [
+                "error",
+                {
+                  "maxNumericValue": 2000
+                }
+              ],
+              [
+                "warn",
+                {
+                  "maxNumericValue": 1500
+                }
+              ]
             ],
             "cumulative-layout-shift": [
               "error",

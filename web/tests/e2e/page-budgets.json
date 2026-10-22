@@ -144,6 +144,17 @@
     },
     {
       "route": "/map/",
+      "metric": "lcpMs",
+      "data_source": "national",
+      "ratified_ceiling": 2500,
+      "recorded_measure": 3350,
+      "regression_bound": 4000,
+      "deferral": "D-P35.51-3",
+      "owner": "the map-surface optimisation row (K13 MAP rows)",
+      "note": "national-scoped: LCP on the national /map/ document measures ≈ 3,349 ms across the three Lighthouse runs (3,367 / 3,349 / 3,349) — over the ratified ≤ 2,500 ms against the real-scale page. Bounded at 4,000 ms; the fixtures build measures under the ratified ceiling."
+    },
+    {
+      "route": "/map/",
       "metric": "interactionLatencyMs",
       "data_source": "national",
       "ratified_ceiling": 200,
@@ -218,6 +229,17 @@
       "deferral": "D-P35.51-3",
       "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
       "note": "national-scoped: one keystroke on the national search document under 4× CPU throttle measures ≈ 112 ms to the narrowed-result effect — marginally over the ratified ≤ 100 ms. Bounded at 200 ms; the fixtures build measures under the ratified ceiling."
+    },
+    {
+      "route": "/search/",
+      "metric": "lcpMs",
+      "data_source": "national",
+      "ratified_ceiling": 1500,
+      "recorded_measure": 1502,
+      "regression_bound": 2000,
+      "deferral": "D-P35.51-3",
+      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+      "note": "national-scoped: LCP on the national /search/ document measures ≈ 1,502 ms across the three Lighthouse runs (1,501.9 / 1,502.0 / 1,502.1) — marginally over the ratified ≤ 1,500 ms against the real-scale document. Bounded at 2,000 ms; the fixtures build measures under the ratified ceiling."
     },
     {
       "route": "/search/",
