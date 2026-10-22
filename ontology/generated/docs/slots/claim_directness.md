@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/claim_directness](https://ontology.sig-project.org/schema/slot/claim_directness)
+URI: [sig:slot/claim_directness](https://ontology.surveillancegraph.org/schema/slot/claim_directness)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/claim_directness](https://ontology.sig-project.org/schema/slot/cl
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/claim_directness](https://ontology.sig-project.org/schema/slot/cl
 <details>
 ```yaml
 name: claim_directness
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/consent_gate](https://ontology.sig-project.org/schema/slot/consent_gate)
+URI: [sig:slot/consent_gate](https://ontology.surveillancegraph.org/schema/slot/consent_gate)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/consent_gate](https://ontology.sig-project.org/schema/slot/consen
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/consent_gate](https://ontology.sig-project.org/schema/slot/consen
 <details>
 ```yaml
 name: consent_gate
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: IntegrationEdge
 domain_of:

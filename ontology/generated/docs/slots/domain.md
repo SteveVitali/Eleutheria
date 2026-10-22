@@ -14,7 +14,7 @@ _The domain-level slug this rolls up to._
 
 
 
-URI: [sig:slot/domain](https://ontology.sig-project.org/schema/slot/domain)
+URI: [sig:slot/domain](https://ontology.surveillancegraph.org/schema/slot/domain)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/domain](https://ontology.sig-project.org/schema/slot/domain)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/domain](https://ontology.sig-project.org/schema/slot/domain)
 ```yaml
 name: domain
 description: The domain-level slug this rolls up to.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Technology
 domain_of:

@@ -15,7 +15,7 @@ _Explicit edge direction — never symmetric by default (§12.5, SIG-ONTO-049)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/Direction](https://ontology.sig-project.org/schema/enum/Direction)
+URI: [sig:enum/Direction](https://ontology.surveillancegraph.org/schema/enum/Direction)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -50,7 +50,7 @@ URI: [sig:enum/Direction](https://ontology.sig-project.org/schema/enum/Direction
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -63,7 +63,7 @@ URI: [sig:enum/Direction](https://ontology.sig-project.org/schema/enum/Direction
 ```yaml
 name: Direction
 description: Explicit edge direction — never symmetric by default (§12.5, SIG-ONTO-049).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   a_to_b:

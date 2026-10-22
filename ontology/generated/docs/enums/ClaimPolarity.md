@@ -15,7 +15,7 @@ _Whether the claim affirms or denies its predicate (§10.3)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/ClaimPolarity](https://ontology.sig-project.org/schema/enum/ClaimPolarity)
+URI: [sig:enum/ClaimPolarity](https://ontology.surveillancegraph.org/schema/enum/ClaimPolarity)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -50,7 +50,7 @@ URI: [sig:enum/ClaimPolarity](https://ontology.sig-project.org/schema/enum/Claim
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -63,7 +63,7 @@ URI: [sig:enum/ClaimPolarity](https://ontology.sig-project.org/schema/enum/Claim
 ```yaml
 name: ClaimPolarity
 description: Whether the claim affirms or denies its predicate (§10.3).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   affirms:

@@ -585,7 +585,7 @@ def build_parser() -> argparse.ArgumentParser:
         "sentinel-scan",
         help="P35.3: the fixture-sentinel scan (SIG-OPS-012) — sweeps the "
         "public web build / release-candidate output / sampled API responses "
-        "for the ops/sentinels.toml sentinels (example.test, sig.example, "
+        "for the ops/sentinels.toml sentinels (the placeholder-domain sentinels, "
         "_FIXTURE, demo_, Reviewer A/B, loopback URLs, undisclosed stand-in "
         "captures, unregistered contact domains). A hit outside a declared "
         "fixture compartment fails. Emits the fixture-sentinel probe-run/1.",

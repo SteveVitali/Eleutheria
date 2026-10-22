@@ -14,7 +14,7 @@ _An upstream's own Tier A-F label, passthrough only — never used in resolution
 
 
 
-URI: [sig:slot/legacy_source_tier](https://ontology.sig-project.org/schema/slot/legacy_source_tier)
+URI: [sig:slot/legacy_source_tier](https://ontology.surveillancegraph.org/schema/slot/legacy_source_tier)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/legacy_source_tier](https://ontology.sig-project.org/schema/slot/
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/legacy_source_tier](https://ontology.sig-project.org/schema/slot/
 name: legacy_source_tier
 description: An upstream's own Tier A-F label, passthrough only — never used in resolution
   (§10.4).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

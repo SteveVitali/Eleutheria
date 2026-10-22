@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/value](https://ontology.sig-project.org/schema/slot/value)
+URI: [sig:slot/value](https://ontology.surveillancegraph.org/schema/slot/value)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/value](https://ontology.sig-project.org/schema/slot/value)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/value](https://ontology.sig-project.org/schema/slot/value)
 <details>
 ```yaml
 name: value
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

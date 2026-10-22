@@ -15,7 +15,7 @@ _The six addressable ways a claim's evidence link points into the captured bytes
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/LocatorKind](https://ontology.sig-project.org/schema/enum/LocatorKind)
+URI: [sig:enum/LocatorKind](https://ontology.surveillancegraph.org/schema/enum/LocatorKind)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -54,7 +54,7 @@ URI: [sig:enum/LocatorKind](https://ontology.sig-project.org/schema/enum/Locator
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -69,7 +69,7 @@ name: LocatorKind
 description: The six addressable ways a claim's evidence link points into the captured
   bytes it was extracted from (§24.1, SIG-PARSE-003). Unknown kinds fail closed —
   never silently re-anchored to the whole document.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   page:

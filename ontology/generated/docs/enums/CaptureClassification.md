@@ -15,7 +15,7 @@ _What an evidence_capture row actually is (SIG-TRUST-002). 'legacy' is the hones
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/CaptureClassification](https://ontology.sig-project.org/schema/enum/CaptureClassification)
+URI: [sig:enum/CaptureClassification](https://ontology.surveillancegraph.org/schema/enum/CaptureClassification)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -51,7 +51,7 @@ URI: [sig:enum/CaptureClassification](https://ontology.sig-project.org/schema/en
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -65,7 +65,7 @@ URI: [sig:enum/CaptureClassification](https://ontology.sig-project.org/schema/en
 name: CaptureClassification
 description: What an evidence_capture row actually is (SIG-TRUST-002). 'legacy' is
   the honest default for rows whose provenance predates the classification.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   actual:

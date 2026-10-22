@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/media_type](https://ontology.sig-project.org/schema/slot/media_type)
+URI: [sig:slot/media_type](https://ontology.surveillancegraph.org/schema/slot/media_type)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/media_type](https://ontology.sig-project.org/schema/slot/media_ty
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/media_type](https://ontology.sig-project.org/schema/slot/media_ty
 <details>
 ```yaml
 name: media_type
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: EvidenceCapture
 domain_of:

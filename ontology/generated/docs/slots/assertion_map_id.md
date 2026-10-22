@@ -14,7 +14,7 @@ _The named versioned mapping the row's defaults were derived under (sig.assertio
 
 
 
-URI: [sig:slot/assertion_map_id](https://ontology.sig-project.org/schema/slot/assertion_map_id)
+URI: [sig:slot/assertion_map_id](https://ontology.surveillancegraph.org/schema/slot/assertion_map_id)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/assertion_map_id](https://ontology.sig-project.org/schema/slot/as
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/assertion_map_id](https://ontology.sig-project.org/schema/slot/as
 ```yaml
 name: assertion_map_id
 description: The named versioned mapping the row's defaults were derived under (sig.assertion.map.v1).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

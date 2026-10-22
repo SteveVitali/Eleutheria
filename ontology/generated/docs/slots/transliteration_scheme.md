@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/transliteration_scheme](https://ontology.sig-project.org/schema/slot/transliteration_scheme)
+URI: [sig:slot/transliteration_scheme](https://ontology.surveillancegraph.org/schema/slot/transliteration_scheme)
 <!-- no inheritance hierarchy -->
 
 

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/response_date](https://ontology.sig-project.org/schema/slot/response_date)
+URI: [sig:slot/response_date](https://ontology.surveillancegraph.org/schema/slot/response_date)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/response_date](https://ontology.sig-project.org/schema/slot/respo
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/response_date](https://ontology.sig-project.org/schema/slot/respo
 <details>
 ```yaml
 name: response_date
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: RecordsRequest
 domain_of:

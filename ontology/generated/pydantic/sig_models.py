@@ -71,7 +71,7 @@ linkml_meta = LinkMLMeta({'default_prefix': 'sig',
      'description': 'The canonical SIG ontology: entities (§11), relationships '
                     '(§12), and the structural controlled vocabularies (§13). One '
                     'LinkML source generates every downstream form (§20.1).',
-     'id': 'https://ontology.sig-project.org/schema/sig',
+     'id': 'https://ontology.surveillancegraph.org/schema/sig',
      'imports': ['linkml:types', 'common', 'entities', 'edges'],
      'license': 'Apache-2.0',
      'name': 'sig',
@@ -80,7 +80,7 @@ linkml_meta = LinkMLMeta({'default_prefix': 'sig',
                   'linkml': {'prefix_prefix': 'linkml',
                              'prefix_reference': 'https://w3id.org/linkml/'},
                   'sig': {'prefix_prefix': 'sig',
-                          'prefix_reference': 'https://ontology.sig-project.org/schema/'},
+                          'prefix_reference': 'https://ontology.surveillancegraph.org/schema/'},
                   'skos': {'prefix_prefix': 'skos',
                            'prefix_reference': 'http://www.w3.org/2004/02/skos/core#'},
                   'xsd': {'prefix_prefix': 'xsd',
@@ -1315,7 +1315,7 @@ class Entity(ConfiguredBaseModel):
     Abstract base — every entity has identity (§3.1 defining standard).
     """
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'abstract': True,
-         'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+         'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
@@ -1324,7 +1324,7 @@ class Jurisdiction(Entity):
     """
     [NEW] A first-class jurisdiction with a self-referential hierarchy, a pluggable national code system, and temporally-versioned geometry (§11.1, SIG-ONTO-010/011).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     jurisdiction_type: Optional[JurisdictionType] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction']} })
     parent_jurisdiction: Optional[list[str]] = Field(default=None, description="""Multiple parents permitted; hierarchies overlap (SIG-ONTO-010).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction']} })
@@ -1344,7 +1344,7 @@ class Organization(Entity):
     """
     The single entity for ALL institutional actors; \"vendor\" is a role, not a subtype (§11.2, SIG-ONTO-012). canonical_name is a claim, not a column (§8.2).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     canonical_name: Optional[str] = Field(default=None, description="""A claim, not an authoritative column (§8.2, SIG-ONTO-003).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
     alias: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
@@ -1371,7 +1371,7 @@ class Person(Entity):
     """
     [NEW] Tightly constrained (§11.3, SIG-ONTO-014/015/016). A Person row carries NO surveillance attributes and MUST NOT be reachable from any automated extraction path. It exists only for named public officials and SIG's own attributable curators.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     public_interest_basis: str = Field(default=..., description="""MUST pass the officer-naming test (§43.4); required (SIG-ONTO-016).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Person']} })
     human_review_completed: bool = Field(default=..., description="""Person creation MUST have been through human review (SIG-ONTO-016).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Person']} })
@@ -1383,7 +1383,7 @@ class Product(Entity):
     """
     A product; MUST NOT be equated with a Technology (§11.4, SIG-ONTO-017).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     product_name: Optional[str] = Field(default=None, description="""Time-bounded; products are renamed constantly.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Product']} })
     vendor: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Product', 'Deployment', 'DataSystem']} })
@@ -1398,7 +1398,7 @@ class Technology(Entity):
     """
     A three-level technology (domain→family→technology, §11.5, SIG-ONTO-019). The authoritative term hierarchy is the SKOS Technology scheme (§13.1); this class carries the code and its rollup levels for a specific referenced node.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     technology: Optional[str] = Field(default=None, description="""The technology-level slug.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Technology', 'Deployment']} })
     family: Optional[str] = Field(default=None, description="""The family-level slug this rolls up to.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Technology']} })
@@ -1410,7 +1410,7 @@ class Capability(Entity):
     """
     A verb.object.scope capability (§11.6, SIG-ONTO-023).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     capability: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Capability']} })
     scope: Optional[CapabilityScope] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Capability', 'AccessRelationship', 'IntegrationEdge']} })
@@ -1421,7 +1421,7 @@ class Deployment(Entity):
     """
     The bridge between organizational adoption and individual devices; creatable with NO product, NO vendor, and NO physical asset (§11.7, SIG-ONTO-026).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     deploying_organization: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment']} })
     product: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Deployment', 'DataSystem']} })
@@ -1452,7 +1452,7 @@ class PhysicalAsset(Entity):
     """
     A field-observed device; geometry is OPTIONAL and operator absence is a first-class countable state (§11.8, SIG-ONTO-027/028). Accommodates ways and relations, not only nodes, and MUST NOT force sensors into a camera abstraction.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     asset_type: Optional[str] = Field(default=None, description="""A Technology reference, not a free string.""", json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset']} })
     geometry: Optional[str] = Field(default=None, description="""Optional (SIG-GEO-004).""", json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset']} })
@@ -1473,7 +1473,7 @@ class CandidateAsset(Entity):
     """
     [NEW] RF/heuristic leads that MUST live in a separate entity type and MUST NOT appear in any public device layer until promoted under §43.5 (§11.9, SIG-ONTO-029/030).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     detection_method: Optional[DetectionMethod] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['CandidateAsset']} })
     location_estimate: Optional[str] = Field(default=None, description="""With estimate_radius_m — never a bare point.""", json_schema_extra = { "linkml_meta": {'domain_of': ['CandidateAsset']} })
@@ -1489,7 +1489,7 @@ class DataSystem(Entity):
     """
     Reference databases as infrastructure — representable even where SIG holds no sensor (§11.10, SIG-ONTO-031).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     operator: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['DataSystem']} })
     vendor: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Product', 'Deployment', 'DataSystem']} })
@@ -1505,7 +1505,7 @@ class Contract(Entity):
     """
     A contract; acquisition_channel and parent_cooperative_contract are REQUIRED model elements (§11.11, SIG-ONTO-032).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     buyer: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract']} })
     seller: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Contract']} })
@@ -1528,7 +1528,7 @@ class FundingInstrument(Entity):
     """
     [NEW] Purchaser != operator != funder (§11.12, SIG-ONTO-033). Grants and third-party funding; federal grant → local surveillance is traceable.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     funder: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['FundingInstrument']} })
     recipient: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['FundingInstrument']} })
@@ -1546,7 +1546,7 @@ class Policy(Entity):
     """
     An institutional policy; MUST NOT be merged with ConfigurationState (§11.13, SIG-ONTO-034). Their disagreement is a first-class finding.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     policy_type: Optional[PolicyType] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Policy']} })
     applies_to: Optional[list[str]] = Field(default=None, description="""Organization, Deployment, or Product — polymorphic and repeatable.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Policy']} })
@@ -1563,7 +1563,7 @@ class LegalInstrument(Entity):
     """
     [NEW] Laws and regulations as a modelled entity (§11.14). Gives the international requirement somewhere to put an arrêté préfectoral, a CNIL decision, or an EU AI Act obligation.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     instrument_type: Optional[LegalInstrumentType] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['FundingInstrument', 'LegalInstrument']} })
     enacting_body: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalInstrument']} })
@@ -1585,7 +1585,7 @@ class ConfigurationState(Entity):
     """
     Promoted to a first-class, time-versioned, per-Deployment entity (§11.15). Configuration is observed, never assumed (SIG-ONTO-036). Retention is a duration OR an ordinal bucket; SIG never fabricates a midpoint (SIG-ONTO-035a).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     deployment: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['PhysicalAsset', 'ConfigurationState']} })
     retention_days: Optional[str] = Field(default=None, description="""Duration OR ordinal bucket; MUST accept both (SIG-ONTO-035a).""", json_schema_extra = { "linkml_meta": {'domain_of': ['ConfigurationState']} })
@@ -1608,7 +1608,7 @@ class UsageAggregate(Entity):
     """
     Aggregated usage; direction is the point (§11.16). NO per-search, per-plate, or per-person row may exist here or anywhere in SIG (SIG-ONTO-037, §18.1).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     searching_org: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['UsageAggregate']} })
     source_org: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['UsageAggregate']} })
@@ -1626,7 +1626,7 @@ class AccountabilityEvent(Entity):
     """
     An accountability event; epistemic_status is REQUIRED and rendered everywhere (§11.17, SIG-ONTO-038/039).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     event_type: Optional[AccountabilityEventType] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent']} })
     epistemic_status: EpistemicStatus = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent']} })
@@ -1644,7 +1644,7 @@ class LegalProceeding(Entity):
     """
     Split from AccountabilityEvent — dockets, parties, filings, posture (§11.18).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     court: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalProceeding']} })
     docket_number: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['LegalProceeding']} })
@@ -1663,7 +1663,7 @@ class RecordsRequest(Entity):
     """
     [NEW] A public-records request SIG both cites as provenance and generates as a task (§11.19). no_responsive_records is a positive finding (SIG-ONTO-040).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     requesting_party: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['RecordsRequest']} })
     target_agency: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['RecordsRequest']} })
@@ -1682,7 +1682,7 @@ class Source(Entity):
     """
     A publisher of evidence (§10.2, §11.20). Distinct from artifact and capture.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     publisher_name: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Source']} })
     reliability: Optional[SourceReliability] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Source']} })
@@ -1693,7 +1693,7 @@ class EvidenceArtifact(Entity):
     """
     A specific artifact published by a Source (§10.2).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     published_by: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceArtifact']} })
     artifact_type: Optional[ArtifactType] = Field(default=None, description="""The genre of the artifact (§10.3.2, SIG-INGEST-047).""", json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceArtifact']} })
@@ -1705,7 +1705,7 @@ class EvidenceCapture(Entity):
     """
     A content-addressed capture of an artifact at a time (§10.2, L0).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     captures_artifact: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceCapture']} })
     captured_at: Optional[datetime ] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceCapture']} })
@@ -1724,7 +1724,7 @@ class Extraction(Entity):
     """
     A run that extracted claims from a capture (§10.2).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     from_capture: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Extraction']} })
     extraction_method: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Extraction']} })
@@ -1739,7 +1739,7 @@ class Claim(Entity):
     """
     An append-only assertion (subject, predicate, value, ...) — the substance of the graph (§10.3, L1). Physical append-only table is P02.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     subject: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'Resolution', 'Contradiction', 'CoverageRecord']} })
     predicate: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'Resolution', 'Contradiction', 'CoverageRecord']} })
@@ -1782,7 +1782,7 @@ class ClaimEvidence(Entity):
     """
     One claim↔capture evidence link (§16.5) — P32.2 binds the ACTUAL captured artifact the extraction consumed, with its typed locator and binding classification (SIG-TRUST-002).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     claim: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ClaimEvidence', 'ClaimQualifier']} })
     capture: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ClaimEvidence']} })
@@ -1800,7 +1800,7 @@ class ClaimQualifier(Entity):
     """
     One typed qualifier statement on a claim (§16.5): the six FIELD_MAP §3 categories — instrument lifecycle, execution evidence, money/currency/ period, actor roles, capability/modality, clause applicability.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     claim: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ClaimEvidence', 'ClaimQualifier']} })
     qualifier_id: Optional[str] = Field(default=None, description="""A registered predicate id — unregistered keys quarantine, never guessed.""", json_schema_extra = { "linkml_meta": {'domain_of': ['ClaimQualifier']} })
@@ -1820,7 +1820,7 @@ class AssertionQuarantine(Entity):
     """
     The append-only fail-closed landing for a rejected assertion (SIG-TRUST-001): unknown predicates/types and binding failures land here with reason and full payload — never silently dropped, never public-readable.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     reason: Optional[QuarantineReason] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['AssertionQuarantine']} })
     connector_name: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['AssertionQuarantine']} })
@@ -1836,7 +1836,7 @@ class Resolution(Entity):
     """
     A stored current-best decision record (§16.4, L3), not a view.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     subject: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'Resolution', 'Contradiction', 'CoverageRecord']} })
     predicate: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'Resolution', 'Contradiction', 'CoverageRecord']} })
@@ -1851,7 +1851,7 @@ class Contradiction(Entity):
     """
     A first-class, addressable contradiction object (§31).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     subject: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'Resolution', 'Contradiction', 'CoverageRecord']} })
     predicate: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'Resolution', 'Contradiction', 'CoverageRecord']} })
@@ -1863,7 +1863,7 @@ class ResearchTask(Entity):
     """
     [NEW] A research task as an object (§11.22, behaviour at §33.2).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     task_type: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ResearchTask']} })
     target: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['ResearchTask', 'Edge']} })
@@ -1876,7 +1876,7 @@ class CoverageRecord(Entity):
     """
     [NEW] Makes negative claims queryable (§11.23, §32.2).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/entities'})
 
     subject: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'Resolution', 'Contradiction', 'CoverageRecord']} })
     predicate: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Claim', 'Resolution', 'Contradiction', 'CoverageRecord']} })
@@ -1891,7 +1891,7 @@ class Edge(ConfiguredBaseModel):
     Universal edge requirements (§12.1): directed, typed, time-bounded, evidenced, and perspectival.
     """
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'abstract': True,
-         'from_schema': 'https://ontology.sig-project.org/schema/edges'})
+         'from_schema': 'https://ontology.surveillancegraph.org/schema/edges'})
 
     id: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
     source: str = Field(default=..., description="""The asserting/originating node (directed — §12.1.1).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
@@ -1910,7 +1910,7 @@ class AccessRelationship(Edge):
     """
     A sharing/access relationship; direction, scope, automaticity, and kind are all required — never reduced to `shares_with` (§12.5, SIG-ONTO-049). The three access kinds (§12.2) are never merged (SIG-ONTO-042).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/edges'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/edges'})
 
     scope: CapabilityScope = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['Capability', 'AccessRelationship', 'IntegrationEdge']} })
     direction: Direction = Field(default=..., description="""Required; never symmetric by default (SIG-ONTO-049).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccessRelationship']} })
@@ -1933,7 +1933,7 @@ class IntegrationEdge(Edge):
     """
     A data-bearing integration edge (§12.3). Edges are per (product-pair, data-kind, direction), never per product-pair (SIG-ONTO-046). Unilaterally terminable, mid-contract, possibly partially, via applies_to_cohort.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/edges'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/edges'})
 
     data_kind: str = Field(default=..., description="""The kind of data that moves (part of the edge key, SIG-ONTO-046).""", json_schema_extra = { "linkml_meta": {'domain_of': ['IntegrationEdge']} })
     initiator: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['IntegrationEdge']} })
@@ -1963,7 +1963,7 @@ class RoleAssignment(Edge):
     """
     Assigns one of the fourteen roles (§12.4, SIG-ONTO-047) from a party to an asset/deployment/system. Modelled separately so the seven load-bearing separations (SIG-ONTO-048) are each independently representable, and so §43.3 coordinate sensitivity can be evaluated at the ROLE level (host≠owner).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/edges'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/edges'})
 
     role: Role = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['ClaimEvidence', 'RoleAssignment']} })
     party: str = Field(default=..., description="""The Organization (or, rarely and reviewed, Person) holding the role.""", json_schema_extra = { "linkml_meta": {'domain_of': ['RoleAssignment']} })
@@ -1985,7 +1985,7 @@ class StructuralEdge(Edge):
     """
     Organizational/structural relationships (§12.6).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/edges'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/edges'})
 
     id: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
     source: str = Field(default=..., description="""The asserting/originating node (directed — §12.1.1).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })
@@ -2004,7 +2004,7 @@ class ProvenanceEdge(Edge):
     """
     Provenance relationships among claims, captures, artifacts, and sources (§12.7).
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/edges'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.surveillancegraph.org/schema/edges'})
 
     id: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
     source: str = Field(default=..., description="""The asserting/originating node (directed — §12.1.1).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })

@@ -9,7 +9,7 @@
       "query"
     ],
     "count": 45,
-    "scheme_iri": "https://ontology.sig-project.org/vocab/capability/1.0.0",
+    "scheme_iri": "https://ontology.surveillancegraph.org/vocab/capability/1.0.0",
     "slugs": [
       "alert.gunshot.own",
       "alert.hotlist.custom",
@@ -370,7 +370,7 @@
       "windowed_search_count",
       "written_policy_value"
     ],
-    "scheme_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0"
+    "scheme_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0"
   },
   "technology": {
     "counts": {
@@ -380,7 +380,7 @@
       "technologies": 110
     },
     "families_without_unspecified_leaf": [],
-    "scheme_iri": "https://ontology.sig-project.org/vocab/technology/1.0.0",
+    "scheme_iri": "https://ontology.surveillancegraph.org/vocab/technology/1.0.0",
     "technologies": [
       {
         "has_distinguishing_criterion": true,

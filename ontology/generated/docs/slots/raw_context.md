@@ -14,7 +14,7 @@ _The citation anchor within the artifact (P2), as structured text._
 
 
 
-URI: [sig:slot/raw_context](https://ontology.sig-project.org/schema/slot/raw_context)
+URI: [sig:slot/raw_context](https://ontology.surveillancegraph.org/schema/slot/raw_context)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/raw_context](https://ontology.sig-project.org/schema/slot/raw_con
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/raw_context](https://ontology.sig-project.org/schema/slot/raw_con
 ```yaml
 name: raw_context
 description: The citation anchor within the artifact (P2), as structured text.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

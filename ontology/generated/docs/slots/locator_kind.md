@@ -14,7 +14,7 @@ _The kind of the typed locator row (locator fields live in the physical jsonb ro
 
 
 
-URI: [sig:slot/locator_kind](https://ontology.sig-project.org/schema/slot/locator_kind)
+URI: [sig:slot/locator_kind](https://ontology.surveillancegraph.org/schema/slot/locator_kind)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/locator_kind](https://ontology.sig-project.org/schema/slot/locato
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/locator_kind](https://ontology.sig-project.org/schema/slot/locato
 name: locator_kind
 description: The kind of the typed locator row (locator fields live in the physical
   jsonb row).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: ClaimEvidence
 domain_of:

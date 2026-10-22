@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/model](https://ontology.sig-project.org/schema/slot/model)
+URI: [sig:slot/model](https://ontology.surveillancegraph.org/schema/slot/model)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/model](https://ontology.sig-project.org/schema/slot/model)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/model](https://ontology.sig-project.org/schema/slot/model)
 <details>
 ```yaml
 name: model
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: PhysicalAsset
 domain_of:

@@ -11,6 +11,8 @@ import json
 import pytest
 from support import VENDOR_TOKENS, generated_dir, load_vocab, slug_tokens
 
+from ontology import generate
+
 SALIENCE = {"L", "M", "H", "C"}
 
 
@@ -136,6 +138,6 @@ def test_structural_vocabularies_are_published_as_skos() -> None:
         "AcquisitionMethod",
         "Role",  # §13.5
     ):
-        iri = f"https://ontology.sig-project.org/vocab/{enum_name}/1.0.0"
+        iri = f"{generate.BASE}vocab/{enum_name}/{generate.VOCAB_VERSION}"
         assert iri in schemes, enum_name
         assert list(g.objects(URIRef(iri), OWL.versionIRI)), enum_name

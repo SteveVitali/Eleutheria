@@ -51,7 +51,7 @@
       "half_life": "infinite",
       "predicate_id": "contract_signed_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_signed_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contract_signed_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -84,7 +84,7 @@
       "half_life": "infinite",
       "predicate_id": "contract_value",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_value",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contract_value",
       "value_datatype": "decimal",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -117,7 +117,7 @@
       "half_life": "infinite",
       "predicate_id": "contracted_device_count",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/contracted_device_count",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contracted_device_count",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -150,7 +150,7 @@
       "half_life": "infinite",
       "predicate_id": "contract_start_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_start_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contract_start_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -183,7 +183,7 @@
       "half_life": "infinite",
       "predicate_id": "contract_end_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_end_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contract_end_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -216,7 +216,7 @@
       "half_life": "infinite",
       "predicate_id": "statutory_citation",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/statutory_citation",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/statutory_citation",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -249,7 +249,7 @@
       "half_life": "infinite",
       "predicate_id": "funding_amount",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_amount",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/funding_amount",
       "value_datatype": "decimal",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -282,7 +282,7 @@
       "half_life": "infinite",
       "predicate_id": "funding_program_name",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_program_name",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/funding_program_name",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -315,7 +315,7 @@
       "half_life": "infinite",
       "predicate_id": "federal_award_id",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_award_id",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/federal_award_id",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -348,7 +348,7 @@
       "half_life": "infinite",
       "predicate_id": "event_epistemic_status",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/event_epistemic_status",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/event_epistemic_status",
       "value_datatype": "EpistemicStatus",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -381,7 +381,7 @@
       "half_life": "10y",
       "predicate_id": "organization_legal_name",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_legal_name",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/organization_legal_name",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -414,7 +414,7 @@
       "half_life": "10y",
       "predicate_id": "organization_jurisdiction",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_jurisdiction",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/organization_jurisdiction",
       "value_datatype": "uriorcurie",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -447,7 +447,7 @@
       "half_life": "10y",
       "predicate_id": "organization_ori",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_ori",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/organization_ori",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -480,7 +480,7 @@
       "half_life": "10y",
       "predicate_id": "organization_type",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_type",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/organization_type",
       "value_datatype": "OrganizationType",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -513,7 +513,7 @@
       "half_life": "5y",
       "predicate_id": "product_vendor",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/product_vendor",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/product_vendor",
       "value_datatype": "uriorcurie",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -546,7 +546,7 @@
       "half_life": "5y",
       "predicate_id": "product_capabilities",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/product_capabilities",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/product_capabilities",
       "value_datatype": "capability_code",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -579,7 +579,7 @@
       "half_life": "12mo",
       "predicate_id": "product_status",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/product_status",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/product_status",
       "value_datatype": "ProductStatus",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -612,7 +612,7 @@
       "half_life": "5y",
       "predicate_id": "implements_technology",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/implements_technology",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/implements_technology",
       "value_datatype": "technology_code",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -645,7 +645,7 @@
       "half_life": "10y",
       "predicate_id": "jurisdiction_parent",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_parent",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/jurisdiction_parent",
       "value_datatype": "uriorcurie",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -678,7 +678,7 @@
       "half_life": "2y",
       "predicate_id": "jurisdiction_boundary",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_boundary",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/jurisdiction_boundary",
       "value_datatype": "geometry_wkt",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -711,7 +711,7 @@
       "half_life": "3y",
       "predicate_id": "deployment_exists",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_exists",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/deployment_exists",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -744,7 +744,7 @@
       "half_life": "3y",
       "predicate_id": "asset_operator",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_operator",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/asset_operator",
       "value_datatype": "uriorcurie",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -777,7 +777,7 @@
       "half_life": "2y",
       "predicate_id": "fixed_asset_location",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/fixed_asset_location",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/fixed_asset_location",
       "value_datatype": "geometry_wkt",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -810,7 +810,7 @@
       "half_life": "2y",
       "predicate_id": "written_policy_value",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/written_policy_value",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/written_policy_value",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -843,7 +843,7 @@
       "half_life": "2y",
       "predicate_id": "policy_enforcement_mechanism",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_enforcement_mechanism",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/policy_enforcement_mechanism",
       "value_datatype": "EnforcementMechanism",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -876,7 +876,7 @@
       "half_life": "2y",
       "predicate_id": "offense_category_filter",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/offense_category_filter",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/offense_category_filter",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -909,7 +909,7 @@
       "half_life": "2y",
       "predicate_id": "audit_case_code_required",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/audit_case_code_required",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/audit_case_code_required",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -942,7 +942,7 @@
       "half_life": "2y",
       "predicate_id": "data_system_scope",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_scope",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/data_system_scope",
       "value_datatype": "SystemScope",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -975,7 +975,7 @@
       "half_life": "2y",
       "predicate_id": "holds_data_collected_by",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/holds_data_collected_by",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/holds_data_collected_by",
       "value_datatype": "uriorcurie",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -1008,7 +1008,7 @@
       "half_life": "3y",
       "predicate_id": "role_assignment",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/role_assignment",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/role_assignment",
       "value_datatype": "Role",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -1041,7 +1041,7 @@
       "half_life": "2y",
       "predicate_id": "candidate_location_estimate",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_location_estimate",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/candidate_location_estimate",
       "value_datatype": "geometry_wkt",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -1074,7 +1074,7 @@
       "half_life": "12mo",
       "predicate_id": "asset_exists_at_location",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_exists_at_location",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/asset_exists_at_location",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -1107,7 +1107,7 @@
       "half_life": "12mo",
       "predicate_id": "procurement_state",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/procurement_state",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/procurement_state",
       "value_datatype": "ProcurementState",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -1140,7 +1140,7 @@
       "half_life": "12mo",
       "predicate_id": "authorization_state",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/authorization_state",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/authorization_state",
       "value_datatype": "AuthorizationState",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -1173,7 +1173,7 @@
       "half_life": "9mo",
       "predicate_id": "configured_retention_days",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_retention_days",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/configured_retention_days",
       "value_datatype": "duration_iso",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -1206,7 +1206,7 @@
       "half_life": "9mo",
       "predicate_id": "vendor_default_retention",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_default_retention",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/vendor_default_retention",
       "value_datatype": "duration_iso",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -1239,7 +1239,7 @@
       "half_life": "9mo",
       "predicate_id": "data_system_retention",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_retention",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/data_system_retention",
       "value_datatype": "duration_iso",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -1272,7 +1272,7 @@
       "half_life": "12mo",
       "predicate_id": "proceeding_posture",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_posture",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_posture",
       "value_datatype": "ProceedingPosture",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -1305,7 +1305,7 @@
       "half_life": "12mo",
       "predicate_id": "records_response_status",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/records_response_status",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/records_response_status",
       "value_datatype": "RecordsResponseStatus",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -1338,7 +1338,7 @@
       "half_life": "12mo",
       "predicate_id": "candidate_promotion_status",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_promotion_status",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/candidate_promotion_status",
       "value_datatype": "PromotionStatus",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -1371,7 +1371,7 @@
       "half_life": "12mo",
       "predicate_id": "integration_edge_active",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/integration_edge_active",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/integration_edge_active",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -1404,7 +1404,7 @@
       "half_life": "6mo",
       "predicate_id": "operational_state",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/operational_state",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/operational_state",
       "value_datatype": "OperationalState",
       "vocab_version": "1.0.0",
       "volatility_class": "FAST"
@@ -1437,7 +1437,7 @@
       "half_life": "6mo",
       "predicate_id": "active_device_count",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/active_device_count",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/active_device_count",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "FAST"
@@ -1470,7 +1470,7 @@
       "half_life": "6mo",
       "predicate_id": "installed_device_count",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/installed_device_count",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/installed_device_count",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "FAST"
@@ -1503,7 +1503,7 @@
       "half_life": "infinite",
       "predicate_id": "invoiced_device_count",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/invoiced_device_count",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/invoiced_device_count",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -1536,7 +1536,7 @@
       "half_life": "12mo",
       "predicate_id": "mapped_device_count",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/mapped_device_count",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/mapped_device_count",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -1569,7 +1569,7 @@
       "half_life": "6mo",
       "predicate_id": "claimed_device_count",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/claimed_device_count",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/claimed_device_count",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "FAST"
@@ -1602,7 +1602,7 @@
       "half_life": "4mo",
       "predicate_id": "configured_sharing_partner_set",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner_set",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/configured_sharing_partner_set",
       "value_datatype": "uriorcurie",
       "vocab_version": "1.0.0",
       "volatility_class": "FAST"
@@ -1637,7 +1637,7 @@
       "object_kind": "entity_ref",
       "predicate_id": "configured_sharing_partner",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/configured_sharing_partner",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "FAST"
@@ -1670,7 +1670,7 @@
       "half_life": "4mo",
       "predicate_id": "configured_access_edge",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_access_edge",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/configured_access_edge",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "FAST"
@@ -1703,7 +1703,7 @@
       "half_life": "2mo",
       "predicate_id": "state_lookup_enabled",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/state_lookup_enabled",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/state_lookup_enabled",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "VOLATILE"
@@ -1736,7 +1736,7 @@
       "half_life": "2mo",
       "predicate_id": "national_lookup_enabled",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/national_lookup_enabled",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/national_lookup_enabled",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "VOLATILE"
@@ -1769,7 +1769,7 @@
       "half_life": "2mo",
       "predicate_id": "federal_sharing_enabled",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_sharing_enabled",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/federal_sharing_enabled",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "VOLATILE"
@@ -1802,7 +1802,7 @@
       "half_life": "2mo",
       "predicate_id": "subscribed_hotlist_topic",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/subscribed_hotlist_topic",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/subscribed_hotlist_topic",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "VOLATILE"
@@ -1835,7 +1835,7 @@
       "half_life": "1mo",
       "predicate_id": "windowed_search_count",
       "resolution_strategy": "interval_union",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/windowed_search_count",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/windowed_search_count",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "VOLATILE"
@@ -1868,7 +1868,7 @@
       "half_life": "1mo",
       "predicate_id": "observed_use_edge",
       "resolution_strategy": "interval_union",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/observed_use_edge",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/observed_use_edge",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "VOLATILE"
@@ -1901,7 +1901,7 @@
       "half_life": "12mo",
       "predicate_id": "asset_data_controller",
       "resolution_strategy": "never_resolve",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_data_controller",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/asset_data_controller",
       "value_datatype": "uriorcurie",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -1934,7 +1934,7 @@
       "half_life": "2y",
       "predicate_id": "camera_latitude",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_latitude",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_latitude",
       "value_datatype": "decimal",
       "value_tolerance": {
         "kind": "absolute",
@@ -1972,7 +1972,7 @@
       "half_life": "2y",
       "predicate_id": "camera_longitude",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_longitude",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_longitude",
       "value_datatype": "decimal",
       "value_tolerance": {
         "kind": "absolute",
@@ -2010,7 +2010,7 @@
       "half_life": "2y",
       "predicate_id": "camera_coordinate_source",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_coordinate_source",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_coordinate_source",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -2043,7 +2043,7 @@
       "half_life": "infinite",
       "predicate_id": "camera_external_ref",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_external_ref",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_external_ref",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2076,7 +2076,7 @@
       "half_life": "infinite",
       "predicate_id": "external_id",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/external_id",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/external_id",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2110,7 +2110,7 @@
       "object_kind": "literal",
       "predicate_id": "enforcement_count",
       "resolution_strategy": "interval_union",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/enforcement_count",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/enforcement_count",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "VOLATILE"
@@ -2144,7 +2144,7 @@
       "object_kind": "entity_ref",
       "predicate_id": "camera_operator",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_operator",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -2177,7 +2177,7 @@
       "half_life": "10y",
       "predicate_id": "camera_jurisdiction",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_jurisdiction",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_jurisdiction",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -2210,7 +2210,7 @@
       "half_life": "10y",
       "predicate_id": "camera_county",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_county",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_county",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -2243,7 +2243,7 @@
       "half_life": "2y",
       "predicate_id": "camera_roadway",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_roadway",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_roadway",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -2276,7 +2276,7 @@
       "half_life": "2y",
       "predicate_id": "camera_name",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_name",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_name",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -2309,7 +2309,7 @@
       "half_life": "2y",
       "predicate_id": "camera_direction",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_direction",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_direction",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -2342,7 +2342,7 @@
       "half_life": "6mo",
       "predicate_id": "camera_status",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_status",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_status",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "FAST"
@@ -2375,7 +2375,7 @@
       "half_life": "2y",
       "predicate_id": "camera_type",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_type",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_type",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -2408,7 +2408,7 @@
       "half_life": "2y",
       "predicate_id": "camera_mount",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_mount",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_mount",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -2442,7 +2442,7 @@
       "object_kind": "entity_ref",
       "predicate_id": "buyer",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/buyer",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/buyer",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2476,7 +2476,7 @@
       "object_kind": "entity_ref",
       "predicate_id": "seller",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/seller",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/seller",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2510,7 +2510,7 @@
       "object_kind": "entity_ref",
       "predicate_id": "funder",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/funder",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/funder",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2544,7 +2544,7 @@
       "object_kind": "entity_ref",
       "predicate_id": "recipient",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/recipient",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/recipient",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2578,7 +2578,7 @@
       "object_kind": "entity_ref",
       "predicate_id": "vendor",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/vendor",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -2613,7 +2613,7 @@
       "object_kind": "literal",
       "predicate_id": "amount",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/amount",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/amount",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2647,7 +2647,7 @@
       "object_kind": "literal",
       "predicate_id": "currency",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/currency",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/currency",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2682,7 +2682,7 @@
       "object_kind": "literal",
       "predicate_id": "signed_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/signed_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/signed_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2717,7 +2717,7 @@
       "object_kind": "literal",
       "predicate_id": "start_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/start_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/start_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2752,7 +2752,7 @@
       "object_kind": "literal",
       "predicate_id": "end_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/end_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/end_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2786,7 +2786,7 @@
       "object_kind": "literal",
       "predicate_id": "renewal_options",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/renewal_options",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/renewal_options",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2820,7 +2820,7 @@
       "object_kind": "literal",
       "predicate_id": "products",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/products",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/products",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2854,7 +2854,7 @@
       "object_kind": "literal",
       "predicate_id": "quantities",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/quantities",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/quantities",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2888,7 +2888,7 @@
       "object_kind": "literal",
       "predicate_id": "document",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/document",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/document",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2922,7 +2922,7 @@
       "object_kind": "literal",
       "predicate_id": "acquisition_channel",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/acquisition_channel",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/acquisition_channel",
       "value_datatype": "AcquisitionChannel",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2956,7 +2956,7 @@
       "object_kind": "literal",
       "predicate_id": "parent_cooperative_contract",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/parent_cooperative_contract",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/parent_cooperative_contract",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -2990,7 +2990,7 @@
       "object_kind": "literal",
       "predicate_id": "amends_contract",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/amends_contract",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/amends_contract",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3025,7 +3025,7 @@
       "object_kind": "literal",
       "predicate_id": "lifecycle_transition",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/lifecycle_transition",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/lifecycle_transition",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -3059,7 +3059,7 @@
       "object_kind": "literal",
       "predicate_id": "instrument_type",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/instrument_type",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/instrument_type",
       "value_datatype": "FundingInstrumentType",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3094,7 +3094,7 @@
       "object_kind": "literal",
       "predicate_id": "program_name",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/program_name",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/program_name",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3128,7 +3128,7 @@
       "object_kind": "literal",
       "predicate_id": "award_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/award_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/award_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3162,7 +3162,7 @@
       "object_kind": "literal",
       "predicate_id": "period",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/period",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/period",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3196,7 +3196,7 @@
       "object_kind": "literal",
       "predicate_id": "conditions",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/conditions",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/conditions",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3230,7 +3230,7 @@
       "object_kind": "literal",
       "predicate_id": "notice_type",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/notice_type",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/notice_type",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3264,7 +3264,7 @@
       "object_kind": "literal",
       "predicate_id": "posted_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/posted_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/posted_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3298,7 +3298,7 @@
       "object_kind": "literal",
       "predicate_id": "response_deadline",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/response_deadline",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/response_deadline",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -3332,7 +3332,7 @@
       "object_kind": "literal",
       "predicate_id": "title",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/title",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/title",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -3366,7 +3366,7 @@
       "object_kind": "literal",
       "predicate_id": "description",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/description",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/description",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -3400,7 +3400,7 @@
       "object_kind": "literal",
       "predicate_id": "place_of_performance",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/place_of_performance",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/place_of_performance",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3434,7 +3434,7 @@
       "object_kind": "literal",
       "predicate_id": "country",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/country",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/country",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3468,7 +3468,7 @@
       "object_kind": "literal",
       "predicate_id": "matched_keyword",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/matched_keyword",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/matched_keyword",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3502,7 +3502,7 @@
       "object_kind": "literal",
       "predicate_id": "content_term",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/content_term",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/content_term",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3536,7 +3536,7 @@
       "object_kind": "literal",
       "predicate_id": "event_type",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/event_type",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/event_type",
       "value_datatype": "AccountabilityEventType",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3570,7 +3570,7 @@
       "object_kind": "literal",
       "predicate_id": "event_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/event_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/event_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3604,7 +3604,7 @@
       "object_kind": "entity_ref",
       "predicate_id": "event_organizations",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/event_organizations",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/event_organizations",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3638,7 +3638,7 @@
       "object_kind": "literal",
       "predicate_id": "event_deployments",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/event_deployments",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/event_deployments",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3672,7 +3672,7 @@
       "object_kind": "literal",
       "predicate_id": "event_technologies",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/event_technologies",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/event_technologies",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3706,7 +3706,7 @@
       "object_kind": "literal",
       "predicate_id": "affected_party_class",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/affected_party_class",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/affected_party_class",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3740,7 +3740,7 @@
       "object_kind": "literal",
       "predicate_id": "proceeding_court",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_court",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_court",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3774,7 +3774,7 @@
       "object_kind": "literal",
       "predicate_id": "proceeding_docket_number",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_docket_number",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_docket_number",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3808,7 +3808,7 @@
       "object_kind": "literal",
       "predicate_id": "proceeding_case_name",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_case_name",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_case_name",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3842,7 +3842,7 @@
       "object_kind": "literal",
       "predicate_id": "proceeding_parties",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_parties",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_parties",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3876,7 +3876,7 @@
       "object_kind": "literal",
       "predicate_id": "proceeding_party_role",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_party_role",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_party_role",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3910,7 +3910,7 @@
       "object_kind": "literal",
       "predicate_id": "proceeding_filed_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_filed_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_filed_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3944,7 +3944,7 @@
       "object_kind": "literal",
       "predicate_id": "proceeding_disposition_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_disposition_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_disposition_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -3978,7 +3978,7 @@
       "object_kind": "literal",
       "predicate_id": "proceeding_courtlistener_id",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_courtlistener_id",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_courtlistener_id",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -4012,7 +4012,7 @@
       "object_kind": "literal",
       "predicate_id": "proceeding_recap_id",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_recap_id",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/proceeding_recap_id",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -4046,7 +4046,7 @@
       "object_kind": "literal",
       "predicate_id": "bill_external_id",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_external_id",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_external_id",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -4080,7 +4080,7 @@
       "object_kind": "literal",
       "predicate_id": "bill_identifier",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_identifier",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_identifier",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -4115,7 +4115,7 @@
       "object_kind": "literal",
       "predicate_id": "bill_title",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_title",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_title",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -4149,7 +4149,7 @@
       "object_kind": "literal",
       "predicate_id": "bill_session",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_session",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_session",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -4183,7 +4183,7 @@
       "object_kind": "literal",
       "predicate_id": "bill_jurisdiction",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_jurisdiction",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_jurisdiction",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -4217,7 +4217,7 @@
       "object_kind": "literal",
       "predicate_id": "bill_chamber",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_chamber",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_chamber",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -4251,7 +4251,7 @@
       "object_kind": "literal",
       "predicate_id": "bill_status",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_status",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -4285,7 +4285,7 @@
       "object_kind": "literal",
       "predicate_id": "bill_status_date",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_status_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -4320,7 +4320,7 @@
       "object_kind": "literal",
       "predicate_id": "bill_matched_keyword",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_matched_keyword",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/bill_matched_keyword",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -4354,7 +4354,7 @@
       "object_kind": "literal",
       "predicate_id": "portal_exists",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/portal_exists",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/portal_exists",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -4388,7 +4388,7 @@
       "object_kind": "literal",
       "predicate_id": "portal_stated_prohibited_use",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/portal_stated_prohibited_use",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/portal_stated_prohibited_use",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -4422,7 +4422,7 @@
       "object_kind": "literal",
       "predicate_id": "portal_last_updated_declared",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/portal_last_updated_declared",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/portal_last_updated_declared",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "VOLATILE"
@@ -4456,7 +4456,7 @@
       "object_kind": "literal",
       "predicate_id": "vehicles_detected_windowed_count",
       "resolution_strategy": "interval_union",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/vehicles_detected_windowed_count",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/vehicles_detected_windowed_count",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "VOLATILE"
@@ -4490,7 +4490,7 @@
       "object_kind": "literal",
       "predicate_id": "hotlist_hit_windowed_count",
       "resolution_strategy": "interval_union",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/hotlist_hit_windowed_count",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/hotlist_hit_windowed_count",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "VOLATILE"
@@ -4525,7 +4525,7 @@
       "object_kind": "literal",
       "predicate_id": "usage_search_windowed_count",
       "resolution_strategy": "interval_union",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/usage_search_windowed_count",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/usage_search_windowed_count",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "VOLATILE"
@@ -4559,7 +4559,7 @@
       "object_kind": "literal",
       "predicate_id": "request_text",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/request_text",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/request_text",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -4593,7 +4593,7 @@
       "object_kind": "literal",
       "predicate_id": "requesting_party",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/requesting_party",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/requesting_party",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -4627,7 +4627,7 @@
       "object_kind": "literal",
       "predicate_id": "target_agency",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/target_agency",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/target_agency",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -4662,7 +4662,7 @@
       "object_kind": "literal",
       "predicate_id": "response_status",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/response_status",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/response_status",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -4696,7 +4696,7 @@
       "object_kind": "literal",
       "predicate_id": "response_date",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/response_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/response_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -4730,7 +4730,7 @@
       "object_kind": "literal",
       "predicate_id": "acquisition_method",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/acquisition_method",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/acquisition_method",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -4764,7 +4764,7 @@
       "object_kind": "literal",
       "predicate_id": "constrains_technology",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/constrains_technology",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/constrains_technology",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -4798,7 +4798,7 @@
       "object_kind": "literal",
       "predicate_id": "effective_from",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/effective_from",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/effective_from",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -4832,7 +4832,7 @@
       "object_kind": "literal",
       "predicate_id": "enacting_body",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/enacting_body",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/enacting_body",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -4866,7 +4866,7 @@
       "object_kind": "literal",
       "predicate_id": "jurisdiction",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/jurisdiction",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -4901,7 +4901,7 @@
       "object_kind": "literal",
       "predicate_id": "citation",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/citation",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/citation",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -4935,7 +4935,7 @@
       "object_kind": "literal",
       "predicate_id": "sunset_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/sunset_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/sunset_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -4969,7 +4969,7 @@
       "object_kind": "literal",
       "predicate_id": "as_of",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/as_of",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/as_of",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -5003,7 +5003,7 @@
       "object_kind": "literal",
       "predicate_id": "technology",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/technology",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/technology",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5037,7 +5037,7 @@
       "object_kind": "literal",
       "predicate_id": "retention_period",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/retention_period",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/retention_period",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5071,7 +5071,7 @@
       "object_kind": "literal",
       "predicate_id": "use_restriction",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/use_restriction",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/use_restriction",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5105,7 +5105,7 @@
       "object_kind": "literal",
       "predicate_id": "sharing_restriction",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/sharing_restriction",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/sharing_restriction",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5139,7 +5139,7 @@
       "object_kind": "literal",
       "predicate_id": "legal_authority",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/legal_authority",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/legal_authority",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -5174,7 +5174,7 @@
       "object_kind": "literal",
       "predicate_id": "ordinance_citation",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/ordinance_citation",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/ordinance_citation",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -5208,7 +5208,7 @@
       "object_kind": "literal",
       "predicate_id": "disclosure_field_state",
       "resolution_strategy": "never_resolve",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/disclosure_field_state",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/disclosure_field_state",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -5242,7 +5242,7 @@
       "object_kind": "literal",
       "predicate_id": "hit_volume_observed",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/hit_volume_observed",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/hit_volume_observed",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -5276,7 +5276,7 @@
       "object_kind": "literal",
       "predicate_id": "scan_volume_observed",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/scan_volume_observed",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/scan_volume_observed",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -5310,7 +5310,7 @@
       "object_kind": "literal",
       "predicate_id": "non_hit_proportion_observed",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/non_hit_proportion_observed",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/non_hit_proportion_observed",
       "value_datatype": "decimal",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -5344,7 +5344,7 @@
       "object_kind": "literal",
       "predicate_id": "pooled_lookup_participation",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/pooled_lookup_participation",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/pooled_lookup_participation",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -5378,7 +5378,7 @@
       "object_kind": "literal",
       "predicate_id": "sharing_partner_degree",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/sharing_partner_degree",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/sharing_partner_degree",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5412,7 +5412,7 @@
       "object_kind": "literal",
       "predicate_id": "ai_surveillance_supplier",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/ai_surveillance_supplier",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/ai_surveillance_supplier",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5446,7 +5446,7 @@
       "object_kind": "literal",
       "predicate_id": "ai_surveillance_tech_from_china",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/ai_surveillance_tech_from_china",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/ai_surveillance_tech_from_china",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5480,7 +5480,7 @@
       "object_kind": "literal",
       "predicate_id": "ai_surveillance_tech_from_us",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/ai_surveillance_tech_from_us",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/ai_surveillance_tech_from_us",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5514,7 +5514,7 @@
       "object_kind": "literal",
       "predicate_id": "uses_ai_surveillance",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/uses_ai_surveillance",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/uses_ai_surveillance",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5548,7 +5548,7 @@
       "object_kind": "literal",
       "predicate_id": "uses_facial_recognition",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/uses_facial_recognition",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/uses_facial_recognition",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5582,7 +5582,7 @@
       "object_kind": "literal",
       "predicate_id": "smart_city_surveillance",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/smart_city_surveillance",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/smart_city_surveillance",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5616,7 +5616,7 @@
       "object_kind": "literal",
       "predicate_id": "smart_policing",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/smart_policing",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/smart_policing",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5650,7 +5650,7 @@
       "object_kind": "literal",
       "predicate_id": "facial_recognition_status",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/facial_recognition_status",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/facial_recognition_status",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5684,7 +5684,7 @@
       "object_kind": "literal",
       "predicate_id": "asset_type",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_type",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/asset_type",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5718,7 +5718,7 @@
       "object_kind": "literal",
       "predicate_id": "surveillance_zone",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/surveillance_zone",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/surveillance_zone",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5752,7 +5752,7 @@
       "object_kind": "literal",
       "predicate_id": "manufacturer",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/manufacturer",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/manufacturer",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -5786,7 +5786,7 @@
       "object_kind": "literal",
       "predicate_id": "manufacturer_qid",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/manufacturer_qid",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/manufacturer_qid",
       "value_datatype": "uriorcurie",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -5820,7 +5820,7 @@
       "object_kind": "literal",
       "predicate_id": "brand",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/brand",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/brand",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -5854,7 +5854,7 @@
       "object_kind": "literal",
       "predicate_id": "brand_qid",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/brand_qid",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/brand_qid",
       "value_datatype": "uriorcurie",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -5888,7 +5888,7 @@
       "object_kind": "literal",
       "predicate_id": "operator_stated",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/operator_stated",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/operator_stated",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5922,7 +5922,7 @@
       "object_kind": "literal",
       "predicate_id": "operator_qid",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/operator_qid",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/operator_qid",
       "value_datatype": "uriorcurie",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -5956,7 +5956,7 @@
       "object_kind": "literal",
       "predicate_id": "operator_type",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/operator_type",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/operator_type",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -5990,7 +5990,7 @@
       "object_kind": "literal",
       "predicate_id": "power_arrangement",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/power_arrangement",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/power_arrangement",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -6024,7 +6024,7 @@
       "object_kind": "literal",
       "predicate_id": "first_observed",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/first_observed",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/first_observed",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -6058,7 +6058,7 @@
       "object_kind": "literal",
       "predicate_id": "mapping_source",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/mapping_source",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/mapping_source",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -6093,7 +6093,7 @@
       "object_kind": "literal",
       "predicate_id": "direction",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/direction",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/direction",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -6127,7 +6127,7 @@
       "object_kind": "literal",
       "predicate_id": "unmapped_surveillance_tag",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/unmapped_surveillance_tag",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/unmapped_surveillance_tag",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -6161,7 +6161,7 @@
       "object_kind": "literal",
       "predicate_id": "camera_registry_publisher",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_registry_publisher",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_registry_publisher",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -6195,7 +6195,7 @@
       "object_kind": "literal",
       "predicate_id": "published_by",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/published_by",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/published_by",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -6229,7 +6229,7 @@
       "object_kind": "literal",
       "predicate_id": "count_scope",
       "resolution_strategy": "never_resolve",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/count_scope",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -6263,7 +6263,7 @@
       "object_kind": "literal",
       "predicate_id": "count_scope_detail",
       "resolution_strategy": "never_resolve",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope_detail",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/count_scope_detail",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -6297,7 +6297,7 @@
       "object_kind": "literal",
       "predicate_id": "evidence_origin",
       "resolution_strategy": "never_resolve",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/evidence_origin",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/evidence_origin",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -6330,7 +6330,7 @@
       "half_life": "infinite",
       "predicate_id": "installation_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/installation_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/installation_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -6363,7 +6363,7 @@
       "half_life": "12mo",
       "predicate_id": "last_checked",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/last_checked",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/last_checked",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -6396,7 +6396,7 @@
       "half_life": "infinite",
       "predicate_id": "upstream_ref",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/upstream_ref",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/upstream_ref",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -6429,7 +6429,7 @@
       "half_life": "2y",
       "predicate_id": "portal_stated_permitted_use",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/portal_stated_permitted_use",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/portal_stated_permitted_use",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -6462,7 +6462,7 @@
       "half_life": "3y",
       "predicate_id": "deployed",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/deployed",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/deployed",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -6495,7 +6495,7 @@
       "half_life": "12mo",
       "predicate_id": "in_operation",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/in_operation",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/in_operation",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -6528,7 +6528,7 @@
       "half_life": "2y",
       "predicate_id": "actually_provides_capability",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/actually_provides_capability",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/actually_provides_capability",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -6561,7 +6561,7 @@
       "half_life": "infinite",
       "predicate_id": "procured_technology",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/procured_technology",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/procured_technology",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -6594,7 +6594,7 @@
       "half_life": "infinite",
       "predicate_id": "contract_amount",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_amount",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contract_amount",
       "value_datatype": "decimal",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -6627,7 +6627,7 @@
       "half_life": "infinite",
       "predicate_id": "contract_number",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_number",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contract_number",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -6660,7 +6660,7 @@
       "half_life": "infinite",
       "predicate_id": "procurement_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/procurement_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/procurement_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -6693,7 +6693,7 @@
       "half_life": "infinite",
       "predicate_id": "legal_instrument",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/legal_instrument",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/legal_instrument",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -6726,7 +6726,7 @@
       "half_life": "3y",
       "predicate_id": "product_name",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/product_name",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/product_name",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -6759,7 +6759,7 @@
       "half_life": "3y",
       "predicate_id": "vendor_name",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_name",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/vendor_name",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -6792,7 +6792,7 @@
       "half_life": "12mo",
       "predicate_id": "subscribes_to",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/subscribes_to",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/subscribes_to",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -6825,7 +6825,7 @@
       "half_life": "12mo",
       "predicate_id": "resells_data_from",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/resells_data_from",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/resells_data_from",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -6858,7 +6858,7 @@
       "half_life": "12mo",
       "predicate_id": "pushes_alerts_to",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/pushes_alerts_to",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/pushes_alerts_to",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -6891,7 +6891,7 @@
       "half_life": "12mo",
       "predicate_id": "ingests_feed_from",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/ingests_feed_from",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/ingests_feed_from",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -6924,7 +6924,7 @@
       "half_life": "12mo",
       "predicate_id": "federates_search_to",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/federates_search_to",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/federates_search_to",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -6957,7 +6957,7 @@
       "half_life": "12mo",
       "predicate_id": "enrolls_asset_into",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/enrolls_asset_into",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/enrolls_asset_into",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -6990,7 +6990,7 @@
       "half_life": "infinite",
       "predicate_id": "filed_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/filed_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/filed_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7023,7 +7023,7 @@
       "half_life": "infinite",
       "predicate_id": "platform",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/platform",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/platform",
       "value_datatype": "RecordsPlatform",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7056,7 +7056,7 @@
       "half_life": "infinite",
       "predicate_id": "records_request",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/records_request",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/records_request",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7089,7 +7089,7 @@
       "half_life": "infinite",
       "predicate_id": "released_documents",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/released_documents",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/released_documents",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7122,7 +7122,7 @@
       "half_life": "infinite",
       "predicate_id": "statutory_basis",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/statutory_basis",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/statutory_basis",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7155,7 +7155,7 @@
       "half_life": "infinite",
       "predicate_id": "agenda_item",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/agenda_item",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agenda_item",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7188,7 +7188,7 @@
       "half_life": "infinite",
       "predicate_id": "contract",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/contract",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contract",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7221,7 +7221,7 @@
       "half_life": "infinite",
       "predicate_id": "funding_instrument",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_instrument",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/funding_instrument",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7254,7 +7254,7 @@
       "half_life": "infinite",
       "predicate_id": "portal_index",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/portal_index",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/portal_index",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7287,7 +7287,7 @@
       "half_life": "infinite",
       "predicate_id": "procurement_notice",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/procurement_notice",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/procurement_notice",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7320,7 +7320,7 @@
       "half_life": "infinite",
       "predicate_id": "accountability_event",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/accountability_event",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/accountability_event",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7353,7 +7353,7 @@
       "half_life": "infinite",
       "predicate_id": "event_source",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/event_source",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/event_source",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7386,7 +7386,7 @@
       "half_life": "infinite",
       "predicate_id": "legal_proceeding",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/legal_proceeding",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/legal_proceeding",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7419,7 +7419,7 @@
       "half_life": "infinite",
       "predicate_id": "legislative_bill",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/legislative_bill",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/legislative_bill",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7452,7 +7452,7 @@
       "half_life": "infinite",
       "predicate_id": "agency_registry_entry",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/agency_registry_entry",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agency_registry_entry",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7485,7 +7485,7 @@
       "half_life": "3y",
       "predicate_id": "agency_name",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/agency_name",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agency_name",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -7518,7 +7518,7 @@
       "half_life": "infinite",
       "predicate_id": "agency_ori9",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/agency_ori9",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agency_ori9",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7551,7 +7551,7 @@
       "half_life": "3y",
       "predicate_id": "agency_type",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/agency_type",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agency_type",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -7584,7 +7584,7 @@
       "half_life": "5y",
       "predicate_id": "agency_state",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/agency_state",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agency_state",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -7617,7 +7617,7 @@
       "half_life": "5y",
       "predicate_id": "agency_county",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/agency_county",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agency_county",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -7650,7 +7650,7 @@
       "half_life": "10y",
       "predicate_id": "agency_latitude",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/agency_latitude",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agency_latitude",
       "value_datatype": "decimal",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -7683,7 +7683,7 @@
       "half_life": "10y",
       "predicate_id": "agency_longitude",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/agency_longitude",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/agency_longitude",
       "value_datatype": "decimal",
       "vocab_version": "1.0.0",
       "volatility_class": "GLACIAL"
@@ -7716,7 +7716,7 @@
       "half_life": "12mo",
       "predicate_id": "nibrs_participant",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/nibrs_participant",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/nibrs_participant",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -7749,7 +7749,7 @@
       "half_life": "infinite",
       "predicate_id": "nibrs_start_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/nibrs_start_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/nibrs_start_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7782,7 +7782,7 @@
       "half_life": "infinite",
       "predicate_id": "audit_cell_redacted",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/audit_cell_redacted",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/audit_cell_redacted",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7815,7 +7815,7 @@
       "half_life": "infinite",
       "predicate_id": "deployment_lifecycle_transition",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_lifecycle_transition",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/deployment_lifecycle_transition",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7848,7 +7848,7 @@
       "half_life": "6mo",
       "predicate_id": "usage_search_aggregate",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/usage_search_aggregate",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/usage_search_aggregate",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -7881,7 +7881,7 @@
       "half_life": "12mo",
       "predicate_id": "retention_window_observed",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/retention_window_observed",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/retention_window_observed",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -7914,7 +7914,7 @@
       "half_life": "infinite",
       "predicate_id": "traffic_camera",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/traffic_camera",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/traffic_camera",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7947,7 +7947,7 @@
       "half_life": "infinite",
       "predicate_id": "acquisition_cost",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/acquisition_cost",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/acquisition_cost",
       "value_datatype": "decimal",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -7980,7 +7980,7 @@
       "half_life": "12mo",
       "predicate_id": "approval_status",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/approval_status",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/approval_status",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -8013,7 +8013,7 @@
       "half_life": "2y",
       "predicate_id": "audit_mechanism",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/audit_mechanism",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/audit_mechanism",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -8046,7 +8046,7 @@
       "half_life": "6mo",
       "predicate_id": "complaint_count",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/complaint_count",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/complaint_count",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -8079,7 +8079,7 @@
       "half_life": "2y",
       "predicate_id": "data_access",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/data_access",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/data_access",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -8112,7 +8112,7 @@
       "half_life": "3y",
       "predicate_id": "deployment_location",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_location",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/deployment_location",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -8145,7 +8145,7 @@
       "half_life": "infinite",
       "predicate_id": "deprecation_reason",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/deprecation_reason",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/deprecation_reason",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -8178,7 +8178,7 @@
       "half_life": "12mo",
       "predicate_id": "disparate_impact",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/disparate_impact",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/disparate_impact",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -8211,7 +8211,7 @@
       "half_life": "infinite",
       "predicate_id": "effective_date",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/effective_date",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/effective_date",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -8244,7 +8244,7 @@
       "half_life": "12mo",
       "predicate_id": "effectiveness_claim",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/effectiveness_claim",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/effectiveness_claim",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -8277,7 +8277,7 @@
       "half_life": "12mo",
       "predicate_id": "in_use",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/in_use",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/in_use",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -8310,7 +8310,7 @@
       "half_life": "6mo",
       "predicate_id": "in_use_without_policy_count",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/in_use_without_policy_count",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/in_use_without_policy_count",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -8343,7 +8343,7 @@
       "half_life": "12mo",
       "predicate_id": "non_compliance_finding",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/non_compliance_finding",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/non_compliance_finding",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -8376,7 +8376,7 @@
       "half_life": "12mo",
       "predicate_id": "operating_cost",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/operating_cost",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/operating_cost",
       "value_datatype": "decimal",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -8409,7 +8409,7 @@
       "half_life": "2y",
       "predicate_id": "oversight_body",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/oversight_body",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/oversight_body",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -8442,7 +8442,7 @@
       "half_life": "12mo",
       "predicate_id": "pilot_status",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/pilot_status",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/pilot_status",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -8475,7 +8475,7 @@
       "half_life": "6mo",
       "predicate_id": "policy_compliance_share",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_compliance_share",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/policy_compliance_share",
       "value_datatype": "decimal",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -8508,7 +8508,7 @@
       "half_life": "12mo",
       "predicate_id": "policy_status",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_status",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/policy_status",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -8541,7 +8541,7 @@
       "half_life": "2y",
       "predicate_id": "reporting_cadence",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/reporting_cadence",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/reporting_cadence",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -8574,7 +8574,7 @@
       "half_life": "12mo",
       "predicate_id": "sharing_partner",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/sharing_partner",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/sharing_partner",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -8607,7 +8607,7 @@
       "half_life": "12mo",
       "predicate_id": "signage_visibility",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/signage_visibility",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/signage_visibility",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -8640,7 +8640,7 @@
       "half_life": "3y",
       "predicate_id": "technology_category",
       "resolution_strategy": "max_support",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/technology_category",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/technology_category",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -8673,7 +8673,7 @@
       "half_life": "12mo",
       "predicate_id": "training",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/training",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/training",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -8706,7 +8706,7 @@
       "half_life": "6mo",
       "predicate_id": "usage_count",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/usage_count",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/usage_count",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -8739,7 +8739,7 @@
       "half_life": "12mo",
       "predicate_id": "vendor_subsidy",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_subsidy",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/vendor_subsidy",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -8772,7 +8772,7 @@
       "half_life": "3y",
       "predicate_id": "constrains_capability",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/constrains_capability",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/constrains_capability",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -8805,7 +8805,7 @@
       "half_life": "infinite",
       "predicate_id": "contract_term_end",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_term_end",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/contract_term_end",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -8838,7 +8838,7 @@
       "half_life": "infinite",
       "predicate_id": "effective_to",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/effective_to",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/effective_to",
       "value_datatype": "edtf",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -8871,7 +8871,7 @@
       "half_life": "3y",
       "predicate_id": "operates_in_country",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/operates_in_country",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/operates_in_country",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -8904,7 +8904,7 @@
       "half_life": "2y",
       "predicate_id": "policy_clause",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_clause",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/policy_clause",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -8937,7 +8937,7 @@
       "half_life": "infinite",
       "predicate_id": "quantity",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/quantity",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/quantity",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -8970,7 +8970,7 @@
       "half_life": "3y",
       "predicate_id": "requires_authorization_of",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/requires_authorization_of",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/requires_authorization_of",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -9003,7 +9003,7 @@
       "half_life": "12mo",
       "predicate_id": "operator_absent",
       "resolution_strategy": "latest_observation_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/operator_absent",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/operator_absent",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
@@ -9036,7 +9036,7 @@
       "half_life": "2y",
       "predicate_id": "mfa_required",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/mfa_required",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/mfa_required",
       "value_datatype": "boolean",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -9069,7 +9069,7 @@
       "half_life": "2y",
       "predicate_id": "retention_days",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/retention_days",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/retention_days",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -9103,7 +9103,7 @@
       "object_kind": "entity_ref",
       "predicate_id": "live_stream_permitted_to",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/live_stream_permitted_to",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/live_stream_permitted_to",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -9137,7 +9137,7 @@
       "object_kind": "entity_ref",
       "predicate_id": "third_party_integration",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/third_party_integration",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/third_party_integration",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -9170,7 +9170,7 @@
       "half_life": "infinite",
       "predicate_id": "observed_via",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/observed_via",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/observed_via",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -9204,7 +9204,7 @@
       "object_kind": "entity_ref",
       "predicate_id": "distributes_list_to",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/distributes_list_to",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/distributes_list_to",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -9238,7 +9238,7 @@
       "object_kind": "entity_ref",
       "predicate_id": "requests_data_from",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/requests_data_from",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/requests_data_from",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -9272,7 +9272,7 @@
       "object_kind": "entity_ref",
       "predicate_id": "authorizes",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/authorizes",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/authorizes",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -9306,7 +9306,7 @@
       "object_kind": "entity_ref",
       "predicate_id": "replaced_by",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/replaced_by",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/replaced_by",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -9340,7 +9340,7 @@
       "object_kind": "entity_ref",
       "predicate_id": "succeeds",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/succeeds",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/succeeds",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -9373,7 +9373,7 @@
       "half_life": "infinite",
       "predicate_id": "atlas_category_retired",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/atlas_category_retired",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/atlas_category_retired",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -9406,7 +9406,7 @@
       "half_life": "infinite",
       "predicate_id": "deployment_ended",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_ended",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/deployment_ended",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -9439,7 +9439,7 @@
       "half_life": "infinite",
       "predicate_id": "osm_element_deleted",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/osm_element_deleted",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/osm_element_deleted",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -9472,7 +9472,7 @@
       "half_life": "infinite",
       "predicate_id": "physical_removed_from_street",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/physical_removed_from_street",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/physical_removed_from_street",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -9505,7 +9505,7 @@
       "half_life": "2y",
       "predicate_id": "geometry_kind",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/geometry_kind",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/geometry_kind",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "SLOW"
@@ -9538,7 +9538,7 @@
       "half_life": "infinite",
       "predicate_id": "programme_area",
       "resolution_strategy": "authoritative_source_wins",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_area",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/programme_area",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
@@ -9572,7 +9572,7 @@
       "object_kind": "literal",
       "predicate_id": "programme_count",
       "resolution_strategy": "interval_union",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/programme_count",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/programme_count",
       "value_datatype": "integer",
       "vocab_version": "1.0.0",
       "volatility_class": "VOLATILE"
@@ -9606,7 +9606,7 @@
       "object_kind": "literal",
       "predicate_id": "geometry_defect",
       "resolution_strategy": "never_resolve",
-      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/geometry_defect",
+      "skos_concept_iri": "https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/geometry_defect",
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"

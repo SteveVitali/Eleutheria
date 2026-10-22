@@ -15,7 +15,7 @@ _How a claim↔capture evidence link was bound (SIG-TRUST-002). The honest class
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/BindingStatus](https://ontology.sig-project.org/schema/enum/BindingStatus)
+URI: [sig:enum/BindingStatus](https://ontology.surveillancegraph.org/schema/enum/BindingStatus)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -52,7 +52,7 @@ URI: [sig:enum/BindingStatus](https://ontology.sig-project.org/schema/enum/Bindi
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -66,7 +66,7 @@ URI: [sig:enum/BindingStatus](https://ontology.sig-project.org/schema/enum/Bindi
 name: BindingStatus
 description: How a claim↔capture evidence link was bound (SIG-TRUST-002). The honest
   classifications — a link is never presented as byte-anchored provenance it is not.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   actual_capture:

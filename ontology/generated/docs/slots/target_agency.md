@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/target_agency](https://ontology.sig-project.org/schema/slot/target_agency)
+URI: [sig:slot/target_agency](https://ontology.surveillancegraph.org/schema/slot/target_agency)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/target_agency](https://ontology.sig-project.org/schema/slot/targe
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/target_agency](https://ontology.sig-project.org/schema/slot/targe
 <details>
 ```yaml
 name: target_agency
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: RecordsRequest
 domain_of:

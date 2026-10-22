@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/confidence](https://ontology.sig-project.org/schema/slot/confidence)
+URI: [sig:slot/confidence](https://ontology.surveillancegraph.org/schema/slot/confidence)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/confidence](https://ontology.sig-project.org/schema/slot/confiden
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/confidence](https://ontology.sig-project.org/schema/slot/confiden
 <details>
 ```yaml
 name: confidence
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Resolution
 domain_of:

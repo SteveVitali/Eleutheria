@@ -15,7 +15,7 @@ _The three edge types that MUST NEVER be merged (§12.2)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/AccessKind](https://ontology.sig-project.org/schema/enum/AccessKind)
+URI: [sig:enum/AccessKind](https://ontology.surveillancegraph.org/schema/enum/AccessKind)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -51,7 +51,7 @@ URI: [sig:enum/AccessKind](https://ontology.sig-project.org/schema/enum/AccessKi
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -64,7 +64,7 @@ URI: [sig:enum/AccessKind](https://ontology.sig-project.org/schema/enum/AccessKi
 ```yaml
 name: AccessKind
 description: The three edge types that MUST NEVER be merged (§12.2).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   configured_access:

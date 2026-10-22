@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/extractor_version](https://ontology.sig-project.org/schema/slot/extractor_version)
+URI: [sig:slot/extractor_version](https://ontology.surveillancegraph.org/schema/slot/extractor_version)
 <!-- no inheritance hierarchy -->
 
 

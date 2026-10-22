@@ -15,7 +15,7 @@ _The six evidence source classes of OL-2E-AL-03 (§11.17, SIG-ONTO-039). An acco
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/SourceClass](https://ontology.sig-project.org/schema/enum/SourceClass)
+URI: [sig:enum/SourceClass](https://ontology.surveillancegraph.org/schema/enum/SourceClass)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -54,7 +54,7 @@ URI: [sig:enum/SourceClass](https://ontology.sig-project.org/schema/enum/SourceC
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -71,7 +71,7 @@ description: The six evidence source classes of OL-2E-AL-03 (§11.17, SIG-ONTO-0
   on the evidence link, so a claim resting only on advocacy analysis is distinguishable
   from one resting on a court record. These are epistemic classes of the reporting,
   NOT the R1..R6 reliability tiers (§10.4).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   primary_record:

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/transport](https://ontology.sig-project.org/schema/slot/transport)
+URI: [sig:slot/transport](https://ontology.surveillancegraph.org/schema/slot/transport)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/transport](https://ontology.sig-project.org/schema/slot/transport
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/transport](https://ontology.sig-project.org/schema/slot/transport
 <details>
 ```yaml
 name: transport
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: IntegrationEdge
 domain_of:

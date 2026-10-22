@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/sensitivity_tier](https://ontology.sig-project.org/schema/slot/sensitivity_tier)
+URI: [sig:slot/sensitivity_tier](https://ontology.surveillancegraph.org/schema/slot/sensitivity_tier)
 <!-- no inheritance hierarchy -->
 
 

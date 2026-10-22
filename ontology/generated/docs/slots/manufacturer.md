@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/manufacturer](https://ontology.sig-project.org/schema/slot/manufacturer)
+URI: [sig:slot/manufacturer](https://ontology.surveillancegraph.org/schema/slot/manufacturer)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/manufacturer](https://ontology.sig-project.org/schema/slot/manufa
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/manufacturer](https://ontology.sig-project.org/schema/slot/manufa
 <details>
 ```yaml
 name: manufacturer
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: PhysicalAsset
 domain_of:

@@ -29,7 +29,11 @@ from pathlib import Path
 from typing import Any
 
 # --- Stable IRIs (per-version; SIG-STORE-035) --------------------------------
-BASE = "https://ontology.sig-project.org/"
+# The one declared identity base for every IRI the ontology surface mints
+# (P35.38b / ADR-217 — owned domain; pre-cut IRIs under the retired
+# `ontology.sig-project` host stay valid names via docs/governance/
+# iri-base-alias-map.json — never rewritten, append-only).
+BASE = "https://ontology.surveillancegraph.org/"
 SCHEMA_NS = BASE + "schema/"
 VOCAB_VERSION = "1.0.0"
 TECH_SCHEME = f"{BASE}vocab/technology/{VOCAB_VERSION}"

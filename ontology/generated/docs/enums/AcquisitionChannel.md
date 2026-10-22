@@ -15,7 +15,7 @@ _Contract acquisition channel (§11.11, SIG-ONTO-032)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/AcquisitionChannel](https://ontology.sig-project.org/schema/enum/AcquisitionChannel)
+URI: [sig:enum/AcquisitionChannel](https://ontology.surveillancegraph.org/schema/enum/AcquisitionChannel)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -56,7 +56,7 @@ URI: [sig:enum/AcquisitionChannel](https://ontology.sig-project.org/schema/enum/
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -69,7 +69,7 @@ URI: [sig:enum/AcquisitionChannel](https://ontology.sig-project.org/schema/enum/
 ```yaml
 name: AcquisitionChannel
 description: Contract acquisition channel (§11.11, SIG-ONTO-032).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   direct_award:

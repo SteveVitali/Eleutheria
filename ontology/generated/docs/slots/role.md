@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/role](https://ontology.sig-project.org/schema/slot/role)
+URI: [sig:slot/role](https://ontology.surveillancegraph.org/schema/slot/role)
 <!-- no inheritance hierarchy -->
 
 

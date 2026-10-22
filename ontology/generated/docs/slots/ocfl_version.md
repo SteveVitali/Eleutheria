@@ -14,7 +14,7 @@ _The immutable OCFL version this occurrence IS — a binding pins this version, 
 
 
 
-URI: [sig:slot/ocfl_version](https://ontology.sig-project.org/schema/slot/ocfl_version)
+URI: [sig:slot/ocfl_version](https://ontology.surveillancegraph.org/schema/slot/ocfl_version)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/ocfl_version](https://ontology.sig-project.org/schema/slot/ocfl_v
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/ocfl_version](https://ontology.sig-project.org/schema/slot/ocfl_v
 name: ocfl_version
 description: The immutable OCFL version this occurrence IS — a binding pins this version,
   never a mutable inventory head.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: EvidenceCapture
 domain_of:

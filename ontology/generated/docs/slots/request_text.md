@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/request_text](https://ontology.sig-project.org/schema/slot/request_text)
+URI: [sig:slot/request_text](https://ontology.surveillancegraph.org/schema/slot/request_text)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/request_text](https://ontology.sig-project.org/schema/slot/reques
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/request_text](https://ontology.sig-project.org/schema/slot/reques
 <details>
 ```yaml
 name: request_text
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: RecordsRequest
 domain_of:

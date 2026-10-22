@@ -14,7 +14,7 @@ _[NEW] A research task as an object (§11.22, behaviour at §33.2)._
 
 
 
-URI: [sig:class/ResearchTask](https://ontology.sig-project.org/schema/class/ResearchTask)
+URI: [sig:class/ResearchTask](https://ontology.surveillancegraph.org/schema/class/ResearchTask)
 
 
 
@@ -82,7 +82,7 @@ URI: [sig:class/ResearchTask](https://ontology.sig-project.org/schema/class/Rese
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -109,20 +109,20 @@ URI: [sig:class/ResearchTask](https://ontology.sig-project.org/schema/class/Rese
 ```yaml
 name: ResearchTask
 description: '[NEW] A research task as an object (§11.22, behaviour at §33.2).'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   task_type:
     name: task_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ResearchTask
     range: string
   target:
     name: target
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ResearchTask
@@ -130,14 +130,14 @@ attributes:
     range: uriorcurie
   closing_condition:
     name: closing_condition
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ResearchTask
     range: string
   resolved:
     name: resolved
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ResearchTask
@@ -152,13 +152,13 @@ attributes:
 ```yaml
 name: ResearchTask
 description: '[NEW] A research task as an object (§11.22, behaviour at §33.2).'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   task_type:
     name: task_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ResearchTask
     domain_of:
@@ -166,7 +166,7 @@ attributes:
     range: string
   target:
     name: target
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ResearchTask
     domain_of:
@@ -175,7 +175,7 @@ attributes:
     range: uriorcurie
   closing_condition:
     name: closing_condition
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ResearchTask
     domain_of:
@@ -183,7 +183,7 @@ attributes:
     range: string
   resolved:
     name: resolved
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ResearchTask
     domain_of:
@@ -192,7 +192,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: ResearchTask

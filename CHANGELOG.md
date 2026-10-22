@@ -774,6 +774,35 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Changed
 
+- **Identifier base moved to the owned domain, with the append-only alias
+  map + compat note and truthful release provenance** (P35.38b / row 317;
+  R11-SAFE-06; owner SIG-IDENT-031; cites F-184 + Q-E2-03 [B-6]
+  *"Move UA, don't buy domain"*, SIG-INGEST-011/015/016, SIG-EXPORT-002/003,
+  SIG-API-008, ED-38/39/40, ADR-168/132/178/217) — every identifier SIG
+  mints in new releases now carries `surveillancegraph.org`
+  (`ontology.surveillancegraph.org` for the ontology/vocabulary families):
+  the LinkML schema ids and `sig:` prefix, §13 SKOS vocabulary IRIs, the
+  PROV-O `/prov/` namespace behind `provenance.ttl`, the JSON-LD `/ns/`
+  `@vocab` context, the API `/id/` subject IRIs, the watch-feed
+  subscription UIDs and the OCFL `user.address` default — each behind one
+  declared constant per surface, with a repo check that fails a new
+  `sig-project.org` literal or a second hard-coded base
+  (`tests/unit/test_identity_base.py`). Already-published IRIs are never
+  rewritten: `docs/governance/iri-base-alias-map.json`
+  (`sig.iri-alias-map/1`, append-only) maps every retired base to its new
+  mint base as a name mapping — never an HTTP-redirect claim — and
+  `docs/governance/iri-base-compat-note.md` is the published note;
+  ADR-217 records the decision and the accepted residual (the retired
+  domains stay unregistered; RISK-R11-29). `provenance.ttl` now emits the
+  real bound captures — the recorded `retrieved_at`, the retrieving
+  `ingest_run` (connector name/version, start/finish), the content digest
+  and the S-6-gated upstream reference — never the export build's
+  `generated_at` on a synthetic per-source entity. Closes the `D-P35.3-1`
+  watch-feed UID deferral (the sentinel compartment is deleted); files
+  `D-P35.38b-1` (hosted vocabulary IRI re-stamp) and `D-P35.38b-2`
+  (organised-editing disclosure repoint — provisioned contact + real
+  routes + the external OSM-wiki edit).
+
 - **Closed claim vocabulary at the sink** (P35.14a; cites SIG-STORE-013,
   SIG-ONTO-028, SIG-ONTO-035, SIG-ONTO-051, SIG-ONTO-057, SIG-ONTO-060,
   SIG-STORE-037, SIG-STORE-044, SIG-GEO-002) — the claim sink now treats the

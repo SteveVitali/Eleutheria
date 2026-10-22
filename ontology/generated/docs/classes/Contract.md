@@ -14,7 +14,7 @@ _A contract; acquisition_channel and parent_cooperative_contract are REQUIRED mo
 
 
 
-URI: [sig:class/Contract](https://ontology.sig-project.org/schema/class/Contract)
+URI: [sig:class/Contract](https://ontology.surveillancegraph.org/schema/class/Contract)
 
 
 
@@ -174,7 +174,7 @@ URI: [sig:class/Contract](https://ontology.sig-project.org/schema/class/Contract
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -202,27 +202,27 @@ URI: [sig:class/Contract](https://ontology.sig-project.org/schema/class/Contract
 name: Contract
 description: A contract; acquisition_channel and parent_cooperative_contract are REQUIRED
   model elements (§11.11, SIG-ONTO-032).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   buyer:
     name: buyer
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Contract
     range: Organization
   seller:
     name: seller
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Contract
     range: Organization
   amount:
     name: amount
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Contract
@@ -230,42 +230,42 @@ attributes:
     range: money
   currency:
     name: currency
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Contract
     range: string
   signed_date:
     name: signed_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Contract
     range: edtf
   start_date:
     name: start_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Contract
     range: edtf
   end_date:
     name: end_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Contract
     range: edtf
   renewal_options:
     name: renewal_options
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Contract
     range: string
   products:
     name: products
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Contract
@@ -273,7 +273,7 @@ attributes:
     multivalued: true
   quantities:
     name: quantities
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Contract
@@ -281,7 +281,7 @@ attributes:
     multivalued: true
   document:
     name: document
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Contract
@@ -289,7 +289,7 @@ attributes:
     range: uriorcurie
   acquisition_channel:
     name: acquisition_channel
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Contract
@@ -297,14 +297,14 @@ attributes:
   parent_cooperative_contract:
     name: parent_cooperative_contract
     description: The master award being ridden (SIG-ONTO-032).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Contract
     range: Contract
   amends_contract:
     name: amends_contract
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Contract
@@ -320,13 +320,13 @@ attributes:
 name: Contract
 description: A contract; acquisition_channel and parent_cooperative_contract are REQUIRED
   model elements (§11.11, SIG-ONTO-032).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   buyer:
     name: buyer
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Contract
     domain_of:
@@ -334,7 +334,7 @@ attributes:
     range: Organization
   seller:
     name: seller
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Contract
     domain_of:
@@ -342,7 +342,7 @@ attributes:
     range: Organization
   amount:
     name: amount
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Contract
     domain_of:
@@ -351,7 +351,7 @@ attributes:
     range: money
   currency:
     name: currency
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Contract
     domain_of:
@@ -359,7 +359,7 @@ attributes:
     range: string
   signed_date:
     name: signed_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Contract
     domain_of:
@@ -367,7 +367,7 @@ attributes:
     range: edtf
   start_date:
     name: start_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Contract
     domain_of:
@@ -375,7 +375,7 @@ attributes:
     range: edtf
   end_date:
     name: end_date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Contract
     domain_of:
@@ -383,7 +383,7 @@ attributes:
     range: edtf
   renewal_options:
     name: renewal_options
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Contract
     domain_of:
@@ -391,7 +391,7 @@ attributes:
     range: string
   products:
     name: products
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Contract
     domain_of:
@@ -400,7 +400,7 @@ attributes:
     multivalued: true
   quantities:
     name: quantities
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Contract
     domain_of:
@@ -409,7 +409,7 @@ attributes:
     multivalued: true
   document:
     name: document
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Contract
     domain_of:
@@ -418,7 +418,7 @@ attributes:
     range: uriorcurie
   acquisition_channel:
     name: acquisition_channel
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Contract
     domain_of:
@@ -427,7 +427,7 @@ attributes:
   parent_cooperative_contract:
     name: parent_cooperative_contract
     description: The master award being ridden (SIG-ONTO-032).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Contract
     domain_of:
@@ -435,7 +435,7 @@ attributes:
     range: Contract
   amends_contract:
     name: amends_contract
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Contract
     domain_of:
@@ -444,7 +444,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: Contract

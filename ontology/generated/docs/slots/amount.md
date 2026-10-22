@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/amount](https://ontology.sig-project.org/schema/slot/amount)
+URI: [sig:slot/amount](https://ontology.surveillancegraph.org/schema/slot/amount)
 <!-- no inheritance hierarchy -->
 
 

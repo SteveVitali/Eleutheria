@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/instrument_type](https://ontology.sig-project.org/schema/slot/instrument_type)
+URI: [sig:slot/instrument_type](https://ontology.surveillancegraph.org/schema/slot/instrument_type)
 <!-- no inheritance hierarchy -->
 
 

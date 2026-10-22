@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/extraction_method](https://ontology.sig-project.org/schema/slot/extraction_method)
+URI: [sig:slot/extraction_method](https://ontology.surveillancegraph.org/schema/slot/extraction_method)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/extraction_method](https://ontology.sig-project.org/schema/slot/e
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/extraction_method](https://ontology.sig-project.org/schema/slot/e
 <details>
 ```yaml
 name: extraction_method
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Extraction
 domain_of:

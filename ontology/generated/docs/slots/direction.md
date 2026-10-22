@@ -14,7 +14,7 @@ _Required; never symmetric by default (SIG-ONTO-049)._
 
 
 
-URI: [sig:slot/direction](https://ontology.sig-project.org/schema/slot/direction)
+URI: [sig:slot/direction](https://ontology.surveillancegraph.org/schema/slot/direction)
 <!-- no inheritance hierarchy -->
 
 
@@ -72,7 +72,7 @@ URI: [sig:slot/direction](https://ontology.sig-project.org/schema/slot/direction
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/direction](https://ontology.sig-project.org/schema/slot/direction
 ```yaml
 name: direction
 description: Required; never symmetric by default (SIG-ONTO-049).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: AccessRelationship
 domain_of:

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/reason_category](https://ontology.sig-project.org/schema/slot/reason_category)
+URI: [sig:slot/reason_category](https://ontology.surveillancegraph.org/schema/slot/reason_category)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/reason_category](https://ontology.sig-project.org/schema/slot/rea
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/reason_category](https://ontology.sig-project.org/schema/slot/rea
 <details>
 ```yaml
 name: reason_category
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: UsageAggregate
 domain_of:

@@ -15,7 +15,7 @@ _Track 2 — physical (§13.4). `replaced` is deliberately NOT here (SIG-ONTO-06
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/PhysicalState](https://ontology.sig-project.org/schema/enum/PhysicalState)
+URI: [sig:enum/PhysicalState](https://ontology.surveillancegraph.org/schema/enum/PhysicalState)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -56,7 +56,7 @@ URI: [sig:enum/PhysicalState](https://ontology.sig-project.org/schema/enum/Physi
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -69,7 +69,7 @@ URI: [sig:enum/PhysicalState](https://ontology.sig-project.org/schema/enum/Physi
 ```yaml
 name: PhysicalState
 description: Track 2 — physical (§13.4). `replaced` is deliberately NOT here (SIG-ONTO-062).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   unknown:

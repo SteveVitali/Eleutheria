@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/published_by](https://ontology.sig-project.org/schema/slot/published_by)
+URI: [sig:slot/published_by](https://ontology.surveillancegraph.org/schema/slot/published_by)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/published_by](https://ontology.sig-project.org/schema/slot/publis
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/published_by](https://ontology.sig-project.org/schema/slot/publis
 <details>
 ```yaml
 name: published_by
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: EvidenceArtifact
 domain_of:

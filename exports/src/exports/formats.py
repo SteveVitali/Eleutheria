@@ -42,6 +42,12 @@ from .manifest import canonical_json
 
 Row = Mapping[str, Any]
 
+#: The one declared namespace the JSON-LD context mints row identifiers under
+#: (P35.38b / ADR-217 — owned domain; pre-cut `/ns/` IRIs under the retired
+#: `sig-project` host stay valid names via
+#: docs/governance/iri-base-alias-map.json).
+SIG_NS = "https://surveillancegraph.org/ns/"
+
 
 # --- scalarisation ------------------------------------------------------------
 
@@ -100,7 +106,7 @@ def write_jsonld(rows: Sequence[Row], *, table_name: str = "export", **_: Any) -
 
     Hand-built (not serialised by a library) so the byte output is stable and diffable.
     """
-    context = {"sig": "https://sig-project.org/ns/", "@vocab": "https://sig-project.org/ns/"}
+    context = {"sig": SIG_NS, "@vocab": SIG_NS}
     graph = []
     for i, row in enumerate(rows):
         node: dict[str, Any] = {"@id": f"sig:{table_name}/{i}"}

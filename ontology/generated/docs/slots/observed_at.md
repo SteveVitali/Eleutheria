@@ -14,7 +14,7 @@ _When SIG observed the state (observation time, never collapsed with valid time 
 
 
 
-URI: [sig:slot/observed_at](https://ontology.sig-project.org/schema/slot/observed_at)
+URI: [sig:slot/observed_at](https://ontology.surveillancegraph.org/schema/slot/observed_at)
 <!-- no inheritance hierarchy -->
 
 
@@ -69,7 +69,7 @@ URI: [sig:slot/observed_at](https://ontology.sig-project.org/schema/slot/observe
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -91,7 +91,7 @@ URI: [sig:slot/observed_at](https://ontology.sig-project.org/schema/slot/observe
 name: observed_at
 description: When SIG observed the state (observation time, never collapsed with valid
   time — §9).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 domain_of:
 - Edge

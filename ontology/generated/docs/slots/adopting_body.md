@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/adopting_body](https://ontology.sig-project.org/schema/slot/adopting_body)
+URI: [sig:slot/adopting_body](https://ontology.surveillancegraph.org/schema/slot/adopting_body)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/adopting_body](https://ontology.sig-project.org/schema/slot/adopt
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/adopting_body](https://ontology.sig-project.org/schema/slot/adopt
 <details>
 ```yaml
 name: adopting_body
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Policy
 domain_of:

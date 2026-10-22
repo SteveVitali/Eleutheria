@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/last_observed](https://ontology.sig-project.org/schema/slot/last_observed)
+URI: [sig:slot/last_observed](https://ontology.surveillancegraph.org/schema/slot/last_observed)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/last_observed](https://ontology.sig-project.org/schema/slot/last_
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/last_observed](https://ontology.sig-project.org/schema/slot/last_
 <details>
 ```yaml
 name: last_observed
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: PhysicalAsset
 domain_of:

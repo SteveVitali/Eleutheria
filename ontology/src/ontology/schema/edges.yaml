@@ -9,13 +9,13 @@
 #   - no undifferentiated symmetric `shares_with`;
 #   - no stored `integrates_with` (query-time rollup only, SIG-ONTO-045);
 #   - no automated Person→AccountabilityEvent edge (SIG-ONTO-016).
-id: https://ontology.sig-project.org/schema/edges
+id: https://ontology.surveillancegraph.org/schema/edges
 name: sig_edges
 title: SIG relationship catalog (§12)
 license: Apache-2.0
 prefixes:
   linkml: https://w3id.org/linkml/
-  sig: https://ontology.sig-project.org/schema/
+  sig: https://ontology.surveillancegraph.org/schema/
 default_prefix: sig
 default_range: string
 imports:

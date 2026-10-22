@@ -112,7 +112,7 @@ describe("iCal subscription is valid and keyed on the decision date (SIG-UI-027)
 });
 
 describe("RSS subscription is valid and keyed on the decision date (SIG-UI-027)", () => {
-  const rss = toRss(WATCH_ITEMS, "Oklahoma City", "https://sig.example");
+  const rss = toRss(WATCH_ITEMS, "Oklahoma City", "https://surveillancegraph.org");
 
   it("is a well-formed RSS 2.0 channel with an item per dated alert", () => {
     expect(rss).toContain('<rss version="2.0">');
@@ -123,13 +123,13 @@ describe("RSS subscription is valid and keyed on the decision date (SIG-UI-027)"
 
   it("titles/keys each item on the decision date and carries a stable guid", () => {
     expect(rss).toContain("Decision deadline 2027-01-02");
-    expect(rss).toContain('<guid isPermaLink="false">sig-watch-contract:okcpd-alpr-20270102@sig.example</guid>');
+    expect(rss).toContain('<guid isPermaLink="false">sig-watch-contract:okcpd-alpr-20270102@surveillancegraph.org</guid>');
     expect(rss).toContain("<pubDate>");
   });
 
   it("escapes XML and carries the contested marker (SIG-UI-008)", () => {
     // The Tulsa feed has no contested item; the OKC feed does.
     expect(rss).toContain(CONTESTED_MARKER.glyph);
-    expect(toRss(WATCH_ITEMS, "Tulsa", "https://sig.example")).not.toContain(CONTESTED_MARKER.glyph);
+    expect(toRss(WATCH_ITEMS, "Tulsa", "https://surveillancegraph.org")).not.toContain(CONTESTED_MARKER.glyph);
   });
 });

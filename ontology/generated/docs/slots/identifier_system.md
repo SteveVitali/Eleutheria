@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/identifier_system](https://ontology.sig-project.org/schema/slot/identifier_system)
+URI: [sig:slot/identifier_system](https://ontology.surveillancegraph.org/schema/slot/identifier_system)
 <!-- no inheritance hierarchy -->
 
 
@@ -67,7 +67,7 @@ URI: [sig:slot/identifier_system](https://ontology.sig-project.org/schema/slot/i
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -87,7 +87,7 @@ URI: [sig:slot/identifier_system](https://ontology.sig-project.org/schema/slot/i
 <details>
 ```yaml
 name: identifier_system
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Organization
 domain_of:

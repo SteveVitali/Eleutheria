@@ -14,7 +14,7 @@ _An accountability event; epistemic_status is REQUIRED and rendered everywhere (
 
 
 
-URI: [sig:class/AccountabilityEvent](https://ontology.sig-project.org/schema/class/AccountabilityEvent)
+URI: [sig:class/AccountabilityEvent](https://ontology.surveillancegraph.org/schema/class/AccountabilityEvent)
 
 
 
@@ -142,7 +142,7 @@ URI: [sig:class/AccountabilityEvent](https://ontology.sig-project.org/schema/cla
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -170,20 +170,20 @@ URI: [sig:class/AccountabilityEvent](https://ontology.sig-project.org/schema/cla
 name: AccountabilityEvent
 description: An accountability event; epistemic_status is REQUIRED and rendered everywhere
   (§11.17, SIG-ONTO-038/039).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   event_type:
     name: event_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - AccountabilityEvent
     range: AccountabilityEventType
   epistemic_status:
     name: epistemic_status
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - AccountabilityEvent
@@ -191,14 +191,14 @@ attributes:
     required: true
   date:
     name: date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - AccountabilityEvent
     range: edtf
   organizations:
     name: organizations
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - AccountabilityEvent
@@ -206,7 +206,7 @@ attributes:
     multivalued: true
   deployments:
     name: deployments
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - AccountabilityEvent
@@ -214,7 +214,7 @@ attributes:
     multivalued: true
   technologies:
     name: technologies
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - AccountabilityEvent
@@ -223,7 +223,7 @@ attributes:
   affected_party_class:
     name: affected_party_class
     description: A class, never a named private individual (N4).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - AccountabilityEvent
@@ -231,7 +231,7 @@ attributes:
   sources:
     name: sources
     description: Linkable to all six source classes of OL-2E-AL-03 (SIG-ONTO-039).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - AccountabilityEvent
     - Edge
@@ -243,7 +243,7 @@ attributes:
       `parties`/`party_role` on LegalProceeding). Recording the class on the evidence
       link is what makes a claim resting only on advocacy analysis distinguishable
       from one resting on a court record (SIG-ONTO-039).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - AccountabilityEvent
@@ -260,13 +260,13 @@ attributes:
 name: AccountabilityEvent
 description: An accountability event; epistemic_status is REQUIRED and rendered everywhere
   (§11.17, SIG-ONTO-038/039).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   event_type:
     name: event_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: AccountabilityEvent
     domain_of:
@@ -274,7 +274,7 @@ attributes:
     range: AccountabilityEventType
   epistemic_status:
     name: epistemic_status
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: AccountabilityEvent
     domain_of:
@@ -283,7 +283,7 @@ attributes:
     required: true
   date:
     name: date
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: AccountabilityEvent
     domain_of:
@@ -291,7 +291,7 @@ attributes:
     range: edtf
   organizations:
     name: organizations
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: AccountabilityEvent
     domain_of:
@@ -300,7 +300,7 @@ attributes:
     multivalued: true
   deployments:
     name: deployments
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: AccountabilityEvent
     domain_of:
@@ -309,7 +309,7 @@ attributes:
     multivalued: true
   technologies:
     name: technologies
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: AccountabilityEvent
     domain_of:
@@ -319,7 +319,7 @@ attributes:
   affected_party_class:
     name: affected_party_class
     description: A class, never a named private individual (N4).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: AccountabilityEvent
     domain_of:
@@ -328,7 +328,7 @@ attributes:
   sources:
     name: sources
     description: Linkable to all six source classes of OL-2E-AL-03 (SIG-ONTO-039).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: AccountabilityEvent
     domain_of:
     - AccountabilityEvent
@@ -341,7 +341,7 @@ attributes:
       `parties`/`party_role` on LegalProceeding). Recording the class on the evidence
       link is what makes a claim resting only on advocacy analysis distinguishable
       from one resting on a court record (SIG-ONTO-039).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: AccountabilityEvent
     domain_of:
@@ -351,7 +351,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: AccountabilityEvent

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/technology](https://ontology.sig-project.org/schema/slot/technology)
+URI: [sig:slot/technology](https://ontology.surveillancegraph.org/schema/slot/technology)
 <!-- no inheritance hierarchy -->
 
 

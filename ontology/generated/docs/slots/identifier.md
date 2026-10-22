@@ -14,7 +14,7 @@ _Repeatable (scheme,value) pairs, qualified by identifier_system (SIG-IDENT-006)
 
 
 
-URI: [sig:slot/identifier](https://ontology.sig-project.org/schema/slot/identifier)
+URI: [sig:slot/identifier](https://ontology.surveillancegraph.org/schema/slot/identifier)
 <!-- no inheritance hierarchy -->
 
 
@@ -72,7 +72,7 @@ URI: [sig:slot/identifier](https://ontology.sig-project.org/schema/slot/identifi
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/identifier](https://ontology.sig-project.org/schema/slot/identifi
 ```yaml
 name: identifier
 description: Repeatable (scheme,value) pairs, qualified by identifier_system (SIG-IDENT-006).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Organization
 domain_of:

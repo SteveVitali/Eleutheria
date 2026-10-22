@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/detection_method](https://ontology.sig-project.org/schema/slot/detection_method)
+URI: [sig:slot/detection_method](https://ontology.surveillancegraph.org/schema/slot/detection_method)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/detection_method](https://ontology.sig-project.org/schema/slot/de
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/detection_method](https://ontology.sig-project.org/schema/slot/de
 <details>
 ```yaml
 name: detection_method
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: CandidateAsset
 domain_of:

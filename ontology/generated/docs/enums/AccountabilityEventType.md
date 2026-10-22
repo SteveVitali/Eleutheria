@@ -15,7 +15,7 @@ _Accountability event type (§11.17)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/AccountabilityEventType](https://ontology.sig-project.org/schema/enum/AccountabilityEventType)
+URI: [sig:enum/AccountabilityEventType](https://ontology.surveillancegraph.org/schema/enum/AccountabilityEventType)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -62,7 +62,7 @@ URI: [sig:enum/AccountabilityEventType](https://ontology.sig-project.org/schema/
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -75,7 +75,7 @@ URI: [sig:enum/AccountabilityEventType](https://ontology.sig-project.org/schema/
 ```yaml
 name: AccountabilityEventType
 description: Accountability event type (§11.17).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   false_stop:

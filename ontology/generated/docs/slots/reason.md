@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/reason](https://ontology.sig-project.org/schema/slot/reason)
+URI: [sig:slot/reason](https://ontology.surveillancegraph.org/schema/slot/reason)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/reason](https://ontology.sig-project.org/schema/slot/reason)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/reason](https://ontology.sig-project.org/schema/slot/reason)
 <details>
 ```yaml
 name: reason
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: AssertionQuarantine
 domain_of:

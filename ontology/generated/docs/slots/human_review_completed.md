@@ -14,7 +14,7 @@ _Person creation MUST have been through human review (SIG-ONTO-016)._
 
 
 
-URI: [sig:slot/human_review_completed](https://ontology.sig-project.org/schema/slot/human_review_completed)
+URI: [sig:slot/human_review_completed](https://ontology.surveillancegraph.org/schema/slot/human_review_completed)
 <!-- no inheritance hierarchy -->
 
 
@@ -72,7 +72,7 @@ URI: [sig:slot/human_review_completed](https://ontology.sig-project.org/schema/s
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/human_review_completed](https://ontology.sig-project.org/schema/s
 ```yaml
 name: human_review_completed
 description: Person creation MUST have been through human review (SIG-ONTO-016).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Person
 domain_of:

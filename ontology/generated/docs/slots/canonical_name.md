@@ -14,7 +14,7 @@ _A claim, not an authoritative column (§8.2, SIG-ONTO-003)._
 
 
 
-URI: [sig:slot/canonical_name](https://ontology.sig-project.org/schema/slot/canonical_name)
+URI: [sig:slot/canonical_name](https://ontology.surveillancegraph.org/schema/slot/canonical_name)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/canonical_name](https://ontology.sig-project.org/schema/slot/cano
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/canonical_name](https://ontology.sig-project.org/schema/slot/cano
 ```yaml
 name: canonical_name
 description: A claim, not an authoritative column (§8.2, SIG-ONTO-003).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Organization
 domain_of:

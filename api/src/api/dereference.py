@@ -19,8 +19,11 @@ from rdflib.namespace import RDF, RDFS
 
 from .store import IdDescriptor
 
-#: The base IRI namespace SIG identifiers dereference under.
-SIG = Namespace("https://sig.example/id/")
+#: The base IRI namespace SIG identifiers dereference under — the one declared
+#: constant for the API `/id/` surface (P35.38b / ADR-217 — owned domain,
+#: F5 PKG-09b ED-38; pre-cut `/id/` IRIs under the retired `sig-example` host
+#: stay valid names via docs/governance/iri-base-alias-map.json).
+SIG = Namespace("https://surveillancegraph.org/id/")
 
 #: The media types the dereference endpoint content-negotiates over, in the
 #: order they are offered (SIG-API-008).

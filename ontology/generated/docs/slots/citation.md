@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/citation](https://ontology.sig-project.org/schema/slot/citation)
+URI: [sig:slot/citation](https://ontology.surveillancegraph.org/schema/slot/citation)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/citation](https://ontology.sig-project.org/schema/slot/citation)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/citation](https://ontology.sig-project.org/schema/slot/citation)
 <details>
 ```yaml
 name: citation
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: LegalInstrument
 domain_of:

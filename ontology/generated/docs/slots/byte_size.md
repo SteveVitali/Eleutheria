@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/byte_size](https://ontology.sig-project.org/schema/slot/byte_size)
+URI: [sig:slot/byte_size](https://ontology.surveillancegraph.org/schema/slot/byte_size)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/byte_size](https://ontology.sig-project.org/schema/slot/byte_size
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/byte_size](https://ontology.sig-project.org/schema/slot/byte_size
 <details>
 ```yaml
 name: byte_size
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: EvidenceCapture
 domain_of:

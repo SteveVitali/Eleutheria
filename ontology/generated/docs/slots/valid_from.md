@@ -14,7 +14,7 @@ _When the fact/relationship became true (valid time, §9.2)._
 
 
 
-URI: [sig:slot/valid_from](https://ontology.sig-project.org/schema/slot/valid_from)
+URI: [sig:slot/valid_from](https://ontology.surveillancegraph.org/schema/slot/valid_from)
 <!-- no inheritance hierarchy -->
 
 
@@ -72,7 +72,7 @@ URI: [sig:slot/valid_from](https://ontology.sig-project.org/schema/slot/valid_fr
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/valid_from](https://ontology.sig-project.org/schema/slot/valid_fr
 ```yaml
 name: valid_from
 description: When the fact/relationship became true (valid time, §9.2).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 domain_of:
 - Jurisdiction

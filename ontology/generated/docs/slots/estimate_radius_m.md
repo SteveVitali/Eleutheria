@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/estimate_radius_m](https://ontology.sig-project.org/schema/slot/estimate_radius_m)
+URI: [sig:slot/estimate_radius_m](https://ontology.surveillancegraph.org/schema/slot/estimate_radius_m)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/estimate_radius_m](https://ontology.sig-project.org/schema/slot/e
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/estimate_radius_m](https://ontology.sig-project.org/schema/slot/e
 <details>
 ```yaml
 name: estimate_radius_m
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: CandidateAsset
 domain_of:

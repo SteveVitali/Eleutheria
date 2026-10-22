@@ -14,7 +14,7 @@ _An institutional policy; MUST NOT be merged with ConfigurationState (§11.13, S
 
 
 
-URI: [sig:class/Policy](https://ontology.sig-project.org/schema/class/Policy)
+URI: [sig:class/Policy](https://ontology.surveillancegraph.org/schema/class/Policy)
 
 
 
@@ -121,7 +121,7 @@ URI: [sig:class/Policy](https://ontology.sig-project.org/schema/class/Policy)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -149,13 +149,13 @@ URI: [sig:class/Policy](https://ontology.sig-project.org/schema/class/Policy)
 name: Policy
 description: An institutional policy; MUST NOT be merged with ConfigurationState (§11.13,
   SIG-ONTO-034). Their disagreement is a first-class finding.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   policy_type:
     name: policy_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Policy
@@ -163,7 +163,7 @@ attributes:
   applies_to:
     name: applies_to
     description: Organization, Deployment, or Product — polymorphic and repeatable.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Policy
@@ -171,7 +171,7 @@ attributes:
     multivalued: true
   effective_from:
     name: effective_from
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Policy
@@ -179,7 +179,7 @@ attributes:
     range: edtf
   effective_to:
     name: effective_to
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Policy
@@ -187,28 +187,28 @@ attributes:
     range: edtf
   adopting_body:
     name: adopting_body
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Policy
     range: Organization
   text:
     name: text
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Policy
     range: string
   document:
     name: document
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Contract
     - Policy
     range: uriorcurie
   enforcement_mechanism:
     name: enforcement_mechanism
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Policy
@@ -224,13 +224,13 @@ attributes:
 name: Policy
 description: An institutional policy; MUST NOT be merged with ConfigurationState (§11.13,
   SIG-ONTO-034). Their disagreement is a first-class finding.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   policy_type:
     name: policy_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Policy
     domain_of:
@@ -239,7 +239,7 @@ attributes:
   applies_to:
     name: applies_to
     description: Organization, Deployment, or Product — polymorphic and repeatable.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Policy
     domain_of:
@@ -248,7 +248,7 @@ attributes:
     multivalued: true
   effective_from:
     name: effective_from
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Policy
     domain_of:
@@ -257,7 +257,7 @@ attributes:
     range: edtf
   effective_to:
     name: effective_to
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Policy
     domain_of:
@@ -266,7 +266,7 @@ attributes:
     range: edtf
   adopting_body:
     name: adopting_body
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Policy
     domain_of:
@@ -274,7 +274,7 @@ attributes:
     range: Organization
   text:
     name: text
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Policy
     domain_of:
@@ -282,7 +282,7 @@ attributes:
     range: string
   document:
     name: document
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: Policy
     domain_of:
     - Contract
@@ -290,7 +290,7 @@ attributes:
     range: uriorcurie
   enforcement_mechanism:
     name: enforcement_mechanism
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Policy
     domain_of:
@@ -299,7 +299,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: Policy

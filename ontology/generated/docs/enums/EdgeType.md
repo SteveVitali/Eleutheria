@@ -15,7 +15,7 @@ _The closed catalog of relationship types (§12.1, SIG-ONTO-041). Untyped edges 
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/EdgeType](https://ontology.sig-project.org/schema/enum/EdgeType)
+URI: [sig:enum/EdgeType](https://ontology.surveillancegraph.org/schema/enum/EdgeType)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -79,7 +79,7 @@ URI: [sig:enum/EdgeType](https://ontology.sig-project.org/schema/enum/EdgeType)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:enum/EdgeType](https://ontology.sig-project.org/schema/enum/EdgeType)
 name: EdgeType
 description: The closed catalog of relationship types (§12.1, SIG-ONTO-041). Untyped
   edges are a schema error. Prohibited edges (§12.8) are intentionally absent.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   ingests_feed_from:

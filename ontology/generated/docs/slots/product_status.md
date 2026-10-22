@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/product_status](https://ontology.sig-project.org/schema/slot/product_status)
+URI: [sig:slot/product_status](https://ontology.surveillancegraph.org/schema/slot/product_status)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/product_status](https://ontology.sig-project.org/schema/slot/prod
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/product_status](https://ontology.sig-project.org/schema/slot/prod
 <details>
 ```yaml
 name: product_status
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Product
 domain_of:

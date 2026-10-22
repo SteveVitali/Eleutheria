@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/period](https://ontology.sig-project.org/schema/slot/period)
+URI: [sig:slot/period](https://ontology.surveillancegraph.org/schema/slot/period)
 <!-- no inheritance hierarchy -->
 
 

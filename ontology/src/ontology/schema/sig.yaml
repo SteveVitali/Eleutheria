@@ -8,7 +8,7 @@
 # OWL/SHACL, Pydantic, docs) all run from here. The large open vocabularies (the
 # technology tree §13.1 and capability grammar §13.2) and the predicate registry
 # (§13.6) are versioned SKOS/JSON artifacts generated from ontology/vocab/.
-id: https://ontology.sig-project.org/schema/sig
+id: https://ontology.surveillancegraph.org/schema/sig
 name: sig
 title: Surveillance Infrastructure Graph ontology
 description: >-
@@ -21,7 +21,7 @@ default_prefix: sig
 default_range: string
 prefixes:
   linkml: https://w3id.org/linkml/
-  sig: https://ontology.sig-project.org/schema/
+  sig: https://ontology.surveillancegraph.org/schema/
   skos: http://www.w3.org/2004/02/skos/core#
   dcterms: http://purl.org/dc/terms/
   xsd: http://www.w3.org/2001/XMLSchema#

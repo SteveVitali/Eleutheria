@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/claim](https://ontology.sig-project.org/schema/slot/claim)
+URI: [sig:slot/claim](https://ontology.surveillancegraph.org/schema/slot/claim)
 <!-- no inheritance hierarchy -->
 
 

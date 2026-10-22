@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/coverage_period](https://ontology.sig-project.org/schema/slot/coverage_period)
+URI: [sig:slot/coverage_period](https://ontology.surveillancegraph.org/schema/slot/coverage_period)
 <!-- no inheritance hierarchy -->
 
 

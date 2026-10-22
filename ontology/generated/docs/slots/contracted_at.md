@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/contracted_at](https://ontology.sig-project.org/schema/slot/contracted_at)
+URI: [sig:slot/contracted_at](https://ontology.surveillancegraph.org/schema/slot/contracted_at)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/contracted_at](https://ontology.sig-project.org/schema/slot/contr
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/contracted_at](https://ontology.sig-project.org/schema/slot/contr
 <details>
 ```yaml
 name: contracted_at
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Deployment
 domain_of:

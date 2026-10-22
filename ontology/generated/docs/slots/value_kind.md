@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/value_kind](https://ontology.sig-project.org/schema/slot/value_kind)
+URI: [sig:slot/value_kind](https://ontology.surveillancegraph.org/schema/slot/value_kind)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/value_kind](https://ontology.sig-project.org/schema/slot/value_ki
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/value_kind](https://ontology.sig-project.org/schema/slot/value_ki
 <details>
 ```yaml
 name: value_kind
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

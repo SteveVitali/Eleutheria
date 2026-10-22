@@ -14,7 +14,7 @@ _The ordinal bucket form; comparison operates on intervals, never a coerced poin
 
 
 
-URI: [sig:slot/retention_bucket](https://ontology.sig-project.org/schema/slot/retention_bucket)
+URI: [sig:slot/retention_bucket](https://ontology.surveillancegraph.org/schema/slot/retention_bucket)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/retention_bucket](https://ontology.sig-project.org/schema/slot/re
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/retention_bucket](https://ontology.sig-project.org/schema/slot/re
 name: retention_bucket
 description: The ordinal bucket form; comparison operates on intervals, never a coerced
   point.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: ConfigurationState
 domain_of:

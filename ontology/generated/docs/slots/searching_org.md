@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/searching_org](https://ontology.sig-project.org/schema/slot/searching_org)
+URI: [sig:slot/searching_org](https://ontology.surveillancegraph.org/schema/slot/searching_org)
 <!-- no inheritance hierarchy -->
 
 
@@ -67,7 +67,7 @@ URI: [sig:slot/searching_org](https://ontology.sig-project.org/schema/slot/searc
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -87,7 +87,7 @@ URI: [sig:slot/searching_org](https://ontology.sig-project.org/schema/slot/searc
 <details>
 ```yaml
 name: searching_org
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: UsageAggregate
 domain_of:

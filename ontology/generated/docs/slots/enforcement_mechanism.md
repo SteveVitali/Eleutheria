@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/enforcement_mechanism](https://ontology.sig-project.org/schema/slot/enforcement_mechanism)
+URI: [sig:slot/enforcement_mechanism](https://ontology.surveillancegraph.org/schema/slot/enforcement_mechanism)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/enforcement_mechanism](https://ontology.sig-project.org/schema/sl
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/enforcement_mechanism](https://ontology.sig-project.org/schema/sl
 <details>
 ```yaml
 name: enforcement_mechanism
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Policy
 domain_of:

@@ -24,6 +24,8 @@ import json
 
 from support import generated_dir, load_vocab
 
+from ontology import generate
+
 _ATE_SLUGS = {
     "ate-red-light",
     "ate-speed",
@@ -33,7 +35,7 @@ _ATE_SLUGS = {
     "ate-unspecified",
 }
 _SALIENCE = {"L", "M", "H", "C"}
-_TECH_IRI = "https://ontology.sig-project.org/vocab/technology/1.0.0"
+_TECH_IRI = generate.TECH_SCHEME
 
 
 def _ate_family(tech: dict) -> dict:
@@ -90,9 +92,7 @@ def test_generated_skos_carries_the_ate_hierarchy() -> None:
         assert (leaf, RDF.type, SKOS.Concept) in g, slug
         assert (leaf, SKOS.broader, family) in g, slug
         assert list(g.objects(leaf, SKOS.definition)), slug
-        assert list(
-            g.objects(leaf, URIRef("https://ontology.sig-project.org/schema/evidenceSignature"))
-        ), slug
+        assert list(g.objects(leaf, URIRef(f"{generate.SCHEMA_NS}evidenceSignature"))), slug
 
 
 def test_geometry_kind_predicate_is_registered() -> None:

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/target](https://ontology.sig-project.org/schema/slot/target)
+URI: [sig:slot/target](https://ontology.surveillancegraph.org/schema/slot/target)
 <!-- no inheritance hierarchy -->
 
 

@@ -15,7 +15,7 @@ _The fourteen separately-modelled roles (§12.4). Never collapsed to owner/opera
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/Role](https://ontology.sig-project.org/schema/enum/Role)
+URI: [sig:enum/Role](https://ontology.surveillancegraph.org/schema/enum/Role)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -56,7 +56,7 @@ URI: [sig:enum/Role](https://ontology.sig-project.org/schema/enum/Role)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -69,7 +69,7 @@ URI: [sig:enum/Role](https://ontology.sig-project.org/schema/enum/Role)
 ```yaml
 name: Role
 description: The fourteen separately-modelled roles (§12.4). Never collapsed to owner/operator.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   owner:

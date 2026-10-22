@@ -14,7 +14,7 @@ _A specific artifact published by a Source (§10.2)._
 
 
 
-URI: [sig:class/EvidenceArtifact](https://ontology.sig-project.org/schema/class/EvidenceArtifact)
+URI: [sig:class/EvidenceArtifact](https://ontology.surveillancegraph.org/schema/class/EvidenceArtifact)
 
 
 
@@ -113,7 +113,7 @@ URI: [sig:class/EvidenceArtifact](https://ontology.sig-project.org/schema/class/
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -140,13 +140,13 @@ URI: [sig:class/EvidenceArtifact](https://ontology.sig-project.org/schema/class/
 ```yaml
 name: EvidenceArtifact
 description: A specific artifact published by a Source (§10.2).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   published_by:
     name: published_by
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - EvidenceArtifact
@@ -154,14 +154,14 @@ attributes:
   artifact_type:
     name: artifact_type
     description: The genre of the artifact (§10.3.2, SIG-INGEST-047).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - EvidenceArtifact
     range: ArtifactType
   integrity:
     name: integrity
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - EvidenceArtifact
@@ -176,13 +176,13 @@ attributes:
 ```yaml
 name: EvidenceArtifact
 description: A specific artifact published by a Source (§10.2).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   published_by:
     name: published_by
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: EvidenceArtifact
     domain_of:
@@ -191,7 +191,7 @@ attributes:
   artifact_type:
     name: artifact_type
     description: The genre of the artifact (§10.3.2, SIG-INGEST-047).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: EvidenceArtifact
     domain_of:
@@ -199,7 +199,7 @@ attributes:
     range: ArtifactType
   integrity:
     name: integrity
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: EvidenceArtifact
     domain_of:
@@ -208,7 +208,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: EvidenceArtifact

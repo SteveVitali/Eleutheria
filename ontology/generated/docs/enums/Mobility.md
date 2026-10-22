@@ -15,7 +15,7 @@ _Physical asset mobility (§11.8)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/Mobility](https://ontology.sig-project.org/schema/enum/Mobility)
+URI: [sig:enum/Mobility](https://ontology.surveillancegraph.org/schema/enum/Mobility)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -54,7 +54,7 @@ URI: [sig:enum/Mobility](https://ontology.sig-project.org/schema/enum/Mobility)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -67,7 +67,7 @@ URI: [sig:enum/Mobility](https://ontology.sig-project.org/schema/enum/Mobility)
 ```yaml
 name: Mobility
 description: Physical asset mobility (§11.8).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   fixed:

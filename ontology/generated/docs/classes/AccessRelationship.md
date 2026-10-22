@@ -14,7 +14,7 @@ _A sharing/access relationship; direction, scope, automaticity, and kind are all
 
 
 
-URI: [sig:class/AccessRelationship](https://ontology.sig-project.org/schema/class/AccessRelationship)
+URI: [sig:class/AccessRelationship](https://ontology.surveillancegraph.org/schema/class/AccessRelationship)
 
 
 
@@ -175,7 +175,7 @@ URI: [sig:class/AccessRelationship](https://ontology.sig-project.org/schema/clas
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -204,13 +204,13 @@ name: AccessRelationship
 description: A sharing/access relationship; direction, scope, automaticity, and kind
   are all required — never reduced to `shares_with` (§12.5, SIG-ONTO-049). The three
   access kinds (§12.2) are never merged (SIG-ONTO-042).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Edge
 attributes:
   scope:
     name: scope
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     domain_of:
     - Capability
     - AccessRelationship
@@ -220,7 +220,7 @@ attributes:
   direction:
     name: direction
     description: Required; never symmetric by default (SIG-ONTO-049).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     domain_of:
     - AccessRelationship
@@ -229,7 +229,7 @@ attributes:
   automaticity:
     name: automaticity
     description: Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     domain_of:
     - AccessRelationship
@@ -239,7 +239,7 @@ attributes:
     name: access_kind
     description: Configured vs observed vs declared — never defaulted into one another
       (SIG-ONTO-042).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     domain_of:
     - AccessRelationship
@@ -257,13 +257,13 @@ name: AccessRelationship
 description: A sharing/access relationship; direction, scope, automaticity, and kind
   are all required — never reduced to `shares_with` (§12.5, SIG-ONTO-049). The three
   access kinds (§12.2) are never merged (SIG-ONTO-042).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Edge
 attributes:
   scope:
     name: scope
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     owner: AccessRelationship
     domain_of:
     - Capability
@@ -274,7 +274,7 @@ attributes:
   direction:
     name: direction
     description: Required; never symmetric by default (SIG-ONTO-049).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: AccessRelationship
     domain_of:
@@ -284,7 +284,7 @@ attributes:
   automaticity:
     name: automaticity
     description: Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: AccessRelationship
     domain_of:
@@ -295,7 +295,7 @@ attributes:
     name: access_kind
     description: Configured vs observed vs declared — never defaulted into one another
       (SIG-ONTO-042).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: AccessRelationship
     domain_of:
@@ -304,7 +304,7 @@ attributes:
     required: true
   id:
     name: id
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     identifier: true
     owner: AccessRelationship
     domain_of:
@@ -315,7 +315,7 @@ attributes:
   source:
     name: source
     description: The asserting/originating node (directed — §12.1.1).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: AccessRelationship
     domain_of:
@@ -324,7 +324,7 @@ attributes:
     required: true
   target:
     name: target
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     owner: AccessRelationship
     domain_of:
     - ResearchTask
@@ -334,7 +334,7 @@ attributes:
   edge_type:
     name: edge_type
     description: Typed from the closed catalog (§12.1.2).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: AccessRelationship
     domain_of:
@@ -343,7 +343,7 @@ attributes:
     required: true
   valid_from:
     name: valid_from
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     owner: AccessRelationship
     domain_of:
     - Jurisdiction
@@ -353,7 +353,7 @@ attributes:
     range: edtf
   valid_to:
     name: valid_to
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     owner: AccessRelationship
     domain_of:
     - Jurisdiction
@@ -364,21 +364,21 @@ attributes:
   valid_from_kind:
     name: valid_from_kind
     description: Snapshot sharing carries unknown/ongoing (SIG-ONTO-044).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     owner: AccessRelationship
     domain_of:
     - Edge
     range: TemporalBoundKind
   valid_to_kind:
     name: valid_to_kind
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     owner: AccessRelationship
     domain_of:
     - Edge
     range: TemporalBoundKind
   observed_at:
     name: observed_at
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     owner: AccessRelationship
     domain_of:
     - Edge
@@ -386,7 +386,7 @@ attributes:
   sources:
     name: sources
     description: At least one supporting claim (§12.1.4, SIG-CHART-013).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     owner: AccessRelationship
     domain_of:
     - AccountabilityEvent
@@ -396,7 +396,7 @@ attributes:
   asserted_by:
     name: asserted_by
     description: Which party asserted it — perspectival (§12.1.5).
-    from_schema: https://ontology.sig-project.org/schema/edges
+    from_schema: https://ontology.surveillancegraph.org/schema/edges
     rank: 1000
     owner: AccessRelationship
     domain_of:

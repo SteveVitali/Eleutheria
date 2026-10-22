@@ -14,7 +14,7 @@ _The resolved entity an entity_ref object names; never a person (Part VIII)._
 
 
 
-URI: [sig:slot/object_entity_ref](https://ontology.sig-project.org/schema/slot/object_entity_ref)
+URI: [sig:slot/object_entity_ref](https://ontology.surveillancegraph.org/schema/slot/object_entity_ref)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/object_entity_ref](https://ontology.sig-project.org/schema/slot/o
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/object_entity_ref](https://ontology.sig-project.org/schema/slot/o
 name: object_entity_ref
 description: The resolved entity an entity_ref object names; never a person (Part
   VIII).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

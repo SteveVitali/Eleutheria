@@ -14,7 +14,7 @@ _Aggregated usage; direction is the point (§11.16). NO per-search, per-plate, o
 
 
 
-URI: [sig:class/UsageAggregate](https://ontology.sig-project.org/schema/class/UsageAggregate)
+URI: [sig:class/UsageAggregate](https://ontology.surveillancegraph.org/schema/class/UsageAggregate)
 
 
 
@@ -133,7 +133,7 @@ URI: [sig:class/UsageAggregate](https://ontology.sig-project.org/schema/class/Us
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -161,13 +161,13 @@ URI: [sig:class/UsageAggregate](https://ontology.sig-project.org/schema/class/Us
 name: UsageAggregate
 description: Aggregated usage; direction is the point (§11.16). NO per-search, per-plate,
   or per-person row may exist here or anywhere in SIG (SIG-ONTO-037, §18.1).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   searching_org:
     name: searching_org
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - UsageAggregate
@@ -175,7 +175,7 @@ attributes:
     required: true
   source_org:
     name: source_org
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - UsageAggregate
@@ -184,7 +184,7 @@ attributes:
   period:
     name: period
     description: Minimum granularity one month for published data (§18.4).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - FundingInstrument
     - UsageAggregate
@@ -192,21 +192,21 @@ attributes:
   count:
     name: count
     description: Subject to small-cell suppression (§18.4).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - UsageAggregate
     range: integer
   search_scope:
     name: search_scope
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - UsageAggregate
     range: CapabilityScope
   reason_category:
     name: reason_category
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - UsageAggregate
@@ -214,14 +214,14 @@ attributes:
   reason_raw_value:
     name: reason_raw_value
     description: Normalized reason_category retains the raw value (P2).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - UsageAggregate
     range: string
   audit_source_type:
     name: audit_source_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - UsageAggregate
@@ -229,7 +229,7 @@ attributes:
   coverage_period:
     name: coverage_period
     description: What span the underlying audit covered — distinct from period.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - UsageAggregate
@@ -246,13 +246,13 @@ attributes:
 name: UsageAggregate
 description: Aggregated usage; direction is the point (§11.16). NO per-search, per-plate,
   or per-person row may exist here or anywhere in SIG (SIG-ONTO-037, §18.1).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   searching_org:
     name: searching_org
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: UsageAggregate
     domain_of:
@@ -261,7 +261,7 @@ attributes:
     required: true
   source_org:
     name: source_org
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: UsageAggregate
     domain_of:
@@ -271,7 +271,7 @@ attributes:
   period:
     name: period
     description: Minimum granularity one month for published data (§18.4).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: UsageAggregate
     domain_of:
     - FundingInstrument
@@ -280,7 +280,7 @@ attributes:
   count:
     name: count
     description: Subject to small-cell suppression (§18.4).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: UsageAggregate
     domain_of:
@@ -288,7 +288,7 @@ attributes:
     range: integer
   search_scope:
     name: search_scope
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: UsageAggregate
     domain_of:
@@ -296,7 +296,7 @@ attributes:
     range: CapabilityScope
   reason_category:
     name: reason_category
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: UsageAggregate
     domain_of:
@@ -305,7 +305,7 @@ attributes:
   reason_raw_value:
     name: reason_raw_value
     description: Normalized reason_category retains the raw value (P2).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: UsageAggregate
     domain_of:
@@ -313,7 +313,7 @@ attributes:
     range: string
   audit_source_type:
     name: audit_source_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: UsageAggregate
     domain_of:
@@ -322,7 +322,7 @@ attributes:
   coverage_period:
     name: coverage_period
     description: What span the underlying audit covered — distinct from period.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: UsageAggregate
     domain_of:
@@ -332,7 +332,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: UsageAggregate

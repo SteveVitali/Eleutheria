@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/government_domain](https://ontology.sig-project.org/schema/slot/government_domain)
+URI: [sig:slot/government_domain](https://ontology.surveillancegraph.org/schema/slot/government_domain)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/government_domain](https://ontology.sig-project.org/schema/slot/g
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/government_domain](https://ontology.sig-project.org/schema/slot/g
 <details>
 ```yaml
 name: government_domain
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Organization
 domain_of:

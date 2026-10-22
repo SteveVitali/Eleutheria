@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/jurisdiction_type](https://ontology.sig-project.org/schema/slot/jurisdiction_type)
+URI: [sig:slot/jurisdiction_type](https://ontology.surveillancegraph.org/schema/slot/jurisdiction_type)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/jurisdiction_type](https://ontology.sig-project.org/schema/slot/j
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/jurisdiction_type](https://ontology.sig-project.org/schema/slot/j
 <details>
 ```yaml
 name: jurisdiction_type
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Jurisdiction
 domain_of:

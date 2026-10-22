@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/supersedes](https://ontology.sig-project.org/schema/slot/supersedes)
+URI: [sig:slot/supersedes](https://ontology.surveillancegraph.org/schema/slot/supersedes)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/supersedes](https://ontology.sig-project.org/schema/slot/supersed
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/supersedes](https://ontology.sig-project.org/schema/slot/supersed
 <details>
 ```yaml
 name: supersedes
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

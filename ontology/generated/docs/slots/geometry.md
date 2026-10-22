@@ -14,7 +14,7 @@ _Optional (SIG-GEO-004)._
 
 
 
-URI: [sig:slot/geometry](https://ontology.sig-project.org/schema/slot/geometry)
+URI: [sig:slot/geometry](https://ontology.surveillancegraph.org/schema/slot/geometry)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/geometry](https://ontology.sig-project.org/schema/slot/geometry)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/geometry](https://ontology.sig-project.org/schema/slot/geometry)
 ```yaml
 name: geometry
 description: Optional (SIG-GEO-004).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: PhysicalAsset
 domain_of:

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/funder](https://ontology.sig-project.org/schema/slot/funder)
+URI: [sig:slot/funder](https://ontology.surveillancegraph.org/schema/slot/funder)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/funder](https://ontology.sig-project.org/schema/slot/funder)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/funder](https://ontology.sig-project.org/schema/slot/funder)
 <details>
 ```yaml
 name: funder
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: FundingInstrument
 domain_of:

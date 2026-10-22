@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/procurement_state](https://ontology.sig-project.org/schema/slot/procurement_state)
+URI: [sig:slot/procurement_state](https://ontology.surveillancegraph.org/schema/slot/procurement_state)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/procurement_state](https://ontology.sig-project.org/schema/slot/p
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/procurement_state](https://ontology.sig-project.org/schema/slot/p
 <details>
 ```yaml
 name: procurement_state
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Deployment
 domain_of:

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/normalization_version](https://ontology.sig-project.org/schema/slot/normalization_version)
+URI: [sig:slot/normalization_version](https://ontology.surveillancegraph.org/schema/slot/normalization_version)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/normalization_version](https://ontology.sig-project.org/schema/sl
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/normalization_version](https://ontology.sig-project.org/schema/sl
 <details>
 ```yaml
 name: normalization_version
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

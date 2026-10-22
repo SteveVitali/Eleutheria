@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/court](https://ontology.sig-project.org/schema/slot/court)
+URI: [sig:slot/court](https://ontology.surveillancegraph.org/schema/slot/court)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/court](https://ontology.sig-project.org/schema/slot/court)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/court](https://ontology.sig-project.org/schema/slot/court)
 <details>
 ```yaml
 name: court
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: LegalProceeding
 domain_of:

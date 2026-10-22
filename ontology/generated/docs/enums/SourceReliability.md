@@ -15,7 +15,7 @@ _Reliability R of the publisher, not the claim (§10.4)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/SourceReliability](https://ontology.sig-project.org/schema/enum/SourceReliability)
+URI: [sig:enum/SourceReliability](https://ontology.surveillancegraph.org/schema/enum/SourceReliability)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -55,7 +55,7 @@ URI: [sig:enum/SourceReliability](https://ontology.sig-project.org/schema/enum/S
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -68,7 +68,7 @@ URI: [sig:enum/SourceReliability](https://ontology.sig-project.org/schema/enum/S
 ```yaml
 name: SourceReliability
 description: Reliability R of the publisher, not the claim (§10.4).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   R1:

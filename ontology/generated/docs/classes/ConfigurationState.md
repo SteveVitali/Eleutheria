@@ -14,7 +14,7 @@ _Promoted to a first-class, time-versioned, per-Deployment entity (§11.15). Con
 
 
 
-URI: [sig:class/ConfigurationState](https://ontology.sig-project.org/schema/class/ConfigurationState)
+URI: [sig:class/ConfigurationState](https://ontology.surveillancegraph.org/schema/class/ConfigurationState)
 
 
 
@@ -139,7 +139,7 @@ URI: [sig:class/ConfigurationState](https://ontology.sig-project.org/schema/clas
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -168,13 +168,13 @@ name: ConfigurationState
 description: Promoted to a first-class, time-versioned, per-Deployment entity (§11.15).
   Configuration is observed, never assumed (SIG-ONTO-036). Retention is a duration
   OR an ordinal bucket; SIG never fabricates a midpoint (SIG-ONTO-035a).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   deployment:
     name: deployment
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - PhysicalAsset
     - ConfigurationState
@@ -182,7 +182,7 @@ attributes:
   retention_days:
     name: retention_days
     description: Duration OR ordinal bucket; MUST accept both (SIG-ONTO-035a).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ConfigurationState
@@ -191,14 +191,14 @@ attributes:
     name: retention_bucket
     description: The ordinal bucket form; comparison operates on intervals, never
       a coerced point.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ConfigurationState
     range: string
   subscribed_hotlist_topic:
     name: subscribed_hotlist_topic
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ConfigurationState
@@ -207,7 +207,7 @@ attributes:
   sharing_partner:
     name: sharing_partner
     description: Repeatable, directional.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ConfigurationState
@@ -215,28 +215,28 @@ attributes:
     multivalued: true
   state_lookup_enabled:
     name: state_lookup_enabled
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ConfigurationState
     range: boolean
   national_lookup_enabled:
     name: national_lookup_enabled
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ConfigurationState
     range: boolean
   federal_sharing_enabled:
     name: federal_sharing_enabled
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ConfigurationState
     range: boolean
   offense_category_filter:
     name: offense_category_filter
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ConfigurationState
@@ -244,7 +244,7 @@ attributes:
     multivalued: true
   live_stream_permitted_to:
     name: live_stream_permitted_to
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ConfigurationState
@@ -252,7 +252,7 @@ attributes:
     multivalued: true
   third_party_integration:
     name: third_party_integration
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ConfigurationState
@@ -260,7 +260,7 @@ attributes:
     multivalued: true
   audit_case_code_required:
     name: audit_case_code_required
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ConfigurationState
@@ -270,14 +270,14 @@ attributes:
     description: 'Whether the deployment''s access configuration requires multi-factor
       authentication (SIG-ONTO-035): an observed ConfigurationState fact — asserted
       from evidence, never assumed.'
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ConfigurationState
     range: boolean
   observed_via:
     name: observed_via
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ConfigurationState
@@ -294,13 +294,13 @@ name: ConfigurationState
 description: Promoted to a first-class, time-versioned, per-Deployment entity (§11.15).
   Configuration is observed, never assumed (SIG-ONTO-036). Retention is a duration
   OR an ordinal bucket; SIG never fabricates a midpoint (SIG-ONTO-035a).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   deployment:
     name: deployment
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: ConfigurationState
     domain_of:
     - PhysicalAsset
@@ -309,7 +309,7 @@ attributes:
   retention_days:
     name: retention_days
     description: Duration OR ordinal bucket; MUST accept both (SIG-ONTO-035a).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ConfigurationState
     domain_of:
@@ -319,7 +319,7 @@ attributes:
     name: retention_bucket
     description: The ordinal bucket form; comparison operates on intervals, never
       a coerced point.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ConfigurationState
     domain_of:
@@ -327,7 +327,7 @@ attributes:
     range: string
   subscribed_hotlist_topic:
     name: subscribed_hotlist_topic
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ConfigurationState
     domain_of:
@@ -337,7 +337,7 @@ attributes:
   sharing_partner:
     name: sharing_partner
     description: Repeatable, directional.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ConfigurationState
     domain_of:
@@ -346,7 +346,7 @@ attributes:
     multivalued: true
   state_lookup_enabled:
     name: state_lookup_enabled
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ConfigurationState
     domain_of:
@@ -354,7 +354,7 @@ attributes:
     range: boolean
   national_lookup_enabled:
     name: national_lookup_enabled
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ConfigurationState
     domain_of:
@@ -362,7 +362,7 @@ attributes:
     range: boolean
   federal_sharing_enabled:
     name: federal_sharing_enabled
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ConfigurationState
     domain_of:
@@ -370,7 +370,7 @@ attributes:
     range: boolean
   offense_category_filter:
     name: offense_category_filter
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ConfigurationState
     domain_of:
@@ -379,7 +379,7 @@ attributes:
     multivalued: true
   live_stream_permitted_to:
     name: live_stream_permitted_to
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ConfigurationState
     domain_of:
@@ -388,7 +388,7 @@ attributes:
     multivalued: true
   third_party_integration:
     name: third_party_integration
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ConfigurationState
     domain_of:
@@ -397,7 +397,7 @@ attributes:
     multivalued: true
   audit_case_code_required:
     name: audit_case_code_required
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ConfigurationState
     domain_of:
@@ -408,7 +408,7 @@ attributes:
     description: 'Whether the deployment''s access configuration requires multi-factor
       authentication (SIG-ONTO-035): an observed ConfigurationState fact — asserted
       from evidence, never assumed.'
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ConfigurationState
     domain_of:
@@ -416,7 +416,7 @@ attributes:
     range: boolean
   observed_via:
     name: observed_via
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ConfigurationState
     domain_of:
@@ -425,7 +425,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: ConfigurationState

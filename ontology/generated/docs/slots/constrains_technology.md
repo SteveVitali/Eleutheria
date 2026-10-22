@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/constrains_technology](https://ontology.sig-project.org/schema/slot/constrains_technology)
+URI: [sig:slot/constrains_technology](https://ontology.surveillancegraph.org/schema/slot/constrains_technology)
 <!-- no inheritance hierarchy -->
 
 
@@ -67,7 +67,7 @@ URI: [sig:slot/constrains_technology](https://ontology.sig-project.org/schema/sl
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -87,7 +87,7 @@ URI: [sig:slot/constrains_technology](https://ontology.sig-project.org/schema/sl
 <details>
 ```yaml
 name: constrains_technology
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: LegalInstrument
 domain_of:

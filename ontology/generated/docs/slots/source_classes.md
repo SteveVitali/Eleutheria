@@ -14,7 +14,7 @@ _The OL-2E-AL-03 class of each entry in `sources`, index-aligned (as `parties`/`
 
 
 
-URI: [sig:slot/source_classes](https://ontology.sig-project.org/schema/slot/source_classes)
+URI: [sig:slot/source_classes](https://ontology.surveillancegraph.org/schema/slot/source_classes)
 <!-- no inheritance hierarchy -->
 
 
@@ -72,7 +72,7 @@ URI: [sig:slot/source_classes](https://ontology.sig-project.org/schema/slot/sour
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -96,7 +96,7 @@ description: The OL-2E-AL-03 class of each entry in `sources`, index-aligned (as
   on LegalProceeding). Recording the class on the evidence link is what makes a claim
   resting only on advocacy analysis distinguishable from one resting on a court record
   (SIG-ONTO-039).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: AccountabilityEvent
 domain_of:

@@ -178,12 +178,19 @@ function icalFold(line: string): string {
 }
 
 /**
+ * The one declared domain the watch-feed UIDs mint under (P35.38b / ADR-217 —
+ * the owned domain; pre-cut UIDs under the retired `sig-example` host stay
+ * valid names via docs/governance/iri-base-alias-map.json; closes D-P35.3-1).
+ */
+export const WATCH_UID_DOMAIN = "surveillancegraph.org";
+
+/**
  * A stable, deterministic UID for a watch event. Built from the contract id and the
  * decision date only — no wall-clock, no random — so re-emitting the feed is
  * byte-stable (a subscription must not churn on every fetch).
  */
 export function watchEventUid(item: ResolvedWatchItem & { next_decision_date: string }): string {
-  return `sig-watch-${item.contract_id}-${icalDate(item.next_decision_date)}@sig.example`;
+  return `sig-watch-${item.contract_id}-${icalDate(item.next_decision_date)}@${WATCH_UID_DOMAIN}`;
 }
 
 /**

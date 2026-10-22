@@ -14,7 +14,7 @@ _A content-addressed capture of an artifact at a time (§10.2, L0)._
 
 
 
-URI: [sig:class/EvidenceCapture](https://ontology.sig-project.org/schema/class/EvidenceCapture)
+URI: [sig:class/EvidenceCapture](https://ontology.surveillancegraph.org/schema/class/EvidenceCapture)
 
 
 
@@ -126,7 +126,7 @@ URI: [sig:class/EvidenceCapture](https://ontology.sig-project.org/schema/class/E
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -153,27 +153,27 @@ URI: [sig:class/EvidenceCapture](https://ontology.sig-project.org/schema/class/E
 ```yaml
 name: EvidenceCapture
 description: A content-addressed capture of an artifact at a time (§10.2, L0).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   captures_artifact:
     name: captures_artifact
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - EvidenceCapture
     range: EvidenceArtifact
   captured_at:
     name: captured_at
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - EvidenceCapture
     range: datetime
   content_digest:
     name: content_digest
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - EvidenceCapture
@@ -181,7 +181,7 @@ attributes:
   ocfl_object_id:
     name: ocfl_object_id
     description: The OCFL object the capture's bytes were committed under.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - EvidenceCapture
@@ -190,14 +190,14 @@ attributes:
     name: ocfl_version
     description: The immutable OCFL version this occurrence IS — a binding pins this
       version, never a mutable inventory head.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - EvidenceCapture
     range: string
   source_uri:
     name: source_uri
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - EvidenceCapture
@@ -205,28 +205,28 @@ attributes:
   blob_digest:
     name: blob_digest
     description: The deduplicated evidence_blob identity the bytes dedup to (SIG-EVID-004).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - EvidenceCapture
     range: string
   capture_classification:
     name: capture_classification
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - EvidenceCapture
     range: CaptureClassification
   byte_size:
     name: byte_size
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - EvidenceCapture
     range: integer
   media_type:
     name: media_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - EvidenceCapture
@@ -241,13 +241,13 @@ attributes:
 ```yaml
 name: EvidenceCapture
 description: A content-addressed capture of an artifact at a time (§10.2, L0).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   captures_artifact:
     name: captures_artifact
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: EvidenceCapture
     domain_of:
@@ -255,7 +255,7 @@ attributes:
     range: EvidenceArtifact
   captured_at:
     name: captured_at
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: EvidenceCapture
     domain_of:
@@ -263,7 +263,7 @@ attributes:
     range: datetime
   content_digest:
     name: content_digest
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: EvidenceCapture
     domain_of:
@@ -272,7 +272,7 @@ attributes:
   ocfl_object_id:
     name: ocfl_object_id
     description: The OCFL object the capture's bytes were committed under.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: EvidenceCapture
     domain_of:
@@ -282,7 +282,7 @@ attributes:
     name: ocfl_version
     description: The immutable OCFL version this occurrence IS — a binding pins this
       version, never a mutable inventory head.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: EvidenceCapture
     domain_of:
@@ -290,7 +290,7 @@ attributes:
     range: string
   source_uri:
     name: source_uri
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: EvidenceCapture
     domain_of:
@@ -299,7 +299,7 @@ attributes:
   blob_digest:
     name: blob_digest
     description: The deduplicated evidence_blob identity the bytes dedup to (SIG-EVID-004).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: EvidenceCapture
     domain_of:
@@ -307,7 +307,7 @@ attributes:
     range: string
   capture_classification:
     name: capture_classification
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: EvidenceCapture
     domain_of:
@@ -315,7 +315,7 @@ attributes:
     range: CaptureClassification
   byte_size:
     name: byte_size
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: EvidenceCapture
     domain_of:
@@ -323,7 +323,7 @@ attributes:
     range: integer
   media_type:
     name: media_type
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: EvidenceCapture
     domain_of:
@@ -332,7 +332,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: EvidenceCapture

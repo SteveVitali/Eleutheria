@@ -15,7 +15,7 @@ _How the observation time is known (T2, §9.4)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/ObservedAtKind](https://ontology.sig-project.org/schema/enum/ObservedAtKind)
+URI: [sig:enum/ObservedAtKind](https://ontology.surveillancegraph.org/schema/enum/ObservedAtKind)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -52,7 +52,7 @@ URI: [sig:enum/ObservedAtKind](https://ontology.sig-project.org/schema/enum/Obse
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -65,7 +65,7 @@ URI: [sig:enum/ObservedAtKind](https://ontology.sig-project.org/schema/enum/Obse
 ```yaml
 name: ObservedAtKind
 description: How the observation time is known (T2, §9.4).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   exact:

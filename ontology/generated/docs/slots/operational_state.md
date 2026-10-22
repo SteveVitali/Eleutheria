@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/operational_state](https://ontology.sig-project.org/schema/slot/operational_state)
+URI: [sig:slot/operational_state](https://ontology.surveillancegraph.org/schema/slot/operational_state)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/operational_state](https://ontology.sig-project.org/schema/slot/o
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/operational_state](https://ontology.sig-project.org/schema/slot/o
 <details>
 ```yaml
 name: operational_state
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Deployment
 domain_of:

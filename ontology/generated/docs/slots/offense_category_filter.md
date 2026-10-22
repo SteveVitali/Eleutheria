@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/offense_category_filter](https://ontology.sig-project.org/schema/slot/offense_category_filter)
+URI: [sig:slot/offense_category_filter](https://ontology.surveillancegraph.org/schema/slot/offense_category_filter)
 <!-- no inheritance hierarchy -->
 
 
@@ -67,7 +67,7 @@ URI: [sig:slot/offense_category_filter](https://ontology.sig-project.org/schema/
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -87,7 +87,7 @@ URI: [sig:slot/offense_category_filter](https://ontology.sig-project.org/schema/
 <details>
 ```yaml
 name: offense_category_filter
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: ConfigurationState
 domain_of:

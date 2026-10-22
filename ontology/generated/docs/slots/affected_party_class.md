@@ -14,7 +14,7 @@ _A class, never a named private individual (N4)._
 
 
 
-URI: [sig:slot/affected_party_class](https://ontology.sig-project.org/schema/slot/affected_party_class)
+URI: [sig:slot/affected_party_class](https://ontology.surveillancegraph.org/schema/slot/affected_party_class)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/affected_party_class](https://ontology.sig-project.org/schema/slo
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/affected_party_class](https://ontology.sig-project.org/schema/slo
 ```yaml
 name: affected_party_class
 description: A class, never a named private individual (N4).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: AccountabilityEvent
 domain_of:

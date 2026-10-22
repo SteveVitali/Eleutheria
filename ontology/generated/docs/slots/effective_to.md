@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/effective_to](https://ontology.sig-project.org/schema/slot/effective_to)
+URI: [sig:slot/effective_to](https://ontology.surveillancegraph.org/schema/slot/effective_to)
 <!-- no inheritance hierarchy -->
 
 

@@ -15,7 +15,7 @@ _The geometry shape kind a record declares for its subject (§19, SIG-GEO-003): 
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/GeometryKind](https://ontology.sig-project.org/schema/enum/GeometryKind)
+URI: [sig:enum/GeometryKind](https://ontology.surveillancegraph.org/schema/enum/GeometryKind)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -45,7 +45,7 @@ URI: [sig:enum/GeometryKind](https://ontology.sig-project.org/schema/enum/Geomet
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -64,7 +64,7 @@ description: 'The geometry shape kind a record declares for its subject (§19, S
   record declares `line`. The `geometry_kind` predicate (ontology/vocab/predicates.yaml)
   carries this vocabulary''s member on the claim surface; an area-shaped record MUST
   NOT be flattened to a device point.'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   point:

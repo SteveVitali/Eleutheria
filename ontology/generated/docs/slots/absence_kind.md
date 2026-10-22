@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/absence_kind](https://ontology.sig-project.org/schema/slot/absence_kind)
+URI: [sig:slot/absence_kind](https://ontology.surveillancegraph.org/schema/slot/absence_kind)
 <!-- no inheritance hierarchy -->
 
 

@@ -15,7 +15,7 @@ _The declared shape of a claim's object — declared, never inferred (§10.3.5).
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/ClaimObjectType](https://ontology.sig-project.org/schema/enum/ClaimObjectType)
+URI: [sig:enum/ClaimObjectType](https://ontology.surveillancegraph.org/schema/enum/ClaimObjectType)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -57,7 +57,7 @@ URI: [sig:enum/ClaimObjectType](https://ontology.sig-project.org/schema/enum/Cla
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -70,7 +70,7 @@ URI: [sig:enum/ClaimObjectType](https://ontology.sig-project.org/schema/enum/Cla
 ```yaml
 name: ClaimObjectType
 description: The declared shape of a claim's object — declared, never inferred (§10.3.5).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   literal:

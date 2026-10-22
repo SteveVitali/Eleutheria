@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/observed_at_kind](https://ontology.sig-project.org/schema/slot/observed_at_kind)
+URI: [sig:slot/observed_at_kind](https://ontology.surveillancegraph.org/schema/slot/observed_at_kind)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/observed_at_kind](https://ontology.sig-project.org/schema/slot/ob
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/observed_at_kind](https://ontology.sig-project.org/schema/slot/ob
 <details>
 ```yaml
 name: observed_at_kind
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

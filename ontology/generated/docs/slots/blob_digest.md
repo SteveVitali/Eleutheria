@@ -14,7 +14,7 @@ _The deduplicated evidence_blob identity the bytes dedup to (SIG-EVID-004)._
 
 
 
-URI: [sig:slot/blob_digest](https://ontology.sig-project.org/schema/slot/blob_digest)
+URI: [sig:slot/blob_digest](https://ontology.surveillancegraph.org/schema/slot/blob_digest)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/blob_digest](https://ontology.sig-project.org/schema/slot/blob_di
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/blob_digest](https://ontology.sig-project.org/schema/slot/blob_di
 ```yaml
 name: blob_digest
 description: The deduplicated evidence_blob identity the bytes dedup to (SIG-EVID-004).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: EvidenceCapture
 domain_of:

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/successor_product](https://ontology.sig-project.org/schema/slot/successor_product)
+URI: [sig:slot/successor_product](https://ontology.surveillancegraph.org/schema/slot/successor_product)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/successor_product](https://ontology.sig-project.org/schema/slot/s
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/successor_product](https://ontology.sig-project.org/schema/slot/s
 <details>
 ```yaml
 name: successor_product
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Product
 domain_of:

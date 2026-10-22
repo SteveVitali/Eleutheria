@@ -15,7 +15,7 @@ _How precisely a stored geometry locates its subject (§14.2, SIG-IDENT-004). An
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/GeometryPrecision](https://ontology.sig-project.org/schema/enum/GeometryPrecision)
+URI: [sig:enum/GeometryPrecision](https://ontology.surveillancegraph.org/schema/enum/GeometryPrecision)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -47,7 +47,7 @@ URI: [sig:enum/GeometryPrecision](https://ontology.sig-project.org/schema/enum/G
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -63,7 +63,7 @@ description: How precisely a stored geometry locates its subject (§14.2, SIG-ID
   An agency-registry latitude/longitude MUST be stored as `organization_centroid_or_unknown`
   and MUST NOT be used for point-in-polygon jurisdiction assignment or as an organization
   address — using an agency centroid as a device location would be a fabrication.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   rooftop:

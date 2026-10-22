@@ -14,7 +14,7 @@ _Custody != collection._
 
 
 
-URI: [sig:slot/holds_data_collected_by](https://ontology.sig-project.org/schema/slot/holds_data_collected_by)
+URI: [sig:slot/holds_data_collected_by](https://ontology.surveillancegraph.org/schema/slot/holds_data_collected_by)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/holds_data_collected_by](https://ontology.sig-project.org/schema/
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/holds_data_collected_by](https://ontology.sig-project.org/schema/
 ```yaml
 name: holds_data_collected_by
 description: Custody != collection.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: DataSystem
 domain_of:

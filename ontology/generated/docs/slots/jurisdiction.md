@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/jurisdiction](https://ontology.sig-project.org/schema/slot/jurisdiction)
+URI: [sig:slot/jurisdiction](https://ontology.surveillancegraph.org/schema/slot/jurisdiction)
 <!-- no inheritance hierarchy -->
 
 

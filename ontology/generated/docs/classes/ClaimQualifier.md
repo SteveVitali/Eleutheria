@@ -14,7 +14,7 @@ _One typed qualifier statement on a claim (§16.5): the six FIELD_MAP §3 catego
 
 
 
-URI: [sig:class/ClaimQualifier](https://ontology.sig-project.org/schema/class/ClaimQualifier)
+URI: [sig:class/ClaimQualifier](https://ontology.surveillancegraph.org/schema/class/ClaimQualifier)
 
 
 
@@ -121,7 +121,7 @@ URI: [sig:class/ClaimQualifier](https://ontology.sig-project.org/schema/class/Cl
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -150,13 +150,13 @@ name: ClaimQualifier
 description: 'One typed qualifier statement on a claim (§16.5): the six FIELD_MAP
   §3 categories — instrument lifecycle, execution evidence, money/currency/ period,
   actor roles, capability/modality, clause applicability.'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   claim:
     name: claim
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - ClaimEvidence
     - ClaimQualifier
@@ -164,14 +164,14 @@ attributes:
   qualifier_id:
     name: qualifier_id
     description: A registered predicate id — unregistered keys quarantine, never guessed.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - ClaimQualifier
     range: predicate_code
   unit:
     name: unit
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Claim
     - ClaimQualifier
@@ -180,7 +180,7 @@ attributes:
     name: valid_from
     description: The qualifier's own applicability valid time (e.g. an instrument's
       effective period).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Jurisdiction
     - Organization
@@ -189,7 +189,7 @@ attributes:
     range: edtf
   valid_to:
     name: valid_to
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Jurisdiction
     - Organization
@@ -199,7 +199,7 @@ attributes:
   jurisdiction:
     name: jurisdiction
     description: The applicability jurisdiction the qualifier scopes to.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Organization
     - Deployment
@@ -208,14 +208,14 @@ attributes:
     range: string
   rank:
     name: rank
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Claim
     - ClaimQualifier
     range: ClaimRank
   extraction:
     name: extraction
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - ClaimEvidence
     - ClaimQualifier
@@ -232,13 +232,13 @@ name: ClaimQualifier
 description: 'One typed qualifier statement on a claim (§16.5): the six FIELD_MAP
   §3 categories — instrument lifecycle, execution evidence, money/currency/ period,
   actor roles, capability/modality, clause applicability.'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   claim:
     name: claim
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: ClaimQualifier
     domain_of:
     - ClaimEvidence
@@ -247,7 +247,7 @@ attributes:
   qualifier_id:
     name: qualifier_id
     description: A registered predicate id — unregistered keys quarantine, never guessed.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: ClaimQualifier
     domain_of:
@@ -255,7 +255,7 @@ attributes:
     range: predicate_code
   unit:
     name: unit
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: ClaimQualifier
     domain_of:
     - Claim
@@ -265,7 +265,7 @@ attributes:
     name: valid_from
     description: The qualifier's own applicability valid time (e.g. an instrument's
       effective period).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: ClaimQualifier
     domain_of:
     - Jurisdiction
@@ -275,7 +275,7 @@ attributes:
     range: edtf
   valid_to:
     name: valid_to
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: ClaimQualifier
     domain_of:
     - Jurisdiction
@@ -286,7 +286,7 @@ attributes:
   jurisdiction:
     name: jurisdiction
     description: The applicability jurisdiction the qualifier scopes to.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: ClaimQualifier
     domain_of:
     - Organization
@@ -296,7 +296,7 @@ attributes:
     range: string
   rank:
     name: rank
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: ClaimQualifier
     domain_of:
     - Claim
@@ -304,7 +304,7 @@ attributes:
     range: ClaimRank
   extraction:
     name: extraction
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: ClaimQualifier
     domain_of:
     - ClaimEvidence
@@ -313,7 +313,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: ClaimQualifier

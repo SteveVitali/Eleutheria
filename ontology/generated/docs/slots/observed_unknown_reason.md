@@ -14,7 +14,7 @@ _REQUIRED when observed_at is absent — an absent observation time always says 
 
 
 
-URI: [sig:slot/observed_unknown_reason](https://ontology.sig-project.org/schema/slot/observed_unknown_reason)
+URI: [sig:slot/observed_unknown_reason](https://ontology.surveillancegraph.org/schema/slot/observed_unknown_reason)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/observed_unknown_reason](https://ontology.sig-project.org/schema/
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/observed_unknown_reason](https://ontology.sig-project.org/schema/
 name: observed_unknown_reason
 description: REQUIRED when observed_at is absent — an absent observation time always
   says why.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

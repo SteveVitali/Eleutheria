@@ -14,7 +14,7 @@ _Organization, Deployment, or Product — polymorphic and repeatable._
 
 
 
-URI: [sig:slot/applies_to](https://ontology.sig-project.org/schema/slot/applies_to)
+URI: [sig:slot/applies_to](https://ontology.surveillancegraph.org/schema/slot/applies_to)
 <!-- no inheritance hierarchy -->
 
 
@@ -72,7 +72,7 @@ URI: [sig:slot/applies_to](https://ontology.sig-project.org/schema/slot/applies_
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -93,7 +93,7 @@ URI: [sig:slot/applies_to](https://ontology.sig-project.org/schema/slot/applies_
 ```yaml
 name: applies_to
 description: Organization, Deployment, or Product — polymorphic and repeatable.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Policy
 domain_of:

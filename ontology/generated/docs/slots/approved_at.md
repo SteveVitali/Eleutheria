@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/approved_at](https://ontology.sig-project.org/schema/slot/approved_at)
+URI: [sig:slot/approved_at](https://ontology.surveillancegraph.org/schema/slot/approved_at)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/approved_at](https://ontology.sig-project.org/schema/slot/approve
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/approved_at](https://ontology.sig-project.org/schema/slot/approve
 <details>
 ```yaml
 name: approved_at
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Deployment
 domain_of:

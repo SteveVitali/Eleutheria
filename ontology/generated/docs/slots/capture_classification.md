@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/capture_classification](https://ontology.sig-project.org/schema/slot/capture_classification)
+URI: [sig:slot/capture_classification](https://ontology.surveillancegraph.org/schema/slot/capture_classification)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/capture_classification](https://ontology.sig-project.org/schema/s
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/capture_classification](https://ontology.sig-project.org/schema/s
 <details>
 ```yaml
 name: capture_classification
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: EvidenceCapture
 domain_of:

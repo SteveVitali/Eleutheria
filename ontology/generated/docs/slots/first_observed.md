@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/first_observed](https://ontology.sig-project.org/schema/slot/first_observed)
+URI: [sig:slot/first_observed](https://ontology.surveillancegraph.org/schema/slot/first_observed)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/first_observed](https://ontology.sig-project.org/schema/slot/firs
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/first_observed](https://ontology.sig-project.org/schema/slot/firs
 <details>
 ```yaml
 name: first_observed
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: PhysicalAsset
 domain_of:

@@ -14,7 +14,7 @@ _The asserting/originating node (directed — §12.1.1)._
 
 
 
-URI: [sig:slot/source](https://ontology.sig-project.org/schema/slot/source)
+URI: [sig:slot/source](https://ontology.surveillancegraph.org/schema/slot/source)
 <!-- no inheritance hierarchy -->
 
 
@@ -77,7 +77,7 @@ URI: [sig:slot/source](https://ontology.sig-project.org/schema/slot/source)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -98,7 +98,7 @@ URI: [sig:slot/source](https://ontology.sig-project.org/schema/slot/source)
 ```yaml
 name: source
 description: The asserting/originating node (directed — §12.1.1).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Edge
 domain_of:

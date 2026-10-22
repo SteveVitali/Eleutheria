@@ -14,7 +14,7 @@ _OUI or similar; never a full MAC._
 
 
 
-URI: [sig:slot/identifier_prefix](https://ontology.sig-project.org/schema/slot/identifier_prefix)
+URI: [sig:slot/identifier_prefix](https://ontology.surveillancegraph.org/schema/slot/identifier_prefix)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/identifier_prefix](https://ontology.sig-project.org/schema/slot/i
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/identifier_prefix](https://ontology.sig-project.org/schema/slot/i
 ```yaml
 name: identifier_prefix
 description: OUI or similar; never a full MAC.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: CandidateAsset
 domain_of:

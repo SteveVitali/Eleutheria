@@ -9,7 +9,8 @@ Two scanners over the same committed table (``ops/sentinels.toml``):
 * **sentinel-scan** — sweeps the declared scan roots (the release-candidate
   build output ``--rc``, the public web build ``web/dist`` / ``--scan``, a
   sampled live API response set ``--api-sample``) for the declared sentinels:
-  ``example.test``, ``sig.example``, ``_FIXTURE``, ``demo_``, ``Reviewer A/B``,
+  the ``example.test`` / ``sig-example-domain`` / ``sig-project-domain``
+  placeholder-domain sentinels, ``_FIXTURE``, ``demo_``, ``Reviewer A/B``,
   loopback URLs, ``capture_kind: stand-in`` without a sibling disclosure, and
   — over the source registry — unregistered contact domains. A hit inside a
   declared fixture compartment passes only when that compartment's ``allow``

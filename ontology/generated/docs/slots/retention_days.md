@@ -14,7 +14,7 @@ _Duration OR ordinal bucket; MUST accept both (SIG-ONTO-035a)._
 
 
 
-URI: [sig:slot/retention_days](https://ontology.sig-project.org/schema/slot/retention_days)
+URI: [sig:slot/retention_days](https://ontology.surveillancegraph.org/schema/slot/retention_days)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/retention_days](https://ontology.sig-project.org/schema/slot/rete
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/retention_days](https://ontology.sig-project.org/schema/slot/rete
 ```yaml
 name: retention_days
 description: Duration OR ordinal bucket; MUST accept both (SIG-ONTO-035a).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: ConfigurationState
 domain_of:

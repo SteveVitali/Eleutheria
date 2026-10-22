@@ -122,6 +122,13 @@ BINDING_DETAIL_COLUMNS: tuple[str, ...] = (
     "extraction_name",
     "extraction_version",
     "extraction_review_status",
+    # P35.38b (F5 09b): the retrieving ingest run's own row — the provenance.ttl
+    # provenance leg reads the run's real connector + timing, never the
+    # export's generation clock.
+    "run_connector_name",
+    "run_connector_version",
+    "run_started_at",
+    "run_finished_at",
 )
 
 #: ``claim_provenance`` row columns (positional).

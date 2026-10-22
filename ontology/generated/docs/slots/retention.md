@@ -14,7 +14,7 @@ _A ConfigurationState fact where it varies per deployment._
 
 
 
-URI: [sig:slot/retention](https://ontology.sig-project.org/schema/slot/retention)
+URI: [sig:slot/retention](https://ontology.surveillancegraph.org/schema/slot/retention)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/retention](https://ontology.sig-project.org/schema/slot/retention
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/retention](https://ontology.sig-project.org/schema/slot/retention
 ```yaml
 name: retention
 description: A ConfigurationState fact where it varies per deployment.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: DataSystem
 domain_of:

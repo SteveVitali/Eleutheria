@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/reliability_provisional](https://ontology.sig-project.org/schema/slot/reliability_provisional)
+URI: [sig:slot/reliability_provisional](https://ontology.surveillancegraph.org/schema/slot/reliability_provisional)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/reliability_provisional](https://ontology.sig-project.org/schema/
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/reliability_provisional](https://ontology.sig-project.org/schema/
 <details>
 ```yaml
 name: reliability_provisional
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

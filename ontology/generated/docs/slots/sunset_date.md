@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/sunset_date](https://ontology.sig-project.org/schema/slot/sunset_date)
+URI: [sig:slot/sunset_date](https://ontology.surveillancegraph.org/schema/slot/sunset_date)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/sunset_date](https://ontology.sig-project.org/schema/slot/sunset_
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/sunset_date](https://ontology.sig-project.org/schema/slot/sunset_
 <details>
 ```yaml
 name: sunset_date
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: LegalInstrument
 domain_of:

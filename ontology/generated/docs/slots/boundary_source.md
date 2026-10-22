@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/boundary_source](https://ontology.sig-project.org/schema/slot/boundary_source)
+URI: [sig:slot/boundary_source](https://ontology.surveillancegraph.org/schema/slot/boundary_source)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/boundary_source](https://ontology.sig-project.org/schema/slot/bou
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/boundary_source](https://ontology.sig-project.org/schema/slot/bou
 <details>
 ```yaml
 name: boundary_source
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Jurisdiction
 domain_of:

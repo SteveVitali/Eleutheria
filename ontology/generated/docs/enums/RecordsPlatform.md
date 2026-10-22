@@ -15,7 +15,7 @@ _Records-request platform (§11.19)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/RecordsPlatform](https://ontology.sig-project.org/schema/enum/RecordsPlatform)
+URI: [sig:enum/RecordsPlatform](https://ontology.surveillancegraph.org/schema/enum/RecordsPlatform)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -55,7 +55,7 @@ URI: [sig:enum/RecordsPlatform](https://ontology.sig-project.org/schema/enum/Rec
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -68,7 +68,7 @@ URI: [sig:enum/RecordsPlatform](https://ontology.sig-project.org/schema/enum/Rec
 ```yaml
 name: RecordsPlatform
 description: Records-request platform (§11.19).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   muckrock:

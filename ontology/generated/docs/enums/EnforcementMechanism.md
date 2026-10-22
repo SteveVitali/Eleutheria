@@ -15,7 +15,7 @@ _Policy enforcement mechanism (§11.13)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/EnforcementMechanism](https://ontology.sig-project.org/schema/enum/EnforcementMechanism)
+URI: [sig:enum/EnforcementMechanism](https://ontology.surveillancegraph.org/schema/enum/EnforcementMechanism)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -54,7 +54,7 @@ URI: [sig:enum/EnforcementMechanism](https://ontology.sig-project.org/schema/enu
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -67,7 +67,7 @@ URI: [sig:enum/EnforcementMechanism](https://ontology.sig-project.org/schema/enu
 ```yaml
 name: EnforcementMechanism
 description: Policy enforcement mechanism (§11.13).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   none_stated:

@@ -14,7 +14,7 @@ _Whether the deployment's access configuration requires multi-factor authenticat
 
 
 
-URI: [sig:slot/mfa_required](https://ontology.sig-project.org/schema/slot/mfa_required)
+URI: [sig:slot/mfa_required](https://ontology.surveillancegraph.org/schema/slot/mfa_required)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/mfa_required](https://ontology.sig-project.org/schema/slot/mfa_re
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -94,7 +94,7 @@ name: mfa_required
 description: 'Whether the deployment''s access configuration requires multi-factor
   authentication (SIG-ONTO-035): an observed ConfigurationState fact — asserted from
   evidence, never assumed.'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: ConfigurationState
 domain_of:

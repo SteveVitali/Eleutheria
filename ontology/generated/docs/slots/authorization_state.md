@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/authorization_state](https://ontology.sig-project.org/schema/slot/authorization_state)
+URI: [sig:slot/authorization_state](https://ontology.surveillancegraph.org/schema/slot/authorization_state)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/authorization_state](https://ontology.sig-project.org/schema/slot
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/authorization_state](https://ontology.sig-project.org/schema/slot
 <details>
 ```yaml
 name: authorization_state
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Deployment
 domain_of:

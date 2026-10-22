@@ -14,7 +14,7 @@ _The entity's stable minted identity (L2 identity only, §8.2)._
 
 
 
-URI: [sig:slot/id](https://ontology.sig-project.org/schema/slot/id)
+URI: [sig:slot/id](https://ontology.surveillancegraph.org/schema/slot/id)
 <!-- no inheritance hierarchy -->
 
 
@@ -109,7 +109,7 @@ URI: [sig:slot/id](https://ontology.sig-project.org/schema/slot/id)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -130,7 +130,7 @@ URI: [sig:slot/id](https://ontology.sig-project.org/schema/slot/id)
 ```yaml
 name: id
 description: The entity's stable minted identity (L2 identity only, §8.2).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 identifier: true
 domain_of:

@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/posture](https://ontology.sig-project.org/schema/slot/posture)
+URI: [sig:slot/posture](https://ontology.surveillancegraph.org/schema/slot/posture)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/posture](https://ontology.sig-project.org/schema/slot/posture)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/posture](https://ontology.sig-project.org/schema/slot/posture)
 <details>
 ```yaml
 name: posture
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: LegalProceeding
 domain_of:

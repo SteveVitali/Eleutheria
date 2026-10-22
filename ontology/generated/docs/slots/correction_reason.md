@@ -14,7 +14,7 @@ _REQUIRED when revises_claim is set (§16.6)._
 
 
 
-URI: [sig:slot/correction_reason](https://ontology.sig-project.org/schema/slot/correction_reason)
+URI: [sig:slot/correction_reason](https://ontology.surveillancegraph.org/schema/slot/correction_reason)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/correction_reason](https://ontology.sig-project.org/schema/slot/c
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/correction_reason](https://ontology.sig-project.org/schema/slot/c
 ```yaml
 name: correction_reason
 description: REQUIRED when revises_claim is set (§16.6).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Claim
 domain_of:

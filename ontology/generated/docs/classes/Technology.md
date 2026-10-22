@@ -14,7 +14,7 @@ _A three-level technology (domain→family→technology, §11.5, SIG-ONTO-019). 
 
 
 
-URI: [sig:class/Technology](https://ontology.sig-project.org/schema/class/Technology)
+URI: [sig:class/Technology](https://ontology.surveillancegraph.org/schema/class/Technology)
 
 
 
@@ -79,7 +79,7 @@ URI: [sig:class/Technology](https://ontology.sig-project.org/schema/class/Techno
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -108,14 +108,14 @@ name: Technology
 description: A three-level technology (domain→family→technology, §11.5, SIG-ONTO-019).
   The authoritative term hierarchy is the SKOS Technology scheme (§13.1); this class
   carries the code and its rollup levels for a specific referenced node.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   technology:
     name: technology
     description: The technology-level slug.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Technology
@@ -124,7 +124,7 @@ attributes:
   family:
     name: family
     description: The family-level slug this rolls up to.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Technology
@@ -132,7 +132,7 @@ attributes:
   domain:
     name: domain
     description: The domain-level slug this rolls up to.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Technology
@@ -149,14 +149,14 @@ name: Technology
 description: A three-level technology (domain→family→technology, §11.5, SIG-ONTO-019).
   The authoritative term hierarchy is the SKOS Technology scheme (§13.1); this class
   carries the code and its rollup levels for a specific referenced node.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   technology:
     name: technology
     description: The technology-level slug.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Technology
     domain_of:
@@ -166,7 +166,7 @@ attributes:
   family:
     name: family
     description: The family-level slug this rolls up to.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Technology
     domain_of:
@@ -175,7 +175,7 @@ attributes:
   domain:
     name: domain
     description: The domain-level slug this rolls up to.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Technology
     domain_of:
@@ -184,7 +184,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: Technology

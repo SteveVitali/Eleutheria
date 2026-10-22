@@ -51,8 +51,8 @@ def test_mint_rejects_non_uuidv7_and_bad_types() -> None:
 
 def test_dereference_url_uses_the_id_path() -> None:
     pid = mint("deployment", value=uuid7(timestamp_ms=5, rand_a=0, rand_b=5))
-    url = dereference_url(pid, host="sig.example")
-    assert url == f"https://sig.example/id/deployment/{pid.uuid}"
+    url = dereference_url(pid, host="surveillancegraph.org")
+    assert url == f"https://surveillancegraph.org/id/deployment/{pid.uuid}"
 
 
 def test_content_negotiation_covers_html_jsonld_rdf() -> None:

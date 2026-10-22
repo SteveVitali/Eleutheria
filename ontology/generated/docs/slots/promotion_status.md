@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/promotion_status](https://ontology.sig-project.org/schema/slot/promotion_status)
+URI: [sig:slot/promotion_status](https://ontology.surveillancegraph.org/schema/slot/promotion_status)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/promotion_status](https://ontology.sig-project.org/schema/slot/pr
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/promotion_status](https://ontology.sig-project.org/schema/slot/pr
 <details>
 ```yaml
 name: promotion_status
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: CandidateAsset
 domain_of:

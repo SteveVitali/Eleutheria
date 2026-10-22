@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "03f5df6fbbcd505469683ef867179e1072a72a60",
+  "input_commit": "0bfab078f4192da25f5b48199d5a026543b75b5b",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "c617740ea6d03bd7f8c2c0745233163dde9fd079191b533741604fc5f065e1c6"
+      "sha256": "c7bbae3987492f7c131c5d9f468ae687e54f938d9ee391145e1e94f8e0201e8c"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -857,20 +857,24 @@
       "sha256": "3bbba28347847cc7a37c88789506cd4fa4dbe424a9e8c2730d23c17913adc3c3"
     },
     {
+      "path": "docs/adr/ADR-217-iri-base-on-the-owned-domain-alias-map-and-compat-note.md",
+      "sha256": "e1f389576e7a7416e4386e2e8b1dbf1443b76302ece58070682f4ea119da3702"
+    },
+    {
       "path": "docs/adr/ADR-218-live-claim-lint-carried-record-provenance.md",
       "sha256": "25ae6a665cc454f4c42bdc0113e7eb0a32c2c18c013e359ef76a212149ff5f75"
     },
     {
       "path": "docs/adr/README.md",
-      "sha256": "21cf0c80fe6cb1f225ddca00a41cc7aed22d35d71e6ac952d0e48053e5b90146"
+      "sha256": "c21240c23bd7b8e9383b52249fc229bee992295a27fa030d995241564d32f037"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "82335265926b030e8c9b9dec58b24d6fff0c08bf6a32459fb6a94fb09f7932c1"
+      "sha256": "e088edac46dbdea859dd69d76ac9e03487238471ed4e843030bd5f0c57022e7b"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "a71cc6a2516bb30ae41241e96d1a5bcdb9ae5cf4abb486651b86a86f5c5ce029"
+      "sha256": "9447da68e27cb0962b8a4fff95abaaf022f7f360253c73d102fad36ee49d7b24"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -878,7 +882,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "9017207005b52cd54d5a4066dccf46084bf00296a6ac845a9749e3f8fb3041ba"
+      "sha256": "6c4c4c07f8cf81c8817045dcdcb7d451172b848c20c6a6ff64fe41867a225af2"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -954,7 +958,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "9bc49322498520214d87e65b38722ddb206995a073d7b15461426d609c1f3cc1"
+      "sha256": "f46bd2884c1647f3500eb49ad7fdb588db8d867691a295700819b50c66ff6691"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -2067,6 +2071,10 @@
     {
       "path": "docs/build/runs/P35.38a.md",
       "sha256": "c8f94d0d01985d4c97a18eaae6f8079553c52bcf18008d88ca27f9561792f3fb"
+    },
+    {
+      "path": "docs/build/runs/P35.38b.md",
+      "sha256": "5d869413e0b436c58f443558147f6f053063bcb8d3b5bdcec9fd9006120477b0"
     },
     {
       "path": "docs/build/runs/P35.4.md",
@@ -3690,7 +3698,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "c0993a41df26486ee9c77570694f0ab020a02eef2137822fca0f5964d8ff7ab1"
+      "sha256": "63bf3e0f76acfba7e1631695b4833fe4548b28c0ab1087d5f3d131fa7a7a441b"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",

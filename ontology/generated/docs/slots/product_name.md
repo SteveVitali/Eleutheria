@@ -14,7 +14,7 @@ _Time-bounded; products are renamed constantly._
 
 
 
-URI: [sig:slot/product_name](https://ontology.sig-project.org/schema/slot/product_name)
+URI: [sig:slot/product_name](https://ontology.surveillancegraph.org/schema/slot/product_name)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/product_name](https://ontology.sig-project.org/schema/slot/produc
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/product_name](https://ontology.sig-project.org/schema/slot/produc
 ```yaml
 name: product_name
 description: Time-bounded; products are renamed constantly.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Product
 domain_of:

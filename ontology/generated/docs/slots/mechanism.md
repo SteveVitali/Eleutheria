@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/mechanism](https://ontology.sig-project.org/schema/slot/mechanism)
+URI: [sig:slot/mechanism](https://ontology.surveillancegraph.org/schema/slot/mechanism)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/mechanism](https://ontology.sig-project.org/schema/slot/mechanism
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/mechanism](https://ontology.sig-project.org/schema/slot/mechanism
 <details>
 ```yaml
 name: mechanism
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: IntegrationEdge
 domain_of:

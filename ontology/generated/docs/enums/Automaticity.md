@@ -15,7 +15,7 @@ _How access is triggered (§12.5)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/Automaticity](https://ontology.sig-project.org/schema/enum/Automaticity)
+URI: [sig:enum/Automaticity](https://ontology.surveillancegraph.org/schema/enum/Automaticity)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -52,7 +52,7 @@ URI: [sig:enum/Automaticity](https://ontology.sig-project.org/schema/enum/Automa
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -65,7 +65,7 @@ URI: [sig:enum/Automaticity](https://ontology.sig-project.org/schema/enum/Automa
 ```yaml
 name: Automaticity
 description: How access is triggered (§12.5).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   automatic:

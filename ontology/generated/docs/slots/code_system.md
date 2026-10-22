@@ -14,7 +14,7 @@ _Repeatable code-system identifiers (us.census.geoid, iso.3166-2, fr.insee, ...)
 
 
 
-URI: [sig:slot/code_system](https://ontology.sig-project.org/schema/slot/code_system)
+URI: [sig:slot/code_system](https://ontology.surveillancegraph.org/schema/slot/code_system)
 <!-- no inheritance hierarchy -->
 
 
@@ -72,7 +72,7 @@ URI: [sig:slot/code_system](https://ontology.sig-project.org/schema/slot/code_sy
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -94,7 +94,7 @@ URI: [sig:slot/code_system](https://ontology.sig-project.org/schema/slot/code_sy
 name: code_system
 description: Repeatable code-system identifiers (us.census.geoid, iso.3166-2, fr.insee,
   ...).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Jurisdiction
 domain_of:

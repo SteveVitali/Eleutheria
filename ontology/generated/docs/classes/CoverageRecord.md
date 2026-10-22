@@ -14,7 +14,7 @@ _[NEW] Makes negative claims queryable (§11.23, §32.2)._
 
 
 
-URI: [sig:class/CoverageRecord](https://ontology.sig-project.org/schema/class/CoverageRecord)
+URI: [sig:class/CoverageRecord](https://ontology.surveillancegraph.org/schema/class/CoverageRecord)
 
 
 
@@ -94,7 +94,7 @@ URI: [sig:class/CoverageRecord](https://ontology.sig-project.org/schema/class/Co
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -121,13 +121,13 @@ URI: [sig:class/CoverageRecord](https://ontology.sig-project.org/schema/class/Co
 ```yaml
 name: CoverageRecord
 description: '[NEW] Makes negative claims queryable (§11.23, §32.2).'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   subject:
     name: subject
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Claim
     - Resolution
@@ -136,7 +136,7 @@ attributes:
     range: uriorcurie
   predicate:
     name: predicate
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Claim
     - Resolution
@@ -145,21 +145,21 @@ attributes:
     range: predicate_code
   absence_kind:
     name: absence_kind
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - Claim
     - CoverageRecord
     range: AbsenceKind
   coverage_period:
     name: coverage_period
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     domain_of:
     - UsageAggregate
     - CoverageRecord
     range: string
   denominator_published:
     name: denominator_published
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - CoverageRecord
@@ -174,13 +174,13 @@ attributes:
 ```yaml
 name: CoverageRecord
 description: '[NEW] Makes negative claims queryable (§11.23, §32.2).'
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   subject:
     name: subject
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: CoverageRecord
     domain_of:
     - Claim
@@ -190,7 +190,7 @@ attributes:
     range: uriorcurie
   predicate:
     name: predicate
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: CoverageRecord
     domain_of:
     - Claim
@@ -200,7 +200,7 @@ attributes:
     range: predicate_code
   absence_kind:
     name: absence_kind
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: CoverageRecord
     domain_of:
     - Claim
@@ -208,7 +208,7 @@ attributes:
     range: AbsenceKind
   coverage_period:
     name: coverage_period
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     owner: CoverageRecord
     domain_of:
     - UsageAggregate
@@ -216,7 +216,7 @@ attributes:
     range: string
   denominator_published:
     name: denominator_published
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: CoverageRecord
     domain_of:
@@ -225,7 +225,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: CoverageRecord

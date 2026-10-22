@@ -15,7 +15,7 @@ _Organization type, namespaced and extensible (§11.2, §13.7, SIG-ONTO-068). "v
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/OrganizationType](https://ontology.sig-project.org/schema/enum/OrganizationType)
+URI: [sig:enum/OrganizationType](https://ontology.surveillancegraph.org/schema/enum/OrganizationType)
 
 ## Permissible Values
 | Value | Meaning | Description | Additional Info |
@@ -84,7 +84,7 @@ URI: [sig:enum/OrganizationType](https://ontology.sig-project.org/schema/enum/Or
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -102,7 +102,7 @@ description: Organization type, namespaced and extensible (§11.2, §13.7, SIG-O
   parent every country's police-force types map onto; national forces are `<cc>.*`
   children linked by `is_a`, added under a national namespace rather than by widening
   the `us.*` set.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   law_enforcement:

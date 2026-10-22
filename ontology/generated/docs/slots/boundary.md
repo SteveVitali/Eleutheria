@@ -14,7 +14,7 @@ _MultiPolygon, 4326._
 
 
 
-URI: [sig:slot/boundary](https://ontology.sig-project.org/schema/slot/boundary)
+URI: [sig:slot/boundary](https://ontology.surveillancegraph.org/schema/slot/boundary)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/boundary](https://ontology.sig-project.org/schema/slot/boundary)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/boundary](https://ontology.sig-project.org/schema/slot/boundary)
 ```yaml
 name: boundary
 description: MultiPolygon, 4326.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Jurisdiction
 domain_of:

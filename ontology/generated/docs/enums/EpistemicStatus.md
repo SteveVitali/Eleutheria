@@ -15,7 +15,7 @@ _Required epistemic status of an accountability event (§11.17, SIG-ONTO-038)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/EpistemicStatus](https://ontology.sig-project.org/schema/enum/EpistemicStatus)
+URI: [sig:enum/EpistemicStatus](https://ontology.surveillancegraph.org/schema/enum/EpistemicStatus)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -56,7 +56,7 @@ URI: [sig:enum/EpistemicStatus](https://ontology.sig-project.org/schema/enum/Epi
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -69,7 +69,7 @@ URI: [sig:enum/EpistemicStatus](https://ontology.sig-project.org/schema/enum/Epi
 ```yaml
 name: EpistemicStatus
 description: Required epistemic status of an accountability event (§11.17, SIG-ONTO-038).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   alleged:

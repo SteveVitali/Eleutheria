@@ -15,7 +15,7 @@ _Integrity I of the artifact (§10.6)._
 
 <div data-search-exclude markdown="1">
 
-URI: [sig:enum/ArtifactIntegrity](https://ontology.sig-project.org/schema/enum/ArtifactIntegrity)
+URI: [sig:enum/ArtifactIntegrity](https://ontology.surveillancegraph.org/schema/enum/ArtifactIntegrity)
 
 ## Permissible Values
 | Value | Meaning | Description |
@@ -52,7 +52,7 @@ URI: [sig:enum/ArtifactIntegrity](https://ontology.sig-project.org/schema/enum/A
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -65,7 +65,7 @@ URI: [sig:enum/ArtifactIntegrity](https://ontology.sig-project.org/schema/enum/A
 ```yaml
 name: ArtifactIntegrity
 description: Integrity I of the artifact (§10.6).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 permissible_values:
   I1:

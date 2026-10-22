@@ -78,7 +78,7 @@ note = "loopback addresses in a production/public context"
 id = "sig-project-domain"
 kind = "literal"
 pattern = "sig-project.org"
-note = "the unregistered placeholder contact domain (et al. — the contact-domains leg checks the whole class, not just this literal)"
+note = "the retired IRI/contact base — an unregistered domain B-6 declined to buy (P35.38b / ADR-217); the detector stays so a NEW literal in shipped code or a public artifact is a hit (et al. — the contact-domains leg checks the whole class, not just this literal)"
 
 [[sentinel]]
 id = "fixture-iri"
@@ -112,12 +112,9 @@ paths = ["web/dist/curate/**", "dist/curate/**", "curate/**"]
 allow = ["loopback-url"]
 reason = "ADR-068 — /curate is the declared loopback-only authenticated curation surface; the baked 127.0.0.1:8001 default is the design, not fixture leakage"
 
-[[compartment]]
-id = "watch-feed-uid"
-paths = ["web/dist/watch/**", "dist/watch/**", "watch/**"]
-allow = ["sig-example-domain"]
-reason = "watch-feed event UIDs stamp @sig.example (web/src/lib/watch.ts) — the placeholder domain reaches the public .ics/.xml artifacts; the owed fix is recorded, not hidden"
-debt = "D-P35.3-1"
+# (watch-feed-uid compartment deleted by P35.38b — the UIDs now stamp the owned
+# domain `@surveillancegraph.org`; the D-P35.3-1 closure is recorded in
+# DEFERRALS + obligations/events.jsonl.)
 
 [[compartment]]
 id = "visual-language-demo"
@@ -133,9 +130,9 @@ reason = "the research dossier's disclosed stand-in assertions carry https://fix
 
 [[compartment]]
 id = "sources-demo-entries"
-paths = ["web/dist/sources/**", "dist/sources/**", "sources/**"]
+paths = ["web/dist/sources/**", "dist/sources/**", "sources/**", "web/dist/artifact/web/sources.json", "web/dist/artifact/web/terms_disclosure.json", "dist/artifact/web/sources.json", "dist/artifact/web/terms_disclosure.json", "artifact/web/sources.json", "artifact/web/terms_disclosure.json"]
 allow = ["example-test-tld"]
-reason = "the /sources index carries visibly-labelled demonstration entries (demo-portal/demo-registry, example.invalid) for the terms-licence display — whether a demo entry belongs on the public registry is the owning row's call"
+reason = "the /sources index carries visibly-labelled demonstration entries (demo-portal/demo-registry, example.invalid) for the terms-licence display — whether a demo entry belongs on the public registry is the owning row's call; the /artifact/<path>.json mirror (P35.37) serves the same disclosed bytes under artifact/web/"
 debt = "D-P35.3-2"
 
 # ── Contact domains ───────────────────────────────────────────────────────────

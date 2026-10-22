@@ -14,7 +14,7 @@ _A product; MUST NOT be equated with a Technology (§11.4, SIG-ONTO-017)._
 
 
 
-URI: [sig:class/Product](https://ontology.sig-project.org/schema/class/Product)
+URI: [sig:class/Product](https://ontology.surveillancegraph.org/schema/class/Product)
 
 
 
@@ -125,7 +125,7 @@ URI: [sig:class/Product](https://ontology.sig-project.org/schema/class/Product)
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -152,21 +152,21 @@ URI: [sig:class/Product](https://ontology.sig-project.org/schema/class/Product)
 ```yaml
 name: Product
 description: A product; MUST NOT be equated with a Technology (§11.4, SIG-ONTO-017).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   product_name:
     name: product_name
     description: Time-bounded; products are renamed constantly.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Product
     range: string
   vendor:
     name: vendor
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Product
@@ -175,7 +175,7 @@ attributes:
     range: Organization
   implements_technology:
     name: implements_technology
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Product
@@ -184,7 +184,7 @@ attributes:
   can_offer_capability:
     name: can_offer_capability
     description: Defeasible / marketing-level only (SIG-ONTO-018).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Product
@@ -192,14 +192,14 @@ attributes:
     multivalued: true
   product_status:
     name: product_status
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Product
     range: ProductStatus
   successor_product:
     name: successor_product
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     domain_of:
     - Product
@@ -214,14 +214,14 @@ attributes:
 ```yaml
 name: Product
 description: A product; MUST NOT be equated with a Technology (§11.4, SIG-ONTO-017).
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 is_a: Entity
 attributes:
   product_name:
     name: product_name
     description: Time-bounded; products are renamed constantly.
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Product
     domain_of:
@@ -229,7 +229,7 @@ attributes:
     range: string
   vendor:
     name: vendor
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Product
     domain_of:
@@ -239,7 +239,7 @@ attributes:
     range: Organization
   implements_technology:
     name: implements_technology
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Product
     domain_of:
@@ -249,7 +249,7 @@ attributes:
   can_offer_capability:
     name: can_offer_capability
     description: Defeasible / marketing-level only (SIG-ONTO-018).
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Product
     domain_of:
@@ -258,7 +258,7 @@ attributes:
     multivalued: true
   product_status:
     name: product_status
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Product
     domain_of:
@@ -266,7 +266,7 @@ attributes:
     range: ProductStatus
   successor_product:
     name: successor_product
-    from_schema: https://ontology.sig-project.org/schema/entities
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
     rank: 1000
     owner: Product
     domain_of:
@@ -275,7 +275,7 @@ attributes:
   id:
     name: id
     description: The entity's stable minted identity (L2 identity only, §8.2).
-    from_schema: https://ontology.sig-project.org/schema/sig
+    from_schema: https://ontology.surveillancegraph.org/schema/sig
     rank: 1000
     identifier: true
     owner: Product

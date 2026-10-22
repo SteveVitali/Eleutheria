@@ -14,7 +14,7 @@ _A registered predicate id — unregistered keys quarantine, never guessed._
 
 
 
-URI: [sig:slot/qualifier_id](https://ontology.sig-project.org/schema/slot/qualifier_id)
+URI: [sig:slot/qualifier_id](https://ontology.surveillancegraph.org/schema/slot/qualifier_id)
 <!-- no inheritance hierarchy -->
 
 
@@ -71,7 +71,7 @@ URI: [sig:slot/qualifier_id](https://ontology.sig-project.org/schema/slot/qualif
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -92,7 +92,7 @@ URI: [sig:slot/qualifier_id](https://ontology.sig-project.org/schema/slot/qualif
 ```yaml
 name: qualifier_id
 description: A registered predicate id — unregistered keys quarantine, never guessed.
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: ClaimQualifier
 domain_of:

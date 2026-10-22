@@ -9,7 +9,7 @@ search:
 
 
 
-URI: [sig:slot/rationale](https://ontology.sig-project.org/schema/slot/rationale)
+URI: [sig:slot/rationale](https://ontology.surveillancegraph.org/schema/slot/rationale)
 <!-- no inheritance hierarchy -->
 
 
@@ -66,7 +66,7 @@ URI: [sig:slot/rationale](https://ontology.sig-project.org/schema/slot/rationale
 ### Schema Source
 
 
-* from schema: https://ontology.sig-project.org/schema/sig
+* from schema: https://ontology.surveillancegraph.org/schema/sig
 
 
 
@@ -86,7 +86,7 @@ URI: [sig:slot/rationale](https://ontology.sig-project.org/schema/slot/rationale
 <details>
 ```yaml
 name: rationale
-from_schema: https://ontology.sig-project.org/schema/sig
+from_schema: https://ontology.surveillancegraph.org/schema/sig
 rank: 1000
 owner: Resolution
 domain_of:
