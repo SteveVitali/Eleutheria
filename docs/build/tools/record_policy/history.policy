@@ -95,6 +95,9 @@ allow db/sqitch.plan 2026-10-22T00:00:00Z declared_lineage [subject_rekey] 2026-
 # their commit lands.
 allow db/sqitch.plan 2026-10-23T00:00:00Z role_edges [declared_lineage] 2026-10-18T13:50:00Z
 allow db/sqitch.plan 2026-10-23T00:00:00Z vocab_published_by [role_edges] 2026-10-18T13:50:00Z
+# P35.32 (ticket 310): ingest_run_report's planned_at is its real `date -u` stamp — future of the
+# pre-commit HEAD only while the line is in flight; past-dated the moment its commit lands.
+allow db/sqitch.plan 2026-10-24T00:00:00Z ingest_run_report [rights_sources_lineage ingest_run_completion ingest_run_capture] 2026-10-19T06:12:00Z
 
 # ── connectors/src/connectors/data/sources.toml rights dates (B1 NEW-5; B4 G1 positions) ─────────────────
 # rights_reviewed_on / last_verified / retrieval_date are record dates (R1: never later than the commit).

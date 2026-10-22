@@ -1251,6 +1251,34 @@ def build_parser() -> argparse.ArgumentParser:
         "--dry-run", action="store_true", help="plan + count only; append nothing"
     )
 
+    reports = sub.add_parser(
+        "backfill-run-reports",
+        help="P35.32 (J3 §3.3 item 1, K10 §18): append one typed "
+        "ingest_run_report row per execution — every WORM ops/runs row "
+        "(linked live / backfill:<basis> / unmatched:<reason> by the P31.2 "
+        "matcher) plus the repo-pinned live-run records (repo_record / "
+        "git_only). INSERT-only; a re-run is +0; prints the reconcile read-back",
+    )
+    reports.add_argument("--dsn", default=None, help="PostgreSQL DSN (else SIG_PG_* parts)")
+    reports.add_argument(
+        "--role", default=None, help="role to SET ROLE to (hosted: sig_materialize)"
+    )
+    reports.add_argument(
+        "--gcs-bucket",
+        default=None,
+        help="the restricted bucket holding ops/runs (default: SIG_OPS_GCS_BUCKET)",
+    )
+    reports.add_argument(
+        "--prefix", default=None, help="run-row prefix (default: cadence.toml [runs])"
+    )
+    reports.add_argument(
+        "--repo-records",
+        default="docs/build/reports/live_runs",
+        help="the pinned live-run record dir (default: docs/build/reports/live_runs)",
+    )
+    reports.add_argument("--cadence", default=None, help="ops/cadence.toml path")
+    reports.add_argument("--dry-run", action="store_true", help="plan + count only; append nothing")
+
     readback = sub.add_parser(
         "scheduled-readback",
         help="P34.39a (D-P31.4-1): READ-ONLY read-back of a scheduled-ingest "
@@ -3676,6 +3704,54 @@ def _cmd_backfill_run_completions(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_backfill_run_reports(args: argparse.Namespace) -> int:
+    """P35.32 / J3 §3.3 item 1 + K10 §18: one typed report row per execution.
+
+    Appends ``ingest_run_report`` rows for every WORM run row (linked by the
+    P31.2 matcher — live URI, backfill basis, or ``unmatched:<reason>``) and
+    for the repo-pinned live-run records (``link_basis='repo_record'``,
+    ``clock_basis='git_only'``). INSERT-only; every re-run is +0 under the
+    ``backfilled_from`` unique key. Prints the read-back reconcile.
+    """
+    import psycopg
+    from connectors.runner import CONNECTOR_FOR_SOURCE
+    from psycopg import sql
+
+    from .run_report import (
+        backfill_run_reports,
+        read_repo_records,
+        read_worm_docs,
+        reconcile_run_reports,
+    )
+    from .scheduled import load_cadence
+
+    dsn = args.dsn or os.environ.get("SIG_STAGING_DSN") or _cloudsql_dsn_from_parts()
+    if not dsn:
+        print("backfill-run-reports: needs --dsn / SIG_STAGING_DSN / SIG_PG_* parts")
+        return 2
+    gcs = _gcs_bucket(args.gcs_bucket)
+    if gcs is None:
+        print("backfill-run-reports: needs --gcs-bucket / SIG_OPS_GCS_BUCKET (the WORM rows)")
+        return 2
+    prefix = args.prefix or load_cadence(args.cadence).runs_gcs_prefix
+    docs = read_worm_docs(gcs, prefix)
+    records = read_repo_records(args.repo_records)
+    with psycopg.connect(dsn, autocommit=True) as conn:
+        if args.role:
+            conn.execute(sql.SQL("SET ROLE {}").format(sql.Identifier(args.role)))
+        report = backfill_run_reports(
+            conn,
+            docs,
+            records,
+            dry_run=args.dry_run,
+            connector_for_source=CONNECTOR_FOR_SOURCE,
+        )
+        out = report.to_dict()
+        out["reconcile"] = reconcile_run_reports(conn)
+    print(json.dumps(out, indent=2, sort_keys=True))
+    return 0
+
+
 def _cmd_scheduled_readback(args: argparse.Namespace) -> int:
     """P34.39a / D-P31.4-1: the read-only post-run read-back of a scheduled run.
 
@@ -3831,7 +3907,13 @@ def _cmd_scheduled_firstfire(args: argparse.Namespace) -> int:
 
 def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
     from .alerts import utcnow
-    from .scheduled import load_cadence, run_object_uri, scheduled_ingest, store_run_row
+    from .scheduled import (
+        load_cadence,
+        run_object_uri,
+        scheduled_ingest,
+        store_run_report,
+        store_run_row,
+    )
 
     cadence = load_cadence(args.cadence)
     if bool(args.source) == bool(args.batch):
@@ -3894,6 +3976,19 @@ def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
         print(json.dumps(row.as_json(), sort_keys=True))
         for where, loc in written.items():
             print(f"  run row stored ({where}): {loc}")
+        # P35.32 / J3 §3.3 item 1: one typed report row per execution,
+        # appended after the WORM row lands. Never fatal — a report miss is
+        # loud, and the backfill mints the row from the WORM object.
+        if dsn:
+            try:
+                report_id = store_run_report(row, dsn=dsn)
+                if report_id:
+                    print(f"  run report appended: {report_id}")
+            except Exception as exc:  # noqa: BLE001 — audit miss is loud, not fatal
+                print(
+                    f"  ! run report append failed: {type(exc).__name__}: {exc}",
+                    file=sys.stderr,
+                )
         if row.exit_code:
             exit_code = exit_code or row.exit_code
     if gcs is None:
@@ -5158,6 +5253,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_dispatch_due(args)
     if args.command == "backfill-run-completions":
         return _cmd_backfill_run_completions(args)
+    if args.command == "backfill-run-reports":
+        return _cmd_backfill_run_reports(args)
     if args.command == "scheduled-readback":
         return _cmd_scheduled_readback(args)
     if args.command == "scheduled-firstfire":
