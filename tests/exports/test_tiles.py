@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import gzip
 import json
+import random
 import struct
 import subprocess
 
@@ -41,18 +42,15 @@ def _parse_pmtiles(data: bytes) -> tuple[dict, dict[int, bytes]]:
     meta_len = struct.unpack_from("<Q", data, 32)[0]
     metadata = json.loads(gzip.decompress(data[meta_off : meta_off + meta_len]))
     tiles = {}
-    for tid, offset, length in _read_root(data):
+    for tid, _run, offset, length in _all_tile_entries(data):
         tile_off = struct.unpack_from("<Q", data, 56)[0]
         blob = data[tile_off + offset : tile_off + offset + length]
         tiles[tid] = gzip.decompress(blob)
     return metadata, tiles
 
 
-def _read_root(data: bytes) -> list[tuple[int, int, int]]:
-    """Decode the root directory into ``(tile_id, offset, length)`` entries."""
-    root_off = struct.unpack_from("<Q", data, 8)[0]
-    root_len = struct.unpack_from("<Q", data, 16)[0]
-    raw = gzip.decompress(data[root_off : root_off + root_len])
+def _read_directory(raw: bytes) -> list[tuple[int, int, int, int]]:
+    """Decode one directory section into ``(tile_id, run_length, offset, length)``."""
     pos = 0
 
     def varint() -> int:
@@ -83,8 +81,26 @@ def _read_root(data: bytes) -> list[tuple[int, int, int]]:
             offsets.append(offsets[i - 1] + lengths[i - 1])
         else:
             offsets.append(stored - 1)
-    assert all(r == 1 for r in runs)  # every entry is a tile, never a leaf pointer
-    return list(zip(ids, offsets, lengths, strict=True))
+    return list(zip(ids, runs, offsets, lengths, strict=True))
+
+
+def _read_root(data: bytes) -> list[tuple[int, int, int, int]]:
+    """Decode the ROOT directory (entries may be leaf pointers, run_length 0)."""
+    root_off = struct.unpack_from("<Q", data, 8)[0]
+    root_len = struct.unpack_from("<Q", data, 16)[0]
+    return _read_directory(gzip.decompress(data[root_off : root_off + root_len]))
+
+
+def _all_tile_entries(data: bytes) -> list[tuple[int, int, int, int]]:
+    """Every ``run_length > 0`` entry, descending through root leaf pointers."""
+    leaf_off = struct.unpack_from("<Q", data, 40)[0]
+    out: list[tuple[int, int, int, int]] = []
+    for tid, run, off, ln in _read_root(data):
+        if run == 0:
+            out.extend(_read_directory(gzip.decompress(data[leaf_off + off : leaf_off + off + ln])))
+        else:
+            out.append((tid, run, off, ln))
+    return out
 
 
 def test_zxy_to_tileid_matches_the_spec_table() -> None:
@@ -113,8 +129,9 @@ def test_render_pmtiles_is_a_valid_v3_archive_with_the_z0_z14_pyramid() -> None:
     assert data[100] == T.PMTILES_MINZOOM and data[101] == T.PMTILES_MAXZOOM
     assert metadata["minzoom"] == T.PMTILES_MINZOOM
     assert metadata["maxzoom"] == T.PMTILES_MAXZOOM
-    # directory entries are sorted by tile_id (clustered layout)
-    assert [t for t, _, _ in _read_root(data)] == sorted(tiles)
+    # directory entries are sorted by tile_id (clustered layout; a small
+    # pyramid keeps the classic flat root — no leaf pointers)
+    assert [t for t, *_ in _read_root(data)] == sorted(tiles)
 
 
 def test_layer_carries_odbl_metadata() -> None:
@@ -166,6 +183,34 @@ def test_bounds_track_the_input_extent() -> None:
     min_lon_e7 = struct.unpack_from("<i", data, 102)[0]
     max_lon_e7 = struct.unpack_from("<i", data, 110)[0]
     assert min_lon_e7 / 1e7 <= -97.5164 <= max_lon_e7 / 1e7
+
+
+def test_leaf_directories_when_the_root_exceeds_the_optimistic_read() -> None:
+    # The reference JS reader parses the root directory from its first 16 KiB
+    # fetch — a national-scale index (the ~100 k-entry national fixture) must
+    # spill into leaf directories or every tile reads as a truncated stream.
+    # Variable-length tiles give the index the entropy that defeats gzip.
+    rng = random.Random(2)
+    ids = sorted(set(T.zxy_to_tileid(14, i % 16384, i // 16384) for i in range(100_000)))
+    # varied tile CONTENT — same-length zero blobs gzip into a near-constant
+    # entry pattern that never reaches the spill threshold in a test.
+    tiles = {tid: bytes(i % 256 for i in range(rng.randrange(200, 2000))) for tid in ids}
+    data = T.build_pmtiles(tiles, metadata={"vector_layers": []})
+
+    root_len = struct.unpack_from("<Q", data, 16)[0]
+    leaf_len = struct.unpack_from("<Q", data, 48)[0]
+    assert root_len <= T._ROOT_DIR_MAX_BYTES
+    assert leaf_len > 0
+    root = _read_root(data)
+    assert all(run == 0 for _tid, run, _off, _ln in root)
+    # the spec §3 addressed count covers tile entries AND the leaf pointers
+    assert struct.unpack_from("<Q", data, 72)[0] == len(tiles) + len(root)
+    # every tile resolves through exactly one leaf, bytes intact
+    flat = _all_tile_entries(data)
+    assert sorted(t for t, *_ in flat) == sorted(tiles)
+    tile_off = struct.unpack_from("<Q", data, 56)[0]
+    for tid, _run, off, ln in flat:
+        assert gzip.decompress(data[tile_off + off : tile_off + off + ln]) == tiles[tid]
 
 
 def test_render_is_byte_deterministic() -> None:

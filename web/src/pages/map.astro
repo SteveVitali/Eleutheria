@@ -80,7 +80,13 @@ const boundIndicators = boundedJurisdictionIndicators(jurisdictionIndicators);
 // id → asset, so the indicator list below is linear at national scale (not a find per id).
 const ASSET_BY_ID = new Map(MAP_ASSETS.map((a) => [a.id, a]));
 const maxCount = Math.max(1, ...DENSITY_BINS.map((b) => b.recordCount));
-const bins = DENSITY_BINS.map((b) => ({ bin: b, render: renderBin(b, maxCount) }));
+// P35.51 (SIG-FIND-005): the bin strip + tabular equivalent were UNBOUNDED —
+// under the real-sized national build (1,100+ cells) the coverage section alone
+// was ~2.4 MB of document. Same P27.5 capRows the asset table already uses:
+// bounded rows, the honest total stated, never a silent drop.
+const allBins = DENSITY_BINS.map((b) => ({ bin: b, render: renderBin(b, maxCount) }));
+const cappedBins = capRows(allBins);
+const bins = cappedBins.rows;
 
 // Build-time cap so the tabular equivalent stays within budget at national scale
 // (tens of thousands of sites); the honest total is preserved. P27.7 adds a build-time
@@ -336,6 +342,12 @@ const mapCitationHref = beliefPinnedPermalink({
 
   <h2 id="bins-table-heading">Coverage bins (tabular equivalent)</h2>
   {bins.length === 0 && <EmptyState surface="mapBins" />}
+  {cappedBins.truncated && (
+    <p class="sig-table-note" data-testid="bins-bounds-note">
+      Showing the first {cappedBins.shown} of {cappedBins.total} density cells — the
+      full cell set ships in the export's <code>web/analytics/density_bins.json</code>.
+    </p>
+  )}
   <div class="sig-table-wrap">
   <table class="sig-table" aria-labelledby="bins-table-heading">
     <thead>

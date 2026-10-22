@@ -31,22 +31,25 @@ const TILE_RE = /^web\/tiles\/[^/]+-sites\.pmtiles$/;
  * @throws when the manifest is missing/unreadable, or lists archives whose
  *   bytes are absent on disk.
  */
-export function resolveTileCopyList(exportDir) {
-  const tilesDir = join(exportDir, "web", "tiles");
-  const manifestPath = join(exportDir, "manifest.json");
+export function resolveTileCopyList(layoutDir, mode = "export") {
+  const tilesDir = join(layoutDir, "web", "tiles");
+  const manifestPath = join(layoutDir, "manifest.json");
   if (!existsSync(manifestPath)) {
     throw new Error(
-      `SIG_DATA_SOURCE=export but the export manifest is missing: ${manifestPath}. ` +
-        "Run `sig-exports build` first.",
+      `SIG_DATA_SOURCE=${mode} but the ${mode} manifest is missing: ${manifestPath}. ` +
+        (mode === "national"
+          ? "Run `npm run fixture:national` first."
+          : "Run `sig-exports build` first."),
     );
   }
   let manifest;
   try {
     manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
   } catch (cause) {
-    throw new Error(`SIG_DATA_SOURCE=export but the export manifest is unreadable: ${manifestPath}.`, {
-      cause,
-    });
+    throw new Error(
+      `SIG_DATA_SOURCE=${mode} but the ${mode} manifest is unreadable: ${manifestPath}.`,
+      { cause },
+    );
   }
   const listed = (manifest.artifacts ?? [])
     .map((a) => String(a.path ?? ""))
@@ -55,7 +58,7 @@ export function resolveTileCopyList(exportDir) {
   const files = listed.filter((f) => existsSync(join(tilesDir, f)));
   if (files.length !== listed.length) {
     throw new Error(
-      `SIG_DATA_SOURCE=export: the manifest lists tile archives missing from ${tilesDir}.`,
+      `SIG_DATA_SOURCE=${mode}: the manifest lists tile archives missing from ${tilesDir}.`,
     );
   }
   // zero listed archives is NOT an error — an export that rendered no

@@ -27,8 +27,10 @@
 #                    stable collect URL `dist/r/_fixture-record/index.html`
 #                    (publication/entity ids are content-derived and differ
 #                    every run; the bytes are the release-builder's own).
-#   budgets          per-island script/total ceilings over the export dist
-#                    (web/tests/e2e/island-budgets.json, ADR-134).
+#   budgets          per-page-type budgets over the export dist — every
+#                    discovered route against page-budgets.json
+#                    (sig.page-budgets/1, K0 §4.3, ADR-155; supersedes the
+#                    retired per-island ceilings).
 #   lighthouse       `lhci autorun --config=lighthouserc.export.json` — the
 #                    export-mode budget matrix incl. /releases/,
 #                    /research-dossier/ and the archive record.
@@ -102,8 +104,8 @@ mount_record() {
 
 budgets() {
     cd "$ROOT/web"
-    node scripts/measure-island-budgets.mjs --out "$WORK/island-budgets-export.md"
-    cat "$WORK/island-budgets-export.md"
+    node scripts/measure-page-budgets.mjs --out "$WORK/page-budgets-export.md"
+    cat "$WORK/page-budgets-export.md"
 }
 
 lighthouse() {

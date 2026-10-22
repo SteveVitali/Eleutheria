@@ -50,9 +50,13 @@ const siteFocusId = (id: string): string => {
 };
 
 // Cap the map-site rows fed to the client index so the page stays within budget at
-// national scale (tens of thousands of sites); the FULL corpus is searched by the
-// released-corpus forms + static browse pages above.
-const cappedSites = capRows(sites);
+// national scale (the full corpus is searched by the released-corpus forms +
+// static browse pages above — the island index is a stated sample, never the
+// claim). P35.51 (SIG-FIND-005): the dedicated 200-row bound keeps the
+// serialized props inside the T2 ≤ 100 KiB document budget at real scale —
+// 500 rows alone was ≈ 136 KB of document.
+const SEARCH_INDEX_MAX = 200;
+const cappedSites = capRows(sites, SEARCH_INDEX_MAX);
 
 // P34.14 (QW-8, F-105): labels and sublabels lead with the place's NAME and
 // keep the code secondary ("Name (CODE)") — a name typed into the filter now

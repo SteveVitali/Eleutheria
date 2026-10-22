@@ -589,13 +589,39 @@ jobs:
           uv run sig-ops sentinel-scan --scan web/dist
           uv run sig-ops claim-marker-scan --scan web/dist
 
-      - name: Island budgets over the export-mode build (ADR-134 ceilings)
+      - name: Page-type budgets over the export-mode build (ADR-155 ceilings)
         working-directory: ${{ github.workspace }}
         run: bash scripts/ci/export_mode_leg.sh budgets
 
       - name: Lighthouse over the export-mode build (Round-10 routes + one archive record)
         working-directory: ${{ github.workspace }}
         run: bash scripts/ci/export_mode_leg.sh lighthouse
+
+      # --- P35.51 (SIG-UI-041, SIG-FIND-005, K0 §4.12.6): the national leg. ---
+      # The deterministic synthetic national fixture (≥ 232k sites / ≥ 5k
+      # agencies / ≥ 400k sharing edges, invented names only — F-173) is the
+      # state every budget row is measured under at real scale: the same
+      # generalised budget suite and the generated national Lighthouse matrix
+      # run over the SIG_DATA_SOURCE=national build, with the recorded
+      # national-scoped measured_gaps binding (never a hidden overage).
+      # `scripts/ci/national_budget_leg.sh` is the single source of the
+      # commands — `npm run check:perf:national` runs the same leg locally.
+
+      - name: National fixture (deterministic synthetic corpus, real-scale)
+        working-directory: ${{ github.workspace }}
+        run: bash scripts/ci/national_budget_leg.sh fixture
+
+      - name: National build (SIG_DATA_SOURCE=national over the overlay)
+        working-directory: ${{ github.workspace }}
+        run: bash scripts/ci/national_budget_leg.sh build
+
+      - name: National page budgets (wire measure; real-scale gaps bound)
+        working-directory: ${{ github.workspace }}
+        run: bash scripts/ci/national_budget_leg.sh budgets
+
+      - name: National Lighthouse (generated national assert matrix)
+        working-directory: ${{ github.workspace }}
+        run: bash scripts/ci/national_budget_leg.sh lighthouse
 
       # Record + save only at the END of a green same-repo PR job whose
       # fixture step actually measured (`mode != 'reuse'` writes nothing).

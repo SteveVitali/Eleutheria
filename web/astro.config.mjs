@@ -25,21 +25,26 @@ function sigExportTiles() {
     name: "sig-export-tiles",
     hooks: {
       "astro:build:done": ({ dir }) => {
-        if (process.env.SIG_DATA_SOURCE !== "export") return;
+        // P35.51: the same manifest-listed copy runs under the `national`
+        // overlay — the synthetic national fixture's per-compartment archives
+        // (SIG_NATIONAL_DIR / the gitignored default `web/national/`).
+        const mode = process.env.SIG_DATA_SOURCE;
+        if (mode !== "export" && mode !== "national") return;
         const repoRoot = fileURLToPath(new URL("../", import.meta.url));
-        const override = process.env.SIG_EXPORT_DIR;
+        const override =
+          mode === "national" ? process.env.SIG_NATIONAL_DIR : process.env.SIG_EXPORT_DIR;
         // `npm --prefix web` runs scripts with cwd=web/, so a repo-relative
-        // SIG_EXPORT_DIR must be anchored at the repo root, not the cwd.
+        // dir override must be anchored at the repo root, not the cwd.
         const exportDir =
           override !== undefined && override !== ""
             ? resolve(repoRoot, override)
-            : join(repoRoot, "exports/out/okc");
+            : join(repoRoot, mode === "national" ? "web/national" : "exports/out/okc");
         const destDir = join(fileURLToPath(dir), "tiles");
         // P34.34a: the copy list comes from resolveTileCopyList — a manifest
         // that lists zero archives is an HONEST empty-tile export (the map
         // page states it), not a build error; only a missing manifest or a
         // listed-but-absent archive fails loud.
-        const { tilesDir, files } = resolveTileCopyList(exportDir);
+        const { tilesDir, files } = resolveTileCopyList(exportDir, mode);
         if (files.length === 0) return;
         mkdirSync(destDir, { recursive: true });
         for (const f of files) cpSync(join(tilesDir, f), join(destDir, f));

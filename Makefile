@@ -17,7 +17,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-par test-db test-sqitch-roundtrip check ci-local check-export-mode lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-live-claims docs-check-runbook docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
+.PHONY: sync lint format-check typecheck test test-par test-db test-sqitch-roundtrip check ci-local check-export-mode check-national-budgets lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-live-claims docs-check-runbook docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -118,6 +118,7 @@ ci-local: sync
 	@# the same commands ci.yml runs (SIG-OPS-012 + DR-C3-03).
 	uv run sig-ops sentinel-scan --scan web/dist
 	uv run sig-ops claim-marker-scan --scan web/dist
+	$(MAKE) check-national-budgets
 
 ## P34.34b (ACT-16b, C4 NEW-26): the web job's export-mode leg, locally — the
 ## same `export_mode_leg.sh` subcommands ci.yml runs. The from-spine fixture
@@ -130,6 +131,19 @@ check-export-mode:
 	bash scripts/ci/export_mode_leg.sh mount-record
 	bash scripts/ci/export_mode_leg.sh budgets
 	bash scripts/ci/export_mode_leg.sh lighthouse
+
+## P35.51 (SIG-UI-041, SIG-FIND-005, K0 §4.12.6): the national-fixture budget
+## leg, locally — the same `national_budget_leg.sh` subcommands ci.yml runs.
+## The deterministic synthetic corpus (≥ 232k sites / ≥ 5k agencies / ≥ 400k
+## sharing edges, invented names only) feeds the SIG_DATA_SOURCE=national
+## build; the wire budget suite and the generated national Lighthouse matrix
+## measure it, with the recorded national-scoped gaps bounding the real-scale
+## overages honestly.
+check-national-budgets:
+	bash scripts/ci/national_budget_leg.sh fixture
+	bash scripts/ci/national_budget_leg.sh build
+	bash scripts/ci/national_budget_leg.sh budgets
+	bash scripts/ci/national_budget_leg.sh lighthouse
 
 ## Refresh the uv lockfile.
 lock:

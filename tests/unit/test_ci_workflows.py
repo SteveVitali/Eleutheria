@@ -877,7 +877,7 @@ def test_ci_local_mirrors_the_new_gates() -> None:
 #
 # The `web` job must build the site in `SIG_DATA_SOURCE=export` over a REAL
 # from-spine fixture export (the producer runs `run_spine_export` over the
-# seeded tests/db spine), run the island budgets and Lighthouse over that
+# seeded tests/db spine), run the page-type budgets and Lighthouse over that
 # build — including the Round-10 routes `/releases/`, `/research-dossier/` and
 # one archive record — and prove the build fails loud on a broken export
 # input. Any of that removed, or the export input swapped for the web-fixture
@@ -974,7 +974,7 @@ def test_the_web_job_never_feeds_serialized_web_fixtures_to_export_mode() -> Non
 
 
 def test_export_mode_leg_measures_budgets_and_lighthouse_on_the_build() -> None:
-    """DR-C4-13 / SIG-FIND-005: island budgets AND Lighthouse run over the
+    """DR-C4-13 / SIG-FIND-005: page budgets AND Lighthouse run over the
     export-mode dist — after the build, via the leg's dedicated steps."""
     subs = _leg_subcommands()
     for required in ("budgets", "lighthouse"):
@@ -985,8 +985,8 @@ def test_export_mode_leg_measures_budgets_and_lighthouse_on_the_build() -> None:
             f"{required} must run after the export-mode build"
         )
     src = _leg_src()
-    assert "measure-island-budgets.mjs" in src, (
-        "the per-island budgets (ADR-134) must measure the export-mode build"
+    assert "measure-page-budgets.mjs" in src, (
+        "the per-page-type budgets (ADR-155, sig.page-budgets/1) must measure the export-mode build"
     )
     assert "lighthouserc.export.json" in src, (
         "Lighthouse must run over the export-mode build with the export rc"
@@ -1046,6 +1046,124 @@ def test_export_producer_is_the_spine_export_path() -> None:
         assert banned not in src, (
             f"the producer must never shell to the web-fixture serializer (found {banned!r})"
         )
+
+
+# --- P35.51 (SIG-UI-041, SIG-FIND-005, K0 §4.12.6): the national leg --------
+#
+# The deterministic synthetic national fixture is the real-scale state every
+# page-type budget row is measured under: the web job must build it, build
+# the site in `SIG_DATA_SOURCE=national`, run the wire budget suite and the
+# generated national Lighthouse matrix over that build — the same subcommands
+# `check-national-budgets` / `check:perf:national` run locally. Any of that
+# removed turns a test below red.
+
+NATIONAL_LEG = REPO_ROOT / "scripts" / "ci" / "national_budget_leg.sh"
+NATIONAL_RC = WEB / "lighthouserc.national.json"
+NATIONAL_FIXTURE_BUILDER = REPO_ROOT / "scripts" / "ci" / "build_national_fixture.py"
+
+
+def _national_leg_src() -> str:
+    assert NATIONAL_LEG.is_file(), (
+        "scripts/ci/national_budget_leg.sh must exist — the web job's national "
+        "steps dispatch its subcommands and check-national-budgets / "
+        "check:perf:national run the same driver locally"
+    )
+    return NATIONAL_LEG.read_text(encoding="utf-8")
+
+
+def _national_subcommands() -> list[str]:
+    """The national-leg subcommand each web-job step invokes, in step order."""
+    import re
+
+    subs = []
+    for r in _runs(_web_job()):
+        m = re.fullmatch(r"bash scripts/ci/national_budget_leg\.sh ([\w-]+)", r.strip())
+        if m:
+            subs.append(m.group(1))
+        elif "national_budget_leg.sh" in r:
+            subs.append("__unrecognised__")
+    return subs
+
+
+def test_the_web_job_runs_the_national_leg_in_order() -> None:
+    """fixture → build → budgets → lighthouse, every step dispatched to the
+    leg — the real-scale measurement cannot silently drop a stage."""
+    subs = _national_subcommands()
+    assert "__unrecognised__" not in subs, (
+        "a web-job step invokes national_budget_leg.sh with no recognisable "
+        "subcommand — the leg's contract drifted"
+    )
+    assert subs == ["fixture", "build", "budgets", "lighthouse"], (
+        f"the national leg must run fixture → build → budgets → lighthouse, got {subs}"
+    )
+
+
+def test_national_leg_builds_and_measures_in_national_mode() -> None:
+    """The fixture producer is the committed deterministic builder; the build
+    and the wire suite bind SIG_DATA_SOURCE=national (the national-scoped
+    gaps' selection key), and Lighthouse runs the generated national rc."""
+    src = _national_leg_src()
+    assert "build_national_fixture.py" in src, (
+        "the fixture step must run the deterministic synthetic builder"
+    )
+    assert "SIG_DATA_SOURCE=national" in src, (
+        "the national leg must build + measure with SIG_DATA_SOURCE=national — "
+        "without it the national-scoped measured gaps never bind"
+    )
+    assert "budget.spec.ts" in src, "the national leg must run the generalised wire budget suite"
+    assert "lighthouserc.national.json" in src, (
+        "the national leg must run Lighthouse over the generated national rc — "
+        "the base lighthouserc's unscoped assertions would fail the real-scale "
+        "build (or worse, the leg would measure nothing)"
+    )
+
+
+def test_national_leg_is_reachable_locally_by_the_same_commands() -> None:
+    """`make ci-local` reaches `check-national-budgets`, the Makefile target
+    dispatches the same leg subcommands ci.yml runs, and the web package
+    exposes `check:perf:national` as the all-in-one entry."""
+    import json
+
+    text = MAKEFILE.read_text()
+    ci_local = text.split("ci-local:", 1)[1].split("\n\n", 1)[0]
+    assert "check-national-budgets" in ci_local, (
+        "`make ci-local` must reach the national budget leg"
+    )
+    target = text.split("check-national-budgets:", 1)[1].split("\n\n", 1)[0]
+    for sub in ("fixture", "build", "budgets", "lighthouse"):
+        assert f"national_budget_leg.sh {sub}" in target, (
+            f"check-national-budgets must dispatch the leg's {sub} subcommand"
+        )
+    pkg = json.loads((WEB / "package.json").read_text())
+    assert "national_budget_leg.sh all" in pkg["scripts"].get("check:perf:national", ""), (
+        "check:perf:national must run the whole national leg"
+    )
+
+
+def test_the_generated_national_rc_exists_and_matches_the_base_matrix() -> None:
+    """The national twin is generated (never hand-edited), collects the same
+    discovered-route URLs as the base rc, and asserts the same per-type
+    matrix — the national-scoped gaps' bounds may differ, the law may not."""
+    import json
+
+    assert NATIONAL_RC.is_file(), "lighthouserc.national.json must be committed"
+    assert NATIONAL_FIXTURE_BUILDER.is_file()
+    national = json.loads(NATIONAL_RC.read_text())
+    base = json.loads((WEB / "lighthouserc.json").read_text())
+    assert national["ci"]["collect"]["url"] == base["ci"]["collect"]["url"], (
+        "the national rc must collect the same discovered routes as the base rc"
+    )
+    assert national["ci"]["collect"]["numberOfRuns"] == base["ci"]["collect"]["numberOfRuns"]
+    base_blocks = {
+        b["matchingUrlPattern"]: b["assertions"] for b in base["ci"]["assert"]["assertMatrix"]
+    }
+    national_blocks = {
+        b["matchingUrlPattern"]: b["assertions"] for b in national["ci"]["assert"]["assertMatrix"]
+    }
+    assert set(national_blocks) == set(base_blocks), (
+        "the national assert matrix must cover the same route patterns — a "
+        "page type asserted in one mode and not the other is a hidden budget hole"
+    )
 
 
 # --- P35.41a (D1+D2): partitioned pytest + fixture-mode Lighthouse reuse ----
@@ -1238,7 +1356,7 @@ def test_export_mode_lighthouse_is_never_reuse_gated() -> None:
     budgets step before it carry no reuse `if`."""
     for frag in (
         "Lighthouse over the export-mode build",
-        "Island budgets over the export-mode build",
+        "Page-type budgets over the export-mode build",
     ):
         step = _web_step(frag)
         assert "if" not in step, f"`{frag}` must run on every head"

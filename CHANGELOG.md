@@ -24,6 +24,42 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Page-type budgets, generated Lighthouse config, and a
+  deterministic synthetic national fixture** (P35.51 / row 329;
+  R11-K13-UXK0-2; serves SIG-UI-041, SIG-FIND-005, SIG-UI-050,
+  SIG-UI-036; cites ADR-155, K0 §4.3/§4.12, F-173, C4 DR-C4-13)
+  — `web/tests/e2e/page-budgets.json` (`sig.page-budgets/1`) is now
+  the single budget truth, carrying the K0 §4.3 ratified table
+  verbatim per page type and superseding `island-budgets.json` in
+  the same change. `budget.spec.ts` wire-measures every discovered
+  route — gzip AND brotli, before and after one scripted interaction
+  per surface (map pan, graph node-select, search keystroke, T1
+  scroll) — and a run whose interaction produces no observable
+  effect fails. `web/scripts/gen-lhci.mjs` renders
+  `lighthouserc.json`, `lighthouserc.export.json` and the national
+  twin `lighthouserc.national.json` from the registry + budget
+  contract; `npm run check:lhci` fails on drift. The deterministic
+  synthetic national fixture (`scripts/ci/build_national_fixture.py`,
+  seed `20261022`) generates 232,500 sites / 5,200 agencies /
+  405,000 sharing edges with invented names only — an executable
+  real-name guard (F-173) fails the fixture on any real
+  organisation/jurisdiction token — including a spec-valid PMTiles
+  archive (leaf-directory v3 layout for the real-scale index) that
+  the map measures at national zoom. `SIG_DATA_SOURCE=national` is a
+  declared overlay (gitignored `web/national/`): the heavy artifacts
+  come from the fixture, everything else stays on the committed
+  corpus, and a missing artifact fails loud. CI gains the national
+  leg (`scripts/ci/national_budget_leg.sh`; `make
+  check-national-budgets` / `npm run check:perf:national` locally):
+  fixture → national build → wire budget suite → national
+  Lighthouse. Real overages are recorded honestly in
+  `measured_gaps`: the ratified ceiling reports every run, a
+  regression bound gates, and a gap row that outlives the bundle's
+  drop under the ceiling fails as stale — the `/map/` ≈ 497 KB vs
+  ≤ 360 KiB and `/search/` ≈ 72 KB vs ≤ 60 KiB bundles
+  (D-P35.51-1/2) plus the national-scale document/total/first-view/
+  latency overages (D-P35.51-3) are bounded records, never smoothed
+  budgets.
 - **Page-type registry + route discovery — every built route is
   classified T0/T1/T2/T3 or the build fails** (P35.50 / row 328;
   R11-K13-UXK0-1; owner SIG-UI-036/SIG-UI-037; cites ADR-155,

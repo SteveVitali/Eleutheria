@@ -1,0 +1,233 @@
+{
+  "schema": "sig.page-budgets/1",
+  "note": "P35.51 (SIG-UI-041, SIG-FIND-005, ADR-155) — the per-page-type budgets, K0-interactive-architecture §4.3's table verbatim (KiB = 1,024 B). Single budget truth: supersedes island-budgets.json in the same change (recorded seam — the old per-island ceilings retire, the T2 surfaces keep their measured envelopes inside the per-type rows). budget.spec.ts wire-measures every discovered route against these rows — gzip AND brotli, before and after one scripted interaction per surface — and gen-lhci.mjs renders the Lighthouse assertMatrix from the same file. The budgets are the law: raising one, or adding a T2 surface, is a new ADR amending ADR-155, never an edit here.",
+  "units": { "bytes": 1, "KiB": 1024, "MiB": 1048576 },
+  "types": {
+    "T0": {
+      "jsInitialBytes": 0,
+      "jsAfterActionBytes": null,
+      "documentMaxBytes": 153600,
+      "totalInitialMaxBytes": 153600,
+      "dataPerInteraction": null,
+      "lighthousePerformance": 0.95,
+      "lighthouseAccessibility": 1.0,
+      "lcpMs": 1500,
+      "cls": 0.02,
+      "tbtMs": 0,
+      "interactionLatencyMs": null
+    },
+    "T1": {
+      "jsInitialBytes": 20480,
+      "jsAfterActionBytes": 40960,
+      "documentMaxBytes": 153600,
+      "totalInitialMaxBytes": 174080,
+      "dataPerInteraction": { "kind": "per-interaction", "maxBytes": 204800 },
+      "lighthousePerformance": 0.95,
+      "lighthouseAccessibility": 1.0,
+      "lcpMs": 1500,
+      "cls": 0.02,
+      "tbtMs": 50,
+      "interactionLatencyMs": 100
+    },
+    "T3": {
+      "jsInitialBytes": null,
+      "jsAfterActionBytes": null,
+      "documentMaxBytes": null,
+      "totalInitialMaxBytes": null,
+      "dataPerInteraction": null,
+      "lighthousePerformance": null,
+      "lighthouseAccessibility": 1.0,
+      "lcpMs": null,
+      "cls": null,
+      "tbtMs": null,
+      "interactionLatencyMs": null
+    }
+  },
+  "t2Surfaces": {
+    "map": {
+      "jsInitialBytes": 368640,
+      "jsAfterActionBytes": 61440,
+      "documentMaxBytes": 102400,
+      "totalInitialMaxBytes": 460800,
+      "dataPerInteraction": {
+        "kind": "map",
+        "firstViewMaxBytes": 1572864,
+        "perPanZoomMaxBytes": 512000
+      },
+      "lighthousePerformance": 0.75,
+      "lighthouseAccessibility": 1.0,
+      "lcpMs": 2500,
+      "cls": 0.05,
+      "tbtMs": 350,
+      "interactionLatencyMs": 200
+    },
+    "graph": {
+      "jsInitialBytes": 122880,
+      "jsAfterActionBytes": 61440,
+      "documentMaxBytes": 102400,
+      "totalInitialMaxBytes": 256000,
+      "dataPerInteraction": { "kind": "per-interaction", "maxBytes": 204800 },
+      "lighthousePerformance": 0.9,
+      "lighthouseAccessibility": 1.0,
+      "lcpMs": 2000,
+      "cls": 0.05,
+      "tbtMs": 200,
+      "interactionLatencyMs": 200
+    },
+    "search": {
+      "jsInitialBytes": 61440,
+      "jsAfterActionBytes": 40960,
+      "documentMaxBytes": 102400,
+      "totalInitialMaxBytes": 184320,
+      "dataPerInteraction": {
+        "kind": "search",
+        "perKeystrokeMaxBytes": 51200,
+        "perResultPageMaxBytes": 40960
+      },
+      "lighthousePerformance": 0.95,
+      "lighthouseAccessibility": 1.0,
+      "lcpMs": 1500,
+      "cls": 0.02,
+      "tbtMs": 100,
+      "interactionLatencyMs": 100
+    }
+  },
+  "interactions": {
+    "T1": {
+      "kind": "scroll",
+      "description": "one scripted user action (a scroll + a click on an in-page control where one exists). Today no T1 enhancement element ships (t1-module-entries.json is empty), so the post-action measure asserts the ceiling — the row still bounds what any UXK0-4 element may load."
+    },
+    "map": {
+      "kind": "pan",
+      "description": "one scripted pan of the map canvas — measures the per-pan/zoom data budget and any post-action scripts. Effect asserted: the map's rendered state moved (centre or tile requests)."
+    },
+    "graph": {
+      "kind": "select-node",
+      "description": "select a non-focused node — the expansion one ring at a time. Effect asserted: aria-pressed flips to true on the selected node (the same effect islands.spec.ts asserts)."
+    },
+    "search": {
+      "kind": "type-query",
+      "description": "type into the quick filter — measures the keystroke-shard data budget. Effect asserted: the rendered result set narrows."
+    }
+  },
+  "measured_gaps": [
+    {
+      "route": "/map/",
+      "metric": "jsInitialBytes",
+      "ratified_ceiling": 368640,
+      "recorded_measure": 496905,
+      "regression_bound": 524288,
+      "deferral": "D-P35.51-1",
+      "owner": "the map-surface optimisation row (K13 MAP rows)",
+      "note": "the ratified ≤ 360 KiB is LAW — it is not relaxed. Today's /map/ bundle measures 496,905 B gzip (≈ 485 KiB; the duplicated MapLibre worker ADR-155's neutral note records ≈ 497 KB for). The gap is recorded, bounded and loud: budget.spec.ts fails if the measure grows past regression_bound (512 KiB), reports the ratified ceiling every run, and fails if this row stays after the bundle drops under the ratified ceiling. The generated lighthouserc asserts the ratified ceiling as a warn and the regression bound as the error gate for this metric only — the row's fix is the owner's, never a smoothed budget."
+    },
+    {
+      "route": "/map/",
+      "metric": "totalInitialMaxBytes",
+      "ratified_ceiling": 460800,
+      "recorded_measure": 543033,
+      "regression_bound": 589824,
+      "deferral": "D-P35.51-1",
+      "owner": "the map-surface optimisation row (K13 MAP rows)",
+      "note": "same recorded gap, the total-transfer row: the ratified ≤ 450 KiB stands; today's initial transfer measures ≈ 543,033 B gzip including the over-budget script family — bounded at 576 KiB, reported every run, stale-row fails."
+    },
+    {
+      "route": "/map/",
+      "metric": "firstViewMaxBytes",
+      "data_source": "national",
+      "ratified_ceiling": 1572864,
+      "recorded_measure": 3288733,
+      "regression_bound": 3500000,
+      "deferral": "D-P35.51-3",
+      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+      "note": "national-scoped: the first /map/ view at real scale streams ≈ 3.29 MB of archive ranges (16 KiB header + a ~8 KiB leaf directory + four z3 viewport tiles ≈ 3.27 MB) against the ratified ≤ 1.5 MiB first-view data budget. Bounded at 3,500,000 B; the owning row's denser low-zoom tiling restores headroom."
+    },
+    {
+      "route": "/map/",
+      "metric": "interactionLatencyMs",
+      "data_source": "national",
+      "ratified_ceiling": 200,
+      "recorded_measure": 955,
+      "regression_bound": 1200,
+      "deferral": "D-P35.51-3",
+      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+      "note": "national-scoped: toggling the licence-compartment filter on the 1.7 MB national document under 4× CPU throttle measures ≈ 0.95 s to the workspace-state href effect — over the ratified ≤ 200 ms map interaction latency. Bounded at 1200 ms; the compact document the owning row ships restores headroom."
+    },
+    {
+      "route": "/map/",
+      "metric": "documentMaxBytes",
+      "data_source": "national",
+      "ratified_ceiling": 102400,
+      "recorded_measure": 1699236,
+      "regression_bound": 1750000,
+      "deferral": "D-P35.51-3",
+      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+      "note": "national-scoped: at real scale (232,500 invented sites) the /map/ no-JS equivalent — bounded located table (500 rows), coverage-bin strip + table (500 cells), per-jurisdiction no-point indicators — measures ≈ 1.7 MB of document against the ratified ≤ 100 KiB T2 ceiling. The ceiling is LAW: reported every run, bounded at 1,750,000 B, stale-row fails. The fixtures build measures ≈ 29 KB so this row is scoped to the national build — the compact/paginated equivalent is the owner's row, never a smoothed budget."
+    },
+    {
+      "route": "/map/",
+      "metric": "totalInitialMaxBytes",
+      "data_source": "national",
+      "ratified_ceiling": 460800,
+      "recorded_measure": 2215047,
+      "regression_bound": 2250000,
+      "deferral": "D-P35.51-3",
+      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+      "note": "national-scoped: the same document overage drives the total transfer — ≈ 2.2 MB gzip against the ratified ≤ 450 KiB. Bounded at 2,250,000 B under the national build only; the fixtures build's unscoped row still gates."
+    },
+    {
+      "route": "/network/",
+      "metric": "documentMaxBytes",
+      "data_source": "national",
+      "ratified_ceiling": 102400,
+      "recorded_measure": 1770398,
+      "regression_bound": 1800000,
+      "deferral": "D-P35.51-3",
+      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+      "note": "national-scoped: at real scale (6,460 nodes / 405,000 sharing edges) the /network/ static equivalent — bounded edge lists (≤ 100 current + ≤ 100 ended/undated per access kind), bounded path list, the focus-adjacent island prop window (≤ 200 nodes / ≤ 400 edges serialized for hydration), bounded claim-provenance panels over the rendered items — measures ≈ 1.8 MB against the ratified ≤ 100 KiB T2 ceiling. Bounded at 1,800,000 B under the national build; the fixtures build measures ≈ 67 KB."
+    },
+    {
+      "route": "/network/",
+      "metric": "totalInitialMaxBytes",
+      "data_source": "national",
+      "ratified_ceiling": 256000,
+      "recorded_measure": 1851893,
+      "regression_bound": 1900000,
+      "deferral": "D-P35.51-3",
+      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+      "note": "national-scoped: the same document overage drives the total — ≈ 1.9 MB gzip against the ratified ≤ 250 KiB. Bounded at 1,900,000 B under the national build only."
+    },
+    {
+      "route": "/network/",
+      "metric": "interactionLatencyMs",
+      "data_source": "national",
+      "ratified_ceiling": 200,
+      "recorded_measure": 284,
+      "regression_bound": 400,
+      "deferral": "D-P35.51-3",
+      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+      "note": "national-scoped: selecting a node on the 1.8 MB national document under 4× CPU throttle measures ≈ 284 ms to the aria-pressed effect — over the ratified ≤ 200 ms graph-expansion latency. Bounded at 400 ms; the compact document the owning row ships restores headroom."
+    },
+    {
+      "route": "/search/",
+      "metric": "interactionLatencyMs",
+      "data_source": "national",
+      "ratified_ceiling": 100,
+      "recorded_measure": 112,
+      "regression_bound": 200,
+      "deferral": "D-P35.51-3",
+      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+      "note": "national-scoped: one keystroke on the national search document under 4× CPU throttle measures ≈ 112 ms to the narrowed-result effect — marginally over the ratified ≤ 100 ms. Bounded at 200 ms; the fixtures build measures under the ratified ceiling."
+    },
+    {
+      "route": "/search/",
+      "metric": "jsInitialBytes",
+      "ratified_ceiling": 61440,
+      "recorded_measure": 72405,
+      "regression_bound": 81920,
+      "deferral": "D-P35.51-2",
+      "owner": "the K0 runtime-migration row (Preact replaces React on the public surface)",
+      "note": "the ratified ≤ 60 KiB is LAW — today's /search/ measures 72,405 B gzip because the island still runs the React runtime (≈ 66 KiB) the K0 budget assumed replaced by Preact + MiniSearch (≈ 11 KB + app). Recorded, bounded at 80 KiB, reported every run, stale-row fails — the runtime migration is the owner's row, never a smoothed budget."
+    }
+  ]
+}

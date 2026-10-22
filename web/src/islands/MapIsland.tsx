@@ -246,6 +246,11 @@ export default function MapIsland({
       center: [-97.5, 39],
       zoom: 3,
       attributionControl: false,
+      // Tile fade-in re-renders the whole viewport every frame — at national
+      // scale (~10⁵ circles per draw) that animation saturates the main thread
+      // for tens of seconds under load. Instant appearance trades a cosmetic
+      // fade for a responsive map.
+      fadeDuration: 0,
       // Keyboard operability (WCAG 2.2 AA): arrow-pan / +- zoom are on by default;
       // the container is focusable and named below so a keyboard user can drive it.
     });
@@ -430,17 +435,25 @@ export default function MapIsland({
       // Evidence the points actually reached the renderer (the worker loaded + a source
       // tiled) — not merely that MapLibre initialised (P30.3: it once hydrated with 0
       // drawn). A compartment archive that 404s leaves its source featureless, which
-      // reads here as an honest data-drawn="false". This is a RECURRING idle check,
-      // not a one-shot: the first idle can precede a just-added source's tiles being
-      // queryable under load, so the flag only ever latches true when features are
-      // really there.
+      // reads here as an honest data-drawn="false".
+      //
+      // The check is `isSourceLoaded`, not a `querySourceFeatures` feature scan: a
+      // feature query materialises every feature in every loaded tile — O(10⁵) at
+      // national scale per call, on a listener that refires each idle — which
+      // saturates the main thread for minutes under CPU throttle. Source-loaded is
+      // the O(1) honest signal: the archive's TileJSON parsed and its tiles are
+      // streaming (a 404/malformed archive never reports loaded); whether any
+      // compartment carries features is the export gate's job, not a per-idle
+      // renderer audit. The check is RECURRING — the first idle can precede a
+      // just-added source's tiles — but unregisters on the first positive latch.
       const checkDrawn = () =>
-        drawnSourceIds.some(
-          (id) => map.getSource(id) && map.querySourceFeatures(id).length > 0,
-        );
-      map.on("idle", () => {
-        if (checkDrawn()) setDrawn(true);
-      });
+        drawnSourceIds.some((id) => map.getSource(id) && map.isSourceLoaded(id));
+      const onIdle = () => {
+        if (!checkDrawn()) return;
+        map.off("idle", onIdle);
+        setDrawn(true);
+      };
+      map.on("idle", onIdle);
     });
 
     return () => {
