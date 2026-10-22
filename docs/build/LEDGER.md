@@ -9,10 +9,10 @@
 
 <!-- Values only (BM-LEDGER-02/08): key lines ≤ 256 B; `returnPass:` rides B3 V2 (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus: IN_PROGRESS # P35.46 landed (325); P35.41 live leg + P35.46 ER leg still QUEUED
-nextTicket: P35.47 # row 326
-lastCompleted: P35.46 # row 325
-blockedOn: (nothing) # #345@45f2feb CI 5/5 green
+projectStatus: IN_PROGRESS # P35.47 landed (326); P35.41 live leg + P35.46 ER leg still QUEUED
+nextTicket: P35.48 # row 327
+lastCompleted: P35.47 # row 326
+blockedOn: (nothing) # #346@e66dd8d CI 5/5 green
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.57,P35.67,P36.12
 manifest: docs/tickets/00_MANIFEST.md
@@ -22,13 +22,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P35.46-derivation-collapse-and-possible-duplicates-v2 # base r11/P35.45-…
+chainTip: r11/P35.47-publish-the-dedup # base r11/P35.46-…-v2
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent # restored 20:55Z post Opus-repair (STACK-CARRY-1)
-updatedAt: 2026-10-22T02:54Z
+updatedAt: 2026-10-22T05:34Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1168,3 +1168,5 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-22 — P35.46 done — `ci: pass #345@45f2feb` 5/5 head-bound (run 39711724866; `reports/ci/p35_46_pr345.json` — stack #343…#325 pass, no waived red) · row 325 — derivation collapse + possible duplicates (ruleset v3): C0 `duplicate_target` / C1 `namespaced_copy` / C2 `position_matched_copy` collapse under declared lineage; every inferential match a review-only `possible_duplicate` (distance + reason + both site ids, never merged); `derived_from` links carry the shared `site_id`; `same_as` only B5-certified/human-accepted; `merged_into` never written; GQ-25 origin-distinct union refusal; GQ-23 `derivation_census` per run → `camera_site_demotion` run-key inputs; axis-swap gate; `count_intervals` (SIG-CONF-D05) + M-1b seeded frame + Clopper–Pearson bound · sqitch `camera_site_derivation` append-only (revert refuses v3 rows; SELECT/INSERT) · detail `runs/P35.46.md` + `pr/P35.46.md` · heads verbatim `runs/P35.46.md` · tests/resolution 545 + tests/db 722; `make check` 10,097/4 recorded-environmental · **ER leg QUEUED** under OM-19 (AR-3 closed at verify) · record repair: PR #344 tip poisoned (untrailered impl commit + range-judged record flags; r11 non-FF unclears per-commit flags — RELAND-AUDIT-1 class) → identical tree re-recorded on -v2 → PR #345; #344 stays historical, never merged · no production mutation · chainTip → r11/P35.46-…-v2 · next → P35.47 (326) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-22 — P35.46 post-closeout record — `ci: pass #345@26ea762` 5/5 head-bound (run 39714878665: python 18m47s / docs 1m54s / composed 12m33s / web 20m13s; security pass 34s on the one B-15 re-run — NPM-AUDIT-503-1 registry 503 on the advisories-bulk endpoint, exit-5 vacuous refusal, `flake_log` attempt 2; `logs/ci-P35.46-head2.json`; stack #343…#325 pass) · pushed heads verbatim: `45f2febb` record head green → `77362944` closeout records (docs-red: SIG-CONF-004 re-route owed + a lint assert word → `e12e5227` repair + `26ea762d` regen; security-red npm 503 → flake entry + re-run green) · closeout `77362944` carried CURRENT STATE advance + BUILD_INDEX row 325 + the closed ledger · record-repair arc: PR #344 superseded by #345 on -v2, #344 stays historical (never merged) · chainTip → r11/P35.46-…-v2 · next → P35.47 (326) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-22 — P35.47 dispatch boundary-confirm — `ci: pass #345@434cea8` 5/5 head-bound (run 39717295573; `reports/ci/p35_46_pr345.json` + `/tmp/p35_46_pr345_confirm.json` re-read) · stack #343…#325 pass, main `1aa6958` descends:no, open-other:1 (#344 — superseded per RELAND-AUDIT-1, do-not-merge posted) · P35.46 record repair complete on -v2: `df1f2dd5` re-record under `## Correction`, DEFERRALS cell verbatim, identical tree `b97dad56` · ER-run leg QUEUED OM-19 · dispatching P35.47 (326 — publish the dedup: site_id/copies[]/possible_duplicates[]/intervals; `live_verification=false`, not OM-20, gate D-K13-4 [B-26] recorded) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-22 — P35.47 correction — the #346@e66dd8d boundary read returned `blockedOn: CI stack on #346@e66dd8d (external): off-stack merge #336 (`docs/operator-signed-gate-records` → `main`) into main at 2026-10-22T04:07:13Z — not a chain row (since 2026-10-16)` (ci_boundary 05:25:45Z, `reports/ci/p35_47_pr346.json`) — the operator's docs merge to main landed mid-run after the dispatch confirm; recorded verbatim, external operator work, not a chain defect. The merge window had been anchored at the main `## PHASE LOG — Round 11` region's last entry (10-16, P35.4) ever since the `corrections` tail became the append target — `last_boundary` scanned only the first matching region, so no recorded entry could move the window (the P34.15/P34.31 anchor mechanic was inert); repaired to anchor on the newest entry across every matching Round-11 region (+ regression test in `test_ci_boundary.py`). This entry anchors the merge window forward per the P34.15/P34.31/P34.32/PLAN-11B precedent · chainTip → r11/P35.47-publish-the-dedup · next → P35.47 closeout · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-22 — P35.47 done — `ci: pass #346@e66dd8d` 5/5 head-bound (run 39725887368; `reports/ci/p35_47_pr346.json` — stack #345…#338 pass, no waived red) · row 326 — publish the dedup: one shared `DedupView` over the latest completed ER run drives every surface — one sites row per post-collapse record, `site_id` on every row, C0/C1/C2/`same_as` copies nested `copies[]` (basis + verbatim display), inferential pairs `possible_duplicates[]` (distance+reason, never merged), same-layer `multi_view`, `n_independent_lineages`; SIG-CONF-005 intervals via the dep's own `count_bounds` — national metric, `web/map.json`, dossier totals/rollup + `listed_cameras` figure, `<comp>/count_interval.json`; measured inflation vs lineage roots beside the ≤1.02 ratchet; `eval_gq10` wired; `merged_into` never written · detail + heads verbatim `runs/P35.47.md` · `make check` 10,120/4 recorded-environmental · no production mutation — public effect rides P35.63's HG-11 leg (D-K13-4 verbatim) · heads `733d5809` impl → `e66dd8df` repair+regen · first boundary read `blockedOn (external)` off-stack merge #336 recorded verbatim + `last_boundary` region-anchor repaired (see correction entry below) · chainTip → r11/P35.47-… · next → P35.48 (327) · harness: devin-desktop/swe-2-high/subagent

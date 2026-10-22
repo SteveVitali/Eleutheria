@@ -1264,11 +1264,15 @@ def last_boundary(ledger: str) -> str:
     The latest `## PHASE LOG — Round 11` entry's leading date, refined to a full
     ISO instant when the entry names one (`ci_boundary 22:18:48Z`); the date alone
     when it does not. An empty/absent section gives an empty string and the merge
-    scan is skipped."""
-    section = re.search(r"(?ms)^##\s+PHASE LOG — Round 11\b[^\n]*$(.*?)(?=^##\s|\Z)", ledger)
-    if not section:
-        return ""
-    entries = re.findall(r"(?m)^\s*-\s*(\d{4}-\d{2}-\d{2}[^\n]*)$", section.group(1))
+    scan is skipped. The Round-11 log is split into sibling regions (the main
+    `… Round 11` section and the `… Round 11 corrections` tail); entries land in
+    whichever region is the current append target, so the newest entry across
+    every matching region anchors the window — not just the first section's."""
+    entries: list[str] = []
+    for section in re.finditer(
+        r"(?ms)^##\s+PHASE LOG — Round 11\b[^\n]*$(.*?)(?=^##\s|\Z)", ledger
+    ):
+        entries += re.findall(r"(?m)^\s*-\s*(\d{4}-\d{2}-\d{2}[^\n]*)$", section.group(1))
     if not entries:
         return ""
     stamp = re.search(r"ci_boundary\s+(\d{2}:\d{2}:\d{2}Z)", entries[-1])
