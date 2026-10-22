@@ -35,13 +35,16 @@ from resolution.camera_sites import (
     CameraSiteRules,
     HumanItem,
     HumanVote,
+    LineageDeclaration,
     PairAssessment,
     TierMeasurement,
     assess_pairs,
+    clopper_pearson_lower,
     cluster_decisions,
     cluster_summary,
     decide_auto_write_tiers,
     declared_device_class,
+    derivation_census,
     device_class,
     device_class_findings,
     direction_bearing,
@@ -156,7 +159,7 @@ def test_same_source_is_never_merged_transitively_through_a_cluster() -> None:
     # a(s1) ~ b(s2) and b(s2) ~ c(s1) would put two s1 records into one site.
     recs = [_rec("a", "s1"), _rec("b", "s2", 0.3), _rec("c", "s1", 0.6)]
     decisions, clusters, _ = cluster_decisions(
-        [_pa("a", "b", 3, 0.3), _pa("b", "c", 3, 0.3)], recs, auto_write_tiers={3}, rules=RULES
+        [_pa("a", "b", 2, 0.3), _pa("b", "c", 2, 0.3)], recs, auto_write_tiers={2}, rules=RULES
     )
     by = {(d.left, d.right): d for d in decisions}
     assert [d.disposition for d in decisions].count("auto_write") == 1
@@ -280,7 +283,12 @@ def test_a_soft_conflict_can_never_auto_write(left_kw, right_kw, conflict) -> No
     recs = [_rec("a", "s1", **left_kw), _rec("b", "s2", 0.3, **right_kw)]
     (p,) = assess_pairs(recs)
     assert p.tier == 3 and conflict in p.soft_conflicts
-    decisions, clusters, _ = cluster_decisions([p], recs, auto_write_tiers={1, 3}, rules=RULES)
+    # The same pair assessed at a collapse tier still cannot auto-collapse:
+    # a soft conflict routes it to a possible_duplicate whatever its tier.
+    collapse = replace(p, tier=1, tier_label=RULES.label(1))
+    decisions, clusters, _ = cluster_decisions(
+        [collapse], recs, auto_write_tiers={1, 2}, rules=RULES
+    )
     assert decisions[0].disposition == "proposed"
     assert decisions[0].reason == f"soft_conflict:{conflict}"
     assert clusters["a"] != clusters["b"]
@@ -418,35 +426,42 @@ def test_gq11_findings_disclose_undeclared_and_cross_declared_copies() -> None:
 # --- tiers --------------------------------------------------------------------------
 
 
-def test_tiers_shared_ref_coincident_proximate_and_discard() -> None:
-    # P35.25 NEW-1: the shared upstream id is evidence only inside ONE declared
-    # namespace — both records declare ``t.upstream`` here.
+def test_tiers_c1_copy_coincident_proximate_and_discard() -> None:
+    # Ruleset v3 (P35.46): C1 needs ONE declared copy lineage plus the shared
+    # namespaced id within copy_tolerance_m; everything inferential is a P
+    # tier. Both sources are DECLARED to the ``t.upstream`` lineage here.
     recs = [
         _rec("a1", "s1", external_ref="51", id_namespace="t.upstream"),
         _rec(
-            "a2", "s2", 3, external_ref="51.0", id_namespace="t.upstream"
-        ),  # shared upstream id, one-to-one within 5 m
+            "a2", "s2", 0.5, external_ref="51.0", id_namespace="t.upstream"
+        ),  # shared upstream id in a declared copy lineage -> C1
         _rec("b1", "s1", 1000),
-        _rec("b2", "s2", 1000.4),  # coincident, one-to-one
+        _rec("b2", "s2", 1000.4),  # coincident, one-to-one -> P3
         _rec("c1", "s1", 2000),
-        _rec("c2", "s2", 2012),  # 12 m, mutual nearest, unique
+        _rec("c2", "s2", 2012),  # 12 m, mutual nearest, unique -> P4
         _rec("d1", "s1", 3000),
-        _rec("d2", "s2", 3045),  # 45 m, no ref: mutual nearest -> tier 5 (review)
+        _rec("d2", "s2", 3045),  # 45 m, no ref: mutual nearest -> P5
         _rec("e1", "s1", 4000),
         _rec("e2", "s3", 4400),  # 400 m apart: not a candidate
     ]
-    got = {k: p.tier for k, p in _by_key(assess_pairs(recs)).items()}
+    declared = {"s1": "t.upstream", "s2": "t.upstream"}
+    got = {k: p.tier for k, p in _by_key(assess_pairs(recs, declared=declared)).items()}
     assert got == {("a1", "a2"): 1, ("b1", "b2"): 3, ("c1", "c2"): 4, ("d1", "d2"): 5}
+    # The identical evidence with NO declared lineage is inferential — never C1.
+    undeclared = {k: p.tier for k, p in _by_key(assess_pairs(recs)).items()}
+    assert undeclared[("a1", "a2")] == 3
 
 
-def test_a_distant_shared_ref_needs_agreeing_descriptions() -> None:
-    # 30 m apart with a shared row number: not one-to-one within 5 m, so only an agreeing
-    # site description makes it the deterministic tier.
+def test_a_shared_ref_beyond_copy_tolerance_is_always_a_possible_duplicate() -> None:
+    # Ruleset v3: 30 m exceeds copy_tolerance_m (1 m), so a shared namespaced id
+    # cannot collapse even inside a declared copy lineage with agreeing site
+    # descriptions — the pair is a proximate possible duplicate.
+    declared = {"s1": "t.upstream", "s2": "t.upstream"}
     unnamed = [
         _rec("f1", "s1", external_ref="9", id_namespace="t.upstream"),
         _rec("f2", "s2", 30, external_ref="9", id_namespace="t.upstream"),
     ]
-    assert {p.tier for p in assess_pairs(unnamed)} == {5}
+    assert {p.tier for p in assess_pairs(unnamed, declared=declared)} == {5}
     named = [
         _rec("g1", "s1", external_ref="9", name="I-84 at 28th", id_namespace="t.upstream"),
         _rec(
@@ -458,7 +473,7 @@ def test_a_distant_shared_ref_needs_agreeing_descriptions() -> None:
             id_namespace="t.upstream",
         ),
     ]
-    assert {p.tier for p in assess_pairs(named)} == {1}
+    assert {p.tier for p in assess_pairs(named, declared=declared)} == {5}
 
 
 def test_colocated_devices_are_never_coincident_tier() -> None:
@@ -468,8 +483,12 @@ def test_colocated_devices_are_never_coincident_tier() -> None:
     assert tiers[("a", "b")] == 5 and tiers[("a", "c")] == 5
 
 
-def test_shared_ref_needs_mutual_nearest_and_disambiguation_when_colocated() -> None:
-    # s1 lists three devices at one point; s2's row shares a number with one of them.
+def test_a_shared_namespaced_id_says_which_co_located_device_a_copy_is() -> None:
+    # Ruleset v3: s1 lists three devices at one point; the mirror's row carries
+    # ref 273 — the publisher's OWN identifier says which device it copies
+    # (unique in each capture), so inside a declared copy lineage the pair is a
+    # C1 collapse. The site-name difference is recorded as an attribute
+    # difference on the link, never silently reconciled.
     base = [
         _rec(
             "x",
@@ -491,11 +510,20 @@ def test_shared_ref_needs_mutual_nearest_and_disambiguation_when_colocated() -> 
         name="SH20B Waokauri Creek",
         id_namespace="t.upstream",
     )
-    tiers = {k: p.tier for k, p in _by_key(assess_pairs([*base, *others, mirror])).items()}
-    assert tiers[("w", "x")] != 1  # names disagree and the point is ambiguous
-    agreeing = replace(mirror, name="SH20B Puhinui Rd West")
-    tiers2 = {k: p.tier for k, p in _by_key(assess_pairs([*base, *others, agreeing])).items()}
-    assert tiers2[("w", "x")] == 1
+    declared = {"s1": "t.upstream", "s2": "t.upstream"}
+    by = _by_key(assess_pairs([*base, *others, mirror], declared=declared))
+    assert by[("w", "x")].tier == 1
+    assert by[("w", "x")].evidence["copy_checks"]["unique_in_captures"] is True
+    assert "name" in by[("w", "x")].evidence["attribute_differences"]
+    # Without the declared copy lineage the same evidence is a P tier — the
+    # ambiguous point keeps every inferential match a possible duplicate.
+    undeclared = _by_key(assess_pairs([*base, *others, mirror]))
+    assert undeclared[("w", "x")].tier != 1
+    # And a ref that is NOT unique in the origin's own capture never collapses:
+    # the census would see two rows under one id.
+    dup = replace(others[0], external_ref="273")
+    duped = _by_key(assess_pairs([*base, dup, others[1], mirror], declared=declared))
+    assert duped[("w", "x")].tier != 1
 
 
 def test_primitive_features() -> None:
@@ -580,12 +608,14 @@ def test_a_tier_auto_writes_only_when_its_measured_holdout_clears_the_floor() ->
     recs = [_rec("a", "s1"), _rec("b", "s2", 0.3), _rec("c", "s1", 500), _rec("d", "s2", 500.2)]
     good = _gold({("a", "b"): GoldLabel.MATCH})
     r = resolve_camera_sites(recs, gold=good, threshold=0.98, rules=ONE_PAIR, certified_tiers=CERT3)
-    assert r.auto_write_tiers == {3}
+    # Tier 1 is always in `auto` — the collapse tiers ride the ADR-L3-B census
+    # waiver (Q-L3-1 = a); the certified inferential tier 3 joins it.
+    assert r.auto_write_tiers == {1, 3}
     assert r.observation_count == 4 and r.cluster_count == 2
     assert r.dedup_ratio == pytest.approx(0.5)
     bad = _gold({("a", "b"): GoldLabel.NOT_ENOUGH_INFORMATION})
     r2 = resolve_camera_sites(recs, gold=bad, threshold=0.98, rules=ONE_PAIR)
-    assert r2.auto_write_tiers == frozenset()
+    assert r2.auto_write_tiers == {1}  # the waived collapse tier; tier 3 demotes
     assert r2.cluster_count == r2.observation_count == 4  # an honest N = M
     assert {d.disposition for d in r2.decisions} == {"proposed"}
 
@@ -639,8 +669,8 @@ def test_a_direction_change_moves_the_run_and_its_decision() -> None:
 def test_a_chain_strung_along_a_road_is_refused_and_alerted() -> None:
     # Five records 20 m apart along a road, each hop a plausible same-device edge.
     recs = [_rec(f"r{i}", f"s{i}", i * 20.0) for i in range(5)]
-    chain = [_pa(f"r{i}", f"r{i + 1}", 3, 20.0) for i in range(4)]
-    decisions, clusters, _ = cluster_decisions(chain, recs, auto_write_tiers={3}, rules=RULES)
+    chain = [_pa(f"r{i}", f"r{i + 1}", 2, 20.0) for i in range(4)]
+    decisions, clusters, _ = cluster_decisions(chain, recs, auto_write_tiers={2}, rules=RULES)
     # the span constraint stops the chain growing past one device's footprint
     assert any(d.reason == "cluster_constraint:max_span" for d in decisions)
     members: dict[str, list[str]] = {}
@@ -658,11 +688,11 @@ def test_a_chain_strung_along_a_road_is_refused_and_alerted() -> None:
 def test_an_alerted_cluster_is_demoted_to_review() -> None:
     loose = replace(RULES, max_span_m=10_000.0, max_size=100)
     recs = [_rec(f"r{i}", f"s{i}", i * 30.0) for i in range(4)]
-    chain = [_pa(f"r{i}", f"r{i + 1}", 3, 30.0) for i in range(3)]
+    chain = [_pa(f"r{i}", f"r{i + 1}", 2, 30.0) for i in range(3)]
     strict = replace(loose, max_span_m=50.0)
     # clustering under the loose constraint, alerting under the strict one
     decisions, clusters, alerts = cluster_decisions(
-        chain, recs, auto_write_tiers={3}, rules=replace(strict, max_span_m=10_000.0)
+        chain, recs, auto_write_tiers={2}, rules=replace(strict, max_span_m=10_000.0)
     )
     assert all(d.disposition == "auto_write" for d in decisions)
     by_id = {r.subject_id: r for r in recs}
@@ -676,13 +706,13 @@ def test_a_single_bridge_join_is_demoted_inside_clustering() -> None:
     # cluster to review and return its members to singletons.
     recs = [_rec(k, f"s-{k}", i * 1.5) for i, k in enumerate("abcdef")]
     edges = [
-        _pa("a", "b", 3, 1.5),
-        _pa("a", "c", 3, 3.0),
-        _pa("d", "e", 3, 1.5),
-        _pa("d", "f", 3, 3.0),
-        _pa("a", "d", 3, 4.5),  # the bridge
+        _pa("a", "b", 2, 1.5),
+        _pa("a", "c", 2, 3.0),
+        _pa("d", "e", 2, 1.5),
+        _pa("d", "f", 2, 3.0),
+        _pa("a", "d", 2, 4.5),  # the bridge
     ]
-    decisions, clusters, alerts = cluster_decisions(edges, recs, auto_write_tiers={3}, rules=RULES)
+    decisions, clusters, alerts = cluster_decisions(edges, recs, auto_write_tiers={2}, rules=RULES)
     assert any(a.kind == "single_bridge_join" for a in alerts)
     assert {d.disposition for d in decisions} == {"proposed"}
     assert {d.reason for d in decisions} == {"cluster_shape_alert"}
@@ -784,7 +814,7 @@ def test_llm_labels_are_reported_as_sensitivity_but_never_gate() -> None:
         rules=ONE_PAIR,
         certified_tiers=CERT3,
     )
-    assert r.auto_write_tiers == {3}
+    assert r.auto_write_tiers == {1, 3}  # waived C1 + the certified inferential tier
     assert r.tier_measurements_llm_labels[3].precision_strict == 0.0
     s = r.summary()
     assert s["tier_measurements"]["3"]["precision_strict"] == 1.0
@@ -968,7 +998,7 @@ def test_an_accept_violating_constraint_a_is_recorded_refused_never_applied() ->
     (d,) = r.decisions
     assert d.disposition == "refused"
     assert d.reason == "human_refused:cluster_constraint:same_source"
-    assert d.decided_by == "curator:kim" and d.relation == "same_as"
+    assert d.decided_by == "curator:kim" and d.relation == "possible_duplicate"
     assert r.clusters["a"] != r.clusters["b"]
     hr = r.summary()["human_review"]
     assert hr["accepts"] == 1 and hr["accept_edges_refused"] == 1
@@ -1083,9 +1113,12 @@ def test_identical_captured_content_makes_the_same_row_one_record() -> None:
     assert r.cluster_count == 1 and r.clusters["a"] == r.clusters["b"]
     (d,) = r.decisions
     assert d.disposition == "auto_write" and d.assessment.tier == 0
-    assert d.assessment.tier_label == "0:duplicate_target_of"
+    assert d.assessment.tier_label == "C0:duplicate_target"
     ev = d.assessment.evidence
     assert ev["identical_capture_digests"] == ["h2"]
+    # P35.46: the collapse is stamped as a derivation link carrying the shared
+    # site id — never an identity merge.
+    assert ev["link_kind"] == "derived_from" and ev["site_id"] == r.clusters["a"]
     s = r.summary()
     assert s["duplicate_target_groups"] == 1 and s["duplicate_target_records"] == 2
 
@@ -1170,7 +1203,7 @@ def test_review_item_args_tolerate_non_matcher_evidence() -> None:
     )
     item_id, _summary, _conf, payload = _review_args(r, proposed_dup)
     assert item_id == f"er_match:camera_site:{a.subject_id}:{b.subject_id}"
-    assert '"rule": "0:duplicate_target_of"' in payload
+    assert '"rule": "C0:duplicate_target"' in payload
 
     # a human conflict on a pair that was never a candidate (decided via a
     # routed-back item) materializes a conflict review item, not a crash.
@@ -1214,3 +1247,246 @@ def test_rules_digest_is_process_stable() -> None:
     assert _rules_digest(rules2) == _rules_digest(rules)
     changed = replace(rules, coincident_m=rules.coincident_m + 1.0)
     assert _rules_digest(changed) != _rules_digest(rules)
+
+
+# --- P35.46: ruleset v3 — derivation links, census, intervals, m-1b ------------------
+
+
+def _declared_copy(*sources: str, lineage: str = "L.copy", evidence: str = "doc"):
+    declared = {s: lineage for s in sources}
+    details = {
+        s: LineageDeclaration(
+            independence_class=lineage,
+            kind="mirror" if i else "primary",
+            evidence=evidence,
+        )
+        for i, s in enumerate(sources)
+    }
+    return declared, details
+
+
+def test_c1_collapse_stamps_a_derivation_link_and_passes_census() -> None:
+    declared, details = _declared_copy("s1", "s2")
+    recs = [
+        _rec("a", "s1", external_ref="273", id_namespace="t.up", target_id="t1"),
+        _rec("b", "s2", 0.3, external_ref="273", id_namespace="t.up", target_id="t1"),
+    ]
+    res = resolve_camera_sites(
+        recs,
+        gold=None,
+        threshold=0.98,
+        rules=RULES,
+        declared_lineages=declared,
+        declared_details=details,
+    )
+    (d,) = res.decisions
+    assert (d.disposition, d.assessment.tier, d.relation) == (
+        "auto_write",
+        1,
+        "derived_from",
+    )
+    ev = d.assessment.evidence
+    assert ev["link_kind"] == "derived_from" and ev["rule"] == "C1:namespaced_copy"
+    assert ev["site_id"] == res.clusters["a"] == res.clusters["b"]
+    assert ev["lineage_ids"] == ["L.copy", "L.copy"]
+    assert res.derivation_census is not None
+    assert res.derivation_census.checked == 1 and res.derivation_census.failures == ()
+    assert res.derivation_census.demote_next_run == ()
+    # Both records collapse at every bound: lower == upper == the resolved count.
+    assert res.count_intervals["national"] == {"lower": 1, "upper": 1}
+    frame = res.m1b_frame
+    assert frame["t.up"]["collapses"] == 1 and frame["t.up"]["sample"]
+
+
+def test_every_inferential_match_is_a_possible_duplicate_never_merged() -> None:
+    # No declared lineage → the coincident unique pair is inferential (P3): a
+    # review-only possible_duplicate the site count never merges.
+    res = resolve_camera_sites(
+        [_rec("a", "s1"), _rec("b", "s2", 0.3)], gold=None, threshold=0.98, rules=RULES
+    )
+    (d,) = res.decisions
+    assert (d.disposition, d.assessment.tier, d.relation) == (
+        "proposed",
+        3,
+        "possible_duplicate",
+    )
+    assert d.reason == "possible_duplicate:inferential"
+    basis = d.assessment.evidence["basis"]
+    assert "not merged" in basis and "possible duplicate" in basis
+    assert res.clusters["a"] != res.clusters["b"]
+    # The pair sits inside the declared distance bound (25 m) → the lower bound
+    # collapses it even though the run never merges it.
+    assert res.count_intervals["national"] == {"lower": 1, "upper": 2}
+
+
+def test_a_possible_duplicate_beyond_the_declared_bound_does_not_lower_the_count() -> None:
+    res = resolve_camera_sites(
+        [_rec("a", "s1"), _rec("b", "s2", 45.0)], gold=None, threshold=0.98, rules=RULES
+    )
+    (d,) = res.decisions
+    assert (d.disposition, d.assessment.tier) == ("proposed", 5)  # proximate candidate
+    assert res.count_intervals["national"] == {"lower": 2, "upper": 2}
+
+
+def test_c2_position_matched_copy_collapses_under_a_documented_measured_lineage() -> None:
+    # A documented mirror whose rows coincide 1:1 with the upstream: C2 fires.
+    declared, details = _declared_copy("dot", "mirror")
+    upstream = [_rec(f"u{i}", "dot", i * 200.0) for i in range(25)]
+    copies = [_rec(f"m{i}", "mirror", i * 200.0 + 0.2) for i in range(25)]
+    assessments = assess_pairs(upstream + copies, declared=declared, declared_details=details)
+    (p,) = [a for a in assessments if {a.left, a.right} == {"u0", "m0"}]
+    assert p.tier == 2 and p.evidence["copy_checks"]["measured_overlap"] >= 0.9
+    res = resolve_camera_sites(
+        upstream + copies,
+        gold=None,
+        threshold=0.98,
+        rules=RULES,
+        declared_lineages=declared,
+        declared_details=details,
+    )
+    d = next(x for x in res.decisions if {x.left, x.right} == {"u0", "m0"})
+    assert (d.disposition, d.relation) == ("auto_write", "derived_from")
+    assert res.derivation_census is not None
+    assert res.derivation_census.checked == 25 and res.derivation_census.failures == ()
+
+
+def test_c2_needs_a_bijection() -> None:
+    # One mirror record duplicated at the same point: the pair is no longer a
+    # 1:1 copy → the C2 gate falls back to a possible duplicate.
+    declared, details = _declared_copy("dot", "mirror")
+    recs = (
+        [_rec("u", "dot"), _rec("m1", "mirror", 0.2), _rec("m2", "mirror", 0.4)]
+        + [_rec(f"u{i}", "dot", i * 200.0) for i in range(3, 25)]
+        + [_rec(f"m{i}", "mirror", i * 200.0 + 0.2) for i in range(3, 25)]
+    )
+    assessments = assess_pairs(recs, declared=declared, declared_details=details)
+    p = next(a for a in assessments if {a.left, a.right} == {"u", "m1"})
+    assert p.tier in RULES.inferential_tiers  # an inferential P, never a collapse
+    assert p.evidence["copy_checks"]["bijective_within_colocation"] is False
+
+
+def test_c2_disabled_demotes_the_pair_to_a_possible_duplicate() -> None:
+    declared, details = _declared_copy("dot", "mirror")
+    rules = replace(RULES, c2_enabled=False)
+    upstream = [_rec(f"u{i}", "dot", i * 200.0) for i in range(25)]
+    copies = [_rec(f"m{i}", "mirror", i * 200.0 + 0.2) for i in range(25)]
+    assessments = assess_pairs(
+        upstream + copies, rules=rules, declared=declared, declared_details=details
+    )
+    assert all(a.tier != 2 for a in assessments)
+
+
+def test_census_failure_demotes_the_lineage_and_the_next_run_stays_a_possible_duplicate() -> None:
+    # GQ-23: a collapsed edge that fails re-verification (the shared ref is not
+    # unique in the capture) is disclosed AND demoted for the next run.
+    recs = [
+        _rec("a", "s1", external_ref="9", id_namespace="n", target_id="t"),
+        _rec("a2", "s1", 400.0, external_ref="9", id_namespace="n", target_id="t"),
+        _rec("b", "s2", 0.3, external_ref="9", id_namespace="n", target_id="t"),
+    ]
+    pa = replace(
+        _pa("a", "b", 1),
+        evidence={
+            "distance_m": 0.5,
+            "lineage_ids": ["L", "L"],
+            "id_namespaces": ["n", "n"],
+            "rule": "C1:namespaced_copy",
+        },
+    )
+    decisions, _, _ = cluster_decisions(
+        [pa], recs, auto_write_tiers=RULES.collapse_tiers, rules=RULES
+    )
+    (d,) = decisions
+    assert d.disposition == "auto_write"
+    census = derivation_census(
+        recs,
+        decisions,
+        {"a": "sA", "b": "sB", "a2": "sA2"},
+        RULES,
+        lineages={"s1": "L", "s2": "L"},
+        copy_lineages={"L"},
+        documented_lineages={"L"},
+    )
+    assert census.checked == 1 and len(census.failures) == 1
+    assert "ref_not_unique_in_captures" in census.failures[0].reason
+    assert census.demote_next_run == (("L", 1),)
+    # The consumed demotion stops the collapse in the next run — the same pair
+    # is proposed as a possible_duplicate (never merged, the failure visible).
+    decisions2, clusters2, _ = cluster_decisions(
+        [pa],
+        recs,
+        auto_write_tiers=RULES.collapse_tiers,
+        rules=RULES,
+        demoted_collapses=[("L", 1)],
+    )
+    (d2,) = decisions2
+    assert d2.disposition == "proposed"
+    assert d2.reason == "possible_duplicate:census_demoted"
+    assert d2.relation == "possible_duplicate"
+    assert clusters2["a"] != clusters2["b"]
+
+
+def test_gq25_origin_distinctness_refuses_the_union() -> None:
+    # Two records the publisher names different ids in the SAME declared
+    # namespace can never collapse into one site — the union is refused and
+    # (if one slips through) the census counts it, disclosed never reconciled.
+    recs = [
+        _rec("a", "s1", external_ref="A", id_namespace="n"),
+        _rec("b", "s2", 0.3, external_ref="B", id_namespace="n"),
+    ]
+    pa = _pa("a", "b", 2)
+    decisions, clusters, _ = cluster_decisions([pa], recs, auto_write_tiers={2}, rules=RULES)
+    (d,) = decisions
+    assert d.reason == "cluster_constraint:origin_distinct"
+    assert d.relation == "possible_duplicate"
+    assert clusters["a"] != clusters["b"]
+    # The pure census reports any union that slipped through anyway.
+    d2 = replace(d, disposition="auto_write", relation="derived_from")
+    census = derivation_census(
+        recs,
+        [d2],
+        {"a": "sX", "b": "sX"},
+        RULES,
+        lineages={"s1": "L", "s2": "L"},
+    )
+    assert census.origin_distinct_violations == 1
+
+
+def test_an_axis_swap_suspected_point_is_never_a_collapse_input() -> None:
+    declared, details = _declared_copy("s1", "s2")
+    bad = _rec("a", "s1", external_ref="1", id_namespace="n", geometry_defects=("axis_swap",))
+    good = _rec("b", "s2", 0.3, external_ref="1", id_namespace="n")
+    assessments = assess_pairs([bad, good], declared=declared, declared_details=details)
+    assert assessments[0].tier != 1
+    assert assessments[0].evidence["copy_checks"]["axis_swap_suspected"] is True
+    # The recorded correction resolves the flag: the C1 collapse fires again.
+    fixed = replace(bad, coordinate_correction="axis_swap")
+    assessments = assess_pairs([fixed, good], declared=declared, declared_details=details)
+    assert assessments[0].tier == 1
+
+
+def test_clopper_pearson_lower_bounds() -> None:
+    assert clopper_pearson_lower(0, 200) == 0.0
+    assert clopper_pearson_lower(200, 200) > 0.98
+    assert 0.0 < clopper_pearson_lower(3, 200) < 0.05
+
+
+def test_m1b_frame_draws_one_sample_per_namespace() -> None:
+    declared, details = _declared_copy("s1", "s2")
+    recs = [
+        _rec("a0", "s1", 0.0, external_ref="r", id_namespace="n1", target_id="t"),
+        _rec("b0", "s2", 0.3, external_ref="r", id_namespace="n1", target_id="t"),
+    ]
+    res = resolve_camera_sites(
+        recs,
+        gold=None,
+        threshold=0.98,
+        rules=RULES,
+        declared_lineages=declared,
+        declared_details=details,
+    )
+    frame = res.m1b_frame
+    assert frame["n1"]["collapses"] == 1
+    (row,) = frame["n1"]["sample"]
+    assert row["shared_upstream_ref"] == "r"
+    assert {row["original_record_id"], row["republish_record_id"]} == {"a0", "b0"}

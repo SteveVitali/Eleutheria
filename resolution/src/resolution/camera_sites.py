@@ -78,10 +78,11 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import random
 import tomllib
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
-from dataclasses import asdict, dataclass, field, is_dataclass
+from dataclasses import asdict, dataclass, field, is_dataclass, replace
 from dataclasses import fields as dc_fields
 from datetime import date, datetime
 from functools import cache
@@ -221,6 +222,17 @@ class CameraRecord:
     #: such a record keeps no point.
     coordinate_capture_id: str | None = None
     coordinate_retrieved_at: datetime | None = None
+    #: P35.16 (R11-DATA-01 / F-322): the defect classes current
+    #: ``geometry_defect`` claims mark on this subject (``axis_swap``,
+    #: ``null_island``, ``sign_flip``, ``wrong_jurisdiction``). An
+    #: ``axis_swap`` flag makes the record never a collapse input — a
+    #: suspected transposed point cannot prove a copy — until the P35.16
+    #: correction lands (``coordinate_correction == "axis_swap"``).
+    geometry_defects: tuple[str, ...] = ()
+    #: The ``correction_reason`` the record's current coordinate pair carries
+    #: (``axis_swap`` when the P35.16 correction claims are the selected
+    #: values); ``None`` for an uncorrected pair.
+    coordinate_correction: str | None = None
 
     def block_record(self) -> dict[str, Any]:
         return {"latitude": self.latitude, "longitude": self.longitude, "source_id": self.source_id}
@@ -253,21 +265,41 @@ class CameraSiteRules:
 
     version: str = "1"
     coincident_m: float = 1.0
+    #: P35.46 (ruleset v3): the measured copy tolerance a derivation collapse
+    #: must sit inside (GQ-23) — M-3's empirical value until CONF-09 re-derives
+    #: it; the coincident bound stands in.
+    copy_tolerance_m: float = 1.0
     colocation_m: float = 5.0
     near_max_m: float = 25.0
     candidate_max_m: float = 50.0
     candidate_auto_write: frozenset[int] = frozenset({1})
+    #: P35.46 (ruleset v3, ADR-153/ADR-L3-B): the derivation-collapse tiers —
+    #: C0 duplicate target, C1 namespaced copy, C2 position-matched copy. These
+    #: are the only tiers that may collapse automatically (the SIG-EVAL-004
+    #: waiver scope); the GQ-23 census replaces the eval gate for them.
+    collapse_tiers: frozenset[int] = frozenset({0, 1, 2})
     #: Identity-inference tiers (GQ-24's locked set; ADR-153): review-only until
     #: an independent human (B5) evaluation certifies the tier — the agent/LLM
     #: gold set can never certify one. A fail-closed default, never derived from
     #: the auto-write list.
     inferential_tiers: frozenset[int] = frozenset({3, 4, 5})
+    #: Q-L3-6 = a: position-matched copies inside documented mirror lineages
+    #: may collapse (C2). Flipped false, every C2 pair is a possible duplicate.
+    c2_enabled: bool = True
+    #: The measured copy overlap a documented lineage must reach before C2
+    #: applies (coincident records covering this share of the smaller source,
+    #: on at least ``lineage_min_pairs`` evidence).
+    c2_min_overlap: float = 0.9
+    #: The M-1b quarterly seeded draw per declared namespace (sample frame
+    #: emitted each run; the upstream GET leg is CONF-09's named scope).
+    m1b_sample_size: int = 200
     tier_labels: Mapping[int, str] = field(
         default_factory=lambda: {
-            1: "1g:shared_upstream_ref",
-            3: "3g:coincident_point",
-            4: "4g:proximate_unique",
-            5: "5g:proximate_candidate",
+            1: "C1:namespaced_copy",
+            2: "C2:position_matched_copy",
+            3: "P3:coincident_point",
+            4: "P4:proximate_unique",
+            5: "P5:proximate_candidate",
         }
     )
     default_class: str = "unspecified"
@@ -281,8 +313,6 @@ class CameraSiteRules:
     soft_conflict_fields: tuple[str, ...] = ("jurisdiction", "camera_type")
     unresolved_jurisdictions: frozenset[str] = frozenset({"unresolved", "", "unknown"})
     direction_conflict_deg: float = 90.0
-    shared_ref_requires_mutual_nearest: bool = True
-    shared_ref_colocated_requires_name_agreement: bool = True
     lineage_min_pairs: int = 20
     lineage_min_share: float = 0.5
     max_span_m: float = 50.0
@@ -302,11 +332,15 @@ class CameraSiteRules:
         return cls(
             version=str(d["version"]),
             coincident_m=float(dist["coincident_m"]),
+            copy_tolerance_m=float(dist.get("copy_tolerance_m", dist["coincident_m"])),
             colocation_m=float(dist["colocation_m"]),
             near_max_m=float(dist["near_max_m"]),
             candidate_max_m=float(dist["candidate_max_m"]),
             candidate_auto_write=frozenset(int(t) for t in d["tiers"]["candidate_auto_write"]),
             inferential_tiers=frozenset(int(t) for t in d["tiers"].get("inferential", (3, 4, 5))),
+            c2_enabled=bool(d["tiers"].get("c2_enabled", True)),
+            c2_min_overlap=float(d["lineage"].get("c2_min_overlap", 0.9)),
+            m1b_sample_size=int(d.get("census", {}).get("m1b_sample_size", 200)),
             tier_labels={int(k): str(v) for k, v in d["tiers"]["labels"].items()},
             default_class=str(classes["default"]),
             class_rules=tuple(
@@ -332,12 +366,6 @@ class CameraSiteRules:
                 str(v).lower() for v in d["soft_conflicts"]["unresolved_jurisdictions"]
             ),
             direction_conflict_deg=float(d["soft_conflicts"]["direction_conflict_deg"]),
-            shared_ref_requires_mutual_nearest=bool(
-                d["tiers"]["shared_ref_requires_mutual_nearest"]
-            ),
-            shared_ref_colocated_requires_name_agreement=bool(
-                d["tiers"]["shared_ref_colocated_requires_name_agreement"]
-            ),
             lineage_min_pairs=int(d["lineage"]["min_pairs"]),
             lineage_min_share=float(d["lineage"]["min_share"]),
             max_span_m=float(d["clusters"]["max_span_m"]),
@@ -601,6 +629,16 @@ def _soft_conflicts(a: CameraRecord, b: CameraRecord, rules: CameraSiteRules) ->
             and _angle_between(da, db) > rules.direction_conflict_deg
         ):
             out.append("direction")
+    if "device_kind" in rules.soft_conflict_fields:
+        # P35.46 / P35.15b: the declared-technology half of the device-kind
+        # conflict — both records declare a technology and their declared
+        # classes differ (compatible-but-different kinds; outright
+        # incompatible pairs are never candidates). A record without a
+        # declaration cannot conflict — the description-parsing half stays
+        # D-P30.2b-2.
+        ka, kb = declared_device_class(a, rules), declared_device_class(b, rules)
+        if ka is not None and kb is not None and ka != kb:
+            out.append("device_kind")
     return tuple(out)
 
 
@@ -608,6 +646,15 @@ def _valid_point(r: CameraRecord) -> bool:
     if r.latitude is None or r.longitude is None:
         return False
     return not (r.latitude == 0.0 and r.longitude == 0.0)
+
+
+def axis_swap_suspected(r: CameraRecord) -> bool:
+    """P35.46: a point flagged ``axis_swap`` (P35.16's ``geometry_defect``
+    claim) is never a collapse input — a suspected transposed pair cannot
+    prove a copy — until the recorded correction lands: when the record's
+    current coordinate pair IS the ``axis_swap`` correction the flag stands
+    resolved (the defect claim remains as the immutable marking)."""
+    return "axis_swap" in r.geometry_defects and r.coordinate_correction != "axis_swap"
 
 
 # --------------------------------------------------------------------------- #
@@ -631,10 +678,67 @@ class LineageFinding:
     share: float
 
 
+@dataclass(frozen=True)
+class LineageDeclaration:
+    """P35.46 (ruleset v3): one source's declared lineage record, from
+    ``source_lineage_current`` — the resolved ``independence_class`` plus the
+    declared ``kind`` (``primary`` / ``mirror`` / ``derived`` / ``syndicated``
+    / ``undeclared``) and the documentary ``evidence`` of the declaration.
+    C1 requires the pair's shared class to be a DECLARED COPY lineage (a
+    mirror/derived member); C2 additionally requires that copy declaration to
+    carry documentary evidence."""
+
+    independence_class: str = "unclassified"
+    kind: str = "undeclared"
+    evidence: str = ""
+
+
 #: The pseudo-class token undeclared sources resolve to under declared mode —
 #: shared by every undeclared source, so undeclared material is never counted
 #: as independent corroboration (SIG-CONF-014).
 UNCLASSIFIED = "unclassified"
+
+#: A ``source_lineage`` ``kind`` that declares this source republishes an
+#: upstream — the declaration that makes a shared independence class a
+#: *copy* lineage (C1) and, with documentary evidence, a *documented* one (C2).
+_COPY_KINDS = frozenset({"mirror", "derived"})
+
+
+@dataclass(frozen=True)
+class CensusFailure:
+    """One applied collapse edge whose GQ-23 census re-verification failed."""
+
+    left: str
+    right: str
+    tier: int
+    token: str  # the demoted unit: shared source (C0) or shared lineage (C1/C2)
+    reason: str
+
+
+@dataclass(frozen=True)
+class DerivationCensus:
+    """The GQ-23 derivation census of one run (P35.46).
+
+    Every applied collapse edge (an ``auto_write`` at a collapse tier) is
+    re-checked against the run's record set: C0 re-derives its row identity,
+    C1 re-derives ref equality + declared namespace + capture uniqueness +
+    copy lineage + tolerance, C2 re-derives the documented lineage + measured
+    overlap + within-colocation bijection. A failure DEMOTES that
+    ``(lineage-or-source, tier)`` for the NEXT run — the demotion set this run
+    consumed (``demoted_collapses`` on the result) is the previous run's
+    output, so a stale declaration can only collapse for one run.
+
+    ``origin_distinct_violations`` counts resolved clusters violating GQ-25 —
+    two members carrying DIFFERENT normalised ids in ONE declared namespace
+    (the origin publisher lists them as distinct). Always a subset; the
+    cluster refusal prefers rejecting the union upstream of this count.
+    """
+
+    checked: int
+    failures: tuple[CensusFailure, ...]
+    demote_next_run: tuple[tuple[str, int], ...]
+    origin_distinct_violations: int
+    origin_distinct_clusters: tuple[str, ...]
 
 
 def _union_find(
@@ -660,14 +764,14 @@ def _union_find(
     return size, find, union
 
 
-def _measured_unions(
+def _measured_overlap(
     records: Sequence[CameraRecord],
     coincident_pairs: Iterable[tuple[int, int]],
-    rules: CameraSiteRules,
     size: Mapping[str, int],
 ) -> dict[tuple[str, str], tuple[int, float]]:
-    """Source pairs whose measured coincidence meets the lineage rule:
-    ``(sa, sb) -> (coincident pair count, share of the smaller source)``."""
+    """The raw measured copy overlap per unordered source pair:
+    ``(sa, sb) -> (coincident pair count, share of the smaller source)`` —
+    ungated; the lineage rule and the C2 floor apply their own thresholds."""
     covered: dict[tuple[str, str], tuple[set[int], set[int]]] = {}
     for i, j in coincident_pairs:
         sa, sb = records[i].source_id, records[j].source_id
@@ -685,13 +789,59 @@ def _measured_unions(
     for (sa, sb), (left, right) in sorted(covered.items()):
         pairs = min(len(left), len(right))
         smaller = min(size[sa], size[sb])
-        if (
-            pairs >= rules.lineage_min_pairs
-            and smaller
-            and pairs / smaller >= rules.lineage_min_share
-        ):
+        if smaller:
             out[(sa, sb)] = (pairs, pairs / smaller)
     return out
+
+
+def _measured_unions(
+    records: Sequence[CameraRecord],
+    coincident_pairs: Iterable[tuple[int, int]],
+    rules: CameraSiteRules,
+    size: Mapping[str, int],
+) -> dict[tuple[str, str], tuple[int, float]]:
+    """Source pairs whose measured coincidence meets the lineage rule:
+    ``(sa, sb) -> (coincident pair count, share of the smaller source)``."""
+    return {
+        key: value
+        for key, value in _measured_overlap(records, coincident_pairs, size).items()
+        if value[0] >= rules.lineage_min_pairs and value[1] >= rules.lineage_min_share
+    }
+
+
+def _copy_and_documented_lineages(
+    lineages: Mapping[str, str],
+    declared_details: Mapping[str, LineageDeclaration] | None,
+) -> tuple[frozenset[str], frozenset[str]]:
+    """The declared-lineage sets the collapse tiers gate on (P35.46).
+
+    ``copy_lineages`` — declared independence classes a ``mirror``/``derived``
+    kind declaration names (a declared copy lineage; C1's gate). ``documented``
+    — the subset whose copy declaration carries documentary evidence (C2's
+    gate; "the mirror's own metadata names its origin"). With a declared-class
+    map but no details the kind/documentary tests are unavailable: every
+    declared class counts as a copy lineage (the map itself is the
+    declaration) and none is documented — C2 then cannot fire. With no
+    declared map at all both sets are empty: undeclared material never
+    collapses."""
+    if declared_details is not None:
+        classes: dict[str, list[LineageDeclaration]] = defaultdict(list)
+        for source, cls in lineages.items():
+            if cls != UNCLASSIFIED:
+                details = declared_details.get(source)
+                if details is not None:
+                    classes[cls].append(details)
+        copy = frozenset(
+            cls for cls, ds in classes.items() if any(d.kind in _COPY_KINDS for d in ds)
+        )
+        documented = frozenset(
+            cls
+            for cls, ds in classes.items()
+            if any(d.kind in _COPY_KINDS and d.evidence.strip() for d in ds)
+        )
+        return copy, documented
+    declared = {cls for cls in lineages.values() if cls != UNCLASSIFIED}
+    return frozenset(declared), frozenset()
 
 
 def infer_lineages(
@@ -1074,6 +1224,12 @@ class _Assessed:
     incompatible_blocked: int
     discarded: int
     lineage_findings: tuple[LineageFinding, ...] = ()  # P35.25 GQ-11 detections
+    # P35.46 (ruleset v3): the collapse inputs the census re-verifies.
+    ref_counts: dict[tuple[str, str], int] = field(default_factory=dict)
+    measured_overlaps: dict[tuple[str, str], tuple[int, float]] = field(default_factory=dict)
+    copy_lineages: frozenset[str] = frozenset()
+    documented_lineages: frozenset[str] = frozenset()
+    colocation_counts: dict[str, dict[str, int]] = field(default_factory=dict)
 
 
 def _neighbour_index(
@@ -1119,6 +1275,7 @@ def _assess(
     geo_rule: GeoGridRule,
     blocking_context: BlockingContext | None,
     declared: Mapping[str, str] | None = None,
+    declared_details: Mapping[str, LineageDeclaration] | None = None,
 ) -> _Assessed:
     block_records = [r.block_record() for r in records]
     index_pairs = validate_geo_rule(block_records, geo_rule, context=blocking_context)
@@ -1141,14 +1298,27 @@ def _assess(
         if d <= rules.candidate_max_m:
             within.append((i, j, d))
 
-    lineages, lineage_findings = _infer_lineages(
-        records,
-        [(i, j) for i, j, d in within if d <= rules.coincident_m],
-        rules,
-        declared,
-    )
+    coincident = [(i, j) for i, j, d in within if d <= rules.coincident_m]
+    lineages, lineage_findings = _infer_lineages(records, coincident, rules, declared)
     neigh = _neighbour_index(records, within, eff)
     classes = [device_class(r, rules) for r in records]
+
+    # P35.46 (ruleset v3): the collapse inputs — the declared copy/documented
+    # lineage sets, the measured copy overlap per source pair, the per-source
+    # ref-uniqueness counts, and the bijection view the census re-verifies.
+    copy_lineages, documented_lineages = _copy_and_documented_lineages(lineages, declared_details)
+    source_sizes: dict[str, int] = defaultdict(int)
+    ref_counts: dict[tuple[str, str], int] = defaultdict(int)
+    for r in records:
+        source_sizes[r.source_id] += 1
+        ref = normalize_ref(r.external_ref)
+        if ref is not None:
+            ref_counts[(r.source_id, ref)] += 1
+    measured_overlaps = _measured_overlap(records, coincident, source_sizes)
+    colocation_counts: dict[str, dict[str, int]] = {
+        records[i].subject_id: {s: _count_within(lst, rules.colocation_m) for s, lst in per.items()}
+        for i, per in neigh.items()
+    }
 
     out: list[PairAssessment] = []
     incompatible = discarded = 0
@@ -1190,25 +1360,66 @@ def _assess(
         unique_near = (
             _count_within(na, rules.near_max_m) == 1 and _count_within(nb, rules.near_max_m) == 1
         )
-        # For the shared-ref tier, "mutually nearest" means no record of the other source is
-        # STRICTLY nearer on either side: a tie (two devices at one point) is resolved by the
-        # shared reference plus the co-location/name rule below, independent of record order.
-        none_strictly_nearer = bool(na) and bool(nb) and na[0][0] >= d and nb[0][0] >= d
-        shared_ref_tier = ref_equal
-        if ref_equal and rules.shared_ref_requires_mutual_nearest and not none_strictly_nearer:
-            shared_ref_tier = False  # another record of the other source is the nearer copy
-        if (
-            shared_ref_tier
-            and rules.shared_ref_colocated_requires_name_agreement
-            and not unique_colocation
-            and not names_agree(a.name, b.name)
-        ):
-            # Unless the site descriptions agree, the pair must be each other's ONLY
-            # counterpart within the co-location radius: a publisher listing several devices
-            # at one point cannot say WHICH one a shared row number is.
-            shared_ref_tier = False
-        if shared_ref_tier:
+        # P35.25: an ``unclassified`` lineage on either side means the pair's
+        # independence is UNDETERMINED — ``same_lineage`` is then null (unknown),
+        # never asserted true or false on undeclared material.
+        la, lb = lineages[a.source_id], lineages[b.source_id]
+        same_lineage: bool | None = (
+            (la == lb) if la != UNCLASSIFIED and lb != UNCLASSIFIED else None
+        )
+        soft = _soft_conflicts(a, b, rules)
+        suspected = axis_swap_suspected(a) or axis_swap_suspected(b)
+        source_key = (
+            (a.source_id, b.source_id) if a.source_id < b.source_id else (b.source_id, a.source_id)
+        )
+        overlap_pairs, measured_share = measured_overlaps.get(source_key, (0, 0.0))
+        # Ruleset v3 (P35.46, ADR-153/ADR-L3-B): the derivation-collapse checks.
+        # C1 — the same value in ONE declared id_namespace inside ONE declared
+        # copy lineage, the id unique in each source's record set, within the
+        # copy tolerance, and no suspected axis swap on either side.
+        unique_in_captures = (
+            ref_a is not None
+            and ref_equal
+            and ref_counts.get((a.source_id, ref_a), 0) == 1
+            and ref_counts.get((b.source_id, ref_a), 0) == 1
+        )
+        copy_checks = {
+            "shared_declared_namespace": shared_ns is not None,
+            "ref_equal": ref_equal,
+            "same_declared_lineage": same_lineage is True,
+            "copy_declared_lineage": la == lb and la in copy_lineages,
+            "unique_in_captures": unique_in_captures,
+            "within_copy_tolerance": d <= rules.copy_tolerance_m,
+            "documented_lineage": la == lb and la in documented_lineages,
+            "measured_overlap": round(measured_share, 4),
+            "overlap_pairs": overlap_pairs,
+            "bijective_within_colocation": unique_colocation,
+            "attribute_conflict": bool(soft),
+            "axis_swap_suspected": suspected,
+        }
+        c1 = (
+            shared_ns is not None
+            and ref_equal
+            and copy_checks["copy_declared_lineage"]
+            and unique_in_captures
+            and d <= rules.copy_tolerance_m
+            and not suspected
+        )
+        c2 = (
+            not c1
+            and rules.c2_enabled
+            and d <= rules.copy_tolerance_m
+            and unique_colocation
+            and copy_checks["documented_lineage"]
+            and overlap_pairs >= rules.lineage_min_pairs
+            and measured_share >= rules.c2_min_overlap
+            and not soft
+            and not suspected
+        )
+        if c1:
             tier = 1
+        elif c2:
+            tier = 2
         elif d <= rules.coincident_m and unique_colocation:
             tier = 3
         elif d <= rules.near_max_m and mutual_nearest and unique_near:
@@ -1220,14 +1431,48 @@ def _assess(
             continue
         left_i, right_i = (i, j) if a.subject_id < b.subject_id else (j, i)
         left, right = records[left_i], records[right_i]
-        # P35.25: an ``unclassified`` lineage on either side means the pair's
-        # independence is UNDETERMINED — ``same_lineage`` is then null (unknown),
-        # never asserted true or false on undeclared material.
-        la, lb = lineages[a.source_id], lineages[b.source_id]
-        same_lineage: bool | None = (
-            (la == lb) if la != UNCLASSIFIED and lb != UNCLASSIFIED else None
+        # C1 records the attribute differences a republished copy carries
+        # (GQ-23: "attribute differences are recorded") — never silently
+        # reconciled; the soft-conflict fields among them still route to P.
+        attribute_differences = sorted(
+            field
+            for field, va, vb in (
+                ("name", _norm_text(a.name), _norm_text(b.name)),
+                ("roadway", _norm_text(a.roadway), _norm_text(b.roadway)),
+                ("direction", _norm_text(a.direction), _norm_text(b.direction)),
+                ("operator", _norm_text(a.operator), _norm_text(b.operator)),
+                ("jurisdiction", _norm_text(a.jurisdiction), _norm_text(b.jurisdiction)),
+                ("camera_type", _norm_text(a.camera_type), _norm_text(b.camera_type)),
+                (
+                    "technology",
+                    ",".join(sorted({t for t in a.declared_technologies or (a.technology,) if t})),
+                    ",".join(sorted({t for t in b.declared_technologies or (b.technology,) if t})),
+                ),
+            )
+            if va != vb
         )
-        soft = _soft_conflicts(a, b, rules)
+        # A pair with a copy SHAPE that failed a collapse condition carries the
+        # failed conditions as its possible-duplicate reason (P's "1g without a
+        # namespace" / undeclared-lineage / non-unique cases, verbatim).
+        copy_rejection: list[str] = []
+        if tier >= 3 and (
+            (shared_ns is not None and ref_equal)
+            or (same_lineage is True and d <= rules.copy_tolerance_m)
+        ):
+            copy_rejection = [
+                name
+                for name in (
+                    "shared_declared_namespace",
+                    "ref_equal",
+                    "copy_declared_lineage",
+                    "unique_in_captures",
+                    "within_copy_tolerance",
+                    "documented_lineage",
+                    "attribute_conflict",
+                    "axis_swap_suspected",
+                )
+                if not copy_checks[name]
+            ]
         evidence: dict[str, Any] = {
             "rule": rules.label(tier),
             "distance_m": round(d, 2),
@@ -1252,6 +1497,11 @@ def _assess(
             "unique_within_near": unique_near,
             "same_lineage": same_lineage,
             "soft_conflicts": list(soft),
+            # P35.46 v3: the collapse-check verdict per pair and the recorded
+            # attribute differences a copy carries.
+            "copy_checks": copy_checks,
+            "copy_rejection": copy_rejection or None,
+            "attribute_differences": attribute_differences,
             "rules_version": rules.version,
         }
         out.append(
@@ -1293,11 +1543,11 @@ def _assess(
                     left=left.subject_id,
                     right=right.subject_id,
                     tier=0,
-                    tier_label="0:duplicate_target_of",
+                    tier_label="C0:duplicate_target",
                     distance_m=d,
                     soft_conflicts=(),
                     evidence={
-                        "rule": "0:duplicate_target_of",
+                        "rule": "C0:duplicate_target",
                         "distance_m": round(d, 2),
                         "sources": [left.source_id, right.source_id],
                         "device_classes": [
@@ -1329,6 +1579,11 @@ def _assess(
         incompatible_blocked=incompatible,
         discarded=discarded,
         lineage_findings=lineage_findings,
+        ref_counts=dict(ref_counts),
+        measured_overlaps=measured_overlaps,
+        copy_lineages=copy_lineages,
+        documented_lineages=documented_lineages,
+        colocation_counts=colocation_counts,
     )
 
 
@@ -1339,13 +1594,17 @@ def assess_pairs(
     geo_rule: GeoGridRule | None = None,
     blocking_context: BlockingContext | None = None,
     declared: Mapping[str, str] | None = None,
+    declared_details: Mapping[str, LineageDeclaration] | None = None,
 ) -> tuple[PairAssessment, ...]:
-    """Block and assess every candidate pair of ``records`` (tiers 1/3/4/5; tier 6 dropped).
+    """Block and assess every candidate pair of ``records`` (tiers 1/2/3/4/5; tier 6 dropped).
 
     ``declared`` is the P35.25 source -> independence-class map (see
     :func:`infer_lineages`); when given it also gates the shared-upstream-ref
     namespace evidence and makes ``same_lineage`` truthful about
-    ``unclassified`` material.
+    ``unclassified`` material. ``declared_details`` (P35.46) carries each
+    source's ``source_lineage`` kind/evidence — the C1 copy-lineage and C2
+    documentary-evidence gates read it; absent it, every declared class
+    counts as a copy lineage and none is documented.
     """
     rs = rules or CameraSiteRules.from_data()
     gr = geo_rule or load_geo_rules()[0]
@@ -1355,6 +1614,7 @@ def assess_pairs(
         geo_rule=gr,
         blocking_context=blocking_context,
         declared=declared,
+        declared_details=declared_details,
     ).assessments
 
 
@@ -1446,6 +1706,19 @@ class _Clusters:
             by_source[self.records[m].source_id].add(self.dup.get(m, m))
         if any(len(ids) > 1 for ids in by_source.values()):
             return "cluster_constraint:same_source"
+        # GQ-25 origin distinctness (P35.46): the joined cluster must never
+        # hold two records one origin publisher lists as DISTINCT — two
+        # different normalised ids inside ONE declared namespace. Refusing
+        # keeps the worst failure in the conservative direction (a possible
+        # duplicate over-counts, never under-counts).
+        by_ns: dict[str, set[str]] = defaultdict(set)
+        for m in self.members[ra] + self.members[rb]:
+            r = self.records[m]
+            ref = normalize_ref(r.external_ref)
+            if r.id_namespace and r.id_namespace != "undeclared" and ref:
+                by_ns[r.id_namespace].add(ref)
+        if any(len(refs) > 1 for refs in by_ns.values()):
+            return "cluster_constraint:origin_distinct"
         if len(self.members[ra]) + len(self.members[rb]) > rules.max_size:
             return "cluster_constraint:max_size"
         # Each existing cluster's own span is already bounded, so the joined span is
@@ -1590,6 +1863,67 @@ def _human_assessment(
     )
 
 
+def _link_stamp(
+    d: SiteDecision, clusters: Mapping[str, str], rules: CameraSiteRules
+) -> SiteDecision:
+    """Stamp the emitted-link vocabulary onto a decision's evidence (P35.46).
+
+    Every recorded decision carries ``link_kind`` + ``basis`` + the site id(s)
+    it binds — the spine's honest record of what the link claims:
+
+    * ``derived_from`` — a collapse: C0/C1/C2 copies of one upstream record
+      (a derivation link with lineage evidence + the shared ``site_id``,
+      never an identity merge — ``merged_into`` stays unwritten, ADR-105 §6);
+    * ``possible_duplicate`` — an inferential match, refused union, soft
+      conflict, shape alert, demoted or axis-swap-suspected pair: NOT merged;
+      the basis says so verbatim;
+    * ``same_as`` / ``cannot_link`` — a human review outcome (the curator's
+      operational decision, folded under ADR-116)."""
+    a = d.assessment
+    ev = dict(a.evidence)
+    left_site = clusters.get(a.left, a.left)
+    right_site = clusters.get(a.right, a.right)
+    link_kind = "possible_duplicate"
+    if d.disposition == "auto_write" and a.tier in rules.collapse_tiers:
+        link_kind = "derived_from"
+        ev["site_id"] = left_site  # the shared site id both copies carry
+        origin = (a.evidence.get("lineage_ids") or [a.left])[0]
+        ref = a.evidence.get("shared_upstream_ref")
+        if a.tier == 0:
+            basis = "same upstream layer ingested twice"
+        elif a.tier == 1:
+            basis = f"copy of {origin} record {ref}, checked automatically"
+        else:
+            basis = f"position-matched copy of {origin} (layer is a republish; matched by location)"
+        ev["basis"] = basis
+    elif d.disposition == "auto_write" or d.disposition == "human_accept":
+        # A B5-certified inferential edge or a curator's accept — one site id.
+        link_kind = "same_as"
+        ev["site_id"] = left_site
+    elif d.disposition == "human_reject":
+        link_kind = "cannot_link"
+        ev["site_ids"] = [left_site, right_site]
+    else:  # proposed | refused — the possible-duplicate link (never merged)
+        ev["site_ids"] = [left_site, right_site]
+        ev["basis"] = (
+            f"possible duplicate of {a.right}, {round(a.distance_m, 2)} m away; "
+            "not merged: SIG cannot prove it is the same camera"
+        )
+        if d.reason:
+            ev["possible_duplicate_reason"] = d.reason
+    ev["link_kind"] = link_kind
+    # The relation the row asserts is the emitted link kind itself — the
+    # camera_site_match.relation_type column carries the v3 vocabulary.
+    return SiteDecision(
+        assessment=replace(a, evidence=ev),
+        disposition=d.disposition,
+        reason=d.reason,
+        relation=link_kind,
+        decided_by=d.decided_by,
+        verdict=d.verdict,
+    )
+
+
 def cluster_decisions(
     assessments: Sequence[PairAssessment],
     records: Sequence[CameraRecord],
@@ -1598,6 +1932,7 @@ def cluster_decisions(
     rules: CameraSiteRules | None = None,
     human_verdicts: Sequence[HumanVerdict] = (),
     dup_groups: Mapping[str, str] | None = None,
+    demoted_collapses: Iterable[tuple[str, int]] = (),
 ) -> tuple[tuple[SiteDecision, ...], dict[str, str], tuple[SiteAlert, ...]]:
     """Turn assessments + human verdicts into decisions + clusters (constraints hold).
 
@@ -1613,9 +1948,16 @@ def cluster_decisions(
     ``human_reject``/``cannot_link`` and the pair never clusters; ``conflict``
     stays ``proposed``. Tier-0 duplicate-target edges are evidence, not a
     measured tier — they apply directly, after human verdicts.
+
+    **Ruleset v3 (P35.46).** Only a ``collapse_tiers`` pair (C0/C1/C2) may
+    auto-collapse — and never one carrying a suspected axis swap or sitting in
+    a census-demoted ``(lineage, tier)`` (``demoted_collapses``, the prior
+    run's GQ-23 failures): those surface as ``possible_duplicate`` links like
+    every inferential pair.
     """
     rs = rules or CameraSiteRules.from_data()
     auto = frozenset(auto_write_tiers)
+    demoted = frozenset(demoted_collapses)
     by_id = {r.subject_id: r for r in records}
     dup = dict(dup_groups or {})
     state = _Clusters(by_id, dup)
@@ -1674,33 +2016,46 @@ def cluster_decisions(
     for p in ordered:
         if p.key in initial:
             continue  # a human verdict already owns this pair
-        if p.tier == 0:
-            refusal = state.refusal(p.left, p.right, rs)
-            if refusal is None:
-                state.union(p.left, p.right)
-                initial[p.key] = ("auto_write", None, "same_as", "auto", None, p)
-            else:
-                initial[p.key] = ("proposed", refusal, "same_as", "auto", None, p)
-        elif p.tier not in auto:
-            # P34.45 (ADR-153): an identity-inference tier without an independent
-            # human certification is review-only — name that on the decision, not
-            # just the generic "not auto-write". A candidate tier demoted on
-            # measured precision stays "tier_not_auto_write" (the demotion record
-            # in the run summary carries the measured reason).
+        # Ruleset v3 (P35.46): ``auto`` already encodes every gate — a
+        # collapse tier is in it by census waiver, an inferential tier ONLY
+        # when a B5 certification named it (GQ-24). Anything else is
+        # review-only: the possible_duplicate link, never a merge.
+        auto_path = p.tier == 0 or p.tier in auto
+        if not auto_path:
             reason = (
-                "review_only:inferential_tier_uncertified"
+                "possible_duplicate:inferential"
                 if p.tier in rs.inferential_tiers
                 else "tier_not_auto_write"
             )
+            initial[p.key] = ("proposed", reason, "same_as", "auto", None, p)
+            continue
+        ra_rec, rb_rec = by_id[p.left], by_id[p.right]
+        if axis_swap_suspected(ra_rec) or axis_swap_suspected(rb_rec):
+            # GQ-24: a suspected axis swap can never merge mechanically.
             initial[p.key] = (
                 "proposed",
-                reason,
+                "possible_duplicate:axis_swap_suspected",
                 "same_as",
                 "auto",
                 None,
                 p,
             )
-        elif p.soft_conflicts:
+            continue
+        lids = p.evidence.get("lineage_ids") or []
+        demotion_token = ra_rec.source_id if p.tier == 0 else (lids[0] if lids else None)
+        if demotion_token is not None and (demotion_token, p.tier) in demoted:
+            # GQ-23: a lineage/tier whose last-run census failed does not
+            # auto-collapse again — the pair is a possible duplicate.
+            initial[p.key] = (
+                "proposed",
+                "possible_duplicate:census_demoted",
+                "same_as",
+                "auto",
+                None,
+                p,
+            )
+            continue
+        if p.soft_conflicts:
             initial[p.key] = (
                 "proposed",
                 "soft_conflict:" + ",".join(p.soft_conflicts),
@@ -1709,13 +2064,13 @@ def cluster_decisions(
                 None,
                 p,
             )
+            continue
+        refusal = state.refusal(p.left, p.right, rs)
+        if refusal is None:
+            state.union(p.left, p.right)
+            initial[p.key] = ("auto_write", None, "same_as", "auto", None, p)
         else:
-            refusal = state.refusal(p.left, p.right, rs)
-            if refusal is None:
-                state.union(p.left, p.right)
-                initial[p.key] = ("auto_write", None, "same_as", "auto", None, p)
-            else:
-                initial[p.key] = ("proposed", refusal, "same_as", "auto", None, p)
+            initial[p.key] = ("proposed", refusal, "same_as", "auto", None, p)
 
     applied = [k for k, d in initial.items() if d[0] in ("auto_write", "human_accept")]
     clusters = _clusters_from_edges(by_id, applied)
@@ -1730,17 +2085,283 @@ def cluster_decisions(
         clusters = _clusters_from_edges(by_id, applied)
 
     decisions = tuple(
-        SiteDecision(
-            assessment=d[5],
-            disposition=d[0],
-            reason=d[1],
-            relation=d[2],
-            decided_by=d[3],
-            verdict=d[4],
+        _link_stamp(
+            SiteDecision(
+                assessment=d[5],
+                disposition=d[0],
+                reason=d[1],
+                relation=d[2],
+                decided_by=d[3],
+                verdict=d[4],
+            ),
+            clusters,
+            rs,
         )
         for k, d in sorted(initial.items())
     )
     return decisions, clusters, tuple(alerts)
+
+
+def derivation_census(
+    records: Sequence[CameraRecord],
+    decisions: Sequence[SiteDecision],
+    clusters: Mapping[str, str],
+    rules: CameraSiteRules,
+    *,
+    lineages: Mapping[str, str],
+    copy_lineages: Iterable[str] = (),
+    documented_lineages: Iterable[str] = (),
+    measured_overlaps: Mapping[tuple[str, str], tuple[int, float]] = {},
+    colocation_counts: Mapping[str, dict[str, int]] = {},
+) -> DerivationCensus:
+    """Re-verify every applied collapse edge of this run — GQ-23 (P35.46).
+
+    Runs AFTER clustering on every run. A collapse edge whose conditions no
+    longer verify on the record set is a :class:`CensusFailure`, and its
+    ``(lineage-or-source, tier)`` joins ``demote_next_run`` — persisted as an
+    append-only demotion row and consumed by the NEXT run's
+    ``cluster_decisions`` (a stale declaration collapses for at most one run).
+
+    Also counts the GQ-25 violations that reached clusters anyway (two members
+    of one resolved site carrying different normalised ids in one declared
+    namespace) — disclosed, never silently reconciled.
+    """
+    by_id = {r.subject_id: r for r in records}
+    # The ref census: (source, normalised ref) -> count, over the full set.
+    ref_counts: dict[tuple[str, str], int] = defaultdict(int)
+    for r in records:
+        ref = normalize_ref(r.external_ref)
+        if ref is not None:
+            ref_counts[(r.source_id, ref)] += 1
+    copy_l = frozenset(copy_lineages)
+    documented_l = frozenset(documented_lineages)
+    failures: list[CensusFailure] = []
+    checked = 0
+    for d in decisions:
+        if d.disposition != "auto_write" or d.assessment.tier not in rules.collapse_tiers:
+            continue
+        checked += 1
+        a, b = by_id[d.assessment.left], by_id[d.assessment.right]
+        tier = d.assessment.tier
+        la = lineages.get(a.source_id, UNCLASSIFIED)
+        lb = lineages.get(b.source_id, UNCLASSIFIED)
+        token = a.source_id if tier == 0 else la
+        failed: list[str] = []
+        if tier == 0:
+            if a.source_id != b.source_id:
+                failed.append("cross_source")
+            elif not (
+                _row_fingerprint(a) == _row_fingerprint(b)
+                or set(a.capture_digests) & set(b.capture_digests)
+            ):
+                failed.append("no_duplicate_target_evidence")
+        else:
+            if a.source_id == b.source_id:
+                failed.append("same_source")
+            if axis_swap_suspected(a) or axis_swap_suspected(b):
+                failed.append("axis_swap_suspected")
+            if d.assessment.distance_m > rules.copy_tolerance_m:
+                failed.append("beyond_copy_tolerance")
+            if la != lb or la == UNCLASSIFIED:
+                failed.append("no_shared_declared_lineage")
+            if tier == 1:
+                ref_a, ref_b = normalize_ref(a.external_ref), normalize_ref(b.external_ref)
+                if (
+                    not a.id_namespace
+                    or a.id_namespace == "undeclared"
+                    or a.id_namespace != b.id_namespace
+                ):
+                    failed.append("no_shared_declared_namespace")
+                if ref_a is None or ref_a != ref_b:
+                    failed.append("ref_mismatch")
+                elif (
+                    ref_counts.get((a.source_id, ref_a), 0) != 1
+                    or ref_counts.get((b.source_id, ref_a), 0) != 1
+                ):
+                    failed.append("ref_not_unique_in_captures")
+                if la not in copy_l:
+                    failed.append("lineage_not_declared_copy")
+            elif tier == 2:
+                if la not in documented_l:
+                    failed.append("lineage_not_documented_copy")
+                key = (
+                    (a.source_id, b.source_id)
+                    if a.source_id < b.source_id
+                    else (b.source_id, a.source_id)
+                )
+                pairs, share = measured_overlaps.get(key, (0, 0.0))
+                if pairs < rules.lineage_min_pairs or share < rules.c2_min_overlap:
+                    failed.append("measured_overlap_below_floor")
+                ca = colocation_counts.get(a.subject_id, {}).get(b.source_id, 0)
+                cb = colocation_counts.get(b.subject_id, {}).get(a.source_id, 0)
+                if ca != 1 or cb != 1:
+                    failed.append("bijection_broken")
+                if _soft_conflicts(a, b, rules):
+                    failed.append("attribute_conflict")
+        if failed:
+            failures.append(
+                CensusFailure(
+                    left=d.assessment.left,
+                    right=d.assessment.right,
+                    tier=tier,
+                    token=token,
+                    reason=",".join(sorted(set(failed))),
+                )
+            )
+    demote = sorted({(f.token, f.tier) for f in failures})
+    # GQ-25 on the final clusters: two members, ONE declared namespace,
+    # DIFFERENT normalised ids -> the origin publisher lists them as distinct.
+    members: dict[str, list[CameraRecord]] = defaultdict(list)
+    for r in records:
+        members[clusters.get(r.subject_id, r.subject_id)].append(r)
+    violating: list[str] = []
+    for cid, ms in sorted(members.items()):
+        by_ns: dict[str, set[str]] = defaultdict(set)
+        for m in ms:
+            ref = normalize_ref(m.external_ref)
+            if m.id_namespace and m.id_namespace != "undeclared" and ref:
+                by_ns[m.id_namespace].add(ref)
+        if any(len(refs) > 1 for refs in by_ns.values()):
+            violating.append(cid)
+    return DerivationCensus(
+        checked=checked,
+        failures=tuple(failures),
+        demote_next_run=tuple(demote),
+        origin_distinct_violations=len(violating),
+        origin_distinct_clusters=tuple(violating),
+    )
+
+
+def count_intervals(
+    records: Sequence[CameraRecord],
+    decisions: Sequence[SiteDecision],
+    clusters: Mapping[str, str],
+    rules: CameraSiteRules,
+    *,
+    dossier_of: Mapping[str, str] | None = None,
+) -> dict[str, Any]:
+    """The P35.46 honest count intervals (SIG-CONF-D05).
+
+    ``upper`` counts only the applied edges (``auto_write`` + ``human_accept``)
+    — the present spine state. ``lower`` additionally collapses every
+    possible-duplicate link whose pair lies within the declared distance
+    (``near_max_m``) — the count if every inferential match proved to be the
+    same camera. Published counts are intervals until CONF-07b closes; a run
+    always reports both bounds, per dossier (``jurisdiction`` by default) and
+    nationally.
+    """
+    subjects = [r.subject_id for r in records]
+    applied = [
+        (d.left, d.right) for d in decisions if d.disposition in ("auto_write", "human_accept")
+    ]
+    possible = [
+        (d.left, d.right)
+        for d in decisions
+        if d.disposition == "proposed" and d.assessment.distance_m <= rules.near_max_m
+    ]
+    dossier = dossier_of or {r.subject_id: (r.jurisdiction or "unresolved") for r in records}
+
+    def _bounds(subset: set[str]) -> dict[str, int]:
+        sub = [s for s in subjects if s in subset]
+        up = len(
+            set(
+                _clusters_from_edges(
+                    sub,
+                    [e for e in applied if e[0] in subset and e[1] in subset],
+                ).values()
+            )
+        )
+        lo = len(
+            set(
+                _clusters_from_edges(
+                    sub, [e for e in applied + possible if e[0] in subset and e[1] in subset]
+                ).values()
+            )
+        )
+        return {"lower": lo, "upper": up}
+
+    all_ids = set(subjects)
+    return {
+        "declared_distance_m": rules.near_max_m,
+        "national": _bounds(all_ids),
+        "per_dossier": {
+            name: _bounds({s for s in subjects if dossier.get(s, "unresolved") == name})
+            for name in sorted({dossier.get(s, "unresolved") for s in subjects})
+        },
+        "note": (
+            "published camera-site counts are intervals until CONF-07b closes; "
+            "the upper bound counts only automatic + human-accepted edges and "
+            "the lower bound also collapses inferential matches within the "
+            "declared distance"
+        ),
+    }
+
+
+def m1b_sample_frame(
+    decisions: Sequence[SiteDecision],
+    *,
+    sample_size: int = 200,
+    seed_salt: str = "",
+) -> dict[str, dict[str, Any]]:
+    """The M-1b id-resolution sample frame (P35.46).
+
+    Per declared namespace, a deterministic random sample of up to
+    ``sample_size`` applied C1 collapses — the id-resolution verification
+    surface a human re-check draws from. Each sample row carries the original
+    and republish record ids, the shared upstream ref, and the pair distance.
+    The seed is the run key plus the namespace, so the same run always draws
+    the same frame (re-runnable, auditable).
+    """
+    by_ns: dict[str, list[SiteDecision]] = defaultdict(list)
+    for d in decisions:
+        if d.disposition == "auto_write" and d.assessment.tier == 1:
+            nss = d.assessment.evidence.get("id_namespaces") or []
+            ns = nss[0] if nss and nss[0] == nss[-1] else None
+            if ns and ns != "undeclared":
+                by_ns[str(ns)].append(d)
+    out: dict[str, dict[str, Any]] = {}
+    for ns in sorted(by_ns):
+        ds = sorted(by_ns[ns], key=lambda d: (d.left, d.right))
+        rng = random.Random(f"m1b:{seed_salt}:{ns}")
+        picked = sorted(rng.sample(range(len(ds)), min(sample_size, len(ds))))
+        out[ns] = {
+            "collapses": len(ds),
+            "sample_size": len(picked),
+            "sample": [
+                {
+                    "original_record_id": ds[i].left,
+                    "republish_record_id": ds[i].right,
+                    "shared_upstream_ref": ds[i].assessment.evidence.get("shared_upstream_ref"),
+                    "distance_m": round(ds[i].assessment.distance_m, 2),
+                }
+                for i in picked
+            ],
+        }
+    return out
+
+
+def clopper_pearson_lower(k: int, n: int, alpha: float = 0.05) -> float:
+    """One-sided exact (Clopper-Pearson) lower confidence bound, binomial.
+
+    The largest ``p`` for which ``P(X >= k | p) = alpha`` — the M-1b
+    acceptance bound compares this against the per-namespace floor.
+    ``k`` verified out of ``n`` sampled collapses.
+    """
+    if n <= 0 or k <= 0:
+        return 0.0
+    k = min(k, n)
+
+    def _sf(p: float) -> float:
+        return sum(math.comb(n, i) * p**i * (1.0 - p) ** (n - i) for i in range(k, n + 1))
+
+    lo, hi = 0.0, 1.0
+    for _ in range(80):
+        mid = (lo + hi) / 2
+        if _sf(mid) < alpha:
+            lo = mid  # P(X >= k | p) increases with p — mid sits below the root
+        else:
+            hi = mid
+    return (lo + hi) / 2
 
 
 def representative_point(
@@ -2032,6 +2653,7 @@ def decide_auto_write_tiers(
     min_pairs: int = 1,
     inferential_tiers: Iterable[int] = (),
     certified_tiers: Iterable[int] = (),
+    eval_waived_tiers: Iterable[int] = (),
 ) -> tuple[frozenset[int], tuple[DemotionDecision, ...]]:
     """Which candidate tiers auto-write this run, and the demotion record.
 
@@ -2046,9 +2668,17 @@ def decide_auto_write_tiers(
     ``no_certifying_evaluation`` however clean its measured precision looks. The
     namespace join (``1g:shared_upstream_ref``) is a derivation, not an inference —
     it follows the measured path like before.
+
+    P35.46 (ADR-153, Q-L3-1 = a): ``eval_waived_tiers`` names the derivation-
+    collapse tiers C0–C2 — the SIG-EVAL-004 holdout bound does NOT gate a
+    mechanical derivation (the GQ-23 census re-verifies every collapse every
+    run instead). The holdout measurement still records — a DemotionDecision
+    with ``reason="eval_waived:gq23_census"`` carries the measured precision
+    even though the tier auto-collapses.
     """
     inferential = frozenset(inferential_tiers)
     certified = frozenset(certified_tiers)
+    waived = frozenset(eval_waived_tiers)
     auto: set[int] = set()
     decisions: list[DemotionDecision] = []
     for tier in sorted(set(candidate_tiers)):
@@ -2057,6 +2687,20 @@ def decide_auto_write_tiers(
         if m is not None:
             precision = m.precision_strict if strict else m.precision_decided
         value = 0.0 if precision is None else precision
+        if tier in waived:
+            # The ADR-L3-B scoped waiver: the eval gate does not apply to a
+            # derivation-collapse tier — the GQ-23 census gates it instead.
+            decisions.append(
+                DemotionDecision(
+                    tier=tier,
+                    precision=value,
+                    threshold=threshold,
+                    demoted=False,
+                    reason="eval_waived:gq23_census",
+                )
+            )
+            auto.add(tier)
+            continue
         uncertified = tier in inferential and tier not in certified
         too_few = m is None or m.predicted < min_pairs
         demoted = uncertified or precision is None or too_few or precision < threshold
@@ -2144,6 +2788,17 @@ class CameraSiteResult:
     #: measured unions CONTRADICTING two declared-independent classes. Empty
     #: when the run had no declared-lineage map.
     lineage_findings: tuple[LineageFinding, ...] = ()
+    #: P35.46 (ruleset v3, GQ-23): the derivation census of THIS run — every
+    #: applied collapse re-verified, the failures, the demotion set the next
+    #: run consumes, and the GQ-25 origin-distinctness cluster count.
+    derivation_census: DerivationCensus | None = None
+    #: P35.46: the ``(lineage-or-source, tier)`` demotions this run CONSUMED —
+    #: the prior run's census failures; pairs under them stayed review-only.
+    demoted_collapses: tuple[tuple[str, int], ...] = ()
+    #: P35.46 (SIG-CONF-D05): honest count intervals — national + per-dossier.
+    count_intervals: dict[str, Any] = field(default_factory=dict)
+    #: P35.46 (M-1b): the id-resolution sample frame, keyed by namespace.
+    m1b_frame: dict[str, dict[str, Any]] = field(default_factory=dict)
 
     @property
     def dedup_ratio(self) -> float:
@@ -2245,6 +2900,44 @@ class CameraSiteResult:
             "decisions": len(self.decisions),
             "auto_write_decisions": auto,
             "proposed_decisions": proposed,
+            # P35.46 (ruleset v3): the link ledger — derivation links carry the
+            # shared site id; every inferential match is a visible
+            # possible_duplicate (distance + reason preserved), never merged.
+            "derivation_links": sum(
+                1
+                for d in self.decisions
+                if d.assessment.evidence.get("link_kind") == "derived_from"
+            ),
+            "possible_duplicate_links": sum(
+                1
+                for d in self.decisions
+                if d.assessment.evidence.get("link_kind") == "possible_duplicate"
+            ),
+            "demoted_collapses": [list(t) for t in self.demoted_collapses],
+            "derivation_census": (
+                None
+                if self.derivation_census is None
+                else {
+                    "checked": self.derivation_census.checked,
+                    "gq23_failures": [
+                        {
+                            "left": f.left,
+                            "right": f.right,
+                            "tier": f.tier,
+                            "token": f.token,
+                            "reason": f.reason,
+                        }
+                        for f in self.derivation_census.failures
+                    ],
+                    "demote_next_run": [list(t) for t in self.derivation_census.demote_next_run],
+                    "origin_distinct_violations": self.derivation_census.origin_distinct_violations,
+                    "origin_distinct_clusters": list(
+                        self.derivation_census.origin_distinct_clusters
+                    ),
+                }
+            ),
+            "count_intervals": self.count_intervals,
+            "m1b_id_resolution_sample": self.m1b_frame,
             # P31.11 human-review accounting (ADR-R9-HUMANER): verdicts folded
             # from review_decision, their outcomes, and what they changed.
             "human_review": {
@@ -2373,6 +3066,8 @@ def run_key(
     records: Sequence[CameraRecord],
     human_verdicts: Sequence[HumanVerdict] = (),
     declared_lineages: Mapping[str, str] | None = None,
+    declared_details: Mapping[str, LineageDeclaration] | None = None,
+    demoted_collapses: Iterable[tuple[str, int]] = (),
 ) -> str:
     """The run identity: every input a decision depends on.
 
@@ -2385,6 +3080,11 @@ def run_key(
     same inputs share a key (so the re-run is +0); ANY change a decision could depend
     on mints a new key, and readers take the latest COMPLETED run whole — never a union of
     a stale run's edges with a new one's.
+
+    P35.46 adds the collapse inputs: each source's lineage-declaration detail
+    (kind + documentary evidence gate C1/C2) and the consumed demotion set
+    (a census failure mints a NEW key — the demoted run is a different run,
+    not a silent re-collapse).
     """
     h = hashlib.sha256()
     h.update(
@@ -2402,6 +3102,21 @@ def run_key(
                     if declared_lineages is None
                     else {k: declared_lineages[k] for k in sorted(declared_lineages)}
                 ),
+                # P35.46 (ruleset v3): the declaration kind/evidence the C1
+                # copy-lineage and C2 documentary gates read.
+                "declared_lineage_details": (
+                    None
+                    if declared_details is None
+                    else {
+                        s: {
+                            "independence_class": d.independence_class,
+                            "kind": d.kind,
+                            "evidence": d.evidence,
+                        }
+                        for s, d in sorted(declared_details.items())
+                    }
+                ),
+                "demoted_collapses": sorted([token, tier] for token, tier in demoted_collapses),
                 "human": [
                     {
                         "left": v.left,
@@ -2455,8 +3170,10 @@ def resolve_camera_sites(
     human_votes: Sequence[HumanVote] = (),
     certified_tiers: Iterable[int] = (),
     declared_lineages: Mapping[str, str] | None = None,
+    declared_details: Mapping[str, LineageDeclaration] | None = None,
+    demoted_collapses: Iterable[tuple[str, int]] = (),
 ) -> CameraSiteResult:
-    """One camera-site ER run: block → assess → measure → decide → cluster (pure).
+    """One camera-site ER run: block → assess → measure → decide → cluster → census (pure).
 
     ``human_items``/``human_votes`` are the append-only review surface
     (P31.11): items bind decided pairs, votes are ``review_decision`` rows.
@@ -2474,16 +3191,23 @@ def resolve_camera_sites(
     sources resolve to the shared ``unclassified`` voice, the shared-upstream
     tier requires a declared namespace match, and GQ-11 copy detections are
     reported as :class:`LineageFinding` — none of it silently independent.
+
+    ``declared_details`` (P35.46) is the same table's kind/evidence detail the
+    C1 copy-lineage and C2 documentary gates read; ``demoted_collapses`` is
+    the prior run's GQ-23 ``(lineage-or-source, tier)`` demotion set — a
+    lineage whose census failed does not auto-collapse again.
     """
     verdicts = fold_human_verdicts(human_items, human_votes)
     rs = rules or CameraSiteRules.from_data()
     gr = geo_rule or load_geo_rules()[0]
+    demoted = tuple(demoted_collapses)
     assessed = _assess(
         records,
         rules=rs,
         geo_rule=gr,
         blocking_context=blocking_context,
         declared=declared_lineages,
+        declared_details=declared_details,
     )
     # The auto-write gate measures exactly what WOULD be auto-written: a candidate-tier pair
     # with a soft conflict is routed to review whatever its tier, so it is not scored as
@@ -2509,6 +3233,9 @@ def resolve_camera_sites(
         min_pairs=rs.min_holdout_pairs,
         inferential_tiers=rs.inferential_tiers,
         certified_tiers=certified_tiers,
+        # Q-L3-1 = a (ADR-153/ADR-L3-B): the holdout bound is waived for the
+        # derivation-collapse tiers — the GQ-23 census re-verifies them.
+        eval_waived_tiers=rs.collapse_tiers,
     )
     by_id = {r.subject_id for r in records}
     matched = [v for v in verdicts if v.left in by_id and v.right in by_id]
@@ -2519,6 +3246,7 @@ def resolve_camera_sites(
         rules=rs,
         human_verdicts=matched,
         dup_groups=assessed.duplicate_groups,
+        demoted_collapses=demoted,
     )
     key = run_key(
         rules=rs,
@@ -2527,7 +3255,26 @@ def resolve_camera_sites(
         records=records,
         human_verdicts=verdicts,
         declared_lineages=declared_lineages,
+        declared_details=declared_details,
+        demoted_collapses=demoted,
     )
+    # GQ-23 (P35.46): the derivation census runs on EVERY run — every applied
+    # collapse re-verified against the record set; failures mint the demotion
+    # set the next run consumes. Then the honest count intervals (D05) and
+    # the M-1b id-resolution sample frame.
+    census = derivation_census(
+        records,
+        decisions,
+        clusters,
+        rs,
+        lineages=assessed.lineages,
+        copy_lineages=assessed.copy_lineages,
+        documented_lineages=assessed.documented_lineages,
+        measured_overlaps=assessed.measured_overlaps,
+        colocation_counts=assessed.colocation_counts,
+    )
+    intervals = count_intervals(records, decisions, clusters, rs)
+    m1b = m1b_sample_frame(decisions, sample_size=rs.m1b_sample_size, seed_salt=key)
     # P35.15a / PKG-07: the declared-technology audit — disagreements between a
     # subject's declared slug and the legacy substring class are findings (the
     # declaration wins classification); subjects still lacking a declaration
@@ -2575,4 +3322,8 @@ def resolve_camera_sites(
         records_without_declared_technology=undeclared,
         mixed_technology_subjects=mixed,
         lineage_findings=assessed.lineage_findings,
+        derivation_census=census,
+        demoted_collapses=demoted,
+        count_intervals=intervals,
+        m1b_frame=m1b,
     )

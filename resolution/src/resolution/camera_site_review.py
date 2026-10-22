@@ -307,8 +307,9 @@ def read_observation(conn: Any, subject_id: str) -> dict[str, Any] | None:
     ).fetchall()
     rec: dict[str, Any] = {"claims": [], "sources": {}}
     # _RECORDS_SQL also carries the P32.4 occurrence refs (capture/retrieved)
-    # — read but not needed for the curator's per-predicate value view.
-    for _subject, predicate, value, claim_id, source_id, _cap, _ret in rows:
+    # and the P35.46 correction_reason column — read but not needed for the
+    # curator's per-predicate value view.
+    for _subject, predicate, value, claim_id, _corr, source_id, _cap, _ret in rows:
         rec[predicate] = value
         rec["sources"][predicate] = source_id
         if predicate in {"camera_latitude", "camera_longitude", "camera_external_ref"}:

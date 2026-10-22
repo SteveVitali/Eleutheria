@@ -17,24 +17,50 @@
 # published floor (splink_model.toml `auto_write_precision_threshold`) auto-write;
 # everything else is PROPOSED and enqueued for human review (SIG-IDENT-020/028).
 #
-# v3-interim (P34.45 / ADR-153 "derivation, not identity"; ADR-152): every
-# identity-INFERENCE tier is review-only — no agent/LLM-labelled evidence can
-# certify an auto-written same-device claim, and no independent human (B5)
-# evaluation exists in Round 11. The namespace join 1g:shared_upstream_ref (the
-# same upstream identifier republished under the v2 conditions) is a DERIVATION,
-# not identity inference, and stays the only candidate auto-write tier.
+# RULESET v3 (P35.46 / ADR-153 "derivation, not identity"; ADR-L3-B): the
+# C0/C1/C2/P vocabulary. Automatic collapse is limited to provable COPIES of
+# one upstream record — derivation links, never identity claims:
+#   C0 duplicate_target          — the same upstream layer ingested twice under
+#                                  one source (row- or byte-identical; ADR-116
+#                                  duplicate-target lineage);
+#   C1 namespaced_copy           — the same normalised value in a DECLARED
+#                                  id_namespace of a DECLARED copy lineage
+#                                  (mirror-of/derived-from), the id unique in
+#                                  each source's record set, within
+#                                  copy_tolerance_m — census-verified every
+#                                  run (GQ-23);
+#   C2 position_matched_copy     — inside a declared lineage carrying
+#                                  documentary evidence AND measured overlap
+#                                  >= c2_min_overlap: bijective within
+#                                  colocation_m, <= copy_tolerance_m, no
+#                                  attribute conflict (Q-L3-6 = a: enabled);
+#   P  possible_duplicate        — every inferential match (3g/4g/5g), a
+#                                  namespaced-id miss, a soft conflict, a
+#                                  refused union, a shape alert, an
+#                                  axis-swap-suspected point, or a
+#                                  census-demoted lineage: NOT merged; a
+#                                  possible_duplicate link with distance and
+#                                  reason, surfaced for optional operator
+#                                  review (GQ-24: identity inference is never
+#                                  auto-written without an independent human
+#                                  (B5) evaluation — none exists in Round 11).
+# SIG-EVAL-004's lower bound is WAIVED for C0-C2 only (Q-L3-1 = a,
+# ADR-153/ADR-L3-B): the GQ-23 census replaces the eval gate for copy tiers;
+# the inferential tiers stay review-only by construction. The v2 bare-ref
+# tier (1g) and the sub-metre coincidence tier (3g) die here: an inferential
+# distance/ref match is a possible duplicate, never a collapse.
 #
-# v3.1-interim (P35.15a / PKG-07, NEW-7 / FM-05): a record's device class now
+# Device classes (P35.15a / PKG-07, NEW-7 / FM-05): a record's class still
 # comes from its subject's DECLARED SKOS technology slug first — the
 # `technology` claim the connector emits from the camera-registry target's
 # declared slug ([[classes.technology_rule]] below). The substring rules are
 # retained only as the fallback for records that carry no declaration (the
 # spine's pre-P35.15b-backfill rows) and as the audit arm that logs a
 # device-class finding when it would have disagreed with a declaration — a
-# mismatch is recorded, never silently overridden. The inferential-tier lock
-# is unchanged.
+# mismatch is recorded, never silently overridden. Under v3 the declared
+# classes also feed the `device_kind` soft conflict.
 
-version = "3.1-interim"
+version = "3"
 
 # ---------------------------------------------------------------------------
 # Distances (metres, great-circle). A candidate pair farther apart than
@@ -44,47 +70,49 @@ version = "3.1-interim"
 # Two records within this distance carry the SAME coordinate for practical purposes:
 # a republished copy of one upstream row (a mirror) typically lands at 0.0 m.
 coincident_m = 1.0
-# The co-location radius used for ONE-TO-ONE checks: if either record has another
-# record of the other's source within this radius, the pair is ambiguous (several
-# devices on one pole / intersection) and never auto-writes.
+# The working copy tolerance a C1/C2 collapse must sit inside (GQ-23): the
+# measured maximum jitter a republished copy carries. M-3 (cross-copy
+# agreement, CONF-09) re-derives the empirical value from the C1 population —
+# until then the coincident bound stands in, deliberately tight.
+copy_tolerance_m = 1.0
+# The co-location radius used for ONE-TO-ONE (bijective) checks: if either
+# record has another record of the other's source within this radius, the pair
+# is ambiguous (several devices on one pole / intersection) and never
+# collapses.
 colocation_m = 5.0
-# Tier-4/5 proximity radius: nearer than this, an unambiguous cross-source pair is a
-# plausible same-device proposal for a human.
+# Tier-4/5 proximity radius — also the declared possible-duplicate distance
+# for the count interval's lower bound (GQ-10's 25 m bound).
 near_max_m = 25.0
-# The outer candidate radius (shared-reference tier + the blocking coverage bound).
+# The outer candidate radius (the blocking coverage bound — a possible
+# duplicate beyond it is not listed, SIG-IDENT-020).
 candidate_max_m = 50.0
 
 # ---------------------------------------------------------------------------
-# Tiers — mapped onto the §14.6 six-tier cascade (the integer is the spec tier the
-# disposition rules and the quality gates key on; the label names the camera rule).
-# `candidate_auto_write` tiers MAY auto-write, but ONLY if the ER run measures their
-# holdout precision >= the floor; a tier with no holdout evidence never auto-writes.
-# `inferential` tiers additionally require an independent human (B5) evaluation to
-# auto-write at all — the P34.45 v3-interim lock (ADR-153, GQ-24): the agent/LLM-
-# labelled gold set can never certify one, so an inferential tier is review-only
-# while `certified_tiers` is empty. A future 1g label that is not the namespace
-# join joins this list.
+# Tiers — the ruleset-v3 C0/C1/C2/P vocabulary (L3-confidence §4.6). The
+# integer is the spec tier the disposition rules key on; the label names the
+# emitted link vocabulary. `candidate_auto_write` lists the COLLAPSE tiers:
+# C0 applies on its own evidence path (duplicate-target lineage); C1/C2 are
+# the declared-lineage copy tiers. Under the ADR-L3-B waiver (Q-L3-1 = a,
+# scoped to C0–C2) the eval holdout never gates a copy tier — the GQ-23
+# census is the gate, and a failing lineage's tier demotes on the next run.
+# `inferential` tiers additionally require an independent human (B5)
+# evaluation to auto-write at all (GQ-24): the agent/LLM-labelled gold set
+# can never certify one, so an inferential tier is review-only while
+# `certified_tiers` is empty — emitted as a `possible_duplicate` link.
+# `c2_enabled` is the operator's Q-L3-6 = a decision as data; flipping it to
+# false demotes every C2 pair to P without a code change.
 # ---------------------------------------------------------------------------
 [tiers]
-candidate_auto_write = [1]
+candidate_auto_write = [1, 2]
 inferential = [3, 4, 5]
-# v2 (ADR-105 §4 — derived from the gold set's TRAINING partition errors, measured on a
-# fresh holdout): a shared upstream reference is the deterministic tier only when the
-# pair is also mutually nearest across the two sources AND, unless the two site
-# descriptions agree, each record is the other's ONLY counterpart within `colocation_m`
-# (so an unnamed shared-ref pair must also be one-to-one within 5 m). A publisher listing
-# several devices at one point cannot be disambiguated by a shared row number alone (the
-# v1 holdout measured tier 1g at 0.882). Its measured precision still rides the
-# agent-labelled holdout, but that measurement only demotes the DERIVATION — it can
-# never promote an inferential tier (ADR-153).
-shared_ref_requires_mutual_nearest = true
-shared_ref_colocated_requires_name_agreement = true
+c2_enabled = true
 
 [tiers.labels]
-1 = "1g:shared_upstream_ref"
-3 = "3g:coincident_point"
-4 = "4g:proximate_unique"
-5 = "5g:proximate_candidate"
+1 = "C1:namespaced_copy"
+2 = "C2:position_matched_copy"
+3 = "P3:coincident_point"
+4 = "P4:proximate_unique"
+5 = "P5:proximate_candidate"
 
 # ---------------------------------------------------------------------------
 # Device classes and the RECORDED compatibility rules. A record's class comes
@@ -154,15 +182,21 @@ operator_substrings = ["cctv"]
 
 # ---------------------------------------------------------------------------
 # Soft conflicts: a pair that carries one of these is still a candidate but can
-# NEVER auto-write — it is routed to review whatever its tier.
+# NEVER collapse or auto-write — it is a `possible_duplicate` routed to review
+# whatever its tier (the P enumeration names "soft conflicts" verbatim).
 #   jurisdiction — both records carry a resolved jurisdiction code and they differ;
 #   camera_type  — both records carry an explicit device type and they differ;
 #   direction    — (v2) both records carry a parseable viewing direction (compass word or
-#                  bearing) more than `direction_conflict_deg` apart.
+#                  bearing) more than `direction_conflict_deg` apart;
+#   device_kind  — (v3, P35.46) both records declare `technology` and their
+#                  declared device classes differ — the declared-technology
+#                  half of the device-kind conflict (the description-parsing
+#                  half stays D-P30.2b-2, unclaimed). A pair whose classes are
+#                  outright incompatible is never a candidate at all.
 # Jurisdiction values in `unresolved_jurisdictions` are treated as absent.
 # ---------------------------------------------------------------------------
 [soft_conflicts]
-fields = ["jurisdiction", "camera_type", "direction"]
+fields = ["jurisdiction", "camera_type", "direction", "device_kind"]
 unresolved_jurisdictions = ["unresolved", "", "unknown"]
 direction_conflict_deg = 90.0
 
@@ -180,10 +214,26 @@ strip_float_suffix = true
 # records are coincident AND those coincident records cover at least `min_share` of
 # the smaller source. A mirror copy is NOT independent corroboration: a cluster's
 # `independent_lineages` counts lineages, not sources.
+# `c2_min_overlap` (P35.46, Q-L3-6 = a): the measured copy overlap a
+# documented declared lineage must reach before a position-matched (C2)
+# collapse is allowed — coincident records covering at least this share of
+# the smaller source, with at least `min_pairs` evidence.
 # ---------------------------------------------------------------------------
 [lineage]
 min_pairs = 20
 min_share = 0.5
+c2_min_overlap = 0.9
+
+# ---------------------------------------------------------------------------
+# The derivation census + M-1b id-resolution sample (GQ-23, P35.46).
+# `m1b_sample_size` is the quarterly seeded draw per declared namespace (the
+# upstream GET leg is CONF-09's named scope); the acceptance bound the
+# catalog names is a >= 0.98 one-sided Clopper-Pearson lower bound on
+# resolved ids — reported as a measured property of the copy link, never a
+# certification figure.
+# ---------------------------------------------------------------------------
+[census]
+m1b_sample_size = 200
 
 # ---------------------------------------------------------------------------
 # Constrained clustering + cluster-shape alerts (SIG-IDENT-029). Auto-write edges are

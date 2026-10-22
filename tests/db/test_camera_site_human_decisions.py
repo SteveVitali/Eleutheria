@@ -91,9 +91,12 @@ def spine_ctx(conn) -> dict[str, object]:
 
     caps: dict[tuple[str, str], object] = {}
 
-    def source(source_id: str, digest: str) -> object:
+    def source(source_id: str, digest: str, lineage: dict | None = None) -> object:
         """One artifact+capture per (source, content digest); cached so two records
-        citing the same fetched bytes cite the same capture."""
+        citing the same fetched bytes cite the same capture. ``lineage`` is the
+        P35.25/P35.46 declaration (kind/mirror_of/class/namespace/evidence);
+        the default declares the source primary under its own class, which is
+        what keeps a~b an inferential pair rather than a C1 collapse."""
         key = (source_id, digest)
         if key in caps:
             return caps[key]
@@ -103,6 +106,20 @@ def spine_ctx(conn) -> dict[str, object]:
             "robots_policy,ingestion_permitted) VALUES(%s,%s,'registry','R2','fixture',%s,"
             "'MIRROR','granted','obey',true) ON CONFLICT DO NOTHING",
             (source_id, source_id, rights),
+        )
+        lin = lineage or {}
+        cur.execute(
+            "INSERT INTO source_lineage(source_id,registry_version,kind,mirror_of,"
+            "independence_class,id_namespace,evidence) "
+            "VALUES(%s,'t1',%s,%s,%s,%s,%s) ON CONFLICT DO NOTHING",
+            (
+                source_id,
+                lin.get("kind", "primary"),
+                lin.get("mirror_of", ""),
+                lin.get("independence_class", f"src:{source_id}"),
+                lin.get("id_namespace", "undeclared"),
+                lin.get("evidence", "fixture"),
+            ),
         )
         cur.execute(
             "INSERT INTO evidence_artifact(source_id,stable_locator,artifact_type,"
@@ -133,8 +150,9 @@ def spine_ctx(conn) -> dict[str, object]:
         *,
         digest: str | None = None,
         target: str | None = None,
+        lineage: dict | None = None,
     ) -> str:
-        cap = source(source_id, digest or f"d-{source_id}-{ref}")
+        cap = source(source_id, digest or f"d-{source_id}-{ref}", lineage)
         cur.execute("INSERT INTO entity(entity_type) VALUES('deployment') RETURNING entity_id")
         subject = str(cur.fetchone()[0])
         ctx["ids"][key] = subject  # type: ignore[index]
@@ -292,15 +310,17 @@ def test_a_human_accept_clusters_the_pair_and_names_the_curator(conn, spine_ctx)
 
 def test_a_human_reject_is_a_cannot_link_that_never_clusters(conn, spine_ctx) -> None:
     ids = _ids(spine_ctx)
-    # The automatic run WOULD merge a~b (clean holdout) — the curator's reject wins.
+    # a~b is an inferential pair (both sources declared primary under their
+    # own classes): proposed, never merged — the curator's reject hardens it
+    # into a recorded cannot_link.
     gold = _gold_pair(ids["a"], ids["b"], GoldLabel.MATCH)
     first = materialize_camera_sites(conn, role=ROLE, gold=gold, threshold=0.98, rules=RULES)
-    assert first["resolved_site_count_N"] == 3 and first["auto_write_decisions"] == 1
+    assert first["resolved_site_count_N"] == 4 and first["auto_write_decisions"] == 0
 
     item = _insert_item(conn.cursor(), ids["a"], ids["b"])
     _decide(conn.cursor(), item, "reject", "curator:lee", "2026-10-01T00:00:00Z")
     second = materialize_camera_sites(conn, role=ROLE, gold=gold, threshold=0.98, rules=RULES)
-    assert second["resolved_site_count_N"] == 4  # the auto merge is gone
+    assert second["resolved_site_count_N"] == 4  # the pair never clusters
     rows = _matches(conn, second["run_key"])
     reject = [r for r in rows if r[3] == "human_reject"]
     assert len(reject) == 1
@@ -414,7 +434,8 @@ def test_duplicate_targets_merge_on_identical_captured_content(conn, spine_ctx) 
     assert dup[0][3] == "auto_write" and dup[0][6] == 0  # tier 0: evidence, not a measured tier
     ev = dup[0][7]
     ev = ev if isinstance(ev, dict) else json.loads(ev)
-    assert ev["rule"] == "0:duplicate_target_of" and ev["identical_capture_digests"]
+    assert ev["rule"] == "C0:duplicate_target" and ev["identical_capture_digests"]
+    assert ev["link_kind"] == "derived_from" and ev["site_id"]
     assert run["duplicate_target_groups"] == 1
 
 
