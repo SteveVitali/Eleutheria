@@ -303,8 +303,7 @@ def test_the_export_reads_the_clusters_n_of_m(conn, camera_spine) -> None:
     # the member-record count beside [lower, upper] listed cameras — the
     # point "N resolved sites" wording is withdrawn in favour of the range.
     assert resolved["value"] == (
-        "8 camera records · between 6 and 7 listed cameras "
-        "([why a range?](/quality/#duplicates))"
+        "8 camera records · between 6 and 7 listed cameras ([why a range?](/quality/#duplicates))"
     )
     interval = resolved["count_interval"]
     assert (interval["records"], interval["lower"], interval["upper"]) == (8, 6, 7)
