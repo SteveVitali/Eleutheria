@@ -40,6 +40,11 @@ ALLOWED_TABLES: frozenset[str] = frozenset(
         "source_registry",
         "rights_record",
         "rights_decision",
+        # P35.35: the API capture() join needs the recorded lane + Part VIII
+        # class for the served-tier floor — the CURRENT view carries only the
+        # fields sources.json publishes; the append-only base table stays
+        # denied (FORBIDDEN-style, never in this set).
+        "source_redistribution_current",
         "contradiction",
         "coverage_record",
         "research_task",

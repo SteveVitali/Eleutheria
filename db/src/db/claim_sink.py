@@ -491,8 +491,15 @@ RightsResolver = Callable[[str], "Mapping[str, Any] | None"]
 #: consumes — ``custody_posture`` / ``spdx`` / ``redistributable`` / ``reviewed``
 #: / ``refused`` — plus the optional ``part_viii_class`` and the caller-injected
 #: ``packet_limited`` / ``sig_labelled_cc0`` signals, or ``None`` when the source
-#: is unknown. Absent a resolver the source's lane cannot be evidenced and every
-#: capture derives ``sealed`` (fail closed — never ``public`` by default).
+#: is unknown. Row 313 (P35.35) adds the recorded ``[redistribution]`` fields:
+#: a non-empty ``lane`` is the recorded verdict and wins over the interim
+#: basis; ``lane_evidence`` / ``lane_evidence_uri`` /
+#: ``lane_decision_authority`` / ``lane_review_needed`` /
+#: ``redistribution_version`` are the mirror fields the sink appends to
+#: ``source_redistribution`` (append-only — a changed declaration lands a new
+#: row, never an UPDATE). Absent a resolver the source's lane cannot be
+#: evidenced and every capture derives ``sealed`` (fail closed — never
+#: ``public`` by default).
 LaneResolver = Callable[[str], "Mapping[str, Any] | None"]
 #: Receives each chunk's already-present claims (see :class:`DuplicateBatch`).
 DuplicateHook = Callable[[DuplicateBatch], None]
@@ -920,10 +927,16 @@ class PgClaimSink:
         # P35.31 / NEW-2 (F-400): the per-source redistribution-lane lookup the
         # capture writer consults for ``storage_tier`` (wired by
         # ``connectors.sinks.make_claim_sink`` from the registry's rights record —
-        # the interim basis until row 313's ``[redistribution]`` fields land).
-        # Absent → every capture records ``sealed`` (fail closed).
+        # the interim basis) and row 313's recorded ``[redistribution]``
+        # fields — a non-empty ``lane`` is the recorded verdict. Absent →
+        # every capture records ``sealed`` (fail closed).
         self._lane_resolver = lane_resolver
         self._lane_by_source: dict[str, tuple[str, str]] = {}
+        # The resolver's full field map per source — the ``source_redistribution``
+        # mirror (P35.35) reads the evidence/decision fields the tier tuple
+        # alone cannot carry.
+        self._lane_fields_by_source: dict[str, dict[str, Any]] = {}
+        self._source_redistribution_ready: bool | None = None
         # Per-instance caches so prerequisites are resolved once, not per claim.
         self._run_id: str | None = None
         # (source_id, spdx, attribution, terms_url) -> rights_id. P34.21a: the
@@ -1470,19 +1483,29 @@ class PgClaimSink:
             return cached
         fields = self._lane_resolver(source_id) if self._lane_resolver else None
         fields = dict(fields) if fields else {}
+        self._lane_fields_by_source[source_id] = fields
         custody = str(fields.get("custody_posture") or "REFERENCE").strip().upper()
         if custody not in {"MIRROR", "DERIVE", "REFERENCE", "LINK"}:
             custody = "REFERENCE"
-        decision = interim_lane(
-            custody_posture=fields.get("custody_posture"),
-            spdx=fields.get("spdx"),
-            redistributable=fields.get("redistributable"),
-            reviewed=fields.get("reviewed"),
-            refused=fields.get("refused"),
-            packet_limited=fields.get("packet_limited"),
-            sig_labelled_cc0=fields.get("sig_labelled_cc0"),
-        )
-        tier = derive_storage_tier(decision.lane, fields.get("part_viii_class"))
+        # P35.35 (row 313): a recorded ``[redistribution]`` lane is the
+        # registry-of-record verdict — it wins over the interim basis. The
+        # interim derivation remains for a source whose block is undeclared
+        # (``lane`` absent) — its basis is recorded, and it never reaches
+        # ``public`` (no Part VIII class evidences a clear screen there).
+        recorded_lane = str(fields.get("lane") or "").strip()
+        if recorded_lane:
+            lane = recorded_lane
+        else:
+            lane = interim_lane(
+                custody_posture=fields.get("custody_posture"),
+                spdx=fields.get("spdx"),
+                redistributable=fields.get("redistributable"),
+                reviewed=fields.get("reviewed"),
+                refused=fields.get("refused"),
+                packet_limited=fields.get("packet_limited"),
+                sig_labelled_cc0=fields.get("sig_labelled_cc0"),
+            ).lane
+        tier = derive_storage_tier(lane, fields.get("part_viii_class"))
         out = (tier, custody)
         self._lane_by_source[source_id] = out
         return out
@@ -1507,6 +1530,60 @@ class PgClaimSink:
             ),
         )
 
+    def _source_redistribution_present(self) -> bool:
+        """Whether this spine carries the P35.35 ``source_redistribution`` change.
+
+        Checked once per sink (the ``claim_lineage`` precedent): an image
+        deployed ahead of the migration keeps captures writable — the
+        mirror row lands on the next write after the change deploys; its
+        absence is never a silent skip on a migrated spine.
+        """
+        if self._source_redistribution_ready is None:
+            row = self._conn.execute(
+                "SELECT to_regclass('public.source_redistribution')"
+            ).fetchone()
+            self._source_redistribution_ready = bool(row and row[0])
+        return self._source_redistribution_ready
+
+    def _mirror_source_redistribution(self, source_id: str) -> None:
+        """Append the resolver's recorded ``[redistribution]`` declaration.
+
+        P35.35 (row 313): the DB mirror of the registry of record — the
+        ``v_transparency_source`` view and the API read path join
+        ``source_redistribution_current`` for the lane + Part VIII fields.
+        Append-only (SIG-STORE-042): a changed declaration lands a NEW row
+        under a new ``registry_version``, never an UPDATE. A source whose
+        resolver carries no recorded lane (undeclared block — the interim
+        basis stays in charge) mirrors nothing: honest absence, never a
+        fabricated verdict.
+        """
+        if not self._source_redistribution_present():
+            return
+        fields = self._lane_fields_by_source.get(source_id) or {}
+        version = str(fields.get("redistribution_version") or "")
+        if not version:
+            return
+        self._conn.execute(
+            "INSERT INTO source_redistribution"
+            "(source_id, registry_version, lane, part_viii_class, evidence,"
+            " evidence_uri, decision_authority, review_needed, packet_limited,"
+            " sig_labelled_cc0) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+            "ON CONFLICT (source_id, registry_version) DO NOTHING",
+            (
+                source_id,
+                version,
+                str(fields.get("lane") or ""),
+                str(fields.get("part_viii_class") or "") or None,
+                str(fields.get("lane_evidence") or "") or None,
+                str(fields.get("lane_evidence_uri") or "") or None,
+                str(fields.get("lane_decision_authority") or "") or None,
+                bool(fields.get("lane_review_needed")),
+                bool(fields.get("packet_limited")),
+                bool(fields.get("sig_labelled_cc0")),
+            ),
+        )
+
     def _ensure_evidence(
         self, source_id: str, rights_id: str, artifact_type: str = "connector_run"
     ) -> tuple[str, str]:
@@ -1524,6 +1601,10 @@ class PgClaimSink:
         # uses, never the old 'public' constant.
         tier, custody = self._lane_and_custody(source_id)
         self._ensure_source(source_id, rights_id, custody)
+        # P35.35 (row 313): mirror the recorded [redistribution] declaration
+        # into source_redistribution so the transparency view and the API
+        # read path join the lane + Part VIII fields end-to-end.
+        self._mirror_source_redistribution(source_id)
         run_id = self._ensure_run()
         stable_locator = f"sig:connector:{self._connector_name}:{source_id}:{artifact_type}"
         # evidence_artifact — UNIQUE(source_id, stable_locator).
@@ -1946,6 +2027,7 @@ class PgClaimSink:
         artifact_id = self._artifact_by_uri.get(cache_key)
         if artifact_id is None:
             self._ensure_source(source_id, rights_id, custody)
+            self._mirror_source_redistribution(source_id)
             acquisition = "replay" if binding.replayed else "http_get"
             art = self._conn.execute(
                 _ACTUAL_ARTIFACT,

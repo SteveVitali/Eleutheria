@@ -234,13 +234,23 @@ def test_order_capture_records_changed_vs_prior():
 _UNSET = object()
 
 
-def _emit(run_rows, cap_rows=(), claims=(), cadence=_UNSET, cadence_path=None, at=AT):
+def _emit(
+    run_rows,
+    cap_rows=(),
+    claims=(),
+    cadence=_UNSET,
+    cadence_path=None,
+    source_registry=None,
+    site_source_ids=(),
+    at=AT,
+):
     raw = {
         "transparency_runs": [tuple(r[c] for c in TRANSPARENCY_RUN_VIEW_COLUMNS) for r in run_rows],
         "transparency_captures": [
             tuple(r[c] for c in TRANSPARENCY_CAPTURE_VIEW_COLUMNS) for r in cap_rows
         ],
         "transparency_source_rights": [],
+        "transparency_sources": [],
         "transparency_predicates": [],
     }
     return emit_transparency_artifacts(
@@ -248,6 +258,8 @@ def _emit(run_rows, cap_rows=(), claims=(), cadence=_UNSET, cadence_path=None, a
         claims=claims,
         cadence_sources={} if cadence is _UNSET else cadence,
         cadence_path=cadence_path,
+        source_registry=source_registry,
+        site_source_ids=site_source_ids,
         at=at,
     )
 

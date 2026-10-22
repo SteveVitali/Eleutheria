@@ -24,6 +24,41 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Registry redistribution lanes and the source-metadata export —
+  `v_transparency_source` + `sources.json`/`counts.json`** (P35.35 /
+  row 313; J3 §3.1 + §3.3 item 3 + J4 §9, K9 §10 C-6, spec §5.7's
+  verbatim wording per ADR-183, D-J3-1 [B-19] recorded; also
+  SIG-TRANSP-002 routed to owner P35.40 and SIG-TRANSP-035 to
+  P37.36) — every registered source now carries a recorded
+  `[sources.<id>.redistribution]` declaration (`lane`,
+  `evidence`, `evidence_uri`, `decision_authority`,
+  `review_needed`, `part_viii_class`, `packet_limited`,
+  `sig_labelled_cc0`) parsed from `sources.toml` with fail-closed
+  validation: unknown keys, invented lanes or Part VIII classes, a
+  positive lane without evidence + authority, and dangling fields
+  all refuse; an absent block reads as honest undeclared
+  (`lane == ""`), distinct from a recorded `unknown`. A new
+  append-only `source_redistribution` mirror (closed-vocabulary
+  CHECKs, immutability trigger, `ON CONFLICT DO NOTHING` writes)
+  plus `source_redistribution_current` carry the declaration into
+  the spine, and the new explicit-column `v_transparency_source`
+  (`sig_export` only) joins registry ⋈ rights ⋈ latest decision ⋈
+  current lane ⋈ last-seen freshness — sensitive registry/rights/
+  Part VIII fields structurally absent. The capture writer derives
+  `storage_tier` from `derive_storage_tier(lane, part_viii_class)`
+  — a lane-evidenced `raw-ok` + P8-clear source reaches `public`
+  (`D-P35.31-1` closed; everything unevidenced stays `sealed`,
+  never a default), and the read path serves the more restrictive
+  of recorded and derived (`derived_at_read` labels tightening,
+  never an upgrade). The release tree gains `transparency/
+  sources.json` (`sig.transparency-sources/1`) and
+  `transparency/counts.json` (`sig.source-counts/1`): the
+  lifecycle partition, the K9 C-6 `last_upstream_change`/
+  `last_sig_records_change` pair, gated rows on the closed reason
+  vocabulary, `no_upstream_url_recorded` where honest, restricted/
+  link-only surfaces as host + `path_sha256`, counts recomputable
+  from the emitted rows, byte-stable on re-export.
+
 - **Transparency run, capture and issue export — the scrubbed
   execution-history release artifacts** (P35.33 / row 311; J3 §3.1 +
   §3.3 items 1–2, K9 §10 C-4…C-7, K10 §18 C-13, SIG-ENG-021; also

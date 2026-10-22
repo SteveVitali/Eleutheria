@@ -36,6 +36,11 @@ from functools import cache
 from typing import Any
 
 from policy.rights import UNDETERMINED, RightsRecord, RightsReservation
+from policy.transparency import (
+    PART_VIII_CLASSES,
+    PART_VIII_CLEAR_VALUES,
+    REDISTRIBUTION_LANES,
+)
 
 from ._data import load_table
 
@@ -135,6 +140,67 @@ class LineageKind(StrEnum):
 #: corroboration — two undeclared voices agreeing stay ONE voice until the
 #: registry says otherwise.
 UNCLASSIFIED = "unclassified"
+
+
+@dataclass(frozen=True)
+class SourceRedistribution:
+    """The ``[sources.<id>.redistribution]`` declaration (P35.35 / ADR-183).
+
+    The registry of record's redistribution-lane verdict: the J4 pass's
+    recorded lane, the evidence that produced it, the decision that ratified
+    it, and the Part VIII signals ``derive_storage_tier`` reads. Additive: a
+    row without the block parses to the undeclared default (``lane == ""`` —
+    an honest absence, distinct from a *recorded* ``unknown`` verdict, which
+    names why no positive lane could be evidenced). A declared lane is a
+    recorded decision — it names its evidence, and a positive lane (anything
+    but ``unknown``) names the decision authority that recorded it; the
+    interim rights-record basis stays the fallback a lane-less row leaves,
+    and never reaches ``public``.
+    """
+
+    #: The recorded lane — one of ``policy.transparency.REDISTRIBUTION_LANES``;
+    #: ``""`` when the block is absent (undeclared, fail-closed).
+    lane: str = ""
+    #: The recorded basis text (verbatim from the lane pass's evidence column —
+    #: the same field, not a new one).
+    evidence: str = ""
+    #: Where the recorded evidence lives (repo-relative path/URI).
+    evidence_uri: str = ""
+    #: The recorded decision that ratified the lane (e.g. ``D-J3-1 [B-19]``).
+    decision_authority: str = ""
+    #: The verdict itself flags thin evidence needing a fresh review pass.
+    review_needed: bool = False
+    #: The most restrictive recorded Part VIII class (``P8-1``…``P8-9``) or a
+    #: recorded clear value (``clear``/``none-known``); ``""`` = unscreened.
+    part_viii_class: str = ""
+    #: R-10: the packet limits redistribution to aggregate granularity.
+    packet_limited: bool = False
+    #: R-11: a SIG-recorded CC0 label on SIG-authored material only.
+    sig_labelled_cc0: bool = False
+
+    def registry_version(self) -> str:
+        """A content-derived version id for the DB mirror row's PK.
+
+        The append-only ``source_redistribution`` projection keys rows on
+        ``(source_id, registry_version)``: a lane declaration that changes
+        lands a NEW row under a new version, never an UPDATE — the audit
+        trail J4's lane history wants.
+        """
+        import hashlib
+
+        canonical = "|".join(
+            (
+                self.lane,
+                self.part_viii_class,
+                self.evidence,
+                self.evidence_uri,
+                self.decision_authority,
+                "1" if self.review_needed else "0",
+                "1" if self.packet_limited else "0",
+                "1" if self.sig_labelled_cc0 else "0",
+            )
+        )
+        return f"sources.toml+{hashlib.sha256(canonical.encode()).hexdigest()[:16]}"
 
 
 @dataclass(frozen=True)
@@ -325,6 +391,14 @@ class SourceRecord:
     #: effect on ``assert_loadable`` (the loader gate reads permission fields
     #: only — this is corroboration metadata, not an ingestion input).
     lineage: SourceLineage = SourceLineage()
+    #: P35.35 (D-J3-1 [B-19], ADR-183): the recorded redistribution-lane
+    #: verdict — the registry of record for the lane the capture-writer's
+    #: ``storage_tier`` derivation and ``v_transparency_source`` read. An
+    #: absent block is the undeclared default — ``lane == ""`` — which leaves
+    #: the interim rights-record basis in charge (never ``public``). This is
+    #: redistribution metadata, never an ingestion input: it has NO effect on
+    #: ``assert_loadable`` and never flips ``ingestion_permitted``.
+    redistribution: SourceRedistribution = SourceRedistribution()
 
     def correction_for(self, field: str) -> DateCorrection | None:
         """The declared correction for ``field``, or None."""
@@ -441,6 +515,50 @@ class SourceRecord:
         # A mirror_of/derived_from reference resolves only against registry
         # ids; the cross-source existence check runs in ``registry()`` once the
         # whole table is loaded (fail-closed: a dangling id raises at load).
+        # P35.35: a redistribution declaration is a recorded verdict — it
+        # names the closed-vocabulary lane, its evidence, and (for a positive
+        # lane) the decision that ratified it. An absent block is the honest
+        # undeclared default; a block naming an invented lane, an unevidenced
+        # verdict, or a Part VIII class outside J4's vocabulary fails closed —
+        # never silently "unknown" (a recorded unknown still names why).
+        red = self.redistribution
+        if red.lane:
+            if red.lane not in REDISTRIBUTION_LANES:
+                raise ValueError(
+                    f"source {self.id!r} declares redistribution lane "
+                    f"{red.lane!r}; the closed vocabulary is "
+                    f"{sorted(REDISTRIBUTION_LANES)} (P35.35, J4 R-1…R-13)."
+                )
+            if not red.evidence.strip():
+                raise ValueError(
+                    f"source {self.id!r} declares redistribution lane "
+                    f"{red.lane!r} with no redistribution.evidence — a lane is "
+                    "a recorded verdict and names its basis (P35.35); leave "
+                    "the block absent for the undeclared default."
+                )
+            if red.lane != "unknown" and not red.decision_authority.strip():
+                raise ValueError(
+                    f"source {self.id!r} declares positive redistribution "
+                    f"lane {red.lane!r} with no decision_authority — a "
+                    "positive lane records the decision that ratified it "
+                    "(P35.35); only a recorded 'unknown' may stand on thin "
+                    "evidence alone."
+                )
+        elif red != SourceRedistribution():
+            raise ValueError(
+                f"source {self.id!r} carries redistribution fields but no "
+                "lane — a declaration without its verdict is dangling "
+                "(P35.35)."
+            )
+        if red.part_viii_class and red.part_viii_class not in (
+            PART_VIII_CLASSES | PART_VIII_CLEAR_VALUES
+        ):
+            raise ValueError(
+                f"source {self.id!r} declares part_viii_class "
+                f"{red.part_viii_class!r}; the vocabulary is "
+                f"{sorted(PART_VIII_CLASSES | PART_VIII_CLEAR_VALUES)} "
+                "(J4 §9, P35.35)."
+            )
 
 
 def _rights_from_row(source_id: str, row: dict[str, Any]) -> RightsRecord:
@@ -572,6 +690,53 @@ def _lineage_from_row(source_id: str, row: dict[str, Any]) -> SourceLineage:
     )
 
 
+def _redistribution_from_row(source_id: str, row: dict[str, Any]) -> SourceRedistribution:
+    """Parse the optional ``[sources.<id>.redistribution]`` sub-table (P35.35).
+
+    Absent block → the undeclared default (``lane == ""`` — the honest
+    absence, not a recorded ``unknown``). A present block must be a table
+    naming only the declared fields — an unknown key is a typo the load
+    refuses rather than silently dropping (fail-closed, §3.1); the lane and
+    Part VIII vocabularies validate on :class:`SourceRecord`.
+    """
+    raw = row.get("redistribution")
+    if raw is None:
+        return SourceRedistribution()
+    if not isinstance(raw, dict):
+        raise ValueError(
+            f"source {source_id!r}: redistribution must be a table "
+            "{lane, evidence, evidence_uri, decision_authority, review_needed, "
+            "part_viii_class, packet_limited, sig_labelled_cc0} (P35.35)"
+        )
+    known = {
+        "lane",
+        "evidence",
+        "evidence_uri",
+        "decision_authority",
+        "review_needed",
+        "part_viii_class",
+        "packet_limited",
+        "sig_labelled_cc0",
+    }
+    extra = set(raw) - known
+    if extra:
+        raise ValueError(
+            f"source {source_id!r}: redistribution block carries unknown "
+            f"field(s) {sorted(extra)} — the declaration is closed-shape "
+            "(P35.35); an unrecognised key never silently drops"
+        )
+    return SourceRedistribution(
+        lane=str(raw.get("lane", "")).strip(),
+        evidence=str(raw.get("evidence", "")),
+        evidence_uri=str(raw.get("evidence_uri", "")),
+        decision_authority=str(raw.get("decision_authority", "")),
+        review_needed=bool(raw.get("review_needed", False)),
+        part_viii_class=str(raw.get("part_viii_class", "")).strip(),
+        packet_limited=bool(raw.get("packet_limited", False)),
+        sig_labelled_cc0=bool(raw.get("sig_labelled_cc0", False)),
+    )
+
+
 def _record_from_row(source_id: str, row: dict[str, Any]) -> SourceRecord:
     last_verified = row.get("last_verified")
     return SourceRecord(
@@ -603,6 +768,7 @@ def _record_from_row(source_id: str, row: dict[str, Any]) -> SourceRecord:
         volatility_class=str(row.get("volatility_class", "")),
         volatility_basis=str(row.get("volatility_basis", "")),
         lineage=_lineage_from_row(source_id, row),
+        redistribution=_redistribution_from_row(source_id, row),
     )
 
 

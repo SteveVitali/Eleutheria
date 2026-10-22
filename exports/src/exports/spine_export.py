@@ -3450,11 +3450,17 @@ def build_spine_export(
         or _parse_instant(generated_at)
         or datetime.now(UTC)
     )
+    # P35.35: the source ids this release's published site records name —
+    # the ``with site records`` attribute K9 C-1 counts.
+    site_source_ids: set[str] = set()
+    for site in dataset.sites:
+        site_source_ids.update(site.source_ids)
     for path, data in emit_transparency_artifacts(
         raw,
         claims=list(claims or ()),
         cadence_sources=cadence_sources,
         scheduler_drift=scheduler_drift,
+        site_source_ids=site_source_ids,
         at=transparency_at,
     ).items():
         web_artifacts[path] = data

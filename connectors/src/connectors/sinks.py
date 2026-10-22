@@ -81,14 +81,18 @@ def _registry_rights(source_id: str) -> Mapping[str, Any] | None:
 
 
 def _registry_lane(source_id: str) -> Mapping[str, Any] | None:
-    """The source's interim redistribution-lane basis (P35.31 / NEW-2, F-400).
+    """The source's redistribution-lane evidence (P35.31 + row 313 / F-400).
 
-    Row 313's ``[redistribution]`` lane fields are not landed yet, so the
-    capture writer's ``storage_tier`` derivation consumes the lane basis the
-    registry already carries: ``custody_posture`` + the rights record fields
-    ``policy.transparency.interim_lane`` reads. A declined compact is the
-    recorded refusal R-1 names; an unregistered source resolves ``None`` —
-    the writer then derives ``sealed``, never ``public`` by default.
+    The capture writer's ``storage_tier`` derivation consumes the recorded
+    ``[redistribution]`` lane where the registry row declares one (row 313's
+    fields — ``lane``, ``part_viii_class``, ``packet_limited``,
+    ``sig_labelled_cc0``, and the verdict's evidence/decision fields the
+    ``source_redistribution`` mirror stores); the interim basis — the rights
+    record fields ``policy.transparency.interim_lane`` reads — remains the
+    fallback for an undeclared block, and never reaches ``public``. A
+    declined compact is the recorded refusal R-1 names; an unregistered
+    source resolves ``None`` — the writer then derives ``sealed``, never
+    ``public`` by default.
     """
     from .registry import CompactStatus, get
 
@@ -109,17 +113,35 @@ def _registry_lane(source_id: str) -> Mapping[str, Any] | None:
         redistributable = "yes"
     else:
         redistributable = "no" if reviewed else "UNDETERMINED"
-    return {
+    fields: dict[str, Any] = {
         "custody_posture": record.custody_posture.value,
         "spdx": rights.spdx,
         "redistributable": redistributable,
         "derivative_permitted": rights.derivative_permitted,
         "reviewed": reviewed,
         "refused": record.compact_status == CompactStatus.PERMISSION_DECLINED,
-        # The record carries no Part VIII class or packet flag yet — the
-        # interim basis leaves them unevidenced (derive_storage_tier fails
-        # closed on them); row 313's fields will carry them.
     }
+    red = record.redistribution
+    if red.lane:
+        # The recorded verdict wins over the interim basis: it names the
+        # closed-vocabulary lane plus the Part VIII class and packet flags
+        # the interim basis could never carry — the raw-ok + P8-clear →
+        # public path is ONLY reachable through these recorded fields.
+        fields.update(
+            {
+                "lane": red.lane,
+                "part_viii_class": red.part_viii_class,
+                "packet_limited": red.packet_limited,
+                "sig_labelled_cc0": red.sig_labelled_cc0,
+                "lane_evidence": red.evidence,
+                "lane_evidence_uri": red.evidence_uri,
+                "lane_decision_authority": red.decision_authority,
+                "lane_review_needed": red.review_needed,
+                "redistribution_version": red.registry_version(),
+                "lane_basis": "registry:[redistribution]",
+            }
+        )
+    return fields
 
 
 def _registry_lineage(source_id: str) -> Any:

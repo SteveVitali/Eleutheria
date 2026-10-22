@@ -21,9 +21,11 @@ from policy.transparency import (
     NEVER_EXPORTED_FIELDS,
     TRANSPARENCY_CAPTURE_VIEW_COLUMNS,
     TRANSPARENCY_RUN_VIEW_COLUMNS,
+    TRANSPARENCY_SOURCE_VIEW_COLUMNS,
 )
 
 DEPLOY = Path(__file__).resolve().parents[2] / "db" / "deploy" / "transparency_views.sql"
+SOURCE_DEPLOY = Path(__file__).resolve().parents[2] / "db" / "deploy" / "transparency_source.sql"
 
 
 def _split_top_level(select_list: str) -> list[str]:
@@ -73,21 +75,26 @@ def _strip_comments(sql: str) -> str:
     return "\n".join(line.split("--", 1)[0] for line in sql.splitlines())
 
 
-def test_no_select_star_and_no_never_exported_names():
-    sql = DEPLOY.read_text()
-    assert not re.search(r"SELECT\s+\*", _strip_comments(sql), re.IGNORECASE)
+def _assert_no_never_exported(sql: str) -> None:
     for field in NEVER_EXPORTED_FIELDS:
         # Word-boundary match — a never-exported column name may only appear
         # inside a comment (naming the rule), never in the view's SQL.
         for m in re.finditer(rf"\b{re.escape(field)}\b", sql):
             line_start = sql.rfind("\n", 0, m.start()) + 1
-            line = sql[line_start : sql.find("\n", m.end())]
+            line_end = sql.find("\n", m.end())
+            line = sql[line_start : line_end if line_end != -1 else len(sql)]
             comment_at = line.find("--")
             in_comment = comment_at != -1 and comment_at < m.start() - line_start
             stripped = line.lstrip()
             assert in_comment or stripped.startswith("--"), (
                 f"never-exported {field!r} outside a comment: {stripped}"
             )
+
+
+def test_no_select_star_and_no_never_exported_names():
+    sql = DEPLOY.read_text()
+    assert not re.search(r"SELECT\s+\*", _strip_comments(sql), re.IGNORECASE)
+    _assert_no_never_exported(sql)
 
 
 def test_run_view_columns_match_allow_list():
@@ -154,3 +161,87 @@ def test_grant_targets_sig_export(view):
     sql = DEPLOY.read_text()
     assert f"GRANT SELECT ON {view} TO sig_export" in sql
     assert "sig_read_public" not in sql
+
+
+# ---------------------------------------------------------------------------
+# P35.35 — v_transparency_source + the source_redistribution mirror
+# ---------------------------------------------------------------------------
+
+
+def test_source_view_columns_match_allow_list():
+    cols = _view_columns(
+        SOURCE_DEPLOY.read_text(), "v_transparency_source", "FROM source_registry sr"
+    )
+    assert cols == list(TRANSPARENCY_SOURCE_VIEW_COLUMNS)
+    assert not NEVER_EXPORTED_FIELDS.intersection(cols)
+
+
+def test_source_deploy_no_select_star_and_no_never_exported_names():
+    sql = SOURCE_DEPLOY.read_text()
+    assert not re.search(r"SELECT\s+\*", _strip_comments(sql), re.IGNORECASE)
+    _assert_no_never_exported(sql)
+
+
+def test_source_view_p8_1_licence_text_is_never_a_column():
+    """A Part VIII-1-classified licence string is never a view column — the
+    view exposes the lane + its recorded evidence, not the classified
+    material itself (ticket 313, Part VIII §0.7)."""
+    cols = _view_columns(
+        SOURCE_DEPLOY.read_text(), "v_transparency_source", "FROM source_registry sr"
+    )
+    for forbidden in (
+        "license_terms",
+        "licence_terms",
+        "terms_text",
+        "license_verbatim",
+        "licence_verbatim",
+        "captured_terms_verbatim",
+        "reviewed_by",  # the raw record's person-shaped column — decisions carry ROLE
+        "notes",
+        "contact_channel",
+        "auth_model",
+        "access_method",
+    ):
+        assert forbidden not in cols, forbidden
+
+
+def test_source_verify_script_selects_the_same_columns():
+    verify = _strip_comments(
+        (SOURCE_DEPLOY.parents[1] / "verify" / "transparency_source.sql").read_text()
+    )
+    stmt = next(
+        (
+            s
+            for s in verify.split(";")
+            if re.search(r"\bFROM v_transparency_source\b", s) and "WHERE FALSE" in s
+        ),
+        None,
+    )
+    assert stmt is not None
+    m = re.search(r"SELECT\s+(.*?)\s+FROM", stmt, re.S)
+    assert m is not None
+    selected = [c.strip() for c in m.group(1).split(",")]
+    assert selected == list(TRANSPARENCY_SOURCE_VIEW_COLUMNS)
+
+
+def test_source_view_grant_targets_sig_export_only():
+    """The view pairs J3 §3.3 item 2's rule — sig_export reads it; the public
+    read role does not. The append-only mirror itself IS granted to
+    sig_read_public (the API's served-tier floor joins it) — the check is on
+    the view's grant lines, not the file."""
+    sql = SOURCE_DEPLOY.read_text()
+    assert "GRANT SELECT ON v_transparency_source TO sig_export" in sql
+    for line in sql.splitlines():
+        if "v_transparency_source" in line and "GRANT" in line:
+            assert "sig_read_public" not in line, line
+
+
+def test_source_export_query_selects_the_allow_list_verbatim():
+    from exports.transparency import TRANSPARENCY_QUERIES
+
+    relation, sql = TRANSPARENCY_QUERIES["transparency_sources"]
+    assert relation == "v_transparency_source"
+    m = re.match(r"SELECT (.*) FROM", sql)
+    assert m is not None
+    selected = [c.strip() for c in m.group(1).split(",")]
+    assert selected == list(TRANSPARENCY_SOURCE_VIEW_COLUMNS)
