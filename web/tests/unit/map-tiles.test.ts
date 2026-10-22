@@ -13,7 +13,9 @@ import {
   PUBLIC_MAP_STYLE,
   assertServingContract,
   buildPublicMapStyle,
+  NATIONAL_CELLS_MAXZOOM,
   compartmentAttribution,
+  compartmentCellsLayerId,
   compartmentLayerId,
   compartmentSourceId,
   isSelfHostedTileUrl,
@@ -94,18 +96,36 @@ describe("per-licence-compartment tile sources (P30.3, ADR-106; P31.15, ADR-R9-T
     expect(style.sources["sig_osm_physical"]?.url).toBe("pmtiles:///tiles/osm_physical-sites.pmtiles");
     expect(style.sources["sig_osm_physical"]?.attribution).toBe(OSM_ATTRIBUTION);
     expect(style.sources["sig_sig_graph"]?.attribution).toContain("CC-BY-4.0");
-    // the layer ids the island registers are the same ones the style declares
+    // the layer ids the island registers are the same ones the style declares —
+    // sig.map-tiles/2: the z0–9 `cells` aggregate layer, then the tier-2 fill
+    // and tr≤1 circle halves of `sites`, per source
     expect(style.layers.map((l) => l.id)).toEqual([
       "sig-background",
+      compartmentCellsLayerId("osm_physical"),
+      `${compartmentLayerId("osm_physical")}-cells`,
       compartmentLayerId("osm_physical"),
+      compartmentCellsLayerId("sig_graph"),
+      `${compartmentLayerId("sig_graph")}-cells`,
       compartmentLayerId("sig_graph"),
     ]);
     expect(style.layers.map((l) => l.source)).toEqual([
       undefined,
       compartmentSourceId("osm_physical"),
+      compartmentSourceId("osm_physical"),
+      compartmentSourceId("osm_physical"),
+      compartmentSourceId("sig_graph"),
+      compartmentSourceId("sig_graph"),
       compartmentSourceId("sig_graph"),
     ]);
-    expect(style.layers[1]?.["source-layer"]).toBe("sites");
+    expect(style.layers[1]?.["source-layer"]).toBe("cells");
+    expect(style.layers[1]?.maxzoom).toBe(NATIONAL_CELLS_MAXZOOM + 1);
+    // tier-2 sites are H3 polygons → a fill layer on tr==2; circles take tr≤1
+    expect(style.layers[2]?.["source-layer"]).toBe("sites");
+    expect(style.layers[2]?.type).toBe("fill");
+    expect(style.layers[2]?.filter).toEqual(["==", ["get", "tr"], 2]);
+    expect(style.layers[3]?.["source-layer"]).toBe("sites");
+    expect(style.layers[3]?.type).toBe("circle");
+    expect(style.layers[3]?.filter).toEqual(["!=", ["get", "tr"], 2]);
   });
 
   it("ODbL layers carry the OpenStreetMap notice", () => {

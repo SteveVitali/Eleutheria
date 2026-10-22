@@ -147,6 +147,13 @@ describe("national-zoom density binning + per-tier point honesty (SIG-UI-019)", 
   it("declares a min zoom for every sensitivity tier", () => {
     for (const t of SENSITIVITY_TIERS) expect(t in MIN_POINT_ZOOM_BY_TIER).toBe(true);
   });
+
+  it("is pinned to the sig.map-tiles/2 zoom bands (ADR-156)", () => {
+    // The web seam must equal SITE_MINZOOM_BY_TIER in exports/tiles.py —
+    // cells carry z0–9; tier 0 → z10, tier 1 → z11, tier 2 → z12; tier 3 never.
+    expect(NATIONAL_ZOOM_MAX).toBe(9);
+    expect(MIN_POINT_ZOOM_BY_TIER).toEqual({ 0: 10, 1: 11, 2: 12, 3: null });
+  });
 });
 
 describe("no-coordinate assets as jurisdiction indicators, never dropped (SIG-UI-020)", () => {

@@ -10,15 +10,17 @@ import { join, relative, resolve, sep } from "node:path";
 import { resolveTileCopyList } from "./scripts/export-tiles.mjs";
 import { buildManifest, classifyDist, writeManifest } from "./src/lib/page-types.ts";
 
-// P21.5 (deliverable 3, LD-F07/H08) + P30.3 (ADR-106) + P31.15 (ADR-R9-TILES): in
-// `export` mode the static build CONSUMES the rendered vector tiles the export
-// produced — ONE archive PER LICENCE COMPARTMENT (`<compartment>-sites.pmtiles`,
-// e.g. the ODbL osm_physical layer apart from the CC-BY graph) — never a merged,
-// mixed-licence archive. Each is served as its own source with its own attribution
+// P21.5 (deliverable 3, LD-F07/H08) + P30.3 (ADR-106) + P31.15 (ADR-R9-TILES) +
+// P35.52 (sig.map-tiles/2, ADR-156): in `export` mode the static build CONSUMES
+// the rendered vector tiles the export produced — ONE archive PER LICENCE
+// COMPARTMENT (`<compartment>-sites.<sha8>.pmtiles`, e.g. the ODbL osm_physical
+// layer apart from the CC-BY graph) — never a merged, mixed-licence archive.
+// Each is served as its own source with its own attribution
 // (/map/style.json), over a plain background with NO basemap (Q8). The copy list is
 // the SAME list `/map/style.json` is built from (data.ts getCompartmentTileSources):
-// the manifest's `web/tiles/<compartment>-sites.pmtiles` artifacts — so the style
-// can never name an archive that was not copied, and no unlisted file is served.
+// the manifest's `web/tiles/<compartment>-sites.<sha8>.pmtiles` artifacts plus the
+// `web/tiles/index.json` contract index — so the style can never name an archive
+// that was not copied, and no unlisted file is served.
 // Fixtures mode (the CI default) is untouched.
 function sigExportTiles() {
   return {

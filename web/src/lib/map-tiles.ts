@@ -31,8 +31,14 @@
  * tabular equivalent remains the archivable, no-JS surface (SIG-UI-037/050).
  */
 
+import { NATIONAL_ZOOM_MAX } from "./map";
+
 /** PMTiles archive version the public map is served as (SIG-GEO-012). */
 export const PMTILES_VERSION = 3;
+
+/** The last zoom the `cells` aggregation layer covers (sig.map-tiles/2, ADR-156)
+ * — pinned to the same band boundary `map.ts` declares. */
+export const NATIONAL_CELLS_MAXZOOM = NATIONAL_ZOOM_MAX;
 
 /**
  * The correct OpenStreetMap attribution, rendered in every context incl. print
@@ -63,7 +69,16 @@ export interface MapLibreStyle {
   /** The declared PMTiles archive version this style consumes (SIG-GEO-012). */
   metadata: { "sig:pmtiles_version": number; "sig:serving": "static" };
   sources: Record<string, MapLibreVectorSource>;
-  layers: Array<{ id: string; type: string; source?: string; "source-layer"?: string }>;
+  layers: Array<{
+    id: string;
+    type: string;
+    source?: string;
+    "source-layer"?: string;
+    minzoom?: number;
+    maxzoom?: number;
+    filter?: unknown[];
+    paint?: Record<string, unknown>;
+  }>;
 }
 
 /** The plain-background base layer (Q8 — no basemap at all). */
@@ -176,6 +191,11 @@ export function compartmentLayerId(compartment: string): string {
   return `sig-sites-${compartment}`;
 }
 
+/** The layer id the z0–9 aggregated cells of one compartment draw under (sig.map-tiles/2). */
+export function compartmentCellsLayerId(compartment: string): string {
+  return `sig-cells-${compartment}`;
+}
+
 /** The attribution a compartment's tile source carries (ODbL → the OSM notice, §42.3). */
 export function compartmentAttribution(license: string): string {
   return license === "ODbL-1.0" ? OSM_ATTRIBUTION : `${SIG_ATTRIBUTION} (${license})`;
@@ -220,11 +240,59 @@ export function buildPublicMapStyle(tiles: readonly CompartmentTileSource[]): Ma
       url: `${PMTILES_PROTOCOL}${t.path}`,
       attribution: tileSourceAttribution(t),
     };
+    // sig.map-tiles/2 (ADR-156): the `cells` layer aggregates the national band
+    // (z0–9) — sized by the cell's record count `n`, still per-compartment so
+    // the browser sums counts across compartments, never a licence-mixed file.
+    layers.push({
+      id: compartmentCellsLayerId(t.compartment),
+      type: "circle",
+      source: id,
+      "source-layer": "cells",
+      maxzoom: NATIONAL_CELLS_MAXZOOM + 1,
+      paint: {
+        // n^(1/2)-scaled radius keeps a 1-record cell small and a metro cell legible
+        "circle-radius": [
+          "interpolate",
+          ["linear"],
+          ["^", ["get", "n"], 0.5],
+          1,
+          3,
+          32,
+          12,
+          256,
+          26,
+        ],
+        "circle-opacity": 0.45,
+        "circle-color": "#35507a",
+        "circle-stroke-color": "#182a44",
+        "circle-stroke-width": 0.6,
+      },
+    });
+    // Tier-2 sites emit an H3 *polygon* (never the true point) — a circle
+    // layer can't draw it, so tr==2 rides its own fill layer; the tier's
+    // z≥12 band comes from the tile data itself.
+    layers.push({
+      id: `${compartmentLayerId(t.compartment)}-cells`,
+      type: "fill",
+      source: id,
+      "source-layer": "sites",
+      filter: ["==", ["get", "tr"], 2],
+      paint: { "fill-color": "#35507a", "fill-opacity": 0.2 },
+    });
     layers.push({
       id: compartmentLayerId(t.compartment),
       type: "circle",
       source: id,
       "source-layer": "sites",
+      // points only — tr==2 polygons are drawn by the fill layer above
+      filter: ["!=", ["get", "tr"], 2],
+      paint: {
+        "circle-radius": 4,
+        "circle-opacity": 0.7,
+        "circle-color": "#35507a",
+        "circle-stroke-color": "#182a44",
+        "circle-stroke-width": 0.8,
+      },
     });
   }
   return { ...PUBLIC_MAP_STYLE, sources, layers };

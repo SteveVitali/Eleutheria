@@ -22,7 +22,7 @@ from exports.published_record import record_from_site_row
 from exports.research_dossier import PACKET_SCHEMA, validate_packet
 from exports.search_index import build_search_index
 from exports.shaping import ShapingClaim, build_shaped_dataset, shape_sites
-from exports.tiles import slim_geojson_for_tiles
+from exports.tiles import map_tile_geojson
 from policy.sensitivity import CandidateAssetPublishRefused
 
 from exports import shaping
@@ -267,21 +267,25 @@ def _feature(**props: Any) -> dict[str, Any]:
     }
 
 
-def test_slim_geojson_refuses_flagged_and_candidate_features() -> None:
+def test_tile_emit_refuses_flagged_and_candidate_features() -> None:
+    # P35.52: the sig.map-tiles/2 emit (map_tile_geojson) runs the same
+    # public-layer refusal on the FULL properties before any reduction.
     flagged = json.dumps(
         {"type": "FeatureCollection", "features": [_feature(residential_parcel_flag=True)]}
     ).encode()
     with pytest.raises(CandidateAssetPublishRefused):
-        slim_geojson_for_tiles(flagged)
+        map_tile_geojson(flagged, "sig_graph")
     candidate = json.dumps(
         {"type": "FeatureCollection", "features": [_feature(entity_type="candidate_asset")]}
     ).encode()
     with pytest.raises(CandidateAssetPublishRefused):
-        slim_geojson_for_tiles(candidate)
-    # A clean feature still slims to the render properties.
+        map_tile_geojson(candidate, "sig_graph")
+    # A clean feature emits the contract properties (rk + tr), never the row.
     ok = json.dumps({"type": "FeatureCollection", "features": [_feature()]}).encode()
-    slimmed = json.loads(slim_geojson_for_tiles(ok))
-    assert slimmed["features"][0]["properties"]["entity_type"] == "deployment"
+    emitted = json.loads(map_tile_geojson(ok, "sig_graph"))
+    site = next(f for f in emitted["features"] if f["tippecanoe"]["layer"] == "sites")
+    assert site["properties"]["rk"] == "sig_graph:deployment:e1"
+    assert site["properties"]["tr"] == 0
 
 
 # --- research_dossier: the packet contract refuses --------------------------------

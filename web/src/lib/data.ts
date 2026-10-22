@@ -1239,7 +1239,13 @@ export function getCompartmentTileSources(): CompartmentTileSource[] {
     );
   }
   return (parsed.artifacts ?? [])
-    .filter((a) => typeof a.path === "string" && /^web\/tiles\/[^/]+-sites\.pmtiles$/.test(a.path))
+    // sig.map-tiles/2 (ADR-156): content-hash names — <comp>-sites.<sha8>.pmtiles;
+    // the optional hash group keeps pre-P35.52 un-hashed exports readable.
+    .filter(
+      (a) =>
+        typeof a.path === "string" &&
+        /^web\/tiles\/[^/]+-sites(?:\.[0-9a-f]{8})?\.pmtiles$/.test(a.path),
+    )
     .map((a) => ({
       compartment: String(a.compartment),
       license: String(a.license),

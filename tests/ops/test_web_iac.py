@@ -217,6 +217,9 @@ def test_sig_web_image_builds_lints_and_serves_byte_ranges(tmp_path: Path) -> No
     tiles = site / "tiles"
     tiles.mkdir()
     (tiles / "sig_graph-sites.pmtiles").write_bytes(payload)
+    # sig.map-tiles/2 (ADR-156): the content-hashed name is immutable-cacheable.
+    (tiles / "sig_graph-sites.0123abcd.pmtiles").write_bytes(payload)
+    (tiles / "index.json").write_text('{"archives": []}', encoding="utf-8")
 
     name = "sig-web-test-p3115"
     subprocess.run(["docker", "rm", "-f", name], capture_output=True, check=False)
@@ -275,6 +278,13 @@ def test_sig_web_image_builds_lints_and_serves_byte_ranges(tmp_path: Path) -> No
         headers = get("http://localhost:18080/tiles/sig_graph-sites.pmtiles").stdout
         assert "application/vnd.pmtiles" in headers
         assert "accept-ranges: bytes" in headers.lower()
+        # P35.52/D12: a content-hashed archive serves immutable; the index and
+        # any un-hashed name still revalidate.
+        hashed = get("http://localhost:18080/tiles/sig_graph-sites.0123abcd.pmtiles").stdout
+        assert "immutable" in hashed.lower()
+        assert "max-age=31536000" in hashed
+        idx = get("http://localhost:18080/tiles/index.json").stdout
+        assert "max-age=300" in idx
         ranged = get(
             "http://localhost:18080/tiles/sig_graph-sites.pmtiles",
             "-r",

@@ -638,6 +638,13 @@ def test_make_ci_local_covers_every_ci_run_command() -> None:
         # tests/unit/test_perf_reuse.py.
         'export CI_IMAGE="${ImageOS:-}-${ImageVersion:-}"',
         "printf '%s\\n' \"$out\"",
+        # P35.52 (ADR-156): the tile-verifier leg's runner provisioning — the
+        # C toolchain + sqlite3/zlib dev headers the pinned tippecanoe build
+        # needs are runner packages (same class as `npx playwright install`
+        # above). Locally the developer's toolchain is asserted by
+        # `build_tippecanoe.sh`, reachable via `check-tile-verify` in ci-local.
+        "sudo apt-get update",
+        "sudo apt-get install",
         'mkdir -p "$(dirname "$CI_RECORD_OUT")"',
         "python3 scripts/ci/perf_reuse.py record",
     )

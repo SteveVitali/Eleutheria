@@ -20,7 +20,12 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-const TILE_RE = /^web\/tiles\/[^/]+-sites\.pmtiles$/;
+// P35.52 (sig.map-tiles/2, ADR-156): archive names carry the content hash —
+// `<compartment>-sites.<sha8>.pmtiles`; the optional hash group keeps older
+// un-hashed exports readable. `web/tiles/index.json` is the contract's index
+// and ships alongside the archives.
+const TILE_RE = /^web\/tiles\/[^/]+-sites(?:\.[0-9a-f]{8})?\.pmtiles$/;
+const TILE_INDEX = "web/tiles/index.json";
 
 /**
  * @param {string} exportDir the export output dir (`<dir>/manifest.json` +
@@ -53,7 +58,7 @@ export function resolveTileCopyList(layoutDir, mode = "export") {
   }
   const listed = (manifest.artifacts ?? [])
     .map((a) => String(a.path ?? ""))
-    .filter((p) => TILE_RE.test(p))
+    .filter((p) => TILE_RE.test(p) || p === TILE_INDEX)
     .map((p) => p.slice("web/tiles/".length));
   const files = listed.filter((f) => existsSync(join(tilesDir, f)));
   if (files.length !== listed.length) {

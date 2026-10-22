@@ -123,9 +123,15 @@ def test_the_export_dir_satisfies_every_export_mode_requirement(produced) -> Non
         assert (export_dir / comp / "ATTRIBUTION.json").is_file(), (
             f"{comp}/ATTRIBUTION.json — the per-compartment attribution index"
         )
+    # P35.52 (sig.map-tiles/2): content-hash names — <comp>-sites.<sha8>.pmtiles —
+    # plus the index.json document that describes them.
+    import re
+
+    tile_re = re.compile(r"^web/tiles/([a-z0-9_]+)-sites\.[0-9a-f]{8}\.pmtiles$")
     tile_paths = [a["path"] for a in manifest["artifacts"] if a["path"].startswith("web/tiles/")]
-    assert "web/tiles/osm_physical-sites.pmtiles" in tile_paths
-    assert f"web/tiles/{cc0_comp}-sites.pmtiles" in tile_paths
+    assert "web/tiles/index.json" in tile_paths
+    tile_comps = {tile_re.match(p).group(1) for p in tile_paths if tile_re.match(p)}
+    assert {"osm_physical", cc0_comp} <= tile_comps
 
     # Provenance: the bytes came from the spine pipeline (PROV-O + exclusions),
     # not a fixture serializer — no fixture serializer emits provenance.ttl or

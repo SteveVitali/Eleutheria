@@ -664,7 +664,7 @@ def assert_site_matches_partition(dist: Path, public_root: Path) -> None:
     leaks = (
         [
             f"tiles/{p.name}"
-            for p in sorted(tiles_dir.glob("*-sites.pmtiles"))
+            for p in sorted(tiles_dir.glob("*-sites*.pmtiles"))
             if f"{_WEB_DIR}/tiles/{p.name}" not in public_paths
         ]
         if tiles_dir.is_dir()

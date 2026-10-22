@@ -871,8 +871,10 @@ def test_s8_web_build_consumes_rendered_tiles(web_build_from_export: _WebBuild) 
     import struct
 
     assert web_build_from_export.returncode == 0
-    tiles = web_build_from_export.dist / "tiles" / "osm_physical-sites.pmtiles"
-    assert tiles.exists(), "the export-built site must serve the rendered PMTiles"
+    # sig.map-tiles/2 (ADR-156): the archive name carries the content hash.
+    found = list(web_build_from_export.dist.glob("tiles/osm_physical-sites*.pmtiles"))
+    assert found, "the export-built site must serve the rendered PMTiles"
+    tiles = found[0]
     data = tiles.read_bytes()
     assert data[0:7] == b"PMTiles" and data[7] == 3, "a valid PMTiles v3 archive"
     assert struct.unpack_from("<Q", data, 72)[0] >= 1, "at least one rendered tile"
