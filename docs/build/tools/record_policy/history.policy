@@ -670,3 +670,17 @@ seed-commit 6cba05fe
 # as a later commit (no force-push). Scope: findings attributed to
 # 103e9025 only; no other commit borrows the exemption.
 seed-commit 103e9025
+# P35.45 (row 324) — f80fbd0a compacts in place the two PHASE LOG
+# entries committed at LEDGER.md:1162/1163 by 103e9025 (the dispatch
+# `live-claim`-correction record and the restart/resume record) and
+# folds the clause-digest head bullet to
+# memory-repair/LEDGER_head_comments20_pre-P35.45.txt: P35.45
+# closeout advanced `nextTicket` to P35.46 (contract head 7,299 B),
+# tipping the orient recipe to 53,622 B > 48 KiB (BM-ORIENT-01 V11).
+# The sanctioned P35.66/6c05e605 in-place pattern — every recorded
+# field kept; git history carries the original bytes; the correction
+# is disclosed by the appended `P35.45 correction` entry naming
+# 103e9025:1162/1163. Declaration lands as a later commit (no
+# force-push). Scope: findings attributed to f80fbd0a only; no other
+# commit borrows the exemption.
+seed-commit f80fbd0a
