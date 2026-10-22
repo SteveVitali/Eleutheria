@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "cc1ffd4a34d60b8053344a17980ecd708cb441fa",
+  "input_commit": "20a5c9ae6697dac919578a120365967b667a06b9",
   "manifest_inputs": 1092,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -9150,10 +9150,10 @@
       "landing": "every national-scoped measured_gaps row measures under its ratified ceiling in national_budget_leg.sh budgets and is removed in the same change — the real-scale documents, totals, first-view data and interaction latencies all inside the law",
       "landing_source": "event-head",
       "backlog_home": "BL-085",
-      "item": "The real-scale measured gaps the national fixture exposed (SIG-FIND-005 — budgets measured under real-sized state, never only demo data): T2 document ≤ 100 KiB vs ≈ 1.70 MB `/map/` and ≈ 1.77 MB `/network/` national documents (the honest no-JS equivalents at 232,500 invented sites / 6,460 nodes / 405,000 edges), the driven totals (≈ 2.22 MB / ≈ 1.85 MB vs ≤ 450/250 KiB), the `/map/` first-view data (≈ 3.24 MB vs ≤ 1.5 MiB), the national interaction latencies under 4× throttle (map ≈ 511 ms vs 200 ms, network ≈ 284 ms vs 200 ms, search ≈ 112 ms vs 100 ms), the national `/map/` Lighthouse LCP (≈ 3,349 ms vs ≤ 2,500 ms), and the fixtures-mode `/network/` node-select latency on the CI runner (≈ 228 ms vs ≤ 200 ms)",
+      "item": "The real-scale measured gaps the national fixture exposed (SIG-FIND-005 — budgets measured under real-sized state, never only demo data): T2 document ≤ 100 KiB vs ≈ 1.70 MB `/map/` and ≈ 1.77 MB `/network/` national documents (the honest no-JS equivalents at 232,500 invented sites / 6,460 nodes / 405,000 edges), the driven totals (≈ 2.22 MB / ≈ 1.85 MB vs ≤ 450/250 KiB), the `/map/` first-view data (≈ 3.24 MB vs ≤ 1.5 MiB), the national interaction latencies under 4× throttle (map ≈ 511–955 ms vs 200 ms, network ≈ 284–552 ms vs 200 ms, search ≈ 112–136 ms vs 100 ms — the higher numbers are the GitHub-hosted runner's), the national `/map/` Lighthouse LCP (≈ 3,349 ms vs ≤ 2,500 ms), and the fixtures-mode `/network/` node-select latency on the CI runner (≈ 228 ms vs ≤ 200 ms)",
       "unblocked_by": "owner: the static-equivalent pagination/compaction row (P27.7's deferred table shapes) + the map tiling owner · trigger: those rows' pick-up",
       "verify": "every national-scoped `measured_gaps` row measures under its ratified ceiling in `national_budget_leg.sh budgets`/`lighthouse` and is removed in the same change (the stale-row gate forces it)",
-      "proxy": "every overage is recorded in `measured_gaps` with a regression bound (`data_source: \"national\"`: document 1,750,000/1,800,000 B, total 2,250,000/1,900,000 B, first-view 3,500,000 B, latency 1,200/400/200 ms, LCP 4,000/2,000 ms) plus the fixtures-scoped `/network/` latency bound 400 ms, reported every run",
+      "proxy": "every overage is recorded in `measured_gaps` with a regression bound (`data_source: \"national\"`: document 1,750,000/1,800,000 B, total 2,250,000/1,900,000 B, first-view 3,500,000 B, latency 1,500/800/300 ms, LCP 4,000/2,000 ms) plus the fixtures-scoped `/network/` latency bound 400 ms, reported every run",
       "line": 1375,
       "events": [
         {
@@ -19711,7 +19711,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "602a36dce9d7bb7489a86ac558c2430f48382f676fc0d56984e444a7a5adb39c",
+  "manifest_sha256": "7d7d2655aa306bb504fa60042bbee86c353db461b0c10be141aac32dcc6bf4f4",
   "current_md": {
     "lines": 63,
     "bytes": 16365,
