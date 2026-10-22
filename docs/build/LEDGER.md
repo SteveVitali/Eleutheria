@@ -9,10 +9,10 @@
 
 <!-- Values only (BM-LEDGER-02/08): key lines ≤ 256 B; `returnPass:` rides B3 V2 (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus: IN_PROGRESS # P35.45 landed (324); P35.41 live leg still QUEUED
-nextTicket: P35.46 # row 325
-lastCompleted: P35.45 # row 324
-blockedOn: (nothing) # #343@e511ae7 CI 5/5 green
+projectStatus: IN_PROGRESS # P35.46 landed (325); P35.41 live leg + P35.46 ER leg still QUEUED
+nextTicket: P35.47 # row 326
+lastCompleted: P35.46 # row 325
+blockedOn: (nothing) # #345@45f2feb CI 5/5 green
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.57,P35.67,P36.12
 manifest: docs/tickets/00_MANIFEST.md
@@ -22,13 +22,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P35.45-dossiers-at-every-level-unplaced-report # base r11/P35.44-…
+chainTip: r11/P35.46-derivation-collapse-and-possible-duplicates-v2 # base r11/P35.45-…
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent # restored 20:55Z post Opus-repair (STACK-CARRY-1)
-updatedAt: 2026-10-21T11:34Z
+updatedAt: 2026-10-22T02:54Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1165,3 +1165,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-21 — P35.45 correction — `nextTicket`→P35.46 (7,299 B contract head) pushed the orient recipe to 53,622 B > 48 KiB — repaired in place (P35.66/`6c05e605` pattern): `103e9025`'s entries compacted (every field kept), replaced head lines archived byte-for-byte → `memory-repair/LEDGER_head_comments20_pre-P35.45.txt`, `return_pass.toml` compacted (leg-verbatim strings kept) · `seed-commit` declaration lands next commit — findings attributed to this commit only · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-22 — P35.45 post-closeout record — `ci: pass #343@54e0740` 5/5 head-bound (run 39698858936; `reports/ci/p35_45_pr343.json` — stack pass, no waived red) · closeout `f80fbd0a` (CURRENT STATE advance, ticket + correction entries, BUILD_INDEX row 324, README rows, digests, projection regen) carried the orient repair — `103e9025`'s entries compacted, head lines folded to `memory-repair/LEDGER_head_comments20_pre-P35.45.txt`, `return_pass.toml` compacted (leg-verbatim kept); orient re-measured ≤ 48 KiB · `54e07404` declared `seed-commit f80fbd0a` · chainTip → r11/P35.45-… · next → P35.46 (325) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-22 — P35.46 dispatch boundary-confirm — `ci: pass #343@1b65227` 5/5 head-bound on the record head (run 39700921065; `logs/ci-P35.45-pr343-boundary2.json`) · stack pass, no waived red · P35.45 heads folded per D5 (orient repair via sanctioned seed-commit `f80fbd0a`/`54e07404`; head-fold archive `memory-repair/LEDGER_head_comments20_pre-P35.45.txt`) · **D-P35.41a-1 measured + DONE** at this boundary — after-state `runs/P35.45.md` §D-P35.41a-1 (billed −34 %/−43 % vs baseline; wall ~19 m, python-bound; reuse 5/13; event `D-P35.41a-1:e1`; quoted to operator for D6) · dispatching P35.46 (325 — derivation collapse + possible duplicates, ruleset v3; ER-run leg named at GATE-G4 §4 — runs in-ticket under the contract preconditions/window, else queues per OM-19) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-22 — P35.46 done — `ci: pass #345@45f2feb` 5/5 head-bound (run 39711724866; `reports/ci/p35_46_pr345.json` — stack #343…#325 pass, no waived red) · row 325 — derivation collapse + possible duplicates (ruleset v3): C0 `duplicate_target` / C1 `namespaced_copy` / C2 `position_matched_copy` collapse under declared lineage; every inferential match a review-only `possible_duplicate` (distance + reason + both site ids, never merged); `derived_from` links carry the shared `site_id`; `same_as` only B5-certified/human-accepted; `merged_into` never written; GQ-25 origin-distinct union refusal; GQ-23 `derivation_census` per run → `camera_site_demotion` run-key inputs; axis-swap gate; `count_intervals` (SIG-CONF-D05) + M-1b seeded frame + Clopper–Pearson bound · sqitch `camera_site_derivation` append-only (revert refuses v3 rows; SELECT/INSERT) · detail `runs/P35.46.md` + `pr/P35.46.md` · heads verbatim `runs/P35.46.md` · tests/resolution 545 + tests/db 722; `make check` 10,097/4 recorded-environmental · **ER leg QUEUED** under OM-19 (AR-3 closed at verify) · record repair: PR #344 tip poisoned (untrailered impl commit + range-judged record flags; r11 non-FF unclears per-commit flags — RELAND-AUDIT-1 class) → identical tree re-recorded on -v2 → PR #345; #344 stays historical, never merged · no production mutation · chainTip → r11/P35.46-…-v2 · next → P35.47 (326) · harness: devin-desktop/swe-2-high/subagent
