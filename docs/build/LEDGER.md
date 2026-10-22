@@ -9,10 +9,10 @@
 
 <!-- Values only (BM-LEDGER-02/08): key lines ≤ 256 B; `returnPass:` rides B3 V2 (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus: IN_PROGRESS # P35.48 landed (327); P35.41 live leg + P35.46 ER leg still QUEUED
-nextTicket: P35.50 # row 328
-lastCompleted: P35.48 # row 327
-blockedOn: (nothing) # #347@1b41c66 CI 5/5 green
+projectStatus: IN_PROGRESS # P35.50 landed (328); P35.41 live leg + P35.46 ER leg still QUEUED
+nextTicket: P35.51 # row 329
+lastCompleted: P35.50 # row 328
+blockedOn: (nothing) # #348@6588e91 CI 5/5 green
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.57,P35.67,P36.12
 manifest: docs/tickets/00_MANIFEST.md
@@ -22,7 +22,7 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P35.48-agent-review-lane # base r11/P35.47-publish-the-dedup
+chainTip: r11/P35.50-page-type-registry-and-route-discovery # base r11/P35.48-agent-review-lane
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
@@ -1177,3 +1177,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-22 — P35.48 post-closeout record — closeout head `6c193638` 5/5 green head-bound (`ci: pass #347@6c19363` — python/docs/composed/security/web, run 39746642623; ci_boundary 08:17:29Z, `reports/ci/p35_48_pr347_post.json`; stack #346…#338 pass, merges:0 open-other:0) · pushed heads verbatim: `1b41c660` impl → `6c193638` closeout records (CURRENT STATE advance, done entry, BUILD_INDEX row 327, README rows, run-ledger Phase 6 + Closed, CI record, projection regen) · `make docs-check` green end-to-end pre-closeout (`check_live_claims` 0 violations, coverage 820 OK, ledger-contract clean, backlog/round-close/ADR/runbook OK, projection fresh) · chainTip → r11/P35.48-agent-review-lane · next → P35.50 (328) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-22 — P35.48 correction — the record-head boundary read returned `blockedOn: CI fail on #347@1dda575 (docs): failure` (run 39749306452; ci_boundary 08:41:58Z, `reports/ci/p35_48_pr347_final.json`) — `check_live_claims` flagged the post-closeout entry's "(live-claims violations 0" segment (`\blive\b` inside "live-claims" with no same-segment negate; SIG-MEM-011). Repaired forward: `b3efd98c` reworded the segment to the `check_live_claims` tool name verbatim (the form every prior entry uses — the range leg judges the net diff) + `6b61555b` projection regen; corpus + range legs both re-verified 0 violations. Re-read on the repaired head: `ci: pass #347@6b61555` 5/5 green head-bound (run 39749692991; `reports/ci/p35_48_pr347_final2.json`; stack #346…#338 pass, merges:0 open-other:0) · chainTip → r11/P35.48-agent-review-lane · next → P35.50 (328) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-22 — P35.50 dispatch boundary-confirm — `ci: pass #347@749220d` 5/5 head-bound on the record head (run 39755315890: python/docs/composed/security/web; ci_boundary 09:45:53Z `/tmp/p35_48_pr347_final.json`) · stack #346…#338 pass, main `fc2e249` descends:no merges:0 open-other:0 · P35.48 size-over recorded verbatim (~2,376 counted vs S=1,500 strict — clause no longer binds, never silent); docs-red arc recorded (`1dda5759` live-lint → `b3efd98c` reword + `6b61555b` regen → `3011bf6e`) · manifest skips P35.49 — row 328 is P35.50 · dispatching P35.50 (328 — page-type registry + route discovery + script-policy/no-JS parity specs, ADR-155/A-12 machinery; `live_verification=false`, not OM-20, leg runs: 0) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-22 — P35.50 done — `ci: pass #348@6588e91` 5/5 head-bound (run 39770202040; ci_boundary 11:23:21Z, `reports/ci/p35_50_pr348.json` — stack #347…#338 pass, no waived red) · row 328 — page-type registry, route discovery, script-policy + no-JS parity (ADR-155 / D-K0-1 [A-12]=a; K0 §4.2/§4.4; SIG-UI-036/037/041/050): `web/src/lib/page-types.ts` — every route pattern → T0/T1/T2/T3 + owner + contract + no-JS equivalent; most-specific-wins, unclassified/ambiguous → build error, never first-match · `sigPageTypes()` `astro:build:done` walks `dist/**/*.html`, fails closed, emits `page-types.json` (`sig.page-types-manifest/1`) · `script-policy.spec.ts` (T0 zero `<script>`; T1 allow-listed modules + hashed bootstrap; T2 bounded; `on*=`/`javascript:`/inline ld+json banned) + `nojs-parity.spec.ts` (T1 `main` parity minus `[data-enhancement]`; T2 named equivalents + `NoJsStateNotice`) replace the islands policy half; every sweep derives from the manifest — 49 discovered routes vs the 28-route hand list · detail `runs/P35.50.md` + `pr/P35.50.md` · verify: web check 506 unit/459 e2e; `make check` green bar 3 recorded-environmental; injected unclassified route build-fails · fix-forward arc in the run ledger: `7621c7c2` docs (stale projection) → `094cf141` regen; `094cf141` docs (assert token in repair bullet) → `82da795e` reword; `82da795e` python (probe fixture missed `page-types.json` capture) → `6588e911` · no production mutation, leg runs 0 · chainTip → r11/P35.50-… · next → P35.51 (329) · harness: devin-desktop/swe-2-high/subagent
