@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "9e6546f7cd6264229571e1eada6eee527b2c6d9e",
+  "input_commit": "e511ae75858f4f376bf212010a0e64801536d277",
   "manifest_inputs": 1087,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.45",
-    "lastCompleted": "P35.44",
+    "nextTicket": "P35.46",
+    "lastCompleted": "P35.45",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.57,P35.67,P36.12",
@@ -17,7 +17,7 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.44-dossier-contribution-export",
+    "chainTip": "r11/P35.45-dossiers-at-every-level-unplaced-report",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
@@ -9224,7 +9224,7 @@
       },
       {
         "key": "P34.38",
-        "obligations_cell": "the queued BidNet terms-capture leg (works the recorded E4-R6a answer; the rights decision keeps its manifest home at row 350)",
+        "obligations_cell": "the queued BidNet terms-capture leg (works the recorded E4-R6a answer; the rights decision keeps its row-350 home)",
         "gates_cell": "public read-only GET of `https://www.bidnetdirect.com/terms` under the project UA (SIG-INGEST-036), robots `Crawl-delay: 5`; gated on `live:P35.38a` — `/data-collection/` live (probed 2026-10-07T12:09Z: not yet); the E4-R6a answer is the go; terms land verbatim in `reports/rights/bidnet_direct.md`",
         "operator_cell": "nothing — wait for `live:P35.38a`; the captured-terms rights decision stays the operator's at GATE-G6 latest (S6R-28)",
         "rerun_cell": "`implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-registry-rows.md live_verification=true` (BidNet terms capture) · landed row 246 (PR #243)",
@@ -9401,9 +9401,9 @@
       {
         "key": "P35.1c",
         "obligations_cell": "the queued dispatcher-consolidation leg (`ops/gcp/dispatcher-consolidation.sh --apply all`): fresh prestate → deploy `sig-sched-due` + its ONE hourly trigger + due-invoker bindings → verify → the 89 `[[retire_triggers]]` name-checked deletes (describe-first, httpTarget-verified) → proof; read-only evidence landed",
-        "gates_cell": "hosted, production write — QUEUED, not run (`live_verification=false`); OM-20 — the GATE-G4 §4 enumeration (2026-10-09T17:32Z) predates the C13 split, names 291 not 291a → NOT pre-authorised — needs an operator amendment naming row 291a; AR-3 + AR-2 — weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exits 42; `SIG_CONSOL_AUTHOR` required; fresh prestate first; voided by failed AR-2/red probe/contradicting read; after `--check` + PR #303 head-bound CI green",
+        "gates_cell": "hosted, production write — QUEUED, not run (`live_verification=false`); OM-20 — the GATE-G4 §4 enumeration predates the C13 split, names 291 not 291a → NOT pre-authorised — needs an amendment naming 291a; AR-3 + AR-2 — weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exits 42; `SIG_CONSOL_AUTHOR` required; fresh prestate first; voided by failed AR-2/red probe/contradicting read; after `--check` + PR #303 head-bound CI green",
         "operator_cell": "explicit GATE-G4 amendment naming row 291a — the OM-20 enumeration (2026-10-09T17:32Z) names 19 rows incl. 291 but predates the C13 split, so 291a is not literally named and never mutates on an ambiguous reading; nothing until amendment + window + ADC + `SIG_CONSOL_AUTHOR` — `--check` plans only; rollback deletes trigger+job and replays `scheduled-ops.sh --apply --shape per-source`; the fleet sweep is P35.1b's leg",
-        "rerun_cell": "`implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true` · landed row 291a (PR #303 — queued; the OM-20 list predates the C13 split; production never touched)",
+        "rerun_cell": "`implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true` · landed row 291a (PR #303 — queued; production never touched)",
         "obligations": []
       },
       {
@@ -9418,8 +9418,8 @@
         "key": "P35.17",
         "obligations_cell": "the queued hosted boundary-source capture: OCFL capture of `census_gazetteer_tiger` + `natural_earth_10m` into the evidence store (append-only digests) — then the live pack build + registry assembly + the real `boundaries_root`",
         "gates_cell": "hosted, production write — QUEUED, never exercised this run (`live_verification=false`); the operator's HG-03 flips of both source rows are the precondition (OP-26 — both stay `ingestion_permitted=false` here); OM-20 — GATE-G4 §4 OM-20 list names P35.17 verbatim (\"Approve all 19 (rec.)\", 2026-10-09T17:32Z; expires at the next GATE, OM-10); append-only OCFL objects only; AR-3 + AR-2 window outside the AR-3 freeze",
-        "operator_cell": "the HG-03 flips of `census_gazetteer_tiger` + `natural_earth_10m` (operator-signed, OP-26), then the re-run in-window — nothing else until the flips land; terms capture already landed",
-        "rerun_cell": "`implement-spec spec=docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md live_verification=true` · landed row 297 (PR #310 — capture not run; no boundary-source bytes fetched, staged, or written)",
+        "operator_cell": "the HG-03 flips of `census_gazetteer_tiger` + `natural_earth_10m` (operator-signed, OP-26), then the re-run in-window — nothing else until the flips land",
+        "rerun_cell": "`implement-spec spec=docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md live_verification=true` · landed row 297 (PR #310 — capture not run; no boundary bytes fetched/staged/written)",
         "obligations": []
       },
       {
@@ -9449,7 +9449,7 @@
       {
         "key": "P35.41",
         "obligations_cell": "the connector-image roll: rebuild + redeploy the connector image carrying `records_digest`, the upstream-declared marks, and the capture-mark headers",
-        "gates_cell": "QUEUED (OM-19 — deferred ~21Z, past the AR-3 preferred slot, under the session's external merge-cascade dispatch hold recorded in the 2026-10-20 15:53Z digest); OM-20 — the GATE-G4 §4 list names P35.41 verbatim (2026-10-09T17:32Z; expires at the next sub-round GATE, OM-10); AR-3 + AR-2 — preferred 14:00–20:00Z weekdays, never 03:00–06:30Z; the roll machinery + field recording are idempotent",
+        "gates_cell": "QUEUED (OM-19 — deferred ~21Z, past the AR-3 preferred slot, under the session's external merge-cascade dispatch hold recorded in the 2026-10-20 15:53Z digest); OM-20 — the GATE-G4 §4 list names P35.41 verbatim (2026-10-09T17:32Z; expires at the next sub-round GATE, OM-10); AR-3 + AR-2 — preferred 14:00–20:00Z weekdays, never 03:00–06:30Z; roll machinery + recording idempotent",
         "operator_cell": "nothing until the re-run; the roll redeploys already-permitted connectors inside existing ingestion permission",
         "rerun_cell": "`implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` · row 320 landed (PR #338)",
         "obligations": []
@@ -19542,10 +19542,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "c7102d4a40d89accaebb22c4f4918773a8ef6cffbb6ca300ff84d72dd0af0b5f",
+  "manifest_sha256": "b38da73eb487087c85140d84d88ccb855306ca7581ca00c76a5b6e5849dbb9e8",
   "current_md": {
     "lines": 63,
-    "bytes": 16352,
+    "bytes": 16364,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
