@@ -184,6 +184,25 @@ export function dossierFigureSpecs(
       }),
     );
   });
+  // P35.47 (SIG-CONF-005 / GQ-10): the dossier's count interval — the L3
+  // §5.2 display string ("N camera records · between L and U listed
+  // cameras") renders verbatim inside one figure region, covering every
+  // numeral it carries. An honest `not_evaluable` block renders no numeral
+  // → no spec.
+  const interval = dossier.rollup?.count_interval;
+  if (interval?.display) {
+    specs.push(
+      spec(ctx, {
+        id: "listed-cameras",
+        value: interval.display,
+        unit: "records",
+        pointer: ptr(ctx, "/rollup/count_interval/display"),
+        definition: "#rollup-heading",
+        breakdown: "#fig-listed-cameras",
+      }),
+    );
+  }
+
   const disagreements: [string, number | undefined][] = [
     ["declared-here-located-elsewhere", dossier.disagreements?.declared_here_located_elsewhere],
     ["located-here-declared-elsewhere", dossier.disagreements?.located_here_declared_elsewhere],

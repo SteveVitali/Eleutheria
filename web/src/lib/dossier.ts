@@ -289,6 +289,17 @@ export interface Dossier {
     records_placed_only_here?: number;
     records_appearing?: number;
     conserved?: boolean;
+    /** P35.47 (SIG-CONF-005): the dossier's count interval — the member
+     * record count beside `[lower, upper]` listed cameras, or the honest
+     * `not_evaluable` reason when no completed ER run exists. */
+    count_interval?: {
+      records?: number;
+      lower?: number;
+      upper?: number;
+      declared_distance_m?: number;
+      display?: string;
+      not_evaluable?: string;
+    };
     note?: string;
   };
   /** The declared-vs-located disagreement pair, kept visible on both sides. */

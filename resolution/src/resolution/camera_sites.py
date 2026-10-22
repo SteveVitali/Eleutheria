@@ -2232,6 +2232,35 @@ def derivation_census(
     )
 
 
+def count_bounds(
+    subjects: Iterable[str],
+    applied: Iterable[tuple[str, str]],
+    possible: Iterable[tuple[str, str]],
+    subset: Iterable[str],
+) -> dict[str, int]:
+    """One count-interval bound pair over ``subset`` (P35.46's computation verbatim).
+
+    ``upper`` = distinct clusters over ``subset`` counting only ``applied``
+    (auto_write + human_accept) edges; ``lower`` = the same count with every
+    ``possible`` edge (the possible-duplicate links inside the declared
+    distance — the caller filters by ``near_max_m``) additionally merged.
+    Both bounds drop an edge the moment either endpoint leaves ``subset`` —
+    a bound computed over partial data can only over-collapse, never invent
+    a merge the subset does not contain.
+
+    P35.47: this is the ONE bound computation — ``count_intervals`` calls it
+    and the export's published intervals read it verbatim (never a second
+    implementation).
+    """
+    subset_set = set(subset)
+    sub = [s for s in subjects if s in subset_set]
+    applied_in = [e for e in applied if e[0] in subset_set and e[1] in subset_set]
+    possible_in = [e for e in possible if e[0] in subset_set and e[1] in subset_set]
+    up = len(set(_clusters_from_edges(sub, applied_in).values()))
+    lo = len(set(_clusters_from_edges(sub, applied_in + possible_in).values()))
+    return {"lower": lo, "upper": up}
+
+
 def count_intervals(
     records: Sequence[CameraRecord],
     decisions: Sequence[SiteDecision],
@@ -2262,23 +2291,7 @@ def count_intervals(
     dossier = dossier_of or {r.subject_id: (r.jurisdiction or "unresolved") for r in records}
 
     def _bounds(subset: set[str]) -> dict[str, int]:
-        sub = [s for s in subjects if s in subset]
-        up = len(
-            set(
-                _clusters_from_edges(
-                    sub,
-                    [e for e in applied if e[0] in subset and e[1] in subset],
-                ).values()
-            )
-        )
-        lo = len(
-            set(
-                _clusters_from_edges(
-                    sub, [e for e in applied + possible if e[0] in subset and e[1] in subset]
-                ).values()
-            )
-        )
-        return {"lower": lo, "upper": up}
+        return count_bounds(subjects, applied, possible, subset)
 
     all_ids = set(subjects)
     return {

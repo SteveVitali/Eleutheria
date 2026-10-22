@@ -299,7 +299,15 @@ def test_the_export_reads_the_clusters_n_of_m(conn, camera_spine) -> None:
     export = run_spine_export(conn, as_of="2026-09-24", note="p30.2b", spine_label="seeded")
     coverage = json.loads(export.web_artifacts["web/coverage.json"])
     resolved = next(m for m in coverage if m["id"] == "resolved_sites")
-    assert resolved["value"].startswith("7 resolved sites (from 8 observation-level records")
+    # P35.47 (SIG-CONF-005): the national figure publishes as the interval —
+    # the member-record count beside [lower, upper] listed cameras — the
+    # point "N resolved sites" wording is withdrawn in favour of the range.
+    assert resolved["value"] == (
+        "8 camera records · between 6 and 7 listed cameras "
+        "([why a range?](/quality/#duplicates))"
+    )
+    interval = resolved["count_interval"]
+    assert (interval["records"], interval["lower"], interval["upper"]) == (8, 6, 7)
     assert resolved["is_population_total"] is False
 
 

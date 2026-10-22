@@ -146,6 +146,13 @@ class PublishedRecord:
     claim_statements: tuple[dict[str, Any], ...] = ()
     coverage: dict[str, Any] = field(default_factory=dict)
     review: dict[str, Any] = field(default_factory=dict)
+    #: P35.47 (SIG-CONF-005 / GQ-10): the record's dedup publication block —
+    #: ``{site_id, copies[], possible_duplicates[], multi_view[],
+    #: n_independent_lineages, n_independent_lineages_display}`` projected
+    #: verbatim from the sites row (the honest ``not_recorded``/
+    #: ``not_evaluable`` objects ride through unaltered). ``None`` on a
+    #: pre-P35.47 export — a sparse field, never fabricated.
+    dedup: dict[str, Any] | None = None
     #: Bound AFTER the namespace is computed — excluded from the ID-free doc.
     publication_id: str | None = None
     href: str | None = None
@@ -166,7 +173,7 @@ class PublishedRecord:
         """The canonical content document hashed into the descriptor —
         every byte is a pure function of admitted inputs (no publication id,
         no public URLs, no timestamps)."""
-        return {
+        doc = {
             "schema": self.schema,
             "record_key": self.record_key,
             "entity_id": self.entity_id,
@@ -184,6 +191,11 @@ class PublishedRecord:
             "coverage": dict(self.coverage),
             "review": dict(self.review),
         }
+        if self.dedup is not None:
+            # P35.47: sparse — a pre-P35.47 export's record projects byte-
+            # identical to its landed descriptor (no invented field).
+            doc["dedup"] = dict(self.dedup)
+        return doc
 
     def as_json(self) -> dict[str, Any]:
         """The full served record (``<uuid>.json``) — the ID-free document plus
@@ -449,6 +461,23 @@ def record_from_site_row(
         "note": "Resolved-site counts rest on a provisional evaluation "
         "pending the preregistered human study (D-R6.1-EVAL).",
     }
+    # P35.47 (SIG-CONF-005): the record's dedup publication fields ride the
+    # same sites row verbatim — ``site_id``, the nested ``copies[]``/
+    # ``possible_duplicates[]``/``multi_view[]`` and the independence-class
+    # count, including their honest ``not_recorded``/``not_evaluable``
+    # objects. A pre-P35.47 row carries none → the block stays ``None``
+    # (sparse — the descriptor is byte-identical to the landed shape).
+    dedup_block: dict[str, Any] | None = None
+    _dedup_keys = (
+        "site_id",
+        "copies",
+        "possible_duplicates",
+        "multi_view",
+        "n_independent_lineages",
+        "n_independent_lineages_display",
+    )
+    if any(k in row for k in _dedup_keys):
+        dedup_block = {k: row.get(k) for k in _dedup_keys}
     return PublishedRecord(
         record_key=record_key(compartment, entity_type, entity_id),
         entity_id=entity_id,
@@ -465,6 +494,7 @@ def record_from_site_row(
         claim_statements=tuple(statements),
         coverage=coverage,
         review=review,
+        dedup=dedup_block,
     )
 
 

@@ -538,6 +538,22 @@ return (
       ) : (
         <p>No registry children carry records here.</p>
       )}
+      {/* P35.47 (SIG-CONF-005): the dossier's count interval — the L3 §5.2
+          display verbatim ("N camera records · between L and U listed
+          cameras"), or the honest not_evaluable reason. Published counts
+          are intervals until CONF-07b closes — never a silent point value. */}
+      {dossier.rollup?.count_interval?.display && specMap.get("listed-cameras") && (
+        <p class="sig-table-note" data-testid="dossier-count-interval">
+          <Figure figure={specMap.get("listed-cameras")!} order="inline">
+            {dossier.rollup.count_interval.display}
+          </Figure>
+        </p>
+      )}
+      {dossier.rollup?.count_interval?.not_evaluable && !dossier.rollup.count_interval.display && (
+        <p class="sig-table-note" data-testid="dossier-count-interval">
+          Camera count interval: not evaluable — {dossier.rollup.count_interval.not_evaluable}
+        </p>
+      )}
       {dossier.rollup?.note && (
         <p class="sig-table-note" data-testid="dossier-conservation">{dossier.rollup.note}</p>
       )}
