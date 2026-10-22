@@ -9,10 +9,10 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key ≤ 256 B; the generated `returnPass:` id list rides the B3 V2 bound (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus:   IN_PROGRESS                           # P35.32 landed (310); live leg QUEUED
-nextTicket:      P35.33                              # row 311
-lastCompleted:   P35.32                              # row 310
-blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #325@f6efe2e8 5/5 (39211891538)
+projectStatus:   IN_PROGRESS                           # P35.33 landed (311); live leg QUEUED
+nextTicket:      P35.34                              # row 312
+lastCompleted:   P35.33                              # row 311
+blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #326@ccbb6a1c 5/5 (39227760200)
 pauseRequested:  false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
@@ -22,13 +22,13 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.32-ingest-run-report        # base r11/P35.31-…
+chainTip:        r11/P35.33-run-capture-issue-export # base r11/P35.32-…
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-19T07:42Z
+updatedAt:       2026-10-19T09:30Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1088,3 +1088,11 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-19 — P35.32 dispatch boundary-confirm — `ci: pass #324@8a75eb19` 5/5 green head-bound (run 39205636162: python 19m32s, web 14m16s, composed 2m55s, docs 1m56s, security 29s; read 06:00:30Z `logs/ci-P35.32-pre-dispatch.json`) · stack verbatim waived `blockedOn` baseline · docs-red arcs recorded verbatim in `runs/P35.31.md` (stale-projection, coverage-matrix routing, orient budget — each repaired forward) · `D-P35.31-1` stays OPEN · P35.32 is a GATE-G4 §4 named OM-20 row: engineering merges in-ticket, the deploy+backfill leg QUEUES under OM-19 (window closed now; legs operator-run per OP-24) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-19 — P35.32 ticket — `ci: pass #325@f6efe2e8` 5/5 green head-bound (run 39211891538: python 19m55s, web 15m7s, composed 2m45s, docs 1m23s, security 38s; boundary read 07:09:26Z `reports/ci/p35_32_pr325.json` — stack pass except verbatim waived `blockedOn: CI fail on #299@19ed46d (docs)`) · `runs/P35.32.md` · row 310 ingest_run_report (append-only report table + scheduled writer + `sig-ops backfill-run-reports` + reconcile; link/clock basis honesty C-13/C-14; `sig_read_public` narrowed off; `per_fetch` column landed, writer row 312's) · live leg QUEUED `P35.32-ingest-run-report-live` (GATE-G4 §4 named; window closed at run end — OM-19; legs operator-run per OP-24) · no production mutation · chainTip → r11/P35.32-… · next → P35.33 (311) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-19 — P35.33 dispatch boundary-confirm — `ci: pass #325@6148c0ee` 5/5 green head-bound (run 39217907668: python 19m55s, web 13m28s, composed 3m7s, docs 2m0s, security 30s; read 08:11:57Z `logs/ci-P35.33-pre-dispatch.json`) · stack verbatim waived `blockedOn` baseline · docs-red arcs recorded verbatim in `runs/P35.32.md` · live leg `P35.32-ingest-run-report-live` QUEUED (GATE-G4 §4 named row; operator-run per OP-24) · dispatching P35.33 (311 — run/capture/issue export; GATE-P B-19 recorded, no pause; not OM-20) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-19 — P35.33 ticket — `ci: pass #326@ccbb6a1c` 5/5 green head-bound (run 39227760200: python 20m33s, web 15m16s, composed 3m18s, docs 1m57s, security 33s; boundary read 09:29:32Z `reports/ci/p35_33_pr326.json` — stack pass except verbatim waived `blockedOn: CI fail on #299@19ed46d (docs)`) · `runs/P35.33.md` · row 311 run/capture/issue export (`policy.freshness` shared cadence module C-4…C-7; `v_transparency_run`/`v_transparency_capture` explicit-column sig_export-only views, shared-run NULLs enforced in-engine; `transparency/{runs,captures,issues,freshness}.jsonl` scrubbed artifacts; docs-red on `872b71de` = changelog_gate → `ccbb6a1c`) · no live leg named (fixture-verified; output rides the next republish) · no production mutation · chainTip → r11/P35.33-… · next → P35.34 (312) · harness: devin-desktop/swe-2-high/subagent
+
+- 2026-10-19 — P35.33 post-closeout record — record head `e554f685` 5/5 green head-bound (`ci: pass #326@e554f68` — python/docs/composed/security/web, run 39231042791: python 16m36s, web 14m59s, composed 3m16s, docs 2m0s, security 32s; boundary re-read 2026-10-19T09:50:54Z `reports/ci/p35_33_pr326.json` — stack pass except verbatim waived `blockedOn: CI fail on #299@19ed46d (docs)`) · every pushed head verbatim in `runs/P35.33.md` (`52122eb9` impl → `872b71de` docs-red `changelog_gate` → `ccbb6a1c` → `e554f685` closeout) · production untouched — views + export code + fixtures only · next → P35.34 (312) dispatch · harness: devin-desktop/swe-2-high/subagent
+
+- 2026-10-19 — P35.33 post-closeout repair — record head `a614a39c` docs-red (`docs-check-projection` stale — the post-closeout LEDGER append lacked a regen; run 39233297524) → repair head `fc3fabd9` 5/5 green head-bound (`ci: pass #326@fc3fabd` — python/docs/composed/security/web, run 39233896768: python 20m45s, web 13m40s, composed 3m23s, docs 2m2s, security 37s; boundary re-read 2026-10-19T10:18:39Z `reports/ci/p35_33_pr326.json` — stack pass except verbatim waived `blockedOn: CI fail on #299@19ed46d (docs)`) · every pushed head verbatim in `runs/P35.33.md` (`52122eb9` → `872b71de` docs-red `changelog_gate` → `ccbb6a1c` → `e554f685` → `a614a39c` docs-red stale-projection → `fc3fabd9`) · production untouched — views + export code + fixtures only · next → P35.34 (312) dispatch · harness: devin-desktop/swe-2-high/subagent
+
+- 2026-10-19 — P35.33 correction — the `a614a39c` post-closeout record's kind slot parsed `record repair` (not in `phase_log_kinds.txt`; docs-red on `844f34fe`, run 39236656559, `docs-check-ledger` V4). The `dc11099f` repair rewrote the line's kind token to the registered `post-closeout repair` — payload bytes unchanged — which trips the staged-append-only guard: a kind slot is unparseable metadata on the same line and no appended entry can fix it, the P35.1a1 precedent's class; recorded verbatim, not smoothed · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-19 — P35.34 dispatch boundary-confirm — `ci: pass #326@42a74ccd` 5/5 green head-bound (run 39237253105: python 20m41s, web 14m54s, composed 3m7s, docs 2m3s, security 37s; read 10:46:34Z `logs/ci-P35.34-pre-dispatch.json`) · stack verbatim waived `blockedOn` baseline · three record-arc docs-reds recorded verbatim in `runs/P35.33.md` (stale projection ×1, changelog_gate ×1, kind-vocabulary ×1 — repaired forward via registered kinds) · dispatching P35.34 (312 — per-fetch telemetry + SIG-INGEST-004 binding-version test; gate: none; not OM-20) · harness: devin-desktop/swe-2-high/subagent

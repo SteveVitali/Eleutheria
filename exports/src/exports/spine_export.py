@@ -120,6 +120,8 @@ from .shaping import (
     shape_sites,
 )
 from .tiles import render_compartment_sites_pmtiles
+from .transparency import TRANSPARENCY_QUERIES as _TRANSPARENCY_QUERIES
+from .transparency import emit_transparency_artifacts
 
 #: The SIG-original derived record: coverage/jurisdiction/freshness/dossier framings
 #: are SIG's own analytical expression, published CC-BY-4.0 (SIG-LIC-005). The
@@ -438,6 +440,11 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "   AND {PUB_CLAIM_GATE}"
         " ORDER BY c.subject_id, c.predicate_id, c.observed_at DESC, c.claim_id",
     ),
+    # P35.33 (J3 §3.1–3.3 + K9 C-4…C-7 + K10 C-13): the transparency
+    # run/capture views, the per-source rights fields the interim lane
+    # reads, and the predicate-registry volatility basis — every row
+    # explicit-column, sig_export-facing, scrubbed again at emission.
+    **_TRANSPARENCY_QUERIES,
 }
 
 
@@ -3033,6 +3040,8 @@ def build_spine_export(
     registry: Mapping[str, Any] | None = None,
     dossier_packets: Sequence[Mapping[str, Any]] | None = None,
     placement: _placement.PlacementEngine | None = None,
+    cadence_sources: Mapping[str, Mapping[str, str]] | None = None,
+    scheduler_drift: Mapping[str, bool] | None = None,
 ) -> SpineExport:
     """Assemble the national :class:`SpineExport` (pure — no database).
 
@@ -3432,6 +3441,26 @@ def build_spine_export(
         web_licenses[path] = _SIG_SPDX
         web_compartments[path] = _WEB_COMPARTMENT
 
+    # --- P35.33 (J3 §3.1–3.2 + K9 C-4…C-7 + K10 C-13): the transparency
+    # run/capture/issue release artifacts under transparency/. The
+    # evaluation instant is the release as-of — a release-bound value,
+    # never the reader's clock (K9 C-4's two-clocks rule).
+    transparency_at = (
+        _parse_instant(str(getattr(dataset, "as_of", "") or ""))
+        or _parse_instant(generated_at)
+        or datetime.now(UTC)
+    )
+    for path, data in emit_transparency_artifacts(
+        raw,
+        claims=list(claims or ()),
+        cadence_sources=cadence_sources,
+        scheduler_drift=scheduler_drift,
+        at=transparency_at,
+    ).items():
+        web_artifacts[path] = data
+        web_licenses[path] = _SIG_SPDX
+        web_compartments[path] = _META_COMPARTMENT
+
     # --- per-compartment PMTiles (ODbL attribution on the OSM layer) ------------
     tile_renderers: dict[str, str] = {}
     # (published_path, compartment, license, bytes)
@@ -3568,7 +3597,9 @@ def _extended_manifest(
                 Artifact.of(
                     name=Path(path).name,
                     path=path,
-                    media_type="application/json",
+                    media_type=(
+                        "application/x-ndjson" if path.endswith(".jsonl") else "application/json"
+                    ),
                     compartment=compartments_for.get(path, _WEB_COMPARTMENT),
                     license=labels.get(path, _SIG_SPDX),
                     data=data,

@@ -24,6 +24,43 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Transparency run, capture and issue export — the scrubbed
+  execution-history release artifacts** (P35.33 / row 311; J3 §3.1 +
+  §3.3 items 1–2, K9 §10 C-4…C-7, K10 §18 C-13, SIG-ENG-021; also
+  SIG-TRANSP-006 routed to owner P36.46; B-19's recorded robots-
+  disregard shape with the GL-GATE-08 reference) — two new
+  `sig_export`-only views publish the restricted tables as explicit
+  columns: `v_transparency_run` (one row per execution;
+  `ingest_run_report ⋈ ingest_run ⋈ ingest_run_completion`) and
+  `v_transparency_capture` (one row per capture mark;
+  `ingest_run_capture ⋈ evidence_capture ⋈ evidence_blob ⋈
+  evidence_artifact` — classification + storage tier + retained
+  status, the mark binding its capture row at most once). Every
+  column is named in `policy.transparency`'s allow-lists and passes
+  the S-1…S-14 scrub at emission; never-exported fields
+  (`parameters`, `environment`, `detail`, `run_record_uri`,
+  `request_fingerprint`, quarantine `payload`) are absent. The
+  execution-keyed rule (K10 C-13) is enforced in-engine: where a
+  shared `ingest_run` serves more than one recorded execution, the
+  run-owned values (code identity, connector identity, completion
+  counts and clock) emit NULL — the export renders
+  `not_recorded (shared run)`, never a borrowed value. The release
+  tree gains four `transparency/` artifacts through the existing
+  licence/compartment/manifest path: `runs.jsonl`
+  (`sig.run-record/1`), `captures.jsonl` (`sig.capture-record/1` —
+  a sealed-tier capture emits `target: "sealed"`, no locator),
+  `issues.jsonl` (`sig.source-issue/1` — the auto-detected J3 §7.3
+  classes as append-only `(source, class, opened_at)` instances with
+  `closed_at`/`count`/`basis`), and `freshness.jsonl`
+  (`sig.source-freshness/1` — the shared `policy.freshness` module's
+  declared-cadence *rule* — never a "next run" stamp — the C-7 state
+  vocabulary with `one_time_load`/`run_record_missing`, the two
+  last-change columns, volatility over the predicate registry with
+  `staleness` typed `not_evaluable`, every value pinned to the
+  release `evaluated_at`). Robots outcomes disclose host + outcome +
+  count — `disregarded` rows adding the `GL-GATE-08` decision
+  reference — never per-request detail; quarantine surfaces as
+  counts-by-reason only.
 - **One transparency scrub, a fail-closed publish secret gate, and honest
   capture storage tiers** (P35.31 / row 309; owner SIG-TRANSP-022, also
   SIG-TRANSP-020; owns F-400 / J3 §3.3 NEW-2; cites D-J3-1, J3 T-6,
