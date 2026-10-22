@@ -30,6 +30,21 @@
   max-height: 70vh;
 }
 
+/* client:only mount skeleton — reserves the island's mounted height (the
+   page computes it: view links + compartment rows + 24 rem canvas) so
+   hydration does not shift the tables below; honest when JavaScript is off,
+   and hidden the moment the island root mounts. */
+.sig-island__placeholder {
+  display: flex;
+  align-items: flex-end;
+  padding: 0.5rem;
+  border: 1px dashed var(--sig-rule);
+  background: hsl(0deg 0% 98%);
+}
+.sig-map-island:has([data-testid="map-island-root"]) .sig-island__placeholder {
+  display: none;
+}
+
 .sig-map-popup {
   font: inherit;
   max-width: 18rem;
