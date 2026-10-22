@@ -332,7 +332,7 @@ def column_registry() -> dict[str, ResourceSpec]:
         _spec(
             "transparency_sources",
             "Source registry rows",
-            "The ``sig.source-registry/1`` rows inside ``transparency/sources.json`` "
+            "The ``sig.source-row/1`` rows inside ``transparency/sources.json`` "
             "— the lane-evidenced registry record per declared source.",
             transparency.SOURCE_RECORD_SPECS,
             kind="table",
@@ -464,7 +464,7 @@ def resource_for_path(path: str) -> str | None:
     if path == "web/sites.json":
         return "sites"
     if path == "transparency/sources.json":
-        # A row-bearing document (``sig.transparency-sources/1`` rows) carried
+        # A row-bearing document (``sig.source-row/1`` rows) carried
         # under a .json extension — it IS the transparency_sources resource.
         return "transparency_sources"
     return None

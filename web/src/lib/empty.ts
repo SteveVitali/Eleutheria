@@ -165,8 +165,10 @@ const COPY: Record<EmptySurface, EmptyStateCopy> = {
     cta: RESEARCH_QUEUE_CTA,
   },
   freshness: {
-    heading: "No sources tracked for freshness yet",
-    body: "SIG monitors no sources for this build. This is the set SIG tracks — never a count of all sources that exist.",
+    // P35.40: "registry sources" — one source is one registry row; the empty
+    // freshness table means no registry row carries a freshness record.
+    heading: "No registry sources tracked for freshness yet",
+    body: "SIG's source registry holds no rows with a freshness record for this build. This is the registry set — never a count of all sources that exist.",
     cta: RESEARCH_QUEUE_CTA,
   },
   coverage: {

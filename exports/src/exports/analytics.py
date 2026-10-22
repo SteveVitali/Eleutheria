@@ -613,6 +613,9 @@ def _provenance(
         "artifact_count": len(artifact_rows),
         "tier_distribution": _tier_distribution(weight_rows, as_of),
         "source_independence_count": len({r["source_id"] for r in weight_rows if r["source_id"]}),
+        # P35.40 (SIG-TRANSP-026, K9 §3.3): the named predicate — sources with
+        # publishable claims — never the stale "independent sources" label.
+        "source_label": "Sources with published claims",
         "date_range": _date_range(weight_rows),
         "rules_applied": [ruleset_version],
         "human_review_status": "partially_reviewed" if human_reviewed else "unreviewed",
@@ -629,6 +632,7 @@ def _provenance(
         "source_independence_count": len(
             {r["source_id"] for r in correction_weights if r["source_id"]}
         ),
+        "source_label": "Sources with published claims",
         "date_range": _date_range(
             [{"observed_at": r[7]} for r in corrections_rows], key="observed_at"
         ),
@@ -643,6 +647,9 @@ def _provenance(
         # as untiered units rather than assigned a weight they do not carry.
         "tier_distribution": {"untiered": len(task_rows)} if task_rows else {"untiered": 0},
         "source_independence_count": len(detectors),
+        # P35.40: the queue's count is detectors (task producers), not
+        # registry sources — the label names the predicate honestly.
+        "source_label": "Detectors",
         "date_range": None,
         "rules_applied": [*detectors, ruleset_version],
         "human_review_status": "unreviewed",
@@ -681,6 +688,7 @@ def _provenance(
             "source_independence_count": len(
                 {r["source_id"] for r in scoped_weights if r["source_id"]}
             ),
+            "source_label": "Sources with published claims",
             "date_range": _date_range(scoped_weights),
             "rules_applied": [ruleset_version],
             # Per-dossier human-review posture is unknown — the site-level

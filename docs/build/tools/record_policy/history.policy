@@ -622,3 +622,14 @@ seed-commit 739338d8
 # Scope: findings attributed to 8e9bc541 only; no other commit borrows
 # the exemption.
 seed-commit 8e9bc541
+# P35.40 (row 319) — 153ded67 closeout compacts the last-3 PHASE LOG
+# entries in place (P35.39 post-closeout + P35.40 dispatch + the P35.40
+# ticket entry) so the orient probe fits 48 KiB after nextTicket
+# advanced to P35.41, whose contract head (6,291 B) pushed the recipe
+# to 51,169 B — the sanctioned P36.9b/P35.25/P35.26/P35.31
+# (0a55c334/8bb8d260/cf120045/e77c18d1) in-place pattern; no record
+# dropped (git history carries the original bytes and the full arc is
+# recorded in runs/P35.40.md "Closeout repair"). Declaration lands as a
+# later commit (no force-push). Scope: findings attributed to 153ded67
+# only; no other commit borrows the exemption.
+seed-commit 153ded67

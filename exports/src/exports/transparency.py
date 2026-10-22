@@ -35,9 +35,12 @@ and the release artifacts land under ``transparency/``:
   (C-5 — never "unknown", never a fake "0 stale").
 
 P35.35 (row 313, J3 §3.3 item 3 + §4.3; K9 §3.2 C-1 + §5.4 C-6; J4 S-6/S-11)
-adds the source-metadata pair:
+adds the source-metadata pair; P35.40 (row 319, SIG-TRANSP-002/026/027,
+K9 §3.1–3.3) names the row schema ``sig.source-row/1`` — one source is one
+registry row, and a connector, agenda tenant, camera endpoint, capture host
+or mirror is an attribute or target of a source, never a second source:
 
-* ``transparency/sources.json`` — ``sig.transparency-sources/1``: one
+* ``transparency/sources.json`` — ``sig.source-row/1``: one
   object per **registry** source (the committed ``sources.toml`` is the
   registry of record — the lane + Part VIII fields land from its
   ``[redistribution]`` blocks; ``v_transparency_source`` corroborates the
@@ -57,11 +60,13 @@ adds the source-metadata pair:
   lifecycle partition (every registry row in exactly one of ``withdrawn``
   · ``published`` · ``ingested_not_published`` · ``permitted_not_ingested``
   · ``gated`` · ``refused``, each named by its predicate and carrying its
-  id list) plus the orthogonal named attributes (rights permitted,
-  scheduled, run records, site records, lane, open issues) and the
-  anomaly list — identifiers carrying data with no registry row, listed by
-  id and never counted as sources. A CI check recomputes every number
-  from ``sources.json``.
+  id list, the published precedence order emitted as ``precedence``) plus
+  the orthogonal named attributes (rights permitted, scheduled, run
+  records, site records, lane, open issues) and the anomaly list —
+  identifiers carrying data with no registry row, listed by id and never
+  counted as sources. The emitted doc asserts its partition sums to the
+  registry row count, and a CI check recomputes every number from
+  ``sources.json``.
 
 The robots-disregard disclosure is host + count + the GL-GATE-08 decision
 reference — never per-request detail (D-J3-2 [B-19]).
@@ -110,7 +115,10 @@ RUN_RECORD_SCHEMA = "sig.run-record/1"
 CAPTURE_RECORD_SCHEMA = "sig.capture-record/1"
 ISSUE_RECORD_SCHEMA = "sig.source-issue/1"
 FRESHNESS_RECORD_SCHEMA = "sig.source-freshness/1"
-SOURCE_RECORD_SCHEMA = "sig.transparency-sources/1"
+#: ``sig.source-row/1`` (K9 §8) — P35.40 renamed the J3 §4.3 row schema
+#: ``sig.transparency-sources/1`` so the artifact's own name states the
+#: counting definition: a source is one registry row.
+SOURCE_RECORD_SCHEMA = "sig.source-row/1"
 COUNTS_SCHEMA = "sig.source-counts/1"
 
 #: Release artifact paths under ``transparency/`` (J3 §3.1–3.2).
@@ -265,7 +273,7 @@ FRESHNESS_RECORD_FIELDS: tuple[str, ...] = (
     "staleness",
 )
 
-#: The full ``sig.transparency-sources/1`` row — a lane-evidenced source's
+#: The full ``sig.source-row/1`` row — a lane-evidenced source's
 #: record (J3 §4.3 + K9 §8's ``sig.source-row/1`` subset the committed
 #: registry + views can honestly populate). Deliberately absent:
 #: ``robots_policy``, ``notes``, ``contact``, ``auth_model``,
@@ -888,7 +896,7 @@ def load_source_registry(path: str | Path | None = None) -> dict[str, dict[str, 
 
 
 # ---------------------------------------------------------------------------
-# sig.transparency-sources/1 — the J3 §4.3 source-metadata record
+# sig.source-row/1 — the J3 §4.3 / K9 §3.1 registry-row source record
 # ---------------------------------------------------------------------------
 
 
@@ -940,10 +948,15 @@ def _lifecycle_state(
     ingested: bool,
 ) -> str:
     """The K9 §3.2 partition — exactly one state per registry row, first
-    match wins. ``withdrawn`` has no recorded signal in this registry: a
-    source-level withdrawal is a gate decision (D-J3-5) nothing carries
+    match wins. ``withdrawn`` has no recorded signal in today's registry:
+    a source-level withdrawal is a gate decision (D-J3-5) nothing carries
     yet, so the state exists in the partition definition and never fires —
-    honest absence, never a fabricated state."""
+    honest absence, never a fabricated state. The hook reads the signal if
+    a registry row ever records one (a ``withdrawn`` flag or a
+    ``[withdrawal]`` sub-table) so the precedence order is real, not
+    asserted-but-dead."""
+    if reg.get("withdrawn") or reg.get("withdrawal"):
+        return "withdrawn"
     if published:
         return "published"
     if ingested:
@@ -1052,7 +1065,7 @@ def source_record(
     cadence_decl: Mapping[str, str] | None,
     open_issue: bool,
 ) -> dict[str, Any]:
-    """One ``sig.transparency-sources/1`` row — the J3 §4.3 record.
+    """One ``sig.source-row/1`` row — the J3 §4.3 record.
 
     The registry of record supplies identity + rights + the recorded
     ``[redistribution]`` fields; the view row corroborates the DB mirror
@@ -1074,12 +1087,17 @@ def source_record(
     state = _lifecycle_state(reg, published=published_claims > 0, ingested=ingested)
 
     declared_fields = dict(cadence_decl or {})
-    scheduled = bool(cadence_decl) and declared_fields.get("state", "enabled") == "enabled"
     one_time = declared_fields.get("cadence", "").lower() in {
         "one_time",
         "one-time",
         "one_time_load",
     }
+    # The schedule attribute is a three-class facet (K9 §3.2):
+    # ``scheduled | not_scheduled | one_time_load`` — a one-time seed is
+    # never also counted as scheduled.
+    scheduled = (
+        bool(cadence_decl) and declared_fields.get("state", "enabled") == "enabled" and not one_time
+    )
     registry_cadence = str(reg.get("cadence") or "")
     cadence_block: dict[str, Any]
     if cadence_decl is None:
@@ -1284,10 +1302,14 @@ def source_counts(
     at: datetime,
 ) -> dict[str, Any]:
     """``counts.json`` — every count a named predicate over ``sources.json``
-    rows (SIG-TRANSP-D26/D27): the lifecycle partition (Σ = the registry
-    row count, id lists per state) plus the orthogonal attributes, and the
-    anomaly id list (identifiers carrying data with no registry row —
-    listed, never counted)."""
+    rows (SIG-TRANSP-002/026/027, K9 §3.2): the ONE exporter function
+    computing the lifecycle partition at the release's belief cut (Σ of the
+    partition = the registry row count, id lists per state, the published
+    precedence order emitted as ``precedence``) plus the orthogonal
+    attributes, and the anomaly id list (identifiers carrying data with no
+    registry row — listed, never counted). The partition invariant is
+    asserted fail-closed: a row escaping every named state fails the export
+    rather than shipping a partition that does not cover the registry."""
     counts = recompute_counts(source_rows)
     lifecycle = {
         state: {
@@ -1298,6 +1320,14 @@ def source_counts(
         for state in LIFECYCLE_STATES
     }
     registered = counts["registered"]
+    partitioned = [sid for state in LIFECYCLE_STATES for sid in counts["partition"][state]]
+    if len(partitioned) != registered or len(set(partitioned)) != len(partitioned):
+        raise AssertionError(
+            "sig.source-counts/1 partition invariant violated: "
+            f"{len(partitioned)} partitioned rows over {registered} registry "
+            "rows — every registry row must land in exactly one lifecycle "
+            "state (SIG-TRANSP-027)"
+        )
     scheduled = counts["scheduled"]
     one_time = counts["one_time_load"]
     site_present = counts["site_records"]
@@ -1308,7 +1338,27 @@ def source_counts(
             "definition": "rows in the source registry (connectors/sources.toml)",
             "count": registered,
         },
+        "precedence": {
+            "definition": (
+                "the published lifecycle precedence — each registry row takes "
+                "the first matching state at the release's belief cut (K9 §3.2)"
+            ),
+            "order": list(LIFECYCLE_STATES),
+        },
         "lifecycle": lifecycle,
+        # The partition check lands IN the released record, not only in the
+        # producer's assert (SIG-TRANSP-027): any consumer can verify the six
+        # states cover the registry exactly once without re-running the gate.
+        "partition_sum": {
+            "definition": (
+                "the emitted partition check — the six lifecycle state "
+                "counts must sum to the registry row count exactly once; "
+                "the export fails closed when they do not"
+            ),
+            "observed": len(partitioned),
+            "expected": registered,
+            "holds": len(partitioned) == registered,
+        },
         "attributes": {
             "rights_permitted": {
                 "definition": "ingestion_permitted = true",
@@ -1346,7 +1396,10 @@ def source_counts(
                 "definition": "no published site record names the source",
                 "count": registered - site_present,
             },
-            "lanes": dict(counts["lanes"]),
+            "lanes": {
+                "definition": "registry rows by recorded raw lane (J4)",
+                "by_lane": dict(counts["lanes"]),
+            },
             "open_issues": {
                 "definition": "≥1 open issue on this release's issues.jsonl",
                 "count": counts["open_issues"],
@@ -2114,8 +2167,15 @@ def emit_transparency_artifacts(
         ]
         for _r in source_rows:
             assert_documented("transparency_sources", _r.keys())
+        # K9 §3.1: an identifier carrying ANY data — claims, captures, runs,
+        # published site records, or an ops cadence declaration — with no
+        # registry row is an anomaly: listed by id, never counted as a source.
         anomalies = (
-            set(executions_by_source) | set(captures_by_source) | set(claim_counts) | site_sources
+            set(executions_by_source)
+            | set(captures_by_source)
+            | set(claim_counts)
+            | site_sources
+            | set(cadence_map or {})
         ) - set(registry_map)
         sources_doc = {
             "schema": SOURCE_RECORD_SCHEMA,

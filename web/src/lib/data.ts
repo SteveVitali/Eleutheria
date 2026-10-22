@@ -65,6 +65,14 @@ import {
   type TermsDisclosure,
 } from "./terms-disclosure";
 import { SOURCES_FIXTURE, sourceLicenceTable, type SourceLicenceRow } from "./sources";
+import {
+  SOURCE_COUNTS_FIXTURE,
+  SOURCE_ROWS_DOC_FIXTURE,
+  isSourceCountsDoc,
+  isSourceRowsDoc,
+  type SourceCountsDoc,
+  type SourceRowsDoc,
+} from "./source-counts";
 import { isResolutionEval, type ResolutionEval } from "./resolution-eval";
 import { STATEMENT_FIXTURES } from "./statements-fixture";
 import type { StatementRow } from "./provenance-panel";
@@ -1187,6 +1195,70 @@ export function getSourceLicenceTable(): SourceLicenceRow[] {
   return sourceLicenceTable(exportDir());
 }
 
+// --------------------------------------------------------------------------- //
+// P35.40 (SIG-TRANSP-002/026/027, K9 §3.1–3.3): the source universe and the
+// lifecycle partition — `transparency/sources.json` (sig.source-row/1: one
+// source is one registry row) and `transparency/counts.json`
+// (sig.source-counts/1: every count a named predicate over those rows). The
+// stale numbers die here — "178 sources tracked" →
+// `attributes.site_records.count` ("sources with published site records"),
+// "Independent sources" → `lifecycle.published.count` ("sources with
+// published claims"), the universe `universe.count`. Anomaly identifiers
+// carry `anomalies.ids` — listed, never counted.
+//
+//   - `fixtures` mode — the committed fixture pair (`source-counts.ts`,
+//     derived through the same recompute the artifact carries).
+//   - `export` mode — `<exportDir>/transparency/…`, emitted since P35.35 —
+//     a missing/malformed artifact fails LOUD (a stale export is rebuilt,
+//     never silently patched).
+// --------------------------------------------------------------------------- //
+
+function readTransparencyArtifact<T>(
+  name: string,
+  validate: (parsed: unknown, path: string) => T,
+): T {
+  const path = `${exportDir()}/transparency/${name}`;
+  let raw: string;
+  try {
+    raw = readFileSync(path, "utf-8");
+  } catch (cause) {
+    throw new Error(
+      `SIG_DATA_SOURCE=export but the transparency artifact is missing: ${path}. ` +
+        "Rebuild the export (`sig-exports build` emits transparency/ artifacts since P35.35).",
+      { cause },
+    );
+  }
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (cause) {
+    throw new Error(`${path}: not valid JSON`, { cause });
+  }
+  return validate(parsed, path);
+}
+
+/** The source universe + named-predicate counts (`transparency/counts.json`). */
+export function getSourceCounts(): SourceCountsDoc {
+  if (dataSource() === "fixtures") return SOURCE_COUNTS_FIXTURE;
+  return readTransparencyArtifact("counts.json", (parsed, path) => {
+    if (!isSourceCountsDoc(parsed)) {
+      throw new Error(`${path}: not a valid sig.source-counts/1 artifact`);
+    }
+    return parsed;
+  });
+}
+
+/** The emitted source rows (`transparency/sources.json`, one per registry row). */
+export function getSourceRows(): SourceRowsDoc {
+  if (dataSource() === "fixtures") return SOURCE_ROWS_DOC_FIXTURE;
+  return readTransparencyArtifact("sources.json", (parsed, path) => {
+    if (!isSourceRowsDoc(parsed)) {
+      throw new Error(`${path}: not a valid sig.source-row/1 artifact`);
+    }
+    return parsed;
+  });
+}
+
 /**
  * P35.39 (SIG-TRANSP-016, J3 §6.5): the generated `sig.data-dictionary/1`
  * document behind `/data/dictionary/` — `<exportDir>/dictionary.json` in
@@ -1336,6 +1408,11 @@ export function getReleaseArtifactPayload(artifactPath: string): unknown | null 
       return getFreshness();
     case "web/sources.json":
       return { schema: "sig.source-licence-table/1", rows: getSourceLicenceTable() };
+    // P35.40: the source-universe pair the counting surfaces point at.
+    case "transparency/counts.json":
+      return getSourceCounts();
+    case "transparency/sources.json":
+      return getSourceRows();
     case "web/evaluation.json":
       return getResolutionEval();
     case "web/terms_disclosure.json":

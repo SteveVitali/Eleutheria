@@ -14,7 +14,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import EmptyState from "../components/EmptyState.astro";
 import Figure from "../components/Figure.astro";
-import { getCoverage, getDossierIndex, getFreshness } from "../lib/data";
+import { getCoverage, getDossierIndex, getSourceCounts } from "../lib/data";
 import { assertCoverageMetrics } from "../lib/metrics";
 import { fmtInt, groupDigits } from "../lib/format";
 import { dossierPath } from "../lib/dossier";
@@ -31,7 +31,13 @@ assertCoverageMetrics(coverage);
 
 const dossierIndex = getDossierIndex();
 const jurisdictions = [...new Set(dossierIndex.map((d) => d.jurisdiction))];
-const sourceCount = getFreshness().length;
+// P35.40 (SIG-TRANSP-002/026/027, K9 §3.3): a source is one registry row
+// (sig.source-row/1), and every published source count names its predicate.
+// The stale "178 sources tracked for freshness" is replaced by the named
+// attribute it actually measured — sources with published site records —
+// recomputed from transparency/counts.json at the release's belief cut.
+const sourceCounts = getSourceCounts();
+const sourceCount = sourceCounts.attributes.site_records.count;
 
 // The ONE figures[] registry for this page (UXR-34): headline-class figures —
 // definition anchor + the release artifact (the visible "source" link) + the
@@ -57,10 +63,10 @@ const FIGURES = defineFigures("home", [
     id: "sources",
     class: "headline",
     value: sourceCount,
-    artifact: "web/freshness.json",
-    pointer: "/",
-    definition: "data-freshness/",
-    href: artifactHref("web/freshness.json"),
+    artifact: "transparency/counts.json",
+    pointer: "/attributes/site_records/count",
+    definition: "sources/#how-counted",
+    href: artifactHref("transparency/counts.json"),
     breakdown: "#fig-sources",
     targets: headlineTargets({ recordList: null }),
   },
@@ -138,9 +144,10 @@ const ENTRY_POINTS: { href: string; title: string; body: string; copy?: string }
       <li class="sig-stat" data-testid="sources-stat">
         <Figure figure={fig("sources")} order="inline" testid="sources-figure">
           <span class="sig-stat__value">{fmtInt(sourceCount)}</span>{" "}
-          <span class="sig-stat__label">sources tracked for freshness</span>{" "}
+          <span class="sig-stat__label">sources with published site records</span>{" "}
           <span class="sig-stat__denominator" data-testid="named-denominator">
-            of the sources SIG monitors — not of all sources that exist
+            of the registry rows in SIG's source registry — never of all
+            sources that exist
           </span>
         </Figure>
       </li>

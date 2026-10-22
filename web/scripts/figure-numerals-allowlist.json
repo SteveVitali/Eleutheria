@@ -43,6 +43,12 @@
       "token": "504",
       "count": 1,
       "reason": "'HTTP 504' — a status-code identifier in crawler-policy prose, not a counted quantity."
+    },
+    {
+      "file": "sources/index.html",
+      "token": "0",
+      "count": 2,
+      "reason": "P35.40: the \"0\" inside the emitted predicate definitions \"claims_inserted > 0\" (ingested_not_published + permitted_not_ingested) — the artifact's recorded definition text rendered verbatim beside its named count, not a rendered count."
     }
   ]
 }

@@ -322,6 +322,14 @@
      edge. The per-node list lines are data-derived (label, count, claim
      ids) — unbound, as all data-derived lines are. pending — added
      2026-10-19. -->
+<!-- P35.40 (TX-11, SIG-TRANSP-002/026/027): HW-05 ("Independent sources")
+     is superseded — the denominator label is now per-surface data
+     (`{sourcesLabel}`: "Sources with published claims" site-wide,
+     "Detectors" on the research queue), so the pinned row is the template
+     placeholder verbatim, like every {expr}-carrying row. HW-05 stays in
+     the batch as recorded history, bound nowhere. Added 2026-10-20. -->
+| HW-14 | component/HowWeKnowThis | {sourcesLabel} | c76bf4273da8a66ef3e5d7e354a5e50b2cf8d1e658319638cbc50a17def3a77e | pending |
+
 ## Confirmation log
 
 <!-- The operator's verbatim confirmation lands here at the copy-batch sitting:

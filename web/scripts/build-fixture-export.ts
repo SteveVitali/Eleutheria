@@ -54,6 +54,11 @@ import { JURISDICTION_DOSSIERS } from "../src/lib/dossier-jurisdiction-fixture";
 import { LEVERAGE_METRIC_FIXTURE } from "../src/lib/leverage-fixture";
 import { SOURCES_FIXTURE } from "../src/lib/sources";
 import { TERMS_DISCLOSURE_FIXTURE } from "../src/lib/terms-disclosure";
+import {
+  SOURCE_COUNTS_FIXTURE,
+  SOURCE_ROWS_DOC_FIXTURE,
+} from "../src/lib/source-counts";
+import { DICTIONARY_FIXTURE } from "../src/lib/dictionary-fixture";
 import { AS_OF, RULESET_VERSION } from "../src/lib/fixtures";
 
 // The repository root — import.meta.url is NOT stable across the esbuild
@@ -90,6 +95,20 @@ function write(name: string, payload: unknown): void {
   writeFileSync(join(webDir, name), JSON.stringify(payload, null, 2) + "\n", "utf-8");
   writtenArtifacts.push({
     path: `web/${name}`,
+    compartment: "sig_graph",
+    license: "CC-BY-4.0",
+  });
+}
+
+// P35.40: the transparency artifact family lives at `<outDir>/transparency/`
+// (NOT web/) — the same layout `sig-exports build` emits — so the export-mode
+// data layer exercises the real release-artifact path.
+function writeTransparency(name: string, payload: unknown): void {
+  const dir = join(outDir, "transparency");
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, name), JSON.stringify(payload, null, 2) + "\n", "utf-8");
+  writtenArtifacts.push({
+    path: `transparency/${name}`,
     compartment: "sig_graph",
     license: "CC-BY-4.0",
   });
@@ -236,9 +255,13 @@ analytic(
     {
       ruleset_version: RULESET_VERSION,
       surfaces: {
-        site: DEFAULT_PROVENANCE,
-        corrections: CORRECTIONS_PROVENANCE,
-        research_queue: RESEARCH_QUEUE_PROVENANCE,
+        // P35.40 (SIG-TRANSP-026): `source_label` names the predicate each
+        // surface's source_independence_count instantiates — "sources with
+        // published claims" for provenance surfaces, "detectors" for the
+        // research queue — replacing the stale "independent sources" label.
+        site: { ...DEFAULT_PROVENANCE, source_label: "Sources with published claims" },
+        corrections: { ...CORRECTIONS_PROVENANCE, source_label: "Sources with published claims" },
+        research_queue: { ...RESEARCH_QUEUE_PROVENANCE, source_label: "Detectors" },
         // P35.20a / ED-41: one provenance row per dossier slug — the surface the
         // data layer's `getDossierProvenance` reads. These are fixture values
         // (the harness is a test seam); the spine export derives each dossier's
@@ -254,6 +277,7 @@ analytic(
               date_range: { earliest: AS_OF.as_of_world, latest: AS_OF.as_of_world },
               rules_applied: [RULESET_VERSION],
               human_review_status: "unreviewed",
+              source_label: "Sources with published claims",
               denominator: `the claims backing the ${d.slug} dossier's sites (fixture values)`,
             },
           ]),
@@ -299,6 +323,37 @@ write(
 // The express-terms disclosure (sig.terms-disclosure/1) — a figure artifact on
 // /sources/; the data layer reads `web/terms_disclosure.json` in export mode.
 write("terms_disclosure.json", TERMS_DISCLOSURE_FIXTURE);
+
+// P35.40 (SIG-TRANSP-002/026/027, K9 §3.3): the source-universe pair the
+// counting surfaces read in export mode — `transparency/counts.json`
+// (sig.source-counts/1) and `transparency/sources.json` (sig.source-row/1).
+// The fixture counts are DERIVED by buildCountsDoc, so the bundle asserts the
+// same partition-sum invariant the real exporter does. When overlaying a real
+// `sig-exports build` bundle, leave real bytes in place.
+if (!existsSync(join(outDir, "transparency", "counts.json"))) {
+  writeTransparency("counts.json", SOURCE_COUNTS_FIXTURE);
+}
+if (!existsSync(join(outDir, "transparency", "sources.json"))) {
+  writeTransparency("sources.json", SOURCE_ROWS_DOC_FIXTURE);
+}
+
+// P35.39 (SIG-TRANSP-016): the generated `sig.data-dictionary/1` document —
+// emitted at the export-dir ROOT (`<outDir>/dictionary.json`), the real
+// exporter's location; the data layer's getDataDictionary reads it there in
+// export mode. Emitted here so a fixture-only export-mode build exercises
+// the /data/dictionary/ page. When overlaying a real bundle, leave it.
+if (!existsSync(join(outDir, "dictionary.json"))) {
+  writeFileSync(
+    join(outDir, "dictionary.json"),
+    JSON.stringify(DICTIONARY_FIXTURE, null, 2) + "\n",
+    "utf-8",
+  );
+  writtenArtifacts.push({
+    path: "dictionary.json",
+    compartment: "sig_graph",
+    license: "CC-BY-4.0",
+  });
+}
 
 // The release manifest at the export-dir ROOT (the same location `sig-exports build
 // --from-spine` writes it, exports/spine_export.py) — written LAST so `artifacts`

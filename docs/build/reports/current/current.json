@@ -1,13 +1,13 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "fdb627eb92c1ba1f4968f00833b3277bfc3d05f2",
-  "manifest_inputs": 1078,
+  "input_commit": "c965d6fbfd5879a6aa57ac6cf0be5c964ffd26ff",
+  "manifest_inputs": 1079,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.40",
-    "lastCompleted": "P35.39",
-    "blockedOn": "CI fail on",
+    "nextTicket": "P35.41",
+    "lastCompleted": "P35.40",
+    "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.57,P35.67,P36.12",
     "manifest": "docs/tickets/00_MANIFEST.md",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.39-data-dictionary-and-metadata",
+    "chainTip": "r11/P35.40-source-universe-lifecycle-and-counts",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
-    "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-20T11:36Z"
+    "harness": "devin-desktop/claude-opus-5-5-high/orchestrator",
+    "updatedAt": "2026-10-20T20:20Z"
   },
   "counts": {
     "obligations": 172,
@@ -13981,8 +13981,8 @@
           "label": "historical/csv"
         },
         "SIG-TRANSP-002": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/transparency.py;web/src/lib/source-counts.ts",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -14125,14 +14125,14 @@
           "label": "historical/csv"
         },
         "SIG-TRANSP-026": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/transparency.py;web/src/lib/source-counts.ts",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-TRANSP-027": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/transparency.py;web/src/lib/source-counts.ts",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -19348,10 +19348,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "a8648ffa8f1da664db79f6a4c09923e12cb0ca240a7a02dd7360a992a1f47eeb",
+  "manifest_sha256": "b07c213191fa1c36497ebc33113d086db008e0dbdbe385fd8e6c8856cb7b5674",
   "current_md": {
     "lines": 63,
-    "bytes": 15610,
+    "bytes": 15618,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
