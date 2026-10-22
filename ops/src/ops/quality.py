@@ -56,6 +56,9 @@ class EvalContext:
 
     conn: Any = None  # psycopg connection (read-only session) or a test stub
     scan_dir: Path | None = None  # release/build dir for file scans (R/P checks)
+    #: The agent-review records dir (docs/build/reports/agent-review) — the
+    #: S-placement GQ-22 probe reads its appended sig.agent-review/1 JSONL.
+    agent_review_dir: Path | None = None
     sample_percent: float | None = None  # TABLESAMPLE percent for B2 checks
     sample_seed: int = 42  # the REPEATABLE seed — always recorded
 
@@ -877,6 +880,71 @@ def eval_gq10(ctx: EvalContext) -> Measurement:
     )
 
 
+def eval_gq22(ctx: EvalContext) -> Measurement:
+    """GQ-22 — topical-relevance precision over the agent-review lane's
+    sampled records (P35.48 / SIG-CONF-002; L3 §3.2/§4.3).
+
+    B3 agent review — ``mode = "report"``, warn-only ``>= 0.9``, never gates.
+    The measure reads the appended ``sig.agent-review/1`` JSONL under the
+    agent-review records dir (never a ``human_eval_*`` table): ``offered`` =
+    packet items in the ``procurement_edges`` stratum — GQ-22's
+    procurement/agenda/grant population; ``evaluated`` = items with both
+    blind contexts' verdicts recorded; ``measured`` = the share whose two
+    verdicts agree ``relevant`` — agent consensus, never "correct". A
+    disagreement routes to the S4 queue and counts *against* the share, never
+    for it. Same-family agreement is correlated by construction (B-31): this
+    is agreement between two AI runs, never accuracy.
+    """
+    if ctx.agent_review_dir is None:
+        return _not_evaluable(
+            "GQ-22",
+            "no agent-review records dir — the S placement reads docs/build/reports/agent-review",
+        )
+    verdicts: dict[str, list[str]] = {}
+    scanned = 0
+    for path in sorted(ctx.agent_review_dir.rglob("*.jsonl")):
+        try:
+            lines = path.read_text(encoding="utf-8").splitlines()
+        except UnicodeDecodeError:
+            continue
+        for line in lines:
+            if not line.strip():
+                continue
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if not isinstance(row, dict) or row.get("version") != "sig.agent-review/1":
+                continue
+            scanned += 1
+            if row.get("stratum") == "procurement_edges":
+                verdicts.setdefault(str(row.get("item_id")), []).append(str(row.get("verdict")))
+    if scanned == 0:
+        return _not_evaluable(
+            "GQ-22", f"no sig.agent-review/1 records under {ctx.agent_review_dir}"
+        )
+    evaluated = {i: v for i, v in verdicts.items() if len(v) >= 2}
+    relevant = sum(1 for v in evaluated.values() if all(x == "relevant" for x in v))
+    return Measurement(
+        check_id="GQ-22",
+        offered=len(verdicts),
+        evaluated=len(evaluated),
+        measured=(relevant / len(evaluated)) if evaluated else None,
+        sampled=True,
+        detail={
+            "procurement_items": len(verdicts),
+            "paired_items": len(evaluated),
+            "consensus_relevant": relevant,
+            "records_scanned": scanned,
+            "basis_label": "agent review",
+            "wording": (
+                "agent review — agent consensus is agreement between two AI "
+                "runs, never accuracy; B3 report-only"
+            ),
+        },
+    )
+
+
 # ---------------------------------------------------------------------------
 # The evaluator table + the runner
 
@@ -922,6 +990,7 @@ SPINE_EVALUATORS: dict[str, Evaluator] = {
 FILE_EVALUATORS: dict[str, Evaluator] = {
     "GQ-10": eval_gq10,
     "GQ-14": eval_gq14,
+    "GQ-22": eval_gq22,
     "GQ-27": eval_gq27,
 }
 
@@ -965,6 +1034,12 @@ def run_quality_probe(
             )
         elif check.check_id in SPINE_EVALUATORS and ctx.conn is None:
             m = _not_evaluable(check.check_id, "no spine connection")
+        elif check.check_id == "GQ-22":
+            m = (
+                evaluator(ctx)
+                if ctx.agent_review_dir is not None
+                else _not_evaluable(check.check_id, "no agent-review records dir")
+            )
         elif check.check_id in FILE_EVALUATORS and ctx.scan_dir is None:
             m = _not_evaluable(check.check_id, "no scan dir")
         else:
@@ -1236,6 +1311,12 @@ def main(argv: list[str] | None = None) -> int:
         help="release/build dir for the file-scan checks (GQ-14, GQ-27)",
     )
     p_run.add_argument(
+        "--agent-review-dir",
+        default=None,
+        help="agent-review records dir for the S-placement GQ-22 probe "
+        "(default: docs/build/reports/agent-review)",
+    )
+    p_run.add_argument(
         "--sample-percent",
         type=float,
         default=None,
@@ -1411,6 +1492,11 @@ def main(argv: list[str] | None = None) -> int:
         ctx = EvalContext(
             conn=conn,
             scan_dir=Path(args.scan_dir) if args.scan_dir else None,
+            agent_review_dir=(
+                Path(args.agent_review_dir)
+                if args.agent_review_dir
+                else (Path("docs/build/reports/agent-review") if args.placement == "S" else None)
+            ),
             sample_percent=args.sample_percent,
             sample_seed=args.seed,
         )

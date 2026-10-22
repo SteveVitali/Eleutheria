@@ -1,0 +1,1161 @@
+{
+  "capture_kind": "stand-in",
+  "corpus_digest": "sha256:d03decacb801aae202e57aec19f2e2c3943c756324e94684ae62ed94e681a103",
+  "design": {
+    "edges": 30,
+    "simple_random_block": true,
+    "sites": 50,
+    "stratum_quotas": {
+      "edge": {
+        "operator_edges": 10,
+        "procurement_edges": 10,
+        "simple_random": 10
+      },
+      "site": {
+        "dossier_delta_sites": 10,
+        "new_sources": 15,
+        "possible_duplicates": 15,
+        "simple_random": 10
+      }
+    }
+  },
+  "items": [
+    {
+      "evidence": {
+        "parsed_date": "2024-05",
+        "parsed_role": "traffic_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Traffic camera \u2014 10th & Walker",
+        "source_name": "okc-public-works",
+        "upstream_excerpt": "CCTV on the 10th/Walker mast arm, installed 2024-05"
+      },
+      "item_id": "site-009",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "new_sources"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2023-05",
+        "parsed_role": "public_space_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Riverwalk camera node 12",
+        "source_name": "parks-dept-feed",
+        "upstream_excerpt": "CCTV node 12 along the riverwalk lighting poles, installed 2023-05"
+      },
+      "item_id": "site-005",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "new_sources"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2020-11",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Library loading-dock cam",
+        "source_name": "library-system",
+        "upstream_excerpt": "CCTV covering the central library loading dock, installed 2020-11"
+      },
+      "item_id": "site-015",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "new_sources"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2023-03",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Airport curb camera A1",
+        "source_name": "airport-authority",
+        "upstream_excerpt": "CCTV over the arrivals curb lane A1, installed 2023-03"
+      },
+      "item_id": "site-016",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "new_sources"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2020-04",
+        "parsed_role": "transit_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Bus station camera array",
+        "source_name": "transit-agency",
+        "upstream_excerpt": "eight CCTV domes across the downtown bus platforms, installed 2020-04"
+      },
+      "item_id": "site-008",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "new_sources"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2021-12",
+        "parsed_role": "critical_infrastructure",
+        "parsed_type": "cctv",
+        "record_title": "Water-plant perimeter cam",
+        "source_name": "utility-district",
+        "upstream_excerpt": "CCTV on the treatment-plant perimeter fence line, installed 2021-12"
+      },
+      "item_id": "site-017",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "new_sources"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2023-08",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Stadium lot camera SE",
+        "source_name": "stadium-authority",
+        "upstream_excerpt": "CCTV pole camera covering the southeast lot, installed 2023-08"
+      },
+      "item_id": "site-013",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "new_sources"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2023-11",
+        "parsed_role": "traffic_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Intersection camera N Broadway",
+        "source_name": "okc-public-works",
+        "upstream_excerpt": "fixed CCTV at Broadway/23rd, installed 2023-11"
+      },
+      "item_id": "site-001",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "new_sources"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2022-06",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Downtown garage camera 4",
+        "source_name": "city-parking-authority",
+        "upstream_excerpt": "CCTV covering garage level 4 north entrance, commissioned 2022-06"
+      },
+      "item_id": "site-003",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "new_sources"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2024-01",
+        "parsed_role": "traffic_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Traffic cam \u2014 Main St & 5th Ave",
+        "source_name": "okc-public-works",
+        "upstream_excerpt": "CCTV camera mounted on pole at Main/5th, traffic monitoring, installed 2024-01"
+      },
+      "item_id": "site-000",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "new_sources"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2023-12",
+        "parsed_role": "red_light_enforcement",
+        "parsed_type": "red_light_camera",
+        "record_title": "Red-light camera \u2014 15th & Penn",
+        "source_name": "okc-public-works",
+        "upstream_excerpt": "red-light enforcement camera at 15th/Penn, activated 2023-12"
+      },
+      "item_id": "site-010",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "new_sources"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2024-08",
+        "parsed_role": "speed_enforcement",
+        "parsed_type": "speed_camera",
+        "record_title": "School-zone camera \u2014 Elm",
+        "source_name": "district-feed",
+        "upstream_excerpt": "speed enforcement camera on Elm St school zone, posted 2024-08"
+      },
+      "item_id": "site-004",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "new_sources"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2022-02",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Courthouse plaza camera",
+        "source_name": "county-facilities",
+        "upstream_excerpt": "CCTV on the plaza's east entrance, commissioned 2022-02"
+      },
+      "item_id": "site-014",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "new_sources"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2021-09",
+        "parsed_role": "facility_access",
+        "parsed_type": "alpr",
+        "record_title": "ALPR \u2014 city yard gate",
+        "source_name": "fleet-services",
+        "upstream_excerpt": "plate reader at the fleet yard vehicle gate, online 2021-09"
+      },
+      "item_id": "site-006",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "new_sources"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2021-07",
+        "parsed_role": "toll_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Bridge toll camera west",
+        "source_name": "toll-authority",
+        "upstream_excerpt": "CCTV at the westbound toll plaza lanes 1\u20133, installed 2021-07"
+      },
+      "item_id": "site-012",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "new_sources"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2024-06",
+        "parsed_role": "traffic_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Traffic cam \u2014 Main & 5th (dup?)",
+        "source_name": "okc-gis-export",
+        "upstream_excerpt": "CCTV camera at Main Street and Fifth Avenue, pole-mounted, listed in the GIS export dated 2024-06"
+      },
+      "item_id": "site-018",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "possible_duplicates"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2022-07",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Plaza east cam (county map)",
+        "source_name": "county-gis",
+        "upstream_excerpt": "courthouse plaza east-entrance CCTV, county facilities map 2022-07"
+      },
+      "item_id": "site-029",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "possible_duplicates"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2023-09",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Garage cam L4N (audit copy)",
+        "source_name": "parking-audit",
+        "upstream_excerpt": "CCTV, parking garage level 4 north entrance \u2014 internal audit export 2023-09"
+      },
+      "item_id": "site-021",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "possible_duplicates"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2023-10",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Stadium SE lot cam (event map)",
+        "source_name": "events-gis",
+        "upstream_excerpt": "CCTV covering the stadium southeast lot, events map layer 2023-10"
+      },
+      "item_id": "site-028",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "possible_duplicates"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2024-02",
+        "parsed_role": "parking_enforcement",
+        "parsed_type": "cctv",
+        "record_title": "Relocation record \u2014 Ward 4 cam",
+        "source_name": "parking-authority",
+        "upstream_excerpt": "Ward 4 lot camera relocated November 2023, reactivated February 2024"
+      },
+      "item_id": "site-024",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "possible_duplicates"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2022-05",
+        "parsed_role": "toll_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Toll plaza cam lanes 1\u20133 (dup)",
+        "source_name": "toll-gis",
+        "upstream_excerpt": "westbound toll plaza CCTV, lanes 1\u20133 \u2014 toll GIS layer 2022-05"
+      },
+      "item_id": "site-027",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "possible_duplicates"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2024-09",
+        "parsed_role": "speed_enforcement",
+        "parsed_type": "speed_camera",
+        "record_title": "Elm school-zone cam (DOT mirror)",
+        "source_name": "state-dot-feed",
+        "upstream_excerpt": "speed enforcement camera, Elm St school zone \u2014 DOT mirror of the district feed, 2024-09"
+      },
+      "item_id": "site-022",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "possible_duplicates"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2021-02",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Library dock cam (work order)",
+        "source_name": "facilities-wo",
+        "upstream_excerpt": "CCTV, central library loading dock \u2014 facilities work-order system 2021-02"
+      },
+      "item_id": "site-030",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "possible_duplicates"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2023-04",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Pier 3 camera (harbour audit)",
+        "source_name": "harbour-audit",
+        "upstream_excerpt": "CCTV overlooking pier 3 vehicle queue, harbour audit 2023-04"
+      },
+      "item_id": "site-026",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "possible_duplicates"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2023-06",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Arrivals curb A1 (airport GIS)",
+        "source_name": "airport-gis",
+        "upstream_excerpt": "CCTV over arrivals curb lane A1, airport GIS 2023-06"
+      },
+      "item_id": "site-031",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "possible_duplicates"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2024-01",
+        "parsed_role": "public_space_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Riverwalk node 12 (parks GIS)",
+        "source_name": "parks-gis",
+        "upstream_excerpt": "riverwalk lighting-pole CCTV node 12, parks GIS layer, snapshot 2024-01"
+      },
+      "item_id": "site-020",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "possible_duplicates"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2024-06",
+        "parsed_role": "traffic_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Broadway intersection cam (GIS)",
+        "source_name": "okc-gis-export",
+        "upstream_excerpt": "fixed CCTV at Broadway/23rd in the 2024-06 GIS extract \u2014 same pole as the works registry entry"
+      },
+      "item_id": "site-019",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "possible_duplicates"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2022-01",
+        "parsed_role": "transit_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Bus platform dome 5 (vendor list)",
+        "source_name": "transit-vendor",
+        "upstream_excerpt": "CCTV dome 5, downtown bus platforms \u2014 vendor maintenance list 2022-01"
+      },
+      "item_id": "site-025",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "possible_duplicates"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2024-05",
+        "parsed_role": "traffic_enforcement",
+        "parsed_type": "alpr",
+        "record_title": "ALPR I-40 gantry (patrol log)",
+        "source_name": "patrol-ops-feed",
+        "upstream_excerpt": "licence plate reader, I-40 EB gantry \u2014 referenced in the 2024-05 patrol log extract"
+      },
+      "item_id": "site-023",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "possible_duplicates"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2022-03",
+        "parsed_role": "critical_infrastructure",
+        "parsed_type": "cctv",
+        "record_title": "Perimeter cam (utility audit)",
+        "source_name": "utility-audit",
+        "upstream_excerpt": "treatment-plant perimeter CCTV, utility audit extract 2022-03"
+      },
+      "item_id": "site-032",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "possible_duplicates"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2026-02",
+        "parsed_role": "parking_enforcement",
+        "parsed_type": "alpr",
+        "record_title": "NEW \u2014 ALPR Ward 2 exit",
+        "source_name": "parking-authority",
+        "upstream_excerpt": "new licence plate reader at the Ward 2 lot exit lane, live 2026-02"
+      },
+      "item_id": "site-037",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "dossier_delta_sites"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2026-03",
+        "parsed_role": "public_space_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "NEW \u2014 trail-head cam Ward 9",
+        "source_name": "parks-dept-feed",
+        "upstream_excerpt": "new CCTV at the Ward 9 trail-head car park, installed 2026-03"
+      },
+      "item_id": "site-043",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "dossier_delta_sites"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2026-03",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "NEW \u2014 garage L2 south cam",
+        "source_name": "city-parking-authority",
+        "upstream_excerpt": "new CCTV covering garage level 2 south ramp, installed 2026-03"
+      },
+      "item_id": "site-039",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "dossier_delta_sites"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2026-02",
+        "parsed_role": "traffic_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "NEW \u2014 4th St bike-lane cam",
+        "source_name": "okc-public-works",
+        "upstream_excerpt": "new CCTV node on the 4th St protected bike lane, installed 2026-02"
+      },
+      "item_id": "site-033",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "dossier_delta_sites"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2025-11",
+        "parsed_role": "work_zone_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "DEL \u2014 Elm temp work-zone cam",
+        "source_name": "district-feed",
+        "upstream_excerpt": "temporary work-zone camera on Elm removed 2025-11"
+      },
+      "item_id": "site-040",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "dossier_delta_sites"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2026-01",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "NEW \u2014 Fair park west gate cam",
+        "source_name": "fairgrounds",
+        "upstream_excerpt": "new CCTV at the fair park west vehicle gate, commissioned 2026-01"
+      },
+      "item_id": "site-034",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "dossier_delta_sites"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2025-12",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "DEL \u2014 old quarry cam (removed)",
+        "source_name": "county-facilities",
+        "upstream_excerpt": "quarry overlook CCTV removed 2025-12 per work order 4419"
+      },
+      "item_id": "site-035",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "dossier_delta_sites"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2026-01",
+        "parsed_role": "toll_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "UPD \u2014 toll plaza lane 4 added",
+        "source_name": "toll-authority",
+        "upstream_excerpt": "toll plaza CCTV now covers lane 4 after the 2026-01 expansion"
+      },
+      "item_id": "site-042",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "dossier_delta_sites"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2026-02",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "NEW \u2014 courthouse west cam",
+        "source_name": "county-facilities",
+        "upstream_excerpt": "new CCTV on the courthouse plaza west entrance, 2026-02"
+      },
+      "item_id": "site-041",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "dossier_delta_sites"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2026-03",
+        "parsed_role": "transit_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "UPD \u2014 bus dome 3 replaced",
+        "source_name": "transit-vendor",
+        "upstream_excerpt": "platform dome 3 replaced with a new low-light CCTV unit, 2026-03"
+      },
+      "item_id": "site-036",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "dossier_delta_sites"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2022-04",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Zoo entrance cam",
+        "source_name": "zoo-authority",
+        "upstream_excerpt": "CCTV over the visitor entrance gates, installed 2022-04"
+      },
+      "item_id": "site-059",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2026-01",
+        "parsed_role": "public_space_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "UPD \u2014 riverwalk node 3 moved",
+        "source_name": "parks-dept-feed",
+        "upstream_excerpt": "riverwalk CCTV node 3 relocated 12 m east along the path, 2026-01"
+      },
+      "item_id": "site-038",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2021-09",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Convention hall dock cam",
+        "source_name": "convention-centre",
+        "upstream_excerpt": "CCTV on the loading dock door 2, installed 2021-09"
+      },
+      "item_id": "site-058",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2026-02",
+        "parsed_role": "traffic_enforcement",
+        "parsed_type": "alpr",
+        "record_title": "UPD \u2014 I-40 gantry second ALPR",
+        "source_name": "state-dot-feed",
+        "upstream_excerpt": "second licence plate reader added to the I-40 EB gantry, 2026-02"
+      },
+      "item_id": "site-044",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2019-10",
+        "parsed_role": "traffic_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Mall ring-road cam 6",
+        "source_name": "private-mall-feed",
+        "upstream_excerpt": "CCTV on the mall ring road pole 6, installed 2019-10"
+      },
+      "item_id": "site-053",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2023-07",
+        "parsed_role": "public_space_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Skate-park cam",
+        "source_name": "parks-dept-feed",
+        "upstream_excerpt": "CCTV at the skate park gate, installed 2023-07"
+      },
+      "item_id": "site-056",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2021-01",
+        "parsed_role": "transit_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Transit hub north cam",
+        "source_name": "transit-agency",
+        "upstream_excerpt": "CCTV at the north interchange entrance, installed 2021-01"
+      },
+      "item_id": "site-055",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2019-12",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Parkade ramp 3 cam",
+        "source_name": "parking-authority",
+        "upstream_excerpt": "CCTV on parkade ramp 3, installed 2019-12"
+      },
+      "item_id": "site-049",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2019-08",
+        "parsed_role": "facility_monitoring",
+        "parsed_type": "cctv",
+        "record_title": "Depot yard camera 2",
+        "source_name": "rail-yard",
+        "upstream_excerpt": "CCTV on the depot yard fence, installed 2019-08"
+      },
+      "item_id": "site-045",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "parsed_date": "2020-08",
+        "parsed_role": "facility_access",
+        "parsed_type": "cctv",
+        "record_title": "Cemetery gate cam",
+        "source_name": "cemetery-trust",
+        "upstream_excerpt": "CCTV over the main vehicle gate, installed 2020-08"
+      },
+      "item_id": "site-057",
+      "kind": "site",
+      "question": "site_fidelity",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "edge_type": "operated_by",
+        "record_title": "Rec centre cam ops",
+        "snippet": "recreation-centre CCTV operated by the city facilities department"
+      },
+      "item_id": "edge-016",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "operator_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "operated_by",
+        "record_title": "Mall ring cam ops",
+        "snippet": "mall ring-road cameras operated by the property's contracted security firm"
+      },
+      "item_id": "edge-017",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "operator_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "operated_by",
+        "record_title": "Parking ALPR ops",
+        "snippet": "parking-authority plate readers operated by the enforcement division"
+      },
+      "item_id": "edge-005",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "operator_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "operated_by",
+        "record_title": "Courthouse cam ops",
+        "snippet": "county courthouse CCTV operated by the sheriff's office"
+      },
+      "item_id": "edge-006",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "operator_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "operated_by",
+        "record_title": "Stadium camera ops",
+        "snippet": "stadium cameras operated by the venue management company"
+      },
+      "item_id": "edge-004",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "operator_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "operated_by",
+        "record_title": "Vehicle-detection radar",
+        "snippet": "vehicle-detection radar units for signal actuation operated by DPW"
+      },
+      "item_id": "edge-009",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "operator_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "operated_by",
+        "record_title": "Ferry terminal cam ops",
+        "snippet": "terminal CCTV operated by the ferry authority"
+      },
+      "item_id": "edge-011",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "operator_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "operated_by",
+        "record_title": "Harbour camera ops",
+        "snippet": "port CCTV operated by the harbour authority surveillance unit"
+      },
+      "item_id": "edge-003",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "operator_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "operated_by",
+        "record_title": "Camera ops contract \u2014 Ward 3",
+        "snippet": "Ward 3 CCTV network operated by SafeStreets LLC under the public-works contract"
+      },
+      "item_id": "edge-000",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "operator_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "operated_by",
+        "record_title": "Signal timing controllers",
+        "snippet": "traffic-signal timing controllers operated by the DPW signals group"
+      },
+      "item_id": "edge-008",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "operator_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "procurement",
+        "record_title": "Harbour cam expansion",
+        "snippet": "procurement plan: 6 additional CCTV cameras along pier 3"
+      },
+      "item_id": "edge-022",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "procurement_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "procurement",
+        "record_title": "Civic Wi-Fi expansion",
+        "snippet": "procurement: public Wi-Fi access points in the civic square"
+      },
+      "item_id": "edge-035",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "procurement_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "procurement",
+        "record_title": "Bus shelter lighting",
+        "snippet": "contract: LED lighting upgrade at 30 bus shelters"
+      },
+      "item_id": "edge-030",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "procurement_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "procurement",
+        "record_title": "Depot yard cam renewal",
+        "snippet": "contract: renewal of depot yard CCTV under the facilities framework"
+      },
+      "item_id": "edge-034",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "procurement_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "procurement",
+        "record_title": "Water plant fence cams",
+        "snippet": "tender: perimeter CCTV along the treatment-plant fence line"
+      },
+      "item_id": "edge-029",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "procurement_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "procurement",
+        "record_title": "Speed camera refresh",
+        "snippet": "procurement: replacement of school-zone speed camera housings"
+      },
+      "item_id": "edge-020",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "procurement_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "procurement",
+        "record_title": "Landscaping contract",
+        "snippet": "contract award: grounds maintenance and landscaping for civic sites"
+      },
+      "item_id": "edge-026",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "procurement_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "procurement",
+        "record_title": "Airport landside cams",
+        "snippet": "procurement: CCTV coverage for the landside arrivals forecourt"
+      },
+      "item_id": "edge-027",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "procurement_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "procurement",
+        "record_title": "Trail-counter sensors",
+        "snippet": "parks department purchase: vehicle-detection sensors for trail counters"
+      },
+      "item_id": "edge-023",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "procurement_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "procurement",
+        "record_title": "Fair park gate cams",
+        "snippet": "purchase order: two vehicle-gate CCTV units for the fair park"
+      },
+      "item_id": "edge-031",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "procurement_edges"
+    },
+    {
+      "evidence": {
+        "edge_type": "procurement",
+        "record_title": "Riverwalk node spares",
+        "snippet": "procurement: spare CCTV nodes for the riverwalk lighting poles"
+      },
+      "item_id": "edge-032",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "edge_type": "operated_by",
+        "record_title": "Toll cam ops",
+        "snippet": "toll plaza CCTV operated by the toll authority control room"
+      },
+      "item_id": "edge-010",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "edge_type": "operated_by",
+        "record_title": "Utility perimeter ops",
+        "snippet": "plant perimeter CCTV operated by the utility security team"
+      },
+      "item_id": "edge-013",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "edge_type": "operated_by",
+        "record_title": "Marina cam ops",
+        "snippet": "marina CCTV operated by the harbormaster office"
+      },
+      "item_id": "edge-015",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "edge_type": "procurement",
+        "record_title": "Transit dome upgrade",
+        "snippet": "contract: upgrade of 40 platform CCTV domes to low-light units"
+      },
+      "item_id": "edge-021",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "edge_type": "operated_by",
+        "record_title": "Library cam ops",
+        "snippet": "library CCTV operated by contracted security staff"
+      },
+      "item_id": "edge-007",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "edge_type": "operated_by",
+        "record_title": "Transit CCTV ops",
+        "snippet": "bus-platform CCTV operated by the transit agency security office"
+      },
+      "item_id": "edge-002",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "edge_type": "procurement",
+        "record_title": "Library AV works",
+        "snippet": "contract: audiovisual fit-out for meeting rooms"
+      },
+      "item_id": "edge-028",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "edge_type": "operated_by",
+        "record_title": "Parks cam ops",
+        "snippet": "trail-head CCTV operated by the parks ranger service"
+      },
+      "item_id": "edge-014",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "simple_random"
+    },
+    {
+      "evidence": {
+        "edge_type": "procurement",
+        "record_title": "Courthouse cam replacement",
+        "snippet": "contract: replace courthouse plaza CCTV head units"
+      },
+      "item_id": "edge-024",
+      "kind": "edge",
+      "question": "edge_relevance",
+      "stratum": "simple_random"
+    }
+  ],
+  "n_edges": 30,
+  "n_sites": 50,
+  "packet_digest": "sha256:6203980e9c3b2948c5a86de30bbaa885e3fa0445d7df96c4dd7741e5648b7a32",
+  "packet_id": "arp-6203980e9c3b2948",
+  "seed": "p35-48-w43",
+  "strata_draws": {
+    "edge": {
+      "operator_edges": [
+        "edge-016",
+        "edge-017",
+        "edge-005",
+        "edge-006",
+        "edge-004",
+        "edge-009",
+        "edge-011",
+        "edge-003",
+        "edge-000",
+        "edge-008"
+      ],
+      "procurement_edges": [
+        "edge-022",
+        "edge-035",
+        "edge-030",
+        "edge-034",
+        "edge-029",
+        "edge-020",
+        "edge-026",
+        "edge-027",
+        "edge-023",
+        "edge-031"
+      ],
+      "simple_random": [
+        "edge-032",
+        "edge-010",
+        "edge-013",
+        "edge-015",
+        "edge-021",
+        "edge-007",
+        "edge-002",
+        "edge-028",
+        "edge-014",
+        "edge-024"
+      ]
+    },
+    "site": {
+      "dossier_delta_sites": [
+        "site-037",
+        "site-043",
+        "site-039",
+        "site-033",
+        "site-040",
+        "site-034",
+        "site-035",
+        "site-042",
+        "site-041",
+        "site-036"
+      ],
+      "new_sources": [
+        "site-009",
+        "site-005",
+        "site-015",
+        "site-016",
+        "site-008",
+        "site-017",
+        "site-013",
+        "site-001",
+        "site-003",
+        "site-000",
+        "site-010",
+        "site-004",
+        "site-014",
+        "site-006",
+        "site-012"
+      ],
+      "possible_duplicates": [
+        "site-018",
+        "site-029",
+        "site-021",
+        "site-028",
+        "site-024",
+        "site-027",
+        "site-022",
+        "site-030",
+        "site-026",
+        "site-031",
+        "site-020",
+        "site-019",
+        "site-025",
+        "site-023",
+        "site-032"
+      ],
+      "simple_random": [
+        "site-059",
+        "site-038",
+        "site-058",
+        "site-044",
+        "site-053",
+        "site-056",
+        "site-055",
+        "site-049",
+        "site-045",
+        "site-057"
+      ]
+    }
+  },
+  "version": "sig.agent-review-packet/1",
+  "week": "2026-W43"
+}
