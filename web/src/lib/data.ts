@@ -64,6 +64,8 @@ import {
   type TermsDisclosure,
 } from "./terms-disclosure";
 import { SOURCES_FIXTURE, sourceLicenceTable, type SourceLicenceRow } from "./sources";
+import { STATEMENT_FIXTURES } from "./statements-fixture";
+import type { StatementRow } from "./provenance-panel";
 
 // The committed fixtures the data layer serves in `fixtures` mode (and that the P27.5
 // fixture-export harness serialises into the export layout). The PAGES import none of
@@ -564,6 +566,50 @@ export function getEntityCompartments(): Map<
           entityType: typeof row.entity_type === "string" ? row.entity_type : "deployment",
         });
       }
+    }
+  }
+  return out;
+}
+
+/**
+ * The `claim_id → sig.statement/1` statement index the shared
+ * `<ProvenancePanel>` contract reads (P35.36, R11-K13-TX-08a / J3 §5.1,
+ * SIG-TRANSP-011).
+ *
+ *   - `fixtures` mode — the committed fixture rows (`statements-fixture.ts`),
+ *     keyed to the claim ids the fixtures name.
+ *   - `export` mode — every compartment's `<exportDir>/<comp>/statements.jsonl`
+ *     (the same per-compartment files the release tree ships under
+ *     `r/<pub>/c/<comp>/statements.jsonl`), scanned by directory like
+ *     `getEntityCompartments`.
+ *
+ * A pre-P35.36 export legitimately carries no statements files — the index is
+ * then EMPTY (the named-absence `not_recorded` panel renders for every claim),
+ * never a build error and never a fabricated statement.
+ */
+export function getStatementIndex(): Map<string, StatementRow> {
+  const out = new Map<string, StatementRow>();
+  const rows =
+    dataSource() === "fixtures"
+      ? STATEMENT_FIXTURES
+      : (() => {
+          const collected: StatementRow[] = [];
+          const root = exportDir();
+          if (!existsSync(root)) return collected;
+          for (const entry of readdirSync(root)) {
+            const p = `${root}/${entry}/statements.jsonl`;
+            if (!existsSync(p)) continue;
+            for (const line of readFileSync(p, "utf-8").split("\n")) {
+              const t = line.trim();
+              if (!t) continue;
+              collected.push(JSON.parse(t) as StatementRow);
+            }
+          }
+          return collected;
+        })();
+  for (const row of rows) {
+    if (typeof row.claim_id === "string" && !isWithdrawn(row.claim_id)) {
+      out.set(row.claim_id, row);
     }
   }
   return out;

@@ -9,10 +9,10 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key ≤ 256 B; the generated `returnPass:` id list rides the B3 V2 bound (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus:   IN_PROGRESS                           # P35.65 landed (314); no live leg
-nextTicket:      P35.36                              # row 315
-lastCompleted:   P35.65                              # row 314
-blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #329@b712adce 5/5 (39301526784); #328@2f6db78 py-red = the dispatch-record line P35.65 repairs
+projectStatus:   IN_PROGRESS                           # P35.36 landed (315); no live leg
+nextTicket:      P35.37                              # row 316
+lastCompleted:   P35.36                              # row 315
+blockedOn:       CI fail on #299@19ed46d (docs)       # waived red; #331@21866dae 5/5 (39342432369); #329@75dd2cb7 5/5 (39337205761) repair line
 pauseRequested:  false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
@@ -22,13 +22,13 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.65-withbase-helper-and-containment-check # base r11/P35.35-…
+chainTip:        r11/P35.36-statements-files-and-provenance-panel-v2 # base r11/P35.65-…
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # since C10
-updatedAt:       2026-10-19T18:40Z
+updatedAt:       2026-10-19T23:57Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1109,3 +1109,6 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-19 — P35.65 correction — repair #2: the `d12b489d` head went docs-red on `verify-recorded-ci` (run 39336312057 job 118346567968: "added PHASE LOG entry with no recorded-ci field") — the `post-closeout repair` kind owes a recorded-ci field it cannot truthfully carry for a red head (only the pass/pass-after-rerun forms parse; the fail/blockedOn forms are stray fragments at field position) · in-place kind repair this commit: the entry's `post-closeout repair` → `correction` — payload bytes untouched (the P34.39b/6fe93216 + P35.14b/64648080 sanctioned pattern — `correction` is the record-event kind, per NON_CI_KINDS) · the `seed-commit` declaration for this repair lands in the next commit per the branch rule · chainTip → r11/P35.65-… · harness: devin-desktop/swe-2-high/subagent
 
 - 2026-10-19 — P35.65 correction — repair #3 (declaration): `history.policy` gains `seed-commit 739338d8` — the commit-prefix-keyed exemption for the in-place kind repair (`post-closeout repair`→`correction` on the `d12b489d` entry; the recorded-ci-owing kind cannot truthfully stamp a red head), same seed-commit pattern as P34.39b/`c5b478bc`, P35.14b and P36.9b — the branch rule forbids force-push so the declaration lands as a later commit · this head re-runs all five checks · chainTip → r11/P35.65-… · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-19 — P35.36 ticket — `ci: pass #331@21866dae` 5/5 green head-bound (run 39342432369: python 21m49s, web 14m52s, composed 3m20s, docs 2m1s, security 25s; boundary read 23:57:31Z `reports/ci/p35_36_pr331.json` — stack verbatim waived `blockedOn: CI fail on #299@19ed46d (docs)` + base `#329@75dd2cb7` 5/5 repair line) · `runs/P35.36.md` · row 315 statements files + `upstream_href` + the shared provenance panel — per-compartment `sig.statement/1` `<comp>/statements.jsonl` (the built-but-unpublished `record_claims` stream + provenance block; closed `not_published` value; J3 §5.1 four binding states verbatim + `not_recorded`; S-6-gated `upstream_block`; ODbL claims never in a CC-BY file) · manifest `schema`/`row_count`/`distinct_entities` entries · release tree `r/<pub>/c/<comp>/statements.jsonl` + `_claim_index` prefers it, `record_claims` fallback · `sig.published-record/4` embeds `claim_statements`, `source_refs[].upstream_href/host/status` filled only through the P35.31 S-6 gate · `sig.provenance-panel/1` one TS contract + one renderer across record pages, edge rows (deduped), map selection (bounded 8), NetworkIsland, the claim viewer — named absences, never blank, `withBase()` links · `ops/sentinels.toml` `independent-review` safe + the verbatim J3 §5.2 disclosure form (negation, never a review claim) · heads verbatim `64b8f496` impl → `8d07aee0`/`039d99ab` poisoned-trailer merge pair (#330 closed unmerged — the `# Conflicts:` litter is permanent in-range) → -v2 `a01f5daa` cherry-pick + `3f3d561e` sentinel fix (docs-red stale projection) → `fd90f6bc` (python-red README/index atomicity — range owed 315 before the row landed) → `21866dae` revert · SIG-TRANSP-011 → MET-ENGINEERED(D-R10-PUBLISH-1) re-routed P35.63 · no production mutation — files + contract only · chainTip → r11/P35.36-…-v2 · next → P35.37 (316) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-20 — P35.36 post-closeout record — `ci: pass #331@2224ec6` 5/5 green head-bound (run 39347205978: python 21m33s, web 15m0s, composed 3m14s, docs 2m3s, security 31s; boundary re-read 2026-10-20T00:46:09Z `reports/ci/p35_36_pr331.json` — stack pass except verbatim waived `blockedOn: CI fail on #299@19ed46d (docs)`) · every pushed head verbatim in `runs/P35.36.md` (`64b8f496` impl → `8d07aee0`/`039d99ab` poisoned-merge pair — #330 closed unmerged → -v2 `a01f5daa` + `3f3d561e` sentinel fix → `fd90f6bc` README-atomicity red → `21866dae` revert → `3a093ed5` closeout — docs-red: fused PHASE LOG line + unparseable header `ci:` field → `8e9bc541` field repair + `865b961e` `seed-commit` declaration + `2224ec6c` unfuse) · PR #331 stays open on the stack for operator integration · no production mutation — files + contract only · chainTip → r11/P35.36-…-v2 · next → P35.37 (316) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-20 — P35.37 dispatch boundary-confirm — `ci: pass #331@06516ac` 5/5 green head-bound (run 39349840318: python 21m9s, web 14m34s, composed 3m17s, docs 2m1s, security 33s; read 01:16:31Z `logs/ci-P35.37-pre-dispatch.json`) · stack verbatim waived `blockedOn` baseline · v1 arc verbatim in `runs/P35.36.md`: `8d07aee0`/`039d99ab` merges carried the git `# Conflicts:` litter in the trailer block (permanent in-range, the `c611119c` class) → #330 closed unmerged → -v2 `a01f5daa` re-land · base `#329` tip repair verbatim: `d12b489d` → `739338d8` → `75dd2cb7` (kind repair + `seed-commit`; 5/5) · dispatching P35.37 (316 — figure-to-evidence pointers; depends P35.36+P35.20b; gate: none; not OM-20) · harness: devin-desktop/swe-2-high/subagent

@@ -24,6 +24,49 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Per-claim statements files, `upstream_href`, and the one shared
+  provenance panel** (P35.36 / row 315; R11-K13-TX-08a; owner
+  SIG-TRANSP-011; cites SIG-TRANSP-012/022/025, SIG-UI-028/035,
+  J3 §5.1–5.3 + §12 TX-08a, K13 §7 W1 / UXR-33 [design ref], J1 §B.4
+  + NEW-10, C4 NEW-2, SIG-EXPORT-001/006, SIG-REL-008) — the
+  built-but-unpublished `record_claims` stream now ships as a
+  per-compartment `sig.statement/1` `statements.jsonl` through the
+  existing licence/compartment/manifest path (ODbL claims never in a
+  CC-BY file; manifest entries carry schema + row count + distinct
+  entities), and the immutable release copies each compartment's
+  statements file into `r/<pub>/c/<comp>/` with `_claim_index`
+  preferring statements and falling back to `record_claims` for
+  pre-P35.36 exports. Every row carries the claim anchor, the closed
+  `not_published` value token (raw claim literals never emit), the
+  `claim_evidence` binding state — J3 §5.1's four states, with
+  `not_recorded` as the honest fifth when no publishable binding
+  exists — scrubbed capture locators, the S-6-gated upstream block
+  (`full_url` only for `raw-ok`/`derived-only` lanes past the gate;
+  `host_only` + path hash otherwise; `no_upstream_url_recorded` /
+  `withheld_by_policy` where honest; a raw URL is never copied
+  through), the §5.3 `view_original` label states (TX-08b mints the
+  byte routes — this row never mints a raw-byte link), extraction,
+  epistemics, recorded run/at, supersession, contradictions, and
+  per-claim rights. `published_record.py` fills
+  `source_refs[].upstream_href`/`upstream_host`/`upstream_status`
+  from the statement's gated upstream object (J1 NEW-10's hard-coded
+  `None` is gone) and embeds the rows as `claim_statements` —
+  `PROJECTION_VERSION` is `sig.published-record/4`. One
+  `sig.provenance-panel/1` contract + `<ProvenancePanel>` component
+  now renders the J3 §5.1 wording verbatim — the `legacy_synthetic`
+  run-level sentence never implies a per-record copy — on the
+  release record pages (`#claim-<id>` anchors resolve to the panel
+  itself), the claim viewer, the network edge rows + island, and
+  the map selection pane; every field is a value or a named absence
+  (`not_recorded` / `no_upstream_url_recorded` / `not_publishable` /
+  `unavailable`), every new internal link routes through
+  `withBase()` (containment baseline unchanged), byte counts group
+  by locale (K14 NEW-8), and repeated inline panels dedupe to a
+  shared anchored panel so the island/page budgets hold. The web
+  data layer gains a statements seam (`getStatementIndex`) —
+  committed fixtures under `SIG_DATA_SOURCE=fixtures`, real per-
+  compartment `statements.jsonl` bytes under `export`, honest
+  absence never fixture fallback.
 - **Registry redistribution lanes and the source-metadata export —
   `v_transparency_source` + `sources.json`/`counts.json`** (P35.35 /
   row 313; J3 §3.1 + §3.3 item 3 + J4 §9, K9 §10 C-6, spec §5.7's

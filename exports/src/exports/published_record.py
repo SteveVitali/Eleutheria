@@ -24,14 +24,22 @@ from dataclasses import dataclass, field, replace
 from typing import Any
 
 from policy.sensitivity import assert_public_layer_subject
+from policy.transparency import NO_UPSTREAM_URL
 
 from .manifest import canonical_json, sha256_hex
+from .statements import STATEMENT_SCHEMA
 
 #: The projection schema/version stamped on every record and hashed into the
 #: publication descriptor — a renderer/projection change is a NEW namespace.
 #: /1 → /2 (P35.15a / PKG-07): the record doc gains ``technology`` — the
 #: subject's declared SKOS slug (id + basis), the map/search facet source.
-PROJECTION_VERSION = "sig.published-record/3"
+#: /3 → /4 (P35.36 / R11-K13-TX-08a, SIG-TRANSP-011): ``source_refs`` gains the
+#: S-6-gated ``upstream_*`` block (``upstream_href`` stops being a constant
+#: ``None`` — J1 NEW-10) and the record embeds ``claim_statements`` — the
+#: ``sig.statement/1`` rows the per-claim provenance panel renders (UXR-33's
+#: one contract — the record page reads the same statements the release's
+#: ``statements.jsonl`` publishes).
+PROJECTION_VERSION = "sig.published-record/4"
 
 
 def record_key(compartment: str, entity_type: str, entity_id: str) -> str:
@@ -85,15 +93,23 @@ class EvidenceRef:
     #: ``metadata_only`` — the capture bytes are not served (§17.5); the page
     #: states the metadata locator. ``unlocated`` — no binding published.
     access: str = "metadata_only"
+    #: P35.36 (J3 §5.1): the binding's recorded ``claim_evidence.binding_status``
+    #: — carried through from the ``sig.statement/1`` row; ``None`` on a
+    #: pre-P35.36 claim index (the old ``record_claims`` shape) keeps the
+    #: released document byte-identical.
+    binding_status: str | None = None
 
     def as_json(self) -> dict[str, Any]:
-        return {
+        doc = {
             "claim_id": self.claim_id,
             "capture_id": self.capture_id,
             "artifact_id": self.artifact_id,
             "role": self.role,
             "access": self.access,
         }
+        if self.binding_status is not None:
+            doc["binding_status"] = self.binding_status
+        return doc
 
 
 @dataclass(frozen=True)
@@ -121,6 +137,13 @@ class PublishedRecord:
     claim_anchors: tuple[ClaimAnchor, ...] = ()
     evidence_refs: tuple[EvidenceRef, ...] = ()
     source_refs: tuple[dict[str, Any], ...] = ()
+    #: P35.36 (R11-K13-TX-08a / J3 §5.1–5.2): the ``sig.statement/1`` rows for
+    #: this record's claims — the same published statements the release's
+    #: ``<comp>/statements.jsonl`` ships, embedded so the record JSON alone
+    #: carries the provenance panel's full field set (the JSON twin IS the
+    #: panel's data contract). Empty on a pre-P35.36 claim index — the page
+    #: then renders the named-absence panel, never a fabricated statement.
+    claim_statements: tuple[dict[str, Any], ...] = ()
     coverage: dict[str, Any] = field(default_factory=dict)
     review: dict[str, Any] = field(default_factory=dict)
     #: Bound AFTER the namespace is computed — excluded from the ID-free doc.
@@ -157,6 +180,7 @@ class PublishedRecord:
             "claim_anchors": [a.as_json() for a in self.claim_anchors],
             "evidence_refs": [e.as_json() for e in self.evidence_refs],
             "source_refs": [dict(s) for s in self.source_refs],
+            "claim_statements": [dict(s) for s in self.claim_statements],
             "coverage": dict(self.coverage),
             "review": dict(self.review),
         }
@@ -317,6 +341,7 @@ def record_from_site_row(
     claim_index = claim_index or {}
     anchors: list[ClaimAnchor] = []
     evidence: list[EvidenceRef] = []
+    statements: list[dict[str, Any]] = []
     for cid in row.get("claim_ids") or []:
         cid_s = str(cid)
         crow = claim_index.get(cid_s)
@@ -336,6 +361,11 @@ def record_from_site_row(
                 access_kind=(str(crow["access_kind"]) if crow.get("access_kind") else None),
             )
         )
+        # P35.36: the sig.statement/1 row rides the record — the one contract
+        # the provenance panel renders from (UXR-33). A pre-P35.36 claim-index
+        # row (no ``schema``) embeds nothing — honest absence.
+        if crow.get("schema") == STATEMENT_SCHEMA:
+            statements.append(dict(crow))
         for ev in crow.get("evidence") or []:
             evidence.append(
                 EvidenceRef(
@@ -344,15 +374,55 @@ def record_from_site_row(
                     artifact_id=(str(ev["artifact_id"]) if ev.get("artifact_id") else None),
                     role=str(ev["role"]) if ev.get("role") else None,
                     access="metadata_only",
+                    binding_status=(
+                        str(ev["binding_status"]) if ev.get("binding_status") else None
+                    ),
                 )
             )
 
+    # P35.36 (J1 NEW-10): ``upstream_href`` through the P35.31 S-6 gate. The
+    # statement rows already carry the scrubbed upstream block — the first
+    # claim statement naming this record's source supplies it (claims order
+    # deterministically by the site row's claim_ids). A release built from a
+    # pre-P35.36 export — or a claim whose upstream was never recorded —
+    # carries the named absence ``no_upstream_url_recorded``, never a dropped
+    # field and never a raw URL.
+    source_id_text = str(row.get("source_id") or rights.get("source_id") or "")
+    upstream_href: str | None = NO_UPSTREAM_URL
+    upstream_host: str | None = None
+    upstream_status = NO_UPSTREAM_URL
+    for cid in row.get("claim_ids") or []:
+        crow = claim_index.get(str(cid))
+        if (
+            crow is None
+            or crow.get("schema") != STATEMENT_SCHEMA
+            or str(crow.get("source_id") or "") != source_id_text
+        ):
+            continue
+        up = crow.get("upstream") or {}
+        upstream_status = str(up.get("status") or NO_UPSTREAM_URL)
+        upstream_host = up.get("host") or None
+        if upstream_status == "full_url":
+            upstream_href = up.get("url") or None
+        elif upstream_status == "host_only":
+            upstream_href = (
+                f"{up.get('host')}#path_sha256:{up.get('path_sha256')}"
+                if up.get("host")
+                else NO_UPSTREAM_URL
+            )
+        elif upstream_status == "withheld_by_policy":
+            upstream_href = "not_publishable"
+        else:
+            upstream_href = NO_UPSTREAM_URL
+        break
     source_refs = (
         {
-            "source_id": str(row.get("source_id") or rights.get("source_id") or ""),
+            "source_id": source_id_text,
             "attribution": str(rights.get("attribution") or ""),
             "terms_url": rights.get("terms_url"),
-            "upstream_href": None,
+            "upstream_href": upstream_href,
+            "upstream_host": upstream_host,
+            "upstream_status": upstream_status,
         },
     )
     coverage = {
@@ -382,6 +452,7 @@ def record_from_site_row(
         claim_anchors=tuple(anchors),
         evidence_refs=tuple(evidence),
         source_refs=source_refs,
+        claim_statements=tuple(statements),
         coverage=coverage,
         review=review,
     )

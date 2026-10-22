@@ -52,7 +52,12 @@ const mark = edgeTemporalMark(e);
         <ul>
           {e.evidence.map((claim) => (
             <li>
-              <code>{claim}</code>
+              <code>{claim}</code>{" "}
+              {/* P35.36 (UXR-33): the claim's provenance panel renders once on
+                  this page under "Claim provenance" — the row links its
+                  `#claim-<id>` anchor rather than duplicating the panel (a
+                  claim may back several edges). */}
+              <a href={`#claim-${claim}`}>provenance</a>
             </li>
           ))}
         </ul>

@@ -8,6 +8,12 @@ import { defineConfig } from "vitest/config";
 // Playwright e2e/a11y suite (tests/e2e) is driven separately by `test:e2e`, so it
 // is excluded here.
 export default defineConfig({
+  // P35.36: the shared ProvenancePanel component is a `.tsx` module — the
+  // workspace tsconfig sets `jsx: "preserve"` (for Astro), so tests opt the
+  // transform into the automatic runtime explicitly (no new plugin, no
+  // client code — the component still renders to static markup under test).
+  // `oxc` is vite 8's transform seam (the `esbuild` key no longer applies).
+  oxc: { jsx: { runtime: "automatic" } },
   test: {
     globals: true,
     environment: "node",
