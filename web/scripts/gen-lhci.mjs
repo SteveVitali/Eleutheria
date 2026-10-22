@@ -162,6 +162,14 @@ const METRIC_AUDITS = {
   tbtMs: "total-blocking-time",
 };
 
+/** Minimum-score metrics — the gap's regression_bound is a FLOOR below the
+ * ratified floor (a recorded gap fails only when the score collapses, not a
+ * ceiling like the byte/latency rows). Maps the gap metric to the audit and
+ * the budget-row field holding the ratified minScore. */
+const MIN_SCORE_AUDITS = {
+  perfScore: { audit: "categories:performance", row: "lighthousePerformance" },
+};
+
 /** The measured_gaps row that binds for (route, metric, source), preferring a
  * source-scoped row over the unscoped one — the same precedence as
  * page-budget-check.ts (`find(scoped) ?? find(unscoped)`). */
@@ -196,8 +204,11 @@ function assertionsFor(row, route, source = "fixtures") {
   for (const [metric, audit] of Object.entries(METRIC_AUDITS)) {
     byteAudit(audit, metric, row[metric]);
   }
-  if (row.lighthousePerformance !== null) {
-    a["categories:performance"] = ["error", { minScore: row.lighthousePerformance }];
+  for (const [metric, def] of Object.entries(MIN_SCORE_AUDITS)) {
+    const ceiling = row[def.row];
+    if (ceiling === null || ceiling === undefined) continue;
+    const g = findGap(route, metric, source);
+    a[def.audit] = ["error", { minScore: g ? g.regression_bound : ceiling }];
   }
   if (row.lighthouseAccessibility !== null) {
     a["categories:accessibility"] = ["error", { minScore: row.lighthouseAccessibility }];
@@ -217,6 +228,10 @@ function gapWarnAssertions(row, route, source = "fixtures") {
     if (g && row[metric] !== null && row[metric] !== undefined) {
       a[audit] = ["warn", { maxNumericValue: g.ratified_ceiling }];
     }
+  }
+  for (const [metric, def] of Object.entries(MIN_SCORE_AUDITS)) {
+    const g = findGap(route, metric, source);
+    if (g) a[def.audit] = ["warn", { minScore: g.ratified_ceiling }];
   }
   return Object.keys(a).length ? a : null;
 }

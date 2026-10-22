@@ -142,9 +142,18 @@ describe("page-budgets.json (sig.page-budgets/1)", () => {
 
   it("records every measured gap with ratified ceiling, bound, owner and deferral", () => {
     for (const gap of budgets.measured_gaps) {
-      expect(gap.regression_bound).toBeGreaterThan(gap.ratified_ceiling);
-      expect(gap.recorded_measure).toBeGreaterThan(gap.ratified_ceiling);
-      expect(gap.recorded_measure).toBeLessThanOrEqual(gap.regression_bound);
+      if (gap.metric === "perfScore") {
+        // minScore metrics invert the direction: the ratified value is a
+        // floor and the regression_bound is a FLOOR BELOW it — the run fails
+        // only when the score collapses past the bound.
+        expect(gap.regression_bound).toBeLessThan(gap.ratified_ceiling);
+        expect(gap.recorded_measure).toBeLessThan(gap.ratified_ceiling);
+        expect(gap.recorded_measure).toBeGreaterThanOrEqual(gap.regression_bound);
+      } else {
+        expect(gap.regression_bound).toBeGreaterThan(gap.ratified_ceiling);
+        expect(gap.recorded_measure).toBeGreaterThan(gap.ratified_ceiling);
+        expect(gap.recorded_measure).toBeLessThanOrEqual(gap.regression_bound);
+      }
       expect(gap.deferral).toMatch(/^D-/);
       expect(gap.owner.length).toBeGreaterThan(0);
       expect(gap.note.length).toBeGreaterThan(0);

@@ -154,6 +154,28 @@
     },
     {
       "route": "/map/",
+      "metric": "tbtMs",
+      "data_source": "national",
+      "ratified_ceiling": 350,
+      "recorded_measure": 5380,
+      "regression_bound": 6500,
+      "deferral": "D-P35.51-1",
+      "owner": "the map-surface optimisation row (K13 MAP rows)",
+      "note": "national-scoped: the ratified ≤ 350 ms TBT is LAW — the GitHub-hosted runner's Lighthouse measures 5,183–5,380 ms on the real-scale /map/ (the ≈ 500 KB bundle plus a 1.7 MB document saturating the main thread under lab throttling; the same bundle this deferral owns, compounded by the national document D-P35.51-3 owns). Bounded at 6,500 ms under the national build only."
+    },
+    {
+      "route": "/map/",
+      "metric": "perfScore",
+      "data_source": "national",
+      "ratified_ceiling": 0.75,
+      "recorded_measure": 0.69,
+      "regression_bound": 0.6,
+      "deferral": "D-P35.51-3",
+      "owner": "the map-surface optimisation row (K13 MAP rows) + the compact static-equivalent row",
+      "note": "national-scoped: the ratified ≥ 0.75 Lighthouse performance score is LAW — the real-scale /map/ scores 0.69–0.70 on the GitHub-hosted runner (the lab metrics above drive it). The regression_bound on a minScore metric is a FLOOR: the run fails if the score drops below 0.6, warns at the ratified 0.75 otherwise."
+    },
+    {
+      "route": "/map/",
       "metric": "lcpMs",
       "data_source": "national",
       "ratified_ceiling": 2500,
