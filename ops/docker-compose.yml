@@ -108,18 +108,53 @@ services:
   # stand-in); `web` also publishes ${SIG_WEB_PORT:-18091} as the run.app
   # stand-in so `sig-ops route-compare` can byte-compare both postures.
   web:
-    profiles: ["serving"]
+    # serving: the legacy flat layout (P34.40) — unset release env renders
+    # the committed legacy config. release-serving: the G3 layout (P35.54)
+    # — SIG_LATEST_PUB + SIG_CONF_GEN render the §4.2 template (ADR-220 D1).
+    profiles: ["serving", "release-serving"]
     build:
       context: ..
       dockerfile: ops/web/Dockerfile
+    environment:
+      # The per-revision release env — the roll's only inputs (SIG-REL-006:
+      # a promotion is a new config generation + a new env, never copied
+      # bytes). Empty → the legacy config path.
+      SIG_LATEST_PUB: ${SIG_LATEST_PUB:-}
+      SIG_LATEST_LABEL: ${SIG_LATEST_LABEL:-}
+      SIG_CONF_GEN: ${SIG_CONF_GEN:-}
+      SIG_STAGING: ${SIG_STAGING:-}
     volumes:
       # A default (not a :? guard) — the profile-free `sig-ops up/down` parse
       # the whole file and must not fail on an unset serving var. An unset
       # default mounts an empty dir: nginx answers 404s, the operator's miss
       # is visible, never silent (the runbook/e2e always set SIG_SITE_ROOT).
       - "${SIG_SITE_ROOT:-/tmp/sig-serving-site}:/mnt/sig-web:ro"
+      # The release root for the release-serving profile — carries
+      # staged/{r,v,s,releases}/ + registry/conf/<gen>/ (the same mount the
+      # Cloud Run volume uses, G3 §4.3).
+      - "${SIG_RELEASE_ROOT:-/tmp/sig-release-root}:/mnt/rel:ro"
     ports:
       - "127.0.0.1:${SIG_WEB_PORT:-18091}:8080"
+    restart: unless-stopped
+
+  web-staging:
+    # The GT-9 staging origin — the same image with SIG_STAGING=1 rendered
+    # in: the promoted gate never gates and X-Robots-Tag: noindex rides
+    # every response. Composed-proof only; the hosted origin is IAM-only
+    # (D-R10-PUBLISH-1 stands).
+    profiles: ["release-serving"]
+    build:
+      context: ..
+      dockerfile: ops/web/Dockerfile
+    environment:
+      SIG_LATEST_PUB: ${SIG_LATEST_PUB:-}
+      SIG_LATEST_LABEL: ${SIG_LATEST_LABEL:-}
+      SIG_CONF_GEN: ${SIG_CONF_GEN:-}
+      SIG_STAGING: "1"
+    volumes:
+      - "${SIG_RELEASE_ROOT:-/tmp/sig-release-root}:/mnt/rel:ro"
+    ports:
+      - "127.0.0.1:${SIG_WEB_STAGING_PORT:-18092}:8080"
     restart: unless-stopped
 
   api:
