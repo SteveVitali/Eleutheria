@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "598171624afe753a5777c9a7cca300a393ecdabc",
+  "input_commit": "7040453a72008175fb7cfd467a208f65b5c9dbad",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "c7bbae3987492f7c131c5d9f468ae687e54f938d9ee391145e1e94f8e0201e8c"
+      "sha256": "a366774624441f07e5f1ef86c2260c068352c1aea171d272df8d78ce31ca7e57"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -865,16 +865,20 @@
       "sha256": "25ae6a665cc454f4c42bdc0113e7eb0a32c2c18c013e359ef76a212149ff5f75"
     },
     {
+      "path": "docs/adr/ADR-219-partitioned-pytest-and-fixture-mode-lighthouse-reuse.md",
+      "sha256": "e85cc701ec951acad2e038e04032962c3ef88877e3c326a5bc5ebac4e1ded13f"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "c21240c23bd7b8e9383b52249fc229bee992295a27fa030d995241564d32f037"
+      "sha256": "7305e0beb7e67e16d07dd4ba70597aad20197fe3945017dc17d39e699790dd27"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "e088edac46dbdea859dd69d76ac9e03487238471ed4e843030bd5f0c57022e7b"
+      "sha256": "0a76bf68363327b65fa06eeebc9deba45019529a0fa1f74eb501a0b176899346"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "30d7c4c0cc4796260c00bce3816af4d2a60e166eea266ca03c751a5b2297850f"
+      "sha256": "eea081586393b6682ba61f489f8c638967dde447799957d9dadae4de3ed8d179"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -882,7 +886,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "abfe89af03f282b761cd2d3d61a9ed4f6a08b25f122a5054e3efe9992e4cd80f"
+      "sha256": "9b5d610068c947c549415ac7420ae96e55d28323e3b18ade9153df455bc35d67"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -958,7 +962,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "f46bd2884c1647f3500eb49ad7fdb588db8d867691a295700819b50c66ff6691"
+      "sha256": "9e5aa4ca2289fb38fadffb9d783e1782459dab97e05acd5689d0ff24e100895d"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -2093,6 +2097,10 @@
       "sha256": "ff746ca702fcf9481c080989c1d4d92ae409dce9cbdb6595b950af00fcbf8ef5"
     },
     {
+      "path": "docs/build/runs/P35.41a.md",
+      "sha256": "7b853433155088e754b88d795b7c70d8b425a7440d43cf4097460106f670383b"
+    },
+    {
       "path": "docs/build/runs/P35.5.md",
       "sha256": "64651623763a88cc23bf933e66f8b409c91aff8a8892ccf0e1dd2240812ae575"
     },
@@ -2294,7 +2302,7 @@
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
-      "sha256": "b51abedc3627aecc2a31390c855f96c5f4b7aad4ddd5785ed29e255df3ee9ab6"
+      "sha256": "addb5a6fab72077a788471bd04c1b4edf6537b9a198958ca0fb2118c6328f1d7"
     },
     {
       "path": "docs/tickets/161_P32.1__baseline-and-memory-audit.md",
@@ -2947,6 +2955,10 @@
     {
       "path": "docs/tickets/320_P35.41__freshness-semantics-v2.md",
       "sha256": "c3de6b05394b6a7c87689efaaf55f959818cd8dc72cddadce5d473fa1486767d"
+    },
+    {
+      "path": "docs/tickets/320a_P35.41a__ci-wait-phase-1-partitioned-pytest-and-perf-reuse.md",
+      "sha256": "27e5a086a45332845ac12dffe73140690b5ab444812f1b4f252d80d961be573f"
     },
     {
       "path": "docs/tickets/321_P35.42__citation-block-and-release-id.md",
@@ -3710,7 +3722,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "63bf3e0f76acfba7e1631695b4833fe4548b28c0ab1087d5f3d131fa7a7a441b"
+      "sha256": "a1b1a087ecb0d69681729457e3c828c72e5a7042ed153d7c81028570eecc791d"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",

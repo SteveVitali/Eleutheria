@@ -3,7 +3,8 @@
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 #
 # One set of commands, used identically by humans and by CI (SIG-ENG-046,
-# P34.1): `make check` is the fast gate — the `python` job's commands;
+# P34.1): `make check` is the fast local gate; the `python` CI job runs the
+# same test suite partitioned via `make test-par` (P35.41a);
 # `make ci-local` runs all five CI jobs (python, docs, composed, security, web).
 # Every §47 pipeline package is a plain CLI (SIG-ENG-013):
 # `uv run python -m <package> --help`.
@@ -16,7 +17,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-db test-sqitch-roundtrip check ci-local check-export-mode lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-live-claims docs-check-runbook docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
+.PHONY: sync lint format-check typecheck test test-par test-db test-sqitch-roundtrip check ci-local check-export-mode lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-live-claims docs-check-runbook docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -37,6 +38,11 @@ typecheck:
 ## Run the test suite.
 test:
 	uv run pytest
+
+## Run the suite partitioned (P35.41a): four concurrent pytest processes
+## over scripts/ci/pytest_partitions.txt — the `python` CI job's Test step.
+test-par:
+	uv run python scripts/ci/pytest_partitions.py run
 
 ## Run only the claim-spine database tests (PG18+PostGIS via Docker; P02.1).
 ## These skip if the Docker daemon is unreachable unless SIG_REQUIRE_DB_TESTS is
@@ -65,7 +71,7 @@ check: lint format-check typecheck test verify-gen
 ## judge in CI.
 ci-local: sync
 	$(MAKE) lint format-check typecheck
-	SIG_REQUIRE_DB_TESTS=1 TESTCONTAINERS_RYUK_DISABLED=true $(MAKE) test
+	SIG_REQUIRE_DB_TESTS=1 TESTCONTAINERS_RYUK_DISABLED=true $(MAKE) test-par
 	$(MAKE) test-sqitch-roundtrip
 	$(MAKE) verify-gen
 	$(MAKE) docs-check

@@ -1,0 +1,21 @@
+# pytest_partitions.txt — the `make test-par` partition table (P35.41a, D1).
+#
+# `#` comments are allowed. Every other line is one partition:
+# whitespace-separated repo-relative directories, each inside a
+# `[tool.pytest.ini_options] testpaths` entry. Exactly one line is the
+# single token `*`, meaning "every testpaths entry minus the directories
+# named on the other lines".
+#
+# Balanced on the pytest-seconds-per-directory measurement of run
+# 39491858342 (the contract's Ground truth 3). Measured constraints:
+# - tests/db and tests/e2e re-import helpers via sys.modules['conftest'],
+#   so each shares a line only with conftest-free dirs (observed: the api
+#   conftest shadowed db's — 27 collection errors).
+# - tests/connectors' tracemalloc-growth test fails cold AND under `*`'s
+#   heavyweight contention (CI run 39534265940); pairing with
+#   tests/acceptance tests/api reproduces serial collection order (the
+#   warm-up it needs) on a leg of its own.
+tests/ops tests/e2e
+docs/build/tools tests/db
+tests/acceptance tests/api tests/connectors
+*

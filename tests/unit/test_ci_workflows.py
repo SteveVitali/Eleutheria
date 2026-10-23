@@ -470,6 +470,9 @@ def test_action_majors_target_node24() -> None:
         "actions/setup-node": 7,
         "actions/upload-artifact": 7,
         "astral-sh/setup-uv": 10,
+        # P35.41a (D2): the perf-record cache pair — v6 is the Node-24 major.
+        "actions/cache/restore": 6,
+        "actions/cache/save": 6,
     }
     for wf in WORKFLOWS:
         for job_name, job in _doc(wf)["jobs"].items():
@@ -628,6 +631,15 @@ def test_make_ci_local_covers_every_ci_run_command() -> None:
         # ci-local asserts the same predicate as file-hash stability across the
         # regen — green even over an intentional uncommitted regeneration.
         "git diff --exit-code",
+        # P35.41a (D2): the reuse machinery's CI-only lines — the decide/record
+        # steps export the runner's ImageOS/ImageVersion label (an Actions-only
+        # input), stage the record under runner.temp, and `record` writes the
+        # pass record; none is a local gate — the machinery is exercised by
+        # tests/unit/test_perf_reuse.py.
+        'export CI_IMAGE="${ImageOS:-}-${ImageVersion:-}"',
+        "printf '%s\\n' \"$out\"",
+        'mkdir -p "$(dirname "$CI_RECORD_OUT")"',
+        "python3 scripts/ci/perf_reuse.py record",
     )
     shell_noise = re.compile(r"^(if\b|then\b|else\b|elif\b|fi$|done$|do$|echo\b|[A-Za-z_]+=|\[|\})")
     normalized_closure = {strip_envs(re.sub(r"\s+", " ", ln)) for ln in closure}
@@ -1034,3 +1046,215 @@ def test_export_producer_is_the_spine_export_path() -> None:
         assert banned not in src, (
             f"the producer must never shell to the web-fixture serializer (found {banned!r})"
         )
+
+
+# --- P35.41a (D1+D2): partitioned pytest + fixture-mode Lighthouse reuse ----
+#
+# AC5: the wiring is pinned structurally — the `python` job partitions through
+# `make test-par` without losing its env needles; the `web` job's single reuse
+# gate sits on exactly the fixture-mode Lighthouse step; the export-mode leg
+# stays ungated; decide carries no `if`/`continue-on-error`; the cache pair is
+# restore/save@v6 behind the `perf-pass-v1-` prefix; and nothing outside that
+# one step may reuse a verdict.
+
+
+def _web_step(name_fragment: str) -> dict:
+    steps = [s for s in _web_job()["steps"] if name_fragment in (s.get("name") or "")]
+    assert len(steps) == 1, f"the web job must carry exactly one `{name_fragment}` step"
+    return steps[0]
+
+
+def test_python_job_partitions_the_test_step() -> None:
+    """D1: the `python` job's Test step runs `make test-par` (re-armed after
+    the OM-18 pause — the flake that triggered it proved environmental: the
+    untouched base head failed the same test serially, and the test itself
+    was repaired to a deterministic retained-bytes measurement; see
+    runs/P35.41a.md). The step keeps the fail-closed env the serial form
+    carried (SIG_REQUIRE_DB_TESTS + the armed GCP needle), and the command
+    seam stays out of both surfaces."""
+    job = _doc(CI_YML)["jobs"]["python"]
+    assert any("make test-par" in r for r in _runs(job)), (
+        "the python job must run `make test-par` (P35.41a D1)"
+    )
+    env = _step_env(job, "make test-par")
+    assert env.get("SIG_REQUIRE_DB_TESTS") == "1", (
+        "the partitioned Test step must keep SIG_REQUIRE_DB_TESTS=1 — the "
+        "DB suite must never silently skip under partitioning"
+    )
+    assert env.get("SIG_GCP_PROJECT") == "${{ vars.SIG_GCP_PROJECT }}", (
+        "the partitioned Test step must keep the armed GCP leak-check needle"
+    )
+    for surface in (CI_YML, MAKEFILE):
+        assert "PYTEST_PARTITIONS_CMD" not in surface.read_text(), (
+            f"{surface.name}: the test-only command seam belongs to the "
+            "runner's self-tests, not CI or the Makefile"
+        )
+
+
+def test_make_test_par_is_the_ci_and_local_form() -> None:
+    """`make test-par` exists, dispatches the committed runner, `make test`
+    stays serial, and `make ci-local` reaches the partitioned form."""
+    import re
+
+    text = MAKEFILE.read_text()
+    assert re.search(
+        r"^test-par:\n\tuv run python scripts/ci/pytest_partitions\.py run", text, re.M
+    ), "the `test-par` target must run scripts/ci/pytest_partitions.py run"
+    assert re.search(r"^test:\n\tuv run pytest\n", text, re.M), (
+        "`make test` must stay the serial gate"
+    )
+    assert re.search(r"^\$\(MAKE\) test-par$", text, re.M) or re.search(
+        r"\$\(MAKE\) test-par\b", text
+    ), "`make ci-local` must reach `make test-par`"
+    for path in ("scripts/ci/pytest_partitions.py", "scripts/ci/pytest_partitions.txt"):
+        assert (REPO_ROOT / path).is_file(), f"{path} must exist"
+
+
+def test_web_job_reuse_gate_shape() -> None:
+    """D2: fingerprint → restore@v6 → decide sit between `npm ci` and the
+    budgets step; the one `mode != 'reuse'` gate is on the fixture-mode
+    `Performance budgets` step and nothing else measures by reuse."""
+    steps = _web_job()["steps"]
+    names = [s.get("name") or "" for s in steps]
+    install = next(i for i, n in enumerate(names) if "committed lockfile" in n)
+    budgets_i = next(i for i, n in enumerate(names) if n.startswith("Performance budgets"))
+    for frag in (
+        "Perf reuse — fingerprint",
+        "Perf reuse — restore the pass record",
+        "Perf reuse — decide",
+    ):
+        i = next(i for i, n in enumerate(names) if frag in n)
+        assert install < i < budgets_i, (
+            f"`{frag}` must sit between `npm ci` and `Performance budgets`"
+        )
+    budgets = steps[budgets_i]
+    assert budgets["if"] == "steps.perf.outputs.mode != 'reuse'", (
+        "the fixture-mode Performance budgets step carries the one reuse gate"
+    )
+    perf_steps = {
+        "Perf reuse — fingerprint",
+        "Perf reuse — restore the pass record",
+        "Perf reuse — decide",
+        "Perf reuse — write the pass record",
+        "Perf reuse — save",
+    }
+    foreign_gated = [
+        s.get("name")
+        for s in steps
+        if "steps.perf" in str(s.get("if") or "") and s.get("name") not in perf_steps
+    ]
+    assert foreign_gated == ["Performance budgets (build fails on regression)"], (
+        f"no non-perf step may consult the reuse decision but budgets; found {foreign_gated}"
+    )
+
+
+def test_decide_step_is_ungated_and_fail_closed() -> None:
+    """`decide` must run on every event (it answers `run` itself for push,
+    dispatch and forks) — no `if:`, no `continue-on-error` to hide a crash."""
+    decide = _web_step("Perf reuse — decide")
+    assert "if" not in decide, "the decide step must not be event-gated"
+    assert not decide.get("continue-on-error"), (
+        "a crashed decide must fail the step, never pass silently"
+    )
+    env = decide.get("env") or {}
+    for key in (
+        "CI_EVENT_NAME",
+        "CI_REPOSITORY",
+        "CI_HEAD_REPO",
+        "CI_PR_NUMBER",
+        "CI_FINGERPRINT",
+        "CI_RECORD",
+    ):
+        assert key in env, f"the decide step must pass {key} to perf_reuse.py"
+    assert env["CI_RECORD"] == "${{ runner.temp }}/perf-pass/record", (
+        "decide reads the restored record's path, never a cache-hit marker"
+    )
+    assert "secrets." not in str(decide), (
+        "the decide step needs no secret — a fork head must run it identically"
+    )
+
+
+def test_cache_pair_is_v6_behind_the_record_prefix() -> None:
+    """The restore/save pair is actions/cache/{restore,save}@v6 under the
+    `perf-pass-v1-<fp>` prefix over the runner.temp staging path. Restore is
+    PR-only, best-effort and prefix-matched (the impossible `-none` key falls
+    through to `restore-keys`); record writes only at the end of a green
+    same-repo PR job that measured; save is keyed per run/attempt so no key
+    is ever rewritten."""
+    steps = _web_job()["steps"]
+    restore = _web_step("Perf reuse — restore the pass record")
+    assert restore["uses"].startswith("actions/cache/restore@v6"), restore["uses"]
+    assert restore["with"]["key"] == ("perf-pass-v1-${{ steps.perffp.outputs.fp }}-none"), (
+        "the impossible exact key forces the restore-keys prefix match"
+    )
+    assert restore["with"]["restore-keys"] == ("perf-pass-v1-${{ steps.perffp.outputs.fp }}-")
+    assert restore["with"]["path"] == "${{ runner.temp }}/perf-pass"
+    assert restore["if"] == (
+        "github.event_name == 'pull_request' && steps.perffp.outputs.fp != ''"
+    ), "restore is PR-only and no-ops when the fingerprint failed"
+    assert restore.get("continue-on-error") is True
+
+    record = _web_step("Perf reuse — write the pass record")
+    cond = record["if"]
+    for needle in (
+        "success()",
+        "pull_request",
+        "head.repo.full_name == github.repository",
+        "steps.perf.outputs.mode != 'reuse'",
+        "steps.perffp.outputs.fp != ''",
+    ):
+        assert needle in cond, f"the record step needs `{needle}` in its if"
+    assert record.get("continue-on-error") is True
+    assert (record.get("env") or {}).get("CI_RECORD_OUT") == ("${{ runner.temp }}/perf-pass/record")
+    assert "python3 scripts/ci/perf_reuse.py record" in record["run"]
+    lighthouse_i = next(
+        i
+        for i, s in enumerate(steps)
+        if "Lighthouse over the export-mode build" in (s.get("name") or "")
+    )
+    record_i = steps.index(record)
+    assert record_i > lighthouse_i, (
+        "the record write must come after the job's last measurement step — "
+        "success() then proves the whole job passed"
+    )
+
+    save = _web_step("Perf reuse — save")
+    assert save["uses"].startswith("actions/cache/save@v6"), save["uses"]
+    assert save["with"]["key"] == (
+        "perf-pass-v1-${{ steps.perffp.outputs.fp }}-${{ github.run_id }}-${{ github.run_attempt }}"
+    ), "the save key is unique per run — a cache key is never rewritten"
+    assert save["with"]["path"] == "${{ runner.temp }}/perf-pass"
+    assert save["if"] == "steps.perfrec.outcome == 'success'"
+    assert save.get("continue-on-error") is True
+
+    # restore skipped → no record file → decide still answers `run` itself;
+    # the fingerprint must feed both cache keys and the decide env.
+    fp = _web_step("Perf reuse — fingerprint")
+    assert "perf_reuse.py fingerprint HEAD" in fp["run"]
+
+
+def test_export_mode_lighthouse_is_never_reuse_gated() -> None:
+    """The export-mode leg measures every head — its Lighthouse step and the
+    budgets step before it carry no reuse `if`."""
+    for frag in (
+        "Lighthouse over the export-mode build",
+        "Island budgets over the export-mode build",
+    ):
+        step = _web_step(frag)
+        assert "if" not in step, f"`{frag}` must run on every head"
+
+
+def test_required_checks_still_cover_the_five_jobs() -> None:
+    """All five required checks run on every head — the policy file's job
+    names must each exist in ci.yml (no gate renamed or dropped)."""
+    required = [
+        line.strip()
+        for line in (REPO_ROOT / "docs/build/tools/record_policy/ci_required.txt")
+        .read_text()
+        .splitlines()
+        if line.strip() and not line.startswith("#")
+    ]
+    jobs = _doc(CI_YML)["jobs"]
+    assert set(required) == {"python", "docs", "composed", "security", "web"}
+    for name in required:
+        assert name in jobs, f"required check {name!r} has no ci.yml job"

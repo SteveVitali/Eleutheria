@@ -30,6 +30,10 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+# Step-gating rule (P35.41a, D2): a `web`-job step may carry the
+# `steps.perf.outputs.mode` reuse gate only when it reads no records path
+# (docs/build minus docs/build/tools, docs/tickets, docs/adr); a step that
+# reads one must not. `perf_reuse.py lint` enforces this on every head.
 jobs:
   # Documentation freshness gate (P22.2, ADR-072). Runs BOTH vendored detectors
   # (human-facing repo docs from P22.1 + the agent-facing AGENTS.md hierarchy) on
@@ -256,7 +260,7 @@ jobs:
       # missing daemon into a failure so the RLS/append-only suite can never
       # silently skip. Ryuk is disabled — the fixtures clean up explicitly.
       - name: Test
-        run: make test
+        run: make test-par
         env:
           SIG_REQUIRE_DB_TESTS: "1"
           TESTCONTAINERS_RYUK_DISABLED: "true"
@@ -410,6 +414,12 @@ jobs:
   # not by memory" (SIG-UI-039) and "the build fails on regression" (SIG-UI-041).
   web:
     runs-on: ubuntu-24.04
+    # `actions: read` lets the reuse decision read the pass-record cache through
+    # the REST API (`GET /actions/caches?key=…`, P35.41a D2); `contents: read`
+    # is the checkout floor.
+    permissions:
+      contents: read
+      actions: read
     defaults:
       run:
         shell: bash # keep pipefail under the job's working-directory override
@@ -449,6 +459,46 @@ jobs:
       - name: Install from the committed lockfile
         run: npm ci
 
+      # --- P35.41a (D2): fixture-mode Lighthouse reuse. --------------------
+      # A records-only push cannot change the fixture-mode `Performance
+      # budgets` measurement. `decide` answers `reuse` only for a same-PR
+      # head whose recorded pass carries the byte-identical non-records
+      # fingerprint on the same runner image; everything else — push,
+      # dispatch, fork, image change, unaudited coupling hit, symlink or
+      # gitlink, ANY error — fails closed to `run`.
+      - name: Perf reuse — fingerprint
+        id: perffp
+        working-directory: ${{ github.workspace }}
+        run: |
+          fp="$(python3 scripts/ci/perf_reuse.py fingerprint HEAD)" || fp=""
+          echo "fp=${fp}" >> "$GITHUB_OUTPUT"
+
+      - name: Perf reuse — restore the pass record
+        if: github.event_name == 'pull_request' && steps.perffp.outputs.fp != ''
+        continue-on-error: true
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ runner.temp }}/perf-pass
+          key: perf-pass-v1-${{ steps.perffp.outputs.fp }}-none
+          restore-keys: perf-pass-v1-${{ steps.perffp.outputs.fp }}-
+
+      - name: Perf reuse — decide
+        id: perf
+        working-directory: ${{ github.workspace }}
+        env:
+          CI_EVENT_NAME: ${{ github.event_name }}
+          CI_REPOSITORY: ${{ github.repository }}
+          CI_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          CI_PR_NUMBER: ${{ github.event.pull_request.number }}
+          CI_FINGERPRINT: ${{ steps.perffp.outputs.fp }}
+          CI_RECORD: ${{ runner.temp }}/perf-pass/record
+        run: |
+          export CI_IMAGE="${ImageOS:-}-${ImageVersion:-}"
+          rc=0; out="$(python3 scripts/ci/perf_reuse.py decide)" || rc=$?
+          printf '%s\n' "$out"
+          if [ "$rc" -eq 0 ] && [ "$(printf '%s\n' "$out" | tail -n 1)" = "reuse" ]; then
+            echo "mode=reuse" >> "$GITHUB_OUTPUT"; else echo "mode=run" >> "$GITHUB_OUTPUT"; fi
+
       - name: Type-check (astro check)
         run: npm run typecheck
 
@@ -467,7 +517,9 @@ jobs:
       - name: End-to-end + WCAG 2.2 AA (axe) + no-JS baseline
         run: npm run test:e2e
 
+      # D2's only reuse gate — every other step still runs on every head.
       - name: Performance budgets (build fails on regression)
+        if: steps.perf.outputs.mode != 'reuse'
         run: npm run check:perf
 
       # --- P34.34b (ACT-16b, C4 NEW-26, DR-C4-13; SIG-FIND-005): --------------
@@ -544,3 +596,26 @@ jobs:
       - name: Lighthouse over the export-mode build (Round-10 routes + one archive record)
         working-directory: ${{ github.workspace }}
         run: bash scripts/ci/export_mode_leg.sh lighthouse
+
+      # Record + save only at the END of a green same-repo PR job whose
+      # fixture step actually measured (`mode != 'reuse'` writes nothing).
+      - name: Perf reuse — write the pass record
+        id: perfrec
+        if: success() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && steps.perf.outputs.mode != 'reuse' && steps.perffp.outputs.fp != ''
+        continue-on-error: true
+        working-directory: ${{ github.workspace }}
+        env:
+          CI_PR_NUMBER: ${{ github.event.pull_request.number }}
+          CI_RECORD_OUT: ${{ runner.temp }}/perf-pass/record
+        run: |
+          export CI_IMAGE="${ImageOS:-}-${ImageVersion:-}"
+          mkdir -p "$(dirname "$CI_RECORD_OUT")"
+          python3 scripts/ci/perf_reuse.py record
+
+      - name: Perf reuse — save
+        if: steps.perfrec.outcome == 'success'
+        continue-on-error: true
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ runner.temp }}/perf-pass
+          key: perf-pass-v1-${{ steps.perffp.outputs.fp }}-${{ github.run_id }}-${{ github.run_attempt }}
