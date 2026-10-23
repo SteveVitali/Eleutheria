@@ -368,7 +368,22 @@ export default function MapIsland({
           },
           paint: { "text-color": "#333" },
         });
-        const resumCells = () => {
+        // The setData below re-fires `sourcedata` for SUMMED_CELLS_SOURCE;
+        // re-entering on our own write is an infinite async loop that keeps the
+        // map permanently busy so `idle` never fires and `data-drawn` never
+        // latches (the P35.52 export leg red). Skip our own source's events and
+        // skip the write entirely when the re-summed collection is unchanged —
+        // a tile storm's sourcedata churn then costs one query pass, not a
+        // worker round-trip per tile.
+        let lastCellsSignature = "";
+        const resumCells = (event?: object) => {
+          if (
+            event !== undefined &&
+            "sourceId" in event &&
+            event.sourceId === SUMMED_CELLS_SOURCE
+          ) {
+            return;
+          }
           // dedupe by (compartment, h3): the same cell can arrive twice from
           // adjacent tile interiors; then sum across compartments by h3.
           const seen = new Set<string>();
@@ -398,16 +413,23 @@ export default function MapIsland({
               }
             }
           }
+          const features = [...byCell].map(([h3, c]) => ({
+            type: "Feature" as const,
+            geometry: { type: "Point" as const, coordinates: c.coordinates },
+            properties: { h3, n: c.n },
+          }));
+          const signature = features
+            .map((f) => `${f.properties.h3}=${f.properties.n}`)
+            .sort()
+            .join("|");
+          if (signature === lastCellsSignature) return;
+          lastCellsSignature = signature;
           const setData = (map.getSource(SUMMED_CELLS_SOURCE) as
             | { setData?: (d: unknown) => void }
             | undefined)?.setData;
           setData?.call(map.getSource(SUMMED_CELLS_SOURCE), {
             type: "FeatureCollection",
-            features: [...byCell].map(([h3, c]) => ({
-              type: "Feature",
-              geometry: { type: "Point", coordinates: c.coordinates },
-              properties: { h3, n: c.n },
-            })),
+            features,
           });
         };
         resumCellsRef.current = resumCells;

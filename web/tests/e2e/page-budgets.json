@@ -133,17 +133,6 @@
     },
     {
       "route": "/map/",
-      "metric": "firstViewMaxBytes",
-      "data_source": "national",
-      "ratified_ceiling": 1572864,
-      "recorded_measure": 3288733,
-      "regression_bound": 3500000,
-      "deferral": "D-P35.51-3",
-      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "national-scoped: the first /map/ view at real scale streams ≈ 3.29 MB of archive ranges (16 KiB header + a ~8 KiB leaf directory + four z3 viewport tiles ≈ 3.27 MB) against the ratified ≤ 1.5 MiB first-view data budget. Bounded at 3,500,000 B; the owning row's denser low-zoom tiling restores headroom."
-    },
-    {
-      "route": "/map/",
       "metric": "tbtMs",
       "ratified_ceiling": 350,
       "recorded_measure": 1763,
