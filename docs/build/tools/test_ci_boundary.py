@@ -892,6 +892,50 @@ def test_unreadable_origin_main_is_unavailable_not_green(env) -> None:
     assert rc == 3 and doc["kind"] == "unavailable" and "origin/main is not readable" in line
 
 
+def test_the_window_anchors_on_the_last_round11_phase_log_region(env) -> None:
+    """The Round-11 log is split: the main `## PHASE LOG — Round 11` region and
+    a later `## PHASE LOG — Round 11 corrections` tail that is the append
+    target. The merge window anchors on the newest entry across every matching
+    region — a corrections-region entry that recorded an off-stack merge moves
+    the window past it (the recorded-merge mechanic every boundary entry
+    relies on), not just the first region's last entry."""
+    env.ledger(phase_entry="- 2026-10-16 — P35.4 ticket — PR #305 green\n")
+    ledger_path = env.root / "docs/build/LEDGER.md"
+    ledger_path.write_text(
+        ledger_path.read_text()
+        + "\n## PHASE LOG — Round 11 corrections (append-only, newest last)\n\n"
+        + "- 2026-10-22 — P35.47 correction — the #346 boundary read recorded an "
+        + "off-stack merge verbatim; external operator work, not a chain defect — "
+        + "this entry anchors the merge window forward (ci_boundary 05:33:00Z)\n",
+        encoding="utf-8",
+    )
+    fx = standard(env.local)
+    fx["merged_prs"] = [
+        {
+            "number": 336,
+            "headRefName": "docs/operator-signed-gate-records",
+            "headRefOid": "e" * 40,
+            "baseRefName": "main",
+            # Off-stack, but merged *before* the corrections-region stamp — the
+            # recorded entry already anchored the window past it.
+            "mergedAt": "2026-10-22T04:07:13Z",
+        }
+    ]
+    env.set(fx)
+    rc, doc, line, _ = env.run("--pr", "202", "--no-wait")
+    assert rc == 0, line
+    ext = doc["external"]
+    assert ext["since"] == "2026-10-22T05:33:00Z"
+    assert ext["merged_since"] == []
+
+    # An off-stack merge *after* the stamp is still red — the repair widens the
+    # region scan, never the red condition.
+    fx["merged_prs"][0]["mergedAt"] = "2026-10-22T06:00:00Z"
+    env.set(fx)
+    rc, doc, line, _ = env.run("--pr", "202", "--no-wait")
+    assert rc == 3 and doc["kind"] == "stack" and "off-stack merge #336" in line
+
+
 def test_ledger_parsers() -> None:
     import importlib.util
 

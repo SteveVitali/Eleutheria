@@ -39,6 +39,7 @@ tokens name every gap (K5 §3.3 + K5-P4 — never a silent zero);
 
 from __future__ import annotations
 
+import itertools
 import json
 from collections import Counter
 from collections.abc import Iterable, Mapping, Sequence
@@ -49,6 +50,7 @@ from typing import Any
 from policy.transparency import TRANSPARENCY_RUN_VIEW_COLUMNS, iso_utc
 
 from . import analytics
+from . import dedup as _dedup
 from . import dossier_keys as _dk
 from .formats import _gzip0
 from .jurisdictions import jurisdiction_slug
@@ -388,6 +390,15 @@ class DossierContributionPlan:
     #: ``dossier-key -> slug_path`` map every artifact path resolves through.
     keyed: _dk.KeyedRegistry | None = None
     slug_paths: dict[str, str] = field(default_factory=dict)
+    #: P35.47 (SIG-CONF-005): the per-dossier count interval — the member
+    #: record count beside ``[lower, upper]`` listed cameras, computed once
+    #: through the dep's bound code (``{"not_evaluable": ...}`` when the run
+    #: is absent — the honest state, never a fabricated bound).
+    dedup_intervals: dict[str, dict[str, Any]] = field(default_factory=dict)
+    #: P35.47 (GQ-10): the measured dossier inflation against lineage roots —
+    #: published site rows vs the interval's upper bound, published as
+    #: measured (``<= 1.02`` is the ratchet target; a miss is recorded).
+    dedup_inflation: dict[str, dict[str, Any]] = field(default_factory=dict)
 
     def slug_path(self, key: str) -> str:
         """The dossier artifact/URL path for a membership key — the registry
@@ -615,6 +626,17 @@ class DossierContributionPlan:
             "declared_here_located_elsewhere": sum(acc.located_elsewhere_pairs.values()),
             "located_here_declared_elsewhere": sum(acc.declared_elsewhere_pairs.values()),
             "contradictions_open": len(acc.contradictions_open),
+            # P35.47 (SIG-CONF-005): the dossier's count interval — the member
+            # record count beside ``[lower, upper]`` listed cameras — and the
+            # measured dossier inflation against lineage roots (GQ-10's
+            # ratchet, published as measured). ``not_evaluable`` carries its
+            # reason when no completed run exists.
+            "count_interval": self.dedup_intervals.get(
+                acc.key, {"records": len(acc.subjects), "not_evaluable": "no interval computed"}
+            ),
+            "dossier_inflation_vs_lineage_roots": self.dedup_inflation.get(
+                acc.key, {"published_rows": 0, "not_evaluable": "no interval computed"}
+            ),
             "cross_source_colocated_candidates": {
                 "not_evaluable": "observation_group not yet exported (DSRC-04)"
             },
@@ -713,6 +735,34 @@ class DossierContributionPlan:
             if disclosure:
                 fig["sum_disclosure"] = disclosure
             figures.append(fig)
+        # P35.47 (SIG-CONF-005): the listed-cameras interval figure — the
+        # verbatim L3 §5.2 display lives in the data contract. ``by_source``
+        # stays empty: the interval is a cluster count that source slices
+        # can never partition (deduplicate, never sum).
+        interval = self.dedup_intervals.get(acc.key)
+        if interval and "upper" in interval:
+            figures.append(
+                {
+                    "figure_id": "listed_cameras",
+                    "label": "Listed cameras (count interval)",
+                    "value": interval["upper"],
+                    "definition": "count_interval",
+                    "artifact": path,
+                    "pointer": "/totals/count_interval",
+                    "by_source": [],
+                    "sum_rule": "distinct",
+                    "sum_disclosure": (
+                        "the bounds count clusters after derivation-collapse "
+                        "— deduplicate, never sum"
+                    ),
+                    "interval": {
+                        "lower": interval["lower"],
+                        "upper": interval["upper"],
+                        "declared_distance_m": interval["declared_distance_m"],
+                    },
+                    "display": interval["display"],
+                }
+            )
         return figures
 
     def _source_doc(
@@ -992,6 +1042,9 @@ def accumulate_dossier_contributions(
     ruleset_version: str,
     as_of: str,
     placement: Any = None,
+    nested_member_rows: Iterable[tuple[str, str, Mapping[str, Any]]] = (),
+    dedup_view: Any = None,
+    emitted_member_subjects: Iterable[str] = (),
 ) -> DossierContributionPlan:
     """The one shared (dossier, source) accumulation (K5 §3.1–3.3).
 
@@ -1002,6 +1055,16 @@ def accumulate_dossier_contributions(
     contradiction set; ``weight_rows`` the normalized ``claim_weights`` dicts
     (``analytics._claim_weight_rows``); ``lineage_rows`` the ``claim_lineage``
     read (``(claim_id, independence_class)`` positional pairs).
+
+    P35.47 (SIG-CONF-005 / GQ-10): ``nested_member_rows`` carries the slice
+    rows of collapsed copy members — they count as member records (the
+    dossier's ``records`` stays the upstream-record count, "412 camera
+    records") while never adding an emitted row. ``dedup_view`` +
+    ``emitted_member_subjects`` feed the per-dossier count interval
+    (``totals.count_interval`` + the ``listed_cameras`` figure — the dep's
+    bound computation verbatim) and the measured dossier inflation against
+    lineage roots (published site rows vs the upper bound, published as
+    measured).
     """
     sightings = _parse_sightings(sightings_rows)
     placement_bound = placement is not None
@@ -1044,7 +1107,9 @@ def accumulate_dossier_contributions(
         claims_by_subject_source.setdefault((s.subject_id, s.source_id), []).append(s)
 
     record_subjects: dict[tuple[str, str], set[str]] = {}
-    for compartment, _slice_key, data in site_rows:
+    emitted_set = set(emitted_member_subjects or ())
+    emitted_per_key: dict[str, set[str]] = {}
+    for compartment, _slice_key, data in itertools.chain(site_rows, nested_member_rows or ()):
         subject = str(data.get("entity_id") or "")
         source = str(data.get("source_id") or "")
         declared = str(data.get("jurisdiction") or _UNRESOLVED)
@@ -1113,6 +1178,10 @@ def accumulate_dossier_contributions(
                 sacc.placed_point_subjects.add(subject)
                 acc.placed_point_subjects.add(subject)
             record_subjects.setdefault((key, source), set()).add(subject)
+            # P35.47: the dossier's published site rows (canonical emitted
+            # members) — the GQ-10 inflation numerator.
+            if subject in emitted_set:
+                emitted_per_key.setdefault(key, set()).add(subject)
             # The both-sides disagreement reading (placement.build_report's
             # rule): outside_declared* checks place a (declared → located)
             # row on BOTH dossiers.
@@ -1263,10 +1332,27 @@ def accumulate_dossier_contributions(
             str(r[0]): str(r[1]) for r in lineage_rows if len(r) >= 2 and r[0] is not None
         }
     as_of_date = date.fromisoformat(str(as_of)[:10]) if as_of else date.today()
+    # --- P35.47 (SIG-CONF-005 / GQ-10): the per-dossier interval + measured
+    # inflation, computed once over the dossier's member records (placed leg;
+    # the unplaced sentinel's members are its appearing subjects). The bound
+    # code is the dep's own (``exports.dedup.interval_block`` →
+    # ``resolution.camera_sites.count_bounds``) — never a re-computation; a
+    # missing run yields the honest ``not_evaluable`` block.
+    dedup_intervals: dict[str, dict[str, Any]] = {}
+    dedup_inflation: dict[str, dict[str, Any]] = {}
+    for key in sorted(dossiers):
+        acc = dossiers[key]
+        members = set(acc.placed_subjects) or set(acc.subjects)
+        dedup_intervals[key] = _dedup.interval_block(dedup_view, members, records=len(members))
+        dedup_inflation[key] = _dedup.dossier_inflation(
+            dedup_view, members, len(emitted_per_key.get(key, ()))
+        )
     plan_stub.weight_rows = weight_norm
     plan_stub.lineage_by_claim = lineage_by_claim
     plan_stub.as_of_date = as_of_date
     plan_stub.contributions_by_source = contributions
+    plan_stub.dedup_intervals = dedup_intervals
+    plan_stub.dedup_inflation = dedup_inflation
     return plan_stub
 
 

@@ -782,6 +782,101 @@ def eval_gq27(ctx: EvalContext) -> Measurement:
     )
 
 
+def eval_gq10(ctx: EvalContext) -> Measurement:
+    """GQ-10 — duplicate accounting (P35.47 / SIG-CONF-005): published site
+    rows equal records after derivation-collapse, measured as the dossier
+    inflation ratio (published rows over the interval's upper bound — the
+    lineage-root count the dep's bound computation emits).
+
+    The scan reads the release's own published accounting — never a second
+    derivation: the keyed dossier docs' ``rollup.dossier_inflation_vs_
+    lineage_roots`` and the dossier-sources docs' ``totals`` twin. ``offered``
+    = the dossier docs found; ``evaluated`` = those whose interval evaluated
+    (a ``not_evaluable`` block is reported, never coerced); ``measured`` = the
+    WORST dossier ratio (``lower_is_better`` against the ≤ 1.02 ratchet — a
+    per-dossier miss is surfaced, never averaged away). The sites-row scan
+    supplies the rest of the check's statement in ``detail``: one row per
+    record (copies nested, never excess rows), the interval published, and
+    same-layer co-located records classed ``multi_view``, not duplicates.
+    """
+    if ctx.scan_dir is None:
+        return _not_evaluable("GQ-10", "no scan dir — the R placement needs a release dir")
+
+    offered = evaluated = 0
+    ratios: dict[str, float] = {}
+    skipped: list[str] = []
+    for path in sorted(ctx.scan_dir.rglob("*.json")):
+        if path.name == "index.json" or "dossier" not in str(path):
+            continue
+        try:
+            doc = json.loads(path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            continue
+        if not isinstance(doc, dict):
+            continue
+        inflation = (doc.get("rollup") or {}).get("dossier_inflation_vs_lineage_roots") or (
+            doc.get("totals") or {}
+        ).get("dossier_inflation_vs_lineage_roots")
+        if not isinstance(inflation, dict):
+            continue
+        offered += 1
+        measured_ratio = inflation.get("measured")
+        if isinstance(measured_ratio, (int, float)) and not isinstance(measured_ratio, bool):
+            evaluated += 1
+            ratios[str(path.relative_to(ctx.scan_dir))] = float(measured_ratio)
+        else:
+            skipped.append(str(path.relative_to(ctx.scan_dir)))
+
+    # The sites-row half of the statement: one row per post-collapse record
+    # (a copy never emits its own row — ``copies[]`` carries it), every row
+    # carrying the dedup fields, and the multi-view classification visible.
+    site_rows = 0
+    with_copies = with_possible = with_multi_view = missing_fields = 0
+    for _path, row in _iter_site_rows(ctx.scan_dir):
+        if "site_id" not in row and "copies" not in row:
+            continue  # a non-sites row (nodes/edges artifacts)
+        site_rows += 1
+        for field in ("site_id", "copies", "possible_duplicates", "multi_view"):
+            if field not in row:
+                missing_fields += 1
+                break
+        if isinstance(row.get("copies"), list) and row["copies"]:
+            with_copies += 1
+        if isinstance(row.get("possible_duplicates"), list) and row["possible_duplicates"]:
+            with_possible += 1
+        if isinstance(row.get("multi_view"), list) and row["multi_view"]:
+            with_multi_view += 1
+
+    if offered == 0 and site_rows == 0:
+        return _not_evaluable(
+            "GQ-10",
+            f"no dossier inflation blocks or dedup-stamped site rows under {ctx.scan_dir}",
+        )
+    if evaluated == 0:
+        return _not_evaluable(
+            "GQ-10",
+            f"{offered} dossier docs scanned, none carried an evaluated "
+            f"inflation measure (skipped: {skipped[:5]})",
+        )
+    worst = max(ratios.items(), key=lambda kv: (kv[1], kv[0]))
+    return Measurement(
+        check_id="GQ-10",
+        offered=offered,
+        evaluated=evaluated,
+        measured=worst[1],
+        detail={
+            "worst_dossier": worst[0],
+            "per_dossier_ratios": dict(sorted(ratios.items())),
+            "skipped_not_evaluable": skipped,
+            "site_rows": site_rows,
+            "rows_with_copies": with_copies,
+            "rows_with_possible_duplicates": with_possible,
+            "rows_with_multi_view": with_multi_view,
+            "rows_missing_dedup_fields": missing_fields,
+        },
+    )
+
+
 # ---------------------------------------------------------------------------
 # The evaluator table + the runner
 
@@ -798,7 +893,6 @@ SEAM_DEFERRALS: dict[str, str] = {
     "GQ-08": "the R placement consumes the release-verify V9 point checks "
     "(REL-04b / P35.58, after PKG-06b)",
     "GQ-09": "the dossier-key scheme split lands with PKG-06a (P35.17/P35.18)",
-    "GQ-10": "duplicate accounting rides V15 (P35.58; PKG-c2 P35.47)",
     "GQ-12": "the lineage/independence-class seam lands with CONF-04 (P35.25)",
     "GQ-16": "the one-resolved join consumes the V6 coverage check (P35.20a/b)",
     "GQ-17": "the R placement consumes the V8 attribution check (P34.21a/b)",
@@ -826,6 +920,7 @@ SPINE_EVALUATORS: dict[str, Evaluator] = {
 }
 
 FILE_EVALUATORS: dict[str, Evaluator] = {
+    "GQ-10": eval_gq10,
     "GQ-14": eval_gq14,
     "GQ-27": eval_gq27,
 }

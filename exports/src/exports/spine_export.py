@@ -46,7 +46,7 @@ import json
 import sys
 import time
 import uuid
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from datetime import UTC, date, datetime
 from pathlib import Path
@@ -99,7 +99,7 @@ from tasks.vocabulary import Disposition
 from policy import disclosure as policy_disclosure
 from policy import withdrawals as policy_withdrawals
 
-from . import analytics, dossier_keys, dossier_sources, provo, source_licences
+from . import analytics, dedup, dossier_keys, dossier_sources, provo, source_licences
 from . import column_registry as CR
 from . import compartments as C
 from . import placement as _placement
@@ -1080,6 +1080,60 @@ def _sites_specs() -> tuple[Any, ...]:
             "GeoJSON JSON",
             dtype="object",
         ),
+        # --- P35.47 (SIG-CONF-005 / GQ-10): the dedup publication fields ----
+        # One row per post-collapse record: the shared site id, the collapsed
+        # copies nested under ``copies[]`` (C0/C1/C2 basis, never an excess
+        # row per copy), the inferential links listed under
+        # ``possible_duplicates[]`` (not merged — the reason says so), the
+        # same-layer co-located records classed ``multi_view`` (never
+        # duplicates), and the site's declared independence-class count.
+        # Every field emits its ``not_recorded``/``not_evaluable`` object
+        # rather than omit when the run is absent — a serialisation carries
+        # the nested arrays as canonical JSON.
+        _CS(
+            "site_id",
+            "the camera-site id the latest completed ER run assigned this "
+            "record's cluster (the record's own id for a singleton site) — "
+            '``{"not_recorded": ...}`` when no run exists',
+            nullable=False,
+        ),
+        _CS(
+            "copies",
+            "the collapsed derivation copies nested on this record's row "
+            "(source, upstream id, C0/C1/C2 basis — ``same_as`` for a "
+            "review-decision member); ``[]`` when none are recorded",
+            dtype="array",
+            nullable=False,
+        ),
+        _CS(
+            "possible_duplicates",
+            "the inferential/unresolved links listed for this record — "
+            "linked record, distance and reason; NOT merged (SIG-CONF-005); "
+            "``[]`` when none are recorded",
+            dtype="array",
+            nullable=False,
+        ),
+        _CS(
+            "multi_view",
+            "same-layer co-located distinct records classed ``multi_view`` — "
+            "never duplicates (GQ-10); ``[]`` when none are recorded",
+            dtype="array",
+            nullable=False,
+        ),
+        _CS(
+            "n_independent_lineages",
+            "the site's declared independence-class count (P-link lineage "
+            'classes, L3 §4.6) — an integer, or the ``{"not_evaluable": ...}`` '
+            "object when the ``claim_lineage`` read is absent",
+            dtype="object",
+            nullable=False,
+            unit="count",
+        ),
+        _CS(
+            "n_independent_lineages_display",
+            "the L3 §5.2 display text for the lineage count (e.g. "
+            "``Listed by 1 source.`` / ``Seen independently by N sources: …``)",
+        ),
         # The request-surface ``sites`` table may carry this — the
         # observation-level record marker (SIG-RECON-058) a hand-built
         # request emits directly.
@@ -1113,6 +1167,16 @@ class _SiteSlices:
     #: P35.19: the ``placement@1`` results behind the emitted rows — the
     #: quality report's input. Empty when no engine was bound.
     placement_results: tuple[_placement.PlacementResult, ...] = ()
+    #: P35.47 (GQ-10): the nested copy members' slice rows — one row per
+    #: post-collapse record means a collapsed copy never emits its own row;
+    #: the rows are kept here (never in ``exclusions`` — dedup nesting is a
+    #: derivation fact, not a licence refusal) so the dossier/source
+    #: accounting still counts every member record and the claim anchors
+    #: behind them stay emittable.
+    nested_members: tuple[tuple[str, str, dict[str, Any]], ...] = ()
+    #: P35.47: the member subjects (canonical records) whose rows emitted —
+    #: the GQ-10 "published site rows" the inflation measure counts.
+    emitted_member_subjects: frozenset[str] = frozenset()
 
 
 def _slice_sites(
@@ -1125,6 +1189,7 @@ def _slice_sites(
     placement: _placement.PlacementEngine | None = None,
     defect_flags: Mapping[str, frozenset[str]] | None = None,
     labels: Mapping[str, EntityLabel] | None = None,
+    dedup_view: dedup.DedupView | None = None,
 ) -> _SiteSlices:
     """Licence-slice every site per (source, rights_id) into per-compartment rows.
 
@@ -1236,6 +1301,61 @@ def _slice_sites(
                 )
                 index.setdefault(slice_key, replace(record, source_id=slice_key))
     exclusions = [refused[k] for k in sorted(refused)]
+
+    # --- P35.47 (SIG-CONF-005 / GQ-10): one row per post-collapse record ----
+    # The emitted sites table lists the canonical member of every site —
+    # collapsed copies nest in its ``copies[]`` (never an excess row per
+    # copy, F-511). The canonical member is the derivation-preferred one
+    # (origin, never republish) *that emitted at least one slice* — a
+    # licence-refused canonical yields to the next emitted member so a site
+    # never loses its only row to a licence refusal. Non-member subjects
+    # (no camera coordinate claims — outside the ER record set) keep a row
+    # with the honest ``not_recorded`` field states.
+    nested: list[tuple[str, str, dict[str, Any]]] = []
+    emitted_member_subjects: set[str] = set()
+    if dedup_view is not None:
+        emitted_by_member: dict[str, int] = {}
+        for _comp, _rows in rows_by_compartment.items():
+            for _row in _rows:
+                _subj = str(_row.data.get("entity_id") or "")
+                if _subj in dedup_view.member_site:
+                    emitted_by_member[_subj] = emitted_by_member.get(_subj, 0) + 1
+        emitted_canonical: set[str] = set()
+        for site_key, members in dedup_view.site_members.items():
+            candidates = [m for m in members if m in emitted_by_member]
+            if not candidates:
+                continue  # every member licence-refused — no row, honest
+            pref = dedup_view.preferred.get(site_key)
+            canonical = pref if pref in candidates else min(candidates)
+            emitted_canonical.add(canonical)
+        new_rows: dict[str, list[C.ExportRow]] = {}
+        for comp, comp_rows in rows_by_compartment.items():
+            for row in comp_rows:
+                subj = str(row.data.get("entity_id") or "")
+                if subj in dedup_view.member_site and subj not in emitted_canonical:
+                    nested.append((comp, row.source_id, dict(row.data)))
+                    continue
+                new_rows.setdefault(comp, []).append(row)
+        rows_by_compartment = new_rows
+        emitted_member_subjects = emitted_canonical
+    # Every emitted row carries the dedup fields — measured values for a
+    # member, the honest ``not_recorded`` object for a subject the run never
+    # evaluated (no run at all, or a non-camera-record subject).
+    for comp, comp_rows in list(rows_by_compartment.items()):
+        stamped: list[C.ExportRow] = []
+        for row in comp_rows:
+            subj = str(row.data.get("entity_id") or "")
+            if dedup_view is None:
+                extra = dedup.not_recorded_fields()
+            elif subj in dedup_view.member_site:
+                extra = dedup_view.record_fields(subj)
+            else:
+                extra = dedup.not_recorded_fields(
+                    "subject carries no camera coordinate claims — "
+                    "outside the camera-site ER record set"
+                )
+            stamped.append(replace(row, data={**row.data, **extra}))
+        rows_by_compartment[comp] = stamped
     return _SiteSlices(
         rows_by_compartment=rows_by_compartment,
         index=index,
@@ -1247,6 +1367,8 @@ def _slice_sites(
         # ``ShapedDataset.candidate_subjects_excluded``.
         refused_subjects=refused_subjects | publish_refused,
         placement_results=tuple(placement_results),
+        nested_members=tuple(nested),
+        emitted_member_subjects=frozenset(emitted_member_subjects),
     )
 
 
@@ -1388,6 +1510,12 @@ def _claim_slots(
     for rows in slices.rows_by_compartment.values():
         for row in rows:
             wanted.update(str(cid) for cid in (row.data.get("claim_ids") or []))
+    # P35.47: a nested copy member's claim anchors stay emittable — the copy
+    # nests under its site's canonical row (never an excess sites row), but
+    # its backing claims are still published evidence (F-511 nests the
+    # record, never erases its provenance).
+    for _comp, _slice_key, data in slices.nested_members:
+        wanted.update(str(cid) for cid in (data.get("claim_ids") or []))
     placement: dict[str, tuple[str | None, str | None]] = {}
     slots: dict[str, tuple[str, str]] = {}
     for c in sorted(claims, key=lambda c: c.claim_id):
@@ -1758,28 +1886,44 @@ def resolved_site_counts(
 
 
 def resolved_sites_metric(
-    resolved_site_runs: Sequence[Mapping[str, Any]], dataset: ShapedDataset
+    resolved_site_runs: Sequence[Mapping[str, Any]],
+    dataset: ShapedDataset,
+    *,
+    dedup_view: dedup.DedupView | None = None,
+    dedup_members: Mapping[str, str] | None = None,
 ) -> dict[str, Any] | None:
-    """The honest "N resolved sites (from M observation-level records)" metric (ADR-105).
+    """The honest resolved-sites / count-interval coverage metric (ADR-105, P35.47).
 
-    Denominated in ``M`` observation-level camera records (never a total, §32); ``N`` is
-    post-ER clusters of the same physical device (:func:`resolved_site_counts`). An
-    honestly-measured ``N`` close to ``M`` (little true overlap between sources) is
-    reported as such — the dedup ratio is shown, never inflated. Carries the
-    provisional-eval disclosure (D-R6.1-EVAL). ``None`` when no ER run has completed.
+    Denominated in ``M`` observation-level camera records (never a total, §32).
+    Under P35.47 the national figure publishes in SIG-CONF-005 interval form —
+    the record count beside ``[lower, upper]`` listed cameras — read off the
+    shared :class:`exports.dedup.DedupView` (the dep's bound computation,
+    never a re-derivation); the pre-run framing keeps the ``N resolved sites
+    (from M records)`` wording. Carries the provisional-eval disclosure
+    (D-R6.1-EVAL). ``None`` when no ER run has completed.
     """
     counts = resolved_site_counts(resolved_site_runs, dataset)
     if counts is None:
         return None
     m, n = counts["observations"], counts["resolved_sites"]
-    return {
+    interval = (
+        dedup.interval_block(dedup_view, (dedup_members or {}).keys(), records=m)
+        if dedup_view is not None
+        else None
+    )
+    value = (
+        interval["display"]
+        if interval is not None and "upper" in interval
+        else (
+            f"{n} resolved sites (from {m} observation-level records; "
+            f"dedup ratio {counts['dedup_ratio']:.3f})"
+        )
+    )
+    out: dict[str, Any] = {
         "id": "resolved_sites",
         "kind": "counted_quantity",
         "label": "resolved sites (clusters of observation-level records of the same device)",
-        "value": (
-            f"{n} resolved sites (from {m} observation-level records; "
-            f"dedup ratio {counts['dedup_ratio']:.3f})"
-        ),
+        "value": value,
         "denominator": (
             f"{m} observation-level sites carrying coordinate claims (each one source's record)"
         ),
@@ -1796,6 +1940,9 @@ def resolved_sites_metric(
         ),
         "is_population_total": False,
     }
+    if interval is not None:
+        out["count_interval"] = interval
+    return out
 
 
 def contradictions_visible_metric(
@@ -2359,6 +2506,8 @@ def _map_layer(
     resolved: Mapping[str, Any] | None = None,
     exclude: set[str] | frozenset[str] = frozenset(),
     placements: Mapping[str, _placement.PlacementResult] | None = None,
+    dedup_view: dedup.DedupView | None = None,
+    emitted_members: Iterable[str] | None = None,
 ) -> dict[str, Any]:
     """Surface 3 — MapLayer / MapAsset / JurisdictionIndicator (§39.3).
 
@@ -2367,13 +2516,27 @@ def _map_layer(
     it keeps the launch observation-level description (the honest degraded state, ADR-092).
     Assets stay one per observation-level record: each carries ONE record's own point, so no
     published point ever mixes coordinates from two sources (ADR-104/ADR-105).
+
+    P35.47 (GQ-10): under a bound dedup view the map draws the canonical
+    member of every post-collapse site — a collapsed copy never paints its
+    own point (F-511's inflation ends at the emit shape); the layer
+    description and the ``count_interval`` block adopt the SIG-CONF-005
+    interval form. The richer per-record fields belong to MAP-01b (row 440);
+    the assets carry ``site_id`` + ``n_independent_lineages`` only.
     """
+    emitted = set(emitted_members or ())
     assets: list[dict[str, Any]] = []
+    drawn_sites: list[str] = []
     for site in dataset.sites:
         if site.entity_id in exclude:
             # A subject with any licence-REFUSED slice never reaches a render surface (its
             # aggregate point could carry refused bytes) — it is in exclusions.json instead.
             continue
+        if dedup_view is not None and site.entity_id in dedup_view.member_site:
+            if site.entity_id not in emitted:
+                # A collapsed copy — nested under its site's canonical row,
+                # never an excess point on the map.
+                continue
         res = placements.get(site.entity_id) if placements is not None else None
         # P35.19 / JUR-02b (K4 §3.3): under a placement run only a
         # ``point_in_polygon``-placed point may draw — a declared-level
@@ -2421,22 +2584,49 @@ def _map_layer(
                 if site.point_status == "conflicted" or site.latitude is not None
                 else "NO_EVIDENCE_FOUND"
             )
+        if dedup_view is not None and site.entity_id in dedup_view.member_site:
+            # P35.47: the fields the tile contract carries — the site's shared
+            # id + its declared independence count (never a merge claim; the
+            # richer copy/duplicate fields are MAP-01b, row 440).
+            fields = dedup_view.record_fields(site.entity_id)
+            asset["site_id"] = fields["site_id"]
+            asset["n_independent_lineages"] = fields["n_independent_lineages"]
+            asset["n_independent_lineages_display"] = fields["n_independent_lineages_display"]
+            drawn_sites.append(str(fields["site_id"]))
         assets.append(asset)
+    doc: dict[str, Any]
     if resolved:
+        interval = None
+        if dedup_view is not None:
+            map_members = {m for s in drawn_sites for m in dedup_view.site_members.get(s, ())}
+            interval = dedup.interval_block(dedup_view, map_members, records=len(map_members))
+        description = (
+            f"{resolved['resolved_sites']} resolved device sites (clusters of the same "
+            f"physical device) from {resolved['observations']} observation-level "
+            f"records (dedup ratio {resolved['dedup_ratio']:.3f}), via materialized "
+            "camera-site entity resolution (ADR-105). Each point shown is one "
+            "record's own. Resolution rests on a provisional eval (D-R6.1-EVAL, OPEN)."
+        )
+        if interval is not None and "upper" in interval:
+            description = (
+                f"{interval['records']} camera records on the map · between "
+                f"{interval['lower']} and {interval['upper']} listed cameras "
+                "(SIG-CONF-005: copies collapsed for the upper bound; every "
+                "possible duplicate within the declared distance merged for "
+                "the lower bound). Each point shown is one record's own. "
+                "Resolution rests on a provisional eval (D-R6.1-EVAL, OPEN)."
+            )
         layers = [
             {
                 "id": "resolved_sites",
                 "label": "Resolved device sites",
                 "kind": "resolved",
-                "description": (
-                    f"{resolved['resolved_sites']} resolved device sites (clusters of the same "
-                    f"physical device) from {resolved['observations']} observation-level "
-                    f"records (dedup ratio {resolved['dedup_ratio']:.3f}), via materialized "
-                    "camera-site entity resolution (ADR-105). Each point shown is one "
-                    "record's own. Resolution rests on a provisional eval (D-R6.1-EVAL, OPEN)."
-                ),
+                "description": description,
             }
         ]
+        doc = {"layers": layers, "assets": assets, "jurisdiction_indicators": []}
+        if interval is not None:
+            doc["count_interval"] = interval
     else:
         layers = [
             {
@@ -2449,8 +2639,10 @@ def _map_layer(
                 ),
             }
         ]
+        doc = {"layers": layers, "assets": assets, "jurisdiction_indicators": []}
     indicators = [{"jurisdiction": j.jurisdiction} for j in dataset.jurisdictions]
-    return {"layers": layers, "assets": assets, "jurisdiction_indicators": indicators}
+    doc["jurisdiction_indicators"] = indicators
+    return doc
 
 
 def _network(
@@ -2490,6 +2682,8 @@ def _coverage(
     materialized_coverage: Sequence[Mapping[str, Any]] = (),
     resolved_site_runs: Sequence[Mapping[str, Any]] = (),
     materialized_contradictions: Sequence[Mapping[str, Any]] = (),
+    dedup_view: dedup.DedupView | None = None,
+    dedup_members: Mapping[str, str] | None = None,
 ) -> list[dict[str, Any]]:
     """Surface 6 — CoverageMetric[] (§32.5). Named denominators, never a total (ADR-101).
 
@@ -2508,7 +2702,9 @@ def _coverage(
         ]
     else:
         base = list(dataset.coverage_metrics)
-    resolved = resolved_sites_metric(resolved_site_runs, dataset)
+    resolved = resolved_sites_metric(
+        resolved_site_runs, dataset, dedup_view=dedup_view, dedup_members=dedup_members
+    )
     if resolved is not None:
         base.append(resolved)
     contradictions = contradictions_visible_metric(materialized_contradictions)
@@ -2565,6 +2761,14 @@ def _coverage_specs() -> tuple[Any, ...]:
             "the excluded subjects' count — disclosed, never clamped away",
             dtype="integer",
             unit="count",
+        ),
+        _CS(
+            "count_interval",
+            "P35.47 (SIG-CONF-005): the resolved-sites count interval — "
+            "``{records, lower, upper, declared_distance_m, display}``, the "
+            "dep's bound computation verbatim (sparse: the resolved-sites "
+            "metric only)",
+            dtype="object",
         ),
     )
 
@@ -3475,6 +3679,18 @@ def _keyed_dossier_docs(
                 # the same honesty the sig.dossier-sources/1 sum_rule carries.
                 "by_source_sum_rule": "distinct" if overlap else "sum",
                 "conserved": conserved,
+                # P35.47 (SIG-CONF-005): the dossier's count interval beside
+                # the conserved roll-up — the member record count plus
+                # ``[lower, upper]`` listed cameras from the shared dep bound
+                # computation (``not_evaluable`` when the run is absent).
+                "count_interval": plan.dedup_intervals.get(
+                    jkey,
+                    {"records": placed_n, "not_evaluable": "no interval computed"},
+                ),
+                "dossier_inflation_vs_lineage_roots": plan.dedup_inflation.get(
+                    jkey,
+                    {"published_rows": placed_n, "not_evaluable": "no interval computed"},
+                ),
                 "note": (
                     "records == records_placed_only_here + records_placed_below "
                     "(Σ by_leaf.records) — each placed record's chain ends at "
@@ -4650,6 +4866,35 @@ def build_spine_export(
     m_coverage = list(raw.get("materialized_coverage") or [])
     m_acct_links = list(raw.get("materialized_accountability_links") or [])
 
+    # --- P35.47 (SIG-CONF-005 / GQ-10): the ONE dedup publication view ------
+    # Built once over the latest completed camera-site ER run's links and the
+    # export's own member records — every surface (sites rows, record_claims,
+    # map, dossier intervals, the national figure, the GQ-10 accounting)
+    # reads this derivation, never a second one. ``None`` when no completed
+    # run exists: the surfaces then publish the honest ``not_recorded``
+    # field states, never a fabricated link set.
+    lineage_by_claim: dict[str, str] | None = None
+    if raw.get("claim_lineage") is not None:
+        lineage_by_claim = {str(r[0]): str(r[1]) for r in (raw.get("claim_lineage") or [])}
+    member_records: dict[str, str] = {}
+    member_lineages: dict[str, tuple[str, ...]] = {}
+    for _site in dataset.sites:
+        if not _site.has_coordinate_claims:
+            continue  # the ER record set is coordinate-claim subjects only
+        member_records[_site.entity_id] = sorted(_site.source_ids)[0] if _site.source_ids else ""
+        if lineage_by_claim is not None:
+            member_lineages[_site.entity_id] = tuple(
+                sorted(
+                    {lineage_by_claim[cid] for cid in _site.claim_ids if cid in lineage_by_claim}
+                )
+            )
+    dedup_view = dedup.build_dedup_view(
+        m_site_runs,
+        member_records=member_records,
+        member_lineages=(member_lineages if lineage_by_claim is not None else None),
+        source_names=source_names,
+    )
+
     # Coverage is computed ONCE (materialized when present, else shaping) so the web
     # coverage.json and the sig_graph coverage table never drift.
     coverage_metrics = _coverage(
@@ -4657,6 +4902,8 @@ def build_spine_export(
         materialized_coverage=m_coverage,
         resolved_site_runs=m_site_runs,
         materialized_contradictions=m_contradictions,
+        dedup_view=dedup_view,
+        dedup_members=member_records,
     )
     resolved_counts = resolved_site_counts(m_site_runs, dataset)
 
@@ -4687,6 +4934,7 @@ def build_spine_export(
         placement=placement,
         defect_flags=defect_flags,
         labels=label_registry,
+        dedup_view=dedup_view,
     )
     site_rows, site_index, site_exclusions = (
         slices.rows_by_compartment,
@@ -4777,6 +5025,12 @@ def build_spine_export(
             for comp, comp_rows in slices.rows_by_compartment.items()
             for row in comp_rows
         ],
+        # P35.47: the nested copy members' rows — dossier/source accounting
+        # counts every member record (the "412 camera records"), never just
+        # the emitted canonical rows.
+        nested_member_rows=list(slices.nested_members),
+        dedup_view=dedup_view,
+        emitted_member_subjects=slices.emitted_member_subjects,
         run_rows=list(raw.get("transparency_runs") or []),
         contradictions=m_contradictions,
         weight_rows=analytics._claim_weight_rows(raw),
@@ -4925,6 +5179,8 @@ def build_spine_export(
             resolved=resolved_counts,
             exclude=slices.refused_subjects | withdrawn_entities,
             placements=map_placements,
+            dedup_view=dedup_view,
+            emitted_members=slices.emitted_member_subjects,
         ),
         # The network reads the materialized §29.3 edges (P28.2) when present, else the
         # compute-on-read shaping envelope (the honest fallback for an unmaterialized spine).
@@ -5127,6 +5383,35 @@ def build_spine_export(
         )
         web_licenses[placement_path] = _SIG_SPDX
         web_compartments[placement_path] = _WEB_COMPARTMENT
+
+    # --- P35.47 (SIG-CONF-005): per-compartment count intervals --------------
+    # The bulk surface's honest range: every compartment whose sites table
+    # carries member rows gets a ``count_interval.json`` naming the member
+    # records it covers beside ``[lower, upper]`` listed cameras — the dep's
+    # bound computation verbatim, never a silent point value. SIG's own
+    # analytical expression → CC-BY-4.0.
+    if dedup_view is not None:
+        members_by_comp: dict[str, set[str]] = {}
+        for comp, comp_rows in slices.rows_by_compartment.items():
+            for row in comp_rows:
+                subj = str(row.data.get("entity_id") or "")
+                site_key = dedup_view.member_site.get(subj)
+                if site_key is not None:
+                    members_by_comp.setdefault(comp, set()).update(
+                        dedup_view.site_members.get(site_key, (subj,))
+                    )
+        for comp, members in sorted(members_by_comp.items()):
+            path = f"{comp}/count_interval.json"
+            web_artifacts[path] = _web_bytes(
+                {
+                    "schema": "sig.count-interval/1",
+                    "compartment": comp,
+                    **dedup.interval_block(dedup_view, members, records=len(members)),
+                }
+            )
+            web_licenses[path] = _SIG_SPDX
+            web_compartments[path] = comp
+            web_schemas[path] = "sig.count-interval/1"
 
     # --- P32.13 (SIG-FIND-002): per-compartment `record_claims.jsonl` ---------
     # The claim/evidence anchors behind every published site — filed under the

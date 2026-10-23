@@ -877,11 +877,18 @@ def read_resolved_site_runs(conn: Any, *, role: str | None = None) -> list[dict[
     framing — never a fabricated resolved-site count), else a one-element list:
     ``{run_key, observation_count, cluster_count, auto_write_tiers, summary,
     auto_write_edges, human_accept_edges, resolved_edges, proposed_count,
-    cannot_link_count, refused_count}``. P31.11: resolved sites are formed by BOTH
+    cannot_link_count, refused_count, links}``. P31.11: resolved sites are formed by BOTH
     ``auto_write`` edges AND valid ``human_accept`` edges (``resolved_edges`` is the
     union); ``proposed`` merges await review, ``human_reject``/``cannot_link`` pairs
     are recorded never to cluster, and ``refused`` accept attempts are counted —
     none of those form sites.
+
+    P35.47: ``links`` carries each recorded pair's emitted-link row —
+    ``{left, right, disposition, relation_type, tier, site_id, evidence}`` —
+    so the publish layer reads the ruleset-v3 derivation/possible-duplicate
+    vocabulary verbatim (``site_id``, ``basis``, ``distance_m``, the shared
+    upstream ref, the possible-duplicate reason) straight from
+    ``camera_site_match``; it never re-derives a link.
     """
     if role:
         set_role(conn, role)
@@ -908,18 +915,31 @@ def read_resolved_site_runs(conn: Any, *, role: str | None = None) -> list[dict[
     if run is None:
         return []
     rows = conn.execute(
-        "SELECT left_entity::text, right_entity::text, disposition FROM camera_site_match "
+        "SELECT left_entity::text, right_entity::text, disposition, relation_type, "
+        "       match_tier, site_id::text, match_evidence FROM camera_site_match "
         " WHERE run_key = %s AND disposition IN ('auto_write', 'human_accept', 'proposed', "
         "                                      'human_reject', 'refused') "
         " ORDER BY left_entity, right_entity",
         (run[0],),
     ).fetchall()
-    auto_edges = [(str(a), str(b)) for a, b, disp in rows if disp == "auto_write"]
-    human_edges = [(str(a), str(b)) for a, b, disp in rows if disp == "human_accept"]
-    proposed_count = sum(1 for _a, _b, disp in rows if disp == "proposed")
-    cannot_link_count = sum(1 for _a, _b, disp in rows if disp == "human_reject")
-    refused_count = sum(1 for _a, _b, disp in rows if disp == "refused")
+    auto_edges = [(str(a), str(b)) for a, b, disp, *_rest in rows if disp == "auto_write"]
+    human_edges = [(str(a), str(b)) for a, b, disp, *_rest in rows if disp == "human_accept"]
+    proposed_count = sum(1 for r in rows if r[2] == "proposed")
+    cannot_link_count = sum(1 for r in rows if r[2] == "human_reject")
+    refused_count = sum(1 for r in rows if r[2] == "refused")
     summary = run[4] if isinstance(run[4], dict) else json.loads(run[4] or "{}")
+    links = [
+        {
+            "left": str(a),
+            "right": str(b),
+            "disposition": str(disp),
+            "relation_type": str(rel) if rel is not None else None,
+            "tier": int(tier) if tier is not None else None,
+            "site_id": str(sid) if sid is not None else None,
+            "evidence": ev if isinstance(ev, dict) else json.loads(ev or "{}"),
+        }
+        for a, b, disp, rel, tier, sid, ev in rows
+    ]
     return [
         {
             "run_key": run[0],
@@ -933,5 +953,6 @@ def read_resolved_site_runs(conn: Any, *, role: str | None = None) -> list[dict[
             "proposed_count": proposed_count,
             "cannot_link_count": cannot_link_count,
             "refused_count": refused_count,
+            "links": links,
         }
     ]

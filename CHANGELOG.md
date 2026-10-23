@@ -24,6 +24,37 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Dedup publication fields — `site_id`, `copies[]`,
+  `possible_duplicates[]`, `multi_view[]`,
+  `n_independent_lineages`, and the SIG-CONF-005 count interval**
+  (P35.47 / row 326; R11-K13-TX-11; owner SIG-CONF-005; cites GQ-10,
+  SIG-CONF-005, ADR-105/ADR-153, D-K13-4 [B-26], L3 §4.5–4.6/§5.2/§9)
+  — one shared `exports/dedup.py` view turns the latest completed
+  camera-site ER run's ruleset-v3 links (P35.46's
+  `read_resolved_site_runs` — read verbatim, never re-derived) into
+  the fields every published record row carries: the shared
+  `site_id`, the collapsed derivation copies nested under `copies[]`
+  (source, upstream id, C0/C1/C2 basis — `same_as` for a
+  review-decision member — never an excess row per copy), the
+  inferential/unresolved links listed under `possible_duplicates[]`
+  (record, distance, reason — "not merged", never a merge claim),
+  same-layer co-located distinct records classed `multi_view` (never
+  duplicates), and the site's declared independence-class count.
+  Published counts are intervals (CONF-07b, this row): the record
+  count beside `[lower, upper]` listed cameras rides the national
+  resolved-sites coverage metric, the map layer's `count_interval`,
+  every dossier's `rollup.count_interval` / `totals.count_interval`,
+  and a `listed_cameras` figure registered on the web surface — all
+  computed through the dep's `count_bounds`, never a second
+  derivation. The measured dossier inflation against lineage roots
+  publishes per dossier (`dossier_inflation_vs_lineage_roots`,
+  ≤ 1.02× ratchet target; a miss is surfaced, never smoothed) and
+  the GQ-10 file evaluator now scans the release's own accounting.
+  Honest absence is first-class: no completed run → every field
+  emits its `not_recorded`/`not_evaluable` object; `copies: []` is a
+  measured fact, never an omitted field; `merged_into` is never
+  written. Publication itself rides P35.63's HG-11 Class-S leg —
+  this row performs no hosted mutation.
 - **Dossiers at every level + the unplaced report — `sig.dossier/2`,
   `sig.dossier-index/2`, `sig.unplaced-report/1`** (P35.45 / row 324;
   R11-K13-JUR-03; owner — none (no §56 `Owner:` names P35.45); served
