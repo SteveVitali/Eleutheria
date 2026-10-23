@@ -37,7 +37,7 @@ VALID_STATUSES = {"pending", "confirmed"}
 # pages with placeholder-bearing elements this suite does not model —
 # `tests/unit/test_p34_17_copy_batch.py` covers them.
 P34_ID = re.compile(
-    r"^(HO|DI|D|DS|HW|CC|CL|W|M|T|DF|CM|XD|XC|RQ|NF|FB|GN|TR|MD|WM|JD|MP|NW|WS|DC|MB|ES|SG)-\d+$"
+    r"^(HO|DI|D|DS|HW|CC|CL|W|M|T|DF|CM|XD|XC|RQ|NF|FB|GN|TR|MD|WM|JD|MP|NW|WS|DC|MB|ES|SG|UP)-\d+$"
 )
 
 # Batch rows whose page P34.12 retired (K11 §5.5 / RQ-00): the `/task/new/`
@@ -51,16 +51,21 @@ RETIRED_ROWS = {"T-01": "web/src/pages/task/new/[slug].astro"}
 # requirement id dropped from public copy), M-20 → M-43 (the "frozen holdout"
 # claim withdrawn), DC-19 → DC-20. P35.40 superseded HW-05 ("Independent
 # sources") → HW-14: the denominator label is now per-surface data
-# ({sourcesLabel}), so the pinned row is the placeholder verbatim.
+# ({sourcesLabel}), so the pinned row is the placeholder verbatim. P35.45
+# superseded DI-04 → DI-07: the index covers every registry level now, so the
+# sentence names them.
 # Asserted superseded, never silently dropped.
-SUPERSEDED_ROWS = {"CL-03", "M-20", "DC-19", "HW-05"}
+SUPERSEDED_ROWS = {"CL-03", "M-20", "DC-19", "HW-05", "DI-04", "UP-04"}
 
 # batch `page` value → the .astro source whose rendered elements bind its rows.
 ASTRO_PAGES = {
     "/": "web/src/pages/index.astro",
     "/dossier/": "web/src/pages/dossier/index.astro",
-    "/dossier/[slug]/": "web/src/pages/dossier/[slug].astro",
-    "/dossier/[slug]/print/": "web/src/pages/dossier/[slug]/print.astro",
+    # P35.45: catch-all dossier routes — nested canonical slug paths. The
+    # batch's JD rows were re-bound to the new page cells (append-only: the
+    # /dossier/[slug]/ rows stay as recorded history, bound nowhere).
+    "/dossier/[...path]/": "web/src/pages/dossier/[...path].astro",
+    "/dossier/[...path]/print/": "web/src/pages/dossier/[...path]/print.astro",
     "/map/": "web/src/pages/map.astro",
     "/network/": "web/src/pages/network.astro",
     "/search/": "web/src/pages/search.astro",

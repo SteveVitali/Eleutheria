@@ -600,6 +600,7 @@ def _provenance(
     ruleset_version: str,
     human_reviewed: bool,
     registry: Mapping[str, Any] | None,
+    dossier_scope_claims: Mapping[str, frozenset[str]] | None = None,
 ) -> dict[str, Any]:
     """The three per-surface "How we know this" summaries (SIG-UI-044).
 
@@ -678,36 +679,64 @@ def _provenance(
         except (TypeError, IndexError):  # a malformed row degrades, never crashes
             continue
     dossier_scopes: dict[str, dict[str, Any]] = {}
-    sites_by_jurisdiction: dict[str, list[Any]] = {}
-    for site_row in dataset.sites:
-        sites_by_jurisdiction.setdefault(str(site_row.jurisdiction), []).append(site_row)
-    for group in dataset.jurisdictions:
-        scoped_claim_ids: set[str] = set()
-        for site_row in sites_by_jurisdiction.get(str(group.jurisdiction), ()):
-            scoped_claim_ids.update(str(cid) for cid in site_row.claim_ids)
-        scoped_weights = [r for r in weight_rows if r["claim_id"] in scoped_claim_ids]
-        scoped_artifacts = {
-            artifact for cid in scoped_claim_ids for artifact in claim_artifacts.get(cid, ())
-        }
-        slug = jurisdiction_slug(str(group.jurisdiction))
-        dossier_scopes[slug] = {
-            "artifact_count": len(scoped_artifacts),
-            "tier_distribution": _tier_distribution(scoped_weights, as_of),
-            "source_independence_count": len(
-                {r["source_id"] for r in scoped_weights if r["source_id"]}
-            ),
-            "source_label": "Sources with published claims",
-            "date_range": _date_range(scoped_weights),
-            "rules_applied": [ruleset_version],
-            # Per-dossier human-review posture is unknown — the site-level
-            # verdicts don't name subjects. Honest, never inherited site posture.
-            "human_review_status": "unreviewed",
-            "denominator": (
-                f"{len(scoped_weights)} publishable tier-0 claims about the "
-                f"{group.jurisdiction} dossier's subjects carrying the epistemic "
-                "axes (reliability/directness/integrity/observed_at)"
-            ),
-        }
+    if dossier_scope_claims is not None:
+        # P35.45 (K4 §5.3): keyed dossier scopes — ``slug_path → claim ids``
+        # pre-derived by the shared contribution accumulation (the same
+        # claims the sig.dossier-sources/1 artifacts count). Each dossier's
+        # provenance counts only ITS OWN scope; the unplaced report carries
+        # no provenance row (it is a data-quality state, not a dossier).
+        for slug_path, scope_cids in sorted(dossier_scope_claims.items()):
+            scoped_weights = [r for r in weight_rows if r["claim_id"] in scope_cids]
+            scoped_artifacts = {
+                artifact for cid in scope_cids for artifact in claim_artifacts.get(cid, ())
+            }
+            dossier_scopes[slug_path] = {
+                "artifact_count": len(scoped_artifacts),
+                "tier_distribution": _tier_distribution(scoped_weights, as_of),
+                "source_independence_count": len(
+                    {r["source_id"] for r in scoped_weights if r["source_id"]}
+                ),
+                "source_label": "Sources with published claims",
+                "date_range": _date_range(scoped_weights),
+                "rules_applied": [ruleset_version],
+                "human_review_status": "unreviewed",
+                "denominator": (
+                    f"{len(scoped_weights)} publishable tier-0 claims about the "
+                    f"{slug_path} dossier's records carrying the epistemic "
+                    "axes (reliability/directness/integrity/observed_at)"
+                ),
+            }
+    else:
+        sites_by_jurisdiction: dict[str, list[Any]] = {}
+        for site_row in dataset.sites:
+            sites_by_jurisdiction.setdefault(str(site_row.jurisdiction), []).append(site_row)
+        for group in dataset.jurisdictions:
+            scoped_claim_ids: set[str] = set()
+            for site_row in sites_by_jurisdiction.get(str(group.jurisdiction), ()):
+                scoped_claim_ids.update(str(cid) for cid in site_row.claim_ids)
+            scoped_weights = [r for r in weight_rows if r["claim_id"] in scoped_claim_ids]
+            scoped_artifacts = {
+                artifact for cid in scoped_claim_ids for artifact in claim_artifacts.get(cid, ())
+            }
+            slug = jurisdiction_slug(str(group.jurisdiction))
+            dossier_scopes[slug] = {
+                "artifact_count": len(scoped_artifacts),
+                "tier_distribution": _tier_distribution(scoped_weights, as_of),
+                "source_independence_count": len(
+                    {r["source_id"] for r in scoped_weights if r["source_id"]}
+                ),
+                "source_label": "Sources with published claims",
+                "date_range": _date_range(scoped_weights),
+                "rules_applied": [ruleset_version],
+                # Per-dossier human-review posture is unknown — the site-level
+                # verdicts don't name subjects. Honest, never inherited site posture.
+                "human_review_status": "unreviewed",
+                "denominator": (
+                    f"{len(scoped_weights)} publishable tier-0 claims about the "
+                    f"{group.jurisdiction} dossier's subjects carrying the epistemic "
+                    "axes (reliability/directness/integrity/observed_at)"
+                ),
+            }
 
     licences = {r["spdx"] for r in weight_rows if r["spdx"]}
     return _envelope(
@@ -771,6 +800,7 @@ def build_analytics(
     ruleset_version: str = "",
     registry: Mapping[str, Any] | None = None,
     placements: Mapping[str, Any] | None = None,
+    dossier_scope_claims: Mapping[str, frozenset[str]] | None = None,
 ) -> list[AnalyticsArtifact]:
     """Emit the ``web/analytics/`` family for one shaped snapshot (pure).
 
@@ -820,6 +850,7 @@ def build_analytics(
                 ruleset_version=ruleset_version,
                 human_reviewed=human_reviewed,
                 registry=registry,
+                dossier_scope_claims=dossier_scope_claims,
             ),
         ),
         _artifact("queue_meta", _SIG_SPDX, _queue_meta(dataset, raw)),

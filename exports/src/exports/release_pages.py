@@ -620,6 +620,8 @@ def jurisdiction_page(
     items: Sequence[Mapping[str, Any]],
     total: int,
     licence: str,
+    jurisdiction_name: str | None = None,
+    jkey: str | None = None,
     stamp: Mapping[str, Any] | None = None,
 ) -> bytes:
     lis = "".join(
@@ -630,17 +632,36 @@ def jurisdiction_page(
         page,
         page_count,
     )
+    # P35.45: ``jurisdiction`` is the dossier slug path (``usa/ca``); the
+    # display name comes from the registry via the key map — the path stays
+    # visible under it so the route's identity is never ambiguous. The
+    # ``unplaced`` segment names its honest data-quality meaning.
+    name_line = ""
+    if jurisdiction_name and jurisdiction_name != jurisdiction:
+        name_line = f'<p><span class="k">Name</span> {_e(jurisdiction_name)}</p>'
+    jkey_line = (
+        f'<p><span class="k">Canonical key</span> <code>{_e(jkey)}</code></p>' if jkey else ""
+    )
+    unplaced_note = (
+        '<p class="warn"><strong>Not yet placed.</strong> Records in this list '
+        "could not be placed in a jurisdiction dossier — the evidence did not "
+        "support a location claim. This is a data-quality state, not a "
+        "guessed home; see the unplaced report for the check breakdown.</p>"
+        if jurisdiction == "unplaced"
+        else ""
+    )
     body = f"""
 <p><span class="k">Jurisdiction</span> {_e(jurisdiction)} ·
    <span class="k">Compartment</span> {_e(compartment)} ·
    <span class="k">Licence</span> {_e(licence)} ·
    <span class="k">Records</span> {_e(total)}</p>
+{name_line}{jkey_line}{unplaced_note}
 <nav><a href="/r/{_e(publication_id)}/c/{_e(compartment)}/">Compartment overview</a></nav>
 <ul>{lis}</ul>
 {pager}
 """
     return _layout(
-        title=f"{jurisdiction} — {compartment} (page {page}/{page_count})",
+        title=f"{jurisdiction_name or jurisdiction} — {compartment} (page {page}/{page_count})",
         body=body,
         publication_id=publication_id,
         licence=licence,
@@ -656,6 +677,7 @@ def compartment_page(
     record_count: int,
     kinds: Mapping[str, int],
     jurisdictions: Mapping[str, int],
+    jurisdiction_names: Mapping[str, str] | None = None,
     stamp: Mapping[str, Any] | None = None,
 ) -> bytes:
     """``/r/<pub>/c/<comp>/`` — the compartment overview."""
@@ -663,8 +685,13 @@ def compartment_page(
         f'<li><a href="browse/{_e(k)}/1/">{_e(k)}</a> — {_e(n)}</li>'
         for k, n in sorted(kinds.items())
     )
+    # P35.45: the key is the slug path (``usa/ca``); the visible label is the
+    # registry display name when the key map supplied one — the path itself
+    # stays in a <code> so the identity is never display-only.
     jur_lis = "".join(
-        f'<li><a href="jurisdiction/{_e(j)}/1/">{_e(j)}</a> — {_e(n)}</li>'
+        f'<li><a href="jurisdiction/{_e(j)}/1/">'
+        f"{_e((jurisdiction_names or {}).get(j) or j)}</a>"
+        f' <code class="mut">{_e(j)}</code> — {_e(n)}</li>'
         for j, n in sorted(jurisdictions.items())
     )
     empty_note = (
@@ -734,11 +761,14 @@ evidence object in the custody store.</p>
 
 
 def dossier_slug(dossier: Mapping[str, Any]) -> str:
-    """The route slug one released dossier occupies — the dossier's own
-    ``slug`` field when present (the spine dossiers carry a slugified form),
-    else the jurisdiction label, else ``unknown``. Shared by the page emitter
-    and the release landing so a link can never drift from its route."""
-    return str(dossier.get("slug") or dossier.get("jurisdiction") or "unknown")
+    """The route slug one released dossier occupies — the canonical
+    ``slug_path`` on a P35.45 keyed dossier (``usa/ca/verdin-county-06037``),
+    the flat ``slug`` on a pre-P35.45 dossier, else the jurisdiction label,
+    else ``unknown``. Shared by the page emitter and the release landing so
+    a link can never drift from its route."""
+    return str(
+        dossier.get("slug_path") or dossier.get("slug") or dossier.get("jurisdiction") or "unknown"
+    )
 
 
 def dossier_page(
@@ -748,17 +778,76 @@ def dossier_page(
     licence: str,
     stamp: Mapping[str, Any] | None = None,
 ) -> bytes:
-    """``/r/<pub>/dossier/<slug>/`` — the released dossier overview: the
-    published sections/rows verbatim plus links into the compartments.
+    """``/r/<pub>/dossier/<slug-path>/`` — the released dossier overview.
 
-    P34.34a (C4 NEW-7): the page states its **provisional** posture plainly —
-    a computed inventory overview of the released projection at the pinned
-    as-of dates, with no human check performed (ADR-152) — and never reads
-    as "reviewed". The licence of the data it summarises travels with the
-    page (SIG-LIC-011).
+    P35.45 keyed dossiers render their canonical identity (jkey, level,
+    name, ancestor chain), the roll-up counts (placed / leaf-only /
+    appearing), the child-dossier list, the declared-vs-located
+    disagreements, and the published sections verbatim. A pre-P35.45 flat
+    dossier keeps the old sections+gaps rendering. Both state the
+    **provisional** posture plainly (P34.34a / ADR-152).
     """
-    jurisdiction = str(dossier.get("jurisdiction") or "unknown")
+    keyed = dossier.get("jurisdiction_key") is not None
+    jurisdiction = str(
+        dossier.get("display_name")
+        or dossier.get("name")
+        or dossier.get("jurisdiction")
+        or "unknown"
+    )
     rows: list[str] = []
+    if keyed:
+        jkey = str(dossier.get("jurisdiction_key"))
+        level = str(dossier.get("level") or "")
+        slug_path = str(dossier.get("slug_path") or "")
+        chain = dossier.get("chain") or []
+        if chain:
+            crumb = (
+                " › ".join(
+                    f'<a href="/dossier/{_e(c.get("slug_path") or "")}/">'
+                    f"{_e(c.get('name') or c.get('jkey'))}</a>"
+                    for c in chain[:-1]
+                )
+                + " › "
+                + _e(str(chain[-1].get("name") or chain[-1].get("jkey")))
+            )
+            rows.append(f'<p class="mut">Chain: {crumb}</p>')
+        rollup = dossier.get("rollup") or {}
+        rows.append(
+            "<table><tr><th>Measure</th><th>Count</th></tr>"
+            f"<tr><td>Records under this dossier</td>"
+            f"<td>{_e(rollup.get('records'))}</td></tr>"
+            f"<tr><td>Placed only here (leaf)</td>"
+            f"<td>{_e(rollup.get('records_placed_only_here'))}</td></tr>"
+            f"<tr><td>Appearing (placed + declared-only)</td>"
+            f"<td>{_e(rollup.get('records_appearing'))}</td></tr>"
+            "</table>"
+        )
+        children = dossier.get("children") or []
+        if children:
+            child_lis = "".join(
+                f'<li><a href="/dossier/{_e(c.get("slug_path") or "")}/">'
+                f"{_e(c.get('name') or c.get('jkey'))}</a>"
+                f' <code class="mut">{_e(c.get("jkey"))}</code>'
+                f" — {_e(c.get('records'))} records</li>"
+                for c in children
+            )
+            rows.append(f"<h2>Child jurisdictions</h2><ul>{child_lis}</ul>")
+        disag = dossier.get("disagreements") or {}
+        d_here = disag.get("declared_here_located_elsewhere")
+        l_here = disag.get("located_here_declared_elsewhere")
+        if d_here or l_here:
+            rows.append(
+                "<h2>Declared vs located disagreements</h2>"
+                f"<p>{_e(d_here or 0)} record(s) declared here but located "
+                f"elsewhere · {_e(l_here or 0)} located here but declared "
+                "elsewhere. These are visible contradictions, never silently "
+                "resolved.</p>"
+            )
+        rows.append(
+            f'<p class="mut"><span class="k">Canonical key</span> '
+            f'<code>{_e(jkey)}</code> · <span class="k">Level</span> {_e(level)} · '
+            f'<span class="k">Slug path</span> <code>{_e(slug_path)}</code></p>'
+        )
     for section in dossier.get("sections") or []:
         sid = _e(section.get("section_id"))
         rows.append(f"<h2>{sid}</h2>")
@@ -804,6 +893,100 @@ Recorded gaps below are first-class absences, never omissions.</p>
     )
 
 
+def unplaced_page(
+    report: Mapping[str, Any],
+    *,
+    publication_id: str,
+    stamp: Mapping[str, Any] | None = None,
+) -> bytes:
+    """``/r/<pub>/dossier/unplaced/`` — the unplaced report: an honest
+    data-quality page rendering the ``sig.unplaced-report/1`` artifact the
+    export emitted — the §5.5 header verbatim, the by-reason table with
+    shares and "what would fix it", and the per-source split.
+
+    Never a guessed home — the report exists so the absence of a dossier
+    placement is a first-class, auditable fact (K4 §5.4/§5.5)."""
+    total = int(report.get("records") or 0)
+    reason_rows = report.get("reason_rows") or []
+    if not reason_rows:
+        # A v1-shaped artifact (by_reason map only) renders the same table
+        # without the share/fix columns' data — the row is still named.
+        reason_rows = [
+            {
+                "reason": k,
+                "records": n,
+                "share_percent": None,
+                "sources": [],
+                "definition": "",
+                "fix": "",
+            }
+            for k, n in sorted((report.get("by_reason") or {}).items())
+        ]
+
+    def _share(r: Mapping[str, Any]) -> str:
+        v = r.get("share_percent")
+        return f"{v}%" if v is not None else "—"
+
+    reason_html = "".join(
+        "<tr>"
+        f"<td><code>{_e(r.get('reason'))}</code></td>"
+        f"<td>{_e(r.get('records'))}</td>"
+        f"<td>{_e(_share(r))}</td>"
+        f"<td>{_e(r.get('definition') or '')}</td>"
+        f"<td>{_e(r.get('fix') or '')}</td>"
+        "</tr>"
+        for r in reason_rows
+    )
+    reason_block = (
+        "<h2>By reason</h2>"
+        "<table><tr><th>Reason</th><th>Records</th><th>Share</th>"
+        "<th>What it means</th><th>What would fix it</th></tr>"
+        f"{reason_html}</table>"
+        if reason_rows
+        else "<p><em>No unplaced records in this release.</em></p>"
+    )
+    src_rows = "".join(
+        f"<tr><td>{_e(s.get('source_id'))}</td><td>{_e(s.get('records'))}</td>"
+        f"<td>{_e(', '.join(r.get('reason') for r in (s.get('top_reasons') or [])))}</td></tr>"
+        for s in (report.get("by_source") or [])
+    )
+    src_block = (
+        "<h2>By source</h2>"
+        "<table><tr><th>Source</th><th>Records</th><th>Reasons</th></tr>"
+        f"{src_rows}</table>"
+        if src_rows
+        else ""
+    )
+    excluded = ", ".join(str(x) for x in report.get("excluded_from") or [])
+    correction = report.get("correction") or {}
+    corr_bits = "".join(
+        f' · <a href="{_e(h)}">{_e(t)}</a>'
+        for h, t in (
+            (correction.get("corrections"), "corrections log"),
+            (correction.get("research_queue"), "research queue"),
+        )
+        if h
+    )
+    header = report.get("header") or report.get("note") or ""
+    body = f"""
+<p><span class="k">Report</span> {_e(report.get("name") or "Not yet placed")} ·
+   <span class="k">Records</span> {_e(total)} ·
+   <span class="k">Placement rules</span> {_e(report.get("placement_rules"))}</p>
+<p class="warn"><strong>Not yet placed.</strong> {_e(header)}</p>
+{reason_block}
+{src_block}
+{f"<p class='mut'>This report is excluded from: {_e(excluded)}.</p>" if excluded else ""}
+{f"<p class='mut'>{_e(correction.get('note') or '')}{corr_bits}</p>" if correction else ""}
+"""
+    return _layout(
+        title="Unplaced records — data-quality report",
+        body=body,
+        publication_id=publication_id,
+        licence="CC-BY-4.0",
+        stamp=stamp,
+    )
+
+
 # --------------------------------------------------------------------------- #
 # Landing, catalog index, convenience stub, tombstone                          #
 # --------------------------------------------------------------------------- #
@@ -844,11 +1027,19 @@ def release_landing(
         if total_records == 0
         else ""
     )
+
     # C4 NEW-7: released dossier overviews are reachable from the landing —
-    # each carries its provisional posture on its own page.
+    # each carries its provisional posture on its own page. P35.45: the route
+    # is the canonical slug path (``usa/ca``), ``safe="/"`` keeps the nesting;
+    # the display name is the registry's, the jkey/path stays machine-visible.
+    def _dossier_label(d: Mapping[str, Any]) -> str:
+        return str(
+            d.get("display_name") or d.get("name") or d.get("jurisdiction") or dossier_slug(d)
+        )
+
     dossier_lis = "".join(
-        f'<li><a href="/r/{_e(pub)}/dossier/{_e(quote(dossier_slug(d), safe=""))}/">'
-        f"{_e(str(d.get('jurisdiction') or dossier_slug(d)))}</a>"
+        f'<li><a href="/r/{_e(pub)}/dossier/{_e(quote(dossier_slug(d), safe="/"))}/">'
+        f"{_e(_dossier_label(d))}</a>"
         f' <code class="mut">{_e(dossier_slug(d))}</code></li>'
         for d in dossiers
     )

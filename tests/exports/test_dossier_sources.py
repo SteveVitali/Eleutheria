@@ -28,7 +28,6 @@ from exports.dossier_sources import (
     SCHEMA,
     accumulate_dossier_contributions,
 )
-from exports.jurisdictions import jurisdiction_slug
 
 AT = "2026-10-21"
 
@@ -39,6 +38,12 @@ _JROWS: dict[str, dict[str, Any]] = {
         "level": "country",
         "parent": None,
         "vintage": "pl94-2020",
+        # P35.45: the canonical identifier mints the slug-path segment —
+        # ``usa`` for the country, ``ca`` under it, NAMELSAD+GEOID at county.
+        "identifiers": [
+            {"kind": "canonical", "scheme": "iso3166-1", "value": "US"},
+            {"kind": "alternate", "scheme": "iso3166-1-a3", "value": "USA"},
+        ],
     },
     "iso3166-2:US-CA": {
         "jkey": "iso3166-2:US-CA",
@@ -46,6 +51,7 @@ _JROWS: dict[str, dict[str, Any]] = {
         "level": "state_province",
         "parent": "iso3166-1:US",
         "vintage": "pl94-2020",
+        "identifiers": [{"kind": "canonical", "scheme": "iso3166-2", "value": "US-CA"}],
     },
     "us.census.geoid.county:06037": {
         "jkey": "us.census.geoid.county:06037",
@@ -53,7 +59,18 @@ _JROWS: dict[str, dict[str, Any]] = {
         "level": "county",
         "parent": "iso3166-2:US-CA",
         "vintage": "pl94-2020",
+        "identifiers": [
+            {"kind": "canonical", "scheme": "us.census.geoid.county", "value": "06037"}
+        ],
     },
+}
+
+#: P35.45 slug paths for the fixture keys — the artifact paths and the
+#: ``dossier_slug`` mirror field carry these (never the flat P35.44 slug).
+_SLUGS: dict[str, str] = {
+    "iso3166-1:US": "usa",
+    "iso3166-2:US-CA": "usa/ca",
+    "us.census.geoid.county:06037": "usa/ca/los-angeles-county-06037",
 }
 _CHAINS: dict[str, tuple[str, ...]] = {
     "us.census.geoid.county:06037": (
@@ -407,9 +424,9 @@ def test_t3_contribution_math_reconciles(world):
 
 def test_t4_county_record_rolls_to_admin1_and_country(world):
     docs = _docs(_plan(**world))
-    county = docs[jurisdiction_slug("us.census.geoid.county:06037")]
-    admin1 = docs[jurisdiction_slug("iso3166-2:US-CA")]
-    country = docs[jurisdiction_slug("iso3166-1:US")]
+    county = docs[_SLUGS["us.census.geoid.county:06037"]]
+    admin1 = docs[_SLUGS["iso3166-2:US-CA"]]
+    country = docs[_SLUGS["iso3166-1:US"]]
     # s1 placed at the county counts in the county + every ancestor.
     for doc in (county, admin1, country):
         subjects = {s["source_id"]: s for s in doc["sources"]}
@@ -428,7 +445,7 @@ def test_t4_county_record_rolls_to_admin1_and_country(world):
 
 def test_t5_first_last_seen_and_latest_ok_run(world):
     docs = _docs(_plan(**world))
-    admin1 = docs[jurisdiction_slug("iso3166-2:US-CA")]
+    admin1 = docs[_SLUGS["iso3166-2:US-CA"]]
     src_a = next(s for s in admin1["sources"] if s["source_id"] == "srcA")
     src_b = next(s for s in admin1["sources"] if s["source_id"] == "srcB")
     # First/last seen come from the sighting aggregate, never invented.
@@ -448,7 +465,7 @@ def test_t5_first_last_seen_and_latest_ok_run(world):
 
 def test_t6_run_level_only_fallback(world):
     docs = _docs(_plan(**world))
-    admin1 = docs[jurisdiction_slug("iso3166-2:US-CA")]
+    admin1 = docs[_SLUGS["iso3166-2:US-CA"]]
     src_c = next(s for s in admin1["sources"] if s["source_id"] == "srcC")
     assert src_c["sightings"] == "run_level_only"
     assert "not_recorded" in src_c["last_seen"]
@@ -466,7 +483,7 @@ def test_t6_single_ok_run_is_per_run_not_fallback(world):
     # just a young series, not missing re-sightings.
     w["run_rows"] = [r for r in world["run_rows"] if r[1] != "run-c2"]
     docs = _docs(_plan(**w))
-    admin1 = docs[jurisdiction_slug("iso3166-2:US-CA")]
+    admin1 = docs[_SLUGS["iso3166-2:US-CA"]]
     src_c = next(s for s in admin1["sources"] if s["source_id"] == "srcC")
     assert src_c["sightings"] == "per_run"
     assert src_c["last_seen"]["at"] == "2026-05-10T00:00:00Z"
@@ -497,7 +514,7 @@ def test_t7_contributions_mirror_the_dossier_rows(world):
 
 def test_t8_artifact_shape_and_honest_states(world):
     docs = _docs(_plan(**world))
-    doc = docs[jurisdiction_slug("iso3166-2:US-CA")]
+    doc = docs[_SLUGS["iso3166-2:US-CA"]]
     assert doc["schema"] == SCHEMA
     for block in (
         "release",
@@ -527,7 +544,7 @@ def test_t8_artifact_shape_and_honest_states(world):
 
 def test_t9_multi_source_record_flips_sum_rule(world):
     docs = _docs(_plan(**world))
-    county = docs[jurisdiction_slug("us.census.geoid.county:06037")]
+    county = docs[_SLUGS["us.census.geoid.county:06037"]]
     fig = {f["figure_id"]: f for f in county["figures"]}
     rec = fig["records"]
     # s1 sits under srcA AND srcB — the by_source values overlap.
@@ -544,14 +561,14 @@ def test_t10_runs_file_levels_and_determinism(world):
     plan = _plan(**world)
     arts = plan.render({})
     # Country + admin-1 carry the per-(source, run) detail; county does not.
-    us_runs = "web/dossier_sources/iso3166-1-us.runs.jsonl.gz"
-    ca_runs = "web/dossier_sources/iso3166-2-us-ca.runs.jsonl.gz"
+    us_runs = "web/dossier_sources/usa.runs.jsonl.gz"
+    ca_runs = "web/dossier_sources/usa/ca.runs.jsonl.gz"
     assert us_runs in arts and ca_runs in arts
     assert not any(p.endswith("06037.runs.jsonl.gz") for p in arts)
     docs = _docs(plan)
-    assert docs["iso3166-1-us"]["runs_file"] == us_runs
-    assert docs["iso3166-2-us-ca"]["runs_file"] == ca_runs
-    assert docs[jurisdiction_slug("us.census.geoid.county:06037")]["runs_file"] is None
+    assert docs["usa"]["runs_file"] == us_runs
+    assert docs["usa/ca"]["runs_file"] == ca_runs
+    assert docs[_SLUGS["us.census.geoid.county:06037"]]["runs_file"] is None
     # gzip determinism (mtime 0): a re-render is byte-identical.
     assert arts[us_runs] == plan.render({})[us_runs]
     # gzip header mtime field (bytes 4-8) is zeroed.
@@ -647,7 +664,7 @@ def test_t11_source_rows_carry_contributions(world):
     contribs["srcG"] = [
         {
             "dossier_jkey": "iso3166-1:US",
-            "dossier_slug": "iso3166-1-us",
+            "dossier_slug": "usa",
             "records": 1,
             "claims": 1,
             "first_seen_at": "2026-05-10T00:00:00Z",

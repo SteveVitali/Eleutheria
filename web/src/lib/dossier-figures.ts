@@ -53,7 +53,10 @@ export function firstNumeral(text: string): string | null {
 /** Where this dossier's record lives in the release artifact set. */
 export interface DossierArtifactRef {
   artifact: string;
-  index: number;
+  /** `null` when the artifact IS the dossier record (a per-dossier
+   * `web/dossiers/<slug-path>.json` — P35.45): the pointer roots at the
+   * document itself rather than an array index. */
+  index: number | null;
 }
 
 /** The build-time context the dossier registry resolves its targets against. */
@@ -70,9 +73,11 @@ export interface DossierFigureContext {
   provenanceHref: string | null;
 }
 
-/** The pointer family every dossier figure shares (`/<index>/<path>`). */
+/** The pointer family every dossier figure shares — `/<index>/<path>` in the
+ * monolithic bundle, `<path>` in a per-dossier file (P35.45: `rest` alone,
+ * `""` falling back to the bare root pointer). */
 function ptr(ctx: DossierFigureContext, rest: string): string {
-  return `/${ctx.ref!.index}${rest}`;
+  return ctx.ref!.index === null ? rest || "/" : `/${ctx.ref!.index}${rest}`;
 }
 
 function spec(
@@ -161,6 +166,41 @@ export function dossierFigureSpecs(
       );
     });
   });
+
+  // P35.45 (K4 §5.2): the roll-up numerals the keyed dossier renders outside
+  // its twelve sections — each child's placed count and the two disagreement
+  // counts. A flat dossier carries none of these fields → no specs (the v1
+  // surface is byte-identical).
+  (dossier.children ?? []).forEach((c, ci) => {
+    if (typeof c.records !== "number") return;
+    specs.push(
+      spec(ctx, {
+        id: `child-${ci}`,
+        value: c.records,
+        unit: "records",
+        pointer: ptr(ctx, `/children/${ci}/records`),
+        definition: "#rollup-heading",
+        breakdown: `#fig-child-${ci}`,
+      }),
+    );
+  });
+  const disagreements: [string, number | undefined][] = [
+    ["declared-here-located-elsewhere", dossier.disagreements?.declared_here_located_elsewhere],
+    ["located-here-declared-elsewhere", dossier.disagreements?.located_here_declared_elsewhere],
+  ];
+  for (const [slug, n] of disagreements) {
+    if (typeof n !== "number" || n === 0) continue;
+    specs.push(
+      spec(ctx, {
+        id: `disagreement-${slug}`,
+        value: n,
+        unit: "records",
+        pointer: ptr(ctx, `/disagreements/${slug.replace(/-/g, "_")}`),
+        definition: "#rollup-heading",
+        breakdown: `#fig-disagreement-${slug}`,
+      }),
+    );
+  }
 
   // The notice-window figure (SIG-UI-014a) — a material number when recorded.
   if (dossier.termination.notice_window_days !== null) {

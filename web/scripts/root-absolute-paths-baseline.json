@@ -1,11 +1,11 @@
 {
   "schema": "sig.path-containment-baseline/1",
-  "measured_at": "2026-10-19T17:45:48Z",
+  "measured_at": "2026-10-21T18:24:06Z",
   "measured_by": "node web/scripts/check-root-absolute-paths.mjs --write-baseline",
   "rule": "quoted ('\"`') literal starting with '/' + URL-path chars, quote not preceded by '/', over /*-*-/ <!-- --> and //-comment-stripped text in web/src/** .astro/.ts/.tsx/.js/.jsx/.mjs/.mts/.css; allow-listed file+token+count exemptions subtracted",
   "scope": "web/src/**",
   "plan_baseline": "G3 NEW-6 measured 85 sites / 36 files (0 BASE_URL uses) at 2026-09-30T18:47:42Z on the pre-refactor tree; re-measured at implement time per the P35.65 contract — the baseline may only shrink (P36.66a's sweep), never grow without a contract amendment",
-  "sites": 160,
+  "sites": 157,
   "files": {
     "src/components/HowWeKnowThis.astro": 3,
     "src/internal/contribution-back.astro": 2,
@@ -42,8 +42,6 @@
     "src/pages/data-collection.astro": 2,
     "src/pages/data-freshness/[...sort].astro": 1,
     "src/pages/dispute.astro": 2,
-    "src/pages/dossier/[slug].astro": 1,
-    "src/pages/dossier/[slug]/print.astro": 2,
     "src/pages/dossier/index.astro": 2,
     "src/pages/editorial-standards.astro": 2,
     "src/pages/evidence/[id].astro": 1,
@@ -67,6 +65,18 @@
       "token": "/",
       "count": 2,
       "reason": "endsWith(\"/\")/startsWith(\"/\") boundary checks on export-dir overrides — string-shape guards, not links"
+    },
+    {
+      "file": "src/lib/data.ts",
+      "token": "/corrections/",
+      "count": 1,
+      "reason": "P35.45: fixture unplaced-report correction field mirrors the emitted web/unplaced.json route literal — artifact data, not a link construction"
+    },
+    {
+      "file": "src/lib/data.ts",
+      "token": "/research-queue/",
+      "count": 1,
+      "reason": "P35.45: fixture unplaced-report correction field mirrors the emitted web/unplaced.json route literal — artifact data, not a link construction"
     },
     {
       "file": "src/lib/map-tiles.ts",
@@ -153,10 +163,16 @@
       "reason": "P35.37: provenance pointerBase — a key inside web/analytics/provenance.json, not a link"
     },
     {
-      "file": "src/pages/dossier/[slug].astro",
+      "file": "src/pages/dossier/[...path].astro",
       "token": "/surfaces/dossiers/$",
       "count": 1,
-      "reason": "P35.37: provenance pointerBase template — a key inside web/analytics/provenance.json, not a link"
+      "reason": "P35.37: provenance pointerBase template — a key inside web/analytics/provenance.json, not a link (P35.45: retargeted to the canonical slug-path route)"
+    },
+    {
+      "file": "src/lib/dossier-figures.ts",
+      "token": "/",
+      "count": 1,
+      "reason": "P35.45: the bare root JSON pointer a per-dossier file's figures resolve (ptr() with index=null) — a pointer, not a link"
     },
     {
       "file": "src/pages/coverage-metrics.astro",
@@ -241,6 +257,54 @@
       "token": "/attributes/$",
       "count": 2,
       "reason": "P35.40: figure pointers \"/attributes/<predicate>/count\" — JSON pointers into transparency/counts.json, not links"
+    },
+    {
+      "file": "src/lib/dossier-figures.ts",
+      "token": "/children/$",
+      "count": 1,
+      "reason": "P35.45: JSON pointer into the keyed dossier artifact's children[] (roll-up counts), not a link"
+    },
+    {
+      "file": "src/lib/dossier-figures.ts",
+      "token": "/disagreements/$",
+      "count": 1,
+      "reason": "P35.45: JSON pointer into the keyed dossier artifact's disagreements block, not a link"
+    },
+    {
+      "file": "src/pages/dossier/[...path].astro",
+      "token": "/records",
+      "count": 1,
+      "reason": "P35.45: JSON pointer /records into web/unplaced.json, not a link"
+    },
+    {
+      "file": "src/pages/dossier/[...path].astro",
+      "token": "/by_reason/$",
+      "count": 1,
+      "reason": "P35.45: JSON pointer /by_reason/<check> into web/unplaced.json, not a link"
+    },
+    {
+      "file": "src/pages/dossier/[...path].astro",
+      "token": "/reason_rows/$",
+      "count": 1,
+      "reason": "P35.45: JSON pointer /reason_rows/<i>/share_percent into web/unplaced.json, not a link"
+    },
+    {
+      "file": "src/pages/dossier/[...path].astro",
+      "token": "/by_source/$",
+      "count": 2,
+      "reason": "P35.45: JSON pointers /by_source/<i>/records + /by_source/<i>/top_reasons/<i>/records into web/unplaced.json, not links"
+    },
+    {
+      "file": "src/pages/dossier/index.astro",
+      "token": "/dossiers/$",
+      "count": 1,
+      "reason": "P35.45: JSON pointer /dossiers/<i>/records into web/dossiers/index.json, not a link"
+    },
+    {
+      "file": "src/pages/dossier/index.astro",
+      "token": "/records",
+      "count": 1,
+      "reason": "P35.45: JSON pointer /records into web/unplaced.json, not a link"
     }
   ]
 }

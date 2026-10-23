@@ -13,6 +13,10 @@ export const SHELL_PAGES = [
   "/",
   "/dossier/",
   "/dossier/oklahoma-city/",
+  // P35.45: the honest unplaced report — a public sibling of the dossier index,
+  // emitted in every mode (fixture exports emit an empty report). T1 content,
+  // zero <script>; excluded from the jurisdiction counts, never a dossier row.
+  "/dossier/unplaced/",
   "/visual-language/",
   "/map/",
   "/network/",

@@ -1273,6 +1273,12 @@ def check_assessments(root: pathlib.Path, assessments: list[dict]) -> list[dict]
     spec_ids = _spec_ids(root)
     by_id: dict[str, dict] = {}
     by_scope: dict[tuple[str, str], list[dict]] = {}
+    # Missing evidence refs are judged after the supersedes pass: a superseded
+    # row is a verbatim historical record whose cited paths may later be renamed
+    # or retired (P35.45) — its missing refs warn (coverage/stale-ref), never
+    # error; the current head must still resolve every ref (coverage/malformed).
+    # Same demotion class as the gitignored-logs volatile-ref warning (P34.9).
+    stale_refs: list[tuple[dict, str]] = []
     for a in assessments:
         aid = a.get("assessment_id", "?")
         errs: list[str] = []
@@ -1317,7 +1323,9 @@ def check_assessments(root: pathlib.Path, assessments: list[dict]) -> list[dict]
                             )
                         )
                     elif missing:
-                        errs.append(f"evidence ref does not exist: {r!r}")
+                        # deferred: severity depends on whether the row is
+                        # superseded (judged after the supersedes pass below)
+                        stale_refs.append((a, r))
                 if verdict_word(a["verdict"]) in MET_VERDICTS and all(
                     r.split("#", 1)[0].startswith(PLANNING_PREFIXES) for r in a["evidence_refs"]
                 ):
@@ -1425,6 +1433,34 @@ def check_assessments(root: pathlib.Path, assessments: list[dict]) -> list[dict]
                         "wider-domain non-MET",
                     )
                 )
+    # deferred ref resolution: a missing ref on the current head errors; the
+    # same missing ref on a superseded row warns — the superseded record is
+    # verbatim history whose cited paths may legitimately be renamed or retired
+    # (P35.45 dossier route migration), and the warning keeps that visible.
+    for a, ref in stale_refs:
+        if a.get("superseded_by"):
+            diags.append(
+                diag(
+                    "coverage/stale-ref",
+                    "warning",
+                    ASSESSMENTS_PATH,
+                    a.get("requirement_id", "?"),
+                    a.get("assessment_id", "?"),
+                    f"superseded row's evidence ref no longer resolves "
+                    f"(renamed/retired since its code_revision): {ref!r}",
+                )
+            )
+        else:
+            diags.append(
+                diag(
+                    "coverage/malformed",
+                    "error",
+                    ASSESSMENTS_PATH,
+                    a.get("requirement_id", "?"),
+                    a.get("assessment_id", "?"),
+                    f"evidence ref does not exist: {ref!r}",
+                )
+            )
     for a in by_id.values():
         a.pop("superseded_by", None)
     return diags

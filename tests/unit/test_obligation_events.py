@@ -472,6 +472,57 @@ def test_missing_superseded_fails(tmp_path: pathlib.Path) -> None:
     assert hits
 
 
+def test_missing_ref_on_current_head_errors(tmp_path: pathlib.Path) -> None:
+    root = _tree(tmp_path)
+    assessments = [
+        _assessment(
+            "a1",
+            "SIG-TST-001",
+            "MET",
+            "implementation",
+            ["docs/build/runs/DOES-NOT-EXIST.md"],
+        ),
+    ]
+    diags = obligation_events.check_assessments(root, assessments)
+    hits = [
+        d for d in diags if d["check"] == "coverage/malformed" and "does not exist" in d["message"]
+    ]
+    assert hits
+    assert all(d["severity"] == "error" for d in hits)
+
+
+def test_missing_ref_on_superseded_row_warns(tmp_path: pathlib.Path) -> None:
+    """A superseded row is verbatim history: a cited path renamed or retired
+    after its code_revision warns (coverage/stale-ref), never errors — the
+    P34.9 volatile-ref demotion class applied to supersedes chains (P35.45).
+    The current head must still resolve every ref."""
+    root = _tree(tmp_path)
+    assessments = [
+        _assessment(
+            "a1",
+            "SIG-TST-001",
+            "PARTIAL",
+            "implementation",
+            ["docs/build/runs/DOES-NOT-EXIST.md"],
+        ),
+        _assessment(
+            "a2",
+            "SIG-TST-001",
+            "MET",
+            "implementation",
+            ["docs/build/runs/P9.1.md"],
+            seq=1,
+            supersedes="a1",
+        ),
+    ]
+    diags = obligation_events.check_assessments(root, assessments)
+    assert not [d for d in diags if d["severity"] == "error"], diags
+    stale = [d for d in diags if d["check"] == "coverage/stale-ref"]
+    assert len(stale) == 1
+    assert stale[0]["severity"] == "warning"
+    assert stale[0]["evidence"] == "a1"
+
+
 def test_planning_doc_met_fails(tmp_path: pathlib.Path) -> None:
     """A new implementation requirement is never MET because a planning
     document says so — the evidence must be landed code/tests/runs."""

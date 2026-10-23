@@ -116,6 +116,16 @@ const ARTIFACT_LIST_PATH = "web/src/lib/figure-artifacts.json";
 /** The export-dir artifact paths a compartment's row streams occupy. */
 const COMPARTMENT_STREAM_RE = /^[a-z0-9_]+\/(sites|statements|record_claims)\.jsonl$/;
 
+/**
+ * P35.45: the per-dossier artifact paths — `web/dossiers/<slug-path>.json`
+ * where the slug path is one or more lowercase slug segments (`usa`,
+ * `usa/ca`, `usa/ca/verdin-county-06037`). Like the compartment streams the
+ * set is unbounded (the registry grows) and the export manifest does not
+ * enumerate it, so a strict pattern stands in for enumeration. The index
+ * document itself is excluded — it carries no dossier record to point into.
+ */
+const PER_DOSSIER_RE = /^web\/dossiers\/[a-z0-9-]+(\/[a-z0-9-]+)*\.json$/;
+
 function repoRoot(): string {
   let dir = fileURLToPath(new URL(".", import.meta.url));
   for (;;) {
@@ -155,6 +165,9 @@ export function fixtureArtifactPaths(): string[] {
 /** True when `path` is a manifest-listed artifact `data-artifact` may name. */
 export function isManifestArtifact(path: string, listed?: readonly string[]): boolean {
   if (COMPARTMENT_STREAM_RE.test(path)) return true;
+  // P35.45 — per-dossier artifacts are emitted under web/dossiers/ but never
+  // the index document itself (it carries no dossier record to point into).
+  if (PER_DOSSIER_RE.test(path) && path !== "web/dossiers/index.json") return true;
   return (listed ?? fixtureArtifactPaths()).includes(path);
 }
 

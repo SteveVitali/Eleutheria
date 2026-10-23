@@ -237,6 +237,7 @@ def record_from_site_row(
     compartment: str,
     license_id: str,
     claim_index: Mapping[str, Mapping[str, Any]] | None = None,
+    jurisdiction_slug_paths: Mapping[str, str] | None = None,
 ) -> PublishedRecord:
     """Project one ``<comp>/sites.jsonl`` row into a :class:`PublishedRecord`.
 
@@ -319,6 +320,15 @@ def record_from_site_row(
                 "check": row.get("placement_check"),
                 "declared": declared,
                 "boundary_vintage": row.get("boundary_vintage"),
+                # P35.45 (K4 §5.2): the dossier slug path of the record's
+                # placed leaf key — the ``jurisdiction/<slug-path>/`` record
+                # list it files under; chain-less records carry the honest
+                # ``unplaced`` data-quality segment, never a guessed place.
+                "slug_path": (
+                    (jurisdiction_slug_paths or {}).get(str(row["jurisdiction_key"]))
+                    if row.get("jurisdiction_key")
+                    else "unplaced"
+                ),
             }
         )
 

@@ -49,6 +49,12 @@
       "token": "0",
       "count": 2,
       "reason": "P35.40: the \"0\" inside the emitted predicate definitions \"claims_inserted > 0\" (ingested_not_published + permitted_not_ingested) — the artifact's recorded definition text rendered verbatim beside its named count, not a rendered count."
+    },
+    {
+      "file": "dossier/unplaced/index.html",
+      "token": "1",
+      "count": 2,
+      "reason": "\"placement@1\" — the placement ruleset's name (appears in the report note and the methodology sentence), a versioned ruleset id, not a counted quantity."
     }
   ]
 }

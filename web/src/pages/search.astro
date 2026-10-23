@@ -62,7 +62,7 @@ const INDEX: SearchItem[] = [
   ...dossiers.map((d) => ({
     kind: "dossier" as const,
     label: dossierDisplayTitle(d.subject_label, d.jurisdiction),
-    sublabel: displayJurisdiction(d.jurisdiction).label,
+    sublabel: d.display_name ?? d.name ?? displayJurisdiction(d.jurisdiction).label,
     href: `/dossier/${d.slug}/`,
   })),
   ...cappedSites.rows.map((s) => ({

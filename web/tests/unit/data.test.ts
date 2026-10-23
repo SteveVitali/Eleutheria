@@ -14,11 +14,16 @@ import {
   getCorrectionsProvenance,
   getCoverage,
   getDecisionPoint,
+  getDossierArtifactRef,
   getDossierIndex,
   getDossierProvenance,
+  getDossiers,
   getEvidence,
   getFreshness,
   getJurisdictionClaims,
+  getJurisdictionCompartments,
+  getJurisdictionKeyMap,
+  getJurisdictionSlugPaths,
   getMapDensityBins,
   getMapSites,
   getNetwork,
@@ -28,6 +33,9 @@ import {
   getResearchQueueProvenance,
   getSiteMetadata,
   getSiteProvenance,
+  getSlugHistory,
+  getUnplacedIndexEntry,
+  getUnplacedReport,
   getWatch,
 } from "../../src/lib/data";
 import { AS_OF, RULESET_VERSION } from "../../src/lib/fixtures";
@@ -478,6 +486,243 @@ describe("P35.43 — the sig/watch/2 envelope bridges to ContractWatchItem[]", (
     process.env.SIG_EXPORT_DIR = empty;
     expect(getWatch()).toEqual([]);
     rmSync(empty, { recursive: true, force: true });
+  });
+});
+
+// --- P35.45: the canonical keyed-dossier artifacts ------------------------
+//
+// `web/dossiers/<slug-path>.json` per-dossier files (nested paths mirroring
+// the jurisdiction chain), the `sig.dossier-index/2` index, the
+// `sig.unplaced-report/1`, the `sig.jurisdiction-key-map/1` and the
+// append-only `sig.jurisdiction-slug-history/1` — plus the honest fallbacks a
+// pre-keyed export keeps working through.
+
+function keyedDossierDoc(slugPath: string, jkey: string, name: string) {
+  return {
+    schema: "sig.dossier/2",
+    kind: "inventory_overview",
+    slug: slugPath,
+    slug_path: slugPath,
+    jurisdiction: jkey,
+    jurisdiction_key: jkey,
+    jurisdictionCode: "US",
+    level: "state_province",
+    name,
+    display_name: `${name}, United States`,
+    subject_label: `Surveillance infrastructure — ${name}, United States`,
+    parent_jkey: "iso3166-1:US",
+    parent_slug_path: "usa",
+    chain: [
+      { jkey: "iso3166-1:US", name: "United States", slug_path: "usa" },
+      { jkey, name, slug_path: slugPath },
+    ],
+    rollup: { records: 3, records_placed_only_here: 1, conserved: true },
+    children: [],
+    sections: [],
+    gaps: [],
+    asOf: { as_of_world: "2026-09-22", as_of_belief: "2026-09-22", belief_pinned: true },
+    rulesetVersion: "ruleset/1",
+  };
+}
+
+let keyedBundle: string;
+beforeAll(() => {
+  keyedBundle = mkdtempSync(join(tmpdir(), "sig-export-keyed-"));
+  const web = join(keyedBundle, "web");
+  mkdirSync(join(web, "dossiers", "usa"), { recursive: true });
+  const w = (rel: string, payload: unknown) =>
+    writeFileSync(join(web, rel), JSON.stringify(payload));
+  w("dossiers/usa.json", keyedDossierDoc("usa", "iso3166-1:US", "United States"));
+  w("dossiers/usa/ca.json", keyedDossierDoc("usa/ca", "iso3166-2:US-CA", "California"));
+  w(
+    "dossiers/index.json",
+    {
+      schema: "sig.dossier-index/2",
+      dossiers: [
+        {
+          slug: "usa",
+          slug_path: "usa",
+          jkey: "iso3166-1:US",
+          jurisdiction: "iso3166-1:US",
+          subject_label: "Surveillance infrastructure — United States",
+          name: "United States",
+          display_name: "United States",
+          level: "country",
+          records: 4,
+          asOf: { as_of_world: "2026-09-22", as_of_belief: "2026-09-22" },
+        },
+        {
+          slug: "usa/ca",
+          slug_path: "usa/ca",
+          jkey: "iso3166-2:US-CA",
+          jurisdiction: "iso3166-2:US-CA",
+          subject_label: "Surveillance infrastructure — California, United States",
+          name: "California",
+          display_name: "California, United States",
+          level: "state_province",
+          parent_name: "United States",
+          records: 3,
+          asOf: { as_of_world: "2026-09-22", as_of_belief: "2026-09-22" },
+        },
+      ],
+      unplaced: {
+        slug_path: "unplaced",
+        href: "/dossier/unplaced/",
+        report: "web/unplaced.json",
+        records: 2,
+      },
+    },
+  );
+  w(
+    "unplaced.json",
+    {
+      schema: "sig.unplaced-report/1",
+      kind: "data_quality_report",
+      name: "Not yet placed",
+      records: 2,
+      by_reason: { no_point: 1, name_ambiguous: 1 },
+      by_source: [{ source_id: "src_a", records: 2, top_reasons: [{ reason: "no_point", records: 1 }] }],
+      reason_definitions: { no_point: "no usable point geometry", name_ambiguous: "matched several" },
+    },
+  );
+  w(
+    "jurisdiction_key_map.json",
+    {
+      schema: "sig.jurisdiction-key-map/1",
+      entries: [
+        { jkey: "iso3166-1:US", slug_path: "usa", name: "United States", level: "country" },
+        { jkey: "iso3166-2:US-CA", slug_path: "usa/ca", name: "California", display_name: "California, United States", level: "state_province" },
+      ],
+    },
+  );
+  w(
+    "jurisdiction_slug_history.json",
+    {
+      schema: "sig.jurisdiction-slug-history/1",
+      rows: [
+        { slug: "ca", kind: "moved", successor: "iso3166-2:US-CA", note: "now at /dossier/usa/ca/" },
+        { slug: "id", kind: "split", successor: ["iso3166-2:US-ID", "iso3166-1:ID"], note: "combined" },
+      ],
+    },
+  );
+  // A compartment row stream — getJurisdictionCompartments resolves jkey AND
+  // slug_path to the same compartment.
+  mkdirSync(join(keyedBundle, "sig_graph"), { recursive: true });
+  writeFileSync(
+    join(keyedBundle, "sig_graph", "sites.jsonl"),
+    JSON.stringify({
+      entity_id: "s1",
+      jurisdiction: { id: "ca", jkey: "iso3166-2:US-CA", slug_path: "usa/ca" },
+      jurisdiction_key: "iso3166-2:US-CA",
+    }) + "\n",
+  );
+});
+
+describe("P35.45 web data layer — the keyed dossier artifact set", () => {
+  it("getDossiers walks web/dossiers/**/*.json — nested slug paths included", () => {
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = keyedBundle;
+    const slugs = getDossiers().map((d) => d.slug).sort();
+    expect(slugs).toEqual(["usa", "usa/ca"]);
+    const ca = getDossiers().find((d) => d.slug === "usa/ca")!;
+    expect(ca.jurisdiction_key).toBe("iso3166-2:US-CA");
+    expect(ca.display_name).toBe("California, United States");
+  });
+
+  it("getDossierIndex prefers the sig.dossier-index/2 rows (jkey + roll-up)", () => {
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = keyedBundle;
+    const rows = getDossierIndex();
+    expect(rows.length).toBe(2);
+    const ca = rows.find((r) => r.slug === "usa/ca")!;
+    expect(ca.jkey).toBe("iso3166-2:US-CA");
+    expect(ca.records).toBe(3);
+    expect(ca.display_name).toBe("California, United States");
+  });
+
+  it("a v2 index without .dossiers fails loud (never silent empty)", () => {
+    const bad = mkdtempSync(join(tmpdir(), "sig-export-badindex-"));
+    mkdirSync(join(bad, "web", "dossiers"), { recursive: true });
+    writeFileSync(join(bad, "web", "dossiers", "index.json"), JSON.stringify({ schema: "sig.dossier-index/2" }));
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = bad;
+    expect(() => getDossierIndex()).toThrow(/sig.dossier-index\/2/);
+    rmSync(bad, { recursive: true, force: true });
+  });
+
+  it("getDossierArtifactRef resolves the per-dossier file (index: null)", () => {
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = keyedBundle;
+    expect(getDossierArtifactRef("usa/ca")).toEqual({
+      artifact: "web/dossiers/usa/ca.json",
+      index: null,
+    });
+    expect(getDossierArtifactRef("missing")).toBeNull();
+  });
+
+  it("getUnplacedReport + getUnplacedIndexEntry read the sibling artifacts", () => {
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = keyedBundle;
+    const report = getUnplacedReport()!;
+    expect(report.records).toBe(2);
+    expect(report.by_reason).toEqual({ no_point: 1, name_ambiguous: 1 });
+    expect(getUnplacedIndexEntry()!.records).toBe(2);
+    expect(getUnplacedIndexEntry()!.href).toBe("/dossier/unplaced/");
+  });
+
+  it("the unplaced artifacts are honest absences on a pre-keyed export", () => {
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = bundle; // the P27.1 bundle — no keyed artifacts
+    expect(getUnplacedReport()).toBeNull();
+    expect(getUnplacedIndexEntry()).toBeNull();
+    expect(getJurisdictionKeyMap()).toBeNull();
+    expect(getJurisdictionSlugPaths()).toBeNull();
+    expect(getSlugHistory()).toEqual([]);
+  });
+
+  it("getJurisdictionKeyMap/SlugPaths resolve jkey → slug_path", () => {
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = keyedBundle;
+    expect(getJurisdictionSlugPaths()!.get("iso3166-2:US-CA")).toBe("usa/ca");
+    expect(getJurisdictionKeyMap()!.get("iso3166-1:US")!.name).toBe("United States");
+  });
+
+  it("getSlugHistory returns the append-only moved/split rows", () => {
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = keyedBundle;
+    const rows = getSlugHistory();
+    expect(rows.length).toBe(2);
+    expect(rows.find((r) => r.slug === "id")!.successor).toEqual(["iso3166-2:US-ID", "iso3166-1:ID"]);
+  });
+
+  it("getJurisdictionCompartments keys on jkey AND slug_path", () => {
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = keyedBundle;
+    const m = getJurisdictionCompartments();
+    expect(m.get("iso3166-2:US-CA")).toBe("sig_graph");
+    expect(m.get("usa/ca")).toBe("sig_graph");
+  });
+
+  it("the legacy monolith still reads when no web/dossiers/ dir exists", () => {
+    const old = mkdtempSync(join(tmpdir(), "sig-export-v1dossiers-"));
+    mkdirSync(join(old, "web"), { recursive: true });
+    writeFileSync(
+      join(old, "web", "dossiers.json"),
+      JSON.stringify([{ slug: "old-place", jurisdiction: "OP", sections: [] }]),
+    );
+    writeFileSync(
+      join(old, "web", "dossier_index.json"),
+      JSON.stringify([{ slug: "old-place", subject_label: "Old Place", jurisdiction: "OP", asOf: {} }]),
+    );
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = old;
+    expect(getDossiers().map((d) => d.slug)).toContain("old-place");
+    expect(getDossierIndex().map((d) => d.slug)).toContain("old-place");
+    expect(getDossierArtifactRef("old-place")).toEqual({
+      artifact: "web/dossiers.json",
+      index: 0,
+    });
+    rmSync(old, { recursive: true, force: true });
   });
 });
 

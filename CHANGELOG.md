@@ -24,6 +24,41 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Dossiers at every level + the unplaced report — `sig.dossier/2`,
+  `sig.dossier-index/2`, `sig.unplaced-report/1`** (P35.45 / row 324;
+  R11-K13-JUR-03; owner — none (no §56 `Owner:` names P35.45); served
+  SIG-UI-048 + SIG-UI-010…015 + SIG-UI-044; cites D-K4-3 [B-44,
+  carried verbatim], D-K4-4, D-K4-7, K4 `placement@1`,
+  SIG-ONTO-011, K4 NEW-4/NEW-6) — a new `exports/dossier_keys.py`
+  canonical registry keys every dossier on the recorded
+  `placement@1` chain (never re-derived): `group_by_key` rolls each
+  record up its whole chain exactly once per ancestor, chainless
+  records file only under `unplaced`, and the D-K4-3 thresholds mint
+  country / admin-1 / US-county / US-place pages with the minting
+  basis recorded (Puerto Rico + territories are US state-equivalents;
+  a no-adapter country renders the conservative D-K4-7 profile;
+  `jurisdictionCode` carries the country A2). One
+  `web/dossiers/<slug-path>.json` per dossier replaces the monolith;
+  `index.json` v2 enumerates the set and carries the dossier-build
+  measurement; `web/jurisdiction_key_map.json` +
+  append-only `web/jurisdiction_slug_history.json` resolve every old
+  flat slug through static `moved`/`corrected`/`split` stubs
+  (301-style JSON documents for single successors, 300-style choice
+  lists for splits — a previously-published dossier URL never 404s).
+  `web/unplaced.json` + `/dossier/unplaced/` (`/dossier/unplaced.json`
+  twin) publish the honest "Not yet placed" data-quality report — the
+  verbatim header, closed-vocabulary by-reason rows with "what would
+  fix it", per-source top reasons, correction links, exclusion
+  disclosures, and honest `not_emitted` download slots — a sibling of
+  every dossier, never a jurisdiction (excluded from counts, "N
+  jurisdictions" copy, and the place facet). Research-queue gap cards
+  re-key to `jurisdiction:<jkey>` only where the key-map is
+  unambiguous; `web/dbright_rereview.json` lists US-located records
+  published under the non-US database-right basis for E4 (a list, not
+  a rights change). The release tree groups record lists under
+  `jurisdiction/<slug-path>/` with `unplaced/` replacing the legacy
+  `unresolved/`; dossier routes move to canonical catch-all paths with
+  ancestor breadcrumbs and child roll-ups.
 - **Dossier contribution export — `sig.dossier-sources/1` + the source-side
   `contributions[]` mirror** (P35.44 / row 323; R11-K13-DSRC-01; owner
   SIG-TRANSP-008 + SIG-TRANSP-040; cites SIG-UI-044/048, SIG-ENG-021,

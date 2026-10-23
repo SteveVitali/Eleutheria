@@ -101,6 +101,23 @@ describe("defineFigures — the page registry contract (UXR-34, J3 §5.4)", () =
     expect(isManifestArtifact("statements.jsonl")).toBe(false);
   });
 
+  it("admits P35.45 per-dossier artifacts by pattern — index excluded", () => {
+    expect(isManifestArtifact("web/dossiers/usa.json")).toBe(true);
+    expect(isManifestArtifact("web/dossiers/usa/ca.json")).toBe(true);
+    expect(isManifestArtifact("web/dossiers/usa/ca/verdin-county-06037.json")).toBe(true);
+    // The index document carries no dossier record — never a figure target.
+    expect(isManifestArtifact("web/dossiers/index.json")).toBe(true); // listed path
+    expect(isManifestArtifact("web/dossier_sources/usa.json")).toBe(false);
+    expect(isManifestArtifact("web/dossiers.json")).toBe(true); // the v1 monolith
+  });
+
+  it("pins PER_DOSSIER_RE byte-identical to the build check's copy", () => {
+    const src = readFileSync(CHECK_FIGURES, "utf-8");
+    const m = /PER_DOSSIER_RE = (\/.+\/[gimsuy]*)/.exec(src);
+    expect(m, "check-figures.mjs must declare PER_DOSSIER_RE").not.toBeNull();
+    expect(m![1]).toBe("/^web\\/dossiers\\/[a-z0-9-]+(\\/[a-z0-9-]+)*\\.json$/");
+  });
+
   it("rejects a pointer that is not a JSON pointer", () => {
     expect(() => defineFigures("test", [baseSpec({ pointer: "metrics/0" })])).toThrow(
       /not a JSON pointer/,
