@@ -72,3 +72,13 @@ evidence_runs = ["37992428702"]
 reason = "same Docker Hub unauthenticated pull-rate limit as DOCKERHUB-RATE-1/-2, on the python job's tests/db image pull"
 tracking = "same as DOCKERHUB-RATE-1 — three jobs on the same class; ESCALATED to the operator (OM-18 three-use rule)"
 expires = "2026-12-01"
+
+[[flake]]
+id = "NPM-AUDIT-503-1"
+job = "security"
+step = "npm advisory gate (production deps, high+)"
+pattern = "exit code 5"
+evidence_runs = ["39714878665"]
+reason = "registry.npmjs.org returned 503 Service Unavailable on the audit advisories-bulk endpoint — the gate's vacuous-refusal exit 5 (EXIT_UNKNOWN) on a non-audit document; transient external outage, no advisory data judged, identical heads green same window"
+tracking = "transient npm registry availability — no repo change owed; escalate to the operator if recurring (OM-18 three-use rule)"
+expires = "2026-12-01"
