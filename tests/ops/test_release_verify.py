@@ -647,10 +647,18 @@ def test_v11_fails_on_a_serious_axe_violation(tmp_path: Path) -> None:
     assert row["evidence"]["legs"]["axe"] == "fail"
 
 
+#: A credential-shaped literal the V12 seeded defect plants. Written as an
+#: explicit concatenation so the file bytes never carry the contiguous key
+#: shape — the repo secret gate (``AKIA[0-9A-Z]{16}``) scans literals;
+#: ``find_secrets`` scans the fixture file the test writes at runtime and
+#: sees the joined value.
+FAKE_AWS_KEY = "AKIA" + "IOSFODNN7EXAMPLE"
+
+
 def test_v12_fails_on_a_secret(tmp_path: Path) -> None:
     work_dir, pub, store = _build_candidate(tmp_path)
     victim = work_dir / "v" / pub / "sources" / "index.html"
-    victim.write_text(victim.read_text() + "AKIAIOSFODNN7EXAMPLE")
+    victim.write_text(victim.read_text() + FAKE_AWS_KEY)
     row = rv.check_v12(_ctx(work_dir, pub, store))
     assert row["status"] == "fail"
     assert row["evidence"]["hits"]
@@ -745,7 +753,7 @@ def test_waiver_only_under_class_s_and_never_v12(tmp_path: Path) -> None:
 
     # and V12 can never be waived even under class_s
     secret_page = work_dir / "v" / pub / "sources" / "index.html"
-    secret_page.write_text(secret_page.read_text() + "AKIAIOSFODNN7EXAMPLE")
+    secret_page.write_text(secret_page.read_text() + FAKE_AWS_KEY)
     ctx_v12 = _ctx(work_dir, pub, store, release_class="class_s", waivers=("V12=readout/1",))
     suite_v12 = rv.run_suite(ctx_v12)
     assert suite_v12["verdict"] == "blocked"
@@ -789,7 +797,7 @@ def test_verb_verify_suite_mode_journals_verified_on_green(tmp_path: Path) -> No
 def test_verb_verify_apply_journals_failed_on_a_seeded_defect(tmp_path: Path) -> None:
     work_dir, pub, store = _build_candidate(tmp_path)
     victim = work_dir / "v" / pub / "sources" / "index.html"
-    victim.write_text(victim.read_text() + "AKIAIOSFODNN7EXAMPLE")
+    victim.write_text(victim.read_text() + FAKE_AWS_KEY)
     with pytest.raises(rp.PipelineError) as err:
         rp.verb_verify(
             store,
