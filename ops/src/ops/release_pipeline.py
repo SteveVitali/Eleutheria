@@ -853,20 +853,216 @@ def verb_stage(
     return result
 
 
+def _git_root(cwd: Path) -> Path | None:
+    """The worktree root ``cwd`` sits inside, or ``None`` when not a repo —
+    V2's default ``--repo-root`` probe target (never a guessed fact)."""
+    import subprocess
+
+    try:
+        out = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            cwd=str(cwd),
+            capture_output=True,
+            text=True,
+            timeout=20,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if out.returncode != 0 or not out.stdout.strip():
+        return None
+    return Path(out.stdout.strip())
+
+
+def _declared_410s(store: Store) -> frozenset[str]:
+    """The route set the current conf generation's ``withdrawn.conf`` denies
+    — V5's "declared 410" allowance: a same-origin link may resolve to 410
+    only when the barrier records the denial."""
+    from . import release_conf as _rc
+
+    gen = _rc.current_generation(store)
+    if gen < 1:
+        return frozenset()
+    body = store.read(_rc._conf_name(gen, "withdrawn.conf"))
+    if body is None:
+        return frozenset()
+    out: set[str] = set()
+    for m in re.finditer(r"location\s*=\s*(\S+)\s*\{([^}]*)}", body.decode("utf-8", "replace")):
+        if "410" in m.group(2):
+            out.add(m.group(1))
+    return frozenset(out)
+
+
+def _verify_suite_contexts(
+    store: Store,
+    work_dir: Path,
+    pub: str,
+    *,
+    mode: str,
+    origins: tuple[str, ...],
+    origin_headers: tuple[str, ...],
+    tree_origin: bool,
+    release_class: str | None,
+    waivers: tuple[str, ...],
+    repo_root: Path | None,
+    pushed: bool | None,
+    tree_clean: bool | None,
+    axe_runner: Any,
+    site_kwargs: dict[str, Any],
+    now: datetime | None,
+) -> list[Any]:
+    """Build the per-origin :class:`release_verify.VerifyContext` set.
+
+    ``origins`` are the real HTTP surfaces — S takes the IAM-only staging
+    origin (``origin_headers`` carry the identity-token header), P every
+    public origin. ``tree_origin`` serves the built ``work_dir`` through
+    the §4.2 mapping — a fixture posture the result rows record as
+    ``origin_kind: "tree"``; the registry's latest conf generation
+    supplies the promoted map, the ``/releases/`` index set and the
+    declared-410 routes wherever they are readable."""
+    from . import release_verify as rv
+
+    shared = dict(
+        store=store,
+        declared_410=_declared_410s(store),
+        release_class=release_class,
+        waivers=tuple(waivers),
+        repo_root=repo_root,
+        pushed=pushed,
+        tree_clean=tree_clean,
+        axe_runner=axe_runner,
+        now=now,
+        **site_kwargs,
+    )
+    headers = {}
+    for h in origin_headers:
+        k, _, v = h.partition(":")
+        headers[k.strip()] = v.strip()
+    contexts: list[Any] = []
+    for url in origins:
+        contexts.append(
+            rv.VerifyContext(
+                mode=mode,
+                work_dir=work_dir,
+                pub=pub,
+                fetcher=rv.HttpFetcher(url, headers=headers),
+                origin=url,
+                origin_kind="http",
+                axe_url=url,
+                **shared,
+            )
+        )
+    if tree_origin:
+        promoted: frozenset[str] | None = None
+        staging = mode == "S"
+        latest_pub = pub
+        latest_label: str | None = None
+        conf_overrides: dict[str, bytes] = {}
+        from . import release_conf as _rc
+
+        gen = _rc.current_generation(store)
+        if gen >= 1:
+            map_body = store.read(_rc._conf_name(gen, "promoted.map"))
+            if mode == "P":
+                promoted = (
+                    frozenset(_rc.parse_promoted_map(map_body.decode("utf-8", "replace")))
+                    if map_body
+                    else frozenset()
+                )
+            latest_body = store.read(_rc._conf_name(gen, "latest.json"))
+            if latest_body is not None:
+                latest = json.loads(latest_body)
+                if mode == "P":
+                    latest_pub = str(latest.get("publication_id") or pub)
+                latest_label = str(latest.get("label") or "") or None
+            for rel, route in (
+                ("releases/index.html", "/releases/"),
+                ("releases/catalog.json", "/releases/catalog.json"),
+                ("latest.json", "/releases/latest.json"),
+            ):
+                body = store.read(_rc._conf_name(gen, rel))
+                if body is not None:
+                    conf_overrides[route] = body
+                    if rel == "releases/index.html":
+                        conf_overrides["/releases/index.html"] = body
+            # the DCAT series catalog lives at the staged root's
+            # releases/ dir (nginx's `location /releases/` prefix maps it to
+            # staged/releases/catalog.jsonld — activation-overlay, not a
+            # <pub>/ namespace). The public deny gate still applies to that
+            # prefix: a non-pub /releases/ path is promoted=0 → 404 in P mode,
+            # served only under staging (SIG_STAGING=1 never gates, GT-9) —
+            # the tree mirror injects the override on S legs only, matching
+            # the real edge byte-for-byte (D-P35.56-1 records the public gap).
+            if mode == "S":
+                for name, route in (
+                    ("staged/releases/catalog.jsonld", "/releases/catalog.jsonld"),
+                ):
+                    body = store.read(name)
+                    if body is not None:
+                        conf_overrides.setdefault(route, body)
+        site = rv._site_release(work_dir, pub) or {}
+        label = latest_label or str(site.get("label") or "")
+        latest_header = f"{label} {latest_pub}" if label else None
+        # the candidate's own stamp pair rides S-mode staging (the staging
+        # revision serves latest=<candidate>); P-mode serves latest.json's
+        contexts.append(
+            rv.VerifyContext(
+                mode=mode,
+                work_dir=work_dir,
+                pub=pub,
+                fetcher=rv.TreeFetcher(
+                    work_dir,
+                    latest_pub,
+                    promoted=promoted,
+                    staging=staging,
+                    release_header=(
+                        latest_header
+                        if mode == "P"
+                        else (f"{site.get('label')} {pub}" if site.get("label") else None)
+                    ),
+                    overrides=conf_overrides,
+                ),
+                origin=f"tree:{work_dir}",
+                origin_kind="tree",
+                **shared,
+            )
+        )
+    return contexts
+
+
 def verb_verify(
     store: Store,
     *,
     apply_: bool,
     work_dir: str | Path,
     publication_id: str | None = None,
+    mode: str | None = None,
+    origins: tuple[str, ...] = (),
+    origin_headers: tuple[str, ...] = (),
+    tree_origin: bool = False,
+    results_dir: str | Path | None = None,
+    release_class: str | None = None,
+    waivers: tuple[str, ...] = (),
+    repo_root: str | Path | None = None,
+    pushed: bool | None = None,
+    tree_clean: bool | None = None,
+    axe_runner: Any = ...,
+    site_kwargs: dict[str, Any] | None = None,
     break_lock: str | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
-    """``verify`` — this row's bounded subset: the built tree re-validates
-    (``exports.release.validate_release``) AND every manifest artifact is
-    staged with byte-identical md5. The V1–V14 staging-surface suite lands
-    at P35.56/P35.58 — the event records that scope honestly."""
+    """``verify`` — the bounded staged==built + integrity leg plus, when a
+    ``mode`` is given, the G3 §5.5 verification suite A (P35.56): V1–V5 +
+    V11–V13 over the staging origin (``S``) or every public origin
+    (``P``). Every check writes a JSON result row; any failure or skip
+    blocks promotion — a ``--apply`` journals ``verified`` only when the
+    bounded leg and every suite verdict pass (a Class-S readout may waive
+    named non-V12 checks; the waiver lands in the event detail).
+
+    ``mode=None`` keeps the pre-P35.56 bounded scope exactly — the scope
+    string in the result/event says so."""
     from exports.release import validate_release
+
+    from . import release_verify as rv
 
     work_dir = Path(work_dir)
     pub = publication_id or _publication_id_of(work_dir)
@@ -887,7 +1083,7 @@ def verb_verify(
             mismatched.append(name)
             continue
         checked += 1
-    ok = report.state == "complete" and not missing and not mismatched
+    bounded_ok = report.state == "complete" and not missing and not mismatched
     result: dict[str, Any] = {
         "verb": "verify",
         "publication_id": pub,
@@ -895,36 +1091,134 @@ def verb_verify(
         "artifacts_checked": checked,
         "missing": missing[:10],
         "mismatched": mismatched[:10],
-        "scope": "staged-bytes==built-bytes + integrity re-validation; "
-        "the V1–V14 staging-surface suite is P35.56/P35.58's",
         "applied": False,
     }
+
+    suites: list[dict[str, Any]] = []
+    if mode in ("S", "P"):
+        contexts = _verify_suite_contexts(
+            store,
+            work_dir,
+            pub,
+            mode=mode,
+            origins=origins,
+            origin_headers=origin_headers,
+            tree_origin=tree_origin,
+            release_class=release_class,
+            waivers=waivers,
+            repo_root=Path(repo_root) if repo_root else None,
+            pushed=pushed,
+            tree_clean=tree_clean,
+            axe_runner=axe_runner,
+            site_kwargs=site_kwargs or {},
+            now=now,
+        )
+        for ctx in contexts:
+            suites.append(rv.run_suite(ctx))
+        if not contexts:
+            # fail-closed: no origin to verify over — every suite check is
+            # an honest skip, and a skip blocks (SIG-ENG-042).
+            suites.append(
+                {
+                    "schema": rv.RESULT_SCHEMA,
+                    "mode": mode,
+                    "publication_id": pub,
+                    "origin": None,
+                    "origin_kind": "none",
+                    "checks": list(rv.CHECKS_S if mode == "S" else rv.CHECKS_P),
+                    "results": [
+                        rv._row(
+                            cid,
+                            mode,
+                            "skip",
+                            "no origin supplied — the check's HTTP surface legs "
+                            "are unevaluable (pass --origin/--tree)",
+                        )
+                        for cid in (rv.CHECKS_S if mode == "S" else rv.CHECKS_P)
+                    ],
+                    "counts": {
+                        "pass": 0,
+                        "fail": 0,
+                        "skip": len(rv.CHECKS_S if mode == "S" else rv.CHECKS_P),
+                    },
+                    "verdict": "blocked",
+                    "promotion_blocked": True,
+                    "waivers": [],
+                    "waivers_ignored": [],
+                    "uncovered": list(rv.CHECKS_S if mode == "S" else rv.CHECKS_P),
+                }
+            )
+        out_dir = (
+            Path(results_dir)
+            if results_dir
+            else work_dir.parent / f"{work_dir.name}.verify-results"
+        )
+        written: list[str] = []
+        for suite in suites:
+            written.extend(str(p) for p in rv.write_results(suite, out_dir))
+        result["results_dir"] = str(out_dir)
+        result["results_written"] = len(written)
+        result["suites"] = suites
+        result["verdict"] = (
+            "verified"
+            if bounded_ok and all(s["verdict"] in ("pass", "waived") for s in suites)
+            else "failed"
+        )
+        result["scope"] = (
+            f"staged==built + V1–V5/V11–V13 suite mode={mode} over {[s['origin'] for s in suites]}"
+        )
+    else:
+        result["scope"] = (
+            "staged-bytes==built-bytes + integrity re-validation "
+            "(no --mode → the pre-P35.56 bounded scope; the V1–V14 suite "
+            "needs --mode S|P)"
+        )
+        result["verdict"] = "verified" if bounded_ok else "failed"
+
+    ok = result["verdict"] == "verified"
     if not apply_:
         result["dry_run"] = True
-        result["verdict"] = "verified" if ok else "failed"
         return result
     now = now or _now()
     with acquire_lock(store, "verify", break_lock=break_lock, now=now):
-        name = emit_event(
-            store,
-            "verified" if ok else "failed",
-            pub,
-            {
-                "outcome": "recorded",
-                "validation_state": report.state,
-                "artifacts_checked": checked,
-                "missing": missing,
-                "mismatched": mismatched,
-                "suite_scope": result["scope"],
-            },
-            now=now,
-        )
-        result.update(applied=True, event=name, verdict="verified" if ok else "failed")
+        event_detail: dict[str, Any] = {
+            "outcome": "recorded",
+            "validation_state": report.state,
+            "artifacts_checked": checked,
+            "missing": missing,
+            "mismatched": mismatched,
+            "suite_scope": result["scope"],
+        }
+        if suites:
+            event_detail["suite"] = [
+                {
+                    "mode": s["mode"],
+                    "origin": s["origin"],
+                    "origin_kind": s["origin_kind"],
+                    "verdict": s["verdict"],
+                    "counts": s["counts"],
+                    "waivers": s["waivers"],
+                    "uncovered": s["uncovered"],
+                }
+                for s in suites
+            ]
+        # A P-mode green is NOT the S-mode `verified` lifecycle event —
+        # re-journalling `verified` after `promoted` would fold the §3.4
+        # state machine backwards, so the post-promote green records
+        # `verified-p` (a non-lifecycle kind the fold keeps as history).
+        if not ok:
+            kind = "failed"
+        elif mode == "P":
+            kind = "verified-p"
+        else:
+            kind = "verified"
+        name = emit_event(store, kind, pub, event_detail, now=now)
+        result.update(applied=True, event=name)
     if not ok:
         raise PipelineError(
             "verify-failed",
-            f"{pub} fails the bounded verify — {len(missing)} missing, "
-            f"{len(mismatched)} mismatched, validation={report.state}",
+            f"{pub} fails verify — bounded ok={bounded_ok}, "
+            f"suite verdicts={[(s['origin'], s['verdict']) for s in suites] or 'bounded'}",
             result,
         )
     return result
@@ -1116,11 +1410,34 @@ def run_verb(args: Any) -> dict[str, Any]:
             break_lock=break_lock,
         )
     if verb == "verify":
+        repo_facts: dict[str, Any] = {}
+        raw_facts = getattr(args, "repo_facts", None)
+        if raw_facts:
+            try:
+                repo_facts = json.loads(raw_facts)
+            except ValueError as exc:
+                raise PipelineError("bad-input", f"--repo-facts is not JSON: {exc}") from exc
+        repo_root_arg: str | None = getattr(args, "repo_root", None)
+        if getattr(args, "no_repo_probe", False):
+            repo_root_arg = None
+        elif repo_root_arg is None and not getattr(args, "tree", False):
+            probe = _git_root(Path.cwd())
+            repo_root_arg = str(probe) if probe is not None else None
         return verb_verify(
             store,
             apply_=apply_,
             work_dir=args.work_dir,
             publication_id=getattr(args, "publication", None),
+            mode=getattr(args, "mode", None),
+            origins=tuple(getattr(args, "origin", ()) or ()),
+            origin_headers=tuple(getattr(args, "origin_header", ()) or ()),
+            tree_origin=bool(getattr(args, "tree", False)),
+            results_dir=getattr(args, "results_dir", None),
+            release_class=getattr(args, "release_class", None),
+            waivers=tuple(getattr(args, "waiver", ()) or ()),
+            repo_root=repo_root_arg,
+            pushed=repo_facts.get("pushed"),
+            tree_clean=repo_facts.get("clean"),
             break_lock=break_lock,
         )
     if verb == "classify":
