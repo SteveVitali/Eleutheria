@@ -71,9 +71,27 @@ COPY --from=brotli-build \
      /build/nginx-1.27.5/objs/ngx_http_brotli_filter_module.so \
      /build/nginx-1.27.5/objs/ngx_http_brotli_static_module.so \
      /usr/lib/nginx/modules/
-COPY ops/web/nginx.conf /etc/nginx/nginx.conf
+# P35.54 (REL-03b, ADR-220 D1): ops/web/nginx.conf is now the G3 §4.2
+# envsubst template — rendered at container start from the per-revision
+# env (SIG_LATEST_PUB / SIG_LATEST_LABEL / SIG_CONF_GEN / SIG_STAGING) by
+# 40-sig-conf.sh, which the stock nginx:alpine entrypoint runs before
+# nginx. Both release vars set → the release template renders; neither →
+# the committed legacy config verbatim; exactly one → refuse to start (a
+# half-set revision env is a misconfiguration). The template's include
+# paths carry ${…}, so no `nginx -t` can run at build — the composed
+# stack proves the rendered config.
+# The templates live OUTSIDE /etc/nginx/templates — the stock
+# 20-envsubst-on-templates.sh globs *.template there and would render them
+# with the wrong var list; 40-sig-conf.sh is the only renderer (it pins the
+# five SIG_* names).
+COPY ops/web/nginx.conf /etc/nginx/sig-release.conf.template
+COPY ops/web/sig-headers.conf /etc/nginx/sig-headers.conf.template
+COPY ops/web/nginx-legacy.conf /etc/nginx/sig-legacy.conf
+COPY ops/web/sig-conf-entrypoint.sh /docker-entrypoint.d/40-sig-conf.sh
+RUN chmod 755 /docker-entrypoint.d/40-sig-conf.sh
 
-# Cloud Run provides $PORT; the config listens on 8080. The site root is the
-# gcsfuse-mounted bucket at /mnt/sig-web (ops/gcp/web.sh).
+# Cloud Run provides $PORT; the rendered config listens on 8080. The
+# release bucket mounts at /mnt/rel (the legacy flat layout at
+# /mnt/sig-web until the cutover roll — ops/gcp/web.sh).
 EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]

@@ -2330,7 +2330,67 @@ def build_parser() -> argparse.ArgumentParser:
             help="the p-<sha256> id (default: the tree's lone releases/<pub>/)",
         )
 
-    for _verb in ("classify", "promote", "rollback", "withdraw"):
+    ppro = rsub.add_parser(
+        "promote",
+        help="P35.54 (REL-03b, SIG-REL-006): metadata-only promotion — check "
+        "the approval, write registry/conf/<gen+1>, roll sig-api then "
+        "sig-web by digest (min-instances=1 through the flip), run the "
+        "post-promote checks, journal `promoted`. Copies no release bytes.",
+    )
+    _rel_common(ppro)
+    ppro.add_argument("--publication", required=True, help="the p-<sha256> id")
+    ppro.add_argument(
+        "--approval",
+        default=None,
+        metavar="NAME",
+        help="the approval record object under registry/approvals/ — a "
+        "standing go (Class R) or a signed readout naming this pub "
+        "(Class S). Required for --apply; the verb checks the record the "
+        "operator wrote, it never creates one.",
+    )
+    ppro.add_argument(
+        "--label",
+        default=None,
+        help="the release's sig-YYYY-MM-DD.N (default: the staged "
+        "descriptor/catalog_entry stamp; an arg is validated against it)",
+    )
+    ppro.add_argument(
+        "--class",
+        dest="release_class",
+        default=None,
+        choices=["class_r", "class_s"],
+        help="the promotion class (default: the journal's classified "
+        "event; fail-closed class_s when the journal is silent)",
+    )
+    ppro.add_argument(
+        "--api-image",
+        default=None,
+        help="the digest-pinned sig-api image (<repo>/<image>@sha256:<64>)",
+    )
+    ppro.add_argument(
+        "--web-image",
+        default=None,
+        help="the digest-pinned sig-web image (<repo>/<image>@sha256:<64>)",
+    )
+    ppro.add_argument(
+        "--min-instances",
+        type=int,
+        default=1,
+        help="the sig-web floor through the flip (default 1 — the latest "
+        "view never scales to zero)",
+    )
+    ppro.add_argument("--project", default=None, help="the GCP project (roll legs)")
+    ppro.add_argument("--region", default=None, help="the GCP region (roll legs)")
+    ppro.add_argument(
+        "--execute-rolls",
+        action="store_true",
+        help="run the gcloud service-update legs for real (the operator's "
+        "leg). Absent: the conf generation writes and the roll args are "
+        "recorded `prepared` verbatim — the composed stack flips by "
+        "recreating the service with the new env.",
+    )
+
+    for _verb in ("classify", "rollback", "withdraw"):
         p = rsub.add_parser(_verb, help="declared; the behaviour lands at its owner row")
         _rel_common(p)
         p.add_argument("--publication", required=True, help="the p-<sha256> id")

@@ -112,7 +112,10 @@ def test_nginx_conf_compression_contract() -> None:
 
 def test_nginx_conf_serves_the_gcsfuse_root_with_ranges_and_cache_policy() -> None:
     text = NGINX_CONF.read_text(encoding="utf-8")
-    assert re.search(r"^\s*root\s+/mnt/sig-web;", text, re.M)  # the bucket mount
+    # P35.54: the file is the G3 §4.2 release-layout template — the latest
+    # view roots at the staged v/ tree the per-revision env names; the
+    # legacy /mnt/sig-web root lives in nginx-legacy.conf until cutover.
+    assert re.search(r"^\s*root\s+/mnt/rel/staged/v/\$\{SIG_LATEST_PUB\};", text, re.M)
     assert re.search(r"^\s*listen\s+8080;", text, re.M)  # Cloud Run $PORT
     assert re.search(r"location\s+/tiles/", text)  # the per-compartment archives
     assert re.search(r"location\s+/_astro/", text)
@@ -144,7 +147,14 @@ def test_dockerfile_compiles_brotli_against_the_runtime_nginx() -> None:
     # Both modules land where nginx.conf's load_module lines point.
     assert "ngx_http_brotli_filter_module.so" in text
     assert "ngx_http_brotli_static_module.so" in text
-    assert "COPY ops/web/nginx.conf /etc/nginx/nginx.conf" in text
+    # P35.54: nginx.conf is now the envsubst template — shipped as a
+    # template the custom entrypoint renders (never through the stock
+    # 20-envsubst glob), with the legacy config + headers include +
+    # entrypoint alongside.
+    assert "COPY ops/web/nginx.conf /etc/nginx/sig-release.conf.template" in text
+    assert "COPY ops/web/sig-headers.conf /etc/nginx/sig-headers.conf.template" in text
+    assert "COPY ops/web/nginx-legacy.conf /etc/nginx/sig-legacy.conf" in text
+    assert "COPY ops/web/sig-conf-entrypoint.sh /docker-entrypoint.d/40-sig-conf.sh" in text
 
 
 # --- the deploy path is digest-pinned and reproduces the live shape ------------
