@@ -83,7 +83,8 @@ from typing import Any, cast
 
 from policy.freshness import (
     cadence_rule,
-    freshness_state,
+    freshness_issue_class,
+    freshness_verdict,
     valid_issue_class,
     valid_quarantine_reason,
 )
@@ -179,6 +180,45 @@ TRANSPARENCY_QUERIES: dict[str, tuple[str, str]] = {
         "SELECT predicate_id, volatility_class, half_life_days "
         "FROM vocab_predicate ORDER BY predicate_id",
     ),
+    # P35.41 (K9 §5.2–5.3): the volatility/staleness basis over ALL of a
+    # source's publishable-eligible claims — every predicate, dated and
+    # undated alike (the shaping-predicates-only vote is the bug this kills).
+    # Two read shapes: per-(source, predicate) claim/undated counts for the
+    # distribution, and the deduped latest dated observation per
+    # (source, subject, predicate) PKG-10's dating rule emits for staleness.
+    "freshness_predicates": (
+        "claim",
+        "{EFFECTIVE}SELECT cs.source_id, c.predicate_id, count(*) AS claims,"
+        "       count(*) FILTER (WHERE c.observed_at IS NOT NULL) AS dated"
+        "  FROM claim c"
+        "  JOIN claim_source cs ON cs.claim_id = c.claim_id"
+        "  LEFT JOIN latest_decision ld"
+        "         ON ld.source_id = cs.source_id AND ld.prior_rights_id = c.rights_id"
+        "  JOIN rights_record rr ON rr.rights_id = COALESCE(ld.rights_id, c.rights_id)"
+        " WHERE upper_inf(c.sys_period)"
+        "   AND rr.redistributable = 'yes'"
+        "   AND c.sensitivity_tier = 0"
+        "   AND {PUB_CLAIM_GATE}"
+        " GROUP BY cs.source_id, c.predicate_id"
+        " ORDER BY cs.source_id, c.predicate_id",
+    ),
+    "freshness_observations": (
+        "claim",
+        "{EFFECTIVE}SELECT cs.source_id, c.predicate_id,"
+        "       max(c.observed_at) AS latest_observed_at"
+        "  FROM claim c"
+        "  JOIN claim_source cs ON cs.claim_id = c.claim_id"
+        "  LEFT JOIN latest_decision ld"
+        "         ON ld.source_id = cs.source_id AND ld.prior_rights_id = c.rights_id"
+        "  JOIN rights_record rr ON rr.rights_id = COALESCE(ld.rights_id, c.rights_id)"
+        " WHERE upper_inf(c.sys_period)"
+        "   AND c.observed_at IS NOT NULL"
+        "   AND rr.redistributable = 'yes'"
+        "   AND c.sensitivity_tier = 0"
+        "   AND {PUB_CLAIM_GATE}"
+        " GROUP BY cs.source_id, c.subject_id, c.predicate_id"
+        " ORDER BY cs.source_id, c.predicate_id",
+    ),
 }
 
 #: The emitted ``sig.*`` record field allow-lists — ``explicit_columns``
@@ -231,6 +271,8 @@ CAPTURE_RECORD_FIELDS: tuple[str, ...] = (
     "media_type",
     "retrieved_at",
     "mark_recorded_at",
+    "records_digest",
+    "upstream_declared",
     "classification",
     "storage_tier",
     "tier_basis",
@@ -441,6 +483,20 @@ def _specs() -> tuple[tuple[Any, ...], ...]:
             dtype="datetime",
         ),
         _CS("mark_recorded_at", "when the capture mark was recorded", dtype="datetime"),
+        _CS(
+            "records_digest",
+            "the canonical fingerprint of the capture's extracted record set — "
+            "the digest the ``last upstream change`` fallback and "
+            "``last SIG records change`` diff (P35.41); a byte-only change "
+            "never moves it",
+        ),
+        _CS(
+            "upstream_declared",
+            "the upstream-declared modification metadata verbatim "
+            "(``modified_at``, ``token`` — e.g. a version/etag a publisher "
+            "declares without a date — and ``basis`` naming the declared "
+            "field); ``not_detectable`` basis when the transport carries none",
+        ),
         _CS(
             "classification",
             "the capture's recorded classification",
@@ -1218,15 +1274,15 @@ def source_record(
         },
         "cadence": cadence_block,
         "last_successful_run": _last_successful_run(executions),
-        # The same field names + the same interim basis labels
-        # ``freshness.jsonl`` carries (K9 C-6 — "the same field, not a new
-        # one"): the upstream-declared value and the canonical records
-        # digest land with the connector roll; until then the basis says so.
+        # The same field names + the same basis labels ``freshness.jsonl``
+        # carries (K9 C-6 — "the same field, not a new one"): the
+        # upstream-declared instant with the ``records_digest`` fallback,
+        # and the SIG-records date with J3's interim wording where the
+        # release-slice diff (P36.68) is not yet landed.
         "last_upstream_change": _last_upstream_change(capture_rows),
-        "last_sig_records_change": {
-            "value": "first_release" if published_claims > 0 else "not_published",
-            "basis": "no previous release carries per-source slices (UX9-4/P36.68)",
-        },
+        "last_sig_records_change": _last_sig_records_change(
+            capture_rows, executions, published_claims
+        ),
         "published_claims": published_claims if published_claims > 0 else "not_published",
         "published_sites": published_sites,
         "review": review,
@@ -1639,6 +1695,15 @@ def capture_record(
         "media_type": row.get("media_type"),
         "retrieved_at": _iso(row.get("retrieved_at")),
         "mark_recorded_at": _iso(row.get("mark_recorded_at")),
+        "records_digest": row.get("records_digest"),
+        # The declared value verbatim + its basis (K9 §5.4): the instant the
+        # publisher declared, a version token it declares in place of a
+        # date, or the honest not_detectable marker.
+        "upstream_declared": {
+            "modified_at": _iso(row.get("upstream_modified_at")),
+            "token": row.get("upstream_token"),
+            "basis": str(row.get("upstream_modified_basis") or "not_detectable"),
+        },
         "classification": classification,
         "storage_tier": tier,
         "tier_basis": tier_basis,
@@ -1656,9 +1721,11 @@ def capture_record(
 
 def order_capture_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Sort capture records (source, target, retrieved_at) and compute
-    ``changed_vs_prior`` — the digest-diff signal J3 §3.2 names (a byte-only
-    change still marks ``changed`` until P35.41's records-digest lands; the
-    field's honest basis lives on the freshness row)."""
+    ``changed_vs_prior`` — the K9 §5.4 rule: where both captures carry a
+    ``records_digest``, a *record-set* difference marks ``changed`` and a
+    byte difference alone marks ``formatting change only`` (a byte-only
+    change never moves the record-set diff); where the digest is missing
+    the raw byte digest stands in, labelled by the comparison it is."""
     records.sort(
         key=lambda r: (
             str(r.get("source_id") or ""),
@@ -1667,18 +1734,30 @@ def order_capture_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]
             str(r.get("mark_recorded_at") or ""),
         )
     )
-    prev: dict[tuple[str, str], str | None] = {}
+    prev: dict[tuple[str, str], tuple[str | None, str | None]] = {}
     for r in records:
         key = (str(r.get("source_id") or ""), str(r.get("target") or ""))
         digest = r.get("digest")
+        records_digest = r.get("records_digest")
         if key not in prev:
             r["changed_vs_prior"] = "first"
-        elif digest is None or prev[key] is None:
-            r["changed_vs_prior"] = "not_comparable (no digest)"
         else:
-            r["changed_vs_prior"] = "changed" if str(digest) != prev[key] else "unchanged"
-        if digest is not None:
-            prev[key] = str(digest)
+            prev_rd, prev_digest = prev[key]
+            if records_digest is not None and prev_rd is not None:
+                if str(records_digest) != prev_rd:
+                    r["changed_vs_prior"] = "changed"
+                elif digest is not None and prev_digest is not None and str(digest) != prev_digest:
+                    r["changed_vs_prior"] = "formatting change only"
+                else:
+                    r["changed_vs_prior"] = "unchanged"
+            elif digest is None or prev_digest is None:
+                r["changed_vs_prior"] = "not_comparable (no digest)"
+            else:
+                r["changed_vs_prior"] = "changed" if str(digest) != prev_digest else "unchanged"
+        prev[key] = (
+            str(records_digest) if records_digest is not None else prev.get(key, (None, None))[0],
+            str(digest) if digest is not None else prev.get(key, (None, None))[1],
+        )
     return records
 
 
@@ -1688,42 +1767,216 @@ def order_capture_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]
 # ---------------------------------------------------------------------------
 
 
+def _predicate_meta(
+    rows: Iterable[Sequence[Any]],
+) -> dict[str, tuple[str | None, float | None]]:
+    """``vocab_predicate`` rows → ``{predicate_id: (volatility_class, half_life_days)}``.
+
+    The registry projection the closed sink seeded (P35.14a): the
+    volatility class the K9 §5.2 distribution bins by and the half-life the
+    §5.3 staleness measure ages against.
+    """
+    out: dict[str, tuple[str | None, float | None]] = {}
+    for r in rows:
+        if not r or not r[0]:
+            continue
+        half_life = r[2] if len(r) > 2 else None
+        try:
+            hl = float(half_life) if half_life is not None else None
+        except (TypeError, ValueError):
+            hl = None
+        out[str(r[0])] = (str(r[1]) if len(r) > 1 and r[1] else None, hl)
+    return out
+
+
 def _source_volatility(
-    claims: Iterable[Mapping[str, Any]],
-    predicate_classes: Mapping[str, str],
+    predicate_rows: Iterable[Sequence[Any]],
+    predicate_meta: Mapping[str, tuple[str | None, float | None]],
 ) -> dict[str, dict[str, Any]]:
-    """Per-source volatility basis: the distribution of the source's
-    published-claim predicates by registry class plus the unregistered and
-    undated-observation counts (C-5 — basis fields, never "unknown" or a
-    fake "0 stale"; P35.41 computes the displayed verdict)."""
+    """Per-source volatility basis over ALL published claims (K9 §5.2):
+    the distribution of the source's published-claim predicates by registry
+    volatility class, the dominant class with its half-life for the
+    ``SLOW · 2 y`` chip, and ``unregistered_predicate (n)`` — claims whose
+    predicate the registry does not declare, counted honestly. ``dated`` /
+    ``undated`` carry the §5.3 staleness denominators (undated observations
+    are never "0 stale")."""
     by_source: dict[str, dict[str, Any]] = {}
-    for c in claims:
-        sid = str(_claim_get(c, "source_id") or "")
+    for r in predicate_rows:
+        if not r:
+            continue
+        sid = str(r[0] or "")
         if not sid:
             continue
         entry = by_source.setdefault(
             sid,
-            {"distribution": {}, "unregistered_predicate": 0, "undated": 0, "dated": 0},
+            {
+                "distribution": {},
+                "half_lives": {},
+                "unregistered_predicate": 0,
+                "claims": 0,
+                "dated": 0,
+                "undated": 0,
+            },
         )
-        pred = str(_claim_get(c, "predicate_id") or "")
-        cls = predicate_classes.get(pred)
+        pred = str(r[1] or "")
+        n = int(r[2] or 0)
+        dated = int(r[3] or 0) if len(r) > 3 else 0
+        cls, half_life = predicate_meta.get(pred, (None, None))
         if cls is None:
-            entry["unregistered_predicate"] += 1
+            entry["unregistered_predicate"] += n
         else:
-            entry["distribution"][cls] = entry["distribution"].get(cls, 0) + 1
-        if _claim_get(c, "observed_at"):
-            entry["dated"] += 1
-        else:
-            entry["undated"] += 1
+            entry["distribution"][cls] = entry["distribution"].get(cls, 0) + n
+            if half_life is not None:
+                entry["half_lives"][cls] = half_life
+        entry["claims"] += n
+        entry["dated"] += dated
+        entry["undated"] += n - dated
+    # The dominant class is the most-claimed registry class (ties broken by
+    # class name — deterministic), carrying its registry half-life for the
+    # chip; a source whose predicates are all unregistered carries no
+    # dominant (honest — never an invented class).
+    for entry in by_source.values():
+        dominant_cls = (
+            sorted(entry["distribution"].items(), key=lambda kv: (-kv[1], kv[0]))[0][0]
+            if entry["distribution"]
+            else None
+        )
+        entry["dominant"] = (
+            {"class": dominant_cls, "half_life_days": entry["half_lives"].get(dominant_cls)}
+            if dominant_cls
+            else None
+        )
+    return by_source
+
+
+def _source_staleness(
+    observation_rows: Iterable[Sequence[Any]],
+    predicate_meta: Mapping[str, tuple[str | None, float | None]],
+    *,
+    at: datetime,
+) -> dict[str, dict[str, int]]:
+    """Per-source staleness counts (K9 §5.3): for each deduped latest dated
+    observation per (source, subject, predicate), whether ``observed_at +
+    predicate half-life`` is already past at ``at`` — the registry's own
+    ageing measure, never a flat day threshold (PKG-10 owns the dating rule;
+    this row displays its emission). ``evaluable``/``stale``/``dated_unevaluable``
+    counts land on the freshness row; a dated observation on a predicate the
+    registry does not declare is never silently evaluated."""
+    # ``at`` is the caller's release as-of (often tz-naive); ``_dt`` renders
+    # every observed_at UTC-aware — compare on one clock, never crash on a
+    # naive/aware mix.
+    eval_at = at if at.tzinfo is not None else at.replace(tzinfo=UTC)
+    by_source: dict[str, dict[str, int]] = {}
+    for r in observation_rows:
+        if not r:
+            continue
+        sid = str(r[0] or "")
+        if not sid:
+            continue
+        entry = by_source.setdefault(sid, {"evaluable": 0, "stale": 0, "dated_unevaluable": 0})
+        pred = str(r[1] or "")
+        observed = _dt(r[2]) if len(r) > 2 else None
+        _cls, half_life = predicate_meta.get(pred, (None, None))
+        if observed is None or half_life is None:
+            entry["dated_unevaluable"] += 1
+            continue
+        entry["evaluable"] += 1
+        if (eval_at - observed).total_seconds() > half_life * 86400:
+            entry["stale"] += 1
     return by_source
 
 
 def _last_upstream_change(captures: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
-    """The C-6 'last upstream change' column over a source's capture marks:
-    the latest capture whose digest differs from the prior capture of the
-    same target (J3's interim rule — the upstream-declared value and the
-    canonical ``records_digest`` land with P35.41's connector roll; the
-    basis names the interim)."""
+    """The C-6 / K9 §5.4 'last upstream change' column (SIG-TRANSP-031):
+    the newest upstream-DECLARED changed instant across the source's
+    capture marks — ``editingInfo.lastEditDate``, ``rowsUpdatedAt``,
+    ``metadata_modified``, ``data_last_updated`` or HTTP ``Last-Modified``
+    — labelled with the declared field. Where no mark carries a declared
+    instant, the canonical ``records_digest`` fallback (SIG-detected): the
+    newest flushed mark whose record-set fingerprint differs from the
+    target's prior flushed mark — a byte-only change never moves this date.
+    A transport that declares nothing and holds no digest history renders
+    ``not_detectable``, never a guessed retrieval timestamp."""
+    latest_declared: str | None = None
+    declared_basis: str | None = None
+    token_only = False
+    by_target: dict[str, list[Mapping[str, Any]]] = {}
+    for row in captures:
+        declared_at = _iso(row.get("upstream_modified_at"))
+        if declared_at is not None:
+            if latest_declared is None or declared_at > latest_declared:
+                latest_declared = declared_at
+                declared_basis = str(row.get("upstream_modified_basis") or "") or None
+        elif row.get("upstream_token"):
+            token_only = True
+        key = str(row.get("target_key") or row.get("source_uri") or "")
+        by_target.setdefault(key, []).append(row)
+    if latest_declared is not None:
+        return {
+            "value": latest_declared,
+            "basis": f"{declared_basis or 'upstream-declared'} (declared by the publisher)",
+        }
+    # Records-digest fallback (K9 §5.4 item 2 — detected by SIG): the mark
+    # where a target's canonical record set differed from its prior flush.
+    latest_change: str | None = None
+    any_digest = False
+    for rows in by_target.values():
+        rows = sorted(
+            (r for r in rows if r.get("state") == "flushed"),
+            key=lambda r: str(r.get("mark_recorded_at") or ""),
+        )
+        prev_digest = None
+        for r in rows:
+            digest = r.get("records_digest")
+            if not digest:
+                continue  # a mark without a fingerprint is not comparable — never a reset
+            any_digest = True
+            ts = _iso(r.get("mark_recorded_at"))
+            if prev_digest is not None and str(digest) != prev_digest and ts:
+                if latest_change is None or ts > latest_change:
+                    latest_change = ts
+            prev_digest = str(digest)
+    if latest_change is not None:
+        return {
+            "value": latest_change,
+            "basis": (
+                "records_digest (canonical record-set change detected by SIG — "
+                "byte-only changes never move it)"
+            ),
+        }
+    if token_only and not any_digest:
+        return {
+            "value": None,
+            "basis": "not_detectable (the publisher declares a version marker, never a date)",
+        }
+    if any_digest:
+        return {"value": None, "basis": "records_digest (no record-set change recorded)"}
+    if by_target:
+        return {
+            "value": None,
+            "basis": (
+                "not_detectable (no upstream-declared date or record-set fingerprint recorded)"
+            ),
+        }
+    return {"value": None, "basis": "not_detectable (no captures recorded)"}
+
+
+def _last_sig_records_change(
+    captures: Sequence[Mapping[str, Any]],
+    executions: Sequence[Mapping[str, Any]],
+    published_claims: int,
+) -> dict[str, Any]:
+    """The 'last change in SIG's records' column (K9 §5.4 item 3).
+
+    The canonical basis is the per-source release-slice hash diff — P36.68's
+    (UX9-4) recorded seam; until two releases carry slices, J3's interim
+    wording stands: the latest execution that INSERTED claims, labelled
+    honestly as 'not a content-change measure' (a +0 re-run changed nothing
+    but still records a run). The ``records_digest`` marks refine that
+    interim: the newest flushed mark whose record set differed from its
+    target's prior flush IS a SIG-records change, so it wins when the roll
+    has produced two comparable digests.
+    """
     by_target: dict[str, list[Mapping[str, Any]]] = {}
     for row in captures:
         key = str(row.get("target_key") or row.get("source_uri") or "")
@@ -1731,32 +1984,54 @@ def _last_upstream_change(captures: Sequence[Mapping[str, Any]]) -> dict[str, An
     latest_change: str | None = None
     for rows in by_target.values():
         rows = sorted(
-            rows,
-            key=lambda r: (
-                str(r.get("retrieved_at") or ""),
-                str(r.get("mark_recorded_at") or ""),
-            ),
+            (r for r in rows if r.get("state") == "flushed"),
+            key=lambda r: str(r.get("mark_recorded_at") or ""),
         )
         prev_digest = None
         for r in rows:
-            digest = r.get("mark_digest")
-            ts = _iso(r.get("retrieved_at")) or _iso(r.get("mark_recorded_at"))
-            if prev_digest is not None and digest != prev_digest and ts:
+            digest = r.get("records_digest")
+            if not digest:
+                continue
+            ts = _iso(r.get("mark_recorded_at"))
+            if prev_digest is not None and str(digest) != prev_digest and ts:
                 if latest_change is None or ts > latest_change:
                     latest_change = ts
-            if digest is not None:
-                prev_digest = digest
+            prev_digest = str(digest)
     if latest_change is not None:
         return {
             "value": latest_change,
-            "basis": "capture_digest (interim — a formatting-only byte change may move this date)",
+            "basis": (
+                "records_digest (canonical record-set fingerprint — P36.68's "
+                "release-slice diff lands beside it)"
+            ),
         }
-    if by_target:
+    # J3's recorded interim: the last run that added claims — labelled, as
+    # the slice-diff seam (P36.68) is not yet landed.
+    last_add: str | None = None
+    for e in executions:
+        try:
+            inserted = int(e.get("claims_inserted") or 0)
+        except (TypeError, ValueError):
+            inserted = 0
+        if inserted <= 0:
+            continue
+        ts = _iso(_execution_instant(e))
+        if ts and (last_add is None or ts > last_add):
+            last_add = ts
+    if last_add is not None:
         return {
-            "value": None,
-            "basis": "capture_digest (no digest change recorded — may understate real changes)",
+            "value": last_add,
+            "basis": "last run that added claims — not a content-change measure",
         }
-    return {"value": None, "basis": "not_detectable (no captures recorded)"}
+    if published_claims > 0:
+        return {
+            "value": "first_release",
+            "basis": (
+                "no records_digest history and no claim-adding execution "
+                "recorded (P36.68's release-slice diff pending)"
+            ),
+        }
+    return {"value": "not_published", "basis": "no published claims"}
 
 
 def freshness_records(
@@ -1766,12 +2041,18 @@ def freshness_records(
     capture_rows_by_source: Mapping[str, Sequence[Mapping[str, Any]]],
     claim_counts: Mapping[str, int],
     volatility_by_source: Mapping[str, Mapping[str, Any]],
+    staleness_by_source: Mapping[str, Mapping[str, int]] | None = None,
     cadence_sources: Mapping[str, Mapping[str, str]] | None,
     at: datetime,
 ) -> list[dict[str, Any]]:
     """One ``sig.source-freshness/1`` row per source the spine evidences or
-    the cadence doc declares — the state inputs P35.41's verdict consumes,
-    every value carrying its evaluation time (the release as-of)."""
+    the cadence doc declares — the shared ``freshness_verdict`` evaluated at
+    ``at`` (the release as-of — the release clock, never the reader's), the
+    K9 §5.2–5.5 inputs beside it: the registry-class volatility distribution
+    over ALL published claims, ``stale n of m evaluable`` staleness counts
+    (never "unknown", never a fabricated "0 stale"), and the two change
+    dates — the upstream-declared instant with the ``records_digest``
+    fallback, and the SIG-records date with its interim basis."""
     out: list[dict[str, Any]] = []
     for sid in sorted(set(source_ids)):
         declared = (cadence_sources or {}).get(sid)
@@ -1791,7 +2072,7 @@ def freshness_records(
             }
             for e in executions_by_source.get(sid, [])
         ]
-        state = freshness_state(
+        state = freshness_verdict(
             cadence_cron=declared_fields.get("cron") or None,
             cadence_word=declared_fields.get("cadence", ""),
             scheduled=scheduled,
@@ -1801,6 +2082,40 @@ def freshness_records(
             at=at,
         )
         vol = volatility_by_source.get(sid)
+        staleness_rows = (staleness_by_source or {}).get(sid)
+        # K9 §5.3 — "stale n of m evaluable" when dated observations exist;
+        # "not evaluable" otherwise (undated + dated-but-unevaluable carry
+        # the count — an unevaluable source NEVER prints a stale figure,
+        # the F-137 defect this row exists to kill).
+        staleness: dict[str, Any]
+        if staleness_rows is not None:
+            evaluable = int(staleness_rows.get("evaluable") or 0)
+            not_evaluable = int(staleness_rows.get("dated_unevaluable") or 0) + int(
+                vol.get("undated", 0) if vol else 0
+            )
+            staleness = {
+                "evaluable": evaluable,
+                "not_evaluable": not_evaluable,
+                "basis": (
+                    "observed_at + predicate half-life at evaluated_at (deduped "
+                    "latest dated observation per subject×predicate); undated "
+                    "claims counted as not evaluable"
+                ),
+            }
+            if evaluable > 0:
+                staleness["stale"] = int(staleness_rows.get("stale") or 0)
+        elif vol:
+            staleness = {
+                "evaluable": vol["dated"],
+                "not_evaluable": vol["undated"],
+                "basis": (
+                    "dated/undated published-claim counts (no staleness "
+                    "observation read — the per-observation half-life measure "
+                    "was not served)"
+                ),
+            }
+        else:
+            staleness = {"basis": "not_evaluable (no published claims)"}
         record = {
             "schema": FRESHNESS_RECORD_SCHEMA,
             "source_id": sid,
@@ -1828,28 +2143,22 @@ def freshness_records(
             "run_record_missing": state.run_record_missing,
             "evaluated_at": iso_utc(state.evaluated_at),
             "last_upstream_change": _last_upstream_change(capture_rows_by_source.get(sid, [])),
-            "last_sig_records_change": {
-                "value": "first_release" if claim_counts.get(sid, 0) > 0 else "not_published",
-                "basis": "no previous release carries per-source slices (UX9-4/P36.68)",
-            },
+            "last_sig_records_change": _last_sig_records_change(
+                capture_rows_by_source.get(sid, []),
+                executions_by_source.get(sid, []),
+                claim_counts.get(sid, 0),
+            ),
             "volatility": (
                 {
                     "distribution": vol["distribution"],
+                    "dominant": vol["dominant"],
                     "unregistered_predicate": vol["unregistered_predicate"],
-                    "basis": "predicate_registry over published claims (interim — P35.41 refines)",
+                    "basis": "predicate_registry over all published claims (K9 §5.2)",
                 }
                 if vol
                 else {"basis": "not_evaluable (no published claims)"}
             ),
-            "staleness": (
-                {
-                    "evaluable": vol["dated"],
-                    "not_evaluable": vol["undated"],
-                    "basis": "undated observations are never '0 stale' (C-5/F-137)",
-                }
-                if vol
-                else {"basis": "not_evaluable (no published claims)"}
-            ),
+            "staleness": staleness,
         }
         out.append(explicit_columns(record, FRESHNESS_RECORD_FIELDS))
     return out
@@ -1992,9 +2301,13 @@ def issue_records(
     # recorded scheduler-drift signal (the live comparison is the probe
     # machinery's; this export only carries what the record evidences).
     for row in freshness_rows:
-        state = row.get("freshness_state")
-        if state in {"late", "overdue", "never_run"}:
-            _fire(str(row["source_id"]), str(state), row.get("evaluated_at"), "freshness_state")
+        # The one verdict→issue-class mapping the alerting path shares —
+        # page and ACT-02 can never disagree (SIG-TRANSP-029).
+        issue_cls = freshness_issue_class(
+            row.get("freshness_state") if isinstance(row.get("freshness_state"), str) else None
+        )
+        if issue_cls is not None:
+            _fire(str(row["source_id"]), issue_cls, row.get("evaluated_at"), "freshness_state")
         if (scheduler_drift or {}).get(str(row["source_id"])):
             _fire(
                 str(row["source_id"]),
@@ -2055,9 +2368,47 @@ def emit_transparency_artifacts(
     source_view_rows = _rows(
         raw.get("transparency_sources") or [], TRANSPARENCY_SOURCE_VIEW_COLUMNS
     )
-    predicate_classes = {
-        str(r[0]): str(r[1]) for r in (raw.get("transparency_predicates") or []) if r and r[1]
-    }
+    # P35.41 (K9 §5.2–5.3): the volatility/staleness basis is the
+    # ``freshness_predicates`` + ``freshness_observations`` reads — ALL of a
+    # source's publishable-eligible claims across every predicate, never
+    # only the dated or site-predicate share. A raw map that never served
+    # the reads (the pre-change fixture seam) degrades to the claim rows
+    # the caller passed — the same shape, honestly narrower.
+    predicate_meta = _predicate_meta(raw.get("transparency_predicates") or [])
+    # A missing key AND an empty result both degrade to the caller's claim
+    # rows — an empty read on a spine whose claims are in hand means the
+    # read never served (a pre-P35.41 spine or a guard miss), never that the
+    # source publishes nothing.
+    predicate_rows = raw.get("freshness_predicates")
+    if not predicate_rows:
+        fallback: dict[tuple[str, str], list[int]] = {}
+        for c in claims:
+            sid = str(_claim_get(c, "source_id") or "")
+            pred = str(_claim_get(c, "predicate_id") or "")
+            if not sid or not pred:
+                continue
+            cell = fallback.setdefault((sid, pred), [0, 0])
+            cell[0] += 1
+            cell[1] += 1 if _claim_get(c, "observed_at") else 0
+        predicate_rows = [(sid, pred, n, d) for (sid, pred), (n, d) in fallback.items()]
+    observation_rows = raw.get("freshness_observations")
+    if not observation_rows:
+        # The same dedupe the read performs, over the caller's claim rows:
+        # the latest dated observation per (source, subject, predicate).
+        obs_latest: dict[tuple[str, str, str], Any] = {}
+        for c in claims:
+            sid = str(_claim_get(c, "source_id") or "")
+            pred = str(_claim_get(c, "predicate_id") or "")
+            subj = str(_claim_get(c, "subject_id") or "")
+            observed = _dt(_claim_get(c, "observed_at"))
+            if not sid or not pred or observed is None:
+                continue
+            key = (sid, subj, pred)
+            if key not in obs_latest or observed > obs_latest[key]:
+                obs_latest[key] = observed
+        observation_rows = [
+            (sid, pred, observed) for (sid, _subj, pred), observed in obs_latest.items()
+        ]
 
     cadence_map = cast(
         "Mapping[str, Mapping[str, str]] | None",
@@ -2090,11 +2441,19 @@ def emit_transparency_artifacts(
     for r in capture_rows:
         captures_by_source.setdefault(str(r.get("source_id") or ""), []).append(r)
     claim_counts: dict[str, int] = {}
-    for c in claims:
-        sid = str(_claim_get(c, "source_id") or "")
+    # The published-claim count is the all-predicate read's total — a source
+    # whose claims are all non-site predicates is counted, never invisible
+    # (the K-3 shaping-predicate bias). The fallback rows the claim list
+    # produced carry the same shape, so the count never forks.
+    for r in predicate_rows:
+        sid = str(r[0] or "")
         if sid:
-            claim_counts[sid] = claim_counts.get(sid, 0) + 1
-    vol = _source_volatility(claims, predicate_classes)
+            claim_counts[sid] = claim_counts.get(sid, 0) + int(r[2] or 0)
+    vol = _source_volatility(predicate_rows, predicate_meta)
+    # observation_rows is always populated by now — the read's rows or the
+    # same dedupe over the caller's claims — so the staleness counts always
+    # carry a basis.
+    staleness = _source_staleness(observation_rows, predicate_meta, at=at)
 
     source_ids = (
         set(executions_by_source)
@@ -2109,6 +2468,7 @@ def emit_transparency_artifacts(
         capture_rows_by_source=captures_by_source,
         claim_counts=claim_counts,
         volatility_by_source=vol,
+        staleness_by_source=staleness,
         cadence_sources=cadence_map,
         at=at,
     )

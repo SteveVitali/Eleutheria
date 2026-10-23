@@ -245,6 +245,17 @@ class CaptureRef:
     #: bytes — the occurrence stays attributed to its acquisition run while the
     #: replay asserts its own claims (P32.2).
     original_run_id: str | None = None
+    #: P35.41 / SIG-TRANSP-031: the upstream's own declared change value for
+    #: these bytes — the publisher-asserted instant (``editingInfo``,
+    #: ``rowsUpdatedAt``, ``Last-Modified``, a payload-declared field), or an
+    #: opaque version token (``ETag``) where the publisher declares only a
+    #: version. All three ``None`` = the transport exposed nothing; the
+    #: release surface renders that ``not_detectable`` and never substitutes
+    #: the retrieval clock. Never part of the content address — declared
+    #: metadata, not content.
+    upstream_modified_at: str | None = None
+    upstream_token: str | None = None
+    upstream_modified_basis: str | None = None
 
     def canonical(self) -> dict[str, Any]:
         # ``retrieved_at`` is retrieval metadata, deliberately excluded from the
@@ -423,6 +434,16 @@ class CaptureLedger(Protocol):
         records: int | None = None,
         ocfl_object_id: str | None = None,
         ocfl_version: str | None = None,
+        # P35.41 / SIG-TRANSP-031: the flushed mark may also carry the digest
+        # of the record set it emitted (``records_digest`` — K9 §5.4, the SIG
+        # record-change signal) and the upstream's own declared change value
+        # (``upstream_modified_at`` instant / ``upstream_token`` version
+        # marker + the declared ``upstream_modified_basis`` field it came
+        # from). All optional — a transport that exposes nothing marks none.
+        records_digest: str | None = None,
+        upstream_modified_at: str | None = None,
+        upstream_token: str | None = None,
+        upstream_modified_basis: str | None = None,
     ) -> Any: ...
 
 

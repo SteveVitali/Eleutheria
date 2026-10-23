@@ -51,5 +51,6 @@
 | P35.24 | queued hosted legs: `sig-db subject-rekey --dsn <hosted> --apply` (append-only; count re-derived) + `/status/` basis notice (S6 A-20) + collision artifact | `implement-spec spec=docs/tickets/303_P35.24__truthful-subject-keys-and-re-keying.md live_verification=true` · row 303 landed (PR #318) |
 | P35.25 | L1 merge · L2 `lineage-rematerialize --apply` + `/status/` notice (A-20) · L3 every-claim `id_namespace` | nothing until the re-run; rollback forward-only |
 | P35.26 | L1 merge · L2 EFF+OSM role-aware re-ingest (OSM in-ODbL; pre-state counts) · L3 edge rematerialize — 1970 at zero | `implement-spec spec=docs/tickets/305_P35.26__roles-and-time-backend.md live_verification=true` · row 305 landed (PR #320) |
+| P35.41 | the connector-image roll: rebuild + redeploy the connector image carrying `records_digest`, the upstream-declared marks, and the capture-mark headers | `implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` · row 320 landed (PR #338) |
 
 ← back: CURRENT.md

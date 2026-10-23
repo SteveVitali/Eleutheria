@@ -207,7 +207,9 @@ export const CORRECTIONS: CorrectionEntry[] = [
  * P35.20b (ED-43, GQ-15): freshness rows carry `staleness_not_evaluable` and a
  * DECLARED §28.3 volatility class — "not_evaluable" where no class is declared
  * (a non-site evidence source still gets a row, never an absent one), never a
- * fabricated "ok / stale 0".
+ * fabricated "ok / stale 0". P35.41 adds the release-time `evaluated_at`, the
+ * "of m evaluable" denominator, the undated share and the §5.2 distribution
+ * basis — counts, never "unknown".
  */
 export const FRESHNESS_ROWS: FreshnessRow[] = [
   {
@@ -218,6 +220,11 @@ export const FRESHNESS_ROWS: FreshnessRow[] = [
     stale_entity_count: 2,
     staleness_not_evaluable: 0,
     volatility_class: "SLOW",
+    evaluated_at: "2026-08-21",
+    staleness_evaluable_count: 41,
+    undated_count: 0,
+    volatility_distribution: { SLOW: 41 },
+    unregistered_predicate_count: 0,
   },
   {
     source: "Eyes on Flock portal aggregator",
@@ -227,6 +234,11 @@ export const FRESHNESS_ROWS: FreshnessRow[] = [
     stale_entity_count: 3,
     staleness_not_evaluable: 1,
     volatility_class: "FAST",
+    evaluated_at: "2026-08-21",
+    staleness_evaluable_count: 58,
+    undated_count: 7,
+    volatility_distribution: { FAST: 52, MODERATE: 13 },
+    unregistered_predicate_count: 1,
   },
   {
     source: "Executed procurement contract (public records request)",
@@ -236,6 +248,11 @@ export const FRESHNESS_ROWS: FreshnessRow[] = [
     stale_entity_count: 0,
     staleness_not_evaluable: 4,
     volatility_class: "not_evaluable",
+    evaluated_at: "2026-08-21",
+    staleness_evaluable_count: 0,
+    undated_count: 2,
+    volatility_distribution: {},
+    unregistered_predicate_count: 6,
   },
   {
     source: "Oklahoma City Council minutes",
@@ -245,6 +262,11 @@ export const FRESHNESS_ROWS: FreshnessRow[] = [
     stale_entity_count: 0,
     staleness_not_evaluable: 6,
     volatility_class: "not_evaluable",
+    evaluated_at: "2026-08-21",
+    staleness_evaluable_count: 0,
+    undated_count: 11,
+    volatility_distribution: {},
+    unregistered_predicate_count: 9,
   },
 ];
 

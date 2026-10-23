@@ -1,23 +1,30 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
-"""The shared cadence + freshness-state machinery (P35.33 / J3 §4.6, K9 §5.1 +
-§10 C-4…C-7) and the auto-detected issue vocabulary (J3 §7.3).
+"""The shared cadence + freshness-verdict machinery (P35.33 / J3 §4.6,
+P35.41 / K9 §5.1 + §10 C-4…C-7) and the auto-detected issue vocabulary
+(J3 §7.3).
 
-This module holds **one pure function** so the export, the status lane and
-ACT-02's alerting can never disagree about a source's freshness: the same
-``freshness_state`` call is evaluated at the release as-of on release pages
-and at status time on status pages (K9 C-4 — a release-bound artifact never
-carries a reader-current-time value; what ships here is the *cadence rule*,
-never a "next run" timestamp).
+This module holds **one pure function** —
+``freshness_verdict(cadence, executions, at)`` — so the export, the status
+lane and ACT-02's alerting can never disagree about a source's freshness:
+the same call is evaluated at the release as-of on release pages and at
+status time on status pages (K9 C-4 — a release-bound artifact never
+carries a reader-current-time value; what ships on release artifacts is
+the *cadence rule* and the observed cadence, never a "next run" day —
+``next_cron_fire`` exists for the status lane only, and release-bound
+emitters never call it).
 
-``freshness_state`` emits the **state** the verdict consumes — the closed
-vocabulary ``on_time · late · overdue · never_run · not_scheduled ·
-last_run_failed`` plus the C-7 additions ``one_time_load`` and the
-``run_record_missing`` flag (a source with published records but no execution
-record — never a fabricated run). The full verdict function's refinements
-(volatility, staleness, the two change dates) are P35.41's (UX9-2); this row
-lands the shared cadence + state inputs.
+The verdict's closed vocabulary is ``on_time · late · overdue ·
+never_run · not_scheduled · last_run_failed · one_time_load ·
+not_applicable`` (K9 §5.1 + C-7); a silent success (a completed execution
+emitting zero records, SIG-ENG-021) is an **issue and a flag**, never a
+verdict — :func:`freshness_issue_class` is the one mapping the exporter's
+issue rows and the alerting path share, so page and alert can never
+disagree. ``run_record_missing`` is the C-7 flag (published records exist
+but no execution record — never a fabricated run). ``freshness_state`` is
+the pre-P35.41 public name, kept as a delegating alias — one
+implementation, never a dual-run semantics.
 """
 
 from __future__ import annotations
@@ -25,7 +32,7 @@ from __future__ import annotations
 import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from typing import Any
 
 #: The closed freshness-state vocabulary (J3 §4.6 item 2 + K9 §5.1 + C-7).
@@ -105,21 +112,31 @@ def valid_quarantine_reason(reason: str) -> bool:
 
 
 @dataclass(frozen=True)
-class FreshnessState:
-    """The state one ``freshness_state`` call emits — the inputs P35.41's
-    verdict and ACT-02's alerting consume.
+class FreshnessVerdict:
+    """The verdict one ``freshness_verdict`` call emits — what the export,
+    the status lane and ACT-02's alerting consume (SIG-TRANSP-029).
 
     ``state`` is one of :data:`FRESHNESS_STATES` (or ``None`` when the
     cadence basis is unrecorded — honest absence, never a guessed state).
     ``run_record_missing`` is the C-7 flag: published records exist but no
-    execution record does. ``evaluated_at`` is the instant the state was
+    execution record does. ``evaluated_at`` is the instant the verdict was
     evaluated against — every emitted freshness value carries its
-    evaluation time (SIG-TRANSP-D29's one-function rule).
+    evaluation time (SIG-TRANSP-029/034's one-function, two-clocks rule).
+    ``next_scheduled_day`` is populated ONLY when the caller passes
+    ``include_next_fire=True`` — the status lane's status-time value
+    (K9 §5.5); release-bound emitters never request it, so no release
+    artifact can carry a reader-clock value.
     """
 
     state: str | None
     run_record_missing: bool
     evaluated_at: datetime
+    next_scheduled_day: date | None = None
+
+
+#: The pre-P35.41 public name — kept as an alias so callers migrate, never
+#: duplicate (the verdict is one implementation; "replaced, not dual-run").
+FreshnessState = FreshnessVerdict
 
 
 # ---------------------------------------------------------------------------
@@ -308,12 +325,76 @@ def previous_cron_fire(cron: str, at: datetime) -> datetime | None:
     return best
 
 
+def next_cron_fire(cron: str, at: datetime) -> datetime | None:
+    """The first instant the cron fires strictly after ``at`` — or ``None``.
+
+    **Status lane only (K9 §5.5, SIG-TRANSP-034):** this is a reader-clock
+    value — it answers "when does the schedule next fire *from the status
+    instant*" and must never land on a release-bound artifact, where the
+    same question would silently read as a promise. Release artifacts ship
+    the cadence *rule* (:func:`cadence_rule`) and the observed cadence,
+    never the next fire.
+    """
+    fields = cron_fields(cron)
+    if fields is None:
+        return None
+    minute, hour, dom, month, dow = fields
+    at = at.astimezone(UTC)
+    dom_all, dow_all = len(dom) == 31, len(dow) == 7
+    day = at.date()
+    for forward in range(0, 731):
+        d = day + timedelta(days=forward)
+        if d.month not in month:
+            continue
+        dom_hit = d.day in dom
+        dow_hit = ((d.weekday() + 1) % 7) in dow
+        match = (
+            (dom_hit or dow_hit)
+            if not (dom_all or dow_all)
+            else ((dom_hit or dom_all) and (dow_hit or dow_all))
+        )
+        if not match:
+            continue
+        for h in sorted(hour):
+            for m in sorted(minute):
+                fire = datetime(d.year, d.month, d.day, h, m, tzinfo=UTC)
+                if fire > at:
+                    return fire
+    return None
+
+
+#: The verdict → public issue-class mapping (J3 §7.3's freshness classes).
+#: ``last_run_failed`` is a verdict but not a named issue class — a failed
+#: run already surfaces through the run-record classes (error_class /
+#: upstream_http_*); the cadence-derived classes are the ones whose only
+#: evidence IS the verdict. The exporter's issue rows and ACT-02's alerting
+#: both consult this one mapping — page and alert can never disagree.
+_FRESHNESS_ISSUE_CLASSES: dict[str, str] = {
+    "late": "late",
+    "overdue": "overdue",
+    "never_run": "never_run",
+}
+
+
+def freshness_issue_class(state: str | None) -> str | None:
+    """The J3 §7.3 issue class a verdict state evidences, or ``None``.
+
+    The single mapping shared by the export's issue emission and the
+    alerting path: a state outside the mapped set (``on_time``,
+    ``last_run_failed``, the static classes, an unevidenced ``None``)
+    raises no freshness issue — the run-record classes name the rest.
+    """
+    if state is None:
+        return None
+    return _FRESHNESS_ISSUE_CLASSES.get(state)
+
+
 # ---------------------------------------------------------------------------
-# The freshness-state function (one shared function — J3 §4.6 item 2, C-7)
+# The freshness verdict (one shared function — J3 §4.6 item 2, K9 §5.1, C-7)
 # ---------------------------------------------------------------------------
 
 
-def freshness_state(
+def freshness_verdict(
     *,
     cadence_cron: str | None,
     cadence_word: str = "",
@@ -323,15 +404,19 @@ def freshness_state(
     has_records: bool = False,
     executions: Sequence[Mapping[str, Any]] = (),
     at: datetime,
-) -> FreshnessState:
-    """Compute the freshness state — one pure function shared by the export,
-    the status lane and ACT-02 alerting (J3 §4.6; K9 §5.1 + C-7).
+    include_next_fire: bool = False,
+) -> FreshnessVerdict:
+    """Compute the freshness verdict — one pure function shared by the
+    export, the status lane and ACT-02 alerting (SIG-TRANSP-029; J3 §4.6;
+    K9 §5.1 + C-7).
 
     ``executions`` are the source's execution rows newest-first or any order
     — each mapping carries ``finished_at`` (datetime|None) and ``status``
     (the completion vocabulary; ``None`` = no completion recorded, treated
     as not-successful). ``at`` is the evaluation instant (the release as-of
-    on release artifacts — never the reader's now).
+    on release artifacts — never the reader's now). ``include_next_fire``
+    asks for ``next_scheduled_day`` — the status lane's status-time
+    disclosure (K9 §5.5); release-bound emitters never set it.
 
     Precedence (K9 §5.1's table, documented): static classes
     (``not_scheduled``/``one_time_load``/``not_applicable``) → ``never_run``
@@ -341,8 +426,17 @@ def freshness_state(
     at = at if at.tzinfo is not None else at.replace(tzinfo=UTC)
     run_record_missing = bool(has_records) and not executions
 
-    def done(state: str | None) -> FreshnessState:
-        return FreshnessState(state=state, run_record_missing=run_record_missing, evaluated_at=at)
+    def done(state: str | None) -> FreshnessVerdict:
+        nxt = None
+        if include_next_fire and cadence_cron:
+            fire = next_cron_fire(cadence_cron, at)
+            nxt = fire.date() if fire is not None else None
+        return FreshnessVerdict(
+            state=state,
+            run_record_missing=run_record_missing,
+            evaluated_at=at,
+            next_scheduled_day=nxt,
+        )
 
     if not applicable:
         return done("not_applicable")
@@ -385,3 +479,13 @@ def freshness_state(
     if at - last_success_at > interval + interval / 2:
         return done("late")
     return done("on_time")
+
+
+def freshness_state(**kwargs: Any) -> FreshnessVerdict:
+    """The pre-P35.41 public name — delegates to :func:`freshness_verdict`.
+
+    One implementation, never a dual-run semantics (the "replaced, not
+    dual-run" rule): existing callers keep their signature; the verdict
+    contract is :func:`freshness_verdict`'s.
+    """
+    return freshness_verdict(**kwargs)

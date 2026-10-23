@@ -1026,3 +1026,21 @@ rerun_cell = '''`implement-spec spec=docs/tickets/305_P35.26__roles-and-time-bac
   go = '''pre-authorised: the GATE-G4 §4 list names P35.26 verbatim (2026-10-09T17:32Z; expires at the next sub-round GATE, OM-10)'''
   rerun = '''implement-spec spec=docs/tickets/305_P35.26__roles-and-time-backend.md live_verification=true'''
   live_dependants = ["P35.27"]
+
+[[row]]
+key = "P35.41"
+kind = "leg"
+obligations = []
+obligations_cell = '''the connector-image roll: rebuild + redeploy the connector image carrying `records_digest`, the upstream-declared marks, and the capture-mark headers'''
+gates_cell = '''QUEUED (OM-19 — deferred ~21Z, past the AR-3 preferred slot, under the session's external merge-cascade dispatch hold recorded in the 2026-10-20 15:53Z digest); OM-20 — the GATE-G4 §4 list names P35.41 verbatim (2026-10-09T17:32Z; expires at the next sub-round GATE, OM-10); AR-3 + AR-2 — preferred 14:00–20:00Z weekdays, never 03:00–06:30Z; the roll machinery + field recording are idempotent'''
+operator_cell = '''nothing until the re-run; the roll redeploys already-permitted connectors inside existing ingestion permission'''
+rerun_cell = '''`implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` · row 320 landed (PR #338)'''
+
+  [[row.legs]]
+  id = "P35.41-freshness-live"
+  obligations = []
+  earliest = '''the next AR-3 slot after the run's ~21Z close (preferred 14:00–20:00Z weekdays) with the AR-2 restore point first'''
+  excluded = ["03:00–06:30Z"]
+  go = '''pre-authorised: the GATE-G4 §4 list names P35.41 verbatim (2026-10-09T17:32Z; expires at the next sub-round GATE, OM-10)'''
+  rerun = '''implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true'''
+  live_dependants = []

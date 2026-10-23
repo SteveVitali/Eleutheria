@@ -9,12 +9,12 @@
 
 <!-- Values only (BM-LEDGER-02/08): one line per key ≤ 256 B; the generated `returnPass:` id list rides the B3 V2 bound (fail > 512 B); no history — PHASE LOG + git carry it. -->
 ```
-projectStatus:   IN_PROGRESS                           # P35.40 landed (319); no live leg
-nextTicket:      P35.41                              # row 320
-lastCompleted:   P35.40                              # row 319
-blockedOn:       (nothing)                           # #299 merged; #337@c965d6fb 5/5 stack-wide
+projectStatus:   IN_PROGRESS                           # P35.41 landed (320); live leg QUEUED
+nextTicket:      P35.42                              # row 321
+lastCompleted:   P35.41                              # row 320
+blockedOn:       (nothing)                           # #338@5981716 CI 5/5 green
 pauseRequested:  false
-returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.57,P35.67,P36.12
+returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.57,P35.67,P36.12
 manifest:        docs/tickets/00_MANIFEST.md
 canonicalSpec:   docs/2_canonical_design_spec.md
 memoryRoot:      docs/build
@@ -22,13 +22,13 @@ dispatchTarget:  subagent
 buildWorktree:   /Users/stevenvitali/Eleutheria # operator checkout
 buildBranchBase: devin/p33-8-agent-docs-refresh     # R11 stacks on #190
 pinnedBaseSha:   b051732c
-chainTip:        r11/P35.40-source-universe-lifecycle-and-counts # base r11/P35.39-…
+chainTip:        r11/P35.41-freshness-semantics-v2 # base r11/P35.40-…
 benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a
 mergePolicy:     OPERATOR                           # agents never merge
 round:           11
-harness:         devin-desktop/claude-opus-5-5-high/orchestrator # temporary; swe-2-high before P35.41
-updatedAt:       2026-10-20T20:20Z
+harness:         devin-desktop/swe-2-high/subagent  # restored 20:55Z after the Opus repair interval (STACK-CARRY-1)
+updatedAt:       2026-10-21T00:10Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -434,6 +434,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | P35.24 | queued hosted legs: `sig-db subject-rekey --dsn <hosted> --apply` (append-only; count re-derived) + `/status/` basis notice (S6 A-20) + collision artifact | hosted write — QUEUED, not run (`live_verification=false`); OM-20 — the GATE-G4 §4 list names P35.24 verbatim (2026-10-09T17:32Z; expires at the next GATE); INSERTs + sys_period close; AR-3/AR-2 outside the AR-3 freeze | nothing until the live re-run — plan is the default; `--apply` in-window; rollback forward-only | `implement-spec spec=docs/tickets/303_P35.24__truthful-subject-keys-and-re-keying.md live_verification=true` · row 303 landed (PR #318) |
 | P35.25 | L1 merge · L2 `lineage-rematerialize --apply` + `/status/` notice (A-20) · L3 every-claim `id_namespace`|undeclared | QUEUED (`live_verification=false`); OM-20 — the GATE-G4 §4 list names P35.25 verbatim (2026-10-09T17:32Z; expires at the next GATE); INSERT-only; AR-3 + AR-2, excluded AR-3 freeze | nothing until the re-run; rollback forward-only | `implement-spec spec=docs/tickets/304_P35.25__declared-lineage-namespaces-independence.md live_verification=true` · row 304 |
 | P35.26 | L1 merge · L2 EFF+OSM role-aware re-ingest (OSM in-ODbL; pre-state counts) · L3 edge rematerialize — 1970 at zero | QUEUED (`live_verification=false`); OM-20 — the GATE-G4 §4 list names P35.26 verbatim (2026-10-09T17:32Z; expires at the next sub-round GATE, OM-10); AR-3 + AR-2, excl. AR-3 freeze | nothing until the re-run; rollback forward-only | `implement-spec spec=docs/tickets/305_P35.26__roles-and-time-backend.md live_verification=true` · row 305 landed (PR #320) |
+| P35.41 | the connector-image roll: rebuild + redeploy the connector image carrying `records_digest`, the upstream-declared marks, and the capture-mark headers | QUEUED (OM-19 — deferred ~21Z, past the AR-3 preferred slot, under the session's external merge-cascade dispatch hold recorded in the 2026-10-20 15:53Z digest); OM-20 — the GATE-G4 §4 list names P35.41 verbatim (2026-10-09T17:32Z; expires at the next sub-round GATE, OM-10); AR-3 + AR-2 — preferred 14:00–20:00Z weekdays, never 03:00–06:30Z; the roll machinery + field recording are idempotent | nothing until the re-run; the roll redeploys already-permitted connectors inside existing ingestion permission | `implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` · row 320 landed (PR #338) |
 
 Sources: OPERATIONAL_READINESS.md §(f3) (sha256 `581fcb5558ca…`, @ `45dcc789`) — blocking domains + packets; `UNIVERSE_DISPOSED.csv` (sha256 `7af12151e419…`) + plan §9.2/§8.6 — dispositions; `data/round11_plan.csv` — gates + order. Not RETURN PASS rows (one other home, §9.2): the 9 `ticket`-disposed rows (e.g. D-R10-MEMORY-1 → P34.30, D-P32.16-1 → P37.59), the 9 `later-phase` rows (LATER-01/02/03/04/06/17; LATER-10 became P37.70 at S6), the 7 `decision` rows (GATE-P), the 2 `already-done` (D-P21.3-2, D-SOURCES.12-1) — SEED-14 records the DEFERRALS re-homing. *Agent interpretation:* B3 keys by the `live-return-pass(<ticket>)` ticket — keys are landed R10 tickets (§8.6: 183→P35.61, 188→P35.62, 191→P35.63, 179–182→P37.16, D-P21.5-1→P37.55, D-P31.4-1→P34.39a); a key is never re-dispatched — the leg runs as the named R11 row (chain order or OM-19 leg).
 
@@ -1128,3 +1129,7 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-20 — P35.40 post-closeout record — `ci: pass #337@6ed027db` 5/5 head-bound (run 39444369716: python 20m43s, web 15m57s, composed 3m6s, docs 1m29s, security 29s; `reports/ci/p35_40_pr337.json` read 15:23:09Z — stack pass except waived `blockedOn: CI fail on #299@19ed46d (docs)`) · heads verbatim `d0156f84` → `596dac9a` → `153ded67` (last-3 compaction, declared) → `db6fe9e3` (docs-red 39442980504 live-claim lint) → `6ed027db` repair · PR #337 open · chainTip → r11/P35.40-… · next → P35.41 (320) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-20 — P35.40 orchestrator repair — #307→#337 stack reconciliation (operator-directed carry of `172c9dab`; #293/P34.42a rows verbatim first; OP-25 not triggered) + ADR-218 `a0270540` · `ci: pass #337@c965d6f` stack-wide · #295…#314 merged to `main`, #299 waiver expired, `blockedOn` clears · detail: OPEN FINDINGS STACK-CARRY-1, RELAND-AUDIT-1, CARRY-MERGE-1 · no production mutation · next → P35.41 (320) · harness: devin-desktop/claude-opus-5-5-high/orchestrator
 - 2026-10-20 — P35.40 harness-switch — devin-desktop/swe-2-high/subagent → devin-desktop/claude-opus-5-5-high/orchestrator (temporary, by the operator) · commits it wrote that carry the swe-2-high trailer: STACK-CARRY-1 · swe-2-high resumes before P35.41 · harness: devin-desktop/claude-opus-5-5-high/orchestrator
+- 2026-10-20 — P35.41 harness-switch — devin-desktop/claude-opus-5-5-high/orchestrator → devin-desktop/swe-2-high/subagent · operator's words: "switched back to SWE-2 High. Proceed with resumed orchestrate-build drive" · restart probe PASS (`reports/isolation/dispatch-P35.41.md`; control echoed, nonce absent, start 20:54:37Z > record 20:54:30Z) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-20 — P35.41 dispatch boundary-confirm — `ci: pass #337@2d85a16` 5/5 head-bound (run 39491858342; `logs/ci-P35.41-pre-dispatch.json`) · stack pass, no waived red · dispatching P35.41 (320 — freshness semantics v2; deps P35.33+P35.32+P35.20b+P35.34; OM-20 connector roll listed in GATE-G4 §4 → in-ticket pre-authorised, expires GATE-G5) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-20 — P35.41 ticket — `ci: pass #338@3f0646b` 5/5 head-bound (run 39510251505; `reports/ci/p35_41_pr338.json` — stack pass) · row 320 — shared `freshness_verdict` + `evaluated_at`, registry-wide volatility, honest n-of-m staleness, two change dates, cadence disclosure · SIG-TRANSP-007/029/030/031 + 034 release-side MET · detail `runs/P35.41.md` · heads `aa201318`→`32609c5f`→`3f0646b7` · live leg QUEUED `P35.41-freshness-live` (GATE-G4 §4 names P35.41 verbatim; OM-19) · no production mutation · chainTip → r11/P35.41-… · next → P35.42 (321) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-21 — P35.41 post-closeout record — `ci: pass #338@5981716` 5/5 head-bound (run 39516219404: python 31m9s, web 14m55s, composed 3m7s, docs 1m36s, security 33s; boundary re-read 2026-10-21T00:08:42Z `reports/ci/p35_41_pr338.json` — stack pass, no waived red) · heads verbatim `runs/P35.41.md` (`aa201318` impl → `32609c5f` vite lock bump → `3f0646b7` CHANGELOG → `59817162` closeout records) · PR #338 stays open on the stack for operator integration · no production mutation — live leg QUEUED `P35.41-freshness-live` (OM-19) · chainTip → r11/P35.41-… · next → P35.42 (321) · harness: devin-desktop/swe-2-high/subagent

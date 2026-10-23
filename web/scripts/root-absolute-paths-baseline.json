@@ -179,8 +179,8 @@
     {
       "file": "src/pages/data-freshness/[...sort].astro",
       "token": "/$",
-      "count": 2,
-      "reason": "P35.37: freshness figure pointers (\"/<i>/staleness_not_evaluable\", \"/<i>/stale_entity_count\") — JSON pointers into web/freshness.json, not links"
+      "count": 4,
+      "reason": "P35.37: freshness figure pointers (\"/<i>/staleness_not_evaluable\", \"/<i>/stale_entity_count\", \"/<i>/undated_count\", \"/<i>/staleness_evaluable_count\" — the latter two P35.41) — JSON pointers into web/freshness.json, not links"
     },
     {
       "file": "src/pages/index.astro",

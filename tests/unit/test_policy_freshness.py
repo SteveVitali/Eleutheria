@@ -11,7 +11,7 @@ never disagree.
 
 from __future__ import annotations
 
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 
 import pytest
 from policy.freshness import (
@@ -22,6 +22,7 @@ from policy.freshness import (
     cadence_rule,
     cron_fields,
     freshness_state,
+    freshness_verdict,
     previous_cron_fire,
     valid_issue_class,
     valid_quarantine_reason,
@@ -177,6 +178,52 @@ def test_state_stays_in_the_closed_vocabulary():
         ).state,
     }
     assert states <= set(FRESHNESS_STATES)
+
+
+# --- the P35.41 verdict contract (SIG-TRANSP-029, K9 C-4/§5.5) ------------
+
+
+def test_every_verdict_carries_its_evaluation_instant():
+    # K9 C-4's two-clocks rule: the verdict the exporter asked for at the
+    # release as-of SAYS it was evaluated then — never the reader's clock.
+    at = datetime(2026, 8, 1, tzinfo=UTC)
+    st = freshness_state(cadence_cron="0 5 6 * *", scheduled=True, at=at)
+    assert st.evaluated_at == at
+    st2 = freshness_state(cadence_cron=None, scheduled=False, at=AT)
+    assert st2.evaluated_at == AT
+    # A naive instant is treated as UTC, never local time.
+    naive = datetime(2026, 8, 1)
+    st3 = freshness_state(cadence_cron=None, scheduled=False, at=naive)
+    assert st3.evaluated_at.tzinfo is not None
+
+
+def test_next_fire_is_status_lane_only():
+    # K9 §5.5 / SIG-TRANSP-034: ``next_scheduled_day`` is a reader-clock
+    # value — populated only when the caller asks (the status lane); a
+    # release-bound call never carries it.
+    monthly = {"cadence_cron": "0 5 6 * *", "cadence_word": "monthly", "scheduled": True}
+    st = freshness_state(**monthly, executions=[_ok_run(AT)], at=AT)
+    assert st.next_scheduled_day is None
+    st_status = freshness_verdict(
+        **monthly, executions=[_ok_run(AT)], at=AT, include_next_fire=True
+    )
+    assert st_status.next_scheduled_day == date(2026, 11, 6)
+
+
+def test_freshness_state_alias_is_the_verdict_never_a_dual_run():
+    monthly = {"cadence_cron": "0 5 6 * *", "cadence_word": "monthly", "scheduled": True}
+    args = {"executions": [_ok_run(AT)], "at": AT}
+    assert freshness_state(**monthly, **args) == freshness_verdict(**monthly, **args)
+
+
+def test_verdict_is_one_pure_function_shared_by_exporter_status_and_alerts():
+    # The same call at the same instant yields the same verdict — the page
+    # and the alert can never disagree because there is one implementation.
+    monthly = {"cadence_cron": "0 5 6 * *", "cadence_word": "monthly", "scheduled": True}
+    executions = [_ok_run(AT - timedelta(days=80))]
+    a = freshness_verdict(**monthly, executions=executions, at=AT)
+    b = freshness_verdict(**monthly, executions=executions, at=AT)
+    assert a == b
 
 
 # --- the closed issue vocabulary (J3 §7.3) -------------------------------

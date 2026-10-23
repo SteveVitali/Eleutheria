@@ -897,6 +897,17 @@ class FetchRecord:
     #: S-6 lane rules; this record is internal and keeps the raw URL (as
     #: ``urls`` always has).
     per_fetch: list[Mapping[str, Any]] = field(default_factory=list)
+    #: P35.41 / SIG-TRANSP-031: the order-independent fingerprint over every
+    #: per-capture ``records_digest`` this execution flushed — the run-level
+    #: "SIG records changed" signal, honest even on a bounded-memory run whose
+    #: ``claims`` list retains only outcome rows.
+    records_digest: str | None = None
+    #: P35.41 / SIG-TRANSP-031: per-capture upstream-declared change values —
+    #: ``{capture_digest, upstream_modified_at, upstream_token,
+    #: upstream_modified_basis}`` for each capture whose transport declared a
+    #: value; a capture absent here declared nothing (``not_detectable``),
+    #: never an inferred retrieval date.
+    capture_upstream: list[Mapping[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         """A JSON-serialisable dict; content is never included (§3.1, §17)."""
@@ -929,6 +940,8 @@ class FetchRecord:
             "resumed": [dict(r) for r in self.resumed],
             "logical_run": self.logical_run,
             "per_fetch": [dict(e) for e in self.per_fetch],
+            "records_digest": self.records_digest,
+            "capture_upstream": [dict(u) for u in self.capture_upstream],
         }
 
 
@@ -983,6 +996,21 @@ class SourceRunReport:
     def emitted(self) -> int:
         """The number of records the run emitted (``claim_count`` or ``len(claims)``)."""
         return self.claim_count if self.claim_count is not None else len(self.claims)
+
+
+def _combined_records_digest(digests: Sequence[str]) -> str | None:
+    """The run-level ``records_digest`` (P35.41): one order-independent
+    fingerprint over the per-capture record-set digests this execution
+    flushed — ``None`` when nothing flushed (never a digest of nothing)."""
+    if not digests:
+        return None
+    import hashlib
+
+    h = hashlib.sha256()
+    for digest in sorted(digests):
+        h.update(str(digest).encode("utf-8"))
+        h.update(b"\n")
+    return h.hexdigest()
 
 
 #: The record kinds a live run's fetch record reports per document (P26.6/.11/.15).
@@ -1350,6 +1378,20 @@ def _run_live(
         resumed=[dict(r) for r in report.resumed],
         logical_run=getattr(sink, "logical_run", None),
         per_fetch=[dict(e) for e in fetcher.per_fetch],
+        # P35.41 / SIG-TRANSP-031: the run-level record-set fingerprint and
+        # each capture's upstream-declared change value (a capture absent
+        # from capture_upstream declared nothing — never a guessed date).
+        records_digest=_combined_records_digest(report.records_digests),
+        capture_upstream=[
+            {
+                "capture_digest": c.digest,
+                "upstream_modified_at": c.upstream_modified_at,
+                "upstream_token": c.upstream_token,
+                "upstream_modified_basis": c.upstream_modified_basis,
+            }
+            for c in report.captures
+            if c.upstream_modified_at or c.upstream_token
+        ],
     )
     write_fetch_record(fetch_record, capture_dir / "live_runs")
     # P36.74 (WV-10/ADR-188): the probe run's single sig.probe-run/1 record —
