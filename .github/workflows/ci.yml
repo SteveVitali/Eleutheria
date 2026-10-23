@@ -652,11 +652,10 @@ jobs:
           bash scripts/ci/build_tippecanoe.sh .cache/sig-tippecanoe
       - name: Tile fixture + verifier (pinned tippecanoe over the synthetic 50k)
         working-directory: ${{ github.workspace }}
-        env:
-          PATH: ${{ github.workspace }}/.cache/sig-tippecanoe:${{ env.PATH }}
+        # env.PATH is empty in the env context — prepend at runtime instead.
         run: |
-          bash scripts/ci/tile_verify_leg.sh fixture
-          bash scripts/ci/tile_verify_leg.sh verify
+          PATH="$GITHUB_WORKSPACE/.cache/sig-tippecanoe:$PATH" bash scripts/ci/tile_verify_leg.sh fixture
+          PATH="$GITHUB_WORKSPACE/.cache/sig-tippecanoe:$PATH" bash scripts/ci/tile_verify_leg.sh verify
 
       # Record + save only at the END of a green same-repo PR job whose
       # fixture step actually measured (`mode != 'reuse'` writes nothing).

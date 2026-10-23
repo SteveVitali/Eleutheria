@@ -197,11 +197,11 @@ jobs:
         id: tileverify
         continue-on-error: true
         env:
-          PATH: ${{ github.workspace }}/.cache/sig-tippecanoe:${{ env.PATH }}
           SIG_TILE_FIXTURE_OUT: ${{ github.workspace }}/.cache/tile-national
+        # env.PATH is empty in the env context — prepend at runtime instead.
         run: |
-          bash scripts/ci/tile_verify_leg.sh national
-          bash scripts/ci/tile_verify_leg.sh verify 2>&1 | tee tile-verify.txt
+          PATH="$GITHUB_WORKSPACE/.cache/sig-tippecanoe:$PATH" bash scripts/ci/tile_verify_leg.sh national
+          PATH="$GITHUB_WORKSPACE/.cache/sig-tippecanoe:$PATH" bash scripts/ci/tile_verify_leg.sh verify 2>&1 | tee tile-verify.txt
 
       # The report is ALSO the gate: it writes nightly-report.md, then exits
       # non-zero if any stage outcome was not success — the upload below still
