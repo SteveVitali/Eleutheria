@@ -684,3 +684,25 @@ seed-commit 103e9025
 # force-push). Scope: findings attributed to f80fbd0a only; no other
 # commit borrows the exemption.
 seed-commit f80fbd0a
+# P35.53 (row 331; NEW-5 / G3 RM-8) — 6059a98b is the ticket-mandated
+# eviction commit: the G3 release model rules that real candidate
+# release trees and staging registries never live in the public
+# repository, so the nine committed subtrees under
+# docs/build/reports/ (1,616 files — `candidate_release`,
+# `corpus_{release,registry}`, `staging_registry`, `rehearsal`,
+# `release`, `registry`) were deleted. The removal is a deletion of
+# files, not of history: every publication id, descriptor digest and
+# manifest digest the runs recorded stays pinned in the surviving
+# packet metadata and in git history; the per-root file counts and
+# sorted-listing sha256s are recorded in
+# docs/build/reports/EVICTION_NEW-5_P35.53.md, and recommit is refused
+# by scripts/ci/release_tree_guard.py (exercised by
+# tests/ops/test_release_pipeline.py). Twelve of the deleted files are
+# `records.index.jsonl` — classified `jsonl` protected records whose
+# deletion the append-only check must still *see* and attribute:
+# sanctioned here, keyed to this commit. The branch rule forbids
+# force-push, so the declaration lands as a later commit rather than a
+# reworded subject — the same pattern as 427c5efb/f17eb537/… above.
+# Scope: findings attributed to 6059a98b only; no other commit borrows
+# the exemption.
+seed-commit 6059a98b
