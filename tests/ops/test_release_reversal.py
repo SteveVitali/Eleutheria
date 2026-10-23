@@ -160,7 +160,7 @@ def _authority(store: rp.Store, name: str = "go-1", **fields: Any) -> dict[str, 
         "schema": rr.AUTHORITY_SCHEMA,
         "kind": "go",
         "ref": f"OPS-{name}",
-        "issued_at": "2026-10-24T00:00:00Z",
+        "issued_at": "2026-10-23T00:00:00Z",
         **fields,
     }
     _put(store, f"{rr.AUTHORITIES_PREFIX}{name}", rec)
@@ -587,7 +587,7 @@ def _approval(store: rp.Store, name: str = "go-pub") -> None:
             "ref": f"GO-{name}",
             "kind": "standing_go",
             "class": "class_r",
-            "issued_at": "2026-10-24T00:00:00Z",
+            "issued_at": "2026-10-23T00:00:00Z",
         },
     )
 
