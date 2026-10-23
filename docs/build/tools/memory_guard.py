@@ -665,6 +665,7 @@ class Change:
         self._hist_subjects: list[str] | None = None
         self.added_by: dict[tuple[str, str], CommitInfo] = {}
         self.removed_by: dict[tuple[str, str], CommitInfo] = {}
+        self.deleted_by: dict[str, CommitInfo] = {}
         if self.committed:
             hc = git.text("log", "-1", "--format=%H %ct %cI", self.head).split()
             self.head_commit = CommitInfo(hc[0], int(hc[1]), hc[2])
@@ -830,12 +831,19 @@ class Change:
                 self.added_by[(new_f, line[1:])] = cur
             elif line.startswith("-") and old_f:
                 self.removed_by[(old_f, line[1:])] = cur
+                if new_f is None:
+                    # `+++ /dev/null`: this commit deleted the file — record it so a
+                    # whole-file-deletion finding (which has no removed line to key on)
+                    # still attributes to the deleting commit.
+                    self.deleted_by.setdefault(old_f, cur)
 
     def commit_of_added(self, path: str, text: str) -> CommitInfo:
         return self.added_by.get((path, text), self.head_commit)
 
     def commit_of_removed(self, path: str, text: str) -> str:
         c = self.removed_by.get((path, text))
+        if c is None:
+            c = self.deleted_by.get(path)
         return c.short if c else (self.head_commit.short if self.mode == "first-parent" else "")
 
     def commits(self) -> list[CommitInfo]:
