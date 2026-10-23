@@ -1767,6 +1767,7 @@ class ReleaseRegistry:
                     policy_version=str(e.get("policy_version") or "publication-eligibility/1"),
                     evidence_claim_id=e.get("evidence_claim_id"),
                     supersedes=e.get("supersedes"),
+                    compartment=str(e["compartment"]) if e.get("compartment") else None,
                     seq=int(e.get("seq") or 0),
                 )
             )
@@ -1787,6 +1788,7 @@ class ReleaseRegistry:
                     "evidence_claim_id": e.evidence_claim_id,
                     "supersedes": e.supersedes,
                     "seq": e.seq,
+                    **({"compartment": e.compartment} if e.compartment else {}),
                 }
                 for e in entries
             ],
@@ -2670,6 +2672,12 @@ def apply_withdrawals(
             return eff
         return None
 
+    def _in_scope(eff: DispositionRecord, route: str) -> bool:
+        """A compartment-scoped disposition (``sig.withdrawal-order/1``,
+        P35.55) denies only routes under ``c/<compartment>/`` — the licence
+        compartments never bleed into one another (§42.3)."""
+        return eff.compartment is None or f"/c/{eff.compartment}/" in f"/{route}/"
+
     claim_index = _claim_route_index(staged)
     # route → the effective denying record (drives the tombstone's safe
     # fields): page routes vs exact-path file routes are kept apart so the
@@ -2679,7 +2687,7 @@ def apply_withdrawals(
 
     def _deny(target_kind: str, target_id: str, route: str, shape: str) -> None:
         eff = _eff(target_kind, target_id)
-        if eff is not None:
+        if eff is not None and _in_scope(eff, route):
             (denied_files if shape == "file" else denied).setdefault(route, eff)
 
     stub_targets: list[tuple[str, str]] = []
@@ -2700,6 +2708,8 @@ def apply_withdrawals(
         if eff is None:
             continue
         for route in claim_index.get(tid, []):
+            if not _in_scope(eff, route):
+                continue
             (denied_files if route.endswith(".json") else denied).setdefault(route, eff)
 
     # release-level withdrawal denies everything under the namespaces
@@ -2714,6 +2724,8 @@ def apply_withdrawals(
                 if not path.is_file():
                     continue
                 rel = path.relative_to(staged).as_posix()
+                if not _in_scope(eff, rel):
+                    continue
                 if rel.endswith("index.html"):
                     # a page route is its directory — the tombstone page
                     # takes the route, not a JSON body over the HTML file
@@ -2734,13 +2746,15 @@ def apply_withdrawals(
     stub_denies: dict[str, DispositionRecord] = {}
     for tid, rel in stub_targets:
         eff = _eff(TargetKind.ENTITY.value, tid)
-        if eff is not None:
+        # a compartment-scoped deny never blanket-denies the stubs — the
+        # route-derived rule below decides from the actually-denied routes
+        if eff is not None and eff.compartment is None:
             stub_denies[rel] = eff
     for (kind, tid), _rs in by_target.items():
         if kind != TargetKind.ENTITY.value:
             continue
         eff = _eff(kind, tid)
-        if eff is None:
+        if eff is None or eff.compartment is not None:
             continue
         for etype in sorted(_entity_types(staged, tid)):
             stub_denies.setdefault(f"entity/{etype}/{tid}", eff)
@@ -3044,7 +3058,11 @@ def route_access(registry_dir: Path | str, route: str) -> dict[str, Any]:
             eff_c = latest_disposition(rs)
             if eff_c is None or access_decision(eff_c).permitted:
                 continue
-            bound = {_norm_route(rt) for rt in idx.get(tid, [])}
+            bound = {
+                _norm_route(rt)
+                for rt in idx.get(tid, [])
+                if eff_c.compartment is None or f"/c/{eff_c.compartment}/" in f"/{rt}/"
+            }
             if norm in bound:
                 return {
                     "permitted": False,

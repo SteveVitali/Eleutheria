@@ -117,6 +117,11 @@ class DispositionRecord:
     rationale: str | None = None
     evidence_claim_id: str | None = None
     supersedes: str | None = None
+    #: Optional licence-compartment scope (``sig.withdrawal-order/1``, P35.55):
+    #: when set the deny lands only on routes under ``c/<compartment>/`` —
+    #: the compartments stay separate (§42.3), so a compartment-scoped
+    #: withdrawal never reaches into another compartment's bytes.
+    compartment: str | None = None
     #: Insert order (``disposition_seq`` in PG) — the deterministic tie-break when
     #: two rows share ``decided_at``. Pure-model records may omit it (defaults 0).
     seq: int = 0
@@ -261,6 +266,7 @@ def new_disposition(
     rationale: str | None = None,
     evidence_claim_id: str | None = None,
     supersedes: str | None = None,
+    compartment: str | None = None,
     seq: int = 0,
 ) -> DispositionRecord:
     """Validate + construct one disposition record (the sink validates through the
@@ -277,6 +283,8 @@ def new_disposition(
         raise ValueError("disposition target_id is required")
     if not authority:
         raise ValueError("disposition authority is required (who/what decided)")
+    if compartment is not None and not compartment.strip():
+        raise ValueError("a compartment scope, when given, is a non-empty name")
     return DispositionRecord(
         target_kind=target_kind,
         target_id=target_id,
@@ -289,5 +297,6 @@ def new_disposition(
         rationale=rationale,
         evidence_claim_id=evidence_claim_id,
         supersedes=supersedes,
+        compartment=compartment.strip() if compartment else None,
         seq=seq,
     )

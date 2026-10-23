@@ -577,6 +577,35 @@ def build_parser() -> argparse.ArgumentParser:
         help="write the sig.probe-run/1 record here (default: stdout).",
     )
 
+    cgprobe = sub.add_parser(
+        "conf-gen-probe",
+        help="P35.55 (REL-08, the P1 probe set): the conf-generation "
+        "regression probe — every --origin's X-SIG-Conf-Gen header must "
+        "equal the generation recorded in the release registry. An OLDER "
+        "generation served is the rollback-revives-withdrawn-routes alarm "
+        "(RR-7); a NEWER unrecorded one means the registry record is stale. "
+        "Emits a sig.probe-run/1 record; a leg it cannot evaluate is "
+        "'skipped', never fabricated. Read-only.",
+    )
+    cgprobe.add_argument(
+        "--registry",
+        default=None,
+        help="the release registry — gs://<bucket>[/<prefix>] or a local "
+        "dir (env SIG_RELEASE_REGISTRY; the recorded generation is read "
+        "from it — unset → every leg reports 'skipped', never a guess)",
+    )
+    cgprobe.add_argument(
+        "--origin",
+        action="append",
+        default=[],
+        help="an origin to probe (repeatable — api + web origins each name one leg).",
+    )
+    cgprobe.add_argument(
+        "--record-out",
+        default=None,
+        help="write the sig.probe-run/1 record here (default: stdout).",
+    )
+
     # --- P35.3 (G10): the fixture-sentinel scan, the claim-marker binding, the
     # probe sweep's registered legs and the registry's own surface. All
     # read-only; every one emits sig.probe-run/1 via the shared ops.probe_run
@@ -2234,10 +2263,13 @@ def build_parser() -> argparse.ArgumentParser:
         "the default and mutates nothing. Stage uploads "
         "staged/{r,v,s,releases}/<pub>/ with if-generation-match=0 — a name "
         "collision refuses and no staged byte is ever overwritten. The verbs "
-        "whose behaviour later rows own (promote→P35.54, rollback/"
-        "clear-latest/withdraw→P35.55, the V1–V14 suite→P35.56/58, the "
+        "whose behaviour later rows own (the V1–V14 suite→P35.56/58, the "
         "classifier→P35.60) are declared and journal a refused outcome "
-        "naming the owner — never a fake success.",
+        "naming the owner — never a fake success. P35.54 landed promote; "
+        "P35.55 landed rollback/clear-latest/withdraw/import-floor (REL-08) "
+        "— every reversal verb needs --reason (and --to/--disposition/--from "
+        "as its shape takes) plus a --go/--authority record under "
+        "registry/authorities/ for --apply.",
     )
     rsub = rel.add_subparsers(dest="release_command", required=True)
 
@@ -2390,14 +2422,141 @@ def build_parser() -> argparse.ArgumentParser:
         "recreating the service with the new env.",
     )
 
-    for _verb in ("classify", "rollback", "withdraw"):
-        p = rsub.add_parser(_verb, help="declared; the behaviour lands at its owner row")
-        _rel_common(p)
-        p.add_argument("--publication", required=True, help="the p-<sha256> id")
+    def _rel_roll_args(p: argparse.ArgumentParser) -> None:
+        """The api→web NEW-revision roll legs every reversal verb prepares
+        (RR-7: never a traffic reversion — an old revision's pinned
+        SIG_CONF_GEN would re-serve denied routes)."""
+        p.add_argument(
+            "--api-image",
+            default=None,
+            help="the digest-pinned sig-api image (<repo>/<image>@sha256:<64>)",
+        )
+        p.add_argument(
+            "--web-image",
+            default=None,
+            help="the digest-pinned sig-web image (<repo>/<image>@sha256:<64>)",
+        )
+        p.add_argument(
+            "--min-instances",
+            type=int,
+            default=1,
+            help="the sig-web floor through the flip (default 1)",
+        )
+        p.add_argument("--project", default=None, help="the GCP project (roll legs)")
+        p.add_argument("--region", default=None, help="the GCP region (roll legs)")
+        p.add_argument(
+            "--execute-rolls",
+            action="store_true",
+            help="run the gcloud service-update legs for real (the operator's "
+            "leg). Absent: the conf generation writes and the roll args are "
+            "recorded `prepared` verbatim — the composed stack flips by "
+            "recreating the service with the new env.",
+        )
 
-    pcl = rsub.add_parser("clear-latest", help="declared; the behaviour lands at P35.55 (REL-08)")
+    p = rsub.add_parser("classify", help="declared; the behaviour lands at its owner row (P35.60)")
+    _rel_common(p)
+    p.add_argument("--publication", required=True, help="the p-<sha256> id")
+
+    prb = rsub.add_parser(
+        "rollback",
+        help="P35.55 (REL-08): point latest at an activated release — or an "
+        "imported legacy floor — re-apply the CURRENT withdrawal set, write "
+        "conf/<gen+1>, roll api→web as NEW revisions. Refuses a target under "
+        "a current denying disposition (a rollback never resurrects).",
+    )
+    _rel_common(prb)
+    prb.add_argument(
+        "--to",
+        required=True,
+        help="the rollback target: a p-<sha256> publication id, a known "
+        "release label, or an imported legacy-<YYYYMMDD> floor",
+    )
+    prb.add_argument("--reason", required=True, help="the operator reason the journal records")
+    prb.add_argument(
+        "--go",
+        default=None,
+        metavar="NAME",
+        help="the operator go / pre-authorisation record under "
+        "registry/authorities/ — required for --apply; the verb verifies "
+        "it, never creates one (§7.3)",
+    )
+    _rel_roll_args(prb)
+
+    pcl = rsub.add_parser(
+        "clear-latest",
+        help="P35.55 (REL-08): the honest no-current-release state — the "
+        "latest pointer clears (v/none/ serves a fully-set env pair), the "
+        "archive keeps serving every promoted release behind the barrier.",
+    )
     _rel_common(pcl)
-    pcl.add_argument("--publication", default=None, help="the p-<sha256> id the pointer clears")
+    pcl.add_argument("--reason", required=True, help="the operator reason the journal records")
+    pcl.add_argument(
+        "--go",
+        default=None,
+        metavar="NAME",
+        help="the operator go / pre-authorisation record under "
+        "registry/authorities/ — required for --apply (§7.3)",
+    )
+    _rel_roll_args(pcl)
+
+    pwd = rsub.add_parser(
+        "withdraw",
+        help="P35.55 (REL-08, SIG-OPS-010/SIG-SEC-009): append a "
+        "sig.withdrawal-order/1 disposition set, re-apply the barrier over "
+        "every staged namespace (deny map + dated tombstones on EVERY "
+        "alias), write conf/<gen+1>, roll api→web, purge hooks (dormant), "
+        "probe every alias, journal a dated receipt. --purge-versions "
+        "(Part VIII takedowns only) deletes the removed objects' "
+        "noncurrent bucket versions — never the claim spine.",
+    )
+    _rel_common(pwd)
+    pwd.add_argument(
+        "--disposition",
+        required=True,
+        metavar="FILE",
+        help="the sig.withdrawal-order/1 order file — the disposition set to append",
+    )
+    pwd.add_argument(
+        "--authority",
+        default=None,
+        metavar="NAME",
+        help="the takedown authority record under registry/authorities/ — "
+        "required for --apply (SIG-SEC-010); the verb verifies it",
+    )
+    pwd.add_argument(
+        "--purge-versions",
+        action="store_true",
+        help="delete the removed staged objects' NONCURRENT bucket versions "
+        "(the legal-takedown lane — live generations stay)",
+    )
+    _rel_roll_args(pwd)
+
+    pif = rsub.add_parser(
+        "import-floor",
+        help="P35.55 (REL-08, §8.5): import a pre-registry serving tree "
+        "under staged/v/legacy-<YYYYMMDD>/, labelled legacy-<date> (never "
+        "a p-<64hex> id). `rollback --to legacy-<date>` serves it.",
+    )
+    _rel_common(pif)
+    pif.add_argument(
+        "--from",
+        dest="from_dir",
+        required=True,
+        help="the local serving tree to import as the legacy floor",
+    )
+    pif.add_argument(
+        "--label",
+        default=None,
+        help="the floor label (default: legacy-<today>) — legacy-<YYYYMMDD>, "
+        "never a publication id",
+    )
+    pif.add_argument(
+        "--go",
+        default=None,
+        metavar="NAME",
+        help="the operator go / pre-authorisation record under "
+        "registry/authorities/ — required for --apply (§7.3)",
+    )
 
     pstat = rsub.add_parser(
         "status", help="print the candidate's §3.4 state machine from the journal"
@@ -3221,6 +3380,33 @@ def _cmd_post_cutover_probe(args: argparse.Namespace) -> int:
         file=sys.stderr,
     )
     return 0 if record["overall"] != "fail" else 1
+
+
+def _cmd_conf_gen_probe(args: argparse.Namespace) -> int:
+    """P35.55 (REL-08): emit the sig.probe-run/1 conf-gen regression record."""
+    from . import probe_run
+    from . import release_pipeline as rp
+    from .release_reversal import conf_gen_probe
+
+    registry = args.registry or os.environ.get("SIG_RELEASE_REGISTRY", "")
+    if not registry:
+        record = probe_run.build_record(
+            "conf-gen-regression",
+            {
+                "conf-gen:no-registry": probe_run.CheckResult(
+                    "skipped",
+                    {
+                        "reason": "--registry/SIG_RELEASE_REGISTRY unset — the "
+                        "recorded generation is unknown; nothing evaluated"
+                    },
+                )
+            },
+            subject={"origins": list(args.origin or [])},
+        )
+        return _emit_probe_record(record, args.record_out, "conf-gen-probe")
+    store = rp.open_store(registry)
+    record = conf_gen_probe(store, origins=args.origin or [])
+    return _emit_probe_record(record, args.record_out, "conf-gen-probe")
 
 
 # --- P35.3 (G10): sentinel scan / claim-marker scan / probe sweep / registry ---
@@ -5339,6 +5525,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_republish_probe(args)
     if args.command == "post-cutover-probe":
         return _cmd_post_cutover_probe(args)
+    if args.command == "conf-gen-probe":
+        return _cmd_conf_gen_probe(args)
     if args.command == "sentinel-scan":
         return _cmd_sentinel_scan(args)
     if args.command == "claim-marker-scan":
