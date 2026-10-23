@@ -116,17 +116,34 @@ def _status_location(url: str) -> tuple[int, str | None]:
     return resp.status, resp.getheader("Location")
 
 
+def _container_state() -> str:
+    """`docker compose ps` + recent logs — the failure-path diagnostics a
+    300s timeout otherwise swallows (CI runs pytest -q; captured output
+    only surfaces on failure)."""
+    ps = _compose("ps", "-a", check=False)
+    logs = _compose("logs", "--tail", "120", check=False)
+    return (
+        f"--- docker compose ps ---\n{ps.stdout}{ps.stderr}\n"
+        f"--- docker compose logs ---\n{logs.stdout}{logs.stderr}"
+    )
+
+
 def _wait_for(url: str, timeout_s: int = 300, want_status: int = 200) -> None:
     deadline = time.monotonic() + timeout_s
+    last_status: int | None = None
     while time.monotonic() < deadline:
         try:
             status, _h, _b = _http(url)
+            last_status = status
             if status == want_status:
                 return
         except (urllib.error.URLError, OSError):
             pass
         time.sleep(2)
-    raise AssertionError(f"{url} never answered {want_status} within {timeout_s}s")
+    raise AssertionError(
+        f"{url} never answered {want_status} within {timeout_s}s "
+        f"(last_status={last_status})\n{_container_state()}"
+    )
 
 
 def _hash_tree(root: Path, prefix: str) -> dict[str, str]:
@@ -151,7 +168,7 @@ def _serve_env(gen: int, pub: str, label: str, root: Path) -> dict[str, str]:
 
 
 def _up_web(gen: int, pub: str, label: str, root: Path) -> None:
-    _compose(
+    up = _compose(
         "--profile",
         "release-serving",
         "up",
@@ -159,12 +176,16 @@ def _up_web(gen: int, pub: str, label: str, root: Path) -> None:
         "--build",
         "web",
         env=_serve_env(gen, pub, label, root),
+        check=False,
+    )
+    assert up.returncode == 0, (
+        f"compose up web failed:\n{up.stdout}\n{up.stderr}\n{_container_state()}"
     )
     _wait_for(f"{WEB}/", want_status=200)
 
 
 def _up_staging(gen: int, pub: str, label: str, root: Path) -> None:
-    _compose(
+    up = _compose(
         "--profile",
         "release-serving",
         "up",
@@ -172,6 +193,10 @@ def _up_staging(gen: int, pub: str, label: str, root: Path) -> None:
         "--build",
         "web-staging",
         env=_serve_env(gen, pub, label, root),
+        check=False,
+    )
+    assert up.returncode == 0, (
+        f"compose up web-staging failed:\n{up.stdout}\n{up.stderr}\n{_container_state()}"
     )
     _wait_for(f"{STAGING}/", want_status=200)
 
