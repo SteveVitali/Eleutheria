@@ -24,6 +24,46 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Rollback, clear-latest, withdrawal, legacy-floor import, and the
+  conf-generation regression probe — `sig-ops release` reversal verbs,
+  compartment-scoped denials, and the runbook procedures** (P35.55 /
+  row 333; serves REL-08, SIG-REL-013, SIG-OPS-004; cites ADR-220,
+  G3 GT-3/GT-9, ADR-156) — `ops/src/ops/release_reversal.py` adds the
+  five operator-commanded verbs. `rollback --to <pub|label|legacy-floor>`
+  requires a reason, refuses to "roll back" to the current pointer or
+  to a never-promoted namespace, **re-derives the current withdrawal
+  barrier** (a rollback never resurrects withdrawn material), writes
+  `conf/<gen+1>` whole, and rolls a *new* revision — never reverts
+  Cloud Run traffic to an old revision whose pinned `SIG_CONF_GEN`
+  could re-serve withdrawn routes. `clear-latest` is archive-only: the
+  latest view 404s honestly under `v/none/` while every promoted
+  namespace and the barrier keep serving. `withdraw --disposition
+  <sig.withdrawal-order/1> --authority <sig.operator-authority/1>`
+  fails closed without an unexpired authority record, appends
+  disposition records (never edits), applies the barrier across every
+  staged namespace, covers **every serving alias** (no-slash,
+  trailing-slash, `index.html`, and the `.json` twin) with dated,
+  public-safe `sig.tombstone/1` bodies, writes a `conf/<gen+1>` with
+  `withdrawals_sha256` in the latest pointer, rolls api→web as new
+  revisions, probes every denied alias (optionally requiring origin
+  HTTP 410), and records a `sig.withdrawal-receipt/1` under
+  `registry/receipts/` carrying `claim_spine_touched: false`. Purge is
+  bounded to `--purge-versions`: noncurrent object generations of
+  already-removed names only, generation-qualified via the new
+  `list_object_versions`/generation-delete GCS APIs — the live object
+  generation and the claim spine are never touched. `import-floor`
+  stages a `legacy-YYYYMMDD` tree with a `sig.legacy-floor/1` record
+  (a label, never a publication ID). `conf-gen-probe` measures each
+  origin's `X-SIG-Conf-Gen` against the recorded generation and
+  journals a `sig.probe-run/1` — an older served gen alarms loudly.
+  `DispositionRecord` gains an optional `compartment` scope honoured
+  by `apply_withdrawals`. `release promote` now records
+  `withdrawals_sha256` in `latest.json`, detects verify→promote
+  withdrawal drift, and re-derives the deny barrier under the promote
+  lock (closing D-P35.54-1), refusing if the registry shifts mid-seam.
+  RUNBOOK gains republish / rollback / withdrawal-takedown procedures.
+  No hosted mutation runs in this ticket — rolls stay prepared-only
+  unless the operator passes `--execute-rolls`.
 - **Configuration generations and metadata-only promotion — the
   templated sig-web edge, `conf/<gen>/` immutable config sets, and the
   `sig-ops release promote` verb** (P35.54 / row 332; serves

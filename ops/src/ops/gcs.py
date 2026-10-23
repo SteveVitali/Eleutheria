@@ -182,7 +182,7 @@ class GcsBucket:
         _, payload = self._request("GET", url)
         return payload
 
-    def delete_object(self, name: str) -> str:
+    def delete_object(self, name: str, *, generation: int | None = None) -> str:
         """Delete one object; returns its name.
 
         Added for P34.10 (SIG-OPS-003/004): the ONE sanctioned deleter — the
@@ -193,14 +193,41 @@ class GcsBucket:
         re-checks every name at the write so a caller bug cannot delete a
         release tree either. P35.53 additionally uses it to *release* the
         release registry's ``registry/LOCK`` object — the only object the
-        pipeline is ever allowed to delete.
+        pipeline is ever allowed to delete. P35.55's ``--purge-versions``
+        passes ``generation=`` to delete exactly one NONCURRENT version of
+        an object a disposition-authorised withdrawal removed (the live
+        version is never named by the purge — see
+        ``release_reversal.purge_noncurrent_versions``).
         """
         url = (
             f"{_GCS_API}/storage/v1/b/{urllib.parse.quote(self.bucket)}/o/"
             f"{urllib.parse.quote(name, safe='')}"
         )
+        if generation is not None:
+            url += f"?generation={int(generation)}"
         self._request("DELETE", url)
         return name
+
+    def list_object_versions(self, prefix: str) -> list[dict]:
+        """Every version of every object under ``prefix`` (``versions=true`` —
+        noncurrent versions carry ``generation`` and are deleted only under
+        the P35.55 ``--purge-versions`` legal-takedown lane)."""
+        items: list[dict] = []
+        page_token: str | None = None
+        while True:
+            query = (
+                f"versions=true&prefix={urllib.parse.quote(prefix)}"
+                "&fields=items(name,generation,timeDeleted),nextPageToken"
+            )
+            if page_token:
+                query += f"&pageToken={urllib.parse.quote(page_token)}"
+            url = f"{_GCS_API}/storage/v1/b/{urllib.parse.quote(self.bucket)}/o?{query}"
+            _, payload = self._request("GET", url)
+            doc = json.loads(payload)
+            items.extend(doc.get("items", []))
+            page_token = doc.get("nextPageToken")
+            if not page_token:
+                return items
 
     def _request_preconditioned(
         self,

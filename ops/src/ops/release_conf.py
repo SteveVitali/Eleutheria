@@ -40,6 +40,7 @@ import hashlib
 import html
 import json
 import re
+import tempfile
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -520,9 +521,18 @@ def compose_generation(
     api_image: str | None,
     web_image: str | None,
     now: datetime,
+    withdrawn_conf: bytes | None = None,
+    withdrawals_sha256: str | None = None,
 ) -> dict[str, bytes]:
     """Every ``registry/conf/<gen>/`` object, deterministic — the dry-run
-    plan and the apply write compose the same bytes."""
+    plan and the apply write compose the same bytes.
+
+    ``withdrawn_conf``: when the caller re-derived the deny map from the
+    CURRENT withdrawal registry (D-P35.54-1), those bytes win over the
+    carried copy; ``withdrawals_sha256`` stamps the registry digest the
+    map was composed from into ``latest.json`` — a later promote detects
+    the drift from the pointer alone.
+    """
     prior_gen = gen - 1
     promoted = read_promoted_map(store, prior_gen) | {pub}
     latest = {
@@ -538,14 +548,19 @@ def compose_generation(
         "previous": (read_generation(store, prior_gen) or {}).get("publication_id"),
         "serving": {"sig_api_image": api_image, "sig_web_image": web_image},
         "rolled_back": False,
+        "withdrawals_sha256": withdrawals_sha256,
     }
     catalog = catalog_v2(store, gen=gen, pub=pub, label=label, meta=meta, now=now)
     latest_bytes = _canonical(latest)
     return {
         "promoted.map": render_promoted_map(promoted, gen=gen),
         "latest.json": latest_bytes,
-        "withdrawn.conf": _carry_or_placeholder(
-            store, prior_gen, "withdrawn.conf", placeholder=_empty_withdrawn(gen)
+        "withdrawn.conf": (
+            withdrawn_conf
+            if withdrawn_conf is not None
+            else _carry_or_placeholder(
+                store, prior_gen, "withdrawn.conf", placeholder=_empty_withdrawn(gen)
+            )
         ),
         "selectors.conf": _carry_or_placeholder(
             store, prior_gen, "selectors.conf", placeholder=_empty_selectors(gen)
@@ -882,6 +897,7 @@ def verb_promote(
     execute_rolls: bool = False,
     gcloud: Any = None,
     post_checks: Callable[..., list[dict[str, Any]]] | None = None,
+    derive_barrier: Callable[..., bytes] | None = None,
     break_lock: str | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
@@ -889,6 +905,15 @@ def verb_promote(
     ``conf/<gen+1>`` → roll sig-api then sig-web by digest → post-promote
     checks → ``promoted`` event. Metadata-only: zero bytes under
     ``staged/**`` are written or copied (SIG-REL-006).
+
+    ``derive_barrier`` (D-P35.54-1, wired by the caller to
+    ``release_reversal.derive_withdrawal_barrier``): when the withdrawal
+    registry's digest moved since the prior generation's marker, apply
+    re-derives ``withdrawn.conf`` from the CURRENT registry through this
+    hook over a throwaway mirror — a disposition journaled between the
+    candidate's verify and its promote lands in the promoted generation's
+    deny map. The marker ``withdrawals_sha256`` stamps every new
+    ``latest.json`` either way.
 
     Resumable: a ``conf/<gen+1>`` already naming this pub means a crashed
     promote — the write is skipped and the rolls/checks/event continue.
@@ -988,6 +1013,20 @@ def verb_promote(
             f"{APPROVALS_PREFIX}<name> record — the verb checks it, "
             "never creates one",
         )
+    # D-P35.54-1 — the withdrawal-registry marker: the prior generation's
+    # pointer records the digest its barrier was composed from (a marker
+    # absent from the pointer stands for the empty registry). On drift the
+    # APPLY path re-derives withdrawn.conf over a staged mirror — never a
+    # carried, possibly-stale, byte copy — and the in-lock re-check refuses
+    # a drift that lands between compose and write.
+    w_body = store.read("registry/withdrawals.json")
+    w_sha = _sha256(w_body or b"")
+    prior_marker = (current or {}).get("withdrawals_sha256")
+    barrier_drifted = (prior_marker or _sha256(b"")) != w_sha
+    derived_barrier: bytes | None = None
+    if apply_ and barrier_drifted and derive_barrier is not None and not resume:
+        with tempfile.TemporaryDirectory(prefix="sig-promote-barrier-") as td:
+            derived_barrier = derive_barrier(store, Path(td), active_pub=pub)
     files = compose_generation(
         store,
         gen=next_gen,
@@ -999,6 +1038,8 @@ def verb_promote(
         api_image=api_image,
         web_image=web_image,
         now=now,
+        withdrawn_conf=derived_barrier,
+        withdrawals_sha256=w_sha,
     )
     web_env = {
         "SIG_CONF_GEN": str(next_gen),
@@ -1010,7 +1051,9 @@ def verb_promote(
     legs: list[ServiceRoll] = []
     plan: list[str] = [
         f"check {APPROVALS_PREFIX}<approval> authorises a {cls} promote of {pub}",
-        f"write registry/conf/{next_gen}/ ({len(files)} objects, create-if-absent)",
+        f"write registry/conf/{next_gen}/ ({len(files)} objects, create-if-absent"
+        + ("; withdrawn.conf re-derived — barrier digest drifted" if barrier_drifted else "")
+        + ")",
         f"roll sig-api → {api_image or '<no image pinned>'} (env: {sorted(api_env)})",
         f"roll sig-web → {web_image or '<no image pinned>'} "
         f"(env: {sorted(web_env)}; min-instances={min_instances})",
@@ -1049,6 +1092,8 @@ def verb_promote(
         "class": cls,
         "resume": resume,
         "staged_namespaces": staged,
+        "withdrawals_sha256": w_sha,
+        "barrier": "re-derived" if derived_barrier is not None else "carried",
         "plan": plan,
         "generation_files": sorted(files),
         "promoted_pubs": sorted(parse_promoted_map(files["promoted.map"].decode())),
@@ -1072,6 +1117,16 @@ def verb_promote(
         result["dry_run"] = True
         return result
     with rp.acquire_lock(store, "promote", break_lock=break_lock, now=now):
+        # D-P35.54-1, the refusal half: a disposition that lands between
+        # the composed barrier and this write moves the registry digest —
+        # refuse; the operator re-runs and the next compose re-derives.
+        if _sha256(store.read("registry/withdrawals.json") or b"") != w_sha:
+            raise rp.PipelineError(
+                "withdrawal-drift",
+                "registry/withdrawals.json changed between compose and the "
+                "locked write — the composed deny map is stale; re-run "
+                "promote (the next compose re-derives it)",
+            )
         written: list[str] = []
         if not resume:
             written = write_generation(store, next_gen, files)
@@ -1182,6 +1237,8 @@ def verb_promote(
                 ],
                 "checks": [{"id": c["id"], "status": c["status"]} for c in checks],
                 "written": sorted(written),
+                "withdrawals_sha256": w_sha,
+                "barrier": "re-derived" if derived_barrier is not None else "carried",
             },
             now=now,
         )
