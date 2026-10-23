@@ -117,15 +117,45 @@ def _status_location(url: str) -> tuple[int, str | None]:
 
 
 def _container_state() -> str:
-    """`docker compose ps` + recent logs — the failure-path diagnostics a
-    300s timeout otherwise swallows (CI runs pytest -q; captured output
-    only surfaces on failure)."""
-    ps = _compose("ps", "-a", check=False)
-    logs = _compose("logs", "--tail", "120", check=False)
-    return (
-        f"--- docker compose ps ---\n{ps.stdout}{ps.stderr}\n"
-        f"--- docker compose logs ---\n{logs.stdout}{logs.stderr}"
+    """`docker ps` + per-container logs/env/rendered-conf — the failure-path
+    diagnostics a 300s timeout otherwise swallows (CI runs pytest -q;
+    captured output only surfaces on failure). Plain `docker`, not
+    `compose logs` — a profile-less `logs` sees an empty service model."""
+    out = []
+    ps = subprocess.run(
+        ["docker", "ps", "-a", "--format", "{{.Names}}\t{{.Status}}"],
+        capture_output=True,
+        text=True,
+        check=False,
     )
+    out.append(f"--- docker ps -a ---\n{ps.stdout}{ps.stderr}")
+    for name in ("sig-e2e-release-web-1", "sig-e2e-release-web-staging-1"):
+        logs = subprocess.run(
+            ["docker", "logs", "--tail", "60", name],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        out.append(f"--- docker logs {name} ---\n{logs.stdout}{logs.stderr}")
+        env = subprocess.run(
+            [
+                "docker",
+                "exec",
+                name,
+                "sh",
+                "-c",
+                "env | sort | grep -i '^SIG' ; "
+                "echo '--- rendered server/root lines ---' ; "
+                "grep -n 'root \\|listen\\|include /mnt' /etc/nginx/nginx.conf ; "
+                "echo '--- /mnt/rel tree ---' ; "
+                "ls -la /mnt/rel /mnt/rel/staged/v 2>&1 | head -20",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        out.append(f"--- docker exec {name} ---\n{env.stdout}{env.stderr}")
+    return "\n".join(out)
 
 
 def _wait_for(url: str, timeout_s: int = 300, want_status: int = 200) -> None:
