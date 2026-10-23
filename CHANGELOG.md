@@ -863,6 +863,32 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Changed
 
+- **Citation block and release id on every page** (P35.42 / row 321;
+  R11-K13-TX-13a; owner SIG-TRANSP-023, citation-block half — the
+  `/s/<pub>/` snapshot build, edge `selectors.conf` and the legacy
+  `withBase()` sweep are P36.66a/b's, rows 409/410; cites SIG-UI-035,
+  SIG-REL-008, DR-C3-14, UXR-25 [design ref]; owned findings F-07,
+  F-099, F-101, F-390, F-399) — `BaseLayout` now passes the build's
+  release context `{publicationId, label, recordPath}` to the
+  citation block on every public page (the F-399 fix — the layout
+  never passed a release, so every page carried the legacy
+  belief-pinned query URL under a reproducibility promise the static
+  origin cannot honour). The block renders the verbatim J3 §8.2 cite
+  sentence — `Cite: <title>, SIG release <pub-short> (data as of
+  <as_of_world>, belief <as_of_belief>, ruleset <r>)` — with the
+  release id beside the as-of pair; the phrase "reproducible after
+  SIG corrects itself" now appears **only** over an immutable
+  `/s/<pub>/` or `/r/<pub>/` URL (a render rule derived from the
+  cited path, never a template flag), and every other page says —
+  verbatim the J3 interim wording — "This page is the latest view of
+  release <data release id>; an immutable citable copy is not yet
+  published." Dossier pages cite their released `/r/<pub>/` record
+  URL; the print dossier footer's cite line renders the same shared
+  contract plus the licence id (F-101); and every new internal link
+  is built with `withBase()` (the root-absolute-path containment
+  count did not grow). Pages under a build that binds no release
+  (fixtures/development) render the plain as-of link — the honest
+  development state, never a fabricated release.
 - **Freshness semantics v2 — one shared verdict, honest staleness, and
   two separate change dates** (P35.41 / row 320; owner SIG-TRANSP-029 +
   SIG-TRANSP-030 + SIG-TRANSP-031 + SIG-TRANSP-007, the release side of

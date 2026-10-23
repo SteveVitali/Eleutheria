@@ -61,6 +61,15 @@ interface Props {
    */
   chrome?: "full" | "minimal";
   /**
+   * P35.42 (SIG-TRANSP-023, J3 §8.2): the path this page's immutable copy
+   * resolves at when the page BACKS a released record — e.g. a dossier page
+   * names its `/r/<pub>/c/<comp>/jurisdiction/<slug>/` record path so the
+   * citation block cites the immutable release URL. Default: the page's own
+   * path joined under the configured base (`withBase(path)` — `/s/<pub>/…`
+   * inside a snapshot build, where the page itself is the immutable copy).
+   */
+  recordPath?: string;
+  /**
    * `true` marks the page noindex AND excludes it from the sitemap (P34.13 /
    * QW-11): error pages and the /terms forwarder are never canonical content.
    */
@@ -98,6 +107,19 @@ const asOfWorld = asOf.as_of_world;
 // release's sig.site-release/1 — never a recomputed value. `null` (dev or a
 // pre-release export) keeps the P34.17 interim sentence honestly.
 const stamp = getReleaseStamp();
+// P35.42 (SIG-TRANSP-023, J3 §8.2, F-399 — the seam this closes): EVERY page
+// passes the build's release context to the citation block — the publication
+// id, the data release id, and the path the page's immutable copy resolves
+// at. `null` only when the build binds no release (fixtures/dev), never a
+// page-local constant: the block renders the honest interim sentence until
+// `/s/<pub>/` snapshots exist (TX-13b / P36.66a+b).
+const citeRelease = stamp
+  ? {
+      publicationId: stamp.publicationId,
+      label: stamp.label,
+      recordPath: Astro.props.recordPath ?? withBase(path),
+    }
+  : null;
 
 // The canonical origin the belief-pinned permalink resolves against (P27.6; DNS
 // cut-over is P27.10). `Astro.site` is set in astro.config.mjs; the literal fallback
@@ -198,7 +220,7 @@ const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] 
         <>
           <HowWeKnowThis provenance={provenance} scope={provenanceScope} pageName={Astro.props.provenanceName} pointerBase={Astro.props.provenancePointerBase ?? "/surfaces/site"} />
           <DisputeLink />
-          <Citation path={path} title={title} asOf={asOf} rulesetVersion={rulesetVersion} />
+          <Citation path={path} title={title} asOf={asOf} rulesetVersion={rulesetVersion} release={citeRelease} />
         </>
       )}
     </main>

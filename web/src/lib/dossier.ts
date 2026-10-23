@@ -608,6 +608,15 @@ export function validateDossier(dossier: Dossier): void {
  * summary top level (`what_we_dont_know`) AND inside the sections, so the API,
  * the print export, and the HTML summary all satisfy SIG-UI-011.
  */
+/**
+ * The dossier artifact's licence id — the ONE contract the JSON twin's
+ * `licence` block (below) and the print document's licence line (P35.42,
+ * F-101) both render; `compartment: "web"` matches the exports-side
+ * `sig.published-record/2` block. Emitted only when a release is bound —
+ * never fabricated on a development build.
+ */
+export const DOSSIER_LICENCE_ID = "CC-BY-4.0";
+
 export function renderDossierJson(
   dossier: Dossier,
   origin?: string,
@@ -623,7 +632,7 @@ export function renderDossierJson(
     // exports-side `sig.published-record/2` blocks. Absent (never fabricated)
     // when the build has no release bound.
     ...(release ? { release } : {}),
-    ...(release ? { licence: { id: "CC-BY-4.0", compartment: "web" } } : {}),
+    ...(release ? { licence: { id: DOSSIER_LICENCE_ID, compartment: "web" } } : {}),
     jurisdiction: dossier.jurisdiction,
     as_of_world: dossier.asOf.as_of_world,
     as_of_belief: dossier.asOf.as_of_belief,
