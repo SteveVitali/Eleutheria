@@ -485,6 +485,141 @@ cadence row.
 A retired source's upstream data stays in the spine — append-only means
 decommissioning is a scheduling/ingestion decision, never a data deletion.
 
+## 10. Republish a release
+
+*Labels: every `release` verb is `engineered/local` on a fixture registry;
+against `gs://…-sig-release` the `--apply` leg is `live` mutating,
+`human/operator-only`. Dry-run is the default — it plans and reads only.*
+
+The release-model republish is a NEW promotion, never an edit in place:
+a fresh candidate rides the one pipeline (`P35.53`/`P35.54`) —
+
+```bash
+# plan the run first — every verb answers its plan without --apply
+uv run sig-ops release status --registry "$SIG_RELEASE_REGISTRY"
+uv run sig-ops release cut --registry "$SIG_RELEASE_REGISTRY"
+# build the candidate tree from an export bundle, then stage + verify it
+uv run sig-ops release build --registry "$SIG_RELEASE_REGISTRY" \
+    --export-dir <export-dir> --work-dir <work-dir>
+uv run sig-ops release stage --registry "$SIG_RELEASE_REGISTRY" --work-dir <work-dir>
+uv run sig-ops release verify --registry "$SIG_RELEASE_REGISTRY" --work-dir <work-dir>
+# promote: metadata-only — writes registry/conf/<gen+1>, rolls sig-api then
+# sig-web as NEW revisions by digest, runs the post-promote checks. The
+# --approval record is the operator's (registry/approvals/); the verb
+# verifies it, never creates one.
+uv run sig-ops release promote --registry "$SIG_RELEASE_REGISTRY" \
+    --publication <p-…> --approval <name> \
+    --api-image "<image>@sha256:<digest>" --web-image "<image>@sha256:<digest>"
+```
+
+A republish's `conf/<gen+1>` carries the CURRENT withdrawal set: `promote`
+re-derives `withdrawn.conf` from the withdrawal registry when its digest
+moved since the prior generation (`withdrawals_sha256` in `latest.json`
+records what the map was composed from — D-P35.54-1). A disposition
+journaled in the verify→promote window is never carried over stale.
+
+## 11. Rollback a release
+
+*Labels: `engineered/local` on a fixture registry; `--apply` is `live`
+mutating, `human/operator-only` — it writes `conf/<gen+1>` and records
+roll legs (executed only with `--execute-rolls`).*
+
+`release rollback --to <pub|label|legacy-YYYYMMDD>` re-points `latest` at
+an earlier PROMOTED release, an imported legacy floor, or a label.
+**Cloud Run traffic reversion is forbidden (RR-7)** — an old revision's
+pinned `SIG_CONF_GEN` would re-serve routes a later withdrawal denied.
+The verb always rolls NEW revisions: the conf generation's env moves
+(`SIG_CONF_GEN`, `SIG_LATEST_PUB`), never a revision pointer back.
+
+```bash
+# plan — resolves the target, prints the generation + roll legs
+uv run sig-ops release rollback --registry "$SIG_RELEASE_REGISTRY" \
+    --to <p-…|label|legacy-YYYYMMDD> --reason "<why>" 
+# apply — needs --reason + --go (the operator's go/pre-authorisation
+# record under registry/authorities/, §7.3's needs-no-readout set)
+uv run sig-ops release rollback --registry "$SIG_RELEASE_REGISTRY" \
+    --to <target> --reason "<why>" --go <name> --apply
+# archive-only: no current release — latest clears to the v/none/
+# sentinel; the archive (promoted namespaces + withdrawal barrier) serves
+uv run sig-ops release clear-latest --registry "$SIG_RELEASE_REGISTRY" \
+    --reason "<why>" --go <name> --apply
+```
+
+What the apply does, in order: re-apply the CURRENT withdrawal set over
+every staged namespace (the barrier is re-derived, never carried) → write
+`registry/conf/<gen+1>` (create-if-absent; the promoted set never shrinks)
+→ roll `sig-api` → `sig-web` as new revisions → journal `rolled-back`
+(+ `rolled-back-from` on the prior latest). A rollback target under a
+current denying release disposition is REFUSED — a rollback never
+resurrects withdrawn material. The first release has no predecessor —
+`clear-latest` is the honest no-current-release state, never a fabricated
+one.
+
+The **legacy floor** (§8.5): a pre-registry serving tree imports as
+`staged/v/legacy-<YYYYMMDD>/`, labelled `legacy-…` — never a `p-<64hex>`
+id and never a promoted release namespace:
+
+```bash
+uv run sig-ops release import-floor --registry "$SIG_RELEASE_REGISTRY" \
+    --from <dir> --label legacy-<YYYYMMDD> --go <name> --apply
+uv run sig-ops release rollback --registry "$SIG_RELEASE_REGISTRY" \
+    --to legacy-<YYYYMMDD> --reason "<why>" --go <name> --apply
+```
+
+## 12. Withdraw / takedown
+
+*Labels: `engineered/local` on a fixture registry; `--apply` is `live`
+mutating, `human/operator-only`. `--purge-versions` is the Part
+VIII/legal-takedown lane — bucket objects only, never the claim spine.*
+
+`release withdraw --disposition <file> --authority <name>` runs the §8.3
+order verbatim: parse + validate the `sig.withdrawal-order/1` file →
+verify the authority record (`registry/authorities/<name>` —
+SIG-SEC-010; checked, never created) → append-only disposition INSERT
+→ re-apply the barrier over EVERY staged namespace → a new
+`conf/<gen+1>` whose `withdrawn.conf` carries full alias coverage →
+roll api→web → cache purge hooks → probe every alias → a dated receipt
+under `registry/receipts/`.
+
+```bash
+# the order file: sig.withdrawal-order/1 — {entries: [{target_kind,
+#   target_id, disposition, reason_category, compartment?}]}. An
+# `allow` row is the reinstatement path — a NEW disposition, never an
+# edit. `compartment` scopes the deny to c/<comp>/ routes only (§42.3).
+uv run sig-ops release withdraw --registry "$SIG_RELEASE_REGISTRY" \
+    --disposition <order.json>
+# apply — the dated sig.tombstone/1 lands on every alias (no-slash,
+# trailing-slash, index.html, .json, release namespaces, record routes,
+# entity stubs, label aliases); private rationale never leaves the registry
+uv run sig-ops release withdraw --registry "$SIG_RELEASE_REGISTRY" \
+    --disposition <order.json> --authority <name> --apply
+# the legal-takedown lane — additionally deletes the removed objects'
+# NONCURRENT bucket versions (current generations stay; a local registry
+# reports noop). Never the claim spine, never release evidence.
+uv run sig-ops release withdraw --registry "$SIG_RELEASE_REGISTRY" \
+    --disposition <order.json> --authority <name> --apply --purge-versions
+```
+
+The 15-minute withdrawal target is a recorded target (D-G3-9), measured
+at rehearsal — never claimed here. Withdrawal alias coverage includes the
+error-page surface (`D-P34.13-1` rides P34.40's change). The P1 alarm —
+an origin serving an OLDER conf generation — is the registered
+`conf-gen-regression` probe; a NEWER unrecorded generation means the
+registry record is stale:
+
+```bash
+uv run sig-ops conf-gen-probe --registry "$SIG_RELEASE_REGISTRY" \
+    --origin https://api.surveillancegraph.org \
+    --origin https://surveillancegraph.org
+```
+
+The R2/CDN purge hooks are wired and dormant: `ops/mirrors.toml` carries
+the mirror row disabled/gate-pending (J3 TX-11) — a missing mirror is a
+recorded no-op, never an error. Withdrawal is append-only end to end:
+reinstatement is a new disposition + a new release; tombstones are
+immutable per disposition; `registry/` events and receipts journal every
+step so the act stays auditable.
+
 ## Verifying this runbook
 
 ```bash
