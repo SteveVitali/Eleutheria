@@ -419,6 +419,17 @@ class PlacementEngine:
         """The verified pack manifest — the report's boundary provenance."""
         return self._manifest
 
+    def jurisdiction_row(self, jkey: str) -> Mapping[str, Any] | None:
+        """The registry row for ``jkey`` — ``None`` for a non-registry key
+        (declared buckets outside the canonical set). Read-only lookup for
+        dossier/jurisdiction surfaces (P35.44)."""
+        return self._rows.get(jkey)
+
+    def ancestor_chain(self, jkey: str) -> tuple[str, ...]:
+        """The root-first canonical chain ending at ``jkey`` (empty for
+        non-registry keys) — the roll-up ancestor list dossier artifacts emit."""
+        return self._ancestors.get(jkey, ())
+
     # -- internals ---------------------------------------------------------- #
 
     def _ancestor_chain(self, row: Mapping[str, Any]) -> tuple[str, ...]:

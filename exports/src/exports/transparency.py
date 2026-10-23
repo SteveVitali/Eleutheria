@@ -345,6 +345,10 @@ SOURCE_ROW_FIELDS: tuple[str, ...] = (
     "published_claims",
     "published_sites",
     "review",
+    # P35.44 (DSRC-01 / TRANSP-040): the dossier-contribution mirror — the
+    # same (dossier, source) numbers the ``sig.dossier-sources/1`` artifacts
+    # carry, written from the one shared accumulation (never a second pass).
+    "contributions",
 )
 
 #: The S-11 gated row — J3 §4.3's registry-only page twin (identity,
@@ -352,7 +356,9 @@ SOURCE_ROW_FIELDS: tuple[str, ...] = (
 #: probe details) plus the bookkeeping fields ``counts.json`` must be
 #: able to recompute from ``sources.json`` alone (SIG-TRANSP-D27):
 #: lifecycle state, lane, flags, declared cadence and site naming are all
-#: registry/ops metadata, not upstream detail.
+#: registry/ops metadata, not upstream detail. ``contributions`` is the
+#: empty list on a gated row — a gated source has no published
+#: contribution to disclose (P35.44).
 GATED_SOURCE_ROW_FIELDS: tuple[str, ...] = (
     "schema",
     "source_id",
@@ -369,6 +375,7 @@ GATED_SOURCE_ROW_FIELDS: tuple[str, ...] = (
     "status_flags",
     "cadence",
     "published_sites",
+    "contributions",
 )
 
 #: P35.39 (SIG-TRANSP-016 / J3 §6.5): the column specs for each emitted
@@ -712,6 +719,16 @@ def _specs() -> tuple[tuple[Any, ...], ...]:
         _CS("status", "the gated row's status token (``gated``/``refused``/``withdrawn``)"),
         _CS("homepage_url", "the gated row's scrubbed homepage host (never the full URL)"),
         _CS("reason_class", "why the source is gated (closed reason class)"),
+        _CS(
+            "contributions",
+            "P35.44 / TRANSP-040 — the dossier-contribution mirror: one entry "
+            "per dossier this source contributes to, carrying the SAME "
+            "``{dossier_jkey, dossier_slug, records, claims, first_seen_at, "
+            "last_seen_at}`` numbers the ``sig.dossier-sources/1`` artifacts "
+            "show (empty on gated rows)",
+            dtype="array",
+            nullable=False,
+        ),
     )
     return (run_specs, capture_specs, issue_specs, freshness_specs, source_specs)
 
@@ -1120,6 +1137,7 @@ def source_record(
     published_sites: bool,
     cadence_decl: Mapping[str, str] | None,
     open_issue: bool,
+    contributions: Sequence[Mapping[str, Any]] = (),
 ) -> dict[str, Any]:
     """One ``sig.source-row/1`` row — the J3 §4.3 record.
 
@@ -1220,6 +1238,7 @@ def source_record(
         row["status_flags"] = flags
         row["cadence"] = cadence_block
         row["published_sites"] = published_sites
+        row["contributions"] = []  # a gated row discloses no contribution
         return explicit_columns(row, GATED_SOURCE_ROW_FIELDS)
 
     gate_passed = published_claims > 0
@@ -1286,6 +1305,10 @@ def source_record(
         "published_claims": published_claims if published_claims > 0 else "not_published",
         "published_sites": published_sites,
         "review": review,
+        # P35.44 (TRANSP-040): the dossier↔source mirror — written from the
+        # shared accumulation's own rows so the dossier artifact and this
+        # page can never disagree (empty when the source contributes nowhere).
+        "contributions": [dict(c) for c in contributions],
     }
     return explicit_columns(record, SOURCE_ROW_FIELDS)
 
@@ -2347,6 +2370,7 @@ def emit_transparency_artifacts(
     sources_path: str | Path | None = None,
     site_source_ids: Iterable[str] = (),
     at: datetime,
+    contributions_by_source: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
 ) -> dict[str, bytes]:
     """The ``transparency/`` release artifacts — every field through the
     scrub, every honesty token typed. ``raw`` is the export's guarded raw
@@ -2361,6 +2385,10 @@ def emit_transparency_artifacts(
     ``None`` suppresses ``sources.json``/``counts.json`` entirely for
     callers that have no registry surface. ``site_source_ids`` carries the
     source ids this release's published site records name.
+    ``contributions_by_source`` (P35.44 / TRANSP-040) is the shared
+    dossier-contribution accumulation's source mirror — each registry row
+    gains ``contributions[]`` from the same numbers the dossier artifacts
+    carry (``[]`` on gated rows and on sources contributing nowhere).
     """
     run_rows = _rows(raw.get("transparency_runs") or [], TRANSPARENCY_RUN_VIEW_COLUMNS)
     capture_rows = _rows(raw.get("transparency_captures") or [], TRANSPARENCY_CAPTURE_VIEW_COLUMNS)
@@ -2522,6 +2550,7 @@ def emit_transparency_artifacts(
                 published_sites=sid in site_sources,
                 cadence_decl=(cadence_map or {}).get(sid),
                 open_issue=sid in open_issue_sources,
+                contributions=(contributions_by_source or {}).get(sid, ()),
             )
             for sid in sorted(registry_map)
         ]

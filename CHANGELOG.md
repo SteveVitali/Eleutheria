@@ -24,6 +24,31 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Dossier contribution export — `sig.dossier-sources/1` + the source-side
+  `contributions[]` mirror** (P35.44 / row 323; R11-K13-DSRC-01; owner
+  SIG-TRANSP-008 + SIG-TRANSP-040; cites SIG-UI-044/048, SIG-ENG-021,
+  K4 `placement@1`, K5 §3.1–3.4, J3 T-2, D-K5-4) — a new
+  `sig_export`-granted `v_claim_sightings` view (explicit columns only:
+  claim identity/gate columns beside the sighting's capture, binding
+  status, run, and retrieval instant — never a locator, excerpt, digest,
+  or OCFL id) feeds the K5 §3.1 `claim_sightings` aggregate under the
+  shared publishable-claim, effective-rights, artifact, and capture-seal
+  gates. One accumulation turns that stream into the dossier-side
+  `web/dossier_sources/<slug>.json` artifacts — release + jurisdiction
+  blocks, named definitions, totals, the SIG-UI-044
+  `provenance_summary` (`human_review_status: "unreviewed"`), figures
+  with `by_source` reconciliation and a disclosed `sum_rule`,
+  per-source contribution rows with first/last seen, run attribution,
+  series, and `latest ok run`/`not_reasserted` fields, plus
+  country/admin-1 `.runs.jsonl.gz` per-(source, run) logs — and the
+  identical numbers appear as `contributions[]` on
+  `transparency/sources.json` rows (TRANSP-040: never a second
+  computation; gated rows carry `[]`). The §3.3 `run_level_only`
+  fallback names `last_seen: not_recorded` and
+  `not_reasserted: not_evaluable` wherever a source's claims carry
+  exactly one establishing link across more than one completed run, and
+  `cross_source.colocated_pairs` stays `not_evaluable` until DSRC-04
+  publishes `observation_group`.
 - **Figure → evidence pointers** (P35.37 / row 316; R11-K13-TX-09;
   owner SIG-TRANSP-013; cites SIG-UI-035/044, J3 §5.4 + §12 TX-09,
   K13 §7 W1 / UXR-34 [design ref], DR-C3-01/DR-C3-03, PKG-10, F-102)
