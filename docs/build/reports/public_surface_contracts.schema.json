@@ -75,10 +75,18 @@
       "items": { "$ref": "#/$defs/CoverageMetric" }
     },
     "watch": {
-      "description": "Surface 7 — the renewal/contract watch (§39.5). The alert key is the DERIVED notice deadline, not the raw expiry (SIG-UI-014b/026).",
-      "x_source": "web/src/lib/watch.ts#ContractWatchItem[]",
-      "type": "array",
-      "items": { "$ref": "#/$defs/ContractWatchItem" }
+      "description": "Surface 7 — the watch (§39.5). P35.43 (K7 WX-01 / F-481) emits the versioned `sig/watch/2` envelope — `sig.watch-item/1` items derived from publishable spine claims by exports/src/exports/watch.py, plus the per-place coverage block (SIG-WATCH-D04: an empty items list still carries coverage). The alert key is the DERIVED notice deadline, not the raw expiry (SIG-UI-014b/026); `contract_expiry` dates carry `date_certainty: upper_bound` and are never labelled deadlines. The web data layer projects the contract-kind items onto the legacy `ContractWatchItem[]` until the surface rows render v2 natively — the envelope is the artifact contract, the row type the render contract.",
+      "x_source": "exports/src/exports/watch.py#build_watch_payload (sig/watch/2) → web/src/lib/data.ts#WatchEnvelopeV2/WatchItemV2 → web/src/lib/watch.ts#ContractWatchItem[] (bridge)",
+      "type": "object",
+      "required": ["schema", "as_of", "generated_at", "build", "coverage", "items"],
+      "properties": {
+        "schema": { "const": "sig/watch/2" },
+        "as_of": { "type": "string", "format": "date" },
+        "generated_at": { "type": "string" },
+        "build": { "type": "object" },
+        "coverage": { "$ref": "#/$defs/WatchCoverage" },
+        "items": { "type": "array", "items": { "$ref": "#/$defs/WatchItem" } }
+      }
     },
     "evidence": {
       "description": "Surface 8 — the evidence recommender (§39.5a) + evidence viewer (§39.6). Ranking MUST NOT use persuasion/sentiment (SIG-UI-027b). Sealed captures carry metadata only, no bytes (§17.5).",
@@ -305,6 +313,48 @@
         "is_population_total": { "const": false, "description": "MUST be false — SIG never publishes a population total (SIG-METRIC-010)." },
         "exclusions": { "type": "object", "additionalProperties": { "type": "integer" }, "description": "ED-42/F-134: optional per-class exclusion disclosure beside a reconciliation ratio — {conflicted, withheld, non_publishable, filtered}; numerator + excluded_total = denominator, never a clamped N-of-N." },
         "excluded_total": { "type": "integer", "description": "The summed exclusion count disclosed beside the numerator (ED-42)." }
+      }
+    },
+    "WatchItem": {
+      "type": "object",
+      "description": "sig.watch-item/1 (P35.43, K7 §5.1) — one derived publishable watch record. `date_certainty` is first-class: `upper_bound` MUST NOT render as a deadline. `place.key` null + `place.check: unplaced` is honest unresolved placement, never a guess.",
+      "required": ["schema", "handle", "title", "kind", "date", "date_kind", "date_certainty", "timeline", "place", "subjects", "technology", "vendor", "status", "what_you_can_do", "evidence", "contested", "tasks", "first_seen", "last_checked", "source_ids"],
+      "properties": {
+        "schema": { "const": "sig.watch-item/1" },
+        "handle": { "type": "string", "description": "Deterministic W-<place>-<kind>-<slug>-<hash4> — never a retrieval timestamp or random id." },
+        "title": { "type": "string", "description": "P35.31-scrubbed label; a person-named source title never surfaces verbatim (K7 §6)." },
+        "kind": { "type": "string", "enum": ["renewal_deadline", "contract_expiry", "solicitation_deadline", "agenda_item", "legislative_action", "grant_period_end"] },
+        "date": { "type": "string", "format": "date" },
+        "date_kind": { "type": "string", "description": "WHAT the date is (notice_deadline/expiry/response_deadline/meeting/status_change/scheduled_action/period_end) — never a certainty claim." },
+        "date_certainty": { "type": "string", "enum": ["derived", "upper_bound", "stated"] },
+        "timeline": { "type": "array", "items": { "type": "object" }, "description": "The subject's other dated facts (posted/signed/period bounds/prior status), attributed to their claims." },
+        "place": { "type": "object", "description": "K7 §5.3 placement view — key/chain/basis/check from the P35.19 engine; key null is `unplaced`." },
+        "body": { "type": ["string", "null"], "description": "The deciding body (buyer/funder/tenant jurisdiction/bill jurisdiction) — claim-derived, scrubbed." },
+        "subjects": { "type": "array", "items": { "type": "string" }, "description": "The connector subject keys the item derives from." },
+        "technology": { "type": "array", "items": { "type": "object" }, "description": "Reviewed-vocab technology matches ({id,label}) — declared claims only." },
+        "vendor": { "type": "array", "items": { "type": "object" }, "description": "Reviewed-vocab vendor matches ({id,label}) — declared claims only." },
+        "status": { "type": "string", "enum": ["upcoming", "today", "recently_decided", "superseded", "withdrawn"] },
+        "what_you_can_do": { "type": "string", "description": "Procedural template text — tells a reader what they could do; never a position, never outreach (W-P4/W-P5)." },
+        "evidence": { "type": "array", "items": { "type": "object" }, "description": "Per-firing-claim anchors: claim/predicate/source + bound artifact ids + the S-6-gated upstream link." },
+        "termination": { "type": "object", "description": "Contract kinds only — the TerminationInput wire (auto_renews/notice_window_days/expiry_date) the web's resolveTermination derives from." },
+        "contested": { "type": "boolean" },
+        "tasks": { "type": "array", "items": { "type": "object" }, "description": "Open research tasks on the item's subjects (e.g. contract_expiring — renewal terms unknown)." },
+        "first_seen": { "type": ["string", "null"], "format": "date" },
+        "last_checked": { "type": "string", "description": "The export's generated_at — the item's own check stamp." },
+        "source_ids": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "WatchCoverage": {
+      "type": "object",
+      "description": "SIG-WATCH-D04 — the honest coverage statement the envelope always carries: every dossier-index place row (items count may be 0), the monitored-portal statement from the committed tenant registries, per-kind counts, and the read-only sizing count (watch_subject_counts).",
+      "required": ["places", "by_kind", "items_total", "last_checked"],
+      "properties": {
+        "monitored": { "type": "object", "description": "Registered tenant jurisdictions — the portals/bodies SIG actually checks." },
+        "places": { "type": "array", "items": { "type": "object" } },
+        "by_kind": { "type": "object", "additionalProperties": { "type": "integer" } },
+        "items_total": { "type": "integer" },
+        "sizing": { "type": "object", "description": "Per-family {subjects, claims} counts under the same gates the producer read." },
+        "last_checked": { "type": "string" }
       }
     },
     "ContractWatchItem": {

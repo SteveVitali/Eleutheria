@@ -395,6 +395,92 @@ describe("P34.20 — the fixture capture diff never reaches an export build (SIG
   });
 });
 
+describe("P35.43 — the sig/watch/2 envelope bridges to ContractWatchItem[]", () => {
+  // The export now emits the versioned `sig/watch/2` envelope; the web data
+  // layer projects the contract-kind items (the only ones carrying
+  // `termination`) onto the legacy row contract until the surface renders v2.
+  const v2Bundle = (() => {
+    const dir = mkdtempSync(join(tmpdir(), "sig-export-watchv2-"));
+    mkdirSync(join(dir, "web"), { recursive: true });
+    writeFileSync(
+      join(dir, "web", "watch.json"),
+      JSON.stringify({
+        schema: "sig/watch/2",
+        as_of: "2026-09-22",
+        generated_at: "2026-09-22T00:00:00Z",
+        build: { ruleset: "watch-derivation/1" },
+        coverage: { places: [], by_kind: {}, items_total: 2, last_checked: "2026-09-22T00:00:00Z" },
+        items: [
+          {
+            schema: "sig.watch-item/1",
+            handle: "W-iso3166-2-us-ok-renewal-c100-ab12",
+            title: "City of Test: contract C-100 renewal decision",
+            kind: "renewal_deadline",
+            date: "2027-04-01",
+            date_kind: "notice_deadline",
+            date_certainty: "derived",
+            place: { key: "iso3166-2:US-OK", chain: ["iso3166-1:US", "iso3166-2:US-OK"] },
+            body: "City of Test",
+            subjects: ["contract:test:tenant:t1:C-100"],
+            status: "upcoming",
+            contested: true,
+            termination: { auto_renews: true, notice_window_days: 90, expiry_date: "2027-06-30" },
+            source_ids: ["src_a"],
+          },
+          {
+            schema: "sig.watch-item/1",
+            handle: "W-iso3166-1-us-solicitation-n9-cd34",
+            title: "CBP: solicitation N-9",
+            kind: "solicitation_deadline",
+            date: "2026-10-15",
+            date_certainty: "stated",
+            place: { key: "iso3166-1:US" },
+            subjects: ["procurement_notice:sam_gov:fed:N-9"],
+            status: "upcoming",
+            contested: false,
+            source_ids: ["sam_gov"],
+          },
+        ],
+      }),
+    );
+    return dir;
+  })();
+
+  it("projects contract-kind items onto the legacy row and drops the rest", () => {
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = v2Bundle;
+    const rows = getWatch();
+    expect(rows.length).toBe(1);
+    const row = rows[0];
+    expect(row.contract_id).toBe("contract:test:tenant:t1:C-100");
+    expect(row.jurisdiction).toBe("iso3166-2:US-OK");
+    expect(row.subject_label).toBe("City of Test");
+    expect(row.approving_body).toBe("City of Test");
+    expect(row.renewal_window_days).toBe(90);
+    expect(row.contested).toBe(true);
+    // SIG-UI-014b — the web derivation (never a stored field) still applies:
+    // expiry − 90d notice = the decision date the watch keys on.
+    expect(row.termination).toEqual({
+      auto_renews: true,
+      notice_window_days: 90,
+      expiry_date: "2027-06-30",
+    });
+  });
+
+  it("an empty v2 envelope reads as an empty watch (honest absence)", () => {
+    const empty = mkdtempSync(join(tmpdir(), "sig-export-watchv2empty-"));
+    mkdirSync(join(empty, "web"), { recursive: true });
+    writeFileSync(
+      join(empty, "web", "watch.json"),
+      JSON.stringify({ schema: "sig/watch/2", items: [], coverage: { places: [] } }),
+    );
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = empty;
+    expect(getWatch()).toEqual([]);
+    rmSync(empty, { recursive: true, force: true });
+  });
+});
+
 describe("P27.5 build-time pagination/summarisation (capRows)", () => {
   it("passes through when under the cap and reports the honest total", () => {
     const r = capRows([1, 2, 3], 10);

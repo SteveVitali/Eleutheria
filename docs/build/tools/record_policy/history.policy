@@ -636,3 +636,13 @@ seed-commit 8e9bc541
 # later commit (no force-push). Scope: findings attributed to 153ded67
 # only; no other commit borrows the exemption.
 seed-commit 153ded67
+# P35.43 (row 322) — 4bbdf19d repairs in place the PHASE LOG entry
+# kind committed at LEDGER.md:1153 by 29539f47 (`record-head read` —
+# not in phase_log_kinds.txt; docs-red on run 39599644843,
+# ledger_contract kind-vocabulary). No appended entry can fix a
+# committed kind field in place — the 8e9bc541/P35.65 pattern.
+# The correction itself is disclosed by the appended
+# `P35.43 correction` entry naming 29539f47:1153. Declaration lands
+# as a later commit (no force-push). Scope: findings attributed to
+# 4bbdf19d only; no other commit borrows the exemption.
+seed-commit 4bbdf19d
