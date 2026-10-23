@@ -52,5 +52,6 @@
 | P35.25 | L1 merge · L2 `lineage-rematerialize --apply` + `/status/` notice (A-20) · L3 every-claim `id_namespace` | nothing until the re-run; rollback forward-only |
 | P35.26 | L1 merge · L2 EFF+OSM role-aware re-ingest (OSM in-ODbL; pre-state counts) · L3 edge rematerialize — 1970 at zero | `implement-spec spec=docs/tickets/305_P35.26__roles-and-time-backend.md live_verification=true` · row 305 landed (PR #320) |
 | P35.41 | the connector-image roll: rebuild + redeploy the connector image carrying `records_digest`, the upstream-declared marks, and the capture-mark headers | `implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` · row 320 landed (PR #338) |
+| P35.53 | D-P35.53-1 | `SIG_RELEASE_AUTHOR="$(git config user.name)" bash ops/gcp/release-infra.sh --apply all`, or `implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-… |
 
 ← back: CURRENT.md
