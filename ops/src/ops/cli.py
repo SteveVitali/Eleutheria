@@ -2342,25 +2342,108 @@ def build_parser() -> argparse.ArgumentParser:
         help="(v2) the JUR-01 jurisdiction-boundaries content root",
     )
 
-    for _verb, _help in (
-        (
-            "stage",
-            "upload staged/{r,v,s,releases}/<pub>/ if-generation-match=0 — "
-            "resume-safe, a collision refuses",
-        ),
-        (
-            "verify",
-            "the bounded staged==built + integrity verify (the V1–V14 suite is P35.56/P35.58's)",
-        ),
-    ):
-        p = rsub.add_parser(_verb, help=_help)
-        _rel_common(p)
-        p.add_argument("--work-dir", required=True, help="the built release tree dir")
-        p.add_argument(
-            "--publication",
-            default=None,
-            help="the p-<sha256> id (default: the tree's lone releases/<pub>/)",
-        )
+    pstage = rsub.add_parser(
+        "stage",
+        help="upload staged/{r,v,s,releases}/<pub>/ if-generation-match=0 — "
+        "resume-safe, a collision refuses",
+    )
+    _rel_common(pstage)
+    pstage.add_argument("--work-dir", required=True, help="the built release tree dir")
+    pstage.add_argument(
+        "--publication",
+        default=None,
+        help="the p-<sha256> id (default: the tree's lone releases/<pub>/)",
+    )
+
+    pver = rsub.add_parser(
+        "verify",
+        help="P35.56 (REL-04a, SIG-REL-007): the staged==built/integrity leg "
+        "plus, under --mode S|P, the G3 §5.5 suite A — V1–V5 + V11–V13 with "
+        "a JSON result row per check; any failure or skip blocks promotion "
+        "(a Class-S readout may waive a named non-V12 check). No --mode → "
+        "the pre-P35.56 bounded scope only.",
+    )
+    _rel_common(pver)
+    pver.add_argument("--work-dir", required=True, help="the built release tree dir")
+    pver.add_argument(
+        "--publication",
+        default=None,
+        help="the p-<sha256> id (default: the tree's lone releases/<pub>/)",
+    )
+    pver.add_argument(
+        "--mode",
+        default=None,
+        choices=["S", "P"],
+        help="the §5.5 suite mode — S: the staging origin before promote "
+        "(V1–V5 + V11–V13); P: every public origin after promote "
+        "(V1 sample 200, V3, V4, V5 sample, V13)",
+    )
+    pver.add_argument(
+        "--origin",
+        action="append",
+        default=None,
+        metavar="URL",
+        help="the origin under verification — S: the IAM-only staging "
+        "origin; P: repeatable for every public origin. Never defaulted: "
+        "a verify leg without an origin records every HTTP check skipped "
+        "(which blocks).",
+    )
+    pver.add_argument(
+        "--origin-header",
+        action="append",
+        default=None,
+        metavar="'NAME: value'",
+        help="a request header for --origin fetches (the staging identity "
+        "token on S-mode legs); repeatable",
+    )
+    pver.add_argument(
+        "--tree",
+        action="store_true",
+        help="serve the built --work-dir through the §4.2 mapping as the "
+        "origin — the fixture/local posture; result rows record "
+        "origin_kind=tree, never a staging/public claim",
+    )
+    pver.add_argument(
+        "--results-dir",
+        default=None,
+        help="where the JSON result rows land (default: <work-dir>.verify-results/)",
+    )
+    pver.add_argument(
+        "--class",
+        dest="release_class",
+        default=None,
+        choices=["class_r", "class_s"],
+        help="the promotion class the waiver rule reads (waivers apply only "
+        "under class_s; absent → no waiver applies)",
+    )
+    pver.add_argument(
+        "--waiver",
+        action="append",
+        default=None,
+        metavar="'V<N>=<readout-ref>'",
+        help="a Class-S waiver naming the check and the readout record it "
+        "is backed by; recorded in the result + event; V12 is never waivable",
+    )
+    pver.add_argument(
+        "--repo-root",
+        default=None,
+        help="the git worktree V2 probes for the pushed/clean facts "
+        "(default: probe the repo the command runs in; pass "
+        "--no-repo-probe to record the facts unverifiable instead)",
+    )
+    pver.add_argument(
+        "--no-repo-probe",
+        action="store_true",
+        help="do not touch git for V2 — the pushed/clean facts record as "
+        "unverifiable (a skip leg, which blocks)",
+    )
+    pver.add_argument(
+        "--repo-facts",
+        default=None,
+        metavar='\'{"pushed":true,"clean":true}\'',
+        help="inject V2's pushed/clean facts verbatim (fixture runs only — "
+        "the injection is recorded in the evidence, never hidden)",
+    )
 
     ppro = rsub.add_parser(
         "promote",
