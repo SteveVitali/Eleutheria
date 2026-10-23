@@ -159,6 +159,32 @@ export SIG_BUCKET_RELEASE="${SIG_GCP_PROJECT}-sig-release"  # release registry (
 export SIG_RELEASE_MOUNT="/mnt/rel"                 # sig-api's registry mount root
 export SIG_RELEASE_REGISTRY_DIR="${SIG_RELEASE_MOUNT}/registry"  # --release-registry value
 
+# --- the P35.53 release pipeline + staging origins (ops/gcp/release-infra.sh,
+# row 331; REL-03a; SIG-REL-004/005; G3 §4.1/§5.1) -------------------------
+# The three creates this row's OM-20 listing names: the private
+# ${SIG_BUCKET_RELEASE} bucket (versioned, 30-day noncurrent lifecycle,
+# uniform bucket-level access, public-access-prevention enforced, NO
+# allUsers/allAuthenticatedUsers — its single-writer IAM conditions
+# sig-release-rt to everything EXCEPT status/** and sig-status-rt to
+# status/** only) + the IAM-only sig-web-staging/sig-api-staging services
+# (same live digests as sig-web/sig-api, --no-allow-unauthenticated,
+# SIG_STAGING=1, min-instances 0 — D-G3-10's ≈$0 answer) + the sig-release
+# Cloud Run job on the reserved sig-release-rt SA (created by P34.42b's leg;
+# this script binds it, never creates it). Same AR-3 + AR-2 window contract
+# as the IAM legs: applies ≥ SIG_RELEASE_EARLIEST and never 03:00–06:30Z —
+# the weekday 14:00–20:00Z slot is the preferred note, not the gate.
+# SIG_RELEASE_NOW overrides the clock for the offline guard test only;
+# SIG_RELEASE_AUTHOR is the recorded operator id every mutating apply needs
+# (OM-20's scope discipline — silence is never consent).
+export SIG_WEB_STAGING="sig-web-staging"
+export SIG_API_STAGING="sig-api-staging"
+export SIG_RELEASE_JOB="sig-release"
+export SIG_RELEASE_LIFECYCLE="ops/gcp/release-bucket-lifecycle.json"
+export SIG_RELEASE_EARLIEST="2026-10-13T12:00:00Z"  # same AR-3 freeze end as SIG_IAM_EARLIEST (declared later in this file)
+export SIG_RELEASE_STATE_DIR="${SIG_RELEASE_STATE_DIR:-${TMPDIR:-/tmp}/p35.53-release}"
+export SIG_RELEASE_AUTHOR="${SIG_RELEASE_AUTHOR:-}"
+export SIG_RELEASE_REGISTRY_URI="gs://${SIG_BUCKET_RELEASE}"
+
 # The P34.40 live window (OM-19): both legs ≥ the SIG_LB_EARLIEST bound below
 # and never 03:00–10:00Z (the contract's named window open, row 249).
 # lb-routes.sh + web-roll.sh enforce it in --apply; the override

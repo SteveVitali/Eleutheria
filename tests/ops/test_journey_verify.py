@@ -16,21 +16,26 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 
+import candidate_fixture
 import pytest
 
 from ops import journey_verify as jv
 
-CANDIDATE = (
-    Path(__file__).resolve().parents[2] / "docs" / "build" / "reports" / "p32.23a-release-candidate"
-)
+
+@pytest.fixture(scope="module")
+def packet(tmp_path_factory) -> Path:
+    """The synthesized candidate packet — P35.53's NEW-5 eviction took the
+    committed release trees out of the repository (G3 RM-8), so the packet
+    is regenerated at test time from the still-committed inputs."""
+    return candidate_fixture.build_candidate_packet(tmp_path_factory.mktemp("packet"))
 
 
 @pytest.fixture(scope="module")
-def portfolio(tmp_path_factory) -> dict:
+def portfolio(tmp_path_factory, packet: Path) -> dict:
     """One shared portfolio run — the corpus build + release + stage is the
     expensive part; the checks below all read the SAME emitted evidence."""
     out = tmp_path_factory.mktemp("jv")
-    return jv.run_portfolio(candidate_dir=CANDIDATE, out_dir=out)
+    return jv.run_portfolio(candidate_dir=packet, out_dir=out)
 
 
 def _check(portfolio: dict, check_id: str) -> dict:
@@ -89,11 +94,11 @@ def test_portfolio_is_green_with_no_failed_check(portfolio: dict) -> None:
     assert failed == []
 
 
-def test_portfolio_pins_the_candidate_it_verified(portfolio: dict) -> None:
+def test_portfolio_pins_the_candidate_it_verified(portfolio: dict, packet: Path) -> None:
     subj = portfolio["subject"]
-    # the expectation is derived from the committed manifest — the code
+    # the expectation is derived from the packet's own manifest — the code
     # carries no pin of its own (P34.22a)
-    manifest = json.loads((CANDIDATE / "CANDIDATE_MANIFEST.json").read_text())
+    manifest = json.loads((packet / "CANDIDATE_MANIFEST.json").read_text())
     assert subj["publication_id"] == manifest["release"]["publication_id"]
     assert subj["evaluation"]["status"] == "deferred"
     assert subj["evaluation"]["decision"] is None
@@ -241,9 +246,9 @@ def test_markdown_discloses_the_gap_class(portfolio: dict) -> None:
     assert "## Honest gaps" in md
 
 
-def test_portfolio_writes_the_emitted_artifacts(tmp_path: Path) -> None:
+def test_portfolio_writes_the_emitted_artifacts(tmp_path: Path, packet: Path) -> None:
     out = tmp_path / "report"
-    jv.run_portfolio(candidate_dir=CANDIDATE, out_dir=out)
+    jv.run_portfolio(candidate_dir=packet, out_dir=out)
     for name in ("JOURNEY_PORTFOLIO.json", "JOURNEY_PORTFOLIO.md"):
         assert (out / name).exists(), name
     assert (out / "corpus_export" / "manifest.json").exists()
@@ -262,10 +267,10 @@ def test_cli_requires_out() -> None:
         main(["journey-verify"])
 
 
-def test_cli_runs_and_reports(tmp_path: Path, capsys) -> None:
+def test_cli_runs_and_reports(tmp_path: Path, packet: Path, capsys) -> None:
     from ops.cli import main
 
-    rc = main(["journey-verify", "--out", str(tmp_path / "report")])
+    rc = main(["journey-verify", "--candidate", str(packet), "--out", str(tmp_path / "report")])
     assert rc == 0
     captured = capsys.readouterr()
     assert "verdict=pass" in captured.out
@@ -280,7 +285,9 @@ def test_cli_journey_intake_requires_publication(capsys) -> None:
     assert "--publication" in err
 
 
-def test_cli_journey_verify_fails_when_a_check_fails(tmp_path: Path, monkeypatch, capsys) -> None:
+def test_cli_journey_verify_fails_when_a_check_fails(
+    tmp_path: Path, packet: Path, monkeypatch, capsys
+) -> None:
     """A forced check failure lands owner+landing on the failing row and the
     verb exits 1 — the report never emits a bare 'fail' with no owner."""
     from ops.cli import main
@@ -303,7 +310,7 @@ def test_cli_journey_verify_fails_when_a_check_fails(tmp_path: Path, monkeypatch
             }
         ],
     )
-    rc = main(["journey-verify", "--out", str(tmp_path / "report")])
+    rc = main(["journey-verify", "--candidate", str(packet), "--out", str(tmp_path / "report")])
     assert rc == 1
     out = capsys.readouterr().out
     assert "FAIL WT.sabotaged" in out

@@ -95,6 +95,17 @@ class GcsError(RuntimeError):
     """A GCS call failed — surfaced, never swallowed (honest ops records)."""
 
 
+class GcsPreconditionFailed(GcsError):
+    """An ``if-generation-match`` precondition failed — HTTP 412.
+
+    P35.53 (SIG-REL-005, G3 §5.1): ``stage`` inserts staged objects with
+    ``ifGenerationMatch=0`` and takes the registry lock as a
+    create-if-absent object; a 412 is the name-collision / held-lock /
+    stale-generation signal the release pipeline refuses on — it is never
+    retried past.
+    """
+
+
 @dataclass
 class GcsBucket:
     """Read/write objects in one GCS bucket over the JSON API.
@@ -180,7 +191,9 @@ class GcsBucket:
         MUST already exclude the protected release namespaces
         (``ops.publish.PROTECTED_PREFIXES``); ``ops.publish.sync_tree``
         re-checks every name at the write so a caller bug cannot delete a
-        release tree either.
+        release tree either. P35.53 additionally uses it to *release* the
+        release registry's ``registry/LOCK`` object — the only object the
+        pipeline is ever allowed to delete.
         """
         url = (
             f"{_GCS_API}/storage/v1/b/{urllib.parse.quote(self.bucket)}/o/"
@@ -189,9 +202,101 @@ class GcsBucket:
         self._request("DELETE", url)
         return name
 
+    def _request_preconditioned(
+        self,
+        url: str,
+        *,
+        body: bytes,
+        content_type: str,
+    ) -> tuple[int, bytes]:
+        """A POST that may legitimately answer 412 (precondition failed).
+
+        Same auth/opener discipline as :meth:`_request`, but HTTP 412 maps
+        to :class:`GcsPreconditionFailed` instead of a generic error so the
+        release pipeline can refuse name collisions / held locks /
+        stale generations distinctly.
+        """
+        token = self.token_provider()
+        if not token:
+            raise GcsError(
+                "no GCS access token available (metadata server + gcloud ADC both "
+                "absent) — the write stays local; nothing was uploaded"
+            )
+        headers = {"Authorization": f"Bearer {token}", "Content-Type": content_type}
+        req = urllib.request.Request(url, data=body, headers=headers, method="POST")
+        try:
+            status, payload = self.opener(req, 60.0)
+        except urllib.error.HTTPError as exc:
+            if exc.code == 412:
+                raise GcsPreconditionFailed(f"GCS POST {url} -> HTTP 412") from exc
+            raise GcsError(f"GCS POST {url} -> HTTP {exc.code}") from exc
+        except Exception as exc:  # noqa: BLE001 - surfaced, not hidden
+            raise GcsError(f"GCS POST {url} failed: {exc}") from exc
+        if status == 412:
+            raise GcsPreconditionFailed(f"GCS POST {url} -> HTTP 412")
+        if not (200 <= status < 300):
+            raise GcsError(f"GCS POST {url} -> HTTP {status}")
+        return status, payload
+
+    def insert_object(
+        self,
+        name: str,
+        body: bytes,
+        *,
+        if_generation_match: int = 0,
+        content_type: str = "application/octet-stream",
+    ) -> dict:
+        """Upload ``body`` under a generation precondition; returns the
+        object's metadata (parsed JSON).
+
+        ``if_generation_match=0`` is create-if-absent (P35.53 / SIG-REL-005):
+        a live object under ``name`` answers 412 →
+        :class:`GcsPreconditionFailed`. A nonzero value is the conditional
+        replace the registry lock uses for ``labels.json``.
+        """
+        url = (
+            f"{_GCS_API}/upload/storage/v1/b/{urllib.parse.quote(self.bucket)}/o"
+            f"?uploadType=media&name={urllib.parse.quote(name)}"
+            f"&ifGenerationMatch={if_generation_match}"
+        )
+        _, payload = self._request_preconditioned(url, body=body, content_type=content_type)
+        try:
+            return json.loads(payload)
+        except ValueError:
+            return {"name": name}
+
+    def get_object_meta(self, name: str) -> dict | None:
+        """One object's JSON metadata (``generation``, ``md5Hash``,
+        ``size``, ``updated``), or ``None`` when the name is absent (404)."""
+        url = (
+            f"{_GCS_API}/storage/v1/b/{urllib.parse.quote(self.bucket)}/o/"
+            f"{urllib.parse.quote(name, safe='')}?alt=json"
+        )
+        token = self.token_provider()
+        if not token:
+            raise GcsError(
+                "no GCS access token available (metadata server + gcloud ADC both "
+                "absent) — nothing was read"
+            )
+        req = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
+        try:
+            status, payload = self.opener(req, 60.0)
+        except urllib.error.HTTPError as exc:
+            if exc.code == 404:
+                return None
+            raise GcsError(f"GCS GET {url} -> HTTP {exc.code}") from exc
+        except Exception as exc:  # noqa: BLE001
+            raise GcsError(f"GCS GET {url} failed: {exc}") from exc
+        if status == 404:
+            return None
+        if not (200 <= status < 300):
+            raise GcsError(f"GCS GET {url} -> HTTP {status}")
+        return json.loads(payload)
+
 
 __all__ = [
     "GcsBucket",
     "GcsError",
+    "GcsPreconditionFailed",
     "default_token_provider",
 ]

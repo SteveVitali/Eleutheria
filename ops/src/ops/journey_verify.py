@@ -2436,7 +2436,12 @@ def run_portfolio(
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    manifest = _read_json(candidate_dir / "CANDIDATE_MANIFEST.json")
+    # The manifest read is defensive: after P35.53's NEW-5 eviction the
+    # committed packet's tree is gone, so a bare default run must report the
+    # absence through the candidate checks (verdict=fail, owner+landing) —
+    # never crash before the check layer can say so.
+    manifest_path = candidate_dir / "CANDIDATE_MANIFEST.json"
+    manifest = _read_json(manifest_path) if manifest_path.exists() else {}
 
     export_dir = out_dir / "corpus_export"
     release_dir = out_dir / "corpus_release"
