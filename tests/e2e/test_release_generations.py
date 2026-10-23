@@ -246,6 +246,13 @@ def release_root(tmp_path_factory: pytest.TempPathFactory) -> Path:
     conf/<gen>/ naming the still-latest pub with a deny line + tombstone
     body — promote then carries it byte-identical into gen-3."""
     root = tmp_path_factory.mktemp("release-root")
+    # mkdtemp is 0700 — the bind mount's root inode is what the container
+    # sees as /mnt/rel, and a native-Linux nginx worker (uid 101) cannot
+    # traverse a 0700 foreign-owned dir (CI found this as stat() EACCES →
+    # 404; Docker Desktop's virtiofs squash masks it locally). The real
+    # release root is a bucket mount — world-traversable — so 0755 is the
+    # honest fixture posture, not a test convenience.
+    root.chmod(0o755)
     for pub, tag in ((PUB1, "one"), (PUB2, "two"), (PUB3, "three")):
         (root / "staged/v" / pub).mkdir(parents=True, exist_ok=True)
         (root / "staged/v" / pub / "index.html").write_bytes(
