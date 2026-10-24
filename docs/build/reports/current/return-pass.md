@@ -11,7 +11,7 @@
 | P32.20 | D-P32.20-1 | chain rows 438 **P37.16a** + 439 **P37.16b** (11D family-split, PLAN-11D); packet `docs/build/reports/p32.20-san-diego-dossier/LIVE_RETURN_PASS.json` · landed 1… |
 | P32.21 | D-P32.21-1 | chain rows 438 **P37.16a** + 439 **P37.16b** (11D family-split, PLAN-11D); packet `docs/build/reports/p32.21-acquisition-pilot/ACQ_PILOT_RETURN_PASS.json` · lan… |
 | P32.22 | queued D-R10-LIVE-1 | chain 338 **P35.61** (11B — ≥48 h after P34.46, post-11B writes); packet `docs/build/reports/p32.22-bounded-recovery/LIVE_RETURN_PASS.json` · landed 183 (PR #17… |
-| P32.23a | D-P32.23a-1 | chain 339 **P35.62** (after P35.61); packet `docs/build/reports/p32.23a-release-candidate/LIVE_RETURN_PASS.json` · landed 188 (PR #180) |
+| P32.23a | queued D-P32.23a-1 | chain 339 **P35.62** (after P35.61); packet `docs/build/reports/p32.23a-release-candidate/LIVE_RETURN_PASS.json` · landed 188 (PR #180) |
 | P32.25 | D-R10-PUBLISH-1 | chain 341 **P35.63** (after P35.62); rollback cases `docs/build/reports/p32.25-accepted-release-verification/LIVE_RETURN_PASS.json` · landed 191 (PR #182) |
 | — | HG-05 (old P23.1 row; no deferral) | none — operator action, not in `returnPass` |
 | P34.3 | D-P34.3-1 | the OM-19 `r11/P34.3-live-<n>` dispatch or `implement-spec spec=docs/tickets/204_P34.3__ops-data-protection.md live_verification=true` — `protect.sh --apply` → … |
