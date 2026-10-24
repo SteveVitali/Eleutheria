@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "49dc2461577199e8870af3e840f6387fed7eecb5",
+  "input_commit": "782609d40082a9168f8e8f79c9ca27af21e7f485",
   "manifest_inputs": 1100,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -19914,7 +19914,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "c68fdb11308a2b395d4c09bfc10440bdf78ffc26806fb0148caf6c36a0fa959b",
+  "manifest_sha256": "d8ca73589efed163b5e9db37c26aee39e03697c79f96e42b8eeb5105f9bd1c09",
   "current_md": {
     "lines": 63,
     "bytes": 16347,
