@@ -39,9 +39,10 @@ Machine-readable twin: `LIVE_PASS_PACKET.json`
 
 ## Re-run
 
-```
-implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true
-```
+**Re-run prompt (queued only — nothing in this row executed; no
+probe-run/1 record exists):**
+`implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md
+live_verification=true` — queued, not executed.
 
 Next valid slot: the next weekday 14:00–20:00Z once every
 precondition holds — earliest Monday 2026-10-26T14:00Z, and only if
