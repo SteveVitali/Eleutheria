@@ -7,10 +7,10 @@
 
 <!-- Values only (BM-LEDGER-02/08): lines ≤ 256 B; `returnPass:` ≤ 512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # P35.59 landed(336); P35.41/P35.46/P35.53/P35.59 live legs QUEUED
-nextTicket: P35.60 # row 337
-lastCompleted: P35.59 # row 336
-blockedOn: (nothing) # #357@ace600c CI 5/5 green
+projectStatus: IN_PROGRESS # P35.60 landed(337); P35.41/P35.46/P35.53/P35.59 live legs QUEUED
+nextTicket: P35.61 # row 338
+lastCompleted: P35.60 # row 337
+blockedOn: (nothing) # #358@5223a10 CI 5/5 green
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.67,P36.12
 manifest: docs/tickets/00_MANIFEST.md
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P35.59-dark-cutover-to-release-layout # base r11/P35.58-verification-suite-b-auto-rollback
+chainTip: r11/P35.60-release-classifier-standing-go-readout # base r11/P35.59-dark-cutover-to-release-layout
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-24T10:59Z
+updatedAt: 2026-10-24T16:19Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1206,3 +1206,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-24 — P35.59 done — `ci: pass #357@ace600c` 5/5 head-bound (run 40085522260; `reports/ci/p35_59_pr357.json`; stack #356…#352 pass, merges:5 `main` d47d7b0 descends:no) · row 336 — REL-09 dark cutover: `verb_cutover` composes `conf/0` genesis + staged/conf carry + `serving.json` retirement (legacy publish class) + `legacy-cutover` journal, create-if-absent + post-checks fail-closed · `publish-web --apply` refuses once retired, before any write · `web-cutover.sh` — AR-2 prestate → floor import → conf gen → pinned-digest roll → both-origin `route-compare` → rollback on byte diff; window guard exit 42 · **leg QUEUED (OM-19)** — Saturday, outside preferred band + `live:P35.53`/`live:P34.40` unmet; verbatim command in RETURN PASS · heads `8800cc2e` impl → `0d1dbf1e` policy → `b903df7b`/`ace600c3` record fixes · legs 0 · chainTip→r11/P35.59-… · next P35.60(337) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-24 — P35.59 post-closeout record — closeout head `7bbd52fe` 5/5 green head-bound (`ci: pass #357@7bbd52f` — run 40088097884: python 19m24s / docs 1m43s / composed 4m16s / security 30s / web 28m17s; `reports/ci/p35_59_pr357_post.json`; stack #356…#352 pass, merges:5, `main` d47d7b0 descends:no, no waived red) · heads verbatim: `8800cc2e` impl → `0d1dbf1e` seed-commit → `b903df7b` orient follow-through → `ace600c3` row-deferral → `7bbd52fe` closeout → this record · fix arc: in-place orient repair (declared via seed-commit, archives under memory-repair/) + claim-bearing rows reverted byte-identical + return-pass leg row deferred to closeout — each repaired forward, no check loosened · chainTip→r11/P35.59-… · next P35.60(337) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-24 — P35.60 dispatch boundary-confirm — `ci: pass #357@92494d9` 5/5 head-bound on the record head (run 40096349944: python/docs/composed/security/web; ci_boundary 13:23:58Z `/tmp/p35_59_pr357_final.json`) · stack #356–#352 pass, main `d47d7b0` merges:5 open-other:0 · P35.59 landed `verb_cutover` + `web-cutover.sh` leg-runner + `publish-web` legacy-class refusal; **live cutover leg QUEUED per OM-19** — Sat outside AR-3 preferred band + prerequisites unmet (`live:P35.53` bucket leg, `live:P34.40` L2); command `SIG_CUTOVER_GO=<authority> ops/gcp/web-cutover.sh --apply all` recorded in run ledger + PR body + return-pass leg; D-R11-LATER-20 90-day clock anchored 2026-10-24 · no production mutation · deferrals +0/−0 (returnPass +P35.59 leg) · dispatching P35.60 (337 — release classifier + Class-R standing go + readout generator, REL-06, `live_verification=false`, no pause — B-9/WV-03/B-31 recorded) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-24 — P35.60 done — `ci: pass #358@5223a10` 5/5 head-bound (run 40108466001; `reports/ci/p35_60_pr358.json`; stack #357…#352 pass, merges:0 `main` d47d7b0 descends:no) · row 337 — REL-06 sign-off machinery: `ops/release_classify.py` consumes V14 deltas + V15 evidence verbatim (never re-measures), one verdict row per R-column condition, `class_r` only all-`r`, fail-closed S on every trigger/unevaluable; standing-go validation + append-only `sig.standing-go-void/1`; agent-drafted `sig.release-readout/1` pair, signature empty, §7.4 wording verbatim; notice via `alerts` seam, no address committed; `exports/release_fingerprint.py` template digest · **SIG-REL-012 + SIG-CONF-010 → MET-ENGINEERED(D-P35.60-1;D-R10-PUBLISH-1)→BL-085**; **ADR-221** landed · **D-P35.60-1 OPEN** (e0) — operator adoption of the go text + first signed readout, never implied · **Verify:** 61 classifier + 316 focused tests; `make check` 10,490/4-failed — 3 machine-local pre-existing (SIG_GCP_PROJECT; P34.18 handles Δ0) + 1 BACKLOG.md staleness fixed by regen · fix arc — docs: range-lint assert tokens→reword, CHANGELOG gate→entry, stale projection→regen; python: fixture `expires_at`→`future-ok` marker · heads `8821612d`→`c5a88fe4`→`8782ac7b`→`5223a10f` · OM-16 ~3.24k over M · legs 0 · chainTip→r11/P35.60-… · next P35.61(338) · harness: devin-desktop/swe-2-high/subagent
