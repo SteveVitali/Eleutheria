@@ -53,5 +53,6 @@
 | P35.26 | L1 merge · L2 EFF+OSM role-aware re-ingest (OSM in-ODbL; pre-state counts) · L3 edge rematerialize — 1970 at zero | `implement-spec spec=docs/tickets/305_P35.26__roles-and-time-backend.md live_verification=true` · row 305 landed (PR #320) |
 | P35.41 | the connector-image roll: rebuild + redeploy the connector image carrying `records_digest`, the upstream-declared marks, and the capture-mark headers | `implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` · row 320 landed (PR #338) |
 | P35.53 | D-P35.53-1 | `SIG_RELEASE_AUTHOR="$(git config user.name)" bash ops/gcp/release-infra.sh --apply all`, or `implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-… |
+| P35.59 | the queued dark cutover (`ops/gcp/web-cutover.sh --apply all`): AR-2 prestate+manifest → `staged/v/legacy-<YYYYMMDD>/` floor import → `conf/0`+carry+`serving.js… | `SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all`, or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_ve… |
 
 ← back: CURRENT.md

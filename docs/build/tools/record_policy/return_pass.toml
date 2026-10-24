@@ -1063,10 +1063,20 @@ rerun_cell = '''`SIG_RELEASE_AUTHOR="$(git config user.name)" bash ops/gcp/relea
   rerun = '''implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-staging-origins.md live_verification=true'''
   live_dependants = ["P35.54", "P35.55", "P35.59"]
 
-# P35.59 (row 336) — the dark-cutover leg rides this ticket's closeout
-# commit, not the impl commit: a returnPass id counts as landed for
-# nextTicket (V2 next-not-lowest), so the row is added only when the
-# BUILD_INDEX row + nextTicket advance land (the 59817162/P35.41
-# convention). The queued leg + verbatim re-run command are recorded
-# in docs/build/runs/P35.59.md, docs/build/pr/P35.59.md and the run
-# ledger's live-leg section until then.
+[[row]]
+key = "P35.59"
+kind = "leg"
+obligations = []
+obligations_cell = '''the queued dark cutover (`ops/gcp/web-cutover.sh --apply all`): AR-2 prestate+manifest → `staged/v/legacy-<YYYYMMDD>/` floor import → `conf/0`+carry+`serving.json` retirement → `sig-web` pinned-digest roll (`SIG_LATEST_PUB`, `SIG_CONF_GEN=0`, min 1, `/mnt/rel`) → `route-compare` both origins — byte diff → rollback'''
+gates_cell = '''hosted, production write — QUEUED (window guard exit 42, 2026-10-24T08:30Z Saturday — outside 14:00–20:00Z weekdays, never 03:00–06:30Z); pre-authorised: GATE-G4 §4 names P35.59 verbatim (expires next GATE, OM-10); requires `live:P35.53` (`…-sig-release` exists) + `live:P34.40` L2 `/v1/*` checked (GB-Q4 expired GATE-G4 — still-paused L2 is an operator naming, never skipped)'''
+operator_cell = '''nothing until window + both live prerequisites — `--check` plans only; per-leg `--apply` if paused; rollback = traffic move to the still-running prior revision (image+env+mounts wholesale); `sig-web` bucket untouched — 90-day floor under D-G3-7 (D-R11-LATER-20 anchors on landing `date -u`)'''
+rerun_cell = '''`SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all`, or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_verification=true` · landed row 336'''
+
+  [[row.legs]]
+  id = "P35.59-dark-cutover"
+  obligations = []
+  earliest = '''the next AR-3 + AR-2 window (preferred 14:00–20:00Z weekdays, never 03:00–06:30Z) after `live:P35.53` (the release bucket exists) and `live:P34.40`-L2 checked (the `/v1/*` rule live or the still-paused step named at the next GATE — its GB-Q4 go expired at GATE-G4)'''
+  excluded = ["03:00–06:30Z"]
+  go = '''pre-authorised: GATE-G4 §4 names P35.59 verbatim'''
+  rerun = '''implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_verification=true'''
+  live_dependants = ["P35.60", "P35.62", "P35.63"]

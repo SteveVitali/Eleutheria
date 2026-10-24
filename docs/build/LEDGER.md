@@ -7,12 +7,12 @@
 
 <!-- Values only (BM-LEDGER-02/08): lines ≤ 256 B; `returnPass:` ≤ 512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # P35.58 landed(335); P35.41 live + P35.46 ER + P35.53 infra legs QUEUED
-nextTicket: P35.59 # row 336
-lastCompleted: P35.58 # row 335
-blockedOn: (nothing) # #356@4434d9a CI 5/5 green
+projectStatus: IN_PROGRESS # P35.59 landed(336); P35.41/P35.46/P35.53/P35.59 live legs QUEUED
+nextTicket: P35.60 # row 337
+lastCompleted: P35.59 # row 336
+blockedOn: (nothing) # #357@ace600c CI 5/5 green
 pauseRequested: false
-returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.67,P36.12
+returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.67,P36.12
 manifest: docs/tickets/00_MANIFEST.md
 canonicalSpec: docs/2_canonical_design_spec.md
 memoryRoot: docs/build
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P35.58-verification-suite-b-auto-rollback # base r11/P35.56-verification-suite-a
+chainTip: r11/P35.59-dark-cutover-to-release-layout # base r11/P35.58-verification-suite-b-auto-rollback
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-23T14:55Z
+updatedAt: 2026-10-24T10:59Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -442,6 +442,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | P35.26 | L1 merge · L2 EFF+OSM role-aware re-ingest (OSM in-ODbL; pre-state counts) · L3 edge rematerialize — 1970 at zero | QUEUED (`live_verification=false`); OM-20 — the GATE-G4 §4 list names P35.26 verbatim (2026-10-09T17:32Z; expires at the next sub-round GATE, OM-10); AR-3 + AR-2, excl. AR-3 freeze | nothing until the re-run; rollback forward-only | `implement-spec spec=docs/tickets/305_P35.26__roles-and-time-backend.md live_verification=true` · row 305 landed (PR #320) |
 | P35.41 | the connector-image roll: rebuild + redeploy the connector image carrying `records_digest`, the upstream-declared marks, and the capture-mark headers | QUEUED (OM-19 — deferred ~21Z, past the AR-3 preferred slot, under the session's external merge-cascade dispatch hold recorded in the 2026-10-20 15:53Z digest); OM-20 — the GATE-G4 §4 list names P35.41 verbatim (2026-10-09T17:32Z; expires at the next sub-round GATE, OM-10); AR-3 + AR-2 — preferred 14:00–20:00Z weekdays, never 03:00–06:30Z; roll machinery + recording idempotent | nothing until the re-run; the roll redeploys already-permitted connectors inside existing ingestion permission | `implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` · row 320 landed (PR #338) |
 | P35.53 | D-P35.53-1 | QUEUED (OM-19 — the leg-runner's AR-3 window guard exited 42 at 2026-10-23T03:33Z, inside the never-mutate 03:00–06:30Z band); OM-20 — the GATE-G4 §4 OM-20 list names P35.53; AR-3 + AR-2 — preferred 14:00–20:00Z weekdays, never 03:00–06:30Z, at/after `SIG_RELEASE_EARLIEST` 2026-10-13T12:00:00Z; ops idempotent (get-or-create + conditioned IAM) | nothing until the re-run; the leg creates the private `…-sig-release` bucket, the IAM-only staging origins and the `sig-release` job under the operator ADC — `SIG_RELEASE_AUTHOR` must equal `git config user.name` | `SIG_RELEASE_AUTHOR="$(git config user.name)" bash ops/gcp/release-infra.sh --apply all`, or `implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-staging-origins.md live_verification=true` · landed row 331 (PR #351) |
+| P35.59 | the queued dark cutover (`ops/gcp/web-cutover.sh --apply all`): AR-2 prestate+manifest → `staged/v/legacy-<YYYYMMDD>/` floor import → `conf/0`+carry+`serving.json` retirement → `sig-web` pinned-digest roll (`SIG_LATEST_PUB`, `SIG_CONF_GEN=0`, min 1, `/mnt/rel`) → `route-compare` both origins — byte diff → rollback | hosted, production write — QUEUED (window guard exit 42, 2026-10-24T08:30Z Saturday — outside 14:00–20:00Z weekdays, never 03:00–06:30Z); pre-authorised: GATE-G4 §4 names P35.59 verbatim (expires next GATE, OM-10); requires `live:P35.53` (`…-sig-release` exists) + `live:P34.40` L2 `/v1/*` checked (GB-Q4 expired GATE-G4 — still-paused L2 is an operator naming, never skipped) | nothing until window + both live prerequisites — `--check` plans only; per-leg `--apply` if paused; rollback = traffic move to the still-running prior revision (image+env+mounts wholesale); `sig-web` bucket untouched — 90-day floor under D-G3-7 (D-R11-LATER-20 anchors on landing `date -u`) | `SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all`, or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_verification=true` · landed row 336 |
 
 Sources: OPERATIONAL_READINESS.md §(f3) (`581fcb5558ca…`@`45dcc789`) + `UNIVERSE_DISPOSED.csv` (`7af12151e419…`) + plan §9.2/§8.6 + `data/round11_plan.csv`. Not rows (one other home, §9.2): 9 `ticket` + 9 `later-phase` + 7 `decision` (GATE-P) + 2 `already-done` — SEED-14 records re-homing. Keying (B3 §8.6/T5 γ): the LANDED R10 ticket — 183→P35.61, 188→P35.62, 191→P35.63, 179–182→P37.16, D-P21.5-1→P37.55, D-P31.4-1→P34.39a; the leg runs as the named R11 row; P32.18–P32.21 share P37.16a/b.
 
@@ -1202,3 +1203,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-24 — P35.58 post-closeout record — closeout head `0ad394b9` 5/5 green head-bound (`ci: pass #356@0ad394b` — run 40072970225: python 18m52s/docs/composed/security/web; `reports/ci/p35_58_pr356_post.json`; stack pass merges:5, `main` d47d7b0 descends:no, no waived red) · heads `b2698a48` boundary→`49dc2461` resume→`1742fc8d` impl→`782609d4` advisory refresh→`4434d9a3` re-normalise+regen→`0ad394b9` closeout→this record · 3 reds: undici/zod advisories(fixed not granted), unpinned-npm write, ordering miss — repaired forward, no check loosened · chainTip→r11/P35.58-… · next P35.59(336) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-24 — P35.59 dispatch boundary-confirm — `ci: pass #356@2682ace` 5/5 head-bound (record head; run 40075245807: python/docs/composed/security/web; ci_boundary 08:07:59Z `/tmp/p35_58_pr356_final.json`) · stack #355–#352 pass, `main` d47d7b0 merges:5 open-other:0 · operator merged #347–#351 into main 05:31–05:32Z (chain PRs now #352/#354/#355/#356) · P35.58 resume recorded (`49dc2461`); lockfile-truth red repaired (npm 11.21 re-normalise + undici/zod bumps — CI-unblock) · `SIG-REL-007`→`MET-ENGINEERED(D-P35.53-1;D-P35.56-1;D-R10-PUBLISH-1)` · deferrals +0/−0 · dispatching P35.59(336 dark cutover — floor import + `sig-web` digest roll + bucket-root retirement; OM-20 named GATE-G4 §4; AR-2/AR-3 weekday 14:00–20:00Z — Sat queues per OM-19; `live_verification=true`, P34.40 L2 `/v1/*` seam) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-24 — P35.59 correction — orient repair (BM-ORIENT-01 V11): L1204–1206 + head L4–6 + state comments compacted, every field kept (originals → `memory-repair/LEDGER_phaselog_L1204-1206_pre-P35.59.txt` 70441d9f3cdaf3df…, `LEDGER_head_lines4-6_pre-P35.59.txt` e1fd6cbfe282deed…, `LEDGER_state_comments_pre-P35.59.txt` 5e32959b63605894…, `LEDGER_head_comments21_pre-P35.59.txt` a0a62a79fefa4dda…); return_pass.toml trims · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-24 — P35.59 done — `ci: pass #357@ace600c` 5/5 head-bound (run 40085522260; `reports/ci/p35_59_pr357.json`; stack #356…#352 pass, merges:5 `main` d47d7b0 descends:no) · row 336 — REL-09 dark cutover: `verb_cutover` composes `conf/0` genesis + staged/conf carry + `serving.json` retirement (legacy publish class) + `legacy-cutover` journal, create-if-absent + post-checks fail-closed · `publish-web --apply` refuses once retired, before any write · `web-cutover.sh` — AR-2 prestate → floor import → conf gen → pinned-digest roll → both-origin `route-compare` → rollback on byte diff; window guard exit 42 · **leg QUEUED (OM-19)** — Saturday, outside preferred band + `live:P35.53`/`live:P34.40` unmet; verbatim command in RETURN PASS · heads `8800cc2e` impl → `0d1dbf1e` policy → `b903df7b`/`ace600c3` record fixes · legs 0 · chainTip→r11/P35.59-… · next P35.60(337) · harness: devin-desktop/swe-2-high/subagent
