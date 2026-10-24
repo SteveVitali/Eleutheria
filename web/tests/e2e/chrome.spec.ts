@@ -10,27 +10,21 @@
 // boundaries, and no ungrouped 5+-digit number in public text.
 import { test, expect } from "@playwright/test";
 import {
-  ALL_PAGES,
   CHROME_PAGES,
-  FRESHNESS_SORT_PAGES,
-  JURISDICTION_DOSSIER_PAGES,
+  DISCOVERED_ROUTES,
   DOSSIER_PRINT,
 } from "./pages";
 
-// The public surface under test: the shell pages, the jurisdiction dossiers,
-// the one real sort route, the chrome pages, and every dossier's print view.
-// Internal/withdrawn routes (/visual-language/, /contribution-back/, /curate/**)
-// are NOT public text and stay out of the copy checks.
-const WITHDRAWN = ["/visual-language/", "/contribution-back/"];
-const PUBLIC_PAGES = [
-  ...ALL_PAGES.filter((p) => !WITHDRAWN.includes(p)),
-  ...JURISDICTION_DOSSIER_PAGES,
-  ...FRESHNESS_SORT_PAGES,
-  ...CHROME_PAGES,
-  DOSSIER_PRINT,
-  "/dossier/paris-alpr/print/",
-  "/dossier/brussels-alpr/print/",
-] as const;
+// The public surface under test — every discovered route that is not marked
+// internal (the injected SIG_BUILD_INTERNAL surface: /curate/**, /releases/,
+// /research-dossier/**, /visual-language/, /contribution-back/ are not public
+// text). The flat error-page copies are byte-identical to /403/ and /410/ for
+// the nginx error_page mapping — asserted to exist below, excluded from the
+// unique-title/copy checks (a copy can never carry a distinct title).
+const FLAT_ERROR_COPIES = new Set(["/403.html", "/410.html"]);
+const PUBLIC_PAGES = DISCOVERED_ROUTES.filter(
+  (r) => !r.internal && !FLAT_ERROR_COPIES.has(r.path),
+).map((r) => r.path);
 
 const ORIGIN = "https://surveillancegraph.org";
 

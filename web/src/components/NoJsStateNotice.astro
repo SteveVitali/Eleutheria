@@ -1,0 +1,42 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P35.50 (K0 §4.4/§4.5, SIG-UI-050): the no-JS notice a T2 surface shows when a
+// URL carries interactive state. A `sig.workspace-state/1` URL encodes what the
+// interactive view would open on — a pinned release, a selected record, a
+// compartment set; with JavaScript off nothing interprets that selection, and
+// this notice says so and names where the same records live statically (the
+// page's named no-JS equivalents). It is rendered inside <noscript>, so it is
+// visible on every no-JS load — its wording is therefore conditional: it names
+// the state a URL MAY carry, which is true whether or not this URL carries any.
+// Static emission only — no client behaviour, and a query string never
+// pretends to pin anything on the server (SIG-FIND-002).
+
+interface Props {
+  /** The workspace-state parameters this surface's URLs may carry. */
+  params: readonly string[];
+  /** The named no-JS equivalents the notice links (same-page anchors or routes). */
+  equivalents: readonly { href: string; label: string }[];
+}
+
+const { params, equivalents } = Astro.props;
+const listed = params.map((p) => `${p}=`).join(", ");
+---
+
+<noscript>
+  <p class="sig-island__note sig-nojs-state-notice" data-testid="no-js-state-notice">
+    A URL on this page can name an interactive view state
+    (<code>{listed}</code>) — the release, selection or query the interactive
+    view would open on. With JavaScript off that view is inert and the
+    selection does not apply. No fact is lost: the same records are in{" "}
+    {equivalents.map((e, i) => (
+      <>
+        {i > 0 && (i === equivalents.length - 1 ? " and " : ", ")}
+        <a href={e.href}>{e.label}</a>
+      </>
+    ))}{" "}
+    on this page.
+  </p>
+</noscript>

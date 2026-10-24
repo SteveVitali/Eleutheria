@@ -12,6 +12,7 @@
 // browse links and island degrade honestly (SIG-UI-037/050).
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ViewSwitch from "../components/ViewSwitch.astro";
+import NoJsStateNotice from "../components/NoJsStateNotice.astro";
 import SearchIsland from "../islands/SearchIsland";
 import type { SearchItem } from "../islands/SearchIsland";
 import {
@@ -153,6 +154,13 @@ const hasUnmapped =
   <!-- The OPT-IN search island (P27.9, ADR-097). Hydrates only here; empty with JS off. -->
   <section class="sig-island" aria-labelledby="search-island-heading" data-testid="search-island-section">
     <h2 id="search-island-heading">Quick filter — the listed index</h2>
+    <NoJsStateNotice
+      params={["release", "q", "kind", "focus", "view", "page"]}
+      equivalents={[
+        { href: "#release-search-heading", label: "the release-pinned search forms" },
+        { href: "#browse-heading", label: "the browse index" },
+      ]}
+    />
     <SearchIsland client:only="react" items={INDEX} release={latest?.publicationId ?? null} />
   </section>
 

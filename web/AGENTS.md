@@ -39,17 +39,20 @@ Run from repo root with `npm --prefix web run <script>` (or from `web/` with `np
 
 ## Critical Gotchas
 
-1. **Page types, not islands (ADR-155).** Look up the route's type in the page-type registry
-   (src/lib/page-types.ts, added by P35.50) before adding any client code. T0: none. T1: a
-   framework-free custom element from src/elements/ that upgrades existing markup (≤ 20 KiB gzip
-   initial). T2: a Preact island mounted with `client:visible`/`client:idle` into a reserved box
-   that already holds the static rendition — never `client:only`. Budgets: tests/e2e/page-budgets.json
-   (P35.51). Never render a data label with `innerHTML`. Runtime dependencies: runtime-deps.json
-   only. **Until P35.50/P35.51 land,** the current contract binds: content pages ship no
-   `<script>` (`web/lighthouserc.json` asserts script size `0`), and only `/curate/**` (ADR-068)
-   and the three ADR-097 islands `/map/`, `/network/`, `/search/` carry client JS, within
-   `web/tests/e2e/island-budgets.json`; adding client JS anywhere else fails
-   `test:e2e`/`check:perf`.
+1. **Page types, not islands (ADR-155).** The page-type registry (`src/lib/page-types.ts`,
+   P35.50) is the single authority: look up the route's type before adding any client code —
+   every built route is classified at `astro:build:done` and an unclassified or double-classified
+   route **fails the build**; the emitted page-types manifest in `dist/` drives the e2e sweeps. T0: no `<script>` at
+   all. T1: a framework-free custom element that upgrades existing markup — today nothing may
+   load (the `type="module"` entry allow-list `tests/e2e/t1-module-entries.json` is empty until
+   UXK0-4 lands an element); the `nojs-parity` spec requires `main` text identical with JS off
+   minus `[data-enhancement]`. T2: a named island over a preserved no-JS fallback whose route
+   names its equivalent in the registry; stateful `sig.workspace-state` URLs show a JS-off
+   notice. Budgets: `tests/e2e/island-budgets.json` today, registry-driven
+   registry-driven tests/e2e/page-budgets.json + generated `lighthouserc.json` under P35.51. Never render a
+   data label with `innerHTML`. No `on*=` handler attributes and no `javascript:` URLs on any
+   type. Raising a budget, adding a T2 surface, or a browser runtime dependency needs a new ADR
+   amending ADR-155.
 2. **Accessibility is enforced, not aspirational.** `test:e2e` runs `@axe-core/playwright` for
    **WCAG 2.2 AA**; a violation fails the suite.
 3. **Dependency licences are gated.** `check:licenses` (`web/scripts/check-licenses.mjs`) fails on a

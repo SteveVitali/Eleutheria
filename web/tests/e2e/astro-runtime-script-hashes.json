@@ -1,0 +1,10 @@
+{
+  "schema": "sig.astro-runtime-script-hashes/1",
+  "recorded_by": "P35.50",
+  "recorded_against": "astro 5.x static build, fixtures data source",
+  "comment": "sha256 of the exact inline <script> bodies the Astro runtime emits for the current island machinery — the 'hashed Astro bootstrap' the K0 §4.12 script policy names. They are data-independent (identical on every island page and on fixtures/export builds). A hash that stops matching is an Astro-runtime diff: script-policy.spec.ts fails loud and the new bytes are reviewed and recorded here, never swept silently.",
+  "hashes": {
+    "7885d6bc09b192bdb9d4b2599239e210ae4b70f1773646a96c97a9a21c184487": "astro:only client-directive bootstrap — registers self.Astro.only and dispatches the astro:only event for client:only islands",
+    "61ad29518ac2ee73390a7ff4e7a4f256e122cfa7451abce6916ce038dd291745": "astro-island custom-element runtime — defines the <astro-island> element and its hydration dispatcher"
+  }
+}

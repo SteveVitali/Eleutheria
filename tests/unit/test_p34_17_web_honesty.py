@@ -212,9 +212,13 @@ def test_new_routes_registered_and_withdrawn_routes_denied() -> None:
     assert "/visual-language/" in denied
     for dead in ("/curate/", "/task/new/", "/releases/", "/research-dossier/", "/intake/"):
         assert dead in denied, f"{dead} must stay denied"
-    # The e2e registry covers the new pages.
-    registry = (WEB / "tests/e2e/pages.ts").read_text(encoding="utf-8")
-    assert '"/sources/"' in registry and '"/status/"' in registry
+    # The e2e sweep covers the new pages — P35.50: membership is the
+    # page-type registry's, and pages.ts derives every list from the emitted
+    # manifest, so a registered pattern IS sweep coverage.
+    registry = (WEB / "src/lib/page-types.ts").read_text(encoding="utf-8")
+    assert '"/sources/**"' in registry and '"/status/**"' in registry
+    pages = (WEB / "tests/e2e/pages.ts").read_text(encoding="utf-8")
+    assert "DISCOVERED_ROUTES" in pages
 
 
 def test_public_pages_carry_no_internal_route_links() -> None:

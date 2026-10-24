@@ -11,6 +11,7 @@
 import { test, expect } from "@playwright/test";
 import { gzipSync } from "node:zlib";
 import budgets from "./island-budgets.json" with { type: "json" };
+import { T2_PAGES } from "./pages";
 
 interface AssetMeasure {
   raw: number;
@@ -78,4 +79,16 @@ test.describe("per-island asset budgets (SIG-FIND-005)", () => {
       expect(totalGzip + docBytes).toBeLessThanOrEqual(budget.totalGzipMaxBytes);
     });
   }
+
+  // P35.50: the sweep guards itself — every discovered T2 route carries a
+  // budget row, so a new explore surface can never escape measurement (the
+  // byte values themselves are P35.51's page-budgets.json generalisation).
+  test("every discovered T2 route has an island budget row", () => {
+    for (const path of T2_PAGES) {
+      expect(
+        budgets.islands,
+        `no island-budgets.json row for discovered T2 route ${path}`,
+      ).toHaveProperty(path);
+    }
+  });
 });

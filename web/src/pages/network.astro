@@ -14,6 +14,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import EmptyState from "../components/EmptyState.astro";
 import ViewSwitch from "../components/ViewSwitch.astro";
+import NoJsStateNotice from "../components/NoJsStateNotice.astro";
 import {
   ACCESS_EDGE_TYPES,
   ACCESS_EDGE_STYLES,
@@ -128,6 +129,14 @@ others.forEach((n, i) => {
   {hasNetwork && (
   <section class="sig-island sig-graph-island" aria-labelledby="graph-island-heading" data-testid="graph-island-section">
     <h2 id="graph-island-heading">Interactive explorer</h2>
+    <NoJsStateNotice
+      params={["release", "focus", "view"]}
+      equivalents={[
+        { href: "#ego-heading", label: "the ego-network figure and caption" },
+        { href: "#access-heading", label: "the access-edge lists" },
+        { href: "#paths-heading", label: "the access-path hop lists" },
+      ]}
+    />
     <p class="sig-island__note">
       An opt-in interactive explorer (P27.9, ADR-097). It opens on an ego network and
       expands one node at a time — never a national hairball (SIG-UI-021/022). With

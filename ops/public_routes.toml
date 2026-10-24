@@ -35,6 +35,7 @@ top_level = [
   "410.html",            # flat copy for the P34.40 error_page mapping
   "favicon.svg",         # the SIG favicon (P34.13 / QW-11)
   "sitemap.xml",         # the canonical-only sitemap (P34.13 / QW-11)
+  "page-types.json",     # the ADR-155 page-type manifest every public build emits (P35.50 / SIG-UI-041)
   "terms",               # /terms → the API terms, with N-7 beside it (P34.13 / QW-11)
   ".sig-release.json",   # the publish's own release record (rewritten each run)
   "robots.txt",
@@ -81,6 +82,7 @@ required = [
   "410.html",
   "favicon.svg",
   "sitemap.xml",
+  "page-types.json",     # emitted by every build — the sigPageTypes hook always writes it
   "terms",
   "robots.txt",
   "_astro",

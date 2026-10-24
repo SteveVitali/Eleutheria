@@ -3,30 +3,13 @@
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
 // Runs in the "chromium" project (JavaScript ENABLED). Proves the three OPT-IN
-// public interactive islands (P27.9, ADR-097) hydrate and are interactive over the
-// real data — and, crucially, that hydration is CONFINED: only the three island
-// pages ship a `<script>`; every other public page still ships zero client JS
-// (SIG-UI-036/037, AC2). ODbL attribution is shown on the map (§42.3).
+// public interactive islands (P27.9, ADR-097 — T2 explore surfaces under
+// ADR-155) hydrate and are interactive over the real data. The page-type
+// script policy these tests used to carry now lives in script-policy.spec.ts
+// (P35.50 — same or stronger assertions, iterated over the discovered routes);
+// the per-island byte budgets stay in budget.spec.ts until P35.51's
+// page-budgets.json generalisation. ODbL attribution is shown on the map (§42.3).
 import { test, expect } from "@playwright/test";
-import { ISLAND_PAGES, ZERO_JS_PUBLIC_PAGES } from "./pages";
-
-test.describe("hydration is confined to the three islands (AC2)", () => {
-  for (const path of ZERO_JS_PUBLIC_PAGES) {
-    test(`no <script> on non-island public page ${path}`, async ({ page }) => {
-      const resp = await page.goto(path);
-      const html = (await resp?.text()) ?? "";
-      expect(html).not.toContain("<script");
-    });
-  }
-
-  for (const path of ISLAND_PAGES) {
-    test(`island page ${path} ships a hydration <script>`, async ({ page }) => {
-      const resp = await page.goto(path);
-      const html = (await resp?.text()) ?? "";
-      expect(html).toContain("<script");
-    });
-  }
-});
 
 test.describe("interactive map island (AC1, AC3)", () => {
   test("hydrates over the real assets, renders MapLibre + ODbL attribution", async ({ page }) => {
