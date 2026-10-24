@@ -129,7 +129,7 @@ def _seed_go(
         "class": "class_r",
         "ref": "B-9 (GATE-P, 2026-10-01T04:35:53Z)",
         "approved_at": "2026-10-01T04:35:53Z",
-        "expires_at": "2026-12-31T00:00:00Z",
+        "expires_at": "2026-12-31T00:00:00Z",  # future-ok: synthetic: fixture go expiry
     }
     rec.update(over)
     base = (root or Path(store.root)) / "registry" / "approvals"
