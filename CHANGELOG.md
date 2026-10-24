@@ -24,6 +24,37 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Release classifier, standing go, and Class-S readout generator —
+  `sig-ops release classify` consumes a completed V14/V15 verification
+  suite's emitted evidence and returns a journaled `class_r` only when
+  every §7.3 R-column condition is proven; any trigger or unevaluable
+  check returns `class_s`** (P35.60 / row 337; SIG-REL-012 +
+  SIG-CONF-010 — owner; ADR-221; cites D-G3-3/B-9) —
+  `ops/src/ops/release_classify.py` never re-measures: it maps every
+  R-column condition to one verdict row (`r` / `trigger` /
+  `unevaluable`) and fail-closes to `class_s` on a missing or malformed
+  suite input, a V14 anomaly, a ratchet regression, a new source, a
+  Part VIII screen change, a code/route/allow-list/public-surface/
+  version/schema/disclosure delta, or a waiver. The standing-go leg
+  (B-9) validates an operator-adopted `sig.promotion-approval/1` — never
+  implied adoption — for scope, revocation, voiding, code-commit scope
+  and expiry (an in-flight release classified while the go was still
+  valid may promote), and appends an immutable `sig.standing-go-void/1`
+  marker on a ratchet regression, Part VIII screen change or new
+  source; the adopted record itself is never edited. A `class_s`
+  result emits an agent-drafted `sig.release-readout/1` pair under
+  `registry/readouts/` whose signature slot stays empty (no proxy
+  operator signature) and whose notice rides the existing alerts seam
+  without committing an operator address; rollback, clear-latest and
+  withdrawal keep their recorded operator go with no readout.
+  `exports/src/exports/release_fingerprint.py` adds the deterministic
+  template fingerprint stamped into release metadata for V14's
+  template delta. `sig-ops release promote` consumes the journaled
+  class and approval metadata rather than re-classifying. The
+  operator-adoption prerequisite (the standing-go text and the first
+  signed Class-S readout) is filed as `D-P35.60-1`; no classification
+  was applied, no notice sent, and no signature produced by this
+  change.
 - **Verification suite B + the pre-authorised post-promote automatic
   rollback — `sig-ops release verify` now runs the full V1–V15 gate and
   a failed post-promotion check restores the previous serving
