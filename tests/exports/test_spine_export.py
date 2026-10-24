@@ -762,14 +762,30 @@ def test_pmtiles_rendered_per_compartment() -> None:
         "B", "48.85", "2.35", "Paris", source_id="fr", spdx="CC-BY-4.0"
     )
     export = _build(claims)
-    assert "web/tiles/osm_physical-sites.pmtiles" in export.web_artifacts
-    assert "web/tiles/sig_graph-sites.pmtiles" in export.web_artifacts
-    assert export.web_artifacts["web/tiles/osm_physical-sites.pmtiles"][:7] == b"PMTiles"
+    # P35.52 (sig.map-tiles/2): content-hash names — <comp>-sites.<sha8>.pmtiles.
+    import hashlib
+    import re
+
+    tile_re = re.compile(r"^web/tiles/([a-z0-9_]+)-sites\.[0-9a-f]{8}\.pmtiles$")
+    tile_paths = {p for p in export.web_artifacts if tile_re.match(p)}
+    comps = {tile_re.match(p).group(1) for p in tile_paths}  # type: ignore[union-attr]
+    assert comps == {"osm_physical", "sig_graph"}
+    osm_path = next(p for p in tile_paths if p.startswith("web/tiles/osm_physical-"))
+    assert export.web_artifacts[osm_path][:7] == b"PMTiles"
     # the ODbL tile is licensed ODbL in the extended manifest
-    osm_tile = next(
-        a for a in export.manifest.artifacts if a.path == "web/tiles/osm_physical-sites.pmtiles"
-    )
+    osm_tile = next(a for a in export.manifest.artifacts if a.path == osm_path)
     assert osm_tile.license == "ODbL-1.0" and osm_tile.compartment == "osm_physical"
+    # the sig.map-tiles/2 index rides alongside (schema-tagged in the manifest)
+    assert "web/tiles/index.json" in export.web_artifacts
+    index = json.loads(export.web_artifacts["web/tiles/index.json"])
+    assert index["contract"] == "sig.map-tiles/2"
+    assert {e["compartment"] for e in index["archives"]} == {"osm_physical", "sig_graph"}
+    entry = next(e for e in index["archives"] if e["compartment"] == "osm_physical")
+    assert entry["path"] == osm_path
+    assert entry["counts"]["points"] == 1
+    assert entry["contract"] == "sig.map-tiles/2"
+
+    assert entry["sha256"] == hashlib.sha256(export.web_artifacts[osm_path]).hexdigest()
 
 
 def test_a_share_alike_tile_is_filed_under_its_own_compartment() -> None:
@@ -777,7 +793,9 @@ def test_a_share_alike_tile_is_filed_under_its_own_compartment() -> None:
     # rule); it is now filed under the compartment its sites were placed in.
     claims = _site("P", "40.0", "-75.0", "Somewhere", source_id="portal", spdx="CC-BY-SA-4.0")
     export = _build(claims)
-    tile = next(a for a in export.manifest.artifacts if a.path.endswith("-sites.pmtiles"))
+    tile = next(
+        a for a in export.manifest.artifacts if "-sites." in a.path and a.path.endswith(".pmtiles")
+    )
     assert (tile.compartment, tile.license) == ("portal", "CC-BY-SA-4.0")
 
 

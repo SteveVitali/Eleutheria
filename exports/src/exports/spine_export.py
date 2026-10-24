@@ -109,11 +109,13 @@ from .bundle import Bundle, build_bundle
 from .jurisdictions import jurisdiction_slug
 from .manifest import (
     PUBLICATION_BASIS,
+    TILES_INDEX_SCHEMA,
     Artifact,
     BuildSpec,
     Manifest,
     canonical_json,
     sha256_hex,
+    tiles_index_document,
 )
 from .shaping import (
     ENVELOPE_CONFLICTED,
@@ -130,7 +132,11 @@ from .shaping import (
     parse_shaping_claims,
     shape_sites,
 )
-from .tiles import render_compartment_sites_pmtiles
+from .tiles import (
+    RenderedTiles,
+    render_compartment_sites_pmtiles,
+    tiles_index_entry,
+)
 from .transparency import (
     _UNSET,
     SOURCE_RIGHTS_COLUMNS,
@@ -5631,9 +5637,16 @@ def build_spine_export(
             web_schemas[path] = dossier_sources.RUNS_ROW_SCHEMA
 
     # --- per-compartment PMTiles (ODbL attribution on the OSM layer) ------------
+    # P35.52 (sig.map-tiles/2, ADR-156): content-hash-named archives +
+    # web/tiles/index.json — <compartment>-sites.<sha8>.pmtiles where sha8 is
+    # the leading 8 hex of the archive sha256, so nginx can serve them
+    # immutable and release pinning is byte-exact (D12). One archive per
+    # licence compartment — counts are summed in the browser, never pooled
+    # into a licence-mixed public file (ADR-106 §4).
     tile_renderers: dict[str, str] = {}
     # (published_path, compartment, license, bytes)
     tile_artifacts: list[tuple[str, str, str, bytes]] = []
+    tiles_index_entries: list[dict[str, Any]] = []
     for pt in bundle.placed:
         if pt.table.name != "sites" or pt.table.kind != "geo":
             continue
@@ -5641,18 +5654,32 @@ def build_spine_export(
         geojson_bytes = bundle.artifact_bytes.get(geojson_path)
         if geojson_bytes is None:
             continue
-        rendered, renderer = _render_tiles(
+        attribution = _compartment_tile_attribution(
+            slices.rows_by_compartment.get(pt.compartment, []), slices.index
+        )
+        rendered = _render_tiles(
             pt.compartment,
             geojson_bytes,
             pt.license,
-            attribution=_compartment_tile_attribution(
-                slices.rows_by_compartment.get(pt.compartment, []), slices.index
-            ),
+            attribution=attribution,
         )
-        tile_path = f"{_WEB_DIR}/tiles/{pt.compartment}-sites.pmtiles"
-        web_artifacts[tile_path] = rendered
-        tile_renderers[pt.compartment] = renderer
-        tile_artifacts.append((tile_path, pt.compartment, pt.license, rendered))
+        tile_path = f"{_WEB_DIR}/tiles/{pt.compartment}-sites.{rendered.sha256[:8]}.pmtiles"
+        web_artifacts[tile_path] = rendered.data
+        tile_renderers[pt.compartment] = rendered.renderer
+        tile_artifacts.append((tile_path, pt.compartment, pt.license, rendered.data))
+        tiles_index_entries.append(
+            tiles_index_entry(
+                compartment=pt.compartment,
+                path=tile_path,
+                license_id=pt.license,
+                attribution=attribution,
+                rendered=rendered,
+                source=geojson_path,
+            )
+        )
+    tiles_index_bytes = canonical_json(tiles_index_document(tiles_index_entries))
+    web_artifacts[f"{_WEB_DIR}/tiles/index.json"] = tiles_index_bytes
+    web_schemas[f"{_WEB_DIR}/tiles/index.json"] = TILES_INDEX_SCHEMA
 
     # --- the PROV-O lineage (§21.6) --------------------------------------------
     _prov_lineage = _provenance_lineage(
@@ -5724,13 +5751,14 @@ def _render_tiles(
     license_id: str,
     *,
     attribution: str | None = None,
-) -> tuple[bytes, str]:
-    """Render one compartment's sites.geojson → PMTiles bytes (+ renderer name).
+) -> RenderedTiles:
+    """Render one compartment's sites.geojson → a ``sig.map-tiles/2`` archive.
 
     Thin alias over :func:`exports.tiles.render_compartment_sites_pmtiles` (the shared
-    per-compartment renderer — ODbL keeps its OSM notice, slimmed render properties,
-    z0–z14 via tippecanoe or the pure-Python encoder). ``attribution`` is the drawn
-    sources' own credit (P34.21a / E2-12); absent it, the licence-level fallback stands.
+    per-compartment renderer — ODbL keeps its OSM notice, the ``cells`` +
+    ``sites`` contract layers, z0–z14 via tippecanoe or the pure-Python
+    encoder). ``attribution`` is the drawn sources' own credit (P34.21a /
+    E2-12); absent it, the licence-level fallback stands.
     """
     return render_compartment_sites_pmtiles(
         compartment, geojson_bytes, license_id, attribution=attribution

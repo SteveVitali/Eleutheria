@@ -468,6 +468,11 @@ def test_the_site_may_not_serve_a_compartment_the_partition_withholds(tmp_path: 
     (dist / "tiles" / "withheld-sites.pmtiles").write_bytes(b"PMTiles")
     with pytest.raises(P.CompartmentLeak, match="withheld-sites"):
         P.assert_site_matches_partition(dist, tmp_path / "public")
+    (dist / "tiles" / "withheld-sites.pmtiles").unlink()
+    # sig.map-tiles/2: the CONTENT-HASHED name is caught by the same gate
+    (dist / "tiles" / "withheld-sites.ab12cd34.pmtiles").write_bytes(b"PMTiles")
+    with pytest.raises(P.CompartmentLeak, match="withheld-sites"):
+        P.assert_site_matches_partition(dist, tmp_path / "public")
 
 
 def test_licence_index_labels_every_public_compartment(tmp_path: Path) -> None:

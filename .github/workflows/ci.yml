@@ -623,6 +623,40 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: bash scripts/ci/national_budget_leg.sh lighthouse
 
+      # --- P35.52 (sig.map-tiles/2, ADR-156, F-104/F-414; K1 §15 NEW-5): ----
+      # the tile verifier leg. The retention contract can't be proven by the
+      # mocked-argv tests alone — the PINNED tippecanoe (the same pin
+      # ops/Dockerfile carries; built once into the actions cache) renders the
+      # deterministic 50k synthetic fixture (clustered cities + co-located +
+      # byte-identical twins, three licence compartments, all tiers), then
+      # `sig-exports tiles verify` measures the six checks — conservation,
+      # renderer parity (non-vacuous under tippecanoe), precision+tier, size,
+      # metadata — over the shipped bytes.
+      - name: Resolve the pinned tippecanoe (ops/Dockerfile pin)
+        id: tippecanoe
+        working-directory: ${{ github.workspace }}
+        run: |
+          v=$(sed -n 's/^ARG TIPPECANOE_VERSION=//p' ops/Dockerfile | head -1)
+          s=$(sed -n 's/^ARG TIPPECANOE_SHA256=//p' ops/Dockerfile | head -1)
+          echo "key=tippecanoe-${v}-${s:0:16}" >> "$GITHUB_OUTPUT"
+      - name: Pinned tippecanoe build cache
+        uses: actions/cache@v6
+        with:
+          path: .cache/sig-tippecanoe
+          key: ${{ steps.tippecanoe.outputs.key }}
+      - name: Build the pinned tippecanoe (no-op on cache hit)
+        working-directory: ${{ github.workspace }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential libsqlite3-dev zlib1g-dev
+          bash scripts/ci/build_tippecanoe.sh .cache/sig-tippecanoe
+      - name: Tile fixture + verifier (pinned tippecanoe over the synthetic 50k)
+        working-directory: ${{ github.workspace }}
+        # env.PATH is empty in the env context — prepend at runtime instead.
+        run: |
+          PATH="$GITHUB_WORKSPACE/.cache/sig-tippecanoe:$PATH" bash scripts/ci/tile_verify_leg.sh fixture
+          PATH="$GITHUB_WORKSPACE/.cache/sig-tippecanoe:$PATH" bash scripts/ci/tile_verify_leg.sh verify
+
       # Record + save only at the END of a green same-repo PR job whose
       # fixture step actually measured (`mode != 'reuse'` writes nothing).
       - name: Perf reuse — write the pass record

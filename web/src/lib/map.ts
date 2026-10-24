@@ -395,29 +395,33 @@ export function binAriaLabel(bin: DensityBin): string {
 // --- National-zoom binning + per-tier point honesty (SIG-UI-019) -----------
 
 /**
- * At or below this zoom the map renders density bins, not individual points — the
- * national view (SIG-UI-019). Above it, points may appear where the tier allows.
+ * At or below this zoom the map renders aggregated cells, not individual points —
+ * the national view (SIG-UI-019). Above it, points may appear where the tier
+ * allows. P35.52 pins this to the `sig.map-tiles/2` band boundary: the `cells`
+ * layer of every archive covers z0–z9 (`CELL_BANDS`), so 9 is both the last
+ * aggregated zoom and the contract's `cells`/`sites` seam (ADR-156).
  */
-export const NATIONAL_ZOOM_MAX = 6;
+export const NATIONAL_ZOOM_MAX = 9;
 
 export type RenderMode = "bins" | "points";
 
-/** Density bins at national zoom, individual points once zoomed in (SIG-UI-019). */
+/** Aggregated cells at national zoom, individual points once zoomed in (SIG-UI-019). */
 export function renderModeForZoom(zoom: number): RenderMode {
   return zoom <= NATIONAL_ZOOM_MAX ? "bins" : "points";
 }
 
 /**
  * The minimum zoom at which an individual point is an HONEST thing to draw for each
- * sensitivity tier (§19.4). A tier-0 asset (public right-of-way hardware) can be
- * shown once past the national view; a tier-2 asset (H3-binned) needs a close zoom
- * so the drawn point never implies more precision than SIG published; a tier-3
- * asset (jurisdiction-only) is NEVER drawn as a point — `null` (SIG-UI-019/020).
+ * sensitivity tier (§19.4) — pinned verbatim to the `sig.map-tiles/2` site zoom
+ * bands (`SITE_MINZOOM_BY_TIER` in `exports/tiles.py`): tier 0 → z10, tier 1 →
+ * z11, tier 2 → z12 (as its H3 polygon). A tier-3 asset (jurisdiction-only) is
+ * NEVER drawn as a point — `null` (SIG-UI-019/020). These constants must equal
+ * the emitted ranges; the web seam deliberately cannot drift from the archive.
  */
 export const MIN_POINT_ZOOM_BY_TIER: Record<SensitivityTier, number | null> = {
-  0: NATIONAL_ZOOM_MAX + 1,
-  1: NATIONAL_ZOOM_MAX + 3,
-  2: NATIONAL_ZOOM_MAX + 6,
+  0: 10,
+  1: 11,
+  2: 12,
   3: null,
 };
 

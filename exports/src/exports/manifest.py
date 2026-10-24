@@ -28,6 +28,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import date
 
@@ -347,11 +348,42 @@ class Manifest:
         return {a.license for a in self.artifacts}
 
 
+# --- the sig.map-tiles/2 tile index (web/tiles/index.json, ADR-156, P35.52) -----
+
+#: The tile-index document schema — both the contract version it indexes and
+#: the manifest ``schema`` recorded on the artifact.
+TILES_INDEX_SCHEMA = "sig.map-tiles/2"
+
+#: The tile-index document's own schema id inside the JSON (``schema`` key).
+TILES_INDEX_DOC_SCHEMA = "sig.map-tiles-index/1"
+
+
+def tiles_index_document(entries: Sequence[Mapping[str, object]]) -> dict[str, object]:
+    """The ``web/tiles/index.json`` document — one entry per compartment archive.
+
+    Each entry (built by :func:`exports.tiles.tiles_index_entry`) carries the
+    archive's compartment, content-hashed ``path``, ``sha256``, ``licence``,
+    ``attribution``, ``bounds``, ``minzoom``/``maxzoom``, ``counts``
+    (``points`` + ``cells_by_band``), ``renderer``/``renderer_version``, the
+    ``contract`` tag and the ``source`` geojson it verified against — the
+    fields ``sig-exports tiles verify`` reconciles against the archive bytes
+    (K1-map §9.2 check 5).
+    """
+    return {
+        "schema": TILES_INDEX_DOC_SCHEMA,
+        "contract": TILES_INDEX_SCHEMA,
+        "archives": list(entries),
+    }
+
+
 __all__ = [
     "BuildSpec",
     "Artifact",
     "Manifest",
+    "TILES_INDEX_SCHEMA",
+    "TILES_INDEX_DOC_SCHEMA",
     "canonical_json",
     "compact_utc_ts",
     "sha256_hex",
+    "tiles_index_document",
 ]

@@ -24,6 +24,30 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Count-conserving map tiles (`sig.map-tiles/2`), a six-check tile
+  verifier, and a pinned-tippecanoe CI leg** (P35.52 / row 330;
+  serves SIG-GEO-012/013, SIG-UI-019, SIG-UI-038; fixes F-104,
+  F-414; cites ADR-118, ADR-106 §4, K1-map §3/§9.2; writes ADR-156)
+  — the per-licence-compartment PMTiles archives are rebuilt to two
+  layers: `cells` (H3 count cells at z0–9; res 3/4/5/6 over the
+  z0–4/5–6/7–8/9 bands) and `sites` (every published located record
+  retained — tier 0 from z10, tier 1 from z11, tier 2 from z12 as
+  its H3 polygon, tier 3 never). The exporter writes per-feature
+  `"tippecanoe": {minzoom, maxzoom}` members and invokes tippecanoe
+  with `-r1`; drop/coalesce flags are refused by an argv guard and
+  an over-500 KiB tile fails the build loudly. The pure-Python
+  renderer honours the same ranges and dedupes only byte-identical
+  features (the old same-cell coalescing is gone). Archives are
+  content-hash named (`<compartment>-sites.<sha8>.pmtiles`),
+  indexed by `web/tiles/index.json`, and nginx serves them
+  `immutable`; the browser sums cell counts across the active
+  compartments in memory — no licence-mixed public archive exists.
+  `sig-exports tiles verify` measures the six K1 §9.2 checks
+  (conservation, renderer parity, precision+tier, size, metadata,
+  CI legs) into `reports/tiles_verify.json`; CI builds pinned
+  tippecanoe 2.79.0 from the `ops/Dockerfile` pin and verifies a
+  deterministic 50k synthetic fixture, and the nightly job verifies
+  the real-sized national fixture.
 - **Page-type budgets, generated Lighthouse config, and a
   deterministic synthetic national fixture** (P35.51 / row 329;
   R11-K13-UXK0-2; serves SIG-UI-041, SIG-FIND-005, SIG-UI-050,

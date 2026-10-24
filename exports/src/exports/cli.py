@@ -19,6 +19,7 @@ import os
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import cast
 
 from . import __version__
 
@@ -201,10 +202,23 @@ def build_parser() -> argparse.ArgumentParser:
 
     tiles = subparsers.add_parser(
         "tiles",
-        help="Render a GeoJSON layer to PMTiles (LD-F07/H08); tippecanoe else pure-Python.",
+        help=(
+            "Render a GeoJSON layer to PMTiles, or 'verify' a built export's "
+            "tiles (sig.map-tiles/2)."
+        ),
     )
-    tiles.add_argument("--in", dest="in_geojson", required=True, help="Input GeoJSON export.")
-    tiles.add_argument("--out", required=True, help="Output PMTiles path.")
+    tiles.add_argument(
+        "verb",
+        nargs="?",
+        choices=["verify"],
+        help="'verify' runs the sig.map-tiles/2 checks over a built export dir (ADR-156).",
+    )
+    tiles.add_argument(
+        "--in",
+        dest="in_geojson",
+        help="Render: input GeoJSON export. Verify: the built export directory.",
+    )
+    tiles.add_argument("--out", help="Render: output PMTiles path.")
     tiles.add_argument("--layer", default="devices", help="Vector layer id (default: devices).")
     tiles.add_argument(
         "--license", default="ODbL-1.0", help="Layer SPDX licence (default ODbL-1.0)."
@@ -921,34 +935,61 @@ def _run_build(
         from pathlib import Path as _P
 
         from .formats import FORMATS
-        from .manifest import Artifact
-        from .tiles import render_compartment_sites_pmtiles
+        from .manifest import Artifact, canonical_json, tiles_index_document
+        from .spine_export import _SIG_SPDX, _WEB_COMPARTMENT
+        from .tiles import (
+            ODBL_ATTRIBUTION,
+            render_compartment_sites_pmtiles,
+            tiles_index_entry,
+        )
 
         geojson_bytes = bundle.artifact_bytes.get("osm_physical/devices.geojson")
         if geojson_bytes is not None:
-            tile_bytes, tile_renderer = render_compartment_sites_pmtiles(
-                "osm_physical", geojson_bytes, "ODbL-1.0"
+            rendered = render_compartment_sites_pmtiles("osm_physical", geojson_bytes, "ODbL-1.0")
+            # P35.52 (sig.map-tiles/2, ADR-156): content-hash name + index.json.
+            tile_path = f"web/tiles/osm_physical-sites.{rendered.sha256[:8]}.pmtiles"
+            bundle.artifact_bytes[tile_path] = rendered.data
+            index_bytes = canonical_json(
+                tiles_index_document(
+                    [
+                        tiles_index_entry(
+                            compartment="osm_physical",
+                            path=tile_path,
+                            license_id="ODbL-1.0",
+                            attribution=ODBL_ATTRIBUTION,
+                            rendered=rendered,
+                            source="osm_physical/devices.geojson",
+                        )
+                    ]
+                )
             )
-            tile_path = "web/tiles/osm_physical-sites.pmtiles"
-            bundle.artifact_bytes[tile_path] = tile_bytes
+            bundle.artifact_bytes["web/tiles/index.json"] = index_bytes
             tile_artifact = Artifact.of(
-                name="osm_physical-sites.pmtiles",
+                name=Path(tile_path).name,
                 path=tile_path,
                 media_type=FORMATS["pmtiles"].media_type,
                 compartment="osm_physical",
                 license="ODbL-1.0",
-                data=tile_bytes,
+                data=rendered.data,
+            )
+            index_artifact = Artifact.of(
+                name="index.json",
+                path="web/tiles/index.json",
+                media_type="application/json",
+                compartment=_WEB_COMPARTMENT,
+                license=_SIG_SPDX,
+                data=index_bytes,
             )
             bundle = _replace(
                 bundle,
                 manifest=_replace(
                     bundle.manifest,
-                    artifacts=bundle.manifest.artifacts + (tile_artifact,),
+                    artifacts=bundle.manifest.artifacts + (tile_artifact, index_artifact),
                 ),
             )
             tile_summary = {
                 "path": str(_P(out_dir) / tile_path),
-                "renderer": tile_renderer,
+                "renderer": rendered.renderer,
                 "license": "ODbL-1.0",
             }
     bundle.write_to(out_dir)
@@ -1214,10 +1255,42 @@ def _run_deposit(in_dir: str, sandbox: bool, dry_run: bool, deposits_md: str) ->
     return 0
 
 
-def _run_tiles(in_geojson: str, out: str, layer: str, license_id: str) -> int:
+def _run_tiles(args: object) -> int:
     from .spine_export import _SIG_ATTRIBUTION
     from .tiles import ODBL_ATTRIBUTION, render_pmtiles_file
 
+    verb = getattr(args, "verb", None)
+    if verb == "verify":
+        in_dir = getattr(args, "in_geojson", None)
+        if not in_dir:
+            print("sig-exports tiles verify: --in <export dir> is required")
+            return 2
+        from .manifest import canonical_json
+        from .tile_verify import verify_export_tiles
+
+        report = verify_export_tiles(Path(in_dir))
+        report_path = Path(in_dir) / "reports" / "tiles_verify.json"
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_bytes(canonical_json(report))
+        archive_count = len(cast("list[object]", report.get("archives") or []))
+        sys.stdout.write(
+            json.dumps(
+                {
+                    "report": str(report_path),
+                    "verdict": report["verdict"],
+                    "archives": archive_count,
+                }
+            )
+            + "\n"
+        )
+        return 0 if report["verdict"] == "pass" else 1
+
+    in_geojson, out = getattr(args, "in_geojson", None), getattr(args, "out", None)
+    if not in_geojson or not out:
+        print("sig-exports tiles: --in and --out are required to render")
+        return 2
+    layer = str(getattr(args, "layer", "devices"))
+    license_id = str(getattr(args, "license", "ODbL-1.0"))
     # The licence's own attribution — ODbL carries the OSM notice (§42.3); a
     # non-ODbL layer carries SIG's (P31.15: the CLI honours --license end-to-end).
     attribution = ODBL_ATTRIBUTION if license_id == "ODbL-1.0" else _SIG_ATTRIBUTION
@@ -1545,7 +1618,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "deposit":
         return _run_deposit(args.in_dir, args.sandbox, args.dry_run, args.deposits_md)
     if args.command == "tiles":
-        return _run_tiles(args.in_geojson, args.out, args.layer, args.license)
+        return _run_tiles(args)
     if args.command == "torrent":
         return _run_torrent(args.in_file, args.out, args.tracker)
     if args.command == "audit":

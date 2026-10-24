@@ -133,17 +133,6 @@
     },
     {
       "route": "/map/",
-      "metric": "firstViewMaxBytes",
-      "data_source": "national",
-      "ratified_ceiling": 1572864,
-      "recorded_measure": 3288733,
-      "regression_bound": 3500000,
-      "deferral": "D-P35.51-3",
-      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "national-scoped: the first /map/ view at real scale streams ≈ 3.29 MB of archive ranges (16 KiB header + a ~8 KiB leaf directory + four z3 viewport tiles ≈ 3.27 MB) against the ratified ≤ 1.5 MiB first-view data budget. Bounded at 3,500,000 B; the owning row's denser low-zoom tiling restores headroom."
-    },
-    {
-      "route": "/map/",
       "metric": "tbtMs",
       "ratified_ceiling": 350,
       "recorded_measure": 1763,
@@ -294,6 +283,17 @@
       "deferral": "D-P35.51-3",
       "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
       "note": "national-scoped: the T1 scroll interaction on the real-scale sources document measures 147 ms to the scrolled-section effect on the GitHub-hosted runner under 4× CPU throttle — over the ratified ≤ 100 ms T1 latency. Bounded at 300 ms; the compact document the owning row ships restores headroom."
+    },
+    {
+      "route": "/sources/",
+      "metric": "interactionLatencyMs",
+      "data_source": "fixtures",
+      "ratified_ceiling": 100,
+      "recorded_measure": 139,
+      "regression_bound": 300,
+      "deferral": "D-P35.51-3",
+      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+      "note": "fixtures-scoped: the T1 scroll interaction on the demo-corpus sources document measured 139 ms to the scrolled-section effect on the GitHub-hosted runner under 4× CPU throttle at P35.52's first web job — over the ratified ≤ 100 ms T1 latency (the developer machine measures under the ratified ceiling). Bounded at 300 ms, matching the national-scope row; the compact document the owning row ships restores headroom."
     },
     {
       "route": "/search/",

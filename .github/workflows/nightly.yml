@@ -168,6 +168,41 @@ jobs:
             --window 400 --max-transitions 25 \
             --json living-backtest.json 2>&1 | tee living-backtest.txt
 
+      # P35.52 (sig.map-tiles/2, ADR-156; K1 §15 NEW-5): the REAL-SIZED tile
+      # verifier leg. The per-PR leg proves the six checks over the 50k
+      # synthetic fixture; nightly proves them over the national-scale
+      # deterministic corpus (the same ≥232k-site overlay the budget leg
+      # measures) rendered by the PINNED tippecanoe — same ops/Dockerfile pin,
+      # built once into the actions cache. count conservation at real scale,
+      # renderer parity vs the pure-Python replay, precision+tier, the 500 KiB
+      # fail-loud bound, and archive/index/manifest metadata agreement.
+      - name: Resolve the pinned tippecanoe (ops/Dockerfile pin)
+        id: tippecanoe
+        run: |
+          v=$(sed -n 's/^ARG TIPPECANOE_VERSION=//p' ops/Dockerfile | head -1)
+          s=$(sed -n 's/^ARG TIPPECANOE_SHA256=//p' ops/Dockerfile | head -1)
+          test -n "$v" && test -n "$s"
+          echo "key=tippecanoe-${v}-${s:0:16}" >> "$GITHUB_OUTPUT"
+      - name: Pinned tippecanoe build cache
+        uses: actions/cache@v6
+        with:
+          path: .cache/sig-tippecanoe
+          key: ${{ steps.tippecanoe.outputs.key }}
+      - name: Build the pinned tippecanoe (no-op on cache hit)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential libsqlite3-dev zlib1g-dev
+          bash scripts/ci/build_tippecanoe.sh .cache/sig-tippecanoe
+      - name: Tile verifier (real-sized national fixture, pinned tippecanoe)
+        id: tileverify
+        continue-on-error: true
+        env:
+          SIG_TILE_FIXTURE_OUT: ${{ github.workspace }}/.cache/tile-national
+        # env.PATH is empty in the env context — prepend at runtime instead.
+        run: |
+          PATH="$GITHUB_WORKSPACE/.cache/sig-tippecanoe:$PATH" bash scripts/ci/tile_verify_leg.sh national
+          PATH="$GITHUB_WORKSPACE/.cache/sig-tippecanoe:$PATH" bash scripts/ci/tile_verify_leg.sh verify 2>&1 | tee tile-verify.txt
+
       # The report is ALSO the gate: it writes nightly-report.md, then exits
       # non-zero if any stage outcome was not success — the upload below still
       # runs (if: always()), so the red nightly carries its own evidence.
@@ -179,10 +214,12 @@ jobs:
           licenses=${{ steps.licenses.outcome }} depaudit=${{ steps.depaudit.outcome }}
           npm=${{ steps.npm.outcome }} recordedci=${{ steps.recordedci.outcome }}
           replay=${{ steps.replay.outcome }} backtest=${{ steps.backtest.outcome }}
+          tileverify=${{ steps.tileverify.outcome }}
           --log e2e=nightly-e2e.txt --log secrets=secret-scan.txt
           --log licenses=license-scan.txt --log depaudit=dep-audit.txt
           --log npm=npm-audit.txt --log recordedci=recorded-ci.txt
           --log replay=memory-replay.txt --log backtest=living-backtest.txt
+          --log tileverify=tile-verify.txt
 
       - name: Upload the nightly report + stage logs
         if: always()
@@ -204,4 +241,6 @@ jobs:
             memory-replay.json
             living-backtest.txt
             living-backtest.json
+            tile-verify.txt
+            .cache/tile-national/reports/tiles_verify.json
           if-no-files-found: warn

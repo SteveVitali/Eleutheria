@@ -49,3 +49,6 @@ web/.lighthouseci-export/
 # P35.51: the generated synthetic national fixture (scripts/ci/build_national_fixture.py)
 web/national/
 exports/out/
+# P35.52: the cached pinned tippecanoe build + generated tile fixtures
+# (scripts/ci/build_tippecanoe.sh, tile_verify_leg.sh)
+.cache/

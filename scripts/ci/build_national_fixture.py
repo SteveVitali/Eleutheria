@@ -32,7 +32,9 @@ Layout (the national overlay layout — ``web/src/lib/data.ts#nationalDir``)::
       sig_graph/ATTRIBUTION.json       invented-source attribution index
       web/map.json                     sig map layer — ≥232k invented assets
       web/network.json                 nodes/edges/access_paths — ≥5k agencies, ≥400k edges
-      web/tiles/sig_graph-sites.pmtiles
+      web/tiles/sig_graph-sites.<sha8>.pmtiles
+      web/tiles/index.json           sig.map-tiles/2 index (P35.52, ADR-156)
+      sig_graph/sites.geojson        the source geojson the verifier replays
       web/analytics/density_bins.json  H3 res-3 bins computed over the synthetic sites
       web/analytics/centrality.json    declares the synthetic ego-focus entity
 """
@@ -51,9 +53,15 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # The exports workspace member supplies the real PMTiles renderer and the real
 # H3 res-3 binning the production analytics run uses.
 sys.path.insert(0, str(REPO_ROOT / "exports" / "src"))
+sys.path.insert(0, str(REPO_ROOT / "policy" / "src"))
 
 import h3  # noqa: E402
-from exports.tiles import render_compartment_sites_pmtiles  # noqa: E402
+from exports.manifest import canonical_json, tiles_index_document  # noqa: E402
+from exports.tiles import (  # noqa: E402
+    render_compartment_sites_pmtiles,
+    tiles_index_entry,
+)
+from policy.sensitivity import apply_tier  # noqa: E402
 
 # --------------------------------------------------------------------------- #
 # The declared fixture parameters — the floors live here so the test suite can
@@ -242,6 +250,9 @@ def gen_sites(rng: random.Random) -> list[dict[str, Any]]:
             "jurisdiction": jurisdiction,
             "technology": tech,
             "technologyStatus": "resolved",
+            # the two invented sources (the attribution block names them) —
+            # source_ids feed the cells layer's `ns` (distinct sources).
+            "source_id": ("src:syn-municipal-01", "src:syn-bulletins-02")[i % 2],
         }
         if located:
             tier_roll = rng.random()
@@ -467,23 +478,33 @@ def gen_centrality() -> dict[str, Any]:
 
 def gen_geojson(sites: list[dict[str, Any]]) -> bytes:
     """The sites.geojson the PMTiles renderer consumes — located, non-tier-3
-    points only, the same slim property set the tile contract carries."""
-    features = [
-        {
-            "type": "Feature",
-            "geometry": {"type": "Point", "coordinates": [a["lon"], a["lat"]]},
-            "properties": {
-                "entity_id": a["id"],
-                "entity_type": "surveillance_device",
-                "label": a["label"],
-                "jurisdiction": a["jurisdiction"],
-                "sensitivity_tier": a["tier"],
-                "precision": a["precision"],
-            },
-        }
-        for a in sites
-        if a["lat"] is not None and a["lon"] is not None and a["tier"] != 3
-    ]
+    points only. P35.52 (sig.map-tiles/2): the coordinates go through the REAL
+    tier transform (``policy.sensitivity.apply_tier`` — tier 1 truncated, tier 2
+    binned) so the verifier's precision check measures true tier behaviour, and
+    each feature carries the ``source_ids`` the ``ns`` cell property counts."""
+    features = []
+    for a in sites:
+        if a["lat"] is None or a["lon"] is None or a["tier"] == 3:
+            continue
+        reduced = apply_tier(a["lat"], a["lon"], a["tier"])
+        if reduced is None:
+            continue
+        lat, lon = reduced
+        features.append(
+            {
+                "type": "Feature",
+                "geometry": {"type": "Point", "coordinates": [lon, lat]},
+                "properties": {
+                    "entity_id": a["id"],
+                    "entity_type": "surveillance_device",
+                    "label": a["label"],
+                    "jurisdiction": a["jurisdiction"],
+                    "sensitivity_tier": a["tier"],
+                    "precision": a["precision"],
+                    "source_ids": [a["source_id"]],
+                },
+            }
+        )
     return json.dumps(
         {"type": "FeatureCollection", "features": features},
         separators=(",", ":"),
@@ -552,10 +573,27 @@ def build(out_dir: Path) -> dict[str, Any]:
 
     geojson = gen_geojson(sites)
     print(f"[national-fixture] rendering PMTiles over {len(sites)} sites…", flush=True)
-    pmtiles_bytes, renderer = render_compartment_sites_pmtiles(COMPARTMENT, geojson, LICENSE_ID)
+    rendered = render_compartment_sites_pmtiles(COMPARTMENT, geojson, LICENSE_ID)
     print(
-        f"[national-fixture] PMTiles renderer={renderer} bytes={len(pmtiles_bytes)}",
+        f"[national-fixture] PMTiles renderer={rendered.renderer} bytes={len(rendered.data)}",
         flush=True,
+    )
+    # P35.52 (sig.map-tiles/2, ADR-156): the content-hashed archive name +
+    # web/tiles/index.json + the source geojson the verifier replays.
+    tile_path = f"web/tiles/{COMPARTMENT}-sites.{rendered.sha256[:8]}.pmtiles"
+    tiles_index = canonical_json(
+        tiles_index_document(
+            [
+                tiles_index_entry(
+                    compartment=COMPARTMENT,
+                    path=tile_path,
+                    license_id=LICENSE_ID,
+                    attribution=f"© The SIG project — {LICENSE_ID}",
+                    rendered=rendered,
+                    source=f"{COMPARTMENT}/sites.geojson",
+                )
+            ]
+        )
     )
 
     files: dict[str, tuple[str, bytes]] = {
@@ -563,7 +601,9 @@ def build(out_dir: Path) -> dict[str, Any]:
         "web/network.json": (COMPARTMENT, _dump_compact(network)),
         "web/analytics/density_bins.json": ("web", _dump(density)),
         "web/analytics/centrality.json": ("web", _dump(centrality)),
-        f"web/tiles/{COMPARTMENT}-sites.pmtiles": (COMPARTMENT, pmtiles_bytes),
+        tile_path: (COMPARTMENT, rendered.data),
+        "web/tiles/index.json": ("web", tiles_index),
+        f"{COMPARTMENT}/sites.geojson": (COMPARTMENT, geojson),
         f"{COMPARTMENT}/ATTRIBUTION.json": (COMPARTMENT, _dump(attribution)),
     }
 

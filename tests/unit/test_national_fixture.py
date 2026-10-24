@@ -208,7 +208,10 @@ def test_pmtiles_archive_is_valid_v3(small, tmp_path) -> None:
     import struct
 
     small.build(tmp_path)
-    data = (tmp_path / "web" / "tiles" / f"{small.COMPARTMENT}-sites.pmtiles").read_bytes()
+    # sig.map-tiles/2: the archive name carries the content hash.
+    found = list((tmp_path / "web" / "tiles").glob(f"{small.COMPARTMENT}-sites*.pmtiles"))
+    assert found, "no per-compartment archive was emitted"
+    data = found[0].read_bytes()
     assert data[0:7] == b"PMTiles" and data[7] == 3, "not a PMTiles v3 archive"
     root_off = struct.unpack_from("<Q", data, 8)[0]
     root_len = struct.unpack_from("<Q", data, 16)[0]

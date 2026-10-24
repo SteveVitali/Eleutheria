@@ -12,10 +12,12 @@
  * the no-JS / screen-reader path (SIG-UI-037) and is never removed. With JavaScript
  * disabled the reader still gets the full located-assets table.
  *
- * Real vector tiles (P31.15, ADR-R9-TILES): the island layers the per-licence-
- * compartment PMTiles archives the export ships (`/tiles/<compartment>-sites.pmtiles`,
- * z0–z14) — one attributed source per compartment, composited on one map as an ODbL
- * 4.4(b) produced work but never merged (ADR-106). **No basemap** (Q8): the points
+ * Real vector tiles (P31.15, ADR-R9-TILES; P35.52, sig.map-tiles/2, ADR-156): the
+ * island layers the per-licence-compartment PMTiles archives the export ships
+ * (`/tiles/<compartment>-sites.<sha8>.pmtiles`, z0–z14 — the `cells` layer at z0–9
+ * and the tier-banded `sites` layer above) — one attributed source per
+ * compartment, composited on one map as an ODbL 4.4(b) produced work but never
+ * merged (ADR-106). **No basemap** (Q8): the points
  * draw over a plain background. The combined `/map/points.json` is retired (Q9 —
  * R8-1 ending); the island never fetches it. Builds that ship no archives (the
  * committed fixtures) fall back to the small inline `points` prop — still only
@@ -49,6 +51,7 @@ import {
   setWorkerUrl,
 } from "maplibre-gl";
 import type { StyleSpecification, MapGeoJSONFeature } from "maplibre-gl";
+import type { Feature as GeoJSONFeature } from "geojson";
 import { Protocol } from "pmtiles";
 import "maplibre-gl/dist/maplibre-gl.css";
 // P30.3: maplibre-gl v6 resolves its worker as `./maplibre-gl-worker.mjs` next to its own
@@ -61,6 +64,7 @@ import {
   compartmentLayerId,
   compartmentSourceId,
   tileSourceAttribution,
+  NATIONAL_CELLS_MAXZOOM,
   PMTILES_PROTOCOL,
 } from "../lib/map-tiles";
 import type { CompartmentTileSource } from "../lib/map-tiles";
@@ -108,6 +112,14 @@ export interface MapIslandProps {
 
 const GEOJSON_SOURCE = "sig-infrastructure";
 const FOCUS_SOURCE = "sig-focus";
+/** The browser-summed cells layer (K1 §3.2) — never a licence-mixed archive. */
+const SUMMED_CELLS_SOURCE = "sig-cells-summed";
+const SUMMED_CELLS_LAYER = "sig-cells-summed-layer";
+const SUMMED_CELLS_LABEL = "sig-cells-summed-label";
+const EMPTY_FC: { type: "FeatureCollection"; features: never[] } = {
+  type: "FeatureCollection",
+  features: [],
+};
 
 function escapeHtml(s: string): string {
   return s
@@ -117,12 +129,14 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
+/** The `sig.map-tiles/2` §3.3 keys a `sites` feature carries. */
 interface TileFeatureProps {
-  entity_id?: string;
-  label?: string;
-  jurisdiction?: string;
-  sensitivity_tier?: number;
-  precision?: string;
+  rk?: string;
+  lb?: string;
+  j?: string;
+  tr?: number;
+  pm?: number;
+  op?: string;
 }
 
 /** The popup carries the epistemic disclosure fields + the citation (SIG-UI-035). */
@@ -203,6 +217,10 @@ export default function MapIsland({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const tileLayerCompartments = useRef<string[]>([]);
+  /** The compartment switch as the sourcedata/moveend listeners see it. */
+  const activeCompartmentsRef = useRef<Set<string>>(new Set());
+  /** The cells re-sum closure the tile path registers (K1 §3.2 browser sum). */
+  const resumCellsRef = useRef<(() => void) | null>(null);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [drawn, setDrawn] = useState(false);
@@ -278,14 +296,25 @@ export default function MapIsland({
               url: `${PMTILES_PROTOCOL}${t.path}`,
               attribution: tileSourceAttribution(t),
             });
+            // sig.map-tiles/2: tier-2 sites are H3 polygons (never the true
+            // point) — they draw under their own fill layer; tr≤1 stay circles.
+            map.addLayer({
+              id: `${layerId}-cells`,
+              type: "fill",
+              source: sourceId,
+              "source-layer": "sites",
+              filter: ["==", ["get", "tr"], 2],
+              paint: { "fill-color": "hsl(28deg 80% 45%)", "fill-opacity": 0.18 },
+            });
             map.addLayer({
               id: layerId,
               type: "circle",
               source: sourceId,
               "source-layer": "sites",
+              filter: ["!=", ["get", "tr"], 2],
               paint: SITE_PAINT,
             });
-            tileLayerIds.push(layerId);
+            tileLayerIds.push(layerId, `${layerId}-cells`);
             tileLayerCompartments.current.push(t.compartment);
             drawnSourceIds.push(sourceId);
           } catch {
@@ -293,9 +322,124 @@ export default function MapIsland({
           }
         }
 
-        // Popups read the tile feature's own (slimmed) render properties — the only
-        // data the archive carries (entity_id / label / jurisdiction /
-        // sensitivity_tier / precision, §19.4).
+        // K1 §3.2: cell counts are summed in the BROWSER. A cross-compartment
+        // count file would be a licence-mixed derived database (ADR-106 §4
+        // files those only as restricted build inputs), so each archive keeps
+        // its own compartment's `cells` and the client re-sums visible cells
+        // per h3 over the ACTIVE compartments on every sourcedata/moveend —
+        // toggling a compartment re-sums instantly. The summed source is an
+        // in-memory GeoJSON layer (a produced work; every active
+        // compartment's attribution rides the map control).
+        map.addSource(SUMMED_CELLS_SOURCE, { type: "geojson", data: EMPTY_FC });
+        map.addLayer({
+          id: SUMMED_CELLS_LAYER,
+          type: "circle",
+          source: SUMMED_CELLS_SOURCE,
+          maxzoom: NATIONAL_CELLS_MAXZOOM + 1,
+          paint: {
+            "circle-color": "hsl(28deg 80% 45%)",
+            "circle-opacity": 0.4,
+            // √(summed n)-scaled radius — legible from 1 record to a metro cell
+            "circle-radius": [
+              "interpolate",
+              ["linear"],
+              ["^", ["get", "n"], 0.5],
+              1,
+              3,
+              32,
+              12,
+              256,
+              26,
+            ],
+            "circle-stroke-color": "#222",
+            "circle-stroke-width": 0.6,
+          },
+        });
+        map.addLayer({
+          id: SUMMED_CELLS_LABEL,
+          type: "symbol",
+          source: SUMMED_CELLS_SOURCE,
+          minzoom: 5,
+          maxzoom: NATIONAL_CELLS_MAXZOOM + 1,
+          layout: {
+            "text-field": ["get", "n"],
+            "text-size": 11,
+            "text-allow-overlap": false,
+          },
+          paint: { "text-color": "#333" },
+        });
+        // The setData below re-fires `sourcedata` for SUMMED_CELLS_SOURCE;
+        // re-entering on our own write is an infinite async loop that keeps the
+        // map permanently busy so `idle` never fires and `data-drawn` never
+        // latches (the P35.52 export leg red). Skip our own source's events and
+        // skip the write entirely when the re-summed collection is unchanged —
+        // a tile storm's sourcedata churn then costs one query pass, not a
+        // worker round-trip per tile.
+        let lastCellsSignature = "";
+        const resumCells = (event?: object) => {
+          if (
+            event !== undefined &&
+            "sourceId" in event &&
+            event.sourceId === SUMMED_CELLS_SOURCE
+          ) {
+            return;
+          }
+          // dedupe by (compartment, h3): the same cell can arrive twice from
+          // adjacent tile interiors; then sum across compartments by h3.
+          const seen = new Set<string>();
+          const byCell = new Map<string, { n: number; coordinates: [number, number] }>();
+          for (const comp of activeCompartmentsRef.current) {
+            const sourceId = compartmentSourceId(comp);
+            if (!map.getSource(sourceId)) continue;
+            let feats: GeoJSONFeature[] = [];
+            try {
+              feats = map.querySourceFeatures(sourceId, { sourceLayer: "cells" });
+            } catch {
+              continue;
+            }
+            for (const f of feats) {
+              const h3 = String((f.properties as Record<string, unknown>)?.["h3"] ?? "");
+              if (!h3 || f.geometry?.type !== "Point") continue;
+              const dedupeKey = `${comp}:${h3}`;
+              if (seen.has(dedupeKey)) continue;
+              seen.add(dedupeKey);
+              const n = Number((f.properties as Record<string, unknown>)?.["n"] ?? 0);
+              const cur = byCell.get(h3);
+              if (cur) cur.n += n;
+              else {
+                const [cx = 0, cy = 0] = (f.geometry as { coordinates: number[] })
+                  .coordinates;
+                byCell.set(h3, { n, coordinates: [cx, cy] });
+              }
+            }
+          }
+          const features = [...byCell].map(([h3, c]) => ({
+            type: "Feature" as const,
+            geometry: { type: "Point" as const, coordinates: c.coordinates },
+            properties: { h3, n: c.n },
+          }));
+          const signature = features
+            .map((f) => `${f.properties.h3}=${f.properties.n}`)
+            .sort()
+            .join("|");
+          if (signature === lastCellsSignature) return;
+          lastCellsSignature = signature;
+          const setData = (map.getSource(SUMMED_CELLS_SOURCE) as
+            | { setData?: (d: unknown) => void }
+            | undefined)?.setData;
+          setData?.call(map.getSource(SUMMED_CELLS_SOURCE), {
+            type: "FeatureCollection",
+            features,
+          });
+        };
+        resumCellsRef.current = resumCells;
+        map.on("sourcedata", resumCells);
+        map.on("moveend", resumCells);
+        resumCells();
+
+        // Popups read the tile feature's own §3.3 render properties — the only
+        // data the archive carries (rk / lb / j / tr / pm / op — the record
+        // key, label, K4 jurisdiction key, tier and uncertainty radius).
         const openTilePopup = (e: {
           features?: MapGeoJSONFeature[];
           lngLat: { lng: number; lat: number };
@@ -303,14 +447,20 @@ export default function MapIsland({
           const f = e.features?.[0];
           const p = (f?.properties ?? {}) as TileFeatureProps;
           if (!f) return;
+          const tier = Number(p.tr ?? 0);
           const asset: IslandPoint = {
-            id: String(p.entity_id ?? ""),
-            label: String(p.label ?? p.entity_id ?? ""),
-            jurisdiction: String(p.jurisdiction ?? ""),
-            tier: Number(p.sensitivity_tier ?? 0),
+            id: String(p.rk ?? ""),
+            label: String(p.lb ?? p.rk ?? ""),
+            jurisdiction: String(p.j ?? ""),
+            tier,
             lat: e.lngLat.lat,
             lon: e.lngLat.lng,
-            precision: String(p.precision ?? ""),
+            precision:
+              typeof p.pm === "number"
+                ? `±${p.pm} m`
+                : tier === 2
+                  ? "binned (H3 cell)"
+                  : "",
           };
           new Popup({ closeButton: true })
             .setLngLat([e.lngLat.lng, e.lngLat.lat])
@@ -407,7 +557,9 @@ export default function MapIsland({
         map.on("click", "sig-clusters", (e) => {
           const f = e.features?.[0];
           if (!f) return;
-          const [lng, lat] = (f.geometry as { coordinates: [number, number] }).coordinates;
+          const g = f.geometry;
+          if (g.type !== "Point") return;
+          const [lng = 0, lat = 0] = g.coordinates;
           map.easeTo({ center: [lng, lat], zoom: Math.min(map.getZoom() + 2, 15) });
         });
         for (const layer of ["sig-points", "sig-clusters"]) {
@@ -460,6 +612,7 @@ export default function MapIsland({
       map.remove();
       mapRef.current = null;
       tileLayerCompartments.current = [];
+      resumCellsRef.current = null;
       try {
         removeProtocol("pmtiles");
       } catch {
@@ -470,20 +623,25 @@ export default function MapIsland({
   }, []);
 
   // Compartment switch → data AND attribution (SIG-FIND-004): each mounted tile
-  // layer toggles with the selection; the attribution line below recomputes.
+  // layer toggles with the selection; the browser-summed `cells` layer re-sums
+  // over the active compartments (K1 §3.2); the attribution line recomputes.
   useEffect(() => {
+    activeCompartmentsRef.current = activeCompartments;
     const map = mapRef.current;
     if (!map || !ready) return;
     for (const compartment of tileLayerCompartments.current) {
       const layerId = compartmentLayerId(compartment);
-      if (map.getLayer(layerId)) {
-        map.setLayoutProperty(
-          layerId,
-          "visibility",
-          activeCompartments.has(compartment) ? "visible" : "none",
-        );
+      for (const id of [layerId, `${layerId}-cells`]) {
+        if (map.getLayer(id)) {
+          map.setLayoutProperty(
+            id,
+            "visibility",
+            activeCompartments.has(compartment) ? "visible" : "none",
+          );
+        }
       }
     }
+    resumCellsRef.current?.();
   }, [activeCompartments, ready]);
 
   // Focus resolution (SIG-FIND-004): a `focus` record_key is self-describing —

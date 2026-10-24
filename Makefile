@@ -17,7 +17,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-par test-db test-sqitch-roundtrip check ci-local check-export-mode check-national-budgets lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-live-claims docs-check-runbook docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
+.PHONY: sync lint format-check typecheck test test-par test-db test-sqitch-roundtrip check ci-local check-export-mode check-national-budgets check-tile-verify lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-live-claims docs-check-runbook docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -119,6 +119,7 @@ ci-local: sync
 	uv run sig-ops sentinel-scan --scan web/dist
 	uv run sig-ops claim-marker-scan --scan web/dist
 	$(MAKE) check-national-budgets
+	$(MAKE) check-tile-verify
 
 ## P34.34b (ACT-16b, C4 NEW-26): the web job's export-mode leg, locally — the
 ## same `export_mode_leg.sh` subcommands ci.yml runs. The from-spine fixture
@@ -144,6 +145,17 @@ check-national-budgets:
 	bash scripts/ci/national_budget_leg.sh build
 	bash scripts/ci/national_budget_leg.sh budgets
 	bash scripts/ci/national_budget_leg.sh lighthouse
+
+## P35.52 (sig.map-tiles/2, ADR-156, F-104/F-414; K1 §15 NEW-5): the tile
+## verifier leg, locally — the same commands ci.yml's web job runs. The pinned
+## tippecanoe (the ops/Dockerfile pin) builds into .cache/sig-tippecanoe and is
+## reused on later runs; a missing C toolchain fails the build step loudly so a
+## local run never silently degrades to the pure-Python renderer. The verify
+## leg runs `sig-exports tiles verify` over the deterministic 50k fixture.
+check-tile-verify:
+	bash scripts/ci/build_tippecanoe.sh .cache/sig-tippecanoe
+	PATH="$(CURDIR)/.cache/sig-tippecanoe:$$PATH" bash scripts/ci/tile_verify_leg.sh fixture
+	PATH="$(CURDIR)/.cache/sig-tippecanoe:$$PATH" bash scripts/ci/tile_verify_leg.sh verify
 
 ## Refresh the uv lockfile.
 lock:
