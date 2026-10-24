@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "0d1dbf1eb25179c1c4ee1c833d3df2c274dcaa3e",
+  "input_commit": "b903df7b79f3b22ff54b47f9ea63b6e0b187a85a",
   "manifest_inputs": 1101,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -9,7 +9,7 @@
     "lastCompleted": "P35.58",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.67,P36.12",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.67,P36.12",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 50,
+    "return_pass_rows": 49,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -9825,14 +9825,6 @@
         "obligations": [
           "D-P35.53-1"
         ]
-      },
-      {
-        "key": "P35.59",
-        "obligations_cell": "the queued dark cutover (`ops/gcp/web-cutover.sh --apply all`): AR-2 prestate+manifest → `staged/v/legacy-<YYYYMMDD>/` floor import → `conf/0`+carry+`serving.json` retirement → `sig-web` pinned-digest roll (`SIG_LATEST_PUB`, `SIG_CONF_GEN=0`, min 1, `/mnt/rel`) → `route-compare` both origins — byte diff → rollback",
-        "gates_cell": "hosted, production write — QUEUED (window guard exit 42, 2026-10-24T08:30Z Saturday — outside 14:00–20:00Z weekdays, never 03:00–06:30Z); pre-authorised: GATE-G4 §4 names P35.59 verbatim (expires next GATE, OM-10); requires `live:P35.53` (`…-sig-release` exists) + `live:P34.40` L2 `/v1/*` checked (GB-Q4 expired GATE-G4 — still-paused L2 is an operator naming, never skipped)",
-        "operator_cell": "nothing until window + both live prerequisites — `--check` plans only; per-leg `--apply` if paused; rollback = traffic move to the still-running prior revision (image+env+mounts wholesale); `sig-web` bucket untouched — 90-day floor under D-G3-7 (D-R11-LATER-20 anchors on landing `date -u`)",
-        "rerun_cell": "`SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all`, or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_verification=true` · landed row 336",
-        "obligations": []
       }
     ]
   },
@@ -19922,7 +19914,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "85cda9412cda975bb0b76feb45383023817dc92b41daae52b43bbae02c96b404",
+  "manifest_sha256": "2898e45af916fce837a9446d2f62c66578f17cdae36c7b8b962bb76346d20aa5",
   "current_md": {
     "lines": 63,
     "bytes": 16361,
