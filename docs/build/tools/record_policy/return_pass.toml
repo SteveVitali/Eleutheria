@@ -914,7 +914,7 @@ obligations = []
 obligations_cell = '''queued fleet-hygiene sweep (`ops/gcp/fleet-sweep.sh --apply all`): fresh prestate + verified AR-2 backup → 4 cron reconciles → exit-64 guard roll → 6 `[[retired_jobs]]` deletes → AR policy apply → `sig-alerts` disposition → post-sweep proof'''
 gates_cell = '''hosted, production write — QUEUED (`live_verification=false`); OM-20 — GATE-G4 11B list (P35.1b; 2026-10-09T17:32Z; expires next GATE, OM-10); AR-3 + AR-2 weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exit 42; `SIG_SWEEP_AUTHOR` + AR-2 backup + fresh prestate; voided by failed AR-2/red probe/contradicting read; after `--check` + PR #302 head-bound CI green'''
 operator_cell = '''nothing until window + ADC + `SIG_SWEEP_AUTHOR` — `--check` plans only; rollback replays recorded cron pre-states + per-job recreation recipes; consolidation = P35.1c's leg'''
-rerun_cell = '''`implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true` · landed 291 (PR #302 — queued exit-42 2026-10-16T01:25Z; production never touched)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true` · landed 291 (PR #302 — queued exit-42 2026-10-16T01:25Z; never touched production)'''
 
   [[row.legs]]
   id = "P35.1b-fleet-sweep-live"
