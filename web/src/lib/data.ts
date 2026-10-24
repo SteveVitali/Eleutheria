@@ -115,11 +115,25 @@ import {
   OKCPD,
 } from "./fixtures";
 
-export type DataSource = "fixtures" | "export";
+export type DataSource = "fixtures" | "export" | "national";
 
-/** The active data source (build-time env; defaults to `fixtures` so CI is unchanged). */
+/**
+ * The active data source (build-time env; defaults to `fixtures` so CI is
+ * unchanged). `national` (P35.51, SIG-FIND-005, K0 §4.12.6) is a DECLARED
+ * overlay: the generated deterministic national fixture supplies the heavy
+ * artifacts it names (`web/map.json`, `web/network.json`,
+ * `web/tiles/*-sites.pmtiles`, `manifest.json`, `<comp>/ATTRIBUTION.json`,
+ * `web/jurisdiction_key_map.json`), and every surface the overlay does not
+ * cover serves the committed fixture corpus — `dataSource() !== "export"`
+ * reads the committed fixture, never a silent export read. The national
+ * manifest lists exactly the artifacts the overlay owns; a missing or
+ * malformed one fails LOUD like an export read.
+ */
 export function dataSource(): DataSource {
-  return process.env.SIG_DATA_SOURCE === "export" ? "export" : "fixtures";
+  const v = process.env.SIG_DATA_SOURCE;
+  if (v === "export") return "export";
+  if (v === "national") return "national";
+  return "fixtures";
 }
 
 /**
@@ -156,6 +170,57 @@ export function exportDir(): string {
 }
 
 /**
+ * The directory `scripts/ci/build_national_fixture.py` wrote — the
+ * deterministic synthetic national fixture (≥ 232k sites / ≥ 5k agencies /
+ * ≥ 400k sharing edges, invented names only, F-173). `SIG_NATIONAL_DIR`
+ * overrides; the default is the gitignored `web/national/` the
+ * `fixture:national` npm script regenerates.
+ */
+export function nationalDir(): string {
+  const override = process.env.SIG_NATIONAL_DIR;
+  if (override !== undefined && override !== "") {
+    return override.startsWith("/") ? override : `${repoRoot()}${override}`;
+  }
+  return `${repoRoot()}web/national`;
+}
+
+/** Read + parse `<nationalDir>/web/<name>` — the national overlay's artifacts
+ * fail LOUD exactly like an export read (SIG-UI-036: never a silent fixture
+ * fall-back inside an overlay read). */
+function readNationalArtifact<T>(
+  name: string,
+  validate: (parsed: unknown, path: string) => T,
+): T {
+  const path = `${nationalDir()}/web/${name}`;
+  let raw: string;
+  try {
+    raw = readFileSync(path, "utf-8");
+  } catch (cause) {
+    throw new Error(
+      `SIG_DATA_SOURCE=national but the national fixture artifact is missing: ${path}. ` +
+        "Regenerate the fixture (`npm run fixture:national`, " +
+        "scripts/ci/build_national_fixture.py) — the overlay names this artifact.",
+      { cause },
+    );
+  }
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (cause) {
+    throw new Error(`${path}: not valid JSON`, { cause });
+  }
+  return validate(parsed, path);
+}
+
+/**
+ * The layout root a heavy-artifact read uses: the national fixture dir under
+ * `national`, the export dir under `export` (never reached under `fixtures`).
+ */
+function layoutDir(): string {
+  return dataSource() === "national" ? nationalDir() : exportDir();
+}
+
+/**
  * The dossiers the site renders. In `fixtures` mode this is the committed fixture
  * set; in `export` mode it is `<exportDir>/web/dossiers.json` — the web-shaped
  * dossier bundle the jurisdiction export emits (the same `Dossier` contract).
@@ -169,7 +234,7 @@ export function exportDir(): string {
  * built surface ungated).
  */
 export function getDossiers(): Dossier[] {
-  if (dataSource() === "fixtures") {
+  if (dataSource() !== "export") {
     return DOSSIERS.map((d) => applyPublicationPolicy(d));
   }
   // P35.45: the per-dossier artifact set — `web/dossiers/<slug-path>.json`
@@ -246,7 +311,7 @@ function jurisdictionDemos(): Dossier[] {
  */
 export function getResearchDossierPortfolio(): ResearchDossierPortfolio {
   let portfolio: ResearchDossierPortfolio;
-  if (dataSource() === "fixtures") {
+  if (dataSource() !== "export") {
     portfolio = RESEARCH_PORTFOLIO_FIXTURE;
   } else {
     const path = `${exportDir()}/web/research_dossiers.json`;
@@ -286,7 +351,7 @@ export function getResearchDossierPortfolio(): ResearchDossierPortfolio {
  * and the attributed changeset ids — no OSM user data (Part VIII §0.7).
  */
 export function getLeverageMetric(): LeverageMetric {
-  if (dataSource() === "fixtures") return LEVERAGE_METRIC_FIXTURE;
+  if (dataSource() !== "export") return LEVERAGE_METRIC_FIXTURE;
   const path = `${exportDir()}/web/leverage.json`;
   let raw: string;
   try {
@@ -354,7 +419,17 @@ function requireArray(parsed: unknown, path: string): unknown[] {
 
 /** Surface 3 — the map layer's assets (§39.3, `map.ts#MapAsset`). Export: `web/map.json` `.assets`. */
 export function getMapSites(): MapAsset[] {
-  if (dataSource() === "fixtures") return MAP_ASSETS;
+  if (dataSource() === "national") {
+    // The national overlay's declared map layer — ≥ 232k synthetic sites.
+    return readNationalArtifact("map.json", (parsed, path) => {
+      const assets = (parsed as { assets?: unknown })?.assets;
+      if (!Array.isArray(assets)) {
+        throw new Error(`${path}: expected an object with an "assets" array (map layer)`);
+      }
+      return assets as MapAsset[];
+    });
+  }
+  if (dataSource() !== "export") return MAP_ASSETS;
   return readExportArtifact("map.json", (parsed, path) => {
     const assets = (parsed as { assets?: unknown })?.assets;
     if (!Array.isArray(assets)) {
@@ -372,7 +447,22 @@ export interface NetworkData {
 }
 
 export function getNetwork(): NetworkData {
-  if (dataSource() === "fixtures") {
+  if (dataSource() === "national") {
+    // The national overlay's declared graph — ≥ 5k agency nodes + ≥ 400k
+    // sharing edges (the prop-window the page serves stays bounded).
+    return readNationalArtifact("network.json", (parsed, path) => {
+      const o = parsed as { nodes?: unknown; edges?: unknown; access_paths?: unknown };
+      if (!Array.isArray(o?.nodes) || !Array.isArray(o?.edges)) {
+        throw new Error(`${path}: expected an object with "nodes" and "edges" arrays`);
+      }
+      return {
+        nodes: o.nodes as NetworkNode[],
+        edges: o.edges as NetworkEdge[],
+        accessPaths: (Array.isArray(o.access_paths) ? o.access_paths : []) as AccessPath[],
+      };
+    });
+  }
+  if (dataSource() !== "export") {
     return { nodes: NETWORK_NODES, edges: NETWORK_EDGES, accessPaths: ACCESS_PATHS };
   }
   return readExportArtifact("network.json", (parsed, path) => {
@@ -390,13 +480,13 @@ export function getNetwork(): NetworkData {
 
 /** Surface 5 — per-source data freshness (§32.4). Export: `web/freshness.json`. */
 export function getFreshness(): FreshnessRow[] {
-  if (dataSource() === "fixtures") return FRESHNESS_ROWS;
+  if (dataSource() !== "export") return FRESHNESS_ROWS;
   return readExportArtifact("freshness.json", (p, path) => requireArray(p, path) as FreshnessRow[]);
 }
 
 /** Surface 6 — coverage metrics (§32.5). Export: `web/coverage.json`. */
 export function getCoverage(): CoverageMetric[] {
-  if (dataSource() === "fixtures") return COVERAGE_METRICS;
+  if (dataSource() !== "export") return COVERAGE_METRICS;
   return readExportArtifact("coverage.json", (p, path) => requireArray(p, path) as CoverageMetric[]);
 }
 
@@ -456,7 +546,7 @@ function watchItemToContractRow(item: WatchItemV2): ContractWatchItem | null {
  * v1 surface's honest-empty state stays truthful).
  */
 export function getWatch(): ContractWatchItem[] {
-  if (dataSource() === "fixtures") return WATCH_ITEMS;
+  if (dataSource() !== "export") return WATCH_ITEMS;
   return readExportArtifact("watch.json", (p, path) => {
     if (Array.isArray(p)) {
       return dropWithdrawn(p as ContractWatchItem[]);
@@ -478,7 +568,7 @@ export interface EvidenceData {
 }
 
 export function getEvidence(): EvidenceData {
-  if (dataSource() === "fixtures") {
+  if (dataSource() !== "export") {
     return { artifacts: EVIDENCE_ARTIFACTS, claimViews: CLAIM_VIEWS };
   }
   return readExportArtifact("evidence.json", (parsed, path) => {
@@ -497,7 +587,7 @@ export function getEvidence(): EvidenceData {
 
 /** Surface 9 — the public corrections log (§39.8). Export: `web/corrections.json`. */
 export function getCorrections(): CorrectionEntry[] {
-  if (dataSource() === "fixtures") return CORRECTIONS;
+  if (dataSource() !== "export") return CORRECTIONS;
   return readExportArtifact("corrections.json", (p, path) =>
     dropWithdrawn(requireArray(p, path) as CorrectionEntry[]),
   );
@@ -505,7 +595,7 @@ export function getCorrections(): CorrectionEntry[] {
 
 /** Surface 10 — the research queue (§39.7). Export: `web/research_queue.json`. */
 export function getResearchQueue(): ResearchTaskCard[] {
-  if (dataSource() === "fixtures") return RESEARCH_QUEUE;
+  if (dataSource() !== "export") return RESEARCH_QUEUE;
   return readExportArtifact(
     "research_queue.json",
     (p, path) => dropWithdrawn(requireArray(p, path) as ResearchTaskCard[]),
@@ -538,7 +628,7 @@ export interface UnplacedIndexEntry {
 
 /** The index's `unplaced` sibling — null on fixtures or a v1 export. */
 export function getUnplacedIndexEntry(): UnplacedIndexEntry | null {
-  if (dataSource() === "fixtures") {
+  if (dataSource() !== "export") {
     return {
       slug_path: "unplaced",
       href: unplacedPath(),
@@ -562,7 +652,7 @@ export function getDossierIndex(): DossierIndexRow[] {
       jurisdiction: d.jurisdiction,
       asOf: d.asOf,
     }));
-  if (dataSource() === "fixtures") {
+  if (dataSource() !== "export") {
     return [...DOSSIERS, ...JURISDICTION_DOSSIERS].map((d) => ({
       slug: d.slug,
       subject_label: d.subject_label,
@@ -611,7 +701,7 @@ export interface DossierArtifactRef {
 }
 
 export function getDossierArtifactRef(slug: string): DossierArtifactRef | null {
-  if (dataSource() === "fixtures") {
+  if (dataSource() !== "export") {
     const i = DOSSIERS.findIndex((d) => d.slug === slug);
     return i >= 0 ? { artifact: "web/dossiers.json", index: i } : null;
   }
@@ -649,7 +739,7 @@ export function getDossierArtifactRef(slug: string): DossierArtifactRef | null {
  */
 export function getJurisdictionCompartments(): Map<string, string> {
   const out = new Map<string, string>();
-  if (dataSource() === "fixtures") return out;
+  if (dataSource() !== "export") return out;
   const root = exportDir();
   for (const entry of readdirSync(root)) {
     const p = `${root}/${entry}/sites.jsonl`;
@@ -745,7 +835,7 @@ export interface UnplacedReport {
 /** The jurisdiction key map (jkey → row), or null when absent. */
 export function getJurisdictionKeyMap(): Map<string, JurisdictionKeyMapRow> | null {
   if (dataSource() === "fixtures") return null;
-  const path = `${exportDir()}/web/jurisdiction_key_map.json`;
+  const path = `${layoutDir()}/web/jurisdiction_key_map.json`;
   if (!existsSync(path)) return null;
   const parsed = JSON.parse(readFileSync(path, "utf-8")) as {
     jurisdictions?: JurisdictionKeyMapRow[];
@@ -772,7 +862,7 @@ export function getJurisdictionSlugPaths(): Map<string, string> | null {
 /** The unplaced report document, or null when the export carries none
  * (a pre-keyed export — fixtures mode returns the honest empty report). */
 export function getUnplacedReport(): UnplacedReport | null {
-  if (dataSource() === "fixtures") {
+  if (dataSource() !== "export") {
     return {
       schema: "sig.unplaced-report/1",
       kind: "data_quality_report",
@@ -834,7 +924,7 @@ export interface SlugHistoryRow {
 }
 
 export function getSlugHistory(): SlugHistoryRow[] {
-  if (dataSource() === "fixtures") return [];
+  if (dataSource() !== "export") return [];
   const path = `${exportDir()}/web/jurisdiction_slug_history.json`;
   if (!existsSync(path)) return [];
   const parsed = JSON.parse(readFileSync(path, "utf-8")) as {
@@ -851,7 +941,7 @@ export function getSlugHistory(): SlugHistoryRow[] {
  * fabricated entry.
  */
 export function getReleaseCatalog(): ReleaseCatalog {
-  if (dataSource() === "fixtures") return RELEASE_CATALOG_FIXTURE;
+  if (dataSource() !== "export") return RELEASE_CATALOG_FIXTURE;
   const path = `${exportDir()}/web/releases.json`;
   if (!existsSync(path)) {
     return { schema: "sig.publication-catalog/1", publications: [] };
@@ -951,7 +1041,7 @@ export function getEntityCompartments(): Map<
   { compartment: string; entityType: string }
 > {
   const out = new Map<string, { compartment: string; entityType: string }>();
-  if (dataSource() === "fixtures") return out;
+  if (dataSource() !== "export") return out;
   const root = exportDir();
   for (const entry of readdirSync(root)) {
     const p = `${root}/${entry}/sites.jsonl`;
@@ -991,7 +1081,7 @@ export function getEntityCompartments(): Map<
 export function getStatementIndex(): Map<string, StatementRow> {
   const out = new Map<string, StatementRow>();
   const rows =
-    dataSource() === "fixtures"
+    dataSource() !== "export"
       ? STATEMENT_FIXTURES
       : (() => {
           const collected: StatementRow[] = [];
@@ -1029,7 +1119,7 @@ export function getStatementIndex(): Map<string, StatementRow> {
  * this export"), never a fabricated entry.
  */
 export function getTermsDisclosure(): TermsDisclosure {
-  if (dataSource() === "fixtures") return TERMS_DISCLOSURE_FIXTURE;
+  if (dataSource() !== "export") return TERMS_DISCLOSURE_FIXTURE;
   const path = `${exportDir()}/web/terms_disclosure.json`;
   if (existsSync(path)) {
     const parsed: unknown = JSON.parse(readFileSync(path, "utf-8"));
@@ -1119,7 +1209,7 @@ interface ReproducibilityInputs {
  * carries an attribution — the licence-level fallback line stands.
  */
 function compartmentAttributionFromIndex(compartment: string): string | undefined {
-  const path = `${exportDir()}/${compartment}/ATTRIBUTION.json`;
+  const path = `${layoutDir()}/${compartment}/ATTRIBUTION.json`;
   let doc: { sources?: Array<{ attribution?: string }> };
   try {
     doc = JSON.parse(readFileSync(path, "utf-8"));
@@ -1138,14 +1228,15 @@ function compartmentAttributionFromIndex(compartment: string): string | undefine
 
 export function getCompartmentTileSources(): CompartmentTileSource[] {
   if (dataSource() === "fixtures") return [];
-  const path = `${exportDir()}/manifest.json`;
+  const path = `${layoutDir()}/manifest.json`;
   let parsed: { artifacts?: Array<{ path?: string; compartment?: string; license?: string }> };
   try {
     parsed = JSON.parse(readFileSync(path, "utf-8"));
   } catch (cause) {
-    throw new Error(`SIG_DATA_SOURCE=export but the export manifest is unreadable: ${path}`, {
-      cause,
-    });
+    throw new Error(
+      `SIG_DATA_SOURCE=${dataSource()} but the ${dataSource()} manifest is unreadable: ${path}`,
+      { cause },
+    );
   }
   return (parsed.artifacts ?? [])
     .filter((a) => typeof a.path === "string" && /^web\/tiles\/[^/]+-sites\.pmtiles$/.test(a.path))
@@ -1163,15 +1254,18 @@ export function getSiteMetadata(): SiteMetadata {
   if (dataSource() === "fixtures") {
     return { asOf: AS_OF, rulesetVersion: RULESET_VERSION, releaseId: null };
   }
-  const path = `${exportDir()}/manifest.json`;
+  const path = `${layoutDir()}/manifest.json`;
   let raw: string;
   try {
     raw = readFileSync(path, "utf-8");
   } catch (cause) {
     throw new Error(
-      `SIG_DATA_SOURCE=export but the export manifest is missing: ${path}. ` +
-        "Run `sig-exports build --from-spine --dsn <dsn> --out <dir>` (or the local " +
-        "fixture-equivalent `npm run export:fixtures -- <dir>`) first.",
+      dataSource() === "national"
+        ? `SIG_DATA_SOURCE=national but the national fixture manifest is missing: ${path}. ` +
+            "Regenerate the fixture (`npm run fixture:national`) first."
+        : `SIG_DATA_SOURCE=export but the export manifest is missing: ${path}. ` +
+            "Run `sig-exports build --from-spine --dsn <dsn> --out <dir>` (or the local " +
+            "fixture-equivalent `npm run export:fixtures -- <dir>`) first.",
       { cause },
     );
   }
@@ -1271,19 +1365,24 @@ interface AnalyticsEnvelope {
   source_compartments: string[];
 }
 
-/** Read `<exportDir>/web/analytics/<name>.json`, failing LOUD on a missing or
- *  malformed artifact — never a silent fall-back (a missing analytic is a build
- *  error, P31.14). `pick` extracts the payload after the envelope is validated. */
+/** Read `<layoutDir>/web/analytics/<name>.json` — the export dir under
+ * `export`, the national fixture dir under `national` (P35.51: the overlay
+ * emits the analytics its declared surfaces need — `density_bins`,
+ * `centrality` — and a missing one fails LOUD exactly like an export read).
+ * `pick` extracts the payload after the envelope is validated. */
 function readAnalytics<T>(name: string, pick: (envelope: AnalyticsEnvelope & Record<string, unknown>, path: string) => T): T {
-  const path = `${exportDir()}/web/analytics/${name}.json`;
+  const path = `${layoutDir()}/web/analytics/${name}.json`;
   let raw: string;
   try {
     raw = readFileSync(path, "utf-8");
   } catch (cause) {
     throw new Error(
-      `SIG_DATA_SOURCE=export but the analytics artifact is missing: ${path}. ` +
-        "Run `sig-exports build --from-spine --dsn <dsn> --out <dir>` (or, for a local " +
-        "fixture-equivalent bundle, `npm run export:fixtures -- <dir>`) first.",
+      `SIG_DATA_SOURCE=${dataSource()} but the analytics artifact is missing: ${path}. ` +
+        (dataSource() === "national"
+          ? "Regenerate the fixture (`npm run fixture:national`, " +
+            "scripts/ci/build_national_fixture.py) first."
+          : "Run `sig-exports build --from-spine --dsn <dsn> --out <dir>` (or, for a local " +
+            "fixture-equivalent bundle, `npm run export:fixtures -- <dir>`) first."),
       { cause },
     );
   }
@@ -1330,7 +1429,7 @@ function readPresentation<T>(name: string, fallback: T): T {
  * the dated-observation range, and the honest human-review posture.
  */
 export function getSiteProvenance(): ProvenanceSummary | undefined {
-  if (dataSource() === "fixtures") return undefined;
+  if (dataSource() !== "export") return undefined;
   return readAnalytics("provenance", (env, path) => {
     const summary = (env.surfaces as Record<string, unknown> | undefined)?.site;
     if (summary == null) throw new Error(`${path}: provenance carries no surfaces.site summary`);
@@ -1340,9 +1439,12 @@ export function getSiteProvenance(): ProvenanceSummary | undefined {
   });
 }
 
-/** National-zoom density bins for the map (§19.5 H3 bins, SIG-UI-019; export-emitted, P31.14). */
+/** National-zoom density bins for the map (§19.5 H3 bins, SIG-UI-019; export-emitted, P31.14).
+ *  P35.51: the national overlay emits the same artifact computed over its
+ *  synthetic sites — the fixture corpus's demo bins never masquerade as the
+ *  national map's coverage shape. */
 export function getMapDensityBins(): DensityBin[] {
-  if (dataSource() === "export") {
+  if (dataSource() !== "fixtures") {
     return readAnalytics("density_bins", (env, path) => {
       if (!Array.isArray(env.bins)) throw new Error(`${path}: expected a "bins" array`);
       // P35.20b (ED-44, SIG-RECON-058): `recordCount` is the canonical field; a
@@ -1369,7 +1471,10 @@ export function getMapDensityBins(): DensityBin[] {
  * stated mechanism (highest undirected degree, ties lexical).
  */
 export function getNetworkFocusEntityId(): string {
-  if (dataSource() === "export") {
+  // P35.51: the national overlay emits the same `centrality` artifact —
+  // its `focus.entity_id` names the synthetic agency the ego view centres on
+  // (never the committed demo corpus's focus id inside a national graph).
+  if (dataSource() !== "fixtures") {
     return readAnalytics("centrality", (env, path) => {
       const focus = env.focus as { entity_id?: unknown } | undefined;
       if (focus == null) throw new Error(`${path}: expected a "focus" block`);
@@ -1416,7 +1521,7 @@ export function getCaptureDiff(): [Capture, Capture] | null {
  * mode → `undefined` (the committed demo dossiers have no emitted rows).
  */
 export function getDossierProvenance(slug: string): ProvenanceSummary | undefined {
-  if (dataSource() === "fixtures") return undefined;
+  if (dataSource() !== "export") return undefined;
   return readAnalytics("provenance", (env) => {
     const dossiers = (env.surfaces as Record<string, unknown> | undefined)?.dossiers as
       | Record<string, unknown>
@@ -1488,7 +1593,7 @@ export function getQueueAsOf(): string {
  * that DOES exist still has to clear `assertReviewReleasable` at the page.
  */
 export function getHostileReaderReview(): HostileReaderReview | null {
-  if (dataSource() === "fixtures") return null;
+  if (dataSource() !== "export") return null;
   const path = `${exportDir()}/web/hostile_reader_review.json`;
   if (!existsSync(path)) return null;
   const parsed = JSON.parse(readFileSync(path, "utf-8")) as HostileReaderReview;
@@ -1510,7 +1615,7 @@ export function getRationaleTemplates(): readonly string[] {
  * carry. Fixtures mode returns the small demonstration set.
  */
 export function getSourceLicenceTable(): SourceLicenceRow[] {
-  if (dataSource() === "fixtures") return SOURCES_FIXTURE;
+  if (dataSource() !== "export") return SOURCES_FIXTURE;
   // P35.37 (SIG-TRANSP-013): `web/sources.json` is the manifest-listed artifact
   // the /sources/ page's figures point at — when the export emits it (P35.37+),
   // the page renders THE artifact rows (never a re-derivation that could drift);
@@ -1571,7 +1676,7 @@ function readTransparencyArtifact<T>(
 
 /** The source universe + named-predicate counts (`transparency/counts.json`). */
 export function getSourceCounts(): SourceCountsDoc {
-  if (dataSource() === "fixtures") return SOURCE_COUNTS_FIXTURE;
+  if (dataSource() !== "export") return SOURCE_COUNTS_FIXTURE;
   return readTransparencyArtifact("counts.json", (parsed, path) => {
     if (!isSourceCountsDoc(parsed)) {
       throw new Error(`${path}: not a valid sig.source-counts/1 artifact`);
@@ -1582,7 +1687,7 @@ export function getSourceCounts(): SourceCountsDoc {
 
 /** The emitted source rows (`transparency/sources.json`, one per registry row). */
 export function getSourceRows(): SourceRowsDoc {
-  if (dataSource() === "fixtures") return SOURCE_ROWS_DOC_FIXTURE;
+  if (dataSource() !== "export") return SOURCE_ROWS_DOC_FIXTURE;
   return readTransparencyArtifact("sources.json", (parsed, path) => {
     if (!isSourceRowsDoc(parsed)) {
       throw new Error(`${path}: not a valid sig.source-row/1 artifact`);
@@ -1600,7 +1705,7 @@ export function getSourceRows(): SourceRowsDoc {
  * never silently patched).
  */
 export function getDataDictionary(): DataDictionary {
-  if (dataSource() === "fixtures") return DICTIONARY_FIXTURE;
+  if (dataSource() !== "export") return DICTIONARY_FIXTURE;
   const path = `${exportDir()}/dictionary.json`;
   let raw: string;
   try {
@@ -1659,7 +1764,7 @@ export interface AttributionCorrections {
 
 /** `null` = the export carries no corrections (or fixtures mode) — no note. */
 export function getAttributionCorrections(): AttributionCorrections | null {
-  if (dataSource() === "fixtures") return null;
+  if (dataSource() !== "export") return null;
   const path = `${exportDir()}/web/attribution_corrections.json`;
   if (!existsSync(path)) return null;
   const parsed: unknown = JSON.parse(readFileSync(path, "utf-8"));
@@ -1703,7 +1808,7 @@ export function getAttributionCorrections(): AttributionCorrections | null {
 export const RESOLUTION_EVAL_RECORD_PATH = "exports/src/exports/data/resolution_eval.json";
 
 export function getResolutionEval(): ResolutionEval {
-  if (dataSource() === "fixtures") {
+  if (dataSource() !== "export") {
     const parsed: unknown = JSON.parse(
       readFileSync(`${repoRoot()}${RESOLUTION_EVAL_RECORD_PATH}`, "utf-8"),
     );
@@ -1766,7 +1871,7 @@ export function getReleaseArtifactPayload(artifactPath: string): unknown | null 
       // The ADR-R9-ANALYTICS envelope the exporter writes — surfaces.site +
       // surfaces.dossiers — so figure pointers (/surfaces/site/artifact_count)
       // resolve into the served bytes the same way they do in the release.
-      const site = dataSource() === "fixtures" ? DEFAULT_PROVENANCE : getSiteProvenance();
+      const site = dataSource() !== "export" ? DEFAULT_PROVENANCE : getSiteProvenance();
       const dossiers = Object.fromEntries(
         [...DOSSIERS, ...JURISDICTION_DOSSIERS].map((d) => [
           d.slug,
@@ -1790,7 +1895,7 @@ export function getReleaseArtifactPayload(artifactPath: string): unknown | null 
     case "web/leverage.json":
       return getLeverageMetric();
     case "web/presentation/jurisdiction_dossiers.json":
-      return dataSource() === "fixtures"
+      return dataSource() !== "export"
         ? JURISDICTION_DOSSIERS
         : readPresentation<Dossier[]>("jurisdiction_dossiers", []);
     default:

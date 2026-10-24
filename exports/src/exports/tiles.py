@@ -354,6 +354,52 @@ def _gzip0(data: bytes) -> bytes:
     return gzip.compress(data, mtime=0)
 
 
+#: PMTiles v3 directory entry: ``(tile_id, run_length, length, offset)``.
+#: ``run_length == 0`` marks a leaf-directory pointer whose ``offset``/``length``
+#: address bytes inside the leaf-directory section instead of the tile-data
+#: section (spec §4.2).
+_DirectoryEntry = tuple[int, int, int, int]
+
+#: The root directory must stay under the reader's optimistic first read: the
+#: reference JS reader fetches ``bytes=0-16383`` (header + root) and parses the
+#: root directory from that buffer — a root directory larger than the fetch
+#: decompresses as a truncated stream and the archive reads as broken even
+#: though it is spec-valid. 16384 − 127-byte header − margin.
+_ROOT_DIR_MAX_BYTES = 16000
+#: Entries per leaf directory when the root spills: bounded so a leaf fetch is
+#: a single small range read (~40 KB gzip), and the root shrinks to one entry
+#: per ~4 k tiles.
+_LEAF_DIR_MAX_ENTRIES = 4096
+
+
+def _serialize_directory(entries: Sequence[_DirectoryEntry]) -> bytes:
+    """Serialize one directory section (spec §4.2).
+
+    Layout: n_entries, then delta tile_ids, run_lengths, lengths, offsets.
+    Offsets encode as ``offset + 1``, or ``0`` when the entry is contiguous with
+    the previous one — our tile data is clustered/contiguous so tile entries
+    after the first encode 0.
+    """
+    directory = bytearray()
+    directory += _varint(len(entries))
+    prev_id = 0
+    for i, (tid, _rl, _ln, _off) in enumerate(entries):
+        directory += _varint(tid - prev_id if i else tid)
+        prev_id = tid
+    for _tid, run_length, _ln, _off in entries:
+        directory += _varint(run_length)
+    for _tid, _rl, length, _off in entries:
+        directory += _varint(length)
+    prev_end = 0
+    for i, (_tid, _rl, length, offset) in enumerate(entries):
+        if i > 0 and offset == prev_end:
+            directory += _varint(0)  # contiguous with the previous entry
+        else:
+            directory += _varint(offset + 1)
+        prev_end = offset + length
+    return bytes(directory)
+
+
 def build_pmtiles(
     tiles: Mapping[int, bytes],
     *,
@@ -366,41 +412,42 @@ def build_pmtiles(
 ) -> bytes:
     """Assemble a PMTiles v3 archive from ``{tile_id: mvt_bytes}``.
 
-    ``tiles`` is sorted by Hilbert tile id (the clustered layout); the root
-    directory is one flat entry list (delta-encoded ids, run_length 1, offsets all
-    0 = contiguous). ``metadata`` is written as the archive's JSON metadata
-    (gzip'd); it MUST carry the ``vector_layers`` descriptor so a reader knows the
-    layer + its licence. No leaf directories — the flat pyramid is small enough.
+    ``tiles`` is sorted by Hilbert tile id (the clustered layout). Small
+    archives keep the classic flat root directory; once the serialized root
+    would exceed the reader's 16 KiB optimistic first read (a national-scale
+    pyramid can need ~1 MB of index) the entries spill into leaf directories —
+    one leaf per ``_LEAF_DIR_MAX_ENTRIES`` consecutive entries, the root holding
+    one ``run_length == 0`` pointer per leaf (spec §4.2). ``metadata`` is
+    written as the archive's JSON metadata (gzip'd); it MUST carry the
+    ``vector_layers`` descriptor so a reader knows the layer + its licence.
     """
     tile_ids = sorted(tiles)
     compressed = {tid: _gzip0(tiles[tid]) for tid in tile_ids}
 
-    # Directory: n_entries, then delta tile_ids, run_lengths, lengths, offsets.
-    # Offsets encode as ``offset + 1``, or ``0`` when the entry is contiguous with
-    # the previous one (spec §4.2) — our layout is clustered/contiguous so every
-    # entry after the first encodes 0.
-    directory = bytearray()
-    directory += _varint(len(tile_ids))
-    prev_id = 0
-    for i, tid in enumerate(tile_ids):
-        directory += _varint(tid - prev_id if i else tid)
-        prev_id = tid
-    for _tid in tile_ids:
-        directory += _varint(1)  # run_length
-    for tid in tile_ids:
-        directory += _varint(len(compressed[tid]))
     offset = 0
-    prev_end = 0
-    for i, tid in enumerate(tile_ids):
-        if i > 0 and offset == prev_end:
-            directory += _varint(0)  # contiguous with the previous entry
-        else:
-            directory += _varint(offset + 1)
-        prev_end = offset + len(compressed[tid])
+    tile_entries: list[_DirectoryEntry] = []
+    for tid in tile_ids:
+        tile_entries.append((tid, 1, len(compressed[tid]), offset))
         offset += len(compressed[tid])
-    root_dir = _gzip0(bytes(directory))
-    meta = _gzip0(json.dumps(metadata, sort_keys=True, separators=(",", ":")).encode("utf-8"))
+
+    root_entries: list[_DirectoryEntry] = tile_entries
+    root_dir = _gzip0(_serialize_directory(root_entries))
     leaf_dir = b""
+    n_leaf_refs = 0
+    if len(root_dir) > _ROOT_DIR_MAX_BYTES:
+        leaf_blobs: list[bytes] = []
+        root_entries = []
+        leaf_offset = 0
+        for start in range(0, len(tile_entries), _LEAF_DIR_MAX_ENTRIES):
+            chunk = tile_entries[start : start + _LEAF_DIR_MAX_ENTRIES]
+            blob = _gzip0(_serialize_directory(chunk))
+            root_entries.append((chunk[0][0], 0, len(blob), leaf_offset))
+            leaf_blobs.append(blob)
+            leaf_offset += len(blob)
+        n_leaf_refs = len(root_entries)
+        root_dir = _gzip0(_serialize_directory(root_entries))
+        leaf_dir = b"".join(leaf_blobs)
+    meta = _gzip0(json.dumps(metadata, sort_keys=True, separators=(",", ":")).encode("utf-8"))
     tile_data = b"".join(compressed[tid] for tid in tile_ids)
 
     header_len = 127
@@ -426,9 +473,11 @@ def build_pmtiles(
     struct.pack_into("<Q", header, 48, len(leaf_dir))
     struct.pack_into("<Q", header, 56, tile_off)
     struct.pack_into("<Q", header, 64, len(tile_data))
-    struct.pack_into("<Q", header, 72, len(tile_ids))  # num addressed tiles
-    struct.pack_into("<Q", header, 80, len(tile_ids))  # num tile entries
-    struct.pack_into("<Q", header, 88, len(tile_ids))  # num tile contents
+    # Spec §3 counts: addressed = every directory entry (tile + leaf-pointer);
+    # entries = run_length > 0 tile entries only; contents = unique data blobs.
+    struct.pack_into("<Q", header, 72, len(tile_ids) + n_leaf_refs)
+    struct.pack_into("<Q", header, 80, len(tile_ids))
+    struct.pack_into("<Q", header, 88, len(tile_ids))
     header[96] = 1  # clustered
     header[97] = 2  # internal compression: gzip
     header[98] = 2  # tile compression: gzip

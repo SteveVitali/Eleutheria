@@ -31,7 +31,14 @@ assertCoverageMetrics(COVERAGE_METRICS);
 
 // The coverage tiles (K12b NEW-14): the national density bins rendered as
 // figures — each cell's record count carries artifact + pointer.
-const TILES = getMapDensityBins();
+// P35.51 (SIG-FIND-005): at real scale this list was ~1.1 MB of document
+// (1,106 cells × ~1 KB figure markup) against the T1 ≤ 150 KiB ceiling — the
+// rendered set is bounded with the honest total stated and the full cell set
+// remains in web/analytics/density_bins.json (P27.5's capRows rule).
+const ALL_TILES = getMapDensityBins();
+const COVERAGE_TILES_MAX = 80;
+const TILES = ALL_TILES.slice(0, COVERAGE_TILES_MAX);
+const tilesTruncated = ALL_TILES.length > TILES.length;
 
 // Figure ids + anchors are lowercase slug tokens (assertFigureSpec); export
 // metric ids can carry uppercase dimension values ("jurisdiction-NY").
@@ -121,6 +128,12 @@ const fig = (id: string) => {
           </li>
         ))}
       </ul>
+      {tilesTruncated && (
+        <p class="sig-table-note" data-testid="coverage-tiles-bounds-note">
+          Showing the first {TILES.length} of {ALL_TILES.length} density cells — the
+          full cell set ships in <code>web/analytics/density_bins.json</code>.
+        </p>
+      )}
     </section>
   )}
 </BaseLayout>

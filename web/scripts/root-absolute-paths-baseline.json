@@ -63,8 +63,8 @@
     {
       "file": "src/lib/data.ts",
       "token": "/",
-      "count": 2,
-      "reason": "endsWith(\"/\")/startsWith(\"/\") boundary checks on export-dir overrides \u2014 string-shape guards, not links"
+      "count": 3,
+      "reason": "endsWith(\"/\")/startsWith(\"/\") boundary checks on export-dir + national-dir overrides \u2014 string-shape guards, not links"
     },
     {
       "file": "src/lib/data.ts",

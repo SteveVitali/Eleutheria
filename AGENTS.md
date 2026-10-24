@@ -129,9 +129,13 @@ Every Python package is `<pkg>/src/<pkg>/…` and exposes a CLI: `uv run python 
    (`sig.workspace-state/2` per ADR-155; `/1` ships today), a server-rendered first paint, a
    named no-JS equivalent in the registry, and a JS-off notice on stateful URLs.
    `/curate/**` is T3 and stays ADR-068. `script-policy.spec.ts`, `nojs-parity.spec.ts` and the
-   axe/shell/chrome sweeps enforce this on every discovered route; per-surface budgets live in
-   `island-budgets.json` today and the registry-driven page-budgets.json + generated
-   `lighthouserc.json` when P35.51 lands. Raising a budget, adding a T2 surface, or adding a
+   axe/shell/chrome sweeps enforce this on every discovered route; per-type budgets live in
+   `web/tests/e2e/page-budgets.json` (`sig.page-budgets/1`, K0 §4.3 verbatim — P35.51; it
+   superseded the P32.15 per-island budget contract under ADR-134), wire-measured by
+   `budget.spec.ts` over every discovered
+   route and mirrored by the GENERATED `web/lighthouserc*.json` files (`gen-lhci.mjs` —
+   never hand-edit them). Recorded real-scale overages live in the file's `measured_gaps`
+   block, bounded and loud — never a smoothed ceiling. Raising a budget, adding a T2 surface, or adding a
    browser runtime dependency needs a new ADR amending ADR-155 — the machinery implements the
    ADR, never re-decides it.
 7. **`tests/e2e` xfails carry an `LD-`/`accepted:` reason and are flipped only by the closing

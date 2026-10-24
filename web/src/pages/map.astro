@@ -80,7 +80,13 @@ const boundIndicators = boundedJurisdictionIndicators(jurisdictionIndicators);
 // id → asset, so the indicator list below is linear at national scale (not a find per id).
 const ASSET_BY_ID = new Map(MAP_ASSETS.map((a) => [a.id, a]));
 const maxCount = Math.max(1, ...DENSITY_BINS.map((b) => b.recordCount));
-const bins = DENSITY_BINS.map((b) => ({ bin: b, render: renderBin(b, maxCount) }));
+// P35.51 (SIG-FIND-005): the bin strip + tabular equivalent were UNBOUNDED —
+// under the real-sized national build (1,100+ cells) the coverage section alone
+// was ~2.4 MB of document. Same P27.5 capRows the asset table already uses:
+// bounded rows, the honest total stated, never a silent drop.
+const allBins = DENSITY_BINS.map((b) => ({ bin: b, render: renderBin(b, maxCount) }));
+const cappedBins = capRows(allBins);
+const bins = cappedBins.rows;
 
 // Build-time cap so the tabular equivalent stays within budget at national scale
 // (tens of thousands of sites); the honest total is preserved. P27.7 adds a build-time
@@ -186,6 +192,11 @@ const ISLAND_COMPARTMENTS = TILE_SOURCES.length > 0
     }))
   : (LATEST?.compartments.map((c) => ({ id: c.compartment, license: c.license })) ?? []);
 const meta = getSiteMetadata();
+// The client:only island mounts ~32.9 rem of chrome + 24 rem canvas (measured
+// on the fixtures build); each licence-compartment row adds ~1.4 rem — all
+// build-known — so the mount skeleton reserves exactly that height and
+// hydration never shifts the tables below (the ratified T2-map CLS ≤ 0.05).
+const ISLAND_MOUNT_MIN_REM = 32 + 1.4 * Math.max(0, ISLAND_COMPARTMENTS.length - 2);
 const mapCitationHref = beliefPinnedPermalink({
   path: "/map/",
   title: "Infrastructure map",
@@ -223,16 +234,36 @@ const mapCitationHref = beliefPinnedPermalink({
       </p>
     )}
     {ISLAND_POINT_COUNT > 0 ? (
-      <MapIsland
-        client:only="react"
-        tiles={TILE_SOURCES}
-        points={ISLAND_FALLBACK_POINTS}
-        pointCount={ISLAND_POINT_COUNT}
-        attribution={ATTRIBUTION_LINE}
-        citationHref={mapCitationHref}
-        release={LATEST?.publicationId ?? null}
-        compartments={ISLAND_COMPARTMENTS}
-      />
+      <>
+        {/* Mount skeleton (P35.51 — the T2-map CLS budget row is ratified
+            law): client:only emits no SSR markup, so without a reserved
+            block the island's mount inserts ~30 rem and pushes every
+            following section down — a real layout shift the export leg
+            measured at 0.073 vs the ≤ 0.05 ceiling. This sibling reserves
+            the mounted height, hides itself via :has() the moment the
+            island root exists, and stays truthful with JavaScript off. */}
+        <div
+          class="sig-island__placeholder"
+          style={`min-height: ${ISLAND_MOUNT_MIN_REM}rem`}
+          data-testid="map-island-placeholder"
+          role="note"
+        >
+          <p class="sig-island__note">
+            The interactive map loads only when JavaScript runs — the tables
+            below carry the same records and are the complete equivalent.
+          </p>
+        </div>
+        <MapIsland
+          client:only="react"
+          tiles={TILE_SOURCES}
+          points={ISLAND_FALLBACK_POINTS}
+          pointCount={ISLAND_POINT_COUNT}
+          attribution={ATTRIBUTION_LINE}
+          citationHref={mapCitationHref}
+          release={LATEST?.publicationId ?? null}
+          compartments={ISLAND_COMPARTMENTS}
+        />
+      </>
     ) : (
       <p class="sig-island__note">No publishable points to draw at this belief; see the tabular equivalent below.</p>
     )}
@@ -336,6 +367,12 @@ const mapCitationHref = beliefPinnedPermalink({
 
   <h2 id="bins-table-heading">Coverage bins (tabular equivalent)</h2>
   {bins.length === 0 && <EmptyState surface="mapBins" />}
+  {cappedBins.truncated && (
+    <p class="sig-table-note" data-testid="bins-bounds-note">
+      Showing the first {cappedBins.shown} of {cappedBins.total} density cells — the
+      full cell set ships in the export's <code>web/analytics/density_bins.json</code>.
+    </p>
+  )}
   <div class="sig-table-wrap">
   <table class="sig-table" aria-labelledby="bins-table-heading">
     <thead>

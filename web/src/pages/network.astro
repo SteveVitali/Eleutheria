@@ -71,31 +71,123 @@ const ego = hasNetwork
   ? boundedEgoNetwork(NETWORK_NODES, NETWORK_EDGES, FOCUS_ENTITY_ID, 1)
   : { nodes: [], edges: [], totalNodes: 0, totalEdges: 0, truncated: false };
 
+// P35.51 (SIG-FIND-005, the T2-graph document budget): the island's props are
+// a DECLARED bounded window around the focus — never the full graph inlined.
+// The window keeps the focus's incident edges FIRST (id-capped ego truncation
+// would drop every neighbour whose id sorts late — the island's own ego view
+// must find a real neighbourhood), then one deterministic onward ring so
+// expansion to a neighbour still resolves inside the window. Under today's
+// data the whole graph fits inside the window (zero behaviour change); under
+// the real-sized national overlay the window is what keeps the page inside
+// its document budget while the static lists below carry honest totals.
+// Expansion past the window is the recorded data-seam gap the /explore/
+// surface rows own (K0 §5's per-release payloads), never a fabricated
+// neighbourhood.
+const ISLAND_PROP_NODE_LIMIT = 200;
+const ISLAND_PROP_EDGE_LIMIT = 400;
+const islandWindow = (() => {
+  if (!hasNetwork) return { nodes: [], edges: [] };
+  const edgeOrder = (a: (typeof NETWORK_EDGES)[number], b: (typeof NETWORK_EDGES)[number]) =>
+    `${a.from}→${a.to}→${a.access_kind}`.localeCompare(`${b.from}→${b.to}→${b.access_kind}`);
+  // Ring 0: every edge incident to the focus (bounded) — the island's default
+  // depth-1 ego always draws a real neighbourhood.
+  const focusEdges = NETWORK_EDGES.filter(
+    (e) => e.from === FOCUS_ENTITY_ID || e.to === FOCUS_ENTITY_ID,
+  )
+    .sort(edgeOrder)
+    .slice(0, ISLAND_PROP_EDGE_LIMIT);
+  const focusEdgeSet = new Set(focusEdges);
+  const ring1Ids = new Set([
+    FOCUS_ENTITY_ID,
+    ...focusEdges.flatMap((e) => [e.from, e.to]),
+  ]);
+  // Ring 1: edges reaching outward from the focus's neighbours — expansion.
+  const ring2Edges = NETWORK_EDGES.filter(
+    (e) => !focusEdgeSet.has(e) && (ring1Ids.has(e.from) || ring1Ids.has(e.to)),
+  )
+    .sort(edgeOrder)
+    .slice(0, Math.max(0, ISLAND_PROP_EDGE_LIMIT - focusEdges.length));
+  const windowEdges = [...focusEdges, ...ring2Edges];
+  // Nodes: focus first, then by id — capped; edges whose far end fell outside
+  // the node cap drop with it (the bounds are stated, never a dangling edge).
+  const windowNodeIds = new Set(windowEdges.flatMap((e) => [e.from, e.to]));
+  const nodes = NETWORK_NODES.filter((n) => windowNodeIds.has(n.id))
+    .sort((a, b) =>
+      a.id === FOCUS_ENTITY_ID ? -1 : b.id === FOCUS_ENTITY_ID ? 1 : a.id.localeCompare(b.id),
+    )
+    .slice(0, ISLAND_PROP_NODE_LIMIT);
+  const keptIds = new Set(nodes.map((n) => n.id));
+  return {
+    nodes,
+    edges: windowEdges.filter((e) => keptIds.has(e.from) && keptIds.has(e.to)),
+  };
+})();
+
+// The access-path list is bounded like the edge lists (P35.51) — the full
+// closure ships in the export artifact.
+const MAX_PATH_ITEMS = 200;
+
+// The rendered (bounded) edge groups — computed once so the claim scope below
+// names exactly what the page renders.
+const ACCESS_EDGE_GROUPS = ACCESS_EDGE_TYPES.map((k) => {
+  const edges = filterAccessEdges(NETWORK_EDGES, {
+    ...DEFAULT_ACCESS_EDGE_FILTER,
+    configured_access: k === "configured_access",
+    observed_use: k === "observed_use",
+    declared_policy: k === "declared_policy",
+  });
+  const current = edges.filter(isCurrentEdge);
+  const nonCurrent = edges.filter((e) => !isCurrentEdge(e));
+  return {
+    kind: k,
+    edges,
+    cappedEdges: capRows(current, EGO_EDGE_LIMIT),
+    // The ended/undated block is bounded too (P35.51) — at national scale an
+    // uncapped details list would blow the document budget; the summary names
+    // the true total and the export carries the full set.
+    cappedPast: capRows(nonCurrent, EGO_EDGE_LIMIT),
+  };
+});
+const DEGREE_NODES = capRows(
+  NETWORK_NODES.filter((n) => n.degree !== undefined),
+  EGO_EDGE_LIMIT,
+);
+const PATH_ITEMS = capRows(ACCESS_PATHS, MAX_PATH_ITEMS);
+
 // The publication the workspace `release=` param defaults to (P32.15).
 const LATEST = getLatestReleaseTarget();
 
 // P35.36 (UXR-33): the `claim_id → sig.provenance-panel/1` map — one panel per
-// UNIQUE claim the page names (edge supporting claims, partner-count claims,
-// path-hop evidence), rendered once in the "Claim provenance" section below so
-// each `#claim-<id>` anchor resolves exactly once; the rows link it. The
-// island's edge detail renders the same normalised contract. A claim with no
-// statement normalises to the `not_recorded` panel — never a gap.
+// UNIQUE claim the page names, rendered once in the "Claim provenance" section
+// below so each `#claim-<id>` anchor resolves exactly once; the rows link it.
+// P35.51: "the page names" scopes to the RENDERED items — the capped lists and
+// the island window — so the panel count stays bounded at real scale; a claim
+// with no statement normalises to the `not_recorded` panel — never a gap.
 const STATEMENTS = getStatementIndex();
 const PAGE_CLAIM_IDS = [
   ...new Set([
-    ...NETWORK_EDGES.flatMap((e) => e.evidence ?? []),
-    ...NETWORK_NODES.flatMap((n) => n.degree_claim_ids ?? []),
-    ...ACCESS_PATHS.flatMap((p) => p.hops.flatMap((h) => h.evidence)),
+    ...ACCESS_EDGE_GROUPS.flatMap((g) =>
+      [...g.cappedEdges.rows, ...g.cappedPast.rows].flatMap((e) => e.evidence ?? []),
+    ),
+    ...DEGREE_NODES.rows.flatMap((n) => n.degree_claim_ids ?? []),
+    ...PATH_ITEMS.rows.flatMap((p) => p.hops.flatMap((h) => h.evidence)),
+    ...islandWindow.edges.flatMap((e) => e.evidence ?? []),
+    ...islandWindow.nodes.flatMap((n) => n.degree_claim_ids ?? []),
   ]),
 ].sort();
 const CLAIM_PANELS: Record<string, ProvenancePanelData> = Object.fromEntries(
   PAGE_CLAIM_IDS.map((cid) => [cid, panelForClaim(STATEMENTS, cid)]),
 );
-// The island ships only the claims that HAVE statements (the row bytes, not
-// the rendered panel) — absent claims normalise in-island to `not_recorded`
-// through the same `panelFromStatement`, so the serialized props stay lean.
+// The island ships only the claims that HAVE statements and that ITS bounded
+// window can name (P35.51 — prop bytes stay inside the document budget);
+// absent claims normalise in-island to `not_recorded` through the same
+// `panelFromStatement`, so the serialized props stay lean.
+const ISLAND_CLAIM_IDS = new Set([
+  ...islandWindow.edges.flatMap((e) => e.evidence ?? []),
+  ...islandWindow.nodes.flatMap((n) => n.degree_claim_ids ?? []),
+]);
 const ISLAND_STATEMENTS: Record<string, StatementRow> = Object.fromEntries(
-  PAGE_CLAIM_IDS.filter((cid) => STATEMENTS.has(cid)).map((cid) => [
+  [...ISLAND_CLAIM_IDS].filter((cid) => STATEMENTS.has(cid)).map((cid) => [
     cid,
     STATEMENTS.get(cid)!,
   ]),
@@ -145,8 +237,8 @@ others.forEach((n, i) => {
     </p>
     <NetworkIsland
       client:only="react"
-      nodes={NETWORK_NODES}
-      edges={NETWORK_EDGES}
+      nodes={islandWindow.nodes}
+      edges={islandWindow.edges}
       focusEntityId={FOCUS_ENTITY_ID}
       release={LATEST?.publicationId ?? null}
       claimStatements={ISLAND_STATEMENTS}
@@ -248,20 +340,8 @@ others.forEach((n, i) => {
     })}
   </ul>
 
-  {ACCESS_EDGE_TYPES.map((k) => {
-    const edges = filterAccessEdges(NETWORK_EDGES, {
-      ...DEFAULT_ACCESS_EDGE_FILTER,
-      configured_access: k === "configured_access",
-      observed_use: k === "observed_use",
-      declared_policy: k === "declared_policy",
-    });
+  {ACCESS_EDGE_GROUPS.map(({ kind: k, edges, cappedEdges, cappedPast }) => {
     const style = ACCESS_EDGE_STYLES[k];
-    // The default "current" view holds dated, not-yet-ended edges only; ended
-    // and undated edges stay listed but visibly marked, out of the current
-    // filter (K2 §7 H-3 — never a present-tense claim about them).
-    const current = edges.filter(isCurrentEdge);
-    const nonCurrent = edges.filter((e) => !isCurrentEdge(e));
-    const cappedEdges = capRows(current, EGO_EDGE_LIMIT);
     return (
       <section class="sig-access-group" data-testid="access-edge-group" data-kind={k}>
         <h3>{style.glyph} {style.label}</h3>
@@ -269,16 +349,23 @@ others.forEach((n, i) => {
         <ul class="sig-edge-list">
           {cappedEdges.rows.map((e) => <NetworkEdgeItem edge={e} labelOf={labelOf} />)}
         </ul>
-        {nonCurrent.length > 0 && (
+        {cappedPast.total > 0 && (
           <details class="sig-edge-past" data-testid="access-edge-past" data-kind={k}>
             <summary>
-              {nonCurrent.length} ended or undated {style.label.toLowerCase()} edge
-              {nonCurrent.length === 1 ? "" : "s"} — visibly marked, out of the
+              {cappedPast.total} ended or undated {style.label.toLowerCase()} edge
+              {cappedPast.total === 1 ? "" : "s"} — visibly marked, out of the
               current view
             </summary>
             <ul class="sig-edge-list">
-              {nonCurrent.map((e) => <NetworkEdgeItem edge={e} labelOf={labelOf} />)}
+              {cappedPast.rows.map((e) => <NetworkEdgeItem edge={e} labelOf={labelOf} />)}
             </ul>
+            {cappedPast.truncated && (
+              <p class="sig-table-note" data-testid="access-past-bounds-note">
+                Showing the first {cappedPast.shown} of {cappedPast.total} ended or
+                undated {style.label.toLowerCase()} edges; the full edge set ships
+                in the export.
+              </p>
+            )}
           </details>
         )}
         {cappedEdges.truncated && (
@@ -295,7 +382,7 @@ others.forEach((n, i) => {
   {/* Recorded partner counts — a source-stated partner COUNT is a node
       attribute, never an edge (P35.30, SIG-INGEST-043c / K2 §7 H-4). The
       static list carries the same fact the island's node chip shows. */}
-  {NETWORK_NODES.some((n) => n.degree !== undefined) && (
+  {DEGREE_NODES.total > 0 && (
     <section data-testid="partner-counts">
       <h2 id="degree-heading">Recorded partner counts</h2>
       <p data-copy="NW-04">
@@ -305,7 +392,7 @@ others.forEach((n, i) => {
         is never drawn as an edge (SIG-INGEST-043c).
       </p>
       <ul class="sig-degree-list">
-        {NETWORK_NODES.filter((n) => n.degree !== undefined).map((n) => (
+        {DEGREE_NODES.rows.map((n) => (
           <li data-testid="degree-node">
             <strong>{n.label}</strong> — {Array.isArray(n.degree) ? n.degree.join("–") : n.degree}{" "}
             partner{n.degree === 1 ? "" : "s"} recorded
@@ -332,7 +419,7 @@ others.forEach((n, i) => {
   </p>
   {ACCESS_PATHS.length === 0 && <EmptyState surface="accessPaths" />}
   <ol class="sig-paths">
-    {ACCESS_PATHS.map((p) => (
+    {PATH_ITEMS.rows.map((p) => (
       <li
         class="sig-path"
         data-testid="access-path"
@@ -371,6 +458,12 @@ others.forEach((n, i) => {
       </li>
     ))}
   </ol>
+  {PATH_ITEMS.truncated && (
+    <p class="sig-table-note" data-testid="access-paths-bounds-note">
+      Showing the first {PATH_ITEMS.shown} of {PATH_ITEMS.total} access paths; the
+      full closure ships in the export.
+    </p>
+  )}
 
   <!-- P35.36 (R11-K13-TX-08a / J3 §5.1–5.2, UXR-33, SIG-TRANSP-011): one shared
        provenance panel per claim the page names — the same contract the

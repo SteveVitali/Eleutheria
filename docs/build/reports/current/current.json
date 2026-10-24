@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "21c70ffad132610284f22e20cfeea18a160f643e",
-  "manifest_inputs": 1091,
+  "input_commit": "feaa53ba995e2003908216265e36bbcd41a244f6",
+  "manifest_inputs": 1092,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.51",
-    "lastCompleted": "P35.50",
+    "nextTicket": "P35.52",
+    "lastCompleted": "P35.51",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.57,P35.67,P36.12",
@@ -17,7 +17,7 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.50-page-type-registry-and-route-discovery",
+    "chainTip": "r11/P35.51-page-budgets-lhci-fixture",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
@@ -26,12 +26,12 @@
     "updatedAt": "2026-10-22T05:34Z"
   },
   "counts": {
-    "obligations": 175,
-    "owed": 98,
-    "open": 95,
+    "obligations": 178,
+    "owed": 101,
+    "open": 98,
     "partial": 3,
     "terminal": 77,
-    "events": 669,
+    "events": 672,
     "transitions": 40,
     "coverage_assessments": 315,
     "coverage_historical_rows": 820,
@@ -9044,6 +9044,152 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P35.51-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.51-1:e0",
+      "kind": "F",
+      "owner": "the map-surface optimisation row (K13 MAP rows)",
+      "landing": "the /map/ bundle under the ratified ceilings — jsInitialBytes ≤ 368,640 B and totalInitialMaxBytes ≤ 460,800 B wire-measured; the two measured_gaps rows removed in the same change",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "The ratified T2-map script ceiling (≤ 360 KiB initial JS, K0 §4.3) versus the measured `/map/` bundle — 500,094 B gzip against 368,640 B ratified, and the driven total transfer 544,512 B gzip vs ≤ 450 KiB: the bundle must come under the ratified ceiling, never the ceiling raised",
+      "unblocked_by": "owner: the map-surface optimisation row (K13 MAP rows) · trigger: that row's pick-up — the budget stays law meanwhile",
+      "verify": "`/map/` `jsInitialBytes` ≤ 368,640 B and `totalInitialMaxBytes` ≤ 460,800 B under the wire suite (`budget.spec.ts`); every `measured_gaps` row under this deferral removed in the same change (the stale-row gate forces it)",
+      "proxy": "the gap is recorded in `page-budgets.json` `measured_gaps`, bounded at 524,288/589,824 B plus the fixtures-scoped pan-latency bound (≈ 539 ms vs 200 ms → 1,200 ms) and the unscoped TBT bound (≈ 888–1,763 ms vs 350 ms → 2,500 ms), and reported every run — a regression past the bound fails",
+      "line": 1373,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.51-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.51-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.51",
+          "owner": "the map-surface optimisation row (K13 MAP rows)",
+          "landing": "the /map/ bundle under the ratified ceilings — jsInitialBytes ≤ 368,640 B and totalInitialMaxBytes ≤ 460,800 B wire-measured; the two measured_gaps rows removed in the same change",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "web/tests/e2e/page-budgets.json",
+            "web/tests/e2e/budget.spec.ts",
+            "docs/build/runs/P35.51.md"
+          ],
+          "observed_at": "2026-10-22",
+          "recorded_at": "2026-10-22",
+          "source_commit": "85f1cffd7b805857295b09b1018e8251b5c93511",
+          "reason": "migration anchor appended by P35.51 (row 329) for the deferral row it added — the ratified T2-map ≤ 360 KiB ceiling stands as law; today's ≈ 497 KB measured bundle is a recorded, bounded gap (500,094 B vs 368,640 B ratified, bound 524,288 B), never a smoothed budget",
+          "anchor": {
+            "row_line": 1373,
+            "row_sha256": "91ae70dc47d84ba041fe6e2db9e91872383151bf72d77aaae9c2211f28bbbcea",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.51-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.51-2:e0",
+      "kind": "F",
+      "owner": "the K0 runtime-migration row (Preact replaces React on the public surface)",
+      "landing": "the /search/ bundle under the ratified ceiling — jsInitialBytes ≤ 61,440 B wire-measured; the measured_gaps row removed in the same change",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "The ratified T2-search script ceiling (≤ 60 KiB initial JS) versus the measured `/search/` bundle — 72,405–72,853 B gzip against 61,440 B ratified: the island still runs the React runtime (≈ 66 KiB) the K0 budget assumed replaced by Preact + MiniSearch (≈ 11 KB + app)",
+      "unblocked_by": "owner: the K0 runtime-migration row (Preact replaces React on the public surface) · trigger: that row's pick-up",
+      "verify": "`/search/` `jsInitialBytes` ≤ 61,440 B under the wire suite; every `measured_gaps` row under this deferral removed in the same change",
+      "proxy": "recorded in `measured_gaps`, bounded at 81,920 B plus the fixtures-scoped keystroke-latency bound (≈ 160 ms vs 100 ms → 300 ms) and the unscoped LCP bound (≈ 1,502–1,655 ms vs 1,500 ms → 2,000 ms), reported every run — a regression past the bound fails",
+      "line": 1374,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.51-2:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.51-2",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.51",
+          "owner": "the K0 runtime-migration row (Preact replaces React on the public surface)",
+          "landing": "the /search/ bundle under the ratified ceiling — jsInitialBytes ≤ 61,440 B wire-measured; the measured_gaps row removed in the same change",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "web/tests/e2e/page-budgets.json",
+            "web/tests/e2e/budget.spec.ts",
+            "docs/build/runs/P35.51.md"
+          ],
+          "observed_at": "2026-10-22",
+          "recorded_at": "2026-10-22",
+          "source_commit": "85f1cffd7b805857295b09b1018e8251b5c93511",
+          "reason": "migration anchor appended by P35.51 (row 329) for the deferral row it added — the ratified T2-search ≤ 60 KiB ceiling stands; the measured ≈ 72.4 KB bundle (React runtime where K0 assumed Preact + MiniSearch) is recorded + bounded at 81,920 B",
+          "anchor": {
+            "row_line": 1374,
+            "row_sha256": "b48b81e861a808b7b67604adba76fc497d887b6b26cc6b8d950fc94671a9f619",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.51-3",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.51-3:e0",
+      "kind": "F",
+      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes) + the map tiling owner",
+      "landing": "every national-scoped measured_gaps row measures under its ratified ceiling in national_budget_leg.sh budgets and is removed in the same change — the real-scale documents, totals, first-view data and interaction latencies all inside the law",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "The real-scale measured gaps the national fixture exposed (SIG-FIND-005 — budgets measured under real-sized state, never only demo data): T2 document ≤ 100 KiB vs ≈ 1.70 MB `/map/` and ≈ 1.77 MB `/network/` national documents (the honest no-JS equivalents at 232,500 invented sites / 6,460 nodes / 405,000 edges), the driven totals (≈ 2.22 MB / ≈ 1.85 MB vs ≤ 450/250 KiB), the `/map/` first-view data (≈ 3.24 MB vs ≤ 1.5 MiB), the national interaction latencies under 4× throttle (map ≈ 511–955 ms vs 200 ms, network ≈ 284–552 ms vs 200 ms, search ≈ 112–136 ms vs 100 ms, `/sources/` T1 scroll ≈ 147 ms vs 100 ms — the higher numbers are the GitHub-hosted runner's), the national `/map/` Lighthouse LCP (≈ 3,349 ms vs ≤ 2,500 ms), the national `/map/` lab metrics on the runner (TBT ≈ 5,183–5,380 ms vs ≤ 350 ms → bound 6,500 ms; performance score ≈ 0.69 vs ≥ 0.75 → the minScore gap's floor bound 0.6), and the fixtures-mode `/network/` node-select latency on the CI runner (≈ 228 ms vs ≤ 200 ms)",
+      "unblocked_by": "owner: the static-equivalent pagination/compaction row (P27.7's deferred table shapes) + the map tiling owner · trigger: those rows' pick-up",
+      "verify": "every national-scoped `measured_gaps` row measures under its ratified ceiling in `national_budget_leg.sh budgets`/`lighthouse` and is removed in the same change (the stale-row gate forces it)",
+      "proxy": "every overage is recorded in `measured_gaps` with a regression bound (`data_source: \"national\"`: document 1,750,000/1,800,000 B, total 2,250,000/1,900,000 B, first-view 3,500,000 B, latency 1,500/800/300/300 ms, LCP 4,000/2,000 ms, TBT 6,500 ms, perf-score floor 0.6) plus the fixtures-scoped `/network/` latency bound 400 ms, reported every run",
+      "line": 1375,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.51-3:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.51-3",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.51",
+          "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes) + the map tiling owner",
+          "landing": "every national-scoped measured_gaps row measures under its ratified ceiling in national_budget_leg.sh budgets and is removed in the same change — the real-scale documents, totals, first-view data and interaction latencies all inside the law",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "web/tests/e2e/page-budgets.json",
+            "web/tests/e2e/budget.spec.ts",
+            "scripts/ci/national_budget_leg.sh",
+            "scripts/ci/build_national_fixture.py",
+            "docs/build/runs/P35.51.md"
+          ],
+          "observed_at": "2026-10-22",
+          "recorded_at": "2026-10-22",
+          "source_commit": "85f1cffd7b805857295b09b1018e8251b5c93511",
+          "reason": "migration anchor appended by P35.51 (row 329) for the deferral row it added — the national fixture exposes the real-scale overages (≈ 1.7/1.8 MB documents vs ≤ 100 KiB, ≈ 3.24 MB first-view vs ≤ 1.5 MiB, national latencies over 100–200 ms); every one recorded with a regression bound, reported every run, never hidden",
+          "anchor": {
+            "row_line": 1375,
+            "row_sha256": "86f4d35128052283ee5655a4200211b660aa1295f16a92bf1d80305247a92368",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -13710,7 +13856,7 @@
         },
         "SIG-FIND-005": {
           "verdict": "MET",
-          "evidence": "web/src/lib/network.ts:1;exports/src/exports/spine_export.py:1;web/src/islands/NetworkIsland.tsx:1;web/src/pages/network.astro:1;web/src/islands/MapIsland.tsx:1;web/lighthouserc.json:1;web/tests/e2e/island-budgets.json:1;web/scripts/measure-island-budgets.mjs:1",
+          "evidence": "web/src/lib/network.ts:1;exports/src/exports/spine_export.py:1;web/src/islands/NetworkIsland.tsx:1;web/src/pages/network.astro:1;web/src/islands/MapIsland.tsx:1;web/lighthouserc.json:1;web/tests/e2e/page-budgets.json:1;web/scripts/measure-page-budgets.mjs:1",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -19565,10 +19711,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "f6ada7a82476d552a1ed24868109281d9efc8489c84661c424dc1eeea8d4a9e1",
+  "manifest_sha256": "9affef2693717436cb3bae7cc8fae627c83cfcc603228802e2e3a7407c255933",
   "current_md": {
     "lines": 63,
-    "bytes": 16363,
+    "bytes": 16352,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
