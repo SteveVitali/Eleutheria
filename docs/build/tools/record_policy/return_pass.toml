@@ -667,7 +667,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/263_P35.67__post-dns-cutover-p
 key = "P35.1a"
 kind = "leg"
 obligations = []
-obligations_cell = '''queued production-write leg: reconcile Cloud Scheduler from ops/cadence.toml (inert PAUSED triggers + declared-bundle publish), then the in-band live-diff; live-1 (prestate + read-only diff, exit 1 — 52 findings) stopped OM-18; ordering: P34.42b IAM first, then `--apply --paused`'''
+obligations_cell = '''queued production-write leg: reconcile Cloud Scheduler from ops/cadence.toml (inert PAUSED triggers + declared-bundle publish), then the in-band live-diff; stopped live-1 (prestate + read-only diff, exit 1 — 52 findings) OM-18; ordering: P34.42b IAM first, then `--apply --paused`'''
 gates_cell = '''QUEUED hosted, production write; OM-20 — GATE-G4 11B list (P35.1a named; expires GATE-G5); monthly-export trigger stays PAUSED inert until D-P34.6-2's verbatim go; AR-3 + AR-2 — weekday 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z), operator present, prestate first; retry waits on `live:P34.42b`, `--apply --paused` (R6)'''
 operator_cell = '''nothing until `live:P34.42b`; then `P35.1a-live-2` in a fresh AR-3/AR-2 window `--apply --paused`; rollback = recorded prestate + script path'''
 rerun_cell = '''`implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` · landed 264 (PR #266; live-1 stopped OM-18) · retry `r11/P35.1a-live-2` post-`live:P34.42b`'''
