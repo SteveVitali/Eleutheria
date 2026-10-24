@@ -46,6 +46,7 @@ def site_release_document(
     *,
     integrity_manifest_sha256: str,
     routes_sha256: str | None,
+    template_fingerprint: str | None = None,
 ) -> dict[str, Any]:
     """Assemble the ``sig.site-release/1`` document from a v2 descriptor.
 
@@ -90,6 +91,7 @@ def site_release_document(
         },
         "disclosures": [str(d.get("id")) for d in (descriptor.get("disclosures") or [])],
         "routes_sha256": routes_sha256,
+        "template_fingerprint": template_fingerprint,
         "integrity_manifest": {
             "path": f"releases/{publication_id}/integrity_manifest.json",
             "sha256": integrity_manifest_sha256,
@@ -154,6 +156,11 @@ def validate_site_release(doc: Mapping[str, Any]) -> list[str]:
     routes_sha = doc.get("routes_sha256")
     if routes_sha is not None and not (isinstance(routes_sha, str) and RI._is_hex(routes_sha, 64)):
         failures.append(f"routes_sha256 {routes_sha!r} is not 64-hex or null")
+    fingerprint = doc.get("template_fingerprint")
+    if fingerprint is not None and not (
+        isinstance(fingerprint, str) and RI._is_hex(fingerprint, 64)
+    ):
+        failures.append(f"template_fingerprint {fingerprint!r} is not 64-hex or null")
     integrity = doc.get("integrity_manifest")
     if not isinstance(integrity, Mapping):
         failures.append("integrity_manifest block absent")

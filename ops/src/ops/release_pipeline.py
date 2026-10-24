@@ -46,8 +46,9 @@ generations, ``rollback``/``clear-latest``/``withdraw`` → P35.55,
 ``classify`` → P35.60's classifier, the V1–V14 suite in ``verify`` →
 P35.56/P35.58) are still *declared here*: they take the lock, honour
 ``--dry-run``/``--apply``, journal a ``refused`` outcome naming the owner
-row, and never pretend to do work they do not. ``classify`` additionally
-answers Class S — RM-6: a classifier that cannot decide says Class S.
+row, and never pretend to do work they do not. ``classify`` is landed
+(P35.60 / ``ops.release_classify``) and still answers Class S whenever a
+check is unevaluable — RM-6 fail-closed.
 """
 
 from __future__ import annotations
@@ -1313,33 +1314,109 @@ def verb_classify(
     *,
     apply_: bool,
     publication_id: str,
+    results: str | Path | None = None,
+    go: str | None = None,
+    notice_hook: Any = None,
+    alert_ledger: Any = None,
+    notifiers: Any = None,
     break_lock: str | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
-    """``classify`` — the P35.60 classifier is not landed; RM-6 fails closed:
-    a classifier that cannot decide says Class S."""
+    """``classify`` — P35.60's §7.3 classifier (SIG-REL-012): consume the
+    emitted V14/V15 result docs (``--results`` — a verify-results directory
+    or one suite file) plus the staged release's declared metadata and the
+    journal; return ``class_r`` only when every R-column condition is
+    proven, ``class_s`` on any named trigger or any check it cannot
+    evaluate (RM-6 / SIG-ENG-042 — fail closed).
+
+    ``--apply`` writes three append-only records under the lock: the
+    ``sig.release-classification/1`` object under
+    ``registry/classifications/``, the classified journal event (which
+    ``release promote``'s ``journal_class`` reads), and — for Class S — the
+    agent-drafted ``sig.release-readout/1`` pair under
+    ``registry/readouts/`` plus the pending-readout notice on the landed
+    alert/mail channel. ``--go <name>`` evaluates the standing-go record
+    as evidence and, on a voiding trigger (ratchet regression · Part VIII
+    screen change · new source — B-9), appends its ``.voided`` marker.
+    ``notice_hook``/``alert_ledger``/``notifiers`` are test seams; the
+    operator's destination lives in the channel's env configuration, never
+    in a file."""
+    from . import release_classify as rcls
+
+    now = now or _now()
+    suites: list[dict[str, Any]] = []
+    bad: list[str] = []
+    if results is None:
+        bad.append(
+            "--results not supplied — the P35.58 verify results are the "
+            "classifier's only input; absent → every delta check unevaluable"
+        )
+    else:
+        suites, bad = rcls.load_suite_documents(results)
+    record = rcls.classify(
+        store,
+        publication_id,
+        suites=suites,
+        unreadable_inputs=bad,
+        go=go,
+        now=now,
+    )
     result: dict[str, Any] = {
         "verb": "classify",
         "publication_id": publication_id,
-        "class": "class_s",
-        "failclosed": True,
-        "owner": "P35.60 (REL-06 — the §7.3 classifier matrix + readout)",
+        "class": record["class"],
+        "failclosed": record["failclosed"],
+        "triggers": record["triggers"],
+        "unevaluable": record["unevaluable"],
         "applied": False,
     }
+    if go:
+        result["standing_go"] = record.get("standing_go")
     if not apply_:
         result["dry_run"] = True
+        result["classification"] = record
         return result
-    now = now or _now()
     with acquire_lock(store, "classify", break_lock=break_lock, now=now):
+        # the immutable classification record — create-if-absent
+        cname = (
+            f"{rcls.CLASSIFICATIONS_PREFIX}{publication_id}-{now.strftime('%Y%m%dT%H%M%S')}.json"
+        )
+        store.insert(cname, _canonical(record), content_type="application/json")
+        result["classification_object"] = cname
+        readout_names: dict[str, str] = {}
+        if record["class"] == "class_s":
+            readout_names = rcls.write_readout(store, record, now=now)
+            result["readout"] = readout_names
+        voided = (
+            rcls.record_go_void(store, go, publication_id, record["triggers"], now=now)
+            if go
+            else None
+        )
+        if voided:
+            result["go_voided"] = voided
+        alert = rcls.notify_classification(
+            record,
+            readout_names or None,
+            ledger=alert_ledger,
+            notifiers=notifiers,
+            notice_hook=notice_hook,
+        )
+        result["notice"] = {"kind": alert.kind, "recorded_at": alert.ts}
         name = emit_event(
             store,
             "classified",
             publication_id,
             {
                 "outcome": "recorded",
-                "class": "class_s",
-                "failclosed": True,
-                "reason": "the §7.3 classifier lands at P35.60 — RM-6 fail-closed default",
+                "class": record["class"],
+                "failclosed": record["failclosed"],
+                "triggers": record["triggers"],
+                "unevaluable": record["unevaluable"],
+                "classification_object": cname,
+                "readout": readout_names or None,
+                "go": go,
+                "go_voided": voided,
+                "notice": result["notice"],
             },
             now=now,
         )
@@ -1533,6 +1610,8 @@ def run_verb(args: Any) -> dict[str, Any]:
             store,
             apply_=apply_,
             publication_id=args.publication,
+            results=getattr(args, "results", None),
+            go=getattr(args, "go", None),
             break_lock=break_lock,
         )
     if verb == "promote":

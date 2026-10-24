@@ -675,6 +675,7 @@ def build_release(
     rights_registry_path: Path | None = None,
     ontology_generated_sha256: str | None | object = ...,
     repo_root: Path | None = None,
+    template_fingerprint: str | None | object = ...,
 ) -> ReleaseBuild:
     """Build the immutable release bundle from an export directory.
 
@@ -1303,11 +1304,22 @@ def build_release(
     if descriptor.get("schema") == RI.DESCRIPTOR_SCHEMA_V2:
         routes_path = (repo_root or _REPO_ROOT) / "ops" / "public_routes.toml"
         routes_sha = sha256_hex(routes_path.read_bytes()) if routes_path.is_file() else None
+        # P35.60 / SIG-REL-012 (G3 §7.3): the template fingerprint — digest of
+        # the fixed-fixture build of this commit — rides release.json so V14's
+        # delta block and the §7.3 classifier can read it. The default is to
+        # compute it; callers pass None explicitly for a genuinely unstamped
+        # build (the fingerprint's own fixture run).
+        fingerprint = template_fingerprint
+        if fingerprint is ...:
+            from .release_fingerprint import template_fingerprint as _fp
+
+            fingerprint = _fp()
         site_release = SR.site_release_document(
             descriptor,
             pub,
             integrity_manifest_sha256=manifest_sha,
             routes_sha256=routes_sha,
+            template_fingerprint=fingerprint if isinstance(fingerprint, str) else None,
         )
         site_release_failures = SR.validate_site_release(site_release)
         if site_release_failures:
