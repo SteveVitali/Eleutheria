@@ -1067,9 +1067,9 @@ rerun_cell = '''`SIG_RELEASE_AUTHOR="$(git config user.name)" bash ops/gcp/relea
 key = "P35.59"
 kind = "leg"
 obligations = []
-obligations_cell = '''the queued dark cutover (`ops/gcp/web-cutover.sh --apply all`): AR-2 prestate+manifest → `staged/v/legacy-<YYYYMMDD>/` floor import → `conf/0`+carry+`serving.json` retirement → `sig-web` pinned-digest roll (`SIG_LATEST_PUB`, `SIG_CONF_GEN=0`, min 1, `/mnt/rel`) → `route-compare` both origins — byte diff → recorded rollback'''
-gates_cell = '''hosted, production write — QUEUED (window guard exit 42, 2026-10-24T08:30Z Saturday — outside preferred 14:00–20:00Z weekdays, never 03:00–06:30Z); pre-authorised: the GATE-G4 §4 list names P35.59 verbatim (expires next sub-round GATE, OM-10); live prerequisites FIRST: `live:P35.53` (the `…-sig-release` bucket exists) + `live:P34.40` L2 `/v1/*` checked (GB-Q4 expired GATE-G4 — a still-paused L2 is an operator naming, never skipped)'''
-operator_cell = '''nothing until window + both live prerequisites — `--check` plans only; per-leg `--apply` if paused; rollback = recorded traffic move to the still-running prior revision (image + env + mounts wholesale); `sig-web` bucket never touched — 90-day floor under D-G3-7 (D-R11-LATER-20 anchors on the landing `date -u`)'''
+obligations_cell = '''the queued dark cutover (`ops/gcp/web-cutover.sh --apply all`): AR-2 prestate+manifest → `staged/v/legacy-<YYYYMMDD>/` floor import → `conf/0`+carry+`serving.json` retirement → `sig-web` pinned-digest roll (`SIG_LATEST_PUB`, `SIG_CONF_GEN=0`, min 1, `/mnt/rel`) → `route-compare` both origins — byte diff → rollback'''
+gates_cell = '''hosted, production write — QUEUED (window guard exit 42, 2026-10-24T08:30Z Saturday — outside 14:00–20:00Z weekdays, never 03:00–06:30Z); pre-authorised: GATE-G4 §4 names P35.59 verbatim (expires next GATE, OM-10); requires `live:P35.53` (`…-sig-release` exists) + `live:P34.40` L2 `/v1/*` checked (GB-Q4 expired GATE-G4 — still-paused L2 is an operator naming, never skipped)'''
+operator_cell = '''nothing until window + both live prerequisites — `--check` plans only; per-leg `--apply` if paused; rollback = traffic move to the still-running prior revision (image+env+mounts wholesale); `sig-web` bucket untouched — 90-day floor under D-G3-7 (D-R11-LATER-20 anchors on landing `date -u`)'''
 rerun_cell = '''`SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all`, or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_verification=true` · landed row 336'''
 
   [[row.legs]]
@@ -1077,6 +1077,6 @@ rerun_cell = '''`SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply 
   obligations = []
   earliest = '''the next AR-3 + AR-2 window (preferred 14:00–20:00Z weekdays, never 03:00–06:30Z) after `live:P35.53` (the release bucket exists) and `live:P34.40`-L2 checked (the `/v1/*` rule live or the still-paused step named at the next GATE — its GB-Q4 go expired at GATE-G4)'''
   excluded = ["03:00–06:30Z"]
-  go = '''pre-authorised: the GATE-G4 §4 list names P35.59 verbatim'''
+  go = '''pre-authorised: GATE-G4 §4 names P35.59 verbatim'''
   rerun = '''implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_verification=true'''
   live_dependants = ["P35.60", "P35.62", "P35.63"]
