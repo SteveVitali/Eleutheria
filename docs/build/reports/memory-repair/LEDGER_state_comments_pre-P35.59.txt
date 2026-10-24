@@ -1,0 +1,3 @@
+projectStatus: IN_PROGRESS # P35.58 landed (335); P35.41 live leg + P35.46 ER leg + P35.53 infra leg still QUEUED
+buildWorktree: /Users/stevenvitali/Eleutheria # operator checkout
+harness: devin-desktop/swe-2-high/subagent # restored 20:55Z post Opus-repair (STACK-CARRY-1)

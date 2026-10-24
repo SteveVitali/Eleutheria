@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "2682ace00c1e686b7b437f716afee42392bb4165",
-  "manifest_inputs": 1100,
+  "input_commit": "b7771fb1ac7ef980ce69868e71fe34146e1ed6e4",
+  "manifest_inputs": 1101,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P35.59",
     "lastCompleted": "P35.58",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.67,P36.12",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.67,P36.12",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 49,
+    "return_pass_rows": 50,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -9756,15 +9756,15 @@
         "key": "P35.1b",
         "obligations_cell": "the queued fleet-hygiene sweep (`ops/gcp/fleet-sweep.sh --apply all`): fresh prestate + verified AR-2 backup → the four cron reconciles → exit-64 guard roll → the six `[[retired_jobs]]` deletes → AR policy apply → `sig-alerts` disposition → post-sweep proof",
         "gates_cell": "hosted, production write — QUEUED, not run (`live_verification=false`); OM-20 conditional — the GATE-G4 OM-20 11B list names P35.1b verbatim (2026-10-09T17:32Z; expires at the next GATE, OM-10); AR-3 + AR-2 weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exits 42; `SIG_SWEEP_AUTHOR` required; AR-2 backup SUCCESSFUL + fresh prestate first; voided by failed AR-2/red probe/contradicting read; after `--check` + PR #302 head-bound CI green",
-        "operator_cell": "nothing until window + ADC + `SIG_SWEEP_AUTHOR` — `--check` plans only; rollback replays the recorded cron pre-states + per-job recreation recipes; dispatcher consolidation is P35.1c's leg",
-        "rerun_cell": "`implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true` · landed row 291 (PR #302 — sweep queued on the closed 2026-10-16T01:25Z out-of-window attempt, exit 42; production never touched)",
+        "operator_cell": "nothing until window + ADC + `SIG_SWEEP_AUTHOR` — `--check` plans only; rollback replays the recorded cron pre-states + per-job recreation recipes; consolidation is P35.1c's leg",
+        "rerun_cell": "`implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true` · landed row 291 (PR #302 — queued exit-42 on the closed 2026-10-16T01:25Z attempt; production never touched)",
         "obligations": []
       },
       {
         "key": "P35.1c",
-        "obligations_cell": "the queued dispatcher-consolidation leg (`ops/gcp/dispatcher-consolidation.sh --apply all`): fresh prestate → deploy `sig-sched-due` + its ONE hourly trigger + due-invoker bindings → verify → the 89 `[[retire_triggers]]` name-checked deletes (describe-first, httpTarget-verified) → proof; read-only evidence landed",
+        "obligations_cell": "the queued dispatcher-consolidation leg (`ops/gcp/dispatcher-consolidation.sh --apply all`): fresh prestate → deploy `sig-sched-due` + its ONE hourly trigger + due-invoker bindings → verify → the 89 `[[retire_triggers]]` name-checked deletes (describe-first, httpTarget-verified) → proof",
         "gates_cell": "hosted, production write — QUEUED, not run (`live_verification=false`); OM-20 — the GATE-G4 §4 enumeration predates the C13 split, names 291 not 291a → NOT pre-authorised — needs an amendment naming 291a; AR-3 + AR-2 — weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exits 42; `SIG_CONSOL_AUTHOR` required; fresh prestate first; voided by failed AR-2/red probe/contradicting read; after `--check` + PR #303 head-bound CI green",
-        "operator_cell": "explicit GATE-G4 amendment naming row 291a — the OM-20 enumeration (2026-10-09T17:32Z) names 19 rows incl. 291 but predates the C13 split, so 291a is not literally named and never mutates on an ambiguous reading; nothing until amendment + window + ADC + `SIG_CONSOL_AUTHOR` — `--check` plans only; rollback deletes trigger+job and replays `scheduled-ops.sh --apply --shape per-source`; the fleet sweep is P35.1b's leg",
+        "operator_cell": "explicit GATE-G4 amendment naming row 291a — the OM-20 enumeration (2026-10-09T17:32Z) names 19 rows incl. 291 but predates the C13 split, so 291a is not literally named and never mutates on an ambiguous reading; nothing until amendment + window + ADC + `SIG_CONSOL_AUTHOR` — `--check` plans only; rollback deletes trigger+job, replays `scheduled-ops.sh --apply --shape per-source`; the sweep is P35.1b's leg",
         "rerun_cell": "`implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true` · landed row 291a (PR #303 — queued; production never touched)",
         "obligations": []
       },
@@ -9825,6 +9825,14 @@
         "obligations": [
           "D-P35.53-1"
         ]
+      },
+      {
+        "key": "P35.59",
+        "obligations_cell": "the queued dark cutover (`ops/gcp/web-cutover.sh --apply all`): AR-2 prestate+manifest → `staged/v/legacy-<YYYYMMDD>/` floor import → `conf/0`+carry+`serving.json` retirement → `sig-web` pinned-digest roll (`SIG_LATEST_PUB`, `SIG_CONF_GEN=0`, min 1, `/mnt/rel`) → `route-compare` both origins — byte diff → recorded rollback",
+        "gates_cell": "hosted, production write — QUEUED (window guard exit 42, 2026-10-24T08:30Z Saturday — outside preferred 14:00–20:00Z weekdays, never 03:00–06:30Z); pre-authorised: the GATE-G4 §4 list names P35.59 verbatim (expires next sub-round GATE, OM-10); live prerequisites FIRST: `live:P35.53` (the `…-sig-release` bucket exists) + `live:P34.40` L2 `/v1/*` checked (GB-Q4 expired GATE-G4 — a still-paused L2 is an operator naming, never skipped)",
+        "operator_cell": "nothing until window + both live prerequisites — `--check` plans only; per-leg `--apply` if paused; rollback = recorded traffic move to the still-running prior revision (image + env + mounts wholesale); `sig-web` bucket never touched — 90-day floor under D-G3-7 (D-R11-LATER-20 anchors on the landing `date -u`)",
+        "rerun_cell": "`SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all`, or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_verification=true` · landed row 336",
+        "obligations": []
       }
     ]
   },
@@ -19914,7 +19922,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "95609d974e45cdb4d2859a0a3f8b2137a36dd7ccc52d3aac249b9c2010ca7628",
+  "manifest_sha256": "e81fd641f6cda44a5ac45ab5d29796944d27347fe6d1db0b0eaa6eda281e4ff0",
   "current_md": {
     "lines": 63,
     "bytes": 16361,
