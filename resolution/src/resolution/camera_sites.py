@@ -24,15 +24,17 @@ The pipeline (every stage pure and deterministic; the PG seam is
    5g proximate candidate · else tier 6, discarded) with its ``match_evidence``
    (SIG-IDENT-025).
 3. **Measurement** — :func:`measure_tiers` / :func:`decide_auto_write_tiers`: the tiers
-   are scored against the committed camera gold set's frozen, agent-labelled holdout;
-   only a *candidate* auto-write tier whose measured (strict) holdout precision clears
-   the published floor auto-writes — a tier with no holdout evidence never does
-   (SIG-IDENT-028, ADR-099). Under ruleset v3-interim (P34.45 / ADR-153 "derivation,
-   not identity") an identity-*inference* tier additionally needs an independent
-   human (B5) evaluation certifying it — the agent/LLM-labelled gold set can never
-   provide one, so every inferential tier is review-only until then; the namespace
-   join ``1g:shared_upstream_ref`` is a derivation, not an inference, and stays
-   eligible.
+   are scored against the committed camera gold set's frozen, agent-labelled holdout —
+   a *reference* measurement, never the auto-write reference (P35.48 /
+   SIG-CONF-002: the set is a development set, every adjudicator field in it is
+   "agent (Claude Opus 5.5), twice"). Under ruleset v3 (P34.45–P35.46 /
+   ADR-153 "derivation, not identity" + ADR-L3-B) no candidate tier's
+   auto-write keys off that agent-labelled precision: every candidate
+   collapse tier (C0–C2) is eval-waived and re-verified by the GQ-23
+   derivation census instead (SIG-EVAL-004), and every identity-*inference*
+   tier needs an independent human (B5) evaluation certifying it — the
+   agent/LLM-labelled gold set can never provide one, so every inferential
+   tier is review-only until then.
 4. **Clustering** — :func:`cluster_decisions`: auto-write edges are applied
    strongest-first under hard constraints (no two records of one source in a cluster,
    bounded span, bounded size); a refused union and every sub-floor tier become

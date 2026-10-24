@@ -1,0 +1,46 @@
+{
+  "agent_agent_kappa": 0.9037304452466908,
+  "agent_consensus": 76,
+  "basis_class": "B3",
+  "basis_label": "agent review",
+  "capture_kind": "stand-in",
+  "consensus_by_question": {
+    "edge_relevance": {
+      "off_topic": 4,
+      "relevant": 23
+    },
+    "site_fidelity": {
+      "faithful": 49
+    }
+  },
+  "corpus_digest": "sha256:d03decacb801aae202e57aec19f2e2c3943c756324e94684ae62ed94e681a103",
+  "disagreements_routed_to_s4": 4,
+  "disclosure": "agent consensus is agreement between two AI runs of the same model family \u2014 never 'correct', never accuracy; same-family agreement is correlated by construction (B-31). B3 agent-review evidence is report-only and may never gate (SIG-CONF-003).",
+  "generated_at": "2026-10-22T08:30:00Z",
+  "labeller_kind": "agent",
+  "model_ids": [
+    "claude-opus-5-5@p35-48-demo"
+  ],
+  "n_items": 80,
+  "n_records": 160,
+  "never_claims": [
+    "agent consensus is not correctness",
+    "agent\u2013agent \u03ba is not accuracy",
+    "B3 evidence never gates",
+    "this lane never impersonates independent human review"
+  ],
+  "packet_digest": "sha256:6203980e9c3b2948c5a86de30bbaa885e3fa0445d7df96c4dd7741e5648b7a32",
+  "packet_id": "arp-6203980e9c3b2948",
+  "paired_items": 80,
+  "queue_appends": [
+    "mq-467d6a192ce2536e",
+    "mq-35d0e3fd1843dd1a",
+    "mq-6c93173a42c984d4",
+    "mq-7a28a6a0d211017a"
+  ],
+  "same_model_family": true,
+  "seed": "p35-48-w43",
+  "unpaired_items": 0,
+  "version": "sig.agent-review-report/1",
+  "week": "2026-W43"
+}
