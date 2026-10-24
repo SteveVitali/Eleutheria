@@ -507,6 +507,32 @@ def test_gate_decisions_rows_deleted_c2055d96_shape(repo: Path) -> None:
     assert rc == 1 and ("append-only", "append-only", "docs/build/LEDGER.md") in rules(doc)
 
 
+def test_deleted_protected_record_attributes_to_deleting_commit(repo: Path) -> None:
+    """A whole-file deletion of a landed protected record attributes to the deleting commit —
+    the `seed-commit` exemption is keyed by that attribution (the P35.53/NEW-5 eviction shape:
+    release trees' `records.index.jsonl` leave the tree in a declared commit)."""
+    rec = "docs/build/reports/demo/records.index.jsonl"
+    write(repo, rec, '{"id":"r1","recorded_at":"2026-09-20T10:00:00Z"}\n')
+    land = commit(repo)
+    (repo / rec).unlink()
+    deleter = commit(repo, msg="evict the demo record")
+    rc, doc, _ = run_guard(repo, "all", "--range", f"{land}..HEAD")
+    hits = [
+        f
+        for c in doc["checks"]
+        for f in c["violations"]
+        if (f["check"], f["rule"], f["path"]) == ("append-only", "deleted", rec)
+    ]
+    assert rc == 1 and hits, doc
+    assert all(f["commit"][:8] == deleter[:8] for f in hits), hits
+    # declared → sanctioned (the same exemption a verifier-backed correction commit borrows)
+    with (repo / "docs/build/tools/record_policy/history.policy").open("a") as fh:
+        fh.write(f"\nseed-commit {deleter[:8]}\n")
+    commit(repo, msg="declare the sanctioned eviction")
+    rc2, doc2, out2 = run_guard(repo, "all", "--range", f"{land}..HEAD")
+    assert rc2 == 0, out2
+
+
 def test_gate_decisions_top_insertion_307161ee_shape(repo: Path) -> None:
     replace(
         repo,

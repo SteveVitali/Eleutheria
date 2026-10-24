@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "f183b05b3b032c1d6e8d703dc0dbeecd105d3f91",
-  "manifest_inputs": 1094,
+  "input_commit": "a6a21987b458a900f27417c2407bff8dd887a945",
+  "manifest_inputs": 1095,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.53",
-    "lastCompleted": "P35.52",
+    "nextTicket": "P35.54",
+    "lastCompleted": "P35.53",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.57,P35.67,P36.12",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.67,P36.12",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,27 +17,27 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.52-tile-retention-and-verifier",
+    "chainTip": "r11/P35.53-release-pipeline-and-staging-origins",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-22T05:34Z"
+    "updatedAt": "2026-10-23T05:05Z"
   },
   "counts": {
-    "obligations": 178,
-    "owed": 101,
-    "open": 98,
+    "obligations": 179,
+    "owed": 102,
+    "open": 99,
     "partial": 3,
     "terminal": 77,
-    "events": 672,
+    "events": 673,
     "transitions": 40,
     "coverage_assessments": 315,
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 48,
+    "return_pass_rows": 49,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -9190,6 +9190,54 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P35.53-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.53-1:e0",
+      "kind": "V",
+      "owner": "the operator (OP-24)",
+      "landing": "RETURN PASS — P35.53",
+      "landing_source": "return-pass-map/1",
+      "backlog_home": "BL-085",
+      "item": "The P35.53 release-infra apply leg (`SIG_RELEASE_AUTHOR=\"$(git config user.name)\" bash ops/gcp/release-infra.sh --apply all`): AR-2 restore point → the private `gs://${SIG_GCP_PROJECT}-sig-release` bucket create (+ versioning, 30-day noncurrent lifecycle, UBLA, public-access-prevention, conditioned single-writer IAM — `sig-release-rt` writes all but `status/**`, `sig-status-rt` writes `status/**` only, no `allUsers`/`allAuthenticatedUsers`) → the IAM-only `sig-web-staging`/`sig-api-staging` Cloud Run services on the live prod digests (`--no-allow-unauthenticated`, `SIG_STAGING=1`, scale-0) → the `sig-release` job + reserved `sig-release-rt` binding → unauthenticated-refusal probes on both origins → the real-bucket `stale-check` leg (resume/collision/LOCK/stale-generation refusals)",
+      "unblocked_by": "owner: the operator (OP-24) · trigger: a valid AR-3 + AR-2 window (weekday 14:00–20:00Z preferred, never 03:00–06:30Z, at/after `SIG_RELEASE_EARLIEST` 2026-10-13T12:00:00Z)",
+      "verify": "`gcloud storage buckets describe` shows UBLA + public-access-prevention + versioning + the lifecycle; both staging services describe `--no-allow-unauthenticated` + `SIG_STAGING=1` + the prod digests; unauthenticated probes refuse; the `stale-check` leg passes its refusal matrix; the IAM conditions are described and recorded",
+      "proxy": "`ops/gcp/release-infra.sh --check` prints the offline plan; 24 `tests/ops/test_release_pipeline.py` tests cover the lock/namespace/IAM-no-public-principal/collision-resume/guard contracts; the window guard proved itself by queuing",
+      "line": 1376,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.53-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.53-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.53",
+          "owner": "the operator (OP-24)",
+          "landing": "the release-infra apply leg inside a valid AR-3 + AR-2 window — ops/gcp/release-infra.sh --apply all runs the three creates (private bucket, IAM-only staging origins, sig-release job + sig-release-rt) then the unauthenticated-refusal probes and the real-bucket stale-check",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P35.53.md",
+            "ops/gcp/release-infra.sh",
+            "tests/ops/test_release_pipeline.py"
+          ],
+          "observed_at": "2026-10-23",
+          "recorded_at": "2026-10-23",
+          "source_commit": "c260a9aad05448e89619b57012d18b94865e813c",
+          "reason": "migration anchor appended by P35.53 (row 331) for the deferral row it added — the release-infra apply leg's window guard exited 42 at 03:33Z inside the never-mutate 03:00–06:30Z band; the leg is operator-run per OP-24 under the GATE-G4 §4 OM-20 listing",
+          "anchor": {
+            "row_line": 1376,
+            "row_sha256": "d1ce64d95c316b44b506b242f35891b820df2b67be51417513fa9ab57d06a6b5",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -9622,6 +9670,16 @@
         "operator_cell": "nothing until the re-run; the roll redeploys already-permitted connectors inside existing ingestion permission",
         "rerun_cell": "`implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` · row 320 landed (PR #338)",
         "obligations": []
+      },
+      {
+        "key": "P35.53",
+        "obligations_cell": "D-P35.53-1",
+        "gates_cell": "QUEUED (OM-19 — the leg-runner's AR-3 window guard exited 42 at 2026-10-23T03:33Z, inside the never-mutate 03:00–06:30Z band); OM-20 — the GATE-G4 §4 OM-20 list names P35.53; AR-3 + AR-2 — preferred 14:00–20:00Z weekdays, never 03:00–06:30Z, at/after `SIG_RELEASE_EARLIEST` 2026-10-13T12:00:00Z; ops idempotent (get-or-create + conditioned IAM)",
+        "operator_cell": "nothing until the re-run; the leg creates the private `…-sig-release` bucket, the IAM-only staging origins and the `sig-release` job under the operator ADC — `SIG_RELEASE_AUTHOR` must equal `git config user.name`",
+        "rerun_cell": "`SIG_RELEASE_AUTHOR=\"$(git config user.name)\" bash ops/gcp/release-infra.sh --apply all`, or `implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-staging-origins.md live_verification=true` · landed row 331 (PR #351)",
+        "obligations": [
+          "D-P35.53-1"
+        ]
       }
     ]
   },
@@ -14137,14 +14195,14 @@
           "label": "historical/csv"
         },
         "SIG-REL-004": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P35.53-1)",
+          "evidence": "ops/src/ops/release_pipeline.py;ops/src/ops/gcs.py;ops/gcp/release-infra.sh;ops/gcp/release-bucket-lifecycle.json;ops/gcp/config.sh;docs/build/runs/P35.53.md;docs/build/pr/P35.53.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-REL-005": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P35.53-1)",
+          "evidence": "ops/gcp/release-infra.sh;ops/gcp/config.sh;ops/src/ops/release_pipeline.py;docs/build/runs/P35.53.md;docs/build/pr/P35.53.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -19711,10 +19769,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "943f04599931d21a2d09462b957fed0927f1d532d5122b4fcee160165364c797",
+  "manifest_sha256": "6b6081878edf68751ab7b9b07de72cc32ebb9395dd6f80e00a5756f685b60492",
   "current_md": {
     "lines": 63,
-    "bytes": 16354,
+    "bytes": 16363,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

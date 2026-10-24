@@ -2222,6 +2222,131 @@ def build_parser() -> argparse.ArgumentParser:
         help="the signed gate readout carrying the publish authority",
     )
 
+    rel = sub.add_parser(
+        "release",
+        help="P35.53 (REL-03a, SIG-REL-004/005, G3 §5.1): the ONE release "
+        "pipeline — cut → build → stage → verify → classify → promote → "
+        "(rollback|clear-latest|withdraw) → status over the private release "
+        "registry (gs://…-sig-release or a local dir). Every verb takes the "
+        "registry lock (registry/LOCK, create-if-absent; a stale lock needs "
+        "--break-lock <reason>), is resumable, journals one "
+        "sig.release-event/1, and WRITES ONLY UNDER --apply — --dry-run is "
+        "the default and mutates nothing. Stage uploads "
+        "staged/{r,v,s,releases}/<pub>/ with if-generation-match=0 — a name "
+        "collision refuses and no staged byte is ever overwritten. The verbs "
+        "whose behaviour later rows own (promote→P35.54, rollback/"
+        "clear-latest/withdraw→P35.55, the V1–V14 suite→P35.56/58, the "
+        "classifier→P35.60) are declared and journal a refused outcome "
+        "naming the owner — never a fake success.",
+    )
+    rsub = rel.add_subparsers(dest="release_command", required=True)
+
+    def _rel_common(p: argparse.ArgumentParser) -> None:
+        p.add_argument(
+            "--registry",
+            default=None,
+            help="the release registry — gs://<bucket>[/<prefix>] or a local "
+            "dir (env SIG_RELEASE_REGISTRY; never defaulted — the private "
+            "release bucket is the production value)",
+        )
+        p.add_argument(
+            "--apply",
+            action="store_true",
+            help="perform the writes; absent → dry-run plans + reads only",
+        )
+        p.add_argument(
+            "--break-lock",
+            default=None,
+            metavar="REASON",
+            help="clear a stale registry/LOCK — the reason is recorded into the fresh lock record",
+        )
+
+    rcut = rsub.add_parser("cut", help="fix T0 under the §3.3 clock guards and journal the cut")
+    _rel_common(rcut)
+    rcut.add_argument(
+        "--as-of",
+        default=None,
+        help="optional ISO as-of instant (same-day only; earlier ⇒ --replay)",
+    )
+    rcut.add_argument(
+        "--replay",
+        default=None,
+        metavar="REASON",
+        help="a historical snapshot is a labelled replay (Class S)",
+    )
+    rcut.add_argument(
+        "--emergency",
+        default=None,
+        metavar="REASON",
+        help="an AR-3 freeze-window cut needs a recorded reason",
+    )
+    rcut.add_argument(
+        "--skip-host-clock-check",
+        action="store_true",
+        help="record a declared skip of the §3.3 host-clock check",
+    )
+
+    rbld = rsub.add_parser(
+        "build", help="wrap sig-exports release build + allocate the label under the lock"
+    )
+    _rel_common(rbld)
+    rbld.add_argument("--export-dir", required=True, help="the fetched export bundle dir")
+    rbld.add_argument(
+        "--work-dir", required=True, help="the local build dir the release tree lands in"
+    )
+    rbld.add_argument(
+        "--environment", default=None, choices=["production", "staging", "fixture", "replay"]
+    )
+    rbld.add_argument(
+        "--label", default=None, help="a pre-allocated sig-YYYY-MM-DD.N (validated, never trusted)"
+    )
+    rbld.add_argument("--schema-version", type=int, choices=[1, 2], default=2)
+    rbld.add_argument(
+        "--renderer-revision", default=None, help="(v1 only) the renderer code revision"
+    )
+    rbld.add_argument(
+        "--boundaries-root",
+        default=None,
+        help="(v2) the JUR-01 jurisdiction-boundaries content root",
+    )
+
+    for _verb, _help in (
+        (
+            "stage",
+            "upload staged/{r,v,s,releases}/<pub>/ if-generation-match=0 — "
+            "resume-safe, a collision refuses",
+        ),
+        (
+            "verify",
+            "the bounded staged==built + integrity verify (the V1–V14 suite is P35.56/P35.58's)",
+        ),
+    ):
+        p = rsub.add_parser(_verb, help=_help)
+        _rel_common(p)
+        p.add_argument("--work-dir", required=True, help="the built release tree dir")
+        p.add_argument(
+            "--publication",
+            default=None,
+            help="the p-<sha256> id (default: the tree's lone releases/<pub>/)",
+        )
+
+    for _verb in ("classify", "promote", "rollback", "withdraw"):
+        p = rsub.add_parser(_verb, help="declared; the behaviour lands at its owner row")
+        _rel_common(p)
+        p.add_argument("--publication", required=True, help="the p-<sha256> id")
+
+    pcl = rsub.add_parser("clear-latest", help="declared; the behaviour lands at P35.55 (REL-08)")
+    _rel_common(pcl)
+    pcl.add_argument("--publication", default=None, help="the p-<sha256> id the pointer clears")
+
+    pstat = rsub.add_parser(
+        "status", help="print the candidate's §3.4 state machine from the journal"
+    )
+    _rel_common(pstat)
+    pstat.add_argument(
+        "--publication", default=None, help="the p-<sha256> id (default: fold the whole journal)"
+    )
+
     cv = sub.add_parser(
         "composed-verify",
         help="P33.2 (sig.composed-verification/1): drive the composed "
@@ -5363,6 +5488,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_journey_intake(args)
     if args.command == "release-publish":
         return _cmd_release_publish(args)
+    if args.command == "release":
+        return _cmd_release(args)
     if args.command == "composed-verify":
         return _cmd_composed_verify(args)
     if args.command == "roll-gate":
@@ -5464,6 +5591,50 @@ def _cmd_journey_verify(args: argparse.Namespace) -> int:
                 f"       owner={check['owner']} landing={check['landing']}"
             )
     return 0 if portfolio["verdict"] == "pass" else 1
+
+
+def _cmd_release(args: argparse.Namespace) -> int:
+    """P35.53 (REL-03a): dispatch one `sig-ops release <verb>` — the module
+    owns the lock/journal/store; this wrapper owns the exit code."""
+    from . import release_pipeline
+
+    try:
+        result = release_pipeline.run_verb(args)
+    except release_pipeline.PipelineError as exc:
+        print(
+            f"sig-ops release {args.release_command}: REFUSED [{exc.code}] — {exc}", file=sys.stderr
+        )
+        return 3 if exc.code == "lock-held" else 2
+    verb = args.release_command
+    if verb == "status":
+        print(
+            f"sig-ops release status: state={result['state']} "
+            f"history={' → '.join(result['history']) or '—'} "
+            f"(events={result['events']}, lock_held={result['lock_held']})"
+        )
+        if result.get("latest"):
+            print(f"  latest: {result['latest'].get('publication_id')}")
+        if result.get("event"):
+            print(f"  event: {result['event']}")
+        return 0
+    parts = [f"sig-ops release {verb}"]
+    if result.get("dry_run"):
+        parts.append("DRY-RUN (no write — pass --apply)")
+        for step in result.get("plan") or []:
+            parts.append(f"  plan: {step}")
+    else:
+        parts.append("applied")
+    if result.get("publication_id"):
+        parts.append(f"pub={result['publication_id']}")
+    if result.get("event"):
+        parts.append(f"event={result['event']}")
+    for key in ("label", "verdict", "class", "t0"):
+        if result.get(key):
+            parts.append(f"{key}={result[key]}")
+    print(
+        ": ".join(parts) if verb == "status" else "\n".join([parts[0] + ": " + " ".join(parts[1:])])
+    )
+    return 0
 
 
 def _cmd_release_publish(args: argparse.Namespace) -> int:

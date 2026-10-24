@@ -4,10 +4,12 @@ harness (SIG-TRUST-009, ADR-144).
 
 The run exercises the REAL ``exports.release`` machinery (activate/rollback/
 clear_latest_pointer/record_withdrawal/apply_withdrawals/route_access/
-resolve_selector/validate_release) over the committed GATE-G3-accepted
-fixture candidate in throwaway registries — the committed packet is never
-written. The production surface is not probed; that is the recorded return
-pass, never claimed here.
+resolve_selector/validate_release) over a SYNTHESIZED fixture candidate in
+throwaway registries — the committed release trees left the repository under
+P35.53's NEW-5 eviction (G3 RM-8), so ``tests/ops/candidate_fixture`` builds
+the packet at test time from the still-committed export + recovery inputs.
+The production surface is not probed; that is the recorded return pass,
+never claimed here.
 """
 
 from __future__ import annotations
@@ -16,6 +18,7 @@ import json
 import shutil
 from pathlib import Path
 
+import candidate_fixture
 import pytest
 from exports.release import ReleaseError
 
@@ -23,7 +26,6 @@ from exports import release as rel
 from ops import release_publish_verify as rpv
 
 REPO = Path(__file__).resolve().parents[2]
-CANDIDATE = REPO / "docs" / "build" / "reports" / "p32.23a-release-candidate"
 PRIOR = (
     REPO
     / "docs"
@@ -32,39 +34,52 @@ PRIOR = (
     / "p32.24-investigation-journey-verification"
     / "corpus_export"
 )
-GATE = REPO / "docs" / "build" / "readouts" / "GATE-G3.md"
-
-
-def _manifest() -> dict:
-    """The committed candidate manifest — the expectations below are derived
-    from it (P34.22a: tests move from pinned values to manifest-derived)."""
-    return json.loads((CANDIDATE / "CANDIDATE_MANIFEST.json").read_text())
 
 
 @pytest.fixture(scope="module")
-def pins() -> rpv.CandidatePins:
-    return rpv.pins_from_candidate_dir(CANDIDATE)
+def packet(tmp_path_factory) -> Path:
+    """The synthesized candidate packet — built once, copied for tampering."""
+    return candidate_fixture.build_candidate_packet(tmp_path_factory.mktemp("packet"))
 
 
-def _integrity_artifacts() -> list[dict]:
+@pytest.fixture(scope="module")
+def gate(tmp_path_factory, packet: Path) -> Path:
+    """The fixture gate readout naming this exact synthesized packet."""
+    return candidate_fixture.write_gate_readout(
+        packet, tmp_path_factory.mktemp("gate") / "GATE-FIXTURE.md"
+    )
+
+
+def _manifest(packet: Path) -> dict:
+    """The synthesized packet's manifest — the expectations below are derived
+    from it (P34.22a: tests move from pinned values to manifest-derived)."""
+    return json.loads((packet / "CANDIDATE_MANIFEST.json").read_text())
+
+
+@pytest.fixture(scope="module")
+def pins(packet: Path) -> rpv.CandidatePins:
+    return rpv.pins_from_candidate_dir(packet)
+
+
+def _integrity_artifacts(packet: Path) -> list[dict]:
     manifest = json.loads(
         next(
-            (CANDIDATE / "candidate_release" / "releases").glob("*/integrity_manifest.json")
+            (packet / "candidate_release" / "releases").glob("*/integrity_manifest.json")
         ).read_text()
     )
     return manifest["artifacts"]
 
 
 @pytest.fixture(scope="module")
-def proof(tmp_path_factory) -> dict:
+def proof(tmp_path_factory, packet: Path, gate: Path) -> dict:
     """One shared bounded-publish run — every assertion reads the SAME
     emitted evidence packet."""
     out = tmp_path_factory.mktemp("rpv") / "report"
     return rpv.run(
-        candidate_dir=CANDIDATE,
+        candidate_dir=packet,
         out_dir=out,
         prior_export_dir=PRIOR,
-        gate_readout=GATE,
+        gate_readout=gate,
         config_path=REPO / "ops" / "config.toml",
     )
 
@@ -82,12 +97,12 @@ def _check(proof: dict, check_id: str) -> dict:
 
 
 def test_preflight_pins_exactly_the_accepted_candidate(
-    proof: dict, pins: rpv.CandidatePins
+    proof: dict, pins: rpv.CandidatePins, packet: Path
 ) -> None:
     chk = _check(proof, "PF.candidate_pinned")
     assert chk["status"] == "pass"
     accepted = proof["accepted"]
-    manifest = _manifest()
+    manifest = _manifest(packet)
     release = manifest["release"]
     cand = manifest["candidate"]
     assert accepted["publication_id"] == pins.publication_id == release["publication_id"]
@@ -106,7 +121,7 @@ def test_preflight_pins_exactly_the_accepted_candidate(
         "mode": "shadow",
         "applied": [],
     }
-    assert accepted["artifact_count"] == len(_integrity_artifacts())
+    assert accepted["artifact_count"] == len(_integrity_artifacts(packet))
 
 
 def test_proof_reports_the_superseded_candidate_posture(proof: dict) -> None:
@@ -127,45 +142,51 @@ def test_gate_readout_is_the_publish_authority(proof: dict) -> None:
     assert _check(proof, "PF.gate_signed")["status"] == "pass"
 
 
-def test_preflight_refuses_a_different_candidate(tmp_path: Path) -> None:
+def test_preflight_refuses_a_different_candidate(tmp_path: Path, packet: Path, gate: Path) -> None:
     """A packet claiming a different publication id can never be published by
     this run — the gate-signed readout is the publish authority: a manifest
     naming a publication the readout does not has no publish authority."""
     tampered = tmp_path / "packet"
-    shutil.copytree(CANDIDATE, tampered)
+    shutil.copytree(packet, tampered)
     cman_path = tampered / "CANDIDATE_MANIFEST.json"
     cman = json.loads(cman_path.read_text())
     cman["release"]["publication_id"] = "p-not-the-accepted-one"
     cman_path.write_text(json.dumps(cman))
     with pytest.raises(rpv.PublishVerificationError, match="publish authority"):
-        rpv.preflight(tampered, GATE, rpv.pins_from_candidate_dir(tampered))
+        rpv.preflight(tampered, gate, rpv.pins_from_candidate_dir(tampered))
 
 
-def test_preflight_refuses_tampered_bytes(tmp_path: Path, pins: rpv.CandidatePins) -> None:
+def test_preflight_refuses_tampered_bytes(
+    tmp_path: Path, packet: Path, gate: Path, pins: rpv.CandidatePins
+) -> None:
     tampered = tmp_path / "packet"
-    shutil.copytree(CANDIDATE, tampered)
+    shutil.copytree(packet, tampered)
     victim = next((tampered / "candidate_release" / "r").rglob("index.html"))
     victim.write_bytes(victim.read_bytes() + b"tampered")
     with pytest.raises(rpv.PublishVerificationError):
-        rpv.preflight(tampered, GATE, pins)
+        rpv.preflight(tampered, gate, pins)
 
 
-def test_preflight_refuses_without_a_signed_gate(tmp_path: Path, pins: rpv.CandidatePins) -> None:
+def test_preflight_refuses_without_a_signed_gate(
+    tmp_path: Path, packet: Path, pins: rpv.CandidatePins
+) -> None:
     unsigned = tmp_path / "GATE-G3.md"
     unsigned.write_text("# GATE-G3\nStatus: pending\n")
     with pytest.raises(rpv.PublishVerificationError, match="publish authority"):
-        rpv.preflight(CANDIDATE, unsigned, pins)
+        rpv.preflight(packet, unsigned, pins)
 
 
-def test_a_dossier_claiming_completion_is_refused(tmp_path: Path, pins: rpv.CandidatePins) -> None:
+def test_a_dossier_claiming_completion_is_refused(
+    tmp_path: Path, packet: Path, gate: Path, pins: rpv.CandidatePins
+) -> None:
     tampered = tmp_path / "packet"
-    shutil.copytree(CANDIDATE, tampered)
+    shutil.copytree(packet, tampered)
     dp = tampered / "candidate_export" / "web" / "research_dossiers.json"
     doc = json.loads(dp.read_text())
     doc["dossiers"][0]["completeness"]["pilot_complete"] = True
     dp.write_text(json.dumps(doc))
     with pytest.raises(rpv.PublishVerificationError, match="pilot completion"):
-        rpv.preflight(tampered, GATE, pins)
+        rpv.preflight(tampered, gate, pins)
 
 
 # ---------------------------------------------------------------------------
@@ -183,12 +204,14 @@ def test_pointer_flips_after_full_validation(proof: dict, pins: rpv.CandidatePin
     assert _check(proof, "P.activation_receipt")["status"] == "pass"
 
 
-def test_publish_refuses_a_non_fresh_registry(tmp_path: Path, pins: rpv.CandidatePins) -> None:
+def test_publish_refuses_a_non_fresh_registry(
+    tmp_path: Path, packet: Path, pins: rpv.CandidatePins
+) -> None:
     reg = tmp_path / "registry"
     reg.mkdir()
     (reg / "stale.txt").write_text("x")
     with pytest.raises(rpv.PublishVerificationError, match="not empty"):
-        rpv.publish(CANDIDATE, reg, pins)
+        rpv.publish(packet, reg, pins)
 
 
 # ---------------------------------------------------------------------------
@@ -216,13 +239,13 @@ def test_all_public_checks_pass(proof: dict) -> None:
         assert _check(proof, cid)["status"] == "pass", cid
 
 
-def test_unauthenticated_reads_match_approved_digests(proof: dict) -> None:
+def test_unauthenticated_reads_match_approved_digests(proof: dict, packet: Path) -> None:
     chk = _check(proof, "V.http_reads")
     ev = chk["evidence"]
     assert ev["non_200"] == []
     assert ev["digest_mismatches"] == []
     # every manifest artifact + the directory/overlay routes
-    assert ev["gets"] >= len(_integrity_artifacts()) + 5
+    assert ev["gets"] >= len(_integrity_artifacts(packet)) + 5
     digests = _check(proof, "V.digests")["evidence"]
     assert digests["mismatches"] == [] and digests["undeclared"] == []
 
@@ -288,13 +311,13 @@ def test_clear_latest_pointer_refuses_when_absent(tmp_path: Path) -> None:
         rel.clear_latest_pointer(registry)
 
 
-def test_tombstoning_never_mutates_the_release_input(tmp_path: Path) -> None:
+def test_tombstoning_never_mutates_the_release_input(tmp_path: Path, packet: Path) -> None:
     """Regression for the hardlink write-through: staged artifacts are
     hardlinks into the release dir, so a tombstone write used to corrupt the
     immutable release input (P32.24's committed corpus_release was hit by
     exactly this). Denying a route must leave the release dir byte-identical."""
     release_dir = tmp_path / "release"
-    shutil.copytree(CANDIDATE / "candidate_release", release_dir)
+    shutil.copytree(packet / "candidate_release", release_dir)
     registry = tmp_path / "registry"
     rel.activate(registry, release_dir)
     manifest = json.loads(next(release_dir.glob("releases/*/integrity_manifest.json")).read_text())
@@ -379,16 +402,16 @@ def test_cli_wiring() -> None:
     assert args.candidate == "docs/build/reports/x"
 
 
-def test_committed_packet_is_untouched_by_the_run(proof: dict) -> None:
-    """The run stages copies — the committed candidate packet must be
+def test_input_packet_is_untouched_by_the_run(proof: dict, packet: Path) -> None:
+    """The run stages copies — the candidate packet it read must be
     byte-identical afterwards (a hardlink write-through would corrupt it)."""
     manifest = json.loads(
         next(
-            (CANDIDATE / "candidate_release" / "releases").glob("*/integrity_manifest.json")
+            (packet / "candidate_release" / "releases").glob("*/integrity_manifest.json")
         ).read_text()
     )
     for art in manifest["artifacts"]:
-        p = CANDIDATE / "candidate_release" / art["path"]
+        p = packet / "candidate_release" / art["path"]
         import hashlib
 
         assert hashlib.sha256(p.read_bytes()).hexdigest() == art["sha256"], art["path"]

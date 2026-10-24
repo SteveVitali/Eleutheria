@@ -1044,3 +1044,21 @@ rerun_cell = '''`implement-spec spec=docs/tickets/320_P35.41__freshness-semantic
   go = '''pre-authorised: the GATE-G4 §4 list names P35.41 verbatim (2026-10-09T17:32Z; expires at the next sub-round GATE, OM-10)'''
   rerun = '''implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true'''
   live_dependants = []
+
+[[row]]
+key = "P35.53"
+kind = "leg"
+obligations = ["D-P35.53-1"]
+obligations_cell = '''D-P35.53-1'''
+gates_cell = '''QUEUED (OM-19 — the leg-runner's AR-3 window guard exited 42 at 2026-10-23T03:33Z, inside the never-mutate 03:00–06:30Z band); OM-20 — the GATE-G4 §4 OM-20 list names P35.53; AR-3 + AR-2 — preferred 14:00–20:00Z weekdays, never 03:00–06:30Z, at/after `SIG_RELEASE_EARLIEST` 2026-10-13T12:00:00Z; ops idempotent (get-or-create + conditioned IAM)'''
+operator_cell = '''nothing until the re-run; the leg creates the private `…-sig-release` bucket, the IAM-only staging origins and the `sig-release` job under the operator ADC — `SIG_RELEASE_AUTHOR` must equal `git config user.name`'''
+rerun_cell = '''`SIG_RELEASE_AUTHOR="$(git config user.name)" bash ops/gcp/release-infra.sh --apply all`, or `implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-staging-origins.md live_verification=true` · landed row 331 (PR #351)'''
+
+  [[row.legs]]
+  id = "P35.53-release-infra"
+  obligations = ["D-P35.53-1"]
+  earliest = '''the next AR-3 + AR-2 window (preferred 14:00–20:00Z weekdays, at/after `SIG_RELEASE_EARLIEST`) with the AR-2 restore point first'''
+  excluded = ["03:00–06:30Z"]
+  go = '''pre-authorised: the GATE-G4 §4 OM-20 list names P35.53'''
+  rerun = '''implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-staging-origins.md live_verification=true'''
+  live_dependants = ["P35.54", "P35.55"]
