@@ -1080,3 +1080,21 @@ rerun_cell = '''`SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply 
   go = '''pre-authorised: GATE-G4 §4 (P35.59; expires next GATE, OM-10)'''
   rerun = '''implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_verification=true'''
   live_dependants = ["P35.60", "P35.62", "P35.63"]
+
+[[row]]
+key = "P35.61"
+kind = "leg"
+obligations = []
+obligations_cell = '''queued live half of P32.22's open recovery deferral + F-522 (chain 338): L1 `sig-ops evidence-audit` + `recovery-plan` (read-only) → L2 operator plan-review pause 1–4 h → L3 bounded `recovery-apply --apply --authority <scope>` pilot → approved batches → `+0` re-run + `--rematerialize` → `recovery-freeze` unpublished; packet `docs/build/reports/p35.61-live-pass/LIVE_PASS_PACKET.{json,md}` prepared_not_executed'''
+gates_cell = '''hosted, production write — QUEUED (L1 read-only checks 2026-10-24T18:20Z Sat: `sig-quality-probe-rt` SA + both login secrets NOT_FOUND, `SIG_GCP_PROJECT`/`SIG_EXEC_IMAGE`/`SIG_HOSTED_DSN`/passwords unset, `live:P34.46` + `live:P34.43` L1/L2 still queued); never pre-authorised — L2 is a stop-and-pause; L3 needs the operator's verbatim in-ticket go naming the `--authority` scope; window AR-3+AR-2 weekday 14:00–20:00Z, excl. weekends + 03:00–06:30Z, before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, earliest 2026-10-26T14:00Z'''
+operator_cell = '''L2: operator reviews the recorded plan and fixes the apply scope (1–4 h); L3 runs only on the operator's verbatim in-ticket go naming the `--authority` scope — the apply never starts on silence; rollback = recorded prestate'''
+rerun_cell = '''`implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` · landed 338 (PR #359 — all legs queued; D-R10-LIVE-1 still OPEN, never ran)'''
+
+  [[row.legs]]
+  id = "P35.61-live-pass"
+  obligations = []
+  earliest = '''the next weekday 14:00–20:00Z slot once `live:P34.46` (+ its 48 h soak) and `live:P34.43` L1+L2 hold — earliest Monday 2026-10-26T14:00Z'''
+  excluded = ["03:00–06:30Z", "weekends", "before `live:P34.46` + 48 h soak", "before `live:P34.43` L1+L2"]
+  go = '''operator: the operator's verbatim in-ticket go naming the `--authority` scope'''
+  rerun = '''implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true'''
+  live_dependants = ["P35.62"]
