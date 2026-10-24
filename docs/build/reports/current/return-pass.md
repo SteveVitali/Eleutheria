@@ -55,5 +55,6 @@
 | P35.53 | D-P35.53-1 | `SIG_RELEASE_AUTHOR="$(git config user.name)" bash ops/gcp/release-infra.sh --apply all`, or `implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-… |
 | P35.59 | queued dark cutover (`ops/gcp/web-cutover.sh --apply all`): AR-2 prestate+manifest → `staged/v/legacy-<YYYYMMDD>/` floor import → `conf/0`+carry+`serving.json` … | `SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all`, or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_ve… |
 | P35.61 | queued live half of P32.22's open recovery deferral + F-522 (chain 338): L1 `sig-ops evidence-audit` + `recovery-plan` (read-only) → L2 operator plan-review pau… | `implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` · landed 338 (PR #359 — all legs queued; D-R10-LIV… |
+| P35.62 | queued live half of P32.23a's open candidate deferral (chain 339): `sig-ops release-candidate` over the hosted `sig.repaired-snapshot/1` `frozen_unpublished` sn… | `implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true` · landed 339 (PR #360 — staging leg queued; D-P32.23a-1 st… |
 
 ← back: CURRENT.md
