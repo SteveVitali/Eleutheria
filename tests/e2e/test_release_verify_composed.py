@@ -40,7 +40,13 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT / "ops" / "src"))
 sys.path.insert(0, str(REPO_ROOT / "tests" / "ops"))
 
-from test_release_verify import LABEL, _build_candidate  # noqa: E402
+from test_release_verify import (  # noqa: E402
+    LABEL,
+    T0,
+    _ApiFixture,
+    _build_candidate,
+    _quality_report,
+)
 
 from ops import release_pipeline as rp  # noqa: E402
 from ops import release_verify as rv  # noqa: E402
@@ -122,6 +128,34 @@ def _serve_env(gen: int, pub: str, root: Path) -> dict[str, str]:
     }
 
 
+def _serve_api(work_dir: Path, pub: str):
+    """P35.58 (suite B): a loopback fixture for V7's served-parity legs —
+    a real ``http.server`` answering ``_ApiFixture``'s contract (the
+    release-named ``/`` + ``/health``, the live-spine basis on ``/terms``,
+    and any ``r/<pub>/api/`` slice docs byte-true). The fixture answer is
+    what a hosted API leg would verify; it is never a hosted pass."""
+    import http.server
+    import threading
+
+    fixture = _ApiFixture(work_dir, pub)
+
+    class _Handler(http.server.BaseHTTPRequestHandler):
+        def do_GET(self) -> None:  # noqa: N802 — stdlib hook
+            res = fixture.get(self.path)
+            self.send_response(res.status)
+            for k, v in res.headers.items():
+                self.send_header(k, v)
+            self.end_headers()
+            self.wfile.write(res.body)
+
+        def log_message(self, *_args: object) -> None:
+            return
+
+    srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), _Handler)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    return srv, f"http://127.0.0.1:{srv.server_port}"
+
+
 def _axe_usable() -> bool:
     """Whether this environment can run the real axe leg (node +
     web/node_modules + a playwright browser). ``playwright_axe`` returns
@@ -187,16 +221,23 @@ def test_s_mode_over_the_composed_staging_origin(s_root):
     assert status == 200 and headers.get("X-Robots-Tag") == "noindex"
     assert headers.get("X-SIG-Release") == f"{LABEL} {pub}"
 
-    out = rp.verb_verify(
-        rp.LocalDirStore(root),
-        apply_=True,
-        work_dir=work_dir,
-        mode="S",
-        origins=(STAGING,),
-        pushed=True,
-        tree_clean=True,
-        results_dir=root / "verify-results",
-    )
+    api_srv, api_base = _serve_api(work_dir, pub)
+    try:
+        out = rp.verb_verify(
+            rp.LocalDirStore(root),
+            apply_=True,
+            work_dir=work_dir,
+            mode="S",
+            origins=(STAGING,),
+            pushed=True,
+            tree_clean=True,
+            results_dir=root / "verify-results",
+            api_origin=api_base,
+            quality_report=_quality_report(),
+            now=T0,
+        )
+    finally:
+        api_srv.shutdown()
     assert out["verdict"] == "verified", json.dumps(
         [
             (r["check"], r["status"], r.get("detail"))
@@ -236,17 +277,24 @@ def test_s_mode_seeded_defect_blocks(s_root):
     assert up.returncode == 0, f"compose up web-staging failed:\n{up.stdout}\n{up.stderr}"
     _wait_for(f"{STAGING}/")
 
-    with pytest.raises(rp.PipelineError) as err:
-        rp.verb_verify(
-            rp.LocalDirStore(root),
-            apply_=True,
-            work_dir=work_dir,
-            mode="S",
-            origins=(STAGING,),
-            pushed=True,
-            tree_clean=True,
-            results_dir=root / "verify-results-tampered",
-        )
+    api_srv, api_base = _serve_api(work_dir, pub)
+    try:
+        with pytest.raises(rp.PipelineError) as err:
+            rp.verb_verify(
+                rp.LocalDirStore(root),
+                apply_=True,
+                work_dir=work_dir,
+                mode="S",
+                origins=(STAGING,),
+                pushed=True,
+                tree_clean=True,
+                results_dir=root / "verify-results-tampered",
+                api_origin=api_base,
+                quality_report=_quality_report(),
+                now=T0,
+            )
+    finally:
+        api_srv.shutdown()
     assert err.value.code == "verify-failed"
     rows = _rows(err.value.detail["suites"])
     assert rows["V1"]["status"] == "fail"
@@ -287,17 +335,24 @@ def test_p_mode_over_the_composed_public_origin(p_root):
     # suite's job is to catch exactly this; the gap is recorded in the
     # run ledger and lands as an honest ``verify-failed`` here, so every
     # non-pass row must be *that* finding and nothing else.
-    with pytest.raises(rp.PipelineError) as err:
-        rp.verb_verify(
-            rp.LocalDirStore(root),
-            apply_=True,
-            work_dir=work_dir,
-            mode="P",
-            origins=(WEB,),
-            pushed=True,
-            tree_clean=True,
-            results_dir=root / "verify-results",
-        )
+    api_srv, api_base = _serve_api(work_dir, pub)
+    try:
+        with pytest.raises(rp.PipelineError) as err:
+            rp.verb_verify(
+                rp.LocalDirStore(root),
+                apply_=True,
+                work_dir=work_dir,
+                mode="P",
+                origins=(WEB,),
+                pushed=True,
+                tree_clean=True,
+                results_dir=root / "verify-results",
+                api_origin=api_base,
+                quality_report=_quality_report(),
+                now=T0,
+            )
+    finally:
+        api_srv.shutdown()
     assert err.value.code == "verify-failed"
     suites = err.value.detail["suites"]
     rows = _rows(suites)
