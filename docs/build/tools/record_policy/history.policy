@@ -726,3 +726,22 @@ seed-commit 6059a98b
 # commit. Scope: findings attributed to 8800cc2e only; no other
 # commit borrows the exemption.
 seed-commit 8800cc2e
+# P35.60 (row 337; REL-06) — 5d7681a4 is the sanctioned in-place
+# orient-probe repair: the closeout head 54ca355b's docs job ran red
+# (run 40111079339) with the orient recipe at 51,218 B > 48 KiB
+# (BM-ORIENT-01 V11). 5d7681a4 compacts PHASE LOG entries
+# L1208–1209 and folds head lines 2/4 plus the CURRENT STATE values
+# comment in place keeping every recorded field — the same
+# sanctioned pattern as 8800cc2e/6c05e605/f80fbd0a. The replaced
+# bytes are archived byte-for-byte under
+# docs/build/reports/memory-repair/ (LEDGER_phaselog_L1208-1209_pre-
+# P35.60.txt sha256 3e1de1c78ea141a9…, LEDGER_head_lines2-4_pre-
+# P35.60.txt 5b61f62d018d27a7…) and the compaction is disclosed by
+# the appended `P35.60 correction` entry (L1210). The RETURN PASS
+# region stays generated (return_pass check byte-identical); the
+# same commit gives every freshly re-blamed row's claim segments
+# explicit negate coverage so check_live_claims corpus stays at 0
+# violations. The branch rule forbids force-push, so the
+# declaration lands as a later commit. Scope: findings attributed
+# to 5d7681a4 only; no other commit borrows the exemption.
+seed-commit 5d7681a4
