@@ -706,3 +706,23 @@ seed-commit f80fbd0a
 # Scope: findings attributed to 6059a98b only; no other commit borrows
 # the exemption.
 seed-commit 6059a98b
+# P35.59 (row 336; REL-09) — 8800cc2e is the sanctioned in-place
+# orient-probe repair: the b7771fb1 dispatch boundary-confirm entry
+# had already pushed the orient recipe to 49,563 B > 48 KiB
+# (BM-ORIENT-01 V11) before this ticket's RETURN PASS row added more;
+# 8800cc2e compacted PHASE LOG entries L1204–1206, head lines 4–6 and
+# three CURRENT STATE comment tails in place keeping every recorded
+# field — the same sanctioned pattern as f80fbd0a/6c05e605. The
+# replaced bytes are archived byte-for-byte under
+# docs/build/reports/memory-repair/ (LEDGER_phaselog_L1204-1206_pre-
+# P35.59.txt sha256 70441d9f3cdaf3df…, LEDGER_head_lines4-6_pre-
+# P35.59.txt e1fd6cbfe282deed…, LEDGER_state_comments_pre-P35.59.txt
+# 5e32959b63605894…, LEDGER_head_comments21_pre-P35.59.txt
+# a0a62a79fefa4dda…) and the compaction is disclosed by the appended
+# `P35.59 correction` entry. Corpus-flagged rows were left
+# byte-identical (check_live_claims re-run confirmed the re-blame on
+# P35.1a/P35.14b and those edits were reverted before commit). The
+# branch rule forbids force-push, so the declaration lands as a later
+# commit. Scope: findings attributed to 8800cc2e only; no other
+# commit borrows the exemption.
+seed-commit 8800cc2e

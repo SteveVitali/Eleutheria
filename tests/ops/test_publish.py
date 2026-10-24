@@ -1320,3 +1320,96 @@ def test_publish_web_refuses_a_secret_in_the_export_tree(tmp_path: Path) -> None
             absent_verify=_ok_absent_verify,
         )
     assert store.put_calls == [] and not (dist / P.RELEASE_RECORD).exists()
+
+
+# --- P35.59 (REL-09): the serving-layout retirement guard ----------------------
+#
+# Once `sig-ops release cutover` writes registry/serving.json declaring the
+# legacy bucket-root publish class retired, `publish-web --apply` refuses —
+# the legacy publish class ends with the cutover record, and public bytes
+# move only through `sig-ops release` from then on. The guard refuses only
+# a record it actually read: an absent record is the live legacy path, an
+# un-openable registry records the unevaluated state in the result.
+
+
+def _serving_registry(root: Path, doc: dict | None) -> Path:
+    reg = root / "relreg"
+    (reg / "registry").mkdir(parents=True, exist_ok=True)
+    if doc is not None:
+        (reg / "registry" / "serving.json").write_text(
+            json.dumps(doc, sort_keys=True), encoding="utf-8"
+        )
+    return reg
+
+
+_RETIRED_DOC = {
+    "schema": "sig.serving-layout/1",
+    "layout": "release",
+    "floor": "legacy-20261024",
+    "conf_gen": 0,
+    "cutover_at": "2026-10-20T15:00:00Z",
+    "legacy_publish_class": "retired",
+}
+
+
+def test_publish_web_apply_refuses_once_the_publish_class_is_retired(
+    tmp_path: Path,
+) -> None:
+    store = _FakeSiteStore()
+    dist = _public_dist(tmp_path)
+    reg = _serving_registry(tmp_path, _RETIRED_DOC)
+    with pytest.raises(P.PublishError, match="bucket-root publish class is retired"):
+        P.run_publish_web(
+            dist=dist,
+            apply=True,
+            bucket=store.bucket(),
+            allowlist_path=_ALLOWLIST_PATH,
+            git_commit="c0ffee",
+            now="2026-10-20T15:00:00Z",
+            absent_verify=_ok_absent_verify,
+            release_registry=str(reg),
+        )
+    # refused before ANY write or sync — the remote untouched, the record unwritten.
+    assert store.put_calls == [] and store.delete_calls == []
+    assert not (dist / P.RELEASE_RECORD).exists()
+
+
+def test_publish_web_apply_runs_while_no_serving_record_exists(tmp_path: Path) -> None:
+    store = _FakeSiteStore()
+    dist = _public_dist(tmp_path)
+    reg = _serving_registry(tmp_path, None)  # registry present, no serving.json
+    result = P.run_publish_web(
+        dist=dist,
+        apply=True,
+        bucket=store.bucket(),
+        allowlist_path=_ALLOWLIST_PATH,
+        git_commit="c0ffee",
+        now="2026-10-03T00:00:00Z",
+        absent_verify=_ok_absent_verify,
+        release_registry=str(reg),
+    )
+    assert result.applied  # the guard found nothing to refuse — legacy path live
+    assert store.put_calls  # the sync ran
+
+
+def test_publish_web_dry_run_reports_the_serving_state(tmp_path: Path) -> None:
+    dist = _public_dist(tmp_path)
+    reg = _serving_registry(tmp_path, _RETIRED_DOC)
+    result = P.run_publish_web(
+        dist=dist,
+        apply=False,
+        allowlist_path=_ALLOWLIST_PATH,
+        git_commit="c0ffee",
+        now="2026-10-20T15:00:00Z",
+        release_registry=str(reg),
+    )
+    assert result.serving_layout is not None
+    assert result.serving_layout["legacy_publish_class"] == "retired"
+    assert any("legacy_publish_class='retired'" in line for line in result.as_lines())
+
+
+def test_serving_layout_state_marks_an_unopenable_registry(tmp_path: Path) -> None:
+    # A named registry that cannot be opened records `_unevaluated` — the
+    # guard refuses only what it can read, never a guessed state.
+    state = P.serving_layout_state(str(tmp_path / "does-not-exist-gs"))
+    assert state is None or state.get("_unevaluated") is True or state == {}

@@ -1627,6 +1627,24 @@ def run_verb(args: Any) -> dict[str, Any]:
             go=getattr(args, "go", None),
             break_lock=break_lock,
         )
+    if verb == "cutover":
+        from . import release_reversal
+
+        return release_reversal.verb_cutover(
+            store,
+            apply_=apply_,
+            label=args.label,
+            web_image=getattr(args, "web_image", None),
+            min_instances=int(getattr(args, "min_instances", 1) or 1),
+            go=getattr(args, "go", None),
+            withdrawals=getattr(args, "withdrawals", None),
+            service=getattr(args, "service", "sig-web"),
+            release_bucket=getattr(args, "release_bucket", None),
+            mount_path=getattr(args, "mount_path", "/mnt/rel"),
+            project=getattr(args, "project", None),
+            region=getattr(args, "region", None),
+            break_lock=break_lock,
+        )
     if verb in VERB_OWNERS:
         return verb_skeleton(
             verb,
