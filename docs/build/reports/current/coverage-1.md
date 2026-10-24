@@ -1,4 +1,4 @@
-# link-out: coverage (page 1/3)
+# link-out: coverage (page 1/5)
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
@@ -51,6 +51,15 @@
 | SIG-DOS-003 | `public` | `MET-ENGINEERED(D-P32.18-1;D-R10-SOURCES-1;D-R10-HUMAN-1)` | 2026-10-01 | — |
 | SIG-DOS-004 | `public` | `MET-ENGINEERED(D-P32.19-1;D-R10-SOURCES-1;D-R10-HUMAN-1)` | 2026-10-01 | — |
 | SIG-DOS-005 | `public` | `MET-ENGINEERED(D-P32.20-1;D-R10-SOURCES-1;D-R10-HUMAN-1)` | 2026-10-01 | — |
+| SIG-DSRC-001 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-DSRC-002 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-DSRC-003 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-DSRC-004 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-DSRC-005 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-DSRC-006 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-DSRC-007 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-DSRC-008 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-DSRC-009 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-ENG-002 | `implementation` | `PARTIAL` | 2026-10-01 | — |
 | SIG-ENG-004 | `implementation` | `N/A-RATIONALE` | 2026-10-01 | — |
 | SIG-ENG-005 | `implementation` | `PARTIAL` | 2026-10-01 | — |
@@ -113,14 +122,5 @@
 | SIG-EVAL-005 | `public` | `MISSING` | 2026-10-01 | — |
 | SIG-EVAL-006 | `public` | `MISSING` | 2026-10-01 | — |
 | SIG-EVAL-007 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-EVID-001 | `hosted` | `PARTIAL` | 2026-10-01 | — |
-| SIG-EVID-019 | `hosted` | `MET-ENGINEERED(D-P21.5-1;D-R11-ARCHIVE-1)` | 2026-10-01 | — |
-| SIG-FIND-006 | `public` | `MET-ENGINEERED(D-P32.16-1;D-R10-PUBLISH-1)` | 2026-10-01 | — |
-| SIG-FIND-007 | `public` | `MET-ENGINEERED(D-R10-USERS-1;D-P32.23a-1;D-R10-PUBLISH-1)` | 2026-10-01 | — |
-| SIG-GEO-002 | `implementation` | `PARTIAL` | 2026-10-01 | — |
-| SIG-GEO-005 | `implementation` | `PARTIAL` | 2026-10-01 | — |
-| SIG-GEO-007 | `implementation` | `N/A-RATIONALE` | 2026-10-01 | — |
-| SIG-GOV-001 | `public` | `WAIVED(ADR-180)` | 2026-10-01 | — |
-| SIG-GOV-002 | `public` | `WAIVED(ADR-180)` | 2026-10-01 | — |
 
 ← back: CURRENT.md · next page: coverage-2.md

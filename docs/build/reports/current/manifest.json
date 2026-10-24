@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "ec10d49125565576bacfe197c45728afe2b2d78c",
+  "input_commit": "f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "169e2ff8bb069fc0c8573b1d665897a5f7c53fe9532c8409d3ebf4cc20798c56"
+      "sha256": "8b6c63ce0d431551f38e5d3eda95576543de232546c06a63fc93e63e29c458e5"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -894,7 +894,7 @@
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "8ee89bde99acc4c2fa4e74fd0b973f9a3199a19fc2a5f7e20b6bb198ed38b876"
+      "sha256": "62dc24a209b13b4ba4bffd0cd6b1e358108b0df9de59c86490e728a9294e1e93"
     },
     {
       "path": "docs/build/LEDGER.md",
@@ -970,7 +970,7 @@
     },
     {
       "path": "docs/build/reports/obligations/coverage_assessments.jsonl",
-      "sha256": "d64cfc349698fef1b355b09d9864b3c85d9a5da3ed3fab24c1e655d2a8bb95ae"
+      "sha256": "5bd92ade7f8ef93d6daf89d78e0f65f92ce72863114e25d51fb9b89cbd6ddfc6"
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
@@ -2285,6 +2285,10 @@
       "sha256": "b7b5288eec03dc5a01384363494317f6a171f85579f93f6ad562436454f0d9eb"
     },
     {
+      "path": "docs/build/runs/PLAN-11C.md",
+      "sha256": "be32da5706dee67f339de92e95eb784e7a3f49338442c268dd11445a913852fc"
+    },
+    {
       "path": "docs/build/runs/SEED-01-04-06-07.md",
       "sha256": "2a2d624970f020e019f119bbacf58a99167dd5822710e7e6a02677b0157fe3bd"
     },
@@ -3142,15 +3146,15 @@
     },
     {
       "path": "docs/tickets/344_P37.1__osm-camera-site-origin.md",
-      "sha256": "e93023091608a0fc42ec5688a9e5ec34ee9e56584fe50e05774cd2d3dca331fd"
+      "sha256": "09908d5674bd067c81ac0feda56549462f4cd9ac7f65bca7b5a2124f16fdb71e"
     },
     {
       "path": "docs/tickets/345_P37.2__wave-c-osm-national-alpr-layer.md",
-      "sha256": "65cd0904e006acc2dec97716fd6c248b956a6cc3d01a74cea54e055f7291ec8c"
+      "sha256": "025af1f6c246a49baab67a05cf6bafcdbc0bb838ad385f4a96b096f193ed9f88"
     },
     {
       "path": "docs/tickets/346_P35.2__alerting-as-code-and-escalation.md",
-      "sha256": "c15ca52834f729d5fc9c7329e3a9bac540e7aee85d9bb190f944f436542e5067"
+      "sha256": "8d95fbe2a465b6430fd5e3d9a0682da3f93fec8021083f27b2ce3220a4814a95"
     },
     {
       "path": "docs/tickets/347_P35.21__partner-name-audit-run.md",

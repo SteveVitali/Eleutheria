@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "ec10d49125565576bacfe197c45728afe2b2d78c",
-  "manifest_inputs": 1105,
+  "input_commit": "f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+  "manifest_inputs": 1106,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "PLAN-11C",
@@ -33,8 +33,8 @@
     "terminal": 79,
     "events": 678,
     "transitions": 42,
-    "coverage_assessments": 315,
-    "coverage_historical_rows": 820,
+    "coverage_assessments": 489,
+    "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
     "return_pass_rows": 52,
@@ -14825,6 +14825,1050 @@
           "evidence": "",
           "assessed": "",
           "label": "historical/csv"
+        },
+        "SIG-UI-051": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-052": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-053": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-054": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-055": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-056": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-057": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-058": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-059": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-060": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-061": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-062": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-063": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-064": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-065": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-066": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-067": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-068": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-069": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-070": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-071": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-072": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-073": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-074": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-075": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-076": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-077": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-078": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-079": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-080": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-081": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-082": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-083": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-084": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-085": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-086": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-087": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-088": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-089": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-090": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-091": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-092": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-093": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-094": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-095": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-096": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-097": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-098": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-099": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-100": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-101": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-102": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-103": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-104": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-105": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-106": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-107": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-GEO-014": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-108": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-109": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-110": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-111": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-112": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-113": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-114": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-115": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-116": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-117": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-118": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-119": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-120": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-121": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-122": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-EXPORT-014": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-EXPORT-015": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-SRCH-001": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-SRCH-002": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-SRCH-003": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-SRCH-004": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-SRCH-005": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-SRCH-006": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-SRCH-007": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-SRCH-008": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-SRCH-009": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-SRCH-010": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-SRCH-011": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-SRCH-012": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-SRCH-013": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-SRCH-014": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-JUR-001": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-JUR-002": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-JUR-003": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-JUR-004": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-JUR-005": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-JUR-006": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-JUR-007": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-JUR-008": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-JUR-009": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-JUR-010": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-JUR-011": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-JUR-012": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-DSRC-001": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-DSRC-002": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-DSRC-003": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-DSRC-004": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-DSRC-005": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-DSRC-006": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-DSRC-007": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-DSRC-008": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-DSRC-009": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-123": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-124": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-125": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-126": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-127": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-128": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-129": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-130": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-131": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-132": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-133": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-134": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-WATCH-001": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-WATCH-002": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-WATCH-003": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-WATCH-004": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-WATCH-005": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-WATCH-006": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-WATCH-007": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-WATCH-008": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-WATCH-009": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-WATCH-010": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-EVUI-001": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-EVUI-002": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-EVUI-003": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-EVUI-004": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-EVUI-005": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-EVUI-006": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-EVUI-007": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-EVUI-008": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-EVUI-009": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-EVUI-010": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-RQ-001": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-RQ-002": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-RQ-003": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-RQ-004": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-RQ-005": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-RQ-006": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-RQ-007": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-RQ-008": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-RQ-009": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-RQ-010": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-135": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-136": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-137": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-138": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-139": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-140": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-141": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-142": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-143": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-144": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-145": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-146": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-147": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-148": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-149": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-150": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-151": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-152": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-153": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-154": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-155": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
+        },
+        "SIG-UI-156": {
+          "verdict": "MISSING",
+          "evidence": "",
+          "assessed": "",
+          "label": "historical/csv"
         }
       }
     },
@@ -15318,6 +16362,96 @@
         "limitations": "engineering verified by the cited research at the achieved domain only; the owed live/operator/human legs are OPEN DEFERRALS rows and are not claimed; matrix row note carries the reasoning; previous matrix verdict MET",
         "supersedes": null,
         "assessment_id": "SIG-DOS-005:r11-1"
+      },
+      {
+        "requirement_id": "SIG-DSRC-001",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-DSRC-D01) entering the matrix as MISSING with its owner's routing (P36.52); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-DSRC-001:r11-1"
+      },
+      {
+        "requirement_id": "SIG-DSRC-002",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-DSRC-D02) entering the matrix as MISSING with its owner's routing (P36.52); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-DSRC-002:r11-1"
+      },
+      {
+        "requirement_id": "SIG-DSRC-003",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-DSRC-D03) entering the matrix as MISSING with its owner's routing (P36.52); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-DSRC-003:r11-1"
+      },
+      {
+        "requirement_id": "SIG-DSRC-004",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-DSRC-D04) entering the matrix as MISSING with its owner's routing (P36.52); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-DSRC-004:r11-1"
+      },
+      {
+        "requirement_id": "SIG-DSRC-005",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-DSRC-D05) entering the matrix as MISSING with its owner's routing (P36.52); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-DSRC-005:r11-1"
+      },
+      {
+        "requirement_id": "SIG-DSRC-006",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-DSRC-D06) entering the matrix as MISSING with its owner's routing (P36.52); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-DSRC-006:r11-1"
+      },
+      {
+        "requirement_id": "SIG-DSRC-007",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-DSRC-D07) entering the matrix as MISSING with its owner's routing (P36.53); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-DSRC-007:r11-1"
+      },
+      {
+        "requirement_id": "SIG-DSRC-008",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-DSRC-D08) entering the matrix as MISSING with its owner's routing (P36.52); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-DSRC-008:r11-1"
+      },
+      {
+        "requirement_id": "SIG-DSRC-009",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-DSRC-D09) entering the matrix as MISSING with its owner's routing (P36.52); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-DSRC-009:r11-1"
       },
       {
         "requirement_id": "SIG-ENG-002",
@@ -15960,6 +17094,126 @@
         "assessment_id": "SIG-EVID-019:r11-1"
       },
       {
+        "requirement_id": "SIG-EVUI-001",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-EVUI-D01) entering the matrix as MISSING with its owner's routing (P36.60); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-EVUI-001:r11-1"
+      },
+      {
+        "requirement_id": "SIG-EVUI-002",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-EVUI-D02) entering the matrix as MISSING with its owner's routing (P36.60); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-EVUI-002:r11-1"
+      },
+      {
+        "requirement_id": "SIG-EVUI-003",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-EVUI-D03) entering the matrix as MISSING with its owner's routing (P36.60); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-EVUI-003:r11-1"
+      },
+      {
+        "requirement_id": "SIG-EVUI-004",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-EVUI-D04) entering the matrix as MISSING with its owner's routing (P36.51); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-EVUI-004:r11-1"
+      },
+      {
+        "requirement_id": "SIG-EVUI-005",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-EVUI-D05) entering the matrix as MISSING with its owner's routing (P36.60); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-EVUI-005:r11-1"
+      },
+      {
+        "requirement_id": "SIG-EVUI-006",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-EVUI-D06) entering the matrix as MISSING with its owner's routing (P36.60); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-EVUI-006:r11-1"
+      },
+      {
+        "requirement_id": "SIG-EVUI-007",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-EVUI-D07) entering the matrix as MISSING with its owner's routing (P36.51); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-EVUI-007:r11-1"
+      },
+      {
+        "requirement_id": "SIG-EVUI-008",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-EVUI-D08) entering the matrix as MISSING with its owner's routing (P36.60); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-EVUI-008:r11-1"
+      },
+      {
+        "requirement_id": "SIG-EVUI-009",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-EVUI-D09) entering the matrix as MISSING with its owner's routing (P37.37); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-EVUI-009:r11-1"
+      },
+      {
+        "requirement_id": "SIG-EVUI-010",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-EVUI-D10) entering the matrix as MISSING with its owner's routing (P36.29); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-EVUI-010:r11-1"
+      },
+      {
+        "requirement_id": "SIG-EXPORT-014",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-EXPORT-D20) entering the matrix as MISSING with its owner's routing (P36.41); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-EXPORT-014:r11-1"
+      },
+      {
+        "requirement_id": "SIG-EXPORT-015",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-EXPORT-D21) entering the matrix as MISSING with its owner's routing (P37.24); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-EXPORT-015:r11-1"
+      },
+      {
         "requirement_id": "SIG-FIND-006",
         "domain": "public",
         "verdict": "MET-ENGINEERED(D-P32.16-1;D-R10-PUBLISH-1)",
@@ -16008,6 +17262,16 @@
         "limitations": "transcription of the ratified Round-11 re-verdict (plan §6.6) from the cited research; current-state verdict, routed to its owning row; no implementation claim; matrix row note carries the reasoning; previous matrix verdict PARTIAL",
         "supersedes": null,
         "assessment_id": "SIG-GEO-007:r11-1"
+      },
+      {
+        "requirement_id": "SIG-GEO-014",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-GEO-DM10) entering the matrix as MISSING with its owner's routing (P37.17); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-GEO-014:r11-1"
       },
       {
         "requirement_id": "SIG-GOV-001",
@@ -16358,6 +17622,126 @@
         "limitations": "transcription of the ratified Round-11 re-verdict (plan §6.6) from the cited research; current-state verdict, routed to its owning row; no implementation claim; matrix row note carries the reasoning; previous matrix verdict PARTIAL",
         "supersedes": null,
         "assessment_id": "SIG-INGEST-048:r11-1"
+      },
+      {
+        "requirement_id": "SIG-JUR-001",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-JUR-D01) entering the matrix as MISSING with its owner's routing (P36.34); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-JUR-001:r11-1"
+      },
+      {
+        "requirement_id": "SIG-JUR-002",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-JUR-D02) entering the matrix as MISSING with its owner's routing (P36.34); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-JUR-002:r11-1"
+      },
+      {
+        "requirement_id": "SIG-JUR-003",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-JUR-D03) entering the matrix as MISSING with its owner's routing (P36.34); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-JUR-003:r11-1"
+      },
+      {
+        "requirement_id": "SIG-JUR-004",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-JUR-D04) entering the matrix as MISSING with its owner's routing (P36.34); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-JUR-004:r11-1"
+      },
+      {
+        "requirement_id": "SIG-JUR-005",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-JUR-D05) entering the matrix as MISSING with its owner's routing (P36.34); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-JUR-005:r11-1"
+      },
+      {
+        "requirement_id": "SIG-JUR-006",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-JUR-D06) entering the matrix as MISSING with its owner's routing (P36.34); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-JUR-006:r11-1"
+      },
+      {
+        "requirement_id": "SIG-JUR-007",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-JUR-D07) entering the matrix as MISSING with its owner's routing (P36.34); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-JUR-007:r11-1"
+      },
+      {
+        "requirement_id": "SIG-JUR-008",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-JUR-D08) entering the matrix as MISSING with its owner's routing (P36.34); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-JUR-008:r11-1"
+      },
+      {
+        "requirement_id": "SIG-JUR-009",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-JUR-D09) entering the matrix as MISSING with its owner's routing (P36.35); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-JUR-009:r11-1"
+      },
+      {
+        "requirement_id": "SIG-JUR-010",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-JUR-D10) entering the matrix as MISSING with its owner's routing (P36.34); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-JUR-010:r11-1"
+      },
+      {
+        "requirement_id": "SIG-JUR-011",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-JUR-D11) entering the matrix as MISSING with its owner's routing (P36.34); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-JUR-011:r11-1"
+      },
+      {
+        "requirement_id": "SIG-JUR-012",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-JUR-D12) entering the matrix as MISSING with its owner's routing (P36.35); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-JUR-012:r11-1"
       },
       {
         "requirement_id": "SIG-LIC-006",
@@ -17200,6 +18584,106 @@
         "assessment_id": "SIG-REL-015:r11-1"
       },
       {
+        "requirement_id": "SIG-RQ-001",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-RQ-D01) entering the matrix as MISSING with its owner's routing (P36.58); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-RQ-001:r11-1"
+      },
+      {
+        "requirement_id": "SIG-RQ-002",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-RQ-D02) entering the matrix as MISSING with its owner's routing (P36.62); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-RQ-002:r11-1"
+      },
+      {
+        "requirement_id": "SIG-RQ-003",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-RQ-D03) entering the matrix as MISSING with its owner's routing (P36.58); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-RQ-003:r11-1"
+      },
+      {
+        "requirement_id": "SIG-RQ-004",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-RQ-D04) entering the matrix as MISSING with its owner's routing (P36.61); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-RQ-004:r11-1"
+      },
+      {
+        "requirement_id": "SIG-RQ-005",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-RQ-D05) entering the matrix as MISSING with its owner's routing (P36.58); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-RQ-005:r11-1"
+      },
+      {
+        "requirement_id": "SIG-RQ-006",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-RQ-D06) entering the matrix as MISSING with its owner's routing (P36.58); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-RQ-006:r11-1"
+      },
+      {
+        "requirement_id": "SIG-RQ-007",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-RQ-D07) entering the matrix as MISSING with its owner's routing (P36.63); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-RQ-007:r11-1"
+      },
+      {
+        "requirement_id": "SIG-RQ-008",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-RQ-D08) entering the matrix as MISSING with its owner's routing (P36.62); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-RQ-008:r11-1"
+      },
+      {
+        "requirement_id": "SIG-RQ-009",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-RQ-D09) entering the matrix as MISSING with its owner's routing (P36.62); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-RQ-009:r11-1"
+      },
+      {
+        "requirement_id": "SIG-RQ-010",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-RQ-D10) entering the matrix as MISSING with its owner's routing (P36.63); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-RQ-010:r11-1"
+      },
+      {
         "requirement_id": "SIG-SEC-002",
         "domain": "implementation",
         "verdict": "MET",
@@ -17298,6 +18782,146 @@
         "limitations": "engineered + fixture-verified, not hosted: the public API no longer answers questions it cannot answer — typed 404 scope_not_available for unheld dossier/coverage scopes (the LIMIT-25 fallback removed), coverage never complete with 0 evaluated, bytes_available only for public-tier captures recorded byte-bearing (capture_classification='actual') with bytes_unavailable_reason, the four OKC fixture source ids and evidence_origin=seed_fixture claims excluded at every PG read path (fixture capture -> not-found), /terms names no board or counsel, and X-SIG-Basis: live-spine + a basis body field on every response including errors. sig_read_public is narrowed by the new public_read_allowlist sqitch change to exactly the published read surface (15 relations + column-limited publication_disposition), proven by the 49-test DB allow-list suite (exact aclexplode grant-set equality, SET-ROLE reads, denial probes on 32 internal relations, zero sequence privileges, sig_materialize preservation set); whole-plan sqitch round-trip green after the ADR-196 @r11-read-allowlist rework of the two verifies the narrowing ends. NOT yet met at the hosted domain: the migration + code deploy with P34.46's API roll (~2026-10-21); the live read-back is D-P34.25-1. Release parity and real jurisdiction dossier scope remain P35.57's; this row ships no production mutation",
         "supersedes": null,
         "assessment_id": "SIG-SEC-011:r11-2"
+      },
+      {
+        "requirement_id": "SIG-SRCH-001",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-SRCH-D01) entering the matrix as MISSING with its owner's routing (P36.38); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-SRCH-001:r11-1"
+      },
+      {
+        "requirement_id": "SIG-SRCH-002",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-SRCH-D02) entering the matrix as MISSING with its owner's routing (P36.39); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-SRCH-002:r11-1"
+      },
+      {
+        "requirement_id": "SIG-SRCH-003",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-SRCH-D03) entering the matrix as MISSING with its owner's routing (P36.38); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-SRCH-003:r11-1"
+      },
+      {
+        "requirement_id": "SIG-SRCH-004",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-SRCH-D04) entering the matrix as MISSING with its owner's routing (P36.31); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-SRCH-004:r11-1"
+      },
+      {
+        "requirement_id": "SIG-SRCH-005",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-SRCH-D05) entering the matrix as MISSING with its owner's routing (P36.31); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-SRCH-005:r11-1"
+      },
+      {
+        "requirement_id": "SIG-SRCH-006",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-SRCH-D06) entering the matrix as MISSING with its owner's routing (P36.39); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-SRCH-006:r11-1"
+      },
+      {
+        "requirement_id": "SIG-SRCH-007",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-SRCH-D07) entering the matrix as MISSING with its owner's routing (P36.39); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-SRCH-007:r11-1"
+      },
+      {
+        "requirement_id": "SIG-SRCH-008",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-SRCH-D08) entering the matrix as MISSING with its owner's routing (P36.39); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-SRCH-008:r11-1"
+      },
+      {
+        "requirement_id": "SIG-SRCH-009",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-SRCH-D09) entering the matrix as MISSING with its owner's routing (P36.39); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-SRCH-009:r11-1"
+      },
+      {
+        "requirement_id": "SIG-SRCH-010",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-SRCH-D10) entering the matrix as MISSING with its owner's routing (P36.40); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-SRCH-010:r11-1"
+      },
+      {
+        "requirement_id": "SIG-SRCH-011",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-SRCH-D11) entering the matrix as MISSING with its owner's routing (P36.31); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-SRCH-011:r11-1"
+      },
+      {
+        "requirement_id": "SIG-SRCH-012",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-SRCH-D12) entering the matrix as MISSING with its owner's routing (P36.38); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-SRCH-012:r11-1"
+      },
+      {
+        "requirement_id": "SIG-SRCH-013",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-SRCH-D13) entering the matrix as MISSING with its owner's routing (P36.71); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-SRCH-013:r11-1"
+      },
+      {
+        "requirement_id": "SIG-SRCH-014",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-SRCH-D14) entering the matrix as MISSING with its owner's routing (P36.71); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-SRCH-014:r11-1"
       },
       {
         "requirement_id": "SIG-STORE-004",
@@ -17978,6 +19602,1166 @@
         "limitations": "re-verdict transcribed from the cited planning research and verified only for path existence at this revision; no test was re-run by this unit; matrix row note carries the reasoning; previous matrix verdict MET-DIFFERENTLY",
         "supersedes": null,
         "assessment_id": "SIG-UI-047:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-051",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-01) entering the matrix as MISSING with its owner's routing (P36.18); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-051:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-052",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-02) entering the matrix as MISSING with its owner's routing (P36.21); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-052:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-053",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-03) entering the matrix as MISSING with its owner's routing (P36.41); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-053:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-054",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-04) entering the matrix as MISSING with its owner's routing (P36.22); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-054:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-055",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-05) entering the matrix as MISSING with its owner's routing (P36.57); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-055:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-056",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-06) entering the matrix as MISSING with its owner's routing (P36.47); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-056:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-057",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-07) entering the matrix as MISSING with its owner's routing (P36.34); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-057:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-058",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-08) entering the matrix as MISSING with its owner's routing (P36.35); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-058:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-059",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-09) entering the matrix as MISSING with its owner's routing (P36.21); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-059:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-060",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-10) entering the matrix as MISSING with its owner's routing (P36.21); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-060:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-061",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-11) entering the matrix as MISSING with its owner's routing (P36.17); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-061:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-062",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-12) entering the matrix as MISSING with its owner's routing (P36.17); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-062:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-063",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-13) entering the matrix as MISSING with its owner's routing (P36.24); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-063:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-064",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-14) entering the matrix as MISSING with its owner's routing (P36.17); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-064:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-065",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-15) entering the matrix as MISSING with its owner's routing (P36.37); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-065:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-066",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-16) entering the matrix as MISSING with its owner's routing (P36.27); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-066:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-067",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-17) entering the matrix as MISSING with its owner's routing (P36.29); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-067:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-068",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-18) entering the matrix as MISSING with its owner's routing (P36.36); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-068:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-069",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-19) entering the matrix as MISSING with its owner's routing (P36.55); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-069:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-070",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-20) entering the matrix as MISSING with its owner's routing (P36.41); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-070:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-071",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-21) entering the matrix as MISSING with its owner's routing (P37.38); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-071:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-072",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-22) entering the matrix as MISSING with its owner's routing (P37.40); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-072:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-073",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-23) entering the matrix as MISSING with its owner's routing (P36.31); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-073:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-074",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-24) entering the matrix as MISSING with its owner's routing (P36.31); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-074:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-075",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-25) entering the matrix as MISSING with its owner's routing (P36.66a); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-075:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-076",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-26) entering the matrix as MISSING with its owner's routing (P36.38); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-076:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-077",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-27) entering the matrix as MISSING with its owner's routing (P37.68a); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-077:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-078",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-28) entering the matrix as MISSING with its owner's routing (P37.68a); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-078:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-079",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-29) entering the matrix as MISSING with its owner's routing (P36.61); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-079:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-080",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-30) entering the matrix as MISSING with its owner's routing (P36.41); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-080:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-081",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-31) entering the matrix as MISSING with its owner's routing (P36.71); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-081:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-082",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-32) entering the matrix as MISSING with its owner's routing (P36.50); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-082:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-083",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-33) entering the matrix as MISSING with its owner's routing (P36.22); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-083:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-084",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-34) entering the matrix as MISSING with its owner's routing (P36.22); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-084:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-085",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-35) entering the matrix as MISSING with its owner's routing (P36.20); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-085:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-086",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-36) entering the matrix as MISSING with its owner's routing (P36.22); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-086:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-087",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-37) entering the matrix as MISSING with its owner's routing (P36.67); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-087:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-088",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source UXR-38) entering the matrix as MISSING with its owner's routing (P36.41); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-088:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-089",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D01) entering the matrix as MISSING with its owner's routing (P36.20); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-089:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-090",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D02) entering the matrix as MISSING with its owner's routing (P36.20); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-090:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-091",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D03) entering the matrix as MISSING with its owner's routing (P36.20); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-091:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-092",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D04) entering the matrix as MISSING with its owner's routing (P36.72a); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-092:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-093",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D05) entering the matrix as MISSING with its owner's routing (P36.21); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-093:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-094",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D06) entering the matrix as MISSING with its owner's routing (P36.27); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-094:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-095",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D07) entering the matrix as MISSING with its owner's routing (P36.37); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-095:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-096",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D08) entering the matrix as MISSING with its owner's routing (P36.19); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-096:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-097",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D09) entering the matrix as MISSING with its owner's routing (P36.37); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-097:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-098",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D10) entering the matrix as MISSING with its owner's routing (P36.26); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-098:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-099",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DM01) entering the matrix as MISSING with its owner's routing (P37.17); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-099:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-100",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DM02) entering the matrix as MISSING with its owner's routing (P36.33); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-100:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-101",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DM03) entering the matrix as MISSING with its owner's routing (P36.37); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-101:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-102",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DM04) entering the matrix as MISSING with its owner's routing (P36.37); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-102:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-103",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DM05) entering the matrix as MISSING with its owner's routing (P36.37); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-103:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-104",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DM06) entering the matrix as MISSING with its owner's routing (P36.37); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-104:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-105",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DM07) entering the matrix as MISSING with its owner's routing (P36.36); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-105:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-106",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DM08) entering the matrix as MISSING with its owner's routing (P36.37); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-106:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-107",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DM09) entering the matrix as MISSING with its owner's routing (P36.37); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-107:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-108",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D20) entering the matrix as MISSING with its owner's routing (P36.41); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-108:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-109",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D21) entering the matrix as MISSING with its owner's routing (P36.29); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-109:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-110",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D22) entering the matrix as MISSING with its owner's routing (P36.41); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-110:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-111",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D23) entering the matrix as MISSING with its owner's routing (P36.29); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-111:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-112",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D24) entering the matrix as MISSING with its owner's routing (P36.29); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-112:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-113",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D25) entering the matrix as MISSING with its owner's routing (P36.29); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-113:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-114",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D26) entering the matrix as MISSING with its owner's routing (P36.41); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-114:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-115",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D27) entering the matrix as MISSING with its owner's routing (P36.41); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-115:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-116",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D28) entering the matrix as MISSING with its owner's routing (P36.41); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-116:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-117",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D29) entering the matrix as MISSING with its owner's routing (P37.24); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-117:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-118",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D30) entering the matrix as MISSING with its owner's routing (P37.24); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-118:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-119",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D31) entering the matrix as MISSING with its owner's routing (P37.26); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-119:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-120",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D32) entering the matrix as MISSING with its owner's routing (P37.26); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-120:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-121",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D33) entering the matrix as MISSING with its owner's routing (P37.26); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-121:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-122",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D34) entering the matrix as MISSING with its owner's routing (P36.42a); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-122:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-123",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DV01) entering the matrix as MISSING with its owner's routing (P36.27); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-123:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-124",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DV02) entering the matrix as MISSING with its owner's routing (P36.27); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-124:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-125",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DV03) entering the matrix as MISSING with its owner's routing (P36.28); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-125:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-126",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DV04) entering the matrix as MISSING with its owner's routing (P36.57); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-126:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-127",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DV05) entering the matrix as MISSING with its owner's routing (P37.29); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-127:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-128",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DV06) entering the matrix as MISSING with its owner's routing (P36.56); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-128:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-129",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DV07) entering the matrix as MISSING with its owner's routing (P36.55); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-129:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-130",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DV08) entering the matrix as MISSING with its owner's routing (P36.26); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-130:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-131",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DV09) entering the matrix as MISSING with its owner's routing (P36.27); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-131:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-132",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DV10) entering the matrix as MISSING with its owner's routing (P36.55); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-132:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-133",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DV11) entering the matrix as MISSING with its owner's routing (P36.17); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-133:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-134",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-DV12) entering the matrix as MISSING with its owner's routing (P36.27); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-134:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-135",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-01) entering the matrix as MISSING with its owner's routing (P36.64); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-135:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-136",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-02) entering the matrix as MISSING with its owner's routing (P36.64); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-136:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-137",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-03) entering the matrix as MISSING with its owner's routing (P36.64); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-137:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-138",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-04) entering the matrix as MISSING with its owner's routing (P36.64); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-138:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-139",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-05) entering the matrix as MISSING with its owner's routing (P36.64); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-139:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-140",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-06) entering the matrix as MISSING with its owner's routing (P36.64); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-140:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-141",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-07) entering the matrix as MISSING with its owner's routing (P36.64); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-141:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-142",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-08) entering the matrix as MISSING with its owner's routing (P36.64); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-142:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-143",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-09) entering the matrix as MISSING with its owner's routing (P36.17); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-143:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-144",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-10) entering the matrix as MISSING with its owner's routing (P36.24); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-144:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-145",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-11) entering the matrix as MISSING with its owner's routing (P36.18); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-145:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-146",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-12) entering the matrix as MISSING with its owner's routing (P36.16); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-146:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-147",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-13) entering the matrix as MISSING with its owner's routing (P36.17); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-147:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-148",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-14) entering the matrix as MISSING with its owner's routing (P36.16); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-148:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-149",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-15) entering the matrix as MISSING with its owner's routing (P36.17); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-149:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-150",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-16) entering the matrix as MISSING with its owner's routing (P36.18); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-150:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-151",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-17) entering the matrix as MISSING with its owner's routing (P36.22); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-151:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-152",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-18) entering the matrix as MISSING with its owner's routing (P37.60); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-152:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-153",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-19) entering the matrix as MISSING with its owner's routing (P36.24); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-153:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-154",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-20) entering the matrix as MISSING with its owner's routing (P36.25); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-154:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-155",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-21) entering the matrix as MISSING with its owner's routing (P36.26); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-155:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-156",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-22) entering the matrix as MISSING with its owner's routing (P36.16); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-UI-156:r11-1"
+      },
+      {
+        "requirement_id": "SIG-WATCH-001",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-WATCH-D01) entering the matrix as MISSING with its owner's routing (P36.59); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-WATCH-001:r11-1"
+      },
+      {
+        "requirement_id": "SIG-WATCH-002",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-WATCH-D02) entering the matrix as MISSING with its owner's routing (P36.59); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-WATCH-002:r11-1"
+      },
+      {
+        "requirement_id": "SIG-WATCH-003",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-WATCH-D03) entering the matrix as MISSING with its owner's routing (P36.59); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-WATCH-003:r11-1"
+      },
+      {
+        "requirement_id": "SIG-WATCH-004",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-WATCH-D04) entering the matrix as MISSING with its owner's routing (P36.59); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-WATCH-004:r11-1"
+      },
+      {
+        "requirement_id": "SIG-WATCH-005",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-WATCH-D05) entering the matrix as MISSING with its owner's routing (P37.34); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-WATCH-005:r11-1"
+      },
+      {
+        "requirement_id": "SIG-WATCH-006",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-WATCH-D06) entering the matrix as MISSING with its owner's routing (P37.34); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-WATCH-006:r11-1"
+      },
+      {
+        "requirement_id": "SIG-WATCH-007",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-WATCH-D07) entering the matrix as MISSING with its owner's routing (P37.31); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-WATCH-007:r11-1"
+      },
+      {
+        "requirement_id": "SIG-WATCH-008",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-WATCH-D08) entering the matrix as MISSING with its owner's routing (P37.31); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-WATCH-008:r11-1"
+      },
+      {
+        "requirement_id": "SIG-WATCH-009",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-WATCH-D09) entering the matrix as MISSING with its owner's routing (P36.55); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-WATCH-009:r11-1"
+      },
+      {
+        "requirement_id": "SIG-WATCH-010",
+        "domain": "public",
+        "verdict": "MISSING",
+        "assessed_at": "2026-10-24",
+        "code_revision": "r11/PLAN-11C-contracts-for-11c-and-k13-families @ f4c1871aa9a91bd4b8c29510d434c9bb27ba3598",
+        "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-WATCH-D10) entering the matrix as MISSING with its owner's routing (P36.59); planning never marks it MET (spec §56.9)",
+        "supersedes": null,
+        "assessment_id": "SIG-WATCH-010:r11-1"
       }
     ]
   },
@@ -19169,6 +21953,51 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-DSRC-001",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-DSRC-002",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-DSRC-003",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-DSRC-004",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-DSRC-005",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-DSRC-006",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-DSRC-007",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-DSRC-008",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-DSRC-009",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
           "requirement": "SIG-ENG-020",
           "verdict": "MET",
           "assessed_at": "2026-10-06"
@@ -19204,6 +22033,66 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-EVUI-001",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-EVUI-002",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-EVUI-003",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-EVUI-004",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-EVUI-005",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-EVUI-006",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-EVUI-007",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-EVUI-008",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-EVUI-009",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-EVUI-010",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-EXPORT-014",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-EXPORT-015",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
           "requirement": "SIG-FIND-006",
           "verdict": "MET-ENGINEERED(D-P32.16-1;D-R10-PUBLISH-1)",
           "assessed_at": "2026-10-01"
@@ -19212,6 +22101,11 @@
           "requirement": "SIG-FIND-007",
           "verdict": "MET-ENGINEERED(D-R10-USERS-1;D-P32.23a-1;D-R10-PUBLISH-1)",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-GEO-014",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
         },
         {
           "requirement": "SIG-GOV-001",
@@ -19257,6 +22151,66 @@
           "requirement": "SIG-IDENT-030",
           "verdict": "PARTIAL",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-JUR-001",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-JUR-002",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-JUR-003",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-JUR-004",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-JUR-005",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-JUR-006",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-JUR-007",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-JUR-008",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-JUR-009",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-JUR-010",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-JUR-011",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-JUR-012",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
         },
         {
           "requirement": "SIG-LIC-012",
@@ -19399,9 +22353,129 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-RQ-001",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-RQ-002",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-RQ-003",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-RQ-004",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-RQ-005",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-RQ-006",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-RQ-007",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-RQ-008",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-RQ-009",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-RQ-010",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
           "requirement": "SIG-SEC-003",
           "verdict": "MISSING",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-SRCH-001",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-SRCH-002",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-SRCH-003",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-SRCH-004",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-SRCH-005",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-SRCH-006",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-SRCH-007",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-SRCH-008",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-SRCH-009",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-SRCH-010",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-SRCH-011",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-SRCH-012",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-SRCH-013",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-SRCH-014",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
         },
         {
           "requirement": "SIG-TRANSP-001",
@@ -19637,6 +22711,586 @@
           "requirement": "SIG-UI-042",
           "verdict": "WAIVED(ADR-179)",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-UI-051",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-052",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-053",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-054",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-055",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-056",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-057",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-058",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-059",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-060",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-061",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-062",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-063",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-064",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-065",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-066",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-067",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-068",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-069",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-070",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-071",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-072",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-073",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-074",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-075",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-076",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-077",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-078",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-079",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-080",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-081",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-082",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-083",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-084",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-085",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-086",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-087",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-088",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-089",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-090",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-091",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-092",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-093",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-094",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-095",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-096",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-097",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-098",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-099",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-100",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-101",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-102",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-103",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-104",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-105",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-106",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-107",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-108",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-109",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-110",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-111",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-112",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-113",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-114",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-115",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-116",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-117",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-118",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-119",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-120",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-121",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-122",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-123",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-124",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-125",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-126",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-127",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-128",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-129",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-130",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-131",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-132",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-133",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-134",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-135",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-136",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-137",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-138",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-139",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-140",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-141",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-142",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-143",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-144",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-145",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-146",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-147",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-148",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-149",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-150",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-151",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-152",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-153",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-154",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-155",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-156",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-WATCH-001",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-WATCH-002",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-WATCH-003",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-WATCH-004",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-WATCH-005",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-WATCH-006",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-WATCH-007",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-WATCH-008",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-WATCH-009",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-WATCH-010",
+          "verdict": "MISSING",
+          "assessed_at": "2026-10-24"
         }
       ]
     }
@@ -19987,19 +23641,19 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "5b99b54bbac16dd929dad6aaae71212d102ff3b2f9d639d2ecf3a048361dc875",
+  "manifest_sha256": "04e3f9119405acca56d0ff04693187aca01fc58aeeae640371c262bba3394bb5",
   "current_md": {
-    "lines": 63,
-    "bytes": 16358,
+    "lines": 127,
+    "bytes": 18560,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
-      "adrs.md",
       "coverage-1.md",
       "coverage-2.md",
       "coverage-3.md",
-      "funnel.md",
-      "obligations.md",
-      "return-pass.md"
+      "coverage-4.md",
+      "coverage-5.md",
+      "domains.md",
+      "obligations.md"
     ]
   }
 }

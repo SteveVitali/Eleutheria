@@ -731,13 +731,14 @@ def render_markdown(projection: dict) -> tuple[str, dict[str, str]]:
         return "\n".join(lines) + "\n"
 
     # Pass 1: fully inlined. Pass 2+: spill the obligation table into pages, then
-    # coverage, then funnel, until bounded. Nothing is ever dropped.
+    # the domains table, then coverage, then funnel, until bounded. Nothing is
+    # ever dropped.
     doc = assemble(True, sections)
     if len(doc.splitlines()) <= MAX_LINES and len(doc.encode()) <= MAX_BYTES:
         return doc, {}
 
     pages: dict[str, str] = {}
-    spill_order = ["obligations", "coverage", "funnel", "adrs", "return-pass"]
+    spill_order = ["obligations", "domains", "coverage", "funnel", "adrs", "return-pass"]
     spilled: set[str] = set()
 
     def _replace_section(name: str, body: list[str]) -> None:

@@ -1,7 +1,29 @@
-# link-out: coverage (page 2/3)
+# link-out: coverage (page 2/5)
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-EVID-001 | `hosted` | `PARTIAL` | 2026-10-01 | — |
+| SIG-EVID-019 | `hosted` | `MET-ENGINEERED(D-P21.5-1;D-R11-ARCHIVE-1)` | 2026-10-01 | — |
+| SIG-EVUI-001 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-EVUI-002 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-EVUI-003 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-EVUI-004 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-EVUI-005 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-EVUI-006 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-EVUI-007 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-EVUI-008 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-EVUI-009 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-EVUI-010 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-EXPORT-014 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-EXPORT-015 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-FIND-006 | `public` | `MET-ENGINEERED(D-P32.16-1;D-R10-PUBLISH-1)` | 2026-10-01 | — |
+| SIG-FIND-007 | `public` | `MET-ENGINEERED(D-R10-USERS-1;D-P32.23a-1;D-R10-PUBLISH-1)` | 2026-10-01 | — |
+| SIG-GEO-002 | `implementation` | `PARTIAL` | 2026-10-01 | — |
+| SIG-GEO-005 | `implementation` | `PARTIAL` | 2026-10-01 | — |
+| SIG-GEO-007 | `implementation` | `N/A-RATIONALE` | 2026-10-01 | — |
+| SIG-GEO-014 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-GOV-001 | `public` | `WAIVED(ADR-180)` | 2026-10-01 | — |
+| SIG-GOV-002 | `public` | `WAIVED(ADR-180)` | 2026-10-01 | — |
 | SIG-GOV-003 | `public` | `WAIVED(ADR-186)` | 2026-10-01 | — |
 | SIG-GOV-008 | `hosted` | `WAIVED(ADR-181)` | 2026-10-01 | — |
 | SIG-GOV-012 | `public` | `WAIVED(ADR-165)` | 2026-10-01 | — |
@@ -35,6 +57,18 @@
 | SIG-INGEST-046b | `hosted` | `MET` | 2026-10-01 | — |
 | SIG-INGEST-046c | `hosted` | `MISSING` | 2026-10-01 | — |
 | SIG-INGEST-048 | `implementation` | `PARTIAL` | 2026-10-01 | — |
+| SIG-JUR-001 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-JUR-002 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-JUR-003 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-JUR-004 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-JUR-005 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-JUR-006 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-JUR-007 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-JUR-008 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-JUR-009 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-JUR-010 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-JUR-011 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-JUR-012 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-LIC-006 | `implementation` | `PARTIAL` | 2026-10-01 | — |
 | SIG-LIC-009 | `implementation` | `WAIVED(ADR-182)` | 2026-10-01 | — |
 | SIG-LIC-012 | `public` | `PARTIAL` | 2026-10-01 | — |
@@ -88,39 +122,5 @@
 | SIG-PUB-002 | `public` | `PARTIAL` | 2026-10-03 | — |
 | SIG-PUB-002 | `public` | `PARTIAL` | 2026-10-03 | SIG-PUB-002:r11-1 |
 | SIG-PUB-003d | `implementation` | `PARTIAL` | 2026-10-06 | — |
-| SIG-PUB-006 | `implementation` | `MET` | 2026-10-06 | — |
-| SIG-PUB-007 | `public` | `AT-RISK-INTEGRATION` | 2026-10-01 | — |
-| SIG-PUB-007 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-10-14 | SIG-PUB-007:r11-1 |
-| SIG-PUB-008 | `public` | `WAIVED(ADR-163)` | 2026-10-01 | — |
-| SIG-PUB-012 | `composed-db` | `PARTIAL` | 2026-10-01 | — |
-| SIG-PUB-014 | `implementation` | `MET` | 2026-10-01 | — |
-| SIG-PUB-014b | `implementation` | `MET` | 2026-10-01 | — |
-| SIG-PUB-015 | `public` | `PARTIAL` | 2026-10-01 | — |
-| SIG-PUB-015 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-10-14 | SIG-PUB-015:r11-1 |
-| SIG-PUB-016 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-PUB-016 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-10-14 | SIG-PUB-016:r11-1 |
-| SIG-RECON-018 | `hosted` | `AT-RISK-INTEGRATION` | 2026-10-01 | — |
-| SIG-RECON-039 | `public` | `PARTIAL` | 2026-10-01 | — |
-| SIG-RECON-040 | `public` | `AT-RISK-INTEGRATION` | 2026-10-01 | — |
-| SIG-RECON-051 | `implementation` | `MET` | 2026-10-06 | — |
-| SIG-RECON-052 | `implementation` | `PARTIAL` | 2026-10-01 | — |
-| SIG-REL-001 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-REL-002 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-REL-003 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-REL-004 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-REL-005 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-REL-006 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-REL-007 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-REL-008 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-REL-009 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-REL-010 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-REL-011 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-REL-012 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-REL-013 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-REL-014 | `implementation` | `MISSING` | 2026-10-01 | — |
-| SIG-REL-015 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-SEC-002 | `implementation` | `MET` | 2026-10-06 | — |
-| SIG-SEC-003 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-SEC-005 | `hosted` | `PARTIAL` | 2026-10-01 | — |
 
 ← back: CURRENT.md · next page: coverage-3.md
