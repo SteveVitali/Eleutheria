@@ -104,9 +104,10 @@ Files written:
   full contract (Kind: ticket; Run line; deps 275/273/304/276 —
   all backward).
 - `docs/tickets/345_P37.2__wave-c-osm-national-alpr-layer.md` —
-  skeleton → full contract (5 live legs verbatim; ING-GO-C + Q-23 +
-  S5-4 carried verbatim; tier-bump in-ticket pause; HG-11 rides
-  P37.65; never pre-authorised).
+  skeleton → full contract (5 legs — all gate-pending, nothing
+  executed — carried verbatim; ING-GO-C + Q-23 + S5-4 carried
+  verbatim; tier-bump in-ticket pause; HG-11 rides P37.65; never
+  pre-authorised).
 - `docs/tickets/346_P35.2__alerting-as-code-and-escalation.md` —
   skeleton → full contract (OM-20 row; alert roll a named mutation;
   SIG-OPS-006/007 owner ids confirmed against §56.4).
@@ -160,15 +161,89 @@ Dispositions:
   names it verbatim.
 - Deviations: none beyond the erratum above.
 
-### C2 — (rows 347–354)
+### C2 — 2026-10-24 (rows 347–354)
 
-Started: — · Closed: —
+Started: 2026-10-24T23:19Z · Closed: 2026-10-24T23:29Z (`date -u`
+at C2 ledger write)
+Context model: devin-desktop/swe-2-high/subagent.
 
 Scope: rights/connector block — P35.21 (partner-name audit), P35.23
 (regression corpus), P36.1b (crawler/robots text), P36.2 (rights batch
 incl. the T3 out-of-rule re-decision fold), P36.76/77/78 (Axon,
 DocumentCloud, Sourcewell/OMNIA connectors — deliverable 7a
 outreach-owed applies), P36.13 (rate limits, OM-20).
+
+Files written:
+
+- `docs/tickets/347_P35.21__partner-name-audit-run.md` — skeleton →
+  full contract (the read-only audit — nothing executed yet — that
+  sizes D-P32.3-1 for the operator's OP-15 dispositions; not an
+  OM-20 row; measures never decides).
+- `docs/tickets/348_P35.23__real-data-regression-corpus.md` — full
+  contract (SIG-CONF-008/012 owners; restricted-bucket write gated
+  through OM-20 naming or in-ticket pause; AR-3 + AR-2 window).
+- `docs/tickets/349_P36.1b__crawler-conduct-text-and-robots-field.md` —
+  full contract (Q-E2-11 [A-5] and Q-E2-02 [B-6] carried verbatim;
+  crawler_conduct.toml + robots_policy field + /data-collection/
+  copy batch; the S4c/S6c split record).
+- `docs/tickets/350_P36.2__rights-flip-decline-batch-and-terms-capture.md` —
+  full contract (HG-03 flips never pre-authorised — OP-26 verbatim;
+  E4-R3…R6b and I7-IU1…IU5 lines carried; the T3 out-of-rule
+  re-decision fold camreg_und_001/calgary/lexington/dot_511_md/
+  camreg_md_opendata; S6R-28 GATE-G6 packet routing).
+- `docs/tickets/351_P36.76__axon-connect-connector.md` — full
+  contract (OM-20 row; two legs — A = screen + registry appends, B =
+  the operator's first wire; R11-A16 programme-facts-only clause).
+- `docs/tickets/352_P36.77__documentcloud-muckrock-connector.md` —
+  full contract (OM-20 row; public pages only; Part VIII screening;
+  redacted rendition + URL + digest else recorded refusal; HG-03
+  activation is leg B — the operator's).
+- `docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md` —
+  full contract (OM-20 row; public unauthenticated contract pages,
+  no circumvention; terms captures per page family).
+- `docs/tickets/354_P36.13__api-rate-limits.md` — full contract
+  (SIG-API-009 enforcement; D-K3-6 honoured — no Cloud Armor; the
+  enforcement flip — gate-pending, nothing executed — is the named
+  OM-20 mutation; code ships dark).
+
+Decisions recorded:
+
+- **Outreach marker on the connector contracts:** 351/352/353 carry
+  the deliverable-7a outreach-owed note — connector contract text is
+  staged for the operator's contact lines but no outreach is sent by
+  any ticket (ADR-171; LATER-04).
+- **P36.2 fold (T3):** the out-of-rule/counsel-flagged re-decision
+  set is folded into row 350's contract as recorded re-decision lines
+  for the operator — every line routes to OP-26, none executes here.
+- **Rights-batch staging:** terms captures (IU1–IU5, R4a, R6a) are
+  live fetches — none yet executed, all pending the row's window —
+  into the evidence store; the flips themselves remain the
+  operator's GATE-P-line acts.
+- **P36.13 scope discipline:** the in-process limiter is the whole
+  mechanism; Cloud Armor stays on D-K3-6 (OPEN) per the row's note.
+
+Verification (C2):
+
+- Contract/history checks — see commit record
+  (`scripts/docs/check-history.sh`, the trailer lint, the claims
+  lint).
+- `make check` — see commit record.
+- Load lists token-counted per contract; largest C2 load (row 350)
+  ~28,833 tokens ÷3 — far under the ~150k ceiling.
+
+Dispositions:
+
+- All eight contracts replaced their skeletons in place (manifest-
+  bound filenames unchanged); each carries a literal `Run:` line
+  (`live_verification=false`), the plan cell's gate text verbatim,
+  backward-only dependencies and layered ACs distinguishing
+  engineered / fixture-verified / live-executed / human-completed
+  evidence layers.
+- Rows 348/351/352/353/354 are OM-20 rows (named-mutation gate or
+  bounded-GET leg); row 350 is never-pre-authorised by construction
+  (the agent half is staging + verification only); rows 347/349 are
+  non-OM-20 rows.
+- Deviations: none.
 
 ### C3 — (rows 355–362)
 
@@ -219,7 +294,8 @@ second-release acceptance (P36.70 — Class R conditional), PLAN-11D
 
 ### C11 — (rows 419–420)
 
-Scope: P36.73 capstone (live-read sweep + GATE-G6 packet) and the
+Scope: P36.73 capstone (the live-read sweep — gate-pending — and
+  the GATE-G6 packet) and the
 GATE-G6 gate marker (guard sentence; collects ING-GO-D, the Wave-D
 flip list, the 11D OM-20 list, the standing-go renewal); requirement
 index regeneration.

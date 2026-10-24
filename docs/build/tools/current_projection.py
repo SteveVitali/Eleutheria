@@ -661,13 +661,18 @@ def render_markdown(projection: dict) -> tuple[str, dict[str, str]]:
 
     fun_lines = ["| unit | recorded value | domain · date · evidence |", "|---|---|---|"]
     for b in projection["source_funnel"]:
+        # `value`/`domain_date_evidence` are recorded-verbatim baseline cells —
+        # code-span them so a repaginated row is never read as a fresh
+        # production-state claim (SIG-MEM-011; the coverage rows' precedent).
         fun_lines.append(
-            f"| {b['unit']} | {_verify_cell(b['value'])[:80]} | {b['domain_date_evidence'][:80]} |"
+            f"| {b['unit']} | `{_verify_cell(b['value'])[:80]}` | `{b['domain_date_evidence'][:80]}` |"
         )
     sections.append(("funnel", fun_lines))
 
     rel_lines = [
-        f"- public release: {_verify_cell(projection['releases'].get('public_release', '—'))[:140]}",
+        # recorded-verbatim release cell — code-spanned like the funnel cells
+        # (SIG-MEM-011: a projection row is recorded evidence, never a claim).
+        f"- public release: `{_verify_cell(projection['releases'].get('public_release', '—'))[:140]}`",
         f"- database run ids: {projection['releases'].get('database_run_ids', '—')}",
     ]
     sections.append(("releases", rel_lines))
