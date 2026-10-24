@@ -909,6 +909,12 @@ def _verify_suite_contexts(
     axe_runner: Any,
     site_kwargs: dict[str, Any],
     now: datetime | None,
+    api_origin: str | None = None,
+    api_headers: tuple[str, ...] = (),
+    api_fetcher: Any = None,
+    covers: Any = None,
+    quality_report: Any = None,
+    cadence_path: Path | None = None,
 ) -> list[Any]:
     """Build the per-origin :class:`release_verify.VerifyContext` set.
 
@@ -917,8 +923,12 @@ def _verify_suite_contexts(
     public origin. ``tree_origin`` serves the built ``work_dir`` through
     the §4.2 mapping — a fixture posture the result rows record as
     ``origin_kind: "tree"``; the registry's latest conf generation
-    supplies the promoted map, the ``/releases/`` index set and the
-    declared-410 routes wherever they are readable."""
+    supplies the promoted map, the ``/releases/`` index set, the
+    withdrawal deny map + tombstone root (V10's 410 barrier), the served
+    ``X-SIG-Conf-Gen`` header, and the declared-410 routes wherever they
+    are readable. ``api_origin`` is V7's served-parity surface — S names
+    sig-api-staging, P the live API; ``covers``/``quality_report`` are
+    V9's boundary oracle and V15's ``sig.quality-report/1``."""
     from . import release_verify as rv
 
     shared = dict(
@@ -931,8 +941,41 @@ def _verify_suite_contexts(
         tree_clean=tree_clean,
         axe_runner=axe_runner,
         now=now,
+        covers=covers,
+        quality_report=quality_report,
+        cadence_path=cadence_path,
         **site_kwargs,
     )
+    # V7's served-parity seam — one fetcher per ctx (S: sig-api-staging,
+    # P: the live API). ``api_fetcher`` injects the fixture answer (the
+    # composed/test seam); ``api_origin`` builds the real HTTP fetcher.
+    # Neither → the V7 served legs record a skip, which blocks (the
+    # honest absence, never an assumed pass).
+    if api_fetcher is None and api_origin:
+        api_headers_map = {}
+        for h in api_headers:
+            k, _, v = h.partition(":")
+            api_headers_map[k.strip()] = v.strip()
+        api_fetcher = rv.HttpFetcher(api_origin, headers=api_headers_map)
+    shared["api_fetcher"] = api_fetcher
+    # V14's baseline — the registry's current latest ≠ the candidate (S
+    # mode); its staged tree is the local store's staged root when it is
+    # one (a GCS store leaves the baseline to an explicit --baseline-dir
+    # through site_kwargs, or records the skip).
+    prev_body = store.read("registry/latest.json")
+    if prev_body is not None:
+        try:
+            prev_pub = str(json.loads(prev_body).get("publication_id") or "")
+        except ValueError:
+            prev_pub = ""
+        if prev_pub and prev_pub != pub:
+            shared.setdefault("previous_pub", prev_pub)
+            store_root = getattr(store, "root", None)
+            if (
+                store_root is not None
+                and (Path(store_root) / "staged" / "releases" / prev_pub).is_dir()
+            ):
+                shared.setdefault("previous_dir", Path(store_root) / "staged")
     headers = {}
     for h in origin_headers:
         k, _, v = h.partition(":")
@@ -957,6 +1000,9 @@ def _verify_suite_contexts(
         latest_pub = pub
         latest_label: str | None = None
         conf_overrides: dict[str, bytes] = {}
+        withdrawn_body: bytes | None = None
+        tombstones: dict[str, bytes] = {}
+        tombstone_root: Path | None = None
         from . import release_conf as _rc
 
         gen = _rc.current_generation(store)
@@ -984,6 +1030,19 @@ def _verify_suite_contexts(
                     conf_overrides[route] = body
                     if rel == "releases/index.html":
                         conf_overrides["/releases/index.html"] = body
+            # V10's deny barrier — the served generation's withdrawn.conf
+            # evaluates before try_files, exactly like nginx (P34.41). The
+            # tombstone bodies resolve under the store's staged root for a
+            # local store; a remote store supplies them as prefetched bytes.
+            withdrawn_body = store.read(_rc._conf_name(gen, "withdrawn.conf"))
+            store_root = getattr(store, "root", None)
+            if store_root is not None:
+                tombstone_root = Path(store_root) / "staged"
+            elif withdrawn_body:
+                for tomb_rel in rv._parse_deny_map(withdrawn_body).values():
+                    body = store.read(f"staged/{tomb_rel.lstrip('/')}")
+                    if body is not None:
+                        tombstones[tomb_rel.lstrip("/")] = body
             # the DCAT series catalog lives at the staged root's
             # releases/ dir (nginx's `location /releases/` prefix maps it to
             # staged/releases/catalog.jsonld — activation-overlay, not a
@@ -1019,7 +1078,11 @@ def _verify_suite_contexts(
                         if mode == "P"
                         else (f"{site.get('label')} {pub}" if site.get("label") else None)
                     ),
+                    conf_gen_header=str(gen) if gen >= 1 else None,
                     overrides=conf_overrides,
+                    deny_conf=withdrawn_body,
+                    tombstone_root=tombstone_root,
+                    tombstones=tombstones or None,
                 ),
                 origin=f"tree:{work_dir}",
                 origin_kind="tree",
@@ -1047,16 +1110,31 @@ def verb_verify(
     tree_clean: bool | None = None,
     axe_runner: Any = ...,
     site_kwargs: dict[str, Any] | None = None,
+    api_origin: str | None = None,
+    api_headers: tuple[str, ...] = (),
+    api_fetcher: Any = None,
+    covers: Any = None,
+    quality_report: Any = None,
+    cadence_path: str | Path | None = None,
     break_lock: str | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     """``verify`` — the bounded staged==built + integrity leg plus, when a
-    ``mode`` is given, the G3 §5.5 verification suite A (P35.56): V1–V5 +
-    V11–V13 over the staging origin (``S``) or every public origin
-    (``P``). Every check writes a JSON result row; any failure or skip
-    blocks promotion — a ``--apply`` journals ``verified`` only when the
-    bounded leg and every suite verdict pass (a Class-S readout may waive
-    named non-V12 checks; the waiver lands in the event detail).
+    ``mode`` is given, the G3 §5.5 verification suite (P35.56 suite A +
+    P35.58 suite B): V1–V15 over the staging origin (``S``); the §5.5
+    P-subset plus P1 over every public origin (``P``). Every check writes
+    a JSON result row; any failure or skip blocks promotion — a
+    ``--apply`` journals ``verified`` only when the bounded leg and every
+    suite verdict pass (a Class-S readout may waive named non-V12 checks;
+    the waiver lands in the event detail).
+
+    ``api_origin`` names V7's served-parity surface (sig-api-staging for
+    S, the live API for P); ``api_fetcher`` injects the fetcher directly
+    (the fixture/composed seam — wins over ``api_origin``); ``covers`` is
+    V9's boundary oracle ``(claim_key, lat, lon) -> bool``;
+    ``quality_report`` is V15's ``sig.quality-report/1`` (dict or path).
+    Unsupplied inputs land their legs as recorded skips — which block
+    (SIG-ENG-042).
 
     ``mode=None`` keeps the pre-P35.56 bounded scope exactly — the scope
     string in the result/event says so."""
@@ -1112,6 +1190,12 @@ def verb_verify(
             axe_runner=axe_runner,
             site_kwargs=site_kwargs or {},
             now=now,
+            api_origin=api_origin,
+            api_headers=api_headers,
+            api_fetcher=api_fetcher,
+            covers=covers,
+            quality_report=quality_report,
+            cadence_path=Path(cadence_path) if cadence_path else None,
         )
         for ctx in contexts:
             suites.append(rv.run_suite(ctx))
@@ -1438,6 +1522,10 @@ def run_verb(args: Any) -> dict[str, Any]:
             repo_root=repo_root_arg,
             pushed=repo_facts.get("pushed"),
             tree_clean=repo_facts.get("clean"),
+            api_origin=getattr(args, "api_origin", None),
+            api_headers=tuple(getattr(args, "api_header", ()) or ()),
+            quality_report=getattr(args, "quality_report", None),
+            cadence_path=getattr(args, "cadence", None),
             break_lock=break_lock,
         )
     if verb == "classify":

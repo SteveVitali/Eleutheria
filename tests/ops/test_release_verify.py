@@ -75,7 +75,7 @@ def _site_row(i: int) -> dict[str, Any]:
     }
 
 
-def _write_export(root: Path) -> Path:
+def _write_export(root: Path, *, as_of: str = AS_OF_WORLD) -> Path:
     comp = "sig_graph"
     (root / comp).mkdir(parents=True)
     (root / "web").mkdir(parents=True)
@@ -121,8 +121,8 @@ def _write_export(root: Path) -> Path:
             "ruleset_version": "p27.3/1.0.0",
         },
         "snapshot": {
-            "as_of_world": AS_OF_WORLD,
-            "as_of_belief": AS_OF_WORLD,
+            "as_of_world": as_of,
+            "as_of_belief": as_of,
             "belief_pinned": False,
             "spine_watermark": "claims=42 closed=0 bump=42",
             "materialize_run": None,
@@ -153,13 +153,18 @@ def _stamp_fields(site_release: dict[str, Any]) -> dict[str, str]:
 def _site_page(fields: dict[str, str], describedby: str, *, basis: str) -> str:
     """A minimal stamped page — the §6.1 contract's markup verbatim:
     one ``sig-release`` meta, one ``describedby`` link, one stamp block,
-    the mut-basis line carrying the "API is live" sentence."""
+    the mut-basis line carrying the "API is live" sentence, and one J3
+    §5.4 figure element (``data-artifact``/``data-pointer``/
+    ``data-figure-value``) whose pointer must recompute — the V6 leg."""
     return (
         '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
         "<title>fixture — SIG released record</title>"
         f'<meta name="sig-release" content="{fields["label"]} {fields["pub"]}">'
         f'<link rel="describedby" type="application/json" href="{describedby}">'
-        "</head><body><main><h1>fixture</h1><p>fixture page</p></main><footer>"
+        "</head><body><main><h1>fixture</h1><p>fixture page</p>"
+        '<figure data-figure-id="sites-total" data-artifact="web/coverage.json" '
+        'data-pointer="/totals/sites" data-figure-value="2">2 sites</figure>'
+        "</main><footer>"
         '<p class="stamp">Release '
         f"{fields['label']} · data as of {fields['as_of']} · "
         f"built {fields['built']} from code "
@@ -246,6 +251,65 @@ def _write_site_tree(
         (root / "index.html").write_text(
             _site_page(fields, describedby, basis=basis), encoding="utf-8"
         )
+        # Suite-B surfaces (P35.58): the J3 artifacts V6's figure contract
+        # recomputes (``coverage.json`` is the page figure's
+        # ``data-artifact``; ``unplaced.json`` is the geometry-less
+        # records' dossier rollup V9 recomputes) and the sources index
+        # V8's attribution legs read.
+        for stem, body in {
+            "web/coverage.json": {
+                "as_of_world": AS_OF_WORLD,
+                "totals": {"sites": 2},
+            },
+            "web/sources.json": {
+                "schema": "sig.sources-index/1",
+                "as_of_world": AS_OF_WORLD,
+                "sources": [
+                    {
+                        "source_id": "src_a",
+                        "name": "Ohio DOT",
+                        "license": {"spdx": "CC-BY-4.0"},
+                        "map_contributor": True,
+                        "records": 2,
+                        "attribution": {"instances": 4},
+                    }
+                ],
+            },
+            "web/dossiers/unplaced.json": {
+                "schema": "sig.dossier-rollup/1",
+                "slug_path": "unplaced",
+                "jurisdiction_key": None,
+                "rollup": {"records": 2, "records_placed_only_here": 2},
+                "page_refs": ["dossier/unplaced/"],
+            },
+            # V8's compartment licence index — the published copy under
+            # artifact/ (the bucket-root /LICENCES.json route is the same
+            # bytes through the publish layer)
+            "LICENCES.json": {
+                "schema": "sig.licences-index/1",
+                "compartments": [
+                    {
+                        "compartment": "sig_graph",
+                        "license": "CC-BY-4.0",
+                        "attribution": "Ohio DOT",
+                    }
+                ],
+            },
+        }.items():
+            f = root / "artifact" / stem
+            f.parent.mkdir(parents=True, exist_ok=True)
+            f.write_text(json.dumps(body), encoding="utf-8")
+        # the map page's attribution element names every map_contributor
+        # source (V8's upstream-holder leg)
+        map_page = root / "map" / "index.html"
+        if map_page.is_file():
+            map_page.write_text(
+                map_page.read_text(encoding="utf-8").replace(
+                    "</main>",
+                    '<p class="map-attribution">Map data © Ohio DOT and contributors</p></main>',
+                ),
+                encoding="utf-8",
+            )
     # the latest-view overlays: entity convenience stubs + the compat index
     # (G3 §4.2: ``/entity/`` and ``/compat_index.json`` resolve inside
     # ``v/<latest>``)
@@ -276,7 +340,9 @@ _OLD_LABEL = "sig-2026-09-30.1"
 _OLD_AS_OF = "2026-09-30T00:00:00Z"
 
 
-def _write_registry(root: Path, pub: str, *, promoted: bool) -> rp.LocalDirStore:
+def _write_registry(
+    root: Path, pub: str, old_pub: str = _OLD_PUB, *, promoted: bool
+) -> rp.LocalDirStore:
     """The release-root registry: labels + catalog + a conf gen. ``promoted``
     poses the post-promotion posture (gen 2 names the candidate latest and
     carries it in promoted.map); the default poses pre-promotion staging
@@ -290,7 +356,7 @@ def _write_registry(root: Path, pub: str, *, promoted: bool) -> rp.LocalDirStore
             {
                 "schema": "sig.release-labels/1",
                 "labels": [
-                    {"label": _OLD_LABEL, "publication_id": _OLD_PUB},
+                    {"label": _OLD_LABEL, "publication_id": old_pub},
                     {"label": LABEL, "publication_id": pub},
                 ],
             }
@@ -303,7 +369,7 @@ def _write_registry(root: Path, pub: str, *, promoted: bool) -> rp.LocalDirStore
                 "schema": "sig.publication-catalog/2",
                 "publications": [
                     {
-                        "publication_id": _OLD_PUB,
+                        "publication_id": old_pub,
                         "label": _OLD_LABEL,
                         "as_of_world": _OLD_AS_OF,
                         "state": "promoted",
@@ -320,24 +386,26 @@ def _write_registry(root: Path, pub: str, *, promoted: bool) -> rp.LocalDirStore
         encoding="utf-8",
     )
     gen_n = 2 if promoted else 1
-    latest_pub, latest_label = (pub, LABEL) if promoted else (_OLD_PUB, _OLD_LABEL)
+    latest_pub, latest_label = (pub, LABEL) if promoted else (old_pub, _OLD_LABEL)
     latest_doc = {
         "schema": "sig.latest-pointer/2",
         "publication_id": latest_pub,
         "label": latest_label,
         "conf_gen": gen_n,
+        # P1's freshness leg — the activation stamp a real generation writes
+        "activated_at": T0.isoformat(),
     }
     (reg / "latest.json").write_text(json.dumps(latest_doc), encoding="utf-8")
     gen = reg / "conf" / str(gen_n)
     (gen / "releases").mkdir(parents=True)
-    promoted_set = {_OLD_PUB, pub} if promoted else {_OLD_PUB}
+    promoted_set = {old_pub, pub} if promoted else {old_pub}
     (gen / "promoted.map").write_text(
         "".join(f"{p} 1;\n" for p in sorted(promoted_set)), encoding="utf-8"
     )
     (gen / "latest.json").write_text(json.dumps(latest_doc), encoding="utf-8")
     (gen / "withdrawn.conf").write_text("# empty barrier\n", encoding="utf-8")
     (gen / "selectors.conf").write_text("# empty selector routes\n", encoding="utf-8")
-    label_aliases = f"location = /releases/{_OLD_LABEL} {{ return 301 /releases/{_OLD_PUB}/; }}\n"
+    label_aliases = f"location = /releases/{_OLD_LABEL} {{ return 301 /releases/{old_pub}/; }}\n"
     if promoted:
         label_aliases += f"location = /releases/{LABEL} {{ return 301 /releases/{pub}/; }}\n"
     (gen / "labels.conf").write_text(label_aliases, encoding="utf-8")
@@ -368,7 +436,9 @@ def _build_candidate(
     disclosures: list[dict[str, Any]] | None = None,
 ) -> tuple[Path, str, rp.LocalDirStore]:
     """``(work_dir, pub, store)`` — a real built v2 tree + site trees +
-    staged objects + registry, ready for a verify."""
+    staged objects + registry, ready for a verify. The registry's prior
+    latest is a REAL staged release (V14's diff baseline re-reads its
+    catalog_entry/descriptor/record JSONs from ``staged/``)."""
     export = _write_export(tmp_path / "export")
     work_dir = tmp_path / "rel"
     build = build_release(
@@ -387,10 +457,109 @@ def _build_candidate(
     pub = build.publication_id
     site_release = json.loads((work_dir / f"releases/{pub}/release.json").read_bytes())
     _write_site_tree(work_dir, pub, site_release)
-    store = _write_registry(tmp_path / "relroot", pub, promoted=promoted)
-    # the staged objects the bounded leg re-proves (staged/*/{pub}/)
+    # the prior promoted release — same fixture shape, the older as_of
+    old_export = _write_export(tmp_path / "export_old", as_of=_OLD_AS_OF)
+    old_dir = tmp_path / "rel_old"
+    old_build = build_release(
+        old_export,
+        old_dir,
+        descriptor_version=2,
+        label=_OLD_LABEL,
+        environment="production",
+        code_commit=COMMIT,
+        code_tree="clean",
+        built_at=datetime(2026, 9, 30, 12, 0, 0, tzinfo=UTC),
+        ontology_generated_sha256="b" * 64,
+        evaluation={"status": "deferred"},
+    )
+    old_pub = old_build.publication_id
+    store = _write_registry(tmp_path / "relroot", pub, old_pub, promoted=promoted)
+    # the staged objects the bounded leg re-proves (staged/*/{pub}/) — the
+    # previous release's tree staged first, exactly as its own promote left it
+    rp.verb_stage(store, apply_=True, work_dir=old_dir, now=T0)
     rp.verb_stage(store, apply_=True, work_dir=work_dir, now=T0)
     return work_dir, pub, store
+
+
+class _ApiFixture:
+    """The served-API fetcher (V7's ``api_fetcher``) — ``/`` + ``/health``
+    name the release, ``/terms`` carries the live-spine basis header, and
+    any slice document declared under ``r/<pub>/api/index.json`` answers
+    the release's own bytes (a defect seeds a wrong answer)."""
+
+    def __init__(
+        self,
+        work_dir: Path,
+        pub: str,
+        *,
+        named_pub: str | None = None,
+        terms_basis: str = "live-spine",
+        missing: frozenset[str] = frozenset(),
+        tampered: frozenset[str] = frozenset(),
+    ) -> None:
+        self.work_dir = work_dir
+        self.pub = pub
+        self.named_pub = named_pub or pub
+        self.terms_basis = terms_basis
+        self.missing = missing
+        self.tampered = tampered
+
+    def get(self, path: str) -> rv.FetchResult:
+        norm = "/" + path.lstrip("/")
+        if norm in ("/", "/health"):
+            return rv.FetchResult(
+                200,
+                {"X-SIG-Basis": "live-spine"},
+                json.dumps(
+                    {"service": "sig-api", "release": {"publication_id": self.named_pub}}
+                ).encode(),
+            )
+        index = self.work_dir / "r" / self.pub / "api" / "index.json"
+        docs: dict[str, str] = {}
+        if index.is_file():
+            for d in json.loads(index.read_bytes()).get("documents") or []:
+                docs[str(d.get("route") or "")] = str(d.get("path") or "")
+        if norm in docs:
+            if norm in self.missing:
+                return rv.FetchResult(404, {}, b"not found")
+            body = (self.work_dir / docs[norm]).read_bytes()
+            if norm in self.tampered:
+                doc = json.loads(body)
+                doc["tampered"] = True
+                body = json.dumps(doc).encode()
+            return rv.FetchResult(
+                200,
+                {"X-SIG-Basis": "release", "X-SIG-Basis-Release": self.named_pub},
+                body,
+            )
+        return rv.FetchResult(
+            200,
+            {"X-SIG-Basis": self.terms_basis},
+            json.dumps({"route": norm, "basis": "live-spine"}).encode(),
+        )
+
+
+#: A green ``sig.quality-report/1`` — the shape
+#: ``exports.quality.build_quality_report`` emits; V15's gate consumes it.
+def _quality_report(**over: Any) -> dict[str, Any]:
+    doc: dict[str, Any] = {
+        "version": "sig.quality-report/1",
+        "generated_at": T0.isoformat(),
+        "placement": "S",
+        "target": "fixture",
+        "checks": [
+            {
+                "id": "q.coverage",
+                "mode": "enforce",
+                "outcome": "pass",
+                "regression": False,
+                "evaluated": True,
+            }
+        ],
+        "summary": {"class_s_trigger": False},
+    }
+    doc.update(over)
+    return doc
 
 
 def _ctx(
@@ -402,15 +571,39 @@ def _ctx(
     axe_runner: Any = lambda _url, _paths: {},  # noqa: E731 - a clean scan
     pushed: bool | None = True,
     tree_clean: bool | None = True,
+    api_fetcher: Any = ...,
+    quality_report: Any = ...,
     **kw: Any,
 ) -> rv.VerifyContext:
     reg = work_dir.parent / "relroot" / "registry"
-    gen = reg / "conf" / ("2" if mode == "P" else "1")
+    gen_n = 2 if mode == "P" else 1
+    gen = reg / "conf" / str(gen_n)
+    # the prior release's pub — the registry's pre-promotion latest (S) or
+    # the catalog's other promoted entry (P)
+    latest_pub = str(json.loads(store.read("registry/latest.json")).get("publication_id") or "")
+    old_pub = latest_pub
+    if mode == "P" and old_pub == pub:
+        for e in json.loads(store.read("registry/catalog.json")).get("publications"):
+            if e.get("publication_id") != pub and e.get("state") == "promoted":
+                old_pub = str(e["publication_id"])
     overrides = {
         "/releases/": (gen / "releases" / "index.html").read_bytes(),
         "/releases/index.html": (gen / "releases" / "index.html").read_bytes(),
         "/releases/catalog.json": (gen / "releases" / "catalog.json").read_bytes(),
         "/releases/latest.json": (gen / "releases" / "latest.json").read_bytes(),
+        # V8's licence index — the bucket-root route the publish layer serves
+        "/LICENCES.json": json.dumps(
+            {
+                "schema": "sig.licences-index/1",
+                "compartments": [
+                    {
+                        "compartment": "sig_graph",
+                        "license": "CC-BY-4.0",
+                        "attribution": "Ohio DOT",
+                    }
+                ],
+            }
+        ).encode(),
     }
     if mode == "S":
         # the DCAT series catalog — nginx's gated `location /releases/` maps
@@ -421,6 +614,9 @@ def _ctx(
         overrides["/releases/catalog.jsonld"] = (
             work_dir.parent / "relroot" / "staged" / "releases" / "catalog.jsonld"
         ).read_bytes()
+    kw.setdefault("previous_pub", old_pub)
+    kw.setdefault("previous_dir", work_dir.parent / "relroot" / "staged")
+    kw.setdefault("repo_root", REPO)
     return rv.VerifyContext(
         mode=mode,
         work_dir=work_dir,
@@ -428,11 +624,16 @@ def _ctx(
         fetcher=rv.TreeFetcher(
             work_dir,
             pub,
-            promoted=(frozenset({pub, _OLD_PUB}) if mode == "P" else None),
+            promoted=(frozenset({pub, old_pub}) if mode == "P" else None),
             staging=(mode == "S"),
             release_header=f"{LABEL} {pub}",
+            conf_gen_header=str(gen_n),
             overrides=overrides,
+            deny_conf=(gen / "withdrawn.conf").read_bytes(),
+            tombstone_root=work_dir.parent / "relroot" / "staged",
         ),
+        api_fetcher=_ApiFixture(work_dir, pub) if api_fetcher is ... else api_fetcher,
+        quality_report=_quality_report() if quality_report is ... else quality_report,
         origin=f"tree:{work_dir}",
         origin_kind="tree",
         store=store,
@@ -785,6 +986,8 @@ def test_verb_verify_suite_mode_journals_verified_on_green(tmp_path: Path) -> No
         tree_clean=True,
         results_dir=tmp_path / "results",
         axe_runner=lambda _url, _paths: {},
+        api_fetcher=_ApiFixture(work_dir, pub),
+        quality_report=_quality_report(),
     )
     assert out["verdict"] == "verified" and out["applied"]
     assert out["event"].startswith("registry/events/")
@@ -809,6 +1012,8 @@ def test_verb_verify_apply_journals_failed_on_a_seeded_defect(tmp_path: Path) ->
             tree_clean=True,
             results_dir=tmp_path / "results",
             axe_runner=lambda _url, _paths: {},
+            api_fetcher=_ApiFixture(work_dir, pub),
+            quality_report=_quality_report(),
         )
     assert err.value.code == "verify-failed"
     # the journal records the failure — promotion sees no `verified` event
@@ -832,6 +1037,8 @@ def test_verb_verify_tree_p_mode_gates_unpromoted_namespaces(tmp_path: Path) -> 
         pushed=True,
         tree_clean=True,
         results_dir=tmp_path / "results",
+        api_fetcher=_ApiFixture(work_dir, pub),
+        quality_report=_quality_report(),
     )
     non_pass = {
         (r["check"], r["status"], r.get("detail"))

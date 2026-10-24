@@ -35,7 +35,9 @@ from __future__ import annotations
 import json
 import os
 import tomllib
-from collections.abc import Callable, Iterable, Sequence
+import urllib.error
+import urllib.request
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from functools import partial
@@ -74,10 +76,16 @@ class TargetSpec:
     """
 
     name: str
-    kind: str  # "http" | "cloudsql" | "http-absent" (P34.10: ok iff 404)
+    kind: str  # "http" | "cloudsql" | "http-absent" (P34.10: ok iff 404) | "sig-release-*" (P35.58)
     url: str = ""
     url_env: str = ""
     path: str = ""
+    #: P35.58 (REL-04b, P1): the release-freshness bound for
+    #: ``sig-release-age`` targets (default the §5.5 verbatim 35 days).
+    max_age_days: int = 0
+    #: The declared trigger point — the alert severity a red target fires
+    #: (``warn`` | ``alarm`` | ``critical``; empty = the sweep's default).
+    trigger: str = ""
 
 
 @dataclass(frozen=True)
@@ -369,6 +377,8 @@ def parse_cadence_doc(doc: dict[str, Any]) -> CadenceConfig:
             url=str(t.get("url", "")),
             url_env=str(t.get("url_env", "")),
             path=str(t.get("path", "")),
+            max_age_days=int(t.get("max_age_days", 0) or 0),
+            trigger=str(t.get("trigger", "")),
         )
         for t in probes.get("targets", [])
     )
@@ -601,6 +611,99 @@ def resolve_targets(
     return out, skipped
 
 
+# --- P35.58 (REL-04b): the P1 release-probe kinds -------------------------------
+
+#: The release-posture probe kinds ``probe_hosted`` dispatches on (P35.58 /
+#: SIG-REL-007 P1 row). Each answers ``(ok, detail)`` like ``http_absent`` —
+#: the evidence row carries the observed values verbatim.
+RELEASE_PROBE_KINDS: tuple[str, ...] = (
+    "sig-release-pointer",
+    "sig-release-age",
+    "sig-conf-gen",
+)
+
+#: ``sig-release-age``'s default bound — the §5.5 P1 row verbatim.
+RELEASE_AGE_MAX_DAYS = 35
+
+
+def _http_get(url: str, *, timeout: float = 15.0) -> tuple[int, dict[str, str], bytes]:
+    """One GET → ``(status, headers, body)`` — the release probes need the
+    response body/headers, not just liveness. An unreachable origin answers
+    status 0 with the error as body — a probe can only ever record a red,
+    never raise over the sweep."""
+    try:
+        with urllib.request.urlopen(url, timeout=timeout) as resp:  # noqa: S310
+            return resp.status, dict(resp.headers), resp.read()
+    except urllib.error.HTTPError as exc:
+        return exc.code, dict(exc.headers), exc.read()
+    except (urllib.error.URLError, OSError) as exc:
+        return 0, {}, f"unreachable: {exc}".encode()
+
+
+def check_release(kind: str, url: str, *, max_age_days: int = 0) -> tuple[bool, str]:
+    """One P1 release-posture probe (P35.58 / SIG-REL-007) → ``(ok, detail)``.
+
+    * ``sig-release-pointer`` — ``<origin>/releases/latest.json``'s
+      ``publication_id`` must equal ``<origin>/release.json``'s (the latest
+      view serves the same release the activation pointer names);
+    * ``sig-release-age`` — ``url`` names the ``/releases/latest.json``
+      object; its ``activated_at`` must be younger than ``max_age_days``
+      (default :data:`RELEASE_AGE_MAX_DAYS`);
+    * ``sig-conf-gen`` — the ``X-SIG-Conf-Gen`` the origin serves on ``/``
+      must equal the generation ``/releases/latest.json`` records.
+    """
+    base = url.rstrip("/")
+    timeout = 15.0
+    if kind == "sig-release-age":
+        status, _h, body = _http_get(base, timeout=timeout)
+        if status != 200:
+            return False, f"latest.json HTTP {status}"
+        try:
+            stamp = json.loads(body).get("activated_at")
+            when = datetime.fromisoformat(str(stamp).replace("Z", "+00:00"))
+        except (ValueError, TypeError):
+            return False, "latest.json carries no parseable activated_at"
+        age = (datetime.now(UTC) - when).total_seconds() / 86400.0
+        bound = max_age_days or RELEASE_AGE_MAX_DAYS
+        if age > bound:
+            return False, f"release age {age:.1f}d > {bound}d"
+        return True, f"release age {age:.1f}d <= {bound}d"
+    status, headers, body = _http_get(f"{base}/releases/latest.json", timeout=timeout)
+    if status != 200:
+        return False, f"/releases/latest.json HTTP {status}"
+    try:
+        latest = json.loads(body)
+    except ValueError:
+        return False, "/releases/latest.json is not JSON"
+    latest_pub = str(latest.get("publication_id") or "")
+    if kind == "sig-release-pointer":
+        status2, _h2, body2 = _http_get(f"{base}/release.json", timeout=timeout)
+        if status2 != 200:
+            return False, f"/release.json HTTP {status2}"
+        try:
+            rel_pub = str(json.loads(body2).get("publication_id") or "")
+        except ValueError:
+            return False, "/release.json is not JSON"
+        if rel_pub != latest_pub:
+            return False, f"/release.json names {rel_pub}, latest.json names {latest_pub}"
+        return True, f"latest view serves {latest_pub[:18]}… as latest.json names it"
+    if kind == "sig-conf-gen":
+        recorded = str(latest.get("conf_gen") or "")
+        status2, headers2, _b2 = _http_get(f"{base}/", timeout=timeout)
+        served = ""
+        for k, v in headers2.items():
+            if k.lower() == "x-sig-conf-gen":
+                served = v
+        if status2 != 200:
+            return False, f"origin root HTTP {status2}"
+        if not served:
+            return False, "origin serves no X-SIG-Conf-Gen header"
+        if served != recorded:
+            return False, f"origin serves conf-gen {served}, latest.json records {recorded}"
+        return True, f"served conf-gen {served} == recorded"
+    return False, f"unknown release probe kind {kind!r}"
+
+
 def probe_hosted(
     targets: Sequence[tuple[str, str, str]],
     *,
@@ -608,6 +711,8 @@ def probe_hosted(
     check_http: Callable[..., bool] | None = None,
     check_pg: Callable[[str], bool] | None = None,
     check_absent: Callable[[str], tuple[bool, str]] | None = None,
+    check_release_fn: Callable[[str, str], tuple[bool, str]] | None = None,
+    specs: Mapping[str, TargetSpec] | None = None,
     http_timeout: float | None = None,
 ) -> list[ProbeResult]:
     """Probe the hosted stack once — one :class:`ProbeResult` per target.
@@ -628,6 +733,12 @@ def probe_hosted(
     sweep can legitimately hit a multi-second cold start — the local 3s budget
     would record a false DOWN on every first probe after idle (observed live
     2026-09-16: 3.03s/3.01s timeouts on a healthy API).
+
+    The ``sig-release-*`` kinds (P35.58 / REL-04b, the §5.5 P1 row) probe the
+    release posture — pointer parity, release freshness, served==recorded conf
+    generation — through :func:`check_release`; ``check_release_fn`` injects a
+    fixture answer for tests, and ``specs`` supplies each target's declared
+    ``max_age_days``.
     """
     if check_http is None:
         timeout = http_timeout
@@ -644,6 +755,16 @@ def probe_hosted(
             assert check_absent is not None
             (ok, note), latency = _timed(partial(check_absent, url))
             detail = note if note else ("" if ok else "denied route present")
+        elif kind in RELEASE_PROBE_KINDS:
+            spec = (specs or {}).get(name)
+            max_age = spec.max_age_days if spec is not None else 0
+            if check_release_fn is not None:
+                (ok, note), latency = _timed(partial(check_release_fn, kind, url))
+            else:
+                (ok, note), latency = _timed(
+                    partial(check_release, kind, url, max_age_days=max_age)
+                )
+            detail = note if note else ("" if ok else "release posture check failed")
         else:
             check = (
                 (lambda u=url: check_pg(u)) if kind == "cloudsql" else (lambda u=url: check_http(u))
