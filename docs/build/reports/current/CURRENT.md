@@ -4,12 +4,12 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `c70ff8a00cb8639e2ee03d7fa77f0fd224b8ba95` · inputs hashed: 1109 · wall-clock receipt: `receipt.json`
+> input_commit: `bcc07178ba5bbeda3d01501e8027561bec769a41` · inputs hashed: 1109 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P35.64` · lastCompleted `P35.63`
-- chainTip `r11/P35.63-first-model-release-to-production` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-25T04:28Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `GATE-G5` · lastCompleted `P35.64`
+- chainTip `r11/P35.64-sub-round-11b-acceptance` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-25T06:57Z`
 
 ## Obligations
 
@@ -77,6 +77,7 @@
 | P35.61 | queued live half of P32.22's recovery deferral + F-522: L1 audit+plan (read-only) → L2 operator pause 1–4 h → L3 bounded `recovery-apply --authority <scope>` pi… | `implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` · landed 338 (PR #359 — legs queued, `D-R10-LIVE-1… |
 | P35.62 | queued live half of P32.23a's candidate deferral: `release-candidate` over a hosted `frozen_unpublished` snapshot → `+0` rematerialize → compartmented export → … | `implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true` · landed 339 (PR #360 — leg queued; D-P32.23a-1 OPEN, neve… |
 | P35.63 | queued release-exposure half of the publish deferral (its home stays the P32.25 row): L1 staged cut over the hosted registry → V1–V15 on the private staging ori… | `implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (resumes at L2's promote leg once the signature exist… |
+| P35.64 | queued 11B acceptance sweep + GATE-G5 packet leg (the sub-round capstone): read-only crawl of the promoted release/API/`sig-public` tiles/`sig-registry` + ledge… | `implement-spec spec=docs/tickets/342_P35.64__sub-round-11b-acceptance.md live_verification=true` (sweep + packet) · landed 342 |
 
 ## Known inconsistencies (preserved, never synthesized)
 

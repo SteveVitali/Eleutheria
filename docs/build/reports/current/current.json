@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "c70ff8a00cb8639e2ee03d7fa77f0fd224b8ba95",
+  "input_commit": "bcc07178ba5bbeda3d01501e8027561bec769a41",
   "manifest_inputs": 1109,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.64",
-    "lastCompleted": "P35.63",
+    "nextTicket": "GATE-G5",
+    "lastCompleted": "P35.64",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.67,P36.12",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.12",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.63-first-model-release-to-production",
+    "chainTip": "r11/P35.64-sub-round-11b-acceptance",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-25T04:28Z"
+    "updatedAt": "2026-10-25T06:57Z"
   },
   "counts": {
     "obligations": 182,
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 53,
+    "return_pass_rows": 54,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -9905,6 +9905,14 @@
         "gates_cell": "hosted, production write — queued (probes Sun: `SIG_GCP_PROJECT`/`SIG_EXEC_IMAGE`/`SIG_HOSTED_DSN` unset, probe SA + login secrets NOT_FOUND; the staged candidate, staging origins + `sig-release` job absent — every upstream leg queued); never pre-authorised — publication in the never-listed set, the `p-17b713` GATE-G3 signature never transfers; L2's go = the operator's verbatim signed HG-11 candidate-specific readout + the operator go; AR-3+AR-2 weekday 14:00–20:00Z excl. weekends + 03:00–06:30Z; before `live:P35.62` (the staged candidate), before `live:P35.53` (the staged/ home), before `live:P35.59` (the dark cutover), before `live:P35.61` (the snapshot input), before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.57` (the queued API-roll leg); earliest 2026-10-26T14:00Z, later in practice",
         "operator_cell": "L1 — the operator's in-slot go for the staged cut (publication is never pre-authorised); L2 — the operator's verbatim signed HG-11 candidate-specific readout + the operator go, never on silence; the rehearsal's prior-pointer leg recorded not-rehearsable on the first release",
         "rerun_cell": "`implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (resumes at L2's promote leg once the signature exists — a re-staged cut of the same candidate is byte-identical) · landed 341 (PR #362 — both legs queued, never ran)",
+        "obligations": []
+      },
+      {
+        "key": "P35.64",
+        "obligations_cell": "queued 11B acceptance sweep + GATE-G5 packet leg (the sub-round capstone): read-only crawl of the promoted release/API/`sig-public` tiles/`sig-registry` + ledger surface (counts only — handles never listed) + the GATE-G5 packet refreshed at the leg; landed: `sig-ops acceptance-sweep-11b` → `sig.probe-run/1` + `acceptance_report_11b` + `gate_packet_11b`",
+        "gates_cell": "hosted, read-only — `acceptance-sweep-11b` refuses (exit 42) before `live:P35.63` promotes (the promoted first model release must exist): both P35.63 legs queued, L2 on the operator's verbatim signed HG-11 readout — never pre-authorised; weekday 14:00-20:00Z slot ≥ 2026-10-26T14:00Z (the promotion's own bound, later in practice); the sweep itself needs no go (read-only); GATE-G5 never presented while a leg is due",
+        "operator_cell": "nothing until `live:P35.63` promotes — the sweep needs no go (read-only); the GATE-G5 packet is presented at row 343 only when no leg is due",
+        "rerun_cell": "`implement-spec spec=docs/tickets/342_P35.64__sub-round-11b-acceptance.md live_verification=true` (sweep + packet) · landed 342",
         "obligations": []
       }
     ]
@@ -23649,10 +23657,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "1a1493c597c6c665fadb6d5dac6a508c43822bf64b492b491ca63e79cce2b3ad",
+  "manifest_sha256": "c844e3444c7aedbd422b11b2450cacb4eda2182c527737fc75f7abef9236107a",
   "current_md": {
-    "lines": 128,
-    "bytes": 18793,
+    "lines": 129,
+    "bytes": 19093,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
