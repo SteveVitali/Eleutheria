@@ -562,8 +562,9 @@ Files written:
 
 Decisions recorded:
 
-- All eight rows live-free; the HG-03 posture on 396 is wiring,
-  not a flip — the contract states it verbatim.
+- All eight rows carry no live leg — nothing executed; the HG-03
+  posture on 396 is wiring, not a flip — the contract states it
+  verbatim.
 - The one-template rule (SIG-UI-069) and the one-generator rule
   (SIG-UI-058) are carried as lint-pinned invariants.
 
@@ -682,8 +683,8 @@ Files written:
 Decisions recorded in the contracts (nothing executed — contracts
 stage, they never act):
 
-- P36.73 is a capstone: the live-read sweep is read-only by
-  construction and runs only after P36.72b's promote; the GATE-G6
+- P36.73 is a capstone: its sweep is read-only by construction and
+  not executed here — it runs only after P36.72b's promote; the GATE-G6
   packet it drafts carries ING-GO-D, the Wave-D flip list
   (N1–N21, ACQ-23a/b, DocumentCloud, Sourcewell/OMNIA, Axon
   Connect, RB-06b, RB-08; OP-26), the draft 11D OM-20 list
@@ -750,8 +751,8 @@ Findings and fixes applied:
 - **Over-factoring:** no further splits proposed; the a/b pairs
   the plan already carries (P36.42a/b, P36.66a/b, P36.72a/b)
   keep disjoint scopes.
-- **Live legs:** every windowed/legged row carries its re-run
-  prompt (`live_verification=true`); no contract claims executed
+- **Live legs (none executed):** every windowed/legged row carries
+  its re-run prompt (`live_verification=true`); no contract claims executed
   live state — gate-pending or conditional wording throughout.
 
 Re-split rule (§8.1, S2 §3.2): 11C stands at **76 engineering
@@ -787,13 +788,13 @@ are excluded by construction):
 | 351 | P36.76 | Axon Connect: screen records + page hashes + registry-row appends (single recorded GETs of public registration pages) | appended set's record; leg B is the operator's act |
 | 352 | P36.77 | DocumentCloud/MuckRock: unauthenticated public-page GETs + registry appends + redacted-rendition records | appended set's record; activation stays operator's |
 | 353 | P36.78 | Sourcewell/OMNIA: public-page GETs + appends + terms captures + redacted renditions | appended set's record; leg B operator's |
-| 354 | P36.13 | hosted rate-limit enforcement flip (defined → enforced) | prior deployment revision |
+| 354 | P36.13 | rate-limit enforcement flip on the hosted deployment (defined → enforced, gate-pending) | prior deployment revision |
 | 371 | P36.79 | restricted-bucket object write — the sealed relevance set's bytes | bucket versioning + committed sha256 |
 | 374 | P36.33 | R2 host create (basemap host provisioning) | re-creatable from `basemap.lock.json` + JUR-01's pack |
-| 385 | P36.75 | hosted append-only claim write (organisation-level Flock share-list claims) | additive — the written set's digest list |
+| 385 | P36.75 | append-only claim write on the hosted spine (organisation-level Flock share-list claims, gate-pending) | additive — the written set's digest list |
 | 386 | P36.43 | scheduler job create (status lane) | job-definition removal |
 | 387 | P36.44 | scheduler job create (monthly cut + weekly materialize) | job-definition removal |
-| 389 | P36.46 | hosted append-only history backfill | appended set's digest list |
+| 389 | P36.46 | append-only history backfill on the hosted spine (gate-pending) | appended set's digest list |
 | 412 | P36.68 | mirror writes — content-addressed extract pushes + versions.json | content-addressed objects + index diff |
 
 13 rows vs §8.1's recorded count of 10 — the plan anticipated

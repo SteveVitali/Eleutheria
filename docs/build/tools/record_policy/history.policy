@@ -745,3 +745,24 @@ seed-commit 8800cc2e
 # declaration lands as a later commit. Scope: findings attributed
 # to 5d7681a4 only; no other commit borrows the exemption.
 seed-commit 5d7681a4
+# ── PLAN-11C C10–C12 executed-flag exemption (ticket 340; recorded 2026-10-25) ──────────────
+# Commits cf587926 (C10) and c1c08a94 (C11) are the sanctioned skeleton→full-contract rewrites
+# of rows 418 and 420 — PLAN-11C's own deliverable, the same class as f17eb537/f9c407c8 above —
+# whose subjects happened to name the later-row ids verbatim ("…acceptance, PLAN-11D" and
+# "…capstone, GATE-G6 marker"), so `executed()` (B2 §7) marked PLAN-11D executing at cf587926
+# and GATE-G6 at c1c08a94 mid-range and the rewrites read as frozen-contract edits (133
+# append-only findings on docs/tickets/418_PLAN-11D__contracts-for-11d-and-tail.md attributed
+# to cf587926 + 1 to ff03e193, 88 on docs/tickets/420_GATE-G6__11c-check-in.md attributed to
+# c1c08a94). The ff03e193 finding (418:9) is C12's forward-dependency repair of the Depends-on
+# header — an edit that is only "frozen" because cf587926's subject set the flag; under the
+# exemption pair the repair conforms. The branch rule forbids force-push, so the exemption
+# lands declared rather than as reworded subjects.
+# Consequence recorded for later contexts: 418's and 420's contracts read "executed" in any
+# range containing cf587926/c1c08a94 — subsequent edits must conform to BM-TICKET-04 (appended
+# `> Amended <date>:` notes) — and PLAN-11D's own dispatch later names row 418's id in
+# subjects freely (it executes the row by then).
+# Scope: findings attributed to cf587926, c1c08a94 and ff03e193 only; no other commit borrows
+# the exemption.
+seed-commit cf587926
+seed-commit c1c08a94
+seed-commit ff03e193
