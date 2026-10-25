@@ -1113,3 +1113,29 @@ rerun_cell = '''`implement-spec spec=docs/tickets/339_P35.62__round10-production
   go = '''pre-authorised: GATE-G4 §4 (P35.62; expires next GATE, OM-10)'''
   rerun = '''implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true'''
   live_dependants = ["P35.63"]
+[[row]]
+key = "P35.63"
+kind = "leg"
+obligations = []
+obligations_cell = '''queued release-exposure half of the publish deferral (its home stays the P32.25 row): L1 staged cut over the hosted registry → V1–V15 on the private staging origins → classify `class_s` → the agent-drafted candidate-specific HG-11 readout (unsigned) · L2 queued promote + post-promote checks + the live rollback rehearsal — only after the operator's verbatim signed HG-11 readout + the operator go; packet `docs/build/reports/p35.63-first-model-release/RELEASE_PACKET.{json,md}` prepared_not_executed'''
+gates_cell = '''hosted, production write — queued (probes Sun: `SIG_GCP_PROJECT`/`SIG_EXEC_IMAGE`/`SIG_HOSTED_DSN` unset, probe SA + login secrets NOT_FOUND; the staged candidate, staging origins + `sig-release` job absent — every upstream leg queued); never pre-authorised — publication in the never-listed set, the `p-17b713` GATE-G3 signature never transfers; L2's go = the operator's verbatim signed HG-11 candidate-specific readout + the operator go; AR-3+AR-2 weekday 14:00–20:00Z excl. weekends + 03:00–06:30Z; before `live:P35.62` (the staged candidate), before `live:P35.53` (the staged/ home), before `live:P35.59` (the dark cutover), before `live:P35.61` (the snapshot input), before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.57` (the queued API-roll leg); earliest 2026-10-26T14:00Z, later in practice'''
+operator_cell = '''L1 — the operator's in-slot go for the staged cut (publication is never pre-authorised); L2 — the operator's verbatim signed HG-11 candidate-specific readout + the operator go, never on silence; the rehearsal's prior-pointer leg recorded not-rehearsable on the first release'''
+rerun_cell = '''`implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (resumes at L2's promote leg once the signature exists — a re-staged cut of the same candidate is byte-identical) · landed 341 (PR #362 — both legs queued, never ran)'''
+
+  [[row.legs]]
+  id = "P35.63-dispatch-stage-verify-readout"
+  obligations = []
+  earliest = '''the next weekday 14:00–20:00Z slot once `live:P35.62` (the staged candidate), `live:P35.53` (the staged/ home), `live:P35.59` (the dark cutover), `live:P35.61` (the snapshot input), `live:P34.46` (+ its 48 h soak), `live:P34.43` L1+L2 and `live:P35.57` (the API-roll leg) all hold — earliest 2026-10-26T14:00Z, later in practice'''
+  excluded = ["03:00–06:30Z", "weekends", "before `live:P35.62` (the staged candidate)", "before `live:P35.53` (the staged/ home)", "before `live:P35.59` (the dark cutover)", "before `live:P35.61` (the snapshot input)", "before `live:P34.46` + 48 h soak", "before `live:P34.43` L1+L2", "before `live:P35.57` (the queued API-roll leg)"]
+  go = '''operator: the operator's in-slot go for the staged cut'''
+  rerun = '''implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true'''
+  live_dependants = ["P35.64"]
+
+  [[row.legs]]
+  id = "P35.63-promote-under-hg11"
+  obligations = []
+  earliest = '''only after L1 lands + the operator's verbatim signed HG-11 readout exists — then the next weekday 14:00–20:00Z slot with the operator present; earliest 2026-10-26T14:00Z, later in practice'''
+  excluded = ["03:00–06:30Z", "weekends", "before `live:P35.62` (the staged candidate)", "before `live:P35.53` (the staged/ home)", "before `live:P35.59` (the dark cutover)", "before `live:P35.61` (the snapshot input)", "before `live:P34.46` + 48 h soak", "before `live:P34.43` L1+L2", "before `live:P35.57` (the queued API-roll leg)"]
+  go = '''operator: the operator's verbatim signed HG-11 candidate-specific readout + the operator go'''
+  rerun = '''implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true'''
+  live_dependants = ["P35.64"]

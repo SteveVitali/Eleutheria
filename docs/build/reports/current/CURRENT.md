@@ -4,12 +4,12 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `e0c3464de7a9e8a73e8193ad3cb54c1035ffff59` · inputs hashed: 1107 · wall-clock receipt: `receipt.json`
+> input_commit: `65f503b61621869e23dcf0ea9caff63ae6729657` · inputs hashed: 1107 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P35.63` · lastCompleted `PLAN-11C`
-- chainTip `r11/PLAN-11C-contracts-for-11c-and-k13-families` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-25T01:49Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P35.64` · lastCompleted `P35.63`
+- chainTip `r11/P35.63-first-model-release-to-production` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-25T04:28Z`
 
 ## Obligations
 
@@ -76,6 +76,7 @@
 | P35.59 | queued dark cutover (`ops/gcp/web-cutover.sh --apply all`): AR-2 prestate+manifest → `staged/v/legacy-<YYYYMMDD>/` floor import → `conf/0`+carry+`serving.json` … | `SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all` or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_ver… |
 | P35.61 | queued live half of P32.22's recovery deferral + F-522: L1 audit+plan (read-only) → L2 operator pause 1–4 h → L3 bounded `recovery-apply --authority <scope>` pi… | `implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` · landed 338 (PR #359 — legs queued, `D-R10-LIVE-1… |
 | P35.62 | queued live half of P32.23a's candidate deferral: `release-candidate` over a hosted `frozen_unpublished` snapshot → `+0` rematerialize → compartmented export → … | `implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true` · landed 339 (PR #360 — leg queued; D-P32.23a-1 OPEN, neve… |
+| P35.63 | queued release-exposure half of the publish deferral (its home stays the P32.25 row): L1 staged cut over the hosted registry → V1–V15 on the private staging ori… | `implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (resumes at L2's promote leg once the signature exist… |
 
 ## Known inconsistencies (preserved, never synthesized)
 
