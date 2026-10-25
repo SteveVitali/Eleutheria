@@ -766,3 +766,26 @@ seed-commit 5d7681a4
 seed-commit cf587926
 seed-commit c1c08a94
 seed-commit ff03e193
+# PLAN-11C (row 340) — 6ccc703f is the sanctioned in-place orient-probe
+# repair: the a149b26d closeout entries pushed the orient recipe to
+# 49,183+ B > 48 KiB (BM-ORIENT-01 V11 — the same docs-red class as
+# 8800cc2e/5d7681a4). 6ccc703f folds the PHASE LOG boundary-confirm +
+# done entries (LEDGER.md:1220/1221) in place keeping every recorded
+# field, and compacts head line 2 + RETURN PASS cells/meta in place —
+# the same sanctioned pattern as f80fbd0a/6c05e605/8800cc2e. The
+# replaced bytes are archived byte-for-byte under
+# docs/build/reports/memory-repair/
+# (LEDGER_phaselog_L1218_pre-PLAN-11C.txt sha256 50dfc5498aaa51e7…,
+# LEDGER_phaselog_L1221_pre-PLAN-11C.txt 78578d6a52fd…,
+# LEDGER_head_line2_pre-PLAN-11C.txt d015ac5d871cfc…,
+# return_pass_rows_pre-PLAN-11C.txt 501dd38ae21bbf…) and the compaction
+# is disclosed by the appended `PLAN-11C correction` entry. Every leg
+# anchor (earliest tokens, excluded hours, go refs, re-run lines,
+# operator steps) survived verbatim — `return_pass.py check` green,
+# region byte-identical; `check_live_claims` corpus 0 violations after
+# restoring severed negates and backticking `live-1`/`D-R10-LIVE-1`
+# (the CURRENT.md truncation could otherwise sever a negate — the
+# P35.59/8800cc2e re-blame trap). The branch rule forbids force-push,
+# so the declaration lands as a later commit. Scope: findings
+# attributed to 6ccc703f only; no other commit borrows the exemption.
+seed-commit 6ccc703f
