@@ -370,11 +370,59 @@ claims lint clean, docs-only (no code touched).
 
 Dispositions: eight skeletons → full contracts; deviations none.
 
-### C5 — (rows 371–378)
+### C5 — 2026-10-25 (rows 371–378)
+
+Started: 2026-10-25T00:01Z · Closed: 2026-10-25T00:02Z (`date -u`)
+Context model: devin-desktop/swe-2-high/subagent.
 
 Scope: P36.79 held-out relevance set (OM-20, B-28 b), search index and
 engine (P36.31/32), basemap host (P36.33, OM-20), dossier index,
 redirects, no-JS map, map app (P36.34…P36.37).
+
+Files written:
+
+- `docs/tickets/371_P36.79__held-out-search-relevance-set.md` —
+  full contract (OM-20 row; the sealed ≥40-query set written by a
+  separate context — labelled `agent-authored held-out set; not
+  independent`, sha256-only in the repo, read only by SRCH-07;
+  D-K3-7 [B-28] = b carried verbatim).
+- `docs/tickets/372_P36.31__search-index-v2-builder.md` — full
+  contract (SIG-UI-073/074 + SIG-SRCH-004/005/011 owners;
+  `sig.release-search-index/2` per compartment).
+- `docs/tickets/373_P36.32__query-engine-v2-and-benchmark.md` —
+  full contract (reads only the sealed set's sha256 — S6 verbatim;
+  the metric is labelled everywhere, TS-20).
+- `docs/tickets/374_P36.33__basemap-pipeline-and-host.md` — full
+  contract (OM-20 row; host create is the named mutation; A-3 = a:
+  R2 after the DNS move — OP-09; kill switch + budget alert;
+  +$2/mo S1a posture).
+- `docs/tickets/375_P36.34__grouped-dossier-index-and-navigation.md` —
+  full contract (SIG-UI-057 + SIG-JUR-001…008/010/011 owners;
+  D-K4-3 [B-44] directory thresholds carried verbatim).
+- `docs/tickets/376_P36.35__migration-and-redirect-generator.md` —
+  full contract (SIG-UI-058 + SIG-JUR-009/012 owners; the ONE
+  redirects.conf generator for every URL history).
+- `docs/tickets/377_P36.36__no-js-map-baseline-and-site-lists.md` —
+  full contract (SIG-UI-068/105 owners; /map/ document ≤100 KiB;
+  UXR-18 interim link target).
+- `docs/tickets/378_P36.37__map-app-shell.md` — full contract
+  (SIG-UI-065/095/097/101…104/106/107 owners; Preact absorbs
+  UXK0-6; lexicon symbols; 'records' copy).
+
+Decisions recorded:
+
+- **The sealed-set discipline is contractual:** 371's contract makes
+  the write-then-seal ordering an AC, and 373's makes the
+  sha256-only read a fixture-verified one — the label travels with
+  every metric (TS-20).
+- **Two OM-20 rows** (371, 374) carry the named-mutation gate text
+  verbatim with in-ticket-pause fallback; both legs are bounded and
+  restorable.
+
+Verification (C5): same profile as C4 — memory_guard green, claims
+lint clean, docs-only.
+
+Dispositions: eight skeletons → full contracts; deviations none.
 
 ### C6 — (rows 379–386)
 
