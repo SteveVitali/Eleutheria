@@ -356,8 +356,8 @@ Files written:
 
 Decisions recorded:
 
-- All eight rows are live-free (`live stage: none` in every
-  contract — none is taken); the S4c note carried — row 367
+- All eight rows carry no live stage — none is taken
+  (the `live stage` cell reads none in every contract); the S4c note carried — row 367
   owns ADR-157 (recorded in the contract, written at
   implementation).
 - Ledger correction folded in: C3's verification block now names
@@ -494,8 +494,9 @@ Files written:
   contract (verdict table as code + lint; OD-07 a batched verbatim
   confirmation; 'description pending review' interim).
 - `docs/tickets/389_P36.46__execution-keyed-ingestion-history.md` —
-  full contract (OM-20 hosted backfill; run_id NULL +
-  link_basis/clock_basis; P31.2 unmatched-verdict import).
+  full contract (OM-20 hosted backfill, gate-pending;
+  run_id NULL + link_basis/clock_basis; P31.2
+  unmatched-verdict import).
 - `docs/tickets/390_P36.47__source-page-a.md` — full contract
   (SIG-UI-056 owner; supersedes TX-05b's first half; disclosure
   texts verbatim-batched per D-K10-1).
