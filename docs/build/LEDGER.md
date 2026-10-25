@@ -7,9 +7,9 @@
 
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # P35.62 landed(339); P35.41/P35.46/P35.53/P35.59/P35.61/P35.62 legs QUEUED
-nextTicket: PLAN-11C # row 340
-lastCompleted: P35.62 # row 339
+projectStatus: IN_PROGRESS # PLAN-11C landed(340); P35.41/P35.46/P35.53/P35.59/P35.61/P35.62 legs QUEUED
+nextTicket: P35.63 # row 341
+lastCompleted: PLAN-11C # row 340
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.67,P36.12
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P35.62-round10-production-candidate # base r11/P35.61 · leg queued, none run
+chainTip: r11/PLAN-11C-contracts-for-11c-and-k13-families # base r11/P35.62 · plan row, no legs
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-24T21:32Z
+updatedAt: 2026-10-25T01:15Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1218,3 +1218,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-24 — P35.62 done — `ci: pass #360@2252761` 5/5 head-bound (run 40132059586; `reports/ci/p35_62_pr360.json`; stack #359…#352 pass, merges:0, `main` d47d7b0 descends:no) · row 339 — R11-ACT-15: the queued `D-P32.23a-1` candidate return pass — **staging leg QUEUED, nothing executed**: OM-20 listing MET (GATE-G4 §4 names the row); every runtime precondition unmet — `live:P35.61` snapshot input absent, `live:P34.46`/`live:P34.43`/`live:P35.53` queued (bucket 404, origins/job/SA + probe SA + login secrets NOT_FOUND), `SIG_GCP_PROJECT`/`SIG_EXEC_IMAGE`/`SIG_HOSTED_DSN` unset, Sat outside the preferred slot → `prepared_not_executed` packet `reports/p35.62-production-candidate/CANDIDATE_PACKET.{json,md}` (`candidate-staging-return-pass/1`: G2 §4 step-3 commands, `frozen_unpublished`/`provisional-ruleset/1`/`eval-confidence/1` shadow `applied=[]`/`pointer_unchanged`/`published:false` pins, `staged/` exactly-once `if-generation-match=0`, verbatim re-run prompt, `p-17b713…` supersession never re-signed) · `tests/ops/test_p35_62_candidate_packet.py` — 12 committed-artifact invariants · `make check` 9,851 passed / 3 machine-local fails (`SIG_GCP_PROJECT` unset; P34.18 Δ0 ×2), verify-gen clean · fix arc: impl head docs-red — projection digest stale on the post-regen ledger edits → forward regen `22527612` · heads `50295be1`→`22527612` · legs 0 · `D-P32.23a-1`/`D-R10-LIVE-1`/`D-R10-PUBLISH-1`/`D-P35.53-1` all OPEN · chainTip→r11/P35.62-… · next PLAN-11C(340) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-24 — P35.62 post-closeout record — closeout head `4a0862e8` 5/5 green head-bound (`ci: pass #360@4a0862e` run 40135300844: docs/security/composed/python/web; `reports/ci/p35_62_pr360_final.json`; stack #359…#352 pass, `main` d47d7b0 descends:no, merges:5) · heads: `50295be1` impl → `22527612` projection regen → `800d1b1a` closeout (docs-red, open-verdict routing owed) → `4a0862e8` BL-085 re-route → this record · every red PR-range-local, repaired forward, no check loosened; forward-only honoured · `D-P32.23a-1`/`D-R10-LIVE-1`/`D-R10-PUBLISH-1`/`D-P35.53-1` all OPEN · chainTip→r11/P35.62-… · next PLAN-11C(340) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-24 — PLAN-11C dispatch boundary-confirm — `ci: pass #360@ec10d49` 5/5 head-bound on the record head (run 40137554186: python/docs/composed/security/web; ci_boundary 22:36:54Z `/tmp/p35_62_pr360_final.json`) · stack #359–#352 pass, main `d47d7b0` merges:5 open-other:0 · P35.62 landed the prepared-not-executed candidate packet (true-date candidate over the queued snapshot; `D-P32.23a-1` stays OPEN — staging leg queued: `frozen_unpublished` input is a P35.61 queued leg + hosted access absent; `live:P35.62` joins the queue) · fix arc: coverage-matrix open-verdict re-route SIG-CHART-034/SIG-FIND-007 → BL-085 · deferrals +0/−0 · dispatching PLAN-11C (340 — `Kind: plan`: twelve fresh contexts C1…C12 each `decompose-spec mode=extend`, full 11C contracts for rows 344–420 + K13 UX spec append + C12 Phase-4 review; must finish before GATE-G5 row 343; no gate, no live, OM-03 plan-only; 7.0 runs est.) · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-25 — PLAN-11C done — `ci: pass #361@6b22738` 5/5 head-bound (run 40147978396; `docs/build/logs/ci_boundary_361.json`; stack #360…#352 pass) · row 340 — `Kind: plan`, twelve fresh contexts C1–C12 `decompose-spec mode=extend`: **all 77 11C rows 344–420 written as execute-grade contracts** (verbatim gate cells — GATE-G5/GATE-G6 marker texts, 416's HG-11 never-pre-authorised Class-S readout pause, ING-GO-C/D, OM-20 named-mutation conditionals — live stage/window/legs + re-run prompts, token-counted Loads, requirement ids + owner bullets, AC layer tags, planning≠execution-evidence statements) + **the K13 UX families appended to the spec** through `spec_src`+`BUILD.sh` (§56.11; 174 new final ids incl. the new SIG-SRCH/JUR/DSRC/WATCH/EVUI/RQ-* prefixes registered §0.3; draft→final map `reports/plan-11c/K13_id_map.csv`; 174 MISSING coverage rows routed one-owner via `coverage-assessment/1`; spec rebuilt — 994 ids, 668+326 fold-backs) + nested **PLAN-11D** plan-kind contract (418) + rows 419/420 (11C acceptance, GATE-G6 marker) + `REQUIREMENT_INDEX_R11.md` regen · C12 Phase-4 review: Loads re-measured (2 stale headers fixed), 0 forward deps (418 prose token repaired), owner bullets +13, K13 exactly-one routing verified, S6c re-split not fired (76 rows/66.5 runs), **draft 11C OM-20 list for GATE-G5 = 13 written Production-mutations headers** (§8.1 10-vs-13 recorded as drift), outreach-owed list (P37.1/2, P36.75–78 — nobody contacted), est_runs 7.0-vs-6.0 drift recorded · `make check` 9,851 passed/629 skipped/3 machine-local fails (SIG_GCP_PROJECT unset fail-closed; P34.18 Δ0 ×2 pre-existing; Docker-gated suites skipped locally — run in CI) · fix arc: impl head `@7ceb5d52` docs-red — projection digest stale on the post-regen ledger negation fixes → forward regen `6b227384` · deferrals +0/−0 · legs 0 · chainTip→r11/PLAN-11C-… · next P35.63(341) · harness: devin-desktop/swe-2-high/subagent

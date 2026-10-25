@@ -11,7 +11,11 @@ Harness: devin-desktop/swe-2-high/subagent
 Started: 2026-10-24T22:55Z (`date -u` at context start; branch
 `r11/PLAN-11C-contracts-for-11c-and-k13-families` at `da2cea19` on
 `r11/P35.62-round10-production-candidate`)
-PR: (to be opened at the C1 push; base `r11/P35.62-round10-production-candidate`)
+PR: #361 (base `r11/P35.62-round10-production-candidate`; opened at the
+C12-close push — the whole row ships on one head)
+Closed: 2026-10-25T01:15Z (`date -u` at closeout; last acceptance
+criterion = the pre-closeout head green on all five required checks,
+recorded in the OM gap table)
 
 ## Spec / Base / Branch / Config
 
@@ -826,3 +830,29 @@ PLAN-11B's C13 handed it; GATE-G5's decisions (ING-GO-C, the
 Wave-C/vendor flip list, the 11C OM-20 list answer, the
 standing-go renewal) sit as quoted cells in the contracts that
 carry them — never anticipated.
+
+## OM gap table
+
+One row per operating clause of the contract's B5 §6.2 / H2 §7 block;
+filled per context, completed at closeout (C12 is the review context —
+this row's own convention names the Phase-4 reviewer C12, not C13).
+
+| clause | status | note |
+|---|---|---|
+| OM-01 harness/model recorded; commits trailered | ok (C1–C12) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent`; `check_trailers.py --range da2cea19..HEAD` clean |
+| OM-04 dates from `date -u` / git / GitHub (source named) | ok (C1–C12) | header + per-context Started/Closed stamps anchored to `date -u` or the recorded file-mtime anomaly (same recorded local-clock offset class as PLAN-11B's C10/C11 — `date -u` anchored) |
+| OM-05 CI read at every boundary; red → blockedOn | ok | one pushed head before the fix: `@7ceb5d52` blockedOn (docs `docs-check-projection` — `runs/PLAN-11C.md` digest stale on the post-regen ledger negation edits; the same regen-before-ledger-write ordering PLAN-11B's C1/C12 hit) → fix-forward `6b227384` regen → `ci: pass #361@6b227384` 5/5 head-bound (run 40147978396; log `logs/ci_boundary_361.json`); the earlier pending reads are recorded in the C12 section |
+| OM-06 every AC names its layer | ok (C1–C12) | every contract's ACs tag a layer (engineered / fixture-verified / staging-verified / live-executed / public / human-completed) |
+| OM-14 production mutations (none this row) | n/a | none — planning row, `live_verification=false`; the drafted OM-20 list is for GATE-G5 and nothing ran |
+| OM-13 protected records appended only | ok (C1–C12) | ledger/manifest/index/coverage rows appended or rewritten-in-place per the skeleton→contract convention (the 77 numbered skeletons are this row's own deliverable — same sanctioned class as PLAN-11B); `history.policy` carries three declared `seed-commit` exemptions (cf587926, c1c08a94, ff03e193 — subjects naming later-row ids `PLAN-11D`/`GATE-G6` set `executed()` mid-range; recorded, scoped, declared-consequence noted) |
+| OM-15 no test asserts a living record's current value | ok (C1–C12) | the only test edits are `test_check_spec_src.py`'s fold-back expectation (820→994 — a deterministic generated-artifact count, not a living record) and `current_projection.py`'s tooling; no test asserts a live cell |
+| OM-07/08/09 gate records verbatim | ok (C1–C12) | every contract's gate cell carries the plan row's operator words verbatim — `none` rows named `none`, the OM-20 named-mutation conditionals quoted, 416's HG-11 Class-S readout pause `never pre-authorised` verbatim, 418's `none (plan only, OM-03)`, 420's S5-2 packet line `silence = pause (OM-18), never consent` verbatim; nothing decided by this row |
+| OM-16 size budget | ok (C1–C12) | twelve ≤8-row contexts as specified; C12 re-measured every contract's Load — largest row 418 ≈106.7 kB-equivalent under the recorded proxy, under the ~150k loaded-token ceiling; no context over budget, no re-split fired |
+| OM-02 closeout is one commit after the PR exists | ok | closeout commit = Closed stamp + OM gap table + boundary record + BUILD_INDEX row 340 + LEDGER advance + README row range + projection regen, sources and digests committed together |
+| OM-19 windows / live legs (none this row) | n/a | none for this row — the written contracts carry their own windows/legs verbatim (AR-3/AR-2 cells, the ≥48 h post-P34.46 chains, HG-11 pauses); no leg ran or was queued by this row |
+| OM-20 pre-authorisation | n/a | not an OM-20 row — it drafts the 11C list (13 rows with written `Production mutations` headers) for GATE-G5 to name; nothing pre-authorised here, nothing approved by implication |
+| OM-03 rows only from the ratified plan | ok | rows 344–420 are the ratified chain rows; C12 evaluated the S6c re-split rule with counts — 76 engineering rows / 66.5 runs, under both thresholds, not fired; PLAN-11D (row 418) is the plan's own nested row, written not dispatched |
+| PR-1 branch from chainTip; PR base = previous branch | ok | branch from `da2cea19` on `r11/P35.62-round10-production-candidate`; PR #361 base = that branch |
+| CI-2/CI-6 pre-closeout head green | ok | `ci: pass #361@6b227384` — all five required checks head-bound (run 40147978396; the `@7ceb5d52` docs-red read recorded verbatim above) |
+| P11 local gate | ok (with recorded limits) | `make check` 9,851 passed / 629 skipped / 3 machine-local fails — `SIG_GCP_PROJECT` unset (fail-closed by design) and the two `test_p34_18_aliases` scans whose hits predate `da2cea19`; Docker absent → `tests/db`/`tests/e2e` skipped locally, run in CI's `python`/`composed` jobs; spec_src 994 ids OK (3 pre-existing stale-ref warnings); coverage 994/994; obligation events 678/489 green; live-claims range + corpus clean — no violations; return-pass 182 obligations / 103 owed each with one home |
+| CI-8 CI config changed | no | no workflow/toolchain change this row |
