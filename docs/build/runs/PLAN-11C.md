@@ -356,7 +356,8 @@ Files written:
 
 Decisions recorded:
 
-- All eight rows live-free again; the S4c note carried — row 367
+- All eight rows are live-free (`live stage: none` in every
+  contract — none is taken); the S4c note carried — row 367
   owns ADR-157 (recorded in the contract, written at
   implementation).
 - Ledger correction folded in: C3's verification block now names
@@ -424,11 +425,56 @@ lint clean, docs-only.
 
 Dispositions: eight skeletons → full contracts; deviations none.
 
-### C6 — (rows 379–386)
+### C6 — 2026-10-25 (rows 379–386)
+
+Started: 2026-10-25T00:02Z · Closed: 2026-10-25T00:03Z (`date -u`)
+Context model: devin-desktop/swe-2-high/subagent.
 
 Scope: API search roll (P36.38 — never pre-authorised), no-JS search,
 typeahead, entity pages A + Organizations (P36.41/42a/42b), Flock
 share-list claims (P36.75, OM-20), status scheduler (P36.43, OM-20).
+
+Files written:
+
+- `docs/tickets/379_P36.38__search-api-serving-v2.md` — full
+  contract (the v2 federated route; roll **never pre-authorised** —
+  explicit verbatim go only; SIG-UI-076 + SIG-SRCH-001/003/012
+  owners; D-K3-5 [B-30] carried; no query logging).
+- `docs/tickets/380_P36.39__no-js-search-results-page.md` — full
+  contract (SIG-SRCH-002/006/007/008/009 owners; the API's HTML
+  representation; C-07's type=/kind= split).
+- `docs/tickets/381_P36.40__typeahead-header-element-search-rewrite.md` —
+  full contract (SIG-SRCH-010 owner; one shard set serves the five
+  consumers — UXR-23).
+- `docs/tickets/382_P36.41__entity-data-contract-a.md` — full
+  contract (SIG-UI-053/070/080/088/108/110/114/115/116 +
+  SIG-EXPORT-014 owners; D-K2-1 [A-10] = b + c verbatim — typed
+  'not yet reviewed').
+- `docs/tickets/383_P36.42a__entity-pages-a-template-and-organizations-hub.md` —
+  full contract (SIG-UI-122 owner; S4c split a — template + hub).
+- `docs/tickets/384_P36.42b__entity-pages-a-ego-timeline-map-print.md` —
+  full contract (S4c split b — ego SVG, timeline strip, map
+  snippet, print).
+- `docs/tickets/385_P36.75__flock-share-lists-configured-access.md` —
+  full contract (OM-20 row; hosted append-only claim write gated;
+  D-K2-4 + OD-24 [A-22] = yes/b verbatim — organisation level only,
+  §43.2a/Part VIII screen, 0 person-level fields).
+- `docs/tickets/386_P36.43__status-lane.md` — full contract
+  (OM-20 row; 6 h scheduler job create gated; D-J3-2/D-J3-11
+  [B-19] = yes carried; scrubbed-log publication posture).
+
+Decisions recorded:
+
+- Three gated rows: 379 is **never pre-authorised** (a public
+  route response change — explicit verbatim go in-ticket); 385 and
+  386 are OM-20 named-mutation rows with in-ticket-pause fallback.
+- The a/b entity-page split (P36.42a/42b) is recorded as S4c
+  context-ceiling splits — contracts, never re-splits.
+
+Verification (C6): memory_guard green; claims lint clean;
+docs-only.
+
+Dispositions: eight skeletons → full contracts; deviations none.
 
 ### C7 — (rows 387–394)
 
