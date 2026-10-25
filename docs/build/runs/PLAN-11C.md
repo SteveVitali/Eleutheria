@@ -664,13 +664,45 @@ Verification: staged memory_guard green before the commit; no live
 claim made anywhere — every live leg is gate-pending or
 conditional.
 
-### C11 — (rows 419–420)
+### C11 — done (rows 419–420)
 
 Scope: P36.73 capstone (the live-read sweep — gate-pending — and
   the GATE-G6 packet) and the
 GATE-G6 gate marker (guard sentence; collects ING-GO-D, the Wave-D
 flip list, the 11D OM-20 list, the standing-go renewal); requirement
 index regeneration.
+
+Files written:
+
+- docs/tickets/419_P36.73__sub-round-11c-acceptance.md
+- docs/tickets/420_GATE-G6__11c-check-in.md
+- docs/tickets/REQUIREMENT_INDEX_R11.md (regenerated —
+  `req_index.py write`, then `check` green)
+
+Decisions recorded in the contracts (nothing executed — contracts
+stage, they never act):
+
+- P36.73 is a capstone: the live-read sweep is read-only by
+  construction and runs only after P36.72b's promote; the GATE-G6
+  packet it drafts carries ING-GO-D, the Wave-D flip list
+  (N1–N21, ACQ-23a/b, DocumentCloud, Sourcewell/OMNIA, Axon
+  Connect, RB-06b, RB-08; OP-26), the draft 11D OM-20 list
+  traceable to written PLAN-11D contract headers, and the
+  standing-go renewal question — every line shows its non-action
+  default.
+- GATE-G6's marker carries the guard sentence (never guessed past;
+  silence = pause, never consent) and records the plan-internal
+  title/note drift (`ING-GO-C/D` in the title vs `collects
+  ING-GO-D` in the S4c note) verbatim, the same shape GATE-G5
+  recorded for `ING-GO-B` — drafted, never resolved.
+- I8-Q5 was answered `a` at GATE-P (Wave D in scope); the G6
+  contract records it rather than re-asking.
+- P36.72b's HG-11 Class S readout sits in the same session — its
+  own decision line, never batch.
+
+Verification: `req_index.py check` green; staged memory_guard green
+before the commit; no live claim made — the sweep and every gate
+line are gate-pending.
 
 ### C12 — (Phase-4 sizing review)
 
