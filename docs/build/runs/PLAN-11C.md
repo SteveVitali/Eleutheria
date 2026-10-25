@@ -856,3 +856,19 @@ this row's own convention names the Phase-4 reviewer C12, not C13).
 | CI-2/CI-6 pre-closeout head green | ok | `ci: pass #361@6b227384` — all five required checks head-bound (run 40147978396; the `@7ceb5d52` docs-red read recorded verbatim above) |
 | P11 local gate | ok (with recorded limits) | `make check` 9,851 passed / 629 skipped / 3 machine-local fails — `SIG_GCP_PROJECT` unset (fail-closed by design) and the two `test_p34_18_aliases` scans whose hits predate `da2cea19`; Docker absent → `tests/db`/`tests/e2e` skipped locally, run in CI's `python`/`composed` jobs; spec_src 994 ids OK (3 pre-existing stale-ref warnings); coverage 994/994; obligation events 678/489 green; live-claims range + corpus clean — no violations; return-pass 182 obligations / 103 owed each with one home |
 | CI-8 CI config changed | no | no workflow/toolchain change this row |
+
+## Boundary record (post-closeout)
+
+`ci: pass #361@6b227384` — 5/5 head-bound on the pre-closeout tip (run
+`40147978396`; `logs/ci_boundary_361.json`). Closeout-head read:
+`@a149b26d` docs-red (run `40150158620` — `check-build-memory`
+BM-ORIENT-01 V11: the closeout entries tipped the orient recipe over
+48 KiB) → fix-forward `4c4f7161` in-place orient repair +
+`feb6736a` seed-commit declaration → `@feb6736a` docs-red (run
+`40152853568` — `docs-check-projection`: recorded LEDGER/return_pass
+digests stale after the declaration commit; same regen-after-edit
+ordering class as `@7ceb5d52`) → fix-forward `e6a7b16e` projection
+regen → `ci: pass #361@e6a7b16` — 5/5 head-bound (run `40153351263`;
+`reports/ci/plan_11c_pr361_final.json`; stack #360…#352 pass, `main`
+`d47d7b0` descends:no, merges:0). Every red was PR-range-local and
+repaired forward; no check loosened; GH013 forward-only honoured.
