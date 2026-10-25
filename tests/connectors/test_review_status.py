@@ -308,15 +308,16 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # the rights posture of `census_gazetteer_tiger` + `natural_earth_10m`
     # (terms captured verbatim, redistributable) — both stay
     # ingestion_permitted=false pending the operator's HG-03 flips, so they
-    # join flip-ready (1 → 3) while loadable stays 236.
+    # join flip-ready (1 → 3). GATE-G5 (2026-10-25, OP-26) flipped
+    # `state_alpr_statute_inventory`, leaving flip-ready at 2 and loadable
+    # at 237.
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
     assert "registered sources: 588" in out
-    assert "flip-ready: 3" in out
+    assert "flip-ready: 2" in out
     assert "flip-ready: census_gazetteer_tiger" in out
     assert "flip-ready: natural_earth_10m" in out
-    assert "flip-ready: state_alpr_statute_inventory" in out
-    assert "loadable now: 236" in out
+    assert "loadable now: 237" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -324,17 +325,17 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 236
-    # state_alpr_statute_inventory was the single flip-ready row: its rights
-    # resolved for the landed seed claims (P27.2/ADR-095) while the live gate
-    # stays closed by design — one-time seed, never a feed (SIG-INGEST-049f).
+    assert len(loadable) == 237
+    # state_alpr_statute_inventory was flipped by the operator at GATE-G5
+    # (2026-10-25, OP-26): its rights were resolved for the landed seed claims
+    # (P27.2/ADR-095) — a one-time seed asset, never a feed (SIG-INGEST-049f).
     # P35.17 (JUR-01) added the two rights-resolved-but-unflipped boundary
     # sources — census_gazetteer_tiger + natural_earth_10m await the
-    # operator's HG-03 flips (flip-ready 1 → 3).
+    # operator's HG-03 flips (flip-ready 1 → 3 → 2 once
+    # state_alpr_statute_inventory flipped at GATE-G5, 2026-10-25).
     assert {s.id for s in flip_ready()} == {
         "census_gazetteer_tiger",
         "natural_earth_10m",
-        "state_alpr_statute_inventory",
     }
 
 

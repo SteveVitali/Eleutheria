@@ -164,12 +164,15 @@ def test_seed_load_is_idempotent_through_the_sink() -> None:
     assert {content_digest(c) for c in a} == {content_digest(c) for c in b}
 
 
-def test_seed_registry_row_stays_unpermitted_and_live_refused() -> None:
-    """The seed load never flips the registry row or the live gate (SIG-INGEST-028)."""
+def test_seed_registry_row_flipped_at_g5_stays_a_seed() -> None:
+    """The seed load never flips the registry row itself (SIG-INGEST-028); the
+    row was flipped by the operator at GATE-G5 (2026-10-25, OP-26)."""
     run_seed(SOURCE, sink_kind="memory")
     rec = get(SOURCE)
-    assert rec.ingestion_permitted is False
-    assert live_gate_reasons(SOURCE)  # a LIVE run for the seed source still refuses
+    assert rec.ingestion_permitted is True  # FLIPPED 2026-10-25 (GATE-G5)
+    assert not live_gate_reasons(
+        SOURCE
+    )  # gate open post-flip; still a one-time seed asset, never a feed
 
 
 def test_run_seed_unknown_source_refuses() -> None:
