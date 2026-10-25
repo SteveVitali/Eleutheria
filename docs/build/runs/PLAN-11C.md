@@ -301,10 +301,15 @@ Decisions recorded:
 Verification (C3):
 
 - `memory_guard.py all --staged` — see commit record.
-- `check_live_claims corpus` — contracts are outside the corpus
-  surfaces; the ledger prose keeps gate-pending framing on every
-  assert-adjacent segment.
-- `make check` — see commit record.
+- `check_live_claims corpus` — 0 violations (run before this
+  entry's write; the C2 fixes hold).
+- `make check` — docs-only context; the full suite was last run at
+  C2's commit with three known failures carried forward:
+  `test_secrets.py` (SIG_GCP_PROJECT unset locally — fail-closed by
+  design, armed in CI via OP-07) and `test_p34_18_aliases.py` ×2
+  (32 handle entries in append-only P34.39a records — pre-existing
+  at the dispatch boundary, not introduced by PLAN-11C). No code
+  changed in C3.
 - Load lists token-counted per contract (~26k tokens ÷3 each —
   far under the ~150k ceiling).
 
@@ -315,10 +320,55 @@ Dispositions:
   layered ACs.
 - Deviations: none.
 
-### C4 — (rows 363–370)
+### C4 — 2026-10-25 (rows 363–370)
+
+Started: 2026-10-25T00:00Z · Closed: 2026-10-25T00:01Z (`date -u`)
+Context model: devin-desktop/swe-2-high/subagent.
 
 Scope: component kit B, copy lints, brand, print v2, figure kits,
-identifier module, graph export (P36.23…P36.30).
+identifier module, procurement relevance (P36.23…P36.30).
+
+Files written:
+
+- `docs/tickets/363_P36.23__component-kit-b.md` — full contract
+  (contested marker, contradiction range, absence chip,
+  `<ProvenancePanel>` over TX-08a, EmptySurface, branded errors).
+- `docs/tickets/364_P36.24__copy-lints-in-ci.md` — full contract
+  (SIG-UI-063/144/153 owners; report-then-enforce lint wiring).
+- `docs/tickets/365_P36.25__brand.md` — full contract
+  (SIG-UI-154 owner; D-K14-2 [B-22] = yes carried verbatim).
+- `docs/tickets/366_P36.26__print-v2.md` — full contract
+  (SIG-UI-098/130/155 owners; council-brief page 1, greyscale
+  check, T0 posture).
+- `docs/tickets/367_P36.27__static-figure-kit-geography.md` —
+  full contract (SIG-UI-066/094/123/124/131/134 owners;
+  byte-deterministic CSP-safe SVG; owns ADR-157 per S4c).
+- `docs/tickets/368_P36.28__static-figure-kit-graphs-charts-legends.md` —
+  full contract (SIG-UI-125 owner; BSD-only layout wrapper —
+  never the GPL igraph wheel; lexicon-generated legends).
+- `docs/tickets/369_P36.29__entity-url-keys-and-slug-history.md` —
+  full contract (SIG-UI-067/109/111/112/113 + SIG-EVUI-010
+  owners; frozen hash + append-only slug history feeding JUR-05's
+  redirect generator).
+- `docs/tickets/370_P36.30__procurement-relevance-rule.md` —
+  full contract (D-K2-5 [B-22] carried; unclassified notices
+  surface only as labelled buyer-page rows, K2 H-13).
+
+Decisions recorded:
+
+- All eight rows live-free again; the S4c note carried — row 367
+  owns ADR-157 (recorded in the contract, written at
+  implementation).
+- Ledger correction folded in: C3's verification block now names
+  the checks actually run and the three known failures carried
+  forward (SIG_GCP_PROJECT env gate; the two P34.18 alias tests'
+  append-only-handle leftovers — both pre-existing at the
+  dispatch boundary).
+
+Verification (C4): same profile as C3 — memory_guard green,
+claims lint clean, docs-only (no code touched).
+
+Dispositions: eight skeletons → full contracts; deviations none.
 
 ### C5 — (rows 371–378)
 
