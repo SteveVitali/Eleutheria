@@ -1,0 +1,13 @@
+{
+  "checks": {},
+  "generated_at": "2026-10-25T05:41:02Z",
+  "leg": "P35.64-sweep-packet",
+  "overall": "suppressed",
+  "probe": "sig-11b-acceptance",
+  "rerun_prompt": "implement-spec spec=docs/tickets/342_P35.64__sub-round-11b-acceptance.md live_verification=true",
+  "suppressed": "p35_63_promotion: the promoted first model release does not exist \u2014 P35.63's promotion leg is still queued in the RETURN PASS map (live:P35.63 fails; the promotion awaits the operator's signed, candidate-specific HG-11 readout)",
+  "suppression_note": "the sweep's recorded window is `after P35.63 promotion`, verbatim; it re-runs at the ticket's verbatim prompt. Suppressed is not a pass: the live verdict stays queued; this record exists so the acceptance note cites its own suppression.",
+  "target": "11b-promoted-release",
+  "version": "sig.probe-run/1",
+  "window": "after P35.63 promotion"
+}
