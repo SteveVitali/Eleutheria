@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `8246b19468565cdc52b853ea803963e2f7613f74` · inputs hashed: 1106 · wall-clock receipt: `receipt.json`
+> input_commit: `e0c3464de7a9e8a73e8193ad3cb54c1035ffff59` · inputs hashed: 1107 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -32,7 +32,7 @@
 | P32.21 | D-P32.21-1 | chain rows 438 **P37.16a** + 439 **P37.16b** (11D family-split, PLAN-11D); packet `docs/build/reports/p32.21-acquisition-pilot/ACQ_PILOT_RETURN_PASS.json` · lan… |
 | P32.22 | queued D-R10-LIVE-1 | chain 338 **P35.61** (11B — ≥48 h after P34.46, post-11B writes); packet `docs/build/reports/p32.22-bounded-recovery/LIVE_RETURN_PASS.json` · landed 183 (PR #17… |
 | P32.23a | queued D-P32.23a-1 | chain 339 **P35.62** (after P35.61); packet `docs/build/reports/p32.23a-release-candidate/LIVE_RETURN_PASS.json` · landed 188 (PR #180) |
-| P32.25 | D-R10-PUBLISH-1 | chain 341 **P35.63** (after P35.62); rollback cases `reports/p32.25-accepted-release-verification/LIVE_RETURN_PASS.json` · landed 191 (PR #182) |
+| P32.25 | queued D-R10-PUBLISH-1 | chain 341 **P35.63** (after P35.62); rollback cases `reports/p32.25-accepted-release-verification/LIVE_RETURN_PASS.json` · landed 191 (PR #182) |
 | — | HG-05 (old P23.1 row; no deferral) | none — operator action, not in `returnPass` |
 | P34.3 | D-P34.3-1 | the OM-19 `r11/P34.3-live-<n>` dispatch or `implement-spec spec=docs/tickets/204_P34.3__ops-data-protection.md live_verification=true` · landed 204 (PR #197) |
 | P34.4 | D-P34.4-1 · D-P34.4-2 | the OM-19 `r11/P34.4-live-<n>` dispatch or `implement-spec spec=docs/tickets/205_P34.4__alerts-that-reach-a-human.md live_verification=true` · landed 205 (PR #1… |
@@ -46,7 +46,7 @@
 | P34.38 | queued BidNet terms-capture leg (works the E4-R6a answer; the rights decision keeps its row-350 home) | `implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-registry-rows.md live_verification=true` (BidNet terms capture) · landed 246 (PR #243) |
 | P34.39b | the three queued monitoring legs (first-fire wave + `camreg_peel_on`); obligations keep their homes — this row carries the clock-guarded legs | `implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true` · landed 248 (PR #246) |
 | P34.40 | two queued production legs of the dark serving-topology roll (L1 `sig-web` pinned-digest roll, L2 `/v1/*` URL-map onto `sig-api`); halves landed (declaration, r… | `implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true` (L1, then L2) · landed 249 (PR #250) |
-| P34.42b | queued jobs IAM leg (G1-01/F-272 jobs half + `roles/editor` removal; halves landed) — live-1 STOPPED at the 100/88 contradiction; live-2 still waits on P35.1a1'… | `implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` · landed 252 (PR #253; `live-1` stopped O… |
+| P34.42b | queued jobs IAM leg (G1-01/F-272 jobs half + `roles/editor` removal; halves landed) — live-1 stopped at the 100/88 read; live-2 stays queued on P35.1a1's 100-jo… | `implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` · landed 252 (PR #253; `live-1` stopped O… |
 | P34.43 | queued L1 exec-host + `sig_audit` legs and L2 `sig_recovery` login (SIG-CONF-013); halves landed; the grant review keeps its DEFERRALS home | `implement-spec spec=docs/tickets/253_P34.43__execution-host-and-least-privilege-db-logins.md live_verification=true` · landed 253 (#255) |
 | P34.49 | queued L1 read-only scan + L2 protective-seal leg (F-406, I7 S1–S9, SIG-PUB-002; ADR-203 deny set) — halves landed (screen, `at-rest`, `seal_register`, audit sc… | `implement-spec spec=docs/tickets/254_P34.49__part-viii-at-rest-audit.md live_verification=true` (L1 scan, then L2 seal) · landed 254 (legs queued exit 42) |
 | P34.44b | queued L1 `sig-quality-probe` job+trigger + L2 baseline run + `apply-baselines` write; halves landed (`sig.quality-probe/1` → quality-probe.sh) | `implement-spec spec=docs/tickets/256_P34.44b__quality-baseline-run-and-nightly-probe.md live_verification=true` (job+trigger, then baseline) · landed 256 |
@@ -74,8 +74,8 @@
 | P35.41 | queued connector-image roll: rebuild + redeploy the image carrying `records_digest`, upstream-declared marks + capture-mark headers | `implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` · landed 320 (PR #338) |
 | P35.53 | D-P35.53-1 | `SIG_RELEASE_AUTHOR="$(git config user.name)" bash ops/gcp/release-infra.sh --apply all` or `implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-s… |
 | P35.59 | queued dark cutover (`ops/gcp/web-cutover.sh --apply all`): AR-2 prestate+manifest → `staged/v/legacy-<YYYYMMDD>/` floor import → `conf/0`+carry+`serving.json` … | `SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all` or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_ver… |
-| P35.61 | queued live half of P32.22's recovery deferral + F-522: L1 `evidence-audit`+`recovery-plan` (read-only) → L2 operator pause 1–4 h → L3 bounded `recovery-apply -… | `implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` · landed 338 (PR #359 — legs queued; `D-R10-LIVE-1… |
-| P35.62 | queued live half of P32.23a's candidate deferral: `sig-ops release-candidate` over a hosted `frozen_unpublished` snapshot → `+0` rematerialize → compartmented e… | `implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true` · landed 339 (PR #360 — leg queued; D-P32.23a-1 OPEN, neve… |
+| P35.61 | queued live half of P32.22's recovery deferral + F-522: L1 audit+plan (read-only) → L2 operator pause 1–4 h → L3 bounded `recovery-apply --authority <scope>` pi… | `implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` · landed 338 (PR #359 — legs queued, `D-R10-LIVE-1… |
+| P35.62 | queued live half of P32.23a's candidate deferral: `release-candidate` over a hosted `frozen_unpublished` snapshot → `+0` rematerialize → compartmented export → … | `implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true` · landed 339 (PR #360 — leg queued; D-P32.23a-1 OPEN, neve… |
 
 ## Known inconsistencies (preserved, never synthesized)
 
