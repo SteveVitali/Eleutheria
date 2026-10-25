@@ -619,13 +619,50 @@ docs-only.
 
 Dispositions: eight skeletons → full contracts; deviations none.
 
-### C10 — (rows 411–418)
+### C10 — done (rows 411–418)
 
 Scope: changes page, extracts mirror writes (P36.68, OM-20), source
 page B, search acceptance (P36.71), core-surfaces acceptance pair
 P36.72a/b (b carries HG-11 Class S — never pre-authorised),
 second-release acceptance (P36.70 — Class R conditional), PLAN-11D
 (plan-kind contract modelled on row 340's).
+
+Files written:
+
+- docs/tickets/411_P36.67__changelog-record-id-diffs-changes-api.md
+- docs/tickets/412_P36.68__per-source-extracts-and-version-index.md
+- docs/tickets/413_P36.69__source-page-b.md
+- docs/tickets/414_P36.71__search-acceptance-and-activation.md
+- docs/tickets/415_P36.72a__core-surfaces-crawl-parity-number-truth.md
+- docs/tickets/416_P36.72b__core-surfaces-walkthroughs-and-promotion.md
+- docs/tickets/417_P36.70__second-release-acceptance.md
+- docs/tickets/418_PLAN-11D__contracts-for-11d-and-tail.md
+
+Decisions recorded in the contracts (nothing executed — contracts
+stage, they never act):
+
+- P36.68's mirror writes are carried as OM-20 named mutations —
+  pre-authorised only if GATE-G5's approved list names the row
+  verbatim (expiry at the next GATE); otherwise an in-ticket pause.
+- P36.71 is the only context permitted to read the sealed held-out
+  set (B-28 = b carried verbatim): read once, at acceptance,
+  sha256-verified against P36.79's committed digest; a mismatch is
+  a hard stop. Its verify leg rides P36.72's Class S cut.
+- P36.72a produces the Class S readout; P36.72b carries the promote
+  verb under the operator's HG-11 readout at the GATE-G6 sitting —
+  never pre-authorised, never implied.
+- P36.70's Class R promotion is conditional: it runs under the
+  standing go only if GATE-G5's renewal kept it valid; otherwise it
+  falls back to a Class S in-ticket pause (D-G3-3 [B-9] = a carried
+  verbatim).
+- PLAN-11D gets the plan-kind form modelled on row 340: rows
+  421–510 (80 11D + 10 tail), ~12 contexts of ≤ 8 rows plus a
+  fresh-context Phase-4 review; the plan's "~6 contexts" fan-out is
+  recorded as the pre-sizing figure, not silently exceeded.
+
+Verification: staged memory_guard green before the commit; no live
+claim made anywhere — every live leg is gate-pending or
+conditional.
 
 ### C11 — (rows 419–420)
 
