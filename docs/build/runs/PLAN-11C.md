@@ -525,10 +525,52 @@ docs-only.
 
 Dispositions: eight skeletons → full contracts; deviations none.
 
-### C8 — (rows 395–402)
+### C8 — 2026-10-25 (rows 395–402)
+
+Started: 2026-10-25T00:04Z · Closed: 2026-10-25T00:05Z (`date -u`)
+Context model: devin-desktop/swe-2-high/subagent.
 
 Scope: dossier sources explorer, downloads, template v2, scoped
-search, task export (P36.52…P36.59).
+search, task export, watch pages (P36.52…P36.59).
+
+Files written:
+
+- `docs/tickets/395_P36.52__dossier-sources-explorer.md` — full
+  contract (SIG-DSRC-001…006/008/009 owners; 'Where this comes
+  from' on every dossier; JSON-twin parity).
+- `docs/tickets/396_P36.53__per-dossier-downloads.md` — full
+  contract (SIG-DSRC-007 owner; HG-03 E4 wiring — an unflipped
+  source stays out of the slices, GATE-P A-7/B-41 carried;
+  D-J3-5 [A-8] = b + D-K5-1 carried).
+- `docs/tickets/397_P36.54__dossier-map-and-locator-figures.md` —
+  full contract (the shared static_map core, one owner recorded;
+  'rule pending' legend on the soft coverage layer).
+- `docs/tickets/398_P36.55__dossier-template-v2.md` — full
+  contract (SIG-UI-069/129/132 + SIG-WATCH-009 owners; the one
+  dossier template; D3-Q4 [B-27] neutral block; D-K7-3 carried).
+- `docs/tickets/399_P36.56__scoped-search-forms.md` — full
+  contract (SIG-UI-128 owner; GET-only scoped forms).
+- `docs/tickets/400_P36.57__explore-bar-and-scoped-search.md` —
+  full contract (SIG-UI-055/126 owners; workspace-state/2 links;
+  the UXR-10 unapplied-facet notice).
+- `docs/tickets/401_P36.58__task-export-v2.md` — full contract
+  (SIG-RQ-001/003/005/006 owners; handle+title derivation;
+  queue_meta v2).
+- `docs/tickets/402_P36.59__watch-pages-and-item-pages.md` — full
+  contract (SIG-WATCH-001…004/010 owners; publishable-claims-only;
+  C-10 route keys).
+
+Decisions recorded:
+
+- All eight rows live-free; the HG-03 posture on 396 is wiring,
+  not a flip — the contract states it verbatim.
+- The one-template rule (SIG-UI-069) and the one-generator rule
+  (SIG-UI-058) are carried as lint-pinned invariants.
+
+Verification (C8): memory_guard green; claims lint clean;
+docs-only.
+
+Dispositions: eight skeletons → full contracts; deviations none.
 
 ### C9 — (rows 403–410)
 
