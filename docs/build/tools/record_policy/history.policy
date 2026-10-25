@@ -766,10 +766,10 @@ seed-commit 5d7681a4
 seed-commit cf587926
 seed-commit c1c08a94
 seed-commit ff03e193
-# PLAN-11C (row 340) — 6ccc703f is the sanctioned in-place orient-probe
+# PLAN-11C (row 340) — 4c4f7161 is the sanctioned in-place orient-probe
 # repair: the a149b26d closeout entries pushed the orient recipe to
 # 49,183+ B > 48 KiB (BM-ORIENT-01 V11 — the same docs-red class as
-# 8800cc2e/5d7681a4). 6ccc703f folds the PHASE LOG boundary-confirm +
+# 8800cc2e/5d7681a4). 4c4f7161 folds the PHASE LOG boundary-confirm +
 # done entries (LEDGER.md:1220/1221) in place keeping every recorded
 # field, and compacts head line 2 + RETURN PASS cells/meta in place —
 # the same sanctioned pattern as f80fbd0a/6c05e605/8800cc2e. The
@@ -787,5 +787,5 @@ seed-commit ff03e193
 # (the CURRENT.md truncation could otherwise sever a negate — the
 # P35.59/8800cc2e re-blame trap). The branch rule forbids force-push,
 # so the declaration lands as a later commit. Scope: findings
-# attributed to 6ccc703f only; no other commit borrows the exemption.
-seed-commit 6ccc703f
+# attributed to 4c4f7161 only; no other commit borrows the exemption.
+seed-commit 4c4f7161
