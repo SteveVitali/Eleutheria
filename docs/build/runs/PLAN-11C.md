@@ -476,11 +476,54 @@ docs-only.
 
 Dispositions: eight skeletons → full contracts; deviations none.
 
-### C7 — (rows 387–394)
+### C7 — 2026-10-25 (rows 387–394)
+
+Started: 2026-10-25T00:03Z · Closed: 2026-10-25T00:04Z (`date -u`)
+Context model: devin-desktop/swe-2-high/subagent.
 
 Scope: release cadence scheduler (P36.44, OM-20), publish matrix,
-run-log backfill (P36.46, OM-20), source pages A/B, source index,
+run-log backfill (P36.46, OM-20), source pages A, sources table,
 issues log, downloads center, evidence anchors.
+
+Files written:
+
+- `docs/tickets/387_P36.44__release-cadence-automation.md` — full
+  contract (OM-20 job creates; the cadence window verbatim incl.
+  the 14-day Class-S suppression; D-G3-4 [B-9] carried).
+- `docs/tickets/388_P36.45__registry-publish-matrix.md` — full
+  contract (verdict table as code + lint; OD-07 a batched verbatim
+  confirmation; 'description pending review' interim).
+- `docs/tickets/389_P36.46__execution-keyed-ingestion-history.md` —
+  full contract (OM-20 hosted backfill; run_id NULL +
+  link_basis/clock_basis; P31.2 unmatched-verdict import).
+- `docs/tickets/390_P36.47__source-page-a.md` — full contract
+  (SIG-UI-056 owner; supersedes TX-05b's first half; disclosure
+  texts verbatim-batched per D-K10-1).
+- `docs/tickets/391_P36.48__sources-table.md` — full contract
+  (3 views + sort/facet routes; /data-freshness/** 301 through
+  JUR-05's one generator).
+- `docs/tickets/392_P36.49__known-issues-and-issues-log.md` — full
+  contract (append-only issues log).
+- `docs/tickets/393_P36.50__downloads-center.md` — full contract
+  (SIG-UI-082 owner; D-J3-5 [A-8] = b no-withdrawal + ADR-183
+  basis statement; D-J3-8 [B-20] = a SHA256SUMS + minisign OP-20;
+  A-3 = a R2 host links).
+- `docs/tickets/394_P36.51__evidence-anchors-and-view-original.md` —
+  full contract (SIG-EVUI-004/007 owners; TX-08b completes the
+  landed 08a half).
+
+Decisions recorded:
+
+- Two more OM-20 rows (387, 389) — named mutations with in-ticket
+  pause fallback; every carry-over answered-decision line quoted
+  verbatim.
+- No contract reaches for a forward dep; every `depends_on` cites
+  landed rows or earlier chain rows only.
+
+Verification (C7): memory_guard green; claims lint clean;
+docs-only.
+
+Dispositions: eight skeletons → full contracts; deviations none.
 
 ### C8 — (rows 395–402)
 
