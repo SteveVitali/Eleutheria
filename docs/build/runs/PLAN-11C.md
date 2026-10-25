@@ -704,13 +704,123 @@ Verification: `req_index.py check` green; staged memory_guard green
 before the commit; no live claim made — the sweep and every gate
 line are gate-pending.
 
-### C12 — (Phase-4 sizing review)
+### C12 — done (Phase-4 sizing review)
 
-Scope: fresh-context review of all 77 contracts — fragmented
-decisions, overflow risk (Load ≤ ~150k by the higher of ÷3/÷4),
-orphan seams, coverage (every §56 id with an 11C owner + every new
-K13-family id maps to exactly one row), ordering (no forward
-`depends`), over-factoring; the 11C re-split decision with counts
-(§8.1: 76 engineering rows / 66.5 runs at S6c); the watch/flag set
-(P36.64 watch-list row, P36.2 fold); the draft 11C OM-20 list for
-GATE-G5; the 11C outreach-owed list; the carried placements.
+Fresh-context adversarial/sizing review of all 77 contracts
+(rows 344–420). Method: every file re-read, every Load list
+re-measured on the current tree (header vs its byte entries),
+every `Depends on:` scanned against plan row numbers, the spec
+`Owner:` pairs re-derived from the built spec, the K13 id map
+cross-checked against the coverage matrix and the regenerated
+requirement index.
+
+Findings and fixes applied:
+
+- **Skeletons:** none remain — all 77 files are full contracts.
+- **Ordering:** no forward `Depends on:` edges. Row 418's header
+  carried `GATE-G6` inside a prose parenthetical on the
+  dependency line — rewritten so the metadata line names only
+  `PLAN-11C` (the GATE-G6 linkage moved to Notes); clean on
+  re-scan.
+- **Load re-measure:** every contract's declared byte figure was
+  compared with the sum of its Load-list entries. Two connector
+  contracts had stale headers after C2's fixes — 352 declared
+  ~86,000 B against ~108,000 B listed; 353 declared ~73,000 B
+  against ~92,000 B listed. Both headers corrected (36,000 and
+  30,666 tokens ÷3). Largest declared load in the sub-round:
+  row 344 ≈ 168.5 kB ≈ 56.2k tokens ÷3; every contract is under
+  the ~150k ceiling by the higher of ÷3/÷4. No context exceeds
+  its batch allowance; no row needs splitting.
+- **Owner coverage (fix applied):** 13 contracts were missing
+  `Owner` bullets for §56.10/earlier ids the spec assigns to
+  their rows (the SIG-TRANSP set PLAN-11B appended plus
+  SIG-REL-008/015, SIG-OPS-008, SIG-REL-011). Owner bullets
+  appended to rows 386–394, 410–413; the regenerated
+  `REQUIREMENT_INDEX_R11.md` (`req_index.py write`, `check`
+  green) now lists zero 11C-owned ids unlisted — the 22
+  remaining unlisted owner rows all belong to P37.* (11D —
+  PLAN-11D's contracts own them).
+- **K13 routing:** all 174 new final ids in `K13_id_map.csv`
+  have exactly one coverage-matrix row, verdict MISSING, routed
+  to an unlanded chain row; UXR-A10/A13 stay citation-only
+  (SIG-TRANSP-001…043, SIG-CONF-001/005/011 — never re-minted).
+- **Fragmented decisions / orphan seams:** none found beyond the
+  already-recorded ones (the SIG-CONF-007b correction C1
+  recorded; the dependency-metadata fix on 351 recorded at C2).
+- **Over-factoring:** no further splits proposed; the a/b pairs
+  the plan already carries (P36.42a/b, P36.66a/b, P36.72a/b)
+  keep disjoint scopes.
+- **Live legs:** every windowed/legged row carries its re-run
+  prompt (`live_verification=true`); no contract claims executed
+  live state — gate-pending or conditional wording throughout.
+
+Re-split rule (§8.1, S2 §3.2): 11C stands at **76 engineering
+rows / 66.5 engineering runs (S6c counts)** — under both
+thresholds (85 rows / 75 runs) even counting C1's K13-family
+deliverable as load. The rule did **not** fire; no extra-GATE
+marker added. Recorded with counts per the plan's instruction.
+
+Drift recorded, not resolved: the plan row's `est_runs=7.0`
+vs §8.1's 6.0 figure stands as written; the actual dispatch was
+twelve ≤1-run contexts (C1–C12).
+
+Watch/flag set (recorded, not actioned):
+
+- **P36.64** (row 407, S6R-14 256k watch row): its own contract
+  re-verifies its ≈26k-token load — stays whole, no split.
+- **P36.2** (row 350, the out-of-rule/counsel-flagged rights
+  re-decision fold — five sources): sized here at ≈28.8k tokens
+  ÷3 declared — fits; the fold stays in the row as T3 recorded.
+- No other row's Load count tripped the ceiling.
+
+Draft 11C OM-20 list for GATE-G5 (built only from written
+`Production mutations` headers; each entry is approve-verbatim
+or nothing — expiry `GATE-G6`; the never-pre-authorised classes
+— P37.2's tier bump, P36.38's API roll, P36.72b's HG-11
+readout, every HG-03 flip, P36.70 if the standing go lapsed —
+are excluded by construction):
+
+| row | id | mutation (contract header) | restore point |
+|---|---|---|---|
+| 346 | P35.2 | alerting-as-code roll: uptime checks, alert policies, notification-channel binding, log retention/restricted sink, `ops/probes/`+`ops/runs/` bucket versioning, `sig-probe` job rebuild | committed IaC text + recorded pre-state describes |
+| 348 | P35.23 | restricted-bucket write of screened corpus slices + committed digests | digest list + bucket versioning |
+| 351 | P36.76 | Axon Connect: screen records + page hashes + registry-row appends (single recorded GETs of public registration pages) | appended set's record; leg B is the operator's act |
+| 352 | P36.77 | DocumentCloud/MuckRock: unauthenticated public-page GETs + registry appends + redacted-rendition records | appended set's record; activation stays operator's |
+| 353 | P36.78 | Sourcewell/OMNIA: public-page GETs + appends + terms captures + redacted renditions | appended set's record; leg B operator's |
+| 354 | P36.13 | hosted rate-limit enforcement flip (defined → enforced) | prior deployment revision |
+| 371 | P36.79 | restricted-bucket object write — the sealed relevance set's bytes | bucket versioning + committed sha256 |
+| 374 | P36.33 | R2 host create (basemap host provisioning) | re-creatable from `basemap.lock.json` + JUR-01's pack |
+| 385 | P36.75 | hosted append-only claim write (organisation-level Flock share-list claims) | additive — the written set's digest list |
+| 386 | P36.43 | scheduler job create (status lane) | job-definition removal |
+| 387 | P36.44 | scheduler job create (monthly cut + weekly materialize) | job-definition removal |
+| 389 | P36.46 | hosted append-only history backfill | appended set's digest list |
+| 412 | P36.68 | mirror writes — content-addressed extract pushes + versions.json | content-addressed objects + index diff |
+
+13 rows vs §8.1's recorded count of 10 — the plan anticipated
+"any further row a written `Production mutations` header
+names"; the four beyond its named nine are P36.76, P36.77,
+P36.78 and P36.43. Recorded as the drift it is.
+
+Outreach-owed list (11C part, ADR-171 — the Stage-0 set
+SIG-CHART-033, SIG-INGEST-029/030a, SIG-CONTRIB-012/012a/013,
+SIG-GOV-024 stays *owed — unmet at launch* on every
+connector-touching row; no agent contacts anyone):
+
+- **P37.1** (row 344) — OSM as a camera-site origin (OWH
+  ecosystem: OSM itself).
+- **P37.2** (row 345) — Wave C: OSM becomes the national ALPR
+  layer's origin.
+- **P36.75** (row 385) — Flock share-lists configured access.
+- **P36.76** (row 351) — Axon Connect connector.
+- **P36.77** (row 352) — DocumentCloud/MuckRock connector.
+- **P36.78** (row 353) — Sourcewell/OMNIA contract pages.
+
+No 11C contract stamps any of the seven ids satisfied. Carried
+to PLAN-11D for GATE-ANNOUNCE's "spec MUSTs unmet at launch"
+list (plan §13.5, row 510).
+
+Carried placements: `D-R11-OSMUID-1` stays with P37.1 as
+PLAN-11B's C13 handed it; GATE-G5's decisions (ING-GO-C, the
+Wave-C/vendor flip list, the 11C OM-20 list answer, the
+standing-go renewal) sit as quoted cells in the contracts that
+carry them — never anticipated.

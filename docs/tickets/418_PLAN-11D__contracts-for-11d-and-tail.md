@@ -6,7 +6,7 @@
 - **Tag:** round11-11D
 - **Harness:** devin-desktop/swe-2-high/subagent
 - **base_branch:** current checkout — the branch the previous row left checked out; this row works on `r11/PLAN-11D-contracts-for-11d-and-tail`, PR base = that branch (H2 PR-1)
-- **Depends on:** PLAN-11C — the plan cell, verbatim (this row's contracts exist so GATE-G6's 11D OM-20 list can name written contracts; it dispatches later — after PLAN-11C lands and while P36.72b waits for its HG-11 go)
+- **Depends on:** PLAN-11C — the plan cell, verbatim; it dispatches later, after PLAN-11C lands and while P36.72b waits for its HG-11 go (the Notes record why these contracts must exist before the next gate)
 - **Run:** `implement-spec spec=docs/tickets/418_PLAN-11D__contracts-for-11d-and-tail.md live_verification=false` — dispatched as the contexts below (one fresh sub-agent each, in order; each context invokes `decompose-spec mode=extend` on its scope only)
 - **Gate status:** `none (plan only, OM-03)` — the plan cell, verbatim; rows enter only from the ratified plan: `data/round11_plan.csv` as ratified at GATE-P (S5) and amended at S6/S6b/S6c
 - **OM-20 status:** not an OM-20 row — it drafts the 11D OM-20 list for GATE-G6, approves nothing

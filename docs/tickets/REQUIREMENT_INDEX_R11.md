@@ -1,4 +1,4 @@
-<!-- Generated 2026-10-25T00:13:44Z by docs/build/planning/2026-09-30-next-phase/tools/s13e/req_index.py (SEED-13e, Round-11 Stage B T3 close-out); regenerate, do not hand-edit. Planning, not execution evidence. -->
+<!-- Generated 2026-10-25T00:15:52Z by docs/build/planning/2026-09-30-next-phase/tools/s13e/req_index.py (SEED-13e, Round-11 Stage B T3 close-out); regenerate, do not hand-edit. Planning, not execution evidence. -->
 # Round-11 requirement → ticket index (rows 201–510)
 
 A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points here). It maps every requirement id cited by the 310 Round-11 chain contracts — the 60 full 11A contracts and the 250 `Kind: skeleton` contracts of 11B–tail — to the rows that own, deliver, extend or cite it, checks the 62 spec §56 ids against their `Owner:` lines, and lists every waived or amended id with its ADR (spec Appendix G.7). Skeleton rows name only the ids the plan row, the catalog or a Stage-B carry item gave them; **PLAN-11B, PLAN-11C and PLAN-11D extend this index** when they write their sub-round's contracts (re-run the generator; their own requirement-index deliverables point here). Requirement status stays in `docs/build/COVERAGE_MATRIX.csv` and the coverage-assessment events — nothing here is a verdict.
@@ -8,10 +8,10 @@ A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points
 ## Summary
 
 - Contracts scanned: **311** (221 full, 90 skeleton).
-- Distinct requirement ids cited: **444** — 246 of the 279 §56 ids and 198 ids defined before Round 11. §56 ids no contract cites: SIG-ENG-044, SIG-EVUI-009, SIG-EXPORT-015, SIG-GEO-014, SIG-TRANSP-003, SIG-TRANSP-005, SIG-TRANSP-009, SIG-TRANSP-010, SIG-TRANSP-014, SIG-TRANSP-015, SIG-TRANSP-018, SIG-TRANSP-021, SIG-TRANSP-024, SIG-TRANSP-032, SIG-TRANSP-041, SIG-TRANSP-042, SIG-TRANSP-043, SIG-UI-071, SIG-UI-072, SIG-UI-077, SIG-UI-078, SIG-UI-099, SIG-UI-117, SIG-UI-118, SIG-UI-119, SIG-UI-120, SIG-UI-121, SIG-UI-127, SIG-UI-152, SIG-WATCH-005, SIG-WATCH-006, SIG-WATCH-007, SIG-WATCH-008 (seed-owned; see §1).
+- Distinct requirement ids cited: **456** — 258 of the 279 §56 ids and 198 ids defined before Round 11. §56 ids no contract cites: SIG-ENG-044, SIG-EVUI-009, SIG-EXPORT-015, SIG-GEO-014, SIG-TRANSP-042, SIG-UI-071, SIG-UI-072, SIG-UI-077, SIG-UI-078, SIG-UI-099, SIG-UI-117, SIG-UI-118, SIG-UI-119, SIG-UI-120, SIG-UI-121, SIG-UI-127, SIG-UI-152, SIG-WATCH-005, SIG-WATCH-006, SIG-WATCH-007, SIG-WATCH-008 (seed-owned; see §1).
 - §56 ids with **no chain-row owner**: 4 — SIG-ENG-041 (owner SEED-15), SIG-ENG-044 (owner SEED-02), SIG-MEM-005 (owner SEED-02), SIG-MEM-012 (owner SEED-02) — owned by Stage-B seed units, not by a Round-11 row (spec §56.1 allows a seed-unit owner); they are verdicted at T4/T6 from the seed's own evidence.
 - §56 owner names that are not chain rows: 0.
-- §56 owner rows whose contract does not (yet) list the id as owned: 52 — SIG-EVUI-009→P37.37 (461), SIG-EXPORT-015→P37.24 (448), SIG-GEO-014→P37.17 (440), SIG-OPS-008→P36.44 (387), SIG-REL-008→P36.66b (410), SIG-REL-011→P36.44 (387), SIG-REL-015→P36.50 (393), SIG-TRANSP-001→P36.48 (391), SIG-TRANSP-003→P36.47 (390), SIG-TRANSP-004→P36.47 (390), SIG-TRANSP-005→P36.69 (413), SIG-TRANSP-006→P36.46 (389), SIG-TRANSP-008→P36.69 (413), SIG-TRANSP-009→P36.47 (390), SIG-TRANSP-010→P36.49 (392), SIG-TRANSP-012→P36.51 (394), SIG-TRANSP-014→P36.50 (393), SIG-TRANSP-015→P36.50 (393), SIG-TRANSP-018→P36.50 (393), SIG-TRANSP-020→P37.36 (460), SIG-TRANSP-021→P36.43 (386), SIG-TRANSP-024→P36.67 (411), SIG-TRANSP-025→P37.42 (466), SIG-TRANSP-028→P36.48 (391), SIG-TRANSP-032→P36.68 (412), SIG-TRANSP-033→P36.48 (391), SIG-TRANSP-034→P36.43 (386), SIG-TRANSP-035→P36.45 (388), SIG-TRANSP-036→P36.46 (389), SIG-TRANSP-037→P36.46 (389), SIG-TRANSP-038→P36.47 (390), SIG-TRANSP-039→P36.47 (390), SIG-TRANSP-040→P36.69 (413), SIG-TRANSP-041→P36.69 (413), SIG-TRANSP-042→P37.41 (465), SIG-TRANSP-043→P36.69 (413), SIG-UI-071→P37.38 (462), SIG-UI-072→P37.40 (464), SIG-UI-077→P37.68a (497), SIG-UI-078→P37.68a (497), SIG-UI-099→P37.17 (440), SIG-UI-117→P37.24 (448), SIG-UI-118→P37.24 (448), SIG-UI-119→P37.26 (450), SIG-UI-120→P37.26 (450), SIG-UI-121→P37.26 (450), SIG-UI-127→P37.29 (453), SIG-UI-152→P37.60 (488), SIG-WATCH-005→P37.34 (458), SIG-WATCH-006→P37.34 (458), SIG-WATCH-007→P37.31 (455), SIG-WATCH-008→P37.31 (455).
+- §56 owner rows whose contract does not (yet) list the id as owned: 22 — SIG-EVUI-009→P37.37 (461), SIG-EXPORT-015→P37.24 (448), SIG-GEO-014→P37.17 (440), SIG-TRANSP-020→P37.36 (460), SIG-TRANSP-025→P37.42 (466), SIG-TRANSP-042→P37.41 (465), SIG-UI-071→P37.38 (462), SIG-UI-072→P37.40 (464), SIG-UI-077→P37.68a (497), SIG-UI-078→P37.68a (497), SIG-UI-099→P37.17 (440), SIG-UI-117→P37.24 (448), SIG-UI-118→P37.24 (448), SIG-UI-119→P37.26 (450), SIG-UI-120→P37.26 (450), SIG-UI-121→P37.26 (450), SIG-UI-127→P37.29 (453), SIG-UI-152→P37.60 (488), SIG-WATCH-005→P37.34 (458), SIG-WATCH-006→P37.34 (458), SIG-WATCH-007→P37.31 (455), SIG-WATCH-008→P37.31 (455).
 - Ids defined before Round 11 that no Round-11 row owns or delivers (cited only): 175 — their owners are the tickets the coverage matrix names (column *matrix `owning_tickets`* in §3, read at HEAD).
 - Appendix G.7: 16 waived ids (G.7.2), 29 amended ids (G.7.3, incl. the outreach set owed later-phase, R11-A15), 18 ids checked and deliberately not amended (G.7.5; the requirement stands) — table §2.
 
@@ -89,7 +89,7 @@ A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points
 | SIG-OPS-005 | MUST | P35.1a (264) | — | yes | P35.2 (346) also; P34.42a (251) cited; P34.42b (252) cited; P35.6 (266) cited; P35.1b (291) cited; P35.1c (291a) cited; P35.3 (292) cited | — |
 | SIG-OPS-006 | MUST | P35.2 (346) | P34.4 (205) | yes | P34.4 (205) also; P34.50 (208) cited; P34.39b (248) cited; P34.44b (256) cited; P35.67 (263) cited; P35.1b (291) cited; P35.3 (292) cited; P35.4 (293) cited | — |
 | SIG-OPS-007 | SHOULD | P35.2 (346) | — | yes | PLAN-11C (340) owner; P35.4 (293) cited; P34.4 (205) mentioned | owner was an agent assignment (T1 map 'confirm at T3/T4'); confirmed at T3 — agent reading, the PLAN row re-confirms when it writes the contract |
-| SIG-OPS-008 | MUST | P36.44 (387) | — | no | P35.4 (293) cited | owner contract is a skeleton without an Owner line |
+| SIG-OPS-008 | MUST | P36.44 (387) | — | yes | P35.4 (293) cited | — |
 | SIG-OPS-009 | MUST | P34.5 (206) | — | yes | P37.2 (345) mentioned | — |
 | SIG-OPS-010 | SHOULD | P35.4 (293) | — | yes | P35.55 (333) also; P34.50 (208) cited; P36.43 (386) mentioned | — |
 | SIG-OPS-011 | MUST | P35.3 (292) | — | yes | P35.58 (335) also; P35.2 (346) also; P34.39a (247) cited; P34.39b (248) cited; P34.43 (253) cited; P34.44b (256) cited; P34.47 (259) cited; P35.67 (263) cited; P36.74 (289) cited; P35.64 (342) cited | — |
@@ -101,14 +101,14 @@ A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points
 | SIG-REL-005 | MUST | P35.53 (331) | — | yes | P35.54 (332) also; P35.55 (333) also; P35.59 (336) cited; P35.62 (339) cited; P35.63 (341) cited | — |
 | SIG-REL-006 | MUST | P35.54 (332) | — | yes | P35.55 (333) also; P34.40 (249) cited; P35.53 (331) cited; P35.59 (336) cited | — |
 | SIG-REL-007 | MUST | P35.58 (335) | P35.56 (334) | yes | P35.56 (334) owner; P35.60 (337) cited | — |
-| SIG-REL-008 | MUST | P36.66b (410) | P35.65 (314) | no | P35.65 (314) also; P35.42 (321) cited; P35.53 (331) cited; P35.56 (334) cited; P34.34a (241) mentioned | owner contract is a skeleton without an Owner line |
+| SIG-REL-008 | MUST | P36.66b (410) | P35.65 (314) | yes | P35.65 (314) also; P35.42 (321) cited; P35.53 (331) cited; P35.56 (334) cited; P34.34a (241) mentioned | — |
 | SIG-REL-009 | MUST | P35.13 (295) | — | yes | P34.10 (212) cited; P35.3 (292) cited; P35.12 (294) cited; P35.56 (334) cited | — |
 | SIG-REL-010 | MUST | P35.57 (261) | P34.25 (229) | yes | P34.25 (229) also; P34.45 (257) cited; P34.46 (258) cited; P35.58 (335) cited; P36.38 (379) mentioned | — |
-| SIG-REL-011 | MUST | P36.44 (387) | — | no | P35.53 (331) mentioned | owner contract is a skeleton without an Owner line |
+| SIG-REL-011 | MUST | P36.44 (387) | — | yes | P35.53 (331) mentioned | — |
 | SIG-REL-012 | MUST | P35.60 (337) | — | yes | GATE-G4 (260) cited; P35.58 (335) cited; P35.63 (341) cited; GATE-G5 (343) cited; GATE-G6 (420) cited | — |
 | SIG-REL-013 | MUST | P35.55 (333) | — | yes | P34.41 (250) cited; P35.58 (335) cited; P35.59 (336) cited; P35.54 (332) mentioned | — |
 | SIG-REL-014 | MUST | P34.23 (227) | — | yes | — | — |
-| SIG-REL-015 | MUST | P36.50 (393) | — | no | P34.28 (233) mentioned | owner contract is a skeleton without an Owner line |
+| SIG-REL-015 | MUST | P36.50 (393) | — | yes | P34.28 (233) mentioned | — |
 | SIG-RQ-001 | MUST | P36.58 (401) | — | yes | — | — |
 | SIG-RQ-002 | MUST | P36.62 (405) | — | yes | — | — |
 | SIG-RQ-003 | MUST | P36.58 (401) | — | yes | P36.61 (404) mentioned | — |
@@ -139,49 +139,49 @@ A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points
 | SIG-SRCH-013 | MUST | P36.71 (414) | P36.79 (371) | yes | P36.32 (373) mentioned | — |
 | SIG-SRCH-014 | MUST | P36.71 (414) | — | yes | — | — |
 | SIG-STORE-048 | MUST | P37.3 (421) | P34.3 (204) | yes | P34.3 (204) also; P34.42b (252) cited; P35.61 (338) cited | — |
-| SIG-TRANSP-001 | MUST | P36.48 (391) | P35.40 (319) | no | P35.40 (319) also; P35.56 (334) mentioned; P36.17 (357) mentioned | owner contract is a skeleton without an Owner line |
+| SIG-TRANSP-001 | MUST | P36.48 (391) | P35.40 (319) | yes | P35.40 (319) also; P35.56 (334) mentioned; P36.17 (357) mentioned | — |
 | SIG-TRANSP-002 | MUST | P35.40 (319) | P35.35 (313) | yes | P35.35 (313) also | — |
-| SIG-TRANSP-003 | MUST | P36.47 (390) | P36.69 (413), P36.45 (388) | no | — | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-004 | MUST | P36.47 (390) | — | no | P36.77 (352) cited; P36.78 (353) cited; P36.2 (350) mentioned | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-005 | MUST | P36.69 (413) | P36.51 (394), P37.36 (460) | no | — | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-006 | MUST | P36.46 (389) | P35.33 (311) | no | P35.33 (311) also | owner contract is a skeleton without an Owner line |
+| SIG-TRANSP-003 | MUST | P36.47 (390) | P36.69 (413), P36.45 (388) | yes | — | — |
+| SIG-TRANSP-004 | MUST | P36.47 (390) | — | yes | P36.77 (352) cited; P36.78 (353) cited; P36.2 (350) mentioned | — |
+| SIG-TRANSP-005 | MUST | P36.69 (413) | P36.51 (394), P37.36 (460) | yes | — | — |
+| SIG-TRANSP-006 | MUST | P36.46 (389) | P35.33 (311) | yes | P35.33 (311) also | — |
 | SIG-TRANSP-007 | MUST | P35.41 (320) | — | yes | — | — |
-| SIG-TRANSP-008 | MUST | P36.69 (413) | P35.44 (323) | no | P35.44 (323) also | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-009 | MUST | P36.47 (390) | P36.69 (413) | no | — | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-010 | MUST | P36.49 (392) | — | no | — | owner contract is a skeleton without an Owner line |
+| SIG-TRANSP-008 | MUST | P36.69 (413) | P35.44 (323) | yes | P35.44 (323) also | — |
+| SIG-TRANSP-009 | MUST | P36.47 (390) | P36.69 (413) | yes | — | — |
+| SIG-TRANSP-010 | MUST | P36.49 (392) | — | yes | — | — |
 | SIG-TRANSP-011 | MUST | P35.36 (315) | — | yes | — | — |
-| SIG-TRANSP-012 | MUST | P36.51 (394) | P37.36 (460) | no | P35.36 (315) cited | owner contract is a skeleton without an Owner line |
+| SIG-TRANSP-012 | MUST | P36.51 (394) | P37.36 (460) | yes | P35.36 (315) cited | — |
 | SIG-TRANSP-013 | MUST | P35.37 (316) | — | yes | — | — |
-| SIG-TRANSP-014 | MUST | P36.50 (393) | — | no | — | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-015 | MUST | P36.50 (393) | — | no | — | owner contract is a skeleton without an Owner line |
+| SIG-TRANSP-014 | MUST | P36.50 (393) | — | yes | — | — |
+| SIG-TRANSP-015 | MUST | P36.50 (393) | — | yes | — | — |
 | SIG-TRANSP-016 | MUST | P35.39 (318) | — | yes | — | — |
 | SIG-TRANSP-017 | MUST | P35.39 (318) | — | yes | — | — |
-| SIG-TRANSP-018 | MUST | P36.50 (393) | — | no | — | owner contract is a skeleton without an Owner line |
+| SIG-TRANSP-018 | MUST | P36.50 (393) | — | yes | — | — |
 | SIG-TRANSP-019 | MUST | P35.5 (262) | — | yes | — | — |
 | SIG-TRANSP-020 | MUST | P37.36 (460) | P35.31 (309) | no | P35.31 (309) also | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-021 | MUST | P36.43 (386) | — | no | — | owner contract is a skeleton without an Owner line |
+| SIG-TRANSP-021 | MUST | P36.43 (386) | — | yes | — | — |
 | SIG-TRANSP-022 | MUST | P35.31 (309) | — | yes | P35.36 (315) cited; P35.56 (334) cited | — |
 | SIG-TRANSP-023 | MUST | P35.42 (321) | P36.66a (409), P36.66b (410) | yes | P35.54 (332) cited | — |
-| SIG-TRANSP-024 | MUST | P36.67 (411) | — | no | — | owner contract is a skeleton without an Owner line |
+| SIG-TRANSP-024 | MUST | P36.67 (411) | — | yes | — | — |
 | SIG-TRANSP-025 | MUST | P37.42 (466) | P35.57 (261) | no | P35.57 (261) cited; P35.36 (315) cited | owner contract is a skeleton without an Owner line |
 | SIG-TRANSP-026 | MUST | P35.40 (319) | — | yes | — | — |
 | SIG-TRANSP-027 | MUST | P35.40 (319) | P36.48 (391) | yes | — | — |
-| SIG-TRANSP-028 | MUST | P36.48 (391) | — | no | P35.40 (319) cited | owner contract is a skeleton without an Owner line |
+| SIG-TRANSP-028 | MUST | P36.48 (391) | — | yes | P35.40 (319) cited | — |
 | SIG-TRANSP-029 | MUST | P35.41 (320) | — | yes | — | — |
 | SIG-TRANSP-030 | MUST | P35.41 (320) | — | yes | — | — |
 | SIG-TRANSP-031 | MUST | P35.41 (320) | — | yes | — | — |
-| SIG-TRANSP-032 | MUST | P36.68 (412) | — | no | — | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-033 | MUST | P36.48 (391) | P35.39 (318) | no | P35.39 (318) also | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-034 | MUST | P36.43 (386) | P35.41 (320) | no | P35.41 (320) also | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-035 | MUST | P36.45 (388) | — | no | P35.35 (313) also; P35.39 (318) mentioned | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-036 | MUST | P36.46 (389) | P35.32 (310) | no | P35.32 (310) also; P35.58 (335) cited; P35.33 (311) mentioned | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-037 | MUST | P36.46 (389) | P36.47 (390), P36.48 (391) | no | P35.33 (311) mentioned | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-038 | MUST | P36.47 (390) | — | no | P36.1b (349) cited; P36.2 (350) cited | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-039 | MUST | P36.47 (390) | P36.46 (389) | no | P35.33 (311) mentioned | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-040 | MUST | P36.69 (413) | P35.44 (323) | no | P35.44 (323) also | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-041 | MUST | P36.69 (413) | P36.51 (394) | no | — | owner contract is a skeleton without an Owner line |
+| SIG-TRANSP-032 | MUST | P36.68 (412) | — | yes | — | — |
+| SIG-TRANSP-033 | MUST | P36.48 (391) | P35.39 (318) | yes | P35.39 (318) also | — |
+| SIG-TRANSP-034 | MUST | P36.43 (386) | P35.41 (320) | yes | P35.41 (320) also | — |
+| SIG-TRANSP-035 | MUST | P36.45 (388) | — | yes | P35.35 (313) also; P35.39 (318) mentioned | — |
+| SIG-TRANSP-036 | MUST | P36.46 (389) | P35.32 (310) | yes | P35.32 (310) also; P35.58 (335) cited; P35.33 (311) mentioned | — |
+| SIG-TRANSP-037 | MUST | P36.46 (389) | P36.47 (390), P36.48 (391) | yes | P35.33 (311) mentioned | — |
+| SIG-TRANSP-038 | MUST | P36.47 (390) | — | yes | P36.1b (349) cited; P36.2 (350) cited | — |
+| SIG-TRANSP-039 | MUST | P36.47 (390) | P36.46 (389) | yes | P35.33 (311) mentioned | — |
+| SIG-TRANSP-040 | MUST | P36.69 (413) | P35.44 (323) | yes | P35.44 (323) also | — |
+| SIG-TRANSP-041 | MUST | P36.69 (413) | P36.51 (394) | yes | — | — |
 | SIG-TRANSP-042 | MUST | P37.41 (465) | — | no | — | owner contract is a skeleton without an Owner line |
-| SIG-TRANSP-043 | MUST | P36.69 (413) | — | no | — | owner contract is a skeleton without an Owner line |
+| SIG-TRANSP-043 | MUST | P36.69 (413) | — | yes | — | — |
 | SIG-UI-051 | MUST | P36.18 (358) | P36.16 (356), P36.17 (357) | yes | — | — |
 | SIG-UI-052 | MUST | P36.21 (361) | P35.50 (328) | yes | — | — |
 | SIG-UI-053 | MUST | P36.41 (382) | P36.24 (364) | yes | P36.42a (383) mentioned | — |
@@ -659,19 +659,28 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-TIME-012 | MUST | — | — | P35.30 (308) | — | — |
 | SIG-TRANSP-001 | MUST | P36.48 (391) (§56) | P35.40 (319) | P35.56 (334)*, P36.17 (357)* | — | — |
 | SIG-TRANSP-002 | MUST | P35.40 (319) (§56) | P35.35 (313) | — | — | — |
+| SIG-TRANSP-003 | MUST | P36.47 (390) (§56) | — | — | — | — |
 | SIG-TRANSP-004 | MUST | P36.47 (390) (§56) | — | P36.77 (352), P36.78 (353), P36.2 (350)* | — | — |
+| SIG-TRANSP-005 | MUST | P36.69 (413) (§56) | — | — | — | — |
 | SIG-TRANSP-006 | MUST | P36.46 (389) (§56) | P35.33 (311) | — | — | — |
 | SIG-TRANSP-007 | MUST | P35.41 (320) (§56) | — | — | — | — |
 | SIG-TRANSP-008 | MUST | P36.69 (413) (§56) | P35.44 (323) | — | — | — |
+| SIG-TRANSP-009 | MUST | P36.47 (390) (§56) | — | — | — | — |
+| SIG-TRANSP-010 | MUST | P36.49 (392) (§56) | — | — | — | — |
 | SIG-TRANSP-011 | MUST | P35.36 (315) (§56) | — | — | — | — |
 | SIG-TRANSP-012 | MUST | P36.51 (394) (§56) | — | P35.36 (315) | — | — |
 | SIG-TRANSP-013 | MUST | P35.37 (316) (§56) | — | — | — | — |
+| SIG-TRANSP-014 | MUST | P36.50 (393) (§56) | — | — | — | — |
+| SIG-TRANSP-015 | MUST | P36.50 (393) (§56) | — | — | — | — |
 | SIG-TRANSP-016 | MUST | P35.39 (318) (§56) | — | — | — | — |
 | SIG-TRANSP-017 | MUST | P35.39 (318) (§56) | — | — | — | — |
+| SIG-TRANSP-018 | MUST | P36.50 (393) (§56) | — | — | — | — |
 | SIG-TRANSP-019 | MUST | P35.5 (262) (§56) | — | — | — | — |
 | SIG-TRANSP-020 | MUST | P37.36 (460) (§56) | P35.31 (309) | — | — | — |
+| SIG-TRANSP-021 | MUST | P36.43 (386) (§56) | — | — | — | — |
 | SIG-TRANSP-022 | MUST | P35.31 (309) (§56) | — | P35.36 (315), P35.56 (334) | — | — |
 | SIG-TRANSP-023 | MUST | P35.42 (321) (§56) | — | P35.54 (332) | — | — |
+| SIG-TRANSP-024 | MUST | P36.67 (411) (§56) | — | — | — | — |
 | SIG-TRANSP-025 | MUST | P37.42 (466) (§56) | — | P35.57 (261), P35.36 (315) | — | — |
 | SIG-TRANSP-026 | MUST | P35.40 (319) (§56) | — | — | — | — |
 | SIG-TRANSP-027 | MUST | P35.40 (319) (§56) | — | — | — | — |
@@ -679,14 +688,17 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-TRANSP-029 | MUST | P35.41 (320) (§56) | — | — | — | — |
 | SIG-TRANSP-030 | MUST | P35.41 (320) (§56) | — | — | — | — |
 | SIG-TRANSP-031 | MUST | P35.41 (320) (§56) | — | — | — | — |
+| SIG-TRANSP-032 | MUST | P36.68 (412) (§56) | — | — | — | — |
 | SIG-TRANSP-033 | MUST | P36.48 (391) (§56) | P35.39 (318) | — | — | — |
 | SIG-TRANSP-034 | MUST | P36.43 (386) (§56) | P35.41 (320) | — | — | — |
 | SIG-TRANSP-035 | MUST | P36.45 (388) (§56) | P35.35 (313) | P35.39 (318)* | — | — |
 | SIG-TRANSP-036 | MUST | P36.46 (389) (§56) | P35.32 (310) | P35.58 (335), P35.33 (311)* | — | — |
 | SIG-TRANSP-037 | MUST | P36.46 (389) (§56) | — | P35.33 (311)* | — | — |
-| SIG-TRANSP-038 | MUST | P36.47 (390) (§56) | — | P36.1b (349), P36.2 (350), P36.47 (390)* | — | — |
+| SIG-TRANSP-038 | MUST | P36.47 (390) (§56) | — | P36.1b (349), P36.2 (350) | — | — |
 | SIG-TRANSP-039 | MUST | P36.47 (390) (§56) | — | P35.33 (311)* | — | — |
 | SIG-TRANSP-040 | MUST | P36.69 (413) (§56) | P35.44 (323) | — | — | — |
+| SIG-TRANSP-041 | MUST | P36.69 (413) (§56) | — | — | — | — |
+| SIG-TRANSP-043 | MUST | P36.69 (413) (§56) | — | — | — | — |
 | SIG-TRUST-001 | MUST | — | — | P35.14a (272), P35.14b (273), P35.15b (275) | P32.2 | — |
 | SIG-TRUST-003 | MUST | — | — | P35.26 (305) | P32.3 | — |
 | SIG-TRUST-006 | MUST | P34.20 (222) (delivers), P34.21b (224) (delivers), P34.26 (231) (delivers) | — | — | — | — |
