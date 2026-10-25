@@ -572,11 +572,52 @@ docs-only.
 
 Dispositions: eight skeletons → full contracts; deviations none.
 
-### C9 — (rows 403–410)
+### C9 — 2026-10-25 (rows 403–410)
+
+Started: 2026-10-25T00:05Z · Closed: 2026-10-25T00:06Z (`date -u`)
+Context model: devin-desktop/swe-2-high/subagent.
 
 Scope: watch pages, evidence hub, queue pages, request drafts,
 home/About, onboarding, site snapshots a/b (P36.60…P36.66b — already
 T3 splits under TX-13b; contracts, never re-splits).
+
+Files written:
+
+- `docs/tickets/403_P36.60__evidence-hub-and-artifact-pages.md` —
+  full contract (SIG-EVUI-001/002/003/005/006/008 owners;
+  D-K8-4 [B-44] honest labels carried; /evidence/<id>/ 301s via
+  JUR-05).
+- `docs/tickets/404_P36.61__queue-hub-facets-cards.md` — full
+  contract (SIG-UI-079 + SIG-RQ-004 owners).
+- `docs/tickets/405_P36.62__task-and-campaign-pages.md` — full
+  contract (SIG-RQ-002/008/009 owners; the 03b half).
+- `docs/tickets/406_P36.63__records-request-drafts.md` — full
+  contract (SIG-RQ-007/010 owners; DRAFT shown never sent —
+  ADR-171; D-K11-3 [B-22] = yes carried).
+- `docs/tickets/407_P36.64__home-about-how-it-works-methodology.md` —
+  full contract (SIG-UI-135…142 owners; C-4/C-5 copy discipline —
+  'who runs SIG' omitted until the operator writes it; the 256k
+  watch note honoured — Load ~26k tokens ÷3, no split needed).
+- `docs/tickets/408_P36.65__onboarding-content.md` — full
+  contract (reading keys + every EmptySurface's copy + the
+  annotated dossier-reading page).
+- `docs/tickets/409_P36.66a__withbase-sweep.md` + `410_P36.66b__
+  site-snapshots-and-edge-selectors.md` — the TX-13b a/b contracts
+  (publish-stage rows riding the operator's next HG-11 Class S cut;
+  D-J3-6 [B-19] = yes carried; ADR-161/162 implemented, no new ADR).
+
+Decisions recorded:
+
+- **Publish-stage posture:** 409/410 carry `live stage: publish`
+  with the verbatim window — exposure rides HG-11's next Class S
+  cut; no contract asserts a published state.
+- **The 256k watch row (407):** Load token-counted — ~26k ÷3,
+  under the ceiling; the row stays whole (S6R-14 honoured).
+
+Verification (C9): memory_guard green; claims lint clean;
+docs-only.
+
+Dispositions: eight skeletons → full contracts; deviations none.
 
 ### C10 — (rows 411–418)
 
