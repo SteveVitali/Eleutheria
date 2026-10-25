@@ -245,10 +245,75 @@ Dispositions:
   non-OM-20 rows.
 - Deviations: none.
 
-### C3 — (rows 355–362)
+### C3 — 2026-10-25 (rows 355–362)
+
+Started: 2026-10-24T23:45Z · Closed: 2026-10-25T00:00Z (`date -u`
+at C3 ledger write)
+Context model: devin-desktop/swe-2-high/subagent.
 
 Scope: L4 marker (P36.14) + design system / chrome / component kits
 (P36.16…P36.22); the K13 families must already exist.
+
+Files written:
+
+- `docs/tickets/355_P36.14__inference-l4-marker.md` — full
+  contract (SIG-RECON-052 stamped: marker on every export + API
+  record, epistemic class, cross-surface test).
+- `docs/tickets/356_P36.16__design-tokens-v2.md` — full contract
+  (SIG-UI-146/148/156 owners; tokens.css + epistemic.css migration;
+  D-K14-3/D-K14-5 [B-22] carried verbatim).
+- `docs/tickets/357_P36.17__lexicon-and-copy-system.md` — full
+  contract (SIG-UI-061/062/064/133/143/147/149 owners;
+  lexicon.json as the single lexicon; D-K14-8 [B-29] = yes
+  carried).
+- `docs/tickets/358_P36.18__layout-and-chrome.md` — full contract
+  (SIG-UI-051/145/150 owners; six-section nav renders a section
+  only when its route exists in the release).
+- `docs/tickets/359_P36.19__csp-hsts-permissions-policy.md` —
+  full contract (SIG-UI-096 owner; CSP hashes, HSTS,
+  Permissions-Policy `geolocation=(self)` on /map/ only,
+  standalone figure-SVG policy).
+- `docs/tickets/360_P36.20__enhancement-kit-behaviour.md` — full
+  contract (SIG-UI-085/089/090/091 owners; framework-free elements;
+  the T2 set stays closed; T1 keeps no-JS parity).
+- `docs/tickets/361_P36.21__workspace-state-cite-this-view-facets.md` —
+  full contract (SIG-UI-052/059/060/093 owners;
+  `sig.workspace-state/2` registry + v1 round-trip + cite-this-view).
+- `docs/tickets/362_P36.22__component-kit-a.md` — full contract
+  (SIG-UI-054/083/084/086/151 owners; Figure visual over the
+  landed TX-09 `<Figure>` contract).
+
+Decisions recorded:
+
+- **All eight rows are live-free:** `live stage: none`, no OM-20,
+  no window — the K13 surfaces ship on the next release's publish
+  path; the contracts say so explicitly so no row implies a served
+  state.
+- **Owned-id routing (the K13 map):** each contract stamps exactly
+  the §56.11 ids whose `Owner:` names it; "also" rows are cited,
+  never double-stamped.
+- **Answered decisions carried verbatim:** D-K14-2/3/5/6/8 [B-22/
+  B-29] lines appear as implemented answers, never re-decided.
+- **Journey acceptance mapped to layers:** K13 §8 capstone
+  journeys land as fixture-verified ACs on the rows whose
+  components they exercise.
+
+Verification (C3):
+
+- `memory_guard.py all --staged` — see commit record.
+- `check_live_claims corpus` — contracts are outside the corpus
+  surfaces; the ledger prose keeps gate-pending framing on every
+  assert-adjacent segment.
+- `make check` — see commit record.
+- Load lists token-counted per contract (~26k tokens ÷3 each —
+  far under the ~150k ceiling).
+
+Dispositions:
+
+- All eight contracts replaced their skeletons in place; each
+  carries a literal `Run:` line, backward-only dependencies, and
+  layered ACs.
+- Deviations: none.
 
 ### C4 — (rows 363–370)
 
