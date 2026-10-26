@@ -141,3 +141,14 @@ command = "uv run sig-ops claim-marker-scan --record-out docs/build/reports/prob
 record = "docs/build/reports/probes/claim-markers.json"
 triggers = ["pr", "candidate", "tail"]
 placement = { pr = "build output" }
+
+[[probe]]
+id = "conf-gen-regression"
+title = "no origin serves a conf generation older than the registry record (the P1 rollback-regression alarm — RR-7)"
+requires = ["SIG-REL-013"]
+owner = "P35.55"
+command = "uv run sig-ops conf-gen-probe --registry gs://sig-release --origin https://api.surveillancegraph.org --origin https://surveillancegraph.org --record-out docs/build/reports/probes/conf-gen-regression.json"
+record = "docs/build/reports/probes/conf-gen-regression.json"
+triggers = ["candidate", "publish", "schedule", "tail"]
+placement = { publish = "after every reversal/promote roll", schedule = "hourly" }
+via = { publish = "verb:conf-gen-probe", schedule = "row:P35.58" }

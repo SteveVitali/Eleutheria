@@ -103,8 +103,15 @@ def test_dry_run_verbs_write_nothing(tmp_path: Path) -> None:
     rp.verb_stage(store, apply_=False, work_dir=work)
     rp.verb_classify(store, apply_=False, publication_id="p-" + "b" * 64)
     rp.verb_status(store, apply_=False)
-    for verb in ("rollback", "withdraw"):
-        rp.verb_skeleton(verb, store, apply_=False, publication_id="p-" + "b" * 64)
+    # the P35.55 reversal verbs are real now — a dry-run on an empty
+    # registry plans (or refuses before the lock) and writes nothing either
+    # way.
+    from ops import release_reversal as rr
+
+    with pytest.raises(rp.PipelineError):  # no --to target resolves
+        rr.verb_rollback(store, apply_=False, to="p-" + "b" * 64, reason="t")
+    rr.verb_clear_latest(store, apply_=False, reason="t")
+    rr.verb_import_floor(store, apply_=False, source_dir=work)
     # promote landed at P35.54 — a dry-run on an empty registry refuses
     # before any write (the refusal itself proves nothing was written).
     with pytest.raises(rp.PipelineError):
@@ -182,11 +189,21 @@ def test_stage_refuses_a_name_collision(tmp_path: Path) -> None:
 def test_every_apply_verb_journals_an_event(tmp_path: Path) -> None:
     store = _store(tmp_path)
     rp.verb_classify(store, apply_=True, publication_id="p-" + "f" * 64)
-    with pytest.raises(rp.VerbDeferred):
-        rp.verb_skeleton("rollback", store, apply_=True, publication_id="p-" + "f" * 64)
+    # the P35.55 verbs are real — an applied import-floor journals its own
+    # event under the same lock/journal contract.
+    from ops import release_reversal as rr
+
+    src = tmp_path / "floor"
+    src.mkdir()
+    (src / "index.html").write_text("x", encoding="utf-8")
+    store.insert(
+        f"{rr.AUTHORITIES_PREFIX}go-1",
+        json.dumps({"schema": rr.AUTHORITY_SCHEMA, "kind": "go", "ref": "OPS-go-1"}).encode(),
+    )
+    rr.verb_import_floor(store, apply_=True, source_dir=src, label="legacy-20251001", go="go-1")
     events = rp.list_events(store)
     kinds = {e["verb"] for e in events}
-    assert kinds == {"classified", "rollback"}
+    assert kinds == {"classified", "legacy-floor-imported"}
 
 
 def test_classify_fails_closed_to_class_s(tmp_path: Path) -> None:
@@ -194,11 +211,19 @@ def test_classify_fails_closed_to_class_s(tmp_path: Path) -> None:
     assert out["class"] == "class_s" and out["failclosed"] is True
 
 
-def test_skeleton_verbs_refuse_and_name_the_owner(tmp_path: Path) -> None:
-    store = _store(tmp_path)
-    with pytest.raises(rp.VerbDeferred) as exc:
-        rp.verb_skeleton("rollback", store, apply_=True, publication_id="p-" + "1" * 64)
-    assert "P35.5" in exc.value.detail["owner"] or "P35" in str(exc.value.detail)
+def test_the_p35_55_verbs_are_no_longer_deferred(tmp_path: Path) -> None:
+    """The VERB_OWNERS skeleton path is empty — rollback/clear-latest/
+    withdraw landed at P35.55 (REL-08), dispatched to release_reversal."""
+    assert rp.VERB_OWNERS == {}
+    from ops import release_reversal as rr
+
+    for verb_fn in (
+        rr.verb_rollback,
+        rr.verb_clear_latest,
+        rr.verb_withdraw,
+        rr.verb_import_floor,
+    ):
+        assert callable(verb_fn)
 
 
 # --------------------------------------------------------------------------- #

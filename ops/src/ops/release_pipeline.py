@@ -571,11 +571,9 @@ def fold_state(
 # --------------------------------------------------------------------------- #
 
 #: Rows that own the deferred verb bodies (the honest refusal text).
-VERB_OWNERS: dict[str, str] = {
-    "rollback": "P35.55 (REL-08 — rollback/withdrawal bodies)",
-    "clear-latest": "P35.55 (REL-08)",
-    "withdraw": "P35.55 (REL-08)",
-}
+#: P35.55 (REL-08) landed rollback/clear-latest/withdraw + import-floor in
+#: ``release_reversal.py`` — none remain deferred here.
+VERB_OWNERS: dict[str, str] = {}
 
 
 def _stage_plan(release_dir: Path, pub: str) -> list[tuple[str, Path]]:
@@ -1133,8 +1131,9 @@ def run_verb(args: Any) -> dict[str, Any]:
             break_lock=break_lock,
         )
     if verb == "promote":
-        # Lazy import: release_conf imports this module's machinery.
-        from . import release_conf
+        # Lazy imports: release_conf/release_reversal import this module's
+        # machinery.
+        from . import release_conf, release_reversal
 
         gcloud = None
         if getattr(args, "execute_rolls", False):
@@ -1155,6 +1154,72 @@ def run_verb(args: Any) -> dict[str, Any]:
             region=getattr(args, "region", None),
             execute_rolls=bool(getattr(args, "execute_rolls", False)),
             gcloud=gcloud,
+            # D-P35.54-1 — the promote-time barrier re-derivation hook.
+            derive_barrier=release_reversal.derive_withdrawal_barrier,
+            break_lock=break_lock,
+        )
+    if verb in ("rollback", "clear-latest", "withdraw", "import-floor"):
+        # Lazy import: release_reversal imports this module's machinery.
+        from . import release_reversal
+
+        rcloud = None
+        if getattr(args, "execute_rolls", False):
+            from . import job_roll
+
+            rcloud = job_roll.gcloud_cli
+        if verb == "rollback":
+            return release_reversal.verb_rollback(
+                store,
+                apply_=apply_,
+                to=args.to,
+                reason=getattr(args, "reason", None),
+                go=getattr(args, "go", None),
+                api_image=getattr(args, "api_image", None),
+                web_image=getattr(args, "web_image", None),
+                min_instances=int(getattr(args, "min_instances", 1) or 1),
+                project=getattr(args, "project", None),
+                region=getattr(args, "region", None),
+                execute_rolls=bool(getattr(args, "execute_rolls", False)),
+                gcloud=rcloud,
+                break_lock=break_lock,
+            )
+        if verb == "clear-latest":
+            return release_reversal.verb_clear_latest(
+                store,
+                apply_=apply_,
+                reason=getattr(args, "reason", None),
+                go=getattr(args, "go", None),
+                api_image=getattr(args, "api_image", None),
+                web_image=getattr(args, "web_image", None),
+                min_instances=int(getattr(args, "min_instances", 1) or 1),
+                project=getattr(args, "project", None),
+                region=getattr(args, "region", None),
+                execute_rolls=bool(getattr(args, "execute_rolls", False)),
+                gcloud=rcloud,
+                break_lock=break_lock,
+            )
+        if verb == "withdraw":
+            return release_reversal.verb_withdraw(
+                store,
+                apply_=apply_,
+                disposition=getattr(args, "disposition", None),
+                authority=getattr(args, "authority", None),
+                purge_versions=bool(getattr(args, "purge_versions", False)),
+                api_image=getattr(args, "api_image", None),
+                web_image=getattr(args, "web_image", None),
+                min_instances=int(getattr(args, "min_instances", 1) or 1),
+                project=getattr(args, "project", None),
+                region=getattr(args, "region", None),
+                execute_rolls=bool(getattr(args, "execute_rolls", False)),
+                gcloud=rcloud,
+                break_lock=break_lock,
+            )
+        return release_reversal.verb_import_floor(
+            store,
+            apply_=apply_,
+            source_dir=args.from_dir,
+            label=getattr(args, "label", None),
+            go=getattr(args, "go", None),
             break_lock=break_lock,
         )
     if verb in VERB_OWNERS:
