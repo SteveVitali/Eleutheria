@@ -1,0 +1,125 @@
+{
+  "packet_version": "live-pass-return-pass/1",
+  "row": "338 / P35.61 (R11-ACT-14, round11-11B)",
+  "purpose": "the owed production half of the open live deferral: a hosted read-only audit, a recovery plan, an operator review pause, then — only under the operator's verbatim in-ticket go with a recorded authority scope — a bounded apply inside the recorded ceilings, a +0 re-run, rematerialization, and a frozen_unpublished sig.repaired-snapshot/1",
+  "status": "prepared_not_executed",
+  "prepared_at": "2026-10-24T18:20:00Z",
+  "prepared_at_commit": "1de8af06825986f05c1da9065074731b63f97cf4",
+  "legs": {
+    "L1": {
+      "name": "hosted audit + plan (read-only)",
+      "disposition": "queued",
+      "read_only": true,
+      "queued_reasons": [
+        "live:P34.46 (the Round-10 schema deploy + roll, carrying the audit_login and recovery_apply changes and the sig_recovery role) is still queued — its hosted legs never ran; read-only check 2026-10-24T18:2xZ found the exec runtime SA and both login secrets absent (NOT_FOUND)",
+        "live:P34.43 L1 (exec host + sig_audit login) is queued — its S5-3 gate listing expired at GATE-G4 and a fresh listing or in-ticket go is owed",
+        "live:P34.43 L2 (sig_recovery_login) is queued and gates on live:P34.46 in any case",
+        "the runtime environment is unset at this record — SIG_GCP_PROJECT, SIG_EXEC_IMAGE, SIG_HOSTED_DSN and SIG_AUDIT_PASSWORD are all absent; the gcloud default project is not the operator's project",
+        "the run clock (Saturday 2026-10-24 ~18:20Z) is outside the preferred weekday 14:00-20:00Z slot — a note, not a refusal, for a read-only leg; the credential and host-state preconditions bind first"
+      ]
+    },
+    "L2": {
+      "name": "operator plan review — a 1-4 h pause, not a leg",
+      "disposition": "pause_reached",
+      "detail": "the run stops here: nothing is reviewed because L1 produced no plan yet; after L1 runs, the operator reviews the recorded plan and fixes the apply scope — the apply never starts on silence"
+    },
+    "L3": {
+      "name": "bounded apply + +0 re-run + rematerialize + freeze",
+      "disposition": "queued",
+      "authority": "the operator's verbatim in-ticket go plus a recorded --authority scope — never an OM-20 pre-authorisation line; this row is on GATE-G4 section 4's never-list",
+      "queued_reasons": [
+        "no verbatim in-ticket go has been given",
+        "L1 (the audit + plan it would apply) is itself queued",
+        "the hosted write path (sig_recovery login, P34.43 L2, gated on live:P34.46) does not exist yet",
+        "AR-2 (an on-demand Cloud SQL restore point, exported and read back) has not been taken for this row",
+        "the run clock is Saturday — outside the preferred weekday slot the apply scripts record"
+      ]
+    }
+  },
+  "window_evaluation": {
+    "run_clock": "Saturday 2026-10-24 ~18:20Z",
+    "never_bands": "daily 03:00-06:30Z and the monthly batch window (day 6 00:00Z through day 13 12:00Z) — neither was active at the run clock",
+    "preferred_band": "weekday 14:00-20:00Z — the read-only audit may run outside it with a recorded note; the apply follows the contract's recorded slot",
+    "next_valid_slot": "the next weekday 14:00-20:00Z once every precondition holds — earliest Monday 2026-10-26T14:00Z, and only if the queued live rows have run and soaked by then"
+  },
+  "preconditions": [
+    "live:P34.46 — the Round-10 schema deploy + roll (the audit_login / recovery_apply / sig_recovery surface and sig-api on the v3-interim image), plus its L3 48 h soak — currently queued; the verbatim in-ticket go names the deploy and roll legs",
+    "live:P34.43 L1 — exec host (the sig-quality-probe-rt runtime SA, the two login secrets, the conditioned captures-mount bindings, the smoke job) and the sig_audit login — currently queued; its S5-3 listing expired at GATE-G4",
+    "live:P34.43 L2 — sig_recovery_login, gated on live:P34.46 — currently queued",
+    "environment — SIG_GCP_PROJECT, SIG_EXEC_IMAGE (a pinned digest), SIG_HOSTED_DSN (or the exec-host dispatch path) and the two login passwords exported in env — unset at this record",
+    "AR-2 — an on-demand Cloud SQL restore point, exported and read back, before any hosted write (L3 only; the audit writes nothing)",
+    "AR-3 — a valid window: never 03:00-06:30Z, never inside the monthly batch window; preferred weekday 14:00-20:00Z",
+    "ordering — no earlier than 48 h after the hosted Round-10 schema roll (the G2 step-1 + soak reading), and after the 11B spine writes"
+  ],
+  "rerun_prompt": "implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true",
+  "commands": [
+    "1. hosted read-only audit: uv run sig-ops evidence-audit --dsn $SIG_HOSTED_DSN --capture-dir <mounted OCFL root> --seed <recorded> --sample <recorded> --out <live-audit>/",
+    "2. recovery plan: uv run sig-ops recovery-plan --audit <live-audit>/audit_report.json --out <live-audit>/",
+    "3. operator review pause (1-4 h): the operator reviews the plan and fixes the apply scope — the apply never starts on silence",
+    "4. bounded apply — pilot first: uv run sig-ops recovery-apply --dsn $SIG_HOSTED_DSN --plan <live-audit>/recovery_plan.json --audit <live-audit>/audit_report.json --apply --execution-id <recorded> --authority <operator-auth-ref> --capture-dir <mounted OCFL root> --verify-rerun --rematerialize --out <live-apply>/ -- with --max-actions and a --batches/--claims selection inside the pilot ceiling (<= 500 claims, <= 50 MB)",
+    "5. approved batches: the same command per approved batch (each <= 10,000 assertions, <= 250 MB distinct bytes, 1 worker)",
+    "6. unpublished freeze: uv run sig-ops recovery-freeze --dsn $SIG_HOSTED_DSN --apply-report <live-apply>/APPLY_REPORT.json --plan <live-audit>/recovery_plan.json --audit <live-audit>/audit_report.json --out <live-apply>/",
+    "7. close: implement-spec spec=docs/tickets/183_P32.22__bounded-recovery-and-activation.md live_verification=true (the OPERATIONAL_READINESS (f3) pass)",
+    "dispatch note: on the ACT-13 exec host steps 1-6 run as sig-exec-{audit,recovery}-<stamp> one-off Cloud Run jobs rendered by sig-ops exec-host run --purpose {audit,recovery} (ops/exec_host.toml) with a read-only captures mount; the --dsn form above is the contract's command surface"
+  ],
+  "ceilings": {
+    "pilot": {
+      "claims": 500,
+      "bytes": 52428800,
+      "detail": "the pilot batch is <= 500 claims and <= 50 MB; a first failure after 50 writes pauses; the pilot is the first batch and it stays the smallest"
+    },
+    "batch": {
+      "assertions": 10000,
+      "distinct_bytes": 262144000,
+      "workers": 1,
+      "detail": "each approved batch: <= 10,000 assertions, <= 250 MB distinct bytes, one worker"
+    },
+    "storage_headroom": {
+      "fractions": "warn at 0.7 used, require a disposition at 0.85, keep >= 0.2 free per batch (B16 / NEW-9)",
+      "basis": "G1 inventory — sig-pg allocates 15 GB SSD with autoresize on and limit 0 (unbounded); GCP counts GB in decimal",
+      "disk_allocated_bytes": 15000000000,
+      "warn_at_used_bytes": 10500000000,
+      "disposition_at_used_bytes": 12750000000,
+      "min_batch_free_bytes": 3000000000,
+      "re_read_rule": "the byte figures are absolute; the leg re-reads bytesUsed/bytesAllocated at run time and, if the allocated figure differs, recomputes the same fractions on the read allocation and records the recomputed bytes in the run ledger — a batch never starts below its free floor"
+    },
+    "job_ceilings": "the exec-host job itself is CPU 1, memory 512 Mi, timeout 1800 s, max-retries 0 (ops/exec_host.toml) — absolute under AR-9"
+  },
+  "pins": {
+    "audit_version": "evidence-audit/1",
+    "plan_version": "recovery-plan/1",
+    "apply_contract": "recovery-apply/1 (the ops/src/ops/recovery_apply.py contract — fixture-verified at P32.22, never run hosted)",
+    "freeze_record": "sig.repaired-snapshot/1 with freeze_state frozen_unpublished",
+    "policy_version": "publication-eligibility/1",
+    "role": "sig_recovery",
+    "capture_root": "<mounted OCFL root — a read-only gcsfuse mount of the captures bucket, env-derived; no bucket literal in this file>",
+    "code_commit": "<pinned at leg — the chain tip the leg runs on>",
+    "sqitch_head": "<recorded at leg — the hosted deploy HEAD>",
+    "hosted_population_digest": "<recorded by L1>"
+  },
+  "verification_checklist": [
+    "the audit's hosted population digest reconciles with the plan's before any write",
+    "applied actions are a subset of the plan, digest for digest — no action outside the plan, no byte outside the capture",
+    "receipts are unique — the apply is exactly-once across restarts",
+    "a restart mid-apply reconciles already_applied and resumes without re-applying",
+    "the +0 re-run applies nothing (verify_rerun)",
+    "no fetch path is used — a missing byte can only produce a skip; nothing is reconstructed as old evidence",
+    "rematerialize is dependency-ordered and a +0 no-op on re-run",
+    "the snapshot records frozen_unpublished — it is never published by this row",
+    "hosted /health and the required surfaces stay green during and after",
+    "the disk before/after read (bytesUsed/bytesAllocated) is recorded at the leg — the contract's catalog AC"
+  ],
+  "explicit_reservations": [
+    "the open live deferral stays OPEN; this row closes its production-recovery half only when the packet executes — the final post-evaluation candidate half stays owed through the human-evaluation path (P35.62)",
+    "no source-rights flip, no publication, no HG gate tick, no human label",
+    "no fetch of historical evidence: a missing byte can only skip",
+    "the apply is exactly-once by receipt and bounded to the recorded plan digest-for-digest",
+    "the snapshot records frozen_unpublished",
+    "the bounded apply is never pre-authorised: it runs only under the operator's verbatim in-ticket go plus a recorded --authority scope",
+    "credentials and secrets are environment-only (HG-09): the project id and bucket names are never literal in any tracked file",
+    "the OCFL captures mount is read-only by IAM condition and by mount flag (SIG-STORE-048)",
+    "a defect found mid-pass pauses and records — production machinery is never patched during the leg",
+    "the disk before/after read, the restore-point id and a date -u stamp are recorded in the run ledger at the leg",
+    "the candidate P35.61a/b split flag stays with C13 — nothing pre-splits"
+  ]
+}
