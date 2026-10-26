@@ -6,4 +6,4 @@
 web/src/lib/public-api.ts	* (docs/build/reports/LAUNCH_RECORD_2026-09-24.md §1), and a publish can
 web/src/lib/terms-disclosure.ts	adr: "docs/adr/ADR-183-express-terms-acceptance.md",
 web/src/lib/withdrawals.ts	* `docs/tickets/DEFERRALS.md`).
-web/src/pages/data-collection.astro	// into docs/build/reports/copy-batches/batch-01.md, sha256-pinned and `pending`
+web/src/pages/data-collection.astro	// sentence is agent-drafted into docs/build/reports/copy-batches/batch-01.md,
