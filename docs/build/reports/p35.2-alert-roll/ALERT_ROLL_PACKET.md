@@ -58,7 +58,7 @@ resource that already matches the committed def.
 
 ```
 ops/gcp/alerting.sh --apply prestate     # AR-2 captures (below) + sha256s
-ops/gcp/alerting.sh --apply bundle       # republish ops/declared/live-diff.json
+ops/gcp/alerting.sh --apply bundle       # republish ops/declared/live-diff.json — queued, never run here
 ops/gcp/alerting.sh --apply policies     # gate: channel present; reconcile 6 defs
 ops/gcp/alerting.sh --apply uptime       # resolve id by displayName; rendered flags
 ops/gcp/alerting.sh --apply retention    # describe first; update to 90
