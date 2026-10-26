@@ -789,3 +789,19 @@ seed-commit ff03e193
 # so the declaration lands as a later commit. Scope: findings
 # attributed to 4c4f7161 only; no other commit borrows the exemption.
 seed-commit 4c4f7161
+# P37.1 (row 344) — 024eca86 is the sanctioned forward repair of a
+# base-tip corpus live-claim: the P37.1 dispatch boundary-confirm entry
+# (LEDGER.md:1242, written at ae9e02ef) carried the bare assertion "the
+# first live run is P37.2's", which check_live_claims corpus flagged at
+# the impl head 3bde97b1. 024eca86 rewrote that one PHASE LOG line in
+# place to the contained "the first live run remains queued for P37.2"
+# — the same sanctioned class as 8800cc2e/5d7681a4/4c4f7161 (an entry
+# rewrite under the orient/live-claim repair protocol; the line's every
+# other field stands verbatim and the pre-repair bytes are archived
+# byte-for-byte under docs/build/reports/memory-repair/
+# (LEDGER_phaselog_L1242_pre-P37.1.txt) since the follow-on orient
+# repair folds the same line further). The branch rule forbids
+# force-push, so the declaration lands as a later commit. Scope:
+# findings attributed to 024eca86 only; no other commit borrows the
+# exemption.
+seed-commit 024eca86
