@@ -9,6 +9,25 @@ The first real source adapter on the P04.1 eight-stage framework
 surveillance-tag vocabulary, and lands them in the physically separate
 **ODbL-licensed** asset layer under the REFERENCE custody posture (§42.3, ADR-011).
 
+P37.1 (ACQ-17, I8 §4.3) widens the connector from the §23.2 tag layer into a
+**camera-site origin**: every element carrying ``surveillance:type`` or
+``highway=speed_camera`` — not only ``man_made=surveillance`` — emits the
+camera-site predicate family (``camera_external_ref``/coordinates/
+``camera_jurisdiction``/``camera_operator``/``technology``) onto its
+``osm:<type>/<id>`` subject, so the element joins the camera-site ER pool.
+The widened queries request ``out body center qt;`` — never ``out meta`` — so
+OSM ``user``/``uid`` are never *requested*, the capture-side half of
+SIG-INGEST-045e (F-406 / D-R11-OSMUID-1 / D-P34.49-2); edit detection moves
+from ``osm_version`` onto the content-digest snapshot diff
+(:func:`element_content_digest` / :func:`snapshot_content_diff`), with
+``osm_element_history`` kept as the version-history channel. National and
+global collection runs as two tiled passes (discovery ``out count;`` per
+declared area, then ``out body center qt;`` per non-empty area, reconciled
+against the discovery counts as ContentDrift — SIG-ENG-042). Elements whose
+``source``/``survey`` provenance names Wi-Fi/BLE/RF detection keep only
+3-decimal coarsened coordinates until the SIG-PUB-011–014 residential
+screen lands.
+
 This module owns four things the spec assigns to P04.2 (§23.2 Notes):
 
 * **The SIG-INGEST-045 versioned tag→claim vocabulary** (data, in
@@ -25,7 +44,9 @@ This module owns four things the spec assigns to P04.2 (§23.2 Notes):
   version where surveillance tags *first appeared*, never the element's creation
   timestamp — a repurposed 2009 road node dates from its retag, not its import.
 * **Mapper-identity discard** (SIG-INGEST-045e, a Part VIII safety invariant):
-  OSM ``user``/``uid`` are dropped at ingest and never stored or exposed;
+  OSM ``user``/``uid`` are never requested (``out body``, P37.1), are refused
+  at the capture writer if a nonconforming endpoint sends them anyway, and are
+  dropped again at extract for the history channel — never stored or exposed;
   ``changeset`` is retained as the provenance anchor.
 
 Deletion is detected by **snapshot diffing** (:func:`snapshot_diff`,
@@ -38,11 +59,13 @@ world event), which the connector never infers from an OSM deletion.
 from __future__ import annotations
 
 import json
-from collections.abc import Iterable, Mapping
+import re
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from functools import cache
 from typing import Any
+from urllib.parse import urlencode
 from uuid import uuid4
 
 from policy.parcel_screen import (
@@ -52,9 +75,18 @@ from policy.parcel_screen import (
     screen_geometry_descriptor,
 )
 from policy.sensitivity import SensitivityClass, demote_for_residential_parcel, geo_tier_for
+from resolution.partner_identity import natural_person_signal, partner_ref_rows
 
 from ._data import load_table
-from .stages import CaptureRef, Connector, ContentDrift, FetchResult, RunContext, register
+from .stages import (
+    CaptureRef,
+    Connector,
+    ContentDrift,
+    FetchResult,
+    RunContext,
+    content_digest,
+    register,
+)
 
 #: The registry source this connector runs against (§22.6; REFERENCE + ODbL-1.0).
 OSM_SOURCE_ID = "osm_overpass"
@@ -122,6 +154,30 @@ def is_surveillance_element(tags: Mapping[str, str]) -> bool:
     return tags.get(v["selection_key"]) == v["selection_value"]
 
 
+def is_camera_site_element(tags: Mapping[str, str]) -> bool:
+    """Whether an element is a camera-site element (P37.1 / ACQ-17, I8 §4.3).
+
+    The camera-site family is additive to ``man_made=surveillance``: an element
+    carrying any ``camera_site.presence_keys`` key (``surveillance:type`` — the
+    ~154k ALPR nodes ride it) or matching a ``value_keys`` pair
+    (``highway=speed_camera``, AP-W-024) emits the camera-site predicate
+    family. The selection is DATA (``osm_tag_vocab.toml``), never a literal.
+    """
+    cs = vocab()["camera_site"]
+    for key in cs["presence_keys"]:
+        if key in tags:
+            return True
+    for key, value in cs["value_keys"].items():
+        if tags.get(key) == value:
+            return True
+    return False
+
+
+def element_in_scope(tags: Mapping[str, str]) -> bool:
+    """Whether an element is in the widened collection scope (P37.1)."""
+    return is_surveillance_element(tags) or is_camera_site_element(tags)
+
+
 # --- pure tag handling --------------------------------------------------------
 
 
@@ -160,6 +216,88 @@ def map_surveillance_type(raw: str) -> str | None:
 def map_mobility(camera_type: str) -> str:
     """Infer mobility from ``camera:type`` (§23.2); unknown values stay ``unknown``."""
     return _normalize_lookup("mobility", camera_type) or "unknown"
+
+
+@cache
+def _rf_patterns() -> tuple[re.Pattern[str], ...]:
+    return tuple(re.compile(str(p), re.IGNORECASE) for p in vocab()["rf_source"]["patterns"])
+
+
+def rf_derived_source(tags: Mapping[str, str]) -> str | None:
+    """The RF-detection provenance a provenance tag declares, else ``None``.
+
+    P37.1 / ACQ-17: an element whose ``source``/``survey`` provenance names
+    Wi-Fi wardriving, Bluetooth/BLE scanning, or generic RF detection keeps
+    only coarsened coordinates until the SIG-PUB-011–014 residential screen
+    lands — RF-derived positions were observed where a *signal* was heard, not
+    where a device was surveyed. Returns the declaring tag's value (the
+    evidence), never a guess.
+    """
+    table = vocab()["rf_source"]
+    for key in table["keys"]:
+        value = tags.get(key)
+        if not value:
+            continue
+        text = str(value)
+        if any(p.search(text) for p in _rf_patterns()):
+            return text
+    return None
+
+
+def coarsened_geometry(geom: Mapping[str, Any] | None, decimals: int) -> dict[str, Any] | None:
+    """Round a geometry descriptor's coordinates to ``decimals`` places.
+
+    Covers point/center ``lat``/``lon`` and the four ``bounds`` edges — an
+    RF-derived element may never emit a precise descriptor of any shape.
+    """
+    if geom is None:
+        return None
+    out = dict(geom)
+    for key in ("lat", "lon"):
+        if key in out:
+            out[key] = round(float(out[key]), decimals)
+    bounds = out.get("bounds")
+    if isinstance(bounds, Mapping):
+        out["bounds"] = {
+            k: round(float(v), decimals) if isinstance(v, int | float) else v
+            for k, v in bounds.items()
+        }
+    return out
+
+
+def camera_site_technologies(tags: Mapping[str, str], mobility: str) -> tuple[str, ...]:
+    """The P35.15b technology slugs a camera-site element declares (ACQ-17).
+
+    ``highway=speed_camera`` declares the P36.3 ATE subtype ``ate-speed``;
+    every ``surveillance:type`` value maps through the device kind + the
+    element's inferred mobility onto ``ontology/vocab/technology.yaml`` slugs
+    (``alpr-fixed``, ``alpr-mobile``, …). A kind whose mobility the table
+    cannot specialise emits NOTHING — honest absence, never a guessed slug —
+    and a retired slug is never emitted.
+    """
+    cs = vocab()["camera_site"]
+    table = vocab()["camera_site_technology"]
+    out: list[str] = []
+    for key, value in cs["value_keys"].items():
+        if key == "highway" and tags.get(key) == value:
+            out.append(str(cs["speed_camera_technology"]))
+    kinds_table = table["kinds"]
+    for raw_value in split_multivalue(str(tags.get("surveillance:type") or "")):
+        kind = map_surveillance_type(raw_value)
+        if kind is None:
+            continue  # unmapped value — the research-task machinery owns it
+        spec = kinds_table.get(kind)
+        if spec is None:
+            continue  # a kind with no declared slug mapping emits no claim
+        slug: str | None = None
+        mobility_map = spec.get("mobility") or {}
+        if mobility in mobility_map:
+            slug = str(mobility_map[mobility])
+        elif spec.get("any_mobility") or mobility in ("fixed", "unknown"):
+            slug = spec.get("default")
+        if slug:
+            out.append(str(slug))
+    return tuple(dict.fromkeys(out))
 
 
 # --- keying (SIG-INGEST-045b / 045f) ------------------------------------------
@@ -311,6 +449,60 @@ def snapshot_diff(previous: Iterable[ElementRef], current: Iterable[ElementRef])
     )
 
 
+def element_content_digest(element: Mapping[str, Any]) -> str:
+    """Content-address one element's *content* for edit detection (P37.1 / ACQ-17).
+
+    Under ``out body`` an element no longer carries ``version`` — the version
+    counter stays on the ``osm_element_history`` channel — so edit detection
+    moves onto the digest of the fields an edit actually changes: tags, the
+    element's own coordinates/center/bounds, and the member lists (a way's
+    ``nodes``, a relation's ``members``) whose change *is* a geometry edit.
+    Acquisition metadata (timestamp/changeset/user/uid) is deliberately
+    excluded: it is never the device's state (and ``user``/``uid`` is never
+    in scope at all, SIG-INGEST-045e).
+    """
+    return content_digest(
+        {
+            "type": element.get("type"),
+            "id": element.get("id"),
+            "tags": element.get("tags") or {},
+            "lat": element.get("lat"),
+            "lon": element.get("lon"),
+            "center": element.get("center"),
+            "bounds": element.get("bounds"),
+            "nodes": element.get("nodes"),
+            "members": element.get("members"),
+        }
+    )
+
+
+@dataclass(frozen=True)
+class ContentSnapshotDiff(SnapshotDiff):
+    """A snapshot diff that also reports *edited* elements (P37.1 / ACQ-17).
+
+    :meth:`snapshot_diff` compares element references; this compares element
+    *content digests*, so a re-tagged or re-sited element — still present under
+    ``out body``, version unseen — surfaces as ``edited`` rather than silently
+    re-persisting. ``persisted`` holds only content-identical elements.
+    """
+
+    edited: frozenset[ElementRef] = frozenset()
+
+
+def snapshot_content_diff(
+    previous: Mapping[ElementRef, str], current: Mapping[ElementRef, str]
+) -> ContentSnapshotDiff:
+    """Diff two snapshots of ``{ElementRef: element_content_digest}`` (P37.1)."""
+    prev, cur = set(previous), set(current)
+    changed = frozenset(r for r in prev & cur if previous[r] != current[r])
+    return ContentSnapshotDiff(
+        added=frozenset(cur - prev),
+        persisted=frozenset(prev & cur) - changed,
+        edited=changed,
+        deleted_from_osm=frozenset(prev - cur),
+    )
+
+
 # --- Overpass etiquette (SIG-INGEST-045d / 045h / 045i / 045j) ----------------
 
 #: Published Overpass quotas that MUST be respected (SIG-INGEST-045h).
@@ -324,6 +516,35 @@ class BulkStitchingForbidden(Exception):
     """Raised on an attempt to stitch bounding boxes to scrape the whole world (SIG-INGEST-045i)."""
 
 
+def _tag_selectors() -> tuple[str, ...]:
+    """The widened tag filters every query selects (P37.1 / ACQ-17).
+
+    ``man_made=surveillance`` (the §23.2 asset layer) **plus** the camera-site
+    selectors: ``["surveillance:type"]`` presence and each ``value_keys`` pair
+    (``highway=speed_camera``). **Never a space in a filter** — a space trips
+    the public instance's request filter (SIG-INGEST-045d); value filtering
+    beyond the selectors happens client-side in :meth:`OSMConnector.normalize`.
+    """
+    v = vocab()
+    sels = [f'["{v["selection_key"]}"="{v["selection_value"]}"]']
+    for key in v["camera_site"]["presence_keys"]:
+        sels.append(f'["{key}"]')
+    for key, value in v["camera_site"]["value_keys"].items():
+        sels.append(f'["{key}"="{value}"]')
+    return tuple(sels)
+
+
+def _select_union(region: str) -> str:
+    """The union of every selector over node/way/relation inside ``region``.
+
+    ``region`` is a parenthesised bbox literal ``(S,W,N,E)`` or an area
+    reference ``(area.a)``.
+    """
+    return "".join(
+        f"{kind}{sel}{region};" for sel in _tag_selectors() for kind in ("node", "way", "relation")
+    )
+
+
 def build_overpass_query(
     *,
     bbox: tuple[float, float, float, float] | None = None,
@@ -332,14 +553,24 @@ def build_overpass_query(
 ) -> str:
     """Build an Overpass QL query for the surveillance layer, respecting etiquette.
 
-    * Selects ``man_made=surveillance`` across node/way/relation (§23.2).
+    * Selects the widened scope (``man_made=surveillance`` + ``surveillance:type``
+      presence + ``highway=speed_camera``) across node/way/relation
+      (§23.2, P37.1 / ACQ-17).
+    * Prints ``out body center qt;`` — the body verbosity carries tags and
+      geometry (``center`` for ways/relations, ``qt`` a stable quadtile order)
+      while requesting **no meta**, so ``user``/``uid`` are never asked for
+      (SIG-INGEST-045e, the capture-side half of F-406). ``version``/
+      ``timestamp``/``changeset`` no longer arrive either: edit detection is
+      the content-digest diff (:func:`snapshot_content_diff`) and the version
+      counter stays on the ``osm_element_history`` channel.
     * Carries ``[timeout:…][maxsize:…]`` (SIG-INGEST-045h).
     * **Never puts a space in a tag-value filter** — a space trips the public
       instance's request filter (SIG-INGEST-045d); any further value filtering is
       done client-side in :meth:`OSMConnector.normalize`.
     * Requires a bbox: an unbounded worldwide query is bulk-stitching and both
       prohibited and doomed in practice (SIG-INGEST-045i) — use a PBF dump for
-      bulk (:func:`acquisition_mode`).
+      bulk (:func:`acquisition_mode`) and the declared area tiling
+      (:func:`tile_discovery_targets`) for increments.
     """
     if bbox is None:
         raise BulkStitchingForbidden(
@@ -347,11 +578,155 @@ def build_overpass_query(
             "use a PBF dump for bulk and tiled Overpass for increments."
         )
     s, w, n, e = bbox
-    area = f"({s},{w},{n},{e})"
-    v = vocab()
-    sel = f'["{v["selection_key"]}"="{v["selection_value"]}"]'  # no spaces (SIG-INGEST-045d)
-    body = "".join(f"{kind}{sel}{area};" for kind in ("node", "way", "relation"))
-    return f"[out:json][timeout:{timeout}][maxsize:{maxsize}];({body});out tags center meta;"
+    body = _select_union(f"({s},{w},{n},{e})")
+    return f"[out:json][timeout:{timeout}][maxsize:{maxsize}];({body});out body center qt;"
+
+
+# --- the national/global area tiling (P37.1 / ACQ-17, I8 §4.3 item 3) ---------
+
+
+@cache
+def area_tiles() -> dict[str, Any]:
+    """The declared collection tiling (``data/osm_area_tiles.toml``, data not code)."""
+    return load_table("osm_area_tiles")
+
+
+def us_state_area_selector(code: str) -> str:
+    """The Overpass area filter for a US state/DC (ISO3166-2)."""
+    return f'area["ISO3166-2"="{code}"]'
+
+
+def country_area_selector(code: str) -> str:
+    """The Overpass area filter for a country (ISO3166-1 alpha-2)."""
+    return f'area["ISO3166-1"="{code}"]'
+
+
+def declared_areas() -> list[dict[str, str]]:
+    """The discovery order: the 51 US state/DC areas first, then every declared
+    ISO country. The US has no country tile — its state areas are the coverage —
+    so no element is ever fetched twice (SIG-INGEST-045i)."""
+    tiles = area_tiles()
+    out = [{"tile": code, "selector": us_state_area_selector(code)} for code in tiles["us_states"]]
+    out += [
+        {"tile": str(code).upper(), "selector": country_area_selector(str(code))}
+        for code in tiles["countries"]
+    ]
+    return out
+
+
+def build_area_count_query(
+    selectors: Sequence[str],
+    *,
+    timeout: int,
+    maxsize: int = OVERPASS_DEFAULT_MAXSIZE,
+) -> str:
+    """One chained ``out count;`` request over a chunk of area selectors.
+
+    Each selector becomes ``<sel>->.aN;(<selection union>(area.aN);)->.cN;.cN
+    out count;`` so the response's count elements align positionally with
+    ``selectors`` — the discovery census every fetch tile reconciles against.
+    """
+    parts: list[str] = []
+    for i, sel in enumerate(selectors):
+        parts.append(f"{sel}->.a{i};({_select_union(f'(area.a{i})')})->.c{i};.c{i} out count;")
+    return f"[out:json][timeout:{timeout}][maxsize:{maxsize}];{''.join(parts)}"
+
+
+def build_area_fetch_query(
+    selector: str,
+    *,
+    timeout: int,
+    maxsize: int = OVERPASS_DEFAULT_MAXSIZE,
+) -> str:
+    """One ``out body center qt;`` fetch query for a single declared area."""
+    return (
+        f"[out:json][timeout:{timeout}][maxsize:{maxsize}];"
+        f"{selector}->.a;({_select_union('(area.a)')});out body center qt;"
+    )
+
+
+def tile_discovery_targets(endpoint: str) -> list[dict[str, Any]]:
+    """The ``out count;`` discovery targets — one per chunk of declared areas.
+
+    Each target carries ``kind="overpass_tile_count"``, the ``tile_ids`` its
+    positional counts map onto, the interpreter URL, and the reviewed pacing
+    (``rate_limit_per_min`` from ``params.pace_seconds`` — the ~30s spacing the
+    public instance expects, enforced by the shared fetcher's per-host delay).
+    The fetch tiles themselves are resolved network-isolated by
+    :meth:`OSMConnector.discover_more` once the counts are captured.
+    """
+    params = area_tiles()["params"]
+    areas = declared_areas()
+    chunk = max(1, int(params["areas_per_count"]))
+    targets: list[dict[str, Any]] = []
+    for i in range(0, len(areas), chunk):
+        part = areas[i : i + chunk]
+        query = build_area_count_query(
+            [a["selector"] for a in part],
+            timeout=int(params["count_timeout"]),
+        )
+        targets.append(
+            {
+                "id": f"{OSM_SOURCE_ID}:tile-count:{i // chunk}",
+                "kind": "overpass_tile_count",
+                "tile_ids": [a["tile"] for a in part],
+                "url": f"{endpoint}?{urlencode({'data': query})}",
+                "endpoint": endpoint,
+                "rate_limit_per_min": max(1, int(60 // int(params["pace_seconds"]))),
+                "pace_seconds": int(params["pace_seconds"]),
+            }
+        )
+    return targets
+
+
+def tile_fetch_target(
+    tile: str, selector: str, expected_count: int, endpoint: str
+) -> dict[str, Any]:
+    """The resolved ``out body center qt;`` fetch target for one non-empty area.
+
+    ``expected_count`` is the tile's discovery count; the post-capture stages
+    reconcile the emitted element count against it and a mismatch beyond the
+    declared tolerance is recorded ContentDrift (:func:`tile_count_drift`).
+    """
+    params = area_tiles()["params"]
+    query = build_area_fetch_query(selector, timeout=int(params["fetch_timeout"]))
+    return {
+        "id": f"{OSM_SOURCE_ID}:tile:{tile}",
+        "kind": "overpass",
+        "tile": tile,
+        "expected_count": int(expected_count),
+        "url": f"{endpoint}?{urlencode({'data': query})}",
+        "rate_limit_per_min": max(1, int(60 // int(params["pace_seconds"]))),
+        "pace_seconds": int(params["pace_seconds"]),
+    }
+
+
+def parse_count_elements(parsed: Mapping[str, Any]) -> list[int]:
+    """The per-statement totals of an ``out count;`` response, in order."""
+    out: list[int] = []
+    for el in parsed.get("elements", []):
+        if el.get("type") == "count":
+            tags = el.get("tags") or {}
+            out.append(int(tags.get("total") or 0))
+    return out
+
+
+def tile_count_drift(expected: int, actual: int) -> int | None:
+    """The element-count delta when it exceeds the declared tolerance, else ``None``.
+
+    Elements can be mapped or deleted between the discovery and fetch passes, so
+    small deltas are ordinary OSM movement, not drift: the tile reconciles
+    unless ``|actual - expected| > max(count_tolerance_floor, expected *
+    count_tolerance_pct)`` (SIG-ENG-042 — the counts reconcile or the run
+    records the drift; never a vacuous success).
+    """
+    params = area_tiles()["params"]
+    bound = max(
+        int(params["count_tolerance_floor"]),
+        int(float(params["count_tolerance_pct"]) * expected),
+    )
+    delta = abs(int(actual) - int(expected))
+    return delta if delta > bound else None
 
 
 def acquisition_mode(*, bulk: bool) -> str:
@@ -449,10 +824,13 @@ def physical_asset_rows(claims: Iterable[Mapping[str, Any]]) -> list[dict[str, A
             continue
         ref = ElementRef(str(claim["osm_type"]), int(claim["osm_id"]))
         flagged = bool(claim.get("residential_parcel_flag"))
+        version = claim.get("osm_version")
         by_ref[ref] = {
             "osm_element_type": ref.osm_type,
             "osm_element_id": ref.osm_id,
-            "osm_version": int(claim["osm_version"]),
+            # Version-optional (P37.1): `out body` yields None — the row keeps
+            # the honest absent rather than minting a version it never saw.
+            "osm_version": int(version) if version is not None else None,
             "asset_technology": claim.get("asset_technology"),
             "mobility": claim.get("mobility", "unknown"),
             # P35.66 (SIG-PUB-005/013): a parcel-intersecting asset is demoted
@@ -522,6 +900,82 @@ class OSMConnector(Connector):
         assert ctx.fetcher is not None, "connectors fetch only through the shared layer"
         return ctx.fetcher.fetch(str(target["url"]))
 
+    # -- capture (the mapper-identity refusal, SIG-INGEST-045e / F-406) --
+    def capture(self, ctx: RunContext, fetched: FetchResult) -> CaptureRef:
+        """Store the bytes — but refuse an Overpass response carrying ``user``/``uid``.
+
+        P37.1 / ACQ-17 (D-R11-OSMUID-1, D-P34.49-2): the widened queries print
+        ``out body`` so mapper identity is never *requested*; a response that
+        still carries it is a nonconforming endpoint — recorded ContentDrift,
+        and the screened bytes never reach the capture store (the defence the
+        post-capture :func:`strip_mapper_identity` could never provide, since
+        the raw capture sealed them first). Scoped to ``osm_overpass`` Overpass
+        responses: the ``osm_element_history`` channel legitimately carries
+        meta-shaped documents.
+        """
+        if (
+            ctx.source.id == OSM_SOURCE_ID
+            and _is_overpass_request(fetched.url)
+            and _carries_mapper_identity(fetched.body)
+        ):
+            raise ContentDrift(
+                ctx.source.id,
+                "Overpass response carries user/uid under an `out body` query — "
+                "mapper identity the request never asked for (SIG-INGEST-045e)",
+                details=(
+                    "the capture writer refuses to seal mapper-identity fields; "
+                    "the endpoint is nonconforming"
+                ),
+            )
+        return super().capture(ctx, fetched)
+
+    def discover_more(
+        self, ctx: RunContext, captures: Sequence[CaptureRef]
+    ) -> list[Mapping[str, Any]]:
+        """Resolve per-area fetch tiles from captured ``out count;`` responses.
+
+        The national/global collection runs two passes inside one run (P37.1 /
+        ACQ-17, SIG-INGEST-045i): discovery captures the per-area census, then
+        every non-empty area resolves to one ``out body center qt;`` fetch
+        target carrying its ``expected_count`` — the drift bound the fetch
+        reconciles against. Pure: reads stored capture bytes and
+        ``ctx.parameters``/``ctx.resolved_targets`` only (network-isolated by
+        the driver), and returns the bounded follow-on list the continuation
+        pass fetches.
+        """
+        by_url: dict[str, Mapping[str, Any]] = {}
+        for t in ctx.parameters.get("targets", []) or []:
+            if str(t.get("kind")) == "overpass_tile_count":
+                by_url[str(t.get("url", ""))] = t
+        area_by_tile = {a["tile"]: a["selector"] for a in declared_areas()}
+        targets: list[Mapping[str, Any]] = []
+        for cap in captures:
+            count_target = by_url.get(cap.source_uri)
+            if count_target is None:
+                continue
+            try:
+                doc = json.loads(ctx.captures.get(cap.digest))
+            except (ValueError, TypeError):
+                continue  # a non-JSON count body is ContentDrift in parse()
+            counts = parse_count_elements(doc)
+            for tile, expected in zip(
+                [str(x) for x in count_target.get("tile_ids") or []], counts, strict=False
+            ):
+                if expected <= 0:
+                    continue  # an empty area resolves to no fetch tile
+                selector = area_by_tile.get(tile)
+                if selector is None:
+                    continue
+                target = tile_fetch_target(
+                    tile,
+                    selector,
+                    expected,
+                    str(count_target.get("endpoint") or _overpass_endpoint()),
+                )
+                ctx.resolved_targets[str(target["url"])] = target
+                targets.append(target)
+        return targets
+
     # -- interpretation (pure functions of the capture) --
     def parse(self, ctx: RunContext, capture: CaptureRef) -> Any:
         """Structure the captured OSM JSON (Overpass snapshot or element history).
@@ -530,10 +984,14 @@ class OSMConnector(Connector):
         504 body); rather than crash with an opaque ``JSONDecodeError``, surface it as
         :class:`ContentDrift` (fail loud, recorded — P25.3 / ADR-082), so the live
         runner writes a ``content_drift`` fetch record with 0 claims.
+
+        The target the capture was fetched under is bound onto the parsed
+        document (``_target``) so :meth:`extract` can reconcile a tile fetch
+        against its discovery ``expected_count`` — context only, never content.
         """
         data = ctx.captures.get(capture.digest)
         try:
-            return json.loads(data)
+            doc = json.loads(data)
         except (ValueError, TypeError) as exc:
             head = data[:64] if isinstance(data, (bytes, bytearray)) else str(data)[:64]
             raise ContentDrift(
@@ -541,36 +999,69 @@ class OSMConnector(Connector):
                 "Overpass returned non-JSON content (HTML error / WAF page / rate-limit body)",
                 details=f"{len(data)} bytes; starts {head!r} ({exc.__class__.__name__})",
             ) from exc
+        if isinstance(doc, dict):
+            target = ctx.resolved_targets.get(capture.source_uri) or _seed_target(
+                ctx, capture.source_uri
+            )
+            if target is not None:
+                doc = dict(doc)
+                doc["_target"] = dict(target)
+        return doc
 
     def extract(self, ctx: RunContext, parsed: Any) -> list[Mapping[str, Any]]:
         """Raw records with locators, preserving raw values and discarding mapper identity.
 
-        Handles both document shapes: an element-history document (all elements
+        Handles three document shapes: an element-history document (all elements
         share one ``(type, id)`` with distinct versions) yields a ``first_observed``
-        record (SIG-INGEST-045a); an Overpass snapshot yields one raw asset record
-        per surveillance element. OSM ``user``/``uid`` are dropped here, at ingest
-        (SIG-INGEST-045e); ``changeset`` is kept.
+        record (SIG-INGEST-045a); an ``out count;`` discovery document yields the
+        per-tile census rows; an Overpass snapshot yields one raw asset record per
+        in-scope element (the widened ``element_in_scope`` selection, P37.1).
+        Under ``out body`` an element carries no ``version`` — the key stays
+        ``None`` and edit detection is the content-digest diff (REQ-R1-01's
+        preserved reference becomes content-addressed rather than versioned).
+        A tile fetch reconciles its element count against the discovery
+        ``expected_count`` — beyond the tolerance, recorded :class:`ContentDrift`.
+        OSM ``user``/``uid`` are dropped here as defence-in-depth for the
+        meta-shaped history channel (SIG-INGEST-045e); ``changeset`` is kept.
         """
         elements = list(parsed.get("elements", []))
         if _is_history_document(elements):
             return _extract_history(elements)
+        if _is_count_document(elements):
+            return _extract_tile_counts(elements, parsed.get("_target"))
+        target = parsed.get("_target") if isinstance(parsed, Mapping) else None
+        expected = (target or {}).get("expected_count")
+        if expected is not None:
+            drift = tile_count_drift(int(expected), len(elements))
+            if drift is not None:
+                raise ContentDrift(
+                    ctx.source.id,
+                    f"tile {(target or {}).get('tile') or (target or {}).get('id')}: "
+                    f"discovery count {expected}, fetched {len(elements)} elements "
+                    f"(Δ{drift}) — the discovery census and the fetch disagree",
+                    details="SIG-ENG-042: tile counts reconcile or the run drifts",
+                )
         out: list[Mapping[str, Any]] = []
         for el in elements:
             tags = el.get("tags", {})
-            if not is_surveillance_element(tags):
+            if not element_in_scope(tags):
                 continue
             clean = strip_mapper_identity(el)
+            version = clean.get("version")
             out.append(
                 {
                     "record_kind": "asset",
                     "osm_type": str(clean["type"]),
                     "osm_id": int(clean["id"]),
-                    "osm_version": int(clean["version"]),
+                    # Version-optional (P37.1): `out body` carries no version —
+                    # the (type,id,version) version-history channel is
+                    # osm_element_history; edit detection is content-addressed.
+                    "osm_version": int(version) if version is not None else None,
                     "changeset": clean.get("changeset"),
                     # P35.26 / SIG-ONTO-030: the upstream change date for this
                     # version — the tag claims' honest `observed_at` (never the
                     # fetch timestamp: an unchanged element re-fetched keeps its
-                    # real last-modified date).
+                    # real last-modified date). None under `out body`.
                     "element_timestamp": clean.get("timestamp"),
                     "raw_tags": dict(tags),
                     "geometry": geometry_descriptor(clean),
@@ -594,6 +1085,11 @@ class OSMConnector(Connector):
         for raw in raw_claims:
             if raw.get("record_kind") == "first_observed":
                 out.append(self._normalize_first_observed(raw))
+                continue
+            if raw.get("record_kind") == "tile_count":
+                # The discovery census: a non-claim run-record row — the audit
+                # surface every fetch tile's expected_count reconciles against.
+                out.append(_stamp(dict(raw)))
                 continue
             out.extend(self._normalize_asset(raw))
         return out
@@ -648,7 +1144,7 @@ class OSMConnector(Connector):
                         "subject_id": ref.subject_id,
                         "osm_type": ref.osm_type,
                         "osm_id": ref.osm_id,
-                        "osm_version": int(raw["osm_version"]),
+                        "osm_version": raw.get("osm_version"),
                         "predicate_id": "operator_absent",
                         "value": True,
                         "raw_value": None,  # P2: the absence is the fact
@@ -668,7 +1164,7 @@ class OSMConnector(Connector):
                     "subject_id": ref.subject_id,
                     "osm_type": ref.osm_type,
                     "osm_id": ref.osm_id,
-                    "osm_version": int(raw["osm_version"]),
+                    "osm_version": raw.get("osm_version"),
                     "predicate_id": "published_by",
                     "value": vocab()["publisher_label"],
                     "raw_value": vocab()["publisher_label"],
@@ -676,6 +1172,16 @@ class OSMConnector(Connector):
                 }
             )
         )
+
+        # P37.1 / ACQ-17 (SIG-PUB-011–014 stand-in): an element whose
+        # provenance names Wi-Fi/BLE/RF detection keeps only 3-decimal
+        # coarsened geometry on every derived surface — the asset row and the
+        # camera-site coordinate claims; the precise bytes stay in the sealed
+        # capture only.
+        rf_source = rf_derived_source(tags)
+        geometry = raw.get("geometry")
+        if rf_source is not None:
+            geometry = coarsened_geometry(geometry, int(vocab()["rf_source"]["decimals"]))
 
         # P35.66 (SIG-PUB-005/013): the residential-parcel screen runs on the
         # asset's device point (``point``/``center`` descriptors); every other
@@ -687,7 +1193,7 @@ class OSMConnector(Connector):
         # (:func:`physical_asset_rows`) withholds it, so the publish surface
         # emits program-level facts only.
         sig = self._parcel_signal or declared_parcel_signal()
-        verdict = screen_geometry_descriptor(raw.get("geometry"), signal=sig)
+        verdict = screen_geometry_descriptor(geometry, signal=sig)
         asset_flagged = verdict is ParcelScreenVerdict.INTERSECTS
         asset_class = demote_for_residential_parcel(
             SensitivityClass.C1,  # SIG-PUB-006: roadside hardware defaults C1
@@ -695,9 +1201,9 @@ class OSMConnector(Connector):
         )
 
         # The asset row itself — the ODbL physical_asset projection input. Carries
-        # the version (edit detection), geometry, inferred mobility, and a
-        # first_observed placeholder (None => resolved later from history, NEVER the
-        # creation timestamp — SIG-INGEST-045a).
+        # the version (edit detection — optional under `out body`), geometry,
+        # inferred mobility, and a first_observed placeholder (None => resolved
+        # later from history, NEVER the creation timestamp — SIG-INGEST-045a).
         rows.append(
             _stamp(
                 {
@@ -705,11 +1211,11 @@ class OSMConnector(Connector):
                     "subject_id": ref.subject_id,
                     "osm_type": ref.osm_type,
                     "osm_id": ref.osm_id,
-                    "osm_version": int(raw["osm_version"]),
+                    "osm_version": raw.get("osm_version"),
                     "changeset": raw.get("changeset"),
                     "asset_technology": asset_technology,
                     "mobility": mobility,
-                    "geometry": raw.get("geometry"),
+                    "geometry": geometry,
                     "first_observed": None,
                     "last_observed": None,
                     "sensitivity_class": asset_class.value,
@@ -717,9 +1223,113 @@ class OSMConnector(Connector):
                     "residential_parcel_flag": asset_flagged,
                     "parcel_screen": verdict.value,
                     "parcel_screen_signal": sig.stamp,
+                    "rf_derived_source": rf_source,
                 }
             )
         )
+
+        # P37.1 / ACQ-17 (I8 §4.3): the camera-site claim family — the OSM
+        # element as a camera-site ORIGIN record (external ref + namespace,
+        # coarsened coordinates, unresolved jurisdiction, org-only operator,
+        # technology) so it enters the camera-site ER pool.
+        if is_camera_site_element(tags):
+            rows.extend(self._camera_site_rows(ref, raw, tags, geometry, mobility))
+        return rows
+
+    def _camera_site_rows(
+        self,
+        ref: ElementRef,
+        raw: Mapping[str, Any],
+        tags: Mapping[str, str],
+        geometry: Mapping[str, Any] | None,
+        mobility: str,
+    ) -> list[dict[str, Any]]:
+        """The camera-site predicate family for one element (P37.1 / ACQ-17).
+
+        Emitted on the element's own ``osm:<type>/<id>`` subject — the origin
+        record the camera-site ER pool reads:
+
+        * ``camera_external_ref`` (+ ``external_id``) in the declared
+          ``osm.element`` namespace — the shared upstream id space a
+          republisher's OSM ref joins under (P35.25 tier-1g, never a bare
+          string coincidence).
+        * ``camera_latitude``/``camera_longitude`` — the node point or the
+          way/relation ``center``; already coarsened by the caller when the
+          element is RF-derived (``coordinate_coarsened`` records the fact).
+          ``camera_coordinate_source`` records ``osm`` — the honest "the point
+          is the element's own geometry" source.
+        * ``camera_jurisdiction`` = ``unresolved`` — OSM carries no reliable
+          jurisdiction tag; honest absence over a guessed one.
+        * ``camera_operator`` — only from an ``operator`` tag that carries NO
+          affirmative natural-person signal (organisation-only; a person-shaped
+          tag is suppressed and never minted). ``link()`` twins it into an
+          organisation entity-ref via ``partner_ref_rows`` scoped to the
+          source, exactly as dot_511 does.
+        * ``technology`` — the P35.15b slugs
+          (:func:`camera_site_technologies`); multi-cardinality, one claim
+          per slug.
+        """
+        subject = ref.subject_id
+        observed = raw.get("element_timestamp")
+        version = raw.get("osm_version")
+        rows: list[dict[str, Any]] = []
+
+        def _claim(predicate: str, value: Any, **extra: Any) -> dict[str, Any]:
+            row: dict[str, Any] = {
+                "record_kind": "claim",
+                "subject_id": subject,
+                "osm_type": ref.osm_type,
+                "osm_id": ref.osm_id,
+                "osm_version": version,
+                "predicate_id": predicate,
+                "value": value,
+                "raw_value": value,
+                "observed_at": observed,
+            }
+            row.update(extra)
+            return _stamp(row)
+
+        element_ref_value = f"{ref.osm_type}/{ref.osm_id}"
+        rows.append(
+            _claim(
+                "camera_external_ref",
+                subject,
+                candidate_identifier={"scheme": "osm.element", "value": element_ref_value},
+                id_namespace="osm.element",
+            )
+        )
+        rows.append(_claim("external_id", subject))
+
+        if isinstance(geometry, Mapping) and geometry.get("kind") in ("point", "center"):
+            rf_source = rf_derived_source(tags)
+            for predicate, key in (("camera_latitude", "lat"), ("camera_longitude", "lon")):
+                extra: dict[str, Any] = {}
+                if rf_source is not None:
+                    extra["coordinate_coarsened"] = {
+                        "decimals": int(vocab()["rf_source"]["decimals"]),
+                        "basis": "rf_derived_source",
+                        "source_value": rf_source,
+                    }
+                rows.append(_claim(predicate, float(geometry[key]), **extra))
+            rows.append(_claim("camera_coordinate_source", "osm"))
+
+        rows.append(
+            _claim(
+                "camera_jurisdiction",
+                "unresolved",
+                candidate_identifier={"scheme": "sig.unresolved", "value": "unresolved"},
+            )
+        )
+
+        operator = str(tags.get("operator") or "").strip()
+        if operator and natural_person_signal(operator) is None:
+            # Organisation-only (P37.1): a person-shaped tag is suppressed
+            # entirely — never a claim, never a mint; the verbatim tag stays
+            # on the operator_stated claim for the record.
+            rows.append(_claim("camera_operator", operator))
+
+        for slug in camera_site_technologies(tags, mobility):
+            rows.append(_claim("technology", slug))
         return rows
 
     def _claim_row(
@@ -736,7 +1346,7 @@ class OSMConnector(Connector):
             "subject_id": ref.subject_id,
             "osm_type": ref.osm_type,
             "osm_id": ref.osm_id,
-            "osm_version": int(raw["osm_version"]),
+            "osm_version": raw.get("osm_version"),
             "predicate_id": predicate,
             "osm_key": key,
             "raw_value": raw_value,  # P2: the raw value is always preserved
@@ -766,7 +1376,7 @@ class OSMConnector(Connector):
                 "subject_id": ref.subject_id,
                 "osm_type": ref.osm_type,
                 "osm_id": ref.osm_id,
-                "osm_version": int(raw["osm_version"]),
+                "osm_version": raw.get("osm_version"),
                 "predicate_id": "unmapped_surveillance_tag",
                 "osm_key": key,
                 "raw_value": value,
@@ -796,6 +1406,18 @@ class OSMConnector(Connector):
         hv = first_observed_from_history(versions)
         return hv.timestamp if hv is not None else None
 
+    # -- link --
+    def link(self, ctx: RunContext, normalized: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Twin authoritative ``camera_operator`` claims into organisation entity-refs.
+
+        The same ``partner_ref_rows`` seam dot_511 uses (P35.26 / ADR-112): an
+        evidenced OSM ``operator`` tag mints a scoped-name organisation ref
+        anchored to the source — never a person (the emission half already
+        suppresses person-shaped tags; the mint machinery additionally refuses
+        ambiguous names). ``operator_stated``/``published_by`` mint nothing.
+        """
+        return partner_ref_rows(normalized, predicates={"camera_operator"}, scope=ctx.source.id)
+
     # -- load --
     def load(self, ctx: RunContext, linked: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Produce the ODbL L1 claim rows; the driver asserts them (live only).
@@ -809,6 +1431,78 @@ class OSMConnector(Connector):
 
 
 # --- module-private helpers ---------------------------------------------------
+
+
+def _overpass_endpoint() -> str:
+    """The configured interpreter endpoint (lazy — live_targets imports osm too)."""
+    import os
+
+    from .live_targets import DEFAULT_OVERPASS_ENDPOINT
+
+    return os.environ.get("SIG_OVERPASS_ENDPOINT", "").strip() or DEFAULT_OVERPASS_ENDPOINT
+
+
+def _is_overpass_request(url: str) -> bool:
+    """Whether a fetched URL is an Overpass interpreter request.
+
+    The capture-side mapper-identity refusal (SIG-INGEST-045e) applies to the
+    Overpass channel — an ``/api/interpreter`` URL or any request carrying the
+    ``data=`` query parameter — and never to the ``osm_element_history``
+    channel, whose API-0.6 responses legitimately carry meta fields.
+    """
+    return "interpreter" in url or "data=" in url
+
+
+def _carries_mapper_identity(body: bytes | str) -> bool:
+    """Whether a response body contains ``user``/``uid`` on any element."""
+    try:
+        doc = json.loads(body)
+    except (ValueError, TypeError):
+        return False  # a non-JSON body is ContentDrift in parse(), not identity
+    discard = set(vocab()["mapper_identity_keys"])
+    elements = doc.get("elements") if isinstance(doc, Mapping) else None
+    if not isinstance(elements, list):
+        return False
+    return any(isinstance(el, Mapping) and discard & set(el) for el in elements)
+
+
+def _seed_target(ctx: RunContext, source_uri: str) -> Mapping[str, Any] | None:
+    """The configured seed target a capture was fetched under, by URL."""
+    for t in ctx.parameters.get("targets", []) or []:
+        if str(t.get("url", "")) == source_uri:
+            return t
+    return None
+
+
+def _is_count_document(elements: list[Mapping[str, Any]]) -> bool:
+    """Whether a parsed document is an ``out count;`` discovery response."""
+    return bool(elements) and all(el.get("type") == "count" for el in elements)
+
+
+def _extract_tile_counts(
+    elements: list[Mapping[str, Any]], target: Mapping[str, Any] | None
+) -> list[Mapping[str, Any]]:
+    """One ``tile_count`` raw record per count element — the discovery census.
+
+    Counts align positionally with the target's ``tile_ids`` (the query
+    emits one ``out count;`` per area statement, in order); a target carrying
+    no ids falls back to the positional index so the record is never lost.
+    """
+    tile_ids = [str(x) for x in (target or {}).get("tile_ids") or []]
+    out: list[Mapping[str, Any]] = []
+    for i, el in enumerate(elements):
+        counts = el.get("tags") or {}
+        out.append(
+            {
+                "record_kind": "tile_count",
+                "tile_id": tile_ids[i] if i < len(tile_ids) else f"#{i}",
+                "count_total": int(counts.get("total") or 0),
+                "count_nodes": int(counts.get("nodes") or 0),
+                "count_ways": int(counts.get("ways") or 0),
+                "count_relations": int(counts.get("relations") or 0),
+            }
+        )
+    return out
 
 
 def _stamp(row: dict[str, Any]) -> dict[str, Any]:
@@ -877,8 +1571,11 @@ def canary_findings(parsed: Mapping[str, Any]) -> list[str]:
     structural expectation the response violated.
 
     Checks: a top-level ``elements`` list is present; every element carries
-    ``type``/``id``/``version`` (the reference key, SIG-INGEST-045b); every
-    surveillance element carries a ``tags`` map. It deliberately does NOT assert
+    ``type``/``id`` — ``version`` is NOT required since P37.1 (``out body``
+    carries no meta; the reference key's version half lives on the
+    ``osm_element_history`` channel, and an Overpass element keeps its own
+    ``type``/``id``); ``count`` elements are the discovery-census shape; every
+    in-scope element carries a ``tags`` map. It deliberately does NOT assert
     tag *values* — new device kinds are handled as unmapped values + research
     tasks (REQ-R1-02), not treated as drift.
     """
@@ -890,16 +1587,18 @@ def canary_findings(parsed: Mapping[str, Any]) -> list[str]:
         if not isinstance(el, Mapping):
             findings.append(f"element[{i}] is not an object")
             continue
-        for key in ("type", "id", "version"):
+        if el.get("type") == "count":
+            continue  # an `out count;` discovery row — the tiling census
+        for key in ("type", "id"):
             if key not in el:
                 findings.append(f"element[{i}] ({el.get('type')}/{el.get('id')}) missing {key!r}")
         if el.get("type") not in ELEMENT_TYPES:
             findings.append(f"element[{i}] has unknown type {el.get('type')!r}")
         tags = el.get("tags", {})
-        if is_surveillance_element(tags if isinstance(tags, Mapping) else {}) and not isinstance(
+        if element_in_scope(tags if isinstance(tags, Mapping) else {}) and not isinstance(
             tags, Mapping
         ):
-            findings.append(f"element[{i}] surveillance element has non-map tags")
+            findings.append(f"element[{i}] in-scope element has non-map tags")
     return findings
 
 
@@ -930,30 +1629,48 @@ __all__ = [
     "OSM_SOURCE_ID",
     "REMOVED_FROM_STREET_PREDICATE",
     "BulkStitchingForbidden",
+    "ContentSnapshotDiff",
     "ElementRef",
     "ElementVersionRef",
     "HistoryVersion",
     "OSMConnector",
     "SnapshotDiff",
     "acquisition_mode",
+    "area_tiles",
     "assert_own_or_public_instance",
+    "build_area_count_query",
+    "build_area_fetch_query",
     "build_overpass_query",
+    "camera_site_technologies",
     "canary_findings",
+    "coarsened_geometry",
+    "country_area_selector",
+    "declared_areas",
+    "element_content_digest",
+    "element_in_scope",
     "element_version_ref",
     "first_observed_from_history",
     "geometry_descriptor",
     "history_versions",
+    "is_camera_site_element",
     "is_surveillance_bearing_key",
     "is_surveillance_element",
     "load_claims_for_l1",
     "map_mobility",
     "map_surveillance_type",
     "overpass_status_action",
+    "parse_count_elements",
     "physical_asset_rows",
+    "rf_derived_source",
+    "snapshot_content_diff",
     "snapshot_diff",
     "split_multivalue",
     "strip_mapper_identity",
+    "tile_count_drift",
+    "tile_discovery_targets",
+    "tile_fetch_target",
     "unmapped_tag_task",
+    "us_state_area_selector",
     "vocab",
     "vocab_version",
 ]

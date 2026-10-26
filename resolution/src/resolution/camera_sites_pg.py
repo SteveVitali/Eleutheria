@@ -135,11 +135,15 @@ _PAIR_BINDINGS_SQL = (
 # `traffic_camera:<source>:<target>:<ref>`) and which captured contents its
 # claims cite (evidence_capture.content_digest) — the two evidences
 # infer_duplicate_targets consumes.
+# P37.1 (ACQ-17): `osm:<type>/<id>` subjects are admitted too — the OSM origin
+# records carry camera-site claims and the element IS their mint scope (the
+# tile/query they were fetched under is not recoverable from the subject
+# string; the element ref is the honest target-level anchor).
 _TARGETS_SQL = (
     "SELECT ei.entity_id::text, ei.value "
     "  FROM entity_identifier ei "
     " WHERE ei.scheme = 'sig.connector.subject' "
-    "   AND ei.value LIKE 'traffic_camera:%%' "
+    "   AND (ei.value LIKE 'traffic_camera:%%' OR ei.value LIKE 'osm:%%') "
     "   AND ei.entity_id = ANY(%s::uuid[])"
 )
 _DIGESTS_SQL = (
@@ -357,6 +361,10 @@ def read_camera_records(conn: Any) -> list[CameraRecord]:
         parts = str(value).split(":", 3)
         if entity in by_id and len(parts) >= 4 and parts[0] == "traffic_camera":
             targets[entity] = parts[2]
+        elif entity in by_id and parts[0] == "osm" and len(parts) == 2:
+            # P37.1: the OSM element itself is the target-level anchor — a tile
+            # query has no identity in the subject string.
+            targets[entity] = parts[1]
     if targets:
         out = [replace(r, target_id=targets.get(r.subject_id)) for r in out]
     # P35.25: the record's declared identifier namespace comes from the

@@ -475,6 +475,76 @@ def test_coordinate_pair_never_mixes_occurrences(conn: Any) -> None:
     assert rec().coordinate_capture_id == cap_x
 
 
+def test_an_osm_subject_is_admitted_to_the_camera_record_pool(conn: Any) -> None:
+    """P37.1 / ACQ-17: an ``osm:<type>/<id>`` subject carrying camera-site
+    claims is a camera record — the pool is no longer traffic_camera-only —
+    and its element ref is the target-level lineage anchor."""
+    conn.execute(
+        "INSERT INTO vocab_resolution_strategy(strategy_id,definition) "
+        "VALUES('latest_observation_wins','fixture') ON CONFLICT DO NOTHING"
+    )
+    conn.execute(
+        "INSERT INTO vocab_predicate(predicate_id,vocab_version,value_datatype,object_type,"
+        " definition,volatility_class,half_life_days,resolution_strategy) "
+        "VALUES('camera_latitude','1','string','literal','f','SLOW',1,'latest_observation_wins'),"
+        "      ('camera_longitude','1','string','literal','f','SLOW',1,'latest_observation_wins'),"
+        "      ('camera_external_ref','1','string','literal','f','SLOW',1,"
+        "'latest_observation_wins')"
+        " ON CONFLICT DO NOTHING"
+    )
+    rights = conn.execute(
+        "INSERT INTO rights_record(spdx_expression,redistributable,derivative_permitted,"
+        "retrieval_date) VALUES('ODbL-1.0','yes','yes','2026-10-01') RETURNING rights_id"
+    ).fetchone()[0]
+    run = conn.execute(
+        "INSERT INTO ingest_run(connector_name,connector_version,code_commit,ruleset_version,"
+        "vocab_version,parameters,environment,input_digests,status,finished_at) "
+        "VALUES('osm','1.0.0','sha','r1','2026.10.26','{}','{}','{}','succeeded',"
+        "'2026-10-26T00:00:00Z') RETURNING run_id"
+    ).fetchone()[0]
+    author = conn.execute(
+        "INSERT INTO entity(entity_type) VALUES('person') RETURNING entity_id"
+    ).fetchone()[0]
+    prereqs = {"rights_id": rights, "run_id": run}
+    ev = _seed_occurrence_chain(conn, prereqs, source_id="osm_overpass")
+    subject = conn.execute(
+        "INSERT INTO entity(entity_type) VALUES('physical_asset') RETURNING entity_id"
+    ).fetchone()[0]
+    # The subject's sig.connector.subject identifier is the OSM element string —
+    # _TARGETS_SQL must admit it (the element is the honest target anchor).
+    conn.execute(
+        "INSERT INTO entity_identifier(entity_id,scheme,value) "
+        "VALUES(%s,'sig.connector.subject','osm:node/42')",
+        (subject,),
+    )
+    cap = _capture_at(conn, prereqs, ev["artifact"], digest="d-osm", retrieved_at=T2)
+
+    def cam_claim(pred: str, value: str) -> str:
+        cid = conn.execute(
+            "INSERT INTO claim(subject_id,predicate_id,object_type,value_kind,value_text,"
+            "raw_value,observed_at,source_reliability,claim_directness,artifact_integrity,"
+            "asserted_by,assertion_rationale,ingest_run_id,rights_id,sensitivity_tier) "
+            "VALUES(%s,%s,'literal','value',%s,%s,%s,'R2','D2','I1',%s,'f',%s,%s,0)"
+            " RETURNING claim_id",
+            (subject, pred, value, value, T2, author, run, rights),
+        ).fetchone()[0]
+        _bind(conn, cid, cap, bound_at=T2)
+        return str(cid)
+
+    cam_claim("camera_latitude", "35.4691")
+    cam_claim("camera_longitude", "-97.5182")
+    cam_claim("camera_external_ref", "osm:node/42")
+
+    from resolution.camera_sites_pg import read_camera_records
+
+    rec = next(r for r in read_camera_records(conn) if r.subject_id == str(subject))
+    assert rec.latitude == pytest.approx(35.4691)
+    assert rec.longitude == pytest.approx(-97.5182)
+    assert rec.external_ref == "osm:node/42"
+    # The element is the target-level anchor (no tile id lives in the subject).
+    assert rec.target_id == "node/42"
+
+
 # --------------------------------------------------------------------------- #
 # Per-execution completion + watermark                                          #
 # --------------------------------------------------------------------------- #

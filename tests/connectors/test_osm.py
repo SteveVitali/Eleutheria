@@ -426,10 +426,19 @@ def test_canary_passes_on_the_committed_fixture() -> None:
 
 
 def test_canary_flags_structural_drift() -> None:
-    # An upstream that drops the version field (the reference key) is drift.
-    drifted = {"elements": [{"type": "node", "id": 9, "tags": {"man_made": "surveillance"}}]}
-    findings = canary_findings(drifted)
-    assert any("version" in f for f in findings)
+    # P37.1: under `out body` an element legitimately carries no `version` —
+    # the version history lives on osm_element_history — so a version-less
+    # element is NOT drift; a missing `type`/`id` or an unknown element type is.
+    assert (
+        canary_findings(
+            {"elements": [{"type": "node", "id": 9, "tags": {"man_made": "surveillance"}}]}
+        )
+        == []
+    )
+    drifted = {"elements": [{"id": 9, "tags": {"man_made": "surveillance"}}]}
+    assert any("'type'" in f for f in canary_findings(drifted))
+    # A `count` element is the discovery-census shape, never drift.
+    assert canary_findings({"elements": [{"type": "count", "id": 1, "tags": {"total": "7"}}]}) == []
     # A response missing the elements list entirely is drift.
     assert canary_findings({"generator": "x"}) == ["missing top-level 'elements' list"]
 

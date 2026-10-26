@@ -30,11 +30,31 @@ from ._data import load_table
 DEFAULT_OVERPASS_ENDPOINT = "https://lz4.overpass-api.de/api/interpreter"
 
 
-def _overpass_targets(source_id: str, spec: dict[str, Any]) -> list[dict[str, str]]:
+def _overpass_targets(source_id: str, spec: dict[str, Any]) -> list[dict[str, Any]]:
     endpoint = os.environ.get("SIG_OVERPASS_ENDPOINT", "").strip() or DEFAULT_OVERPASS_ENDPOINT
-    query = str(spec["overpass_query"]).strip()
+    from .osm import build_overpass_query, tile_discovery_targets
+
+    targets: list[dict[str, Any]] = []
+    if spec.get("tile_discovery"):
+        # P37.1 / ACQ-17: the declared `out count;` area-census targets precede
+        # the seed bbox so the two-pass collection (discovery → per-area fetch
+        # via discover_more) runs inside the one live run.
+        targets.extend(tile_discovery_targets(endpoint))
+    if "overpass_query" in spec:
+        query = str(spec["overpass_query"]).strip()
+    else:
+        # The widened selection is built, never literal — the camera-site
+        # selectors ride the versioned vocabulary, not a frozen string.
+        bbox_raw = [float(x) for x in spec["bbox"]]
+        if len(bbox_raw) != 4:
+            raise ValueError(f"{source_id}: live_targets bbox needs 4 numbers (S,W,N,E)")
+        query = build_overpass_query(
+            bbox=(bbox_raw[0], bbox_raw[1], bbox_raw[2], bbox_raw[3]),
+            timeout=int(spec.get("timeout", 180)),
+        )
     url = f"{endpoint}?{urlencode({'data': query})}"
-    return [{"id": f"{source_id}:overpass", "url": url, "kind": "overpass"}]
+    targets.append({"id": f"{source_id}:overpass", "url": url, "kind": "overpass"})
+    return targets
 
 
 def live_targets(source_id: str) -> list[dict[str, str]]:

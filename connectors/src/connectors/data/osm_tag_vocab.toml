@@ -16,7 +16,14 @@
 # emits a `published_by` provenance claim per element (the dataset publisher,
 # never an operational role); element `timestamp` is stamped `observed_at` on
 # tag claims (the upstream change date, P35.26 honest-time).
-version = "2026.10.18"
+# 2026.10.26: P37.1 / ACQ-17 — the camera-site origin family (I8 §4.3):
+# [camera_site] widens the selection to elements carrying `surveillance:type`
+# or `highway=speed_camera`; [camera_site_technology] maps device kind +
+# mobility onto ontology/vocab/technology.yaml slugs (the P35.15b machinery,
+# the P36.3 ATE subtype for speed cameras); [rf_source] names the Wi-Fi /
+# BLE / RF survey provenances whose coordinates coarsen to 3 decimals until
+# the SIG-PUB-011–014 residential screen lands.
+version = "2026.10.26"
 
 # P35.26 / SIG-TRUST-003: the dataset publisher, emitted as a `published_by`
 # provenance claim per element — recorded as PUBLISHER, never an operational
@@ -102,3 +109,55 @@ raw_value_only_keys = ["description"]
 "mobile"   = "redeployable"
 "vehicle"  = "vehicle_mounted"
 "drone"    = "airborne"
+
+# ---------------------------------------------------------------------------
+# P37.1 / ACQ-17 (I8 §4.3): the camera-site origin family. An element joins the
+# family when it carries `surveillance:type` (any value) or
+# `highway=speed_camera` — additive to the man_made=surveillance selection, so
+# the ~154k ALPR nodes (man_made + surveillance:type=ALPR) and the ~1,383
+# highway=speed_camera US nodes (AP-W-024) both emit camera-site claims.
+# ---------------------------------------------------------------------------
+
+# An element is a camera-site element iff it carries any `presence_key` OR
+# matches a `value_key` pair.
+[camera_site]
+presence_keys = ["surveillance:type"]
+value_keys = { "highway" = "speed_camera" }
+
+# The speed-camera subtype (P36.3): highway=speed_camera emits `ate-speed`,
+# never the retired traffic_camera blanket.
+speed_camera_technology = "ate-speed"
+
+# Device kind (the [surveillance_type] map's output) + normalised mobility ->
+# ontology/vocab/technology.yaml slug. `default` fires for mobility `fixed`
+# or `unknown`; an entry in `mobility` overrides for that mobility; a kind
+# with `any_mobility` emits its default for every mobility; a kind whose
+# mobility is neither defaultable nor listed emits NOTHING (honest absence —
+# a drone-mounted CCTV is not a fixed-camera claim). Kinds absent from this
+# table (guard, webcam, unmapped values) emit no technology claim.
+[camera_site_technology.kinds]
+alpr = { default = "alpr-fixed", mobility = { vehicle_mounted = "alpr-mobile", redeployable = "alpr-trailer", airborne = "alpr-unspecified" } }
+camera = { default = "fixed-camera-unspecified", mobility = { redeployable = "camera-trailer-unspecified" } }
+acoustic_gunshot_detector = { default = "gunshot-detection-fixed", mobility = { vehicle_mounted = "gunshot-detection-unspecified", redeployable = "gunshot-detection-unspecified", airborne = "gunshot-detection-unspecified" } }
+automated_facial_recognition = { default = "face-recognition-unspecified", any_mobility = true }
+
+# P37.1 / ACQ-17 (SIG-PUB-011–014 stand-in): an element whose `source`/`survey`
+# provenance names RF detection keeps only 3-decimal coarsened coordinates
+# until the residential publication screen lands. `rf_source_patterns` are
+# case-insensitive regexes matched against the tag value.
+[rf_source]
+keys = ["source", "survey", "source:survey", "source:location"]
+patterns = [
+  "wi[-_ ]?fi",
+  "bluetooth",
+  "\\bble\\b",
+  "\\brf\\b",
+  "rfid",
+  "radio[ -]?frequency",
+  "\\buwb\\b",
+  "wifi",
+  "wireless",
+]
+# The coarsening precision (decimal places) and the marker key stamped onto
+# every coarsened coordinate claim + the asset row.
+decimals = 3
