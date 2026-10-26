@@ -37,8 +37,16 @@ so your project's value is amplified, not copied.
   differentiator** (e.g. plate-level search, your live crawler, your UX).
 - We will **not fork** your project (DeFlock: SIG-CHART-015.1).
 - We treat lead-generation sources as **leads only**, never auto-confirmed (§43.5).
-- We honour robots/ToS and conservative crawler conduct (§26); where your terms do not
-  permit a use, we do not make it.
+- We run a published crawler-conduct policy (§26, `policy/` → `crawler_conduct.toml`,
+  stated publicly on the crawler explanation page): a descriptive User-Agent with a
+  contact URL, conservative per-host rate limits, and **no access-control
+  circumvention — ever**. We probe and record every host's `robots.txt`; under a
+  recorded operator decision (GL-GATE-08 / ADR-088, ADR-168) a disallow does not by
+  itself stop a fetch — the fetch is marked `robots_disregarded` and disclosed
+  publicly as host + count — but **a direct opt-out stops us at once** (a host-level
+  opt-out register is checked before every fetch), and **an affirmative
+  machine-readable rights reservation is honoured as a refusal**. Where your terms
+  do not permit a use, we do not make it.
 
 **What we offer** (it gives before it asks — the cheapest demonstration of the compact):
 

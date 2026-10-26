@@ -152,3 +152,12 @@ recorded per-target** for the audit trail, but **never blocks** a fetch.
   disposition stays the operator's to revoke, as that clause says; it fires when the operator revokes or narrows
   GL-GATE-08 by a new gate decision and ADR, or when counsel is obtained (LATER-05) or a first legal demand arrives
   (ADR-182's and ADR-166's triggers). The decision and the body above are unchanged (SIG-ENG-003).
+- **Status:** Superseded by ADR-222 (2026-10-26)
+- **Status note (2026-10-26, Round-11 11C, P36.1b):** superseded **in part** — the
+  `robots_policy`-field clause only (Decision §5's "declared posture, now read as 'probe +
+  record'" sentence and the rejected flip-to-`not_applicable` alternative, together the
+  "accurate declarations" clause Q-E2-02's adopted line named). ADR-222 fixes the field's
+  documented meaning: the source's robots posture **as declared at review time**, registry
+  metadata that is never an enforcement claim. The probe-and-record decision this ADR made —
+  and ADR-168 re-confirmed on every host — stands unchanged; no `robots_policy` value gates a
+  fetch (SIG-ENG-003).

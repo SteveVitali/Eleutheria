@@ -1258,6 +1258,41 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Changed
 
+- **Crawler conduct text, the `robots_policy` field and the
+  `/data-collection/` page state the decided posture** (P36.1b / row 349;
+  R11-GOV-04; ADR-222; owner SIG-INGEST-036 rule 7 + SIG-INGEST-046c;
+  cites Q-E2-11 [A-5], Q-E2-02 [B-6], GL-GATE-08, ADR-087/088/168/182/187,
+  SIG-INGEST-046b, SIG-ENG-042) — the E2-07 contradiction closed:
+  `policy/src/policy/data/crawler_conduct.toml` rule 2 now reads "Probe
+  and record robots.txt" (it previously said "Honor robots.txt …
+  permission is NOT granted", a claim the code never made true), rule 7
+  names the `sig.opt-out-register/1` mechanism, and `policy.crawler`'s
+  docstring and helper docs match. The `robots_policy` registry field is
+  documented — on the `RobotsPolicy` enum and in the `sources.toml`
+  header — as the source's robots posture *declared at review time*,
+  registry metadata that is never an enforcement claim: under GL-GATE-08
+  every value means "probe + record", and a `disallowed`/`unretrievable`
+  verdict proceeds stamped `robots_disregarded` and is disclosed publicly
+  as host + count. `/data-collection/` is rewritten to the full text —
+  the eight conduct rules carried verbatim (new CR-01…CR-08 batch rows
+  pinned to `title + ". " + text`), the robots posture, the host+count
+  disclosure, the opt-out register checked before every fetch, the
+  SIG-INGEST-046c reservation refusal kept distinct from `UNDETERMINED`,
+  rate limits and the `/dispute/` stop route; DC-21 supersedes DC-03 and
+  DC-22…DC-32 carry the new sections, all `pending` until the operator's
+  verbatim confirmation. `tests/unit/test_conduct_text.py` is the new
+  copy check: conduct text asserting conduct the code does not implement
+  fails the build, and the anchors are fixture-verified (an opted-out
+  host sees zero egress; a `Disallow` proceeds stamped; a recorded
+  reservation refuses at the loader gate). The Stage-0 outreach letter's
+  robots/ToS sentence is corrected before any send (sending stays
+  operator outreach under ADR-171); the ALPR Abuse Library's observed
+  `Content-Signal` + Article-4 reservation is recorded as
+  `[sources.alpr_abuse_library.rights.reservation]` — the row stays
+  `ingestion_permitted=false`, rights `UNDETERMINED`, and the loader
+  refuses it outright. No behaviour change: A-5 re-confirmed GL-GATE-08
+  as-is on every host; the text now records it.
+
 - **Citation block and release id on every page** (P35.42 / row 321;
   R11-K13-TX-13a; owner SIG-TRANSP-023, citation-block half — the
   `/s/<pub>/` snapshot build, edge `selectors.conf` and the legacy

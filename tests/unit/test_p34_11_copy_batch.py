@@ -35,9 +35,11 @@ VALID_STATUSES = {"pending", "confirmed"}
 # and SG-01 (the editorial-standards rewrite + the style-guide register
 # sentence). The wave's other rows (DP/OC/ST/SL-05+/PB/RS/DL/TR-03+) bind on
 # pages with placeholder-bearing elements this suite does not model —
-# `tests/unit/test_p34_17_copy_batch.py` covers them.
+# `tests/unit/test_p34_17_copy_batch.py` covers them. P36.1b appended
+# DC-21…DC-32 (the /data-collection/ full text) and the CR-01…CR-08 conduct
+# rows — the crawler conduct policy carried verbatim on the page (B-2).
 P34_ID = re.compile(
-    r"^(HO|DI|D|DS|HW|CC|CL|W|M|T|DF|CM|XD|XC|RQ|NF|FB|GN|TR|MD|WM|JD|MP|NW|WS|DC|MB|ES|SG|UP)-\d+$"
+    r"^(HO|DI|D|DS|HW|CC|CL|W|M|T|DF|CM|XD|XC|RQ|NF|FB|GN|TR|MD|WM|JD|MP|NW|WS|DC|MB|ES|SG|UP|CR)-\d+$"
 )
 
 # Batch rows whose page P34.12 retired (K11 §5.5 / RQ-00): the `/task/new/`
@@ -53,9 +55,10 @@ RETIRED_ROWS = {"T-01": "web/src/pages/task/new/[slug].astro"}
 # sources") → HW-14: the denominator label is now per-surface data
 # ({sourcesLabel}), so the pinned row is the placeholder verbatim. P35.45
 # superseded DI-04 → DI-07: the index covers every registry level now, so the
-# sentence names them.
+# sentence names them. P36.1b superseded DC-03 → DC-21: the /data-collection/
+# intro now names the conduct-policy and opt-out sections the full text adds.
 # Asserted superseded, never silently dropped.
-SUPERSEDED_ROWS = {"CL-03", "M-20", "DC-19", "HW-05", "DI-04", "UP-04"}
+SUPERSEDED_ROWS = {"CL-03", "M-20", "DC-19", "HW-05", "DI-04", "UP-04", "DC-03"}
 
 # batch `page` value → the .astro source whose rendered elements bind its rows.
 ASTRO_PAGES = {

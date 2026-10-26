@@ -4,23 +4,28 @@
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
 // The crawler contact/explanation page (SIG-INGEST-036 rule 1 "Identify";
-// P35.38a; ADR-168 Decisions 6–7). This is the URL every crawler User-Agent
-// names, on the domain SIG owns. T0 under ADR-155: static markup only — no
-// <script>, no island, no runtime dependency. Every sentence is agent-drafted
-// into docs/build/reports/copy-batches/batch-01.md, sha256-pinned and `pending`
-// until the operator confirms it verbatim (B-2); the `data-copy` tokens bind
-// each element to its batch rows and tests/unit/test_data_collection_page.py
-// fails on any drift. The page ships publicly in republish #1 (P34.17).
+// P35.38a minimal page, replaced by P36.1b's full text; ADR-168 Decisions 6–7,
+// ADR-222). This is the URL every crawler User-Agent names, on the domain SIG
+// owns — and it is where the crawler conduct policy of record
+// (policy/src/policy/data/crawler_conduct.toml) is published, verbatim (the
+// CR-01…CR-08 rows carry the rules' title + text exactly). T0 under ADR-155:
+// static markup only — no <script>, no island, no runtime dependency. Every
+// sentence is agent-drafted into docs/build/reports/copy-batches/batch-01.md,
+// sha256-pinned and `pending` until the operator confirms it verbatim (B-2);
+// the `data-copy` tokens bind each element to its batch rows and
+// tests/unit/test_data_collection_page.py fails on any drift — while
+// tests/unit/test_conduct_text.py fails when a sentence claims conduct the
+// code does not implement. The page ships publicly in republish #1 (P34.17).
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="How SIG collects data" path="/data-collection/">
-  <p data-copy="DC-02 DC-03">
+  <p data-copy="DC-02 DC-21">
     SIG — the Surveillance Infrastructure Graph — is an open, evidence-first
     record of public surveillance infrastructure, built by fetching public
     records. This page is the explanation the crawler's contact URL points to:
-    what it fetches, how it identifies itself, how it treats robots.txt, and
-    how to ask it to stop.
+    what it fetches, how it identifies itself, the conduct policy it runs
+    under, how it treats robots.txt, and how to ask it to stop.
   </p>
 
   <h2 data-copy="DC-04">What SIG fetches</h2>
@@ -41,8 +46,77 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     a block.
   </p>
 
+  <h2 data-copy="DC-22">The conduct policy</h2>
+  <p data-copy="DC-23 DC-24">
+    Eight rules bind every fetch SIG makes — the crawler conduct policy's text
+    of record is a committed policy file, and this page carries it verbatim. A
+    copy check fails the build when the text claims conduct the code does not
+    implement.
+  </p>
+  <ol>
+    <li data-copy="CR-01">
+      <strong>Identify.</strong> A descriptive UA with a contact URL and an
+      explanation page. No spoofing. The contact URL names an owned explanation
+      page on SIG's own domain
+      (https://surveillancegraph.org/data-collection/), never the operator's
+      personal identifiers (ADR-168).
+    </li>
+    <li data-copy="CR-02">
+      <strong>Probe and record robots.txt.</strong> Probe and record
+      robots.txt, including AI-crawler directives and content-signal headers.
+      The per-host verdict is classified per RFC 9309 §2.3.1.4 (retrieved /
+      no_policy_4xx / unretrievable) and recorded on the fetch record
+      (ADR-087). Under the operator's GL-GATE-08 disposition
+      (ADR-088; re-confirmed A-5 and applied to every host — ADR-168) a
+      disallowed or unretrievable verdict does not gate the fetch: it proceeds
+      marked robots_disregarded, and each disregard is disclosed publicly as
+      host + count with the decision reference. A disregarded disallow is
+      never a rights reservation, a licence or an ingestion clearance;
+      an affirmative machine-readable reservation is
+      honoured as a refusal. Documented, allow-listed API endpoints run under
+      ADR-083's API mode (robots not applied to the named endpoint; rate-limit
+      and no-circumvention still apply). The binding access control is the
+      fail-closed rights gate (ingestion_permitted), which robots does
+      not replace.
+    </li>
+    <li data-copy="CR-03">
+      <strong>Rate-limit conservatively.</strong> Rate-limit conservatively,
+      per host, with backoff. Never burden a small civic host.
+    </li>
+    <li data-copy="CR-04">
+      <strong>Never circumvent access controls.</strong> No authentication
+      bypass, no paywall evasion, no challenge-solving, no proxy rotation or
+      human-mimicking to defeat bot management. This is a legal posture;
+      deviating from it is an ADR-level decision on the
+      operator's recorded word, never a routine engineering choice (ADR-182).
+    </li>
+    <li data-copy="CR-05">
+      <strong>Prefer the offered channel.</strong> If a source publishes an
+      API, a bulk download, or a partner feed, use it instead of scraping the
+      HTML.
+    </li>
+    <li data-copy="CR-06">
+      <strong>Ask first.</strong> Ask first where the compact is unresolved and
+      the source is a small civil-society project. Waived for
+      DocumentCloud/MuckRock only (WV-09 / ADR-187); the rule binds every other
+      source.
+    </li>
+    <li data-copy="CR-07">
+      <strong>Honor opt-out.</strong> Honor opt-out immediately and record it
+      in the compact. The host-level opt-out register
+      (sig.opt-out-register/1) is checked before every fetch — before even the
+      robots probe — and a listed host receives zero egress; an
+      operator-supplied register file applies an entry on the next run, with
+      no rebuild or redeploy (ADR-168).
+    </li>
+    <li data-copy="CR-08">
+      <strong>Cache aggressively; refetch rarely.</strong> Conditional
+      requests, content-hash short-circuits.
+    </li>
+  </ol>
+
   <h2 data-copy="DC-10">How robots.txt is treated</h2>
-  <p data-copy="DC-11 DC-12 DC-13">
+  <p data-copy="DC-11 DC-12 DC-13 DC-25 DC-26">
     For every host it fetches, SIG retrieves and records the host's{" "}
     <code>robots.txt</code> and classifies the answer per RFC 9309. Under a
     recorded operator decision (GL-GATE-08 — ADR-088 and ADR-168), a{" "}
@@ -51,7 +125,32 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <code>robots_disregarded</code> in SIG's record, so the refusal stays
     visible instead of being silently bypassed. Robots.txt is not the access
     control: the binding check is a fail-closed rights review per source, and a
-    source is never fetched before its rights record permits it.
+    source is never fetched before its rights record permits it. Every
+    disregard is disclosed publicly as the host and a count, with a reference
+    to the recorded decision — it is never silent. A robots.txt refusal is an
+    access wish, not a rights reservation: a host that signals one is still
+    refused, as the next section states.
+  </p>
+
+  <h2 data-copy="DC-27">Opt-outs and rights reservations</h2>
+  <p data-copy="DC-28 DC-29">
+    A site operator can opt out at any time: SIG keeps a host-level opt-out
+    register that is checked before every fetch — before even the robots.txt
+    probe — and a listed host receives no requests at all. An entry applies on
+    the next run — the fetcher can be pointed at an updated register file
+    without a rebuild or redeploy — and every opt-out is recorded with where it
+    was received.
+  </p>
+  <p data-copy="DC-30 DC-31">
+    A machine-readable rights reservation is honoured as a refusal: a{" "}
+    <code>Content-Signal</code> directive such as <code>ai-train=no</code>, a{" "}
+    <code>TDM-Reservation</code> header, an <code>X-Robots-Tag</code>{" "}
+    <code>noai</code> or <code>noimageai</code> directive, or an EU DSM Article
+    4 reservation in a page's markup ends the fetch — the bytes are never
+    captured — and is recorded on the source's rights record. That refused
+    state is kept distinct from an unresolved rights review — a refusal closes
+    the conversation where an unresolved record invites it — and a source
+    carrying a recorded reservation is refused by the ingestion gate outright.
   </p>
 
   <h2 data-copy="DC-14">Rate limits</h2>
@@ -64,9 +163,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   </p>
 
   <h2 data-copy="DC-17">Ask SIG to stop</h2>
-  <p data-copy="DC-18 DC-20">
+  <p data-copy="DC-18 DC-20 DC-32">
     To ask SIG to stop fetching a site you operate, open a request through this
     site's <a href="/dispute/">dispute channel</a>. The dispute page names the
-    contact address and states its own operating status.
+    contact address and states its own operating status. A stop request is
+    recorded on the opt-out register described above and takes effect on the
+    next fetch run.
   </p>
 </BaseLayout>

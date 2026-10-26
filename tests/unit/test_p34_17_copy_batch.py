@@ -56,7 +56,7 @@ P3417_LITERAL_PAGES = {
 # Rows superseded by the wave (append-only: kept in the batch, bound to
 # nothing). CL-03 → CL-06 (requirement id dropped), M-20 → M-43 ("frozen
 # holdout" claim), DC-19 → DC-20 (the dispute page names the address now).
-SUPERSEDED_ROWS = {"CL-03": "CL-06", "M-20": "M-43", "DC-19": "DC-20"}
+SUPERSEDED_ROWS = {"CL-03": "CL-06", "M-20": "M-43", "DC-19": "DC-20", "DC-03": "DC-21"}
 
 # The P34.17 row ids (the `title` id repeats per page — page-scoped). SL-01…
 # SL-04 were authored by P34.19 and stay its rows; the wave adds SL-05…SL-19.
