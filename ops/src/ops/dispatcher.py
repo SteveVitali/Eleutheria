@@ -43,7 +43,7 @@ import tomllib
 import urllib.request
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -147,16 +147,29 @@ def evaluate_due(
     now = _minute(now or datetime.now(UTC))
     window_open, window_close = due_window(spec.cron, now, since=since)
     kept = {r.name for r in config.retire_triggers if r.disposition == "kept-declared-pin"}
-    rows: list[tuple[str, str, str, str, str, str]] = [
-        ("source", s.source, s.job, s.scheduler, s.cron, s.state) for s in config.sources
+    rows: list[tuple[str, str, str, str, str, str, str]] = [
+        ("source", s.source, s.job, s.scheduler, s.cron, s.state, "") for s in config.sources
     ]
-    rows += [("batch", b.id, b.job, b.scheduler, b.cron, b.state) for b in config.batches]
+    rows += [
+        ("batch", b.id, b.job, b.scheduler, b.cron, b.state, b.paused_until) for b in config.batches
+    ]
     due: list[DueRow] = []
     skipped: list[SkippedRow] = []
-    for kind, rid, job, scheduler, cron, state in rows:
+    today = now.date()
+    for kind, rid, job, scheduler, cron, state, paused_until in rows:
         if state == "paused":
             skipped.append(SkippedRow(kind, rid, job, scheduler, "declared-paused"))
             continue
+        if paused_until:
+            try:
+                bound = date.fromisoformat(paused_until[:10])
+            except ValueError as exc:
+                raise DispatcherError(
+                    f"{kind} {rid}: paused_until {paused_until!r} is not an ISO date"
+                ) from exc
+            if today <= bound:
+                skipped.append(SkippedRow(kind, rid, job, scheduler, "declared-paused-until"))
+                continue
         if scheduler in kept:
             skipped.append(SkippedRow(kind, rid, job, scheduler, "kept-declared-pin"))
             continue

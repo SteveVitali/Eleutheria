@@ -292,11 +292,22 @@ gcs_prefix = "ops/runs"
 
 [[sources]]
 id = "osm_overpass"
-cadence = "weekly"               # OSM changes continuously (ticket spec)
-cron = "12 4 * * 1"              # Monday 04:12 UTC
+# P37.2 (ACQ-18): the declared retarget — weekly `12 4 * * 1` → monthly
+# `12 8 24 * *` (the 24th, 08:12 UTC — I8 §4.3's inference: a monthly
+# snapshot diff is adequate for ALPR mapping; the operator may keep weekly
+# at +0 spine cost). The previous weekly fire lands 11-09, inside the Wave-B
+# window; the declared change binds at the Wave-C reconcile (the published
+# declaration bundle carries it — SIG-OPS-005). The OKC bbox stays one of the
+# tiled run's targets.
+cadence = "monthly"              # P37.2: was weekly — OSM origin runs monthly
+cron = "12 8 24 * *"             # day 24, 08:12 UTC — was "12 4 * * 1" (Mon)
 job = "sig-ingest-osm-overpass"
 scheduler = "sig-sched-osm-overpass"
-note = "OKC metro bbox over Overpass; ODbL compartment."
+# P37.2: the national tiled pass (≈1.1M claims over ~70–90 paced Overpass
+# queries) needs more than the 60m source default — a 3h task bound, the
+# same reviewed bound legistar's widened pass carries (P35.6).
+task_timeout = "3h"
+note = "P37.2: national tiled pass over Overpass (US-first ordering, non-US objects kept — S5-4); ODbL compartment."
 
 [[sources]]
 id = "decp_fr"
@@ -928,6 +939,11 @@ state = "paused"              # R6 declared-inert: the row is skipped by the
                                     # to "enabled" (P35.1c — the trigger-shape change
                                     # carries the pause on the row, not the trigger)
 task_timeout = "6h"
+# P37.2 (FEA-15): the Wave-B r11 batch crons pause for the Wave-C window —
+# dom-18 (11-18) sits inside 2026-11-16 → 11-20 (future-ok: scheduled: window), so the declared bound holds
+# the row inert through the window even if its Wave-B resume flips `state`
+# to "enabled" inside it. Expired the bound is inert record.
+paused_until = "2026-11-20"  # future-ok: scheduled: the FEA-15 Wave-C pause bound (a declared, bounded exception)
 members = ["camreg_dc_ddot_ate", "camreg_montgomery_md_ate", "camreg_nyc_mta_bus_lane_ate", "camreg_tacoma_wa_ate", "camreg_howard_md_school_zone_ate", "camreg_lakeland_fl_red_light", "camreg_suffolk_ny_red_light", "camreg_medford_or_ate", "camreg_ctdot_speed_safety"]
 note = "Round-11 batch r11-ate-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6). P36.6 (ACQ-10) review: the batch is the ticket's nine GATED sources \u2014 camreg_dc_ddot_ate is the licence-mismatch fallback the plan names for the DC ASC pair (CC-BY-4.0 vs dot_511_dc's CC0-1.0); camreg_montgomery_md_ate consolidates the two generated Montgomery rows into ONE member carrying all three targets in the same run (I8 \u00a75.3 R1). The DE red-light target consolidated under dot_511_de rides that source's r11-layers-01 seat, and the two Chicago aggregate targets ride camreg_chicago_il's existing camreg-batch-02 seat (a source holds one seat). The nine rows stay gated until the operator's OP-26 Wave-B flip under ING-GO-B."
 
@@ -984,6 +1000,10 @@ state = "paused"              # R6 declared-inert: the row is skipped by the
                                     # to "enabled" (P35.1c — the trigger-shape change
                                     # carries the pause on the row, not the trigger)
 task_timeout = "6h"
+# P37.2 (FEA-15): dom-16 (11-16) opens inside the Wave-C window — the
+# declared bound holds the row inert through 2026-11-20 (future-ok: scheduled: bound) even if its Wave-B
+# resume flips `state` to "enabled" inside it.
+paused_until = "2026-11-20"  # future-ok: scheduled: the FEA-15 Wave-C pause bound (a declared, bounded exception)
 members = ["dot_511_de", "dot_511_vt", "dot_511_wv", "dot_511_mi", "camreg_ne_lincoln_traffic_cameras", "camreg_omaha_ne_parks_cameras", "camreg_hyattsville_md_cctv_camera_2024", "dot_511_nc"]
 note = "Round-11 batch r11-layers-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6). P36.4 (ACQ-08) review: the batch is the eight GATED members of the ticket\u2019s ten-layer scope \u2014 camreg_denver_co and camreg_seattle_wa are already permitted (P26.16, GL-GATE-07) and ride their existing camreg-batch-0x rows; a source may hold only one batch seat, so the two new targets on those sources inherit their existing cadence. The eight rows stay gated until the operator\u2019s OP-26 Wave-B flip under ING-GO-B."
 
@@ -998,6 +1018,10 @@ state = "paused"              # R6 declared-inert: the row is skipped by the
                                     # to "enabled" (P35.1c — the trigger-shape change
                                     # carries the pause on the row, not the trigger)
 task_timeout = "6h"
+# P37.2 (FEA-15): dom-17 (11-17) sits inside the Wave-C window — the
+# declared bound holds the row inert through 2026-11-20 (future-ok: scheduled: bound) even if its Wave-B
+# resume flips `state` to "enabled" inside it.
+paused_until = "2026-11-20"  # future-ok: scheduled: the FEA-15 Wave-C pause bound (a declared, bounded exception)
 members = ["camreg_fdot_flock", "camreg_pueblo_co_flock", "camreg_rocky_mount_nc_lpr_cameras", "camreg_shelbyville_tn_flock_cameras", "camreg_temecula_ca_flock_wfl1", "camreg_marble_falls_tx_flock_locations", "camreg_va_prince_william_county", "camreg_milford_ct_flocklprcam", "camreg_elgin_il_lpr_cameras", "camreg_south_fulton_ga_lpr_cameras", "camreg_va_pittsylvania_county_stationary", "camreg_alabaster_al_lpr_cameras", "camreg_thomasville_ga_flock_location", "camreg_leon_county_fl_overwatch_viewer", "camreg_ga_peachtree_corners_flock_camera"]
 note = "Round-11 batch r11-layers-02 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6). P36.5 (ACQ-09) review: the batch is the ticket's fifteen GATED sources \u2014 the ACQ-01-generated pair camreg_fl_d3_flock_camera + camreg_fl_flock_removal_status consolidates into ONE member camreg_fdot_flock carrying both targets in the same run (I8 \u00a75.2 \u2014 a removal fact is never asserted against a stale inventory). Monthly cadence even for the 'once' layers: the 2026 removal wave (FDOT's order, I9a NEW-2) makes currency the value. The fifteen rows stay gated until the operator's OP-26 Wave-B flip under ING-GO-B."
 
@@ -1012,6 +1036,10 @@ state = "paused"              # R6 declared-inert: the row is skipped by the
                                     # to "enabled" (P35.1c — the trigger-shape change
                                     # carries the pause on the row, not the trigger)
 task_timeout = "6h"
+# P37.2 (FEA-15): dom-19 (11-19) sits inside the Wave-C window — the
+# declared bound holds the row inert through 2026-11-20 (future-ok: scheduled: bound) even if its Wave-B
+# resume flips `state` to "enabled" inside it.
+paused_until = "2026-11-20"  # future-ok: scheduled: the FEA-15 Wave-C pause bound (a declared, bounded exception)
 members = ["procportal_cook_il_awards", "procportal_wa_des_contract_sales", "camreg_dc_ovsjg_camera_rebate"]
 note = "Round-11 batch r11-procurement-01 (I8 \u00a77.1; ACQ-01 generated; created --paused, R6). P36.7 (ACQ-11) review: the three members are the ticket's final source ids \u2014 the ACQ-01 generated rows (procportal_il_cook_county_procurement / procportal_wa_washington_des_statewide / camreg_dc_private_security_camera) are replaced by their I8-design ids; all three stay gated until the operator's OP-26 Wave-B flip under ING-GO-B."
 

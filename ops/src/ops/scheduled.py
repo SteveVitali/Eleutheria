@@ -156,6 +156,12 @@ class BatchCadence:
     #: create-paused rows declare ``"paused"``; the dispatcher records them
     #: skipped until their wave's resume flips the declaration.
     state: str = "enabled"
+    #: P37.2 (FEA-15): an ISO date bound — while ``paused_until`` covers
+    #: ``today`` the row is skipped by the due-set even when ``state``
+    #: flips to ``"enabled"`` (a wave resume inside the covered window can
+    #: never fire early). An expired bound is inert record — the
+    #: removal-with-record idiom; it is never cleaned up.
+    paused_until: str = ""
 
 
 @dataclass(frozen=True)
@@ -411,6 +417,7 @@ def parse_cadence_doc(doc: dict[str, Any]) -> CadenceConfig:
             cron_or_semantics_ok=_annotation(b.get("cron_or_semantics_ok")),
             task_timeout=str(b.get("task_timeout", "")),
             state=str(b.get("state", "enabled")).lower(),
+            paused_until=str(b.get("paused_until", "")),
         )
         for b in doc.get("batches", [])
     )

@@ -1768,23 +1768,11 @@ object_id_field = "ObjectId"
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
 notes = "Arcgis item e3b39af538fd42ac88fd756cccbad853 'Surveillance_Towers' (owner [account withheld], 500 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
-[[targets]]
-id = "osm_surveillance_alpr_nationwide"
-axis_order = "lon-lat"
-technology = "alpr-fixed"
-source_id = "camreg_osm_surveillance"
-kind = "arcgis_query"
-platform = "arcgis"
-url = "https://services.arcgis.com/7CRlmWNEbeCqEJ6a/arcgis/rest/services/alpr_locations_nationwide/FeatureServer/0"
-layer_url = "https://services.arcgis.com/7CRlmWNEbeCqEJ6a/arcgis/rest/services/alpr_locations_nationwide/FeatureServer/0"
-agency = "OpenStreetMap contributors (republished man_made=surveillance nodes)"
-state = "unresolved"
-jurisdiction_scheme = "sig.unresolved"
-observed_count = 19044
-verified = 2026-09-18
-object_id_field = "ObjectId"
-license_spdx = "ODbL-1.0"
-notes = "Arcgis item e7cc29c2f5dc495ab6e1f0daebef0ce4 'alpr_locations_nationwide' (owner [account withheld], 19044 rows observed 2026-09-18). FLIPPED (GL-GATE-07): ODbL-1.0."
+# P37.2 (ACQ-18): osm_surveillance_alpr_nationwide is retired from the live
+# fetch set — its row is preserved verbatim under [[enumerated]] at the end
+# of this file (status = "retired_mirror") as the committed restore record.
+# Re-add it here to restore the target; the retirement is a fetch-target
+# removal, never an evidence removal.
 
 [[targets]]
 id = "lawrence_ks_traffic_cameras"
@@ -3064,23 +3052,11 @@ object_id_field = "OBJECTID"
 license_spdx = "LicenseRef-OperatorAccepted-DBRight"
 notes = "Arcgis item 8614054b26e54f588f7a55094f2fe4f0 'CCTV Eff' (owner TimCross, 24 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-OperatorAccepted-DBRight."
 
-[[targets]]
-id = "osm_surveillance_deflock"
-axis_order = "lon-lat"
-technology = "alpr-fixed"
-source_id = "camreg_osm_surveillance"
-kind = "arcgis_query"
-platform = "arcgis"
-url = "https://services4.arcgis.com/eeULstZhYSemxYF5/arcgis/rest/services/cameras_flock/FeatureServer/0"
-layer_url = "https://services4.arcgis.com/eeULstZhYSemxYF5/arcgis/rest/services/cameras_flock/FeatureServer/0"
-agency = "OpenStreetMap contributors (republished man_made=surveillance nodes)"
-state = "unresolved"
-jurisdiction_scheme = "sig.unresolved"
-observed_count = 132689
-verified = 2026-09-18
-object_id_field = "FID"
-license_spdx = "ODbL-1.0"
-notes = "Arcgis item d6267b54848f483bad8c529b529611ba 'Automated License Plate Reader (ALPR) Camera Locations (Deflock)' (owner instructor.Valentina.Pestana, 132689 rows observed 2026-09-18). FLIPPED (GL-GATE-07): ODbL-1.0."
+# P37.2 (ACQ-18): osm_surveillance_deflock is retired from the live fetch
+# set — its row is preserved verbatim under [[enumerated]] at the end of
+# this file (status = "retired_mirror") as the committed restore record.
+# Re-add it here to restore the target; the retirement is a fetch-target
+# removal, never an evidence removal.
 
 [[targets]]
 id = "polyu_hk_cctv"
@@ -6216,3 +6192,61 @@ state = "US"
 status = "screened_lane"
 verified = 2026-09-30
 notes = "R11-ACQ-07 disposition (plan AP-T2-201, cand I5-C225, IND-TRIBAL): a US-TRIBAL geography reference spine, not a camera registry — the endpoint is verified-positive but the row-level arcgis_query is deliberately NOT a fetch target under the ADR-185 S8 screened lane (B-37 'TR facts+cite'; leader name/phone/email fields never read). The bounded citation lands through source `camreg_tribal_all_leaders_directory` (dossier_documents clause_fields over this layer's own metadata page); row-level ingestion stays gated behind CG-LATER-tribal-data-governance-rule-i7-new-6 (OPEN)."
+
+# --- P37.2 (ACQ-18 / Wave C): the retired ALPR mirror targets -----------------
+# The two camreg_osm_surveillance republish targets retired from the live fetch
+# set — preserved here verbatim (removal-with-record) as the committed restore
+# point the ticket's OM-14 line names ("re-add to restore the retired targets").
+# The mirror layers republish OSM man_made=surveillance elements the
+# osm_overpass national origin run (P37.1/ACQ-17 code, ACQ-18's Wave-C legs)
+# now fetches directly; republish↔origin is recorded as one lineage under
+# PKG-12 ED-49 (derived_from on the republish claims) — the mirrors never
+# corroborate the origin independently, and the retirement removes fetch
+# targets, never evidence (the spine stays append-only). The four small CCTV
+# republish targets (osm_surveillance_thailand / _ucp_osm / _ucp_amini /
+# _cctv_london) stay under [[targets]] until each origin is checked
+# separately. To restore: re-add the row under [[targets]] above.
+
+[[enumerated]]
+id = "osm_surveillance_alpr_nationwide"
+axis_order = "lon-lat"
+technology = "alpr-fixed"
+prior_source_id = "camreg_osm_surveillance"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services.arcgis.com/7CRlmWNEbeCqEJ6a/arcgis/rest/services/alpr_locations_nationwide/FeatureServer/0"
+layer_url = "https://services.arcgis.com/7CRlmWNEbeCqEJ6a/arcgis/rest/services/alpr_locations_nationwide/FeatureServer/0"
+agency = "OpenStreetMap contributors (republished man_made=surveillance nodes)"
+state = "unresolved"
+jurisdiction_scheme = "sig.unresolved"
+observed_count = 19044
+verified = 2026-09-18
+object_id_field = "ObjectId"
+license_spdx = "ODbL-1.0"
+status = "retired_mirror"
+mirror_of = "osm_overpass"
+derived_from = "osm_overpass"
+lineage_evidence = "sources.toml [sources.camreg_osm_surveillance.lineage] kind=derived derived_from=[osm_overpass, deflock_repo] + the layer's own 'republished man_made=surveillance nodes' attribution; Wave-C (P37.2/ACQ-18) makes osm_overpass the national origin — republish↔origin rides one lineage (PKG-12 ED-49), never independent corroboration."
+notes = "P37.2 (ACQ-18): retired from camreg-batch-05's fetch set in the Wave-C national-run leg — the osm_overpass national origin run replaces the republish (≥95 % of the 132,689 DeFlock-family republish rows merge onto OSM origin sites under the §7.7 verify set before the retirement closes). republish↔origin recorded as one lineage under PKG-12 ED-49 (derived_from); the row is the committed restore point — re-add under [[targets]] with source_id = \"camreg_osm_surveillance\" to restore. Prior record: Arcgis item e7cc29c2f5dc495ab6e1f0daebef0ce4 'alpr_locations_nationwide' (owner [account withheld], 19044 rows observed 2026-09-18). FLIPPED (GL-GATE-07): ODbL-1.0."
+
+[[enumerated]]
+id = "osm_surveillance_deflock"
+axis_order = "lon-lat"
+technology = "alpr-fixed"
+prior_source_id = "camreg_osm_surveillance"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services4.arcgis.com/eeULstZhYSemxYF5/arcgis/rest/services/cameras_flock/FeatureServer/0"
+layer_url = "https://services4.arcgis.com/eeULstZhYSemxYF5/arcgis/rest/services/cameras_flock/FeatureServer/0"
+agency = "OpenStreetMap contributors (republished man_made=surveillance nodes)"
+state = "unresolved"
+jurisdiction_scheme = "sig.unresolved"
+observed_count = 132689
+verified = 2026-09-18
+object_id_field = "FID"
+license_spdx = "ODbL-1.0"
+status = "retired_mirror"
+mirror_of = "osm_overpass"
+derived_from = "deflock_repo"
+lineage_evidence = "sources.toml [sources.camreg_osm_surveillance.lineage] kind=derived derived_from=[osm_overpass, deflock_repo] + the layer's own 'republished man_made=surveillance nodes' attribution: the immediate republisher is deflock_repo (itself derived from OSM) — Wave-C (P37.2/ACQ-18) makes osm_overpass the national origin; republish↔origin rides one lineage (PKG-12 ED-49), never independent corroboration."
+notes = "P37.2 (ACQ-18): retired from camreg-batch-05's fetch set in the Wave-C national-run leg — the osm_overpass national origin run replaces the republish (≥95 % of this layer's 132,689 republish rows merge onto OSM origin sites under the §7.7 verify set before the retirement closes). republish↔origin recorded as one lineage under PKG-12 ED-49 (derived_from); the row is the committed restore point — re-add under [[targets]] with source_id = \"camreg_osm_surveillance\" to restore. Prior record: Arcgis item d6267b54848f483bad8c529b529611ba 'Automated License Plate Reader (ALPR) Camera Locations (Deflock)' (owner instructor.Valentina.Pestana, 132689 rows observed 2026-09-18). FLIPPED (GL-GATE-07): ODbL-1.0."

@@ -266,13 +266,16 @@ PY
 }
 
 # Read the grouped-batch table
-# (id|cadence|cron|job|scheduler|member-count|task_timeout|state) —
+# (id|cadence|cron|job|scheduler|member-count|task_timeout|state|paused_until) —
 # P26.16 (SOURCES.15): the GL-GATE-07 rights batch groups its newly-green
 # camera-registry sources under ~10 sig-ingest-camreg-batch-* jobs; each batch
 # job runs `scheduled-ingest --batch <id>` which appends one ops/runs row PER
 # MEMBER source. `task_timeout` (P35.6) is a per-row duration string; empty =
 # the 36h default (ADR-107's batch-05 ceiling). `state` (P35.1c) is the
-# row-level pause posture the due-set honours.
+# row-level pause posture the due-set honours. `paused_until` (P37.2, FEA-15)
+# is an ISO date bound — while it covers today the row's effective posture is
+# paused even when `state` says enabled (a wave resume inside the covered
+# window can never fire early).
 read_batch_rows() {
   (cd "${_here}/../.." && uv run python - "${_here}/../cadence.toml" <<'PY'
 import sys
@@ -292,6 +295,7 @@ for b in doc.get("batches", []):
                 str(len(b.get("members", []))),
                 b.get("task_timeout", ""),
                 b.get("state", "enabled"),
+                str(b.get("paused_until", "")),
             ]
         )
     )
@@ -380,13 +384,19 @@ import tomllib
 
 with open(sys.argv[1], "rb") as fh:
     doc = tomllib.load(fh)
+import datetime
+
 retire = {
     r["name"]: r.get("disposition", "") for r in doc.get("retire_triggers", [])
 }
+today = datetime.date.today()
 for row in doc.get("sources", []) + doc.get("batches", []):
     sched = row.get("scheduler", "")
     if row.get("state", "enabled") == "paused":
         continue
+    bound = str(row.get("paused_until") or "")
+    if bound and today <= datetime.date.fromisoformat(bound[:10]):
+        continue  # P37.2 (FEA-15): a covering paused_until keeps the row inert
     if retire.get(sched, "").startswith("kept"):
         continue
     print(row["job"])
@@ -611,9 +621,16 @@ done < <(read_cadence_rows)
 #    mirror, and the live batch jobs already run 36h (P31.4 aligned this script,
 #    which used to say 120m, with the deployed jobs so a re-apply cannot shrink it).
 _log "-- grouped batches (run rows per member → ops/runs/<source>/) --"
-while IFS='|' read -r bid bcad bcron bjob bsched bcount btimeout bstate; do
+while IFS='|' read -r bid bcad bcron bjob bsched bcount btimeout bstate bpuntil; do
   [ -z "${bid}" ] && continue
-  _log "  batch ${bid} (${bcount} member sources, ${bcad} ${bcron}${bstate:+ state=${bstate}}) -> ${bjob} (task-timeout ${btimeout:-36h})"
+  # P37.2 (FEA-15): a covering paused_until makes the row's effective
+  # posture paused for trigger reconcile even when `state` says enabled —
+  # the same bound the due-set honours.
+  beff="${bstate:-enabled}"
+  if [[ -n "${bpuntil}" && "$(date -u +%F)" < "${bpuntil:0:10}~" ]]; then
+    beff="paused"  # today <= the ISO bound's date (lexical compare on YYYY-MM-DD)
+  fi
+  _log "  batch ${bid} (${bcount} member sources, ${bcad} ${bcron}${beff:+ state=${beff}}) -> ${bjob} (task-timeout ${btimeout:-36h})"
   run gcloud run jobs deploy "${bjob}" \
     --image "${IMAGE}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
     --service-account "${SIG_INGEST_SA_EMAIL}" \
@@ -636,7 +653,10 @@ while IFS='|' read -r bid bcad bcron bjob bsched bcount btimeout bstate; do
     continue
   fi
   sched_upsert "${bsched}" "${bcron}" "${bjob}"
-  if [ "${bstate:-enabled}" = "paused" ]; then
+  # The effective posture binds the trigger too — a declared-paused row OR a
+  # covering paused_until bound (P37.2 / FEA-15) is held PAUSED; the row's own
+  # wave resume enables it, never this script (same rule as maintenance rows).
+  if [ "${beff:-enabled}" = "paused" ]; then
     sched_set_state "${bsched}" paused
   fi
 done < <(read_batch_rows)
