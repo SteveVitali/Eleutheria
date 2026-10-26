@@ -501,7 +501,8 @@ def test_element_content_digest_tracks_edits_not_metadata() -> None:
     assert element_content_digest(el) != element_content_digest(edited)
     assert element_content_digest(el) != element_content_digest(moved)
     # mapper/acquisition metadata is deliberately outside the content digest.
-    meta = {**el, "timestamp": "2027-01-01T00:00:00Z", "changeset": 42}  # future-ok: synthetic: far-future marker proving `timestamp` never enters the content digest
+    stamp = "2027-01-01T00:00:00Z"  # future-ok: synthetic: digest-excluded field
+    meta = {**el, "timestamp": stamp, "changeset": 42}
     assert element_content_digest(el) == element_content_digest(meta)
 
 
