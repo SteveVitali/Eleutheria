@@ -24,6 +24,54 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Verification suite B + the pre-authorised post-promote automatic
+  rollback — `sig-ops release verify` now runs the full V1–V15 gate and
+  a failed post-promotion check restores the previous serving
+  generation itself** (P35.58 / row 335; SIG-REL-007 — this row's half;
+  serves SIG-CONF-007's V15 hook and SIG-OPS-011's probe targets; cites
+  D-G3-8/B-9, ADR-154, SIG-REL-010, SIG-REL-013) —
+  `ops/src/ops/release_verify.py` adds V6 number truth (every
+  `data-artifact` figure element must be figure-manifest-listed, resolve
+  under the release's artifact space and recompute to the rendered
+  value, with the artifact as-of matching `as_of_world`), V7 API parity
+  (the §6.4 table: `release_publish_verify.api_parity_check` over the
+  staged half verbatim plus served-half canonical-JSON slice equality,
+  `/` and `/health` naming the release, live-spine routes carrying their
+  basis label — no API surface is a `skip`, which blocks), V8
+  attribution sanity (no empty required attribution, `LICENCES.json`
+  per compartment, map pages naming upstream holders, no bare-id or
+  handle-shaped source render), V9 jurisdiction–coordinate sanity (no
+  null-island/out-of-range points, the `covers` oracle catching axis
+  swaps, out-of-boundary points withheld or disclosed, dossier rollup
+  counts recomputed), V10 withdrawal barrier (the expected deny set
+  re-derived over a throwaway registry mirror and diffed against the
+  served `withdrawn.conf`, every alias — or all-new plus a deterministic
+  20-sample in P — probed for `410` + its own `sig.tombstone/1` body,
+  `X-SIG-Conf-Gen` equal to the recorded generation), V14 diff sanity
+  (the six deltas vs the current latest emitted as measured evidence —
+  the §7.3 bounds fail, the classifier stays its own row), the V15 hook
+  (`sig.quality-report/1` handed to `exports.quality.run_release_gate`
+  verbatim — verdict, enforce, not-evaluable, ratchet and the
+  `class_s` signal ride the evidence; the hook is hosted, never
+  re-implemented), and P1 (`/releases/latest.json` = `/release.json`
+  pub, release age < 35 days, served `X-SIG-Conf-Gen` = recorded gen,
+  cadence declarations present). `ops/cadence.toml` declares the
+  `sig-release-pointer`/`sig-release-age`/`sig-conf-gen` targets plus an
+  unpromoted-route absence target, each with cadence + trigger;
+  `probe_hosted` dispatches them and an unreachable origin records a
+  red probe, never a crash. `release promote`'s post-check failure path
+  is the D-G3-8/B-9 pre-authorised one: `failed` journaled, the lock
+  released, then `release_reversal.verb_rollback` to the prior latest
+  (or `verb_clear_latest` on a first release) writing a **new immutable
+  conf generation**, a recorded `release-auto-rollback` alert fired, and
+  an append-only `registry/incidents/` note + `incident` journal event
+  naming the failed checks, the generations, the authority, the rollback
+  outcome and the alert — the promote still raises `post-check-failed`,
+  a refused rollback records verbatim, and a crash-resumed promote
+  restores the failed generation's recorded `previous`. Fixture and
+  composed proof only: no hosted, staging or public leg ran in this
+  row — the suite's first live invocation and a real post-promote
+  rollback are the release rows' legs.
 - **Verification suite A — `sig-ops release verify --mode S|P` running the
   V1–V5 + V11–V13 release gate with durable JSON result evidence** (P35.56 /
   row 334; SIG-REL-007 `Also:` — the V6–V10 + V14 + auto-rollback half is

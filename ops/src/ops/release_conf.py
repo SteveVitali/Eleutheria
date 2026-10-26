@@ -898,6 +898,10 @@ def verb_promote(
     gcloud: Any = None,
     post_checks: Callable[..., list[dict[str, Any]]] | None = None,
     derive_barrier: Callable[..., bytes] | None = None,
+    auto_rollback: bool = True,
+    rollback_authority: str = "d-g3-8",
+    rollback_runner: Callable[..., dict[str, Any]] | None = None,
+    alert_hook: Callable[..., Any] | None = None,
     break_lock: str | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
@@ -914,6 +918,21 @@ def verb_promote(
     candidate's verify and its promote lands in the promoted generation's
     deny map. The marker ``withdrawals_sha256`` stamps every new
     ``latest.json`` either way.
+
+    P35.58 (REL-04b) — the post-promote failure path is the
+    pre-authorised one (D-G3-8/B-9; ``rollback_authority`` names the
+    standing go record the operator wrote under ``registry/authorities/``):
+    a failed post-check journals ``failed``, then — the promote lock
+    released — invokes ``release_reversal.verb_rollback`` (or
+    ``verb_clear_latest`` when the failed release was the first) under
+    that authority, writes a NEW immutable generation, fires a recorded
+    operator alert, and appends an ``registry/incidents/`` note naming the
+    failure, the authority, the rollback outcome, and the alert. A
+    refused/failed rollback is recorded, never smoothed — the promote
+    still raises ``post-check-failed``. ``auto_rollback=False`` keeps the
+    pre-P35.58 posture (journal + refuse) for a composed stack that rolls
+    by other machinery; ``rollback_runner``/``alert_hook`` are the test
+    seams (an injected runner is recorded verbatim in the incident note).
 
     Resumable: a ``conf/<gen+1>`` already naming this pub means a crashed
     promote — the write is skipped and the rolls/checks/event continue.
@@ -1116,6 +1135,7 @@ def verb_promote(
     if not apply_:
         result["dry_run"] = True
         return result
+    post_failure: dict[str, Any] | None = None
     with rp.acquire_lock(store, "promote", break_lock=break_lock, now=now):
         # D-P35.54-1, the refusal half: a disposition that lands between
         # the composed barrier and this write moves the registry digest —
@@ -1206,44 +1226,316 @@ def verb_promote(
                 legs,
                 now=now,
             )
-            raise rp.PipelineError(
-                "post-check-failed",
-                f"{len(failed_checks)} post-promote check(s) failed — the "
-                f"generation is written (resume continues at the checks): "
-                + "; ".join(c["id"] for c in failed_checks),
+            post_failure = {
+                "failed_checks": failed_checks,
+                "gen": next_gen,
+                # The restore target is the generation the failed
+                # candidate replaced — ``conf/<next_gen - 1>`` — read
+                # directly, never from ``current``: on a RESUME
+                # ``current`` IS the failed generation (its pub would be
+                # a same-latest no-op refusal that leaves it serving).
+                # A legacy-floor serve records ``publication_id: None``
+                # and carries ``legacy_floor`` — the label is the
+                # rollback target (§8.5).
+                "prior_pub": str(
+                    (read_generation(store, next_gen - 1) or {}).get("publication_id")
+                    or (read_generation(store, next_gen - 1) or {}).get("legacy_floor")
+                    or ""
+                )
+                or None,
+            }
+        else:
+            name = rp.emit_event(
+                store,
+                "promoted",
+                pub,
+                {
+                    "outcome": "recorded",
+                    "conf_gen": next_gen,
+                    "previous_generation": gen,
+                    "label": label,
+                    "class": cls,
+                    "approval_ref": approval_ref,
+                    "resume": resume,
+                    "serving": {"sig_api_image": api_image, "sig_web_image": web_image},
+                    "rolls": [
+                        {
+                            "service": leg.service,
+                            "image_digest": leg.image_digest,
+                            "status": leg.status,
+                            "revision": leg.revision,
+                            "min_instances": leg.min_instances,
+                        }
+                        for leg in legs
+                    ],
+                    "checks": [{"id": c["id"], "status": c["status"]} for c in checks],
+                    "written": sorted(written),
+                    "withdrawals_sha256": w_sha,
+                    "barrier": "re-derived" if derived_barrier is not None else "carried",
+                },
+                now=now,
             )
-        name = rp.emit_event(
+            result.update(applied=True, event=name, outcome="promoted")
+    # -- P35.58 (REL-04b): the failed post-check's pre-authorised path ---- #
+    # Outside the promote lock — the rollback verb takes its own. The
+    # failed event is already journaled; this block rolls back to the
+    # prior latest (a NEW immutable generation — history is never
+    # rewritten), alerts the operator, and appends the incident note.
+    if post_failure is not None:
+        reason = "post-promote verification failed: " + "; ".join(
+            c["id"] for c in post_failure["failed_checks"]
+        )
+        rollback_info: dict[str, Any] | None = None
+        if auto_rollback:
+            rollback_info = _auto_rollback_post_failure(
+                store,
+                candidate=pub,
+                prior_latest=post_failure["prior_pub"],
+                reason=reason,
+                authority=rollback_authority,
+                api_image=api_image,
+                web_image=web_image,
+                min_instances=min_instances,
+                project=project,
+                region=region,
+                execute_rolls=execute_rolls,
+                gcloud=gcloud,
+                runner=rollback_runner,
+                now=now,
+            )
+            result["auto_rollback"] = rollback_info
+        alert_info = _fire_post_failure_alert(
+            pub=pub,
+            gen=next_gen,
+            failed_checks=post_failure["failed_checks"],
+            rollback=rollback_info,
+            alert_hook=alert_hook,
+        )
+        result["alert"] = alert_info
+        result["incident"] = _write_incident_note(
             store,
-            "promoted",
-            pub,
-            {
-                "outcome": "recorded",
-                "conf_gen": next_gen,
-                "previous_generation": gen,
-                "label": label,
-                "class": cls,
-                "approval_ref": approval_ref,
-                "resume": resume,
-                "serving": {"sig_api_image": api_image, "sig_web_image": web_image},
-                "rolls": [
-                    {
-                        "service": leg.service,
-                        "image_digest": leg.image_digest,
-                        "status": leg.status,
-                        "revision": leg.revision,
-                        "min_instances": leg.min_instances,
-                    }
-                    for leg in legs
-                ],
-                "checks": [{"id": c["id"], "status": c["status"]} for c in checks],
-                "written": sorted(written),
-                "withdrawals_sha256": w_sha,
-                "barrier": "re-derived" if derived_barrier is not None else "carried",
-            },
+            pub=pub,
+            failed_gen=next_gen,
+            prior_gen=gen,
+            prior_latest=post_failure["prior_pub"],
+            failed_checks=post_failure["failed_checks"],
+            rollback=rollback_info,
+            alert=alert_info,
+            authority=rollback_authority,
             now=now,
         )
-        result.update(applied=True, event=name, outcome="promoted")
+        rb_outcome = (rollback_info or {}).get("outcome") if auto_rollback else "disabled"
+        raise rp.PipelineError(
+            "post-check-failed",
+            f"{len(post_failure['failed_checks'])} post-promote check(s) failed — the "
+            f"generation is written (resume continues at the checks): "
+            + "; ".join(c["id"] for c in post_failure["failed_checks"])
+            + f"; auto-rollback: {rb_outcome} (see {result['incident']})",
+            detail=result,
+        )
     return result
+
+
+def _auto_rollback_post_failure(
+    store: rp.Store,
+    *,
+    candidate: str,
+    prior_latest: str | None,
+    reason: str,
+    authority: str,
+    api_image: str | None,
+    web_image: str | None,
+    min_instances: int,
+    project: str | None,
+    region: str | None,
+    execute_rolls: bool,
+    gcloud: Any,
+    runner: Callable[..., dict[str, Any]] | None,
+    now: datetime,
+) -> dict[str, Any]:
+    """D-G3-8/B-9 — the standing pre-authorisation: a failed post-promote
+    check restores the previous serving generation through
+    ``release_reversal``'s own verb (a NEW conf generation, the current
+    withdrawal set re-applied — never a pointer edit on history).
+
+    A refused or crashed rollback is returned, never raised over the
+    promote's own ``post-check-failed`` — the operator reads BOTH facts."""
+    from . import release_reversal as rr
+
+    info: dict[str, Any] = {
+        "authority": f"{rr.AUTHORITIES_PREFIX}{authority}",
+        "authority_decision": "D-G3-8/B-9 — automatic rollback on failed "
+        "post-promote verification is pre-authorised; the verb checks the "
+        "standing record, it never re-decides",
+        "target": prior_latest,
+        "outcome": "not-run",
+    }
+    try:
+        if runner is not None:
+            out = runner(store, to=prior_latest, reason=reason, go=authority)
+            info["runner"] = "injected"
+        elif prior_latest and (
+            PUB_RE.match(prior_latest) or rr.LEGACY_LABEL_RE.match(prior_latest)
+        ):
+            # ``verb_rollback`` resolves both pubs and legacy-floor labels
+            # (``--to <pub|label|legacy-YYYYMMDD>``); a floor serve's
+            # restore target is its label.
+            out = rr.verb_rollback(
+                store,
+                apply_=True,
+                to=prior_latest,
+                reason=reason,
+                go=authority,
+                api_image=api_image,
+                web_image=web_image,
+                min_instances=min_instances,
+                project=project,
+                region=region,
+                execute_rolls=execute_rolls,
+                gcloud=gcloud,
+                now=now,
+            )
+        else:
+            # no prior promoted release — the archive-only posture: the
+            # latest pointer clears and the barrier still serves (§8.2).
+            out = rr.verb_clear_latest(
+                store,
+                apply_=True,
+                reason=reason,
+                go=authority,
+                api_image=api_image,
+                web_image=web_image,
+                min_instances=min_instances,
+                project=project,
+                region=region,
+                execute_rolls=execute_rolls,
+                gcloud=gcloud,
+                now=now,
+            )
+    except Exception as exc:  # noqa: BLE001 — recorded verbatim, never masked
+        info["outcome"] = "refused" if isinstance(exc, rp.PipelineError) else "failed"
+        info["error"] = f"{getattr(exc, 'code', type(exc).__name__)}: {exc}"
+        return info
+    info["outcome"] = str(out.get("outcome") or ("applied" if out.get("applied") else "refused"))
+    info["conf_gen"] = out.get("conf_gen")
+    info["verb"] = out.get("verb")
+    info["checks"] = out.get("checks")
+    return info
+
+
+def _fire_post_failure_alert(
+    *,
+    pub: str,
+    gen: int,
+    failed_checks: list[dict[str, Any]],
+    rollback: dict[str, Any] | None,
+    alert_hook: Callable[..., Any] | None,
+) -> dict[str, Any]:
+    """The operator alert for an auto-rolled-back promote (P34.4 / ACT-02's
+    recorded-alert ledger — the alert is recorded before it is delivered).
+    ``alert_hook`` is the test seam — it receives the :class:`Alert` and its
+    return rides the incident note verbatim."""
+    from .alerts import Alert, AlertLedger, fire, notifiers_from_env
+
+    ids = ", ".join(str(c.get("id")) for c in failed_checks)
+    alert = Alert.create(
+        "release-auto-rollback",
+        "critical",
+        f"post-promote verification failed for {pub[:18]}… ({ids}) — the "
+        f"serving generation {gen} was rolled back automatically under the "
+        "D-G3-8/B-9 standing authorisation",
+        detail={
+            "publication_id": pub,
+            "failed_conf_gen": gen,
+            "failed_checks": [c.get("id") for c in failed_checks],
+            "rollback": rollback,
+        },
+    )
+    info: dict[str, Any] = {"kind": alert.kind, "severity": alert.severity}
+    try:
+        if alert_hook is not None:
+            info["delivered"] = alert_hook(alert)
+            info["ledger"] = "injected"
+        else:
+            import os
+
+            ledger = AlertLedger(Path(os.environ.get("SIG_ALERT_LOG", ".sig/ops/alerts.jsonl")))
+            notifiers = notifiers_from_env()
+            fired = fire(alert, ledger=ledger, notifiers=notifiers)
+            info["ledger"] = str(ledger.path)
+            info["recorded_ts"] = fired.ts
+            info["notifiers"] = [getattr(n, "name", type(n).__name__) for n in notifiers]
+            info["delivered"] = "recorded"
+    except Exception as exc:  # noqa: BLE001 — an undelivered alert is recorded
+        info["delivered"] = f"failed: {type(exc).__name__}: {exc}"
+    return info
+
+
+def _write_incident_note(
+    store: rp.Store,
+    *,
+    pub: str,
+    failed_gen: int,
+    prior_gen: int,
+    prior_latest: str | None,
+    failed_checks: list[dict[str, Any]],
+    rollback: dict[str, Any] | None,
+    alert: dict[str, Any],
+    authority: str,
+    now: datetime,
+) -> str:
+    """The append-only incident record — ``registry/incidents/`` holds one
+    new object per auto-rollback (create-if-absent, never rewritten). The
+    journal also gains an ``incident`` event so the pub's history names
+    it."""
+    doc = {
+        "schema": "sig.release-incident/1",
+        "kind": "auto-rollback",
+        "publication_id": pub,
+        "failed_conf_gen": failed_gen,
+        "previous_conf_gen": prior_gen,
+        "restored_publication_id": prior_latest,
+        "reason": "post-promote verification failed",
+        "failed_checks": [
+            {"id": c.get("id"), "detail": str(c.get("detail") or "")[:200]} for c in failed_checks
+        ],
+        "authority": f"authorities/{authority}",
+        "authority_decision": "D-G3-8/B-9",
+        "rollback": rollback,
+        "alert": alert,
+        "recorded_at": _iso(now),
+    }
+    seq = len(store.list("registry/incidents/"))
+    stem = f"{now.strftime('%Y%m%dT%H%M%S')}-auto-rollback-{pub[:10]}"
+    name = ""
+    for n in range(1000):
+        name = f"registry/incidents/{seq + n:06d}-{stem}.json"
+        try:
+            store.insert(name, rp._canonical(doc), content_type="application/json")
+            break
+        except Exception:  # noqa: BLE001 — create-if-absent collision → next seq
+            continue
+    else:
+        raise rp.PipelineError("incident-journal-full", f"no free incident name under {stem}")
+    rp.emit_event(
+        store,
+        "incident",
+        pub,
+        {
+            "outcome": "recorded",
+            "code": "auto-rollback",
+            "incident": name,
+            "failed_conf_gen": failed_gen,
+            "restored": prior_latest,
+            "authority": f"authorities/{authority}",
+            "authority_decision": "D-G3-8/B-9",
+            "rollback_outcome": (rollback or {}).get("outcome"),
+            "rollback_conf_gen": (rollback or {}).get("conf_gen"),
+            "alert": alert,
+        },
+        now=now,
+    )
+    return name
 
 
 def emit_failed(

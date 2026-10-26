@@ -2444,6 +2444,35 @@ def build_parser() -> argparse.ArgumentParser:
         help="inject V2's pushed/clean facts verbatim (fixture runs only — "
         "the injection is recorded in the evidence, never hidden)",
     )
+    pver.add_argument(
+        "--api-origin",
+        default=None,
+        metavar="URL",
+        help="P35.58 (suite B): the API base URL V7's served-parity legs "
+        "probe — S names sig-api-staging, P the live API. Unset → the "
+        "served legs record a skip, which blocks.",
+    )
+    pver.add_argument(
+        "--api-header",
+        action="append",
+        default=None,
+        metavar="'NAME: value'",
+        help="a request header for --api-origin fetches; repeatable",
+    )
+    pver.add_argument(
+        "--quality-report",
+        default=None,
+        metavar="PATH",
+        help="P35.58 (suite B): the sig.quality-report/1 file V15 gates on "
+        "(exports.quality.run_release_gate — hosted, never re-implemented). "
+        "Unset → V15 records a skip, which blocks.",
+    )
+    pver.add_argument(
+        "--cadence",
+        default=None,
+        metavar="PATH",
+        help="the cadence.toml P1's declaration leg reads (default: the repo's ops/cadence.toml)",
+    )
 
     ppro = rsub.add_parser(
         "promote",
@@ -4000,7 +4029,13 @@ def _cmd_probe_hosted(args: argparse.Namespace) -> int:
     from .alerts import alert_exit_code
     from .gcs import GcsError
     from .observe import ProbeLog, prune_jsonl
-    from .scheduled import load_cadence, probe_hosted, resolve_targets, upload_sweep
+    from .scheduled import (
+        RELEASE_PROBE_KINDS,
+        load_cadence,
+        probe_hosted,
+        resolve_targets,
+        upload_sweep,
+    )
 
     config = _observability_config(None)
     cadence = load_cadence(args.cadence)
@@ -4022,7 +4057,7 @@ def _cmd_probe_hosted(args: argparse.Namespace) -> int:
         print("probe-hosted: no targets resolved — nothing probed (config gap)", file=sys.stderr)
         return 2
 
-    results = probe_hosted(targets)
+    results = probe_hosted(targets, specs=specs)
     # Local bounded log (the OBS.1 shape) — always, even before any upload.
     log = ProbeLog(_probe_log_path())
     for result in results:
@@ -4053,6 +4088,10 @@ def _cmd_probe_hosted(args: argparse.Namespace) -> int:
         kinds = {name: kind for name, kind, _url in targets}
         fired = None
         for result in down:
+            # The declared trigger point (P35.58 P1) wins the severity;
+            # undeclared targets page critical, as before.
+            spec = specs.get(result.service)
+            severity = (spec.trigger if spec else "") or "critical"
             if kinds.get(result.service) == "http-absent":
                 # P34.10: a failed absence probe means the denied route is
                 # PRESENT (or the origin unreachable) — word it accordingly.
@@ -4060,11 +4099,16 @@ def _cmd_probe_hosted(args: argparse.Namespace) -> int:
                     f"denied route probe {result.service} is RED on a public origin "
                     f"({result.detail or 'route present'})"
                 )
+            elif kinds.get(result.service) in RELEASE_PROBE_KINDS:
+                message = (
+                    f"release-posture probe {result.service} is RED "
+                    f"({result.detail or 'check failed'})"
+                )
             else:
                 message = (
                     f"hosted target {result.service} is DOWN ({result.detail or 'unreachable'})"
                 )
-            fired = _fire_alert("probe-hosted", "critical", message, detail=result.as_json())
+            fired = _fire_alert("probe-hosted", severity, message, detail=result.as_json())
         return alert_exit_code(fired)
     return 0 if not down else 1
 

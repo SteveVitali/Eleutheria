@@ -231,6 +231,44 @@ url = "https://storage.googleapis.com/{project}-sig-web"
 path = "/visual-language/"   # withdrawn fixture surface — removed by republish #1 (P34.17, A-0.3)
 
 
+# --- P35.58 (REL-04b / SIG-REL-007): the P1 release-posture probes --------------
+# The §5.5 P1 row verbatim: the origin's /releases/latest.json publication id
+# equals the release its latest view serves (/release.json); the release is
+# younger than 35 days; and the served X-SIG-Conf-Gen equals the recorded
+# generation (a served conf-gen behind — or ahead of — the registry record is
+# RR-7's alarm class). `trigger` declares each target's alert severity; the
+# probe runs on the shared `sig-sched-probe` cadence and every result appends
+# a sig.probe-run/1 row to the sweep object — the operator-page is the
+# declared trigger point, never a silent finding.
+
+[[probes.targets]]
+name = "sig-release-pointer"
+kind = "sig-release-pointer"
+url_env = "SIG_PROBE_WEB_URL"          # the public origin — latest.json vs /release.json
+trigger = "critical"                   # a stale/mismatched latest view is a serving incident
+
+[[probes.targets]]
+name = "sig-release-age"
+kind = "sig-release-age"
+url_env = "SIG_PROBE_WEB_URL"
+path = "/releases/latest.json"         # the pointer object; activated_at drives the age
+max_age_days = 35                      # §5.5 verbatim: release age < 35 days
+trigger = "alarm"                      # a stale release is an ops alert, not a page
+
+[[probes.targets]]
+name = "sig-conf-gen"
+kind = "sig-conf-gen"
+url_env = "SIG_PROBE_WEB_URL"          # origin / header vs the recorded generation
+trigger = "critical"                   # served != recorded is the RR-7 regression alarm
+
+[[probes.targets]]
+name = "absent-api-release-unpromoted" # P1 absence leg: a never-promoted release id is
+kind = "http-absent"                   # never servable — the API's release-namespaced
+url_env = "SIG_PROBE_API_URL"          # registry route must answer 404 for it
+path = "/v1/releases/p-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+trigger = "critical"
+
+
 [runs]
 # Every scheduled ingest execution appends one run row here:
 #   gs://…-sig-restricted/ops/runs/<source>/<date>/<ts>.json

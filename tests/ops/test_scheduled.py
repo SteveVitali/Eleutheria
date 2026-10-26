@@ -474,6 +474,9 @@ def test_cli_probe_hosted_appends_log_and_uploads(
     monkeypatch.setattr(cli, "_gcs_bucket", lambda _a: store.bucket_client())
     monkeypatch.setattr("ops.scheduled.http_ok", lambda url, **k: True)
     monkeypatch.setattr("ops.scheduled.http_absent", lambda url, **k: (True, "absent (HTTP 404)"))
+    # P35.58: keep the release-posture probes deterministic too (no live
+    # origins in unit tests — the fixture answer is the seam).
+    monkeypatch.setattr("ops.scheduled.check_release", lambda kind, url, **k: (True, f"{kind} ok"))
     # The cloudsql target is unconfigured here -> honestly skipped, not probed.
     code = cli.main(["probe-hosted"])
     assert code == 0
