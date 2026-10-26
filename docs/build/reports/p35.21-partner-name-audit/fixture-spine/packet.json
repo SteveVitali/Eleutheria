@@ -1,0 +1,70 @@
+{
+  "dry_run": true,
+  "generated_at": "2026-10-26T15:27:10Z",
+  "keys": [
+    {
+      "entity_id": "e-fixture-1",
+      "name_key_sha256": "077373bb2d54c3a8dda100df40a807c3e857587c08b0ac564538933de8cb0c33",
+      "source_count": 1,
+      "split_count": 1
+    },
+    {
+      "entity_id": "e-fixture-2",
+      "name_key_sha256": "b99e3ecb750d6c0d23b258864719f224efd32adffaaa9ef505f09a66f26037dd",
+      "source_count": 3,
+      "split_count": 3
+    },
+    {
+      "entity_id": "e-fixture-3",
+      "name_key_sha256": "898794ab15afada021abeb798b58fa82277472fc99905010c00b9b66517e7af8",
+      "source_count": 1,
+      "split_count": 1
+    }
+  ],
+  "measured": {
+    "distinct_asserting_sources": 3,
+    "legacy_keys": 3,
+    "scoped_candidates_total": 5,
+    "split_count_histogram": {
+      "1": 2,
+      "3": 1
+    },
+    "split_keys": 1
+  },
+  "n": 3,
+  "notes": [
+    "counts key ids only \u2014 per-key rows are entity_id + name_key_sha256 + counts; no registrant name or label leaves the audit report (Part VIII)",
+    "this row measures; it never decides \u2014 every disposition is the operator's (OP-15), and D-P32.3-1 stays OPEN until they land"
+  ],
+  "obligation": "D-P32.3-1",
+  "option_blast_radii": {
+    "keep": {
+      "basis": "split_count == 1 \u2014 single-source keys whose global union was harmless (the 'keep the entity' OP-15 option)",
+      "keys": 2
+    },
+    "same_as": {
+      "basis": "not sized by this query \u2014 the audit report carries no strong-identifier joinability; the 'same_as' OP-15 option needs a strong-id census the packet honestly does not claim",
+      "keys": null,
+      "sized": false
+    },
+    "split": {
+      "basis": "split_count > 1 \u2014 multi-source keys; each decomposes into its reported sig.org.name_scoped candidates (the auto-union exposure the OP-15 'split' option reviews)",
+      "keys": 1,
+      "scoped_candidates": 5
+    }
+  },
+  "query": {
+    "note": "the verbatim provenance SELECT of resolution.partner_name_audit.name_scope_report \u2014 every count in this packet derives from exactly this query",
+    "sha256": "dcc24c347ae3ee34599c8b5ed036199011def8b1e9ac77c839f06f78230a9396",
+    "sql": "\nSELECT ei.value AS name_key,\n       e.entity_id::text,\n       o.cached_canonical_name AS label,\n       ea.source_id,\n       c.predicate_id\n  FROM entity_identifier ei\n  JOIN entity e ON e.entity_id = ei.entity_id\n  LEFT JOIN organization o ON o.entity_id = e.entity_id\n  JOIN claim c ON c.object_entity = e.entity_id AND c.object_type = 'entity_ref'\n  JOIN claim_evidence ce ON ce.claim_id = c.claim_id\n  JOIN evidence_capture ec ON ec.capture_id = ce.capture_id\n  JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id\n WHERE ei.scheme = %s\n ORDER BY ei.value, ea.source_id, c.predicate_id\n"
+  },
+  "record_type": "sig.partner-name-disposition-packet/1",
+  "report_sha256": "b58d51aa4b12d9673af79b47412b8e02e677060146f1a88d7a030afcc1c49fbd",
+  "run_bounds": {
+    "finished_at": "2026-10-26T15:27:09Z",
+    "started_at": "2026-10-26T15:27:08Z"
+  },
+  "scheme": "sig.org.name",
+  "spine": "fixture-spine (P35.21 test fixture)",
+  "status": "measured"
+}

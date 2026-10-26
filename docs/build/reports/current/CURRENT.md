@@ -4,19 +4,19 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `185a0eaa01c3b498e19595cd4b0ff86bbf143212` · inputs hashed: 1112 · wall-clock receipt: `receipt.json`
+> input_commit: `ff26890289996d77db6881f7e912540a1dbb9a16` · inputs hashed: 1113 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P35.21` · lastCompleted `P35.2`
-- chainTip `r11/P35.2-alerting-as-code-and-escalation` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-26T12:58Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P35.23` · lastCompleted `P35.21`
+- chainTip `r11/P35.21-partner-name-audit-run` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-26T15:30Z`
 
 ## Obligations
 
-- 183 obligations · **102 owed** (99 OPEN, 3 PARTIAL) · 81 terminal
-- 682 events (45 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 184 obligations · **103 owed** (100 OPEN, 3 PARTIAL) · 81 terminal
+- 683 events (45 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 102 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 103 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -80,6 +80,7 @@
 | P35.64 | queued 11B acceptance sweep + GATE-G5 packet leg: read-only crawl of the promoted release/API/`sig-public`/`sig-registry` + ledger surface (counts only) + the p… | `implement-spec spec=docs/tickets/342_P35.64__sub-round-11b-acceptance.md live_verification=true` · landed 342 (PR #363) |
 | P37.2 | Wave-C sequence L1→L5 (pre-grow → tier bump after the go → national run → 24 h soak read → revert); missed leg reported; packet `reports/p37.2-wave-c/WAVE_C_PAC… | … |
 | P35.2 | D-P35.2-1 | `implement-spec spec=docs/tickets/346_P35.2__alerting-as-code-and-escalation.md live_verification=true` · landed 346 |
+| P35.21 | D-P35.21-1 | `implement-spec spec=docs/tickets/347_P35.21__partner-name-audit-run.md live_verification=true` · landed 347 |
 
 ## Known inconsistencies (preserved, never synthesized)
 

@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "185a0eaa01c3b498e19595cd4b0ff86bbf143212",
-  "manifest_inputs": 1112,
+  "input_commit": "ff26890289996d77db6881f7e912540a1dbb9a16",
+  "manifest_inputs": 1113,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.21",
-    "lastCompleted": "P35.2",
+    "nextTicket": "P35.23",
+    "lastCompleted": "P35.21",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.12,P37.2",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.12,P37.2",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,27 +17,27 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.2-alerting-as-code-and-escalation",
+    "chainTip": "r11/P35.21-partner-name-audit-run",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-26T12:58Z"
+    "updatedAt": "2026-10-26T15:30Z"
   },
   "counts": {
-    "obligations": 183,
-    "owed": 102,
-    "open": 99,
+    "obligations": 184,
+    "owed": 103,
+    "open": 100,
     "partial": 3,
     "terminal": 81,
-    "events": 682,
+    "events": 683,
     "transitions": 45,
     "coverage_assessments": 489,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 56,
+    "return_pass_rows": 57,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -9550,6 +9550,52 @@
           "recorded_at": "2026-10-26"
         }
       ]
+    },
+    {
+      "id": "D-P35.21-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.21-1:e0",
+      "kind": "V",
+      "owner": "the OM-19 leg-runner — the orchestrator's `r11/P35.21-live-<n>` dispatch or the operator",
+      "landing": "RETURN PASS — P35.21",
+      "landing_source": "return-pass-map/1",
+      "backlog_home": "BL-085",
+      "item": "The P35.21 hosted partner-name audit (`ops/gcp/partner-name-audit.sh --apply`): cloud-sql-proxy → `sig-resolution partner-name-audit --dsn-env SIG_PARTNER_AUDIT_DSN --role sig_read_public` (one read-only transaction, `SET TRANSACTION READ ONLY`) → `sig-resolution partner-name-packet --report <report> --spine \"sig-pg (read-only sig_read_public)\" --started-at <T0> --finished-at <T1>` emitting the measured `sig.partner-name-disposition-packet/1` (N, the OP-15 option blast radii, verbatim query + query sha256, report sha256, `date -u` bounds; per-key rows are `entity_id` + `name_key_sha256` + counts only — the name-bearing report JSON stays in the gitignored `docs/build/logs/` tree, Part VIII)",
+      "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P35.21-live-<n>` dispatch or the operator · trigger: `implement-spec spec=docs/tickets/347_P35.21__partner-name-audit-run.md live_verification=true` with ADC + `SIG_GCP_PROJECT` + `SIG_PARTNER_AUDIT_DSN` exported and `cloud-sql-proxy` on PATH (a read binds no mutation window — Live window: none)",
+      "verify": "the measured packet lands under `docs/build/reports/p35.21-partner-name-audit/` with `status: measured`, `legacy_keys` = the counted N, the same query sha256 the queued packet already pins (`dcc24c34…`), the report sha256 and the recorded `date -u` bounds; the run ledger carries the command + bounds + packet digest",
+      "proxy": "the queued `sig.partner-name-disposition-packet/1` is committed (`docs/build/reports/p35.21-partner-name-audit/` — `prepared_not_executed`: same query + digest surface, `n`/`measured` null, nothing fabricated); the fixture-spine packet beside it proves the generator over a known spine (3 legacy keys, 1 splitting → 5 scoped candidates); 12 `tests/resolution/test_partner_name_packet.py` tests pin the counts, the Part VIII boundary (no name in any emitted artifact), the inconsistent-report refusal and the vacuous-N refusal (SIG-ENG-042)",
+      "line": 1396,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.21",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/reports/p35.21-partner-name-audit/PACKET.md"
+          ],
+          "observed_at": "2026-10-26",
+          "recorded_at": "2026-10-26",
+          "source_commit": "ff268902",
+          "reason": "migration anchor appended by P35.21 (row 347) for the row it added — the hosted read-only partner-name audit is queued prepared_not_executed: no ADC, SIG_GCP_PROJECT unset, SIG_PARTNER_AUDIT_DSN unset; a read binds no mutation window; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "event_id": "D-P35.21-1:e0",
+          "obligation_id": "D-P35.21-1",
+          "owner": "the OM-19 leg-runner — the orchestrator's `r11/P35.21-live-<n>` dispatch or the operator",
+          "landing": "P35.21's live_verification=true run with ADC + SIG_GCP_PROJECT + SIG_PARTNER_AUDIT_DSN exported and cloud-sql-proxy on PATH",
+          "anchor": {
+            "row_line": 1396,
+            "row_sha256": "233e157271b2f235cb7fae8240423557b2af26ac83a2b73b3d079ad2d9e8014d",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -10049,6 +10095,16 @@
         "rerun_cell": "`implement-spec spec=docs/tickets/346_P35.2__alerting-as-code-and-escalation.md live_verification=true` · landed 346",
         "obligations": [
           "D-P35.2-1"
+        ]
+      },
+      {
+        "key": "P35.21",
+        "obligations_cell": "D-P35.21-1",
+        "gates_cell": "hosted read-only — queued (no ADC, `SIG_GCP_PROJECT` unset, `SIG_PARTNER_AUDIT_DSN` unset); not an OM-20 row — a read binds no mutation window (Live window: none); packet `reports/p35.21-partner-name-audit/` `prepared_not_executed` (the fixture-spine packet beside it is fixture evidence, never a hosted count)",
+        "operator_cell": "nothing until the re-run — the verbatim leg lives in `ops/gcp/partner-name-audit.sh --apply` (proxy → `partner-name-audit --dsn-env SIG_PARTNER_AUDIT_DSN --role sig_read_public` → `partner-name-packet`); `D-P32.3-1` stays OPEN — this row sized it, the operator's OP-15 dispositions decide",
+        "rerun_cell": "`implement-spec spec=docs/tickets/347_P35.21__partner-name-audit-run.md live_verification=true` · landed 347",
+        "obligations": [
+          "D-P35.21-1"
         ]
       }
     ]
@@ -23793,10 +23849,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "05828d22192053cc0e63fe1c00b985f0716caa83ccd62e18fe1e0de16bf45721",
+  "manifest_sha256": "73198f08f8200583bfc66720d918c5a315dc20035d00247bb7e59e6ab7acaaa8",
   "current_md": {
-    "lines": 131,
-    "bytes": 19415,
+    "lines": 132,
+    "bytes": 19545,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
