@@ -923,3 +923,12 @@ seed-commit 0a61e2e5
 # archived `reports/memory-repair/LEDGER_L1263_pre-P35.23-ci-field.txt`;
 # payload stands verbatim. Scope: findings attributed to 932cbb98 only.
 seed-commit 932cbb98
+
+# ci-token repair (orchestrator): `52021081` carries the real reword of
+# `932cbb98`'s correction line — "`ci: fail`-class" -> "read red" (the
+# stray-fragment pattern: ci:+state without a parseable #n@sha claim).
+# `6534c30f` pushed with only the archive after a heredoc mangling; this
+# commit is the byte-carrier. Pre-repair bytes archived
+# `reports/memory-repair/LEDGER_L1266_pre-ci-token.txt`. Scope: the
+# ci-token finding on 932cbb98's added line only.
+seed-commit 52021081
