@@ -7,9 +7,9 @@
 
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # P35.23 landed(348); 1 leg QUEUED (returnPass)
-nextTicket: P36.1b # row 349 — crawler-conduct-text-and-robots-field
-lastCompleted: P35.23 # row 348 — real-data-regression-corpus 2026-10-26
+projectStatus: IN_PROGRESS # P36.1b landed(349); queued legs on earlier rows
+nextTicket: P36.2 # row 350 — rights-flip-decline-batch-and-terms-capture
+lastCompleted: P36.1b # row 349 — crawler-conduct-text-and-robots-field 2026-10-26
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.12,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P35.23-real-data-regression-corpus # P35.23 landed on this tip; P36.1b stacks here
+chainTip: r11/P36.1b-crawler-conduct-text-and-robots-field # P36.1b landed on this tip; P36.2 stacks here
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-26T19:40Z
+updatedAt: 2026-10-26T23:44Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1267,3 +1267,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-26 — P35.23 post-closeout record — `14f8d310` `ci: pass #368@14f8d31` 5/5 head-bound (run 40395188796: python/docs/composed/security/web) · prior head `2adf61da` read red (docs: the `done` entry missing its `ci:` field; python: row-772 `MISSING` still routed to the landed row) — repaired forward `932cbb98`/`4a27fde9`/`52021081`/`14f8d310` with `seed-commit` declarations + archived bytes; one empty-body repair `6534c30f` (heredoc mangling ate its edit — the bytes landed in `52021081`, disclosed) · `main` untouched · the apply leg stays QUEUED `D-P35.23-1` prepared_not_executed; archetypes `D-P35.23-2`…`-11` OPEN · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-10-26 — P35.23 correction — orient-recipe fold (BM-ORIENT-01: 49,639 B > 48 KiB on head `e92350be` — `nextTicket=P36.1b`'s 4,450-B ticket header tipped it): in-place byte-compact of this row's own two newest committed lines (955→540 B, 1097→663 B — payload verbatim), pre-repair bytes archived `reports/memory-repair/LEDGER_L1266_L1267_pre-P35.23-orientfold.txt`; `seed-commit`-declared next commit · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-10-26 — P36.1b dispatch boundary-confirm — `ci: pass #368@157ff62` 5/5 head-bound (run 40400752664) · P35.23 landed: `sig.rdc-corpus/1` 7 slices/14 archetypes + pipeline-independent oracles + M-4/5/6 harnesses — **apply leg QUEUED `D-P35.23-1` prepared_not_executed** · repair arc: `932cbb98`/`4a27fde9`/`52021081`/`caa6a363`/`14f8d310` + disclosed empty `6534c30f` · `main` untouched · deferrals +11/−0 (`D-P35.23-1`..`-11`) · dispatching P36.1b (row 349 — conduct text + `robots_policy` + `/data-collection/`; `live_verification=false`, not OM-20, no gate; A-5/B-6 recorded; dep P36.1a landed) · chainTip → r11/P35.23-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-10-26 — P36.1b done — row 349 (R11-GOV-04): conduct truth landed — `crawler_conduct.toml` v2026-10-26 rules 1/2/7 (probe+record, never a gate; `robots_disregarded` + host+count disclosure; opt-out pre-robots, zero egress; reservation refused ≠ a disallow), crawler.py docstrings, `robots_policy` = review-time metadata (ADR-222; ADR-088 status append; appF row + spec regen; triggers + BL-086), outreach letter + `/data-collection/` copy (CR-01…08 verbatim, `pending` B-2; DC-03→DC-21), `test_conduct_text.py` 18 green · `D-P35.38a-1` annotated OPEN · deferrals +0/−0 · verify: `make check` 10,828/2 skip/3 env-red (recorded); web 501 · impl `20543bce` red (perf-lint allow + orient 49,660 B) → `5f76438b` · ci: head-bound read follows · chainTip → r11/P36.1b-… · next → P36.2 · harness: devin-desktop/swe-2-high/subagent

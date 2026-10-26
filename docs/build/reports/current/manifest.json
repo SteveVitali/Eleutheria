@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "157ff6249f89ec56c4e819c2d0e059205f208397",
+  "input_commit": "5f76438b6addb1121f9370d7a63bb060231c84f6",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "8b6c63ce0d431551f38e5d3eda95576543de232546c06a63fc93e63e29c458e5"
+      "sha256": "74c789b62ccb2a3de9a9473642ecd959fc65533f97a76a3feede7919bcbf00f2"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -358,7 +358,7 @@
     },
     {
       "path": "docs/adr/ADR-088-robots-verdicts-recorded-never-enforced-gl-gate-08.md",
-      "sha256": "f07ada359b768c15d9f4f8919fdd50c1d6edeb651ee604bb77642fd5548bd804"
+      "sha256": "88fad8e0b9a65496cf789effcff24988ab0e36d2bcc0629ff050f7f372ad6e7a"
     },
     {
       "path": "docs/adr/ADR-089-bounded-quota-aware-sam-gov-sweep.md",
@@ -881,24 +881,28 @@
       "sha256": "99886d778e16eb1409040eafec3b4cffc41e735c052eb47c8b940cb395e268b1"
     },
     {
+      "path": "docs/adr/ADR-222-robots-policy-declared-posture-never-enforcement.md",
+      "sha256": "9e7b9b983ee262780bb08836c7b7282456bf23a19e9503bb2ced59a3aa6a8459"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "37783271aa337a7eeb02c5a7445ddf14484bd4a47e60fdd4fe9078b08e58625d"
+      "sha256": "e573548e3c2506b1b5477daa2263b3aab8152d2c1ced2d5a9cfa5ce9d46aea59"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "190e89ce46d2f1ce2a72c1fe8c67e569659e4e6f70011748e9430649983c7444"
+      "sha256": "195703b871a71a50ae56a09999b420e44e104292d01dca0811919ca90ac0b2dc"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "a58c0a71cb519ab68d375d2bdc480e1d9299cc21a61ea658032fc9943e0bef68"
+      "sha256": "d4c1f00457723feeb2263431b192f4a80cb597bbf473a1419142148e64af043e"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "d3ff9acedb6170c6ed199acfb3701672895fe28988e3fe6b8a2cc51382ea02b2"
+      "sha256": "5d488b0d9e946630c99ee95e422b259759749a0263a3c102626110149e9ab14c"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "ce3978756c606c6900ff803c2faed3432399aa52ab030c766660b018b50d4a8f"
+      "sha256": "24db06b87d32977abb8e2e796f00722dbe65bca09bc56a933029200ebe7169b2"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -978,7 +982,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "e6a045d9786c6dd3de8b84b455f8d3c2092c865d55de455d1b5faff3ffa54437"
+      "sha256": "d322cbea625d218ce666b30ac6a0d57b87379c0d87f69972c863798fef77045c"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -2267,6 +2271,10 @@
     {
       "path": "docs/build/runs/P36.1a.md",
       "sha256": "364140aa6dba9d85871d73460f4e054cbd0979ee148e6b899c90a6195d6963c6"
+    },
+    {
+      "path": "docs/build/runs/P36.1b.md",
+      "sha256": "a58b233273d88fa76679b12fe8f5e932cbaf06df6c3bfc4a0d7c905b348ec1a2"
     },
     {
       "path": "docs/build/runs/P36.3.md",
@@ -3846,7 +3854,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "5ea969cbf8dea40c561b381c8708a3ed4f8eaed0d9e374b1e2b83d2101218a14"
+      "sha256": "288fa88de1ba605a68d0f2a5aa4f883fd4e92018d746a5e9491d1a635c4d9aed"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",
