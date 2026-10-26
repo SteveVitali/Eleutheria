@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# sig.rdc-slice/1 — the Atlas of Surveillance multi-state-name excerpt (P35.23).
+
+schema = "sig.rdc-slice/1"
+slice_id = "eff_atlas_multistate"
+lane = "committed"
+source_id = "eff_atlas_of_surveillance"
+archetype = "atlas_eff_two_state_names"
+coverage = "served"
+spdx = "CC-BY-4.0"
+attribution = "Electronic Frontier Foundation, Atlas of Surveillance (CC BY 4.0)"
+terms_url = "https://atlasofsurveillance.org/about"
+captured = "2026-09-15"
+oracle = "atlas_multistate_facts"
+legs = ["oracle", "pipeline"]
+notes = "Bounded excerpt of the captured download.csv (15,187 rows): every row whose normalised Agency name is asserted for agencies in two or more distinct states, for the first 150 such names alphabetically (736 rows, 150 names). The recorded phenomenon — same-name agencies in two states are possibly the same agency, never silently resolved."
+
+[pipeline]
+expect = { run = "completed" }
+media_type = "text/csv"
+
+[[members]]
+path = "atlas_multistate.csv"
+sha256 = "fd851ba73eb17549eff582c550f73d32dbe51ce2f323537ba679f496425d4ea4"
+source_uri = "https://www.atlasofsurveillance.org/download.csv"

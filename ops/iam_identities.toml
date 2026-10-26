@@ -91,7 +91,7 @@ purpose = "sig-materialize — Cloud SQL client + read on the restricted bucket 
 [[service_account]]
 id = "sig-quality-probe-rt"
 display_name = "sig quality probe runtime"
-purpose = "sig-exec-* one-off execution host + P34.44b's scheduled probe — Cloud SQL client, conditioned read on evidence/captures/, conditioned create on ops/probes/, the two DB-login secrets; nothing else"
+purpose = "sig-exec-* one-off execution host + P34.44b's scheduled probe + P35.23's sig-rdc-probe (the restricted-corpus lane reads evidence/captures/ and writes ops/probes/rdc/ — inside the same conditioned grants, no new scope) — Cloud SQL client, conditioned read on evidence/captures/, conditioned create on ops/probes/, the two DB-login secrets; nothing else"
 
 [[service_account]]
 id = "sig-release-rt"

@@ -65,6 +65,11 @@ COPY orchestration ./orchestration
 COPY policy ./policy
 COPY ops ./ops
 COPY evidence ./evidence
+# P35.23 (SIG-CONF-008): the real-data regression corpus rides the image —
+# the scheduled sig-rdc-probe job runs `sig-ops rdc scheduled --corpus
+# /app/tests/rdc/data` (ops/rdc_probe.toml), so the image digest pins the
+# exact corpus manifest + committed member bytes each run evaluates.
+COPY tests/rdc ./tests/rdc
 
 # Install uv and the read-API package (+ its transitive workspace deps) into the
 # system env. Installing ./api pulls sig-reconcile/-inference/-policy/-evidence/

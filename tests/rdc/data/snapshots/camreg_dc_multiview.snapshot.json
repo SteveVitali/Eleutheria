@@ -1,0 +1,43 @@
+{
+  "approvals": [
+    {
+      "from": null,
+      "landed_in": "P35.23",
+      "rationale": "initial corpus landing \u2014 baseline pins for the four committed slices",
+      "rationale_ref": "docs/build/runs/P35.23.md",
+      "to": [
+        "sha256:8a139ea50a1a4667281a41a1347f336607cfbb365dcf6f0de4126fa03a3b6b44",
+        "sha256:0e14b20e6b9e996911a888771f11ae8bdbcda3f855750731424456b2dfe83f28",
+        "sha256:e397585d4bbca5358411d9473b4b88fd84fdae8b964a15da340e136b95c59da1"
+      ]
+    }
+  ],
+  "facts": {
+    "co_located_features": 93,
+    "co_located_groups": 46,
+    "collided_object_ids": [],
+    "collision_count": 0,
+    "distinct_object_ids": 1060,
+    "feature_count": 1060,
+    "features_with_geometry": 1060,
+    "null_island": 0,
+    "oracle": "arcgis_camera_facts",
+    "out_of_extent": 0,
+    "same_id_distinct_points": 0
+  },
+  "lane": "committed",
+  "members_digest": "sha256:8a139ea50a1a4667281a41a1347f336607cfbb365dcf6f0de4126fa03a3b6b44",
+  "oracle_digest": "sha256:0e14b20e6b9e996911a888771f11ae8bdbcda3f855750731424456b2dfe83f28",
+  "pipeline": {
+    "error": "subject key 'traffic_camera:camreg_washington_dc:dc_cctv_street_cameras:0.0' minted twice within the same capture for target camreg_washington_dc \u2014 the declared key fields are not unique upstream",
+    "error_class": "SubjectKeyCollision",
+    "pipeline": "dot_511",
+    "requested": [
+      "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_Sensors_WebMercator/MapServer/11/query?where=1%3D1&outFields=%2A&outSR=4326&returnGeometry=true&f=json&orderByFields=OBJECTID&resultRecordCount=1000&resultOffset=0"
+    ],
+    "run": "failed"
+  },
+  "pipeline_digest": "sha256:e397585d4bbca5358411d9473b4b88fd84fdae8b964a15da340e136b95c59da1",
+  "schema": "sig.rdc-snapshot/1",
+  "slice_id": "camreg_dc_multiview"
+}

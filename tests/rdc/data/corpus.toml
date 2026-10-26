@@ -1,0 +1,122 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# sig.rdc-corpus/1 — the real-data regression corpus manifest (P35.23,
+# SIG-CONF-008 / L3-confidence-program §3.5 + draft row SIG-CONF-D08).
+#
+# One licence-aware captured slice per recorded failure archetype, or a filed
+# D-… deferral row when no licensed slice exists. `committed` slices carry
+# bytes under this directory (licence lane raw-ok, non-ODbL, attribution in
+# SOURCES.md) and run in the PR lane; `restricted` slices commit only
+# member digests and run in the scheduled sig-rdc-probe job (SIG-CONF-013
+# posture) over the screened compartment bucket.
+#
+# The estimand headers below are the SIG-CONF-012 contract (draft row
+# SIG-CONF-D12): every sig.rdc-report/1 carries them verbatim and states
+# that the numbers are mechanical censuses — never real-world precision or
+# recall. A header missing them fails the report lint.
+
+schema = "sig.rdc-corpus/1"
+corpus_id = "rdc"
+version = 1
+generated_by = "P35.23 (docs/tickets/348_P35.23__real-data-regression-corpus.md)"
+
+[estimands]
+m4 = "per-class join/no-join outcomes over modelled perturbations of corpus records — a mechanical census against the declared ruleset contract, never an estimate of real-world precision or recall"
+m5 = "share of mechanically-declared known-distinct pairs the matcher merges — a census over the declared negative classes only, never an estimate of real-world precision or recall"
+m6 = "metamorphic invariants over the corpus record set — cluster-set equality under input-order permutation and blocking-page changes, unchanged distinct-record count under declared-mirror edits, and idempotent re-run — never an estimate of real-world precision or recall"
+
+# The L3 §3.5 archetype register. status: served = a slice with coverage
+# "served" exists; partial = a slice covers part of the recorded phenomenon
+# (or an analog slice stands in); deferred = no licensed slice yet — the
+# `deferral` id names the filed DEFERRALS row.
+[[archetypes]]
+id = "il_dot_objectid"
+summary = "IL DOT-style upstream non-unique declared key — a collided key must fail closed, never silently merge"
+status = "partial"
+deferral = "D-P35.23-11"
+# camreg_dc_multiview exercises the same defect class (24 rows minting one
+# key → SubjectKeyCollision fail-closed); the named IL DOT capture is owed.
+
+[[archetypes]]
+id = "fl511_republish_pair"
+summary = "FL 511 two layers republishing the same upstream camera registry"
+status = "deferred"
+deferral = "D-P35.23-2"
+
+[[archetypes]]
+id = "camreg_osm_both_targets"
+summary = "camreg + OSM layers republishing the same upstream registry (osm-overlaps-nottingham shape)"
+status = "partial"
+deferral = "D-P35.23-3"
+# restricted osm_okc_surveillance covers the OSM side; the camreg republish
+# half is owed.
+
+[[archetypes]]
+id = "nottingham_mark43"
+summary = "Nottingham axis-swapped upstream fields + its Mark43 republish mirror"
+status = "partial"
+deferral = "D-P35.23-4"
+# camreg_nottingham_axis carries the real axis-swap bytes (all 562 Lat/Long
+# fields transposed — geometry_defect on every record). The Mark43 mirror
+# half is owed.
+
+[[archetypes]]
+id = "md_threeway_mirror"
+summary = "Maryland three-way republish mirror (same registry, three layers)"
+status = "deferred"
+deferral = "D-P35.23-5"
+
+[[archetypes]]
+id = "ucsd_penndot"
+summary = "UCSD + PennDOT republishing the same upstream camera set"
+status = "deferred"
+deferral = "D-P35.23-6"
+
+[[archetypes]]
+id = "toronto_cot_geohub"
+summary = "Toronto CoT GeoHub republish pair"
+status = "deferred"
+deferral = "D-P35.23-7"
+
+[[archetypes]]
+id = "ga511_null_island"
+summary = "GA 511 records carrying null-island / sign-flipped coordinates"
+status = "deferred"
+deferral = "D-P35.23-8"
+
+[[archetypes]]
+id = "fdot_d5_wrong_state"
+summary = "FDOT D5 records declared in the wrong state/jurisdiction"
+status = "deferred"
+deferral = "D-P35.23-9"
+
+[[archetypes]]
+id = "ia_dot_multiview"
+summary = "IA DOT co-located multi-view records — same site, distinct devices, never merged"
+status = "partial"
+deferral = "D-P35.23-10"
+# camreg_dc_multiview is the analog slice: real co-located multi-view records
+# (Waterfront Tower East/West at coincident points) exercise the class; the
+# named IA DOT capture is owed.
+
+[[archetypes]]
+id = "eff_data_driven"
+summary = "EFF/MuckRock Data Driven 2016–17 release — temporal overlap and double-claim issues"
+status = "served"
+
+[[archetypes]]
+id = "legistar_tenants"
+summary = "Legistar tenant-key collisions — shared MatterFile keys across tenants are distinct matters, never one"
+status = "served"
+
+[[archetypes]]
+id = "atlas_eff_two_state_names"
+summary = "Atlas/EFF same-name agencies in two states — possibly the same agency, never silently resolved"
+status = "served"
+
+[[archetypes]]
+id = "procurement_topical"
+summary = "Procurement topical relevance — only records whose description matches the reviewed term set surface"
+status = "served"

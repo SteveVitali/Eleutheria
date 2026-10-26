@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# sig.rdc-slice/1 — the Legistar tenant-collision pair (restricted lane).
+# Registry lane `derived-only`: bytes stay in the screened compartment bucket;
+# only digests are committed. The scheduled sig-rdc-probe run evaluates it.
+
+schema = "sig.rdc-slice/1"
+slice_id = "legistar_tenant_collision"
+lane = "restricted"
+source_id = "legistar"
+archetype = "legistar_tenants"
+coverage = "served"
+spdx = "CC0-1.0"
+attribution = "Municipal legislative records via Legistar InSite (public record)"
+terms_url = "https://legistar.com"
+captured = "2026-09-17"
+oracle = "legistar_tenant_facts"
+legs = ["oracle"]
+notes = "Two captured /v1/<tenant>/matters pages (albemarle + bart, ?top=100 each): 71 of 100 MatterFile keys collide across the two tenants — tenant-scoped upstream ids, two distinct matters sharing a display key, never one matter. The scheduled leg asserts the tenant-scoped namespaces stay apart."
+
+[[members]]
+path = "albemarle_matters.json"
+sha256 = "efee6e8a5344e0eca2a9c95533f9d7678ca73ef48cea595b74339756a5b99f58"
+source_uri = "https://webapi.legistar.com/v1/albemarle/matters?$top=100&$orderby=MatterLastModifiedUtc%20desc"
+capture = "sig:capture:bcnaa7xesldpux2gcgtcn7qvlgw2yvofpqhlbpflj3c6mbcmguitzgfmusadnoq6vp2jsysbtwrvmv2p4iu2i2wb64xqx7rpbbvijsii26a"
+
+[[members]]
+path = "bart_matters.json"
+sha256 = "a7837afb9d2ce2b859717fda9e8b9472b5d11d862919e64812d7ffe0b589c695"
+source_uri = "https://webapi.legistar.com/v1/bart/matters?$top=100&$orderby=MatterLastModifiedUtc%20desc"
+capture = "sig:capture:bcnaitw5r4zqy4ugbiwailrmq4eeyc44oihhcrkku2qvigs3sgmc4i4ouh2qllyyfrsor5e72cufqjnf7lifzsn4rkzfthqo3rr6nhu57c4"
