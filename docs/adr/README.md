@@ -222,6 +222,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-218](ADR-218-live-claim-lint-carried-record-provenance.md) | Live-claim lint: listed, verified provenance for carried records | P35.16 (orchestrator repair on `r11/P35.16-geometry-defects-at-ingest`, PR #309) | accepted |
 | [ADR-219](ADR-219-partitioned-pytest-and-fixture-mode-lighthouse-reuse.md) | Partitioned pytest and fixture-mode Lighthouse pass reuse (P35.41a) | P35.41a (CI wait, phase 1, on `r11/P35.41a-ci-wait-phase-1`) | accepted |
 | [ADR-220](ADR-220-config-generations-and-metadata-only-promotion.md) | Configuration generations and metadata-only promotion (P35.54) | P35.54 (REL-03b, on `r11/P35.54-config-generations-metadata-only-promotion`) | accepted |
+| [ADR-221](ADR-221-release-sign-off-scope-what-an-operator-signature-means.md) | Release sign-off scope: what an operator signature means (P35.60) | P35.60 (REL-06, on `r11/P35.60-release-classifier-standing-go-readout`) | accepted |
 
 ## Notes
 

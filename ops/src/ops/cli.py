@@ -2573,9 +2573,32 @@ def build_parser() -> argparse.ArgumentParser:
             "recreating the service with the new env.",
         )
 
-    p = rsub.add_parser("classify", help="declared; the behaviour lands at its owner row (P35.60)")
+    p = rsub.add_parser(
+        "classify",
+        help="P35.60 (REL-06, SIG-REL-012): the §7.3 classifier — consumes the "
+        "emitted V14/V15 result docs + declared release metadata, returns "
+        "class_r only when every R condition is proven (fail-closed to "
+        "class_s), drafts the agent-labelled readout and fires the "
+        "pending-readout notice on the landed alert path under --apply.",
+    )
     _rel_common(p)
     p.add_argument("--publication", required=True, help="the p-<sha256> id")
+    p.add_argument(
+        "--results",
+        default=None,
+        metavar="PATH",
+        help="the verify results — a suite-S/P doc or the verify-results "
+        "directory `release verify --mode S --results-dir` wrote (the "
+        "classifier's only input; absent → fail-closed class_s)",
+    )
+    p.add_argument(
+        "--go",
+        default=None,
+        metavar="NAME",
+        help="the standing-go record under registry/approvals/ to evaluate "
+        "as evidence — a voiding trigger (ratchet regression · Part VIII "
+        "screen change · new source) appends its .voided marker under --apply",
+    )
 
     prb = rsub.add_parser(
         "rollback",

@@ -1,0 +1,9 @@
+LEDGER.md head lines 2 + 4 before the P35.60 orient repair (BM-ORIENT-01 V11);
+byte-for-byte originals, folded 2026-10-24 (precedent: P35.59's head_lines4-6 fold).
+
+<!-- Archived head bytes (BM-LEDGER-08): comments18 folded → `docs/build/reports/memory-repair/LEDGER_head_comments19_pre-P35.24.txt` (bc8cb68779…) — P35.24 orient repair. -->
+> **OPERATING MODE — Round 11** (SEED-17; binds rows 201–510 from GATE-B). Full text: `docs/build/reports/OPERATING_MODE_R11.md`; per-ticket subset: manifest `## Operating rules`; priors archived. Clause digest folded — replaced lines byte-for-byte → `docs/build/reports/memory-repair/LEDGER_head_comments20_pre-P35.45.txt` (c052afbfdfa4…) + `LEDGER_head_lines4-6_pre-P35.59.txt` (e1fd6cbfe282deed…); text binds unchanged.
+
+Plus the CURRENT STATE values comment folded in the same repair:
+
+<!-- Values only (BM-LEDGER-02/08): lines ≤ 256 B; `returnPass:` ≤ 512 B; no history — PHASE LOG + git. -->

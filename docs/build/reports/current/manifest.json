@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "c56ea1bcb739036ad675239ef7e8aa5adef0603f",
+  "input_commit": "35ef0423dd41928964743ca794b8d064daa0c1dd",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "37d9dfc54a7ed965ba5d99ef02bc4e7393b28226fcab3ae674b9b5d1d72aad66"
+      "sha256": "169e2ff8bb069fc0c8573b1d665897a5f7c53fe9532c8409d3ebf4cc20798c56"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -877,24 +877,28 @@
       "sha256": "7baf894534c72bffc8b7703e034fc4e0b14e98de15ee53bb66462fae8dc081f4"
     },
     {
+      "path": "docs/adr/ADR-221-release-sign-off-scope-what-an-operator-signature-means.md",
+      "sha256": "99886d778e16eb1409040eafec3b4cffc41e735c052eb47c8b940cb395e268b1"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "59378f33013163cdd6e080a9f8d48d1b8874623cbd0ac88958cfb2472e3ef102"
+      "sha256": "37783271aa337a7eeb02c5a7445ddf14484bd4a47e60fdd4fe9078b08e58625d"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "52fb96cdd8fb0c27ac23caa50f8311bb0139800d360b1c586412c108e1771c6d"
+      "sha256": "190e89ce46d2f1ce2a72c1fe8c67e569659e4e6f70011748e9430649983c7444"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "271aac2adecd8a73cb0aea710b304573361109c582644d7b50d2e14b662060cb"
+      "sha256": "52f29e0fa31bf06c02ae33ce3ab7cea6da41075a87b6ada7f91eb30ee17c1721"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "2217d71bdd20b3d6614d01feb1e319ac3508c718f9bcf86864d59c1598bac018"
+      "sha256": "03fc330167b713ac4861a3b6c0893ab640dd0d100b313966f74369d882a5971d"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "b79938744610a57634628b58722519c52e8698364e36de2236ccb04daf46d27c"
+      "sha256": "5ada928b7d234120e39cc571782d1d7d9955265a2dc0158ad7e91afad29420a1"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -970,7 +974,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "ae8ef467bfeea9b23232f563fcfc38fcce0fd4df65aa44273a92f99128dc9037"
+      "sha256": "51db1d0d51603856a89ce436f96b1b8a7e0b462b525e4bf861561cb8896c4589"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -2185,6 +2189,10 @@
       "sha256": "b300ba68ded04a0bb6b1dafd461a8f1145fc879e135abbac4a4a6e4006f3e074"
     },
     {
+      "path": "docs/build/runs/P35.60.md",
+      "sha256": "8db24a589ff0b6df0bc6027bd9cff5df5b45a6f0e5f3294e8d8f5c101034a195"
+    },
+    {
       "path": "docs/build/runs/P35.65.md",
       "sha256": "54d7d6ae80acbaad1e85fd1350494fff48b8502987a08607d50c287c345c6ace"
     },
@@ -2370,7 +2378,7 @@
     },
     {
       "path": "docs/build/tools/record_policy/return_pass.toml",
-      "sha256": "16ad936ffb74e55db7a7292940bf6aed925a1cca4e1a757ee68ad17033f0e447"
+      "sha256": "1d9dec6fb7e75df6b594b1cf4c556addd478f9055b7d8d410bbbf1ad4a013f52"
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
@@ -3794,7 +3802,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "636faaa9b5ab3fa61e56865f8888f660e193d7d569614e72ed15265dfdb372f0"
+      "sha256": "5b8c8eeffa5139e463550d8f3a13a38912f70e3f54d256ed374ccab92b3d106d"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",

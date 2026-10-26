@@ -213,14 +213,21 @@ def read_release_meta(store: rp.Store, pub: str) -> dict[str, Any]:
     return meta
 
 
+def journal_classification(store: rp.Store, pub: str) -> dict[str, Any] | None:
+    """The journal's latest ``classified`` event for ``pub`` — the classifier
+    record promote enforces (SIG-REL-012); ``None`` when it never ran."""
+    event: dict[str, Any] | None = None
+    for ev in rp.list_events(store, pub):
+        if ev.get("verb") == "classified" and ev.get("publication_id") == pub:
+            event = ev
+    return event
+
+
 def journal_class(store: rp.Store, pub: str) -> str | None:
     """The promotion class the journal's latest ``classified`` event
     recorded; ``None`` when the classifier never ran."""
-    cls: str | None = None
-    for ev in rp.list_events(store, pub):
-        if ev.get("verb") == "classified" and ev.get("publication_id") == pub:
-            cls = str(ev.get("class") or "") or cls
-    return cls
+    event = journal_classification(store, pub)
+    return str(event.get("class") or "") or None if event else None
 
 
 def _publication_states(store: rp.Store) -> dict[str, str]:
@@ -268,13 +275,25 @@ def check_approval(
     approval_name: str,
     *,
     now: datetime | None = None,
+    classified_at: datetime | None = None,
+    candidate_commit: str | None = None,
 ) -> dict[str, Any]:
     """Verify ``registry/approvals/<approval_name>`` authorises this
-    promotion. Class R needs an unrevoked, unexpired ``standing_go``;
-    Class S needs a ``signed_readout`` naming this pub with a ``signature``
-    present (presence-checked only — cryptographic verification is the
-    operator's readout path, never the pipeline's). Returns the approval
-    ref recorded into ``latest.json``; refusals raise PipelineError."""
+    promotion. Class R needs an unrevoked, unexpired, unvoided
+    ``standing_go``; Class S needs a ``signed_readout`` naming this pub
+    with a ``signature`` present (presence-checked only — cryptographic
+    verification is the operator's readout path, never the pipeline's).
+
+    P35.60 (SIG-REL-012): a ``<name>.voided`` object beside the go — the
+    append-only void marker the classifier writes on a ratchet regression,
+    Part VIII screen change or new source (B-9) — refuses outright. An
+    *expired* go is honoured once for an in-flight release: when
+    ``classified_at`` (the journaled classify instant) precedes the expiry,
+    the release classified while the go was valid may still promote; a go
+    expired *before* the classify is refused. A ``scope.code_commit`` on
+    the record must equal the candidate's descriptor commit. Returns the
+    approval ref recorded into ``latest.json``; refusals raise
+    PipelineError."""
     if "/" in approval_name or approval_name.startswith("."):
         raise rp.PipelineError(
             "bad-approval-name",
@@ -298,15 +317,29 @@ def check_approval(
             f"{obj} does not declare schema {APPROVAL_SCHEMA!r}",
         )
     reasons: list[str] = []
+    honoured_in_flight = False
     if rec.get("revoked") is True:
         reasons.append("the record carries revoked=true")
+    if release_class == "class_r" and store.read(f"{obj}.voided") is not None:
+        # P35.60 / B-9: the append-only void marker the classifier appends
+        # on a ratchet regression, Part VIII screen change or new source.
+        reasons.append(
+            "the standing go is void — the classifier recorded a "
+            f"{obj}.voided marker (a voiding trigger landed: ratchet "
+            "regression · Part VIII screen change · new source; B-9)"
+        )
     expires = rec.get("expires_at")
     if expires:
         exp_dt = parse_instant(str(expires))
         if exp_dt is None:
             reasons.append(f"expires_at {expires!r} is not an ISO instant")
         elif exp_dt <= (now or datetime.now(UTC)):
-            reasons.append(f"the record expired at {expires}")
+            if release_class == "class_r" and classified_at is not None and classified_at <= exp_dt:
+                # the in-flight rule (§7.3): classified while the go was
+                # still valid — honoured once for this release only.
+                honoured_in_flight = True
+            else:
+                reasons.append(f"the record expired at {expires}")
     declared_class = rec.get("class")
     if declared_class and declared_class != release_class:
         reasons.append(
@@ -329,6 +362,13 @@ def check_approval(
             reasons.append(
                 f"the standing go is scoped to {rec.get('publication_id')!r}, not {publication_id}"
             )
+        else:
+            scope_commit = ((rec.get("scope") or {}).get("code_commit")) or None
+            if scope_commit and candidate_commit and scope_commit != candidate_commit:
+                reasons.append(
+                    f"the standing go's scope.code_commit {scope_commit[:12]}… "
+                    f"!= the candidate's {candidate_commit[:12]}…"
+                )
     if reasons:
         raise rp.PipelineError(
             "approval-refused",
@@ -340,6 +380,10 @@ def check_approval(
         "kind": kind,
         "ref": rec.get("ref"),
         "approved_at": rec.get("approved_at"),
+        # an expired-but-in-flight go's honour is recorded in the approval
+        # ref the generation's latest.json carries — the evidence stands
+        # in the record, never smoothed.
+        **({"honoured_in_flight": True} if honoured_in_flight else {}),
     }
 
 
@@ -1018,13 +1062,25 @@ def verb_promote(
     # The class — the journal's classified event wins; --class only when
     # the journal is silent; fail-closed Class S (the classifier's RM-6
     # default). Class S additionally needs the signed readout.
-    cls = journal_class(store, pub) or release_class or "class_s"
+    cls_event = journal_classification(store, pub)
+    cls = str((cls_event or {}).get("class") or "") or release_class or "class_s"
     if cls not in ("class_r", "class_s"):
         raise rp.PipelineError("bad-class", f"{cls!r} — only class_r|class_s")
+    # P35.60 — the standing-go in-flight rule needs the classify instant
+    # the journal recorded; the scope check needs the candidate's commit.
+    classified_at = parse_instant(str((cls_event or {}).get("utc_instant") or ""))
     # The approval — required for apply; checked read-only either way.
     approval_ref: dict[str, Any] | None = None
     if approval:
-        approval_ref = check_approval(store, pub, cls, approval, now=now)
+        approval_ref = check_approval(
+            store,
+            pub,
+            cls,
+            approval,
+            now=now,
+            classified_at=classified_at,
+            candidate_commit=meta.get("code_commit"),
+        )
     elif apply_:
         raise rp.PipelineError(
             "approval-required",
@@ -1595,6 +1651,7 @@ __all__ = [
     "default_post_checks",
     "describe_service",
     "journal_class",
+    "journal_classification",
     "parse_promoted_map",
     "plan_service_roll",
     "read_generation",
