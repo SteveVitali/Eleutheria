@@ -850,3 +850,18 @@ seed-commit 1aef6b8d
 # (orient/claim-lint entry repairs). Scope: findings attributed to
 # cff579e5 only; no other commit borrows the exemption.
 seed-commit cff579e5
+
+# ── P35.21 kind-vocabulary fold (row 347; recorded 2026-10-26) ──
+# 3ee9f131 is the sanctioned forward repair of the ledger_contract
+# kind-vocabulary violation on the appended orient-budget disclosure
+# entry (LEDGER.md:1259, written at cff579e5): the V4 kind slot parsed
+# `repair`, which record_policy/phase_log_kinds.txt does not declare —
+# `correction` is the registered kind for an in-place fold of committed
+# record text, so the entry head reads `P35.21 correction — orient-
+# budget fold …` with every payload byte verbatim. Pre-repair line
+# archived under docs/build/reports/memory-repair/
+# (LEDGER_phaselog_L1259_pre-P35.21-kinds.txt). Same sanctioned
+# in-place class as 024eca86/4c4f7161/1aef6b8d/cff579e5. Scope:
+# findings attributed to 3ee9f131 only; no other commit borrows the
+# exemption.
+seed-commit 3ee9f131
