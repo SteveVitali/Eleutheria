@@ -47,3 +47,5 @@ date,pr,head_sha,check,flake_id,run_id,attempt,outcome
 2026-10-24T12:11:19Z,357,c56ea1bcb739036ad675239ef7e8aa5adef0603f,python,PY-STUB-1,40090842369,2,success (rerun green — the head's one re-run per B-15; ci: pass-after-rerun)
 2026-10-24T15:40:38Z,358,c5a88fe46a250dc5b4374bd9eca159ec8c56210d,python,PY-STUB-1,40106622780,1,failure
 2026-10-24T15:40:38Z,358,c5a88fe46a250dc5b4374bd9eca159ec8c56210d,python,PY-STUB-1,40106622780,2,rerun-requested
+2026-10-26T03:36:15Z,363,ae9e02efc45b21424495970665c029c73626aed9,python,PY-STUB-1,40255670986,1,failure
+2026-10-26T03:36:15Z,363,ae9e02efc45b21424495970665c029c73626aed9,python,PY-STUB-1,40255670986,2,rerun-requested
