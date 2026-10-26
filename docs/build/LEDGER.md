@@ -7,9 +7,9 @@
 
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # GATE-G5 answered(343); 8 legs QUEUED (returnPass)
-nextTicket: P37.1 # row 344 — osm-camera-site-origin
-lastCompleted: GATE-G5 # row 343 — operator answered 2026-10-25
+projectStatus: IN_PROGRESS # P37.1 landed(344); 8 legs QUEUED (returnPass)
+nextTicket: P37.2 # row 345 — OSM live execution + mirror retirement
+lastCompleted: P37.1 # row 344 — osm-camera-site-origin 2026-10-26
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.12
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P35.64-sub-round-11b-acceptance # GATE-G5 answered on this tip; P37.1 stacks here
+chainTip: r11/P37.1-osm-camera-site-origin # P37.1 landed on this tip; P37.2 stacks here
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-25T18:40Z
+updatedAt: 2026-10-26T02:40Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1239,4 +1239,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-25 — GATE-G5 gate — `ci: pass #363@008c080` 5/5 head-bound on the P35.64 record head (run 40173282370; ci_boundary 07:55:55Z `/tmp/p35_64_pr363_final.json`; stack #362–#352 pass, main `d47d7b0` merges:0 open-other:0) · P35.64 resumed after a mid-closeout worker exit: interruption WIP preserved verbatim at `bcc07178`, resume worker `38925ef9` completed `5122bcd8` closeout → `008c080f` record · 11B acceptance note + GATE-G5 packet draft landed (`docs/build/readouts/GATE-G5.md`, agent-drafted sha256 `490ec9c9047e…`); sweep leg queued — nothing promoted so nothing to sweep · **GATE-G5 (row 343) is REACHED — the chain pauses for the operator's verbatim check-in lines** (OM-18: silence = pause, never consent; batch lines answerable by `continue`; OM-20/rights/money/own-words lines each need their own verbatim line) · no leg is currently due-and-runnable (every queued leg waits on absent hosted access or an unsigned go) so the packet is presentable · deferrals +0/−0 · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-25 — GATE-G5 gate — the sitting answered: the operator's verbatim message + recorded AskUserQuestion selections landed as eight GATE DECISIONS rows @2026-10-25T18:40Z — the 13-row 11C OM-20 list pre-authorised (expires GATE-G6); the 15 unrun 11B legs re-authorised by row id; Class R standing go renewed verbatim (expires GATE-G6 or 2026-11-24, whichever first); ING-GO-C granted; the HG-03 flip list pre-approves all 352 currently-registered unpermitted ids for flip on rights-review completion under the GL-GATE-06 mechanism (SIG-INGEST-028/038 metadata rule unchanged; non-clear resolutions keep their per-source gate); all four A-7 Part VIII screen lanes approved in one answer; recorded drifts approved · the readout moves PENDING → SIGNED with the signature block filled (`docs/build/readouts/GATE-G5.md`); `state_alpr_statute_inventory` (the one review-complete id) flips in this commit — FLIPPED 2026-10-25 (GATE-G5) · this record commit is operator-signed per OP-25/SIG-SEC-010 — its `G` verification covers the eight rows + the readout status move + the flip · CURRENT STATE → `lastCompleted=GATE-G5`, `nextTicket=P37.1` (row 344) · **the build resumes — sub-round 11C opens** · deferrals +0/−0 · harness: operator
 - 2026-10-25 — GATE-G5 correction — kind-vocabulary repair of the entry above: `GATE-G5 resume` → `GATE-G5 gate` (`resume` is not in `phase_log_kinds.txt`; `gate` is the registered kind GATE-G4's sitting entry used — same class as P35.43's `record-head read` repair, declared per OM-13; the entry's content stands verbatim) · caught by CI docs leg on `83f96c19` (run 40228194282: ledger-contract V4) · chainTip → r11/P35.64-… · next → P37.1 (row 344) · harness: devin-desktop/swe-2-high/subagent
-- 2026-10-25 — P37.1 dispatch boundary-confirm — `ci: pass #363@710421a` 5/5 head-bound on the record head (run 40230199119: python/docs/composed/security/web; stack read at dispatch) · GATE-G5 sitting recorded: operator-signed `83f96c19` (10/10 gate-affecting records covered — 8 GATE DECISIONS rows + readout SIGNED + the `state_alpr_statute_inventory` flip) + forward repairs `2a431793` (PHASE LOG kind `resume`→`gate`) and `710421a1` (flip-moved pins: flip-ready 3→2, loadable 236→237, two `is False` asserts, README 1-343) · deferrals +0/−0 · dispatching P37.1 (row 344 — first 11C row: OSM as a camera-site origin; `live_verification=false`, no gate, not OM-20, M-sized; deps P35.15b/P35.14b/P35.25/P36.3 all landed; `osm_overpass` already permitted — this row flips nothing; the first live run is P37.2's) · chainTip → r11/P35.64-… · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-25 — P37.1 dispatch boundary-confirm — `ci: pass #363@710421a` 5/5 head-bound on the record head (run 40230199119: python/docs/composed/security/web; stack read at dispatch) · GATE-G5 sitting recorded: operator-signed `83f96c19` (10/10 gate-affecting records covered — 8 GATE DECISIONS rows + readout SIGNED + the `state_alpr_statute_inventory` flip) + forward repairs `2a431793` (PHASE LOG kind `resume`→`gate`) and `710421a1` (flip-moved pins: flip-ready 3→2, loadable 236→237, two `is False` asserts, README 1-343) · deferrals +0/−0 · dispatching P37.1 (row 344 — first 11C row: OSM as a camera-site origin; `live_verification=false`, no gate, not OM-20, M-sized; deps P35.15b/P35.14b/P35.25/P36.3 all landed; `osm_overpass` already permitted — this row flips nothing; the first live run remains queued for P37.2) · chainTip → r11/P35.64-… · harness: devin-desktop/swe-2-high/subagent
