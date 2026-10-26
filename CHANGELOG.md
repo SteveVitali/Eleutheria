@@ -24,6 +24,43 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Verification suite A — `sig-ops release verify --mode S|P` running the
+  V1–V5 + V11–V13 release gate with durable JSON result evidence** (P35.56 /
+  row 334; SIG-REL-007 `Also:` — the V6–V10 + V14 + auto-rollback half is
+  P35.58's) — `ops/src/ops/release_verify.py` adds the suite: V1 integrity
+  (`validate_release` complete; descriptor digest recomputes to the pub id;
+  every <1 MiB integrity-manifest artifact fetched over HTTP and
+  sha256-matched plus a stratified 2 % sample of larger/record files, capped
+  at 200 in P mode), V2 identity and clock (descriptor v2,
+  `environment=production`, pushed/clean 40-hex commit, no `0.0.0`, the §3.3
+  clock rules, label uniqueness, `as_of_world` monotonicity — unevaluable
+  legs land honest `skip`s), V3 allow-list and absence (`public_routes.toml`
+  route-set diff, content assertions, denied-route probes answering 404),
+  V4 stamp and manifest (every HTML page carries exactly one matching
+  `sig-release` meta + `describedby` link + visible stamp block, and
+  `X-SIG-Release` rides every response — P-mode compares against
+  `latest.json`), V5 link crawl and §5.3 containment (every same-origin
+  href → 200 or a declared 410; `s/<pub>/` links stay in-prefix bar the
+  declared exceptions), V11 zero-JS/budgets/accessibility (the committed
+  `page-budgets.json` ceilings + a real Playwright/axe WCAG scan via
+  `web/scripts/axe_scan.mjs` — absent runner or browser is a `skip`, never
+  a pass), V12 transparency scrub (the `policy.transparency` secret scan
+  over every publish-set byte; one hit fails, never waivable), V13
+  disclosures (digests recomputed, required renderings checked,
+  eval-status wording never overclaims). Every check emits a
+  `sig.release-verify/1` result row (`pass`/`fail`/`skip` + evidence +
+  duration) persisted per check plus a suite document under
+  `--results-dir`; **any failure or skip blocks promotion** — waivers apply
+  only under `--class class_s` with a named readout reference and are
+  recorded, never silent. `--origin` (repeatable, with `--origin-header`
+  for the staging identity token), `--tree` (the local fixture origin,
+  `origin_kind: "tree"` — never a staging/public claim), `--no-repo-probe`,
+  and `--repo-facts` control the surfaces; no origin → every check `skip`s
+  and the suite blocks (SIG-ENG-042). `release verify` with no `--mode`
+  keeps the pre-P35.56 bounded scope verbatim. Composed proof:
+  `tests/e2e/test_release_verify_composed.py` runs S and P over the real
+  nginx serving shape — the P leg surfaced one genuine serving gap
+  (`/releases/catalog.jsonld` 404s publicly; filed `D-P35.56-1`).
 - **Rollback, clear-latest, withdrawal, legacy-floor import, and the
   conf-generation regression probe — `sig-ops release` reversal verbs,
   compartment-scoped denials, and the runbook procedures** (P35.55 /

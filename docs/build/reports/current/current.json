@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "9cd2eae27567cf8d67381059910aa31c4461874d",
-  "manifest_inputs": 1098,
+  "input_commit": "50d30fc5df0c9911924b0253ac6a95e6eeb213e7",
+  "manifest_inputs": 1099,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.56",
-    "lastCompleted": "P35.55",
+    "nextTicket": "P35.58",
+    "lastCompleted": "P35.56",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.67,P36.12",
@@ -17,7 +17,7 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.55-rollback-withdrawal-purge-runbook-v2",
+    "chainTip": "r11/P35.56-verification-suite-a",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
@@ -26,12 +26,12 @@
     "updatedAt": "2026-10-23T14:55Z"
   },
   "counts": {
-    "obligations": 180,
-    "owed": 101,
-    "open": 98,
+    "obligations": 181,
+    "owed": 102,
+    "open": 99,
     "partial": 3,
     "terminal": 79,
-    "events": 676,
+    "events": 677,
     "transitions": 42,
     "coverage_assessments": 315,
     "coverage_historical_rows": 820,
@@ -9334,6 +9334,55 @@
           "recorded_at": "2026-10-23"
         }
       ]
+    },
+    {
+      "id": "D-P35.56-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.56-1:e0",
+      "kind": "F",
+      "owner": "the release-serving generation row",
+      "landing": "the serving-template/generation writer — the first promotion leg's P-mode V5 run keeps flagging the dead link until /releases/catalog.jsonld answers publicly",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "`/releases/catalog.jsonld` (the DCAT DatasetSeries catalog every stamped page links via `<link rel=\"alternate\" type=\"application/ld+json\">` — `exports/release_pages.py`) answers 404 on public origins: the nginx `location /releases/` prefix serves it from `staged/releases/` but only when the URI names a promoted `p-<pub>` — a non-pub path under the gated prefix is `promoted=0` → `deny_gate=00` → 404 (staging answers 200 — `SIG_STAGING=1` never gates). The conf generation's `releases/` set (`release_conf.GENERATION_FILES`: index.html/catalog.json/latest.json) does not carry it and no exact-match `location =` names it",
+      "unblocked_by": "owner: the release-serving generation row (the `ops/web/nginx.conf` template / `release_conf` writer) · trigger: the first promotion leg's P-mode V5 run — it keeps flagging the dead link until the route answers · due: before the first real P-mode verify of a promoted release",
+      "verify": "on a public origin `curl -o /dev/null -w '%{http_code}' <origin>/releases/catalog.jsonld` answers 200 and the P-mode V5 row's `dead_or_undeclared` no longer names it",
+      "proxy": "the finding is loud and bounded: V5 reports it verbatim on every P-mode leg (composed proof `tests/e2e/test_release_verify_composed.py` asserts the gap is *exactly* `{404: ['/releases/catalog.jsonld']}`), so promotion sees the finding rather than a smoothed pass; the link itself is alternate-representation metadata, not a user-facing nav route",
+      "line": 1378,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.56-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.56-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.56",
+          "owner": "the release-serving generation row",
+          "landing": "the serving-template/generation writer — the first promotion leg's P-mode V5 run keeps flagging the dead link until /releases/catalog.jsonld answers publicly",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "ops/web/nginx.conf",
+            "ops/src/ops/release_conf.py",
+            "exports/src/exports/release_pages.py",
+            "tests/e2e/test_release_verify_composed.py"
+          ],
+          "observed_at": "2026-10-23",
+          "source_commit": "ffb5c40bb572e57489406c39c1d937c7d18c9da8",
+          "reason": "migration anchor appended by P35.56 (row 334) for the deferral row it added — the suite-A P-mode V5 leg over the composed nginx found /releases/catalog.jsonld answers 404 publicly (non-pub path under the deny-gated /releases/ prefix) while every stamped page links it via the ld+json alternate; the fix is a serving-contract change, not a detector change — the finding stays loud, never smoothed",
+          "anchor": {
+            "row_line": 1378,
+            "row_sha256": "92ee3dd7a28cb9d35271c29706b12dcfcfef3fea3b3f3ceb5bb6cd84644fc370",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-10-23"
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -14309,8 +14358,8 @@
           "label": "historical/csv"
         },
         "SIG-REL-007": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "ops/src/ops/release_verify.py;ops/src/ops/release_pipeline.py;ops/src/ops/cli.py;web/scripts/axe_scan.mjs;docs/build/runs/P35.56.md;docs/build/pr/P35.56.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -19865,10 +19914,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "91788611982efb9ff342701b8ca09dee955bf9dbcee4b88661a1ebbdb333c286",
+  "manifest_sha256": "9d90cc059f4b56579ddffdbd428b9e8115df6c803510aa8a88e01efe6b73097d",
   "current_md": {
     "lines": 63,
-    "bytes": 16363,
+    "bytes": 16347,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
