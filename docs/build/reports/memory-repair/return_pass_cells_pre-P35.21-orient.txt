@@ -1,0 +1,21 @@
+=== return_pass.toml [[row]] P35.21 (pre-orient-compaction) ===
+[[row]]
+key = "P35.21"
+kind = "leg"
+obligations = ["D-P35.21-1"]
+obligations_cell = '''D-P35.21-1'''
+gates_cell = '''hosted read-only — queued (no ADC, `SIG_GCP_PROJECT` unset, `SIG_PARTNER_AUDIT_DSN` unset); not an OM-20 row — a read binds no mutation window (Live window: none); packet `reports/p35.21-partner-name-audit/` `prepared_not_executed` (the fixture-spine packet beside it is fixture evidence, never a hosted count)'''
+operator_cell = '''nothing until the re-run — the verbatim leg lives in `ops/gcp/partner-name-audit.sh --apply` (proxy → `partner-name-audit --dsn-env SIG_PARTNER_AUDIT_DSN --role sig_read_public` → `partner-name-packet`); `D-P32.3-1` stays OPEN — this row sized it, the operator's OP-15 dispositions decide'''
+rerun_cell = '''`implement-spec spec=docs/tickets/347_P35.21__partner-name-audit-run.md live_verification=true` · landed 347'''
+
+  [[row.legs]]
+  id = "P35.21-partner-name-audit"
+  obligations = ["D-P35.21-1"]
+  earliest = '''the next dispatch once ADC + `SIG_GCP_PROJECT` + `SIG_PARTNER_AUDIT_DSN` hold and `cloud-sql-proxy` is on PATH — a read-only leg binds no mutation window'''
+  excluded = ["no ADC, `SIG_GCP_PROJECT` unset, `SIG_PARTNER_AUDIT_DSN` unset"]
+  go = '''none — read-only measurement; it sizes `D-P32.3-1` for the operator's OP-15 dispositions, decides nothing'''
+  rerun = '''implement-spec spec=docs/tickets/347_P35.21__partner-name-audit-run.md live_verification=true'''
+  live_dependants = []
+
+=== rendered LEDGER.md:460 (pre-orient-compaction) ===
+| P35.21 | D-P35.21-1 | hosted read-only — queued (no ADC, `SIG_GCP_PROJECT` unset, `SIG_PARTNER_AUDIT_DSN` unset); not an OM-20 row — a read binds no mutation window (Live window: none); packet `reports/p35.21-partner-name-audit/` `prepared_not_executed` (the fixture-spine packet beside it is fixture evidence, never a hosted count) | nothing until the re-run — the verbatim leg lives in `ops/gcp/partner-name-audit.sh --apply` (proxy → `partner-name-audit --dsn-env SIG_PARTNER_AUDIT_DSN --role sig_read_public` → `partner-name-packet`); `D-P32.3-1` stays OPEN — this row sized it, the operator's OP-15 dispositions decide | `implement-spec spec=docs/tickets/347_P35.21__partner-name-audit-run.md live_verification=true` · landed 347 |
