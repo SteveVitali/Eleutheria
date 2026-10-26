@@ -230,16 +230,19 @@ def test_route_compare_dead_origin_is_an_error_not_a_deny() -> None:
 
 def test_nginx_conf_carries_the_dark_fragment_includes() -> None:
     text = NGINX_CONF.read_text(encoding="utf-8")
-    # The withdrawal + renamed barriers (pre-existing) and the two new globs,
-    # all inside the server block and before the catch-all location.
+    # P35.54 (G3 §4.2, ADR-220): the file is now the release-layout envsubst
+    # template. The withdrawal barrier and the selector/label fragments ride
+    # the configuration generation; the carried D-P34.13-1/ADR-178 globs moved
+    # to the staged conf/ surface; and the release_*.conf dark glob is retired
+    # — the §6.3 provenance pair renders from env via sig-headers.conf.
     order = [
-        "include /mnt/sig-web/conf/withdrawn_*.conf;",
-        "include /mnt/sig-web/conf/renamed_*.conf;",
-        "include /mnt/sig-web/conf/chrome_*.conf;",
-        "include /mnt/sig-web/conf/terms_*.conf;",
-        # P35.13 (G3 §6.3): the release provenance pair — dark until the
-        # publish pipeline generates release_headers.conf at activation.
-        "include /mnt/sig-web/conf/release_*.conf;",
+        "include /mnt/rel/registry/conf/${SIG_CONF_GEN}/withdrawn.conf;",
+        "include /mnt/rel/registry/conf/${SIG_CONF_GEN}/selectors.conf;",
+        "include /mnt/rel/registry/conf/${SIG_CONF_GEN}/labels.conf;",
+        "include /mnt/rel/staged/conf/chrome_*.conf;",
+        "include /mnt/rel/staged/conf/terms_*.conf;",
+        "include /mnt/rel/staged/conf/renamed_*.conf;",
+        "include /etc/nginx/sig-headers.conf;",
         "location / {",
     ]
     pos = -1
@@ -292,17 +295,37 @@ def test_serving_profile_shape() -> None:
     services = doc["services"]
 
     # The serving profile services exist and are profile-gated — `sig-ops up`
-    # (no profile) still starts only db + sqitch.
-    for name in ("web", "api", "intake", "edge"):
+    # (no profile) still starts only db + sqitch. P35.54: `web` also rides
+    # the release-serving profile (the G3 §4.2 template renders when the
+    # release env is set); `web-staging` is its SIG_STAGING=1 sibling.
+    for name in ("api", "intake", "edge"):
         assert services[name]["profiles"] == ["serving"], name
+    assert services["web"]["profiles"] == ["serving", "release-serving"]
+    assert services["web-staging"]["profiles"] == ["release-serving"]
     assert "profiles" not in services["db"]
     assert "profiles" not in services["sqitch"]
 
-    # web: the real sig-web image over the staged site at the production path.
+    # web: the real sig-web image over the staged site at the production path,
+    # plus the release root the generation-aware template reads (the same
+    # /mnt/rel mount the Cloud Run volume uses, G3 §4.3).
     web = services["web"]
     assert web["build"]["dockerfile"] == "ops/web/Dockerfile"
-    (vol,) = web["volumes"]
-    assert vol.endswith(":/mnt/sig-web:ro")
+    assert [v.split(":")[-2] + ":" + v.split(":")[-1] for v in web["volumes"]] == [
+        "/mnt/sig-web:ro",
+        "/mnt/rel:ro",
+    ]
+    # The per-revision release env — a promotion is a new conf generation +
+    # a new env, never copied bytes (SIG-REL-006). All empty-defaulted.
+    for var in ("SIG_LATEST_PUB", "SIG_LATEST_LABEL", "SIG_CONF_GEN", "SIG_STAGING"):
+        assert web["environment"][var] == f"${{{var}:-}}", var
+
+    # web-staging: the GT-9 staging origin — same image, SIG_STAGING pinned,
+    # release root only (no legacy site mount), loopback-published.
+    staging = services["web-staging"]
+    assert staging["build"]["dockerfile"] == "ops/web/Dockerfile"
+    assert staging["environment"]["SIG_STAGING"] == "1"
+    (svol,) = staging["volumes"]
+    assert svol.endswith(":/mnt/rel:ro")
 
     # api: the real ops image with the registry mounted read-only at the path
     # its CMD conditionalises on.

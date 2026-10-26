@@ -103,8 +103,14 @@ def test_dry_run_verbs_write_nothing(tmp_path: Path) -> None:
     rp.verb_stage(store, apply_=False, work_dir=work)
     rp.verb_classify(store, apply_=False, publication_id="p-" + "b" * 64)
     rp.verb_status(store, apply_=False)
-    for verb in ("promote", "rollback", "withdraw"):
+    for verb in ("rollback", "withdraw"):
         rp.verb_skeleton(verb, store, apply_=False, publication_id="p-" + "b" * 64)
+    # promote landed at P35.54 — a dry-run on an empty registry refuses
+    # before any write (the refusal itself proves nothing was written).
+    with pytest.raises(rp.PipelineError):
+        from ops import release_conf
+
+        release_conf.verb_promote(store, apply_=False, publication_id="p-" + "b" * 64)
     assert list((tmp_path / "registry").rglob("*")) == [] or not (tmp_path / "registry").exists()
 
 
@@ -177,10 +183,10 @@ def test_every_apply_verb_journals_an_event(tmp_path: Path) -> None:
     store = _store(tmp_path)
     rp.verb_classify(store, apply_=True, publication_id="p-" + "f" * 64)
     with pytest.raises(rp.VerbDeferred):
-        rp.verb_skeleton("promote", store, apply_=True, publication_id="p-" + "f" * 64)
+        rp.verb_skeleton("rollback", store, apply_=True, publication_id="p-" + "f" * 64)
     events = rp.list_events(store)
     kinds = {e["verb"] for e in events}
-    assert kinds == {"classified", "promote"}
+    assert kinds == {"classified", "rollback"}
 
 
 def test_classify_fails_closed_to_class_s(tmp_path: Path) -> None:

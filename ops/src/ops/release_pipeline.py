@@ -56,6 +56,7 @@ import base64
 import hashlib
 import json
 import os
+import re
 import tempfile
 from collections.abc import Iterable
 from dataclasses import dataclass
@@ -488,7 +489,14 @@ def emit_event(
     the object name."""
     now = now or _now()
     short = (publication_id or "root")[:10] if publication_id else "root"
-    stem = f"{EVENTS_PREFIX}{now.strftime('%Y%m%dT%H%M%S')}-{verb}-{short}"
+    # The seq prefix makes the journal's name order IS its append order —
+    # name-sort alone would order same-instant events alphabetically by
+    # verb, a wrong fold for the §3.4 state machine (found by P35.54's
+    # same-instant fixture). The seq counts the append-only journal's
+    # objects; a create-if-absent collision (a racing writer) retries with
+    # the next seq — under the registry lock there is exactly one writer.
+    seq = len(store.list(EVENTS_PREFIX))
+    stem = f"{now.strftime('%Y%m%dT%H%M%S')}-{verb}-{short}"
     doc = {
         "schema": EVENT_SCHEMA,
         "verb": verb,
@@ -497,10 +505,13 @@ def emit_event(
         "utc_instant": _iso(now),
         **payload,
     }
-    # Two same-second same-verb events are legal (a verb may run twice); the
-    # if-absent write gets a distinct suffix rather than a refusal.
+    # Two same-instant same-verb events are legal (a verb may run twice);
+    # the if-absent write gets the next counter — always two digits and
+    # always present, so `stem-00` sorts before `stem-01` and the journal's
+    # name order IS the append order (`stem-1` would sort BEFORE `stem.json`,
+    # '-' < '.', breaking the fold).
     for n in range(1000):
-        name = f"{stem}-{n}.json" if n else f"{stem}.json"
+        name = f"{EVENTS_PREFIX}{seq + n:06d}-{stem}.json"
         try:
             store.insert(name, _canonical(doc), content_type="application/json")
             return name
@@ -509,10 +520,20 @@ def emit_event(
     raise PipelineError("journal-full", f"no free event name under {stem}")
 
 
+_EVENT_SEQ_NAME = re.compile(r"^events/(\d{6})-")
+
+
 def list_events(store: Store, publication_id: str | None = None) -> list[dict[str, Any]]:
-    """Every event in journal order (name-sorted — timestamps lead), parsed."""
+    """Every event in journal order — the seq-prefixed names (P35.54) sort
+    by their append counter; the older timestamp-led names (P35.53, all
+    appended before the scheme existed) keep name order and sort first."""
+
+    def _key(name: str) -> tuple[int, str]:
+        m = _EVENT_SEQ_NAME.match(name)
+        return (1, m.group(1)) if m else (0, name)
+
     events: list[dict[str, Any]] = []
-    for name in sorted(store.list(EVENTS_PREFIX)):
+    for name in sorted(store.list(EVENTS_PREFIX), key=_key):
         body = store.read(name)
         if body is None:
             continue
@@ -551,7 +572,6 @@ def fold_state(
 
 #: Rows that own the deferred verb bodies (the honest refusal text).
 VERB_OWNERS: dict[str, str] = {
-    "promote": "P35.54 (REL-03b — conf generations + metadata-only promotion)",
     "rollback": "P35.55 (REL-08 — rollback/withdrawal bodies)",
     "clear-latest": "P35.55 (REL-08)",
     "withdraw": "P35.55 (REL-08)",
@@ -961,9 +981,10 @@ def verb_skeleton(
     now: datetime | None = None,
     extra: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """``promote``/``rollback``/``clear-latest``/``withdraw`` — declared under
-    the contract (lock, dry-run, apply, journal), refused naming the owner
-    row. A refusal still journals — the attempt is audit-visible."""
+    """``rollback``/``clear-latest``/``withdraw`` — declared under the
+    contract (lock, dry-run, apply, journal), refused naming the owner
+    row. A refusal still journals — the attempt is audit-visible.
+    ``promote`` landed at P35.54 (release_conf.verb_promote)."""
     owner = VERB_OWNERS[verb]
     result: dict[str, Any] = {
         "verb": verb,
@@ -1109,6 +1130,31 @@ def run_verb(args: Any) -> dict[str, Any]:
             store,
             apply_=apply_,
             publication_id=args.publication,
+            break_lock=break_lock,
+        )
+    if verb == "promote":
+        # Lazy import: release_conf imports this module's machinery.
+        from . import release_conf
+
+        gcloud = None
+        if getattr(args, "execute_rolls", False):
+            from . import job_roll
+
+            gcloud = job_roll.gcloud_cli
+        return release_conf.verb_promote(
+            store,
+            apply_=apply_,
+            publication_id=args.publication,
+            approval=getattr(args, "approval", None),
+            label=getattr(args, "label", None),
+            release_class=getattr(args, "release_class", None),
+            api_image=getattr(args, "api_image", None),
+            web_image=getattr(args, "web_image", None),
+            min_instances=int(getattr(args, "min_instances", 1) or 1),
+            project=getattr(args, "project", None),
+            region=getattr(args, "region", None),
+            execute_rolls=bool(getattr(args, "execute_rolls", False)),
+            gcloud=gcloud,
             break_lock=break_lock,
         )
     if verb in VERB_OWNERS:

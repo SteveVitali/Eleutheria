@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "a6a21987b458a900f27417c2407bff8dd887a945",
-  "manifest_inputs": 1095,
+  "input_commit": "89e0fd280d02968c639aefc699472c8f3417e738",
+  "manifest_inputs": 1097,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.54",
-    "lastCompleted": "P35.53",
+    "nextTicket": "P35.55",
+    "lastCompleted": "P35.54",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.67,P36.12",
@@ -17,22 +17,22 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.53-release-pipeline-and-staging-origins",
+    "chainTip": "r11/P35.54-config-generations-metadata-only-promotion",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-23T05:05Z"
+    "updatedAt": "2026-10-23T10:25Z"
   },
   "counts": {
-    "obligations": 179,
+    "obligations": 180,
     "owed": 102,
     "open": 99,
     "partial": 3,
-    "terminal": 77,
-    "events": 673,
-    "transitions": 40,
+    "terminal": 78,
+    "events": 675,
+    "transitions": 41,
     "coverage_assessments": 315,
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
@@ -8953,11 +8953,11 @@
     },
     {
       "id": "D-P35.41a-2",
-      "status": "OPEN",
-      "status_source": "event-head D-P35.41a-2:e0",
+      "status": "DONE",
+      "status_source": "event-head D-P35.41a-2:e1",
       "kind": "V",
-      "owner": "the operator's merge + the orchestrator's next boundary read",
-      "landing": "the first merge into main that contains P35.41a's commits — the push run completes with all five jobs success, python on make test-par (four partitions, nproc printed) and web's Performance budgets running (reuse never applies to push)",
+      "owner": "the orchestrator",
+      "landing": "the first completed `push` run of ci.yml on `main` carrying P35.41a — `82e53d09` (merge of #346, run 39901596136) — all five jobs success: python 12m32s running `make test-par` (`nproc=4`; partitions 351/292/647/252 s), docs 1m55s, composed 2m44s, web 17m37s (`mode=run` emitted — reuse never applies to push — + Lighthouse budgets), security 26s. The literal first push run carrying it (`bdab9cdc` merge of #339, run 39901485353) plus five successors were cancelled by the rapid merge cadence — the documented D-P35.41a-3(c) class",
       "landing_source": "event-head",
       "backlog_home": "BL-085",
       "item": "The first `push` run of `ci.yml` on `main` that carries P35.41a completes with all five jobs `success`, its `python` job running `make test-par` (four partitions, `nproc` printed) and its `web` job running `Performance budgets` (reuse never applies to `push`)",
@@ -8995,6 +8995,28 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.41a-2:e1",
+          "kind": "transition",
+          "obligation_id": "D-P35.41a-2",
+          "seq": 1,
+          "expected_previous_event": "D-P35.41a-2:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P35.54",
+          "owner": "the orchestrator",
+          "landing": "the first completed `push` run of ci.yml on `main` carrying P35.41a — `82e53d09` (merge of #346, run 39901596136) — all five jobs success: python 12m32s running `make test-par` (`nproc=4`; partitions 351/292/647/252 s), docs 1m55s, composed 2m44s, web 17m37s (`mode=run` emitted — reuse never applies to push — + Lighthouse budgets), security 26s. The literal first push run carrying it (`bdab9cdc` merge of #339, run 39901485353) plus five successors were cancelled by the rapid merge cadence — the documented D-P35.41a-3(c) class",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/LEDGER.md"
+          ],
+          "observed_at": "2026-10-23",
+          "source_commit": "0ea794886ce8d407f29a14bde1bd1fb8bd4fa3df",
+          "reason": "the operator merged #338–#346 into main at 04:39–04:40Z; the next boundary read verified the completed push run's jobs and step outputs — DEFERRALS-first close",
+          "recorded_at": "2026-10-23"
         }
       ]
     },
@@ -9232,6 +9254,54 @@
           "anchor": {
             "row_line": 1376,
             "row_sha256": "d1ce64d95c316b44b506b242f35891b820df2b67be51417513fa9ab57d06a6b5",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.54-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.54-1:e0",
+      "kind": "F",
+      "owner": "the P35.55 writer / verification-suite row",
+      "landing": "a disposition recorded in the verify→promote window lands in the promoted generation's withdrawn.conf (re-derivation) or the promote refuses and re-verifies (gate) — a test exercises the seam either way",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "A disposition (withdrawal/route deny) journaled between a candidate's V10 verification run and its `release promote` does not reach the carried `withdrawn.conf` for routes that only the newly promoted publication serves — `promote` carries the map recorded at verify time, it does not re-derive",
+      "unblocked_by": "owner: the P35.55 writer / verification-suite row · trigger: that row's pick-up — the carry semantics stand meanwhile",
+      "verify": "a disposition recorded in the verify→promote window lands in the promoted generation's `withdrawn.conf` (re-derivation) or the promote refuses and re-verifies (gate) — a test exercises the seam either way",
+      "proxy": "the window is bounded and audible: verify→promote runs under the same registry LOCK, the carried map is byte-identical to the verify-time state, and the `promoted` event records the state digest so any drift is visible in the journal",
+      "line": 1377,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.54-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.54-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.54",
+          "owner": "the P35.55 writer / verification-suite row",
+          "landing": "a disposition recorded in the verify→promote window lands in the promoted generation's withdrawn.conf (re-derivation) or the promote refuses and re-verifies (gate) — a test exercises the seam either way",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P35.54.md",
+            "docs/adr/ADR-220-config-generations-and-metadata-only-promotion.md",
+            "ops/src/ops/release_conf.py"
+          ],
+          "observed_at": "2026-10-23",
+          "recorded_at": "2026-10-23",
+          "source_commit": "71b7ce0542c47a24ec444ac5ec68069ee0ba80e4",
+          "reason": "migration anchor appended by P35.54 (row 332) for the deferral row it added — promote carries the withdrawn.conf recorded at verify time; a disposition journaled between a candidate's V10 run and its promote does not re-derive into the carried map for routes only the new pub serves (ADR-220 Consequences). The window is bounded: verify→promote runs under the same registry LOCK and the promoted event records the state digest.",
+          "anchor": {
+            "row_line": 1377,
+            "row_sha256": "caf9bc5cb13f312a01d89777d5298949a8d546a4da52a0b881641fb698bfa869",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -14207,8 +14277,8 @@
           "label": "historical/csv"
         },
         "SIG-REL-006": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P35.54-1)",
+          "evidence": "ops/web/nginx.conf;ops/web/sig-headers.conf;ops/web/sig-conf-entrypoint.sh;ops/web/nginx-legacy.conf;ops/web/Dockerfile;ops/src/ops/release_conf.py;ops/src/ops/release_pipeline.py;ops/src/ops/cli.py;ops/docker-compose.yml;docs/adr/ADR-220-config-generations-and-metadata-only-promotion.md;docs/build/runs/P35.54.md;docs/build/pr/P35.54.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -19769,10 +19839,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "6b6081878edf68751ab7b9b07de72cc32ebb9395dd6f80e00a5756f685b60492",
+  "manifest_sha256": "07a2191d0fb7b821ff0c0427c8668912bb13e9376a2ffab1ab40ca5442dc8726",
   "current_md": {
     "lines": 63,
-    "bytes": 16363,
+    "bytes": 16369,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
