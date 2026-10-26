@@ -46,6 +46,14 @@ surface the §8 contract fixes around them:
   root tree imports to ``staged/v/legacy-<YYYYMMDD>/``, labelled
   ``legacy-<date>`` (never a publication id), recorded under
   ``registry/floor.json``. ``rollback --to legacy-<date>`` serves it.
+* **``cutover --label legacy-<YYYYMMDD>``** — the REL-09 dark cutover's
+  registry half (P35.59): genesis ``conf/0`` is composed for byte-identity
+  with the flat site (empty promoted set, the floor's own ``conf/`` deny +
+  selector fragments carried verbatim, no ``releases/`` index — a denied
+  route stays denied); the floor's ``conf/`` lands under ``staged/conf/``;
+  ``registry/serving.json`` retires the legacy bucket-root publish class;
+  the ``sig-web`` roll is recorded intent — ``ops/gcp/web-cutover.sh``
+  executes the deploy.
 * **``conf-gen-probe``** — the P1 regression probe (G3 §1.1/RR-7): every
   origin's served ``X-SIG-Conf-Gen`` must equal the registry's recorded
   generation; an older — or unrecorded — generation fails loud.
@@ -103,10 +111,12 @@ AUTHORITY_SCHEMA = "sig.operator-authority/1"
 FLOOR_SCHEMA = "sig.legacy-floor/1"
 RECEIPT_SCHEMA = "sig.withdrawal-receipt/1"
 LATEST_SCHEMA_V1 = "sig.latest-pointer/1"
+SERVING_SCHEMA = "sig.serving-layout/1"
 
 AUTHORITIES_PREFIX = "registry/authorities/"
 RECEIPTS_PREFIX = "registry/receipts/"
 FLOOR_OBJECT = "registry/floor.json"
+SERVING_OBJECT = "registry/serving.json"
 STAGED_DENY_MAP = "staged/conf/withdrawn_routes.conf"
 
 #: The archive-only latest-view sentinel — ``staged/v/none/`` is never staged,
@@ -1113,6 +1123,21 @@ def _floor_record(store: rp.Store) -> dict[str, Any]:
     return doc if isinstance(doc, dict) else {"schema": FLOOR_SCHEMA, "floors": []}
 
 
+def serving_layout(store: rp.Store) -> dict[str, Any] | None:
+    """The ``registry/serving.json`` record the cutover writes — ``None``
+    pre-cutover; the parsed ``sig.serving-layout/1`` doc after. The
+    bucket-root publish class reads this to refuse itself: an absent
+    record means the legacy path is still live, never a guessed state."""
+    body = store.read(SERVING_OBJECT)
+    if body is None:
+        return None
+    try:
+        doc = json.loads(body)
+    except ValueError:
+        return {"_unreadable": True}
+    return doc if isinstance(doc, dict) else {"_unreadable": True}
+
+
 def _resolve_target(store: rp.Store, to: str) -> dict[str, Any]:
     """``--to`` → {kind: pub|floor, publication_id?, label, env values}."""
     to = (to or "").strip()
@@ -1997,6 +2022,374 @@ def verb_import_floor(
     return result
 
 
+# --------------------------------------------------------------------------- #
+# verb_cutover — the dark cutover's genesis composition (P35.59, REL-09,     #
+# G3 §8.2/§11): conf/0 = the floor serve; staged/conf = the live fragments;  #
+# registry/serving.json retires the bucket-root publish class.               #
+# ---------------------------------------------------------------------------#
+
+
+def _insert_idempotent(store: rp.Store, name: str, body: bytes) -> str:
+    """One create-if-absent write with the import's resume rule: identical
+    bytes already there → ``carried`` (a re-run skips); different bytes →
+    the name collision refuses (a generation is immutable once served)."""
+    try:
+        store.insert(name, body, content_type=_media_type(name))
+        return "inserted"
+    except _gcs.GcsPreconditionFailed as exc:
+        existing = store.read(name)
+        if existing == body:
+            return "carried"
+        raise rp.NameCollision(name) from exc
+
+
+def _floor_conf_carry(store: rp.Store, label: str, glob: str) -> bytes | None:
+    """The live serving fragments the floor's own ``conf/`` subtree carries,
+    matched by prefix glob (``withdrawn_`` matches ``withdrawn_routes.conf``
+    and any dated sibling — the legacy nginx glob's include order is the
+    sorted order this concatenates in). ``None`` when the floor has none."""
+    names = sorted(
+        n for n in store.list(f"staged/v/{label}/conf/") if Path(n).name.startswith(glob)
+    )
+    if not names:
+        return None
+    return b"".join(store.read(n) or b"" for n in names)
+
+
+def compose_floor_generation(
+    store: rp.Store,
+    *,
+    label: str,
+    floor: dict[str, Any],
+    go_ref: dict[str, Any] | None,
+    now: datetime,
+) -> dict[str, bytes]:
+    """The genesis ``registry/conf/0/`` object set — the byte-identity
+    composition (P35.59): the promoted map + labels start empty (nothing is
+    promoted yet — the gated namespaces 404 by construction, which is what
+    the flat site already answers for every not-published release route);
+    ``withdrawn.conf`` + ``selectors.conf`` carry the floor's own live
+    ``conf/`` fragments VERBATIM (a deny map is never re-derived here — the
+    flat barrier is the truth the leg must reproduce); ``latest.json`` is
+    the floor pointer. ``releases/*`` is deliberately ABSENT: the flat site
+    404s ``/releases/`` (a denied route on the publish probe list), so
+    writing the index would be the one visible change the leg forbids —
+    the release-index surfaces first land with the first real promotion
+    (gen 1, P35.62's row)."""
+    latest_doc: dict[str, Any] = {
+        "schema": rc.LATEST_SCHEMA_V2,
+        "publication_id": None,
+        "label": label,
+        "legacy_floor": label,
+        "conf_gen": 0,
+        "activated_at": _iso(now),
+        "cutover": True,
+        "previous": None,
+        "go_ref": go_ref,
+        "floor": {
+            "objects": floor.get("objects"),
+            "bytes": floor.get("bytes"),
+            "imported_at": floor.get("imported_at"),
+        },
+    }
+    withdrawn = _floor_conf_carry(store, label, "withdrawn_")
+    selectors = _floor_conf_carry(store, label, "selectors")
+    return {
+        "promoted.map": rc.render_promoted_map(set(), gen=0),
+        "latest.json": _canonical(latest_doc),
+        "withdrawn.conf": (withdrawn if withdrawn is not None else rc._empty_withdrawn(0)),
+        "selectors.conf": (selectors if selectors is not None else rc._empty_selectors(0)),
+        "labels.conf": rc.render_labels_conf(rc.read_label_map(store), gen=0),
+    }
+
+
+def _floor_fragment_names(store: rp.Store, label: str) -> list[tuple[str, str]]:
+    """Every object the floor's ``conf/`` subtree carries — the verbatim
+    ``staged/conf/`` carry (the template globs chrome_*/terms_*/renamed_*
+    and the tombstone bodies the deny map's error_page targets resolve).
+    Returns ``(src_object, dest_object)`` pairs — the dest path mirrors the
+    floor's conf/-relative layout so nested dirs (``tombstone/``) land
+    verbatim."""
+    prefix = f"staged/v/{label}/conf/"
+    return [(n, f"staged/conf/{n[len(prefix) :]}") for n in sorted(store.list(prefix))]
+
+
+def _cutover_post_checks(
+    store: rp.Store,
+    *,
+    label: str,
+    withdrawn_conf: bytes,
+    selectors_conf: bytes,
+) -> list[dict[str, Any]]:
+    checks: list[dict[str, Any]] = []
+
+    def record(check_id: str, ok: bool, detail: str) -> None:
+        checks.append({"id": check_id, "status": "pass" if ok else "fail", "detail": detail})
+
+    latest = rc.read_generation(store, 0)
+    record(
+        "conf0.latest",
+        latest is not None
+        and latest.get("publication_id") is None
+        and latest.get("legacy_floor") == label
+        and latest.get("conf_gen") == 0,
+        f"conf/0/latest.json is the {label} floor pointer — never a pub id",
+    )
+    record(
+        "conf0.promoted-map-empty",
+        rc.read_promoted_map(store, 0) == set(),
+        "the genesis promoted set is empty — every gated namespace 404s",
+    )
+    record(
+        "conf0.withdrawn",
+        store.read(rc._conf_name(0, "withdrawn.conf")) == withdrawn_conf,
+        "conf/0/withdrawn.conf carries the live barrier byte-identically",
+    )
+    record(
+        "conf0.selectors",
+        store.read(rc._conf_name(0, "selectors.conf")) == selectors_conf,
+        "conf/0/selectors.conf carries the live selector set (or the empty placeholder)",
+    )
+    record(
+        "conf0.no-releases-index",
+        not store.list(rc._conf_name(0, "releases/")),
+        "conf/0/releases/* absent — /releases/ stays the denied route the "
+        "flat site answers today (the index lands with the first promotion)",
+    )
+    record(
+        "serving.retired",
+        store.read(SERVING_OBJECT) is not None,
+        "registry/serving.json declares the bucket-root publish class retired",
+    )
+    return checks
+
+
+def verb_cutover(
+    store: rp.Store,
+    *,
+    apply_: bool,
+    label: str,
+    web_image: str | None = None,
+    min_instances: int = 1,
+    go: str | None = None,
+    withdrawals: str | Path | None = None,
+    service: str = "sig-web",
+    release_bucket: str | None = None,
+    mount_path: str = "/mnt/rel",
+    project: str | None = None,
+    region: str | None = None,
+    break_lock: str | None = None,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """``cutover --label legacy-<YYYYMMDD>`` — the dark cutover's registry
+    half (P35.59 / REL-09, OM-20-named): compose genesis ``conf/0`` serving
+    the imported floor, carry the floor's ``conf/`` fragments into
+    ``staged/conf/``, write ``registry/serving.json`` retiring the legacy
+    bucket-root publish class, and record the templated ``sig-web`` roll's
+    intent (the deploy itself is ``ops/gcp/web-cutover.sh``'s act — the
+    volume swap reads the live mounts, never guessed). Idempotent under
+    create-if-absent; a second run over identical bytes is a recorded
+    no-op."""
+    now = now or _now()
+    label = (label or "").strip()
+    if not LEGACY_LABEL_RE.match(label):
+        raise rp.PipelineError(
+            "bad-floor-label",
+            f"cutover label {label!r} — the floor is labelled "
+            "legacy-<YYYYMMDD>, never a p-<64hex> publication id",
+        )
+    doc = _floor_record(store)
+    floor = next((f for f in doc.get("floors") or [] if f.get("label") == label), None)
+    if floor is None:
+        raise rp.PipelineError(
+            "unknown-floor",
+            f"{label!r} is not an imported legacy floor — `release "
+            "import-floor --from <tree>` stages it first (known floors: "
+            f"{[f.get('label') for f in doc.get('floors') or []]})",
+        )
+    if not store.list(f"staged/v/{label}/"):
+        raise rp.PipelineError(
+            "floor-unstaged",
+            f"registry/floor.json records {label} but staged/v/{label}/ is "
+            "empty — a cutover over a missing floor would serve 404s",
+        )
+    gen = rc.current_generation(store)
+    if gen > 0:
+        raise rp.PipelineError(
+            "genesis-passed",
+            f"conf generation {gen} already exists — the release layout is "
+            "already cut over; serving the floor again is `release rollback "
+            "--to <label>`'s act, never a second genesis",
+        )
+    if web_image is not None and not rc.DIGEST_REF.match(web_image):
+        raise rp.PipelineError(
+            "image-not-digest",
+            f"--web-image {web_image!r} is not a digest-pinned ref "
+            "(<repo>/<image>@sha256:<64>) — the roll never moves a tag",
+        )
+    withdrawals_doc: dict[str, Any] | None = None
+    if withdrawals is not None:
+        body = Path(withdrawals).read_bytes()
+        try:
+            parsed = json.loads(body)
+        except ValueError as exc:
+            raise rp.PipelineError(
+                "bad-input", f"--withdrawals {withdrawals} is not JSON: {exc}"
+            ) from exc
+        if not isinstance(parsed, dict) or not str(parsed.get("schema") or "").startswith(
+            "sig.withdrawal-registry/"
+        ):
+            raise rp.PipelineError(
+                "bad-input",
+                f"--withdrawals {withdrawals} is not a sig.withdrawal-registry/* "
+                "document — the cutover seeds the withdrawal registry verbatim "
+                "or not at all",
+            )
+        withdrawals_doc = {"name": "registry/withdrawals.json", "body": body}
+    go_ref = _require_go(store, go, apply_, "cutover")
+    env = {
+        "SIG_CONF_GEN": "0",
+        "SIG_LATEST_PUB": label,
+        "SIG_LATEST_LABEL": label,
+        "SIG_STAGING": "0",
+    }
+    roll = {
+        "service": service,
+        "image": web_image,
+        "env": env,
+        "min_instances": min_instances,
+        "mount": {"bucket": release_bucket, "mount_path": mount_path},
+        "status": "prepared",
+        "detail": (
+            "ops/gcp/web-cutover.sh executes the deploy — the live "
+            "volume-mounts are read back and replaced, never guessed; "
+            "rollback is a traffic move to the still-running prior revision"
+        ),
+        "project": project,
+        "region": region,
+    }
+    files = compose_floor_generation(store, label=label, floor=floor, go_ref=go_ref, now=now)
+    fragments = _floor_fragment_names(store, label)
+    result: dict[str, Any] = {
+        "verb": "cutover",
+        "label": label,
+        "namespace": floor.get("namespace"),
+        "conf_gen": 0,
+        "go": go_ref,
+        "roll": roll,
+        "retirement": {
+            "object": SERVING_OBJECT,
+            "legacy_publish_class": "retired",
+            "note": (
+                "the bucket-root publish path dies with the cutover record — "
+                "`sig-ops publish-web --apply` refuses while "
+                "registry/serving.json declares the release layout live; the "
+                "sig-web bucket itself is untouched (the 90-day rollback "
+                "floor source, D-R11-LATER-20)"
+            ),
+        },
+        "plan": [
+            f"write registry/conf/0/ ({len(files)} objects, create-if-absent)",
+            f"carry {len(fragments)} staged/v/{label}/conf/ fragments → staged/conf/",
+            f"write {SERVING_OBJECT} (legacy publish class retired)",
+            (
+                f"seed registry/withdrawals.json from {withdrawals}"
+                if withdrawals_doc is not None
+                else "no --withdrawals seed — the carried conf/0 barrier is the truth; "
+                "the first real withdrawal re-derives from the registry it lands then"
+            ),
+            f"record the sig-web roll intent (env {env}; deploy = ops/gcp/web-cutover.sh)",
+            "journal `legacy-cutover`",
+        ],
+        "applied": False,
+    }
+    if not apply_:
+        result["dry_run"] = True
+        return result
+    with rp.acquire_lock(store, "cutover", break_lock=break_lock, now=now) as lock:
+        lock.refresh()
+        written: list[str] = []
+        carried: list[str] = []
+        for rel, body in files.items():
+            name = rc._conf_name(0, rel)
+            if _insert_idempotent(store, name, body) == "inserted":
+                written.append(name)
+            else:
+                carried.append(name)
+        frag_written = 0
+        for src, dest in fragments:
+            frag_body = store.read(src)
+            assert frag_body is not None  # listed moments ago
+            if _insert_idempotent(store, dest, frag_body) == "inserted":
+                frag_written += 1
+        if withdrawals_doc is not None:
+            _insert_idempotent(store, withdrawals_doc["name"], withdrawals_doc["body"])
+        serving_doc = {
+            "schema": SERVING_SCHEMA,
+            "layout": "release",
+            "floor": label,
+            "conf_gen": 0,
+            "cutover_at": _iso(now),
+            "go_ref": go_ref,
+            "legacy_publish_class": "retired",
+            "legacy_bucket": {
+                "retained_as": "rollback-floor-source",
+                "retention_days": 90,
+                "deferral": "D-R11-LATER-20",
+            },
+        }
+        _insert_idempotent(store, SERVING_OBJECT, _canonical(serving_doc))
+        checks = _cutover_post_checks(
+            store,
+            label=label,
+            withdrawn_conf=files["withdrawn.conf"],
+            selectors_conf=files["selectors.conf"],
+        )
+        failed = [c for c in checks if c.get("status") == "fail"]
+        result["checks"] = checks
+        result["written"] = sorted(written)
+        result["carried_unchanged"] = sorted(carried)
+        result["staged_conf_written"] = frag_written
+        _rebaseline(lock)
+        if failed:
+            rp.emit_event(
+                store,
+                "failed",
+                None,
+                {
+                    "outcome": "failed",
+                    "conf_gen": 0,
+                    "refusal": "; ".join(c["id"] for c in failed),
+                },
+                now=now,
+            )
+            raise rp.PipelineError(
+                "post-check-failed",
+                f"{len(failed)} post-cutover check(s) failed — the registry "
+                "writes landed; refusing rather than journaling a green the "
+                "cutover did not earn",
+            )
+        ev = rp.emit_event(
+            store,
+            "legacy-cutover",
+            None,
+            {
+                "outcome": "recorded",
+                "label": label,
+                "conf_gen": 0,
+                "go_ref": go_ref,
+                "roll": roll,
+                "retired_publish_class": "bucket-root",
+                "withdrawals_seed": withdrawals_doc["name"]
+                if withdrawals_doc is not None
+                else None,
+            },
+            now=now,
+        )
+        result.update(applied=True, event=ev, outcome="cutover-composed")
+    return result
+
+
 __all__ = [
     "AUTHORITY_SCHEMA",
     "AUTHORITIES_PREFIX",
@@ -2007,7 +2400,10 @@ __all__ = [
     "NO_LATEST_SENTINEL",
     "ORDER_SCHEMA",
     "RECEIPT_SCHEMA",
+    "SERVING_OBJECT",
+    "SERVING_SCHEMA",
     "check_authority",
+    "compose_floor_generation",
     "compose_reversal_generation",
     "conf_gen_probe",
     "derive_withdrawal_barrier",
@@ -2016,9 +2412,11 @@ __all__ = [
     "purge_hooks",
     "purge_noncurrent_versions",
     "registry_view",
+    "serving_layout",
     "sync_registry_back",
     "sync_staged_back",
     "verb_clear_latest",
+    "verb_cutover",
     "verb_import_floor",
     "verb_rollback",
     "verb_withdraw",

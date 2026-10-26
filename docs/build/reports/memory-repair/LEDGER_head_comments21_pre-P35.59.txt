@@ -1,0 +1,2 @@
+<!-- Archived head bytes (BM-LEDGER-08): comments18 folded byte-for-byte → docs/build/reports/memory-repair/LEDGER_head_comments19_pre-P35.24.txt (sha256 bc8cb68779…) — P35.24 orient repair (V11). -->
+<!-- Values only (BM-LEDGER-02/08): key lines ≤ 256 B; `returnPass:` rides B3 V2 (fail > 512 B); no history — PHASE LOG + git carry it. -->

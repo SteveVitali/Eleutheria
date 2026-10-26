@@ -82,3 +82,13 @@ evidence_runs = ["39714878665"]
 reason = "registry.npmjs.org returned 503 Service Unavailable on the audit advisories-bulk endpoint — the gate's vacuous-refusal exit 5 (EXIT_UNKNOWN) on a non-audit document; transient external outage, no advisory data judged, identical heads green same window"
 tracking = "transient npm registry availability — no repo change owed; escalate to the operator if recurring (OM-18 three-use rule)"
 expires = "2026-12-01"
+
+[[flake]]
+id = "PY-STUB-1"
+job = "python"
+step = "Test (make test-par partitions)"
+pattern = "exit code 2"
+evidence_runs = ["40090842369"]
+reason = "one-shot environment race: the offline gcloud stub's canned 'sql instances patch --help' did not reach the flag probe (stub advertised all five flags; identical test green on two same-code runs today + local) — 'gcloud does not advertise --retain-backups-on-delete' on a stub that always echoes it is not a code defect; a genuine regression fails the rerun too (flake-exhausted)"
+tracking = "test_protect_iac.py stub PATH/capability probe — if this re-appears the stub should pin a private PATH rather than prepend (OM-18 three-use rule)"
+expires = "2026-11-24"

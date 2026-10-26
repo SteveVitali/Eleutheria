@@ -620,6 +620,64 @@ reinstatement is a new disposition + a new release; tombstones are
 immutable per disposition; `registry/` events and receipts journal every
 step so the act stays auditable.
 
+## 13. Dark cutover to the release layout
+
+*Labels: `live` mutating, `human/operator-only`, **one leg** inside
+AR-3 + AR-2 under the OM-20 naming (P35.59 / REL-09). The designed public
+effect is ZERO: every allow-listed route answers byte-identical bytes on
+the canonical origin and the run.app URL before and after the roll.*
+
+`ops/gcp/web-cutover.sh` runs the leg in order: AR-2 prestate (the
+service spec + URL map export + route captures + a read-only snapshot
+of the then-current tree and its sha256 manifest) → `release import-floor` under
+`staged/v/legacy-<YYYYMMDD>/` → `release cutover` (genesis `conf/0` +
+the `staged/conf/` carry + `registry/serving.json`) → the templated
+`sig-web` deploy by pinned digest (`SIG_LATEST_PUB=legacy-…`,
+`SIG_CONF_GEN=0`, min-instances 1, the `<project>-sig-release` bucket at
+`/mnt/rel` — the live volume-mounts are read back and replaced, never
+guessed) → `route-compare verify` on BOTH origins. Any byte difference
+fails the leg and prints the recorded rollback — a traffic move to the
+still-running prior revision, which restores image + env + mounts
+wholesale (never a re-versioned config edit).
+
+```bash
+# the whole leg inside the window — weekday 14:00–20:00Z, never
+# 03:00–06:30Z; outside it the script exits 42 (queued, never mutated).
+# SIG_CUTOVER_GO names the operator's registry/authorities/ record (the
+# OM-20 listing — the verbs check it, never create it).
+SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all
+# split legs for a paused run — prestate and poststate are read-only and
+# never window-gated; import/compose/roll are
+ops/gcp/web-cutover.sh --check all                 # plan only — no ADC
+ops/gcp/web-cutover.sh --apply prestate            # AR-2 capture
+ops/gcp/web-cutover.sh --apply import              # the floor import
+ops/gcp/web-cutover.sh --apply compose             # conf/0 + retirement
+ops/gcp/web-cutover.sh --apply roll                # the digest roll
+ops/gcp/web-cutover.sh --apply poststate           # the byte-compare gate
+ops/gcp/web-cutover.sh --apply rollback            # prints the rollback
+```
+
+What `release cutover` composes for byte-identity: genesis `conf/0` — an
+EMPTY promoted set (every gated namespace 404s, the same answer the flat
+site gives a not-published release route), the floor's own
+`conf/withdrawn_*.conf` + `conf/selectors*` carried VERBATIM (a deny map
+is never re-derived at cutover — the flat barrier is the truth the leg
+reproduces), and deliberately **no** `releases/` index set — the flat
+site denies `/releases/` today, so writing the index would be the one
+visible change the leg forbids. The `sig-api` roll is NOT this leg's —
+the API keeps serving live-spine until P35.57's own roll.
+
+The **retirement** is `registry/serving.json` (`sig.serving-layout/1`):
+`legacy_publish_class: "retired"` is the declaration `sig-ops publish-web
+--apply` refuses on — the legacy bucket-root publish class dies with the
+cutover record; public bytes move only through `sig-ops release` from
+then on (SIG-OPS-004/SIG-REL-004's enforcement completing). The `sig-web`
+bucket itself is **not** modified — its public-read IAM stays and its
+root bytes remain the 90-day rollback floor source under D-R11-LATER-20
+(the clock starts from this leg's landing `date -u`, recorded in the run
+ledger); `sig-public` stays frozen with its README pointer until J3
+TX-11's mirror lands. Neither bucket is deleted by this row.
+
 ## Verifying this runbook
 
 ```bash

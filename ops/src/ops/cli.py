@@ -386,6 +386,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="ops/mirrors.toml path for --mirror / mirror-push (default: the "
         "committed file / SIG_OPS_MIRRORS).",
     )
+    pub.add_argument(
+        "--release-registry",
+        default=None,
+        help="the release registry (gs://… or a local dir; default: "
+        "SIG_RELEASE_REGISTRY) — read for the P35.59 retirement guard: once "
+        "the cutover's registry/serving.json declares the legacy bucket-root "
+        "publish class retired, --apply refuses (SIG-OPS-004/SIG-REL-004).",
+    )
 
     mp = sub.add_parser(
         "mirror-push",
@@ -2670,6 +2678,61 @@ def build_parser() -> argparse.ArgumentParser:
         "registry/authorities/ — required for --apply (§7.3)",
     )
 
+    pco = rsub.add_parser(
+        "cutover",
+        help="P35.59 (REL-09, OM-20-named): the dark cutover's registry half "
+        "— compose genesis conf/0 serving an imported legacy floor "
+        "byte-identically (empty promoted set, the floor's own conf/ deny + "
+        "selector fragments carried verbatim, no releases/ index), carry "
+        "staged/conf/, write registry/serving.json retiring the bucket-root "
+        "publish class, and record the sig-web roll intent. "
+        "ops/gcp/web-cutover.sh runs the deploy + byte-compare leg.",
+    )
+    _rel_common(pco)
+    pco.add_argument(
+        "--label",
+        required=True,
+        help="the imported floor label — legacy-<YYYYMMDD>, never a publication id",
+    )
+    pco.add_argument(
+        "--go",
+        default=None,
+        metavar="NAME",
+        help="the operator go / pre-authorisation record under "
+        "registry/authorities/ — required for --apply (§7.3)",
+    )
+    pco.add_argument(
+        "--web-image",
+        default=None,
+        help="the digest-pinned sig-web image (<repo>/<image>@sha256:<64>) — "
+        "recorded into the roll intent; the deploy is web-cutover.sh's act",
+    )
+    pco.add_argument(
+        "--min-instances",
+        type=int,
+        default=1,
+        help="the sig-web floor through the flip (default 1 — the latest "
+        "view never scales to zero)",
+    )
+    pco.add_argument(
+        "--withdrawals",
+        default=None,
+        metavar="FILE",
+        help="an optional sig.withdrawal-registry/* document seeded verbatim "
+        "as registry/withdrawals.json (the live disposition set — keeps the "
+        "first promotion's re-derived barrier continuous with the carried one)",
+    )
+    pco.add_argument("--service", default="sig-web", help="the service being rolled")
+    pco.add_argument(
+        "--release-bucket",
+        default=None,
+        help="the release-layout bucket the roll mounts at --mount-path "
+        "(default: the <project>-sig-release convention the leg passes)",
+    )
+    pco.add_argument("--mount-path", default="/mnt/rel", help="the release mount")
+    pco.add_argument("--project", default=None, help="the GCP project (roll intent)")
+    pco.add_argument("--region", default=None, help="the GCP region (roll intent)")
+
     pstat = rsub.add_parser(
         "status", help="print the candidate's §3.4 state machine from the journal"
     )
@@ -3346,6 +3409,9 @@ def _cmd_publish_web(args: argparse.Namespace) -> int:
             data_release=data_release,
             absent_verify=absent_verify if args.apply else None,
             mirror=mirror_leg,
+            release_registry=args.release_registry
+            or os.environ.get("SIG_RELEASE_REGISTRY", "").strip()
+            or None,
         )
     except PublishError as exc:
         print(str(exc), file=sys.stderr)

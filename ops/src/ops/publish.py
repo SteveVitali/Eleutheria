@@ -715,6 +715,33 @@ RELEASE_TREE_TOP_LEVEL: frozenset[str] = frozenset(
     {"r", "releases", "entity", "conf", "compat_index.json", "release.json"}
 )
 
+#: P35.59 (REL-09): ``registry/serving.json`` in the release registry is the
+#: serving-layout record the cutover writes — ``legacy_publish_class:
+#: "retired"`` is the declaration that retires THIS publish class: the
+#: bucket-root sync dies with the cutover record, and public bytes move only
+#: through `sig-ops release` from then on (SIG-OPS-004/SIG-REL-004's
+#: enforcement completing). The check reads the record the leg wrote — it
+#: refuses nothing it cannot read.
+SERVING_OBJECT = "registry/serving.json"
+LEGACY_PUBLISH_RETIRED = "retired"
+
+
+def serving_layout_state(registry: str | None) -> dict[str, Any] | None:
+    """Read the release registry's ``sig.serving-layout/1`` record. ``None``
+    when no registry is named or none is recorded (the pre-cutover state —
+    the legacy publish path is still the live one). An unreadable or
+    un-openable registry returns ``{"_unevaluated": True}`` — the guard
+    records that it could not judge rather than silently pass or refuse."""
+    if not registry:
+        return None
+    try:
+        from . import release_pipeline as rp
+        from . import release_reversal as rr
+
+        return rr.serving_layout(rp.open_store(registry))
+    except Exception:  # noqa: BLE001 — store open/read failures are a state, not a crash
+        return {"_unevaluated": True}
+
 
 def is_protected_object(name: str) -> bool:
     """True iff the bucket object ``name`` is a release-tree byte the site sync
@@ -1191,6 +1218,10 @@ class PublishWebResult:
     #: P35.5 / SIG-TRANSP-019: the zero-egress mirror leg's preflight plan
     #: (dry-run) or applied outcome lines.
     mirror_lines: tuple[str, ...] = ()
+    #: P35.59 (REL-09): the serving-layout record the retirement guard read
+    #: (``None`` pre-cutover; ``{"_unevaluated": True}`` when the registry
+    #: could not be opened — the guard refuses only what it can read).
+    serving_layout: dict[str, Any] | None = None
 
     def as_lines(self) -> list[str]:
         mode = "APPLIED" if self.applied else "DRY-RUN (nothing synced)"
@@ -1204,6 +1235,19 @@ class PublishWebResult:
             + ("" if self.site_plan.remote_known else " (remote unlisted — deletes uncomputed)"),
             f"  protected remote objects kept: {len(self.site_plan.protected_kept)}",
         ]
+        if self.serving_layout is not None:
+            if self.serving_layout.get("_unevaluated"):
+                lines.append(
+                    "  serving layout: UNEVALUATED — the named release registry "
+                    "could not be opened; the retirement guard did not judge "
+                    "(dry-run reports; --apply refuses only a record it read)"
+                )
+            else:
+                lines.append(
+                    f"  serving layout: {self.serving_layout.get('layout')!r} "
+                    f"(floor={self.serving_layout.get('floor')!r}, "
+                    f"legacy_publish_class={self.serving_layout.get('legacy_publish_class')!r})"
+                )
         if self.release_plan is not None:
             lines.append(
                 f"  release-tree sync ({self.release_tree}): "
@@ -1270,6 +1314,7 @@ def run_publish_web(
     absent_verify: Callable[[], Sequence[ProbeResult]] | None = None,
     copy_batch_path: str | Path | None = None,
     mirror: MirrorLeg | None = None,
+    release_registry: str | None = None,
 ) -> PublishWebResult:
     """The one publish path (SIG-OPS-003/004): assert → record → sync → verify.
 
@@ -1289,6 +1334,20 @@ def run_publish_web(
     """
     if not dist.is_dir() or not any(dist.iterdir()):
         raise PublishError(f"publish refused — {dist} is absent or empty; build first")
+    # P35.59 (REL-09): the serving-layout record is the retirement guard —
+    # once the cutover's registry/serving.json declares the bucket-root
+    # publish class retired, this command's --apply refuses: public bytes
+    # move only through `sig-ops release` from then on. Evaluated before
+    # ANY write or sync; a registry that cannot be read records the state
+    # in the result (the guard refuses only what it can read).
+    serving = serving_layout_state(release_registry)
+    if apply and serving and serving.get("legacy_publish_class") == LEGACY_PUBLISH_RETIRED:
+        raise PublishError(
+            "publish refused — the legacy bucket-root publish class is retired "
+            f"({SERVING_OBJECT}: layout={serving.get('layout')!r} floor="
+            f"{serving.get('floor')!r} cutover_at={serving.get('cutover_at')!r}); "
+            "public bytes move only through `sig-ops release` — nothing was synced"
+        )
     allowlist = load_allowlist(allowlist_path)
     assert_allowlisted_tree(dist, allowlist)
     assert_public_tree_content(dist)
@@ -1417,6 +1476,7 @@ def run_publish_web(
         absent_probes=probes,
         copy_violations=copy_violations,
         mirror_lines=mirror_lines,
+        serving_layout=serving,
     )
 
 
