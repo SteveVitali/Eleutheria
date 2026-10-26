@@ -915,3 +915,11 @@ seed-commit 77cad905
 # later commit. Scope: findings attributed to 0a61e2e5 only; no
 # other commit borrows the exemption.
 seed-commit 0a61e2e5
+
+# ci-field + re-route repair (orchestrator): `932cbb98` re-sites the P35.23
+# `done` entry's OM-20 naming at GATE-G5 and appends the `ci: head-bound read
+# follows` field the verify-recorded-ci check owed, plus the COVERAGE_MATRIX
+# row-772 re-route (SIG-ENG-041). The LEDGER line's pre-repair bytes are
+# archived `reports/memory-repair/LEDGER_L1263_pre-P35.23-ci-field.txt`;
+# payload stands verbatim. Scope: findings attributed to 932cbb98 only.
+seed-commit 932cbb98
