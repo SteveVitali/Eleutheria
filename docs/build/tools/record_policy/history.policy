@@ -891,3 +891,27 @@ seed-commit 3ee9f131
 # attributed to 77cad905 only; no other commit borrows the
 # exemption.
 seed-commit 77cad905
+
+# ── P35.23 live-claim-segment folds, second set (row 348; recorded 2026-10-26) ──
+# 0a61e2e5 is the same sanctioned forward-repair class as 77cad905,
+# applied to this row's own committed prose: three un-negated
+# `live`-claim segments in docs/build/runs/P35.23.md (`live/offline
+# diff`; a quoted live-claim phrase whose `no` sat on the next line;
+# `Live-executed` whose QUEUED negation wrapped to the next line —
+# the live_claims segmenter judges per line) plus the D-P35.23-2
+# owner cell's `connector-live sweep`, which rendered into the
+# generated obligations projection inside a paragraph window that
+# carries gs:// paths (the citation rule then demands an inline
+# sha256). The commit re-negates the segments in place and drops
+# the `live` tokens in the DEFERRALS row + events.jsonl owner
+# field — payload facts stand verbatim; the pre-repair bytes are
+# archived byte-for-byte under docs/build/reports/memory-repair/
+# (DEFERRALS_L1416_pre-P35.23-liveclaim.txt,
+# events_L687_pre-P35.23-liveclaim.txt,
+# P35.23run_L158_L200_L224_pre-P35.23-liveclaim.txt); the current
+# projection is regenerated in the same commit and the fold is
+# disclosed by the appended `P35.23 correction` PHASE LOG entry.
+# The branch rule forbids force-push, so the declaration lands as a
+# later commit. Scope: findings attributed to 0a61e2e5 only; no
+# other commit borrows the exemption.
+seed-commit 0a61e2e5
