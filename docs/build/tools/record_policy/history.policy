@@ -805,3 +805,25 @@ seed-commit 4c4f7161
 # findings attributed to 024eca86 only; no other commit borrows the
 # exemption.
 seed-commit 024eca86
+
+# ── P35.21 dispatch-line segment-negation repair (row 347; recorded 2026-10-26) ──
+# ff268902's dispatch boundary-confirm PHASE LOG entry (LEDGER.md:1256)
+# stranded `hosted` in "hosted read-only partner-name audit sizing
+# `D-P32.3-1` for the operator's OP-15 dispositions" on a segment that
+# carries no negate — the code-spanned `live_verification=false` is
+# stripped and the entry's own negations (`will queue per OM-19 —
+# hosted env absent`) sit in later `;`-segments, so the
+# check_live_claims corpus leg flags the line (SIG-MEM-011; the same
+# segment-negation class as 024eca86/ab0f97ab/5acac1d3/103e9025).
+# 1aef6b8d rewords the token in place —
+# `hosted read-only partner-name audit` → `the queued hosted read-only
+# partner-name audit` — `queued` is the truthful negation the same
+# parenthetical already records; payload bytes otherwise untouched and
+# the pre-repair line is archived byte-for-byte under
+# docs/build/reports/memory-repair/
+# (LEDGER_phaselog_L1256_pre-P35.21.txt). The correction is disclosed by
+# the appended `P35.21 correction` PHASE LOG entry naming ff268902:1256.
+# The branch rule forbids force-push, so the declaration lands as a
+# later commit. Scope: findings attributed to 1aef6b8d only; no other
+# commit borrows the exemption.
+seed-commit 1aef6b8d
