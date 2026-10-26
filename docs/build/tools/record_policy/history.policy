@@ -932,3 +932,11 @@ seed-commit 932cbb98
 # `reports/memory-repair/LEDGER_L1266_pre-ci-token.txt`. Scope: the
 # ci-token finding on 932cbb98's added line only.
 seed-commit 52021081
+
+# orient fold (orchestrator): `caa6a363` byte-compacted this row's two newest
+# committed PHASE LOG lines (955->481 B, 1097->677 B) after BM-ORIENT-01 read
+# 49,639 B > 48 KiB on `e92350be` (nextTicket P36.1b's 4,450-B header tipped
+# the recipe). Payload verbatim; pre-repair bytes archived
+# `reports/memory-repair/LEDGER_L1266_L1267_pre-P35.23-orientfold.txt`.
+# Scope: BM-ORIENT-01 findings attributed to caa6a363's folded lines only.
+seed-commit caa6a363
