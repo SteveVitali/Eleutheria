@@ -125,6 +125,12 @@ every `SIG-*` id referenced anywhere in this document is either defined or liste
 | `REL` | Release identity, promotion, rollback, withdrawal and versioning (§56) |
 | `CONF` | Confidence basis, graph-quality checks and their public disclosure (§56) |
 | `TRANSP` | Public transparency surfaces: source index and pages, captures and runs, downloads and distribution, status lane, citations and release diffs (§56.10, appended by PLAN-11B) |
+| `SRCH` | Public search: indexes, query engine, results surfaces (opened by §56.11, appended by PLAN-11C) |
+| `JUR` | Jurisdiction structure, dossier directories and index (§56.11) |
+| `DSRC` | Dossier–source contribution surfaces and the sources explorer (§56.11) |
+| `WATCH` | Watch items, feeds and next-decision surfaces (§56.11) |
+| `EVUI` | Evidence-artifact user interface (§56.11) |
+| `RQ` | Research-queue surfaces: tasks, campaigns, gap routing (§56.11) |
 
 ## 0.4 The execution model
 

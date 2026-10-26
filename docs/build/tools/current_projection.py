@@ -661,13 +661,18 @@ def render_markdown(projection: dict) -> tuple[str, dict[str, str]]:
 
     fun_lines = ["| unit | recorded value | domain · date · evidence |", "|---|---|---|"]
     for b in projection["source_funnel"]:
+        # `value`/`domain_date_evidence` are recorded-verbatim baseline cells —
+        # code-span them so a repaginated row is never read as a fresh
+        # production-state claim (SIG-MEM-011; the coverage rows' precedent).
         fun_lines.append(
-            f"| {b['unit']} | {_verify_cell(b['value'])[:80]} | {b['domain_date_evidence'][:80]} |"
+            f"| {b['unit']} | `{_verify_cell(b['value'])[:80]}` | `{b['domain_date_evidence'][:80]}` |"
         )
     sections.append(("funnel", fun_lines))
 
     rel_lines = [
-        f"- public release: {_verify_cell(projection['releases'].get('public_release', '—'))[:140]}",
+        # recorded-verbatim release cell — code-spanned like the funnel cells
+        # (SIG-MEM-011: a projection row is recorded evidence, never a claim).
+        f"- public release: `{_verify_cell(projection['releases'].get('public_release', '—'))[:140]}`",
         f"- database run ids: {projection['releases'].get('database_run_ids', '—')}",
     ]
     sections.append(("releases", rel_lines))
@@ -731,13 +736,14 @@ def render_markdown(projection: dict) -> tuple[str, dict[str, str]]:
         return "\n".join(lines) + "\n"
 
     # Pass 1: fully inlined. Pass 2+: spill the obligation table into pages, then
-    # coverage, then funnel, until bounded. Nothing is ever dropped.
+    # the domains table, then coverage, then funnel, until bounded. Nothing is
+    # ever dropped.
     doc = assemble(True, sections)
     if len(doc.splitlines()) <= MAX_LINES and len(doc.encode()) <= MAX_BYTES:
         return doc, {}
 
     pages: dict[str, str] = {}
-    spill_order = ["obligations", "coverage", "funnel", "adrs", "return-pass"]
+    spill_order = ["obligations", "domains", "coverage", "funnel", "adrs", "return-pass"]
     spilled: set[str] = set()
 
     def _replace_section(name: str, body: list[str]) -> None:

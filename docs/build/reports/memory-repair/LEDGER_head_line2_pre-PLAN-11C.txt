@@ -1,0 +1,1 @@
+<!-- Archived head bytes (BM-LEDGER-08): folds 18–22 → `docs/build/reports/memory-repair/` (latest `LEDGER_head_lines2-4_pre-P35.60.txt`, 5b61f62d…). -->

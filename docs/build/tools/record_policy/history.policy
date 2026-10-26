@@ -745,3 +745,47 @@ seed-commit 8800cc2e
 # declaration lands as a later commit. Scope: findings attributed
 # to 5d7681a4 only; no other commit borrows the exemption.
 seed-commit 5d7681a4
+# ── PLAN-11C C10–C12 executed-flag exemption (ticket 340; recorded 2026-10-25) ──────────────
+# Commits cf587926 (C10) and c1c08a94 (C11) are the sanctioned skeleton→full-contract rewrites
+# of rows 418 and 420 — PLAN-11C's own deliverable, the same class as f17eb537/f9c407c8 above —
+# whose subjects happened to name the later-row ids verbatim ("…acceptance, PLAN-11D" and
+# "…capstone, GATE-G6 marker"), so `executed()` (B2 §7) marked PLAN-11D executing at cf587926
+# and GATE-G6 at c1c08a94 mid-range and the rewrites read as frozen-contract edits (133
+# append-only findings on docs/tickets/418_PLAN-11D__contracts-for-11d-and-tail.md attributed
+# to cf587926 + 1 to ff03e193, 88 on docs/tickets/420_GATE-G6__11c-check-in.md attributed to
+# c1c08a94). The ff03e193 finding (418:9) is C12's forward-dependency repair of the Depends-on
+# header — an edit that is only "frozen" because cf587926's subject set the flag; under the
+# exemption pair the repair conforms. The branch rule forbids force-push, so the exemption
+# lands declared rather than as reworded subjects.
+# Consequence recorded for later contexts: 418's and 420's contracts read "executed" in any
+# range containing cf587926/c1c08a94 — subsequent edits must conform to BM-TICKET-04 (appended
+# `> Amended <date>:` notes) — and PLAN-11D's own dispatch later names row 418's id in
+# subjects freely (it executes the row by then).
+# Scope: findings attributed to cf587926, c1c08a94 and ff03e193 only; no other commit borrows
+# the exemption.
+seed-commit cf587926
+seed-commit c1c08a94
+seed-commit ff03e193
+# PLAN-11C (row 340) — 4c4f7161 is the sanctioned in-place orient-probe
+# repair: the a149b26d closeout entries pushed the orient recipe to
+# 49,183+ B > 48 KiB (BM-ORIENT-01 V11 — the same docs-red class as
+# 8800cc2e/5d7681a4). 4c4f7161 folds the PHASE LOG boundary-confirm +
+# done entries (LEDGER.md:1220/1221) in place keeping every recorded
+# field, and compacts head line 2 + RETURN PASS cells/meta in place —
+# the same sanctioned pattern as f80fbd0a/6c05e605/8800cc2e. The
+# replaced bytes are archived byte-for-byte under
+# docs/build/reports/memory-repair/
+# (LEDGER_phaselog_L1218_pre-PLAN-11C.txt sha256 50dfc5498aaa51e7…,
+# LEDGER_phaselog_L1221_pre-PLAN-11C.txt 78578d6a52fd…,
+# LEDGER_head_line2_pre-PLAN-11C.txt d015ac5d871cfc…,
+# return_pass_rows_pre-PLAN-11C.txt 501dd38ae21bbf…) and the compaction
+# is disclosed by the appended `PLAN-11C correction` entry. Every leg
+# anchor (earliest tokens, excluded hours, go refs, re-run lines,
+# operator steps) survived verbatim — `return_pass.py check` green,
+# region byte-identical; `check_live_claims` corpus 0 violations after
+# restoring severed negates and backticking `live-1`/`D-R10-LIVE-1`
+# (the CURRENT.md truncation could otherwise sever a negate — the
+# P35.59/8800cc2e re-blame trap). The branch rule forbids force-push,
+# so the declaration lands as a later commit. Scope: findings
+# attributed to 4c4f7161 only; no other commit borrows the exemption.
+seed-commit 4c4f7161

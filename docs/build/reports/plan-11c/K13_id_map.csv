@@ -1,0 +1,177 @@
+draft_id,final_id,family,plan_section,note
+UXR-01,SIG-UI-051,UI,§5.6; K13 synthesis,"Six-section navigation. Owner P36.18; also P36.16, P36.17"
+UXR-02,SIG-UI-052,UI,§5.6; K13 synthesis,Route registry completeness. Owner P36.21; also P35.50
+UXR-03,SIG-UI-053,UI,§5.6; K13 synthesis,Linked mentions only. Owner P36.41; also P36.24
+UXR-04,SIG-UI-054,UI,§5.6; K13 synthesis,Figure to evidence in two actions. Owner P36.22; also P35.37
+UXR-05,SIG-UI-055,UI,§5.6; K13 synthesis,Sideways links per page type. Owner P36.57; also P36.55
+UXR-06,SIG-UI-056,UI,§5.6; K13 synthesis,Upstream and other-resources links. Owner P36.47; also P36.64
+UXR-07,SIG-UI-057,UI,§5.6; K13 synthesis,"Place-slug paths. Owner P36.34; also P35.17, P35.18, P35.19"
+UXR-08,SIG-UI-058,UI,§5.6; K13 synthesis,One redirect generator. Owner P36.35
+UXR-09,SIG-UI-059,UI,§5.6; K13 synthesis,Workspace-state parameter registry. Owner P36.21
+UXR-10,SIG-UI-060,UI,§5.6; K13 synthesis,Unapplied-facet notice. Owner P36.21
+UXR-11,SIG-UI-061,UI,§5.6; K13 synthesis,One legend lexicon. Owner P36.17; also P36.28
+UXR-12,SIG-UI-062,UI,§5.6; K13 synthesis,Candidate versus Provisional. Owner P36.17; also P36.24
+UXR-13,SIG-UI-063,UI,§5.6; K13 synthesis,Records versus camera sites. Owner P36.24; also P36.37
+UXR-14,SIG-UI-064,UI,§5.6; K13 synthesis,Independent-lineage corroboration. Owner P36.17; also P36.37
+UXR-15,SIG-UI-065,UI,§5.6; K13 synthesis,One data hue. Owner P36.37
+UXR-16,SIG-UI-066,UI,§5.6; K13 synthesis,One static figure kit. Owner P36.27; also P36.28
+UXR-17,SIG-UI-067,UI,§5.6; K13 synthesis,One identifier module. Owner P36.29; also P36.58
+UXR-18,SIG-UI-068,UI,§5.6; K13 synthesis,Site-record link target. Owner P36.36; also P36.35
+UXR-19,SIG-UI-069,UI,§5.6; K13 synthesis,One dossier template. Owner P36.55
+UXR-20,SIG-UI-070,UI,§5.6; K13 synthesis,Entity index. Owner P36.41
+UXR-21,SIG-UI-071,UI,§5.6; K13 synthesis,Disagreements browser. Owner P37.38
+UXR-22,SIG-UI-072,UI,§5.6; K13 synthesis,Changes page and feeds. Owner P37.40
+UXR-23,SIG-UI-073,UI,§5.6; K13 synthesis,One search index for all entries. Owner P36.31
+UXR-24,SIG-UI-074,UI,§5.6; K13 synthesis,One gazetteer. Owner P36.31
+UXR-25,SIG-UI-075,UI,§5.6; K13 synthesis,Base-path helper on every link. Owner P36.66a; also P35.65
+UXR-26,SIG-UI-076,UI,§5.6; K13 synthesis,Release-pinned data only. Owner P36.38; also P36.66a
+UXR-27,SIG-UI-077,UI,§5.6; K13 synthesis,Named acceptance check per ask. Owner P37.68a
+UXR-28,SIG-UI-078,UI,§5.6; K13 synthesis,Acceptance journeys. Owner P37.68a
+UXR-29,SIG-UI-079,UI,§5.6; K13 synthesis,Queue reachable from absences. Owner P36.61; also P36.62
+UXR-30,SIG-UI-080,UI,§5.6; K13 synthesis,Withheld-organisations notice. Owner P36.41
+UXR-31,SIG-UI-081,UI,§5.6; K13 synthesis,"Serving-cost readout. Owner P36.71; also P37.63, P37.68a"
+UXR-32,SIG-UI-082,UI,§5.6; K13 synthesis,Linked metadata files. Owner P36.50; also P35.39
+UXR-33,SIG-UI-083,UI,§5.6; K13 synthesis,"One provenance-panel contract. Owner P36.22; also P36.51, P35.36"
+UXR-34,SIG-UI-084,UI,§5.6; K13 synthesis,One Figure component and figures registry. Owner P36.22; also P35.37
+UXR-35,SIG-UI-085,UI,§5.6; K13 synthesis,The T2 set is closed. Owner P36.20; also P35.50
+UXR-36,SIG-UI-086,UI,§5.6; K13 synthesis,Five-part typed empty states. Owner P36.22; also P36.24
+UXR-37,SIG-UI-087,UI,§5.6; K13 synthesis,Release pages free of live-clock values. Owner P36.67; also P36.43
+UXR-38,SIG-UI-088,UI,§5.6; K13 synthesis,"Historical and undated marked. Owner P36.41; also P36.37, P36.39"
+SIG-UI-D01,SIG-UI-089,UI,§5.6; K0,Route classification; adopted by UXR-A01. Owner P36.20; also P35.50
+SIG-UI-D02,SIG-UI-090,UI,§5.6; K0,No script on T0; adopted by UXR-A01. Owner P36.20; also P35.50
+SIG-UI-D03,SIG-UI-091,UI,§5.6; K0,T1 no-JS parity; adopted by UXR-A01. Owner P36.20; also P35.50
+SIG-UI-D04,SIG-UI-092,UI,§5.6; K0,Per-type budgets held; adopted by UXR-A01. Owner P36.72a; also P35.51
+SIG-UI-D05,SIG-UI-093,UI,§5.6; K0,Workspace-state round-trip; adopted by UXR-A01. Owner P36.21
+SIG-UI-D06,SIG-UI-094,UI,§5.6; K0,Static SVG for every visualisation; adopted by UXR-A01. Owner P36.27; also P36.20
+SIG-UI-D07,SIG-UI-095,UI,§5.6; K0,Canvas reachability; adopted by UXR-A01. Owner P36.37; also P36.20
+SIG-UI-D08,SIG-UI-096,UI,§5.6; K0,Strict CSP and HSTS; adopted by UXR-A01. Owner P36.19
+SIG-UI-D09,SIG-UI-097,UI,§5.6; K0,Runtime dependency discipline; adopted by UXR-A01. Owner P36.37; also P36.20
+SIG-UI-D10,SIG-UI-098,UI,§5.6; K0,Printed dossiers carry figures; adopted by UXR-A01. Owner P36.26
+SIG-UI-DM01,SIG-UI-099,UI,§5.6; K1,"Record represented at every zoom; adopted by UXR-A02. Owner P37.17; also P35.52, P36.33"
+SIG-UI-DM02,SIG-UI-100,UI,§5.6; K1,Self-hosted basemap; adopted by UXR-A02. Owner P36.33
+SIG-UI-DM03,SIG-UI-101,UI,§5.6; K1,Selection panel fields; adopted by UXR-A02. Owner P36.37
+SIG-UI-DM04,SIG-UI-102,UI,§5.6; K1,Synchronised map list; adopted by UXR-A02. Owner P36.37; also P36.36
+SIG-UI-DM05,SIG-UI-103,UI,§5.6; K1,Map state round-trip; adopted by UXR-A02. Owner P36.37; also P36.21
+SIG-UI-DM06,SIG-UI-104,UI,§5.6; K1,Filter counts and cannot-apply; adopted by UXR-A02. Owner P36.37
+SIG-UI-DM07,SIG-UI-105,UI,§5.6; K1,No-JS map baseline; adopted by UXR-A02. Owner P36.36
+SIG-UI-DM08,SIG-UI-106,UI,§5.6; K1,Map budgets; adopted by UXR-A02. Owner P36.37
+SIG-UI-DM09,SIG-UI-107,UI,§5.6; K1,Symbol contrast and channels; adopted by UXR-A02. Owner P36.37; also P36.17
+SIG-GEO-DM10,SIG-GEO-014,UI,§5.6; K1,Tile precision bound; source table carried no level marker — landed as MUST (a prohibition or unconditional bound); adopted by UXR-A02. Owner P37.17; also P35.52
+SIG-UI-D20,SIG-UI-108,UI/EXPORT,§5.6; K2,"No raw identifiers as labels; source table carried no level marker — landed as MUST (a prohibition or unconditional bound); adopted by UXR-A03. Owner P36.41; also P36.24, P35.29"
+SIG-UI-D21,SIG-UI-109,UI/EXPORT,§5.6; K2,One entity label; adopted by UXR-A03. Owner P36.29; also P35.29
+SIG-UI-D22,SIG-UI-110,UI/EXPORT,§5.6; K2,Label basis shown; adopted by UXR-A03. Owner P36.41
+SIG-UI-D23,SIG-UI-111,UI/EXPORT,§5.6; K2,Unique labels per kind; source table carried no level marker — landed as MUST (a prohibition or unconditional bound); adopted by UXR-A03. Owner P36.29
+SIG-UI-D24,SIG-UI-112,UI/EXPORT,§5.6; K2,Person-name screen; adopted by UXR-A03. Owner P36.29
+SIG-UI-D25,SIG-UI-113,UI/EXPORT,§5.6; K2,Entity URL scheme and permanence; adopted by UXR-A03. Owner P36.29; also P36.35
+SIG-UI-D26,SIG-UI-114,UI/EXPORT,§5.6; K2,Entity page sections; adopted by UXR-A03. Owner P36.41; also P36.42a
+SIG-UI-D27,SIG-UI-115,UI/EXPORT,§5.6; K2,Relationship row fields; adopted by UXR-A03. Owner P36.41; also P36.42a
+SIG-UI-D28,SIG-UI-116,UI/EXPORT,§5.6; K2,Historical relationships marked; adopted by UXR-A03. Owner P36.41; also P36.42a
+SIG-UI-D29,SIG-UI-117,UI/EXPORT,§5.6; K2,Degree-only is not an edge; adopted by UXR-A03. Owner P37.24
+SIG-UI-D30,SIG-UI-118,UI/EXPORT,§5.6; K2,Overview bounds; adopted by UXR-A03. Owner P37.24
+SIG-UI-D31,SIG-UI-119,UI/EXPORT,§5.6; K2,Explorer state round-trip; adopted by UXR-A03. Owner P37.26
+SIG-UI-D32,SIG-UI-120,UI/EXPORT,§5.6; K2,Path answers; adopted by UXR-A03. Owner P37.26
+SIG-UI-D33,SIG-UI-121,UI/EXPORT,§5.6; K2,No unverified centrality; source table carried no level marker — landed as MUST (a prohibition or unconditional bound); adopted by UXR-A03. Owner P37.26
+SIG-UI-D34,SIG-UI-122,UI/EXPORT,§5.6; K2,Edge to provenance in two actions; adopted by UXR-A03. Owner P36.42a; also P36.51
+SIG-EXPORT-D20,SIG-EXPORT-014,UI/EXPORT,§5.6; K2,"Entity and graph export artifacts; adopted by UXR-A03. Owner P36.41; also P37.24, P36.30"
+SIG-EXPORT-D21,SIG-EXPORT-015,UI/EXPORT,§5.6; K2,Edges carry their claims; adopted by UXR-A03. Owner P37.24; also P36.30
+SIG-SRCH-D01,SIG-SRCH-001,SRCH,§5.6; K3,All compartments in one request; adopted by UXR-A04/A05. Owner P36.38
+SIG-SRCH-D02,SIG-SRCH-002,SRCH,§5.6; K3,Typed linked results; adopted by UXR-A04/A05. Owner P36.39
+SIG-SRCH-D03,SIG-SRCH-003,SRCH,§5.6; K3,Match-quality ordering; adopted by UXR-A04/A05. Owner P36.38
+SIG-SRCH-D04,SIG-SRCH-004,SRCH,§5.6; K3,Jurisdiction names resolve first; adopted by UXR-A04/A05. Owner P36.31
+SIG-SRCH-D05,SIG-SRCH-005,SRCH,§5.6; K3,Acronym handling; adopted by UXR-A04/A05. Owner P36.31
+SIG-SRCH-D06,SIG-SRCH-006,SRCH,§5.6; K3,Spelling suggestions; adopted by UXR-A04/A05. Owner P36.39
+SIG-SRCH-D07,SIG-SRCH-007,SRCH,§5.6; K3,Evidence basis per result; adopted by UXR-A04/A05. Owner P36.39
+SIG-SRCH-D08,SIG-SRCH-008,SRCH,§5.6; K3,Search empty states; adopted by UXR-A04/A05. Owner P36.39
+SIG-SRCH-D09,SIG-SRCH-009,SRCH,§5.6; K3,Search without JavaScript; adopted by UXR-A04/A05. Owner P36.39
+SIG-SRCH-D10,SIG-SRCH-010,SRCH,§5.6; K3,Typeahead shards; adopted by UXR-A04/A05. Owner P36.40
+SIG-SRCH-D11,SIG-SRCH-011,SRCH,§5.6; K3,Release-verified indexes; adopted by UXR-A04/A05. Owner P36.31
+SIG-SRCH-D12,SIG-SRCH-012,SRCH,§5.6; K3,No query logging; adopted by UXR-A04/A05. Owner P36.38
+SIG-SRCH-D13,SIG-SRCH-013,SRCH,§5.6; K3,Measured relevance; adopted by UXR-A04/A05. Owner P36.71; also P36.79
+SIG-SRCH-D14,SIG-SRCH-014,SRCH,§5.6; K3,Search performance bound; source table carried no level marker — landed as MUST (a prohibition or unconditional bound); adopted by UXR-A04/A05. Owner P36.71
+SIG-JUR-D01,SIG-JUR-001,JUR,§5.6; K4,Canonical jurisdiction keys; adopted by K13-direct. Owner P36.34; also P35.17
+SIG-JUR-D02,SIG-JUR-002,JUR,§5.6; K4,"Scheme preserved end to end; adopted by K13-direct. Owner P36.34; also P35.17, P35.18"
+SIG-JUR-D03,SIG-JUR-003,JUR,§5.6; K4,Placement carried; adopted by K13-direct. Owner P36.34; also P35.19
+SIG-JUR-D04,SIG-JUR-004,JUR,§5.6; K4,Located counts; adopted by K13-direct. Owner P36.34; also P35.19
+SIG-JUR-D05,SIG-JUR-005,JUR,§5.6; K4,Unplaced report; adopted by K13-direct. Owner P36.34; also P35.45
+SIG-JUR-D06,SIG-JUR-006,JUR,§5.6; K4,Grouped dossier index; adopted by K13-direct. Owner P36.34
+SIG-JUR-D07,SIG-JUR-007,JUR,§5.6; K4,Dossier hierarchy sums; adopted by K13-direct. Owner P36.34; also P35.45
+SIG-JUR-D08,SIG-JUR-008,JUR,§5.6; K4,Human dossier titles; adopted by K13-direct. Owner P36.34
+SIG-JUR-D09,SIG-JUR-009,JUR,§5.6; K4,Dossier URL permanence; adopted by K13-direct. Owner P36.35
+SIG-JUR-D10,SIG-JUR-010,JUR,§5.6; K4,Publication regime by country; adopted by K13-direct. Owner P36.34; also P36.45
+SIG-JUR-D11,SIG-JUR-011,JUR,§5.6; K4,No-JS dossier reachability; adopted by K13-direct. Owner P36.34
+SIG-JUR-D12,SIG-JUR-012,JUR,§5.6; K4,As-of permalinks; adopted by K13-direct. Owner P36.35
+SIG-DSRC-D01,SIG-DSRC-001,DSRC,§5.6; K5,Dossier contribution artifact; adopted by UXR-A06. Owner P36.52; also P35.44
+SIG-DSRC-D02,SIG-DSRC-002,DSRC,§5.6; K5,Per-source contribution display; adopted by UXR-A06. Owner P36.52
+SIG-DSRC-D03,SIG-DSRC-003,DSRC,§5.6; K5,Contribution timing; adopted by UXR-A06. Owner P36.52
+SIG-DSRC-D04,SIG-DSRC-004,DSRC,§5.6; K5,Figure definitions and breakdowns; adopted by UXR-A06. Owner P36.52; also P36.55
+SIG-DSRC-D05,SIG-DSRC-005,DSRC,§5.6; K5,Source disagreements shown; adopted by UXR-A06. Owner P36.52; also P37.39
+SIG-DSRC-D06,SIG-DSRC-006,DSRC,§5.6; K5,Explorer without JavaScript; adopted by UXR-A06. Owner P36.52; also P37.61
+SIG-DSRC-D07,SIG-DSRC-007,DSRC,§5.6; K5,Dossier downloads by compartment; adopted by UXR-A06. Owner P36.53
+SIG-DSRC-D08,SIG-DSRC-008,DSRC,§5.6; K5,"Contribution parity; adopted by UXR-A06. Owner P36.52; also P36.47, P36.69"
+SIG-DSRC-D09,SIG-DSRC-009,DSRC,§5.6; K5,Explorer JSON twin; adopted by UXR-A06. Owner P36.52
+SIG-UI-DV01,SIG-UI-123,UI,§5.6; K6,Dossier at-a-glance map; adopted by UXR-A07. Owner P36.27; also P36.55
+SIG-UI-DV02,SIG-UI-124,UI,§5.6; K6,Static-map binning; adopted by UXR-A07. Owner P36.27
+SIG-UI-DV03,SIG-UI-125,UI,§5.6; K6,Dossier network figure; adopted by UXR-A07. Owner P36.28; also P37.28
+SIG-UI-DV04,SIG-UI-126,UI,§5.6; K6,Dossier sideways links; adopted by UXR-A07. Owner P36.57; also P36.21
+SIG-UI-DV05,SIG-UI-127,UI,§5.6; K6,No T2 preload on dossiers; adopted by UXR-A07. Owner P37.29
+SIG-UI-DV06,SIG-UI-128,UI,§5.6; K6,Dossier scoped search; adopted by UXR-A07. Owner P36.56; also P36.57
+SIG-UI-DV07,SIG-UI-129,UI,§5.6; K6,Dossier T1 budgets; adopted by UXR-A07. Owner P36.55
+SIG-UI-DV08,SIG-UI-130,UI,§5.6; K6,Print carries every figure; adopted by UXR-A07. Owner P36.26
+SIG-UI-DV09,SIG-UI-131,UI,§5.6; K6,Figure accessibility; adopted by UXR-A07. Owner P36.27
+SIG-UI-DV10,SIG-UI-132,UI,§5.6; K6,Figure counts reconcile; adopted by UXR-A07. Owner P36.55
+SIG-UI-DV11,SIG-UI-133,UI,§5.6; K6,One meaning per symbol; adopted by UXR-A07. Owner P36.17
+SIG-UI-DV12,SIG-UI-134,UI,§5.6; K6,Figures leak no data; adopted by UXR-A07. Owner P36.27
+SIG-WATCH-D01,SIG-WATCH-001,WATCH,§5.6; K7,Watch items from publishable claims; adopted by UXR-A08. Owner P36.59; also P35.43
+SIG-WATCH-D02,SIG-WATCH-002,WATCH,§5.6; K7,One alert date; adopted by UXR-A08. Owner P36.59
+SIG-WATCH-D03,SIG-WATCH-003,WATCH,§5.6; K7,Watch evidence links; adopted by UXR-A08. Owner P36.59
+SIG-WATCH-D04,SIG-WATCH-004,WATCH,§5.6; K7,Watch page per place; adopted by UXR-A08. Owner P36.59; also P36.34
+SIG-WATCH-D05,SIG-WATCH-005,WATCH,§5.6; K7,Feeds validate; adopted by UXR-A08. Owner P37.34; also P36.59
+SIG-WATCH-D06,SIG-WATCH-006,WATCH,§5.6; K7,Real feed timestamps; adopted by UXR-A08. Owner P37.34
+SIG-WATCH-D07,SIG-WATCH-007,WATCH,§5.6; K7,Recommender bounds; adopted by UXR-A08. Owner P37.31
+SIG-WATCH-D08,SIG-WATCH-008,WATCH,§5.6; K7,Agenda recency; adopted by UXR-A08. Owner P37.31
+SIG-WATCH-D09,SIG-WATCH-009,WATCH,§5.6; K7,Dossier next decisions; adopted by UXR-A08. Owner P36.55; also P36.59
+SIG-WATCH-D10,SIG-WATCH-010,WATCH,§5.6; K7,Watch empty-state honesty; adopted by UXR-A08. Owner P36.59
+SIG-EVUI-D01,SIG-EVUI-001,EVUI,§5.6; K8,Evidence index; adopted by UXR-A09. Owner P36.60
+SIG-EVUI-D02,SIG-EVUI-002,EVUI,§5.6; K8,Artifact page blocks; adopted by UXR-A09. Owner P36.60
+SIG-EVUI-D03,SIG-EVUI-003,EVUI,§5.6; K8,Capture classification shown; adopted by UXR-A09. Owner P36.60
+SIG-EVUI-D04,SIG-EVUI-004,EVUI,§5.6; K8,Claim viewer binding states; adopted by UXR-A09. Owner P36.51; also P37.37
+SIG-EVUI-D05,SIG-EVUI-005,EVUI,§5.6; K8,No fixture diffs; adopted by UXR-A09. Owner P36.60
+SIG-EVUI-D06,SIG-EVUI-006,EVUI,§5.6; K8,Artifact eligibility gate; adopted by UXR-A09. Owner P36.60
+SIG-EVUI-D07,SIG-EVUI-007,EVUI,§5.6; K8,Claim to evidence navigable; adopted by UXR-A09. Owner P36.51
+SIG-EVUI-D08,SIG-EVUI-008,EVUI,§5.6; K8,Evidence empty-state honesty; adopted by UXR-A09. Owner P36.60
+SIG-EVUI-D09,SIG-EVUI-009,EVUI,§5.6; K8,Claim-view coverage and cap; adopted by UXR-A09. Owner P37.37
+SIG-EVUI-D10,SIG-EVUI-010,EVUI,§5.6; K8,Artifact handles; adopted by UXR-A09. Owner P36.29; also P36.60
+SIG-RQ-D01,SIG-RQ-001,RQ,§5.6; K11,Handles and titles; adopted by UXR-A11. Owner P36.58
+SIG-RQ-D02,SIG-RQ-002,RQ,§5.6; K11,Task detail blocks; adopted by UXR-A11. Owner P36.62
+SIG-RQ-D03,SIG-RQ-003,RQ,§5.6; K11,Card metadata real; adopted by UXR-A11. Owner P36.58
+SIG-RQ-D04,SIG-RQ-004,RQ,§5.6; K11,Queue pagination and facets; adopted by UXR-A11. Owner P36.61
+SIG-RQ-D05,SIG-RQ-005,RQ,§5.6; K11,Gap routing predicate table; adopted by UXR-A11. Owner P36.58
+SIG-RQ-D06,SIG-RQ-006,RQ,§5.6; K11,Field gaps as campaigns; adopted by UXR-A11. Owner P36.58
+SIG-RQ-D07,SIG-RQ-007,RQ,§5.6; K11,"Draft requests shown, never sent; adopted by UXR-A11. Owner P36.63"
+SIG-RQ-D08,SIG-RQ-008,RQ,§5.6; K11,Gap links resolve; adopted by UXR-A11. Owner P36.62
+SIG-RQ-D09,SIG-RQ-009,RQ,§5.6; K11,Handle redirects; adopted by UXR-A11. Owner P36.62; also P36.35
+SIG-RQ-D10,SIG-RQ-010,RQ,§5.6; K11,Queue downloads sharded; adopted by UXR-A11. Owner P36.63
+DR-K14-01,SIG-UI-135,UI,§5.6; K14,Home leads with tagline and search; adopted by UXR-A12. Owner P36.64
+DR-K14-02,SIG-UI-136,UI,§5.6; K14,Home headline figures; adopted by UXR-A12. Owner P36.64
+DR-K14-03,SIG-UI-137,UI,§5.6; K14,Persona start-here paths; adopted by UXR-A12. Owner P36.64; also P36.65
+DR-K14-04,SIG-UI-138,UI,§5.6; K14,Generated example questions; adopted by UXR-A12. Owner P36.64
+DR-K14-05,SIG-UI-139,UI,§5.6; K14,Capability table; adopted by UXR-A12. Owner P36.64
+DR-K14-06,SIG-UI-140,UI,§5.6; K14,About and glossary pages; adopted by UXR-A12. Owner P36.64
+DR-K14-07,SIG-UI-141,UI,§5.6; K14,In-brief leads; adopted by UXR-A12. Owner P36.64
+DR-K14-08,SIG-UI-142,UI,§5.6; K14,Glossary popover links; adopted by UXR-A12. Owner P36.64
+DR-K14-09,SIG-UI-143,UI,§5.6; K14,One epistemic lexicon; adopted by UXR-A12. Owner P36.17
+DR-K14-10,SIG-UI-144,UI,§5.6; K14,No repeated sentences; adopted by UXR-A12. Owner P36.24
+DR-K14-11,SIG-UI-145,UI,§5.6; K14,Forty-word chrome; adopted by UXR-A12. Owner P36.18; also P36.24
+DR-K14-12,SIG-UI-146,UI,§5.6; K14,Design tokens only; adopted by UXR-A12. Owner P36.16
+DR-K14-13,SIG-UI-147,UI,§5.6; K14,Dark theme; adopted by UXR-A12. Owner P36.17; also P36.16
+DR-K14-14,SIG-UI-148,UI,§5.6; K14,Type scale; adopted by UXR-A12. Owner P36.16
+DR-K14-15,SIG-UI-149,UI,§5.6; K14,Reduced motion; adopted by UXR-A12. Owner P36.17
+DR-K14-16,SIG-UI-150,UI,§5.6; K14,Header and menu; adopted by UXR-A12. Owner P36.18
+DR-K14-17,SIG-UI-151,UI,§5.6; K14,Empty and error pages; adopted by UXR-A12. Owner P36.22; also P36.18
+DR-K14-18,SIG-UI-152,UI,§5.6; K14,Visual regression grid; adopted by UXR-A12. Owner P37.60
+DR-K14-19,SIG-UI-153,UI,§5.6; K14,Joined words and digit grouping; adopted by UXR-A12. Owner P36.24
+DR-K14-20,SIG-UI-154,UI,§5.6; K14,Brand assets; adopted by UXR-A12. Owner P36.25
+DR-K14-21,SIG-UI-155,UI,§5.6; K14,Print first page; adopted by UXR-A12. Owner P36.26
+DR-K14-22,SIG-UI-156,UI,§5.6; K14,CSS and font budgets; adopted by UXR-A12. Owner P36.16
+UXR-A10,(adopts),TRANSP,§5.6,"adopts J3/K9/K10 drafts written once in §56.10 as SIG-TRANSP-001…043 — cited, never re-minted"
+UXR-A13,(adopts),CONF,§5.6,"adopts L3 drafts written once in §56.7 as SIG-CONF-001, SIG-CONF-005, SIG-CONF-011 — cited, never re-minted"
