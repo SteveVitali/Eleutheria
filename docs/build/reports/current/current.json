@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "023f177ed7843a640e46cda0c453ebf77b38fed3",
-  "manifest_inputs": 1113,
+  "input_commit": "c37a4009c1eb49d875f462deca82958e29783d81",
+  "manifest_inputs": 1114,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.23",
-    "lastCompleted": "P35.21",
+    "nextTicket": "P36.1b",
+    "lastCompleted": "P35.23",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.12,P37.2",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.12,P37.2",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,27 +17,27 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.21-partner-name-audit-run",
+    "chainTip": "r11/P35.23-real-data-regression-corpus",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-26T15:30Z"
+    "updatedAt": "2026-10-26T19:40Z"
   },
   "counts": {
-    "obligations": 184,
-    "owed": 103,
-    "open": 100,
+    "obligations": 195,
+    "owed": 114,
+    "open": 111,
     "partial": 3,
     "terminal": 81,
-    "events": 683,
+    "events": 694,
     "transitions": 45,
     "coverage_assessments": 489,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 57,
+    "return_pass_rows": 58,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -9596,6 +9596,512 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P35.23-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.23-1:e0",
+      "kind": "V",
+      "owner": "the OM-19 leg-runner — the orchestrator's `r11/P35.23-live-<n>` dispatch or the operator",
+      "landing": "RETURN PASS — P35.23",
+      "landing_source": "return-pass-map/1",
+      "backlog_home": "BL-085",
+      "item": "The P35.23 scheduled-corpus apply leg (`SIG_RDC_IMAGE=<sig-api-digest> bash ops/gcp/rdc-slices.sh --apply all`): prestate → deps (`sig-quality-probe-rt`, `sig-scheduler`) → `gcloud run jobs deploy sig-rdc-probe` (digest-pinned, `sig-ops rdc scheduled --corpus /app/tests/rdc/data`) → `sig-sched-rdc-probe` trigger (`15 1 1-5,14-31 * *`) → poststate `rdc job verify-describe`/`verify-trigger` 0 DRIFT; then the first fired run's `sig.rdc-report/1` + `sig.probe-run/1` land under `ops/probes/rdc/` with all three restricted slices evaluated",
+      "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P35.23-live-<n>` dispatch or the operator · trigger: `implement-spec spec=docs/tickets/348_P35.23__real-data-regression-corpus.md live_verification=true` inside a valid AR-3 + AR-2 window with ADC + `SIG_GCP_PROJECT` + `SIG_RDC_IMAGE` exported",
+      "verify": "`ops/gcp/rdc-slices.sh --verify` reports job + trigger matching `ops/rdc_probe.toml`; `gcloud storage objects list gs://<project>-sig-restricted/ops/probes/rdc/` shows the fired run's two records; the probe-run `overall` is pass with all 7 slices evaluated and the restricted oracles' fact digests match the committed manifest",
+      "proxy": "`rdc-slices.sh --check all` prints the whole mutation set offline; `sig-ops rdc job plan` validates the declaration (schedule can structurally never fire inside either window); `run_scheduled` is test-proven end-to-end on a fake bucket (`tests/rdc/test_rdc_corpus.py` — staged derive, overlay corpus, both records, window suppression); the job needs no new IAM grant (the conditioned `evidence/captures/` read + `ops/probes/` create already fit)",
+      "line": 1415,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.23-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.23-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.23",
+          "owner": "the OM-19 leg-runner — the orchestrator's `r11/P35.23-live-<n>` dispatch or the operator",
+          "landing": "`implement-spec spec=docs/tickets/348_P35.23__real-data-regression-corpus.md live_verification=true` inside a valid AR-3 + AR-2 window with ADC + `SIG_GCP_PROJECT` + `SIG_RDC_IMAGE` exported",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "tests/rdc/data/corpus.toml"
+          ],
+          "observed_at": "2026-10-26",
+          "recorded_at": "2026-10-26",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P35.23 (row 348) for the row it added — the corpus's restricted-lane apply leg (queued, prepared_not_executed) / recorded archetypes awaiting licensed captures; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1415,
+            "row_sha256": "022f812cc9c72cd9ae05e443e097cdc51b68e2a29e26d966491135c8a7740549",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.23-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.23-2:e0",
+      "kind": "F",
+      "owner": "the corpus maintainer — a capture ticket under the connector-live sweep",
+      "landing": "a licensed FL 511 two-layer capture lands (a `sig:capture:` locator + licence review)",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "fl511_republish_pair — a licensed FL 511 two-layer capture of one upstream camera registry republished by two layers",
+      "unblocked_by": "owner: the corpus maintainer — a capture ticket under the connector-live sweep · trigger: a licensed FL 511 two-layer capture lands (a `sig:capture:` locator + licence review)",
+      "verify": "a `sig.rdc-slice/1` (restricted lane if the licence requires) names both layers' digests and the oracle counts the republish overlap; `sig-ops rdc check` shows the archetype `served`",
+      "proxy": "the archetype is declared `deferred` in `tests/rdc/data/corpus.toml` with this id — the corpus check fails loudly if a row drifts",
+      "line": 1416,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.23-2:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.23-2",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.23",
+          "owner": "the corpus maintainer — a capture ticket under the connector-live sweep",
+          "landing": "a licensed FL 511 two-layer capture lands (a `sig:capture:` locator + licence review)",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "tests/rdc/data/corpus.toml"
+          ],
+          "observed_at": "2026-10-26",
+          "recorded_at": "2026-10-26",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P35.23 (row 348) for the row it added — the corpus's restricted-lane apply leg (queued, prepared_not_executed) / recorded archetypes awaiting licensed captures; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1416,
+            "row_sha256": "17c4d56cb05fc2ebe73732370d9bdd3a9ea8b89e1642bfd9f13a5509f8803113",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.23-3",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.23-3:e0",
+      "kind": "F",
+      "owner": "the corpus maintainer — a camreg capture ticket",
+      "landing": "a licensed camreg republish-layer capture lands",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "camreg_osm_both_targets, camreg half — the camreg republish-layer capture paired with the OSM OKC slice (osm-overlaps-nottingham shape)",
+      "unblocked_by": "owner: the corpus maintainer — a camreg capture ticket · trigger: a licensed camreg republish-layer capture lands",
+      "verify": "a second restricted slice pins the camreg layer's digest; the pair's oracle diff records the cross-source republish census",
+      "proxy": "the OSM member digest `34dd1d93…` is committed in `tests/rdc/data/restricted/osm_okc_surveillance/slice.toml` with a `sig:capture:` locator the scheduled job derives from",
+      "line": 1417,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.23-3:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.23-3",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.23",
+          "owner": "the corpus maintainer — a camreg capture ticket",
+          "landing": "a licensed camreg republish-layer capture lands",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "tests/rdc/data/corpus.toml"
+          ],
+          "observed_at": "2026-10-26",
+          "recorded_at": "2026-10-26",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P35.23 (row 348) for the row it added — the corpus's restricted-lane apply leg (queued, prepared_not_executed) / recorded archetypes awaiting licensed captures; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1417,
+            "row_sha256": "f8f8112456fc61c6ce88e95883435b6482a9bc204a37b4ebe0f12f763d83e537",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.23-4",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.23-4:e0",
+      "kind": "F",
+      "owner": "the corpus maintainer — a Mark43 capture ticket",
+      "landing": "a licensed Mark43 mirror capture lands",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "nottingham_mark43, Mark43 half — the Mark43 republish mirror of the Nottingham axis-swapped registry",
+      "unblocked_by": "owner: the corpus maintainer — a Mark43 capture ticket · trigger: a licensed Mark43 mirror capture lands",
+      "verify": "a restricted-lane slice pins the mirror digest; the pair records the upstream-defect propagation census",
+      "proxy": "the 562-record axis-swap census is pinned in `camreg_nottingham_axis`'s committed snapshot (every record flags `geometry_defect` under the declared axis order, zero entity failures)",
+      "line": 1418,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.23-4:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.23-4",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.23",
+          "owner": "the corpus maintainer — a Mark43 capture ticket",
+          "landing": "a licensed Mark43 mirror capture lands",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "tests/rdc/data/corpus.toml"
+          ],
+          "observed_at": "2026-10-26",
+          "recorded_at": "2026-10-26",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P35.23 (row 348) for the row it added — the corpus's restricted-lane apply leg (queued, prepared_not_executed) / recorded archetypes awaiting licensed captures; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1418,
+            "row_sha256": "7941dc357aa7037dc0d6a27295871373ac2b561027796e4ed9001e3e0709b9b3",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.23-5",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.23-5:e0",
+      "kind": "F",
+      "owner": "the corpus maintainer",
+      "landing": "a licensed MD three-layer capture lands",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "md_threeway_mirror — a licensed Maryland three-way republish-mirror capture (same registry, three layers)",
+      "unblocked_by": "owner: the corpus maintainer · trigger: a licensed MD three-layer capture lands",
+      "verify": "the slice pins three members' digests; the oracle counts the three-way overlap",
+      "proxy": "declared `deferred` in corpus.toml with this id",
+      "line": 1419,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.23-5:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.23-5",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.23",
+          "owner": "the corpus maintainer",
+          "landing": "a licensed MD three-layer capture lands",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "tests/rdc/data/corpus.toml"
+          ],
+          "observed_at": "2026-10-26",
+          "recorded_at": "2026-10-26",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P35.23 (row 348) for the row it added — the corpus's restricted-lane apply leg (queued, prepared_not_executed) / recorded archetypes awaiting licensed captures; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1419,
+            "row_sha256": "022a10cd172ec64001fc78051374a882faa82b26a229500b570223715119804e",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.23-6",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.23-6:e0",
+      "kind": "F",
+      "owner": "the corpus maintainer",
+      "landing": "a licensed UCSD/PennDOT pair capture lands",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "ucsd_penndot — a licensed UCSD + PennDOT republish pair capture",
+      "unblocked_by": "owner: the corpus maintainer · trigger: a licensed UCSD/PennDOT pair capture lands",
+      "verify": "the slice pins both members' digests; the oracle counts the shared-registry overlap",
+      "proxy": "declared `deferred` in corpus.toml with this id",
+      "line": 1420,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.23-6:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.23-6",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.23",
+          "owner": "the corpus maintainer",
+          "landing": "a licensed UCSD/PennDOT pair capture lands",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "tests/rdc/data/corpus.toml"
+          ],
+          "observed_at": "2026-10-26",
+          "recorded_at": "2026-10-26",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P35.23 (row 348) for the row it added — the corpus's restricted-lane apply leg (queued, prepared_not_executed) / recorded archetypes awaiting licensed captures; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1420,
+            "row_sha256": "8aff4efedda296e3b470fd324fa06eb4a916a3f9f123512d4c6758fc21a4fbe5",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.23-7",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.23-7:e0",
+      "kind": "F",
+      "owner": "the corpus maintainer",
+      "landing": "a licensed Toronto GeoHub capture lands",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "toronto_cot_geohub — a licensed Toronto CoT GeoHub republish pair capture",
+      "unblocked_by": "owner: the corpus maintainer · trigger: a licensed Toronto GeoHub capture lands",
+      "verify": "the slice pins both members' digests; the oracle counts the overlap",
+      "proxy": "declared `deferred` in corpus.toml with this id",
+      "line": 1421,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.23-7:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.23-7",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.23",
+          "owner": "the corpus maintainer",
+          "landing": "a licensed Toronto GeoHub capture lands",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "tests/rdc/data/corpus.toml"
+          ],
+          "observed_at": "2026-10-26",
+          "recorded_at": "2026-10-26",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P35.23 (row 348) for the row it added — the corpus's restricted-lane apply leg (queued, prepared_not_executed) / recorded archetypes awaiting licensed captures; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1421,
+            "row_sha256": "42d39606dcebacc61bf69721ccf6813cb62dcad48d6e319dc90e7d22d3f1821f",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.23-8",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.23-8:e0",
+      "kind": "F",
+      "owner": "the corpus maintainer",
+      "landing": "a licensed GA 511 capture lands",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "ga511_null_island — a licensed GA 511 capture carrying null-island / sign-flipped coordinates",
+      "unblocked_by": "owner: the corpus maintainer · trigger: a licensed GA 511 capture lands",
+      "verify": "the slice pins the capture's digest; the oracle counts the coordinate-defect rows",
+      "proxy": "declared `deferred` in corpus.toml; the M-4 `sign_flip` and `axis_swap` classes pin the mechanical behaviour the slice would record",
+      "line": 1422,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.23-8:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.23-8",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.23",
+          "owner": "the corpus maintainer",
+          "landing": "a licensed GA 511 capture lands",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "tests/rdc/data/corpus.toml"
+          ],
+          "observed_at": "2026-10-26",
+          "recorded_at": "2026-10-26",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P35.23 (row 348) for the row it added — the corpus's restricted-lane apply leg (queued, prepared_not_executed) / recorded archetypes awaiting licensed captures; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1422,
+            "row_sha256": "263f930822c76ebb540fff6cb960356f38ccb6ab307106270325c655d6941cda",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.23-9",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.23-9:e0",
+      "kind": "F",
+      "owner": "the corpus maintainer",
+      "landing": "a licensed FDOT D5 capture lands",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "fdot_d5_wrong_state — a licensed FDOT D5 capture with records declared in the wrong state/jurisdiction",
+      "unblocked_by": "owner: the corpus maintainer · trigger: a licensed FDOT D5 capture lands",
+      "verify": "the slice pins the capture's digest; the oracle counts the jurisdiction-mismatch rows",
+      "proxy": "declared `deferred` in corpus.toml with this id",
+      "line": 1423,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.23-9:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.23-9",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.23",
+          "owner": "the corpus maintainer",
+          "landing": "a licensed FDOT D5 capture lands",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "tests/rdc/data/corpus.toml"
+          ],
+          "observed_at": "2026-10-26",
+          "recorded_at": "2026-10-26",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P35.23 (row 348) for the row it added — the corpus's restricted-lane apply leg (queued, prepared_not_executed) / recorded archetypes awaiting licensed captures; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1423,
+            "row_sha256": "cf41296fb72cec67f3263bb4ba728ca0fe083296c49c88703402d96103e1ad1f",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.23-10",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.23-10:e0",
+      "kind": "F",
+      "owner": "the corpus maintainer",
+      "landing": "a licensed IA DOT multiview capture lands",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "ia_dot_multiview — the named IA DOT co-located multi-view capture (same site, distinct devices, never merged)",
+      "unblocked_by": "owner: the corpus maintainer · trigger: a licensed IA DOT multiview capture lands",
+      "verify": "the slice pins the capture's digest; the oracle counts the distinct-device co-locations",
+      "proxy": "`camreg_dc_multiview` serves the analog: two overlapping ArcGIS pages exercising `SubjectKeyCollision` fail-closed (pinned `expect.failure_class` in the committed snapshot)",
+      "line": 1424,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.23-10:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.23-10",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.23",
+          "owner": "the corpus maintainer",
+          "landing": "a licensed IA DOT multiview capture lands",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "tests/rdc/data/corpus.toml"
+          ],
+          "observed_at": "2026-10-26",
+          "recorded_at": "2026-10-26",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P35.23 (row 348) for the row it added — the corpus's restricted-lane apply leg (queued, prepared_not_executed) / recorded archetypes awaiting licensed captures; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1424,
+            "row_sha256": "a50edcdb326aa28d791383a205151520f78eaf3a84be9aed5c7cee9aee2cf193",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P35.23-11",
+      "status": "OPEN",
+      "status_source": "event-head D-P35.23-11:e0",
+      "kind": "F",
+      "owner": "the corpus maintainer",
+      "landing": "a licensed IL DOT capture lands",
+      "landing_source": "event-head",
+      "backlog_home": "BL-085",
+      "item": "il_dot_objectid — the named IL DOT upstream non-unique declared-key capture (a collided key must fail closed, never silently merge)",
+      "unblocked_by": "owner: the corpus maintainer · trigger: a licensed IL DOT capture lands",
+      "verify": "the slice pins the capture's digest; the pipeline leg expects the fail-closed collision outcome",
+      "proxy": "`camreg_dc_multiview` pins `expect.failure_class = SubjectKeyCollision` — the fail-closed contract the archetype records",
+      "line": 1425,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.23-11:e0",
+          "kind": "migration",
+          "obligation_id": "D-P35.23-11",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P35.23",
+          "owner": "the corpus maintainer",
+          "landing": "a licensed IL DOT capture lands",
+          "backlog_home": "BL-085",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "tests/rdc/data/corpus.toml"
+          ],
+          "observed_at": "2026-10-26",
+          "recorded_at": "2026-10-26",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P35.23 (row 348) for the row it added — the corpus's restricted-lane apply leg (queued, prepared_not_executed) / recorded archetypes awaiting licensed captures; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 1425,
+            "row_sha256": "7c6f8d83c641e37d3e349afc8d21562860e08ef9da21210bf2af37f57c759a51",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -10105,6 +10611,16 @@
         "rerun_cell": "`implement-spec spec=docs/tickets/347_P35.21__partner-name-audit-run.md live_verification=true` · landed 347",
         "obligations": [
           "D-P35.21-1"
+        ]
+      },
+      {
+        "key": "P35.23",
+        "obligations_cell": "D-P35.23-1",
+        "gates_cell": "hosted job creation + scheduler trigger — queued (no ADC, `SIG_GCP_PROJECT` unset, `SIG_RDC_IMAGE` unset); pre-authorised: OM-20 (named at GATE-G5 — the in-ticket restricted write under AR-2/AR-3); in-window only: weekday 14:00–20:00Z preferred, never 03:00–06:30Z, never the day-6→13 batch window, ≥ `SIG_RDC_EARLIEST`; the job re-checks both windows at run time — a suppressed fire writes a `skipped` `sig.probe-run/1`, never a fake pass",
+        "operator_cell": "nothing until the re-run — `SIG_RDC_IMAGE=<sig-api-digest> bash ops/gcp/rdc-slices.sh --apply all`; `--check all` plans offline; `D-P35.23-2…-11` stay OPEN — owed licensed captures, corpus-coverage deferrals, no live leg",
+        "rerun_cell": "`implement-spec spec=docs/tickets/348_P35.23__real-data-regression-corpus.md live_verification=true` · landed 348",
+        "obligations": [
+          "D-P35.23-1"
         ]
       }
     ]
@@ -23849,10 +24365,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "568f973f8b57f9d5a5cb8c0e3c4519c8b3bcba8570b63d150aeb37eeeac1cc71",
+  "manifest_sha256": "320c6b79a64f1386d226e05d32f18b66c481f4a7714ba24dfdfd6b581324ca52",
   "current_md": {
-    "lines": 132,
-    "bytes": 19545,
+    "lines": 133,
+    "bytes": 19691,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

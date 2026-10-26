@@ -105,5 +105,16 @@
 | D-P35.60-1 | OPEN | the operator | a standing-go record present in the registry validates under evaluate_standing_go (adopted, unexpired, unrevoked, unvoided, code-commit in scope) and release cl… | a standing-go record present in the registry validates under `evaluate_standing_go` (adopted, unexpired, unrevoked, unvoided, code-commit in scope) and `release… |
 | D-P35.2-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P35.2-live-<n>` dispatch or the operator | RETURN PASS — P35.2 | `ops/gcp/alerting.sh --verify` prints `9 OK` on `monitoring-defs verify` plus `OK` on every posture row (retention=90, versioning on, sig-probe pinned + `SIG_OP… |
 | D-P35.21-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P35.21-live-<n>` dispatch or the operator | RETURN PASS — P35.21 | the measured packet lands under `docs/build/reports/p35.21-partner-name-audit/` with `status: measured`, `legacy_keys` = the counted N, the same query sha256 th… |
+| D-P35.23-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P35.23-live-<n>` dispatch or the operator | RETURN PASS — P35.23 | `ops/gcp/rdc-slices.sh --verify` reports job + trigger matching `ops/rdc_probe.toml`; `gcloud storage objects list gs://<project>-sig-restricted/ops/probes/rdc/… |
+| D-P35.23-2 | OPEN | the corpus maintainer — a capture ticket under the connector-live sweep | a licensed FL 511 two-layer capture lands (a `sig:capture:` locator + licence review) | a `sig.rdc-slice/1` (restricted lane if the licence requires) names both layers' digests and the oracle counts the republish overlap; `sig-ops rdc check` shows … |
+| D-P35.23-3 | OPEN | the corpus maintainer — a camreg capture ticket | a licensed camreg republish-layer capture lands | a second restricted slice pins the camreg layer's digest; the pair's oracle diff records the cross-source republish census |
+| D-P35.23-4 | OPEN | the corpus maintainer — a Mark43 capture ticket | a licensed Mark43 mirror capture lands | a restricted-lane slice pins the mirror digest; the pair records the upstream-defect propagation census |
+| D-P35.23-5 | OPEN | the corpus maintainer | a licensed MD three-layer capture lands | the slice pins three members' digests; the oracle counts the three-way overlap |
+| D-P35.23-6 | OPEN | the corpus maintainer | a licensed UCSD/PennDOT pair capture lands | the slice pins both members' digests; the oracle counts the shared-registry overlap |
+| D-P35.23-7 | OPEN | the corpus maintainer | a licensed Toronto GeoHub capture lands | the slice pins both members' digests; the oracle counts the overlap |
+| D-P35.23-8 | OPEN | the corpus maintainer | a licensed GA 511 capture lands | the slice pins the capture's digest; the oracle counts the coordinate-defect rows |
+| D-P35.23-9 | OPEN | the corpus maintainer | a licensed FDOT D5 capture lands | the slice pins the capture's digest; the oracle counts the jurisdiction-mismatch rows |
+| D-P35.23-10 | OPEN | the corpus maintainer | a licensed IA DOT multiview capture lands | the slice pins the capture's digest; the oracle counts the distinct-device co-locations |
+| D-P35.23-11 | OPEN | the corpus maintainer | a licensed IL DOT capture lands | the slice pins the capture's digest; the pipeline leg expects the fail-closed collision outcome |
 
 ← back: CURRENT.md

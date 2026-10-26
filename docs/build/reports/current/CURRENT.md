@@ -4,19 +4,19 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `023f177ed7843a640e46cda0c453ebf77b38fed3` · inputs hashed: 1113 · wall-clock receipt: `receipt.json`
+> input_commit: `c37a4009c1eb49d875f462deca82958e29783d81` · inputs hashed: 1114 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P35.23` · lastCompleted `P35.21`
-- chainTip `r11/P35.21-partner-name-audit-run` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-26T15:30Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.1b` · lastCompleted `P35.23`
+- chainTip `r11/P35.23-real-data-regression-corpus` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-26T19:40Z`
 
 ## Obligations
 
-- 184 obligations · **103 owed** (100 OPEN, 3 PARTIAL) · 81 terminal
-- 683 events (45 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 195 obligations · **114 owed** (111 OPEN, 3 PARTIAL) · 81 terminal
+- 694 events (45 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 103 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 114 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -81,6 +81,7 @@
 | P37.2 | Wave-C sequence L1→L5 (pre-grow → tier bump after the go → national run → 24 h soak read → revert); missed leg reported; packet `reports/p37.2-wave-c/WAVE_C_PAC… | … |
 | P35.2 | D-P35.2-1 | `implement-spec spec=docs/tickets/346_P35.2__alerting-as-code-and-escalation.md live_verification=true` · landed 346 |
 | P35.21 | D-P35.21-1 | `implement-spec spec=docs/tickets/347_P35.21__partner-name-audit-run.md live_verification=true` · landed 347 |
+| P35.23 | D-P35.23-1 | `implement-spec spec=docs/tickets/348_P35.23__real-data-regression-corpus.md live_verification=true` · landed 348 |
 
 ## Known inconsistencies (preserved, never synthesized)
 
