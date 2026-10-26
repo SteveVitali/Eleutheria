@@ -865,3 +865,29 @@ seed-commit cff579e5
 # findings attributed to 3ee9f131 only; no other commit borrows the
 # exemption.
 seed-commit 3ee9f131
+
+# ── P35.23 in-place folds (row 348; recorded 2026-10-26) ──
+# 77cad905 is the sanctioned forward repair of two findings on this
+# row's own committed PHASE LOG lines: (a) the check_live_claims
+# corpus violation on c37a4009's P35.23 dispatch boundary-confirm
+# (LEDGER.md:1261 — the segment `same-segment live-claim rewords`
+# carried \blive\b with no same-segment negation); and (b) the
+# BM-ORIENT-01 orient-recipe overshoot the same dispatch-boundary
+# commit pushed over (52,582 B > 48 KiB — the same ancestor
+# ledger-budget class recorded on #363–#366, repaired forward on the
+# landing branch, never rewritten at base). The commit folds three
+# committed lines to smaller byte-identical-meaning text (the
+# boundary-confirm, the P35.21 post-closeout record, both in
+# `## PHASE LOG — Round 11 corrections`) — payload facts stand
+# verbatim; the pre-repair bytes are archived byte-for-byte under
+# docs/build/reports/memory-repair/
+# (LEDGER_phaselog_L1261_pre-P35.23-liveclaim.txt,
+# LEDGER_phaselog_L1261_pre-P35.23-orient.txt,
+# LEDGER_phaselog_L1262_pre-P35.23-orient.txt) and the fold is
+# disclosed by the appended `P35.23 correction` PHASE LOG entry in
+# the same commit. The branch rule forbids force-push, so the
+# declaration lands as a later commit. Same sanctioned in-place
+# class as 024eca86/4c4f7161/1aef6b8d/cff579e5. Scope: findings
+# attributed to 77cad905 only; no other commit borrows the
+# exemption.
+seed-commit 77cad905
