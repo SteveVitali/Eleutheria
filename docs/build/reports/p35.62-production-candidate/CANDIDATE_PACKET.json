@@ -1,0 +1,126 @@
+{
+  "packet_version": "candidate-staging-return-pass/1",
+  "row": "339 / P35.62 (R11-ACT-15, round11-11B)",
+  "purpose": "the D-P32.23a-1 return pass: build the real production release candidate over the hosted frozen snapshot (sig.repaired-snapshot/1, frozen_unpublished) — sig-ops release-candidate materializing under the then-active decided ruleset (provisional-ruleset/1 while the S3 spine stays deferred), the compartmented export incl. web/leverage.json + web/tiles/*-sites.pmtiles + web/releases.json, the staged release namespace under staged/ in the private release bucket, and the export-mode web build + DR-C4-01 crawl + real-data island budgets/Lighthouse on the IAM-only staging origins — all with true dates, activate()/rollback() never called, latest.json byte-identical before and after",
+  "status": "prepared_not_executed",
+  "prepared_at": "2026-10-24T20:20:00Z",
+  "prepared_at_commit": "1b453ef396bebcb6d2c8a64241e51e62ca77f9af",
+  "om20_authority": {
+    "listing": "GATE DECISIONS, LEDGER.md — 2026-10-09T17:32Z, GATE-G4 §4, kind pre-authorization: 'pre-authorise the 19 named 11B OM-20 rows in-ticket (P35.5, P35.1a, P35.14a, P35.15a, P35.15b, P35.1b, P35.16, P35.17, P35.22, P35.24, P35.25, P35.26, P35.27, P35.32, P35.41, P35.46, P35.53, P35.59, P35.62)' — 'Approve all 19 (rec.)' (AskUserQuestion selection, Devin Desktop session)",
+    "row_named": true,
+    "expiry": "the next sub-round gate (GATE-G5, or GATE-G4b if the re-split rule fires); voided-by a later operator row in GATE DECISIONS — if the staging leg runs after the listing expires a fresh listing is owed, never assumed",
+    "mutation_set_verbatim": "write the staged release candidate (materialize under the active decided ruleset → the compartmented export → the staged release namespace bytes under staged/ in the private gs://…-sig-release bucket → the export-mode web build artifacts staged on the IAM-only staging origins). No publication, no latest.json change, nothing publicly reachable.",
+    "never": [
+      "no publication — no promote, no activate(), no rollback()",
+      "no latest.json pointer write — byte-identical before and after",
+      "no allow-listed route change, no Cloud Run production roll",
+      "nothing publicly reachable — staged/ objects + IAM-only origins only",
+      "no existing object modified — if-generation-match=0 create-only writes",
+      "no gate tick, no source flip, no human label, no signature"
+    ]
+  },
+  "staging_leg": {
+    "disposition": "queued",
+    "note": "the OM-20 listing stands (the row is named verbatim) but the leg's runtime preconditions are unmet at this record — queued under OM-19 with the verbatim re-run prompt; zero production mutations, zero hosted writes, zero staged objects written",
+    "leg_runs": 1,
+    "exactly_once": "a second stage of the same candidate is a no-op diff under if-generation-match=0 — identical bytes resume-skip (counted, never rewritten), a same-named object with different bytes is a name-collision refusal; nothing staged is ever overwritten (SIG-REL-005)"
+  },
+  "precondition_verdicts": [
+    {
+      "precondition": "the OM-20 listing names this row (the authority half)",
+      "verdict": "met",
+      "evidence": "GATE-G4 §4 (2026-10-09T17:32Z) names P35.62 verbatim — 'Approve all 19 (rec.)'; expiry the next sub-round gate, voided-by a later operator row"
+    },
+    {
+      "precondition": "the input snapshot <live-apply>/REPAIRED_SNAPSHOT.json — sig.repaired-snapshot/1 frozen_unpublished, the live:P35.61 L3 output",
+      "verdict": "unmet",
+      "evidence": "live:P35.61's legs are all queued (its LIVE_PASS_PACKET is prepared_not_executed, PR #359) — no hosted repaired snapshot exists; the only in-tree REPAIRED_SNAPSHOT.json files are the P32.22/P32.23a fixture artifacts, never the hosted one"
+    },
+    {
+      "precondition": "live:P34.46 (the Round-10 schema deploy + roll + 48 h soak) and live:P34.43 L1/L2 (the exec host + sig_audit/sig_recovery logins) upstream of live:P35.61",
+      "verdict": "unmet",
+      "evidence": "both still queued; read-only probes 2026-10-24T20:1xZ: sig-quality-probe-rt service account NOT_FOUND, sig-audit-password + sig-recovery-password secrets NOT_FOUND"
+    },
+    {
+      "precondition": "live:P35.53 release infra — the private …-sig-release bucket (staged/ namespace target), the IAM-only sig-web-staging/sig-api-staging origins, the sig-release job + sig-release-rt",
+      "verdict": "unmet",
+      "evidence": "the infra leg is queued (D-P35.53-1 OPEN); read-only probes 2026-10-24T20:1xZ: the release bucket 404, both staging services not found, the sig-release job not found, sig-release-rt NOT_FOUND"
+    },
+    {
+      "precondition": "the runtime environment — SIG_GCP_PROJECT, SIG_EXEC_IMAGE, SIG_HOSTED_DSN (or the exec-host dispatch path) and any login passwords exported in env",
+      "verdict": "unmet",
+      "evidence": "all unset in the run shell at this record; the gcloud default project is not the operator's"
+    },
+    {
+      "precondition": "AR-2 restore point — every bucket write carries one (the staging writes included)",
+      "verdict": "not taken — nothing ran",
+      "evidence": "a queued leg never reaches the restore-point step; recorded honestly, not fabricated"
+    },
+    {
+      "precondition": "AR-3 etiquette — the hosted reads + staging writes inside a valid window (never 03:00–06:30Z, never inside the monthly day-6→day-13 batch window; preferred weekday 14:00–20:00Z)",
+      "verdict": "note — outside the preferred slot",
+      "evidence": "the run clock is Saturday 2026-10-24 ~20:20Z — outside the preferred weekday slot and a weekend; the credential and host-state preconditions bind first in any case"
+    }
+  ],
+  "rerun_prompt": "implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true",
+  "next_valid_slot": "the next weekday 14:00–20:00Z window once every precondition holds — earliest Monday 2026-10-26T14:00Z, and only if live:P34.46 (+ its 48 h soak), live:P34.43 L1+L2, live:P35.61 (the snapshot input) and live:P35.53 (the staged/ home + staging origins) have all run by then — later in practice",
+  "commands": [
+    "0. pre-state capture (the contract's OM-14 line, verbatim): the bucket staged/ listing, latest.json's bytes (byte-identical after), the frozen snapshot digest, date -u",
+    "1. the hosted candidate build (G2 §4 step 3, verbatim): uv run sig-ops release-candidate --dsn $SIG_HOSTED_DSN --snapshot <live-apply>/REPAIRED_SNAPSHOT.json --plan <plan> --audit <audit> --apply-report <live-apply>/APPLY_REPORT.json --registry <release registry> --out <candidate>/ — frame-verify fail-closed on changed input, +0 rematerialize, the compartmented export (web/leverage.json, web/tiles/*-sites.pmtiles, web/releases.json), the staged release namespace, the disclosure + rollback packet + manifest",
+    "2. the staged write (the authorised mutation): sig-ops release stage --registry $SIG_RELEASE_REGISTRY_URI --work-dir <candidate>/candidate_release --apply — staged/{r,v,s,releases}/<pub>/ + the staged releases/ index under staged/ in the private release bucket, if-generation-match=0 create-only; the export-mode web build artifacts staged on the IAM-only staging origins for the crawl/budget legs",
+    "3. the export-mode web build over the candidate (the C4 command): SIG_DATA_SOURCE=export SIG_EXPORT_DIR=<candidate>/candidate_export npx astro build",
+    "4. the verification legs over the staging origins (identity-token access, never public): the DR-C4-01 link crawl (no non-200 same-origin link except declared 410s), real-data island budgets + Lighthouse (DR-C4-13, C4 NEW-25), and the unauthenticated probe of both staging origins refused",
+    "5. post-state verification (the contract's verification line, verbatim): CANDIDATE_MANIFEST.json validates — frame consistent, materialization.plus_zero, validation complete, pointer_unchanged: true, published: false; every manifest cites the same identity digest; eval-confidence/1 shadow with applied=[]; disclosure 'provisional/review-only'; no date later than the build clock anywhere in the tree; latest.json byte-identical before/after",
+    "6. the executed records land beside docs/build/reports/p32.23a-release-candidate/LIVE_RETURN_PASS.json (append — the prepared record is never rewritten), then the closing re-dispatch (G2 verbatim): implement-spec spec=docs/tickets/188_P32.23a__post-evaluation-release-candidate.md live_verification=true",
+    "7. the OM-19 resume for the staging write itself (this row's re-run prompt): implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true — the build steps re-run deterministically; a second stage of the same candidate is a no-op diff under if-generation-match=0"
+  ],
+  "pins": {
+    "snapshot_version": "sig.repaired-snapshot/1",
+    "freeze_state": "frozen_unpublished — never a preview identity",
+    "ruleset": "provisional-ruleset/1 (or the then-active decided ruleset if the S3 spine has resumed — a resumed-S3 measured decision lands in a NEW candidate, never a mutation of this one)",
+    "candidate_version": "sig.release-candidate/1",
+    "identity_version": "sig.candidate-identity/1",
+    "manifest_version": "sig.candidate-manifest/1",
+    "eval_policy": "eval-confidence/1 — mode shadow, applied=[] at build time",
+    "policy_version": "publication-eligibility/1",
+    "staged_namespaces": "staged/{r,v,s,releases}/<pub>/ — SIG-REL-005 immutable after staging",
+    "registry": "<release registry — env-derived, no bucket literal>",
+    "code_commit": "<pinned at leg — the chain tip the leg runs on>",
+    "superseded_candidate": "p-17b713… — stays superseded by an appended record (B1 option C, Q-12/Q-B1-3); never re-signed, never edited",
+    "closing_redispatch": "implement-spec spec=docs/tickets/188_P32.23a__post-evaluation-release-candidate.md live_verification=true"
+  },
+  "verification_checklist": [
+    "the candidate packet exists with the pinned snapshot digest, the recorded ruleset and the executed command sequence before the staging write lands (the engineered layer — this packet is that record)",
+    "population frame reconciles to the hosted snapshot, digest-for-digest (changed input stops fail-closed)",
+    "rematerialization dependency order ran; the rerun inserted +0",
+    "the release namespace validates complete; every manifest cites the same candidate identity digest",
+    "eval-confidence/1 is shadow with applied=[] at build time",
+    "latest.json is byte-identical before and after staging — pointer_unchanged: true, published: false",
+    "the compartmented export carries web/leverage.json, web/tiles/*-sites.pmtiles and web/releases.json (C4 NEW-26 — the export build is strict about artifacts)",
+    "the export-mode web build + the DR-C4-01 crawl pass; island budgets + Lighthouse measured on real data (DR-C4-13, C4 NEW-25)",
+    "the disclosure is provisional/review-only; no prior preview count is quoted",
+    "no date later than the build clock anywhere in the tree (true dates — as-of ≤ build time, date -u)",
+    "the unauthenticated probe of both staging origins is refused — a staged candidate is not publicly reachable",
+    "the candidate remains unpublished — promotion is P35.63's (the first model release names this candidate's publication id in its HG-11 readout)"
+  ],
+  "explicit_reservations": [
+    "D-P32.23a-1 stays OPEN until the production candidate actually lands — this row reports a queued staging leg, not a landed pass; no lead-token change, no obligation-event transition",
+    "no publication, no HG-11 tick, no source-rights flip, no human label, no signature — the GATE-G3 signature on p-17b713 is superseded and never transfers",
+    "the authorised mutation set is exactly the staged-candidate writes — staged/ namespace objects in the private release bucket + staged artifacts on the IAM-only staging origins; nothing else",
+    "activate()/rollback() are never called; the publication pointer is read before and after staging and a drift is a hard failure",
+    "credentials and secrets are environment-only (HG-09): the project id and bucket names are never literal in any tracked file",
+    "the hosted reads run inside AR-3 etiquette; the staging writes carry the AR-2 restore point as any bucket write does",
+    "a defect found mid-pass pauses and records — production machinery is never patched during the leg",
+    "the p-17b713… publication stays superseded by an appended record — never re-signed, never edited",
+    "a resumed-S3 measured evaluation decision replaces status=deferred in a NEW candidate, never a mutation of this one (the deferral's own rule)",
+    "release trees and staging registries are evicted from the public repository (G3 NEW-5) — the candidate tree never commits; the executed packet records land beside the prepared one",
+    "no assertion of a living record and no claim that a queued write ran — the staged leg reports its real disposition at execution",
+    "the five-measure metrics verification (SIG-CHART-034's open PARTIAL) rides this leg on the production candidate — recorded as owed, never implied done"
+  ],
+  "deferral_dispositions": [
+    {"id": "D-P32.23a-1", "disposition": "open", "note": "the prepared_not_executed candidate-return-pass/1 becomes executed when this leg runs; this row queues it — OPEN unchanged"},
+    {"id": "D-R10-LIVE-1", "disposition": "open", "note": "the upstream snapshot-producing legs (live:P35.61) are queued — this candidate's input does not exist yet"},
+    {"id": "D-R10-PUBLISH-1", "disposition": "open", "note": "publication is P35.63's row — nothing here promotes, points, or exposes"},
+    {"id": "D-P35.53-1", "disposition": "open", "note": "the staged/ home this leg writes into does not exist yet — the release-infra leg is queued"}
+  ]
+}

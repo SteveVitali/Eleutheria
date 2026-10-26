@@ -11,7 +11,7 @@
 | P32.20 | D-P32.20-1 | chain rows 438 **P37.16a** + 439 **P37.16b** (11D family-split, PLAN-11D); packet `docs/build/reports/p32.20-san-diego-dossier/LIVE_RETURN_PASS.json` · landed 1… |
 | P32.21 | D-P32.21-1 | chain rows 438 **P37.16a** + 439 **P37.16b** (11D family-split, PLAN-11D); packet `docs/build/reports/p32.21-acquisition-pilot/ACQ_PILOT_RETURN_PASS.json` · lan… |
 | P32.22 | queued D-R10-LIVE-1 | chain 338 **P35.61** (11B — ≥48 h after P34.46, post-11B writes); packet `docs/build/reports/p32.22-bounded-recovery/LIVE_RETURN_PASS.json` · landed 183 (PR #17… |
-| P32.23a | D-P32.23a-1 | chain 339 **P35.62** (after P35.61); packet `docs/build/reports/p32.23a-release-candidate/LIVE_RETURN_PASS.json` · landed 188 (PR #180) |
+| P32.23a | queued D-P32.23a-1 | chain 339 **P35.62** (after P35.61); packet `docs/build/reports/p32.23a-release-candidate/LIVE_RETURN_PASS.json` · landed 188 (PR #180) |
 | P32.25 | D-R10-PUBLISH-1 | chain 341 **P35.63** (after P35.62); rollback cases `docs/build/reports/p32.25-accepted-release-verification/LIVE_RETURN_PASS.json` · landed 191 (PR #182) |
 | — | HG-05 (old P23.1 row; no deferral) | none — operator action, not in `returnPass` |
 | P34.3 | D-P34.3-1 | the OM-19 `r11/P34.3-live-<n>` dispatch or `implement-spec spec=docs/tickets/204_P34.3__ops-data-protection.md live_verification=true` — `protect.sh --apply` → … |
@@ -55,5 +55,6 @@
 | P35.53 | D-P35.53-1 | `SIG_RELEASE_AUTHOR="$(git config user.name)" bash ops/gcp/release-infra.sh --apply all`, or `implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-… |
 | P35.59 | queued dark cutover (`ops/gcp/web-cutover.sh --apply all`): AR-2 prestate+manifest → `staged/v/legacy-<YYYYMMDD>/` floor import → `conf/0`+carry+`serving.json` … | `SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all`, or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_ve… |
 | P35.61 | queued live half of P32.22's open recovery deferral + F-522 (chain 338): L1 `sig-ops evidence-audit` + `recovery-plan` (read-only) → L2 operator plan-review pau… | `implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` · landed 338 (PR #359 — all legs queued; D-R10-LIV… |
+| P35.62 | queued live half of P32.23a's open candidate deferral (chain 339): `sig-ops release-candidate` over the hosted `sig.repaired-snapshot/1` `frozen_unpublished` sn… | `implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true` · landed 339 (PR #360 — staging leg queued; D-P32.23a-1 st… |
 
 ← back: CURRENT.md

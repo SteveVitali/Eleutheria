@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "0a8c8732e433b45cd84e06611e241f8f5bdc6193",
-  "manifest_inputs": 1104,
+  "input_commit": "4a0862e8e7abd61991d0fa2e1a05d859ab8ecab8",
+  "manifest_inputs": 1105,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P35.62",
-    "lastCompleted": "P35.61",
+    "nextTicket": "PLAN-11C",
+    "lastCompleted": "P35.62",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.67,P36.12",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.67,P36.12",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.61-round10-live-pass-audit-apply-freeze",
+    "chainTip": "r11/P35.62-round10-production-candidate",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-24T18:53Z"
+    "updatedAt": "2026-10-24T21:32Z"
   },
   "counts": {
     "obligations": 182,
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 820,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 51,
+    "return_pass_rows": 52,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -9509,7 +9509,7 @@
       },
       {
         "key": "P32.23a",
-        "obligations_cell": "D-P32.23a-1",
+        "obligations_cell": "queued D-P32.23a-1",
         "gates_cell": "hosted, staged only; OM-20 named mutation",
         "operator_cell": "list it on the GATE-G4 pre-authorisation, else in-ticket go (staged candidate, no publication)",
         "rerun_cell": "chain 339 **P35.62** (after P35.61); packet `docs/build/reports/p32.23a-release-candidate/LIVE_RETURN_PASS.json` · landed 188 (PR #180)",
@@ -9889,6 +9889,14 @@
         "gates_cell": "hosted, production write — QUEUED (L1 read-only checks 2026-10-24T18:20Z Sat: `sig-quality-probe-rt` SA + both login secrets NOT_FOUND, `SIG_GCP_PROJECT`/`SIG_EXEC_IMAGE`/`SIG_HOSTED_DSN`/passwords unset, `live:P34.46` + `live:P34.43` L1/L2 still queued); never pre-authorised — L2 is a stop-and-pause; L3 needs the operator's verbatim in-ticket go naming the `--authority` scope; window AR-3+AR-2 weekday 14:00–20:00Z, excl. weekends + 03:00–06:30Z, before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, earliest 2026-10-26T14:00Z",
         "operator_cell": "L2: operator reviews the recorded plan and fixes the apply scope (1–4 h); L3 runs only on the operator's verbatim in-ticket go naming the `--authority` scope — the apply never starts on silence; rollback = recorded prestate",
         "rerun_cell": "`implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` · landed 338 (PR #359 — all legs queued; D-R10-LIVE-1 still OPEN, never ran)",
+        "obligations": []
+      },
+      {
+        "key": "P35.62",
+        "obligations_cell": "queued live half of P32.23a's open candidate deferral (chain 339): `sig-ops release-candidate` over the hosted `sig.repaired-snapshot/1` `frozen_unpublished` snapshot → `+0` rematerialize → compartmented export (`web/leverage.json`, `web/tiles/*-sites.pmtiles`, `web/releases.json`) → `sig-ops release stage` staged/{r,v,s,releases}/<pub>/ + IAM-only staging origins → export-mode web build + DR-C4-01 crawl + budgets; packet `docs/build/reports/p35.62-production-candidate/CANDIDATE_PACKET.{json,md}` prepared_not_executed",
+        "gates_cell": "hosted, staged only — QUEUED (read-only probes 2026-10-24T20:1xZ Sat: `live:P35.61` legs all queued → no hosted snapshot, `live:P34.46`+`live:P34.43` L1/L2 + `live:P35.53` still queued — bucket 404, staging origins/job/SA + `sig-quality-probe-rt` + both login secrets NOT_FOUND, `SIG_GCP_PROJECT`/`SIG_EXEC_IMAGE`/`SIG_HOSTED_DSN` unset); OM-20 listed — GATE-G4 §4 (P35.62; expires next GATE, OM-10); window AR-3+AR-2 weekday 14:00–20:00Z, excl. weekends + 03:00–06:30Z, before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.61` (the snapshot), before `live:P35.53` (the staged/ home), earliest 2026-10-26T14:00Z; staged/ create-only `if-generation-match=0`, never a pointer/latest.json/public write",
+        "operator_cell": "nothing until the re-run — the leg stages the candidate only; activation/rollback/promotion stay P35.63's under HG-11",
+        "rerun_cell": "`implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true` · landed 339 (PR #360 — staging leg queued; D-P32.23a-1 still OPEN, never ran)",
         "obligations": []
       }
     ]
@@ -19979,10 +19987,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "1de590329d4e0a542e508bc87d4e493d9e92f1d749a0729d2d1f432deb44eaf5",
+  "manifest_sha256": "b724a6e655bc86cef7fe819d992df7bd8b982390c79c207dea18a25073f57f7f",
   "current_md": {
     "lines": 63,
-    "bytes": 16364,
+    "bytes": 16358,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
