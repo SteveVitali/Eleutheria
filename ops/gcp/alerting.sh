@@ -149,9 +149,11 @@ export SIG_API_IMAGE="${SIG_AR_HOST}/${SIG_GCP_PROJECT}/${SIG_AR_REPO}/sig-api"
 # ---- constants --------------------------------------------------------------
 
 # AR-3 windows (the batch windows the contract's roll stays outside of):
-AR3_WINDOWS="2026-10-06T00:00:00Z 2026-10-13T12:00:00Z
-2026-11-06T00:00:00Z 2026-11-13T12:00:00Z
-2026-12-06T00:00:00Z 2026-12-13T12:00:00Z"
+AR3_WINDOWS="2026-10-06T00:00:00Z 2026-10-13T12:00:00Z"
+AR3_WINDOWS="$AR3_WINDOWS
+2026-11-06T00:00:00Z 2026-11-13T12:00:00Z"  # future-ok: scheduled: the November AR-3 batch window the roll stays outside of
+AR3_WINDOWS="$AR3_WINDOWS
+2026-12-06T00:00:00Z 2026-12-13T12:00:00Z"  # future-ok: scheduled: the December AR-3 batch window the roll stays outside of
 
 EVIDENCE_ROOT="${SIG_ALERTING_EVIDENCE_DIR:-${_here}/../../docs/build/logs/alerting}"
 DEFS_DIR="${_here}/../monitoring"

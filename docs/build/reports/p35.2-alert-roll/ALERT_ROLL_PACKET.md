@@ -7,9 +7,10 @@ escalation (SIG-OPS-006, SIG-OPS-007; codifies and extends P34.4).
 **Status: `prepared_not_executed` — no production write was
 attempted, no `gcloud`/`gh`/`storage` mutation ran, no Monitoring
 resource was touched.** The roll is a named mutation (OM-20: the
-GATE-G5 list names this row verbatim); its live leg additionally
-needs the hosted environment and a valid AR-3 + AR-2 window, and
-neither held at the run clock. Deferred: `D-P35.2-1`
+GATE-G5 list names this row verbatim); its queued live leg
+additionally needs the hosted environment — absent here — and a
+valid AR-3 + AR-2 window, and neither held at the run clock.
+Deferred: `D-P35.2-1`
 (`docs/tickets/DEFERRALS.md`).
 
 Machine-readable twin: `ALERT_ROLL_PACKET.json`
@@ -20,10 +21,10 @@ Machine-readable twin: `ALERT_ROLL_PACKET.json`
 - **Hosted environment absent.** `SIG_GCP_PROJECT` is unset and no
   Application Default Credentials are configured in this shell —
   `lib.sh require_adc` would refuse (exit 3) before any mutation.
-- **Window posture.** The run clock (Sunday 2026-10-26 ~07:38Z) is
+- **Window posture.** The run clock (Monday 2026-10-26 ~07:38Z) is
   outside the preferred weekday 14:00–20:00Z AR-3 slot and inside no
-  batch window; the roll is operator-windowed work, never a
-  Sunday-night write. AR-2's on-demand backup first is the
+  batch window; the roll is operator-windowed work, never an
+  off-hours write. AR-2's on-demand backup first is the
   operator's recorded step — it was not taken.
 - **OM-20 naming holds** — the GATE-G5 list names this row — but a
   named mutation still runs only inside its window with its
@@ -37,8 +38,8 @@ Machine-readable twin: `ALERT_ROLL_PACKET.json`
 implement-spec spec=docs/tickets/346_P35.2__alerting-as-code-and-escalation.md live_verification=true
 ```
 
-Resumed apply is **idempotent-reconcile**: every leg reads live
-state first and either converges or skips (`SKIP retention` /
+Resumed apply is **idempotent-reconcile**: every leg reads live state before
+writing and either converges or skips (`SKIP retention` /
 `SKIP versioning` / create→update-in-place) — it never re-creates a
 resource that already matches the committed def.
 
@@ -110,8 +111,7 @@ text (`ops/monitoring/*.json`, `ops/cadence.toml`) plus:
 
 ## The monthly delivery test (after the roll)
 
-`probe-hosted --extra-target
-forced-failure-drill=https://does-not-exist.invalid.example --alert`
+`probe-hosted --extra-target forced-failure-drill=https://does-not-exist.invalid.example --alert`
 on the rolled `sig-probe` produces a DOWN row → the recorded alert →
 `SIG-ALERT` log line → the log-match policy's incident → e-mail in
 < 1 h (SIG-OPS-006's AC). The mechanism stays available in

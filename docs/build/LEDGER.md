@@ -7,9 +7,9 @@
 
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # P37.2 landed(345); 5 legs QUEUED (returnPass)
-nextTicket: P35.2 # row 346 — alerting-as-code-and-escalation
-lastCompleted: P37.2 # row 345 — wave-c-osm-national-alpr-layer 2026-10-26
+projectStatus: IN_PROGRESS # P35.2 landed(346); 1 leg QUEUED (returnPass)
+nextTicket: P35.21 # row 347 — partner-name-audit-run
+lastCompleted: P35.2 # row 346 — alerting-as-code-and-escalation 2026-10-26
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.12,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P37.2-wave-c-osm-national-alpr-layer # P37.2 landed on this tip; P35.2 stacks here
+chainTip: r11/P35.2-alerting-as-code-and-escalation # P35.2 landed on this tip; P35.21 stacks here
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-26T05:15Z
+updatedAt: 2026-10-26T12:58Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1250,3 +1250,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-26 — P37.2 post-closeout record — `be4a2ec5` `ci: pass #365@be4a2ec` 5/5 head-bound (run 40278977637; `reports/ci/p37_2_pr365.json`) · #364/#363 tips docs-red on base-tip records — #364: BM-ORIENT-01 at the dispatch-boundary nextTicket flip, resolved at this head; #363: P37.1's forward repair; `main` untouched · local reds env-class (leak-check sentinel / p34_18 handles / serving containerd) — CI green · 5 legs QUEUED · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-26 — P35.2 dispatch boundary-confirm — `ci: pass #365@759589a` 5/5 head-bound on the record head (run 40282416729: python/docs/composed/security/web; `reports/ci/p37_2_pr365.json`) · stack #364–#352 pass, `main` d47d7b0 descends:no merges:0 open-other:0 · P37.2 landed: `sig-ops wave-c` gate/plan + `ops/gcp/wave-c.sh` + `paused_until` binding + cadence retarget to monthly + two mirror-target retirement rows declared + `WAVE_C_PACKET`/`WAVE_C_RUNBOOK` + 74 tests — **all five live legs honestly QUEUED** (strict window binds 11-16; PKG-07 legs unlanded so the 10-26 earliest predicate fails; hosted creds absent; tier-bump go never borrowed from ING-GO-C) · fix arc: `prior_source_id`/`mirror_of` declared-lineage form, future-ok markers on scheduled literals, `date.today`→`datetime.now(UTC)`, BUILD_INDEX `|` escape — **ancestor reds recorded honestly**: #364 tip docs-red on a BM-ORIENT-01 overshoot caused by the prior boundary nextTicket flip (repaired forward on #365, never rewritten at base) · deferrals +0/−0 (`D-R11-OSMUID-1`+`D-P34.49-2` closed by P37.1) · dispatching P35.2 (row 346 — alerting-as-code + escalation: `live_verification=false`; **OM-20 NAMED at GATE-G5** — the alert roll is pre-authorised in-ticket under AR-2/AR-3, but hosted creds absent + Sunday outside the preferred band → the roll leg queues per OM-19 while the IaC + machinery + packet land; dep P34.4 landed) · chainTip → r11/P37.2-… · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-26 — P35.2 interruption + resume — the first P35.2 worker exited mid-closeout after completing the implementation and drafting all records: `ops/src/ops/alerting.py` + `ops/gcp/alerting.sh` (the roll machinery), `ops/monitoring/` IaC + uptime-check edits, `cli.py`/`scheduled.py` verbs, test fixtures + `test_p35_2_alerting.py` (737 ln), the prepared_not_executed packet `reports/p35.2-alert-roll/`, `D-P35.2-1` + `D-P34.4-3` DEFERRALS rows, `D-P35.2-1:e0` migration anchor, run ledger (ACs ticked), `pr/P35.2.md`, BUILD_INDEX row 346, RETURN PASS row, `returnPass` + P35.2 — all WIP preserved verbatim, uncommitted (P35.58/`49dc2461`, P35.64/`bcc07178` precedent); the resume worker verifies the work, writes the remaining closeout entries, regens the projection last, runs the gates, pushes, opens the PR · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-26 — P35.2 done — row 346 (R11-OPS-02): alerting-as-code landed — `ops/src/ops/alerting.py` (`renotify_due` once-daily rule SIG-OPS-006, uptime-def→`gcloud` argv, `measured_gate` SIG-ENG-042, the 99.5% monthly SLO readout — no-data never 100%, SIG-OPS-007) · bundle-driven probe targets via `SIG_OPS_DECLARED_GCS` (`scheduled.py` external loader + `cli.py` `probe-hosted`/`slo-readout`/`observe-gate`/`render-uptime` — cadence edits at bundle publish, never an image roll, SIG-OPS-005/G1-02a) · `ops/monitoring/` — `notificationRateLimit 86400s` on the three Track-0.5 defs (all six rate-limited; the D-P34.4-3 def half), uptime defs `apply:"update"` + 3 regions + site content match · `ops/gcp/alerting.sh` — `--check` plan-only `check OK`; `--apply` ADC+project gated (exit 3), AR-3 window guard (exit 42, unforceable); legs prestate→bundle→policies(channel gate)→uptime→retention(30→90)→versioning→proberoll(digest-pinned)→verify (0 DRIFT; a `:latest` sig-alerts is DRIFT) · `observability.yml` measured-nothing gate · packet `reports/p35.2-alert-roll/` prepared_not_executed + PLAN.txt verbatim · **the alert roll QUEUED `prepared_not_executed` (D-P35.2-1)** — OM-20 named verbatim at GATE-G5 (pre-authorised, still windowed); hosted env absent (no ADC/`SIG_GCP_PROJECT`), outside the preferred band, AR-2 not taken — zero production mutations · tests: 53 p35_2 + 33 alerts-iac + 41 gcp-iac; ruff/format/mypy/bash -n clean · resume-worker fix arc on the preserved WIP `7df5cbf1`: test-count repair 118→33 (IR-BI-17 + unmerged-record edits), "Sunday"→Monday (2026-10-26 is a Monday; the pushed copies carry an appended correction, never a rewrite), OM-05/CI-2/AC-8 cells de-ticked to PENDING until the head-bound read · deferrals +1/−0 (`D-P35.2-1` opened `:e0`; `D-P34.4-3` annotated OPEN) · chainTip → r11/P35.2-… · next → P35.21 · harness: devin-desktop/swe-2-high/subagent

@@ -4,19 +4,19 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `759589ab39d4e63030c091eb8cb96933e1f15df1` · inputs hashed: 1111 · wall-clock receipt: `receipt.json`
+> input_commit: `7df5cbf100daf78543d58731649954d22e455b89` · inputs hashed: 1112 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P35.2` · lastCompleted `P37.2`
-- chainTip `r11/P37.2-wave-c-osm-national-alpr-layer` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-26T05:15Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P35.21` · lastCompleted `P35.2`
+- chainTip `r11/P35.2-alerting-as-code-and-escalation` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-26T12:58Z`
 
 ## Obligations
 
-- 182 obligations · **101 owed** (98 OPEN, 3 PARTIAL) · 81 terminal
-- 680 events (44 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 183 obligations · **102 owed** (99 OPEN, 3 PARTIAL) · 81 terminal
+- 681 events (44 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 101 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 102 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -79,6 +79,7 @@
 | P35.63 | queued release-exposure half of the publish deferral (home: P32.25): L1 staged cut → V1–V15 → classify `class_s` → agent-drafted HG-11 readout (unsigned) · L2 p… | `implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (resumes at L2's promote once signed — re-staged cut … |
 | P35.64 | queued 11B acceptance sweep + GATE-G5 packet leg: read-only crawl of the promoted release/API/`sig-public`/`sig-registry` + ledger surface (counts only) + the p… | `implement-spec spec=docs/tickets/342_P35.64__sub-round-11b-acceptance.md live_verification=true` · landed 342 (PR #363) |
 | P37.2 | Wave-C sequence L1→L5 (pre-grow → tier bump after the go → national run → 24 h soak read → revert); missed leg reported; packet `reports/p37.2-wave-c/WAVE_C_PAC… | … |
+| P35.2 | D-P35.2-1 | `implement-spec spec=docs/tickets/346_P35.2__alerting-as-code-and-escalation.md live_verification=true` · landed 346 |
 
 ## Known inconsistencies (preserved, never synthesized)
 

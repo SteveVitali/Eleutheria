@@ -63,7 +63,7 @@ from ops import monitoring_defs as md  # noqa: E402
 
 INSIDE_FREEZE = "2026-10-26T04:00:00Z"  # 03:00–06:30Z daily AR-3 freeze
 INSIDE_FREEZE_LATE = "2026-10-26T06:15:00Z"
-OPEN_WINDOW = "2026-10-26T15:00:00Z"  # outside the freeze + AR-3 windows
+OPEN_WINDOW = "2026-10-26T15:00:00Z"  # future-ok: synthetic: fixture instant outside the windows
 INSIDE_AR3 = "2026-10-08T12:00:00Z"  # AR-3 batch window — future-ok: scheduled: AR-3 window
 
 PROJECT = "sig-fixture-project"  # a fixture id — the real id is never committed (OP-07)
