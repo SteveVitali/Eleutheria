@@ -1,0 +1,57 @@
+note: SIG_GCP_PROJECT is unset — check mode uses a placeholder id.
+==============================================================
+SIG alerting roll — P35.2 (mode=check action=all)
+  project=<SIG_GCP_PROJECT-unset> region=us-central1
+==============================================================
+PLAN: capture monitoring channel/uptime/policy lists, _Default retention
+PLAN: describe, sig-restricted bucket describe (versioning), sig-probe job
+PLAN: describe + image + env, sig-alerts service describe (digest record),
+PLAN: sig-web-cert describe, declaration bundle head -> $SIG_ALERTING_EVIDENCE_DIR/pre-<ts> (+sha256s)
+PLAN: sig-ops live-diff --emit-declared | gcloud storage cp - gs://-sig-restricted/ops/declared/live-diff.json
+PLAN:   # the probe-target declaration the sig-probe job reads via
+PLAN:   # SIG_OPS_DECLARED_GCS — a cadence edit needs no image roll (G1-02a)
+PLAN: gate: operator e-mail channel present+enabled (P34.4's; else exit 42)
+PLAN: render ops/monitoring/alert-policy.api-uptime.json -> gcloud alpha monitoring policies
+PLAN:   update <id> --policy-from-file=<rendered> (or create when absent;
+PLAN:   rollback: re-apply the captured prior body / delete the new id)
+PLAN: render ops/monitoring/alert-policy.disk-utilization.json -> gcloud alpha monitoring policies
+PLAN:   update <id> --policy-from-file=<rendered> (or create when absent;
+PLAN:   rollback: re-apply the captured prior body / delete the new id)
+PLAN: render ops/monitoring/alert-policy.job-failures.json -> gcloud alpha monitoring policies
+PLAN:   update <id> --policy-from-file=<rendered> (or create when absent;
+PLAN:   rollback: re-apply the captured prior body / delete the new id)
+PLAN: render ops/monitoring/alert-policy.sig-alert-log.json -> gcloud alpha monitoring policies
+PLAN:   update <id> --policy-from-file=<rendered> (or create when absent;
+PLAN:   rollback: re-apply the captured prior body / delete the new id)
+PLAN: render ops/monitoring/alert-policy.site-uptime.json -> gcloud alpha monitoring policies
+PLAN:   update <id> --policy-from-file=<rendered> (or create when absent;
+PLAN:   rollback: re-apply the captured prior body / delete the new id)
+PLAN: render ops/monitoring/alert-policy.tls-cert-expiry.json -> gcloud alpha monitoring policies
+PLAN:   update <id> --policy-from-file=<rendered> (or create when absent;
+PLAN:   rollback: re-apply the captured prior body / delete the new id)
+PLAN: resolve live uptime-check id for uptime-check.api (displayName match) ->
+PLAN:   sig-ops monitoring-defs render-uptime --slug uptime-check.api --check-id <id>
+PLAN:   gcloud monitoring uptime <rendered argv>  (create when absent)
+PLAN: resolve live uptime-check id for uptime-check.site (displayName match) ->
+PLAN:   sig-ops monitoring-defs render-uptime --slug uptime-check.site --check-id <id>
+PLAN:   gcloud monitoring uptime <rendered argv>  (create when absent)
+PLAN: gcloud logging buckets describe _Default --location=global  # capture prior days
+PLAN: gcloud logging buckets update _Default --location=global --retention-days=90
+PLAN:   rollback: update --retention-days=<captured prior>
+PLAN: gcloud storage buckets describe gs://-sig-restricted  # capture versioning posture
+PLAN: gcloud storage buckets update gs://-sig-restricted --versioning
+PLAN:   # covers ops/probes/ + ops/runs/ on the restricted bucket (G1-05;
+PLAN:   # append-only — prior probe evidence stays tamper-evident)
+PLAN:   rollback: gcloud storage buckets update gs://-sig-restricted --no-versioning
+PLAN: publish declaration bundle (bundle leg) + assert SIG_OPS_DECLARED_GCS
+PLAN:   env on sig-probe: --update-env-vars SIG_OPS_DECLARED_GCS=gs://-sig-restricted/ops/declared/live-diff.json
+PLAN: git archive --format=tar.gz HEAD > <tmp>/ctx.tgz && gcloud builds submit <tmp>/ctx.tgz
+PLAN:   --config <tmp>/cloudbuild.yaml   # docker build -f ops/Dockerfile -t us-central1-docker.pkg.dev/<SIG_GCP_PROJECT-unset>/sig/sig-api:p35-2-cdaa59fb
+PLAN: pin_image_digest us-central1-docker.pkg.dev/<SIG_GCP_PROJECT-unset>/sig/sig-api:p35-2-cdaa59fb -> <repo>@sha256:<digest>      (never :latest, ADR-111)
+PLAN: uv run sig-ops roll-jobs --job sig-probe --image <digest> --apply --record <dir>/proberoll.record.json
+PLAN:   rollback: sig-ops roll-jobs --job sig-probe --image <recorded before_digest>
+PLAN: capture the posture rows -> /Users/stevenvitali/Eleutheria/ops/gcp/../../docs/build/logs/alerting/verify-20261026T073832Z, then
+PLAN: sig-ops monitoring-defs verify --from-state /Users/stevenvitali/Eleutheria/ops/gcp/../../docs/build/logs/alerting/verify-20261026T073832Z --project <p>
+PLAN: + _Default retention=90 + restricted versioning + sig-probe pin/env
+PLAN: + sig-alerts digest pin (§3.3); exit 1 on any non-OK
+check OK

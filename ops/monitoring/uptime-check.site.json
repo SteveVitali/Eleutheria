@@ -1,18 +1,29 @@
 {
   "_sig": {
-    "apply": "diff-only",
+    "apply": "update",
     "displayName": "SIG site surveillancegraph.org",
     "id": "sig-site-surveillancegraph-org-F2yZbTB73dw",
     "kind": "uptime",
-    "source": "track0.5-live-export-2026-10-02"
+    "source": "track0.5-live-export-2026-10-02 + P35.2 (3 regions + content match per G1 §3.5 synthetic row)"
   },
   "checkerType": "STATIC_IP_CHECKERS",
   "displayName": "SIG site surveillancegraph.org",
+  "selectedRegions": [
+    "USA_IOWA",
+    "EUROPE",
+    "ASIA_PACIFIC"
+  ],
   "httpCheck": {
     "path": "/",
     "port": 443,
     "requestMethod": "GET",
-    "useSsl": true
+    "useSsl": true,
+    "contentMatchers": [
+      {
+        "content": "Surveillance Infrastructure Graph",
+        "matcher": "CONTAINS_STRING"
+      }
+    ]
   },
   "monitoredResource": {
     "labels": {

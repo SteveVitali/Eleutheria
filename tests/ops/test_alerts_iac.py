@@ -86,7 +86,9 @@ def test_every_def_loads_with_a_sane_envelope() -> None:
     kinds = {d.kind for d in defs}
     assert kinds == {"channel", "uptime", "policy"}
     assert sum(1 for d in defs if d.apply == "create") == 2
-    assert sum(1 for d in defs if d.apply == "update") == 4
+    # P35.2: the two uptime defs moved diff-only -> update (the roll applies
+    # the 3-region + content-match posture); the channel stays diff-only.
+    assert sum(1 for d in defs if d.apply == "update") == 6
 
 
 def test_defs_have_no_volatile_fields_or_literal_project_or_email() -> None:

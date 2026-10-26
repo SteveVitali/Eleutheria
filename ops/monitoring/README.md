@@ -26,13 +26,38 @@ Every file carries a `_sig` envelope the verify engine and apply path use:
 
 - `id` — the server-side id the def matches on (the suffix of `name`). `null`
   matches by `displayName` — used for policies this change creates (no id yet).
-- `apply` — `update`/`create`: `alerts.sh --apply` may write this def
+- `apply` — `update`/`create`: the roll scripts (`alerts.sh` for P34.4's named
+  set; `alerting.sh` for P35.2's full reconciliation) may write this def
   (`gcloud monitoring policies update <id> --policy-from-file` /
-  `… create --policy-from-file`). `diff-only`: never written by the script —
-  the channel and uptime checks predate this row (Track 0.5); their recreation
-  is P35.2 scope.
+  `… create --policy-from-file`; uptime defs render `gcloud monitoring uptime`
+  flags via `sig-ops monitoring-defs render-uptime`). `diff-only`: never
+  written — the operator e-mail channel stays P34.4's mechanism (its creation
+  is never this roll's; P35.2 binds policies to it).
 - `source` — where the definition came from (a dated live export or the
   authoring ticket).
+
+## P35.2 additions (SIG-OPS-006/007)
+
+- **`alertStrategy.notificationRateLimit {period: "86400s"}` on every policy**
+  — the >24 h-red condition re-notifies once daily (the hygiene row of G1
+  §3.5's design table; D-P34.4-3's general-escalation leg). The executable
+  rule the drill and roll cite lives in `ops/src/ops/alerting.py`
+  (`renotify_due`).
+- **Uptime checks carry `selectedRegions` (3 regions) and the site check a
+  `contentMatchers` row** (`Surveillance Infrastructure Graph` on `/`) — the
+  G1 §3.5 "synthetic" row: 5-minute cadence from 3 regions on the canonical
+  public origin (LB-fronted `surveillancegraph.org`) and the API `/health`.
+- **`sig-alerts` posture (G1 §3.3)** — the service is kept only as a
+  repo-owned, IAM-authenticated, digest-pinned record: its runtime identity
+  (`sig-alerts-rt`) and invoker bindings are declared in
+  `ops/iam_identities.toml` (P34.42a); `alerting.sh --verify` asserts the
+  deployed image is a `@sha256:` digest — a `:latest` or tag reference is
+  DRIFT (SIG-SEC-008, F-12). The e-mail channel + Monitoring policies are the
+  delivery path; the service is the webhook receiver record.
+- **`alerting.sh` is the roll** — prestate → bundle → policies → uptime →
+  retention → versioning → proberoll → verify; every mutating leg is
+  windowed (never 03:00–06:30Z, never an AR-3 batch window), idempotent and
+  reversible from its captured pre-state.
 
 ## Invariants (tests pin them)
 

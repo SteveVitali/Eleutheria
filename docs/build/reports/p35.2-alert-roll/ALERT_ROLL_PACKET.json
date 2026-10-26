@@ -1,0 +1,52 @@
+{
+  "schema": "alert-roll-packet/1",
+  "ticket": "P35.2",
+  "spec": "docs/tickets/346_P35.2__alerting-as-code-and-escalation.md",
+  "status": "prepared_not_executed",
+  "prepared_at": "2026-10-26T07:38Z",
+  "deferral": "D-P35.2-1",
+  "rerun_prompt": "implement-spec spec=docs/tickets/346_P35.2__alerting-as-code-and-escalation.md live_verification=true",
+  "reason_not_executed": [
+    "hosted environment absent: SIG_GCP_PROJECT unset, no ADC (require_adc refuses)",
+    "run clock outside the preferred weekday 14:00-20:00Z AR-3 band; AR-2 backup-first step not taken",
+    "production writes are windowed (AR-3 + AR-2): never 03:00-06:30Z, never an AR-3 batch window"
+  ],
+  "apply_sequence": [
+    "ops/gcp/alerting.sh --apply prestate",
+    "ops/gcp/alerting.sh --apply bundle",
+    "ops/gcp/alerting.sh --apply policies",
+    "ops/gcp/alerting.sh --apply uptime",
+    "ops/gcp/alerting.sh --apply retention",
+    "ops/gcp/alerting.sh --apply versioning",
+    "ops/gcp/alerting.sh --apply proberoll",
+    "ops/gcp/alerting.sh --verify"
+  ],
+  "prestate_captures": [
+    "channels.json",
+    "uptime-checks.json",
+    "alert-policies.json",
+    "log-retention.json",
+    "restricted-bucket.json",
+    "sig-probe.job.json",
+    "sig-probe.image.txt",
+    "sig-probe.declared-env.txt",
+    "sig-alerts.service.json",
+    "sig-alerts.image.txt",
+    "ssl-cert.json",
+    "policy.<id>.prior.json",
+    "uptime.<id>.prior.json",
+    "declared-bundle.prior.json",
+    "sha256s.txt"
+  ],
+  "rollback": {
+    "policy_update": "policies update <id> --policy-from-file=<captured prior>",
+    "policy_create": "policies delete <new id>",
+    "uptime_update": "re-apply uptime.<id>.prior.json via render-uptime flags",
+    "uptime_create": "gcloud monitoring uptime delete <new id>",
+    "retention": "logging buckets update _Default --retention-days=<captured>",
+    "versioning": "storage buckets update --no-versioning",
+    "bundle": "storage cp <prior bundle> gs://\u2026/ops/declared/live-diff.json",
+    "proberoll": "roll-jobs --job sig-probe --image <recorded before-digest>"
+  },
+  "idempotent_reconcile": true
+}

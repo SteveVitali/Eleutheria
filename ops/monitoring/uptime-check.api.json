@@ -1,13 +1,18 @@
 {
   "_sig": {
-    "apply": "diff-only",
+    "apply": "update",
     "displayName": "SIG API health",
     "id": "sig-api-health-or4_q7yICx4",
     "kind": "uptime",
-    "source": "track0.5-live-export-2026-10-02"
+    "source": "track0.5-live-export-2026-10-02 + P35.2 (3 regions per G1 §3.5 synthetic row)"
   },
   "checkerType": "STATIC_IP_CHECKERS",
   "displayName": "SIG API health",
+  "selectedRegions": [
+    "USA_IOWA",
+    "EUROPE",
+    "ASIA_PACIFIC"
+  ],
   "httpCheck": {
     "path": "/health",
     "port": 443,

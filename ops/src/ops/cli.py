@@ -1172,6 +1172,55 @@ def build_parser() -> argparse.ArgumentParser:
         help="latency window per target for the p95 (default: last 20 probes)",
     )
 
+    # --- P35.2 (SIG-OPS-006/007): the SLO readout + the measured-nothing gate --
+    slo = sub.add_parser(
+        "slo-readout",
+        help="generate the monthly 99.5%% availability readout (SIG-OPS-007) "
+        "over stored ops/probes sweep rows into docs/build/reports/; fails when "
+        "it measured nothing (SIG-ENG-042)",
+    )
+    slo.add_argument("--month", required=True, help="YYYY-MM")
+    slo.add_argument(
+        "--local",
+        default=None,
+        help="read a local JSONL probe log (repeatable — concat several sweeps); "
+        "the offline path (no GCS bucket configured)",
+        action="append",
+    )
+    slo.add_argument(
+        "--gcs-bucket",
+        default=None,
+        help="bucket holding the sweeps (default: SIG_OPS_GCS_BUCKET)",
+    )
+    slo.add_argument(
+        "--cadence",
+        default=None,
+        help="ops/cadence.toml path (for the probe prefix; default packaged)",
+    )
+    slo.add_argument(
+        "--out",
+        default=None,
+        help="readout path (default docs/build/reports/slo-<month>.md)",
+    )
+    slo.add_argument(
+        "--objective",
+        type=float,
+        default=99.5,
+        help="the monthly availability objective pct (default 99.5 — SIG-OPS-007)",
+    )
+
+    gate = sub.add_parser(
+        "observe-gate",
+        help="SIG-ENG-042 gate for .github/workflows/observability.yml: read the "
+        "offered/evaluated counts file and FAIL when a scheduled check measured "
+        "nothing",
+    )
+    gate.add_argument(
+        "--counts",
+        required=True,
+        help="the counts file — one `key=N` line per leg (*_offered / *_evaluated)",
+    )
+
     ingest = sub.add_parser(
         "scheduled-ingest",
         help="run one source live through the gated connector and append the run "
@@ -1797,6 +1846,20 @@ def build_parser() -> argparse.ArgumentParser:
         "--slug", required=True, help="file stem, e.g. alert-policy.tls-cert-expiry"
     )
     mrender.add_argument("--project", default=None, help="GCP project (default: SIG_GCP_PROJECT)")
+    mruptime = msub.add_parser(
+        "render-uptime",
+        help="print an uptime-check def's gcloud argv (JSON list): `uptime "
+        "update <check-id> …` when --check-id is given, else `uptime create …` "
+        "— the P35.2 uptime leg's flag set, never a hand-built command",
+    )
+    mruptime.add_argument("--defs", default=None, help="definitions dir (default: ops/monitoring)")
+    mruptime.add_argument("--slug", required=True, help="file stem, e.g. uptime-check.site")
+    mruptime.add_argument("--project", default=None, help="GCP project (default: SIG_GCP_PROJECT)")
+    mruptime.add_argument(
+        "--check-id",
+        default=None,
+        help="the live uptime-check config id to update (empty => render create)",
+    )
 
     dash = sub.add_parser(
         "dashboard",
@@ -4181,14 +4244,20 @@ def _cmd_probe_hosted(args: argparse.Namespace) -> int:
     from .observe import ProbeLog, prune_jsonl
     from .scheduled import (
         RELEASE_PROBE_KINDS,
-        load_cadence,
+        load_cadence_external,
         probe_hosted,
         resolve_targets,
         upload_sweep,
     )
 
     config = _observability_config(None)
-    cadence = load_cadence(args.cadence)
+
+    # P35.2 (G1-02a): probe targets out of the image — the declared-bundle
+    # source wins over the baked copy, so a cadence edit takes effect at the
+    # next bundle publish, never an image roll (SIG-OPS-005). --cadence stays
+    # a deliberate local override; provenance rides the sweep record.
+    cadence, cadence_src = load_cadence_external(args.cadence)
+    print(f"  cadence source: {cadence_src}")
     specs = {s.name: s for s in cadence.probe_targets}
     resolved, skipped = resolve_targets(cadence)
     targets: list[tuple[str, str, str]] = [(name, specs[name].kind, url) for name, url in resolved]
@@ -4306,6 +4375,94 @@ def _cmd_probe_history(args: argparse.Namespace) -> int:
             f"{s.p95_ms if s.p95_ms is not None else '—'} |"
         )
     return 0
+
+
+def _cmd_slo_readout(args: argparse.Namespace) -> int:
+    """The monthly 99.5 % error-budget readout (P35.2 / SIG-OPS-007).
+
+    Generated from stored ops/probes sweeps (GCS or --local files) — never
+    hand-written (SIG-ENG-042: a readout that evaluated nothing fails rather
+    than printing a green).
+    """
+    from .alerting import (
+        render_slo_readout,
+        slo_report,
+    )
+    from .gcs import GcsError
+    from .observe import ProbeLog
+    from .scheduled import load_cadence, read_sweep_rows
+
+    rows: list[dict[str, object]] = []
+    origin = ""
+    if args.local:
+        for path in args.local:
+            rows.extend(r.as_json() for r in ProbeLog(Path(path)).read())
+        origin = ",".join(args.local)
+    else:
+        cadence = load_cadence(args.cadence)
+        gcs = _gcs_bucket(args.gcs_bucket)
+        if gcs is None:
+            print(
+                "slo-readout: no GCS bucket configured (--gcs-bucket / "
+                "SIG_OPS_GCS_BUCKET) and no --local log given",
+                file=sys.stderr,
+            )
+            return 2
+        try:
+            probe_rows = read_sweep_rows(gcs, cadence.probe_gcs_prefix)
+        except GcsError as exc:
+            print(f"slo-readout: GCS read failed: {exc}", file=sys.stderr)
+            return 1
+        rows.extend(r.as_json() for r in probe_rows)
+        origin = f"gs://{gcs.bucket}/{cadence.probe_gcs_prefix}/"
+    report = slo_report(rows, month=args.month, objective_pct=args.objective)
+    out = (
+        Path(args.out)
+        if args.out
+        else _REPO_ROOT / "docs" / "build" / "reports" / f"slo-{args.month}.md"
+    )
+    out.parent.mkdir(parents=True, exist_ok=True)
+    text = render_slo_readout(report)
+    if not report.gate_ok:
+        # The report still writes — a measured-nothing month is recorded, but
+        # the run fails (never a green artifact on zero evaluation).
+        out.write_text(text, encoding="utf-8")
+        print(
+            f"slo-readout: measured nothing over {origin} — "
+            f"offered={report.offered} evaluated=0 (SIG-ENG-042); "
+            f"readout recorded at {out}",
+            file=sys.stderr,
+        )
+        return 3
+    out.write_text(text, encoding="utf-8")
+    print(
+        f"slo-readout: {args.month} over {origin} — "
+        f"offered={report.offered} evaluated={report.evaluated} → {out}"
+    )
+    for r in report.results:
+        print(
+            f"  {r.name}: {r.status} "
+            + ("(no rows)" if r.uptime_pct is None else f"({r.uptime_pct:.3f}%)")
+        )
+    return 0
+
+
+def _cmd_observe_gate(args: argparse.Namespace) -> int:
+    """SIG-ENG-042: the scheduled observability sweep fails on a no-op run."""
+    from .alerting import measured_gate, parse_measured_counts
+
+    try:
+        text = Path(args.counts).read_text(encoding="utf-8")
+    except OSError as exc:
+        print(
+            f"observe-gate: counts file unreadable ({exc}) — measured nothing "
+            "is provable: FAIL (SIG-ENG-042)",
+            file=sys.stderr,
+        )
+        return 1
+    ok, report = measured_gate(parse_measured_counts(text))
+    print(f"observe-gate: {report}")
+    return 0 if ok else 1
 
 
 def _cloudsql_dsn_from_parts() -> str | None:
@@ -4912,6 +5069,41 @@ def _cmd_monitoring_defs(args: argparse.Namespace) -> int:
                 print(json.dumps(render_policy_body(d, project), indent=2, sort_keys=True))
                 return 0
         print(f"monitoring-defs render: no policy def slug {args.slug!r}", file=sys.stderr)
+        return 2
+    if cmd == "render-uptime":
+        if not project:
+            print(
+                "monitoring-defs render-uptime: --project / SIG_GCP_PROJECT is required",
+                file=sys.stderr,
+            )
+            return 2
+        from .alerting import DefRenderError, uptime_create_args, uptime_update_args
+
+        for d in defs:
+            if d.slug == args.slug:
+                if d.kind != "uptime":
+                    print(
+                        f"monitoring-defs render-uptime: {args.slug!r} is a "
+                        f"{d.kind} def, not uptime",
+                        file=sys.stderr,
+                    )
+                    return 2
+                try:
+                    body = json.loads(json.dumps(d.body).replace("{project}", project))
+                    argv = (
+                        uptime_update_args(body, args.check_id, project)
+                        if args.check_id
+                        else uptime_create_args(body, project)
+                    )
+                except DefRenderError as exc:
+                    print(f"monitoring-defs render-uptime: {exc}", file=sys.stderr)
+                    return 2
+                print(json.dumps(argv))
+                return 0
+        print(
+            f"monitoring-defs render-uptime: no uptime def slug {args.slug!r}",
+            file=sys.stderr,
+        )
         return 2
     if cmd == "verify":
         if args.live and not project:
@@ -5828,6 +6020,10 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_probe_hosted(args)
     if args.command == "probe-history":
         return _cmd_probe_history(args)
+    if args.command == "slo-readout":
+        return _cmd_slo_readout(args)
+    if args.command == "observe-gate":
+        return _cmd_observe_gate(args)
     if args.command == "scheduled-ingest":
         return _cmd_scheduled_ingest(args)
     if args.command == "replay-ingest":

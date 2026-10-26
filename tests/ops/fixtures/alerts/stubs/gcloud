@@ -35,6 +35,17 @@ def flag(prefix: str) -> str:
 
 
 def job_json() -> dict:
+    env = [
+        {"name": "SIG_CODE_COMMIT", "value": state.get("probe_commit", "")},
+        {"name": "SIG_OPS_CADENCE", "value": "/app/ops/cadence.toml"},
+    ]
+    # P35.2: --update-env-vars writes land in state["job_env"] so the describe
+    # reflects them (the SIG_OPS_DECLARED_GCS assert is idempotent-verifiable).
+    env += [
+        {"name": k, "value": v}
+        for k, v in sorted(state.get("job_env", {}).items())
+        if k != "SIG_CODE_COMMIT"
+    ]
     return {
         "apiVersion": "run.googleapis.com/v2",
         "kind": "Job",
@@ -48,10 +59,7 @@ def job_json() -> dict:
                                 {
                                     "image": state.get("probe_image", "img@sha256:" + "0" * 64),
                                     "args": ["-c", "exec sig-ops probe-hosted --alert"],
-                                    "env": [
-                                        {"name": "SIG_CODE_COMMIT", "value": state.get("probe_commit", "")},
-                                        {"name": "SIG_OPS_CADENCE", "value": "/app/ops/cadence.toml"},
-                                    ],
+                                    "env": env,
                                 }
                             ],
                             "volumes": [],
@@ -64,6 +72,91 @@ def job_json() -> dict:
     }
 
 
+def fmt_value(default: str, prefix: str) -> str:
+    """--format='value(<prefix>)' extraction for describe-style verbs."""
+    return flag("--format=value(").rstrip(")") if flag("--format=value(") else default
+
+
+def flagval(name: str) -> str:
+    """--name=value OR `--name value` (the flag render emits separate argv)."""
+    if flag(name + "="):
+        return flag(name + "=")
+    for i, a in enumerate(sys.argv[1:]):
+        if a == name and i + 2 <= len(sys.argv[1:]):
+            return sys.argv[1:][i + 1]
+    return ""
+
+
+REGION_REST = {
+    "usa-iowa": "USA_IOWA",
+    "usa-oregon": "USA_OREGON",
+    "europe": "EUROPE",
+    "south-america": "SOUTH_AMERICA",
+    "asia-pacific": "ASIA_PACIFIC",
+}
+MATCHER_REST = {
+    "contains-string": "CONTAINS_STRING",
+    "not-contains-string": "NOT_CONTAINS_STRING",
+    "matches-regex": "MATCHES_REGEX",
+    "not-matches-regex": "NOT_MATCHES_REGEX",
+    "matches-json-path": "MATCHES_JSON_PATH",
+    "not-matches-json-path": "NOT_MATCHES_JSON_PATH",
+}
+
+
+def uptime_body_from_flags(check_id: str | None) -> dict:
+    """Build the REST body `uptime update|create` would produce from the
+    rendered flag set (enough fidelity for monitoring-defs verify to converge)."""
+    labels = {}
+    for pair in flagval("--resource-labels").split(","):
+        if "=" in pair:
+            k, v = pair.split("=", 1)
+            labels[k] = v
+    body = {
+        "checkerType": "STATIC_IP_CHECKERS",
+        "displayName": flagval("--display-name"),
+        "httpCheck": {
+            "path": flagval("--path") or "/",
+            "port": int(flagval("--port") or "443"),
+            "requestMethod": flagval("--request-method").upper() or "GET",
+            "useSsl": flagval("--protocol") != "http",
+        },
+        "monitoredResource": {
+            "labels": {"host": labels.get("host", ""), "project_id": labels.get("project_id", project)},
+            "type": "uptime_url",
+        },
+        "name": f"projects/{project}/uptimeCheckConfigs/{check_id or 'new'}",
+        "period": f"{flagval('--period')}s",
+        "timeout": f"{flagval('--timeout')}s",
+    }
+    regions = flagval("--set-regions")
+    if regions:
+        body["selectedRegions"] = [REGION_REST.get(r, r.upper()) for r in regions.split(",")]
+    if flagval("--matcher-content"):
+        body["httpCheck"]["contentMatchers"] = [
+            {
+                "content": flagval("--matcher-content"),
+                "matcher": MATCHER_REST.get(flagval("--matcher-type"), "CONTAINS_STRING"),
+            }
+        ]
+    if flagval("--validate-ssl"):
+        body["httpCheck"]["validateSsl"] = flagval("--validate-ssl") == "true"
+    if check_id is None:
+        # create: keep the resource labels a live describe carries
+        prior_host = ""
+        for r in state.get("uptime", []):
+            if r.get("displayName") == body["displayName"]:
+                prior_host = (r.get("monitoredResource") or {}).get("labels", {}).get("host", "")
+        if prior_host:
+            body["monitoredResource"]["labels"]["host"] = prior_host
+    else:
+        # update: keep the live check's monitored resource (update never moves it)
+        for r in state.get("uptime", []):
+            if str(r.get("name", "")).endswith("/" + check_id):
+                body["monitoredResource"] = r.get("monitoredResource", body["monitoredResource"])
+    return body
+
+
 pos = [a for a in sys.argv[1:] if not a.startswith("--")]
 project = state.get("project", "stub-project")
 
@@ -73,6 +166,32 @@ elif pos[:4] == ["beta", "monitoring", "channels", "list"]:
     print(json.dumps(state.get("channels", [])))
 elif pos[:3] == ["monitoring", "uptime", "list-configs"]:
     print(json.dumps(state.get("uptime", [])))
+elif pos[:3] == ["monitoring", "uptime", "describe"]:
+    cid = pos[3]
+    found = next(
+        (u for u in state.get("uptime", []) if str(u.get("name", "")).endswith("/" + cid)),
+        {},
+    )
+    print(json.dumps(found))
+elif pos[:3] == ["monitoring", "uptime", "update"]:
+    cid = pos[3]
+    body = uptime_body_from_flags(cid)
+    rows = state.get("uptime", [])
+    for i, u in enumerate(rows):
+        if str(u.get("name", "")).endswith("/" + cid):
+            rows[i] = body
+            break
+    else:
+        rows.append(body)
+    state["uptime"] = rows
+    save()
+    print(json.dumps(body))
+elif pos[:3] == ["monitoring", "uptime", "create"]:
+    cid = "sig-" + flagval("--display-name").lower().replace(" ", "-") + "-stub"
+    body = uptime_body_from_flags(cid)
+    state.setdefault("uptime", []).append(body)
+    save()
+    print(json.dumps(body))
 elif pos[:4] == ["alpha", "monitoring", "policies", "list"]:
     print(json.dumps(state.get("policies", [])))
 elif pos[:4] == ["alpha", "monitoring", "policies", "describe"]:
@@ -115,12 +234,24 @@ elif pos[:3] == ["run", "jobs", "update"]:
         k, v = pair.split("=", 1)
         if k == "SIG_CODE_COMMIT":
             state["probe_commit"] = v
+        else:
+            state.setdefault("job_env", {})[k] = v
     save()
     print(json.dumps(job_json()))
 elif pos[:4] == ["run", "jobs", "executions", "list"]:
     print(json.dumps(state.get("probe_execs", [])))
 elif pos[:3] == ["run", "services", "describe"]:
-    print("https://sig-alerts-stub.run.app")
+    # --format=json → the service body (P35.2's digest check reads the image);
+    # --format='value(status.url)' → the URL (P34.4's delivery leg).
+    if flag("--format=").startswith("json") or flag("--format") == "json":
+        print(json.dumps({
+            "spec": {"template": {"spec": {"containers": [
+                {"image": state.get("alerts_image", "img@sha256:" + "0" * 64)}
+            ]}}},
+            "status": {"url": "https://sig-alerts-stub.run.app"},
+        }))
+    else:
+        print("https://sig-alerts-stub.run.app")
 elif pos[:3] == ["compute", "ssl-certificates", "describe"]:
     print(
         json.dumps(
@@ -144,5 +275,40 @@ elif pos[:4] == ["artifacts", "docker", "images", "describe"]:
     print(state.get("image_digest", ""))
 elif pos[:2] == ["logging", "read"]:
     print(json.dumps(state.get("log_rows", [])))
+elif pos[:3] == ["logging", "buckets", "describe"]:
+    body = {
+        "name": f"projects/{project}/locations/global/buckets/_Default",
+        "retentionDays": state.get("retention_days", 30),
+    }
+    if "value(" in flag("--format="):
+        print(body["retentionDays"])
+    else:
+        print(json.dumps(body))
+elif pos[:3] == ["logging", "buckets", "update"]:
+    days = flag("--retention-days=")
+    if days:
+        state["retention_days"] = int(days)
+        save()
+    print(json.dumps({"retentionDays": state.get("retention_days", 30)}))
+elif pos[:3] == ["storage", "buckets", "describe"]:
+    body = {
+        "name": pos[3].removeprefix("gs://"),
+        "versioning": {"enabled": state.get("versioning", False)},
+        "lifecycle": {},
+    }
+    if "value(" in flag("--format="):
+        print(body["versioning"]["enabled"])
+    else:
+        print(json.dumps(body))
+elif pos[:3] == ["storage", "buckets", "update"]:
+    if "--versioning" in sys.argv[1:]:
+        state["versioning"] = True
+    if "--no-versioning" in sys.argv[1:]:
+        state["versioning"] = False
+    save()
+    print(json.dumps({"versioning": {"enabled": state.get("versioning", False)}}))
+elif pos[:2] == ["storage", "cp"]:
+    state.setdefault("copies", []).append([sys.argv[1:][-2], sys.argv[1:][-1]])
+    save()
 else:
     print("{}")
