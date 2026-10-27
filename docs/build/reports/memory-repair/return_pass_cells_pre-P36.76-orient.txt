@@ -1,0 +1,358 @@
+# pre-fold cell bytes — P36.76 orient fold 3 (2026-10-27)
+# archived before the sanctioned compaction (BM-ORIENT-01 — orient recipe
+# read 49,527 B > 48 KiB at the P36.76 dispatch head, failing #370's docs
+# job); each block is the verbatim HEAD text of a cell whose text changed.
+# Bound leg tokens (earliest/excluded/go-refs/operator steps/rerun lines)
+# and classifier-negating phrases are all carried verbatim into the fold.
+
+### P21.5.rerun_cell (99 B)
+chain 482 **P37.55** (11D, after P34.21b) · landed 59 (PR #61 — prepare-only re-run row 76, PR #76)
+
+### P31.4.rerun_cell (214 B)
+chain 247 **P34.39a** (11A — leg ran 2026-10-14 `fail` → `deferral-row`; a `P34.39a-live-2` re-read rides the call); verify = the D-P31.4-1 command; P34.39b carries first-fire + peel-on reads · landed 145 (PR #140)
+
+### P32.18.operator_cell (112 B)
+the HG-03 flips (OP-26; GL-GATE-07, A-7); verbatim go per capture run; families screen-cleared, disclosed (B-42)
+
+### P32.18.rerun_cell (166 B)
+chain rows 438 **P37.16a** + 439 **P37.16b** (11D family-split, PLAN-11D); packet `docs/build/reports/p32.18-okc-dossier/LIVE_RETURN_PASS.json` · landed 179 (PR #175)
+
+### P32.19.operator_cell (112 B)
+the HG-03 flips (OP-26; GL-GATE-07, A-7); verbatim go per capture run; families screen-cleared, disclosed (B-42)
+
+### P32.19.rerun_cell (168 B)
+chain rows 438 **P37.16a** + 439 **P37.16b** (11D family-split, PLAN-11D); packet `docs/build/reports/p32.19-tulsa-dossier/LIVE_RETURN_PASS.json` · landed 180 (PR #176)
+
+### P32.20.operator_cell (112 B)
+the HG-03 flips (OP-26; GL-GATE-07, A-7); verbatim go per capture run; families screen-cleared, disclosed (B-42)
+
+### P32.20.rerun_cell (172 B)
+chain rows 438 **P37.16a** + 439 **P37.16b** (11D family-split, PLAN-11D); packet `docs/build/reports/p32.20-san-diego-dossier/LIVE_RETURN_PASS.json` · landed 181 (PR #177)
+
+### P32.21.operator_cell (112 B)
+the HG-03 flips (OP-26; GL-GATE-07, A-7); verbatim go per capture run; families screen-cleared, disclosed (B-42)
+
+### P32.21.rerun_cell (177 B)
+chain rows 438 **P37.16a** + 439 **P37.16b** (11D family-split, PLAN-11D); packet `docs/build/reports/p32.21-acquisition-pilot/ACQ_PILOT_RETURN_PASS.json` · landed 182 (PR #178)
+
+### P32.22.rerun_cell (162 B)
+chain 338 **P35.61** (11B — ≥48 h after P34.46, post-11B writes); packet `docs/build/reports/p32.22-bounded-recovery/LIVE_RETURN_PASS.json` · landed 183 (PR #179)
+
+### P32.23a.rerun_cell (135 B)
+chain 339 **P35.62** (after P35.61); packet `docs/build/reports/p32.23a-release-candidate/LIVE_RETURN_PASS.json` · landed 188 (PR #180)
+
+### P32.25.rerun_cell (143 B)
+chain 341 **P35.63** (after P35.62); rollback cases `reports/p32.25-accepted-release-verification/LIVE_RETURN_PASS.json` · landed 191 (PR #182)
+
+### P34.3.gates_cell (204 B)
+hosted, live-window only (mutations never 03:00–10:00Z; `sig-pg` legs also outside AR-3 with no `sig-materialize`); the five mutations pre-authorised (S5-3 11A list, expires GATE-G4); window guard exit 42
+
+### P34.3.rerun_cell (157 B)
+the OM-19 `r11/P34.3-live-<n>` dispatch or `implement-spec spec=docs/tickets/204_P34.3__ops-data-protection.md live_verification=true` · landed 204 (PR #197)
+
+### P34.4.gates_cell (186 B)
+hosted, live-window only (never 03:00–10:00Z; `sig-probe` roll also outside AR-3; jobfail gated on a green sweep); mutations pre-authorised (S5-3, expires GATE-G4); -2 human check (B-31)
+
+### P34.4.rerun_cell (163 B)
+the OM-19 `r11/P34.4-live-<n>` dispatch or `implement-spec spec=docs/tickets/205_P34.4__alerts-that-reach-a-human.md live_verification=true` · landed 205 (PR #198)
+
+### P34.5.gates_cell (138 B)
+-1 human check → name-checked delete (`--fired-confirmed`); -2 operator console step (OP-12, no API path); -3 waits on -2 + ~a day of rows
+
+### P34.5.rerun_cell (251 B)
+-3: `implement-spec spec=docs/tickets/206_P34.5__cost-guard-budget-alert-billing-export.md live_verification=true` once `exportcheck` reads ≥1 row; -1: `cost-guard.sh --apply testbudget-delete --fired-confirmed "<confirmation>"` · landed 206 (PR #199)
+
+### P34.6.gates_cell (175 B)
+-2…-5 each need a verbatim in-ticket go or a GATE-G4 OM-20 listing (none on S5-3); -2/-5 also live-window (never 03:00–10:00Z; -2 outside AR-3); -6 boundary-triggered (P34.46)
+
+### P34.6.operator_cell (129 B)
+record a verbatim go per leg (`--go "<verbatim go>"` — each script refuses without it); -6 rides the P34.46 run, no operator step
+
+### P34.6.rerun_cell (195 B)
+`logical-export.sh --apply export\|lifecycle\|relabel --go "…"`; `restore-drill.sh --apply fullrestore --go "…"`; -6: the drill re-run after P34.46's schema-changing deploy · landed 207 (PR #200)
+
+### P34.50.operator_cell (151 B)
+execute the `surveillancegraph.org` nameserver switch per `docs/build/reports/DNS_CUTOVER_RUNBOOK.md` (TTL step-down, grey-cloud, double-DS, checklist)
+
+### P34.50.rerun_cell (94 B)
+none — operator action; **P35.67** (row 263) is the verifying probe row · landed 208 (PR #201)
+
+### P34.17.gates_cell (192 B)
+public; HG-11 (verbatim republish go, IN-TICKET PAUSE, never pre-authorised); batch #1 verbatim confirmation (B-2), `live:P34.3` versioning on, probe-run ≤ 24 h, `date -u` outside 03:00–10:00Z
+
+### P34.17.rerun_cell (198 B)
+`implement-spec spec=docs/tickets/220_P34.17__web-honesty-wave-and-republish-1.md live_verification=true` (L2 republish — `publish-web --apply` over `sig-2026-09-27-ce480ab1`) · landed 220 (PR #216)
+
+### P34.18.gates_cell (225 B)
+QUEUED hosted; verbatim in-ticket go (IN-TICKET PAUSE — not on S5-3's 11A OM-20 list); `date -u` ≥ 2026-10-13T12:00Z outside 03:00–06:30Z (AR-3; preferred 14:00–20:00Z weekdays), AR-2 restore + pre-state, `probe-run/1` ≤ 24 h
+
+### P34.18.rerun_cell (201 B)
+`implement-spec spec=docs/tickets/221_P34.18__personal-handle-source-id-rename.md live_verification=true` (L2 — insert-only rename + `sig-restricted` map + counts-only read-back) · landed 221 (PR #217)
+
+### P34.21a.gates_cell (295 B)
+QUEUED hosted, window-bound (`date -u` ≥ 2026-10-13T12:00Z, outside 03:00–06:30Z daily, preferred 14:00–20:00Z weekdays — AR-3); rights backfill pre-authorised (S5-3 11A list, expires GATE-G4; voided-by red probe/failed restore); also `live:P34.3`, AR-2 restore + pre-state, `probe-run/1` ≤ 24 h
+
+### P34.21a.rerun_cell (232 B)
+`implement-spec spec=docs/tickets/223_P34.21a__attribution-gate-sink-rights-and-backfill.md live_verification=true` (L1 — `attribution-corrections` dry-run → `--apply` → read-back 0 empty-attribution-required) · landed 223 (PR #219)
+
+### P34.21b.operator_cell (173 B)
+record verbatim A-0.2 go (L1, `SIG_PUBLIC_GATE_GO`) + verbatim republish go (L2) in GATE DECISIONS; confirm batch-02 verbatim (SL-20; TB-01 if it rides) + upstream legs DONE
+
+### P34.21b.gates_cell (326 B)
+-1 public (bucket IAM — inside AR-3, never 03:00–10:00Z); verbatim A-0.2 go (IN-TICKET PAUSE — not on S5-3); `live:P34.3` on saved describe, sha256 pre-state · -2 public republish (never pre-authorised): verbatim republish go, `D-P34.21a-1` + `D-P34.18-1` DONE, batch-02 `confirmed`, `probe-run/1` ≤ 24 h, outside 03:00–10:00Z
+
+### P34.21b.rerun_cell (272 B)
+`implement-spec spec=docs/tickets/224_P34.21b__attribution-re-export-and-republish-2.md live_verification=true` (L1 `public-gate.sh` prestate → `--apply` → `--verify`, rollback `set-iam-policy`; or L2 `export.sh --apply run` → `publish-web --apply`) · landed 224 (PR #220)
+
+### P34.38.gates_cell (284 B)
+queued public read-only GET of `https://www.bidnetdirect.com/terms` under the project UA (SIG-INGEST-036), `Crawl-delay: 5`; gated on `live:P35.38a` (`/data-collection/` probed 2026-10-07T12:09Z not yet live); E4-R6a is the go; terms land verbatim in `reports/rights/bidnet_direct.md`
+
+### P34.38.obligations_cell (141 B)
+queued BidNet terms-capture leg (works the E4-R6a answer; the rights decision keeps its row-350 home) — leg now rides row 350's capture queue
+
+### P34.38.rerun_cell (192 B)
+`implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-registry-rows.md live_verification=true` (BidNet terms capture; superseded by the P36.2 re-run line) · landed 246 (PR #243)
+
+### P34.39b.gates_cell (262 B)
+QUEUED hosted, date-bound (§(f3)), read-only — L1 at the wave close `2026-10-21T06:09Z` (per-fire AR-4 applies); L2 at the `camreg_peel_on` fire `2026-10-29T12:00Z` + `lastAttemptTime` + a finished `sig-ingest-camreg-peel-on` execution; L3 after L2; else exit 42
+
+### P34.39b.obligations_cell (141 B)
+the three queued monitoring legs (first-fire wave + `camreg_peel_on`); obligations keep their homes — this row carries the clock-guarded legs
+
+### P34.39b.rerun_cell (118 B)
+`implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true` · landed 248 (PR #246)
+
+### P36.2.obligations_cell (104 B)
+queued D-P36.2-1 — the 12 P36.2 terms captures (IU1–IU5, Edmonton OGL, BidNet terms, 5 folded-set terms)
+
+### P34.40.obligations_cell (185 B)
+two queued production legs of the dark serving-topology roll (L1 `sig-web` pinned-digest roll, L2 `/v1/*` URL-map onto `sig-api`); halves landed (declaration, render/diff, byte-compare)
+
+### P34.40.gates_cell (237 B)
+QUEUED hosted legs, window-bound (AR-3): each earliest `2026-10-13T12:00Z` excl. 03:00-10:00Z daily — exit 42; pre-authorised — L1 S5-3 (11A list; expires GATE-G4), L2 GATE-B GB-Q4 (11A list; expires GATE-G4); non-zero byte-compare stops
+
+### P34.40.rerun_cell (131 B)
+`implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true` (L1, then L2) · landed 249 (PR #250)
+
+### P34.42b.obligations_cell (171 B)
+queued jobs IAM leg (G1-01/F-272 jobs half + `roles/editor` removal; halves landed) — live-1 stopped at the 100/88 read; live-2 stays queued on P35.1a1's 100-job poststate
+
+### P34.42b.gates_cell (266 B)
+QUEUED hosted leg (AR-3+AR-2): excl. 03:00-06:30Z/d, never mid-class-run — exit 42; weekday 14:00-20:00Z, operator present; fresh one-leg authorization ("Full P34.42b leg", 2026-10-14T17:09Z) — still voided by live-1's 88-vs-100 read (OM-18); waits on `live:P35.1a1`
+
+### P34.42b.rerun_cell (213 B)
+`implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` · landed 252 (PR #253; `live-1` stopped OM-18) · next `r11/P34.42b-live-2` post-`live:P35.1a1`
+
+### P34.43.gates_cell (290 B)
+QUEUED hosted legs, (AR-3+AR-2): L1 earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z/d — exit 42; pre-authorised L1+L2 S5-3 (11A list; expires GATE-G4); then 11B list or in-ticket go; waits on `live:P34.46`; voided-by red probe/failed restore; AR-2 + `sig-pg` backup; `/health` failure stops
+
+### P34.44b.gates_cell (321 B)
+queued hosted legs, (AR-3+AR-2): both earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z/d + monthly batch window (d6 00:00Z→d13 12:00Z) — exit 42; pre-authorised S5-3 (11A list; expires GATE-G4); waits on `live:P34.43` (`deps` exit 42 while secrets absent); voided-by red probe/failed restore; AR-2 prestate + versioning ON
+
+### P34.44b.operator_cell (130 B)
+nothing until window + `live:P34.43` + ADC — `--check` default; rollback = exact-name delete of trigger + job (probe records stay)
+
+### P34.45.gates_cell (320 B)
+QUEUED hosted leg, (AR-3+AR-2): earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z/d + monthly batch window (d6 00:00Z→d13 12:00Z) — exit 42; pre-authorised S5-3 "Both + list + P34.45" (expires GATE-G4); waits on `live:P34.43` + `live:P34.44b` + `live:P34.46` (GQ-24/A-20); voided-by red probe/failed restore; AR-2 prestate
+
+### P34.46.obligations_cell (202 B)
+queued L2 deploy slot (schema roll + ADR-159 dispositions + `sig-api` roll + `/status/` notice + trigger pause/resume) + L3 48 h soak; landed: r11-verify rework, rehearsal, roll-gate, drafts, pause list
+
+### P34.46.rerun_cell (130 B)
+`implement-spec spec=docs/tickets/258_P34.46__round10-schema-allows-and-api-roll.md live_verification=true` · landed 258 (PR #261)
+
+### P34.47.gates_cell (274 B)
+hosted, read-only — `acceptance-sweep --check` exit 42 until `live:P34.46` L2 (verbatim go, `live:P34.39a` pass, weekday 14:00-20:00Z ≥ 2026-10-14T14:00Z + roll-gate); exit 5 waits on L3 soak; missing handle list = RI-01 unchecked; GATE-G4 never presented while a leg is due
+
+### P34.47.obligations_cell (222 B)
+queued 11A acceptance sweep + GATE-G4 packet leg (§13.1): read-only crawl of site/API/tiles/`sig-public` + repo tip (counts only) + packet refresh at the leg; landed: `acceptance-sweep` → `sig.probe-run/1` + packet drafter
+
+### P34.47.operator_cell (119 B)
+nothing until `live:P34.46` L2 — the sweep needs no go (read-only); packet presented at row 260 only when no leg is due
+
+### P34.49.gates_cell (293 B)
+QUEUED hosted legs, (AR-3+AR-2): both earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z/d — exit 42; both pre-authorised S5-3 (11A list; expires GATE-G4); voided-by red probe/failed restore; L1 on P34.43 exec host; L2 on L1's counts, AR-2 SUCCESSFUL, `SIG_ATREST_AUTHOR`, pending `seal_register`
+
+### P35.57.operator_cell (130 B)
+the GATE-G4 §2 go is on record; run the roll in-slot — mount, roll, `/v1/health` verify — present; a failed health read rolls back
+
+### P35.57.rerun_cell (134 B)
+`implement-spec spec=docs/tickets/261_P35.57__api-release-parity.md live_verification=true` (mount+roll+verify) · landed 261 (PR #263)
+
+### P35.5.gates_cell (276 B)
+QUEUED hosted mirror, production write; OM-20 conditional — only after OP-09 (`dig` answers the Cloudflare pair) + while the GATE-G4 OM-20 11B list (P35.5, expires GATE-G5) stands; AR-3+AR-2 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z); R2 credentials env-only (HG-09)
+
+### P35.5.obligations_cell (254 B)
+queued R2-mirror leg: R2 bucket + CDN domain (files.surveillancegraph.org non-listable), content-hash keys, immutable Cache-Control, $0 egress; landed: PushLimits, --mirror seam, $50/mo ceiling+alerts, kill-switch runbook; no deferral — OP-09 is P34.50's
+
+### P35.67.gates_cell (190 B)
+QUEUED hosted, read-only (argv contract pinned in tests); L1 needs `live:OP-09` (`dig +noall +answer surveillancegraph.org NS` answers the Cloudflare pair); L2 calendar-bounded (≈2026-11-22)
+
+### P35.67.obligations_cell (171 B)
+queued L1 post-cutover checklist (`sig-ops post-cutover-probe --leg l1`) post-OP-09 + the L2 cert-renewal read ≈ 2026-11-22; read-only OM-14; probe verb + checklist landed
+
+### P35.67.rerun_cell (118 B)
+`implement-spec spec=docs/tickets/263_P35.67__post-dns-cutover-probe.md live_verification=true` · landed 263 (PR #265)
+
+### P35.1a.obligations_cell (236 B)
+queued production-write leg: reconcile Cloud Scheduler from ops/cadence.toml (inert PAUSED triggers + declared-bundle publish) + in-band live-diff; `live-1` stopped OM-18 (exit 1, 52 findings); P34.42b IAM first, then `--apply --paused`
+
+### P35.1a.gates_cell (273 B)
+QUEUED hosted, production write; OM-20 — GATE-G4 11B list (P35.1a; expires GATE-G5); monthly-export trigger PAUSED inert until D-P34.6-2's verbatim go; AR-3+AR-2 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z), operator present, prestate first; retry on `live:P34.42b`
+
+### P35.1a.operator_cell (127 B)
+nothing until `live:P34.42b`; then `P35.1a-live-2` in a fresh AR-3/AR-2 window `--apply --paused`; rollback = recorded prestate
+
+### P35.1a.rerun_cell (207 B)
+`implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` · landed 264 (PR #266; `live-1` stopped OM-18) · retry `r11/P35.1a-live-2` post-`live:P34.42b`
+
+### P35.1a1.gates_cell (292 B)
+QUEUED hosted write; one-leg authorization — GATE DECISIONS row 321 (2026-10-14T19:34Z) verbatim "Create 12 paused jobs"; expires on completion; voided by failed AR-2/red probe; weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exit 42; after `--check` + PR #296 green
+
+### P35.1a1.rerun_cell (170 B)
+`implement-spec spec=docs/tickets/287a_P35.1a1__seed-declared-jobs-paused.md live_verification=true` · landed 287a (PR #296 — leg queued 2026-10-14, production untouched)
+
+### P35.11.gates_cell (270 B)
+hosted write, never pre-authorised (GATE-G4 never-list): weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z, outside 2026-10-19→23) — verbatim ING-GO-A at open + `wave-a-gate` exit 0, AR-2 + OM-14 prestate, serial, ordered-prefix green; missed leg reported
+
+### P35.11.operator_cell (212 B)
+record ING-GO-A verbatim + recorded_at + the OP-26 HG-03 flip list (absent: facts/citations-only), AR-2 + OM-14 prestate, then `wave-a.sh --apply --leg <L1|L2|L3> --inputs <json>` (no-go → 42); rollback = runbook
+
+### P35.11.rerun_cell (113 B)
+`implement-spec spec=docs/tickets/271_P35.11__wave-a-activation.md live_verification=true` · landed 271 (PR #273)
+
+### P35.14a.obligations_cell (166 B)
+queued hosted write: `sqitch deploy closed_vocabulary` (INSERT-only — 280 predicates + 5,600 directness rows + genres/strategies + widened CHECK) + verify + read-back
+
+### P35.14a.gates_cell (304 B)
+queued hosted write; OM-20 — GATE-G4 approve-all-19 (this row — INSERT-only vocabulary registration; expires next GATE, OM-10); AR-3 — first weekday 14:00-20:00Z post-freeze, operator present, AR-2 prestate (excl. weekends + outside-14:00-20:00Z, before 2026-10-13T12:00Z AR-3 freeze); AC human-completed
+
+### P35.14a.rerun_cell (137 B)
+`implement-spec spec=docs/tickets/272_P35.14a__vocabulary-conformance-closed-vocabulary.md live_verification=true` · landed 272 (PR #274)
+
+### P35.14b.obligations_cell (222 B)
+queued hosted leg: `sqitch deploy entity_typing_mobility_check` (ACCESS EXCLUSIVE, `lock_timeout`) then append-only typed-identity write (`--apply`, INSERT-only, +0); verify + read-back; VALIDATE = a later row; no deferral
+
+### P35.14b.gates_cell (305 B)
+QUEUED hosted write; never pre-authorised (§3.3 ACCESS EXCLUSIVE): verbatim in-ticket go only; AR-3+AR-2 — first weekday 14:00-20:00Z post-freeze, operator present, AR-2 SUCCESSFUL (excl. weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze); live AC still human-completed
+
+### P35.14b.operator_cell (209 B)
+verbatim go + `date -u`; AR-2 `SUCCESSFUL` + pre-state (sqitch.plan head, counts, `spine_watermark`); `sqitch deploy --verify` + `lock_timeout`; dry-run → `--apply` → read-back; rollback = `sqitch revert`/PITR
+
+### P35.14b.rerun_cell (138 B)
+`implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and-hosted-check-constraint.md live_verification=true` · landed 273 (PR #275)
+
+### P35.15a.gates_cell (349 B)
+queued hosted write; pre-authorised GATE-G4 approve-all-19 (this row — INSERT-only vocabulary registration; expires next GATE, OM-10); AR-3 — first weekday 14:00-20:00Z post-freeze, operator present, AR-2 prestate (excl. weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze); after `live:P35.14a`; AC human-completed
+
+### P35.15a.rerun_cell (130 B)
+`implement-spec spec=docs/tickets/274_P35.15a__technology-typing-slug-and-facets.md live_verification=true` · landed 274 (PR #276)
+
+### P35.15b.gates_cell (334 B)
+queued hosted write; pre-authorised GATE-G4 approve-all-19 (INSERT-only claim backfill; expires GATE-G5); AR-3+AR-2 first weekday 14:00-20:00Z post-freeze, operator present, AR-2 SUCCESSFUL + pre-state (excl. weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze, before `live:P35.15a`); F-523 recorded
+
+### P35.15b.rerun_cell (116 B)
+`implement-spec spec=docs/tickets/275_P35.15b__technology-backfill.md live_verification=true` · landed 275 (PR #277)
+
+### P35.1b.gates_cell (315 B)
+queued hosted write (`live_verification=false`); OM-20 — GATE-G4 11B list (P35.1b; 2026-10-09T17:32Z; expires next GATE, OM-10); AR-3+AR-2 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z) — apply exit 42; `SIG_SWEEP_AUTHOR` + AR-2 backup + prestate; voided by failed AR-2/red probe; after `--check` + #302 green
+
+### P35.1b.rerun_cell (109 B)
+`implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true` · landed 291 (PR #302)
+
+### P35.1c.gates_cell (295 B)
+queued hosted write; OM-20 — GATE-G4 §4 names 291 not 291a (predates C13 → never pre-authorised; needs a 291a amendment); AR-3+AR-2 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z) — apply exit 42; `SIG_CONSOL_AUTHOR` + prestate; voided by failed AR-2/red probe; after `--check` + #303 green
+
+### P35.1c.rerun_cell (122 B)
+`implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true` · landed 291a (PR #303)
+
+### P35.16.gates_cell (204 B)
+QUEUED hosted write, never exercised; OM-20 — GATE-G4 §4 (P35.16 "Approve all 19 (rec.)", 2026-10-09T17:32Z; expires next GATE, OM-10); append-only INSERTs only; AR-3 + AR-2 window outside the AR-3 freeze
+
+### P35.16.rerun_cell (122 B)
+`implement-spec spec=docs/tickets/296_P35.16__geometry-defects-at-ingest.md live_verification=true` · landed 296 (PR #309)
+
+### P35.17.gates_cell (304 B)
+QUEUED hosted write (`live_verification=false`); both HG-03 flips are the precondition (OP-26 — both stay `ingestion_permitted=false`); pre-authorised GATE-G4 §4 (P35.17 "Approve all 19 (rec.)", 2026-10-09T17:32Z; expires next GATE, OM-10); append-only OCFL only; AR-3+AR-2 window outside the AR-3 freeze
+
+### P35.17.rerun_cell (135 B)
+`implement-spec spec=docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md live_verification=true` · landed 297 (PR #310)
+
+### P35.24.gates_cell (188 B)
+hosted write — QUEUED, not run (`live_verification=false`); OM-20 — GATE-G4 §4 (P35.24; 2026-10-09T17:32Z; expires next GATE); INSERTs + sys_period close; AR-3+AR-2 outside the AR-3 freeze
+
+### P35.24.rerun_cell (131 B)
+`implement-spec spec=docs/tickets/303_P35.24__truthful-subject-keys-and-re-keying.md live_verification=true` · landed 303 (PR #318)
+
+### P35.25.gates_cell (147 B)
+QUEUED (`live_verification=false`); OM-20 — GATE-G4 §4 (P35.25; 2026-10-09T17:32Z; expires next GATE); INSERT-only; AR-3+AR-2, excluded AR-3 freeze
+
+### P35.26.rerun_cell (118 B)
+`implement-spec spec=docs/tickets/305_P35.26__roles-and-time-backend.md live_verification=true` · landed 305 (PR #320)
+
+### P35.41.gates_cell (275 B)
+QUEUED (OM-19 — deferred past the AR-3 slot under the merge-cascade hold, 2026-10-20T15:53Z digest); OM-20 — GATE-G4 §4 (P35.41; 2026-10-09T17:32Z; expires next sub-round GATE, OM-10); AR-3+AR-2 14:00–20:00Z weekdays, never 03:00–06:30Z; roll machinery + recording idempotent
+
+### P35.41.obligations_cell (131 B)
+queued connector-image roll: rebuild + redeploy the image carrying `records_digest`, upstream-declared marks + capture-mark headers
+
+### P35.41.rerun_cell (118 B)
+`implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` · landed 320 (PR #338)
+
+### P35.53.gates_cell (270 B)
+QUEUED (OM-19 — window guard exit 42 2026-10-23T03:33Z, never-mutate 03:00–06:30Z band); OM-20 — GATE-G4 §4 (P35.53); AR-3+AR-2 14:00–20:00Z weekdays, never 03:00–06:30Z, at/after `SIG_RELEASE_EARLIEST` 2026-10-13T12:00Z; ops idempotent (get-or-create + conditioned IAM)
+
+### P35.53.rerun_cell (224 B)
+`SIG_RELEASE_AUTHOR="$(git config user.name)" bash ops/gcp/release-infra.sh --apply all` or `implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-staging-origins.md live_verification=true` · landed 331 (PR #351)
+
+### P35.59.operator_cell (211 B)
+nothing until window + both live prerequisites (`--check` plans only); rollback = traffic move to the prior revision; `sig-web` untouched — 90-day floor under D-G3-7 (D-R11-LATER-20 anchors on landing `date -u`)
+
+### P35.61.obligations_cell (249 B)
+queued live half of P32.22's recovery deferral + F-522 (audit+plan → operator pause → bounded `recovery-apply --authority <scope>` → `+0`/rematerialize → freeze unpublished); packet `reports/p35.61-live-pass/LIVE_PASS_PACKET.*` prepared_not_executed
+
+### P35.61.rerun_cell (153 B)
+`implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` · landed 338 (PR #359; `D-R10-LIVE-1` OPEN)
+
+### P35.62.obligations_cell (296 B)
+queued live half of P32.23a's candidate deferral: `release-candidate` over a hosted `frozen_unpublished` snapshot → `+0` rematerialize → export → `release stage` + IAM-only origins → web build + DR-C4-01 crawl; packet `reports/p35.62-production-candidate/CANDIDATE_PACKET.*` prepared_not_executed
+
+### P35.62.gates_cell (388 B)
+hosted, staged only — queued (no snapshot, secrets NOT_FOUND, env unset); pre-authorised GATE-G4 §4 (P35.62; expires next GATE, OM-10); AR-3+AR-2 14:00–20:00Z excl. 03:00–06:30Z, weekends, before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.61` (snapshot), before `live:P35.53` (staged/ home); earliest 2026-10-26T14:00Z; create-only, never pointer/public write
+
+### P35.62.rerun_cell (124 B)
+`implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true` · landed 339 (PR #360)
+
+### P35.63.obligations_cell (330 B)
+queued release-exposure half of the publish deferral (home: P32.25): L1 staged cut → V1–V15 → `class_s` classify → agent-drafted HG-11 readout (unsigned) · L2 promote + checks + rollback rehearsal — verbatim signed HG-11 readout + go only; packet `reports/p35.63-first-model-release/RELEASE_PACKET.{json,md}` prepared_not_executed
+
+### P35.63.gates_cell (535 B)
+queued hosted write (env unset, secrets NOT_FOUND, upstream queued); never pre-authorised — publication never-listed, `p-17b713` never transfers; L2's go = verbatim signed HG-11 readout + go; AR-3+AR-2 14:00–20:00Z excl. 03:00–06:30Z, weekends, before `live:P35.62` (staged candidate), before `live:P35.53` (staged/ home), before `live:P35.59` (dark cutover), before `live:P35.61` (snapshot input), before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.57` (the queued API-roll leg); earliest 2026-10-26T14:00Z
+
+### P35.63.rerun_cell (185 B)
+`implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (resumes at L2's promote; re-staged cut byte-identical) · landed 341 (PR #362)
+
+### P35.64.obligations_cell (254 B)
+queued 11B acceptance sweep + GATE-G5 packet leg: read-only crawl of the promoted release/API/`sig-public`/`sig-registry` + ledger surface (counts only) + packet refreshed at the leg; `acceptance-sweep-11b` → `sig.probe-run/1` + acceptance + packet tools
+
+### P35.64.gates_cell (299 B)
+hosted read-only — `acceptance-sweep-11b` refuses (exit 42) before `live:P35.63` promotes (promoted first release must exist): both legs queued, L2 on verbatim signed HG-11 readout, never pre-authorised; 14:00–20:00Z ≥ 2026-10-26T14:00Z; sweep needs no go; GATE-G5 never presented while a leg is due
+
+### P35.64.rerun_cell (120 B)
+`implement-spec spec=docs/tickets/342_P35.64__sub-round-11b-acceptance.md live_verification=true` · landed 342 (PR #363)
+
+### P37.2.obligations_cell (183 B)
+Wave-C sequence L1→L5 (pre-grow → tier bump after the go → national run → 24 h soak → revert); missed leg reported; packet `reports/p37.2-wave-c/WAVE_C_PACKET.*` prepared_not_executed
+
+### P37.2.gates_cell (543 B)
+hosted write, never pre-authorised (tier-bump go = P37.2's own in-ticket pause); in-window only: 2026-11-16→20 (earliest 2026-10-26 iff P37.1+PKG-07+Q-23 landed — strict); excluded: outside 2026-11-16→20 (strict; earliest unmet), 03:00–06:30Z, AR-3 freeze/cut, materialize/G2/manual run, Wave-B r11 batch crons not held (FEA-15) for L3; L4 read-only: soak < 24 h from the recorded run end or outside the 48 h grace (through 2026-11-22T00:00Z); verbatim ING-GO-C ("Approve ING-GO-C (rec.)", GATE-G5 §3, byte-exact) + `wave-c-gate` green per leg
+
+### P35.2.gates_cell (324 B)
+queued hosted write (no ADC, `SIG_GCP_PROJECT` unset); pre-authorised OM-20 (named verbatim on the GATE-G5 list); in-window only: 14:00–20:00Z preferred, never 03:00–06:30Z, never an AR-3 batch window, never before AR-2's on-demand backup; earliest 2026-10-27T14:00Z; packet `reports/p35.2-alert-roll/` prepared_not_executed
+
+### P35.2.operator_cell (191 B)
+nothing until re-run — the verbatim apply sequence, the AR-2 prestate list and the per-leg rollback live in `docs/build/reports/p35.2-alert-roll/`; e-mail receipt confirmation stays D-P34.4-2
+
+### P35.21.gates_cell (221 B)
+hosted read-only — queued (no ADC, `SIG_GCP_PROJECT` unset, `SIG_PARTNER_AUDIT_DSN` unset); not OM-20 (a read binds no window); packet `reports/p35.21-partner-name-audit/` `prepared_not_executed`; fixture packet beside it
+
