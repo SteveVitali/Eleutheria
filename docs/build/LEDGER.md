@@ -7,12 +7,12 @@
 
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # P36.2 landed(350); queued legs on earlier rows
-nextTicket: P36.76 # row 351 — axon-connect-connector
-lastCompleted: P36.2 # row 350 — rights-flip-decline-batch-and-terms-capture 2026-10-27
+projectStatus: IN_PROGRESS # P36.76 landed(351); queued legs on earlier rows
+nextTicket: P36.77 # row 352 — documentcloud-muckrock-connector
+lastCompleted: P36.76 # row 351 — axon-connect-connector 2026-10-27
 blockedOn: (nothing)
 pauseRequested: false
-returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P37.2
+returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.76,P37.2
 manifest: docs/tickets/00_MANIFEST.md
 canonicalSpec: docs/2_canonical_design_spec.md
 memoryRoot: docs/build
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P36.2-rights-flip-decline-batch-and-terms-capture # P36.2 landed on this tip; P36.76 stacks here
+chainTip: r11/P36.76-axon-connect-connector # P36.76 landed on this tip; P36.77 stacks here
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-27T03:25Z
+updatedAt: 2026-10-27T05:39Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -460,6 +460,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | P35.2 | D-P35.2-1 | queued hosted write (no ADC, `SIG_GCP_PROJECT` unset); pre-authorised OM-20 (named verbatim on the GATE-G5 list); in-window only: 14:00–20:00Z preferred, never 03:00–06:30Z, never an AR-3 batch window, never before AR-2's on-demand backup; earliest 2026-10-27T14:00Z; packet `reports/p35.2-alert-roll/` prepared_not_executed | nothing until re-run — the verbatim apply sequence, the AR-2 prestate list and the per-leg rollback live in `docs/build/reports/p35.2-alert-roll/`; e-mail receipt confirmation stays D-P34.4-2 | `implement-spec spec=docs/tickets/346_P35.2__alerting-as-code-and-escalation.md live_verification=true` · landed 346 |
 | P35.21 | D-P35.21-1 | hosted read-only — queued (no ADC, `SIG_GCP_PROJECT` unset, `SIG_PARTNER_AUDIT_DSN` unset); not OM-20 (a read binds no window); packet `reports/p35.21-partner-name-audit/` `prepared_not_executed`; fixture packet beside it | nothing until re-run — `ops/gcp/partner-name-audit.sh --apply`; `D-P32.3-1` stays OPEN — sized only | `implement-spec spec=docs/tickets/347_P35.21__partner-name-audit-run.md live_verification=true` · landed 347 |
 | P35.23 | D-P35.23-1 | queued hosted apply — no ADC/`SIG_GCP_PROJECT`/`SIG_RDC_IMAGE`; pre-authorised OM-20; ≥ `SIG_RDC_EARLIEST`, never 03:00–06:30Z or the day-6→13 batch window | nothing until re-run — `rdc-slices.sh --apply all`; `D-P35.23-2…-11` stay OPEN | `implement-spec spec=docs/tickets/348_P35.23__real-data-regression-corpus.md live_verification=true` · landed 348 |
+| P36.76 | queued D-P36.76-1 — the 12 leg-A bounded GETs (6 registration pages + 6 `/:8443` screens); D-P36.76-2 — leg B, the operator's first-wire act | bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T05:01Z); records land under `reports/rights/p3676/`; leg B is never agent execution | nothing until `live:P35.38a` — leg B's flip + first wire stay the operator's HG-03 + OP-26 acts (packet `p3676/leg-b-packet.md`, go lines blank) | `implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true` · landed 351 |
 
 Sources: OPERATIONAL_READINESS §(f3) + `UNIVERSE_DISPOSED.csv` + plan §9.2/§8.6 + `data/round11_plan.csv`. Non-row homes: 9 `ticket` + 9 `later-phase` + 7 `decision` + 2 `already-done`. Keying (T5 γ) = LANDED R10 ticket: 183→P35.61, 188→P35.62, 191→P35.63, 179–182→P37.16, D-P21.5-1→P37.55, D-P31.4-1→P34.39a (SEED-17 T5).
 
@@ -1278,3 +1279,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-27 — P36.2 correction — orient-fold repair: fold 2's rerun-cell drops on P34.42b/P35.1a/P35.1a1 removed the negation phrase (`live-1` stopped OM-18 / `queued … production untouched`) that suppressed the corpus leg — head-bound CI flagged regenerated `CURRENT.md:60`; the three cells restored verbatim (bytes recovered from `4dd5fabb`, archived `return_pass_cells_pre-P36.2-orient2-supplement.txt` sha256:da43ba78…) · region + projection regen'd, corpus 0 violations · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-27 — P36.2 post-closeout record — `ci: pass #370@e338999` 5/5 head-bound (run 40445251637: composed · web · security · docs · python); PR #370 OPEN, base `r11/P36.1b-…`; flips still UNAPPLIED — `85b71827` waits on `r11/sources-flips` for the operator's signed apply (OP-26); `D-P36.2-1` OPEN — 12 captures queued on `live:P35.38a` · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-27 — P36.76 dispatch boundary-confirm — `ci: pass #370@66c7d11` 5/5 head-bound on the record head (run 40448434239: python/docs/composed/security/web; impl read `ci: pass #370@e338999` run 40445251637) · P36.2 landed: E4 §2 rights-batch agent half — 8 staged packets, p362 machinery, 12 terms captures `prepared_not_executed` (`D-P36.2-1`), 7 tests; **zero `ingestion_permitted` flips — `r11/sources-flips`@`85b71827` holds the prepared HG-03 apply UNAPPLIED for the operator's signed act (OP-26)**; 8 sources stay REFUSED · fix arc: orient fold 2 dropped negation phrases → `e3389997` restored verbatim + archived; BUILD_INDEX append-only lesson (row-350 ci cell stays `recorded in PHASE LOG`) · `main` untouched · deferrals +1/−0 · dispatching P36.76 (row 351 — Axon `Connect <Place>` connector + `/:8443` screen: `live_verification=false`; **OM-20 NAMED at GATE-G5** — leg A (screen records + page hashes + registry-row appends = bounded single recorded GETs of public registration pages) pre-authorised in-ticket under AR-3+AR-2+AR-1c; **leg B (first real host's wire) is the operator's act — held**; ING-GO-D was never granted (GATE-G5 granted ING-GO-C only) — anything binding on it queues; 6 deps landed; S-sized) · chainTip → r11/P36.2-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-10-27 — P36.76 done — row 351 (I7-C12 Axon/Fusus): `axon_connect` connector — 6 committed sites / 12 bounded targets (`connect_page` + `marked_host_screen`), programme-facts-only records (`sig.axon-connect-page/1`), `sig.fusus-screen/1` marker/status/sha256 records (login bytes never persisted), counts-only `fusus_marked_host` candidate — never a feed; Part VIII pre-persistence screen fail-closed · `camera_registration_portal` predicate + regen · `sources.toml` row stays `ingestion_permitted=false` (gate REFUSED, live exit 3) · leg A 12 GETs QUEUED `prepared_not_executed` (`live:P35.38a` 404 → `D-P36.76-1` OPEN); leg B held — `D-P36.76-2` OPEN (operator OP-26) · 25 tests green · shadow 11 claims/7 captures diff=0 · deferrals +2/−0 · verify `make check` 10,862/2 skip/4 env+pre-existing-red · impl `47eee564`→`54e5a1da` · ci: head-bound read follows · chainTip → r11/P36.76-… · next → P36.77 · harness: devin-desktop/swe-2-high/subagent
