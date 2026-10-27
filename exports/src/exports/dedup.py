@@ -40,6 +40,7 @@ from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
+from inference.marking import mark_inferred
 from resolution.camera_sites import count_bounds
 
 #: The schema stamp this module's emitted field shapes answer to.
@@ -165,8 +166,15 @@ class DedupView:
         return {
             "site_id": site,
             "copies": [dict(e) for e in self.copies.get(site, ())],
-            "possible_duplicates": [dict(e) for e in self.possible.get(site, ())],
-            "multi_view": [dict(e) for e in self.multi_view.get(site, ())],
+            # P36.14 (SIG-RECON-052): possible_duplicates are the inferential
+            # ER links — never merged, marked L4 — and multi_view entries are
+            # the engine's derived same-layer classification. Each emitted
+            # entry carries the typed ``inferred``/``layer`` marker; the
+            # mechanically-verified copies (``same_as`` review decisions and
+            # C-tier shared-upstream checks) are recorded/mechanical, not L4,
+            # and stay unmarked.
+            "possible_duplicates": [mark_inferred(dict(e)) for e in self.possible.get(site, ())],
+            "multi_view": [mark_inferred(dict(e)) for e in self.multi_view.get(site, ())],
             "n_independent_lineages": n_lin,
             "n_independent_lineages_display": n_display,
         }

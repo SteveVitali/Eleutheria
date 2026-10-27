@@ -167,6 +167,20 @@ export const OKC_DOSSIER: Dossier = {
       figures: [activeDeviceCount, mappedDeviceCount],
       rows: [
         { label: "Device type", value: "Fixed ALPR cameras; one RTCC integration hub" },
+        // P36.14 / SIG-RECON-052 (§30.4): a governance-chain link is an L4
+        // derived fact — the fixture row carries the SAME typed marker the
+        // export's `_governance_row` emits (`inferred` + `layer: "L4"`), and
+        // the page renders it through the `sig-inferred` marker so the
+        // derivation can never read as an observed fact.
+        {
+          label: "Vendor / platform provider",
+          value: "Motorola Solutions",
+          inferred: true,
+          layer: "L4",
+          note:
+            "Derived accountability link (L4 inference, confidence probable); " +
+            "established by claim(s) contract — procured ≠ deployed (§3.1).",
+        },
       ],
     },
     {

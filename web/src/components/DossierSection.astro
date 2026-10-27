@@ -13,6 +13,7 @@ import Figure from "./Figure.astro";
 import AbsenceHatch from "./AbsenceHatch.astro";
 import { groupDigits } from "../lib/format";
 import { rowDisplayValue } from "../lib/dossier";
+import { INFERRED_MARKER, isInferredRecord } from "../lib/epistemic";
 import type { Section } from "../lib/dossier";
 // P35.37 (SIG-TRANSP-013): each figure's evidence pointer and every
 // numeral-bearing row come from the page's figure registry.
@@ -44,6 +45,25 @@ const rows = section.rows ?? [];
           const body = (
             <>
               <span class="sig-dossier-row__label">{r.label}:</span>{" "}
+              {/* P36.14 / SIG-RECON-052: a marked L4 row renders the persistent
+                  inference marker — glyph + text label (SIG-UI-005), styled by
+                  the epistemic `sig-inferred` class — before its value, so the
+                  derivation can never read as an observed fact. Pure markup;
+                  no script. */}
+              {isInferredRecord(r) && (
+                <span
+                  class={INFERRED_MARKER.cssClass}
+                  data-testid="inferred-marker"
+                  data-inferred="true"
+                  data-layer="L4"
+                  title={INFERRED_MARKER.meaning}
+                >
+                  <span class="sig-inferred__glyph" aria-hidden="true">
+                    {INFERRED_MARKER.glyph}
+                  </span>{" "}
+                  {INFERRED_MARKER.label}
+                </span>
+              )}{" "}
               {r.absence ? (
                 <AbsenceHatch
                   kind={r.absence}

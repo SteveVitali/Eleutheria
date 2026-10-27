@@ -27,7 +27,7 @@
  * the JSON API can never drift out of the SIG-UI-011 contract.
  */
 
-import { ABSENCE_KIND_META } from "./epistemic";
+import { ABSENCE_KIND_META, isInferredRecord } from "./epistemic";
 import type { AbsenceKind, CompetingClaim, Support } from "./epistemic";
 import { beliefPinnedPermalink } from "./citation";
 import type { AsOfEcho } from "./fixtures";
@@ -130,6 +130,15 @@ export interface Row {
    * governing regime — the value is cleared and this flag drives the render.
    */
   withheld?: boolean;
+  /**
+   * P36.14 / SIG-RECON-052: the typed L4-inference marker. `inferred: true`
+   * with `layer: "L4"` exactly when this row carries an L4 derived fact
+   * (an `inference.derived_fact` record, e.g. a governance-chain link) —
+   * the row then renders the `sig-inferred` marker so an inference can never
+   * read as an observed fact. Absent/`false` on observed rows.
+   */
+  inferred?: boolean;
+  layer?: string;
 }
 
 /** The explicit display string for a row value (SIG-UI-015: "unknown", not omitted). */
@@ -794,6 +803,9 @@ function rowJson(row: Row): Record<string, unknown> {
     ...(row.absence ? { absence_kind: row.absence } : {}),
     ...(row.documentUrl ? { document_url: row.documentUrl } : {}),
     ...(row.note ? { note: row.note } : {}),
+    // P36.14 / SIG-RECON-052: the typed L4 marker rides the JSON twin too —
+    // the same coherent pair the HTML render reads (never a half-marker).
+    ...(isInferredRecord(row) ? { inferred: true, layer: "L4" } : {}),
   };
 }
 
