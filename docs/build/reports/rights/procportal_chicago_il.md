@@ -72,4 +72,4 @@ Staged for the operator on `r11/sources-flips` (unsigned, prepared only):
 `LicenseRef-PublicRecord-FactualCompilation`, reviewer `maintainer
 (delegated)`, packet = this file. Precedent: `camreg_chicago_il` — same
 `data.cityofchicago.org` portal, terms uncaptured — was flipped under
-GL-GATE-07 2026-09-18 and runs live.
+GL-GATE-07 2026-09-18 and sits `ingestion_permitted=true` in the registry.
