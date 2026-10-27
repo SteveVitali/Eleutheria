@@ -1255,6 +1255,33 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   consume it natively. No production mutation, no spine write —
   the artifact ships with the next export under that row's
   authority.
+- **Public-API rate limits — the exposure-posture enforcement half
+  lands dark** (P36.13 / row 354; SIG-API-009 the ticket's read +
+  SIG-API-011 cited — the §37.4 anonymous tier's rate-limit clause;
+  K3 §5.6, D-K3-6 [B-30], SIG-STORE-003) —
+  `api/src/api/rate_limit.py` adds an in-process per-client token
+  bucket (30 requests per 60 seconds, burst 10) keyed on the
+  edge-appended client address: RFC 7239 `Forwarded` /
+  `X-Forwarded-For` sliced by the declared
+  `SIG_API_TRUSTED_PROXY_HOPS` (2 behind the Google external load
+  balancer); client-claimed chain entries are never trusted and a
+  short chain falls back to the direct peer. When armed,
+  `RateLimit-Limit`/`RateLimit-Remaining`/`RateLimit-Reset` ride
+  every response — success, typed errors, framework 404s and the
+  emitted 500 alike — and an over-limit burst in `enforce` posture
+  answers 429 + `Retry-After` with the typed `{detail,
+  code: "rate_limited", …}` body or the no-JS HTML page (DR-C4-10).
+  The `SIG_API_RATE_LIMIT` env = `off` (default — nothing mounts;
+  the code ships dark ahead of the staged flip) · `advise`
+  (headers + accounting, never rejects) · `enforce`; an unknown
+  value refuses app construction. The hosted-enforcement flip is
+  the named OM-20 mutation — staged in
+  `ops/gcp/rate-limit-enforcement.sh` (check/apply/verify; apply
+  gated on ADC + `SIG_GCP_PROJECT` + `SIG_RATELIMIT_AUTHOR` + the
+  AR-3 windows), queued under `D-P36.13-1`, not performed by this
+  change; the loopback curation app and the non-operational intake
+  receiver are untouched. No Cloud Armor — D-K3-6 stays deferred;
+  the in-process limiter is the whole mechanism (SIG-STORE-003).
 
 ### Changed
 
