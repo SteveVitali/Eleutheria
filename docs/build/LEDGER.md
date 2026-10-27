@@ -7,9 +7,9 @@
 
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # P36.16 landed(356); queued legs on earlier rows
-nextTicket: P36.17 # row 357 — lexicon-and-copy-system
-lastCompleted: P36.16 # row 356 — design-tokens-v2 2026-10-27
+projectStatus: IN_PROGRESS # P36.17 landed(357); queued legs on earlier rows
+nextTicket: P36.18 # row 358 — layout-and-chrome
+lastCompleted: P36.17 # row 357 — lexicon-and-copy-system 2026-10-27
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.76,P36.77,P36.78,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P36.16-design-tokens-v2 # P36.16 landed on this tip; P36.17 stacks here
+chainTip: r11/P36.17-lexicon-and-copy-system # P36.17 landed on this tip; P36.18 stacks here
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-27T20:15Z
+updatedAt: 2026-10-27T22:52Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1306,3 +1306,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-27 — P36.16 done — row 356 (K13 UXK14-1 design tokens v2; SIG-UI-146/148/156): `web/src/styles/tokens.css` the single source — 8-step 1.25 scale (13 px floor), 4 px space ramp, 4/8/pill radii, 120–160 ms motion zeroed under reduced-motion; light + chosen dark `light-dark()` sets, print forces light; reserved hues single-meaning (raspberry = contested/unresolved, amber = provisional, blue = links + data); slate support ramp ordinal + lightness-monotone; the incompleteness banner stays neutral · epistemic/islands/curate restated on `var(--sig-*)`, every legacy name an alias · map/network literals → `lib/design-tokens.ts` (byte-pinned by test) · Public Sans Variable vendored 26,832 B + OFL-1.1, `font-display: optional` · `check-tokens.mjs` allow-list + ≤12 KiB gzip CSS / ≤30 KiB font budgets in `npm run check` · 29 unit + 5 e2e · deferrals +0/−0 · `make check` 10,945p/2s/6r+7err (env: GCP sentinel, P34.18 residue ×2, Docker-daemon EOF ×7; 3 self-inflicted misses — publish-test allow-list + claim-lint respells — repaired + re-run green) · `npm run check` green · impl `f061dbf1` · ci: head-bound read follows — stack `blockedOn` ancestor #374@c421540 (waived-ancestor pattern) · chainTip → r11/P36.16-… · next → P36.17 · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-27 — P36.16 post-closeout record — `ci: pass #376@3fe74db` 5/5 head-bound (run 40581863278: python 19m52s · docs 2m20s · composed 4m13s · security 28s · web 31m30s; check-runs read 21:28Z) · stack `blockedOn` ancestor #374's head c421540 docs-red (run 40534176482 — waived-ancestor pattern, same as the #368@75aa5a8 reads on earlier records) · every pushed head verbatim in `runs/P36.16.md`: `f061dbf1` impl (run 40576383579 cancelled-superseded) → `d7c2d96e` web-red (LH-PERF-1 signature — `/map` categories.performance 0.72 < 0.75, TBT spread 875–3,457 ms; check-run annotation generic, allow-list unmatched → no re-run per CI-5) → `58c6d3ed` docs-red (stale projection — `runs/P36.16.md` is a hashed input; P35.54 class) → `3fe74dbd` in-commit regen, green · PR #376 OPEN on the stack for operator integration · `main` untouched · deferrals +0/−0 · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-27 — P36.17 dispatch boundary-confirm — `ci: pass #376@0504a80` 5/5 head-bound on the record tip (run 40587179456: python/docs/composed/security/web; impl read `ci: pass #376@3fe74db` run 40581863278; `reports/ci/p36_16_pr376.json`) · P36.16 landed: design tokens v2 — `tokens.css` single source (type scale + space ramp + radii + motion + light/dark + print-light + reserved hues), TS mirror `design-tokens.ts`, vendored Public Sans woff2 + OFL, `check-tokens` budgets wired, 34 tests; `web/` styles migrated to `var(--sig-*)` · fix arc recorded: corpus respells (`self-hosted`/`live-claim` assert-token collisions), `updatedAt` real-date repair, coverage re-route SIG-UI-146/148/156 → `MET-ENGINEERED(D-R10-PUBLISH-1)`/BL-085, `d7c2d96e` web-red LH-PERF-1 unmatched-form (no rerun, CI-5 — resampled green on next head), `58c6d3ed` docs-red stale projection repaired in-commit · `main` untouched · deferrals +0/−0 · dispatching P36.17 (row 357 — lexicon and copy system: `live_verification=false`; no gate (D-K14-5/-6 B-22 + D-K14-8 B-29 answered, carried — the spec publishes as a page per release), no OM-20, no production mutations; dep P36.16 landed; M-sized) · chainTip → r11/P36.16-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-10-27 — P36.17 done — row 357 (K13 UXK14-4 lexicon and copy system; SIG-UI-061/062/064/133/143 + 147/149 posture): `web/src/lib/lexicon.json` (`sig.lexicon/1`) the one vocabulary — 11 state fields with K14 §3.4 labels ("None found", "Stated absent"), the C-01…C-04 legend map (corroborated = independent lineages + interim line verbatim; line pattern = access kind only; one meaning per symbol; absence one shared hatch), `identity.COPY`/`POSSIBLE_DUPLICATE` (`merged:false`, "cannot prove"), the controlled vocabulary + 30 terms · `lexicon.ts` fail-closed binding (Appendix E verbatim via uv.lock root-walk; 3-source merge throws on a spec-term shadow) · `epistemic.ts` derives all display strings — stored enums + `isContested()` untouched · `/glossary/` T1 zero-JS: 47 entries, 88 spec-ref disclosures · `<Term>` native popover + glossary link, build-error on undefined · map data hue resolves via `legend.dataHue.token` (islands read the JSON — no node builtin in a client bundle) · `check-lexicon.mjs` 9 legs in `npm run check` · T1 registry + allow-list + nav; root-absolute baseline holds 157 · deferrals +0/−0 · `make check` 10,946p/2s/6f/7err (env: GCP sentinel, P34.18 residue ×2, serving-topology Docker ×7; 3 self-inflicted fixture misses repaired + re-run green) · `npm run check` green (584 unit, 50 routes, 529 e2e) · impl `27538696` · ci: head-bound read follows · harness: devin-desktop/swe-2-high/subagent
