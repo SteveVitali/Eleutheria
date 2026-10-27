@@ -1326,6 +1326,35 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   stylelint-equivalent allow-list gate plus the ≤12 KiB gzip CSS /
   ≤30 KiB font budgets (`check:tokens` in `npm run check`); pages
   declare `color-scheme: light dark`. Zero client JS added.
+- **Lexicon and copy system — one machine-readable vocabulary and a
+  generated `/glossary/`** (P36.17 / row 357; SIG-UI-061 + SIG-UI-062 +
+  SIG-UI-064 + SIG-UI-133 + SIG-UI-143 + SIG-UI-147 + SIG-UI-149 —
+  owner; D-K14-5/D-K14-6 [B-22] = as recommended, D-K14-8 [B-29] = yes;
+  cites SIG-UI-039/040, SIG-ENG-042, SIG-TRANSP-001…043) —
+  `web/src/lib/lexicon.json` (`sig.lexicon/1`) is now the single
+  legend and epistemic vocabulary: the K13 C-01…C-04 decisions (the
+  corroborated fill counts independent lineages and carries the
+  interim "2+ source records; republications not yet collapsed" line,
+  the line pattern encodes access kind only, every symbol declares one
+  meaning family, absence is one shared hatch with kinds told apart by
+  symbol + text), the L3 `copy`/`possible duplicate` identity states
+  (possible duplicates stay visible and unmerged — SIG cannot prove
+  they are the same camera), Candidate vs Provisional distinct in
+  word/symbol/filter, and the controlled one-word-per-concept
+  vocabulary. `epistemic.ts` derives every display string from it
+  (K14 §3.4 labels — "None found", "Stated absent" — stored enums
+  untouched); the map style resolves its data hue through
+  `legend.dataHue.token`; the Python figure kit reads the same JSON.
+  `/glossary/` (T1, zero JS) is generated at build from Appendix E
+  verbatim + lexicon terms + site terms — 47 entries, 88 "Spec
+  references" disclosures; `<Term>` renders a glossary link plus a
+  native HTML popover and fails the build on an undefined term;
+  `<InBrief>` and `<SpecRefs>` land the plain-first/spec-ref-disclosed
+  copy pattern on `/methodology/`; reason codes and axis codes render
+  inside `<code>`, never prose. `scripts/check-lexicon.mjs`
+  (`check:lexicon` in `npm run check`) fails on an uncovered enum, a
+  symbol carrying two meanings, a shadowed spec term, an unresolvable
+  `<Term>`, or a raw enum in built visible prose.
 
 ### Changed
 

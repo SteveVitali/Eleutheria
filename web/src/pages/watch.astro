@@ -155,7 +155,9 @@ const axisLabels: Record<string, string> = {
         <p class="sig-recommendation__title">
           <strong>{i + 1}. {r.artifact.title}</strong>{" "}
           {r.contested && <ContestedMarker compact />}
-          <span class="sig-recommendation__meta"> — {r.artifact.source} (directness {r.artifact.directness}, currency {r.artifact.currency}, {r.artifact.capture_status})</span>
+          {/* P36.17 (DR-K14-09 / SIG-UI-143): the axis codes are machine
+              vocabulary — they render inside `code`, never as prose. */}
+          <span class="sig-recommendation__meta"> — {r.artifact.source} (directness <code>{r.artifact.directness}</code>, currency <code>{r.artifact.currency}</code>, {r.artifact.capture_status})</span>
         </p>
         <ul class="sig-score-breakdown" data-testid="score-breakdown">
           {Object.entries(r.breakdown)

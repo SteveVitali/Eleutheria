@@ -41,7 +41,8 @@ describe("support glyph (SIG-UI-003)", () => {
 
   it("always carries a text equivalent naming the level and the count", () => {
     const text = supportTextEquivalent("STRONGLY_SUPPORTED");
-    expect(text).toContain("strongly supported");
+    // P36.17: the lexicon label, never a re-cased enum (SIG-UI-143).
+    expect(text).toContain("Strong support");
     expect(text).toContain(`3 of ${GLYPH_STEP_COUNT}`);
   });
 

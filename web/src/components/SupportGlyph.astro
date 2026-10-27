@@ -31,6 +31,8 @@ const mark = supportMark(support, evidenceCount);
   <span class="sig-glyph__text"> {mark.textEquivalent}</span>
   <span class="sig-glyph__evidence"> · {mark.evidenceCount} evidence class{mark.evidenceCount === 1 ? "" : "es"}</span>
   {mark.downgradeReasonCode && (
-    <span class="sig-glyph__reason"> · downgrade: {mark.downgradeReasonCode}</span>
+    /* P36.17 (DR-K14-09 / SIG-UI-143): a stable reason code is a raw enum —
+       it may appear only inside `code`, never as prose. */
+    <span class="sig-glyph__reason"> · downgrade: <code>{mark.downgradeReasonCode}</code></span>
   )}
 </span>

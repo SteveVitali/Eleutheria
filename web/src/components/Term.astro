@@ -1,0 +1,42 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.17 (K14 §2.5): the defined-term mark. A term SIG defines renders as a
+// link to its /glossary/ anchor plus a native HTML popover (`popovertarget`
+// on a <button>) carrying the plain definition — no JavaScript required
+// anywhere (the popover is a UA feature; where the feature is absent the
+// button is inert and the glossary link still lands). The term must exist in
+// the lexicon — `glossaryTerm` throws at build time otherwise (SIG-ENG-042;
+// a term used before it is defined is a defect, never a silent omission).
+//
+// Constraint (K14): use <Term> for the FIRST significant mention of a defined
+// term per page, at most once per page per term — the popover id is the
+// glossary anchor, so two uses would duplicate an id. `check-lexicon.mjs`
+// enforces the once-per-page rule.
+import { glossaryTerm } from "../lib/lexicon";
+import { withBase } from "../lib/paths";
+
+interface Props {
+  /** The lexicon term id, e.g. "camera-site" → /glossary/#camera-site. */
+  term: string;
+}
+
+const { term } = Astro.props;
+const entry = glossaryTerm(term); // throws on an undefined term — build fails
+---
+
+<span class="sig-term" data-term={entry.id}>
+  <a class="sig-term__link" href={withBase(`glossary/#${entry.anchor}`)}
+    ><slot>{entry.term}</slot></a
+  ><button
+    type="button"
+    class="sig-term__def"
+    popovertarget={`td-${entry.anchor}`}
+    aria-label={`Definition of ${entry.term}`}
+    ><span aria-hidden="true">ⓘ</span></button
+  ><span popover id={`td-${entry.anchor}`} class="sig-term__popover"
+    >{entry.plain}</span
+  >
+</span>

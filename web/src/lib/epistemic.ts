@@ -18,7 +18,15 @@
  * where the "green never for epistemic state" rule (SIG-UI-006) is enforced by a
  * test. Every state here declares a non-colour text channel so the redundant
  * encoding required by WCAG 1.4.1 (SIG-UI-005) exists independently of any style.
+ *
+ * P36.17 (SIG-UI-143): every display string — labels, plain meanings, marker
+ * text — is derived from `lexicon.json`, the one machine-readable vocabulary
+ * (K14 §3.4). This module keeps the stored enums and the logic; it never
+ * forks the wording. Raw enum values are machine keys only — they must not
+ * appear in visible prose outside Technical details or `code`.
  */
+
+import { stateLabel, lexiconState, LEXICON } from "./lexicon";
 
 // --- The four orthogonal fields (§10.7, SIG-EPIS-023) ----------------------
 
@@ -58,11 +66,29 @@ export const EPISTEMIC_FIELD_NAMES: readonly EpistemicFieldName[] = [
 
 /** Human-readable field titles (the label shown beside each independent chip). */
 export const FIELD_TITLES: Record<EpistemicFieldName, string> = {
-  resolution_status: "Resolution",
-  support: "Support",
-  agreement: "Agreement",
-  currency: "Currency",
+  resolution_status: LEXICON.fields.resolution_status.label,
+  support: LEXICON.fields.support.label,
+  agreement: LEXICON.fields.agreement.label,
+  currency: LEXICON.fields.currency.label,
 };
+
+/** The lexicon state field each epistemic field's values draw their labels from. */
+const FIELD_STATE_KEY: Record<EpistemicFieldName, Parameters<typeof stateLabel>[0]> = {
+  resolution_status: "resolution",
+  support: "support",
+  agreement: "agreement",
+  currency: "currency",
+};
+
+/**
+ * The display label for one field value — from the lexicon, never a re-cased
+ * enum (SIG-UI-143). A null/`—` value renders the typed "Not applicable"
+ * state (CP-5), never a bare "unknown".
+ */
+export function epistemicFieldValueLabel(field: EpistemicFieldName, value: string): string {
+  if (value === "—") return LEXICON.legend.cannotApply.label;
+  return stateLabel(FIELD_STATE_KEY[field], value);
+}
 
 // --- The support glyph (SIG-UI-003) ----------------------------------------
 
@@ -94,8 +120,9 @@ export function supportGlyph(support: Support): string {
 /** The accessible text equivalent for the glyph (what a screen reader announces). */
 export function supportTextEquivalent(support: Support): string {
   const filled = SUPPORT_STEPS[support];
-  const words = support.toLowerCase().replace(/_/g, " ");
-  return `Support: ${words} (${filled} of ${GLYPH_STEP_COUNT})`;
+  // The lexicon label, not a re-cased enum — the text channel carries the
+  // shared vocabulary (SIG-UI-143).
+  return `Support: ${stateLabel("support", support)} (${filled} of ${GLYPH_STEP_COUNT})`;
 }
 
 /**
@@ -151,10 +178,10 @@ export function isContested(agreement: Agreement): boolean {
   return CONTESTED_AGREEMENTS.includes(agreement);
 }
 
-/** The persistent contested marker glyph + its accessible label. */
+/** The persistent contested marker glyph + its accessible label — from the lexicon. */
 export const CONTESTED_MARKER = {
-  glyph: "\u2260", // ≠ — a non-colour channel (SIG-UI-005)
-  label: "Contested value",
+  glyph: lexiconState("agreement", "CONTESTED").symbol!, // ≠ — a non-colour channel (SIG-UI-005)
+  label: stateLabel("agreement", "CONTESTED"),
 } as const;
 
 // --- The inferred / L4 marker (§30.4, SIG-RECON-052, P36.14) ---------------
@@ -178,11 +205,9 @@ export const INFERRED_LAYER = "L4";
  */
 export const INFERRED_MARKER = {
   /** ◈ — a non-colour channel (SIG-UI-005), distinct from every other marker glyph. */
-  glyph: "◈",
-  label: "Inferred",
-  meaning:
-    "Derived by a named rule from recorded claims — an L4 inference, not an " +
-    "observed fact (§30, SIG-RECON-052). Its supporting claims are cited.",
+  glyph: lexiconState("inferred", "INFERRED").symbol!,
+  label: lexiconState("inferred", "INFERRED").label,
+  meaning: lexiconState("inferred", "INFERRED").plain,
   /** The epistemic class that styles this marker (defined once in epistemic.css). */
   cssClass: "sig-inferred",
 } as const;
@@ -226,36 +251,21 @@ export interface AbsenceKindMeta {
   taskable: boolean;
 }
 
-export const ABSENCE_KIND_META: Record<AbsenceKind, AbsenceKindMeta> = {
-  NOT_RESEARCHED: {
-    kind: "NOT_RESEARCHED",
-    label: "Not researched",
-    meaning: "SIG has not looked yet. Absence of a row is not evidence of absence.",
-    symbol: "?",
-    taskable: true,
-  },
-  NO_EVIDENCE_FOUND: {
-    kind: "NO_EVIDENCE_FOUND",
-    label: "No evidence found",
-    meaning: "SIG searched named sources and found nothing.",
-    symbol: "\u2205", // ∅
-    taskable: true,
-  },
-  EVIDENCE_OF_ABSENCE: {
-    kind: "EVIDENCE_OF_ABSENCE",
-    label: "Evidence of absence",
-    meaning: "A source affirmatively asserts this does not exist.",
-    symbol: "\u2717", // ✗
-    taskable: true,
-  },
-  UNRESOLVED: {
-    kind: "UNRESOLVED",
-    label: "Unresolved",
-    meaning: "Evidence exists and disagrees; no resolution is defensible.",
-    symbol: "\u26A0", // ⚠
-    taskable: true,
-  },
-};
+export const ABSENCE_KIND_META: Record<AbsenceKind, AbsenceKindMeta> = Object.fromEntries(
+  ABSENCE_KINDS.map((kind) => {
+    const state = lexiconState("absence", kind);
+    return [
+      kind,
+      {
+        kind,
+        label: state.label, // K14 §3.4 short labels: "None found", "Stated absent"
+        meaning: state.plain,
+        symbol: state.symbol!,
+        taskable: true,
+      },
+    ];
+  }),
+) as Record<AbsenceKind, AbsenceKindMeta>;
 
 /** The single shared hatch texture class (SIG-UI-007: exactly one texture). */
 export const ABSENCE_HATCH_CLASS = "sig-absence-hatch";

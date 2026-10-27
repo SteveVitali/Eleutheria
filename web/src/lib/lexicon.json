@@ -1,0 +1,623 @@
+{
+  "schema": "sig.lexicon/1",
+  "id": "sig.lexicon/1",
+  "title": "SIG shared lexicon and copy system",
+  "version": "2026-10-28",
+  "about": "P36.17 (K13 UXK14-4 / K14 §3.4–3.5, C-01…C-04). The ONE machine-readable vocabulary every surface reads — Astro components, the internal visual-language page, the map style and the Python figure kit (P36.27/28 read this file as plain JSON). One epistemic word means one thing everywhere (SIG-UI-143); one symbol carries one meaning (SIG-UI-133). Stored enums, JSON keys and spec terms are never rewritten — this file maps them to their display labels and plain-language meanings; the precise layer stays verbatim behind it (K14 §3.3).",
+
+  "fields": {
+    "resolution_status": {
+      "label": "Resolution",
+      "plain": "The decision about which value the record currently stands on.",
+      "spec": "§16.4, §10.7"
+    },
+    "support": {
+      "label": "Support",
+      "plain": "How strongly the winning value is evidenced.",
+      "spec": "§10.7"
+    },
+    "agreement": {
+      "label": "Agreement",
+      "plain": "How much the admissible evidence disagrees.",
+      "spec": "§10.7"
+    },
+    "currency": {
+      "label": "Currency",
+      "plain": "How stale the claim is relative to how fast this kind of fact changes.",
+      "spec": "§28.3"
+    }
+  },
+
+  "states": {
+    "support": {
+      "CONFIRMED": {
+        "label": "Confirmed",
+        "plain": "The strongest backing SIG gives: the evidence settles this value.",
+        "symbol": "⊕⊕⊕⊕",
+        "symbolMeaning": "support step count",
+        "spec": "§10.7"
+      },
+      "STRONGLY_SUPPORTED": {
+        "label": "Strong support",
+        "plain": "Backed by one high-tier source or two mid-tier sources.",
+        "symbol": "⊕⊕⊕◯",
+        "symbolMeaning": "support step count",
+        "spec": "§10.7"
+      },
+      "PROBABLE": {
+        "label": "Probable",
+        "plain": "Backed by a single mid-tier source.",
+        "symbol": "⊕⊕◯◯",
+        "symbolMeaning": "support step count",
+        "spec": "§10.7"
+      },
+      "WEAKLY_SUPPORTED": {
+        "label": "Weak support",
+        "plain": "Only thin evidence backs this value.",
+        "symbol": "⊕◯◯◯",
+        "symbolMeaning": "support step count",
+        "spec": "§10.7"
+      },
+      "UNSUPPORTED": {
+        "label": "Unsupported",
+        "plain": "No admissible claim backs this value; it is shown because something must be displayed.",
+        "symbol": "◯◯◯◯",
+        "symbolMeaning": "support step count",
+        "spec": "§10.7"
+      }
+    },
+    "agreement": {
+      "UNCONTESTED": {
+        "label": "Uncontested",
+        "plain": "No admissible evidence disagrees with this value.",
+        "spec": "§10.7"
+      },
+      "MINOR_DISAGREEMENT": {
+        "label": "Minor disagreement",
+        "plain": "Small differences within tolerance; no marker is raised.",
+        "spec": "§10.7"
+      },
+      "CONTESTED": {
+        "label": "Contested",
+        "plain": "Sources disagree about this value; SIG shows the leading value and the others.",
+        "symbol": "≠",
+        "symbolMeaning": "contested or unresolved value",
+        "spec": "§10.7; SIG-UI-008"
+      },
+      "IRRECONCILABLE": {
+        "label": "Unresolved",
+        "plain": "Sources disagree and no value can be defended yet; see the range.",
+        "symbol": "≠",
+        "symbolMeaning": "contested or unresolved value",
+        "spec": "§29; SIG-UI-009"
+      }
+    },
+    "currency": {
+      "CURRENT": {
+        "label": "Current",
+        "plain": "Fresh for this kind of fact.",
+        "spec": "§28.3"
+      },
+      "AGING": {
+        "label": "Aging",
+        "plain": "Getting old for this kind of fact.",
+        "spec": "§28.3"
+      },
+      "STALE": {
+        "label": "Stale",
+        "plain": "Older than this kind of fact should be; may have changed since.",
+        "spec": "§28.3"
+      },
+      "HISTORICAL": {
+        "label": "Historical",
+        "plain": "True at a past date, kept as history — shown with its date, e.g. 'Historical, recorded 2020-01-28', never 'undated'.",
+        "spec": "§28.3"
+      }
+    },
+    "resolution": {
+      "RESOLVED": {
+        "label": "Resolved",
+        "plain": "SIG has a recorded decision for this value.",
+        "spec": "§16.4"
+      },
+      "UNRESOLVED": {
+        "label": "Unresolved",
+        "plain": "A legitimate, publishable outcome — not an error and never hidden.",
+        "spec": "§28.5"
+      },
+      "SUPERSEDED": {
+        "label": "Superseded",
+        "plain": "Replaced by a later record.",
+        "spec": "§16"
+      },
+      "WITHDRAWN": {
+        "label": "Withdrawn",
+        "plain": "Removed from publication; the reason is given.",
+        "spec": "§45"
+      }
+    },
+    "provisional": {
+      "PROVISIONAL": {
+        "label": "Provisional",
+        "plain": "Produced by a method not yet independently evaluated; may change.",
+        "symbol": "◔",
+        "symbolMeaning": "provisional state",
+        "colourMeaning": "amber means the provisional state only",
+        "token": "sig-epi-provisional-ink",
+        "spec": "Stream L; methodology PROVISIONAL"
+      }
+    },
+    "review": {
+      "UNREVIEWED": {
+        "label": "Not reviewed",
+        "plain": "No person outside the project has checked this.",
+        "spec": "SIG-UI-044 human-review status"
+      },
+      "NOT_REVIEWED_BY_PERSON": {
+        "label": "Not reviewed by a person",
+        "plain": "Produced by an automated step that no person has checked yet.",
+        "spec": "Stream L review status"
+      }
+    },
+    "directness": {
+      "D1": {
+        "label": "Direct",
+        "plain": "This kind of document can show this kind of fact on its own.",
+        "spec": "§10.5"
+      },
+      "D6": {
+        "label": "Not evidence",
+        "plain": "Non-probative for this predicate — excluded, not down-weighted.",
+        "spec": "§10.5"
+      }
+    },
+    "access": {
+      "CONFIGURED_ACCESS": {
+        "label": "Set up to share",
+        "plain": "The system is set up to permit it — that says nothing about whether anyone used it.",
+        "symbol": "solid line",
+        "symbolMeaning": "access kind only",
+        "spec": "§12.2; SIG-UI-024"
+      },
+      "DECLARED_POLICY": {
+        "label": "Stated policy",
+        "plain": "Someone said it is permitted or forbidden — distinct from configuration and from use.",
+        "symbol": "dashed line",
+        "symbolMeaning": "access kind only",
+        "spec": "§12.2; SIG-UI-024"
+      },
+      "OBSERVED_USE": {
+        "label": "Observed use",
+        "plain": "Someone actually did it.",
+        "symbol": "double line",
+        "symbolMeaning": "access kind only",
+        "spec": "§12.2; SIG-UI-024"
+      }
+    },
+    "absence": {
+      "NOT_RESEARCHED": {
+        "label": "Not researched",
+        "plain": "SIG hasn't looked yet. Absence of a row is not evidence of absence.",
+        "symbol": "?",
+        "symbolMeaning": "absence kind, on the shared hatch",
+        "spec": "§9.5"
+      },
+      "NO_EVIDENCE_FOUND": {
+        "label": "None found",
+        "plain": "SIG searched the named sources and found nothing.",
+        "symbol": "∅",
+        "symbolMeaning": "absence kind, on the shared hatch",
+        "spec": "§9.5"
+      },
+      "EVIDENCE_OF_ABSENCE": {
+        "label": "Stated absent",
+        "plain": "A source says this does not exist.",
+        "symbol": "✗",
+        "symbolMeaning": "absence kind, on the shared hatch",
+        "spec": "§9.5"
+      },
+      "UNRESOLVED": {
+        "label": "Unresolved",
+        "plain": "Evidence exists and disagrees; no resolution is defensible.",
+        "symbol": "⚠",
+        "symbolMeaning": "absence kind, on the shared hatch",
+        "spec": "§9.5"
+      }
+    },
+    "identity": {
+      "COPY": {
+        "label": "copy",
+        "plain": "A second appearance of a record SIG already has — kept linked, counted once.",
+        "merged": true,
+        "spec": "§35"
+      },
+      "POSSIBLE_DUPLICATE": {
+        "label": "possible duplicate",
+        "plain": "Possibly the same camera as another record. It stays visible and is not merged — SIG cannot prove they are the same, so counts are ranges.",
+        "merged": false,
+        "spec": "§35"
+      }
+    },
+    "inferred": {
+      "INFERRED": {
+        "label": "Inferred",
+        "plain": "Derived by a named rule from recorded claims — an L4 inference, not an observed fact. Its supporting claims are cited.",
+        "symbol": "◈",
+        "symbolMeaning": "L4 derived record",
+        "spec": "§30.4; SIG-RECON-052"
+      }
+    }
+  },
+
+  "legend": {
+    "note": "The K13 C-01…C-04 collisions, resolved. One visual channel carries exactly one meaning; every encoding below is load-bearing and exclusive. Colour is never the only channel (SIG-UI-005).",
+    "fill": {
+      "channel": "fill",
+      "encodings": {
+        "corroborated": {
+          "label": "Corroborated",
+          "plain": "Two or more source records with independent lineages back this point or area.",
+          "symbol": "filled shape",
+          "appliesTo": ["point", "area"],
+          "countsIndependentLineages": true,
+          "interimLegendLine": "2+ source records; republications not yet collapsed",
+          "spec": "§10.8; SIG-UI-064"
+        },
+        "singleSource": {
+          "label": "One source",
+          "plain": "One source record backs this point or area.",
+          "symbol": "hollow shape",
+          "appliesTo": ["point", "area"],
+          "spec": "SIG-UI-061"
+        }
+      }
+    },
+    "linePattern": {
+      "channel": "line pattern",
+      "meaning": "access kind only — never currency, never a brand edge",
+      "encodings": {
+        "configured": { "state": "access.CONFIGURED_ACCESS", "symbol": "solid line", "symbolMeaning": "access kind only" },
+        "declared": { "state": "access.DECLARED_POLICY", "symbol": "dashed line", "symbolMeaning": "access kind only" },
+        "observed": { "state": "access.OBSERVED_USE", "symbol": "double line", "symbolMeaning": "access kind only" }
+      }
+    },
+    "currency": {
+      "channel": "muted ink plus a date or word",
+      "never": ["a line pattern", "hollow"],
+      "plain": "Staleness is shown as muted ink with a date or word ('Historical, recorded 2020-01-28'), never by a line pattern and never hollow.",
+      "spec": "§28.3"
+    },
+    "contested": {
+      "channel": "raspberry hue plus the ≠ marker",
+      "plain": "Raspberry means contested or unresolved — nothing else.",
+      "tokens": ["sig-epi-disagree-ink"],
+      "spec": "SIG-UI-008"
+    },
+    "provisional": {
+      "channel": "amber hue plus the ◔ outline or chip",
+      "plain": "Amber means provisional — nothing else.",
+      "tokens": ["sig-epi-provisional-ink"],
+      "spec": "SIG-UI-062"
+    },
+    "absence": {
+      "channel": "hatch texture",
+      "plain": "Hatch means absence only; the four kinds are distinguished inside it.",
+      "spec": "§9.5; SIG-UI-007"
+    },
+    "entityKind": {
+      "channel": "shape",
+      "plain": "Entity kind uses shape (point, area, institution, vendor) — shape never carries epistemic state.",
+      "spec": "SIG-UI-133"
+    },
+    "cannotApply": {
+      "label": "Not applicable",
+      "plain": "This measure does not apply to this fact — a typed state, never a blank cell.",
+      "symbol": "em dash",
+      "spec": "CP-5"
+    },
+    "dataHue": {
+      "channel": "the single data hue",
+      "plain": "Categorical data uses one hue plus shapes; the hue is the site's data blue.",
+      "token": "sig-data-1",
+      "spec": "D-K14-3"
+    },
+    "candidateVsProvisional": {
+      "note": "Two different axes that must never collapse into each other (SIG-UI-062): Candidate is a lifecycle state (a record not yet committed); Provisional is an epistemic state (a method not yet evaluated). They differ in word, symbol and filter value.",
+      "rows": [
+        {
+          "axis": "lifecycle",
+          "word": "Candidate",
+          "symbol": "none — lifecycle states are filtered, not marked",
+          "filter": "lifecycle",
+          "plain": "A record that exists but is not yet part of the published record."
+        },
+        {
+          "axis": "epistemic",
+          "word": "Provisional",
+          "symbol": "◔",
+          "filter": "provisional",
+          "state": "provisional.PROVISIONAL",
+          "plain": "A published value produced by a method not yet independently evaluated."
+        }
+      ]
+    }
+  },
+
+  "vocabulary": [
+    { "concept": "A place SIG publishes a page for", "use": "place", "also": "dossier (the document)", "not": ["jurisdiction code", "subject"] },
+    { "concept": "One source's row about a camera", "use": "record", "not": ["observation-level record", "subject"] },
+    { "concept": "The de-duplicated physical camera", "use": "camera site", "not": ["resolved site", "asset", "entity", "subject"] },
+    { "concept": "Where SIG got something", "use": "source", "also": "plus the publisher's name", "not": ["registry id", "source key", "compartment"] },
+    { "concept": "A dated published snapshot", "use": "release", "not": ["publication id", "belief"] },
+    { "concept": "When the data was taken", "use": "data as of <date>", "not": ["as of world", "as of belief"] },
+    { "concept": "The rules version", "use": "method version", "also": "in Technical details", "not": ["ruleset"] },
+    { "concept": "Evidence strength", "use": "support", "not": ["tier", "W1–W3"] }
+  ],
+
+  "terms": [
+    {
+      "id": "place",
+      "term": "place",
+      "plain": "A jurisdiction or named area SIG publishes a dossier for.",
+      "example": "Oklahoma City is a place; its dossier is the document SIG publishes about it.",
+      "seeAlso": ["dossier"],
+      "spec": "§39.2"
+    },
+    {
+      "id": "dossier",
+      "term": "dossier",
+      "plain": "The per-place document that gathers what SIG knows about that place's surveillance record.",
+      "specTerm": "Dossier",
+      "example": "The Oklahoma City dossier lists the camera sites, the sharing edges and the gaps.",
+      "seeAlso": ["place", "record"],
+      "spec": "§39.2"
+    },
+    {
+      "id": "record",
+      "term": "record",
+      "plain": "One source's row about a camera — what one document or dataset says about one thing.",
+      "example": "A procurement PDF's line naming a camera model is one record.",
+      "seeAlso": ["camera-site", "claim", "source"],
+      "spec": "§10"
+    },
+    {
+      "id": "camera-site",
+      "term": "camera site",
+      "plain": "The de-duplicated physical camera — one real-world installation, possibly described by several records.",
+      "example": "Two vendor documents that describe the same pole camera are two records of one camera site.",
+      "seeAlso": ["record", "possible-duplicate"],
+      "spec": "§10"
+    },
+    {
+      "id": "source",
+      "term": "source",
+      "plain": "Where SIG got something — the publisher and the document or dataset, named.",
+      "example": "The council minutes of 14 March are a source; so is the vendor's product page.",
+      "seeAlso": ["capture", "claim"],
+      "spec": "§10.2"
+    },
+    {
+      "id": "release",
+      "term": "release",
+      "plain": "A dated published snapshot of the whole dataset — citable, immutable, never edited after the fact.",
+      "example": "Every page names the release it was built from in the footer.",
+      "seeAlso": ["data-as-of", "pinned-citation"],
+      "spec": "§35"
+    },
+    {
+      "id": "claim",
+      "term": "claim",
+      "plain": "One assertion, kept with its evidence and the raw words it came from — the substance of the graph.",
+      "specTerm": "Claim",
+      "example": "'OKCPD operated 42 devices in 2020' is a claim backed by the auditor's report.",
+      "seeAlso": ["evidence", "source"],
+      "spec": "§10.3.5"
+    },
+    {
+      "id": "capture",
+      "term": "capture",
+      "plain": "The immutable bytes SIG obtained at one instant — never edited; a redaction is a new capture.",
+      "specTerm": "Capture",
+      "example": "The PDF SIG fetched on 3 August is one capture; a later fetch of the same page is another.",
+      "seeAlso": ["source", "evidence"],
+      "spec": "§10.2"
+    },
+    {
+      "id": "evidence",
+      "term": "evidence",
+      "plain": "The artifacts bearing on a claim — a claim never has just 'a source'.",
+      "specTerm": "Evidence set",
+      "example": "The evidence for the device count is the audit PDF plus the council minutes.",
+      "seeAlso": ["claim", "capture"],
+      "spec": "§10.3.6"
+    },
+    {
+      "id": "configured-access",
+      "term": "configured access",
+      "plain": "The system is set up to permit sharing — says nothing about whether anyone used it.",
+      "specTerm": "Configured access",
+      "stateRef": "access.CONFIGURED_ACCESS",
+      "example": "An agency's platform is configured to share with the fusion centre.",
+      "seeAlso": ["declared-policy", "observed-use"],
+      "spec": "§12.2"
+    },
+    {
+      "id": "declared-policy",
+      "term": "declared policy",
+      "plain": "Someone said sharing is permitted or forbidden — distinct from configuration and from use.",
+      "specTerm": "Declared policy",
+      "stateRef": "access.DECLARED_POLICY",
+      "example": "A memorandum states the agency may share feeds with the state patrol.",
+      "seeAlso": ["configured-access", "observed-use"],
+      "spec": "§12.2"
+    },
+    {
+      "id": "observed-use",
+      "term": "observed use",
+      "plain": "Someone actually used the sharing — distinct from configured access and from declared policy.",
+      "specTerm": "Observed use",
+      "stateRef": "access.OBSERVED_USE",
+      "example": "A query log shows a partner searched the camera list 41 times in June.",
+      "seeAlso": ["configured-access", "declared-policy"],
+      "spec": "§12.2"
+    },
+    {
+      "id": "directness",
+      "term": "directness",
+      "plain": "How directly this kind of document can show this kind of fact; a document can be strong evidence for one question and no evidence for another.",
+      "specTerm": "Directness (`D`)",
+      "stateRef": "directness.D1",
+      "example": "A query log is direct evidence of use but no evidence of a written policy.",
+      "seeAlso": ["support"],
+      "spec": "§10.5"
+    },
+    {
+      "id": "provisional",
+      "term": "provisional",
+      "plain": "Produced by a method not yet independently evaluated; may change.",
+      "stateRef": "provisional.PROVISIONAL",
+      "example": "The automated count of camera sites is provisional until the method's evaluation is published.",
+      "seeAlso": ["not-reviewed", "candidate"],
+      "spec": "Stream L"
+    },
+    {
+      "id": "candidate",
+      "term": "candidate",
+      "plain": "A record that exists but is not yet part of the published record — a lifecycle state, not an epistemic one.",
+      "example": "A camera site held back pending a rights review is a candidate.",
+      "seeAlso": ["provisional"],
+      "spec": "SIG-UI-062"
+    },
+    {
+      "id": "data-as-of",
+      "term": "data as of",
+      "plain": "The date the underlying data was taken — every figure and page names it.",
+      "example": "'Data as of 27 Sep 2026' means nothing newer than that date is included.",
+      "seeAlso": ["release"],
+      "spec": "SIG-UI-035"
+    },
+    {
+      "id": "method-version",
+      "term": "method version",
+      "plain": "The version of the rules that produced this value, shown in Technical details.",
+      "example": "A count produced under method v3 can differ from one under v2; the version is named.",
+      "seeAlso": ["data-as-of"],
+      "spec": "§16.4"
+    },
+    {
+      "id": "support",
+      "term": "support",
+      "plain": "How strongly the winning value is evidenced — one of the four fields, independent of agreement.",
+      "specTerm": "Support",
+      "stateRef": "support.CONFIRMED",
+      "example": "'Strong support' means one high-tier source, or two mid-tier sources, back the value.",
+      "seeAlso": ["agreement", "evidence"],
+      "spec": "§10.7"
+    },
+    {
+      "id": "agreement",
+      "term": "agreement",
+      "plain": "How much the admissible evidence disagrees — one of the four fields, independent of support.",
+      "specTerm": "Agreement",
+      "example": "A value can be strongly supported and still contested.",
+      "seeAlso": ["support", "contested"],
+      "spec": "§10.7"
+    },
+    {
+      "id": "currency-term",
+      "term": "currency",
+      "plain": "How stale a claim is relative to how fast this kind of fact changes — derived at query time, never stored.",
+      "specTerm": "Currency (`C`)",
+      "example": "A camera count from 2020 is historical; a policy captured last month is current.",
+      "seeAlso": ["data-as-of"],
+      "spec": "§28.3"
+    },
+    {
+      "id": "contested",
+      "term": "contested",
+      "plain": "Sources disagree about this value; SIG shows the leading value and the others, marked ≠.",
+      "stateRef": "agreement.CONTESTED",
+      "example": "'42 ≠' means one source says 42, another disagrees, and both are shown.",
+      "seeAlso": ["agreement", "unresolved"],
+      "spec": "SIG-UI-008"
+    },
+    {
+      "id": "unresolved",
+      "term": "unresolved",
+      "plain": "Evidence exists and disagrees, so no value can be defended — a legitimate published outcome, never hidden.",
+      "specTerm": "UNRESOLVED",
+      "stateRef": "resolution.UNRESOLVED",
+      "example": "Two credible sources give different counts and neither can be ruled out.",
+      "seeAlso": ["contested"],
+      "spec": "§28.5"
+    },
+    {
+      "id": "copy",
+      "term": "copy",
+      "plain": "A second appearance of a record SIG already has — kept linked, counted once.",
+      "stateRef": "identity.COPY",
+      "example": "The same camera appearing in two vendor catalogues is a copy, counted once.",
+      "seeAlso": ["possible-duplicate", "record"],
+      "spec": "§35"
+    },
+    {
+      "id": "possible-duplicate",
+      "term": "possible duplicate",
+      "plain": "Possibly the same camera as another record — kept visible and not merged, because SIG cannot prove they are the same.",
+      "stateRef": "identity.POSSIBLE_DUPLICATE",
+      "example": "Two records 40 metres apart with the same model might be one camera; the count is shown as a range.",
+      "seeAlso": ["copy", "camera-site"],
+      "spec": "§35"
+    },
+    {
+      "id": "independent-corroboration",
+      "term": "independent corroboration",
+      "plain": "Backing from sources with independent lineages — republications of the same origin count once.",
+      "specTerm": "Independence class",
+      "example": "A vendor page and the audit behind it are not independent; the audit and the council minutes are.",
+      "seeAlso": ["support", "evidence"],
+      "spec": "§10.8"
+    },
+    {
+      "id": "location-check",
+      "term": "location check",
+      "plain": "A review pass confirming a record's coordinates point at the place they claim.",
+      "example": "A location check caught a site pinned to the wrong side of the street.",
+      "seeAlso": ["not-reviewed"],
+      "spec": "§43"
+    },
+    {
+      "id": "technology-source",
+      "term": "technology source",
+      "plain": "The document or dataset that names what kind of machine a record describes.",
+      "example": "The procurement line naming the camera model is the technology source.",
+      "seeAlso": ["source", "record"],
+      "spec": "§11"
+    },
+    {
+      "id": "not-reviewed",
+      "term": "not reviewed",
+      "plain": "No person outside the project has checked this.",
+      "stateRef": "review.UNREVIEWED",
+      "example": "An automated extraction marked 'Not reviewed' has had no human check yet.",
+      "seeAlso": ["provisional"],
+      "spec": "SIG-UI-044"
+    },
+    {
+      "id": "pinned-citation",
+      "term": "pinned citation",
+      "plain": "A citation fixed to one immutable release, so the words cited still resolve after the next release.",
+      "example": "The 'Cite' action gives a URL that points at this exact snapshot.",
+      "seeAlso": ["release", "data-as-of"],
+      "spec": "SIG-UI-035"
+    },
+    {
+      "id": "as-of",
+      "term": "as of",
+      "plain": "The date a statement was true or the data was taken — always shown with its date.",
+      "example": "'Data as of 27 Sep 2026' bounds what the figure can show.",
+      "seeAlso": ["data-as-of"],
+      "spec": "§9.2"
+    }
+  ]
+}

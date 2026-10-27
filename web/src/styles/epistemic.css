@@ -1279,3 +1279,139 @@ table.sig-freshness th {
   max-height: 20rem;
   overflow: auto;
 }
+
+/* --- P36.17: the lexicon + copy system (K14 §2.4–2.5) ----------------------- */
+
+/* <Term>: a defined term — glossary link + the native-popover definition
+   button. The ⓘ button hugs the link; in print it is useless chrome and is
+   dropped (the popover carries the definition; the "terms used" affordance
+   is the glossary link itself). */
+.sig-term__link {
+  text-decoration-style: dotted;
+  text-underline-offset: var(--sig-space-1);
+}
+.sig-term__def {
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-pill);
+  background: transparent;
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--2);
+  line-height: var(--sig-leading-1);
+  padding: 0 var(--sig-space-1);
+  margin-inline-start: var(--sig-space-1);
+  cursor: pointer;
+}
+.sig-term__popover {
+  inset: auto;
+  margin: auto;
+  max-inline-size: 22rem;
+  padding: var(--sig-space-2) var(--sig-space-3);
+  border: var(--sig-border-thin) solid var(--sig-border-strong);
+  border-radius: var(--sig-radius-2);
+  background: var(--sig-paper);
+  color: var(--sig-ink);
+  font-size: var(--sig-step--1);
+  line-height: var(--sig-leading-4);
+  /* no drop shadow: colour literals are tokens-only (check-tokens), and the
+     strong border already delineates the popover on both schemes. */
+}
+/* Where the UA lacks popover support the button is inert — hide the
+   definition span outright so it cannot render as stray inline prose.
+   `@supports selector(:popover-open)` keeps the popover openable where the
+   feature exists (the UA styles it only via :popover-open). */
+@supports not (selector(:popover-open)) {
+  .sig-term__popover {
+    display: none;
+  }
+  .sig-term__def {
+    display: none;
+  }
+}
+@media print {
+  .sig-term__def {
+    display: none;
+  }
+  .sig-term__popover {
+    display: none;
+  }
+}
+
+/* The "In brief" box (K14 §2.4): plain first, ≤ ~80 words, precise one
+   action away. Neutral panel — it is orientation copy, not a state mark. */
+.sig-inbrief {
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-inline-start: var(--sig-border-strong) solid var(--sig-data-1);
+  border-radius: var(--sig-radius-1);
+  background: var(--sig-surface-2);
+  padding: var(--sig-space-3) var(--sig-space-4);
+  margin: var(--sig-space-4) 0;
+  max-inline-size: var(--sig-measure);
+}
+.sig-inbrief__heading {
+  font-size: var(--sig-step--1);
+  margin: 0 0 var(--sig-space-1);
+  color: var(--sig-ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.sig-inbrief__body {
+  font-size: var(--sig-step-0);
+  line-height: var(--sig-leading-4);
+}
+.sig-inbrief__more {
+  margin: var(--sig-space-2) 0 0;
+  font-size: var(--sig-step--1);
+}
+
+/* "Spec references" — requirement ids and section pointers live ONLY inside
+   this disclosure (DR-K14-07), never in running prose. */
+.sig-spec-refs {
+  font-size: var(--sig-step--2);
+  color: var(--sig-ink-muted);
+  margin-block-start: var(--sig-space-1);
+}
+.sig-spec-refs ul {
+  margin: var(--sig-space-1) 0 0;
+  padding-inline-start: var(--sig-space-4);
+}
+@media print {
+  .sig-spec-refs:not([open]) > :not(summary) {
+    display: block;
+  }
+}
+
+/* The glossary page (T1). */
+.sig-glossary__item > dt {
+  font-size: var(--sig-step-1);
+  margin-block-start: var(--sig-space-4);
+}
+.sig-glossary__item > dd {
+  margin-inline-start: 0;
+}
+.sig-glossary__src {
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--1);
+}
+.sig-glossary__precise,
+.sig-glossary__example,
+.sig-glossary__seealso {
+  font-size: var(--sig-step--1);
+  color: var(--sig-ink-muted);
+  margin: var(--sig-space-1) 0;
+}
+.sig-glossary__states dt {
+  margin-block-start: var(--sig-space-2);
+}
+.sig-glossary__states dd {
+  margin-inline-start: var(--sig-space-4);
+}
+.sig-glossary__symbol {
+  font-family: var(--sig-font-mono);
+}
+.sig-glossary__legend dt {
+  font-weight: 700;
+  margin-block-start: var(--sig-space-3);
+}
+.sig-glossary__legend dd {
+  margin-inline-start: var(--sig-space-4);
+}
