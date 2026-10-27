@@ -1646,21 +1646,33 @@ name = "Sourcewell"
 source_kind = "government_portal"
 homepage_url = "https://www.sourcewell-mn.gov/"
 default_tier = "R1"
-custody_posture = "REFERENCE"
+# P36.78: custody REFERENCE → DERIVE — the committed contract-page lane
+# persists screened renditions derived from the public pages (the same
+# posture muckrock_public's rendition lane carries), never a served-byte
+# reference copy; the recorded posture now says what the lane does.
+# ingestion_permitted stays false; HG-03 + OP-26 still stand.
+custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "public files"
+access_method = "public contract-page fetch (cooperative connector, P36.78)"
 auth_model = "none"
 verified = true
 last_verified = 2026-08-20
-notes = "Free full competitive record + signed contracts + monthly SKU price lists. Dominant acquisition channel (§22.3)."
+notes = "Free full competitive record + signed contracts + monthly SKU price lists. Dominant acquisition channel (§22.3). The discovery recorded the terms-use robot/spider prohibition verbatim (I7-U478/I6-C001: 'Use automated tools such as robots or spiders to access or copy content' is a prohibited use); decision-catalog I7-C3 [B-39] authorised the bounded fetch-despite-terms lane under ADR-184's envelope — public unauthenticated contract/terms pages only. Rights stay UNDETERMINED; the flag stays false until the operator's HG-03 line (leg B is OP-26)."
 [sources.sourcewell.redistribution]
 lane = "unknown"
-evidence = "sources.toml [sources.sourcewell] (custody REFERENCE, redistributable=-); attribution: nothing published"
+evidence = "sources.toml [sources.sourcewell] (custody DERIVE, redistributable=-); attribution: nothing published"
 evidence_uri = "docs/build/planning/2026-09-30-next-phase/data/redistribution.csv#sourcewell"
 decision_authority = "D-J3-1 [B-19]"
-part_viii_class = "none-known"
+part_viii_class = "P8-2"
 review_needed = true
+[sources.sourcewell.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+derivative_permitted = false
+attribution = "Sourcewell public cooperative contract pages"
+terms_url = "https://www.sourcewell-mn.gov/terms-use"
+publication_basis = "public unauthenticated pages only; ADR-184 bounded-envelope decision I7-C3 [B-39] — terms capture verbatim under SIG-LIC-004a; UNDETERMINED stays fail-closed"
 
 
 [sources.omnia_partners]
@@ -1668,17 +1680,32 @@ name = "OMNIA Partners"
 source_kind = "government_portal"
 homepage_url = "https://www.omniapartners.com/"
 default_tier = "R1"
-custody_posture = "LINK"
+# P36.78: custody LINK → DERIVE — the committed contract-page lane persists
+# screened renditions derived from the public pages (the same posture
+# muckrock_public's rendition lane carries); a LINK row could never admit
+# the content-fetching connector this row was vetted for, so the recorded
+# posture now says what the lane does. ingestion_permitted stays false;
+# HG-03 + OP-26 still stand.
+custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-notes = "Cooperative purchasing vehicle (§22.3)."
+access_method = "public contract-page fetch (cooperative connector, P36.78)"
+auth_model = "none"
+notes = "Cooperative purchasing vehicle (§22.3). The discovery recorded the terms-of-use robot/scraping prohibition verbatim (I7-U440/I6-C002: 'you shall not: (a) use any robot, spider, or other automatic or manual device or process for the purpose of \"scraping,\" \"crawling,\" harvesting, or compiling information on the Site for purposes other than for a generally available search engine'); decision-catalog I7-C3 [B-39] authorised the bounded fetch-despite-terms lane under ADR-184's envelope — public unauthenticated supplier/contract-documents/terms pages only (the contract documents route through a member form — gated, never submitted). Rights stay UNDETERMINED; the flag stays false until the operator's HG-03 line (leg B is OP-26)."
 [sources.omnia_partners.redistribution]
-lane = "link-only"
-evidence = "sources.toml [sources.omnia_partners] (custody LINK, redistributable=-); attribution: nothing published"
+lane = "unknown"
+evidence = "sources.toml [sources.omnia_partners] (custody DERIVE, redistributable=-); attribution: nothing published"
 evidence_uri = "docs/build/planning/2026-09-30-next-phase/data/redistribution.csv#omnia_partners"
 decision_authority = "D-J3-1 [B-19]"
-part_viii_class = "none-known"
-review_needed = false
+part_viii_class = "P8-2"
+review_needed = true
+[sources.omnia_partners.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+derivative_permitted = false
+attribution = "OMNIA Partners public cooperative contract pages"
+terms_url = "https://www.omniapartners.com/terms-of-use"
+publication_basis = "public unauthenticated pages only; ADR-184 bounded-envelope decision I7-C3 [B-39] — terms capture verbatim under SIG-LIC-004a; UNDETERMINED stays fail-closed"
 
 
 [sources.naspo_valuepoint]

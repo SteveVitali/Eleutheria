@@ -491,6 +491,20 @@ kind = "documentcloud_targets"
 [muckrock_public]
 kind = "documentcloud_targets"
 
+# Sourcewell + OMNIA Partners cooperative contract pages — the live targets
+# ARE the committed seed inventory in data/cooperative_targets.toml (P36.78 /
+# R11-ACQ-33): bounded rows per public unauthenticated contract/supplier/
+# terms page — the Sourcewell master-contract page, the OMNIA supplier and
+# contract-documents index pages, both governing terms pages — never new
+# discovery; member-gated document files are pointers only. Leg A's screen
+# GETs are the OM-20 row-353 mutation GATE-G5 named (2026-10-25T18:40Z); leg
+# B — the first real wire as a connector run — is the operator's act (OP-26).
+# Both source rows stay ingestion_permitted=false.
+[sourcewell]
+kind = "cooperative_targets"
+[omnia_partners]
+kind = "cooperative_targets"
+
 # --- P26.7 (SOURCES.7): state DOT/511 traffic-camera registries ---------------
 # Each `dot_511_<st>` source resolves its live targets from the verified
 # [[targets]] rows of data/dot_511_targets.toml (kind = "dot_511_targets") —

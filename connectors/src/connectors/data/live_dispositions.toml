@@ -277,9 +277,6 @@ note = "P34.38 gated placeholder (SRC-007) — bounded document capture rides th
 disposition = "reference"
 note = "P34.38 gated placeholder (SRC-006) — bounded document capture rides the dossier/pilot path under HG-03; no live connector"
 
-[sources.omnia_partners]
-disposition = "link_only"
-
 [sources.osm_automated_edits_coc]
 disposition = "reference"
 
@@ -334,9 +331,6 @@ disposition = "reference"
 note = "P26.2 discovery (RAA pattern) — Rotterdam municipal camera register"
 
 [sources.sm_alpr]
-disposition = "reference"
-
-[sources.sourcewell]
 disposition = "reference"
 
 [sources.sous_surveillance_osm_import]

@@ -1,0 +1,106 @@
+# SPDX-License-Identifier: Apache-2.0
+# The `cooperative` connector's committed seed inventory (P36.78 /
+# R11-ACQ-33). This table is DATA, not code (SIG-ENG-001): the seed rows are
+# the cooperative contract-page surface the I6/I7 discovery named and
+# decision-catalog row I7-C3 [B-39] authorised under ADR-184's envelope —
+# reviewed on their own, never discovery output. Identifiers + provenance
+# only: a row is a URL, a kind, a source and an evidence ref, never content.
+#
+# Every row is a PUBLIC UNAUTHENTICATED surface: https, the committed host
+# for its platform, the kind's reviewed public path — no credentials, no
+# member-only endpoints, no query strings. Sourcewell's terms-use page
+# (prohibited uses: "Use automated tools such as robots or spiders") and
+# OMNIA's terms-of-use page ("you shall not: (a) use any robot, spider, or
+# other automatic or manual device or process for the purpose of
+# 'scraping,' 'crawling,' harvesting, or compiling information") are both
+# affirmatively restrictive — leg A is bounded screen GETs only under
+# GATE-G5's OM-20 naming (2026-10-25T18:40Z, expires GATE-G6); leg B (the
+# first real wire as a connector run) is the operator's act under OP-26 /
+# ING-GO-D (never granted — queues per OM-19). All rows stay behind
+# `ingestion_permitted=false` — the gate REFUSES until the operator's HG-03
+# line.
+
+schema = "sig.cooperative-targets/1"
+
+[inventory]
+# Derivation provenance: the cooperative contract-pages decision is
+# decision_catalog.csv row I7-C3 (Sourcewell/OMNIA "prohibit robots and
+# reproduction" → "fetch despite terms", packet B-39, 2026-10-01T04:49:27Z)
+# — the ticket labels this family "I7-C14"; no such catalog record exists
+# (recorded deviation; the seed set below cites the verbatim candidate
+# evidence ids).
+source_ref = "I7-C3 [B-39] (decision_catalog.csv; ticket label 'I7-C14' names no record — recorded deviation)"
+evidence_ref = "docs/build/planning/2026-09-30-next-phase/research/I7-candidates.md + data/candidates_consolidated.csv (I7-U478 / I6-C001 + SRC-010; I7-U440 / I6-C002; I7-U441 / I9b-C036) + data/decision_catalog.csv I7-C3 [B-39]; sources.toml [sources.sourcewell] + [sources.omnia_partners]"
+captured_on = "2026-10-27"
+selection_rule = "the committed cooperative contract-page surface the I6/I7 discovery fetched and decision I7-C3 [B-39] authorised under ADR-184's envelope: the served public Sourcewell contract page (101223-AXN), the two served public OMNIA supplier/contract-documents pages, and both platforms' recorded terms pages — public unauthenticated pages only, one bounded GET each; contract ids named WITHOUT a recorded public URL (Sourcewell 010720-WCH, 101223-MOT, 030425-SND; OMNIA R250203) are NOT seeded (no invented targets); member-gated document files are pointers only"
+target_count = 5
+opted_out_targets = []
+
+[[inventory.targets]]
+# The OMNIA Gaggle public contract-documents index — the index page is the
+# served public surface; the contract documents route through a member form
+# (member-gated — pointers/counts only, never fetched).
+id = "op-docs-gaggle"
+source = "omnia_partners"
+platform = "omnia"
+kind = "contract_documents_page"
+url = "https://www.omniapartners.com/suppliers/gaggle/public-sector/contract-documents"
+contract_id = ""
+expect = ["gaggle"]
+evidence = "I7-U441 / I9b-C036 (candidates_consolidated.csv) — the verbatim public contract-documents index URL, fetched 200 GET 2026-09-30T20:22:47Z; documents behind a connect form (member-gated), never submitted"
+
+[[inventory.targets]]
+# The OMNIA Flock Safety supplier page — the public listing naming the
+# cooperative vehicle; contract number not shown on the public page (I7-U440).
+id = "op-supplier-flock"
+source = "omnia_partners"
+platform = "omnia"
+kind = "supplier_page"
+url = "https://www.omniapartners.com/suppliers/flock-safety"
+contract_id = ""
+expect = ["flock"]
+evidence = "I7-U440 / I6-C002 (candidates_consolidated.csv) — the verbatim public supplier-page URL, fetched 200 GET 2026-09-30T18:01:49Z"
+
+[[inventory.targets]]
+# The OMNIA governing terms capture (SIG-LIC-004a / SIG-TRANSP-004): the
+# terms-of-use the I6 review captured verbatim — "you shall not: (a) use any
+# robot, spider, or other automatic or manual device or process for the
+# purpose of 'scraping,' 'crawling,' harvesting, or compiling information
+# on the Site for purposes other than for a generally available search
+# engine". Affirmatively restrictive — the family terms record.
+id = "op-terms"
+source = "omnia_partners"
+platform = "omnia"
+kind = "om_terms_page"
+url = "https://www.omniapartners.com/terms-of-use"
+contract_id = ""
+expect = []
+evidence = "I7-U440 / I6-C002 (candidates_consolidated.csv) — the recorded terms URL + verbatim clause"
+
+[[inventory.targets]]
+# The Sourcewell master contract page — 101223-AXN (Axon Enterprise, public
+# safety video surveillance): the record of record for the cooperative
+# award the discovery named (maturity 12/15/2027; ~7 public solicitation
+# PDFs + the price xlsx are linked pointers — the files are never fetched).
+id = "sw-contract-101223-axn"
+source = "sourcewell"
+platform = "sourcewell"
+kind = "contract_page"
+url = "https://www.sourcewell-mn.gov/cooperative-purchasing/101223-axn"
+contract_id = "101223-AXN"
+expect = ["101223", "axon"]
+evidence = "I7-U478 / I6-C001 + SRC-010 (candidates_consolidated.csv) — the verbatim public contract-page URL, fetched 200 GET 2026-09-30T18:01:48Z (robots.txt 200, F000; private-person-name flag: staff contact names)"
+
+[[inventory.targets]]
+# The Sourcewell governing terms capture (SIG-LIC-004a / SIG-TRANSP-004):
+# the terms-use page the I6 review captured verbatim — prohibited uses
+# include "Use automated tools such as robots or spiders to access or copy
+# content." Affirmatively restrictive — the family terms record.
+id = "sw-terms"
+source = "sourcewell"
+platform = "sourcewell"
+kind = "sw_terms_page"
+url = "https://www.sourcewell-mn.gov/terms-use"
+contract_id = ""
+expect = []
+evidence = "I7-U478 / I6-C001 (candidates_consolidated.csv) — the recorded terms URL + verbatim clause"

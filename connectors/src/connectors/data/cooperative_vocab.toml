@@ -1,0 +1,134 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned `cooperative` connector vocabulary (P36.78 / R11-ACQ-33).
+# This table is DATA, not code (SIG-ENG-001): the connector's predicate
+# allowlist, its kind→public-surface contract, its host set, its page
+# markers, and the hazard-name map the in-memory redaction screens under
+# are data rows reviewed on their own. Changes after P36.78 are VERSIONED
+# MIGRATIONS — bump `vocab_version` and add the change, never silently
+# rewrite a row (SIG-INGEST-017).
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first
+# [table] header — otherwise TOML nests it under that table. The [kinds.*],
+# [hosts], [page] and [screen_as] tables therefore come last.
+
+schema = "sig.cooperative-vocab/1"
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.10.27"
+
+# The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033):
+# the `cooperative` connector may write ONLY the cooperative master-award
+# record-of-record linkage + the page/document facts + the title field —
+# every claim carries `contract_page` (the public page the record reads).
+# `released_documents` appears here because the shared evidence_artifact L1
+# row stamps it (the cooperative's page is released material — the same
+# rendition genre as the documentcloud lane); normalize() never asserts it
+# as a claim. Writing anything else — a party, a piggyback, a deployment —
+# is a schema error.
+predicate_allowlist = [
+  "contract",
+  "contract_number",
+  "external_id",
+  "document",
+  "platform",
+  "acquisition_method",
+  "released_documents",
+  "title",
+]
+
+# Predicate GENRES the connector MUST NOT write (scope-creep guard, §23.5):
+# party claims (buyer/seller) and the piggyback linkage a jurisdiction's
+# purchase carries belong to the procurement lane's own records, never to a
+# cooperative's public page rendition (procured ≠ deployed is the same
+# guard); request/deployment/parsed-content write-sets are other
+# connectors'.
+forbidden_predicate_genres = [
+  "records_request",
+  "buyer",
+  "seller",
+  "parent_cooperative_contract",
+  "parsed_document_claim",
+  "deployment_exists",
+]
+
+# --- [kinds] — the five bounded public-surface kinds ------------------------
+# Each kind: the platform it belongs to and the reviewed PUBLIC path pattern.
+# Anything outside the pattern — a query string, a userinfo, a credential
+# endpoint, a member-only path — is not a public unauthenticated surface and
+# refuses at inventory load AND at fetch.
+[kinds.contract_page]
+platform = "sourcewell"
+path_re = '^/cooperative-purchasing/[0-9a-z\-]+/?$'
+
+[kinds.supplier_page]
+platform = "omnia"
+path_re = '^/suppliers/[0-9a-z\-]+/?$'
+
+# The public contract-documents INDEX page — the documents themselves are
+# member-gated (I7-U441: the /contract-documents path serves the public
+# listing; the files route through a member form). The page is fetched;
+# the documents never are — pointers/counts only.
+[kinds.contract_documents_page]
+platform = "omnia"
+path_re = '^/suppliers/[0-9a-z\-]+/public-sector/contract-documents/?$'
+member_gated = true
+
+[kinds.sw_terms_page]
+platform = "sourcewell"
+path_re = '^/terms-use/?$'
+
+[kinds.om_terms_page]
+platform = "omnia"
+path_re = '^/terms-of-use/?$'
+
+# --- [hosts] — the committed host set per platform ---------------------------
+# Public unauthenticated pages only (SIG-INGEST-035/037): the cooperative's
+# own public web host. files.sourcewell.org (the solicitation-document asset
+# host) is NOT a rendition surface — document binaries are recorded as
+# pointers, never fetched (the rendition lane's bound).
+[hosts]
+sourcewell = ["www.sourcewell-mn.gov"]
+omnia = ["www.omniapartners.com"]
+
+# --- [page] — the HTML extraction vocabulary ---------------------------------
+[page]
+# Element ids/classes whose inner text is a terms/licence block (captured
+# verbatim under SIG-LIC-004a where a page carries one).
+terms_element_ids = ["terms", "tos", "license", "licence", "terms-of-use", "terms-of-service", "legal"]
+
+# 2xx bot-management stub markers — an interstitial is a challenge, never a
+# page (SIG-INGEST-013): the attempt ends recorded, never defeated.
+interstitial_markers = [
+  "checking your browser",
+  "verify you are a human",
+  "attention required",
+  "cloudflare",
+  "just a moment",
+  "perimeterx",
+  "akamai bot",
+  "captcha",
+]
+
+# Href suffixes counted as linked procurement documents on a contract/index
+# page — a COUNT only; the linked document URLs are pointers never carried
+# (filenames can carry names and the documents are never fetched).
+document_link_suffixes = [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".zip"]
+
+# --- [screen_as] — the hazard-name map for the in-memory redaction -----------
+# The Part VIII declaration's field-name rules (I7-S6 free text, I7-S7
+# incidental person names, PUB002-*) flag by FIELD NAME. Every candidate
+# rendition field declares the hazardous name it screens under: person-named
+# candidates (the Sourcewell page's recorded staff-contact names — the
+# I7-U478 private-person-name flag) screen under "name"; free-text
+# candidates under "description"/"notes"; organisation labels under "title".
+# A hit drops the value into redacted_fields — name + classes + value
+# sha256, never the value.
+[screen_as]
+contact_name = "name"
+author = "name"
+description = "description"
+notes = "notes"
+title = "title"
+supplier_name = "title"
+agency = "title"
+site_name = "title"
