@@ -1049,3 +1049,15 @@ seed-commit 3d296ca0
 # attributed to 819c127d's respelled line only; no other commit borrows
 # the exemption.
 seed-commit 819c127d
+
+# record-entry respell (worker, P36.77): `a16ba1b6` respelled the committed
+# record entry (L1293) in place — kind 'record head' → 'post-closeout
+# record' (ledger-contract V4 kind vocabulary) + added the `ci: pass
+# #372@0fd9312` field (verify-recorded-ci G3b) — run 40487324735 docs-red;
+# fields verbatim otherwise. Pre-edit bytes archived
+# `reports/memory-repair/LEDGER_L1293_pre-P36.77-recordhead-respell.txt`
+# (sha256:f3c27c72…). The branch rule forbids force-push, so the
+# declaration lands here, the next commit. Scope: the append-only finding
+# attributed to a16ba1b6's respelled line only; no other commit borrows
+# the exemption.
+seed-commit a16ba1b6
