@@ -119,5 +119,7 @@
 | D-P36.2-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.2-live-<n>` dispatch or the operator | RETURN PASS — P36.2 | each leg's `captures/<leg-id>/capture-*.json` sidecar records http_status + sha256 + `generated_at` and the verbatim bytes sit beside it; `capture_terms.py` exi… |
 | D-P36.76-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.76-live-<n>` dispatch or the operator | RETURN PASS — P36.76 | each leg's queued row flips `executed = true` with the persisted record's digest + `date -u` bounds in the run ledger; a challenge/403/interstitial leg records … |
 | D-P36.76-2 | OPEN | the operator | RETURN PASS — P36.76 | the staged packet `docs/build/reports/rights/p3676/leg-b-packet.md` enumerates preconditions + the verbatim command surface + the go lines (agent-drafted, blank… |
+| D-P36.77-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.77-live-<n>` dispatch or the operator | RETURN PASS — P36.77 | each leg's queued row flips `executed = true` with the persisted record's digest + `date -u` bounds in the run ledger; a challenge/403/interstitial leg records … |
+| D-P36.77-2 | OPEN | the operator | RETURN PASS — P36.77 | the staged packet `docs/build/reports/rights/p3677/leg-b-packet.md` enumerates preconditions + the verbatim command surface + the go lines (agent-drafted, blank… |
 
 ← back: CURRENT.md
