@@ -981,3 +981,20 @@ seed-commit 0cf6b81b
 # attributed to 72c1624a's folded lines only; no other commit borrows the
 # exemption.
 seed-commit 72c1624a
+
+# orient fold 3 for the P36.76 dispatch head (worker, P36.76 run):
+# `df4c4ab3` byte-compacted 117 RETURN PASS cells across the owed map
+# (-1,124 B) plus LEDGER L1279/L1280 (1,723->1,531 B) after BM-ORIENT-01
+# read 49,527 B > 48 KiB at the dispatch head and #370's docs job failed
+# (run 40450398871). Bound leg tokens + classifier-negating phrases
+# verbatim; pre-fold bytes archived
+# `reports/memory-repair/return_pass_cells_pre-P36.76-orient.txt`
+# (sha256:f07615eea4e8…) and
+# `reports/memory-repair/LEDGER_L1279_L1280_pre-P36.76-orientfold.txt`
+# (sha256:187736a885c3…); disclosed by the appended `P36.2 correction`
+# entry in the same commit. The branch rule forbids force-push, so the
+# declaration lands here, the next commit. Same sanctioned class as
+# 4c4f7161/caa6a363/5f76438b/0cf6b81b/72c1624a. Scope: BM-ORIENT-01
+# findings attributed to df4c4ab3's folded lines only; no other commit
+# borrows the exemption.
+seed-commit df4c4ab3
