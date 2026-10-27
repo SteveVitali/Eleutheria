@@ -477,16 +477,19 @@ targets = [
   { id = "cl-docket-5", url = "https://www.courtlistener.com/api/rest/v4/dockets/5/", kind = "docket_lookup", docket_id = "5" },
 ]
 
-# DocumentCloud — a targeted single-document lookup (verified reachable
-# 2026-09-16: /api/documents/20504557/ answers the metadata record). The source
-# stays GATED — per-document rights vary, source-level licence UNDETERMINED —
-# so the live run refuses at the gate; the row is the reviewed target for the
-# day a rights decision lands.
+# DocumentCloud / MuckRock public released materials — the live targets ARE
+# the committed seed inventory in data/documentcloud_targets.toml (P36.77 /
+# R11-ACQ-32): bounded rows per public unauthenticated page/API record —
+# DocumentCloud documents + project indexes, the MuckRock public /foi/ page,
+# the governing terms page — never new discovery. Leg A's screen GETs are the
+# OM-20 row-352 mutation GATE-G5 named (2026-10-25T18:40Z); leg B — the first
+# real wire as a connector run — is the operator's act (OP-26). Both source
+# rows stay ingestion_permitted=false; the reviewed P26.2 dc-doc-20504557
+# lookup migrated into the inventory verbatim.
 [documentcloud]
-kind = "document"
-targets = [
-  { id = "dc-doc-20504557", url = "https://api.www.documentcloud.org/api/documents/20504557/", kind = "document_lookup", external_id = "20504557" },
-]
+kind = "documentcloud_targets"
+[muckrock_public]
+kind = "documentcloud_targets"
 
 # --- P26.7 (SOURCES.7): state DOT/511 traffic-camera registries ---------------
 # Each `dot_511_<st>` source resolves its live targets from the verified

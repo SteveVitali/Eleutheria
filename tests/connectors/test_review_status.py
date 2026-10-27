@@ -159,8 +159,11 @@ def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[st
     # P36.76 registered `axon_connect` — the Axon Fusus `Connect <Place>`
     # connector's source row — ingestion_permitted=false pending the
     # operator's leg-B flip (588 → 589; loadable unchanged, no rights block
-    # so it does not join flip-ready).
-    assert "registered sources: 589" in out
+    # so it does not join flip-ready). P36.77 registered `muckrock_public`
+    # — the MuckRock public /foi/ page lane of the released-materials
+    # connector — ingestion_permitted=false pending the operator's leg-B
+    # flip (589 → 590; loadable unchanged).
+    assert "registered sources: 590" in out
     assert "self-checks OK" in out
 
 
@@ -316,10 +319,14 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # `state_alpr_statute_inventory`, leaving flip-ready at 2 and loadable
     # at 237. P36.76 registered `axon_connect` (588 → 589;
     # ingestion_permitted=false pending the operator's leg-B flip — loadable
-    # unchanged, no rights block so it does not join flip-ready).
+    # unchanged, no rights block so it does not join flip-ready). P36.77
+    # registered `muckrock_public` — the MuckRock public /foi/ page lane of
+    # the released-materials connector (589 → 590; ingestion_permitted=false
+    # pending the operator's leg-B flip; its rights stay UNDETERMINED so it
+    # does not join flip-ready — loadable unchanged).
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 589" in out
+    assert "registered sources: 590" in out
     assert "flip-ready: 2" in out
     assert "flip-ready: census_gazetteer_tiger" in out
     assert "flip-ready: natural_earth_10m" in out

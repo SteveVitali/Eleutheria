@@ -1487,14 +1487,22 @@ name = "DocumentCloud"
 source_kind = "records_channel"
 homepage_url = "https://api.www.documentcloud.org/api/documents/search/"
 default_tier = "R3"
+# P36.77 / R11-ACQ-32 — the released-materials rendition lane: the committed
+# public-page seed set in data/documentcloud_targets.toml (document records,
+# uploader pages, project indexes, the governing terms page). Custody stays
+# REFERENCE→screened-DERIVE in practice: the connector persists ONLY the
+# screened rendition (allowlisted fields + redaction provenance + the
+# original's sha256) or the sig.documentcloud-refusal/1 record — never a
+# served page byte (ADR-185). The `records` document-index path this lane
+# supersedes is unmapped (runner: documentcloud → documentcloud connector).
 custody_posture = "REFERENCE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "search_api + S3 assets"
+access_method = "bounded rendition screen (one recorded GET per committed public page/API seed; leg B is the operator's) + search_api + S3 assets"
 auth_model = "none for public"
 verified = true
 last_verified = 2026-09-17
-notes = "Public search + full text. Per-document rights vary — UNDETERMINED at source level. STAYS GATED — P26.3 review (2026-09-17) completed the rights packet: the MuckRock ToS (muckrock.com/tos, which governs 'MuckRock, FOIA Machine, or DocumentCloud') expressly excludes 'data mining, robots, or similar data gathering and extraction tools' from the access licence and makes user content personal-use-only — an affirmatively restrictive posture, no GL-GATE-06-covered basis. api.www.documentcloud.org IS anonymously reachable and robots is Disallow:/ (a real policy — a hard refusal, never the ADR-087 4xx case). The document-index connector path exists for a future flip; the gate refuses live fetches meanwhile."
+notes = "Public search + full text. Per-document rights vary — UNDETERMINED at source level. STAYS GATED — P26.3 review (2026-09-17) completed the rights packet: the MuckRock ToS (muckrock.com/tos, which governs 'MuckRock, FOIA Machine, or DocumentCloud') expressly excludes 'data mining, robots, or similar data gathering and extraction tools' from the access licence and makes user content personal-use-only — an affirmatively restrictive posture, no GL-GATE-06-covered basis. api.www.documentcloud.org IS anonymously reachable and robots is Disallow:/ (a real policy — a hard refusal, never the ADR-087 4xx case). The document-index connector path exists for a future flip; the gate refuses live fetches meanwhile. P36.77: the rendition lane lands — public unauthenticated pages only, Part VIII screen before persistence, redacted rendition or recorded refusal; ingestion_permitted stays false (the flip is the operator's HG-03/OP-26 act; D-SOURCES.2-2 stays OPEN)."
 review_packet = "docs/build/reports/rights/documentcloud.md"
 [sources.documentcloud.redistribution]
 lane = "restricted"
@@ -1503,6 +1511,49 @@ evidence_uri = "docs/build/planning/2026-09-30-next-phase/data/redistribution.cs
 decision_authority = "D-J3-1 [B-19]"
 part_viii_class = "P8-2"
 review_needed = false
+
+
+[sources.muckrock_public]
+name = "MuckRock public request pages"
+source_kind = "records_channel"
+homepage_url = "https://www.muckrock.com/foi/"
+default_tier = "R3"
+# P36.77 / R11-ACQ-32 — the PUBLIC unauthenticated /foi/ page surface (the
+# committed released-materials seeds in data/documentcloud_targets.toml),
+# distinct from the api_v2 sibling [sources.muckrock] (5-min JWT, its own
+# HG-03 posture — untouched by this row). Custody DERIVE: the connector
+# persists ONLY the screened rendition (allowlisted page facts + redaction
+# provenance + the original's sha256) or the sig.documentcloud-refusal/1
+# record — never a served page byte (ADR-185, SIG-PUB-002).
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+# Leg A = the OM-20 row-352 mutation GATE-G5 named verbatim (2026-10-25T18:40Z,
+# expires GATE-G6): one recorded GET per committed public page — screened
+# renditions + page hashes only. Leg B — the first real host's wire/fetch as
+# a connector run — is the operator's act (OP-26), separately authorised.
+access_method = "bounded rendition screen (one recorded GET per committed public /foi/ page seed; leg B is the operator's)"
+auth_model = "none — public unauthenticated pages only"
+verified = true
+last_verified = 2026-09-30
+notes = "The MuckRock public /foi/ request-page family — requester-published released-material pages (I7 released-materials surface; I6-C031 recorded the api path's 403/challenge posture, the public page family is this lane's distinct surface). The MuckRock ToS (muckrock.com/tos) expressly excludes 'data mining, robots, or similar data gathering and extraction tools' from the access licence — affirmatively restrictive; the row's posture is public_terms_only + DERIVE (rendition/refusal records only, never page bytes). ingestion_permitted stays false — the flip is the operator's HG-03/OP-26 act; requester/uploader person names are redacted in memory (S7 lane) and every claim links the uploader's public page URL."
+review_packet = "docs/build/reports/rights/muckrock.md"
+[sources.muckrock_public.rights]
+# Rights UNRESOLVED-safe pre-flip: UNDETERMINED + redistributable=false fail
+# the export gate closed. The governing ToS is captured verbatim on the
+# rendition lane's terms target at first yield — nothing asserted pre-yield.
+spdx = "UNDETERMINED"
+redistributable = false
+derivative_permitted = false
+terms_url = "https://www.muckrock.com/tos/"
+retrieval_date = 2026-09-17
+publication_basis = "P36.77 leg A is a bounded screen under GATE-G5's OM-20 naming (single recorded GETs of public unauthenticated request pages, expiring GATE-G6); rendition/refusal records only — any ingestion beyond the screen is leg B, the operator's act under OP-26 after a rights line."
+[sources.muckrock_public.redistribution]
+lane = "unknown"
+evidence = "sources.toml [sources.muckrock_public] (custody DERIVE, redistributable=-); attribution: nothing published"
+evidence_uri = "connectors/src/connectors/data/sources.toml#muckrock_public"
+part_viii_class = "P8-2"
+review_needed = true
 
 
 [sources.usaspending]

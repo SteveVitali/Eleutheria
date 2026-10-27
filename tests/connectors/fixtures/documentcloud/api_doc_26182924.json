@@ -1,0 +1,20 @@
+{
+  "id": 26182924,
+  "title": "Pittsboro Police Department Flock Safety Shared Devices List",
+  "access": "public",
+  "pages": 4,
+  "description": "Released records naming officer Jane Doe and describing the Flock Safety shared camera network received by Pittsboro PD.",
+  "created_at": "2025-08-11T15:04:22.000Z",
+  "updated_at": "2025-08-11T15:04:22.000Z",
+  "contributor": "Jane Doe",
+  "user": {"id": 41230, "name": "Jane Doe"},
+  "organization": {"id": 882, "name": "MuckRock News"},
+  "asset_url": "https://assets.documentcloud.org/documents/26182924/",
+  "canonical_url": "https://www.documentcloud.org/documents/26182924-pittsboro-police-department-flock-safety-shared-devices-list/",
+  "pdf_url": "https://assets.documentcloud.org/documents/26182924/pittsboro-police-department-flock-safety-shared-devices-list.pdf",
+  "language": "eng",
+  "status": "success",
+  "source": "Public records request by Jane Doe",
+  "slug": "pittsboro-police-department-flock-safety-shared-devices-list",
+  "data": {"topic": "alpr", "request_id": "136412"}
+}

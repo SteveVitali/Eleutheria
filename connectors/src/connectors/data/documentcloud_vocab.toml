@@ -1,0 +1,129 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned `documentcloud` connector vocabulary (P36.77 / R11-ACQ-32).
+# This table is DATA, not code (SIG-ENG-001): the connector's predicate
+# allowlist, its kind→public-surface contract, its host set, its page
+# markers, and the hazard-name map the in-memory redaction screens under
+# are data rows reviewed on their own. Changes after P36.77 are VERSIONED
+# MIGRATIONS — bump `vocab_version` and add the change, never silently
+# rewrite a row (SIG-INGEST-017).
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first
+# [table] header — otherwise TOML nests it under that table. The [kinds.*],
+# [hosts], [page] and [screen_as] tables therefore come last.
+
+schema = "sig.documentcloud-vocab/1"
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.10.27"
+
+# The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033):
+# the `documentcloud` connector may write ONLY the released-document index
+# linkage + the platform/acquisition-method facts + the title field — every
+# claim carries the uploader's public page URL (`uploader_page`). Writing
+# anything else — a request, a deployment, a plate — is a schema error.
+predicate_allowlist = [
+  "released_documents",
+  "platform",
+  "acquisition_method",
+  "title",
+]
+
+# Predicate GENRES the connector MUST NOT write (scope-creep guard, §23.5):
+# records-request entity rows are the `records` connector's api_v2 lane (the
+# connector does not mint request entities from public pages — SIG-INGEST-034);
+# parsed-document content claims are P07.1's; procurement/deployment write-sets
+# belong to other connectors.
+forbidden_predicate_genres = [
+  "records_request",
+  "target_agency",
+  "requesting_party",
+  "parsed_document_claim",
+  "deployment_exists",
+]
+
+# --- [kinds] — the six bounded public-surface kinds -------------------------
+# Each kind: the platform it belongs to, the registry source row it serves,
+# and the reviewed PUBLIC path pattern. Anything outside the pattern — a
+# query string, a userinfo, a credential endpoint, a private path — is not a
+# public unauthenticated surface and refuses at inventory load AND at fetch.
+[kinds.api_document]
+platform = "documentcloud"
+path_re = '^/api/documents/[0-9]+/?$'
+
+[kinds.api_project]
+platform = "documentcloud"
+path_re = '^/api/projects/[0-9]+/?$'
+
+[kinds.document_page]
+platform = "documentcloud"
+path_re = '^/documents/[0-9]+[0-9A-Za-z\-]*/?$'
+
+[kinds.project_page]
+platform = "documentcloud"
+path_re = '^/projects/[0-9A-Za-z\-]+/?$'
+
+[kinds.muckrock_page]
+platform = "muckrock"
+path_re = '^/foi/[0-9A-Za-z\-]+/[0-9A-Za-z\-]+/?$'
+
+[kinds.terms_page]
+platform = "muckrock"
+path_re = '^/tos/?$'
+
+# --- [hosts] — the committed host set per platform ---------------------------
+# Public unauthenticated pages only (SIG-INGEST-035/037): the documented
+# DocumentCloud API host + the uploader-page host, and MuckRock's public web
+# host. accounts.muckrock.com (the JWT mint) is NOT a public surface — the
+# muckrock_public lane never touches it.
+[hosts]
+documentcloud = ["api.www.documentcloud.org", "www.documentcloud.org"]
+muckrock = ["www.muckrock.com"]
+
+# --- [page] — the HTML extraction vocabulary ---------------------------------
+[page]
+# Element ids/classes whose inner text is a terms/licence block (captured
+# verbatim under SIG-LIC-004a where a page carries one).
+terms_element_ids = ["terms", "tos", "license", "licence", "terms-of-service", "legal"]
+
+# 2xx bot-management stub markers — an interstitial is a challenge, never a
+# page (SIG-INGEST-013): the attempt ends recorded, never defeated.
+interstitial_markers = [
+  "checking your browser",
+  "verify you are a human",
+  "attention required",
+  "cloudflare",
+  "just a moment",
+  "perimeterx",
+  "akamai bot",
+  "captcha",
+]
+
+# MuckRock request-page status vocabulary — the served page's declared
+# request status (a page-level fact, never a resolution).
+status_markers = [
+  "no responsive documents",
+  "partially completed",
+  "awaiting response",
+  "awaiting acknowledgement",
+  "fix required",
+  "completed",
+  "rejected",
+  "withdrawn",
+]
+
+# --- [screen_as] — the hazard-name map for the in-memory redaction -----------
+# The Part VIII declaration's field-name rules (I7-S6 free text, I7-S7
+# incidental person names, PUB002-*) flag by FIELD NAME. Every candidate
+# rendition field declares the hazardous name it screens under: person-named
+# candidates screen under "name" (I7-S7/PUB002-PERSON-NAMES), free-text
+# candidates under "description"/"notes" (I7-S6). A hit drops the value into
+# redacted_fields — name + classes + value sha256, never the value.
+[screen_as]
+contributor = "name"
+author = "name"
+description = "description"
+source = "notes"
+agency = "title"
+title = "title"
+site_name = "title"
+organization_name = "title"

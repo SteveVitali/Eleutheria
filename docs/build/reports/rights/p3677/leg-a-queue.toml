@@ -1,0 +1,135 @@
+# sig.documentcloud-leg-a-queue/1 — P36.77 (row 352) queued leg-A rendition legs
+#
+# All 11 legs are `status = "queued"` / `executed = false` — `prepared_not_executed`.
+#
+# Two blockers, both recorded honestly (SIG-ENG-042 — nothing fabricated):
+#
+#   1. The run was dispatched `live_verification=false` — code + registry +
+#      fixtures + tests only; no production mutation, no live GET.
+#   2. The probe-UA precondition fails: the connector's descriptive UA cites
+#      the owned explanation page `https://surveillancegraph.org/data-collection/`,
+#      which returned HTTP 404 at the 2026-10-27T07:54:48Z probe (root 200).
+#      Under SIG-INGEST-036 no descriptive-UA fetch may run while that page is
+#      dead — the same precondition P36.2's and P36.76's queues recorded.
+#
+# When the precondition holds and the re-run is dispatched
+# (`implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true`),
+# each leg is ONE recorded GET through the connector's shared polite-fetch
+# seam — never the raw page persisted: a rendition leg persists the screened
+# `sig.documentcloud-rendition/1` record (allowlisted fields + redaction
+# provenance + the uploader's public page URL + the original's sha256); a
+# `terms_page` leg persists the verbatim `sig.documentcloud-terms/1` capture;
+# a rendition that cannot be made reliable persists only the
+# `sig.documentcloud-refusal/1` record — pointer + classes + counts + hash,
+# never raw bytes (SIG-ENG-042). A challenge/403/interstitial ends the leg
+# recorded — never defeated (SIG-INGEST-013/037). Leg B — the first real
+# host's wire as a connector run — is the operator's act (OP-26); see
+# `leg-b-packet.md`.
+
+[meta]
+format = "sig.documentcloud-leg-a-queue/1"
+ticket = "P36.77"
+prepared_at = "2026-10-27T08:17:00Z"
+authorisation = "GATE-G5 OM-20 row-352 naming (2026-10-25T18:40Z, expires GATE-G6): public-page GETs + registry appends + redacted-rendition records through the Part VIII screen — single recorded GETs of public unauthenticated pages"
+blocker = "live:P35.38a — https://surveillancegraph.org/data-collection/ returned HTTP 404 at 2026-10-27T07:54:48Z probe (root 200); a descriptive UA may not cite a dead owned page (SIG-INGEST-036). Run dispatched live_verification=false."
+rerun = "implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true"
+targets_table = "connectors/src/connectors/data/documentcloud_targets.toml"
+
+[[leg]]
+id = "p3677-dc-api-20504557"
+target = "dc-api-20504557"
+kind = "api_document"
+source = "documentcloud"
+url = "https://api.www.documentcloud.org/api/documents/20504557/"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3677-dc-api-207706"
+target = "dc-api-207706"
+kind = "api_project"
+source = "documentcloud"
+url = "https://api.www.documentcloud.org/api/projects/207706/"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3677-dc-api-209393"
+target = "dc-api-209393"
+kind = "api_project"
+source = "documentcloud"
+url = "https://api.www.documentcloud.org/api/projects/209393/"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3677-dc-api-212258"
+target = "dc-api-212258"
+kind = "api_project"
+source = "documentcloud"
+url = "https://api.www.documentcloud.org/api/projects/212258/"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3677-dc-api-25545615"
+target = "dc-api-25545615"
+kind = "api_document"
+source = "documentcloud"
+url = "https://api.www.documentcloud.org/api/documents/25545615/"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3677-dc-api-26182924"
+target = "dc-api-26182924"
+kind = "api_document"
+source = "documentcloud"
+url = "https://api.www.documentcloud.org/api/documents/26182924/"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3677-dc-api-28534682"
+target = "dc-api-28534682"
+kind = "api_document"
+source = "documentcloud"
+url = "https://api.www.documentcloud.org/api/documents/28534682/"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3677-dc-page-209393"
+target = "dc-page-209393"
+kind = "project_page"
+source = "documentcloud"
+url = "https://www.documentcloud.org/projects/fog-data-science-public-209393/"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3677-dc-page-26182924"
+target = "dc-page-26182924"
+kind = "document_page"
+source = "documentcloud"
+url = "https://www.documentcloud.org/documents/26182924-pittsboro-police-department-flock-safety-shared-devices-list/"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3677-dc-terms-tos"
+target = "dc-terms-tos"
+kind = "terms_page"
+source = "documentcloud"
+url = "https://www.muckrock.com/tos/"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3677-mr-page-136412"
+target = "mr-page-136412"
+kind = "muckrock_page"
+source = "muckrock_public"
+url = "https://www.muckrock.com/foi/los-angeles-91/automated-license-plate-readers-los-angeles-police-department-136412/"
+status = "queued"
+executed = false

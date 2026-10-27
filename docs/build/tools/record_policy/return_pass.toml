@@ -1308,3 +1308,30 @@ rerun_cell = '''`implement-spec spec=docs/tickets/351_P36.76__axon-connect-conne
   go = '''operator: HG-03 + OP-26'''
   rerun = '''implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true'''
   live_dependants = []
+
+[[row]]
+key = "P36.77"
+kind = "leg"
+obligations = ["D-P36.77-1", "D-P36.77-2"]
+obligations_cell = '''queued D-P36.77-1 — the 11 leg-A bounded GETs (4 api_document + 3 api_project + 2 public DocumentCloud pages + the governing ToS + the MuckRock public /foi/ page); D-P36.77-2 — leg B, the operator's first-wire act'''
+gates_cell = '''bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T07:54:48Z); records land under `reports/rights/p3677/`; leg B is never agent execution'''
+operator_cell = '''nothing until `live:P35.38a` — leg B's flips + first wire stay the operator's HG-03 + OP-26 acts (packet `p3677/leg-b-packet.md`, go lines blank)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true` · landed 352'''
+
+  [[row.legs]]
+  id = "P36.77-legA"
+  obligations = ["D-P36.77-1"]
+  earliest = '''when `live:P35.38a` holds — owned `/data-collection/` live'''
+  excluded = []
+  go = '''pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6)'''
+  rerun = '''implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true'''
+  live_dependants = []
+
+  [[row.legs]]
+  id = "P36.77-legB"
+  obligations = ["D-P36.77-2"]
+  earliest = '''the operator's OP-26 dispatch — never an agent leg'''
+  excluded = ["agent execution"]
+  go = '''operator: HG-03 + OP-26'''
+  rerun = '''implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true'''
+  live_dependants = []
