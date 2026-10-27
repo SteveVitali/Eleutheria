@@ -1036,3 +1036,16 @@ seed-commit 6681775d
 # here, the next commit. Scope: the append-only finding attributed to
 # 3d296ca0's respelled line only; no other commit borrows the exemption.
 seed-commit 3d296ca0
+
+# live-claims respell (worker, P36.77): `819c127d` respelled the committed
+# P36.77 correction line (L1288) whose quoted literal "live-claim" token
+# tripped check_live_claims range mode at the impl head (run 40478333259
+# docs) — semantics verbatim, the described fact (L1287 respell, archive,
+# seed-declared) unchanged. Same sanctioned class as 6681775d/3d296ca0.
+# Pre-edit bytes archived
+# `reports/memory-repair/LEDGER_L1288_pre-P36.77-correction-respell.txt`
+# (sha256:fdc4475d6fab…). The branch rule forbids force-push, so the
+# declaration lands here, the next commit. Scope: the append-only finding
+# attributed to 819c127d's respelled line only; no other commit borrows
+# the exemption.
+seed-commit 819c127d
