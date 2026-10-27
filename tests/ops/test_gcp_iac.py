@@ -53,6 +53,7 @@ SHELL_SCRIPTS = [
     "wave-a.sh",
     "wave-b.sh",
     "partner-name-audit.sh",
+    "rate-limit-enforcement.sh",
 ]
 EXECUTABLE_SCRIPTS = [
     "provision.sh",
@@ -78,6 +79,7 @@ EXECUTABLE_SCRIPTS = [
     "seed-declared-jobs.sh",
     "fleet-sweep.sh",
     "partner-name-audit.sh",
+    "rate-limit-enforcement.sh",
 ]
 
 
