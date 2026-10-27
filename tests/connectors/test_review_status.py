@@ -156,7 +156,11 @@ def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[st
     # unchanged. P35.17 (JUR-01) registered `natural_earth_10m` (587 → 588
     # registered; ingestion_permitted=false pending the HG-03 flip — loadable
     # unchanged; its captured-terms rights block joins flip-ready).
-    assert "registered sources: 588" in out
+    # P36.76 registered `axon_connect` — the Axon Fusus `Connect <Place>`
+    # connector's source row — ingestion_permitted=false pending the
+    # operator's leg-B flip (588 → 589; loadable unchanged, no rights block
+    # so it does not join flip-ready).
+    assert "registered sources: 589" in out
     assert "self-checks OK" in out
 
 
@@ -310,10 +314,12 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # ingestion_permitted=false pending the operator's HG-03 flips, so they
     # join flip-ready (1 → 3). GATE-G5 (2026-10-25, OP-26) flipped
     # `state_alpr_statute_inventory`, leaving flip-ready at 2 and loadable
-    # at 237.
+    # at 237. P36.76 registered `axon_connect` (588 → 589;
+    # ingestion_permitted=false pending the operator's leg-B flip — loadable
+    # unchanged, no rights block so it does not join flip-ready).
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 588" in out
+    assert "registered sources: 589" in out
     assert "flip-ready: 2" in out
     assert "flip-ready: census_gazetteer_tiger" in out
     assert "flip-ready: natural_earth_10m" in out

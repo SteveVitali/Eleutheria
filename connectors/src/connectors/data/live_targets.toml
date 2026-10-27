@@ -396,6 +396,16 @@ targets = [
 [flock_transparency_portals]
 kind = "flock_portal_probe_targets"
 
+# Axon Fusus `Connect <Place>` sites — the P36.76 connector (R11-ACQ-31): the
+# live targets ARE the committed I9a-C003 site inventory in
+# data/axon_connect_targets.toml (six hosts, each yielding two bounded rows —
+# the public registration page + the :8443 faststream screen; no discovery).
+# Leg A's screen/page GETs are the OM-20 row-351 mutation GATE-G5 named
+# (2026-10-25T18:40Z); leg B — the first real wire as a connector run — is the
+# operator's act (OP-26). The source row stays ingestion_permitted=false.
+[axon_connect]
+kind = "axon_connect_targets"
+
 # FBI CDE agency registry — the documented api.usa.gov endpoint; the data.gov
 # key resolves from $SIG_DATA_GOV_KEY at fetch time (HG-09, else the published
 # DEMO_KEY). byStateAbbr/OK is a bounded per-state slice (verified live

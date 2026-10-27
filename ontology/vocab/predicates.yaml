@@ -9433,3 +9433,46 @@ predicates:
     subscription: D6
     recommendation: D6
   object_kind: literal
+- predicate_id: camera_registration_portal
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: >-
+    Whether the subject's publisher operates a public opt-in
+    camera-registration/integration portal — the vendor white-label
+    `Connect <Place>` (Axon Fusus) surface shape (P36.76 / R11-ACQ-31).
+    A programme-level existence fact about the published portal page —
+    never registrant content: the portal exists as a public programme
+    surface; what it registrant-carries is out of scope by construction
+    (SIG-PUB-002; R11-A16 — programme facts, never registrant bytes).
+    Distinct from `portal_exists` (a transparency portal) and from
+    `deployment_exists` (a deployment's world existence).
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/camera_registration_portal
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: latest_observation_wins
+  # P36.76 assessment: camera_registry D1 (the programme's own published page
+  # is its own fact); connector_run D3 (a recorded run observation); all
+  # other genres D6.
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D5
+    vendor_default_page: D4
+    camera_registry: D1
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D5
+    template: D6
+    subscription: D6
+    recommendation: D6
+  object_kind: literal

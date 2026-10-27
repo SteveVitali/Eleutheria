@@ -234,6 +234,14 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     # execution under ING-GO-B — this mapping makes the connector routable
     # without making the source loadable.
     "flock_transparency_portals": "flock_portal_probe",
+    # P36.76 / R11-ACQ-31: the Axon Fusus `Connect <Place>` connector — the
+    # committed I9a-C003 site set (data/axon_connect_targets.toml), one bounded
+    # GET each of the public registration page + the :8443 faststream screen,
+    # programme facts only (R11-A16 — never registrant bytes). The source row
+    # stays ingestion_permitted=false; leg B (the first real wire) is the
+    # operator's act (OP-26) — this mapping makes the connector routable
+    # without making the source loadable.
+    "axon_connect": "axon_connect",
     "openstates": "accountability",
     "fbi_cde_agency_registry": "agency_registry",
     # P26.12 (SOURCES.11): the federal companion to the OpenStates sweep — the
@@ -1725,6 +1733,7 @@ def _run_over_fixture(
     )
     targets: list[Mapping[str, Any]] = [{"id": "t1", "url": f"https://{source_id}/x", "kind": kind}]
     if kind == "oversight_report" or source_id in {
+        "axon_connect",
         "fema_hsgp_allocations",
         "flock_transparency_portals",
     }:

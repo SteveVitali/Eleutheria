@@ -1,0 +1,102 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# P36.76 / R11-ACQ-31 — the axon_connect connector's committed vocabulary.
+#
+# DATA, not code (SIG-ENG-001): the page markers, screen markers and predicate
+# allowlist the connector reads. A vocabulary change is a reviewable diff.
+#
+# R11-A16's clause is the shape: PROGRAMME FACTS, NEVER REGISTRANT BYTES. The
+# page parse extracts only the allowlisted programme surface (programme name,
+# modes offered, publisher, verbatim stated-use clauses); a field matching the
+# committed Part VIII denylist (connectors.field_denylist — the F-330 token
+# vocabulary) anywhere in an embedded payload or an emitted fact is a hard
+# refusal, never a warning (the extraction refuses by NAME — SIG-PUB-002).
+
+schema = "sig.axon-connect-vocab/1"
+schema_version = "2026-10-27"
+
+#: The predicates this connector may write (§23.4 closed allowlist; every id
+#: is a registered row in ontology/vocab/predicates.yaml — conformance-tested).
+predicate_allowlist = [
+  "camera_registration_portal",    # the programme surface exists (P36.76's new row)
+  "camera_registry_publisher",     # publisher provenance of the page
+  "agency_name",                   # the programme's published name/brand
+  "portal_stated_prohibited_use",  # verbatim clauses the page states as prohibited
+]
+
+[page]
+#: Programme-surface markers (case-insensitive text scan of the served page).
+#: A `connect_page` fetch that evidences NEITHER registration NOR integration
+#: markers is not a Connect page and refuses whole (schema refusal).
+registration_markers = [
+  "register your camera",
+  "camera registration",
+  "camera registry",
+  "level 1",
+]
+integration_markers = [
+  "integrate your camera",
+  "camera integration",
+  "level 2",
+  "core device",
+  "fususcore",
+]
+#: Vendor marks the white-label template carries (Axon Fusus branding/CORE copy).
+vendor_markers = [
+  "fusus",
+  "axon",
+]
+#: Page-identity check: at least one committed `expect` token of the target
+#: site must appear in the served text, else the page is refused whole (the
+#: served page contradicts the committed site — ContentDrift-shaped, never
+#: a guessed parse).
+#: (the per-site token lists live in axon_connect_targets.toml rows)
+
+#: Verbatim stated-use clauses — sentences the page publishes about what the
+#: programme may NOT do (e.g. "does not allow ... access to your live video
+#: stream"). Captured verbatim, emitted as portal_stated_prohibited_use.
+stated_use_patterns = [
+  "does not allow",
+  "not allow",
+  "no direct access",
+  "only authorized",
+  "not have access",
+  "cannot access",
+]
+
+#: Element id/class markers carrying the page's terms/privacy block (lifted
+#: verbatim — never normalized), same shape as the flock probe's terms leg.
+terms_element_ids = [
+  "terms",
+  "privacy",
+  "privacy-faqs",
+  "site-terms",
+  "terms-of-use",
+]
+
+[screen]
+#: The FUSUS marked-host screen — `https://<host>:8443/faststream/login.html`.
+#: A 2xx body is a recognised marked host when it carries >= min_hits of the
+#: committed byte markers (case-insensitive). The record
+#: (sig.fusus-screen/1) is what persists — host, URL, status, markers_hit,
+#: recognised, sha256 + byte size + retrieval instant — NEVER the page bytes.
+port = 8443
+path = "/faststream/login.html"
+min_hits = 1
+markers = [
+  "faststream",
+  "fusus",
+  "fususone",
+]
+
+#: 2xx bot-management stubs a fetch may be served instead of the real page —
+#: an interstitial is a challenge refusal, never defeated (SIG-INGEST-013).
+interstitial_markers = [
+  "just a moment",
+  "attention required",
+  "cf-browser-verification",
+  "challenge-platform",
+  "incapsula",
+]

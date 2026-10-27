@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<!-- Fixture: a served /:8443/faststream/login.html page (P36.76 tests) —
+     the FUSUS marked-host screen shape. Login chrome only; no credentials,
+     no registrant material. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>FastStream — Sign in</title>
+</head>
+<body>
+  <main class="fs-login">
+    <h1>FususONE FastStream</h1>
+    <p>Sign in to continue to the agency console.</p>
+    <form method="post" action="/faststream/session">
+      <label for="u">Username</label><input id="u" name="u" type="text">
+      <label for="p">Password</label><input id="p" name="p" type="password">
+      <button type="submit">Sign in</button>
+    </form>
+  </main>
+</body>
+</html>

@@ -81,10 +81,12 @@ patterns = ["email", "phone"]
 # the row is added, the leg flags it). Membership is conservative: an
 # over-broad glob can over-flag (a reviewable seal), never under-flag.
 #
-# S1: private-camera registry registrant names (PCAM/Flock/Ring/Nextdoor lanes).
+# S1: private-camera registry registrant names (PCAM/Flock/Ring/Nextdoor
+# lanes; P36.76 adds the axon_connect lane — the Fusus `Connect <Place>`
+# private-camera registration surfaces carry the same registrant class).
 [[class]]
 id = "I7-S1"
-members = ["*flock*", "*ring*", "*nextdoor*", "*pcam*", "*private_camera*"]
+members = ["*flock*", "*ring*", "*nextdoor*", "*pcam*", "*private_camera*", "axon_connect*"]
 [[class.rules]]
 kind = "fields"
 fields = [
@@ -116,10 +118,11 @@ members = ["*311*", "*la311*", "*nyc311*", "*kc311*"]
 kind = "shape"
 shapes = ["row_level"]
 
-# S4: residential-coordinate / RF-propagation members (OKC class).
+# S4: residential-coordinate / RF-propagation members (OKC class; P36.76 adds
+# axon_connect — a camera-registrant's home address is the same hazard class).
 [[class]]
 id = "I7-S4"
-members = ["*okc*residential*", "*rf_propagation*", "*residential*"]
+members = ["*okc*residential*", "*rf_propagation*", "*residential*", "axon_connect*"]
 [[class.rules]]
 kind = "fields"
 fields = [
