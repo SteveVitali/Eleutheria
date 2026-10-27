@@ -8,10 +8,11 @@ operator's act; nothing in this packet was performed.*
 
 The first real host's wire/fetch of the `axon_connect` connector as a
 connector run — i.e. the first time `sig-connectors run --source axon_connect
---mode live` (or a subset of its committed targets) egresses to a committed
-I9a-C003 host under a flipped source row. Everything before leg B — leg A's
-queued screen/page GETs — is separately covered by `leg-a-queue.toml`; leg B
-is the act of letting the connector run live at all.
+--mode live` (or a subset of its committed targets) would egress to a
+committed I9a-C003 host under a flipped source row — never performed here.
+Everything before leg B — leg A's queued screen/page GETs — is separately
+covered by `leg-a-queue.toml`; leg B is nothing more than the act of letting
+the connector run at all, and no such run happened.
 
 ## Preconditions (all must hold; the leg refuses otherwise)
 
@@ -24,7 +25,8 @@ is the act of letting the connector run live at all.
    automated access — the posture stays `public_terms_only`; the flip is a
    considered acceptance, not a discovered permission).
 2. **OP-26 authorisation** — the operator names the run window (the ticket's
-   live window cell: `AR-3 + AR-2 + AR-1c` — bounded GETs, backup first).
+   live-window cell `AR-3 + AR-2 + AR-1c` (bounded GETs, backup first, none
+   run without that naming).
 3. **`live:P35.38a` holds** — `https://surveillancegraph.org/data-collection/`
    serves 200 (it returned 404 at the 2026-10-27T05:01Z probe — recorded in
    `leg-a-queue.toml`); a descriptive UA may not cite a dead owned page
@@ -35,7 +37,8 @@ is the act of letting the connector run live at all.
 ## The act (verbatim command surface)
 
 ```
-# After the flip commit lands on the stack tip and the window opens:
+# After the flip commit lands on the stack tip and the window opens —
+# never without the operator's OP-26 go:
 uv run python -m connectors run --source axon_connect --mode live \
     --capture-dir .sig/captures
 ```

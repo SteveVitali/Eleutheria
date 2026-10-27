@@ -1281,3 +1281,30 @@ rerun_cell = '''`implement-spec spec=docs/tickets/348_P35.23__real-data-regressi
   go = '''pre-authorised: OM-20'''
   rerun = '''implement-spec spec=docs/tickets/348_P35.23__real-data-regression-corpus.md live_verification=true'''
   live_dependants = []
+
+[[row]]
+key = "P36.76"
+kind = "leg"
+obligations = ["D-P36.76-1", "D-P36.76-2"]
+obligations_cell = '''queued D-P36.76-1 — the 12 leg-A bounded GETs (6 registration pages + 6 `/:8443` screens); D-P36.76-2 — leg B, the operator's first-wire act'''
+gates_cell = '''bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T05:01Z); records land under `reports/rights/p3676/`; leg B is never agent execution'''
+operator_cell = '''nothing until `live:P35.38a` — leg B's flip + first wire stay the operator's HG-03 + OP-26 acts (packet `p3676/leg-b-packet.md`, go lines blank)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true` · landed 351'''
+
+  [[row.legs]]
+  id = "P36.76-legA"
+  obligations = ["D-P36.76-1"]
+  earliest = '''when `live:P35.38a` holds — owned `/data-collection/` live'''
+  excluded = []
+  go = '''pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6)'''
+  rerun = '''implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true'''
+  live_dependants = []
+
+  [[row.legs]]
+  id = "P36.76-legB"
+  obligations = ["D-P36.76-2"]
+  earliest = '''the operator's OP-26 dispatch — never an agent leg'''
+  excluded = ["agent execution"]
+  go = '''operator: HG-03 + OP-26'''
+  rerun = '''implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true'''
+  live_dependants = []
