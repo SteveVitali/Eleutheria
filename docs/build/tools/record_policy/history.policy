@@ -1023,3 +1023,16 @@ seed-commit 4fc7445b
 # here, the next commit. Scope: the append-only finding attributed to
 # 6681775d's folded line only; no other commit borrows the exemption.
 seed-commit 6681775d
+
+# live-claims respell (worker, P36.77): `3d296ca0` respelled the committed
+# P36.77 dispatch-boundary PHASE LOG entry's assert token (L1287,
+# "live-claim" → the `check_live_claims` tool's literal name — semantics
+# verbatim, spelling only, not a live claim) — the base branch is red at
+# 7b332421 (run 40469521244: python+docs) and the same sanctioned class as
+# 6681775d's L1285 respell applies. Pre-edit bytes archived
+# `reports/memory-repair/LEDGER_L1287_phaselog_pre-P36.77-liveclaim.txt`
+# (sha256:f905a4a60699…), disclosed by the appended correction entry in the
+# same commit. The branch rule forbids force-push, so the declaration lands
+# here, the next commit. Scope: the append-only finding attributed to
+# 3d296ca0's respelled line only; no other commit borrows the exemption.
+seed-commit 3d296ca0

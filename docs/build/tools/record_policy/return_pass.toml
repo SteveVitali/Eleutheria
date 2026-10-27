@@ -54,7 +54,7 @@ kind = "obligation"
 obligations = ["D-P31.4-1"]
 obligations_cell = '''D-P31.4-1'''
 gates_cell = '''queued hosted, date-bound (§(f3)); read-only, no gate'''
-operator_cell = '''the operator's call on `D-P34.39a-1` — the 2026-10-14 read-back recorded `fail` on two tooling artifacts (production-facing criteria still passed); closing needs operator accept or a criteria-fix re-read'''
+operator_cell = '''operator's call on `D-P34.39a-1` — the 2026-10-14 read-back recorded `fail` on two tooling artifacts (production-facing criteria still passed); closing needs operator accept or a criteria-fix re-read'''
 rerun_cell = '''chain 247 **P34.39a** (11A — leg ran 2026-10-14 `fail` → `deferral-row`; a `P34.39a-live-2` re-read rides the call); verify = the D-P31.4-1 command; P34.39b carries the first-fire/peel-on reads · landed 145 (#140)'''
 
 [[row]]
@@ -368,7 +368,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep
   obligations = []
   earliest = '''when `live:P35.38a` holds — the project UA's owned `/data-collection/` page live'''
   excluded = []
-  go = '''none — the operator's recorded E4-R6a answer is the go (a public GET, not a production write)'''
+  go = '''none — operator's recorded E4-R6a answer is the go (a public GET, not a production write)'''
   rerun = '''implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-registry-rows.md live_verification=true'''
   live_dependants = []
 
@@ -414,7 +414,7 @@ kind = "leg"
 obligations = ["D-P36.2-1"]
 obligations_cell = '''queued D-P36.2-1 — the 12 P36.2 terms captures (IU1–IU5, Edmonton OGL, BidNet, 5 folded-set)'''
 gates_cell = '''public read-only GETs under the project UA (SIG-INGEST-036), `Crawl-delay: 5`; gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T01:53Z); terms land verbatim+sha256 under `reports/rights/p362/captures/`'''
-operator_cell = '''nothing until `live:P35.38a` — flips are the operator's signed apply on `r11/sources-flips` (OP-26); terms lines ride GATE-G6 (S6R-28)'''
+operator_cell = '''nothing until `live:P35.38a` — flips are operator's signed apply on `r11/sources-flips` (OP-26); terms lines ride GATE-G6 (S6R-28)'''
 rerun_cell = '''`implement-spec spec=docs/tickets/350_P36.2__rights-flip-decline-batch-and-terms-capture.md live_verification=true` · landed 350'''
 
   [[row.legs]]
@@ -777,9 +777,9 @@ rerun_cell = '''`implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and
   [[row.legs]]
   id = "P35.14b-live-typing-check"
   obligations = []
-  earliest = '''2026-10-13 — first weekday 14:00-20:00Z slot at/after the freeze end (12:00Z), after the operator's explicit verbatim in-ticket go, operator present, AR-2 restore point verified first'''
+  earliest = '''2026-10-13 — first weekday 14:00-20:00Z slot at/after the freeze end (12:00Z), after operator's explicit verbatim in-ticket go, operator present, AR-2 restore point verified first'''
   excluded = ["weekends + outside-14:00-20:00Z", "03:00-06:30Z/d", "before 2026-10-13T12:00Z AR-3 freeze"]
-  go = '''verbatim-go: never pre-authorised (OM-20 / §3.3 named class) — only the operator's explicit verbatim in-ticket go collected at execution time; no GATE-G4 list entry can authorise; silence is never consent'''
+  go = '''verbatim-go: never pre-authorised (OM-20 / §3.3 named class) — only operator's explicit verbatim in-ticket go collected at execution time; no GATE-G4 list entry can authorise; silence is never consent'''
   rerun = '''implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and-hosted-check-constraint.md live_verification=true'''
   live_dependants = []
 [[row]]
@@ -946,7 +946,7 @@ kind = "leg"
 obligations = []
 obligations_cell = '''queued dispatcher-consolidation leg (`ops/gcp/dispatcher-consolidation.sh --apply all`): prestate → deploy `sig-sched-due` + 1 hourly trigger + bindings → verify → 89 `[[retire_triggers]]` name-checked deletes → proof'''
 gates_cell = '''queued hosted write; OM-20 — GATE-G4 §4 names 291 not 291a (predates C13 → never pre-authorised; needs 291a amendment); AR-3+AR-2 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z) — apply exit 42; `SIG_CONSOL_AUTHOR` + prestate; voided by failed AR-2/red probe; after `--check` + #303 green'''
-operator_cell = '''an explicit GATE-G4 amendment naming row 291a (§4 names 291 — predates C13); nothing until amendment + window + ADC + `SIG_CONSOL_AUTHOR` — `--check` plans only; rollback deletes trigger+job, replays prestate'''
+operator_cell = '''explicit GATE-G4 amendment naming row 291a (§4 names 291 — predates C13); nothing until amendment + window + ADC + `SIG_CONSOL_AUTHOR` — `--check` plans only; rollback deletes trigger+job, replays prestate'''
 rerun_cell = '''`implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true` · landed 291a (#303)'''
 
   [[row.legs]]
@@ -954,7 +954,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consol
   obligations = []
   earliest = '''a weekday 14:00-20:00Z slot (AR-3 + AR-2) AFTER the operator's GATE-G4 amendment explicitly names row 291a — operator ADC armed + `SIG_CONSOL_AUTHOR` set + PR #303 head-bound CI green; fresh prestate + verify legs run inside the same invocation before any destructive leg'''
   excluded = ["weekends + outside-14:00-20:00Z"]
-  go = '''operator: an explicit GATE-G4 amendment naming row 291a (§4 names 291 — predates C13)'''
+  go = '''operator: explicit GATE-G4 amendment naming row 291a (§4 names 291 — predates C13)'''
   rerun = '''implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true'''
   live_dependants = []
 [[row]]
@@ -1119,8 +1119,8 @@ key = "P35.62"
 kind = "leg"
 obligations = []
 obligations_cell = '''queued live half of P32.23a's candidate deferral: `release-candidate` over a hosted `frozen_unpublished` snapshot → `+0` rematerialize → export → `release stage` + IAM-only origins → web build + DR-C4-01 crawl; packet `reports/p35.62-production-candidate/` prepared_not_executed'''
-gates_cell = '''hosted staged only, queued (no snapshot, secrets NOT_FOUND, env unset); pre-authorised GATE-G4 §4 (P35.62; expires next GATE, OM-10); AR-3+AR-2 14:00–20:00Z excl. 03:00–06:30Z, weekends, before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.61` (snapshot), before `live:P35.53` (staged/ home); earliest 2026-10-26T14:00Z; create-only, never pointer/public'''
-operator_cell = '''nothing until re-run — the leg stages the candidate; activation/rollback/promotion are P35.63's under HG-11'''
+gates_cell = '''hosted staged only, queued (no snapshot/secrets/env); pre-authorised GATE-G4 §4 (P35.62; expires next GATE, OM-10); AR-3+AR-2 14:00–20:00Z excl. 03:00–06:30Z, weekends, before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.61` (snapshot), before `live:P35.53` (staged/ home); earliest 2026-10-26T14:00Z; create-only, never pointer/public'''
+operator_cell = '''nothing until re-run — leg stages the candidate; activation/rollback/promotion are P35.63's under HG-11'''
 rerun_cell = '''`implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true` · landed 339 (#360)'''
 
   [[row.legs]]
@@ -1135,16 +1135,16 @@ rerun_cell = '''`implement-spec spec=docs/tickets/339_P35.62__round10-production
 key = "P35.63"
 kind = "leg"
 obligations = []
-obligations_cell = '''queued release-exposure half of the publish deferral (home P32.25): L1 staged cut → V1–V15 → `class_s` → agent-drafted HG-11 readout (unsigned) · L2 promote + checks + rollback rehearsal — verbatim signed HG-11 readout + go only; packet `reports/p35.63-first-model-release/` prepared_not_executed'''
-gates_cell = '''queued hosted write (env unset, secrets NOT_FOUND, upstream queued); never pre-authorised — publication never-listed, `p-17b713` never transfers; L2 go = verbatim signed HG-11 readout+go; AR-3+AR-2 14:00–20:00Z excl. 03:00–06:30Z, weekends, before `live:P35.62` (staged candidate), before `live:P35.53` (staged/ home), before `live:P35.59` (dark cutover), before `live:P35.61` (snapshot input), before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.57` (the queued API-roll leg); earliest 2026-10-26T14:00Z'''
-operator_cell = '''L1 — operator's in-slot go for the staged cut (publication never pre-authorised); L2 — operator's verbatim signed HG-11 candidate-specific readout + go (never on silence); prior-pointer leg recorded not-rehearsable'''
+obligations_cell = '''queued release-exposure half of publish deferral (home P32.25): L1 staged cut → V1–V15 → `class_s` → agent-drafted HG-11 readout (unsigned) · L2 promote + checks + rollback rehearsal — verbatim signed HG-11 readout + go only; packet `reports/p35.63-first-model-release/` prepared_not_executed'''
+gates_cell = '''queued hosted write (env unset, secrets NOT_FOUND, upstream queued); never pre-authorised — publication never-listed, `p-17b713` never transfers; L2 go = verbatim signed HG-11 readout+go; AR-3+AR-2 14:00–20:00Z excl. 03:00–06:30Z, weekends, before `live:P35.62` (staged candidate), before `live:P35.53` (staged/ home), before `live:P35.59` (dark cutover), before `live:P35.61` (snapshot input), before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.57` (API-roll leg); earliest 2026-10-26T14:00Z'''
+operator_cell = '''L1 — operator's in-slot go for the staged cut (publication never pre-authorised); L2 — operator's verbatim signed HG-11 candidate-specific readout + go (never on silence); prior-pointer leg not-rehearsable'''
 rerun_cell = '''`implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (resumes at L2's promote; re-staged cut byte-identical) · landed 341 (#362)'''
 
   [[row.legs]]
   id = "P35.63-dispatch-stage-verify-readout"
   obligations = []
   earliest = '''the next weekday 14:00–20:00Z slot once `live:P35.62` (the staged candidate), `live:P35.53` (the staged/ home), `live:P35.59` (the dark cutover), `live:P35.61` (the snapshot input), `live:P34.46` (+ its 48 h soak), `live:P34.43` L1+L2 and `live:P35.57` (the API-roll leg) all hold — earliest 2026-10-26T14:00Z, later in practice'''
-  excluded = ["03:00–06:30Z", "weekends", "before `live:P35.62` (staged candidate)", "before `live:P35.53` (staged/ home)", "before `live:P35.59` (dark cutover)", "before `live:P35.61` (snapshot input)", "before `live:P34.46` + 48 h soak", "before `live:P34.43` L1+L2", "before `live:P35.57` (the queued API-roll leg)"]
+  excluded = ["03:00–06:30Z", "weekends", "before `live:P35.62` (staged candidate)", "before `live:P35.53` (staged/ home)", "before `live:P35.59` (dark cutover)", "before `live:P35.61` (snapshot input)", "before `live:P34.46` + 48 h soak", "before `live:P34.43` L1+L2", "before `live:P35.57` (API-roll leg)"]
   go = '''operator: operator's in-slot go for the staged cut'''
   rerun = '''implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true'''
   live_dependants = ["P35.64"]
@@ -1152,8 +1152,8 @@ rerun_cell = '''`implement-spec spec=docs/tickets/341_P35.63__first-model-releas
   [[row.legs]]
   id = "P35.63-promote-under-hg11"
   obligations = []
-  earliest = '''only after L1 lands + the operator's verbatim signed HG-11 readout exists — then the next weekday 14:00–20:00Z slot with the operator present; earliest 2026-10-26T14:00Z, later in practice'''
-  excluded = ["03:00–06:30Z", "weekends", "before `live:P35.62` (staged candidate)", "before `live:P35.53` (staged/ home)", "before `live:P35.59` (dark cutover)", "before `live:P35.61` (snapshot input)", "before `live:P34.46` + 48 h soak", "before `live:P34.43` L1+L2", "before `live:P35.57` (the queued API-roll leg)"]
+  earliest = '''only after L1 lands + operator's verbatim signed HG-11 readout exists — then the next weekday 14:00–20:00Z slot with the operator present; earliest 2026-10-26T14:00Z, later in practice'''
+  excluded = ["03:00–06:30Z", "weekends", "before `live:P35.62` (staged candidate)", "before `live:P35.53` (staged/ home)", "before `live:P35.59` (dark cutover)", "before `live:P35.61` (snapshot input)", "before `live:P34.46` + 48 h soak", "before `live:P34.43` L1+L2", "before `live:P35.57` (API-roll leg)"]
   go = '''operator: operator's verbatim signed HG-11 candidate-specific readout + go'''
   rerun = '''implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true'''
   live_dependants = ["P35.64"]
@@ -1169,7 +1169,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/342_P35.64__sub-round-11b-acce
   [[row.legs]]
   id = "P35.64-sweep-packet"
   obligations = []
-  earliest = '''2026-10-26T14:00Z — the promotion's own bound; the real precondition is `live:P35.63` (both its legs queued — L2 waits on the operator's verbatim signed HG-11 readout)'''
+  earliest = '''2026-10-26T14:00Z — the promotion's own bound; the real precondition is `live:P35.63` (both its legs queued — L2 waits on operator's verbatim signed HG-11 readout)'''
   excluded = ["before `live:P35.63` promotes (promoted first release must exist)"]
   go = '''none — read-only sweeps and reads (the promoted release existing is the precondition, not a go)'''
   rerun = '''implement-spec spec=docs/tickets/342_P35.64__sub-round-11b-acceptance.md live_verification=true'''
@@ -1179,7 +1179,7 @@ key = "P37.2"
 kind = "leg"
 obligations = []
 obligations_cell = '''Wave-C sequence L1→L5 (pre-grow → tier bump after the go → national run → 24 h soak → revert); missed leg reported; packet `reports/p37.2-wave-c/` prepared_not_executed'''
-gates_cell = '''hosted write, never pre-authorised (tier-bump go = P37.2's in-ticket pause); window 2026-11-16→20 (earliest 2026-10-26 iff P37.1+PKG-07+Q-23 landed); excluded: outside 2026-11-16→20 (strict; earliest unmet), 03:00–06:30Z, AR-3 freeze/cut, materialize/G2/manual run, Wave-B r11 batch crons not held (FEA-15) for L3; L4 read-only: soak < 24 h from the recorded run end or outside the 48 h grace (through 2026-11-22T00:00Z); verbatim ING-GO-C ("Approve ING-GO-C (rec.)", GATE-G5 §3) + `wave-c-gate` per leg'''
+gates_cell = '''hosted write, never pre-authorised (tier-bump go = own in-ticket pause); window 2026-11-16→20 (earliest 2026-10-26 iff P37.1+PKG-07+Q-23 landed); excluded: outside 2026-11-16→20 (strict; earliest unmet), 03:00–06:30Z, AR-3 freeze/cut, materialize/G2/manual run, Wave-B r11 batch crons not held (FEA-15) for L3; L4 read-only: soak < 24 h from the recorded run end or outside the 48 h grace (through 2026-11-22T00:00Z); verbatim ING-GO-C ("Approve ING-GO-C (rec.)", GATE-G5 §3) + `wave-c-gate` per leg'''
 operator_cell = '''ING-GO-C recorded; verbatim in-ticket tier-bump go asked when L2 is due — never the ING-GO-C text; `wave-c.sh --apply --leg L1|…|L5 --inputs <json>` (no-go → 42); flips stay HG-03'''
 rerun_cell = '''`implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national-alpr-layer.md live_verification=true` (first unauthorised leg; pre-grow is one-way) · landed 345'''
 
@@ -1286,7 +1286,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/348_P35.23__real-data-regressi
 key = "P36.76"
 kind = "leg"
 obligations = ["D-P36.76-1", "D-P36.76-2"]
-obligations_cell = '''queued D-P36.76-1 — the 12 leg-A bounded GETs (6 registration pages + 6 `/:8443` screens); D-P36.76-2 — leg B, the operator's first-wire act'''
+obligations_cell = '''queued D-P36.76-1 — the 12 leg-A bounded GETs (6 registration pages + 6 `/:8443` screens); D-P36.76-2 — leg B, operator's first-wire act'''
 gates_cell = '''bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T05:01Z); records land under `reports/rights/p3676/`; leg B is never agent execution'''
 operator_cell = '''nothing until `live:P35.38a` — leg B's flip + first wire stay the operator's HG-03 + OP-26 acts (packet `p3676/leg-b-packet.md`, go lines blank)'''
 rerun_cell = '''`implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true` · landed 351'''
@@ -1313,9 +1313,9 @@ rerun_cell = '''`implement-spec spec=docs/tickets/351_P36.76__axon-connect-conne
 key = "P36.77"
 kind = "leg"
 obligations = ["D-P36.77-1", "D-P36.77-2"]
-obligations_cell = '''queued D-P36.77-1 — the 11 leg-A bounded GETs (4 api_document + 3 api_project + 2 public DocumentCloud pages + the governing ToS + the MuckRock public /foi/ page); D-P36.77-2 — leg B, the operator's first-wire act'''
-gates_cell = '''bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T07:54:48Z); records land under `reports/rights/p3677/`; leg B is never agent execution'''
-operator_cell = '''nothing until `live:P35.38a` — leg B's flips + first wire stay the operator's HG-03 + OP-26 acts (packet `p3677/leg-b-packet.md`, go lines blank)'''
+obligations_cell = '''queued D-P36.77-1 — 11 leg-A GETs (4 api_document + 3 api_project + 2 DocumentCloud pages + ToS + the MuckRock /foi/ page); D-P36.77-2 — leg B, operator's first-wire act'''
+gates_cell = '''bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T07:54Z); records under `reports/rights/p3677/`; leg B never agent execution'''
+operator_cell = '''nothing until `live:P35.38a` — leg B's flips + first wire are operator acts (HG-03 + OP-26; packet `p3677/leg-b-packet.md`, go lines blank)'''
 rerun_cell = '''`implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true` · landed 352'''
 
   [[row.legs]]
