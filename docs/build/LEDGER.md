@@ -7,9 +7,9 @@
 
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # P36.78 landed(353); queued legs on earlier rows
-nextTicket: P36.13 # row 354 — api-rate-limits
-lastCompleted: P36.78 # row 353 — sourcewell-omnia-contract-pages 2026-10-27
+projectStatus: IN_PROGRESS # P36.13 landed(354); queued legs on earlier rows
+nextTicket: P36.14 # row 355 — inference-l4-marker
+lastCompleted: P36.13 # row 354 — api-rate-limits 2026-10-27
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.76,P36.77,P36.78,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P36.78-sourcewell-omnia-contract-pages # P36.78 landed on this tip; P36.13 stacks here
+chainTip: r11/P36.13-api-rate-limits # P36.13 landed on this tip; P36.14 stacks here
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-27T12:05Z
+updatedAt: 2026-10-27T14:15Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1297,3 +1297,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-27 — P36.78 done — row 353 (I7-C14→I7-C3 [B-39] cooperative contract pages): `cooperative` connector — 5 seeds/5 kinds, screened `sig.cooperative-rendition/1` (redacted name+classes+hash + contract_page + sha256; served bytes never persisted) or counts-only `sig.cooperative-refusal/1`; verbatim `sig.cooperative-terms/1` ×2 · `sources.toml` amends — both `ingestion_permitted=false`, custody →DERIVE (gate REFUSED, live exit 3 ×2) · leg A 5 GETs QUEUED `prepared_not_executed` (`live:P35.38a` 404 → `D-P36.78-1` OPEN); leg B held — `D-P36.78-2` OPEN (OP-26) · 27 tests green · shadow 10c/2cap+7c/2cap diff=0 · deferrals +2/−0 · `make check` final-tree 10,923/2s/3 (env+pre-existing only: `SIG_GCP_PROJECT` + P34.18 ×2; impl-tree 4 liveclaim segments respelled — corpus 0) · impl `7de9c375` · ci: head-bound read follows · chainTip → r11/P36.78-… · next → P36.13 · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-27 — P36.78 post-closeout record — `ci: pass #373@6dfe3aa` 5/5 head-bound (run 40506285366: python 13m49s · docs 2m31s · composed 3m30s · security 28s · web 30m23s; record `reports/ci/p36_78_pr373.json` read 13:19:14Z); stack `blockedOn` pre-existing red ancestor #368@75aa5a8 (waived-ancestor pattern, same as #372/#371 records) · impl head `7de9c375` docs-red (run 40500987555 — projection digests stale on the deferred DEFERRALS/events/return-pass inputs) repaired by closeout `6dfe3aa1` (regen 1120/1120 + the obligations spill-path fix) · PR #373 OPEN on the stack for operator integration; Leg A queued `D-P36.78-1` prepared_not_executed (UA 404), Leg B held `D-P36.78-2` OP-26 — no `ingestion_permitted` flip · `main` untouched · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-27 — P36.13 dispatch boundary-confirm — `ci: pass #373@af075c3` 5/5 head-bound on the record tip (run 40511170168: python/docs/composed/security/web; impl read `ci: pass #373@6dfe3aa` run 40506285366; `reports/ci/p36_78_pr373.json`) · P36.78 landed: Sourcewell+OMNIA cooperative contract-page connector + registry rows (`ingestion_permitted=false`) + 27 tests — **leg A's 5 GETs QUEUED `D-P36.78-1`** (the `/data-collection/` probe-UA precondition 404s); **leg B held `D-P36.78-2` (OP-26)**; gate verified refusing · fix arc recorded: a `current_projection.py` obligation-spill fix (chunk 120→160 — the +2 rows had re-blamed 15 verbatim cells into fresh live-claims; the P36.78 worker's mechanical repair, view-bound only) · `main` untouched · deferrals +2/−0 · dispatching P36.13 (row 354 — API exposure posture: `live_verification=false`; **OM-20 NAMED at GATE-G5** — the hosted-enforcement flip (defined→enforced rate limits) is pre-authorised in-ticket under AR-3+AR-2 but hosted creds absent → the flip queues per OM-19 while SIG-API-009's limiter + headers + tests land; D-K3-6 Cloud Armor stays deferred; dep P34.46 landed; S-sized) · chainTip → r11/P36.78-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-10-27 — P36.13 done — row 354 (R11-OPS-06 API exposure posture: enforced rate limits, D-K3-6 honoured): in-process per-client token bucket on the public read API — 30 req/60 s burst 10, `RateLimit-{Limit,Remaining,Reset}` on every response incl. typed 404/422/framework 404 + the emitted 500; `enforce` → 429 + `Retry-After` + typed `rate_limited` body or the no-JS HTML page (DR-C4-10); client key = the edge-appended address (RFC 7239/XFF Nth-from-right, hops=2 behind the Google external LB, short chain → peer, client-claimed entries never trusted); posture env `off`(default)/`advise`/`enforce` fails closed — ships dark · `ops/gcp/rate-limit-enforcement.sh` staged — check-mode green no-ADC, apply gated ADC+`SIG_GCP_PROJECT`+`SIG_RATELIMIT_AUTHOR`+AR-3, prestate describe = restore point · **the hosted flip QUEUED `D-P36.13-1`** (no ADC/`SIG_GCP_PROJECT`, OM-19; OM-20 GATE-G5 named verbatim, expires GATE-G6) · **D-K3-6 stays OPEN — no Cloud Armor artifact** · SIG-API-009 canonical-id collision recorded as Deviation 1 — no coverage verdict touched · 18 tests green · deferrals +1/−0 · `make check` mid-flight 10,937/5s/7r+1err (2 mid-flight self-inflicted — resolved this commit; `SIG_GCP_PROJECT` fail-closed + Docker-down ×2 env; P34.18 residue ×2 pre-existing) · impl `1f08aaca` + records `b6e391af` · ci: head-bound read follows · chainTip → r11/P36.13-… · next → P36.14 · harness: devin-desktop/swe-2-high/subagent

@@ -4,12 +4,12 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `1f08aaca5504a13355e60934aaa7b557f50b0b66` · inputs hashed: 1120 · wall-clock receipt: `receipt.json`
+> input_commit: `b6e391afc9a1119f2667c329d93fc19bd6afcedf` · inputs hashed: 1121 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.13` · lastCompleted `P36.78`
-- chainTip `r11/P36.78-sourcewell-omnia-contract-pages` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-27T12:05Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.14` · lastCompleted `P36.13`
+- chainTip `r11/P36.13-api-rate-limits` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-27T14:15Z`
 
 ## Obligations
 
@@ -86,7 +86,7 @@
 | P36.76 | queued D-P36.76-1 — the 12 leg-A bounded GETs (6 registration pages + 6 `/:8443` screens); D-P36.76-2 — leg B, operator's first-wire act | `implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true` |
 | P36.77 | queued D-P36.77-1 — 11 leg-A GETs (4 api_document + 3 api_project + 2 DocumentCloud pages + ToS + the MuckRock /foi/ page); D-P36.77-2 — leg B, operator's first… | `implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true` |
 | P36.78 | queued D-P36.78-1 — 5 leg-A GETs (the Sourcewell contract page + terms-use, the OMNIA supplier + contract-documents index + terms-of-use); D-P36.78-2 — leg B, o… | `implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true` |
-| P36.13 | queued D-P36.13-1 — the hosted-enforcement flip on `sig-api` (SIG_API_RATE_LIMIT=enforce + SIG_API_TRUSTED_PROXY_HOPS=2 via `rate-limit-enforcement.sh --apply`;… | `implement-spec spec=docs/tickets/354_P36.13__api-rate-limits.md live_verification=true` |
+| P36.13 | queued D-P36.13-1 — the hosted-enforcement flip on `sig-api` (env `SIG_API_RATE_LIMIT=enforce` + hops 2; prestate describe = restore point) | `implement-spec spec=docs/tickets/354_P36.13__api-rate-limits.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 
