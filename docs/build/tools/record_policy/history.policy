@@ -964,3 +964,20 @@ seed-commit 5f76438b
 # caa6a363/5f76438b. Scope: BM-ORIENT-01 findings attributed to 0cf6b81b's
 # folded lines only; no other commit borrows the exemption.
 seed-commit 0cf6b81b
+
+# orient fold (worker): `72c1624a` byte-compacted this row's own committed
+# P36.2 dispatch boundary-confirm (LEDGER.md L1274, 1,455->1,027 B) plus
+# RETURN PASS cells across the owed map after BM-ORIENT-01 read 50,671 B >
+# 48 KiB following the row's regen (the recipe was already over at the
+# dispatch boundary — 49,696 B on `4dd5fabb`). Payload fields verbatim;
+# pre-repair bytes archived
+# `reports/memory-repair/LEDGER_L_phaselog_pre-P36.2-orientfold.txt`
+# (sha256:626a5a82…) and
+# `reports/memory-repair/return_pass_legcells_pre-P36.2-orient.txt`
+# (sha256:04662e50…); the fold is disclosed by the appended `P36.2
+# correction` entry in the same commit. The branch rule forbids force-push,
+# so the declaration lands here, the next commit. Same sanctioned class as
+# 4c4f7161/caa6a363/5f76438b/0cf6b81b. Scope: BM-ORIENT-01 findings
+# attributed to 72c1624a's folded lines only; no other commit borrows the
+# exemption.
+seed-commit 72c1624a
