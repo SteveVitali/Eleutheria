@@ -950,3 +950,17 @@ seed-commit caa6a363
 # commit re-pinned the perf_reuse allow row to the rewrapped comment line.
 # Scope: BM-ORIENT-01 findings attributed to 5f76438b's folded line only.
 seed-commit 5f76438b
+
+# orient fold for the post-closeout record (worker): `0cf6b81b`
+# byte-compacted this row's own committed L1269 dispatch boundary-confirm
+# (699->623 B) and L1270 done (859->740 B) after the recipe read 49,139 B —
+# 13-B headroom cannot carry the post-closeout record. Payload fields
+# verbatim; pre-repair bytes archived
+# `reports/memory-repair/LEDGER_L1269_L1270_pre-P36.1b-recordfold.txt`
+# (sha256:982c1491d32182c4af2871dbd15b01eaa6b968250f4df399077bd2abed10e563)
+# and the fold is disclosed by the appended `P36.1b correction` entry in
+# the same commit. The branch rule forbids force-push, so the declaration
+# lands here, the next commit. Same sanctioned class as 4c4f7161/77cad905/
+# caa6a363/5f76438b. Scope: BM-ORIENT-01 findings attributed to 0cf6b81b's
+# folded lines only; no other commit borrows the exemption.
+seed-commit 0cf6b81b
