@@ -671,6 +671,8 @@ def test_resolved_sources_are_green_gated_sources_refuse() -> None:
         "dot_511_ga",
         "dot_511_la",
         "dot_511_md",
+        # P36.2 (E4-R3 = a): the last DOT remainder flipped under GL-GATE-07.
+        "dot_511_tx",
     }
     gated = set(SOURCE_IDS) - green
     for source_id in green:
@@ -905,13 +907,14 @@ def test_camreg_green_sources_pass_gated_ones_refuse() -> None:
         "camreg_nzta_nz",
         "camreg_donegal_ie",
         "camreg_stalbert_ab",
+        # P36.2 (E4-R4b = a): HK flipped under GL-GATE-07 non-US basis.
+        "camreg_hk_hk",
     }
     gated = set(CAMREG_SOURCE_IDS + CAMREG_P26_13_SOURCE_IDS) - green
     assert gated == {
         "camreg_edmonton_ab",
         "camreg_bellevue_wa",
         "camreg_qldc_au",
-        "camreg_hk_hk",
     }
     for source_id in green:
         assert live_gate_reasons(source_id) == [], f"{source_id} should be green"

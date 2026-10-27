@@ -556,9 +556,10 @@ def test_loader_gate_refuses_gated_portal_sources() -> None:
     """The registry rows are gated; the loader refuses them before any fetch."""
     from connectors.loader import IngestionNotPermitted, assert_loadable
 
-    # BidNet (not_contacted), Bonfire (robots Disallow:/), OpenGov (challenged)
-    # and Chicago Socrata (no licence metadata) stay gated.
-    for source_key in ("bidnet_direct", "bonfire", "opengov_procurement", "procportal_chicago_il"):
+    # BidNet (not_contacted), Bonfire (robots Disallow:/) and OpenGov
+    # (challenged) stay gated. procportal_chicago_il was flipped by P36.2
+    # (E4-R5 = a, GL-GATE-07) and is covered by test_flipped_socrata_sources.
+    for source_key in ("bidnet_direct", "bonfire", "opengov_procurement"):
         with pytest.raises(IngestionNotPermitted):
             assert_loadable(get(source_ids()[source_key]))
 

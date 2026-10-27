@@ -2630,7 +2630,7 @@ access_method = "per-agency eBid portals"
 auth_model = "none for public listings"
 verified = true
 last_verified = 2026-09-16
-notes = "P26.2 discovery (records/procurement surface). Periscope eBid (BidSync) portals host many public agency solicitations. P26.10 note: periscopeholdings.com's current public product surface IS BidNet Direct (mdf commerce) — the `bidnet_direct` row carries the live tenant registry; this row stays the per-agency eBid-portal lead (rights packet docs/build/reports/rights/periscope_s2g.md, terms still not captured verbatim — D-SOURCES.9-4 class)."
+notes = "P26.2 discovery (records/procurement surface). CLOSED 2026-10-01 (operator, HG-03) — \"R6b Periscope: superseded\" (B-41, GATE-P 2026-10-01T04:49:27Z; E4-R6b = a): superseded by bidnet_direct — periscopeholdings.com's current public product surface IS BidNet Direct (mdf commerce); the `bidnet_direct` row carries the live tenant registry. Stays ingestion_permitted=false; no re-review owed (the row itself called it superseded). Prior: per-agency eBid portals host public agency solicitations; rights packet docs/build/reports/rights/periscope_s2g.md."
 
 [sources.publicpurchase]
 name = "PublicPurchase — public agency bid portal"
@@ -2842,16 +2842,26 @@ name = "City of Chicago — Socrata 'Contracts' dataset"
 source_kind = "government_portal"
 homepage_url = "https://data.cityofchicago.org/d/rsxa-ify5"
 default_tier = "R3"
-custody_posture = "LINK"
-compact_status = "not_contacted"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
 robots_policy = "honor"
 access_method = "rest_api (socrata /resource rows API — registry dataset only)"
 auth_model = "none"
 cadence = "monthly"
 verified = true
-last_verified = 2026-09-18
+last_verified = 2026-10-01
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-10-01
 review_packet = "docs/build/reports/rights/procportal_chicago_il.md"
-notes = "P26.10 (SOURCES.9). STAYS GATED (D-SOURCES.9-1): dataset rsxa-ify5 'Contracts' carries NO licence metadata on /api/views — unlike the four flipped Socrata datasets there is no verbatim dedication to evaluate, so the GL-GATE-06 clear-licence basis does not apply and the flip needs the city terms reviewed (counsel-needed flag). Verified surveillance-relevant rows exist ('VIDEO/SURVEILLANCE CAMERA SERVICES', 'VIDEO SURVEILLANCE MANAGEMENT SYSTEM'); the gate refuses fetches meanwhile."
+notes = "P26.10 (SOURCES.9). FLIPPED 2026-10-01 under GL-GATE-07 (US) — \"R5 Chicago procurement portal: flip\" (B-41, GATE-P 2026-10-01T04:49:27Z; E4-R5 = a): City of Chicago procurement rows are a US public-record factual compilation — LicenseRef-PublicRecord-FactualCompilation (same portal + basis as camreg_chicago_il, flipped 2026-09-18; the four Socrata siblings flipped under GL-GATE-06). Custody LINK → MIRROR matching the siblings; the dataset itself carries no licence metadata (recorded). Verified surveillance-relevant rows exist ('VIDEO/SURVEILLANCE CAMERA SERVICES', 'VIDEO SURVEILLANCE MANAGEMENT SYSTEM'). Prepared on r11/sources-flips; applied in the operator-signed commit (OP-25/OP-26)."
+[sources.procportal_chicago_il.rights]
+spdx = "LicenseRef-PublicRecord-FactualCompilation"
+attribution = "City of Chicago (municipal public record; data.cityofchicago.org)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://data.cityofchicago.org/d/rsxa-ify5"
+retrieval_date = 2026-10-01
 
 
 [sources.la_city_clerk_cfms]
@@ -3171,18 +3181,25 @@ source_kind = "government_portal"
 homepage_url = "https://services1.arcgis.com/7DRakJXKPEhwv0fM/arcgis/rest/services/TxDOT_CCTV_Locations/FeatureServer/0"
 default_tier = "R1"
 custody_posture = "MIRROR"
-compact_status = "not_contacted"
+compact_status = "public_terms_only"
 robots_policy = "honor"
 access_method = "rest_api (arcgis feature layer query — registry rows only)"
 auth_model = "none"
 cadence = "monthly"
 verified = true
-last_verified = 2026-09-17
-notes = "P26.7. GATED — ArcGIS item adb3663e850e4f76be44596dbe696a93 is published under a personal account (dkarctur), not a TxDOT-owned org, AND licenseInfo is EMPTY. Blocker: publisher authority + HG-03-class rights decision. drivetexas.org camera API also unreachable on probe (recorded)."
+last_verified = 2026-10-01
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-10-01
+review_packet = "docs/build/reports/rights/dot_511_tx.md"
+notes = "P26.7. FLIPPED 2026-10-01 under GL-GATE-07 — \"As listed, R3 flip\" (B-41, GATE-P 2026-10-01T04:49:27Z; E4-R3 = a): TxDOT camera locations are a US public-record factual compilation — LicenseRef-PublicRecord-FactualCompilation (same basis as dot_511_la/_ga/_al/_md, P26.16). The item's licenseInfo is EMPTY and its publisher is a personal account (dkarctur) — the operator accepted that risk pattern (camreg_txdot_rep_tx precedent). drivetexas.org camera API unreachable on probe (recorded). Prepared on r11/sources-flips; applied in the operator-signed commit (OP-25/OP-26)."
 [sources.dot_511_tx.rights]
-spdx = "UNDETERMINED"
-redistributable = false
-retrieval_date = 2026-09-17
+spdx = "LicenseRef-PublicRecord-FactualCompilation"
+attribution = "TxDOT CCTV locations (ArcGIS republish; US public record factual compilation)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://services1.arcgis.com/7DRakJXKPEhwv0fM/arcgis/rest/services/TxDOT_CCTV_Locations/FeatureServer/0"
+retrieval_date = 2026-10-01
 
 [sources.dot_511_md]
 name = "MD SHA CHART traffic cameras (ArcGIS registry)"
@@ -3660,7 +3677,7 @@ auth_model = "none"
 cadence = "monthly"
 verified = true
 last_verified = 2026-09-18
-notes = "P26.9. GATED — item d47e172d8d184a208121c69ac7f6d088 licenseInfo carries a no-warranty disclaimer PLUS 'Any commercial use or sale of this map or portions thereof, is prohibited without express written authorization by the City of Bellevue' — a non-commercial restriction, NOT a resolved-clear permissive grant. Blocker: NC-conditioned terms need an outreach/decision path, not a delegated flip (D-SOURCES.8-1). 234 cameras observed."
+notes = "P26.9. DECLINED 2026-10-01 (operator, HG-03) — \"R4d Bellevue: decline (non-commercial, A-9)\" (B-41, GATE-P 2026-10-01T04:49:27Z; E4-R4d = c): SIG's use is or may be commercial (A-9) and item d47e172d8d184a208121c69ac7f6d088's licenseInfo expressly prohibits commercial use without written authorization — stays ingestion_permitted=false (a decline is a valid close). Prior gate note: no-warranty disclaimer + the NC clause; 234 cameras observed. Rights packet docs/build/reports/rights/camreg_bellevue_wa.md."
 [sources.camreg_bellevue_wa.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -3731,7 +3748,7 @@ auth_model = "none"
 cadence = "monthly"
 verified = true
 last_verified = 2026-09-18
-notes = "P26.9. GATED — item eebb997724054f8a816efde37a5b40a6 'CCTV Cameras (External View)' (240 rows) licenseInfo says only 'Currently available for external use' — not a licence grant. The authoritative QLDTraffic v1 API is token-gated (enumerated; CC-BY-3.0/4.0 on the CKAN dataset). Blocker: licence grant or QLDTraffic API-key registration + terms (D-SOURCES.8-1/-2)."
+notes = "P26.9. ROUTE-CHANGE recorded 2026-10-01 (operator, HG-03) — \"R4c QLDC via the QLDTraffic API\" (B-41, GATE-P 2026-10-01T04:49:27Z; E4-R4c = b): Queensland camera coverage lands via the token-gated QLDTraffic v1 API (CC-BY-3.0/4.0 on the CKAN dataset) at P37.70 — this ArcGIS republish row was never flipped and stays ingestion_permitted=false. Prior gate note: item eebb997724054f8a816efde37a5b40a6 'CCTV Cameras (External View)' (240 rows) licenseInfo 'Currently available for external use' — not a licence grant. Rights packet docs/build/reports/rights/camreg_qldc_au.md."
 [sources.camreg_qldc_au.rights]
 spdx = "UNDETERMINED"
 redistributable = false
@@ -3769,18 +3786,25 @@ source_kind = "government_portal"
 homepage_url = "https://services3.arcgis.com/6j1KwZfY2fZrfNMR/arcgis/rest/services/CCTV_Camera_Locations_in_Hong_Kong/FeatureServer/0"
 default_tier = "R1"
 custody_posture = "MIRROR"
-compact_status = "not_contacted"
+compact_status = "public_terms_only"
 robots_policy = "honor"
 access_method = "rest_api (arcgis feature layer query — registry rows only)"
 auth_model = "none"
 cadence = "monthly"
 verified = true
-last_verified = 2026-09-18
-notes = "P26.9. GATED — item 0b05a33ce41d4cb7b75436dabe592c5e (32 rows) licenseInfo defers to data.gov.hk 'Terms and Conditions of Use', not captured verbatim this run. Blocker: verbatim terms capture + HG-03-class decision (D-SOURCES.8-1)."
+last_verified = 2026-10-01
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-10-01
+review_packet = "docs/build/reports/rights/camreg_hk_hk.md"
+notes = "P26.9. FLIPPED 2026-10-01 under GL-GATE-07 (non-US) — \"R4b Hong Kong flip\" (B-41, GATE-P 2026-10-01T04:49:27Z; E4-R4b = a): LicenseRef-OperatorAccepted-DBRight — the operator-accepted database-right basis on the non-US factual compilation (camreg_polyu_hk precedent: HK, licence \"none\" → DBRight, live). Item 0b05a33ce41d4cb7b75436dabe592c5e (32 rows) licenseInfo defers to data.gov.hk 'Terms and Conditions of Use', not captured verbatim. Prepared on r11/sources-flips; applied in the operator-signed commit (OP-25/OP-26)."
 [sources.camreg_hk_hk.rights]
-spdx = "UNDETERMINED"
-redistributable = false
-retrieval_date = 2026-09-18
+spdx = "LicenseRef-OperatorAccepted-DBRight"
+attribution = "Hong Kong CCTV camera locations (data.gov.hk / ArcGIS)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://services3.arcgis.com/6j1KwZfY2fZrfNMR/arcgis/rest/services/CCTV_Camera_Locations_in_Hong_Kong/FeatureServer/0"
+retrieval_date = 2026-10-01
 
 # ---------------------------------------------------------------------------
 # P26.13 (SOURCES.12) — open-data-catalog sweep yield. The systematic catalog
