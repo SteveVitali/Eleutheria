@@ -460,7 +460,7 @@ obligations = []
 obligations_cell = '''queued jobs IAM leg (G1-01/F-272 jobs half + `roles/editor` removal; halves landed) — live-1 stopped at the 100/88 read; live-2 stays queued on P35.1a1's 100-job poststate'''
 gates_cell = '''QUEUED hosted leg (AR-3+AR-2): excl. 03:00-06:30Z/d, never mid-class-run — exit 42; weekday 14:00-20:00Z, operator present; fresh one-leg authorization ("Full P34.42b leg", 2026-10-14T17:09Z) — still voided by live-1's 88-vs-100 read (OM-18); waits on `live:P35.1a1`'''
 operator_cell = '''D-P34.42b-2 resolved 2026-10-14T19:34Z as "Create 12 paused jobs" — re-run on its own authorization; rollback replays the prestate'''
-rerun_cell = '''`implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` · landed 252 (PR #253) · next `r11/P34.42b-live-2` post-`live:P35.1a1`'''
+rerun_cell = '''`implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` · landed 252 (PR #253; `live-1` stopped OM-18) · next `r11/P34.42b-live-2` post-`live:P35.1a1`'''
 
   [[row.legs]]
   id = "P34.42b-jobs-iam"
@@ -686,7 +686,7 @@ obligations = []
 obligations_cell = '''queued production-write leg: reconcile Cloud Scheduler from ops/cadence.toml (inert PAUSED triggers + declared-bundle publish) + in-band live-diff; `live-1` stopped OM-18 (exit 1, 52 findings); P34.42b IAM first, then `--apply --paused`'''
 gates_cell = '''QUEUED hosted, production write; OM-20 — GATE-G4 11B list (P35.1a; expires GATE-G5); monthly-export trigger PAUSED inert until D-P34.6-2's verbatim go; AR-3+AR-2 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z), operator present, prestate first; retry on `live:P34.42b`'''
 operator_cell = '''nothing until `live:P34.42b`; then `P35.1a-live-2` in a fresh AR-3/AR-2 window `--apply --paused`; rollback = recorded prestate'''
-rerun_cell = '''`implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` · landed 264 (PR #266) · retry `r11/P35.1a-live-2` post-`live:P34.42b`'''
+rerun_cell = '''`implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` · landed 264 (PR #266; `live-1` stopped OM-18) · retry `r11/P35.1a-live-2` post-`live:P34.42b`'''
 
   [[row.legs]]
   id = "P35.1a-live-scheduled-ops"
@@ -703,7 +703,7 @@ obligations = []
 obligations_cell = '''queued declared-job seed leg (row 287a): create the 12 declared-absent jobs on the labelled default-compute identity + `sig-scheduler` run.invoker + paused triggers; `ops/gcp/seed-declared-jobs.sh` landed'''
 gates_cell = '''QUEUED hosted write; one-leg authorization — GATE DECISIONS row 321 (2026-10-14T19:34Z) verbatim "Create 12 paused jobs"; expires on completion; voided by failed AR-2/red probe; weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exit 42; after `--check` + PR #296 green'''
 operator_cell = '''nothing until window + ADC + standing go — `--check` plans only; rollback replays this leg's `created.txt`; then `P34.42b-live-2` → `P35.1a-live-2` `--apply --paused`'''
-rerun_cell = '''`implement-spec spec=docs/tickets/287a_P35.1a1__seed-declared-jobs-paused.md live_verification=true` · landed 287a (PR #296)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/287a_P35.1a1__seed-declared-jobs-paused.md live_verification=true` · landed 287a (PR #296 — leg queued 2026-10-14, production untouched)'''
 
   [[row.legs]]
   id = "P35.1a1-seed-declared-jobs-live"
