@@ -39,7 +39,7 @@ the connector run at all, and no such run happened.
 ```
 # After the flip commit lands on the stack tip and the window opens —
 # never without the operator's OP-26 go:
-uv run python -m connectors run --source axon_connect --mode live \
+uv run python -m connectors run --source axon_connect --mode live \  # staged — never run by the agent
     --capture-dir .sig/captures
 ```
 
