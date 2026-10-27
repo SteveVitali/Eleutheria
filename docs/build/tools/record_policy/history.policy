@@ -998,3 +998,17 @@ seed-commit 72c1624a
 # findings attributed to df4c4ab3's folded lines only; no other commit
 # borrows the exemption.
 seed-commit df4c4ab3
+
+# orient fold 3 carry-merge (worker, P36.76): `4fc7445b` forward-merged
+# the base fold (df4c4ab3 + 5e158a02) into r11/P36.76 and byte-compacted
+# this row's own committed done entry (953->912 B) inside the merge so
+# the recipe reads under 48 KiB at the merged head (48,982 B); fields
+# verbatim, pre-fold bytes archived
+# `reports/memory-repair/LEDGER_L_phaselog_pre-P36.76-fold.txt`
+# (sha256:3b6652814449…) and disclosed by the appended `P36.76
+# correction` entry in the same commit. The branch rule forbids
+# force-push, so the declaration lands here, the next commit. Same
+# sanctioned class as 0cf6b81b/72c1624a/df4c4ab3. Scope: BM-ORIENT-01
+# findings attributed to 4fc7445b's folded line only; no other commit
+# borrows the exemption.
+seed-commit 4fc7445b
