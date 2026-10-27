@@ -167,6 +167,17 @@ seed-commit 375a8728
 seed-commit 23094c8c
 seed-commit b4f52e4d
 
+# ── P36.17 records-CI repair (2026-10-27) ────────────────────────────────────────────────
+# 2d86676b restores the L1309 `done` entry's stack-`blockedOn` ancestor marker in place —
+# the pre-commit orient trim dropped it, leaving the entry owing a parseable `ci:` field the
+# head-bound read had not produced (verify_recorded_ci fail at d9352b9f docs-red, run
+# 40598289323). Sanctioned 024eca86/0a61e2e5 class: pre-repair bytes archived under
+# reports/memory-repair/LEDGER_L1309_pre-P36.17-ci-field.txt (sha256:80e76516…) and the
+# dated `P36.17 correction` entry declares the repair. The same commit also re-verdicts the
+# 7 owned coverage rows to MET-ENGINEERED(D-R10-PUBLISH-1)/BL-085 — a matrix update, not an
+# append-only repair.
+seed-commit 2d86676b
+
 # ── P34.18 / ADR-178 (S0 RI-01; B-3, OD-17, OD-20) ────────────────────────────────────────────
 # Commits a58fa2fa and d130b54d are the verifier-backed bulk re-key the ticket's acceptance
 # criterion demands (zero handle-list entries in the repo tip's tracked files): a Part VIII
