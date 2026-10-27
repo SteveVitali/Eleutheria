@@ -32,6 +32,7 @@
  */
 
 import { NATIONAL_ZOOM_MAX } from "./map";
+import { SIG_DATA_1, SIG_DATA_SEQ_700 } from "./design-tokens";
 
 /** PMTiles archive version the public map is served as (SIG-GEO-012). */
 export const PMTILES_VERSION = 3;
@@ -263,8 +264,10 @@ export function buildPublicMapStyle(tiles: readonly CompartmentTileSource[]): Ma
           26,
         ],
         "circle-opacity": 0.45,
-        "circle-color": "#35507a",
-        "circle-stroke-color": "#182a44",
+        // P36.16 (SIG-UI-146): site data rides the shared data-blue vocabulary
+        // (lib/design-tokens.ts, pinned to tokens.css) — no forked palette.
+        "circle-color": SIG_DATA_1,
+        "circle-stroke-color": SIG_DATA_SEQ_700,
         "circle-stroke-width": 0.6,
       },
     });
@@ -277,7 +280,7 @@ export function buildPublicMapStyle(tiles: readonly CompartmentTileSource[]): Ma
       source: id,
       "source-layer": "sites",
       filter: ["==", ["get", "tr"], 2],
-      paint: { "fill-color": "#35507a", "fill-opacity": 0.2 },
+      paint: { "fill-color": SIG_DATA_1, "fill-opacity": 0.2 },
     });
     layers.push({
       id: compartmentLayerId(t.compartment),
@@ -289,8 +292,8 @@ export function buildPublicMapStyle(tiles: readonly CompartmentTileSource[]): Ma
       paint: {
         "circle-radius": 4,
         "circle-opacity": 0.7,
-        "circle-color": "#35507a",
-        "circle-stroke-color": "#182a44",
+        "circle-color": SIG_DATA_1,
+        "circle-stroke-color": SIG_DATA_SEQ_700,
         "circle-stroke-width": 0.8,
       },
     });

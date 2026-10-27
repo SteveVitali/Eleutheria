@@ -169,6 +169,10 @@ const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] 
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* P36.16 (SIG-UI-146/147, K14 §4.10): both colour schemes are first-class —
+        the tokens carry a chosen dark set, so the browser may colour UA chrome
+        (form controls, the page canvas) for whichever scheme is active. */}
+    <meta name="color-scheme" content="light dark" />
     <title>{title} · SIG</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex" />}

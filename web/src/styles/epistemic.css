@@ -3,66 +3,36 @@
  * Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
  * carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
  *
- * The epistemic design system (§39.1, §40).
+ * The epistemic design system (§39.1, §40) — RESTATED ON TOKENS (P36.16 /
+ * UXK14-1, SIG-UI-146): every colour, font size, space and radius below is a
+ * `var(--sig-*)` reference into `tokens.css`; the only literals are the
+ * allow-listed kinds `scripts/check-tokens.mjs` names (keyword colours,
+ * 1 px/2 px-equivalent border tokens, em/% relatives, sizing/box metrics).
  *
  * INVARIANTS enforced here and tested in tests/unit/design-tokens.test.ts:
  *   - SIG-UI-006: every epistemic colour token (`--sig-epi-*`) is written as an
- *     hsl() whose hue is OUTSIDE the green band [75deg, 165deg]. Green reads as
- *     endorsement; SIG reports, it does not endorse. The test parses this file.
+ *     hsl() (or a var() alias of one) whose hue is OUTSIDE the green band
+ *     [75deg, 165deg]. Green reads as endorsement; SIG reports, it does not
+ *     endorse. The test parses tokens.css.
  *   - SIG-UI-005: colour never carries meaning alone. Each epistemic state also
- *     has a glyph/symbol/text channel supplied by the components. The tokens here
+ *     has a glyph/symbol/text channel supplied by the components. The tokens
  *     are the *redundant* colour channel, never the sole one.
  *   - SIG-UI-007: absence has exactly ONE texture — `.sig-absence-hatch`. It is
  *     defined once, here, and used for nothing else.
+ *   - SIG-UI-146 / K14 NEW-2: the reserved hues are single-meaning — raspberry
+ *     (`--sig-epi-disagree-*`) is used ONLY by the contested / unresolved /
+ *     contradiction-range classes, amber (`--sig-epi-provisional-*`) ONLY by
+ *     the provisional state. The incompleteness banner is neutral: absence is
+ *     not a disagreement.
  *
- * Saturated colour is reserved for epistemic state and data (SIG-UI-006); chrome
- * uses the neutral `--sig-ink` / `--sig-paper` tokens, which are exempt (they are
- * not `--sig-epi-*` tokens and encode no epistemic meaning).
+ * Saturated colour is reserved for epistemic state and data (SIG-UI-006);
+ * chrome uses the neutral `--sig-ink` / `--sig-bg` / `--sig-surface` tokens.
+ * Dark values live in `tokens.css` — every `var(--sig-*)` below flips under
+ * `prefers-color-scheme: dark` and forces back to light under print
+ * (K14 §4.10); motion tokens zero under `prefers-reduced-motion`.
  */
 
-:root {
-  /* Neutral chrome (not epistemic; greyscale, no hue). */
-  --sig-paper: hsl(0deg 0% 100%);
-  --sig-ink: hsl(0deg 0% 12%);
-  --sig-muted: hsl(0deg 0% 40%);
-  --sig-rule: hsl(0deg 0% 82%);
-  --sig-focus: hsl(216deg 90% 45%);
-
-  /* Support scale (SIG-UI-003) — a blue→amber sequence; NO green. */
-  --sig-epi-support-confirmed: hsl(214deg 80% 38%);
-  --sig-epi-support-strong: hsl(206deg 72% 44%);
-  --sig-epi-support-probable: hsl(41deg 88% 45%);
-  --sig-epi-support-weak: hsl(28deg 82% 48%);
-  --sig-epi-support-unsupported: hsl(0deg 0% 55%);
-
-  /* Agreement (SIG-UI-008) — contested reads as magenta/violet, never green. */
-  --sig-epi-agreement-uncontested: hsl(0deg 0% 35%);
-  --sig-epi-agreement-minor: hsl(266deg 40% 50%);
-  --sig-epi-agreement-contested: hsl(318deg 65% 45%);
-  --sig-epi-agreement-irreconcilable: hsl(348deg 72% 45%);
-
-  /* Currency — a desaturation ramp toward grey for older beliefs; NO green. */
-  --sig-epi-currency-current: hsl(214deg 60% 42%);
-  --sig-epi-currency-aging: hsl(214deg 34% 46%);
-  --sig-epi-currency-stale: hsl(214deg 16% 52%);
-  --sig-epi-currency-historical: hsl(0deg 0% 50%);
-
-  /* Resolution status accents; NO green. */
-  --sig-epi-status-resolved: hsl(214deg 70% 40%);
-  --sig-epi-status-unresolved: hsl(348deg 72% 45%);
-  --sig-epi-status-superseded: hsl(0deg 0% 45%);
-  --sig-epi-status-withdrawn: hsl(0deg 0% 60%);
-
-  /* Absence hatch ink (the single texture's stroke); neutral, NO green. */
-  --sig-epi-absence-ink: hsl(220deg 12% 40%);
-
-  /* Inferred / L4 marker ink (P36.14, SIG-RECON-052) — a steel-cyan, outside
-   * the green band and distinct from the blue support ramp (214deg) and the
-   * violet/magenta agreement ramp (266deg+). The marker's meaning is carried
-   * by its glyph + label text (SIG-UI-005); this hue is the redundant colour
-   * channel only. */
-  --sig-epi-inferred-ink: hsl(195deg 70% 32%);
-}
+@import "./tokens.css";
 
 *,
 *::before,
@@ -72,35 +42,73 @@
 
 body {
   margin: 0;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--sig-font-body);
+  font-size: var(--sig-step-0);
   color: var(--sig-ink);
-  background: var(--sig-paper);
-  line-height: 1.5;
+  background: var(--sig-bg);
+  line-height: var(--sig-leading-1);
+}
+
+h1 {
+  font-size: var(--sig-step-4);
+  line-height: var(--sig-leading-6);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: var(--sig-step-3);
+  line-height: var(--sig-leading-5);
+}
+h3 {
+  font-size: var(--sig-step-2);
+  line-height: var(--sig-leading-4);
+}
+h4 {
+  font-size: var(--sig-step-1);
+  line-height: var(--sig-leading-3);
 }
 
 main {
-  max-width: 62rem;
+  max-width: var(--sig-content);
   margin: 0 auto;
-  padding: 1.5rem 1.25rem 4rem;
+  padding: var(--sig-space-5) var(--sig-space-4) var(--sig-space-8);
+}
+
+/* Prose measure (SIG-UI-148: ≤ 70 ch). Tables, cards and grids are already
+ * bounded by their own containers, so this binds only true running text. */
+main p,
+main li,
+main dd,
+main blockquote {
+  max-width: var(--sig-measure);
 }
 
 a {
-  color: var(--sig-focus);
+  color: var(--sig-link);
 }
 
-/* P34.13 (QW-13, RI-49 / DR-C4-14): long identifiers — UUIDs, content digests,
-   ruleset ids, H3 cells, permalinks — must WRAP inside their container instead
-   of forcing 800-px-wide overflow at 320-px reflow. break-word only fires when
-   the word would otherwise overflow; normal wrapping is unchanged. */
 code,
 .sig-cite__permalink,
 .sig-print-footer__permalink {
+  font-family: var(--sig-font-mono);
+  font-variant-numeric: tabular-nums;
+  /* P34.13 (QW-13, RI-49 / DR-C4-14): long identifiers — UUIDs, content
+   * digests, ruleset ids, H3 cells, permalinks — must WRAP inside their
+   * container instead of forcing 800-px-wide overflow at 320-px reflow. */
   overflow-wrap: break-word;
   word-break: break-word;
 }
 
+/* Tabular numerals for figures and numeric columns (SIG-UI-148). */
+.sig-num,
+.sig-stat__value,
+table.sig-table td,
+table.sig-freshness td,
+table.sig-sources td {
+  font-variant-numeric: tabular-nums;
+}
+
 :focus-visible {
-  outline: 3px solid var(--sig-focus);
+  outline: 3px solid var(--sig-link);
   outline-offset: 2px;
 }
 
@@ -121,8 +129,8 @@ code,
   left: -9999px;
   top: 0;
   background: var(--sig-ink);
-  color: var(--sig-paper);
-  padding: 0.5rem 0.75rem;
+  color: var(--sig-bg);
+  padding: var(--sig-space-2) var(--sig-space-3);
   z-index: 10;
 }
 .sig-skip-link:focus {
@@ -133,7 +141,7 @@ code,
 .sig-fields {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--sig-space-2);
   align-items: stretch;
   padding: 0;
   margin: 0;
@@ -142,21 +150,21 @@ code,
 .sig-field {
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
-  border: 1px solid var(--sig-rule);
-  border-left-width: 4px;
-  border-radius: 4px;
-  padding: 0.3rem 0.55rem;
+  gap: var(--sig-space-1);
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-left-width: var(--sig-border-strong);
+  border-radius: var(--sig-radius-1);
+  padding: var(--sig-space-1) var(--sig-space-2);
   min-width: 8.5rem;
 }
 .sig-field__name {
-  font-size: 0.68rem;
+  font-size: var(--sig-step--2);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--sig-muted);
+  color: var(--sig-ink-muted);
 }
 .sig-field__value {
-  font-size: 0.9rem;
+  font-size: var(--sig-step--1);
   font-weight: 600;
 }
 
@@ -194,11 +202,31 @@ code,
 .sig-contested {
   display: inline-flex;
   align-items: center;
-  gap: 0.2rem;
+  gap: var(--sig-space-1);
   font-weight: 700;
-  color: var(--sig-epi-agreement-contested);
+  color: var(--sig-epi-disagree-text);
 }
 .sig-contested__glyph {
+  font-size: 0.95em;
+}
+
+/* --- The provisional marker (K14 §4.7 — the unevaluated-method state):
+ * a dashed amber outline + the label; amber is reserved to this state. ----- */
+.sig-provisional {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sig-space-1);
+  border: var(--sig-border-thin) dashed var(--sig-epi-provisional-mark);
+  border-radius: var(--sig-radius-pill);
+  padding: 0 var(--sig-space-2);
+  font-size: var(--sig-step--2);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sig-epi-provisional-text);
+  white-space: nowrap;
+}
+.sig-provisional__glyph {
   font-size: 0.95em;
 }
 
@@ -207,17 +235,17 @@ code,
  * carrying a ◈ glyph + the word "Inferred" — the non-colour channels are the
  * glyph, the label text, and the dotted (not dashed, not solid) outline, so the
  * state reads in greyscale and print (SIG-UI-005). Deliberately distinct from
- * the contested marker (magenta text, no border), the absence hatch (§9.5's
- * single texture, SIG-UI-007) and the Provisional chip (K14: unevaluated
- * method — a different concept, SIG-UI-062). */
+ * the contested marker (raspberry text, no border), the absence hatch (§9.5's
+ * single texture, SIG-UI-007) and the Provisional chip (an unevaluated-method
+ * label — a different concept, SIG-UI-062). */
 .sig-inferred {
   display: inline-flex;
   align-items: baseline;
-  gap: 0.25rem;
-  border: 1px dotted var(--sig-epi-inferred-ink);
-  border-radius: 999px;
-  padding: 0 0.45rem;
-  font-size: 0.75rem;
+  gap: var(--sig-space-1);
+  border: var(--sig-border-thin) dotted var(--sig-epi-inferred-ink);
+  border-radius: var(--sig-radius-pill);
+  padding: 0 var(--sig-space-2);
+  font-size: var(--sig-step--2);
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -230,55 +258,55 @@ code,
 
 /* --- Absence: exactly ONE texture (SIG-UI-007) ----------------------------- */
 .sig-absence-hatch {
-  --hatch: var(--sig-epi-absence-ink);
   background-image: repeating-linear-gradient(
     45deg,
     transparent 0,
     transparent 5px,
-    color-mix(in srgb, var(--hatch) 45%, transparent) 5px,
-    color-mix(in srgb, var(--hatch) 45%, transparent) 7px
+    color-mix(in srgb, var(--sig-epi-absence-ink) 45%, transparent) 5px,
+    color-mix(in srgb, var(--sig-epi-absence-ink) 45%, transparent) 7px
   );
-  border: 1px dashed var(--sig-epi-absence-ink);
+  border: var(--sig-border-thin) dashed var(--sig-epi-absence-ink);
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.15rem 0.5rem;
-  border-radius: 3px;
+  gap: var(--sig-space-1);
+  padding: var(--sig-space-1) var(--sig-space-2);
+  border-radius: var(--sig-radius-1);
   color: var(--sig-ink);
   text-decoration: none;
+  transition: background-color var(--sig-motion-1);
 }
 .sig-absence-hatch__symbol {
   font-weight: 700;
 }
 a.sig-absence-hatch:hover,
 a.sig-absence-hatch:focus-visible {
-  background-color: color-mix(in srgb, var(--sig-focus) 12%, transparent);
+  background-color: color-mix(in srgb, var(--sig-link) 12%, transparent);
 }
 
 /* --- Contradiction value range (SIG-UI-009) -------------------------------- */
 .sig-range {
-  border: 1px solid var(--sig-rule);
-  border-radius: 4px;
-  padding: 0.75rem;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+  padding: var(--sig-space-3);
 }
 .sig-range__track {
   position: relative;
   height: 2px;
   background: var(--sig-rule);
-  margin: 1.5rem 0.5rem 0.5rem;
+  margin: var(--sig-space-5) var(--sig-space-2) var(--sig-space-2);
 }
 .sig-range__point {
   position: absolute;
   top: 50%;
-  width: 0.6rem;
-  height: 0.6rem;
+  width: var(--sig-space-2);
+  height: var(--sig-space-2);
   border-radius: 50%;
-  background: var(--sig-epi-status-resolved);
+  background: var(--sig-epi-disagree-mark);
   transform: translate(-50%, -50%);
 }
 .sig-range__claims {
-  margin: 0.5rem 0 0;
-  padding-left: 1.1rem;
+  margin: var(--sig-space-2) 0 0;
+  padding-left: var(--sig-space-4);
 }
 
 table.sig-table {
@@ -287,44 +315,49 @@ table.sig-table {
 }
 table.sig-table th,
 table.sig-table td {
-  border: 1px solid var(--sig-rule);
-  padding: 0.4rem 0.6rem;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  padding: var(--sig-space-2) var(--sig-space-3);
   text-align: left;
   vertical-align: top;
 }
+table.sig-table th {
+  background: var(--sig-surface-2);
+}
 
 .sig-cite {
-  margin-top: 3rem;
-  border-top: 2px solid var(--sig-rule);
-  padding-top: 1rem;
-  font-size: 0.85rem;
+  margin-top: var(--sig-space-7);
+  border-top: var(--sig-border-strong) solid var(--sig-rule);
+  padding-top: var(--sig-space-4);
+  font-size: var(--sig-step--1);
 }
 .sig-cite__text {
-  background: hsl(0deg 0% 96%);
-  padding: 0.6rem;
-  border-radius: 4px;
+  background: var(--sig-surface-2);
+  padding: var(--sig-space-2);
+  border-radius: var(--sig-radius-1);
   white-space: pre-wrap;
   word-break: break-word;
 }
 
 /* --- The local dossier (§39.2, SIG-UI-010..015) ---------------------------- */
-/* All chrome here is neutral greyscale — no `--sig-epi-*` tokens — so it carries
- * no epistemic meaning and is exempt from the green-band rule (SIG-UI-006). */
+/* All chrome here is neutral — no reserved hue — so it carries no epistemic
+ * meaning (SIG-UI-006). */
 
-/* The incompleteness banner (SIG-UI-012): prominent, not fine print. */
+/* The incompleteness banner (SIG-UI-012): prominent, not fine print — and
+ * NEUTRAL (K14 NEW-2): a count of gaps is not a disagreement, so the banner
+ * no longer wears the reserved raspberry. */
 .sig-incompleteness {
-  border: 2px solid var(--sig-epi-agreement-contested);
-  background: color-mix(in srgb, var(--sig-epi-agreement-contested) 8%, transparent);
-  padding: 0.75rem 1rem;
-  margin: 1rem 0 1.5rem;
+  border: var(--sig-border-strong) solid var(--sig-rule-strong);
+  background: var(--sig-surface-2);
+  padding: var(--sig-space-3) var(--sig-space-4);
+  margin: var(--sig-space-4) 0 var(--sig-space-5);
   font-weight: 600;
-  border-radius: 4px;
+  border-radius: var(--sig-radius-1);
 }
 
 .sig-dossier-summary {
-  border-left: 4px solid var(--sig-rule);
-  padding-left: 1rem;
-  margin: 1rem 0 1.5rem;
+  border-left: var(--sig-border-strong) solid var(--sig-rule);
+  padding-left: var(--sig-space-4);
+  margin: var(--sig-space-4) 0 var(--sig-space-5);
 }
 
 /* "What we don't know" gap list (SIG-UI-011). */
@@ -334,84 +367,84 @@ table.sig-table td {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: var(--sig-space-2);
 }
 .sig-gaps__item {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.4rem;
+  gap: var(--sig-space-2);
 }
 .sig-gaps__label {
   font-weight: 600;
 }
 .sig-gaps__searched,
 .sig-gaps__note {
-  color: var(--sig-muted);
-  font-size: 0.9rem;
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--1);
   flex-basis: 100%;
 }
 
 /* Material figure → reconciliation disclosure (SIG-UI-014). */
 .sig-recon {
-  border: 1px solid var(--sig-rule);
-  border-radius: 4px;
-  padding: 0.5rem 0.75rem;
-  margin: 0.6rem 0;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+  padding: var(--sig-space-2) var(--sig-space-3);
+  margin: var(--sig-space-2) 0;
 }
 .sig-recon > summary {
   cursor: pointer;
-  font-size: 1rem;
+  font-size: var(--sig-step-0);
 }
 .sig-recon__label {
-  color: var(--sig-muted);
+  color: var(--sig-ink-muted);
 }
 .sig-recon__body {
-  margin-top: 0.6rem;
+  margin-top: var(--sig-space-2);
 }
 .sig-recon__rule-label {
-  color: var(--sig-muted);
-  font-size: 0.85rem;
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--1);
 }
 .sig-recon__claims {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
+  margin-top: var(--sig-space-2);
+  font-size: var(--sig-step--1);
 }
 .sig-recon__won {
-  color: var(--sig-muted);
+  color: var(--sig-ink-muted);
   font-weight: 400;
 }
 .sig-recon__diff {
-  font-size: 0.9rem;
-  color: var(--sig-muted);
+  font-size: var(--sig-step--1);
+  color: var(--sig-ink-muted);
 }
 
 /* Dossier rows + unknown values (SIG-UI-015). */
 .sig-dossier-rows {
   list-style: none;
   padding: 0;
-  margin: 0.4rem 0;
+  margin: var(--sig-space-2) 0;
 }
 .sig-dossier-row {
-  padding: 0.25rem 0;
+  padding: var(--sig-space-1) 0;
 }
 .sig-dossier-row__label {
   font-weight: 600;
 }
 .sig-dossier-row__note {
-  color: var(--sig-muted);
+  color: var(--sig-ink-muted);
 }
 .sig-unknown {
-  color: var(--sig-muted);
+  color: var(--sig-ink-muted);
   font-style: italic;
 }
 
 /* The three action blocks (SIG-UI-014a). */
 .sig-action-block {
-  border: 1px solid var(--sig-rule);
-  border-radius: 4px;
-  padding: 0.6rem 0.9rem;
-  margin: 0.8rem 0;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+  padding: var(--sig-space-2) var(--sig-space-4);
+  margin: var(--sig-space-3) 0;
 }
 .sig-action-block h3 {
   margin-top: 0;
@@ -419,20 +452,21 @@ table.sig-table td {
 .sig-kv {
   display: grid;
   grid-template-columns: max-content 1fr;
-  gap: 0.2rem 1rem;
+  gap: var(--sig-space-1) var(--sig-space-4);
   margin: 0;
 }
 .sig-kv dt {
   font-weight: 600;
-  color: var(--sig-muted);
+  color: var(--sig-ink-muted);
 }
 .sig-kv dd {
   margin: 0;
 }
 
 /* --- The infrastructure map + network explorer (§39.3/§39.4, P15.3) -------- */
-/* All chrome here is neutral greyscale; the epistemic tokens it reuses (contested)
- * are the same non-green tokens the design-token test already guards (SIG-UI-006). */
+/* All chrome here is neutral; the disagreement hue appears ONLY on the
+ * contested marker and the contradiction range — never on layer chrome
+ * (K14 NEW-2). */
 
 .sig-layer-controls,
 .sig-jurisdiction-indicators,
@@ -440,108 +474,111 @@ table.sig-table td {
 .sig-access-legend {
   list-style: none;
   padding: 0;
-  margin: 0.5rem 0 1rem;
+  margin: var(--sig-space-2) 0 var(--sig-space-4);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--sig-space-2);
 }
 .sig-layer-control {
-  border: 1px solid var(--sig-rule);
-  border-left-width: 4px;
-  border-radius: 4px;
-  padding: 0.4rem 0.6rem;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-left-width: var(--sig-border-strong);
+  border-radius: var(--sig-radius-1);
+  padding: var(--sig-space-2) var(--sig-space-3);
 }
+/* A bound layer is data, not a disagreement: blue, never raspberry (NEW-2). */
 .sig-layer-control[data-bound="true"] {
-  border-left-color: var(--sig-epi-agreement-contested);
+  border-left-color: var(--sig-data-1);
 }
 .sig-layer-control__note {
-  color: var(--sig-muted);
-  font-size: 0.9rem;
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--1);
 }
 
 .sig-map-attribution {
-  margin-top: 2rem;
-  padding-top: 0.6rem;
-  border-top: 1px solid var(--sig-rule);
-  font-size: 0.8rem;
-  color: var(--sig-muted);
+  margin-top: var(--sig-space-6);
+  padding-top: var(--sig-space-2);
+  border-top: var(--sig-border-thin) solid var(--sig-rule);
+  font-size: var(--sig-step--2);
+  color: var(--sig-ink-muted);
 }
 
 .sig-centrality__item {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
-  border-left: 4px solid var(--sig-rule);
-  padding: 0.3rem 0.7rem;
+  gap: var(--sig-space-1);
+  border-left: var(--sig-border-strong) solid var(--sig-rule);
+  padding: var(--sig-space-1) var(--sig-space-3);
 }
 .sig-centrality__er {
-  color: var(--sig-muted);
-  font-size: 0.85rem;
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--1);
 }
 
 .sig-access-legend li {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.4rem;
-  border: 1px solid var(--sig-rule);
-  border-radius: 4px;
-  padding: 0.35rem 0.6rem;
-  font-size: 0.9rem;
+  gap: var(--sig-space-2);
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+  padding: var(--sig-space-1) var(--sig-space-3);
+  font-size: var(--sig-step--1);
 }
 .sig-access-glyph {
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: var(--sig-step-0);
 }
 .sig-access-group {
-  margin: 1rem 0;
+  margin: var(--sig-space-4) 0;
 }
 .sig-edge-list {
   list-style: none;
   padding: 0;
-  margin: 0.4rem 0;
+  margin: var(--sig-space-2) 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--sig-space-2);
 }
 .sig-edge-list > li {
-  border-left: 3px solid var(--sig-rule);
-  padding: 0.2rem 0.7rem;
+  border-left: var(--sig-border-strong) solid var(--sig-rule);
+  padding: var(--sig-space-1) var(--sig-space-3);
 }
 
 .sig-paths {
-  padding-left: 1.2rem;
+  padding-left: var(--sig-space-4);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--sig-space-4);
 }
 .sig-path {
-  border: 1px solid var(--sig-rule);
-  border-radius: 4px;
-  padding: 0.5rem 0.8rem;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+  padding: var(--sig-space-2) var(--sig-space-3);
 }
+/* A speculative path is an unconfirmed chain — a neutral callout, not the
+ * disagreement hue (K14 NEW-2). The label text carries the meaning. */
 .sig-path[data-speculative="true"] {
-  border-left: 4px solid var(--sig-epi-agreement-contested);
+  border-left: var(--sig-border-strong) solid var(--sig-rule-strong);
 }
 .sig-path[data-headline="true"] {
-  border-left: 4px solid var(--sig-epi-status-resolved);
+  border-left: var(--sig-border-strong) solid var(--sig-data-1);
 }
 .sig-path__speculative {
   font-weight: 700;
-  color: var(--sig-epi-agreement-contested);
+  color: var(--sig-ink-muted);
 }
 .sig-path__chain {
   font-weight: 600;
-  margin: 0.3rem 0;
+  margin: var(--sig-space-1) 0;
 }
 .sig-path__hops {
-  margin: 0.3rem 0 0;
-  padding-left: 1.1rem;
+  margin: var(--sig-space-1) 0 0;
+  padding-left: var(--sig-space-4);
 }
 .sig-path__hop-meta,
 .sig-path__evidence {
-  color: var(--sig-muted);
-  font-size: 0.85rem;
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--1);
   display: block;
 }
 
@@ -551,19 +588,19 @@ table.sig-table td {
  * page of the printed PDF is self-identifying and citable. Browser "print to PDF"
  * from this route produces a hand-to-a-council-member document. */
 .sig-print-page {
-  margin: 0 auto 2rem;
-  max-width: 62rem;
+  margin: 0 auto var(--sig-space-6);
+  max-width: var(--sig-content);
 }
 .sig-print-footer {
-  border-top: 1px solid var(--sig-muted);
-  margin-top: 1.5rem;
-  padding-top: 0.4rem;
-  font-size: 0.75rem;
-  color: var(--sig-muted);
+  border-top: var(--sig-border-thin) solid var(--sig-ink-muted);
+  margin-top: var(--sig-space-5);
+  padding-top: var(--sig-space-2);
+  font-size: var(--sig-step--2);
+  color: var(--sig-ink-muted);
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--sig-space-2);
 }
 
 @media print {
@@ -595,7 +632,7 @@ table.sig-table td {
 }
 
 /* --- P15.4: renewal watch + recommender + evidence viewer (§39.5/39.6) ------ */
-/* All chrome uses the neutral greyscale tokens; no epistemic colour is introduced
+/* All chrome uses the neutral tokens; no epistemic colour is introduced
  * here (the contested marker and glyphs bring their own via the components). */
 .sig-watch-list,
 .sig-subscription-list,
@@ -606,100 +643,100 @@ table.sig-table td {
   padding-left: 0;
 }
 .sig-watch-item {
-  border: 1px solid var(--sig-rule);
-  border-radius: 6px;
-  padding: 0.75rem 1rem;
-  margin: 0.75rem 0;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-2);
+  padding: var(--sig-space-3) var(--sig-space-4);
+  margin: var(--sig-space-3) 0;
 }
 .sig-watch-fields {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-  gap: 0.4rem 1.5rem;
-  margin: 0.5rem 0 0;
+  gap: var(--sig-space-2) var(--sig-space-5);
+  margin: var(--sig-space-2) 0 0;
 }
 .sig-watch-fields dt {
-  font-size: 0.8rem;
-  color: var(--sig-muted);
+  font-size: var(--sig-step--2);
+  color: var(--sig-ink-muted);
 }
 .sig-watch-fields dd {
-  margin: 0 0 0.4rem;
+  margin: 0 0 var(--sig-space-2);
 }
 .sig-subscription,
 .sig-citation-list li,
 .sig-evidence-index li {
-  margin: 0.4rem 0;
+  margin: var(--sig-space-2) 0;
 }
 .sig-neutrality-note {
-  border-left: 3px solid var(--sig-ink);
-  padding-left: 0.75rem;
+  border-left: var(--sig-border-strong) solid var(--sig-ink);
+  padding-left: var(--sig-space-3);
 }
 .sig-recommendation {
-  border-bottom: 1px solid var(--sig-rule);
-  padding: 0.5rem 0;
+  border-bottom: var(--sig-border-thin) solid var(--sig-rule);
+  padding: var(--sig-space-2) 0;
 }
 .sig-recommendation__meta {
-  color: var(--sig-muted);
-  font-size: 0.85rem;
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--1);
 }
 .sig-score-breakdown {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: var(--sig-space-2);
   padding-left: 0;
-  margin: 0.25rem 0 0;
-  font-size: 0.8rem;
-  color: var(--sig-muted);
+  margin: var(--sig-space-1) 0 0;
+  font-size: var(--sig-step--2);
+  color: var(--sig-ink-muted);
 }
 .sig-score-breakdown li {
-  border: 1px solid var(--sig-rule);
-  border-radius: 999px;
-  padding: 0.05rem 0.5rem;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-pill);
+  padding: var(--sig-space-1) var(--sig-space-2);
 }
 
 /* The evidence viewer (§39.6). */
 .sig-document {
-  border: 1px solid var(--sig-rule);
-  border-left: 4px solid var(--sig-muted);
-  padding: 0.75rem 1rem;
-  margin: 0.5rem 0;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-left: var(--sig-border-strong) solid var(--sig-rule-strong);
+  padding: var(--sig-space-3) var(--sig-space-4);
+  margin: var(--sig-space-2) 0;
   white-space: pre-wrap;
 }
 /* The supporting span: a neutral highlight PLUS an underline (a non-colour channel,
  * SIG-UI-005), so the highlight survives greyscale and print. */
 .sig-evidence-span {
-  background: hsl(0deg 0% 90%);
+  background: var(--sig-surface-2);
   color: var(--sig-ink);
-  border-bottom: 2px solid var(--sig-ink);
-  padding: 0 0.1rem;
+  border-bottom: var(--sig-border-strong) solid var(--sig-ink);
+  padding: 0 var(--sig-space-1);
   font-weight: 600;
 }
 .sig-evidence-meta {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  gap: 0.3rem 1.5rem;
+  gap: var(--sig-space-1) var(--sig-space-5);
 }
 .sig-evidence-meta dt {
-  font-size: 0.8rem;
-  color: var(--sig-muted);
+  font-size: var(--sig-step--2);
+  color: var(--sig-ink-muted);
 }
 .sig-evidence-meta dd {
-  margin: 0 0 0.4rem;
+  margin: 0 0 var(--sig-space-2);
   word-break: break-word;
 }
 .sig-conflicting,
 .sig-claim-history {
-  padding-left: 1.1rem;
+  padding-left: var(--sig-space-4);
 }
 .sig-different-quantity,
 .sig-history-note {
-  color: var(--sig-muted);
-  font-size: 0.85rem;
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--1);
 }
 .sig-sealed {
-  border: 2px dashed var(--sig-muted);
-  padding: 0.75rem 1rem;
-  margin: 0.5rem 0;
+  border: var(--sig-border-strong) dashed var(--sig-ink-muted);
+  padding: var(--sig-space-3) var(--sig-space-4);
+  margin: var(--sig-space-2) 0;
 }
 .sig-capture-diff table {
   border-collapse: collapse;
@@ -707,8 +744,8 @@ table.sig-table td {
 }
 .sig-capture-diff th,
 .sig-capture-diff td {
-  border: 1px solid var(--sig-rule);
-  padding: 0.3rem 0.5rem;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  padding: var(--sig-space-1) var(--sig-space-2);
   text-align: left;
 }
 .sig-capture-diff tr[data-changed="true"] {
@@ -716,40 +753,40 @@ table.sig-table td {
 }
 
 /* --- P15.5: research queue, corrections, methodology + editorial standards --- */
-/* Neutral greyscale chrome only; no `--sig-epi-*` tokens are introduced here, so
- * none of it carries epistemic meaning (SIG-UI-006). Epistemic markers embedded in
- * these surfaces bring their own colour via their components. */
+/* Neutral chrome only; no epistemic colour is introduced here (SIG-UI-006).
+ * Epistemic markers embedded in these surfaces bring their own colour via
+ * their components. */
 
 /* The site-wide "How we know this" module (SIG-UI-044) + dispute link (SIG-UI-033),
  * rendered by the base layout on every page just above the citation. */
 .sig-hwkt {
-  margin-top: 2.5rem;
-  border-top: 1px solid var(--sig-rule);
-  padding-top: 0.8rem;
-  font-size: 0.85rem;
+  margin-top: var(--sig-space-7);
+  border-top: var(--sig-border-thin) solid var(--sig-rule);
+  padding-top: var(--sig-space-3);
+  font-size: var(--sig-step--1);
 }
 .sig-hwkt__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-  gap: 0.4rem 1.2rem;
+  gap: var(--sig-space-2) var(--sig-space-4);
   margin: 0;
 }
 .sig-hwkt__grid dt {
   font-weight: 600;
-  color: var(--sig-muted);
+  color: var(--sig-ink-muted);
 }
 .sig-hwkt__grid dd {
-  margin: 0 0 0.4rem;
+  margin: 0 0 var(--sig-space-2);
 }
 .sig-hwkt__links {
-  margin-top: 0.6rem;
+  margin-top: var(--sig-space-2);
 }
 .sig-dispute {
-  margin-top: 1rem;
-  font-size: 0.9rem;
+  margin-top: var(--sig-space-4);
+  font-size: var(--sig-step--1);
 }
 .sig-dispute--compact {
-  font-size: 0.8rem;
+  font-size: var(--sig-step--2);
 }
 
 /* Research queue (SIG-UI-031). */
@@ -772,37 +809,37 @@ table.sig-table td {
 .sig-editorial-case,
 .sig-register-rule,
 .sig-review-finding {
-  border: 1px solid var(--sig-rule);
-  border-radius: 6px;
-  padding: 0.8rem 1rem;
-  margin-bottom: 1rem;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-2);
+  padding: var(--sig-space-3) var(--sig-space-4);
+  margin-bottom: var(--sig-space-4);
 }
 .sig-task-card__fields > div,
 .sig-correction__fields > div {
-  margin-bottom: 0.3rem;
+  margin-bottom: var(--sig-space-1);
 }
 .sig-task-card__fields dt,
 .sig-correction__fields dt {
   font-weight: 600;
-  color: var(--sig-muted);
+  color: var(--sig-ink-muted);
 }
 .sig-task-card__fields dd,
 .sig-correction__fields dd {
   margin: 0;
 }
 .sig-task-card__claim {
-  font-size: 0.85rem;
-  color: var(--sig-muted);
+  font-size: var(--sig-step--1);
+  color: var(--sig-ink-muted);
 }
 .sig-queue-note,
 .sig-coverage-prohibition {
   font-style: italic;
-  color: var(--sig-muted);
+  color: var(--sig-ink-muted);
 }
 .sig-transparency {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-  gap: 1rem;
+  gap: var(--sig-space-4);
 }
 
 /* Data-freshness table. */
@@ -812,53 +849,40 @@ table.sig-freshness {
 }
 table.sig-freshness th,
 table.sig-freshness td {
-  border: 1px solid var(--sig-rule);
-  padding: 0.4rem 0.6rem;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  padding: var(--sig-space-2) var(--sig-space-3);
   text-align: left;
   vertical-align: top;
+}
+table.sig-freshness th {
+  background: var(--sig-surface-2);
 }
 
 /* Editorial standards: example cases + register rules. */
 .sig-editorial-case blockquote,
 .sig-register-rule__good,
 .sig-register-rule__bad {
-  border-left: 3px solid var(--sig-rule);
-  padding-left: 0.8rem;
-  margin: 0.4rem 0;
+  border-left: var(--sig-border-strong) solid var(--sig-rule);
+  padding-left: var(--sig-space-3);
+  margin: var(--sig-space-2) 0;
 }
 
 /* --------------------------------------------------------------------------- *
- * P27.6 — the launch design system (SIG-UI-049 / ADR-093).
+ * P27.6 — the launch design system (SIG-UI-049 / ADR-093), restated on tokens.
  *
  * A cohesive, modern, zero-JS visual system applied site-wide: the grouped header
  * navigation, the national landing surface, and the per-jurisdiction dossier index.
- * All chrome uses the NEUTRAL greyscale tokens (--sig-ink/--sig-paper/--sig-muted/
- * --sig-rule/--sig-focus) — no --sig-epi-* token is introduced here, so saturated
- * colour stays reserved for epistemic state and data (SIG-UI-006). Layout is fluid
- * and needs no client JS.
+ * All chrome uses the NEUTRAL tokens — no epistemic colour is introduced here, so
+ * saturated colour stays reserved for epistemic state and data (SIG-UI-006).
  * --------------------------------------------------------------------------- */
-
-:root {
-  /* Spacing scale (neutral chrome; no epistemic meaning). */
-  --sig-space-1: 0.25rem;
-  --sig-space-2: 0.5rem;
-  --sig-space-3: 0.75rem;
-  --sig-space-4: 1rem;
-  --sig-space-5: 1.5rem;
-  --sig-space-6: 2rem;
-  --sig-space-7: 3rem;
-  /* A faint neutral wash for cards/panels; greyscale, no hue. */
-  --sig-panel: hsl(0deg 0% 98%);
-  --sig-radius: 8px;
-}
 
 /* --- Header + grouped navigation (SIG-UI-049) ------------------------------ */
 .sig-header {
-  border-bottom: 1px solid var(--sig-rule);
-  background: var(--sig-paper);
+  border-bottom: var(--sig-border-thin) solid var(--sig-rule);
+  background: var(--sig-surface);
 }
 .sig-header__bar {
-  max-width: 72rem;
+  max-width: var(--sig-content);
   margin: 0 auto;
   padding: var(--sig-space-3) var(--sig-space-5);
   display: flex;
@@ -875,13 +899,13 @@ table.sig-freshness td {
   font-weight: 700;
 }
 .sig-wordmark__mark {
-  font-size: 1.35rem;
+  font-size: var(--sig-step-1);
   letter-spacing: 0.08em;
 }
 .sig-wordmark__full {
-  font-size: 0.8rem;
+  font-size: var(--sig-step--2);
   font-weight: 600;
-  color: var(--sig-muted);
+  color: var(--sig-ink-muted);
 }
 .sig-nav {
   display: flex;
@@ -895,10 +919,10 @@ table.sig-freshness td {
   gap: var(--sig-space-1);
 }
 .sig-nav__group-label {
-  font-size: 0.62rem;
+  font-size: var(--sig-step--2);
   text-transform: uppercase;
   letter-spacing: 0.09em;
-  color: var(--sig-muted);
+  color: var(--sig-ink-muted);
   font-weight: 700;
 }
 .sig-nav__list {
@@ -911,11 +935,12 @@ table.sig-freshness td {
 }
 .sig-nav__list a {
   display: inline-block;
-  padding: 0.15rem 0;
-  font-size: 0.92rem;
-  color: var(--sig-focus);
+  padding: var(--sig-space-1) 0;
+  font-size: var(--sig-step--1);
+  color: var(--sig-link);
   text-decoration: none;
-  border-bottom: 2px solid transparent;
+  border-bottom: var(--sig-border-strong) solid transparent;
+  transition: border-bottom-color var(--sig-motion-1);
 }
 .sig-nav__list a:hover,
 .sig-nav__list a:focus-visible {
@@ -939,20 +964,20 @@ table.sig-freshness td {
 
 /* --- Landing surface (SIG-UI-049) ------------------------------------------ */
 .sig-lede {
-  font-size: 1.12rem;
-  line-height: 1.55;
-  max-width: 46rem;
+  font-size: var(--sig-step-1);
+  line-height: var(--sig-leading-1);
+  max-width: var(--sig-measure);
 }
 .sig-landing-section {
   margin-top: var(--sig-space-7);
 }
 .sig-landing-section > h2 {
-  border-bottom: 1px solid var(--sig-rule);
+  border-bottom: var(--sig-border-thin) solid var(--sig-rule);
   padding-bottom: var(--sig-space-2);
 }
 .sig-landing-more {
-  font-size: 0.9rem;
-  color: var(--sig-muted);
+  font-size: var(--sig-step--1);
+  color: var(--sig-ink-muted);
 }
 
 /* Headline counts — named denominators, no total (SIG-METRIC-009/010). */
@@ -965,30 +990,30 @@ table.sig-freshness td {
   gap: var(--sig-space-4);
 }
 .sig-stat {
-  border: 1px solid var(--sig-rule);
-  border-radius: var(--sig-radius);
-  background: var(--sig-panel);
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-2);
+  background: var(--sig-surface-2);
   padding: var(--sig-space-4);
   display: flex;
   flex-direction: column;
   gap: var(--sig-space-1);
 }
 .sig-stat__value {
-  font-size: 1.9rem;
+  font-size: var(--sig-step-5);
   font-weight: 700;
-  line-height: 1.1;
+  line-height: var(--sig-leading-7);
   color: var(--sig-ink);
 }
 .sig-stat__label {
   font-weight: 600;
 }
 .sig-stat__denominator {
-  font-size: 0.85rem;
-  color: var(--sig-muted);
+  font-size: var(--sig-step--1);
+  color: var(--sig-ink-muted);
 }
 .sig-stat__note {
-  font-size: 0.78rem;
-  color: var(--sig-muted);
+  font-size: var(--sig-step--2);
+  color: var(--sig-ink-muted);
   font-style: italic;
   margin-top: var(--sig-space-1);
 }
@@ -1010,23 +1035,24 @@ table.sig-freshness td {
   flex-direction: column;
   gap: var(--sig-space-2);
   width: 100%;
-  border: 1px solid var(--sig-rule);
-  border-radius: var(--sig-radius);
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-2);
   padding: var(--sig-space-4);
   text-decoration: none;
   color: var(--sig-ink);
-  background: var(--sig-paper);
+  background: var(--sig-surface);
+  transition: border-color var(--sig-motion-1);
 }
 .sig-entry__link:hover,
 .sig-entry__link:focus-visible {
-  border-color: var(--sig-focus);
+  border-color: var(--sig-link);
 }
 .sig-entry__title {
   font-weight: 700;
-  color: var(--sig-focus);
+  color: var(--sig-link);
 }
 .sig-entry__body {
-  font-size: 0.9rem;
+  font-size: var(--sig-step--1);
   color: var(--sig-ink);
 }
 
@@ -1040,8 +1066,8 @@ table.sig-freshness td {
   gap: var(--sig-space-2) var(--sig-space-5);
 }
 .sig-jurisdiction-reach__place {
-  color: var(--sig-muted);
-  font-size: 0.9rem;
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--1);
 }
 
 /* --- Per-jurisdiction dossier index (SIG-UI-048) --------------------------- */
@@ -1054,13 +1080,13 @@ table.sig-freshness td {
   gap: var(--sig-space-4);
 }
 .sig-dossier-index__item {
-  border: 1px solid var(--sig-rule);
-  border-radius: var(--sig-radius);
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-2);
   padding: var(--sig-space-4);
   display: flex;
   flex-direction: column;
   gap: var(--sig-space-2);
-  background: var(--sig-paper);
+  background: var(--sig-surface);
 }
 .sig-dossier-index__link {
   display: flex;
@@ -1070,27 +1096,26 @@ table.sig-freshness td {
 }
 .sig-dossier-index__subject {
   font-weight: 700;
-  font-size: 1.05rem;
-  color: var(--sig-focus);
+  font-size: var(--sig-step-0);
+  color: var(--sig-link);
 }
 .sig-dossier-index__place {
-  color: var(--sig-muted);
-  font-size: 0.9rem;
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--1);
 }
 .sig-dossier-index__meta {
-  font-size: 0.82rem;
-  color: var(--sig-muted);
-  border-top: 1px solid var(--sig-rule);
+  font-size: var(--sig-step--2);
+  color: var(--sig-ink-muted);
+  border-top: var(--sig-border-thin) solid var(--sig-rule);
   padding-top: var(--sig-space-2);
 }
 
 /* --------------------------------------------------------------------------- *
- * P27.7 — empty / gap states, large-table UX & responsive polish.
+ * P27.7 — empty / gap states, large-table UX & responsive polish, on tokens.
  *
- * All chrome here is NEUTRAL greyscale (--sig-ink/paper/muted/rule/focus/panel) —
- * no --sig-epi-* token is introduced, so saturated colour stays reserved for
- * epistemic state and data (SIG-UI-006). The empty state reuses the single absence
- * texture (the hatch, SIG-UI-007). Nothing here ships client JavaScript.
+ * All chrome here is NEUTRAL — no reserved hue is introduced; the empty state
+ * reuses the single absence texture (the hatch, SIG-UI-007). Nothing here
+ * ships client JavaScript.
  * --------------------------------------------------------------------------- */
 
 /* --- Honest empty / partial state (SIG-UI-007, §3.1) ---------------------- */
@@ -1098,8 +1123,8 @@ table.sig-freshness td {
   display: flex;
   gap: var(--sig-space-4);
   align-items: flex-start;
-  border: 1px dashed var(--sig-epi-absence-ink);
-  border-radius: var(--sig-radius);
+  border: var(--sig-border-thin) dashed var(--sig-epi-absence-ink);
+  border-radius: var(--sig-radius-2);
   background-image: repeating-linear-gradient(
     45deg,
     transparent 0,
@@ -1112,10 +1137,10 @@ table.sig-freshness td {
 }
 .sig-empty__hatch {
   flex: 0 0 auto;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 4px;
-  border: 1px dashed var(--sig-epi-absence-ink);
+  width: var(--sig-space-6);
+  height: var(--sig-space-6);
+  border-radius: var(--sig-radius-1);
+  border: var(--sig-border-thin) dashed var(--sig-epi-absence-ink);
   background-image: repeating-linear-gradient(
     45deg,
     transparent 0,
@@ -1133,7 +1158,7 @@ table.sig-freshness td {
 }
 .sig-empty__text {
   margin: 0 0 var(--sig-space-2);
-  max-width: 46rem;
+  max-width: var(--sig-measure);
 }
 .sig-empty__cta {
   margin: 0;
@@ -1157,10 +1182,10 @@ table.sig-freshness td {
   gap: var(--sig-space-2) var(--sig-space-4);
   padding: var(--sig-space-3) var(--sig-space-4);
   margin: var(--sig-space-4) 0;
-  border: 1px solid var(--sig-rule);
-  border-radius: var(--sig-radius);
-  background: var(--sig-panel);
-  font-size: 0.9rem;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-2);
+  background: var(--sig-surface-2);
+  font-size: var(--sig-step--1);
 }
 .sig-table-summary__count {
   font-weight: 700;
@@ -1173,10 +1198,10 @@ table.sig-freshness td {
   align-items: baseline;
   gap: var(--sig-space-2) var(--sig-space-3);
   margin: var(--sig-space-4) 0 var(--sig-space-2);
-  font-size: 0.9rem;
+  font-size: var(--sig-step--1);
 }
 .sig-sort__label {
-  color: var(--sig-muted);
+  color: var(--sig-ink-muted);
 }
 .sig-sort__link[aria-current="true"] {
   font-weight: 700;
@@ -1185,8 +1210,8 @@ table.sig-freshness td {
 }
 
 .sig-table-note {
-  font-size: 0.9rem;
-  color: var(--sig-muted);
+  font-size: var(--sig-step--1);
+  color: var(--sig-ink-muted);
   margin: var(--sig-space-3) 0;
 }
 
@@ -1205,7 +1230,7 @@ table.sig-freshness td {
   }
   table.sig-table,
   table.sig-freshness {
-    font-size: 0.9rem;
+    font-size: var(--sig-step--1);
   }
 }
 
@@ -1224,33 +1249,33 @@ table.sig-freshness td {
 /* The publication-basis label (H-6 / ADR-167) + the interim release stamp,
  * rendered on every full-chrome page. */
 .sig-footer {
-  margin-top: 2rem;
-  border-top: 1px solid var(--sig-rule);
-  padding: 0.8rem var(--sig-space-4) 1.2rem;
-  font-size: 0.8rem;
-  color: var(--sig-muted);
+  margin-top: var(--sig-space-6);
+  border-top: var(--sig-border-thin) solid var(--sig-rule);
+  padding: var(--sig-space-3) var(--sig-space-4) var(--sig-space-4);
+  font-size: var(--sig-step--2);
+  color: var(--sig-ink-muted);
 }
 .sig-basis {
-  font-size: 0.9rem;
+  font-size: var(--sig-step--1);
   font-style: italic;
 }
 
 /* The interim sources-and-licences table (R1.8). */
 .sig-sources {
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: var(--sig-step--1);
   max-width: 100%;
 }
 .sig-sources th,
 .sig-sources td {
   text-align: left;
-  padding: 0.3rem 0.8rem 0.3rem 0;
-  border-bottom: 1px solid var(--sig-rule);
+  padding: var(--sig-space-1) var(--sig-space-3) var(--sig-space-1) 0;
+  border-bottom: var(--sig-border-thin) solid var(--sig-rule);
   vertical-align: top;
 }
 .sig-captured-terms {
   white-space: pre-wrap;
-  font-size: 0.8rem;
+  font-size: var(--sig-step--2);
   max-height: 20rem;
   overflow: auto;
 }
