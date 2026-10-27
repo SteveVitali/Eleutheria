@@ -1,0 +1,73 @@
+# sig.sources-flip-lane/1 — prepared HG-03 apply for lane `axon_connect`
+#
+# STATUS: PREPARED, UNAPPLIED — the operator-signed apply is pending (OP-25/OP-26).
+# This lane file stages the applied-state `[sources.axon_connect]` block that a
+# signed apply splices into `connectors/src/connectors/data/sources.toml`
+# (replacing the row P36.76 registered `ingestion_permitted = false`). The
+# registry itself is NOT touched — `sources.toml` stays fail-closed and the
+# loader gate keeps refusing `axon_connect` until the apply.
+#
+# Lane: flips/axon_connect
+# Reason: D-P36.76-2 (P36.76 leg B — the first real host wire, operator act)
+# Decision cited: B-35 — decision_catalog.csv `I7-IT7` answered `a`
+#   ("IT7 full fetch", 2026-10-01T04:46:04Z): the agency-hosted Axon Fusus
+#   'Connect <Place>' pages are fetched in full under A-17's envelope —
+#   public, unauthenticated pages only; no logins, API keys or circumvention;
+#   rate-limited; robots honoured per GL-GATE-08 on every host; terms text
+#   captured verbatim; the exposure disclosed; every byte through the
+#   Part VIII screen before storage or publication; private registrants never
+#   stored or published (Part VIII and SIG-PUB-002 not waived).
+# Still gated on: OP-26 window naming + `live:P35.38a`
+#   (surveillancegraph.org/data-collection/ 404 at 2026-10-27T05:01Z probe —
+#   a descriptive UA may not cite a dead owned page, SIG-INGEST-036).
+# Apply = splice the block below into sources.toml over the existing
+# [sources.axon_connect] row (same table key); keep every other row untouched.
+
+[sources.axon_connect]
+name = "Axon Fusus Connect <Place> sites"
+source_kind = "vendor_site"
+homepage_url = "https://connect.volusiasheriff.gov/"
+default_tier = "R2"
+# P36.76 / R11-ACQ-31 — the per-agency `Connect <Place>` / Fusus white-label
+# camera-registration surfaces (the committed I9a-C003 set in
+# data/axon_connect_targets.toml). Custody DERIVE: the connector persists ONLY
+# the screened records (sig.axon-connect-page/1 programme facts + the
+# sig.fusus-screen/1 marked-host record — hash, markers, status), never the
+# served page's bytes (ADR-185). Programme facts only — R11-A16 forbids
+# registrant bytes; a marked-host presence is a SIG-ACQ-020 candidate, never
+# a feed.
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+# Leg A = the OM-20 row-351 mutation GATE-G5 named verbatim (2026-10-25T18:40Z,
+# expires GATE-G6): one recorded GET per committed host of the public
+# registration page + one of the :8443 faststream screen — screen records +
+# page hashes only. Leg B — the first real host's wire/fetch as a connector
+# run — is the operator's act (OP-26), separately authorised.
+access_method = "bounded screen (one recorded GET per committed host: public registration page + :8443 faststream screen; leg B is the operator's)"
+verified = true
+last_verified = 2026-10-01
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-10-01
+review_packet = "docs/build/reports/rights/p3676/leg-b-packet.md"
+notes = "FLIPPED 2026-10-01 — \"I7-IT7 = a: IT7 full fetch\" (B-35, decision_catalog.csv 2026-10-01T04:46:04Z): the agency-hosted Axon Fusus 'Connect <Place>' pages are fetched in full under A-17's envelope — public, unauthenticated pages only, no logins/keys/circumvention, rate-limited, robots per GL-GATE-08, terms text captured verbatim, exposure disclosed (D3-Q3 answered b). Basis: LicenseRef-OperatorAccepted-DBRight — Axon terms prohibit automated access, so the flip is a considered acceptance, not a discovered permission. Custody stays DERIVE (only screened records persist; served bytes never) and private registrants are never stored or published (Part VIII + SIG-PUB-002 not waived). Posture stays public_terms_only. Prepared on r11/sources-flips as flips/axon_connect; applied in the operator-signed commit (OP-25/OP-26)."
+[sources.axon_connect.rights]
+# Operator-accepted basis (B-35 = a): Axon's terms prohibit automated access
+# and the operator accepted that exposure under A-17 — a considered
+# acceptance, not a discovered permission. Custody DERIVE means nothing raw is
+# re-hosted: what redistributes is the screened programme-facts layer only.
+spdx = "LicenseRef-OperatorAccepted-DBRight"
+attribution = "Axon Fusus 'Connect <Place>' agency-hosted camera-registration surfaces"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://connect.volusiasheriff.gov/"
+retrieval_date = 2026-10-01
+publication_basis = "P36.76 leg A is a bounded screen under GATE-G5's OM-20 naming (single recorded GETs of public registration pages + the :8443 faststream screen, expiring GATE-G6); the FUSUS posture (SIG-INGEST-038) records a marked-host presence as a candidate, never a feed. Ingestion itself is leg B — flipped under B-35 (I7-IT7 = a, full fetch under A-17's envelope); first wire still the operator's OP-26 act."
+[sources.axon_connect.redistribution]
+lane = "derived-only"
+evidence = "sources.toml [sources.axon_connect] (custody DERIVE — only screened records persist; served bytes never); attribution: nothing published"
+evidence_uri = "connectors/src/connectors/data/sources.toml#axon_connect"
+decision_authority = "B-35 (I7-IT7 = a, 2026-10-01)"
+part_viii_class = "none-known"
+review_needed = false
