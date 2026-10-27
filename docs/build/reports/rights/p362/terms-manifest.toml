@@ -1,0 +1,160 @@
+# sig.terms-capture-manifest/1 — P36.2 (row 350) queued terms captures
+#
+# All 12 legs are `status = "queued"` / `executed = false` — `prepared_not_executed`:
+# the project UA's owned explanation page is not live (`live:P35.38a`), so no
+# descriptive-UA fetch may run (SIG-INGEST-036). Re-run prompt (OM-19):
+#   implement-spec spec=docs/tickets/350_P36.2__rights-flip-decline-batch-and-terms-capture.md live_verification=true
+# Runner: `capture_terms.py` (in this directory) — refuses (exit 42) while the
+# precondition fails. Captures land VERBATIM under `captures/` with sha256 +
+# generated_at (SIG-TRANSP-004); nothing is paraphrased.
+
+[meta]
+format = "sig.terms-capture-manifest/1"
+ticket = "P36.2"
+prepared_at = "2026-10-27T01:53:00Z"
+blocker = "live:P35.38a — https://surveillancegraph.org/data-collection/ returned HTTP 404 at 2026-10-27T01:53Z probe (root 200); a descriptive UA may not cite a dead owned page"
+rerun = "implement-spec spec=docs/tickets/350_P36.2__rights-flip-decline-batch-and-terms-capture.md live_verification=true"
+
+# ── B-36: IU1–IU5 (capture terms, then one E4-style line each) ──────────────
+
+[[leg]]
+id = "p362-iu1-leonardo-terms"
+subject = "IU1 — Leonardo/ELSAG procurement contracts page"
+lane = "iu"
+urls = ["https://www.leonardocompany-us.com/lpr/how-to-buy/procurement-contracts"]
+discover = "follow any terms/conditions or policy links on the page; capture each verbatim"
+crawl_delay = 5
+status = "queued"
+executed = false
+packet = "docs/build/reports/rights/p362/batch.md"
+
+[[leg]]
+id = "p362-iu2-carahsoft-terms"
+subject = "IU2 — Carahsoft / Cellebrite contract vehicle"
+lane = "iu"
+urls = ["https://www.carahsoft.com/cellebrite/contracts"]
+discover = "follow the site terms-of-use link from the contracts page; capture each verbatim"
+crawl_delay = 5
+status = "queued"
+executed = false
+packet = "docs/build/reports/rights/p362/batch.md"
+
+[[leg]]
+id = "p362-iu3-google-terms"
+subject = "IU3 — Google geofence warrants (Google Terms of Service)"
+lane = "iu"
+urls = ["https://policies.google.com/terms"]
+discover = ""
+crawl_delay = 5
+status = "queued"
+executed = false
+packet = "docs/build/reports/rights/p362/batch.md"
+
+[[leg]]
+id = "p362-iu4-soundthinking-terms"
+subject = "IU4 — SoundThinking press releases"
+lane = "iu"
+urls = [
+  "https://www.soundthinking.com/terms-of-use",
+  "https://www.soundthinking.com/press-releases/",
+]
+discover = "terms-of-use path returned 404 at check time — record the honest status; capture the landing page's terms link if one exists"
+crawl_delay = 5
+status = "queued"
+executed = false
+packet = "docs/build/reports/rights/p362/batch.md"
+
+[[leg]]
+id = "p362-iu5-flockradar-terms"
+subject = "IU5 — FlockRadar (github.com/rxsklife/flockradar)"
+lane = "iu"
+urls = [
+  "https://github.com/rxsklife/flockradar",
+  "https://raw.githubusercontent.com/rxsklife/flockradar/main/LICENSE",
+]
+discover = "code licence is AGPL-3.0; capture README + LICENSE verbatim — the data licence is unstated; record 'none found' honestly if no data licence text exists"
+crawl_delay = 5
+status = "queued"
+executed = false
+packet = "docs/build/reports/rights/p362/batch.md"
+
+# ── E4 conditional lines ────────────────────────────────────────────────────
+
+[[leg]]
+id = "p362-camreg-edmonton-terms"
+subject = "E4-R4a — City of Edmonton terms body (page titled 'Open Government Licence - Edmonton', I7-F011)"
+lane = "e4"
+urls = ["https://data.edmonton.ca/d/7fnd-72gr"]
+discover = "the dataset licence field reads 'See Terms of Use' — resolve the terms-page link from the dataset record and capture the OGL-Edmonton body verbatim (JS-rendered: a text snapshot is acceptable evidence of the rendered body)"
+crawl_delay = 5
+status = "queued"
+executed = false
+packet = "docs/build/reports/rights/camreg_edmonton_ab.md"
+
+[[leg]]
+id = "p362-bidnet-terms"
+subject = "E4-R6a — bidnetdirect.com terms (transferred from P34.38's queued leg P34.38-bidnet-terms)"
+lane = "e4"
+urls = ["https://www.bidnetdirect.com/terms"]
+discover = "if /terms redirects or 404s, capture the terms link from the homepage footer verbatim"
+crawl_delay = 5
+status = "queued"
+executed = false
+packet = "docs/build/reports/rights/bidnet_direct.md"
+
+# ── D-R11-RIGHTS-1 folded re-decision set ───────────────────────────────────
+
+[[leg]]
+id = "p362-camreg-und-001-terms"
+subject = "re-decision — camreg_und_001 ArcGIS item licenseInfo"
+lane = "redecision"
+urls = ["https://www.arcgis.com/sharing/rest/content/items/509475945f494a37bcbeefee139a6ecc?f=json"]
+discover = "capture the item JSON verbatim; the licenseInfo field IS the terms record"
+crawl_delay = 5
+status = "queued"
+executed = false
+packet = "docs/build/reports/rights/p362/batch.md"
+
+[[leg]]
+id = "p362-camreg-calgary-terms"
+subject = "re-decision — camreg_calgary_ab City of Calgary dataset Terms-of-Use"
+lane = "redecision"
+urls = ["https://data.calgary.ca/d/k7p9-kppz"]
+discover = "the dataset carries a Terms-of-Use licence link whose text was never captured; resolve and capture it verbatim"
+crawl_delay = 5
+status = "queued"
+executed = false
+packet = "docs/build/reports/rights/p362/batch.md"
+
+[[leg]]
+id = "p362-camreg-lexington-terms"
+subject = "re-decision — camreg_lexington_ky LFUCG Terms of Use (embedded in item licenseInfo; indemnify-AND-defend §VI.B)"
+lane = "redecision"
+urls = ["https://www.arcgis.com/sharing/rest/content/items/d220ce31999448659626afe990ca1328?f=json"]
+discover = "capture the item JSON verbatim; licenseInfo embeds the full LFUCG ToU text"
+crawl_delay = 5
+status = "queued"
+executed = false
+packet = "docs/build/reports/rights/p362/batch.md"
+
+[[leg]]
+id = "p362-dot-511-md-terms"
+subject = "re-decision — dot_511_md Maryland iMAP attribution-conditioned terms"
+lane = "redecision"
+urls = ["https://chartimap1.sha.maryland.gov/arcgis/rest/services/CHART/Cameras/MapServer/0"]
+discover = "capture the iMAP terms-of-use text verbatim (the 'freely distributed as long as the metadata entry is not modified or deleted; derived data must acknowledge the State of Maryland' wording — resolve the iMAP portal's terms page)"
+crawl_delay = 5
+status = "queued"
+executed = false
+packet = "docs/build/reports/rights/p362/batch.md"
+
+[[leg]]
+id = "p362-camreg-md-opendata-terms"
+subject = "re-decision — camreg_md_opendata (opendata.maryland.gov hua3-qc8n; same iMAP-conditioned blocker)"
+lane = "redecision"
+urls = ["https://opendata.maryland.gov/d/hua3-qc8n"]
+discover = "capture the portal terms page verbatim; the dataset carries NO licence metadata — the iMAP terms govern (shared with p362-dot-511-md-terms)"
+crawl_delay = 5
+status = "queued"
+executed = false
+packet = "docs/build/reports/rights/p362/batch.md"

@@ -110,3 +110,14 @@ prompt `implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-regi
 (scope: the BidNet terms capture only). This packet's Terms section is
 unchanged — the verbatim capture remains owed; the rights decision is the
 operator's at GATE-G6 at the latest (S6R-28). D-SOURCES.9-4 stays OPEN.
+
+## P36.2 staging — the leg transfers to row 350's queued batch
+
+P36.2 (row 350) re-probed the precondition: `live:P35.38a` still fails, so the
+capture stays queued — now under `p362/terms-manifest.toml` leg
+`p362-bidnet-terms` with the re-run prompt
+`implement-spec spec=docs/tickets/350_P36.2__rights-flip-decline-batch-and-terms-capture.md live_verification=true`.
+On capture, the verbatim terms land in this packet's Terms section with their
+retrieval date, and the staged E4-style decision line in `p362/batch.md` goes
+to the operator (GATE-G6 packet at the latest, S6R-28). D-SOURCES.9-4 stays
+OPEN.

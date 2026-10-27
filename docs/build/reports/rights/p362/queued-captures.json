@@ -1,0 +1,41 @@
+{
+  "schema": "sig.queued-legs/1",
+  "ticket": "P36.2",
+  "status": "prepared_not_executed",
+  "generated_at": "2026-10-27T01:53:00Z",
+  "probe": {
+    "at": "2026-10-27T01:53:19Z",
+    "https://surveillancegraph.org/": 200,
+    "https://surveillancegraph.org/data-collection/": 404,
+    "verdict": "live:P35.38a FAILS — the project UA's owned explanation page is not live; a descriptive UA (SIG-INGEST-036) may not cite it, so no terms fetch was attempted"
+  },
+  "rerun": "implement-spec spec=docs/tickets/350_P36.2__rights-flip-decline-batch-and-terms-capture.md live_verification=true",
+  "runner": "docs/build/reports/rights/p362/capture_terms.py",
+  "manifest": "docs/build/reports/rights/p362/terms-manifest.toml",
+  "legs": [
+    "p362-iu1-leonardo-terms",
+    "p362-iu2-carahsoft-terms",
+    "p362-iu3-google-terms",
+    "p362-iu4-soundthinking-terms",
+    "p362-iu5-flockradar-terms",
+    "p362-camreg-edmonton-terms",
+    "p362-bidnet-terms",
+    "p362-camreg-und-001-terms",
+    "p362-camreg-calgary-terms",
+    "p362-camreg-lexington-terms",
+    "p362-dot-511-md-terms",
+    "p362-camreg-md-opendata-terms"
+  ],
+  "operator_lines_owed": [
+    "E4-R4a — camreg_edmonton_ab: decide on the OGL-Edmonton basis once the terms body is captured (GATE-G6 at latest, S6R-28)",
+    "E4-R6a — bidnet_direct: one line after the captured terms are quoted into rights/bidnet_direct.md (GATE-G6 at latest)",
+    "IU1–IU5 — one E4-style line each after capture (B-36; GATE-G6 at latest)",
+    "D-R11-RIGHTS-1 — five keep/decline lines (staged verbatim in batch.md §3)"
+  ],
+  "flips_staged_not_executed": {
+    "branch": "r11/sources-flips",
+    "sources": ["dot_511_tx", "camreg_hk_hk", "procportal_chicago_il"],
+    "notes": ["camreg_bellevue_wa DECLINED", "periscope_s2g CLOSED-superseded", "camreg_qldc_au route → P37.70"],
+    "executor": "the operator only (OP-26 / ADR-169 §14)"
+  }
+}

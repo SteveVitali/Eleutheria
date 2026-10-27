@@ -52,3 +52,12 @@ records that answer as DATA — it is not a rights decision made by the agent,
 and it flips nothing: the source stays `ingestion_permitted=false` until the
 supersession is reflected in the register. The D-SOURCES.9-4 DEFERRALS
 annotation is SEED-14's (T4), not this ticket's.
+
+## P36.2 close staging — E4-R6b = a (superseded)
+
+P36.2 (row 350) carries the close through: a `CLOSED 2026-10-01 (operator,
+HG-03) — superseded by bidnet_direct (E4-R6b = a, B-41)` registry note is
+prepared on `r11/sources-flips` alongside the batch's flip patch
+(`ingestion_permitted` stays false — a close is not a flip). Verification
+recorded in the run ledger: `gate --source periscope_s2g` → REFUSED (exit 1);
+`run --mode live` → exit 3.
