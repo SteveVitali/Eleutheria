@@ -4,19 +4,19 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `87e3a385f717d4d3504948fbb9544acb7956ff29` · inputs hashed: 1119 · wall-clock receipt: `receipt.json`
+> input_commit: `7de9c375d53a9e5399307dd519400305e972dc0b` · inputs hashed: 1120 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.78` · lastCompleted `P36.77`
-- chainTip `r11/P36.77-documentcloud-muckrock-connector` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-27T09:07Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.13` · lastCompleted `P36.78`
+- chainTip `r11/P36.78-sourcewell-omnia-contract-pages` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-27T12:05Z`
 
 ## Obligations
 
-- 200 obligations · **119 owed** (116 OPEN, 3 PARTIAL) · 81 terminal
-- 705 events (51 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 202 obligations · **121 owed** (118 OPEN, 3 PARTIAL) · 81 terminal
+- 707 events (51 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 119 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 121 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -85,6 +85,7 @@
 | P35.23 | D-P35.23-1 | `implement-spec spec=docs/tickets/348_P35.23__real-data-regression-corpus.md live_verification=true` |
 | P36.76 | queued D-P36.76-1 — the 12 leg-A bounded GETs (6 registration pages + 6 `/:8443` screens); D-P36.76-2 — leg B, operator's first-wire act | `implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true` |
 | P36.77 | queued D-P36.77-1 — 11 leg-A GETs (4 api_document + 3 api_project + 2 DocumentCloud pages + ToS + the MuckRock /foi/ page); D-P36.77-2 — leg B, operator's first… | `implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true` |
+| P36.78 | queued D-P36.78-1 — 5 leg-A GETs (the Sourcewell contract page + terms-use, the OMNIA supplier + contract-documents index + terms-of-use); D-P36.78-2 — leg B, o… | `implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 

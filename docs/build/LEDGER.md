@@ -7,12 +7,12 @@
 
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # P36.77 landed(352); queued legs on earlier rows
-nextTicket: P36.78 # row 353 — sourcewell-omnia-contract-pages
-lastCompleted: P36.77 # row 352 — documentcloud-muckrock-connector 2026-10-27
+projectStatus: IN_PROGRESS # P36.78 landed(353); queued legs on earlier rows
+nextTicket: P36.13 # row 354 — api-rate-limits
+lastCompleted: P36.78 # row 353 — sourcewell-omnia-contract-pages 2026-10-27
 blockedOn: (nothing)
 pauseRequested: false
-returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.76,P36.77,P37.2
+returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.76,P36.77,P36.78,P37.2
 manifest: docs/tickets/00_MANIFEST.md
 canonicalSpec: docs/2_canonical_design_spec.md
 memoryRoot: docs/build
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P36.77-documentcloud-muckrock-connector # P36.77 landed on this tip; P36.78 stacks here
+chainTip: r11/P36.78-sourcewell-omnia-contract-pages # P36.78 landed on this tip; P36.13 stacks here
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-27T09:07Z
+updatedAt: 2026-10-27T12:05Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -462,6 +462,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | P35.23 | D-P35.23-1 | queued hosted apply — no ADC/`SIG_GCP_PROJECT`/`SIG_RDC_IMAGE`; pre-authorised OM-20; ≥ `SIG_RDC_EARLIEST`, never 03:00–06:30Z or the day-6→13 batch window | nothing until re-run — `rdc-slices.sh --apply all`; `D-P35.23-2…-11` stay OPEN | `implement-spec spec=docs/tickets/348_P35.23__real-data-regression-corpus.md live_verification=true` |
 | P36.76 | queued D-P36.76-1 — the 12 leg-A bounded GETs (6 registration pages + 6 `/:8443` screens); D-P36.76-2 — leg B, operator's first-wire act | bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T05:01Z); records land under `reports/rights/p3676/`; leg B is never agent execution | nothing until `live:P35.38a` — leg B's flip + first wire stay the operator's HG-03 + OP-26 acts (packet `p3676/leg-b-packet.md`, go lines blank) | `implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true` |
 | P36.77 | queued D-P36.77-1 — 11 leg-A GETs (4 api_document + 3 api_project + 2 DocumentCloud pages + ToS + the MuckRock /foi/ page); D-P36.77-2 — leg B, operator's first-wire act | bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T07:54Z); records under `reports/rights/p3677/`; leg B never agent execution | nothing until `live:P35.38a` — leg B's flips + first wire are operator acts (HG-03 + OP-26; packet `p3677/leg-b-packet.md`, go lines blank) | `implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true` |
+| P36.78 | queued D-P36.78-1 — 5 leg-A GETs (the Sourcewell contract page + terms-use, the OMNIA supplier + contract-documents index + terms-of-use); D-P36.78-2 — leg B, operator's first-wire act | bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T11:10Z); records under `reports/rights/p3678/`; leg B never agent execution | nothing until `live:P35.38a` — leg B's flips + first wire are operator acts (HG-03 + OP-26; packet `p3678/leg-b-packet.md`, go lines blank) | `implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true` |
 
 Sources: OPERATIONAL_READINESS §(f3) + `UNIVERSE_DISPOSED.csv` + plan §9.2/§8.6 + `data/round11_plan.csv`. Non-row homes: 9 ticket + 9 later-phase + 7 decision + 2 already-done. Keying (T5 γ) = LANDED R10 ticket: 183→P35.61, 188→P35.62, 191→P35.63, 179–182→P37.16, D-P21.5-1→P37.55, D-P31.4-1→P34.39a (SEED-17 T5).
 
@@ -1292,3 +1293,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-27 — P36.77 post-closeout record — `ci: pass #372@a5e64c1` 5/5 head-bound (run 40480669321: python · docs · composed · security · web; record `reports/ci/p36_77_pr372.json` read 09:54:34Z); stack `blockedOn` pre-existing red ancestor #368@75aa5a8 · repair arc: `819c127d` L1288 assert-token respell (declared), `e9753128` orient fold 2 (`· landed` markers ×59 — seq in BUILD_INDEX — region byte-identical), `a5e64c12` projection regen (1119/1119) · PR #372 OPEN; Leg A queued `D-P36.77-1` prepared_not_executed (UA 404), Leg B held `D-P36.77-2` OP-26 — no `ingestion_permitted` flip · `main` untouched · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-27 — P36.77 post-closeout record — `ci: pass #372@0fd9312` 5/5 green head-bound (run 40484765249: python 18m26s · web 18m43s · docs 1m57s · composed 4m18s · security 34s); the post-closeout record commit's LEDGER append had drifted the projection — regen rode `1dedd2d1` · PR #372 OPEN on the stack for operator integration; `main` untouched · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-27 — P36.78 dispatch boundary-confirm — `ci: pass #372@87e3a38` 5/5 head-bound on the tip (run 40487605631: python/docs/composed/security/web; `reports/ci/p36_77_pr372.json`) · P36.77 landed: DocumentCloud/MuckRock connector + targets/vocab TOMLs + Part VIII screen membership + 29 tests — **leg A QUEUED `D-P36.77-1`** (probe-UA precondition `/data-collection/` 404s — honest queue); **leg B activation held `D-P36.77-2` (HG-03+OP-26)**; zero flips, gate still refuses · fix arc recorded: three docs-red repair cycles (assert-token respells, orient fold incl. the `· landed` cell compaction, record-entry kind/ci: respell) — all `seed-commit`-declared with archives · `main` untouched · deferrals +2/−0 · dispatching P36.78 (row 353 — Sourcewell+OMNIA cooperative contract-page connector: `live_verification=false`; **OM-20 NAMED at GATE-G5** — leg A (public unauthenticated contract-page GETs + registry appends + terms captures/redacted-rendition records) pre-authorised under AR-3+AR-2+AR-1c; **leg B (anything beyond the captures) = operator's act — held**; no circumvention; 4 deps landed; S-sized) · chainTip → r11/P36.77-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-10-27 — P36.78 done — row 353 (I7-C14→I7-C3 [B-39] cooperative contract pages): `cooperative` connector — 5 seeds/5 kinds, screened `sig.cooperative-rendition/1` (redacted name+classes+hash + contract_page + sha256; served bytes never persisted) or counts-only `sig.cooperative-refusal/1`; verbatim `sig.cooperative-terms/1` ×2 · `sources.toml` amends — both `ingestion_permitted=false`, custody →DERIVE (gate REFUSED, live exit 3 ×2) · leg A 5 GETs QUEUED `prepared_not_executed` (`live:P35.38a` 404 → `D-P36.78-1` OPEN); leg B held — `D-P36.78-2` OPEN (OP-26) · 27 tests green · shadow 10c/2cap+7c/2cap diff=0 · deferrals +2/−0 · `make check` final-tree 10,923/2s/3 (env+pre-existing only: `SIG_GCP_PROJECT` + P34.18 ×2; impl-tree 4 liveclaim segments respelled — corpus 0) · impl `7de9c375` · ci: head-bound read follows · chainTip → r11/P36.78-… · next → P36.13 · harness: devin-desktop/swe-2-high/subagent
