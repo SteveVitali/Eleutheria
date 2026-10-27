@@ -7,3 +7,7 @@ web/src/lib/public-api.ts	* (docs/build/reports/LAUNCH_RECORD_2026-09-24.md §1)
 web/src/lib/terms-disclosure.ts	adr: "docs/adr/ADR-183-express-terms-acceptance.md",
 web/src/lib/withdrawals.ts	* `docs/tickets/DEFERRALS.md`).
 web/src/pages/data-collection.astro	// sentence is agent-drafted into docs/build/reports/copy-batches/batch-01.md,
+# P36.17: the lexicon deliberately reads the canonical spec (Appendix E verbatim
+# parse + built-HTML spec-ref anchors) — an audited data read, not a records read.
+web/src/lib/lexicon.ts	const SPEC_PATH = join(repoRoot(), "docs", "2_canonical_design_spec.md");
+web/scripts/check-lexicon.mjs	const SPEC = join(WEB, "..", "docs", "2_canonical_design_spec.md");

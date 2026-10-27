@@ -2,7 +2,7 @@
   "schema": "sig.lexicon/1",
   "id": "sig.lexicon/1",
   "title": "SIG shared lexicon and copy system",
-  "version": "2026-10-28",
+  "version": "2026-10-27",
   "about": "P36.17 (K13 UXK14-4 / K14 §3.4–3.5, C-01…C-04). The ONE machine-readable vocabulary every surface reads — Astro components, the internal visual-language page, the map style and the Python figure kit (P36.27/28 read this file as plain JSON). One epistemic word means one thing everywhere (SIG-UI-143); one symbol carries one meaning (SIG-UI-133). Stored enums, JSON keys and spec terms are never rewritten — this file maps them to their display labels and plain-language meanings; the precise layer stays verbatim behind it (K14 §3.3).",
 
   "fields": {
