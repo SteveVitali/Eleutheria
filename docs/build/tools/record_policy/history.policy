@@ -1072,3 +1072,15 @@ seed-commit 819c127d
 # attributed to a16ba1b6's respelled line only; no other commit borrows
 # the exemption.
 seed-commit a16ba1b6
+
+# phase-log budget trim (worker, P36.20): `37aca9e4` trimmed the committed
+# row-360 `done` entry (L1319) in place — it landed at 2,397 B, over the
+# 2 KiB PHASE LOG budget (BM-LEDGER-06 `ledger-budget` violation caught by
+# check-build-memory on the orient sweep); the trimmed restatement is
+# verbatim-shorter, the detail lives in `runs/P36.20.md`. Pre-edit bytes
+# archived `reports/memory-repair/LEDGER_phaselog_L1319_pre-P36.20-budget.txt`
+# (sha256:58d3abb0631d…), disclosed by the appended correction entry in the
+# same commit. The branch rule forbids force-push, so the declaration lands
+# here, the next commit. Scope: the append-only finding attributed to
+# 37aca9e4's trimmed line only; no other commit borrows the exemption.
+seed-commit 37aca9e4
