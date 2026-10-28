@@ -222,11 +222,22 @@ def declared_fleet(
     retire_map = {r.name: r.disposition for r in cadence.retire_triggers}
     dispatched = cadence.dispatcher is not None
 
-    def _per_row_trigger(name: str, cron: str, job: str, state: str) -> None:
+    def _per_row_trigger(
+        name: str, cron: str, job: str, state: str, paused_until: str = ""
+    ) -> None:
         if dispatched:
             if retire_map.get(name) != "kept-declared-pin":
                 return  # retired — expected absent post-consolidation
-        triggers.append(DeclaredTrigger(name=name, cron=cron, job=job, paused=state == "paused"))
+        # P37.2 (FEA-15): a ``paused_until`` bound covering today holds the
+        # declared posture paused even when ``state`` says enabled — the
+        # bound is a due-set/trigger input, never silently dropped.
+        paused = state == "paused"
+        if not paused and paused_until:
+            try:
+                paused = datetime.now(UTC).date() <= date.fromisoformat(paused_until[:10])
+            except ValueError:
+                paused = False  # malformed bounds surface via the dispatcher lint, not here
+        triggers.append(DeclaredTrigger(name=name, cron=cron, job=job, paused=paused))
 
     for src in cadence.sources:
         _per_row_trigger(src.scheduler, src.cron, src.job, src.state)
@@ -236,7 +247,7 @@ def declared_fleet(
             secrets=src.secrets,
         )
     for batch in cadence.batches:
-        _per_row_trigger(batch.scheduler, batch.cron, batch.job, batch.state)
+        _per_row_trigger(batch.scheduler, batch.cron, batch.job, batch.state, batch.paused_until)
         jobs[batch.job] = DeclaredJob(name=batch.job, image=_expect(batch.job))
     if cadence.dispatcher is not None:
         disp = cadence.dispatcher

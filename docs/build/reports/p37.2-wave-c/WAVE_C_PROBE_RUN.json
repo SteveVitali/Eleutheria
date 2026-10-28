@@ -1,0 +1,13 @@
+{
+  "version": "sig.probe-run/1",
+  "probe": "sig-wave-c-national-run",
+  "target": "osm_overpass national ALPR layer",
+  "leg": "P37.2-l3-national-run",
+  "generated_at": "2026-10-26T04:46:00Z",
+  "window": "2026-11-16 -> 2026-11-20 (earliest 2026-10-26 iff P37.1 + PKG-07 + Q-23 all landed early)",
+  "overall": "suppressed",
+  "checks": {},
+  "suppressed": "hosted production execution is unavailable to this build context — no gcloud ADC and no SIG_GCP_PROJECT/SIG_HOSTED_DSN — and the contract window is not open: the strict window 2026-11-16→11-20 binds because PKG-07's hosted backfill legs stay queued in RETURN PASS (the earliest-window predicate fails even though P37.1 landed green). The tier-bump go is also unasked — L2's in-ticket pause is collected when the leg is due, never assumed.",
+  "suppression_note": "the wave's recorded window and the recorded ING-GO-C both bind before any fetch; it re-runs at the ticket's verbatim prompt `implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national-alpr-layer.md live_verification=true`. Suppressed is not a pass: all five legs stay `prepared_not_executed` in WAVE_C_PACKET.json and QUEUED in the RETURN PASS map; this record exists so the run ledger cites its own suppression. No live fetch, no source flip, no capture bytes, no mutation ran — nothing to report as a check.",
+  "rerun_prompt": "implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national-alpr-layer.md live_verification=true"
+}

@@ -4,12 +4,12 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `825e87d2eb8032246c9adcb661e731d69ddeba2f` · inputs hashed: 1110 · wall-clock receipt: `receipt.json`
+> input_commit: `759589ab39d4e63030c091eb8cb96933e1f15df1` · inputs hashed: 1111 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.2` · lastCompleted `P37.1`
-- chainTip `r11/P37.1-osm-camera-site-origin` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-26T03:41Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P35.2` · lastCompleted `P37.2`
+- chainTip `r11/P37.2-wave-c-osm-national-alpr-layer` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-26T05:15Z`
 
 ## Obligations
 
@@ -74,10 +74,11 @@
 | P35.41 | queued connector-image roll: rebuild + redeploy the image carrying `records_digest`, upstream-declared marks + capture-mark headers | `implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` · landed 320 (PR #338) |
 | P35.53 | D-P35.53-1 | `SIG_RELEASE_AUTHOR="$(git config user.name)" bash ops/gcp/release-infra.sh --apply all` or `implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-s… |
 | P35.59 | queued dark cutover (`web-cutover.sh --apply all`): AR-2 prestate+manifest → `staged/v/legacy-<YYYYMMDD>/` floor import → `conf/0`+carry+`serving.json` retire →… | `SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all` or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_ver… |
-| P35.61 | queued live half of P32.22's recovery deferral + F-522: L1 audit+plan (read-only) → L2 operator pause 1–4 h → L3 bounded `recovery-apply --authority <scope>` → … | `implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` · landed 338 (PR #359 — `D-R10-LIVE-1` OPEN, never… |
+| P35.61 | queued live half of P32.22's recovery deferral + F-522 (audit+plan → operator pause → bounded `recovery-apply --authority <scope>` → `+0`/rematerialize → freeze… | `implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` · landed 338 (PR #359 — `D-R10-LIVE-1` OPEN, never… |
 | P35.62 | queued live half of P32.23a's candidate deferral: `release-candidate` over a hosted `frozen_unpublished` snapshot → `+0` rematerialize → export → `release stage… | `implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true` · landed 339 (PR #360 — queued, never ran) |
-| P35.63 | queued release-exposure half of the publish deferral (home: P32.25): L1 staged cut → V1–V15 on the private staging origins → classify `class_s` → agent-drafted … | `implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (resumes at L2's promote once signed — re-staged cut … |
-| P35.64 | queued 11B acceptance sweep + GATE-G5 packet leg: read-only crawl of the promoted release/API/`sig-public`/`sig-registry` + ledger surface (counts only) + the p… | `implement-spec spec=docs/tickets/342_P35.64__sub-round-11b-acceptance.md live_verification=true` · landed 342 |
+| P35.63 | queued release-exposure half of the publish deferral (home: P32.25): L1 staged cut → V1–V15 → classify `class_s` → agent-drafted HG-11 readout (unsigned) · L2 p… | `implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (resumes at L2's promote once signed — re-staged cut … |
+| P35.64 | queued 11B acceptance sweep + GATE-G5 packet leg: read-only crawl of the promoted release/API/`sig-public`/`sig-registry` + ledger surface (counts only) + the p… | `implement-spec spec=docs/tickets/342_P35.64__sub-round-11b-acceptance.md live_verification=true` · landed 342 (PR #363) |
+| P37.2 | Wave-C sequence L1→L5 (pre-grow → tier bump after the go → national run → 24 h soak read → revert); missed leg reported; packet `reports/p37.2-wave-c/WAVE_C_PAC… | … |
 
 ## Known inconsistencies (preserved, never synthesized)
 
