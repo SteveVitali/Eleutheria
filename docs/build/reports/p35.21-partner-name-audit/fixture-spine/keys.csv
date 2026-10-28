@@ -1,0 +1,4 @@
+entity_id,name_key_sha256,source_count,split_count
+e-fixture-1,077373bb2d54c3a8dda100df40a807c3e857587c08b0ac564538933de8cb0c33,1,1
+e-fixture-2,b99e3ecb750d6c0d23b258864719f224efd32adffaaa9ef505f09a66f26037dd,3,3
+e-fixture-3,898794ab15afada021abeb798b58fa82277472fc99905010c00b9b66517e7af8,1,1

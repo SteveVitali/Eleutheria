@@ -41,7 +41,14 @@ Sub-commands expose the identity substrate (§11.1-11.3, §14):
   queue (+0 on re-run).
 * ``partner-name-audit --dsn …`` — the P32.3 dry-run impact report (ADR-122):
   every legacy ``sig.org.name`` partner key, its asserting sources/predicates,
-  and the scoped ``sig.org.name_scoped`` keys it decomposes into (read-only).
+  and the scoped ``sig.org.name_scoped`` keys it decomposes into (read-only;
+  ``--dsn-env``/``--role``/``--out`` added by P35.21 — the hosted leg reads as
+  ``sig_read_public`` with the DSN on env, never argv).
+* ``partner-name-packet --report … | --queued`` — the P35.21 OP-15
+  disposition packet (``sig.partner-name-disposition-packet/1``, D-P32.3-1):
+  the measured packet over a saved audit report, or the queued
+  ``prepared_not_executed`` packet when no hosted run has happened — Part
+  VIII: key ids + digests + counts only, never registrant names.
 
 With no sub-command it prints help and exits 0 (the SIG-ENG-013 convention).
 """
@@ -494,7 +501,94 @@ def build_parser() -> argparse.ArgumentParser:
         "its asserting sources/predicates, and the scoped sig.org.name_scoped keys "
         "it decomposes into (read-only)",
     )
-    audit.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    audit.add_argument(
+        "--dsn",
+        default=None,
+        help="PostgreSQL DSN of the claim spine (a DSN on argv leaks into the "
+        "process list — prefer --dsn-env)",
+    )
+    audit.add_argument(
+        "--dsn-env",
+        dest="dsn_env",
+        default="SIG_PARTNER_AUDIT_DSN",
+        help="name of the env var carrying the DSN (default "
+        "SIG_PARTNER_AUDIT_DSN; env only — never a DSN literal in a file)",
+    )
+    audit.add_argument(
+        "--role",
+        default=None,
+        help="role to SET ROLE to for the read — the hosted leg uses "
+        "sig_read_public (least privilege; a local fixture spine omits it)",
+    )
+    audit.add_argument(
+        "--out",
+        default=None,
+        help="also write the report JSON to this path (the name-bearing "
+        "report belongs under the gitignored docs/build/logs/ tree)",
+    )
+    packet = sub.add_parser(
+        "partner-name-packet",
+        help="P35.21 / D-P32.3-1: emit the OP-15 disposition packet "
+        "(sig.partner-name-disposition-packet/1) — measured over a saved "
+        "partner-name-audit report, or the queued prepared_not_executed "
+        "packet when no hosted run has happened (Part VIII: key ids and "
+        "counts only, never registrant names)",
+    )
+    packet.add_argument(
+        "--report",
+        default=None,
+        help="path to the partner-name-audit JSON report (measured mode)",
+    )
+    packet.add_argument(
+        "--queued",
+        action="store_true",
+        help="emit the prepared_not_executed packet instead (no report; "
+        "n/measured are null — an absent run is recorded, never fabricated)",
+    )
+    packet.add_argument(
+        "--reason",
+        default=None,
+        help="(queued) why the run did not execute (recorded verbatim)",
+    )
+    packet.add_argument(
+        "--rerun",
+        default=None,
+        help="(queued) the verbatim re-run prompt recorded into the packet",
+    )
+    packet.add_argument(
+        "--spine",
+        default="fixture",
+        help="the spine name stamped on the packet (e.g. "
+        "'sig-pg (read-only sig_read_public)' — honest provenance)",
+    )
+    packet.add_argument(
+        "--started-at",
+        default=None,
+        help="(measured) the `date -u` bound recorded before the audit read",
+    )
+    packet.add_argument(
+        "--finished-at",
+        default=None,
+        help="(measured) the `date -u` bound recorded after the audit read",
+    )
+    packet.add_argument(
+        "--planned-at",
+        default=None,
+        help="(queued) the `date -u` stamp of the queued-run record",
+    )
+    packet.add_argument(
+        "--allow-empty",
+        action="store_true",
+        help="permit a 0-key report (the recorded escape for a spine that "
+        "genuinely carries no legacy keys — the packet refuses a vacuous N "
+        "otherwise, SIG-ENG-042)",
+    )
+    packet.add_argument(
+        "--out-dir",
+        required=True,
+        help="output directory for the packet artifacts (packet.json + "
+        "packet.sha256 + PACKET.md + keys.csv when measured)",
+    )
     return parser
 
 
@@ -1371,6 +1465,8 @@ def main(argv: list[str] | None = None) -> int:
         return _run_identity_triage(args)
     if args.command == "partner-name-audit":
         return _run_partner_name_audit(args)
+    if args.command == "partner-name-packet":
+        return _run_partner_name_packet(args)
 
     parser.print_help()
     return 0
@@ -1413,15 +1509,108 @@ def _run_identity_triage(args: argparse.Namespace) -> int:
 
 def _run_partner_name_audit(args: argparse.Namespace) -> int:
     """Dry-run impact report for legacy ``sig.org.name`` partner keys (P32.3)."""
+    import os
+    import sys
+
     import psycopg
 
     from .partner_name_audit import name_scope_report
 
-    with psycopg.connect(args.dsn) as conn:
+    dsn = args.dsn or os.environ.get(args.dsn_env, "").strip()
+    if not dsn:
+        print(
+            f"partner-name-audit: pass --dsn or set {args.dsn_env} "
+            "(env only — a DSN on argv leaks into the process list).",
+            file=sys.stderr,
+        )
+        return 2
+    with psycopg.connect(dsn) as conn:
+        if args.role:
+            # The hosted leg reads as sig_read_public (least privilege);
+            # SET ROLE inside the read-only transaction, never persisted.
+            from psycopg import sql as _sql
+
+            conn.execute(_sql.SQL("SET ROLE {}").format(_sql.Identifier(args.role)))
         conn.execute("SET TRANSACTION READ ONLY")
         report = name_scope_report(conn)
         conn.rollback()
-    print(json.dumps(report, indent=2, sort_keys=True))
+    text = json.dumps(report, indent=2, sort_keys=True)
+    print(text)
+    if args.out:
+        with open(args.out, "w", encoding="utf-8") as fh:
+            fh.write(text + "\n")
+        print(f"partner-name-audit: -> {args.out}", file=sys.stderr)
+    return 0
+
+
+def _run_partner_name_packet(args: argparse.Namespace) -> int:
+    """The OP-15 disposition packet for the audit (P35.21 / D-P32.3-1)."""
+    import sys
+
+    from .partner_name_packet import (
+        PartnerNamePacketError,
+        build_packet,
+        build_queued_packet,
+        load_report,
+        packet_sha256,
+        write_packet,
+    )
+
+    if args.queued:
+        if not args.planned_at:
+            print(
+                "partner-name-packet: --queued needs --planned-at (a `date -u` "
+                "stamp — records never invent a clock).",
+                file=sys.stderr,
+            )
+            return 2
+        packet = build_queued_packet(
+            spine=args.spine,
+            planned_at=args.planned_at,
+            reason=args.reason or "hosted run not executed",
+            rerun=args.rerun or "",
+        )
+    else:
+        if not args.report:
+            print(
+                "partner-name-packet: --report <audit JSON> is required in "
+                "measured mode (or pass --queued for the prepared packet).",
+                file=sys.stderr,
+            )
+            return 2
+        if not args.started_at or not args.finished_at:
+            print(
+                "partner-name-packet: measured mode needs --started-at and "
+                "--finished-at (the `date -u` bounds around the audit read).",
+                file=sys.stderr,
+            )
+            return 2
+        try:
+            report = load_report(args.report)
+            packet = build_packet(
+                report,
+                spine=args.spine,
+                started_at=args.started_at,
+                finished_at=args.finished_at,
+                allow_empty=args.allow_empty,
+            )
+        except PartnerNamePacketError as exc:
+            print(f"partner-name-packet: REFUSED — {exc}", file=sys.stderr)
+            return 2
+    paths = write_packet(packet, args.out_dir)
+    print(
+        json.dumps(
+            {
+                "record_type": packet["record_type"],
+                "status": packet["status"],
+                "n": packet["n"],
+                "packet_sha256": packet_sha256(packet),
+                "paths": {k: str(v) for k, v in paths.items()},
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
     return 0
 
 
