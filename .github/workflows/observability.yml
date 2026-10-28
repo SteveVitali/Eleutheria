@@ -13,6 +13,11 @@
 # Secrets (HG-09): the webhook endpoint/token and any staging DSN ride secrets/vars
 # only — never literals. Absent, the notifiers degrade to the always-on recorded
 # ledger + log line; nothing is fabricated.
+#
+# SIG-ENG-042 truth (P35.2): a scheduled check that measured nothing FAILS. Every
+# measurement leg records `key=N` counts (offered/evaluated) and
+# `sig-ops observe-gate` goes red when the run evaluated nothing — the previous
+# "probe skipped … nothing measured" green was a vacuous success.
 
 name: observability
 
@@ -77,24 +82,40 @@ jobs:
       # false alarm fires.
       - name: Egress budget check — recorded alert on breach
         run: |
+          mkdir -p .observe
+          echo "egress_offered=1" >> .observe/counts
           if [ -n "${SIG_EGRESS_USAGE_GB:-}" ]; then
+            echo "egress_evaluated=1" >> .observe/counts
             uv run sig-ops egress-report --alert --usage-gb "$SIG_EGRESS_USAGE_GB"
           else
+            # Gate-pending (HG-07): the report renders but measured nothing —
+            # counted as unevaluated; the observe-gate step accounts for it.
             uv run sig-ops egress-report --alert
           fi
         env:
           SIG_EGRESS_USAGE_GB: ${{ vars.SIG_EGRESS_USAGE_GB }}
 
       # Stack probe: records ok/latency metrics to the bounded probe log and fires
-      # a recorded alert per DOWN service. Skipped (not failed) while the hosted
-      # endpoints are unconfigured — the offline posture measures nothing.
+      # a recorded alert per DOWN service. With the endpoints unconfigured the leg
+      # measured nothing — SIG-ENG-042 counts it unevaluated and the observe-gate
+      # step below goes red rather than report a vacuous green.
       - name: Probe the live stack (skipped until endpoints are configured)
         run: |
+          mkdir -p .observe
+          echo "probe_offered=1" >> .observe/counts
           if [ -n "${SIG_STAGING_API_URL:-}" ]; then
+            echo "probe_evaluated=1" >> .observe/counts
             uv run sig-ops probe --alert
           else
-            echo "staging endpoints unset — probe skipped (offline posture; nothing measured)"
+            echo "staging endpoints unset — probe leg measured nothing (SIG-ENG-042: counted below)"
           fi
+
+      # SIG-ENG-042 (P35.2): the run reports what it offered and what it
+      # evaluated; a scheduled check that measured nothing fails — never a
+      # green artifact on zero measurement.
+      - name: Measured-nothing gate (SIG-ENG-042)
+        if: always()
+        run: uv run sig-ops observe-gate --counts .observe/counts
 
       # The dashboard/readout artifact: a deterministic render of the recorded
       # probe log + alert ledger + egress report.
@@ -110,4 +131,5 @@ jobs:
             alerts.jsonl
             probes.jsonl
             observability-dashboard.md
+            .observe/counts
           if-no-files-found: ignore

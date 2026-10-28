@@ -1209,3 +1209,21 @@ rerun_cell = '''`implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national
   go = '''verbatim-go: ordered prefix — L1–L4 green or held-reported, ING-GO-C in force + `sig-ops wave-c-gate` admit go (exit 0)'''
   rerun = '''implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national-alpr-layer.md live_verification=true'''
   live_dependants = ["P37.65a", "P37.66"]
+
+[[row]]
+key = "P35.2"
+kind = "leg"
+obligations = ["D-P35.2-1"]
+obligations_cell = '''D-P35.2-1'''
+gates_cell = '''hosted production write — queued (no ADC, `SIG_GCP_PROJECT` unset); pre-authorised: OM-20 (the row is named verbatim on the GATE-G5 list); in-window only: weekday 14:00–20:00Z preferred, never 03:00–06:30Z, never an AR-3 batch window, never before AR-2's on-demand backup; earliest 2026-10-27T14:00Z; packet `reports/p35.2-alert-roll/` prepared_not_executed'''
+operator_cell = '''nothing until the re-run — the verbatim apply sequence, the AR-2 prestate list and the per-leg rollback live in `docs/build/reports/p35.2-alert-roll/`; e-mail receipt confirmation stays D-P34.4-2'''
+rerun_cell = '''`implement-spec spec=docs/tickets/346_P35.2__alerting-as-code-and-escalation.md live_verification=true` · landed 346'''
+
+  [[row.legs]]
+  id = "P35.2-alert-roll"
+  obligations = ["D-P35.2-1"]
+  earliest = '''the next weekday 14:00–20:00Z slot once ADC + `SIG_GCP_PROJECT` hold and AR-2's on-demand backup is recorded — earliest 2026-10-27T14:00Z'''
+  excluded = ["03:00–06:30Z", "AR-3 batch window", "before AR-2's on-demand backup"]
+  go = '''pre-authorised: OM-20'''
+  rerun = '''implement-spec spec=docs/tickets/346_P35.2__alerting-as-code-and-escalation.md live_verification=true'''
+  live_dependants = []

@@ -32,6 +32,7 @@ already committed in ``docs/build/reports/GCP_DEPLOYMENT.md``).
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import tomllib
@@ -364,6 +365,75 @@ def load_cadence(path: str | Path | None = None) -> CadenceConfig:
     with resolved.open("rb") as fh:
         doc = tomllib.load(fh)
     return parse_cadence_doc(doc)
+
+
+def read_bundle_cadence(
+    source: str, *, read_bytes: Callable[[str], bytes] | None = None
+) -> tuple[CadenceConfig, str]:
+    """Parse the ``cadence_toml`` member of a published declaration bundle.
+
+    The bundle is the ``live_diff`` declaration object (``--emit-declared``)
+    published under ``ops/declared/`` on the restricted bucket — the same
+    object ``SIG_OPS_DECLARED_GCS`` names. ``read_bytes(source)`` supplies the
+    fetch (a ``gs://`` read in deployment, a file read in tests); the default
+    reader handles ``gs://`` through :class:`~ops.gcs.GcsBucket` and everything
+    else as a filesystem path. Returns ``(cadence, provenance)``.
+    """
+    if read_bytes is None:
+
+        def read_bytes(uri: str) -> bytes:
+            if uri.startswith("gs://"):
+                bucket, _, name = uri[5:].partition("/")
+                return GcsBucket(bucket).get_object(name)
+            return Path(uri).read_bytes()
+
+    bundle = json.loads(read_bytes(source))
+    if not isinstance(bundle, dict) or "cadence_toml" not in bundle:
+        raise CadenceError(f"declaration bundle at {source} has no `cadence_toml` member")
+    try:
+        doc = tomllib.loads(bundle["cadence_toml"])
+    except (tomllib.TOMLDecodeError, TypeError) as exc:
+        raise CadenceError(f"declaration bundle cadence unparseable ({source}): {exc}") from exc
+    sha = hashlib.sha256(bundle["cadence_toml"].encode()).hexdigest()
+    return parse_cadence_doc(doc), f"{source}#sha256:{sha}"
+
+
+class CadenceError(ValueError):
+    """A cadence source (file or declaration bundle) was unusable."""
+
+
+def load_cadence_external(
+    path: str | Path | None = None,
+    *,
+    env: dict[str, str] | None = None,
+    read_bytes: Callable[[str], bytes] | None = None,
+) -> tuple[CadenceConfig, str]:
+    """Resolve the probe sweep's cadence — targets out of the image (G1-02a).
+
+    Resolution order (first wins):
+
+    1. explicit ``path`` (``--cadence``) — a deliberate local override,
+    2. ``$SIG_OPS_DECLARED_GCS`` — the published declaration bundle the job
+       env already carries; a cadence edit takes effect at the next bundle
+       publish, never an image roll (SIG-OPS-005),
+    3. the packaged/baked file via :func:`load_cadence`
+       (``$SIG_OPS_CADENCE`` → repo checkout → image ``WORKDIR`` copy).
+
+    Returns ``(cadence, provenance)`` — provenance names which source won so
+    the sweep record can say which declaration it ran (audit, never hidden).
+    A bundle that is set but unreadable/unparseable is an error — never a
+    silent fall-back to a stale image copy (the same fail-closed posture
+    ``live_diff.load_declared`` takes).
+    """
+    resolved_env = dict(os.environ) if env is None else env
+    if path:
+        return load_cadence(path), f"file:{path}"
+    bundle_uri = resolved_env.get("SIG_OPS_DECLARED_GCS", "").strip()
+    if bundle_uri:
+        return read_bundle_cadence(bundle_uri, read_bytes=read_bytes)
+    cadence = load_cadence()
+    env_path = resolved_env.get("SIG_OPS_CADENCE", "").strip()
+    return cadence, f"file:{env_path or DEFAULT_CADENCE_PATH}"
 
 
 def parse_cadence_doc(doc: dict[str, Any]) -> CadenceConfig:
@@ -1171,6 +1241,7 @@ __all__ = [
     "BatchCadence",
     "BucketPosture",
     "CadenceConfig",
+    "CadenceError",
     "DispatcherSpec",
     "FleetDecl",
     "ImagePin",
@@ -1186,9 +1257,11 @@ __all__ = [
     "fold_probe_history",
     "hosted_pg_dsn",
     "load_cadence",
+    "load_cadence_external",
     "parse_cadence_doc",
     "percentile",
     "probe_hosted",
+    "read_bundle_cadence",
     "read_sweep_rows",
     "resolve_targets",
     "run_object_name",

@@ -7,7 +7,10 @@
     "source": "track0.5-live-export-2026-10-02"
   },
   "alertStrategy": {
-    "autoClose": "1800s"
+    "autoClose": "1800s",
+    "notificationRateLimit": {
+      "period": "86400s"
+    }
   },
   "combiner": "OR",
   "conditions": [

@@ -3,6 +3,12 @@
     "checkerType": "STATIC_IP_CHECKERS",
     "displayName": "SIG site surveillancegraph.org",
     "httpCheck": {
+      "contentMatchers": [
+        {
+          "content": "Surveillance Infrastructure Graph",
+          "matcher": "CONTAINS_STRING"
+        }
+      ],
       "path": "/",
       "port": 443,
       "requestMethod": "GET",
@@ -17,6 +23,11 @@
     },
     "name": "projects/sig-fixture-project/uptimeCheckConfigs/sig-site-surveillancegraph-org-F2yZbTB73dw",
     "period": "300s",
+    "selectedRegions": [
+      "USA_IOWA",
+      "EUROPE",
+      "ASIA_PACIFIC"
+    ],
     "timeout": "10s"
   },
   {
@@ -37,6 +48,11 @@
     },
     "name": "projects/sig-fixture-project/uptimeCheckConfigs/sig-api-health-or4_q7yICx4",
     "period": "300s",
+    "selectedRegions": [
+      "USA_IOWA",
+      "EUROPE",
+      "ASIA_PACIFIC"
+    ],
     "timeout": "10s"
   }
 ]
