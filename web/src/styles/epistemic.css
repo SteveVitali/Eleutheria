@@ -997,6 +997,14 @@ table.sig-freshness th {
   color: var(--sig-ink);
   font-weight: 700;
 }
+.sig-wordmark__glyph {
+  /* P36.25 (SIG-UI-154): the node-link glyph at the wordmark's text size —
+     one ink colour via currentColor in either theme. */
+  inline-size: var(--sig-step-1);
+  block-size: var(--sig-step-1);
+  align-self: center;
+  flex: none;
+}
 .sig-wordmark__mark {
   font-size: var(--sig-step-1);
   letter-spacing: 0.08em;

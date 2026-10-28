@@ -8,9 +8,17 @@ import * as esbuild from "esbuild";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { join, relative, resolve, sep } from "node:path";
+import sharp from "sharp";
 import { resolveTileCopyList } from "./scripts/export-tiles.mjs";
 import { buildManifest, classifyDist, classifyRoute, writeManifest } from "./src/lib/page-types.ts";
 import { tightenT0Document } from "./src/lib/csp.ts";
+import {
+  renderCardSvg,
+  renderLogoSvg,
+  SOCIAL_CARDS,
+  SOCIAL_CARD_SIZE,
+} from "./src/lib/brand.ts";
+import { getSiteMetadata } from "./src/lib/data.ts";
 
 // P21.5 (deliverable 3, LD-F07/H08) + P30.3 (ADR-106) + P31.15 (ADR-R9-TILES) +
 // P35.52 (sig.map-tiles/2, ADR-156): in `export` mode the static build CONSUMES
@@ -246,6 +254,60 @@ function sigEnhancementKit() {
   };
 }
 
+// P36.25 (UXK14-7, K14 §4.12 + DR-K14-20, SIG-UI-154): the brand assets that
+// must be GENERATED at build time — the raster favicon set (32 px PNG + the
+// 180 px apple-touch-icon), the standalone logo file, and one social card
+// per page type (`sig.social-card/1` — T0/T1/T2; T3 is loopback-only and
+// shares none). `sharp` is a build-time dependency of Astro itself (the
+// image pipeline — imported statically above: no new dependency is added,
+// and a static import survives past the Vite module-runner teardown where a
+// dynamic import() would fail). The cards' "data as of" comes from the same
+// data layer the pages read — a card can never name a different as-of than
+// the site it advertises. Emitted under dist root (favicon-32.png,
+// apple-touch-icon.png, brand/logo.svg, social/card-*.png); under a
+// `/s/<pub>/` snapshot build the same files land inside the snapshot, so the
+// head tags' withBase() URLs stay self-contained.
+function sigBrandAssets() {
+  return {
+    name: "sig-brand-assets",
+    hooks: {
+      "astro:build:done": async ({ dir }) => {
+        const distDir = fileURLToPath(dir);
+        const publicDir = fileURLToPath(new URL("./public", import.meta.url));
+        // The 32 px icon and the 180 px touch icon are the committed
+        // favicon.svg rasterised — one glyph source, never a redrawn second
+        // mark that could drift.
+        const favicon = readFileSync(join(publicDir, "favicon.svg"));
+        await sharp(favicon, { density: 384 })
+          .resize(32, 32)
+          .png()
+          .toFile(join(distDir, "favicon-32.png"));
+        await sharp(favicon, { density: 384 })
+          .resize(180, 180)
+          .png()
+          .toFile(join(distDir, "apple-touch-icon.png"));
+        // The standalone logo — the mark in ink on a transparent ground.
+        mkdirSync(join(distDir, "brand"), { recursive: true });
+        writeFileSync(join(distDir, "brand", "logo.svg"), renderLogoSvg());
+        // One card per page type — the release's as-of, never a recomputed
+        // date (SIG-REL-009's rule: the stamp's data is the release's own).
+        mkdirSync(join(distDir, "social"), { recursive: true });
+        const asOfWorld = getSiteMetadata().asOf.as_of_world;
+        for (const card of SOCIAL_CARDS) {
+          const svg = Buffer.from(renderCardSvg(card, asOfWorld));
+          await sharp(svg, { density: 96 })
+            .resize(SOCIAL_CARD_SIZE.width, SOCIAL_CARD_SIZE.height)
+            .png()
+            .toFile(join(distDir, ...card.file.split("/")));
+        }
+        console.log(
+          `sig-brand-assets: favicon-32.png + apple-touch-icon.png + brand/logo.svg + ${SOCIAL_CARDS.length} social card(s) emitted`,
+        );
+      },
+    },
+  };
+}
+
 // P35.50 (UXK0-1, K0 §4.12 item 1, ADR-155, SIG-UI-041/NEW-4): route discovery —
 // the `astro:build:done` hook walks `dist/**/*.html` and classifies every built
 // route against web/src/lib/page-types.ts. An unclassified route or a route two
@@ -308,7 +370,7 @@ export default defineConfig({
   // `client:*` directive, which in the public surface is exactly the three named
   // islands (map / network / search). Every other page still ships zero `<script>`
   // (SIG-UI-036/037); each island preserves its no-JS fallback (SIG-UI-050).
-  integrations: [react(), sigExportTiles(), sigInternalRoutes(), sigChrome(), sigEnhancementKit(), sigPageTypes()],
+  integrations: [react(), sigExportTiles(), sigInternalRoutes(), sigChrome(), sigEnhancementKit(), sigBrandAssets(), sigPageTypes()],
   // The canonical public origin (P27.6 deliverable 4, ADR-093). This is the real
   // custom domain the launch surface is cited at; the belief-pinned permalinks
   // (SIG-UI-035) resolve against it. DNS/TLS cut-over completes in P27.10 — the

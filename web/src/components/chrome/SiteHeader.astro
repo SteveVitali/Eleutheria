@@ -14,6 +14,7 @@
 import type { RenderedNavSection } from "../../lib/nav";
 import { CHROME } from "../../lib/lexicon";
 import { withBase } from "../../lib/paths";
+import LogoMark from "../brand/LogoMark.astro";
 
 interface Props {
   sections: RenderedNavSection[];
@@ -28,6 +29,11 @@ const { sections, wordmarkLabel } = Astro.props;
 <header class="sig-header">
   <div class="sig-header__bar">
     <a class="sig-wordmark" href={withBase("")} aria-label={wordmarkLabel}>
+      {/* P36.25 (UXK14-7, K14 §4.12, SIG-UI-154): the node-link glyph beside
+          the wordmark — three nodes, two solid edges, one dashed edge, one
+          ink colour (the link's accessible name still carries the site name;
+          the glyph is decorative). */}
+      <LogoMark class="sig-wordmark__glyph" />
       <span class="sig-wordmark__mark" aria-hidden="true">SIG</span>{" "}
       <span class="sig-wordmark__full">Surveillance Infrastructure Graph</span>
     </a>

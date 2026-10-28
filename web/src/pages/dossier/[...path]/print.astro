@@ -16,7 +16,7 @@ import IncompletenessBanner from "../../../components/IncompletenessBanner.astro
 import WhatWeDontKnow from "../../../components/WhatWeDontKnow.astro";
 import DossierSection from "../../../components/DossierSection.astro";
 import ActionBlocks from "../../../components/ActionBlocks.astro";
-import { SECTION_TITLES, dossierPath, dossierPermalink, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG, DOSSIER_LICENCE_ID } from "../../../lib/dossier";
+import { SECTION_TITLES, dossierPath, dossierPermalink, dossierPrintPath, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG, DOSSIER_LICENCE_ID } from "../../../lib/dossier";
 import type { Section } from "../../../lib/dossier";
 import { citationBlock, REPRODUCIBLE_PHRASE } from "../../../lib/citation";
 import { withBase } from "../../../lib/paths";
@@ -28,6 +28,7 @@ import { displayJurisdiction, dossierDisplayTitle } from "../../../lib/jurisdict
 import { artifactHref, defineFigures } from "../../../lib/figures";
 import { dossierFigureSpecs, figureSpecMap } from "../../../lib/dossier-figures";
 import { defaultDescription } from "../../../lib/meta";
+import { socialCardForRoute } from "../../../lib/brand";
 
 // P35.45 (D-K4-3 / K4 §5.3): print/CSV/runs mint ONLY for country + admin-1
 // dossiers — the registry levels `country` and `state_province`
@@ -68,6 +69,15 @@ const combinesList = jurisdiction.combines ? jurisdiction.combines.join(" and ")
 const SECTIONS_PER_PAGE = 3;
 const origin = Astro.site ? Astro.site.origin : undefined;
 const link = dossierPermalink(dossier, origin);
+// P36.25 (SIG-UI-154): this route's own path — the OG share object + the
+// card lookup below. `dossierPrintPath` is the registry-named route.
+const printPath = dossierPrintPath(dossier.slug);
+const printCard = socialCardForRoute(printPath);
+const printOrigin = Astro.site ?? "https://surveillancegraph.org";
+const printUrl = new URL(printPath, printOrigin).href;
+const printCardUrl = printCard ? new URL(withBase(printCard.file), printOrigin).href : null;
+const printTitle = `${pageTitle} — SIG dossier (print)`;
+const printDesc = defaultDescription(printTitle, "T0");
 
 // P35.13 (SIG-REL-009, G3 §6.1): the print form names the release it was
 // printed from on every page footer — a council copy of "release
@@ -137,11 +147,35 @@ const specMap = figureSpecMap(FIGURES);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle} — SIG dossier (print)</title>
     {/* P34.13 (QW-11): the same unique-description template as BaseLayout
-        (copy-batch row MD-01) so the print document carries its own meta
-        description, plus the shared favicon. */}
-    <meta name="description" content={defaultDescription(`${pageTitle} — SIG dossier (print)`)} />
+        (copy-batch row MD-01), in this route's T0 form (P36.25, SIG-UI-154 —
+        the print page IS the fixed, no-JavaScript surface), plus the shared
+        favicon set and the per-type social card. */}
+    <meta name="description" content={printDesc} />
     <link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
+    <link rel="alternate icon" type="image/png" sizes="32x32" href={withBase("favicon-32.png")} />
+    <link rel="apple-touch-icon" sizes="180x180" href={withBase("apple-touch-icon.png")} />
     <link rel="canonical" href={new URL(dossierPath(dossier.slug), Astro.site ?? "https://surveillancegraph.org").href} />
+    {/* P36.25 (SIG-UI-154): the same OG/Twitter block as BaseLayout — the
+        print route is T0 and shares the T0 card; og:url names this route
+        itself (the shared object), while link rel=canonical still names the
+        dossier for indexers. */}
+    {printCard && (
+      <Fragment>
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Surveillance Infrastructure Graph" />
+        <meta property="og:title" content={printTitle} />
+        <meta property="og:description" content={printDesc} />
+        <meta property="og:url" content={printUrl} />
+        <meta property="og:image" content={printCardUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={printCard.alt} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={printTitle} />
+        <meta name="twitter:description" content={printDesc} />
+        <meta name="twitter:image" content={printCardUrl} />
+      </Fragment>
+    )}
     {stamp && <meta name="sig-release" content={stamp.metaContent} />}
     {stamp && <link rel="describedby" type="application/json" href={stamp.describedby} />}
   </head>
