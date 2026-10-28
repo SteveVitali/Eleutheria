@@ -615,7 +615,9 @@ def test_state_alpr_statute_seed_is_labelled_with_its_date() -> None:
 
 def test_ncsl_inventory_source_is_registered_and_not_a_feed() -> None:
     rec = get("state_alpr_statute_inventory")
-    assert rec.ingestion_permitted is False
+    assert (
+        rec.ingestion_permitted is True
+    )  # FLIPPED 2026-10-25 (GATE-G5) — one-time seed, never a feed
     assert "2022-02-03" in rec.notes
 
 

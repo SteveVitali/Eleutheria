@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "60262ef5b07a04d13c36d55c01620f5a28551c39",
+  "input_commit": "710421a102cbee2f572f52613b4bdb382918df36",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -890,7 +890,7 @@
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "729ea6753e414471008b9f845647357007ff3f69ca3b2b5f1f8ca1a43dfadcd0"
+      "sha256": "61ac9fb549c8505fa73e74f03100f63241c84aa46691a2825b2069096bdb192d"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -898,7 +898,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "c4f0f0eae210f07b2517b06ca4e50f6a0b8089c384d437bb849627462e33cb39"
+      "sha256": "7bd461a3ad709dc8cb2c65a3b3c9b47820a02f3d0c1b7546743deeb917e721e3"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -935,6 +935,10 @@
     {
       "path": "docs/build/readouts/GATE-G4.md",
       "sha256": "e5956bd6491e8667be653b51bfd396483a1e9f0826074ea986bce5251595ffbb"
+    },
+    {
+      "path": "docs/build/readouts/GATE-G5.md",
+      "sha256": "32fe40c8e1f6d069838025a08c8488b03accaf4ca41907287e621df89649b9d6"
     },
     {
       "path": "docs/build/readouts/HUMAN-H1.md",
@@ -2205,6 +2209,10 @@
       "sha256": "958e9beaff5bb9fdb14a9def56c2e1bec93501ef2fb2bdfa53a0b88d3473372d"
     },
     {
+      "path": "docs/build/runs/P35.64.md",
+      "sha256": "a0d7d5582c50916b2a83a43dd6c41eea1ef48d96abee7015e3f1ba4e2218536d"
+    },
+    {
       "path": "docs/build/runs/P35.65.md",
       "sha256": "54d7d6ae80acbaad1e85fd1350494fff48b8502987a08607d50c287c345c6ace"
     },
@@ -2394,7 +2402,7 @@
     },
     {
       "path": "docs/build/tools/record_policy/return_pass.toml",
-      "sha256": "ee5414540a21c55cebb317dacacf98961d97408c20984f1f76a471f5b2036c84"
+      "sha256": "ffa0a90809f10681c8ae39e924f180b733157eb2fbccee9c5647d95d34158e44"
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",

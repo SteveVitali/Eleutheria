@@ -1023,6 +1023,33 @@ def build_parser() -> argparse.ArgumentParser:
     acsw.add_argument("--tiles-dir", action="append", default=[])
     acsw.add_argument("--build-dir", action="append", default=[])
 
+    ac11 = sub.add_parser(
+        "acceptance-sweep-11b",
+        help="P35.64 (plan S2 §4.2): the 11B live-read acceptance sweep "
+        "→ sig.probe-run/1 (read-only GETs over the promoted release's "
+        "routes, release-search, withdrawal aliases, dossiers, /network/, "
+        "tiles, parity pairs and disclosure routes — caller-supplied). "
+        "Gated on the promoted release existing (P35.63's promotion leg "
+        "out of the RETURN PASS queue) — exits 42 queued otherwise; "
+        "--check evaluates the gate only",
+    )
+    ac11.add_argument("--check", action="store_true", help="evaluate the gate only")
+    ac11.add_argument("--inputs", default=None, help="a recorded inputs JSON")
+    ac11.add_argument("--map", dest="map_path", default=None)
+    ac11.add_argument("--at", dest="at", default=None)
+    ac11.add_argument("--routes-file", default=None, help="a routes-spec JSON")
+    ac11.add_argument("--site-base", default=None)
+    ac11.add_argument("--record-out", default=None)
+    ac11.add_argument("--release-url", action="append", default=[])
+    ac11.add_argument("--search-url", action="append", default=[])
+    ac11.add_argument("--withdrawal-alias", action="append", default=[])
+    ac11.add_argument("--dossier", action="append", default=[])
+    ac11.add_argument("--network-url", default=None)
+    ac11.add_argument("--tile-url", action="append", default=[])
+    ac11.add_argument("--parity", action="append", default=[])
+    ac11.add_argument("--disclosure", action="append", default=[])
+    ac11.add_argument("--reads-file", default=None)
+
     # --- OBS.1 / GL-OBS-01: observability & alerting (ADR-077) ------------------
     keepalive = sub.add_parser(
         "keepalive-check",
@@ -6016,6 +6043,40 @@ def main(argv: list[str] | None = None) -> int:
         if args.reads_file:
             tail += ["--reads-file", args.reads_file]
         return acceptance.main(tail)
+    if args.command == "acceptance-sweep-11b":
+        from . import acceptance_11b
+
+        tail = []
+        if args.check:
+            tail.append("--check")
+        if args.inputs:
+            tail += ["--inputs", args.inputs]
+        if args.map_path:
+            tail += ["--map", args.map_path]
+        if args.at:
+            tail += ["--at", args.at]
+        if args.routes_file:
+            tail += ["--routes-file", args.routes_file]
+        if args.site_base:
+            tail += ["--site-base", args.site_base]
+        if args.record_out:
+            tail += ["--record-out", args.record_out]
+        if args.network_url:
+            tail += ["--network-url", args.network_url]
+        if args.reads_file:
+            tail += ["--reads-file", args.reads_file]
+        for opt, vals in (
+            ("--release-url", args.release_url),
+            ("--search-url", args.search_url),
+            ("--withdrawal-alias", args.withdrawal_alias),
+            ("--dossier", args.dossier),
+            ("--tile-url", args.tile_url),
+            ("--parity", args.parity),
+            ("--disclosure", args.disclosure),
+        ):
+            for v in vals:
+                tail += [opt, v]
+        return acceptance_11b.main(tail)
     parser.print_help()
     return 0
 
