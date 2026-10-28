@@ -7,9 +7,9 @@
 
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # P36.20 landed(360); queued legs on earlier rows
-nextTicket: P36.21 # row 361 — workspace-state-cite-this-view-facets
-lastCompleted: P36.20 # row 360 — enhancement-kit-behaviour 2026-10-28
+projectStatus: IN_PROGRESS # P36.21 landed(361); queued legs on earlier rows
+nextTicket: P36.22 # row 362 — component-kit-a
+lastCompleted: P36.21 # row 361 — workspace-state-cite-this-view-facets 2026-10-28
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.76,P36.77,P36.78,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P36.20-enhancement-kit-behaviour # P36.20 landed on this tip; P36.21 stacks here
+chainTip: r11/P36.21-workspace-state-cite-this-view-facets # P36.21 landed on this tip; P36.22 stacks here
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-28T08:25Z
+updatedAt: 2026-10-28T10:44Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1320,3 +1320,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-28 — P36.20 correction — the row-360 `done` entry's first landing ran 2,397 B over the 2 KiB phase-log budget (BM-LEDGER-06 `ledger-budget` violation): trimmed in place to a compact restatement — the detail lives in `runs/P36.20.md`; pre-repair bytes archived `reports/memory-repair/LEDGER_phaselog_L1319_pre-P36.20-budget.txt` sha256:58d3abb0631de8ca526b3ab50b8763f3 · `seed-commit`-declared next commit · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-28 — P36.20 post-closeout record — `ci: pass #380@901b20c3` 5/5 head-bound (run 40658884362: python 15m41s · docs 2m22s · composed 4m5s · security 23s · web 29m22s; check-runs read 09:15Z; `reports/ci/p36_20_pr380.json`) · stack `blockedOn` ancestor #374@c421540 docs-red (run 40534176482 — waived-ancestor pattern, same as the #368@75aa5a8 reads on earlier records) · every pushed head verbatim in `runs/P36.20.md`: `27e08e1a` impl (no run — batched under `2ac2922d`) → `2ac2922d` records (run 40655978320 cancelled-superseded) → `fca1b5f8` closeout records (run 40656219450 cancelled-superseded) → `37aca9e4`/`0884fb26` sanctioned phase-log trim + seed-commit (no run — batched under `239d2c4c`) → `239d2c4c` coverage verdicts + projection regen (run 40657685652 cancelled-superseded; `docs` had already read red — projection-stale on the `aria-live` reword that postdated the regen, Fix-arc 8) → `901b20c3` projection regen — **green** · PR #380 OPEN on the stack for operator integration · `main` untouched · deferrals +0/−0 · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-28 — P36.21 dispatch boundary-confirm — `ci: pass #380@0d7291f6` 5/5 head-bound on the record tip (run 40663212456: python/docs/composed/security/web; impl read `ci: pass #380@901b20c3` run 40658884362) · P36.20 landed: enhancement kit behaviour — coverage re-verdicts SIG-UI-085/089/090/091 → `MET-ENGINEERED(D-R10-PUBLISH-1)`/BL-085 · `main` untouched · deferrals +0/−0 · dispatching P36.21 (row 361 — `sig.workspace-state/2`, cite-this-view + facet conformance harness: `live_verification=false`; no gate, no OM-20, no production mutations; deps P35.50+P35.42 landed; M-sized) · chainTip → r11/P36.20-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-10-28 — P36.21 done — row 361 (K13 UXR-09/UXR-10; SIG-UI-052/059/060/093): `sig.workspace-state/2` lands — one `sig.workspace-state-registry/1` table (`web/src/lib/workspace-state/registry.ts`) drives parse/serialise/conformance/cite; an unregistered parameter refuses loud · `v=1` URLs resolve identically, new links mint `v=2` · `bbox`/`frame`→`at=` (map viewport), `kind=site`→`type=record` (result-type filter), `US-OK`→`iso3166-2:`, `view=network`→`graph`, `location=any`→absent — each fold carries a visible `role="status"` receipt naming the facet · every T2 surface partitions the registry into applied-or-visibly-named (`facet-not-applied` notices; `at=` parsed+announced, its application P36.37's) · "cite this view" mints `/s/<pub>/<surface>/?v=2&…` (J3 §8.1 interim) · T2 `noindex,follow` + base canonical; sitemap = registry-derived canonical T0/T1 only · page-type contracts `/1`→`/2`, the /1 module stays for /1's tests · ADR-225 (index/Appendix-F/triggers/BL-086 registered) · deferrals +0/−0 · `make check` 10,975p/2s/3f/7err — all env/pre-existing classes recorded on P36.19/P36.20 (GCP sentinel, P34.18 residue ×2, port-5432 topology ×7) · `npm run check` green (684 unit, 644 e2e incl. workspace-v2) · impl `2fb76dc3` → records `e89d4df4` → closeout this commit · ci: head-bound read follows · chainTip → r11/P36.21-… · next → P36.22 · harness: devin-desktop/swe-2-high/subagent
