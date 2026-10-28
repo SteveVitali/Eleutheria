@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# sig.rdc-slice/1 — the OSM/Overpass OKC surveillance-node capture (restricted lane).
+# ODbL-1.0 compartment material: never a committed fixture even under a raw-ok
+# lane; bytes stay in the screened compartment bucket, digest committed.
+
+schema = "sig.rdc-slice/1"
+slice_id = "osm_okc_surveillance"
+lane = "restricted"
+source_id = "osm_overpass"
+archetype = "camreg_osm_both_targets"
+coverage = "partial"
+spdx = "ODbL-1.0"
+attribution = "© OpenStreetMap contributors (ODbL 1.0)"
+terms_url = "https://www.openstreetmap.org/copyright"
+captured = "2026-09-15"
+oracle = "osm_overpass_facts"
+legs = ["oracle"]
+notes = "647 man_made=surveillance nodes over the OKC extent — the OSM half of the recorded camreg/OSM republish archetype (osm-overlaps-nottingham shape). The camreg republish half is owed (D-P35.23-3). ODbL compartment: bytes live in the screened bucket only; the committed tree carries this digest."
+
+[[members]]
+path = "overpass_nodes.json"
+sha256 = "34dd1d933d63625543d5ef36664418cc4e7ba17bcf38fe279ded196f52a2e273"
+source_uri = "https://lz4.overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A90%5D%3B%0A%28%0A++node%5B%22man_made%22%3D%22surveillance%22%5D%2835.30%2C-97.85%2C35.75%2C-97.15%29%3B%0A++way%5B%22man_made%22%3D%22surveillance%22%5D%2835.30%2C-97.85%2C35.75%2C-97.15%29%3B%0A%29%3B%0Aout+meta+center%3B"
+capture = "sig:capture:bcnaaosf6f4ixtdzv7g6jzcf5a52yjijvppjzjluuo6pv6vi6ze7ajhc3yezncedoo3rsaldgm5mdstbqbo7ijbjj7z47txfhcfsqyddf44"

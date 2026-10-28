@@ -2676,6 +2676,7 @@ dependencies = [
     { name = "sig-exports" },
     { name = "sig-parsing" },
     { name = "sig-policy" },
+    { name = "sig-resolution" },
 ]
 
 [package.metadata]
@@ -2689,6 +2690,7 @@ requires-dist = [
     { name = "sig-exports", editable = "exports" },
     { name = "sig-parsing", editable = "parsing" },
     { name = "sig-policy", editable = "policy" },
+    { name = "sig-resolution", editable = "resolution" },
 ]
 
 [[package]]

@@ -1,0 +1,48 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# sig.rdc-slice/1 — the Washington DC CCTV street-camera slice (P35.23).
+
+schema = "sig.rdc-slice/1"
+slice_id = "camreg_dc_multiview"
+lane = "committed"
+source_id = "camreg_washington_dc"
+archetype = "ia_dot_multiview"
+coverage = "analog"
+spdx = "CC-BY-4.0"
+attribution = "District of Columbia CCTV street camera registry (DCGIS open data)"
+terms_url = "https://www.arcgis.com/home/item.html?id=2bb8375e31a94067a17911ea70f917ef"
+captured = "2026-09-18"
+oracle = "arcgis_camera_facts"
+legs = ["oracle", "pipeline", "records", "m4", "m5", "m6"]
+notes = "Two ArcGIS query pages over the DCGIS Transportation Sensors layer (1,060 cameras, observed_count 1,060). Analog for the ia_dot_multiview archetype (real co-located multi-view records: Waterfront Tower East/West and sibling sites at coincident points) AND the il_dot_objectid defect class — the upstream `ID` field collides (24 rows carry ID=0.0; further duplicated values), so today's P35.24/GQ-04 uniqueness check fails the connector run closed. Both are the recorded-archetype behaviour the corpus exists to pin."
+
+[oracle_params]
+object_id_field = "OBJECTID"
+# DC city extent — points outside it are a wrong-jurisdiction / transposed signal
+extent = [-77.15, 38.75, -76.85, 39.05]
+
+[pipeline]
+# dot_511 over the two captured page URLs. The DC run FAILS CLOSED today:
+# `ID` is an earlier id_fields alias than OBJECTID and its 24 `0.0` rows mint
+# one subject key — the F-518/GQ-04 recorded defect class. That fail-closed
+# outcome is the pinned expectation, not a bug in the corpus.
+expect = { run = "failed", error_class = "SubjectKeyCollision" }
+
+[records]
+projection = "arcgis_camera"
+object_id_field = "OBJECTID"
+name_fields = ["NAME", "ADDRESS"]
+technology = "fixed-camera-cctv"
+jurisdiction = "DC"
+
+[[members]]
+path = "page_0.json"
+sha256 = "95292ec277e94b1520453703a8c6af7cbae33105a423befcf57904a1e6d47aa3"
+source_uri = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_Sensors_WebMercator/MapServer/11/query?where=1%3D1&outFields=%2A&outSR=4326&returnGeometry=true&f=json&orderByFields=OBJECTID&resultRecordCount=1000&resultOffset=0"
+
+[[members]]
+path = "page_1000.json"
+sha256 = "1f32029cbb385bd8215303ccd12d5876880ab5377c11e8014cdbf0cfa09b0587"
+source_uri = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_Sensors_WebMercator/MapServer/11/query?where=1%3D1&outFields=%2A&outSR=4326&returnGeometry=true&f=json&orderByFields=OBJECTID&resultRecordCount=1000&resultOffset=1000"

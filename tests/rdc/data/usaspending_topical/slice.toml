@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# sig.rdc-slice/1 — the USAspending topical-relevance slice (P35.23).
+
+schema = "sig.rdc-slice/1"
+slice_id = "usaspending_topical"
+lane = "committed"
+source_id = "usaspending"
+archetype = "procurement_topical"
+coverage = "served"
+spdx = "CC0-1.0"
+attribution = "USAspending.gov (U.S. Department of the Treasury)"
+terms_url = "https://www.usaspending.gov/about"
+captured = "2026-09-15"
+oracle = "usaspending_facts"
+legs = ["oracle", "pipeline"]
+notes = "One captured spending_by_award page (100 sub-award rows) from the reviewed surveillance-keyword sweep. The oracle counts term-class hits over raw Sub-Award Description text; the procurement connector's matched_keyword / notice routing must reproduce the census. Federal work (public domain posture, CC0-1.0 recorded)."
+
+[oracle_params]
+# The reviewed topical classes the archetype names — descriptions mentioning
+# at least one term verbatim (case-folded) count as hits.
+term_classes = { surveillance = ["surveillance", "camera", "license plate", "alpr", "cctv", "drone", "unmanned", "facial recognition", "gunshot", "cell-site", "stingray"], forensics = ["cellebrite", "graykey", "grayshift", "forensic", "penlink", "dataminr"] }
+
+[pipeline]
+expect = { run = "completed" }
+parameters = { sweep_expansion = false }
+
+[[members]]
+path = "spending_by_award.json"
+sha256 = "82d3775212dd702fe8d162c476e154ad21ae305f1cd8a7b9590b9bb253e27fea"
+source_uri = "https://api.usaspending.gov/api/v2/search/spending_by_award/"

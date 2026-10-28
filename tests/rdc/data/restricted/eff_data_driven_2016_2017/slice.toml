@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# sig.rdc-slice/1 — the EFF/MuckRock Data Driven 2016–17 release (restricted lane).
+# Registry lane `derived-only`: bytes stay in the screened compartment bucket;
+# only the digest is committed. The scheduled sig-rdc-probe run evaluates it.
+
+schema = "sig.rdc-slice/1"
+slice_id = "eff_data_driven_2016_2017"
+lane = "restricted"
+source_id = "eff_data_driven"
+archetype = "eff_data_driven"
+coverage = "served"
+spdx = "CC-BY-4.0"
+attribution = "EFF & MuckRock — Data Driven (2018)"
+terms_url = "https://www.eff.org/pages/data-driven-terms"
+captured = "2026-09-15"
+oracle = "eff_release_facts"
+legs = ["oracle"]
+notes = "The 2016–17 ALPR release zip (44.6 KB): aggregate CSV + XLSX + field definitions. Temporal overlap and double-claim signatures per the recorded archetype; the committed EFF connector fixture stays a connector fixture, not this corpus's licence basis — the corpus lane follows the registry's derived-only verdict."
+
+[[members]]
+path = "alpr_2016-2017_update.zip"
+sha256 = "e29950fe1d29775752e5c71b59b281550904a5465d84280e03f2547d51bd256a"
+source_uri = "https://www.eff.org/files/2020/01/28/alpr_2016-2017_update.zip"
+capture = "sig:capture:bcnab3jdmlnufhpum24dq5n44qkx3w7f6yk7mexfk7i2ikwdpdjmcmdi3p4wealuwgmmgr2rszlb7hge5curkadp4xzcbwbd3o3urbfnwuu"

@@ -1,0 +1,106 @@
+# SPDX-License-Identifier: Apache-2.0
+# THE committed declaration of the scheduled restricted-corpus probe job
+# (P35.23; SIG-CONF-008/012/013 — sibling to ops/quality_probe.toml's
+# sig.quality-probe/1). This file is DATA, not code —
+# `sig-ops rdc job render` renders the mutation set;
+# ops/gcp/rdc-slices.sh owns the (windowed, queued-live-leg) mutations
+# themselves.
+#
+# The job is the restricted half of the real-data regression corpus: the
+# committed tree under tests/rdc/data/ carries every restricted slice's
+# member digests + capture locators, never the bytes (licence lanes:
+# ODbL-compartment material and non-raw-ok lanes stay out of committed
+# fixtures). Each run:
+#
+#   1. re-checks the OM-19 windows — a fire inside 03:00–06:30Z or the
+#      monthly batch window records a `skipped` sig.probe-run/1 instead
+#      of running (defence in depth for a drifted/manual trigger);
+#   2. fetches each restricted member's bytes from the OCFL capture store
+#      under evidence/captures/ — the conditioned objectViewer scope;
+#      the path is deterministic (extension 0003): one bounded object
+#      fetch per member, never a bucket listing;
+#   3. sha256-verifies every fetched byte stream against the committed
+#      digest before staging — content-addressed, never trusted;
+#   4. runs the full corpus harness (oracle + pipeline + M-4/M-5/M-6)
+#      on an overlay corpus — the committed tree is never mutated;
+#   5. writes sig.rdc-report/1 + sig.probe-run/1 as NEW timestamped
+#      objects under ops/probes/rdc/ — inside the conditioned
+#      ops/probes/ objectCreator scope; records are never rewritten.
+#
+# The job needs no database and no secrets: the corpus rides the workload
+# image (tests/rdc/ is COPYed into /app — the image digest pins the
+# corpus version), and the bucket API auth is the runtime identity's
+# metadata-server token.
+schema = "sig.rdc-probe/1"
+
+# The job's exact name — rollback (pause trigger → delete trigger → delete
+# job) is name-checked against exactly these two names, never a pattern.
+job = "sig-rdc-probe"
+
+# The runtime identity — the confidence program's scheduled-probe identity
+# (P34.43's reserved sig-quality-probe-rt, shared with sig-quality-probe):
+# conditioned objectViewer on evidence/captures/ + conditioned
+# objectCreator on ops/probes/ — the exact read/write surface this job
+# needs, nothing else (ops/iam_identities.toml).
+service_account = "sig-quality-probe-rt"
+
+# The workload image: the shared sig-api repository — resolved to a pinned
+# digest at apply time (ADR-111); an unpinned or `:latest` image is refused.
+image_repo = "sig-api"
+
+# Container shape: one task, no retries — a failed run is recorded and the
+# next scheduled fire runs fresh. `container_args` is the one in-container
+# command line — the job verb renders `--args` by joining these on commas
+# (an element may never carry a comma).
+command = "sh"
+container_args = ["-c", "exec sig-ops rdc scheduled --corpus /app/tests/rdc/data"]
+tasks = 1
+max_retries = 0
+task_timeout = "900s"           # 15 min: 3 bounded fetches + the full harness
+cpu = "1"
+memory = "2Gi"
+
+# The corpus root inside the image — tests/rdc/ is COPYed into /app at
+# build (ops/Dockerfile); the image digest pins the corpus version the job
+# runs.
+corpus_root = "/app/tests/rdc/data"
+
+# The bucket-relative OCFL capture-root prefix the restricted member bytes
+# are fetched from — inside the conditioned `evidence/captures/`
+# objectViewer scope exactly (ops/iam_identities.toml).
+capture_prefix = "evidence/captures/"
+
+# The bucket-relative prefix the two records land under — inside the
+# IAM `objectCreator` condition's `ops/probes/` scope exactly, as
+# `<probe_prefix><yyyy-mm-dd>/<stamp>-rdc-report.json` and `-probe-run.json`.
+# Probe records are new objects only — never rewritten.
+probe_prefix = "ops/probes/rdc/"
+
+# Every plain (non-secret) env var the job carries. The leg renders each
+# name's value at apply time — never a literal here. The declaration
+# carries NO [[secret_env]]: the probe reads the capture store and writes
+# probe records through the runtime identity's conditioned grants only.
+plain_env = [
+  "SIG_GCP_PROJECT",
+  "SIG_OPS_GCS_BUCKET",
+  "SIG_RDC_PROBE_PREFIX",
+  "SIG_RDC_CAPTURE_PREFIX",
+  "SIG_RDC_JOB_NAME",
+]
+
+# The Cloud Scheduler trigger. The contract's window (OM-19): off-peak,
+# NEVER 03:00–06:30Z, and never inside the monthly batch window (day 6
+# 00:00Z → day 13 12:00Z — the ingest batch owns those nights).
+# `15 1 1-5,14-31 * *` fires 01:15Z on days 1–5 and 14–31: the earliest
+# batch-window fire is structurally impossible (the dom field excludes
+# 6–13), 01:15Z is comfortably off-peak and outside the quiet band, and
+# it trails the quality probe's 01:00Z fire by fifteen minutes — the two
+# probes never contend for the same first byte.
+# The job ITSELF re-checks both windows at run time and records a
+# `skipped` sig.probe-run/1 instead of running — defence in depth for a
+# manually invoked or drifted trigger (sig-ops rdc scheduled).
+[scheduler]
+name = "sig-sched-rdc-probe"
+schedule = "15 1 1-5,14-31 * *"
+time_zone = "Etc/UTC"
+invoker = "sig-scheduler"       # the OIDC invoker identity (P25.7's)

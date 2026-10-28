@@ -309,6 +309,28 @@ export SIG_BASELINE_RELEASE_PREFIX="${SIG_BASELINE_RELEASE_PREFIX:-}"
 # or digest — resolved to a pinned digest at apply, ADR-111).
 export SIG_QUALITY_IMAGE="${SIG_QUALITY_IMAGE:-}"
 
+# --- the scheduled restricted-corpus probe (P35.23 / SIG-CONF-008/013) -----
+# The permanent `sig-rdc-probe` Cloud Run job — the restricted half of the
+# real-data regression corpus: fetch the restricted member bytes from the
+# OCFL capture root (conditioned evidence/captures/ read), sha256-verify
+# them against the committed manifest, run the full M-4/M-5/M-6 harness
+# over an overlay corpus, and write sig.rdc-report/1 + sig.probe-run/1
+# under ops/probes/rdc/ — plus its `sig-sched-rdc-probe` trigger, declared
+# in ops/rdc_probe.toml (sig.rdc-probe/1, rendered by `sig-ops rdc job`).
+# Same OM-19 window as the quality legs: applies ≥ SIG_RDC_EARLIEST, never
+# 03:00–06:30Z, never inside the day-6→13 batch window; SIG_RDC_NOW
+# overrides the clock for the offline guard test only. The runtime
+# identity is the confidence program's probe identity sig-quality-probe-rt
+# — its conditioned grants fit the surface exactly (read
+# evidence/captures/, create ops/probes/; no new grant, no secret).
+export SIG_RDC_JOB="sig-rdc-probe"
+export SIG_RDC_SCHED="sig-sched-rdc-probe"
+export SIG_RDC_TOML="ops/rdc_probe.toml"
+export SIG_RDC_PREFIX="ops/probes/rdc/"           # inside the conditioned ops/probes/ scope
+export SIG_RDC_EARLIEST="${SIG_EXEC_EARLIEST}"    # same AR-3 window
+export SIG_RDC_STATE_DIR="${SIG_RDC_STATE_DIR:-${TMPDIR:-/tmp}/p35.23-rdc}"
+export SIG_RDC_IMAGE="${SIG_RDC_IMAGE:-}"         # a ${SIG_API_IMAGE}:<tag> | @sha256
+
 # --- the v3-interim camera-site ER re-run (P34.45 / ADR-153+206, OM-20) ------
 # The ONE append-only ER re-run under `sig_materialize_login` on the P34.43
 # exec host (ops/gcp/er-rerun.sh). Same contract window as the IAM/quality

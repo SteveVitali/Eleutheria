@@ -5961,6 +5961,10 @@ def main(argv: list[str] | None = None) -> int:
         from . import quality
 
         return quality.main(raw[1:])
+    if raw and raw[0] == "rdc":
+        from . import rdc
+
+        return rdc.main(raw[1:])
     args = parser.parse_args(argv)
     if args.command == "up":
         return _cmd_up(args)

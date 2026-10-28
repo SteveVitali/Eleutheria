@@ -1,0 +1,16 @@
+L158:
+  read-only live/offline diff, `rollback` name-checked.
+L199-L203:
+    at `LEDGER.md:1261`: the `c37a4009` boundary-confirm line's
+    "same-segment live-claim rewords" segment carried `\blive\b` with
+    no same-segment negation. Repaired forward in place (the
+    sanctioned class — pre-repair bytes archived at
+    `docs/build/reports/memory-repair/LEDGER_phaselog_L1261_pre-P35.23-liveclaim.txt`):
+L223-L229:
+  **ACCEPTED**.
+- [x] **Live-executed** (AC-3): the scheduled restricted lane is
+  QUEUED `prepared_not_executed` (`D-P35.23-1`) — the declaration is
+  committed, the leg is scripted and window-guarded, the in-container
+  leg is test-proven end-to-end on a fake bucket; nothing hosted is
+  claimed — **ACCEPTED (recorded)**.
+- [x] **CI integration** (AC-4): `tests/rdc` rides the `*` partition
