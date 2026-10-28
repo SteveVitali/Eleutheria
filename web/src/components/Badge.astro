@@ -12,6 +12,7 @@
 // `lib/badges.ts`, which fails the build on an unknown value, SIG-ENG-042).
 import { directnessBadge, accessKindBadge, licenceBadge, mirrorBadge } from "../lib/badges";
 import type { BadgeKind } from "../lib/badges";
+import "../styles/component-kit.css";
 
 interface Props {
   kind: BadgeKind;
