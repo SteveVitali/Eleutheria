@@ -1725,6 +1725,32 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Security
 
+- **Strict response security layer — CSP meta ∩ header, HSTS,
+  Permissions-Policy and the figure-SVG policy** (P36.19 / row 359;
+  owner SIG-UI-096; cites SIG-UI-039, SIG-UI-040, SIG-ENG-042,
+  SIG-UI-066, SIG-UI-D08; ADR-223) — the public surface now carries
+  K0 §4.8's response posture end to end. Astro `security.csp` emits a
+  per-page `<meta http-equiv="Content-Security-Policy">` with sha384
+  hashes for each page's inline bootstrap (`script-src`/`style-src`
+  `'self'` + tracked hashes, `script-src-attr`/`style-src-attr`
+  `'none'`, no `'unsafe-inline'`/`'unsafe-eval'`); the build rewrites
+  every T0 record/print page's meta to `default-src 'none'`. The nginx
+  edge ships `ops/web/sig-security.conf` — HSTS
+  `max-age=63072000; includeSubDomains` (no `preload`, a launch-row
+  decision), the hash-independent CSP guards (`frame-ancestors`,
+  `object-src`, `base-uri`, `form-action`, the `*-attr 'none'` pair)
+  on every response, a `map`-keyed dedicated policy
+  (`default-src 'none'; style-src 'unsafe-inline'; img-src data:;
+  sandbox` + `nosniff`) on every standalone `.svg` under `/r/`, `/s/`
+  and the latest view, and a Permissions-Policy granting
+  `geolocation=(self)` on `/map/` only, deny elsewhere. Every inline
+  `style=""` attribute moved to classes (`style-src-attr 'none'` needs
+  no exception) and the map island's popups build DOM nodes for
+  `.setDOMContent` — `check-unsafe-dom.mjs` fails `npm run check` on a
+  reintroduced `innerHTML`/`setHTML`/`dangerouslySetInnerHTML`. A
+  `securitypolicyviolation` e2e proves injected
+  scripts/styles/attributes/`eval` are blocked and reported on the
+  real pages.
 - **Part VIII at-rest protective seal: counts-only screen + two-carrier
   deny set** (P34.49, TS-07; cites SIG-GOV-007, SIG-PUB-002, SIG-PUB-003,
   SIG-INGEST-045e, SIG-GOV-008, SIG-STORE-011; ADR-185 → ADR-203) — the
