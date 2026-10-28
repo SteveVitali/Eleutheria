@@ -7,9 +7,9 @@
 
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # P36.24 landed(364); queued legs on earlier rows
-nextTicket: P36.25 # row 365 — brand
-lastCompleted: P36.24 # row 364 — copy-lints-in-ci 2026-10-28
+projectStatus: IN_PROGRESS # P36.25 landed(365); queued legs on earlier rows
+nextTicket: P36.26 # row 366 — print-v2
+lastCompleted: P36.25 # row 365 — brand 2026-10-28
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.76,P36.77,P36.78,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P36.24-copy-lints-in-ci # P36.24 landed on this tip; P36.25 stacks here
+chainTip: r11/P36.25-brand # P36.25 landed on this tip; P36.26 stacks here
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-28T20:33Z
+updatedAt: 2026-10-28T22:42Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1333,3 +1333,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-28 — P36.24 done — row 364 (K13 UXK14-5 copy lints in CI; owner SIG-UI-063/144/153; cites SIG-UI-039/040, SIG-ENG-042 + DR-C6-28, DR-K14-10/11/19, CP-4/CP-8): `check-copy-lints.mjs` sweeps every `dist/page-types.json` route (the P35.50 manifest — no route escapes) over main+footer — ids/snake_case/UUIDs/enums/req-ids in prose (technical-details/spec-refs exempt) · repeated 8+-word sentences · chrome ≤40 words visible-by-default · joined words (punct + boundary shapes) · ungrouped 5+-digit runs · bare unknown · records-vs-camera-sites both ways via `data-sig-count="dedup"` · candidate-vs-provisional · multi-word banned phrasings · CP-8 readability advisory · `copy-lint-enforce.json` `sig.copy-lint-enforce/1` — defaultMode report, routes {}; each surface's ticket flips its pattern · `check:copy` in `npm run check`, ci.yml untouched · 17-leg vitest over planted dist fixtures — both ways, vacuous 3 / missing manifest 2 · coverage re-verdicts 063/144/153 → MET-ENGINEERED(D-R10-PUBLISH-1)/BL-085 · deferrals +0/−0 · `make check` recorded in runs/P36.24.md (env classes per P36.19–23) · `npm run check` green (734 unit, 53 routes, 679 e2e; `check:copy` 53 scanned / 278 report / 0 enforced) · impl `65a3ca2f` → closeout this commit · ci: head-bound read follows · no gate (Gate status: none), no OM-20, no live leg · chainTip → r11/P36.24-… · next → P36.25 · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-28 — P36.24 post-closeout record — `ci: pass #384@b9ab8051` 5/5 head-bound (run 40768086234: python 13m53s · docs 2m27s · composed 4m19s · security 38s · web 32m13s; check-runs read 21:34Z; `reports/ci/p36_24_pr384.json`) · stack verbatim `blockedOn: CI fail on #383@a0dfbb8 (docs)` (run 40762187907 — the BM-ORIENT-01 orient read 49,161 B on the dispatch-boundary commit; the same red `65a3ca2f` carried, repaired forward in `b9ab8051` — `nextTicket: P36.25` → 48,999 B) · every pushed head verbatim in `runs/P36.24.md` · PR #384 OPEN on the stack for operator integration · `main` untouched · deferrals +0/−0 · no live leg, no production mutation, no gate, no OM-20 · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-28 — P36.25 dispatch boundary-confirm — `ci: pass #384@a1c129c8` 5/5 head-bound on the record tip (run 40773197063: python/docs/composed/security/web; impl read `ci: pass #384@b9ab8051` run 40768086234) · P36.24 landed: copy lints in CI — `check-copy-lints.mjs` 13 rules sweeping `page-types.json` routes (report mode default, per-surface enforce), 17 vitest legs · `main` untouched · deferrals +0/−0 · dispatching P36.25 (row 365 — brand: `live_verification=false`; gate cell is the answered plan decision `D-K14-2 [B-22] = yes` carried verbatim; no OM-20, no production mutations, no deps; S-sized) · chainTip → r11/P36.24-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-10-28 — P36.25 done — row 365 (K14 UXK14-7 brand; owner SIG-UI-154; cites SIG-UI-039/040, SIG-ENG-042 + `D-K14-2 [B-22] = yes`, DR-K14-20 verbatim): `lib/brand.ts` `sig.brand-mark/1` — 3 nodes, 2 solid + 1 dashed edge, one ink, badge-free, never a legend symbol — + `sig.social-card/1` per-type registry via `classifyRoute` · `LogoMark.astro` in the wordmark (`aria-hidden`, `currentColor`) · favicon.svg byte-pinned to the renderer + `favicon-32.png`/`apple-touch-icon.png`/`brand/logo.svg`/`social/card-{t0,t1,t2}.png` emitted at `astro:build:done` via Astro's own `sharp` · `BaseLayout` + print head: favicon links + OG/Twitter per route (T3 none) · `meta.ts` per-type descriptions (T1 = MD-01) · `public_routes.toml` +4 required rows · deferrals +0/−0 · `make check` recorded in runs/P36.25.md (env classes per P36.19–24; publish-allow-list regression repaired same commit) · `npm run check` green (766 unit, 53 routes, 688 e2e) · impl `d05ae4b4` → changelog repair `5f589522` → closeout this commit · ci: head-bound read follows · no gate (Gate status: none — the plan cell's `D-K14-2 [B-22] = yes` is carried, never re-decided), no OM-20, no live leg · chainTip → r11/P36.25-… · next → P36.26 · harness: devin-desktop/swe-2-high/subagent
