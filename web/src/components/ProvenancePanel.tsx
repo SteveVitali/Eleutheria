@@ -23,9 +23,10 @@
  */
 
 import type { ReactElement, ReactNode } from "react";
-// P36.23 (UXK14-3b): the panel's visual shell rides the component itself, so
-// every mount — the static shell or a React island — carries the same styles.
-import "../styles/provenance.css";
+// P36.23 (UXK14-3b): the panel's visual rules ride the GLOBAL epistemic
+// sheet (`styles/epistemic.css`, loaded by every layout) — a module-level
+// stylesheet import resolves through the shared facade chunk and lands an
+// extra render-blocking <link> on pages that never mount the panel.
 import {
   FIELD_LABELS,
   NOT_PUBLISHABLE,

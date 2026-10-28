@@ -132,17 +132,21 @@ describe("sig.callout/1 — the closed callout vocabulary (K14 §4.6)", () => {
 });
 
 describe("the one provenance panel (SIG-UI-083, UXR-33)", () => {
-  it("the shell mounts the one renderer, which alone carries the stylesheet", () => {
+  it("the shell mounts the one renderer; the panel rules ride the global sheet", () => {
     const shell = readSrc("components/ProvenancePanelShell.astro");
     expect(shell).toContain('from "./ProvenancePanel"');
-    // The shell does NOT import the stylesheet itself — the .tsx is the
-    // single importing module, so shell mounts and island mounts read the
-    // same sheet (a second importer adds nothing but a duplicate import).
-    expect(shell).not.toContain('import "../styles/provenance.css"');
     // The shell never re-implements the contract — it is markup-thin.
     expect(shell).not.toContain("data-provenance-panel");
+    // The panel's rules live on the GLOBAL epistemic sheet — a dedicated
+    // per-module stylesheet import resolves through the shared facade chunk
+    // and lands an extra render-blocking <link> on pages that never mount
+    // the panel (fix-arc 12: the leak regressed T1 LCP ~11 ms over the
+    // ratified 1,500 ms bound). Neither module may import one.
+    expect(shell).not.toContain('import "../styles/provenance.css"');
     const tsx = readSrc("components/ProvenancePanel.tsx");
-    expect(tsx).toContain('import "../styles/provenance.css"');
+    expect(tsx).not.toContain('import "../styles/provenance.css"');
+    const css = readSrc("styles/epistemic.css");
+    expect(css).toContain(".provenance-panel");
   });
 });
 

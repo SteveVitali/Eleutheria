@@ -9,11 +9,10 @@
 // (TX-08a / P35.36). It does one thing and only one: resolve the single
 // renderer (`ProvenancePanel.tsx` — UXR-33's one-panel rule; the unit suite
 // fails on a second emitter of the panel's marker attribute anywhere in
-// src/components/). The .tsx alone carries the stylesheet import —
-// `styles/provenance.css` — so whether the mount is this shell (record
-// pages) or the React islands directly (selection panels) the contract
-// renders with the identical sheet from a single importing module —
-// importing it here too would add a second importer for no behaviour.
+// src/components/). The panel's rules ride the global `styles/epistemic.css`
+// every layout already loads — a dedicated per-module stylesheet import
+// resolves through the shared facade chunk and lands a render-blocking
+// <link> on pages that never mount the panel (fix-arc 12).
 import ProvenancePanel from "./ProvenancePanel";
 import type { ProvenancePanelData } from "../lib/provenance-panel";
 
