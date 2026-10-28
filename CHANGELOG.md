@@ -24,6 +24,26 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Brand — the K14 node-link mark, the favicon set, per-page-type
+  social cards generated at build time, and per-type meta
+  descriptions** (P36.25 / row 365; K13 UXK14-7 + K14 §4.12/DR-K14-20;
+  SIG-UI-154 — owner; serves SIG-UI-039/040, SIG-ENG-042; `D-K14-2
+  [B-22] = yes` carried verbatim) — `web/src/lib/brand.ts`
+  (`sig.brand-mark/1` + `sig.social-card/1`) declares the mark once —
+  three nodes, two solid edges, one dashed edge in a single ink, no
+  badge, no epistemic hue; the dashed edge is brand, never a legend
+  symbol. `LogoMark.astro` renders it in `currentColor` beside the
+  wordmark; `public/favicon.svg` carries it byte-pinned to the one
+  renderer. The `sig-brand-assets` build hook emits `favicon-32.png`,
+  `apple-touch-icon.png`, `brand/logo.svg` and
+  `social/card-{t0,t1,t2}.png` (1200×630, "Data as of" from the same
+  data layer the pages read) at `astro:build:done` via Astro's own
+  `sharp` dependency — zero new packages, zero added JavaScript.
+  `BaseLayout` and the standalone print head emit the favicon links
+  and the full OG/Twitter `summary_large_image` block on every public
+  route (T3 shares none), and `defaultDescription` gains the T0/T2
+  per-type forms beside the MD-01 T1 form. `ops/public_routes.toml`
+  allow-lists the four new emitted top-level entries.
 - **Copy lints in CI — the K13 vocabulary rules run as a build gate over
   every discovered route, report-mode until each surface's ticket flips
   its routes to enforce** (P36.24 / row 364; K13 UXK14-5 + K14 UXK14-5;
