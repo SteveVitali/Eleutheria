@@ -165,6 +165,26 @@
         "plain": "This kind of document can show this kind of fact on its own.",
         "spec": "§10.5"
       },
+      "D2": {
+        "label": "First-party",
+        "plain": "The body the fact is about reported the fact itself — a first-party report.",
+        "spec": "§10.5"
+      },
+      "D3": {
+        "label": "Secondhand",
+        "plain": "A secondhand report of the fact, or a close proxy for it.",
+        "spec": "§10.5"
+      },
+      "D4": {
+        "label": "Short inference",
+        "plain": "The document shows a related fact; the target is a short inference away.",
+        "spec": "§10.5"
+      },
+      "D5": {
+        "label": "Model-based",
+        "plain": "The document bears on the fact only through a modelling assumption.",
+        "spec": "§10.5"
+      },
       "D6": {
         "label": "Not evidence",
         "plain": "Non-probative for this predicate — excluded, not down-weighted.",

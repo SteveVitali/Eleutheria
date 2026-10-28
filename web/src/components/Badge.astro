@@ -1,0 +1,41 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.22 (K14 UXK14-3a / §4.6 badge row): the neutral text badge — one
+// component for the directness (§10.5), access-kind (§12.2), licence (verbatim
+// SPDX id) and mirror (J4 byte-serving state) badges a record or source
+// surface renders. The badge is a TEXT channel — a muted kind word plus the
+// value word — never a coloured verdict and never a bare enum (SIG-UI-143:
+// the stored value rides `data-value`, the visible label comes from
+// `lib/badges.ts`, which fails the build on an unknown value, SIG-ENG-042).
+import { directnessBadge, accessKindBadge, licenceBadge, mirrorBadge } from "../lib/badges";
+import type { BadgeKind } from "../lib/badges";
+
+interface Props {
+  kind: BadgeKind;
+  /** The stored value — a §10.5 class, a §12.2 kind, an SPDX id, a mirror state. */
+  value: string;
+}
+
+const { kind, value } = Astro.props;
+const RESOLVERS = {
+  directness: directnessBadge,
+  access_kind: accessKindBadge,
+  licence: licenceBadge,
+  mirror: mirrorBadge,
+} as const;
+const spec = RESOLVERS[kind](value);
+---
+
+<span
+  class="sig-badge"
+  data-badge={spec.kind}
+  data-value={spec.value}
+  title={spec.meaning}
+  data-testid={`badge-${spec.kind}`}
+>
+  <span class="sig-badge__kind">{spec.kindLabel}</span>
+  <span class="sig-badge__value">{spec.label}</span>
+</span>

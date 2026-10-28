@@ -1,0 +1,63 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.22 (K14 UXK14-3a / §4.6 status row, §3.4): the status chips —
+// Provisional · Historical (+ date) · Not reviewed · Superseded · Withdrawn —
+// the lifecycle/publication states a record or figure carries, independent of
+// the four epistemic fields (never fused with them, SIG-UI-004). Every label
+// and meaning comes from the shared lexicon (SIG-UI-143): provisional reads
+// `states.provisional` (the amber ◔ state, method not yet evaluated);
+// historical reads `states.currency.HISTORICAL` and carries its start date in
+// `since`; not reviewed / superseded / withdrawn read `states.review` /
+// `states.resolution`. An unknown kind fails the build (SIG-ENG-042).
+import { lexiconState } from "../lib/lexicon";
+import type { StatusChipKind } from "../lib/cards";
+
+interface Props {
+  kind: StatusChipKind;
+  /** `historical` only: the date the state began, rendered after the label. */
+  since?: string;
+}
+
+const { kind, since } = Astro.props;
+
+const SPECS: Record<StatusChipKind, { label: string; plain: string; symbol?: string }> = {
+  provisional: (() => {
+    const s = lexiconState("provisional", "PROVISIONAL");
+    return { label: s.label, plain: s.plain, symbol: s.symbol };
+  })(),
+  historical: (() => {
+    const s = lexiconState("currency", "HISTORICAL");
+    return { label: s.label, plain: s.plain };
+  })(),
+  not_reviewed: (() => {
+    const s = lexiconState("review", "UNREVIEWED");
+    return { label: s.label, plain: s.plain };
+  })(),
+  superseded: (() => {
+    const s = lexiconState("resolution", "SUPERSEDED");
+    return { label: s.label, plain: s.plain };
+  })(),
+  withdrawn: (() => {
+    const s = lexiconState("resolution", "WITHDRAWN");
+    return { label: s.label, plain: s.plain };
+  })(),
+};
+
+const spec = SPECS[kind];
+---
+
+<span
+  class="sig-chip sig-chip--status"
+  data-chip="status"
+  data-status={kind}
+  {...(since ? { "data-since": since } : {})}
+  title={spec.plain}
+  data-testid={`status-chip-${kind}`}
+>
+  {spec.symbol && <span class="sig-chip__glyph" aria-hidden="true">{spec.symbol}</span>}
+  <span class="sig-chip__label">{spec.label}</span>
+  {kind === "historical" && since && <span class="sig-chip__date">· since {since}</span>}
+</span>

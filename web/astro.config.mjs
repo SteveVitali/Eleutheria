@@ -86,6 +86,10 @@ const INTERNAL_ROUTES = [
   // `<sig-typeahead>` reads (P36.40's real shards land in export mode later).
   ["/enhancement-kit", "enhancement-kit/index.astro"],
   ["/enhancement-kit/shards/[key].json", "enhancement-kit/shards/[key].json.ts"],
+  // P36.22 (UXK14-3a): the internal component-kit-A harness — mounts every
+  // kit-A component over fixture data so the e2e suite exercises the visual
+  // layer end-to-end; never published.
+  ["/component-kit", "component-kit/index.astro"],
 ];
 
 function sigInternalRoutes() {
@@ -115,6 +119,8 @@ function sigInternalRoutes() {
 // noindex pages never appear at all; (b) the flat /403.html + /410.html copies
 // matching the /404.html error-page convention (the nginx `error_page` wiring
 // that serves them is P34.40's dark roll — this row only builds the pages).
+// P36.22: /500.html needs no copy — Astro emits 500.astro flat natively,
+// exactly like 404.astro (the loop keeps it listed for the audit trail).
 // P36.21 (K13 §2.5, ADR-155): the sitemap is generated FROM THE ROUTE REGISTRY —
 // a URL is listed only when its page type is T0 or T1, so the stateful T2
 // surfaces (`/map/`, `/network/`, `/search/` — `noindex,follow` documents whose
@@ -126,7 +132,7 @@ function sigChrome() {
     hooks: {
       "astro:build:done": ({ dir }) => {
         const distDir = fileURLToPath(dir);
-        for (const code of ["403", "410"]) {
+        for (const code of ["403", "410", "500"]) {
           const page = join(distDir, code, "index.html");
           if (existsSync(page)) cpSync(page, join(distDir, `${code}.html`));
         }

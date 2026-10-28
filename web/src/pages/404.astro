@@ -7,10 +7,16 @@
 // route as /404.html; ops/web/nginx.conf already maps `error_page 404` onto it.
 // The page is chrome-light (no provenance/citation modules — there is nothing
 // here to cite) and noindex (never canonical content).
+// P36.22 (SIG-UI-151): the body renders the five-part `sig.error-page/1`
+// contract — state · missing · nearby · action · change plus the search /
+// status recovery links (home is the action).
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ErrorState from "../components/ErrorState.astro";
+import { errorPage } from "../lib/errors";
+
+const spec = errorPage("not_found");
 ---
 
-<BaseLayout title="Page not found" path="/404.html" chrome="minimal" noindex={true}>
-  <p data-copy="NF-01">This address does not name a page in the published record.</p>
-  <p><a data-copy="NF-02" href="/">Go to the home page</a></p>
+<BaseLayout title={spec.state} path="/404.html" chrome="minimal" noindex={true}>
+  <ErrorState spec={spec} />
 </BaseLayout>

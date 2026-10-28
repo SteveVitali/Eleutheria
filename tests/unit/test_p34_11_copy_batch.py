@@ -38,6 +38,11 @@ VALID_STATUSES = {"pending", "confirmed"}
 # `tests/unit/test_p34_17_copy_batch.py` covers them. P36.1b appended
 # DC-21…DC-32 (the /data-collection/ full text) and the CR-01…CR-08 conduct
 # rows — the crawler conduct policy carried verbatim on the page (B-2).
+# P36.22 re-bound NF-01/02, FB-01/02 and GN-01 to `lib/errors.ts`: the
+# branded error pages now delegate to sig.error-page/1, so the sentences
+# live in the contract's kind records and render through
+# ErrorState.astro's data-copy bindings (same append-only re-scope the
+# JD rows took under P35.45).
 P34_ID = re.compile(
     r"^(HO|DI|D|DS|HW|CC|CL|W|M|T|DF|CM|XD|XC|RQ|NF|FB|GN|TR|MD|WM|JD|MP|NW|WS|DC|MB|ES|SG|UP|CR)-\d+$"
 )
@@ -98,6 +103,7 @@ LITERAL_PAGES = {
     "lib/empty.ts": "web/src/lib/empty.ts",
     "lib/workspace-state.ts": "web/src/lib/workspace-state.ts",
     "lib/meta.ts": "web/src/lib/meta.ts",
+    "lib/errors.ts": "web/src/lib/errors.ts",
     "component/BaseLayout": "web/src/layouts/BaseLayout.astro",
     "exports/web_dossier.py": "exports/src/exports/web_dossier.py",
     "exports/spine_export.py": "exports/src/exports/spine_export.py",

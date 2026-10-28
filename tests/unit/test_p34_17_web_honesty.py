@@ -179,30 +179,44 @@ def test_notice_strings_render_verbatim_where_pinned() -> None:
     # Some notices sit inside JSX conditionals (N-1 under `review === null`,
     # N-4 under `creditUnderCorrection`), so this checks the raw template —
     # the `data-notice` marker is asserted alongside the literal text.
+    # P36.22: N-6 moved off 410.astro into sig.error-page/1 — the kind record
+    # pins `notice: "N-6"` in lib/errors.ts and ErrorState.astro emits it as
+    # `data-notice` (the rendered attribute is asserted by chrome.spec.ts).
     expectations = {
-        "web/src/pages/editorial-standards.astro": ("N-1", "Not yet performed."),
-        "web/src/pages/410.astro": (
-            "N-6",
+        "web/src/pages/editorial-standards.astro": (
+            'data-notice="N-1"',
+            "Not yet performed.",
+        ),
+        "web/src/lib/errors.ts": (
+            'notice: "N-6"',
             "This page has been removed while a correction is made.",
         ),
         "web/src/pages/status.astro": (
-            "N-7",
+            'data-notice="N-7"',
             "The API's dossier and terms responses are known to be wrong and are being corrected.",
         ),
         "web/src/pages/terms.astro": (
-            "N-7",
+            'data-notice="N-7"',
             "The API's dossier and terms responses are known to be wrong and are being corrected.",
         ),
         "web/src/pages/sources.astro": (
-            "N-4",
+            'data-notice="N-4"',
             "Attribution for this source is being corrected; see the source's own terms.",
         ),
-        "web/src/pages/dispute.astro": ("N-2", "Not operating yet."),
+        "web/src/pages/dispute.astro": ('data-notice="N-2"', "Not operating yet."),
     }
-    for rel, (nid, notice) in expectations.items():
+    for rel, (marker, notice) in expectations.items():
         template = (REPO_ROOT / rel).read_text(encoding="utf-8")
-        assert f'data-notice="{nid}"' in template, f"{rel}: data-notice={nid} marker missing"
+        assert marker in template, f"{rel}: notice marker missing — {marker!r}"
         assert notice in template, f"{rel}: notice string missing — {notice!r}"
+    # The contract's render channel: the pinned notice reaches markup as
+    # `data-notice` on the missing part (never a batch row).
+    renderer = (REPO_ROOT / "web/src/components/ErrorState.astro").read_text(
+        encoding="utf-8"
+    )
+    assert "data-notice" in renderer, (
+        "ErrorState.astro must emit the pinned notice as data-notice"
+    )
 
 
 def test_new_routes_registered_and_withdrawn_routes_denied() -> None:

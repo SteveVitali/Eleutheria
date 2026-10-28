@@ -1,0 +1,63 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.22 (K14 UXK14-3a / §4.6 field chips): the four epistemic fields as four
+// INDEPENDENT chips — the compact row variant of `EpistemicFields.astro` for
+// cards and record headers where the list layout is too tall. The contract is
+// identical (SIG-UI-004: never fused — `data-fused="false"`, one
+// `data-field`/`data-value` chip per field, the field name and value text
+// carrying the meaning with colour a redundant channel only, SIG-UI-005).
+// Labels come from the lexicon (`epistemicFieldValueLabel`, SIG-UI-143); the
+// support chip additionally carries the four-step glyph (SIG-UI-003).
+import {
+  EPISTEMIC_FIELD_NAMES,
+  FIELD_TITLES,
+  epistemicFieldValueLabel,
+  supportGlyph,
+  SUPPORT_STEPS,
+  GLYPH_STEP_COUNT,
+} from "../lib/epistemic";
+import type { Agreement, Currency, ResolutionStatus, Support } from "../lib/epistemic";
+
+interface Props {
+  resolution_status: ResolutionStatus;
+  support: Support;
+  agreement: Agreement;
+  currency: Currency | null;
+}
+
+const props = Astro.props;
+const values: Record<string, string> = {
+  resolution_status: props.resolution_status,
+  support: props.support,
+  agreement: props.agreement,
+  currency: props.currency ?? "—",
+};
+---
+
+<ul class="sig-fieldchips" data-testid="field-chips" data-fused="false">
+  {
+    EPISTEMIC_FIELD_NAMES.map((name) => (
+      <li class="sig-chip sig-chip--field" data-field={name} data-value={values[name]}>
+        <span class="sig-chip__name">{FIELD_TITLES[name]}</span>
+        {name === "support" && (
+          <span
+            class="sig-chip__glyph"
+            aria-hidden="true"
+            data-filled-steps={SUPPORT_STEPS[props.support]}
+          >
+            {supportGlyph(props.support)}
+          </span>
+        )}
+        <span class="sig-chip__value">{epistemicFieldValueLabel(name, values[name]!)}</span>
+        {name === "support" && (
+          <span class="sig-visually-hidden">
+            ({SUPPORT_STEPS[props.support]} of {GLYPH_STEP_COUNT} steps)
+          </span>
+        )}
+      </li>
+    ))
+  }
+</ul>

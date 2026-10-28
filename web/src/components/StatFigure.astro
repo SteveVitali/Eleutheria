@@ -1,0 +1,47 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.22 (K14 UXK14-3a / §4.6 stat row): ONE stat cell — the big number, the
+// caption label and the named denominator — whose numeral ALWAYS renders
+// through the `<Figure>` contract (SIG-UI-084 / SIG-TRANSP-013): the digits
+// sit inside the figure region so the bare-numeral check and the
+// pointer contract (`data-artifact` / `data-pointer` / `data-figure-id`)
+// hold exactly as on a hand-rolled stat. The value renders `groupDigits`ed —
+// never a raw run (SIG-UI-148); the denominator states what the count is
+// counted against (§32.5 — never a total, SIG-METRIC-010).
+import Figure from "./Figure.astro";
+import { groupDigits } from "../lib/format";
+import type { FigureSpec } from "../lib/figures";
+
+interface Props {
+  /** The figure contract — value + artifact + pointer + links. */
+  figure: FigureSpec;
+  /** The caption under the number ("jurisdictions with a published dossier"). */
+  label: string;
+  /** The named denominator the count is measured against (§32.5). */
+  denominator?: string;
+  /** An optional note line (e.g. the population caveat). */
+  note?: string;
+  /** The wrapping element — "li" inside a StatRow, "div" standalone. */
+  tag?: "li" | "div";
+  testid?: string;
+}
+
+const { figure, label, denominator, note, testid } = Astro.props;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const Tag = (Astro.props.tag ?? "div") as any;
+const unit = figure.unit ? ` ${figure.unit}` : "";
+---
+
+<Tag class="sig-stat" data-testid={testid}>
+  <Figure figure={figure} order="inline" testid={testid ? `${testid}-figure` : undefined}>
+    <span class="sig-stat__value">{groupDigits(String(figure.value))}{unit}</span>{" "}
+    <span class="sig-stat__label">{label}</span>{" "}
+    {denominator !== undefined && (
+      <span class="sig-stat__denominator" data-testid={testid ? `${testid}-denominator` : "named-denominator"}>{denominator}</span>
+    )}
+    {note !== undefined && <span class="sig-stat__note">{note}</span>}
+  </Figure>
+</Tag>
