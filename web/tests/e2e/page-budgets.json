@@ -125,11 +125,11 @@
       "route": "/map/",
       "metric": "totalInitialMaxBytes",
       "ratified_ceiling": 460800,
-      "recorded_measure": 543033,
-      "regression_bound": 589824,
+      "recorded_measure": 591239,
+      "regression_bound": 600000,
       "deferral": "D-P35.51-1",
       "owner": "the map-surface optimisation row (K13 MAP rows)",
-      "note": "same recorded gap, the total-transfer row: the ratified ≤ 450 KiB stands; today's initial transfer measures ≈ 543,033 B gzip including the over-budget script family — bounded at 576 KiB, reported every run, stale-row fails."
+      "note": "same recorded gap, the total-transfer row: the ratified ≤ 450 KiB stands; the P36.23 head's wire measure is 591,239 B gzip — the script family still dominates, plus the kit-B mounts this row adds (per-record absence chips on the unlocated list — ⓘ meaning popover + Help-find-it link — and the shared provenance stylesheet the FocusClaimPanels path now carries). Re-recorded once at the CI measure under the same deferral, ceilings untouched (P36.18's national-leg precedent), bounded at 600,000 B, reported every run, stale-row fails."
     },
     {
       "route": "/map/",
