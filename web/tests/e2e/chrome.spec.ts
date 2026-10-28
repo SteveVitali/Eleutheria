@@ -104,6 +104,17 @@ test("sitemap lists canonical-origin URLs only, all resolvable (QW-11)", async (
       (p) => !p.includes("/print/") && !(CHROME_PAGES as readonly string[]).includes(p),
     ),
   );
+  // P36.21 (K13 §2.5): the sitemap is the registry's canonical T0/T1 set —
+  // a stateful T2 surface (noindex,follow; canonical on the base surface) is
+  // never listed, whatever its document meta looks like.
+  const T0_T1_PATHS = new Set(
+    DISCOVERED_ROUTES.filter((r) => !r.internal && (r.type === "T0" || r.type === "T1")).map(
+      (r) => r.path,
+    ),
+  );
+  const T2_PATHS = new Set(
+    DISCOVERED_ROUTES.filter((r) => !r.internal && r.type === "T2").map((r) => r.path),
+  );
   // P35.39: the sitemap may also name linked machine-metadata FILES (the DCAT
   // catalog the build serves at /data/catalog.jsonld in export mode). A file
   // loc resolves on the canonical origin but is not a page — no canonical
@@ -116,6 +127,14 @@ test("sitemap lists canonical-origin URLs only, all resolvable (QW-11)", async (
       routes.has(path) || METADATA_LOCS.has(path),
       `sitemap lists a non-public or non-canonical route: ${loc}`,
     ).toBe(true);
+    expect(
+      T0_T1_PATHS.has(path) || METADATA_LOCS.has(path),
+      `sitemap lists a non-T0/T1 route: ${loc}`,
+    ).toBe(true);
+    expect(
+      T2_PATHS.has(path),
+      `sitemap lists a stateful T2 surface: ${loc}`,
+    ).toBe(false);
   }
   // Error pages, the /terms forwarder, print views and internal routes are never
   // canonical content — they must not appear.

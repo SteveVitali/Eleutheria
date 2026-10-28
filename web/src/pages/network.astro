@@ -15,6 +15,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import EmptyState from "../components/EmptyState.astro";
 import ViewSwitch from "../components/ViewSwitch.astro";
 import NoJsStateNotice from "../components/NoJsStateNotice.astro";
+import CiteThisView from "../components/CiteThisView.astro";
 import {
   ACCESS_EDGE_TYPES,
   ACCESS_EDGE_STYLES,
@@ -222,11 +223,19 @@ others.forEach((n, i) => {
   <section class="sig-island sig-graph-island" aria-labelledby="graph-island-heading" data-testid="graph-island-section">
     <h2 id="graph-island-heading">Interactive explorer</h2>
     <NoJsStateNotice
-      params={["release", "focus", "view"]}
+      params={["release", "overview", "hops", "edge", "expand", "path", "focus", "view"]}
       equivalents={[
         { href: "#ego-heading", label: "the ego-network figure and caption" },
         { href: "#access-heading", label: "the access-edge lists" },
         { href: "#paths-heading", label: "the access-path hop lists" },
+      ]}
+    />
+    <CiteThisView
+      view="network"
+      release={LATEST?.publicationId ?? null}
+      equivalents={[
+        { href: "#ego-heading", label: "the ego-network figure and caption" },
+        { href: "#access-heading", label: "the access-edge lists" },
       ]}
     />
     <p class="sig-island__note">

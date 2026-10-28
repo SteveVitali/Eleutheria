@@ -42,10 +42,10 @@ import {
 } from "../lib/network";
 import {
   facetNoticeText,
+  ISLAND_VIEWS,
   recordRoutes,
   viewHref,
-  WORKSPACE_VIEWS,
-} from "../lib/workspace-state";
+} from "../lib/workspace-state/index";
 import { panelFromStatement } from "../lib/provenance-panel";
 import type { StatementRow } from "../lib/provenance-panel";
 import ProvenancePanel from "../components/ProvenancePanel";
@@ -145,7 +145,7 @@ export default function NetworkIsland({
   return (
     <div data-testid="network-island">
       <nav className="sig-view-links" aria-label="Investigation views" data-testid="island-view-links">
-        {WORKSPACE_VIEWS.map((v) =>
+        {ISLAND_VIEWS.map((v) =>
           v === state.view ? (
             <strong key={v} aria-current="page">{VIEW_LABELS[v]}</strong>
           ) : (

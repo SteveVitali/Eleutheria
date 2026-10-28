@@ -35,6 +35,7 @@ import type { Crumb, PageAction } from "../lib/nav";
 import { releaseRoutes } from "../lib/release-routes";
 import { withBase, BASE } from "../lib/paths";
 import { classifyRoute } from "../lib/page-types";
+import { T2_ROBOTS_CONTENT } from "../lib/workspace-state/index";
 import { defaultDescription } from "../lib/meta";
 
 interface Props {
@@ -211,6 +212,14 @@ const KIT_CHROME_MODULES = ["sig-details", "sig-cite", "sig-copy"] as const;
 const pageClassification = classifyRoute(path);
 const loadKitChrome =
   chrome === "full" && pageClassification.ok && pageClassification.entry.type === "T1";
+// P36.21 (K13 §2.5, SIG-UI-059/060, ADR-225): the T2 indexing posture. Every
+// parameterised T2 URL carries `noindex,follow` and the canonical on the base
+// surface — a static build emits one head per route, so the directive is
+// unconditional on the T2 document. The sitemap (registry-derived, T0/T1
+// routes only) is the indexable set; the explore surfaces were never the
+// canonical content for the index anyway.
+const isT2 =
+  pageClassification.ok && pageClassification.entry.type === "T2";
 ---
 
 <!doctype html>
@@ -225,6 +234,10 @@ const loadKitChrome =
     <title>{title} · SIG</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex" />}
+    {/* P36.21 (K13 §2.5): the stateful T2 surface is `noindex,follow` — the
+        parameter-space of one route is never the indexable copy; the
+        canonical link names the base surface. */}
+    {isT2 && <meta name="robots" content={T2_ROBOTS_CONTENT} />}
     <!-- P34.13 (QW-11): the SIG favicon — the wordmark's three-letter mark on
          the ink square, served from /favicon.svg (a file the allow-list names). -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

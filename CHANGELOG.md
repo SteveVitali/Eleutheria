@@ -24,6 +24,26 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **The `sig.workspace-state/2` contract — one parameter registry driving
+  T2 URL state, "cite this view" snapshot links, and a surface × facet
+  conformance rule** (P36.21 / row 361; UXR-09/UXR-10;
+  SIG-UI-052/059/060/093 — owner; ADR-225; cites SIG-UI-039/040,
+  SIG-ENG-042, ADR-134, ADR-155) — `web/src/lib/workspace-state/`
+  registers every supported parameter (`sig.workspace-state-registry/1`)
+  with its type, cardinality, default, vocabulary, legacy aliases and
+  per-surface application; an unregistered or unsupported parameter is
+  refused loudly, never silently dropped. `v=1` links keep resolving
+  identically while new links mint `v=2`; `bbox`/`frame` fold into the
+  canonical `at=` frame, `kind=site`→`type=record`, `US-OK`→
+  `iso3166-2:US-OK`, `view=network`→`graph` and `location=any`→absent
+  all land with visible normalisation receipts. Every T2 surface
+  (`/map/`, `/network/`, `/search/`) partitions the registry into
+  applied-or-visibly-named: a parameter it does not apply earns a
+  `role="status"` facet notice instead of silently appearing to work.
+  "Cite this view" mints release-pinned `/s/<pub>/<surface>/?v=2&…`
+  links as copyable text; T2 documents carry `noindex,follow` plus the
+  base canonical, and the sitemap lists registry-derived canonical
+  T0/T1 routes only.
 - **The T1 enhancement kit — five framework-free custom elements that
   upgrade server-rendered HTML, emitted as `/_kit/sig-*.js` module
   entries and admitted only on T1 pages** (P36.20 / row 360; UXK0-4;

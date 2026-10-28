@@ -23,6 +23,7 @@ import AbsenceHatch from "../components/AbsenceHatch.astro";
 import EmptyState from "../components/EmptyState.astro";
 import ViewSwitch from "../components/ViewSwitch.astro";
 import NoJsStateNotice from "../components/NoJsStateNotice.astro";
+import CiteThisView from "../components/CiteThisView.astro";
 import { summariseBy } from "../lib/tables";
 import {
   LAYER_CONTROLS,
@@ -235,11 +236,19 @@ const mapCitationHref = beliefPinnedPermalink({
   <section class="sig-island sig-map-island" aria-labelledby="map-island-heading" data-testid="map-island-section">
     <h2 id="map-island-heading">Interactive map</h2>
     <NoJsStateNotice
-      params={["release", "collection", "focus", "view"]}
+      params={["release", "collection", "jurisdiction", "frame", "bbox", "at", "layers", "basemap", "focus", "view"]}
       equivalents={[
         { href: "#assets-heading", label: "the located-records table" },
         { href: "#bins-table-heading", label: "the coverage-bins table" },
         { href: "#nocoord-heading", label: "the records-without-a-point list" },
+      ]}
+    />
+    <CiteThisView
+      view="map"
+      release={LATEST?.publicationId ?? null}
+      equivalents={[
+        { href: "#assets-heading", label: "the located-records table" },
+        { href: "#bins-table-heading", label: "the coverage-bins table" },
       ]}
     />
     {EMPTY_TILE_STATE && (

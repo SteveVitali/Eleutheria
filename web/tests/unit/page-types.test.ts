@@ -46,6 +46,17 @@ describe("registry shape", () => {
     }
   });
 
+  it("every T2 entry names the sig.workspace-state/2 contract (SIG-UI-052/059)", () => {
+    // P36.21: the T2 surfaces' data contract is the workspace-state/2
+    // registry — the route registry declares it so a route can never claim
+    // stateful behaviour against the superseded /1 contract.
+    const t2 = PAGE_TYPE_REGISTRY.filter((e) => e.type === "T2");
+    expect(t2.length).toBeGreaterThanOrEqual(3);
+    for (const entry of t2) {
+      expect(entry.contract, `${entry.patterns}`).toBe("sig.workspace-state/2");
+    }
+  });
+
   it("every pattern parses — a malformed pattern is a build error at parse", () => {
     for (const entry of PAGE_TYPE_REGISTRY) {
       for (const p of entry.patterns) expect(() => parsePattern(p)).not.toThrow();

@@ -401,6 +401,42 @@
       "token": "/)?.",
       "count": 1,
       "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
+    },
+    {
+      "file": "src/lib/workspace-state/registry.ts",
+      "token": "/map/",
+      "count": 1,
+      "reason": "P36.21: sig.workspace-state/2 SURFACE_PATHS registry constant \u2014 the map surface's canonical route id (schema data consumed by the page-type registry, not a template link construction)"
+    },
+    {
+      "file": "src/lib/workspace-state/registry.ts",
+      "token": "/network/",
+      "count": 1,
+      "reason": "P36.21: SURFACE_PATHS registry constant \u2014 the graph surface's interim route id until the GX-09a rename row"
+    },
+    {
+      "file": "src/lib/workspace-state/registry.ts",
+      "token": "/search/",
+      "count": 1,
+      "reason": "P36.21: SURFACE_PATHS registry constant \u2014 the search surface's canonical route id"
+    },
+    {
+      "file": "src/lib/workspace-state/registry.ts",
+      "token": "/",
+      "count": 1,
+      "reason": "P36.21: a `/`-join inside a prose `meaning` string of the registry (inline-code markup inside a description, not a path)"
+    },
+    {
+      "file": "src/lib/workspace-state/state.ts",
+      "token": "/",
+      "count": 1,
+      "reason": "P36.21: raw.split(\"/\") delimiter in parseViewport \u2014 a string-shape split, not a link"
+    },
+    {
+      "file": "src/lib/workspace-state/cite.ts",
+      "token": "/s/$",
+      "count": 1,
+      "reason": "P36.21: citeViewHref's /s/<pub> snapshot-prefix template join \u2014 the cite-this-view contract's own minted form (the one construction the contract exists to produce)"
     }
   ]
 }
