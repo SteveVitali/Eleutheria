@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "32fd253ac3296caafe329085796d82bd7b211ac7",
+  "input_commit": "7d869e2c04c174779e3d5f5e70ea9d167fa4c6f8",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "74c789b62ccb2a3de9a9473642ecd959fc65533f97a76a3feede7919bcbf00f2"
+      "sha256": "8cd08a2bf73990bf6c7ba5afb508019f350b256c9d97b50c1f24ddc14eef2ac5"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -885,24 +885,28 @@
       "sha256": "9e7b9b983ee262780bb08836c7b7282456bf23a19e9503bb2ced59a3aa6a8459"
     },
     {
+      "path": "docs/adr/ADR-223-strict-csp-split-hsts-permissions-policy-and-figure-svg-posture.md",
+      "sha256": "4f5e9db1b9515ec648574073831c8507f5a02674ed8927e553b332cd39b4bd5d"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "e573548e3c2506b1b5477daa2263b3aab8152d2c1ced2d5a9cfa5ce9d46aea59"
+      "sha256": "5b7f4ea04b06f32c1b0f8c05a7b2a54a0e530f5f21ae7e24c5923212a2315632"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "195703b871a71a50ae56a09999b420e44e104292d01dca0811919ca90ac0b2dc"
+      "sha256": "668dc6d42b5dfdec35f5cccf7769412da37cc002985d4138649c749b207a671f"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "42527419a0560a5b388e54c730f721e8eb46023b7f2ccbad6c87d644c002d4e9"
+      "sha256": "7c89535c3fd01df17ae5421c02f4145dfcac4ca2bd47fba52c52299685cd6228"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "b3c8487fc9d0dabc35bcb8fa1d61d53fd030f832a2a620d1a50258f630de8fe6"
+      "sha256": "266280065daa0a245ca5cfc45cfb1607064d27d72b6b729e9ebd6cf2028d34f2"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "59de43997026f563f136edae2cae71ee2af075231296ddceda13baa0d4d3b3de"
+      "sha256": "94b4de003e50f2c03939b577c2cd3be9325f22ff086fd6cdcd5ba3db870871e9"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -2287,6 +2291,10 @@
     {
       "path": "docs/build/runs/P36.18.md",
       "sha256": "dbff5c7fc58c0c5ab744fc1e038c44af3bc09aec0a959afe5046f577a8e7db02"
+    },
+    {
+      "path": "docs/build/runs/P36.19.md",
+      "sha256": "09347a059c2a7ff8cd9952263949ce63e079f029dadabf2426a566148ce62610"
     },
     {
       "path": "docs/build/runs/P36.1a.md",
