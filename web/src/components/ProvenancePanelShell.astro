@@ -1,0 +1,30 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.23 (UXK14-3b, K14 §4.6 provenance-panel row, SIG-UI-083): the ONE
+// provenance panel's Astro-side shell — the component every static (.astro)
+// surface mounts to render the shared `sig.provenance-panel/1` contract
+// (TX-08a / P35.36). It does two things and only two: resolve the single
+// renderer (`ProvenancePanel.tsx` — UXR-33's one-panel rule; the unit suite
+// fails on a second emitter of the panel's marker attribute anywhere in
+// src/components/) and carry the panel's stylesheet (`styles/provenance.css`)
+// so the visual shell travels with the component. The React islands mount
+// the .tsx directly — it imports the same stylesheet, so selection panels
+// and record pages render the identical contract identically.
+import ProvenancePanel from "./ProvenancePanel";
+import type { ProvenancePanelData } from "../lib/provenance-panel";
+import "../styles/provenance.css";
+
+interface Props {
+  /** The normalised `sig.provenance-panel/1` data (panelForClaim/panelFromStatement). */
+  panel: ProvenancePanelData;
+  /** Emit `id="claim-<id>"` so `#claim-<id>` anchors resolve to this panel. */
+  anchor?: boolean;
+}
+
+const { panel, anchor = false } = Astro.props;
+---
+
+<ProvenancePanel panel={panel} anchor={anchor} />

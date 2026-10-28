@@ -77,46 +77,10 @@
   letter-spacing: 0.05em;
   white-space: nowrap;
 }
-/* The ⓘ definition button + native popover on a chip — the same no-JS
- * pattern `.sig-term__def`/`.sig-term__popover` carry (UA feature; inert
- * where unsupported). */
-.sig-chip__def {
-  border: var(--sig-border-thin) solid var(--sig-rule);
-  border-radius: var(--sig-radius-pill);
-  background: transparent;
-  color: var(--sig-ink-muted);
-  font-size: var(--sig-step--2);
-  line-height: var(--sig-leading-1);
-  padding: 0 var(--sig-space-1);
-  margin-inline-start: var(--sig-space-1);
-  cursor: pointer;
-}
-.sig-chip__popover {
-  inset: auto;
-  margin: auto;
-  max-inline-size: 22rem;
-  padding: var(--sig-space-2) var(--sig-space-3);
-  border: var(--sig-border-thin) solid var(--sig-border-strong);
-  border-radius: var(--sig-radius-2);
-  background: var(--sig-paper);
-  color: var(--sig-ink);
-  font-size: var(--sig-step--1);
-  line-height: var(--sig-leading-4);
-}
-@supports not (selector(:popover-open)) {
-  .sig-chip__popover {
-    display: none;
-  }
-  .sig-chip__def {
-    display: none;
-  }
-}
-@media print {
-  .sig-chip__def,
-  .sig-chip__popover {
-    display: none;
-  }
-}
+/* The ⓘ definition button + native popover rules live in epistemic.css —
+ * P36.23 moved them onto the global sheet so the absence chip (mounted on
+ * /map/ and pages that never load this file) shares the ONE no-JavaScript
+ * popover treatment the support chip uses. */
 /* The status chip's state accents — reserved hues ONLY on the states the
  * palette assigns them to (provisional amber; superseded/withdrawn neutral;
  * historical rides the currency ramp). Every accent pairs with the label
@@ -286,5 +250,39 @@ table.sig-table th[aria-sort="ascending"]::after {
 }
 table.sig-table th[aria-sort="descending"]::after {
   content: " ↓";
+}
+
+/* --- P36.23 (UXK14-3b, K14 §4.6 "Callouts" row): the typed callout — a
+ * labelled aside with a strong left rule. Only `caution` may carry the
+ * provisional amber accent (it IS the Provisional-disclosure callout); the
+ * other kinds stay strictly neutral — the label text always names the kind,
+ * colour is the redundant channel (SIG-UI-005/006). -------------------- */
+.sig-callout {
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-left: var(--sig-border-strong) solid var(--sig-rule-strong);
+  border-radius: var(--sig-radius-1);
+  background: var(--sig-surface-2);
+  padding: var(--sig-space-3) var(--sig-space-4);
+  margin: var(--sig-space-4) 0;
+}
+.sig-callout__title {
+  margin: 0 0 var(--sig-space-1);
+  font-size: var(--sig-step--1);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--sig-ink-muted);
+}
+.sig-callout__body > :first-child {
+  margin-top: 0;
+}
+.sig-callout__body > :last-child {
+  margin-bottom: 0;
+}
+.sig-callout--caution {
+  border-left-color: var(--sig-epi-provisional-mark);
+}
+.sig-callout--caution .sig-callout__title {
+  color: var(--sig-epi-provisional-text);
 }
 

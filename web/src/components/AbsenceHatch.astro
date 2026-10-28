@@ -31,6 +31,9 @@ const meta = ABSENCE_KIND_META[kind];
   data-absence-predicate={predicate_id}
   aria-label={`${predicate_label}: ${meta.label}`}
 >
-  <span class="sig-absence-hatch__mark" aria-hidden="true"></span>
+  {/* P36.23 (K14 §3.4/§4.6): the kind's symbol rides the hatch next to the
+      label — the four kinds read apart by symbol + text, never by a second
+      texture (SIG-UI-007). */}
+  <span class="sig-absence-hatch__symbol" aria-hidden="true">{meta.symbol}</span>
   {meta.label}
 </span>

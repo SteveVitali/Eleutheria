@@ -23,6 +23,9 @@
  */
 
 import type { ReactElement, ReactNode } from "react";
+// P36.23 (UXK14-3b): the panel's visual shell rides the component itself, so
+// every mount — the static shell or a React island — carries the same styles.
+import "../styles/provenance.css";
 import {
   FIELD_LABELS,
   NOT_PUBLISHABLE,

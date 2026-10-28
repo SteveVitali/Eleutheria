@@ -270,6 +270,18 @@ export const ABSENCE_KIND_META: Record<AbsenceKind, AbsenceKindMeta> = Object.fr
 /** The single shared hatch texture class (SIG-UI-007: exactly one texture). */
 export const ABSENCE_HATCH_CLASS = "sig-absence-hatch";
 
+/**
+ * P36.23 (UXK14-3b, K14 §4.6): the absence chip's action label — "Help find
+ * it ›". Absence is an invitation, not a dead end: the link takes the reader
+ * to the surface where the gap becomes work (the public research queue by
+ * default; a real `/task/<handle>/` page when one exists — never a mock
+ * "generated task" page, P34.12's retirement stands). The sentence is an
+ * agent-drafted public string: sha256-pinned copy-batch row `CK-61`
+ * (batch-03, B-2) — pending until the operator confirms it verbatim.
+ */
+export const ABSENCE_HELP_LABEL = "Help find it ›";
+export const ABSENCE_HELP_BATCH_ID = "CK-61";
+
 // --- The contradiction value range (§29.1, SIG-UI-009) ---------------------
 
 /** One competing claim plotted on the contradiction range. */

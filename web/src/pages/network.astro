@@ -37,7 +37,10 @@ import {
   SPECULATIVE_HOP_THRESHOLD,
 } from "../lib/network";
 import NetworkEdgeItem from "../components/NetworkEdgeItem.astro";
-import ProvenancePanel from "../components/ProvenancePanel";
+// P36.23 (UXK14-3b, SIG-UI-083): the static claim panels mount the shell —
+// the same one renderer + the shell stylesheet (the island renders through
+// ProvenancePanel.tsx directly, which carries the identical styles).
+import ProvenancePanelShell from "../components/ProvenancePanelShell.astro";
 import {
   getNetwork,
   getNetworkFocusEntityId,
@@ -507,7 +510,7 @@ others.forEach((n, i) => {
         an implied document.
       </p>
       {PAGE_CLAIM_IDS.map((cid) => (
-        <ProvenancePanel panel={CLAIM_PANELS[cid]!} anchor />
+        <ProvenancePanelShell panel={CLAIM_PANELS[cid]!} anchor />
       ))}
     </section>
   )}

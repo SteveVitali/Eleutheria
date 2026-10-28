@@ -1,0 +1,76 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.23 (UXK14-3b, K14 §4.6 "Absence chip", SIG-UI-007, O4): the actionable
+// absence marker — the ONE shared hatch (SIG-UI-007's single texture)
+// carrying the kind's distinct symbol + short label, a ⓘ that opens the
+// kind's plain-language meaning in a UA-native popover (the same no-JS
+// pattern the support chip uses; inert where the feature is absent), and
+// the "Help find it ›" action — a plain GET link to where the gap becomes
+// work: the research queue by default, or a real `/task/<handle>/` page
+// when the caller names one. It never links to a mock generated-task page
+// (P34.12's retirement stands: the link must not imply a task exists).
+import {
+  ABSENCE_HELP_BATCH_ID,
+  ABSENCE_HELP_LABEL,
+  ABSENCE_KIND_META,
+  type AbsenceKind,
+} from "../lib/epistemic";
+import { withBase } from "../lib/paths";
+
+interface Props {
+  /** The absence kind — NOT_RESEARCHED · NO_EVIDENCE_FOUND · EVIDENCE_OF_ABSENCE · UNRESOLVED. */
+  kind: AbsenceKind;
+  /** Machine-readable subject/predicate the absence is about. */
+  subject_id: string;
+  predicate_id: string;
+  /** The predicate's display name — "Location", "Sharing partners". */
+  predicate_label: string;
+  /**
+   * A slug unique ON THIS PAGE — the popover id derives from it, so two chips
+   * on one page must not share it (same rule `SupportChip`/`Term` carry).
+   */
+  chipId: string;
+  /**
+   * Where "Help find it ›" leads: a real `/task/<handle>/` page when one
+   * exists for this gap, else the research queue (the default) — the route
+   * where open gaps become tasks. `withBase()` applies to route paths.
+   */
+  helpHref?: string;
+}
+
+const { kind, subject_id, predicate_id, predicate_label, chipId, helpHref } = Astro.props;
+const meta = ABSENCE_KIND_META[kind];
+const help = helpHref === undefined ? withBase("research-queue/") : helpHref.startsWith("#") ? helpHref : withBase(helpHref);
+---
+
+<span
+  class="sig-absence-chip"
+  data-testid="absence-chip"
+  data-absence-kind={kind}
+  data-absence-subject={subject_id}
+  data-absence-predicate={predicate_id}
+  data-taskable={meta.taskable ? "true" : "false"}
+>
+  <span class="sig-absence-hatch" aria-label={`${predicate_label}: ${meta.label}`}>
+    <span class="sig-absence-hatch__symbol" aria-hidden="true">{meta.symbol}</span>
+    {meta.label}
+  </span>
+  <button
+    type="button"
+    class="sig-chip__def sig-absence-chip__def"
+    popovertarget={`ac-${chipId}`}
+    aria-label={`What ${meta.label} means`}
+    ><span aria-hidden="true">ⓘ</span></button
+  ><span popover id={`ac-${chipId}`} class="sig-chip__popover">{meta.meaning}</span>
+  {meta.taskable && (
+    <>
+      {" "}
+      <a class="sig-absence-chip__help" href={help} data-copy={ABSENCE_HELP_BATCH_ID}>
+        {ABSENCE_HELP_LABEL}
+      </a>
+    </>
+  )}
+</span>

@@ -25,7 +25,9 @@ import {
 import type { ClaimView } from "../../lib/evidence-viewer";
 import { getEvidence, getCaptureDiff, getStatementIndex } from "../../lib/data";
 import { panelForClaim } from "../../lib/provenance-panel";
-import ProvenancePanel from "../../components/ProvenancePanel";
+// P36.23 (UXK14-3b, SIG-UI-083): the page mounts the panel's Astro shell —
+// the same one renderer + the shell stylesheet.
+import ProvenancePanelShell from "../../components/ProvenancePanelShell.astro";
 
 // The evidence claim-views + capture diff flow through the single data seam (ADR-066):
 // fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
@@ -64,7 +66,9 @@ const panel = panelForClaim(STATEMENTS, view.claim_id, { jsonHref: null });
   >
     <p>
       <strong>Claim:</strong> {view.claim_label} = <strong>{String(view.value)}</strong>{" "}
-      {contested && <ContestedMarker compact />}
+      {/* P36.23 (J3): the marker is one click away from the both-sides list
+          below — the contested claims render on this same page. */}
+      {contested && <ContestedMarker compact href="#conflicting-claims" />}
     </p>
 
     <!-- The supporting document (SIG-UI-028), or the sealed metadata-only view (SIG-UI-030). -->
@@ -104,10 +108,12 @@ const panel = panelForClaim(STATEMENTS, view.claim_id, { jsonHref: null });
     <!-- The shared per-claim provenance panel (P35.36 / UXR-33): the same
          contract + verbatim binding-state wording every surface renders, and
          the `#claim-<id>` anchor's resolution target. -->
-    <ProvenancePanel panel={panel} anchor />
+    <ProvenancePanelShell panel={panel} anchor />
 
-    <!-- Conflicting claims (SIG-UI-028/009) — the dispute stays visible. -->
-    <h2>Conflicting claims</h2>
+    <!-- Conflicting claims (SIG-UI-028/009) — the dispute stays visible.
+         P36.23 (J3): `id="conflicting-claims"` is the both-sides anchor the
+         contested marker links to. -->
+    <h2 id="conflicting-claims">Conflicting claims</h2>
     {contested ? (
       <ul class="sig-conflicting" data-testid="conflicting-claims">
         {view.conflicting_claims.map((c) => (

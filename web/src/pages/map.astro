@@ -19,7 +19,9 @@
 // count, and contested locations roll up to a per-jurisdiction count that leads
 // to the dossier — never a dead task link.
 import BaseLayout from "../layouts/BaseLayout.astro";
-import AbsenceHatch from "../components/AbsenceHatch.astro";
+// P36.23 (UXK14-3b / O4): the per-record absence is the actionable chip —
+// the one hatch + kind symbol/label + "Help find it ›" to the queue.
+import AbsenceChip from "../components/AbsenceChip.astro";
 import EmptyState from "../components/EmptyState.astro";
 import ViewSwitch from "../components/ViewSwitch.astro";
 import NoJsStateNotice from "../components/NoJsStateNotice.astro";
@@ -552,11 +554,12 @@ const mapCitationHref = beliefPinnedPermalink({
               <li>
                 {href ? <a href={href}>{asset.label}</a> : asset.label} — {asset.precision}
                 {asset.locationAbsence && (
-                  <> <AbsenceHatch
+                  <> <AbsenceChip
                     kind={asset.locationAbsence}
                     subject_id={asset.id}
                     predicate_id="location"
                     predicate_label="Location"
+                    chipId={`map-${asset.id}`}
                   /></>
                 )}
               </li>

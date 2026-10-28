@@ -497,6 +497,30 @@
       "token": "/attributes/site_records/count",
       "count": 1,
       "reason": "P36.22: harness figure JSON pointer into a manifest-listed artifact — schema data, not a navigable link"
+    },
+    {
+      "file": "src/internal/component-kit/index.astro",
+      "token": "/sources/",
+      "count": 1,
+      "reason": "P36.23: kit-B empty-state fixture action href — EmptyStateParts spec data wrapped by withBase() inside EmptyState.astro, never emitted raw"
+    },
+    {
+      "file": "src/internal/component-kit/index.astro",
+      "token": "/status/",
+      "count": 1,
+      "reason": "P36.23: kit-B degraded empty-state fixture action href — EmptyStateParts spec data wrapped by withBase() inside EmptyState.astro, never emitted raw"
+    },
+    {
+      "file": "src/internal/component-kit/index.astro",
+      "token": "/component-kit/",
+      "count": 1,
+      "reason": "P36.23: kit-B 'Clear filters' fixture action href — EmptyStateParts spec data wrapped by withBase() inside EmptyState.astro, never emitted raw"
+    },
+    {
+      "file": "src/internal/component-kit/index.astro",
+      "token": "/task/example-task-handle/",
+      "count": 1,
+      "reason": "P36.23: kit-B absence-chip O4 fixture href — helpHref spec data wrapped by withBase() inside AbsenceChip.astro, never emitted raw"
     }
   ]
 }

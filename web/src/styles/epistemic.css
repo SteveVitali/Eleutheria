@@ -209,6 +209,23 @@ table.sig-sources td {
 .sig-contested__glyph {
   font-size: 0.95em;
 }
+/* P36.23 (K14 §3.4): the unresolved level keeps the same ≠ glyph but a
+ * different label plus a solid raspberry outline ("raspberry, solid") — the
+ * states read apart by outline + text, never by colour alone (SIG-UI-005). */
+.sig-contested--unresolved {
+  border: var(--sig-border-thin) solid var(--sig-epi-disagree-mark);
+  border-radius: var(--sig-radius-pill);
+  padding: 0 var(--sig-space-2);
+}
+/* A linked marker is a plain GET to the both-sides surface (J3) — it keeps
+ * the marker's look and shows the link affordance on hover/focus only. */
+a.sig-contested {
+  text-decoration: none;
+}
+a.sig-contested:hover,
+a.sig-contested:focus-visible {
+  text-decoration: underline;
+}
 
 /* --- The provisional marker (K14 §4.7 — the unevaluated-method state):
  * a dashed amber outline + the label; amber is reserved to this state. ----- */
@@ -283,6 +300,63 @@ a.sig-absence-hatch:focus-visible {
   background-color: color-mix(in srgb, var(--sig-link) 12%, transparent);
 }
 
+/* P36.23 (K14 §4.6 "Absence chip" / O4): the actionable absence — the one
+ * hatch (symbol + label) plus the ⓘ meaning popover and the "Help find it ›"
+ * action. The wrapper only lays the three pieces out; the texture never
+ * changes (SIG-UI-007). */
+.sig-absence-chip {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sig-space-1) var(--sig-space-2);
+}
+.sig-absence-chip__help {
+  font-size: var(--sig-step--1);
+  white-space: nowrap;
+}
+
+/* P36.23 (UXK14-3b): the chip popover pattern moved here from
+ * component-kit.css — it is the ONE no-JavaScript ⓘ-definition treatment the
+ * support chip and the absence chip share, so it lives on the global sheet
+ * every chip-mounting surface already loads. */
+.sig-chip__def {
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-pill);
+  background: transparent;
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--2);
+  line-height: var(--sig-leading-1);
+  padding: 0 var(--sig-space-1);
+  margin-inline-start: var(--sig-space-1);
+  cursor: pointer;
+}
+.sig-chip__popover {
+  inset: auto;
+  margin: auto;
+  max-inline-size: 22rem;
+  padding: var(--sig-space-2) var(--sig-space-3);
+  border: var(--sig-border-thin) solid var(--sig-border-strong);
+  border-radius: var(--sig-radius-2);
+  background: var(--sig-paper);
+  color: var(--sig-ink);
+  font-size: var(--sig-step--1);
+  line-height: var(--sig-leading-4);
+}
+@supports not (selector(:popover-open)) {
+  .sig-chip__popover {
+    display: none;
+  }
+  .sig-chip__def {
+    display: none;
+  }
+}
+@media print {
+  .sig-chip__def,
+  .sig-chip__popover {
+    display: none;
+  }
+}
+
 /* --- Contradiction value range (SIG-UI-009) -------------------------------- */
 .sig-range {
   border: var(--sig-border-thin) solid var(--sig-rule);
@@ -291,11 +365,13 @@ a.sig-absence-hatch:focus-visible {
 }
 /* P36.19 (UXK0-3, K0 §4.8): the plotted track renders as an inline <svg> —
    point positions are geometry attributes (cx="42.3%"), never style=""
-   attributes, so the strict CSP carries no style-src-attr exception. */
+   attributes, so the strict CSP carries no style-src-attr exception. The
+   viewport is tall enough for each point's ordinal label beneath the dot
+   (P36.23: "one labelled dot per claim"). */
 .sig-range__track {
   display: block;
   width: 100%;
-  height: 8px;
+  height: 26px;
   margin: var(--sig-space-5) 0 var(--sig-space-2);
 }
 .sig-range__track-line {
@@ -304,6 +380,16 @@ a.sig-absence-hatch:focus-visible {
 }
 .sig-range__point {
   fill: var(--sig-epi-disagree-mark);
+}
+.sig-range__point-label {
+  fill: var(--sig-ink-muted);
+  font-size: var(--sig-step--2);
+}
+/* P36.23 (K14 §3.4/§4.7): an unresolved range keeps the reserved raspberry
+ * as a SOLID frame — the only use of that hue besides the marker; the
+ * figcaption's "Unresolved range" wording carries the state in text. */
+.sig-range--unresolved {
+  border: var(--sig-border-strong) solid var(--sig-epi-disagree-mark);
 }
 .sig-range__claims {
   margin: var(--sig-space-2) 0 0;
