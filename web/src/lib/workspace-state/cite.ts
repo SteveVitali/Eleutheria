@@ -74,10 +74,9 @@ export function citeViewHref(
  * an ungrouped digit run (K14 NEW-8); the minted form inside <code> shows it.
  */
 export const INTERIM_CITE_VIEW_TEXT =
-  "The snapshot-pinned form resolves when the release publishes its site " +
-  "snapshot; the page you are reading is the latest view and an immutable " +
-  "citable copy is not yet published.";
+  "The pinned form resolves when the release publishes its site snapshot; " +
+  "this page is the latest view — an immutable citable copy is not yet published.";
 
 /** The affordance text when no release is bound to the build — honest, no dead link. */
 export const CITE_VIEW_UNBOUND =
-  "Cite this view is unavailable on this build — no release is bound, so no snapshot-pinned form exists.";
+  "Cite this view is unavailable on this build — no release is bound, so no pinned form exists.";

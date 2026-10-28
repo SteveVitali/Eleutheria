@@ -69,16 +69,16 @@ export function useWorkspaceState(
     release: defaultsRef.current.release ?? null,
     view: SURFACE_VIEW[ISLAND_SURFACE[view]],
   });
+  // The path decides the rendered view (SIG-UI-059); a `view=` that
+  // resolves to a different surface is a visible receipt, then the page's
+  // own view stands.
+  const viewMismatch = (named: string) =>
+    `The address names the "${named}" view; this page is ${ISLAND_SURFACE[view]} — it does not apply here.`;
   const read = () => {
     const parsed = parseWorkspaceState2(window.location.search, seed());
-    // The path decides the rendered view (SIG-UI-059); a `view=` that
-    // resolves to a different surface is a visible receipt, then the page's
-    // own view stands.
     const issues = [...parsed.issues, ...parsed.notes];
     if (VIEW_SURFACE[parsed.state.view] !== ISLAND_SURFACE[view]) {
-      issues.push(
-        `The address names the "${parsed.state.view}" view; this page is the ${ISLAND_SURFACE[view]} surface — the named view does not apply here.`,
-      );
+      issues.push(viewMismatch(parsed.state.view));
     }
     return {
       parsed: { ...parsed, issues },
@@ -100,9 +100,7 @@ export function useWorkspaceState(
       const parsed = parseWorkspaceState2(window.location.search, seed());
       const issues = [...parsed.issues, ...parsed.notes];
       if (VIEW_SURFACE[parsed.state.view] !== ISLAND_SURFACE[view]) {
-        issues.push(
-          `The address names the "${parsed.state.view}" view; this page is the ${ISLAND_SURFACE[view]} surface — the named view does not apply here.`,
-        );
+        issues.push(viewMismatch(parsed.state.view));
       }
       setCurrent({
         state: toIslandState(parsed.state, view),

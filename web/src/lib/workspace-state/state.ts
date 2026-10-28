@@ -40,6 +40,7 @@ import {
   SURFACE_VIEW,
   VIEW_SURFACE,
   V1_PARAM_NAMES,
+  WORKSPACE_PARAMS,
   WORKSPACE_STATE2_VERSION,
   type WorkspaceParamDef,
   type WorkspaceSurface,
@@ -273,10 +274,10 @@ function parseViewport(raw: string): Viewport | string {
     return `at coordinates must be numbers, got "${raw}"`;
   }
   if (z < 0 || z > 22) {
-    return `at zoom must sit inside 0..22, got "${zRaw}"`;
+    return `at zoom outside 0..22, got "${zRaw}"`;
   }
   if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
-    return `at coordinates sit outside the valid ranges, got "${raw}"`;
+    return `at coordinates outside the valid ranges, got "${raw}"`;
   }
   const d = viewportDecimals(z);
   return { z, lat: roundTo(lat, d), lon: roundTo(lon, d) };
@@ -295,10 +296,10 @@ export function bboxToViewport(raw: string): Viewport | string {
   }
   const [w, s, e, n] = parts;
   if (e <= w || n <= s) {
-    return `bbox must name a non-empty box (w<s? got "${raw}")`;
+    return `bbox must name a non-empty box, got "${raw}"`;
   }
   if (s < -90 || n > 90 || w < -180 || e > 180) {
-    return `bbox coordinates sit outside the valid ranges, got "${raw}"`;
+    return `bbox coordinates outside the valid ranges, got "${raw}"`;
   }
   const span = Math.max(e - w, n - s);
   const z = Math.max(0, Math.min(14, Math.floor(Math.log2(360 / span))));
@@ -326,7 +327,7 @@ function entriesOf(input: string): [string, string][] {
 }
 
 function badValue(issues: string[], name: string, why: string) {
-  issues.push(`The address has an unusable ${name} (${why}); it is ignored.`);
+  issues.push(`Unusable ${name} (${why}); it is ignored.`);
 }
 
 /**
@@ -360,7 +361,7 @@ export function parseWorkspaceState2(
     legacyV1 = true;
   } else if (v !== null && v !== WORKSPACE_STATE2_VERSION) {
     issues.push(
-      `The address names an unrecognised workspace-state version "${v}" — it is parsed as v=${WORKSPACE_STATE2_VERSION}.`,
+      `Unrecognised workspace-state version "${v}" — parsed as v=${WORKSPACE_STATE2_VERSION}.`,
     );
   }
 
@@ -373,7 +374,7 @@ export function parseWorkspaceState2(
       if (!unregistered.includes(name)) {
         unregistered.push(name);
         issues.push(
-          `The address names the parameter "${name}", which is not in the sig.workspace-state/2 registry — it is not applied.`,
+          `The parameter "${name}" is not in the sig.workspace-state/2 registry — not applied.`,
         );
       }
       continue;
@@ -413,6 +414,30 @@ export function parseWorkspaceState2(
   };
 
   // --- common
+  // The plain copies (no vocabulary or canonicalisation rule) fold into two
+  // registry-driven loops; every field still lands under its wire name.
+  for (const key of [
+    "q",
+    "frame",
+    "focus",
+    "sort",
+    "cursor",
+    "within",
+    "overview",
+  ] as const) {
+    if (single.has(key)) state[key] = single.get(key)!;
+  }
+  for (const key of [
+    "technology",
+    "vendor",
+    "operator",
+    "source",
+    "layers",
+    "edge",
+    "expand",
+  ] as const) {
+    if (lists.has(key)) state[key] = lists.get(key)!;
+  }
   if (single.has("release")) state.release = single.get("release")!;
   if (single.has("view")) {
     const raw = single.get("view")!;
@@ -428,7 +453,7 @@ export function parseWorkspaceState2(
     } else if (raw === LEGACY_VIEW_NETWORK) {
       state.view = "graph";
       notes.push(
-        `The address names the v1 view "network"; its canonical name is "graph".`,
+        `The address names the v1 view "network"; it resolves as "graph".`,
       );
     } else if (vocabCheck(PARAM_BY_NAME.get("view")!, raw)) {
       state.view = raw as WorkspaceViewValue;
@@ -454,7 +479,7 @@ export function parseWorkspaceState2(
             state.type = [...state.type, "record"];
           }
           notes.push(
-            `The facet kind=site is a legacy form; it resolves as type=record.`,
+            `kind=site is a legacy form; it resolves as type=record.`,
           );
         } else {
           state.kind.push(k);
@@ -471,7 +496,7 @@ export function parseWorkspaceState2(
         if (LEGACY_JKEY_RE.test(j)) {
           const canonical = `iso3166-2:${j}`;
           notes.push(
-            `The jurisdiction code "${j}" is a legacy form; it resolves as "${canonical}".`,
+            `The jurisdiction code "${j}" resolves as "${canonical}".`,
           );
           return canonical;
         }
@@ -479,11 +504,6 @@ export function parseWorkspaceState2(
       });
     }
   }
-  if (single.has("frame")) state.frame = single.get("frame")!;
-  if (lists.has("technology")) state.technology = lists.get("technology")!;
-  if (lists.has("vendor")) state.vendor = lists.get("vendor")!;
-  if (lists.has("operator")) state.operator = lists.get("operator")!;
-  if (lists.has("source")) state.source = lists.get("source")!;
   if (lists.has("collection")) {
     state.collection = lists.get("collection")!;
     state.collectionSpecified = true;
@@ -496,7 +516,7 @@ export function parseWorkspaceState2(
       } else {
         state.location = null;
         notes.push(
-          `The location value "any" is the v1 default word; the canonical form is the absent filter.`,
+          `location "any" is the v1 default word; the canonical form is the absent filter.`,
         );
       }
     } else if (vocabCheck(PARAM_BY_NAME.get("location")!, raw)) {
@@ -522,7 +542,6 @@ export function parseWorkspaceState2(
     const raw = vocabCheck(PARAM_BY_NAME.get("currency")!, single.get("currency")!);
     if (raw) state.currency = raw as Currency;
   }
-  if (single.has("focus")) state.focus = single.get("focus")!;
   if (single.has("page")) {
     const raw = single.get("page")!;
     // v1's rule verbatim: a canonical decimal integer ≥ 1 (so `01`, `0` and
@@ -534,13 +553,10 @@ export function parseWorkspaceState2(
       issues.push(`Unusable page "${raw}"; showing page 1.`);
     }
   }
-  if (single.has("sort")) state.sort = single.get("sort")!;
   if (single.has("dir")) {
     const raw = vocabCheck(PARAM_BY_NAME.get("dir")!, single.get("dir")!);
     if (raw) state.dir = raw as "asc" | "desc";
   }
-  if (single.has("cursor")) state.cursor = single.get("cursor")!;
-  if (single.has("within")) state.within = single.get("within")!;
 
   // --- map scope
   if (single.has("at")) {
@@ -558,29 +574,25 @@ export function parseWorkspaceState2(
       badValue(issues, "bbox", folded);
     } else if (state.at) {
       notes.push(
-        `The address's bbox is superseded by its explicit viewport at=${formatViewport(state.at)}.`,
+        `The bbox is superseded by the explicit map viewport at=${formatViewport(state.at)}.`,
       );
     } else {
       state.at = folded;
       notes.push(
-        `The address's bbox resolves to the canonical viewport at=${formatViewport(folded)}.`,
+        `The bbox resolves to the map viewport at=${formatViewport(folded)}.`,
       );
     }
   }
-  if (lists.has("layers")) state.layers = lists.get("layers")!;
   if (single.has("basemap")) {
     const raw = vocabCheck(PARAM_BY_NAME.get("basemap")!, single.get("basemap")!);
     if (raw) state.basemap = raw as "0" | "1";
   }
 
   // --- graph scope
-  if (single.has("overview")) state.overview = single.get("overview")!;
   if (single.has("hops")) {
     const raw = vocabCheck(PARAM_BY_NAME.get("hops")!, single.get("hops")!);
     if (raw) state.hops = raw === "1" ? 1 : 2;
   }
-  if (lists.has("edge")) state.edge = lists.get("edge")!;
-  if (lists.has("expand")) state.expand = lists.get("expand")!;
   if (single.has("path")) {
     const raw = single.get("path")!;
     if (raw.includes("~") && raw.split("~").every((p) => p !== "")) {
@@ -610,7 +622,7 @@ export function canonicaliseWorkspaceState(
     const folded = opts.frameBounds(state.frame);
     if (folded) {
       notes.push(
-        `The map frame "${state.frame}" resolves to the canonical viewport at=${formatViewport(folded)}.`,
+        `The map frame "${state.frame}" resolves to the viewport at=${formatViewport(folded)}.`,
       );
       return {
         state: { ...state, at: folded, frame: null },
@@ -637,42 +649,35 @@ export function serializeWorkspaceState2(state: WorkspaceState2): string {
   const params = new URLSearchParams();
   params.set("v", WORKSPACE_STATE2_VERSION);
   params.set("view", state.view);
-  if (state.release) params.set("release", state.release);
-  if (state.q !== "") params.set("q", state.q);
-  append(params, "type", state.type);
-  append(params, "kind", state.kind);
-  append(params, "jurisdiction", state.jurisdiction);
-  if (state.frame) params.set("frame", state.frame);
-  append(params, "technology", state.technology);
-  append(params, "vendor", state.vendor);
-  append(params, "operator", state.operator);
-  append(params, "source", state.source);
-  if (state.collectionSpecified || state.collection.length > 0) {
-    if (state.collection.length === 0) {
-      params.append("collection", "");
-    } else {
-      append(params, "collection", state.collection);
+  for (const def of WORKSPACE_PARAMS) {
+    const name = def.name;
+    // `v`/`view` are minted above; `bbox` never re-emits (it canonicalised
+    // to `at` on parse); `collection`'s bare-token and `at`'s viewport shape
+    // keep their special forms.
+    if (name === "view" || name === "bbox") continue;
+    if (name === "collection") {
+      if (state.collectionSpecified || state.collection.length > 0) {
+        append(
+          params,
+          name,
+          state.collection.length ? state.collection : [""],
+        );
+      }
+      continue;
     }
+    if (name === "at") {
+      if (state.at) params.set("at", formatViewport(state.at));
+      continue;
+    }
+    if (name === "page") {
+      if (state.page !== 1) params.set("page", String(state.page));
+      continue;
+    }
+    const value = state[name as keyof WorkspaceState2];
+    if (value === null || value === undefined || value === "") continue;
+    if (Array.isArray(value)) append(params, name, value as string[]);
+    else params.set(name, String(value));
   }
-  if (state.location) params.set("location", state.location);
-  append(params, "status", state.status);
-  if (state.seen) params.set("seen", state.seen);
-  if (state.dated) params.set("dated", state.dated);
-  if (state.currency) params.set("currency", state.currency);
-  if (state.focus) params.set("focus", state.focus);
-  if (state.page !== 1) params.set("page", String(state.page));
-  if (state.sort) params.set("sort", state.sort);
-  if (state.dir) params.set("dir", state.dir);
-  if (state.cursor) params.set("cursor", state.cursor);
-  if (state.within) params.set("within", state.within);
-  if (state.at) params.set("at", formatViewport(state.at));
-  append(params, "layers", state.layers);
-  if (state.basemap) params.set("basemap", state.basemap);
-  if (state.overview) params.set("overview", state.overview);
-  if (state.hops) params.set("hops", String(state.hops));
-  append(params, "edge", state.edge);
-  append(params, "expand", state.expand);
-  if (state.path) params.set("path", state.path);
   return params.toString();
 }
 

@@ -39,7 +39,7 @@
  * licence obligation).
  */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactElement } from "react";
 import {
   Map as MapLibreMap,
@@ -85,9 +85,13 @@ import {
   viewHref,
 } from "../lib/workspace-state/index";
 import { useWorkspaceState } from "./workspace";
-import { panelFromStatement } from "../lib/provenance-panel";
 import type { StatementRow } from "../lib/provenance-panel";
-import ProvenancePanel from "../components/ProvenancePanel";
+
+// P36.21: the claim panels load ONLY when a selected record carries embedded
+// statements — the shared panel contract (~2.4 KB gzip) leaves the initial
+// chunk graph, which is what the /map/ regression bound D-P35.51-1 measures.
+// The dynamic boundary keeps P35.36's contract byte-identical when it mounts.
+const FocusClaimPanels = lazy(() => import("../components/FocusClaimPanels"));
 
 /** One switchable licence compartment (tile archive or release compartment). */
 export interface CompartmentOption {
@@ -217,9 +221,6 @@ interface FocusPane {
   /** Where the focus resolves in the current view ("not in this view" is honest). */
   located: boolean;
 }
-
-/** The selection pane bounds its panels; the record page carries them all. */
-const FOCUS_PANEL_LIMIT = 8;
 
 export default function MapIsland({
   tiles,
@@ -919,26 +920,16 @@ export default function MapIsland({
           </p>
           {/* P35.36 (UXR-33): one shared provenance panel per claim the record
               publishes — the same contract the record page renders, bounded
-              here with the remainder on the record page. */}
+              here with the remainder on the record page. Lazy: mounts only
+              when a focus with statements exists (P36.21 bundle diet). */}
           {focusPane.claimStatements && focusPane.claimStatements.length > 0 && (
-            <div className="sig-island__focus-panels" data-testid="focus-claim-panels">
-              {focusPane.claimStatements.slice(0, FOCUS_PANEL_LIMIT).map((stmt) => (
-                <ProvenancePanel
-                  key={stmt.claim_id}
-                  panel={panelFromStatement(stmt, stmt.claim_id, {
-                    jsonHref: focusPane.recordJsonHref,
-                  })}
-                  anchor={false}
-                />
-              ))}
-              {focusPane.claimStatements.length > FOCUS_PANEL_LIMIT && focusPane.recordPageHref && (
-                <p className="sig-island__note">
-                  {focusPane.claimStatements.length - FOCUS_PANEL_LIMIT} more claim
-                  {focusPane.claimStatements.length - FOCUS_PANEL_LIMIT === 1 ? "" : "s"} on{" "}
-                  <a href={focusPane.recordPageHref}>the released record</a>.
-                </p>
-              )}
-            </div>
+            <Suspense fallback={null}>
+              <FocusClaimPanels
+                statements={focusPane.claimStatements}
+                jsonHref={focusPane.recordJsonHref}
+                recordPageHref={focusPane.recordPageHref}
+              />
+            </Suspense>
           )}
         </section>
       )}
