@@ -116,5 +116,6 @@
 | D-P35.23-9 | OPEN | the corpus maintainer | a licensed FDOT D5 capture lands | the slice pins the capture's digest; the oracle counts the jurisdiction-mismatch rows |
 | D-P35.23-10 | OPEN | the corpus maintainer | a licensed IA DOT multiview capture lands | the slice pins the capture's digest; the oracle counts the distinct-device co-locations |
 | D-P35.23-11 | OPEN | the corpus maintainer | a licensed IL DOT capture lands | the slice pins the capture's digest; the pipeline leg expects the fail-closed collision outcome |
+| D-P36.2-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.2-live-<n>` dispatch or the operator | RETURN PASS — P36.2 | each leg's `captures/<leg-id>/capture-*.json` sidecar records http_status + sha256 + `generated_at` and the verbatim bytes sit beside it; `capture_terms.py` exi… |
 
 ← back: CURRENT.md

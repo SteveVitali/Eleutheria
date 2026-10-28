@@ -57,3 +57,19 @@ meanwhile.
 PENDING REVIEW (D-SOURCES.9-1) — gated on missing licence metadata: the city
 Terms of Use must be captured verbatim and reviewed before any flip (HG-03
 class). The source stays `ingestion_permitted=false`.
+
+## Recorded operator answer — E4-R5 (P36.2 staging; GATE-P, 2026-10-01T04:49:27Z)
+
+B-41 (ADR-169 §12): E4-R5 = **a — flip `procportal_chicago_il` under
+GL-GATE-07 (US)**. This records the operator's answer as DATA — it is not a
+rights decision made by the agent, and it flips nothing by itself: the row
+stays `ingestion_permitted=false` until the operator applies the prepared
+patch (OP-26 / ADR-169 §14).
+
+Staged for the operator on `r11/sources-flips` (unsigned, prepared only):
+`ingestion_permitted = true`, `compact_status = "public_terms_only"`, custody
+`LINK → MIRROR` (matching the four flipped Socrata siblings), spdx
+`LicenseRef-PublicRecord-FactualCompilation`, reviewer `maintainer
+(delegated)`, packet = this file. Precedent: `camreg_chicago_il` — same
+`data.cityofchicago.org` portal, terms uncaptured — was flipped under
+GL-GATE-07 2026-09-18 and sits `ingestion_permitted=true` in the registry.

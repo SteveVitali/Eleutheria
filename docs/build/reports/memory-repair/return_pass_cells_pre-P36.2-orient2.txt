@@ -1,0 +1,117 @@
+# pre-fold cell bytes — P36.2 orient round 2 (2026-10-27)
+# archived before the second sanctioned compaction; each block is the
+# verbatim HEAD text of a cell whose text changed in round 2.
+
+### P32.22.gates_cell (70 B)
+queued hosted, production write; IN-TICKET PAUSE, never pre-authorised
+
+### P34.42b.gates_cell (280 B)
+QUEUED hosted leg, window-bound (AR-3+AR-2): excl. 03:00-06:30Z/d, never mid-class-run — exit 42; weekday 14:00-20:00Z, operator present; fresh one-leg authorization ("Full P34.42b leg", 2026-10-14T17:09Z) — still voided by live-1's 88-vs-100 read (OM-18); waits on `live:P35.1a1`
+
+### P34.43.gates_cell (303 B)
+QUEUED hosted legs, window-bound (AR-3+AR-2): L1 earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z/d — exit 42; pre-authorised L1+L2 S5-3 (11A list; expires GATE-G4); then 11B list or in-ticket go; waits on `live:P34.46`; voided-by red probe/failed restore; AR-2 + `sig-pg` backup; `/health` failure stops
+
+### P34.49.gates_cell (306 B)
+QUEUED hosted legs, window-bound (AR-3+AR-2): both earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z/d — exit 42; both pre-authorised S5-3 (11A list; expires GATE-G4); voided-by red probe/failed restore; L1 on P34.43 exec host; L2 on L1's counts, AR-2 SUCCESSFUL, `SIG_ATREST_AUTHOR`, pending `seal_register`
+
+### P34.44b.gates_cell (334 B)
+queued hosted legs, window-bound (AR-3+AR-2): both earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z/d + monthly batch window (d6 00:00Z→d13 12:00Z) — exit 42; pre-authorised S5-3 (11A list; expires GATE-G4); waits on `live:P34.43` (`deps` exit 42 while secrets absent); voided-by red probe/failed restore; AR-2 prestate + versioning ON
+
+### P34.45.gates_cell (333 B)
+QUEUED hosted leg, window-bound (AR-3+AR-2): earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z/d + monthly batch window (d6 00:00Z→d13 12:00Z) — exit 42; pre-authorised S5-3 "Both + list + P34.45" (expires GATE-G4); waits on `live:P34.43` + `live:P34.44b` + `live:P34.46` (GQ-24/A-20); voided-by red probe/failed restore; AR-2 prestate
+
+### P34.46.gates_cell (294 B)
+hosted, never pre-authorised (IN-TICKET PAUSE — L44 rewrites `claim_evidence` ACCESS EXCLUSIVE): L2 verbatim in-ticket go, operator present, weekday 14:00-20:00Z ≥ 2026-10-14T14:00Z (excl. weekends + outside-14:00-20:00Z), `live:P34.39a` pass, AR-2 SUCCESSFUL, roll-gate green; L3 48 h after L2
+
+### P35.57.gates_cell (294 B)
+hosted production write, never pre-authorised (IN-TICKET PAUSE — changes public API bytes): GATE-G4 §2 verbatim go recorded; needs `live:P34.46` L2 (`sig-api` serving), registry mount, promoted release, AR-2 SUCCESSFUL, roll-gate green, AR-3 weekday slot (excl. weekends + outside-14:00-20:00Z)
+
+### P35.5.gates_cell (284 B)
+QUEUED hosted mirror, production write; OM-20 conditional — only after OP-09 (`dig` answers the Cloudflare pair) + while the GATE-G4 OM-20 11B list (P35.5, expires GATE-G5) stands; AR-3+AR-2 weekday 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z); R2 credentials env-only (HG-09)
+
+### P35.1a.gates_cell (281 B)
+QUEUED hosted, production write; OM-20 — GATE-G4 11B list (P35.1a; expires GATE-G5); monthly-export trigger PAUSED inert until D-P34.6-2's verbatim go; AR-3+AR-2 weekday 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z), operator present, prestate first; retry on `live:P34.42b`
+
+### P35.1a1.gates_cell (304 B)
+QUEUED hosted, production write; one-leg authorization — GATE DECISIONS row 321 (2026-10-14T19:34Z) verbatim "Create 12 paused jobs"; expires on completion; voided by failed AR-2/red probe; weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exit 42; after `--check` + PR #296 green
+
+### P35.11.gates_cell (282 B)
+hosted, production write, never pre-authorised (GATE-G4 never-list): weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z, outside 2026-10-19→23) — verbatim ING-GO-A at open + `wave-a-gate` exit 0, AR-2 + OM-14 prestate, serial, ordered-prefix green; missed leg reported
+
+### P35.14a.gates_cell (316 B)
+queued hosted, production write; OM-20 — GATE-G4 approve-all-19 (this row — INSERT-only vocabulary registration; expires next GATE, OM-10); AR-3 — first weekday 14:00-20:00Z post-freeze, operator present, AR-2 prestate (excl. weekends + outside-14:00-20:00Z, before 2026-10-13T12:00Z AR-3 freeze); AC human-completed
+
+### P35.14b.gates_cell (317 B)
+QUEUED hosted, production write; never pre-authorised (§3.3 ACCESS EXCLUSIVE): verbatim in-ticket go only; AR-3+AR-2 — first weekday 14:00-20:00Z post-freeze, operator present, AR-2 SUCCESSFUL (excl. weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze); live AC still human-completed
+
+### P35.15a.gates_cell (361 B)
+queued hosted, production write; pre-authorised GATE-G4 approve-all-19 (this row — INSERT-only vocabulary registration; expires next GATE, OM-10); AR-3 — first weekday 14:00-20:00Z post-freeze, operator present, AR-2 prestate (excl. weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze); after `live:P35.14a`; AC human-completed
+
+### P35.15b.gates_cell (346 B)
+queued hosted, production write; pre-authorised GATE-G4 approve-all-19 (INSERT-only claim backfill; expires GATE-G5); AR-3+AR-2 first weekday 14:00-20:00Z post-freeze, operator present, AR-2 SUCCESSFUL + pre-state (excl. weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze, before `live:P35.15a`); F-523 recorded
+
+### P36.12.gates_cell (240 B)
+hosted production write, never pre-authorised; in-window only: excluded outside-14:00-20:00Z, outside 2026-10-26→11-05, AR-3 freeze/cut, materialize/G2 slot, 2026-10-29 peel-on first fire uncleared; verbatim ING-GO-B + `wave-b-gate` per leg
+
+### P35.1b.gates_cell (336 B)
+hosted production write — queued (`live_verification=false`); OM-20 — GATE-G4 11B list (P35.1b; 2026-10-09T17:32Z; expires next GATE, OM-10); AR-3+AR-2 weekday 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z) — apply exit 42; `SIG_SWEEP_AUTHOR` + AR-2 backup + prestate; voided by failed AR-2/red probe; after `--check` + #302 green
+
+### P35.1c.gates_cell (316 B)
+hosted production write — queued; OM-20 — GATE-G4 §4 names 291 not 291a (predates C13 → never pre-authorised; needs a 291a amendment); AR-3+AR-2 weekday 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z) — apply exit 42; `SIG_CONSOL_AUTHOR` + prestate; voided by failed AR-2/red probe; after `--check` + #303 green
+
+### P35.16.gates_cell (218 B)
+hosted, production write — QUEUED, never exercised; OM-20 — GATE-G4 §4 (P35.16 "Approve all 19 (rec.)", 2026-10-09T17:32Z; expires next GATE, OM-10); append-only INSERTs only; AR-3 + AR-2 window outside the AR-3 freeze
+
+### P35.16.operator_cell (110 B)
+nothing until the re-run — dry-run default; `--apply` only in-window; rollback forward-only (the claims stand)
+
+### P35.17.gates_cell (318 B)
+hosted, production write — QUEUED (`live_verification=false`); both HG-03 flips are the precondition (OP-26 — both stay `ingestion_permitted=false`); pre-authorised GATE-G4 §4 (P35.17 "Approve all 19 (rec.)", 2026-10-09T17:32Z; expires next GATE, OM-10); append-only OCFL only; AR-3+AR-2 window outside the AR-3 freeze
+
+### P35.25.operator_cell (47 B)
+nothing until the re-run; rollback forward-only
+
+### P35.26.operator_cell (47 B)
+nothing until the re-run; rollback forward-only
+
+### P35.41.gates_cell (285 B)
+QUEUED (OM-19 — deferred past the AR-3 slot under the merge-cascade hold, 2026-10-20T15:53Z digest); OM-20 — GATE-G4 §4 (P35.41; 2026-10-09T17:32Z; expires next sub-round GATE, OM-10); AR-3+AR-2 preferred 14:00–20:00Z weekdays, never 03:00–06:30Z; roll machinery + recording idempotent
+
+### P35.41.operator_cell (110 B)
+nothing until the re-run; the roll redeploys already-permitted connectors inside existing ingestion permission
+
+### P35.53.gates_cell (280 B)
+QUEUED (OM-19 — window guard exit 42 2026-10-23T03:33Z, never-mutate 03:00–06:30Z band); OM-20 — GATE-G4 §4 (P35.53); AR-3+AR-2 preferred 14:00–20:00Z weekdays, never 03:00–06:30Z, at/after `SIG_RELEASE_EARLIEST` 2026-10-13T12:00Z; ops idempotent (get-or-create + conditioned IAM)
+
+### P35.59.gates_cell (212 B)
+hosted production write — queued (guard exit 42 — weekday 14:00–20:00Z, never 03:00–06:30Z); pre-authorised GATE-G4 §4 (P35.59; expires next GATE, OM-10); requires `live:P35.53` + `live:P34.40` L2 (GB-Q4 expired)
+
+### P35.61.gates_cell (290 B)
+hosted production write — queued (secrets NOT_FOUND, env unset, upstream queued); never pre-authorised — L2 stop-and-pause, L3 verbatim go; AR-3+AR-2 weekday 14:00–20:00Z excl. 03:00–06:30Z, weekends, before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2 — earliest 2026-10-26T14:00Z
+
+### P35.62.gates_cell (396 B)
+hosted, staged only — queued (no snapshot, secrets NOT_FOUND, env unset); pre-authorised GATE-G4 §4 (P35.62; expires next GATE, OM-10); AR-3+AR-2 weekday 14:00–20:00Z excl. 03:00–06:30Z, weekends, before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.61` (snapshot), before `live:P35.53` (staged/ home); earliest 2026-10-26T14:00Z; create-only, never pointer/public write
+
+### P35.62.operator_cell (111 B)
+nothing until the re-run — the leg stages the candidate; activation/rollback/promotion are P35.63's under HG-11
+
+### P35.63.gates_cell (556 B)
+hosted production write — queued (env unset, secrets NOT_FOUND, upstream queued); never pre-authorised — publication never-listed, `p-17b713` never transfers; L2's go = verbatim signed HG-11 readout + go; AR-3+AR-2 weekday 14:00–20:00Z excl. 03:00–06:30Z, weekends, before `live:P35.62` (staged candidate), before `live:P35.53` (staged/ home), before `live:P35.59` (dark cutover), before `live:P35.61` (snapshot input), before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.57` (the queued API-roll leg); earliest 2026-10-26T14:00Z
+
+### P35.64.gates_cell (308 B)
+hosted, read-only — `acceptance-sweep-11b` refuses (exit 42) before `live:P35.63` promotes (promoted first release must exist): both legs queued, L2 on verbatim signed HG-11 readout, never pre-authorised; weekday 14:00–20:00Z ≥ 2026-10-26T14:00Z; sweep needs no go; GATE-G5 never presented while a leg is due
+
+### P37.2.gates_cell (554 B)
+hosted production write, never pre-authorised (tier-bump go = P37.2's own in-ticket pause); in-window only: 2026-11-16→20 (earliest 2026-10-26 iff P37.1+PKG-07+Q-23 landed — strict); excluded: outside 2026-11-16→20 (strict; earliest unmet), 03:00–06:30Z, AR-3 freeze/cut, materialize/G2/manual run, Wave-B r11 batch crons not held (FEA-15) for L3; L4 read-only: soak < 24 h from the recorded run end or outside the 48 h grace (through 2026-11-22T00:00Z); verbatim ING-GO-C ("Approve ING-GO-C (rec.)", GATE-G5 §3, byte-exact) + `wave-c-gate` green per leg
+
+### P35.2.gates_cell (345 B)
+hosted production write — queued (no ADC, `SIG_GCP_PROJECT` unset); pre-authorised OM-20 (named verbatim on the GATE-G5 list); in-window only: weekday 14:00–20:00Z preferred, never 03:00–06:30Z, never an AR-3 batch window, never before AR-2's on-demand backup; earliest 2026-10-27T14:00Z; packet `reports/p35.2-alert-roll/` prepared_not_executed
+
+### P35.2.operator_cell (195 B)
+nothing until the re-run — the verbatim apply sequence, the AR-2 prestate list and the per-leg rollback live in `docs/build/reports/p35.2-alert-roll/`; e-mail receipt confirmation stays D-P34.4-2
+
+### P35.21.operator_cell (103 B)
+nothing until the re-run — `ops/gcp/partner-name-audit.sh --apply`; `D-P32.3-1` stays OPEN — sized only
+
+### P35.23.operator_cell (82 B)
+nothing until the re-run — `rdc-slices.sh --apply all`; `D-P35.23-2…-11` stay OPEN

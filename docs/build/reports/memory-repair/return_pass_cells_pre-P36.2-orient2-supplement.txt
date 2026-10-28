@@ -1,0 +1,17 @@
+P36.2 orient fold 2 — SUPPLEMENT: cells compacted but missed by the
+primary archive (gap surfaced by the head-bound CI live-claims leg:
+dropping `live-1` stopped OM-18` removed the negation token that
+suppressed the cell's production-state segment in the regenerated
+CURRENT.md). Pre-repair bytes recovered verbatim from git object
+4dd5fabb (dispatch boundary = last base commit before the folds);
+the three cells were restored verbatim in the same repair, so the
+fold no longer carries these drops.
+
+### P34.42b.rerun_cell (pre-fold, from 4dd5fabb)
+`implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` · landed 252 (PR #253; `live-1` stopped OM-18) · next `r11/P34.42b-live-2` post-`live:P35.1a1`
+
+### P35.1a.rerun_cell (pre-fold, from 4dd5fabb)
+`implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` · landed 264 (PR #266; `live-1` stopped OM-18) · retry `r11/P35.1a-live-2` post-`live:P34.42b`
+
+### P35.1a1.rerun_cell (pre-fold, from 4dd5fabb)
+`implement-spec spec=docs/tickets/287a_P35.1a1__seed-declared-jobs-paused.md live_verification=true` · landed 287a (PR #296 — leg queued 2026-10-14, production untouched)
