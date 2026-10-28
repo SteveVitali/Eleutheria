@@ -1,0 +1,81 @@
+# SPDX-License-Identifier: Apache-2.0
+# P37.1 / ACQ-17 (I8 §4.3 item 3): the national/global OSM collection tiling —
+# DATA, not code (SIG-ENG-001): the area set, the per-query chunk sizes, the
+# timeouts, pacing and the discovery-vs-fetch drift tolerance are reviewed data
+# rows, never literals buried in code.
+#
+# The collection runs two passes inside one run:
+#   1. DISCOVERY — `out count;` queries, each covering up to `areas_per_count`
+#      area filters chained in one request, over the whole declared area set
+#      (51 US-state areas first, then every declared country).
+#   2. FETCH — one `out body center qt;` query per area whose discovery count
+#      is non-zero, at `pace_seconds` spacing and `fetch_timeout`; the emitted
+#      element count is reconciled against the discovery count and a mismatch
+#      beyond the tolerance is a recorded ContentDrift (SIG-ENG-042: the tile
+#      counts reconcile or the run fails — never a vacuous success).
+#
+# The US is deliberately NOT a country tile: its 51 state areas are the US
+# coverage at the granularity the data volume needs, so no element is ever
+# fetched twice. `us` is absent from `countries` by construction.
+#
+# SIG-INGEST-045i: these are named administrative AREA queries, never an
+# unbounded world query — the tiling is the sanctioned increment path.
+
+version = "sig.osm-area-tiles/1"
+
+# Discovery order: the US state/DC areas first (ISO3166-2), then every declared
+# country (ISO3166-1 alpha-2; `us` excluded — see header). Top-level keys, not
+# [params] — the two pass inputs the tiling enumerates over.
+us_states = [
+  "US-AL", "US-AK", "US-AZ", "US-AR", "US-CA", "US-CO", "US-CT", "US-DE",
+  "US-FL", "US-GA", "US-HI", "US-ID", "US-IL", "US-IN", "US-IA", "US-KS",
+  "US-KY", "US-LA", "US-ME", "US-MD", "US-MA", "US-MI", "US-MN", "US-MS",
+  "US-MO", "US-MT", "US-NE", "US-NV", "US-NH", "US-NJ", "US-NM", "US-NY",
+  "US-NC", "US-ND", "US-OH", "US-OK", "US-OR", "US-PA", "US-RI", "US-SC",
+  "US-SD", "US-TN", "US-TX", "US-UT", "US-VT", "US-VA", "US-WA", "US-WV",
+  "US-WI", "US-WY", "US-DC",
+]
+
+# ISO 3166-1 alpha-2, minus `us` (covered by us_states). Declared in full so
+# the discovery pass measures every country rather than assuming coverage.
+countries = [
+  "ad", "ae", "af", "ag", "ai", "al", "am", "ao", "aq", "ar", "as", "at",
+  "au", "aw", "ax", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bi",
+  "bj", "bl", "bm", "bn", "bo", "bq", "br", "bs", "bt", "bv", "bw", "by",
+  "bz", "ca", "cc", "cd", "cf", "cg", "ch", "ci", "ck", "cl", "cm", "cn",
+  "co", "cr", "cu", "cv", "cw", "cx", "cy", "cz", "de", "dj", "dk", "dm",
+  "do", "dz", "ec", "ee", "eg", "eh", "er", "es", "et", "fi", "fj", "fk",
+  "fm", "fo", "fr", "ga", "gb", "gd", "ge", "gf", "gg", "gh", "gi", "gl",
+  "gm", "gn", "gp", "gq", "gr", "gs", "gt", "gu", "gw", "gy", "hk", "hm",
+  "hn", "hr", "ht", "hu", "id", "ie", "il", "im", "in", "io", "iq", "ir",
+  "is", "it", "je", "jm", "jo", "jp", "ke", "kg", "kh", "ki", "km", "kn",
+  "kp", "kr", "kw", "ky", "kz", "la", "lb", "lc", "li", "lk", "lr", "ls",
+  "lt", "lu", "lv", "ly", "ma", "mc", "md", "me", "mf", "mg", "mh", "mk",
+  "ml", "mm", "mn", "mo", "mp", "mq", "mr", "ms", "mt", "mu", "mv", "mw",
+  "mx", "my", "mz", "na", "nc", "ne", "nf", "ng", "ni", "nl", "no", "np",
+  "nr", "nu", "nz", "om", "pa", "pe", "pf", "pg", "ph", "pk", "pl", "pm",
+  "pn", "pr", "ps", "pt", "pw", "py", "qa", "re", "ro", "rs", "ru", "rw",
+  "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sj", "sk", "sl", "sm",
+  "sn", "so", "sr", "ss", "st", "sv", "sx", "sy", "sz", "tc", "td", "tf",
+  "tg", "th", "tj", "tk", "tl", "tm", "tn", "to", "tr", "tt", "tv", "tw",
+  "tz", "ua", "ug", "um", "uy", "uz", "va", "vc", "ve", "vg", "vi", "vn",
+  "vu", "wf", "ws", "ye", "yt", "za", "zm", "zw",
+]
+
+[params]
+# Areas chained into one discovery `out count;` request (bounded so the GET URL
+# stays under the instance's request limit).
+areas_per_count = 50
+# Seconds between Overpass requests (the reviewed ~30s pacing; rate_limit_per_min
+# 2 on the emitted targets — the shared rate limiter enforces it per host).
+pace_seconds = 30
+# Query timeouts (seconds) — fetch tiles carry the ACQ-17 180s budget; the
+# count probes are cheap aggregates and keep a shorter bound.
+fetch_timeout = 180
+count_timeout = 90
+# Discovery-vs-fetch reconciliation: a tile is drifting when
+# |actual - expected| > max(floor, expected * tolerance_pct) — elements can be
+# mapped or deleted between the two passes, so small deltas are movement,
+# not drift.
+count_tolerance_pct = 0.02
+count_tolerance_floor = 2

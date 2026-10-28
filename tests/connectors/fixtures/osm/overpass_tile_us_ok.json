@@ -1,0 +1,2213 @@
+{
+ "version": 0.6,
+ "generator": "Overpass API 0.7.62",
+ "osm3s": {
+  "timestamp_osm_base": "2026-10-26T00:00:00Z",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+ },
+ "elements": [
+  {
+   "type": "node",
+   "id": 10001,
+   "lat": 34.860995,
+   "lon": -98.716366,
+   "tags": {
+    "highway": "speed_camera"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10002,
+   "lat": 34.905885,
+   "lon": -97.372539,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10003,
+   "lat": 35.846493,
+   "lon": -99.854872,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10004,
+   "lat": 35.521265,
+   "lon": -98.055737,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10005,
+   "lat": 35.385601,
+   "lon": -96.535917,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10006,
+   "lat": 35.223406,
+   "lon": -97.309813,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10007,
+   "lat": 35.385716,
+   "lon": -95.296093,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10008,
+   "lat": 36.786657,
+   "lon": -99.624914,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10009,
+   "lat": 35.103092,
+   "lon": -97.319034,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10010,
+   "lat": 36.024719,
+   "lon": -94.938202,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10011,
+   "lat": 34.896892,
+   "lon": -97.884441,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10012,
+   "lat": 36.676399,
+   "lon": -98.29892,
+   "tags": {
+    "surveillance:type": "camera",
+    "camera:type": "dome"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10013,
+   "lat": 36.335804,
+   "lon": -97.862265,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10014,
+   "lat": 35.341925,
+   "lon": -99.535957,
+   "tags": {
+    "highway": "speed_camera"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10015,
+   "lat": 36.431989,
+   "lon": -95.989972,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10016,
+   "lat": 34.941163,
+   "lon": -98.229051,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10017,
+   "lat": 35.94404,
+   "lon": -96.175383,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10018,
+   "lat": 36.712214,
+   "lon": -97.415177,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10019,
+   "lat": 35.447575,
+   "lon": -98.14214,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10020,
+   "lat": 36.748666,
+   "lon": -99.105513,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10021,
+   "lat": 35.070519,
+   "lon": -99.090418,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10022,
+   "lat": 35.694887,
+   "lon": -98.653282,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10023,
+   "lat": 34.739761,
+   "lon": -97.689226,
+   "tags": {
+    "surveillance:type": "camera",
+    "camera:type": "dome"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10024,
+   "lat": 35.504098,
+   "lon": -97.847447,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10025,
+   "lat": 36.850172,
+   "lon": -97.11864,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10026,
+   "lat": 36.141859,
+   "lon": -95.53029,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10027,
+   "lat": 35.114119,
+   "lon": -97.546425,
+   "tags": {
+    "highway": "speed_camera"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10028,
+   "lat": 34.893472,
+   "lon": -99.045531,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10029,
+   "lat": 35.242337,
+   "lon": -96.159682,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10030,
+   "lat": 36.495737,
+   "lon": -96.540657,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10031,
+   "lat": 35.417905,
+   "lon": -99.404652,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10032,
+   "lat": 35.964613,
+   "lon": -94.704088,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10033,
+   "lat": 35.276997,
+   "lon": -96.167456,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10034,
+   "lat": 36.087006,
+   "lon": -99.477664,
+   "tags": {
+    "surveillance:type": "camera",
+    "camera:type": "dome"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10035,
+   "lat": 34.78387,
+   "lon": -99.846472,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10036,
+   "lat": 35.809081,
+   "lon": -99.478828,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10037,
+   "lat": 35.214244,
+   "lon": -95.320444,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10038,
+   "lat": 36.620697,
+   "lon": -99.647763,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10039,
+   "lat": 35.75455,
+   "lon": -99.600511,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10040,
+   "lat": 36.619775,
+   "lon": -95.14219,
+   "tags": {
+    "highway": "speed_camera"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10041,
+   "lat": 36.837723,
+   "lon": -96.525903,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10042,
+   "lat": 36.875538,
+   "lon": -98.939361,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10043,
+   "lat": 35.410592,
+   "lon": -97.336585,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10044,
+   "lat": 35.097179,
+   "lon": -97.590329,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10045,
+   "lat": 35.869443,
+   "lon": -95.77355,
+   "tags": {
+    "surveillance:type": "camera",
+    "camera:type": "dome"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10046,
+   "lat": 35.728237,
+   "lon": -97.634084,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10047,
+   "lat": 34.997958,
+   "lon": -96.314268,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10048,
+   "lat": 35.479928,
+   "lon": -95.284932,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10049,
+   "lat": 36.830915,
+   "lon": -94.918572,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10050,
+   "lat": 35.638584,
+   "lon": -99.491291,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10051,
+   "lat": 34.905978,
+   "lon": -98.167115,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10052,
+   "lat": 36.799429,
+   "lon": -96.355985,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10053,
+   "lat": 35.700202,
+   "lon": -95.640272,
+   "tags": {
+    "highway": "speed_camera"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10054,
+   "lat": 35.453476,
+   "lon": -95.559396,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10055,
+   "lat": 35.042516,
+   "lon": -98.307835,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10056,
+   "lat": 36.311955,
+   "lon": -98.536772,
+   "tags": {
+    "surveillance:type": "camera",
+    "camera:type": "dome"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10057,
+   "lat": 36.34443,
+   "lon": -99.073879,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10058,
+   "lat": 36.222345,
+   "lon": -96.235877,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10059,
+   "lat": 35.500955,
+   "lon": -97.162867,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10060,
+   "lat": 35.658345,
+   "lon": -95.256237,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10061,
+   "lat": 35.441461,
+   "lon": -96.634984,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10062,
+   "lat": 35.339023,
+   "lon": -96.080237,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10063,
+   "lat": 36.142765,
+   "lon": -95.326076,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10064,
+   "lat": 35.6521,
+   "lon": -99.459442,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10065,
+   "lat": 36.819886,
+   "lon": -95.8403,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10066,
+   "lat": 35.958822,
+   "lon": -97.105764,
+   "tags": {
+    "highway": "speed_camera"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10067,
+   "lat": 35.561596,
+   "lon": -95.491715,
+   "tags": {
+    "surveillance:type": "camera",
+    "camera:type": "dome"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10068,
+   "lat": 36.507837,
+   "lon": -97.526508,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10069,
+   "lat": 36.807584,
+   "lon": -96.665992,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10070,
+   "lat": 35.436897,
+   "lon": -96.460689,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10071,
+   "lat": 36.082658,
+   "lon": -96.886267,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10072,
+   "lat": 35.10327,
+   "lon": -99.078233,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10073,
+   "lat": 36.09309,
+   "lon": -96.468901,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10074,
+   "lat": 36.337394,
+   "lon": -98.041967,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10075,
+   "lat": 36.155336,
+   "lon": -95.999422,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10076,
+   "lat": 36.314799,
+   "lon": -97.782469,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10077,
+   "lat": 35.707031,
+   "lon": -97.151142,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10078,
+   "lat": 35.897866,
+   "lon": -95.217572,
+   "tags": {
+    "surveillance:type": "camera",
+    "camera:type": "dome"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10079,
+   "lat": 36.64486,
+   "lon": -95.432163,
+   "tags": {
+    "highway": "speed_camera"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10080,
+   "lat": 34.825053,
+   "lon": -97.122409,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10081,
+   "lat": 36.174133,
+   "lon": -99.422686,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10082,
+   "lat": 35.807073,
+   "lon": -96.849045,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10083,
+   "lat": 35.287533,
+   "lon": -97.459169,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10084,
+   "lat": 36.335886,
+   "lon": -97.068085,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10085,
+   "lat": 36.571935,
+   "lon": -98.98224,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10086,
+   "lat": 35.988653,
+   "lon": -96.377131,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10087,
+   "lat": 36.146344,
+   "lon": -99.309629,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10088,
+   "lat": 34.937526,
+   "lon": -97.463889,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10089,
+   "lat": 36.832703,
+   "lon": -98.739815,
+   "tags": {
+    "surveillance:type": "camera",
+    "camera:type": "dome"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10090,
+   "lat": 36.256106,
+   "lon": -95.162057,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10091,
+   "lat": 36.385531,
+   "lon": -98.166688,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10092,
+   "lat": 35.262749,
+   "lon": -99.818746,
+   "tags": {
+    "highway": "speed_camera"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10093,
+   "lat": 35.884745,
+   "lon": -95.677693,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10094,
+   "lat": 35.905688,
+   "lon": -96.431017,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10095,
+   "lat": 35.173712,
+   "lon": -95.510118,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10096,
+   "lat": 34.700026,
+   "lon": -98.177298,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10097,
+   "lat": 35.895873,
+   "lon": -95.662303,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10098,
+   "lat": 35.945962,
+   "lon": -97.552257,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10099,
+   "lat": 36.516807,
+   "lon": -95.546075,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10100,
+   "lat": 34.776474,
+   "lon": -97.725772,
+   "tags": {
+    "surveillance:type": "camera",
+    "camera:type": "dome"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10101,
+   "lat": 35.402314,
+   "lon": -96.157804,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10102,
+   "lat": 36.489084,
+   "lon": -95.968143,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10103,
+   "lat": 35.73649,
+   "lon": -98.602722,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10104,
+   "lat": 36.244583,
+   "lon": -97.891058,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10105,
+   "lat": 36.863417,
+   "lon": -95.620607,
+   "tags": {
+    "highway": "speed_camera"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10106,
+   "lat": 34.78426,
+   "lon": -96.202917,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10107,
+   "lat": 36.196855,
+   "lon": -94.719003,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10108,
+   "lat": 35.099592,
+   "lon": -96.56941,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10109,
+   "lat": 36.226285,
+   "lon": -99.742211,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10110,
+   "lat": 35.761064,
+   "lon": -95.586367,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10111,
+   "lat": 36.147606,
+   "lon": -98.221928,
+   "tags": {
+    "surveillance:type": "camera",
+    "camera:type": "dome"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10112,
+   "lat": 36.536587,
+   "lon": -99.582247,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10113,
+   "lat": 34.935347,
+   "lon": -95.808255,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10114,
+   "lat": 35.605265,
+   "lon": -95.428226,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10115,
+   "lat": 35.954284,
+   "lon": -99.124935,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10116,
+   "lat": 36.0868,
+   "lon": -97.096533,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10117,
+   "lat": 35.798976,
+   "lon": -99.366231,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10118,
+   "lat": 36.275976,
+   "lon": -95.692183,
+   "tags": {
+    "highway": "speed_camera"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10119,
+   "lat": 35.152501,
+   "lon": -97.621562,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10120,
+   "lat": 34.837963,
+   "lon": -96.283734,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10121,
+   "lat": 36.591181,
+   "lon": -97.941618,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10122,
+   "lat": 35.368788,
+   "lon": -97.420239,
+   "tags": {
+    "surveillance:type": "camera",
+    "camera:type": "dome"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10123,
+   "lat": 36.563059,
+   "lon": -97.889987,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10124,
+   "lat": 36.030369,
+   "lon": -97.169884,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10125,
+   "lat": 35.014713,
+   "lon": -99.565197,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10126,
+   "lat": 35.619922,
+   "lon": -96.366598,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10127,
+   "lat": 36.797381,
+   "lon": -98.886133,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10128,
+   "lat": 34.802695,
+   "lon": -96.342787,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10129,
+   "lat": 36.507037,
+   "lon": -95.413924,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10130,
+   "lat": 36.02526,
+   "lon": -98.438322,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10131,
+   "lat": 34.928334,
+   "lon": -98.458866,
+   "tags": {
+    "highway": "speed_camera"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10132,
+   "lat": 35.000581,
+   "lon": -99.855866,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10133,
+   "lat": 36.108351,
+   "lon": -94.78152,
+   "tags": {
+    "surveillance:type": "camera",
+    "camera:type": "dome"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10134,
+   "lat": 36.699757,
+   "lon": -99.812229,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10135,
+   "lat": 36.039518,
+   "lon": -97.381986,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10136,
+   "lat": 34.953928,
+   "lon": -96.669625,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10137,
+   "lat": 36.373664,
+   "lon": -95.092625,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10138,
+   "lat": 35.004979,
+   "lon": -97.16922,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10139,
+   "lat": 35.91704,
+   "lon": -96.001472,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10140,
+   "lat": 35.145322,
+   "lon": -97.920489,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10141,
+   "lat": 36.443813,
+   "lon": -95.320734,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10142,
+   "lat": 35.769898,
+   "lon": -99.270454,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10143,
+   "lat": 35.745065,
+   "lon": -95.318224,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10144,
+   "lat": 35.395568,
+   "lon": -94.730181,
+   "tags": {
+    "highway": "speed_camera"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10145,
+   "lat": 35.65854,
+   "lon": -94.994531,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10146,
+   "lat": 35.426377,
+   "lon": -99.030327,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10147,
+   "lat": 35.415319,
+   "lon": -94.828345,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10148,
+   "lat": 36.720987,
+   "lon": -99.649829,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10149,
+   "lat": 36.482404,
+   "lon": -99.350304,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10150,
+   "lat": 36.661281,
+   "lon": -97.661568,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10151,
+   "lat": 35.003384,
+   "lon": -98.498177,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10152,
+   "lat": 36.558368,
+   "lon": -96.18791,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10153,
+   "lat": 35.16241,
+   "lon": -97.601313,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10154,
+   "lat": 36.182331,
+   "lon": -96.063559,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10155,
+   "lat": 36.539441,
+   "lon": -98.84654,
+   "tags": {
+    "surveillance:type": "camera",
+    "camera:type": "dome"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10156,
+   "lat": 35.424496,
+   "lon": -96.042553,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10157,
+   "lat": 35.885365,
+   "lon": -96.418196,
+   "tags": {
+    "highway": "speed_camera"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10158,
+   "lat": 35.325119,
+   "lon": -98.159863,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10159,
+   "lat": 34.725796,
+   "lon": -94.892994,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10160,
+   "lat": 35.787683,
+   "lon": -94.825666,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10161,
+   "lat": 36.013846,
+   "lon": -96.684335,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10162,
+   "lat": 36.162103,
+   "lon": -95.850874,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10163,
+   "lat": 34.959703,
+   "lon": -95.895882,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10164,
+   "lat": 35.908703,
+   "lon": -97.6659,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10165,
+   "lat": 35.239374,
+   "lon": -95.176189,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10166,
+   "lat": 36.401469,
+   "lon": -94.75005,
+   "tags": {
+    "surveillance:type": "camera",
+    "camera:type": "dome"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10167,
+   "lat": 36.841338,
+   "lon": -99.391885,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10168,
+   "lat": 35.040704,
+   "lon": -99.453722,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10169,
+   "lat": 35.007316,
+   "lon": -95.824809,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10170,
+   "lat": 35.126082,
+   "lon": -98.149717,
+   "tags": {
+    "highway": "speed_camera"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10171,
+   "lat": 36.524462,
+   "lon": -97.691893,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10172,
+   "lat": 34.777695,
+   "lon": -98.100228,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10173,
+   "lat": 36.851041,
+   "lon": -95.770075,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10174,
+   "lat": 36.072312,
+   "lon": -96.965437,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10175,
+   "lat": 35.023263,
+   "lon": -95.573463,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10176,
+   "lat": 35.968776,
+   "lon": -95.456191,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10177,
+   "lat": 36.356194,
+   "lon": -97.328421,
+   "tags": {
+    "surveillance:type": "camera",
+    "camera:type": "dome"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10178,
+   "lat": 35.657855,
+   "lon": -97.617723,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10179,
+   "lat": 35.240758,
+   "lon": -96.880132,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10180,
+   "lat": 35.246328,
+   "lon": -98.281005,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10181,
+   "lat": 34.828749,
+   "lon": -95.959957,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10182,
+   "lat": 36.194018,
+   "lon": -97.674342,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10183,
+   "lat": 35.546789,
+   "lon": -99.677509,
+   "tags": {
+    "highway": "speed_camera"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10184,
+   "lat": 36.453516,
+   "lon": -99.657383,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10185,
+   "lat": 36.692333,
+   "lon": -95.336025,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10186,
+   "lat": 36.481801,
+   "lon": -98.265887,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10187,
+   "lat": 35.358115,
+   "lon": -98.538562,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10188,
+   "lat": 35.535354,
+   "lon": -99.606622,
+   "tags": {
+    "surveillance:type": "camera",
+    "camera:type": "dome"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10189,
+   "lat": 36.721846,
+   "lon": -97.859484,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10190,
+   "lat": 35.775454,
+   "lon": -95.481404,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed",
+    "operator": "Oklahoma City Police Department"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10191,
+   "lat": 35.160015,
+   "lon": -95.042772,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10192,
+   "lat": 35.522608,
+   "lon": -97.514442,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10193,
+   "lat": 35.235771,
+   "lon": -96.437049,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10194,
+   "lat": 36.081488,
+   "lon": -99.848797,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 10195,
+   "lat": 35.950916,
+   "lon": -97.765707,
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "way",
+   "id": 11001,
+   "center": {
+    "lat": 35.4,
+    "lon": -97.5
+   },
+   "nodes": [
+    20001,
+    20002,
+    20003
+   ],
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "way",
+   "id": 11002,
+   "center": {
+    "lat": 35.55,
+    "lon": -97.7
+   },
+   "nodes": [
+    20004,
+    20005,
+    20006
+   ],
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "way",
+   "id": 11003,
+   "center": {
+    "lat": 35.7,
+    "lon": -97.9
+   },
+   "nodes": [
+    20007,
+    20008,
+    20009
+   ],
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "way",
+   "id": 11004,
+   "center": {
+    "lat": 35.85,
+    "lon": -98.1
+   },
+   "nodes": [
+    20010,
+    20011,
+    20012
+   ],
+   "tags": {
+    "man_made": "surveillance",
+    "surveillance:type": "ALPR",
+    "camera:type": "fixed"
+   }
+  },
+  {
+   "type": "node",
+   "id": 90001,
+   "lat": 35.5,
+   "lon": -97.5,
+   "tags": {
+    "amenity": "cafe"
+   }
+  }
+ ]
+}

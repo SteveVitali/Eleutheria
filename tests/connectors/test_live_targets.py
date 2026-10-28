@@ -20,19 +20,42 @@ from connectors.runner import RunMode, run_source
 def test_osm_overpass_has_a_configured_live_target() -> None:
     """The OKC OSM/Overpass live target row exists (guards the config)."""
     targets = live_targets("osm_overpass")
-    assert len(targets) == 1
-    assert targets[0]["kind"] == "overpass"
+    overpass = [t for t in targets if t["kind"] == "overpass"]
+    assert len(overpass) == 1
+    assert overpass[0]["id"] == "osm_overpass:overpass"
 
 
 def test_overpass_target_builds_the_interpreter_url_with_the_okc_query() -> None:
-    target = live_targets("osm_overpass")[0]
+    target = next(t for t in live_targets("osm_overpass") if t["kind"] == "overpass")
     parsed = urlparse(target["url"])
     assert parsed.path.endswith("/interpreter")
     query = parse_qs(parsed.query)["data"][0]
-    # the surveillance selector + the OKC metro bbox + metadata output are present
+    # the widened P37.1 selection + the OKC metro bbox + body output are present
     assert 'man_made"="surveillance"' in query.replace("[", "").replace("]", "")
-    assert "35.30,-97.85,35.75,-97.15" in query
-    assert "out meta center" in query
+    assert 'surveillance:type"' in query
+    assert 'highway"="speed_camera"' in query
+    assert "35.3,-97.85,35.75,-97.15" in query
+    # P37.1 / SIG-INGEST-045e: `out body center qt` — never `out meta`; user/uid
+    # are never requested (the capture-side half of F-406).
+    assert "out body center qt" in query
+    assert "out meta" not in query
+
+
+def test_overpass_tile_discovery_targets_are_declared() -> None:
+    """P37.1 / ACQ-17: the national/global two-pass collection's count targets."""
+    counts = [t for t in live_targets("osm_overpass") if t["kind"] == "overpass_tile_count"]
+    assert counts, "the tile_discovery flag must emit `out count;` census targets"
+    tile_ids = [tile for t in counts for tile in t["tile_ids"]]
+    # The declared areas: 51 US-state/DC areas first, then every ISO country.
+    assert tile_ids[:2] == ["US-AL", "US-AK"]
+    assert "US-DC" in tile_ids and "AU" in tile_ids
+    for t in counts:
+        parsed = urlparse(t["url"])
+        assert parsed.path.endswith("/interpreter")
+        query = parse_qs(parsed.query)["data"][0]
+        assert "out count;" in query
+        # The reviewed ~30s pacing rides the target metadata (rate_limit_per_min=2).
+        assert t["rate_limit_per_min"] == 2
 
 
 def test_overpass_endpoint_is_env_overridable(monkeypatch: pytest.MonkeyPatch) -> None:

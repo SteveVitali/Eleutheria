@@ -18,17 +18,24 @@
 # lands in the physically separate ODbL compartment (§42.3).
 [osm_overpass]
 kind = "overpass"
-# Overpass QL — man_made=surveillance in the Oklahoma City metro bbox (S,W,N,E).
-# The runner builds the request URL from $SIG_OVERPASS_ENDPOINT (default: the
-# public instance) + urlencode(query). `out meta center` yields the version/
-# changeset/timestamp the (osm_type,osm_id,version) key + first_observed need,
-# and way centroids (SIG-INGEST-045a/045b/045f).
-overpass_query = """[out:json][timeout:90];
-(
-  node["man_made"="surveillance"](35.30,-97.85,35.75,-97.15);
-  way["man_made"="surveillance"](35.30,-97.85,35.75,-97.15);
-);
-out meta center;"""
+# Overpass QL — the widened P37.1 selection (man_made=surveillance +
+# surveillance:type presence + highway=speed_camera; connectors.osm's
+# build_overpass_query emits it) in the Oklahoma City metro bbox (S,W,N,E).
+# `out body center qt` requests NO meta — user/uid are never asked for
+# (SIG-INGEST-045e, the capture-side half of F-406); version/timestamp stay on
+# the osm_element_history channel and edit detection is the content-digest
+# snapshot diff. The runner builds the request URL from $SIG_OVERPASS_ENDPOINT
+# (default: the public instance) + urlencode(query).
+bbox = [35.30, -97.85, 35.75, -97.15]
+timeout = 90
+# P37.1 / ACQ-17 (I8 §4.3 item 3): the national/global two-pass collection —
+# tile_discovery prepends the declared `out count;` area-census targets
+# (data/osm_area_tiles.toml: 51 US-state/DC areas + every ISO country, chunked
+# 50 per request, rate_limit_per_min=2 ≈ the ~30s pacing). Each non-empty area
+# then resolves to one `out body center qt;` fetch tile in discover_more and
+# reconciles its emitted element count against the discovery count as
+# ContentDrift (SIG-ENG-042).
+tile_discovery = true
 
 # EFF Atlas of Surveillance — the full national bulk CSV (CC-BY-4.0). robots.txt is
 # open (CRAWL mode, no carve-out needed). Use the www. host: the apex redirects

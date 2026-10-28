@@ -1,0 +1,77 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62",
+  "osm3s": {
+    "timestamp_osm_base": "2026-10-26T00:00:00Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+    {
+      "type": "node",
+      "id": 5001,
+      "lat": 35.4691,
+      "lon": -97.5182,
+      "tags": {
+        "man_made": "surveillance",
+        "surveillance:type": "ALPR",
+        "camera:type": "fixed",
+        "operator": "Flock Safety",
+        "direction": "270"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5002,
+      "lat": 35.4821,
+      "lon": -97.5335,
+      "tags": {
+        "highway": "speed_camera",
+        "direction": "90"
+      }
+    },
+    {
+      "type": "way",
+      "id": 5003,
+      "center": { "lat": 35.5012, "lon": -97.5501 },
+      "nodes": [7001, 7002, 7003],
+      "tags": {
+        "man_made": "surveillance",
+        "surveillance:type": "gunshot_detector",
+        "camera:type": "fixed"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5004,
+      "lat": 35.5567891,
+      "lon": -97.4423456,
+      "tags": {
+        "man_made": "surveillance",
+        "surveillance:type": "ALPR",
+        "camera:type": "fixed",
+        "source": "wifi survey wardrive"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5005,
+      "lat": 35.61,
+      "lon": -97.49,
+      "tags": {
+        "man_made": "surveillance",
+        "surveillance:type": "ALPR",
+        "camera:type": "fixed",
+        "operator": "John Smith dba Smith Cams"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5006,
+      "lat": 35.49,
+      "lon": -97.51,
+      "tags": {
+        "amenity": "cafe"
+      }
+    }
+  ]
+}
