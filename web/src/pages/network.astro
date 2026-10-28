@@ -235,6 +235,25 @@ others.forEach((n, i) => {
       JavaScript disabled this block is empty and the edge and path <strong>lists
       below</strong> are the full, usable surface (SIG-UI-037/050).
     </p>
+    {/* P36.18 budget fix: the island mounts ~95 rem tall on the budget
+        viewport and ~72 rem wide-open — measured on the fixtures build,
+        stepped in islands.css. Without the reservation the mount pushes
+        the ego figure and lists ~1,500 px down — a real layout shift the
+        Lighthouse leg measured at 0.069 vs the ≤ 0.05 ceiling (the same
+        defect the map placeholder fixes). This sibling reserves the
+        mounted height, hides itself via :has() the moment the island
+        root exists, and stays truthful with JavaScript off. */}
+    <div
+      class="sig-island__placeholder"
+      data-testid="graph-island-placeholder"
+      role="note"
+    >
+      <p class="sig-island__note">
+        The interactive explorer loads only when JavaScript runs — the
+        figure and lists below carry the same nodes and edges and are the
+        complete equivalent.
+      </p>
+    </div>
     <NetworkIsland
       client:only="react"
       nodes={islandWindow.nodes}
