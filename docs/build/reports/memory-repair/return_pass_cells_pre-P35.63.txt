@@ -1,0 +1,41 @@
+### P32.25.obligations_cell
+queued D-R10-PUBLISH-1 (release-exposure half under P35.63; the intake half stays owed)
+
+### P35.62.gates_cell
+hosted, staged only — QUEUED (probes 2026-10-24 Sat: `live:P35.61` legs queued → no snapshot; `live:P34.46`/`P34.43`/`P35.53` queued; bucket 404, probe SA + login secrets NOT_FOUND, `SIG_GCP_PROJECT`/`SIG_EXEC_IMAGE`/`SIG_HOSTED_DSN` unset); OM-20 — GATE-G4 §4 (P35.62; expires next GATE, OM-10); AR-3+AR-2 weekday 14:00–20:00Z excl. weekends + 03:00–06:30Z; before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.61` (the snapshot), before `live:P35.53` (the staged/ home); earliest 2026-10-26T14:00Z; create-only `if-generation-match=0`, never pointer/public write
+
+### P35.61.gates_cell
+hosted, production write — QUEUED (checks 2026-10-24 Sat: probe-rt SA + login secrets NOT_FOUND, `SIG_GCP_PROJECT`/`SIG_EXEC_IMAGE`/`SIG_HOSTED_DSN`/passwords unset, `live:P34.46`+`P34.43` queued); never pre-authorised — L2 stop-and-pause; L3 needs the verbatim in-ticket go naming `--authority` scope; AR-3+AR-2 weekday 14:00–20:00Z excl. weekends + 03:00–06:30Z; before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, earliest 2026-10-26T14:00Z
+
+### P35.61.obligations_cell
+queued live half of P32.22's recovery deferral + F-522: L1 `evidence-audit`+`recovery-plan` (read-only) → L2 operator pause 1–4 h → L3 bounded `recovery-apply --apply --authority <scope>` pilot → `+0`/`--rematerialize` → `recovery-freeze` unpublished; packet `docs/build/reports/p35.61-live-pass/LIVE_PASS_PACKET.{json,md}` prepared_not_executed
+
+### P35.62.obligations_cell
+queued live half of P32.23a's candidate deferral: `sig-ops release-candidate` over a hosted `frozen_unpublished` snapshot → `+0` rematerialize → compartmented export → `release stage` staged/{r,v,s,releases}/<pub>/ + IAM-only origins → web build + DR-C4-01 crawl; packet `docs/build/reports/p35.62-production-candidate/CANDIDATE_PACKET.{json,md}` prepared_not_executed
+
+### P35.59.gates_cell
+hosted, production write — QUEUED (guard exit 42 2026-10-24T08:30Z Sat — outside 14:00–20:00Z weekdays, never 03:00–06:30Z); pre-authorised: GATE-G4 §4 (P35.59; expires next GATE, OM-10); requires `live:P35.53` + `live:P34.40` L2 checked (GB-Q4 expired GATE-G4 — the paused L2 is operator-named, never skipped)
+
+### P35.15b.gates_cell
+QUEUED hosted, production write; pre-authorised: GATE-G4 approve-all-19 names this row (INSERT-only claim backfill; expires GATE-G5, OM-10); AR-3 — first weekday 14:00-20:00Z slot post-freeze, operator present, AR-2 SUCCESSFUL + pre-state (excl. weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z (AR-3 freeze), before `live:P35.15a`); F-523 recorded; live AC still human-completed
+
+### P35.15a.gates_cell
+QUEUED hosted, production write; pre-authorised: GATE-G4 approve-all-19 (this row named — INSERT-only vocabulary registration; expires next GATE, OM-10); AR-3 — first weekday 14:00-20:00Z slot post-freeze, operator present, AR-2 prestate (excl. weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z (AR-3 freeze)); after `live:P35.14a`; live AC still human-completed
+
+### P35.14a.gates_cell
+QUEUED hosted, production write; OM-20 — GATE-G4 approve-all-19 (this row named — INSERT-only vocabulary registration; expires next GATE, OM-10); AR-3 — first weekday 14:00-20:00Z post-freeze, operator present, AR-2 prestate (excl. weekends + outside-14:00-20:00Z, before 2026-10-13T12:00Z (AR-3 freeze)); live AC still human-completed
+
+### P34.44b.gates_cell
+QUEUED hosted legs, window-bound (AR-3+AR-2): both earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z/d + the monthly batch window (d6 00:00Z → d13 12:00Z) — exit 42; pre-authorised S5-3 (11A list; expires GATE-G4); waits on `live:P34.43` (`deps` exit 42 while `sig_audit`/`sig-quality-probe-rt`/secrets absent); voided-by red probe/failed restore; AR-2 prestate + versioning ON
+
+### P35.1b.gates_cell
+hosted, production write — QUEUED (`live_verification=false`); OM-20 — GATE-G4 11B list (P35.1b; 2026-10-09T17:32Z; expires next GATE, OM-10); AR-3+AR-2 weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exit 42; `SIG_SWEEP_AUTHOR` + AR-2 backup + fresh prestate; voided by failed AR-2/red probe/contradicting read; after `--check` + PR #302 head-bound CI green
+
+### P35.1c.gates_cell
+hosted, production write — QUEUED (`live_verification=false`); OM-20 — GATE-G4 §4 names 291 not 291a (predates the C13 split → never pre-authorised; needs a 291a amendment); AR-3+AR-2 weekday 14:00-20:00Z only (excl. weekends + outside-14:00-20:00Z) — apply exit 42; `SIG_CONSOL_AUTHOR` + prestate; voided by failed AR-2/red probe; after `--check` + #303 head-bound CI green
+
+### P34.42b.obligations_cell
+queued jobs IAM leg (G1-01/F-272 jobs half + `roles/editor` removal; halves landed) — live-1 STOPPED at the 100/88 contradiction; live-2 still waits on P35.1a1's 100-job poststate
+
+### meta.postamble
+Sources: OPERATIONAL_READINESS §(f3) (`581fcb5558ca…`@`45dcc789`) + `UNIVERSE_DISPOSED.csv` (`7af12151e419…`) + plan §9.2/§8.6 + `data/round11_plan.csv`. Non-row homes (§9.2): 9 `ticket` + 9 `later-phase` + 7 `decision` + 2 `already-done`. Keying (T5 γ) = the LANDED R10 ticket: 183→P35.61, 188→P35.62, 191→P35.63, 179–182→P37.16, D-P21.5-1→P37.55, D-P31.4-1→P34.39a. SEED-17 T5 (2026-10-01): SEED-16 keyed by the R11 row — misfired past 247; T5 keys by the landed ticket; obligations/gates/actions unchanged.

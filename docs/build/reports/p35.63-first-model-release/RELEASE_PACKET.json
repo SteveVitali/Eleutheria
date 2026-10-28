@@ -1,0 +1,160 @@
+{
+  "packet_version": "first-model-release-return-pass/1",
+  "row": "341 / P35.63 (R11-ACT-24, round11-11B)",
+  "purpose": "the D-R10-PUBLISH-1 release-exposure return pass: the first model release to production — L1 (dispatch) stages the cut over the hosted registry, runs the full V1-V15 suite on the private staging origins, classifies the candidate (expected class_s) and emits the agent-drafted candidate-specific HG-11 readout; L2 (operator) promotes after the operator's verbatim signed readout, runs the post-promote checks on the public origins and executes the reversed-and-receipted live rollback rehearsal",
+  "status": "prepared_not_executed",
+  "prepared_at": "2026-10-25T03:14:00Z",
+  "prepared_at_commit": "e0c3464de7a9e8a73e8193ad3cb54c1035ffff59",
+  "authority": {
+    "listing": "NEVER pre-authorised — publication is in the GATE-G4 never-listed set verbatim: GATE DECISIONS, LEDGER.md 2026-10-09T17:32Z, GATE-G4 §4 kind pre-authorization records 'the never-list stands (P35.11, P35.14b, P36.12, P35.61, P35.63 and every HG-03 flip)' — no OM-20 line covers this row and none may be assumed",
+    "rule": "a Class S promotion is the OPERATOR's act: an agent may never promote Class S, never sign, never renew, and never treat silence as approval (G3 §7.3, verbatim in effect); the authority is the operator's verbatim signed HG-11 candidate-specific readout + the operator go — the old GATE-G3 signature on p-17b713… is superseded (E2-17 / Q-E2-18) and never transfers, never re-signed",
+    "signature_state": "absent — the candidate-specific signed HG-11 readout does not exist; D-P35.60-1 (operator adoption of the standing-go text and the first signed Class-S readout) is OPEN; an agent may never sign and may only record what is owed"
+  },
+  "legs": {
+    "L1_dispatch": {
+      "disposition": "queued",
+      "scope": "stage the cut over the hosted registry → the full V1-V15 suite on the private staging origins → classify (expected class_s) → the agent-drafted candidate-specific readout (signature slot empty by construction)",
+      "note": "queued under OM-19 — every runtime precondition is unmet at this record; zero production mutations, zero hosted writes, zero staged objects, zero verification reads ran",
+      "leg_runs": 0,
+      "exactly_once": "a re-staged cut of the same candidate is byte-identical — immutability is enforced by the single writer, versioning and the monthly digest audit (the contract's re-run line, verbatim in effect); staged/ writes are create-only under if-generation-match=0 (SIG-REL-005)"
+    },
+    "L2_operator": {
+      "disposition": "queued — blocked on the signature",
+      "scope": "after the verbatim signature: promote (conf/<gen+1> writes, latest.json, rolls by digest, LB path rules live) → post-promote checks on the public origins → the live rollback rehearsal, each leg reversed and receipted",
+      "note": "the promote leg waits for the operator's verbatim signed HG-11 candidate-specific readout, which does not exist at this record; an agent may never promote Class S — L2 queues in RETURN PASS with the contract's verbatim re-run prompt",
+      "leg_runs": 0,
+      "rehearsal_shape": "(i) clear_latest_pointer on the no-prior-pointer case → /releases/ shows no latest while r/<pub> stays reachable; (ii) a record_withdrawal on one low-stakes record → 410 tombstone on every alias after the roll; (iii) prior-release pointer rollback — NOT rehearsable on the first real release (no prior activated release), recorded as such and rehearsed on the second release; each rehearsal is reversed and receipted"
+    }
+  },
+  "precondition_verdicts": [
+    {
+      "precondition": "the operator's verbatim signed HG-11 candidate-specific readout naming the new publication id (the row's authority — never an OM-20 line)",
+      "verdict": "unmet",
+      "evidence": "no signed readout exists at this record; D-P35.60-1 OPEN — the signature slot in every agent-drafted readout is empty by construction and an agent never signs; the GATE-G3 signature on the superseded p-17b713… candidate never transfers"
+    },
+    {
+      "precondition": "the staged production candidate — live:P35.62's staged/ release namespace under the private release bucket (the row's subject)",
+      "verdict": "unmet",
+      "evidence": "live:P35.62's staging leg is queued (its CANDIDATE_PACKET is prepared_not_executed, PR #360); read-only probes at this record under the gcloud default project: the private release bucket 404 — no staged candidate bytes exist"
+    },
+    {
+      "precondition": "the release-infra staged home — live:P35.53's private release bucket, IAM-only sig-web-staging/sig-api-staging origins, sig-release job + sig-release-rt (D-P35.53-1, operator-owned OP-24)",
+      "verdict": "unmet",
+      "evidence": "D-P35.53-1 OPEN; probes at this record: bucket 404, both staging services NOT_FOUND, the sig-release job NOT_FOUND, sig-release-rt NOT_FOUND"
+    },
+    {
+      "precondition": "the dark cutover — live:P35.59's conf/0 genesis + legacy floor + tombstone-carrying sig-web roll serving the release layout",
+      "verdict": "unmet",
+      "evidence": "the cutover leg is queued (window guard exit 42 2026-10-24T08:30Z Sat — outside the preferred band; requires live:P35.53 + live:P34.40 L2, both queued); the release layout is not serving"
+    },
+    {
+      "precondition": "the upstream chain — live:P35.61's frozen_unpublished snapshot (the candidate's input), live:P34.46 (+ 48 h soak) and live:P34.43 L1+L2",
+      "verdict": "unmet",
+      "evidence": "all still queued; probes at this record: sig-quality-probe-rt SA NOT_FOUND, sig-audit-password and sig-recovery-password secrets NOT_FOUND"
+    },
+    {
+      "precondition": "P35.57 API release parity — the promoted release's registry mounted on sig-api (SIG_RELEASE_REGISTRY) with /v1/health naming the release — a listed depends cell that is currently an unlanded manifest row in returnPass",
+      "verdict": "unmet — recorded as a precondition input to the queued leg, never silently treated as satisfied",
+      "evidence": "P35.57 is in CURRENT STATE returnPass — its API-roll leg is queued (GATE-G4 §2 verbatim go recorded); D-P35.57-1 OPEN — no committed or staged release yet carries the sig.api-slice/1 set, so V7 records deferred on the first real candidate and the slice emission rides this leg as an owed input"
+    },
+    {
+      "precondition": "the runtime environment — SIG_GCP_PROJECT, SIG_EXEC_IMAGE, SIG_HOSTED_DSN, SIG_RELEASE_REGISTRY (or the exec-host dispatch path) and any login passwords exported in env",
+      "verdict": "unmet",
+      "evidence": "all unset in the run shell at this record; the gcloud default project (rhema-507501) is not the operator's SIG project — project and bucket names stay env-derived, never literal"
+    },
+    {
+      "precondition": "AR-2 restore point — bucket versioning on, the current conf generation and latest.json bytes captured, the staged tree's manifest digests recorded, date -u",
+      "verdict": "not taken — nothing ran",
+      "evidence": "a queued leg never reaches the restore-point step; recorded honestly, never fabricated"
+    },
+    {
+      "precondition": "release-cut window — never inside AR-3 windows (G3 §7.2); the promote window is 14:00-20:00Z with the operator available for HG-11",
+      "verdict": "note — the run clock sits outside every valid band",
+      "evidence": "run clock 2026-10-25T03:1xZ — a Sunday inside the never-mutate 03:00-06:30Z band and outside 14:00-20:00Z; the signature and upstream preconditions bind first in any case"
+    },
+    {
+      "precondition": "PLAN-11C's scheduled window — it writes while this row waits for the go (the contract's live-window note, verbatim in effect)",
+      "verdict": "met — planning row landed, no leg interference",
+      "evidence": "PLAN-11C (row 340) landed 2026-10-25 as this row's PR base; its writes are complete and this row's wait changes nothing in them"
+    }
+  ],
+  "rerun_prompt": "implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true",
+  "rerun_note": "the contract's re-run line, verbatim: if the HG-11 signature has not been given when the run ends, the follow-up resumes at the promote leg — a re-staged cut of the same candidate is byte-identical (immutability enforced by the single writer, versioning and the monthly digest audit)",
+  "next_valid_slot": "the next weekday 14:00-20:00Z window with the operator available, and only after every upstream leg has run — live:P35.53 (infra), live:P35.61 (snapshot), live:P35.62 (the staged candidate), live:P35.59 (the dark cutover), live:P34.40 L2, live:P34.46 + 48 h soak, live:P34.43 L1+L2 — and the operator's verbatim signed HG-11 readout exists for the candidate's publication id; the release cut itself is never inside AR-3 windows",
+  "l1_commands": [
+    "0. pre-state capture (the contract's OM-14 line, verbatim): the AR-2 restore point (bucket versioning on); the current conf generation and latest.json bytes; the staged tree's manifest digests; date -u",
+    "1. the queued release cut over the hosted registry (G2 step 7's command shape): sig-ops release-publish --candidate <dir> --out <report> — staged only at L1; the promotion half of that command surface runs at L2 after the signature",
+    "2. the queued full V1-V15 suite on the private staging origins (fail closed — a check that cannot run fails): sig-ops release verify --mode S --work-dir <built tree> --origin <staging> --api-origin <api-staging> --results-dir <results> — V1 integrity, V2 identity and clock, V3 route allow-list and absence, V4 stamp and manifest, V5-V9 (the REL-04a/b landed split), V10 withdrawal barrier on every alias, V11 zero-JS/budgets/a11y, V12 scrub and secret scan, V13 disclosures, V14 diff sanity, V15 (the REL-04b tail)",
+    "3. the queued classify (expected class_s): sig-ops release classify --publication <pub> --results <results> --apply — consumes the emitted V14/V15 docs verbatim, never re-measures; class_r only when every R condition is proven, fail-closed class_s on the first model release",
+    "4. the queued agent-drafted candidate-specific readout: the classify --apply step emits the sig.release-readout/1 pair under registry/readouts/ — names the new publication id, true dates, the approved artifact digests, the disclosures and the route list; states verbatim 'single maintainer, no second reviewer' and 'no human check performed'; carries the residual-miss known-issue lines; signature slot empty by construction; the pending-readout notice rides the alerts seam",
+    "5. the queued P32.25 packet regenerated for the new publication id — never p-17b713…'s: sig-ops release-publish --candidate <dir> --out <report> over the real candidate emits the regenerated PUBLISH_PROOF/staging_registry/rehearsal/ROLLBACK_REHEARSAL/LIVE_RETURN_PASS set"
+  ],
+  "l2_commands": [
+    "6. operator leg — the verbatim signature: the operator signs the drafted readout verbatim (HG-11); the signed record lands under registry/approvals/ as a signed_readout naming the publication id — an agent never writes it",
+    "7. the queued promotion (post-signature only): sig-ops release promote --publication <pub> --approval <signed-readout-object> --apply — conf/<gen+1> writes (promoted.map, latest.json sig.latest-pointer/2, withdrawn.conf, selectors.conf, labels.conf, releases/), the sig-api then sig-web rolls by digest (min-instances=1 through the flip), the LB path rules live (/v1/releases/* → the api NEG, /intake/* → the receiver — P34.40's dark topology goes live), and the publish-tree object uploads (~475 k objects) through publish-web --apply",
+    "8. the queued post-promote checks on the public origins (P-mode suite): digest match on every manifest route; the ACT-16 crawl live; absence probes for non-allow-listed routes; latest.json as intended; /v1/releases/…/search 200 on the canonical origin; the +0 re-run of the publish verification",
+    "9. the queued live rollback rehearsal, each leg reversed and receipted: (i) clear_latest_pointer on the no-prior-pointer case → /releases/ shows no latest while r/<pub> stays reachable; (ii) record_withdrawal on one low-stakes record → 410 with the sig.tombstone/1 body on every alias after the sig-web roll; (iii) prior-release pointer rollback — recorded NOT rehearsable on the first real release (no prior activated release); rehearsed on the second release",
+    "10. the queued allow-list expansion — archive + pinned citations + release search first (Q-9/G2-HOTFIX [B-7] = a, verbatim): research-dossier routes only if the ACT-18 + ACT-22 equivalents are landed (11D rows — stay dark); /intake/ only if step 6 is done (P37.59 — stays dark)",
+    "11. the queued ratchet read (FEA-11): zero ratchet regressions and zero failures on checks flipped to enforce by landed rows — recorded in the readout; the absolute Stream-L targets stay moved to P37.67 (CONF-14); residual misses are known-issue lines in the readout, never hidden",
+    "12. the closing re-dispatch (G2's closing command, verbatim): implement-spec spec=docs/tickets/191_P32.25__accepted-release-public-verification.md live_verification=true"
+  ],
+  "pins": {
+    "readout_version": "sig.release-readout/1 — agent_drafted, signature slot empty by construction; the operator signs verbatim, an agent never signs",
+    "approval_version": "sig.promotion-approval/1 — the signed_readout record under registry/approvals/ the promote verb checks and never creates",
+    "pointer_version": "sig.latest-pointer/2 — conf/<gen+1> writes only; every field quoted from the descriptor (P35.54's contract)",
+    "proof_version": "sig.release-publish-verification/1 — the regenerated P32.25 packet names the new publication id, never p-17b713…'s",
+    "verify_version": "sig.release-verify/1 — V1-V15 JSON result rows; any failure or skip blocks promotion; a waiver is Class-S-only and recorded in the readout, V12 never waivable",
+    "classify_version": "sig.release-classification/1 — consumes the emitted V14/V15 result docs verbatim, never re-measures; fail-closed class_s",
+    "publish_class": "class_s — the first release under this model is always Class S (G3 §7.3, verbatim in effect); the standing-go form (D-P35.60-1) governs Class R only and is irrelevant to this row",
+    "expected_class": "class_s",
+    "allow_list": "archive + pinned citations + release search first (Q-9/G2-HOTFIX [B-7] = a); research-dossier routes dark until the ACT-18/ACT-22 equivalents land; /intake/ dark until step 6 — the allow-list opens nothing else",
+    "superseded_candidate": "p-17b713… — the GATE-G3 signature on it is superseded (E2-17 / Q-E2-18, B1 NEW-2); never re-signed, never edited, never transferred",
+    "ratchet": "FEA-11 — zero ratchet regressions and zero failures on enforce-flipped checks, recorded in the readout; absolute Stream-L targets moved to P37.67 (CONF-14), never hidden",
+    "merge_sentence": "the present-tense merge sentence ships only if P34.45's re-run and the derivation census make it true (probe-run record ≤ 24 h old at leg time) — otherwise the readout records it unsent",
+    "split_decision": "the recorded oversized flag names the candidate seam P35.63a (L1) / P35.63b (L2) — the split decision is C13's; this row is contracted whole and nothing here pre-splits",
+    "closing_redispatch": "implement-spec spec=docs/tickets/191_P32.25__accepted-release-public-verification.md live_verification=true"
+  },
+  "verification_checklist": [
+    "the staged cut's packet exists — candidate dir, registry target, the regenerated P32.25 packet naming the new publication id, the drafted readout with the two verbatim statements and the known-issue lines (the engineered layer — this packet is that record)",
+    "the full V1-V15 suite is green on the private staging origins over this candidate — every check ran (fail-closed), zero waivers unless the Class S readout records them",
+    "the classifier returns class_s and the drafted readout names the publication id, true dates, the approved artifact digests, the disclosures and the route list — 'single maintainer, no second reviewer' and 'no human check performed' verbatim, signature empty",
+    "HG-11 is signed verbatim by the operator before any promote — the signature and the go are recorded verbatim with date -u; never implied by agent text",
+    "post-promote checks green — digest match on every manifest route, the live crawl passes, absence probes refuse non-allow-listed routes, latest.json as intended, /v1/releases/…/search 200, the +0 re-run",
+    "the live rollback rehearsal is recorded — each leg reversed and receipted; the prior-pointer leg recorded not-rehearsable",
+    "the release is publicly reachable only after the operator's go — archive, pinned citations and release search serve the new publication id; the allow-list opened nothing else",
+    "the ratchet read reports zero ratchet regressions and zero failures on enforce-flipped checks — the readout's known-issue lines carry residual misses, never hidden",
+    "the release-exposure half of D-R10-PUBLISH-1 closes only on the real exposure — the receiver half stays owed until the intake operation lands and is never silently marked"
+  ],
+  "explicit_reservations": [
+    "NEVER pre-authorised — publication is in the GATE-G4 never-listed set; no OM-20 line covers this row and none may be assumed",
+    "an agent may never promote Class S, never sign, never renew, and never treat silence as approval — the readout's signature slot stays empty until the operator signs",
+    "L2 queues in RETURN PASS until the operator's verbatim signed HG-11 candidate-specific readout exists — the contract's verbatim re-run prompt is recorded in the run ledger, the return-pass leg and the PR body",
+    "the GATE-G3 signature on p-17b713… is superseded and never transfers — the appended supersession record stands, never re-signed, never edited",
+    "every leg is queued at this record — nothing staged, nothing promoted, nothing verified on a hosted origin, nothing publicly reachable; zero production mutations",
+    "D-R10-PUBLISH-1 stays OPEN until the real exposure lands — the release-exposure half closes only on it; no lead-token change and no obligation-event/1 transition is owed at this record",
+    "no gate tick, no source-rights flip, no human label, no signature — HG-01/HG-02/HG-11 stay the operator's",
+    "credentials and secrets are environment-only (HG-09): the project id and bucket names are never literal in any tracked file",
+    "the release cut never runs inside AR-3 windows; the promote window is 14:00-20:00Z with the operator available — a queued leg never reaches the AR-2 restore-point step",
+    "P35.57 (API release parity) is a listed dep currently in returnPass — recorded as an unlanded precondition input to the queued leg, never silently treated as satisfied; D-P35.57-1's api-slice emission rides the first real candidate as an owed input",
+    "the allow-list expands archive + pinned citations + release search first — research-dossier routes and /intake/ stay dark under their own rows",
+    "immutable namespaces are withdrawn, never deleted; a defect found mid-leg pauses and records — machinery is never patched during the leg",
+    "the candidate P35.63a/P35.63b split decision is C13's — this row is contracted whole and nothing here pre-splits",
+    "release trees and staging registries are evicted from the public repository (G3 NEW-5) — the executed packet records land beside the prepared one, the candidate tree never commits",
+    "no assertion of a living record and no claim that a queued leg ran — each leg reports its real disposition at execution"
+  ],
+  "machinery_checks": {
+    "note": "the landable-now half: every verb the queued legs name is landed and green under the suite; the drafted-readout generation path was exercised end-to-end on a local fixture-registry copy at this record",
+    "verbs_present": "sig-ops release {cut,build,stage,verify,promote,classify,rollback,clear-latest,withdraw,import-floor,cutover,status} and sig-ops release-publish --candidate/--out — all landed (P35.53/54/55/56/58/60, P34.10)",
+    "readout_path_proof": "sig-ops release classify --registry <local fixture copy> --publication p-aaaa… --apply at this record: fail-closed class_s on unevaluable suite input (the expected class for the first model release), journaled the classified event, emitted the sig.release-readout/1 pair under registry/readouts/ with agent_drafted true + signature null + 'single maintainer, no second reviewer' + 'no human check performed' verbatim, and fired the release.readout-pending notice on the alerts seam — the draft is agent-labelled and unsigned by construction",
+    "suites": "tests/ops release suites (pipeline/verify/classify/reversal/publish-verify/candidate/standing-go) green at this record — counts in the run ledger"
+  },
+  "deferral_dispositions": [
+    {"id": "D-R10-PUBLISH-1", "disposition": "open", "note": "this row closes the release-exposure half only when the real exposure lands — both legs queued at this record, no lead-token change and no obligation-event/1 transition owed; the receiver half stays owed until the intake operation lands"},
+    {"id": "D-P32.23a-1", "disposition": "open", "note": "the row's subject — live:P35.62's staged candidate is queued (prepared_not_executed, PR #360); no hosted candidate bytes exist"},
+    {"id": "D-R10-LIVE-1", "disposition": "open", "note": "the upstream snapshot chain (live:P35.61) is queued — the candidate input does not exist"},
+    {"id": "D-P35.53-1", "disposition": "open", "note": "the staged home + IAM-only staging origins are queued and operator-owned (OP-24) — bucket 404, services/job/SA NOT_FOUND at this record"},
+    {"id": "D-P35.60-1", "disposition": "open", "note": "the signature source — the operator's standing-go adoption and the first signed Class-S readout are human work; this row may never sign"},
+    {"id": "D-P35.57-1", "disposition": "open", "note": "the sig.api-slice/1 emission owed into every release — V7 records deferred on the first real candidate until a release carries the slice; rides the queued leg as an owed input"},
+    {"id": "D-P35.56-1", "disposition": "open", "note": "the /releases/catalog.jsonld public-origin 404 gap — a loud known finding the first P-mode V5 leg will report verbatim, never smoothed"}
+  ]
+}
