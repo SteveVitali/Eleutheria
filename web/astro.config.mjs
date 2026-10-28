@@ -4,6 +4,7 @@
 
 import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
+import * as esbuild from "esbuild";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { join, relative, resolve, sep } from "node:path";
@@ -80,6 +81,11 @@ const INTERNAL_ROUTES = [
   ["/research-dossier/[slug].json", "research-dossier/[slug].json.ts"],
   ["/contribution-back", "contribution-back.astro"],
   ["/visual-language", "visual-language.astro"],
+  // P36.20 (UXK0-4): the internal enhancement-kit harness — exercises every
+  // element over fixture markup plus the fixture shard endpoint
+  // `<sig-typeahead>` reads (P36.40's real shards land in export mode later).
+  ["/enhancement-kit", "enhancement-kit/index.astro"],
+  ["/enhancement-kit/shards/[key].json", "enhancement-kit/shards/[key].json.ts"],
 ];
 
 function sigInternalRoutes() {
@@ -176,6 +182,51 @@ function sigChrome() {
   };
 }
 
+// P36.20 (UXK0-4, ADR-224): the T1 enhancement kit emission. The
+// framework-free custom elements under `src/elements/` are bundled by
+// esbuild (a build-time dep of Vite — no new runtime dependency) into
+// `dist/_kit/sig-*.js`, ONE emitted entry per element file, under STABLE
+// unprefixed names: the T1 module allow-list
+// (`tests/e2e/t1-module-entries.json`, P35.50/ADR-155) can then name each
+// admitted entry verbatim instead of a moving content hash, and the strict
+// CSP's `script-src 'self'` (P36.19/ADR-223) admits them without a hash
+// allowance. A page pulls in an element module with an explicit
+// `<script type="module" src="/_kit/…">` — never render-blocking (module
+// scripts are deferred), never silently loaded (the allow-list records
+// every admitted entry), and absent on every T0 page.
+function sigEnhancementKit() {
+  return {
+    name: "sig-enhancement-kit",
+    hooks: {
+      "astro:build:done": async ({ dir }) => {
+        const distDir = fileURLToPath(dir);
+        const elementsDir = fileURLToPath(new URL("./src/elements", import.meta.url));
+        const files = readdirSync(elementsDir)
+          .filter((f) => /^sig-[\w-]+\.ts$/.test(f))
+          .sort();
+        const outDir = join(distDir, "_kit");
+        mkdirSync(outDir, { recursive: true });
+        for (const f of files) {
+          await esbuild.build({
+            entryPoints: [join(elementsDir, f)],
+            outfile: join(outDir, f.replace(/\.ts$/, ".js")),
+            bundle: true,
+            minify: true,
+            format: "esm",
+            platform: "browser",
+            target: "es2022",
+            banner: { js: "// SPDX-License-Identifier: Apache-2.0" },
+            logLevel: "warning",
+          });
+        }
+        console.log(
+          `sig-enhancement-kit: ${files.length} element module(s) emitted to /_kit/`,
+        );
+      },
+    },
+  };
+}
+
 // P35.50 (UXK0-1, K0 §4.12 item 1, ADR-155, SIG-UI-041/NEW-4): route discovery —
 // the `astro:build:done` hook walks `dist/**/*.html` and classifies every built
 // route against web/src/lib/page-types.ts. An unclassified route or a route two
@@ -238,7 +289,7 @@ export default defineConfig({
   // `client:*` directive, which in the public surface is exactly the three named
   // islands (map / network / search). Every other page still ships zero `<script>`
   // (SIG-UI-036/037); each island preserves its no-JS fallback (SIG-UI-050).
-  integrations: [react(), sigExportTiles(), sigInternalRoutes(), sigChrome(), sigPageTypes()],
+  integrations: [react(), sigExportTiles(), sigInternalRoutes(), sigChrome(), sigEnhancementKit(), sigPageTypes()],
   // The canonical public origin (P27.6 deliverable 4, ADR-093). This is the real
   // custom domain the launch surface is cited at; the belief-pinned permalinks
   // (SIG-UI-035) resolve against it. DNS/TLS cut-over completes in P27.10 — the

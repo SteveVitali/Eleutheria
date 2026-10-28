@@ -1,0 +1,125 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.20 (UXK0-4): the internal enhancement-kit harness — an injected
+// SIG_BUILD_INTERNAL route that mounts every element over honest fixture
+// markup so the e2e suite exercises them end-to-end (the shared cite/copy/
+// details trio already mounts in this page's header band). Never public:
+// the page lives under src/internal/ and publishes nothing.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { withBase } from "../../lib/paths";
+
+const ROWS = [
+  {
+    name: "deflock",
+    licence: "DeFlock-Noncommercial-1.0",
+    rows: "3,172",
+    credit: "under correction",
+    creditFacet: "under-correction",
+    compartment: "restricted",
+  },
+  {
+    name: "osm-physical",
+    licence: "ODbL-1.0",
+    rows: "48,901",
+    credit: "OpenStreetMap contributors",
+    creditFacet: "ok",
+    compartment: "osm",
+  },
+  {
+    name: "atlas-of-surveillance",
+    licence: "CC-BY-4.0",
+    rows: "12,044",
+    credit: "EFF Atlas of Surveillance",
+    creditFacet: "ok",
+    compartment: "graph",
+  },
+  {
+    name: "municipal-open-data",
+    licence: "CC0-1.0",
+    rows: "731",
+    credit: "—",
+    creditFacet: "ok",
+    compartment: "graph",
+  },
+];
+---
+
+<BaseLayout title="Enhancement kit harness" path={withBase("enhancement-kit/")} lede="Internal fixture surface for the T1 enhancement kit (UXK0-4) — not published.">
+  <p>
+    Every UXK0-4 element mounted over fixture markup. With JavaScript the
+    elements upgrade the complete server-rendered HTML; without it the page
+    below is already whole — filtering, sorting, formats and copy affordances
+    are the only things absent.
+  </p>
+
+  <h2>Typeahead over static shards</h2>
+  <p>
+    A plain GET form whose input becomes an APG combobox fed by
+    <code>sig.typeahead-shard/1</code> fixtures — never a live-spine read.
+  </p>
+  <sig-typeahead shard-root={withBase("enhancement-kit/shards/")} min-chars="2">
+    <form method="get" action={withBase("search/")} data-testid="kit-typeahead-form">
+      <label for="kit-q">Query</label>
+      <input id="kit-q" name="q" type="search" data-testid="kit-typeahead-input" />
+      <button type="submit">Search</button>
+    </form>
+  </sig-typeahead>
+  <script is:inline type="module" src={withBase("_kit/sig-typeahead.js")}></script>
+
+  <h2>A sortable, filterable, downloadable table</h2>
+  <sig-table
+    filter
+    facets="licence compartment credit"
+    columns
+    download="kit-fixture-view"
+    label="Harness fixture table"
+  >
+    <table class="sig-table" data-testid="kit-table" aria-label="Harness fixture table">
+      <thead>
+        <tr>
+          <th scope="col" data-col="name">Name</th>
+          <th scope="col" data-col="licence">Licence</th>
+          <th scope="col" data-col="rows">Rows</th>
+          <th scope="col" data-col="credit">Credit</th>
+          <th scope="col" data-col="compartment">Compartment</th>
+        </tr>
+      </thead>
+      <tbody>
+        {ROWS.map((r) => (
+          <tr
+            data-testid="kit-row"
+            data-facet-licence={r.licence}
+            data-facet-credit={r.creditFacet}
+            data-facet-compartment={r.compartment}
+            data-licence={r.licence}
+            data-compartment={r.compartment}
+          >
+            <td><code>{r.name}</code></td>
+            <td>{r.licence}</td>
+            <td>{r.rows}</td>
+            <td>{r.credit}</td>
+            <td>{r.compartment}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </sig-table>
+  <script is:inline type="module" src={withBase("_kit/sig-table.js")}></script>
+
+  <h2>A disclosure</h2>
+  <sig-details>
+    <details id="harness-details" data-testid="kit-details">
+      <summary>Harness disclosure</summary>
+      <p>Content a fragment link or a print view reaches even when collapsed.</p>
+    </details>
+  </sig-details>
+
+  <h2>A copy affordance</h2>
+  <p>
+    The string <sig-copy label="Copy text"><code>sig.fixture/1</code></sig-copy> keeps
+    its text beside a JS-only copy action.
+  </p>
+</BaseLayout>

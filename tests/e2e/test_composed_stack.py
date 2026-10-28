@@ -51,6 +51,36 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
+def _t1_module_entries() -> frozenset[str]:
+    """The T1 script allow-list (ADR-155, UXK0-4): every ``<script>`` a T1 page
+    ships is a ``type="module"`` entry listed in
+    ``web/tests/e2e/t1-module-entries.json`` — the same set
+    ``script-policy.spec.ts`` enforces on the JS side."""
+    entries = json.loads(
+        (REPO_ROOT / "web" / "tests" / "e2e" / "t1-module-entries.json").read_text(encoding="utf-8")
+    )["entries"]
+    return frozenset(entries)
+
+
+def _assert_only_allowlisted_kit_modules(html: str, page_label: str) -> None:
+    """Zero-JS contract for T1 content pages (SIG-UI-036, ADR-155, UXK0-4):
+    a content page may carry ONLY allow-listed ``/_kit/`` ``type="module"``
+    enhancement entries — inert upgrades over complete server-rendered markup.
+    Any other ``<script>`` (inline, unlisted, non-module) fails the assertion."""
+    import re
+
+    allowed = _t1_module_entries()
+    for tag in re.findall(r"<script\b[^>]*>", html):
+        src = re.search(r'\bsrc="([^"]+)"', tag)
+        typ = re.search(r'\btype="([^"]+)"', tag)
+        assert typ is not None and typ.group(1) == "module", (
+            f"{page_label}: script tag is not type=module: {tag}"
+        )
+        assert src is not None and src.group(1) in allowed, (
+            f"{page_label}: script src is not an allow-listed /_kit/ entry: {tag}"
+        )
+
+
 def _docker_reachable() -> bool:
     try:
         import docker
@@ -1043,8 +1073,9 @@ def test_p34_20_export_build_evidence_lists_artifacts_grouped_by_source(
     # an upstream link is the source's own link, recorded as a claim (K8 NEW-9)
     assert 'data-testid="upstream-link"' in html
     assert "own link (recorded as a claim)" in html
-    # zero-JS (SIG-UI-036)
-    assert "<script" not in html, "/evidence/ must ship no script tags"
+    # zero-JS (SIG-UI-036): the only <script> tags a T1 content page may carry
+    # are inert, allow-listed /_kit/ module entries (ADR-155, UXK0-4)
+    _assert_only_allowlisted_kit_modules(html, "/evidence/")
 
 
 def test_p34_20_export_build_carries_no_fixture_capture_diff(
@@ -1166,7 +1197,9 @@ def test_p35_13_built_site_carries_the_release_stamp(
     assert "This is the latest view." in html
     assert f"/r/{pub}/" in html
     assert 'data-testid="release-stamp"' in html
-    assert "<script" not in html, "a stamped content page stays zero-JS (SIG-UI-036)"
+    # zero-JS (SIG-UI-036): only inert, allow-listed /_kit/ module entries —
+    # no inline or unlisted script on a stamped content page (ADR-155, UXK0-4)
+    _assert_only_allowlisted_kit_modules(html, "a stamped content page")
 
     status = build.dist / "status" / "index.html"
     assert status.exists()

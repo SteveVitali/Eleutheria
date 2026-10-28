@@ -54,10 +54,15 @@ const { title, lede, crumbs, crumbsTestId, stamp, actions } = Astro.props;
     )}
     {/* The citation affordance (SIG-UI-035): one action away behind a native
         disclosure so the shared chrome stays inside its word budget
-        (SIG-UI-145); the <slot> carries the page's Citation block. */}
-    <details class="sig-cite-details" data-testid="cite-details">
-      <summary class="sig-cite-details__summary">{CHROME.cite}</summary>
-      <slot />
-    </details>
+        (SIG-UI-145); the <slot> carries the page's Citation block. P36.20
+        (UXK0-4): `<sig-details>` upgrades it on T1 — a `#cite-details`
+        fragment (or any id inside) opens it, and it expands for print then
+        restores; the native <details> is already complete without JS. */}
+    <sig-details>
+      <details class="sig-cite-details" data-testid="cite-details" id="cite-details">
+        <summary class="sig-cite-details__summary">{CHROME.cite}</summary>
+        <slot />
+      </details>
+    </sig-details>
   </div>
 </div>

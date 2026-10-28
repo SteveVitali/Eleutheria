@@ -68,6 +68,22 @@ const releaseCite =
     : null;
 ---
 
+{/* P36.20 (UXK0-4): the cite block mounts inside `<sig-cite>` — with JS the
+    element adds a JS-only format picker (plain/APA/Chicago/legal, all
+    `[data-enhancement]`) restating the verbatim sentence from the
+    `data-cite-*` fields; without JS the paragraph-form citation is complete.
+    Each permalink anchor mounts inside `<sig-copy>` — a copy action beside
+    the link that never alters the source text. The elements' modules load
+    only on T1 pages (BaseLayout gates on the page-type registry); elsewhere
+    they are inert markup. */}
+<sig-cite
+  data-cite-title={title}
+  data-cite-release={block.releaseId ?? ""}
+  data-cite-asof-world={asOf.as_of_world}
+  data-cite-asof-belief={asOf.as_of_belief}
+  data-cite-ruleset={rulesetVersion}
+  data-cite-url={block.citeUrl ?? permalink}
+>
 <section class="sig-cite" data-testid="citation" aria-labelledby="cite-heading">
   <h2 id="cite-heading">Cite this page</h2>
   {block.mode === "immutable" && (
@@ -88,7 +104,7 @@ const releaseCite =
       <p class="sig-cite__legacy">
         Historical-selector URL (legacy — resolved through the release
         compatibility index, never an immutable citation):{" "}
-        <a data-testid="permalink" href={permalink}>{permalink}</a>
+        <sig-copy label="Copy link"><a data-testid="permalink" href={permalink}>{permalink}</a></sig-copy>
       </p>
     </>
   )}
@@ -98,26 +114,26 @@ const releaseCite =
       <p class="sig-cite__interim" data-testid="citation-interim">{block.interimSentence}</p>
       <p data-copy="CC-01">
         Link (records the as-of pair and ruleset of this build):{" "}
-        <a
+        <sig-copy label="Copy link"><a
           class="sig-cite__permalink"
           data-testid="permalink"
           rel="bookmark"
           href={permalink}
           >{permalink}</a
-        >
+        ></sig-copy>
       </p>
     </>
   )}
   {block.mode === "unreleased" && (
     <p data-copy="CC-01">
       Link (records the as-of pair and ruleset of this build):{" "}
-      <a
+      <sig-copy label="Copy link"><a
         class="sig-cite__permalink"
         data-testid="permalink"
         rel="bookmark"
         href={permalink}
         >{permalink}</a
-      >
+      ></sig-copy>
     </p>
   )}
   <p>
@@ -130,3 +146,4 @@ const releaseCite =
   </p>
   <p class="sig-cite__text" data-testid="citation-text">{releaseCite ?? cite}</p>
 </section>
+</sig-cite>

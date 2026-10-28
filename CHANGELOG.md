@@ -24,6 +24,29 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **The T1 enhancement kit — five framework-free custom elements that
+  upgrade server-rendered HTML, emitted as `/_kit/sig-*.js` module
+  entries and admitted only on T1 pages** (P36.20 / row 360; UXK0-4;
+  SIG-UI-085/089/090/091 — owner; ADR-224; cites SIG-UI-039/040,
+  SIG-ENG-042, ADR-155, ADR-223) — a `sigEnhancementKit` build hook
+  bundles each `src/elements/sig-*.ts` into a stable-name
+  `/_kit/sig-<name>.js` module that `tests/e2e/t1-module-entries.json`
+  allow-lists verbatim and the strict CSP's `script-src 'self'` admits
+  without a new directive. `BaseLayout` gates the shared cite disclosure
+  upgrades on the page-type registry — only full-chrome T1 pages load
+  `sig-details` (fragment + print handling), `sig-cite` (plain/APA/
+  Chicago/legal restatement from the block's own `data-cite-*` fields)
+  and `sig-copy` (a copy action beside the permalink) — while
+  `/sources/` mounts `<sig-table>` (sort with `aria-sort`, text filter,
+  licence/credit facet chips, column chooser, URL view state, and a
+  "download this view" CSV whose `#` provenance lines restate the
+  licences of the visible rows) and the internal `/enhancement-kit/`
+  harness mounts `<sig-typeahead>` (an APG combobox over static
+  `sig.typeahead-shard/1` fixtures — never a live-spine read — over a
+  plain GET form that keeps working without JS). Every element injects
+  only `[data-enhancement]` chrome, so JS-on `main` text minus those
+  subtrees equals the JS-off page, print shows the same facts, and a
+  module that never loads leaves the markup untouched.
 - **Release classifier, standing go, and Class-S readout generator —
   `sig-ops release classify` consumes a completed V14/V15 verification
   suite's emitted evidence and returns a journaled `class_r` only when

@@ -34,6 +34,7 @@ import { navForRoutes } from "../lib/nav";
 import type { Crumb, PageAction } from "../lib/nav";
 import { releaseRoutes } from "../lib/release-routes";
 import { withBase, BASE } from "../lib/paths";
+import { classifyRoute } from "../lib/page-types";
 import { defaultDescription } from "../lib/meta";
 
 interface Props {
@@ -196,6 +197,20 @@ const footerLinks = [
   { label: CHROME.status, route: "status/" },
   { label: "Other public resources", route: "about/resources/" },
 ].filter((link) => routes.has(link.route));
+// P36.20 (UXK0-4, ADR-224): the T1 enhancement kit's chrome modules. Only a
+// full-chrome page classified T1 loads them — the registry is the single
+// authority, so a page re-typed T0/T2 stops emitting the tags with no
+// template edit, and a T0 route can never carry a `<script>`. The three
+// modules upgrade the shared cite disclosure (`<sig-details>` opens it for
+// fragment links + print, `<sig-cite>` restates formats, `<sig-copy>` copies
+// the permalink); page-local elements (`<sig-table>`, `<sig-typeahead>`)
+// name their own module beside the markup they upgrade. Every entry is
+// allow-listed in tests/e2e/t1-module-entries.json (ADR-155/P35.50) and
+// admitted under the strict CSP's `script-src 'self'` (P36.19/ADR-223).
+const KIT_CHROME_MODULES = ["sig-details", "sig-cite", "sig-copy"] as const;
+const pageClassification = classifyRoute(path);
+const loadKitChrome =
+  chrome === "full" && pageClassification.ok && pageClassification.entry.type === "T1";
 ---
 
 <!doctype html>
@@ -226,6 +241,10 @@ const footerLinks = [
         JSON-LD is never inlined on a public page. */}
     {stamp && <link rel="describedby" type="application/json" href={withBase(`releases/${stamp.publicationId}/datapackage.json`)} />}
     {stamp && <link rel="alternate" type="application/ld+json" href={withBase("releases/catalog.jsonld")} />}
+    {loadKitChrome &&
+      KIT_CHROME_MODULES.map((name) => (
+        <script is:inline type="module" src={withBase(`_kit/${name}.js`)}></script>
+      ))}
   </head>
   <body>
     <a class="sig-skip-link" href="#main">Skip to main content</a>

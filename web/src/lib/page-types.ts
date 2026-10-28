@@ -337,6 +337,17 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
     notes: "The epistemic-language reference page — withdrawn from public nav (A-0.3 = b), injected internal route.",
   },
   {
+    patterns: ["/enhancement-kit/**"],
+    type: "T1",
+    owner: "P36.20",
+    contract: "none",
+    noJsEquivalent: SELF,
+    internal: true,
+    examples: ["/enhancement-kit/"],
+    notes:
+      "The internal UXK0-4 harness — fixture markup exercising every element plus the sig.typeahead-shard/1 fixture endpoint (P36.40 owns the export-mode shards).",
+  },
+  {
     patterns: ["/about/**"],
     type: "T1",
     owner: "P35.50",

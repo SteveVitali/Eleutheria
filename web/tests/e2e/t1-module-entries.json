@@ -1,6 +1,12 @@
 {
   "schema": "sig.t1-module-entries/1",
-  "recorded_by": "P35.50",
-  "comment": "The allow-listed `type=\"module\"` script `src` entries a T1 page may load (K0 §4.12 item 2: 'only type=\"module\" scripts whose src is an allow-listed entry'). The mechanism is P35.50's; the entries are the UXK0-4 enhancement-kit rows' — each registers its emitted entry here when it lands. Empty until then: a T1 page shipping ANY script today fails closed.",
-  "entries": []
+  "recorded_by": "P36.20",
+  "comment": "The UXK0-4 enhancement-kit entries (ADR-224): one emitted `/_kit/sig-*.js` module per custom-element source under `web/src/elements/`, admitted verbatim under the strict CSP's `script-src 'self'` (P36.19/ADR-223). T1 pages load only the entries their markup uses; T0 pages load nothing.",
+  "entries": [
+    "/_kit/sig-cite.js",
+    "/_kit/sig-copy.js",
+    "/_kit/sig-details.js",
+    "/_kit/sig-table.js",
+    "/_kit/sig-typeahead.js"
+  ]
 }
