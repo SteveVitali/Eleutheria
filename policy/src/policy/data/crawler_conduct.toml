@@ -1,20 +1,37 @@
 # SPDX-License-Identifier: Apache-2.0
 # Crawler Conduct Policy (§26, SIG-INGEST-036). The eight operative rules,
-# binding on every connector. Rule 4 (no circumvention) is also a legal posture
-# (SIG-INGEST-037): deviating from it is an ADR-level decision requiring counsel,
-# not an engineering judgment. policy.crawler exposes these as executable checks.
+# binding on every connector. This file is the policy of record — its text is
+# published on the crawler page (/data-collection/) and pinned by the
+# /data-collection/ copy batch, so what the text claims is what the code must
+# do (SIG-ENG-042; the copy check fails a text/code mismatch).
+#
+# Round-11 posture (GATE-P, A-5 "Re-confirm GL-GATE-08 as is",
+# 2026-10-01T04:03:25Z, applied to every host per S6R-08 "All hosts, as
+# ADR-088", 2026-10-01T06:51:11Z — ADR-168): robots verdicts are probed and
+# recorded per RFC 9309 §2.3.1.4 (ADR-087) but never gate a fetch — a
+# disregarded disallow is stamped robots_disregarded and disclosed publicly
+# as host + count (ADR-088). What still refuses: a host-level opt-out
+# (rule 7, the P36.1a register) and an affirmative machine-readable rights
+# reservation (SIG-INGEST-046c — a disallow is not a reservation). Rule 4
+# (no circumvention) is also a legal posture (SIG-INGEST-037): deviating
+# from it is an ADR-level decision on the operator's recorded word — the
+# "requiring counsel" clause is waived (WV-07 / ADR-182); rule 4 itself
+# stands unchanged. Rule 6 is waived for DocumentCloud/MuckRock only
+# (WV-09 / ADR-187) and binds every other source.
+# policy.crawler exposes these as executable checks and connectors.net's
+# PoliteFetcher runs them on every fetch.
 
-version = "2026-08-26"
+version = "2026-10-26"
 
 [[rules]]
 n = 1
 title = "Identify"
-text = "A descriptive UA with a contact URL and an explanation page. No spoofing."
+text = "A descriptive UA with a contact URL and an explanation page. No spoofing. The contact URL names an owned explanation page on SIG's own domain (https://surveillancegraph.org/data-collection/), never the operator's personal identifiers (ADR-168)."
 
 [[rules]]
 n = 2
-title = "Honor robots.txt"
-text = "Honor robots.txt, including AI-crawler directives and content-signal headers. Where robots.txt is unretrievable, permission is NOT granted (SIG-INGEST-012)."
+title = "Probe and record robots.txt"
+text = "Probe and record robots.txt, including AI-crawler directives and content-signal headers. The per-host verdict is classified per RFC 9309 §2.3.1.4 (retrieved / no_policy_4xx / unretrievable) and recorded on the fetch record (ADR-087). Under the operator's GL-GATE-08 disposition (ADR-088; re-confirmed A-5 and applied to every host — ADR-168) a disallowed or unretrievable verdict does not gate the fetch: it proceeds marked robots_disregarded, and each disregard is disclosed publicly as host + count with the decision reference. A disregarded disallow is never a rights reservation, a licence or an ingestion clearance; an affirmative machine-readable reservation is honoured as a refusal. Documented, allow-listed API endpoints run under ADR-083's API mode (robots not applied to the named endpoint; rate-limit and no-circumvention still apply). The binding access control is the fail-closed rights gate (ingestion_permitted), which robots does not replace."
 
 [[rules]]
 n = 3
@@ -24,7 +41,7 @@ text = "Rate-limit conservatively, per host, with backoff. Never burden a small 
 [[rules]]
 n = 4
 title = "Never circumvent access controls"
-text = "No authentication bypass, no paywall evasion, no challenge-solving, no proxy rotation or human-mimicking to defeat bot management. This is a legal posture (SIG-INGEST-037)."
+text = "No authentication bypass, no paywall evasion, no challenge-solving, no proxy rotation or human-mimicking to defeat bot management. This is a legal posture; deviating from it is an ADR-level decision on the operator's recorded word, never a routine engineering choice (ADR-182)."
 
 [[rules]]
 n = 5
@@ -34,12 +51,12 @@ text = "If a source publishes an API, a bulk download, or a partner feed, use it
 [[rules]]
 n = 6
 title = "Ask first"
-text = "Ask first where the compact is unresolved and the source is a small civil-society project."
+text = "Ask first where the compact is unresolved and the source is a small civil-society project. Waived for DocumentCloud/MuckRock only (WV-09 / ADR-187); the rule binds every other source."
 
 [[rules]]
 n = 7
 title = "Honor opt-out"
-text = "Honor opt-out immediately and record it in the compact."
+text = "Honor opt-out immediately and record it in the compact. The host-level opt-out register (sig.opt-out-register/1) is checked before every fetch — before even the robots probe — and a listed host receives zero egress; an operator-supplied register file applies an entry on the next run, with no rebuild or redeploy (ADR-168)."
 
 [[rules]]
 n = 8
@@ -47,7 +64,8 @@ title = "Cache aggressively; refetch rarely"
 text = "Conditional requests, content-hash short-circuits."
 
 # Techniques that constitute circumvention under Rule 4. Presence of any of
-# these in a connector's plan is an ADR-level deviation requiring counsel.
+# these in a connector's plan is an ADR-level deviation on the operator's
+# recorded word (the counsel clause is waived — WV-07 / ADR-182).
 [circumvention]
 techniques = [
     "authentication_bypass",

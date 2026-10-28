@@ -27,6 +27,12 @@ ROUTE = "/data-collection/"
 CONTACT_URL = "https://surveillancegraph.org/data-collection/"
 VALID_STATUSES = {"pending", "confirmed"}
 
+# Rows superseded on this page (the batch is append-only — the old row stays
+# recorded but is bound to no element): DC-19 → DC-20 (P34.17 — the dispute
+# page names the contact address now) and DC-03 → DC-21 (P36.1b — the intro
+# names the conduct-policy and opt-out sections the full text added).
+SUPERSEDED = {"DC-19": "DC-20", "DC-03": "DC-21"}
+
 
 def _norm(text: str) -> str:
     """Collapse whitespace runs and unfold ``{" "}`` JSX space literals —
@@ -152,11 +158,11 @@ def test_every_page_sentence_is_batch_recorded() -> None:
         seen.extend(ids)
 
     for rid in rows:
-        # DC-19 is superseded by DC-20 (P34.17 — the dispute page names the
-        # contact address): the batch is append-only, so the old row stays
-        # recorded but is bound to nothing.
-        if rid == "DC-19":
-            assert rid not in seen, "superseded row DC-19 must not still render"
+        if rid in SUPERSEDED:
+            # The batch is append-only: a superseded row stays recorded but is
+            # bound to nothing, and its successor exists.
+            assert rid not in seen, f"superseded row {rid} must not still render"
+            assert SUPERSEDED[rid] in rows, f"successor row {SUPERSEDED[rid]} missing"
             continue
         assert rid == "title" or rid in seen, f"batch row {rid} is not carried by the page"
 
@@ -179,12 +185,22 @@ def test_page_is_t0_script_free() -> None:
 
 
 def test_page_states_the_contract_content() -> None:
-    # Deliverable 4: the exact contact URL, the robots posture, the fail-closed
-    # rights gate, and the opt-out route (the dispute page — Q-29).
+    # Deliverable 4 (P35.38a) + P36.1b: the exact contact URL, the robots
+    # posture (probe+record, robots_disregarded, host+count disclosure), the
+    # fail-closed rights gate, the opt-out register and the 046c refusal
+    # state, and the opt-out route (the dispute page — Q-29).
     source = _page_source()
     assert CONTACT_URL in source
     assert "robots_disregarded" in source
     assert 'href="/dispute/"' in source
+    # P36.1b: the full conduct policy is carried verbatim (the eight CR-* rows)
+    # and the page names the register, the reservation refusal and the
+    # disallow-is-not-a-reservation distinction.
+    assert 'data-copy="CR-01"' in source and 'data-copy="CR-08"' in source
+    assert "opt-out register" in source
+    assert "noai" in source and "noimageai" in source
+    assert "ai-train=no" in source
+    assert "not a rights reservation" in source
     # No e-mail and no unowned-domain literal anywhere on the page (A-17 / C-8 /
     # B-6): the rendered copy carries neither.
     assert "@" not in "".join(t for _, t in _slot_elements()[0])

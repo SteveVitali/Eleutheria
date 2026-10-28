@@ -91,7 +91,33 @@ class CompactStatus(StrEnum):
 
 
 class RobotsPolicy(StrEnum):
-    """The robots.txt posture a connector MUST honour (§10.3.1, §26)."""
+    """The source's robots.txt posture **as declared at review time** (§10.3.1,
+    §26) — registry metadata, never an enforcement claim (ADR-222).
+
+    The field records what a review observed about the source's surface,
+    not what the fetcher will do: under GL-GATE-08 (ADR-088, re-confirmed
+    A-5 on every host — ADR-168) every host's robots verdict is probed,
+    classified per RFC 9309 §2.3.1.4 and recorded, and a ``disallowed`` or
+    ``unretrievable`` verdict does not gate the fetch — it is stamped
+    ``robots_disregarded`` and disclosed publicly as host + count. No value
+    of this field changes that behaviour:
+
+    * ``honor`` — a crawlable surface whose robots.txt is probed and
+      recorded; the historical label for "a robots policy governs this
+      surface", kept verbatim so pre-P36.1b rows stay readable. It is a
+      declaration of the surface's posture, not a promise the fetcher obeys
+      the verdict — read "probe and record".
+    * ``honor_with_exception`` — the same, where a recorded exception basis
+      (e.g. an ADR-083 documented-API allow-list entry) covers part of the
+      surface.
+    * ``not_applicable`` — no robots-governed crawl surface (a documented
+      API-mode row, or a non-fetch record source).
+
+    The vocabulary is closed; a new value is an additive enum entry, never
+    a retconned meaning. What still refuses — host opt-outs and affirmative
+    rights reservations — is governed by §26 rule 7 / SIG-INGEST-046c, not
+    by this field.
+    """
 
     HONOR = "honor"
     HONOR_WITH_EXCEPTION = "honor_with_exception"
@@ -348,6 +374,9 @@ class SourceRecord:
     default_tier: str
     custody_posture: CustodyPosture
     compact_status: CompactStatus
+    #: The source's robots posture as declared at review time (ADR-222) —
+    #: registry metadata, never an enforcement claim; under GL-GATE-08 every
+    #: value means "probe + record" (:class:`RobotsPolicy`).
     robots_policy: RobotsPolicy
     rights: RightsRecord
     #: Hard gate — a connector refuses to run when false (SIG-INGEST-028).

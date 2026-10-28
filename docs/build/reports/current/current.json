@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "157ff6249f89ec56c4e819c2d0e059205f208397",
-  "manifest_inputs": 1114,
+  "input_commit": "13e42370aaf5f24df4f477556d6e4ac86161510d",
+  "manifest_inputs": 1116,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P36.1b",
-    "lastCompleted": "P35.23",
+    "nextTicket": "P36.2",
+    "lastCompleted": "P36.1b",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.12,P37.2",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P35.23-real-data-regression-corpus",
+    "chainTip": "r11/P36.1b-crawler-conduct-text-and-robots-field",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-26T19:40Z"
+    "updatedAt": "2026-10-26T23:44Z"
   },
   "counts": {
     "obligations": 195,
@@ -31,8 +31,8 @@
     "open": 111,
     "partial": 3,
     "terminal": 81,
-    "events": 694,
-    "transitions": 45,
+    "events": 695,
+    "transitions": 46,
     "coverage_assessments": 489,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
@@ -6528,7 +6528,7 @@
     {
       "id": "D-P35.38a-1",
       "status": "OPEN",
-      "status_source": "event-head D-P35.38a-1:e0",
+      "status_source": "event-head D-P35.38a-1:e1",
       "kind": "P",
       "owner": "the operator (the copy-batch sitting)",
       "landing": "the copy-batch sitting before republish #1 — P34.17's L2 refuses a pending sentence",
@@ -6567,6 +6567,29 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P35.38a-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P35.38a-1",
+          "seq": 1,
+          "expected_previous_event": "D-P35.38a-1:e0",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P36.1b",
+          "owner": "the operator (the copy-batch sitting)",
+          "landing": "the copy-batch sitting before republish #1 — P34.17's L2 refuses a pending sentence",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/reports/copy-batches/batch-01.md",
+            "web/src/pages/data-collection.astro"
+          ],
+          "observed_at": "2026-10-26",
+          "source_commit": "WORKTREE",
+          "reason": "progress note, not a close (P36.1b): the batch-01 /data-collection/ denominator grew — the full-page text replaced P35.38a's minimal page (CR-01…CR-08 conduct-rule rows + DC-21/25/26/30/31 sentences, DC-03 superseded by DC-21), every new row `pending`; the operator's verbatim-confirmation sitting now covers them. Status, owner, landing and backlog_home unchanged — an agent never self-confirms copy (OM-07/08).",
+          "recorded_at": "2026-10-26"
         }
       ]
     },
@@ -12522,7 +12545,7 @@
         },
         "SIG-INGEST-046c": {
           "verdict": "PARTIAL",
-          "evidence": "connectors/src/connectors/opt_out.py:1;connectors/src/connectors/data/opt_out_register.toml:1;policy/src/policy/crawler.py:118;policy/src/policy/rights.py:37;connectors/src/connectors/net.py:115;connectors/src/connectors/loader.py:94;docs/build/runs/P36.1a.md",
+          "evidence": "connectors/src/connectors/opt_out.py:1;connectors/src/connectors/data/opt_out_register.toml:1;policy/src/policy/crawler.py:118;policy/src/policy/rights.py:37;connectors/src/connectors/net.py:115;connectors/src/connectors/loader.py:94;docs/build/runs/P36.1a.md;tests/unit/test_conduct_text.py:1;web/src/pages/data-collection.astro:1;docs/build/runs/P36.1b.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -24365,10 +24388,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "f493c6c736b55392b31e9e73ebbaff3e90de1750696a4b3147c0ef835625501d",
+  "manifest_sha256": "aadc96c6b7b8211d8ce4135458f35d2b9ca218f907ff58cccc09c93a3c3d6939",
   "current_md": {
     "lines": 133,
-    "bytes": 19691,
+    "bytes": 19700,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

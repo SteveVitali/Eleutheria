@@ -45,6 +45,18 @@
       "reason": "'HTTP 504' — a status-code identifier in crawler-policy prose, not a counted quantity."
     },
     {
+      "file": "data-collection/index.html",
+      "token": "9309",
+      "count": 1,
+      "reason": "'RFC 9309' — the Robots Exclusion Protocol standard the conduct policy cites (P36.1b), not a counted quantity."
+    },
+    {
+      "file": "data-collection/index.html",
+      "token": "4",
+      "count": 1,
+      "reason": "'EU DSM Article 4' — the directive-article citation the rights-reservation text names (P36.1b), not a counted quantity."
+    },
+    {
       "file": "sources/index.html",
       "token": "0",
       "count": 2,

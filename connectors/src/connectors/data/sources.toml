@@ -17,6 +17,25 @@
 #   * compact_status is the closed SIG-INGEST-027 vocabulary; no_response is a real
 #     recorded state.
 #   * default_tier is source reliability R1..R6 (§10.4), assigned per source.
+#   * robots_policy is the source's robots posture AS DECLARED AT REVIEW TIME —
+#     registry metadata, never an enforcement claim (ADR-222). Under GL-GATE-08
+#     (ADR-088, re-confirmed A-5 on every host — ADR-168) every host's robots
+#     verdict is probed and recorded per RFC 9309 §2.3.1.4 and never gates a
+#     fetch: a disregarded disallow is stamped robots_disregarded and disclosed
+#     publicly as host + count. The value "honor" is the historical label for
+#     "a robots policy governs this crawl surface" — read it as "probe and
+#     record"; "honor_with_exception" adds a recorded exception basis (e.g.
+#     ADR-083 API mode); "not_applicable" marks a row with no robots-governed
+#     surface. What still refuses a fetch — a host opt-out (§26 rule 7,
+#     opt_out_register.toml) or an affirmative machine-readable rights
+#     reservation (SIG-INGEST-046c, the [sources.<id>.rights.reservation]
+#     sub-table) — is governed by those mechanisms, not by this field.
+#   * rights.reservation records an affirmative machine-readable rights
+#     reservation (SIG-INGEST-046c, P36.1a): {kind, verbatim, observed_on,
+#     evidence} — the REFUSED state, stored distinctly from UNDETERMINED. The
+#     loader gate and live_gate_reasons refuse a reserved record outright; a
+#     robots Disallow is never recorded here (under GL-GATE-08 it proceeds,
+#     stamped robots_disregarded).
 #
 # Fields per row map to §10.3.1 Source + the SIG-INGEST-023 minimum-field list.
 
@@ -1087,7 +1106,18 @@ compact_status = "not_contacted"
 robots_policy = "honor"
 verified = true
 last_verified = 2026-08-20
-notes = "Curated source index; held UNNORMALIZED (SIG-EPIS-030). UNDETERMINED."
+notes = "Curated source index; held UNNORMALIZED (SIG-EPIS-030). UNDETERMINED. Affirmative machine-readable rights reservation recorded (SIG-INGEST-046c) — corpus refused; cite/link only."
+# P36.1b / SIG-INGEST-046c (F2.20): the corpus is affirmatively refused —
+# robots.txt (200, retrieved 2026-08-20) carries the Content-Signal directive
+# under an EU DSM Article 4 reservation preamble, plus AI-crawler disallows.
+# The reservation sits beside the UNDETERMINED spdx (the refused state is
+# distinct from an unresolved review); ingestion is refused by the loader
+# gate even though the row also stays ingestion_permitted=false.
+[sources.alpr_abuse_library.rights.reservation]
+kind = "content_signal"
+verbatim = "User-agent: * / Content-Signal: search=yes,ai-train=no,use=reference / Allow: / — under the preamble 'ANY RESTRICTIONS EXPRESSED VIA CONTENT SIGNALS ARE EXPRESS RESERVATIONS OF RIGHTS UNDER ARTICLE 4 OF THE EUROPEAN UNION DIRECTIVE 2019/790…', followed by Disallow: / for Amazonbot, Applebot-Extended, Bytespider, CCBot, ClaudeBot, CloudflareBrowserRenderingCrawler, Google-Extended, GPTBot, meta-externalagent"
+observed_on = 2026-08-20
+evidence = "docs/research/R2_flock_ecosystem_data_access.md (F2.20 / Part 5E; https://library.kansas.watch/robots.txt fetched first-hand 2026-08-20, HTTP 200, 1,836 B)"
 [sources.alpr_abuse_library.redistribution]
 lane = "unknown"
 evidence = "sources.toml [sources.alpr_abuse_library] (custody REFERENCE, redistributable=-); attribution: nothing published"

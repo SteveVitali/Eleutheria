@@ -3,16 +3,31 @@
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 """Crawler Conduct Policy as executable rules (§26, SIG-INGEST-036/037).
 
-The eight operative rules bind every connector. Two of them are enforced here
-as pure functions the connector layer will call in later phases:
+The eight operative rules bind every connector; the committed text of record
+is ``data/crawler_conduct.toml``, published on the crawler page
+(/data-collection/). The rule functions here classify and refuse exactly as
+the text says — under GL-GATE-08 (ADR-088; re-confirmed A-5 on every host —
+ADR-168) robots verdicts are probed and recorded, never enforced:
 
-* **Rule 2 — honour robots.txt and content-signal headers.** Where robots.txt is
-  unretrievable, permission is *not* granted (SIG-INGEST-012). Access permission
-  and AI-training permission are different grants (SIG-LIC-004b): a site may
+* **Rule 2 — probe and record robots.txt and content-signal headers.** The
+  RFC 9309 §2.3.1.4 access-result split (:func:`robots_access_permits`,
+  ADR-087) classifies each host's verdict for the fetch record
+  (SIG-INGEST-012). A ``disallowed`` or ``unretrievable`` verdict does **not**
+  gate the fetch: the fetch proceeds stamped ``robots_disregarded`` and the
+  disregard is disclosed publicly as host + count. Access permission and
+  AI-training permission are different grants (SIG-LIC-004b): a site may
   ``Allow: /`` for general agents while signalling ``ai-train=no``.
-* **Rule 4 — never circumvent access controls.** This is not merely ethical; it
-  is a legal posture (SIG-INGEST-037). Deviating from it is an ADR-level
-  decision requiring counsel, not an engineering judgment.
+* **Rule 7 + SIG-INGEST-046c — opt-outs and affirmative reservations
+  refuse.** A host on the opt-out register receives zero egress
+  (:mod:`connectors.opt_out` — consulted before every fetch, before the
+  robots probe), and a response carrying an affirmative machine-readable
+  rights reservation is refused (:func:`detect_reservation`, recorded on the
+  rights record, distinct from ``UNDETERMINED``). A robots ``Disallow`` is
+  **not** such a reservation.
+* **Rule 4 — never circumvent access controls.** This is not merely ethical;
+  it is a legal posture (SIG-INGEST-037). Deviating from it is an ADR-level
+  decision on the operator's recorded word — the "requiring counsel" clause
+  is waived (WV-07 / ADR-182) — not an engineering judgment.
 
 Note the boundary against §25: honouring ``ai-train=no`` restricts using content
 as model *training* data, not model-*assisted extraction* (inference over a
@@ -47,11 +62,14 @@ def conduct_rules() -> tuple[ConductRule, ...]:
 
 
 def robots_permits(fetch_allowed: bool | None) -> bool:
-    """Whether a fetch is permitted given the robots.txt determination.
+    """The robots verdict on a fetch — the *recorded* answer, not a gate.
 
     ``fetch_allowed`` is the parsed robots.txt verdict, or ``None`` when
-    robots.txt could not be retrieved. An unretrievable robots.txt is **not**
-    an implied grant: permission defaults closed (SIG-INGEST-012).
+    robots.txt could not be retrieved; an unretrievable robots.txt records
+    the RFC-assumed disallow, ``False`` (SIG-INGEST-012). Under GL-GATE-08
+    (ADR-088/ADR-168) this verdict is probed and recorded for the fetch
+    record — it never blocks the fetch itself; a ``False`` outcome is what
+    stamps ``robots_disregarded``.
     """
     if fetch_allowed is None:
         return False
@@ -59,10 +77,12 @@ def robots_permits(fetch_allowed: bool | None) -> bool:
 
 
 def robots_access_permits(*, retrieved: bool, status: int | None) -> bool:
-    """Whether the robots.txt *retrieval outcome* permits fetching at all.
+    """The robots.txt *retrieval-outcome* verdict — recorded, never enforced.
 
     This is the access-result split RFC 9309 §2.3.1.4 draws (ADR-087, the
-    P26.3 amendment to SIG-INGEST-012):
+    P26.3 amendment to SIG-INGEST-012). Under GL-GATE-08 (ADR-088/ADR-168)
+    the ``False`` outcomes classify the fetch ``robots_disregarded`` on the
+    record; they no longer refuse it:
 
     * ``retrieved`` (a 2xx policy body was obtained) — a policy exists and its
       parsed verdict governs via :func:`robots_permits` → ``True`` here.
@@ -309,11 +329,13 @@ def is_circumvention(technique: str) -> bool:
 def assert_no_circumvention(technique: str) -> None:
     """Raise :class:`CircumventionError` if ``technique`` circumvents access controls.
 
-    Circumvention is an ADR-level deviation requiring counsel (SIG-INGEST-037),
-    never a routine engineering choice — hence a hard failure here.
+    Circumvention is an ADR-level deviation on the operator's recorded word
+    (SIG-INGEST-037; the counsel clause is waived — WV-07 / ADR-182), never a
+    routine engineering choice — hence a hard failure here.
     """
     if is_circumvention(technique):
         raise CircumventionError(
             f"{technique!r} circumvents access controls (Rule 4, §26); deviating "
-            "is an ADR-level decision requiring counsel (SIG-INGEST-037)."
+            "is an ADR-level decision on the operator's recorded word "
+            "(SIG-INGEST-037, ADR-182)."
         )
