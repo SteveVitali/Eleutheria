@@ -103,12 +103,20 @@ def test_shell_scripts_parse_with_bash_n() -> None:
 @pytest.mark.parametrize("script", EXECUTABLE_SCRIPTS)
 def test_check_dry_run_is_green_without_adc(script: str) -> None:
     """`--check` prints the plan, uses no ADC, opens no network, and exits 0."""
+    env = _no_adc_env()
+    if script == "rate-limit-enforcement.sh":
+        # The check leg runs `leg_flip`'s AR-3 window guard (exit 42 inside the
+        # daily 03:00–06:30Z freeze or a batch window) — a correct refusal, not
+        # a check defect. `SIG_RATELIMIT_NOW` is the script's documented test
+        # seam: pin `now` outside every declared window so the plan path is
+        # exercised deterministically at any wall-clock time.
+        env["SIG_RATELIMIT_NOW"] = "2027-03-01T12:00:00Z"
     proc = subprocess.run(
         ["bash", str(GCP_DIR / script), "--check"],
         capture_output=True,
         text=True,
         check=False,
-        env=_no_adc_env(),
+        env=env,
         cwd=str(REPO_ROOT),
     )
     assert proc.returncode == 0, f"{script} --check exited {proc.returncode}: {proc.stderr}"
