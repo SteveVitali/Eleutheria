@@ -7,8 +7,11 @@
 // ADR-093). It ships NO client JavaScript: there is no `client:*` directive
 // anywhere in the shell, so the built HTML is archivable by default. Every page
 // rendered through this layout carries the citation affordance (SIG-UI-035), a skip
-// link, a document language, the grouped keyboard-accessible navigation, and the
-// shared design system.
+// link, a document language, the six-section route-aware navigation
+// (P36.18 / SIG-UI-051/150 — a section or menu item the release does not serve
+// is never offered), the page-header band with its release stamp and Cite
+// disclosure, the footer strip inside the forty-word chrome budget
+// (SIG-UI-145), and the shared design system.
 //
 // The belief-pinned citation defaults (the as-of pair + ruleset) come from the
 // export MANIFEST via the data layer (getSiteMetadata), not the frozen fixtures
@@ -17,12 +20,20 @@
 import Citation from "../components/Citation.astro";
 import HowWeKnowThis from "../components/HowWeKnowThis.astro";
 import DisputeLink from "../components/DisputeLink.astro";
+import SiteHeader from "../components/chrome/SiteHeader.astro";
+import PageHeaderBand from "../components/chrome/PageHeaderBand.astro";
 import "../styles/epistemic.css";
 import type { AsOfEcho } from "../lib/fixtures";
 import type { ProvenanceSummary } from "../lib/provenance";
-import { getSiteMetadata, getSiteProvenance } from "../lib/data";
+import { DEFAULT_PROVENANCE, REVIEW_STATUS_LABELS } from "../lib/provenance";
+import { getSiteMetadata, getSiteProvenance, getSourceCounts } from "../lib/data";
 import { getReleaseStamp } from "../lib/release-stamp";
-import { withBase } from "../lib/paths";
+import { CHROME, renderChrome } from "../lib/lexicon";
+import { groupDigits } from "../lib/format";
+import { navForRoutes } from "../lib/nav";
+import type { Crumb, PageAction } from "../lib/nav";
+import { releaseRoutes } from "../lib/release-routes";
+import { withBase, BASE } from "../lib/paths";
 import { defaultDescription } from "../lib/meta";
 
 interface Props {
@@ -76,6 +87,19 @@ interface Props {
   noindex?: boolean;
   /** The BCP-47 document language (SIG-UI localisation); defaults to English. */
   lang?: string;
+  /**
+   * P36.18 (UXK14-2, SIG-UI-150): the page-header band's breadcrumb trail —
+   * record pages pass their canonical chain (jurisdiction dossiers: country >
+   * state > county > place; entity pages: Organizations > type > entity). The
+   * last row is the current page, rendered unlinked.
+   */
+  crumbs?: Crumb[];
+  /** The breadcrumb trail's testid (e.g. "dossier-breadcrumb"). */
+  crumbsTestId?: string;
+  /** The band's one-sentence lede (K14 §4.5); absent → no lede paragraph. */
+  lede?: string;
+  /** The band's action links (Print, the JSON form, …). */
+  actions?: PageAction[];
 }
 
 const { title, path } = Astro.props;
@@ -126,47 +150,52 @@ const citeRelease = stamp
 // matches it so a stray host never resurrects the retired placeholder domain.
 const CANONICAL_ORIGIN = "https://surveillancegraph.org";
 
-// The grouped, uncluttered navigation (SIG-UI-049 / ADR-093): product · about the
-// record · reference. Replaces the flat 13-link bar; the Dossiers entry points at
-// the per-jurisdiction index, never a single hardcoded jurisdiction.
-const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] = [
-  {
-    label: "Explore",
-    links: [
-      { href: "/map/", label: "Map" },
-      { href: "/network/", label: "Network" },
-      { href: "/search/", label: "Search" },
-      { href: "/dossier/", label: "Dossiers" },
-      { href: "/watch/", label: "Watch" },
-      { href: "/evidence/", label: "Evidence" },
-    ],
-  },
-  {
-    label: "About the record",
-    links: [
-      { href: "/methodology/", label: "Methodology" },
-      { href: "/coverage-metrics/", label: "Coverage" },
-      { href: "/data-freshness/", label: "Data freshness" },
-      { href: "/research-queue/", label: "Research queue" },
-      { href: "/corrections/", label: "Corrections" },
-      // P34.17: the interim sources/licences page and the status page.
-      { href: "/sources/", label: "Sources" },
-      { href: "/status/", label: "Status" },
-    ],
-  },
-  {
-    label: "Reference",
-    links: [
-      // P36.17: the generated glossary — linked from chrome so every page can
-      // reach the one vocabulary (SIG-UI-040; DR-K14-06's fuller About/footer
-      // wiring is P36.64's). `withBase` — a root-absolute literal would grow
-      // the containment baseline.
-      { href: withBase("glossary/"), label: "Glossary" },
-      { href: "/editorial-standards/", label: "Editorial standards" },
-      { href: "/style-guide/", label: "Style guide" },
-    ],
-  },
-];
+// P34.13 (WM-01): the wordmark's accessible name — the pinned copy row binds
+// this exact literal in THIS file; the header component renders it via prop.
+const WORDMARK_HOME_LABEL = "SIG Surveillance Infrastructure Graph — home";
+// P36.18 (UXK14-2, SIG-UI-051/UXR-01): the header renders the sections this
+// release actually serves — the manifest comes from the emitted page files
+// plus the declared data probes, so a menu item can never 404 (SIG-ENG-042).
+// `Astro.url.pathname` carries the configured base — strip it before the
+// section-prefix match so a snapshot build still marks the right section.
+const routes = releaseRoutes();
+const navPath = (Astro.url.pathname.startsWith(BASE)
+  ? Astro.url.pathname.slice(BASE.length)
+  : Astro.url.pathname.replace(/^\/+/, "")
+).replace(/\/+$/, "");
+const navPathKey = navPath === "" ? "" : `${navPath}/`;
+const navSections = navForRoutes(routes, navPathKey);
+// The strip's own site-wide claims — the same named counts the "How we know
+// this" module renders (the published-lifecycle partition over
+// transparency/counts.json, the site summary's review posture). Templates
+// come from the lexicon (SIG-UI-145): a count or date is never hard-coded.
+const siteSourceCount = getSourceCounts().lifecycle.published.count;
+const siteReviewStatus =
+  REVIEW_STATUS_LABELS[(getSiteProvenance() ?? DEFAULT_PROVENANCE).human_review_status];
+const stripText = renderChrome(CHROME.strip, {
+  sources: groupDigits(String(siteSourceCount)),
+  asOf: asOfWorld,
+  reviewStatus: siteReviewStatus.toLowerCase(),
+});
+// The band's stamp line: the release's own label when the build binds a
+// release (the honest interim id when only the manifest names one), else the
+// development-build form — never a fabricated release identity.
+const stampLine = stamp
+  ? renderChrome(CHROME.stampRelease, { asOf: stamp.asOfWorld, label: stamp.label })
+  : releaseId
+    ? renderChrome(CHROME.stampRelease, { asOf: asOfWorld, label: releaseId })
+    : renderChrome(CHROME.stampDevelopment, { asOf: asOfWorld });
+// The footer's route-aware links — the same release manifest filters them
+// (K13 §2.4: licence line, dispute, About, Releases, Status, resources — a
+// target the release does not serve is omitted, never a dead link).
+const footerLinks = [
+  { label: CHROME.licences, route: "sources/" },
+  { label: "About", route: "about/" },
+  { label: "Contact", route: "contact/" },
+  { label: "Releases", route: "releases/" },
+  { label: CHROME.status, route: "status/" },
+  { label: "Other public resources", route: "about/resources/" },
+].filter((link) => routes.has(link.route));
 ---
 
 <!doctype html>
@@ -200,83 +229,87 @@ const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] 
   </head>
   <body>
     <a class="sig-skip-link" href="#main">Skip to main content</a>
-    <header class="sig-header">
-      <div class="sig-header__bar">
-        <a class="sig-wordmark" href="/" aria-label="SIG Surveillance Infrastructure Graph — home">
-          <span class="sig-wordmark__mark" aria-hidden="true">SIG</span>{" "}
-          <span class="sig-wordmark__full">Surveillance Infrastructure Graph</span>
-        </a>
-        <nav class="sig-nav" aria-label="Primary">
-          {NAV_GROUPS.map((group) => (
-            <div class="sig-nav__group" role="group" aria-label={group.label}>
-              <span class="sig-nav__group-label" aria-hidden="true">{group.label}</span>
-              <ul class="sig-nav__list">
-                {group.links.map((link) => (
-                  <li>
-                    <a href={link.href}>{link.label}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </nav>
-      </div>
-    </header>
+    <SiteHeader sections={navSections} wordmarkLabel={WORDMARK_HOME_LABEL} />
     <main id="main">
-      <h1>{title}</h1>
-      <slot />
-      {chrome === "full" && (
-        <>
-          <HowWeKnowThis provenance={provenance} scope={provenanceScope} pageName={Astro.props.provenanceName} pointerBase={Astro.props.provenancePointerBase ?? "/surfaces/site"} />
-          <DisputeLink />
+      {chrome === "full" ? (
+        <PageHeaderBand
+          title={title}
+          lede={Astro.props.lede}
+          crumbs={Astro.props.crumbs}
+          crumbsTestId={Astro.props.crumbsTestId}
+          stamp={stampLine}
+          actions={Astro.props.actions}
+        >
           <Citation path={path} title={title} asOf={asOf} rulesetVersion={rulesetVersion} release={citeRelease} />
-        </>
+        </PageHeaderBand>
+      ) : (
+        <h1>{title}</h1>
       )}
+      <slot />
     </main>
     <footer class="sig-footer">
-      <!-- P34.17: the interim release stamp (A-20 honesty — the site is a dated
-           snapshot; the API may be newer) + the publication-basis label (H-6 /
-           ADR-167 — the recorded no-legal-review posture). Both ship as pending
-           copy-batch rows; the sentences render on every chrome=full page. The
-           stamp is omitted on chrome=minimal error/forwarder pages. -->
-      {chrome === "full" && (stamp ? (
-        <Fragment>
-          {/* P35.13 / SIG-REL-009 (G3 §6.1): the full provenance stamp —
-              label, data as-of, build instant, the linked code commit, the
-              publication id and the release.json link; then the latest-view
-              basis sentence pointing at the immutable namespace. The
-              /s/<pub>/ fixed-copy surface is the publish row's leg — the
-              immutable /r/<pub>/ namespace is the citable target today. */}
-          <p class="sig-footer__stamp" data-testid="release-stamp" data-copy="RS-04">
-            Release {stamp.label} · data as of {stamp.asOfWorld} · built{" "}
-            {stamp.builtAt} from code{" "}
-            <a href={stamp.commitHref}><code>{stamp.commit8}</code></a> ·{" "}
-            <code>{stamp.publicationShort}</code> ·{" "}
-            <a href={stamp.describedby}>release.json</a>
-          </p>
-          <p class="sig-footer__stamp-basis" data-testid="release-stamp-basis" data-copy="RS-05">
-            This is the latest view. Cite the fixed copy:{" "}
-            <a href={`/r/${stamp.publicationId}/`}><code>/r/{stamp.publicationId}/</code></a>.
-            The public API also serves newer, unreleased records, labelled "live".
-          </p>
-        </Fragment>
-      ) : releaseId ? (
-        <p class="sig-footer__stamp" data-testid="release-stamp" data-copy="RS-01 RS-02">
-          This site shows release {releaseId}, data as of {asOfWorld}.
-          The public API is updated continuously and may show newer records.
-        </p>
-      ) : (
-        <p class="sig-footer__stamp" data-testid="release-stamp" data-copy="RS-03 RS-02">
-          This is a development build.
-          The public API is updated continuously and may show newer records.
-        </p>
-      ))}
       {chrome === "full" && (
-        <p class="sig-footer__basis" data-testid="publication-basis" data-copy="PB-01 PB-02">
-          Published on the maintainer's own rights and publication decisions. No
-          lawyer's written opinion has been obtained; nothing here states that
-          this publication has been cleared by counsel.
-        </p>
+        <div class="sig-footer__inner">
+          {/* K14 §3.7's strip — the shared provenance line every page carries,
+              with the disclosure one action away (SIG-UI-044/145). */}
+          <p class="sig-footer__strip" data-testid="footer-strip">{stripText} · <DisputeLink compact /></p>
+          {/* SIG-UI-145: the full module stays one action away on every page;
+              on a record page its scope is page-specific (the page passes its
+              own provenance row — scope "page" above). */}
+          <details class="sig-footer__details" data-testid="chrome-details">
+            <summary class="sig-footer__details-summary">{CHROME.howWeKnowThis}</summary>
+            <HowWeKnowThis provenance={provenance} scope={provenanceScope} pageName={Astro.props.provenanceName} pointerBase={Astro.props.provenancePointerBase ?? "/surfaces/site"} />
+            {/* P34.17: the interim release stamp (A-20 honesty — the site is a dated
+                snapshot; the API may be newer) + the publication-basis label (H-6 /
+                ADR-167 — the recorded no-legal-review posture). Both ship as pending
+                copy-batch rows; the sentences live inside the same disclosure so the
+                visible strip stays inside the word budget. */}
+            {stamp ? (
+              <Fragment>
+                {/* P35.13 / the full provenance stamp — label, data as-of,
+                    build instant, the linked code commit, the publication id
+                    and the release.json link; then the latest-view basis
+                    sentence pointing at the immutable namespace. */}
+                <p class="sig-footer__stamp" data-testid="release-stamp" data-copy="RS-04">
+                  Release {stamp.label} · data as of {stamp.asOfWorld} · built{" "}
+                  {stamp.builtAt} from code{" "}
+                  <a href={stamp.commitHref}><code>{stamp.commit8}</code></a> ·{" "}
+                  <code>{stamp.publicationShort}</code> ·{" "}
+                  <a href={stamp.describedby}>release.json</a>
+                </p>
+                <p class="sig-footer__stamp-basis" data-testid="release-stamp-basis" data-copy="RS-05">
+                  This is the latest view. Cite the fixed copy:{" "}
+                  <a href={`/r/${stamp.publicationId}/`}><code>/r/{stamp.publicationId}/</code></a>.
+                  The public API also serves newer, unreleased records, labelled "live".
+                </p>
+              </Fragment>
+            ) : releaseId ? (
+              <p class="sig-footer__stamp" data-testid="release-stamp" data-copy="RS-01 RS-02">
+                This site shows release {releaseId}, data as of {asOfWorld}.
+                The public API is updated continuously and may show newer records.
+              </p>
+            ) : (
+              <p class="sig-footer__stamp" data-testid="release-stamp" data-copy="RS-03 RS-02">
+                This is a development build.
+                The public API is updated continuously and may show newer records.
+              </p>
+            )}
+            <p class="sig-footer__basis" data-testid="publication-basis" data-copy="PB-01 PB-02">
+              Published on the maintainer's own rights and publication decisions. No
+              lawyer's written opinion has been obtained; nothing here states that
+              this publication has been cleared by counsel.
+            </p>
+          </details>
+          <nav class="sig-footer__links" aria-label="Footer">
+            {footerLinks.map((link, i) => (
+              <>
+                {i > 0 && <span aria-hidden="true"> · </span>}
+                <a href={withBase(link.route)}>{link.label}</a>
+              </>
+            ))}
+          </nav>
+          <p class="sig-footer__tagline" data-testid="footer-tagline">{CHROME.tagline}</p>
+        </div>
       )}
     </footer>
   </body>

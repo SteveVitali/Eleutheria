@@ -33,6 +33,11 @@
  *                     /glossary/ anchor; no raw enum token appears in visible
  *                     text outside code/pre/details; no word joined at an
  *                     element boundary (DR-K14-19 shape).
+ *  10. chrome       — P36.18 (SIG-UI-145): the shared chrome's visible-by-
+ *                     default strings live in lexicon.chrome and render at
+ *                     most 40 words; the strip template names its data slots
+ *                     ({sources}/{asOf}/{reviewStatus}) so a count or date
+ *                     can never be hard-coded into chrome copy.
  *
  * Exit codes: 0 pass · 1 violation · 2 usage/input error · 3 vacuous.
  */
@@ -308,6 +313,43 @@ const lexicon = JSON.parse(readFileSync(join(SRC, "lib", "lexicon.json"), "utf8"
     }
     if (scanned === 0) vacuous("built", "no <main> found in dist html");
     else notes.push(`built: ${scanned} pages scanned for enum leaks + joined words`);
+  }
+}
+
+// --- 10. chrome — the forty-word visible-by-default budget ----------------------
+{
+  const chrome = lexicon.chrome;
+  if (!chrome || typeof chrome !== "object") {
+    fail("chrome", "lexicon.chrome missing — the shared chrome strings must be declared");
+  } else {
+    const COUNTED = ["strip", "dispute", "howWeKnowThis", "tagline", "licences", "status", "cite"];
+    for (const key of [...COUNTED, "stampRelease", "stampDevelopment"]) {
+      if (typeof chrome[key] !== "string" || chrome[key].length === 0) {
+        fail("chrome", `lexicon.chrome.${key} missing or empty`);
+      }
+    }
+    // A data slot keeps the template honest — a rendered count or date is
+    // never a literal in chrome copy.
+    for (const slot of ["{sources}", "{asOf}", "{reviewStatus}"]) {
+      if (typeof chrome.strip === "string" && !chrome.strip.includes(slot)) {
+        fail("chrome", `strip template lost its ${slot} slot — a value must never be hard-coded`);
+      }
+    }
+    const words = (s) =>
+      (s ?? "")
+        .split(/\s+/)
+        .filter((w) => /[\p{L}\p{N}]/u.test(w)).length; // a {slot} or a value is one word; "·" is none
+    let total = 0;
+    for (const key of COUNTED) total += words(chrome[key]);
+    // Exactly one stamp form renders per page — count the larger.
+    total += Math.max(words(chrome.stampRelease), words(chrome.stampDevelopment));
+    if (total > 40) {
+      fail("chrome", `visible-by-default chrome words ${total} > 40 (SIG-UI-145)`);
+    } else if (total === 0) {
+      vacuous("chrome", "no chrome words counted");
+    } else {
+      notes.push(`chrome: ${total} visible-by-default chrome words ≤ 40 (SIG-UI-145)`);
+    }
   }
 }
 

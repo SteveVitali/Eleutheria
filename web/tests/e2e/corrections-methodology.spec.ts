@@ -174,8 +174,10 @@ test.describe("dispute/correction submission path (SIG-UI-033, §45)", () => {
     await expect(notice).toHaveAttribute("data-operational", "false");
     // P34.17: notice string N-2 ("Not operating yet.") states the truth.
     await expect(notice).toContainText("Not operating yet");
-    // It must also never present a fake submission path.
-    await expect(page.locator("form")).toHaveCount(0);
+    // It must also never present a fake submission path — scoped to `main`:
+    // the shared header's GET search entry is a <form> on every page since
+    // P36.18 and is not an intake surface.
+    await expect(page.locator("main form")).toHaveCount(0);
   });
 });
 
@@ -298,6 +300,10 @@ test.describe("'How we know this' module on every page (SIG-UI-044)", () => {
   for (const path of SHELL_PAGES) {
     test(`all six components present on ${path}`, async ({ page }) => {
       await page.goto(path);
+      // P36.18 (UXK14-2, SIG-UI-145): the shared module stays one action away
+      // inside the footer strip's disclosure — a native <details> toggle on
+      // every page, record pages included.
+      await page.locator("[data-testid='chrome-details'] > summary").click();
       const module = page.getByTestId("how-we-know-this");
       await expect(module).toBeVisible();
       for (const component of [

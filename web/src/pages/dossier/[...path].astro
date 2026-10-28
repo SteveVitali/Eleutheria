@@ -30,6 +30,7 @@ import ActionBlocks from "../../components/ActionBlocks.astro";
 import Figure from "../../components/Figure.astro";
 import { applyPublicationPolicy, dossierLang, dossierJsonPath, dossierPath, dossierPrintPath, sectionTitlesFor, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG, unplacedPath } from "../../lib/dossier";
 import type { Dossier } from "../../lib/dossier";
+import type { Crumb, PageAction } from "../../lib/nav";
 import { getDossierArtifactRef, getDossiers, getDossierProvenance, getJurisdictionCompartments, getJurisdictionKeyMap, getSlugHistory, getUnplacedReport } from "../../lib/data";
 import type { SlugHistoryRow, UnplacedReport } from "../../lib/data";
 import { getReleaseStamp } from "../../lib/release-stamp";
@@ -126,6 +127,10 @@ const props = Astro.props as PageProps;
   <BaseLayout
     title={`Moved — /dossier/${props.history.slug}/`}
     path={dossierPath(props.history.slug)}
+    crumbs={[
+      { label: "Places", href: withBase("dossier/") },
+      { label: "Moved" },
+    ]}
   >
     <p class="sig-lede" data-testid="dossier-stub">
       {props.history.kind === "split"
@@ -231,6 +236,10 @@ return (
     title="Not yet placed — data-quality report"
     path={unplacedPath()}
     provenanceName="unplaced report"
+    crumbs={[
+      { label: "Places", href: withBase("dossier/") },
+      { label: report.name ?? "Not yet placed" },
+    ]}
   >
     <p class="sig-dossier-kind" data-testid="unplaced-kind" data-copy="UP-01">
       {report.name ?? "Not yet placed"} — a data-quality report, not a
@@ -424,6 +433,30 @@ if (FIGURES.length === 0) {
   );
 }
 const specMap = figureSpecMap(FIGURES);
+// P36.18 (UXK14-2, SIG-UI-150): the page-header band's breadcrumb — the
+// canonical chain this dossier sits under (country > state > county > place),
+// every ancestor its own dossier page (P35.45). A legacy flat dossier carries
+// no chain and renders Places > <name> — the trail names only what the record
+// carries, never an unverified ancestry.
+const crumbs: Crumb[] = [{ label: "Places", href: withBase("dossier/") }];
+if ((dossier.chain?.length ?? 0) > 1) {
+  for (const link of dossier.chain!) {
+    crumbs.push({
+      label: link.name ?? link.jkey,
+      href: link.slug_path ? withBase(`dossier/${link.slug_path}/`) : undefined,
+    });
+  }
+} else {
+  crumbs.push({ label: pageTitle });
+}
+// The band's actions — the print form mints only for country + admin-1
+// dossiers (P35.45 / D-K4-3); `links.print` names the minted set.
+const actions: PageAction[] = [
+  ...(dossier.links === undefined || dossier.links?.print
+    ? [{ label: "Print", href: withBase(dossierPrintPath(dossier.slug)), testId: "print-link" }]
+    : []),
+  { label: "JSON", href: withBase(dossierJsonPath(dossier.slug)), testId: "api-link" },
+];
 return (
 <BaseLayout
   title={pageTitle}
@@ -433,25 +466,10 @@ return (
   provenanceName={`${jurisdiction.name} dossier`}
   provenancePointerBase={`/surfaces/dossiers/${dossier.slug}`}
   recordPath={recordList ? withBase(recordList) : undefined}
+  crumbs={crumbs}
+  crumbsTestId="dossier-breadcrumb"
+  actions={actions}
 >
-  {/* P35.45: the ancestor breadcrumb — the canonical chain this dossier
-      sits under (country → admin-1 → county → place), every ancestor its
-      own dossier page. */}
-  {(dossier.chain?.length ?? 0) > 1 && (
-    <nav aria-label="Dossier ancestors" class="sig-dossier-breadcrumb" data-testid="dossier-breadcrumb">
-      <ol>
-        {dossier.chain!.map((link, i) => (
-          <li>
-            {i < dossier.chain!.length - 1 && link.slug_path ? (
-              <a href={dossierPath(link.slug_path)}>{link.name ?? link.jkey}</a>
-            ) : (
-              <span aria-current="page">{link.name ?? link.jkey}</span>
-            )}
-          </li>
-        ))}
-      </ol>
-    </nav>
-  )}
   <p class="sig-dossier-jurisdiction" data-testid="dossier-jurisdiction">{jurisdiction.label}</p>
   {dossier.level && (
     <p class="sig-dossier-level" data-testid="dossier-level">
@@ -480,19 +498,6 @@ return (
     </p>
     <WhatWeDontKnow gaps={dossier.gaps} variant="summary" specs={specMap} />
   </section>
-
-  <p class="sig-dossier-actions">
-    {/* P35.45 (D-K4-3): print mints only for country + admin-1 dossiers —
-        a keyed dossier's `links.print` names the minted set (absent on
-        legacy dossiers, which keep the link). */}
-    {(dossier.links === undefined || dossier.links?.print) && (
-      <>
-        <a href={dossierPrintPath(dossier.slug)} data-testid="print-link">Print / PDF version</a>
-        {" · "}
-      </>
-    )}
-    <a href={dossierJsonPath(dossier.slug)} data-testid="api-link">JSON (API form)</a>
-  </p>
 
   {dossier.sections.map((section) => {
     const action = SECTION_ACTION_BLOCKS[section.section_id];
