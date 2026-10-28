@@ -7,9 +7,9 @@
 
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # P36.21 landed(361); queued legs on earlier rows
-nextTicket: P36.22 # row 362 — component-kit-a
-lastCompleted: P36.21 # row 361 — workspace-state-cite-this-view-facets 2026-10-28
+projectStatus: IN_PROGRESS # P36.22 landed(362); queued legs on earlier rows
+nextTicket: P36.23 # row 363 — component-kit-b
+lastCompleted: P36.22 # row 362 — component-kit-a 2026-10-28
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.76,P36.77,P36.78,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P36.21-workspace-state-cite-this-view-facets # P36.21 landed on this tip; P36.22 stacks here
+chainTip: r11/P36.22-component-kit-a # P36.22 landed on this tip; P36.23 stacks here
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-28T10:44Z
+updatedAt: 2026-10-28T14:00Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1324,3 +1324,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-28 — P36.21 correction — the row-361 `done` entry landed without a parseable `ci:` field or an incidental non-done marker → `verify-recorded-ci` flagged `added PHASE LOG entry with no ci: field` on `da38f00f` (run 40674612353 docs-red). Repaired in place: named the pushed heads verbatim + recorded the row's `Gate status: none` truthfully — the real `ci:` claim lands in the post-closeout record on a green head, the same shape P36.19/P36.20 closed with. Pre-edit bytes archived `reports/memory-repair/LEDGER_phaselog_L1323_pre-P36.21-ci-field.txt` sha256:8c65f960915bd0047ebd17141d4a39b0b417657350c784ee88c6e70d4fe0369a; `seed-commit`-declared next commit · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-28 — P36.21 post-closeout record — `ci: pass #381@875faa5` 5/5 head-bound (run 40678965057: python 17m55s · docs 2m25s · composed 3m50s · security 30s · web 31m26s; check-runs read 11:55Z) · stack clean — base #380@befac233 5/5 green · every pushed head verbatim in `runs/P36.21.md`: `2fb76dc3` impl (no run — batched under `e89d4df4`) → `e89d4df4` records (run 40674289256 cancelled-superseded) → `da38f00f` closeout (run 40674612353 red — `/map/` 591,206 B over the 589,824 B bound + the missing phase-log `ci:` field) → `7179f537`/`70f0ca0d`/`875faa52` bundle-diet + phase-log repair + seed-commit in one push (run 40678965057 **green** — `/map/` 589,075 B under the bound) · PR #381 OPEN on the stack for operator integration · `main` untouched · deferrals +0/−0 · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-28 — P36.22 dispatch boundary-confirm — `ci: pass #381@fd3d1aab` 5/5 head-bound on the record tip (run 40683863158: python/docs/composed/security/web; impl read `ci: pass #381@875faa5` run 40678965057) · P36.21 landed: `sig.workspace-state/2` + cite-this-view + facet conformance harness · fix arc: landed-entry `ci:`-field repair via sanctioned in-place rewrite (archived bytes, `seed-commit 70f0ca0d` declared) + `/map/` `totalInitial` budget measured green under bound · `main` untouched · deferrals +0/−0 · dispatching P36.22 (row 362 — component kit A, visual layer: `live_verification=false`; no gate, no OM-20, no production mutations; deps P36.16+P36.17+P36.20+P35.37 landed; M-sized) · chainTip → r11/P36.21-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-10-28 — P36.22 done — row 362 (K14 §4.6/§6.4 + DR-K14-17; SIG-UI-054/083/084/086/151): component kit A lands — `sig.badge/1`/`sig.card/1`/`sig.error-page/1` contracts in `web/src/lib/` + nine renderers (`Badge`/`StatusChip`/`SupportChip`/`FieldChips`/`StatFigure`/`StatRow`/`Card`/`DataTable`/`ErrorState`) · all 22 empty surfaces typed five-part with eight named `EMPTY_CAUSES` — pipeline causes never → queue, `NON_ABSENCE_CAUSES` no hatch · `/500.html` completes the branded error set (flat like `/404.html`; `"500"`+`"500.html"` allow-listed) · every kit numeral inside the one `<Figure>` (≤2 actions to evidence); `sig.provenance-panel/1` stays sole panel · lexicon D2–D5 · internal `/component-kit/` T1 harness · 60 pending `CK-*` rows (batch-02) bound `data-copy`; NF/FB/GN rows re-scoped `lib/errors.ts` · deferrals +0/−0 · `make check` 10,981p/2s/7f/7err → 4 in-range repaired + re-run green (124p); env classes per P36.19–21 (GCP sentinel, P34.18 residue ×2, topology compose ×7) · `npm run check` green (706 unit, e2e incl. component-kit JS+no-JS, axe clean) · `check:paths` 141→134 · impl `ea14671c` → closeout this commit · ci: head-bound read follows — impl-head run 40700473629 read docs-red (projection-stale on the coverage re-verdicts; regenerated in this commit) + python-red (ruff format on the N-6 test edit; reformatted in this commit) · no gate (Gate status: none), no OM-20, no live leg · chainTip → r11/P36.22-… · next → P36.23 · harness: devin-desktop/swe-2-high/subagent

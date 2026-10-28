@@ -211,12 +211,8 @@ def test_notice_strings_render_verbatim_where_pinned() -> None:
         assert notice in template, f"{rel}: notice string missing — {notice!r}"
     # The contract's render channel: the pinned notice reaches markup as
     # `data-notice` on the missing part (never a batch row).
-    renderer = (REPO_ROOT / "web/src/components/ErrorState.astro").read_text(
-        encoding="utf-8"
-    )
-    assert "data-notice" in renderer, (
-        "ErrorState.astro must emit the pinned notice as data-notice"
-    )
+    renderer = (REPO_ROOT / "web/src/components/ErrorState.astro").read_text(encoding="utf-8")
+    assert "data-notice" in renderer, "ErrorState.astro must emit the pinned notice as data-notice"
 
 
 def test_new_routes_registered_and_withdrawn_routes_denied() -> None:
