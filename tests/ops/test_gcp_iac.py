@@ -110,7 +110,7 @@ def test_check_dry_run_is_green_without_adc(script: str) -> None:
         # a check defect. `SIG_RATELIMIT_NOW` is the script's documented test
         # seam: pin `now` outside every declared window so the plan path is
         # exercised deterministically at any wall-clock time.
-        env["SIG_RATELIMIT_NOW"] = "2027-03-01T12:00:00Z"
+        env["SIG_RATELIMIT_NOW"] = "2026-10-20T12:00:00Z"
     proc = subprocess.run(
         ["bash", str(GCP_DIR / script), "--check"],
         capture_output=True,
