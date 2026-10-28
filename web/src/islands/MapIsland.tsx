@@ -128,14 +128,6 @@ const EMPTY_FC: { type: "FeatureCollection"; features: never[] } = {
   features: [],
 };
 
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
 /** The `sig.map-tiles/2` §3.3 keys a `sites` feature carries. */
 interface TileFeatureProps {
   rk?: string;
@@ -146,19 +138,36 @@ interface TileFeatureProps {
   op?: string;
 }
 
-/** The popup carries the epistemic disclosure fields + the citation (SIG-UI-035). */
-function popupHtml(a: IslandPoint, citationHref: string): string {
-  return (
-    `<div class="sig-map-popup">` +
-    `<h3>${escapeHtml(a.label)}</h3>` +
-    `<dl>` +
-    `<dt>Jurisdiction</dt><dd>${escapeHtml(a.jurisdiction)}</dd>` +
-    `<dt>Sensitivity tier</dt><dd>${a.tier}</dd>` +
-    `<dt>Published precision</dt><dd>${escapeHtml(a.precision)}</dd>` +
-    `</dl>` +
-    `<a href="${escapeHtml(citationHref)}">Cite this view (belief-pinned)</a>` +
-    `</div>`
-  );
+// P36.19 (UXK0-3, K0 §4.8): the popup is built from DOM nodes + textContent —
+// client code renders text only: no innerHTML, no dangerouslySetInnerHTML,
+// no MapLibre setHTML (check-unsafe-dom.mjs fails the gate on a re-introduce).
+// Every label still comes from third-party data and is never markup.
+function popupElement(a: IslandPoint, citationHref: string): HTMLElement {
+  const root = document.createElement("div");
+  root.className = "sig-map-popup";
+  const heading = document.createElement("h3");
+  heading.textContent = a.label;
+  root.appendChild(heading);
+  const fields = document.createElement("dl");
+  const rows: Array<[string, string]> = [
+    ["Jurisdiction", a.jurisdiction],
+    ["Sensitivity tier", String(a.tier)],
+    ["Published precision", a.precision],
+  ];
+  for (const [term, value] of rows) {
+    const dt = document.createElement("dt");
+    dt.textContent = term;
+    const dd = document.createElement("dd");
+    dd.textContent = value;
+    fields.appendChild(dt);
+    fields.appendChild(dd);
+  }
+  root.appendChild(fields);
+  const cite = document.createElement("a");
+  cite.href = citationHref;
+  cite.textContent = "Cite this view (belief-pinned)";
+  root.appendChild(cite);
+  return root;
 }
 
 function backgroundStyle(): StyleSpecification {
@@ -471,7 +480,7 @@ export default function MapIsland({
           };
           new Popup({ closeButton: true })
             .setLngLat([e.lngLat.lng, e.lngLat.lat])
-            .setHTML(popupHtml(asset, citationHref))
+            .setDOMContent(popupElement(asset, citationHref))
             .addTo(map);
         };
         for (const layerId of tileLayerIds) {
@@ -558,7 +567,7 @@ export default function MapIsland({
           if (!asset) return;
           new Popup({ closeButton: true })
             .setLngLat([asset.lon, asset.lat])
-            .setHTML(popupHtml(asset, citationHref))
+            .setDOMContent(popupElement(asset, citationHref))
             .addTo(map);
         });
         map.on("click", "sig-clusters", (e) => {

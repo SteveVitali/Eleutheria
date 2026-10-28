@@ -289,24 +289,37 @@ a.sig-absence-hatch:focus-visible {
   border-radius: var(--sig-radius-1);
   padding: var(--sig-space-3);
 }
+/* P36.19 (UXK0-3, K0 §4.8): the plotted track renders as an inline <svg> —
+   point positions are geometry attributes (cx="42.3%"), never style=""
+   attributes, so the strict CSP carries no style-src-attr exception. */
 .sig-range__track {
-  position: relative;
-  height: 2px;
-  background: var(--sig-rule);
-  margin: var(--sig-space-5) var(--sig-space-2) var(--sig-space-2);
+  display: block;
+  width: 100%;
+  height: 8px;
+  margin: var(--sig-space-5) 0 var(--sig-space-2);
+}
+.sig-range__track-line {
+  stroke: var(--sig-rule);
+  stroke-width: 2px;
 }
 .sig-range__point {
-  position: absolute;
-  top: 50%;
-  width: var(--sig-space-2);
-  height: var(--sig-space-2);
-  border-radius: 50%;
-  background: var(--sig-epi-disagree-mark);
-  transform: translate(-50%, -50%);
+  fill: var(--sig-epi-disagree-mark);
 }
 .sig-range__claims {
   margin: var(--sig-space-2) 0 0;
   padding-left: var(--sig-space-4);
+}
+
+/* P36.19 (UXK0-3, K0 §4.8, K13 C-08): the ruled frame inline figure <svg>
+   documents sit in — replaces the per-page style="" attributes (the map's
+   coverage bins, the network ego figure, the visual-language reference
+   figures). Background rides the --sig-surface-2 token so the frame themes
+   with the rest of the page — the moved literals (hsl 97–98 %) could not
+   live in component CSS under check-tokens anyway. */
+.sig-figure-frame {
+  max-width: 100%;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  background: var(--sig-surface-2);
 }
 
 table.sig-table {
