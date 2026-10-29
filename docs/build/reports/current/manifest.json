@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "1d211b8994e8171c60a7ede759938af466567d5c",
+  "input_commit": "78efcaa64a0d72a2e27b2d9f3937a04b3159e7cd",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "84087285ca2a829ba9b1451acf99829fb556875d4896f3dc53e35af0214a45a6"
+      "sha256": "e77c9619b5a28f02a1ed5b0257ec9e76111ced51e7023f15906087ee732a2469"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -633,6 +633,10 @@
       "sha256": "a8c6585026964cf882e414d91610279b02c702b12b37254867639a51be41bf2d"
     },
     {
+      "path": "docs/adr/ADR-157-one-static-figure-kit-geography.md",
+      "sha256": "dba93af2f3639ceadb83022b8af9331b6530bd3edd68e4a50a11ed909de108bd"
+    },
+    {
       "path": "docs/adr/ADR-158-graph-exploration-as-aggregated-overviews.md",
       "sha256": "27581ff5966fa236c4046ea72b9cb02f6188ffeae52015a4ece47e8d541d525a"
     },
@@ -898,11 +902,11 @@
     },
     {
       "path": "docs/adr/README.md",
-      "sha256": "2c4e3662d9bb491af77302fd959700c2dc056fc88893ecf430e1d3ca12fdcd78"
+      "sha256": "66a668ca74f21cdc793884eea37f104f0bb6c57698d4e149124344e49195763b"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "9a6145112dad2983f0bbaa39ec8e70c6dde92ea6d88093a8350c0cf6ada47361"
+      "sha256": "0b93fe823922bae2acbcd2d9c9dede199459a9b4b0a922daed65bf4dc350ea65"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
