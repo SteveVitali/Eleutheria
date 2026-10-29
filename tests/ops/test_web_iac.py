@@ -125,6 +125,139 @@ def test_nginx_conf_serves_the_gcsfuse_root_with_ranges_and_cache_policy() -> No
     assert "max_ranges" not in text
 
 
+# --- P36.19 strict response layer (UXK0-3, K0 §4.8, SIG-UI-096, ADR-223) -----
+
+SECURITY_CONF = WEB_DIR / "sig-security.conf"
+LEGACY_CONF = WEB_DIR / "nginx-legacy.conf"
+
+SIG_CSP_UNIFORM = (
+    "frame-ancestors 'none'; object-src 'none'; base-uri 'none'; "
+    "form-action 'self'; script-src-attr 'none'; style-src-attr 'none'"
+)
+SIG_CSP_SVG = "default-src 'none'; style-src 'unsafe-inline'; img-src data:; sandbox"
+SIG_PP_DENY = (
+    "geolocation=(), camera=(), microphone=(), payment=(), usb=(), "
+    "interest-cohort=(), browsing-topics=()"
+)
+SIG_PP_MAP = (
+    "geolocation=(self), camera=(), microphone=(), payment=(), usb=(), "
+    "interest-cohort=(), browsing-topics=()"
+)
+
+
+def _location_bodies(text: str) -> list[str]:
+    """Every `location … { … }` block body (brace-matched — the generated
+    fragments' error_page lines nest braces inside the block)."""
+    out: list[str] = []
+    for m in re.finditer(r"location\s+[^\n{]+\{", text):
+        depth = 1
+        i = m.end()
+        while i < len(text) and depth:
+            depth += text[i] == "{"
+            depth -= text[i] == "}"
+            i += 1
+        out.append(text[m.end() : i - 1])
+    return out
+
+
+def test_sig_security_conf_carries_the_strict_layer_verbatim() -> None:
+    text = SECURITY_CONF.read_text(encoding="utf-8")
+    # HSTS — two-year max-age, subdomains in scope; `preload` is deliberately
+    # absent (the browser preload-list submission is an operator decision the
+    # launch row owns — ADR-223).
+    assert (
+        'add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;' in text
+    )
+    # The policy values come from the $sig_csp / $sig_permissions_policy maps —
+    # interpolated, so the standalone-.svg and /map/ exceptions follow the
+    # request under every tree (/r/, /s/, the latest view) without a dedicated
+    # location that could drift.
+    assert 'add_header Content-Security-Policy "$sig_csp" always;' in text
+    assert 'add_header Permissions-Policy "$sig_permissions_policy" always;' in text
+    assert 'add_header X-Content-Type-Options "nosniff" always;' in text
+    # The fragment itself never names a posture value — the maps own those.
+    assert "unsafe" not in text
+    # `always` on every directive — errors carry the layer too (the same
+    # guarantee §6.3 makes for the provenance pair).
+    for ln in text.splitlines():
+        if ln.strip().startswith("add_header"):
+            assert ln.rstrip().endswith("always;"), ln
+
+
+@pytest.mark.parametrize("conf", [NGINX_CONF, LEGACY_CONF], ids=["release", "legacy"])
+def test_nginx_templates_carry_the_response_policy_maps(conf: Path) -> None:
+    text = conf.read_text(encoding="utf-8")
+    # The two maps exist at http scope; the values are K0 §4.8 verbatim.
+    assert re.search(r"map\s+\$uri\s+\$sig_csp\s*\{", text)
+    assert re.search(r"map\s+\$uri\s+\$sig_permissions_policy\s*\{", text)
+    # Standalone .svg responses get the dedicated figure policy — scriptless
+    # sandboxed documents whose OWN <style> elements and data: rasters
+    # still render ('unsafe-inline' exists ONLY in this map value — never
+    # on the uniform policy, never on a page).
+    assert f'"{SIG_CSP_SVG}"' in text
+    assert f'"{SIG_CSP_UNIFORM}"' in text
+    assert f'"{SIG_PP_DENY}"' in text
+    assert f'"{SIG_PP_MAP}"' in text
+    # /map/ is the sole geolocation=(self) route; everything else denies.
+    assert re.search(r'~\^/map\(/\|\$\)\s+"' + re.escape(SIG_PP_MAP), text)
+    # The uniform page policy names NO 'unsafe-*' source and no script-src /
+    # default-src — the per-page hashes live in the emitted <meta> (the
+    # header only carries meta-inexpressible + hash-independent guards).
+    uniform_block = re.search(r"map\s+\$uri\s+\$sig_csp\s*\{(.*?)\}", text, re.S)
+    assert uniform_block is not None
+    assert "unsafe-inline" not in uniform_block.group(1).replace(SIG_CSP_SVG, "")
+    assert "unsafe-eval" not in uniform_block.group(1)
+    assert "default-src" not in uniform_block.group(1).replace(SIG_CSP_SVG, "")
+    assert "script-src 'self'" not in uniform_block.group(1)
+
+
+def _server_body(text: str) -> str:
+    """The `server { … }` block body, brace-matched."""
+    m = re.search(r"server\s*\{", text)
+    assert m is not None, "no server block"
+    depth = 1
+    i = m.end()
+    while i < len(text) and depth:
+        depth += text[i] == "{"
+        depth -= text[i] == "}"
+        i += 1
+    return text[m.end() : i - 1]
+
+
+@pytest.mark.parametrize("conf", [NGINX_CONF, LEGACY_CONF], ids=["release", "legacy"])
+def test_every_add_header_location_includes_the_security_layer(conf: Path) -> None:
+    text = conf.read_text(encoding="utf-8")
+    server = _server_body(text)
+    # Server scope carries the include — the locations that declare no
+    # add_header of their own inherit the strict layer from it. (Strip the
+    # location blocks first so a location-level include can't fake it.)
+    outside_locations = server
+    for body in _location_bodies(server):
+        outside_locations = outside_locations.replace(body, "", 1)
+    assert "include /etc/nginx/sig-security.conf;" in outside_locations
+    # Every location that declares an add_header ALSO includes the fragment
+    # — nginx drops the server-level set there, the same rule
+    # sig-headers.conf exists for.
+    for body in _location_bodies(server):
+        if "add_header" in body:
+            assert "include /etc/nginx/sig-security.conf;" in body, body[:200]
+    # nosniff has exactly one source — the fragment. A location declaring
+    # its own would send the header twice.
+    for body in _location_bodies(server):
+        assert "X-Content-Type-Options" not in body
+
+
+def test_the_security_fragment_is_copied_not_rendered() -> None:
+    # sig-security.conf is a COMMITTED static fragment (its $sig_csp /
+    # $sig_permissions_policy interpolations are nginx variables, never
+    # envsubst names) — copied at a real path, not rendered like the
+    # provenance-pair template.
+    dockerfile = DOCKERFILE.read_text(encoding="utf-8")
+    assert "COPY ops/web/sig-security.conf /etc/nginx/sig-security.conf" in dockerfile
+    entrypoint = (WEB_DIR / "sig-conf-entrypoint.sh").read_text(encoding="utf-8")
+    assert "sig_csp" not in entrypoint and "sig_permissions" not in entrypoint
+
+
 # --- the image is a real compile, not the incompatible Alpine package ----------
 
 

@@ -86,6 +86,7 @@ COPY --from=brotli-build \
 # five SIG_* names).
 COPY ops/web/nginx.conf /etc/nginx/sig-release.conf.template
 COPY ops/web/sig-headers.conf /etc/nginx/sig-headers.conf.template
+COPY ops/web/sig-security.conf /etc/nginx/sig-security.conf
 COPY ops/web/nginx-legacy.conf /etc/nginx/sig-legacy.conf
 COPY ops/web/sig-conf-entrypoint.sh /docker-entrypoint.d/40-sig-conf.sh
 RUN chmod 755 /docker-entrypoint.d/40-sig-conf.sh

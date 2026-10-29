@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import { join, relative, resolve, sep } from "node:path";
 import { resolveTileCopyList } from "./scripts/export-tiles.mjs";
 import { buildManifest, classifyDist, writeManifest } from "./src/lib/page-types.ts";
+import { tightenT0Document } from "./src/lib/csp.ts";
 
 // P21.5 (deliverable 3, LD-F07/H08) + P30.3 (ADR-106) + P31.15 (ADR-R9-TILES) +
 // P35.52 (sig.map-tiles/2, ADR-156): in `export` mode the static build CONSUMES
@@ -196,8 +197,27 @@ function sigPageTypes() {
             `page-type registry: ${errors.length} unclassifiable route(s)\n  ${errors.join("\n  ")}`,
           );
         }
+        // P36.19 (UXK0-3, K0 §4.8): Astro emits one global meta policy — the
+        // T0 record/print pages get K0's stricter `default-src 'none'` row
+        // (no script-src/connect-src/worker-src, no img blob:) by rewriting
+        // the emitted meta here, where the classification is already known.
+        // csp.spec.ts asserts the tightened shape on every discovered T0
+        // route, so a page that missed the patch fails the gate.
+        let t0Tightened = 0;
+        for (const r of routes) {
+          if (r.type !== "T0") continue;
+          const file = join(distDir, r.file);
+          const html = readFileSync(file, "utf-8");
+          const tightened = tightenT0Document(html);
+          if (tightened !== html) {
+            writeFileSync(file, tightened);
+            t0Tightened += 1;
+          }
+        }
         writeManifest(distDir, buildManifest(routes));
-        console.log(`sig-page-types: ${routes.length} route(s) classified`);
+        console.log(
+          `sig-page-types: ${routes.length} route(s) classified, ${t0Tightened} T0 meta CSP(s) tightened`,
+        );
       },
     },
   };
@@ -231,6 +251,40 @@ export default defineConfig({
     // Inline nothing implicitly: keep assets as separate, cacheable, budgetable
     // files so the Lighthouse resource-size budgets (SIG-UI-041) are meaningful.
     inlineStylesheets: "never",
+  },
+  // P36.19 (UXK0-3, K0 §4.8, SIG-UI-096, ADR-223): the strict page CSP. On a
+  // static build Astro emits a <meta http-equiv="Content-Security-Policy">
+  // per page with the per-page hashes for its inline <script>/<style>
+  // elements (the island bootstrap + scoped styles) — script-src/style-src
+  // default to 'self' plus those hashes, never 'unsafe-inline'/'unsafe-eval'.
+  // script-src-attr/style-src-attr 'none' bans inline handlers and style=""
+  // attributes at the platform layer (every style= site moved to classes;
+  // MapLibre/React set CSSOM properties, never the style attribute, so no
+  // exception is needed — K0's recorded fallback clause stays unused).
+  // The directives a <meta> cannot express (frame-ancestors, the T0
+  // tightening, the standalone-SVG policy, HSTS, Permissions-Policy) ride the
+  // nginx response layer (ops/web/sig-security.conf + the $sig_csp /
+  // $sig_permissions_policy maps).
+  security: {
+    csp: {
+      algorithm: "SHA-384",
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' data: blob:",
+        "connect-src 'self'",
+        "worker-src 'self' blob:",
+        "font-src 'self'",
+        "object-src 'none'",
+        "base-uri 'none'",
+        "form-action 'self'",
+      ],
+      scriptDirective: {
+        resources: [{ resource: "'none'", kind: "attribute" }],
+      },
+      styleDirective: {
+        resources: [{ resource: "'none'", kind: "attribute" }],
+      },
+    },
   },
   devToolbar: { enabled: false },
 });

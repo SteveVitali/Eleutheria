@@ -196,7 +196,21 @@ const meta = getSiteMetadata();
 // on the fixtures build); each licence-compartment row adds ~1.4 rem — all
 // build-known — so the mount skeleton reserves exactly that height and
 // hydration never shifts the tables below (the ratified T2-map CLS ≤ 0.05).
-const ISLAND_MOUNT_MIN_REM = 32 + 1.4 * Math.max(0, ISLAND_COMPARTMENTS.length - 2);
+// P36.19 (UXK0-3, K0 §4.8): the reserved height rides a --k<N> CLASS, never a
+// style="" attribute (the strict CSP ships no style-src-attr exception). The
+// class holds 32 + 1.4 × N rem for N = extra compartment rows past the
+// baseline two — the same formula — and islands.css generates k0…k24; a
+// build naming a 27th compartment fails loud here, never silently
+// under-reserves.
+const PLACEHOLDER_MAX_K = 24;
+const placeholderK = Math.max(0, ISLAND_COMPARTMENTS.length - 2);
+if (placeholderK > PLACEHOLDER_MAX_K) {
+  throw new Error(
+    `map: ${ISLAND_COMPARTMENTS.length} licence compartments exceed the ` +
+      `placeholder reservation table (islands.css --k0…--k${PLACEHOLDER_MAX_K}) — ` +
+      `extend the generated classes, never swallow the layout reservation`,
+  );
+}
 const mapCitationHref = beliefPinnedPermalink({
   path: "/map/",
   title: "Infrastructure map",
@@ -243,8 +257,7 @@ const mapCitationHref = beliefPinnedPermalink({
             the mounted height, hides itself via :has() the moment the
             island root exists, and stays truthful with JavaScript off. */}
         <div
-          class="sig-island__placeholder"
-          style={`min-height: ${ISLAND_MOUNT_MIN_REM}rem`}
+          class={`sig-island__placeholder sig-island__placeholder--k${placeholderK}`}
           data-testid="map-island-placeholder"
           role="note"
         >
@@ -330,7 +343,7 @@ const mapCitationHref = beliefPinnedPermalink({
       viewBox={`0 0 ${cell * bins.length} ${cell + 40}`}
       width={cell * bins.length}
       height={cell + 40}
-      style="max-width:100%;border:1px solid var(--sig-rule);background:hsl(0deg 0% 98%);"
+      class="sig-figure-frame"
     >
       {bins.map(({ bin, render }, i) => (
         <g>

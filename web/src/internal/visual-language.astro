@@ -139,7 +139,7 @@ const nodeX = (i: number) => 60 + i * 140;
         viewBox="0 0 400 240"
         width="400"
         height="240"
-        style="border:1px solid var(--sig-rule); background: hsl(0deg 0% 97%);"
+        class="sig-figure-frame"
       >
         {plotted.map((s) => (
           <circle
@@ -220,7 +220,7 @@ const nodeX = (i: number) => 60 + i * 140;
         viewBox="0 0 400 160"
         width="400"
         height="160"
-        style="border:1px solid var(--sig-rule); background: hsl(0deg 0% 97%);"
+        class="sig-figure-frame"
       >
         {REFERENCE_GRAPH_EDGES.map((e) => {
           const fi = REFERENCE_GRAPH_NODES.findIndex((n) => n.id === e.from);

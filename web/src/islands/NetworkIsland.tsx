@@ -229,7 +229,10 @@ export default function NetworkIsland({
                   }
                   stroke="var(--sig-ink)"
                   strokeWidth={p.node.id === selectedId ? 2 : 1}
-                  style={{ cursor: "pointer" }}
+                  // P36.19 (UXK0-3, K0 §4.8): the cursor rides a class — a
+                  // JSX style={{}} prop serializes to a style="" attribute,
+                  // which the strict CSP's style-src-attr 'none' blocks.
+                  className="sig-graph-island__pick"
                   onClick={() => setInspectId(p.node.id)}
                 >
                   <title>{p.node.label}</title>

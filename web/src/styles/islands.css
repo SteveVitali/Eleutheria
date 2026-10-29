@@ -45,6 +45,44 @@
   display: none;
 }
 
+/* P36.19 (UXK0-3, K0 §4.8): the map island's reserved mount height moved off
+   the style="" attribute. map.astro selects --k<N> for N extra
+   licence-compartment rows past the baseline two — the same 32 + 1.4 × N rem
+   formula the inline style computed — and fails the build beyond k24 (a
+   27th compartment), never silently under-reserving. */
+.sig-map-island .sig-island__placeholder--k0 { min-height: 32rem; }
+.sig-map-island .sig-island__placeholder--k1 { min-height: 33.4rem; }
+.sig-map-island .sig-island__placeholder--k2 { min-height: 34.8rem; }
+.sig-map-island .sig-island__placeholder--k3 { min-height: 36.2rem; }
+.sig-map-island .sig-island__placeholder--k4 { min-height: 37.6rem; }
+.sig-map-island .sig-island__placeholder--k5 { min-height: 39rem; }
+.sig-map-island .sig-island__placeholder--k6 { min-height: 40.4rem; }
+.sig-map-island .sig-island__placeholder--k7 { min-height: 41.8rem; }
+.sig-map-island .sig-island__placeholder--k8 { min-height: 43.2rem; }
+.sig-map-island .sig-island__placeholder--k9 { min-height: 44.6rem; }
+.sig-map-island .sig-island__placeholder--k10 { min-height: 46rem; }
+.sig-map-island .sig-island__placeholder--k11 { min-height: 47.4rem; }
+.sig-map-island .sig-island__placeholder--k12 { min-height: 48.8rem; }
+.sig-map-island .sig-island__placeholder--k13 { min-height: 50.2rem; }
+.sig-map-island .sig-island__placeholder--k14 { min-height: 51.6rem; }
+.sig-map-island .sig-island__placeholder--k15 { min-height: 53rem; }
+.sig-map-island .sig-island__placeholder--k16 { min-height: 54.4rem; }
+.sig-map-island .sig-island__placeholder--k17 { min-height: 55.8rem; }
+.sig-map-island .sig-island__placeholder--k18 { min-height: 57.2rem; }
+.sig-map-island .sig-island__placeholder--k19 { min-height: 58.6rem; }
+.sig-map-island .sig-island__placeholder--k20 { min-height: 60rem; }
+.sig-map-island .sig-island__placeholder--k21 { min-height: 61.4rem; }
+.sig-map-island .sig-island__placeholder--k22 { min-height: 62.8rem; }
+.sig-map-island .sig-island__placeholder--k23 { min-height: 64.2rem; }
+.sig-map-island .sig-island__placeholder--k24 { min-height: 65.6rem; }
+
+/* P36.19 (UXK0-3, K0 §4.8): clickable network-graph nodes get the pointer
+   cursor from a class — the JSX style={{}} prop it replaced serialized to a
+   style="" attribute, which style-src-attr 'none' blocks. */
+.sig-graph-island__pick {
+  cursor: pointer;
+}
+
 /* P36.18: the network explorer needs the same reservation — its mount is
    taller (view links + canvas + node list + detail pane). Heights measured
    on the fixtures build: ~95 rem at the 412 px budget viewport, easing to

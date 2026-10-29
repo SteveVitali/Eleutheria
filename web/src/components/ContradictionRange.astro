@@ -28,17 +28,25 @@ const suffix = unit ? ` ${unit}` : "";
     across {claims.length} competing claim{claims.length === 1 ? "" : "s"}
   </figcaption>
 
-  <div class="sig-range__track" aria-hidden="true">
+  {/* P36.19 (UXK0-3, K0 §4.8): the track is an inline <svg> — the plotted
+      positions are geometry attributes (cx percent), never style=""
+      attributes, so the strict CSP needs no style-src-attr exception. The
+      decorative plot stays aria-hidden; the claims list is the equivalent. */}
+  <svg class="sig-range__track" aria-hidden="true">
+    <line class="sig-range__track-line" x1="0" x2="100%" y1="4" y2="4" />
     {
       claims.map((c) => (
-        <span
+        <circle
           class="sig-range__point"
-          style={`left: ${(plotPosition(range, c.value) * 100).toFixed(1)}%`}
-          title={`${c.value}${suffix} — ${c.source}`}
-        />
+          cx={`${(plotPosition(range, c.value) * 100).toFixed(1)}%`}
+          cy="4"
+          r="4"
+        >
+          <title>{`${c.value}${suffix} — ${c.source}`}</title>
+        </circle>
       ))
     }
-  </div>
+  </svg>
 
   <ol class="sig-range__claims">
     {

@@ -63,6 +63,15 @@ NOW = datetime(2026, 10, 23, 12, 0, 0, tzinfo=UTC)
 DENY_ROUTE = f"/r/{PUB1}/gone/"
 TOMBSTONE_BODY = b"<html><body>withdrawn - sig.tombstone/1 fixture body</body></html>"
 
+# P36.19 (UXK0-3, K0 §4.8, SIG-UI-096, ADR-223): the strict response layer the
+# $sig_csp / $sig_permissions_policy maps + sig-security.conf must emit.
+SIG_CSP_UNIFORM = (
+    "frame-ancestors 'none'; object-src 'none'; base-uri 'none'; "
+    "form-action 'self'; script-src-attr 'none'; style-src-attr 'none'"
+)
+SIG_CSP_SVG = "default-src 'none'; style-src 'unsafe-inline'; img-src data:; sandbox"
+SIG_PP_DENY_PREFIX = "geolocation=()"
+
 
 def _docker_reachable() -> bool:
     try:
@@ -258,8 +267,21 @@ def release_root(tmp_path_factory: pytest.TempPathFactory) -> Path:
         (root / "staged/v" / pub / "index.html").write_bytes(
             f"<html>latest view {tag}</html>".encode()
         )
+        # P36.19: the /map/ Permissions-Policy exception + a standalone .svg
+        # need real bytes in the fixture trees to assert the response layer.
+        (root / "staged/v" / pub / "map").mkdir(parents=True, exist_ok=True)
+        (root / "staged/v" / pub / "map" / "index.html").write_bytes(
+            f"<html>map {tag}</html>".encode()
+        )
+        (root / "staged/v" / pub / "figures").mkdir(parents=True, exist_ok=True)
+        (root / "staged/v" / pub / "figures" / "f.svg").write_bytes(
+            b"<svg xmlns='http://www.w3.org/2000/svg'><style>rect{fill:#000}</style></svg>"
+        )
         (root / "staged/r" / pub).mkdir(parents=True, exist_ok=True)
         (root / "staged/r" / pub / "index.html").write_bytes(f"<html>records {tag}</html>".encode())
+        (root / "staged/r" / pub / "fig.svg").write_bytes(
+            b"<svg xmlns='http://www.w3.org/2000/svg'></svg>"
+        )
         (root / "staged/r" / pub / "gone").mkdir(parents=True, exist_ok=True)
         (root / "staged/r" / pub / "gone" / "index.html").write_bytes(b"<html>gone</html>")
         (root / "staged/s" / pub).mkdir(parents=True, exist_ok=True)
@@ -354,6 +376,29 @@ def test_metadata_only_promotion_and_the_generation_flip(release_root: Path):
     assert headers.get("X-SIG-Conf-Gen") == "1"
     assert headers.get("X-SIG-Release") == f"{LABEL1} {PUB1}"
     assert "X-Robots-Tag" not in headers
+
+    # P36.19: the strict response layer on the served bytes — HSTS +
+    # nosniff on every response, the hash-independent CSP guards on HTML,
+    # the /map/ geolocation exception, and K0 §4.8's dedicated figure-SVG
+    # policy under BOTH the latest view and the /r/ release tree (the
+    # $sig_csp map keys on the request, never on a location).
+    assert headers.get("Strict-Transport-Security") == "max-age=63072000; includeSubDomains"
+    assert headers.get("Content-Security-Policy") == SIG_CSP_UNIFORM
+    assert headers.get("Permissions-Policy", "").startswith(SIG_PP_DENY_PREFIX)
+    assert headers.get("X-Content-Type-Options") == "nosniff"
+    status, headers, body = _http(f"{WEB}/map/")
+    assert status == 200
+    assert headers.get("Permissions-Policy", "").startswith("geolocation=(self)")
+    assert headers.get("Content-Security-Policy") == SIG_CSP_UNIFORM
+    status, headers, body = _http(f"{WEB}/figures/f.svg")
+    assert status == 200
+    assert headers.get("Content-Security-Policy") == SIG_CSP_SVG
+    assert headers.get("X-Content-Type-Options") == "nosniff"
+    status, headers, body = _http(f"{WEB}/r/{PUB1}/fig.svg")
+    assert status == 200
+    assert headers.get("Content-Security-Policy") == SIG_CSP_SVG, (
+        "the dedicated figure policy follows the bytes under /r/ too"
+    )
 
     status, headers, body = _http(f"{WEB}/r/{PUB1}/")
     assert status == 200 and body == b"<html>records one</html>"
