@@ -15,9 +15,9 @@ resolved as-of pair (:class:`AsOfEcho`, SIG-API-005) and a coverage statement
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Any
+from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 
 #: The §37.1 resolution-envelope fields, in canonical order (SIG-API-002). The
 #: contract test asserts every material-fact response carries exactly these keys,
@@ -43,6 +43,40 @@ class _Model(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class _InferenceMarked(_Model):
+    """The typed L4-inference marker pair (§30.4, SIG-RECON-052, P36.14).
+
+    Every fact/assertion record the API serves carries these two fields so a
+    consumer can always branch on them — never parse prose:
+
+    * ``inferred`` — ``true`` exactly when the record is an L4 derived fact
+      (``inference.derived_fact``: ``derivation_rule`` + ``derived_at`` +
+      ``input_claim_ids``, SIG-RECON-047/031). Every spine-layer record the
+      API serves today — a resolved material fact (an L3 recorded decision),
+      a claim (an asserted observation), a computed task or contradiction —
+      is ``inferred: false``: structurally distinguished, never mistaken for
+      an inference.
+    * ``layer`` — ``"L4"`` when ``inferred`` is true, ``null`` otherwise.
+
+    The pair is coherent or absent: ``inferred: true`` without
+    ``layer: "L4"`` (or the reverse) is a broken marker and fails validation —
+    the same contract ``inference.marking.is_inferred_record`` reads on the
+    export side.
+    """
+
+    inferred: bool = False
+    layer: Literal["L4"] | None = None
+
+    @model_validator(mode="after")
+    def _marker_is_coherent(self) -> _InferenceMarked:
+        if self.inferred != (self.layer == "L4"):
+            raise ValueError(
+                "the L4 marker is coherent or absent: inferred=True requires "
+                'layer="L4", and layer="L4" requires inferred=True'
+            )
+        return self
+
+
 class Rationale(_Model):
     """The resolver's rationale (§16.4): a stable code plus human-readable text.
 
@@ -55,13 +89,18 @@ class Rationale(_Model):
     text: str
 
 
-class ResolutionEnvelope(_Model):
+class ResolutionEnvelope(_InferenceMarked):
     """The §37.1 resolution envelope carried by every material fact (SIG-API-002).
 
     A material fact is NEVER returned as a bare value: the value only ever appears
     inside this envelope, alongside the support/agreement/currency signals, the
     supporting and dissenting claim ids, the as-of pair the value was resolved at,
     and the ruleset version that decided it.
+
+    The envelope also carries the P36.14 inference marker (``inferred``/``layer``,
+    SIG-RECON-052): a resolved material fact is an L3 recorded decision, never an
+    L4 derivation, so the pair reads ``inferred: false, layer: null`` — the field
+    is present so the distinction is *structural*, not absent-by-convention.
     """
 
     value: Any
@@ -223,7 +262,7 @@ class EntityResponse(_Model):
     publication: PublicationTombstone | None = None
 
 
-class ClaimResponse(_Model):
+class ClaimResponse(_InferenceMarked):
     """A single claim resource (§37.3 ``/claim/{id}``): provenance, not a verdict.
 
     A claim is one asserted observation with its evidence, not the resolved value
@@ -367,8 +406,14 @@ class DossierResponse(_Model):
     as_of: AsOfEcho
 
 
-class TaskResponse(_Model):
-    """A research-task resource (§37.3 ``/task``)."""
+class TaskResponse(_InferenceMarked):
+    """A research-task resource (§37.3 ``/task``).
+
+    The queue is derived by rule, but a task is a work item, not an L4
+    derived *fact* — its derivation is already disclosed by
+    ``spine_watermark`` (P25.10), and the P36.14 marker pair reads
+    ``inferred: false`` (SIG-RECON-052).
+    """
 
     task_id: str
     kind: str
@@ -390,8 +435,13 @@ class TaskCollection(_Model):
     spine_watermark: str | None = None
 
 
-class ContradictionResponse(_Model):
-    """A contradiction resource (§37.3 ``/contradiction``): always visible (§3.1)."""
+class ContradictionResponse(_InferenceMarked):
+    """A contradiction resource (§37.3 ``/contradiction``): always visible (§3.1).
+
+    A contradiction is a §31 first-class object computed on read — derived in
+    the watermark sense (``spine_watermark``) but not an L4 derived *fact*;
+    the P36.14 marker pair reads ``inferred: false`` (SIG-RECON-052).
+    """
 
     contradiction_id: str
     subject_id: str

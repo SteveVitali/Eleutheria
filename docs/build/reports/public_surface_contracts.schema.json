@@ -183,7 +183,9 @@
         "documentUrl": { "type": "string" },
         "note": { "type": "string" },
         "isPublicEmployeeName": { "type": "boolean" },
-        "withheld": { "type": "boolean" }
+        "withheld": { "type": "boolean" },
+        "inferred": { "type": "boolean", "description": "P36.14 / SIG-RECON-052: true exactly when this row is an L4 derived fact (inference.derived_fact); absent or false on observed/resolved rows." },
+        "layer": { "type": "string", "enum": ["L4"], "description": "P36.14 / SIG-RECON-052: 'L4' exactly when inferred is true; absent otherwise." }
       }
     },
     "Gap": {

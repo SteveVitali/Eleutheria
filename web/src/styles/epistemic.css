@@ -55,6 +55,13 @@
 
   /* Absence hatch ink (the single texture's stroke); neutral, NO green. */
   --sig-epi-absence-ink: hsl(220deg 12% 40%);
+
+  /* Inferred / L4 marker ink (P36.14, SIG-RECON-052) — a steel-cyan, outside
+   * the green band and distinct from the blue support ramp (214deg) and the
+   * violet/magenta agreement ramp (266deg+). The marker's meaning is carried
+   * by its glyph + label text (SIG-UI-005); this hue is the redundant colour
+   * channel only. */
+  --sig-epi-inferred-ink: hsl(195deg 70% 32%);
 }
 
 *,
@@ -192,6 +199,32 @@ code,
   color: var(--sig-epi-agreement-contested);
 }
 .sig-contested__glyph {
+  font-size: 0.95em;
+}
+
+/* --- The inferred / L4 marker (§30.4, SIG-RECON-052, P36.14) ---------------- */
+/* An L4 derived fact is marked wherever it appears: a dotted-outline chip
+ * carrying a ◈ glyph + the word "Inferred" — the non-colour channels are the
+ * glyph, the label text, and the dotted (not dashed, not solid) outline, so the
+ * state reads in greyscale and print (SIG-UI-005). Deliberately distinct from
+ * the contested marker (magenta text, no border), the absence hatch (§9.5's
+ * single texture, SIG-UI-007) and the Provisional chip (K14: unevaluated
+ * method — a different concept, SIG-UI-062). */
+.sig-inferred {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  border: 1px dotted var(--sig-epi-inferred-ink);
+  border-radius: 999px;
+  padding: 0 0.45rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sig-epi-inferred-ink);
+  white-space: nowrap;
+}
+.sig-inferred__glyph {
   font-size: 0.95em;
 }
 

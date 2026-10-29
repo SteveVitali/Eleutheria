@@ -222,7 +222,12 @@ def _supersession_record(candidate_dir: Path, publication_id: str) -> str | None
 #: tree gained per-compartment `statements.jsonl`, so the same corpus
 #: rebuilds to a new deterministic id — p-7c63… is the same corpus under
 #: the /4 projection with statements files.
-PRIOR_RELEASE_ID = "p-7c6318d9f40d2ed091b680e88e4cabaed61796fd5be98eba10216da675942481"
+#: P36.14 (SIG-RECON-052) re-pinned the id a fifth time: the projection
+#: bumped sig.published-record/4 → /5 (every record doc gains the typed
+#: inference-marker pair ``inferred``/``layer`` on the hashed document), so
+#: the same corpus rebuilds to a new deterministic id — p-df24… is the
+#: same corpus under the /5 projection.
+PRIOR_RELEASE_ID = "p-df246531de995ecda3506d5642dd7259a4be17920df9e255142a38549f02f9a4"
 PRIOR_RENDERER = "p32.24"
 PRIOR_ENTITY_WITHHOLD = "ent-acc-dep-41"  # corpus entity — deny target
 PRIOR_CLAIM_WITHHOLD = "cl-acc-denied-claim"  # corpus claim — denies its carriers

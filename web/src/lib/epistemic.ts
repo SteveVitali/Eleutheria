@@ -157,6 +157,48 @@ export const CONTESTED_MARKER = {
   label: "Contested value",
 } as const;
 
+// --- The inferred / L4 marker (§30.4, SIG-RECON-052, P36.14) ---------------
+
+/**
+ * The spine layer an inference belongs to (§30, SIG-RECON-047). Mirrors
+ * `inference.marking.INFERRED_LAYER` — the Python side owns the stored
+ * `inference.derived_fact` shape; this constant is the same contract on the
+ * rendered side.
+ */
+export const INFERRED_LAYER = "L4";
+
+/**
+ * The persistent inferred marker: an L4 derived fact (§30.4, SIG-RECON-052)
+ * MUST be visually and structurally distinguishable from an observed or
+ * resolved record on every surface. The marker is a glyph + a text label —
+ * never colour alone (SIG-UI-005) — rendered by the `sig-inferred` epistemic
+ * class (`styles/epistemic.css`). It names *what kind of record this is*
+ * (derived, not observed); it is deliberately NOT the lexicon's Provisional
+ * chip (an unevaluated-method label, SIG-UI-062) nor a lifecycle Candidate.
+ */
+export const INFERRED_MARKER = {
+  /** ◈ — a non-colour channel (SIG-UI-005), distinct from every other marker glyph. */
+  glyph: "◈",
+  label: "Inferred",
+  meaning:
+    "Derived by a named rule from recorded claims — an L4 inference, not an " +
+    "observed fact (§30, SIG-RECON-052). Its supporting claims are cited.",
+  /** The epistemic class that styles this marker (defined once in epistemic.css). */
+  cssClass: "sig-inferred",
+} as const;
+
+/**
+ * True exactly when a record carries the complete L4 marker —
+ * `inferred: true` AND `layer: "L4"` together (the same contract
+ * `inference.marking.is_inferred_record` enforces on the Python side). A
+ * half-marked record counts as unmarked.
+ */
+export function isInferredRecord(
+  record: { inferred?: boolean; layer?: string } | null | undefined,
+): boolean {
+  return record?.inferred === true && record?.layer === INFERRED_LAYER;
+}
+
 // --- The four absence kinds within the single hatch (§9.5, SIG-UI-007) -----
 
 export const ABSENCE_KINDS = [

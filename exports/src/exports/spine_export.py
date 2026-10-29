@@ -61,6 +61,7 @@ from db.dispositions import (
 )
 from db.occurrences import BELIEF_NOW, BELIEF_PARAM, claim_source_cte
 from inference.accountability import read_materialized_accountability_links
+from inference.marking import mark_inferred
 from inference.materialize import read_materialized_coverage
 from policy.labels import (
     KINDS,
@@ -3037,15 +3038,21 @@ def _governance_row(link: Mapping[str, Any], label: str) -> dict[str, Any]:
     if link.get("via_contract"):
         via_bits.append(f"via contract {link['via_contract']}")
     via = f" ({'; '.join(via_bits)})" if via_bits else ""
-    return {
-        "label": label,
-        "value": str(link.get("object_id")),
-        "note": (
-            f"Derived accountability link (L4 inference, confidence "
-            f"{link.get('confidence', 'probable')}){via}; established by claim(s) {claims} "
-            "— procured ≠ deployed (§3.1)."
-        ),
-    }
+    # P36.14 (SIG-RECON-052): the row IS an inference — it carries the typed
+    # marker fields (``inferred``/``layer: "L4"``), not only the prose note, so
+    # every consumer can branch on it. The web ``Row`` renders the
+    # ``sig-inferred`` chip off these fields.
+    return mark_inferred(
+        {
+            "label": label,
+            "value": str(link.get("object_id")),
+            "note": (
+                f"Derived accountability link (L4 inference, confidence "
+                f"{link.get('confidence', 'probable')}){via}; established by claim(s) {claims} "
+                "— procured ≠ deployed (§3.1)."
+            ),
+        }
+    )
 
 
 def _governance_chain_field(
@@ -3064,16 +3071,21 @@ def _governance_chain_field(
             segments[role] = {
                 "status": "evidenced",
                 "links": [
-                    {
-                        "object_id": str(link.get("object_id")),
-                        "object_type": link.get("object_type"),
-                        "confidence": link.get("confidence", "probable"),
-                        "establishing_claims": [
-                            str(c) for c in (link.get("establishing_claims") or ())
-                        ],
-                        "via_org": link.get("via_org"),
-                        "via_contract": link.get("via_contract"),
-                    }
+                    # P36.14 (SIG-RECON-052): each emitted chain link is an L4
+                    # derived fact — it carries the typed ``inferred``/``layer``
+                    # marker, not only the "Derived" prose.
+                    mark_inferred(
+                        {
+                            "object_id": str(link.get("object_id")),
+                            "object_type": link.get("object_type"),
+                            "confidence": link.get("confidence", "probable"),
+                            "establishing_claims": [
+                                str(c) for c in (link.get("establishing_claims") or ())
+                            ],
+                            "via_org": link.get("via_org"),
+                            "via_contract": link.get("via_contract"),
+                        }
+                    )
                     for link in links
                 ],
             }

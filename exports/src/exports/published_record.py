@@ -39,7 +39,11 @@ from .statements import STATEMENT_SCHEMA
 #: ``sig.statement/1`` rows the per-claim provenance panel renders (UXR-33's
 #: one contract — the record page reads the same statements the release's
 #: ``statements.jsonl`` publishes).
-PROJECTION_VERSION = "sig.published-record/4"
+#: /4 → /5 (P36.14 / SIG-RECON-052): every record doc carries the typed
+#: inference-marker pair — ``inferred`` (bool) + ``layer`` — so an L4
+#: derivation is structurally distinguishable from an observed record on every
+#: surface the record touches.
+PROJECTION_VERSION = "sig.published-record/5"
 
 
 def record_key(compartment: str, entity_type: str, entity_id: str) -> str:
@@ -165,7 +169,22 @@ class PublishedRecord:
     #: Both are bound-view fields, never hashed into the projection.
     release: dict[str, Any] | None = None
     licence: dict[str, Any] | None = None
+    #: P36.14 (SIG-RECON-052, §30.4): the typed inference marker — emitted on
+    #: EVERY record so observed and derived bytes are structurally
+    #: distinguishable at a glance. ``inferred=False``/``layer=None`` is the
+    #: observed-record state; an L4 derived record carries ``inferred=True`` +
+    #: ``layer="L4"`` (``inference.marking`` is the contract).
+    inferred: bool = False
+    layer: str | None = None
     schema: str = PROJECTION_VERSION
+
+    def __post_init__(self) -> None:
+        """The marker pair is coherent or absent — a half-marker is a bug."""
+        if self.inferred != (self.layer == "L4"):
+            raise ValueError(
+                "inference marker is coherent or absent: inferred=True requires "
+                'layer="L4", and layer="L4" requires inferred=True'
+            )
 
     # -- serialisation -------------------------------------------------------- #
 
@@ -190,6 +209,11 @@ class PublishedRecord:
             "claim_statements": [dict(s) for s in self.claim_statements],
             "coverage": dict(self.coverage),
             "review": dict(self.review),
+            # P36.14 (SIG-RECON-052): the marker rides the hashed document —
+            # an inferred record and an observed record can never serialize
+            # identically.
+            "inferred": self.inferred,
+            "layer": self.layer,
         }
         if self.dedup is not None:
             # P35.47: sparse — a pre-P35.47 export's record projects byte-

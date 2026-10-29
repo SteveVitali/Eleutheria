@@ -1282,6 +1282,27 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   change; the loopback curation app and the non-operational intake
   receiver are untouched. No Cloud Armor — D-K3-6 stays deferred;
   the in-process limiter is the whole mechanism (SIG-STORE-003).
+- **The L4 inference marker on every export and API record**
+  (P36.14 / row 355; SIG-RECON-052 — every inference visually and
+  structurally distinguishable from observed evidence; cited
+  SIG-RECON-047/031, SIG-UI-005/006/062, SIG-CONF-005, SIG-ENG-042) —
+  the typed marker pair `inferred` + `layer` now travels on every
+  record where a derived fact can appear: `inference.marking` defines
+  the contract once (`mark_inferred` / `is_inferred_record` — the pair
+  is coherent or absent); export governance-chain rows and structured
+  links (`spine_export.py`), the dedup view's inferential entries
+  (`possible_duplicates`, `multi_view` — dedup.py), and every
+  `sig.published-record/5` document carry it; the API's
+  `ResolutionEnvelope`/`ClaimResponse`/`TaskResponse`/
+  `ContradictionResponse` expose `inferred: false, layer: null` as
+  typed fields on spine-layer records so observed and inferred
+  answers are structurally distinct, never prose-only. The web dossier
+  renders the `sig-inferred` marker — a ◈ glyph + "Inferred" label on
+  a dotted chip (a non-green token; text/glyph redundant channels per
+  SIG-UI-005) — server-rendered with `data-inferred`/`data-layer`
+  attributes, no script, print-parity. A cross-surface conformance
+  test asserts one fixture inference is marked in export bytes, the
+  API payload and the rendered page — removing the marker fails it.
 
 ### Changed
 

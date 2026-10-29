@@ -110,7 +110,7 @@ def test_record_json_is_deterministic() -> None:
     r2 = record_from_site_row(_row(), compartment="c", license_id="L").bind("p-" + "0" * 64)
     assert r1.json_bytes() == r2.json_bytes()
     doc = json.loads(r1.json_bytes())
-    assert doc["schema"] == "sig.published-record/4"
+    assert doc["schema"] == "sig.published-record/5"
 
 
 def test_declared_technology_survives_the_projection() -> None:
