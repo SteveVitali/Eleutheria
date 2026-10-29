@@ -188,18 +188,24 @@ def test_no_reader_imports_the_emit_path():
 
 
 def test_no_held_out_fixture_or_data_reader_exists(doc):
-    """No committed fixture/data/reader file may carry the artifact's
-    record type or feed set rows to a reader — the descriptor is the only
-    committed reference point."""
+    """No committed fixture/data/reader file on a tuning surface may carry
+    the artifact's record type or feed set rows to a reader — the
+    descriptor under ``docs/build/reports/p36.79-*/`` is the only committed
+    reference point (build memory — LEDGER/DEFERRALS/projection — may name
+    the schema id: it is the obligation record, never a set row)."""
     hits = []
     for path in _committed_files():
-        if path.startswith(
-            ("tests/", "web/", "exports/", "api/", "connectors/", "tasks/", "parsing/")
-        ) or path.endswith((".json", ".toml", ".sqlite")):
-            p = REPO / path
-            if p.is_file() and h.SET_SCHEMA in p.read_text(errors="replace"):
-                if not path.startswith("docs/build/reports/p36.79"):
-                    hits.append(path)
+        if not path.startswith(
+            ("tests/", "web/", "exports/", "api/", "connectors/", "tasks/",
+             "parsing/", "ontology/", "db/", "resolution/", "reconcile/",
+             "inference/", "evidence/", "orchestration/")
+        ):
+            continue
+        if path.startswith("tests/ops/test_held_out_relevance"):
+            continue
+        p = REPO / path
+        if p.is_file() and h.SET_SCHEMA in p.read_text(errors="replace"):
+            hits.append(path)
     assert not hits, hits
 
 
