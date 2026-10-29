@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "77a63da71c6cba1d5e19e7fbec982e966c3a3b61",
+  "input_commit": "05b282f3fdbe8c68155d099d38d8704babef937b",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "6927561ccca5404b97e08d32527f145c127f7a2c52dbfa1769fff46882ad71a8"
+      "sha256": "b8801dff08cd997f8448cf05d5370d252ef4124cc360a21d4f184c6595198f15"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -905,24 +905,28 @@
       "sha256": "90488dc2b6d08b3d8042de160df1c1b853a055deb0dc5959bdec0344219def33"
     },
     {
+      "path": "docs/adr/ADR-227-entity-url-key-permanence-slug-history.md",
+      "sha256": "f7b787a658ce9f0ced7aeb5a8e4eb224f0b60e763e2f61b0b480b4aca2cbc630"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "a29b89ac1e02bbcba5186dd325fa06798c2d49061a9293162b3c7f199a4f409f"
+      "sha256": "954520a9ea85f887ba97beaed8795271d90d08984daf0649aad4b4986512a801"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "349644b259ceeda74929ec3a548d42ba442767e59ef09f13829cb1e003c49d61"
+      "sha256": "465cd0e15938d1c52ce455871bef5d64b6ec2f53474ed26fe239df46448d46ed"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "e4937f045d18b8622426940d58f2fb9a83b1ec2b90cdbbbd12b0d42112bf808c"
+      "sha256": "0a040f492d8c25b1affee3a1625f0252d49409f4501d008e4e19ee3722a70371"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "8c486c96baf908ffa86540f48c38a0628bca15bb10485aa61c308c6eac0d78b9"
+      "sha256": "ea5f78f57a81392b3afa28294c5d9ef75f12d2a3003dda63a8bd41b372717991"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "250520e23bc0774724445e026dafaca8a355c45b6eb00e6fdbd24ca0464f8a2d"
+      "sha256": "05e8cb2c9634fb24b9fe458367b776ed39c881f1e40479960ed8dd5f70b94f07"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -2359,6 +2363,10 @@
     {
       "path": "docs/build/runs/P36.28.md",
       "sha256": "f4cfc0965106ae17ad287d3dad604b76fbf0ba175533b5cd3e2307f9592cd6ce"
+    },
+    {
+      "path": "docs/build/runs/P36.29.md",
+      "sha256": "58e441906f3491032c01dba4d82a0a7b1748e0e9d798868512fa2f4c60a25ae0"
     },
     {
       "path": "docs/build/runs/P36.3.md",

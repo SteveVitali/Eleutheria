@@ -66,6 +66,7 @@ from inference.materialize import read_materialized_coverage
 from policy.labels import (
     KINDS,
     LABEL_BASES,
+    URL_TYPES,
     EntityLabel,
     LabelFacts,
     derive_label,
@@ -82,6 +83,13 @@ from policy.licensing import (
     license_url as policy_license_url,
 )
 from policy.rights import RightsRecord
+from policy.slug_history import (
+    ENTITY_SLUG_HISTORY_SCHEMA,
+    check_unique_labels,
+    freeze_hashes,
+    history_doc,
+    merge_history,
+)
 from policy.source_aliases import resolve_public_text
 from policy.transparency import TRANSPARENCY_SOURCE_VIEW_COLUMNS, LaneDecision
 from reconcile.materialize import (
@@ -4813,6 +4821,7 @@ def build_spine_export(
     placement: _placement.PlacementEngine | None = None,
     cadence_sources: Mapping[str, Mapping[str, str]] | None | object = _UNSET,
     scheduler_drift: Mapping[str, bool] | None = None,
+    previous_entity_history: Sequence[Mapping[str, Any]] | None = None,
 ) -> SpineExport:
     """Assemble the national :class:`SpineExport` (pure — no database).
 
@@ -4839,6 +4848,14 @@ def build_spine_export(
     ``sig.placement-report/1`` quality report lands at
     ``web/placement.json``. When absent the export is byte-identical to the
     pre-placement posture — placement never silently defaults on.
+
+    ``previous_entity_history`` (P36.29 / K2 GX-03) is the previous release's
+    emitted ``sig.slug-history/1`` rows when one is bound — the merge carries
+    them verbatim and appends this release's transitions, and their issued
+    hashes bound the collision-extension rule (a hash is never reissued).
+    ``None`` is the honest first-release posture: the emitted history is the
+    current key set plus recorded merged/withdrawn tombstones, and the
+    7-char hash stands until a real collision is recorded.
     """
     raw = dict(raw or {})
     retrieval = date.fromisoformat(dataset.as_of[:10]) if dataset.as_of else date.today()
@@ -4941,6 +4958,28 @@ def build_spine_export(
     label_registry, label_comps = _label_registry(
         raw, dataset, retrieval=retrieval, registry=registry
     )
+    # P36.29 (K2 GX-03, SIG-UI-113): the hash is authoritative + frozen —
+    # collision-extend any new key that hits an already-issued hash (the
+    # prior history binds the issued set) or a sibling in this registry,
+    # never rewrite an issued one. Then SIG-UI-111: two public entities of
+    # one kind may never share a full display label — a violated invariant
+    # refuses the export rather than shipping a duplicate.
+    label_registry = freeze_hashes(label_registry, previous_entity_history or ())
+    check_unique_labels(label_registry)
+    # The history merge's terminal inputs — entity id → URL type segment and
+    # entity id → survivor id, off the same snapshot rows the registry read.
+    entity_url_types: dict[str, str] = {}
+    entity_merged_into: dict[str, str] = {}
+    for _row in raw.get("label_entities") or []:
+        try:
+            _eid, _etype = str(_row[0]), str(_row[1])
+            _skey = str(_row[2]) if _row[2] else None
+            _merged = str(_row[3]) if _row[3] else None
+        except (TypeError, IndexError):
+            continue
+        entity_url_types[_eid] = URL_TYPES.get(kind_for(_etype, _skey), "entity")
+        if _merged:
+            entity_merged_into[_eid] = _merged
 
     # --- the licence-critical path: sites sliced per (source, rights) -----------
     slices = _slice_sites(
@@ -5518,6 +5557,38 @@ def build_spine_export(
         web_artifacts[path] = b"".join(canonical_json(r) for r in label_rows)
         web_licenses[path] = str(comp_licenses.get(comp, _SIG_SPDX))
         web_compartments[path] = comp
+
+    # --- P36.29 (K2 GX-03/GX-05, ``sig.slug-history/1``): the entity URL-key
+    # history — one append-only log of every issued public entity key. The
+    # current rows carry the frozen hash + cosmetic slug; the terminal rows
+    # record rename/merge/split/withdrawal so ``/id/<type>/<uuid>`` and
+    # stale-key requests resolve truthfully — the rows JUR-05's single
+    # redirect generator reads. A prior release's rows carry through
+    # verbatim; a person entity emits nothing, ever (SIG-UI-112); a
+    # publication-withdrawn entity is scrubbed entirely — its id may not
+    # appear in a public artifact (P34.19/F-337), not even a tombstone.
+    entity_history_rows = merge_history(
+        previous_entity_history or (),
+        label_registry,
+        publication=build_spec.release_id(),
+        url_types=entity_url_types,
+        merged_into=entity_merged_into,
+        withdrawn=withdrawn_entities,
+    )
+    entity_history_doc = history_doc(
+        entity_history_rows,
+        generated_at=generated_at,
+        publication=build_spec.release_id(),
+    )
+    entity_history_path = f"{_WEB_DIR}/entity_slug_history.json"
+    web_artifacts[entity_history_path] = _web_bytes(entity_history_doc)
+    web_licenses[entity_history_path] = _SIG_SPDX
+    web_compartments[entity_history_path] = _WEB_COMPARTMENT
+    web_schemas[entity_history_path] = ENTITY_SLUG_HISTORY_SCHEMA
+    web_counts[entity_history_path] = (
+        len(entity_history_rows),
+        len({r.uuid for r in entity_history_rows}),
+    )
 
     disclosure = _terms_disclosure_payload(
         slices.rows_by_compartment,
@@ -6315,6 +6386,7 @@ def run_spine_export(
     boundary_spec: str | Path | None = None,
     cadence_sources: Mapping[str, Mapping[str, str]] | None | object = _UNSET,
     scheduler_drift: Mapping[str, bool] | None = None,
+    previous_entity_history: Sequence[Mapping[str, Any]] | None = None,
 ) -> SpineExport:
     """Execute the read-only reads and assemble the national export.
 
@@ -6488,6 +6560,7 @@ def run_spine_export(
         # "doc unreadable" marker, never silently either.
         cadence_sources=cadence_sources,
         scheduler_drift=scheduler_drift,
+        previous_entity_history=previous_entity_history,
     )
 
 
