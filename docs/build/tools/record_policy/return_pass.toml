@@ -1379,3 +1379,21 @@ rerun_cell = '''`implement-spec spec=docs/tickets/354_P36.13__api-rate-limits.md
   go = '''pre-authorised: OM-20 GATE-G5 (expires GATE-G6); AR-3 freeze/batch windows exit 42; `SIG_RATELIMIT_AUTHOR` per apply'''
   rerun = '''implement-spec spec=docs/tickets/354_P36.13__api-rate-limits.md live_verification=true'''
   live_dependants = []
+
+[[row]]
+key = "P36.79"
+kind = "leg"
+obligations = ["D-P36.79-1"]
+obligations_cell = '''queued D-P36.79-1 — the restricted-bucket object write of the sealed held-out relevance set (read-back digest verify; restore point = bucket versioning + committed sha256)'''
+gates_cell = '''pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6); contract window `any time outside 03:00-10:00Z` (guard exit 42 inside); `SIG_HELDOUT_AUTHOR` per apply; needs ADC + `SIG_GCP_PROJECT`'''
+operator_cell = '''nothing until ADC + `SIG_GCP_PROJECT` — one bounded object write; the set's sha256 is already committed'''
+rerun_cell = '''`implement-spec spec=docs/tickets/371_P36.79__held-out-search-relevance-set.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P36.79-seal"
+  obligations = ["D-P36.79-1"]
+  earliest = '''when ADC + `SIG_GCP_PROJECT` are present — the hosted creds this env lacks; outside 03:00-10:00Z'''
+  excluded = ["03:00-10:00Z"]
+  go = '''pre-authorised: OM-20 GATE-G5 (expires GATE-G6); `SIG_HELDOUT_AUTHOR` recorded'''
+  rerun = '''implement-spec spec=docs/tickets/371_P36.79__held-out-search-relevance-set.md live_verification=true'''
+  live_dependants = ["P36.71"]
