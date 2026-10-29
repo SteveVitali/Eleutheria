@@ -685,6 +685,33 @@ def build_parser() -> argparse.ArgumentParser:
     )
     bval.add_argument("--registry", required=True)
 
+    fig = subparsers.add_parser(
+        "figure",
+        help="Static figure kit (P36.27, FIG-01a, ADR-157): render a build-time "
+        "geography figure — the dossier at-a-glance map, a locator, or the "
+        "index sprite.",
+    )
+    fig.add_argument(
+        "verb",
+        choices=["map", "locator", "sprite"],
+        help="map: a sig.figure-kit-geo/1 document → SVG + sig.figure-geo-meta/1; "
+        "locator: a context/focus outline document → the locator SVG; "
+        "sprite: an entries list → the index-sprite SVG + sig.figure-index-sprite/1.",
+    )
+    fig.add_argument("--in", dest="in_file", required=True, help="the figure spec JSON")
+    fig.add_argument("--out", required=True, help="the .svg output path")
+    fig.add_argument(
+        "--meta",
+        default=None,
+        help="write the figure metadata JSON (figure-geo-meta or the sprite index)",
+    )
+    fig.add_argument(
+        "--standalone",
+        action="store_true",
+        help="wrap the figure in the standalone-download document (the P36.19 "
+        "style-block variant served under the dedicated SVG policy)",
+    )
+
     return parser
 
 
@@ -1641,7 +1668,66 @@ def main(argv: list[str] | None = None) -> int:
         return _run_quality(args)
     if args.command == "boundaries":
         return _run_boundaries(args)
+    if args.command == "figure":
+        return _run_figure(args)
     parser.print_help()
+    return 0
+
+
+def _json_outline(doc: object) -> tuple[tuple[tuple[float, float], ...], ...]:
+    """JSON rings → the figure kit's ``Outline`` (lists of ``[lon, lat]``)."""
+    if not isinstance(doc, (list, tuple)):
+        raise ValueError("outline is not a list of rings")
+    return tuple(
+        tuple((float(p[0]), float(p[1])) for p in ring)
+        for ring in doc  # type: ignore[union-attr]
+    )
+
+
+def _run_figure(args: argparse.Namespace) -> int:
+    """The P36.27 static-figure verbs — all offline; a malformed spec or a
+    figure that cannot meet its contract refuses on stdout (never a partial
+    emission — SIG-ENG-042)."""
+    from . import figures as fig
+
+    try:
+        spec_doc = json.loads(Path(args.in_file).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as e:
+        print(f"sig-exports figure: cannot read spec — {e}")
+        return 4
+    try:
+        if args.verb == "map":
+            result = fig.build_map_figure(fig.spec_from_dict(spec_doc))
+            svg = result.svg
+            meta = result.to_json()
+        elif args.verb == "locator":
+            svg = fig.build_locator(
+                _json_outline(spec_doc["context_outline"]),
+                _json_outline(spec_doc["focus_outline"]),
+                str(spec_doc["context_name"]),
+                str(spec_doc["focus_name"]),
+            )
+            meta = {"schema": "sig.figure-locator-meta/1"}
+        else:
+            entries = [
+                fig.SpriteEntry(str(e["jkey"]), _json_outline(e["outline"]))
+                for e in spec_doc["entries"]
+            ]
+            svg, meta = fig.build_index_sprite(entries)
+        if args.standalone:
+            svg = fig.standalone_document(svg)
+    except fig.FigureKitError as e:
+        print(f"sig-exports figure {args.verb}: refused — {e}")
+        return 4
+    except (KeyError, TypeError, ValueError) as e:
+        print(f"sig-exports figure {args.verb}: malformed spec — {e}")
+        return 4
+    Path(args.out).write_text(svg, encoding="utf-8")
+    if args.meta:
+        Path(args.meta).write_text(
+            json.dumps(meta, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+    print(json.dumps({"verb": args.verb, "out": args.out, "bytes": len(svg.encode("utf-8"))}))
     return 0
 
 
