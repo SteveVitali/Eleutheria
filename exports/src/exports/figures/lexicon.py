@@ -64,6 +64,52 @@ FIGURE_CLASSES = (
     "sig-fig-sprite-cell",
     "sig-fig-caption",
     "sig-fig-legend",
+    # --- P36.28 (FIG-01b): graph + chart + legend classes ----------------
+    # figure kinds (markers)
+    "sig-fig-graph",
+    "sig-fig-ego",
+    "sig-fig-chart",
+    # nodes — .sig-fig-node carries the shape's fill/stroke; the per-kind
+    # classes are the K14 §4.7 shape channel (marker hooks — the geometry
+    # carries the shape). .sig-fig-centre is the ego's centre node.
+    "sig-fig-node",
+    "sig-fig-node-agency",
+    "sig-fig-node-vendor",
+    "sig-fig-node-product",
+    "sig-fig-node-site",
+    "sig-fig-node-source",
+    "sig-fig-node-instrument",
+    "sig-fig-node-entity",
+    "sig-fig-node-group",
+    "sig-fig-centre",
+    "sig-fig-neighbour",
+    "sig-fig-node-label",
+    # edges — the access-kind classes are the line-pattern encodings and
+    # the page's :has() toggle hooks (K6 §6.4); .sig-fig-edge-muted is the
+    # currency channel (muted ink — historical/undated only).
+    "sig-fig-edge",
+    "sig-fig-edge-acc-configured",
+    "sig-fig-edge-acc-declared",
+    "sig-fig-edge-acc-observed",
+    "sig-fig-edge-muted",
+    # ego sector guides
+    "sig-fig-sector",
+    # charts — axis, bars, stacked series (≤ 9: top-8 + "other"), strip /
+    # timeline marks and their labels.
+    "sig-fig-axis",
+    "sig-fig-axis-label",
+    "sig-fig-bar",
+    "sig-fig-mark",
+    "sig-fig-mark-label",
+    "sig-fig-series-0",
+    "sig-fig-series-1",
+    "sig-fig-series-2",
+    "sig-fig-series-3",
+    "sig-fig-series-4",
+    "sig-fig-series-5",
+    "sig-fig-series-6",
+    "sig-fig-series-7",
+    "sig-fig-series-8",
 )
 
 
@@ -79,6 +125,13 @@ class Lexicon:
     fill_encodings: dict[str, Any]
     line_pattern: dict[str, Any]
     entity_kind: dict[str, Any]
+    entity_kind_plain: str
+    entity_kind_spec: str
+    currency_plain: str
+    currency_spec: str
+    provisional_plain: str
+    absence_plain: str
+    states: dict[str, Any]
     labels: dict[str, str]
 
     def check_class(self, cls: str) -> str:
@@ -86,6 +139,14 @@ class Lexicon:
         if cls not in FIGURE_CLASSES:
             raise FigureKitError(f"figure class {cls!r} not in the kit vocabulary")
         return cls
+
+    def state_label(self, section: str, key: str) -> str:
+        """A ``states.<section>.<key>.label`` — fail-closed: a state the
+        shared lexicon does not name cannot be drawn."""
+        node = self.states.get(section, {}).get(key)
+        if not isinstance(node, dict) or not isinstance(node.get("label"), str):
+            raise FigureKitError(f"lexicon states.{section}.{key} has no label")
+        return str(node["label"])
 
     def corroboration_class(self, n_sources: int) -> str:
         """The interim lineages rule (``fill.encodings``): one source → the
@@ -149,6 +210,9 @@ def load_lexicon(path: Path | str | None = None, repo_root: Path | None = None) 
         provisional_tokens = _get("legend", "provisional", "tokens")
         line_pattern = _get("legend", "linePattern")
         entity_kind = _get("legend", "entityKind")
+        currency = _get("legend", "currency")
+        absence = _get("legend", "absence")
+        states = _get("states")
         labels = {
             "singleSource": str(
                 fill["singleSource"]["interimLegendLine"]
@@ -171,6 +235,13 @@ def load_lexicon(path: Path | str | None = None, repo_root: Path | None = None) 
         fill_encodings=fill,
         line_pattern=line_pattern,
         entity_kind=entity_kind,
+        entity_kind_plain=str(entity_kind.get("plain", "")),
+        entity_kind_spec=str(entity_kind.get("spec", "")),
+        currency_plain=str(currency.get("plain", "")),
+        currency_spec=str(currency.get("spec", "")),
+        provisional_plain=str(legend["provisional"].get("plain", "")),
+        absence_plain=str(absence.get("plain", "")),
+        states=states,
         labels=labels,
     )
 

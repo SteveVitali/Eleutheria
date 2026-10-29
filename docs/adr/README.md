@@ -161,7 +161,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-154](ADR-154-graph-quality-suite-as-a-ratcheted-release-gate.md) | Graph-quality suite as a ratcheted release gate | SEED-11 (unit SEED-11a) | Accepted |
 | [ADR-155](ADR-155-html-first-page-types.md) | HTML-first page types | SEED-11 (unit SEED-11a) | Accepted |
 | [ADR-156](ADR-156-public-map-v2-tiles-and-self-hosted-basemap.md) | Public map v2 — count-conserving per-compartment overlay tiles (`sig.map-tiles/2`) and the self-hosted OSM basemap direction | P35.52 (run ledger `docs/build/runs/P35.52.md`). Design source: `PD/design/K1-map.md` §2–§3, §9.2, | Proposed (agent-drafted record of the K1 design; the overlay-tile half is implemented by P35.52 — the |
-| [ADR-157](ADR-157-one-static-figure-kit-geography.md) | one static figure kit: the geography half (`exports.figures`), Web Mercator, `static-12px@1`, the CSP-safe serializer (P36.27) | P36.27 (R11-K13-FIG-01a, manifest row 367 — on | accepted |
+| [ADR-157](ADR-157-one-static-figure-kit-geography.md) | one static figure kit: the geography half (`exports.figures`), Web Mercator, `static-12px@1`, the CSP-safe serializer (P36.27) | P36.27 (R11-K13-FIG-01a, manifest row 367 — on | Extended by ADR-226 (2026-10-29) |
 | [ADR-158](ADR-158-graph-exploration-as-aggregated-overviews.md) | Graph exploration as aggregated overviews — overview graphs of at most 3,000 nodes, entity egos and `/explore/`, descriptive only | SEED-11 (Round 11 Stage B, T1; unit SEED-11b) | Extended by ADR-190 (2026-10-01) |
 | [ADR-159](ADR-159-organisation-publication-registry-auto-allow.md) | Organisation publication — registry auto-allow, a typed "not yet reviewed" state, no operator review queue | SEED-11 (Round 11 Stage B, T1; unit SEED-11b) | Accepted |
 | [ADR-160](ADR-160-jurisdiction-registry-boundary-pack-and-lookup-1.md) | The jurisdiction registry, the GeoParquet boundary pack, and `lookup@1` (P35.17) | P35.17 (Round 11 / P35, manifest row 297 — K4 §3.1/§3.2/§4.2/§5.4) | accepted |
@@ -228,6 +228,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-223](ADR-223-strict-csp-split-hsts-permissions-policy-and-figure-svg-posture.md) | the strict CSP is a meta ∩ header split; HSTS, the `/map/`-only geolocation exception, and the dedicated figure-SVG policy (P36.19) | P36.19 (UXK0-3, manifest row 359 — on `r11/P36.19-csp-hsts-permissions-policy`) | accepted |
 | [ADR-224](ADR-224-t1-enhancement-kit-emission-admission-and-element-roster.md) | the T1 enhancement kit's emission, admission and element roster (P36.20) | P36.20 (UXK0-4, manifest row 360 — on `r11/P36.20-enhancement-kit-behaviour`) | accepted |
 | [ADR-225](ADR-225-workspace-state-2-registry-cite-this-view-and-facet-conformance.md) | the `sig.workspace-state/2` registry, "cite this view", and the surface × facet conformance harness (P36.21) | P36.21 (UXR-09/UXR-10, manifest row 361 — on `r11/P36.21-workspace-state-cite-this-view-facets`) | accepted |
+| [ADR-226](ADR-226-static-figure-kit-graphs-charts-legends.md) | the static figure kit's graph/chart/legend half: in-repo deterministic layouts, generated legends, table twins (P36.28) | P36.28 (R11-K13-FIG-01b, manifest row 368 — on | accepted |
 
 ## Notes
 

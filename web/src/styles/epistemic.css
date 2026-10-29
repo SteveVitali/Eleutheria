@@ -529,6 +529,176 @@ a.sig-absence-hatch:focus-visible {
   }
 }
 
+/* P36.28 (R11-K13-FIG-01b, ADR-157): the graph + chart half of the figure
+ * kit's class vocabulary — same rules as the geography half: colour only
+ * through --sig-* tokens, sig-fig-* classes carry structure/state, and the
+ * lexicon's channels stay exclusive (line pattern = access kind only;
+ * muted ink = currency; raspberry ≠ = contested only).
+ *
+ * Marker classes — semantic hooks in the emitted markup that need no
+ * colour rule of their own: .sig-fig-graph, .sig-fig-ego and .sig-fig-chart
+ * (the figure kinds), .sig-fig-neighbour (ego ring nodes), the per-kind
+ * shape classes .sig-fig-node-agency, .sig-fig-node-vendor,
+ * .sig-fig-node-product, .sig-fig-node-site, .sig-fig-node-source,
+ * .sig-fig-node-instrument and .sig-fig-node-entity (the K14 §4.7 shape
+ * channel — the path geometry carries the shape; .sig-fig-node-group is
+ * styled below since the aggregate glyph draws hollow). */
+.sig-fig-node {
+  fill: var(--sig-data-1);
+  stroke: var(--sig-surface);
+  stroke-width: 1;
+}
+
+.sig-fig-centre {
+  fill: var(--sig-ink);
+}
+
+/* The grouped-node glyph stays hollow — an aggregate is a link to the
+ * per-place page, not a counted entity (K6 §6.2). */
+.sig-fig-node-group {
+  fill: var(--sig-surface);
+  stroke: var(--sig-data-1);
+  stroke-width: 1.4;
+}
+
+.sig-fig-node-label {
+  fill: var(--sig-ink);
+  font-size: var(--sig-step--2);
+}
+
+.sig-fig-edge {
+  fill: none;
+  stroke: var(--sig-ink);
+  stroke-width: 1.4;
+}
+
+/* muted ink = currency (historical / undated) — never a line pattern,
+ * never hollow (sig.lexicon/1 legend.currency). */
+.sig-fig-edge-muted {
+  stroke: var(--sig-ink-muted);
+}
+
+/* line pattern = access kind only: declared is dashed, observed is the
+ * double line (two offset paths, both carry .sig-fig-edge-acc-observed),
+ * configured is the solid base stroke (sig.lexicon/1 legend.linePattern). */
+.sig-fig-edge-acc-declared {
+  stroke-dasharray: 5 3;
+}
+
+.sig-fig-sector {
+  fill: none;
+  stroke: var(--sig-rule-strong);
+  stroke-width: 0.8;
+}
+
+.sig-fig-axis {
+  fill: none;
+  stroke: var(--sig-rule-strong);
+  stroke-width: 1;
+}
+
+.sig-fig-axis-label {
+  fill: var(--sig-ink-muted);
+  font-size: var(--sig-step--2);
+}
+
+.sig-fig-bar {
+  fill: var(--sig-data-1);
+}
+
+.sig-fig-mark {
+  fill: var(--sig-data-1);
+  stroke: var(--sig-surface);
+  stroke-width: 1;
+}
+
+.sig-fig-mark-label {
+  fill: var(--sig-ink);
+  font-size: var(--sig-step--2);
+}
+
+/* The in-SVG legend strip: SVG <text> reads fill, not color. */
+.sig-fig-legend {
+  fill: var(--sig-ink-muted);
+}
+
+/* Stacked series — the sequential blue ramp interleaved for local
+ * contrast (adjacent segments always differ in lightness, so the stack
+ * survives greyscale); series-8 is K5's neutral 'other' aggregate. */
+.sig-fig-series-0 {
+  fill: var(--sig-data-seq-400);
+}
+
+.sig-fig-series-1 {
+  fill: var(--sig-data-seq-200);
+}
+
+.sig-fig-series-2 {
+  fill: var(--sig-data-seq-600);
+}
+
+.sig-fig-series-3 {
+  fill: var(--sig-data-seq-300);
+}
+
+.sig-fig-series-4 {
+  fill: var(--sig-data-seq-700);
+}
+
+.sig-fig-series-5 {
+  fill: var(--sig-data-seq-100);
+}
+
+.sig-fig-series-6 {
+  fill: var(--sig-data-seq-500);
+}
+
+.sig-fig-series-7 {
+  fill: var(--sig-data-1);
+}
+
+.sig-fig-series-8 {
+  fill: var(--sig-rule-strong);
+}
+
+/* K6 §6.4: the access kinds + the undated state are independently
+ * hideable without JavaScript — the figure's fieldset carries the named
+ * checkboxes and :has() hides the matching edge classes. */
+figure:has(#k-configured:not(:checked)) .sig-fig-edge-acc-configured,
+figure:has(#k-declared:not(:checked)) .sig-fig-edge-acc-declared,
+figure:has(#k-observed:not(:checked)) .sig-fig-edge-acc-observed,
+figure:has(#k-historical:not(:checked)) .sig-fig-edge-muted {
+  display: none;
+}
+
+@media print {
+  /* K6 §6.6: a figure never splits across pages; the light token set is
+   * forced by tokens.css. Access kinds survive greyscale through pattern
+   * (solid / dashed / double), nodes through shape, series through the
+   * lightness ramp — colour is never the only channel. */
+  .sig-fig,
+  .sig-figure-frame {
+    break-inside: avoid;
+  }
+
+  .sig-fig-edge {
+    stroke: var(--sig-ink);
+  }
+
+  .sig-fig-edge-muted {
+    stroke: var(--sig-ink-muted);
+  }
+
+  .sig-fig-bar,
+  .sig-fig-mark {
+    fill: var(--sig-ink);
+  }
+
+  .sig-fig-node {
+    fill: var(--sig-ink);
+  }
+}
+
 table.sig-table {
   border-collapse: collapse;
   width: 100%;
