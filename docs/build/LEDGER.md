@@ -7,9 +7,9 @@
 
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # P36.26 landed(366); queued legs on earlier rows
-nextTicket: P36.27 # row 367 — static-figure-kit-geography
-lastCompleted: P36.26 # row 366 — print-v2 2026-10-29
+projectStatus: IN_PROGRESS # P36.27 landed(367); queued legs on earlier rows
+nextTicket: P36.28 # row 368 — static-figure-kit-graphs-charts-legends
+lastCompleted: P36.27 # row 367 — static-figure-kit-geography 2026-10-29
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.76,P36.77,P36.78,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P36.26-print-v2 # P36.26 landed on this tip; P36.27 stacks here
+chainTip: r11/P36.27-static-figure-kit-geography # P36.27 landed on this tip; P36.28 stacks here
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-29T01:35Z
+updatedAt: 2026-10-29T05:21Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1341,3 +1341,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-29 — P36.26 correction — `fa36f986` rewrote the post-closeout entry above in place (an append-only region) to fit the orient budget, and a stray `ci:` fragment + an undeclared entry kind were repaired in place this commit (the P34.39b/ef1fb3bf sanctioned pattern; pre-edit bytes `reports/memory-repair/LEDGER_phaselog_L1340-1341_pre-P36.26-ci-kind.txt` sha256:1ee8473d…; the `seed-commit` declaration lands next commit per the branch rule); the entry stands trimmed — the fuller text is `a2d2ee18`'s — and this entry is the correction (BM-HIST-01) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-29 — P36.26 post-closeout record — `ci: pass #386@b6d8f32b` — run 40810947393 5/5 head-bound (python 17m6s · docs 1m34s · composed 4m15s · security 25s · web 29m42s) · correction: the earlier runner-variance attribution is withdrawn — the /search/ national bound trip was a deterministic print.css hoist onto every page head (`inlineStylesheets: "never"` + shared chunk), repaired by a `?url` route-scoped link (`/search/` 199,098 B local re-measure; flake_log row appended) · + carried ancestor `#383@a0dfbb8 (docs)` run 40762187907 unchanged · PR #386 OPEN · `main` untouched · deferrals +0/−0 · no live leg, no gate, no OM-20 · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-29 — P36.27 dispatch boundary-confirm — `ci: pass #386@1d211b89` 5/5 head-bound on the record tip (run 40814119625: python/docs/composed/security/web; impl read `ci: pass #386@b6d8f32b` run 40810947393) · P36.26 landed: print v2 · fix arcs: `print.css` `?url` scoped-link repair (site-wide ~1 KiB gzip leak → print routes only; `/search/` totalInitial back under bound) + sanctioned in-place `ci:`-fragment/kind repair (archived, seed-commits declared) + flake_log correction (deterministic, not runner variance) · `main` untouched · deferrals +0/−0 · dispatching P36.27 (row 367 — static figure kit, geography: `live_verification=false`; no gate, no OM-20, no production mutations; deps P35.17+P36.17+P36.19 landed; M-sized) · chainTip → r11/P36.26-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-10-29 — P36.27 done — row 367 (K6 NEW-3/FIG-01a static figure kit — geography; owner SIG-UI-066/094/123/124/131/134; cites SIG-UI-039/040, SIG-ENG-042; plan cell has no answered decision lines; **ADR-157**): `exports/src/exports/figures/` — one Python package: projection+fit · deterministic simplify w/ minimum-perimeter floor · `static-12px@1` binning · H3 areas vs tier-0 points (zoom≥10, tier/precision-guarded, finest-precision-honouring res) · jurisdiction + child outlines + links (uncovered hatched) · locator + index-sprite · typed not-drawn counters (aggregate only, no raw record data) · byte-deterministic CSP-safe serializer (no script/on*/external refs; xmlns = namespace id, never a fetch) · `<title>`/`<desc>`/`role="img"`/`aria-labelledby` · lexicon+token-bound classes (`sig-fig-contested` carries the disagreement hue — the reserved-hue leg forced the semantic name) · standalone doc (light/dark vars, print-light) for the P36.19 response policy · `sig-exports figure map|locator|sprite` (refuse-closed, exit 4) · ADR-157 registered (ADR_TRIGGERS, appF, spec rebuilt, BL-086, adr index) · tests: 31 exports + 3 web class-parity · `make check` 11,040 passed (4 failed + 7 errors = the recorded env/pre-existing profile; the row's own BACKLOG.md staleness fixed pre-commit) · `npm run check` green (793 unit, 697 e2e) · impl `aa3b7191` · PR #387 OPEN · ci: head-bound read follows · no gate, no OM-20, no live leg · deferrals +0/−0 · chainTip → r11/P36.27-… · next → P36.28 · harness: devin-desktop/swe-2-high/subagent
