@@ -196,9 +196,22 @@ def test_no_held_out_fixture_or_data_reader_exists(doc):
     hits = []
     for path in _committed_files():
         if not path.startswith(
-            ("tests/", "web/", "exports/", "api/", "connectors/", "tasks/",
-             "parsing/", "ontology/", "db/", "resolution/", "reconcile/",
-             "inference/", "evidence/", "orchestration/")
+            (
+                "tests/",
+                "web/",
+                "exports/",
+                "api/",
+                "connectors/",
+                "tasks/",
+                "parsing/",
+                "ontology/",
+                "db/",
+                "resolution/",
+                "reconcile/",
+                "inference/",
+                "evidence/",
+                "orchestration/",
+            )
         ):
             continue
         if path.startswith("tests/ops/test_held_out_relevance"):
