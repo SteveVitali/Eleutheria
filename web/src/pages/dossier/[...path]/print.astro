@@ -15,7 +15,7 @@
 // self-identifying (SIG-UI-013/035, DR-K14-21 no orphan pages). The
 // reconciliations print expanded (a paper reader cannot click) via print CSS.
 import "../../../styles/epistemic.css";
-import "../../../styles/print.css";
+import printCssUrl from "../../../styles/print.css?url";
 import PrintChrome from "../../../components/print/PrintChrome.astro";
 import CouncilBrief from "../../../components/print/CouncilBrief.astro";
 import PrintFigure from "../../../components/print/PrintFigure.astro";
@@ -189,6 +189,14 @@ const specMap = figureSpecMap(FIGURES);
     )}
     {stamp && <meta name="sig-release" content={stamp.metaContent} />}
     {stamp && <link rel="describedby" type="application/json" href={stamp.describedby} />}
+    {/* The print stylesheet is an explicit link, not a side-effect import —
+        a frontmatter `import ".../print.css"` gets hoisted onto every page's
+        <head> in this build (`inlineStylesheets: "never"` + the shared
+        data-layer chunk), which leaked ~1 KiB gzip onto /search/'s initial
+        wire bytes and tripped the recorded D-P35.51-2 regression bound (run
+        40807930438). `?url` still gives the bundled, hashed asset — it just
+        ships only where this page links it. */}
+    <link rel="stylesheet" href={printCssUrl} />
   </head>
   <body>
     <div class="sig-print-toolbar" role="note">

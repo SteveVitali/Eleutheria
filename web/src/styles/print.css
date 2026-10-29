@@ -233,16 +233,20 @@
     margin: 2cm;
   }
 
-  .sig-header,
-  .sig-skip-link,
-  .sig-cite,
-  .sig-hwkt,
-  .sig-dispute,
-  .sig-print-toolbar {
+  /* Selectors carry `[data-sig-chrome="print"]` so every rule outranks the
+   * shared epistemic sheet regardless of <link> order — this file is linked
+   * explicitly (the route-scoped `?url` asset) and Astro's injection order
+   * for the auto-emitted epistemic link is not contractual. */
+  [data-sig-chrome="print"] .sig-header,
+  [data-sig-chrome="print"] .sig-skip-link,
+  [data-sig-chrome="print"] .sig-cite,
+  [data-sig-chrome="print"] .sig-hwkt,
+  [data-sig-chrome="print"] .sig-dispute,
+  [data-sig-chrome="print"] .sig-print-toolbar {
     display: none !important;
   }
 
-  .sig-print-page {
+  [data-sig-chrome="print"] .sig-print-page {
     margin: 0;
     max-width: none;
     page-break-after: always;
@@ -250,35 +254,38 @@
   }
   /* The last page emits no trailing break — no blank trailing sheet
    * (DR-K14-21: no orphan pages). */
-  .sig-print-page:last-child {
+  [data-sig-chrome="print"] .sig-print-page:last-child {
     page-break-after: auto;
     break-after: auto;
   }
 
   /* Reconciliations are printed expanded — a paper reader cannot click. */
-  details.sig-recon > .sig-recon__body {
+  [data-sig-chrome="print"] details.sig-recon > .sig-recon__body {
     display: block !important;
   }
 
   /* No heading orphaned at a page foot; no figure/table/term cell split. */
-  h1, h2, h3 {
+  [data-sig-chrome="print"] h1,
+  [data-sig-chrome="print"] h2,
+  [data-sig-chrome="print"] h3 {
     break-after: avoid;
   }
-  .sig-print-figure,
-  .sig-recon,
-  table.sig-table,
-  .sig-print-brief__glance-item,
-  .sig-print-brief__qr,
-  .sig-print-terms__item {
+  [data-sig-chrome="print"] .sig-print-figure,
+  [data-sig-chrome="print"] .sig-recon,
+  [data-sig-chrome="print"] table.sig-table,
+  [data-sig-chrome="print"] .sig-print-brief__glance-item,
+  [data-sig-chrome="print"] .sig-print-brief__qr,
+  [data-sig-chrome="print"] .sig-print-terms__item {
     break-inside: avoid;
   }
 
-  p, li {
+  [data-sig-chrome="print"] p,
+  [data-sig-chrome="print"] li {
     orphans: 3;
     widows: 3;
   }
 
-  a {
+  [data-sig-chrome="print"] a {
     color: var(--sig-ink);
   }
 }
