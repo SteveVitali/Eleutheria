@@ -95,6 +95,12 @@ export const OKC_DOSSIER: Dossier = {
     "OpenStreetMap community map",
     "Oklahoma City Council minutes",
   ],
+  // P36.26 (`sig.print-figure/1`): the declared print visuals — the map is
+  // declared (K13: the map leads its own page); the static kit that draws it
+  // is P36.27's, so the slot renders the labelled placeholder until then.
+  print_figures: [
+    { kind: "map", title: "Placement of recorded camera sites" },
+  ],
   authorization: {
     // The single most actionable thing a local advocate can learn (SIG-UI-014a):
     // this passed unopposed on the consent agenda, with no public comment taken.

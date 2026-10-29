@@ -681,54 +681,11 @@ table.sig-table th {
   display: block;
 }
 
-/* --- The print / PDF path (SIG-UI-013) ------------------------------------- */
+/* --- The print / PDF path (SIG-UI-013, P36.26) ------------------------------- */
 /* The dedicated print route renders the dossier as paginated `.sig-print-page`
- * blocks, EACH carrying a footer with the as-of date and the permalink, so every
- * page of the printed PDF is self-identifying and citable. Browser "print to PDF"
- * from this route produces a hand-to-a-council-member document. */
-.sig-print-page {
-  margin: 0 auto var(--sig-space-6);
-  max-width: var(--sig-content);
-}
-.sig-print-footer {
-  border-top: var(--sig-border-thin) solid var(--sig-ink-muted);
-  margin-top: var(--sig-space-5);
-  padding-top: var(--sig-space-2);
-  font-size: var(--sig-step--2);
-  color: var(--sig-ink-muted);
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--sig-space-2);
-}
-
-@media print {
-  @page {
-    size: letter;
-    margin: 2cm;
-  }
-  .sig-header,
-  .sig-skip-link,
-  .sig-cite,
-  .sig-hwkt,
-  .sig-dispute,
-  .sig-print-toolbar {
-    display: none !important;
-  }
-  .sig-print-page {
-    page-break-after: always;
-  }
-  .sig-print-page:last-child {
-    page-break-after: auto;
-  }
-  /* Reconciliations are printed expanded — a paper reader cannot click. */
-  details.sig-recon > .sig-recon__body {
-    display: block !important;
-  }
-  a {
-    color: var(--sig-ink);
-  }
-}
+ * blocks carrying a running head and footer — all print-document styles live
+ * in `styles/print.css` (imported by the print route only), so the interactive
+ * dossier never pays for them. */
 
 /* --- P15.4: renewal watch + recommender + evidence viewer (§39.5/39.6) ------ */
 /* All chrome uses the neutral tokens; no epistemic colour is introduced

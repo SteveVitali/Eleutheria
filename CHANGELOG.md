@@ -24,6 +24,23 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Print v2 — the council-brief page 1, running head and foot on every
+  logical page, a terms-used list, a QR back to the pinned permalink,
+  and declared print figures under the figure contract** (P36.26 /
+  row 366; K14 UXK14-9; SIG-UI-098/130/155 — owner; serves SIG-UI-039/040,
+  SIG-ENG-042) — `web/src/lib/print.ts` composes the document:
+  `sig.print-figure/1` declarations (map/extent/trend/axis kinds) render
+  on their own no-split page and unknowns print as named absences, never
+  silent omissions; the brief carries the at-a-glance counts inside new
+  `glance-recorded`/`glance-unknown` figure regions so the material-number
+  gate keeps every count evidence-linked. `web/src/lib/qr.ts` is a
+  dependency-free byte-mode QR encoder (EC-M, versions 1–10, Reed–Solomon
+  + interleaving) emitting SVG path data at build time. Print components
+  (`CouncilBrief`, `PrintChrome`, `PrintFigure`, `PrintTerms`) plus
+  `web/src/styles/print.css` give every page place/doc-kind chrome, the
+  as-of pair, permalink, licence-if-bound, `Page n/N` and the P35.42 cite
+  sentence — still T0, zero `<script>`, greyscale-safe by border/label,
+  never colour alone.
 - **Brand — the K14 node-link mark, the favicon set, per-page-type
   social cards generated at build time, and per-type meta
   descriptions** (P36.25 / row 365; K13 UXK14-7 + K14 §4.12/DR-K14-20;

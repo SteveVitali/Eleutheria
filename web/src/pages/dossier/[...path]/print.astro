@@ -3,26 +3,34 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// The dossier print / PDF path (SIG-UI-013): a document suitable for handing to a
-// council member. It is a standalone, zero-JS page (not the interactive shell
-// layout) that paginates the twelve §39.2 sections into `.sig-print-page` blocks,
-// EACH carrying a footer with the as-of date and a link recording the build's
-// as-of pair and ruleset — so every page of the printed PDF is self-identifying
-// (SIG-UI-013/035). Browser "Print → Save as PDF" from this route yields the
-// document; the reconciliations print expanded (a paper reader cannot click)
-// via print CSS.
+// The dossier print / PDF path (SIG-UI-013): a document suitable for handing to
+// a council member. It is a standalone, zero-JS page (not the interactive shell
+// layout). P36.26 (K14 UXK14-9 / §4.10–4.11, SIG-UI-098/130/155) composes it:
+// page 1 is the council brief (recorded/unknown at a glance, next decision or
+// its typed absence, documents to bring, the build-generated QR back to the
+// pinned permalink); each declared print figure paginates on its own page; the
+// twelve §39.2 sections follow; the "Terms used" strip closes the document.
+// Every `.sig-print-page` carries the running head and footer — as-of, release,
+// permalink, licence, page n of N — so every emitted PDF page is
+// self-identifying (SIG-UI-013/035, DR-K14-21 no orphan pages). The
+// reconciliations print expanded (a paper reader cannot click) via print CSS.
 import "../../../styles/epistemic.css";
-import IncompletenessBanner from "../../../components/IncompletenessBanner.astro";
-import WhatWeDontKnow from "../../../components/WhatWeDontKnow.astro";
+import "../../../styles/print.css";
+import PrintChrome from "../../../components/print/PrintChrome.astro";
+import CouncilBrief from "../../../components/print/CouncilBrief.astro";
+import PrintFigure from "../../../components/print/PrintFigure.astro";
+import PrintTerms from "../../../components/print/PrintTerms.astro";
 import DossierSection from "../../../components/DossierSection.astro";
 import ActionBlocks from "../../../components/ActionBlocks.astro";
-import { SECTION_TITLES, dossierPath, dossierPermalink, dossierPrintPath, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG, DOSSIER_LICENCE_ID } from "../../../lib/dossier";
-import type { Section } from "../../../lib/dossier";
-import { citationBlock, REPRODUCIBLE_PHRASE } from "../../../lib/citation";
+import WhatWeDontKnow from "../../../components/WhatWeDontKnow.astro";
+import { SECTION_TITLES, dossierPath, dossierPermalink, dossierPrintPath, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG } from "../../../lib/dossier";
+import { citationBlock } from "../../../lib/citation";
 import { withBase } from "../../../lib/paths";
 import { getDossierArtifactRef, getDossiers, getJurisdictionCompartments } from "../../../lib/data";
 import { getReleaseStamp } from "../../../lib/release-stamp";
 import { displayJurisdiction, dossierDisplayTitle } from "../../../lib/jurisdictions";
+import { planPrintPages, recordedGlance, councilDecision, documentsToBring } from "../../../lib/print";
+import { qrEncode, qrPathData } from "../../../lib/qr";
 // P35.37 (SIG-TRANSP-013, J3 §5.4, UXR-34): the print document carries the SAME
 // figure-evidence registry as the interactive dossier (its own variant ids).
 import { artifactHref, defineFigures } from "../../../lib/figures";
@@ -66,7 +74,6 @@ const jurisdiction = dossier.display_name || dossier.name
 const pageTitle = dossierDisplayTitle(dossier.subject_label, dossier.jurisdiction);
 const combinesList = jurisdiction.combines ? jurisdiction.combines.join(" and ") : null;
 
-const SECTIONS_PER_PAGE = 3;
 const origin = Astro.site ? Astro.site.origin : undefined;
 const link = dossierPermalink(dossier, origin);
 // P36.25 (SIG-UI-154): this route's own path — the OG share object + the
@@ -84,12 +91,17 @@ const printDesc = defaultDescription(printTitle, "T0");
 // sig-2026-10-15.1" is citable on its own.
 const stamp = getReleaseStamp();
 
-// Chunk the twelve sections into fixed-size pages; page 1 also carries the header,
-// the incompleteness banner, and the "what we don't know" summary.
-const pages: Section[][] = [];
-for (let i = 0; i < dossier.sections.length; i += SECTIONS_PER_PAGE) {
-  pages.push(dossier.sections.slice(i, i + SECTIONS_PER_PAGE));
-}
+// P36.26: the page plan — brief + one page per declared figure + the section
+// chunks + the terms strip. `releaseBound` decides whether `release` and
+// `pinned-citation` join the terms list and whether the release/licence lines
+// render — never asserted on an unbound development build.
+const pages = planPrintPages(dossier, { releaseBound: stamp !== null });
+const glance = recordedGlance(dossier);
+const decision = councilDecision(dossier);
+const documents = documentsToBring(dossier);
+// K14 §4.11: the QR is a static SVG generated at build — EC level M,
+// deterministic, encodes the belief-pinned permalink verbatim.
+const qr = qrPathData(qrEncode(link));
 
 // The print page's figures[] registry — the print variant ids; no "How we know
 // this" panel on this surface → the provenance target is a named absence.
@@ -105,9 +117,8 @@ const recordList =
 
 // P35.42 (SIG-TRANSP-023, J3 §8.2, F-101): the print document's citation line
 // renders the SAME contract as the on-page block — the cite sentence, the
-// release id, the conditional reproducibility/interim wording and the licence
-// — not a second hand-written block. The dossier's released record path is the
-// immutable form; absent one the interim sentence prints.
+// release id, the conditional reproducibility/interim wording — not a second
+// hand-written block.
 const printCite = citationBlock({
   path: dossierPath(dossier.slug),
   title: pageTitle,
@@ -188,54 +199,85 @@ const specMap = figureSpecMap(FIGURES);
     </div>
 
     {/* P34.13 (QW-13, RI-49): the standalone document had NO main landmark —
-        the print content now sits inside one. */}
+        the print content now sits inside one. P36.26: every page carries the
+        running head (place) and footer (as-of, release, permalink, licence,
+        page n of N) — DR-K14-21's "no orphan pages". */}
     <main id="main">
-    {pages.map((chunk, idx) => (
-      <div class="sig-print-page" data-testid="print-page">
-        {idx === 0 && (
-          <header class="sig-print-header">
-            <h1>{pageTitle}</h1>
-            <p class="sig-dossier-jurisdiction">{jurisdiction.label}</p>
-            {combinesList && (
-              <p class="sig-dossier-combines" data-testid="dossier-combines" data-copy="JD-02">This dossier combines {combinesList}.</p>
-            )}
-            {!jurisdiction.known && (
-              <p class="sig-dossier-unmapped" data-testid="dossier-jurisdiction-unmapped" data-copy="JD-07">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href={withBase("research-queue/")}>research queue</a>.</p>
-            )}
-            <IncompletenessBanner dossier={dossier} spec={specMap.get("banner")} />
-            <section aria-labelledby="print-summary-gaps">
-              <h2 id="print-summary-gaps">What we don't know (summary)</h2>
-              <WhatWeDontKnow gaps={dossier.gaps} variant="print-summary" specs={specMap} />
-            </section>
-          </header>
+    {pages.map((page) => (
+      <div class="sig-print-page" data-testid="print-page" data-page-kind={page.kind}>
+        <PrintChrome part="head" place={jurisdiction.label} n={page.n} total={page.total} />
+
+        {page.kind === "brief" && (
+          <CouncilBrief
+            dossier={dossier}
+            pageTitle={pageTitle}
+            jurisdictionLabel={jurisdiction.label}
+            glance={glance}
+            decision={decision}
+            documents={documents}
+            qr={qr}
+            permalink={link}
+            specMap={specMap}
+          >
+            {/* JD-02/JD-07 stay in THIS file: the P34.14 copy-binding tests
+                parse the route source, so the guarded elements are passed to
+                the brief as a named slot (mixed-bucket disclosure K4 NEW-1). */}
+            <Fragment slot="jurisdiction-notes">
+              {combinesList && (
+                <p class="sig-dossier-combines" data-testid="dossier-combines" data-copy="JD-02">This dossier combines {combinesList}.</p>
+              )}
+              {!jurisdiction.known && (
+                <p class="sig-dossier-unmapped" data-testid="dossier-jurisdiction-unmapped" data-copy="JD-07">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href={withBase("research-queue/")}>research queue</a>.</p>
+              )}
+            </Fragment>
+          </CouncilBrief>
         )}
 
-        {chunk.map((section) => {
-          const action = SECTION_ACTION_BLOCKS[section.section_id];
-          const noRecord =
-            section.section_id !== "what_we_dont_know" && sectionIsEmpty(section) && !action;
-          return (
-            <section data-section-id={section.section_id}>
-              <h2>{SECTION_TITLES[section.section_id]}</h2>
-              {section.section_id === "what_we_dont_know" ? (
-                <WhatWeDontKnow gaps={dossier.gaps} variant="print-section" specs={specMap} />
-              ) : (
-                <DossierSection section={section} specs={specMap} />
-              )}
-              {action && <ActionBlocks dossier={dossier} which={action} specs={specMap} />}
-              {noRecord && (
-                <p class="sig-no-record" data-testid="section-no-record" data-copy="DS-01">{NO_RECORD_IN_SIG}</p>
-              )}
-            </section>
-          );
-        })}
+        {page.kind === "figures" && (
+          <PrintFigure
+            figure={page.figure}
+            ordinal={page.n - 1}
+            place={jurisdiction.label}
+            asOf={dossier.asOf}
+            permalink={link}
+          />
+        )}
 
-        <footer class="sig-print-footer" data-testid="print-footer">
-          <span class="sig-print-footer__asof">
-            As of world <time datetime={dossier.asOf.as_of_world}>{dossier.asOf.as_of_world}</time>,
-            belief <time datetime={dossier.asOf.as_of_belief}>{dossier.asOf.as_of_belief}</time>
-          </span>{" "}
-          <a class="sig-print-footer__permalink" data-testid="print-permalink" href={link}>{link}</a>
+        {page.kind === "sections" &&
+          page.sections.map((section) => {
+            const action = SECTION_ACTION_BLOCKS[section.section_id];
+            const noRecord =
+              section.section_id !== "what_we_dont_know" && sectionIsEmpty(section) && !action;
+            return (
+              <section data-section-id={section.section_id}>
+                <h2>{SECTION_TITLES[section.section_id]}</h2>
+                {section.section_id === "what_we_dont_know" ? (
+                  <WhatWeDontKnow gaps={dossier.gaps} variant="print-section" specs={specMap} />
+                ) : (
+                  <DossierSection section={section} specs={specMap} />
+                )}
+                {action && <ActionBlocks dossier={dossier} which={action} specs={specMap} />}
+                {noRecord && (
+                  <p class="sig-no-record" data-testid="section-no-record" data-copy="DS-01">{NO_RECORD_IN_SIG}</p>
+                )}
+              </section>
+            );
+          })}
+
+        {page.kind === "terms" && <PrintTerms terms={page.terms} />}
+
+        <PrintChrome
+          part="foot"
+          place={jurisdiction.label}
+          n={page.n}
+          total={page.total}
+          asOf={dossier.asOf}
+          permalink={link}
+          stamp={stamp}
+          cite={printCite}
+        >
+          {/* JD-08 likewise binds in this file — the release sentence renders
+              inside the footer row via the default slot. */}
           {stamp && (
             <span class="sig-print-footer__release" data-testid="print-release" data-copy="JD-08">
               {" "}— release {stamp.label} · built {stamp.builtAt} from code{" "}
@@ -244,18 +286,7 @@ const specMap = figureSpecMap(FIGURES);
               <a href={stamp.describedby}>release.json</a>
             </span>
           )}
-          {/* P35.42 (SIG-TRANSP-023, F-101): the cite sentence, the
-              conditional reproducibility/interim wording and the licence the
-              print page lacked — rendered from the shared citationBlock
-              contract, so every printed page is self-citing. */}
-          {printCite.citeSentence && (
-            <p class="sig-print-footer__cite" data-testid="print-cite">
-              {printCite.citeSentence}.
-              {printCite.reproducible && <> — {REPRODUCIBLE_PHRASE}.</>}{" "}
-              {printCite.interimSentence} Licence: {DOSSIER_LICENCE_ID}.
-            </p>
-          )}
-        </footer>
+        </PrintChrome>
       </div>
     ))}
     </main>

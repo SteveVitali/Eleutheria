@@ -22,7 +22,7 @@ import {
   dossierTargets,
   type FigureSpec,
 } from "./figures";
-import { dossierUnknowns, rowDisplayValue } from "./dossier";
+import { dossierFieldAudit, dossierUnknowns, rowDisplayValue } from "./dossier";
 import type { Dossier } from "./dossier";
 
 /**
@@ -231,6 +231,33 @@ export function dossierFigureSpecs(
         pointer: ptr(ctx, "/termination/notice_window_days"),
         definition: "#sec-cost_and_expiry",
         breakdown: "#fig-notice-window",
+      }),
+    );
+  }
+
+  // P36.26 (SIG-UI-155): the council brief's at-a-glance counts — the
+  // recorded-vs-answered split and the unknown total are material numbers, so
+  // they render inside figure regions like every other dossier count. Both
+  // DERIVE from the whole artifact (the field audit spans gaps + rows + the
+  // action-block fields), so the pointer is the document root.
+  if (page === "print") {
+    const audit = dossierFieldAudit(dossier);
+    const recorded = audit.allFields.size - audit.kinds.size - audit.withheld;
+    specs.push(
+      spec(ctx, {
+        id: "glance-recorded",
+        value: `${recorded} of ${audit.allFields.size} fields`,
+        pointer: ptr(ctx, ""),
+        definition: "#fig-glance-recorded",
+        breakdown: "#fig-glance-recorded",
+      }),
+      spec(ctx, {
+        id: "glance-unknown",
+        value: dossierUnknowns(dossier).total,
+        unit: "fields",
+        pointer: ptr(ctx, ""),
+        definition: "#fig-glance-unknown",
+        breakdown: "#fig-glance-unknown",
       }),
     );
   }

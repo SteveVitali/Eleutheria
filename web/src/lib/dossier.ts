@@ -324,6 +324,19 @@ export interface Dossier {
   page_threshold_basis?: string;
   /** The artifact's schema id (`sig.dossier/2`). */
   schema?: string;
+
+  // --- P36.26 (K14 UXK14-9): the declared print visuals ---------------------
+  /**
+   * The dossier's declared print figures (`sig.print-figure/1`): the geography
+   * and deployment visuals the print document paginates onto their own pages
+   * (SIG-UI-098/130). `kind` ∈ `map | extent | trend | axis`; `state` names a
+   * lexicon epistemic state when the figure is a contested value; `note`
+   * customises the placeholder line while the P36.27/28 static kits are
+   * pending. Optional and back-compat — a dossier with no declarations prints
+   * its sections only; a declaration NEVER fabricates a visual (the renderer
+   * emits the labelled placeholder for kinds it cannot yet draw).
+   */
+  print_figures?: { kind: string; title: string; state?: string; note?: string }[];
 }
 
 /** The BCP-47 language tag for a dossier (defaults to English). */
@@ -535,9 +548,26 @@ const _UNKNOWN_KIND_RANK: Record<string, number> = {
   NO_EVIDENCE_FOUND: 2,
 };
 
-export function dossierUnknowns(dossier: Dossier): DossierUnknowns {
+/**
+ * P36.26 (SIG-UI-155): the field-level audit behind {@link dossierUnknowns} —
+ * extracted so the council brief can count RECORDED fields against the same
+ * field universe the banner counts unknowns in (the two counts can never
+ * disagree about what "a field" is).
+ */
+export interface DossierFieldAudit {
+  /** Every answerable field the dossier poses: all gap + row keys plus the action-block fields. */
+  allFields: Set<string>;
+  /** kind-keyed dedup of fields with no recorded value (see `dossierUnknowns`). */
+  kinds: Map<string, string>;
+  /** Values withheld under publication policy (count, as before). */
+  withheld: number;
+  emptySections: number;
+}
+
+export function dossierFieldAudit(dossier: Dossier): DossierFieldAudit {
   // kind-keyed dedup over gaps + absence rows + bare-null rows, by field key.
   const kinds = new Map<string, string>();
+  const allFields = new Set<string>();
   const bump = (key: string, kind: string) => {
     const prev = kinds.get(key);
     if (prev === undefined || (_UNKNOWN_KIND_RANK[kind] ?? -1) > (_UNKNOWN_KIND_RANK[prev] ?? -1)) {
@@ -546,13 +576,16 @@ export function dossierUnknowns(dossier: Dossier): DossierUnknowns {
   };
   let withheld = 0;
   for (const g of dossier.gaps) {
+    const key = `${g.subject_id}\u0000${g.predicate_id}`;
+    allFields.add(key);
     if (g.kind !== "EVIDENCE_OF_ABSENCE") {
-      bump(`${g.subject_id}\u0000${g.predicate_id}`, g.kind);
+      bump(key, g.kind);
     }
   }
   for (const s of dossier.sections) {
     for (const r of s.rows ?? []) {
       const key = `${r.subject_id ?? dossier.slug}\u0000${r.predicate_id ?? r.label}`;
+      allFields.add(key);
       if (r.absence) {
         if (r.absence !== "EVIDENCE_OF_ABSENCE") bump(key, r.absence);
       } else if (r.withheld) {
@@ -581,31 +614,42 @@ export function dossierUnknowns(dossier: Dossier): DossierUnknowns {
     ["legal_regime.local_ordinance", dossier.legal_regime.local_ordinance],
   ];
   for (const [field, v] of actionNulls) {
-    if (v === null) bump(`${dossier.slug}\u0000${field}`, "UNKNOWN");
+    const key = `${dossier.slug}\u0000${field}`;
+    allFields.add(key);
+    if (v === null) bump(key, "UNKNOWN");
   }
-  if (dossier.legal_regime.disclosure_duties.length === 0) {
-    bump(`${dossier.slug}\u0000legal_regime.disclosure_duties`, "UNKNOWN");
+  {
+    const key = `${dossier.slug}\u0000legal_regime.disclosure_duties`;
+    allFields.add(key);
+    if (dossier.legal_regime.disclosure_duties.length === 0) {
+      bump(key, "UNKNOWN");
+    }
   }
-  const counts: Record<string, number> = {};
-  for (const kind of kinds.values()) counts[kind] = (counts[kind] ?? 0) + 1;
-  const notResearched = counts["NOT_RESEARCHED"] ?? 0;
-  const noEvidenceFound = counts["NO_EVIDENCE_FOUND"] ?? 0;
-  const unresolved = counts["UNRESOLVED"] ?? 0;
-  const unknown = counts["UNKNOWN"] ?? 0;
   const emptySections = dossier.sections.filter(
     (s) =>
       sectionIsEmpty(s) &&
       !SECTION_ACTION_BLOCKS[s.section_id] &&
       !(s.section_id === "what_we_dont_know" && dossier.gaps.length > 0),
   ).length;
+  return { allFields, kinds, withheld, emptySections };
+}
+
+export function dossierUnknowns(dossier: Dossier): DossierUnknowns {
+  const audit = dossierFieldAudit(dossier);
+  const counts: Record<string, number> = {};
+  for (const kind of audit.kinds.values()) counts[kind] = (counts[kind] ?? 0) + 1;
+  const notResearched = counts["NOT_RESEARCHED"] ?? 0;
+  const noEvidenceFound = counts["NO_EVIDENCE_FOUND"] ?? 0;
+  const unresolved = counts["UNRESOLVED"] ?? 0;
+  const unknown = counts["UNKNOWN"] ?? 0;
   return {
     total: notResearched + noEvidenceFound + unresolved + unknown,
     notResearched,
     noEvidenceFound,
     unresolved,
     unknown,
-    withheld,
-    emptySections,
+    withheld: audit.withheld,
+    emptySections: audit.emptySections,
   };
 }
 

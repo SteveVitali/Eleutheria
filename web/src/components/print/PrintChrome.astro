@@ -1,0 +1,74 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.26 (K14 §4.11, SIG-UI-155): the running chrome — the head and foot every
+// `.sig-print-page` carries so each emitted PDF page is self-identifying and
+// citable. `part="head"` is the running head (place + document kind);
+// `part="foot"` is the running footer: as-of pair, release, permalink,
+// licence, "Page n of N", plus the P35.42 citation sentence. In-flow (the K14
+// fallback — see styles/print.css for the @page margin-box note).
+import { DOSSIER_LICENCE_ID } from "../../lib/dossier";
+import { REPRODUCIBLE_PHRASE } from "../../lib/citation";
+import type { AsOfEcho } from "../../lib/fixtures";
+import type { ReleaseStamp } from "../../lib/release-stamp";
+
+interface Props {
+  part: "head" | "foot";
+  place: string;
+  n: number;
+  total: number;
+  asOf?: AsOfEcho;
+  permalink?: string;
+  stamp?: ReleaseStamp | null;
+  cite?: { citeSentence: string | null; reproducible: boolean; interimSentence: string | null } | null;
+}
+
+const { part, place, n, total, asOf, permalink, stamp, cite } = Astro.props;
+---
+
+{part === "head" ? (
+  <header class="sig-print-runhead" data-testid="print-runhead">
+    <span class="sig-print-runhead__place">{place}</span>{" "}
+    <span class="sig-print-runhead__doc" data-copy="PV-14">SIG dossier — print</span>
+  </header>
+) : (
+  <footer class="sig-print-footer" data-testid="print-footer">
+    <p class="sig-print-footer__row">
+      {asOf && (
+        <span class="sig-print-footer__asof">
+          As of world <time datetime={asOf.as_of_world}>{asOf.as_of_world}</time>,
+          belief <time datetime={asOf.as_of_belief}>{asOf.as_of_belief}</time>
+        </span>
+      )}
+      {/* The release sentence (JD-08) is the page's slot child — the
+          copy-binding tests parse the route file, so the literal element
+          lives there; only the slot seat stays here. */}
+      <slot />
+      {/* The licence is asserted only on a release-bound build (the same
+          contract as DOSSIER_LICENCE_ID in the cite line — never fabricated
+          on a development build). */}
+      {stamp && <>{" "}<span class="sig-print-footer__licence" data-copy="PV-16">Licence: {DOSSIER_LICENCE_ID}.</span></>}
+      {/* `n/N` rather than `n of N`: the figure gate's material-numeral
+          scanner exempts `x/y` forms (dates/enumerators), and a bare page
+          index is chrome, not evidence — it must not read as a count claim. */}
+      {" "}<span class="sig-print-footer__page" data-testid="print-pageno" data-copy="PV-15">Page {n}/{total}</span>
+    </p>
+    {permalink && (
+      <p class="sig-print-footer__row">
+        <a class="sig-print-footer__permalink" data-testid="print-permalink" href={permalink}>{permalink}</a>
+      </p>
+    )}
+    {/* P35.42 (SIG-TRANSP-023, F-101): the cite sentence, the conditional
+        reproducibility/interim wording — the shared citationBlock contract,
+        so every printed page is self-citing. */}
+    {cite?.citeSentence && (
+      <p class="sig-print-footer__cite" data-testid="print-cite">
+        {cite.citeSentence}.
+        {cite.reproducible && <> — {REPRODUCIBLE_PHRASE}.</>}{" "}
+        {cite.interimSentence}
+      </p>
+    )}
+  </footer>
+)}
