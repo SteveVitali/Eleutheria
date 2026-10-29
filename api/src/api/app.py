@@ -37,6 +37,7 @@ from .dereference import (
 )
 from .models import HealthResponse, TermsResponse
 from .prohibitions import assert_no_prohibited_routes, route_paths
+from .rate_limit import RateLimitConfig, RateLimitMiddleware, TokenBucketLimiter
 from .release_search import KNOWN_PARAMS, ReleaseSearchStore, render_search_html
 from .release_serving import (
     PUBLICATION_RE,
@@ -75,6 +76,7 @@ def create_app(
     *,
     release_id: str | None = None,
     release_serving: ReleaseServingStore | None = None,
+    rate_limit: RateLimitConfig | None = None,
 ) -> FastAPI:
     """Build the read-API app over ``store`` (SIG-API-001).
 
@@ -92,6 +94,15 @@ def create_app(
     ``/v1/changes``, ``/v1/sources…``, ``/v1/releases/**``) answer from release
     files, not the spine. It defaults to the ``release_search`` registry —
     one mounted registry backs both surfaces.
+
+    ``rate_limit`` is the per-client limiter posture (P36.13, SIG-API-009;
+    D-K3-6 — in-process, no managed edge, SIG-STORE-003). ``None`` reads the
+    deploy env: ``SIG_API_RATE_LIMIT`` = ``off`` (default — nothing mounted;
+    the code ships dark ahead of the hosted-enforcement flip), ``advise``
+    (limit/remaining/reset headers + accounting, never rejects — the
+    "defined" half) or ``enforce`` (the 429 rejection too — the named OM-20
+    mutation), with ``SIG_API_TRUSTED_PROXY_HOPS`` declaring the trusted
+    forwarding hops the client key slices (2 behind the Google external LB).
     """
     if release_serving is None and release_search is not None:
         release_serving = ReleaseServingStore(release_search.registry_root)
@@ -350,6 +361,25 @@ def create_app(
     # redact at the response boundary so nothing publicly renderable repeats a
     # handle. Output-side only; recorded ids still query.
     app.add_middleware(IdentifierAliasMiddleware)
+    # P36.13 / SIG-API-009 (D-K3-6 honoured — in-process, no Cloud Armor /
+    # managed edge, SIG-STORE-003): the per-client token-bucket limiter —
+    # 30 requests per 60 seconds, burst 10, keyed on the edge-appended
+    # client address (K3 §5.6, never the raw peer — C4 NEW-16). Stamps
+    # RateLimit-Limit/Remaining/Reset on every response; in ``enforce``
+    # posture an over-limit burst is refused with the documented 429 +
+    # Retry-After body (HTML for ``format=html``/``Accept: text/html``).
+    # Mounted INSIDE the basis label so a rejection still carries
+    # X-SIG-Basis + the deploy identity headers, and inside the alias
+    # projection's caller side so a refused request burns no render work.
+    if rate_limit is None:
+        rate_limit = RateLimitConfig.from_env()
+    if rate_limit.posture != "off":
+        app.add_middleware(
+            RateLimitMiddleware,
+            limiter=TokenBucketLimiter(),
+            enforce=rate_limit.posture == "enforce",
+            trusted_proxy_hops=rate_limit.trusted_proxy_hops,
+        )
     # P34.25 / A-20=a (SIG-REL-010): the outermost wrapper stamps the
     # ``live-spine`` basis label — an X-SIG-Basis header on EVERY response and
     # a ``basis`` field on every JSON object body (errors included). Added last
