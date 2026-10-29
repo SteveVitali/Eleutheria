@@ -170,3 +170,7 @@ policy.
 - **The standalone policy changes** — if P36.19's dedicated response row
   tightens or loosens `style-src`, the standalone wrapper's one permitted
   relaxation is re-examined against it.
+
+## Status updates
+
+- **Status:** Extended by ADR-226 (2026-10-29)

@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "8abac1246d7c9b0c7e2654ed5f89d2677e39a82d",
+  "input_commit": "2d09d76b82c1e330b0b0a7da206cd42486233f0a",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -634,7 +634,7 @@
     },
     {
       "path": "docs/adr/ADR-157-one-static-figure-kit-geography.md",
-      "sha256": "dba93af2f3639ceadb83022b8af9331b6530bd3edd68e4a50a11ed909de108bd"
+      "sha256": "a8096e3f04d51b32df6394ca4e5af75213803885c6053b21ebddcfe837f136f0"
     },
     {
       "path": "docs/adr/ADR-158-graph-exploration-as-aggregated-overviews.md",
@@ -906,7 +906,7 @@
     },
     {
       "path": "docs/adr/README.md",
-      "sha256": "45648c9f54b236cafb034240beef8137fe8440491d2d0236d9de7263d1529753"
+      "sha256": "a29b89ac1e02bbcba5186dd325fa06798c2d49061a9293162b3c7f199a4f409f"
     },
     {
       "path": "docs/build/BACKLOG.csv",
