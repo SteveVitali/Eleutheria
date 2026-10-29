@@ -104,6 +104,16 @@ def live_targets(source_id: str) -> list[dict[str, str]]:
         from .axon_connect import connect_targets
 
         return connect_targets()
+    if kind == "documentcloud_targets":
+        # P36.77 / R11-ACQ-32: the documentcloud + muckrock_public sources'
+        # live targets ARE the committed released-materials seed inventory in
+        # data/documentcloud_targets.toml — bounded rows per public
+        # unauthenticated page/API record, never new discovery. Both source
+        # rows stay ingestion_permitted=false; leg B is the operator's act
+        # (OP-26).
+        from .documentcloud import documentcloud_targets
+
+        return documentcloud_targets(source_id=source_id)
     if kind == "procurement_portal_tenants":
         # A procurement-portal source's live targets ARE its tenant rows in
         # data/procurement_portal_tenants.toml (P26.10): each expands to the

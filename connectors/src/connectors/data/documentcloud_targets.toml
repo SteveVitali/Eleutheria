@@ -1,0 +1,160 @@
+# SPDX-License-Identifier: Apache-2.0
+# The `documentcloud` connector's committed seed inventory (P36.77 /
+# R11-ACQ-32). This table is DATA, not code (SIG-ENG-001): the seed rows are
+# the released-ALPR-materials surface the I6/I7 discovery named — reviewed
+# on their own, never discovery output. Identifiers + provenance only: a row
+# is a URL, a kind, a source and an evidence ref, never content.
+#
+# Every row is a PUBLIC UNAUTHENTICATED surface (ADR-184/187's terms-
+# conflicted envelope): https, the committed host for its platform, the kind's
+# reviewed public path — no credentials, no private endpoints, no query
+# strings. The MuckRock ToS (muckrock.com/tos) governs DocumentCloud and is
+# affirmatively restrictive ("data mining, robots, or similar data gathering
+# and extraction tools" are outside the access licence) — leg A is bounded
+# screen GETs only under GATE-G5's OM-20 naming (2026-10-25T18:40Z, expires
+# GATE-G6); leg B (the first real wire as a connector run) is the operator's
+# act under OP-26. All rows stay behind `ingestion_permitted=false` — the
+# gate REFUSES until the operator's HG-03 line.
+
+schema = "sig.documentcloud-targets/1"
+
+[inventory]
+# Derivation provenance: the I6/I7 released-materials decision is
+# decision_catalog.csv row I7-C2 (DocumentCloud/MuckRock, "existing refused
+# channel" posture) — the ticket labels this family "I7-C13"; no such catalog
+# record exists (recorded deviation; the seed set below cites the verbatim
+# candidate evidence ids).
+source_ref = "I7-C2 (decision_catalog.csv; ticket label 'I7-C13' names no record — recorded deviation)"
+evidence_ref = "docs/build/planning/2026-09-30-next-phase/research/I7-candidates.md + data/candidates_consolidated.csv + decision_catalog.csv (I7-U645/U669/U681, I6-C031); docs/tickets/DEFERRALS.md D-SOURCES.2-2/D-P21.3-2; docs/build/reports/rights/{documentcloud,muckrock}.md"
+captured_on = "2026-10-27"
+selection_rule = "the committed released-ALPR-materials surface the I6/I7 discovery named: DocumentCloud released-document API records + uploader pages + project indexes, the MuckRock public /foi/ request page, and the governing terms page — public unauthenticated pages only, one bounded GET each; GAO-26-108118's DocumentCloud copy and the named MuckRock project slugs are NOT seeded (their public URLs were never recorded — no invented targets)"
+target_count = 11
+opted_out_targets = []
+
+[[inventory.targets]]
+# The P26.2 reviewed single-document lookup, migrating into the rendition
+# lane verbatim — the offered-channel form (api.www.documentcloud.org).
+id = "dc-api-20504557"
+source = "documentcloud"
+platform = "documentcloud"
+kind = "api_document"
+url = "https://api.www.documentcloud.org/api/documents/20504557/"
+document_id = "20504557"
+expect = ["20504557"]
+evidence = "live_targets.toml [documentcloud] dc-doc-20504557 (reviewed reachable 2026-09-16, P26.2/SOURCES.2) — migrates verbatim into the rendition lane"
+
+[[inventory.targets]]
+# The three DocumentCloud project indexes the discovery named verbatim —
+# released-document collections, member names never extracted.
+id = "dc-api-207706"
+source = "documentcloud"
+platform = "documentcloud"
+kind = "api_project"
+url = "https://api.www.documentcloud.org/api/projects/207706/"
+document_id = "207706"
+expect = ["207706"]
+evidence = "candidates_consolidated.csv — 'dhs-tech-2022' project 207706 (DHS surveillance-tech documents)"
+
+[[inventory.targets]]
+id = "dc-api-209393"
+source = "documentcloud"
+platform = "documentcloud"
+kind = "api_project"
+url = "https://api.www.documentcloud.org/api/projects/209393/"
+document_id = "209393"
+expect = ["209393"]
+evidence = "I7-U669 (candidates_consolidated.csv) — 'Fog Data Science public' project 209393 (Ring/police partnerships FOIA set)"
+
+[[inventory.targets]]
+id = "dc-api-212258"
+source = "documentcloud"
+platform = "documentcloud"
+kind = "api_project"
+url = "https://api.www.documentcloud.org/api/projects/212258/"
+document_id = "212258"
+expect = ["212258"]
+evidence = "candidates_consolidated.csv — CA Coastal Commission / CBP towers project 212258"
+
+[[inventory.targets]]
+# The s3.documentcloud.org document asset I7-U681 names — seeded through the
+# offered-channel api_document form (the asset bytes are the PDF; the
+# rendition lane reads the record + uploader page only).
+id = "dc-api-25545615"
+source = "documentcloud"
+platform = "documentcloud"
+kind = "api_document"
+url = "https://api.www.documentcloud.org/api/documents/25545615/"
+document_id = "25545615"
+expect = ["25545615"]
+evidence = "I7-U681 (candidates_consolidated.csv) — s3.documentcloud.org 25545615 → the documented api_document form"
+
+[[inventory.targets]]
+# Pittsboro PD Flock shared-devices list — I7-U645's verbatim document page
+# (cited by 1,197 I6 Atlas rows); the api_document row is the offered-channel
+# form of the same document.
+id = "dc-api-26182924"
+source = "documentcloud"
+platform = "documentcloud"
+kind = "api_document"
+url = "https://api.www.documentcloud.org/api/documents/26182924/"
+document_id = "26182924"
+expect = ["26182924"]
+evidence = "I7-U645 (candidates_consolidated.csv) — Pittsboro PD Flock Safety shared devices list, DocumentCloud 26182924; referenced by 1,197 Atlas rows"
+
+[[inventory.targets]]
+# Johnston County SO 'agency sharing' records — the second document id
+# I7-U645 names verbatim.
+id = "dc-api-28534682"
+source = "documentcloud"
+platform = "documentcloud"
+kind = "api_document"
+url = "https://api.www.documentcloud.org/api/documents/28534682/"
+document_id = "28534682"
+expect = ["28534682"]
+evidence = "I7-U645 (candidates_consolidated.csv) — JCSO 'agency sharing' records, DocumentCloud 28534682"
+
+[[inventory.targets]]
+id = "dc-page-209393"
+source = "documentcloud"
+platform = "documentcloud"
+kind = "project_page"
+url = "https://www.documentcloud.org/projects/fog-data-science-public-209393/"
+document_id = "209393"
+expect = ["fog data science", "209393"]
+evidence = "I7-U669 (candidates_consolidated.csv) — the verbatim public project page URL"
+
+[[inventory.targets]]
+id = "dc-page-26182924"
+source = "documentcloud"
+platform = "documentcloud"
+kind = "document_page"
+url = "https://www.documentcloud.org/documents/26182924-pittsboro-police-department-flock-safety-shared-devices-list/"
+document_id = "26182924"
+expect = ["pittsboro"]
+evidence = "I7-U645 (candidates_consolidated.csv) — the verbatim public uploader page URL"
+
+[[inventory.targets]]
+# The governing terms capture (SIG-LIC-004a / SIG-TRANSP-004): the MuckRock
+# ToS governs 'MuckRock, FOIA Machine, or DocumentCloud' — captured verbatim
+# for the page family. Rides the documentcloud lane (the family terms
+# record); documentcloud.org /terms + /tos answer 404 (rights packet).
+id = "dc-terms-tos"
+source = "documentcloud"
+platform = "muckrock"
+kind = "terms_page"
+url = "https://www.muckrock.com/tos/"
+document_id = ""
+expect = []
+evidence = "docs/build/reports/rights/documentcloud.md — 'Terms URL(s): https://www.muckrock.com/tos/ — the MuckRock Foundation Terms'"
+
+[[inventory.targets]]
+# The MuckRock public request page — the LAPD ALPR FOIA request's
+# permanent_link verbatim from the committed request fixture.
+id = "mr-page-136412"
+source = "muckrock_public"
+platform = "muckrock"
+kind = "muckrock_page"
+url = "https://www.muckrock.com/foi/los-angeles-91/automated-license-plate-readers-los-angeles-police-department-136412/"
+document_id = "136412"
+expect = ["136412", "license plate"]
+evidence = "tests/tasks/fixtures/muckrock_request_136412.json permanent_link (a completed LAPD ALPR FOIA request)"

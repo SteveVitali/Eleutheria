@@ -1,0 +1,1 @@
+- 2026-10-27 — P36.77 record head — `0fd93122` 5/5 green head-bound (run 40484765249: python 18m26s · web 18m43s · docs 1m57s · composed 4m18s · security 34s); the post-closeout record commit's LEDGER append had drifted the projection — regen rode the same head · PR #372 OPEN on the stack for operator integration; `main` untouched · harness: devin-desktop/swe-2-high/subagent

@@ -1,0 +1,10 @@
+{
+  "id": 209393,
+  "title": "Fog Data Science public",
+  "description": "FOIA-released documents on Ring and police partnerships, collected by Fog Data Science.",
+  "user": {"id": 90210, "name": "Dave Maass"},
+  "created_at": "2024-04-02T09:10:00.000Z",
+  "updated_at": "2025-01-20T17:44:00.000Z",
+  "documents": [24501234, 24501235, 24501236],
+  "canonical_url": "https://www.documentcloud.org/projects/fog-data-science-public-209393/"
+}

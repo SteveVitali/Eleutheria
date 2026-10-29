@@ -1,0 +1,59 @@
+== P35.1c.obligations_cell ==
+queued dispatcher-consolidation leg (`ops/gcp/dispatcher-consolidation.sh --apply all`): prestate → deploy `sig-sched-due` + 1 hourly trigger + bindings → verify → 89 `[[retire_triggers]]` name-checked deletes → proof
+
+== P35.1c.gates_cell ==
+queued hosted write; OM-20 — GATE-G4 §4 names 291 not 291a (predates C13 → never pre-authorised; needs 291a amendment); AR-3+AR-2 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z) — apply exit 42; `SIG_CONSOL_AUTHOR` + prestate; voided by failed AR-2/red probe; after `--check` + #303 green
+
+== P35.1c.operator_cell ==
+an explicit GATE-G4 amendment naming row 291a (§4 names 291 — predates C13); nothing until amendment + window + ADC + `SIG_CONSOL_AUTHOR` — `--check` plans only; rollback deletes trigger+job, replays prestate
+
+== P35.1c.rerun_cell ==
+`implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true` · landed 291a (#303)
+
+== P35.62.obligations_cell ==
+queued live half of P32.23a's candidate deferral: `release-candidate` over a hosted `frozen_unpublished` snapshot → `+0` rematerialize → export → `release stage` + IAM-only origins → web build + DR-C4-01 crawl; packet `reports/p35.62-production-candidate/` prepared_not_executed
+
+== P35.62.gates_cell ==
+hosted staged only, queued (no snapshot, secrets NOT_FOUND, env unset); pre-authorised GATE-G4 §4 (P35.62; expires next GATE, OM-10); AR-3+AR-2 14:00–20:00Z excl. 03:00–06:30Z, weekends, before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.61` (snapshot), before `live:P35.53` (staged/ home); earliest 2026-10-26T14:00Z; create-only, never pointer/public
+
+== P35.62.operator_cell ==
+nothing until re-run — the leg stages the candidate; activation/rollback/promotion are P35.63's under HG-11
+
+== P35.62.rerun_cell ==
+`implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true` · landed 339 (#360)
+
+== P35.63.obligations_cell ==
+queued release-exposure half of the publish deferral (home P32.25): L1 staged cut → V1–V15 → `class_s` → agent-drafted HG-11 readout (unsigned) · L2 promote + checks + rollback rehearsal — verbatim signed HG-11 readout + go only; packet `reports/p35.63-first-model-release/` prepared_not_executed
+
+== P35.63.gates_cell ==
+queued hosted write (env unset, secrets NOT_FOUND, upstream queued); never pre-authorised — publication never-listed, `p-17b713` never transfers; L2 go = verbatim signed HG-11 readout+go; AR-3+AR-2 14:00–20:00Z excl. 03:00–06:30Z, weekends, before `live:P35.62` (staged candidate), before `live:P35.53` (staged/ home), before `live:P35.59` (dark cutover), before `live:P35.61` (snapshot input), before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.57` (the queued API-roll leg); earliest 2026-10-26T14:00Z
+
+== P35.63.operator_cell ==
+L1 — operator's in-slot go for the staged cut (publication never pre-authorised); L2 — operator's verbatim signed HG-11 candidate-specific readout + go (never on silence); prior-pointer leg recorded not-rehearsable
+
+== P35.63.rerun_cell ==
+`implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (resumes at L2's promote; re-staged cut byte-identical) · landed 341 (#362)
+
+== P37.2.obligations_cell ==
+Wave-C sequence L1→L5 (pre-grow → tier bump after the go → national run → 24 h soak → revert); missed leg reported; packet `reports/p37.2-wave-c/` prepared_not_executed
+
+== P37.2.gates_cell ==
+hosted write, never pre-authorised (tier-bump go = P37.2's in-ticket pause); window 2026-11-16→20 (earliest 2026-10-26 iff P37.1+PKG-07+Q-23 landed); excluded: outside 2026-11-16→20 (strict; earliest unmet), 03:00–06:30Z, AR-3 freeze/cut, materialize/G2/manual run, Wave-B r11 batch crons not held (FEA-15) for L3; L4 read-only: soak < 24 h from the recorded run end or outside the 48 h grace (through 2026-11-22T00:00Z); verbatim ING-GO-C ("Approve ING-GO-C (rec.)", GATE-G5 §3) + `wave-c-gate` per leg
+
+== P37.2.operator_cell ==
+ING-GO-C recorded; verbatim in-ticket tier-bump go asked when L2 is due — never the ING-GO-C text; `wave-c.sh --apply --leg L1|…|L5 --inputs <json>` (no-go → 42); flips stay HG-03
+
+== P37.2.rerun_cell ==
+`implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national-alpr-layer.md live_verification=true` (first unauthorised leg; pre-grow is one-way) · landed 345
+
+== P36.77.obligations_cell ==
+queued D-P36.77-1 — the 11 leg-A bounded GETs (4 api_document + 3 api_project + 2 public DocumentCloud pages + the governing ToS + the MuckRock public /foi/ page); D-P36.77-2 — leg B, the operator's first-wire act
+
+== P36.77.gates_cell ==
+bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T07:54:48Z); records land under `reports/rights/p3677/`; leg B is never agent execution
+
+== P36.77.operator_cell ==
+nothing until `live:P35.38a` — leg B's flips + first wire stay the operator's HG-03 + OP-26 acts (packet `p3677/leg-b-packet.md`, go lines blank)
+
+== P36.77.rerun_cell ==
+`implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true` · landed 352

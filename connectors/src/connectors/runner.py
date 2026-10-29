@@ -225,7 +225,17 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "escribe": "procurement",
     "sam_gov": "procurement",
     "courtlistener_recap": "accountability",
-    "documentcloud": "records",
+    # P36.77 / R11-ACQ-32: the DocumentCloud/MuckRock released-materials
+    # connector — the committed seed set (data/documentcloud_targets.toml),
+    # one bounded GET per public unauthenticated page/API record, screened
+    # renditions only (served page bytes are never persisted; an unreliable
+    # redaction is a recorded refusal, SIG-ENG-042). The `documentcloud` row
+    # remaps here from the records index path this lane supersedes; the new
+    # `muckrock_public` row covers the public /foi/ pages — the muckrock
+    # api_v2 source stays on `records`. Both stay ingestion_permitted=false;
+    # leg B (the first real wire) is the operator's act (OP-26).
+    "documentcloud": "documentcloud",
+    "muckrock_public": "documentcloud",
     "eyes_on_flock": "flock_portal",
     # P36.74 (WV-10/ADR-188): the Flock transparency-portal probe connector —
     # one bounded GET per committed known portal, stops on any challenge, and
@@ -1734,8 +1744,10 @@ def _run_over_fixture(
     targets: list[Mapping[str, Any]] = [{"id": "t1", "url": f"https://{source_id}/x", "kind": kind}]
     if kind == "oversight_report" or source_id in {
         "axon_connect",
+        "documentcloud",
         "fema_hsgp_allocations",
         "flock_transparency_portals",
+        "muckrock_public",
     }:
         # P31.12: a targeted report lookup resolves its reviewed live_targets row
         # (the synthetic fixture URL names no reviewed report). P31.13: FEMA's
