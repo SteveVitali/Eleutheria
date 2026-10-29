@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "c5cccebe48fdfd85a28d63bc9f1ad4e018ad947d",
+  "input_commit": "90929f45736829ef49b78a2290c8510c900ccaee",
   "manifest_inputs": 1146,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -16309,14 +16309,14 @@
           "label": "historical/csv"
         },
         "SIG-UI-073": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/search_index_v2.py;docs/build/runs/P36.31.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-074": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/search_index_v2.py;docs/build/runs/P36.31.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16645,14 +16645,14 @@
           "label": "historical/csv"
         },
         "SIG-SRCH-004": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/search_index_v2.py;docs/build/runs/P36.31.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-SRCH-005": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/search_index_v2.py;docs/build/runs/P36.31.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16687,8 +16687,8 @@
           "label": "historical/csv"
         },
         "SIG-SRCH-011": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/search_index_v2.py;docs/build/runs/P36.31.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -24991,7 +24991,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "9e9143ac0f4d56756cbd1407412dc6e296e53da7ad4b3e0b3dd7dec1c1fc937a",
+  "manifest_sha256": "8e87ee1f5c68442e0ca40a19d85ce7ad3fd9702ca109d0dab9cb07ca4de3e4d1",
   "current_md": {
     "lines": 139,
     "bytes": 20471,
