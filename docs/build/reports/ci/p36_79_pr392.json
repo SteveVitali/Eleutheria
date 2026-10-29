@@ -1,0 +1,46 @@
+{
+  "record_type": "ci-boundary-read/1",
+  "pr": 392,
+  "head": "06b603152bf677191d926d5027fd9fbe352489bb",
+  "run_id": 40924338058,
+  "read_at": "2026-10-29T18:17:28Z",
+  "verdict": "pass",
+  "checks": [
+    {
+      "completed_at": "2026-10-29T17:46:12Z",
+      "conclusion": "success",
+      "name": "security",
+      "started_at": "2026-10-29T17:45:41Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-10-29T17:48:09Z",
+      "conclusion": "success",
+      "name": "docs",
+      "started_at": "2026-10-29T17:45:40Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-10-29T18:13:10Z",
+      "conclusion": "success",
+      "name": "web",
+      "started_at": "2026-10-29T17:45:40Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-10-29T18:06:02Z",
+      "conclusion": "success",
+      "name": "python",
+      "started_at": "2026-10-29T17:45:40Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-10-29T17:48:58Z",
+      "conclusion": "success",
+      "name": "composed",
+      "started_at": "2026-10-29T17:45:40Z",
+      "status": "completed"
+    }
+  ],
+  "note": "head-bound read via check-runs API on the PR head (run 40924338058); earlier heads' runs cancelled by supersession \u2014 impl 221c3ddc (docs-red on the live-claim vocabulary + stale projection) \u2192 fc20dbf7 phrasing \u2192 d146b1f8 projection regen (format-check red on the repair commit's unformatted edit, cancelled mid-run) \u2192 bc1b281c test-scope fix \u2192 06b60315 formatted; green on the final tip."
+}
