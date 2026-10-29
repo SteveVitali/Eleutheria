@@ -1084,3 +1084,20 @@ seed-commit a16ba1b6
 # here, the next commit. Scope: the append-only finding attributed to
 # 37aca9e4's trimmed line only; no other commit borrows the exemption.
 seed-commit 37aca9e4
+
+# phase-log ci-field repair (worker, P36.21): `70f0ca0d` rewrote the
+# committed row-361 `done` entry (L1323) in place — it landed with no
+# parseable `ci:` field and no incidental non-done marker, so
+# verify-recorded-ci flagged `added PHASE LOG entry with no ci: field`
+# on `da38f00f` (run 40674612353 docs-red); the two predecessor rows
+# escaped on incidental markers ("posture held", a "gate" word in
+# prose). The repair names the pushed heads verbatim and records the
+# row's `Gate status: none` truthfully — the real `ci:` claim lands in
+# the post-closeout record on a green head. Pre-edit bytes archived
+# `reports/memory-repair/LEDGER_phaselog_L1323_pre-P36.21-ci-field.txt`
+# (sha256:8c65f960915bd0…), disclosed by the appended correction entry
+# in the same commit. The branch rule forbids force-push, so the
+# declaration lands here, the next commit. Scope: the append-only
+# finding attributed to `70f0ca0d`'s rewritten line only; no other
+# commit borrows the exemption.
+seed-commit 70f0ca0d

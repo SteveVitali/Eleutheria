@@ -9,7 +9,7 @@ import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync
 import { fileURLToPath } from "node:url";
 import { join, relative, resolve, sep } from "node:path";
 import { resolveTileCopyList } from "./scripts/export-tiles.mjs";
-import { buildManifest, classifyDist, writeManifest } from "./src/lib/page-types.ts";
+import { buildManifest, classifyDist, classifyRoute, writeManifest } from "./src/lib/page-types.ts";
 import { tightenT0Document } from "./src/lib/csp.ts";
 
 // P21.5 (deliverable 3, LD-F07/H08) + P30.3 (ADR-106) + P31.15 (ADR-R9-TILES) +
@@ -115,6 +115,11 @@ function sigInternalRoutes() {
 // noindex pages never appear at all; (b) the flat /403.html + /410.html copies
 // matching the /404.html error-page convention (the nginx `error_page` wiring
 // that serves them is P34.40's dark roll — this row only builds the pages).
+// P36.21 (K13 §2.5, ADR-155): the sitemap is generated FROM THE ROUTE REGISTRY —
+// a URL is listed only when its page type is T0 or T1, so the stateful T2
+// surfaces (`/map/`, `/network/`, `/search/` — `noindex,follow` documents whose
+// canonical lives on the base surface) can never leak into the indexable set
+// even if a page's own meta drifts.
 function sigChrome() {
   return {
     name: "sig-chrome",
@@ -142,7 +147,15 @@ function sigChrome() {
               if (!m) continue;
               const rel = `${relative(distDir, full).split(sep).join("/").replace(/index\.html$/, "")}`;
               const own = `${origin}/${rel}`;
-              if (m[1] === own) urls.push(m[1]);
+              if (m[1] !== own) continue;
+              // K13 §2.5 (P36.21): the sitemap is the canonical T0/T1 set only
+              // — the page-type registry decides, so a stateful T2 surface or
+              // a T3/internal route can never be listed even when its document
+              // meta is canonical-shaped.
+              const classified = classifyRoute(`/${rel}`);
+              if (!classified.ok) continue;
+              if (classified.entry.type !== "T0" && classified.entry.type !== "T1") continue;
+              urls.push(m[1]);
             }
           }
         };

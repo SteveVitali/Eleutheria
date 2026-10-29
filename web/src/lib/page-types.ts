@@ -15,7 +15,7 @@
  *                       Astro bootstrap; JS-off `main` text equals JS-on text
  *                       minus `[data-enhancement]` subtrees.
  *   T2 explore        — app-like surfaces that keep URL state
- *                       (`sig.workspace-state/1` today), a server-rendered
+ *                       (`sig.workspace-state/2`; the v1 contract still parses), a server-rendered
  *                       first view and a named no-JS equivalent.
  *   T3 tools          — `/curate/**` (ADR-068; loopback-only, never published).
  *
@@ -399,7 +399,7 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
     patterns: ["/map/"],
     type: "T2",
     owner: "P37.17",
-    contract: "sig.workspace-state/1",
+    contract: "sig.workspace-state/2",
     noJsEquivalent: {
       kind: "sections",
       description:
@@ -413,7 +413,7 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
     patterns: ["/explore/"],
     type: "T2",
     owner: "P37.17",
-    contract: "sig.workspace-state/1",
+    contract: "sig.workspace-state/2",
     noJsEquivalent: {
       kind: "sections",
       description:
@@ -427,7 +427,7 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
     patterns: ["/network/"],
     type: "T2",
     owner: "P37.17",
-    contract: "sig.workspace-state/1",
+    contract: "sig.workspace-state/2",
     noJsEquivalent: {
       kind: "sections",
       description:
@@ -442,7 +442,7 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
     patterns: ["/search/"],
     type: "T2",
     owner: "P36.40",
-    contract: "sig.workspace-state/1",
+    contract: "sig.workspace-state/2",
     noJsEquivalent: {
       kind: "sections",
       description:
@@ -456,7 +456,7 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
     patterns: ["/s/*/map/", "/s/*/explore/", "/s/*/network/", "/s/*/search/"],
     type: "T2",
     owner: "P36.66b",
-    contract: "sig.workspace-state/1",
+    contract: "sig.workspace-state/2",
     noJsEquivalent: {
       kind: "sections",
       description: "the same named equivalents as the unprefixed T2 surfaces, under `/s/<pub>/`",

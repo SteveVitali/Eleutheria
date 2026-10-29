@@ -20,14 +20,15 @@ test("the static view switch links carry the versioned release state on all thre
     await page.goto(path);
     const nav = page.getByTestId("view-switch");
     await expect(nav).toBeVisible();
-    // The current view is marked; the other two are real links carrying v=1,
-    // the target view and the pinned release.
+    // The current view is marked; the other two are real links carrying v=2
+    // (P36.21 — the canonical minted form; v=1 links still resolve), the
+    // target view and the pinned release.
     await expect(nav.getByTestId(current)).toHaveAttribute("aria-current", "page");
     const links = nav.locator("a");
     expect(await links.count()).toBe(2);
     for (let i = 0; i < 2; i += 1) {
       const href = await links.nth(i).getAttribute("href");
-      expect(href).toContain("v=1");
+      expect(href).toContain("v=2");
       expect(href).toContain("view=");
       expect(href).toContain("release=p-");
     }

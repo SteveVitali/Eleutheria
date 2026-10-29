@@ -32,10 +32,10 @@ import type { ReactElement } from "react";
 import {
   clearFocusOutOfScope,
   facetNoticeText,
+  ISLAND_VIEWS,
   recordRoutes,
   viewHref,
-  WORKSPACE_VIEWS,
-} from "../lib/workspace-state";
+} from "../lib/workspace-state/index";
 import { useWorkspaceState } from "./workspace";
 
 export type SearchKind = "dossier" | "site" | "source";
@@ -134,7 +134,7 @@ export default function SearchIsland({ items, release }: SearchIslandProps): Rea
   return (
     <div className="sig-search-island" data-testid="search-island">
       <nav className="sig-view-links" aria-label="Investigation views" data-testid="island-view-links">
-        {WORKSPACE_VIEWS.map((v) =>
+        {ISLAND_VIEWS.map((v) =>
           v === state.view ? (
             <strong key={v} aria-current="page">{VIEW_LABELS[v]}</strong>
           ) : (

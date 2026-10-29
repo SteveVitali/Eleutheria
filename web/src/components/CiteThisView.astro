@@ -1,0 +1,54 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// "Cite this view" (P36.21; K0 §4.5, J3 §8.1, SIG-UI-059/093): the affordance a
+// T2 surface carries so a reader can hold a durable link. The minted form is
+// `/s/<pub>/<surface>/?v=2&…` — the snapshot-pinned copy of THIS view state.
+// TX-13b has not landed, so /s/<pub>/ does not resolve on this build: the
+// affordance shows the minted form as copyable text with J3 §8.1's interim
+// sentence rather than a dead link, and names the page's no-JS equivalents
+// (the static anchors that carry the same records today). With JavaScript the
+// islands render the live-state form (the minted URL carries the URL state);
+// this static block names the form — it never pretends a snapshot exists.
+import {
+  citeViewHref,
+  INTERIM_CITE_VIEW_TEXT,
+  CITE_VIEW_UNBOUND,
+  ISLAND_SURFACE,
+} from "../lib/workspace-state/index";
+import type { IslandView } from "../lib/workspace-state/index";
+
+interface Props {
+  /** This surface's internal view id (the island vocabulary). */
+  view: IslandView;
+  /** The latest activated publication id for this build, or null (none). */
+  release: string | null;
+  /** The named no-JS equivalents the affordance links (same-page anchors). */
+  equivalents: readonly { href: string; label: string }[];
+}
+
+const { view, release, equivalents } = Astro.props;
+const minted = release ? citeViewHref(release, ISLAND_SURFACE[view], null) : null;
+---
+
+<p class="sig-island__note sig-cite-view" data-testid="cite-this-view">
+  <strong>Cite this view.</strong>{" "}
+  {minted ? (
+    <>
+      The snapshot-pinned form is <code>{minted}&amp;…</code>.{" "}
+      {INTERIM_CITE_VIEW_TEXT}{" "}
+      The same records live today in{" "}
+      {equivalents.map((e, i) => (
+        <>
+          {i > 0 && (i === equivalents.length - 1 ? " and " : ", ")}
+          <a href={e.href}>{e.label}</a>
+        </>
+      ))}
+      .
+    </>
+  ) : (
+    CITE_VIEW_UNBOUND
+  )}
+</p>

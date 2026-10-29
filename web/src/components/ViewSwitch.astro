@@ -3,29 +3,31 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// The investigation-view switch (P32.15, SIG-FIND-004, ADR-134): plain zero-JS
-// links between the three workspace views carrying the versioned
-// `sig.workspace-state/1` release state — `?v=1&view=<v>&release=<pub>`. With
-// JavaScript the islands render the same switch with the LIVE state (query,
-// filters and the selected record preserved); without it these links still move
-// the reader between the views at the pinned release.
+// The investigation-view switch (P32.15, SIG-FIND-004, ADR-134; updated to
+// `sig.workspace-state/2` by P36.21): plain zero-JS links between the three
+// workspace views carrying the versioned release state —
+// `?v=2&view=<v>&release=<pub>`. With JavaScript the islands render the same
+// switch with the LIVE state (query, filters and the selected record
+// preserved); without it these links still move the reader between the views
+// at the pinned release. `v=1` links still resolve — the v2 parser keeps the
+// v1 parameter semantics — and these links mint the canonical v2 form.
 import {
-  DEFAULT_WORKSPACE_STATE,
-  WORKSPACE_VIEWS,
+  DEFAULT_WORKSPACE_STATE2,
+  ISLAND_VIEWS,
   viewHref,
-} from "../lib/workspace-state";
-import type { WorkspaceView } from "../lib/workspace-state";
+} from "../lib/workspace-state/index";
+import type { IslandView } from "../lib/workspace-state/index";
 
 interface Props {
-  view: WorkspaceView;
+  view: IslandView;
   /** The latest activated publication id for this build, or null (none). */
   release: string | null;
 }
 
 const { view, release } = Astro.props;
-const state = { ...DEFAULT_WORKSPACE_STATE, view, release };
+const state = { ...DEFAULT_WORKSPACE_STATE2, view, release };
 
-const LABELS: Record<WorkspaceView, string> = {
+const LABELS: Record<IslandView, string> = {
   list: "List",
   map: "Map",
   network: "Connections",
@@ -34,7 +36,7 @@ const LABELS: Record<WorkspaceView, string> = {
 
 <nav class="sig-view-switch" aria-label="Investigation views" data-testid="view-switch">
   <strong class="sig-view-switch__label">Investigation views:</strong>{" "}
-  {WORKSPACE_VIEWS.map((v, i) => (
+  {ISLAND_VIEWS.map((v, i) => (
     <>
       {i > 0 && " · "}
       {v === view ? (
