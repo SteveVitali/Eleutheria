@@ -1394,6 +1394,6 @@ rerun_cell = '''`implement-spec spec=docs/tickets/371_P36.79__held-out-search-re
   obligations = ["D-P36.79-1"]
   earliest = '''when ADC + `SIG_GCP_PROJECT` are present — the hosted creds this env lacks; outside 03:00-10:00Z'''
   excluded = ["03:00-10:00Z"]
-  go = '''pre-authorised: OM-20 GATE-G5 (expires GATE-G6); `SIG_HELDOUT_AUTHOR` recorded'''
+  go = '''pre-authorised: `SIG_HELDOUT_AUTHOR` per apply'''
   rerun = '''implement-spec spec=docs/tickets/371_P36.79__held-out-search-relevance-set.md live_verification=true'''
   live_dependants = ["P36.71"]
