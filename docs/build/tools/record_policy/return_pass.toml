@@ -1335,3 +1335,30 @@ rerun_cell = '''`implement-spec spec=docs/tickets/352_P36.77__documentcloud-muck
   go = '''operator: HG-03 + OP-26'''
   rerun = '''implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true'''
   live_dependants = []
+
+[[row]]
+key = "P36.78"
+kind = "leg"
+obligations = ["D-P36.78-1", "D-P36.78-2"]
+obligations_cell = '''queued D-P36.78-1 — 5 leg-A GETs (the Sourcewell contract page + terms-use, the OMNIA supplier + contract-documents index + terms-of-use); D-P36.78-2 — leg B, operator's first-wire act'''
+gates_cell = '''bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T11:10Z); records under `reports/rights/p3678/`; leg B never agent execution'''
+operator_cell = '''nothing until `live:P35.38a` — leg B's flips + first wire are operator acts (HG-03 + OP-26; packet `p3678/leg-b-packet.md`, go lines blank)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P36.78-legA"
+  obligations = ["D-P36.78-1"]
+  earliest = '''when `live:P35.38a` holds — owned `/data-collection/` live'''
+  excluded = []
+  go = '''pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6)'''
+  rerun = '''implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true'''
+  live_dependants = []
+
+  [[row.legs]]
+  id = "P36.78-legB"
+  obligations = ["D-P36.78-2"]
+  earliest = '''the operator's OP-26 dispatch — never an agent leg'''
+  excluded = ["agent execution"]
+  go = '''operator: HG-03 + OP-26'''
+  rerun = '''implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true'''
+  live_dependants = []

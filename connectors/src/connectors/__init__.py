@@ -61,6 +61,7 @@ from . import atlas as atlas  # noqa: E402,F401
 from . import audit_structural as audit_structural  # noqa: E402,F401
 from . import axon_connect as axon_connect  # noqa: E402,F401
 from . import coarse_international as coarse_international  # noqa: E402,F401
+from . import cooperative as cooperative  # noqa: E402,F401
 from . import data_driven as data_driven  # noqa: E402,F401
 from . import documentcloud as documentcloud  # noqa: E402,F401
 from . import dossier_documents as dossier_documents  # noqa: E402,F401

@@ -236,6 +236,16 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     # leg B (the first real wire) is the operator's act (OP-26).
     "documentcloud": "documentcloud",
     "muckrock_public": "documentcloud",
+    # P36.78 / R11-ACQ-33: the Sourcewell + OMNIA Partners cooperative
+    # contract-page connector — the committed seed set
+    # (data/cooperative_targets.toml), one bounded GET per public
+    # unauthenticated contract/supplier/terms page, screened renditions only
+    # (served page bytes are never persisted; an unreliable redaction is a
+    # recorded refusal, SIG-ENG-042). Both source rows stay
+    # ingestion_permitted=false; leg B (the first real wire) is the
+    # operator's act (OP-26 / ING-GO-D, never granted — queued per OM-19).
+    "sourcewell": "cooperative",
+    "omnia_partners": "cooperative",
     "eyes_on_flock": "flock_portal",
     # P36.74 (WV-10/ADR-188): the Flock transparency-portal probe connector —
     # one bounded GET per committed known portal, stops on any challenge, and
@@ -1748,6 +1758,8 @@ def _run_over_fixture(
         "fema_hsgp_allocations",
         "flock_transparency_portals",
         "muckrock_public",
+        "omnia_partners",
+        "sourcewell",
     }:
         # P31.12: a targeted report lookup resolves its reviewed live_targets row
         # (the synthetic fixture URL names no reviewed report). P31.13: FEMA's

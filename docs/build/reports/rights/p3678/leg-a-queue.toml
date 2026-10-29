@@ -1,0 +1,86 @@
+# sig.cooperative-leg-a-queue/1 — P36.78 (row 353) queued leg-A rendition legs
+#
+# All 5 legs are `status = "queued"` / `executed = false` — `prepared_not_executed`.
+#
+# Two blockers, both recorded honestly (SIG-ENG-042 — nothing fabricated):
+#
+#   1. The run was dispatched `live_verification=false` — code + registry +
+#      fixtures + tests only; no production mutation, no live GET.
+#   2. The probe-UA precondition fails: the connector's descriptive UA cites
+#      the owned explanation page `https://surveillancegraph.org/data-collection/`,
+#      which returned HTTP 404 at the 2026-10-27T11:10:24Z probe (root 200).
+#      Under SIG-INGEST-036 no descriptive-UA fetch may run while that page is
+#      dead — the same precondition P36.2's, P36.76's and P36.77's queues
+#      recorded.
+#
+# When the precondition holds and the re-run is dispatched
+# (`implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true`),
+# each leg is ONE recorded GET through the connector's shared polite-fetch
+# seam — never the raw page persisted: a page leg persists the screened
+# `sig.cooperative-rendition/1` record (allowlisted fields + redaction
+# provenance + the cooperative's public contract page URL + the original's
+# sha256 + the linked-document COUNT — member-gated documents are pointers,
+# never fetched); a terms leg persists the verbatim `sig.cooperative-terms/1`
+# capture; a rendition that cannot be made reliable persists only the
+# `sig.cooperative-refusal/1` record — pointer + classes + counts + hash,
+# never raw bytes (SIG-ENG-042). A challenge/403/interstitial ends the leg
+# recorded — never defeated (SIG-INGEST-013/037). Both platforms' terms
+# affirmatively restrict automated extraction — leg A is the OM-20 row-353
+# mutation GATE-G5 named under the ADR-184 bounded envelope (I7-C3 [B-39]);
+# the exposure is disclosed and the terms captured verbatim. Leg B — the
+# first real host's wire as a connector run — is the operator's act (OP-26);
+# see `leg-b-packet.md`.
+
+[meta]
+format = "sig.cooperative-leg-a-queue/1"
+ticket = "P36.78"
+prepared_at = "2026-10-27T11:15:00Z"
+authorisation = "GATE-G5 OM-20 row-353 naming (2026-10-25T18:40Z, expires GATE-G6): public unauthenticated contract-page GETs + registry appends + terms captures + redacted-rendition records through the Part VIII screen — single recorded GETs under ADR-184's bounded envelope (decision-catalog I7-C3 [B-39] 'fetch despite terms'; the ticket's 'I7-C14' label names no catalog record — recorded deviation)"
+blocker = "live:P35.38a — https://surveillancegraph.org/data-collection/ returned HTTP 404 at 2026-10-27T11:10:24Z probe (root 200); a descriptive UA may not cite a dead owned page (SIG-INGEST-036). Run dispatched live_verification=false."
+rerun = "implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true"
+targets_table = "connectors/src/connectors/data/cooperative_targets.toml"
+
+[[leg]]
+id = "p3678-op-docs-gaggle"
+target = "op-docs-gaggle"
+kind = "contract_documents_page"
+source = "omnia_partners"
+url = "https://www.omniapartners.com/suppliers/gaggle/public-sector/contract-documents"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3678-op-supplier-flock"
+target = "op-supplier-flock"
+kind = "supplier_page"
+source = "omnia_partners"
+url = "https://www.omniapartners.com/suppliers/flock-safety"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3678-op-terms"
+target = "op-terms"
+kind = "om_terms_page"
+source = "omnia_partners"
+url = "https://www.omniapartners.com/terms-of-use"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3678-sw-contract-101223-axn"
+target = "sw-contract-101223-axn"
+kind = "contract_page"
+source = "sourcewell"
+url = "https://www.sourcewell-mn.gov/cooperative-purchasing/101223-axn"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3678-sw-terms"
+target = "sw-terms"
+kind = "sw_terms_page"
+source = "sourcewell"
+url = "https://www.sourcewell-mn.gov/terms-use"
+status = "queued"
+executed = false

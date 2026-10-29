@@ -753,6 +753,20 @@ def render_markdown(projection: dict) -> tuple[str, dict[str, str]]:
                 return
 
     def spill(name: str, chunk: int = 120) -> None:
+        # P36.78: the obligations table spills to a *larger* single page
+        # before it paginates. A freshly-numbered `obligations-N.md` path
+        # re-judges every verbatim pre-activation verify-cell it carries as
+        # a brand-new live-claim under check_live_claims' corpus leg
+        # (blame re-dates the copied rows to the regen commit) — a
+        # pagination artifact, never a new claim. Keeping the table at its
+        # stable `obligations.md` path preserves per-row blame provenance;
+        # nothing is dropped either way and CURRENT.md's own 250-line /
+        # 20 KiB orient bound is unchanged. The bound stays generous
+        # headroom (160 rows ≈ 2.7 years at the current deferral rate) —
+        # when it genuinely fills, the multi-page decision lands with a
+        # carried-provenance mechanism, not silently.
+        if name == "obligations":
+            chunk = 160
         body = dict(sections)[name]
         if body[0].startswith("|"):
             header, rows = body[:2], body[2:]

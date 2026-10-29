@@ -121,5 +121,7 @@
 | D-P36.76-2 | OPEN | the operator | RETURN PASS — P36.76 | the staged packet `docs/build/reports/rights/p3676/leg-b-packet.md` enumerates preconditions + the verbatim command surface + the go lines (agent-drafted, blank… |
 | D-P36.77-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.77-live-<n>` dispatch or the operator | RETURN PASS — P36.77 | each leg's queued row flips `executed = true` with the persisted record's digest + `date -u` bounds in the run ledger; a challenge/403/interstitial leg records … |
 | D-P36.77-2 | OPEN | the operator | RETURN PASS — P36.77 | the staged packet `docs/build/reports/rights/p3677/leg-b-packet.md` enumerates preconditions + the verbatim command surface + the go lines (agent-drafted, blank… |
+| D-P36.78-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.78-live-<n>` dispatch or the operator | RETURN PASS — P36.78 | each leg's queued row flips `executed = true` with the persisted record's digest + `date -u` bounds in the run ledger; a challenge/403/interstitial leg records … |
+| D-P36.78-2 | OPEN | the operator | RETURN PASS — P36.78 | the staged packet `docs/build/reports/rights/p3678/leg-b-packet.md` enumerates preconditions + the verbatim command surface + the go lines (agent-drafted, blank… |
 
 ← back: CURRENT.md

@@ -114,6 +114,16 @@ def live_targets(source_id: str) -> list[dict[str, str]]:
         from .documentcloud import documentcloud_targets
 
         return documentcloud_targets(source_id=source_id)
+    if kind == "cooperative_targets":
+        # P36.78 / R11-ACQ-33: the sourcewell + omnia_partners sources' live
+        # targets ARE the committed cooperative contract-page seed inventory
+        # in data/cooperative_targets.toml — bounded rows per public
+        # unauthenticated contract/supplier/terms page, never new discovery.
+        # Both source rows stay ingestion_permitted=false; leg B is the
+        # operator's act (OP-26).
+        from .cooperative import cooperative_targets
+
+        return cooperative_targets(source_id=source_id)
     if kind == "procurement_portal_tenants":
         # A procurement-portal source's live targets ARE its tenant rows in
         # data/procurement_portal_tenants.toml (P26.10): each expands to the

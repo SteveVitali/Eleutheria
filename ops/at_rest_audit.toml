@@ -143,10 +143,12 @@ fields = [
 
 # S6: records-derived members (free text is the hazard class). P36.77 adds
 # the documentcloud/muckrock_public rendition lane — released-document
-# description/notes/text fields are the same free-text hazard.
+# description/notes/text fields are the same free-text hazard. P36.78 adds
+# the sourcewell/omnia_partners cooperative contract-page lane — served
+# description/body-copy fields are the same free-text hazard.
 [[class]]
 id = "I7-S6"
-members = ["eyes_on_flock*", "*records*", "*foia*", "*muckrock*", "*minutes*", "documentcloud*"]
+members = ["eyes_on_flock*", "*records*", "*foia*", "*muckrock*", "*minutes*", "documentcloud*", "omnia_partners*", "sourcewell*"]
 [[class.rules]]
 kind = "fields"
 fields = [
@@ -157,10 +159,13 @@ fields = [
 # S7: DC-PSAP-class members (incidental private names inside operational
 # records — 911-caller/witness-shaped fields). P36.77 adds the released-
 # materials rendition lane — uploader/requester person names inside public
-# records pages are the same incidental-name hazard.
+# records pages are the same incidental-name hazard. P36.78 adds the
+# sourcewell/omnia_partners cooperative contract-page lane — the staff-
+# contact names the Sourcewell page records (I7-U478's private-person-name
+# flag) are the same incidental-name hazard.
 [[class]]
 id = "I7-S7"
-members = ["*psap*", "*911*", "*dispatch*", "documentcloud*", "muckrock_public*"]
+members = ["*psap*", "*911*", "*dispatch*", "documentcloud*", "muckrock_public*", "omnia_partners*", "sourcewell*"]
 [[class.rules]]
 kind = "fields"
 fields = [

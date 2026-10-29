@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "87e3a385f717d4d3504948fbb9544acb7956ff29",
-  "manifest_inputs": 1119,
+  "input_commit": "af075c34877b3491c32b77bb08135abbcc029f71",
+  "manifest_inputs": 1120,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P36.78",
-    "lastCompleted": "P36.77",
+    "nextTicket": "P36.13",
+    "lastCompleted": "P36.78",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.76,P36.77,P37.2",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.76,P36.77,P36.78,P37.2",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,27 +17,27 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P36.77-documentcloud-muckrock-connector",
+    "chainTip": "r11/P36.78-sourcewell-omnia-contract-pages",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-27T09:07Z"
+    "updatedAt": "2026-10-27T12:05Z"
   },
   "counts": {
-    "obligations": 200,
-    "owed": 119,
-    "open": 116,
+    "obligations": 202,
+    "owed": 121,
+    "open": 118,
     "partial": 3,
     "terminal": 81,
-    "events": 705,
+    "events": 707,
     "transitions": 51,
     "coverage_assessments": 489,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 61,
+    "return_pass_rows": 62,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -10476,6 +10476,100 @@
           "recorded_at": "2026-10-27"
         }
       ]
+    },
+    {
+      "id": "D-P36.78-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P36.78-1:e0",
+      "kind": "V",
+      "owner": "the OM-19 leg-runner — the orchestrator's `r11/P36.78-live-<n>` dispatch or the operator",
+      "landing": "RETURN PASS — P36.78",
+      "landing_source": "return-pass-map/1",
+      "backlog_home": "BL-086",
+      "item": "The 5 queued leg-A bounded GETs (`p3678/leg-a-queue.toml`): one recorded GET per committed seed in `data/cooperative_targets.toml` — the Sourcewell public master-contract page `101223-axn` (→ screened `sig.cooperative-rendition/1`: allowlisted fields + redaction provenance + contract-page URL + sha256 + linked-document COUNT — member-gated documents pointers only), the OMNIA public supplier page `flock-safety`, the OMNIA public contract-documents index `gaggle` (member-gated documents recorded, never submitted), and both platforms' terms pages (→ `sig.cooperative-terms/1` verbatim bounded captures). Each leg ends recorded on any challenge/403/interstitial — never defeated",
+      "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P36.78-live-<n>` dispatch or the operator · trigger: `implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true` once `live:P35.38a` holds",
+      "verify": "each leg's queued row flips `executed = true` with the persisted record's digest + `date -u` bounds in the run ledger; a challenge/403/interstitial leg records its refusal kind instead — never a fabricated hash",
+      "proxy": "the queue manifest is committed (`prepared_not_executed`); both source rows gate-refuse (`gate --source sourcewell` + `--source omnia_partners` REFUSED, `run --mode live` exit 3); 27 fixture tests pin the served/refused/screened/terms/redaction paths incl. no-person-name carriage and member-gated pointer-only bounds; the pipeline's opt-out/robots/challenge machinery is exercised unchanged",
+      "line": 1462,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P36.78",
+          "backlog_home": "BL-086",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/reports/rights/p3678/leg-a-queue.toml",
+            "docs/build/reports/rights/p3678/leg-b-packet.md"
+          ],
+          "observed_at": "2026-10-27",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P36.78 (row 353) for the row it added — leg-A GETs queued prepared_not_executed (live_verification=false + live:P35.38a fails: /data-collection/ 404 at 2026-10-27T11:10:24Z); leg B stays the operator's OP-26 act — nothing production-side was touched; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "event_id": "D-P36.78-1:e0",
+          "obligation_id": "D-P36.78-1",
+          "owner": "the OM-19 leg-runner — the orchestrator's `r11/P36.78-live-<n>` dispatch or the operator",
+          "landing": "P36.78's live_verification=true run once `live:P35.38a` holds (the `/data-collection/` page live)",
+          "anchor": {
+            "row_line": 1462,
+            "row_sha256": "fb47bc6f5128258edf9e4c896ec69ea36622080b673f49732211e44f8ff0b366",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": "D-P36.78-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P36.78-2:e0",
+      "kind": "V",
+      "owner": "the operator",
+      "landing": "RETURN PASS — P36.78",
+      "landing_source": "return-pass-map/1",
+      "backlog_home": "BL-086",
+      "item": "Leg B — the first real host's wire/fetch of `sourcewell`/`omnia_partners` as a connector run (`run --source … --mode live` after the HG-03 flips): the operator's first-wire act per the ticket's verbatim legs cell",
+      "unblocked_by": "owner: the operator · trigger: the operator's HG-03 rights lines on `[sources.sourcewell]` + `[sources.omnia_partners]` + OP-26 window authorisation, inside `AR-3 + AR-2 + AR-1c` with `live:P35.38a` holding",
+      "verify": "the staged packet `docs/build/reports/rights/p3678/leg-b-packet.md` enumerates preconditions + the verbatim command surface + the go lines (agent-drafted, blank for the operator); a leg-B run records its outcomes on the connector's outcome ledger",
+      "proxy": "the packet is committed `prepared_not_executed`; `run --mode live` verified REFUSED exit 3 pre-flip for both sources (gated, never bypassed); the module source audit asserts no circumvention vocabulary exists anywhere in the connector",
+      "line": 1463,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P36.78",
+          "backlog_home": "BL-086",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/reports/rights/p3678/leg-a-queue.toml",
+            "docs/build/reports/rights/p3678/leg-b-packet.md"
+          ],
+          "observed_at": "2026-10-27",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P36.78 (row 353) for the row it added — leg-A GETs queued prepared_not_executed (live_verification=false + live:P35.38a fails: /data-collection/ 404 at 2026-10-27T11:10:24Z); leg B stays the operator's OP-26 act — nothing production-side was touched; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "event_id": "D-P36.78-2:e0",
+          "obligation_id": "D-P36.78-2",
+          "owner": "the operator",
+          "landing": "the operator's HG-03 rights lines + OP-26 window authorisation (leg B is the first real host's wire)",
+          "anchor": {
+            "row_line": 1463,
+            "row_sha256": "96a867b883d4df6bc7b03b9a343bd89b9a1f3ca4d6c3c01bf00b6926afa7b466",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-10-27"
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -11027,6 +11121,17 @@
         "obligations": [
           "D-P36.77-1",
           "D-P36.77-2"
+        ]
+      },
+      {
+        "key": "P36.78",
+        "obligations_cell": "queued D-P36.78-1 — 5 leg-A GETs (the Sourcewell contract page + terms-use, the OMNIA supplier + contract-documents index + terms-of-use); D-P36.78-2 — leg B, operator's first-wire act",
+        "gates_cell": "bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T11:10Z); records under `reports/rights/p3678/`; leg B never agent execution",
+        "operator_cell": "nothing until `live:P35.38a` — leg B's flips + first wire are operator acts (HG-03 + OP-26; packet `p3678/leg-b-packet.md`, go lines blank)",
+        "rerun_cell": "`implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true`",
+        "obligations": [
+          "D-P36.78-1",
+          "D-P36.78-2"
         ]
       }
     ]
@@ -24771,10 +24876,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "c02b53c10d530d3c0a07814ac3c32c1235504dbddd7a991396d7709599d2e96c",
+  "manifest_sha256": "9a6985d3b62a940fafb2b84b7022820aef45698cfce9b1705326461cf90f2c7a",
   "current_md": {
-    "lines": 136,
-    "bytes": 19656,
+    "lines": 137,
+    "bytes": 19943,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
