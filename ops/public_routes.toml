@@ -40,6 +40,7 @@ top_level = [
   ".sig-release.json",   # the publish's own release record (rewritten each run)
   "robots.txt",
   "_astro",              # Astro's hashed build assets (css/js islands)
+  "_kit",                # the T1 enhancement-kit element modules (P36.20 / ADR-155 + ADR-224 — allow-listed T1 entries only)
   "tiles",               # per-compartment PMTiles (export-mode builds only)
   "corrections",
   "coverage-metrics",
@@ -87,6 +88,7 @@ required = [
   "terms",
   "robots.txt",
   "_astro",
+  "_kit",
   "corrections",
   "coverage-metrics",
   "artifact",

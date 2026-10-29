@@ -25,6 +25,7 @@ import {
 // counted.
 import { LIFECYCLE_STATES, STATE_LABELS } from "../lib/source-counts";
 import { fmtInt } from "../lib/format";
+import { withBase } from "../lib/paths";
 // P35.37 (SIG-TRANSP-013, J3 §5.4, UXR-34): every row count is a per-source
 // <Figure> — artifact web/sources.json (or web/terms_disclosure.json for the
 // express-terms counts), and the /sources/<id>/ coverage target is a named
@@ -272,19 +273,34 @@ const fig = (id: string) => {
   </section>
 
   <h2 id="licences-heading" data-copy="SL-12">Sources and licences</h2>
+  {/* P36.20 (UXK0-4): the table is the canonical no-JS view — `<sig-table>`
+      upgrades it on this T1 page with filtering, licence/credit facet
+      chips, a column chooser, column sorting and a "download this view"
+      CSV whose provenance lines restate the licences the visible rows are
+      filed under (`data-licence` carries them; `data-facet-*` feeds the
+      chips). The module is an allow-listed T1 entry
+      (tests/e2e/t1-module-entries.json); with JS off every row still
+      renders. */}
+  <sig-table
+    filter
+    facets="licence credit"
+    columns
+    download="sig-sources-licences"
+    label="Sources and licences"
+  >
   <table class="sig-sources" aria-labelledby="licences-heading">
     <thead>
       <tr>
-        <th scope="col" data-copy="SL-06">Source</th>
-        <th scope="col" data-copy="SL-07">Licence</th>
-        <th scope="col" data-copy="SL-08">Rows</th>
-        <th scope="col" data-copy="SL-09">Credit</th>
-        <th scope="col" data-copy="SL-10">Terms</th>
+        <th scope="col" data-copy="SL-06" data-col="source">Source</th>
+        <th scope="col" data-copy="SL-07" data-col="licence">Licence</th>
+        <th scope="col" data-copy="SL-08" data-col="rows">Rows</th>
+        <th scope="col" data-copy="SL-09" data-col="credit">Credit</th>
+        <th scope="col" data-copy="SL-10" data-col="terms">Terms</th>
       </tr>
     </thead>
     <tbody>
       {sources.map((s) => (
-        <tr data-testid="source-row" data-source-id={s.sourceId} data-credit-status={s.creditUnderCorrection ? "under-correction" : "ok"}>
+        <tr data-testid="source-row" data-source-id={s.sourceId} data-credit-status={s.creditUnderCorrection ? "under-correction" : "ok"} data-facet-licence={s.licenses.join("|")} data-facet-credit={s.creditUnderCorrection ? "under-correction" : "ok"} data-licence={s.licenses.join("|")}>
           <td><code>{s.sourceId}</code></td>
           <td>{s.licenses.join(", ")}</td>
           <td><Figure figure={fig(`rows-${slug(s.sourceId)}`)} order="inline" testid="source-rows-figure">{fmtInt(s.rows)}</Figure></td>
@@ -303,6 +319,8 @@ const fig = (id: string) => {
       ))}
     </tbody>
   </table>
+  </sig-table>
+  <script is:inline type="module" src={withBase("_kit/sig-table.js")}></script>
   {correctedCount > 0 && (
     <p data-copy="SL-05">
       Some credits are wrong or missing where the licence requires one; the

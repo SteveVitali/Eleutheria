@@ -225,6 +225,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-221](ADR-221-release-sign-off-scope-what-an-operator-signature-means.md) | Release sign-off scope: what an operator signature means (P35.60) | P35.60 (REL-06, on `r11/P35.60-release-classifier-standing-go-readout`) | accepted |
 | [ADR-222](ADR-222-robots-policy-declared-posture-never-enforcement.md) | `robots_policy` is a review-time declaration, never an enforcement claim (P36.1b) | P36.1b (R11-GOV-04, manifest row 349 — on `r11/P36.1b-crawler-conduct-text-and-robots-field`) | accepted |
 | [ADR-223](ADR-223-strict-csp-split-hsts-permissions-policy-and-figure-svg-posture.md) | the strict CSP is a meta ∩ header split; HSTS, the `/map/`-only geolocation exception, and the dedicated figure-SVG policy (P36.19) | P36.19 (UXK0-3, manifest row 359 — on `r11/P36.19-csp-hsts-permissions-policy`) | accepted |
+| [ADR-224](ADR-224-t1-enhancement-kit-emission-admission-and-element-roster.md) | the T1 enhancement kit's emission, admission and element roster (P36.20) | P36.20 (UXK0-4, manifest row 360 — on `r11/P36.20-enhancement-kit-behaviour`) | accepted |
 
 ## Notes
 

@@ -7,6 +7,26 @@
 // JavaScript (SIG-UI-037), and that the honest-rendering signals the ACs turn on are
 // present in the static HTML.
 import { test, expect } from "@playwright/test";
+import type { Page } from "@playwright/test";
+import t1ModuleEntries from "./t1-module-entries.json" with { type: "json" };
+
+const T1_MODULE_ENTRIES = new Set<string>(t1ModuleEntries.entries);
+
+// The T1 script contract (ADR-155, UXK0-4): the only <script> elements a T1
+// page may ship are allow-listed /_kit/ module entries — inert under
+// JavaScript-disabled rendering.
+async function expectOnlyAllowListedKitModules(page: Page): Promise<void> {
+  const scripts = await page.$$eval("script", (els) =>
+    els.map((el) => ({ src: el.getAttribute("src"), type: el.getAttribute("type") })),
+  );
+  for (const s of scripts) {
+    expect(s.type, `script ${s.src ?? "(inline)"} must be type=module`).toBe("module");
+    expect(
+      s.src !== null && T1_MODULE_ENTRIES.has(s.src),
+      `script ${s.src ?? "(inline)"} is not an allow-listed /_kit/ entry`,
+    ).toBe(true);
+  }
+}
 
 test("the watch + recommender + citation list render without JS (SIG-UI-037)", async ({ page }) => {
   await page.goto("/watch/");
@@ -62,6 +82,7 @@ test("the interim artifact list renders grouped by source, zero-JS (P34.20, K8 N
   await expect(page.getByTestId("upstream-link").first()).toHaveText(
     "the source's own link (recorded as a claim)",
   );
-  // The page ships no client JavaScript (SIG-UI-036).
-  await expect(page.locator("script")).toHaveCount(0);
+  // The page ships no executable JavaScript — only inert, allow-listed
+  // /_kit/ module entries (SIG-UI-036, ADR-155).
+  await expectOnlyAllowListedKitModules(page);
 });

@@ -1686,3 +1686,141 @@ table.sig-freshness th {
 .sig-glossary__legend dd {
   margin-inline-start: var(--sig-space-4);
 }
+
+
+/* --- The T1 enhancement kit (P36.20, UXK0-4, SIG-UI-091) ---------------------
+ * The framework-free custom elements' injected chrome. Everything here is
+ * additive: the markup underneath is the complete no-JS view, and every
+ * interactive affordance lives inside a [data-enhancement] subtree so the
+ * parity sweep never counts it and print never shows it (K14 §3.7). */
+sig-cite,
+sig-copy,
+sig-details,
+sig-table,
+sig-typeahead {
+  display: contents;
+}
+
+.sig-kit-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sig-space-2);
+  margin: var(--sig-space-2) 0;
+  font-size: var(--sig-step--1);
+}
+.sig-kit-field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sig-space-1);
+}
+.sig-kit-filter {
+  font: inherit;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+  padding: var(--sig-space-1) var(--sig-space-2);
+  background: var(--sig-surface);
+  color: var(--sig-ink);
+}
+.sig-kit-menu {
+  display: inline-block;
+}
+.sig-kit-menu > summary {
+  cursor: pointer;
+  color: var(--sig-link);
+}
+.sig-kit-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sig-space-1);
+  margin-top: var(--sig-space-1);
+  padding: var(--sig-space-2);
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+  background: var(--sig-paper);
+}
+.sig-kit-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sig-space-1);
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-pill);
+  padding: var(--sig-space-1) var(--sig-space-2);
+  font-size: var(--sig-step--2);
+  cursor: pointer;
+  transition: background-color var(--sig-motion-1) ease;
+}
+.sig-kit-chip:has(:checked) {
+  border-color: var(--sig-rule-strong);
+  background: var(--sig-surface-2);
+}
+.sig-kit-sort {
+  font: inherit;
+  font-weight: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  color: var(--sig-ink);
+}
+.sig-kit-sort-mark {
+  color: var(--sig-ink-muted);
+  margin-inline-start: var(--sig-space-1);
+}
+.sig-kit-copy,
+.sig-kit-download {
+  font: inherit;
+  font-size: var(--sig-step--2);
+  margin-inline-start: var(--sig-space-2);
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+  padding: var(--sig-space-1) var(--sig-space-2);
+  background: var(--sig-surface-2);
+  color: var(--sig-ink);
+  cursor: pointer;
+}
+.sig-kit-status {
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--2);
+}
+
+.sig-typeahead-popup {
+  display: inline-block;
+}
+.sig-typeahead-list {
+  list-style: none;
+  margin: var(--sig-space-1) 0 0;
+  padding: 0;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+  background: var(--sig-paper);
+  max-width: var(--sig-measure);
+}
+.sig-typeahead-option {
+  padding: var(--sig-space-1) var(--sig-space-2);
+  cursor: pointer;
+}
+.sig-typeahead-option[aria-selected="true"] {
+  background: var(--sig-surface-2);
+}
+.sig-typeahead-kind {
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--2);
+}
+
+.sig-cite__formatted {
+  background: var(--sig-surface-2);
+  padding: var(--sig-space-2);
+  border-radius: var(--sig-radius-1);
+  font-size: var(--sig-step--1);
+  word-break: break-word;
+}
+
+@media print {
+  /* K14 §3.7: enhancement-only chrome never prints — the printed page shows
+   * the same facts the no-JS page does. */
+  [data-enhancement] {
+    display: none !important;
+  }
+}
