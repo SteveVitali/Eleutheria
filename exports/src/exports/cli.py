@@ -687,23 +687,33 @@ def build_parser() -> argparse.ArgumentParser:
 
     fig = subparsers.add_parser(
         "figure",
-        help="Static figure kit (P36.27, FIG-01a, ADR-157): render a build-time "
-        "geography figure — the dossier at-a-glance map, a locator, or the "
-        "index sprite.",
+        help="Static figure kit (P36.27 FIG-01a + P36.28 FIG-01b, ADR-157): "
+        "render a build-time figure — map/locator/sprite (geography) or "
+        "network/ego/chart (graphs, charts, legends).",
     )
     fig.add_argument(
         "verb",
-        choices=["map", "locator", "sprite"],
+        choices=["map", "locator", "sprite", "network", "ego", "chart"],
         help="map: a sig.figure-kit-geo/1 document → SVG + sig.figure-geo-meta/1; "
         "locator: a context/focus outline document → the locator SVG; "
-        "sprite: an entries list → the index-sprite SVG + sig.figure-index-sprite/1.",
+        "sprite: an entries list → the index-sprite SVG + sig.figure-index-sprite/1; "
+        "network|ego: a sig.figure-kit-graph/1 document → wide SVG + "
+        "sig.figure-graph-meta/1 (the narrow variant is in the metadata); "
+        "chart: a sig.figure-kit-chart/1 document → wide SVG + "
+        "sig.figure-chart-meta/1.",
     )
     fig.add_argument("--in", dest="in_file", required=True, help="the figure spec JSON")
-    fig.add_argument("--out", required=True, help="the .svg output path")
+    fig.add_argument("--out", required=True, help="the wide .svg output path")
+    fig.add_argument(
+        "--out-narrow",
+        default=None,
+        help="also write the narrow-variant .svg here (network/ego/chart only)",
+    )
     fig.add_argument(
         "--meta",
         default=None,
-        help="write the figure metadata JSON (figure-geo-meta or the sprite index)",
+        help="write the figure metadata JSON (figure-geo-meta, figure-graph-meta, "
+        "figure-chart-meta or the sprite index)",
     )
     fig.add_argument(
         "--standalone",
@@ -1696,10 +1706,23 @@ def _run_figure(args: argparse.Namespace) -> int:
         print(f"sig-exports figure: cannot read spec — {e}")
         return 4
     try:
+        narrow_svg: str | None = None
         if args.verb == "map":
-            result = fig.build_map_figure(fig.spec_from_dict(spec_doc))
-            svg = result.svg
-            meta = result.to_json()
+            map_result = fig.build_map_figure(fig.spec_from_dict(spec_doc))
+            svg = map_result.svg
+            meta = map_result.to_json()
+        elif args.verb in ("network", "ego", "chart"):
+            static_result = (
+                fig.build_chart(fig.chart_spec_from_dict(spec_doc))
+                if args.verb == "chart"
+                else (fig.build_network_figure if args.verb == "network" else fig.build_ego_figure)(
+                    fig.graph_spec_from_dict(spec_doc)
+                )
+            )
+            svg = static_result.svg
+            narrow_svg = static_result.svg_narrow
+            meta = static_result.to_json()
+            meta["svg_narrow_bytes"] = len(narrow_svg.encode("utf-8"))
         elif args.verb == "locator":
             svg = fig.build_locator(
                 _json_outline(spec_doc["context_outline"]),
@@ -1716,6 +1739,8 @@ def _run_figure(args: argparse.Namespace) -> int:
             svg, meta = fig.build_index_sprite(entries)
         if args.standalone:
             svg = fig.standalone_document(svg)
+            if narrow_svg is not None:
+                narrow_svg = fig.standalone_document(narrow_svg)
     except fig.FigureKitError as e:
         print(f"sig-exports figure {args.verb}: refused — {e}")
         return 4
@@ -1723,6 +1748,11 @@ def _run_figure(args: argparse.Namespace) -> int:
         print(f"sig-exports figure {args.verb}: malformed spec — {e}")
         return 4
     Path(args.out).write_text(svg, encoding="utf-8")
+    if args.out_narrow:
+        if narrow_svg is None:
+            print(f"sig-exports figure {args.verb}: --out-narrow has no narrow variant")
+            return 4
+        Path(args.out_narrow).write_text(narrow_svg, encoding="utf-8")
     if args.meta:
         Path(args.meta).write_text(
             json.dumps(meta, indent=2, sort_keys=True) + "\n", encoding="utf-8"

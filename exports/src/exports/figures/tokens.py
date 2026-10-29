@@ -39,7 +39,12 @@ SIG_TOKEN_VALUES_LIGHT: dict[str, str] = {
     "sig-epi-provisional-text": "hsl(36.1deg 100% 27.1%)",
     "sig-epi-absence-ink": "hsl(220deg 11.8% 40%)",
     "sig-data-1": "hsl(212.8deg 67.7% 50.2%)",
+    "sig-data-seq-100": "hsl(213deg 85% 89.4%)",
+    "sig-data-seq-200": "hsl(213deg 84% 78.4%)",
+    "sig-data-seq-300": "hsl(213deg 83% 67.5%)",
     "sig-data-seq-400": "hsl(213deg 82% 56.5%)",
+    "sig-data-seq-500": "hsl(213deg 81% 45.5%)",
+    "sig-data-seq-600": "hsl(214deg 79% 34.5%)",
     "sig-data-seq-700": "hsl(214deg 78% 23.5%)",
 }
 
@@ -61,7 +66,12 @@ SIG_TOKEN_VALUES_DARK: dict[str, str] = {
     "sig-epi-provisional-text": "hsl(40.1deg 84.8% 66.5%)",
     "sig-epi-absence-ink": "hsl(220deg 15.4% 65.7%)",
     "sig-data-1": "hsl(212.8deg 76.8% 56.1%)",
+    "sig-data-seq-100": "hsl(214deg 78% 23.5%)",
+    "sig-data-seq-200": "hsl(214deg 79% 34.5%)",
+    "sig-data-seq-300": "hsl(213deg 81% 45.5%)",
     "sig-data-seq-400": "hsl(213deg 82% 56.5%)",
+    "sig-data-seq-500": "hsl(213deg 83% 67.5%)",
+    "sig-data-seq-600": "hsl(213deg 84% 78.4%)",
     "sig-data-seq-700": "hsl(213deg 85% 89.4%)",
 }
 
