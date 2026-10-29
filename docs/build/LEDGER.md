@@ -7,9 +7,9 @@
 
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # P36.29 landed(369); queued legs on earlier rows
-nextTicket: P36.30 # row 370 — procurement-relevance-rule
-lastCompleted: P36.29 # row 369 — entity-url-keys-and-slug-history 2026-10-29
+projectStatus: IN_PROGRESS # P36.30 landed(370); queued legs on earlier rows
+nextTicket: P36.79 # row 371 — held-out-search-relevance-set
+lastCompleted: P36.30 # row 370 — procurement-relevance-rule 2026-10-29
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.76,P36.77,P36.78,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P36.29-entity-url-keys-and-slug-history # P36.29 landed on this tip; P36.30 stacks here
+chainTip: r11/P36.30-procurement-relevance-rule # P36.30 landed on this tip; P36.79 stacks here
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-29T12:39Z
+updatedAt: 2026-10-29T14:55Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1350,3 +1350,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-29 — P36.29 done — row 369 (K13 GX-03 entity URL keys + slug history; owner SIG-UI-067/109/111/112/113, SIG-EVUI-010; cites SIG-UI-039/040, SIG-ENG-042; plan cell has no answered decision lines; **ADR-227**): `policy/slug_history.py` `sig.slug-history/1` — verbatim carry + appended terminal rows (liveness computed: current minus retired) · `freeze_hashes` foreign-uuid extension, issued never rewritten · unique-label export refusal (SIG-UI-111) · `resolve_request` `/entity/` hash-authoritative 200/301-canonical/terminal + `/id/` 302-while-current · publication-withdrawal scrub vs lifecycle 410 (F-337; merge/split targets filtered) · person emits nothing · `spine_export` → `web/entity_slug_history.json` (`previous_entity_history` release binding, manifest counts, SIG licence, web compartment) · `entity-history.ts` mirror + `getEntitySlugHistory` · ADR-227 registered (ADR_TRIGGERS, appF, spec rebuilt, BL-086, adr index) · tests 39+8+18 · `npm run check` green (697 e2e; local Node 25 vs >=24 <25 recorded) · `make check` profile in runs/P36.29.md · size over S budget recorded (≈2,100 impl+test lines) · impl `c3e371b8` · PR #390 OPEN · fix arc: inherited orient-probe overage (`7e08391d` never ran CI) + a reverted in-place 1349 trim (BM-HIST-01), all forward · ci: head-bound read follows · no gate, no OM-20, no live leg · deferrals +0/−0 · chainTip → r11/P36.29-… · next → P36.30 · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-29 — P36.29 post-closeout record — `ci: pass #390@e77fcd30` — run 40870770073 5/5 head-bound (python · docs · composed · security · web; read 12:38Z; `reports/ci/p36_29_pr390.json`) · fix arc: impl head `c3e371b8` docs-red on the inherited orient overage (`7e08391d` tipped last-3, never ran CI) → `ff4cd254` in-place trim red (BM-HIST-01) → reverted + repaired via head region on `4dade62e` (`ci: pass #390@4dade62e` run 40865884546) · stack `blockedOn` ancestor `#389@7e08391d` docs-red (run 40852336449 — same overage, base tip) · PR #390 OPEN · `main` untouched · deferrals +0/−0 · no live leg, no gate, no OM-20 · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-29 — P36.30 dispatch boundary-confirm — `ci: pass #390@05b282f3` 5/5 head-bound on the record tip (run 40875208817: python/docs/composed/security/web; impl read `ci: pass #390@e77fcd30` run 40870770073) · P36.29 landed: entity URL keys + slug history — `sig.slug-history/1` append-only resolver (rename→301/merge→301/split→300/withdrawal→410), `entity_slug_history.json` export + TS mirror + ADR-227 · fix arc: orient-overage forward repair (head-region trim) · `main` untouched · deferrals +0/−0 · dispatching P36.30 (row 370 — procurement relevance rule: `live_verification=false`; gate cell is the answered plan decision `D-K2-5 [B-22] = as recommended: exclude unclassified procurement` carried verbatim; no OM-20, no production mutations, no deps; M-sized) · chainTip → r11/P36.29-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-10-29 — P36.30 done — row 370 (K13 GX-04 procurement relevance rule; gate cell `D-K2-5 [B-22] = as recommended: exclude unclassified procurement` carried verbatim): `policy/procurement_relevance.py` `sig.procurement-relevance/1` — the ONE classification + `web/procurement_relevance.json` + the TS mirror (D-K2-5 exclusion, H-13 buyer label) · tests 12+10+11 · `npm run check` + `make check` profiles in runs/P36.30.md · RESUME: WIP preserved `83936309`, verified + kept · impl `53bf8b30` · PR #391 OPEN · Gate status: none · ci: head-bound read follows · no OM-20, no live leg · deferrals +0/−0 · chainTip → r11/P36.30-… · next → P36.79 · harness: devin-desktop/swe-2-high/subagent
