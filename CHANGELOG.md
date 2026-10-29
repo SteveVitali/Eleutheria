@@ -24,6 +24,25 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Search query engine v2 + benchmark harness: the `sig.search-results/2`
+  contract and `sig.search-benchmark/1` reports** (P36.32 / row 373; K3
+  SRCH-02 §4.2/§7/§9, K13 §7 W1; serves SIG-SRCH-003/004/005/006 region
+  and the SIG-SRCH-011…013 surface; `D-K3-7 [B-28]` answered 'Separate
+  agent, labelled' carried verbatim) — `exports/src/exports/
+  search_query_v2.py` is the serving half of the §4.2 pipeline over the
+  /2 indexes: tier-0 identifier resolution, case-sensitive acronym
+  aliases (never word-matched, word-hits collapsed — SIG-SRCH-005),
+  exact-name place resolution with records-held homonym ordering
+  (SIG-SRCH-004), weighted catalog text × type prior, per-compartment
+  tiered record pages (name phrase → all-words-in-name → place/source
+  words) with per-group cursors and exact counts, stated-only spelling
+  suggestions, facets with counts, and the carried-over withdrawal
+  barrier, deadline and 100 KiB wire bound. `search_benchmark.py` runs
+  dev/release/held-out modes; the held-out set is verified only via the
+  committed descriptor sha256 and every metric surface carries the
+  `agent-authored held-out set; not independent` estimand label (TS-20).
+  `sig-exports search-benchmark` exposes the release + held-out legs.
+
 - **Search index v2 builder: `sig.release-search-index/2` artifacts —
   a compact per-compartment record index, `claim_ref`, the release
   catalog index and `search_aliases.toml`** (P36.31 / row 372; K3
