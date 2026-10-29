@@ -209,7 +209,7 @@ export default function NetworkIsland({
                   y1={a.y}
                   x2={b.x}
                   y2={b.y}
-                  stroke="var(--sig-muted, #666)"
+                  stroke="var(--sig-ink-muted)"
                   strokeWidth={2}
                   strokeDasharray={style.dash || undefined}
                   strokeOpacity={faded ? 0.4 : 1}
@@ -224,10 +224,10 @@ export default function NetworkIsland({
                   r={p.center ? 13 : 9}
                   fill={
                     p.node.id === selectedId
-                      ? "hsl(28deg 80% 50%)"
-                      : "var(--sig-epi-status-resolved, #345)"
+                      ? "var(--sig-link)"
+                      : "var(--sig-epi-status-resolved)"
                   }
-                  stroke="#222"
+                  stroke="var(--sig-ink)"
                   strokeWidth={p.node.id === selectedId ? 2 : 1}
                   style={{ cursor: "pointer" }}
                   onClick={() => setInspectId(p.node.id)}

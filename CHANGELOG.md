@@ -1303,6 +1303,29 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   attributes, no script, print-parity. A cross-surface conformance
   test asserts one fixture inference is marked in export bytes, the
   API payload and the rendered page — removing the marker fails it.
+- **Design tokens v2 — the shared visual token layer**
+  (P36.16 / row 356; SIG-UI-146 + SIG-UI-148 + SIG-UI-156 — owner;
+  D-K14-3/D-K14-5 [B-22] = as recommended; cites SIG-UI-005/006,
+  SIG-UI-039/040, SIG-ENG-042) — `web/src/styles/tokens.css` is now
+  the single source of truth for every colour, type, space, radius and
+  motion value on the public surface: the 8-step 1.25 type scale
+  (13 px floor, responsive steps 4–5), the 4 px space ramp, the
+  4/8/pill radius set, the 120–160 ms motion pair, and light + chosen
+  dark colour sets under `prefers-color-scheme` with print forcing
+  light. The reserved hues are single-meaning — raspberry
+  (`--sig-epi-disagree-*`) only for contested/unresolved, amber
+  (`--sig-epi-provisional-*`) only for the provisional state, blue for
+  links and data; the slate support ramp is ordinal and lightness-
+  monotone; the incompleteness banner is neutral (absence is not a
+  disagreement). `epistemic.css`, `islands.css` and `curate.css` are
+  restated on tokens — every legacy `--sig-*` name kept as an alias —
+  and the map style's forked literals ride the same data-blue
+  vocabulary via `src/lib/design-tokens.ts`, pinned equal to the CSS
+  by test. Public Sans Variable (26.8 KB, OFL-1.1) ships self-hosted
+  with `font-display: optional`; `scripts/check-tokens.mjs` is the
+  stylelint-equivalent allow-list gate plus the ≤12 KiB gzip CSS /
+  ≤30 KiB font budgets (`check:tokens` in `npm run check`); pages
+  declare `color-scheme: light dark`. Zero client JS added.
 
 ### Changed
 

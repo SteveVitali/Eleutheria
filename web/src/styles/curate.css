@@ -4,12 +4,13 @@
 
    Curation surface styles (P21.6, §34, ADR-068). Colour-free structural styling for
    the authenticated /curate/** pages; WCAG 2.2 AA (contrast, focus, target size). Not
-   under the public zero-JS budget but ships no client JS regardless. */
+   under the public zero-JS budget but ships no client JS regardless. Spaces and
+   borders ride tokens.css (P36.16 / SIG-UI-146); colours stay `currentColor`. */
 
 .sig-curate-banner {
-  border: 2px solid currentColor;
-  padding: 0.75rem 1rem;
-  margin: 0 0 1rem;
+  border: var(--sig-border-strong) solid currentColor;
+  padding: var(--sig-space-3) var(--sig-space-4);
+  margin: 0 0 var(--sig-space-4);
   max-width: 60rem;
 }
 
@@ -17,7 +18,7 @@
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: var(--sig-space-4);
   padding: 0;
   margin: 0;
 }
@@ -30,34 +31,34 @@
 .sig-compare {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  margin: 1rem 0;
+  gap: var(--sig-space-5);
+  margin: var(--sig-space-4) 0;
 }
 
 .sig-compare__side {
-  border: 1px solid currentColor;
-  padding: 1rem;
+  border: var(--sig-border-thin) solid currentColor;
+  padding: var(--sig-space-4);
   min-width: 16rem;
   flex: 1 1 20rem;
 }
 
 .sig-suggestion {
-  border: 2px dashed currentColor;
-  padding: 0.75rem 1rem;
-  margin: 1rem 0;
+  border: var(--sig-border-strong) dashed currentColor;
+  padding: var(--sig-space-3) var(--sig-space-4);
+  margin: var(--sig-space-4) 0;
   max-width: 60rem;
 }
 
 .sig-decide-form fieldset {
-  border: 1px solid currentColor;
-  margin: 1rem 0;
-  padding: 1rem;
+  border: var(--sig-border-thin) solid currentColor;
+  margin: var(--sig-space-4) 0;
+  padding: var(--sig-space-4);
   max-width: 40rem;
 }
 
 .sig-decide-form label {
   display: block;
-  margin: 0.5rem 0;
+  margin: var(--sig-space-2) 0;
 }
 
 .sig-decide-form textarea,
@@ -68,14 +69,14 @@
   display: block;
   width: 100%;
   max-width: 40rem;
-  margin-top: 0.25rem;
-  padding: 0.5rem;
+  margin-top: var(--sig-space-1);
+  padding: var(--sig-space-2);
   box-sizing: border-box;
 }
 
 .sig-decide-form button {
-  margin-top: 1rem;
-  padding: 0.6rem 1.2rem;
+  margin-top: var(--sig-space-4);
+  padding: var(--sig-space-2) var(--sig-space-4);
   min-height: 44px; /* WCAG 2.2 AA target size */
   cursor: pointer;
 }
@@ -83,18 +84,18 @@
 .sig-contradiction-claims {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  margin: 1rem 0;
+  gap: var(--sig-space-5);
+  margin: var(--sig-space-4) 0;
 }
 
 .sig-contradiction-claim {
-  border: 1px solid currentColor;
-  padding: 1rem;
+  border: var(--sig-border-thin) solid currentColor;
+  padding: var(--sig-space-4);
   flex: 1 1 20rem;
 }
 
 .sig-queue-item {
-  border: 1px solid currentColor;
-  padding: 1rem;
-  margin: 0.75rem 0;
+  border: var(--sig-border-thin) solid currentColor;
+  padding: var(--sig-space-4);
+  margin: var(--sig-space-3) 0;
 }

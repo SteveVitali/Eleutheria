@@ -14,6 +14,9 @@ import { DOSSIERS } from "../../src/lib/dossier-fixture";
 
 const CSS_PATH = fileURLToPath(new URL("../../src/styles/epistemic.css", import.meta.url));
 const css = readFileSync(CSS_PATH, "utf8");
+// P36.16: token VALUES live in tokens.css; epistemic.css consumes them.
+const TOKENS_PATH = fileURLToPath(new URL("../../src/styles/tokens.css", import.meta.url));
+const tokensCss = readFileSync(TOKENS_PATH, "utf8");
 
 describe("the L4 inference marker (SIG-RECON-052)", () => {
   it("the marker predicate requires BOTH fields — a half-marker is unmarked", () => {
@@ -38,7 +41,7 @@ describe("the L4 inference marker (SIG-RECON-052)", () => {
   it("the epistemic class exists in epistemic.css and its token is non-green", () => {
     expect(css).toContain(".sig-inferred");
     expect(css).toContain("--sig-epi-inferred-ink");
-    const m = /--sig-epi-inferred-ink:\s*hsl\(\s*([\d.]+)deg/.exec(css);
+    const m = /--sig-epi-inferred-ink:\s*hsl\(\s*([\d.]+)deg/.exec(tokensCss);
     expect(m, "inferred ink token must be hsl()").not.toBeNull();
     const hue = Number(m![1]);
     expect(hue < 75 || hue > 165, `${hue}deg must be outside the green band`).toBe(true);

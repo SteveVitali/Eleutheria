@@ -70,6 +70,13 @@ import {
 import type { CompartmentTileSource } from "../lib/map-tiles";
 import type { IslandPoint } from "../lib/map";
 import {
+  SIG_DATA_1,
+  SIG_DATA_SEQ_400,
+  SIG_DATA_SEQ_700,
+  SIG_INK,
+  SIG_SURFACE_2,
+} from "../lib/design-tokens";
+import {
   evidenceAnchorHref,
   facetNoticeText,
   recordRoutes,
@@ -162,16 +169,16 @@ function backgroundStyle(): StyleSpecification {
       {
         id: "sig-bg",
         type: "background",
-        paint: { "background-color": "hsl(210deg 20% 96%)" },
+        paint: { "background-color": SIG_SURFACE_2 },
       },
     ],
   };
 }
 
 const SITE_PAINT = {
-  "circle-color": "hsl(28deg 80% 45%)",
+  "circle-color": SIG_DATA_1,
   "circle-radius": ["interpolate", ["linear"], ["zoom"], 3, 3, 10, 6] as never,
-  "circle-stroke-color": "#222",
+  "circle-stroke-color": SIG_DATA_SEQ_700,
   "circle-stroke-width": 1,
 };
 
@@ -304,7 +311,7 @@ export default function MapIsland({
               source: sourceId,
               "source-layer": "sites",
               filter: ["==", ["get", "tr"], 2],
-              paint: { "fill-color": "hsl(28deg 80% 45%)", "fill-opacity": 0.18 },
+              paint: { "fill-color": SIG_DATA_1, "fill-opacity": 0.18 },
             });
             map.addLayer({
               id: layerId,
@@ -337,7 +344,7 @@ export default function MapIsland({
           source: SUMMED_CELLS_SOURCE,
           maxzoom: NATIONAL_CELLS_MAXZOOM + 1,
           paint: {
-            "circle-color": "hsl(28deg 80% 45%)",
+            "circle-color": SIG_DATA_1,
             "circle-opacity": 0.4,
             // √(summed n)-scaled radius — legible from 1 record to a metro cell
             "circle-radius": [
@@ -351,7 +358,7 @@ export default function MapIsland({
               256,
               26,
             ],
-            "circle-stroke-color": "#222",
+            "circle-stroke-color": SIG_DATA_SEQ_700,
             "circle-stroke-width": 0.6,
           },
         });
@@ -366,7 +373,7 @@ export default function MapIsland({
             "text-size": 11,
             "text-allow-overlap": false,
           },
-          paint: { "text-color": "#333" },
+          paint: { "text-color": SIG_INK },
         });
         // The setData below re-fires `sourcedata` for SUMMED_CELLS_SOURCE;
         // re-entering on our own write is an infinite async loop that keeps the
@@ -500,9 +507,9 @@ export default function MapIsland({
           source: GEOJSON_SOURCE,
           filter: ["has", "point_count"],
           paint: {
-            "circle-color": "hsl(28deg 80% 55%)",
+            "circle-color": SIG_DATA_SEQ_400,
             "circle-radius": ["step", ["get", "point_count"], 14, 10, 20, 50, 28],
-            "circle-stroke-color": "#333",
+            "circle-stroke-color": SIG_DATA_SEQ_700,
             "circle-stroke-width": 1,
           },
         });
@@ -519,9 +526,9 @@ export default function MapIsland({
           source: GEOJSON_SOURCE,
           filter: ["!", ["has", "point_count"]],
           paint: {
-            "circle-color": "hsl(28deg 80% 45%)",
+            "circle-color": SIG_DATA_1,
             "circle-radius": 6,
-            "circle-stroke-color": "#222",
+            "circle-stroke-color": SIG_DATA_SEQ_700,
             "circle-stroke-width": 1,
           },
         });
@@ -537,7 +544,7 @@ export default function MapIsland({
           paint: {
             "circle-color": "rgba(0,0,0,0)",
             "circle-radius": 12,
-            "circle-stroke-color": "hsl(28deg 80% 40%)",
+            "circle-stroke-color": SIG_INK,
             "circle-stroke-width": 3,
           },
         });

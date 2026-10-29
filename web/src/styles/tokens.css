@@ -1,0 +1,293 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+ * carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+ *
+ * Design tokens v2 (P36.16 / UXK14-1, K14 §4, adopted as SIG-UI-146/147/148/156).
+ *
+ * THE SINGLE SOURCE OF TRUTH for every colour, font size, space, radius and
+ * motion value the public surface uses (SIG-UI-146): component styles consume
+ * `var(--sig-*)` tokens, never literals — `scripts/check-tokens.mjs` is the
+ * allow-list gate and `tests/unit/design-tokens.test.ts` proves the palette's
+ * claims (contrast, monotone ordinal ramp, reserved-hue discipline, no green —
+ * SIG-UI-006).
+ *
+ * Token values are the K14 §4.3 table (hex) restated in hsl() so the hue of
+ * every epistemic token stays machine-checkable; K14's measured contrast
+ * figures are re-derived by the unit test, never trusted on faith (§3.1).
+ *
+ * Decisions carried (the plan cell, verbatim): D-K14-3/D-K14-5 [B-22] =
+ * "as recommended" — Public Sans Variable (26,832 B, OFL-1.1, self-hosted)
+ * and the slate support ramp / raspberry disagreement / amber provisional /
+ * blue link+data palette.
+ *
+ * Font provenance: `src/assets/fonts/public-sans-latin-wght-normal.woff2` is
+ * `public-sans-latin-wght-normal.woff2` from `@fontsource-variable/public-sans`
+ * 5.3.0 (OFL-1.1 — the licence text ships beside the font at
+ * `src/assets/fonts/OFL.txt`), sha256 base64
+ * XtTTHJiOc7JYiUJE8gkGnr533H5WSGGVSyEZi23pDWg= (verified against the package
+ * manifest at vendor time). Metrics (fontTools): upm 2000, xHeight 1034,
+ * capHeight 1446, typo asc/desc 1900/-450, wght 100–900.
+ */
+
+/* --- The typeface (D-K14-3 = as recommended; SIG-UI-156) ------------------- */
+/* One self-hosted variable file; `optional` display + a metric-matched local
+ * fallback keeps swap CLS inside K0's ≤ 0.02. size-adjust scales the fallback's
+ * x-height to Public Sans' (1034/2000 vs Arial's 1062/2048 ≈ 0.997); the
+ * overrides match its vertical metrics so line boxes barely move. */
+@font-face {
+  font-family: "Public Sans Variable";
+  src: url("../assets/fonts/public-sans-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: optional;
+}
+@font-face {
+  font-family: "Public Sans Fallback";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica");
+  size-adjust: 99.7%;
+  ascent-override: 94.7%;
+  descent-override: 22.4%;
+  line-gap-override: 0%;
+}
+
+:root {
+  /* Light + dark are both first-class schemes; print forces light below. */
+  color-scheme: light dark;
+
+  /* --- Type (SIG-UI-148): the 8-step 1.25 scale, 13 px floor. ------------- */
+  --sig-step--2: 0.8125rem; /* 13 px — the minimum (legal, micro-labels) */
+  --sig-step--1: 0.875rem; /* 14 px — meta, captions, dense tables, chips */
+  --sig-step-0: 1rem; /* 16 px — body, tables */
+  --sig-step-1: 1.25rem; /* 20 px — lead, H4, figure labels */
+  --sig-step-2: 1.5rem; /* 24 px — H3 */
+  --sig-step-3: 1.875rem; /* 30 px — H2 */
+  --sig-step-4: clamp(2rem, 1.6rem + 1.6vw, 2.5rem); /* H1, 32–40 px */
+  --sig-step-5: clamp(2.25rem, 1.8rem + 2.2vw, 3rem); /* hero; headline figures */
+
+  /* Leading paired with the steps (K14 §4.2). */
+  --sig-leading-1: 1.55; /* step-0 body */
+  --sig-leading-2: 1.45; /* step--1 meta */
+  --sig-leading-3: 1.4; /* step--2 / step-1 */
+  --sig-leading-4: 1.3; /* step-2 */
+  --sig-leading-5: 1.2; /* step-3 */
+  --sig-leading-6: 1.15; /* step-4 */
+  --sig-leading-7: 1.1; /* step-5 */
+
+  --sig-font-body:
+    "Public Sans Variable", "Public Sans Fallback", ui-sans-serif, system-ui,
+    -apple-system, "Segoe UI", Roboto, sans-serif;
+  --sig-font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+
+  /* --- Space (4 px base; K14 §4.4). --------------------------------------- */
+  --sig-space-1: 0.25rem;
+  --sig-space-2: 0.5rem;
+  --sig-space-3: 0.75rem;
+  --sig-space-4: 1rem;
+  --sig-space-5: 1.5rem;
+  --sig-space-6: 2rem;
+  --sig-space-7: 3rem;
+  --sig-space-8: 4rem;
+  --sig-space-9: 6rem;
+
+  /* --- Shape (K14 §4.4): 4 px chips/inputs, 8 px cards, the pill; borders
+   * 1 px, emphasis 2 px. -------------------------------------------------- */
+  --sig-radius-1: 4px;
+  --sig-radius-2: 8px;
+  --sig-radius-pill: 999px;
+  --sig-radius: var(--sig-radius-2); /* P27.6-era alias */
+  --sig-border-thin: 1px;
+  --sig-border-strong: 2px;
+
+  /* --- Measure and containers (K14 §4.5). --------------------------------- */
+  --sig-measure: 68ch; /* prose (SIG-UI-148: ≤ 70 ch) */
+  --sig-content: 72rem;
+  --sig-wide: 90rem;
+
+  /* --- Motion (K14 §4.9): colour/opacity transitions only, 120–160 ms.
+   * `prefers-reduced-motion` zeroes them below (SIG-UI-149 posture). ------- */
+  --sig-motion-1: 120ms;
+  --sig-motion-2: 160ms;
+
+  /* --- Neutrals and interaction (K14 §4.3, light). ------------------------ */
+  --sig-bg: hsl(240deg 14.3% 98.6%); /* page */
+  --sig-surface: hsl(0deg 0% 100%); /* cards, tables */
+  --sig-surface-2: hsl(216deg 23.8% 95.9%); /* table headers, panels */
+  --sig-rule: hsl(218.2deg 15.1% 85.7%); /* decorative dividers only */
+  --sig-rule-strong: hsl(219.1deg 9.8% 53.9%); /* essential boundaries ≥ 3:1 */
+  --sig-ink: hsl(218.2deg 20% 10.8%); /* text, 16.9:1 on --sig-bg */
+  --sig-ink-muted: hsl(220deg 10.3% 39.8%); /* secondary text, 5.9:1 */
+  --sig-link: hsl(213.1deg 71.9% 39%); /* links + focus ring, 6.4:1 */
+  --sig-focus: var(--sig-link);
+
+  /* P27.6-era neutral aliases — kept, never removed (one vocabulary). */
+  --sig-paper: var(--sig-surface);
+  --sig-muted: var(--sig-ink-muted);
+  --sig-panel: var(--sig-surface-2);
+
+  /* --- The slate support ramp (D-K14-5 = as recommended; SIG-UI-146):
+   * ordinal 0–4, single hue (~215–222°), lightness-monotone, darker = more
+   * support. UNSUPPORTED is the off-ramp zero state — a neutral, not a ramp
+   * step (the glyph's 0-of-4 + label carry the meaning). -------------- */
+  --sig-epi-support-4: hsl(222.2deg 47.4% 11.2%);
+  --sig-epi-support-3: hsl(215.3deg 25% 26.7%);
+  --sig-epi-support-2: hsl(215.4deg 16.3% 46.9%);
+  --sig-epi-support-1: hsl(215deg 20.2% 65.1%);
+  --sig-epi-support-unsupported: hsl(219.1deg 9.8% 53.9%); /* = rule-strong */
+
+  /* Legacy level names → the ramp (SIG-UI-003 vocabulary, kept). */
+  --sig-epi-support-confirmed: var(--sig-epi-support-4);
+  --sig-epi-support-strong: var(--sig-epi-support-3);
+  --sig-epi-support-probable: var(--sig-epi-support-2);
+  --sig-epi-support-weak: var(--sig-epi-support-1);
+  /* --sig-epi-support-unsupported keeps its literal above. */
+
+  /* --- Disagreement (raspberry ~337°): the ONLY hue for contested and
+   * unresolved, told apart by glyph and fill (K14 §4.3/§4.7). ---------- */
+  --sig-epi-disagree-mark: hsl(337.3deg 59.2% 49%); /* ≠, ⚠ solid, ranges */
+  --sig-epi-disagree-text: hsl(336.6deg 61.5% 40.8%); /* state labels */
+
+  /* Agreement states (SIG-UI-008): contested/unresolved share the reserved
+   * hue; uncontested/minor stay neutral — no violet, no red, no green. */
+  --sig-epi-agreement-contested: var(--sig-epi-disagree-mark);
+  --sig-epi-agreement-irreconcilable: var(--sig-epi-disagree-mark);
+  --sig-epi-agreement-uncontested: var(--sig-rule-strong);
+  --sig-epi-agreement-minor: var(--sig-ink-muted);
+
+  /* Resolution status accents: unresolved shares the disagreement hue;
+   * resolved reads as data (blue); superseded/withdrawn stay neutral. */
+  --sig-epi-status-unresolved: var(--sig-epi-disagree-mark);
+  --sig-epi-status-resolved: hsl(212.8deg 67.7% 50.2%); /* = --sig-data-1 */
+  --sig-epi-status-superseded: hsl(219.1deg 9.8% 53.9%);
+  --sig-epi-status-withdrawn: hsl(218deg 11.4% 59%);
+
+  /* --- Provisional (amber ~39°): the unevaluated-method state only. ------- */
+  --sig-epi-provisional-mark: hsl(38.9deg 100% 36.3%);
+  --sig-epi-provisional-text: hsl(36.1deg 100% 27.1%);
+
+  /* --- Absence: the hatch's ink (SIG-UI-007 — the only texture). ---------- */
+  --sig-epi-absence-ink: hsl(220deg 11.8% 40%);
+
+  /* --- Inferred / L4 marker ink (P36.14, SIG-RECON-052): steel-cyan 195°,
+   * outside the green band and distinct from support slate and disagree. -- */
+  --sig-epi-inferred-ink: hsl(195deg 70% 32%);
+
+  /* --- Currency (K14 §4.7): a desaturation ramp toward grey for older
+   * beliefs — neutral, monotone lightness. -------------------------------- */
+  --sig-epi-currency-current: hsl(218.2deg 20% 10.8%);
+  --sig-epi-currency-aging: hsl(220deg 10.3% 39.8%);
+  --sig-epi-currency-stale: hsl(219.1deg 9.8% 53.9%);
+  --sig-epi-currency-historical: hsl(215deg 20.2% 65.1%);
+
+  /* --- Data (blue ~213°): links and data share one hue family. One
+   * categorical colour — shape/labels do the rest (K14 §4.7). ---------- */
+  --sig-data-1: hsl(212.8deg 67.7% 50.2%);
+  /* The sequential ramp (--sig-data-seq-100…700): single hue, lightness-
+   * monotone, light → dark, for density bins and choropleths (SIG-UI-019). */
+  --sig-data-seq-100: hsl(213deg 85% 89.4%);
+  --sig-data-seq-200: hsl(213deg 84% 78.4%);
+  --sig-data-seq-300: hsl(213deg 83% 67.5%);
+  --sig-data-seq-400: hsl(213deg 82% 56.5%);
+  --sig-data-seq-500: hsl(213deg 81% 45.5%);
+  --sig-data-seq-600: hsl(214deg 79% 34.5%);
+  --sig-data-seq-700: hsl(214deg 78% 23.5%);
+}
+
+/* --- Dark theme (SIG-UI-147 posture; K14 §4.10): a chosen step set, not an
+ * inversion. The OS setting is the only selector in Round 11 (D-K14-4). ---- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --sig-bg: hsl(217.5deg 16% 9.8%);
+    --sig-surface: hsl(220deg 17.1% 13.7%);
+    --sig-surface-2: hsl(218.6deg 15.9% 17.3%);
+    --sig-rule: hsl(220deg 14.8% 23.9%);
+    --sig-rule-strong: hsl(220deg 10.1% 46.7%);
+    --sig-ink: hsl(222.9deg 17.9% 92.4%);
+    --sig-ink-muted: hsl(220deg 12.9% 68%);
+    --sig-link: hsl(212.6deg 76.6% 73.1%);
+
+    /* The slate ramp re-anchored: darkest = least support on a dark surface. */
+    --sig-epi-support-4: hsl(210deg 40% 96.1%);
+    --sig-epi-support-3: hsl(212.7deg 26.8% 83.9%);
+    --sig-epi-support-2: hsl(215deg 20.2% 65.1%);
+    --sig-epi-support-1: hsl(215.4deg 16.3% 46.9%);
+    --sig-epi-support-unsupported: hsl(220deg 10.1% 46.7%);
+
+    --sig-epi-disagree-mark: hsl(337.7deg 68.8% 61%);
+    --sig-epi-disagree-text: hsl(339.1deg 84.1% 75.3%);
+    --sig-epi-status-resolved: hsl(212.8deg 76.8% 56.1%);
+    --sig-epi-status-superseded: hsl(220deg 10.1% 46.7%);
+    --sig-epi-status-withdrawn: hsl(220deg 14.5% 56%);
+    --sig-epi-provisional-mark: hsl(42.7deg 88.7% 38.2%);
+    --sig-epi-provisional-text: hsl(40.1deg 84.8% 66.5%);
+    --sig-epi-absence-ink: hsl(220deg 15.4% 65.7%);
+    --sig-epi-inferred-ink: hsl(191deg 63% 64%);
+
+    --sig-epi-currency-current: hsl(222.9deg 17.9% 92.4%);
+    --sig-epi-currency-aging: hsl(220deg 12.9% 68%);
+    --sig-epi-currency-stale: hsl(220deg 10.1% 46.7%);
+    --sig-epi-currency-historical: hsl(220deg 11.1% 37.1%);
+
+    --sig-data-1: hsl(212.8deg 76.8% 56.1%);
+    /* The same ramp, anchor flipped for the dark surface (K14 §4.3). */
+    --sig-data-seq-100: hsl(214deg 78% 23.5%);
+    --sig-data-seq-200: hsl(214deg 79% 34.5%);
+    --sig-data-seq-300: hsl(213deg 81% 45.5%);
+    --sig-data-seq-400: hsl(213deg 82% 56.5%);
+    --sig-data-seq-500: hsl(213deg 83% 67.5%);
+    --sig-data-seq-600: hsl(213deg 84% 78.4%);
+    --sig-data-seq-700: hsl(213deg 85% 89.4%);
+  }
+}
+
+/* --- Reduced motion (SIG-UI-149 posture): the transition tokens go to zero,
+ * so every rule that animates through them stops moving — the page still
+ * renders identically, only without motion. -------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --sig-motion-1: 0ms;
+    --sig-motion-2: 0ms;
+  }
+}
+
+/* --- Print always forces the light token set (K14 §4.10). ----------------- */
+@media print {
+  :root {
+    color-scheme: light;
+    --sig-bg: hsl(240deg 14.3% 98.6%);
+    --sig-surface: hsl(0deg 0% 100%);
+    --sig-surface-2: hsl(216deg 23.8% 95.9%);
+    --sig-rule: hsl(218.2deg 15.1% 85.7%);
+    --sig-rule-strong: hsl(219.1deg 9.8% 53.9%);
+    --sig-ink: hsl(218.2deg 20% 10.8%);
+    --sig-ink-muted: hsl(220deg 10.3% 39.8%);
+    --sig-link: hsl(213.1deg 71.9% 39%);
+
+    --sig-epi-support-4: hsl(222.2deg 47.4% 11.2%);
+    --sig-epi-support-3: hsl(215.3deg 25% 26.7%);
+    --sig-epi-support-2: hsl(215.4deg 16.3% 46.9%);
+    --sig-epi-support-1: hsl(215deg 20.2% 65.1%);
+    --sig-epi-support-unsupported: hsl(219.1deg 9.8% 53.9%);
+    --sig-epi-disagree-mark: hsl(337.3deg 59.2% 49%);
+    --sig-epi-disagree-text: hsl(336.6deg 61.5% 40.8%);
+    --sig-epi-status-resolved: hsl(212.8deg 67.7% 50.2%);
+    --sig-epi-status-superseded: hsl(219.1deg 9.8% 53.9%);
+    --sig-epi-status-withdrawn: hsl(218deg 11.4% 59%);
+    --sig-epi-provisional-mark: hsl(38.9deg 100% 36.3%);
+    --sig-epi-provisional-text: hsl(36.1deg 100% 27.1%);
+    --sig-epi-absence-ink: hsl(220deg 11.8% 40%);
+    --sig-epi-inferred-ink: hsl(195deg 70% 32%);
+    --sig-epi-currency-current: hsl(218.2deg 20% 10.8%);
+    --sig-epi-currency-aging: hsl(220deg 10.3% 39.8%);
+    --sig-epi-currency-stale: hsl(219.1deg 9.8% 53.9%);
+    --sig-epi-currency-historical: hsl(215deg 20.2% 65.1%);
+    --sig-data-1: hsl(212.8deg 67.7% 50.2%);
+    --sig-data-seq-100: hsl(213deg 85% 89.4%);
+    --sig-data-seq-200: hsl(213deg 84% 78.4%);
+    --sig-data-seq-300: hsl(213deg 83% 67.5%);
+    --sig-data-seq-400: hsl(213deg 82% 56.5%);
+    --sig-data-seq-500: hsl(213deg 81% 45.5%);
+    --sig-data-seq-600: hsl(214deg 79% 34.5%);
+    --sig-data-seq-700: hsl(214deg 78% 23.5%);
+  }
+}
