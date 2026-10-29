@@ -24,6 +24,24 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Entity URL keys and slug history: the `sig.slug-history/1`
+  append-only record, frozen-hash collision extension, the `/id/`
+  redirect semantics and the export artifact the redirect generator
+  reads** (P36.29 / row 369; K2 §3.3/§6.5, K13 §7 W1 GX-03, ADR-227;
+  SIG-UI-067/109/111/112/113, SIG-EVUI-010 — owner; serves SIG-UI-039/
+  040, SIG-ENG-042) — `policy/src/policy/slug_history.py` is the history
+  half of the one identifier module (`merge_history` carries prior rows
+  verbatim and appends `renamed`/`merged`/`split`/`withdrawn` terminal
+  rows; `freeze_hashes` applies the foreign-uuid collision extension in
+  deterministic order without ever rewriting an issued hash;
+  `check_unique_labels` makes SIG-UI-111 an export refusal;
+  `resolve_request` is the single redirect vocabulary — `/entity/` hash
+  authoritative 200/301/300/410, `/id/<type>/<uuid>` 302/301/300/410).
+  `build_spine_export` emits `web/entity_slug_history.json`
+  (`sig.slug-history/1`) and takes `previous_entity_history` as the
+  release-chain binding; `web/src/lib/entity-history.ts` mirrors the
+  resolver and `getEntitySlugHistory` loads it build-time. Person
+  entities emit nothing under any path (SIG-UI-112).
 - **Static figure kit — graphs, charts and legends: deterministic
   bipartite and radial layouts, four chart emitters, lexicon-generated
   legends and table twins** (P36.28 / row 368; K6 §6.2/§6.3, K13 §7 W1
