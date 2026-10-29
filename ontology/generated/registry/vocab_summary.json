@@ -81,7 +81,7 @@
       "subscription",
       "recommendation"
     ],
-    "count": 286,
+    "count": 287,
     "ids": [
       "accountability_event",
       "acquisition_channel",
@@ -139,6 +139,7 @@
       "camera_mount",
       "camera_name",
       "camera_operator",
+      "camera_registration_portal",
       "camera_registry_publisher",
       "camera_roadway",
       "camera_status",

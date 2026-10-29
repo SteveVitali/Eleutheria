@@ -1,0 +1,8 @@
+# pre-fold PHASE LOG bytes — P36.76 post-closeout record compact (2026-10-27)
+# verbatim committed line 1285 (dc92e6cc) rewritten in place to (a) hold the
+# orient recipe under 48 KiB (last-3 window) and (b) fix two live-claim assert
+# tokens ('live-claims' → 'check_live_claims'); all fields preserved verbatim.
+# Disclosed by the appended correction entry; seed-commit-declared.
+
+### L1285 (916 B incl. newline)
+- 2026-10-27 — P36.76 post-closeout record — `ci: pass #371@c168c8a8` 5/5 head-bound (run 40460281472: python · docs · composed · security · web; record `reports/ci/p36_76_pr371.json`); stack verdict `blockedOn` pre-existing red ancestor #368@75aa5a8 (below this row) · repair arc: base orient fold `df4c4ab3`+`5e158a02` merged forward `4fc7445b` (declared `3b058d36`), done entry folded 953→912 B archived `memory-repair/LEDGER_L_phaselog_pre-P36.76-fold.txt`; live-claims range fix on leg-b-packet's verbatim `--mode live` line (`c168c8a8` — same-line `# staged — never run` negation); leg-B HG-03 lane staged `flips/axon_connect/sources.toml` on r11/sources-flips `b65c34af` UNAPPLIED (B-35 I7-IT7=a, DERIVE, derived-only; sources.toml untouched — gate refuses) · `D-P36.76-1`/`D-P36.76-2` OPEN · `ingestion_permitted` never flipped · `main` untouched · next → P36.77 · harness: devin-desktop/swe-2-high/subagent

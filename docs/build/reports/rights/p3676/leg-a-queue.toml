@@ -1,0 +1,129 @@
+# sig.axon-connect-leg-a-queue/1 — P36.76 (row 351) queued leg-A screen legs
+#
+# All 12 legs are `status = "queued"` / `executed = false` — `prepared_not_executed`.
+#
+# Two blockers, both recorded honestly (SIG-ENG-042 — nothing fabricated):
+#
+#   1. The run was dispatched `live_verification=false` — code + registry +
+#      fixtures + tests only; no production mutation, no live GET.
+#   2. The probe-UA precondition fails: the connector's descriptive UA cites
+#      the owned explanation page `https://surveillancegraph.org/data-collection/`,
+#      which returned HTTP 404 at the 2026-10-27T05:01Z probe (root 200).
+#      Under SIG-INGEST-036 no descriptive-UA fetch may run while that page is
+#      dead — the same precondition P36.2's queue recorded (D-P36.2-1).
+#
+# When the precondition holds and the re-run is dispatched
+# (`implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true`),
+# each leg is ONE recorded GET through the connector's shared polite-fetch
+# seam — never the raw page persisted: a `connect_page` leg persists the
+# screened `sig.axon-connect-page/1` record (programme fields + verbatim
+# stated-use clauses + page sha256 + byte size); a `marked_host_screen` leg
+# persists the `sig.fusus-screen/1` record (markers hit + status + sha256).
+# A challenge/403/interstitial ends the leg recorded — never defeated
+# (SIG-INGEST-013/037). Leg B — the first real host's wire as a connector run —
+# is the operator's act (OP-26); see `leg-b-packet.md`.
+
+[meta]
+format = "sig.axon-connect-leg-a-queue/1"
+ticket = "P36.76"
+prepared_at = "2026-10-27T05:01:00Z"
+authorisation = "GATE-G5 OM-20 row-351 naming (2026-10-25T18:40Z, expires GATE-G6): screen records + page hashes + registry-row appends — single recorded GETs of public registration pages"
+blocker = "live:P35.38a — https://surveillancegraph.org/data-collection/ returned HTTP 404 at 2026-10-27T05:01Z probe (root 200); a descriptive UA may not cite a dead owned page (SIG-INGEST-036). Run dispatched live_verification=false."
+rerun = "implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true"
+targets_table = "connectors/src/connectors/data/axon_connect_targets.toml"
+
+[[leg]]
+id = "p3676-connect-greenville-county-page"
+site = "connect_greenville_county"
+kind = "connect_page"
+url = "https://connectgreenvillecounty.org/camera-registration/"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3676-connect-greenville-county-8443"
+site = "connect_greenville_county"
+kind = "marked_host_screen"
+url = "https://connectgreenvillecounty.org:8443/faststream/login.html"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3676-connect-orange-county-page"
+site = "connect_orange_county"
+kind = "connect_page"
+url = "https://connectorangecounty.org/camera-registration/"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3676-connect-orange-county-8443"
+site = "connect_orange_county"
+kind = "marked_host_screen"
+url = "https://connectorangecounty.org:8443/faststream/login.html"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3676-connect-shawnee-county-page"
+site = "connect_shawnee_county"
+kind = "connect_page"
+url = "https://connectshawneecounty.org/camera-registration/"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3676-connect-shawnee-county-8443"
+site = "connect_shawnee_county"
+kind = "marked_host_screen"
+url = "https://connectshawneecounty.org:8443/faststream/login.html"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3676-connect-sumner-page"
+site = "connect_sumner"
+kind = "connect_page"
+url = "https://connectsumner.org/"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3676-connect-sumner-8443"
+site = "connect_sumner"
+kind = "marked_host_screen"
+url = "https://connectsumner.org:8443/faststream/login.html"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3676-connect-volusia-sheriff-page"
+site = "connect_volusia_sheriff"
+kind = "connect_page"
+url = "https://connect.volusiasheriff.gov/"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3676-connect-volusia-sheriff-8443"
+site = "connect_volusia_sheriff"
+kind = "marked_host_screen"
+url = "https://connect.volusiasheriff.gov:8443/faststream/login.html"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3676-together-cos-page"
+site = "together_cos"
+kind = "connect_page"
+url = "https://togethercos.org/"
+status = "queued"
+executed = false
+
+[[leg]]
+id = "p3676-together-cos-8443"
+site = "together_cos"
+kind = "marked_host_screen"
+url = "https://togethercos.org:8443/faststream/login.html"
+status = "queued"
+executed = false

@@ -1,0 +1,8 @@
+# pre-fold PHASE LOG bytes — P36.76 orient fold 3 carry (2026-10-27)
+# verbatim HEAD line for this row's done entry compacted in place at the
+# base-fold carry-merge (the fold is disclosed by the appended
+# `P36.76 correction` entry in the same commit).
+
+### done entry (953 B)
+- 2026-10-27 — P36.76 done — row 351 (I7-C12 Axon/Fusus): `axon_connect` connector — 6 committed sites / 12 bounded targets (`connect_page` + `marked_host_screen`), programme-facts-only records (`sig.axon-connect-page/1`), `sig.fusus-screen/1` marker/status/sha256 records (login bytes never persisted), counts-only `fusus_marked_host` candidate — never a feed; Part VIII pre-persistence screen fail-closed · `camera_registration_portal` predicate + regen · `sources.toml` row stays `ingestion_permitted=false` (gate REFUSED, live exit 3) · leg A 12 GETs QUEUED `prepared_not_executed` (`live:P35.38a` 404 → `D-P36.76-1` OPEN); leg B held — `D-P36.76-2` OPEN (operator OP-26) · 25 tests green · shadow 11 claims/7 captures diff=0 · deferrals +2/−0 · verify `make check` 10,862/2 skip/4 env+pre-existing-red · impl `47eee564`→`54e5a1da` · ci: head-bound read follows · chainTip → r11/P36.76-… · next → P36.77 · harness: devin-desktop/swe-2-high/subagent
+

@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "81b1fde0f649627f110509ab5503970b9cb558a2",
-  "manifest_inputs": 1117,
+  "input_commit": "0931c2d15fa1c709c3dfdb187d02d71c09dd8d6b",
+  "manifest_inputs": 1118,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P36.76",
-    "lastCompleted": "P36.2",
+    "nextTicket": "P36.77",
+    "lastCompleted": "P36.76",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P37.2",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.76,P37.2",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,27 +17,27 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P36.2-rights-flip-decline-batch-and-terms-capture",
+    "chainTip": "r11/P36.76-axon-connect-connector",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-27T03:25Z"
+    "updatedAt": "2026-10-27T05:39Z"
   },
   "counts": {
-    "obligations": 196,
-    "owed": 115,
-    "open": 112,
+    "obligations": 198,
+    "owed": 117,
+    "open": 114,
     "partial": 3,
     "terminal": 81,
-    "events": 701,
+    "events": 703,
     "transitions": 51,
     "coverage_assessments": 489,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 59,
+    "return_pass_rows": 60,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -10288,6 +10288,100 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P36.76-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P36.76-1:e0",
+      "kind": "V",
+      "owner": "the OM-19 leg-runner — the orchestrator's `r11/P36.76-live-<n>` dispatch or the operator",
+      "landing": "RETURN PASS — P36.76",
+      "landing_source": "return-pass-map/1",
+      "backlog_home": "BL-086",
+      "item": "The 12 queued leg-A bounded GETs (`p3676/leg-a-queue.toml`): one recorded GET per committed I9a-C003 site's public `Connect <Place>` registration page (→ screened `sig.axon-connect-page/1` record: programme fields + verbatim stated-use clauses + page sha256) and one per `https://<host>:8443/faststream/login.html` screen (→ `sig.fusus-screen/1` record: markers + status + sha256 — never the login page's bytes). Each leg ends recorded on any challenge/403/interstitial — never defeated",
+      "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P36.76-live-<n>` dispatch or the operator · trigger: `implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true` once `live:P35.38a` holds",
+      "verify": "each leg's queued row flips `executed = true` with the persisted record's digest + `date -u` bounds in the run ledger; a challenge/403/interstitial leg records its refusal kind instead — never a fabricated hash",
+      "proxy": "the queue manifest is committed (`prepared_not_executed`); `axon_connect` gates refuse (validate green, `gate --source axon_connect` REFUSED, `run --mode live` exit 3); 25 fixture tests pin the served/refused/screened paths; the pipeline's opt-out/robots/challenge machinery is exercised unchanged",
+      "line": 1458,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P36.76",
+          "backlog_home": "BL-086",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/reports/rights/p3676/leg-a-queue.toml",
+            "docs/build/reports/rights/p3676/leg-b-packet.md"
+          ],
+          "observed_at": "2026-10-27",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P36.76 (row 351) for the row it added — leg-A GETs queued prepared_not_executed (live_verification=false + live:P35.38a fails: /data-collection/ 404 at 2026-10-27T05:01Z); leg B stays the operator's OP-26 act — nothing production-side was touched; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "event_id": "D-P36.76-1:e0",
+          "obligation_id": "D-P36.76-1",
+          "owner": "the OM-19 leg-runner — the orchestrator's `r11/P36.76-live-<n>` dispatch or the operator",
+          "landing": "P36.76's live_verification=true run once `live:P35.38a` holds (the `/data-collection/` page live)",
+          "anchor": {
+            "row_line": 1458,
+            "row_sha256": "09805c6bd743c0b5ae6eda9fe6fd1723ae20a72980adcb91d974b9950b04ec83",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": "D-P36.76-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P36.76-2:e0",
+      "kind": "V",
+      "owner": "the operator",
+      "landing": "RETURN PASS — P36.76",
+      "landing_source": "return-pass-map/1",
+      "backlog_home": "BL-086",
+      "item": "Leg B — the first real host's wire/fetch of `axon_connect` as a connector run (`run --source axon_connect --mode live` after the HG-03 flip): the operator's first-wire act per the ticket's verbatim legs cell",
+      "unblocked_by": "owner: the operator · trigger: the operator's HG-03 rights line on `[sources.axon_connect]` + OP-26 window authorisation, inside `AR-3 + AR-2 + AR-1c` with `live:P35.38a` holding",
+      "verify": "the staged packet `docs/build/reports/rights/p3676/leg-b-packet.md` enumerates preconditions + the verbatim command surface + the go lines (agent-drafted, blank for the operator); a leg-B run records its `sig.probe-run`-style outcomes on the connector's outcome ledger",
+      "proxy": "the packet is committed `prepared_not_executed`; `run --mode live` verified REFUSED exit 3 pre-flip (gated, never bypassed); the module source audit asserts no circumvention vocabulary exists anywhere in the connector",
+      "line": 1459,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P36.76",
+          "backlog_home": "BL-086",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/reports/rights/p3676/leg-a-queue.toml",
+            "docs/build/reports/rights/p3676/leg-b-packet.md"
+          ],
+          "observed_at": "2026-10-27",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P36.76 (row 351) for the row it added — leg-A GETs queued prepared_not_executed (live_verification=false + live:P35.38a fails: /data-collection/ 404 at 2026-10-27T05:01Z); leg B stays the operator's OP-26 act — nothing production-side was touched; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "event_id": "D-P36.76-2:e0",
+          "obligation_id": "D-P36.76-2",
+          "owner": "the operator",
+          "landing": "the operator's HG-03 rights line + OP-26 window authorisation (leg B is the first real host's wire)",
+          "anchor": {
+            "row_line": 1459,
+            "row_sha256": "34c959d45649a53856a91888147b46a4a6392cc679c511e37bb2236b2ac8e5e9",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-10-27"
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -10817,6 +10911,17 @@
         "rerun_cell": "`implement-spec spec=docs/tickets/348_P35.23__real-data-regression-corpus.md live_verification=true` · landed 348",
         "obligations": [
           "D-P35.23-1"
+        ]
+      },
+      {
+        "key": "P36.76",
+        "obligations_cell": "queued D-P36.76-1 — the 12 leg-A bounded GETs (6 registration pages + 6 `/:8443` screens); D-P36.76-2 — leg B, the operator's first-wire act",
+        "gates_cell": "bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T05:01Z); records land under `reports/rights/p3676/`; leg B is never agent execution",
+        "operator_cell": "nothing until `live:P35.38a` — leg B's flip + first wire stay the operator's HG-03 + OP-26 acts (packet `p3676/leg-b-packet.md`, go lines blank)",
+        "rerun_cell": "`implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true` · landed 351",
+        "obligations": [
+          "D-P36.76-1",
+          "D-P36.76-2"
         ]
       }
     ]
@@ -24561,10 +24666,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "719435571128842bcc11ecbfac16dee6ee70ba05cf4d589befdda7512d0a69b3",
+  "manifest_sha256": "ad5fbd2491af1b301cb5a7721db45f096253a0741cc49da5b1eff9e20606cca7",
   "current_md": {
-    "lines": 134,
-    "bytes": 19675,
+    "lines": 135,
+    "bytes": 19926,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

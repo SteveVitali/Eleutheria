@@ -95,6 +95,15 @@ def live_targets(source_id: str) -> list[dict[str, str]]:
         from .flock_portal_probe import probe_targets
 
         return probe_targets()
+    if kind == "axon_connect_targets":
+        # P36.76 / R11-ACQ-31: the axon_connect source's live targets ARE the
+        # committed I9a-C003 site inventory in data/axon_connect_targets.toml —
+        # two bounded rows per site (the public registration page + the :8443
+        # faststream screen), never new discovery. The source row stays
+        # ingestion_permitted=false; leg B is the operator's act (OP-26).
+        from .axon_connect import connect_targets
+
+        return connect_targets()
     if kind == "procurement_portal_tenants":
         # A procurement-portal source's live targets ARE its tenant rows in
         # data/procurement_portal_tenants.toml (P26.10): each expands to the

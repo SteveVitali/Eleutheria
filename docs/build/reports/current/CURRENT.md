@@ -4,19 +4,19 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `81b1fde0f649627f110509ab5503970b9cb558a2` · inputs hashed: 1117 · wall-clock receipt: `receipt.json`
+> input_commit: `0931c2d15fa1c709c3dfdb187d02d71c09dd8d6b` · inputs hashed: 1118 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.76` · lastCompleted `P36.2`
-- chainTip `r11/P36.2-rights-flip-decline-batch-and-terms-capture` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-27T03:25Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.77` · lastCompleted `P36.76`
+- chainTip `r11/P36.76-axon-connect-connector` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-27T05:39Z`
 
 ## Obligations
 
-- 196 obligations · **115 owed** (112 OPEN, 3 PARTIAL) · 81 terminal
-- 701 events (51 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 198 obligations · **117 owed** (114 OPEN, 3 PARTIAL) · 81 terminal
+- 703 events (51 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 115 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 117 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -83,6 +83,7 @@
 | P35.2 | D-P35.2-1 | `implement-spec spec=docs/tickets/346_P35.2__alerting-as-code-and-escalation.md live_verification=true` · landed 346 |
 | P35.21 | D-P35.21-1 | `implement-spec spec=docs/tickets/347_P35.21__partner-name-audit-run.md live_verification=true` · landed 347 |
 | P35.23 | D-P35.23-1 | `implement-spec spec=docs/tickets/348_P35.23__real-data-regression-corpus.md live_verification=true` · landed 348 |
+| P36.76 | queued D-P36.76-1 — the 12 leg-A bounded GETs (6 registration pages + 6 `/:8443` screens); D-P36.76-2 — leg B, the operator's first-wire act | `implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true` · landed 351 |
 
 ## Known inconsistencies (preserved, never synthesized)
 

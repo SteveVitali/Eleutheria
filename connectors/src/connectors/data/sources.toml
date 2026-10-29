@@ -653,6 +653,47 @@ part_viii_class = "none-known"
 review_needed = true
 
 
+[sources.axon_connect]
+name = "Axon Fusus Connect <Place> sites"
+source_kind = "vendor_site"
+homepage_url = "https://connect.volusiasheriff.gov/"
+default_tier = "R2"
+# P36.76 / R11-ACQ-31 — the per-agency `Connect <Place>` / Fusus white-label
+# camera-registration surfaces (the committed I9a-C003 set in
+# data/axon_connect_targets.toml). Custody DERIVE: the connector persists ONLY
+# the screened records (sig.axon-connect-page/1 programme facts + the
+# sig.fusus-screen/1 marked-host record — hash, markers, status), never the
+# served page's bytes (ADR-185). Programme facts only — R11-A16 forbids
+# registrant bytes; a marked-host presence is a SIG-ACQ-020 candidate, never
+# a feed.
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+# Leg A = the OM-20 row-351 mutation GATE-G5 named verbatim (2026-10-25T18:40Z,
+# expires GATE-G6): one recorded GET per committed host of the public
+# registration page + one of the :8443 faststream screen — screen records +
+# page hashes only. Leg B — the first real host's wire/fetch as a connector
+# run — is the operator's act (OP-26), separately authorised.
+access_method = "bounded screen (one recorded GET per committed host: public registration page + :8443 faststream screen; leg B is the operator's)"
+verified = true
+last_verified = 2026-09-30
+notes = "Private-camera opt-in registration/integration surface family (I9a-C003). Axon terms prohibit automated access — the row's posture is public_terms_only and every byte is screened in memory before persistence; the landing template's own text states registration is opt-in and grants no live-video access. ingestion_permitted stays false — the flip is the operator's HG-03/OP-26 act."
+[sources.axon_connect.rights]
+# Rights UNRESOLVED-safe pre-flip: UNDETERMINED + redistributable=false fail
+# the export gate closed. The served page's own terms text is captured
+# verbatim at first yield and recorded here then — nothing asserted pre-yield.
+spdx = "UNDETERMINED"
+redistributable = false
+derivative_permitted = false
+publication_basis = "P36.76 leg A is a bounded screen under GATE-G5's OM-20 naming (single recorded GETs of public registration pages + the :8443 faststream screen, expiring GATE-G6); the FUSUS posture (SIG-INGEST-038) records a marked-host presence as a candidate, never a feed. Any feed/ingestion is leg B — the operator's act under OP-26 after a rights line."
+[sources.axon_connect.redistribution]
+lane = "unknown"
+evidence = "sources.toml [sources.axon_connect] (custody DERIVE, redistributable=-); attribution: nothing published"
+evidence_uri = "connectors/src/connectors/data/sources.toml#axon_connect"
+part_viii_class = "none-known"
+review_needed = true
+
+
 [sources.footnote4a]
 name = "Footnote4a"
 source_kind = "community"
