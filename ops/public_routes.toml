@@ -51,6 +51,7 @@ top_level = [
   "dossier",
   "editorial-standards",
   "evidence",
+  "glossary",            # the generated glossary (P36.17 / K14 §2.5)
   "map",
   "methodology",
   "network",
@@ -95,6 +96,7 @@ required = [
   "dossier",
   "editorial-standards",
   "evidence",
+  "glossary",
   "map",
   "methodology",
   "network",

@@ -32,7 +32,7 @@
  */
 
 import { NATIONAL_ZOOM_MAX } from "./map";
-import { SIG_DATA_1, SIG_DATA_SEQ_700 } from "./design-tokens";
+import { SIG_DATA_HUE, SIG_DATA_SEQ_700 } from "./design-tokens";
 
 /** PMTiles archive version the public map is served as (SIG-GEO-012). */
 export const PMTILES_VERSION = 3;
@@ -266,7 +266,9 @@ export function buildPublicMapStyle(tiles: readonly CompartmentTileSource[]): Ma
         "circle-opacity": 0.45,
         // P36.16 (SIG-UI-146): site data rides the shared data-blue vocabulary
         // (lib/design-tokens.ts, pinned to tokens.css) — no forked palette.
-        "circle-color": SIG_DATA_1,
+        // P36.17 (SIG-UI-143): SIG_DATA_HUE is resolved through the lexicon's
+        // declared legend binding (legend.dataHue.token), not a literal.
+        "circle-color": SIG_DATA_HUE,
         "circle-stroke-color": SIG_DATA_SEQ_700,
         "circle-stroke-width": 0.6,
       },
@@ -280,7 +282,7 @@ export function buildPublicMapStyle(tiles: readonly CompartmentTileSource[]): Ma
       source: id,
       "source-layer": "sites",
       filter: ["==", ["get", "tr"], 2],
-      paint: { "fill-color": SIG_DATA_1, "fill-opacity": 0.2 },
+      paint: { "fill-color": SIG_DATA_HUE, "fill-opacity": 0.2 },
     });
     layers.push({
       id: compartmentLayerId(t.compartment),
@@ -292,7 +294,7 @@ export function buildPublicMapStyle(tiles: readonly CompartmentTileSource[]): Ma
       paint: {
         "circle-radius": 4,
         "circle-opacity": 0.7,
-        "circle-color": SIG_DATA_1,
+        "circle-color": SIG_DATA_HUE,
         "circle-stroke-color": SIG_DATA_SEQ_700,
         "circle-stroke-width": 0.8,
       },

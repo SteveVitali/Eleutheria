@@ -10,6 +10,8 @@
 // "How we know this" module, satisfying "linked from every dossier".
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Figure from "../components/Figure.astro";
+import InBrief from "../components/InBrief.astro";
+import Term from "../components/Term.astro";
 import { getResolutionEval } from "../lib/data";
 // P35.37 (SIG-TRANSP-013, DR-C3-03): the eval is a published release artifact —
 // the data layer's single seam (canonical record in fixtures mode,
@@ -32,16 +34,26 @@ const FIGURES = defineFigures("methodology", eval_.metrics.map((m, i) => ({
 ---
 
 <BaseLayout title="Methodology" path="/methodology/">
+  {/* P36.17 (K14 §2.4): the plain layer first — ≤80 words, the precise page
+      one action away. */}
+  <InBrief href="#evidence-tiers">
+    SIG reports what the evidence shows, and how sure it is — nothing more.
+    Every claim keeps its sources, how strongly they back it, whether sources
+    disagree, and how old the evidence is. A gap is named, never silently
+    omitted.
+  </InBrief>
   <p>
-    This page explains how SIG produces and qualifies every claim. SIG{" "}
+    This page explains how SIG produces and qualifies every{" "}
+    <Term term="claim">claim</Term>. SIG{" "}
     <strong>reports</strong>; it does not endorse. Every material claim carries four
     independent epistemic fields, a support glyph, a persistent marker when contested,
     and an honest gap wherever SIG has not looked.
   </p>
 
-  <h2>Evidence tiers and support</h2>
+  <h2 id="evidence-tiers">Evidence tiers and support</h2>
   <p>
-    Sources are graded by an evidence tier (e.g. a records-request contract outranks a
+    <Term term="source">Sources</Term> are graded by an evidence tier (e.g. a
+    records-request contract outranks a
     portal aggregator snapshot). The support glyph is a four-step mark whose fill
     reflects how many independent, method-distinct evidence classes stand behind the
     winning value, and it always carries a machine-readable downgrade reason when it
@@ -60,8 +72,8 @@ const FIGURES = defineFigures("methodology", eval_.metrics.map((m, i) => ({
   <h2>Absence is data</h2>
   <p>
     A missing row is never silently omitted. SIG distinguishes four kinds of absence —
-    not researched, no evidence found (with the sources searched named), evidence of
-    absence, and unresolved — and each is a clickable invitation to{" "}
+    not researched, none found (with the sources searched named), stated
+    absent, and unresolved — and each is a clickable invitation to{" "}
     <a href="/research-queue/">research it</a>.
   </p>
 
@@ -90,7 +102,8 @@ const FIGURES = defineFigures("methodology", eval_.metrics.map((m, i) => ({
     upstream record are merged.
   </p>
   <p data-testid="resolved-site-definition">
-    <strong>What a "resolved site" is.</strong> An <em>observation-level record</em> is one
+    <strong>What a "resolved site" is.</strong> An{" "}
+    <em><Term term="record">observation-level record</Term></em> is one
     source's published row for one camera. A <em>resolved site</em> is a cluster of those
     records that SIG's camera-site entity resolution judged to describe the <strong>same
     physical device</strong>. SIG reports <strong>N resolved sites from M observation-level

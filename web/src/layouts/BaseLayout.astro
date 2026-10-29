@@ -157,6 +157,11 @@ const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] 
   {
     label: "Reference",
     links: [
+      // P36.17: the generated glossary — linked from chrome so every page can
+      // reach the one vocabulary (SIG-UI-040; DR-K14-06's fuller About/footer
+      // wiring is P36.64's). `withBase` — a root-absolute literal would grow
+      // the containment baseline.
+      { href: withBase("glossary/"), label: "Glossary" },
       { href: "/editorial-standards/", label: "Editorial standards" },
       { href: "/style-guide/", label: "Style guide" },
     ],

@@ -21,12 +21,13 @@
     "check:paths": "node scripts/check-root-absolute-paths.mjs",
     "check:figures": "node scripts/check-figures.mjs",
     "check:tokens": "node scripts/check-tokens.mjs",
+    "check:lexicon": "node scripts/check-lexicon.mjs",
     "check:lhci": "node scripts/gen-lhci.mjs --verify",
     "check:perf": "SIG_BUILD_INTERNAL=1 npm run build && npm run check:lhci && lhci autorun",
     "check:perf:national": "bash ../scripts/ci/national_budget_leg.sh all",
     "fixture:national": "uv run python ../scripts/ci/build_national_fixture.py --out national",
     "export:fixtures": "esbuild scripts/build-fixture-export.ts --bundle --platform=node --format=esm --packages=external --outfile=node_modules/.cache/build-fixture-export.mjs && node node_modules/.cache/build-fixture-export.mjs",
-    "check": "npm run typecheck && npm run test:unit && SIG_BUILD_INTERNAL=1 npm run build && npm run check:lhci && npm run check:licenses && npm run check:paths && npm run check:figures && npm run check:tokens && npm run test:e2e"
+    "check": "npm run typecheck && npm run test:unit && SIG_BUILD_INTERNAL=1 npm run build && npm run check:lhci && npm run check:licenses && npm run check:paths && npm run check:figures && npm run check:tokens && npm run check:lexicon && npm run test:e2e"
   },
   "dependencies": {
     "astro": "7.3.5",

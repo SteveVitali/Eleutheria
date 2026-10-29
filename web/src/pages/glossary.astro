@@ -1,0 +1,243 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.17 (K13 UXK14-4 / K14 §2.5, SIG-UI-061/143): the glossary — a T1 static
+// page GENERATED at build from three sources: the canonical spec's Appendix E
+// (verbatim precise definitions, read — never copied by hand), the shared
+// lexicon (lexicon.json — the same file the components, the map style and the
+// figure kit read), and the site terms below it defines. The page rebuilds
+// with every release (D-K14-8: the spec publishes as a page per release).
+// Requirement and section ids live only inside the "Spec references"
+// disclosures (DR-K14-07); every term carries a plain definition FIRST
+// (DR-K14-10).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import InBrief from "../components/InBrief.astro";
+import SpecRefs from "../components/SpecRefs.astro";
+import {
+  CONTROLLED_VOCABULARY,
+  glossaryEntries,
+  legendState,
+  specGlossaryTerms,
+  LEXICON,
+} from "../lib/lexicon";
+import { withBase } from "../lib/paths";
+
+const entries = glossaryEntries();
+const entryById = new Map(entries.map((e) => [e.id, e]));
+const specCount = specGlossaryTerms().length;
+const sorted = [...entries].sort((a, b) =>
+  a.term.localeCompare(b.term, "en", { sensitivity: "base" }),
+);
+const legend = LEXICON.legend;
+const fields = LEXICON.fields;
+const vocab = CONTROLLED_VOCABULARY;
+
+type StateEntry = { label: string; plain: string; symbol?: string; spec?: string };
+const STATES = LEXICON.states as Record<string, Record<string, StateEntry>>;
+const fieldGroups: { heading: string; field: string; ids: string[] }[] = [
+  { heading: "Support", field: "support", ids: Object.keys(STATES.support!) },
+  { heading: "Agreement", field: "agreement", ids: Object.keys(STATES.agreement!) },
+  { heading: "Currency", field: "currency", ids: Object.keys(STATES.currency!) },
+  { heading: "Resolution", field: "resolution", ids: Object.keys(STATES.resolution!) },
+  { heading: "Review", field: "review", ids: Object.keys(STATES.review!) },
+  { heading: "Directness", field: "directness", ids: Object.keys(STATES.directness!) },
+  { heading: "Access", field: "access", ids: Object.keys(STATES.access!) },
+  { heading: "Absence", field: "absence", ids: Object.keys(STATES.absence!) },
+  { heading: "Identity", field: "identity", ids: Object.keys(STATES.identity!) },
+  {
+    heading: "Provisional and derived",
+    field: "provisional",
+    ids: Object.keys(STATES.provisional!).concat(Object.keys(STATES.inferred!)),
+  },
+];
+function stateAt(field: string, id: string): StateEntry {
+  return (id === "INFERRED" ? STATES.inferred! : STATES[field]!)[id]!;
+}
+---
+
+<BaseLayout title="Glossary" path={withBase("glossary/")}>
+  <InBrief href="#terms-heading">
+    The words and marks SIG uses mean exactly one thing, everywhere — on pages,
+    maps, figures and in the data. This page is that one vocabulary: {specCount}{" "}
+    definitions from the canonical spec, verbatim, plus the terms and states
+    the site itself uses, all in plain language first.
+  </InBrief>
+
+  <section aria-labelledby="marks-heading">
+    <h2 id="marks-heading">How SIG marks what it knows</h2>
+    <p>
+      Every material claim carries four independent fields — never one fused
+      badge — so &ldquo;strongly supported but contested&rdquo; and
+      &ldquo;confirmed but historical&rdquo; are both expressible at a glance:{" "}
+      {Object.values(fields).map((f, i) => (
+        <>
+          {i > 0 && (i === Object.keys(fields).length - 1 ? " and " : ", ")}
+          <strong>{f.label}</strong>
+        </>
+      ))}
+      . Each state below is the whole of what its mark means; colour is never
+      the only channel — a glyph, texture, stroke or label always travels with
+      it.
+    </p>
+    {fieldGroups.map((group) => (
+      <>
+        <h3 id={`marks-${group.field}`}>{group.heading}</h3>
+        <dl class="sig-glossary__states" data-testid="glossary-states" data-field={group.field}>
+          {group.ids.map((id) => {
+            const s = stateAt(group.field, id);
+            return (
+              <>
+                <dt class="sig-glossary__state">
+                  {s.symbol && <code class="sig-glossary__symbol">{s.symbol}</code>}{" "}
+                  <strong>{s.label}</strong>
+                </dt>
+                <dd>
+                  {s.plain}{" "}
+                  {s.spec && <SpecRefs refs={[s.spec]} />}
+                </dd>
+              </>
+            );
+          })}
+        </dl>
+      </>
+    ))}
+  </section>
+
+  <section aria-labelledby="legend-heading">
+    <h2 id="legend-heading">The legend — one meaning per channel</h2>
+    <p>{legend.note}</p>
+    <dl class="sig-glossary__legend" data-testid="glossary-legend">
+      <dt>Fill</dt>
+      <dd>
+        <strong>{legend.fill.encodings.corroborated.label}</strong> — {legend.fill.encodings.corroborated.plain}{" "}
+        Until independent lineages are declared for a surface, the legend reads:{" "}
+        <em>&ldquo;{legend.fill.encodings.corroborated.interimLegendLine}.&rdquo;</em>
+        <br />
+        <strong>{legend.fill.encodings.singleSource.label}</strong> — {legend.fill.encodings.singleSource.plain}{" "}
+        (hollow applies to points and areas only).
+        <SpecRefs refs={[legend.fill.encodings.corroborated.spec!]} />
+      </dd>
+      <dt>Line pattern</dt>
+      <dd>
+        A line pattern means <strong>access kind only</strong>:{" "}
+        {Object.values(legend.linePattern.encodings).map((e, i) => {
+          const st = legendState(e.state);
+          return (
+            <>
+              {i > 0 && " · "}
+              {st.label} = {e.symbol}
+            </>
+          );
+        })}
+        . Never currency, never a brand edge.
+        <SpecRefs refs={["§12.2"]} />
+      </dd>
+      <dt>Currency</dt>
+      <dd>
+        {legend.currency.plain}
+        <SpecRefs refs={[legend.currency.spec!]} />
+      </dd>
+      <dt>Contested and unresolved</dt>
+      <dd>
+        {legend.contested.plain} The same marker (≠) appears wherever the value
+        appears — a table, a card, a map popup, a list, print.
+        <SpecRefs refs={[legend.contested.spec!]} />
+      </dd>
+      <dt>Provisional</dt>
+      <dd>
+        {legend.provisional.plain}
+        <SpecRefs refs={[legend.provisional.spec!]} />
+      </dd>
+      <dt>Absence</dt>
+      <dd>
+        {legend.absence.plain}
+        <SpecRefs refs={[legend.absence.spec!]} />
+      </dd>
+      <dt>Shape</dt>
+      <dd>
+        {legend.entityKind.plain}
+        <SpecRefs refs={[legend.entityKind.spec!]} />
+      </dd>
+      <dt>Data</dt>
+      <dd>
+        {legend.dataHue.plain}
+        <SpecRefs refs={[legend.dataHue.spec!]} />
+      </dd>
+      <dt>Not applicable</dt>
+      <dd>
+        {legend.cannotApply.plain}
+      </dd>
+      <dt>Candidate vs provisional</dt>
+      <dd>
+        {legend.candidateVsProvisional.note}{" "}
+        <strong>{legend.candidateVsProvisional.rows[0]!.word}</strong>: {legend.candidateVsProvisional.rows[0]!.plain}{" "}
+        <strong>{legend.candidateVsProvisional.rows[1]!.word}</strong>: {legend.candidateVsProvisional.rows[1]!.plain}
+        <SpecRefs refs={["SIG-UI-062"]} />
+      </dd>
+    </dl>
+  </section>
+
+  <section aria-labelledby="vocab-heading">
+    <h2 id="vocab-heading">One word per concept</h2>
+    <p>
+      The site&rsquo;s controlled vocabulary — the same concept always carries
+      the same word in UI copy:
+    </p>
+    <table class="sig-table" data-testid="glossary-vocabulary">
+      <thead>
+        <tr><th scope="col">Concept</th><th scope="col">Use</th><th scope="col">Not</th></tr>
+      </thead>
+      <tbody>
+        {vocab.map((v) => (
+          <tr>
+            <td>{v.concept}</td>
+            <td><strong>{v.use}</strong>{v.also ? ` (${v.also})` : ""}</td>
+            <td>{v.not?.join(", ") ?? "—"}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+
+  <section aria-labelledby="terms-heading">
+    <h2 id="terms-heading">Terms</h2>
+    <p>
+      {entries.length} entries — {specCount} carried verbatim from the
+      canonical spec&rsquo;s Appendix E, the rest the site&rsquo;s own terms.
+      Entries marked <em>spec</em> are the spec&rsquo;s words, not a rewrite.
+    </p>
+    <dl class="sig-glossary" data-testid="glossary-entries">
+      {sorted.map((e) => (
+        <div class="sig-glossary__item" data-testid="glossary-entry" data-glossary-source={e.source}>
+          <dt id={e.anchor}>
+            <strong>{e.term}</strong>
+            {e.source === "spec" && <span class="sig-glossary__src"> · spec, Appendix E</span>}
+          </dt>
+          <dd>
+            <p>{e.plain}</p>
+            {e.precise && e.source !== "spec" && (
+              <p class="sig-glossary__precise">
+                <strong>Spec:</strong> {e.precise}
+              </p>
+            )}
+            {e.example && <p class="sig-glossary__example"><strong>Example:</strong> {e.example}</p>}
+            {e.seeAlso.length > 0 && (
+              <p class="sig-glossary__seealso">
+                <strong>See also:</strong>{" "}
+                {e.seeAlso.map((ref, i) => (
+                  <>
+                    {i > 0 && ", "}
+                    <a href={withBase(`glossary/#${ref}`)}>{entryById.get(ref)!.term}</a>
+                  </>
+                ))}
+              </p>
+            )}
+            {e.spec && <SpecRefs refs={[e.spec]} />}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+</BaseLayout>

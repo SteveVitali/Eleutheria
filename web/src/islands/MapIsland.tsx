@@ -70,7 +70,7 @@ import {
 import type { CompartmentTileSource } from "../lib/map-tiles";
 import type { IslandPoint } from "../lib/map";
 import {
-  SIG_DATA_1,
+  SIG_DATA_HUE,
   SIG_DATA_SEQ_400,
   SIG_DATA_SEQ_700,
   SIG_INK,
@@ -176,7 +176,7 @@ function backgroundStyle(): StyleSpecification {
 }
 
 const SITE_PAINT = {
-  "circle-color": SIG_DATA_1,
+  "circle-color": SIG_DATA_HUE,
   "circle-radius": ["interpolate", ["linear"], ["zoom"], 3, 3, 10, 6] as never,
   "circle-stroke-color": SIG_DATA_SEQ_700,
   "circle-stroke-width": 1,
@@ -311,7 +311,7 @@ export default function MapIsland({
               source: sourceId,
               "source-layer": "sites",
               filter: ["==", ["get", "tr"], 2],
-              paint: { "fill-color": SIG_DATA_1, "fill-opacity": 0.18 },
+              paint: { "fill-color": SIG_DATA_HUE, "fill-opacity": 0.18 },
             });
             map.addLayer({
               id: layerId,
@@ -344,7 +344,7 @@ export default function MapIsland({
           source: SUMMED_CELLS_SOURCE,
           maxzoom: NATIONAL_CELLS_MAXZOOM + 1,
           paint: {
-            "circle-color": SIG_DATA_1,
+            "circle-color": SIG_DATA_HUE,
             "circle-opacity": 0.4,
             // √(summed n)-scaled radius — legible from 1 record to a metro cell
             "circle-radius": [
@@ -526,7 +526,7 @@ export default function MapIsland({
           source: GEOJSON_SOURCE,
           filter: ["!", ["has", "point_count"]],
           paint: {
-            "circle-color": SIG_DATA_1,
+            "circle-color": SIG_DATA_HUE,
             "circle-radius": 6,
             "circle-stroke-color": SIG_DATA_SEQ_700,
             "circle-stroke-width": 1,

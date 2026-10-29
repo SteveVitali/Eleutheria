@@ -317,6 +317,16 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
     notes: "K14's editorial/style content pages.",
   },
   {
+    patterns: ["/glossary/"],
+    type: "T1",
+    owner: "P36.17",
+    contract: "sig.lexicon/1",
+    noJsEquivalent: SELF,
+    examples: ["/glossary/"],
+    notes:
+      "K14 §2.5's generated glossary — Appendix E verbatim + the shared lexicon + site terms. Popovers are native-HTML, no JS.",
+  },
+  {
     patterns: ["/visual-language/"],
     type: "T1",
     owner: "P15.2",
