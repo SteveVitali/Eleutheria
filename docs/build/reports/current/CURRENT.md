@@ -4,19 +4,19 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `24ee3d273830943442b71061a7918c567768fe44` · inputs hashed: 1143 · wall-clock receipt: `receipt.json`
+> input_commit: `cd92f568cf972436c090a365a47f2209b553265c` · inputs hashed: 1145 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.79` · lastCompleted `P36.30`
-- chainTip `r11/P36.30-procurement-relevance-rule` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-29T14:55Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.31` · lastCompleted `P36.79`
+- chainTip `r11/P36.79-held-out-search-relevance-set` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-29T14:55Z`
 
 ## Obligations
 
-- 203 obligations · **122 owed** (119 OPEN, 3 PARTIAL) · 81 terminal
-- 708 events (51 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 204 obligations · **123 owed** (120 OPEN, 3 PARTIAL) · 81 terminal
+- 709 events (51 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 122 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 123 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -87,6 +87,7 @@
 | P36.77 | queued D-P36.77-1 — 11 leg-A GETs (4 api_document + 3 api_project + 2 DocumentCloud pages + ToS + the MuckRock /foi/ page); D-P36.77-2 — leg B, operator's first… | `implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true` |
 | P36.78 | queued D-P36.78-1 — 5 leg-A GETs (the Sourcewell contract page + terms-use, the OMNIA supplier + contract-documents index + terms-of-use); D-P36.78-2 — leg B, o… | `implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true` |
 | P36.13 | queued D-P36.13-1 — the hosted-enforcement flip on `sig-api` (env `SIG_API_RATE_LIMIT=enforce` + hops 2; prestate describe = restore point) | `implement-spec spec=docs/tickets/354_P36.13__api-rate-limits.md live_verification=true` |
+| P36.79 | queued D-P36.79-1 — the restricted-bucket object write of the sealed held-out relevance set (read-back digest verify; restore point = bucket versioning + commit… | `implement-spec spec=docs/tickets/371_P36.79__held-out-search-relevance-set.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 

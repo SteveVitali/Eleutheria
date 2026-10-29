@@ -1,0 +1,32 @@
+{
+  "bytes": 16422,
+  "generation": {
+    "inputs": [
+      {
+        "path": "connectors/src/connectors/data/sources.toml",
+        "sha256": "049f97596b2fb7589affb824df9564bdbc803ea9b271a5112cd1e59f3f86fff2"
+      },
+      {
+        "path": "connectors/src/connectors/data/camera_registry_targets.toml",
+        "sha256": "09d08a1b1f6872aca6b1b043bca3281dd8a21f227a08846f198ac7c34b5bd6fb"
+      },
+      {
+        "path": "connectors/src/connectors/data/dot_511_targets.toml",
+        "sha256": "bc4c47c25e47e59598f98a024deb4f1b6f9a321f97df945a45a8cd5a46a31586"
+      }
+    ],
+    "method": "ops.held_out_relevance build_set()",
+    "pin_commit": "80d71cf153c5ef45780bae6966f89ee81d3a9233"
+  },
+  "label": "agent-authored held-out set; not independent",
+  "metric_label": "agent-authored held-out set; not independent",
+  "object": "gs://<project>-sig-restricted/search/held-out/sig.held-out-relevance-set-1.json",
+  "reader": "R11-K13-SRCH-07 (P36.71 \u2014 the search acceptance row)",
+  "record_type": "sig.held-out-relevance-descriptor/1",
+  "rule": "readers: the acceptance row R11-K13-SRCH-07 (P36.71) only; tuning contexts (P36.31, P36.32, P36.38\u2026P36.40) read the committed sig.held-out-relevance-descriptor/1 \u2014 the digest \u2014 and never this set",
+  "schema": "sig.held-out-relevance-descriptor/1",
+  "sealed_at": null,
+  "set_id": "sig.held-out.search-relevance/2026-10",
+  "sha256": "44c746836f709e9dde74e2a4834a1c8d0a3b447c7beb9cc43ffbdf91a7a8a1b0",
+  "status": "prepared_not_executed"
+}
