@@ -377,3 +377,54 @@ export interface VocabularyRow {
 }
 
 export const CONTROLLED_VOCABULARY: VocabularyRow[] = lexicon.vocabulary;
+
+// --- Shared chrome strings (P36.18 / SIG-UI-145, K14 §3.7) ------------------
+//
+// The visible-by-default chrome copy lives HERE, not in templates: the
+// forty-word chrome budget (SIG-UI-145) can only be audited when every
+// counted string is declared in one place. Templates carry `{slot}`
+// placeholders the build fills from data — a hard-coded count or date in
+// chrome copy is a copy-system violation.
+
+export interface ChromeStrings {
+  /** The footer strip — "Built from {sources} sources · data as of {asOf} · {reviewStatus}". */
+  strip: string;
+  /** The strip's dispute affordance label. */
+  dispute: string;
+  /** The shared provenance/release disclosure summary. */
+  howWeKnowThis: string;
+  /** The positioning tagline — "not a census · not advocacy". */
+  tagline: string;
+  /** The licence line's link label (→ the sources-and-licences page). */
+  licences: string;
+  /** The status page's link label. */
+  status: string;
+  /** The page-header band's citation disclosure summary. */
+  cite: string;
+  /** The band stamp on a release build — "data as of {asOf} · release {label}". */
+  stampRelease: string;
+  /** The band stamp on a development/pre-release build. */
+  stampDevelopment: string;
+  /** The header search affordance (a nav label — outside the word budget). */
+  search: string;
+  /** The search field's accessible prompt (a nav label). */
+  searchPrompt: string;
+  /** The mobile `<details>` menu's summary (a nav label). */
+  menu: string;
+}
+
+export const CHROME: ChromeStrings = lexicon.chrome as ChromeStrings;
+
+/**
+ * Render a chrome template: `{slot}` names are filled from `slots`. An
+ * unfilled slot is a build-time error — a rendered `{sources}` literal is
+ * never a value (SIG-ENG-042).
+ */
+export function renderChrome(template: string, slots: Record<string, string>): string {
+  return template.replace(/\{(\w+)\}/g, (_match, key: string) => {
+    if (!(key in slots)) {
+      throw new Error(`chrome template has no value for slot {${key}} — "${template}"`);
+    }
+    return slots[key]!;
+  });
+}

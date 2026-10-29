@@ -1,0 +1,97 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The site header (P36.18, UXK14-2 + the K13 IA; SIG-UI-051/150): the
+// wordmark, the six-section route-aware primary nav, the search entry (a
+// plain GET to /search/ — the typeahead that upgrades it is P36.40's row),
+// and the mobile <details> menu carrying the same sections with zero client
+// JavaScript (SIG-UI-037). The caller passes the ALREADY-FILTERED section
+// list from lib/nav.ts + the release route manifest — a section or item the
+// release does not serve is never offered (UXR-01), and the current section
+// carries aria-current.
+import type { RenderedNavSection } from "../../lib/nav";
+import { CHROME } from "../../lib/lexicon";
+import { withBase } from "../../lib/paths";
+
+interface Props {
+  sections: RenderedNavSection[];
+  /** The wordmark's accessible name — WM-01's pinned literal, authored by
+      the caller (BaseLayout) so the copy-batch pin keeps its file binding. */
+  wordmarkLabel: string;
+}
+
+const { sections, wordmarkLabel } = Astro.props;
+---
+
+<header class="sig-header">
+  <div class="sig-header__bar">
+    <a class="sig-wordmark" href={withBase("")} aria-label={wordmarkLabel}>
+      <span class="sig-wordmark__mark" aria-hidden="true">SIG</span>{" "}
+      <span class="sig-wordmark__full">Surveillance Infrastructure Graph</span>
+    </a>
+    <nav class="sig-nav" aria-label="Primary" data-testid="primary-nav">
+      {sections.map((section) => (
+        <div class="sig-nav__section" role="group" aria-label={section.label}>
+          <a
+            class="sig-nav__section-link"
+            href={withBase(section.landing)}
+            aria-current={section.current ? "true" : undefined}
+          >{section.label}</a>
+          {section.items.length > 0 && (
+            <ul class="sig-nav__list">
+              {section.items.map((item) => (
+                <li>
+                  <a
+                    href={withBase(item.route)}
+                    aria-current={item.current ? "page" : undefined}
+                  >{item.label}</a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))}
+    </nav>
+    <form class="sig-search" method="get" action={withBase("search/")} role="search" data-testid="site-search">
+      <label class="sig-search__label">
+        <span class="sig-visually-hidden">{CHROME.searchPrompt}</span>
+        <input class="sig-search__input" type="search" name="q" placeholder={CHROME.search} autocomplete="off" />
+      </label>
+      <button class="sig-search__submit" type="submit">{CHROME.search}</button>
+    </form>
+    {/* K14 §5.3's mobile bar: a compact link to /search/ stands in for the
+        field — the bar stays one row at 320 px so the H1 keeps its budget. */}
+    <a class="sig-search-link" href={withBase("search/")} data-testid="site-search-link">{CHROME.search}</a>
+    {/* The mobile menu — the SAME route-filtered sections behind a native
+        <details>: no JavaScript is needed to open it, and no item the release
+        does not serve is ever offered (UXR-01). */}
+    <details class="sig-nav-mobile" data-testid="mobile-nav">
+      <summary class="sig-nav-mobile__summary">{CHROME.menu}</summary>
+      <nav class="sig-nav-mobile__nav" aria-label="Menu">
+        {sections.map((section) => (
+          <div class="sig-nav__group" role="group" aria-label={section.label}>
+            <a
+              class="sig-nav__section-link"
+              href={withBase(section.landing)}
+              aria-current={section.current ? "true" : undefined}
+            >{section.label}</a>
+            {section.items.length > 0 && (
+              <ul class="sig-nav__list">
+                {section.items.map((item) => (
+                  <li>
+                    <a
+                      href={withBase(item.route)}
+                      aria-current={item.current ? "page" : undefined}
+                    >{item.label}</a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
+      </nav>
+    </details>
+  </div>
+</header>

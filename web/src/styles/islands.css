@@ -45,6 +45,29 @@
   display: none;
 }
 
+/* P36.18: the network explorer needs the same reservation — its mount is
+   taller (view links + canvas + node list + detail pane). Heights measured
+   on the fixtures build: ~95 rem at the 412 px budget viewport, easing to
+   ~72 rem once the two-column layout reaches its max content width. The
+   steps track that measured curve; the residual delta elsewhere is a few
+   rem, vs ~95 rem of unreserved shift before. */
+.sig-graph-island .sig-island__placeholder {
+  min-height: 95rem;
+}
+@media (min-width: 56rem) {
+  .sig-graph-island .sig-island__placeholder {
+    min-height: 85rem;
+  }
+}
+@media (min-width: 62rem) {
+  .sig-graph-island .sig-island__placeholder {
+    min-height: 73rem;
+  }
+}
+.sig-graph-island:has([data-testid="network-island"]) .sig-island__placeholder {
+  display: none;
+}
+
 .sig-map-popup {
   font: inherit;
   max-width: 18rem;

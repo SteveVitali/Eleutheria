@@ -73,6 +73,10 @@ test.describe("belief-pinned permalink + citation on every page (SIG-UI-035, AC6
   for (const path of ALL_PAGES) {
     test(`citation present on ${path}`, async ({ page }) => {
       await page.goto(path);
+      // P36.18 (UXK14-2, SIG-UI-145): the citation affordance lives one action
+      // away behind the page-header band's Cite disclosure — opening it is a
+      // native <details> toggle, no JavaScript.
+      await page.locator("[data-testid='cite-details'] > summary").click();
       const cite = page.getByTestId("citation");
       await expect(cite).toBeVisible();
       const permalink = cite.getByTestId("permalink");

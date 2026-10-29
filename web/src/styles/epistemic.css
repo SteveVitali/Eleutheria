@@ -884,7 +884,7 @@ table.sig-freshness th {
 .sig-header__bar {
   max-width: var(--sig-content);
   margin: 0 auto;
-  padding: var(--sig-space-3) var(--sig-space-5);
+  padding: var(--sig-space-3) var(--sig-space-4);
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -910,32 +910,59 @@ table.sig-freshness th {
 .sig-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sig-space-4) var(--sig-space-6);
+  gap: var(--sig-space-2) var(--sig-space-5);
   margin-left: auto;
 }
-.sig-nav__group {
+.sig-nav__section {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  gap: var(--sig-space-1);
+  align-items: baseline;
 }
-.sig-nav__group-label {
-  font-size: var(--sig-step--2);
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: var(--sig-ink-muted);
-  font-weight: 700;
+.sig-nav__section-link {
+  display: inline-block;
+  padding: var(--sig-space-1) 0;
+  font-size: var(--sig-step--1);
+  font-weight: 600;
+  color: var(--sig-ink);
+  text-decoration: none;
+  border-bottom: var(--sig-border-strong) solid transparent;
+  transition: border-bottom-color var(--sig-motion-1);
 }
+.sig-nav__section-link:hover,
+.sig-nav__section-link:focus-visible {
+  border-bottom-color: currentColor;
+}
+/* The current section — the data-hue rule marks where the reader is
+ * (aria-current is the machine channel; colour is never the only one). */
+.sig-nav__section-link[aria-current] {
+  border-bottom-color: var(--sig-data-1);
+}
+/* The section menu: hidden until hover/focus — a paper reader never sees a
+ * collapsed menu's items, but every one is a real anchor in the static HTML. */
 .sig-nav__list {
   list-style: none;
   margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sig-space-1) var(--sig-space-4);
+  padding: var(--sig-space-1) 0;
+}
+.sig-nav__section > .sig-nav__list {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 12rem;
+  padding: var(--sig-space-2);
+  background: var(--sig-surface);
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+  z-index: 20;
+}
+.sig-nav__section:hover > .sig-nav__list,
+.sig-nav__section:focus-within > .sig-nav__list {
+  display: block;
 }
 .sig-nav__list a {
   display: inline-block;
-  padding: var(--sig-space-1) 0;
+  padding: var(--sig-space-1) var(--sig-space-2);
   font-size: var(--sig-step--1);
   color: var(--sig-link);
   text-decoration: none;
@@ -946,13 +973,210 @@ table.sig-freshness th {
 .sig-nav__list a:focus-visible {
   border-bottom-color: currentColor;
 }
+.sig-nav__list a[aria-current="page"] {
+  font-weight: 700;
+  color: var(--sig-ink);
+  border-bottom-color: var(--sig-data-1);
+}
+/* The header search entry — a plain GET to /search/ (the typeahead that
+ * upgrades it is a later row's island). */
+.sig-search {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sig-space-1);
+}
+.sig-search__input {
+  font-size: var(--sig-step--1);
+  font-family: inherit;
+  color: var(--sig-ink);
+  background: var(--sig-surface);
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+  padding: var(--sig-space-1) var(--sig-space-2);
+  inline-size: 11rem;
+}
+.sig-search__submit {
+  font-size: var(--sig-step--1);
+  font-family: inherit;
+  color: var(--sig-ink);
+  background: var(--sig-surface-2);
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+  padding: var(--sig-space-1) var(--sig-space-2);
+  cursor: pointer;
+}
+/* The mobile menu — the same sections behind a native disclosure — and the
+ * compact search entry K14 §5.3 gives the ≤ 56 px mobile bar. */
+.sig-nav-mobile,
+.sig-search-link {
+  display: none;
+}
+.sig-nav-mobile {
+  position: relative;
+}
+.sig-search-link {
+  padding: var(--sig-space-1) var(--sig-space-2);
+  font-size: var(--sig-step--1);
+  font-weight: 600;
+  color: var(--sig-ink);
+  text-decoration: none;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+}
+.sig-nav__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sig-space-1);
+}
+.sig-nav-mobile__summary {
+  display: inline-block;
+  padding: var(--sig-space-1) var(--sig-space-2);
+  font-size: var(--sig-step--1);
+  font-weight: 600;
+  color: var(--sig-ink);
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+  cursor: pointer;
+}
+.sig-nav-mobile[open] > .sig-nav-mobile__summary {
+  border-bottom-color: transparent;
+}
+.sig-nav-mobile__nav {
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+  background: var(--sig-surface);
+  padding: var(--sig-space-2) var(--sig-space-3);
+  margin-top: var(--sig-space-2);
+  position: absolute;
+  right: var(--sig-space-4);
+  z-index: 20;
+  min-width: 14rem;
+}
+.sig-nav-mobile__nav .sig-nav__group {
+  margin-bottom: var(--sig-space-3);
+}
+.sig-nav-mobile__nav .sig-nav__list a {
+  display: block;
+}
+/* Print: menus and the search entry are chrome, not content. */
+@media print {
+  .sig-nav,
+  .sig-nav-mobile,
+  .sig-search,
+  .sig-search-link {
+    display: none !important;
+  }
+}
 
 @media (max-width: 40rem) {
   .sig-nav {
-    margin-left: 0;
-    width: 100%;
-    flex-direction: column;
-    gap: var(--sig-space-3);
+    display: none;
+  }
+  .sig-nav-mobile {
+    display: block;
+    margin-left: auto;
+  }
+  /* One-row mobile bar (K14 §4.5: the H1 stays within ~120 px): the full
+   * wordmark name drops to the mark alone — the link's aria-label still
+   * announces the whole name — and the bar's gaps and search field narrow so
+   * wordmark + search + menu share one row at 320 px. */
+  .sig-header__bar {
+    gap: var(--sig-space-2) var(--sig-space-3);
+  }
+  .sig-wordmark__full {
+    display: none;
+  }
+  /* K14 §5.3: the ≤ 56 px mobile bar carries the mark, a compact search link
+   * and the Menu disclosure — the field steps aside for its landing route. */
+  .sig-search {
+    display: none;
+  }
+  .sig-search-link {
+    display: inline-block;
+  }
+}
+
+/* The page-header band (K14 §4.5): breadcrumbs, the H1, an optional lede,
+ * the release stamp line, page actions and the Cite disclosure — one shared
+ * band so the mobile H1 stays close to the top. */
+.sig-page-header {
+  margin: 0 0 var(--sig-space-5);
+  padding-bottom: var(--sig-space-4);
+  border-bottom: var(--sig-border-thin) solid var(--sig-rule);
+}
+.sig-page-header > h1 {
+  margin: var(--sig-space-2) 0;
+}
+.sig-page-header__lede {
+  font-size: var(--sig-step-1);
+  max-width: var(--sig-measure);
+  margin: 0 0 var(--sig-space-2);
+}
+.sig-page-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sig-space-2) var(--sig-space-4);
+  font-size: var(--sig-step--2);
+  color: var(--sig-ink-muted);
+}
+.sig-stamp {
+  margin: 0;
+}
+.sig-page-header__actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--sig-space-1);
+}
+/* The Cite disclosure keeps the citation affordance (SIG-UI-035) one action
+ * away inside the word budget (SIG-UI-145). */
+.sig-cite-details {
+  display: inline-block;
+}
+.sig-cite-details > summary {
+  display: inline;
+  cursor: pointer;
+  color: var(--sig-link);
+}
+.sig-cite-details > .sig-cite {
+  margin-top: var(--sig-space-3);
+  border-top: 0;
+  padding-top: 0;
+}
+/* The breadcrumb trail (SIG-UI-150): the record's ancestry above the title. */
+.sig-breadcrumbs__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sig-space-1);
+  font-size: var(--sig-step--2);
+  color: var(--sig-ink-muted);
+}
+.sig-breadcrumbs__item + .sig-breadcrumbs__item::before {
+  content: "›";
+  margin-inline-end: var(--sig-space-1);
+  color: var(--sig-ink-muted);
+}
+
+@media (max-width: 40rem) {
+  /* A long record title would wrap the trail into the H1's 120 px budget
+   * (K14 §5.3). The trail stays one line: ancestors never truncate, the
+   * current-page crumb — the title the H1 repeats directly below — takes
+   * the ellipsis. */
+  .sig-breadcrumbs__list {
+    flex-wrap: nowrap;
+  }
+  .sig-breadcrumbs__item {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .sig-breadcrumbs__item:last-child {
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
@@ -1246,14 +1470,48 @@ table.sig-freshness th {
 
 /* --- P34.17: the honesty wave's small additions ----------------------------- */
 
-/* The publication-basis label (H-6 / ADR-167) + the interim release stamp,
- * rendered on every full-chrome page. */
+/* The publication-basis label (H-6 / ADR-167) + the interim release stamp —
+ * carried inside the shared footer disclosure since P36.18. */
 .sig-footer {
   margin-top: var(--sig-space-6);
   border-top: var(--sig-border-thin) solid var(--sig-rule);
-  padding: var(--sig-space-3) var(--sig-space-4) var(--sig-space-4);
+  padding: var(--sig-space-3) 0 var(--sig-space-4);
   font-size: var(--sig-step--2);
   color: var(--sig-ink-muted);
+}
+/* P36.18 (UXK14-2, SIG-UI-145): the footer strip — one shared provenance
+ * line, the disclosure one action away, the route-aware link row and the
+ * positioning tagline — inside the same container the header and main use
+ * (K14's shared grid alignment). */
+.sig-footer__inner {
+  max-width: var(--sig-content);
+  margin: 0 auto;
+  padding: 0 var(--sig-space-4);
+}
+.sig-footer__strip {
+  margin: 0;
+  font-size: var(--sig-step--1);
+  color: var(--sig-ink);
+}
+.sig-footer__strip .sig-dispute {
+  margin-top: 0;
+  font-size: inherit;
+}
+.sig-footer__details {
+  margin-top: var(--sig-space-2);
+}
+.sig-footer__details > summary {
+  cursor: pointer;
+  color: var(--sig-link);
+  font-size: var(--sig-step--1);
+}
+.sig-footer__links {
+  margin-top: var(--sig-space-2);
+  font-size: var(--sig-step--2);
+}
+.sig-footer__tagline {
+  margin: var(--sig-space-2) 0 0;
+  font-style: italic;
 }
 .sig-basis {
   font-size: var(--sig-step--1);

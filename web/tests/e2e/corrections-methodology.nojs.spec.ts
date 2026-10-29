@@ -58,6 +58,10 @@ test("editorial standards render the three cases + the truthful review state wit
 
 test("the 'How we know this' module is in the static HTML of every page (SIG-UI-044)", async ({ page }) => {
   await page.goto("/research-queue/");
+  // P36.18 (UXK14-2, SIG-UI-145): the shared module lives one action away
+  // inside the footer strip's disclosure — the <details> toggle is native
+  // HTML, so it opens with JavaScript off too.
+  await page.locator("[data-testid='chrome-details'] > summary").click();
   const module = page.getByTestId("how-we-know-this");
   await expect(module).toBeVisible();
   await expect(module.locator("[data-component]")).toHaveCount(6);

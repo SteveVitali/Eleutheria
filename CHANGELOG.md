@@ -1355,9 +1355,62 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   (`check:lexicon` in `npm run check`) fails on an uncovered enum, a
   symbol carrying two meanings, a shadowed spec term, an unresolvable
   `<Term>`, or a raw enum in built visible prose.
+- **Six-section route-aware chrome, the computed release route
+  manifest and the forty-word shared shell** (P36.18 / row 358;
+  SIG-UI-051 + SIG-UI-145 + SIG-UI-150 — owner; C-31 + D-K14-4 = yes +
+  D-K14-2 = yes carried verbatim; cites SIG-UI-039/040, SIG-UI-035,
+  SIG-ENG-042, UXR-01) — `web/src/lib/release-routes.ts` computes the
+  set of public routes this build actually serves (`import.meta.glob`
+  over `src/pages/` plus data-conditioned probes and, in export mode,
+  the pipeline-declared `web/site-routes.json`), and `web/src/lib/nav.ts`
+  filters the six K13 §2.1 sections and their items against it — a
+  section or menu item the release does not serve is never offered,
+  and the current section carries `aria-current`.
+  `web/src/components/chrome/` lands the shared `SiteHeader`
+  (wordmark, sections, a plain-GET `/search/` form and a
+  zero-JavaScript mobile `<details>` menu), `Breadcrumbs` and
+  `PageHeaderBand` (breadcrumbs, H1, release stamp, actions and the
+  Cite `<details>`); `BaseLayout` rewires every page to the compact
+  header, the page-header band and a footer strip whose counts and
+  dates render from `lexicon.chrome` templates — the `check:lexicon`
+  chrome leg lints the ≤ 40 visible-word budget. Dossier pages pass
+  their canonical chain as breadcrumbs and carry Print/JSON as band
+  actions. No client JavaScript was added and every emitted route
+  keeps its ADR-155 page-type classification.
 
 ### Changed
 
+- **Site chrome and page layout — the six-section route-aware
+  navigation, shared grid, page-header band and forty-word footer
+  strip** (P36.18 / row 358; R11-K13-UXK14-2; owner SIG-UI-051,
+  SIG-UI-145, SIG-UI-150; cites K13 information architecture, K14
+  onboarding, C-31, ADR-155, SIG-ENG-042) — `BaseLayout` now renders a
+  computed-release route manifest (`web/src/lib/release-routes.ts`,
+  built from emitted page sources plus `import.meta.glob` probes, never
+  a hand list; internal routes stay unlisted) and the
+  `web/src/lib/nav.ts` model filters the six K13 sections — Places,
+  Explore, Watch, Sources & data, About, Search — dropping any section
+  or item whose target the release does not emit (Organisations is
+  absent while no `/entity/` hub exists) and resolving the current
+  section by longest declared path prefix. `SiteHeader.astro` carries
+  the wordmark, a plain GET search form and the same sections in a
+  native `<details>` mobile menu — zero client JavaScript added;
+  `aria-current` marks the current section and page.
+  `PageHeaderBand.astro` gives every page breadcrumbs, the release
+  stamp, its actions and a native Cite disclosure one action away;
+  `Breadcrumbs.astro` renders canonical jurisdiction chains on dossier
+  records (country > state > county > place — never invented ancestry).
+  Header and `main` share one grid, and the footer carries only the
+  lexicon-driven provenance strip (source count, as-of, review status)
+  plus a route-filtered link set; the visible shared chrome measures 31
+  words against the SIG-UI-145 forty-word budget, enforced by
+  `check-lexicon.mjs`. The mobile H1 sits ~100 px from the top at 320
+  px, inside the 120 px budget. The `/network/` interactive explorer
+  gains the map's height-reserving placeholder
+  (`sig-island__placeholder` hidden by `:has()` on mount) — the
+  previously unreserved React mount pushed the lists below ~95 rem and
+  measured CLS 0.069 against the ≤ 0.05 ceiling; all three local
+  budget runs now measure 0.
 - **Crawler conduct text, the `robots_policy` field and the
   `/data-collection/` page state the decided posture** (P36.1b / row 349;
   R11-GOV-04; ADR-222; owner SIG-INGEST-036 rule 7 + SIG-INGEST-046c;

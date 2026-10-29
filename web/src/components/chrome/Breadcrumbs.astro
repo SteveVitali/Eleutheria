@@ -1,0 +1,37 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The breadcrumb trail (P36.18, UXK14-2, SIG-UI-150): an ordered list inside a
+// labelled nav landmark. The CALLER builds the rows — jurisdiction dossiers
+// pass the canonical country > state > county > place chain; a missing chain
+// renders nothing (a breadcrumb shell over unverified ancestry is never
+// emitted, SIG-ENG-042). The last row is the current page — unlinked,
+// aria-current="page".
+import type { Crumb } from "../../lib/nav";
+
+interface Props {
+  crumbs: Crumb[];
+  /** Carries the page's own breadcrumb testid (e.g. "dossier-breadcrumb"). */
+  testId?: string;
+}
+
+const { crumbs, testId } = Astro.props;
+---
+
+{crumbs.length > 0 && (
+  <nav class="sig-breadcrumbs" aria-label="Breadcrumb" data-testid={testId}>
+    <ol class="sig-breadcrumbs__list">
+      {crumbs.map((crumb, i) => (
+        <li class="sig-breadcrumbs__item">
+          {i < crumbs.length - 1 && crumb.href !== undefined ? (
+            <a href={crumb.href}>{crumb.label}</a>
+          ) : (
+            <span aria-current="page">{crumb.label}</span>
+          )}
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}

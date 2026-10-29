@@ -619,5 +619,21 @@
       "seeAlso": ["data-as-of"],
       "spec": "§9.2"
     }
-  ]
+  ],
+
+  "chrome": {
+    "about": "P36.18 (UXK14-2 / SIG-UI-145, K14 §3.7): the shared chrome's visible-by-default strings — the footer strip, the tagline, the disclosure summaries, the stamp line — budgeted at ≤ 40 words total (the check-lexicon 'chrome' leg counts the declared words; a new word is a budget decision, not a copy edit). Navigation labels (section names, menu items) live in src/lib/nav.ts — they are labels, not chrome words. Templates carry {slot} placeholders filled from build data — never a hard-coded count or date.",
+    "strip": "Built from {sources} sources · data as of {asOf} · {reviewStatus}",
+    "dispute": "Dispute or correct this",
+    "howWeKnowThis": "How we know this",
+    "tagline": "not a census · not advocacy",
+    "licences": "Licences",
+    "status": "Status",
+    "cite": "Cite",
+    "stampRelease": "data as of {asOf} · release {label}",
+    "stampDevelopment": "data as of {asOf} · development build",
+    "search": "Search",
+    "searchPrompt": "Search the record",
+    "menu": "Menu"
+  }
 }

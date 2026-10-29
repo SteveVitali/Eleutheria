@@ -1,0 +1,63 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The page-header band (P36.18, UXK14-2, K14 §4.5): the shared band every
+// full-chrome page opens with — breadcrumbs when the page supplies them
+// (record pages: country > state > county > place, SIG-UI-150), the H1, an
+// optional one-sentence lede, the build's release stamp line, the Cite
+// disclosure (the full citation stays one action away behind the <details>,
+// SIG-UI-035/145), and optional page actions (Print, the JSON form, an
+// explore link). All static — no client JavaScript.
+import Breadcrumbs from "./Breadcrumbs.astro";
+import { CHROME } from "../../lib/lexicon";
+import type { Crumb, PageAction } from "../../lib/nav";
+
+interface Props {
+  /** The H1 text — rendered as the band's single bare heading. */
+  title: string;
+  /** One-sentence page summary; omitted when a page has no lede to declare. */
+  lede?: string;
+  /** Breadcrumb rows; absent → the band carries no trail (never an empty nav). */
+  crumbs?: Crumb[];
+  /** The page's breadcrumb testid (e.g. "dossier-breadcrumb"). */
+  crumbsTestId?: string;
+  /** The rendered stamp line — "data as of <date> · release <label>". */
+  stamp?: string;
+  /** Optional action links (Print, JSON form, …). */
+  actions?: PageAction[];
+}
+
+const { title, lede, crumbs, crumbsTestId, stamp, actions } = Astro.props;
+---
+
+<div class="sig-page-header" data-testid="page-header">
+  {crumbs !== undefined && crumbs.length > 0 && (
+    <Breadcrumbs crumbs={crumbs} testId={crumbsTestId} />
+  )}
+  <h1>{title}</h1>
+  {lede !== undefined && <p class="sig-page-header__lede">{lede}</p>}
+  <div class="sig-page-header__meta">
+    {stamp !== undefined && (
+      <p class="sig-stamp" data-testid="page-stamp">{stamp}</p>
+    )}
+    {actions !== undefined && actions.length > 0 && (
+      <nav class="sig-page-header__actions" aria-label="Page actions">
+        {actions.map((action, i) => (
+          <>
+            {i > 0 && <span aria-hidden="true"> · </span>}
+            <a href={action.href} data-testid={action.testId}>{action.label}</a>
+          </>
+        ))}
+      </nav>
+    )}
+    {/* The citation affordance (SIG-UI-035): one action away behind a native
+        disclosure so the shared chrome stays inside its word budget
+        (SIG-UI-145); the <slot> carries the page's Citation block. */}
+    <details class="sig-cite-details" data-testid="cite-details">
+      <summary class="sig-cite-details__summary">{CHROME.cite}</summary>
+      <slot />
+    </details>
+  </div>
+</div>
