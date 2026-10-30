@@ -1,0 +1,1 @@
+- 2026-10-29 — P36.32 post-closeout record — `ci: blockedOn #395@ce590fd7 (own head pending; base #393@1cd6d338 docs red — ledger-budget orient >48KiB, pre-existing on base head, not P36.32 content; P36.32 head back under budget)` — boundary reports/ci/p36_32_pr395.json (sha-bound, read 22:52Z) · every pushed head verbatim in runs/P36.32.md · Gate status: none
