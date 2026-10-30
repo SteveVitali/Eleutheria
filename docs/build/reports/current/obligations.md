@@ -125,6 +125,6 @@
 | D-P36.78-2 | OPEN | the operator | RETURN PASS — P36.78 | the staged packet `docs/build/reports/rights/p3678/leg-b-packet.md` enumerates preconditions + the verbatim command surface + the go lines (agent-drafted, blank… |
 | D-P36.13-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.13-live-<n>` dispatch or the operator | RETURN PASS — P36.13 | `rate-limit-enforcement.sh --verify` reads the serving posture back `enforce` and names the serving revision; the prestate/poststate describes sit under the sta… |
 | D-P36.79-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.79-live-<n>` dispatch or the operator | RETURN PASS — P36.79 | `gcloud storage cat` on the object sha256-matches `descriptor.json`; the run ledger records the `date -u` bounds + digest; SRCH-07 (P36.71) later verifies the s… |
-| D-P36.33-1 | OPEN | the OM-19 leg-runner — the orchestrator's live dispatch or the operator | RETURN PASS — P36.33 | `curl -I` on the tile origin answers 200 + immutable; a `Range:` GET answers 206 + `Content-Range`; CORS headers present on an `Origin:` request; `sig-ops basem… |
+| D-P36.33-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.33-live-<n>` dispatch or the operator | RETURN PASS — P36.33 | `curl -I` on the tile origin answers 200 + immutable; a `Range:` GET answers 206 + `Content-Range`; CORS headers present on an `Origin:` request; `sig-ops basem… |
 
 ← back: CURRENT.md

@@ -521,8 +521,7 @@ def host_plan(lock: dict[str, Any]) -> list[str]:
         "  4. public access on the custom domain only; the bucket stays non-listable",
         "  5. first upload = `sig-ops basemap refresh --apply` (the same leg)",
         f"  headers: {host['cache_control']} on versioned keys; Range reads pass through",
-        "  restore point: the host is re-creatable from basemap.lock.json + the "
-        "upstream archive",
+        "  restore point: the host is re-creatable from basemap.lock.json + the upstream archive",
         "  kill switch: lock serving.active_source → context + the provider-side "
         "domain disable (operator act)",
         f"  re-run: {RERUN}",
@@ -644,9 +643,7 @@ def refresh_apply(
     }
 
 
-def _cf_api(
-    token: str, account: str, method: str, path: str, body: Any = None
-) -> Any:
+def _cf_api(token: str, account: str, method: str, path: str, body: Any = None) -> Any:
     """One Cloudflare API call — the host-create leg's transport."""
     req = urllib.request.Request(
         f"https://api.cloudflare.com/client/v4/accounts/{account}{path}",
