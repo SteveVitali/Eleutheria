@@ -125,11 +125,11 @@
       "route": "/map/",
       "metric": "totalInitialMaxBytes",
       "ratified_ceiling": 460800,
-      "recorded_measure": 543033,
-      "regression_bound": 589824,
+      "recorded_measure": 591239,
+      "regression_bound": 600000,
       "deferral": "D-P35.51-1",
       "owner": "the map-surface optimisation row (K13 MAP rows)",
-      "note": "same recorded gap, the total-transfer row: the ratified ≤ 450 KiB stands; today's initial transfer measures ≈ 543,033 B gzip including the over-budget script family — bounded at 576 KiB, reported every run, stale-row fails."
+      "note": "same recorded gap, the total-transfer row: the ratified ≤ 450 KiB stands; the P36.23 head's wire measure is 591,239 B gzip — the script family still dominates, plus the kit-B mounts this row adds (per-record absence chips on the unlocated list — ⓘ meaning popover + Help-find-it link — and the shared provenance stylesheet the FocusClaimPanels path now carries). Re-recorded once at the CI measure under the same deferral, ceilings untouched (P36.18's national-leg precedent), bounded at 600,000 B, reported every run, stale-row fails."
     },
     {
       "route": "/map/",
@@ -190,22 +190,22 @@
       "metric": "documentMaxBytes",
       "data_source": "national",
       "ratified_ceiling": 102400,
-      "recorded_measure": 1699236,
-      "regression_bound": 1750000,
+      "recorded_measure": 2937723,
+      "regression_bound": 3000000,
       "deferral": "D-P35.51-3",
       "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "national-scoped: at real scale (232,500 invented sites) the /map/ no-JS equivalent — bounded located table (500 rows), coverage-bin strip + table (500 cells), per-jurisdiction no-point indicators — measures ≈ 1.7 MB of document against the ratified ≤ 100 KiB T2 ceiling. The ceiling is LAW: reported every run, bounded at 1,750,000 B, stale-row fails. The fixtures build measures ≈ 29 KB so this row is scoped to the national build — the compact/paginated equivalent is the owner's row, never a smoothed budget."
+      "note": "national-scoped: at real scale (232,500 invented sites) the /map/ no-JS equivalent measures 2,937,723 B of document against the ratified ≤ 100 KiB T2 ceiling. P36.23's per-record absence chips — the K14-mandated ⓘ meaning popover + Help-find-it link on every unlocated record — added ≈ 1.24 MB across the ≈ 2,600 national indicator rows; the located table + coverage bins are unchanged. The ceiling is LAW: reported every run, re-recorded once at this measure (bounded at 3,000,000 B), stale-row fails. The compact/paginated equivalent is the owner's row, never a smoothed budget."
     },
     {
       "route": "/map/",
       "metric": "totalInitialMaxBytes",
       "data_source": "national",
       "ratified_ceiling": 460800,
-      "recorded_measure": 2215047,
-      "regression_bound": 2250000,
+      "recorded_measure": 3494592,
+      "regression_bound": 3550000,
       "deferral": "D-P35.51-3",
       "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "national-scoped: the same document overage drives the total transfer — ≈ 2.2 MB gzip against the ratified ≤ 450 KiB. Bounded at 2,250,000 B under the national build only; the fixtures build's unscoped row still gates."
+      "note": "national-scoped: the same document overage drives the total transfer — the P36.23 head's wire measure is 3,494,592 B gzip / 3,402,150 B brotli against the ratified ≤ 450 KiB (the ≈ 1.24 MB chip markup on the national unlocated list, compressed well under its raw size). Re-recorded once at the CI measure under the same deferral, ceilings untouched — bounded at 3,550,000 B under the national build only; the fixtures build's unscoped row still gates."
     },
     {
       "route": "/map/",

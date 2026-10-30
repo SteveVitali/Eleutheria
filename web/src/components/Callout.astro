@@ -1,0 +1,39 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.23 (UXK14-3b, K14 §4.6 "Callouts" row): the typed callout — `note`,
+// `caution` (the Provisional-disclosure aside; the only kind that may carry
+// the provisional amber accent) and `known_issue`. One contract
+// (`sig.callout/1` in `lib/callouts.ts`), a closed kind vocabulary that fails
+// closed on an unknown kind (SIG-ENG-042), and complete server-rendered HTML
+// — an <aside> with a labelled title line, no JavaScript anywhere. The body
+// is the caller's copy; the kind label is the batch-tracked shared word.
+import { calloutSpec } from "../lib/callouts";
+import "../styles/component-kit.css";
+
+interface Props {
+  /** The callout kind — a closed `sig.callout/1` vocabulary. */
+  kind: string;
+  /** Optional override title — defaults to the kind's label. */
+  title?: string;
+  /** data-testid hook for the mount (harness and page tests). */
+  testid?: string;
+}
+
+const { kind, title, testid } = Astro.props;
+const spec = calloutSpec(kind); // throws on an unknown kind — fail closed
+---
+
+<aside
+  class={`sig-callout sig-callout--${spec.kind}`}
+  role="note"
+  data-callout-kind={spec.kind}
+  data-testid={testid ?? "callout"}
+>
+  <p class="sig-callout__title" data-copy={spec.batchId}>{title ?? spec.label}</p>
+  <div class="sig-callout__body">
+    <slot />
+  </div>
+</aside>

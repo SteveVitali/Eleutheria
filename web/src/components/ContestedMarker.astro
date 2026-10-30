@@ -8,21 +8,57 @@
 // not only in a detail view, so a reader who never opens the detail still knows
 // the number is disputed. The marker is a glyph + text (a non-colour channel,
 // SIG-UI-005); colour merely reinforces it.
-import { CONTESTED_MARKER } from "../lib/epistemic";
+//
+// P36.23 (UXK14-3b, K14 §3.4/§4.7): the marker distinguishes the two contested
+// agreement levels it can render — CONTESTED ("Contested") and IRRECONCILABLE
+// ("Unresolved", the §29 state where no value can be defended) — the same ≠
+// glyph but a different label plus a solid outline, so the states read apart
+// in greyscale too. `href` makes the marker a plain GET link to the surface
+// that shows BOTH sides (J3's "both sides one click away" — today the
+// conflicting-claims list on the same page; the disputes browser lands with
+// CX-01).
+import { lexiconState } from "../lib/lexicon";
+import { withBase } from "../lib/paths";
 
 interface Props {
   /** Optional compact mode: glyph only, meaning still in the accessible label. */
   compact?: boolean;
+  /**
+   * The agreement level being marked — CONTESTED or IRRECONCILABLE (the two
+   * `CONTESTED_AGREEMENTS` members; anything else never renders a marker).
+   */
+  agreement?: "CONTESTED" | "IRRECONCILABLE";
+  /**
+   * The both-sides surface this marker jumps to (an in-page anchor like
+   * `#conflicting-claims`, or a route). Every href resolves through
+   * `withBase()` unless it is already a `#anchor`.
+   */
+  href?: string;
 }
 
-const { compact = false } = Astro.props;
+const { compact = false, agreement = "CONTESTED", href } = Astro.props;
+const state = lexiconState("agreement", agreement);
+const classes = [
+  "sig-contested",
+  agreement === "IRRECONCILABLE" ? "sig-contested--unresolved" : undefined,
+]
+  .filter(Boolean)
+  .join(" ");
+const link = (target: string): string => (target.startsWith("#") ? target : withBase(target));
+const Tag = href ? "a" : "span";
 ---
 
-<span class="sig-contested" data-testid="contested-marker" title={CONTESTED_MARKER.label}>
-  <span class="sig-contested__glyph" aria-hidden="true">{CONTESTED_MARKER.glyph}</span>
+<Tag
+  class={classes}
+  {...(href ? { href: link(href) } : {})}
+  data-testid="contested-marker"
+  data-agreement={agreement}
+  title={state.label}
+>
+  <span class="sig-contested__glyph" aria-hidden="true">{state.symbol}</span>
   {compact ? (
-    <span class="sig-visually-hidden">{CONTESTED_MARKER.label}</span>
+    <span class="sig-visually-hidden">{state.label}</span>
   ) : (
-    <span class="sig-contested__label">{CONTESTED_MARKER.label}</span>
+    <span class="sig-contested__label">{state.label}</span>
   )}
-</span>
+</Tag>

@@ -9,22 +9,42 @@
 // the reader can see at a glance that "42 vs 38" is not necessarily a disagreement
 // (§29.1). The plotted track is decorative and aria-hidden; the claims list below
 // carries the full information and is the no-JS/screen-reader equivalent.
+//
+// P36.23 (UXK14-3b, K14 §3.4/§4.6): the range names its agreement level —
+// CONTESTED ("Contested range") or IRRECONCILABLE ("Unresolved range", the §29
+// state where no value can be defended yet — the figure keeps a solid
+// raspberry frame, the only place that hue lands besides the marker). Every
+// plotted point now carries its ordinal label, so "one labelled dot per
+// claim" ties each mark to its row in the equivalent claims list.
 import { contradictionRange, plotPosition } from "../lib/epistemic";
 import type { CompetingClaim } from "../lib/epistemic";
+import { lexiconState } from "../lib/lexicon";
 
 interface Props {
   claims: CompetingClaim[];
   unit?: string;
+  /**
+   * The agreement level this range renders — CONTESTED or IRRECONCILABLE
+   * (the two `CONTESTED_AGREEMENTS` members). The unresolved figure keeps the
+   * reserved-hue solid frame; every other value reads as the contested form.
+   */
+  agreement?: "CONTESTED" | "IRRECONCILABLE";
 }
 
-const { claims, unit } = Astro.props;
+const { claims, unit, agreement = "CONTESTED" } = Astro.props;
 const range = contradictionRange(claims);
 const suffix = unit ? ` ${unit}` : "";
+const state = lexiconState("agreement", agreement);
+const label = `${state.label} range`;
 ---
 
-<figure class="sig-range" data-testid="contradiction-range">
+<figure
+  class:list={["sig-range", agreement === "IRRECONCILABLE" && "sig-range--unresolved"]}
+  data-testid="contradiction-range"
+  data-agreement={agreement}
+>
   <figcaption>
-    Contested range: <strong>{range.min}</strong>–<strong>{range.max}</strong>{suffix}
+    {label}: <strong>{range.min}</strong>–<strong>{range.max}</strong>{suffix}
     across {claims.length} competing claim{claims.length === 1 ? "" : "s"}
   </figcaption>
 
@@ -35,15 +55,24 @@ const suffix = unit ? ` ${unit}` : "";
   <svg class="sig-range__track" aria-hidden="true">
     <line class="sig-range__track-line" x1="0" x2="100%" y1="4" y2="4" />
     {
-      claims.map((c) => (
-        <circle
-          class="sig-range__point"
-          cx={`${(plotPosition(range, c.value) * 100).toFixed(1)}%`}
-          cy="4"
-          r="4"
-        >
-          <title>{`${c.value}${suffix} — ${c.source}`}</title>
-        </circle>
+      claims.map((c, i) => (
+        <g>
+          <circle
+            class="sig-range__point"
+            cx={`${(plotPosition(range, c.value) * 100).toFixed(1)}%`}
+            cy="4"
+            r="4"
+          />
+          <text
+            class="sig-range__point-label"
+            x={`${(plotPosition(range, c.value) * 100).toFixed(1)}%`}
+            y="18"
+            text-anchor="middle"
+          >
+            {i + 1}
+          </text>
+          <title>{`${i + 1} — ${c.value}${suffix} — ${c.source}`}</title>
+        </g>
       ))
     }
   </svg>

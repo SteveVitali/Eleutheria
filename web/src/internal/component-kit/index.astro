@@ -3,11 +3,12 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// P36.22 (UXK14-3a): the internal component-kit-A harness — an injected
-// SIG_BUILD_INTERNAL route that mounts every visual-layer component over
-// honest fixture data so the e2e suite exercises them end-to-end (the same
-// harness pattern `/enhancement-kit/` carries for the T1 elements). Never
-// public: the page lives under src/internal/ and publishes nothing.
+// P36.22 (UXK14-3a) + P36.23 (UXK14-3b): the internal component-kit harness
+// — an injected SIG_BUILD_INTERNAL route that mounts every visual-layer
+// component over honest fixture data so the e2e suite exercises them
+// end-to-end (the same harness pattern `/enhancement-kit/` carries for the
+// T1 elements). Never public: the page lives under src/internal/ and
+// publishes nothing.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { withBase } from "../../lib/paths";
 import StatRow from "../../components/StatRow.astro";
@@ -17,11 +18,24 @@ import SupportChip from "../../components/SupportChip.astro";
 import FieldChips from "../../components/FieldChips.astro";
 import StatusChip from "../../components/StatusChip.astro";
 import Badge from "../../components/Badge.astro";
+import ContestedMarker from "../../components/ContestedMarker.astro";
+import ContradictionRange from "../../components/ContradictionRange.astro";
+import AbsenceChip from "../../components/AbsenceChip.astro";
+import ProvenancePanelShell from "../../components/ProvenancePanelShell.astro";
+import Callout from "../../components/Callout.astro";
+import IncompletenessBanner from "../../components/IncompletenessBanner.astro";
+import EmptyState from "../../components/EmptyState.astro";
+import ErrorState from "../../components/ErrorState.astro";
 import { defineFigures, artifactHref, headlineTargets, dossierTargets, ROOT_POINTER } from "../../lib/figures";
 import { defineCard } from "../../lib/cards";
 import { DIRECTNESS_CLASSES, ACCESS_KINDS, MIRROR_STATES } from "../../lib/badges";
 import { STATUS_CHIP_KINDS } from "../../lib/cards";
+import { ABSENCE_KINDS, type CompetingClaim } from "../../lib/epistemic";
+import { panelFromStatement } from "../../lib/provenance-panel";
+import { errorPage, ERROR_KINDS } from "../../lib/errors";
+import { getDossiers } from "../../lib/data";
 import type { StatCell } from "../../components/StatRow.astro";
+import type { EmptyStateParts } from "../../lib/empty";
 
 // The ONE figures[] registry for this harness (UXR-34) — every stat/card
 // numeral renders through <Figure> against manifest-listed artifacts.
@@ -167,15 +181,120 @@ const SUPPORT_FIXTURE = {
   agreement: "CONTESTED",
   currency: "CURRENT",
 } as const;
+
+// ---------------------------------------------------------------- kit B ---
+// P36.23 (UXK14-3b) fixtures — contested claims, provenance panels, the
+// non-absence empty kinds and the banner dossier.
+
+const COMPETING: CompetingClaim[] = [
+  {
+    claimId: "fixture-claim-a",
+    value: 38,
+    source: "City council minutes 2024-03",
+    tier: "W3",
+    date: "2024-03-12",
+    documentUrl: withBase("sources/"),
+  },
+  {
+    claimId: "fixture-claim-b",
+    value: 42,
+    source: "Vendor marketing page",
+    tier: "W6",
+    date: "2024-01-05",
+    documentUrl: withBase("sources/"),
+    differentQuantityNote:
+      "counts cameras announced city-wide, not cameras installed at the named sites",
+  },
+  {
+    claimId: "fixture-claim-c",
+    value: 40,
+    source: "Records request response",
+    tier: "W2",
+    date: "2024-06-20",
+    documentUrl: withBase("sources/"),
+  },
+];
+
+// Two panels: one fully-populated statement and one honest `not_recorded`
+// absence — the contract renders every field either way, never a gap.
+const PANEL_FULL = panelFromStatement(
+  {
+    source_id: "fixture-source",
+    source_name: "Fixture source registry row",
+    binding_status: "document_only",
+    capture: {
+      capture_id: "cap-fixture-1",
+      artifact_id: "art-fixture-1",
+      retrieved_at: "2024-06-20T14:02:00Z",
+      digest: "sha256:9f2c…fixture",
+      byte_size: 48211,
+      media_type: "text/html",
+      storage_tier: "public",
+    },
+    upstream: { status: "host_only", host: "example.gov" },
+    epistemics: {
+      directness: "D2",
+      reliability: "W2",
+      integrity: "high",
+      review_status: "reviewed",
+    },
+    rights: { spdx: "CC-BY-4.0", attribution: "Fixture city open data", compartment: "web" },
+  },
+  "fixture-claim-panel",
+  { jsonHref: null },
+);
+const PANEL_ABSENT = panelFromStatement(undefined, "fixture-claim-unpublished");
+
+// The three non-absence causes have no aggregate surface yet — the harness
+// mounts them by contract so the full typed vocabulary renders somewhere.
+const NON_ABSENCE_PARTS: EmptyStateParts[] = [
+  {
+    state: "No records match this filter",
+    missing: "The filter returned nothing — this is not an absence in the record.",
+    nearby: "The unfiltered list holds every record this view covers.",
+    action: { href: "/component-kit/", label: "Clear filters" },
+    change: "The filter result changes only when the records or the filter change.",
+    cause: "filtered_none",
+    batchIds: {},
+  },
+  {
+    state: "This record cannot be redistributed",
+    missing: "The licence on this data does not permit SIG to republish it — a rights hold, not a gap.",
+    nearby: "The source registry names where the record lives upstream.",
+    action: { href: "/sources/", label: "See the sources" },
+    change: "The record appears only if its licence posture changes.",
+    cause: "not_redistributable",
+    batchIds: {},
+  },
+  {
+    state: "This surface is temporarily limited",
+    missing: "A serving fault limits this view right now — it is not an absence in the record.",
+    nearby: "The status page records any known serving fault.",
+    action: { href: "/status/", label: "Check the status page" },
+    change: "The view returns when the fault clears.",
+    cause: "degraded",
+    batchIds: {},
+  },
+];
+
+// The banner needs a real dossier shape — the fixtures corpus always carries
+// Oklahoma City; a missing fixture fails loud, never skips the mount.
+const BANNER_DOSSIER = getDossiers()[0];
+if (BANNER_DOSSIER === undefined) {
+  throw new Error("component-kit harness: no fixture dossier for the incompleteness banner");
+}
 ---
 
-<BaseLayout title="Component kit A harness" path={withBase("component-kit/")} lede="Internal fixture surface for the K14 component kit A visual layer (UXK14-3a) — not published.">
+<BaseLayout title="Component kit harness" path={withBase("component-kit/")} lede="Internal fixture surface for the K14 component kit visual layer (UXK14-3a/3b) — not published.">
   <p>
-    Every kit-A component mounted over fixture data: the stat row, the six
-    card kinds (plus the empty card), the <code>sig-table</code> visual shell,
-    the support chip, the four independent field chips, the status chips and
-    the directness / access-kind / licence / mirror badges. The page is
-    complete server-rendered HTML — no JavaScript anywhere.
+    Every kit component mounted over fixture data — kit A (UXK14-3a): the
+    stat row, the six card kinds (plus the empty card), the <code>sig-table</code>
+    visual shell, the support chip, the four independent field chips, the
+    status chips and the badges; kit B (UXK14-3b): the contested marker, the
+    contradiction range, the absence chip, the provenance-panel shell,
+    callouts, the incompleteness banner, the typed empty surfaces and the
+    branded error states. The page is complete server-rendered HTML — no
+    JavaScript anywhere.
   </p>
 
   <h2 id="kit-stats">The stat row</h2>
@@ -262,5 +381,126 @@ const SUPPORT_FIXTURE = {
   <p>
     {MIRROR_STATES.map((state) => <Badge kind="mirror" value={state} />)}
   </p>
+  </div>
+
+  {/* ------------------------------------------------------------ kit B ---
+      P36.23 (UXK14-3b) — the epistemic surfaces: contested + unresolved
+      markers, the labelled range, the actionable absence chip, the one
+      provenance panel's shell, callouts, the neutral incompleteness banner,
+      every typed empty cause and the branded error states. */}
+
+  <h2 id="kit-b-contested">The contested marker</h2>
+  <p>
+    A contested value carries the marker at every appearance — glyph + label,
+    never colour alone:
+    {" "}<ContestedMarker />
+    {" "}<ContestedMarker compact />
+    {" "}<ContestedMarker agreement="IRRECONCILABLE" />
+    {" "}<ContestedMarker agreement="IRRECONCILABLE" compact />
+  </p>
+  <p>
+    The marker links to the both-sides surface (J3 — one click):
+    {" "}<ContestedMarker href="#kit-b-range" />{" "}
+    <ContestedMarker agreement="IRRECONCILABLE" href="#kit-b-range" />
+  </p>
+
+  <h2 id="kit-b-range">The contradiction range</h2>
+  <p>A plotted range with one labelled point per claim — and the different-quantity note:</p>
+  <ContradictionRange claims={COMPETING} unit="cameras" />
+  <p>The unresolved form — no value can be defended yet; the frame keeps the reserved hue, solid:</p>
+  <ContradictionRange claims={COMPETING} unit="cameras" agreement="IRRECONCILABLE" />
+
+  <h2 id="kit-b-absence">The absence chip</h2>
+  <p>
+    One hatch, four kinds — each carries its kind symbol + label, the ⓘ
+    meaning popover and the "Help find it ›" action (the research queue by
+    default):
+  </p>
+  <p data-testid="kit-absence-chips">
+    {ABSENCE_KINDS.map((kind) => (
+      <AbsenceChip
+        kind={kind}
+        subject_id="fixture-site-1"
+        predicate_id="location"
+        predicate_label="Location"
+        chipId={`harness-${kind.toLowerCase()}`}
+      />
+    ))}
+  </p>
+  <p>
+    Where a real task page exists the chip links straight to it (O4):
+    {" "}<AbsenceChip
+      kind="NOT_RESEARCHED"
+      subject_id="fixture-site-1"
+      predicate_id="location"
+      predicate_label="Location"
+      chipId="harness-tasked"
+      helpHref="/task/example-task-handle/"
+    />
+  </p>
+
+  <h2 id="kit-b-provenance">The provenance panel</h2>
+  <p>
+    One <code>sig.provenance-panel/1</code> contract, one renderer — the shell
+    mounts it on static pages; the islands carry the identical component.
+  </p>
+  <div data-testid="kit-provenance">
+    <ProvenancePanelShell panel={PANEL_FULL} anchor />
+    <ProvenancePanelShell panel={PANEL_ABSENT} anchor />
+  </div>
+
+  <h2 id="kit-b-callouts">Callouts</h2>
+  <div data-testid="kit-callouts">
+    <Callout kind="note" testid="callout-note">
+      <p>A neutral aside — context the reader should see beside the content.</p>
+    </Callout>
+    <Callout kind="caution" testid="callout-caution">
+      <p>
+        The figures beside this callout came from a method not yet independently
+        evaluated — they may change.
+      </p>
+    </Callout>
+    <Callout kind="known_issue" testid="callout-known-issue">
+      <p>
+        A recorded limitation stated where the reader meets it — the issues log
+        carries the full entry.
+      </p>
+    </Callout>
+  </div>
+
+  <h2 id="kit-b-incomplete">The incompleteness banner</h2>
+  <p>
+    Neutral, always — a count of gaps is not a disagreement:
+  </p>
+  <div data-testid="kit-incomplete">
+    <IncompletenessBanner dossier={BANNER_DOSSIER} />
+  </div>
+
+  <h2 id="kit-b-empty">The typed empty surfaces</h2>
+  <p>
+    Every empty surface names its cause class; the hatch renders only when
+    the cause is a real absence — a filter miss, a rights hold or a degraded
+    service carries no hatch:
+  </p>
+  <div data-testid="kit-empty-absence">
+    <EmptyState surface="mapAssets" />
+    <EmptyState surface="centrality" />
+    <EmptyState surface="researchQueue" />
+  </div>
+  <div data-testid="kit-empty-non-absence">
+    {NON_ABSENCE_PARTS.map((parts) => (
+      <EmptyState parts={parts} />
+    ))}
+  </div>
+
+  <h2 id="kit-b-errors">The branded error states</h2>
+  <p>
+    Five parts plus the search · home · status recovery trio — an error is
+    never an absence, so no hatch renders:
+  </p>
+  <div data-testid="kit-error-states">
+    {ERROR_KINDS.map((kind) => (
+      <ErrorState spec={errorPage(kind)} />
+    ))}
   </div>
 </BaseLayout>

@@ -24,6 +24,31 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Component kit B — the K14 epistemic visual layer: the contested
+  marker's two agreement levels with a both-sides link, the labelled
+  contradiction range, the actionable absence chip, the provenance
+  panel's Astro shell, typed callouts, and typed empty surfaces by
+  contract** (P36.23 / row 363; K13 UXK14-3b; cites SIG-UI-039/040,
+  SIG-ENG-042, SIG-UI-083/086/151) — `ContestedMarker` now renders
+  `CONTESTED` vs `IRRECONCILABLE` (same ≠ glyph, different label +
+  frame) and `href` makes the marker one click from the both-sides
+  list (J3 — wired on `/evidence/[id]/`); `ContradictionRange` names
+  its agreement level and labels one dot per claim;
+  `AbsenceChip.astro` wraps the ONE shared `sig-absence-hatch` texture
+  (SIG-UI-007) with the kind symbol + lexicon label, a UA-native
+  meaning popover and the "Help find it ›" action (a plain GET link
+  to the research queue or a real `/task/<handle>/`, never a mock
+  generated-task page) — `/map/` mounts it on every unlocated record;
+  `ProvenancePanelShell.astro` is the Astro shell over the single
+  `sig.provenance-panel/1` renderer (`ProvenancePanel.tsx` keeps sole
+  emitter status — SIG-UI-083); `lib/callouts.ts` `sig.callout/1` +
+  `Callout.astro` add the closed note · caution · known_issue
+  vocabulary that fails closed on an unknown kind (SIG-ENG-042);
+  `EmptyState.astro` accepts a typed `parts` contract so the
+  non-absence cause classes mount (SIG-UI-086); the internal
+  `/component-kit/` harness grows kit-B fixture sections exercising
+  every component over honest data. New public sentences ride
+  `batch-03.md` (`CK-61`…`CK-64`, sha256-pinned `pending`).
 - **Component kit A — the K14 visual layer: stat row, six-kind card
   family, `<sig-table>` visual shell, support/field/status chips,
   directness/access/licence/mirror badges, universal five-part typed

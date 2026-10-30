@@ -23,6 +23,10 @@
  */
 
 import type { ReactElement, ReactNode } from "react";
+// P36.23 (UXK14-3b): the panel's visual rules ride the GLOBAL epistemic
+// sheet (`styles/epistemic.css`, loaded by every layout) — a module-level
+// stylesheet import resolves through the shared facade chunk and lands an
+// extra render-blocking <link> on pages that never mount the panel.
 import {
   FIELD_LABELS,
   NOT_PUBLISHABLE,

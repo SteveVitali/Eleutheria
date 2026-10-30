@@ -365,7 +365,7 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
     internal: true,
     examples: ["/component-kit/"],
     notes:
-      "The internal UXK14-3a harness — fixture data exercising every component-kit-A visual component; never published.",
+      "The internal UXK14-3a/3b harness — fixture data exercising every component-kit visual component (kit A's structure plus P36.23's epistemic kit B); never published.",
   },
   {
     patterns: ["/about/**"],
