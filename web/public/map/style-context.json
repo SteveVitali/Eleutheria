@@ -1,0 +1,107 @@
+{
+  "version": 8,
+  "name": "SIG context fallback — boundaries only",
+  "metadata": {
+    "sig:contract": "sig.basemap-style/1",
+    "sig:lock": "ops/basemap.lock.json",
+    "sig:basemap": {
+      "active_source": "basemap",
+      "served_key": "basemap/20260930.pmtiles",
+      "reference_build": "20260930.pmtiles",
+      "host_status": "prepared_not_executed",
+      "theme": "context"
+    }
+  },
+  "sources": {
+    "context": {
+      "type": "vector",
+      "url": "pmtiles:///tiles/context.pmtiles",
+      "attribution": "Boundaries: U.S. Census Bureau, Natural Earth (public domain)"
+    }
+  },
+  "glyphs": "/map/fonts/{fontstack}/{range}.pbf",
+  "layers": [
+    {
+      "id": "background",
+      "type": "background",
+      "paint": {
+        "background-color": "#f2f4f7"
+      }
+    },
+    {
+      "id": "boundary-country",
+      "type": "line",
+      "source": "context",
+      "source-layer": "boundary",
+      "filter": [
+        "==",
+        [
+          "get",
+          "level"
+        ],
+        "country"
+      ],
+      "paint": {
+        "line-color": "#7e8695",
+        "line-width": 1.2
+      }
+    },
+    {
+      "id": "boundary-state",
+      "type": "line",
+      "source": "context",
+      "source-layer": "boundary",
+      "filter": [
+        "==",
+        [
+          "get",
+          "level"
+        ],
+        "state"
+      ],
+      "paint": {
+        "line-color": "#9aa3b5",
+        "line-width": 0.8
+      }
+    },
+    {
+      "id": "boundary-county",
+      "type": "line",
+      "source": "context",
+      "source-layer": "boundary",
+      "filter": [
+        "==",
+        [
+          "get",
+          "level"
+        ],
+        "county"
+      ],
+      "paint": {
+        "line-color": "#c3c9d4",
+        "line-width": 0.5
+      }
+    },
+    {
+      "id": "place-labels",
+      "type": "symbol",
+      "source": "context",
+      "source-layer": "place",
+      "layout": {
+        "text-field": [
+          "get",
+          "name"
+        ],
+        "text-font": [
+          "Noto Sans Regular"
+        ],
+        "text-size": 11
+      },
+      "paint": {
+        "text-color": "#5a6272",
+        "text-halo-color": "#ffffff",
+        "text-halo-width": 1
+      }
+    }
+  ]
+}
