@@ -1132,3 +1132,9 @@ seed-commit 730acf47f2037523df44696d2b080d630fa98661
 # live-token respells, archive re-encode); pre-fold bytes archived at
 # docs/build/reports/memory-repair/LEDGER_correction_pre-P36.33-fold.txt
 seed-commit 324d62e96dc057f8c7b460c55a812081e7df6079
+
+# P36.34 orient fold (da48474b87d1ecfa8c4bb97f5f7fa65b41c6e14f): the boundary-confirm line tipped the
+# orient recipe to 49,212 B > 49,152. Folded ~931 -> ~490 B; facts
+# preserved; pre-fold bytes archived under
+# docs/build/reports/memory-repair/LEDGER_phaselog_L1373_pre-fold.txt
+seed-commit da48474b87d1ecfa8c4bb97f5f7fa65b41c6e14f
