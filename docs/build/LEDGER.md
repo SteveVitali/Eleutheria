@@ -8,8 +8,8 @@
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
 projectStatus: IN_PROGRESS # P36.79 landed(371); queued legs on earlier rows
-nextTicket: P36.34 # row 375 — grouped-dossier-index-and-navigation
-lastCompleted: P36.33 # row 374 — basemap-pipeline-and-host 2026-10-30
+nextTicket: P36.35 # row 376 — migration-and-redirect-generator
+lastCompleted: P36.34 # row 375 — grouped-dossier-index-and-navigation 2026-10-30
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -26,7 +26,7 @@ autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-29T22:20Z
+updatedAt: 2026-10-30T21:05Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1371,3 +1371,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-30 — P36.33 done — row 374 (K13 MAP-02; SIG-UI-100): `basemap.lock.json` `sig.basemap-lock/1` (20260930 ref + `@protomaps/basemaps` 5.7.2 pairing + verbatim plan cells) / `sig-ops basemap` check|glyphs|context-build|refresh|host|kill-switch (apply-gate exit 42; b3sum-verified versioned-key refresh; 3-call CF host leg; kill-switch → context) / `gen-map-styles.mjs` committed light/dark/context docs (no sprite) / glyphs `/map/fonts/` + `sig.basemap-glyphs/1` / `sig.context-tiles/1` z0–10 PD / CSP + tile origin / `sig.basemap-alert/1` · OM-20 R2 create `prepared_not_executed` → D-P36.33-1 + packet · ADR-229 · tests 22+15 · impl `9e36f792` · PR #396 OPEN · Gate status: none · ci: head-bound read follows · OM-20 queued · deferrals +1/−0 · chainTip → r11/P36.33-… · next → P36.34 · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-30 — P36.33 correction — `c5f76300` reds: basemap format, row 871 owed-legs params, `live` tokens in DEFERRALS owner + `events.jsonl:710` respelled (`0a61e2e5` class, archived), archive `.txt`→`.txt.gz` (stale `ci:` token) · `seed-commit`-declared · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-10-30 — P36.34 dispatch boundary-confirm — `ci: pass #396@730e35b6` 5/5 head-bound on the repaired record tip (run 41116277864; arc: `b2c3fe01` no-run event gap → nudge `c5f76300` docs+python reds → repair `730acf47` (format, row 871 params, live-token respells in DEFERRALS+events owner, archive→.txt.gz) → orient fold `324d62e9` → BACKLOG.md regen `730e35b6`) · P36.33 landed: basemap pipeline + host — `basemap.lock.json` + `sig-ops basemap` + glyphs/styles + context-build + ADR-229; R2 host create queued `D-P36.33-1` `prepared_not_executed` · `main` untouched · deferrals +1/−0 · dispatching P36.34 (row 375 — grouped dossier index + navigation: `live_verification=false`; gate cell `D-K4-3 [B-44]` answered decision carried verbatim; no OM-20, no production mutations; deps P35.45+P36.18+P36.27 landed; M-sized) · chainTip → r11/P36.33-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-10-30 — P36.34 done — row 375 (K4 JUR-04; SIG-UI-057 + SIG-JUR-001…008/010/011): `dossier-index.ts` grouped model (US-first tree / sort / facet / A–Z / publication regime / named field definitions / index figure specs) / `DossierIndexRow` + rewritten `/dossier/` / sort·by·a-z GET routes / keyed fixture corpus (no-page-parent climb, conservation, conservative regime) / place form → `/search/?type=place` + letter fallback (C-24) / FIG-01a sprite / nav·page-types·paths updates · RESUME: prior worker impl `716f8ead` kept; reported-green inaccurate — typecheck 3 + check-figures 189 + chrome NEW-7/8 fixed forward `4e798427` (located-of/children-pages figures, code-qualified keys, `<code>` identifiers, glyph whitespace boundary; stale preview flake re-run) · tests 11 unit + 1063 e2e · PR #397 OPEN · Gate status: none · ci: head-bound read follows · deferrals +0/−0 · chainTip → r11/P36.34-… · next → P36.35 · harness: devin-desktop/swe-2-high/subagent
