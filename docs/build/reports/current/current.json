@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "aedd5a5c0b1b2037f94b715e1f921e02956e3e2e",
+  "input_commit": "9466cc8f0b78533079fbba102ef26838e74c4594",
   "manifest_inputs": 1150,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P36.79-held-out-search-relevance-set",
+    "chainTip": "r11/P36.34-grouped-dossier-index-directories-navigation",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-30T21:05Z"
+    "updatedAt": "2026-10-30T21:40Z"
   },
   "counts": {
     "obligations": 205,
@@ -25050,10 +25050,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "00ac00d4a10a90148f4a44899a98330827b1f666d31b69732df595a76c68f25b",
+  "manifest_sha256": "71ca371a76de95181ffc14ca6ca68adfbbaafbbc914da6e34405c36cfa358131",
   "current_md": {
     "lines": 131,
-    "bytes": 19590,
+    "bytes": 19605,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
