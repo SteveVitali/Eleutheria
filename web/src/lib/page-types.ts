@@ -189,10 +189,12 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
   {
     patterns: ["/dossier/**"],
     type: "T1",
-    owner: "P35.45",
+    owner: "P36.34",
     contract: "sig.dossier/2",
     noJsEquivalent: SELF,
-    examples: ["/dossier/", "/dossier/oklahoma-city/", "/dossier/unplaced/"],
+    examples: ["/dossier/", "/dossier/oklahoma-city/", "/dossier/unplaced/", "/dossier/a-z/o/", "/dossier/sort/records/", "/dossier/by/level/county/"],
+    notes:
+      "K4's dossier tree: the grouped index (P36.34 / sig.dossier-index/2), dossiers at every level, the A–Z directory, sort/facet GET routes, the unplaced report and JUR-05's slug stubs.",
   },
   {
     patterns: ["/entity/**"],

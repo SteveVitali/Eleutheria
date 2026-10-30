@@ -1,0 +1,29 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project.
+// P36.34 (K4 JUR-04): the A–Z directory root — every letter the index covers
+// links its static page (the no-JS fallback the place form names, C-24;
+// SIG-JUR-011: every dossier ≤3 clicks of /dossier/).
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getDossierIndex } from "../../../lib/data";
+import { azGroups } from "../../../lib/dossier-index";
+import { withBase } from "../../../lib/paths";
+import dossierIndexCssUrl from "../../../styles/dossier-index.css?url";
+const letters = azGroups(getDossierIndex());
+---
+<BaseLayout title="Dossier A–Z directory" path="/dossier/a-z/">
+  {/* Route-scoped stylesheet (the print.css precedent): `?url` + an explicit
+      head link — a side-effect import would hoist onto every page's wire. */}
+  <link slot="head" rel="stylesheet" href={dossierIndexCssUrl} />
+  <p class="sig-lede" data-testid="az-intro">
+    Every published dossier by name — the no-JavaScript directory the index's
+    place form falls back to.
+  </p>
+  <ul class="sig-az-letters" data-testid="az-letters">
+    {[...letters.keys()].map((letter) => (
+      <li>
+        <a href={withBase(`dossier/a-z/${letter}/`)}>{letter.toUpperCase()}</a>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

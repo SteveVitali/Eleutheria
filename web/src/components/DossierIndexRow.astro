@@ -1,0 +1,121 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.34 (K4 JUR-04): one grouped-index row — the K4 §5.2 field set:
+// name (+ parent, code·scheme·level secondary), records, located share,
+// sources, evidence types, open questions, disagreements, freshness,
+// children, the country-derived publication regime, and the dossier/print/
+// JSON/map links. Every numeral is a registered figure; every missing field
+// renders the typed absence, never a blank cell.
+import Figure from "./Figure.astro";
+import type { DossierIndexRow } from "../lib/data";
+import type { IndexSpriteDoc } from "../lib/dossier-grouped-fixture";
+import type { FigureSpec } from "../lib/figures";
+import { dossierPath, dossierPrintPath, dossierJsonPath } from "../lib/dossier";
+import { displayJurisdiction, dossierDisplayTitle } from "../lib/jurisdictions";
+import { mapHrefFor, publicationRegime } from "../lib/dossier-index";
+import { withBase } from "../lib/paths";
+
+interface Props {
+  row: DossierIndexRow;
+  figs: Map<string, FigureSpec>;
+  /** Doc index within the keyed artifact rows (-1 = flat/v1 row). */
+  keyedIndex: number;
+  depth?: number;
+  sprite?: IndexSpriteDoc | null;
+}
+const { row, figs, keyedIndex, depth = 0, sprite = null } = Astro.props;
+const fid = (field: string) => (keyedIndex >= 0 ? figs.get(`r${keyedIndex}-${field}`) : undefined);
+const keyed = !!row.jkey;
+// P34.14 (QW-8): the row's name leads — a keyed row carries `display_name`,
+// else the subject label passes through the shared lookup so a trailing
+// " — CODE" renders " — Name (CODE)", never a bare code.
+const name = row.display_name ?? row.name ?? dossierDisplayTitle(row.subject_label, row.jurisdiction);
+const placeLabel = displayJurisdiction(row.jurisdiction).label;
+const regime = publicationRegime(row);
+const mapHref = mapHrefFor(row);
+const glyph = sprite?.glyphs.find((g) => g.jkey === row.jkey) ?? null;
+const et = row.evidence_types;
+const nonSiteClasses = et ? Object.entries(et.other_classes ?? {}).filter(([, v]) => typeof v === "number") : [];
+const hasPrint = !keyed || row.level === "country" || row.level === "state_province" || row.level === undefined;
+---
+
+<li
+  class="sig-dossier-index__item"
+  data-testid="dossier-index-item"
+  data-slug={row.slug_path ?? row.slug}
+  data-level={row.level}
+  data-depth={depth > 0 ? depth : undefined}
+>
+  {/* The strict CSP ships style-src-attr 'none' — no style="" anywhere: the
+      nesting indent is a data-depth attribute the stylesheet maps, and the
+      locator glyph is an <svg viewBox> crop over the sprite sheet via <use>
+      (geometry attributes, not style). */}
+  {glyph && sprite?.svg && (
+    <svg
+      class="sig-index-glyph"
+      data-testid="index-glyph"
+      viewBox={`${glyph.x} ${glyph.y} ${glyph.cell_px} ${glyph.cell_px}`}
+      width={glyph.cell_px}
+      height={glyph.cell_px}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <use href={withBase(sprite.svg)} />
+    </svg>
+  )}{" "}
+  <a class="sig-dossier-index__link" href={withBase(dossierPath(row.slug_path ?? row.slug))}>
+    <span class="sig-dossier-index__subject">{name}</span>{" "}
+    <span class="sig-dossier-index__place">{keyed ? <>{name} (<code>{row.jkey}</code>)</> : placeLabel}</span>
+  </a>{" "}
+  {keyed && (
+    <span class="sig-dossier-index__code">
+      {/* A pure-digit code (a GEOID leaf) renders its scheme-qualified key —
+          the bare leaf is an identifier, but the bare-numeral check reads it
+          as a count; the qualified `…:NNN` form is the canonical key anyway
+          (SIG-JUR-001) and already appears in the row label. */}
+      <code>{/^\d+$/.test(row.code ?? "") ? row.jkey : row.code}</code> · {row.scheme} · {row.level}
+    </span>
+  )}{" "}
+  <span class="sig-dossier-index__meta">
+    {fid("records") && (
+      <span data-testid="dossier-index-records"><Figure figure={fid("records")!} order="inline">{row.records}</Figure> records · </span>
+    )}
+    {fid("located") && fid("located-of") && (
+      <span><Figure figure={fid("located")!} order="inline">{row.located!.by_point}</Figure> of <Figure figure={fid("located-of")!} order="inline">{row.located!.of}</Figure> located · </span>
+    )}
+    {fid("sources") && (
+      <span><Figure figure={fid("sources")!} order="inline">{row.sources!.count}</Figure> source{row.sources!.count === 1 ? "" : "s"}{(row.sources!.top ?? []).length > 0 && ` (${row.sources!.top!.join(", ")})`} · </span>
+    )}
+    {et && (
+      <span>
+        evidence: site observations{nonSiteClasses.length > 0 ? ` + ${nonSiteClasses.map(([k]) => k).join(", ")}` : ""} ·{" "}
+      </span>
+    )}
+    {fid("questions") && (
+      <span><Figure figure={fid("questions")!} order="inline">{row.open_questions}</Figure> open question{row.open_questions === 1 ? "" : "s"} · </span>
+    )}
+    {row.disagreements && (fid("declared-elsewhere") || fid("located-elsewhere")) && (
+      <span>
+        disagreements:
+        {fid("declared-elsewhere") && <> <Figure figure={fid("declared-elsewhere")!} order="inline">{row.disagreements.declared_here_located_elsewhere}</Figure> declared-here-located-elsewhere</>}
+        {fid("located-elsewhere") && <> · <Figure figure={fid("located-elsewhere")!} order="inline">{row.disagreements.located_here_declared_elsewhere}</Figure> located-here</>} ·{" "}
+      </span>
+    )}
+    {row.freshness && (row.freshness.newest || row.freshness.oldest) && (
+      <span>newest run {row.freshness.newest ?? "—"} · oldest {row.freshness.oldest ?? "—"} · </span>
+    )}
+    {fid("children") && (
+      <span><Figure figure={fid("children")!} order="inline">{row.children!.count}</Figure> child{row.children!.count === 1 ? "" : "ren"}{fid("children-pages") && <> (<Figure figure={fid("children-pages")!} order="inline">{row.children!.pages}</Figure> with dossiers)</>} · </span>
+    )}
+    {regime && (
+      <span>publication: <a href="#fig-def-publication-regime">{regime.adapter ? regime.profile : "conservative (no adapter)"}</a> · </span>
+    )}
+    as of {row.asOf.as_of_world}
+    {hasPrint && <>{" "}<a href={withBase(dossierPrintPath(row.slug_path ?? row.slug))}>print / PDF</a></>}
+    {" "}<a href={withBase(dossierJsonPath(row.slug_path ?? row.slug))}>JSON</a>
+    {mapHref && <>{" "}<a href={withBase(mapHref)}>map</a></>}
+  </span>
+</li>

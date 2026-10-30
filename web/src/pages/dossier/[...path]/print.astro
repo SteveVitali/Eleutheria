@@ -44,7 +44,7 @@ import { socialCardForRoute } from "../../../lib/brand";
 // carries no `level` and keeps its print page; a keyed dossier whose level is
 // county/municipality mints none — the dossier's `links.print` names the same
 // set, so no link dangles.
-const PRINT_LEVELS = new Set(["country", "state_province"]);
+export const PRINT_LEVELS = new Set(["country", "state_province"]);
 
 export function getStaticPaths() {
   return getDossiers()

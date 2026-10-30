@@ -470,7 +470,9 @@ return (
   crumbsTestId="dossier-breadcrumb"
   actions={actions}
 >
-  <p class="sig-dossier-jurisdiction" data-testid="dossier-jurisdiction">{jurisdiction.label}</p>
+  <p class="sig-dossier-jurisdiction" data-testid="dossier-jurisdiction">{dossier.jurisdiction_key
+    ? <>{dossier.display_name ?? dossier.name} (<code>{dossier.jurisdiction_key}</code>)</>
+    : jurisdiction.label}</p>
   {dossier.level && (
     <p class="sig-dossier-level" data-testid="dossier-level">
       {dossier.level}

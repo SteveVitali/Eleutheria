@@ -26,7 +26,8 @@ import {
   releasedRecordHref,
   capRows,
 } from "../lib/data";
-import { displayJurisdiction, dossierDisplayTitle } from "../lib/jurisdictions";
+import { displayJurisdiction } from "../lib/jurisdictions";
+import { withBase } from "../lib/paths";
 import "../styles/islands.css";
 
 const dossiers = getDossierIndex();
@@ -64,13 +65,11 @@ const cappedSites = capRows(sites, SEARCH_INDEX_MAX);
 // matches the row (the label carries it). The FTS5 index in released search
 // bytes still keys on codes; naming those is the exporter's job (P34.21b), and
 // the static browse pages lead with names the same way.
+// P36.34 repair: the DOSSIER rows are no longer serialized here — the dossier
+// index is the filter's one unbounded list, so the island fetches it from
+// `/search/index.json` on mount (lib/search-index holds the shared mapping);
+// the bounded rows below stay in the props.
 const INDEX: SearchItem[] = [
-  ...dossiers.map((d) => ({
-    kind: "dossier" as const,
-    label: dossierDisplayTitle(d.subject_label, d.jurisdiction),
-    sublabel: d.display_name ?? d.name ?? displayJurisdiction(d.jurisdiction).label,
-    href: `/dossier/${d.slug}/`,
-  })),
   ...cappedSites.rows.map((s) => ({
     kind: "site" as const,
     label: s.label,
@@ -174,7 +173,12 @@ const hasUnmapped =
         { href: "#browse-heading", label: "the browse index" },
       ]}
     />
-    <SearchIsland client:only="react" items={INDEX} release={latest?.publicationId ?? null} />
+    <SearchIsland
+      client:only="react"
+      items={INDEX}
+      dossierIndexHref={withBase("search/index.json")}
+      release={latest?.publicationId ?? null}
+    />
   </section>
 
   <!-- The no-JS BROWSE fallback: real GET links, always present (SIG-UI-050). -->

@@ -1,0 +1,40 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project.
+// P36.34 (K4 JUR-04): one letter of the A–Z directory — name, parent, level
+// and records per row (K4 §6). A letter with no rows mints no route.
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import DossierIndexRow from "../../../components/DossierIndexRow.astro";
+import { getDossierIndex, getIndexSprite } from "../../../lib/data";
+import { azGroups, indexFigureSpecs, isKeyedIndexRow } from "../../../lib/dossier-index";
+import { defineFigures } from "../../../lib/figures";
+import { withBase } from "../../../lib/paths";
+import dossierIndexCssUrl from "../../../styles/dossier-index.css?url";
+
+export function getStaticPaths() {
+  return [...azGroups(getDossierIndex()).keys()].map((letter) => ({
+    params: { letter },
+    props: { letter },
+  }));
+}
+const { letter } = Astro.props;
+const dossiers = getDossierIndex();
+const keyedRows = dossiers.filter(isKeyedIndexRow);
+const rows = azGroups(dossiers).get(letter) ?? [];
+const figs = new Map(defineFigures(`dossier-az-${letter}`, indexFigureSpecs(keyedRows)).map((f) => [f.id, f]));
+const keyedIndex = (row: (typeof dossiers)[number]) => keyedRows.indexOf(row);
+const sprite = getIndexSprite();
+---
+<BaseLayout title={`Dossier directory — ${letter.toUpperCase()}`} path={`/dossier/a-z/${letter}/`}>
+  <link slot="head" rel="stylesheet" href={dossierIndexCssUrl} />
+  <p class="sig-lede">
+    Places under <strong>{letter.toUpperCase()}</strong>.{" "}
+    <a href={withBase("dossier/a-z/")}>All letters</a> ·{" "}
+    <a href={withBase("dossier/")}>The grouped index</a>
+  </p>
+  <ul class="sig-dossier-index" role="list" data-testid="dossier-index">
+    {rows.map((row) => (
+      <DossierIndexRow row={row} figs={figs} keyedIndex={keyedIndex(row)} sprite={sprite} />
+    ))}
+  </ul>
+</BaseLayout>

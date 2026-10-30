@@ -3,66 +3,49 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// The per-jurisdiction dossier index (§39.2, SIG-UI-048 / ADR-090+ADR-093): the
-// SIG-UI-010..015 local dossier made discoverable at scale. Static-first, zero client
-// JS (SIG-UI-036/037). P35.45: the rows are canonical jurisdiction keys —
-// country, admin-1, county, place — addressed by nested slug paths
-// (`/dossier/usa/ca/`), each row carrying its placed-record roll-up. The
-// "Not yet placed" data-quality report is a SIBLING entry at the foot of the
-// list — it is excluded from the jurisdiction count by construction (K4 §5.2),
-// never listed as if it were a place.
+// The grouped dossier index (K4 JUR-04 / P36.34): the `sig.dossier-index/2`
+// tree rendered as K4 §5.1 — the United States first (states and territories
+// nested, subdivisions under them), then the other countries A–Z with their
+// subdivisions, then the honest unkeyed demonstration tail and the
+// "Not yet placed" data-quality sibling (never a jurisdiction). Every row
+// carries the §5.2 field set with named definitions (SIG-JUR-006/007/008),
+// the country-derived publication regime (SIG-JUR-010), and the
+// dossier/print/JSON/map links (SIG-JUR-011: every dossier ≤3 clicks away
+// by hierarchy or the A–Z directory). The place form GETs
+// `/search/?type=place` (C-24); the same letter the reader would type is a
+// static `/dossier/a-z/<letter>/` page while the API is unreachable.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import EmptyState from "../../components/EmptyState.astro";
+import DossierIndexRow from "../../components/DossierIndexRow.astro";
 import Figure from "../../components/Figure.astro";
-import { getDossierIndex, getUnplacedIndexEntry } from "../../lib/data";
-import { dossierPath, dossierPrintPath, unplacedPath } from "../../lib/dossier";
+import { getDossierIndex, getIndexSprite, getUnplacedIndexEntry } from "../../lib/data";
+import type { DossierIndexRow as IndexRowType } from "../../lib/data";
+import { unplacedPath } from "../../lib/dossier";
 import { displayJurisdiction, dossierDisplayTitle } from "../../lib/jurisdictions";
+import dossierIndexCssUrl from "../../styles/dossier-index.css?url";
+import {
+  INDEX_FIELD_DEFINITIONS,
+  facetValues,
+  groupIndex,
+  isKeyedIndexRow,
+  indexFigureSpecs,
+  FACET_DIMS,
+  SORT_KEYS,
+} from "../../lib/dossier-index";
+import type { IndexTreeNode } from "../../lib/dossier-index";
 import { artifactHref, defineFigures, dossierTargets } from "../../lib/figures";
+import { withBase } from "../../lib/paths";
 
-// P34.14 (QW-8, F-105): names lead — the index sorts by the place's NAME so a
-// reader browsing names finds them, and every row shows "Name (CODE)" with the
-// code secondary. A bare code the lookup does not know fails loud (AC4/AC5).
-// P35.45: a keyed row carries its own display_name — name first, jkey
-// secondary; a v1/fixture row falls back to the flat-code lookup.
-const placeName = (d: ReturnType<typeof getDossierIndex>[number]) =>
-  d.display_name ?? d.name ?? displayJurisdiction(d.jurisdiction).name;
-const placeLabel = (d: ReturnType<typeof getDossierIndex>[number]) =>
-  d.display_name || d.name
-    ? d.jkey
-      ? `${d.display_name ?? d.name} (${d.jkey})`
-      : (d.display_name ?? d.name ?? d.jurisdiction)
-    : displayJurisdiction(d.jurisdiction).label;
-const dossiers = [...getDossierIndex()].sort(
-  (a, b) =>
-    placeName(a).localeCompare(placeName(b)) ||
-    a.subject_label.localeCompare(b.subject_label),
-);
-const hasUnmapped = dossiers.some(
-  (d) => !d.display_name && !d.name && !displayJurisdiction(d.jurisdiction).known,
-);
+const dossiers = getDossierIndex();
+const keyedRows = dossiers.filter(isKeyedIndexRow);
 const unplaced = getUnplacedIndexEntry();
+const sprite = getIndexSprite();
+const groups = groupIndex(dossiers);
 
-// P35.37 (SIG-TRANSP-013): every numeral on this page is a registered figure —
-// the keyed index's per-row record counts point into web/dossiers/index.json,
-// the unplaced count into web/unplaced.json. A v1/fixture index carries no
-// `records` field → no figures (the surface is byte-identical to pre-P35.45).
+// The ONE figures[] registry: the row-table numerals (pointing into
+// `web/dossiers/index.json`) + the unplaced sibling's count.
 const INDEX_FIGURES = defineFigures("dossier-index", [
-  ...dossiers.flatMap((d, i) =>
-    typeof d.records === "number"
-      ? [{
-          id: `records-${i}`,
-          class: "dossier" as const,
-          value: d.records,
-          unit: "records",
-          artifact: "web/dossiers/index.json",
-          pointer: `/dossiers/${i}/records`,
-          definition: "#dossier-index",
-          href: artifactHref("web/dossiers/index.json"),
-          breakdown: `#fig-records-${i}`,
-          targets: dossierTargets({ recordList: null, provenanceHref: null, perSourceSlices: null }),
-        }]
-      : [],
-  ),
+  ...indexFigureSpecs(keyedRows),
   ...(unplaced !== null
     ? [{
         id: "unplaced-records",
@@ -78,10 +61,33 @@ const INDEX_FIGURES = defineFigures("dossier-index", [
       }]
     : []),
 ]);
-const indexFig = (id: string) => INDEX_FIGURES.find((f) => f.id === id)!;
+const figs = new Map(INDEX_FIGURES.map((f) => [f.id, f]));
+const keyedIndex = (row: IndexRowType) => keyedRows.indexOf(row);
+
+// Flatten a tree into (node, depth) rows for the nested list.
+const flatten = (node: IndexTreeNode, depth = 0): { node: IndexTreeNode; depth: number }[] => [
+  { node, depth },
+  ...node.children.flatMap((c) => flatten(c, depth + 1)),
+];
+const hasUnmapped = dossiers.some(
+  (d) => !d.display_name && !d.name && !displayJurisdiction(d.jurisdiction).known,
+);
+// P34.14 (QW-8) on the place form's suggestion list too: a suggestion leads
+// with the place's display NAME — a keyed row's `display_name`, else the
+// subject label rewritten through the shared lookup — while `data-slug`
+// keeps the wire/routing key beside it (never a bare code as the name).
+const placeOptionLabel = (d: IndexRowType) =>
+  d.display_name ?? d.name ?? dossierDisplayTitle(d.subject_label, d.jurisdiction);
 ---
 
 <BaseLayout title="Dossiers" path="/dossier/">
+  {/* The grouped-index stylesheet is an explicit head link, not a side-effect
+      import — a frontmatter `import ".../dossier-index.css"` gets hoisted onto
+      every page's <head> in this build (`inlineStylesheets: "never"` + the
+      shared data-layer chunk), which leaked the P36.34 rules onto /search/'s
+      initial wire bytes. `?url` still gives the bundled, hashed asset — it
+      ships only where a dossier-directory page links it. */}
+  <link slot="head" rel="stylesheet" href={dossierIndexCssUrl} />
   <p class="sig-lede" data-copy="DI-02 DI-03">
     A dossier is SIG's primary public artifact for a jurisdiction: what is deployed, who
     can see it, what it costs, when it must be decided, and — as a headline, not an
@@ -96,43 +102,140 @@ const indexFig = (id: string) => INDEX_FIGURES.find((f) => f.id === id)!;
     <strong>inventory overviews</strong>, built automatically from published claims; the
     reviewed, evidence-complete twelve-question portfolio form is being built.
   </p>
+  <p class="sig-table-note">
+    Grouped the way the registry records it: the <strong>United States</strong> first —
+    its states and territories together — then the other countries and their
+    subdivisions, then the demonstration tail and the "Not yet placed" report.
+  </p>
+
+  {/* C-24: the index place form — GET /search/?type=place (the release-pinned
+      search's place kind); the same first letter is a static directory page
+      while the API is unreachable (the nginx first-letter fallback). */}
+  <form
+    method="get"
+    action={withBase("search/")}
+    class="sig-place-search"
+    data-testid="place-search-form"
+  >
+    <label for="place-q">Find a place:</label>{" "}
+    <input id="place-q" type="search" name="q" maxlength={200} size={30} placeholder="State, county or city" list="place-names" />
+    <input type="hidden" name="type" value="place" />
+    <button type="submit">Search</button>{" "}
+    {/* Native, no-JS suggestions for the form — each option leads with the
+        place's display name (the shared lookup, never a bare code) and keeps
+        the slug as its wire key. */}
+    <datalist id="place-names">
+      {dossiers.map((d) => (
+        <option data-slug={d.slug} value={placeOptionLabel(d)} />
+      ))}
+    </datalist>{" "}
+    <span class="sig-place-search__note" data-testid="place-search-fallback">
+      If search cannot be reached, the first letter of a place's name finds it in the{" "}
+      <a href={withBase("dossier/a-z/")}>A–Z directory</a>.
+    </span>
+  </form>
+  <p class="sig-table-note">
+    Sort:{" "}
+    {SORT_KEYS.map((k, i) => (
+      <>
+        {i > 0 && " · "}
+        <a href={withBase(`dossier/sort/${k}/`)}>{k}</a>
+      </>
+    ))}
+    {" · "}
+    {FACET_DIMS.map((d, i) => (
+      <>
+        {i > 0 && " · "}
+        by {d}:{" "}
+        {facetValues(keyedRows, d).map((v, vi) => (
+          <>
+            {vi > 0 && " "}
+            <a href={withBase(`dossier/by/${d}/${v}/`)}>{v}</a>
+          </>
+        ))}
+      </>
+    ))}
+    {" · "}
+    <a href={withBase("dossier/a-z/")}>A–Z directory</a>
+    {" · "}
+    <a href={withBase("map/")}>Browse on the map</a>
+    {" · "}
+    <a href={artifactHref("web/dossiers/index.json")}>index JSON</a>
+  </p>
 
   {dossiers.length === 0 && <EmptyState surface="dossierIndex" />}
   {hasUnmapped && (
-    <p class="sig-jurisdiction-unmapped" data-testid="dossier-index-unmapped" data-copy="JD-04">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href="/research-queue/">research queue</a>.</p>
+    <p class="sig-jurisdiction-unmapped" data-testid="dossier-index-unmapped" data-copy="JD-04">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href={withBase("research-queue/")}>research queue</a>.</p>
   )}
-  <ul class="sig-dossier-index" role="list" data-testid="dossier-index" id="dossier-index">
-    {dossiers.map((d, i) => (
-      <li class="sig-dossier-index__item" data-testid="dossier-index-item" data-slug={d.slug} data-level={d.level}>
-        <a class="sig-dossier-index__link" href={dossierPath(d.slug)}>
-          <span class="sig-dossier-index__subject">{dossierDisplayTitle(d.subject_label, d.jurisdiction)}</span>{" "}
-          <span class="sig-dossier-index__place">{placeLabel(d)}</span>
-          {d.level && <span class="sig-dossier-index__level" data-testid="dossier-index-level"> — {d.level}</span>}
-        </a>{" "}
-        <span class="sig-dossier-index__meta">
-          {typeof d.records === "number" && indexFig(`records-${i}`) && (
-            <span data-testid="dossier-index-records"><Figure figure={indexFig(`records-${i}`)} order="inline">{d.records}</Figure> record{d.records === 1 ? "" : "s"} · </span>
-          )}
-          as of {d.asOf.as_of_world}
-          <span aria-hidden="true"> · </span>
-          <a href={dossierPrintPath(d.slug)}>print / PDF</a>
-        </span>
-      </li>
-    ))}
-  </ul>
 
-  {/* P35.45 (K4 §5.2): the unplaced sibling — a data-quality report, never a
-      jurisdiction. It is excluded from the count of dossiers above. */}
+  {groups.unitedStates && (
+    <section aria-labelledby="group-us" data-testid="group-united-states">
+      <h2 id="group-us">United States</h2>
+      <p class="sig-table-note">
+        States and territories under the United States — counties and places nest
+        under their state.
+      </p>
+      <ul class="sig-dossier-index" role="list" data-testid="dossier-index">
+        {flatten(groups.unitedStates).map(({ node, depth }) => (
+          <DossierIndexRow row={node.row} figs={figs} keyedIndex={keyedIndex(node.row)} depth={depth} sprite={sprite} />
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {groups.otherCountries.length > 0 && (
+    <section aria-labelledby="group-other" data-testid="group-other-countries">
+      <h2 id="group-other">Other countries</h2>
+      <p class="sig-table-note">Countries and their first-level subdivisions, A–Z.</p>
+      <ul class="sig-dossier-index" role="list" data-testid="dossier-index-other">
+        {groups.otherCountries.flatMap((c) =>
+          flatten(c).map(({ node, depth }) => (
+            <DossierIndexRow row={node.row} figs={figs} keyedIndex={keyedIndex(node.row)} depth={depth} sprite={sprite} />
+          )),
+        )}
+      </ul>
+    </section>
+  )}
+
+  {groups.unkeyed.length > 0 && (
+    <section aria-labelledby="group-demos" data-testid="group-demonstrations">
+      <h2 id="group-demos">Demonstration dossiers</h2>
+      <p class="sig-table-note">
+        Worked examples outside the canonical jurisdiction tree — the publication-rule
+        demonstrations and the appendix worked dossier.
+      </p>
+      <ul class="sig-dossier-index" role="list" data-testid="dossier-index-demos">
+        {groups.unkeyed.map((row) => (
+          <DossierIndexRow row={row} figs={figs} keyedIndex={-1} sprite={null} />
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {/* The unplaced sibling — a data-quality report, never a jurisdiction
+      (K4 §5.2; excluded from the count above). */}
   {unplaced !== null && (
     <section aria-labelledby="unplaced-heading" data-testid="dossier-index-unplaced">
       <h2 id="unplaced-heading">Not a jurisdiction</h2>
       <p>
         <a href={unplacedPath()} data-testid="unplaced-link">Not yet placed — the data-quality report</a>{" "}
-        — <Figure figure={indexFig("unplaced-records")} order="inline">{unplaced.records}</Figure> published
+        — <Figure figure={figs.get("unplaced-records")!} order="inline">{unplaced.records}</Figure> published
         record{unplaced.records === 1 ? "" : "s"} could not be
         placed under the recorded placement checks. It is excluded from the jurisdiction
         count above; a record here is never guessed into a place.
       </p>
     </section>
   )}
+
+  <section aria-labelledby="field-defs" data-testid="index-field-definitions">
+    <h2 id="field-defs">What the row fields mean</h2>
+    <dl class="sig-definitions">
+      {INDEX_FIELD_DEFINITIONS.map((d) => (
+        <>
+          <dt id={`fig-def-${d.id}`}>{d.field}</dt>
+          <dd>{d.definition}</dd>
+        </>
+      ))}
+    </dl>
+  </section>
 </BaseLayout>
