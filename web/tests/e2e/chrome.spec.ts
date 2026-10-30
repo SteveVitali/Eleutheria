@@ -18,10 +18,10 @@ import {
 // The public surface under test — every discovered route that is not marked
 // internal (the injected SIG_BUILD_INTERNAL surface: /curate/**, /releases/,
 // /research-dossier/**, /visual-language/, /contribution-back/ are not public
-// text). The flat error-page copies are byte-identical to /403/ and /410/ for
-// the nginx error_page mapping — asserted to exist below, excluded from the
-// unique-title/copy checks (a copy can never carry a distinct title).
-const FLAT_ERROR_COPIES = new Set(["/403.html", "/410.html"]);
+// text). The flat error-page copies are byte-identical to /403/, /410/ and
+// /500/ for the nginx error_page mapping — asserted to exist below, excluded
+// from the unique-title/copy checks (a copy can never carry a distinct title).
+const FLAT_ERROR_COPIES = new Set(["/403.html", "/410.html", "/500.html"]);
 const PUBLIC_PAGES = DISCOVERED_ROUTES.filter(
   (r) => !r.internal && !FLAT_ERROR_COPIES.has(r.path),
 ).map((r) => r.path);
@@ -36,29 +36,41 @@ async function htmlOf(request: import("@playwright/test").APIRequestContext, pat
 
 // ---------------------------------------------------------------- QW-11: chrome
 
-test("branded 404/403/410 pages ship the shell, a home link and noindex (QW-11)", async ({
+test("branded 404/403/410/500 pages ship the shell, a home link and noindex (QW-11, SIG-UI-151)", async ({
   request,
 }) => {
   const cases = [
-    { path: "/404.html", h1: "Page not found" },
-    { path: "/403/", h1: "Access refused" },
-    { path: "/410/", h1: "Page removed" },
+    { path: "/404.html", h1: "Page not found", kind: "not_found" },
+    { path: "/403/", h1: "Access refused", kind: "refused" },
+    { path: "/410/", h1: "Page removed", kind: "removed" },
+    { path: "/500/", h1: "Something went wrong", kind: "server_error" },
   ];
-  for (const { path, h1 } of cases) {
+  for (const { path, h1, kind } of cases) {
     const html = await htmlOf(request, path);
     expect(html, `${path} carries the SIG wordmark`).toContain("sig-wordmark");
     expect(html, `${path} carries its h1`).toContain(`<h1>${h1}</h1>`);
     expect(html, `${path} is noindex`).toContain('name="robots" content="noindex"');
     expect(html, `${path} links home`).toContain('href="/"');
+    // P36.22 (SIG-UI-151): the five-part sig.error-page/1 contract — a typed
+    // state, what happened, what exists nearby, what the visitor can do and
+    // when it may change — plus the search · home · status recovery trio.
+    expect(html, `${path} carries its typed kind`).toContain(`data-error-kind="${kind}"`);
+    expect(html, `${path} carries the recovery links`).toContain('data-testid="error-recovery"');
+    expect(html, `${path} recovery links to search`).toContain('href="/search/"');
+    expect(html, `${path} recovery links to status`).toContain('href="/status/"');
+    // An error is NOT absence — the empty-state hatch never renders here.
+    expect(html, `${path} renders no absence hatch`).not.toContain("sig-empty__hatch");
   }
   // The flat error-page copies nginx error_page will map onto (P34.40's roll).
-  for (const flat of ["/403.html", "/410.html"]) {
+  for (const flat of ["/403.html", "/410.html", "/500.html"]) {
     const res = await request.get(flat);
     expect(res.status(), `${flat} must be emitted for the error_page mapping`).toBe(200);
   }
-  // The 410 body is notice string N-6 verbatim (B-2 notice allowance).
+  // The 410 body is notice string N-6 verbatim (B-2 notice allowance) —
+  // tracked as data-notice, never a copy-batch row.
   const gone = await htmlOf(request, "/410/");
   expect(gone).toContain("This page has been removed while a correction is made.");
+  expect(gone).toContain('data-notice="N-6"');
 });
 
 test("favicon is emitted and linked on every public page (QW-11)", async ({ request }) => {
@@ -138,7 +150,7 @@ test("sitemap lists canonical-origin URLs only, all resolvable (QW-11)", async (
   }
   // Error pages, the /terms forwarder, print views and internal routes are never
   // canonical content — they must not appear.
-  for (const banned of ["/404", "/403", "/410", "/terms/", "/print/", "/curate/", "/visual-language/"]) {
+  for (const banned of ["/404", "/403", "/410", "/500", "/terms/", "/print/", "/curate/", "/visual-language/"]) {
     expect(xml.includes(banned), `sitemap must not contain ${banned}`).toBe(false);
   }
   // Every listed URL resolves; HTML pages resolve as their own canonical.

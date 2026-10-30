@@ -158,14 +158,23 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
       "K0's `/releases/<pub>/data/**` listings — machine-readable release data listings are record-class pages.",
   },
   {
-    patterns: ["/403/", "/403.html", "/404.html", "/404/", "/410/", "/410.html"],
+    patterns: [
+      "/403/",
+      "/403.html",
+      "/404.html",
+      "/404/",
+      "/410/",
+      "/410.html",
+      "/500/",
+      "/500.html",
+    ],
     type: "T0",
     owner: "P34.13",
-    contract: "none",
+    contract: "sig.error-page/1",
     noJsEquivalent: SELF,
-    examples: ["/404.html", "/403/", "/410.html"],
+    examples: ["/404.html", "/403/", "/410.html", "/500.html"],
     notes:
-      "404/410 tombstones (and the 403 refused page) — K0's '404/410 tombstones'; the flat `*.html` copies are the error_page files sigChrome emits.",
+      "404/410 tombstones, the 403 refused page and P36.22's 500 — K0's '404/410 tombstones'; the flat `*.html` copies are the error_page files sigChrome emits. P36.22 (SIG-UI-151): every error page renders the five-part `sig.error-page/1` contract with the search·home·status recovery trio.",
   },
 
   // ------------------------------------------------------------------ T1 ---
@@ -346,6 +355,17 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
     examples: ["/enhancement-kit/"],
     notes:
       "The internal UXK0-4 harness — fixture markup exercising every element plus the sig.typeahead-shard/1 fixture endpoint (P36.40 owns the export-mode shards).",
+  },
+  {
+    patterns: ["/component-kit/"],
+    type: "T1",
+    owner: "P36.22",
+    contract: "none",
+    noJsEquivalent: SELF,
+    internal: true,
+    examples: ["/component-kit/"],
+    notes:
+      "The internal UXK14-3a harness — fixture data exercising every component-kit-A visual component; never published.",
   },
   {
     patterns: ["/about/**"],

@@ -1,0 +1,84 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.22 (K14 UXK14-3a / §4.6 table row): the `<sig-table>` visual shell —
+// the COMPLETE server-rendered table every data table starts as (SIG-UI-037:
+// no JavaScript anywhere in this markup). The component supplies the
+// horizontal-scroll wrapper (`.sig-table-wrap`), the sticky header, the
+// density variant, `scope="col"` headers, numeric-column right alignment,
+// and sortable-column semantics (`aria-sort` + a plain GET sort link — the
+// same static-sort pattern `/data-freshness/` already ships). The `sig-table`
+// enhancement element may wrap this markup on a T1 route later; the shell
+// renders identically without it. The tbody is the caller's slot so a cell
+// never goes through `innerHTML`/`set:html`.
+import { withBase } from "../lib/paths";
+import "../styles/component-kit.css";
+
+/** One column header. */
+export interface TableColumn {
+  /** The column key (`data-col` — the enhancement kit's facet/sort hook). */
+  key: string;
+  /** The visible header text. */
+  label: string;
+  /** Right-align the column's cells (numeric data, SIG-UI-148 tabular-nums). */
+  numeric?: boolean;
+  /**
+   * The rendered sort state — `aria-sort` on the `<th>` (WAI-ARIA: set only
+   * on the actively sorted column; omit it on merely sortable ones).
+   */
+  sort?: "ascending" | "descending";
+  /** A plain GET link to the pre-rendered sort route for this column. */
+  sortHref?: string;
+}
+
+interface Props {
+  /** The accessible table name (aria-label when no caption renders). */
+  label: string;
+  /** An optional visible caption rendered inside the table. */
+  caption?: string;
+  columns: TableColumn[];
+  /** Row-density variant — `data-density` (compact for record lists). */
+  density?: "compact" | "default" | "roomy";
+  /** Keep the header visible while the body scrolls in the wrap. */
+  sticky?: boolean;
+  testid?: string;
+}
+
+const { label, caption, columns, density = "default", sticky = false, testid } = Astro.props;
+---
+
+<div class="sig-table-wrap" data-sticky={sticky ? "true" : "false"}>
+  <table
+    class="sig-table"
+    data-density={density}
+    data-sticky={sticky ? "true" : "false"}
+    aria-label={caption === undefined ? label : undefined}
+    data-testid={testid}
+  >
+    {caption !== undefined && <caption>{caption}</caption>}
+    <thead>
+      <tr>
+        {
+          columns.map((c) => (
+            <th
+              scope="col"
+              data-col={c.key}
+              data-numeric={c.numeric ? "true" : undefined}
+              aria-sort={c.sort}
+              class={c.numeric ? "sig-table__num" : undefined}
+            >
+              {c.sortHref !== undefined ? (
+                <a class="sig-table__sortlink" href={withBase(c.sortHref)}>{c.label}</a>
+              ) : (
+                c.label
+              )}
+            </th>
+          ))
+        }
+      </tr>
+    </thead>
+    <slot />
+  </table>
+</div>

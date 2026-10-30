@@ -1,0 +1,23 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.22 (SIG-UI-151 / DR-K14-17): the branded 500 — the last of the
+// error-page set (404/403/410 landed P34.13). The body renders the five-part
+// `sig.error-page/1` contract — state · missing · nearby · action · change
+// plus the search / status recovery links (home is the action). The page is
+// chrome-light and noindex like its siblings; Astro emits this page flat as
+// /500.html — the same convention as 404.astro — which is the asset the
+// eventual `error_page 500` mapping reads (the serving wiring itself is the
+// same ops dark roll the 403/410 mappings ride — recorded owed, not this row).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ErrorState from "../components/ErrorState.astro";
+import { errorPage } from "../lib/errors";
+
+const spec = errorPage("server_error");
+---
+
+<BaseLayout title={spec.state} path="/500/" chrome="minimal" noindex={true}>
+  <ErrorState spec={spec} />
+</BaseLayout>

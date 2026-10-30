@@ -1824,3 +1824,48 @@ sig-typeahead {
     display: none !important;
   }
 }
+
+/* --- The branded error page (SIG-UI-151): the five-part contract — a typed
+ * state label, what happened, what exists nearby, what the visitor can do,
+ * when it may change, then the recovery trio (search · home · status). An
+ * error is NOT absence: no hatch renders here. ---------------------------- */
+.sig-error {
+  border: var(--sig-border-thin) solid var(--sig-rule-strong);
+  border-radius: var(--sig-radius-2);
+  background: var(--sig-surface-2);
+  padding: var(--sig-space-5);
+  margin: var(--sig-space-4) 0;
+  max-inline-size: var(--sig-measure);
+}
+.sig-error__state {
+  margin: 0 0 var(--sig-space-2);
+  font-size: var(--sig-step-1);
+  line-height: var(--sig-leading-3);
+}
+.sig-error__missing,
+.sig-error__nearby,
+.sig-error__action,
+.sig-error__change,
+.sig-error__recovery {
+  margin: 0 0 var(--sig-space-2);
+}
+.sig-error__change {
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--1);
+}
+.sig-error__recovery {
+  margin: var(--sig-space-3) 0 0;
+  font-size: var(--sig-step--1);
+}
+
+/* --- The five-part empty state (SIG-UI-086/151): the cause-class parts
+ * stack under the typed state label; when the cause is NOT absence
+ * (filtered_none / not_redistributable / degraded) the hatch and its dashed
+ * border drop — an error or a rights hold is not a gap in the record. ------ */
+.sig-empty[data-hatch="false"] {
+  border-style: solid;
+  border-color: var(--sig-rule-strong);
+  background-image: none;
+  background-color: var(--sig-surface-2);
+}
+

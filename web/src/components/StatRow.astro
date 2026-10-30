@@ -1,0 +1,44 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.22 (K14 UXK14-3a / §4.6 stat row): the stat row — a responsive grid of
+// `StatFigure` cells, each a `<Figure>`-contracted number with its caption
+// and named denominator. `stats` is a plain data array, so a page's row is
+// validated (a stat with no figure id fails `defineFigures` before it ever
+// reaches here) and every numeral stays inside a figure region.
+import StatFigure from "./StatFigure.astro";
+import type { FigureSpec } from "../lib/figures";
+
+/** One stat cell in the row. */
+export interface StatCell {
+  figure: FigureSpec;
+  label: string;
+  denominator?: string;
+  note?: string;
+  testid?: string;
+}
+
+interface Props {
+  stats: StatCell[];
+  testid?: string;
+}
+
+const { stats, testid } = Astro.props;
+---
+
+<ul class="sig-stat-grid" role="list" data-testid={testid}>
+  {
+    stats.map((s) => (
+      <StatFigure
+        figure={s.figure}
+        label={s.label}
+        denominator={s.denominator}
+        note={s.note}
+        tag="li"
+        testid={s.testid}
+      />
+    ))
+  }
+</ul>

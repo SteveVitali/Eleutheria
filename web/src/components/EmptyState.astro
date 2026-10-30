@@ -16,8 +16,15 @@
 // may change. These states name a real cause; they never say "research gap"
 // and never route the visitor to the research queue as the remedy for a
 // pipeline gap.
-import { emptyState } from "../lib/empty";
+//
+// P36.22 (SIG-UI-086/151): EVERY surface is typed — `parts` is always present
+// and carries `cause`, the named cause class rendered as `data-cause`. The
+// hatch renders only when the cause IS absence (filtered_none /
+// not_redistributable / degraded render no hatch — an error or a rights hold
+// is not a gap in the record).
+import { emptyState, emptyStateHasHatch } from "../lib/empty";
 import type { EmptySurface } from "../lib/empty";
+import { withBase } from "../lib/paths";
 
 interface Props {
   /** The surface whose honest copy to render. */
@@ -27,6 +34,7 @@ interface Props {
 const { surface } = Astro.props;
 const copy = emptyState(surface);
 const parts = copy.parts;
+const hatch = parts ? emptyStateHasHatch(parts.cause) : true;
 ---
 
 <div
@@ -35,8 +43,10 @@ const parts = copy.parts;
   data-testid="empty-state"
   data-surface={surface}
   data-cause-class={parts ? "true" : "false"}
+  {...(parts ? { "data-cause": parts.cause } : {})}
+  data-hatch={hatch ? "true" : "false"}
 >
-  <span class="sig-empty__hatch" aria-hidden="true"></span>
+  {hatch && <span class="sig-empty__hatch" aria-hidden="true"></span>}
   <div class="sig-empty__body">
     {
       parts ? (
@@ -51,7 +61,7 @@ const parts = copy.parts;
             {parts.nearby}
           </p>
           <p class="sig-empty__cta" data-testid="empty-state-action">
-            <a data-testid="empty-state-cta" data-copy={parts.batchIds.action} href={parts.action.href}>
+            <a data-testid="empty-state-cta" data-copy={parts.batchIds.action} href={withBase(parts.action.href)}>
               {parts.action.label}
             </a>
           </p>
@@ -64,7 +74,7 @@ const parts = copy.parts;
           <p class="sig-empty__heading">{copy.heading}</p>
           <p class="sig-empty__text">{copy.body}</p>
           <p class="sig-empty__cta">
-            <a data-testid="empty-state-cta" href={copy.cta.href}>
+            <a data-testid="empty-state-cta" href={withBase(copy.cta.href)}>
               {copy.cta.label}
             </a>
           </p>

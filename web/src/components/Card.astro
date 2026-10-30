@@ -1,0 +1,77 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.22 (K14 UXK14-3a / §4.6 card row): renders the ONE card contract
+// (`sig.card/1` in `lib/cards.ts`) for all six kinds — place, organization,
+// source, task, persona ("start here") and example. A card is a doorway:
+// a kicker naming what kind of thing it is, a titled GET link, labelled meta
+// lines, an optional `<Figure>` (the only way a numeral may appear on a
+// card, SIG-UI-084), neutral badges and status chips — or, when the spec
+// names an `empty` surface, the typed `EmptyState` instead of a dead card.
+// `assertCard` has already run (defineCard in the page); this component is
+// markup only.
+import EmptyState from "./EmptyState.astro";
+import Figure from "./Figure.astro";
+import Badge from "./Badge.astro";
+import StatusChip from "./StatusChip.astro";
+import { withBase } from "../lib/paths";
+import type { CardSpec } from "../lib/cards";
+import "../styles/component-kit.css";
+
+interface Props {
+  card: CardSpec;
+  testid?: string;
+}
+
+const { card, testid } = Astro.props;
+const link = (href: string): string => (href.startsWith("#") ? href : withBase(href));
+---
+
+<article class="sig-card" data-card-kind={card.kind} data-testid={testid ?? `card-${card.kind}`}>
+  {
+    card.empty !== undefined ? (
+      <EmptyState surface={card.empty} />
+    ) : (
+      <>
+        {card.kicker !== undefined && (
+          <p class="sig-card__kicker" data-testid="card-kicker">{card.kicker}</p>
+        )}
+        <h3 class="sig-card__title">
+          <a href={link(card.titleHref!)} data-testid="card-link">{card.title}</a>
+        </h3>
+        {(card.badges?.length ?? 0) > 0 || (card.statuses?.length ?? 0) > 0 ? (
+          <p class="sig-card__chips">
+            {card.badges?.map((b) => <Badge kind={b.kind} value={b.value} />)}
+            {card.statuses?.map((s) => <StatusChip kind={s.kind} since={s.since} />)}
+          </p>
+        ) : null}
+        {card.meta !== undefined && card.meta.length > 0 && (
+          <dl class="sig-card__meta">
+            {card.meta.map((m) => (
+              <div class="sig-card__meta-row">
+                <dt>{m.label}</dt>
+                <dd>{m.href !== undefined ? <a href={link(m.href)}>{m.value}</a> : m.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+        {card.figure !== undefined && (
+          <p class="sig-card__figure">
+            <Figure figure={card.figure} order="value-first" />
+          </p>
+        )}
+        {card.steps !== undefined && card.steps.length > 0 && (
+          <ol class="sig-card__steps" data-testid="card-steps">
+            {card.steps.map((s) => (
+              <li>
+                <a href={link(s.href)}>{s.label}</a>
+              </li>
+            ))}
+          </ol>
+        )}
+      </>
+    )
+  }
+</article>

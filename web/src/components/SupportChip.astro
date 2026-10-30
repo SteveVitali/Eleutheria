@@ -1,0 +1,46 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.22 (K14 UXK14-3a / §4.6 support chip, DR-K14-02): the per-claim support
+// chip — the four-step glyph + the lexicon label + the §11.3 evidence count —
+// with a native HTML `popover` naming the state in plain words (the same
+// no-JavaScript popover pattern `Term.astro` uses; where the feature is
+// absent the button is inert and the chip still reads glyph + text + count).
+// The chip sits beside the factual claim it grades; disputed flags and
+// rectification states resolve BEFORE the support field renders (DISPUTED ·
+// WITHDRAWN · RECTIFIED stay on the figure chrome, never inside this chip —
+// ADR-215). The glyph and the text equivalent come from `SupportGlyph`
+// (SIG-UI-003 — text + symbol, never colour alone, SIG-UI-005).
+import SupportGlyph from "./SupportGlyph.astro";
+import { lexiconState } from "../lib/lexicon";
+import type { Support } from "../lib/epistemic";
+import "../styles/component-kit.css";
+
+interface Props {
+  /** The support field (§7.4's five-level ordinal). */
+  support: Support;
+  /** The §11.3 evidence-ledger size (independent evidence classes). */
+  evidenceCount: number;
+  /**
+   * A slug unique ON THIS PAGE — the popover id derives from it, so two chips
+   * on one page must not share it (same rule `Term.astro` carries).
+   */
+  chipId: string;
+}
+
+const { support, evidenceCount, chipId } = Astro.props;
+const state = lexiconState("support", support); // throws on an unknown level
+---
+
+<span class="sig-chip sig-chip--support" data-chip="support" data-testid="support-chip">
+  <SupportGlyph support={support} evidenceCount={evidenceCount} />
+  <button
+    type="button"
+    class="sig-chip__def"
+    popovertarget={`sc-${chipId}`}
+    aria-label={`What ${state.label} support means`}
+    ><span aria-hidden="true">ⓘ</span></button
+  ><span popover id={`sc-${chipId}`} class="sig-chip__popover">{state.plain}</span>
+</span>

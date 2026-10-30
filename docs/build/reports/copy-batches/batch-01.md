@@ -104,13 +104,13 @@
 | RQ-01 | lib/research-queue.ts | not yet classified | bb563272ba6e0dd5a84d94137f0156a345d8f3d0041bd9d54046978086209c48 | pending |
 | XC-03 | exports/spine_export.py | not yet classified | bb563272ba6e0dd5a84d94137f0156a345d8f3d0041bd9d54046978086209c48 | pending |
 | title | /404.html | Page not found | a469ab4ca4e55bf547566e9ebfa1b809c933207e9d558156bc0c4252b17533fe | pending |
-| NF-01 | /404.html | This address does not name a page in the published record. | 4bf6a31cea6b0b3cdd530bb9d4edf0f544c14284521d5179de8018e49937e036 | pending |
-| NF-02 | /404.html | Go to the home page | adceddedfd5962e31a232a284d14ee514b150e8baed9faeb7c9ca217623de072 | pending |
+| NF-01 | lib/errors.ts | This address does not name a page in the published record. | 4bf6a31cea6b0b3cdd530bb9d4edf0f544c14284521d5179de8018e49937e036 | pending |
+| NF-02 | lib/errors.ts | Go to the home page | adceddedfd5962e31a232a284d14ee514b150e8baed9faeb7c9ca217623de072 | pending |
 | title | /403/ | Access refused | 07edbc210200672dd22b8675ff412e2dfb0bdb32cd35bf98f215643a2969b360 | pending |
-| FB-01 | /403/ | This address is not open to the public record. | 1c53fb5591a3cb3bd20d3db1adf0b367f3ce267d630b06302ad5cbafaca29e8b | pending |
-| FB-02 | /403/ | Go to the home page | adceddedfd5962e31a232a284d14ee514b150e8baed9faeb7c9ca217623de072 | pending |
+| FB-01 | lib/errors.ts | This address is not open to the public record. | 1c53fb5591a3cb3bd20d3db1adf0b367f3ce267d630b06302ad5cbafaca29e8b | pending |
+| FB-02 | lib/errors.ts | Go to the home page | adceddedfd5962e31a232a284d14ee514b150e8baed9faeb7c9ca217623de072 | pending |
 | title | /410/ | Page removed | 07bfb4386863abf77f91715a0bc1ae0a6ee8db3a005d952e9161e6b0a4f8367e | pending |
-| GN-01 | /410/ | Go to the home page | adceddedfd5962e31a232a284d14ee514b150e8baed9faeb7c9ca217623de072 | pending |
+| GN-01 | lib/errors.ts | Go to the home page | adceddedfd5962e31a232a284d14ee514b150e8baed9faeb7c9ca217623de072 | pending |
 | title | /terms/ | Terms of acceptable use | cd9c8f9815b668373aa0e899adeed724126616c1fa133c171edaa919c4739a18 | pending |
 | TR-01 | /terms/ | The acceptable-use terms are served by the read API. | e22ca2017eb209fce805f46a746b5acb626149dafa14c854d1fdea25379ca6b4 | pending |
 | TR-02 | /terms/ | Open the API terms | c9e30377375fad6ba26cb3435ab8eb4f6f6cfbc354828fd0f66f39f7e09aef8c | pending |

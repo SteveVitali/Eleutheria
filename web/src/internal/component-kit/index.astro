@@ -1,0 +1,266 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.22 (UXK14-3a): the internal component-kit-A harness — an injected
+// SIG_BUILD_INTERNAL route that mounts every visual-layer component over
+// honest fixture data so the e2e suite exercises them end-to-end (the same
+// harness pattern `/enhancement-kit/` carries for the T1 elements). Never
+// public: the page lives under src/internal/ and publishes nothing.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { withBase } from "../../lib/paths";
+import StatRow from "../../components/StatRow.astro";
+import Card from "../../components/Card.astro";
+import DataTable from "../../components/DataTable.astro";
+import SupportChip from "../../components/SupportChip.astro";
+import FieldChips from "../../components/FieldChips.astro";
+import StatusChip from "../../components/StatusChip.astro";
+import Badge from "../../components/Badge.astro";
+import { defineFigures, artifactHref, headlineTargets, dossierTargets, ROOT_POINTER } from "../../lib/figures";
+import { defineCard } from "../../lib/cards";
+import { DIRECTNESS_CLASSES, ACCESS_KINDS, MIRROR_STATES } from "../../lib/badges";
+import { STATUS_CHIP_KINDS } from "../../lib/cards";
+import type { StatCell } from "../../components/StatRow.astro";
+
+// The ONE figures[] registry for this harness (UXR-34) — every stat/card
+// numeral renders through <Figure> against manifest-listed artifacts.
+const FIGURES = defineFigures("component-kit", [
+  {
+    id: "jurisdictions",
+    class: "headline",
+    value: 3,
+    artifact: "web/dossier_index.json",
+    pointer: ROOT_POINTER,
+    definition: "dossier/",
+    href: artifactHref("web/dossier_index.json"),
+    breakdown: "#fig-jurisdictions",
+    targets: headlineTargets({ recordList: null }),
+  },
+  {
+    id: "site-records",
+    class: "headline",
+    value: 64212,
+    artifact: "transparency/counts.json",
+    pointer: "/attributes/site_records/count",
+    definition: "sources/#how-counted",
+    href: artifactHref("transparency/counts.json"),
+    breakdown: "#fig-site-records",
+    targets: headlineTargets({ recordList: null }),
+  },
+  {
+    id: "card-records",
+    class: "dossier",
+    value: 41,
+    artifact: "web/coverage.json",
+    pointer: "/0/value",
+    definition: "coverage-metrics/",
+    href: artifactHref("web/coverage.json"),
+    breakdown: "#fig-card-records",
+    targets: dossierTargets({ recordList: null, provenanceHref: "#kit-cards" }),
+  },
+]);
+const fig = (id: string) => {
+  const f = FIGURES.find((x) => x.id === id);
+  if (!f) throw new Error(`component-kit figures[]: no figure registered as "${id}"`);
+  return f;
+};
+
+const STATS: StatCell[] = [
+  {
+    figure: fig("jurisdictions"),
+    label: "jurisdictions with a published dossier",
+    denominator: "of the jurisdictions SIG has researched to a publishable standard",
+    testid: "kit-stat-jurisdictions",
+  },
+  {
+    figure: fig("site-records"),
+    label: "sources with published site records",
+    denominator: "of the registry rows in SIG's source registry",
+    testid: "kit-stat-sources",
+  },
+];
+
+const CARDS = [
+  defineCard(
+    {
+      kind: "place",
+      title: "Oklahoma City",
+      titleHref: "/dossier/",
+      kicker: "US-OK-OKC",
+      meta: [{ label: "Published records", value: "dossier count inside the card figure below" }],
+      figure: fig("card-records"),
+    },
+    "component-kit place",
+  ),
+  defineCard(
+    {
+      kind: "organization",
+      title: "Flock Safety",
+      titleHref: "/network/",
+      kicker: "Vendor",
+      meta: [{ label: "Recorded sharing edges", value: "named on the network page" }],
+      statuses: [{ kind: "not_reviewed" }],
+    },
+    "component-kit organization",
+  ),
+  defineCard(
+    {
+      kind: "source",
+      title: "DeFlock ALPR map",
+      titleHref: "/sources/",
+      kicker: "Community dataset",
+      badges: [
+        { kind: "licence", value: "DeFlock-Noncommercial-1.0" },
+        { kind: "access_kind", value: "DECLARED_POLICY" },
+        { kind: "mirror", value: "mirrored" },
+      ],
+      statuses: [{ kind: "provisional" }],
+    },
+    "component-kit source",
+  ),
+  defineCard(
+    {
+      kind: "task",
+      title: "Find the contract renewal date",
+      titleHref: "/research-queue/",
+      kicker: "Watch task · Oklahoma City",
+      meta: [{ label: "State", value: "Open" }],
+      statuses: [{ kind: "historical", since: "2025-11" }],
+    },
+    "component-kit task",
+  ),
+  defineCard(
+    {
+      kind: "persona",
+      title: "A resident asking about their street",
+      titleHref: "/dossier/",
+      kicker: "Start here",
+      steps: [
+        { label: "Open the local dossier", href: "/dossier/" },
+        { label: "See what SIG does not know", href: "/research-queue/" },
+        { label: "Check the sources", href: "/sources/" },
+      ],
+    },
+    "component-kit persona",
+  ),
+  defineCard(
+    {
+      kind: "example",
+      title: "Who can query this camera network?",
+      titleHref: "/network/",
+      kicker: "Example question",
+      meta: [
+        { label: "Question", value: "Who can query this camera network?" },
+        { label: "Where the answer lives", value: "the sharing network", href: "/network/" },
+      ],
+    },
+    "component-kit example",
+  ),
+  // The empty card renders the typed five-part state, never a dead card.
+  defineCard({ kind: "place", empty: "dossierIndex" }, "component-kit empty place"),
+];
+
+const SUPPORT_FIXTURE = {
+  resolution_status: "RESOLVED",
+  support: "STRONGLY_SUPPORTED",
+  agreement: "CONTESTED",
+  currency: "CURRENT",
+} as const;
+---
+
+<BaseLayout title="Component kit A harness" path={withBase("component-kit/")} lede="Internal fixture surface for the K14 component kit A visual layer (UXK14-3a) — not published.">
+  <p>
+    Every kit-A component mounted over fixture data: the stat row, the six
+    card kinds (plus the empty card), the <code>sig-table</code> visual shell,
+    the support chip, the four independent field chips, the status chips and
+    the directness / access-kind / licence / mirror badges. The page is
+    complete server-rendered HTML — no JavaScript anywhere.
+  </p>
+
+  <h2 id="kit-stats">The stat row</h2>
+  <StatRow stats={STATS} testid="kit-stat-row" />
+
+  <h2 id="kit-cards">The card family</h2>
+  <ul class="sig-stat-grid" role="list" data-testid="kit-card-grid">
+    {CARDS.map((card) => (
+      <li>
+        <Card card={card} />
+      </li>
+    ))}
+  </ul>
+
+  <h2 id="kit-table">The table visual</h2>
+  <p>A sortable, sticky-header, numeric-column table at each density:</p>
+  {
+    (["compact", "default", "roomy"] as const).map((density) => (
+      <div data-testid={`kit-table-${density}`}>
+        <h3>{density} density</h3>
+        <DataTable
+          label={`Harness ${density} table`}
+          caption={density === "default" ? "Fixture sources by row count" : undefined}
+          density={density}
+          sticky={density === "compact"}
+          columns={[
+            { key: "name", label: "Source", sortHref: "/component-kit/", sort: density === "default" ? "ascending" : undefined },
+            { key: "licence", label: "Licence", sortHref: "/component-kit/" },
+            { key: "rows", label: "Rows", numeric: true },
+          ]}
+        >
+          <tbody>
+            <tr><td><code>deflock</code></td><td>DeFlock-Noncommercial-1.0</td><td class="sig-table__num">3,172</td></tr>
+            <tr><td><code>atlas</code></td><td>CC-BY-4.0</td><td class="sig-table__num">12,044</td></tr>
+            <tr><td><code>osm-physical</code></td><td>ODbL-1.0</td><td class="sig-table__num">48,901</td></tr>
+          </tbody>
+        </DataTable>
+      </div>
+    ))
+  }
+
+  <h2 id="kit-support">The support chip</h2>
+  <p>
+    A claim's support reads glyph + label + evidence count; the ⓘ opens the
+    plain meaning (native popover, no JavaScript):{" "}
+    <SupportChip support="STRONGLY_SUPPORTED" evidenceCount={4} chipId="fixture-strong" />
+    {" "}
+    <SupportChip support="WEAKLY_SUPPORTED" evidenceCount={1} chipId="fixture-weak" />
+  </p>
+
+  <h2 id="kit-fields">The four independent field chips</h2>
+  <p>Four fields, four chips — never fused (<code>data-fused="false"</code>):</p>
+  <FieldChips
+    resolution_status={SUPPORT_FIXTURE.resolution_status}
+    support={SUPPORT_FIXTURE.support}
+    agreement={SUPPORT_FIXTURE.agreement}
+    currency={SUPPORT_FIXTURE.currency}
+  />
+
+  <h2 id="kit-status">The status chips</h2>
+  <p>
+    {STATUS_CHIP_KINDS.map((kind) => (
+      <StatusChip kind={kind} since={kind === "historical" ? "2025-11" : undefined} />
+    ))}
+  </p>
+
+  <h2 id="kit-badges">The neutral badges</h2>
+  <div data-testid="kit-badge-block">
+  <h3>Directness (§10.5)</h3>
+  <p>
+    {DIRECTNESS_CLASSES.map((cls) => <Badge kind="directness" value={cls} />)}
+  </p>
+  <h3>Access kind (§12.2)</h3>
+  <p>
+    {ACCESS_KINDS.map((kind) => <Badge kind="access_kind" value={kind} />)}
+  </p>
+  <h3>Licence (verbatim SPDX id)</h3>
+  <p>
+    <Badge kind="licence" value="ODbL-1.0" />
+    {" "}
+    <Badge kind="licence" value="CC-BY-4.0" />
+  </p>
+  <h3>Mirror state</h3>
+  <p>
+    {MIRROR_STATES.map((state) => <Badge kind="mirror" value={state} />)}
+  </p>
+  </div>
+</BaseLayout>

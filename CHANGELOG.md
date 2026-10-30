@@ -24,6 +24,29 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Component kit A — the K14 visual layer: stat row, six-kind card
+  family, `<sig-table>` visual shell, support/field/status chips,
+  directness/access/licence/mirror badges, universal five-part typed
+  empty states, and the branded 500 page completing the error set**
+  (P36.22 / row 362; K13 UXK14-3a; SIG-UI-054/083/084/086/151 —
+  owner; cites SIG-UI-039/040, SIG-ENG-042) — `web/src/lib/`
+  `badges.ts` (`sig.badge/1`), `cards.ts` (`sig.card/1`) and
+  `errors.ts` (`sig.error-page/1`) are the fail-closed contracts the
+  nine new `web/src/components/` renderers (`Badge`, `StatusChip`,
+  `SupportChip`, `FieldChips`, `StatFigure`, `StatRow`, `Card`,
+  `DataTable`, `ErrorState`) draw from; every kit numeral renders
+  inside the one `<Figure>` contract (SIG-UI-084) so evidence stays
+  ≤ 2 actions away (SIG-UI-054), and `sig.provenance-panel/1` stays
+  the only panel (SIG-UI-083). All 22 empty surfaces now carry the
+  typed five-part state with a named `cause` class — pipeline causes
+  never route to the research queue and `filtered_none` /
+  `not_redistributable` / `degraded` render no absence hatch
+  (SIG-UI-086). `/500/` joins 403/404/410 under `sig.error-page/1`
+  with the search · home · status recovery trio, emitted flat as
+  `/500.html` (the 404 convention) for the error_page mapping (SIG-UI-151).
+  `lexicon.json` gains §10.5's D2–D5 directness states; an internal
+  `/component-kit/` harness (`SIG_BUILD_INTERNAL`, T1, never
+  published) exercises every component over fixtures.
 - **The `sig.workspace-state/2` contract — one parameter registry driving
   T2 URL state, "cite this view" snapshot links, and a surface × facet
   conformance rule** (P36.21 / row 361; UXR-09/UXR-10;
