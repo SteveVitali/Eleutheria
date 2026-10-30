@@ -1402,9 +1402,9 @@ rerun_cell = '''`implement-spec spec=docs/tickets/371_P36.79__held-out-search-re
 key = "P36.33"
 kind = "leg"
 obligations = ["D-P36.33-1"]
-obligations_cell = '''queued D-P36.33-1 — the R2 basemap host create (bucket sig-basemap + CORS/Range/immutable posture + custom domain tiles.surveillancegraph.org + first upload); restore point: the host is re-creatable from ops/basemap.lock.json + the upstream archive'''
-gates_cell = '''pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6); window AR-3 + AR-2; needs SIG_CF_ACCOUNT_ID + SIG_CF_API_TOKEN + SIG_R2_ACCESS_KEY_ID + SIG_R2_SECRET_ACCESS_KEY + SIG_BASEMAP_AUTHOR per apply + OP-09 (the DNS zone move, operator act)'''
-operator_cell = '''nothing until the OP-09 zone move + the R2/Cloudflare creds — the pipeline, styles, glyphs and lock are already landed'''
+obligations_cell = '''queued D-P36.33-1 — the R2 basemap host create (bucket sig-basemap + CORS/Range/immutable + custom domain tiles.surveillancegraph.org + first upload); restore point: re-creatable from basemap.lock.json + upstream'''
+gates_cell = '''pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6); window AR-3 + AR-2 — outside the batch window day 6 00:00Z → day 13 12:00Z and daily 03:00-06:30Z; `SIG_BASEMAP_AUTHOR` per apply; needs SIG_CF_*/SIG_R2_* env + OP-09'''
+operator_cell = '''nothing until OP-09 + the Cloudflare/R2 env — the pipeline, styles, glyphs and lock are landed'''
 rerun_cell = '''`implement-spec spec=docs/tickets/374_P36.33__basemap-pipeline-and-host.md live_verification=true`'''
 
   [[row.legs]]

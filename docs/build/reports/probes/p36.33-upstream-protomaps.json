@@ -1,0 +1,32 @@
+{
+  "version": "sig.probe-run/1",
+  "probe": "p36.33-upstream-protomaps",
+  "generated_at": "2026-10-30T17:40:00Z",
+  "subject": {
+    "scope": "the Protomaps upstream — build index, archive and basemaps-assets glyph tree",
+    "runner": "sig-ops basemap glyphs fetch + urllib reads (devin-desktop/swe-2-high/subagent)"
+  },
+  "checks": {
+    "reference-build-rotated": {
+      "read": "GET https://build.protomaps.com/20260930.pmtiles",
+      "verdict": "pass",
+      "observed": "HTTP 404 — the K1-measured reference build has rotated off the daily index (fetchable: false as the lock records)"
+    },
+    "builds-index": {
+      "read": "GET https://build-metadata.protomaps.dev/builds.json",
+      "verdict": "pass",
+      "observed": "HTTP 200 — rows incl. 20261029.pmtiles (139,191,612,225 B, b3sum 4c08fa256bc18104bf761eb7a8d4eeaed37d9e033b10e59e5efde6ffae321a28, version 4.15.2) and 20261030.pmtiles (139,202,898,553 B, b3sum b936e54942f13e0d5e3921409b992348a61f33953e4a6609dbef5aeb52c8f917, version 4.15.2)"
+    },
+    "glyph-dir": {
+      "read": "GET https://protomaps.github.io/basemaps-assets/fonts/Noto%20Sans%20Regular/",
+      "verdict": "pass",
+      "observed": "HTTP 200 — the glyph directory lists the 256 range files"
+    },
+    "glyph-fetch": {
+      "read": "sig-ops basemap glyphs fetch — 513 files (Noto Sans Regular + Italic, 256 ranges each, + OFL.txt)",
+      "verdict": "pass",
+      "observed": "HTTP 200 each — staged under web/public/map/fonts/, sig.basemap-glyphs/1 manifest root sha256:71f2db96cf2fabdbbe18d16fd5f3a22481b102ae47ba1ae5c304ffcefdcc972d"
+    }
+  },
+  "overall": "pass"
+}
