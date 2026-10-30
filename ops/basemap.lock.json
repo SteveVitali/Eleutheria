@@ -1,0 +1,168 @@
+{
+  "schema": "sig.basemap-lock/1",
+  "lock_version": 1,
+  "recorded_at": "2026-10-30T17:59:32Z",
+  "row": "P36.33",
+  "decisions": {
+    "D-K1-1": "yes \u2014 the map draws a self-hosted OSM basemap (reverses Round-9 Q8; ADR-156 \u00a7Decision 6)",
+    "Q-31/D-K1-2 [A-3]": "a \u2014 the basemap lives on R2 after the DNS move (OP-09) with public download links (S6)",
+    "D-K1-3 [B-22]": "as recommended"
+  },
+  "upstream": {
+    "provider": "protomaps",
+    "archive_base": "https://build.protomaps.com/",
+    "builds_index": "https://build-metadata.protomaps.dev/builds.json",
+    "reference_build": {
+      "key": "20260930.pmtiles",
+      "bytes": 138478612042,
+      "minzoom": 0,
+      "maxzoom": 15,
+      "tile_schema": "4.15.2",
+      "unique_tiles": 136127655,
+      "measured": "K1-map \u00a72.1 live-read 2026-09-30T22:14:52Z-22:15:34Z (7 ranged reads)",
+      "fetchable": false,
+      "note": "Daily builds rotate off the index (~62 days); 20260930 404s upstream now. It stays the recorded sizing reference \u2014 the refresh pins the build it actually fetches."
+    },
+    "licence": {
+      "data": "ODbL-1.0 (OpenStreetMap contributors)",
+      "style": "CC0-1.0",
+      "fonts": "OFL-1.1 (Noto Sans)",
+      "sprites": "MIT \u2014 not served: the emitted styles carry no sprite sheet"
+    }
+  },
+  "style": {
+    "package": "@protomaps/basemaps",
+    "version": "5.7.2",
+    "licence": "BSD-3-Clause",
+    "pairing": "basemap tile schema v4.x pairs with @protomaps/basemaps 5.x \u2014 verified against the pinned 5.7.2 emit (69 layers, v4 source-layer names)",
+    "flavours": {
+      "light": "grayscale",
+      "dark": "black"
+    },
+    "lang": "en",
+    "generator": "web/scripts/gen-map-styles.mjs",
+    "emitted": [
+      "web/public/map/style-light.json",
+      "web/public/map/style-dark.json",
+      "web/public/map/style-context.json"
+    ],
+    "content": {
+      "keep": "earth, water, muted landcover, roads (casing from z11), admin boundaries, place labels (country/region/locality), road labels from z13, water labels",
+      "drop": [
+        "address_label",
+        "roads_shields"
+      ],
+      "adjust": {
+        "buildings": "minzoom 15 (low contrast \u2014 the flavour default)",
+        "roads_labels_major": "minzoom 13",
+        "roads_shields": "dropped \u2014 needs the sprite sheet the posture refuses"
+      },
+      "no_poi_layers": "the v4 basemap schema emits no POI or transit layers; no sprite sheet is referenced anywhere"
+    }
+  },
+  "glyphs": {
+    "serving": "same-origin \u2014 the SIG web origin under /map/fonts/, never a second host; works in every basemap posture incl. the context fallback",
+    "upstream_base": "https://protomaps.github.io/basemaps-assets/fonts/",
+    "fontstacks": [
+      "Noto Sans Regular",
+      "Noto Sans Italic"
+    ],
+    "range_count": 256,
+    "range_span": 256,
+    "local_root": "web/public/map/fonts",
+    "url_template": "/map/fonts/{fontstack}/{range}.pbf",
+    "manifest": "web/public/map/fonts/manifest.json",
+    "manifest_sha256": "71f2db96cf2fabdbbe18d16fd5f3a22481b102ae47ba1ae5c304ffcefdcc972d",
+    "licence": "OFL-1.1",
+    "licence_file": "web/public/map/fonts/OFL.txt"
+  },
+  "context": {
+    "archive": "context.pmtiles",
+    "contract": "sig.context-tiles/1",
+    "source": "JUR-01's boundary pack (P35.17, sig.boundary-pack/1): Census CB 500k state outlines + TIGER county + Gazetteer internal points, Natural Earth 10m admin-0/admin-1 \u2014 public domain",
+    "layers": {
+      "boundary": "outlines with `level` (country|state|county) + `name`",
+      "place": "internal points with `name` + `kind` (country|state|county|place)"
+    },
+    "minzoom": 0,
+    "maxzoom": 10,
+    "built_by": "sig-ops basemap context-build --pack <boundary-pack dir> --out <path>",
+    "serving": "same-origin /tiles/context.pmtiles \u2014 never the basemap host (K1 \u00a72.6)",
+    "licence": "public domain (U.S. Census Bureau, Natural Earth)"
+  },
+  "host": {
+    "provider": "cloudflare-r2",
+    "bucket": "sig-basemap",
+    "origin": "https://tiles.surveillancegraph.org",
+    "key_prefix": "basemap/",
+    "served": null,
+    "previous": [],
+    "keep_previous_days": 30,
+    "cache_control": "public, max-age=31536000, immutable",
+    "cors": {
+      "allowed_origins": [
+        "https://surveillancegraph.org",
+        "https://www.surveillancegraph.org"
+      ],
+      "allowed_methods": [
+        "GET",
+        "HEAD"
+      ],
+      "allowed_headers": [
+        "Range"
+      ],
+      "expose_headers": [
+        "Content-Range",
+        "ETag",
+        "Content-Length"
+      ],
+      "max_age_seconds": 86400
+    },
+    "create_status": "prepared_not_executed",
+    "preconditions": [
+      "OP-09 \u2014 the surveillancegraph.org DNS zone on Cloudflare (operator act)",
+      "SIG_CF_ACCOUNT_ID + SIG_CF_API_TOKEN + SIG_R2_ACCESS_KEY_ID + SIG_R2_SECRET_ACCESS_KEY (env only, HG-09)",
+      "SIG_BASEMAP_AUTHOR \u2014 the recorded operator id (OM-20 scope discipline)",
+      "outside the AR-3 excluded windows (batch window day 6 00:00Z \u2192 day 13 12:00Z; daily 03:00-06:30Z)"
+    ],
+    "authority": "named verbatim in the GATE-G5 OM-20 list (2026-10-25T18:40Z, expires GATE-G6); queued under OM-19 \u2014 the hosted env is absent"
+  },
+  "serving": {
+    "active_source": "basemap",
+    "kill_switch": "one committed flip of serving.active_source to \"context\" repoints every generated style at the boundaries fallback (`sig-ops basemap kill-switch`); the provider-side step \u2014 disabling the custom domain \u2014 is the operator's documented act"
+  },
+  "refresh": {
+    "cadence": "twice a year, or on a MapLibre/basemaps upgrade",
+    "verb": "sig-ops basemap refresh",
+    "steps": [
+      "fetch builds.json, resolve --build (default latest)",
+      "stream-download the archive verifying the index's b3sum",
+      "upload under the new versioned key basemap/<key>.pmtiles",
+      "record the key in host.served; the previous key keeps serving 30 days",
+      "regenerate the styles (gen-map-styles.mjs reads this lock)"
+    ],
+    "cost_note": "run outside GCP \u2014 a GCP-originated upload pays ~$17 egress per refresh (K1 \u00a72.2, inference)"
+  },
+  "cost": {
+    "unit_prices": {
+      "storage_usd_per_gb_month": 0.015,
+      "free_gb": 10,
+      "class_b_usd_per_million": 0.36,
+      "free_class_b_million": 10,
+      "egress_usd_per_gb": 0
+    },
+    "monthly_estimate_usd": {
+      "sessions_1k": 2,
+      "sessions_10k": 3,
+      "sessions_100k": 13
+    },
+    "source": "K1-map \u00a72.4 (unit prices cited; session shape measured/inference)",
+    "budget_alert": "ops/basemap.alert.json",
+    "posture": "+$2/mo S1a upper end \u2014 SIG-STORE-003 conscious low-cost posture, inside U-008's $300/month"
+  },
+  "release_note": {
+    "field": "basemap_build",
+    "consumer": "release.json + the map's 'About this map' note",
+    "status": "the field lands when a release pipeline consumes it (the app row P36.37 / the release lane); the lock is the pin of record now"
+  }
+}

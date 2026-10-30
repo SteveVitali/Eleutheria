@@ -1397,3 +1397,21 @@ rerun_cell = '''`implement-spec spec=docs/tickets/371_P36.79__held-out-search-re
   go = '''pre-authorised: `SIG_HELDOUT_AUTHOR` per apply'''
   rerun = '''implement-spec spec=docs/tickets/371_P36.79__held-out-search-relevance-set.md live_verification=true'''
   live_dependants = ["P36.71"]
+
+[[row]]
+key = "P36.33"
+kind = "leg"
+obligations = ["D-P36.33-1"]
+obligations_cell = '''queued D-P36.33-1 — the R2 basemap host create (bucket sig-basemap + CORS/Range/immutable + custom domain tiles.surveillancegraph.org + first upload); restore point: re-creatable from basemap.lock.json + upstream'''
+gates_cell = '''pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6); window AR-3 + AR-2 — outside the batch window day 6 00:00Z → day 13 12:00Z and daily 03:00-06:30Z; `SIG_BASEMAP_AUTHOR` per apply; needs SIG_CF_*/SIG_R2_* env + OP-09'''
+operator_cell = '''nothing until OP-09 + the Cloudflare/R2 env — the pipeline, styles, glyphs and lock are landed'''
+rerun_cell = '''`implement-spec spec=docs/tickets/374_P36.33__basemap-pipeline-and-host.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P36.33-host"
+  obligations = ["D-P36.33-1"]
+  earliest = '''when OP-09 has landed and the SIG_CF_/SIG_R2_ creds + SIG_BASEMAP_AUTHOR are present; outside AR-3 windows'''
+  excluded = ["batch window day 6 00:00Z → day 13 12:00Z", "daily 03:00-06:30Z"]
+  go = '''pre-authorised: `SIG_BASEMAP_AUTHOR` per apply'''
+  rerun = '''implement-spec spec=docs/tickets/374_P36.33__basemap-pipeline-and-host.md live_verification=true'''
+  live_dependants = []

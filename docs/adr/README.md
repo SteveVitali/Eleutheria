@@ -231,6 +231,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-226](ADR-226-static-figure-kit-graphs-charts-legends.md) | the static figure kit's graph/chart/legend half: in-repo deterministic layouts, generated legends, table twins (P36.28) | P36.28 (R11-K13-FIG-01b, manifest row 368 — on | accepted |
 | [ADR-227](ADR-227-entity-url-key-permanence-slug-history.md) | entity URL-key permanence: frozen hash, verbatim append-only slug history, and the `/id/` redirect semantics (P36.29) | P36.29 (R11-K13-GX-03, manifest row 369 — on | accepted |
 | [ADR-228](ADR-228-held-out-search-relevance-set-sealed-derivation.md) | held-out search relevance set: sealed derivation, digest-only reader contract (P36.79) | P36.79 (R11-K13-SRCH-00, manifest row 371 — on | accepted |
+| [ADR-229](ADR-229-basemap-pipeline-and-r2-host.md) | The basemap pipeline — `sig.basemap-lock/1`, generated styles, self-hosted glyphs, the context fallback, and the R2 host posture | P36.33 (manifest row 374; run ledger `docs/build/runs/P36.33.md`) | Proposed (agent-drafted; implements MAP-02's half of ADR-156 §Decision 6) |
 
 ## Notes
 

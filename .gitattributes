@@ -1,0 +1,3 @@
+# MapLibre/Mapbox vector glyph ranges are binary protobuf payloads.
+*.pbf binary
+*.pmtiles binary

@@ -551,6 +551,18 @@
       "token": "/entity/agency/okcpd-south-division--vsht0xe/",
       "count": 1,
       "reason": "P36.29: fixture split-row target mirrors emitted sig.slug-history/1 bytes — artifact data, not a link"
+    },
+    {
+      "file": "src/lib/basemap.ts",
+      "token": "/map/fonts/",
+      "count": 1,
+      "reason": "P36.33 (K1 MAP-02 / SIG-UI-100): the same-origin glyph URL template written into the emitted basemap style documents — artifact data consumed by MapLibre at runtime, not a page-link construction (web/public/map/fonts/ is the committed OFL Noto tree)"
+    },
+    {
+      "file": "src/lib/basemap.ts",
+      "token": "/",
+      "count": 2,
+      "reason": "P36.33: startsWith(\"/\") same-origin guard + origin + \"/\" join on the tile-origin constant — string-shape guards, not links"
     }
   ]
 }
