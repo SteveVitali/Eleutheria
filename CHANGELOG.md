@@ -24,6 +24,27 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Copy lints in CI — the K13 vocabulary rules run as a build gate over
+  every discovered route, report-mode until each surface's ticket flips
+  its routes to enforce** (P36.24 / row 364; K13 UXK14-5 + K14 UXK14-5;
+  SIG-UI-063/144/153 — owner; serves DR-C6-28, DR-K14-10/11/19,
+  SIG-UI-053/062/145) — `web/scripts/check-copy-lints.mjs` reads
+  `dist/page-types.json` (the P35.50 route manifest, so no built route
+  escapes the corpus) and sweeps each route's `<main>` + `<footer>` for
+  UUIDs/snake_case keys/raw enums/requirement ids in prose (DR-C6-28),
+  repeated 8+-word sentences (SIG-UI-144), visible-by-default chrome
+  over 40 words (SIG-UI-145's rendered count), words joined at element
+  boundaries and ungrouped 5+-digit runs (SIG-UI-153), a bare "unknown",
+  "camera sites"/"listed cameras" outside the `data-sig-count="dedup"`
+  interval contract and the reverse (SIG-UI-063), Candidate/Provisional
+  collapses (SIG-UI-062), and the lexicon's multi-word banned phrasings;
+  the CP-8 readability report prints advisories that never fail.
+  `web/scripts/copy-lint-enforce.json` (`sig.copy-lint-enforce/1`) is the
+  report→enforce map — every route defaults to `report`; a surface's
+  ticket flips its page-type-registry pattern to `enforce` as it fixes
+  its own copy. Wired into `npm run check` as `check:copy` after
+  `check:lexicon`; `tests/unit/copy-lints.test.ts` proves the verdict
+  both ways over planted fixture dist trees (17 legs).
 - **Component kit B — the K14 epistemic visual layer: the contested
   marker's two agreement levels with a both-sides link, the labelled
   contradiction range, the actionable absence chip, the provenance

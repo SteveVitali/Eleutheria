@@ -1,0 +1,6 @@
+{
+  "schema": "sig.copy-lint-enforce/1",
+  "about": "P36.24 (K13 UXK14-5): the copy lints' report→enforce map. Every discovered route (dist/page-types.json) is linted by scripts/check-copy-lints.mjs; routes not named here run the default 'report' mode — findings print, the build stays green. A surface's ticket flips ITS routes to 'enforce' by adding its page-type-registry pattern (or an exact route path) below; an entry may be the string \"enforce\" or an object {\"mode\": \"enforce\", \"except\": [rule-id, …]} where the ticket records a bounded exemption it owns. Fixing flagged copy is the surface's row — this file records only the flip.",
+  "defaultMode": "report",
+  "routes": {}
+}
