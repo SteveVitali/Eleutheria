@@ -10,6 +10,7 @@ import { getDossierIndex, getIndexSprite } from "../../../../lib/data";
 import { FACET_DIMS, facetIndex, facetValues, indexFigureSpecs, isFacetDim, isKeyedIndexRow } from "../../../../lib/dossier-index";
 import { defineFigures } from "../../../../lib/figures";
 import { withBase } from "../../../../lib/paths";
+import dossierIndexCssUrl from "../../../../styles/dossier-index.css?url";
 
 export function getStaticPaths() {
   const rows = getDossierIndex();
@@ -31,6 +32,7 @@ const keyedIndex = (row: (typeof dossiers)[number]) => keyedRows.indexOf(row);
 const sprite = getIndexSprite();
 ---
 <BaseLayout title={`Dossiers — ${dim}: ${value}`} path={`/dossier/by/${dim}/${value}/`}>
+  <link slot="head" rel="stylesheet" href={dossierIndexCssUrl} />
   <p class="sig-lede">
     Dossiers where <strong>{dim}</strong> is <strong>{value}</strong>.{" "}
     <a href={withBase("dossier/")}>Back to the grouped index</a>.

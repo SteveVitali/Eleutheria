@@ -21,7 +21,8 @@ import Figure from "../../components/Figure.astro";
 import { getDossierIndex, getIndexSprite, getUnplacedIndexEntry } from "../../lib/data";
 import type { DossierIndexRow as IndexRowType } from "../../lib/data";
 import { unplacedPath } from "../../lib/dossier";
-import { displayJurisdiction } from "../../lib/jurisdictions";
+import { displayJurisdiction, dossierDisplayTitle } from "../../lib/jurisdictions";
+import dossierIndexCssUrl from "../../styles/dossier-index.css?url";
 import {
   INDEX_FIELD_DEFINITIONS,
   facetValues,
@@ -71,9 +72,22 @@ const flatten = (node: IndexTreeNode, depth = 0): { node: IndexTreeNode; depth: 
 const hasUnmapped = dossiers.some(
   (d) => !d.display_name && !d.name && !displayJurisdiction(d.jurisdiction).known,
 );
+// P34.14 (QW-8) on the place form's suggestion list too: a suggestion leads
+// with the place's display NAME — a keyed row's `display_name`, else the
+// subject label rewritten through the shared lookup — while `data-slug`
+// keeps the wire/routing key beside it (never a bare code as the name).
+const placeOptionLabel = (d: IndexRowType) =>
+  d.display_name ?? d.name ?? dossierDisplayTitle(d.subject_label, d.jurisdiction);
 ---
 
 <BaseLayout title="Dossiers" path="/dossier/">
+  {/* The grouped-index stylesheet is an explicit head link, not a side-effect
+      import — a frontmatter `import ".../dossier-index.css"` gets hoisted onto
+      every page's <head> in this build (`inlineStylesheets: "never"` + the
+      shared data-layer chunk), which leaked the P36.34 rules onto /search/'s
+      initial wire bytes. `?url` still gives the bundled, hashed asset — it
+      ships only where a dossier-directory page links it. */}
+  <link slot="head" rel="stylesheet" href={dossierIndexCssUrl} />
   <p class="sig-lede" data-copy="DI-02 DI-03">
     A dossier is SIG's primary public artifact for a jurisdiction: what is deployed, who
     can see it, what it costs, when it must be decided, and — as a headline, not an
@@ -81,11 +95,17 @@ const hasUnmapped = dossiers.some(
     and the page records the belief-time and ruleset it was built from.
   </p>
   <p data-copy="DI-07 DI-05 DI-06">
-    This index lists every jurisdiction SIG has published to a publishable standard,
-    grouped the way the registry records it: the <strong>United States</strong> first,
-    its states and territories together, then the other countries and their
-    subdivisions. It is not a census: a jurisdiction absent here is one SIG has not yet
-    published, <strong>not</strong> one with no surveillance infrastructure.
+    This index lists every jurisdiction SIG has researched to a publishable standard —
+    at every level the registry records: country, state or province, county, and place.
+    It is not a census: a jurisdiction absent here is one SIG has not yet published,{" "}
+    <strong>not</strong> one with no surveillance infrastructure. These are{" "}
+    <strong>inventory overviews</strong>, built automatically from published claims; the
+    reviewed, evidence-complete twelve-question portfolio form is being built.
+  </p>
+  <p class="sig-table-note">
+    Grouped the way the registry records it: the <strong>United States</strong> first —
+    its states and territories together — then the other countries and their
+    subdivisions, then the demonstration tail and the "Not yet placed" report.
   </p>
 
   {/* C-24: the index place form — GET /search/?type=place (the release-pinned
@@ -98,9 +118,17 @@ const hasUnmapped = dossiers.some(
     data-testid="place-search-form"
   >
     <label for="place-q">Find a place:</label>{" "}
-    <input id="place-q" type="search" name="q" maxlength={200} size={30} placeholder="State, county or city" />
+    <input id="place-q" type="search" name="q" maxlength={200} size={30} placeholder="State, county or city" list="place-names" />
     <input type="hidden" name="type" value="place" />
     <button type="submit">Search</button>{" "}
+    {/* Native, no-JS suggestions for the form — each option leads with the
+        place's display name (the shared lookup, never a bare code) and keeps
+        the slug as its wire key. */}
+    <datalist id="place-names">
+      {dossiers.map((d) => (
+        <option data-slug={d.slug} value={placeOptionLabel(d)} />
+      ))}
+    </datalist>{" "}
     <span class="sig-place-search__note" data-testid="place-search-fallback">
       If search cannot be reached, the first letter of a place's name finds it in the{" "}
       <a href={withBase("dossier/a-z/")}>A–Z directory</a>.

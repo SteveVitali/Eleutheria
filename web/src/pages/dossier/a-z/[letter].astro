@@ -9,6 +9,7 @@ import { getDossierIndex, getIndexSprite } from "../../../lib/data";
 import { azGroups, indexFigureSpecs, isKeyedIndexRow } from "../../../lib/dossier-index";
 import { defineFigures } from "../../../lib/figures";
 import { withBase } from "../../../lib/paths";
+import dossierIndexCssUrl from "../../../styles/dossier-index.css?url";
 
 export function getStaticPaths() {
   return [...azGroups(getDossierIndex()).keys()].map((letter) => ({
@@ -25,6 +26,7 @@ const keyedIndex = (row: (typeof dossiers)[number]) => keyedRows.indexOf(row);
 const sprite = getIndexSprite();
 ---
 <BaseLayout title={`Dossier directory — ${letter.toUpperCase()}`} path={`/dossier/a-z/${letter}/`}>
+  <link slot="head" rel="stylesheet" href={dossierIndexCssUrl} />
   <p class="sig-lede">
     Places under <strong>{letter.toUpperCase()}</strong>.{" "}
     <a href={withBase("dossier/a-z/")}>All letters</a> ·{" "}

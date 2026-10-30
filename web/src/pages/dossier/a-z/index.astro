@@ -8,9 +8,13 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { getDossierIndex } from "../../../lib/data";
 import { azGroups } from "../../../lib/dossier-index";
 import { withBase } from "../../../lib/paths";
+import dossierIndexCssUrl from "../../../styles/dossier-index.css?url";
 const letters = azGroups(getDossierIndex());
 ---
 <BaseLayout title="Dossier A–Z directory" path="/dossier/a-z/">
+  {/* Route-scoped stylesheet (the print.css precedent): `?url` + an explicit
+      head link — a side-effect import would hoist onto every page's wire. */}
+  <link slot="head" rel="stylesheet" href={dossierIndexCssUrl} />
   <p class="sig-lede" data-testid="az-intro">
     Every published dossier by name — the no-JavaScript directory the index's
     place form falls back to.

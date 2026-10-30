@@ -14,7 +14,7 @@ import type { DossierIndexRow } from "../lib/data";
 import type { IndexSpriteDoc } from "../lib/dossier-grouped-fixture";
 import type { FigureSpec } from "../lib/figures";
 import { dossierPath, dossierPrintPath, dossierJsonPath } from "../lib/dossier";
-import { displayJurisdiction } from "../lib/jurisdictions";
+import { displayJurisdiction, dossierDisplayTitle } from "../lib/jurisdictions";
 import { mapHrefFor, publicationRegime } from "../lib/dossier-index";
 import { withBase } from "../lib/paths";
 
@@ -29,12 +29,14 @@ interface Props {
 const { row, figs, keyedIndex, depth = 0, sprite = null } = Astro.props;
 const fid = (field: string) => (keyedIndex >= 0 ? figs.get(`r${keyedIndex}-${field}`) : undefined);
 const keyed = !!row.jkey;
-const name = row.display_name ?? row.name ?? row.subject_label;
+// P34.14 (QW-8): the row's name leads — a keyed row carries `display_name`,
+// else the subject label passes through the shared lookup so a trailing
+// " — CODE" renders " — Name (CODE)", never a bare code.
+const name = row.display_name ?? row.name ?? dossierDisplayTitle(row.subject_label, row.jurisdiction);
 const placeLabel = displayJurisdiction(row.jurisdiction).label;
 const regime = publicationRegime(row);
 const mapHref = mapHrefFor(row);
 const glyph = sprite?.glyphs.find((g) => g.jkey === row.jkey) ?? null;
-const sheetTotal = sprite ? { w: sprite.columns * sprite.cell_px, h: sprite.rows * sprite.cell_px } : null;
 const et = row.evidence_types;
 const nonSiteClasses = et ? Object.entries(et.other_classes ?? {}).filter(([, v]) => typeof v === "number") : [];
 const hasPrint = !keyed || row.level === "country" || row.level === "state_province" || row.level === undefined;
@@ -45,15 +47,24 @@ const hasPrint = !keyed || row.level === "country" || row.level === "state_provi
   data-testid="dossier-index-item"
   data-slug={row.slug_path ?? row.slug}
   data-level={row.level}
-  style={depth > 0 ? `margin-inline-start: ${depth * 1.25}rem` : undefined}
+  data-depth={depth > 0 ? depth : undefined}
 >
-  {glyph && sheetTotal && sprite?.svg && (
-    <span
+  {/* The strict CSP ships style-src-attr 'none' — no style="" anywhere: the
+      nesting indent is a data-depth attribute the stylesheet maps, and the
+      locator glyph is an <svg viewBox> crop over the sprite sheet via <use>
+      (geometry attributes, not style). */}
+  {glyph && sprite?.svg && (
+    <svg
       class="sig-index-glyph"
       data-testid="index-glyph"
+      viewBox={`${glyph.x} ${glyph.y} ${glyph.cell_px} ${glyph.cell_px}`}
+      width={glyph.cell_px}
+      height={glyph.cell_px}
       aria-hidden="true"
-      style={`background-image: url(${withBase(sprite.svg)}); background-position: -${glyph.x}px -${glyph.y}px; background-size: ${sheetTotal.w}px ${sheetTotal.h}px; width: ${glyph.cell_px}px; height: ${glyph.cell_px}px;`}
-    />
+      focusable="false"
+    >
+      <use href={withBase(sprite.svg)} />
+    </svg>
   )}{" "}
   <a class="sig-dossier-index__link" href={withBase(dossierPath(row.slug_path ?? row.slug))}>
     <span class="sig-dossier-index__subject">{name}</span>{" "}

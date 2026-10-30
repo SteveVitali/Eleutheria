@@ -10,6 +10,7 @@ import { groupIndex, indexFigureSpecs, isKeyedIndexRow, isSortKey, sortIndex, SO
 import type { IndexTreeNode } from "../../../lib/dossier-index";
 import { defineFigures } from "../../../lib/figures";
 import { withBase } from "../../../lib/paths";
+import dossierIndexCssUrl from "../../../styles/dossier-index.css?url";
 
 export function getStaticPaths() {
   return SORT_KEYS.map((key) => ({ params: { key }, props: { key } }));
@@ -29,6 +30,7 @@ const flatten = (n: IndexTreeNode, depth = 0): { node: IndexTreeNode; depth: num
 const sprite = getIndexSprite();
 ---
 <BaseLayout title={`Dossiers — sorted by ${key}`} path={`/dossier/sort/${key}/`}>
+  <link slot="head" rel="stylesheet" href={dossierIndexCssUrl} />
   <p class="sig-lede">The dossier index, sorted by <strong>{key}</strong> inside each group. <a href={withBase("dossier/")}>A–Z by name</a>.</p>
   {groups.unitedStates && (
     <section aria-labelledby="group-us"><h2 id="group-us">United States</h2>
