@@ -202,15 +202,28 @@ def test_every_name_surface_goes_through_the_lookup() -> None:
         src = (REPO_ROOT / page).read_text(encoding="utf-8")
         assert "displayJurisdiction" in src, f"{page} no longer names jurisdictions"
     # Titles/H1s lead with the name: the subject-label code suffix is rewritten.
+    # P36.34 repair: the /search/ dossier rows no longer ride search.astro's
+    # serialized island props — they are emitted by the fetched
+    # /search/index.json document through the shared lib/search-index.ts
+    # mapping, so the title surface moved with the rows. The bounded
+    # site/source rows search.astro still serializes stay bound by the
+    # displayJurisdiction check above.
     for page in (
         "web/src/pages/dossier/[...path].astro",
         "web/src/pages/dossier/[...path]/print.astro",
         "web/src/pages/dossier/index.astro",
-        "web/src/pages/search.astro",
+        "web/src/lib/search-index.ts",
         "web/src/pages/index.astro",
     ):
         src = (REPO_ROOT / page).read_text(encoding="utf-8")
         assert "dossierDisplayTitle" in src, f"{page} titles no longer lead with the name"
+    # The fetched endpoint must emit those rows through the shared lookup'd
+    # mapping — never a hand-rolled label that could bypass the name rewrite.
+    endpoint_src = (REPO_ROOT / "web/src/pages/search/index.json.ts").read_text(encoding="utf-8")
+    assert "dossierSearchItems" in endpoint_src, (
+        "web/src/pages/search/index.json.ts no longer emits the dossier rows "
+        "through the shared lookup'd mapping"
+    )
 
 
 def test_wire_fields_keep_the_code() -> None:
