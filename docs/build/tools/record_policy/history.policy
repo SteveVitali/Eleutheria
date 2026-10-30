@@ -1101,3 +1101,21 @@ seed-commit 37aca9e4
 # finding attributed to `70f0ca0d`'s rewritten line only; no other
 # commit borrows the exemption.
 seed-commit 70f0ca0d
+
+# phase-log orient trim + ci-field/kind repair (worker, P36.26): `fa36f986`
+# trimmed the committed row-366 post-closeout entry (L1340) in place — it
+# landed over the 48 KiB orient probe (BM-ORIENT-01 `ledger-budget`
+# violation caught by check-build-memory on run 40807049494). `31421b80`
+# then repaired the same pair of lines in place: the entry carried a stray
+# `ci:` fragment (a red verdict cannot stamp `ci:` — verify-recorded-ci
+# flagged it on run 40807478493) and the correction entry's kind
+# `record correction` was undeclared (kind-vocabulary V4 → `correction`,
+# NON_CI_KINDS). Pre-edit bytes archived
+# `reports/memory-repair/LEDGER_phaselog_L1340-1341_pre-P36.26-ci-kind.txt`
+# (sha256:1ee8473d…), disclosed by the appended `correction` entry in
+# `31421b80`. The branch rule forbids force-push, so the declarations land
+# here, the next commit. Scope: the append-only findings attributed to
+# `fa36f986`'s and `31421b80`'s rewritten lines only; no other commit
+# borrows the exemptions.
+seed-commit fa36f986
+seed-commit 31421b80

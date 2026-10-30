@@ -1,0 +1,68 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.26 (SIG-UI-130, K14 §4.11): one declared print figure on its own page.
+// Every declared `sig.print-figure/1` renders a slot that never splits across
+// a page break (break-inside: avoid) and never renders client-side — no
+// canvas, no script, no external raster dependency. A kind the static figure
+// kit cannot yet draw emits the labelled placeholder — hatch plus the state
+// label, both greyscale-safe (K14: hatches print as symbol + label) — never a
+// fabricated visual and never a silent omission.
+import type { PrintFigureDecl } from "../../lib/print";
+import type { AsOfEcho } from "../../lib/fixtures";
+
+interface Props {
+  figure: PrintFigureDecl;
+  /** The figure's ordinal on this dossier (figures print one per page). */
+  ordinal: number;
+  place: string;
+  asOf: AsOfEcho;
+  permalink: string;
+}
+
+const { figure, ordinal, place, asOf, permalink } = Astro.props;
+
+const KIND_CAPTION: Record<PrintFigureDecl["kind"], { copy: string; text: string }> = {
+  map: { copy: "PV-09", text: "Map — the recorded sites' geography." },
+  extent: { copy: "PV-10", text: "Extent — the recorded deployment's geographic coverage." },
+  trend: { copy: "PV-11", text: "Trend — the recorded count over time." },
+  axis: { copy: "PV-12", text: "Axis — the recorded deployment axis." },
+};
+const placeholderNote =
+  figure.note ??
+  "Static rendering pending the print figure kit; the live dossier carries the interactive figure.";
+---
+
+<figure class="sig-print-figure" data-figure-kind={figure.kind} data-testid="print-figure">
+  <div
+    class={`sig-print-figure__canvas sig-print-figure__canvas--${figure.kind}`}
+    role="img"
+    aria-label={`${figure.title}: ${placeholderNote}`}
+  >
+    <span class="sig-print-figure__glyph" aria-hidden="true">
+      {figure.kind === "map" ? "▦" : figure.kind === "extent" ? "◫" : figure.kind === "trend" ? "⌁" : "∥"}
+    </span>
+    {figure.state && (
+      <span class="sig-print-figure__state" data-state={figure.state} data-testid="print-figure-state">
+        {figure.state.toLowerCase().replaceAll("_", " ")}
+      </span>
+    )}
+  </div>
+  <figcaption class="sig-print-figure__caption">
+    {/* `{" "}` between every inline part — the K14 glue check flags adjacent
+        inline elements with no separator as fused words in extracted text. */}
+    <span class="sig-print-figure__title">{figure.title}</span>{" "}
+    <span class="sig-print-figure__kind" data-copy={KIND_CAPTION[figure.kind].copy}>{KIND_CAPTION[figure.kind].text}</span>{" "}
+    <span class="sig-print-figure__note">{placeholderNote}</span>{" "}
+    <span class="sig-print-figure__asof">
+      As of world <time datetime={asOf.as_of_world}>{asOf.as_of_world}</time>,
+      belief <time datetime={asOf.as_of_belief}>{asOf.as_of_belief}</time>
+    </span>{" "}
+    <a class="sig-print-figure__permalink" href={permalink}>{permalink}</a>{" "}
+    {/* The ordinal is a document label, not a measured quantity — the
+        `n.` form keeps the bare-numeral scan from reading it as a count. */}
+    <span class="sig-visually-hidden">Figure {ordinal}. For {place}.</span>
+  </figcaption>
+</figure>

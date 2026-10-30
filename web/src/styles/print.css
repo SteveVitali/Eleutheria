@@ -1,0 +1,291 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and
+ * documentation carry per-artifact licences — see LICENSE and
+ * docs/2_canonical_design_spec.md §42.
+ *
+ * P36.26 (K14 UXK14-9 / K14 §4.10–4.11, SIG-UI-098/130/155): the print
+ * document's own stylesheet — page furniture, the council brief, the declared
+ * figure slots, and the terms strip. `tokens.css` already forces the light
+ * token set under @media print; everything below stays inside those tokens so
+ * the document is greyscale-safe (K14: hatches print as symbol + label,
+ * states carry text — never colour alone).
+ *
+ * Running chrome — the K14-documented fallback: Chrome ≥131 (verified on the
+ * pinned toolchain's bundled Chromium) does emit CSS `@page` margin boxes
+ * with live counter(page)/counter(pages). Margin boxes are still
+ * engine-conditional — a page printed in a browser without them would lose
+ * the mandated as-of/release/permalink/licence/page fields SILENTLY, and
+ * where they do apply they would DOUBLE the in-flow footer. So the running
+ * head/foot render in-flow inside each `.sig-print-page` block — which is
+ * break-aligned to a physical page — carrying the composed "Page n of N" the
+ * margin-box counters could never disagree with.
+ */
+
+/* --- The page block and its running chrome --------------------------------- */
+
+.sig-print-page {
+  margin: 0 auto var(--sig-space-6);
+  max-width: var(--sig-content);
+}
+
+.sig-print-runhead {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sig-space-3);
+  border-bottom: var(--sig-border-thin) solid var(--sig-ink-muted);
+  padding-bottom: var(--sig-space-2);
+  margin-bottom: var(--sig-space-4);
+  font-size: var(--sig-step--2);
+  color: var(--sig-ink-muted);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.sig-print-runhead__place {
+  font-weight: 600;
+}
+
+.sig-print-footer {
+  border-top: var(--sig-border-thin) solid var(--sig-ink-muted);
+  margin-top: var(--sig-space-5);
+  padding-top: var(--sig-space-2);
+  font-size: var(--sig-step--2);
+  color: var(--sig-ink-muted);
+}
+.sig-print-footer__row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sig-space-2);
+  margin: 0 0 var(--sig-space-1);
+}
+.sig-print-footer__page {
+  font-variant-numeric: tabular-nums;
+}
+.sig-print-footer__cite {
+  margin: var(--sig-space-1) 0 0;
+}
+
+/* --- The council brief (page 1) -------------------------------------------- */
+
+.sig-print-brief__kicker {
+  font-size: var(--sig-step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sig-ink-muted);
+  margin: 0 0 var(--sig-space-2);
+}
+
+.sig-print-brief__glance {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--sig-space-3);
+  margin: var(--sig-space-4) 0;
+}
+.sig-print-brief__glance-item {
+  border: var(--sig-border-thin) solid var(--sig-rule-strong);
+  border-radius: var(--sig-radius-2);
+  padding: var(--sig-space-3) var(--sig-space-4);
+  /* a count cell never splits across pages */
+  break-inside: avoid;
+}
+.sig-print-brief__glance-item dt {
+  font-size: var(--sig-step--1);
+  color: var(--sig-ink-muted);
+  margin: 0 0 var(--sig-space-1);
+}
+.sig-print-brief__glance-item dd {
+  margin: 0;
+  font-size: var(--sig-step-0);
+}
+.sig-print-brief__glance-item strong {
+  font-size: var(--sig-step-1);
+}
+.sig-print-brief__absent {
+  font-style: italic;
+  color: var(--sig-ink-muted);
+}
+.sig-print-brief__basis,
+.sig-print-brief__unknown-bits {
+  font-size: var(--sig-step--1);
+  color: var(--sig-ink-muted);
+}
+
+.sig-print-brief__doclist {
+  margin: var(--sig-space-2) 0 var(--sig-space-3);
+  padding-left: var(--sig-space-5);
+}
+.sig-print-brief__doclist li {
+  margin-bottom: var(--sig-space-1);
+}
+.sig-print-brief__dochref {
+  font-size: var(--sig-step--1);
+  overflow-wrap: anywhere;
+}
+
+/* The build-generated QR — static, inline, monochrome. */
+.sig-print-brief__qr {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sig-space-3);
+  border: var(--sig-border-thin) solid var(--sig-rule-strong);
+  border-radius: var(--sig-radius-2);
+  padding: var(--sig-space-3);
+  margin: var(--sig-space-4) 0;
+  break-inside: avoid;
+}
+.sig-print-brief__qr-svg {
+  width: 34mm;
+  height: 34mm;
+  flex: none;
+  color: var(--sig-ink);
+}
+.sig-print-brief__qr-caption {
+  margin: 0;
+  font-size: var(--sig-step--1);
+  color: var(--sig-ink-muted);
+}
+.sig-print-brief__qr-caption code {
+  overflow-wrap: anywhere;
+}
+
+/* --- Declared print figures (sig.print-figure/1) ---------------------------- */
+
+.sig-print-figure {
+  margin: 0;
+  /* SIG-UI-130: a figure never splits across a page break. */
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.sig-print-figure__canvas {
+  /* The honest placeholder for a kind the static figure kit cannot yet draw:
+   * a hatched region — hatch + a text label, greyscale-safe by construction. */
+  border: var(--sig-border-strong) solid var(--sig-ink);
+  min-height: 60mm;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sig-space-3);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent 0,
+      transparent 5px,
+      var(--sig-rule-strong) 5px,
+      var(--sig-rule-strong) 6px
+    );
+}
+.sig-print-figure__glyph {
+  font-size: var(--sig-step-3);
+  background: var(--sig-paper);
+  padding: 0 var(--sig-space-2);
+}
+.sig-print-figure__state {
+  /* the state chip: border + text — colour is never the only channel */
+  border: var(--sig-border-thin) solid var(--sig-ink);
+  background: var(--sig-paper);
+  padding: var(--sig-space-1) var(--sig-space-3);
+  font-size: var(--sig-step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.sig-print-figure__caption {
+  margin-top: var(--sig-space-3);
+  font-size: var(--sig-step--1);
+  color: var(--sig-ink-muted);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sig-space-1);
+}
+.sig-print-figure__title {
+  font-size: var(--sig-step-0);
+  font-weight: 600;
+  color: var(--sig-ink);
+}
+.sig-print-figure__permalink {
+  font-family: var(--sig-font-mono);
+  overflow-wrap: anywhere;
+}
+
+/* --- The terms strip (last page — K14 §4.11) -------------------------------- */
+
+.sig-print-terms__list {
+  margin: var(--sig-space-3) 0;
+}
+.sig-print-terms__item {
+  break-inside: avoid;
+  margin-bottom: var(--sig-space-2);
+}
+.sig-print-terms__item dt {
+  font-weight: 600;
+}
+.sig-print-terms__item dd {
+  margin: 0 0 0 var(--sig-space-4);
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--1);
+}
+
+/* --- Print behaviour --------------------------------------------------------- */
+
+@media print {
+  @page {
+    size: letter;
+    margin: 2cm;
+  }
+
+  /* Selectors carry `[data-sig-chrome="print"]` so every rule outranks the
+   * shared epistemic sheet regardless of <link> order — this file is linked
+   * explicitly (the route-scoped `?url` asset) and Astro's injection order
+   * for the auto-emitted epistemic link is not contractual. */
+  [data-sig-chrome="print"] .sig-header,
+  [data-sig-chrome="print"] .sig-skip-link,
+  [data-sig-chrome="print"] .sig-cite,
+  [data-sig-chrome="print"] .sig-hwkt,
+  [data-sig-chrome="print"] .sig-dispute,
+  [data-sig-chrome="print"] .sig-print-toolbar {
+    display: none !important;
+  }
+
+  [data-sig-chrome="print"] .sig-print-page {
+    margin: 0;
+    max-width: none;
+    page-break-after: always;
+    break-after: page;
+  }
+  /* The last page emits no trailing break — no blank trailing sheet
+   * (DR-K14-21: no orphan pages). */
+  [data-sig-chrome="print"] .sig-print-page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+
+  /* Reconciliations are printed expanded — a paper reader cannot click. */
+  [data-sig-chrome="print"] details.sig-recon > .sig-recon__body {
+    display: block !important;
+  }
+
+  /* No heading orphaned at a page foot; no figure/table/term cell split. */
+  [data-sig-chrome="print"] h1,
+  [data-sig-chrome="print"] h2,
+  [data-sig-chrome="print"] h3 {
+    break-after: avoid;
+  }
+  [data-sig-chrome="print"] .sig-print-figure,
+  [data-sig-chrome="print"] .sig-recon,
+  [data-sig-chrome="print"] table.sig-table,
+  [data-sig-chrome="print"] .sig-print-brief__glance-item,
+  [data-sig-chrome="print"] .sig-print-brief__qr,
+  [data-sig-chrome="print"] .sig-print-terms__item {
+    break-inside: avoid;
+  }
+
+  [data-sig-chrome="print"] p,
+  [data-sig-chrome="print"] li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  [data-sig-chrome="print"] a {
+    color: var(--sig-ink);
+  }
+}
