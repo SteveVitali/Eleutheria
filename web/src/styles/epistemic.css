@@ -2270,3 +2270,44 @@ sig-typeahead {
   font-size: var(--sig-step--1);
 }
 
+
+/* --- P36.34 (K4 JUR-04): the grouped dossier index -------------------------- */
+.sig-dossier-index__code {
+  font-size: var(--sig-step--2);
+  color: var(--sig-ink-muted);
+}
+.sig-index-glyph {
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-size: contain;
+  vertical-align: middle;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+}
+.sig-place-search {
+  margin: var(--sig-space-4) 0;
+  padding: var(--sig-space-3);
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-2);
+  background: var(--sig-surface);
+}
+.sig-place-search__note {
+  font-size: var(--sig-step--1);
+  color: var(--sig-ink-muted);
+}
+.sig-az-letters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sig-space-3);
+  list-style: none;
+  padding: 0;
+  font-size: var(--sig-step-1);
+}
+.sig-definitions dt {
+  font-weight: 700;
+  margin-top: var(--sig-space-2);
+}
+.sig-definitions dd {
+  margin-inline-start: var(--sig-space-4);
+}

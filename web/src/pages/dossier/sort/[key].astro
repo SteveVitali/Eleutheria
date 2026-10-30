@@ -1,0 +1,58 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project.
+// P36.34 (K4 JUR-04): the pre-rendered GET sort routes — /dossier/sort/<k>/
+// reorders each sibling group of the grouped index by a named key (K4 §5.1).
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import DossierIndexRow from "../../../components/DossierIndexRow.astro";
+import { getDossierIndex, getIndexSprite } from "../../../lib/data";
+import { groupIndex, indexFigureSpecs, isKeyedIndexRow, isSortKey, sortIndex, SORT_KEYS } from "../../../lib/dossier-index";
+import type { IndexTreeNode } from "../../../lib/dossier-index";
+import { defineFigures } from "../../../lib/figures";
+import { withBase } from "../../../lib/paths";
+
+export function getStaticPaths() {
+  return SORT_KEYS.map((key) => ({ params: { key }, props: { key } }));
+}
+const { key } = Astro.props;
+if (!isSortKey(key)) throw new Error(`dossier sort: unknown key ${key}`);
+const dossiers = getDossierIndex();
+const keyedRows = dossiers.filter(isKeyedIndexRow);
+const groups = groupIndex(dossiers);
+sortIndex(groups.unitedStates, key);
+groups.otherCountries.forEach((c) => sortIndex(c, key));
+const figs = new Map(defineFigures(`dossier-sort-${key}`, indexFigureSpecs(keyedRows)).map((f) => [f.id, f]));
+const keyedIndex = (row: (typeof dossiers)[number]) => keyedRows.indexOf(row);
+const flatten = (n: IndexTreeNode, depth = 0): { node: IndexTreeNode; depth: number }[] => [
+  { node: n, depth }, ...n.children.flatMap((c) => flatten(c, depth + 1)),
+];
+const sprite = getIndexSprite();
+---
+<BaseLayout title={`Dossiers — sorted by ${key}`} path={`/dossier/sort/${key}/`}>
+  <p class="sig-lede">The dossier index, sorted by <strong>{key}</strong> inside each group. <a href={withBase("dossier/")}>A–Z by name</a>.</p>
+  {groups.unitedStates && (
+    <section aria-labelledby="group-us"><h2 id="group-us">United States</h2>
+      <ul class="sig-dossier-index" role="list" data-testid="dossier-index">
+        {flatten(groups.unitedStates).map(({ node, depth }) => (
+          <DossierIndexRow row={node.row} figs={figs} keyedIndex={keyedIndex(node.row)} depth={depth} sprite={sprite} />
+        ))}
+      </ul>
+    </section>
+  )}
+  {groups.otherCountries.length > 0 && (
+    <section aria-labelledby="group-other"><h2 id="group-other">Other countries</h2>
+      <ul class="sig-dossier-index" role="list" data-testid="dossier-index-other">
+        {groups.otherCountries.flatMap((c) => flatten(c).map(({ node, depth }) => (
+          <DossierIndexRow row={node.row} figs={figs} keyedIndex={keyedIndex(node.row)} depth={depth} sprite={sprite} />
+        )))}
+      </ul>
+    </section>
+  )}
+  {groups.unkeyed.length > 0 && (
+    <section aria-labelledby="group-demos"><h2 id="group-demos">Demonstration dossiers</h2>
+      <ul class="sig-dossier-index" role="list">
+        {groups.unkeyed.map((row) => <DossierIndexRow row={row} figs={figs} keyedIndex={-1} sprite={null} />)}
+      </ul>
+    </section>
+  )}
+</BaseLayout>

@@ -28,6 +28,8 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { DOSSIERS } from "./dossier-fixture";
 import { JURISDICTION_DOSSIERS } from "./dossier-jurisdiction-fixture";
+import { GROUPED_INDEX_FIXTURE, INDEX_SPRITE_FIXTURE } from "./dossier-grouped-fixture";
+import type { IndexSpriteDoc } from "./dossier-grouped-fixture";
 import { applyPublicationPolicy, unplacedPath } from "./dossier";
 import type { Dossier, TerminationInput } from "./dossier";
 import { RESEARCH_PORTFOLIO_FIXTURE } from "./research-dossier-fixture";
@@ -624,6 +626,32 @@ export type DossierIndexRow = Pick<Dossier, "slug" | "subject_label" | "jurisdic
   records_placed_only_here?: number;
   records_appearing?: number;
   conserved?: boolean;
+  // P36.34 (JUR-04): the remaining K4 §5.2 row fields the grouped index
+  // renders — the scheme/code pair, the located share, sources, evidence
+  // classes, open questions, disagreements, freshness and children, the
+  // publication-regime country code, the minted-page basis and the slug
+  // path a multi-segment row links through.
+  slug_path?: string;
+  code?: string;
+  scheme?: string;
+  jurisdictionCode?: string | null;
+  parent_jkey?: string | null;
+  parent_slug_path?: string | null;
+  located?: { by_point?: number; of?: number };
+  sources?: { count: number; top?: string[] };
+  evidence_types?: {
+    site_observations?: number;
+    other_classes?: Record<string, number | string>;
+  };
+  technology?: string[];
+  open_questions?: number;
+  disagreements?: {
+    declared_here_located_elsewhere?: number;
+    located_here_declared_elsewhere?: number;
+  };
+  freshness?: { newest?: string; oldest?: string };
+  children?: { count: number; with_records?: number; pages?: number };
+  page_threshold_basis?: string;
 };
 
 /** The unplaced sibling block the v2 index carries (`unplaced` in `sig.dossier-index/2`). */
@@ -662,12 +690,20 @@ export function getDossierIndex(): DossierIndexRow[] {
       asOf: d.asOf,
     }));
   if (dataSource() !== "export") {
-    return [...DOSSIERS, ...JURISDICTION_DOSSIERS].map((d) => ({
-      slug: d.slug,
-      subject_label: d.subject_label,
-      jurisdiction: d.jurisdiction,
-      asOf: d.asOf,
-    }));
+    // P36.34 (JUR-04): fixtures mode serves the committed
+    // `sig.dossier-index/2` fixture corpus — the same keyed shape an
+    // export emits — then the legacy flat demonstration dossiers (the
+    // worked OKC example + the SIG-PUB-017 demos) as unkeyed rows so the
+    // grouped index's honest tail still names them.
+    const flat = DOSSIERS.filter((d) => d.jurisdiction_key === undefined).map(
+      (d) => ({
+        slug: d.slug,
+        subject_label: d.subject_label,
+        jurisdiction: d.jurisdiction,
+        asOf: d.asOf,
+      }),
+    );
+    return [...GROUPED_INDEX_FIXTURE.dossiers, ...flat];
   }
   // P35.45: the canonical `web/dossiers/index.json` (`sig.dossier-index/2`)
   // supersedes the flat `web/dossier_index.json` — a placement-bound export
@@ -930,6 +966,22 @@ export interface SlugHistoryRow {
   first_release?: string | null;
   last_release?: string | null;
   [key: string]: unknown;
+}
+
+/**
+ * P36.34 (JUR-04 / FIG-01a): the index locator sprite's
+ * `sig.figure-index-sprite/1` index — jkey → sprite cell — so index rows
+ * can paint the same outline glyph the figure kit minted. Fixtures mode
+ * serves the committed fixture doc (its sheet at
+ * `/dossier/figures/index-sprite.svg`); export mode reads
+ * `<exportDir>/web/figure_index_sprite.json` when the export emitted one
+ * (absent → null → rows render without a glyph, an honest absence).
+ */
+export function getIndexSprite(): IndexSpriteDoc | null {
+  if (dataSource() !== "export") return INDEX_SPRITE_FIXTURE;
+  const path = `${exportDir()}/web/figure_index_sprite.json`;
+  if (!existsSync(path)) return null;
+  return JSON.parse(readFileSync(path, "utf-8")) as IndexSpriteDoc;
 }
 
 export function getSlugHistory(): SlugHistoryRow[] {
