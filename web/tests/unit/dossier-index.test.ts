@@ -18,20 +18,15 @@ import {
   sortIndex,
   INDEX_FIELD_DEFINITIONS,
 } from "../../src/lib/dossier-index";
-import { GROUPED_FIXTURE_DOSSIERS, GROUPED_INDEX_FIXTURE } from "../../src/lib/dossier-grouped-fixture";
+import type { IndexTreeNode } from "../../src/lib/dossier-index";
+import { GROUPED_FIXTURE_DOSSIERS } from "../../src/lib/dossier-grouped-fixture";
 import { getDossierIndex } from "../../src/lib/data";
 import { validateDossier } from "../../src/lib/dossier";
 
 const rows = getDossierIndex();
 const keyed = rows.filter(isKeyedIndexRow);
 const groups = groupIndex(rows);
-const bySlug = new Map(GROUPED_FIXTURE_DOSSIERS.map((d) => [d.slug, d]));
-
-const flatten = (n: { children: unknown[] }) =>
-  [n, ...n.children.flatMap((c) => flatten(c as typeof n))] as {
-    row: (typeof rows)[number];
-    children: unknown[];
-  }[];
+const flatten = (n: IndexTreeNode): IndexTreeNode[] => [n, ...n.children.flatMap(flatten)];
 
 describe("groupIndex (SIG-JUR-006)", () => {
   it("puts the United States first, then other countries A–Z", () => {
@@ -67,7 +62,7 @@ describe("hierarchy conservation + index↔dossier parity (SIG-JUR-007/006)", ()
       const kidSum = (d.children ?? []).reduce((s, c) => s + (c.records ?? 0), 0);
       expect(d.rollup!.records).toBe(kidSum + (d.rollup!.records_placed_only_here ?? 0));
       // Index row parity with the dossier JSON.
-      const row = byJkey.get(d.jurisdiction_key)!;
+      const row = byJkey.get(d.jurisdiction_key!)!;
       expect(row.records).toBe(d.rollup!.records);
       expect(row.children!.count).toBe((d.children ?? []).length);
     }

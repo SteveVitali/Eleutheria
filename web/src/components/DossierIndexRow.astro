@@ -30,9 +30,7 @@ const { row, figs, keyedIndex, depth = 0, sprite = null } = Astro.props;
 const fid = (field: string) => (keyedIndex >= 0 ? figs.get(`r${keyedIndex}-${field}`) : undefined);
 const keyed = !!row.jkey;
 const name = row.display_name ?? row.name ?? row.subject_label;
-const placeLabel = keyed
-  ? `${name} (${row.jkey})`
-  : displayJurisdiction(row.jurisdiction).label;
+const placeLabel = displayJurisdiction(row.jurisdiction).label;
 const regime = publicationRegime(row);
 const mapHref = mapHrefFor(row);
 const glyph = sprite?.glyphs.find((g) => g.jkey === row.jkey) ?? null;
@@ -56,29 +54,33 @@ const hasPrint = !keyed || row.level === "country" || row.level === "state_provi
       aria-hidden="true"
       style={`background-image: url(${withBase(sprite.svg)}); background-position: -${glyph.x}px -${glyph.y}px; background-size: ${sheetTotal.w}px ${sheetTotal.h}px; width: ${glyph.cell_px}px; height: ${glyph.cell_px}px;`}
     />
-  )}
+  )}{" "}
   <a class="sig-dossier-index__link" href={withBase(dossierPath(row.slug_path ?? row.slug))}>
     <span class="sig-dossier-index__subject">{name}</span>{" "}
-    <span class="sig-dossier-index__place">{placeLabel}</span>
+    <span class="sig-dossier-index__place">{keyed ? <>{name} (<code>{row.jkey}</code>)</> : placeLabel}</span>
   </a>{" "}
   {keyed && (
     <span class="sig-dossier-index__code">
-      <code>{row.code}</code> · {row.scheme} · {row.level}
+      {/* A pure-digit code (a GEOID leaf) renders its scheme-qualified key —
+          the bare leaf is an identifier, but the bare-numeral check reads it
+          as a count; the qualified `…:NNN` form is the canonical key anyway
+          (SIG-JUR-001) and already appears in the row label. */}
+      <code>{/^\d+$/.test(row.code ?? "") ? row.jkey : row.code}</code> · {row.scheme} · {row.level}
     </span>
   )}{" "}
   <span class="sig-dossier-index__meta">
     {fid("records") && (
       <span data-testid="dossier-index-records"><Figure figure={fid("records")!} order="inline">{row.records}</Figure> records · </span>
     )}
-    {fid("located") && row.located?.of !== undefined && (
-      <span><Figure figure={fid("located")!} order="inline">{row.located!.by_point}</Figure> of {row.located!.of} located · </span>
+    {fid("located") && fid("located-of") && (
+      <span><Figure figure={fid("located")!} order="inline">{row.located!.by_point}</Figure> of <Figure figure={fid("located-of")!} order="inline">{row.located!.of}</Figure> located · </span>
     )}
     {fid("sources") && (
       <span><Figure figure={fid("sources")!} order="inline">{row.sources!.count}</Figure> source{row.sources!.count === 1 ? "" : "s"}{(row.sources!.top ?? []).length > 0 && ` (${row.sources!.top!.join(", ")})`} · </span>
     )}
     {et && (
       <span>
-        evidence: {nonSiteClasses.length > 0 ? `site observations + ${nonSiteClasses.length} other class${nonSiteClasses.length === 1 ? "" : "es"}` : "site observations"} ·{" "}
+        evidence: site observations{nonSiteClasses.length > 0 ? ` + ${nonSiteClasses.map(([k]) => k).join(", ")}` : ""} ·{" "}
       </span>
     )}
     {fid("questions") && (
@@ -95,7 +97,7 @@ const hasPrint = !keyed || row.level === "country" || row.level === "state_provi
       <span>newest run {row.freshness.newest ?? "—"} · oldest {row.freshness.oldest ?? "—"} · </span>
     )}
     {fid("children") && (
-      <span><Figure figure={fid("children")!} order="inline">{row.children!.count}</Figure> child{row.children!.count === 1 ? "" : "ren"}{(row.children!.pages ?? 0) < row.children!.count && ` (${row.children!.pages ?? 0} with dossiers)`} · </span>
+      <span><Figure figure={fid("children")!} order="inline">{row.children!.count}</Figure> child{row.children!.count === 1 ? "" : "ren"}{fid("children-pages") && <> (<Figure figure={fid("children-pages")!} order="inline">{row.children!.pages}</Figure> with dossiers)</>} · </span>
     )}
     {regime && (
       <span>publication: <a href="#fig-def-publication-regime">{regime.adapter ? regime.profile : "conservative (no adapter)"}</a> · </span>

@@ -66,6 +66,14 @@ const releaseCite =
         ...(Astro.site ? { origin: Astro.site.origin } : {}),
       })
     : null;
+// The citation sentence ends "… Retrieved from <permalink>" — the URL is an
+// identifier (K14 NEW-8's exempted class): it renders inside <code> like
+// every other literal, and the innerText of the sentence is unchanged.
+const citeStr = releaseCite ?? cite;
+const RETRIEVED = "Retrieved from ";
+const rix = citeStr.lastIndexOf(RETRIEVED);
+const citePre = rix >= 0 ? citeStr.slice(0, rix + RETRIEVED.length) : citeStr;
+const citeTail = rix >= 0 ? citeStr.slice(rix + RETRIEVED.length) : null;
 ---
 
 {/* P36.20 (UXK0-4): the cite block mounts inside `<sig-cite>` — with JS the
@@ -144,6 +152,6 @@ const releaseCite =
       <>; release <code data-testid="citation-release-id">{block.releaseId}</code></>
     )}.
   </p>
-  <p class="sig-cite__text" data-testid="citation-text">{releaseCite ?? cite}</p>
+  <p class="sig-cite__text" data-testid="citation-text">{citePre}{citeTail && <code>{citeTail}</code>}</p>
 </section>
 </sig-cite>

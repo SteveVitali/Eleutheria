@@ -24,7 +24,6 @@ import { unplacedPath } from "../../lib/dossier";
 import { displayJurisdiction } from "../../lib/jurisdictions";
 import {
   INDEX_FIELD_DEFINITIONS,
-  azGroups,
   facetValues,
   groupIndex,
   isKeyedIndexRow,
@@ -41,7 +40,6 @@ const keyedRows = dossiers.filter(isKeyedIndexRow);
 const unplaced = getUnplacedIndexEntry();
 const sprite = getIndexSprite();
 const groups = groupIndex(dossiers);
-const letters = azGroups(dossiers);
 
 // The ONE figures[] registry: the row-table numerals (pointing into
 // `web/dossiers/index.json`) + the unplaced sibling's count.

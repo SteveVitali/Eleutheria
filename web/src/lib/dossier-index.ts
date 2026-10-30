@@ -354,7 +354,7 @@ import type { FigureSpec } from "./figures";
  */
 export function indexFigureSpecs(keyedRows: readonly DossierIndexRow[]): FigureSpec[] {
   const specs: FigureSpec[] = [];
-  const base = (i: number, id: string, value: number, pointer: string): FigureSpec => ({
+  const base = (_i: number, id: string, value: number, pointer: string): FigureSpec => ({
     id,
     class: "dossier",
     value,
@@ -374,6 +374,9 @@ export function indexFigureSpecs(keyedRows: readonly DossierIndexRow[]): FigureS
     if (typeof r.located?.by_point === "number") {
       specs.push({ ...base(i, `r${i}-located`, r.located.by_point, `${p}/located/by_point`), definition: "#fig-def-located" });
     }
+    if (typeof r.located?.of === "number") {
+      specs.push({ ...base(i, `r${i}-located-of`, r.located.of, `${p}/located/of`), definition: "#fig-def-located" });
+    }
     if (typeof r.sources?.count === "number") {
       specs.push({ ...base(i, `r${i}-sources`, r.sources.count, `${p}/sources/count`), unit: "sources", definition: "#fig-def-sources" });
     }
@@ -390,6 +393,13 @@ export function indexFigureSpecs(keyedRows: readonly DossierIndexRow[]): FigureS
     }
     if (typeof r.children?.count === "number" && r.children.count > 0) {
       specs.push({ ...base(i, `r${i}-children`, r.children.count, `${p}/children/count`), unit: "children", definition: "#fig-def-children" });
+    }
+    if (
+      typeof r.children?.pages === "number" &&
+      typeof r.children.count === "number" &&
+      r.children.pages < r.children.count
+    ) {
+      specs.push({ ...base(i, `r${i}-children-pages`, r.children.pages, `${p}/children/pages`), unit: "children", definition: "#fig-def-children" });
     }
   });
   return specs;

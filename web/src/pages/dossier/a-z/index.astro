@@ -16,10 +16,9 @@ const letters = azGroups(getDossierIndex());
     place form falls back to.
   </p>
   <ul class="sig-az-letters" data-testid="az-letters">
-    {[...letters.entries()].map(([letter, rows]) => (
+    {[...letters.keys()].map((letter) => (
       <li>
-        <a href={withBase(`dossier/a-z/${letter}/`)}>{letter.toUpperCase()}</a>{" "}
-        ({rows.length})
+        <a href={withBase(`dossier/a-z/${letter}/`)}>{letter.toUpperCase()}</a>
       </li>
     ))}
   </ul>
