@@ -57,11 +57,20 @@ describe("public-api (QW-11)", () => {
   });
 });
 
-describe("defaultDescription (QW-11, copy row MD-01)", () => {
+describe("defaultDescription (QW-11, copy row MD-01; P36.25 per-type forms)", () => {
   it("derives a unique description from the unique page title", () => {
     expect(defaultDescription("Data freshness")).toBe(
       "Data freshness — Surveillance Infrastructure Graph (SIG)",
     );
     expect(defaultDescription("Page not found")).not.toBe(defaultDescription("Data freshness"));
+  });
+  it("names the page type in the T0/T2 forms — MD-01 stays the T1 form", () => {
+    expect(defaultDescription("Data freshness", "T0")).toContain(
+      "a fixed, no-JavaScript page",
+    );
+    expect(defaultDescription("Data freshness", "T2")).toContain("interactive views");
+    expect(defaultDescription("Data freshness", "T1")).toBe(
+      defaultDescription("Data freshness"),
+    );
   });
 });

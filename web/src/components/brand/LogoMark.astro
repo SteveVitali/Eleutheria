@@ -1,0 +1,47 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The SIG logo glyph (P36.25, UXK14-7; `sig.brand-mark/1` in lib/brand.ts;
+// K14 §4.12 under the answered D-K14-2 = yes): the node-link mark — three
+// nodes, two solid edges, one dashed edge — drawn in `currentColor` so it
+// carries the wordmark's ink in either theme (one colour, no epistemic hue,
+// no hatch, no badge shape; the dashed edge is brand, never a legend symbol
+// — K13 C-01). Decorative: the wordmark link's aria-label names the site, so
+// the glyph is aria-hidden.
+import { BRAND_MARK } from "../../lib/brand";
+
+interface Props {
+  /** The glyph's rendered box — the caller's CSS class sizes it; this only
+      sets the intrinsic ratio hint. */
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const { viewBox, nodes, edges, strokeWidth, dasharray } = BRAND_MARK;
+---
+
+<svg
+  class={className}
+  viewBox={viewBox}
+  fill="none"
+  aria-hidden="true"
+  focusable="false"
+>
+  {
+    edges.map((e) => (
+      <line
+        x1={nodes[e.a]!.cx}
+        y1={nodes[e.a]!.cy}
+        x2={nodes[e.b]!.cx}
+        y2={nodes[e.b]!.cy}
+        stroke="currentColor"
+        stroke-width={strokeWidth}
+        stroke-linecap="round"
+        stroke-dasharray={e.dashed ? dasharray : undefined}
+      />
+    ))
+  }
+  {nodes.map((n) => <circle cx={n.cx} cy={n.cy} r={n.r} fill="currentColor" />)}
+</svg>

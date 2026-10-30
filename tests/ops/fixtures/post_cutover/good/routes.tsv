@@ -35,3 +35,7 @@ route:https://surveillancegraph.org/task/	route_2169c69a3c4c.txt
 route:https://surveillancegraph.org/watch/	route_99b3b5404bf4.txt
 route:https://surveillancegraph.org/artifact/	route_aa8230bd5dba.txt
 route:https://surveillancegraph.org/page-types.json	route_cea3f38dfbee.txt
+route:https://surveillancegraph.org/favicon-32.png	route_9ae39b956a1c.txt
+route:https://surveillancegraph.org/apple-touch-icon.png	route_9568280ddf90.txt
+route:https://surveillancegraph.org/brand/	route_c9db3ab6a374.txt
+route:https://surveillancegraph.org/social/	route_f0e800c39b69.txt

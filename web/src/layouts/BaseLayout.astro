@@ -37,6 +37,7 @@ import { withBase, BASE } from "../lib/paths";
 import { classifyRoute } from "../lib/page-types";
 import { T2_ROBOTS_CONTENT } from "../lib/workspace-state/index";
 import { defaultDescription } from "../lib/meta";
+import { socialCardForRoute } from "../lib/brand";
 
 interface Props {
   title: string;
@@ -105,7 +106,12 @@ interface Props {
 }
 
 const { title, path } = Astro.props;
-const description = Astro.props.description ?? defaultDescription(title);
+// P36.25 (SIG-UI-154): the page-type classification drives both the default
+// description's per-type template and the social card this page shares —
+// computed once, reused by the kit/robots legs below.
+const pageClassification = classifyRoute(path);
+const pageType = pageClassification.ok ? pageClassification.entry.type : "T1";
+const description = Astro.props.description ?? defaultDescription(title, pageType);
 const chrome = Astro.props.chrome ?? "full";
 const noindex = Astro.props.noindex ?? false;
 const siteMeta = getSiteMetadata();
@@ -209,7 +215,6 @@ const footerLinks = [
 // allow-listed in tests/e2e/t1-module-entries.json (ADR-155/P35.50) and
 // admitted under the strict CSP's `script-src 'self'` (P36.19/ADR-223).
 const KIT_CHROME_MODULES = ["sig-details", "sig-cite", "sig-copy"] as const;
-const pageClassification = classifyRoute(path);
 const loadKitChrome =
   chrome === "full" && pageClassification.ok && pageClassification.entry.type === "T1";
 // P36.21 (K13 §2.5, SIG-UI-059/060, ADR-225): the T2 indexing posture. Every
@@ -220,6 +225,16 @@ const loadKitChrome =
 // canonical content for the index anyway.
 const isT2 =
   pageClassification.ok && pageClassification.entry.type === "T2";
+// P36.25 (SIG-UI-154, K14 §4.12): the social card this page shares — one
+// static card per page type, generated at build time (SVG → PNG by the
+// sigBrandAssets hook; T3/internal tooling shares none). og:image needs an
+// absolute URL, resolved against the canonical origin through withBase so a
+// snapshot build names its own copy.
+const socialCard = socialCardForRoute(path);
+const canonicalUrl = new URL(path, Astro.site ?? CANONICAL_ORIGIN).href;
+const socialCardUrl = socialCard
+  ? new URL(withBase(socialCard.file), Astro.site ?? CANONICAL_ORIGIN).href
+  : null;
 ---
 
 <!doctype html>
@@ -238,10 +253,38 @@ const isT2 =
         parameter-space of one route is never the indexable copy; the
         canonical link names the base surface. */}
     {isT2 && <meta name="robots" content={T2_ROBOTS_CONTENT} />}
-    <!-- P34.13 (QW-11): the SIG favicon — the wordmark's three-letter mark on
-         the ink square, served from /favicon.svg (a file the allow-list names). -->
+    <!-- P34.13 (QW-11): the SIG favicon — served from /favicon.svg (a file
+         the allow-list names); P36.25 replaced the interim letter mark with
+         the node-link glyph. -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="canonical" href={new URL(path, Astro.site ?? CANONICAL_ORIGIN).href} />
+    {/* P36.25 (SIG-UI-154, K14 §4.12): the favicon set — the 32 px PNG is the
+        `alternate icon` fallback for browsers without SVG favicons (so it is
+        never fetched where the SVG suffices), and the 180 px touch icon for
+        mobile surfaces. Both are rasterised from public/favicon.svg at build
+        time. */}
+    <link rel="alternate icon" type="image/png" sizes="32x32" href={withBase("favicon-32.png")} />
+    <link rel="apple-touch-icon" sizes="180x180" href={withBase("apple-touch-icon.png")} />
+    <link rel="canonical" href={canonicalUrl} />
+    {/* P36.25 (SIG-UI-154): the Open Graph + summary-card meta — one static
+        card per page type (`sig.social-card/1`), emitted under /social/ at
+        build time. T3 routes resolve no card and emit none of these tags. */}
+    {socialCard && (
+      <Fragment>
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Surveillance Infrastructure Graph" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:image" content={socialCardUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={socialCard.alt} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={socialCardUrl} />
+      </Fragment>
+    )}
     {/* P35.13 (SIG-REL-009, G3 §6.1): the machine + link pair — every page
         names its release (`<meta name="sig-release">` = `<label> <pub>`) and
         links the release's own release.json (`describedby`). Both absent in
