@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "09333e0a85ea47485f7b18adcb6d4a0ba5eb02e6",
+  "input_commit": "40edd4dc71c0664304c1f4bb1f9c99479c123599",
   "manifest_inputs": 1153,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -23,7 +23,7 @@
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-31T05:40Z"
+    "updatedAt": "2026-10-31T05:52Z"
   },
   "counts": {
     "obligations": 206,
@@ -15583,7 +15583,7 @@
         },
         "SIG-FIND-004": {
           "verdict": "MET",
-          "evidence": "web/src/lib/workspace-state.ts:1;web/src/islands/workspace.ts:1;web/src/islands/SearchIsland.tsx:1;web/src/islands/MapIsland.tsx:1;web/src/islands/NetworkIsland.tsx:1;web/src/components/ViewSwitch.astro:1;web/src/pages/search.astro:1;web/src/pages/map.astro:1;web/src/pages/network.astro:1;web/src/lib/network.ts:1;web/src/lib/map.ts:1",
+          "evidence": "web/src/islands/map/workspace.ts:1;web/src/islands/workspace.ts:1;web/src/islands/SearchIsland.tsx:1;web/src/islands/MapIsland.tsx:1;web/src/islands/NetworkIsland.tsx:1;web/src/components/ViewSwitch.astro:1;web/src/pages/search.astro:1;web/src/pages/map.astro:1;web/src/pages/network.astro:1;web/src/lib/network.ts:1;web/src/lib/map.ts:1",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16368,8 +16368,8 @@
           "label": "historical/csv"
         },
         "SIG-UI-065": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/islands/map/MapApp.tsx;web/src/islands/map/vendor.ts;web/scripts/prepare-map-vendor.mjs;web/runtime-deps.json;web/src/islands/map/workspace.ts;web/src/pages/map.astro;docs/build/runs/P36.37.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16548,8 +16548,8 @@
           "label": "historical/csv"
         },
         "SIG-UI-095": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/islands/map/MapApp.tsx;web/src/islands/map/vendor.ts;web/scripts/prepare-map-vendor.mjs;web/runtime-deps.json;web/src/islands/map/workspace.ts;web/src/pages/map.astro;docs/build/runs/P36.37.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16560,8 +16560,8 @@
           "label": "historical/csv"
         },
         "SIG-UI-097": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/islands/map/MapApp.tsx;web/src/islands/map/vendor.ts;web/scripts/prepare-map-vendor.mjs;web/runtime-deps.json;web/src/islands/map/workspace.ts;web/src/pages/map.astro;docs/build/runs/P36.37.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16584,26 +16584,26 @@
           "label": "historical/csv"
         },
         "SIG-UI-101": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/islands/map/MapApp.tsx;web/src/islands/map/vendor.ts;web/scripts/prepare-map-vendor.mjs;web/runtime-deps.json;web/src/islands/map/workspace.ts;web/src/pages/map.astro;docs/build/runs/P36.37.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-102": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/islands/map/MapApp.tsx;web/src/islands/map/vendor.ts;web/scripts/prepare-map-vendor.mjs;web/runtime-deps.json;web/src/islands/map/workspace.ts;web/src/pages/map.astro;docs/build/runs/P36.37.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-103": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/islands/map/MapApp.tsx;web/src/islands/map/vendor.ts;web/scripts/prepare-map-vendor.mjs;web/runtime-deps.json;web/src/islands/map/workspace.ts;web/src/pages/map.astro;docs/build/runs/P36.37.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-104": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/islands/map/MapApp.tsx;web/src/islands/map/vendor.ts;web/scripts/prepare-map-vendor.mjs;web/runtime-deps.json;web/src/islands/map/workspace.ts;web/src/pages/map.astro;docs/build/runs/P36.37.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16614,14 +16614,14 @@
           "label": "historical/csv"
         },
         "SIG-UI-106": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/islands/map/MapApp.tsx;web/src/islands/map/vendor.ts;web/scripts/prepare-map-vendor.mjs;web/runtime-deps.json;web/src/islands/map/workspace.ts;web/src/pages/map.astro;docs/build/runs/P36.37.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-107": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/islands/map/MapApp.tsx;web/src/islands/map/vendor.ts;web/scripts/prepare-map-vendor.mjs;web/runtime-deps.json;web/src/islands/map/workspace.ts;web/src/pages/map.astro;docs/build/runs/P36.37.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -25098,7 +25098,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "328e281f50ac49efad6341dea523926b77604f727fe81b04571dc43a4a9a2a97",
+  "manifest_sha256": "b862eeaa95fe7ce0cd94cb3ea4f12588a068d1212e625b6b29b452ea2fcdbb41",
   "current_md": {
     "lines": 131,
     "bytes": 19574,
