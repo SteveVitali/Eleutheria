@@ -96,7 +96,8 @@ const searchHtmlPath = join(DIST, "search", "index.html");
 if (existsSync(searchHtmlPath)) {
   const shtml = readFileSync(searchHtmlPath, "utf8");
   for (const ref of [...shtml.matchAll(/(?:src|url)="([^"]+\.m?js)"/g)].map((m) => m[1])) {
-    if (/react/i.test(ref)) fail(`/search/ references a react runtime asset: ${ref}`);
+    // Boundary before 'r' — pReact.module.*.js is the shared Preact runtime.
+    if (/(^|[^a-z])react/i.test(ref)) fail(`/search/ references a react runtime asset: ${ref}`);
   }
   const searchChunks = readdirSync(astroDir).filter(
     (f) => f.endsWith(".js") && /SearchIsland/i.test(f),

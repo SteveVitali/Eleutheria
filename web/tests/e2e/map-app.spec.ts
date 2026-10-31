@@ -131,7 +131,9 @@ test.describe("map app shell (P36.37)", () => {
       timeout: 20_000,
     });
     for (const s of scripts) {
-      expect(s, `react runtime must not reach /map/: ${s}`).not.toMatch(/react/i);
+      // A boundary before 'r': pReact.module.*.js is the PREACT runtime the
+      // two migrated islands share (P36.37 + P36.40) — not React.
+      expect(s, `react runtime must not reach /map/: ${s}`).not.toMatch(/(^|[^a-z])react/i);
     }
   });
 
