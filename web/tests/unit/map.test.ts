@@ -245,7 +245,9 @@ describe("bounded jurisdiction indicators (P32.15, SIG-FIND-005)", () => {
     const bound = boundedJurisdictionIndicators(jurisdictionIndicators);
     const listed = bound.reduce((n, j) => n + j.listedIds.length, 0);
     const total = bound.reduce((n, j) => n + j.count, 0);
-    expect(listed).toBe(Math.min(total, bound.length * 50));
+    // Per-jurisdiction cap: each indicator lists min(count_j, 50) — the
+    // P36.36 fixture's 120-record Harris block exercises the capped case.
+    expect(listed).toBe(bound.reduce((n, j) => n + Math.min(j.count, 50), 0));
     expect(total).toBe(MAP_ASSETS.length - partitionByLocatability(MAP_ASSETS).locatable.length);
   });
 });

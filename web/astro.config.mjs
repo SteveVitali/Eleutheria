@@ -5,7 +5,7 @@
 import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
 import * as esbuild from "esbuild";
-import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { join, relative, resolve, sep } from "node:path";
 import sharp from "sharp";
@@ -66,6 +66,20 @@ function sigExportTiles() {
         // page states it), not a build error; only a missing manifest or a
         // listed-but-absent archive fails loud.
         const { tilesDir, files } = resolveTileCopyList(exportDir, mode);
+        // P36.36 (MAP-05): the national static overview — `<dir>/web/map/
+        // overview.svg` ships at `/map/overview.svg` when the bundle emits
+        // it; when it does not, the fixtures sheet MUST NOT ship either (an
+        // honest absence — `getMapOverview()` names it, the page links none).
+        const distMap = join(fileURLToPath(dir), "map");
+        const overviewSrc = join(exportDir, "web", "map", "overview.svg");
+        if (existsSync(overviewSrc)) {
+          mkdirSync(distMap, { recursive: true });
+          cpSync(overviewSrc, join(distMap, "overview.svg"));
+        } else {
+          try {
+            rmSync(join(distMap, "overview.svg"));
+          } catch { /* absent already — nothing to remove */ }
+        }
         if (files.length === 0) return;
         mkdirSync(destDir, { recursive: true });
         for (const f of files) cpSync(join(tilesDir, f), join(destDir, f));

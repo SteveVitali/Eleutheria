@@ -3,34 +3,20 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// The infrastructure map (§39.3). The shipped page is static-first (SIG-UI-036):
-// the data-bearing layers, the coverage-bound point control, the
-// low-coverage≠low-density encoding, the national-zoom bins, and the no-coordinate
-// jurisdiction indicators all render server-side, and the TABULAR EQUIVALENT below
-// is the source of truth and the no-JS/screen-reader path (SIG-UI-037). The map is
-// SERVED from self-hosted static PMTiles v3 — one z0–z14 archive per licence
-// compartment (P31.15, ADR-R9-TILES) with per-source attribution and NO basemap
-// (Q8) — the style is at /map/style.json (SIG-UI-038, SIG-GEO-012/013); the
-// maplibre-gl runtime reaches the page only inside the `/map` island allowance
-// (SIG-UI-047), so archivability and the island budget hold. The combined,
-// licence-mixed /map/points.json is retired (Q9 — R8-1 ending).
-// P34.15 (QW-12/K1 NEW-20/K12b NEW-7): the tables count RECORDS (never "devices"),
-// legend entries with no records are dropped, a value-suppressed bin prints no
-// count, and contested locations roll up to a per-jurisdiction count that leads
-// to the dossier — never a dead task link.
+// The infrastructure map (§39.3). P36.36 (K1 MAP-05, UXR-18): the NO-JS
+// baseline — a ≤ 100 KiB document carrying the static overview figure, the
+// place form and the places table, with every per-record row moved to the
+// paginated `/dossier/<path>/sites/` lists (the interim site-record link
+// target, SIG-UI-068). The interactive renderer is the opt-in T2 surface
+// (P36.37 owns its app half); without JavaScript this page is complete.
 import BaseLayout from "../layouts/BaseLayout.astro";
-// P36.23 (UXK14-3b / O4): the per-record absence is the actionable chip —
-// the one hatch + kind symbol/label + "Help find it ›" to the queue.
 import AbsenceChip from "../components/AbsenceChip.astro";
 import EmptyState from "../components/EmptyState.astro";
 import ViewSwitch from "../components/ViewSwitch.astro";
 import NoJsStateNotice from "../components/NoJsStateNotice.astro";
 import CiteThisView from "../components/CiteThisView.astro";
-import { summariseBy } from "../lib/tables";
 import {
   LAYER_CONTROLS,
-  OBSERVED_LAYERS,
-  DERIVED_LAYERS,
   NATIONAL_ZOOM_MAX,
   POINT_LAYER_ID,
   COVERAGE_LAYER_ID,
@@ -41,75 +27,76 @@ import {
   contestedCount,
   coverageEncoding,
   islandPoints,
-  jurisdictionSlug,
   layerControlsWithData,
   layersWithData,
   boundedJurisdictionIndicators,
   partitionByLocatability,
   readsAsDensity,
   renderBin,
-  technologyLabel,
+  OBSERVED_LAYERS,
+  DERIVED_LAYERS,
 } from "../lib/map";
 import { EMPTY_TILE_STATE_NOTE, mapAttributionLine } from "../lib/map-tiles";
 import {
   dataSource,
   getDossiers,
+  getDossierIndex,
+  getJurisdictionKeyMap,
   getMapSites,
   getMapDensityBins,
+  getMapOverview,
   getCompartmentTileSources,
-  getJurisdictionSlugPaths,
   getLatestReleaseTarget,
-  getEntityCompartments,
-  releasedRecordHref,
-  capRows,
   getSiteMetadata,
+  capRows,
 } from "../lib/data";
+import {
+  buildJurisdictionLookup,
+  buildSitesModel,
+  buildPlaceTable,
+  emittedSiteLists,
+  dossierSitesPath,
+  dossierSitesHref,
+} from "../lib/sites";
 import { dossierPath } from "../lib/dossier";
 import { beliefPinnedPermalink } from "../lib/citation";
+import { withBase } from "../lib/paths";
 import MapIsland from "../islands/MapIsland";
 import "../styles/islands.css";
 
-// The map's assets + national-view density bins flow through the single data seam
-// (ADR-066): committed fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
 const MAP_ASSETS = getMapSites();
 const DENSITY_BINS = getMapDensityBins();
 
 const { locatable, jurisdictionIndicators } = partitionByLocatability(MAP_ASSETS);
-// The no-coordinate enumeration is BOUNDED inline (P32.15, SIG-FIND-005): the
-// honest jurisdiction count is kept, but the id list is capped and the
-// remainder stays navigable through the released compartment browse — the
-// same complete static pagination P32.14 delivered.
-const boundIndicators = boundedJurisdictionIndicators(jurisdictionIndicators);
-// id → asset, so the indicator list below is linear at national scale (not a find per id).
+const boundIndicators = boundedJurisdictionIndicators(jurisdictionIndicators, 10);
 const ASSET_BY_ID = new Map(MAP_ASSETS.map((a) => [a.id, a]));
 const maxCount = Math.max(1, ...DENSITY_BINS.map((b) => b.recordCount));
-// P35.51 (SIG-FIND-005): the bin strip + tabular equivalent were UNBOUNDED —
-// under the real-sized national build (1,100+ cells) the coverage section alone
-// was ~2.4 MB of document. Same P27.5 capRows the asset table already uses:
-// bounded rows, the honest total stated, never a silent drop.
 const allBins = DENSITY_BINS.map((b) => ({ bin: b, render: renderBin(b, maxCount) }));
 const cappedBins = capRows(allBins);
 const bins = cappedBins.rows;
 
-// Build-time cap so the tabular equivalent stays within budget at national scale
-// (tens of thousands of sites); the honest total is preserved. P27.7 adds a build-time
-// per-jurisdiction summary band so a reader sees the shape before the (capped) rows.
-const locatableRows = capRows(locatable);
-const assetsByJurisdiction = summariseBy(locatable, (a) => a.jurisdiction);
-// P35.15a / PKG-07: the declared-technology facet band — grouped by the
-// subject's declared SKOS slug; records with no declaration count honestly
-// under "unreported" (or "conflicted declarations"), never guessed.
-const assetsByTechnology = summariseBy(locatable, (a) => technologyLabel(a));
+// P36.36 (MAP-05): the per-dossier sites model — every record resolves to its
+// deepest published dossier; the places table and the sites lists derive from
+// the SAME resolution, so the counts reconcile by construction.
+const DOSSIERS = getDossiers();
+const lookup = buildJurisdictionLookup(
+  DOSSIERS,
+  getDossierIndex(),
+  getJurisdictionKeyMap(),
+);
+const sitesModel = buildSitesModel(MAP_ASSETS, lookup);
+const places = buildPlaceTable(sitesModel, DOSSIERS);
+// P36.36 (UXR-18 / SIG-UI-068): record id → its emitted sites-list page — the
+// interim per-record link target; only lists that actually emit (≥ 1 located
+// record) may be linked, so an anchor can never 404.
+const SLUG_BY_ASSET_ID = new Map(
+  emittedSiteLists(sitesModel).flatMap((l) => l.rows.map((r) => [r.id, l.slug] as const)),
+);
+const siteRecordHref = (id: string): string | null => {
+  const slug = SLUG_BY_ASSET_ID.get(id);
+  return slug ? withBase(dossierSitesHref(slug, id)) : null;
+};
 
-// Which layer id each control governs, for the "bound control" display.
-const boundControl = LAYER_CONTROLS.find(
-  (c) => c.governs.includes(POINT_LAYER_ID) && c.governs.includes(COVERAGE_LAYER_ID),
-)!;
-
-// P34.15 (QW-12): a legend entry implies data — controls and layer labels are
-// listed ONLY when a layer they name carries records in this build. Today the
-// map draws device points/indicators (physical_devices) and the coverage
-// underlay; every other §39.3 layer has no records yet and is not listed.
 const DATA_LAYER_IDS: ReadonlySet<string> = new Set([
   ...(MAP_ASSETS.length > 0 ? [POINT_LAYER_ID] : []),
   ...(bins.length > 0 ? [COVERAGE_LAYER_ID] : []),
@@ -119,74 +106,38 @@ const layersDropped = visibleControls.length < LAYER_CONTROLS.length;
 const observedWithData = layersWithData(OBSERVED_LAYERS, DATA_LAYER_IDS);
 const derivedWithData = layersWithData(DERIVED_LAYERS, DATA_LAYER_IDS);
 
-// P34.15 (K12b NEW-7): the retired per-record "⚠ Unresolved" affordances (dead
-// /task/new/ links) become a per-jurisdiction contested count that leads to the
-// dossier — only where a dossier with the jurisdiction's slug exists, so the
-// count never links to a 404. The count covers ALL of the indicator's records,
-// not just the inline-listed cap. A partial export tree without dossiers.json
-// degrades to the count without the link — never a build failure, never a 404.
-const DOSSIER_SLUGS = new Set(
-  (() => {
-    try {
-      return getDossiers().map((d) => d.slug);
-    } catch {
-      return [] as string[];
-    }
-  })(),
-);
+const DOSSIER_SLUGS = new Set(DOSSIERS.map((d) => d.slug));
 const CONTESTED_BY_JURISDICTION = new Map(
   jurisdictionIndicators.map((j) => [
     j.jurisdiction,
     contestedCount(j.assetIds, ASSET_BY_ID),
   ]),
 );
-// P35.45: a canonical jurisdiction key resolves to its SLUG PATH through the
-// export's key map (`usa/ca`), never a re-derived slug; a key whose dossier is
-// under the publication threshold links nowhere — never a 404. The flat
-// `jurisdictionSlug` fallback keeps pre-keyed exports and fixtures working.
-const SLUG_PATHS = (() => {
-  try {
-    return getJurisdictionSlugPaths() ?? new Map<string, string>();
-  } catch {
-    return new Map<string, string>();
-  }
-})();
+// P36.36: contested counts lead to the dossier the records resolve to —
+// the keyed canonical slug path, never a re-derived flat slug.
 const dossierSlugFor = (jurisdiction: string): string | null => {
-  const slug = SLUG_PATHS.get(jurisdiction) ?? jurisdictionSlug(jurisdiction);
-  return DOSSIER_SLUGS.has(slug) ? slug : null;
+  const asset = jurisdictionIndicators
+    .find((j) => j.jurisdiction === jurisdiction)
+    ?.assetIds.map((id) => ASSET_BY_ID.get(id))
+    .find((a) => a !== undefined);
+  if (asset) {
+    const key = asset.jurisdictionKey ?? (asset.jurisdiction.includes(":") ? asset.jurisdiction : null);
+    const slug = key ? lookup.slugByJkey.get(key) ?? null : null;
+    if (slug && DOSSIER_SLUGS.has(slug)) return slug;
+  }
+  return null;
 };
 
-// A tiny static bin strip so the low-coverage≠low-density encoding is visible.
 const cell = 64;
 
-// P27.9 (ADR-097): the OPT-IN interactive map island. It draws ONLY the already
-// tier-reduced, publishable points (§19.4) — the same `locatable` set the table
-// below renders — so it can never imply more precision than SIG published, and it is
-// a progressive enhancement layered over that table, never a replacement (SIG-UI-050).
-// P31.15 (ADR-R9-TILES): the island layers the per-compartment PMTiles archives the
-// export ships (one attributed source per compartment — never the retired,
-// licence-mixed /map/points.json). A build with no archives (the fixtures) passes the
-// small inline fallback list instead.
+// The opt-in interactive island (unchanged T2 surface — P36.37's app row).
 const TILE_SOURCES = getCompartmentTileSources();
-// P34.34a: an export carrying no tile archives is HONEST, not broken — the
-// map page says so explicitly rather than showing a blank canvas that could
-// read as "nothing exists". Fixtures mode is already labelled demo data.
 const EMPTY_TILE_STATE = dataSource() === "export" && TILE_SOURCES.length === 0;
-// P34.21a / E2-12: the attribution line names the upstream sources actually
-// drawn (each compartment's ATTRIBUTION.json), never the generic SIG line.
 const ATTRIBUTION_LINE = mapAttributionLine(TILE_SOURCES);
 const ISLAND_POINT_COUNT = locatable.filter((a) => a.lat !== null && a.lon !== null).length;
 const ISLAND_FALLBACK_POINTS = TILE_SOURCES.length === 0 ? islandPoints(locatable) : [];
 
-// P32.15 (SIG-FIND-004): the shared workspace state — the latest activated
-// release the `release=` param defaults to, the compartment set the island's
-// switch governs (tile archives in export mode; the release catalog's
-// compartments otherwise), and the specific released-record hrefs the table
-// links where the release maps an asset id.
 const LATEST = getLatestReleaseTarget();
-const entityComps = LATEST ? getEntityCompartments() : new Map();
-const recordHref = (id: string): string | null =>
-  releasedRecordHref(LATEST, entityComps, id);
 const ISLAND_COMPARTMENTS = TILE_SOURCES.length > 0
   ? TILE_SOURCES.map((t) => ({
       id: t.compartment,
@@ -195,16 +146,6 @@ const ISLAND_COMPARTMENTS = TILE_SOURCES.length > 0
     }))
   : (LATEST?.compartments.map((c) => ({ id: c.compartment, license: c.license })) ?? []);
 const meta = getSiteMetadata();
-// The client:only island mounts ~32.9 rem of chrome + 24 rem canvas (measured
-// on the fixtures build); each licence-compartment row adds ~1.4 rem — all
-// build-known — so the mount skeleton reserves exactly that height and
-// hydration never shifts the tables below (the ratified T2-map CLS ≤ 0.05).
-// P36.19 (UXK0-3, K0 §4.8): the reserved height rides a --k<N> CLASS, never a
-// style="" attribute (the strict CSP ships no style-src-attr exception). The
-// class holds 32 + 1.4 × N rem for N = extra compartment rows past the
-// baseline two — the same formula — and islands.css generates k0…k24; a
-// build naming a 27th compartment fails loud here, never silently
-// under-reserves.
 const PLACEHOLDER_MAX_K = 24;
 const placeholderK = Math.max(0, ISLAND_COMPARTMENTS.length - 2);
 if (placeholderK > PLACEHOLDER_MAX_K) {
@@ -220,6 +161,13 @@ const mapCitationHref = beliefPinnedPermalink({
   asOf: meta.asOf,
   rulesetVersion: meta.rulesetVersion,
 });
+const overview = getMapOverview();
+// The place form's native suggestions — the same display-name lookup the
+// dossier index uses, bounded so the document stays inside its wire budget.
+const PLACE_OPTIONS_MAX = 200;
+const placeRows = getDossierIndex().slice(0, PLACE_OPTIONS_MAX);
+const placeOptionLabel = (d: (typeof placeRows)[number]) =>
+  d.display_name ?? d.name ?? d.subject_label;
 ---
 
 <BaseLayout title="Infrastructure map" path="/map/">
@@ -232,24 +180,22 @@ const mapCitationHref = beliefPinnedPermalink({
 
   <ViewSwitch view="map" release={LATEST?.publicationId ?? null} />
 
-  <!-- The OPT-IN interactive map island (P27.9, ADR-097; exercises SIG-UI-047).
-       It hydrates only here; with JavaScript disabled this block is empty and the
-       tabular equivalent below is the full, usable surface (SIG-UI-037/050). -->
+  <!-- The OPT-IN interactive map island (P27.9, ADR-097; exercises SIG-UI-047). -->
   <section class="sig-island sig-map-island" aria-labelledby="map-island-heading" data-testid="map-island-section">
     <h2 id="map-island-heading">Interactive map</h2>
     <NoJsStateNotice
       params={["release", "collection", "jurisdiction", "frame", "bbox", "at", "layers", "basemap", "focus", "view"]}
       equivalents={[
-        { href: "#assets-heading", label: "the located-records table" },
+        { href: "#overview-heading", label: "the static overview" },
+        { href: "#places-heading", label: "the places table" },
         { href: "#bins-table-heading", label: "the coverage-bins table" },
-        { href: "#nocoord-heading", label: "the records-without-a-point list" },
       ]}
     />
     <CiteThisView
       view="map"
       release={LATEST?.publicationId ?? null}
       equivalents={[
-        { href: "#assets-heading", label: "the located-records table" },
+        { href: "#places-heading", label: "the places table" },
         { href: "#bins-table-heading", label: "the coverage-bins table" },
       ]}
     />
@@ -260,13 +206,6 @@ const mapCitationHref = beliefPinnedPermalink({
     )}
     {ISLAND_POINT_COUNT > 0 ? (
       <>
-        {/* Mount skeleton (P35.51 — the T2-map CLS budget row is ratified
-            law): client:only emits no SSR markup, so without a reserved
-            block the island's mount inserts ~30 rem and pushes every
-            following section down — a real layout shift the export leg
-            measured at 0.073 vs the ≤ 0.05 ceiling. This sibling reserves
-            the mounted height, hides itself via :has() the moment the
-            island root exists, and stays truthful with JavaScript off. */}
         <div
           class={`sig-island__placeholder sig-island__placeholder--k${placeholderK}`}
           data-testid="map-island-placeholder"
@@ -297,11 +236,61 @@ const mapCitationHref = beliefPinnedPermalink({
     </p>
   </section>
 
+  <!-- P36.36 (MAP-05, SIG-UI-105): the static national overview — a build-time
+       SVG figure (FIG-01a) with its own attribution; the places table below is
+       its tabular equivalent. -->
+  <h2 id="overview-heading" data-copy="SL-MAP-04">Static overview</h2>
+  {overview !== null ? (
+    <figure aria-labelledby="overview-caption">
+      <img
+        src={withBase(overview.href)}
+        alt="National overview of published located records — binned density over jurisdiction outlines"
+        data-testid="map-overview"
+        loading="eager"
+        decoding="async"
+      />
+      <figcaption id="overview-caption" data-copy="SL-MAP-05">
+        A build-time static rendition of the located records, binned so no single
+        point implies more precision than SIG published. The places table below is
+        its tabular equivalent (SIG-UI-037).
+      </figcaption>
+    </figure>
+  ) : (
+    <p class="sig-island__note" data-testid="map-overview-absent" data-copy="SL-MAP-06">
+      This export does not emit the drawn overview figure — the places table
+      below carries the same counts (SIG-ENG-042: an honest absence, never a
+      fabricated map).
+    </p>
+  )}
+
+  <!-- The place form (K1 §5 / C-24): a zero-JS GET to the release-pinned
+       search's place kind; the A–Z directory is the static fallback. -->
+  <form
+    method="get"
+    action={withBase("search/")}
+    class="sig-place-search"
+    data-testid="place-search-form"
+  >
+    <label for="map-place-q">Find a place:</label>{" "}
+    <input id="map-place-q" type="search" name="q" maxlength={200} size={30} placeholder="State, county or city" list="map-place-names" />
+    <input type="hidden" name="type" value="place" />
+    <button type="submit">Search</button>{" "}
+    <datalist id="map-place-names">
+      {placeRows.map((d) => (
+        <option data-slug={d.slug} value={placeOptionLabel(d)} />
+      ))}
+    </datalist>{" "}
+    <span class="sig-place-search__note" data-testid="place-search-fallback" data-copy="SL-MAP-07">
+      If search cannot be reached, the first letter of a place's name finds it in the{" "}
+      <a href={withBase("dossier/a-z/")}>A–Z directory</a>.
+    </span>
+  </form>
+
   <!-- Layers (SIG-UI-016): observed layers, plus DERIVED layers flagged distinct. -->
   <h2 id="layers-heading">Layers</h2>
   <ul class="sig-layer-controls" data-testid="map-layer-controls" aria-labelledby="layers-heading">
     {visibleControls.map((c) => {
-      const bound = c.id === boundControl.id;
+      const bound = c.id === "devices_and_coverage";
       return (
         <li
           class="sig-layer-control"
@@ -340,6 +329,84 @@ const mapCitationHref = beliefPinnedPermalink({
     </div>
   </details>
 
+  <!-- P36.36 (MAP-05, SIG-UI-105): the places table — the located-records
+       tabular equivalent, grouped by country, ≤ 70 rows, every count shown
+       with its coverage, and each jurisdiction's own paginated sites list. -->
+  <h2 id="places-heading" data-copy="MP-07">Located records (tabular equivalent)</h2>
+  <p data-copy="SL-MAP-08">
+    Every jurisdiction SIG has located records in, with its own full site
+    list — a paginated page per place, the interim per-record link target.
+  </p>
+  {places.totalRows === 0 && <EmptyState surface="mapAssets" />}
+  {places.totalRows > 0 && (
+    <>
+      <div class="sig-table-wrap" data-testid="assets-summary">
+      <table class="sig-table" aria-labelledby="places-heading" data-testid="places-table">
+        <thead>
+          <tr>
+            <th scope="col">Place</th>
+            <th scope="col">Published located records</th>
+            <th scope="col">Sources</th>
+            <th scope="col">Share single-source</th>
+            <th scope="col">No published point</th>
+            <th scope="col">Site list</th>
+          </tr>
+        </thead>
+        <tbody>
+          {places.groups.map((g) => (
+            <>
+              <tr data-testid="places-country" data-country={g.countrySlug}>
+                <th scope="rowgroup" colspan="6">
+                  {DOSSIER_SLUGS.has(g.countrySlug) ? (
+                    <a href={withBase(dossierPath(g.countrySlug).replace(/^\//, ""))}>{g.countryName}</a>
+                  ) : (
+                    g.countryName
+                  )}
+                </th>
+              </tr>
+              {g.rows.map((r) => (
+                <tr data-testid="map-places-row" data-slug={r.slug} data-level={r.level ?? ""}>
+                  <th scope="row">
+                    <a href={withBase(dossierPath(r.slug).replace(/^\//, ""))}>{r.name}</a>
+                  </th>
+                  <td data-testid="places-located">{r.located}</td>
+                  <td data-testid="places-sources">{r.sources ?? "not recorded"}</td>
+                  <td data-testid="places-single-source">
+                    {r.singleSourceShare !== null
+                      ? `${Math.round(r.singleSourceShare * 100)}%`
+                      : "not recorded"}
+                  </td>
+                  <td data-testid="places-no-point">{r.noPoint}</td>
+                  <td>
+                    {r.hasSitesList ? (
+                      <a href={withBase(dossierSitesPath(r.slug))} data-testid="sites-list-link">Site list</a>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </>
+          ))}
+        </tbody>
+      </table>
+      </div>
+      {places.truncated > 0 && (
+        <p class="sig-table-note" data-testid="places-truncation-note">
+          Showing {places.totalRows - places.truncated} of {places.totalRows} jurisdictions — the{" "}
+          <a href={withBase("dossier/")}>dossier index</a> lists every place.
+        </p>
+      )}
+      {places.unresolvedRecords > 0 && (
+        <p class="sig-table-note" data-testid="places-unresolved">
+          {places.unresolvedRecords} record{places.unresolvedRecords === 1 ? "" : "s"} placed to no
+          published dossier in this build — they remain in the export bundle and the API, never
+          guessed into a jurisdiction.
+        </p>
+      )}
+    </>
+  )}
+
   <!-- National-zoom density bins with the low-coverage≠low-density encoding. -->
   <h2 id="coverage-heading">National view: density binning with coverage (SIG-UI-018/019)</h2>
   <p>
@@ -369,9 +436,6 @@ const mapCitationHref = beliefPinnedPermalink({
             stroke={render.coverage.hatched ? "var(--sig-epi-absence-ink)" : "var(--sig-rule)"}
             stroke-dasharray={render.coverage.hatched ? "3 2" : undefined}
           >
-            {/* P35.20b (ED-44): the title reads the SAME suppression decision the
-                table prints — one function (binCountLabel via binAriaLabel), one
-                source of truth; a suppressed figure leaks nowhere. */}
             <title>{binAriaLabel(bin)}</title>
           </rect>
           <text x={i * cell + cell / 2} y={cell + 12} text-anchor="middle" font-size="9">
@@ -410,11 +474,6 @@ const mapCitationHref = beliefPinnedPermalink({
     </thead>
     <tbody>
       {bins.map(({ bin }) => {
-        // P35.20b (ED-44): the cell's jurisdiction is the scheme-qualified key
-        // (placement `jurisdiction_key` when bound, else the declared-scheme
-        // bucket); a cell spanning several keys discloses the split so the
-        // plurality label is never mistaken for the whole cell and the per-key
-        // sums reconcile with the dossier geolocated denominators.
         const keys = binJurisdictionKeys(bin);
         const mixed = keys.length > 1;
         return (
@@ -446,84 +505,6 @@ const mapCitationHref = beliefPinnedPermalink({
   </table>
   </div>
 
-  <!-- The tabular equivalent for the asset points + jurisdiction indicators. -->
-  <h2 id="assets-heading" data-copy="MP-07">Located records (tabular equivalent)</h2>
-  {locatable.length === 0 ? (
-    <EmptyState surface="mapAssets" />
-  ) : (
-    <>
-      <!-- Build-time per-jurisdiction summarisation: the shape before the rows. -->
-      <ul class="sig-table-summary" data-testid="assets-summary">
-        {assetsByJurisdiction.map((b) => (
-          <li data-testid="assets-summary-item" data-jurisdiction={b.label}>
-            <span class="sig-table-summary__count">{b.count}</span> {b.label}
-          </li>
-        ))}
-      </ul>
-      <!-- P35.15a / PKG-07: the same shape over the declared technology slug. -->
-      <ul class="sig-table-summary" data-testid="technology-summary">
-        {assetsByTechnology.map((b) => (
-          <li data-testid="technology-summary-item" data-technology={b.label}>
-            <span class="sig-table-summary__count">{b.count}</span> {b.label}
-          </li>
-        ))}
-      </ul>
-      {locatableRows.truncated && (
-        <p class="sig-table-note" data-testid="assets-truncation-note">
-          <span data-copy="MP-09">Showing the first {locatableRows.shown} of {locatableRows.total} located records</span>
-          {LATEST ? (
-            <>
-              {" "}— every released record remains navigable in the{" "}
-              {LATEST.compartments.map((c, i) => (
-                <>
-                  {i > 0 && " · "}
-                  <a href={c.overviewHref}>compartment browse</a>
-                </>
-              ))}{" "}
-              and the export bundle/API (SIG-UI-037).
-            </>
-          ) : (
-            <>; the full set is in the export bundle and the API (SIG-UI-037).</>
-          )}
-        </p>
-      )}
-      <div class="sig-table-wrap">
-      <table class="sig-table" aria-labelledby="assets-heading">
-        <thead>
-      <tr>
-        <th scope="col" data-copy="MP-08">Record</th>
-        <th scope="col">Technology</th>
-        <th scope="col">Jurisdiction</th>
-        <th scope="col">Tier</th>
-        <th scope="col">Latitude</th>
-        <th scope="col">Longitude</th>
-        <th scope="col">Published precision</th>
-      </tr>
-    </thead>
-    <tbody>
-      {locatableRows.rows.map((a) => (
-        <tr data-testid="map-asset-row">
-          <th scope="row">
-            {recordHref(a.id) ? (
-              <a href={recordHref(a.id)!} data-testid="map-asset-record">{a.label}</a>
-            ) : (
-              a.label
-            )}
-          </th>
-          <td data-testid="map-asset-technology">{technologyLabel(a)}</td>
-          <td>{a.jurisdiction}</td>
-          <td>{a.tier}</td>
-          <td>{a.lat}</td>
-          <td>{a.lon}</td>
-          <td>{a.precision}</td>
-        </tr>
-      ))}
-        </tbody>
-      </table>
-      </div>
-    </>
-  )}
-
   <!-- No-coordinate records: jurisdiction indicators, never dropped (SIG-UI-020). -->
   <h2 id="nocoord-heading" data-copy="MP-10">Records without a published point</h2>
   <p data-copy="MP-14 MP-15">
@@ -541,7 +522,7 @@ const mapCitationHref = beliefPinnedPermalink({
       <li data-testid="jurisdiction-indicator" data-count={j.count}>
         <strong>{j.jurisdiction}</strong>: <span data-copy="MP-11">{j.count} record(s) with no published point.</span>
         {contested > 0 && dossierSlug !== null && (
-          <span class="sig-jurisdiction-contested" data-testid="jurisdiction-contested" data-count={contested} data-copy="MP-12"> — {contested} contested; see the <a href={dossierPath(dossierSlug)} data-testid="contested-dossier-link">{j.jurisdiction} dossier</a>.</span>
+          <span class="sig-jurisdiction-contested" data-testid="jurisdiction-contested" data-count={contested} data-copy="MP-12"> — {contested} contested; see the <a href={withBase(dossierPath(dossierSlug).replace(/^\//, ""))} data-testid="contested-dossier-link">{j.jurisdiction} dossier</a>.</span>
         )}
         {contested > 0 && dossierSlug === null && (
           <span class="sig-jurisdiction-contested" data-testid="jurisdiction-contested" data-count={contested} data-copy="MP-13"> — {contested} contested.</span>
@@ -549,7 +530,7 @@ const mapCitationHref = beliefPinnedPermalink({
         <ul>
           {j.listedIds.map((id) => {
             const asset = ASSET_BY_ID.get(id)!;
-            const href = recordHref(asset.id);
+            const href = siteRecordHref(id);
             return (
               <li>
                 {href ? <a href={href}>{asset.label}</a> : asset.label} — {asset.precision}
@@ -569,21 +550,7 @@ const mapCitationHref = beliefPinnedPermalink({
         {j.truncated && (
           <p class="sig-table-note" data-testid="indicator-bounds-note">
             … and {j.count - j.listedIds.length} more in {j.jurisdiction} — every record
-            remains navigable
-            {LATEST ? (
-              <>
-                {" "}in the{" "}
-                {LATEST.compartments.map((c, i) => (
-                  <>
-                    {i > 0 && " · "}
-                    <a href={c.overviewHref}>released compartment browse</a>
-                  </>
-                ))}
-                .
-              </>
-            ) : (
-              <> in the export bundle and the API.</>
-            )}
+            remains navigable through its dossier's sites list and the export bundle.
           </p>
         )}
       </li>

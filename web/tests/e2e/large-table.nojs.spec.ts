@@ -86,5 +86,5 @@ test("the map's tabular equivalent carries a build-time per-jurisdiction summary
 }) => {
   await page.goto("/map/");
   await expect(page.getByTestId("assets-summary")).toBeVisible();
-  expect(await page.getByTestId("assets-summary-item").count()).toBeGreaterThan(0);
+  expect(await page.getByTestId("map-places-row").count()).toBeGreaterThan(0);
 });

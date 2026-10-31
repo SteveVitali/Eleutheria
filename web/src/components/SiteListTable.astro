@@ -1,0 +1,133 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.36 (K1 §5): the sites-list table — the cross-compartment reading view.
+// Rows group by licence compartment with a licence line per group; every row
+// carries its `#<key>` anchor (the UXR-18 interim site-record link target).
+// Coordinates print only at the published precision — the model already
+// suppresses a finer point, so a renderer can never leak one.
+import { siteAnchor, dossierSitesPagePath, NOT_STATED } from "../lib/sites";
+import type { SiteList, SiteRow } from "../lib/sites";
+import { withBase } from "../lib/paths";
+
+interface Props {
+  list: SiteList;
+  rows: SiteRow[];
+}
+const { list, rows } = Astro.props;
+const compartments = list.compartments.filter((c) => rows.some((r) => r.compartment === c));
+const multi = compartments.length > 1;
+---
+
+{multi ? (
+  compartments.map((comp) => {
+    const group = rows.filter((r) => r.compartment === comp);
+    const licence = group.find((r) => r.licence !== null)?.licence ?? null;
+    return (
+      <section aria-labelledby={`comp-${comp ?? "unassigned"}`} data-testid="sites-compartment" data-compartment={comp ?? "unassigned"}>
+        <h2 id={`comp-${comp ?? "unassigned"}`}>
+          Compartment: <code data-testid="sites-compartment-name">{comp ?? "unassigned"}</code>
+        </h2>
+        <p class="sig-table-note" data-testid="sites-licence-line" data-copy="SL-MAP-03">
+          {licence ? `Licence: ${licence}` : "Licence: not stated"}
+          {comp === null && " — this group is outside every named licence compartment."}
+        </p>
+        <div class="sig-table-wrap">
+          <table class="sig-table" data-testid="sites-table">
+            <thead>
+              <tr>
+                <th scope="col">Record</th>
+                <th scope="col">Technology</th>
+                <th scope="col">Operator</th>
+                <th scope="col">Source</th>
+                <th scope="col">First seen</th>
+                <th scope="col">Last seen</th>
+                <th scope="col">Status</th>
+                <th scope="col">Published precision</th>
+                <th scope="col">Coordinates</th>
+              </tr>
+            </thead>
+            <tbody>
+              {group.map((r) => (
+                <tr id={siteAnchor(r.id)} data-testid="site-row" data-tier={r.tier}>
+                  <th scope="row">
+                    <a href={`#${siteAnchor(r.id)}`} data-testid="site-anchor">{r.label}</a>
+                  </th>
+                  <td>{r.technology}</td>
+                  <td>{r.operator ?? NOT_STATED}</td>
+                  <td>
+                    {r.sources ? (
+                      <a href={withBase("sources/")}>{r.sources.join("; ")}</a>
+                    ) : (
+                      NOT_STATED
+                    )}
+                  </td>
+                  <td>{r.firstSeen ? <time datetime={r.firstSeen}>{r.firstSeen}</time> : NOT_STATED}</td>
+                  <td>{r.lastSeen ? <time datetime={r.lastSeen}>{r.lastSeen}</time> : NOT_STATED}</td>
+                  <td>{r.status ?? NOT_STATED}{r.contested ? " · contested" : ""}</td>
+                  <td>{r.precision}</td>
+                  <td>
+                    {r.lat !== null && r.lon !== null ? (
+                      <span data-testid="site-coords">{r.lat.toFixed(4)}, {r.lon.toFixed(4)}</span>
+                    ) : (
+                      <span data-testid="site-no-coords">{r.precision}</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    );
+  })
+) : (
+  <div class="sig-table-wrap">
+    <table class="sig-table" data-testid="sites-table">
+      <thead>
+        <tr>
+          <th scope="col">Record</th>
+          <th scope="col">Technology</th>
+          <th scope="col">Operator</th>
+          <th scope="col">Source</th>
+          <th scope="col">First seen</th>
+          <th scope="col">Last seen</th>
+          <th scope="col">Status</th>
+          <th scope="col">Published precision</th>
+          <th scope="col">Coordinates</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr id={siteAnchor(r.id)} data-testid="site-row" data-tier={r.tier}>
+            <th scope="row">
+              <a href={`#${siteAnchor(r.id)}`} data-testid="site-anchor">{r.label}</a>
+            </th>
+            <td>{r.technology}</td>
+            <td>{r.operator ?? NOT_STATED}</td>
+            <td>
+              {r.sources ? (
+                <a href={withBase("sources/")}>{r.sources.join("; ")}</a>
+              ) : (
+                NOT_STATED
+              )}
+            </td>
+            <td>{r.firstSeen ? <time datetime={r.firstSeen}>{r.firstSeen}</time> : NOT_STATED}</td>
+            <td>{r.lastSeen ? <time datetime={r.lastSeen}>{r.lastSeen}</time> : NOT_STATED}</td>
+            <td>{r.status ?? NOT_STATED}{r.contested ? " · contested" : ""}</td>
+            <td>{r.precision}</td>
+            <td>
+              {r.lat !== null && r.lon !== null ? (
+                <span data-testid="site-coords">{r.lat.toFixed(4)}, {r.lon.toFixed(4)}</span>
+              ) : (
+                <span data-testid="site-no-coords">{r.precision}</span>
+              )}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
