@@ -68,7 +68,7 @@ const MAP_ASSETS = getMapSites();
 const DENSITY_BINS = getMapDensityBins();
 
 const { locatable, jurisdictionIndicators } = partitionByLocatability(MAP_ASSETS);
-const boundIndicators = boundedJurisdictionIndicators(jurisdictionIndicators, 10);
+const boundIndicators = boundedJurisdictionIndicators(jurisdictionIndicators, 3);
 const ASSET_BY_ID = new Map(MAP_ASSETS.map((a) => [a.id, a]));
 const maxCount = Math.max(1, ...DENSITY_BINS.map((b) => b.recordCount));
 const allBins = DENSITY_BINS.map((b) => ({ bin: b, render: renderBin(b, maxCount) }));
