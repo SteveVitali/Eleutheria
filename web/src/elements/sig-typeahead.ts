@@ -14,14 +14,30 @@
  * closes the listbox and the form still submits. Every injected node is
  * `[data-enhancement]` for the SIG-UI-091 parity sweep.
  */
-import { isShard, matchEntries, shardKey, type TypeaheadEntry } from "./typeahead-model";
+import {
+  isShard,
+  matchEntries,
+  shardKey,
+  type TypeaheadEntry,
+  type TypeaheadShard,
+} from "./typeahead-model";
 
 const uid = (() => {
   let n = 0;
   return () => `sig-typeahead-${++n}`;
 })();
 
-class SigTypeahead extends HTMLElement {
+// P36.40: SSR-safe — a T2 island bundle imports this module to register the
+// element under its own `/_astro/` graph, and Astro evaluates the island's
+// module graph during server-side rendering where `HTMLElement` does not
+// exist. The class is never instantiated there (there is no DOM to mount),
+// so the browser-only base is a stand-in under SSR only.
+const HTMLElementBase: typeof HTMLElement =
+  typeof HTMLElement === "undefined"
+    ? (class {} as unknown as typeof HTMLElement)
+    : HTMLElement;
+
+class SigTypeahead extends HTMLElementBase {
   private enhanced = false;
 
   connectedCallback() {
@@ -59,18 +75,23 @@ class SigTypeahead extends HTMLElement {
     input.setAttribute("aria-controls", list.id);
     input.setAttribute("autocomplete", "off");
 
-    const shards = new Map<string, Promise<TypeaheadEntry[]>>();
+    const shards = new Map<string, Promise<TypeaheadShard>>();
     let options: TypeaheadEntry[] = [];
     let active = -1;
     let open = false;
 
-    const loadShard = (key: string): Promise<TypeaheadEntry[]> => {
+    const loadShard = (key: string): Promise<TypeaheadShard> => {
       let p = shards.get(key);
       if (p === undefined) {
         p = fetch(`${root}${key}.json`)
           .then((r) => (r.ok ? r.json() : null))
-          .then((doc) => (isShard(doc) && doc.key === key ? doc.entries : []))
-          .catch(() => []);
+          .then(
+            (doc): TypeaheadShard =>
+              isShard(doc) && doc.key === key
+                ? doc
+                : { schema: "sig.typeahead-shard/1", key, entries: [] },
+          )
+          .catch((): TypeaheadShard => ({ schema: "sig.typeahead-shard/1", key, entries: [] }));
         shards.set(key, p);
       }
       return p;
@@ -103,6 +124,12 @@ class SigTypeahead extends HTMLElement {
           kind.textContent = entry.kind;
           li.append(" ", kind);
         }
+        if (entry.detail !== undefined && entry.detail !== "") {
+          const detail = document.createElement("span");
+          detail.className = "sig-typeahead-detail";
+          detail.textContent = entry.detail;
+          li.append(" ", detail);
+        }
         li.addEventListener("pointerdown", (e) => {
           // pointerdown (not click) so the choice lands before blur closes.
           e.preventDefault();
@@ -127,10 +154,19 @@ class SigTypeahead extends HTMLElement {
         status.textContent = "";
         return;
       }
-      const entries = await loadShard(key);
+      let shard = await loadShard(key);
+      // P36.40's split shards: a `deeper` bucket split one character down —
+      // once the query's first run is longer than this shard's key, refetch
+      // the deeper shard for the full set (the parent shard carries only a
+      // bounded representative set by construction).
+      const run = /^[a-z0-9]+/i.exec(q)?.[0].toLowerCase() ?? "";
+      if (shard.deeper === true && run.length > key.length) {
+        const deepKey = (run + run.slice(-1).repeat(key.length + 1)).slice(0, key.length + 1);
+        if (deepKey !== key) shard = await loadShard(deepKey);
+      }
       // A slower shard reply must never overwrite a newer query.
       if (input.value.trim() !== q) return;
-      options = matchEntries(entries, q).slice(0, maxItems);
+      options = matchEntries(shard.entries, q).slice(0, maxItems);
       // Nothing pre-selected: Enter still submits the plain GET form unless
       // the user actively arrows onto an option (the no-JS path, preserved).
       active = -1;
