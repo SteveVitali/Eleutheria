@@ -136,7 +136,7 @@
             "resource-summary:script:size": [
               "error",
               {
-                "maxNumericValue": 524288
+                "maxNumericValue": 368640
               }
             ],
             "resource-summary:document:size": [
@@ -185,12 +185,6 @@
           "warnTwin": true,
           "matchingUrlPattern": ".*/map/.*",
           "assertions": {
-            "resource-summary:script:size": [
-              "warn",
-              {
-                "maxNumericValue": 368640
-              }
-            ],
             "total-blocking-time": [
               "warn",
               {
