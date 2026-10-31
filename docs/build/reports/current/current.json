@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "44dfab751e4ed66ff2d4ff4f81d0537299d914b8",
-  "manifest_inputs": 1155,
+  "input_commit": "12f1ce71e39f350e31b069c203ce3e327ed2258d",
+  "manifest_inputs": 1156,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P36.40",
-    "lastCompleted": "P36.39",
+    "nextTicket": "P36.41",
+    "lastCompleted": "P36.40",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.76,P36.77,P36.78,P36.79,P37.2",
@@ -33,7 +33,7 @@
     "terminal": 81,
     "events": 712,
     "transitions": 51,
-    "coverage_assessments": 489,
+    "coverage_assessments": 490,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -20400,6 +20400,16 @@
         "assessment_id": "SIG-SRCH-010:r11-1"
       },
       {
+        "requirement_id": "SIG-SRCH-010",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-10-31",
+        "code_revision": "r11/P36.40-typeahead-header-element-search-rewrite @ 12f1ce71e39f350e31b069c203ce3e327ed2258d",
+        "limitations": "landing re-verdict at P36.40 (PR #403): the APG combobox runs over static per-release `sig.typeahead-shard/1` shards — word-start keys + K3 stop words, 3-char `deeper` split, hard fail past the ≤50 KiB bound; no keystroke reaches a server (the same-origin e2e assertion counts requests); the shared-root conformance harness fails on divergence across the header/hero/corpus/dossier-index mounts (map place search + explorer search-to-node join at P37.19/P37.26). Verified at the implementation domain; live_verification=false. Owed legs: per-release shard content rides the next release's publish path — D-R10-PUBLISH-1 (OPEN); keystroke-to-suggestion ≤100 ms at 4× CPU throttle is asserted by the budgeted T1/T2 wire suite's local measures, the throttled verdict rides the same live leg.",
+        "supersedes": "SIG-SRCH-010:r11-1",
+        "assessment_id": "SIG-SRCH-010:r11-2"
+      },
+      {
         "requirement_id": "SIG-SRCH-011",
         "domain": "public",
         "verdict": "MISSING",
@@ -23974,6 +23984,11 @@
           "assessed_at": "2026-10-24"
         },
         {
+          "requirement": "SIG-SRCH-010",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-10-31"
+        },
+        {
           "requirement": "SIG-SRCH-011",
           "verdict": "MISSING",
           "assessed_at": "2026-10-24"
@@ -25157,7 +25172,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "4024ccab2cba7bf173a86e7f8be822f16896152fd8a675870a2e5300fd00c86e",
+  "manifest_sha256": "ec21eefa712e65ca910f0f81ab6e260e716955c31f068a1e1c1cb1eb35e95567",
   "current_md": {
     "lines": 132,
     "bytes": 19783,
