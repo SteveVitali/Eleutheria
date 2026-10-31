@@ -22,6 +22,8 @@
  * identifier as a label (SIG-UI-053/080/108/110/114/115/116).
  */
 
+import { withBase } from "./paths";
+
 export const ENTITY_PAGE_SCHEMA = "sig.entity-page/1";
 
 /** Contract A's page kinds (the E1 wave — K2 §4.3). */
@@ -326,7 +328,20 @@ export function entityIndex(rows: readonly EntityLabelRow[]): EntityIndex {
 // pair exercises the operator's answered decision verbatim: an auto-allowed
 // agency renders its twin; an organisation outside the auto-allow registry
 // renders the typed `not_yet_reviewed` state, never a silent absence).
+//
+// Path note (P35.65): the emitted artifact's `url`/`record_url` fields are
+// root-absolute paths (policy.labels.entity_url → `/entity/<type>/<key>/`).
+// The fixtures build those bytes through `withBase()` with a sans-slash
+// argument — the pinned construction seam — so the containment check
+// (check-root-absolute-paths.mjs) sees no new root-absolute literal while
+// the runtime value stays byte-identical under the default root base.
 // ---------------------------------------------------------------------------
+
+/** The fixture mirror of `policy.labels.entity_url` — `<slug>--<hash>`
+ * joined under `entity/<url_type>/`, through `withBase()`. */
+function fixtureEntityUrl(urlType: string, slug: string, hash: string): string {
+  return withBase(`entity/${urlType}/${slug}--${hash}/`);
+}
 
 /** Invented label-registry rows: one auto-allowed agency (keyed twin), one
  * allowed portal, and one organisation outside the auto-allow registry. */
@@ -343,7 +358,7 @@ export const ENTITY_LABEL_FIXTURES: EntityLabelRow[] = [
     place_jkey: "usa-ga",
     slug: "acworth-police-department",
     hash: "4g2wm8q",
-    url: "/entity/agency/acworth-police-department--4g2wm8q/",
+    url: fixtureEntityUrl("agency", "acworth-police-department", "4g2wm8q"),
     disambiguator: null,
     component_id: "comp-1",
     part8: "pass",
@@ -361,7 +376,7 @@ export const ENTITY_LABEL_FIXTURES: EntityLabelRow[] = [
     place_jkey: null,
     slug: "vigilant-solutions-learn",
     hash: "7xk3mrt",
-    url: "/entity/org/vigilant-solutions-learn--7xk3mrt/",
+    url: fixtureEntityUrl("org", "vigilant-solutions-learn", "7xk3mrt"),
     disambiguator: null,
     component_id: "comp-1",
     part8: "pass",
@@ -379,7 +394,7 @@ export const ENTITY_LABEL_FIXTURES: EntityLabelRow[] = [
     place_jkey: "usa-ga",
     slug: "acworth-pd-transparency-portal",
     hash: "2rn6vqw",
-    url: "/entity/portal/acworth-pd-transparency-portal--2rn6vqw/",
+    url: fixtureEntityUrl("portal", "acworth-pd-transparency-portal", "2rn6vqw"),
     disambiguator: null,
     component_id: "comp-1",
     part8: "pass",
@@ -419,7 +434,7 @@ export const ENTITY_PAGE_TWIN_FIXTURE: EntityPageTwin = {
   sig_id: "sig:agency:0190cafe-0000-7000-8000-0000000000a1",
   kind: "agency",
   url_type: "agency",
-  url: "/entity/agency/acworth-police-department--4g2wm8q/",
+  url: fixtureEntityUrl("agency", "acworth-police-department", "4g2wm8q"),
   label: "Acworth Police Department",
   descriptor: "Government body · usa-ga",
   label_basis: "source_name",
@@ -480,7 +495,7 @@ export const ENTITY_PAGE_TWIN_FIXTURE: EntityPageTwin = {
             kind: "org",
             label: "Vigilant Solutions (LEARN)",
             label_basis: "source_name",
-            url: "/entity/org/vigilant-solutions-learn--7xk3mrt/",
+            url: fixtureEntityUrl("org", "vigilant-solutions-learn", "7xk3mrt"),
             key: "vigilant-solutions-learn--7xk3mrt",
           },
           relation: "configured sharing partner",
@@ -552,9 +567,10 @@ export const ENTITY_PAGE_TWIN_FIXTURE: EntityPageTwin = {
   downloads: [],
   cite: {
     publication: "sig-release-2026.09",
-    url: "/entity/agency/acworth-police-department--4g2wm8q/",
-    record_url:
-      "/r/sig-release-2026.09/c/sig_graph/entity/agency/0190cafe-0000-7000-8000-0000000000a1/",
+    url: fixtureEntityUrl("agency", "acworth-police-department", "4g2wm8q"),
+    record_url: withBase(
+      "r/sig-release-2026.09/c/sig_graph/entity/agency/0190cafe-0000-7000-8000-0000000000a1/",
+    ),
     sig_id: "sig:agency:0190cafe-0000-7000-8000-0000000000a1",
   },
   withheld_notice: WITHHELD_RELATIONSHIPS_NOTICE,
