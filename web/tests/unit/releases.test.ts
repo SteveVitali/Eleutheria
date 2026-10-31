@@ -42,14 +42,22 @@ describe("released-corpus search targets (P32.14, SIG-FIND-003)", () => {
       `/v1/releases/${t.publicationId}/compartments/sig_graph/search`,
     );
     expect(c.overviewHref).toBe(`/r/${t.publicationId}/c/sig_graph/`);
+    // P36.39: the federated v2 route — one GET across every compartment.
+    expect(t.federatedSearchHref).toBe(
+      `/v1/releases/${t.publicationId}/search`,
+    );
   });
 
   it("SIG_RELEASE_SEARCH_BASE overrides only the route origin", () => {
     const prev = process.env.SIG_RELEASE_SEARCH_BASE;
     process.env.SIG_RELEASE_SEARCH_BASE = "https://api.example.test/";
     try {
-      const c = getReleaseSearchTargets()[0].compartments[0];
+      const t = getReleaseSearchTargets()[0];
+      const c = t.compartments[0];
       expect(c.searchHref.startsWith("https://api.example.test/v1/releases/")).toBe(
+        true,
+      );
+      expect(t.federatedSearchHref.startsWith("https://api.example.test/")).toBe(
         true,
       );
       expect(c.overviewHref.startsWith("/r/")).toBe(true);
