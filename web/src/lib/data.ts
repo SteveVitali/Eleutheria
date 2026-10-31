@@ -1146,6 +1146,13 @@ export interface ReleaseSearchTarget {
   publicationId: string;
   recordCount: number;
   landingHref: string;
+  /**
+   * P36.39 (K3 SRCH-04): the federated v2 search route — ONE GET covering
+   * every licence compartment (SIG-SRCH-001), whose `format=html` answer is
+   * the API's server-rendered no-JS results page. The per-compartment
+   * `searchHref`s below keep the v1 route, which stays serving.
+   */
+  federatedSearchHref: string;
   compartments: ReleaseSearchCompartment[];
 }
 
@@ -1161,6 +1168,7 @@ export function getReleaseSearchTargets(): ReleaseSearchTarget[] {
     publicationId: e.publication_id,
     recordCount: e.record_count,
     landingHref: `/releases/${e.publication_id}/`,
+    federatedSearchHref: `${base}/v1/releases/${e.publication_id}/search`,
     compartments: e.compartments.map((c) => ({
       compartment: c.compartment,
       license: c.license,

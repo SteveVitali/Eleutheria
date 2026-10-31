@@ -119,6 +119,19 @@ const hasUnmapped =
             {t.recordCount} released records across{" "}
             {t.compartments.length} licence compartment{t.compartments.length === 1 ? "" : "s"}.
           </p>
+          <form method="get" action={t.federatedSearchHref} data-testid="release-search-federated-form">
+            <input type="hidden" name="format" value="html" />
+            <label>
+              Search every licence group at once{" "}
+              <input type="search" name="q" maxlength={200} size={36} />
+            </label>{" "}
+            <button type="submit">Search this release</button>
+            <p class="sig-island__note">
+              One request, every compartment — the v2 federated search answers
+              with a server-rendered results page. The compartment forms below
+              run on the v1 route, which keeps serving.
+            </p>
+          </form>
           {t.compartments.map((c) => (
             <div class="sig-release-search__compartment" data-testid="release-search-compartment">
               <h3>

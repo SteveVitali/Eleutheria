@@ -306,15 +306,6 @@ def create_app(
                     "unsupported_query",
                     f"format must be json or html; got {format!r}",
                 )
-            if format == "html":
-                # SRCH-04 (P36.39) renders this route's HTML representation —
-                # an explicit typed refusal, never silent JSON to a browser.
-                raise SearchQueryV2Error(
-                    501,
-                    "html_representation_pending",
-                    "the no-JS HTML representation of this route lands with the "
-                    "search results page (SRCH-04); ask for format=json or omit it",
-                )
             unknown = sorted(set(request.query_params.keys()) - KNOWN_PARAMS_V2)
             params = parse_params_v2(
                 q=q,
@@ -331,6 +322,16 @@ def create_app(
             )
             result, pub, was_latest = rstore.search(publication_id, params)
             _mark_release_basis(request, pub)
+            if rs2.wants_html_v2(request):
+                # SRCH-04 (P36.39): the no-JS representation — the same
+                # verified payload as site chrome + typed cards + facets +
+                # per-group paging (DR-C4-02).
+                return HTMLResponse(
+                    rs2.render_search_html_v2(
+                        rstore, publication_id, params, result, pub, was_latest
+                    ),
+                    headers={"Cache-Control": rs2.cache_control(was_latest)},
+                )
             return JSONResponse(
                 result,
                 headers={"Cache-Control": rs2.cache_control(was_latest)},
@@ -340,6 +341,17 @@ def create_app(
         def _search_v2_error(request: Request, exc: SearchQueryV2Error) -> Response:
             _mark_release_basis(request, str(request.path_params.get("publication_id") or ""))
             headers = {"Retry-After": "5"} if exc.status == 503 else None
+            if rs2.wants_html_v2(request):
+                # DR-C4-10: an HTML client gets an HTML page for every error
+                # status — never a raw JSON body.
+                return HTMLResponse(
+                    rs2.render_search_error_html_v2(
+                        str(request.path_params.get("publication_id") or "latest"),
+                        exc,
+                    ),
+                    status_code=exc.status,
+                    headers=headers,
+                )
             return JSONResponse(
                 status_code=exc.status,
                 content={"detail": exc.detail, "code": exc.code, **exc.extra},
