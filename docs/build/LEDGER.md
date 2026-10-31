@@ -7,9 +7,9 @@
 
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # P36.36 landed(377); queued legs on earlier rows
-nextTicket: P36.38 # row 379 — search-api-serving-v2
-lastCompleted: P36.37 # row 378 — map-app-shell 2026-10-31
+projectStatus: IN_PROGRESS
+nextTicket: P36.38
+lastCompleted: P36.37
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -18,15 +18,15 @@ canonicalSpec: docs/2_canonical_design_spec.md
 memoryRoot: docs/build
 dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
-buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
+buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.36-nojs-map-baseline-and-site-lists # P36.36 landed on this tip; P36.37 stacks here
+chainTip: r11/P36.37-map-app-shell
 benchmarkSet: N/A
-autonomy: checkpoint # Q-15 = a
-mergePolicy: OPERATOR # agents never merge
+autonomy: checkpoint
+mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-30T23:35Z
+updatedAt: 2026-10-31T05:40Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
