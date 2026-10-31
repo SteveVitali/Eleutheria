@@ -17,7 +17,7 @@
 // offers alone.
 
 import { test, expect, type Browser, type Page } from "@playwright/test";
-import { T1_PAGES, T2_PAGES } from "./pages";
+import { gotoSettled, T1_PAGES, T2_PAGES } from "./pages";
 import { classifyRoute } from "../../src/lib/page-types";
 
 /** Rendered `main` text with every `[data-enhancement]` subtree removed. */
@@ -34,14 +34,14 @@ async function mainText(page: Page): Promise<string> {
 async function noJsPage(browser: Browser, path: string): Promise<Page> {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
-  await page.goto(path);
+  await gotoSettled(page, path);
   return page;
 }
 
 test.describe("T1 parity: main text JS-off == JS-on minus [data-enhancement]", () => {
   for (const path of T1_PAGES) {
     test(`${path}`, async ({ page, browser }) => {
-      await page.goto(path);
+      await gotoSettled(page, path);
       const jsOn = await mainText(page);
       const jsOffPage = await noJsPage(browser, path);
       const jsOff = await mainText(jsOffPage);

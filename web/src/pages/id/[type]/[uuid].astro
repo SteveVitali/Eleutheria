@@ -77,12 +77,15 @@ const label = KIND[p.reason ?? ""] ?? "current";
 ---
 
 <BaseLayout
-  title={`Identifier ${p.status === 410 ? "withdrawn" : label === "current" ? "redirect" : label} — ${p.urlType}`}
+  title={`Identifier ${p.status === 410 ? "withdrawn" : label === "current" ? "redirect" : label} — ${p.uuid}`}
   path={`/id/${p.urlType}/${p.uuid}/`}
   noindex
   crumbs={[{ label: "Identifier" }]}
 >
   {refresh && <meta slot="head" http-equiv="refresh" content={`0; url=${refresh}`} />}
+  <p class="sig-table-note" data-testid="id-stub-identifier">
+    Canonical identifier: <code>{p.uuid}</code>
+  </p>
   {p.status === 410 ? (
     <p class="sig-lede" data-testid="id-stub" data-status="withdrawn">
       This identifier was withdrawn from the public surface — it is retired,
