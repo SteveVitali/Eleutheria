@@ -18,6 +18,12 @@ export interface TypeaheadEntry {
   label: string;
   /** Optional kind tag shown beside the label (source, place, term, …). */
   kind?: string;
+  /** Optional context line — level, parent and count for a place; the
+   *  suggestion never leads with a raw code (P34.14). */
+  detail?: string;
+  /** Alternate names the shard builder may key the entry under — matched
+   *  like `label` but never rendered. */
+  alt?: string[];
   /** The destination the option navigates to. */
   href: string;
 }
@@ -26,6 +32,13 @@ export interface TypeaheadShard {
   schema: "sig.typeahead-shard/1";
   /** The prefix key this shard answers (lowercase alnum). */
   key: string;
+  /**
+   * P36.40: `true` on a two-character shard whose bucket split to
+   * three-character keys — the shard carries a bounded representative set
+   * and a query whose first run is ≥ 3 characters refetches the
+   * three-character shard for the full set.
+   */
+  deeper?: boolean;
   entries: TypeaheadEntry[];
 }
 
@@ -62,8 +75,10 @@ export function shardKey(query: string, keyLen = 2): string | null {
 
 /**
  * Rank entries for a query: a label-word prefix beats a bare substring;
- * ties keep shard order (the shard's own ranking). The caller slices to
- * its cap — matching never reorders beyond these classes.
+ * ties keep shard order (the shard's own ranking). Alternates (`alt`)
+ * match like the label but never render — "OKC" still surfaces "Oklahoma
+ * City". The caller slices to its cap — matching never reorders beyond
+ * these classes.
  */
 export function matchEntries(
   entries: TypeaheadEntry[],
@@ -77,9 +92,14 @@ export function matchEntries(
     if (l.includes(q)) return 1;
     return -1;
   };
+  const scoreEntry = (entry: TypeaheadEntry): number => {
+    let s = score(entry.label);
+    for (const alt of entry.alt ?? []) s = Math.min(s === -1 ? 2 : s, score(alt));
+    return s;
+  };
   return entries
-    .map((entry, i) => ({ entry, i, s: score(entry.label) }))
-    .filter((x) => x.s >= 0)
+    .map((entry, i) => ({ entry, i, s: scoreEntry(entry) }))
+    .filter((x) => x.s >= 0 && x.s < 2)
     .sort((a, b) => a.s - b.s || a.i - b.i)
     .map((x) => x.entry);
 }

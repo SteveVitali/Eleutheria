@@ -35,6 +35,7 @@ import {
 import type { IndexTreeNode } from "../../lib/dossier-index";
 import { artifactHref, defineFigures, dossierTargets } from "../../lib/figures";
 import { withBase } from "../../lib/paths";
+import { TYPEAHEAD_SHARD_ROOT } from "../../lib/typeahead-shards";
 
 const dossiers = getDossierIndex();
 const keyedRows = dossiers.filter(isKeyedIndexRow);
@@ -110,13 +111,18 @@ const placeOptionLabel = (d: IndexRowType) =>
 
   {/* C-24: the index place form — GET /search/?type=place (the release-pinned
       search's place kind); the same first letter is a static directory page
-      while the API is unreachable (the nginx first-letter fallback). */}
+      while the API is unreachable (the nginx first-letter fallback).
+      P36.40 (SIG-SRCH-010, UXR-23): with JS the field upgrades to the
+      shared-shards APG combobox — the SAME `sig.typeahead-shard/1` root the
+      header element reads; without JS the native datalist stays the
+      suggestion path. */}
   <form
     method="get"
     action={withBase("search/")}
     class="sig-place-search"
     data-testid="place-search-form"
   >
+    <sig-typeahead shard-root={withBase(TYPEAHEAD_SHARD_ROOT)} min-chars="2" data-testid="place-search-typeahead">
     <label for="place-q">Find a place:</label>{" "}
     <input id="place-q" type="search" name="q" maxlength={200} size={30} placeholder="State, county or city" list="place-names" />
     <input type="hidden" name="type" value="place" />
@@ -133,7 +139,9 @@ const placeOptionLabel = (d: IndexRowType) =>
       If search cannot be reached, the first letter of a place's name finds it in the{" "}
       <a href={withBase("dossier/a-z/")}>A–Z directory</a>.
     </span>
+    </sig-typeahead>
   </form>
+  <script is:inline type="module" src={withBase("_kit/sig-typeahead.js")}></script>
   <p class="sig-table-note">
     Sort:{" "}
     {SORT_KEYS.map((k, i) => (

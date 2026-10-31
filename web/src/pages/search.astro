@@ -28,6 +28,7 @@ import {
 } from "../lib/data";
 import { displayJurisdiction } from "../lib/jurisdictions";
 import { withBase } from "../lib/paths";
+import { TYPEAHEAD_SHARD_ROOT } from "../lib/typeahead-shards";
 import "../styles/islands.css";
 
 const dossiers = getDossierIndex();
@@ -121,11 +122,17 @@ const hasUnmapped =
           </p>
           <form method="get" action={t.federatedSearchHref} data-testid="release-search-federated-form">
             <input type="hidden" name="format" value="html" />
-            <label>
-              Search every licence group at once{" "}
-              <input type="search" name="q" maxlength={200} size={36} />
-            </label>{" "}
-            <button type="submit">Search this release</button>
+            {/* P36.40 (SIG-SRCH-010): the corpus form's field is also a
+                `<sig-typeahead>` — on this T2 route the element is defined by
+                the island's own content-hashed bundle (no `/_kit/` src is
+                admitted here); without JS the form is already complete. */}
+            <sig-typeahead shard-root={withBase(TYPEAHEAD_SHARD_ROOT)} min-chars="2" data-testid="release-search-typeahead">
+              <label>
+                Search every licence group at once{" "}
+                <input type="search" name="q" maxlength={200} size={36} />
+              </label>{" "}
+              <button type="submit">Search this release</button>
+            </sig-typeahead>
             <p class="sig-island__note">
               One request, every compartment — the v2 federated search answers
               with a server-rendered results page. The compartment forms below
@@ -186,8 +193,20 @@ const hasUnmapped =
         { href: "#browse-heading", label: "the browse index" },
       ]}
     />
+    {/* P36.40: the reserved box — the static placeholder the Preact island
+        replaces on hydration; it is never a dead control. `client:only` must
+        name `preact` because `.tsx` resolves to BOTH installed renderers and
+        the SSR check is ambiguous while @astrojs/react coexists (GX-09a
+        removes it — the P36.37 map precedent). */}
+    <div class="sig-island__placeholder" data-testid="search-island-placeholder" role="note">
+      <p class="sig-island__note">
+        The interactive filter loads when JavaScript runs — the
+        release-pinned search forms above and the browse index below are the
+        complete equivalent.
+      </p>
+    </div>
     <SearchIsland
-      client:only="react"
+      client:only="preact"
       items={INDEX}
       dossierIndexHref={withBase("search/index.json")}
       release={latest?.publicationId ?? null}

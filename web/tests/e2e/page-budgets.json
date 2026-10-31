@@ -1,351 +1,341 @@
 {
-  "schema": "sig.page-budgets/1",
-  "note": "P35.51 (SIG-UI-041, SIG-FIND-005, ADR-155) — the per-page-type budgets, K0-interactive-architecture §4.3's table verbatim (KiB = 1,024 B). Single budget truth: supersedes island-budgets.json in the same change (recorded seam — the old per-island ceilings retire, the T2 surfaces keep their measured envelopes inside the per-type rows). budget.spec.ts wire-measures every discovered route against these rows — gzip AND brotli, before and after one scripted interaction per surface — and gen-lhci.mjs renders the Lighthouse assertMatrix from the same file. The budgets are the law: raising one, or adding a T2 surface, is a new ADR amending ADR-155, never an edit here.",
-  "units": {
-    "bytes": 1,
-    "KiB": 1024,
-    "MiB": 1048576
+ "schema": "sig.page-budgets/1",
+ "note": "P35.51 (SIG-UI-041, SIG-FIND-005, ADR-155) \u2014 the per-page-type budgets, K0-interactive-architecture \u00a74.3's table verbatim (KiB = 1,024 B). Single budget truth: supersedes island-budgets.json in the same change (recorded seam \u2014 the old per-island ceilings retire, the T2 surfaces keep their measured envelopes inside the per-type rows). budget.spec.ts wire-measures every discovered route against these rows \u2014 gzip AND brotli, before and after one scripted interaction per surface \u2014 and gen-lhci.mjs renders the Lighthouse assertMatrix from the same file. The budgets are the law: raising one, or adding a T2 surface, is a new ADR amending ADR-155, never an edit here.",
+ "units": {
+  "bytes": 1,
+  "KiB": 1024,
+  "MiB": 1048576
+ },
+ "types": {
+  "T0": {
+   "jsInitialBytes": 0,
+   "jsAfterActionBytes": null,
+   "documentMaxBytes": 153600,
+   "totalInitialMaxBytes": 153600,
+   "dataPerInteraction": null,
+   "lighthousePerformance": 0.95,
+   "lighthouseAccessibility": 1.0,
+   "lcpMs": 1500,
+   "cls": 0.02,
+   "tbtMs": 0,
+   "interactionLatencyMs": null
   },
-  "types": {
-    "T0": {
-      "jsInitialBytes": 0,
-      "jsAfterActionBytes": null,
-      "documentMaxBytes": 153600,
-      "totalInitialMaxBytes": 153600,
-      "dataPerInteraction": null,
-      "lighthousePerformance": 0.95,
-      "lighthouseAccessibility": 1.0,
-      "lcpMs": 1500,
-      "cls": 0.02,
-      "tbtMs": 0,
-      "interactionLatencyMs": null
-    },
-    "T1": {
-      "jsInitialBytes": 20480,
-      "jsAfterActionBytes": 40960,
-      "documentMaxBytes": 153600,
-      "totalInitialMaxBytes": 174080,
-      "dataPerInteraction": {
-        "kind": "per-interaction",
-        "maxBytes": 204800
-      },
-      "lighthousePerformance": 0.95,
-      "lighthouseAccessibility": 1.0,
-      "lcpMs": 1500,
-      "cls": 0.02,
-      "tbtMs": 50,
-      "interactionLatencyMs": 100
-    },
-    "T3": {
-      "jsInitialBytes": null,
-      "jsAfterActionBytes": null,
-      "documentMaxBytes": null,
-      "totalInitialMaxBytes": null,
-      "dataPerInteraction": null,
-      "lighthousePerformance": null,
-      "lighthouseAccessibility": 1.0,
-      "lcpMs": null,
-      "cls": null,
-      "tbtMs": null,
-      "interactionLatencyMs": null
-    }
+  "T1": {
+   "jsInitialBytes": 20480,
+   "jsAfterActionBytes": 40960,
+   "documentMaxBytes": 153600,
+   "totalInitialMaxBytes": 174080,
+   "dataPerInteraction": {
+    "kind": "per-interaction",
+    "maxBytes": 204800
+   },
+   "lighthousePerformance": 0.95,
+   "lighthouseAccessibility": 1.0,
+   "lcpMs": 1500,
+   "cls": 0.02,
+   "tbtMs": 50,
+   "interactionLatencyMs": 100
   },
-  "t2Surfaces": {
-    "map": {
-      "jsInitialBytes": 368640,
-      "jsAfterActionBytes": 61440,
-      "documentMaxBytes": 102400,
-      "totalInitialMaxBytes": 460800,
-      "dataPerInteraction": {
-        "kind": "map",
-        "firstViewMaxBytes": 1572864,
-        "perPanZoomMaxBytes": 512000
-      },
-      "lighthousePerformance": 0.75,
-      "lighthouseAccessibility": 1.0,
-      "lcpMs": 2500,
-      "cls": 0.05,
-      "tbtMs": 350,
-      "interactionLatencyMs": 200
-    },
-    "graph": {
-      "jsInitialBytes": 122880,
-      "jsAfterActionBytes": 61440,
-      "documentMaxBytes": 102400,
-      "totalInitialMaxBytes": 256000,
-      "dataPerInteraction": {
-        "kind": "per-interaction",
-        "maxBytes": 204800
-      },
-      "lighthousePerformance": 0.9,
-      "lighthouseAccessibility": 1.0,
-      "lcpMs": 2000,
-      "cls": 0.05,
-      "tbtMs": 200,
-      "interactionLatencyMs": 200
-    },
-    "search": {
-      "jsInitialBytes": 61440,
-      "jsAfterActionBytes": 40960,
-      "documentMaxBytes": 102400,
-      "totalInitialMaxBytes": 184320,
-      "dataPerInteraction": {
-        "kind": "search",
-        "perKeystrokeMaxBytes": 51200,
-        "perResultPageMaxBytes": 40960
-      },
-      "lighthousePerformance": 0.95,
-      "lighthouseAccessibility": 1.0,
-      "lcpMs": 1500,
-      "cls": 0.02,
-      "tbtMs": 100,
-      "interactionLatencyMs": 100
-    }
+  "T3": {
+   "jsInitialBytes": null,
+   "jsAfterActionBytes": null,
+   "documentMaxBytes": null,
+   "totalInitialMaxBytes": null,
+   "dataPerInteraction": null,
+   "lighthousePerformance": null,
+   "lighthouseAccessibility": 1.0,
+   "lcpMs": null,
+   "cls": null,
+   "tbtMs": null,
+   "interactionLatencyMs": null
+  }
+ },
+ "t2Surfaces": {
+  "map": {
+   "jsInitialBytes": 368640,
+   "jsAfterActionBytes": 61440,
+   "documentMaxBytes": 102400,
+   "totalInitialMaxBytes": 460800,
+   "dataPerInteraction": {
+    "kind": "map",
+    "firstViewMaxBytes": 1572864,
+    "perPanZoomMaxBytes": 512000
+   },
+   "lighthousePerformance": 0.75,
+   "lighthouseAccessibility": 1.0,
+   "lcpMs": 2500,
+   "cls": 0.05,
+   "tbtMs": 350,
+   "interactionLatencyMs": 200
   },
-  "interactions": {
-    "T1": {
-      "kind": "scroll",
-      "description": "one scripted user action (a scroll + a click on an in-page control where one exists). Today no T1 enhancement element ships (t1-module-entries.json is empty), so the post-action measure asserts the ceiling — the row still bounds what any UXK0-4 element may load."
-    },
-    "map": {
-      "kind": "pan",
-      "description": "one scripted pan of the map canvas — measures the per-pan/zoom data budget and any post-action scripts. Effect asserted: the map's rendered state moved (centre or tile requests)."
-    },
-    "graph": {
-      "kind": "select-node",
-      "description": "select a non-focused node — the expansion one ring at a time. Effect asserted: aria-pressed flips to true on the selected node (the same effect islands.spec.ts asserts)."
-    },
-    "search": {
-      "kind": "type-query",
-      "description": "type into the quick filter — measures the keystroke-shard data budget. Effect asserted: the rendered result set narrows."
-    }
+  "graph": {
+   "jsInitialBytes": 122880,
+   "jsAfterActionBytes": 61440,
+   "documentMaxBytes": 102400,
+   "totalInitialMaxBytes": 256000,
+   "dataPerInteraction": {
+    "kind": "per-interaction",
+    "maxBytes": 204800
+   },
+   "lighthousePerformance": 0.9,
+   "lighthouseAccessibility": 1.0,
+   "lcpMs": 2000,
+   "cls": 0.05,
+   "tbtMs": 200,
+   "interactionLatencyMs": 200
   },
-  "measured_gaps": [
-    {
-      "route": "/map/",
-      "metric": "jsInitialBytes",
-      "ratified_ceiling": 368640,
-      "recorded_measure": 482469,
-      "regression_bound": 524288,
-      "deferral": "D-P35.51-1",
-      "owner": "the map-surface optimisation row (K13 MAP rows)",
-      "note": "the ratified ≤ 360 KiB is LAW — it is not relaxed. The P36.37 head's /map/ wire measure is 482,469 B gzip / 402,308 B brotli (the ESM-split MapLibre vendor chunks are fetched over the wire at runtime; the export leg's dist measure resolves the same runtime module graphs per fetching realm — /map/vendor/ entries discovered from the serialized vendorBase + the chunk's basename literals — and reports 488,362 B gzip). Re-recorded once at the wire measure under the same deferral, ceilings untouched. The gap is recorded, bounded and loud: budget.spec.ts fails if the measure grows past regression_bound (512 KiB), reports the ratified ceiling every run, and fails if this row stays after the bundle drops under the ratified ceiling. The generated lighthouserc asserts the ratified ceiling as a warn and the regression bound as the error gate for this metric only — the row's fix is the owner's, never a smoothed budget."
-    },
-    {
-      "route": "/map/",
-      "metric": "totalInitialMaxBytes",
-      "ratified_ceiling": 460800,
-      "recorded_measure": 578041,
-      "regression_bound": 600000,
-      "deferral": "D-P35.51-1",
-      "owner": "the map-surface optimisation row (K13 MAP rows)",
-      "note": "same recorded gap, the total-transfer row: the ratified ≤ 450 KiB stands; the P36.37 head's wire measure is 578,041 B gzip / 494,331 B brotli — the script family still dominates, plus the kit-B mounts this row adds (per-record absence chips on the unlocated list — ⓘ meaning popover + Help-find-it link — and the shared provenance stylesheet the FocusClaimPanels path now carries). Re-recorded once at the wire measure under the same deferral, ceilings untouched (P36.18's national-leg precedent), bounded at 600,000 B, reported every run, stale-row fails."
-    },
-    {
-      "route": "/map/",
-      "metric": "tbtMs",
-      "ratified_ceiling": 350,
-      "recorded_measure": 1763,
-      "regression_bound": 2500,
-      "deferral": "D-P35.51-1",
-      "owner": "the map-surface optimisation row (K13 MAP rows)",
-      "note": "the ratified ≤ 350 ms TBT is LAW — the GitHub-hosted runner's Lighthouse measures 888–1,763 ms on the demo-corpus /map/ (the ≈ 500 KB JS bundle saturates the main thread under lab throttling; same root cause as the script-weight gap this deferral owns). Bounded at 2,500 ms; the developer machine measures under the ratified ceiling."
-    },
-    {
-      "route": "/map/",
-      "metric": "tbtMs",
-      "data_source": "national",
-      "ratified_ceiling": 350,
-      "recorded_measure": 5380,
-      "regression_bound": 6500,
-      "deferral": "D-P35.51-1",
-      "owner": "the map-surface optimisation row (K13 MAP rows)",
-      "note": "national-scoped: the ratified ≤ 350 ms TBT is LAW — the GitHub-hosted runner's Lighthouse measures 5,183–5,380 ms on the real-scale /map/ (the ≈ 500 KB bundle plus a 1.7 MB document saturating the main thread under lab throttling; the same bundle this deferral owns, compounded by the national document D-P35.51-3 owns). Bounded at 6,500 ms under the national build only."
-    },
-    {
-      "route": "/map/",
-      "metric": "perfScore",
-      "data_source": "national",
-      "ratified_ceiling": 0.75,
-      "recorded_measure": 0.69,
-      "regression_bound": 0.6,
-      "deferral": "D-P35.51-3",
-      "owner": "the map-surface optimisation row (K13 MAP rows) + the compact static-equivalent row",
-      "note": "national-scoped: the ratified ≥ 0.75 Lighthouse performance score is LAW — the real-scale /map/ scores 0.69–0.70 on the GitHub-hosted runner (the lab metrics above drive it). The regression_bound on a minScore metric is a FLOOR: the run fails if the score drops below 0.6, warns at the ratified 0.75 otherwise."
-    },
-    {
-      "route": "/map/",
-      "metric": "lcpMs",
-      "data_source": "national",
-      "ratified_ceiling": 2500,
-      "recorded_measure": 3350,
-      "regression_bound": 4000,
-      "deferral": "D-P35.51-3",
-      "owner": "the map-surface optimisation row (K13 MAP rows)",
-      "note": "national-scoped: LCP on the national /map/ document measures ≈ 3,349 ms across the three Lighthouse runs (3,367 / 3,349 / 3,349) — over the ratified ≤ 2,500 ms against the real-scale page. Bounded at 4,000 ms; the fixtures build measures under the ratified ceiling."
-    },
-    {
-      "route": "/map/",
-      "metric": "interactionLatencyMs",
-      "data_source": "national",
-      "ratified_ceiling": 200,
-      "recorded_measure": 955,
-      "regression_bound": 1500,
-      "deferral": "D-P35.51-3",
-      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "national-scoped: toggling the licence-compartment filter on the 1.7 MB national document under 4× CPU throttle measures ≈ 0.95 s to the workspace-state href effect on the GitHub-hosted runner (≈ 0.48 s on the developer machine) — over the ratified ≤ 200 ms map interaction latency. Bounded at 1,500 ms; the compact document the owning row ships restores headroom."
-    },
-    {
-      "route": "/map/",
-      "metric": "documentMaxBytes",
-      "data_source": "national",
-      "ratified_ceiling": 102400,
-      "recorded_measure": 761442,
-      "regression_bound": 800000,
-      "deferral": "D-P35.51-3",
-      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "national-scoped: at real scale (232,500 invented sites) the /map/ no-JS equivalent measures 761,442 B of document at the P36.37 head — the app shell's bounded static equivalent (bounded indicator/directory lists) dropped it from the recorded 2,937,723 B — still over the ratified ≤ 100 KiB T2 ceiling. The ceiling is LAW: reported every run, re-recorded once at this measure (bounded at 800,000 B), stale-row fails. The compact/paginated equivalent is the owner's row, never a smoothed budget."
-    },
-    {
-      "route": "/map/",
-      "metric": "totalInitialMaxBytes",
-      "data_source": "national",
-      "ratified_ceiling": 460800,
-      "recorded_measure": 1290581,
-      "regression_bound": 1350000,
-      "deferral": "D-P35.51-3",
-      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "national-scoped: the same document overage drives the total transfer — the P36.37 head's wire measure is 1,290,581 B gzip / 1,207,087 B brotli against the ratified ≤ 450 KiB (the bounded static equivalent's ≈ 761 KB document plus the ≈ 482 KB gz script family; the measure counts the document raw). Re-recorded once at the wire measure under the same deferral, ceilings untouched — bounded at 1,350,000 B under the national build only; the fixtures build's unscoped row still gates."
-    },
-    {
-      "route": "/map/",
-      "metric": "interactionLatencyMs",
-      "data_source": "fixtures",
-      "ratified_ceiling": 200,
-      "recorded_measure": 539,
-      "regression_bound": 1200,
-      "deferral": "D-P35.51-1",
-      "owner": "the map-surface optimisation row (K13 MAP rows)",
-      "note": "fixtures-scoped: one pan on the demo-corpus map under 4× CPU throttle measures ≈ 539 ms to the view-change effect on the GitHub-hosted runner (the developer machine measures under the ratified ≤ 200 ms) — the throttle-bound latency rides with the oversized bundle this deferral owns. Bounded at 1,200 ms, matching the national bound."
-    },
-    {
-      "route": "/network/",
-      "metric": "interactionLatencyMs",
-      "data_source": "fixtures",
-      "ratified_ceiling": 200,
-      "recorded_measure": 228,
-      "regression_bound": 400,
-      "deferral": "D-P35.51-3",
-      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "fixtures-scoped: node-select on the demo-corpus graph under 4× CPU throttle measures ≈ 228 ms to the aria-pressed effect on the GitHub-hosted runner — marginally over the ratified ≤ 200 ms. Bounded at 400 ms, matching the national bound; the compact document restores headroom."
-    },
-    {
-      "route": "/network/",
-      "metric": "documentMaxBytes",
-      "data_source": "national",
-      "ratified_ceiling": 102400,
-      "recorded_measure": 1779527,
-      "regression_bound": 1800000,
-      "deferral": "D-P35.51-3",
-      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "national-scoped: at real scale (6,460 nodes / 405,000 sharing edges) the /network/ static equivalent — bounded edge lists (≤ 100 current + ≤ 100 ended/undated per access kind), bounded path list, the focus-adjacent island prop window (≤ 200 nodes / ≤ 400 edges serialized for hydration), bounded claim-provenance panels over the rendered items — measures ≈ 1.8 MB against the ratified ≤ 100 KiB T2 ceiling; P36.18's shared chrome added ≈ 2.7 KB of markup to every document. Bounded at 1,800,000 B under the national build; the fixtures build measures ≈ 67 KB."
-    },
-    {
-      "route": "/network/",
-      "metric": "totalInitialMaxBytes",
-      "data_source": "national",
-      "ratified_ceiling": 256000,
-      "recorded_measure": 1900589,
-      "regression_bound": 1920000,
-      "deferral": "D-P35.51-3",
-      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "national-scoped: the same document overage drives the total — ≈ 1.9 MB gzip against the ratified ≤ 250 KiB. P36.18's shared chrome (header/band/footer markup + the epistemic chrome styles) added ≈ 4.5 KB gz to every page's initial transfer and carried the measure past the previously recorded 1,900,000 B bound — re-recorded, never smoothed. Bounded at 1,920,000 B under the national build only."
-    },
-    {
-      "route": "/network/",
-      "metric": "interactionLatencyMs",
-      "data_source": "national",
-      "ratified_ceiling": 200,
-      "recorded_measure": 552,
-      "regression_bound": 800,
-      "deferral": "D-P35.51-3",
-      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "national-scoped: selecting a node on the 1.8 MB national document under 4× CPU throttle measures ≈ 284 ms on the developer machine and 552 ms on the GitHub-hosted runner — over the ratified ≤ 200 ms graph-expansion latency. Bounded at 800 ms; the compact document the owning row ships restores headroom."
-    },
-    {
-      "route": "/search/",
-      "metric": "interactionLatencyMs",
-      "data_source": "national",
-      "ratified_ceiling": 100,
-      "recorded_measure": 136,
-      "regression_bound": 300,
-      "deferral": "D-P35.51-3",
-      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "national-scoped: one keystroke on the national search document under 4× CPU throttle measures ≈ 112 ms on the developer machine and 136 ms on the GitHub-hosted runner — over the ratified ≤ 100 ms. Bounded at 300 ms; the fixtures build measures under the ratified ceiling."
-    },
-    {
-      "route": "/sources/",
-      "metric": "interactionLatencyMs",
-      "data_source": "national",
-      "ratified_ceiling": 100,
-      "recorded_measure": 147,
-      "regression_bound": 300,
-      "deferral": "D-P35.51-3",
-      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "national-scoped: the T1 scroll interaction on the real-scale sources document measures 147 ms to the scrolled-section effect on the GitHub-hosted runner under 4× CPU throttle — over the ratified ≤ 100 ms T1 latency. Bounded at 300 ms; the compact document the owning row ships restores headroom."
-    },
-    {
-      "route": "/sources/",
-      "metric": "interactionLatencyMs",
-      "data_source": "fixtures",
-      "ratified_ceiling": 100,
-      "recorded_measure": 139,
-      "regression_bound": 300,
-      "deferral": "D-P35.51-3",
-      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "fixtures-scoped: the T1 scroll interaction on the demo-corpus sources document measured 139 ms to the scrolled-section effect on the GitHub-hosted runner under 4× CPU throttle at P35.52's first web job — over the ratified ≤ 100 ms T1 latency (the developer machine measures under the ratified ceiling). Bounded at 300 ms, matching the national-scope row; the compact document the owning row ships restores headroom."
-    },
-    {
-      "route": "/search/",
-      "metric": "lcpMs",
-      "ratified_ceiling": 1500,
-      "recorded_measure": 1655,
-      "regression_bound": 2000,
-      "deferral": "D-P35.51-2",
-      "owner": "the K0 runtime-migration row (Preact replaces React on the public surface)",
-      "note": "the ratified ≤ 1,500 ms LCP is LAW — the GitHub-hosted runner's Lighthouse measures 1,502–1,655 ms on /search/ (the React island's hydration cost sits in the paint path; same runtime this deferral owns). Bounded at 2,000 ms; the developer machine measures under the ratified ceiling."
-    },
-    {
-      "route": "/search/",
-      "metric": "interactionLatencyMs",
-      "data_source": "fixtures",
-      "ratified_ceiling": 100,
-      "recorded_measure": 160,
-      "regression_bound": 300,
-      "deferral": "D-P35.51-2",
-      "owner": "the K0 runtime-migration row (Preact replaces React on the public surface)",
-      "note": "fixtures-scoped: one keystroke on the demo-corpus search under 4× CPU throttle measures ≈ 160 ms to the narrowed-result effect on the GitHub-hosted runner (the developer machine measures under the ratified ≤ 100 ms) — the throttle-bound latency rides with the React runtime this deferral owns. Bounded at 300 ms; the national bound stays 200 ms."
-    },
-    {
-      "route": "/search/",
-      "metric": "jsInitialBytes",
-      "ratified_ceiling": 61440,
-      "recorded_measure": 72405,
-      "regression_bound": 81920,
-      "deferral": "D-P35.51-2",
-      "owner": "the K0 runtime-migration row (Preact replaces React on the public surface)",
-      "note": "the ratified ≤ 60 KiB is LAW — today's /search/ measures 72,405 B gzip because the island still runs the React runtime (≈ 66 KiB) the K0 budget assumed replaced by Preact + MiniSearch (≈ 11 KB + app). Recorded, bounded at 80 KiB, reported every run, stale-row fails — the runtime migration is the owner's row, never a smoothed budget."
-    },
-    {
-      "route": "/search/",
-      "metric": "totalInitialMaxBytes",
-      "data_source": "national",
-      "ratified_ceiling": 184320,
-      "recorded_measure": 200334,
-      "regression_bound": 210000,
-      "deferral": "D-P35.51-2",
-      "owner": "the K0 runtime-migration row (Preact replaces React on the public surface)",
-      "note": "national-scoped: the ratified ≤ 180 KiB total transfer is LAW — the P36.39 head's national wire measure is 200,334 B gzip (run 41192754119 read 200,231; the ≈ 27 KB variable-font fetch counts on the wire only — the export leg's dist measure resolves 173,474 B). The overage is this deferral's own script gap carrying through (the React runtime, 75,589 vs 61,440 B gz) plus the markup accumulated since the 192,259 B recording — P36.39's one federated GET form adds ≈ 640 B of raw document, which this metric counts uncompressed, and tipped the real-scale page past the recorded 200,000 B bound. Re-recorded once at the wire measure under the same deferral, ceilings untouched (P36.18's national-leg precedent). Bounded at 210,000 B, reported every run; the runtime migration removes the row via the stale-row gate."
-    }
-  ]
+  "search": {
+   "jsInitialBytes": 61440,
+   "jsAfterActionBytes": 40960,
+   "documentMaxBytes": 102400,
+   "totalInitialMaxBytes": 184320,
+   "dataPerInteraction": {
+    "kind": "search",
+    "perKeystrokeMaxBytes": 51200,
+    "perResultPageMaxBytes": 40960
+   },
+   "lighthousePerformance": 0.95,
+   "lighthouseAccessibility": 1.0,
+   "lcpMs": 1500,
+   "cls": 0.02,
+   "tbtMs": 100,
+   "interactionLatencyMs": 100
+  }
+ },
+ "interactions": {
+  "T1": {
+   "kind": "scroll",
+   "description": "one scripted user action (a scroll + a click on an in-page control where one exists). Today no T1 enhancement element ships (t1-module-entries.json is empty), so the post-action measure asserts the ceiling \u2014 the row still bounds what any UXK0-4 element may load."
+  },
+  "map": {
+   "kind": "pan",
+   "description": "one scripted pan of the map canvas \u2014 measures the per-pan/zoom data budget and any post-action scripts. Effect asserted: the map's rendered state moved (centre or tile requests)."
+  },
+  "graph": {
+   "kind": "select-node",
+   "description": "select a non-focused node \u2014 the expansion one ring at a time. Effect asserted: aria-pressed flips to true on the selected node (the same effect islands.spec.ts asserts)."
+  },
+  "search": {
+   "kind": "type-query",
+   "description": "type into the quick filter \u2014 measures the keystroke-shard data budget. Effect asserted: the rendered result set narrows."
+  }
+ },
+ "measured_gaps": [
+  {
+   "route": "/map/",
+   "metric": "jsInitialBytes",
+   "ratified_ceiling": 368640,
+   "recorded_measure": 482469,
+   "regression_bound": 524288,
+   "deferral": "D-P35.51-1",
+   "owner": "the map-surface optimisation row (K13 MAP rows)",
+   "note": "the ratified \u2264 360 KiB is LAW \u2014 it is not relaxed. The P36.37 head's /map/ wire measure is 482,469 B gzip / 402,308 B brotli (the ESM-split MapLibre vendor chunks are fetched over the wire at runtime; the export leg's dist measure resolves the same runtime module graphs per fetching realm \u2014 /map/vendor/ entries discovered from the serialized vendorBase + the chunk's basename literals \u2014 and reports 488,362 B gzip). Re-recorded once at the wire measure under the same deferral, ceilings untouched. The gap is recorded, bounded and loud: budget.spec.ts fails if the measure grows past regression_bound (512 KiB), reports the ratified ceiling every run, and fails if this row stays after the bundle drops under the ratified ceiling. The generated lighthouserc asserts the ratified ceiling as a warn and the regression bound as the error gate for this metric only \u2014 the row's fix is the owner's, never a smoothed budget."
+  },
+  {
+   "route": "/map/",
+   "metric": "totalInitialMaxBytes",
+   "ratified_ceiling": 460800,
+   "recorded_measure": 578041,
+   "regression_bound": 600000,
+   "deferral": "D-P35.51-1",
+   "owner": "the map-surface optimisation row (K13 MAP rows)",
+   "note": "same recorded gap, the total-transfer row: the ratified \u2264 450 KiB stands; the P36.37 head's wire measure is 578,041 B gzip / 494,331 B brotli \u2014 the script family still dominates, plus the kit-B mounts this row adds (per-record absence chips on the unlocated list \u2014 \u24d8 meaning popover + Help-find-it link \u2014 and the shared provenance stylesheet the FocusClaimPanels path now carries). Re-recorded once at the wire measure under the same deferral, ceilings untouched (P36.18's national-leg precedent), bounded at 600,000 B, reported every run, stale-row fails."
+  },
+  {
+   "route": "/map/",
+   "metric": "tbtMs",
+   "ratified_ceiling": 350,
+   "recorded_measure": 1763,
+   "regression_bound": 2500,
+   "deferral": "D-P35.51-1",
+   "owner": "the map-surface optimisation row (K13 MAP rows)",
+   "note": "the ratified \u2264 350 ms TBT is LAW \u2014 the GitHub-hosted runner's Lighthouse measures 888\u20131,763 ms on the demo-corpus /map/ (the \u2248 500 KB JS bundle saturates the main thread under lab throttling; same root cause as the script-weight gap this deferral owns). Bounded at 2,500 ms; the developer machine measures under the ratified ceiling."
+  },
+  {
+   "route": "/map/",
+   "metric": "tbtMs",
+   "data_source": "national",
+   "ratified_ceiling": 350,
+   "recorded_measure": 5380,
+   "regression_bound": 6500,
+   "deferral": "D-P35.51-1",
+   "owner": "the map-surface optimisation row (K13 MAP rows)",
+   "note": "national-scoped: the ratified \u2264 350 ms TBT is LAW \u2014 the GitHub-hosted runner's Lighthouse measures 5,183\u20135,380 ms on the real-scale /map/ (the \u2248 500 KB bundle plus a 1.7 MB document saturating the main thread under lab throttling; the same bundle this deferral owns, compounded by the national document D-P35.51-3 owns). Bounded at 6,500 ms under the national build only."
+  },
+  {
+   "route": "/map/",
+   "metric": "perfScore",
+   "data_source": "national",
+   "ratified_ceiling": 0.75,
+   "recorded_measure": 0.69,
+   "regression_bound": 0.6,
+   "deferral": "D-P35.51-3",
+   "owner": "the map-surface optimisation row (K13 MAP rows) + the compact static-equivalent row",
+   "note": "national-scoped: the ratified \u2265 0.75 Lighthouse performance score is LAW \u2014 the real-scale /map/ scores 0.69\u20130.70 on the GitHub-hosted runner (the lab metrics above drive it). The regression_bound on a minScore metric is a FLOOR: the run fails if the score drops below 0.6, warns at the ratified 0.75 otherwise."
+  },
+  {
+   "route": "/map/",
+   "metric": "lcpMs",
+   "data_source": "national",
+   "ratified_ceiling": 2500,
+   "recorded_measure": 3350,
+   "regression_bound": 4000,
+   "deferral": "D-P35.51-3",
+   "owner": "the map-surface optimisation row (K13 MAP rows)",
+   "note": "national-scoped: LCP on the national /map/ document measures \u2248 3,349 ms across the three Lighthouse runs (3,367 / 3,349 / 3,349) \u2014 over the ratified \u2264 2,500 ms against the real-scale page. Bounded at 4,000 ms; the fixtures build measures under the ratified ceiling."
+  },
+  {
+   "route": "/map/",
+   "metric": "interactionLatencyMs",
+   "data_source": "national",
+   "ratified_ceiling": 200,
+   "recorded_measure": 955,
+   "regression_bound": 1500,
+   "deferral": "D-P35.51-3",
+   "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+   "note": "national-scoped: toggling the licence-compartment filter on the 1.7 MB national document under 4\u00d7 CPU throttle measures \u2248 0.95 s to the workspace-state href effect on the GitHub-hosted runner (\u2248 0.48 s on the developer machine) \u2014 over the ratified \u2264 200 ms map interaction latency. Bounded at 1,500 ms; the compact document the owning row ships restores headroom."
+  },
+  {
+   "route": "/map/",
+   "metric": "documentMaxBytes",
+   "data_source": "national",
+   "ratified_ceiling": 102400,
+   "recorded_measure": 761442,
+   "regression_bound": 800000,
+   "deferral": "D-P35.51-3",
+   "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+   "note": "national-scoped: at real scale (232,500 invented sites) the /map/ no-JS equivalent measures 761,442 B of document at the P36.37 head \u2014 the app shell's bounded static equivalent (bounded indicator/directory lists) dropped it from the recorded 2,937,723 B \u2014 still over the ratified \u2264 100 KiB T2 ceiling. The ceiling is LAW: reported every run, re-recorded once at this measure (bounded at 800,000 B), stale-row fails. The compact/paginated equivalent is the owner's row, never a smoothed budget."
+  },
+  {
+   "route": "/map/",
+   "metric": "totalInitialMaxBytes",
+   "data_source": "national",
+   "ratified_ceiling": 460800,
+   "recorded_measure": 1290581,
+   "regression_bound": 1350000,
+   "deferral": "D-P35.51-3",
+   "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+   "note": "national-scoped: the same document overage drives the total transfer \u2014 the P36.37 head's wire measure is 1,290,581 B gzip / 1,207,087 B brotli against the ratified \u2264 450 KiB (the bounded static equivalent's \u2248 761 KB document plus the \u2248 482 KB gz script family; the measure counts the document raw). Re-recorded once at the wire measure under the same deferral, ceilings untouched \u2014 bounded at 1,350,000 B under the national build only; the fixtures build's unscoped row still gates."
+  },
+  {
+   "route": "/map/",
+   "metric": "interactionLatencyMs",
+   "data_source": "fixtures",
+   "ratified_ceiling": 200,
+   "recorded_measure": 539,
+   "regression_bound": 1200,
+   "deferral": "D-P35.51-1",
+   "owner": "the map-surface optimisation row (K13 MAP rows)",
+   "note": "fixtures-scoped: one pan on the demo-corpus map under 4\u00d7 CPU throttle measures \u2248 539 ms to the view-change effect on the GitHub-hosted runner (the developer machine measures under the ratified \u2264 200 ms) \u2014 the throttle-bound latency rides with the oversized bundle this deferral owns. Bounded at 1,200 ms, matching the national bound."
+  },
+  {
+   "route": "/network/",
+   "metric": "interactionLatencyMs",
+   "data_source": "fixtures",
+   "ratified_ceiling": 200,
+   "recorded_measure": 228,
+   "regression_bound": 400,
+   "deferral": "D-P35.51-3",
+   "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+   "note": "fixtures-scoped: node-select on the demo-corpus graph under 4\u00d7 CPU throttle measures \u2248 228 ms to the aria-pressed effect on the GitHub-hosted runner \u2014 marginally over the ratified \u2264 200 ms. Bounded at 400 ms, matching the national bound; the compact document restores headroom."
+  },
+  {
+   "route": "/network/",
+   "metric": "documentMaxBytes",
+   "data_source": "national",
+   "ratified_ceiling": 102400,
+   "recorded_measure": 1779527,
+   "regression_bound": 1800000,
+   "deferral": "D-P35.51-3",
+   "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+   "note": "national-scoped: at real scale (6,460 nodes / 405,000 sharing edges) the /network/ static equivalent \u2014 bounded edge lists (\u2264 100 current + \u2264 100 ended/undated per access kind), bounded path list, the focus-adjacent island prop window (\u2264 200 nodes / \u2264 400 edges serialized for hydration), bounded claim-provenance panels over the rendered items \u2014 measures \u2248 1.8 MB against the ratified \u2264 100 KiB T2 ceiling; P36.18's shared chrome added \u2248 2.7 KB of markup to every document. Bounded at 1,800,000 B under the national build; the fixtures build measures \u2248 67 KB."
+  },
+  {
+   "route": "/network/",
+   "metric": "totalInitialMaxBytes",
+   "data_source": "national",
+   "ratified_ceiling": 256000,
+   "recorded_measure": 1900589,
+   "regression_bound": 1920000,
+   "deferral": "D-P35.51-3",
+   "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+   "note": "national-scoped: the same document overage drives the total \u2014 \u2248 1.9 MB gzip against the ratified \u2264 250 KiB. P36.18's shared chrome (header/band/footer markup + the epistemic chrome styles) added \u2248 4.5 KB gz to every page's initial transfer and carried the measure past the previously recorded 1,900,000 B bound \u2014 re-recorded, never smoothed. Bounded at 1,920,000 B under the national build only."
+  },
+  {
+   "route": "/network/",
+   "metric": "interactionLatencyMs",
+   "data_source": "national",
+   "ratified_ceiling": 200,
+   "recorded_measure": 552,
+   "regression_bound": 800,
+   "deferral": "D-P35.51-3",
+   "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+   "note": "national-scoped: selecting a node on the 1.8 MB national document under 4\u00d7 CPU throttle measures \u2248 284 ms on the developer machine and 552 ms on the GitHub-hosted runner \u2014 over the ratified \u2264 200 ms graph-expansion latency. Bounded at 800 ms; the compact document the owning row ships restores headroom."
+  },
+  {
+   "route": "/search/",
+   "metric": "interactionLatencyMs",
+   "data_source": "national",
+   "ratified_ceiling": 100,
+   "recorded_measure": 136,
+   "regression_bound": 300,
+   "deferral": "D-P35.51-3",
+   "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+   "note": "national-scoped: one keystroke on the national search document under 4\u00d7 CPU throttle measures \u2248 112 ms on the developer machine and 136 ms on the GitHub-hosted runner \u2014 over the ratified \u2264 100 ms. Bounded at 300 ms; the fixtures build measures under the ratified ceiling."
+  },
+  {
+   "route": "/sources/",
+   "metric": "interactionLatencyMs",
+   "data_source": "national",
+   "ratified_ceiling": 100,
+   "recorded_measure": 147,
+   "regression_bound": 300,
+   "deferral": "D-P35.51-3",
+   "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+   "note": "national-scoped: the T1 scroll interaction on the real-scale sources document measures 147 ms to the scrolled-section effect on the GitHub-hosted runner under 4\u00d7 CPU throttle \u2014 over the ratified \u2264 100 ms T1 latency. Bounded at 300 ms; the compact document the owning row ships restores headroom."
+  },
+  {
+   "route": "/sources/",
+   "metric": "interactionLatencyMs",
+   "data_source": "fixtures",
+   "ratified_ceiling": 100,
+   "recorded_measure": 139,
+   "regression_bound": 300,
+   "deferral": "D-P35.51-3",
+   "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+   "note": "fixtures-scoped: the T1 scroll interaction on the demo-corpus sources document measured 139 ms to the scrolled-section effect on the GitHub-hosted runner under 4\u00d7 CPU throttle at P35.52's first web job \u2014 over the ratified \u2264 100 ms T1 latency (the developer machine measures under the ratified ceiling). Bounded at 300 ms, matching the national-scope row; the compact document the owning row ships restores headroom."
+  },
+  {
+   "route": "/search/",
+   "metric": "lcpMs",
+   "ratified_ceiling": 1500,
+   "recorded_measure": 1655,
+   "regression_bound": 2000,
+   "deferral": "D-P35.51-2",
+   "owner": "the K0 runtime-migration row (Preact replaces React on the public surface)",
+   "note": "the ratified \u2264 1,500 ms LCP is LAW \u2014 the GitHub-hosted runner's Lighthouse measures 1,502\u20131,655 ms on /search/ (the React island's hydration cost sits in the paint path; same runtime this deferral owns). Bounded at 2,000 ms; the developer machine measures under the ratified ceiling."
+  },
+  {
+   "route": "/search/",
+   "metric": "interactionLatencyMs",
+   "data_source": "fixtures",
+   "ratified_ceiling": 100,
+   "recorded_measure": 160,
+   "regression_bound": 300,
+   "deferral": "D-P35.51-2",
+   "owner": "the K0 runtime-migration row (Preact replaces React on the public surface)",
+   "note": "fixtures-scoped: one keystroke on the demo-corpus search under 4\u00d7 CPU throttle measures \u2248 160 ms to the narrowed-result effect on the GitHub-hosted runner (the developer machine measures under the ratified \u2264 100 ms) \u2014 the throttle-bound latency rides with the React runtime this deferral owns. Bounded at 300 ms; the national bound stays 200 ms."
+  },
+  {
+   "route": "/search/",
+   "metric": "totalInitialMaxBytes",
+   "data_source": "national",
+   "ratified_ceiling": 184320,
+   "recorded_measure": 200334,
+   "regression_bound": 210000,
+   "deferral": "D-P35.51-2",
+   "owner": "the K0 runtime-migration row (Preact replaces React on the public surface)",
+   "note": "national-scoped: the ratified \u2264 180 KiB total transfer is LAW \u2014 the P36.39 head's national wire measure is 200,334 B gzip (run 41192754119 read 200,231; the \u2248 27 KB variable-font fetch counts on the wire only \u2014 the export leg's dist measure resolves 173,474 B). The overage is this deferral's own script gap carrying through (the React runtime, 75,589 vs 61,440 B gz) plus the markup accumulated since the 192,259 B recording \u2014 P36.39's one federated GET form adds \u2248 640 B of raw document, which this metric counts uncompressed, and tipped the real-scale page past the recorded 200,000 B bound. Re-recorded once at the wire measure under the same deferral, ceilings untouched (P36.18's national-leg precedent). Bounded at 210,000 B, reported every run; the runtime migration removes the row via the stale-row gate."
+  }
+ ]
 }

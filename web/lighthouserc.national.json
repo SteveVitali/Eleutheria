@@ -288,7 +288,7 @@
             "resource-summary:script:size": [
               "error",
               {
-                "maxNumericValue": 81920
+                "maxNumericValue": 61440
               }
             ],
             "resource-summary:document:size": [
@@ -337,12 +337,6 @@
           "warnTwin": true,
           "matchingUrlPattern": ".*/search/.*",
           "assertions": {
-            "resource-summary:script:size": [
-              "warn",
-              {
-                "maxNumericValue": 61440
-              }
-            ],
             "largest-contentful-paint": [
               "warn",
               {
