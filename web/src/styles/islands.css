@@ -368,7 +368,9 @@
   background: none;
   cursor: pointer;
   text-align: left;
-  color: var(--sig-data-1);
+  /* Interactive text takes the link channel — the AA-chosen step in every
+   * scheme (dark --sig-data-1 tops out at 4.43:1 on --sig-surface). */
+  color: var(--sig-link);
   font-size: inherit;
 }
 .sig-map-app__row-meta {
@@ -421,7 +423,9 @@
   border: 0;
   background: none;
   padding: 0;
-  color: var(--sig-data-1);
+  /* Interactive text takes the link channel — the AA-chosen step in every
+   * scheme (dark --sig-data-1 tops out at 4.43:1 on --sig-surface). */
+  color: var(--sig-link);
   cursor: pointer;
   text-decoration: underline;
 }
