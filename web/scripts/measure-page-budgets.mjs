@@ -85,6 +85,73 @@ function walk(entry) {
   return [...seen];
 }
 
+/** Decode the entities Astro serializes island props with so absolute path
+ * literals (`"/map/vendor/"`) are matchable in the raw document. */
+const HTML_ENTITIES = { "&quot;": '"', "&#39;": "'", "&apos;": "'", "&amp;": "&" };
+const unescapeHtml = (s) => s.replace(/&quot;|&#39;|&apos;|&amp;/g, (m) => HTML_ENTITIES[m]);
+
+const JS_BASENAME = "[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*\\.m?js";
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/**
+ * Runtime-resolved modules the static walk cannot see. A chunk can build a
+ * module URL at runtime — `import(`${vendorBase}maplibre-gl.mjs`)`,
+ * `setWorkerUrl(`${vendorBase}maplibre-gl-worker.mjs`)` — where the base is a
+ * serialized prop (`"/map/vendor/"` in the document's island props, the
+ * self-hosted split `prepare-map-vendor.mjs` emits, K1 §6.1) and the
+ * basename is a literal in the chunk. The `/_astro/` walk misses these
+ * entirely (the dist-walk probe that briefly retired the /map/ gap rows).
+ *
+ * A basename counts only where a fetch context names it — `import(`,
+ * `setWorkerUrl`/`new Worker`/`workerUrl`, `fetch(`, `new URL(` — never a
+ * bare string; and only when it resolves to an emitted file under one of the
+ * declared base directories.
+ *
+ * Realm semantics follow the wire measure (budget.spec.ts counts per
+ * response): a worker realm runs its OWN module graph, so the chunks it
+ * shares with the main thread transfer — and count — again. Each returned
+ * entry is one realm's entry point; the caller walks each realm's graph and
+ * counts worker graphs on top of the main family.
+ */
+function runtimeModuleRefs(html, sources) {
+  const text = [unescapeHtml(html), ...sources].join("\n");
+  const bases = new Set(
+    [...text.matchAll(/["'`](\/[A-Za-z0-9_.\-/]+\/)["'`]/g)].map((m) => m[1]),
+  );
+  const basenames = new Set();
+  for (const m of text.matchAll(new RegExp(`["'\`](${JS_BASENAME})["'\`]`, "g"))) {
+    basenames.add(m[1]);
+  }
+  for (const m of text.matchAll(new RegExp(`\\$\\{[^}]*\\}(${JS_BASENAME})`, "g"))) {
+    basenames.add(m[1]);
+  }
+  const entries = [];
+  const seen = new Set();
+  for (const name of basenames) {
+    const esc = escapeRe(name);
+    const realms = [];
+    if (
+      new RegExp(`(?:setWorkerUrl|new\\s+(?:Shared)?Worker|workerUrl)\\s*\\([^)]*${esc}`).test(text)
+    ) {
+      realms.push("worker");
+    }
+    if (new RegExp(`(?:import|fetch|new\\s+URL)\\s*\\([^)]*${esc}`).test(text)) {
+      realms.push("main");
+    }
+    for (const realm of realms) {
+      for (const base of bases) {
+        const p = join(DIST, base, name);
+        const key = `${base}${name} ${realm}`;
+        if (!seen.has(key) && p.startsWith(DIST) && existsSync(p)) {
+          seen.add(key);
+          entries.push({ path: p, realm });
+        }
+      }
+    }
+  }
+  return entries;
+}
+
 /** The initial-load PhaseMeasure a route's document implies: every `/_astro/`
  * reference plus the script family's transitive deps, raw + gzip + brotli. */
 function pageMeasure(file) {
@@ -96,16 +163,36 @@ function pageMeasure(file) {
       .filter((r) => !r.includes("${")),
   );
   const scripts = [];
+  const scriptSources = [];
+  const relOf = (p) => "/" + p.slice(DIST.length + 1).replace(/\\/g, "/");
   for (const r of refs) {
     if (r.endsWith(".js") || r.endsWith(".mjs")) {
       for (const p of walk(join(DIST, r))) {
-        const rel = "/" + p.slice(DIST.length + 1).replace(/\\/g, "/");
+        const rel = relOf(p);
         if (!refs.has(rel) && !rel.includes("${")) scripts.push(rel);
+        try {
+          scriptSources.push(readFileSync(p, "utf-8"));
+        } catch {
+          // an unreadable path contributes no runtime refs
+        }
       }
     }
   }
-  const resources = [...new Set([...refs, ...scripts])]
+  // Runtime-fetched module graphs (the self-hosted vendor split and any
+  // future runtime-resolved module): each fetching realm walks its own
+  // entry's transitive imports — a worker realm's shared chunks transfer a
+  // second time over the wire, so worker graphs count on top of the
+  // main-realm family, mirroring budget.spec.ts's per-response measure.
+  const mainRuntime = new Set();
+  const workerGraphs = [];
+  for (const { path: p, realm } of runtimeModuleRefs(html, scriptSources)) {
+    const graph = [...new Set(walk(p).map(relOf))].filter((rel) => !rel.includes("${"));
+    if (realm === "worker") workerGraphs.push(graph);
+    else for (const rel of graph) mainRuntime.add(rel);
+  }
+  const resources = [...new Set([...refs, ...scripts, ...mainRuntime])]
     .sort()
+    .concat(workerGraphs.flat())
     .map((rel) => {
       const body = readFileSync(join(DIST, rel));
       return {

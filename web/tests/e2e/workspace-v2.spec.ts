@@ -53,8 +53,8 @@ test.describe("v2 deep links (SIG-UI-093)", () => {
     await expect(page.getByTestId("map-island")).toHaveAttribute("data-ready", "true", {
       timeout: 20_000,
     });
-    await expect(page.getByTestId("map-focus-pane")).toBeVisible();
-    await expect(page.getByTestId("map-focus-pane")).toContainText(
+    await expect(page.getByTestId("map-selected-panel")).toBeVisible();
+    await expect(page.getByTestId("map-selected-panel")).toContainText(
       "Fixed ALPR — downtown corridor",
     );
   });

@@ -45,6 +45,16 @@ const OSI_ALLOW = new Set([
 //   - BlueOak-1.0.0 — permissive; on the Blue Oak Council permissive list
 const WAIVED = new Set(["CC0-1.0", "BlueOak-1.0.0"]);
 
+// Named-package waivers (P36.37): a licence string the OSI list cannot cover
+// for a package whose distribution is data, not code — reviewed per name, never
+// a blanket licence carve-out.
+const WAIVED_PACKAGES = new Map([
+  [
+    "caniuse-lite@",
+    "the package ships the caniuse compatibility TABLES (data, CC-BY-4.0), never code — it arrives transitively via @prefresh/vite → browserslist",
+  ],
+]);
+
 const ALLOW = new Set([...OSI_ALLOW, ...WAIVED]);
 
 // The categories SIG-UI-039 explicitly rules out. Matched case-insensitively as a
@@ -83,7 +93,9 @@ init({ start: process.cwd(), production: !scanAll, excludePackages: [SELF] }, (e
     }
     const atoms = splitExpression(raw);
     // A dual/expression licence passes if ANY atom is allowed (we may pick it).
-    const ok = atoms.length > 0 && atoms.some((a) => ALLOW.has(a));
+    const ok =
+      (atoms.length > 0 && atoms.some((a) => ALLOW.has(a))) ||
+      [...WAIVED_PACKAGES.keys()].some((p) => name.startsWith(p));
     if (!ok) notAllowed.push(`${name}: ${raw || "(no licence field)"}`);
   }
 
