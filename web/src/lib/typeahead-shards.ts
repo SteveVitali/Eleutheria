@@ -212,8 +212,9 @@ function emitBucket(
   // Terminal bucket: deeper keys cannot divide it. Keep single-home entries
   // first (they are reachable ONLY through this prefix), then fill what fits;
   // dropped multi-key entries stay reachable through their other shards.
+  const order = new Map<TypeaheadCatalogEntry, number>(bucket.map((e, i) => [e, i]));
   const ordered = [...bucket].sort(
-    (a, b) => homeCount(a) - homeCount(b) || bucket.indexOf(a) - bucket.indexOf(b),
+    (a, b) => homeCount(a) - homeCount(b) || order.get(a)! - order.get(b)!,
   );
   const kept: TypeaheadCatalogEntry[] = [];
   let bytes = shardBytes(serialize(key, []));
