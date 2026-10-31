@@ -394,11 +394,19 @@ class ReleaseSearchV2Store:
             return denied_records.get(row[0])
 
         has_denies = bool(denied_entities or denied_records)
-        result = engine.search(
-            params,
-            denied=denied if has_denies else None,
-            deadline_seconds=QUERY_TIMEOUT_SECONDS,
-        )
+        # The engine's connections are check_same_thread=False (the LRU may
+        # serve them on a different request thread than the opener) — but a
+        # single engine's `search` is not reentrant: two concurrent calls
+        # interleave cursors on the shared connections (the
+        # `test_engine_survives_cross_thread_use` pin caught a `_doc_row`
+        # interleave). Serving serializes the call — each is bounded by the
+        # 2 s deadline and the rate limiter bounds the fan-in anyway.
+        with self._lock:
+            result = engine.search(
+                params,
+                denied=denied if has_denies else None,
+                deadline_seconds=QUERY_TIMEOUT_SECONDS,
+            )
         return result, pub, was_latest
 
     def readiness(self) -> dict[str, Any]:

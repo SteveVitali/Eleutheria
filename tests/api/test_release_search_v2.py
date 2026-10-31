@@ -365,6 +365,21 @@ def test_rate_limit_covers_the_v2_route(released, tmp_path: Path) -> None:
     assert seen_429
 
 
+def test_engine_survives_cross_thread_use(client: TestClient, released) -> None:
+    """P36.38 CI fix-arc: the LRU-cached engine's connections are created on
+    one threadpool thread and used on another (P36.32's open() now carries
+    ``check_same_thread=False``). Two sequential requests force the store to
+    serve an engine whose conns outlive their creating thread — a regression
+    here re-raises sqlite3.ProgrammingError."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    _reg, pub = released
+    assert _search(client, pub, q="Site").status_code == 200
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        results = list(pool.map(lambda q: _search(client, pub, q="Site").status_code, range(8)))
+    assert all(code == 200 for code in results)
+
+
 # --------------------------------------------------------------------------- #
 # The LRU bound                                                                #
 # --------------------------------------------------------------------------- #
