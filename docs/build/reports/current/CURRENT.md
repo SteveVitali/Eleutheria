@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `bb18cf96c35518936c48df76565bd54b0567c9e1` · inputs hashed: 1154 · wall-clock receipt: `receipt.json`
+> input_commit: `81f47a063947618f979f3e154426604c2cc608ca` · inputs hashed: 1154 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -89,7 +89,7 @@
 | P36.13 | queued D-P36.13-1 — the hosted-enforcement flip on `sig-api` (env `SIG_API_RATE_LIMIT=enforce` + hops 2; prestate describe = restore point) | `implement-spec spec=docs/tickets/354_P36.13__api-rate-limits.md live_verification=true` |
 | P36.79 | queued D-P36.79-1 — the restricted-bucket object write of the sealed held-out relevance set (read-back digest verify; restore point = bucket versioning + commit… | `implement-spec spec=docs/tickets/371_P36.79__held-out-search-relevance-set.md live_verification=true` |
 | P36.33 | queued D-P36.33-1 — the R2 basemap host create (bucket sig-basemap + CORS/Range/immutable + custom domain tiles.surveillancegraph.org + first upload); restore p… | `implement-spec spec=docs/tickets/374_P36.33__basemap-pipeline-and-host.md live_verification=true` |
-| P36.38 | queued D-P36.38-1 — the v2-search API roll (`--memory 1Gi` + `SIG_API_SEARCH_V2=on`; prestate = restore point) | `implement-spec spec=docs/tickets/379_P36.38__search-api-serving-v2.md live_verification=true` |
+| P36.38 | queued D-P36.38-1 — the v2-search API roll (`--memory 1Gi` + `SIG_API_SEARCH_V2=on`) | `implement-spec spec=docs/tickets/379_P36.38__search-api-serving-v2.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 
