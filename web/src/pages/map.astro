@@ -239,7 +239,7 @@ const placeOptionLabel = (d: (typeof placeRows)[number]) =>
   <!-- P36.36 (MAP-05, SIG-UI-105): the static national overview — a build-time
        SVG figure (FIG-01a) with its own attribution; the places table below is
        its tabular equivalent. -->
-  <h2 id="overview-heading" data-copy="SL-MAP-04">Static overview</h2>
+  <h2 id="overview-heading" data-copy="MP-16">Static overview</h2>
   {overview !== null ? (
     <figure aria-labelledby="overview-caption">
       <img
@@ -249,14 +249,14 @@ const placeOptionLabel = (d: (typeof placeRows)[number]) =>
         loading="eager"
         decoding="async"
       />
-      <figcaption id="overview-caption" data-copy="SL-MAP-05">
+      <figcaption id="overview-caption" data-copy="MP-17">
         A build-time static rendition of the located records, binned so no single
         point implies more precision than SIG published. The places table below is
         its tabular equivalent (SIG-UI-037).
       </figcaption>
     </figure>
   ) : (
-    <p class="sig-island__note" data-testid="map-overview-absent" data-copy="SL-MAP-06">
+    <p class="sig-island__note" data-testid="map-overview-absent" data-copy="MP-18">
       This export does not emit the drawn overview figure — the places table
       below carries the same counts (SIG-ENG-042: an honest absence, never a
       fabricated map).
@@ -280,7 +280,7 @@ const placeOptionLabel = (d: (typeof placeRows)[number]) =>
         <option data-slug={d.slug} value={placeOptionLabel(d)} />
       ))}
     </datalist>{" "}
-    <span class="sig-place-search__note" data-testid="place-search-fallback" data-copy="SL-MAP-07">
+    <span class="sig-place-search__note" data-testid="place-search-fallback" data-copy="MP-19">
       If search cannot be reached, the first letter of a place's name finds it in the{" "}
       <a href={withBase("dossier/a-z/")}>A–Z directory</a>.
     </span>
@@ -333,7 +333,7 @@ const placeOptionLabel = (d: (typeof placeRows)[number]) =>
        tabular equivalent, grouped by country, ≤ 70 rows, every count shown
        with its coverage, and each jurisdiction's own paginated sites list. -->
   <h2 id="places-heading" data-copy="MP-07">Located records (tabular equivalent)</h2>
-  <p data-copy="SL-MAP-08">
+  <p data-copy="MP-20">
     Every jurisdiction SIG has located records in, with its own full site
     list — a paginated page per place, the interim per-record link target.
   </p>

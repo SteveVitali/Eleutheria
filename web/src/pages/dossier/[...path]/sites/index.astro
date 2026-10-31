@@ -74,7 +74,7 @@ crumbs.push({ label: "Site list" });
       : []),
   ]}
 >
-  <p class="sig-lede" data-testid="sites-lede" data-copy="SL-MAP-01">
+  <p class="sig-lede" data-testid="sites-lede">
     Every published record placed in <a href={withBase(dossierPath(list.slug).replace(/^\//, ""))}>{name}</a>,
     grouped by licence compartment — the interim per-record link target
     (each row answers <code>#{`{key}`}</code>). Coordinates print only at the
@@ -93,7 +93,7 @@ crumbs.push({ label: "Site list" });
       <use href={withBase(sprite.svg)} />
     </svg>
   )}
-  <p class="sig-table-note" data-testid="sites-count" data-copy="SL-MAP-02">
+  <p class="sig-table-note" data-testid="sites-count">
     {list.rows.length} record{list.rows.length === 1 ? "" : "s"} —
     {list.located} located, {list.noPoint} with no published point
     {list.contested > 0 && `, ${list.contested} contested`}.

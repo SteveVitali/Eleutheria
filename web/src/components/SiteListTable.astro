@@ -30,7 +30,7 @@ const multi = compartments.length > 1;
         <h2 id={`comp-${comp ?? "unassigned"}`}>
           Compartment: <code data-testid="sites-compartment-name">{comp ?? "unassigned"}</code>
         </h2>
-        <p class="sig-table-note" data-testid="sites-licence-line" data-copy="SL-MAP-03">
+        <p class="sig-table-note" data-testid="sites-licence-line">
           {licence ? `Licence: ${licence}` : "Licence: not stated"}
           {comp === null && " — this group is outside every named licence compartment."}
         </p>
