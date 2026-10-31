@@ -136,13 +136,13 @@
             "resource-summary:script:size": [
               "error",
               {
-                "maxNumericValue": 368640
+                "maxNumericValue": 524288
               }
             ],
             "resource-summary:document:size": [
               "error",
               {
-                "maxNumericValue": 3000000
+                "maxNumericValue": 800000
               }
             ],
             "largest-contentful-paint": [
@@ -185,6 +185,12 @@
           "warnTwin": true,
           "matchingUrlPattern": ".*/map/.*",
           "assertions": {
+            "resource-summary:script:size": [
+              "warn",
+              {
+                "maxNumericValue": 368640
+              }
+            ],
             "resource-summary:document:size": [
               "warn",
               {

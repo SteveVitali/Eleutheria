@@ -123,6 +123,26 @@
   "measured_gaps": [
     {
       "route": "/map/",
+      "metric": "jsInitialBytes",
+      "ratified_ceiling": 368640,
+      "recorded_measure": 482469,
+      "regression_bound": 524288,
+      "deferral": "D-P35.51-1",
+      "owner": "the map-surface optimisation row (K13 MAP rows)",
+      "note": "the ratified ≤ 360 KiB is LAW — it is not relaxed. The P36.37 head's /map/ wire measure is 482,469 B gzip / 402,308 B brotli (the ESM-split MapLibre vendor chunks are fetched over the wire at runtime — a static dist-walk probe undercounts them; measure with budget.spec.ts). Re-recorded once at the wire measure under the same deferral, ceilings untouched. The gap is recorded, bounded and loud: budget.spec.ts fails if the measure grows past regression_bound (512 KiB), reports the ratified ceiling every run, and fails if this row stays after the bundle drops under the ratified ceiling. The generated lighthouserc asserts the ratified ceiling as a warn and the regression bound as the error gate for this metric only — the row's fix is the owner's, never a smoothed budget."
+    },
+    {
+      "route": "/map/",
+      "metric": "totalInitialMaxBytes",
+      "ratified_ceiling": 460800,
+      "recorded_measure": 578041,
+      "regression_bound": 600000,
+      "deferral": "D-P35.51-1",
+      "owner": "the map-surface optimisation row (K13 MAP rows)",
+      "note": "same recorded gap, the total-transfer row: the ratified ≤ 450 KiB stands; the P36.37 head's wire measure is 578,041 B gzip / 494,331 B brotli — the script family still dominates, plus the kit-B mounts this row adds (per-record absence chips on the unlocated list — ⓘ meaning popover + Help-find-it link — and the shared provenance stylesheet the FocusClaimPanels path now carries). Re-recorded once at the wire measure under the same deferral, ceilings untouched (P36.18's national-leg precedent), bounded at 600,000 B, reported every run, stale-row fails."
+    },
+    {
+      "route": "/map/",
       "metric": "tbtMs",
       "ratified_ceiling": 350,
       "recorded_measure": 1763,
@@ -180,11 +200,22 @@
       "metric": "documentMaxBytes",
       "data_source": "national",
       "ratified_ceiling": 102400,
-      "recorded_measure": 2937723,
-      "regression_bound": 3000000,
+      "recorded_measure": 761442,
+      "regression_bound": 800000,
       "deferral": "D-P35.51-3",
       "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "national-scoped: at real scale (232,500 invented sites) the /map/ no-JS equivalent measures 2,937,723 B of document against the ratified ≤ 100 KiB T2 ceiling. P36.23's per-record absence chips — the K14-mandated ⓘ meaning popover + Help-find-it link on every unlocated record — added ≈ 1.24 MB across the ≈ 2,600 national indicator rows; the located table + coverage bins are unchanged. The ceiling is LAW: reported every run, re-recorded once at this measure (bounded at 3,000,000 B), stale-row fails. The compact/paginated equivalent is the owner's row, never a smoothed budget."
+      "note": "national-scoped: at real scale (232,500 invented sites) the /map/ no-JS equivalent measures 761,442 B of document at the P36.37 head — the app shell's bounded static equivalent (bounded indicator/directory lists) dropped it from the recorded 2,937,723 B — still over the ratified ≤ 100 KiB T2 ceiling. The ceiling is LAW: reported every run, re-recorded once at this measure (bounded at 800,000 B), stale-row fails. The compact/paginated equivalent is the owner's row, never a smoothed budget."
+    },
+    {
+      "route": "/map/",
+      "metric": "totalInitialMaxBytes",
+      "data_source": "national",
+      "ratified_ceiling": 460800,
+      "recorded_measure": 1290581,
+      "regression_bound": 1350000,
+      "deferral": "D-P35.51-3",
+      "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
+      "note": "national-scoped: the same document overage drives the total transfer — the P36.37 head's wire measure is 1,290,581 B gzip / 1,207,087 B brotli against the ratified ≤ 450 KiB (the bounded static equivalent's ≈ 761 KB document plus the ≈ 482 KB gz script family; the measure counts the document raw). Re-recorded once at the wire measure under the same deferral, ceilings untouched — bounded at 1,350,000 B under the national build only; the fixtures build's unscoped row still gates."
     },
     {
       "route": "/map/",

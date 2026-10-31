@@ -140,13 +140,15 @@ test.describe("map island — focus + compartment switch (SIG-FIND-004)", () => 
     await expect(page.getByTestId("map-island")).toHaveAttribute("data-ready", "true", {
       timeout: 20_000,
     });
-    const pane = page.getByTestId("map-focus-pane");
+    const pane = page.getByTestId("map-selected-panel");
     await expect(pane).toBeVisible();
     await expect(pane).toContainText("Fixed ALPR — downtown corridor");
     // The view links preserve the selection.
-    await expect(page.getByTestId("focus-network-link")).toBeVisible();
+    const networkLink = page.getByTestId("view-link-network");
+    await expect(networkLink).toBeVisible();
+    expect(await networkLink.getAttribute("href")).toContain("focus=");
     await page.reload();
-    await expect(page.getByTestId("map-focus-pane")).toBeVisible();
+    await expect(page.getByTestId("map-selected-panel")).toBeVisible();
   });
 
   test("a record-key focus stays navigable even when the record cannot load here", async ({
@@ -159,9 +161,9 @@ test.describe("map island — focus + compartment switch (SIG-FIND-004)", () => 
     await expect(page.getByTestId("map-island")).toHaveAttribute("data-ready", "true", {
       timeout: 20_000,
     });
-    const pane = page.getByTestId("map-focus-pane");
+    const pane = page.getByTestId("map-selected-panel");
     await expect(pane).toContainText("could not be loaded", { timeout: 10_000 });
-    await expect(page.getByTestId("focus-record-link")).toHaveAttribute(
+    await expect(page.getByTestId("selection-page-link")).toHaveAttribute(
       "href",
       "/r/p-0000000000000000000000000000000000000000000000000000000000000001/c/sig_graph/entity/deployment/missing/",
     );
@@ -177,6 +179,8 @@ test.describe("map island — focus + compartment switch (SIG-FIND-004)", () => 
     const attribution = page.getByTestId("map-compartment-attribution");
     await expect(attribution).toContainText("All 1 licence compartment");
     await expect(attribution).toContainText("CC-BY-4.0");
+    // The compartment toggles live under the Filters tab in the P36.37 app shell.
+    await page.getByTestId("map-tab-filters").click();
     const toggle = page.getByTestId("map-compartment-sig_graph");
     await toggle.uncheck();
     await expect(attribution).toContainText("0 of 1 licence compartments");

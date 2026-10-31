@@ -54,6 +54,7 @@ import {
   viewportDecimals,
   viewHref,
 } from "../../lib/workspace-state/index";
+import { withBase } from "../../lib/paths";
 import { useMapWorkspace } from "./workspace";
 import {
   facetCannotApply,
@@ -702,7 +703,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
     if (rec) {
       const model = selectionFromRecord(rec, {
         recordPageHref: routes?.pageHref ?? null,
-        disputeHref: `/dispute/?subject=${encodeURIComponent(focus)}`,
+        disputeHref: withBase(`dispute/?subject=${encodeURIComponent(focus)}`),
       });
       setSelection(model);
       setTab("selected");
@@ -774,7 +775,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
             recordHref: null,
             listHref: null,
             recordPageHref: routes.pageHref,
-            disputeHref: `/dispute/?subject=${encodeURIComponent(focus)}`,
+            disputeHref: withBase(`dispute/?subject=${encodeURIComponent(focus)}`),
             located: typeof loc?.lat === "number",
           });
           setStatements(
@@ -831,7 +832,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
         p as Parameters<typeof selectionFromTileProps>[0],
         {
           recordPageHref: routes?.pageHref ?? null,
-          disputeHref: rk ? `/dispute/?subject=${encodeURIComponent(rk)}` : null,
+          disputeHref: rk ? withBase(`dispute/?subject=${encodeURIComponent(rk)}`) : null,
         },
       );
       setSelection(model);
