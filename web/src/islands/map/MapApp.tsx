@@ -1353,7 +1353,12 @@ export default function MapApp(props: MapAppProps): JSX.Element {
         {activeAttribution(props.compartments, activeCompartments)
           ? ` — ${activeAttribution(props.compartments, activeCompartments)}`
           : ""}
-        .{state.release ? ` Release ${state.release}.` : ""}
+        .{state.release ? (
+          <>
+            {" "}
+            Release <code>{state.release}</code>.
+          </>
+        ) : null}
       </p>
     </div>
   );
