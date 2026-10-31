@@ -33,12 +33,18 @@ export interface TypeaheadShard {
   /** The prefix key this shard answers (lowercase alnum). */
   key: string;
   /**
-   * P36.40: `true` on a two-character shard whose bucket split to
-   * three-character keys — the shard carries a bounded representative set
-   * and a query whose first run is ≥ 3 characters refetches the
-   * three-character shard for the full set.
+   * P36.40: `true` on a shard whose bucket split one character deeper —
+   * the shard carries a bounded representative set and a query whose
+   * first run is longer than this key refetches the deeper shard for the
+   * full set.
    */
   deeper?: boolean;
+  /**
+   * `true` on a terminal shard that could not be split any further and
+   * keeps only the entries that fit — dropped multi-key entries stay
+   * reachable through their other word-start shards.
+   */
+  truncated?: boolean;
   entries: TypeaheadEntry[];
 }
 

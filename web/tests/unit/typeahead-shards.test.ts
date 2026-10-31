@@ -93,31 +93,56 @@ describe("buildTypeaheadShards", () => {
     expect(a).toBe(b);
   });
 
-  it("splits an over-threshold bucket to three-char keys and marks it deeper", () => {
-    // A synthetic catalog dense enough under one key to cross the split bound.
-    const dense = Array.from({ length: 400 }, (_, i) => ({
-      label: `Aalborg precinct ${String(i).padStart(3, "0")} municipal camera registry annex`,
+  it("splits an over-threshold bucket one char deeper and marks it deeper", () => {
+    // A synthetic catalog dense under `ca` but diverging at char 3 — the
+    // partition separates it into can/cam/cal children.
+    const dense = Array.from({ length: 900 }, (_, i) => ({
+      label: `${["Canton", "Camden", "Calhoun"][i % 3]} precinct ${String(i).padStart(3, "0")} registry annex`,
       kind: "place",
       href: "/dossier/x/",
     }));
     const built = buildTypeaheadShards(dense);
-    const aa = built.get("aa");
-    expect(aa?.deeper).toBe(true);
-    expect(aa!.entries.length).toBeLessThanOrEqual(DEEPER_SHARD_CAP);
-    const deepKeys = [...built.keys()].filter((k) => k.startsWith("aa") && k.length === 3);
-    expect(deepKeys.length).toBeGreaterThan(0);
+    const ca = built.get("ca");
+    expect(ca?.deeper).toBe(true);
+    expect(ca!.entries.length).toBeLessThanOrEqual(DEEPER_SHARD_CAP);
+    const deepKeys = [...built.keys()].filter((k) => k.startsWith("ca") && k.length === 3);
+    expect(deepKeys).toEqual(["cal", "cam", "can"]);
     for (const k of deepKeys) {
       expect(JSON.stringify(built.get(k)).length).toBeLessThanOrEqual(SHARD_MAX_BYTES);
     }
   });
 
-  it("refuses to emit a three-char shard over the ratified bound (SIG-ENG-042)", () => {
-    const giant = Array.from({ length: 2000 }, (_, i) => ({
-      label: `Aardvark Holdings District ${String(i).padStart(4, "0")} of the consolidated northern municipal camera registry annex precinct`,
+  it("truncates a monolithic terminal bucket but never loses a named thing", () => {
+    // Every entry shares the same first word — deeper keys cannot divide the
+    // bucket — but each has a second word, so dropped entries stay reachable
+    // through their other two-char home.
+    const dense = Array.from({ length: 600 }, (_, i) => ({
+      label: `Cameron village${String(i).padStart(4, "0")} site`,
       kind: "place",
       href: "/dossier/x/",
     }));
-    expect(() => buildTypeaheadShards(giant)).toThrow(/SIG-SRCH-010|ratified/);
+    const built = buildTypeaheadShards(dense);
+    // "ca" cannot split (every entry shares "cameron" → "came…" identical):
+    // it must emit, marked either deeper or truncated, and stay in bounds.
+    for (const [key, shard] of built) {
+      expect(JSON.stringify(shard).length, `shard ${key}`).toBeLessThanOrEqual(SHARD_MAX_BYTES);
+    }
+    // no throw — the coverage check proves every entry survived in ≥1 shard
+    const total = [...built.values()].reduce((n, s) => n + s.entries.length, 0);
+    expect(total).toBeGreaterThanOrEqual(600);
+  });
+
+  it("refuses a catalog whose single-home entries alone exceed the bound (SIG-ENG-042)", () => {
+    // Every word keys to `aa` — this prefix is each entry's ONLY home, so a
+    // terminal shard that cannot hold them all is a build failure, never a
+    // silent drop.
+    const giant = Array.from({ length: 2000 }, (_, i) => ({
+      label: "Aardvark Aalto Aaron Aames",
+      kind: "place",
+      detail: `annex ${i}`,
+      href: "/dossier/x/",
+    }));
+    expect(() => buildTypeaheadShards(giant)).toThrow(/SIG-SRCH-010|reachable/);
   });
 });
 

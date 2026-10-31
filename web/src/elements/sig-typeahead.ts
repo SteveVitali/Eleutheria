@@ -155,13 +155,13 @@ class SigTypeahead extends HTMLElementBase {
         return;
       }
       let shard = await loadShard(key);
-      // P36.40's split shards: a `deeper` bucket split to three-char keys —
-      // once the query's first run reaches three characters, refetch the
-      // deeper shard for the full set (the two-char shard is a bounded
-      // representative set by construction).
+      // P36.40's split shards: a `deeper` bucket split one character down —
+      // once the query's first run is longer than this shard's key, refetch
+      // the deeper shard for the full set (the parent shard carries only a
+      // bounded representative set by construction).
       const run = /^[a-z0-9]+/i.exec(q)?.[0].toLowerCase() ?? "";
       if (shard.deeper === true && run.length > key.length) {
-        const deepKey = (run + run.slice(-1).repeat(3)).slice(0, 3);
+        const deepKey = (run + run.slice(-1).repeat(key.length + 1)).slice(0, key.length + 1);
         if (deepKey !== key) shard = await loadShard(deepKey);
       }
       // A slower shard reply must never overwrite a newer query.
