@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+<!-- Copyright (C) 2026 The SIG project. Documentation is CC-BY-4.0; see LICENSE and §42. -->
+
 # P36.38 — the v2 search API roll packet (`prepared_not_executed`)
 
 `sig.search-v2-roll-packet/1` — see `packet.json` for the machine row.
