@@ -39,6 +39,7 @@ from .models import HealthResponse, TermsResponse
 from .prohibitions import assert_no_prohibited_routes, route_paths
 from .rate_limit import RateLimitConfig, RateLimitMiddleware, TokenBucketLimiter
 from .release_search import KNOWN_PARAMS, ReleaseSearchStore, render_search_html
+from .release_search_v2 import KNOWN_PARAMS_V2, ReleaseSearchV2Store
 from .release_serving import (
     PUBLICATION_RE,
     ReleaseServingError,
@@ -77,6 +78,8 @@ def create_app(
     release_id: str | None = None,
     release_serving: ReleaseServingStore | None = None,
     rate_limit: RateLimitConfig | None = None,
+    release_search_v2: ReleaseSearchV2Store | None = None,
+    search_v2: str | None = None,
 ) -> FastAPI:
     """Build the read-API app over ``store`` (SIG-API-001).
 
@@ -103,6 +106,16 @@ def create_app(
     "defined" half) or ``enforce`` (the 429 rejection too — the named OM-20
     mutation), with ``SIG_API_TRUSTED_PROXY_HOPS`` declaring the trusted
     forwarding hops the client key slices (2 behind the Google external LB).
+
+    ``release_search_v2`` is the federated v2 serving store (P36.38,
+    SIG-SRCH-001) over the same activated registry; ``search_v2`` is its
+    serving posture — ``None`` reads the deploy env ``SIG_API_SEARCH_V2``:
+    ``off`` (default — the ``/v1/releases/{pub or latest}/search`` route is
+    not mounted at all; the public response is identical to before this code
+    landed, v1 keeps serving — the OM-20 dark-ship ahead of the operator's
+    roll) or ``on`` (the route serves). An unknown posture fails closed at
+    construction. The roll enabling it on the deployment is never
+    pre-authorised — the operator's explicit verbatim go (D-P36.38-1).
     """
     if release_serving is None and release_search is not None:
         release_serving = ReleaseServingStore(release_search.registry_root)
@@ -118,6 +131,7 @@ def create_app(
     app.state.store = store
     app.state.release_search = release_search
     app.state.release_serving = release_serving
+    app.state.release_search_v2 = release_search_v2
     app.state.basis_release_id = release_id
     app.include_router(build_router())
 
@@ -245,6 +259,92 @@ def create_app(
             )
             return _html_search_error(request, err)
         return await request_validation_exception_handler(request, exc)
+
+    # --- /v1/releases/{pub or latest}/search — federated v2 (P36.38) ---------
+    # K3 SRCH-03 / SIG-SRCH-001: ONE request across every licence compartment
+    # over the verified sig.release-search-index/2 artifacts (P36.31) and the
+    # sig.search-results/2 engine (P36.32). Ships DARK — the route mounts only
+    # under SIG_API_SEARCH_V2=on (the OM-20 roll is the operator's verbatim
+    # go, D-P36.38-1); off mounts nothing and the answer is the same 404 the
+    # route gave before this code landed. No query logging (SIG-SRCH-012).
+    from exports.search_query_v2 import SearchQueryV2Error, parse_params_v2
+
+    from . import release_search_v2 as rs2
+
+    if (search_v2 or rs2.search_v2_posture(os.environ)) == "on":
+
+        @app.get("/v1/releases/{publication_id}/search")
+        def released_search_v2(
+            request: Request,
+            publication_id: str,
+            q: str | None = Query(default=None),
+            type: list[str] | None = Query(default=None),
+            kind: str | None = Query(default=None),
+            jurisdiction: str | None = Query(default=None),
+            source: str | None = Query(default=None),
+            technology: str | None = Query(default=None),
+            collection: str | None = Query(default=None),
+            cursor: str | None = Query(default=None),
+            expand: str | None = Query(default=None),
+            limit: int | None = Query(default=None),
+            format: str | None = Query(default=None),
+        ) -> Response:
+            _mark_release_basis(
+                request,
+                publication_id if PUBLICATION_RE.match(publication_id) else None,
+            )
+            rstore: ReleaseSearchV2Store | None = request.app.state.release_search_v2
+            if rstore is None:
+                raise SearchQueryV2Error(
+                    503,
+                    "release_search_v2_unconfigured",
+                    "federated release search is not configured on this service",
+                )
+            if format is not None and format not in ("json", "html"):
+                raise SearchQueryV2Error(
+                    422,
+                    "unsupported_query",
+                    f"format must be json or html; got {format!r}",
+                )
+            if format == "html":
+                # SRCH-04 (P36.39) renders this route's HTML representation —
+                # an explicit typed refusal, never silent JSON to a browser.
+                raise SearchQueryV2Error(
+                    501,
+                    "html_representation_pending",
+                    "the no-JS HTML representation of this route lands with the "
+                    "search results page (SRCH-04); ask for format=json or omit it",
+                )
+            unknown = sorted(set(request.query_params.keys()) - KNOWN_PARAMS_V2)
+            params = parse_params_v2(
+                q=q,
+                types=type,
+                kind=kind,
+                jurisdiction=jurisdiction,
+                source=source,
+                technology=technology,
+                collection=collection,
+                cursor=cursor,
+                expand=expand,
+                limit=limit,
+                extra=unknown,
+            )
+            result, pub, was_latest = rstore.search(publication_id, params)
+            _mark_release_basis(request, pub)
+            return JSONResponse(
+                result,
+                headers={"Cache-Control": rs2.cache_control(was_latest)},
+            )
+
+        @app.exception_handler(SearchQueryV2Error)
+        def _search_v2_error(request: Request, exc: SearchQueryV2Error) -> Response:
+            _mark_release_basis(request, str(request.path_params.get("publication_id") or ""))
+            headers = {"Retry-After": "5"} if exc.status == 503 else None
+            return JSONResponse(
+                status_code=exc.status,
+                content={"detail": exc.detail, "code": exc.code, **exc.extra},
+                headers=headers,
+            )
 
     # --- /id/{type}/{uuid} — dereferenceable identifiers (SIG-API-008) --------
     @app.get("/id/{id_type}/{uuid}")

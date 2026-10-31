@@ -1,0 +1,25 @@
+{
+  "schema": "sig.search-v2-roll-packet/1",
+  "ticket": "P36.38",
+  "row": 379,
+  "status": "prepared_not_executed",
+  "deferral": "D-P36.38-1",
+  "mutation": {
+    "kind": "gcloud run services update",
+    "service": "sig-api",
+    "args": [
+      "--memory 1Gi",
+      "--update-env-vars SIG_API_SEARCH_V2=on"
+    ],
+    "window": "AR-3 + AR-2",
+    "pre_authorised": false,
+    "gate": "operator explicit verbatim go (OM-20; never pre-authorised)"
+  },
+  "decisions_carried": {
+    "D-K3-5 [B-30]": "yes: sig-api 512 MiB -> 1 GiB (+$3/mo) and the v2 API rolls (U-003.3)"
+  },
+  "runner": "ops/gcp/search-v2-roll.sh",
+  "rerun": "implement-spec spec=docs/tickets/379_P36.38__search-api-serving-v2.md live_verification=true",
+  "restore_point": "the prior deployment revision env+memory (prestate describe)",
+  "rollback": "gcloud run services update sig-api --memory <prior> --remove-env-vars SIG_API_SEARCH_V2"
+}
