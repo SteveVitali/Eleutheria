@@ -325,17 +325,6 @@
    "deferral": "D-P35.51-2",
    "owner": "the K0 runtime-migration row (Preact replaces React on the public surface)",
    "note": "fixtures-scoped: one keystroke on the demo-corpus search under 4\u00d7 CPU throttle measures \u2248 160 ms to the narrowed-result effect on the GitHub-hosted runner (the developer machine measures under the ratified \u2264 100 ms) \u2014 the throttle-bound latency rides with the React runtime this deferral owns. Bounded at 300 ms; the national bound stays 200 ms."
-  },
-  {
-   "route": "/search/",
-   "metric": "totalInitialMaxBytes",
-   "data_source": "national",
-   "ratified_ceiling": 184320,
-   "recorded_measure": 200334,
-   "regression_bound": 210000,
-   "deferral": "D-P35.51-2",
-   "owner": "the K0 runtime-migration row (Preact replaces React on the public surface)",
-   "note": "national-scoped: the ratified \u2264 180 KiB total transfer is LAW \u2014 the P36.39 head's national wire measure is 200,334 B gzip (run 41192754119 read 200,231; the \u2248 27 KB variable-font fetch counts on the wire only \u2014 the export leg's dist measure resolves 173,474 B). The overage is this deferral's own script gap carrying through (the React runtime, 75,589 vs 61,440 B gz) plus the markup accumulated since the 192,259 B recording \u2014 P36.39's one federated GET form adds \u2248 640 B of raw document, which this metric counts uncompressed, and tipped the real-scale page past the recorded 200,000 B bound. Re-recorded once at the wire measure under the same deferral, ceilings untouched (P36.18's national-leg precedent). Bounded at 210,000 B, reported every run; the runtime migration removes the row via the stale-row gate."
   }
  ]
 }
