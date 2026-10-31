@@ -85,6 +85,13 @@ import {
   type EntitySlugHistoryRow,
 } from "./entity-history";
 import {
+  ENTITY_LABEL_FIXTURES,
+  ENTITY_PAGE_FIXTURES,
+  isEntityPageTwin,
+  type EntityLabelRow,
+  type EntityPageTwin,
+} from "./entity-page";
+import {
   PROCUREMENT_RELEVANCE_FIXTURE,
   isProcurementRelevanceDoc,
   type ProcurementRelevanceRow,
@@ -1081,6 +1088,60 @@ export function getEntitySlugHistory(): EntitySlugHistoryRow[] {
     rows?: EntitySlugHistoryRow[];
   };
   return parsed.rows ?? [];
+}
+
+/**
+ * P36.41 (K2 §6.2 / A-10, `sig.entity-label/1` rows): the shared label
+ * registry — every emitted entity row, keyed and typed-review states
+ * alike. Export mode scans `<exportDir>/labels/*.jsonl` (the per-compartment
+ * row streams the release ships); a duplicate row across compartments is
+ * read once (the registry is entity-keyed). Fixtures serve the committed
+ * entity-label fixture rows.
+ */
+export function getEntityLabelRows(): EntityLabelRow[] {
+  if (dataSource() !== "export") return ENTITY_LABEL_FIXTURES;
+  const root = `${exportDir()}/labels`;
+  if (!existsSync(root)) return [];
+  const seen = new Map<string, EntityLabelRow>();
+  for (const entry of readdirSync(root)) {
+    if (!entry.endsWith(".jsonl")) continue;
+    const lines = readFileSync(`${root}/${entry}`, "utf-8").split("\n");
+    for (const line of lines) {
+      if (line.trim() === "") continue;
+      const row = JSON.parse(line) as EntityLabelRow;
+      if (!seen.has(row.entity_id)) seen.set(row.entity_id, row);
+    }
+  }
+  return [...seen.values()];
+}
+
+/**
+ * P36.41 (K2 §6.2 / A-10, `sig.entity-page/1`): the entity-page twins —
+ * one doc per licence compartment the entity's facts license to, emitted
+ * at `web/entity/<url_type>/<slug>--<hash>/index.<comp>.json`. Export mode
+ * reads every compartment twin for the key (the page unions them with the
+ * per-compartment licence lines, ADR-106); an absent directory is the
+ * honest empty set (a pre-P36.41 export). Fixtures serve the committed
+ * twin. `[]` is also the answer for a `not_yet_reviewed` or withheld
+ * entity — its typed state rides the label registry, never a broken page.
+ */
+export function getEntityPageTwins(urlType: string, key: string): EntityPageTwin[] {
+  if (dataSource() !== "export") {
+    const twin = ENTITY_PAGE_FIXTURES[`${urlType}/${key}`];
+    return twin ? [twin] : [];
+  }
+  const dir = `${exportDir()}/web/entity/${urlType}/${key}`;
+  if (!existsSync(dir)) return [];
+  const out: EntityPageTwin[] = [];
+  for (const entry of readdirSync(dir).sort()) {
+    if (!entry.startsWith("index.") || !entry.endsWith(".json")) continue;
+    const parsed = JSON.parse(readFileSync(`${dir}/${entry}`, "utf-8")) as unknown;
+    if (!isEntityPageTwin(parsed)) {
+      throw new Error(`${dir}/${entry}: not a valid sig.entity-page/1 twin`);
+    }
+    out.push(parsed);
+  }
+  return out;
 }
 
 /**
