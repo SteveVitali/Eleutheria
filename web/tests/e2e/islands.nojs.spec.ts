@@ -17,7 +17,7 @@ test("map: without JS the island is inert but the tabular equivalent is usable",
   await expect(page.getByTestId("map-island-section")).toBeVisible();
   await expect(page.locator(".maplibregl-canvas")).toHaveCount(0);
   // The no-JS fallback: the located-assets table and OSM attribution are present.
-  await expect(page.getByTestId("map-asset-row").first()).toBeVisible();
+  await expect(page.getByTestId("map-places-row").first()).toBeVisible();
   await expect(page.getByTestId("map-attribution")).toContainText("OpenStreetMap");
 });
 

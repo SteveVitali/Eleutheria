@@ -187,6 +187,16 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
     examples: ["/"],
   },
   {
+    patterns: ["/dossier/**/sites/", "/dossier/**/sites/page/*/"],
+    type: "T1",
+    owner: "P36.36",
+    contract: "sig.dossier-sites/1",
+    noJsEquivalent: SELF,
+    examples: ["/dossier/usa/ok/sites/", "/dossier/usa/tx/harris-county-48201/sites/page/2/"],
+    notes:
+      "P36.36 (MAP-05, UXR-18 / SIG-UI-068/105): the per-dossier sites lists — the interim site-record link target (`…#<key>`), ≤ 100 rows per page, paginated by path. Leaf-first literal `sites`/`page` beats the `/dossier/**` umbrella.",
+  },
+  {
     patterns: ["/dossier/**"],
     type: "T1",
     owner: "P36.34",
@@ -435,11 +445,11 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
     noJsEquivalent: {
       kind: "sections",
       description:
-        "the coverage-bins table, the located-records table and the records-without-a-point list (K0 §4.4: the map's tabular equivalents)",
-      testIds: ["map-asset-row", "map-attribution"],
+        "the static overview figure, the place form, the places table, the coverage-bins table and the per-dossier sites lists (K0 §4.4 + K1 §5: the no-JS baseline — P36.36)",
+      testIds: ["map-places-row", "map-attribution"],
     },
     examples: ["/map/"],
-    notes: "The T2 map surface — today's MapLibre island stays until its own migration rows.",
+    notes: "The T2 map surface — the K1 §5 no-JS baseline landed at P36.36; today's MapLibre island stays until its own migration rows.",
   },
   {
     patterns: ["/explore/"],

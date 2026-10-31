@@ -63,7 +63,11 @@ RETIRED_ROWS = {"T-01": "web/src/pages/task/new/[slug].astro"}
 # sentence names them. P36.1b superseded DC-03 → DC-21: the /data-collection/
 # intro now names the conduct-policy and opt-out sections the full text adds.
 # Asserted superseded, never silently dropped.
-SUPERSEDED_ROWS = {"CL-03", "M-20", "DC-19", "HW-05", "DI-04", "UP-04", "DC-03"}
+# P36.36 (K1 MAP-05): the located-records table the K1 §5 baseline retires took
+# MP-08 ("Record" column head) and MP-09 (the truncation note) with it — the
+# same sentences now live on the sites lists / places table, so the rows are
+# superseded, never dropped.
+SUPERSEDED_ROWS = {"CL-03", "M-20", "DC-19", "HW-05", "DI-04", "UP-04", "DC-03", "MP-08", "MP-09"}
 
 # batch `page` value → the .astro source whose rendered elements bind its rows.
 ASTRO_PAGES = {

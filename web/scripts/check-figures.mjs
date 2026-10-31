@@ -57,10 +57,15 @@ const COMPARTMENT_STREAM_RE = /^[a-z0-9_]+\/(sites|statements|record_claims)\.js
  * index document itself excepted (it carries no dossier record). */
 const PER_DOSSIER_RE = /^web\/dossiers\/[a-z0-9-]+(\/[a-z0-9-]+)*\.json$/;
 
-/** The J3 §5.4 named page classes → dist globs. */
+/** The J3 §5.4 named page classes → dist globs. P36.36 (MAP-05): the dossier
+ * class boundary — `/dossier/<path>/sites/**` is the map's no-JS list surface
+ * (K13 route table: "sites files + placement", a T1 table page like
+ * `/sources/`), not the dossier template; its per-row numerals are row data,
+ * not material figures. */
+const SKIP_SEGMENTS = new Set(["sites"]);
 const PAGE_CLASSES = [
   { cls: "home", files: ["index.html"] },
-  { cls: "dossier", dirs: ["dossier"] },
+  { cls: "dossier", dirs: ["dossier"], skipSegments: true },
   { cls: "coverage", files: ["coverage-metrics/index.html"] },
   { cls: "freshness", dirs: ["data-freshness"] },
   { cls: "sources", dirs: ["sources"] },
@@ -71,11 +76,13 @@ const PAGE_CLASSES = [
 const FIGURE_OPEN = "<!-- sig-figure -->";
 const FIGURE_CLOSE = "<!-- /sig-figure -->";
 
-function* walk(dir) {
+function* walk(dir, skipSegments = false) {
   for (const e of readdirSync(dir, { withFileTypes: true })) {
     const p = join(dir, e.name);
-    if (e.isDirectory()) yield* walk(p);
-    else if (e.isFile() && p.endsWith(".html")) yield p;
+    if (e.isDirectory()) {
+      if (skipSegments && SKIP_SEGMENTS.has(e.name)) continue;
+      yield* walk(p, skipSegments);
+    } else if (e.isFile() && p.endsWith(".html")) yield p;
   }
 }
 
@@ -183,7 +190,7 @@ function check(distDir) {
     for (const d of pc.dirs ?? []) {
       const dir = join(distDir, d);
       if (existsSync(dir)) {
-        for (const p of walk(dir)) files.push({ cls: pc.cls, path: p });
+        for (const p of walk(dir, pc.skipSegments === true)) files.push({ cls: pc.cls, path: p });
       }
     }
   }

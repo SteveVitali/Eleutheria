@@ -10,8 +10,8 @@ import { test, expect } from "@playwright/test";
 
 test("map has a populated tabular equivalent without JS (SIG-UI-037)", async ({ page }) => {
   await page.goto("/map/");
-  // The located-records table and the coverage-bins table both carry rows.
-  await expect(page.getByTestId("map-asset-row").first()).toBeVisible();
+  // The places table (located-records equivalent) and the coverage-bins table carry rows.
+  await expect(page.getByTestId("map-places-row").first()).toBeVisible();
   await expect(page.getByTestId("coverage-bin").first()).toBeVisible();
   // The jurisdiction indicators for point-less records are present (SIG-UI-020).
   await expect(page.getByTestId("jurisdiction-indicator").first()).toBeVisible();
@@ -64,9 +64,10 @@ test("contested locations roll up to a count that leads to the dossier (P34.15, 
   const contested = page.getByTestId("jurisdiction-contested");
   await expect(contested).toHaveCount(1); // Oklahoma City: one UNRESOLVED-location record
   const link = contested.getByTestId("contested-dossier-link");
-  await expect(link).toHaveAttribute("href", "/dossier/oklahoma-city/");
+  // P36.36: the keyed canonical dossier, never a re-derived flat slug.
+  await expect(link).toHaveAttribute("href", "/dossier/usa/ok/oklahoma-city-4064000/");
   const res = await link.click().then(() => page.url());
-  expect(res).toContain("/dossier/oklahoma-city/");
+  expect(res).toContain("/dossier/usa/ok/oklahoma-city-4064000/");
 });
 
 test("low-coverage ≠ low-density is encoded in the static HTML (SIG-UI-018)", async ({ page }) => {
