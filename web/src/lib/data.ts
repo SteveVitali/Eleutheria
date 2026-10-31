@@ -984,14 +984,84 @@ export function getIndexSprite(): IndexSpriteDoc | null {
   return JSON.parse(readFileSync(path, "utf-8")) as IndexSpriteDoc;
 }
 
+/**
+ * P36.35 (JUR-05): the fixtures-mode jurisdiction slug history — REAL
+ * `_SLUG_HISTORY_SEED` rows (K4 §8.1's published flat slugs) so the stub
+ * pages, the derived corrections entries and the redirect generator
+ * exercise every kind in the default build: `id` (split — its jkey
+ * successors honestly resolve to "not published in this build" without a
+ * key map), `bd` (corrected), `unresolved` (moved → the unplaced report,
+ * the one successor a fixtures build can resolve).
+ */
+export const JURISDICTION_SLUG_HISTORY_FIXTURE: { schema: string; rows: SlugHistoryRow[] } = {
+  schema: "sig.jurisdiction-slug-history/1",
+  rows: [
+    {
+      slug: "id",
+      kind: "split",
+      successor: ["iso3166-2:US-ID", "iso3166-1:ID"],
+      note: "this page combined Idaho (US) and Indonesia — they are now separate dossiers",
+      first_release: null,
+      last_release: null,
+    },
+    {
+      slug: "bd",
+      kind: "corrected",
+      successor: "iso3166-1:SG",
+      note: "records were mislabelled Bangladesh — they are located in Singapore; this is a correction page, not a rename",
+      first_release: null,
+      last_release: null,
+    },
+    {
+      slug: "unresolved",
+      kind: "moved",
+      successor: "unplaced",
+      note: "the unresolved bucket is now the 'Not yet placed' data-quality report — most records formerly here are now placed by location",
+      first_release: null,
+      last_release: null,
+    },
+  ],
+};
+
 export function getSlugHistory(): SlugHistoryRow[] {
-  if (dataSource() !== "export") return [];
+  if (dataSource() !== "export") return JURISDICTION_SLUG_HISTORY_FIXTURE.rows;
   const path = `${exportDir()}/web/jurisdiction_slug_history.json`;
   if (!existsSync(path)) return [];
   const parsed = JSON.parse(readFileSync(path, "utf-8")) as {
     rows?: SlugHistoryRow[];
   };
   return parsed.rows ?? [];
+}
+
+/**
+ * P36.35 (JUR-05 / SIG-UI-058): the RQ/WX/EV `*_handles_history` artifacts
+ * — one `<family>_handles_history.json` per handle family (task, watch,
+ * evidence — K11's handle map, EV's claim ids), each row old → new path.
+ * No artifact is emitted today (RQ-01/WX-01/EV-02 land them) — absent
+ * files are the honest empty set, never a fabricated rename. Fixtures
+ * serve the honest empty set too (the fixture corpus has no handles).
+ */
+export function getHandleHistories(): { old: string; target: string; note?: string }[] {
+  if (dataSource() !== "export") return [];
+  const root = `${exportDir()}/web`;
+  if (!existsSync(root)) return [];
+  const out: { old: string; target: string; note?: string }[] = [];
+  for (const entry of readdirSync(root).sort()) {
+    if (!entry.endsWith("_handles_history.json")) continue;
+    const parsed = JSON.parse(readFileSync(`${root}/${entry}`, "utf-8")) as {
+      rows?: { old?: unknown; target?: unknown; note?: unknown }[];
+    };
+    for (const r of parsed.rows ?? []) {
+      if (typeof r?.old === "string" && typeof r?.target === "string" && r.old && r.target) {
+        out.push({
+          old: r.old,
+          target: r.target,
+          note: typeof r.note === "string" ? r.note : undefined,
+        });
+      }
+    }
+  }
+  return out;
 }
 
 /**

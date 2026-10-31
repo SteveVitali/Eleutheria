@@ -13,6 +13,14 @@ import { resolveTileCopyList } from "./scripts/export-tiles.mjs";
 import { buildManifest, classifyDist, classifyRoute, writeManifest } from "./src/lib/page-types.ts";
 import { tightenT0Document } from "./src/lib/csp.ts";
 import { BASEMAP_TILE_ORIGIN } from "./src/lib/basemap.ts";
+import { redirectRules, renderRedirectsConf } from "./src/lib/redirects.ts";
+import {
+  getSlugHistory,
+  getEntitySlugHistory,
+  getHandleHistories,
+  getJurisdictionKeyMap,
+  getUnplacedReport,
+} from "./src/lib/data.ts";
 import {
   renderCardSvg,
   renderLogoSvg,
@@ -309,6 +317,76 @@ function sigBrandAssets() {
   };
 }
 
+// P36.35 (JUR-05 / SIG-UI-058, SIG-JUR-009/012): the ONE redirect generator.
+// Every URL-history artifact the build reads — the jurisdiction slug history,
+// the entity `sig.slug-history/1`, every `*_handles_history`, the fixed
+// legacy list — derives ONE rule table via `src/lib/redirects.ts`; the
+// emitted `dist/redirects.conf` is the generated include (the static stub
+// pages are the fallback where the include cannot run). The emitted-route
+// set gates every 3xx: a redirect is never written to a target this build
+// does not emit, and a fixed-legacy rule fires only once its source route
+// retired (SIG-ENG-042 — an unverifiable surface fails, never ships).
+function sigRedirects() {
+  return {
+    name: "sig-redirects",
+    hooks: {
+      "astro:build:done": async ({ dir }) => {
+        const distDir = fileURLToPath(dir);
+        // The emitted-route set — every `<route>/index.html` under dist.
+        const emittedRoutes = new Set();
+        const walk = (sub) => {
+          for (const e of readdirSync(join(distDir, sub), { withFileTypes: true })) {
+            if (e.isDirectory()) walk(`${sub}${e.name}/`);
+            else if (e.name === "index.html") emittedRoutes.add(`/${sub}`);
+          }
+        };
+        walk("");
+        const keyMap = getJurisdictionKeyMap();
+        const jurisdictionTargets = new Map();
+        const jurisdictionLevels = new Map();
+        if (getUnplacedReport() !== null) {
+          jurisdictionTargets.set("unplaced", "/dossier/unplaced/");
+        }
+        for (const [jkey, row] of keyMap ?? []) {
+          if (row.slug_path) jurisdictionTargets.set(jkey, `/dossier/${row.slug_path}/`);
+          if (row.level) jurisdictionLevels.set(jkey, row.level);
+        }
+        const slugHistory = getSlugHistory();
+        const entityHistory = getEntitySlugHistory();
+        const handleRows = getHandleHistories().map((r) => ({ ...r, family: "handle" }));
+        const rules = redirectRules({
+          slugHistory,
+          jurisdictionTargets,
+          jurisdictionLevels,
+          entityHistory,
+          handleRows,
+          emittedRoutes,
+        });
+        // SIG-JUR-009: every historical slug resolves — a stub page OR a rule.
+        for (const row of slugHistory) {
+          const from = `/dossier/${row.slug}/`;
+          if (!emittedRoutes.has(from) && !rules.some((r) => r.from === from)) {
+            throw new Error(
+              `redirects: historical slug /dossier/${row.slug}/ resolves to ` +
+                "nothing — every published URL must answer (SIG-JUR-009)",
+            );
+          }
+        }
+        writeFileSync(
+          join(distDir, "redirects.conf"),
+          renderRedirectsConf(rules, {
+            jurisdictions: slugHistory.length,
+            entities: entityHistory.length,
+            handles: handleRows.length,
+            routes: emittedRoutes.size,
+          }),
+        );
+        console.log(`sig-redirects: ${rules.length} redirect rule(s) emitted to /redirects.conf`);
+      },
+    },
+  };
+}
+
 // P35.50 (UXK0-1, K0 §4.12 item 1, ADR-155, SIG-UI-041/NEW-4): route discovery —
 // the `astro:build:done` hook walks `dist/**/*.html` and classifies every built
 // route against web/src/lib/page-types.ts. An unclassified route or a route two
@@ -371,7 +449,7 @@ export default defineConfig({
   // `client:*` directive, which in the public surface is exactly the three named
   // islands (map / network / search). Every other page still ships zero `<script>`
   // (SIG-UI-036/037); each island preserves its no-JS fallback (SIG-UI-050).
-  integrations: [react(), sigExportTiles(), sigInternalRoutes(), sigChrome(), sigEnhancementKit(), sigBrandAssets(), sigPageTypes()],
+  integrations: [react(), sigExportTiles(), sigInternalRoutes(), sigChrome(), sigEnhancementKit(), sigBrandAssets(), sigRedirects(), sigPageTypes()],
   // The canonical public origin (P27.6 deliverable 4, ADR-093). This is the real
   // custom domain the launch surface is cited at; the belief-pinned permalinks
   // (SIG-UI-035) resolve against it. DNS/TLS cut-over completes in P27.10 — the
