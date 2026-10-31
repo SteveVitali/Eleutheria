@@ -125,13 +125,25 @@ const props = Astro.props as PageProps;
 
 {props.kind === "stub" && (
   <BaseLayout
-    title={`Moved — /dossier/${props.history.slug}/`}
+    title={props.history.kind === "split"
+      ? `Split — /dossier/${props.history.slug}/`
+      : props.history.kind === "corrected"
+        ? `Corrected — /dossier/${props.history.slug}/`
+        : `Moved — /dossier/${props.history.slug}/`}
     path={dossierPath(props.history.slug)}
+    noindex
     crumbs={[
       { label: "Places", href: withBase("dossier/") },
-      { label: "Moved" },
+      { label: props.history.kind === "split" ? "Split" : props.history.kind === "corrected" ? "Corrected" : "Moved" },
     ]}
   >
+    {/* P36.35 (JUR-05 / K4 §8.2): a `moved` stub with one resolved target is
+        a zero-JS redirect — a 0-second meta refresh is no WCAG timing
+        failure (F41 targets delayed refresh). Split and corrected rows are
+        pages, never refreshes; an unresolved successor never refreshes. */}
+    {props.history.kind === "moved" && props.targets.length === 1 && (
+      <meta slot="head" http-equiv="refresh" content={`0; url=${props.targets[0]!.href}`} />
+    )}
     <p class="sig-lede" data-testid="dossier-stub">
       {props.history.kind === "split"
         ? "This dossier page covered more than one place. SIG's dossiers are now organised by canonical jurisdiction — each place has its own page."

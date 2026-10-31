@@ -3,7 +3,7 @@
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
 import { test, expect } from "@playwright/test";
-import { ALL_PAGES, SHELL_PAGES } from "./pages";
+import { ALL_PAGES, gotoSettled, SHELL_PAGES } from "./pages";
 
 test.describe("four independent epistemic fields (SIG-UI-004, AC3)", () => {
   test("renders four separate field chips and never a fused badge", async ({ page }) => {
@@ -72,7 +72,7 @@ test.describe("contradiction renders as a value range (SIG-UI-009)", () => {
 test.describe("belief-pinned permalink + citation on every page (SIG-UI-035, AC6)", () => {
   for (const path of ALL_PAGES) {
     test(`citation present on ${path}`, async ({ page }) => {
-      await page.goto(path);
+      await gotoSettled(page, path);
       // P36.18 (UXK14-2, SIG-UI-145): the citation affordance lives one action
       // away behind the page-header band's Cite disclosure — opening it is a
       // native <details> toggle, no JavaScript.
@@ -167,7 +167,7 @@ test.describe("no green for epistemic state, rendered (SIG-UI-006)", () => {
 test.describe("reference surfaces load", () => {
   for (const path of SHELL_PAGES) {
     test(`page ${path} has a heading and the primary nav`, async ({ page }) => {
-      await page.goto(path);
+      await gotoSettled(page, path);
       await expect(page.locator("h1")).toBeVisible();
       await expect(page.locator("nav[aria-label='Primary']")).toBeVisible();
     });

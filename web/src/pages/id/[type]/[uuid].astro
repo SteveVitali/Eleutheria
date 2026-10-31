@@ -1,0 +1,125 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.35 (JUR-05 / SIG-UI-058): the `/id/<type>/<uuid>` static fallback.
+// The canonical-id alias resolves through the same seam the generated
+// `redirects.conf` reads — `resolveEntityRequest` (P36.29, the shared
+// vocabulary — stub and rule can never diverge): 302 to the current key
+// while the entity is live, else the terminal status (rename/merge 301,
+// split 300-choice, withdrawn 410). A static host cannot serve a real 3xx,
+// so this page IS the no-include answer: a 0-second meta refresh where the
+// successor page exists in this build, else an honest explanation naming
+// what the identifier was recorded as — never a dead link (K13 R-6).
+import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getEntitySlugHistory } from "../../../lib/data";
+import { resolveEntityRequest } from "../../../lib/entity-history";
+import { withBase } from "../../../lib/paths";
+
+interface Props {
+  uuid: string;
+  urlType: string;
+  status: number;
+  target?: string;
+  targets?: string[];
+  reason?: string;
+}
+
+// The refresh/link fallback is honest only where the successor PAGE is
+// emitted — `/entity/**` surfaces ship with the GX-05/06 rows; until then a
+// resolved URL names its path without linking it (R-6: never link a 404).
+const ENTITY_PAGES_EMIT = existsSync(
+  fileURLToPath(new URL("../../entity", import.meta.url)),
+);
+
+export function getStaticPaths() {
+  const rows = getEntitySlugHistory();
+  const out: { params: { type: string; uuid: string }; props: Props }[] = [];
+  const seen = new Set<string>();
+  for (const row of rows) {
+    if (!row.uuid || !row.url_type) continue;
+    const key = `${row.url_type}${row.uuid}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const decision = resolveEntityRequest(rows, `/id/${row.url_type}/${row.uuid}`);
+    if (decision === null) continue;
+    out.push({
+      params: { type: String(row.url_type), uuid: String(row.uuid) },
+      props: {
+        uuid: String(row.uuid),
+        urlType: String(row.url_type),
+        status: decision.status,
+        target: decision.target,
+        targets: decision.targets,
+        reason: decision.reason,
+      },
+    });
+  }
+  return out;
+}
+
+const p = Astro.props as Props;
+const liveTarget = ENTITY_PAGES_EMIT ? p.target : undefined;
+const liveTargets = ENTITY_PAGES_EMIT ? (p.targets ?? []) : [];
+// Meta-refresh only for a single live successor — a split list and a
+// withdrawn key are pages, never refreshes.
+const refresh = (p.status === 301 || p.status === 302) && liveTarget ? liveTarget : null;
+const KIND: Record<string, string> = {
+  renamed: "renamed",
+  merged: "merged",
+  split: "split",
+  withdrawn: "withdrawn",
+};
+const label = KIND[p.reason ?? ""] ?? "current";
+---
+
+<BaseLayout
+  title={`Identifier ${p.status === 410 ? "withdrawn" : label === "current" ? "redirect" : label} — ${p.uuid}`}
+  path={`/id/${p.urlType}/${p.uuid}/`}
+  noindex
+  crumbs={[{ label: "Identifier" }]}
+>
+  {refresh && <meta slot="head" http-equiv="refresh" content={`0; url=${refresh}`} />}
+  <p class="sig-table-note" data-testid="id-stub-identifier">
+    Canonical identifier: <code>{p.uuid}</code>
+  </p>
+  {p.status === 410 ? (
+    <p class="sig-lede" data-testid="id-stub" data-status="withdrawn">
+      This identifier was withdrawn from the public surface — it is retired,
+      never reassigned.
+    </p>
+  ) : p.status === 300 ? (
+    <>
+      <p class="sig-lede" data-testid="id-stub" data-status="split">
+        The entity this identifier named was split — each part has its own
+        identifier now.
+      </p>
+      {liveTargets.length > 0 ? (
+        <ul data-testid="id-stub-targets">
+          {liveTargets.map((t) => (
+            <li><a href={withBase(t.replace(/^\//, ""))}>{t}</a></li>
+          ))}
+        </ul>
+      ) : (
+        <p data-testid="id-stub-note">
+          Its successors are not published in this build — the split is
+          recorded in the identifier history.
+        </p>
+      )}
+    </>
+  ) : (
+    <p class="sig-lede" data-testid="id-stub" data-status={label}>
+      {label === "current"
+        ? "This short identifier resolves to the entity's current page."
+        : `This identifier was ${label} — the entity now lives at its canonical address.`}
+      {refresh ? (
+        <> Follow <a href={refresh}>the current page</a>.</>
+      ) : (
+        <> The entity page is not published in this build.</>
+      )}
+    </p>
+  )}
+</BaseLayout>

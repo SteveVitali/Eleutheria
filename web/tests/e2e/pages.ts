@@ -18,6 +18,7 @@
 
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import type { Page, Response } from "@playwright/test";
 
 export type PageType = "T0" | "T1" | "T2" | "T3";
 
@@ -170,3 +171,55 @@ export const REMOVED_FRESHNESS_SORT_PAGES = [
   "/data-freshness/stale/",
   "/data-freshness/volatility/",
 ] as const;
+
+// ---------------------------------------------------------------------------
+// Navigation over the discovered-route set
+// ---------------------------------------------------------------------------
+
+/**
+ * `page.goto` for a route a sweep iterates, settled through K4 §8.2's
+ * zero-JS instant-redirect stub (`<meta http-equiv="refresh" content="0;
+ * url=…">` — a real client navigation every browser follows, JS on or off,
+ * e.g. `/dossier/unresolved/` → `/dossier/unplaced/`). Two races sit between
+ * the goto and the caller's first evaluation: a refresh still pending from
+ * the PREVIOUS route interrupts this goto ("Navigation … is interrupted"),
+ * and this page's own refresh destroys the execution context mid-evaluate.
+ * The sweep measures the document a visitor lands on, so a detected refresh
+ * is waited out rather than fought — every assertion runs on exactly what
+ * ships.
+ */
+export async function gotoSettled(page: Page, path: string): Promise<Response | null> {
+  for (let attempt = 0; ; attempt += 1) {
+    let resp: Response | null;
+    try {
+      resp = await page.goto(path);
+    } catch (error) {
+      // The previous route's instant redirect was still in flight and won —
+      // let it land, then navigate again (bounded: a refresh commits at once).
+      if (attempt >= 3) throw error;
+      await page.waitForLoadState("networkidle").catch(() => undefined);
+      continue;
+    }
+    let instantRefresh = false;
+    try {
+      const content = await page.evaluate(
+        () =>
+          document
+            .querySelector('meta[http-equiv="refresh"]')
+            ?.getAttribute("content") ?? null,
+      );
+      instantRefresh = content !== null && /^\s*0\s*;/.test(content);
+    } catch {
+      // The evaluate's context died mid-check — this route IS the redirect
+      // stub and its follow-up navigation is already in flight.
+      instantRefresh = true;
+    }
+    if (instantRefresh) {
+      // The browser performs the redirect itself — wait for the settled
+      // document the visitor lands on (a 0-second refresh fires at once;
+      // networkidle covers the follow-up load, never a fixed sleep).
+      await page.waitForLoadState("networkidle");
+    }
+    return resp;
+  }
+}

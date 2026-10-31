@@ -13,6 +13,7 @@ import {
   CHROME_PAGES,
   DISCOVERED_ROUTES,
   DOSSIER_PRINT,
+  gotoSettled,
 } from "./pages";
 
 // The public surface under test — every discovered route that is not marked
@@ -308,7 +309,7 @@ test("no ungrouped 5+-digit number in public text — identifiers excepted (K14 
   page,
 }) => {
   for (const path of PUBLIC_PAGES) {
-    await page.goto(path);
+    await gotoSettled(page, path);
     const text = await page.evaluate(() => {
       const clone = document.body.cloneNode(true) as HTMLElement;
       // Identifiers are exact values, never human-formatted: code literals,

@@ -59,6 +59,8 @@ top_level = [
   "editorial-standards",
   "evidence",
   "glossary",            # the generated glossary (P36.17 / K14 §2.5)
+  "id",                  # /id/<type>/<uuid> static fallback stubs (P36.35 / JUR-05)
+  "redirects.conf",      # the ONE generated redirect include (P36.35 / SIG-UI-058) — a serving-config artifact the publish path carries into conf/
   "map",
   "methodology",
   "network",
