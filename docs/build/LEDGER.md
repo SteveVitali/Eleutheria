@@ -8,11 +8,11 @@
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.38
-lastCompleted: P36.37
+nextTicket: P36.39
+lastCompleted: P36.38
 blockedOn: (nothing)
 pauseRequested: false
-returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.76,P36.77,P36.78,P36.79,P37.2
+returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.76,P36.77,P36.78,P36.79,P37.2
 manifest: docs/tickets/00_MANIFEST.md
 canonicalSpec: docs/2_canonical_design_spec.md
 memoryRoot: docs/build
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.37-map-app-shell
+chainTip: r11/P36.38-search-api-serving-v2
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-31T05:52Z
+updatedAt: 2026-10-31T08:12Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -466,6 +466,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | P36.13 | queued D-P36.13-1 — the hosted-enforcement flip on `sig-api` (env `SIG_API_RATE_LIMIT=enforce` + hops 2; prestate describe = restore point) | pre-authorised: OM-20 GATE-G5 (expires GATE-G6); AR-3 freeze/batch windows exit 42; `SIG_RATELIMIT_AUTHOR` per apply; needs ADC + `SIG_GCP_PROJECT`; D-K3-6 deferred | nothing until ADC + `SIG_GCP_PROJECT` — a bounded env update, never schema/gate | `implement-spec spec=docs/tickets/354_P36.13__api-rate-limits.md live_verification=true` |
 | P36.79 | queued D-P36.79-1 — the restricted-bucket object write of the sealed held-out relevance set (read-back digest verify; restore point = bucket versioning + committed sha256) | pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6); contract window `any time outside 03:00-10:00Z` (guard exit 42 inside); `SIG_HELDOUT_AUTHOR` per apply; needs ADC + `SIG_GCP_PROJECT` | nothing until ADC + `SIG_GCP_PROJECT` — one bounded object write; the set's sha256 is already committed | `implement-spec spec=docs/tickets/371_P36.79__held-out-search-relevance-set.md live_verification=true` |
 | P36.33 | queued D-P36.33-1 — the R2 basemap host create (bucket sig-basemap + CORS/Range/immutable + custom domain tiles.surveillancegraph.org + first upload); restore point: re-creatable from basemap.lock.json + upstream | pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6); window AR-3 + AR-2 — outside the batch window day 6 00:00Z → day 13 12:00Z and daily 03:00-06:30Z; `SIG_BASEMAP_AUTHOR` per apply; needs SIG_CF_*/SIG_R2_* env + OP-09 | nothing until OP-09 + the Cloudflare/R2 env — the pipeline, styles, glyphs and lock are landed | `implement-spec spec=docs/tickets/374_P36.33__basemap-pipeline-and-host.md live_verification=true` |
+| P36.38 | queued D-P36.38-1 — the v2-search API roll (`--memory 1Gi` + `SIG_API_SEARCH_V2=on`) | never pre-authorised (OM-20); outside batch window day 6 00:00Z → day 13 12:00Z + daily 03:00-06:30Z; `SIG_SEARCHV2_AUTHOR` + ADC + `SIG_GCP_PROJECT` | the verbatim go + author env — code/runner/packet landed (route ships dark) | `implement-spec spec=docs/tickets/379_P36.38__search-api-serving-v2.md live_verification=true` |
 
 Sources: OPERATIONAL_READINESS §(f3) + `UNIVERSE_DISPOSED.csv` + plan §9.2/§8.6 + `data/round11_plan.csv`. Non-row homes: 9 ticket + 9 later-phase + 7 decision + 2 already-done. Keying (T5 γ) = LANDED R10 ticket: 183→P35.61, 188→P35.62, 191→P35.63, 179–182→P37.16, D-P21.5-1→P37.55, D-P31.4-1→P34.39a (SEED-17 T5).
 
@@ -1388,3 +1389,7 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 
 
 - 2026-10-31 — P36.38 dispatch boundary-confirm — `ci: pass #400@942896b4` 5/5 head-bound (run 41180966353; arc: orient head trims `3a5af6d9`, `/map/` gap rows restored with wire measures `09333e0a` + record corrections `40edd4dc`, coverage re-verdicts + updatedAt `fbcbc591`, NEW-8 `<code>` `2015dced`, island-honesty re-point + dark-contrast `611d4b3d`, measure-tool undercount fix `942896b4`) · P36.37 landed: `/map/` T2 app shell — Preact island + ESM-split MapLibre vendor + in-view list + selection panel + filters/legend/keyboard + `sig.workspace-state/2` over the no-JS baseline · `main` untouched · deferrals +0/−0 · dispatching P36.38 (row 379 — search-api-serving-v2: `live_verification=false`; IN-TICKET PAUSE — the API roll is never pre-authorised, queues for the operator's verbatim go; `D-K3-5 [B-30]` = yes 512 MiB→1 GiB carried verbatim; deps P36.32+P35.57+P34.40+P36.13(S2) landed) · chainTip → r11/P36.37-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-10-31 — P36.38 done — row 379 (K13 SRCH-03; SIG-UI-076 + SIG-SRCH-001/003/012): `api/release_search_v2.py` federated `/v1/releases/{pub|latest}/search` over `sig.release-search-index/2` — streaming verify-and-copy + LRU / `latest` conf-gen / DR-C4-09 scope denials via `claim_ref` / immutable-vs-300 cache headers / no query logging · `SIG_API_SEARCH_V2` dark-ship + `SIG_API_MEMORY=1Gi` (D-K3-5 yes) · roll `prepared_not_executed` → D-P36.38-1 + packet + runner · tests 23+44 · impl `bb18cf96` · PR #401 OPEN · Gate status: IN-TICKET PAUSE · ci: head-bound read follows · OM-20 queued · deferrals +1/−0 · chainTip → r11/P36.38-… · next → P36.39 · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-31 — P36.38 post-closeout record — `44a8744f` `ci: pass #401@44a8744f` 5/5 head-bound (run 41187132513: docs 2m27s + security 34s + composed 3m49s + python 15m17s + web 33m46s — the head after the fix arc `93e0f38c`+`368b446f`+`44a8744f`: cross-thread SQLite check_same_thread + serialized search, `live`-claim code spans, orient-budget cell compaction, projection regen) — boundary `gh run list --branch`/`gh pr checks` read · PR #401 OPEN on the stack for operator integration · `main` untouched · Gate status: IN-TICKET PAUSE (D-P36.38-1 `prepared_not_executed` — the roll is never pre-authorised OM-20, the operator's explicit verbatim go only) · deferrals +1/−0 · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-31 — P36.38 correction — `2cbed894` docs-red (run 41189596409): orient recipe 49,364 B > 49,152 — this appended entry discloses the repair and re-weights the last-3 set; no committed line was edited · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-10-31 — P36.39 dispatch boundary-confirm — `ci: pass #401@780f6e35` 5/5 head-bound on the repaired record tip (run 41190042272; arc: `44a8744f` impl+closeout green; `2cbed894` orient-red → correction-append re-weight `780f6e35`) · P36.38 landed: `ReleaseSearchV2Store` federated v2 serving on `GET /v1/releases/{pub|latest}/search` (env-gated off by default; withdrawal barrier, verify-and-copy LRU, no query logging) + roll queued `D-P36.38-1` `prepared_not_executed` · `main` untouched · deferrals +1/−0 · dispatching P36.39 (row 380 — no-js search results page: `live_verification=false`; gate none; no OM-20; deps P36.38+P35.13+P36.21+P36.22 landed) · chainTip → r11/P36.38-… · harness: devin-desktop/swe-2-high/orchestrator

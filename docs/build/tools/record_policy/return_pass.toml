@@ -1415,3 +1415,21 @@ rerun_cell = '''`implement-spec spec=docs/tickets/374_P36.33__basemap-pipeline-a
   go = '''pre-authorised: `SIG_BASEMAP_AUTHOR` per apply'''
   rerun = '''implement-spec spec=docs/tickets/374_P36.33__basemap-pipeline-and-host.md live_verification=true'''
   live_dependants = []
+
+[[row]]
+key = "P36.38"
+kind = "leg"
+obligations = ["D-P36.38-1"]
+obligations_cell = '''queued D-P36.38-1 — the v2-search API roll (`--memory 1Gi` + `SIG_API_SEARCH_V2=on`)'''
+gates_cell = '''never pre-authorised (OM-20); outside batch window day 6 00:00Z → day 13 12:00Z + daily 03:00-06:30Z; `SIG_SEARCHV2_AUTHOR` + ADC + `SIG_GCP_PROJECT`'''
+operator_cell = '''the verbatim go + author env — code/runner/packet landed (route ships dark)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/379_P36.38__search-api-serving-v2.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P36.38-roll"
+  obligations = ["D-P36.38-1"]
+  earliest = '''the verbatim go (`SIG_SEARCHV2_AUTHOR`) + ADC + `SIG_GCP_PROJECT`; outside AR-3 windows'''
+  excluded = ["batch window day 6 00:00Z → day 13 12:00Z", "daily 03:00-06:30Z"]
+  go = '''verbatim-go: `SIG_SEARCHV2_AUTHOR` per apply'''
+  rerun = '''implement-spec spec=docs/tickets/379_P36.38__search-api-serving-v2.md live_verification=true'''
+  live_dependants = ["P36.39", "P36.40", "P36.71"]
