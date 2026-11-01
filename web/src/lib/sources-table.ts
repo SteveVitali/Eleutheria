@@ -330,7 +330,7 @@ export function composeRow(
     runRecordMissing: verdict.runRecordMissing || (row.status_flags ?? []).includes("run_record_missing"),
     volatilityDominant: volatilityDominant(freshness?.volatility),
     staleness: freshness?.staleness
-      ? { evaluable: freshness.staleness.evaluable, notEvaluable: freshness.staleness.not_evaluable }
+      ? { evaluable: freshness.staleness.evaluable ?? 0, notEvaluable: freshness.staleness.not_evaluable ?? 0 }
       : null,
     publishedClaims: typeof row.published_claims === "number" ? row.published_claims : null,
     publishedSites: row.published_sites === true,
