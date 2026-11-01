@@ -78,7 +78,7 @@ const PAGE_CLASSES = [
   { cls: "home", files: ["index.html"] },
   { cls: "dossier", dirs: ["dossier"], skipSegments: true },
   { cls: "coverage", files: ["coverage-metrics/index.html"] },
-  { cls: "freshness", dirs: ["data-freshness"] },
+  { cls: "freshness", dirs: ["sources/runs"] },
   { cls: "sources", dirs: ["sources"] },
   { cls: "data", files: ["data-collection/index.html"] },
   { cls: "status", files: ["status/index.html"] },

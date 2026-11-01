@@ -58,7 +58,9 @@ describe("generated lighthouserc files (gen-lhci.mjs)", () => {
       "/sources/index.html",
       "/releases/index.html",
       "/coverage-metrics/index.html",
-      "/data-freshness/index.html",
+      // P36.48 (UX9-3): the retired data-freshness URL is replaced by the
+      // sources table's runs view — the K9 Lighthouse route coverage.
+      "/sources/runs/index.html",
       "/map/index.html",
       "/network/index.html",
       "/search/index.html",

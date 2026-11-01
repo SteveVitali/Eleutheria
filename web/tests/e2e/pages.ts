@@ -117,7 +117,7 @@ export const A11Y_PAGES = pathsOf(() => true);
 // sorting is a plain GET to a distinct page, so each emitted sort route must
 // meet WCAG 2.2 AA like the base page.
 export const FRESHNESS_SORT_PAGES = pathsOf(
-  (r) => r.path.startsWith("/data-freshness/") && r.path !== "/data-freshness/",
+  (r) => r.path.startsWith("/sources/runs/sort/"),
 );
 
 // The jurisdiction-conditional dossiers (localised, public-employee name

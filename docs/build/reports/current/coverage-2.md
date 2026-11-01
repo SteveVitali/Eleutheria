@@ -2,6 +2,7 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-EVAL-007 | `public` | `MISSING` | 2026-10-01 | — |
 | SIG-EVID-001 | `hosted` | `PARTIAL` | 2026-10-01 | — |
 | SIG-EVID-019 | `hosted` | `MET-ENGINEERED(D-P21.5-1;D-R11-ARCHIVE-1)` | 2026-10-01 | — |
 | SIG-EVUI-001 | `public` | `MISSING` | 2026-10-24 | — |
@@ -121,6 +122,5 @@
 | SIG-PUB-001 | `implementation` | `MET` | 2026-10-06 | — |
 | SIG-PUB-002 | `public` | `PARTIAL` | 2026-10-03 | — |
 | SIG-PUB-002 | `public` | `PARTIAL` | 2026-10-03 | SIG-PUB-002:r11-1 |
-| SIG-PUB-003d | `implementation` | `PARTIAL` | 2026-10-06 | — |
 
 ← back: CURRENT.md · next page: coverage-3.md

@@ -91,6 +91,9 @@ export function selectUrls(routes) {
   // T1: the contract's named representatives.
   add(has("/") ? "/" : null);
   add(has("/sources/") ? "/sources/" : null);
+  // P36.48 (UX9-3): the sources table's Runs & freshness view — the
+  // `/data-freshness/` representative's successor on the K9 route set.
+  add(has("/sources/runs/") ? "/sources/runs/" : null);
   add(has("/releases/") ? "/releases/" : null);
   add(
     first((r) => r.type === "T1" && /^\/research-dossier\/[^/]+\/$/.test(r.path)) ??

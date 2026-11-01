@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "14f7244a4db6e4518226272ce88b3221930b7634",
-  "manifest_inputs": 1165,
+  "input_commit": "eb466b537862b855af123b3f7be8cfd619af3d42",
+  "manifest_inputs": 1166,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P36.48",
-    "lastCompleted": "P36.47",
+    "nextTicket": "P36.49",
+    "lastCompleted": "P36.48",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2",
@@ -17,7 +17,7 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P36.46-execution-keyed-ingestion-history",
+    "chainTip": "r11/P36.48-sources-table",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
@@ -33,7 +33,7 @@
     "terminal": 81,
     "events": 716,
     "transitions": 51,
-    "coverage_assessments": 490,
+    "coverage_assessments": 494,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -12241,7 +12241,7 @@
         },
         "SIG-ENG-020": {
           "verdict": "MET",
-          "evidence": "web/src/pages/data-freshness/[...sort].astro;ops/src/ops/run_completion.py;docs/build/reports/REPUBLISH_LIVE_2026-09-27.md",
+          "evidence": "web/src/pages/sources/runs/index.astro;ops/src/ops/run_completion.py;docs/build/reports/REPUBLISH_LIVE_2026-09-27.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16320,8 +16320,8 @@
           "label": "historical/csv"
         },
         "SIG-TRANSP-001": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/lib/sources-table.ts;web/src/pages/sources.astro;web/src/components/SourcesTablePage.astro;web/src/components/SourcesTable.astro",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16482,8 +16482,8 @@
           "label": "historical/csv"
         },
         "SIG-TRANSP-028": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/lib/sources-table.ts;web/src/components/SourcesTable.astro;web/src/components/SourceTableRow.astro;web/src/components/SourcesTablePage.astro",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16512,8 +16512,8 @@
           "label": "historical/csv"
         },
         "SIG-TRANSP-033": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/pages/artifact/transparency/sources.csv.ts;web/src/pages/artifact/transparency/sources.schema.json.ts;web/src/lib/sources-table.ts;exports/src/exports/column_registry.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -18273,6 +18273,16 @@
         "limitations": "row-by-row re-verdict (P34.48 set): the requirement text was re-read and the cited paths were read/verified to exist at the named revision; the HG-14 bulk acceptance and the classifier boilerplate note were not carried forward; live_verification=false — hosted/public claims rest on committed live-read records (e.g. REPUBLISH_LIVE_2026-09-27), not on a fresh live probe; the public data-freshness/status surface renders per-source staleness from the run-completion ledger rather than hiding it; the 2026-09-27 republish live read verified the page serves real dates.",
         "supersedes": null,
         "assessment_id": "SIG-ENG-020:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-020",
+        "domain": "public",
+        "verdict": "MET",
+        "assessed_at": "2026-11-01",
+        "code_revision": "r11/P36.48-sources-table",
+        "limitations": "P36.48 successor-evidence correction (append-only): the r11-1 assessment's first ref `web/src/pages/data-freshness/[...sort].astro` retired — /data-freshness/** answers 301 through the one redirect generator and the runs view `/sources/runs/` renders per-source staleness/verdicts from the same run-completion ledger over `transparency/freshness.jsonl`. Verdict unchanged; no fresh live probe (live_verification=false).",
+        "supersedes": "SIG-ENG-020:r11-1",
+        "assessment_id": "SIG-ENG-020:r11-2"
       },
       {
         "requirement_id": "SIG-ENG-021",
@@ -20785,6 +20795,16 @@
         "assessment_id": "SIG-TRANSP-001:r11-1"
       },
       {
+        "requirement_id": "SIG-TRANSP-001",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-11-01",
+        "code_revision": "r11/P36.48-sources-table",
+        "limitations": "P36.48 landing verdict (row 391): fixture-verified, live_verification=false; no production mutation. The served transparency/sources.json is the same sig.source-row/1 doc the API's /v1/sources serves (P35.57 parity — byte identity, not re-derivation).",
+        "supersedes": "SIG-TRANSP-001:r11-1",
+        "assessment_id": "SIG-TRANSP-001:r11-2"
+      },
+      {
         "requirement_id": "SIG-TRANSP-002",
         "domain": "public",
         "verdict": "MISSING",
@@ -21055,6 +21075,16 @@
         "assessment_id": "SIG-TRANSP-028:r11-1"
       },
       {
+        "requirement_id": "SIG-TRANSP-028",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-11-01",
+        "code_revision": "r11/P36.48-sources-table",
+        "limitations": "P36.48 landing verdict (row 391): fixture-verified, live_verification=false; no production mutation. The served transparency/sources.json is the same sig.source-row/1 doc the API's /v1/sources serves (P35.57 parity — byte identity, not re-derivation).",
+        "supersedes": "SIG-TRANSP-028:r11-1",
+        "assessment_id": "SIG-TRANSP-028:r11-2"
+      },
+      {
         "requirement_id": "SIG-TRANSP-029",
         "domain": "public",
         "verdict": "MISSING",
@@ -21103,6 +21133,16 @@
         "limitations": "new Round-11 requirement (the transparency family, §56.10) entering the matrix as MISSING with its owner's routing (P36.48); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-TRANSP-033:r11-1"
+      },
+      {
+        "requirement_id": "SIG-TRANSP-033",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-11-01",
+        "code_revision": "r11/P36.48-sources-table",
+        "limitations": "P36.48 landing verdict (row 391): fixture-verified, live_verification=false; no production mutation. The served transparency/sources.json is the same sig.source-row/1 doc the API's /v1/sources serves (P35.57 parity — byte identity, not re-derivation).",
+        "supersedes": "SIG-TRANSP-033:r11-1",
+        "assessment_id": "SIG-TRANSP-033:r11-2"
       },
       {
         "requirement_id": "SIG-TRANSP-034",
@@ -23764,6 +23804,11 @@
           "assessed_at": "2026-10-06"
         },
         {
+          "requirement": "SIG-ENG-020",
+          "verdict": "MET",
+          "assessed_at": "2026-11-01"
+        },
+        {
           "requirement": "SIG-EVAL-001",
           "verdict": "PARTIAL",
           "assessed_at": "2026-10-01"
@@ -24249,6 +24294,11 @@
           "assessed_at": "2026-10-05"
         },
         {
+          "requirement": "SIG-TRANSP-001",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-11-01"
+        },
+        {
           "requirement": "SIG-TRANSP-002",
           "verdict": "MISSING",
           "assessed_at": "2026-10-05"
@@ -24379,6 +24429,11 @@
           "assessed_at": "2026-10-05"
         },
         {
+          "requirement": "SIG-TRANSP-028",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-11-01"
+        },
+        {
           "requirement": "SIG-TRANSP-029",
           "verdict": "MISSING",
           "assessed_at": "2026-10-05"
@@ -24402,6 +24457,11 @@
           "requirement": "SIG-TRANSP-033",
           "verdict": "MISSING",
           "assessed_at": "2026-10-05"
+        },
+        {
+          "requirement": "SIG-TRANSP-033",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-11-01"
         },
         {
           "requirement": "SIG-TRANSP-034",
@@ -25407,10 +25467,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "5adfa41f2f0a49ba34ae091af838d2ffb5958a33926cf138fc6f1cc892ef589c",
+  "manifest_sha256": "bda3c1fde8aaaa112e2cbc9db096175b05e8bc44e8fe55c304b8b06eee770886",
   "current_md": {
     "lines": 130,
-    "bytes": 19881,
+    "bytes": 19861,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",

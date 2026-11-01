@@ -115,11 +115,9 @@ export function releaseRoutes(): Set<string> {
   // `dossier/[...path].astro` emits /dossier/unplaced/ exactly when the
   // unplaced report exists — the same condition its getStaticPaths uses.
   if (getUnplacedReport() !== null) routes.add("dossier/unplaced/");
-  // `data-freshness/[...sort].astro` always emits its unsorted index
-  // (params.sort === undefined) whenever the page exists.
-  if (`${PAGES_PREFIX}data-freshness/[...sort].astro` in PAGE_MODULES) {
-    routes.add("data-freshness/");
-  }
+  // P36.48: the data-freshness surface retired — `/data-freshness/**`
+  // answers 301 through the one redirect generator (K9 C-11, SIG-UI-058);
+  // no page module emits it and no probe may re-add it.
   // `entity/[type]/` emits /entity/<type>/ exactly for the kinds the label
   // registry keys a published entity under — the same condition the
   // per-type getStaticPaths uses (P36.42a). The hub itself (`entity/`) is a

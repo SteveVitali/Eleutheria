@@ -1,0 +1,30 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.48 (UX9-3, SIG-TRANSP-028): the Overview view's pre-rendered sort
+// routes — `/sources/sort/<col>/<asc|desc>/`, plain GETs (K9 §6.1).
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import SourcesTablePage from "../../../../components/SourcesTablePage.astro";
+import { sortRoutesFor, SORT_SPECS } from "../../../../lib/sources-table";
+import type { SortDir } from "../../../../lib/sources-table";
+import { withBase } from "../../../../lib/paths";
+
+export function getStaticPaths() {
+  return sortRoutesFor("overview").map(({ col, dir }) => ({
+    params: { col, dir },
+    props: { col, dir },
+  }));
+}
+
+const { col, dir } = Astro.props as { col: string; dir: SortDir };
+const spec = SORT_SPECS[col];
+if (!spec || (dir !== "asc" && dir !== "desc")) {
+  throw new Error(`sources/sort: unregistered sort ${col}/${dir} (SIG-ENG-042)`);
+}
+---
+
+<BaseLayout title={`Sources — overview, ${col} ${dir === "desc" ? "descending" : "ascending"}`} path={withBase(`sources/sort/${col}/${dir}/`)}>
+  <SourcesTablePage view="overview" sortKey={col} sortDir={dir} />
+</BaseLayout>

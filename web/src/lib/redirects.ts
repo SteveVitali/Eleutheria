@@ -254,17 +254,33 @@ function legacyRules(inputs: RedirectInputs): RedirectRule[] {
     kind: "retired",
     note: "prefix rule — the fixture intake pages are retired",
   });
-  // `/data-freshness/**` → `/sources/` — emitted once the page retires
-  // (UX9-3's sources table is the successor surface) and `/sources/` exists.
-  if (!emitted.has("/data-freshness/") && emitted.has("/sources/")) {
-    for (const suffix of ["", "status/", "source/"]) {
-      out.push({
-        from: `/data-freshness/${suffix}`,
-        status: 301,
-        target: "/sources/",
-        family: "legacy",
-        kind: "moved",
-      });
+  // `/data-freshness/**` → `/sources/…` — emitted once the page retires
+  // (UX9-3's sources table is the successor surface) and its targets exist.
+  // The published URL set is the base page plus its sort routes
+  // (`status/`, `stale/`, `volatility/` — K-1's live-read, P34.13's
+  // `source/` defensively); each maps to the equivalent `/sources/`
+  // view/sort route (K9 C-11): the Runs & freshness view is the enriched
+  // successor, `status/` → the freshness-verdict sort, `stale/` and
+  // `volatility/` → the runs view (their data now lives inside the
+  // freshness cell), `source/` → the name-sorted index.
+  if (!emitted.has("/data-freshness/")) {
+    const freshnessMap: [string, string][] = [
+      ["", "sources/runs/"],
+      ["status/", "sources/runs/sort/freshness/asc/"],
+      ["stale/", "sources/runs/"],
+      ["volatility/", "sources/runs/"],
+      ["source/", "sources/"],
+    ];
+    for (const [suffix, target] of freshnessMap) {
+      if (emitted.has(`/${target}`)) {
+        out.push({
+          from: `/data-freshness/${suffix}`,
+          status: 301,
+          target: `/${target}`,
+          family: "legacy",
+          kind: "moved",
+        });
+      }
     }
   }
   // `/network/` → `/explore/` — emitted once GX-09a's explorer exists and

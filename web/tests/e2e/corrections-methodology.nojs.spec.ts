@@ -39,8 +39,9 @@ test("the dispute path is a plain link on every page, no JS (SIG-UI-033/037)", a
 test("methodology / freshness / coverage are static and linked from the dossier (SIG-UI-034)", async ({ page }) => {
   await page.goto("/dossier/oklahoma-city/");
   await expect(page.getByTestId("methodology-link")).toHaveAttribute("href", "/methodology/");
-  await page.goto("/data-freshness/");
-  await expect(page.getByTestId("freshness-row").first()).toBeVisible();
+  // P36.48: the retired /data-freshness/ page's successor is the runs view.
+  await page.goto("/sources/runs/");
+  await expect(page.getByTestId("source-table-row").first()).toBeVisible();
   await page.goto("/coverage-metrics/");
   await expect(page.getByTestId("coverage-metric").first()).toBeVisible();
   await expect(page.getByTestId("population-note").first()).toBeVisible();

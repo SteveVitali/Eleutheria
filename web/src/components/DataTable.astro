@@ -31,6 +31,8 @@ export interface TableColumn {
   sort?: "ascending" | "descending";
   /** A plain GET link to the pre-rendered sort route for this column. */
   sortHref?: string;
+  /** The copy-batch row id this header binds (`data-copy`, P36.48). */
+  copy?: string;
 }
 
 interface Props {
@@ -66,6 +68,7 @@ const { label, caption, columns, density = "default", sticky = false, testid } =
               scope="col"
               data-col={c.key}
               data-numeric={c.numeric ? "true" : undefined}
+              data-copy={c.copy}
               aria-sort={c.sort}
               class={c.numeric ? "sig-table__num" : undefined}
             >

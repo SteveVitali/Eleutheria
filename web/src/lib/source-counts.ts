@@ -481,7 +481,7 @@ export const SOURCE_ROWS_FIXTURE: SourceRow[] = [
       terms_reviewed: true,
     },
     contributions: [
-      { dossier_key: "us-ok-oklahoma-city", dossier_slug: "usa/ok/oklahoma-city", records: 38, share_of_dossier: "demonstration", basis: "declared_by_source" },
+      { dossier_key: "us-ok-oklahoma-city", dossier_slug: "usa/ok/oklahoma-city-4064000", records: 38, share_of_dossier: "demonstration", basis: "declared_by_source" },
     ],
   },
   {
