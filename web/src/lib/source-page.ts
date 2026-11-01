@@ -47,6 +47,7 @@ import {
   SOURCE_ROWS_DOC_FIXTURE,
   isSourceRowsDoc,
   type LifecycleState,
+  type SourceRow,
 } from "./source-counts";
 
 export const SOURCE_PAGE_SCHEMA = "sig.source-page/2";
@@ -105,8 +106,9 @@ export interface SourcePageRow {
     terms_reviewed: boolean;
   };
   /** The P35.44 dossier-contribution mirror — the same rows the dossier
-   *  artifacts carry (parity by construction, SIG-DSRC-008). */
-  contributions: ContributionRow[];
+   *  artifacts carry (parity by construction, SIG-DSRC-008). S-11 rows
+   *  omit the field entirely (a gated row discloses no contribution). */
+  contributions?: ContributionRow[];
   /** S-11 registry-only rows: */
   status?: string;
   reason_class?: string;
@@ -239,11 +241,26 @@ function isChangeField(v: unknown): v is ChangeField {
   return !!o && (o.value === null || typeof o.value === "string") && typeof o.basis === "string";
 }
 
+/** S-11 registry-only detection — the emitter's precedence: a gated /
+ *  refused / withdrawn lifecycle or an unknown / restricted lane, or the
+ *  explicit S-11 fields (`status`, `reason_class`). */
+function isRegistryOnlyShape(o: { lifecycle_state: string; lane?: string; status?: string; reason_class?: string }): boolean {
+  return (
+    o.status !== undefined ||
+    o.reason_class !== undefined ||
+    o.lifecycle_state === "gated" ||
+    o.lifecycle_state === "refused" ||
+    o.lifecycle_state === "withdrawn" ||
+    o.lane === "unknown" ||
+    o.lane === "restricted"
+  );
+}
+
 export function isSourcePageRow(v: unknown): v is SourcePageRow {
   const o = v as SourcePageRow | null;
   if (!o || typeof o.source_id !== "string" || typeof o.lifecycle_state !== "string") return false;
-  if (o.reason_class !== undefined || o.status !== undefined) {
-    // S-11 gated row: identity + status + reason class + bookkeeping fields.
+  if (isRegistryOnlyShape(o)) {
+    // S-11 gated row: identity + status/reason class + the counting fields.
     return typeof o.name === "string" && typeof o.lane === "string";
   }
   return (
@@ -274,262 +291,21 @@ export function isExecutionRecord(v: unknown): v is ExecutionRecord {
 // every section and every named-absence kind (§3.1: demo ids, never real).
 // ---------------------------------------------------------------------------
 
-/** Full `sig.source-row/1`-shaped fixture rows — the fixtures-mode mirror of
- *  the emitted document (gated rows carry the S-11 shape). */
-export const SOURCE_PAGE_ROWS_FIXTURE: Record<string, SourcePageRow> = {
-  okc_camera_registry: {
-    source_id: "okc_camera_registry",
-    name: "OKC camera registry",
-    publisher: "Oklahoma City municipal data portal (demonstration entry)",
-    publisher_type: "government portal",
-    lifecycle_state: "published",
-    status_flags: ["run_records_present"],
-    lane: "raw-ok",
-    lane_basis: "source_redistribution",
-    lane_evidence: "recorded [redistribution] verdict (demonstration entry)",
-    lane_decision_authority: "rights review",
-    lane_review_needed: false,
-    part_viii_class: null,
-    licence: {
-      spdx: "LicenseRef-PublicRecord-FactualCompilation",
-      redistributable: true,
-      derivative_permitted: "yes",
-      attribution: "Oklahoma City municipal portal (demonstration entry)",
-      terms_reviewed: true,
-      sig_labelled_cc0: false,
-    },
-    ground_truth: {
-      homepage: "https://example.invalid/okc/camera-registry",
-      homepage_host: "example.invalid",
-      terms_url: "https://example.invalid/okc/terms",
-    },
-    cadence: { rule: "monthly", basis: "ops/cadence.toml", state: "enabled", scheduled: true, one_time_load: false },
-    last_successful_run: "2026-10-15T05:12:40Z",
-    last_upstream_change: {
-      value: "2026-10-12T00:00:00Z",
-      basis: "records_digest (canonical record-set change detected by SIG — byte-only changes never move it)",
-    },
-    last_sig_records_change: {
-      value: "2026-10-15T05:12:40Z",
-      basis: "latest claim-inserting execution (interim — not a content-change measure)",
-    },
-    published_claims: 12,
-    published_sites: true,
-    review: {
-      basis: "HG-03 under GL-GATE-07: err on the side of approving (demonstration entry)",
-      reviewer_role: "maintainer (delegated)",
-      decided_at: "2026-09-18T00:00:00Z",
-      terms_reviewed: true,
-    },
-    contributions: [
-      { dossier_key: "us-ok-oklahoma-city", dossier_slug: "usa/ok/oklahoma-city", records: 38, share_of_dossier: "demonstration", basis: "declared_by_source" },
-    ],
-  },
-  okc_council_minutes: {
-    source_id: "okc_council_minutes",
-    name: "OKC council minutes",
-    publisher: "Oklahoma City clerk (demonstration entry)",
-    publisher_type: "document index",
-    lifecycle_state: "published",
-    status_flags: ["run_records_present"],
-    lane: "raw-ok",
-    lane_basis: "source_redistribution",
-    lane_evidence: null,
-    lane_decision_authority: "rights review",
-    lane_review_needed: false,
-    part_viii_class: null,
-    licence: {
-      spdx: "CC0-1.0",
-      redistributable: true,
-      derivative_permitted: "yes",
-      attribution: null,
-      terms_reviewed: true,
-      sig_labelled_cc0: true,
-    },
-    ground_truth: {
-      homepage: "https://example.invalid/okc/minutes",
-      homepage_host: "example.invalid",
-      terms_url: "no_upstream_url_recorded",
-    },
-    cadence: { rule: "weekly", basis: "ops/cadence.toml", state: "enabled", scheduled: true, one_time_load: false },
-    last_successful_run: "2026-10-13T05:03:11Z",
-    last_upstream_change: { value: null, basis: "not_detectable (no upstream-declared date or record-set fingerprint recorded)" },
-    last_sig_records_change: { value: "2026-10-13T05:03:11Z", basis: "latest claim-inserting execution (interim — not a content-change measure)" },
-    published_claims: 4,
-    published_sites: false,
-    review: {
-      basis: "reviewed licence (CC0-1.0)",
-      reviewer_role: "maintainer",
-      decided_at: "2026-09-10T00:00:00Z",
-      terms_reviewed: true,
-    },
-    contributions: [],
-  },
-  demo_ingested_feed: {
-    source_id: "demo_ingested_feed",
-    name: "Demo ingested feed",
-    publisher: "publisher_not_recorded",
-    publisher_type: "upstream project",
-    lifecycle_state: "ingested_not_published",
-    status_flags: ["open_issue", "run_record_missing"],
-    lane: "derived-only",
-    lane_basis: "interim:rights-record",
-    lane_evidence: null,
-    lane_decision_authority: null,
-    lane_review_needed: true,
-    part_viii_class: null,
-    licence: {
-      spdx: "UNDETERMINED",
-      redistributable: "UNDETERMINED",
-      derivative_permitted: "UNDETERMINED",
-      attribution: null,
-      terms_reviewed: false,
-      sig_labelled_cc0: false,
-    },
-    ground_truth: {
-      homepage: "example.invalid#path_sha256:9f8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b",
-      homepage_host: "example.invalid",
-      terms_url: "no_upstream_url_recorded",
-    },
-    cadence: { rule: "daily", basis: "ops/cadence.toml", state: "enabled", scheduled: true, one_time_load: false },
-    last_successful_run: "not_recorded (no successful execution recorded)",
-    last_upstream_change: { value: null, basis: "not_detectable (no captures recorded)" },
-    last_sig_records_change: { value: null, basis: "not_recorded (no claim-inserting execution recorded)" },
-    published_claims: "not_published",
-    published_sites: false,
-    review: { basis: "no_decision_recorded", reviewer_role: "not_recorded", decided_at: null, terms_reviewed: false },
-    contributions: [],
-  },
-  demo_seed_load: {
-    source_id: "demo_seed_load",
-    name: "Demo one-time seed",
-    publisher: "publisher_not_recorded",
-    publisher_type: "bulk file",
-    lifecycle_state: "permitted_not_ingested",
-    status_flags: ["one_time_load"],
-    lane: "link-only",
-    lane_basis: "source_redistribution",
-    lane_evidence: null,
-    lane_decision_authority: "rights review",
-    lane_review_needed: false,
-    part_viii_class: null,
-    licence: {
-      spdx: "LicenseRef-OperatorAccepted-DBRight",
-      redistributable: false,
-      derivative_permitted: "no",
-      attribution: null,
-      terms_reviewed: true,
-      sig_labelled_cc0: false,
-    },
-    ground_truth: {
-      homepage: "https://example.invalid/seed",
-      homepage_host: "example.invalid",
-      terms_url: "no_upstream_url_recorded",
-    },
-    cadence: { rule: "not_scheduled", basis: "ops/cadence.toml", state: "disabled", scheduled: false, one_time_load: true },
-    last_successful_run: "never_run",
-    last_upstream_change: { value: null, basis: "not_detectable (no captures recorded)" },
-    last_sig_records_change: { value: null, basis: "not_recorded (no claim-inserting execution recorded)" },
-    published_claims: "not_published",
-    published_sites: false,
-    review: {
-      basis: "HG-03 per-source review (demonstration entry)",
-      reviewer_role: "maintainer",
-      decided_at: "2026-09-15T00:00:00Z",
-      terms_reviewed: true,
-    },
-    contributions: [],
-  },
-  demo_permitted_portal: {
-    source_id: "demo_permitted_portal",
-    name: "Demo permitted portal",
-    publisher: "publisher_not_recorded",
-    publisher_type: "government portal",
-    lifecycle_state: "permitted_not_ingested",
-    status_flags: [],
-    lane: "derived-only",
-    lane_basis: "interim:rights-record",
-    lane_evidence: null,
-    lane_decision_authority: null,
-    lane_review_needed: false,
-    part_viii_class: null,
-    licence: {
-      spdx: "UNDETERMINED",
-      redistributable: "UNDETERMINED",
-      derivative_permitted: "UNDETERMINED",
-      attribution: null,
-      terms_reviewed: false,
-      sig_labelled_cc0: false,
-    },
-    ground_truth: {
-      homepage: "https://example.invalid/portal",
-      homepage_host: "example.invalid",
-      terms_url: "no_upstream_url_recorded",
-    },
-    cadence: { rule: "monthly", basis: "ops/cadence.toml", state: "enabled", scheduled: true, one_time_load: false },
-    last_successful_run: "never_run",
-    last_upstream_change: { value: null, basis: "not_detectable (no captures recorded)" },
-    last_sig_records_change: { value: null, basis: "not_recorded (no claim-inserting execution recorded)" },
-    published_claims: "not_published",
-    published_sites: false,
-    review: { basis: "no_decision_recorded", reviewer_role: "not_recorded", decided_at: null, terms_reviewed: false },
-    contributions: [],
-  },
-  demo_gated_registry: {
-    source_id: "demo_gated_registry",
-    name: "Demo gated registry",
-    publisher: "publisher_not_recorded",
-    publisher_type: "camera registry",
-    lifecycle_state: "gated",
-    status_flags: ["rights_not_reviewed"],
-    lane: "unknown",
-    lane_basis: "not_reviewed",
-    lane_evidence: null,
-    lane_decision_authority: null,
-    lane_review_needed: false,
-    part_viii_class: null,
-    licence: { spdx: "UNDETERMINED", redistributable: "UNDETERMINED", derivative_permitted: "UNDETERMINED", attribution: null, terms_reviewed: false, sig_labelled_cc0: false },
-    ground_truth: { homepage: "no_upstream_url_recorded", homepage_host: null, terms_url: "no_upstream_url_recorded" },
-    cadence: { rule: "not_scheduled", basis: "not_declared", scheduled: false, one_time_load: false },
-    last_successful_run: "never_run",
-    last_upstream_change: { value: null, basis: "not_detectable (no captures recorded)" },
-    last_sig_records_change: { value: null, basis: "not_recorded (no claim-inserting execution recorded)" },
-    published_claims: "not_published",
-    published_sites: false,
-    review: { basis: "no_decision_recorded", reviewer_role: "not_recorded", decided_at: null, terms_reviewed: false },
-    contributions: [],
-    status: "gated",
-    reason_class: "not_reviewed",
-    homepage_url: "no_upstream_url_recorded",
-  },
-  demo_refused_source: {
-    source_id: "demo_refused_source",
-    name: "Demo refused source",
-    publisher: "publisher_not_recorded",
-    publisher_type: "aggregator",
-    lifecycle_state: "refused",
-    status_flags: ["rights_not_reviewed"],
-    lane: "restricted",
-    lane_basis: "source_redistribution",
-    lane_evidence: null,
-    lane_decision_authority: "rights review",
-    lane_review_needed: false,
-    part_viii_class: null,
-    licence: { spdx: "UNDETERMINED", redistributable: "UNDETERMINED", derivative_permitted: "no", attribution: null, terms_reviewed: true, sig_labelled_cc0: false },
-    ground_truth: { homepage: "no_upstream_url_recorded", homepage_host: null, terms_url: "no_upstream_url_recorded" },
-    cadence: { rule: "not_scheduled", basis: "not_declared", scheduled: false, one_time_load: false },
-    last_successful_run: "never_run",
-    last_upstream_change: { value: null, basis: "not_detectable (no captures recorded)" },
-    last_sig_records_change: { value: null, basis: "not_recorded (no claim-inserting execution recorded)" },
-    published_claims: "not_published",
-    published_sites: false,
-    review: { basis: "compact_status = permission_declined (demonstration entry)", reviewer_role: "maintainer", decided_at: "2026-09-20T00:00:00Z", terms_reviewed: true },
-    contributions: [],
-    status: "refused",
-    reason_class: "refused",
-    homepage_url: "example.invalid",
-  },
-};
+/** The page row lookup — fixtures mode reads the committed
+ *  `transparency/sources.json` fixture (one row universe for the counting
+ *  surfaces AND the page; export mode reads the release's artifact). The
+ *  renderable shape is asserted through `isSourcePageRow` (fail closed). */
+function fixturePageRow(sourceId: string): SourcePageRow | null {
+  for (const raw of SOURCE_ROWS_DOC_FIXTURE.sources) {
+    const o = raw as SourceRow;
+    if (o.source_id !== sourceId) continue;
+    if (!isSourcePageRow(o)) {
+      throw new Error(`SOURCE_ROWS_DOC_FIXTURE: row ${sourceId} is not a renderable sig.source-row/1`);
+    }
+    return o;
+  }
+  return null;
+}
 
 /** Per-source extras — the fields the artifacts do not carry yet (each a
  *  value or `null` → the typed absence; synthetic demo content). */
@@ -778,7 +554,7 @@ export const SOURCE_FRESHNESS_FIXTURE: Record<string, SourceFreshness> = {
 // ---------------------------------------------------------------------------
 
 function fixturePageIds(): string[] {
-  return Object.keys(SOURCE_PAGE_ROWS_FIXTURE).sort();
+  return SOURCE_ROWS_DOC_FIXTURE.sources.map((r) => r.source_id).sort();
 }
 
 function exportPageIds(): string[] {
@@ -851,14 +627,7 @@ function exportFreshness(sourceId: string): SourceFreshness | null {
 /** S-11: the row is the registry-only record — gated/refused/withdrawn or
  *  an unknown/restricted lane (the emitter's own precedence). */
 export function isRegistryOnly(row: SourcePageRow): boolean {
-  if (row.reason_class !== undefined || row.status !== undefined) return true;
-  return (
-    row.lifecycle_state === "gated" ||
-    row.lifecycle_state === "refused" ||
-    row.lifecycle_state === "withdrawn" ||
-    row.lane === "unknown" ||
-    row.lane === "restricted"
-  );
+  return isRegistryOnlyShape(row);
 }
 
 /** The page model for one source — `null` when no row names the id. */
@@ -874,7 +643,7 @@ export function getSourcePage(sourceId: string): SourcePageModel | null {
       registryOnly: isRegistryOnly(row),
     };
   }
-  const row = SOURCE_PAGE_ROWS_FIXTURE[sourceId] ?? null;
+  const row = fixturePageRow(sourceId);
   if (!row) return null;
   return {
     row,

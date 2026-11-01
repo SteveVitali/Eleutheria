@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "ef47950988f98dcdcdf140cd019fb6e518bd492b",
+  "input_commit": "8ef40a7f6acd566071d81294ba4022d536691754",
   "manifest_inputs": 1165,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -16332,14 +16332,14 @@
           "label": "historical/csv"
         },
         "SIG-TRANSP-003": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "web/src/lib/source-page.ts;web/src/pages/sources/[id]/index.astro;web/src/lib/source-counts.ts",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-TRANSP-004": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/lib/source-page.ts;web/src/pages/sources/[id]/index.astro;web/src/lib/source-counts.ts",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16368,8 +16368,8 @@
           "label": "historical/csv"
         },
         "SIG-TRANSP-009": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "web/src/lib/source-page.ts;web/src/pages/sources/[id]/index.astro;web/src/lib/source-counts.ts",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16542,14 +16542,14 @@
           "label": "historical/csv"
         },
         "SIG-TRANSP-038": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/lib/source-page.ts;web/src/pages/sources/[id]/index.astro;web/src/lib/source-counts.ts",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-TRANSP-039": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/lib/source-page.ts;web/src/pages/sources/[id]/index.astro;web/src/lib/source-counts.ts",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16608,8 +16608,8 @@
           "label": "historical/csv"
         },
         "SIG-UI-056": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "web/src/lib/source-page.ts;web/src/pages/sources/[id]/index.astro;web/src/lib/source-counts.ts",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -25407,7 +25407,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "8446c2332f0d0eb64453843da61ee3acf0d9da9706ff21509eebf8f2ac9db781",
+  "manifest_sha256": "b7dd677c770d1e8514e895aa48f6fa6cc3cb413407255d18550c6583dabd69c1",
   "current_md": {
     "lines": 130,
     "bytes": 19881,

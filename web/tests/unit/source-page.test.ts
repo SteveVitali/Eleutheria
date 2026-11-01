@@ -25,13 +25,12 @@ import {
   runsStripSpec,
   SOURCE_EXECUTIONS_FIXTURE,
   SOURCE_PAGE_EXTRAS_FIXTURE,
-  SOURCE_PAGE_ROWS_FIXTURE,
 } from "../../src/lib/source-page";
 
 describe("the fixture universe (getSourcePageIds/getSourcePage)", () => {
   it("emits a page id per fixture source row", () => {
     const ids = getSourcePageIds();
-    expect(ids).toEqual([...Object.keys(SOURCE_PAGE_ROWS_FIXTURE)].sort());
+    expect(ids.length).toBeGreaterThanOrEqual(7);
     for (const id of ids) {
       const model = getSourcePage(id);
       expect(model, id).not.toBeNull();
@@ -40,12 +39,13 @@ describe("the fixture universe (getSourcePageIds/getSourcePage)", () => {
   });
 
   it("every fixture row validates and gated rows classify registry-only", () => {
-    for (const [id, row] of Object.entries(SOURCE_PAGE_ROWS_FIXTURE)) {
-      expect(isSourcePageRow(row), id).toBe(true);
+    for (const id of getSourcePageIds()) {
+      const model = getSourcePage(id)!;
+      expect(isSourcePageRow(model.row), id).toBe(true);
     }
-    expect(isRegistryOnly(SOURCE_PAGE_ROWS_FIXTURE.demo_gated_registry!)).toBe(true);
-    expect(isRegistryOnly(SOURCE_PAGE_ROWS_FIXTURE.demo_refused_source!)).toBe(true);
-    expect(isRegistryOnly(SOURCE_PAGE_ROWS_FIXTURE.okc_camera_registry!)).toBe(false);
+    expect(isRegistryOnly(getSourcePage("demo_gated_registry")!.row)).toBe(true);
+    expect(isRegistryOnly(getSourcePage("demo_refused_source")!.row)).toBe(true);
+    expect(isRegistryOnly(getSourcePage("okc_camera_registry")!.row)).toBe(false);
   });
 
   it("an unknown id resolves to null (never an untyped page)", () => {

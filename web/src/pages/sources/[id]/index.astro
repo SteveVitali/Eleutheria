@@ -59,6 +59,7 @@ const conduct = conductSummary(m.executions);
 const missing = runRecordMissing(m);
 const coverage = coverageClass(m);
 const termsDisc = sourceTermsDisclosure(row.source_id);
+const contributions = row.contributions ?? [];
 const observedDays = observedCadenceDays(m.executions);
 const targets = m.extras.targets ?? null;
 const slugify = (s: string): string => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -107,11 +108,11 @@ if (typeof row.published_claims === "number") {
     targets: perSourceTargets(id, `sources/${id}/`),
   });
 }
-if (row.contributions.length > 0) {
+if (contributions.length > 0) {
   add({
     id: "dossier-contributions",
     class: "per_source",
-    value: row.contributions.length,
+    value: contributions.length,
     artifact: "transparency/sources.json",
     pointer: `${J}sources/${id}/contributions`,
     definition: "#glance-heading",
@@ -351,7 +352,7 @@ const crumbs = [
         <dt data-copy="SP-63">Reason class</dt>
         <dd><code>{row.reason_class ?? "not_reviewed"}</code></dd>
         <dt data-copy="SP-64">Publisher</dt>
-        <dd>{row.publisher === "publisher_not_recorded" ? "not recorded" : row.publisher}{row.publisher_type ? <> ({row.publisher_type})</> : null}</dd>
+        <dd>{!row.publisher || row.publisher === "publisher_not_recorded" ? "not recorded" : row.publisher}{row.publisher_type ? <> ({row.publisher_type})</> : null}</dd>
         <dt data-copy="SP-65">Upstream host</dt>
         <dd>{row.homepage_url && row.homepage_url !== "no_upstream_url_recorded" ? row.homepage_url : "not recorded"}</dd>
         <dt data-copy="SP-66">Lane</dt>
@@ -394,7 +395,7 @@ const crumbs = [
         <h2 id="glance-heading" data-copy="SP-04">At a glance</h2>
         <dl class="sig-fields">
           <dt data-copy="SP-05">Publisher</dt>
-          <dd>{row.publisher === "publisher_not_recorded" ? "not recorded" : row.publisher}{row.publisher_type ? <> ({row.publisher_type})</> : null}</dd>
+          <dd>{!row.publisher || row.publisher === "publisher_not_recorded" ? "not recorded" : row.publisher}{row.publisher_type ? <> ({row.publisher_type})</> : null}</dd>
           <dt data-copy="SP-06">Lifecycle state</dt>
           <dd>{row.lifecycle_state.replace(/_/g, " ")}{row.status_flags.length > 0 ? <> — {row.status_flags.join(", ")}</> : null}</dd>
           <dt data-copy="SP-07">Raw-bytes lane</dt>
@@ -413,13 +414,13 @@ const crumbs = [
           <dd>{row.last_upstream_change.value ?? "not detectable"} — {row.last_upstream_change.basis}</dd>
           <dt data-copy="SP-11">Last change in SIG's records</dt>
           <dd>{row.last_sig_records_change.value ?? "not recorded"} — {row.last_sig_records_change.basis}</dd>
-          {row.contributions.length > 0 && (
+          {contributions.length > 0 && (
             <>
               <dt data-copy="SP-12">Dossier contribution</dt>
               <dd id="fig-dossier-contributions">
-                <Figure figure={fig("dossier-contributions")} order="inline">{fmtInt(row.contributions.length)}</Figure>{" "}
+                <Figure figure={fig("dossier-contributions")} order="inline">{fmtInt(contributions.length)}</Figure>{" "}
                 dossier groupings — the same rows the dossier pages render (one shared artifact).{" "}
-                {row.contributions.map((c) => (
+                {contributions.map((c) => (
                   <span data-testid="contribution-row">
                     {c.dossier_slug ? <a href={withBase(`dossier/${c.dossier_slug}/`)}>{c.dossier_key}</a> : c.dossier_key}{" "}
                     ({c.basis}){" "}
