@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `b968acbf20e6cce86524215bad28c472a417fdd5` · inputs hashed: 1161 · wall-clock receipt: `receipt.json`
+> input_commit: `10f102b8825a59986d51b57bc241b8d0e425635b` · inputs hashed: 1162 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -13,10 +13,10 @@
 
 ## Obligations
 
-- 209 obligations · **128 owed** (125 OPEN, 3 PARTIAL) · 81 terminal
-- 714 events (51 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 210 obligations · **129 owed** (126 OPEN, 3 PARTIAL) · 81 terminal
+- 715 events (51 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 128 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 129 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -92,6 +92,7 @@
 | P36.38 | queued D-P36.38-1 — the v2-search API roll (`--memory 1Gi` + `SIG_API_SEARCH_V2=on`) | `implement-spec spec=docs/tickets/379_P36.38__search-api-serving-v2.md live_verification=true` |
 | P36.75 | queued D-P36.75-1 — the hosted append-only `configured_access` claim write (org-level `configured_sharing_partner` over the 43.2a-screened share lists); restore… | `implement-spec spec=docs/tickets/385_P36.75__flock-share-lists-configured-access.md live_verification=true` |
 | P36.43 | queued D-P36.43-1 — the `sig-status-publish` job create + `sig-sched-status-publish` 6h trigger + invoker binding; restore = delete trigger then job | `implement-spec spec=docs/tickets/386_P36.43__status-lane.md live_verification=true` |
+| P36.44 | queued D-P36.44-1 — the `sig-sched-release-cut` + `sig-sched-materialize` Cloud Scheduler trigger creates; restore = delete both triggers | `implement-spec spec=docs/tickets/387_P36.44__release-cadence-automation.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 
@@ -116,13 +117,7 @@
 
 ## Governing ADRs
 
-| ADR | scope | file |
-|---|---|---|
-| ADR-073 | build-memory v2 — docs/build/ is the committed memory root; LEDGER.md holds the  | docs/adr/ADR-073-build-memory-committed-under-docs-build-scratch-retired.md |
-| ADR-119 | P30.4 leak-scope policy — governs what a closeout/report may contain (referenced | docs/adr/ADR-119-project-id-leak-check-scoped-to-code-and-config.md |
-| ADR-120 | the Round-10 six-stream program + the memory extension this projection serves (S | docs/adr/ADR-120-six-stream-integrity-investigation-and-memory-extension.md |
-| ADR-125 | evidence-audit/1 + recovery-plan/1 — the offline audit/dry-run contracts the mem | docs/adr/ADR-125-legacy-evidence-audit-and-recovery-plan-contract.md |
-| ADR-126 | obligation-event/1 + coverage-assessment/1 + current-projection/1 + input-manife | docs/adr/ADR-126-obligation-events-and-current-projection.md |
+- `adrs` → see [adrs.md](adrs.md) (complete — 5 rows)
 
 ## Reading this view
 

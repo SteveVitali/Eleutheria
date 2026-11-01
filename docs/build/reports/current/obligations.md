@@ -130,5 +130,6 @@
 | D-P36.38-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.38-live-<n>` dispatch or the operator | RETURN PASS — P36.38 | `search-v2-roll.sh --verify` reads `SIG_API_SEARCH_V2=on` + `memory=1Gi` back and names the serving revision; the poststate probe `GET /v1/releases/latest/searc… |
 | D-P36.75-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.75-live-<n>` dispatch or the operator | RETURN PASS — P36.75 | the dry plan reports every unit bindable with `claims_pending` = the screened edge count; the apply's `claims_added`/`claims_duplicate` match the plan; the +0 d… |
 | D-P36.43-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.43-live-<n>` dispatch or the operator | RETURN PASS — P36.43 | `gcloud run jobs describe` shows the pinned digest + status SA; `gcloud scheduler jobs describe` shows `12 */6 * * *` ENABLED; the first execution writes `statu… |
+| D-P36.44-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.44-live-<n>` dispatch or the operator | RETURN PASS — P36.44 | `gcloud scheduler jobs describe sig-sched-release-cut` shows `0 14 15-17 * *` ENABLED → `sig-release:run`; `gcloud scheduler jobs describe sig-sched-materialize… |
 
 ← back: CURRENT.md

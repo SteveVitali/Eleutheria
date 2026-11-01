@@ -1467,3 +1467,19 @@ rerun_cell = '''`implement-spec spec=docs/tickets/386_P36.43__status-lane.md liv
   excluded = ["daily 03:00-06:30Z", "batch window day 6 00:00Z → day 13 12:00Z"]
   go = '''pre-authorised: `SIG_STATUS_AUTHOR` per apply'''
   rerun = '''implement-spec spec=docs/tickets/386_P36.43__status-lane.md live_verification=true'''
+[[row]]
+key = "P36.44"
+kind = "leg"
+obligations = ["D-P36.44-1"]
+obligations_cell = '''queued D-P36.44-1 — the `sig-sched-release-cut` + `sig-sched-materialize` Cloud Scheduler trigger creates; restore = delete both triggers'''
+gates_cell = '''pre-authorised: OM-20 GATE-G5 (expires GATE-G6); AR-3 + AR-2 — never daily 03:00-06:30Z or batch window day 6 00:00Z → day 13 12:00Z; `SIG_CADENCE_AUTHOR` per apply; ADC + `SIG_GCP_PROJECT` + `SIG_SCHEDULER_SA_EMAIL` + both target jobs present'''
+operator_cell = '''nothing until the `hosted` env — packet `reports/p36.44-release-cadence/` landed'''
+rerun_cell = '''`implement-spec spec=docs/tickets/387_P36.44__release-cadence-automation.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P36.44-trigger-create"
+  obligations = ["D-P36.44-1"]
+  earliest = '''when ADC + `SIG_GCP_PROJECT` + `SIG_CADENCE_AUTHOR` + `SIG_SCHEDULER_SA_EMAIL` are present and sig-release + sig-materialize exist; inside AR-3 + AR-2'''
+  excluded = ["daily 03:00-06:30Z", "batch window day 6 00:00Z → day 13 12:00Z"]
+  go = '''pre-authorised: `SIG_CADENCE_AUTHOR` per apply'''
+  rerun = '''implement-spec spec=docs/tickets/387_P36.44__release-cadence-automation.md live_verification=true'''
