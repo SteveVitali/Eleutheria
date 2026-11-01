@@ -26,7 +26,7 @@ from ops.status_publish import (
     publish_status_tree,
 )
 
-STATUS_TIME = "2026-11-01T12:00:00Z"
+STATUS_TIME = "2026-10-15T12:00:00Z"
 
 
 def _run(source_id: str, started: str, outcome: str = "ok", **kw):
@@ -74,7 +74,7 @@ def _sources_doc():
 
 def _lane(runs=None, scheduler=None, release=None):
     return build_status_lane(
-        runs=runs if runs is not None else [_run("alpha_feed", "2026-11-01T05:00:00Z")],
+        runs=runs if runs is not None else [_run("alpha_feed", "2026-10-15T05:00:00Z")],
         sources_doc=_sources_doc(),
         crons={"alpha_feed": {"cron": "12 4 * * 1", "cadence": "weekly"}},
         scheduler_report=scheduler,
@@ -95,10 +95,10 @@ def test_heartbeat_is_the_state_txt_pattern():
 
 def test_runs_by_outcome_window_counts():
     runs = [
-        _run("alpha_feed", "2026-11-01T05:00:00Z"),
-        _run("alpha_feed", "2026-10-28T05:00:00Z", "failed"),
-        _run("beta_feed", "2026-10-29T05:00:00Z"),
-        _run("beta_feed", "2026-10-10T05:00:00Z"),  # outside the 7d window
+        _run("alpha_feed", "2026-10-15T05:00:00Z"),
+        _run("alpha_feed", "2026-10-12T05:00:00Z", "failed"),
+        _run("beta_feed", "2026-10-13T05:00:00Z"),
+        _run("beta_feed", "2026-10-01T05:00:00Z"),  # outside the 7d window
     ]
     lane = _lane(runs=runs)
     assert lane["runs"]["last_24h"]["ok"] == 1
@@ -137,7 +137,7 @@ def test_robots_disregard_discloses_host_and_count_only():
     runs = [
         _run(
             "alpha_feed",
-            "2026-11-01T05:00:00Z",
+            "2026-10-15T05:00:00Z",
             robots=[
                 {"host": "oscp.example.gov", "outcome": "disregarded", "count": 7},
                 {"host": "city.example.gov", "outcome": "obeyed", "count": 3},
@@ -175,7 +175,7 @@ def test_emit_writes_the_full_file_set(tmp_path: Path):
         "status/sources/index.html",
         "status/issues/index.html",
         "status/sources/alpha_feed.json",
-        "status/archive/2026-11-01.json",
+        "status/archive/2026-10-15.json",
     ):
         assert rel in written, rel
     lane_doc = json.loads((tmp_path / "status/lane.json").read_text())
@@ -195,7 +195,7 @@ def test_archive_is_append_only(tmp_path: Path):
     emit_status_files(_lane(), tmp_path)
     emit_status_files(_lane(), tmp_path)  # same-day re-emit: identical bytes OK
     other = build_status_lane(
-        runs=[_run("beta_feed", "2026-11-01T06:00:00Z")],
+        runs=[_run("beta_feed", "2026-10-15T06:00:00Z")],
         sources_doc=_sources_doc(),
         crons={},
         scheduler_report=None,
@@ -210,7 +210,7 @@ def test_scrub_gate_aborts_on_secret(tmp_path: Path):
     lane = _lane()
     # The secret shape is assembled at runtime — no literal key lands in
     # tracked source (the repo's own secret scan sweeps every file).
-    lane["sources"][0]["name"] = "api_key=" + "AKIA" + "IOSFODNN7" + "EXAMPLE"
+    lane["sources"][0]["name"] = "AKIA" + "IOSFODNN7" + "EXAMPLE" + "KEYX"
     from ops.status_lane import StatusLaneError
 
     with pytest.raises(StatusLaneError, match="secret"):
@@ -237,7 +237,7 @@ def test_per_source_json_is_a_status_source_doc(tmp_path: Path):
 
 def _emit(tmp_path: Path) -> Path:
     runs = tmp_path / "runs.jsonl"
-    runs.write_text(json.dumps(_run("alpha_feed", "2026-11-01T05:00:00Z")) + "\n")
+    runs.write_text(json.dumps(_run("alpha_feed", "2026-10-15T05:00:00Z")) + "\n")
     src = tmp_path / "sources.json"
     src.write_text(json.dumps(_sources_doc()))
     out = tmp_path / "tree"
@@ -317,7 +317,7 @@ def test_publish_dry_run_plans_without_writes(tmp_path: Path):
 
 def test_cli_emit(tmp_path: Path):
     runs = tmp_path / "runs.jsonl"
-    runs.write_text(json.dumps(_run("alpha_feed", "2026-11-01T05:00:00Z")) + "\n")
+    runs.write_text(json.dumps(_run("alpha_feed", "2026-10-15T05:00:00Z")) + "\n")
     src = tmp_path / "sources.json"
     src.write_text(json.dumps(_sources_doc()))
     out = tmp_path / "tree"
