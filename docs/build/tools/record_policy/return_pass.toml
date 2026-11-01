@@ -1286,9 +1286,9 @@ rerun_cell = '''`implement-spec spec=docs/tickets/348_P35.23__real-data-regressi
 key = "P36.76"
 kind = "leg"
 obligations = ["D-P36.76-1", "D-P36.76-2"]
-obligations_cell = '''queued D-P36.76-1 — the 12 leg-A bounded GETs (6 registration pages + 6 `/:8443` screens); D-P36.76-2 — leg B, operator's first-wire act'''
-gates_cell = '''bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T05:01Z); records land under `reports/rights/p3676/`; leg B is never agent execution'''
-operator_cell = '''nothing until `live:P35.38a` — leg B's flip + first wire stay the operator's HG-03 + OP-26 acts (packet `p3676/leg-b-packet.md`, go lines blank)'''
+obligations_cell = '''queued D-P36.76-1 — the 12 leg-A bounded GETs (6 registration + 6 `/:8443` screens); D-P36.76-2 — leg B, operator's first-wire act'''
+gates_cell = '''bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records land under `reports/rights/p3676/`; leg B never agent execution'''
+operator_cell = '''nothing until `live:P35.38a` — leg B is operator HG-03 + OP-26 (packet `p3676/leg-b-packet.md`)'''
 rerun_cell = '''`implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true`'''
 
   [[row.legs]]
@@ -1313,9 +1313,9 @@ rerun_cell = '''`implement-spec spec=docs/tickets/351_P36.76__axon-connect-conne
 key = "P36.77"
 kind = "leg"
 obligations = ["D-P36.77-1", "D-P36.77-2"]
-obligations_cell = '''queued D-P36.77-1 — 11 leg-A GETs (4 api_document + 3 api_project + 2 DocumentCloud pages + ToS + the MuckRock /foi/ page); D-P36.77-2 — leg B, operator's first-wire act'''
-gates_cell = '''bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T07:54Z); records under `reports/rights/p3677/`; leg B never agent execution'''
-operator_cell = '''nothing until `live:P35.38a` — leg B's flips + first wire are operator acts (HG-03 + OP-26; packet `p3677/leg-b-packet.md`, go lines blank)'''
+obligations_cell = '''queued D-P36.77-1 — 11 leg-A GETs (4 api_document + 3 api_project + 2 DocumentCloud + ToS + /foi/); D-P36.77-2 — leg B, operator's first-wire act'''
+gates_cell = '''bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records under `reports/rights/p3677/`; leg B never agent execution'''
+operator_cell = '''nothing until `live:P35.38a` — leg B is operator HG-03 + OP-26 (packet `p3677/leg-b-packet.md`)'''
 rerun_cell = '''`implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true`'''
 
   [[row.legs]]
@@ -1340,9 +1340,9 @@ rerun_cell = '''`implement-spec spec=docs/tickets/352_P36.77__documentcloud-muck
 key = "P36.78"
 kind = "leg"
 obligations = ["D-P36.78-1", "D-P36.78-2"]
-obligations_cell = '''queued D-P36.78-1 — 5 leg-A GETs (the Sourcewell contract page + terms-use, the OMNIA supplier + contract-documents index + terms-of-use); D-P36.78-2 — leg B, operator's first-wire act'''
-gates_cell = '''bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T11:10Z); records under `reports/rights/p3678/`; leg B never agent execution'''
-operator_cell = '''nothing until `live:P35.38a` — leg B's flips + first wire are operator acts (HG-03 + OP-26; packet `p3678/leg-b-packet.md`, go lines blank)'''
+obligations_cell = '''queued D-P36.78-1 — 5 leg-A GETs (Sourcewell + OMNIA contract/terms pages); D-P36.78-2 — leg B, operator's first-wire act'''
+gates_cell = '''bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records under `reports/rights/p3678/`; leg B never agent execution'''
+operator_cell = '''nothing until `live:P35.38a` — leg B is operator HG-03 + OP-26 (packet `p3678/leg-b-packet.md`)'''
 rerun_cell = '''`implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true`'''
 
   [[row.legs]]
@@ -1438,9 +1438,9 @@ rerun_cell = '''`implement-spec spec=docs/tickets/379_P36.38__search-api-serving
 key = "P36.75"
 kind = "leg"
 obligations = ["D-P36.75-1"]
-obligations_cell = '''queued D-P36.75-1 — the hosted append-only `configured_access` claim write (org-level `configured_sharing_partner` over the 43.2a-screened share lists); restore point = claim-set digest list'''
-gates_cell = '''pre-authorised: OM-20 GATE-G5 (expires GATE-G6); outside daily 03:00-06:30Z + batch window day 6 00:00Z → day 13 12:00Z; `SIG_SHARE_LISTS_AUTHOR` per apply; ADC + `SIG_GCP_PROJECT` + `SIG_SHARE_WRITE_DSN` + `SIG_SHARE_SNAPSHOT`'''
-operator_cell = '''nothing until the hosted env — the screen/builder/write machinery + packet `reports/p36.75-flock-share-lists/` landed'''
+obligations_cell = '''queued D-P36.75-1 — the `hosted` append-only `configured_access` claim write (org-level `configured_sharing_partner`); restore point = claim-set digest list'''
+gates_cell = '''pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z or batch window day 6 00:00Z → day 13 12:00Z; `SIG_SHARE_LISTS_AUTHOR` per apply; ADC + `SIG_GCP_PROJECT` + `SIG_SHARE_WRITE_DSN` + `SIG_SHARE_SNAPSHOT`'''
+operator_cell = '''nothing until the `hosted` env — machinery + packet `reports/p36.75-flock-share-lists/` landed'''
 rerun_cell = '''`implement-spec spec=docs/tickets/385_P36.75__flock-share-lists-configured-access.md live_verification=true`'''
 
   [[row.legs]]
@@ -1487,15 +1487,15 @@ rerun_cell = '''`implement-spec spec=docs/tickets/387_P36.44__release-cadence-au
 key = "P36.46"
 kind = "leg"
 obligations = ["D-P36.46-1"]
-obligations_cell = '''queued D-P36.46-1 — the hosted append-only ingestion-history backfill (INSERT-only ingest_run_report rows via the P31.2 matcher + repo records; +0 under backfilled_from); restore point = the appended set's digest list'''
-gates_cell = '''pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z or batch window day 6 00:00Z → day 13 12:00Z; `SIG_BACKFILL_AUTHOR` per apply; ADC + `SIG_GCP_PROJECT` + `SIG_BACKFILL_DSN` + `SIG_OPS_GCS_BUCKET`'''
-operator_cell = '''nothing until the `hosted` env — the view/import machinery + packet `reports/p36.46-ingestion-history/` landed'''
-rerun_cell = '''`implement-spec spec=docs/tickets/389_P36.46__execution-keyed-ingestion-history.md live_verification=true`'''
+obligations_cell = "queued D-P36.46-1 — `hosted` report backfill (INSERT-only, +0; restore = appended-set digests)"
+gates_cell = "pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z or batch window day 6 → day 13 12:00Z; `SIG_BACKFILL_AUTHOR`"
+operator_cell = "nothing until the `hosted` env — machinery + packet landed"
+rerun_cell = "`implement-spec spec=docs/tickets/389_P36.46__execution-keyed-ingestion-history.md live_verification=true`"
 
   [[row.legs]]
   id = "P36.46-backfill"
   obligations = ["D-P36.46-1"]
-  earliest = '''when ADC + `SIG_GCP_PROJECT` + `SIG_BACKFILL_DSN` + `SIG_BACKFILL_AUTHOR` + `SIG_OPS_GCS_BUCKET` are present; inside AR-3 + AR-2'''
-  excluded = ["daily 03:00-06:30Z", "batch window day 6 00:00Z → day 13 12:00Z"]
-  go = '''pre-authorised: `SIG_BACKFILL_AUTHOR` per apply'''
-  rerun = '''implement-spec spec=docs/tickets/389_P36.46__execution-keyed-ingestion-history.md live_verification=true'''
+  earliest = "ADC + `SIG_GCP_PROJECT` + `SIG_BACKFILL_DSN` + `SIG_BACKFILL_AUTHOR` + `SIG_OPS_GCS_BUCKET`; inside AR-3+AR-2"
+  excluded = ["daily 03:00-06:30Z", "batch window day 6 → day 13 12:00Z"]
+  go = "pre-authorised: `SIG_BACKFILL_AUTHOR`"
+  rerun = "implement-spec spec=docs/tickets/389_P36.46__execution-keyed-ingestion-history.md live_verification=true"

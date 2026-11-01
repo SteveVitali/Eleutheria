@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `12c2ddf52b65ba8ff06fd28127ba6f055a3bad40` · inputs hashed: 1164 · wall-clock receipt: `receipt.json`
+> input_commit: `9065478ec6feaeec34dfb13369e5df32a1b864a4` · inputs hashed: 1164 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -83,17 +83,17 @@
 | P35.2 | D-P35.2-1 | `implement-spec spec=docs/tickets/346_P35.2__alerting-as-code-and-escalation.md live_verification=true` |
 | P35.21 | D-P35.21-1 | `implement-spec spec=docs/tickets/347_P35.21__partner-name-audit-run.md live_verification=true` |
 | P35.23 | D-P35.23-1 | `implement-spec spec=docs/tickets/348_P35.23__real-data-regression-corpus.md live_verification=true` |
-| P36.76 | queued D-P36.76-1 — the 12 leg-A bounded GETs (6 registration pages + 6 `/:8443` screens); D-P36.76-2 — leg B, operator's first-wire act | `implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true` |
-| P36.77 | queued D-P36.77-1 — 11 leg-A GETs (4 api_document + 3 api_project + 2 DocumentCloud pages + ToS + the MuckRock /foi/ page); D-P36.77-2 — leg B, operator's first… | `implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true` |
-| P36.78 | queued D-P36.78-1 — 5 leg-A GETs (the Sourcewell contract page + terms-use, the OMNIA supplier + contract-documents index + terms-of-use); D-P36.78-2 — leg B, o… | `implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true` |
+| P36.76 | queued D-P36.76-1 — the 12 leg-A bounded GETs (6 registration + 6 `/:8443` screens); D-P36.76-2 — leg B, operator's first-wire act | `implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true` |
+| P36.77 | queued D-P36.77-1 — 11 leg-A GETs (4 api_document + 3 api_project + 2 DocumentCloud + ToS + /foi/); D-P36.77-2 — leg B, operator's first-wire act | `implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true` |
+| P36.78 | queued D-P36.78-1 — 5 leg-A GETs (Sourcewell + OMNIA contract/terms pages); D-P36.78-2 — leg B, operator's first-wire act | `implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true` |
 | P36.13 | queued D-P36.13-1 — the hosted-enforcement flip on `sig-api` (env `SIG_API_RATE_LIMIT=enforce` + hops 2; prestate describe = restore point) | `implement-spec spec=docs/tickets/354_P36.13__api-rate-limits.md live_verification=true` |
 | P36.79 | queued D-P36.79-1 — the restricted-bucket object write of the sealed held-out relevance set (read-back digest verify; restore point = bucket versioning + commit… | `implement-spec spec=docs/tickets/371_P36.79__held-out-search-relevance-set.md live_verification=true` |
 | P36.33 | queued D-P36.33-1 — the R2 basemap host create (bucket sig-basemap + CORS/Range/immutable + custom domain tiles.surveillancegraph.org + first upload); restore p… | `implement-spec spec=docs/tickets/374_P36.33__basemap-pipeline-and-host.md live_verification=true` |
 | P36.38 | queued D-P36.38-1 — the v2-search API roll (`--memory 1Gi` + `SIG_API_SEARCH_V2=on`) | `implement-spec spec=docs/tickets/379_P36.38__search-api-serving-v2.md live_verification=true` |
-| P36.75 | queued D-P36.75-1 — the hosted append-only `configured_access` claim write (org-level `configured_sharing_partner` over the 43.2a-screened share lists); restore… | `implement-spec spec=docs/tickets/385_P36.75__flock-share-lists-configured-access.md live_verification=true` |
+| P36.75 | queued D-P36.75-1 — the `hosted` append-only `configured_access` claim write (org-level `configured_sharing_partner`); restore point = claim-set digest list | `implement-spec spec=docs/tickets/385_P36.75__flock-share-lists-configured-access.md live_verification=true` |
 | P36.43 | queued D-P36.43-1 — the `sig-status-publish` job create + `sig-sched-status-publish` 6h trigger + invoker binding; restore = delete trigger then job | `implement-spec spec=docs/tickets/386_P36.43__status-lane.md live_verification=true` |
 | P36.44 | queued D-P36.44-1 — the `sig-sched-release-cut` + `sig-sched-materialize` Cloud Scheduler trigger creates; restore = delete both triggers | `implement-spec spec=docs/tickets/387_P36.44__release-cadence-automation.md live_verification=true` |
-| P36.46 | queued D-P36.46-1 — the hosted append-only ingestion-history backfill (INSERT-only ingest_run_report rows via the P31.2 matcher + repo records; +0 under backfil… | `implement-spec spec=docs/tickets/389_P36.46__execution-keyed-ingestion-history.md live_verification=true` |
+| P36.46 | queued D-P36.46-1 — `hosted` report backfill (INSERT-only, +0; restore = appended-set digests) | `implement-spec spec=docs/tickets/389_P36.46__execution-keyed-ingestion-history.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 
