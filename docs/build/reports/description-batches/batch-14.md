@@ -16,31 +16,31 @@ no confirmed row here. An unconfirmed source publishes
 
 | id | source | text | sha256 | status |
 |---|---|---|---|---|
-| D14-01 | ccops_ok_tulsa_flock_policies | Tulsa Flock policies integration and executed contract search — a government portal source published by City of Tulsa / Tulsa Police Department. | b6b63ec593333e748de8f89db75aecd68eca2cc7a6717886ce4fe172c7578d56 | pending |
-| D14-02 | ccops_ordinance_disclosures | Municipal surveillance-ordinance (CCOPS) disclosures — a government mandated disclosure source. | d62ffa66e33a1c83f02fcb851e5177270dfcca596e379af0651a57da03f19efc | pending |
-| D14-03 | ccops_ri_narragansett_police_camera | Narragansett Police camera registry programme - 'Polaris - CameraKit - FAQs' (Dec 2022) — a government portal source published by Town of Narragansett, RI Police Department. | 8ea5366bbc3242e00f757062682802793a72b17ff877453f9bb540b91ca45447 | pending |
-| D14-04 | ccops_san_diego_ca | San Diego technology inventory and annual reports — a government portal source published by City of San Diego (SDPD). | f3dc0d0c1164b9a50cf55b3b16b95c6d7b460af65fa5daf5d115cb77bede232c | pending |
-| D14-05 | ccops_san_francisco_bay_ca | BART surveillance reports policies and public decisions — a government portal source published by San Francisco Bay Area Rapid Transit District (BART). | ff6f9a222b73a7e9795075dcad70c3cd1b08dedb3e466d420d0b62b7e18d2938 | pending |
-| D14-06 | ccops_san_jose_ca | San Jose privacy decisions and algorithm register — a government portal source published by City of San José (Digital Privacy / IT). | 17366bdb1e0a7da48720cd1cdbfe2db3bdd7849fc35d915650d5e15d56e9c5dd | pending |
-| D14-07 | ccops_santa_clara_county_ca | Santa Clara County surveillance impact and oversight — a government portal source published by Santa Clara County (privacy/oversight office). | 979d25f08f226c6cc5c599e2269bc904241f9e73470eadc055e1a9ae56d3ff0f | pending |
-| D14-08 | ccops_seattle | Seattle Surveillance Ordinance disclosures (SMC 14.18 — Master List, SIRs, quarterly determination reports) — a government mandated disclosure source. | 518e80dfb1fd3bdb2a3491bdf4128f457eba60559728e7dcf5dc6c5acf5b4595 | pending |
-| D14-09 | ccops_sf | San Francisco Chapter 19B biannual surveillance technology inventory — a government mandated disclosure source. | 36441b06c0cf4fa7e898de7f96d3e2792315fc9c83f89152b5a8ede4c05fb7f8 | pending |
-| D14-10 | ccops_si_085_novo_mesto_evidenca_o | Evidenca o izvajanju videonadzora na javnih površinah v Mestni občini Novo mesto — a government portal source published by Mestna občina Novo mesto. | eee38f690dcd1c15dd7347afa874badd5dc7c73c9e7f8a1ad8f019429343153d | pending |
-| D14-11 | ccops_somerville | CCOPS Somerville — surveillance oversight disclosures — a government mandated disclosure source. | 1a9718cc3902523ad005983d249a1373ad701bbb7e97ea3165c7645cc6cc70da | pending |
-| D14-12 | ccops_st_louis_mo | City of St. Louis: Police Department Surveillance Technology Reports (Ordinance 71842; Executive Order 78) — a government mandated disclosure source published by Metropolitan St. Louis Police Department / City of St. Louis, MO. | 3900cc665814c42ed89550d1edcc5b4919258d32bf967c7445df24e2bf38d43f | pending |
-| D14-13 | census_gazetteer_tiger | Census Gazetteer / TIGER — a government portal source. | ee36a4b02e90a485158e116630a2a1daa0d5c50be4836382f95b66d375aa91da | pending |
-| D14-14 | census_geocoder | Census Geocoder — a government portal source. | 9731ca22d673d69cb20dea6f83aa928d4830cfe94bea318dcd68dee9cfa3a2be | pending |
-| D14-15 | civicclerk | CivicClerk — a government portal source. | e9a01f654ff6e4155f1ff618a2bef43ab62141a060ff53f493a5823cac6615c3 | pending |
-| D14-16 | civicplus | CivicPlus — a government portal source. | cf67af5d7be10e36d63868247836c1088f06d7fbf3599390d6bcac846441ad87 | pending |
-| D14-17 | congress_gov | Congress.gov API (Library of Congress) — a government portal source. | 45795b82ed5eca5a0524f891793737638ff8308a20ce775ca8deccf773769ded | pending |
-| D14-18 | courtlistener_recap | CourtListener / RECAP — a court system source. | 08aab28f3661d817d233eb1fb34ca8857b644fe8a4d7a630a20fb2d043960565 | pending |
-| D14-19 | declarationcamera_be | declarationcamera.be (BE national camera register) — a government portal source. | c314b038abb3917266452bfad122cd1d2f84de765ec3e82161463c1be4a33a86 | pending |
-| D14-20 | decp_fr | DECP (FR procurement) — a government portal source. | 9b7c4becb0b14dfabcf85a5231ca44298c1bb72c1afbd32f23c1959846d288b7 | pending |
-| D14-21 | deflock | DeFlock — an upstream project source. | 5244055d2e972458396d8a9eb36d0ded704368654882a2a267e204bdee304b2c | pending |
-| D14-22 | deflock_app_repo | DeFlock — app repo (FoggedLens/deflock-app) — an upstream project source. | 638f22d6dfec836078a2aa654116e2fb97231522c77d5290711e01c224695665 | pending |
-| D14-23 | deflock_repo | DeFlock — canonical repo (FoggedLens/deflock) — an upstream project source. | fcedc6783a91998e426581a411573e004003da9bb112978af52050974a916730 | pending |
-| D14-24 | demandstar | DemandStar — public agency bid portal — a government portal source. | c6d22b263c3174ee1d3008d458019307f51d80f3b5844ab9b0d8266a5a2905a7 | pending |
-| D14-25 | denmark_politi_cctv | Denmark National Police — official CCTV camera map — a government portal source. | 577811bc840ada3a490725f6ba1ab214a28e0e40b763603c50554a69caa9db8a | pending |
+| D14-01 | ccops_ok_tulsa_flock_policies | `Tulsa Flock policies integration and executed contract search` — a government portal source published by `City of Tulsa / Tulsa Police Department`. | 3434867d935b42a63c34571bb972bf32d419c6f0c00e3710b5803663a2bd6a7b | pending |
+| D14-02 | ccops_ordinance_disclosures | `Municipal surveillance-ordinance (CCOPS) disclosures` — a government mandated disclosure source. | eea7c23bbe45f8dbc56e20d4730e36a3c04a02434dd6d91b6e3e58815828657f | pending |
+| D14-03 | ccops_ri_narragansett_police_camera | `Narragansett Police camera registry programme - 'Polaris - CameraKit - FAQs' (Dec 2022)` — a government portal source published by `Town of Narragansett, RI Police Department`. | 85cd79438e7f78c1b0075d953e169b607782244f9fada88389bbafda5d98c17e | pending |
+| D14-04 | ccops_san_diego_ca | `San Diego technology inventory and annual reports` — a government portal source published by `City of San Diego (SDPD)`. | 6056961987f135b0024405ebb9e3e2d7818365255ab68b734786b7e597bb2abb | pending |
+| D14-05 | ccops_san_francisco_bay_ca | `BART surveillance reports policies and public decisions` — a government portal source published by `San Francisco Bay Area Rapid Transit District (BART)`. | 8ccad47215e2a96caa9210de3b3365edea23aad5e72da2507b27404f2ce64f3e | pending |
+| D14-06 | ccops_san_jose_ca | `San Jose privacy decisions and algorithm register` — a government portal source published by `City of San José (Digital Privacy / IT)`. | a6df7e1d2d982457410015510ad1a3c840cb6131c199dc1f1c06cb1720978acb | pending |
+| D14-07 | ccops_santa_clara_county_ca | `Santa Clara County surveillance impact and oversight` — a government portal source published by `Santa Clara County (privacy/oversight office)`. | 5e4a660e6575e9231b9f2aa650591cd5d475ec3de0c353df750e23eceb7c8d91 | pending |
+| D14-08 | ccops_seattle | `Seattle Surveillance Ordinance disclosures (SMC 14.18 — Master List, SIRs, quarterly determination reports)` — a government mandated disclosure source. | 530a237be974bf06dcce5cf8e27bdc9a92990caca7983802440cf9352894cb80 | pending |
+| D14-09 | ccops_sf | `San Francisco Chapter 19B biannual surveillance technology inventory` — a government mandated disclosure source. | 15f5dbddc78f7019513b0bc97cd8572da5869baeca892cbec4597219402fefa7 | pending |
+| D14-10 | ccops_si_085_novo_mesto_evidenca_o | `Evidenca o izvajanju videonadzora na javnih površinah v Mestni občini Novo mesto` — a government portal source published by `Mestna občina Novo mesto`. | 4fbdd0a47b663fc4f020b6f97fd3b581e47a660bddb504f1e02da1480cfc235b | pending |
+| D14-11 | ccops_somerville | `CCOPS Somerville — surveillance oversight disclosures` — a government mandated disclosure source. | 1c5f719c4b20df0c6ba6b4dd5812fedbe538aabd8135e79853413147a25cdec4 | pending |
+| D14-12 | ccops_st_louis_mo | `City of St. Louis: Police Department Surveillance Technology Reports (Ordinance 71842, Executive Order 78)` — a government mandated disclosure source published by `Metropolitan St. Louis Police Department / City of St. Louis, MO`. | e02fb4c22ed5abbaa4f5483daff16ab4e17e99b028310b76f3d615efdf4a009e | pending |
+| D14-13 | census_gazetteer_tiger | `Census Gazetteer / TIGER` — a government portal source. | 42842eead67fb5979a149903841de19a1e42c6aefd44e2090d0c8ccd9cd55e01 | pending |
+| D14-14 | census_geocoder | `Census Geocoder` — a government portal source. | 73fbdb213051147d7df9f7d7773a5992f776aca9e00445a1d9ccef20ff5d118c | pending |
+| D14-15 | civicclerk | `CivicClerk` — a government portal source. | 807a07a75d4a6fe3b3fa079873cf47b53babb0af983ab1db7ad30774076d966c | pending |
+| D14-16 | civicplus | `CivicPlus` — a government portal source. | f440d5378d660f3996f6bfa1a95de18ca15648d51d10ab9bf9890d5af6d85cbf | pending |
+| D14-17 | congress_gov | `Congress.gov API (Library of Congress)` — a government portal source. | de314fe6b67ecf516631ae8167c90498098328ef97d9c3a23b741cf5a03892fa | pending |
+| D14-18 | courtlistener_recap | `CourtListener / RECAP` — a court system source. | d37705b7d1693bb6df9e9796eca610031658392e51c8ade6f91d947a90bdb271 | pending |
+| D14-19 | declarationcamera_be | `declarationcamera.be (BE national camera register)` — a government portal source. | d6b45e7523d732706e027eea94900a1cd216a15a3bb21610592d3ee5d2fb8b9a | pending |
+| D14-20 | decp_fr | `DECP (FR procurement)` — a government portal source. | 48e1e557b2a6e71b65eefc05ff414cfa2a4e53103786a64f1d43ef67c7fc3a64 | pending |
+| D14-21 | deflock | `DeFlock` — an upstream project source. | 8c887b69e4c3caee214e7270538c8aeff2799abd3eff08b4295f6f2046c8ba29 | pending |
+| D14-22 | deflock_app_repo | `DeFlock — app repo (FoggedLens/deflock-app)` — an upstream project source. | e1e5c030fb888b4543c05c6a161d0b78a323761b7fa315f196facae3fadac4ea | pending |
+| D14-23 | deflock_repo | `DeFlock — canonical repo (FoggedLens/deflock)` — an upstream project source. | b48a68888729a6afa3eb7e45ee9a51fef77c11e4099605b6c04f6b7e20105961 | pending |
+| D14-24 | demandstar | `DemandStar — public agency bid portal` — a government portal source. | 87fc37f7b67cf0f0e63c87581f857e5661d575decc7796661d67453422e7ea00 | pending |
+| D14-25 | denmark_politi_cctv | `Denmark National Police — official CCTV camera map` — a government portal source. | ddd18295b38bde4b574a9a5d36099ed0b3558aad9dfaa60876b0dc9dd16355db | pending |
 
 ## Confirmation log
 

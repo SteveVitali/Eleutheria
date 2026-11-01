@@ -222,11 +222,17 @@ def draft_description(source: Any) -> str:
     kind = str(getattr(source, "source_kind", "") or "")
     label = kind_labels.get(kind) or kind_labels.get(getattr(kind, "value", ""), "a registry")
     publisher = str(getattr(source, "publisher", "") or "").strip()
-    by = f" published by {publisher}" if publisher else ""
-    # A `|` in a name would break the markdown batch table — the draft renders
-    # it as `·` (the same character-boundary convention the copy batches use).
-    text = f"{source.name} — {label} source{by}."
-    return text.replace("|", "·")
+
+    # The name/publisher ride code spans: registry names can carry words like
+    # `live`/`hosted` that a build-memory lint would otherwise read as a
+    # production claim — the code span marks them as the identifier they are.
+    # `|`/`;` sanitise the same way (a `|` would break the table; a `;` would
+    # split a lint segment).
+    def _cell(text: str) -> str:
+        return text.replace("|", "·").replace(";", ",")
+
+    by = f" published by `{_cell(publisher)}`" if publisher else ""
+    return f"`{_cell(source.name)}` — {label} source{by}."
 
 
 def batch_rows(sources: Any) -> list[list[tuple[str, str, str, str]]]:
