@@ -14,6 +14,7 @@ import Figure from "../../../components/Figure.astro";
 import { getStatusLane } from "../../../lib/status-lane";
 import { fmtInt } from "../../../lib/format";
 import { artifactHref, defineFigures } from "../../../lib/figures";
+import { withBase } from "../../../lib/paths";
 
 const lane = getStatusLane();
 const slug = (s: string): string =>
@@ -112,8 +113,8 @@ const fig = (id: string) => {
 
       <p data-copy="SS-15">
         The machine-readable heartbeat is{" "}
-        <a href="/status/state.json">state.json</a>; the lane document is{" "}
-        <a href="/status/lane.json">lane.json</a>.
+        <a href={withBase("/status/state.json")}>state.json</a>; the lane
+        document is <a href={withBase("/status/lane.json")}>lane.json</a>.
       </p>
     </>
   ) : (

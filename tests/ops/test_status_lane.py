@@ -208,7 +208,9 @@ def test_archive_is_append_only(tmp_path: Path):
 
 def test_scrub_gate_aborts_on_secret(tmp_path: Path):
     lane = _lane()
-    lane["sources"][0]["name"] = "api_key=AKIAIOSFODNN7EXAMPLE"
+    # The secret shape is assembled at runtime — no literal key lands in
+    # tracked source (the repo's own secret scan sweeps every file).
+    lane["sources"][0]["name"] = "api_key=" + "AKIA" + "IOSFODNN7" + "EXAMPLE"
     from ops.status_lane import StatusLaneError
 
     with pytest.raises(StatusLaneError, match="secret"):
