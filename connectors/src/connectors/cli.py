@@ -432,6 +432,21 @@ def _validate() -> int:
         for msg in map_violations:
             print(f"VALIDATION FAILED: P36.8 technology map: {msg}")
         return 1
+    # P36.45 / UX10-1 (SIG-TRANSP-035, K10 §4): the registry publish matrix —
+    # every registry field carries a publish verdict (publish/transform/
+    # never); an unclassified field, an unmappable access/auth free text, an
+    # out-of-vocabulary publisher_type, or a description declared without its
+    # confirmed batch row fails closed here — the 'description pending
+    # review' interim always passes.
+    from .publish_matrix import publish_matrix_violations
+
+    matrix_violations = publish_matrix_violations()
+    if matrix_violations:
+        for msg in matrix_violations[:50]:
+            print(f"VALIDATION FAILED: publish matrix: {msg}")
+        if len(matrix_violations) > 50:
+            print(f"VALIDATION FAILED: … and {len(matrix_violations) - 50} more")
+        return 1
     print("connectors registry self-checks OK")
     return 0
 
