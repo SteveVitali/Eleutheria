@@ -23,6 +23,8 @@ import { entityTimeline } from "../../../../lib/entity-figures";
 import { getEntityFigures, getEntityLabelRows, getEntityPageTwins, getSiteMetadata } from "../../../../lib/data";
 import { getReleaseStamp } from "../../../../lib/release-stamp";
 import { withBase } from "../../../../lib/paths";
+import { defaultDescription } from "../../../../lib/meta";
+import { socialCardForRoute } from "../../../../lib/brand";
 
 export function getStaticPaths() {
   const index = entityIndex(getEntityLabelRows());
@@ -45,7 +47,16 @@ const ART = getEntityFigures(type!, key!);
 const TIMELINE = entityTimeline(merged);
 const stamp = getReleaseStamp();
 const meta = getSiteMetadata();
-const permalink = new URL(withBase(`entity/${type}/${key}/print/`), Astro.site ?? "https://surveillancegraph.org").href;
+const printPath = withBase(`entity/${type}/${key}/print/`);
+const permalink = new URL(printPath, Astro.site ?? "https://surveillancegraph.org").href;
+// SIG-UI-154: the print route shares the T0 social card — og:url names this
+// route, canonical still names the entity page.
+const printCard = socialCardForRoute(printPath);
+const printOrigin = Astro.site ?? "https://surveillancegraph.org";
+const printUrl = new URL(printPath, printOrigin).href;
+const printCardUrl = printCard ? new URL(withBase(printCard.file), printOrigin).href : null;
+const printTitle = `${twin.label} — SIG entity page (print)`;
+const printDesc = defaultDescription(printTitle, "T0");
 const entityUrl = withBase(`entity/${type}/${key}/`);
 
 // The print page plan — brief, one page for the figures, one for the
@@ -64,10 +75,29 @@ const PAGES = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{twin.label} — SIG entity page (print)</title>
-    <meta name="description" content={`${twin.label} — ${kindWord(twin.kind)} — SIG entity record, print form.`} />
+    <title>{printTitle}</title>
+    <meta name="description" content={printDesc} />
     <link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
+    <link rel="alternate icon" type="image/png" sizes="32x32" href={withBase("favicon-32.png")} />
+    <link rel="apple-touch-icon" sizes="180x180" href={withBase("apple-touch-icon.png")} />
     <link rel="canonical" href={new URL(entityUrl, Astro.site ?? "https://surveillancegraph.org").href} />
+    {printCard && (
+      <Fragment>
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Surveillance Infrastructure Graph" />
+        <meta property="og:title" content={printTitle} />
+        <meta property="og:description" content={printDesc} />
+        <meta property="og:url" content={printUrl} />
+        <meta property="og:image" content={printCardUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={printCard.alt} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={printTitle} />
+        <meta name="twitter:description" content={printDesc} />
+        <meta name="twitter:image" content={printCardUrl} />
+      </Fragment>
+    )}
     {stamp && <meta name="sig-release" content={stamp.metaContent} />}
     {stamp && <link rel="describedby" type="application/json" href={stamp.describedby} />}
     <link rel="stylesheet" href={printCssUrl} />
@@ -120,11 +150,13 @@ const PAGES = [
               kind="ego"
               figure={ART.ego}
               caption={`One hop out from ${twin.label} — the relationship table is this figure's long description.`}
+              alt={`${twin.label} — recorded relationships, drawn one hop out.`}
             />
             <EntityFigure
               kind="timeline"
               figure={ART.timeline}
               caption={`Dated events SIG records for ${twin.label}.`}
+              alt={`${twin.label} — dated events on a time axis.`}
             />
             {TIMELINE.undated.length > 0 && (
               <p class="sig-table-note" data-testid="print-timeline-undated">
@@ -135,6 +167,7 @@ const PAGES = [
               kind="map"
               figure={ART.map}
               caption={twin.place_jkey ? `SIG records ${twin.label} in ${twin.place_jkey}.` : "Location not recorded."}
+              alt={twin.place_jkey ? `${twin.label} — the recorded place's boundary.` : "Location not recorded."}
             />
           </section>
         )}

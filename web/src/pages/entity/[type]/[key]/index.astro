@@ -402,7 +402,8 @@ const NULL_FIELD = "—";
         <EntityFigure
           kind="ego"
           figure={FIGURES_ART?.ego ?? null}
-          caption={`One hop out from ${twin.label} — the relationship tables above are this figure's long description; every drawn node links.`}
+          caption={`One hop out from ${twin.label} — the relationship tables above are this figure's long description.`}
+          alt={`${twin.label} — recorded relationships, drawn one hop out.`}
         />
         <p class="sig-table-note" data-testid="ego-explorer" data-copy="EF-02">
           An interactive explorer view ships with the explore-surface wave; the
@@ -418,6 +419,7 @@ const NULL_FIELD = "—";
           kind="timeline"
           figure={FIGURES_ART?.timeline ?? null}
           caption={`Dated events SIG records for ${twin.label}.`}
+          alt={`${twin.label} — dated events on a time axis.`}
         />
         {TIMELINE !== null && TIMELINE.undated.length > 0 && (
           <p class="sig-table-note" data-testid="timeline-undated">
@@ -434,6 +436,7 @@ const NULL_FIELD = "—";
           kind="map"
           figure={FIGURES_ART?.map ?? null}
           caption={twin.place_jkey ? `SIG records ${twin.label} in ${twin.place_jkey}.` : "Location not recorded."}
+          alt={twin.place_jkey ? `${twin.label} — the recorded place's boundary.` : "Location not recorded."}
         />
       </section>
 

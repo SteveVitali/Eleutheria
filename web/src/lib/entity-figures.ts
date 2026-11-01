@@ -490,11 +490,7 @@ export const ENTITY_FIGURE_KINDS = ["ego", "timeline", "map"] as const;
 export type EntityFigureKind = (typeof ENTITY_FIGURE_KINDS)[number];
 
 /** The typed state a page renders when this record wave emits no figure —
- *  honest about the wave, never a fabricated drawing (SIG-UI-086). */
-export const FIGURE_NOT_EMITTED = {
-  state: "No drawn figure in this record wave",
-  missing:
-    "This build carries no static figure artifact for this entity — a publication state, not a finding about the entity.",
-  nearby: "The tables on this page carry the same recorded facts.",
-  change: "The drawn figure appears with a release that emits it.",
-} as const;
+ *  honest about the wave, never a fabricated drawing (SIG-UI-086). The
+ *  rendered sentence is copy-batch bound (EF-01, batch-06). */
+export const FIGURE_NOT_EMITTED =
+  "No drawn figure in this record wave — this build carries no static figure artifact for this entity (a publication state, not a finding about the entity); the tables on this page carry the same recorded facts.";

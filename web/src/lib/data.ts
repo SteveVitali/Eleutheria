@@ -1160,9 +1160,10 @@ export function getEntityPageTwins(urlType: string, key: string): EntityPageTwin
  *     the fixture bytes shipped as real.
  */
 export interface EntityFigureArtifact {
-  /** The inline figure bytes — re-checked at the seam before the page
-   *  inlines them (`assertInlineSvgSafe` in `entity-figures.ts`). */
-  svg: string;
+  /** Root-relative serving path for `withBase()` — the figure endpoint's
+   *  own route (`entity/<type>/<key>/<kind>.svg`), identical in every
+   *  data-source mode. */
+  href: string;
   /** The kit's meta document (legend, table twin, honesty counters). */
   meta: Record<string, unknown> | null;
 }
@@ -1172,33 +1173,40 @@ export interface EntityFigureSet {
   map: EntityFigureArtifact | null;
 }
 
-function readEntityFigure(dir: string, kind: string): EntityFigureArtifact | null {
-  const svgPath = `${dir}/${kind}.svg`;
-  if (!existsSync(svgPath)) return null;
-  const metaPath = `${dir}/${kind}.meta.json`;
-  return {
-    svg: readFileSync(svgPath, "utf-8"),
-    meta: existsSync(metaPath)
-      ? (JSON.parse(readFileSync(metaPath, "utf-8")) as Record<string, unknown>)
-      : null,
-  };
+const ENTITY_FIGURE_KINDS = ["ego", "timeline", "map"] as const;
+export type EntityFigureKind = (typeof ENTITY_FIGURE_KINDS)[number];
+
+function entityFigureDir(urlType: string, key: string): string {
+  return dataSource() !== "export"
+    ? `${repoRoot()}/web/src/fixtures/entity-figures/${urlType}/${key}`
+    : `${exportDir()}/web/entity/${urlType}/${key}`;
 }
 
 export function getEntityFigures(urlType: string, key: string): EntityFigureSet {
-  if (dataSource() !== "export") {
-    const dir = `${repoRoot()}/web/src/fixtures/entity-figures/${urlType}/${key}`;
+  const dir = entityFigureDir(urlType, key);
+  const read = (kind: EntityFigureKind) => {
+    const metaPath = `${dir}/${kind}.meta.json`;
+    if (!existsSync(`${dir}/${kind}.svg`)) return null;
     return {
-      ego: existsSync(dir) ? readEntityFigure(dir, "ego") : null,
-      timeline: existsSync(dir) ? readEntityFigure(dir, "timeline") : null,
-      map: existsSync(dir) ? readEntityFigure(dir, "map") : null,
+      href: `entity/${urlType}/${key}/${kind}.svg`,
+      meta: existsSync(metaPath)
+        ? (JSON.parse(readFileSync(metaPath, "utf-8")) as Record<string, unknown>)
+        : null,
     };
-  }
-  const dir = `${exportDir()}/web/entity/${urlType}/${key}`;
-  return {
-    ego: readEntityFigure(dir, "ego"),
-    timeline: readEntityFigure(dir, "timeline"),
-    map: readEntityFigure(dir, "map"),
   };
+  return { ego: read("ego"), timeline: read("timeline"), map: read("map") };
+}
+
+/** The emitted SVG bytes a figure endpoint serves — re-checked against the
+ *  inline-safety contract at the seam (`assertInlineSvgSafe`); `null` when
+ *  this record wave emits no such figure. */
+export function getEntityFigureBytes(
+  urlType: string,
+  key: string,
+  kind: EntityFigureKind,
+): string | null {
+  const path = `${entityFigureDir(urlType, key)}/${kind}.svg`;
+  return existsSync(path) ? readFileSync(path, "utf-8") : null;
 }
 
 /**

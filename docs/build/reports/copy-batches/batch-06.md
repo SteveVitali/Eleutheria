@@ -22,6 +22,6 @@ SIG-UI-080 withheld sentence) are record data, never batch sentences.
 
 | id | page | text | sha256 | status |
 |---|---|---|---|---|
-| EF-01 | /entity/<type>/<key>/ | No drawn figure in this record wave — This build carries no static figure artifact for this entity — a publication state, not a finding about the entity. The tables on this page carry the same recorded facts. The drawn figure appears with a release that emits it. | 2b39a7545771c44d58eb9056c275e06fe5c08b5aa599b62f1595d012c3098ecd | pending |
+| EF-01 | /entity/<type>/<key>/ | No drawn figure in this record wave — this build carries no static figure artifact for this entity (a publication state, not a finding about the entity); the tables on this page carry the same recorded facts. | e22564bd49f33d0113467aefc15e0af8d82c1ab6c9b340f4a3df51a0c70da494 | pending |
 | EF-02 | /entity/<type>/<key>/ | An interactive explorer view ships with the explore-surface wave; the figure and tables carry the same facts today. | 3fce5307181bdebd7f2eb042f3b8ce7596052d0a7377c074bfb4e5764e5c0a75 | pending |
 | EF-03 | /entity/<type>/<key>/print/ | Print or save this page as a PDF (your browser's Print dialog → “Save as PDF”). Back to the entity page. | 9c1b706ca9742630df363f51448693a2d8136b1e459172acf842f0eecf8cf42a | pending |
