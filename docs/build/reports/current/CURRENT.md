@@ -4,12 +4,12 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `b430201925eeb220b77183e4c25efd0523f5d63a` · inputs hashed: 1156 · wall-clock receipt: `receipt.json`
+> input_commit: `ac2320019ce8c8498bda7f254d81be171e1c67af` · inputs hashed: 1157 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.41` · lastCompleted `P36.40`
-- chainTip `r11/P36.39-no-js-search-results-page` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-31T18:10Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.42a` · lastCompleted `P36.41`
+- chainTip `r11/P36.41-entity-data-contract-a` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-31T18:10Z`
 
 ## Obligations
 
@@ -93,7 +93,10 @@
 
 ## Known inconsistencies (preserved, never synthesized)
 
-- none — every P32.1 baseline conflict is either reconciled by a recorded event interpretation (old values preserved on the anchor) or documented in `reconciliations.json`; anything new would appear here and fail `verify`
+| check | obligation | message |
+|---|---|---|
+| ledger/last-completed | P36.41 | lastCompleted 'P36.41' has no BUILD_INDEX row |
+| ledger/next-not-lowest | P36.42a | nextTicket 'P36.42a' is not the lowest chain row that has not landed ('P36.41'; superseded-by/deferred/unused and HUMAN rows skipped — V2) |
 
 ## Evidence domains — recorded evidence only
 
