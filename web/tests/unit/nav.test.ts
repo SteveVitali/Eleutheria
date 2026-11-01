@@ -27,7 +27,7 @@ const PUBLIC_ROUTES = new Set([
   "sources/identifier-changed/",
   "evidence/",
   "data/dictionary/",
-  "data-freshness/",
+  "sources/runs/",
   "status/",
   "glossary/",
   "methodology/",
@@ -109,7 +109,8 @@ describe("sectionForPath — the current-section marker (aria-current)", () => {
     expect(sectionForPath("watch/")?.id).toBe("watch");
     expect(sectionForPath("sources/identifier-changed/")?.id).toBe("sources-data");
     expect(sectionForPath("data/dictionary/")?.id).toBe("sources-data");
-    expect(sectionForPath("data-freshness/")?.id).toBe("sources-data");
+    // P36.48: `/data-freshness/` retired — the runs view marks the section.
+    expect(sectionForPath("sources/runs/")?.id).toBe("sources-data");
     expect(sectionForPath("status/")?.id).toBe("sources-data");
     expect(sectionForPath("corrections/")?.id).toBe("about");
     expect(sectionForPath("glossary/")?.id).toBe("about");
@@ -122,10 +123,10 @@ describe("sectionForPath — the current-section marker (aria-current)", () => {
     expect(sectionForPath("404.html")).toBeUndefined();
   });
 
-  it("a partial segment never marks a section — data-freshness/ is not data/", () => {
-    // `data-freshness/` must not satisfy the `data/` prefix via bare string
-    // prefixing; it is declared explicitly in the section's match list.
-    expect(pathInSection("data-freshness/", NAV_SECTIONS[4]!)).toBe(true);
+  it("a partial segment never marks a section — data-freshness/ is not data/ (P36.48: retired)", () => {
+    // `data-freshness/` no longer sits in the section's match list (the
+    // 301 map owns it), and bare `data/` prefixing never catches it.
+    expect(pathInSection("data-freshness/", NAV_SECTIONS[4]!)).toBe(false);
     const fake = { ...NAV_SECTIONS[4]!, match: ["data/"] };
     expect(pathInSection("data-freshness/", fake)).toBe(false);
   });

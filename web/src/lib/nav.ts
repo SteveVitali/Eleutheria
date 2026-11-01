@@ -113,7 +113,6 @@ export const NAV_SECTIONS: NavSection[] = [
       "sources/",
       "evidence/",
       "data/",
-      "data-freshness/",
       "releases/",
       "changes/",
       "status/",

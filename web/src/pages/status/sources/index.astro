@@ -47,11 +47,11 @@ const FIGURES = defineFigures(
           targets: [],
         },
         ...lane.sources.map((s, i) => ({
-          id: `claims-${slug(s.source_id)}`,
+          id: `runs7d-${slug(s.source_id)}`,
           class: "per_source" as const,
-          value: s.claims_7d.inserted,
+          value: s.runs_7d.total,
           artifact: "status/lane.json",
-          pointer: `/sources/${i}/claims_7d/inserted`,
+          pointer: `/sources/${i}/runs_7d/total`,
           definition: "#runs-heading",
           href: artifactHref("status/lane.json"),
           breakdown: `#src-${s.source_id}`,
@@ -76,7 +76,7 @@ const refused = lane ? fmtInt(lane.counts.refused) : "0";
 const withdrawn = lane ? fmtInt(lane.counts.withdrawn) : "0";
 ---
 
-<BaseLayout title="Sources — runs and freshness" path="/status/sources/">
+<BaseLayout title="Source status — runs and freshness" path="/status/sources/">
   {lane ? (
     <>
       <p data-copy="SS-02" data-testid="status-clock-label">
@@ -98,17 +98,24 @@ const withdrawn = lane ? fmtInt(lane.counts.withdrawn) : "0";
       </p>
 
       <h2 id="runs-heading" data-copy="SS-06">Runs and freshness</h2>
+      {/* P36.48 (K9 C-12): the SAME row component and column set the
+          release-clock `/sources/runs/` view renders, fed from lane data —
+          plus the status-only "Next run (day)" column. Supersession
+          (append-only, batch-07 comment): SS-09, SS-12 and SS-14 are
+          superseded by ST-19…ST-23. */}
       <table class="sig-table" aria-labelledby="runs-heading">
         <thead>
           <tr>
             <th scope="col" data-copy="SS-07">Source</th>
             <th scope="col" data-copy="SS-08">Status</th>
-            <th scope="col" data-copy="SS-09">Last run</th>
-            <th scope="col" data-copy="SS-10">Next run (day)</th>
+            <th scope="col" data-copy="ST-19">Last successful run</th>
+            <th scope="col" data-copy="ST-20">Last upstream change</th>
+            <th scope="col" data-copy="ST-21">Last change in SIG's records</th>
+            <th scope="col" data-copy="ST-22">Cadence</th>
             <th scope="col" data-copy="SS-11">Freshness</th>
-            <th scope="col" data-copy="SS-12">Runs 7d</th>
+            <th scope="col" data-copy="ST-23">Runs</th>
             <th scope="col" data-copy="SS-13">Errors</th>
-            <th scope="col" data-copy="SS-14">Claims 7d</th>
+            <th scope="col" data-copy="SS-10">Next run (day)</th>
           </tr>
         </thead>
         <tbody>

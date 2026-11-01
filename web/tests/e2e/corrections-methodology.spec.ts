@@ -186,15 +186,17 @@ test.describe("methodology, data-freshness, coverage-metrics (SIG-UI-034, §32.4
     // Linked from the dossier via the "How we know this" module the base layout renders.
     await page.goto("/dossier/oklahoma-city/");
     await expect(page.getByTestId("methodology-link")).toHaveAttribute("href", "/methodology/");
-    await expect(page.getByTestId("data-freshness-link")).toHaveAttribute("href", "/data-freshness/");
+    // P36.48: the retired /data-freshness/ link now names the runs view.
+    await expect(page.getByTestId("data-freshness-link")).toHaveAttribute("href", "/sources/runs/");
     await expect(page.getByTestId("coverage-metrics-link")).toHaveAttribute("href", "/coverage-metrics/");
   });
 
-  test("data-freshness shows per-source run/change/status/stale counts (SIG-METRIC-007)", async ({ page }) => {
-    await page.goto("/data-freshness/");
-    const row = page.getByTestId("freshness-row").first();
-    await expect(row.getByTestId("freshness-status")).not.toBeEmpty();
-    await expect(row.getByTestId("stale-count")).not.toBeEmpty();
+  test("the runs view shows per-source run/change/status/freshness (SIG-METRIC-007, P36.48)", async ({ page }) => {
+    await page.goto("/sources/runs/");
+    const row = page.getByTestId("source-table-row").first();
+    await expect(row.getByTestId("cell-freshness")).not.toBeEmpty();
+    await expect(row.getByTestId("cell-last-run")).not.toBeEmpty();
+    await expect(row.getByTestId("cell-sig-change")).not.toBeEmpty();
   });
 
   test("coverage metrics name denominators and never claim a total (SIG-METRIC-009/010)", async ({ page }) => {

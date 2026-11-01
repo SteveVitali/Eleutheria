@@ -43,10 +43,12 @@ describe("releaseRoutes — the served-route manifest (SIG-UI-051)", () => {
   });
 
   it("resolves the declared data-dependent probes", () => {
-    // The fixtures build emits the unplaced report and the freshness sort
-    // index — both must be offered to chrome.
+    // The fixtures build emits the unplaced report — it must be offered to
+    // chrome. `/data-freshness/` retired under P36.48 (301 map): the probe
+    // list must never re-offer it.
     expect(routes.has("dossier/unplaced/")).toBe(true);
-    expect(routes.has("data-freshness/")).toBe(true);
+    expect(routes.has("data-freshness/")).toBe(false);
+    expect(routes.has("sources/runs/")).toBe(true);
   });
 
   it("never names an internal route — internal surfaces are not public", () => {

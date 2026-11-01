@@ -67,6 +67,7 @@
 | SIG-ENG-018 | `implementation` | `MET` | 2026-10-06 | — |
 | SIG-ENG-019 | `hosted` | `PARTIAL` | 2026-10-06 | — |
 | SIG-ENG-020 | `public` | `MET` | 2026-10-06 | — |
+| SIG-ENG-020 | `public` | `MET` | 2026-11-01 | SIG-ENG-020:r11-1 |
 | SIG-ENG-021 | `hosted` | `PARTIAL` | 2026-10-06 | — |
 | SIG-ENG-022 | `implementation` | `PARTIAL` | 2026-10-06 | — |
 | SIG-ENG-023 | `hosted` | `PARTIAL` | 2026-10-06 | — |
@@ -121,6 +122,5 @@
 | SIG-EVAL-004 | `hosted` | `WAIVED(ADR-153)` | 2026-10-01 | — |
 | SIG-EVAL-005 | `public` | `MISSING` | 2026-10-01 | — |
 | SIG-EVAL-006 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-EVAL-007 | `public` | `MISSING` | 2026-10-01 | — |
 
 ← back: CURRENT.md · next page: coverage-2.md

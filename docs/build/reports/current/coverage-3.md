@@ -2,6 +2,7 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-PUB-003d | `implementation` | `PARTIAL` | 2026-10-06 | — |
 | SIG-PUB-006 | `implementation` | `MET` | 2026-10-06 | — |
 | SIG-PUB-007 | `public` | `AT-RISK-INTEGRATION` | 2026-10-01 | — |
 | SIG-PUB-007 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-10-14 | SIG-PUB-007:r11-1 |
@@ -78,6 +79,7 @@
 | SIG-STORE-048 | `hosted` | `MISSING` | 2026-10-01 | — |
 | SIG-TIME-003 | `implementation` | `MET` | 2026-10-06 | — |
 | SIG-TRANSP-001 | `public` | `MISSING` | 2026-10-05 | — |
+| SIG-TRANSP-001 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-01 | SIG-TRANSP-001:r11-1 |
 | SIG-TRANSP-002 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-003 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-004 | `public` | `MISSING` | 2026-10-05 | — |
@@ -105,11 +107,13 @@
 | SIG-TRANSP-026 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-027 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-028 | `public` | `MISSING` | 2026-10-05 | — |
+| SIG-TRANSP-028 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-01 | SIG-TRANSP-028:r11-1 |
 | SIG-TRANSP-029 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-030 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-031 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-032 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-033 | `public` | `MISSING` | 2026-10-05 | — |
+| SIG-TRANSP-033 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-01 | SIG-TRANSP-033:r11-1 |
 | SIG-TRANSP-034 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-035 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-036 | `public` | `MISSING` | 2026-10-05 | — |
@@ -118,9 +122,5 @@
 | SIG-TRANSP-039 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-040 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-041 | `public` | `MISSING` | 2026-10-05 | — |
-| SIG-TRANSP-042 | `public` | `MISSING` | 2026-10-05 | — |
-| SIG-TRANSP-043 | `public` | `MISSING` | 2026-10-05 | — |
-| SIG-TRUST-004 | `hosted` | `MET-ENGINEERED(D-P32.3-1)` | 2026-10-01 | — |
-| SIG-TRUST-006 | `hosted` | `PARTIAL` | 2026-10-04 | — |
 
 ← back: CURRENT.md · next page: coverage-4.md

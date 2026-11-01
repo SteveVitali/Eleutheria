@@ -193,3 +193,55 @@ export function outcomeCells(counts: Record<string, number>): string {
     .map(([k, n]) => `${k} ${n}`);
   return parts.length ? parts.join(" · ") : "none recorded";
 }
+
+// ---------------------------------------------------------------------------
+// P36.48 (K9 C-12): the lane row → the shared sources-table row shape. The
+// lane carries what the status clock records — last run, next run day, the
+// current verdict, seven-day run/outcome and error splits; cells the lane
+// does not record (upstream change, SIG-records change, the declared
+// cadence rule) render their named absence, never a fabricated value.
+// ---------------------------------------------------------------------------
+
+import type { TableRow } from "./sources-table";
+
+export function statusRowToTableRow(s: StatusSourceRow): TableRow {
+  return {
+    sourceId: s.source_id,
+    name: s.name,
+    publisher: "publisher_not_recorded",
+    publisherType: "not_recorded",
+    classes: null,
+    geography: null,
+    country: "unresolved",
+    subdivision: "unresolved",
+    licenceSpdx: null,
+    licenceAttribution: null,
+    termsUrl: null,
+    homepage: null,
+    homepageHost: null,
+    derivedStatus: "not_published",
+    lane: "unknown",
+    laneBasis: null,
+    lifecycle: s.lifecycle_state as TableRow["lifecycle"],
+    flags: [],
+    lastRun: s.last_run?.finished_at ?? s.last_run?.started_at ?? null,
+    lastRunToken: s.last_run === null ? "never_run" : null,
+    upstreamChange: null,
+    sigChange: null,
+    cadenceRule: null,
+    cadenceBasis: null,
+    freshnessState: s.freshness.state,
+    freshnessEvaluatedAt: s.freshness.evaluated_at,
+    runRecordMissing: s.freshness.run_record_missing,
+    volatilityDominant: null,
+    staleness: null,
+    publishedClaims: null,
+    publishedSites: false,
+    runsTotal: s.runs_7d.total,
+    runsByOutcome: { ...s.runs_7d.by_outcome },
+    failedRecent: s.errors.failed_30d,
+    openIssue: s.issue_classes.length > 0,
+    downloadToken: "not_published",
+    registryOnly: false,
+  };
+}

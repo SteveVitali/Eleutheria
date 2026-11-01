@@ -32,6 +32,10 @@ import { withBase } from "../lib/paths";
 // absence until P36.48's route ships.
 import { artifactHref, defineFigures, perSourceTargets, type FigureSpec } from "../lib/figures";
 import { firstNumeral } from "../lib/dossier-figures";
+// P36.48 (UX9-3; SIG-TRANSP-001/028/033): the sources table — the Overview
+// view of the canonical sig.source-row/1 row set renders below the
+// counting block (the partition header and anomaly box stay P35.40's).
+import SourcesTablePage from "../components/SourcesTablePage.astro";
 
 const sources = getSourceLicenceTable();
 const sourceCounts = getSourceCounts();
@@ -164,7 +168,7 @@ const fig = (id: string) => {
 };
 ---
 
-<BaseLayout title="Sources and licences" path="/sources/">
+<BaseLayout title="Sources" path="/sources/">{/* batch-09 `title` row */}
   <p data-copy="SL-02">
     Every source SIG publishes rows from is listed with the licence its rows are
     filed under; a source whose express terms the operator accepted the risk of
@@ -271,6 +275,13 @@ const fig = (id: string) => {
       SIG is gated from or has refused to collect.
     </p>
   </section>
+
+  {/* P36.48 (UX9-3): the sources table — the K9 §4.1 columns over the
+      canonical sig.source-row/1 row set. Three views (this one is
+      Overview), asc/desc sort routes, single-dimension facet routes, an
+      A–Z jump list and the CSV/JSON/Table-Schema downloads — all plain
+      GETs, no JavaScript required. */}
+  <SourcesTablePage view="overview" />
 
   <h2 id="licences-heading" data-copy="SL-12">Sources and licences</h2>
   {/* P36.20 (UXK0-4): the table is the canonical no-JS view — `<sig-table>`
