@@ -1,0 +1,2 @@
+<!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
+<!-- Values only (BM-LEDGER-02/08): ≤256 B/line; no history — PHASE LOG + git. -->

@@ -5,7 +5,7 @@
 
 ## CURRENT STATE
 
-<!-- Values only (BM-LEDGER-02/08): ≤256 B/line; no history — PHASE LOG + git. -->
+<!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
 nextTicket: P36.43
