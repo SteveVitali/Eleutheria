@@ -1442,3 +1442,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-01 — P36.46 correction — orient re-weight: tip read 49,525 > 48 KiB; repair = compact appends; `main` untouched · devin-desktop/swe-2-high/orchestrator
 - 2026-11-01 — P36.46 correction — `nextTicket: P36.47` row 390 · devin-desktop/swe-2-high/orchestrator
 - 2026-11-01 — P36.46 correction — `D-P36.46-1` OPEN `prepared_not_executed` (OM-19) · devin-desktop/swe-2-high/orchestrator
+- 2026-11-01 — P36.46 correction — status-lane figures repair (inherited P36.43 defect, base-tip red): `/status/` bare numerals → `<Figure>` regions (+`runs-7d`/`freshness-states`/`robots-hosts`/`robots-events`; "6 h" cadence = reasoned allow-list row, no artifact pointer) — `check:figures`+`check:paths`+`astro check`+sweeps green · harness: devin-desktop/swe-2-high/subagent
