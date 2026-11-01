@@ -5,7 +5,7 @@
 
 ## CURRENT STATE
 
-<!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
+<!-- Values only (BM-LEDGER-02/08): ≤256 B/line; no history — PHASE LOG + git. -->
 ```
 projectStatus: IN_PROGRESS
 nextTicket: P36.43
@@ -1415,3 +1415,6 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-01 — P36.42b post-closeout record — `a96f015` `ci: pass #406@a96f015` 5/5 head-bound (run 41271101857) · Gate status: none · deferrals +0/−0 · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-31 — P36.75 dispatch boundary-confirm — `ci: pass #406@e2230dad` 5/5 head-bound on the record tip (run 41273599982; arc: `13927fb0` impl → axe/NEW-7/favicon fixes → `849a0ef1` phase-log fold → `a96f015` zero-CSS rewrite (shared chunk LCP red) → 5/5) · P36.42b landed: `/entity/` companions — `sig.figure-kit-{graph,chart,geo}/1` ego/timeline/map served as standalone SVG docs (every node an `<a href>`, table twin + typed absence) + T0 `/print/` document · `main` untouched · deferrals +0/−0 · dispatching P36.75 (row 385 — Flock share lists → `configured_access`; **OM-20 named in GATE-G5 §4** → pre-authorised under contract preconditions; §43.2a/Part VIII screen lane approved in the same sitting; hosted env absent → the one claim-write leg queues `prepared_not_executed` per OM-19 with packet + deferral; deps P36.74+P35.25+P35.28+P34.49+P36.41 landed) · chainTip → r11/P36.42b-… · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-11-01 — P36.75 done — `ci: head-bound read follows` · Gate status: OM-20 (the GATE-G5 list names it verbatim) + A-22/A-10/S6R-12/S6R-09 carried · deferrals +1/−0 (`D-P36.75-1` OPEN) · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-01 — P36.75 correction — orient re-weight (appends; fold separate) · devin-desktop/swe-2-high/orchestrator
+- 2026-11-01 — P36.75 correction — `D-P36.75-1` OPEN `prepared_not_executed` (OM-19) · devin-desktop/swe-2-high/orchestrator
+- 2026-11-01 — P36.75 correction — next ticket P36.43 · devin-desktop/swe-2-high/orchestrator
