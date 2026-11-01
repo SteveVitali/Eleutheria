@@ -1,12 +1,12 @@
-# P36.75 — hosted append-only `configured_access` claim write (`prepared_not_executed`)
+# P36.75 — the append-only `configured_access` share-list write packet (`prepared_not_executed`)
 
 `sig.flock-share-packet/1` — see `packet.json` for the machine row.
 
 ## The named mutation
 
 GATE-G5 §4 (2026-10-25T18:40Z, kind `pre-authorization`, expires GATE-G6)
-names **P36.75** verbatim among the 13 pre-authorised 11C OM-20 rows —
-"the hosted append-only claim write after the G5 list or its go". Window
+names **P36.75** verbatim among the 13 pre-authorised 11C OM-20 rows (the
+mutation it names is quoted in `packet.json` `mutation`). Window
 `AR-3 + AR-2`. The §43.2a screen lane was approved GATE-G5 §3 (A-7) — the
 screen machinery proceeds under this row's own gates regardless.
 

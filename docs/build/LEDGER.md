@@ -8,8 +8,8 @@
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.75
-lastCompleted: P36.42b
+nextTicket: P36.43
+lastCompleted: P36.75
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -20,7 +20,7 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.42a-entity-pages-a-template-and-organizations-hub
+chainTip: r11/P36.75-flock-share-lists-configured-access
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
@@ -1413,3 +1413,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-01 — P36.42b correction — two record entries landed under unsanctioned kinds → docs-red on `20831d92`; repaired in place (pre-edit bytes archived reports/memory-repair/LEDGER_L1411_L1412_pre-P36.42b-kindfix.txt); seed-commit next · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-01 — P36.42b post-closeout record — `a96f015` `ci: pass #406@a96f015` 5/5 head-bound (run 41271101857) · Gate status: none · deferrals +0/−0 · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-31 — P36.75 dispatch boundary-confirm — `ci: pass #406@e2230dad` 5/5 head-bound on the record tip (run 41273599982; arc: `13927fb0` impl → axe/NEW-7/favicon fixes → `849a0ef1` phase-log fold → `a96f015` zero-CSS rewrite (shared chunk LCP red) → 5/5) · P36.42b landed: `/entity/` companions — `sig.figure-kit-{graph,chart,geo}/1` ego/timeline/map served as standalone SVG docs (every node an `<a href>`, table twin + typed absence) + T0 `/print/` document · `main` untouched · deferrals +0/−0 · dispatching P36.75 (row 385 — Flock share lists → `configured_access`; **OM-20 named in GATE-G5 §4** → pre-authorised under contract preconditions; §43.2a/Part VIII screen lane approved in the same sitting; hosted env absent → the one claim-write leg queues `prepared_not_executed` per OM-19 with packet + deferral; deps P36.74+P35.25+P35.28+P34.49+P36.41 landed) · chainTip → r11/P36.42b-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-01 — P36.75 done — `ci: head-bound read follows` · Gate status: OM-20 (the GATE-G5 list names it verbatim) + A-22/A-10/S6R-12/S6R-09 carried · deferrals +1/−0 (`D-P36.75-1` OPEN) · harness: devin-desktop/swe-2-high/subagent
