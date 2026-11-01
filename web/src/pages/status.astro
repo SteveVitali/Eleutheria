@@ -75,6 +75,28 @@ const fig = (id: string) => {
 const meta = getSiteMetadata();
 const releaseId = meta.releaseId;
 const asOfWorld = meta.asOf.as_of_world;
+const statusTime = lane?.status_time ?? "not_recorded";
+const runs24h = lane
+  ? fmtInt(Object.values(lane.runs.last_24h).reduce((a, b) => a + b, 0))
+  : "0";
+const outcomes24h = lane ? outcomeCells(lane.runs.last_24h) : "none";
+const outcomes7d = lane ? outcomeCells(lane.runs.last_7d) : "none";
+const freshnessStates = lane
+  ? Object.entries(lane.sources_by_freshness)
+      .map(([k, n]) => `${k} ${fmtInt(n)}`)
+      .join(" · ") || "none evaluated"
+  : "none evaluated";
+const listedCount = lane ? fmtInt(lane.counts.listed) : "0";
+const drift = lane
+  ? lane.scheduler_drift.state === "drift"
+    ? `${fmtInt(lane.scheduler_drift.findings ?? 0)} finding(s)`
+    : lane.scheduler_drift.state === "ok"
+      ? "none detected"
+      : "not evaluated this run"
+  : "not evaluated this run";
+const decisionRef = lane?.robots_disregard.decision_ref ?? "not_recorded";
+const hosts = lane ? fmtInt(lane.robots_disregard.hosts) : "0";
+const events = lane ? fmtInt(lane.robots_disregard.events) : "0";
 // P35.13 (SIG-REL-009): the currency answer names the release fully once a
 // sig.site-release/1 is bound — interim sentence until then.
 const stamp = getReleaseStamp();
@@ -90,44 +112,30 @@ const stamp = getReleaseStamp();
     <>
       <h2 id="lane-heading" data-copy="ST-12">The status lane</h2>
       <p data-copy="ST-13" data-testid="status-clock-label">
-        Status as of <time datetime={lane.status_time}>{lane.status_time}</time>{" "}
+        Status as of <time datetime={lane.status_time}>{statusTime}</time>{" "}
         UTC — the lane updates every 6 hours and its values are not a
-        citation; the published data is release{" "}
-        {lane.release?.id ?? "not_recorded"} (data as of{" "}
-        {lane.release?.as_of_world ?? "not_recorded"}).
+        citation; the published data is release {releaseId} (data as of{" "}
+        {asOfWorld}).
       </p>
       <p data-copy="ST-14" id="fig-runs-24h" data-testid="lane-runs">
-        In the last 24 hours <Figure figure={fig("runs-24h")} order="inline">{fmtInt(Object.values(lane.runs.last_24h).reduce((a, b) => a + b, 0))}</Figure>{" "}
-        runs completed — {outcomeCells(lane.runs.last_24h)}; the last 7 days:{" "}
-        {outcomeCells(lane.runs.last_7d)}.
+        In the last 24 hours <Figure figure={fig("runs-24h")} order="inline">{runs24h}</Figure>{" "}
+        runs completed — {outcomes24h}; the last 7 days: {outcomes7d}.
       </p>
       <p data-copy="ST-15" id="fig-listed" data-testid="lane-freshness">
-        Sources by freshness state:{" "}
-        {Object.entries(lane.sources_by_freshness)
-          .map(([k, n]) => `${k} ${fmtInt(n)}`)
-          .join(" · ") || "none evaluated"}.
+        Sources by freshness state: {freshnessStates}.
       </p>
       <p data-copy="ST-16" id="fig-count-only" data-testid="lane-count-only">
-        <Figure figure={fig("listed")} order="inline">{fmtInt(lane.counts.listed)}</Figure>{" "}
+        <Figure figure={fig("listed")} order="inline">{listedCount}</Figure>{" "}
         scheduled sources are listed on{" "}
         <a href={withBase("/status/sources/")}>/status/sources/</a>;{" "}
-        <Figure figure={fig("count-only")} order="inline">{fmtInt(countOnly)}</Figure>{" "}
+        <Figure figure={fig("count-only")} order="inline">{countOnly}</Figure>{" "}
         gated, refused or withdrawn sources appear as counts only.
       </p>
-      <p data-copy="ST-17" data-testid="lane-drift">
-        Scheduler drift:{" "}
-        {lane.scheduler_drift.state === "drift"
-          ? `${fmtInt(lane.scheduler_drift.findings ?? 0)} finding(s)`
-          : lane.scheduler_drift.state === "ok"
-            ? "none detected"
-            : "not evaluated this run"}.
-      </p>
+      <p data-copy="ST-17" data-testid="lane-drift">Scheduler drift: {drift}.</p>
       <p data-copy="ST-18" data-testid="lane-robots">
-        Robots disregarded under the recorded decision (
-        {lane.robots_disregard.decision_ref}):{" "}
-        {fmtInt(lane.robots_disregard.hosts)} host(s),{" "}
-        {fmtInt(lane.robots_disregard.events)} fetch(es) — disclosed as host
-        and count only.
+        Robots disregarded under the recorded decision ({decisionRef}):{" "}
+        {hosts} host(s), {events} fetch(es) — disclosed as host and count
+        only.
       </p>
     </>
   ) : (

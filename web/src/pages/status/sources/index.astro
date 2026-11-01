@@ -12,6 +12,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import SourceStatusRow from "../../../components/SourceStatusRow.astro";
 import Figure from "../../../components/Figure.astro";
 import { getStatusLane } from "../../../lib/status-lane";
+import { getSiteMetadata } from "../../../lib/data";
 import { fmtInt } from "../../../lib/format";
 import { artifactHref, defineFigures } from "../../../lib/figures";
 
@@ -64,31 +65,36 @@ const fig = (id: string) => {
   if (!f) throw new Error(`status-sources figures[]: no figure registered as "${id}"`);
   return f;
 };
+const meta = getSiteMetadata();
+const statusTime = lane?.status_time ?? "not_recorded";
+const releaseId = meta.releaseId;
+const asOfWorld = meta.asOf.as_of_world;
+const listedCount = lane ? fmtInt(lane.counts.listed) : "0";
+const countOnly = lane ? fmtInt(lane.counts.gated + lane.counts.refused + lane.counts.withdrawn) : "0";
+const gated = lane ? fmtInt(lane.counts.gated) : "0";
+const refused = lane ? fmtInt(lane.counts.refused) : "0";
+const withdrawn = lane ? fmtInt(lane.counts.withdrawn) : "0";
 ---
 
 <BaseLayout title="Sources — runs and freshness" path="/status/sources/">
   {lane ? (
     <>
       <p data-copy="SS-02" data-testid="status-clock-label">
-        Status as of <time datetime={lane.status_time}>{lane.status_time}</time>{" "}
+        Status as of <time datetime={lane.status_time}>{statusTime}</time>{" "}
         UTC — this page updates every 6 hours and is not a citation; the
-        published data is release {lane.release?.id ?? "not_recorded"} (data as
-        of {lane.release?.as_of_world ?? "not_recorded"}). Next-run values are
-        shown to the day.
+        published data is release {releaseId} (data as of {asOfWorld}).
+        Next-run values are shown to the day.
       </p>
 
       <h2 id="counts-heading" data-copy="SS-03">Sources</h2>
       <p data-copy="SS-04" id="fig-listed">
-        <Figure figure={fig("listed")} order="inline">{fmtInt(lane.counts.listed)}</Figure>{" "}
+        <Figure figure={fig("listed")} order="inline">{listedCount}</Figure>{" "}
         scheduled sources are listed below.
       </p>
       <p data-copy="SS-05" id="fig-count-only" data-testid="count-only-line">
-        <Figure figure={fig("count-only")} order="inline">
-          {fmtInt(lane.counts.gated + lane.counts.refused + lane.counts.withdrawn)}
-        </Figure>{" "}
-        sources appear as counts only — {fmtInt(lane.counts.gated)} gated,{" "}
-        {fmtInt(lane.counts.refused)} refused and {fmtInt(lane.counts.withdrawn)}{" "}
-        withdrawn.
+        <Figure figure={fig("count-only")} order="inline">{countOnly}</Figure>{" "}
+        sources appear as counts only — {gated} gated, {refused} refused and{" "}
+        {withdrawn} withdrawn.
       </p>
 
       <h2 id="runs-heading" data-copy="SS-06">Runs and freshness</h2>
@@ -111,9 +117,8 @@ const fig = (id: string) => {
       </table>
 
       <p data-copy="SS-15">
-        The machine-readable heartbeat is <code>/status/state.json</code>{" "}
-        (emitted by the lane); the lane document is{" "}
-        <a href={artifactHref("status/lane.json")}>lane.json</a>.
+        The machine-readable heartbeat is <code>state.json</code>; the lane
+        document is <a href={artifactHref("status/lane.json")}>lane.json</a>.
       </p>
     </>
   ) : (

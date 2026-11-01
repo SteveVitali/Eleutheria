@@ -102,7 +102,7 @@ export const STATUS_LANE_FIXTURE: StatusLaneDoc = {
         finished_at: "2026-10-15T05:12:40Z",
         outcome: "ok",
       },
-      next_run_day: "2026-11-07",
+      next_run_day: "2026-11-07", // future-ok: synthetic: lane fixture cadence
       freshness: { state: "on_time", evaluated_at: "2026-10-15T12:00:00Z", run_record_missing: false },
       runs_7d: { total: 1, by_outcome: { ok: 1, partial: 0, quota_reached: 0, failed: 0 } },
       errors: { failed_7d: 0, failed_30d: 0, error_classes: {} },
@@ -118,7 +118,7 @@ export const STATUS_LANE_FIXTURE: StatusLaneDoc = {
         finished_at: "2026-10-13T05:03:11Z",
         outcome: "ok",
       },
-      next_run_day: "2026-11-01",
+      next_run_day: "2026-11-01", // future-ok: synthetic: lane fixture cadence
       freshness: { state: "on_time", evaluated_at: "2026-10-15T12:00:00Z", run_record_missing: false },
       runs_7d: { total: 1, by_outcome: { ok: 1, partial: 0, quota_reached: 0, failed: 0 } },
       errors: { failed_7d: 0, failed_30d: 0, error_classes: {} },
