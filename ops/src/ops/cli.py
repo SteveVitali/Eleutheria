@@ -1675,6 +1675,44 @@ def build_parser() -> argparse.ArgumentParser:
         "(scheduled-ops.sh publishes it to gs://…/ops/declared/live-diff.json)",
     )
 
+    # P36.43 (TX-07, SIG-TRANSP-021/034): the status lane — emit the status/**
+    # file set from scrubbed run records + the source universe, or emit + push
+    # status/** through the status-scoped publish leg (the OM-20 job create is
+    # ops/gcp/status-publish.sh's, not this verb's).
+    spub = sub.add_parser(
+        "status-publish",
+        help="P36.43 (SIG-TRANSP-021/034): the 6-hourly status lane — emit "
+        "status/{state.json,lane.json,index.html,sources/**,issues/,archive/**} "
+        "from scrubbed run records (exit 0 ok, 2 refusal, 42 queued on --apply "
+        "without the hosted env)",
+    )
+    spub.add_argument("--runs", required=True, help="transparency/runs.jsonl (sig.run-record/1)")
+    spub.add_argument(
+        "--sources", required=True, help="transparency/sources.json (sig.source-row/1)"
+    )
+    spub.add_argument("--cadence", default=None, help="ops/cadence.toml path (default: packaged)")
+    spub.add_argument(
+        "--scheduler-report",
+        default=None,
+        help="latest sig.live-diff/1 report for the drift flag (absent → not_evaluated)",
+    )
+    spub.add_argument(
+        "--release",
+        default=None,
+        help="release.json for the release/as-of label (absent → not_recorded)",
+    )
+    spub.add_argument("--status-time", required=True, help="the lane's status time (ISO-8601 UTC)")
+    spub.add_argument("--out", required=True, help="output directory (status/** written under it)")
+    spub.add_argument(
+        "--apply",
+        action="store_true",
+        help="also push status/** through the scoped publish leg — needs "
+        "SIG_STATUS_BUCKET; without it the leg queues (exit 42)",
+    )
+    spub.add_argument(
+        "--bucket", default=None, help="destination bucket (default: SIG_STATUS_BUCKET)"
+    )
+
     # P35.6 (I8 ACQ-01): the Round-11 acquisition plumbing — generator +
     # verification CLIs. Each forwards its argv tail to the module's own
     # argparse so flags live in one place (additive verbs only).
@@ -6113,6 +6151,10 @@ def main(argv: list[str] | None = None) -> int:
         return wave_verify.main(wv_tail)
     if args.command == "live-diff":
         return _cmd_live_diff(args)
+    if args.command == "status-publish":
+        from .status_publish import run_status_publish
+
+        return run_status_publish(args)
     if args.command == "dispatch-due":
         return _cmd_dispatch_due(args)
     if args.command == "backfill-run-completions":

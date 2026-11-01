@@ -1451,3 +1451,19 @@ rerun_cell = '''`implement-spec spec=docs/tickets/385_P36.75__flock-share-lists-
   go = '''pre-authorised: `SIG_SHARE_LISTS_AUTHOR` per apply'''
   rerun = '''implement-spec spec=docs/tickets/385_P36.75__flock-share-lists-configured-access.md live_verification=true'''
   live_dependants = ["P37.25"]
+[[row]]
+key = "P36.43"
+kind = "leg"
+obligations = ["D-P36.43-1"]
+obligations_cell = '''queued D-P36.43-1 — the `sig-status-publish` Cloud Run job create + the `sig-sched-status-publish` 6-hourly scheduler trigger + invoker binding; restore point = delete the trigger then the job'''
+gates_cell = '''pre-authorised: OM-20 GATE-G5 (expires GATE-G6); window AR-3 + AR-2 — outside daily 03:00-06:30Z + batch window day 6 00:00Z → day 13 12:00Z; `SIG_STATUS_AUTHOR` per apply; needs ADC + `SIG_GCP_PROJECT` + `SIG_JOB_IMAGE` (`@sha256:`) + `SIG_STATUS_SA_EMAIL` + `SIG_SCHEDULER_SA_EMAIL`'''
+operator_cell = '''nothing until the hosted env — the lane builder/scoped publish/web surface + packet `reports/p36.43-status-lane/` landed'''
+rerun_cell = '''`implement-spec spec=docs/tickets/386_P36.43__status-lane.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P36.43-job-create"
+  obligations = ["D-P36.43-1"]
+  earliest = '''when ADC + `SIG_GCP_PROJECT` + `SIG_JOB_IMAGE` + `SIG_STATUS_AUTHOR` + `SIG_STATUS_SA_EMAIL` + `SIG_SCHEDULER_SA_EMAIL` are present; inside AR-3 + AR-2'''
+  excluded = ["daily 03:00-06:30Z", "batch window day 6 00:00Z → day 13 12:00Z"]
+  go = '''pre-authorised: `SIG_STATUS_AUTHOR` per apply'''
+  rerun = '''implement-spec spec=docs/tickets/386_P36.43__status-lane.md live_verification=true'''

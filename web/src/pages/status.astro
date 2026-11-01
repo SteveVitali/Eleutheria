@@ -10,14 +10,67 @@
 // release. Every sentence is a pending copy-batch row (`data-copy`) or an allowed
 // N-string (`data-notice`, B-2 notice allowance until GATE-G4).
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Figure from "../components/Figure.astro";
 import { getSiteMetadata } from "../lib/data";
 import { getReleaseStamp } from "../lib/release-stamp";
 import { withBase } from "../lib/paths";
+// P36.43 (TX-07, SIG-TRANSP-021/034): the status lane — the second clock.
+// `getStatusLane()` reads the lane job's `sig.status-lane/1` doc (fixtures:
+// the committed fixture; export: `<exportDir>/status/lane.json` when the
+// lane has emitted, else honest absence).
+import { getStatusLane, outcomeCells } from "../lib/status-lane";
+import { fmtInt } from "../lib/format";
 // P35.37 (SIG-TRANSP-013, UXR-34): the page's ONE figures[] registry — the
-// status page renders no material number, so the registry is empty (the
-// release stamp's id/date numerals are identifiers, not counted quantities).
-import { defineFigures } from "../lib/figures";
-defineFigures("status", []);
+// lane's material counts point at the `status/lane.json` artifact.
+import { artifactHref, defineFigures } from "../lib/figures";
+
+const lane = getStatusLane();
+const countOnly = lane ? lane.counts.gated + lane.counts.refused + lane.counts.withdrawn : 0;
+const FIGURES = defineFigures(
+  "status",
+  lane
+    ? [
+        {
+          id: "runs-24h",
+          class: "headline" as const,
+          value: Object.values(lane.runs.last_24h).reduce((a, b) => a + b, 0),
+          artifact: "status/lane.json",
+          pointer: "/runs/last_24h",
+          definition: "#lane-heading",
+          href: artifactHref("status/lane.json"),
+          breakdown: "#fig-runs-24h",
+          targets: [],
+        },
+        {
+          id: "listed",
+          class: "headline" as const,
+          value: lane.counts.listed,
+          artifact: "status/lane.json",
+          pointer: "/counts/listed",
+          definition: "#lane-heading",
+          href: artifactHref("status/lane.json"),
+          breakdown: "#fig-listed",
+          targets: [],
+        },
+        {
+          id: "count-only",
+          class: "headline" as const,
+          value: countOnly,
+          artifact: "status/lane.json",
+          pointer: "/counts",
+          definition: "#lane-heading",
+          href: artifactHref("status/lane.json"),
+          breakdown: "#fig-count-only",
+          targets: [],
+        },
+      ]
+    : [],
+);
+const fig = (id: string) => {
+  const f = FIGURES.find((x) => x.id === id);
+  if (!f) throw new Error(`status figures[]: no figure registered as "${id}"`);
+  return f;
+};
 
 const meta = getSiteMetadata();
 const releaseId = meta.releaseId;
@@ -32,6 +85,57 @@ const stamp = getReleaseStamp();
     This page names what is known to be wrong right now and how it is being
     corrected.
   </p>
+
+  {lane ? (
+    <>
+      <h2 id="lane-heading" data-copy="ST-12">The status lane</h2>
+      <p data-copy="ST-13" data-testid="status-clock-label">
+        Status as of <time datetime={lane.status_time}>{lane.status_time}</time>{" "}
+        UTC — the lane updates every 6 hours and its values are not a
+        citation; the published data is release{" "}
+        {lane.release?.id ?? "not_recorded"} (data as of{" "}
+        {lane.release?.as_of_world ?? "not_recorded"}).
+      </p>
+      <p data-copy="ST-14" id="fig-runs-24h" data-testid="lane-runs">
+        In the last 24 hours <Figure figure={fig("runs-24h")} order="inline">{fmtInt(Object.values(lane.runs.last_24h).reduce((a, b) => a + b, 0))}</Figure>{" "}
+        runs completed — {outcomeCells(lane.runs.last_24h)}; the last 7 days:{" "}
+        {outcomeCells(lane.runs.last_7d)}.
+      </p>
+      <p data-copy="ST-15" id="fig-listed" data-testid="lane-freshness">
+        Sources by freshness state:{" "}
+        {Object.entries(lane.sources_by_freshness)
+          .map(([k, n]) => `${k} ${fmtInt(n)}`)
+          .join(" · ") || "none evaluated"}.
+      </p>
+      <p data-copy="ST-16" id="fig-count-only" data-testid="lane-count-only">
+        <Figure figure={fig("listed")} order="inline">{fmtInt(lane.counts.listed)}</Figure>{" "}
+        scheduled sources are listed on{" "}
+        <a href={withBase("/status/sources/")}>/status/sources/</a>;{" "}
+        <Figure figure={fig("count-only")} order="inline">{fmtInt(countOnly)}</Figure>{" "}
+        gated, refused or withdrawn sources appear as counts only.
+      </p>
+      <p data-copy="ST-17" data-testid="lane-drift">
+        Scheduler drift:{" "}
+        {lane.scheduler_drift.state === "drift"
+          ? `${fmtInt(lane.scheduler_drift.findings ?? 0)} finding(s)`
+          : lane.scheduler_drift.state === "ok"
+            ? "none detected"
+            : "not evaluated this run"}.
+      </p>
+      <p data-copy="ST-18" data-testid="lane-robots">
+        Robots disregarded under the recorded decision (
+        {lane.robots_disregard.decision_ref}):{" "}
+        {fmtInt(lane.robots_disregard.hosts)} host(s),{" "}
+        {fmtInt(lane.robots_disregard.events)} fetch(es) — disclosed as host
+        and count only.
+      </p>
+    </>
+  ) : (
+    <p data-copy="ST-19" data-testid="no-status-read">
+      No status read is recorded in this build; the lane publishes a fresh
+      copy every 6 hours once the status job runs.
+    </p>
+  )}
 
   <h2 id="api-heading" data-copy="ST-07">The API</h2>
   <p data-notice="N-7" data-testid="api-notice">The API's dossier and terms responses are known to be wrong and are being corrected.</p>

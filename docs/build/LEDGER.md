@@ -8,11 +8,11 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.43
-lastCompleted: P36.75
+nextTicket: P36.44
+lastCompleted: P36.43
 blockedOn: (nothing)
 pauseRequested: false
-returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2
+returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2
 manifest: docs/tickets/00_MANIFEST.md
 canonicalSpec: docs/2_canonical_design_spec.md
 memoryRoot: docs/build
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.75-flock-share-lists-configured-access
+chainTip: r11/P36.43-status-lane
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-31T18:10Z
+updatedAt: 2026-11-01T06:55Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -468,6 +468,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | P36.33 | queued D-P36.33-1 — the R2 basemap host create (bucket sig-basemap + CORS/Range/immutable + custom domain tiles.surveillancegraph.org + first upload); restore point: re-creatable from basemap.lock.json + upstream | pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6); window AR-3 + AR-2 — outside the batch window day 6 00:00Z → day 13 12:00Z and daily 03:00-06:30Z; `SIG_BASEMAP_AUTHOR` per apply; needs SIG_CF_*/SIG_R2_* env + OP-09 | nothing until OP-09 + the Cloudflare/R2 env — the pipeline, styles, glyphs and lock are landed | `implement-spec spec=docs/tickets/374_P36.33__basemap-pipeline-and-host.md live_verification=true` |
 | P36.38 | queued D-P36.38-1 — the v2-search API roll (`--memory 1Gi` + `SIG_API_SEARCH_V2=on`) | never pre-authorised (OM-20); outside batch window day 6 00:00Z → day 13 12:00Z + daily 03:00-06:30Z; `SIG_SEARCHV2_AUTHOR` + ADC + `SIG_GCP_PROJECT` | the verbatim go + author env — code/runner/packet landed (route ships dark) | `implement-spec spec=docs/tickets/379_P36.38__search-api-serving-v2.md live_verification=true` |
 | P36.75 | queued D-P36.75-1 — the hosted append-only `configured_access` claim write (org-level `configured_sharing_partner` over the 43.2a-screened share lists); restore point = claim-set digest list | pre-authorised: OM-20 GATE-G5 (expires GATE-G6); window AR-3 + AR-2 — outside daily 03:00-06:30Z + batch window day 6 00:00Z → day 13 12:00Z; `SIG_SHARE_LISTS_AUTHOR` per apply; needs ADC + `SIG_GCP_PROJECT` + `SIG_SHARE_WRITE_DSN` + `SIG_SHARE_SNAPSHOT` | nothing until the hosted env — the screen/builder/write machinery + packet `reports/p36.75-flock-share-lists/` landed | `implement-spec spec=docs/tickets/385_P36.75__flock-share-lists-configured-access.md live_verification=true` |
+| P36.43 | queued D-P36.43-1 — the `sig-status-publish` Cloud Run job create + the `sig-sched-status-publish` 6-hourly scheduler trigger + invoker binding; restore point = delete the trigger then the job | pre-authorised: OM-20 GATE-G5 (expires GATE-G6); window AR-3 + AR-2 — outside daily 03:00-06:30Z + batch window day 6 00:00Z → day 13 12:00Z; `SIG_STATUS_AUTHOR` per apply; needs ADC + `SIG_GCP_PROJECT` + `SIG_JOB_IMAGE` (`@sha256:`) + `SIG_STATUS_SA_EMAIL` + `SIG_SCHEDULER_SA_EMAIL` | nothing until the hosted env — the lane builder/scoped publish/web surface + packet `reports/p36.43-status-lane/` landed | `implement-spec spec=docs/tickets/386_P36.43__status-lane.md live_verification=true` |
 
 Sources: OPERATIONAL_READINESS §(f3) + `UNIVERSE_DISPOSED.csv` + plan §9.2/§8.6 + `data/round11_plan.csv`. Non-row homes: 9 ticket + 9 later-phase + 7 decision + 2 already-done. Keying (T5 γ) = LANDED R10 ticket: 183→P35.61, 188→P35.62, 191→P35.63, 179–182→P37.16, D-P21.5-1→P37.55, D-P31.4-1→P34.39a (SEED-17 T5).
 
@@ -1419,3 +1420,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-01 — P36.75 correction — `D-P36.75-1` OPEN `prepared_not_executed` (OM-19) · devin-desktop/swe-2-high/orchestrator
 - 2026-11-01 — P36.75 correction — next ticket P36.43 · devin-desktop/swe-2-high/orchestrator
 - 2026-11-01 — P36.43 dispatch boundary-confirm — `ci: pass #407@60cbf45c` 5/5 head-bound (run 41279025974; arc: `acd607b1` docs-red orient → compact-append re-weight `68be6dd6` + legend archive `60cbf45c`) · P36.75 landed: `sig.flock-share-screen/1` whole-fieldset §43.2a screen (5 deny classes, counts-only) + `flock_share_lists.py` (screened portals → `configured_access`, digest-parity +0 re-run) + `flock_share_write.py` INSERT-only PgClaimSink path; claim-write leg queued `D-P36.75-1` `prepared_not_executed` · `main` untouched · deferrals +1/−0 · dispatching P36.43 (row 386 — status lane; **OM-20 named in GATE-G5 §4** → scheduler-job pre-authorised under contract preconditions; hosted env absent → leg queues `prepared_not_executed`; `D-J3-2`/`D-J3-11` answers carried verbatim; deps P35.33+P34.10+P34.4+P34.43 landed) · chainTip → r11/P36.75-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-01 — P36.43 done — `ci: head-bound read follows` · Gate status: OM-20 (the GATE-G5 list names it verbatim) + D-J3-2/D-J3-11 [B-19] carried · deferrals +1/−0 (`D-P36.43-1` OPEN) · chainTip → r11/P36.43-… · next → P36.44 · harness: devin-desktop/swe-2-high/subagent

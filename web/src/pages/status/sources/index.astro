@@ -1,0 +1,125 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// `/status/sources/` — the status lane's per-source table (P36.43 / TX-07;
+// J3 §7.2 + K9 C-12: the shared row component's Runs & freshness columns at
+// the STATUS clock — next run day + current verdict, both labelled
+// status_time, never a citation). Gated/refused/withdrawn sources render as
+// counts only (D-J3-11 = yes). T1, zero-JS.
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import SourceStatusRow from "../../../components/SourceStatusRow.astro";
+import Figure from "../../../components/Figure.astro";
+import { getStatusLane } from "../../../lib/status-lane";
+import { fmtInt } from "../../../lib/format";
+import { artifactHref, defineFigures } from "../../../lib/figures";
+
+const lane = getStatusLane();
+const slug = (s: string): string =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+const FIGURES = defineFigures(
+  "status-sources",
+  lane
+    ? [
+        {
+          id: "listed",
+          class: "headline",
+          value: lane.counts.listed,
+          artifact: "status/lane.json",
+          pointer: "/counts/listed",
+          definition: "#counts-heading",
+          href: artifactHref("status/lane.json"),
+          breakdown: "#fig-listed",
+          targets: [],
+        },
+        {
+          id: "count-only",
+          class: "headline",
+          value: lane.counts.gated + lane.counts.refused + lane.counts.withdrawn,
+          artifact: "status/lane.json",
+          pointer: "/counts",
+          definition: "#counts-heading",
+          href: artifactHref("status/lane.json"),
+          breakdown: "#fig-count-only",
+          targets: [],
+        },
+        ...lane.sources.map((s, i) => ({
+          id: `claims-${slug(s.source_id)}`,
+          class: "per_source" as const,
+          value: s.claims_7d.inserted,
+          artifact: "status/lane.json",
+          pointer: `/sources/${i}/claims_7d/inserted`,
+          definition: "#runs-heading",
+          href: artifactHref("status/lane.json"),
+          breakdown: `#src-${s.source_id}`,
+          targets: [],
+        })),
+      ]
+    : [],
+);
+const fig = (id: string) => {
+  const f = FIGURES.find((x) => x.id === id);
+  if (!f) throw new Error(`status-sources figures[]: no figure registered as "${id}"`);
+  return f;
+};
+---
+
+<BaseLayout title="Sources — runs and freshness" path="/status/sources/">
+  {lane ? (
+    <>
+      <p data-copy="SS-02" data-testid="status-clock-label">
+        Status as of <time datetime={lane.status_time}>{lane.status_time}</time>{" "}
+        UTC — this page updates every 6 hours and is not a citation; the
+        published data is release {lane.release?.id ?? "not_recorded"} (data as
+        of {lane.release?.as_of_world ?? "not_recorded"}). Next-run values are
+        shown to the day.
+      </p>
+
+      <h2 id="counts-heading" data-copy="SS-03">Sources</h2>
+      <p data-copy="SS-04" id="fig-listed">
+        <Figure figure={fig("listed")} order="inline">{fmtInt(lane.counts.listed)}</Figure>{" "}
+        scheduled sources are listed below.
+      </p>
+      <p data-copy="SS-05" id="fig-count-only" data-testid="count-only-line">
+        <Figure figure={fig("count-only")} order="inline">
+          {fmtInt(lane.counts.gated + lane.counts.refused + lane.counts.withdrawn)}
+        </Figure>{" "}
+        sources appear as counts only — {fmtInt(lane.counts.gated)} gated,{" "}
+        {fmtInt(lane.counts.refused)} refused and {fmtInt(lane.counts.withdrawn)}{" "}
+        withdrawn.
+      </p>
+
+      <h2 id="runs-heading" data-copy="SS-06">Runs and freshness</h2>
+      <table class="sig-table" aria-labelledby="runs-heading">
+        <thead>
+          <tr>
+            <th scope="col" data-copy="SS-07">Source</th>
+            <th scope="col" data-copy="SS-08">Status</th>
+            <th scope="col" data-copy="SS-09">Last run</th>
+            <th scope="col" data-copy="SS-10">Next run (day)</th>
+            <th scope="col" data-copy="SS-11">Freshness</th>
+            <th scope="col" data-copy="SS-12">Runs 7d</th>
+            <th scope="col" data-copy="SS-13">Errors</th>
+            <th scope="col" data-copy="SS-14">Claims 7d</th>
+          </tr>
+        </thead>
+        <tbody>
+          {lane.sources.map((row) => <SourceStatusRow row={row} />)}
+        </tbody>
+      </table>
+
+      <p data-copy="SS-15">
+        The machine-readable heartbeat is{" "}
+        <a href="/status/state.json">state.json</a>; the lane document is{" "}
+        <a href="/status/lane.json">lane.json</a>.
+      </p>
+    </>
+  ) : (
+    <p data-copy="SS-01" data-testid="no-status-read">
+      No status read is recorded in this build; the lane publishes a fresh
+      copy every 6 hours once the status job runs.
+    </p>
+  )}
+</BaseLayout>

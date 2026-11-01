@@ -1,0 +1,63 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The shared source row component (K9 C-12 — one set of column definitions
+// for both clocks). This is the STATUS-CLOCK rendering: the Runs & freshness
+// view's columns evaluated at the status time, plus "Next run (day)" — a
+// value the lane alone may show (SIG-TRANSP-034). UX9-3's `/sources/runs/`
+// reuses this component on the release clock without that column.
+// Every cell is a value or a named absence token; a count-only (gated /
+// refused / withdrawn) source never reaches this component — the lane
+// publishes it as a count (D-J3-11).
+import type { StatusSourceRow } from "../lib/status-lane";
+import { outcomeCells } from "../lib/status-lane";
+import { fmtInt } from "../lib/format";
+
+interface Props {
+  row: StatusSourceRow;
+  /** Show the status-clock "Next run (day)" cell (default true). */
+  nextRun?: boolean;
+}
+const { row, nextRun = true } = Astro.props;
+const last = row.last_run;
+---
+
+<tr
+  id={`src-${row.source_id}`}
+  data-testid="status-source-row"
+  data-source={row.source_id}
+  data-status={row.lifecycle_state}
+  data-freshness={row.freshness.state}
+>
+  <td>
+    {row.name}<br />
+    <code>{row.source_id}</code>
+  </td>
+  <td>{row.lifecycle_state}</td>
+  <td>
+    {last ? (
+      <>
+        {last.started_at ?? "not_recorded"} → {last.finished_at ?? "not_recorded"}<br />
+        {last.outcome}
+      </>
+    ) : (
+      "never_run"
+    )}
+  </td>
+  {nextRun && <td>{row.next_run_day}</td>}
+  <td>
+    {row.freshness.state}
+    {row.freshness.run_record_missing && <> (run_record_missing)</>}<br />
+    evaluated {row.freshness.evaluated_at}
+  </td>
+  <td>{fmtInt(row.runs_7d.total)} · {outcomeCells(row.runs_7d.by_outcome)}</td>
+  <td>
+    {fmtInt(row.errors.failed_7d)} failed 7d · {fmtInt(row.errors.failed_30d)} failed 30d
+  </td>
+  <td>
+    +{fmtInt(row.claims_7d.inserted)} · dup {fmtInt(row.claims_7d.duplicate)} · rej{" "}
+    {fmtInt(row.claims_7d.rejected)}
+  </td>
+</tr>

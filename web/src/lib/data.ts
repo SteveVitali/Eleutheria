@@ -75,6 +75,7 @@ import {
   type SourceCountsDoc,
   type SourceRowsDoc,
 } from "./source-counts";
+import { getStatusLane } from "./status-lane";
 import { isResolutionEval, type ResolutionEval } from "./resolution-eval";
 import { STATEMENT_FIXTURES } from "./statements-fixture";
 import type { StatementRow } from "./provenance-panel";
@@ -2192,6 +2193,11 @@ export function getReleaseArtifactPayload(artifactPath: string): unknown | null 
       return getResolutionEval();
     case "web/terms_disclosure.json":
       return getTermsDisclosure();
+    // P36.43: the status lane document — the figure target for every
+    // material count on `/status/` + `/status/sources/` (null when absent
+    // → the artifact route 404s, matching the page's honest-absence state).
+    case "status/lane.json":
+      return getStatusLane();
     case "web/analytics/density_bins.json":
       return {
         schema: "sig/analytics-density-bins/1",
