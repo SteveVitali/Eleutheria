@@ -8,8 +8,8 @@
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.42a
-lastCompleted: P36.41
+nextTicket: P36.42b
+lastCompleted: P36.42a
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -20,7 +20,7 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.41-entity-data-contract-a
+chainTip: r11/P36.42a-entity-pages-a-template-and-organizations-hub
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
@@ -1402,3 +1402,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-31 — P36.40 post-closeout record — `d449d5de` `ci: pass #403@d449d5de` 5/5 head-bound (run 41242456927: docs 2m · security · composed · python · web incl. export-mode + national wire legs) · fix arc: `live`-claim phrasing `d656cf96` → orient re-weight `ef68e38e` → SIG-SRCH-010 matrix re-verdict `b7013805` → no-React boundary match `d6b0763c` → generalize shard splitting `c2fcbad9` + O(n) `9fc28fdc` → national gap row drop + projection regen `6dffded8`/`d449d5de` · PR #403 OPEN on the stack for operator integration · `main` untouched · Gate status: none · deferrals +0/−0 (D-P35.51-2 annotated, stays OPEN on its remaining rows) · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-31 — P36.41 dispatch boundary-confirm — `ci: pass #403@b4302019` 5/5 head-bound (run 41246072180; arc: `d449d5de` impl green; `4284a46c` records → projection-stale docs-red → regen `b4302019`) · P36.40 landed: `sig.typeahead-shard/1` (43 fixture / 42 national shards ≤50 KiB, coverage-checked) + `<sig-typeahead>` on the one root (header/hero/`/search/`/dossier) + SearchIsland React→Preact (≈66 KiB React runtime out of `/search/` — 140,788 B vs 184,320 ratified) · `main` untouched · deferrals +0/−0 · dispatching P36.41 (row 382 — entity data contract A: `live_verification=false`; gate = `D-K2-1` answered verbatim; no OM-20; deps P35.29+P36.29+P35.36+P35.44+P35.28+P36.14 landed) · chainTip → r11/P36.40-… · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-10-31 — P36.42a dispatch boundary-confirm — `ci: pass #404@ac232001` 5/5 head-bound (run 41253190866; arc: interrupted mid-arc ×2 → resume; `a39b84a8` web-red `root-absolute-paths-check` → `withBase()` correction `ac232001`; full closeout landed) · P36.41 landed: `sig.entity-page/1` contract A (K2 GX-05a) — the canonical entity JSON feeding entity pages; `D-K2-1` answered decision carried · `main` untouched · deferrals +0/−0 · dispatching P36.42a (row 383 — entity pages A template + organizations hub: `live_verification=false`; gate none; no OM-20; deps P36.41+P35.50+P36.20+P36.22+P36.23+P35.42 landed) · chainTip → r11/P36.41-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-01 — P36.42a done — row 383 (K2 GX-06a; SIG-UI-070/114/115/116/122): /entity/ hub — per-type Figure counts + ER disclosure verbatim + typed A-10 review rows · per-type paginated A-Z · the 06a template — claims/relations (H-2, historical marked), degree-only sentences, typed contract-B empties, JSON twin downloads, cite, one-action provenance · /id/ stubs refresh per-target only · entity allow-listed + probe capture · tests 11+5 · impl `40d0c93d` · PR #405 OPEN · fix arc: root-absolute→withBase, lexicon labels, per-target emit, NEW-7, lighthouserc regen, probe capture · Gate status: none · ci: head-bound read follows · deferrals +0/−0 · chainTip → r11/P36.42a-… · next → P36.42b · harness: devin-desktop/swe-2-high/subagent
