@@ -27,6 +27,7 @@ orchestration choice is reversible (SIG-INGEST-021, ADR-014). The sub-commands:
 from __future__ import annotations
 
 import argparse
+import os
 from typing import TYPE_CHECKING
 
 from policy.licensing import LicenseIncompatibilityError, compartments
@@ -144,6 +145,36 @@ def build_parser() -> argparse.ArgumentParser:
         default="unknown",
         help="code commit recorded on the ingest_run (default: 'unknown')",
     )
+    sl = sub.add_parser(
+        "flock-share-lists",
+        help=(
+            "P36.75 / R11-ACQ-30 (D-K2-4 + OD-24 [A-22]): §43.2a-screen the "
+            "Flock share lists and write organisation-level "
+            "configured_access claims — dry-run by default, INSERT-only, "
+            "+0-convergent; --apply writes (the OM-20 named mutation)"
+        ),
+    )
+    sl.add_argument(
+        "--snapshot",
+        action="append",
+        default=None,
+        help="an Eyes on Flock aggregator snapshot JSON (repeatable)",
+    )
+    sl.add_argument(
+        "--portal-extraction",
+        action="append",
+        default=None,
+        help="a sig.flock-portal-page/1 screened extraction (repeatable)",
+    )
+    sl.add_argument("--dsn", default=None, help="PostgreSQL DSN for the claim spine")
+    sl.add_argument(
+        "--dsn-env",
+        default=None,
+        help="env var naming the DSN (preferred — a DSN on argv leaks)",
+    )
+    sl.add_argument("--apply", action="store_true", help="write claims (default: dry-run)")
+    sl.add_argument("--commit-chunk-size", type=int, default=None)
+    sl.add_argument("--code-commit", default="unknown")
     rp = sub.add_parser(
         "redact-propose",
         help=(
@@ -574,6 +605,95 @@ def _technology_backfill(args: argparse.Namespace) -> int:
     return 1 if report.get("refused") else 0
 
 
+def _flock_share_lists(args: argparse.Namespace) -> int:
+    """Drive ``db.flock_share_write`` — the P36.75 append-only share-list write.
+
+    Each ``--snapshot``/``--portal-extraction`` input's bytes are
+    multihash-addressed, screened (§43.2a whole-fieldset) and built into
+    organisation-level ``configured_access`` claims; the write binds the
+    stored capture whose ``content_digest`` the input re-derives — a file
+    that was never captured fails closed.
+    """
+    import json as _json
+    from pathlib import Path
+
+    from evidence.digest import multihash
+
+    from .flock_portal import EYES_ON_FLOCK_SOURCE_ID
+    from .flock_share_lists import (
+        PROBE_SOURCE_ID,
+        build_share_claims,
+        page_record_portal,
+        snapshot_portals,
+    )
+    from .sinks import _registry_rights, resolve_commit_chunk_size
+
+    try:
+        commit_chunk_size = resolve_commit_chunk_size(args.commit_chunk_size)
+    except ValueError as bad:
+        print(f"invalid commit chunk size: {bad}")
+        return 2
+    dsn = args.dsn or os.environ.get(str(args.dsn_env or ""), "")
+    if not dsn:
+        print("flock-share-lists: --dsn or --dsn-env is required")
+        return 2
+    snapshots = [str(p) for p in (args.snapshot or [])]
+    extractions = [str(p) for p in (args.portal_extraction or [])]
+    if not snapshots and not extractions:
+        print("flock-share-lists: at least one --snapshot or --portal-extraction is required")
+        return 2
+
+    from db.flock_share_write import ShareUnit, run_write
+
+    units: list[ShareUnit] = []
+    try:
+        for path in snapshots:
+            blob = Path(path).read_bytes()
+            doc = _json.loads(blob)
+            build = build_share_claims(snapshot_portals(doc), source_id=EYES_ON_FLOCK_SOURCE_ID)
+            units.append(
+                ShareUnit(
+                    source_id=EYES_ON_FLOCK_SOURCE_ID,
+                    input_digest=multihash(blob),
+                    byte_size=len(blob),
+                    media_type="application/json",
+                    claims=build.claims,
+                    feed_digest=str(build.feed.get("digest")),
+                    screened_portals=build.screened_portals,
+                    refused_portals=len(build.refused),
+                )
+            )
+        for path in extractions:
+            blob = Path(path).read_bytes()
+            doc = _json.loads(blob)
+            build = build_share_claims([page_record_portal(doc)], source_id=PROBE_SOURCE_ID)
+            units.append(
+                ShareUnit(
+                    source_id=PROBE_SOURCE_ID,
+                    input_digest=multihash(blob),
+                    byte_size=len(blob),
+                    media_type="application/json",
+                    claims=build.claims,
+                    feed_digest=str(build.feed.get("digest")),
+                    screened_portals=build.screened_portals,
+                    refused_portals=len(build.refused),
+                )
+            )
+    except (OSError, ValueError, _json.JSONDecodeError) as bad:
+        print(f"flock-share-lists: input refused: {bad}")
+        return 2
+    report = run_write(
+        dsn,
+        units=units,
+        apply=args.apply,
+        code_commit=args.code_commit,
+        commit_chunk_size=commit_chunk_size,
+        rights_resolver=_registry_rights,
+    )
+    print(_json.dumps(report, indent=2, sort_keys=True, default=str))
+    return 1 if report.get("refused") else 0
+
+
 def _geometry_corrections(args: argparse.Namespace) -> int:
     """Drive ``db.geometry_corrections`` — the P35.16 append-only pass.
 
@@ -874,6 +994,8 @@ def main(argv: list[str] | None = None) -> int:
         return _technology_backfill(args)
     if args.command == "geometry-corrections":
         return _geometry_corrections(args)
+    if args.command == "flock-share-lists":
+        return _flock_share_lists(args)
     if args.command == "redact-propose":
         return _redact_propose(args)
     if args.command == "redact-apply":

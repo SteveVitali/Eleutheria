@@ -1,0 +1,136 @@
+# SPDX-License-Identifier: Apache-2.0
+# The Flock share-list §43.2a / Part VIII screen (P36.75 / R11-ACQ-30;
+# D-K2-4 + OD-24 [A-22] = yes / b, verbatim: "organisation level only, after
+# the §43.2a/Part VIII screen (no operator ids, search reasons or audit
+# rows)"). Approved as the "Flock share-list §43.2a screen" lane at GATE-G5
+# §3 (2026-10-25T18:40Z). DATA, not code (SIG-ENG-001) — the vocabulary is a
+# committed document, reviewed on its own and changed as a VERSIONED
+# migration (bump `vocab_version`, never silently rewrite).
+#
+# Semantics (whole-fieldset, A-22): the screen walks a portal record's ENTIRE
+# field surface. One hit on ANY deny class refuses the portal's WHOLE share
+# fieldset — both directional lists and the slug/state the edges key on — so
+# a portal carrying prohibited material contributes ZERO edges, never a
+# field-level drop. Names are normalised to lowercase snake tokens before
+# matching (the same rule connectors.field_denylist uses); a class hits when
+# the field name matches its vocabulary AND the value is material-bearing —
+# `value_kinds` names the kinds that can carry material. A scalar bool or
+# number under a borderline name (`public_search_audit = true`,
+# `total_searches = 4600`) is configuration, never a row, and never hits.
+schema = "sig.flock-share-screen/1"
+vocab_version = "2026.11.01"
+finding = "D-K2-4 + OD-24 [A-22] = yes / b"
+owner = "P36.75 (R11-ACQ-30)"
+
+# The reviewed share fieldset — the ONLY fields the claim builder reads off a
+# portal record. Scanned for deny hits like every other name; the share lists
+# additionally pass the entry-shape rule below.
+share_fields = [
+  "slug",
+  "data_last_updated",
+  "state",
+  "organizations_shared_with",
+  "organizations_received_from",
+]
+
+# The reviewed aggregator surface EXEMPT from the deny scan — the connector's
+# own vocabulary ([fields] + identity + context) already gates these fields
+# through its own predicate allowlist; re-screening them here would
+# double-screen reviewed ground (and `subscribed_hotlist_topics` is a
+# reviewed configuration list, never a hotlist row surface).
+exempt_fields = [
+  "slug",
+  "portal_url",
+  "data_last_updated",
+  "state",
+  "county",
+  "population",
+  "type",
+  "hotlist_hit_rate",
+  "total_cameras",
+  "data_retention",
+  "state_lookup_enabled",
+  "national_lookup_enabled",
+  "federal_sharing_enabled",
+  "subscribed_hotlist_topics",
+  "vehicles_captured",
+  "hotlist_hits",
+  "total_searches",
+  "permitted_uses",
+  "prohibited_uses",
+  "organizations_shared_with",
+  "organizations_received_from",
+]
+
+# Reviewed-but-unmapped upstream fields: scalars the mirror carries that are
+# neither claimed nor denied. `public_search_audit` is a boolean flag naming
+# whether the portal exposes its audit view — an organisation-level config
+# flag, never an audit row.
+known_unmapped_fields = ["public_search_audit"]
+
+# The organisation-platform slug shape every share-list entry MUST match —
+# the same identifier grammar the portal `slug` field carries (`okhp`,
+# `acworth-pd`). A free-text entry — a person name with spaces, an e-mail, an
+# id with disallowed characters, a non-scalar — is `P8-NON-SLUG-ENTRY` and
+# refuses the whole fieldset.
+entry_pattern = "^[a-z0-9][a-z0-9._-]{0,127}$"
+
+# The deny classes. `tokens` match a single normalised token exactly;
+# `sequences` match a contiguous token run (`["search","reason"]` hits
+# `top_search_reasons` and `searchReason`). `field_denylist = true` delegates
+# the name check to the committed F-330 denylist
+# (connectors.field_denylist.denied_match) — the reviewed person/plate/
+# contact vocabulary, never a drifted copy.
+[[classes]]
+class_id = "P8-OPERATOR-IDS"
+description = "operator / user / performer identity fields — A-22 forbids operator ids at any level"
+tokens = [
+  "operator", "operatorid", "userid", "username", "uid", "requestor",
+  "requester", "querier", "responder",
+]
+sequences = [
+  ["created", "by"], ["modified", "by"], ["run", "by"], ["performed", "by"],
+  ["queried", "by"], ["requested", "by"], ["searched", "by"],
+  ["entered", "by"], ["updated", "by"], ["uploaded", "by"],
+  ["user", "id"], ["user", "name"], ["operator", "id"], ["operator", "name"],
+]
+value_kinds = ["string", "list", "dict"]
+
+[[classes]]
+class_id = "P8-SEARCH-REASONS"
+description = "search reasons / purposes / case numbers — A-22 forbids them at any level"
+tokens = ["reason", "justification", "purpose"]
+sequences = [
+  ["search", "reason"], ["search", "reasons"], ["stop", "reason"],
+  ["hit", "reason"], ["top", "search", "reasons"],
+  ["reason", "for", "search"], ["case", "number"], ["case", "id"],
+  ["investigative", "purpose"], ["permissible", "purpose"],
+]
+value_kinds = ["string", "list", "dict"]
+
+[[classes]]
+class_id = "P8-AUDIT-ROWS"
+description = "audit / search / access log rows — A-22 forbids audit rows; a boolean flag is config, never a row"
+tokens = ["audit", "auditlog"]
+sequences = [
+  ["audit", "log"], ["audit", "trail"], ["audit", "rows"], ["audit", "entries"],
+  ["search", "audit"], ["search", "log"], ["search", "history"],
+  ["search", "records"], ["access", "log"], ["query", "log"],
+  ["event", "log"], ["read", "log"], ["hit", "log"], ["usage", "log"],
+  ["audit", "url"],
+]
+value_kinds = ["string", "list", "dict"]
+
+[[classes]]
+class_id = "P8-PERSON-MATERIAL"
+description = "person / plate / registrant / contact fields — delegates the name check to the committed F-330 denylist"
+field_denylist = true
+value_kinds = ["string", "list", "dict"]
+
+[[classes]]
+class_id = "P8-UNREVIEWED-ROWS"
+description = "any unreviewed field carrying records — a list/dict value under a name outside the reviewed surface, exempt set and known-unmapped set"
+tokens = []          # name check is the complement: every name not exempt/known/deny-matched
+sequences = []
+match_unreviewed = true
+value_kinds = ["list", "dict"]

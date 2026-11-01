@@ -1,0 +1,30 @@
+{
+  "schema": "sig.flock-share-packet/1",
+  "status": "prepared_not_executed",
+  "row": "P36.75",
+  "recorded_at": "2026-11-01T00:00:00Z",
+  "authority": "GATE-G5 §4 13-row OM-20 list names P36.75 verbatim (2026-10-25T18:40Z, expires GATE-G6); window AR-3 + AR-2; the Flock share-list §43.2a screen lane approved GATE-G5 §3 (A-7)",
+  "mutation": "the hosted append-only configured_access claim write — organisation-level configured_sharing_partner claims over the §43.2a-screened share lists (the Eyes on Flock mirror + served portal extractions); INSERT-only via PgClaimSink, +0-convergent",
+  "queued_because": "live_verification=false + hosted env absent (no SIG_GCP_PROJECT, no ADC, no claim-spine writer DSN)",
+  "rerun_prompt": "implement-spec spec=docs/tickets/385_P36.75__flock-share-lists-configured-access.md live_verification=true",
+  "env_required": [
+    "SIG_GCP_PROJECT",
+    "ADC (gcloud application-default)",
+    "SIG_SHARE_WRITE_DSN",
+    "SIG_SHARE_LISTS_AUTHOR",
+    "SIG_SHARE_SNAPSHOT",
+    "cloud-sql-proxy on PATH"
+  ],
+  "preconditions": [
+    "AR-3 + AR-2 window: outside 03:00-06:30Z and the monthly batch window (day 6 00:00Z to day 13 12:00Z)",
+    "the mirror snapshot staged (capture bytes whose sha256 multihash equals the stored evidence_capture content_digest for eyes_on_flock)",
+    "vocab_predicate configured_sharing_partner + vocab_artifact_genre portal_snapshot registered (refuses before write otherwise)"
+  ],
+  "verify": [
+    "dry plan reports every unit bindable with claims_pending = the screened edge count",
+    "apply report's claims_added + claims_duplicate = claims_pending; the written rows' content_digests derive from the plan's claim_set_digest",
+    "a +0 dry re-run reports edges_already_claimed = claims_total"
+  ],
+  "restore_point": "append-only is additive — the restore record is the written claim set's digest list (the apply report + plan's claim_set_digest)",
+  "obligation": "D-P36.75-1"
+}
