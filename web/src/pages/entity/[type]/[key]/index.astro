@@ -15,11 +15,13 @@
 // never silent gaps (SIG-UI-086).
 import BaseLayout from "../../../../layouts/BaseLayout.astro";
 import EmptyState from "../../../../components/EmptyState.astro";
+import EntityFigure from "../../../../components/entity/EntityFigure.astro";
 import EpistemicFields from "../../../../components/EpistemicFields.astro";
 import Figure from "../../../../components/Figure.astro";
 import ProvenancePanelShell from "../../../../components/ProvenancePanelShell.astro";
 import SupportGlyph from "../../../../components/SupportGlyph.astro";
-import { getEntityLabelRows, getEntityPageTwins, getStatementIndex } from "../../../../lib/data";
+import { getEntityFigures, getEntityLabelRows, getEntityPageTwins, getStatementIndex } from "../../../../lib/data";
+import { entityTimeline } from "../../../../lib/entity-figures";
 import { entityIndex } from "../../../../lib/entity-page";
 import type { EntityLabelRow } from "../../../../lib/entity-page";
 import {
@@ -111,6 +113,13 @@ const CLAIM_PANELS: Record<string, ProvenancePanelData> = twin
   ? Object.fromEntries(merged!.claimIds.map((cid) => [cid, panelForClaim(STATEMENTS, cid)]))
   : {};
 
+// P36.42b (K2 §4.2 rows 7/9/10): the static figure companions — the radial
+// ego, the timeline strip and the map snippet. The emitted artifacts carry
+// the drawn bytes; the merged twin composes the timeline's undated list and
+// answers "is there anything to draw" for the typed states.
+const FIGURES_ART = twin ? getEntityFigures(type!, key!) : null;
+const TIMELINE = merged ? entityTimeline(merged) : null;
+
 const crumbs = twin
   ? [
       { label: "Organizations", href: withBase("entity/") },
@@ -129,6 +138,11 @@ const NULL_FIELD = "—";
   crumbsTestId="entity-breadcrumb"
   lede={twin?.descriptor ?? undefined}
   recordPath={twin?.cite.record_url ?? undefined}
+  actions={
+    twin
+      ? [{ label: "Print", href: withBase(`entity/${type}/${key}/print/`), testId: "print-link" }]
+      : []
+  }
 >
   {twin === null && (
     // The keyed row emitted no twin this build — a typed publication-gap
@@ -375,6 +389,52 @@ const NULL_FIELD = "—";
             {d.sources.length > 0 && <> · source: {d.sources.map((s) => s.name ?? s.id).join(", ")}</>}
           </p>
         ))}
+      </section>
+
+      {/* §4.2 row 7 — the static SVG ego: every node links (a paged
+          counterparty to its page, a page-less one to this page whose
+          relationship table is the figure's long description — the
+          ≤2-actions-to-provenance rule, SIG-UI-122). The explorer link
+          stays a named absence until the GX-09a surface exists — never a
+          dead route. */}
+      <section aria-labelledby="ego-heading" data-testid="entity-ego">
+        <h2 id="ego-heading">Recorded relationships, drawn</h2>
+        <EntityFigure
+          kind="ego"
+          figure={FIGURES_ART?.ego ?? null}
+          caption={`One hop out from ${twin.label} — the relationship tables above are this figure's long description; every drawn node links.`}
+        />
+        <p class="sig-table-note" data-testid="ego-explorer" data-copy="EF-02">
+          An interactive explorer view ships with the explore-surface wave; the
+          figure and tables carry the same facts today.
+        </p>
+      </section>
+
+      {/* §4.2 row 9 — the timeline strip: dated events on an axis; undated
+          items listed apart, never drawn (SIG-UI-116). */}
+      <section aria-labelledby="timeline-heading" data-testid="entity-timeline">
+        <h2 id="timeline-heading">Timeline</h2>
+        <EntityFigure
+          kind="timeline"
+          figure={FIGURES_ART?.timeline ?? null}
+          caption={`Dated events SIG records for ${twin.label}.`}
+        />
+        {TIMELINE !== null && TIMELINE.undated.length > 0 && (
+          <p class="sig-table-note" data-testid="timeline-undated">
+            Undated items: {TIMELINE.undated.map((u) => u.label).join("; ")} — undated items are listed, never placed on the axis.
+          </p>
+        )}
+      </section>
+
+      {/* §4.2 row 10 — the map snippet: the entity's recorded place drawn;
+          "location not recorded" is the typed state otherwise. */}
+      <section aria-labelledby="map-heading" data-testid="entity-map">
+        <h2 id="map-heading">Recorded place</h2>
+        <EntityFigure
+          kind="map"
+          figure={FIGURES_ART?.map ?? null}
+          caption={twin.place_jkey ? `SIG records ${twin.label} in ${twin.place_jkey}.` : "Location not recorded."}
+        />
       </section>
 
       {/* §4.2 rows 8/9/11 — contract-B sections as typed empty states under

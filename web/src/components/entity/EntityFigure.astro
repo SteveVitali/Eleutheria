@@ -1,0 +1,103 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.42b (K2 GX-06a 06b / §4.2 rows 7/9/10; SIG-UI-094/122/130/131) — the
+// ONE renderer every entity figure goes through: the figure kit's emitted
+// SVG bytes inlined verbatim (classed markup — scripts, handlers, styles,
+// `data-*` and external refs can never reach the page because the kit's
+// serializer refuses them and `assertInlineSvgSafe` re-checks the bytes at
+// this seam), the caption, and the generated legend's plain-English lines.
+// A record wave that emits no figure renders the typed not-emitted state —
+// never a fabricated drawing and never an empty frame (SIG-UI-086).
+import { assertInlineSvgSafe, FIGURE_NOT_EMITTED } from "../../lib/entity-figures";
+import type { EntityFigureArtifact } from "../../lib/data";
+
+interface Props {
+  /** The figure kind — drives the test ids. */
+  kind: "ego" | "timeline" | "map";
+  /** The emitted artifact, or null when this record wave carries none. */
+  figure: EntityFigureArtifact | null;
+  /** The caption's first sentence (the figure's own title). */
+  caption: string;
+}
+
+const { kind, figure, caption } = Astro.props;
+const svg = figure ? assertInlineSvgSafe(figure.svg, `entity figure ${kind}`) : null;
+const legend = (figure?.meta?.legend ?? []) as { label?: string; plain?: string }[];
+const twinRows = (figure?.meta?.table_rows ?? []) as Record<string, unknown>[];
+---
+
+<figure class="sig-entity-figure" data-testid={`entity-figure-${kind}`} data-figure-kind={kind}>
+  {svg !== null ? (
+    <div class="sig-entity-figure__svg" set:html={svg} />
+  ) : (
+    <p class="sig-island__note" data-testid={`entity-figure-${kind}-absent`} data-copy="EF-01">
+      {FIGURE_NOT_EMITTED.state} — {FIGURE_NOT_EMITTED.missing} {FIGURE_NOT_EMITTED.nearby}{" "}
+      {FIGURE_NOT_EMITTED.change}
+    </p>
+  )}
+  <figcaption class="sig-entity-figure__caption" data-testid={`entity-figure-${kind}-caption`}>
+    {caption}
+    {legend.length > 0 && (
+      <ul class="sig-fig-legend-list" data-testid={`entity-figure-${kind}-legend`}>
+        {legend.map((l) => (
+          <li>
+            <strong>{l.label}:</strong> {l.plain}
+          </li>
+        ))}
+      </ul>
+    )}
+    {twinRows.length > 0 && (
+      <details class="sig-entity-figure__twin" data-testid={`entity-figure-${kind}-twin`}>
+        <summary>The figure's table twin ({twinRows.length} rows)</summary>
+        <div class="sig-table-wrap">
+          <table class="sig-table">
+            <thead>
+              <tr>{Object.keys(twinRows[0]!).map((c) => <th scope="col">{c.replaceAll("_", " ")}</th>)}</tr>
+            </thead>
+            <tbody>
+              {twinRows.map((r) => (
+                <tr>
+                  {Object.values(r).map((v) => (
+                    <td>{Array.isArray(v) ? v.join(", ") : String(v)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    )}
+  </figcaption>
+</figure>
+
+<style>
+  .sig-entity-figure {
+    margin: var(--sig-space-4, 1rem) 0;
+  }
+  .sig-entity-figure__svg :global(svg.sig-fig) {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+  .sig-entity-figure__caption {
+    font-size: var(--sig-font-size-sm, 0.875rem);
+    color: var(--sig-muted, #555);
+    margin-top: var(--sig-space-2, 0.5rem);
+  }
+  .sig-fig-legend-list {
+    margin: var(--sig-space-2, 0.5rem) 0 0;
+    padding-left: 1.25rem;
+    font-size: inherit;
+  }
+  .sig-entity-figure__twin {
+    margin-top: var(--sig-space-2, 0.5rem);
+  }
+  @media print {
+    .sig-entity-figure {
+      break-inside: avoid;
+    }
+  }
+</style>

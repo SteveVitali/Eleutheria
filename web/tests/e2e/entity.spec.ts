@@ -101,3 +101,39 @@ test.describe("the 06a entity page (SIG-UI-114/115/116/122)", () => {
     expect(doc.label).toBe("Acworth Police Department");
   });
 });
+
+test.describe("the 06b figure companions (SIG-UI-094/122/130)", () => {
+  test("the ego figure renders inline with linking nodes + generated legend", async ({ page }) => {
+    await page.goto(AGENCY);
+    const fig = page.locator('[data-testid="entity-figure-ego"]');
+    await expect(fig.locator("svg.sig-fig-ego")).toHaveCount(1);
+    // Every drawn node is a link (K2 §4.2 row 7).
+    const links = fig.locator("svg a");
+    await expect(links.first()).toBeVisible();
+    // A paged counterparty links its page; the legend lists only drawn encodings.
+    await expect(fig.locator('svg a[href="/entity/org/vigilant-solutions-learn--7xk3mrt/"]')).toHaveCount(1);
+    await expect(page.locator('[data-testid="entity-figure-ego-legend"] li').first()).toBeVisible();
+    // The explorer named-absence is text, never a dead route.
+    await expect(page.locator('[data-testid="ego-explorer"] a')).toHaveCount(0);
+  });
+
+  test("the timeline strip draws dated events; undated items list apart", async ({ page }) => {
+    await page.goto(AGENCY);
+    await expect(page.locator('[data-testid="entity-figure-timeline"] svg')).toHaveCount(1);
+    await expect(page.locator('[data-testid="timeline-undated"]')).toContainText("camera operator");
+  });
+
+  test("the map snippet draws the recorded place", async ({ page }) => {
+    await page.goto(AGENCY);
+    await expect(page.locator('[data-testid="entity-figure-map"] svg')).toHaveCount(1);
+    await expect(page.locator('[data-testid="entity-figure-map-caption"]')).toContainText("usa-ga");
+  });
+
+  test("the print page is T0: figures print, no script anywhere", async ({ page }) => {
+    await page.goto(`${AGENCY}print/`);
+    await expect(page.locator("script")).toHaveCount(0);
+    await expect(page.locator('[data-testid="print-page"]')).toHaveCount(4);
+    await expect(page.locator('[data-testid="print-figures"] svg')).not.toHaveCount(0);
+    await expect(page.locator('[data-testid="print-tables"] table')).not.toHaveCount(0);
+  });
+});

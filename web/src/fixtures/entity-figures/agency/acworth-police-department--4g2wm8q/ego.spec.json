@@ -1,0 +1,75 @@
+{
+  "schema": "sig.figure-kit-graph/1",
+  "release": {
+    "label": "Surveillance Infrastructure Graph",
+    "publication_id": "sig-release-2026.09",
+    "as_of_world": "2026-09-01"
+  },
+  "kind": "ego",
+  "title": "Acworth Police Department — recorded relationships",
+  "nodes": [
+    {
+      "key": "centre",
+      "label": "Acworth Police Department",
+      "kind": "agency",
+      "side": "centre",
+      "href": "/entity/agency/acworth-police-department--4g2wm8q/"
+    },
+    {
+      "key": "0190cafe-0000-7000-8000-0000000000b2",
+      "label": "Vigilant Solutions (LEARN)",
+      "kind": "entity",
+      "side": "neighbour",
+      "href": "/entity/org/vigilant-solutions-learn--7xk3mrt/",
+      "group_key": "entity",
+      "group_label": "Entities",
+      "group_href": "#rel-group-0",
+      "noun": "entities"
+    },
+    {
+      "key": "0190cafe-0000-7000-8000-0000000000e5",
+      "label": "surveillance camera in usa-ga",
+      "kind": "site",
+      "side": "neighbour",
+      "href": "/entity/agency/acworth-police-department--4g2wm8q/",
+      "group_key": "site",
+      "group_label": "Sites",
+      "group_href": "#rel-group-1",
+      "noun": "sites"
+    }
+  ],
+  "edges": [
+    {
+      "source": "centre",
+      "target": "0190cafe-0000-7000-8000-0000000000b2",
+      "relation": "configured sharing partner",
+      "direction": "outbound",
+      "date_kind": "single",
+      "currency": "historical",
+      "sources": [
+        "eff_data_driven"
+      ],
+      "claim_ids": [
+        "clm-apd-vigilant-1"
+      ],
+      "access_kind": "configured",
+      "date": "2020-01-28",
+      "support": "WEAKLY_SUPPORTED"
+    },
+    {
+      "source": "0190cafe-0000-7000-8000-0000000000e5",
+      "target": "centre",
+      "relation": "camera operator",
+      "direction": "inbound",
+      "date_kind": "undated",
+      "currency": "aging",
+      "sources": [
+        "dot_511_ga"
+      ],
+      "claim_ids": [
+        "clm-cam-12"
+      ],
+      "support": "WEAKLY_SUPPORTED"
+    }
+  ]
+}
