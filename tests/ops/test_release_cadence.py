@@ -63,24 +63,40 @@ def _latest(pub: str, days_ago: float, now: datetime, cls: str = "R") -> dict:
 
 
 def test_cut_day_first_weekday_on_or_after_the_15th() -> None:
-    # the window cell's literal instances: 2026-11-15 is a Sunday → Mon 11-16;
-    # 2026-12-15 is a Tuesday → itself.
-    assert cut_day(2026, 11).isoformat() == "2026-11-16"
-    assert cut_day(2026, 12).isoformat() == "2026-12-15"
+    # future-ok: scheduled: the window cell's verbatim instance (contract date) — the window cell's literal instances: 2026-11-15 is a Sunday → Mon 11-16;
+    # future-ok: scheduled: the window cell's verbatim instance (contract date) — 2026-12-15 is a Tuesday → itself.
+    assert (
+        cut_day(2026, 11).isoformat() == "2026-11-16"
+    )  # future-ok: scheduled: the window cell's verbatim instance (contract date)
+    assert (
+        cut_day(2026, 12).isoformat() == "2026-12-15"
+    )  # future-ok: scheduled: the window cell's verbatim instance (contract date)
 
 
 def test_cut_day_weekend_slide() -> None:
-    # 2026-08-15 is a Saturday → Monday the 17th; 2027-01-15 is a Friday → itself.
+    # future-ok: scheduled: the window cell's verbatim instance (contract date) — 2026-08-15 is a Saturday → Monday the 17th; 2027-01-15 is a Friday → itself.
     assert cut_day(2026, 8).isoformat() == "2026-08-17"
-    assert cut_day(2027, 1).isoformat() == "2027-01-15"
+    assert (
+        cut_day(2027, 1).isoformat() == "2027-01-15"
+    )  # future-ok: scheduled: the window cell's verbatim instance (contract date)
 
 
 def test_scheduled_due_only_in_the_1400z_slot() -> None:
-    assert scheduled_due(_at("2026-11-16T14:00:00Z"))
-    assert scheduled_due(_at("2026-11-16T14:37:12Z"))
-    assert not scheduled_due(_at("2026-11-16T13:59:59Z"))
-    assert not scheduled_due(_at("2026-11-15T14:00:00Z"))  # Sunday — not a weekday
-    assert not scheduled_due(_at("2026-11-17T14:00:00Z"))  # the slot has passed
+    assert scheduled_due(
+        _at("2026-11-16T14:00:00Z")
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
+    assert scheduled_due(
+        _at("2026-11-16T14:37:12Z")
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
+    assert not scheduled_due(
+        _at("2026-11-16T13:59:59Z")
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
+    assert not scheduled_due(
+        _at("2026-11-15T14:00:00Z")
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture) — Sunday — not a weekday
+    assert not scheduled_due(
+        _at("2026-11-17T14:00:00Z")
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture) — the slot has passed
 
 
 def test_release_cron_covers_every_cut_day() -> None:
@@ -127,7 +143,9 @@ def test_in_flight_publications_folds_the_state_machine() -> None:
 
 
 def test_scheduled_cut_fires_on_the_cut_day() -> None:
-    now = _at("2026-11-16T14:00:00Z")
+    now = _at(
+        "2026-11-16T14:00:00Z"
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
     rec = evaluate(
         now,
         promotions=[_promo("R", 20, now)],
@@ -139,11 +157,15 @@ def test_scheduled_cut_fires_on_the_cut_day() -> None:
     assert rec["schema"] == CADENCE_SCHEMA
     assert rec["decision"] == "cut"
     assert "scheduled" in rec["triggered_by"]
-    assert rec["cut_slot"]["day"] == "2026-11-16"
+    assert (
+        rec["cut_slot"]["day"] == "2026-11-16"
+    )  # future-ok: scheduled: the window cell's verbatim instance (contract date)
 
 
 def test_class_s_promotion_within_14_days_suppresses_the_scheduled_cut() -> None:
-    now = _at("2026-11-16T14:00:00Z")
+    now = _at(
+        "2026-11-16T14:00:00Z"
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
     rec = evaluate(
         now,
         promotions=[_promo("S", 10, now)],
@@ -158,7 +180,9 @@ def test_class_s_promotion_within_14_days_suppresses_the_scheduled_cut() -> None
 
 
 def test_class_s_older_than_14_days_does_not_suppress() -> None:
-    now = _at("2026-11-16T14:00:00Z")
+    now = _at(
+        "2026-11-16T14:00:00Z"
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
     rec = evaluate(
         now,
         promotions=[_promo("S", 16, now)],
@@ -172,7 +196,9 @@ def test_class_s_older_than_14_days_does_not_suppress() -> None:
 
 
 def test_class_r_promotion_never_suppresses_the_scheduled_cut() -> None:
-    now = _at("2026-11-16T14:00:00Z")
+    now = _at(
+        "2026-11-16T14:00:00Z"
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
     rec = evaluate(
         now,
         promotions=[_promo("R", 3, now)],
@@ -185,7 +211,9 @@ def test_class_r_promotion_never_suppresses_the_scheduled_cut() -> None:
 
 
 def test_early_cut_needs_10pct_and_14_days() -> None:
-    now = _at("2026-11-20T14:00:00Z")  # not a cut day
+    now = _at(
+        "2026-11-20T14:00:00Z"
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture) — not a cut day
     rec = evaluate(
         now,
         promotions=[_promo("R", 20, now)],
@@ -220,7 +248,9 @@ def test_early_cut_needs_10pct_and_14_days() -> None:
 
 
 def test_early_trigger_is_honest_when_inputs_are_absent() -> None:
-    now = _at("2026-11-20T14:00:00Z")
+    now = _at(
+        "2026-11-20T14:00:00Z"
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
     rec = evaluate(
         now,
         promotions=[_promo("R", 20, now)],
@@ -234,7 +264,9 @@ def test_early_trigger_is_honest_when_inputs_are_absent() -> None:
 
 
 def test_a_release_older_than_35_days_alerts() -> None:
-    now = _at("2026-11-20T14:00:00Z")
+    now = _at(
+        "2026-11-20T14:00:00Z"
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
     rec = evaluate(
         now,
         promotions=[_promo("R", 40, now)],
@@ -249,7 +281,9 @@ def test_a_release_older_than_35_days_alerts() -> None:
 
 
 def test_max_age_alerts_but_never_double_cuts_a_running_cut() -> None:
-    now = _at("2026-11-20T14:00:00Z")
+    now = _at(
+        "2026-11-20T14:00:00Z"
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
     rec = evaluate(
         now,
         promotions=[_promo("R", 40, now)],
@@ -266,7 +300,9 @@ def test_max_age_alerts_but_never_double_cuts_a_running_cut() -> None:
 def test_ar3_freeze_is_a_recorded_check_never_a_comment() -> None:
     # the daily restricted window — 03:00–06:30Z (the monthly batch window
     # ends day 13; the cut day can never be inside it)
-    now = _at("2026-11-20T04:00:00Z")
+    now = _at(
+        "2026-11-20T04:00:00Z"
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
     rec = evaluate(
         now,
         promotions=[_promo("R", 40, now)],
@@ -283,7 +319,9 @@ def test_ar3_freeze_is_a_recorded_check_never_a_comment() -> None:
 
 
 def test_no_promoted_release_decides_no_release() -> None:
-    now = _at("2026-11-16T14:00:00Z")
+    now = _at(
+        "2026-11-16T14:00:00Z"
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
     rec = evaluate(
         now,
         promotions=[],
@@ -299,7 +337,9 @@ def test_no_promoted_release_decides_no_release() -> None:
 
 
 def test_emit_decision_writes_append_only(tmp_path: Path) -> None:
-    now = _at("2026-11-16T14:00:00Z")
+    now = _at(
+        "2026-11-16T14:00:00Z"
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
     rec = evaluate(
         now,
         promotions=[_promo("R", 20, now)],
@@ -319,7 +359,9 @@ def test_emit_decision_writes_append_only(tmp_path: Path) -> None:
 
 
 def test_max_age_alert_lands_in_the_ledger(tmp_path: Path) -> None:
-    now = _at("2026-11-20T14:00:00Z")
+    now = _at(
+        "2026-11-20T14:00:00Z"
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
     rec = evaluate(
         now,
         promotions=[_promo("R", 40, now)],
@@ -358,7 +400,9 @@ def _fixture_registry(root: Path, *, now: datetime) -> LocalDirStore:
 
 
 def test_registry_facts_reads_latest_and_promotions(tmp_path: Path) -> None:
-    now = _at("2026-11-16T14:00:00Z")
+    now = _at(
+        "2026-11-16T14:00:00Z"
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
     store = _fixture_registry(tmp_path, now=now)
     facts = registry_facts(store)
     assert facts["latest"]["publication_id"] == "p-aaaa"
@@ -386,13 +430,15 @@ def _ns(**kw: object) -> argparse.Namespace:
 
 
 def test_run_release_cadence_evaluates_and_emits(tmp_path: Path, capsys) -> None:
-    now = _at("2026-11-16T14:00:00Z")
+    now = _at(
+        "2026-11-16T14:00:00Z"
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
     registry = tmp_path / "registry"
     _fixture_registry(registry, now=now)
     rc = run_release_cadence(
         _ns(
             registry=str(registry),
-            at="2026-11-16T14:00:00Z",
+            at="2026-11-16T14:00:00Z",  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
             out=str(tmp_path / "out"),
             facts=None,
             spine_eligible=1005,
@@ -409,13 +455,15 @@ def test_run_release_cadence_evaluates_and_emits(tmp_path: Path, capsys) -> None
 
 
 def test_run_release_cadence_apply_journals_and_cuts(tmp_path: Path, capsys) -> None:
-    now = _at("2026-11-16T14:00:00Z")
+    now = _at(
+        "2026-11-16T14:00:00Z"
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
     registry = tmp_path / "registry"
     _fixture_registry(registry, now=now)
     rc = run_release_cadence(
         _ns(
             registry=str(registry),
-            at="2026-11-16T14:00:00Z",
+            at="2026-11-16T14:00:00Z",  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
             apply=True,
             skip_host_clock_check=True,
         )
@@ -436,7 +484,9 @@ def test_run_release_cadence_refuses_without_registry(capsys) -> None:
 def test_run_release_cadence_alert_fires_and_exits_6(tmp_path: Path, capsys) -> None:
     registry = tmp_path / "registry"
     store = LocalDirStore(registry)
-    now = _at("2026-11-20T14:00:00Z")
+    now = _at(
+        "2026-11-20T14:00:00Z"
+    )  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
     emit_event(
         store,
         "promoted",
@@ -452,7 +502,7 @@ def test_run_release_cadence_alert_fires_and_exits_6(tmp_path: Path, capsys) -> 
     rc = run_release_cadence(
         _ns(
             registry=str(registry),
-            at="2026-11-20T14:00:00Z",
+            at="2026-11-20T14:00:00Z",  # future-ok: synthetic: deterministic test-clock literal (cadence fixture)
             alert=True,
             ledger=str(tmp_path / "alerts.jsonl"),
             spine_eligible=1000,

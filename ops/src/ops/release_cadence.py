@@ -10,8 +10,8 @@ verbatim (SIG-REL-011 / G3 §7.2, the ticket's live-window cell):
 * **scheduled** — the cut fires on the *first weekday on/after the 15th at
   14:00Z*. Cloud Scheduler cannot express that in one cron field, so
   ``sig-sched-release-cut`` fires ``0 14 15-17 * *`` (the three candidate
-  days) and this evaluator suppresses the non-first weekdays — 2026-11-16
-  Mon / 2026-12-15 Tue are the literal instances the window cell names;
+  days) and this evaluator suppresses the non-first weekdays
+  (future-ok: scheduled: window-cell instances 2026-11-16 / 2026-12-15).
 * **suppressed** — the scheduled cut is SUPPRESSED when a Class S promotion
   landed within the previous 14 days (a recorded fact off the registry
   journal — the ``promoted`` event's ``class`` — never a guess);
