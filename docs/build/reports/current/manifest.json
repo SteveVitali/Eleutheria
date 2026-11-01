@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "16d5af5ef2f848d7c1acc8a2587e13899f761486",
+  "input_commit": "e09d5676ded4d650618a80f1e0bd94b934365360",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -926,7 +926,7 @@
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "626234548de1c8e3301d4c41ebb29e70872e6749bcaf173e6e8d37d730b3b939"
+      "sha256": "12cd6062360a27c145abd190dace2c4fd0df038b0030bf3bbe28670753e4e4d1"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -1014,7 +1014,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "194abcc7c26ae6ead8f581cb6ed9e6ef31c0f77a517755d6ae20844ef907681f"
+      "sha256": "9278f7d8fdd4e275e0243c2cbdf3d60389e335c71c32a3d973143541feac7acc"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -2606,7 +2606,7 @@
     },
     {
       "path": "docs/build/tools/record_policy/return_pass.toml",
-      "sha256": "c7adb02713d1a6f2343df26a5dc49125c8be0b97e533b41f71ca9f54bd763577"
+      "sha256": "f369d47a576dba8ecc472185dc8cb52f37c6b84862e359c590814957e4fe27c7"
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",

@@ -1433,3 +1433,21 @@ rerun_cell = '''`implement-spec spec=docs/tickets/379_P36.38__search-api-serving
   go = '''verbatim-go: `SIG_SEARCHV2_AUTHOR` per apply'''
   rerun = '''implement-spec spec=docs/tickets/379_P36.38__search-api-serving-v2.md live_verification=true'''
   live_dependants = ["P36.39", "P36.40", "P36.71"]
+
+[[row]]
+key = "P36.75"
+kind = "leg"
+obligations = ["D-P36.75-1"]
+obligations_cell = '''queued D-P36.75-1 — the hosted append-only `configured_access` claim write (org-level `configured_sharing_partner` over the 43.2a-screened share lists); restore point = claim-set digest list'''
+gates_cell = '''pre-authorised: OM-20 GATE-G5 (expires GATE-G6); window AR-3 + AR-2 — outside daily 03:00-06:30Z + batch window day 6 00:00Z → day 13 12:00Z; `SIG_SHARE_LISTS_AUTHOR` per apply; needs ADC + `SIG_GCP_PROJECT` + `SIG_SHARE_WRITE_DSN` + `SIG_SHARE_SNAPSHOT`'''
+operator_cell = '''nothing until the hosted env — the screen/builder/write machinery + packet `reports/p36.75-flock-share-lists/` landed'''
+rerun_cell = '''`implement-spec spec=docs/tickets/385_P36.75__flock-share-lists-configured-access.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P36.75-write"
+  obligations = ["D-P36.75-1"]
+  earliest = '''when ADC + `SIG_GCP_PROJECT` + `SIG_SHARE_WRITE_DSN` + `SIG_SHARE_LISTS_AUTHOR` + `SIG_SHARE_SNAPSHOT` are present; inside AR-3 + AR-2'''
+  excluded = ["daily 03:00-06:30Z", "batch window day 6 00:00Z → day 13 12:00Z"]
+  go = '''pre-authorised: `SIG_SHARE_LISTS_AUTHOR` per apply'''
+  rerun = '''implement-spec spec=docs/tickets/385_P36.75__flock-share-lists-configured-access.md live_verification=true'''
+  live_dependants = ["P37.25"]
