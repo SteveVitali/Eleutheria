@@ -1,0 +1,780 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.47 (R11-K13-UX10-3a; SIG-TRANSP-003/004/009/037/038/039, SIG-UI-056,
+// SIG-UI-039/040 cited) — the `/sources/<id>/` source page, part A (K10 §5–8):
+// header, at a glance, about, ground truth, targets, licence & redistribution,
+// the rights-review record with its disclosure texts, observed collection
+// conduct, and cadence/freshness with the FIG-01b runs-over-time strip.
+//
+// T1, zero-JS (SIG-UI-037/091): every fact renders with JS off; the page
+// reads only release-pinned artifacts (SIG-UI-076). Fields the artifacts do
+// not carry render their named-absence kind (SIG-TRANSP-003); gated, refused,
+// withdrawn and unknown/restricted-lane sources render the S-11 registry-only
+// page and never a run, capture or probe detail (D-J3-11). Page B (P36.69)
+// lands the runs/captures/versions/entities/dossiers sub-pages and the JSON
+// twin; the sources table is P36.48's.
+//
+// D-J3-2 [B-19] = yes — carried verbatim: scrubbed run logs publish; a
+// robots disregard discloses as host + count + the GL-GATE-08 reference,
+// never per-URL detail. D-K10-1 [B-2] = OD-07 a — carried verbatim: the
+// disclosure texts are the batched rows; an unapproved description renders
+// "description pending review".
+import { existsSync, readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import EmptyState from "../../../components/EmptyState.astro";
+import Figure from "../../../components/Figure.astro";
+import { assertInlineSvgSafe } from "../../../lib/entity-figures";
+import { artifactHref, defineFigures, freshnessTargets, perSourceTargets, target, type FigureSpec } from "../../../lib/figures";
+import { fmtInt } from "../../../lib/format";
+import { withBase } from "../../../lib/paths";
+import {
+  conductSummary,
+  coverageClass,
+  fixtureReleaseInfo,
+  getSourcePage,
+  getSourcePageIds,
+  observedCadenceDays,
+  runRecordMissing,
+  sourceTermsDisclosure,
+  type SourcePageModel,
+} from "../../../lib/source-page";
+import { resolveSourceId } from "../../../lib/alias";
+
+export function getStaticPaths() {
+  return getSourcePageIds().map((id) => ({ params: { id }, props: {} }));
+}
+
+const id = resolveSourceId(String(Astro.params.id ?? "")) ?? "";
+const model = getSourcePage(id);
+if (model === null) {
+  throw new Error(`sources/[id]: no source-page row for "${id}" — the route set and the row set drifted (SIG-ENG-042)`);
+}
+const m = model as SourcePageModel;
+const row = m.row;
+const conduct = conductSummary(m.executions);
+const missing = runRecordMissing(m);
+const coverage = coverageClass(m);
+const termsDisc = sourceTermsDisclosure(row.source_id);
+const observedDays = observedCadenceDays(m.executions);
+const targets = m.extras.targets ?? null;
+const slugify = (s: string): string => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+// JSON pointers are built through a non-literal slash so the root-absolute
+// containment rule never counts a pointer as a site path (same seam
+// entity-figures uses for `withBase` joins).
+const J = String.fromCharCode(47);
+
+// The runs-over-time strip — the kit-rendered fixture artifact when this
+// build carries one (fixtures: the committed `src/fixtures/source-figures/`
+// bytes; export: `transparency/sources/<id>/figures/runs.svg` when the
+// release pipeline emits it). Inlined only after the safety contract
+// re-verifies (SIG-UI-066/096) — never a fabricated drawing.
+function stripSvg(): string | null {
+  const candidates =
+    process.env.SIG_DATA_SOURCE === "export"
+      ? [`${process.env.SIG_EXPORT_DIR ?? ""}/transparency/sources/${id}/figures/runs.svg`]
+      : [fileURLToPath(new URL(`../../../fixtures/source-figures/${id}/runs.svg`, import.meta.url))];
+  for (const p of candidates) {
+    if (p && existsSync(p)) {
+      return assertInlineSvgSafe(readFileSync(p, "utf-8"), `source strip ${id}`);
+    }
+  }
+  return null;
+}
+const STRIP = m.registryOnly ? null : stripSvg();
+const stripAbsent = !m.registryOnly && STRIP === null;
+
+// ---------------------------------------------------------------------------
+// The ONE figures[] registry (UXR-34 / SIG-UI-084) — every numeral on this
+// page rides inside a <Figure> region (check:figures, sources class).
+// ---------------------------------------------------------------------------
+const specs: FigureSpec[] = [];
+const add = (f: FigureSpec) => specs.push(f);
+
+if (typeof row.published_claims === "number") {
+  add({
+    id: "published-claims",
+    class: "per_source",
+    value: row.published_claims,
+    artifact: "transparency/sources.json",
+    pointer: `${J}sources/${id}/published_claims`,
+    definition: "#glance-heading",
+    href: artifactHref("transparency/sources.json"),
+    breakdown: "#fig-published-claims",
+    targets: perSourceTargets(id, `sources/${id}/`),
+  });
+}
+if (row.contributions.length > 0) {
+  add({
+    id: "dossier-contributions",
+    class: "per_source",
+    value: row.contributions.length,
+    artifact: "transparency/sources.json",
+    pointer: `${J}sources/${id}/contributions`,
+    definition: "#glance-heading",
+    href: artifactHref("transparency/sources.json"),
+    breakdown: "#fig-dossier-contributions",
+    targets: perSourceTargets(id, `sources/${id}/`),
+  });
+}
+if (conduct !== null) {
+  add({
+    id: "executions-recorded",
+    class: "freshness",
+    value: conduct.totalExecutions,
+    artifact: `transparency/sources/${id}/executions.jsonl`,
+    pointer: J,
+    definition: "#conduct-heading",
+    href: `#conduct-heading`,
+    breakdown: "#fig-executions-recorded",
+    targets: freshnessTargets(id),
+  });
+  for (const r of conduct.robotsByHost) {
+    const total = Object.values(r.outcomes).reduce((a, b) => a + b, 0);
+    add({
+      id: `robots-events-${slugify(r.host)}`,
+      class: "freshness",
+      value: total,
+      artifact: `transparency/sources/${id}/executions.jsonl`,
+      pointer: `${J}robots`,
+      definition: "#conduct-heading",
+      href: `#conduct-heading`,
+      breakdown: `#fig-robots-${slugify(r.host)}`,
+      targets: freshnessTargets(id),
+    });
+    const latest = conduct.latestRobots.find((x) => x.host === r.host);
+    if (latest) {
+      add({
+        id: `robots-latest-${slugify(r.host)}`,
+        class: "freshness",
+        value: Object.values(latest.outcomes).reduce((a, b) => a + b, 0),
+        artifact: `transparency/sources/${id}/executions.jsonl`,
+        pointer: `${J}robots`,
+        definition: "#conduct-heading",
+        href: `#conduct-heading`,
+        breakdown: `#fig-robots-${slugify(r.host)}`,
+        targets: freshnessTargets(id),
+      });
+    }
+    const disregarded = r.outcomes.disregarded ?? 0;
+    if (disregarded > 0) {
+      add({
+        id: `robots-disregarded-${slugify(r.host)}`,
+        class: "freshness",
+        value: disregarded,
+        artifact: `transparency/sources/${id}/executions.jsonl`,
+        pointer: `${J}robots`,
+        definition: "#conduct-heading",
+        href: `#conduct-heading`,
+        breakdown: `#fig-robots-${slugify(r.host)}`,
+        targets: freshnessTargets(id),
+      });
+    }
+  }
+  for (const [klass, n] of Object.entries(conduct.refusals)) {
+    add({
+      id: `refusals-${slugify(klass)}`,
+      class: "freshness",
+      value: n,
+      artifact: `transparency/sources/${id}/executions.jsonl`,
+      pointer: `${J}rejected`,
+      definition: "#conduct-heading",
+      href: "#conduct-heading",
+      breakdown: `#fig-refusals-${slugify(klass)}`,
+      targets: freshnessTargets(id),
+    });
+  }
+  if (conduct.rateLimitEvents > 0) {
+    add({
+      id: "rate-limit-events",
+      class: "freshness",
+      value: conduct.rateLimitEvents,
+      artifact: `transparency/sources/${id}/executions.jsonl`,
+      pointer: `${J}rate_limit_events`,
+      definition: "#conduct-heading",
+      href: "#conduct-heading",
+      breakdown: "#fig-rate-limit-events",
+      targets: freshnessTargets(id),
+    });
+  }
+}
+for (const [i, t] of (targets ?? []).entries()) {
+  if (t.observed_count !== null) {
+    add({
+      id: `target-count-${i}`,
+      class: "per_source",
+      value: t.observed_count,
+      artifact: "transparency/sources.json",
+      pointer: `${J}sources/${id}`,
+      definition: "#targets-heading",
+      href: artifactHref("transparency/sources.json"),
+      breakdown: `#fig-target-${i}`,
+      targets: perSourceTargets(id, `sources/${id}/`),
+    });
+  }
+}
+if (m.freshness?.staleness && (m.freshness.staleness.evaluable > 0 || m.freshness.staleness.not_evaluable > 0)) {
+  add({
+    id: "staleness-evaluable",
+    class: "freshness",
+    value: m.freshness.staleness.evaluable,
+    artifact: "transparency/freshness.jsonl",
+    pointer: `${J}staleness/evaluable`,
+    definition: "#cadence-heading",
+    href: "#cadence-heading",
+    breakdown: "#fig-staleness-evaluable",
+    targets: freshnessTargets(id, `status/sources/#src-${id}`),
+  });
+  if (m.freshness.staleness.not_evaluable > 0) {
+    add({
+      id: "staleness-not-evaluable",
+      class: "freshness",
+      value: m.freshness.staleness.not_evaluable,
+      artifact: "transparency/freshness.jsonl",
+      pointer: `${J}staleness/not_evaluable`,
+      definition: "#cadence-heading",
+      href: "#cadence-heading",
+      breakdown: "#fig-staleness-evaluable",
+      targets: freshnessTargets(id, `status/sources/#src-${id}`),
+    });
+  }
+}
+if (observedDays !== null) {
+  add({
+    id: "observed-cadence-days",
+    class: "freshness",
+    value: observedDays,
+    unit: "days",
+    artifact: `transparency/sources/${id}/executions.jsonl`,
+    pointer: J,
+    definition: "#cadence-heading",
+    href: "#cadence-heading",
+    breakdown: "#fig-observed-cadence",
+    targets: freshnessTargets(id, `status/sources/#src-${id}`),
+  });
+}
+if (m.freshness?.volatility) {
+  for (const [k, v] of Object.entries(m.freshness.volatility)) {
+    add({
+      id: `volatility-${slugify(k)}`,
+      class: "freshness",
+      value: v,
+      artifact: "transparency/freshness.jsonl",
+      pointer: `${J}volatility/${k}`,
+      definition: "#about-heading",
+      href: "#about-heading",
+      breakdown: `#fig-volatility-${slugify(k)}`,
+      targets: freshnessTargets(id),
+    });
+  }
+}
+if (conduct && conduct.quotaReached > 0) {
+  add({
+    id: "quota-reached",
+    class: "freshness",
+    value: conduct.quotaReached,
+    artifact: `transparency/sources/${id}/executions.jsonl`,
+    pointer: `${J}quota_reached`,
+    definition: "#conduct-heading",
+    href: "#conduct-heading",
+    breakdown: "#fig-quota-reached",
+    targets: freshnessTargets(id),
+  });
+}
+if (conduct && conduct.budgetReached > 0) {
+  add({
+    id: "budget-reached",
+    class: "freshness",
+    value: conduct.budgetReached,
+    artifact: `transparency/sources/${id}/executions.jsonl`,
+    pointer: `${J}budget_reached`,
+    definition: "#conduct-heading",
+    href: "#conduct-heading",
+    breakdown: "#fig-budget-reached",
+    targets: freshnessTargets(id),
+  });
+}
+
+const FIGURES = defineFigures(`source-${id}`, specs);
+const fig = (fid: string) => {
+  const f = FIGURES.find((x) => x.id === fid);
+  if (!f) throw new Error(`source-${id} figures[]: no figure registered as "${fid}"`);
+  return f;
+};
+
+const OUTCOME_WORDS: Record<string, string> = {
+  obeyed: "obeyed",
+  disallowed: "disallowed",
+  unavailable: "unavailable",
+  disregarded: "disregarded",
+};
+const robotsCells = (outcomes: Record<string, number>): string =>
+  Object.entries(outcomes)
+    .filter(([, n]) => n > 0)
+    .map(([k, n]) => `${OUTCOME_WORDS[k] ?? k} ${fmtInt(n)}`)
+    .join(" · ");
+const laneWord: Record<string, string> = {
+  "raw-ok": "raw captures may be republished",
+  "derived-only": "SIG publishes derived facts only",
+  "link-only": "SIG links to the source only",
+  restricted: "not redistributable",
+  unknown: "lane not determined",
+};
+
+const crumbs = [
+  { label: "Sources & data", href: withBase("sources/") },
+  { label: "Sources", href: withBase("sources/") },
+  { label: row.name },
+];
+---
+
+<BaseLayout
+  title={row.name}
+  path={withBase(`sources/${id}/`)}
+  crumbs={crumbs}
+  lede={m.registryOnly ? undefined : `${row.name} — a registered SIG source (${row.lifecycle_state.replace(/_/g, " ")}).`}
+>
+  {/* ===================== S-11 registry-only page ===================== */}
+  {m.registryOnly ? (
+    <section aria-labelledby="registry-only-heading" data-testid="registry-only-page">
+      <h2 id="registry-only-heading" data-copy="SP-60">Registry record only</h2>
+      <p data-copy="SP-61" data-testid="registry-only-lead">
+        This page carries the registry record for this source — SIG publishes
+        no runs, captures or records from it.
+      </p>
+      <dl class="sig-fields" data-testid="registry-fields">
+        <dt data-copy="SP-62">Status</dt>
+        <dd>{row.status ?? row.lifecycle_state} ({row.lifecycle_state.replace(/_/g, " ")})</dd>
+        <dt data-copy="SP-63">Reason class</dt>
+        <dd><code>{row.reason_class ?? "not_reviewed"}</code></dd>
+        <dt data-copy="SP-64">Publisher</dt>
+        <dd>{row.publisher === "publisher_not_recorded" ? "not recorded" : row.publisher}{row.publisher_type ? <> ({row.publisher_type})</> : null}</dd>
+        <dt data-copy="SP-65">Upstream host</dt>
+        <dd>{row.homepage_url && row.homepage_url !== "no_upstream_url_recorded" ? row.homepage_url : "not recorded"}</dd>
+        <dt data-copy="SP-66">Lane</dt>
+        <dd>{laneWord[row.lane] ?? `${row.lane} — lane not determined`}</dd>
+      </dl>
+      {row.lifecycle_state === "refused" ? (
+        <p data-copy="SP-81" data-testid="registry-rights">
+          SIG decided not to ingest this source; the refusal class is recorded above.
+        </p>
+      ) : (
+        <p data-copy="SP-67" data-testid="registry-rights">
+          Not yet approved: waiting for a rights review.
+        </p>
+      )}
+      <p data-copy="SP-68">
+        When a rights decision lands, this page gains the full source record;
+        the status page lists this source only as a count (D-J3-11).
+      </p>
+    </section>
+  ) : (
+    <>
+      {/* ===================== Header ===================== */}
+      <p class="sig-source-meta" data-testid="source-header" data-copy="SP-01">
+        <span data-testid="lifecycle-chip">{row.lifecycle_state.replace(/_/g, " ")}</span>
+        {row.status_flags.length > 0 && (
+          <> · flags: {row.status_flags.join(", ")}</>
+        )}
+        {" · "}
+        <a href={withBase(`status/sources/#src-${id}`)} data-copy="SP-02">runs since this release →</a>
+      </p>
+      {missing && (
+        <p class="sig-notice" data-testid="run-record-missing" data-copy="SP-03">
+          SIG holds data from this source, but no record of the run that
+          loaded it exists.
+        </p>
+      )}
+
+      {/* ===================== At a glance ===================== */}
+      <section aria-labelledby="glance-heading" data-testid="at-a-glance">
+        <h2 id="glance-heading" data-copy="SP-04">At a glance</h2>
+        <dl class="sig-fields">
+          <dt data-copy="SP-05">Publisher</dt>
+          <dd>{row.publisher === "publisher_not_recorded" ? "not recorded" : row.publisher}{row.publisher_type ? <> ({row.publisher_type})</> : null}</dd>
+          <dt data-copy="SP-06">Lifecycle state</dt>
+          <dd>{row.lifecycle_state.replace(/_/g, " ")}{row.status_flags.length > 0 ? <> — {row.status_flags.join(", ")}</> : null}</dd>
+          <dt data-copy="SP-07">Raw-bytes lane</dt>
+          <dd>{row.lane} — {laneWord[row.lane] ?? row.lane_basis}{row.lane_review_needed ? <> (a lane review is pending)</> : null}</dd>
+          <dt data-copy="SP-08">Published claims</dt>
+          <dd id="fig-published-claims">
+            {typeof row.published_claims === "number" ? (
+              <Figure figure={fig("published-claims")} order="inline">{fmtInt(row.published_claims)}</Figure>
+            ) : (
+              "not published in this release"
+            )}
+          </dd>
+          <dt data-copy="SP-09">Last successful run</dt>
+          <dd>{row.last_successful_run}</dd>
+          <dt data-copy="SP-10">Last upstream change</dt>
+          <dd>{row.last_upstream_change.value ?? "not detectable"} — {row.last_upstream_change.basis}</dd>
+          <dt data-copy="SP-11">Last change in SIG's records</dt>
+          <dd>{row.last_sig_records_change.value ?? "not recorded"} — {row.last_sig_records_change.basis}</dd>
+          {row.contributions.length > 0 && (
+            <>
+              <dt data-copy="SP-12">Dossier contribution</dt>
+              <dd id="fig-dossier-contributions">
+                <Figure figure={fig("dossier-contributions")} order="inline">{fmtInt(row.contributions.length)}</Figure>{" "}
+                dossier groupings — the same rows the dossier pages render (one shared artifact).{" "}
+                {row.contributions.map((c) => (
+                  <span data-testid="contribution-row">
+                    {c.dossier_slug ? <a href={withBase(`dossier/${c.dossier_slug}/`)}>{c.dossier_key}</a> : c.dossier_key}{" "}
+                    ({c.basis}){" "}
+                  </span>
+                ))}
+              </dd>
+            </>
+          )}
+        </dl>
+      </section>
+
+      {/* ===================== About ===================== */}
+      <section aria-labelledby="about-heading" data-testid="about-section">
+        <h2 id="about-heading" data-copy="SP-13">About this source</h2>
+        {m.extras.description ? (
+          <p data-testid="source-description">{m.extras.description}</p>
+        ) : (
+          <p data-testid="source-description" data-copy="SP-14">description pending review</p>
+        )}
+        <dl class="sig-fields">
+          <dt data-copy="SP-15">Technology classes</dt>
+          <dd>{m.extras.technology_classes ? m.extras.technology_classes.join(", ") : "not published in this release"}</dd>
+          <dt data-copy="SP-16">Declared geography</dt>
+          <dd>{m.extras.geography ?? "not published in this release"}</dd>
+        </dl>
+        {m.freshness?.volatility && (
+          <p data-testid="volatility-note" data-copy="SP-17">
+            Volatility across this source's published claims:{" "}
+            {Object.entries(m.freshness.volatility).map(([k, v], i) => (
+              <>
+                {i > 0 && " · "}
+                <span id={`fig-volatility-${slugify(k)}`}>
+                  {k}{" "}
+                  <Figure figure={fig(`volatility-${slugify(k)}`)} order="inline">{fmtInt(v)}</Figure>
+                </span>
+              </>
+            ))}
+            .
+          </p>
+        )}
+      </section>
+
+      {/* ===================== Ground truth ===================== */}
+      <section aria-labelledby="ground-truth-heading" data-testid="ground-truth">
+        <h2 id="ground-truth-heading" data-copy="SP-18">Ground truth (upstream)</h2>
+        {row.ground_truth.homepage === "no_upstream_url_recorded" && row.ground_truth.terms_url === "no_upstream_url_recorded" && !termsDisc ? (
+          <EmptyState
+            parts={{
+              state: "No upstream link is recorded",
+              missing: "SIG has not recorded a homepage or terms URL for this source — an evidenced absence, not a broken link.",
+              nearby: "The rights record below says on what basis SIG publishes from this source.",
+              action: { href: "sources/", label: "Back to the sources table" },
+              change: "An upstream link appears here when the registry records one (S-6 checked before it publishes).",
+              cause: "none_recorded",
+              batchIds: { state: "SP-19", missing: "SP-20", nearby: "SP-21", action: "SP-22", change: "SP-23" },
+            }}
+          />
+        ) : (
+          <ul class="sig-list" data-testid="upstream-links">
+            {row.ground_truth.homepage !== "no_upstream_url_recorded" && (
+              <li data-testid="homepage-link">
+                {row.ground_truth.homepage.startsWith("http") ? (
+                  <a href={row.ground_truth.homepage} rel="external">Source homepage{row.ground_truth.homepage_host ? ` (${row.ground_truth.homepage_host})` : ""}</a>
+                ) : (
+                  <span data-copy="SP-24">Upstream page — <code>{row.ground_truth.homepage}</code> (path withheld: the full URL is not publishable for this lane)</span>
+                )}
+              </li>
+            )}
+            {termsDisc ? (
+              <li data-testid="terms-link">
+                <a href={termsDisc.terms_url} rel="external">Terms page</a>
+                {termsDisc.terms_retrieval_date && <> — terms as captured on {termsDisc.terms_retrieval_date}</>}
+                <> · <a href={withBase("sources/#express-terms-heading")}>the captured-terms disclosure</a></>
+              </li>
+            ) : row.ground_truth.terms_url !== "no_upstream_url_recorded" ? (
+              <li data-testid="terms-link">
+                {row.ground_truth.terms_url.startsWith("http") ? (
+                  <a href={row.ground_truth.terms_url} rel="external">Terms page</a>
+                ) : (
+                  <span data-copy="SP-25">Terms page — <code>{row.ground_truth.terms_url}</code> (path withheld)</span>
+                )}
+                {!row.review.terms_reviewed && <span data-copy="SP-26"> — terms not captured by SIG</span>}
+              </li>
+            ) : null}
+          </ul>
+        )}
+      </section>
+
+      {/* ===================== Targets ===================== */}
+      <section aria-labelledby="targets-heading" data-testid="targets-section">
+        <h2 id="targets-heading" data-copy="SP-27">Targets</h2>
+        {targets === null ? (
+          <p data-copy="SP-28" data-testid="targets-absent">This release's artifacts enumerate no per-target rows for this source — the section lists target endpoints, tenants or slices once the targets artifact ships.</p>
+        ) : (
+          <table class="sig-table" aria-labelledby="targets-heading">
+            <thead>
+              <tr>
+                <th scope="col" data-copy="SP-29">Target</th>
+                <th scope="col" data-copy="SP-30">Host</th>
+                <th scope="col" data-copy="SP-31">Declared jurisdiction</th>
+                <th scope="col" data-copy="SP-32">Observed at enumeration</th>
+                <th scope="col" data-copy="SP-33">Last capture</th>
+                <th scope="col" data-copy="SP-34">State</th>
+              </tr>
+            </thead>
+            <tbody>
+              {targets.map((t, i) => (
+                <tr data-testid="target-row" id={`fig-target-${i}`}>
+                  <td>{t.label}</td>
+                  <td>{t.host}</td>
+                  <td>{t.jurisdiction ?? "not declared"}</td>
+                  <td>{t.observed_count !== null ? <Figure figure={fig(`target-count-${i}`)} order="inline">{fmtInt(t.observed_count)}</Figure> : "not recorded"}</td>
+                  <td>{t.last_capture ?? "not recorded"}</td>
+                  <td>{t.state.replace(/_/g, " ")}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>
+
+      {/* ===================== Licence & redistribution ===================== */}
+      <section aria-labelledby="licence-heading" data-testid="licence-section">
+        <h2 id="licence-heading" data-copy="SP-35">Licence and redistribution</h2>
+        <dl class="sig-fields">
+          <dt data-copy="SP-36">Upstream licence (as declared)</dt>
+          <dd><code>{row.licence.spdx}</code></dd>
+          <dt data-copy="SP-37">SIG's publication basis</dt>
+          <dd data-copy="SP-38">{laneWord[row.lane] ?? row.lane} — {row.lane_basis}{row.lane_decision_authority ? <>; recorded under {row.lane_decision_authority}</> : null}. SIG publishes facts, not a licence from the publisher.</dd>
+          <dt data-copy="SP-39">Derivative redistribution</dt>
+          <dd>{row.licence.derivative_permitted}</dd>
+          <dt data-copy="SP-40">Required attribution</dt>
+          <dd>{row.licence.attribution ?? (row.licence.sig_labelled_cc0 ? "SIG labels these facts CC0 — no upstream credit is required" : "none recorded")}</dd>
+          <dt data-copy="SP-41">Part VIII class</dt>
+          <dd>{row.part_viii_class ?? "none recorded"}</dd>
+        </dl>
+        {row.licence.attribution === null && !row.licence.sig_labelled_cc0 && (
+          <p class="sig-notice" data-notice="N-4" data-copy="SP-42" data-testid="credit-notice">
+            Attribution for this source is being corrected; see the source's own terms.
+          </p>
+        )}
+      </section>
+
+      {/* ===================== Rights review record ===================== */}
+      <section aria-labelledby="rights-heading" data-testid="rights-section">
+        <h2 id="rights-heading" data-copy="SP-43">Rights review record</h2>
+        <dl class="sig-fields" data-testid="rights-record">
+          <dt data-copy="SP-44">Decision basis</dt>
+          <dd>{row.review.basis === "no_decision_recorded" ? "no decision recorded in this release's artifacts" : row.review.basis}</dd>
+          <dt data-copy="SP-45">Reviewer</dt>
+          <dd>{row.review.reviewer_role === "not_recorded" ? "not recorded" : `${row.review.reviewer_role} (role only — SIG never names a person here)`}</dd>
+          <dt data-copy="SP-46">Decided</dt>
+          <dd>{row.review.decided_at ?? "not recorded"}</dd>
+          <dt data-copy="SP-47">Terms reviewed</dt>
+          <dd>{row.review.terms_reviewed ? "yes" : "no terms capture is recorded"}</dd>
+        </dl>
+        {coverage === "delegated_rule" && (
+          <p data-copy="SP-48" data-testid="disclosure-delegated">
+            Approved for ingestion on {row.review.decided_at ?? "the recorded date"} under a standing instruction from SIG's operator (GL-GATE-07) to "err on the side of approving" sources awaiting rights review. A maintainer applied it under delegation. No per-source legal review and no counsel opinion is recorded for this source. SIG publishes facts from it on its own basis, which is not a licence from the publisher.
+          </p>
+        )}
+        {coverage === "outside_rule" && (
+          <p data-copy="SP-49" data-testid="disclosure-outside-rule">
+            This approval went beyond the rule as recorded. A fresh decision is pending.
+          </p>
+        )}
+        {coverage === "terms_conflict" && m.extras.terms_conflict_excerpt && (
+          <p data-copy="SP-50" data-testid="disclosure-terms-conflict">
+            The publisher's captured terms say: "{m.extras.terms_conflict_excerpt}". SIG has not yet withdrawn this source's data pending a new rights review.
+          </p>
+        )}
+        {coverage === "counsel" && (
+          <p data-copy="SP-51" data-testid="disclosure-counsel">
+            Reviewer recorded as counsel. This was reported by SIG's operator; no written counsel opinion is on file.
+          </p>
+        )}
+        {coverage === "per_source_review" && (
+          <p data-copy="SP-52" data-testid="disclosure-per-source">
+            Approved on {row.review.decided_at ?? "the recorded date"} after review of the publisher's licence ({row.licence.spdx}).
+          </p>
+        )}
+        {coverage === "registry_only" && (
+          <p data-copy="SP-53" data-testid="disclosure-registry-only">
+            The registry records this approval; no rights-decision row is on the published record for this source.
+          </p>
+        )}
+        {coverage === "terms_conflict" && !m.extras.terms_conflict_excerpt && (
+          <p data-copy="SP-54" data-testid="disclosure-terms-conflict-brief">
+            The publisher's captured terms conflict with what SIG publishes; a new rights review is pending.
+          </p>
+        )}
+      </section>
+
+      {/* ===================== Collection conduct ===================== */}
+      <section aria-labelledby="conduct-heading" data-testid="conduct-section">
+        <h2 id="conduct-heading" data-copy="SP-55">Collection conduct (observed)</h2>
+        <p data-copy="SP-56">
+          These rows come from SIG's own run records — never from the
+          registry's declared crawling posture.
+        </p>
+        {conduct === null ? (
+          missing ? (
+            <p data-copy="SP-57" data-testid="conduct-no-record">
+              SIG holds data from this source, but no record of the run that
+              loaded it exists.
+            </p>
+          ) : (
+            <p data-copy="SP-58" data-testid="conduct-none">
+              No executions are recorded for this source in this release.
+            </p>
+          )
+        ) : (
+          <>
+            <p id="fig-executions-recorded" data-testid="conduct-total">
+              <Figure figure={fig("executions-recorded")} order="inline">{fmtInt(conduct.totalExecutions)}</Figure>{" "}
+              recorded executions feed the conduct summary below.
+            </p>
+            {conduct.robotsByHost.length > 0 && (
+              <table class="sig-table" aria-label="robots outcomes per host" data-testid="robots-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Host</th>
+                    <th scope="col">Outcomes (all recorded executions)</th>
+                    <th scope="col">Outcomes (latest execution)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {conduct.robotsByHost.map((r) => {
+                    const latest = conduct.latestRobots.find((x) => x.host === r.host);
+                    const hasDisregard = (r.outcomes.disregarded ?? 0) > 0;
+                    return (
+                      <tr data-testid="robots-row" id={`fig-robots-${slugify(r.host)}`}>
+                        <td>{r.host}</td>
+                        <td>
+                          <Figure figure={fig(`robots-events-${slugify(r.host)}`)} order="inline">{robotsCells(r.outcomes)}</Figure>
+                          {hasDisregard && (
+                            <p data-testid="robots-disclosure" data-copy="SP-59">
+                              <Figure figure={fig(`robots-disregarded-${slugify(r.host)}`)} order="inline">
+                                SIG fetched {fmtInt(r.outcomes.disregarded)} page(s) on {r.host} that the site's robots.txt disallows, under SIG's crawler policy {r.decisionRef ?? "GL-GATE-08"}.
+                              </Figure>
+                            </p>
+                          )}
+                        </td>
+                        <td>
+                          {latest ? (
+                            <Figure figure={fig(`robots-latest-${slugify(r.host)}`)} order="inline">{robotsCells(latest.outcomes)}</Figure>
+                          ) : (
+                            "none recorded"
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
+            {m.extras.robots_registry_declared === "honor" && (conduct.robotsByHost.some((r) => (r.outcomes.disregarded ?? 0) > 0)) && (
+              <p class="sig-notice" data-testid="robots-mismatch" data-copy="SP-69">
+                SIG's registry states that SIG honours robots.txt for this source; the run records above show otherwise. A registry correction is pending.
+              </p>
+            )}
+            {(Object.keys(conduct.refusals).length > 0 || conduct.rateLimitEvents > 0 || conduct.quotaReached > 0 || conduct.budgetReached > 0) && (
+              <ul class="sig-list" data-testid="politeness-rows">
+                {Object.entries(conduct.refusals).map(([klass, n]) => (
+                  <li id={`fig-refusals-${slugify(klass)}`} data-testid="refusal-row">
+                    refused/held back by class <code>{klass}</code>:{" "}
+                    <Figure figure={fig(`refusals-${slugify(klass)}`)} order="inline">{fmtInt(n)}</Figure>
+                  </li>
+                ))}
+                {conduct.rateLimitEvents > 0 && (
+                  <li id="fig-rate-limit-events" data-testid="rate-limit-row">
+                    rate-limit events recorded:{" "}
+                    <Figure figure={fig("rate-limit-events")} order="inline">{fmtInt(conduct.rateLimitEvents)}</Figure>
+                  </li>
+                )}
+                {conduct.quotaReached > 0 && (
+                  <li id="fig-quota-reached" data-testid="quota-row" data-copy="SP-70">
+                    a recorded quota stopped{" "}
+                    <Figure figure={fig("quota-reached")} order="inline">{fmtInt(conduct.quotaReached)}</Figure>{" "}
+                    execution(s) early
+                  </li>
+                )}
+                {conduct.budgetReached > 0 && (
+                  <li id="fig-budget-reached" data-testid="budget-row" data-copy="SP-71">
+                    a recorded byte/time budget stopped{" "}
+                    <Figure figure={fig("budget-reached")} order="inline">{fmtInt(conduct.budgetReached)}</Figure>{" "}
+                    execution(s) early
+                  </li>
+                )}
+              </ul>
+            )}
+          </>
+        )}
+        <p data-copy="SP-72">
+          Crawler identity: {m.extras.crawler_identity ?? <>not published in this release — the <a href={withBase("data-collection/")}>data-collection page</a> carries the crawler contact</>}.
+        </p>
+      </section>
+
+      {/* ===================== Cadence & freshness ===================== */}
+      <section aria-labelledby="cadence-heading" data-testid="cadence-section">
+        <h2 id="cadence-heading" data-copy="SP-73">Cadence and freshness</h2>
+        <dl class="sig-fields">
+          <dt data-copy="SP-74">Declared cadence</dt>
+          <dd>{row.cadence.rule} — {row.cadence.basis}{row.cadence.state ? ` (${row.cadence.state})` : ""}</dd>
+          <dt data-copy="SP-75">Observed cadence</dt>
+          <dd id="fig-observed-cadence">
+            {observedDays !== null ? (
+              <>
+                about{" "}
+                <Figure figure={fig("observed-cadence-days")} order="inline">{fmtInt(observedDays)}</Figure>{" "}
+                days between successful executions (median of recent runs)
+              </>
+            ) : (
+              "not evaluable (fewer than two successful executions are recorded)"
+            )}
+          </dd>
+          <dt data-copy="SP-76">Freshness verdict</dt>
+          <dd data-testid="freshness-verdict">
+            {m.freshness
+              ? <>{m.freshness.freshness_state.replace(/_/g, " ")} — evaluated {m.freshness.evaluated_at}{m.freshness.run_record_missing ? <> (run_record_missing)</> : null}</>
+              : "not evaluated in this release"}
+          </dd>
+          {m.freshness?.staleness && (m.freshness.staleness.evaluable > 0 || m.freshness.staleness.not_evaluable > 0) && (
+            <>
+              <dt data-copy="SP-77">Staleness</dt>
+              <dd id="fig-staleness-evaluable" data-testid="staleness-row">
+                <Figure figure={fig("staleness-evaluable")} order="inline">{fmtInt(m.freshness.staleness.evaluable)}</Figure>{" "}
+                evaluable
+                {m.freshness.staleness.not_evaluable > 0 && (
+                  <>
+                    {" · "}
+                    <Figure figure={fig("staleness-not-evaluable")} order="inline">{fmtInt(m.freshness.staleness.not_evaluable)}</Figure>{" "}
+                    not evaluable
+                  </>
+                )}
+              </dd>
+            </>
+          )}
+        </dl>
+        {STRIP !== null && (
+          <figure class="sig-fig-block" data-testid="runs-strip" data-copy="SP-78">
+            <figcaption>Recorded runs over time — one marker per execution (the conduct table above is this figure's text equivalent).</figcaption>
+            <Fragment set:html={STRIP} />
+          </figure>
+        )}
+        {stripAbsent && (
+          <p data-testid="runs-strip-absent" data-copy="SP-79">
+            No drawn runs strip in this build — this build carries no static figure artifact for this source (a publication state, not a finding); the conduct rows above carry the same recorded facts.
+          </p>
+        )}
+        <p data-copy="SP-80">
+          <a href={withBase(`status/sources/#src-${id}`)}>Runs since this release and the current verdict</a>{" "}
+          live on the status lane — a different clock, never a citation.
+        </p>
+      </section>
+    </>
+  )}
+</BaseLayout>

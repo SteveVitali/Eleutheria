@@ -1,0 +1,41 @@
+{
+  "cap_actions": [],
+  "desc": {
+    "as_of_world": "2026-08-20",
+    "categories": 0,
+    "events": 1,
+    "series": [],
+    "title": "Recorded runs for OKC council minutes",
+    "unit": "executions"
+  },
+  "edge_count": 0,
+  "gzip_bytes": 355,
+  "legend": [],
+  "mode": "strip",
+  "narrow_viewbox": [
+    360,
+    108.0
+  ],
+  "node_count": 1,
+  "schema": "sig.figure-chart-meta/1",
+  "size_bytes": 674,
+  "svg_narrow_bytes": 678,
+  "table_columns": [
+    "date",
+    "event",
+    "kind",
+    "href"
+  ],
+  "table_rows": [
+    {
+      "date": "2026-10-13",
+      "event": "ok \u2014 4 claims inserted",
+      "href": null,
+      "kind": "ok"
+    }
+  ],
+  "viewbox": [
+    720,
+    108.0
+  ]
+}

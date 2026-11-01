@@ -35,7 +35,8 @@
     "prebuild": "node scripts/prepare-map-vendor.mjs",
     "predev": "node scripts/prepare-map-vendor.mjs",
     "check:runtime-deps": "node scripts/check-runtime-deps.mjs",
-    "fixture:entity-figures": "esbuild scripts/emit-entity-figures.ts --bundle --platform=node --format=esm --packages=external --outfile=node_modules/.cache/emit-entity-figures.mjs && node node_modules/.cache/emit-entity-figures.mjs"
+    "fixture:entity-figures": "esbuild scripts/emit-entity-figures.ts --bundle --platform=node --format=esm --packages=external --outfile=node_modules/.cache/emit-entity-figures.mjs && node node_modules/.cache/emit-entity-figures.mjs",
+    "fixture:source-figures": "esbuild scripts/emit-source-figures.ts --bundle --platform=node --format=esm --packages=external --outfile=node_modules/.cache/emit-source-figures.mjs && node node_modules/.cache/emit-source-figures.mjs"
   },
   "dependencies": {
     "@astrojs/preact": "6.0.5",

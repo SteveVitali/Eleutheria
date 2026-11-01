@@ -137,6 +137,15 @@ const LABEL_STREAM_RE = /^labels\/[a-z0-9_]+\.jsonl$/;
 const ENTITY_TWIN_RE =
   /^web\/entity\/[a-z0-9-]+\/[a-z0-9][a-z0-9-]*--[a-z0-9]+\/index\.[a-z0-9_]+\.json$/;
 
+/**
+ * P36.46/P36.47: the per-source transparency streams —
+ * `transparency/sources/<id>/{executions,captures,targets,issues}.jsonl` —
+ * unbounded like the compartment streams; admitted by pattern (the manifest
+ * does not enumerate per-source files).
+ */
+const TRANSPARENCY_SOURCE_RE =
+  /^transparency\/sources\/[a-z0-9_-]+\/(executions|captures|targets|issues)\.jsonl$/;
+
 function repoRoot(): string {
   let dir = fileURLToPath(new URL(".", import.meta.url));
   for (;;) {
@@ -178,6 +187,7 @@ export function isManifestArtifact(path: string, listed?: readonly string[]): bo
   if (COMPARTMENT_STREAM_RE.test(path)) return true;
   if (LABEL_STREAM_RE.test(path)) return true;
   if (ENTITY_TWIN_RE.test(path)) return true;
+  if (TRANSPARENCY_SOURCE_RE.test(path)) return true;
   // P35.45 — per-dossier artifacts are emitted under web/dossiers/ but never
   // the index document itself (it carries no dossier record to point into).
   if (PER_DOSSIER_RE.test(path) && path !== "web/dossiers/index.json") return true;

@@ -1,0 +1,22 @@
+{
+  "schema": "sig.figure-kit-chart/1",
+  "release": {
+    "label": "demo-release",
+    "publication_id": "demo-release",
+    "as_of_world": "2026-08-20"
+  },
+  "kind": "strip",
+  "title": "Recorded runs for OKC council minutes",
+  "unit": "executions",
+  "categories": [],
+  "series": [],
+  "events": [
+    {
+      "date": "2026-10-13",
+      "label": "ok — 4 claims inserted",
+      "kind": "ok"
+    }
+  ],
+  "width": 720,
+  "narrow_width": 360
+}
