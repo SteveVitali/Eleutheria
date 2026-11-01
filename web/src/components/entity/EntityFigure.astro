@@ -34,13 +34,13 @@ const twinRows = (figure?.meta?.table_rows ?? []) as Record<string, unknown>[];
   {figure !== null ? (
     <>
       <a href={withBase(figure.href)} data-testid={`entity-figure-${kind}-open`}>
-        <img class="sig-entity-figure__img" src={withBase(figure.href)} alt={alt} loading="lazy" />
+        <img class="sig-figure-frame sig-entity-figure__img" src={withBase(figure.href)} alt={alt} loading="lazy" />
       </a>
-      <figcaption class="sig-entity-figure__caption" data-testid={`entity-figure-${kind}-caption`}>
+      <figcaption class="sig-fig-caption" data-testid={`entity-figure-${kind}-caption`}>
         {caption}{" "}
         <a href={withBase(figure.href)}>Open the standalone figure</a> — every drawn node links.
         {legend.length > 0 && (
-          <ul class="sig-fig-legend-list" data-testid={`entity-figure-${kind}-legend`}>
+          <ul class="sig-fig-legend" data-testid={`entity-figure-${kind}-legend`}>
             {legend.map((l) => (
               <li>
                 <strong>{l.label}:</strong> {l.plain}
@@ -49,7 +49,7 @@ const twinRows = (figure?.meta?.table_rows ?? []) as Record<string, unknown>[];
           </ul>
         )}
         {twinRows.length > 0 && (
-          <details class="sig-entity-figure__twin" data-testid={`entity-figure-${kind}-twin`}>
+          <details data-testid={`entity-figure-${kind}-twin`}>
             <summary>The figure's table twin ({twinRows.length} rows)</summary>
             <div class="sig-table-wrap">
               <table class="sig-table">
@@ -77,33 +77,3 @@ const twinRows = (figure?.meta?.table_rows ?? []) as Record<string, unknown>[];
     </p>
   )}
 </figure>
-
-<style>
-  .sig-entity-figure {
-    margin: var(--sig-space-4, 1rem) 0;
-  }
-  .sig-entity-figure__img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    border: 1px solid var(--sig-border, #d9d9d9);
-  }
-  .sig-entity-figure__caption {
-    font-size: var(--sig-font-size-sm, 0.875rem);
-    color: var(--sig-muted, #555);
-    margin-top: var(--sig-space-2, 0.5rem);
-  }
-  .sig-fig-legend-list {
-    margin: var(--sig-space-2, 0.5rem) 0 0;
-    padding-left: 1.25rem;
-    font-size: inherit;
-  }
-  .sig-entity-figure__twin {
-    margin-top: var(--sig-space-2, 0.5rem);
-  }
-  @media print {
-    .sig-entity-figure {
-      break-inside: avoid;
-    }
-  }
-</style>
