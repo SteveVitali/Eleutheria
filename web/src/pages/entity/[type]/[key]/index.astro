@@ -1,0 +1,472 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.42a (K2 GX-06a §4.2; SIG-UI-114/115/116/122, UXR-20) — the 06a entity
+// page template: header, summary, identifiers, "What SIG records" claim
+// groups, the relationship tables (one per relation × direction × access
+// kind — the three kinds never merged, SIG-UI-024), degree-only facts as
+// sentences (H-4 — never edges), the contract-B typed absences, downloads,
+// cite, technical details, and the on-page claim-provenance panels every
+// relationship row reaches in ONE action (SIG-UI-122 — `#claim-<id>`
+// anchors, no JS needed). The contract-B halves (contradictions, timeline,
+// related, downloads rows) render typed empty states under contract A —
+// never silent gaps (SIG-UI-086).
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import EmptyState from "../../../../components/EmptyState.astro";
+import EpistemicFields from "../../../../components/EpistemicFields.astro";
+import Figure from "../../../../components/Figure.astro";
+import ProvenancePanelShell from "../../../../components/ProvenancePanelShell.astro";
+import SupportGlyph from "../../../../components/SupportGlyph.astro";
+import { getEntityLabelRows, getEntityPageTwins, getStatementIndex } from "../../../../lib/data";
+import { entityIndex } from "../../../../lib/entity-page";
+import type { EntityLabelRow } from "../../../../lib/entity-page";
+import {
+  accessKindWord,
+  directionExplainer,
+  directionWord,
+  kindPlural,
+  kindWord,
+  mergeEntityTwins,
+  TWIN_MISSING_STATE,
+} from "../../../../lib/entity-pages";
+import type { Agreement, Currency, ResolutionStatus, Support } from "../../../../lib/epistemic";
+import { epistemicFieldValueLabel } from "../../../../lib/epistemic";
+import { defineFigures, ROOT_POINTER, target } from "../../../../lib/figures";
+import { panelForClaim } from "../../../../lib/provenance-panel";
+import type { ProvenancePanelData } from "../../../../lib/provenance-panel";
+import { withBase } from "../../../../lib/paths";
+
+export function getStaticPaths() {
+  const index = entityIndex(getEntityLabelRows());
+  return index.rows.map((row) => ({
+    params: { type: row.url_type, key: `${row.slug}--${row.hash}` },
+    props: { row },
+  }));
+}
+
+const { type, key } = Astro.params;
+const labelRow = Astro.props.row as EntityLabelRow;
+const twins = getEntityPageTwins(type!, key!);
+const merged = twins.length > 0 ? mergeEntityTwins(twins) : null;
+const twin = merged?.twin ?? null;
+
+// The shared label-registry kinds for the sibling-type links below.
+const index = entityIndex(getEntityLabelRows());
+
+// The ONE figures[] registry: summary-line values, relation-group counts and
+// degree-only counts — each points into this entity's emitted JSON twin.
+const twinArtifact = twin ? `web/entity/${type}/${key}/index.${twin.compartment}.json` : "";
+const figSpecs = twin
+  ? [
+      ...merged!.summary.map((s, i) => ({
+        id: `summary-${i}`,
+        class: "dossier" as const,
+        value: s.value,
+        unit: "",
+        artifact: twinArtifact,
+        pointer: `${ROOT_POINTER}summary`,
+        definition: "#summary-heading",
+        href: "#entity-claims",
+        breakdown: `#fig-summary-${i}`,
+        targets: s.claim_ids.map((cid) =>
+          target("claim", `claim ${cid}`, { href: `#claim-${cid}` }),
+        ),
+      })),
+      ...merged!.relations.map((g, i) => ({
+        id: `rel-${i}-count`,
+        class: "dossier" as const,
+        value: g.count,
+        unit: g.count === 1 ? "row" : "rows",
+        artifact: twinArtifact,
+        pointer: `${ROOT_POINTER}relations`,
+        definition: `#rel-group-${i}`,
+        href: `#rel-group-${i}`,
+        breakdown: `#fig-rel-${i}-count`,
+        targets: [target("record list", "the JSON twin", { href: `entity/${type}/${key}/index.${twin.compartment}.json` })],
+      })),
+      ...merged!.degreeOnly.map((d, i) => ({
+        id: `degree-${i}`,
+        class: "dossier" as const,
+        value: d.counts.reduce((a, b) => a + b, 0) === 1 && d.counts.length === 1 ? d.counts[0]! : d.counts.reduce((a, b) => a + b, 0),
+        unit: "",
+        artifact: twinArtifact,
+        pointer: `${ROOT_POINTER}access/degree_only`,
+        definition: "#access-heading",
+        href: "#access-heading",
+        breakdown: `#fig-degree-${i}`,
+        targets: d.claim_ids.map((cid) => target("claim", `claim ${cid}`, { href: `#claim-${cid}` })),
+      })),
+    ]
+  : [];
+const FIGURES = defineFigures(`entity-${type}-${key}`, figSpecs);
+const figs = new Map(FIGURES.map((f) => [f.id, f]));
+
+// SIG-UI-122: one provenance panel per UNIQUE claim the page names, rendered
+// once under "Claim provenance" — every row's `#claim-<id>` link resolves in
+// exactly one action, with and without JS.
+const STATEMENTS = getStatementIndex();
+const CLAIM_PANELS: Record<string, ProvenancePanelData> = twin
+  ? Object.fromEntries(merged!.claimIds.map((cid) => [cid, panelForClaim(STATEMENTS, cid)]))
+  : {};
+
+const crumbs = twin
+  ? [
+      { label: "Organizations", href: withBase("entity/") },
+      { label: kindPlural(twin.url_type), href: withBase(`entity/${twin.url_type}/`) },
+      { label: twin.label },
+    ]
+  : [{ label: "Organizations", href: withBase("entity/") }, { label: kindPlural(type!) }];
+
+const NULL_FIELD = "—";
+---
+
+<BaseLayout
+  title={twin ? twin.label : `${kindWord(labelRow.kind)} — not published as a page`}
+  path={withBase(`entity/${type}/${key}/`)}
+  crumbs={crumbs}
+  crumbsTestId="entity-breadcrumb"
+  lede={twin?.descriptor ?? undefined}
+  recordPath={twin?.cite.record_url ?? undefined}
+>
+  {twin === null && (
+    // The keyed row emitted no twin this build — a typed publication-gap
+    // state, never a broken page (SIG-ENG-042).
+    <EmptyState
+      parts={{
+        state: TWIN_MISSING_STATE.state,
+        missing: TWIN_MISSING_STATE.missing,
+        nearby: TWIN_MISSING_STATE.nearby,
+        action: TWIN_MISSING_STATE.action,
+        change: TWIN_MISSING_STATE.change,
+        cause: "not_published",
+        batchIds: {
+          state: "EN-20",
+          missing: "EN-21",
+          nearby: "EN-22",
+          action: "EN-23",
+          change: "EN-24",
+        },
+      }}
+    />
+  )}
+
+  {twin !== null && merged !== null && (
+    <>
+      {/* §4.2 row 1 — the header strip: kind, descriptor, label basis, place,
+          review status. The band's stamp + cite disclosure ride BaseLayout. */}
+      <p class="sig-entity-meta" data-testid="entity-header">
+        {kindWord(twin.kind)}
+        {twin.descriptor && <> — {twin.descriptor}</>}
+        {twin.label_basis && <> · label basis: <span data-testid="label-basis">{twin.label_basis}</span></>}
+        {twin.place_jkey && <> · place: {twin.place_jkey}</>}
+        {" · "}
+        <span data-testid="review-status">Not yet independently reviewed</span>
+      </p>
+      {twin.disambiguator && <p class="sig-table-note">Disambiguated as {twin.disambiguator}.</p>}
+      {twin.withheld_notice && (
+        <p class="sig-entity-withheld" data-testid="withheld-notice">{twin.withheld_notice}</p>
+      )}
+
+      {/* §4.2 row 2 — the mechanical summary: every number a <Figure> with a
+          pointer into the twin (K2 §4.2 row 2 / SIG-UI-084). */}
+      {merged.summary.length > 0 && (
+        <section aria-labelledby="summary-heading" data-testid="entity-summary">
+          <h2 id="summary-heading">At a glance</h2>
+          <ul role="list">
+            {merged.summary.map((s, i) => (
+              <li data-testid="summary-line">
+                <Figure figure={figs.get(`summary-${i}`)!} order="inline">{s.text}</Figure>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* §4.2 row 3 — identifiers: the only place raw keys may render
+          (SIG-UI-053/108's Identifiers block, marked data-identifiers). */}
+      {merged.identifiers.length > 0 && (
+        <section aria-labelledby="identifiers-heading" data-identifiers data-testid="entity-identifiers">
+          <h2 id="identifiers-heading">Identifiers</h2>
+          <dl class="sig-identifiers">
+            {merged.identifiers.map((i) => (
+              <>
+                <dt>{i.scheme}</dt>
+                <dd><code>{i.value}</code></dd>
+              </>
+            ))}
+          </dl>
+        </section>
+      )}
+
+      {/* §4.2 row 4 — "What SIG records": claims grouped by predicate; the
+          four epistemic fields as four separate fields (SIG-UI-004); every
+          claim links its provenance anchor (SIG-UI-122). */}
+      <section aria-labelledby="claims-heading" data-testid="entity-claims">
+        <h2 id="claims-heading">What SIG records</h2>
+        {merged.claims.length === 0 && (
+          <EmptyState
+            parts={{
+              state: "No claims published for this entity",
+              missing:
+                "This release publishes no resolved claims about this entity — a reviewed state, not a finding.",
+              nearby: "The relationships below are the recorded edges when they exist.",
+              action: { href: `entity/${twin.url_type}/`, label: `Back to ${kindPlural(twin.url_type)}` },
+              change: "Claims appear with a release that publishes them.",
+              cause: "none_recorded",
+              batchIds: {
+                state: "EN-25",
+                missing: "EN-26",
+                nearby: "EN-27",
+                action: "EN-28",
+                change: "EN-29",
+              },
+            }}
+          />
+        )}
+        {merged.claims.map((c) => (
+          <div class="sig-claim-group" data-testid="claim-group" data-predicate={c.predicate}>
+            <h3>{c.relation}</h3>
+            <EpistemicFields
+              resolution_status={(c.envelope.status?.toUpperCase() ?? NULL_FIELD) as ResolutionStatus}
+              support={c.envelope.support as Support}
+              agreement={(c.envelope.agreement?.toUpperCase() ?? NULL_FIELD) as Agreement}
+              currency={(c.envelope.currency?.toUpperCase() ?? null) as Currency | null}
+            />
+            <p>
+              Values: {c.values.join("; ")}
+              {" — "}
+              {c.date_kind === "observed" && c.observed_at ? `observed ${c.observed_at}` : "undated"}
+              {c.sources.length > 0 && (
+                <> · source: {c.sources.map((s) => s.name ?? s.id).join(", ")}</>
+              )}
+            </p>
+            <p class="sig-claim-evidence">
+              {c.claim_ids.map((cid, ci) => (
+                <>
+                  {ci > 0 && " · "}
+                  <a href={`#claim-${cid}`} data-testid="claim-link">{cid}</a>
+                </>
+              ))}
+            </p>
+          </div>
+        ))}
+      </section>
+
+      {/* §4.2 row 5 — relationships: one table per relation group; H-2's
+          fields per row; historical and undated marked, never present-tense
+          (SIG-UI-115/116/088); the three access kinds never merge (024). */}
+      <section aria-labelledby="relations-heading" data-testid="entity-relations">
+        <h2 id="relations-heading">Relationships</h2>
+        {merged.relations.length === 0 && (
+          <EmptyState
+            parts={{
+              state: "No relationships recorded",
+              missing:
+                "SIG has recorded no relationships for this entity in this release — an evidenced absence in the record, not in the world.",
+              nearby: "The claim groups above carry what SIG does record.",
+              action: { href: "entity/", label: "Back to the entity hub" },
+              change: "Relationship rows appear with a release that evidences them.",
+              cause: "none_recorded",
+              batchIds: {
+                state: "EN-30",
+                missing: "EN-31",
+                nearby: "EN-32",
+                action: "EN-33",
+                change: "EN-34",
+              },
+            }}
+          />
+        )}
+        {merged.relations.map((g, gi) => (
+          <section aria-labelledby={`rel-group-${gi}`} data-testid="relation-group" data-relation={g.relation} data-direction={g.direction}>
+            <h3 id={`rel-group-${gi}`}>
+              {g.relation} — {directionWord(g.direction)}
+              {accessKindWord(g.access_kind) && <> · {accessKindWord(g.access_kind)}</>}
+            </h3>
+            <p class="sig-table-note">
+              {directionExplainer(g.direction)};{" "}
+              <Figure figure={figs.get(`rel-${gi}-count`)!} order="inline">{g.count}</Figure>{" "}
+              recorded {g.count === 1 ? "row" : "rows"}.
+            </p>
+            <div class="sig-table-wrap">
+              <table class="sig-table" aria-label={`${g.relation} ${directionWord(g.direction)}`}>
+                <thead>
+                  <tr>
+                    <th scope="col">Counterparty</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Currency</th>
+                    <th scope="col">Support</th>
+                    <th scope="col">Source</th>
+                    <th scope="col">Evidence</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {g.items.map((it) => (
+                    <tr data-testid="relation-row" data-historical={it.historical ? "true" : "false"} data-date-kind={it.date_kind}>
+                      <td>
+                        {it.counterparty.url ? (
+                          <a href={withBase(it.counterparty.url.replace(/^\//, ""))}>
+                            {it.counterparty.label ?? it.counterparty.review_state}
+                          </a>
+                        ) : (
+                          <span>{it.counterparty.label ?? it.counterparty.review_state ?? "not yet reviewed"}</span>
+                        )}
+                        {it.counterparty.label_basis && (
+                          <span class="sig-table-note"> (basis: {it.counterparty.label_basis})</span>
+                        )}
+                      </td>
+                      <td>{it.role ?? "—"}</td>
+                      <td>
+                        {it.date_kind === "observed" && it.date ? (
+                          <time datetime={it.date}>{it.date}</time>
+                        ) : (
+                          <span class="sig-temporal-mark">undated</span>
+                        )}
+                        {it.historical && <span class="sig-temporal-mark" data-testid="historical-mark"> · historical</span>}
+                      </td>
+                      <td>{it.currency === "UNDATED" ? "undated" : it.currency ? epistemicFieldValueLabel("currency", it.currency.toUpperCase()) : NULL_FIELD}</td>
+                      <td><SupportGlyph support={it.support as Support} evidenceCount={it.claim_ids.length} /></td>
+                      <td>{it.sources.map((s) => s.name ?? s.id).join(", ")}</td>
+                      <td data-testid="relation-evidence">
+                        {it.claim_ids.map((cid, ci) => (
+                          <>
+                            {ci > 0 && " · "}
+                            <a href={`#claim-${cid}`}>{cid}</a>
+                          </>
+                        ))}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {g.more > 0 && (
+              <p class="sig-table-note" data-testid="relation-more">
+                First {g.items.length} of {g.count} rows shown; all {g.count} ship in the{" "}
+                <a href={withBase(`entity/${type}/${key}/index.${twin.compartment}.json`)}>JSON twin</a>.
+              </p>
+            )}
+          </section>
+        ))}
+      </section>
+
+      {/* §4.2 row 6 — access: contract A carries degree-only facts (H-4:
+          node attributes as sentences, never edges) and the GX-07 closure
+          slot as a typed empty. */}
+      <section aria-labelledby="access-heading" data-testid="entity-access">
+        <h2 id="access-heading">Access</h2>
+        {merged.degreeOnly.length === 0 && (
+          <p class="sig-table-note" data-testid="access-empty">
+            No degree-only or access-path facts are published for this entity in
+            this release.
+          </p>
+        )}
+        {merged.degreeOnly.map((d, i) => (
+          <p data-testid="degree-fact">
+            <Figure figure={figs.get(`degree-${i}`)!} order="inline">
+              {d.predicate === "sharing_partner_degree"
+                ? `Shared with ${d.counts.join(" + ")} — partners not named`
+                : `${d.predicate}: ${d.counts.join(", ")}`}
+            </Figure>
+            {d.historical && <span class="sig-temporal-mark" data-testid="historical-mark"> · historical</span>}
+            {d.sources.length > 0 && <> · source: {d.sources.map((s) => s.name ?? s.id).join(", ")}</>}
+          </p>
+        ))}
+      </section>
+
+      {/* §4.2 rows 8/9/11 — contract-B sections as typed empty states under
+          contract A (the record shape is stable across waves). */}
+      <section aria-labelledby="contractb-heading" data-testid="entity-contract-b">
+        <h2 id="contractb-heading">Disagreements, timeline and related pages</h2>
+        <EmptyState
+          parts={{
+            state: "Not shipped in this record wave",
+            missing:
+              "Contradiction records, the dated timeline and the related-pages block are contract-B sections — this release's entity record carries them as typed empty slots.",
+            nearby: "The relationships table and claim groups above carry this contract's facts.",
+            action: { href: `entity/${twin.url_type}/${key}/index.${twin.compartment}.json`, label: "Read the JSON twin" },
+            change: "These sections fill with the contract-B release.",
+            cause: "not_published",
+            batchIds: {
+              state: "EN-35",
+              missing: "EN-36",
+              nearby: "EN-37",
+              action: "EN-38",
+              change: "EN-39",
+            },
+          }}
+        />
+      </section>
+
+      {/* §4.2 row 12 — downloads: the JSON twin per compartment + the
+          typed-empty statements/relationships artifacts under contract A. */}
+      <section aria-labelledby="downloads-heading" data-testid="entity-downloads">
+        <h2 id="downloads-heading">Downloads</h2>
+        <ul role="list">
+          {merged.compartments.map((comp) => (
+            <li data-testid="download-twin">
+              <a href={withBase(`entity/${type}/${key}/index.${comp}.json`)}>
+                JSON twin — {comp} compartment
+              </a>{" "}
+              (<code>sig.entity-page/1</code>)
+            </li>
+          ))}
+        </ul>
+        <p class="sig-table-note" data-copy="EN-07">
+          Per-compartment statement and relationship exports land with the
+          contract-B release; the JSON twin above is this entity's complete
+          record today.
+        </p>
+      </section>
+
+      {/* §4.2 row 13 — cite: the SIG id + record route ride the page's cite
+          block (the band); this section names the citable identifiers. */}
+      <section aria-labelledby="entity-cite-heading" data-testid="entity-cite">
+        <h2 id="entity-cite-heading">Cite this entity</h2>
+        <p>
+          SIG id: <code data-testid="cite-sig-id">{twin.cite.sig_id ?? twin.sig_id ?? "not recorded"}</code>
+          {" · release "}
+          <code>{twin.publication}</code>
+          {twin.cite.record_url && (
+            <>
+              {" · record: "}
+              <a href={withBase(twin.cite.record_url.replace(/^\//, ""))}>the release record</a>
+            </>
+          )}
+        </p>
+      </section>
+
+      {/* §4.2 row 14 — technical details (the Identifiers-class block: raw
+          keys are legal here, and only here). */}
+      <section aria-labelledby="technical-heading" data-technical-details data-testid="entity-technical">
+        <h2 id="technical-heading">Technical details</h2>
+        <dl>
+          <dt>Entity id</dt>
+          <dd><code>{twin.entity_id}</code></dd>
+          <dt>Compartment{twin ? "" : ""}</dt>
+          <dd><code>{merged.compartments.join(", ")}</code></dd>
+          <dt>Record schema</dt>
+          <dd><code>{twin.schema}</code></dd>
+        </dl>
+      </section>
+
+      {/* SIG-UI-122 — the J3 provenance panels, one per named claim; every
+          row's evidence link resolves here in one action. */}
+      {merged.claimIds.length > 0 && (
+        <section data-testid="claim-provenance">
+          <h2 id="claim-provenance-heading">Claim provenance</h2>
+          <p class="mut">
+            One provenance panel per named claim — J3's binding states,
+            verbatim. A claim SIG cannot evidence shows the named absence.
+          </p>
+          {merged.claimIds.map((cid) => (
+            <ProvenancePanelShell panel={CLAIM_PANELS[cid]!} anchor />
+          ))}
+        </section>
+      )}
+    </>
+  )}
+</BaseLayout>

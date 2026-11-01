@@ -48,12 +48,13 @@ test.describe("the six-section route-aware header (SIG-UI-051, UXR-01)", () => {
       const res = await request.get(href!);
       expect(res.status(), `chrome link ${href} must resolve in this release`).toBe(200);
     }
-    // The route the release does not serve is never offered: no entity hub is
-    // emitted today, so the Organizations section is honestly absent; the
-    // internal /releases/ route is never a chrome target.
+    // P36.42a: the entity hub is emitted → the Organizations section is
+    // offered (its per-type items ride releaseRoutes()'s label-registry
+    // probe — a kind with no keyed entity drops out, never a dead link).
+    // The internal /releases/ route is never a chrome target.
     await expect(
       page.locator("nav[aria-label='Primary'] .sig-nav__section-link", { hasText: "Organizations" }),
-    ).toHaveCount(0);
+    ).toHaveCount(1);
     expect(hrefs.some((h) => h === "/releases/" || h!.startsWith("/releases/"))).toBe(false);
     // And every target is a public route the build emitted (sitemap-side check).
     for (const href of hrefs) {

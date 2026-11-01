@@ -36,7 +36,8 @@
 
 import { existsSync, readFileSync } from "node:fs";
 import { basename, join } from "node:path";
-import { dataSource, exportDir, getUnplacedReport } from "./data";
+import { dataSource, exportDir, getEntityLabelRows, getUnplacedReport } from "./data";
+import { entityIndex } from "./entity-page";
 
 /**
  * The page files under `src/pages/` — Vite resolves the glob at bundle time,
@@ -118,6 +119,15 @@ export function releaseRoutes(): Set<string> {
   // (params.sort === undefined) whenever the page exists.
   if (`${PAGES_PREFIX}data-freshness/[...sort].astro` in PAGE_MODULES) {
     routes.add("data-freshness/");
+  }
+  // `entity/[type]/` emits /entity/<type>/ exactly for the kinds the label
+  // registry keys a published entity under — the same condition the
+  // per-type getStaticPaths uses (P36.42a). The hub itself (`entity/`) is a
+  // static page, already in the module set.
+  if (`${PAGES_PREFIX}entity/[type]/index.astro` in PAGE_MODULES) {
+    for (const k of entityIndex(getEntityLabelRows()).kinds) {
+      routes.add(`entity/${k.kind}/`);
+    }
   }
 
   // --- The release pipeline's declared served routes (export mode only) ---

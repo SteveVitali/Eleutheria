@@ -248,6 +248,109 @@ const SCREENSHOT_STATEMENT: StatementRow = {
   },
 };
 
+/** The APD→Vigilant configured-sharing edge claim (P36.42a / GX-06a) —
+ *  `legacy_synthetic`: the EFF Data Driven registry import backs it; the
+ *  entity page's relationship row links its `#claim-apd-vigilant-1` panel. */
+const APD_VIGILANT_STATEMENT: StatementRow = {
+  schema: "sig.statement/1",
+  claim_id: "clm-apd-vigilant-1",
+  entity_id: "0190cafe-0000-7000-8000-0000000000a1",
+  predicate_id: "configured_sharing_partner",
+  observed_at: "2020-01-28",
+  source_id: "eff_data_driven",
+  value: "vigilant_solutions_learn",
+  binding_status: "legacy_synthetic",
+  lane: "link-only",
+  capture: null,
+  upstream: {
+    status: "host_only",
+    url: null,
+    host: "data.eff.org",
+    path_sha256: "b5d4045c3f466fa91fe2cc6abe79232a1a57cdf104f7a26e716e0a1e2789df78",
+  },
+  view_original: {
+    kind: "view_at_source",
+    label: "View at source",
+    href: "https://data.eff.org/",
+    note: null,
+  },
+  extraction: {
+    method: "registry row extraction",
+    extractor_name: "parsing",
+    extractor_version: "parser-2026.06",
+    review_status: "unreviewed",
+  },
+  epistemics: {
+    directness: "D3",
+    reliability: "W2",
+    integrity: "I3",
+    review_status: "unreviewed",
+  },
+  recorded: { run_id: "run:eff-data-driven-2020", at: "2020-01-28T00:00:00Z" },
+  supersession: {
+    revises_claim: null,
+    retraction_of: null,
+    prior_recorded_at: null,
+  },
+  contradictions: { contradiction_ids: [], competing_claim_ids: [] },
+  rights: {
+    spdx: "CC-BY-4.0",
+    attribution: "EFF Data Driven",
+    compartment: "sig_graph",
+  },
+};
+
+/** The APD agency-name claim — `document_only`: the registry row's name
+ *  field backs the label's claim group on the entity page. */
+const APD_NAME_STATEMENT: StatementRow = {
+  schema: "sig.statement/1",
+  claim_id: "clm-apd-name-1",
+  entity_id: "0190cafe-0000-7000-8000-0000000000a1",
+  predicate_id: "agency_name",
+  observed_at: "2020-01-28",
+  source_id: "eff_data_driven",
+  value: "Acworth Police Department",
+  binding_status: "document_only",
+  lane: "raw-ok",
+  capture: null,
+  upstream: {
+    status: "no_upstream_url_recorded",
+    url: null,
+    host: null,
+    path_sha256: null,
+  },
+  view_original: {
+    kind: "view_at_source",
+    label: "View at source",
+    href: null,
+    note: null,
+  },
+  extraction: {
+    method: "registry row extraction",
+    extractor_name: "parsing",
+    extractor_version: "parser-2026.06",
+    review_status: "unreviewed",
+  },
+  epistemics: {
+    directness: "D2",
+    reliability: "W2",
+    integrity: "I2",
+    review_status: "unreviewed",
+  },
+  recorded: { run_id: "run:eff-data-driven-2020", at: "2020-01-28T00:00:00Z" },
+  supersession: {
+    revises_claim: null,
+    retraction_of: null,
+    prior_recorded_at: null,
+  },
+  contradictions: { contradiction_ids: [], competing_claim_ids: [] },
+  rights: {
+    spdx: "CC-BY-4.0",
+    attribution: "EFF Data Driven",
+    compartment: "sig_graph",
+  },
+};
+
 /** The `claim_id → sig.statement/1` fixture index — mirrors the export's
  *  per-compartment `statements.jsonl` files (fixtures mode's single
  *  `sig_graph` compartment). Claims absent from the index render the
@@ -257,4 +360,6 @@ export const STATEMENT_FIXTURES: StatementRow[] = [
   ROSTER_STATEMENT,
   MOU_STATEMENT,
   SCREENSHOT_STATEMENT,
+  APD_VIGILANT_STATEMENT,
+  APD_NAME_STATEMENT,
 ];

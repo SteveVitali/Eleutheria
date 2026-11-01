@@ -1,0 +1,144 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.42a (K2 GX-06a; SIG-UI-070/UXR-20) — one type's A–Z list, page 1
+// (`/entity/<type>/`); `page/<n>/` carries the rest. Every row links the
+// entity's page through its keyed URL; typed `not_yet_reviewed` records
+// render the A-10 state, never a name.
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import EmptyState from "../../../components/EmptyState.astro";
+import Figure from "../../../components/Figure.astro";
+import { getEntityLabelRows } from "../../../lib/data";
+import { entityIndex } from "../../../lib/entity-page";
+import {
+  kindPlural,
+  kindWord,
+  paginate,
+  typeList,
+  NOT_YET_REVIEWED_STATE,
+} from "../../../lib/entity-pages";
+import { defineFigures, ROOT_POINTER, target } from "../../../lib/figures";
+import { withBase } from "../../../lib/paths";
+
+export function getStaticPaths() {
+  const index = entityIndex(getEntityLabelRows());
+  return index.kinds.map((k) => ({ params: { type: k.kind } }));
+}
+
+const { type } = Astro.params;
+const index = entityIndex(getEntityLabelRows());
+const list = typeList(index, type);
+const first = paginate(list.published, 1);
+const kindMeta = index.kinds.find((k) => k.kind === type);
+
+const figId = `${type}-count`;
+const FIGURES = defineFigures(`entity-list-${type}`, [
+  {
+    id: figId,
+    class: "dossier" as const,
+    value: kindMeta?.count ?? 0,
+    unit: kindMeta?.count === 1 ? "entity" : "entities",
+    artifact: "labels/sig_graph.jsonl",
+    pointer: ROOT_POINTER,
+    definition: "#er-disclosure",
+    href: "#entity-list",
+    breakdown: `#fig-${figId}`,
+    targets: [target("record list", "this list", { href: `entity/${type}/` })],
+  },
+]);
+const figs = new Map(FIGURES.map((f) => [f.id, f]));
+---
+
+<BaseLayout
+  title={kindPlural(type)}
+  path={withBase(`entity/${type}/`)}
+  crumbs={[
+    { label: "Organizations", href: withBase("entity/") },
+    { label: kindPlural(type) },
+  ]}
+  lede={`Published ${kindPlural(type).toLowerCase()}, A–Z — ${kindMeta?.er_disclosure ?? ""}`}
+>
+  <p class="sig-lede">
+    <a href={withBase("entity/")}>All entity types</a>
+    {" · "}
+    Published {kindPlural(type).toLowerCase()}, A–Z.
+  </p>
+
+  {first.total === 0 && (
+    <EmptyState
+      parts={{
+        state: `No ${kindPlural(type).toLowerCase()} published yet`,
+        missing:
+          "This release keys no published entity of this type — a publication state, not a finding that none exist.",
+        nearby: "Other published entity types are listed on the hub.",
+        action: { href: "entity/", label: "Back to the entity hub" },
+        change: "Rows appear here once a release keys entities of this type.",
+        cause: "not_published",
+        batchIds: {
+          state: "EN-15",
+          missing: "EN-16",
+          nearby: "EN-17",
+          action: "EN-18",
+          change: "EN-19",
+        },
+      }}
+    />
+  )}
+
+  {first.total > 0 && (
+    <>
+      <p class="sig-table-note">
+        <Figure figure={figs.get(figId)!} order="inline">{first.total}</Figure>
+        {" — "}
+        {kindMeta?.er_disclosure}
+        {first.pages > 1 && (
+          <>
+            {" · pages: "}
+            {Array.from({ length: first.pages }, (_, i) => (
+              <>
+                {i > 0 && " "}
+                {i === 0 ? (
+                  <span aria-current="page">1</span>
+                ) : (
+                  <a href={withBase(`entity/${type}/page/${i + 1}/`)}>{i + 1}</a>
+                )}
+              </>
+            ))}
+          </>
+        )}
+      </p>
+      <ul class="sig-entity-list" role="list" id="entity-list" data-testid="entity-list">
+        {first.rows.map((row) => (
+          <li data-testid="entity-row">
+            <a href={withBase(`entity/${row.url_type}/${row.slug}--${row.hash}/`)}>{row.label}</a>
+            {row.descriptor && <span class="sig-entity-list__descriptor"> — {row.descriptor}</span>}
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
+
+  {list.review.length > 0 && (
+    <section aria-labelledby="entity-review" data-testid="entity-review">
+      <h2 id="entity-review">{NOT_YET_REVIEWED_STATE.state}</h2>
+      <p data-copy="EN-06">
+        {list.review.length} recorded {kindWord(list.review[0]!.kind)}{list.review.length === 1 ? "" : "s"}{" "}
+        {NOT_YET_REVIEWED_STATE.state.toLowerCase()} — keyed no page and shown no
+        name until the registry auto-allow review matches {list.review.length === 1 ? "it" : "them"}.
+      </p>
+      <ul role="list" data-testid="entity-review-list">
+        {list.review.map((r) => (
+          <li data-testid="entity-review-row">
+            <span class="sig-typed-state">{r.descriptor ?? kindWord(r.kind)} — {NOT_YET_REVIEWED_STATE.state.toLowerCase()}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <p class="sig-table-note" id="er-disclosure">
+    <strong>Entity resolution.</strong> {kindMeta?.er_disclosure}
+  </p>
+</BaseLayout>

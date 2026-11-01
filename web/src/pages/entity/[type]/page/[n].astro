@@ -1,0 +1,74 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.42a (SIG-UI-070): a later page of one type's A–Z list
+// (`/entity/<type>/page/<n>/`, n ≥ 2 — page 1 is the type's index route).
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import { getEntityLabelRows } from "../../../../lib/data";
+import { entityIndex } from "../../../../lib/entity-page";
+import { kindPlural, paginate, typeList } from "../../../../lib/entity-pages";
+import { withBase } from "../../../../lib/paths";
+
+export function getStaticPaths() {
+  const index = entityIndex(getEntityLabelRows());
+  const paths: { params: { type: string; n: string } }[] = [];
+  for (const k of index.kinds) {
+    const list = typeList(index, k.kind);
+    const pages = Math.ceil(list.published.length / 100);
+    for (let n = 2; n <= pages; n++) {
+      paths.push({ params: { type: k.kind, n: String(n) } });
+    }
+  }
+  return paths;
+}
+
+const { type, n } = Astro.params;
+const index = entityIndex(getEntityLabelRows());
+const list = typeList(index, type);
+const page = paginate(list.published, Number(n));
+const kindMeta = index.kinds.find((k) => k.kind === type);
+---
+
+<BaseLayout
+  title={`${kindPlural(type)} — A–Z, page ${page.page}`}
+  path={withBase(`entity/${type}/page/${page.page}/`)}
+  crumbs={[
+    { label: "Organizations", href: withBase("entity/") },
+    { label: kindPlural(type), href: withBase(`entity/${type}/`) },
+    { label: `Page ${page.page}` },
+  ]}
+>
+  <p class="sig-lede">
+    <a href={withBase("entity/")}>All entity types</a>
+    {" · "}
+    <a href={withBase(`entity/${type}/`)}>{kindPlural(type)}</a>
+    {" · page "}
+    {page.page} of {page.pages}.
+  </p>
+  <ul class="sig-entity-list" role="list" data-testid="entity-list">
+    {page.rows.map((row) => (
+      <li data-testid="entity-row">
+        <a href={withBase(`entity/${row.url_type}/${row.slug}--${row.hash}/`)}>{row.label}</a>
+        {row.descriptor && <span class="sig-entity-list__descriptor"> — {row.descriptor}</span>}
+      </li>
+    ))}
+  </ul>
+  <p class="sig-table-note">
+    {Array.from({ length: page.pages }, (_, i) => (
+      <>
+        {i > 0 && " · "}
+        {i + 1 === page.page ? (
+          <span aria-current="page">{i + 1}</span>
+        ) : i === 0 ? (
+          <a href={withBase(`entity/${type}/`)}>1</a>
+        ) : (
+          <a href={withBase(`entity/${type}/page/${i + 1}/`)}>{i + 1}</a>
+        )}
+      </>
+    ))}
+    {" — "}
+    {kindMeta?.er_disclosure}
+  </p>
+</BaseLayout>
