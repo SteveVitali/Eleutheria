@@ -4,19 +4,19 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `1bb33826705e054766f5bac538889d6de6557d08` · inputs hashed: 1163 · wall-clock receipt: `receipt.json`
+> input_commit: `12c2ddf52b65ba8ff06fd28127ba6f055a3bad40` · inputs hashed: 1164 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.46` · lastCompleted `P36.45`
-- chainTip `r11/P36.44-release-cadence-automation` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-01T10:47Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.47` · lastCompleted `P36.46`
+- chainTip `r11/P36.46-execution-keyed-ingestion-history` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-01T11:47Z`
 
 ## Obligations
 
-- 210 obligations · **129 owed** (126 OPEN, 3 PARTIAL) · 81 terminal
-- 715 events (51 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 211 obligations · **130 owed** (127 OPEN, 3 PARTIAL) · 81 terminal
+- 716 events (51 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 129 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 130 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -93,6 +93,7 @@
 | P36.75 | queued D-P36.75-1 — the hosted append-only `configured_access` claim write (org-level `configured_sharing_partner` over the 43.2a-screened share lists); restore… | `implement-spec spec=docs/tickets/385_P36.75__flock-share-lists-configured-access.md live_verification=true` |
 | P36.43 | queued D-P36.43-1 — the `sig-status-publish` job create + `sig-sched-status-publish` 6h trigger + invoker binding; restore = delete trigger then job | `implement-spec spec=docs/tickets/386_P36.43__status-lane.md live_verification=true` |
 | P36.44 | queued D-P36.44-1 — the `sig-sched-release-cut` + `sig-sched-materialize` Cloud Scheduler trigger creates; restore = delete both triggers | `implement-spec spec=docs/tickets/387_P36.44__release-cadence-automation.md live_verification=true` |
+| P36.46 | queued D-P36.46-1 — the hosted append-only ingestion-history backfill (INSERT-only ingest_run_report rows via the P31.2 matcher + repo records; +0 under backfil… | `implement-spec spec=docs/tickets/389_P36.46__execution-keyed-ingestion-history.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 

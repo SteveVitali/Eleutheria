@@ -14,7 +14,7 @@ append-only.
 ## The named mutation (OM-20, GATE-G5 §4 — expires GATE-G6)
 
 `ops/gcp/ingestion-history.sh --apply` — the append-only ingestion-history
-backfill on the hosted spine:
+backfill on the `hosted` spine:
 
 1. `sig-ops backfill-run-reports --role sig_materialize --dry-run` — the
    plan report over every WORM `ops/runs/**.json` row (linked `live` /
@@ -43,7 +43,7 @@ able to `SET ROLE sig_materialize` — env only, HG-09) +
 
 - `db/deploy/ingest_run_report_execution_key.sql` (+ revert/verify +
   sqitch.plan) — `ingest_run_report` gains NULL-tolerant `mode`/`kind`
-  (run-row execution metadata; `mode` CHECK live|replay|shadow);
+  (run-row execution metadata; `mode` CHECK `live`/`replay`/`shadow`);
   `v_transparency_run` gains appended `execution_key` (the C-14 merge key:
   `completion:<id>` else `run-row:<object name>` else `repo:<path>` else
   `report:<id>` — the gs:// locator never leaves the view) + `mode`/`kind`.
