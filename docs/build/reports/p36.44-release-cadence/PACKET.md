@@ -28,7 +28,7 @@ this packet landed; the named mutations queue here.
    '0 8 * * 0' --time-zone=Etc/UTC --uri …/jobs/sig-materialize:run
    --http-method=POST --oauth-service-account-email=…` — weekly Sundays
    08:00 UTC (G1 §3.6 verbatim); the job's baked args run the materializer
-   step so the read models lag live claims by at most 7 days (SIG-OPS-008).
+   step so the read models lag `live` claims by at most 7 days (SIG-OPS-008).
 3. Commit `ops/cadence.toml`'s two rows **in the same re-run commit** — the
    release-cut row plus `sig-materialize`'s `[[manual_jobs]]` note flipping
    off "no trigger by design" — so `live-diff`'s undeclared-trigger report

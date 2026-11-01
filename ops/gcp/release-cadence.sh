@@ -18,7 +18,7 @@
 #   2. `gcloud scheduler jobs create http sig-sched-materialize` —
 #      `--schedule '0 8 * * 0'` (G1 §3.6 verbatim: weekly Sundays 08:00 UTC)
 #      invoking the existing sig-materialize job on its BAKED args (the
-#      materializer step — no override; the materialized views then lag live
+#      materializer step — no override; the materialized views then lag `live`
 #      claims by at most 7 days, SIG-OPS-008).
 #   3. cadence.toml gains both rows IN THE SAME RE-RUN COMMIT — the release-
 #      cut row + sig-materialize's note updated from "no trigger by design"
