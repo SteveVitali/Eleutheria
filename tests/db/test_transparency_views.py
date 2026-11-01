@@ -559,3 +559,59 @@ def test_recorded_raw_ok_clear_writes_and_serves_public(clean_dsn: str) -> None:
     assert meta is not None
     assert str(getattr(meta.tier, "value", meta.tier)) == "public"
     assert meta.tier_basis == "recorded"
+
+
+def test_execution_key_and_run_row_metadata(clean_dsn: str) -> None:
+    """P36.46 / K10 §9: ``execution_key`` is the C-14 merge key
+    (``completion:<id>`` where a 1:1 completion links, else the run-row
+    object name, else the repo path, else the report id) and the report's
+    recorded ``mode``/``kind`` pass through NULL-tolerant."""
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        run = _insert_run(conn, "deadbeef")
+        cid = conn.execute(
+            "INSERT INTO ingest_run_completion"
+            " (run_id, source_id, status, claims_inserted)"
+            " VALUES (%s, 'src.exec.demo', 'ok', 3) RETURNING completion_id",
+            (run,),
+        ).fetchone()[0]
+        conn.execute(
+            "INSERT INTO ingest_run_report"
+            " (run_id, source_id, link_basis, clock_basis, mode, kind)"
+            " VALUES (%s, 'src.exec.demo', 'live', 'db', 'live', 'scheduled-ingest')",
+            (run,),
+        )
+        conn.execute(
+            "INSERT INTO ingest_run_report"
+            " (source_id, link_basis, clock_basis, backfilled_from)"
+            " VALUES ('src.exec.demo', 'unmatched:no_candidate_run', 'run_row',"
+            "        'gs://sig-test/ops/runs/src.exec.demo/2026-09-20/x.json')"
+        )
+        conn.execute(
+            "INSERT INTO ingest_run_report"
+            " (source_id, link_basis, clock_basis, backfilled_from)"
+            " VALUES ('src.exec.demo', 'repo_record', 'git_only',"
+            "        'repo:docs/build/reports/live_runs/r.json')"
+        )
+        rows = conn.execute(
+            "SELECT execution_key, mode, kind FROM v_transparency_run"
+            " WHERE source_id = 'src.exec.demo' ORDER BY execution_key"
+        ).fetchall()
+        keys = {r[0] for r in rows}
+        assert keys == {
+            f"completion:{cid}",
+            "run-row:ops/runs/src.exec.demo/2026-09-20/x.json",
+            "repo:docs/build/reports/live_runs/r.json",
+        }
+        live = [r for r in rows if r[0].startswith("completion:")][0]
+        assert live[1:] == ("live", "scheduled-ingest")
+        unmatched = [r for r in rows if r[0].startswith("run-row:")][0]
+        assert unmatched[1:] == (None, None)
+
+
+def test_mode_check_refuses_off_vocabulary(clean_dsn: str) -> None:
+    """The ``mode`` column's closed vocabulary CHECK binds new writes."""
+    with psycopg.connect(clean_dsn) as conn, pytest.raises(psycopg.errors.CheckViolation):
+        conn.execute(
+            "INSERT INTO ingest_run_report (link_basis, clock_basis, mode)"
+            " VALUES ('live', 'db', 'invented')"
+        )

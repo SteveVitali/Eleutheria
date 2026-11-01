@@ -1,0 +1,11 @@
+{
+  "schema": "sig.live-leg-packet/1",
+  "ticket": "P36.46",
+  "status": "prepared_not_executed",
+  "rerun": "implement-spec spec=docs/tickets/389_P36.46__execution-keyed-ingestion-history.md live_verification=true",
+  "named_mutation": "hosted append-only ingestion-history backfill (sig-ops backfill-run-reports --role sig_materialize)",
+  "window": "AR-3 + AR-2",
+  "restore_point": "the appended set's digest list (reconcile link_basis/clock_basis counts + backfilled_from URI set)",
+  "preconditions": ["ADC", "SIG_GCP_PROJECT", "SIG_BACKFILL_DSN", "SIG_BACKFILL_AUTHOR", "SIG_OPS_GCS_BUCKET", "cloud-sql-proxy"],
+  "deferral": "D-P36.46-1"
+}

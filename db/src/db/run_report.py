@@ -49,6 +49,12 @@ LINK_BASES = (
 
 CLOCK_BASES = ("db", "run_row", "git_only")
 
+#: The closed run-mode vocabulary the ``mode`` column's CHECK mirrors
+#: (SIG-INGEST-018/019 run modes). ``kind`` is recorded verbatim — the job
+#: kinds (scheduled-ingest, p265-tenant-sweep, replay-ingest, …) are an
+#: open recorded vocabulary, never a guessed one.
+MODES = ("live", "replay", "shadow")
+
 
 def valid_link_basis(value: object) -> bool:
     return isinstance(value, str) and (value in LINK_BASES or value.startswith("unmatched:"))
@@ -62,6 +68,21 @@ def report_present(conn: Any) -> bool:
     """True when ``ingest_run_report`` exists (False pre-deploy — writers
     then record nothing and the backfill mints the rows)."""
     return conn.execute("SELECT to_regclass('public.ingest_run_report') IS NOT NULL").fetchone()[0]
+
+
+def execution_meta_present(conn: Any) -> bool:
+    """True when ``ingest_run_report`` carries the P36.46 ``mode``/``kind``
+    columns. A spine not yet migrated answers False — the writers then
+    record the row without the run-row execution metadata rather than
+    failing the write; the values are never fabricated onto an older
+    schema."""
+    return conn.execute(
+        "SELECT EXISTS ("
+        " SELECT 1 FROM information_schema.columns"
+        " WHERE table_schema = 'public'"
+        "   AND table_name = 'ingest_run_report'"
+        "   AND column_name = 'mode')"
+    ).fetchone()[0]
 
 
 def upstream_recon_present(conn: Any) -> bool:
@@ -101,6 +122,8 @@ def append_report(
     per_fetch: Any = None,
     upstream_reconciliation: Any = None,
     backfilled_from: str | None = None,
+    mode: str | None = None,
+    kind: str | None = None,
 ) -> str | None:
     """Insert one report row; return the new report_id (uuid str).
 
@@ -124,85 +147,74 @@ def append_report(
     def _jb(v: Any) -> str | None:
         return None if v is None else json.dumps(v, sort_keys=True, default=str)
 
-    # The P35.34 change may not be deployed on this spine yet — a writer
-    # then records the row without the reconciliation field rather than
-    # failing the write (the same posture ``report_present`` sets: an
-    # undeployed surface is skipped, never fabricated onto the old schema).
+    # The P35.34 / P36.46 changes may not be deployed on this spine yet — a
+    # writer then records the row without the reconciliation field / the
+    # run-row execution metadata rather than failing the write (the same
+    # posture ``report_present`` sets: an undeployed surface is skipped,
+    # never fabricated onto the old schema).
     has_recon = upstream_recon_present(conn)
+    has_meta = execution_meta_present(conn)
+    columns = [
+        "run_id",
+        "source_id",
+        "link_basis",
+        "clock_basis",
+        "started_at",
+        "fetches",
+        "records_emitted",
+        "duration_seconds",
+        "robots_outcomes",
+        "refusal_classes",
+        "rate_limit_events",
+        "disappearances",
+        "document_outcomes",
+        "quota_reached",
+        "budget_reached",
+        "error_class",
+        "per_fetch",
+    ]
+    values: list[Any] = [
+        run_id,
+        source_id,
+        link_basis,
+        clock_basis,
+        started_at,
+        fetches,
+        records_emitted,
+        duration_seconds,
+        _jb(robots_outcomes),
+        _jb(refusal_classes),
+        rate_limit_events,
+        disappearances,
+        _jb(document_outcomes),
+        quota_reached,
+        budget_reached,
+        error_class,
+        _jb(per_fetch),
+    ]
+    jsonb = {
+        "robots_outcomes",
+        "refusal_classes",
+        "document_outcomes",
+        "per_fetch",
+        "upstream_reconciliation",
+    }
     if has_recon:
-        sql = (
-            "INSERT INTO ingest_run_report"
-            " (run_id, source_id, link_basis, clock_basis, started_at,"
-            "  fetches, records_emitted, duration_seconds,"
-            "  robots_outcomes, refusal_classes, rate_limit_events,"
-            "  disappearances, document_outcomes, quota_reached, budget_reached,"
-            "  error_class, per_fetch, upstream_reconciliation, backfilled_from)"
-            " VALUES"
-            " (%s, %s, %s, %s, %s,"
-            "  %s, %s, %s,"
-            "  %s::jsonb, %s::jsonb, %s,"
-            "  %s, %s::jsonb, %s, %s,"
-            "  %s, %s::jsonb, %s::jsonb, %s)"
-            " ON CONFLICT DO NOTHING RETURNING report_id"
-        )
-        params: tuple[Any, ...] = (
-            run_id,
-            source_id,
-            link_basis,
-            clock_basis,
-            started_at,
-            fetches,
-            records_emitted,
-            duration_seconds,
-            _jb(robots_outcomes),
-            _jb(refusal_classes),
-            rate_limit_events,
-            disappearances,
-            _jb(document_outcomes),
-            quota_reached,
-            budget_reached,
-            error_class,
-            _jb(per_fetch),
-            _jb(upstream_reconciliation),
-            backfilled_from,
-        )
-    else:
-        sql = (
-            "INSERT INTO ingest_run_report"
-            " (run_id, source_id, link_basis, clock_basis, started_at,"
-            "  fetches, records_emitted, duration_seconds,"
-            "  robots_outcomes, refusal_classes, rate_limit_events,"
-            "  disappearances, document_outcomes, quota_reached, budget_reached,"
-            "  error_class, per_fetch, backfilled_from)"
-            " VALUES"
-            " (%s, %s, %s, %s, %s,"
-            "  %s, %s, %s,"
-            "  %s::jsonb, %s::jsonb, %s,"
-            "  %s, %s::jsonb, %s, %s,"
-            "  %s, %s::jsonb, %s)"
-            " ON CONFLICT DO NOTHING RETURNING report_id"
-        )
-        params = (
-            run_id,
-            source_id,
-            link_basis,
-            clock_basis,
-            started_at,
-            fetches,
-            records_emitted,
-            duration_seconds,
-            _jb(robots_outcomes),
-            _jb(refusal_classes),
-            rate_limit_events,
-            disappearances,
-            _jb(document_outcomes),
-            quota_reached,
-            budget_reached,
-            error_class,
-            _jb(per_fetch),
-            backfilled_from,
-        )
-    row = conn.execute(sql, params).fetchone()
+        columns.append("upstream_reconciliation")
+        values.append(_jb(upstream_reconciliation))
+    columns.append("backfilled_from")
+    values.append(backfilled_from)
+    if has_meta:
+        columns += ["mode", "kind"]
+        values += [mode, kind]
+    sql = (
+        "INSERT INTO ingest_run_report ("
+        + ", ".join(columns)
+        + ") VALUES ("
+        + ", ".join("%s::jsonb" if c in jsonb else "%s" for c in columns)
+        + ") ON CONFLICT DO NOTHING RETURNING report_id"
+    )
+    row = conn.execute(sql, tuple(values)).fetchone()
     return None if row is None else str(row[0])
 
 

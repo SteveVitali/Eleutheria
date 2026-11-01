@@ -296,6 +296,18 @@ def column_registry() -> dict[str, ResourceSpec]:
     )
     reg(
         _spec(
+            "transparency_executions",
+            "Per-source execution records",
+            "The ``sig.execution-record/1`` rows inside each source's "
+            "``transparency/sources/<id>/executions.jsonl`` — one row per "
+            "execution across every execution store (P36.46 / K10 §9/§16.1).",
+            transparency.EXECUTION_RECORD_SPECS,
+            kind="table",
+            schema_id=transparency.EXECUTION_RECORD_SCHEMA,
+        )
+    )
+    reg(
+        _spec(
             "transparency_captures",
             "Capture records",
             "The ``sig.transparency-captures/1`` stream — one record per evidence "

@@ -111,8 +111,10 @@ from policy.transparency import (
     valid_error_class,
 )
 
-#: Schema ids (J3 §3.2).
+#: Schema ids (J3 §3.2; ``sig.execution-record/1`` is K10 §16.1's renamed
+#: + extended run record).
 RUN_RECORD_SCHEMA = "sig.run-record/1"
+EXECUTION_RECORD_SCHEMA = "sig.execution-record/1"
 CAPTURE_RECORD_SCHEMA = "sig.capture-record/1"
 ISSUE_RECORD_SCHEMA = "sig.source-issue/1"
 FRESHNESS_RECORD_SCHEMA = "sig.source-freshness/1"
@@ -122,8 +124,11 @@ FRESHNESS_RECORD_SCHEMA = "sig.source-freshness/1"
 SOURCE_RECORD_SCHEMA = "sig.source-row/1"
 COUNTS_SCHEMA = "sig.source-counts/1"
 
-#: Release artifact paths under ``transparency/`` (J3 §3.1–3.2).
+#: Release artifact paths under ``transparency/`` (J3 §3.1–3.2). The
+#: per-source execution history (K10 §16.1) lands one ``executions.jsonl``
+#: under each source's directory.
 TRANSPARENCY_RUNS_PATH = "transparency/runs.jsonl"
+TRANSPARENCY_EXECUTIONS_GLOB = "transparency/sources/{source_id}/executions.jsonl"
 TRANSPARENCY_CAPTURES_PATH = "transparency/captures.jsonl"
 TRANSPARENCY_ISSUES_PATH = "transparency/issues.jsonl"
 TRANSPARENCY_FRESHNESS_PATH = "transparency/freshness.jsonl"
@@ -257,6 +262,16 @@ RUN_RECORD_FIELDS: tuple[str, ...] = (
     "connector_name",
     "connector_version",
     "recorded_at",
+)
+
+#: ``sig.execution-record/1`` (K10 §16.1) — the ``sig.run-record/1`` shape
+#: renamed plus the execution-keyed additions: the C-14 merge key, the
+#: run-row mode/kind, and the packaged ``code_identity`` object.
+EXECUTION_RECORD_FIELDS: tuple[str, ...] = RUN_RECORD_FIELDS + (
+    "execution_key",
+    "mode",
+    "kind",
+    "code_identity",
 )
 
 CAPTURE_RECORD_FIELDS: tuple[str, ...] = (
@@ -730,7 +745,52 @@ def _specs() -> tuple[tuple[Any, ...], ...]:
             nullable=False,
         ),
     )
-    return (run_specs, capture_specs, issue_specs, freshness_specs, source_specs)
+    # ``sig.execution-record/1`` (K10 §16.1) — the run-record columns plus
+    # the execution-keyed additions, documented beside the same writer.
+    execution_specs = (
+        (
+            _CS(
+                "schema",
+                "the row's schema id",
+                nullable=False,
+                declared_values=(EXECUTION_RECORD_SCHEMA,),
+            ),
+        )
+        + run_specs[1:]
+        + (
+            _CS(
+                "execution_key",
+                "the C-14 merge key across every execution store — "
+                "``completion:<id>``, ``run-row:<object name>``, "
+                "``repo:<path>`` or ``report:<id>``",
+                nullable=False,
+            ),
+            _CS(
+                "mode",
+                "the run-row's recorded mode (``live``/``replay``/``shadow``; "
+                "``not_recorded``-shaped absence stays NULL on the view)",
+            ),
+            _CS(
+                "kind",
+                "the run-row's recorded job kind (scheduled-ingest, "
+                "p265-tenant-sweep, replay-ingest, …)",
+            ),
+            _CS(
+                "code_identity",
+                "the packaged code-identity object — connector name/version + "
+                "code commit under the C-13 ownership rule, with its basis",
+                dtype="object",
+            ),
+        )
+    )
+    return (
+        run_specs,
+        capture_specs,
+        issue_specs,
+        freshness_specs,
+        source_specs,
+        execution_specs,
+    )
 
 
 #: The K9 C-1 lifecycle states, in partition precedence order (first
@@ -794,6 +854,7 @@ _PER_FETCH_FIELDS = (
     ISSUE_RECORD_SPECS,
     FRESHNESS_RECORD_SPECS,
     SOURCE_RECORD_SPECS,
+    EXECUTION_RECORD_SPECS,
 ) = _specs()
 
 
@@ -1624,6 +1685,44 @@ def run_record(row: Mapping[str, Any]) -> dict[str, Any]:
     return explicit_columns(record, RUN_RECORD_FIELDS)
 
 
+def _code_identity(row: Mapping[str, Any]) -> dict[str, Any]:
+    """The packaged code-identity object (K10 §9): connector name +
+    version, ``ingest_run.code_commit`` only where the execution owns its
+    run (the view already NULLs shared/unlinked runs), the ADR-111 default
+    ``"unknown"`` folding to ``not_recorded`` — the basis names which
+    absence it is, never a borrowed or fabricated identity."""
+    commit = row.get("code_commit")
+    if commit == "unknown":
+        commit = None
+    if row.get("shared_run"):
+        basis = _NOT_RECORDED_SHARED
+    elif row.get("run_id") is None:
+        basis = _NOT_RECORDED_NO_RUN
+    elif row.get("connector_name") is None and row.get("code_commit") is None:
+        basis = _NOT_RECORDED
+    else:
+        basis = "ingest_run (the execution owns its run)"
+    return {
+        "connector_name": _run_owned(row.get("connector_name"), row),
+        "connector_version": _run_owned(row.get("connector_version"), row),
+        "code_commit": _run_owned(commit, row),
+        "basis": basis,
+    }
+
+
+def execution_record(row: Mapping[str, Any]) -> dict[str, Any]:
+    """One ``v_transparency_run`` row as ``sig.execution-record/1`` — the
+    ``sig.run-record/1`` shape renamed plus the C-14 merge key, the run-row
+    mode/kind, and the packaged code identity."""
+    record = run_record(row)
+    record["schema"] = EXECUTION_RECORD_SCHEMA
+    record["execution_key"] = str(row.get("execution_key") or "") or None
+    record["mode"] = row.get("mode")
+    record["kind"] = row.get("kind")
+    record["code_identity"] = _code_identity(row)
+    return explicit_columns(record, EXECUTION_RECORD_FIELDS)
+
+
 # ---------------------------------------------------------------------------
 # sig.capture-record/1 — classification + tier, sealed stays sealed
 # ---------------------------------------------------------------------------
@@ -2452,6 +2551,15 @@ def emit_transparency_artifacts(
     run_recs = [run_record(r) for r in run_rows]
     run_recs.sort(key=lambda r: (str(r.get("source_id") or ""), _execution_instant(r) or ""))
 
+    # P36.46 (K10 §9 + §16.1): the per-source execution history — one
+    # ``transparency/sources/<id>/executions.jsonl`` per source the run
+    # view reports, each row a ``sig.execution-record/1``.
+    exec_by_source: dict[str, list[dict[str, Any]]] = {}
+    for r in run_rows:
+        sid = str(r.get("source_id") or "")
+        if sid:
+            exec_by_source.setdefault(sid, []).append(execution_record(r))
+
     cap_recs = [
         capture_record(
             r,
@@ -2516,6 +2624,9 @@ def emit_transparency_artifacts(
 
     for _r in run_recs:
         assert_documented("transparency_runs", _r.keys())
+    for _recs in exec_by_source.values():
+        for _r in _recs:
+            assert_documented("transparency_executions", _r.keys())
     for _r in cap_recs:
         assert_documented("transparency_captures", _r.keys())
     for _r in issues:
@@ -2529,6 +2640,10 @@ def emit_transparency_artifacts(
         TRANSPARENCY_ISSUES_PATH: _jsonl(issues),
         TRANSPARENCY_FRESHNESS_PATH: _jsonl(freshness),
     }
+    for _sid in sorted(exec_by_source):
+        artifacts[TRANSPARENCY_EXECUTIONS_GLOB.format(source_id=_sid)] = _jsonl(
+            exec_by_source[_sid]
+        )
 
     if registry_map is not None:
         # P35.35: the source-metadata pair. The registry of record is the
@@ -2588,6 +2703,9 @@ __all__ = [
     "CAPTURE_RECORD_SCHEMA",
     "CAPTURE_RECORD_SPECS",
     "COUNTS_SCHEMA",
+    "EXECUTION_RECORD_FIELDS",
+    "EXECUTION_RECORD_SCHEMA",
+    "EXECUTION_RECORD_SPECS",
     "FRESHNESS_RECORD_FIELDS",
     "FRESHNESS_RECORD_SCHEMA",
     "FRESHNESS_RECORD_SPECS",
@@ -2605,6 +2723,7 @@ __all__ = [
     "SOURCE_ROW_FIELDS",
     "TRANSPARENCY_CAPTURES_PATH",
     "TRANSPARENCY_COUNTS_PATH",
+    "TRANSPARENCY_EXECUTIONS_GLOB",
     "TRANSPARENCY_FRESHNESS_PATH",
     "TRANSPARENCY_ISSUES_PATH",
     "TRANSPARENCY_QUERIES",
@@ -2612,6 +2731,7 @@ __all__ = [
     "TRANSPARENCY_SOURCES_PATH",
     "capture_record",
     "emit_transparency_artifacts",
+    "execution_record",
     "freshness_records",
     "issue_records",
     "load_cadence_sources",

@@ -149,8 +149,11 @@ def test_no_select_star_and_no_never_exported_names():
 
 
 def test_run_view_columns_match_allow_list():
-    sql = DEPLOY.read_text()
-    cols = _view_columns(sql, "v_transparency_run", "FROM ingest_run_report rr")
+    cols = _view_columns(
+        _latest_view_sql("v_transparency_run"),
+        "v_transparency_run",
+        "FROM ingest_run_report rr",
+    )
     assert cols == list(TRANSPARENCY_RUN_VIEW_COLUMNS)
 
 
