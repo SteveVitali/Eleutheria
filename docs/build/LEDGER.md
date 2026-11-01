@@ -1424,3 +1424,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-01 — P36.43 correction — orient fold: RETURN PASS cells compacted (bound tokens verbatim), bytes archived `reports/memory-repair/return_pass_cells_pre-P36.43-orient.txt` sha256:ffcd52c18a0ff92d51dbc9cfc688417c2a7ebc78e9dcff1478691ccacf36a0a1 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-01 — P36.43 correction — orient re-weight (appends; fold separate) · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-01 — P36.43 correction — re-weight completes · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-01 — P36.43 post-closeout record — `5022073b` `ci: pass #408@5022073b` 5/5 head-bound run 41287377196 (web rerun green after one map-app socket flake) · devin-desktop/swe-2-high/subagent
