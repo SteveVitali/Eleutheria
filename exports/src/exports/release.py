@@ -62,6 +62,7 @@ from policy.eligibility import (
 )
 
 from . import release_identity as RI
+from . import search_index_v2 as SIV2
 from . import site_release as SR
 from .manifest import Artifact, canonical_json, sha256_hex
 from .published_record import (
@@ -676,6 +677,9 @@ def build_release(
     ontology_generated_sha256: str | None | object = ...,
     repo_root: Path | None = None,
     template_fingerprint: str | None | object = ...,
+    technology_vocab_path: Path | str | None = None,
+    search_aliases_path: Path | str | None = None,
+    jurisdiction_registry_path: Path | str | None = None,
 ) -> ReleaseBuild:
     """Build the immutable release bundle from an export directory.
 
@@ -726,8 +730,10 @@ def build_release(
     jurisdiction_slug_paths: dict[str, str] = {}
     jurisdiction_display: dict[str, dict[str, str]] = {}
     key_map_path = export_dir / "web" / "jurisdiction_key_map.json"
+    key_map_entries: list[dict[str, Any]] = []
     if key_map_path.is_file():
         for e in _read_json(key_map_path).get("entries") or []:
+            key_map_entries.append(dict(e))
             sp = str(e.get("slug_path") or "")
             if not sp:
                 continue
@@ -885,6 +891,34 @@ def build_release(
         for a in evidence_payload.get("artifacts") or []
     }
 
+    # P36.31 (R11-K13-SRCH-01; SIG-UI-073/074, SIG-SRCH-004/005/011): the
+    # ``sig.release-search-index/2`` inputs — registry source names, the one
+    # gazetteer's K4 place text (name + country + code) and the committed
+    # alias registry. The v1 ``search_index`` artifacts are emitted
+    # unchanged; v2 files are additive until SRCH-03 flips serving.
+    import tomllib as _tomllib
+
+    _sources_path = Path(
+        rights_registry_path or (_REPO_ROOT / "connectors/src/connectors/data/sources.toml")
+    )
+    sources_registry_v2: dict[str, Any] = {}
+    if _sources_path.is_file():
+        sources_registry_v2 = (
+            _tomllib.loads(_sources_path.read_text(encoding="utf-8")).get("sources") or {}
+        )
+    source_names_v2 = {
+        str(sid): str((row or {}).get("name") or sid) for sid, row in sources_registry_v2.items()
+    }
+    place_names_v2: dict[str, str] = {}
+    for e in key_map_entries:
+        jk = str(e.get("jkey") or "")
+        if not jk:
+            continue
+        nm = str(e.get("display_name") or e.get("name") or jk)
+        extra = [str(e.get("country_code") or ""), str(e.get("code") or "")]
+        place_names_v2[jk] = " · ".join([nm] + [x for x in extra if x and x != nm])
+    aliases_v2 = SIV2.load_search_aliases(search_aliases_path)
+
     comp_meta: list[dict[str, Any]] = []
     total_records = 0
     for comp in sorted(builds):
@@ -964,6 +998,9 @@ def build_release(
                         or record.jurisdiction.get("id")
                         or "unreported"
                     ),
+                    # P36.31: the v2 record index marks derived names — the
+                    # label's recorded basis is K2's rule (P35.29).
+                    "label_basis": record.label.get("basis"),
                     "location_kind": ("public-point" if row.get("geometry") else "no-public-point"),
                     "source_id": str(row.get("source_id") or ""),
                     "technology": str(row.get("technology") or ""),
@@ -1023,6 +1060,51 @@ def build_release(
         )
         cb.search_index_sha256 = sha256_hex(idx_bytes)
         cb.search_indexed_records = int(idx_descriptor["scope"]["indexed_records"])
+        # P36.31 (R11-K13-SRCH-01): the sig.release-search-index/2 record
+        # index + claim_ref for this compartment — additive beside the v1
+        # artifacts (the v2 builder replaces, never wraps, the v1 index
+        # shape; SRCH-03 flips serving).
+        fd_v2, tmp_v2 = tempfile.mkstemp(suffix=".sqlite", prefix="sig-idx2-")
+        os.close(fd_v2)
+        fd_cr, tmp_cr = tempfile.mkstemp(suffix=".sqlite", prefix="sig-cref-")
+        os.close(fd_cr)
+        try:
+            idx2_descriptor = SIV2.build_record_index_v2(
+                search_rows,
+                publication_id=pub,
+                compartment=comp,
+                license_id=comps[comp],
+                out=Path(tmp_v2),
+                claim_ref_out=Path(tmp_cr),
+                release_label=release_label,
+                as_of_world=release_as_of_world,
+                source_names=source_names_v2,
+                place_names=place_names_v2,
+                aliases_path=search_aliases_path,
+            )
+            idx2_bytes = Path(tmp_v2).read_bytes()
+            cref_bytes = Path(tmp_cr).read_bytes()
+        finally:
+            Path(tmp_v2).unlink(missing_ok=True)
+            Path(tmp_cr).unlink(missing_ok=True)
+        emit(
+            f"{comp_dir}/{SIV2.RECORD_INDEX_V2_FILE}",
+            idx2_bytes,
+            compartment=comp,
+            licence=comps[comp],
+        )
+        emit(
+            f"{comp_dir}/{SIV2.RECORD_INDEX_V2_DESCRIPTOR_FILE}",
+            canonical_json(idx2_descriptor),
+            compartment=comp,
+            licence=comps[comp],
+        )
+        emit(
+            f"{comp_dir}/{SIV2.CLAIM_REF_FILE}",
+            cref_bytes,
+            compartment=comp,
+            licence=comps[comp],
+        )
         emit(
             f"{comp_dir}/index.html",
             compartment_page(
@@ -1197,6 +1279,106 @@ def build_release(
     emit(
         descriptor_rel,
         canonical_json(descriptor),
+        compartment="metadata",
+        licence="CC-BY-4.0",
+    )
+
+    # --- the v2 search catalog (P36.31 / R11-K13-SRCH-01) ------------------ #
+    # ONE index for every entry type (SIG-UI-073); the one gazetteer every
+    # place form resolves through (SIG-UI-074). Places come from the bound
+    # JUR-01 registry when supplied, else the export's jurisdiction key map
+    # (the NE gazetteer stays HG-03 gated — the interim source is recorded
+    # in the descriptor, never claimed to be more).
+    catalog_docs: list[dict[str, Any]] = []
+    places_source = "none"
+    _jur_reg = (
+        Path(jurisdiction_registry_path)
+        if jurisdiction_registry_path is not None
+        else export_dir / "web" / "jurisdiction_registry.json"
+    )
+    if _jur_reg.is_file():
+        _reg_doc = _read_json(_jur_reg)
+        catalog_docs.extend(SIV2.place_docs_from_registry(_reg_doc.get("rows") or []))
+        places_source = "jurisdiction_registry"
+    elif key_map_entries:
+        catalog_docs.extend(SIV2.place_docs_from_key_map(key_map_entries))
+        places_source = "jurisdiction_key_map"
+    catalog_docs.extend(SIV2.source_docs_from_registry(sources_registry_v2))
+    _vocab_path = Path(
+        technology_vocab_path or (_REPO_ROOT / "ontology" / "vocab" / "technology.yaml")
+    )
+    _vocab_sha: str | None = None
+    if _vocab_path.is_file():
+        import yaml
+
+        _vocab_bytes = _vocab_path.read_bytes()
+        _vocab_sha = sha256_hex(_vocab_bytes)
+        catalog_docs.extend(SIV2.technology_docs_from_vocab(yaml.safe_load(_vocab_bytes)))
+    catalog_docs.extend(
+        SIV2.document_docs_from_evidence(
+            evidence_payload.get("artifacts") or [], source_names=source_names_v2
+        )
+    )
+    # K2 entities "as present" — absent on an export without the entity
+    # export seam; the descriptor scope records the absence honestly.
+    _entities_path = export_dir / "web" / "entities.json"
+    if _entities_path.is_file():
+        _ent_doc = _read_json(_entities_path)
+        _ent_rows = _ent_doc.get("entities") if isinstance(_ent_doc, dict) else _ent_doc
+        catalog_docs.extend(SIV2.entity_docs(_ent_rows or []))
+    catalog_docs.extend(SIV2.page_docs(dossiers))
+
+    fd_cat, tmp_cat = tempfile.mkstemp(suffix=".sqlite", prefix="sig-cat-")
+    os.close(fd_cat)
+    try:
+        cat_descriptor = SIV2.build_catalog_index(
+            catalog_docs,
+            publication_id=pub,
+            out=Path(tmp_cat),
+            aliases=aliases_v2,
+            release_label=release_label,
+            as_of_world=release_as_of_world,
+            inputs={
+                "places_source": places_source,
+                "jurisdiction_registry_sha256": (
+                    sha256_hex(_jur_reg.read_bytes()) if _jur_reg.is_file() else None
+                ),
+                "jurisdiction_key_map_sha256": (
+                    sha256_hex(key_map_path.read_bytes()) if key_map_path.is_file() else None
+                ),
+                "sources_registry_sha256": (
+                    sha256_hex(_sources_path.read_bytes()) if _sources_path.is_file() else None
+                ),
+                "technology_vocab_sha256": _vocab_sha,
+                "aliases_sha256": SIV2.aliases_sha256(search_aliases_path),
+            },
+        )
+        cat_bytes = Path(tmp_cat).read_bytes()
+    finally:
+        Path(tmp_cat).unlink(missing_ok=True)
+    emit(
+        f"releases/{pub}/search/{SIV2.CATALOG_V2_FILE}",
+        cat_bytes,
+        compartment="metadata",
+        licence="CC-BY-4.0",
+    )
+    emit(
+        f"releases/{pub}/search/{SIV2.CATALOG_V2_DESCRIPTOR_FILE}",
+        canonical_json(cat_descriptor),
+        compartment="metadata",
+        licence="CC-BY-4.0",
+    )
+    # The resolved alias table ships as data — every alias a card can use
+    # is visible with its expansion and cited source (SIG-SRCH-005).
+    emit(
+        f"releases/{pub}/search/{SIV2.ALIASES_RESOLVED_FILE}",
+        canonical_json(
+            {
+                "schema": "sig.search-aliases-resolved/1",
+                "publication_id": pub,
+                "aliases": aliases_v2,
+            }
+        ),
         compartment="metadata",
         licence="CC-BY-4.0",
     )

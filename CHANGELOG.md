@@ -24,6 +24,25 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Search index v2 builder: `sig.release-search-index/2` artifacts —
+  a compact per-compartment record index, `claim_ref`, the release
+  catalog index and `search_aliases.toml`** (P36.31 / row 372; K3
+  SRCH-01, K13 §7 W1; serves SIG-UI-073, SIG-UI-074, SIG-SRCH-004,
+  SIG-SRCH-005, SIG-SRCH-011) — `exports/src/exports/search_index_v2.py`
+  builds the deterministic, release-pinned v2 indexes: a contentless
+  weighted FTS5 record index per compartment (marked interim derived
+  names, K4 place text, registry source names, two filter indexes), a
+  `claim BLOB(16)` claim→record table, and one catalog index for every
+  entry type (places from JUR-01's registry or the key-map interim,
+  sources with facet fields, the technology vocabulary, K2 entities as
+  present, K8 documents, content pages; prefix-2/3 FTS + trigram +
+  exact-names + alias tables). `release.py` emits them additively beside
+  the unchanged v1 artifacts, all integrity-listed;
+  `verify_search_index` stream-hashes and refuses drifted artifacts
+  before any read-only open. The alias registry seeds 11 reviewed rows;
+  a case-sensitive acronym is never reachable through normalized
+  word-lookup (SIG-SRCH-005). SRCH-03 (P36.38) flips serving.
+
 - **Procurement relevance rule: the `sig.procurement-relevance/1`
   verdict artifact — one classification over every notice-family
   entity, the D-K2-5 exclusion posture and the H-13 buyer-page

@@ -1,0 +1,122 @@
+# SPDX-License-Identifier: Apache-2.0
+# The search alias registry (K3 §4.4, P36.31 / SRCH-01 — SIG-SRCH-005).
+# This table is DATA, not code (SIG-ENG-001): every alias SIG search may
+# resolve is a row here, reviewed like a registry row. Rules (K3 §4.4):
+#   * only abbreviations and official alternate names;
+#   * never a characterization ("ICE" resolves to the agency's name, never a
+#     description of what it does);
+#   * never a vendor's marketing term as a technology;
+#   * every alias shows its expansion and its cited source on the card that
+#     uses it;
+#   * case_sensitive acronyms match case-sensitively and are NEVER presented
+#     as word-matches (SIG-SRCH-005); technical terms resolve
+#     case-insensitively;
+#   * `target` names a SIG entity id the alias resolves to — empty today
+#     (K2 entity publication pending); a registry alternate, vocabulary
+#     synonym or entity alias is never hand-copied here — those feed the
+#     same lookup table automatically.
+
+version = "1"
+
+# --- agency acronyms (case-sensitive; K3 §4.2 stage 2) ---------------------
+
+[[aliases]]
+key = "ICE"
+case_sensitive = true
+expansion = "U.S. Immigration and Customs Enforcement"
+target = ""
+source_url = "https://www.ice.gov/"
+added_by = "R11-K13-SRCH-01 (P36.31)"
+reviewed_on = "2026-10-25"
+
+[[aliases]]
+key = "CBP"
+case_sensitive = true
+expansion = "U.S. Customs and Border Protection"
+target = ""
+source_url = "https://www.cbp.gov/"
+added_by = "R11-K13-SRCH-01 (P36.31)"
+reviewed_on = "2026-10-25"
+
+[[aliases]]
+key = "DHS"
+case_sensitive = true
+expansion = "U.S. Department of Homeland Security"
+target = ""
+source_url = "https://www.dhs.gov/"
+added_by = "R11-K13-SRCH-01 (P36.31)"
+reviewed_on = "2026-10-25"
+
+[[aliases]]
+key = "FBI"
+case_sensitive = true
+expansion = "Federal Bureau of Investigation"
+target = ""
+source_url = "https://www.fbi.gov/"
+added_by = "R11-K13-SRCH-01 (P36.31)"
+reviewed_on = "2026-10-25"
+
+[[aliases]]
+key = "HSI"
+case_sensitive = true
+expansion = "Homeland Security Investigations"
+target = ""
+source_url = "https://www.ice.gov/about-ice/hsi"
+added_by = "R11-K13-SRCH-01 (P36.31)"
+reviewed_on = "2026-10-25"
+
+[[aliases]]
+key = "RTCC"
+case_sensitive = true
+expansion = "Real-Time Crime Center"
+target = ""
+source_url = "https://bsair.org/real-time-crime-center/"
+added_by = "R11-K13-SRCH-01 (P36.31)"
+reviewed_on = "2026-10-25"
+
+[[aliases]]
+key = "LEARN"
+case_sensitive = true
+expansion = "Law Enforcement Archival and Reporting Network"
+target = ""
+source_url = "https://www.motorolasolutions.com/en_us/products/video-security-access-control/vigilant-vehicle-manager/learch.html"
+added_by = "R11-K13-SRCH-01 (P36.31)"
+reviewed_on = "2026-10-25"
+
+# --- technical terms (case-insensitive matching) ----------------------------
+
+[[aliases]]
+key = "ALPR"
+case_sensitive = false
+expansion = "automatic licence plate reader"
+target = "technology:alpr-fixed"
+source_url = "https://sls.eff.org/technologies/automated-license-plate-readers-alprs"
+added_by = "R11-K13-SRCH-01 (P36.31)"
+reviewed_on = "2026-10-25"
+
+[[aliases]]
+key = "LPR"
+case_sensitive = false
+expansion = "licence plate reader"
+target = "technology:alpr-fixed"
+source_url = "https://sls.eff.org/technologies/automated-license-plate-readers-alprs"
+added_by = "R11-K13-SRCH-01 (P36.31)"
+reviewed_on = "2026-10-25"
+
+[[aliases]]
+key = "ANPR"
+case_sensitive = false
+expansion = "automatic number plate recognition"
+target = "technology:alpr-fixed"
+source_url = "https://sls.eff.org/technologies/automated-license-plate-readers-alprs"
+added_by = "R11-K13-SRCH-01 (P36.31)"
+reviewed_on = "2026-10-25"
+
+[[aliases]]
+key = "CCTV"
+case_sensitive = false
+expansion = "closed-circuit television"
+target = "technology:fixed-camera-cctv"
+source_url = "https://sls.eff.org/technologies/video-surveillance-cameras"
+added_by = "R11-K13-SRCH-01 (P36.31)"
+reviewed_on = "2026-10-25"
