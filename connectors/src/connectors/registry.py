@@ -428,6 +428,17 @@ class SourceRecord:
     #: redistribution metadata, never an ingestion input: it has NO effect on
     #: ``assert_loadable`` and never flips ``ingestion_permitted``.
     redistribution: SourceRedistribution = SourceRedistribution()
+    #: P36.45 (R11-K13-UX10-1, SIG-TRANSP-035): the publish-metadata fields the
+    #: registry publish matrix governs — ``publisher`` (seeded from target
+    #: ``agency`` strings + I1, K10 NEW-7), ``publisher_type`` (the closed §8.6
+    #: vocabulary I1's typing uses), ``one_time_load`` (the SIG-INGEST-025b
+    #: static-load flag) and ``description`` (the D-J3-12 / OD-07-a batched
+    #: verbatim field — absent publishes ``description_pending_review``). All
+    #: additive: absent fields are honest absences, never guessed defaults.
+    publisher: str = ""
+    publisher_type: str = ""
+    one_time_load: bool = False
+    description: str = ""
 
     def correction_for(self, field: str) -> DateCorrection | None:
         """The declared correction for ``field``, or None."""
@@ -588,6 +599,23 @@ class SourceRecord:
                 f"{sorted(PART_VIII_CLASSES | PART_VIII_CLEAR_VALUES)} "
                 "(J4 §9, P35.35)."
             )
+        # P36.45 (UX10-1, SIG-TRANSP-035): a declared publisher_type is a
+        # member of the closed §8.6 vocabulary the publish matrix carries —
+        # the honest state for an untyped source is the field absent, never a
+        # guessed bucket. `other` is a recorded verdict, not a default.
+        if self.publisher_type:
+            from .publish_matrix import PUBLISHER_TYPES
+
+            if self.publisher_type not in PUBLISHER_TYPES:
+                raise ValueError(
+                    f"source {self.id!r} declares publisher_type "
+                    f"{self.publisher_type!r}; the closed §8.6 vocabulary is "
+                    f"{sorted(PUBLISHER_TYPES)} (P36.45, I1)."
+                )
+        # A declared description is operator-confirmed text (D-J3-12) — the
+        # batch-binding check lives in the publish-matrix lint; here the field
+        # only has to be non-empty when present (an absent field publishes the
+        # interim label, never drafted copy).
 
 
 def _rights_from_row(source_id: str, row: dict[str, Any]) -> RightsRecord:
@@ -798,6 +826,10 @@ def _record_from_row(source_id: str, row: dict[str, Any]) -> SourceRecord:
         volatility_basis=str(row.get("volatility_basis", "")),
         lineage=_lineage_from_row(source_id, row),
         redistribution=_redistribution_from_row(source_id, row),
+        publisher=str(row.get("publisher", "")),
+        publisher_type=str(row.get("publisher_type", "")),
+        one_time_load=bool(row.get("one_time_load", False)),
+        description=str(row.get("description", "")),
     )
 
 

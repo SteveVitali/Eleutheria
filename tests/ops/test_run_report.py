@@ -546,3 +546,31 @@ def test_fetch_record_to_dict_round_trips_per_fetch() -> None:
     ]
     # Back-compat: the aggregate arrays still serialise beside it.
     assert "urls" in doc and "status_codes" in doc and "byte_counts" in doc
+
+
+def test_fields_for_run_row_carries_mode_and_kind() -> None:
+    """P36.46 / K10 §9: the WORM row's recorded mode/kind land verbatim;
+    absent values stay NULL (not_recorded), never fabricated."""
+    doc = {
+        "source": "src.demo",
+        "outcome": "ok",
+        "mode": "replay",
+        "kind": "replay-ingest",
+        "claims_added": 3,
+        "fetch_record": {},
+    }
+    fields = fields_for_run_row(doc, link_basis="backfill:sole-candidate", run_id="r1")
+    assert fields["mode"] == "replay"
+    assert fields["kind"] == "replay-ingest"
+    doc2 = {"source": "src.demo", "outcome": "ok", "claims_added": 0, "fetch_record": {}}
+    fields2 = fields_for_run_row(doc2, link_basis="unmatched:no_candidate_run")
+    assert fields2["mode"] is None and fields2["kind"] is None
+
+
+def test_fields_for_repo_record_carries_mode() -> None:
+    """The pinned live-run records record mode: live — imported verbatim."""
+    fields = fields_for_repo_record(
+        {"mode": "live", "claim_count": 2, "source_id": "src.repo.demo"}
+    )
+    assert fields["mode"] == "live"
+    assert fields["kind"] is None

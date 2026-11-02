@@ -364,6 +364,9 @@ def test_emit_returns_four_canonical_artifacts_deterministically():
         TRANSPARENCY_CAPTURES_PATH,
         TRANSPARENCY_ISSUES_PATH,
         TRANSPARENCY_FRESHNESS_PATH,
+        # P36.46 (K10 §16.1): one executions.jsonl per source the run view
+        # reports — the run fixture's source is ``muckrock``.
+        "transparency/sources/muckrock/executions.jsonl",
     }
     for path in a1:
         assert a1[path] == a2[path], f"{path} not byte-stable"

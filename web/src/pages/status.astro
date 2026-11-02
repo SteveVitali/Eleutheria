@@ -63,6 +63,56 @@ const FIGURES = defineFigures(
           breakdown: "#fig-count-only",
           targets: [],
         },
+        {
+          // The 7-day outcome string rides inside ONE figure region (the
+          // `basis-rows` precedent — a clause of data-bearing prose): the
+          // pointer names the window object every rendered cell derives
+          // from; the value is the window's run total.
+          id: "runs-7d",
+          class: "headline" as const,
+          value: Object.values(lane.runs.last_7d).reduce((a, b) => a + b, 0),
+          artifact: "status/lane.json",
+          pointer: "/runs/last_7d",
+          definition: "#lane-heading",
+          href: artifactHref("status/lane.json"),
+          breakdown: "#fig-runs-7d",
+          targets: [],
+        },
+        {
+          // Same grouped-region treatment for the per-state freshness list —
+          // the whole `sources_by_freshness` object is the derivation.
+          id: "freshness-states",
+          class: "headline" as const,
+          value: Object.values(lane.sources_by_freshness).reduce((a, b) => a + b, 0),
+          artifact: "status/lane.json",
+          pointer: "/sources_by_freshness",
+          definition: "#lane-heading",
+          href: artifactHref("status/lane.json"),
+          breakdown: "#fig-freshness-states",
+          targets: [],
+        },
+        {
+          id: "robots-hosts",
+          class: "headline" as const,
+          value: lane.robots_disregard.hosts,
+          artifact: "status/lane.json",
+          pointer: "/robots_disregard/hosts",
+          definition: "#lane-heading",
+          href: artifactHref("status/lane.json"),
+          breakdown: "#fig-robots-hosts",
+          targets: [],
+        },
+        {
+          id: "robots-events",
+          class: "headline" as const,
+          value: lane.robots_disregard.events,
+          artifact: "status/lane.json",
+          pointer: "/robots_disregard/events",
+          definition: "#lane-heading",
+          href: artifactHref("status/lane.json"),
+          breakdown: "#fig-robots-events",
+          targets: [],
+        },
       ]
     : [],
 );
@@ -117,14 +167,25 @@ const stamp = getReleaseStamp();
         citation; the published data is release {releaseId} (data as of{" "}
         {asOfWorld}).
       </p>
-      <p data-copy="ST-14" id="fig-runs-24h" data-testid="lane-runs">
-        In the last 24 hours <Figure figure={fig("runs-24h")} order="inline">{runs24h}</Figure>{" "}
-        runs completed — {outcomes24h}; the last 7 days: {outcomes7d}.
+      {/* P36.46 repair (inherited P36.43 defect): every material numeral on
+          this page rides a <Figure> region — the bare-numeral check
+          (J3 §5.4/UXR-34) fails otherwise. The window clauses wrap whole
+          (`basis-rows` precedent); the "24"/"7" window labels ride inside
+          their figures' slots. */}
+      <p data-copy="ST-14" data-testid="lane-runs">
+        <Figure figure={fig("runs-24h")} order="inline">
+          In the last 24 hours {runs24h} runs completed — {outcomes24h}
+        </Figure>;{" "}
+        <Figure figure={fig("runs-7d")} order="inline">
+          the last 7 days: {outcomes7d}
+        </Figure>.
       </p>
-      <p data-copy="ST-15" id="fig-listed" data-testid="lane-freshness">
-        Sources by freshness state: {freshnessStates}.
+      <p data-copy="ST-15" data-testid="lane-freshness">
+        <Figure figure={fig("freshness-states")} order="inline">
+          Sources by freshness state: {freshnessStates}
+        </Figure>.
       </p>
-      <p data-copy="ST-16" id="fig-count-only" data-testid="lane-count-only">
+      <p data-copy="ST-16" data-testid="lane-count-only">
         <Figure figure={fig("listed")} order="inline">{listedCount}</Figure>{" "}
         scheduled sources are listed on{" "}
         <a href={withBase("/status/sources/")}>/status/sources/</a>;{" "}
@@ -134,8 +195,9 @@ const stamp = getReleaseStamp();
       <p data-copy="ST-17" data-testid="lane-drift">Scheduler drift: {drift}.</p>
       <p data-copy="ST-18" data-testid="lane-robots">
         Robots disregarded under the recorded decision ({decisionRef}):{" "}
-        {hosts} host(s), {events} fetch(es) — disclosed as host and count
-        only.
+        <Figure figure={fig("robots-hosts")} order="inline">{hosts}</Figure>{" "}
+        host(s), <Figure figure={fig("robots-events")} order="inline">{events}</Figure>{" "}
+        fetch(es) — disclosed as host and count only.
       </p>
     </>
   ) : (

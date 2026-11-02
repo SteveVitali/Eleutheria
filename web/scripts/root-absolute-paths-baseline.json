@@ -642,6 +642,30 @@
       "token": "/dossier/$",
       "count": 6,
       "reason": "P36.35: migration corrections build /dossier/<slug>/ subject_path + display literals from history rows — artifact data, not links"
+    },
+    {
+      "file": "src/pages/status.astro",
+      "token": "/runs/last_7d",
+      "count": 1,
+      "reason": "P36.46 repair: figure pointer — a JSON pointer into status/lane.json (the 7-day run window), not a link"
+    },
+    {
+      "file": "src/pages/status.astro",
+      "token": "/sources_by_freshness",
+      "count": 1,
+      "reason": "P36.46 repair: figure pointer — a JSON pointer into status/lane.json (the per-state freshness partition), not a link"
+    },
+    {
+      "file": "src/pages/status.astro",
+      "token": "/robots_disregard/hosts",
+      "count": 1,
+      "reason": "P36.46 repair: figure pointer — a JSON pointer into status/lane.json (robots-disregard host count, D-J3-2), not a link"
+    },
+    {
+      "file": "src/pages/status.astro",
+      "token": "/robots_disregard/events",
+      "count": 1,
+      "reason": "P36.46 repair: figure pointer — a JSON pointer into status/lane.json (robots-disregard fetch count, D-J3-2), not a link"
     }
   ]
 }

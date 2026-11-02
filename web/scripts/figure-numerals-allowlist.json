@@ -61,6 +61,12 @@
       "token": "0",
       "count": 2,
       "reason": "P35.40: the \"0\" inside the emitted predicate definitions \"claims_inserted > 0\" (ingested_not_published + permitted_not_ingested) — the artifact's recorded definition text rendered verbatim beside its named count, not a rendered count."
+    },
+    {
+      "file": "status/index.html",
+      "token": "6",
+      "count": 1,
+      "reason": "P36.46 repair: 'the lane updates every 6 hours' (ST-13; 'a fresh copy every 6 hours' in the ST-19 no-read state — only one renders) — the lane's fixed publication cadence named in prose per D-J3-11's decided schedule, a schedule period with no lane-artifact pointer, not a counted quantity."
     }
   ]
 }

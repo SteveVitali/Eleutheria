@@ -718,6 +718,10 @@ def fields_for_scheduled_row(
             outcome, detail, refusal_reason=refusal_reason, fetch_record=fr
         ),
         "backfilled_from": None,
+        # P36.46 / K10 §9: the execution's own recorded run metadata — a
+        # live scheduled row ran 'live' under its recorded job kind.
+        "mode": "live",
+        "kind": _record_get(row, "kind") or None,
         **fields,
     }
 
@@ -768,6 +772,10 @@ def fields_for_run_row(
             refusal_reason=refusal_reason,
             fetch_record=fr,
         ),
+        # The WORM row's own recorded mode/kind, verbatim — NULL where the
+        # row never recorded them.
+        "mode": doc.get("mode") or None,
+        "kind": doc.get("kind") or None,
         **fields,
     }
 
@@ -809,6 +817,8 @@ def fields_for_repo_record(rec: Any) -> dict[str, Any]:
         or (fr.get("duration_seconds") if isinstance(fr, Mapping) else None),
         "refusal_classes": refusal_class_map(fr),
         "error_class": error,
+        "mode": rec.get("mode") or None,
+        "kind": rec.get("kind") or None,
         **fields,
     }
 

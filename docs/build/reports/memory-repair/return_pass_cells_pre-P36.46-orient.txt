@@ -1,0 +1,16 @@
+[[row]]
+key = "P36.46"
+kind = "leg"
+obligations = ["D-P36.46-1"]
+obligations_cell = "queued D-P36.46-1 — the `hosted` report backfill (INSERT-only, +0 under `backfilled_from`; restore point = the appended set's digest list)"
+gates_cell = "pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z or batch window day 6 → day 13 12:00Z (AR-3 + AR-2); `SIG_BACKFILL_AUTHOR` per apply"
+operator_cell = "nothing until the `hosted` env — machinery + packet `reports/p36.46-ingestion-history/` landed"
+rerun_cell = "`implement-spec spec=docs/tickets/389_P36.46__execution-keyed-ingestion-history.md live_verification=true`"
+
+  [[row.legs]]
+  id = "P36.46-backfill"
+  obligations = ["D-P36.46-1"]
+  earliest = "ADC + `SIG_GCP_PROJECT` + `SIG_BACKFILL_DSN` + `SIG_BACKFILL_AUTHOR` + `SIG_OPS_GCS_BUCKET`; inside AR-3 + AR-2"
+  excluded = ["daily 03:00-06:30Z", "batch window day 6 → day 13 12:00Z"]
+  go = "pre-authorised: `SIG_BACKFILL_AUTHOR` per apply"
+  rerun = "implement-spec spec=docs/tickets/389_P36.46__execution-keyed-ingestion-history.md live_verification=true"

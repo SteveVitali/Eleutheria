@@ -910,6 +910,12 @@ TRANSPARENCY_RUN_VIEW_COLUMNS: tuple[str, ...] = (
     "connector_version",
     "code_commit",
     "recorded_at",
+    # P36.46 (K10 §9 + §16.1): the appended execution-surface columns —
+    # the C-14 merge key (completion / run-row object / repo path / report
+    # id — never a bucket locator) and the run-row execution metadata.
+    "execution_key",
+    "mode",
+    "kind",
 )
 
 #: The columns ``v_transparency_capture`` may carry. ``target_key`` /

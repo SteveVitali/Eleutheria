@@ -1,0 +1,515 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The registry field publish matrix (K10 §4, NEW-6 fix; P36.45 / R11-K13-UX10-1,
+# SIG-TRANSP-035). Every registry field carries a publish verdict —
+# `publish` (as is) · `transform` (after the named transform) · `never` — and a
+# field the table does not classify defaults to `never` (fail closed). The
+# matrix governs EVERY page, file and API route; the registry lint
+# (`sig-connectors validate` + tests/connectors/test_publish_matrix.py) fails a
+# row carrying an unclassified field, and the J3 publish scrub (policy S-1…S-14,
+# T-6) strips `never` content wherever registry material reaches an artifact.
+#
+# This table is DATA, not code (SIG-ENG-001): a new registry field ships no
+# verdict until a reviewed row here declares it — the lint fails closed in the
+# meantime, so a verdict is never forgotten.
+
+schema = "sig.registry-publish-matrix/1"
+owner = "P36.45 (R11-K13-UX10-1)"
+basis = "K10 §4 (design/K10-source-pages.md 'Registry field publish matrix'); SIG-TRANSP-035"
+
+# ---- Closed vocabularies the transform verdicts produce ----------------------
+#
+# `access_method` / `auth_model` publish ONLY as a member of their closed
+# vocabulary (K10 §4 — never the registry's free text: it names fixture paths,
+# internal connectors and environment variables, P-8). The ordered `[*_map]`
+# rules classify each row's recorded free text onto one vocabulary member —
+# first case-insensitive substring match wins, no match is a lint violation.
+# A row with no recorded `access_method` publishes the honest absence token
+# `not_recorded` (a LINK/REFERENCE-custody row was never fetched).
+
+[vocabularies]
+access_method = ["api", "bulk_file", "html", "pdf", "arcgis", "socrata", "ckan", "document_index"]
+auth_model = ["none", "api_key", "login", "session"]
+# The §8.6 publisher-type vocabulary I1's coverage typing uses
+# (research/I1-source-coverage.md §2.3). `other` is a recorded verdict for
+# unidentified/community publishers — never a fill-in default.
+publisher_type = [
+  "gov-open-data",
+  "procurement",
+  "agenda",
+  "ccops-report",
+  "statutory-report",
+  "legislation",
+  "grant",
+  "records-release",
+  "journalism",
+  "court",
+  "academic",
+  "ngo",
+  "crowdsourced",
+  "vendor-portal",
+  "other",
+]
+
+# ---- The field verdict table (K10 §4 verbatim rows + the additive fields -----
+# landed after the draft — an unclassified field fails the lint, so every row
+# must be named). `sub` covers a nested table's keys (or an array-of-tables'
+# entry keys); `transform` names the executable transform the verdict needs.
+
+[fields.source_id]
+verdict = "publish"
+rule = "post-ACT-06 renamed ids only; old ids 301"
+
+[fields.name]
+verdict = "publish"
+
+[fields.source_kind]
+verdict = "transform"
+transform = "plain_label"
+rule = "plain-language label ('government portal', 'upstream project', …)"
+
+[fields.homepage_url]
+verdict = "transform"
+transform = "s1_s6_url"
+rule = "S-1 then show; host always visible"
+
+[fields.default_tier]
+verdict = "transform"
+transform = "reliability_class"
+rule = "shown as 'SIG reliability class' with its reliability_justification, after operator review of the justification texts (D-K10-4)"
+
+[fields.custody_posture]
+verdict = "transform"
+transform = "gloss_map"
+rule = "MIRROR 'SIG keeps a copy', REFERENCE 'SIG reads and derives facts', LINK 'SIG links only', DERIVE 'SIG publishes derived facts only'"
+
+[fields.compact_status]
+verdict = "transform"
+transform = "gloss_map"
+rule = "'publisher not contacted' / 'public terms only' / 'no response'"
+
+[fields.robots_policy]
+verdict = "never"
+rule = "contradicted by conduct (F-184); observed outcomes render instead"
+
+[fields.notes]
+verdict = "never"
+rule = "internal ticket ids, paths, email-like strings (P-8); the public description is separate approved text"
+
+[fields.access_method]
+verdict = "transform"
+transform = "vocab:access_method"
+rule = "closed vocabulary only; never paths"
+
+[fields.auth_model]
+verdict = "transform"
+transform = "vocab:auth_model"
+rule = "closed vocabulary only; never variable names"
+
+[fields.contact]
+verdict = "never"
+rule = "may be a person's address (P-8)"
+
+[fields.rate_limits]
+verdict = "transform"
+transform = "scrubbed_text"
+rule = "the publisher's documented limit only, never observed failure notes"
+
+[fields.cadence]
+verdict = "transform"
+transform = "cadence_label"
+rule = "fallback only, labelled 'registry, not scheduled' (K9 §5.5)"
+
+[fields.last_verified]
+verdict = "publish"
+rule = "date + 'endpoint verified by SIG'; B1 clock caveat where applicable"
+
+[fields.verified]
+verdict = "publish"
+rule = "date + 'endpoint verified by SIG'; B1 clock caveat where applicable"
+
+[fields.ingestion_permitted]
+verdict = "transform"
+transform = "rights_record"
+rule = "part of the rights record (K10 §6), never a bare boolean"
+
+[fields.rights_reviewed_by]
+verdict = "transform"
+transform = "role_only"
+rule = "role only (already roles today)"
+
+[fields.rights_reviewed_on]
+verdict = "transform"
+transform = "dated_correction"
+rule = "shown with the B1 correction note where the date is past-dated (F-054)"
+
+[fields.review_packet]
+verdict = "transform"
+transform = "packet_gate"
+rule = "per D-J3-13: packet link only if the packet text is approved; else 'review packet held privately'"
+
+[fields.reliability_provisional]
+verdict = "never"
+rule = "internal novel-source flag (SIG-EPIS-015); the provisional label is computed, not this bit"
+
+[fields.jurisdiction]
+verdict = "publish"
+rule = "declared jurisdiction code (NEW-8: assigned per source, never per point)"
+
+[fields.jurisdiction_place]
+verdict = "publish"
+rule = "the declared jurisdiction's display name"
+
+[fields.jurisdiction_scheme]
+verdict = "transform"
+transform = "plain_label"
+rule = "the declared scheme label, never a raw key"
+
+[fields.volatility_class]
+verdict = "transform"
+transform = "plain_label"
+rule = "the declared §28.3 class label on the freshness surface (P35.20b)"
+
+[fields.volatility_basis]
+verdict = "transform"
+transform = "scrubbed_text"
+rule = "the recorded basis citation beside the class; scrubbed through S-1"
+
+[fields.date_corrections]
+verdict = "transform"
+transform = "dated_correction"
+rule = "the B1 correction note (P34.22b / ADR-146)"
+[fields.date_corrections.sub.field]
+verdict = "publish"
+[fields.date_corrections.sub.recorded]
+verdict = "publish"
+[fields.date_corrections.sub.true]
+verdict = "publish"
+[fields.date_corrections.sub.evidence]
+verdict = "transform"
+transform = "scrubbed_text"
+rule = "the recording commit, scrubbed through S-1"
+[fields.date_corrections.sub.adr]
+verdict = "publish"
+
+[fields.lineage]
+verdict = "transform"
+transform = "plain_label"
+rule = "the declared lineage class + upstream link(s) (SIG-CONF-014); undeclared renders the honest absence, never 'independent'"
+[fields.lineage.sub.kind]
+verdict = "transform"
+transform = "plain_label"
+[fields.lineage.sub.origin]
+verdict = "publish"
+[fields.lineage.sub.mirror_of]
+verdict = "publish"
+rule = "a registry source id — linked, never a bare key"
+[fields.lineage.sub.derived_from]
+verdict = "publish"
+rule = "registry source ids — linked, never bare keys"
+[fields.lineage.sub.independence_class]
+verdict = "publish"
+rule = "the resolved independence class token (P35.25)"
+[fields.lineage.sub.id_namespace]
+verdict = "publish"
+[fields.lineage.sub.collection_method]
+verdict = "transform"
+transform = "plain_label"
+[fields.lineage.sub.evidence]
+verdict = "transform"
+transform = "scrubbed_text"
+rule = "the documentary basis, scrubbed through S-1"
+
+[fields.redistribution]
+verdict = "publish"
+rule = "lane + basis + reviewed date + decision ref (J4)"
+[fields.redistribution.sub.lane]
+verdict = "publish"
+[fields.redistribution.sub.evidence]
+verdict = "transform"
+transform = "scrubbed_text"
+rule = "the recorded lane evidence, scrubbed through S-1"
+[fields.redistribution.sub.evidence_uri]
+verdict = "never"
+rule = "an internal repo path — the evidence text carries the basis, the locator stays internal"
+[fields.redistribution.sub.decision_authority]
+verdict = "publish"
+[fields.redistribution.sub.review_needed]
+verdict = "publish"
+[fields.redistribution.sub.part_viii_class]
+verdict = "publish"
+rule = "the class token publishes; the payload never does"
+[fields.redistribution.sub.packet_limited]
+verdict = "publish"
+[fields.redistribution.sub.sig_labelled_cc0]
+verdict = "publish"
+
+[fields.rights]
+verdict = "transform"
+transform = "rights_record"
+rule = "attribution text is the only attribution source (J3 T-4); terms_url through S-1"
+[fields.rights.sub.spdx]
+verdict = "publish"
+[fields.rights.sub.attribution]
+verdict = "transform"
+transform = "scrubbed_text"
+rule = "required attribution text (registry), scrubbed through S-1"
+[fields.rights.sub.redistributable]
+verdict = "publish"
+[fields.rights.sub.derivative_permitted]
+verdict = "publish"
+[fields.rights.sub.terms_url]
+verdict = "transform"
+transform = "s1_s6_url"
+rule = "through S-1/S-6 — host always, full URL per lane"
+[fields.rights.sub.retrieval_date]
+verdict = "publish"
+[fields.rights.sub.ai_training_permitted]
+verdict = "publish"
+[fields.rights.sub.upstream_license]
+verdict = "transform"
+transform = "scrubbed_text"
+[fields.rights.sub.captured_terms_verbatim]
+verdict = "transform"
+transform = "terms_excerpt"
+rule = "≤ 25-word excerpt, quoted and linked (J3 §4.3)"
+[fields.rights.sub.captured_terms_evidence]
+verdict = "transform"
+transform = "scrubbed_text"
+[fields.rights.sub.publication_basis]
+verdict = "transform"
+transform = "scrubbed_text"
+[fields.rights.sub.reservation]
+verdict = "transform"
+transform = "rights_record"
+rule = "the recorded refusal state (SIG-INGEST-046c), disclosed inside the rights record"
+[fields.rights.sub.reservation.sub.kind]
+verdict = "publish"
+[fields.rights.sub.reservation.sub.verbatim]
+verdict = "transform"
+transform = "terms_excerpt"
+rule = "≤ 25-word excerpt of the reservation, quoted and linked"
+[fields.rights.sub.reservation.sub.observed_on]
+verdict = "publish"
+[fields.rights.sub.reservation.sub.evidence]
+verdict = "transform"
+transform = "scrubbed_text"
+
+# ---- The new metadata fields (P36.45): publish as is; descriptions are the
+# D-J3-12 / OD-07-a batched verbatim flow — an unconfirmed row publishes the
+# honest interim label `description_pending_review`, never drafted copy.
+
+[fields.publisher]
+verdict = "publish"
+rule = "seeded from target `agency` strings (P-9) + I1; linked to its K2 entity page when operator_org_id is set"
+
+[fields.publisher_type]
+verdict = "publish"
+rule = "the closed §8.6 vocabulary only (vocabularies.publisher_type)"
+
+[fields.one_time_load]
+verdict = "publish"
+rule = "the one-time-load flag (K9 §3.2 schedule facet; SIG-INGEST-025b static rows)"
+
+[fields.description]
+verdict = "publish"
+rule = "operator-confirmed in batches (D-J3-12); 'description pending review' until then"
+
+# ---- Ordered vocabulary transforms ------------------------------------------
+#
+# Each rule is {contains, token}: the first case-insensitive substring hit on
+# the recorded `access_method` free text wins. `socrata`/`arcgis`/`ckan` and the
+# document-index names precede the generic transports so a platform layer and
+# a document lane never classify as bare `api`/`html`; a row whose text matches
+# no rule fails the lint — the vocabulary is extended deliberately, never by
+# accident.
+
+[[access_method_map]]
+contains = "socrata"
+token = "socrata"
+
+[[access_method_map]]
+contains = "arcgis"
+token = "arcgis"
+
+[[access_method_map]]
+contains = "ckan"
+token = "ckan"
+
+[[access_method_map]]
+contains = "document index"
+token = "document_index"
+
+[[access_method_map]]
+contains = "document_index"
+token = "document_index"
+
+[[access_method_map]]
+contains = "dossier_documents"
+token = "document_index"
+
+[[access_method_map]]
+contains = "clause_fields"
+token = "document_index"
+
+[[access_method_map]]
+contains = "document capture"
+token = "document_index"
+
+[[access_method_map]]
+contains = "document(s)"
+token = "document_index"
+
+[[access_method_map]]
+contains = "document page"
+token = "document_index"
+
+[[access_method_map]]
+contains = "request_documents"
+token = "document_index"
+
+[[access_method_map]]
+contains = "records_request"
+token = "document_index"
+
+[[access_method_map]]
+contains = "civicclerk"
+token = "document_index"
+
+[[access_method_map]]
+contains = "agenda"
+token = "document_index"
+
+[[access_method_map]]
+contains = "pdf"
+token = "pdf"
+
+[[access_method_map]]
+contains = "bulk"
+token = "bulk_file"
+
+[[access_method_map]]
+contains = "direct download"
+token = "bulk_file"
+
+[[access_method_map]]
+contains = "dataset"
+token = "bulk_file"
+
+[[access_method_map]]
+contains = "committed fixtures"
+token = "bulk_file"
+
+[[access_method_map]]
+contains = "undocumented"
+token = "api"
+
+[[access_method_map]]
+contains = "/client/"
+token = "api"
+
+[[access_method_map]]
+contains = "api"
+token = "api"
+
+[[access_method_map]]
+contains = "sparql"
+token = "api"
+
+[[access_method_map]]
+contains = "json"
+token = "api"
+
+[[access_method_map]]
+contains = "osc_diff"
+token = "api"
+
+[[access_method_map]]
+contains = "cdx"
+token = "api"
+
+[[access_method_map]]
+contains = "html"
+token = "html"
+
+[[access_method_map]]
+contains = "wiki"
+token = "html"
+
+[[access_method_map]]
+contains = "screen"
+token = "html"
+
+[[access_method_map]]
+contains = "probe"
+token = "html"
+
+[[access_method_map]]
+contains = "listing"
+token = "html"
+
+[[access_method_map]]
+contains = "portal"
+token = "html"
+
+[[access_method_map]]
+contains = "page"
+token = "html"
+
+[[access_method_map]]
+contains = "register"
+token = "html"
+
+[[access_method_map]]
+contains = "map"
+token = "html"
+
+[[access_method_map]]
+contains = "open data"
+token = "html"
+
+[[access_method_map]]
+contains = "manual acquisition"
+token = "html"
+
+[[access_method_map]]
+contains = "connector"
+token = "api"
+
+# `auth_model` free text — 'none*' first so a documented-keyless row stays
+# `none`; key/token/jwt forms → `api_key`; credential names → `login`;
+# session-bound → `session`. Environment-variable names never publish.
+
+[[auth_model_map]]
+contains = "none"
+token = "none"
+
+[[auth_model_map]]
+contains = "api key"
+token = "api_key"
+
+[[auth_model_map]]
+contains = "key"
+token = "api_key"
+
+[[auth_model_map]]
+contains = "token"
+token = "api_key"
+
+[[auth_model_map]]
+contains = "jwt"
+token = "api_key"
+
+[[auth_model_map]]
+contains = "eid"
+token = "login"
+
+[[auth_model_map]]
+contains = "login"
+token = "login"
+
+[[auth_model_map]]
+contains = "session"
+token = "session"

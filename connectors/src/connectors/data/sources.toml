@@ -45,6 +45,7 @@
 
 [sources.osm_surveillance_tagging]
 name = "OSM surveillance tagging (Tag:man_made=surveillance)"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 homepage_url = "https://wiki.openstreetmap.org/wiki/Tag:man_made%3Dsurveillance"
 default_tier = "R2"
@@ -75,6 +76,7 @@ review_needed = false
 
 [sources.osm_copyright]
 name = "OSM copyright / licence"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 homepage_url = "https://www.openstreetmap.org/copyright"
 default_tier = "R1"
@@ -105,6 +107,7 @@ review_needed = false
 
 [sources.osmf_licence_guidelines]
 name = "OSMF Licence Community Guidelines"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 homepage_url = "https://wiki.osmfoundation.org/wiki/Licence/Community_Guidelines"
 default_tier = "R1"
@@ -135,6 +138,7 @@ review_needed = false
 
 [sources.osm_taginfo]
 name = "OSM taginfo API"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 homepage_url = "https://taginfo.openstreetmap.org/api/4/"
 default_tier = "R3"
@@ -167,6 +171,7 @@ review_needed = false
 
 [sources.osm_overpass]
 name = "OSM Overpass API"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 homepage_url = "https://overpass-api.de/api/interpreter"
 default_tier = "R5"
@@ -231,6 +236,7 @@ review_needed = false
 
 [sources.osm_replication]
 name = "OSM replication diffs"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 homepage_url = "https://planet.openstreetmap.org/replication/"
 default_tier = "R5"
@@ -261,6 +267,7 @@ review_needed = false
 
 [sources.osm_element_history]
 name = "OSM element history"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 homepage_url = "https://api.openstreetmap.org/api/0.6/node/<id>/history.json"
 default_tier = "R5"
@@ -292,6 +299,7 @@ review_needed = false
 
 [sources.osm_automated_edits_coc]
 name = "OSM Automated Edits code of conduct"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 homepage_url = "https://wiki.openstreetmap.org/wiki/Automated_Edits_code_of_conduct"
 default_tier = "R1"
@@ -321,6 +329,7 @@ review_needed = false
 
 [sources.deflock]
 name = "DeFlock"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 # REQ-R1-14 / SIG-TASK-014: the canonical host is deflock.org (200, serves the
 # app). deflock.me returns 403 (Cloudflare challenge ahead of a 301 to .org) and
@@ -344,6 +353,7 @@ review_needed = true
 
 [sources.deflock_repo]
 name = "DeFlock — canonical repo (FoggedLens/deflock)"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 homepage_url = "https://github.com/FoggedLens/deflock"
 default_tier = "R2"
@@ -396,6 +406,7 @@ review_needed = false
 
 [sources.deflock_app_repo]
 name = "DeFlock — app repo (FoggedLens/deflock-app)"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 homepage_url = "https://github.com/FoggedLens/deflock-app"
 default_tier = "R2"
@@ -429,6 +440,7 @@ review_needed = false
 
 [sources.flockhopper3_deflock_data]
 name = "flockhopper3/deflock-data (NOT DeFlock)"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 homepage_url = "https://github.com/flockhopper3/deflock-data"
 default_tier = "R6"
@@ -449,6 +461,7 @@ review_needed = false
 
 [sources.surveillance_under_surveillance]
 name = "Surveillance under Surveillance"
+publisher_type = "crowdsourced"
 source_kind = "community"
 homepage_url = "https://sunders.uber.space/"
 default_tier = "R5"
@@ -469,6 +482,7 @@ review_needed = true
 
 [sources.panopticity]
 name = "PanoptiCity"
+publisher_type = "crowdsourced"
 source_kind = "community"
 homepage_url = "https://panopticity.fr/"
 default_tier = "R5"
@@ -489,6 +503,7 @@ review_needed = false
 
 [sources.drivers_against_flock]
 name = "Drivers Against Flock"
+publisher_type = "ngo"
 source_kind = "community"
 homepage_url = "https://driversagainstflock.org/"
 default_tier = "R5"
@@ -513,6 +528,7 @@ review_needed = false
 
 [sources.flock_transparency_portals]
 name = "Flock transparency portals"
+publisher_type = "vendor-portal"
 source_kind = "vendor_site"
 homepage_url = "https://transparency.flocksafety.com/"
 default_tier = "R2"
@@ -558,6 +574,7 @@ review_needed = false
 
 [sources.flock_api_terms]
 name = "Flock API & Integration Terms"
+publisher_type = "vendor-portal"
 source_kind = "vendor_site"
 homepage_url = "https://www.flocksafety.com/legal/api-integration-terms"
 default_tier = "R2"
@@ -576,6 +593,7 @@ review_needed = true
 
 [sources.eyes_on_flock]
 name = "Eyes on Flock"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://eyesonflock.com/"
 default_tier = "R3"
@@ -616,6 +634,7 @@ review_needed = false
 
 [sources.eyes_on_flock_description]
 name = "Eyes on Flock description (Reddit)"
+publisher_type = "other"
 source_kind = "news_publisher"
 homepage_url = "https://www.reddit.com/r/FlockSurveillance/comments/1ra26qw/"
 default_tier = "R5"
@@ -634,6 +653,7 @@ review_needed = false
 
 [sources.axon_community_connect]
 name = "Axon Community Connect"
+publisher_type = "vendor-portal"
 source_kind = "vendor_site"
 homepage_url = "https://axoncommunityconnect.com/communities/"
 default_tier = "R2"
@@ -696,6 +716,7 @@ review_needed = true
 
 [sources.footnote4a]
 name = "Footnote4a"
+publisher_type = "ngo"
 source_kind = "community"
 homepage_url = "https://footnote4a.org/news/transparency-portals"
 default_tier = "R4"
@@ -714,6 +735,7 @@ review_needed = false
 
 [sources.ca_sharing_visualization]
 name = "CA sharing visualization (Reddit)"
+publisher_type = "other"
 source_kind = "news_publisher"
 homepage_url = "https://www.reddit.com/r/FlockSurveillance/comments/1slvs6a/"
 default_tier = "R5"
@@ -736,6 +758,7 @@ review_needed = false
 
 [sources.have_i_been_flocked]
 name = "Have I Been Flocked"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://haveibeenflocked.com/"
 default_tier = "R3"
@@ -756,6 +779,7 @@ review_needed = true
 
 [sources.hibf_methodology]
 name = "HIBF methodology hub"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://haveibeenflocked.com/about"
 default_tier = "R3"
@@ -774,6 +798,7 @@ review_needed = true
 
 [sources.hibf_audit_log_guide]
 name = "HIBF audit-log guide"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://haveibeenflocked.com/about/audit-logs"
 default_tier = "R3"
@@ -804,6 +829,7 @@ review_needed = true
 # posture (SIG-INGEST-028).
 [sources.agency_audit_export]
 name = "Agency Flock audit export (public record)"
+publisher_type = "records-release"
 source_kind = "records_channel"
 homepage_url = "https://eleutheria.example/records/agency-audit-export"
 default_tier = "R2"
@@ -836,6 +862,7 @@ review_needed = false
 
 [sources.alpr_watch]
 name = "ALPR Watch"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://alprwatch.org/"
 default_tier = "R3"
@@ -856,6 +883,7 @@ review_needed = true
 
 [sources.alpr_watch_foia_method]
 name = "ALPR Watch Flock FOIA method"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://alprwatch.org/news/2025-07-28_flock_foia/"
 default_tier = "R3"
@@ -874,6 +902,7 @@ review_needed = true
 
 [sources.alpr_watch_code]
 name = "ALPR Watch code (GitLab)"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://gitlab.com/alprwatch-org"
 default_tier = "R2"
@@ -894,6 +923,7 @@ review_needed = true
 
 [sources.alpr_watch_dashboard]
 name = "ALPR Watch FOIA dashboard (Superset)"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://superset.alprwatch.org/superset/dashboard/columbia-river-gorge-foia/"
 default_tier = "R3"
@@ -914,6 +944,7 @@ review_needed = true
 
 [sources.flock_ajith_fyi]
 name = "flock.ajith.fyi"
+publisher_type = "crowdsourced"
 source_kind = "community"
 homepage_url = "https://flock.ajith.fyi/"
 default_tier = "R6"
@@ -933,6 +964,7 @@ review_needed = false
 
 [sources.monahan_grounding_the_flock]
 name = "Monahan, \"Grounding the Flock\" (2026)"
+publisher_type = "academic"
 source_kind = "academic"
 homepage_url = "https://journals.sagepub.com/doi/10.1177/20501579261453519"
 default_tier = "R4"
@@ -957,6 +989,7 @@ review_needed = false
 
 [sources.eff_atlas_of_surveillance]
 name = "EFF Atlas of Surveillance"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://www.atlasofsurveillance.org/"
 default_tier = "R3"
@@ -988,6 +1021,7 @@ review_needed = false
 
 [sources.atlas_methodology]
 name = "Atlas methodology"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://www.atlasofsurveillance.org/methodology"
 default_tier = "R3"
@@ -1006,6 +1040,7 @@ review_needed = true
 
 [sources.atlas_about]
 name = "Atlas about / scope boundary"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://atlasofsurveillance.org/pages/about"
 default_tier = "R3"
@@ -1026,6 +1061,7 @@ review_needed = true
 
 [sources.atlas_data_library]
 name = "Atlas Data Library"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://www.atlasofsurveillance.org/data-library"
 default_tier = "R3"
@@ -1044,6 +1080,7 @@ review_needed = false
 
 [sources.eff_copyright]
 name = "EFF copyright"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://www.eff.org/copyright"
 default_tier = "R1"
@@ -1064,6 +1101,7 @@ review_needed = true
 
 [sources.eff_street_level_surveillance]
 name = "EFF Street-Level Surveillance"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://www.eff.org/issues/street-level-surveillance"
 default_tier = "R3"
@@ -1082,6 +1120,7 @@ review_needed = true
 
 [sources.eff_data_driven]
 name = "EFF Data Driven (2018 release)"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://www.eff.org/deeplinks/2018/11/eff-and-muckrock-release-records-and-data-200-law-enforcement-agencies-automated"
 default_tier = "R3"
@@ -1119,6 +1158,7 @@ packet_limited = true
 
 [sources.alpr_accountability_atlas]
 name = "ALPR Accountability Atlas"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://alpratlas.org/"
 default_tier = "R3"
@@ -1139,6 +1179,7 @@ review_needed = true
 
 [sources.alpr_abuse_library]
 name = "ALPR Abuse Library"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://library.kansas.watch/"
 default_tier = "R3"
@@ -1170,6 +1211,7 @@ review_needed = true
 
 [sources.aclu_flock_toolkit]
 name = "ACLU Get the Flock Out toolkit"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://www.aclu.org/get-the-flock-out-toolkit"
 default_tier = "R3"
@@ -1188,6 +1230,7 @@ review_needed = true
 
 [sources.aclu_cell_site_simulators]
 name = "ACLU cell-site simulators"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://www.aclu.org/issues/privacy-technology/surveillance-technologies/stingray-tracking-devices"
 default_tier = "R3"
@@ -1206,6 +1249,7 @@ review_needed = true
 
 [sources.wired_shotspotter_leak]
 name = "WIRED ShotSpotter sensor leak"
+publisher_type = "journalism"
 source_kind = "news_publisher"
 homepage_url = "https://www.wired.com/story/shotspotter-secret-sensor-locations-leak"
 default_tier = "R4"
@@ -1224,6 +1268,7 @@ review_needed = false
 
 [sources.guardian_flock_cameras]
 name = "Guardian, Flock cameras (2026-08-20)"
+publisher_type = "journalism"
 source_kind = "news_publisher"
 homepage_url = "https://www.theguardian.com/us-news/2026/aug/20/flock-cameras-surveillance"
 default_tier = "R4"
@@ -1242,6 +1287,7 @@ review_needed = false
 
 [sources.courtlistener_recap]
 name = "CourtListener / RECAP"
+publisher_type = "court"
 source_kind = "court_system"
 homepage_url = "https://www.courtlistener.com/api/rest/v4/"
 default_tier = "R1"
@@ -1279,6 +1325,7 @@ review_needed = true
 
 [sources.gao_surveillance_reports]
 name = "U.S. Government Accountability Office — surveillance-technology oversight reports (facial recognition, ALPR, DHS grant programs)"
+publisher_type = "statutory-report"
 source_kind = "government_portal"
 homepage_url = "https://www.gao.gov/"
 default_tier = "R1"
@@ -1311,6 +1358,7 @@ review_needed = false
 
 [sources.dhs_oig_reports]
 name = "DHS Office of Inspector General — oversight reports (fusion centers, grant programs, CBP/ICE surveillance)"
+publisher_type = "statutory-report"
 source_kind = "government_portal"
 homepage_url = "https://www.oig.dhs.gov/reports"
 default_tier = "R1"
@@ -1343,6 +1391,7 @@ review_needed = false
 
 [sources.dhs_fusion_center_assessments]
 name = "DHS Fusion Center Assessment — National Network of Fusion Centers governance reports"
+publisher_type = "statutory-report"
 source_kind = "government_portal"
 homepage_url = "https://www.dhs.gov/fusion-center-locations-and-contact-information"
 default_tier = "R1"
@@ -1375,6 +1424,7 @@ review_needed = false
 
 [sources.fema_hsgp_allocations]
 name = "FEMA Homeland Security Grant Program (HSGP/UASI) allocations — federal grant funding to fusion centers and RTCCs"
+publisher_type = "grant"
 source_kind = "government_portal"
 homepage_url = "https://www.fema.gov/grants/preparedness/homeland-security"
 default_tier = "R1"
@@ -1407,6 +1457,7 @@ review_needed = false
 
 [sources.uk_surveillance_camera_commissioner]
 name = "UK Biometrics & Surveillance Camera Commissioner — Surveillance Camera Code of Practice compliance & oversight"
+publisher_type = "statutory-report"
 source_kind = "government_portal"
 homepage_url = "https://www.gov.uk/government/organisations/surveillance-camera-commissioner"
 default_tier = "R1"
@@ -1443,6 +1494,7 @@ review_needed = false
 
 [sources.muckrock]
 name = "MuckRock"
+publisher_type = "records-release"
 source_kind = "records_channel"
 homepage_url = "https://www.muckrock.com/"
 default_tier = "R3"
@@ -1484,6 +1536,7 @@ review_needed = false
 
 [sources.documentcloud]
 name = "DocumentCloud"
+publisher_type = "records-release"
 source_kind = "records_channel"
 homepage_url = "https://api.www.documentcloud.org/api/documents/search/"
 default_tier = "R3"
@@ -1558,6 +1611,7 @@ review_needed = true
 
 [sources.usaspending]
 name = "USAspending"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://api.usaspending.gov/"
 default_tier = "R1"
@@ -1591,6 +1645,7 @@ review_needed = true
 
 [sources.sam_gov]
 name = "SAM.gov"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://api.sam.gov/"
 default_tier = "R1"
@@ -1625,6 +1680,7 @@ review_needed = false
 
 [sources.govspend]
 name = "GovSpend"
+publisher_type = "procurement"
 source_kind = "commercial"
 homepage_url = "https://www.govspend.com/"
 default_tier = "R3"
@@ -1643,6 +1699,7 @@ review_needed = false
 
 [sources.sourcewell]
 name = "Sourcewell"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://www.sourcewell-mn.gov/"
 default_tier = "R1"
@@ -1677,6 +1734,7 @@ publication_basis = "public unauthenticated pages only; ADR-184 bounded-envelope
 
 [sources.omnia_partners]
 name = "OMNIA Partners"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://www.omniapartners.com/"
 default_tier = "R1"
@@ -1710,6 +1768,7 @@ publication_basis = "public unauthenticated pages only; ADR-184 bounded-envelope
 
 [sources.naspo_valuepoint]
 name = "NASPO ValuePoint"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://www.naspovaluepoint.org/"
 default_tier = "R1"
@@ -1728,6 +1787,7 @@ review_needed = false
 
 [sources.buyboard]
 name = "BuyBoard"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://www.buyboard.com/"
 default_tier = "R1"
@@ -1746,6 +1806,7 @@ review_needed = false
 
 [sources.tips_usa]
 name = "TIPS"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://www.tips-usa.com/"
 default_tier = "R1"
@@ -1764,6 +1825,7 @@ review_needed = false
 
 [sources.hgacbuy]
 name = "HGACBuy"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://www.hgacbuy.org/"
 default_tier = "R1"
@@ -1782,6 +1844,7 @@ review_needed = false
 
 [sources.equalis_group]
 name = "Equalis Group"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://equalisgroup.org/"
 default_tier = "R1"
@@ -1800,6 +1863,7 @@ review_needed = false
 
 [sources.gsa]
 name = "GSA"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://www.gsa.gov/"
 default_tier = "R1"
@@ -1818,6 +1882,7 @@ review_needed = false
 
 [sources.legistar]
 name = "Legistar InSite API"
+publisher_type = "agenda"
 source_kind = "government_portal"
 homepage_url = "https://webapi.legistar.com/v1/<client>/"
 default_tier = "R2"
@@ -1852,6 +1917,7 @@ sig_labelled_cc0 = true
 
 [sources.primegov]
 name = "PrimeGov"
+publisher_type = "agenda"
 source_kind = "government_portal"
 homepage_url = "https://<tenant>.primegov.com/api/v2/PublicPortal/"
 default_tier = "R2"
@@ -1886,6 +1952,7 @@ sig_labelled_cc0 = true
 
 [sources.civicclerk]
 name = "CivicClerk"
+publisher_type = "agenda"
 source_kind = "government_portal"
 homepage_url = "https://<tenant>.api.civicclerk.com/v1/Events"
 default_tier = "R2"
@@ -1920,6 +1987,7 @@ sig_labelled_cc0 = true
 
 [sources.civicplus]
 name = "CivicPlus"
+publisher_type = "agenda"
 source_kind = "government_portal"
 homepage_url = "https://www.civicplus.com/"
 default_tier = "R2"
@@ -1938,6 +2006,7 @@ review_needed = false
 
 [sources.novusagenda]
 name = "NovusAgenda"
+publisher_type = "agenda"
 source_kind = "government_portal"
 homepage_url = "https://www.novusagenda.com/"
 default_tier = "R2"
@@ -1956,6 +2025,7 @@ review_needed = false
 
 [sources.boarddocs]
 name = "BoardDocs"
+publisher_type = "agenda"
 source_kind = "government_portal"
 homepage_url = "https://www.boarddocs.com/"
 default_tier = "R2"
@@ -1974,6 +2044,7 @@ review_needed = false
 
 [sources.granicus]
 name = "Granicus"
+publisher_type = "agenda"
 source_kind = "government_portal"
 homepage_url = "https://www.granicus.com/"
 default_tier = "R2"
@@ -1992,6 +2063,7 @@ review_needed = false
 
 [sources.iqm2]
 name = "IQM2"
+publisher_type = "agenda"
 source_kind = "government_portal"
 homepage_url = "https://www.iqm2.com/"
 default_tier = "R2"
@@ -2010,6 +2082,7 @@ review_needed = false
 
 [sources.escribe]
 name = "eScribe"
+publisher_type = "agenda"
 source_kind = "government_portal"
 homepage_url = "https://pub-<tenant>.escribemeetings.com/"
 default_tier = "R2"
@@ -2044,6 +2117,7 @@ sig_labelled_cc0 = true
 
 [sources.nextrequest]
 name = "NextRequest"
+publisher_type = "records-release"
 source_kind = "records_channel"
 homepage_url = "https://<tenant>.nextrequest.com/client/requests"
 default_tier = "R2"
@@ -2066,6 +2140,7 @@ review_needed = true
 
 [sources.govqa]
 name = "GovQA"
+publisher_type = "records-release"
 source_kind = "records_channel"
 homepage_url = "https://www.govqa.com/"
 default_tier = "R2"
@@ -2084,6 +2159,7 @@ review_needed = false
 
 [sources.justfoia]
 name = "JustFOIA"
+publisher_type = "records-release"
 source_kind = "records_channel"
 homepage_url = "https://www.justfoia.com/"
 default_tier = "R2"
@@ -2102,6 +2178,7 @@ review_needed = false
 
 [sources.foiaxpress]
 name = "FOIAXpress"
+publisher_type = "records-release"
 source_kind = "records_channel"
 homepage_url = "https://foiaxpress.com/"
 default_tier = "R2"
@@ -2120,6 +2197,7 @@ review_needed = false
 
 [sources.openstates]
 name = "OpenStates"
+publisher_type = "legislation"
 source_kind = "government_portal"
 homepage_url = "https://v3.openstates.org/"
 default_tier = "R1"
@@ -2153,6 +2231,7 @@ review_needed = false
 
 [sources.fbi_cde_agency_registry]
 name = "FBI CDE agency registry"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://api.usa.gov/crime/fbi/cde/agency/byStateAbbr/{ST}"
 default_tier = "R1"
@@ -2187,6 +2266,7 @@ review_needed = false
 
 [sources.congress_gov]
 name = "Congress.gov API (Library of Congress)"
+publisher_type = "legislation"
 source_kind = "government_portal"
 homepage_url = "https://api.congress.gov/"
 default_tier = "R1"
@@ -2221,6 +2301,7 @@ review_needed = false
 
 [sources.leaic_crosswalk]
 name = "LEAIC crosswalk (ICPSR study 35158)"
+publisher_type = "academic"
 source_kind = "academic"
 homepage_url = "https://www.icpsr.umich.edu/web/ICPSR/studies/35158"
 default_tier = "R1"
@@ -2241,6 +2322,7 @@ review_needed = true
 
 [sources.census_gazetteer_tiger]
 name = "Census Gazetteer / TIGER"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.census.gov/geographies/reference-files/time-series/geo/gazetteer-files.html"
 default_tier = "R1"
@@ -2310,6 +2392,7 @@ review_needed = true
 
 [sources.census_geocoder]
 name = "Census Geocoder"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://geocoding.geo.census.gov/geocoder/"
 default_tier = "R1"
@@ -2330,6 +2413,7 @@ review_needed = true
 
 [sources.gleif]
 name = "GLEIF golden copy"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.gleif.org/en/lei-data/gleif-golden-copy"
 default_tier = "R1"
@@ -2359,6 +2443,7 @@ review_needed = false
 
 [sources.nces_ipeds_ntd_cms]
 name = "NCES / IPEDS / NTD / CMS"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://nces.ed.gov/ccd/"
 default_tier = "R1"
@@ -2377,6 +2462,7 @@ review_needed = true
 
 [sources.wikidata_sparql]
 name = "Wikidata SPARQL"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 homepage_url = "https://query.wikidata.org/sparql"
 default_tier = "R3"
@@ -2408,6 +2494,7 @@ review_needed = false
 
 [sources.internet_archive_wayback]
 name = "Internet Archive Wayback"
+publisher_type = "other"
 source_kind = "upstream_project"
 homepage_url = "https://archive.org/wayback/available"
 default_tier = "R2"
@@ -2430,6 +2517,7 @@ review_needed = true
 
 [sources.dhs_fusion_centers]
 name = "DHS fusion centers"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.dhs.gov/fusion-center-locations-and-contact-information"
 default_tier = "R1"
@@ -2448,6 +2536,7 @@ review_needed = true
 
 [sources.faa_drone_waivers]
 name = "FAA drone waivers"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.faa.gov/uas/advanced_operations/part_91_waivers/waivers_issued"
 default_tier = "R1"
@@ -2470,6 +2559,7 @@ review_needed = true
 
 [sources.flock_finder]
 name = "Flock Finder"
+publisher_type = "crowdsourced"
 source_kind = "community"
 homepage_url = "https://github.com/simeononsecurity/flock-finder"
 default_tier = "R6"
@@ -2499,6 +2589,7 @@ review_needed = false
 
 [sources.flock_you]
 name = "Flock-You"
+publisher_type = "crowdsourced"
 source_kind = "community"
 homepage_url = "https://github.com/colonelpanichacks/flock-you"
 default_tier = "R6"
@@ -2517,6 +2608,7 @@ review_needed = true
 
 [sources.wigle]
 name = "WiGLE"
+publisher_type = "crowdsourced"
 source_kind = "commercial"
 homepage_url = "https://wigle.net/"
 default_tier = "R6"
@@ -2539,6 +2631,7 @@ review_needed = false
 
 [sources.flockreporter]
 name = "FlockReporter"
+publisher_type = "crowdsourced"
 source_kind = "community"
 homepage_url = "https://flockreporter.org/"
 default_tier = "R5"
@@ -2561,6 +2654,7 @@ review_needed = false
 
 [sources.eyes_off_cedar_rapids]
 name = "Eyes Off Cedar Rapids"
+publisher_type = "ngo"
 source_kind = "community"
 homepage_url = "https://eyesoffcr.org/"
 default_tier = "R5"
@@ -2581,6 +2675,7 @@ review_needed = false
 
 [sources.r_flocksurveillance]
 name = "r/FlockSurveillance"
+publisher_type = "crowdsourced"
 source_kind = "community"
 homepage_url = "https://www.reddit.com/r/FlockSurveillance/"
 default_tier = "R5"
@@ -2603,6 +2698,7 @@ review_needed = false
 
 [sources.sm_alpr]
 name = "none-below/sm-alpr"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 homepage_url = "https://github.com/none-below/sm-alpr"
 default_tier = "R3"
@@ -2630,6 +2726,7 @@ review_needed = false
 
 [sources.eyes_off_eugene]
 name = "eyes-off/eugene-oregon"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 homepage_url = "https://github.com/eyes-off/eugene-oregon"
 default_tier = "R3"
@@ -2655,6 +2752,7 @@ review_needed = false
 
 [sources.panopti_ca]
 name = "resistanceisliberty/panopti.ca"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 homepage_url = "https://panopti.ca/"
 default_tier = "R5"
@@ -2680,6 +2778,7 @@ review_needed = false
 
 [sources.private_eyes]
 name = "mcclatchy-southeast/private_eyes"
+publisher_type = "journalism"
 source_kind = "news_publisher"
 homepage_url = "https://github.com/mcclatchy-southeast/private_eyes"
 default_tier = "R4"
@@ -2705,6 +2804,7 @@ review_needed = false
 
 [sources.ringmast4r_flock]
 name = "Ringmast4r/FLOCK"
+publisher_type = "crowdsourced"
 source_kind = "community"
 homepage_url = "https://ringmast4r.github.io/FLOCK"
 default_tier = "R6"
@@ -2730,6 +2830,7 @@ review_needed = false
 
 [sources.ccops_ordinance_disclosures]
 name = "Municipal surveillance-ordinance (CCOPS) disclosures"
+publisher_type = "ccops-report"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.aclu.org/issues/privacy-technology/surveillance-technologies/community-control-over-police-surveillance"
 default_tier = "R1"
@@ -2759,6 +2860,7 @@ review_needed = true
 
 [sources.ccops_seattle]
 name = "Seattle Surveillance Ordinance disclosures (SMC 14.18 — Master List, SIRs, quarterly determination reports)"
+publisher_type = "ccops-report"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.seattle.gov/tech/data-privacy/surveillance-technology"
 default_tier = "R1"
@@ -2791,6 +2893,7 @@ review_needed = false
 
 [sources.ccops_nyc_post]
 name = "NYC POST Act impact & use policies (42 per-technology PDFs)"
+publisher_type = "ccops-report"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.nyc.gov/site/nypd/about/about-nypd/policy/post-act.page"
 default_tier = "R1"
@@ -2823,6 +2926,7 @@ review_needed = false
 
 [sources.ccops_sf]
 name = "San Francisco Chapter 19B biannual surveillance technology inventory"
+publisher_type = "ccops-report"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.sf.gov/surveillance-technology-inventory"
 default_tier = "R1"
@@ -2856,6 +2960,7 @@ review_needed = false
 
 [sources.state_alpr_statute_inventory]
 name = "State ALPR statute national inventory"
+publisher_type = "legislation"
 source_kind = "government_portal"
 homepage_url = "https://www.ncsl.org/technology-and-communication/automated-license-plate-readers"
 default_tier = "R1"
@@ -2908,6 +3013,7 @@ review_needed = true
 
 [sources.future_statutory_disclosure_2027]
 name = "State statutory disclosure — first reports due 2027-04-01"  # future-ok: real-world: statutory first-reports deadline
+publisher_type = "statutory-report"
 source_kind = "government_portal"
 homepage_url = ""
 default_tier = "R1"
@@ -3031,6 +3137,7 @@ review_needed = true
 
 [sources.technopolice]
 name = "Technopolice"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://technopolice.fr/"
 default_tier = "R4"
@@ -3051,6 +3158,7 @@ review_needed = true
 
 [sources.technopolice_forum]
 name = "Technopolice mapping discussion"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://forum.technopolice.fr/topic/405/cartographier-la-surveillance"
 default_tier = "R4"
@@ -3069,6 +3177,7 @@ review_needed = false
 
 [sources.technocarte_update]
 name = "Technocarte update"
+publisher_type = "ngo"
 source_kind = "upstream_project"
 homepage_url = "https://technopolice.fr/blog/mise-a-jour-de-la-technocarte/"
 default_tier = "R4"
@@ -3087,6 +3196,7 @@ review_needed = false
 
 [sources.la_quadrature_du_net]
 name = "La Quadrature du Net"
+publisher_type = "ngo"
 source_kind = "news_publisher"
 homepage_url = "https://www.laquadrature.net/"
 default_tier = "R4"
@@ -3105,6 +3215,7 @@ review_needed = false
 
 [sources.sous_surveillance_osm_import]
 name = "sous-surveillance.net → OSM import"
+publisher_type = "crowdsourced"
 source_kind = "upstream_project"
 homepage_url = "https://wiki.openstreetmap.org/wiki/Import/sous-surveillance"
 default_tier = "R5"
@@ -3134,6 +3245,7 @@ review_needed = false
 
 [sources.ted_eu]
 name = "TED — Tenders Electronic Daily (EU OJ S procurement notices)"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://ted.europa.eu/"
 default_tier = "R1"
@@ -3168,6 +3280,7 @@ review_needed = true
 
 [sources.decp_fr]
 name = "DECP (FR procurement)"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://www.data.gouv.fr/"
 default_tier = "R1"
@@ -3203,6 +3316,7 @@ review_needed = false
 # renewable authorizations under the Code de la sécurité intérieure L251-1..L255-1.
 [sources.raa_prefectures]
 name = "RAA des préfectures (arrêtés préfectoraux)"
+publisher_type = "legislation"
 source_kind = "government_portal"
 homepage_url = "https://www.data.gouv.fr/fr/datasets/recueils-des-actes-administratifs-des-prefectures/"
 default_tier = "R1"
@@ -3237,6 +3351,7 @@ packet_limited = true
 # (F9.14). The internationalized records-request regime is fr.cada, NOT foia_request.
 [sources.madada]
 name = "Ma Dada (FR CADA public-records platform)"
+publisher_type = "records-release"
 source_kind = "records_channel"
 homepage_url = "https://madada.fr/"
 default_tier = "R2"
@@ -3273,6 +3388,7 @@ review_needed = true
 
 [sources.declarationcamera_be]
 name = "declarationcamera.be (BE national camera register)"
+publisher_type = "statutory-report"
 source_kind = "government_portal"
 homepage_url = "https://www.declarationcamera.be/"
 default_tier = "R1"
@@ -3311,6 +3427,7 @@ review_needed = false
 
 [sources.carnegie_ai_gsi]
 name = "AI Global Surveillance Index (Carnegie)"
+publisher_type = "academic"
 source_kind = "academic"
 homepage_url = "https://carnegieendowment.org/2019/09/17/global-expansion-of-ai-surveillance-pub-79847"
 default_tier = "R2"
@@ -3342,6 +3459,7 @@ review_needed = false
 
 [sources.facial_recognition_world_map]
 name = "Facial Recognition World Map"
+publisher_type = "other"
 source_kind = "community"
 homepage_url = "https://www.surfshark.com/facial-recognition-map"
 default_tier = "R4"
@@ -3373,6 +3491,7 @@ review_needed = false
 
 [sources.aspi_mapping_chinas_tech_giants]
 name = "Mapping China's Tech Giants (ASPI)"
+publisher_type = "academic"
 source_kind = "academic"
 homepage_url = "https://chinatechmap.aspi.org.au/"
 default_tier = "R2"
@@ -3415,6 +3534,7 @@ terms_url = "https://chinatechmap.aspi.org.au/"
 retrieval_date = 2026-09-15
 [sources.okc_procurement]
 name = "City of Oklahoma City — procurement / contracts"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://www.okc.gov/departments/finance/purchasing"
 default_tier = "R1"
@@ -3470,6 +3590,7 @@ sig_labelled_cc0 = true
 
 [sources.okc_council]
 name = "Oklahoma City Council — agendas & minutes (CivicClerk)"
+publisher_type = "agenda"
 source_kind = "government_portal"
 homepage_url = "https://oklahomacityok.portal.civicclerk.com/"
 default_tier = "R2"
@@ -3526,6 +3647,7 @@ sig_labelled_cc0 = true
 
 [sources.okcpd_policy]
 name = "Oklahoma City Police Department — policy (Operations Manual)"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.okc.gov/departments/police"
 default_tier = "R2"
@@ -3581,6 +3703,7 @@ sig_labelled_cc0 = true
 
 [sources.ok_statute]
 name = "Oklahoma statutes (47 O.S. §7-606.1 et seq.)"
+publisher_type = "legislation"
 source_kind = "government_portal"
 homepage_url = "https://www.oscn.net/applications/oscn/index.asp?ftdb=STOKST47"
 default_tier = "R1"
@@ -3635,6 +3758,7 @@ review_needed = false
 
 [sources.journalrecord]
 name = "The Journal Record (Oklahoma City)"
+publisher_type = "journalism"
 source_kind = "news_publisher"
 homepage_url = "https://journalrecord.com/"
 default_tier = "R2"
@@ -3653,6 +3777,7 @@ review_needed = false
 
 [sources.oklahoman]
 name = "The Oklahoman (oklahoman.com)"
+publisher_type = "journalism"
 source_kind = "news_publisher"
 homepage_url = "https://www.oklahoman.com/"
 default_tier = "R4"
@@ -3679,6 +3804,7 @@ review_needed = false
 
 [sources.pathways_rtcc_federation]
 name = "Municipal RTCC / private-camera federation disclosures (Stage-5 pathway)"
+publisher_type = "ngo"
 source_kind = "government_portal"
 homepage_url = "https://www.eff.org/pages/atlas-surveillance"
 default_tier = "R3"
@@ -3711,6 +3837,7 @@ review_needed = false
 
 [sources.pathways_fr_css_forensics]
 name = "FR / cell-site-simulator / mobile-forensics procurement & policy (Stage-5 pathway)"
+publisher_type = "ngo"
 source_kind = "government_portal"
 homepage_url = "https://www.eff.org/pages/atlas-surveillance"
 default_tier = "R3"
@@ -3743,6 +3870,7 @@ review_needed = false
 
 [sources.pathways_acoustic_drone_location]
 name = "Acoustic / drone / commercial-location procurement & policy (Stage-5 pathway)"
+publisher_type = "ngo"
 source_kind = "government_portal"
 homepage_url = "https://www.eff.org/pages/atlas-surveillance"
 default_tier = "R3"
@@ -3785,6 +3913,7 @@ review_needed = false
 
 [sources.ccops_oakland]
 name = "CCOPS Oakland — Privacy Advisory Commission surveillance disclosures"
+publisher_type = "ccops-report"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.oaklandca.gov/boards-commissions/privacy-advisory-board"
 default_tier = "R2"
@@ -3818,6 +3947,7 @@ review_needed = false
 
 [sources.ccops_berkeley]
 name = "CCOPS Berkeley — Surveillance Technology Use ordinance disclosures"
+publisher_type = "ccops-report"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://berkeleyca.gov/"
 default_tier = "R2"
@@ -3840,6 +3970,7 @@ review_needed = true
 
 [sources.ccops_davis]
 name = "CCOPS Davis — surveillance technology ordinance disclosures"
+publisher_type = "ccops-report"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.cityofdavis.org/"
 default_tier = "R2"
@@ -3862,6 +3993,7 @@ review_needed = true
 
 [sources.ccops_cambridge]
 name = "CCOPS Cambridge MA — surveillance oversight ordinance disclosures"
+publisher_type = "ccops-report"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.cambridgema.gov/"
 default_tier = "R2"
@@ -3895,6 +4027,7 @@ review_needed = false
 
 [sources.ccops_boston]
 name = "CCOPS Boston — surveillance oversight ordinance disclosures"
+publisher_type = "ccops-report"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.boston.gov/"
 default_tier = "R2"
@@ -3917,6 +4050,7 @@ review_needed = true
 
 [sources.ccops_baltimore]
 name = "CCOPS Baltimore — surveillance ordinance disclosures"
+publisher_type = "ccops-report"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.baltimorecity.gov/"
 default_tier = "R2"
@@ -3939,6 +4073,7 @@ review_needed = true
 
 [sources.ccops_nashville]
 name = "CCOPS Nashville — Metro surveillance ordinance disclosures"
+publisher_type = "ccops-report"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.nashville.gov/"
 default_tier = "R2"
@@ -3961,6 +4096,7 @@ review_needed = true
 
 [sources.ccops_grand_rapids]
 name = "CCOPS Grand Rapids — surveillance ordinance disclosures"
+publisher_type = "ccops-report"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.grandrapidsmi.gov/"
 default_tier = "R2"
@@ -3983,6 +4119,7 @@ review_needed = true
 
 [sources.ccops_somerville]
 name = "CCOPS Somerville — surveillance oversight disclosures"
+publisher_type = "ccops-report"
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.somervillema.gov/"
 default_tier = "R2"
@@ -4016,6 +4153,7 @@ review_needed = false
 
 [sources.denmark_politi_cctv]
 name = "Denmark National Police — official CCTV camera map"
+publisher_type = "statutory-report"
 source_kind = "government_portal"
 homepage_url = "https://www.politi.dk/da/borgerservice/tv-overvaagning"
 default_tier = "R2"
@@ -4038,6 +4176,7 @@ review_needed = true
 
 [sources.amsterdam_camerakaart]
 name = "Amsterdam cameraregister — municipal camera map open data"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://data.amsterdam.nl/"
 default_tier = "R2"
@@ -4060,6 +4199,7 @@ review_needed = true
 
 [sources.austria_vidreg]
 name = "Austria VidReg — video-surveillance register"
+publisher_type = "statutory-report"
 source_kind = "government_portal"
 homepage_url = "https://www.dsb.gv.at/"
 default_tier = "R2"
@@ -4082,6 +4222,7 @@ review_needed = true
 
 [sources.rotterdam_cameraregister]
 name = "Rotterdam cameraregister — municipal camera disclosures"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.rotterdam.nl/"
 default_tier = "R2"
@@ -4104,6 +4245,7 @@ review_needed = true
 
 [sources.bidnet_direct]
 name = "BidNet Direct — public agency bid portal"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://www.bidnetdirect.com/"
 default_tier = "R3"
@@ -4128,6 +4270,7 @@ review_needed = false
 
 [sources.periscope_s2g]
 name = "Periscope S2G — eBid procurement portals"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://www.periscopeholdings.com/"
 default_tier = "R3"
@@ -4150,6 +4293,7 @@ review_needed = false
 
 [sources.publicpurchase]
 name = "PublicPurchase — public agency bid portal"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://www.publicpurchase.com/"
 default_tier = "R3"
@@ -4172,6 +4316,7 @@ review_needed = false
 
 [sources.demandstar]
 name = "DemandStar — public agency bid portal"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://www.demandstar.com/"
 default_tier = "R3"
@@ -4194,6 +4339,7 @@ review_needed = false
 
 [sources.planetbids]
 name = "PlanetBids — public agency procurement portals"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://www.planetbids.com/"
 default_tier = "R3"
@@ -4216,6 +4362,7 @@ review_needed = false
 
 [sources.powerdms_public_portals]
 name = "PowerDMS public policy portals"
+publisher_type = "other"
 source_kind = "records_channel"
 homepage_url = "https://powerdms.com/"
 default_tier = "R3"
@@ -4238,6 +4385,7 @@ review_needed = false
 
 [sources.swagit]
 name = "Swagit — municipal meeting video/agenda portals"
+publisher_type = "agenda"
 source_kind = "government_portal"
 homepage_url = "https://www.swagit.com/"
 default_tier = "R3"
@@ -4260,6 +4408,7 @@ review_needed = false
 
 [sources.opengov_procurement]
 name = "OpenGov Procurement — public agency solicitation portals"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://procurement.opengov.com/"
 default_tier = "R3"
@@ -4284,6 +4433,7 @@ review_needed = false
 
 [sources.bonfire]
 name = "Bonfire — per-tenant procurement portals (*.bonfirehub.com)"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://bonfirehub.com/"
 default_tier = "R3"
@@ -4307,6 +4457,7 @@ review_needed = false
 
 [sources.procportal_austin_tx]
 name = "City of Austin — Socrata 'Contracts' dataset"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://data.austintexas.gov/d/84ih-p28j"
 default_tier = "R3"
@@ -4341,6 +4492,7 @@ review_needed = true
 
 [sources.procportal_sf_ca]
 name = "City and County of San Francisco — Socrata 'Supplier Contracts' dataset"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://data.sf.gov/d/cqi5-hm2d"
 default_tier = "R3"
@@ -4375,6 +4527,7 @@ review_needed = true
 
 [sources.procportal_kcmo_mo]
 name = "Kansas City, MO — Socrata 'List of KCMO City Contracts' dataset"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://data.kcmo.org/d/c46m-hv6s"
 default_tier = "R3"
@@ -4409,6 +4562,7 @@ review_needed = true
 
 [sources.procportal_nyc_ny]
 name = "City of New York — Socrata 'City Record Online' dataset"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://data.cityofnewyork.us/d/dg92-zbpx"
 default_tier = "R3"
@@ -4443,6 +4597,7 @@ review_needed = true
 
 [sources.procportal_chicago_il]
 name = "City of Chicago — Socrata 'Contracts' dataset"
+publisher_type = "procurement"
 source_kind = "government_portal"
 homepage_url = "https://data.cityofchicago.org/d/rsxa-ify5"
 default_tier = "R3"
@@ -4468,6 +4623,7 @@ review_needed = false
 
 [sources.la_city_clerk_cfms]
 name = "LA City Clerk Connect (CFMS) — Los Angeles City legislative file management"
+publisher_type = "agenda"
 source_kind = "records_channel"
 homepage_url = "https://cityclerk.lacity.org/lacityclerkconnect/"
 default_tier = "R3"
@@ -4501,6 +4657,8 @@ review_needed = false
 
 [sources.dot_511_ky]
 name = "KYTC traffic cameras (ArcGIS registry)"
+publisher = "Kentucky Transportation Cabinet"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services2.arcgis.com/CcI36Pduqd0OR4W9/arcgis/rest/services/trafficCamerasCur_Prd/FeatureServer/0"
 default_tier = "R1"
@@ -4538,6 +4696,8 @@ sig_labelled_cc0 = true
 
 [sources.dot_511_il]
 name = "IDOT Illinois Gateway traffic cameras (ArcGIS registry)"
+publisher = "Illinois Department of Transportation"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/TrafficCamerasTM_Public/FeatureServer/0"
 default_tier = "R1"
@@ -4574,6 +4734,8 @@ review_needed = false
 
 [sources.dot_511_ut]
 name = "UDOT Live View cameras (ArcGIS registry)"
+publisher = "Utah Department of Transportation"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services.arcgis.com/pA2nEVnB6tquxgOW/arcgis/rest/services/Live_View_Cameras/FeatureServer/0"
 default_tier = "R1"
@@ -4611,6 +4773,8 @@ sig_labelled_cc0 = true
 
 [sources.dot_511_or]
 name = "ODOT TripCheck cameras (ArcGIS registry)"
+publisher = "Oregon Department of Transportation (TripCheck)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/TripCheck_Cameras/FeatureServer/0"
 default_tier = "R1"
@@ -4648,6 +4812,8 @@ sig_labelled_cc0 = true
 
 [sources.dot_511_la]
 name = "LDOTD traffic cameras (ArcGIS registry)"
+publisher = "Louisiana Department of Transportation and Development"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services1.arcgis.com/fXHQyq63u0UsTeSM/arcgis/rest/services/DOTD_Traffic_Cameras/FeatureServer/0"
 default_tier = "R1"
@@ -4684,6 +4850,8 @@ review_needed = false
 
 [sources.dot_511_ia]
 name = "Iowa DOT traffic cameras (ArcGIS registry)"
+publisher = "Iowa Department of Transportation"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services.arcgis.com/8lRhdTsQyJpO52F1/arcgis/rest/services/Traffic_Cameras_View/FeatureServer/0"
 default_tier = "R1"
@@ -4720,6 +4888,8 @@ review_needed = false
 
 [sources.dot_511_wa]
 name = "WSDOT travel information cameras (+ KC/WSDOT layer)"
+publisher = "King County / WSDOT; Washington State Department of Transportation"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://data.wsdot.wa.gov/arcgis/rest/services/TravelInformation/TravelInfoCamerasWeather/FeatureServer/0"
 default_tier = "R1"
@@ -4757,6 +4927,8 @@ sig_labelled_cc0 = true
 
 [sources.dot_511_dc]
 name = "DDOT traffic cameras (DC GIS registry)"
+publisher = "District Department of Transportation / DC GIS (OCTO)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_Sensors_WebMercator/MapServer/93"
 default_tier = "R1"
@@ -4793,6 +4965,8 @@ review_needed = false
 
 [sources.dot_511_ga]
 name = "GDOT 511 cameras (ArcGIS registry)"
+publisher = "Georgia Department of Transportation; rbagby_gema"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services1.arcgis.com/2iUE8l8JKrP2tygQ/arcgis/rest/services/GDOT_511_Cameras/FeatureServer/0"
 default_tier = "R1"
@@ -4829,6 +5003,8 @@ review_needed = false
 
 [sources.dot_511_al]
 name = "ALDOT traffic cameras (ArcGIS registry)"
+publisher = "Alabama Department of Transportation"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services5.arcgis.com/P2OFkRrXCz6u4SBf/arcgis/rest/services/ALDOT_TC_HFL_public/FeatureServer/0"
 default_tier = "R1"
@@ -4865,6 +5041,8 @@ review_needed = false
 
 [sources.dot_511_mo]
 name = "MoDOT traffic cameras (ArcGIS registry)"
+publisher = "Missouri Department of Transportation"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services2.arcgis.com/jWXb6JPWtBjOCalT/arcgis/rest/services/MODOT_Traffic_Cameras/FeatureServer/1"
 default_tier = "R1"
@@ -4902,6 +5080,8 @@ sig_labelled_cc0 = true
 
 [sources.dot_511_tx]
 name = "TxDOT CCTV locations (ArcGIS registry)"
+publisher = "Texas Department of Transportation"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services1.arcgis.com/7DRakJXKPEhwv0fM/arcgis/rest/services/TxDOT_CCTV_Locations/FeatureServer/0"
 default_tier = "R1"
@@ -4931,6 +5111,8 @@ review_needed = false
 
 [sources.dot_511_md]
 name = "MD SHA CHART traffic cameras (ArcGIS registry)"
+publisher = "Maryland DOT SHA / CHART"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://chartimap1.sha.maryland.gov/arcgis/rest/services/CHART/Cameras/MapServer/0"
 default_tier = "R1"
@@ -4967,6 +5149,8 @@ review_needed = false
 
 [sources.camreg_austin_tx]
 name = "Austin traffic cameras (Socrata open-data registry)"
+publisher = "City of Austin Transportation and Public Works"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://datahub.austintexas.gov/d/b4k4-adkb"
 default_tier = "R1"
@@ -5003,6 +5187,8 @@ review_needed = false
 
 [sources.camreg_nola_la]
 name = "New Orleans traffic cameras (Socrata open-data registry)"
+publisher = "City of New Orleans Department of Public Works"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://data.nola.gov/d/te2d-4txp"
 default_tier = "R1"
@@ -5039,6 +5225,8 @@ review_needed = false
 
 [sources.camreg_batonrouge_la]
 name = "Baton Rouge traffic cameras (Socrata open-data registry)"
+publisher = "City of Baton Rouge / East Baton Rouge Parish"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://data.brla.gov/d/6z6u-ts44"
 default_tier = "R1"
@@ -5075,6 +5263,8 @@ review_needed = false
 
 [sources.camreg_winnipeg_mb]
 name = "Winnipeg traffic signal cameras (Socrata open-data registry)"
+publisher = "City of Winnipeg Public Works"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://data.winnipeg.ca/d/42pk-2u2c"
 default_tier = "R1"
@@ -5111,6 +5301,8 @@ review_needed = false
 
 [sources.camreg_act_au]
 name = "ACT traffic safety cameras (Socrata open-data registry)"
+publisher = "ACT Government Justice and Community Safety"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.data.act.gov.au/d/426s-vdu4"
 default_tier = "R1"
@@ -5147,6 +5339,8 @@ review_needed = false
 
 [sources.camreg_siouxfalls_sd]
 name = "Sioux Falls traffic surveillance cameras (ArcGIS registry)"
+publisher = "City of Sioux Falls / Sioux Falls Traffic Management"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://gis.siouxfalls.gov/arcgis/rest/services/Data/Traffic/MapServer/8"
 default_tier = "R1"
@@ -5183,6 +5377,8 @@ review_needed = false
 
 [sources.camreg_baltimore_md]
 name = "Baltimore CitiWatch cameras (ArcGIS registry)"
+publisher = "Baltimore City (CitiWatch)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://baltegis.baltimorecity.gov/mapping/rest/services/CityView/CitiWatchCamera/FeatureServer/0"
 default_tier = "R1"
@@ -5219,6 +5415,8 @@ review_needed = false
 
 [sources.camreg_ottawa_on]
 name = "Ottawa enforcement cameras (ArcGIS open-data registry)"
+publisher = "City of Ottawa"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://open.ottawa.ca/datasets/ottawa::red-light-camera-locations"
 default_tier = "R1"
@@ -5255,6 +5453,8 @@ review_needed = false
 
 [sources.camreg_sheffield_gb]
 name = "Sheffield CCTV and traffic cameras (ArcGIS registry)"
+publisher = "Sheffield City Council"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://utility.arcgis.com/usrsvcs/servers/c5b5971a1c1248faa95649d081849aa1/rest/services/AGOL/OpenData/MapServer/7"
 default_tier = "R1"
@@ -5293,6 +5493,8 @@ review_needed = false
 
 [sources.camreg_chicago_il]
 name = "Chicago speed + red-light cameras (Socrata open-data registry)"
+publisher = "City of Chicago Department of Transportation"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://data.cityofchicago.org/d/4i42-qv3h"
 default_tier = "R1"
@@ -5329,6 +5531,8 @@ review_needed = false
 
 [sources.camreg_calgary_ab]
 name = "Calgary traffic + intersection safety cameras (Socrata registry)"
+publisher = "City of Calgary"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://data.calgary.ca/d/k7p9-kppz"
 default_tier = "R1"
@@ -5365,6 +5569,8 @@ review_needed = false
 
 [sources.camreg_edmonton_ab]
 name = "Edmonton intersection safety device locations (Socrata registry)"
+publisher = "City of Edmonton"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://data.edmonton.ca/d/7fnd-72gr"
 default_tier = "R1"
@@ -5394,6 +5600,8 @@ review_needed = false
 
 [sources.camreg_honolulu_hi]
 name = "Honolulu traffic camera locations (Socrata registry)"
+publisher = "City and County of Honolulu"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://data.honolulu.gov/d/cat5-2v98"
 default_tier = "R1"
@@ -5430,6 +5638,8 @@ review_needed = false
 
 [sources.camreg_md_opendata]
 name = "Maryland traffic cameras (Socrata open-data mirror)"
+publisher = "Maryland Department of Transportation / CHART; opendata.maryland.gov"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://opendata.maryland.gov/d/hua3-qc8n"
 default_tier = "R1"
@@ -5466,6 +5676,8 @@ review_needed = false
 
 [sources.camreg_york_on]
 name = "York Region traffic + red-light cameras (ArcGIS registry)"
+publisher = "Regional Municipality of York"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://insights-york.opendata.arcgis.com/datasets/york::traffic-camera"
 default_tier = "R1"
@@ -5502,6 +5714,8 @@ review_needed = false
 
 [sources.camreg_arlington_va]
 name = "Arlington County traffic + photo enforcement cameras (ArcGIS registry)"
+publisher = "Arlington County DES"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://gisdata-arlgis.opendata.arcgis.com/datasets/arlgis::traffic-cameras"
 default_tier = "R1"
@@ -5538,6 +5752,8 @@ review_needed = false
 
 [sources.camreg_seattle_wa]
 name = "Seattle traffic + safety cameras (SDOT ArcGIS registry)"
+publisher = "City of Seattle (SPD GIS); Seattle Department of Transportation"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Traffic_Cameras_CDL/FeatureServer/0"
 default_tier = "R1"
@@ -5574,6 +5790,8 @@ review_needed = false
 
 [sources.camreg_bellevue_wa]
 name = "Bellevue traffic cameras (ArcGIS registry)"
+publisher = "City of Bellevue Transportation Department; City of Bellevue, WA (ArcGIS Online, owner <staff account id redacted>)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services1.arcgis.com/EYzEZbDhXZjURPbP/arcgis/rest/services/TrafficCameras_Public_View/FeatureServer/0"
 default_tier = "R1"
@@ -5603,6 +5821,8 @@ review_needed = false
 
 [sources.camreg_lexington_ky]
 name = "Lexington traffic camera locations (LFUCG ArcGIS registry)"
+publisher = "Lexington-Fayette Urban County Government (LFUCG)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services1.arcgis.com/Mg7DLdfYcSWIaDnu/arcgis/rest/services/Traffic_Camera_Locations_Public_view/FeatureServer/0"
 default_tier = "R1"
@@ -5639,6 +5859,8 @@ review_needed = false
 
 [sources.camreg_nzta_nz]
 name = "NZTA traffic cameras (ArcGIS public view)"
+publisher = "NZ Transport Agency Waka Kotahi; NZTA; NZTA, Eagle Technology Group; Open.Data_NZTA"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services.arcgis.com/CXBb7LAjgIIdcsPt/arcgis/rest/services/LiveCamerasNZTA_Public_View/FeatureServer/0"
 default_tier = "R1"
@@ -5675,6 +5897,8 @@ review_needed = false
 
 [sources.camreg_qldc_au]
 name = "Queensland CCTV cameras external view (ArcGIS registry)"
+publisher = "Queensland Government (QLDCGIS external view)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services1.arcgis.com/9YyqaQtDdDR8tupG/arcgis/rest/services/CCTV_Cameras_(External_View)/FeatureServer/0"
 default_tier = "R1"
@@ -5704,6 +5928,8 @@ review_needed = false
 
 [sources.camreg_donegal_ie]
 name = "Donegal traffic cameras (ArcGIS registry)"
+publisher = "Donegal County Council / TII"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services2.arcgis.com/WRtfelnPg3R7bCEW/arcgis/rest/services/TrafficCameras/FeatureServer/0"
 default_tier = "R1"
@@ -5740,6 +5966,8 @@ review_needed = false
 
 [sources.camreg_hk_hk]
 name = "Hong Kong CCTV camera locations (ArcGIS registry)"
+publisher = "Hong Kong Transport Department"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services3.arcgis.com/6j1KwZfY2fZrfNMR/arcgis/rest/services/CCTV_Camera_Locations_in_Hong_Kong/FeatureServer/0"
 default_tier = "R1"
@@ -5779,6 +6007,8 @@ review_needed = false
 
 [sources.camreg_washington_dc]
 name = "Washington DC CCTV street cameras (DCGIS ArcGIS registry)"
+publisher = "District of Columbia (DCGIS / OCTO)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_Sensors_WebMercator/MapServer/11"
 default_tier = "R1"
@@ -5815,6 +6045,8 @@ review_needed = false
 
 [sources.camreg_nottingham_gb]
 name = "Nottingham CCTV cameras (ArcGIS registry)"
+publisher = "Nottingham City Council"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services.arcgis.com/yvqphKcf9bBSnjX1/arcgis/rest/services/CCTV_Cameras/FeatureServer/83"
 default_tier = "R1"
@@ -5851,6 +6083,8 @@ review_needed = false
 
 [sources.camreg_york_gb]
 name = "City of York CCTV cameras (ArcGIS registry)"
+publisher = "City of York Council"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://maps.york.gov.uk/arcgis/rest/services/Public/LV_TranStreetCare/MapServer/26"
 default_tier = "R1"
@@ -5887,6 +6121,8 @@ review_needed = false
 
 [sources.camreg_glasgow_gb]
 name = "Glasgow CCTV cameras (ArcGIS registry)"
+publisher = "Glasgow City Council"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.mapping.glasgow.gov.uk/arcgis_web/rest/services/OPEN_DATA/CCTV/MapServer/0"
 default_tier = "R1"
@@ -5923,6 +6159,8 @@ review_needed = false
 
 [sources.camreg_northayrshire_gb]
 name = "North Ayrshire CCTV cameras (ArcGIS registry)"
+publisher = "North Ayrshire Council"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.maps.north-ayrshire.gov.uk/arcgis/rest/services/AGOL/Open_Data_Portal4/MapServer/12"
 default_tier = "R1"
@@ -5959,6 +6197,8 @@ review_needed = false
 
 [sources.camreg_lambeth_gb]
 name = "Lambeth parking CCTV cameras (ArcGIS registry)"
+publisher = "London Borough of Lambeth"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://gis.lambeth.gov.uk/arcgis/rest/services/LambethParkingCCTVCameras/MapServer/0"
 default_tier = "R1"
@@ -5995,6 +6235,8 @@ review_needed = false
 
 [sources.camreg_peel_on]
 name = "Peel Region red-light cameras (ArcGIS registry)"
+publisher = "Regional Municipality of Peel"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services6.arcgis.com/ONZht79c8QWuX759/arcgis/rest/services/Red_Light_Cameras/FeatureServer/0"
 default_tier = "R1"
@@ -6031,6 +6273,8 @@ review_needed = true
 
 [sources.camreg_stalbert_ab]
 name = "St. Albert photo enforcement camera sites (ArcGIS registry)"
+publisher = "City of St. Albert"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services1.arcgis.com/fyyY0cNXvmUWvX1x/arcgis/rest/services/Automated_Traffic_Enforcement_Sites/FeatureServer/0"
 default_tier = "R1"
@@ -6067,6 +6311,8 @@ review_needed = true
 
 [sources.camreg_rochester_ny]
 name = "Rochester NY BlueLight cameras (ArcGIS registry)"
+publisher = "Rochester Police Department (City of Rochester, NY)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services7.arcgis.com/wMvCpnbQEKXZsPSQ/arcgis/rest/services/Rochester_Cameras/FeatureServer/0"
 default_tier = "R1"
@@ -6103,6 +6349,8 @@ review_needed = false
 
 [sources.camreg_goldcoast_au]
 name = "City of Gold Coast Safety Camera Network (ArcGIS registry)"
+publisher = "City of Gold Coast (Safety Camera Network)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://services-ap1.arcgis.com/lnVW0dLI3fvST2hd/arcgis/rest/services/Camera_view/FeatureServer/0"
 default_tier = "R1"
@@ -6139,6 +6387,8 @@ review_needed = false
 
 [sources.camreg_puertogaitan_co]
 name = "Puerto Gaitán municipal CCTV map (datos.gov.co Socrata registry)"
+publisher = "Alcaldía de Puerto Gaitán, Meta"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.datos.gov.co/d/fvdt-ftkz"
 default_tier = "R1"
@@ -6180,6 +6430,8 @@ review_needed = false
 
 [sources.camreg_achd_id]
 name = "Ada County Highway District traffic cameras (ArcGIS registry)"
+publisher = "Ada County Highway District, Idaho"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=7b3c9de533e544a397882b3ac62dcb9f"
 default_tier = "R1"
@@ -6216,6 +6468,8 @@ review_needed = false
 
 [sources.camreg_und_001]
 name = "Traffic cameras (ArcGIS registry)"
+publisher = "ArcGIS community-published traffic-camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=509475945f494a37bcbeefee139a6ecc"
 default_tier = "R1"
@@ -6252,6 +6506,8 @@ review_needed = false
 
 [sources.camreg_amber_kh]
 name = "Traffic monitoring cameras (ArcGIS registry)"
+publisher = "ArcGIS community-published traffic-camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=f9efbc77cd404122899fc9f93c1f0741"
 default_tier = "R1"
@@ -6288,6 +6544,8 @@ review_needed = false
 
 [sources.camreg_apram_pt]
 name = "Madeira CCTV cameras (APRAM ArcGIS registry)"
+publisher = "APRAM — Agência Regional para o Ambiente, Portugal"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=e4ebd2812c4b472c8f4ef60eef4f84b9"
 default_tier = "R1"
@@ -6324,6 +6582,8 @@ review_needed = false
 
 [sources.camreg_arc_1975641302]
 name = "CCTV locations registry (ArcGIS, anonymous publisher)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=a8471041aee14916bbe50401da5a9d40"
 default_tier = "R1"
@@ -6360,6 +6620,8 @@ review_needed = false
 
 [sources.camreg_avctransport]
 name = "Surveillance 2026 registry (avctransport ArcGIS layer)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=48a727929e6f4350b71be361d5002d4c"
 default_tier = "R1"
@@ -6396,6 +6658,8 @@ review_needed = false
 
 [sources.camreg_azdot_az]
 name = "Arizona DOT CCTV cameras (ArcGIS registry)"
+publisher = "Arizona Department of Transportation (ADOT publisher account)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=ec493f52acd64bc1b9e75b2dbc5fb696"
 default_tier = "R1"
@@ -6432,6 +6696,8 @@ review_needed = false
 
 [sources.camreg_baltimore_atves_md]
 name = "Baltimore ATVES speed/red-light cameras (ArcGIS registry)"
+publisher = "City of Baltimore (baltimore_city ArcGIS org)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=02625f728f714c78a5b3ad6aa06695b3"
 default_tier = "R1"
@@ -6468,6 +6734,8 @@ review_needed = false
 
 [sources.camreg_bangla_bd]
 name = "Bangladesh camera locations (ArcGIS registry)"
+publisher = "Bangladesh community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=5590d73396564488b5d627079be0ee5a"
 default_tier = "R1"
@@ -6504,6 +6772,8 @@ review_needed = false
 
 [sources.camreg_und_002]
 name = "CCTV camera registry (ArcGIS layer)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=8ebed01d37c9486fae407a8e6623e8f4"
 default_tier = "R1"
@@ -6540,6 +6810,8 @@ review_needed = false
 
 [sources.camreg_bedford_gb]
 name = "Bedford external CCTV cameras (ArcGIS registry)"
+publisher = "Bedford Borough Council"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=b55c7017a4ae4a3e96d204f90f93fce2"
 default_tier = "R1"
@@ -6576,6 +6848,8 @@ review_needed = false
 
 [sources.camreg_bettendorf_ia]
 name = "Bettendorf traffic control / stop-light cameras (ArcGIS registry)"
+publisher = "City of Bettendorf, Iowa"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=5269969b5f784cd2a2a519ccdc10149b"
 default_tier = "R1"
@@ -6612,6 +6886,8 @@ review_needed = false
 
 [sources.camreg_bouhan_jp]
 name = "Japanese bouhan (security) camera locations (ArcGIS registry)"
+publisher = "Japanese community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=9740206173524c11a0800d2f4aa31196"
 default_tier = "R1"
@@ -6648,6 +6924,8 @@ review_needed = false
 
 [sources.camreg_brea_ca]
 name = "Brea PD camera locations and inventory (ArcGIS registry)"
+publisher = "City of Brea, California"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=398a99c974704bebb1008c3e9daa20b9"
 default_tier = "R1"
@@ -6684,6 +6962,8 @@ review_needed = false
 
 [sources.camreg_caledon_on]
 name = "Caledon CCTV locations (ArcGIS registry)"
+publisher = "Town of Caledon, Ontario"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=c56aedd0f83f4515ad641eac5e975b93"
 default_tier = "R1"
@@ -6720,6 +7000,8 @@ review_needed = false
 
 [sources.camreg_caloes_ca]
 name = "CalOES California webcams (ArcGIS registry)"
+publisher = "California Governor's Office of Emergency Services"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=5b4040338d704693994d5682ab2747c5"
 default_tier = "R1"
@@ -6761,6 +7043,8 @@ review_needed = true
 
 [sources.camreg_camberwell_au]
 name = "Camberwell-area CCTV cameras (ArcGIS registry)"
+publisher = "Camberwell Grammar School GIS org (community-published layer)"
+publisher_type = "academic"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=31aed70b2053498dbe4ec44dc0728801"
 default_tier = "R1"
@@ -6797,6 +7081,8 @@ review_needed = false
 
 [sources.camreg_camilo_schools]
 name = "CCTV locations (GIS-for-schools ArcGIS registry)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "academic"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=a426098dc7584c98b815c985ea76a632"
 default_tier = "R1"
@@ -6833,6 +7119,8 @@ review_needed = false
 
 [sources.camreg_carver_mn]
 name = "Carver County traffic cameras (ArcGIS registry)"
+publisher = "Carver County, Minnesota"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=9667d52f9c014ba29e576a519af6b409"
 default_tier = "R1"
@@ -6869,6 +7157,8 @@ review_needed = false
 
 [sources.camreg_und_003]
 name = "Public-safety cameras view (ArcGIS registry)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=aa12417a64b04fcbb07e67435c84086d"
 default_tier = "R1"
@@ -6905,6 +7195,8 @@ review_needed = false
 
 [sources.camreg_chattanooga_tn]
 name = "Chattanooga public-safety cameras (CHATTGIS ArcGIS registry)"
+publisher = "Chattanooga-area GIS publisher (CHATTGIS)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=bb665114837146769fe7103082d4fb98"
 default_tier = "R1"
@@ -6941,6 +7233,8 @@ review_needed = false
 
 [sources.camreg_und_004]
 name = "CCTV camera registry (ArcGIS layer)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=7d7654bc257f40d0aa7aebf71ae971b8"
 default_tier = "R1"
@@ -6977,6 +7271,8 @@ review_needed = false
 
 [sources.camreg_colgis]
 name = "Traffic cameras view (COLGIS ArcGIS registry)"
+publisher = "ArcGIS community-published traffic-camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=bbf9cb2ff4fb4cf6a2cdabdbe6e810e6"
 default_tier = "R1"
@@ -7013,6 +7309,8 @@ review_needed = false
 
 [sources.camreg_cotgeo]
 name = "Geospatial traffic camera registry (ArcGIS layer)"
+publisher = "ArcGIS community-published traffic-camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=634b19920c7e45c092455134055b9335"
 default_tier = "R1"
@@ -7054,6 +7352,8 @@ review_needed = true
 
 [sources.camreg_und_005]
 name = "Surveillance sites (ArcGIS registry)"
+publisher = "ArcGIS community-published surveillance-site registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=81d052e49e5c4ac8972506a6740adb03"
 default_tier = "R1"
@@ -7090,6 +7390,8 @@ review_needed = false
 
 [sources.camreg_cwarcgis]
 name = "Camera registry (cwarcgis ArcGIS layer)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=46b1e00b2b2c494c805a0743c5e723a1"
 default_tier = "R1"
@@ -7126,6 +7428,8 @@ review_needed = false
 
 [sources.camreg_dc_dot_dc]
 name = "Washington DC traffic-camera ArcGIS republish layers"
+publisher = "District of Columbia (DDOT camera registries, republished layers)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=cbe1f0e312994a21ae16ad8f841caf8d"
 default_tier = "R1"
@@ -7162,6 +7466,8 @@ review_needed = false
 
 [sources.camreg_denver_co]
 name = "Denver automated license-plate-reader camera locations (ArcGIS registry)"
+publisher = "City and County of Denver; City and County of Denver (geospatialDENVER)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=541a1e1581e34e15ab63d057a869977b"
 default_tier = "R1"
@@ -7198,6 +7504,8 @@ review_needed = false
 
 [sources.camreg_dover_gb]
 name = "Dover CCTV cameras (ArcGIS registry)"
+publisher = "Dover District Council"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=eb7a4722e25f4fefaf49e0e2e42a40c8"
 default_tier = "R1"
@@ -7234,6 +7542,8 @@ review_needed = false
 
 [sources.camreg_dubuque_ia]
 name = "Dubuque public camera locations (ArcGIS registry)"
+publisher = "City of Dubuque, Iowa"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=55213f82bc5a47c2b5483c5627c4730f"
 default_tier = "R1"
@@ -7270,6 +7580,8 @@ review_needed = false
 
 [sources.camreg_und_006]
 name = "Flock ALPR locations (UA GIS ArcGIS registry)"
+publisher = "University-community-published ALPR camera registry"
+publisher_type = "academic"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=1396d889c2734c57a93184470a11c7f4"
 default_tier = "R1"
@@ -7306,6 +7618,8 @@ review_needed = false
 
 [sources.camreg_durham_gb]
 name = "Durham County traffic web cameras (ArcGIS registry)"
+publisher = "Durham County Council"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=8599d93543124bafb012b007c403aaa7"
 default_tier = "R1"
@@ -7342,6 +7656,8 @@ review_needed = false
 
 [sources.camreg_eastdun_gb]
 name = "East Dunbartonshire CCTV cameras (ArcGIS registry)"
+publisher = "East Dunbartonshire Council"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=1cb8e713aaf346cd86a1d59a1ae78709"
 default_tier = "R1"
@@ -7378,6 +7694,8 @@ review_needed = false
 
 [sources.camreg_ebrgis_la]
 name = "East Baton Rouge traffic cameras (EBRGIS ArcGIS registry)"
+publisher = "City of Baton Rouge / East Baton Rouge Parish"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=c686a8a6b41342b7bc4011d16e75f61c"
 default_tier = "R1"
@@ -7414,6 +7732,8 @@ review_needed = false
 
 [sources.camreg_esri_dash]
 name = "Traffic cameras (Esri dashboard-publisher ArcGIS layer)"
+publisher = "ArcGIS community-published traffic-camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=57d50a7d46b148f88bb721d8e06a3211"
 default_tier = "R1"
@@ -7450,6 +7770,8 @@ review_needed = false
 
 [sources.camreg_esriukpolice_gb]
 name = "UK police CCTV locations (Esri UK police ArcGIS registry)"
+publisher = "Esri UK police demonstration org (community-published layer)"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=1cdab839cdaa4e789ca155a8d6323cab"
 default_tier = "R1"
@@ -7486,6 +7808,8 @@ review_needed = false
 
 [sources.camreg_essex_gb]
 name = "Essex safety cameras public view (ArcGIS registry)"
+publisher = "Essex County Council / Essex Safety Camera Partnership"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=d23db5da905b43798391379c0bd2f4a2"
 default_tier = "R1"
@@ -7522,6 +7846,8 @@ review_needed = false
 
 [sources.camreg_und_007]
 name = "CCTV_ camera registry (ArcGIS layer)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=d03b77e0286d4d82b76c76de32c36b27"
 default_tier = "R1"
@@ -7558,6 +7884,8 @@ review_needed = false
 
 [sources.camreg_firemedic]
 name = "Traffic camera registry (ArcGIS layer)"
+publisher = "ArcGIS community-published traffic-camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=63a8783964ca4fafa891bd38cb10deac"
 default_tier = "R1"
@@ -7594,6 +7922,8 @@ review_needed = false
 
 [sources.camreg_fl511_fl]
 name = "FL511/FDOT traffic cameras (ArcGIS republish layers)"
+publisher = "Florida Department of Transportation (republished layers)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=307dfd0020554c28959706d40ea0ba90"
 default_tier = "R1"
@@ -7630,6 +7960,8 @@ review_needed = false
 
 [sources.camreg_forwardalliance]
 name = "CCTV camera registry (forwardalliance ArcGIS layer)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=fe8ee8d36eb34bc6bdd49c3e447f5ffb"
 default_tier = "R1"
@@ -7666,6 +7998,8 @@ review_needed = false
 
 [sources.camreg_und_008]
 name = "ITS CCTV camera layer (ArcGIS registry)"
+publisher = "ArcGIS community-published ITS camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=d6d80e7f82884caaaeea1e0eed5d595b"
 default_tier = "R1"
@@ -7702,6 +8036,8 @@ review_needed = false
 
 [sources.camreg_friendswood_tx]
 name = "Friendswood Flock Safety ALPR camera locations (ArcGIS registry)"
+publisher = "City of Friendswood, Texas"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=248d8ce7280c4d48b3d91d1c870fc1da"
 default_tier = "R1"
@@ -7738,6 +8074,8 @@ review_needed = false
 
 [sources.camreg_gainesville_fl]
 name = "Gainesville traffic cameras (ArcGIS registry)"
+publisher = "City of Gainesville, Florida"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=dda63ffcc4bf44f8b3dd5845a54e2e86"
 default_tier = "R1"
@@ -7774,6 +8112,8 @@ review_needed = false
 
 [sources.camreg_gedling_gb]
 name = "Gedling CCTV locations (ArcGIS registry)"
+publisher = "Gedling Borough Council"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=9fa192edd1bb4040a842f4ac908c3f00"
 default_tier = "R1"
@@ -7810,6 +8150,8 @@ review_needed = false
 
 [sources.camreg_gistel_be]
 name = "Gistel camera locations (ArcGIS registry)"
+publisher = "Gistel municipal camera registry (m.decraemer publisher)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=2dfd6bae23ac4ae9b3e24112a82c2277"
 default_tier = "R1"
@@ -7846,6 +8188,8 @@ review_needed = false
 
 [sources.camreg_gmh_emc_ga]
 name = "Georgia EMC CCTV cameras (ArcGIS registry)"
+publisher = "Georgia EMC (GMH_GA_emc publisher)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=d5e2555c03574fbe93e300c404a38813"
 default_tier = "R1"
@@ -7882,6 +8226,8 @@ review_needed = false
 
 [sources.camreg_guildford_gb]
 name = "Guildford CCTV cameras (ArcGIS registry)"
+publisher = "Guildford (rgsguildford publisher)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=4e1c6cf7573948ef885ecd262d5d262b"
 default_tier = "R1"
@@ -7918,6 +8264,8 @@ review_needed = false
 
 [sources.camreg_und_009]
 name = "CCTV cameras asset registry (3D-GIS ArcGIS layer)"
+publisher = "ArcGIS community-published CCTV asset registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=119f3f9304f94b74af62f20798d3c52d"
 default_tier = "R1"
@@ -7954,6 +8302,8 @@ review_needed = false
 
 [sources.camreg_und_010]
 name = "Camera registry (ArcGIS layer)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=0fa13d7ceac549e5869f30800d2b2a2c"
 default_tier = "R1"
@@ -7990,6 +8340,8 @@ review_needed = false
 
 [sources.camreg_indonesia_id]
 name = "Indonesia CCTV camera layers (ArcGIS registry)"
+publisher = "Indonesian community/municipal camera registries"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=0977f811c1ab494b9a1c31614fda7863"
 default_tier = "R1"
@@ -8026,6 +8378,8 @@ review_needed = false
 
 [sources.camreg_infocemosa]
 name = "CCTV point registry (Infocemosa ArcGIS layer)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=fc73440e889f4e33b0a57d7c9158a70c"
 default_tier = "R1"
@@ -8062,6 +8416,8 @@ review_needed = false
 
 [sources.camreg_infraestructura]
 name = "CCTV proyectado registry (ArcGIS, Spanish schema)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=5a0e181639a94a08bfaee91492450431"
 default_tier = "R1"
@@ -8098,6 +8454,8 @@ review_needed = false
 
 [sources.camreg_ira]
 name = "CCTV camera registry (ArcGIS layer)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=4fc65d41686c4b5c84f7b466738c4ad5"
 default_tier = "R1"
@@ -8134,6 +8492,8 @@ review_needed = false
 
 [sources.camreg_jcfd3_or]
 name = "Jackson County OR RoxyAnn camera (ArcGIS registry)"
+publisher = "Jackson County Fire District 3, Oregon"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=24da916fb36f44e9afd0bab4c527204d"
 default_tier = "R1"
@@ -8170,6 +8530,8 @@ review_needed = false
 
 [sources.camreg_und_011]
 name = "Camera point registry (UNSW ArcGIS layer)"
+publisher = "University-community-published camera registry"
+publisher_type = "academic"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=38ad4086df4e4ba285792c207fc37da4"
 default_tier = "R1"
@@ -8206,6 +8568,8 @@ review_needed = false
 
 [sources.camreg_jmh_us]
 name = "MPD Flock camera locations (ArcGIS registry)"
+publisher = "US municipal police department (jmh_com publisher)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=a1373bba67a444878af07c52c65a5e91"
 default_tier = "R1"
@@ -8242,6 +8606,8 @@ review_needed = false
 
 [sources.camreg_kcmo_mo]
 name = "Kansas City traffic camera locations (ArcGIS registry)"
+publisher = "Kansas City, Missouri"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=498f44acc19145b98f5f180d0451774c"
 default_tier = "R1"
@@ -8278,6 +8644,8 @@ review_needed = false
 
 [sources.camreg_keizer_or]
 name = "Keizer traffic and graffiti cameras (ArcGIS registry)"
+publisher = "City of Keizer, Oregon"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=9338737e5f6b4deda9d90d120f16c32c"
 default_tier = "R1"
@@ -8341,6 +8709,8 @@ review_needed = true
 
 [sources.camreg_und_012]
 name = "Camera registry (ArcGIS layer)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=3a72754fa9004f9ca5774bb23c6f3504"
 default_tier = "R1"
@@ -8377,6 +8747,8 @@ review_needed = false
 
 [sources.camreg_kirkland_wa]
 name = "Kirkland traffic cameras (ArcGIS registry)"
+publisher = "City of Kirkland, Washington"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=7fc8ba9051684d0aabc228038758c10b"
 default_tier = "R1"
@@ -8413,6 +8785,8 @@ review_needed = false
 
 [sources.camreg_und_013]
 name = "Traffic cameras (ArcGIS layer)"
+publisher = "ArcGIS community-published traffic-camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=234686a8453d406bab8f1a2ab5870ce5"
 default_tier = "R1"
@@ -8449,6 +8823,8 @@ review_needed = false
 
 [sources.camreg_und_014]
 name = "CCTV camera registry (ArcGIS layer)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=25a5a95fcbd645d0b5cfe08522209591"
 default_tier = "R1"
@@ -8485,6 +8861,8 @@ review_needed = false
 
 [sources.camreg_und_015]
 name = "Camera registry (ArcGIS layer)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=98fa8eeae92946dbadb62b821e756522"
 default_tier = "R1"
@@ -8521,6 +8899,8 @@ review_needed = false
 
 [sources.camreg_lawrence_ks]
 name = "Lawrence KS traffic cameras (ArcGIS registry)"
+publisher = "City of Lawrence, Kansas"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=e8c0a78e50084eb782607ce02c38501e"
 default_tier = "R1"
@@ -8557,6 +8937,8 @@ review_needed = false
 
 [sources.camreg_und_016]
 name = "University security cameras public view (ArcGIS registry)"
+publisher = "University-community-published camera registry"
+publisher_type = "academic"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=22d52fc22ec440a78813debcf2d1c21a"
 default_tier = "R1"
@@ -8593,6 +8975,8 @@ review_needed = false
 
 [sources.camreg_leon_fl]
 name = "Leon County traffic cameras (COT ArcGIS registry)"
+publisher = "Leon County / City of Tallahassee (cotinter.leoncountyfl.gov)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=1562517848d94a4ba6f10bf3e2a64665"
 default_tier = "R1"
@@ -8629,6 +9013,8 @@ review_needed = false
 
 [sources.camreg_lisburn_gb]
 name = "Lisburn & Castlereagh CCTV cameras (ArcGIS registry)"
+publisher = "Lisburn and Castlereagh City Council"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=afab7c664cf14139a8384e752c083143"
 default_tier = "R1"
@@ -8665,6 +9051,8 @@ review_needed = false
 
 [sources.camreg_lojic_ky]
 name = "Jefferson County KY traffic web cameras (LOJIC/KYTC ArcGIS registry)"
+publisher = "LOJIC — Louisville/Jefferson County Information Consortium"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=c2201ec5ea4a4b9c8ae02f6b681f91e5"
 default_tier = "R1"
@@ -8701,6 +9089,8 @@ review_needed = false
 
 [sources.camreg_lpd_flock]
 name = "Active Flock camera locations (LPDGIS ArcGIS registry)"
+publisher = "ArcGIS community-published ALPR camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=5d2bd8ccc5f74ea7b7574f126cacd1cc"
 default_tier = "R1"
@@ -8737,6 +9127,8 @@ review_needed = false
 
 [sources.camreg_manhattan_ks]
 name = "Manhattan KS traffic cameras (ArcGIS registry)"
+publisher = "City of Manhattan, Kansas"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=409faf7a03d840aab1d13412ad42925b"
 default_tier = "R1"
@@ -8773,6 +9165,8 @@ review_needed = false
 
 [sources.camreg_mark43]
 name = "CCTV cameras (mark43 ArcGIS registry)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=7b5888a0ea584bd2a0a6e7aa33d70eb8"
 default_tier = "R1"
@@ -8809,6 +9203,8 @@ review_needed = false
 
 [sources.camreg_massdot_ma]
 name = "MassDOT CCTV cameras (ArcGIS registry)"
+publisher = "Massachusetts Department of Transportation"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=4ffcd943366f46649cbd58e476afb3d3"
 default_tier = "R1"
@@ -8845,6 +9241,8 @@ review_needed = false
 
 [sources.camreg_mbrc_au]
 name = "Moreton Bay CCTV cameras (ArcGIS registry)"
+publisher = "Moreton Bay Regional Council, Queensland"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=d7cbf7e7cf724a9581b15058ee6f1453"
 default_tier = "R1"
@@ -8881,6 +9279,8 @@ review_needed = false
 
 [sources.camreg_mctx_tx]
 name = "Montgomery County TX live cameras (ArcGIS registry)"
+publisher = "Montgomery County, Texas"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=bb2aa42539864062b55011c67510cfe2"
 default_tier = "R1"
@@ -8917,6 +9317,8 @@ review_needed = false
 
 [sources.camreg_und_017]
 name = "Public-safety / ALPR cameras view (ArcGIS registry)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=22be1b5f269b441ba5f4963c4f4ac665"
 default_tier = "R1"
@@ -8953,6 +9355,8 @@ review_needed = false
 
 [sources.camreg_mndot_mn]
 name = "MnDOT traffic cameras (ArcGIS republish layer)"
+publisher = "Minnesota Department of Transportation (republished layer)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=0fca25174cba4605938cac79c3331640"
 default_tier = "R1"
@@ -8989,6 +9393,8 @@ review_needed = false
 
 [sources.camreg_monmap_mn]
 name = "Mongolia camera locations (monmap ArcGIS registry)"
+publisher = "Mongolian mapping community publisher"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=df45f0840d8640efbdfed569f0033e8c"
 default_tier = "R1"
@@ -9025,6 +9431,8 @@ review_needed = false
 
 [sources.camreg_mueller_de]
 name = "German camera positions (ArcGIS registry)"
+publisher = "German community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=ada7ca58962b4ab48ccd6853a893fc31"
 default_tier = "R1"
@@ -9061,6 +9469,8 @@ review_needed = false
 
 [sources.camreg_nashville_tn]
 name = "Nashville license-plate-reader camera locations (ArcGIS registry)"
+publisher = "Metropolitan Government of Nashville and Davidson County"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=da60121904964a28a01ca13dbd9cb226"
 default_tier = "R1"
@@ -9097,6 +9507,8 @@ review_needed = false
 
 [sources.camreg_nitro]
 name = "Camera feeds registry (ArcGIS layer)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=45f4d8efb35c442f9fdaa50273b177bf"
 default_tier = "R1"
@@ -9133,6 +9545,8 @@ review_needed = false
 
 [sources.camreg_nola_safety_la]
 name = "New Orleans traffic safety cameras (ArcGIS registry)"
+publisher = "City of New Orleans"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=a86fc3d9aa4b4f579f826055af93d1dc"
 default_tier = "R1"
@@ -9169,6 +9583,8 @@ review_needed = false
 
 [sources.camreg_und_018]
 name = "CCTV camera registries (ArcGIS layers)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=32b4a83b129646ad985081f5ba654696"
 default_tier = "R1"
@@ -9205,6 +9621,8 @@ review_needed = false
 
 [sources.camreg_us_ny_001]
 name = "NYCDOT traffic cameras (ArcGIS republish layer)"
+publisher = "New York City Department of Transportation (republished layer)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=900bea850d98407ead83b9b0ec392a2a"
 default_tier = "R1"
@@ -9241,6 +9659,8 @@ review_needed = false
 
 [sources.camreg_us_ny_002]
 name = "New York City traffic cameras (ArcGIS republish layer)"
+publisher = "New York City (republished layer)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=9e90790daf7e4f0592da37a1bda10417"
 default_tier = "R1"
@@ -9277,6 +9697,8 @@ review_needed = false
 
 [sources.camreg_oem_camera]
 name = "Potential camera and gauge locations (OEM ArcGIS registry)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=bc2f36369f9e4137872afefcdc62735d"
 default_tier = "R1"
@@ -9313,6 +9735,8 @@ review_needed = false
 
 [sources.camreg_und_019]
 name = "CCTV camera registry (ArcGIS layer)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=106e6ceef3c14fb6bceddeb07eb5d8a5"
 default_tier = "R1"
@@ -9349,6 +9773,8 @@ review_needed = false
 
 [sources.camreg_oosgis_nl]
 name = "Dutch camera registry (OOS GIS, CEVI schema)"
+publisher = "Dutch municipal camera registry (oosgis publisher)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=e61f3ed7f7ab4aef9d295395621292c2"
 default_tier = "R1"
@@ -9385,6 +9811,8 @@ review_needed = false
 
 [sources.camreg_osm_surveillance]
 name = "OSM-derived surveillance-camera layers (DeFlock/OSM exports)"
+publisher = "OpenStreetMap contributors (republished man_made=surveillance nodes)"
+publisher_type = "crowdsourced"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=27f49b788f074fc5a34086c7d7191959"
 default_tier = "R1"
@@ -9438,6 +9866,8 @@ review_needed = false
 
 [sources.camreg_palmdesert_ca]
 name = "Palm Desert license-plate-recognition camera locations (ArcGIS registry)"
+publisher = "City of Palm Desert, California"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=d2dad98935c9481f97141ec963d5b582"
 default_tier = "R1"
@@ -9474,6 +9904,8 @@ review_needed = false
 
 [sources.camreg_penndot_pa]
 name = "PennDOT CCTV cameras (ArcGIS registry)"
+publisher = "Pennsylvania Department of Transportation (publisher account)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=68589ded0afc49d494e7a209b50c0483"
 default_tier = "R1"
@@ -9510,6 +9942,8 @@ review_needed = false
 
 [sources.camreg_pgcounty_md]
 name = "Prince George's County speed/red-light cameras (Socrata registry)"
+publisher = "Prince George's County, Maryland (PGPD)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://data.princegeorgescountymd.gov/d/3a3p-zwvz"
 default_tier = "R1"
@@ -9546,6 +9980,8 @@ review_needed = false
 
 [sources.camreg_pipeline_sec]
 name = "Traffic/security camera registry (ArcGIS layer)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=0ebee47dfb7b4f529a8b618c88997a27"
 default_tier = "R1"
@@ -9582,6 +10018,8 @@ review_needed = false
 
 [sources.camreg_plymouth_gb]
 name = "Plymouth traffic cameras (ArcGIS registry)"
+publisher = "Plymouth City Council"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=d55477395f4c41ad8288d45df8c3f00e"
 default_tier = "R1"
@@ -9618,6 +10056,8 @@ review_needed = false
 
 [sources.camreg_polyu_hk]
 name = "Hong Kong CCTV camera layers (esrichina.hk ArcGIS registry)"
+publisher = "Hong Kong PolyU/police CCTV layers (community-published)"
+publisher_type = "academic"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=188b6ca940a14029a0aceb1aad25e553"
 default_tier = "R1"
@@ -9654,6 +10094,8 @@ review_needed = false
 
 [sources.camreg_portland_or]
 name = "Portland ITS cameras (portlandmaps ArcGIS registry)"
+publisher = "City of Portland, Oregon"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=c83d85929ead4c01b1d684594391cf09"
 default_tier = "R1"
@@ -9690,6 +10132,8 @@ review_needed = false
 
 [sources.camreg_raleigh_nc]
 name = "Raleigh traffic cameras (ArcGIS registry)"
+publisher = "City of Raleigh, North Carolina"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=9f4a2984d9044a8099411ebfd18cba81"
 default_tier = "R1"
@@ -9726,6 +10170,8 @@ review_needed = false
 
 [sources.camreg_ramallah_ps]
 name = "Ramallah surveillance camera network (ArcGIS registry)"
+publisher = "Ramallah municipal camera registry (community-published layer)"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=f4b3928a3f504467b3827b8658544c63"
 default_tier = "R1"
@@ -9767,6 +10213,8 @@ review_needed = true
 
 [sources.camreg_redmond_wa]
 name = "Redmond traffic cameras (ArcGIS registry)"
+publisher = "City of Redmond, Washington"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=55f2d14f468c4d35b1870bf8469b2c96"
 default_tier = "R1"
@@ -9803,6 +10251,8 @@ review_needed = false
 
 [sources.camreg_riyadh_sa]
 name = "Riyadh camera-control registry (ArcGIS registry)"
+publisher = "Riyadh municipal camera registry (rematalriyadh publisher)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=6f7185fd39d34ccb95a9545f778ed43c"
 default_tier = "R1"
@@ -9839,6 +10289,8 @@ review_needed = false
 
 [sources.camreg_und_020]
 name = "Cameras registry (ArcGIS layer)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=871da848d25940e890d811ee20280f79"
 default_tier = "R1"
@@ -9875,6 +10327,8 @@ review_needed = false
 
 [sources.camreg_und_021]
 name = "CCTV_S camera registry (UCP/UFR ArcGIS layer)"
+publisher = "University-community-published CCTV registry"
+publisher_type = "academic"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=776c96fa7597423da691513f9fa05a66"
 default_tier = "R1"
@@ -9911,6 +10365,8 @@ review_needed = false
 
 [sources.camreg_salisbury_nc]
 name = "Salisbury NC traffic cameras (ArcGIS registry)"
+publisher = "City of Salisbury, North Carolina"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=9487d6220db7407fa37272a4e178298a"
 default_tier = "R1"
@@ -9947,6 +10403,8 @@ review_needed = false
 
 [sources.camreg_sarasota_fl]
 name = "Sarasota County traffic cameras (Cartegraph ArcGIS registry)"
+publisher = "Sarasota County, Florida"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=e153fe4453104b11b8a5a17599bd8478"
 default_tier = "R1"
@@ -9983,6 +10441,8 @@ review_needed = false
 
 [sources.camreg_und_022]
 name = "BPD surveillance cameras (ArcGIS registry)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=fbb79a6d3cf94464a6b657a59e8cedf1"
 default_tier = "R1"
@@ -10019,6 +10479,8 @@ review_needed = false
 
 [sources.camreg_sensenet]
 name = "Camera view registry (SenseNet ArcGIS layer)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=99799a7e7e164f229cec271da18165ae"
 default_tier = "R1"
@@ -10055,6 +10517,8 @@ review_needed = false
 
 [sources.camreg_und_023]
 name = "Cameras registry (ArcGIS layer)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=460290f9870d4d8692048a87221f2080"
 default_tier = "R1"
@@ -10096,6 +10560,8 @@ review_needed = true
 
 [sources.camreg_smart_sky]
 name = "Camera registry (Smart Sky ArcGIS layer)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=145823e4fd4846da98599e8bf5b5980c"
 default_tier = "R1"
@@ -10132,6 +10598,8 @@ review_needed = false
 
 [sources.camreg_squan]
 name = "Stephen camera registry (ArcGIS layer)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=959ee82bc06f4f79a387866e14762348"
 default_tier = "R1"
@@ -10168,6 +10636,8 @@ review_needed = false
 
 [sources.camreg_stanford_us]
 name = "US-nationwide surveillance-tower / ALPR-checkpoint research layers (Stanford)"
+publisher = "Stanford University research-compiled camera locations"
+publisher_type = "academic"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=a1b558f7ea3f4a459d24ee92654f5e6e"
 default_tier = "R1"
@@ -10204,6 +10674,8 @@ review_needed = false
 
 [sources.camreg_surrey_bc]
 name = "Surrey traffic cameras (ArcGIS registry)"
+publisher = "City of Surrey, British Columbia"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=94b17026e83d49d58b41fd75933166db"
 default_tier = "R1"
@@ -10240,6 +10712,8 @@ review_needed = false
 
 [sources.camreg_und_024]
 name = "Replacement CCTV system camera locations (ArcGIS registry)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=de3248c897b645c6a825c6c56b42b6c5"
 default_tier = "R1"
@@ -10276,6 +10750,8 @@ review_needed = false
 
 [sources.camreg_und_025]
 name = "Camera intersections registry (ArcGIS layer)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=650c53bb6fb24aa1aecba07847f1e2fb"
 default_tier = "R1"
@@ -10312,6 +10788,8 @@ review_needed = false
 
 [sources.camreg_thailand_th]
 name = "Thailand CCTV camera layers (ArcGIS registry)"
+publisher = "Thai municipal/community camera registries"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=825d7725a7a040f6ae6e15978bdf4bb9"
 default_tier = "R1"
@@ -10348,6 +10826,8 @@ review_needed = false
 
 [sources.camreg_toronto_on]
 name = "Toronto camera locations (ArcGIS republish layer)"
+publisher = "City of Toronto (republished layer)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=077b66ab35dd48de97fedf0abbf4a03b"
 default_tier = "R1"
@@ -10384,6 +10864,8 @@ review_needed = false
 
 [sources.camreg_townofws]
 name = "ASE camera locations (Town of WS ArcGIS registry)"
+publisher = "ArcGIS community-published enforcement-camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=c41e80757b5c49cbbf805492cd282166"
 default_tier = "R1"
@@ -10420,6 +10902,8 @@ review_needed = false
 
 [sources.camreg_trafficops_ca]
 name = "California highway CCTV cameras (TrafficOps.GIS ArcGIS registry)"
+publisher = "California traffic-operations publisher (Postmile schema)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=cbe977542c984003bbc99856219de1e5"
 default_tier = "R1"
@@ -10456,6 +10940,8 @@ review_needed = false
 
 [sources.camreg_trpa_us]
 name = "Lake Tahoe SMART traffic cameras (TRPA ArcGIS registry)"
+publisher = "Tahoe Regional Planning Agency (bi-state compact)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=4a1feaa5dd214d0287aee6467c2da3c7"
 default_tier = "R1"
@@ -10497,6 +10983,8 @@ review_needed = true
 
 [sources.camreg_tulane_la]
 name = "New Orleans CCTV cameras (Tulane ArcGIS registry)"
+publisher = "Tulane University (republished municipal layer)"
+publisher_type = "academic"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=cdf8cc99704d441fae13608702a6a74d"
 default_tier = "R1"
@@ -10533,6 +11021,8 @@ review_needed = false
 
 [sources.camreg_txdot_rep_tx]
 name = "Texas DOT traffic cameras (ArcGIS republish layer)"
+publisher = "Texas Department of Transportation (republished layer)"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=269df31cafd9463abfd46ecd24162ef6"
 default_tier = "R1"
@@ -10574,6 +11064,8 @@ review_needed = false
 
 [sources.camreg_uchicago]
 name = "Security camera registry (UChicago ArcGIS layer)"
+publisher = "University-community-published camera registry"
+publisher_type = "academic"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=2938f76af301480f8f153958a2aadf2f"
 default_tier = "R1"
@@ -10610,6 +11102,8 @@ review_needed = false
 
 [sources.camreg_ucsd]
 name = "Traffic camera registry (UCSD Online ArcGIS layers)"
+publisher = "University-community-published traffic-camera registry"
+publisher_type = "academic"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=b01d7c8ddd614d9785435b458037bfc0"
 default_tier = "R1"
@@ -10646,6 +11140,8 @@ review_needed = false
 
 [sources.camreg_ukm_my]
 name = "UKM CCTV management system (ArcGIS registry)"
+publisher = "Universiti Kebangsaan Malaysia (community-published layer)"
+publisher_type = "academic"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=a69da35b0c7f404890ba318f57d56349"
 default_tier = "R1"
@@ -10687,6 +11183,8 @@ review_needed = true
 
 [sources.camreg_umbc_md]
 name = "Maryland camera locations (UMBC ArcGIS registry)"
+publisher = "University of Maryland, Baltimore County (republished state layer)"
+publisher_type = "academic"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=3c232823551e496a95d70a9a6f9cb87f"
 default_tier = "R1"
@@ -10723,6 +11221,8 @@ review_needed = false
 
 [sources.camreg_univmb_mb]
 name = "Winnipeg-area surveillance cameras (UnivMB ArcGIS registry)"
+publisher = "University of Manitoba (republished municipal layers)"
+publisher_type = "academic"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=e19e8d52e59240e4931c5ebb723533af"
 default_tier = "R1"
@@ -10759,6 +11259,8 @@ review_needed = false
 
 [sources.camreg_uofmd_md]
 name = "Maryland CCTV camera layer (UofMD ArcGIS registry)"
+publisher = "University of Maryland (republished layer)"
+publisher_type = "academic"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=350fa8a11b8b4ba8adcf8b2b3f88ea62"
 default_tier = "R1"
@@ -10795,6 +11297,8 @@ review_needed = false
 
 [sources.camreg_vancouver_bc]
 name = "Vancouver web cameras (ArcGIS registry)"
+publisher = "City of Vancouver, British Columbia"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=f4859c702ed54fd69b416ae91de3b1fd"
 default_tier = "R1"
@@ -10831,6 +11335,8 @@ review_needed = true
 
 [sources.camreg_und_026]
 name = "CCTV camera registry (ArcGIS layer)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=bce5d44e878d4d71b5895a89ecfac9c7"
 default_tier = "R1"
@@ -10867,6 +11373,8 @@ review_needed = false
 
 [sources.camreg_webappfme]
 name = "Traffic cameras tour points (ArcGIS layer)"
+publisher = "ArcGIS community-published traffic-camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=20c6386650414867ad1fa29027164750"
 default_tier = "R1"
@@ -10903,6 +11411,8 @@ review_needed = false
 
 [sources.camreg_wellington_nz]
 name = "Wellington City CCTV cameras (ArcGIS registry)"
+publisher = "Wellington City Council"
+publisher_type = "gov-open-data"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=90e7ab7aed3c4cf6a61ed75cd4e5e286"
 default_tier = "R1"
@@ -10939,6 +11449,8 @@ review_needed = false
 
 [sources.camreg_und_027]
 name = "Camera locations (ArcGIS registry)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=b28ca74f76ad4b7cb31d380f7679c49f"
 default_tier = "R1"
@@ -10975,6 +11487,8 @@ review_needed = false
 
 [sources.camreg_wim_camera]
 name = "WIM camera locations (ArcGIS registry)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=a0a6e71d55804d249535831ec98b4db0"
 default_tier = "R1"
@@ -11011,6 +11525,8 @@ review_needed = false
 
 [sources.camreg_und_028]
 name = "CCTV phase-1 registry (ArcGIS layer)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=4d528bdf8dab4956885c527b41732ae4"
 default_tier = "R1"
@@ -11047,6 +11563,8 @@ review_needed = false
 
 [sources.camreg_yline]
 name = "CCTV camera registry (ArcGIS layer)"
+publisher = "ArcGIS community-published CCTV registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=1aa6eddd4bab4e35b2f8b3f66d9f1977"
 default_tier = "R1"
@@ -11083,6 +11601,8 @@ review_needed = false
 
 [sources.camreg_yorku]
 name = "Camera locations (YorkU ArcGIS registry)"
+publisher = "York University community-published camera layer"
+publisher_type = "academic"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=10e0013f57d045cebc794610150a6dc4"
 default_tier = "R1"
@@ -11119,6 +11639,8 @@ review_needed = false
 
 [sources.camreg_und_029]
 name = "CAMERA_3 registry (ArcGIS layer)"
+publisher = "ArcGIS community-published camera registry"
+publisher_type = "other"
 source_kind = "government_portal"
 homepage_url = "https://www.arcgis.com/home/item.html?id=718e480ad69e466fbebf3b11c0684f9e"
 default_tier = "R1"
@@ -11163,6 +11685,7 @@ review_needed = false
 
 [sources.dossier_okc]
 name = "City of Oklahoma City — ALPR dossier documents (usage page, council memo, amendment)"
+publisher_type = "records-release"
 source_kind = "government_portal"
 homepage_url = "https://www.okc.gov/departments/police"
 default_tier = "R1"
@@ -11182,6 +11705,7 @@ review_needed = true
 
 [sources.dossier_tulsa]
 name = "Tulsa Police Department — ALPR dossier documents (policies 113C/113E, MOU template)"
+publisher_type = "records-release"
 source_kind = "government_portal"
 homepage_url = "https://www.tulsapolice.org/"
 default_tier = "R1"
@@ -11201,6 +11725,7 @@ review_needed = true
 
 [sources.dossier_san_diego]
 name = "City of San Diego — surveillance-technology dossier documents (ASR, Ubicquia agreement, indexes)"
+publisher_type = "ccops-report"
 source_kind = "government_portal"
 homepage_url = "https://www.sandiego.gov/police/data-transparency"
 default_tier = "R1"
@@ -11519,6 +12044,7 @@ review_needed = true
 
 [sources.dot_511_mi]
 name = "MiDrive Cameras"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://services2.arcgis.com/67lKNkQ2TO1I3lhR/arcgis/rest/services/MiDrive%20Cameras/FeatureServer/0"
 default_tier = "R1"
@@ -12391,6 +12917,7 @@ review_needed = true
 
 [sources.agenda_haskell_ar_council]
 name = "City of Haskell AR Resolution No. 19-2025 - contract with Flock Safety for License Plate Reader cameras (4 LPR + 2 Flex "
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://www.haskellar.gov/assets/pdf/resolutions/2025/19-2025.pdf"
 default_tier = "R4"
@@ -12419,6 +12946,7 @@ review_needed = true
 
 [sources.camreg_suffolk_ny_red_light]
 name = "TPVA Red Light Camera Locations 2015 (Suffolk County, NY Traffic and Parking Violations Agency; SCOpenData)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://services.arcgis.com/JsDD4qdG5r2a7hR5/arcgis/rest/services/TPVA_Red_Light_Camera_Locations_2015/FeatureServer/0"
 default_tier = "R1"
@@ -12585,6 +13113,7 @@ review_needed = true
 
 [sources.camreg_omaha_ne_parks_cameras]
 name = "Parks_Cameras (City of Omaha-maintained cameras; College World Series)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://services.arcgis.com/pDAi2YK0L0QxVJHj/arcgis/rest/services/Parks_Cameras/FeatureServer/0"
 default_tier = "R1"
@@ -12944,6 +13473,7 @@ review_needed = true
 
 [sources.ccops_anchorage_ak]
 name = "Anchorage Municipal Code chapter 3.102 'Municipal Use of Surveillance Technologies' - AO 2023-78 amending it to require "
+one_time_load = true
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.muni.org/Departments/Assembly/Documents/AO%202023-78.pdf"
 default_tier = "R4"
@@ -13030,6 +13560,7 @@ review_needed = true
 
 [sources.policy_pasadena_ca_pd]
 name = "Pasadena Police Department Policy 620 Cellular Site Simulator Usage and Privacy (City Council agenda 2024-01-22, item 8,"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://ww2.cityofpasadena.net/2024%20Agendas/Jan_22_24/AR%208%20ATTACHMENT%20A.pdf"
 default_tier = "R4"
@@ -13141,6 +13672,7 @@ review_needed = true
 
 [sources.grant_nj_oag_bwc]
 name = "New Jersey OAG SFY21 Body-Worn Camera Grant Program - Program Administration and Guidelines ($57,500,000)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://www.nj.gov/oag/grants/BWC_Program-Administration-and-Guidelines.pdf"
 default_tier = "R4"
@@ -13250,6 +13782,7 @@ review_needed = true
 
 [sources.agenda_des_moines_ia_council]
 name = "City of Des Moines IA council communication 26-235 (2026-06-29) - Motorola Solutions License Plate Recognition software "
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://councildocs.dsm.city/communications/2026/26-235.pdf"
 default_tier = "R4"
@@ -13278,6 +13811,7 @@ review_needed = true
 
 [sources.agenda_jasper_sc_council]
 name = "Jasper County Council special called meeting agenda e-packet 2024-06-28 (Sheriff purchase of Cellebrite electronic evide"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://jaspercountysc.gov/media/1lqbd25k/06282024-agenda-e-packet-special-called-meeting.pdf"
 default_tier = "R4"
@@ -13306,6 +13840,7 @@ review_needed = true
 
 [sources.procportal_davie_fl_purchasing]
 name = "Town of Davie Notice of Intent to Award a Sole Source Procurement NTSS-2018-026: Cellebrite Universal Mobile Phone Foren"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://www.davie-fl.gov/DocumentCenter/View/4395/NTSS-2018-026-Cellebrite---Universal-Mobile-Phone-Forensic-Software-Upgrade"
 default_tier = "R4"
@@ -13390,6 +13925,7 @@ review_needed = true
 
 [sources.procportal_forsyth_nc_purchasing]
 name = "RFP2449 Real-Time Intelligence Center Enterprise Solution"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://www.cityofws.org/DocumentCenter/View/30154/WebDoc---Real-Time-Intelligence-Center-Enterprise-Solution---RFP2449?bidId="
 default_tier = "R4"
@@ -13418,6 +13954,7 @@ review_needed = true
 
 [sources.statrep_austin_tx_auditor]
 name = "City of Austin Office of the City Auditor - 'APD License Plate Reader Audit Report' (May 2025)"
+one_time_load = true
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://services.austintexas.gov/edims/document.cfm?id=452710"
 default_tier = "R4"
@@ -13501,6 +14038,7 @@ review_needed = true
 
 [sources.ccops_austin_tx]
 name = "City of Austin TX - Transparent and Responsible Use of Surveillance Technology (TRUST) Act resolution (File ID 26-1072, "
+one_time_load = true
 source_kind = "government_mandated_disclosure"
 homepage_url = "https://services.austintexas.gov/edims/document.cfm?id=466941"
 default_tier = "R4"
@@ -13529,6 +14067,7 @@ review_needed = true
 
 [sources.legis_gu_governor]
 name = "Governor of Guam press release: 'Bill for GPD Security Cameras now Law' (Bill 132-35, the Governor's alternative to Bill"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://governor.guam.gov/press_release/bill-for-gpd-security-cameras-now-law/"
 default_tier = "R4"
@@ -13917,6 +14456,7 @@ review_needed = true
 
 [sources.camreg_jeffersonville_in_flock]
 name = "flock (City of Jeffersonville, IN)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://services.arcgis.com/NuZplX0yD9b0Mx90/arcgis/rest/services/flock/FeatureServer/0"
 default_tier = "R1"
@@ -13947,6 +14487,7 @@ review_needed = true
 
 [sources.camreg_ca_monterey_park_flock_camera]
 name = "Flock camera locations / Flock Camera Map (Monterey Park, CA staff accounts)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://services9.arcgis.com/ivAMP6vRMPA12GAA/arcgis/rest/services/Flock_camera_locations/FeatureServer/0"
 default_tier = "R1"
@@ -14324,6 +14865,7 @@ review_needed = true
 
 [sources.camreg_la_east_baton_rouge_parish_flock]
 name = "Flock_Location_Data view (East Baton Rouge Sheriff's Office)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://services7.arcgis.com/w9KefBd0vxjnp6IW/arcgis/rest/services/Flock_Location_Data_view/FeatureServer/0"
 default_tier = "R1"
@@ -14354,6 +14896,7 @@ review_needed = true
 
 [sources.camreg_ga_flock_cameras_asof]
 name = "FLOCK_CAMERAS_ASOF_20240318 (CCSO, west Georgia; org unresolved)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://services1.arcgis.com/AaPyNbrJpNGryRqh/arcgis/rest/services/FLOCK_CAMERAS_ASOF_20240318/FeatureServer/0"
 default_tier = "R1"
@@ -14383,6 +14926,7 @@ review_needed = true
 
 [sources.camreg_gastonia_nc_flock_condor_cameras]
 name = "City of Gastonia NC Flock layers: Condor Cameras, LPR, Flock OS integration layers"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://services3.arcgis.com/u6Nvh8zpOQRNNRJi/arcgis/rest/services/Condor_Cameras/FeatureServer/0"
 default_tier = "R1"
@@ -14779,6 +15323,7 @@ review_needed = true
 
 [sources.camreg_ga_brookhaven_flock_camera]
 name = "Flock_Camera_Locations_Sep_2023 (City of Brookhaven, GA)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://services.arcgis.com/hOnx0eXgrjDCJCZV/arcgis/rest/services/Flock_Camera_Locations_Sep_2023/FeatureServer/0"
 default_tier = "R1"
@@ -15282,6 +15827,7 @@ review_needed = true
 
 [sources.camreg_us_body_worn_camera]
 name = "Body Worn Camera Resources (OJP/BJA BWC Toolkit resource library dataset)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://priv-data.ojp.usdoj.gov/d/ak2j-ub9q"
 default_tier = "R1"
@@ -15367,6 +15913,7 @@ review_needed = true
 
 [sources.dot_511_nv]
 name = "ITS_ATM - Existing Devices (NDOT Statewide ITS ATM Masterplan, layer 3)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://services1.arcgis.com/9Y4hSlLf13E9S0Eo/arcgis/rest/services/ITS_ATM/FeatureServer/3"
 default_tier = "R1"
@@ -15601,6 +16148,7 @@ review_needed = true
 
 [sources.legis_vi_legislature_virgin_islands]
 name = "Legislature of the U.S. Virgin Islands press release: 'Committee advances bill to provide automatic license plate reader"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://legvi.org/committee-advances-bill-to-provide-automatic-license-plate-reader-data-system"
 default_tier = "R4"
@@ -15745,6 +16293,7 @@ review_needed = true
 
 [sources.grant_ma_massachusetts_law_enforcement]
 name = "Massachusetts Law Enforcement Body-Worn Camera Program (EOPSS Office of Grants and Research) award announcements"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://www.mass.gov/news/healey-driscoll-administration-awards-nearly-35-million-for-police-body-worn-cameras"
 default_tier = "R4"
@@ -16046,6 +16595,7 @@ review_needed = true
 
 [sources.camreg_oakland_ca_shotspotter_2013_2015]
 name = "Oakland Police Department Shotspotter Data 2013-2015 (PRR 11288 release, 5 datasets)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://data.oaklandca.gov/browse?q=shotspotter"
 default_tier = "R1"
@@ -16104,6 +16654,7 @@ review_needed = true
 
 [sources.statrep_ca_special_parliament_use]
 name = "Special report to Parliament: Police use of Facial Recognition Technology in Canada and the way forward (RCMP / Clearvie"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://www.priv.gc.ca/en/opc-actions-and-decisions/ar_index/202021/sr_rcmp/"
 default_tier = "R4"
@@ -16551,6 +17102,7 @@ review_needed = true
 
 [sources.ccops_it_tn_trento_provvedimento_dell_11]
 name = "Provvedimento dell'11 gennaio 2024 [9977020] (Comune di Trento \u2014 Marvel/Protector/Precrisis)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9977020"
 default_tier = "R4"
@@ -16814,6 +17366,7 @@ review_needed = true
 
 [sources.camreg_il_chicago_violence_reduction]
 name = "Violence Reduction - Shotspotter Alerts - Historical"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://data.cityofchicago.org/d/3h7q-7mdb"
 default_tier = "R1"
@@ -16844,6 +17397,7 @@ review_needed = true
 
 [sources.statrep_us_upturn_mass_extraction_2020]
 name = "Upturn - Mass Extraction (2020), Appendix C: Total Amounts Spent on MDFTs (agency table)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://www.upturn.org/work/mass-extraction/"
 default_tier = "R4"
@@ -17009,6 +17563,7 @@ review_needed = true
 
 [sources.camreg_si_048_ko_evje_videonadzor_na]
 name = "Videonadzor na javnih povr\u0161inah na obmo\u010dju Ob\u010dine Ko\u010devje"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://podatki.gov.si/dataset/videonadzor-na-javnih-povrsinah-na-obmocju-obcine-kocevje"
 default_tier = "R1"
@@ -17039,6 +17594,7 @@ review_needed = true
 
 [sources.ccops_oh_cincinnati_police_department]
 name = "Cincinnati Police Department - voluntary community camera registry (Axon Fusus 'Real-Time Crime Center in the Cloud')"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://www.cincinnati-oh.gov/police/news/cpd-launches-voluntary-community-camera-registry/"
 default_tier = "R4"
@@ -17327,6 +17883,7 @@ review_needed = true
 
 [sources.policy_lafayette_in_camera_registration]
 name = "Lafayette Police Department camera registration (via CityProtect/CrimeReports)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://www.lafayette.in.gov/2043/Camera-Registration"
 default_tier = "R4"
@@ -17355,6 +17912,7 @@ review_needed = true
 
 [sources.policy_zionsville_in_camera_registry]
 name = "Zionsville Police Department Camera Registry (Polaris cameraregistry.net)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://www.zionsville-in.gov/762/Camera-Registry"
 default_tier = "R4"
@@ -17383,6 +17941,7 @@ review_needed = true
 
 [sources.ccops_ri_narragansett_police_camera]
 name = "Narragansett Police camera registry programme - 'Polaris - CameraKit - FAQs' (Dec 2022)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://www.narragansettri.gov/DocumentCenter/View/17317"
 default_tier = "R4"
@@ -17411,6 +17970,7 @@ review_needed = true
 
 [sources.ccops_ca_calistoga_police_department]
 name = "Calistoga Police Department Voluntary Security Camera Registry"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://www.calistogaca.gov/Services/Police/Police-and-Public-Safety-Updates/Voluntary-Security-Camera-Registry"
 default_tier = "R4"
@@ -17439,6 +17999,7 @@ review_needed = true
 
 [sources.ccops_ca_pinole_police_department]
 name = "Pinole Police Department Security Camera Registry"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://www.pinole.gov/services/security-camera-registry/"
 default_tier = "R4"
@@ -17467,6 +18028,7 @@ review_needed = true
 
 [sources.ccops_mn_dayton_police_department]
 name = "Dayton (MN) Police Department Resident Camera Registry"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://www.daytonmn.gov/departments/police/resident_camera_registry.php"
 default_tier = "R4"
@@ -17577,6 +18139,7 @@ review_needed = true
 
 [sources.policy_chicago_il_oemc_link_your]
 name = "Chicago OEMC - Link Your Cameras (Private Sector Camera Initiative)"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://www.chicago.gov/city/en/depts/oem/provdrs/tech/svcs/link_your_cameras.html"
 default_tier = "R4"
@@ -17605,6 +18168,7 @@ review_needed = true
 
 [sources.statrep_tx_ca_nm_ri_fl_il_eff_red_flag]
 name = "EFF Red Flag Machine \u2014 GoGuardian records research"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://redflagmachine.com/research/"
 default_tier = "R4"
@@ -17632,6 +18196,7 @@ review_needed = true
 
 [sources.ccops_nc_elizabeth_city_police]
 name = "Elizabeth City (NC) Police Department memorandum 'AXON Enterprise, Inc. Purchased FUSUS' (2024-10-11) - Intelligence Cen"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://elizabethcitync.gov/vertical/sites/%7B81CF1C17-216A-4959-BE57-0B405379B891%7D/uploads/Memorandum_AXON_Enterprise_Inc._Purchased_FUSUS_10-14-24.pdf"
 default_tier = "R4"
@@ -17744,6 +18309,7 @@ review_needed = true
 
 [sources.ccops_mo_st_louis_fy21_spi_shotspotter]
 name = "FY21 - SPI ShotSpotter Expansion Evaluation - Final Report (St. Louis Metropolitan Police Department)"
+one_time_load = true
 source_kind = "academic"
 homepage_url = "https://www.siue.edu/ccsvp/pdf/SPIShotSpotterSLMPD2026.pdf"
 default_tier = "R4"
@@ -17772,6 +18338,7 @@ review_needed = true
 
 [sources.legis_ie_rs_general_scheme]
 name = "L&RS General Scheme Briefing Paper: Garda S\u00edoch\u00e1na (Recording Devices) (Amendment) Bill"
+one_time_load = true
 source_kind = "government_portal"
 homepage_url = "https://data.oireachtas.ie/ie/oireachtas/libraryResearch/2025/2025-08-18_briefing-paper-garda-siochana-recording-devices-amendment-bill_en.pdf"
 default_tier = "R4"
