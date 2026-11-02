@@ -1,0 +1,193 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.48 (UX9-3; K9 §4.2/§6.1, SIG-TRANSP-028) — the sources table shell:
+// the view switcher (Overview · Runs & freshness · Rights & downloads),
+// the per-column asc/desc sort links (plain GETs to pre-rendered routes),
+// the A–Z jump list and the table itself via the shared row component.
+// No-JS by construction (SIG-UI-037): every sort and filter is a link.
+import DataTable, { type TableColumn } from "./DataTable.astro";
+import SourceTableRow from "./SourceTableRow.astro";
+import type { FigureSpec } from "../lib/figures";
+import {
+  SORT_SPECS,
+  VIEWS,
+  sortTable,
+  sortRoute,
+  type SortDir,
+  type TableRow,
+  type TableView,
+} from "../lib/sources-table";
+import { withBase } from "../lib/paths";
+
+export interface Props {
+  view: TableView;
+  /** The page slice — the route's sorted row set, already paginated. */
+  rows: TableRow[];
+  /** The active sort — the view root is the default (source asc). */
+  sortKey?: string;
+  sortDir?: SortDir;
+  /** A facet page's fixed row set renders the default sort (K9 §6.1). */
+  caption?: string;
+  /** The page's figures[] registry — one spec per rendered numeral cell. */
+  figureSpecs?: (row: TableRow, cell: string) => FigureSpec | undefined;
+  /** data-copy ids for the column headers (copy-batch rows). */
+  headerCopyIds?: Record<string, string>;
+  testid?: string;
+  /** The A–Z letters with their (possibly cross-page) hrefs — empty hides
+   *  the jump list (non-overview views carry no A–Z, K9 §6.1). */
+  azLetters?: { letter: string; href: string }[];
+  /** sourceId → `az-<letter>` anchor id for the letter-opening rows on
+   *  this page (populated only when the name sort itself renders). */
+  azAnchors?: Map<string, string>;
+}
+
+const {
+  view,
+  rows,
+  sortKey = "source",
+  sortDir = "asc",
+  caption,
+  figureSpecs,
+  headerCopyIds = {},
+  testid = "sources-table",
+  azLetters = [],
+  azAnchors,
+} = Astro.props;
+
+const VIEW_COPY: Record<TableView, string> = {
+  overview: "ST-05",
+  runs: "ST-06",
+  rights: "ST-07",
+};
+
+const HEADERS: Record<string, string> = {
+  source: "Source",
+  publisher: "Publisher",
+  class: "Class",
+  geography: "Geography",
+  status: "Status",
+  freshness: "Freshness",
+  claims: "Published claims",
+  download: "Download",
+  last_run: "Last successful run",
+  upstream: "Last upstream change",
+  sig_change: "Last change in SIG's records",
+  cadence: "Cadence",
+  runs: "Runs",
+  errors: "Errors",
+  licence: "Licence",
+  redistribution: "Redistribution",
+  ground_truth: "Ground truth",
+};
+
+const activeView: TableView = view;
+const cols: TableColumn[] = VIEWS[activeView].columns.map((key: string) => {
+  const sortable = SORT_SPECS[key] !== undefined;
+  const active = sortable && key === sortKey;
+  return {
+    key,
+    label: HEADERS[key] ?? key,
+    numeric: ["claims", "runs", "errors"].includes(key),
+    sort: active ? (sortDir === "desc" ? "descending" : "ascending") : undefined,
+    sortHref: sortable
+      ? sortRoute(view, key, key === sortKey && sortDir === "asc" ? "desc" : "asc")
+      : undefined,
+    copy: headerCopyIds[key],
+  };
+});
+
+const sorted = sortTable(rows, sortKey, sortDir);
+const CELL_FIG_KEY: Record<string, string[]> = {
+  overview: ["claims", "staleness", "staleness-eval"],
+  runs: ["runs", "errors"],
+  rights: [],
+};
+
+// Pre-computed per-row figure maps — a block-bodied arrow inside a JSX
+// expression mis-parses, so the work happens here in frontmatter.
+const figMap = new Map<string, Record<string, FigureSpec>>();
+for (const row of sorted) {
+  const figs: Record<string, FigureSpec> = {};
+  for (const cell of CELL_FIG_KEY[view]) {
+    const spec = figureSpecs?.(row, cell);
+    if (spec) figs[cell] = spec;
+  }
+  figMap.set(row.sourceId, figs);
+}
+---
+
+<div class="sig-sources-table" data-testid={testid} data-view={view}>
+  <nav class="sig-sort" aria-label="Sources table views" data-testid="view-switch">
+    <span class="sig-sort__label" data-copy="ST-04">View:</span>{" "}
+    {(Object.keys(VIEWS) as TableView[]).map((v, i) => (
+      <>
+        {i > 0 && " · "}
+        {v === view
+          ? <strong aria-current="page" data-testid={`view-${v}`} data-copy={VIEW_COPY[v]}>{VIEWS[v].label}</strong>
+          : <a href={withBase(VIEWS[v].routeBase)} data-testid={`view-${v}`} data-copy={VIEW_COPY[v]}>{VIEWS[v].label}</a>}
+      </>
+    ))}
+  </nav>
+
+  <nav class="sig-sort" aria-label="Sort the sources table" data-testid="sort-links">
+    <span class="sig-sort__label" data-copy="ST-08">Sort by:</span>{" "}
+    {cols.filter((c) => c.sortHref !== undefined).map((c, i) => (
+      <>
+        {i > 0 && " "}
+        <a
+          class="sig-sort__link"
+          data-testid="sort-link"
+          data-sort-key={c.key}
+          href={withBase(sortRoute(view, c.key, "asc"))}
+          aria-current={c.key === sortKey ? "true" : "false"}
+        >
+          {c.label}
+        </a>{" "}
+        <a
+          class="sig-sort__dir"
+          data-testid="sort-desc"
+          data-sort-key={c.key}
+          href={withBase(sortRoute(view, c.key, "desc"))}
+          aria-label={`${c.label}, descending`}
+          aria-current={c.key === sortKey && sortDir === "desc" ? "true" : "false"}
+        >
+          ↓
+        </a>
+      </>
+    ))}
+  </nav>
+
+  {azLetters.length > 0 && (
+    <nav class="sig-az" aria-label="Jump to a letter" data-testid="az-index">
+      <span class="sig-sort__label" data-copy="ST-09">A–Z:</span>{" "}
+      {azLetters.map((l, i) => (
+        <>
+          {i > 0 && " "}
+          <a href={l.href} data-testid="az-link">{l.letter}</a>
+        </>
+      ))}
+    </nav>
+  )}
+
+  <DataTable
+    label={caption ?? `Sources — ${VIEWS[activeView].label}`}
+    caption={caption}
+    columns={cols}
+    density="compact"
+    testid="sources-table-grid"
+  >
+    <tbody>
+      {sorted.map((row) => (
+        <SourceTableRow
+          row={row}
+          view={view}
+          figs={figMap.get(row.sourceId) ?? {}}
+          azId={azAnchors?.get(row.sourceId)}
+        />
+      ))}
+    </tbody>
+  </DataTable>
+</div>

@@ -41,5 +41,6 @@ test("search: without JS the island is inert but the browse index is usable", as
   await expect(browse).toBeVisible();
   await expect(browse.locator("a[href='/dossier/']")).toBeVisible();
   await expect(browse.locator("a[href='/map/']")).toBeVisible();
-  await expect(browse.locator("a[href='/data-freshness/']")).toBeVisible();
+  // P36.48: the sources link names the runs view (the retired page's successor).
+  await expect(browse.locator("a[href='/sources/runs/']")).toBeVisible();
 });

@@ -163,12 +163,32 @@ describe("fixed legacy list + handles", () => {
     expect(rules.has("/network/")).toBe(false);
   });
 
-  it("retired source + existing successor → the fixed rule fires", () => {
+  it("retired source + existing successors → the /data-freshness/ map fires (K9 C-11)", () => {
     const rules = byFrom(
-      redirectRules(inputs({ emittedRoutes: new Set(["/sources/"]) })),
+      redirectRules(
+        inputs({
+          emittedRoutes: new Set(["/sources/", "/sources/runs/", "/sources/runs/sort/freshness/asc/"]),
+        }),
+      ),
     );
-    expect(rules.get("/data-freshness/")).toMatchObject({ status: 301, target: "/sources/" });
+    expect(rules.get("/data-freshness/")).toMatchObject({ status: 301, target: "/sources/runs/" });
+    expect(rules.get("/data-freshness/status/")).toMatchObject({
+      status: 301,
+      target: "/sources/runs/sort/freshness/asc/",
+    });
+    expect(rules.get("/data-freshness/stale/")?.target).toBe("/sources/runs/");
+    expect(rules.get("/data-freshness/volatility/")?.target).toBe("/sources/runs/");
+    expect(rules.get("/data-freshness/source/")?.target).toBe("/sources/");
     expect(rules.has("/network/")).toBe(false); // /explore/ not emitted → no rule
+  });
+
+  it("no route serves /data-freshness/ while the map fires — the fixture check (P36.48 AC)", () => {
+    const rules = redirectRules(
+      inputs({ emittedRoutes: new Set(["/sources/", "/sources/runs/", "/sources/runs/sort/freshness/asc/"]) }),
+    );
+    const hit = resolveRequest(rules, "/data-freshness/status/");
+    expect(hit?.status).toBe(301);
+    expect(hit?.target).toBe("/sources/runs/sort/freshness/asc/");
   });
 
   it("handle-history rows feed the same table (301)", () => {

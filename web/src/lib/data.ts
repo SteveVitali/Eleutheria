@@ -75,6 +75,10 @@ import {
   type SourceCountsDoc,
   type SourceRowsDoc,
 } from "./source-counts";
+import {
+  SOURCE_EXECUTIONS_FIXTURE,
+  SOURCE_FRESHNESS_FIXTURE,
+} from "./source-page";
 import { getStatusLane } from "./status-lane";
 import { isResolutionEval, type ResolutionEval } from "./resolution-eval";
 import { STATEMENT_FIXTURES } from "./statements-fixture";
@@ -2035,6 +2039,35 @@ export function getSourceRows(): SourceRowsDoc {
   });
 }
 
+/** P36.48: the freshness rows as an artifact payload (`freshness.jsonl`). */
+function getFreshnessRecords(): unknown[] {
+  if (dataSource() !== "export") {
+    return Object.values(SOURCE_FRESHNESS_FIXTURE);
+  }
+  const path = `${exportDir()}/transparency/freshness.jsonl`;
+  if (!existsSync(path)) return [];
+  return readFileSync(path, "utf-8")
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .map((l) => JSON.parse(l) as unknown);
+}
+
+/** P36.48: one source's `sig.execution-record/1` feed (P36.46) — `null`
+ *  when the source records none (the honest absence). */
+function getSourceExecutionsArtifact(sourceId: string): unknown[] | null {
+  if (dataSource() !== "export") {
+    return SOURCE_EXECUTIONS_FIXTURE[sourceId] ?? null;
+  }
+  const path = `${exportDir()}/transparency/sources/${sourceId}/executions.jsonl`;
+  if (!existsSync(path)) return null;
+  return readFileSync(path, "utf-8")
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .map((l) => JSON.parse(l) as unknown);
+}
+
 /**
  * P35.39 (SIG-TRANSP-016, J3 §6.5): the generated `sig.data-dictionary/1`
  * document behind `/data/dictionary/` — `<exportDir>/dictionary.json` in
@@ -2189,6 +2222,9 @@ export function getReleaseArtifactPayload(artifactPath: string): unknown | null 
       return getSourceCounts();
     case "transparency/sources.json":
       return getSourceRows();
+    // P36.48: the freshness verdicts the table's staleness cells point at.
+    case "transparency/freshness.jsonl":
+      return getFreshnessRecords();
     case "web/evaluation.json":
       return getResolutionEval();
     case "web/terms_disclosure.json":
@@ -2242,8 +2278,15 @@ export function getReleaseArtifactPayload(artifactPath: string): unknown | null 
       return dataSource() !== "export"
         ? JURISDICTION_DOSSIERS
         : readPresentation<Dossier[]>("jurisdiction_dossiers", []);
-    default:
+    default: {
+      // P36.48: the per-source execution feeds the table's run-cell
+      // figures point at (the P36.46 sig.execution-record/1 rows).
+      const m = /^transparency\/sources\/([a-z0-9_-]+)\/executions\.jsonl$/.exec(
+        artifactPath,
+      );
+      if (m) return getSourceExecutionsArtifact(m[1]!);
       return null;
+    }
   }
 }
 

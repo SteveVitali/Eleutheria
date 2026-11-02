@@ -1,0 +1,41 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.48 fix arc (UX9-3, SIG-TRANSP-028, K9 §6.1): the facet routes'
+// continuation pages — `/sources/by/<dim>/<value>/page/<n>/` paginates a
+// filtered row set that exceeds the budget page size (the catch-all facet
+// values hold most of the registry).
+import BaseLayout from "../../../../../../layouts/BaseLayout.astro";
+import SourcesTablePage from "../../../../../../components/SourcesTablePage.astro";
+import {
+  facetDim,
+  facetRoutes,
+  facetValueSlug,
+  getTableRows,
+  pageNumbers,
+} from "../../../../../../lib/sources-table";
+import { withBase } from "../../../../../../lib/paths";
+
+export function getStaticPaths() {
+  const { rows } = getTableRows();
+  // params.value is the slugged segment; props.value stays the rendered
+  // predicate value (same contract as the facet index route).
+  return facetRoutes(rows).flatMap(({ dim, value, count }) =>
+    pageNumbers(count).map((n) => ({
+      params: { dim, value: facetValueSlug(value), n: String(n) },
+      props: { dim, value, page: n },
+    })),
+  );
+}
+
+const { dim, value, page } = Astro.props as { dim: string; value: string; page: number };
+if (facetDim(dim) === null) {
+  throw new Error(`sources/by: unregistered facet dimension "${dim}" (SIG-ENG-042)`);
+}
+---
+
+<BaseLayout title={`Sources — ${dim}: ${value}, page ${page}`} path={withBase(`sources/by/${dim}/${facetValueSlug(value)}/page/${page}/`)}>
+  <SourcesTablePage view="overview" facet={{ dim, value }} page={page} />
+</BaseLayout>

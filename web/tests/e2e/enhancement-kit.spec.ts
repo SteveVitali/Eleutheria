@@ -47,14 +47,17 @@ test.describe("<sig-table> on the sources table", () => {
     const sort = page.getByRole("button", { name: /^Source/ });
     await sort.click();
     await expect(firstCell()).toContainText("demo-municipal-portal");
+    // P36.48: /sources/ now carries two tables — scope to the licence
+    // table (the one with `source-row` rows) for the aria-sort check.
+    const licenceTable = page.locator("table:has([data-testid='source-row'])");
     await expect(
-      page.locator('th[aria-sort="ascending"]'),
+      licenceTable.locator('th[aria-sort="ascending"]'),
     ).toContainText("Source");
     expect(page.url()).toContain("sort=source");
     await sort.click();
     await expect(firstCell()).toContainText("demo-records-request");
     await expect(
-      page.locator('th[aria-sort="descending"]'),
+      licenceTable.locator('th[aria-sort="descending"]'),
     ).toContainText("Source");
     expect(page.url()).toContain("dir=desc");
   });
@@ -134,9 +137,9 @@ test.describe("<sig-cite>, <sig-copy>, <sig-details> — the shared cite trio", 
     await expect(out).toContainText(
       "Surveillance Infrastructure Graph. (",
     );
-    await expect(out).toContainText("Sources and licences");
+    await expect(out).toContainText("Sources");
     await cite.getByRole("combobox", { name: "Format" }).selectOption("chicago");
-    await expect(out).toContainText('"Sources and licences."');
+    await expect(out).toContainText('"Sources."');
     await cite.getByRole("combobox", { name: "Format" }).selectOption("legal");
     await expect(out).toContainText("data as of");
   });

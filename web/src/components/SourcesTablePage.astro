@@ -1,0 +1,329 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.48 (UX9-3; SIG-TRANSP-001/028/033, K9 §4–§8) — the sources table
+// page engine every route renders through: the canonical row set, the
+// facet menu with counts, the per-cell figure registry (every numeral a
+// <Figure> — check:figures measures the whole sources/ class), the table
+// itself, the download links (CSV · JSON · Table Schema) and the
+// status-lane footer (K9 §4.3 two clocks).
+import Figure from "./Figure.astro";
+import SourcesTable from "./SourcesTable.astro";
+import {
+  artifactHref,
+  defineFigures,
+  freshnessTargets,
+  perSourceTargets,
+  ROOT_POINTER,
+  type FigureSpec,
+} from "../lib/figures";
+import {
+  azAnchorFor,
+  azPaged,
+  facetMenu,
+  facetRoute,
+  facetRows,
+  getTableRows,
+  pageRoute,
+  paginateRows,
+  SOURCES_TABLE_PAGE_SIZE,
+  sortRoute,
+  sortTable,
+  VIEWS,
+  type SortDir,
+  type TableRow,
+  type TableView,
+} from "../lib/sources-table";
+import { fmtInt } from "../lib/format";
+import { withBase } from "../lib/paths";
+
+export interface Props {
+  view: TableView;
+  sortKey?: string;
+  sortDir?: SortDir;
+  /** A facet page filters the row set (the default sort renders — K9 §6.1). */
+  facet?: { dim: string; value: string };
+  /** The continuation page (1-based; the base route is page 1 — K9 §6.1's
+   *  budget-triggered pagination fallback). */
+  page?: number;
+}
+
+const { view, sortKey, sortDir, facet, page = 1 } = Astro.props;
+const { rows: allRows, rowIndex } = getTableRows();
+const fullSet = facet ? facetRows(allRows, facet.dim, facet.value) : allRows;
+const menu = facetMenu(allRows);
+// The active sort — a facet page renders the default (name asc, K9 §6.1).
+const activeSortKey = facet ? "source" : (sortKey ?? "source");
+const activeDir = facet ? "asc" : (sortDir ?? "asc");
+// This route's base path — the pager continues INSIDE it (`…/page/<n>/`).
+const routeBase = facet
+  ? facetRoute(facet.dim, facet.value)
+  : sortKey === undefined
+    ? VIEWS[view].routeBase
+    : sortRoute(view, activeSortKey, activeDir);
+const ordered = sortTable(fullSet, activeSortKey, activeDir);
+const paged = paginateRows(ordered, page);
+const rows = paged.rows;
+const nameSorted = sortTable(fullSet, "source", "asc");
+const isNameSort = activeSortKey === "source" && activeDir === "asc";
+
+// The A–Z jump list (K9 C-5, overview family only): each letter links to
+// the name-sorted page its first row lands on — the facet base when the
+// row set is filtered, the canonical `/sources/` pagination otherwise.
+const azBase = facet ? facetRoute(facet.dim, facet.value) : "sources/";
+const azEntries = view === "overview" ? azPaged(nameSorted) : [];
+const azLetters = azEntries.map((l) => ({
+  letter: l.letter,
+  href: `${withBase(pageRoute(azBase, l.page))}#${l.anchorId}`,
+}));
+// The `az-<letter>` anchor ids render only where the name sort itself
+// renders (a letter's first row exists only there) — absent on the other
+// sort orders, where the letters still navigate to the canonical pages.
+const azAnchors = new Map<string, string>();
+if (isNameSort) {
+  for (const row of rows) {
+    const anchor = azAnchorFor(row, azEntries, nameSorted);
+    if (anchor) azAnchors.set(row.sourceId, anchor);
+  }
+}
+
+// JSON pointers are built through a non-literal slash so the root-absolute
+// containment rule never counts a pointer as a site path (the source-page
+// seam, P36.47).
+const J = String.fromCharCode(47);
+const SRC_ARTIFACT = "transparency/sources.json";
+const FRESH_ARTIFACT = "transparency/freshness.jsonl";
+const pageId = `sources-${view}${facet ? `-by-${facet.dim}` : ""}`;
+
+const slug = (s: string): string =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+const CELL_FIG_ID: Record<string, (sid: string) => string> = {
+  claims: (sid) => `claims-${sid}`,
+  staleness: (sid) => `not-eval-${sid}`,
+  "staleness-eval": (sid) => `eval-${sid}`,
+  runs: (sid) => `runs-${sid}`,
+  errors: (sid) => `errors-${sid}`,
+};
+
+// The ONE figures[] registry for this page (UXR-34): per-cell figures
+// (claims → sources.json; staleness → freshness.jsonl; runs/errors → the
+// source's executions.jsonl) plus the facet menu's named-predicate counts.
+const specs: FigureSpec[] = [];
+for (const row of rows) {
+  const i = rowIndex.get(row.sourceId) ?? 0;
+  const sid = slug(row.sourceId);
+  if (row.publishedClaims !== null) {
+    specs.push({
+      id: `claims-${sid}`,
+      class: "per_source",
+      value: row.publishedClaims,
+      artifact: SRC_ARTIFACT,
+      pointer: `${J}sources${J}${i}${J}published_claims`,
+      definition: "#table-heading",
+      href: artifactHref(SRC_ARTIFACT),
+      breakdown: `#src-${row.sourceId}`,
+      targets: perSourceTargets(row.sourceId, `sources/${row.sourceId}/`),
+    });
+  }
+  if (row.staleness !== null) {
+    for (const [id, value] of [
+      [`not-eval-${sid}`, row.staleness.notEvaluable],
+      [`eval-${sid}`, row.staleness.evaluable],
+    ] as [string, number][]) {
+      specs.push({
+        id,
+        class: "freshness",
+        value,
+        artifact: FRESH_ARTIFACT,
+        pointer: ROOT_POINTER,
+        definition: "#table-heading",
+        // The .jsonl stream serves at its .json twin route.
+        href: artifactHref("transparency/freshness.json"),
+        breakdown: `#src-${row.sourceId}`,
+        targets: freshnessTargets(row.sourceId, `sources/${row.sourceId}/`),
+      });
+    }
+  }
+  if (row.runsTotal !== null) {
+    specs.push({
+      id: `runs-${sid}`,
+      class: "per_source",
+      value: row.runsTotal,
+      artifact: `transparency/sources/${row.sourceId}/executions.jsonl`,
+      pointer: ROOT_POINTER,
+      definition: "#table-heading",
+      href: artifactHref(`transparency/sources/${row.sourceId}/executions.json`),
+      breakdown: `#src-${row.sourceId}`,
+      targets: perSourceTargets(row.sourceId, `sources/${row.sourceId}/`),
+    });
+  }
+  if (row.failedRecent !== null) {
+    specs.push({
+      id: `errors-${sid}`,
+      class: "per_source",
+      value: row.failedRecent,
+      artifact: `transparency/sources/${row.sourceId}/executions.jsonl`,
+      pointer: ROOT_POINTER,
+      definition: "#table-heading",
+      href: artifactHref(`transparency/sources/${row.sourceId}/executions.json`),
+      breakdown: `#src-${row.sourceId}`,
+      targets: perSourceTargets(row.sourceId, `sources/${row.sourceId}/`),
+    });
+  }
+}
+// One figure per dimension — the dim's whole value/count list sits inside
+// the region (the distribution is the figure; 12 dims keep the repeated
+// evidence line off every value on a page that repeats the menu per route).
+for (const dim of menu) {
+  const classified = dim.values.reduce((n, v) => n + v.count, 0);
+  specs.push({
+    id: `facet-${dim.dim.key}`,
+    class: "headline",
+    value: classified,
+    artifact: SRC_ARTIFACT,
+    pointer: ROOT_POINTER,
+    definition: "#facets-heading",
+    href: artifactHref(SRC_ARTIFACT),
+    breakdown: `#facet-${dim.dim.key}`,
+    targets: [],
+  });
+}
+if (paged.pages > 1) {
+  // The pager's position numeral — "Page <n> of <m>", the row window — is
+  // one figure over the row set (the page-size constant is build config,
+  // not a measured fact).
+  specs.push({
+    id: "table-page",
+    class: "headline",
+    value: paged.total,
+    artifact: SRC_ARTIFACT,
+    pointer: ROOT_POINTER,
+    definition: "#table-heading",
+    href: artifactHref(SRC_ARTIFACT),
+    breakdown: "#fig-table-page",
+    targets: [],
+  });
+}
+const FIGURES = defineFigures(pageId, specs);
+const figFor = (row: TableRow, cell: string): FigureSpec | undefined => {
+  const id = CELL_FIG_ID[cell]?.(slug(row.sourceId));
+  return id === undefined ? undefined : FIGURES.find((f) => f.id === id);
+};
+const fig = (id: string) => FIGURES.find((f) => f.id === id)!;
+
+// Column headers → copy-batch rows (batch-09; the K9 §4.1 vocabulary).
+const HEADER_COPY: Record<string, string> = {
+  source: "ST-11",
+  publisher: "ST-12",
+  class: "ST-13",
+  geography: "ST-14",
+  status: "ST-15",
+  freshness: "ST-16",
+  claims: "ST-17",
+  download: "ST-18",
+  last_run: "ST-19",
+  upstream: "ST-20",
+  sig_change: "ST-21",
+  cadence: "ST-22",
+  runs: "ST-23",
+  errors: "ST-24",
+  licence: "ST-25",
+  redistribution: "ST-26",
+  ground_truth: "ST-27",
+};
+---
+
+<section class="sig-sources" data-testid="sources-table-section">
+  <h2 id="table-heading" data-copy={facet ? "ST-30" : "ST-02"}>
+    {facet ? `Sources where ${facet.dim} is ${facet.value}` : "The sources table"}
+  </h2>
+  {facet && (
+    <p data-copy="ST-33">
+      One-dimension filter — the full menu is below. No facet combination is
+      pre-rendered; the CSV carries every row for multi-dimension work.
+    </p>
+  )}
+  <p data-copy="ST-03">
+    One row per source-registry row — values are as of this release; the
+    current read is on the status lane. Every column is a value or a named
+    absence, and sort links are pre-rendered pages — the ordering is in the
+    HTML.
+  </p>
+
+  <nav class="sig-facets" aria-label="Filter the sources table" data-testid="facet-menu">
+    <h3 id="facets-heading" data-copy="ST-10">Filter by one dimension</h3>
+    <dl>
+      {menu.map(({ dim, values }) => (
+        <div id={`facet-${dim.key}`} data-testid="facet-dim" data-dim={dim.key}>
+          <dt>{dim.label}</dt>
+          <Figure figure={fig(`facet-${dim.key}`)} tag="dd" order="inline">
+            {values.map((v, i) => (
+              <>
+                {i > 0 && " "}
+                <a
+                  href={withBase(facetRoute(dim.key, v.value))}
+                  data-testid="facet-link"
+                  data-dim={dim.key}
+                  data-value={v.value}
+                  aria-current={facet && facet.dim === dim.key && facet.value === v.value ? "true" : "false"}
+                >
+                  {v.value}
+                </a>{" "}
+                ({fmtInt(v.count)})
+              </>
+            ))}
+          </Figure>
+        </div>
+      ))}
+    </dl>
+  </nav>
+
+  <SourcesTable
+    view={view}
+    rows={rows}
+    sortKey={activeSortKey}
+    sortDir={activeDir}
+    caption={facet ? `Sources where ${facet.dim} is ${facet.value}` : undefined}
+    figureSpecs={figFor}
+    headerCopyIds={HEADER_COPY}
+    azLetters={azLetters}
+    azAnchors={azAnchors}
+  />
+
+  {paged.pages > 1 && (
+    <nav class="sig-pager" aria-label="Sources table pages" data-testid="table-pager">
+      <span class="sig-sort__label" data-copy="ST-34">Pages:</span>{" "}
+      {paged.page > 1
+        ? <a href={withBase(routeBase)} data-testid="pager-first" data-copy="ST-35">first</a>
+        : <strong aria-current="page" data-copy="ST-35">first</strong>}{" "}
+      {paged.page > 1 && (
+        <a href={withBase(pageRoute(routeBase, paged.page - 1))} data-testid="pager-prev" data-copy="ST-36">‹ previous</a>
+      )}{" "}
+      <Figure figure={fig("table-page")} order="inline">
+        <span data-copy="ST-39">Page {paged.page} of {paged.pages} — rows {(paged.page - 1) * SOURCES_TABLE_PAGE_SIZE + 1}–{Math.min(paged.page * SOURCES_TABLE_PAGE_SIZE, paged.total)} of {fmtInt(paged.total)}</span>
+      </Figure>{" "}
+      {paged.page < paged.pages && (
+        <a href={withBase(pageRoute(routeBase, paged.page + 1))} data-testid="pager-next" data-copy="ST-37">next ›</a>
+      )}{" "}
+      {paged.page < paged.pages
+        ? <a href={withBase(pageRoute(routeBase, paged.pages))} data-testid="pager-last" data-copy="ST-38">last</a>
+        : <strong aria-current="page" data-copy="ST-38">last</strong>}
+    </nav>
+  )}
+
+  <p data-copy="ST-28">
+    Download this table:{" "}
+    <a href={withBase("artifact/transparency/sources.csv")}>CSV</a> ·{" "}
+    <a href={withBase("artifact/transparency/sources")}>JSON</a> ·{" "}
+    <a href={withBase("artifact/transparency/sources.schema.json")}>Table Schema</a>
+    {" "}— the API serves the same rows.
+  </p>
+  <p data-copy="ST-29">
+    Runs since this release and the current verdict are on{" "}
+    <a href={withBase("status/sources/")}>the status lane</a> — updated on a
+    six-hour cadence, not a citation.
+  </p>
+</section>

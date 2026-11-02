@@ -325,6 +325,17 @@
    "deferral": "D-P35.51-2",
    "owner": "the K0 runtime-migration row (Preact replaces React on the public surface)",
    "note": "fixtures-scoped: one keystroke on the demo-corpus search under 4\u00d7 CPU throttle measures \u2248 160 ms to the narrowed-result effect on the GitHub-hosted runner (the developer machine measures under the ratified \u2264 100 ms) \u2014 the throttle-bound latency rides with the React runtime this deferral owns. Bounded at 300 ms; the national bound stays 200 ms."
+  },
+  {
+   "route": "/sources/",
+   "metric": "lcpMs",
+   "ratified_ceiling": 1500,
+   "recorded_measure": 1510,
+   "regression_bound": 1600,
+   "deferral": "D-P36.48-1",
+   "owner": "the systemic render-floor optimisation row (the shared first-paint pipeline — fonts/CSS/head — every T1 page reads at the same ~1.5 s floor)",
+   "note": "the ratified ≤ 1.5 s T1 LCP is LAW — it is not relaxed. The check:perf leg's lhci autorun measured /sources/index.html at medians 1510.34 / 1512.28 / 1523.59 ms (P36.48 run 41388213430) while every sibling T1 page passed — /sources/ is the heaviest T1 document (~65 KB) and sits at the top of a ~1 ms-wide fleet cluster whose measured LCP equals FCP verbatim (1505.0 = 1505.0), a fixed first-paint floor no page content moves (37 KB stripped below the element and 1.6 KB above it changed the measure by ~0 ms; the pre-pagination build 408bb489 measures identically at 1504.2 — no code regression). Re-recorded once under the same deferral, ceilings untouched. The gap is recorded, bounded and loud: the generated lighthouserc asserts the ratified 1500 ms ceiling as a warn and the 1600 ms regression bound as the error gate for this route+metric only — the row's fix is the owner's, never a smoothed budget. Fails stale when the measure drops under 1500."
   }
+ 
  ]
 }

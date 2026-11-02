@@ -1,0 +1,194 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.48 (UX9-3; K9 C-12 + §4.1) — THE shared sources-table row component:
+// one `<tr>` of the K9 column vocabulary rendered identically on the
+// release clock (`/sources/` + its sort/facet routes) and the status clock
+// (`/status/sources/`, which feeds the same component adapted lane rows —
+// see status-lane.ts). The status table adds its one status-only cell,
+// "Next run (day)" (SIG-TRANSP-034: no release page shows a status value).
+// Every cell is a value or a named absence token (J3 T-5); a registry-only
+// row never renders a run, capture or probe detail (D-J3-11). Numerals
+// ride inside <Figure> only when the caller passes a spec — the sources
+// class's pages always do; the status lane is outside the figure sweep.
+import Figure from "./Figure.astro";
+import type { FigureSpec } from "../lib/figures";
+import type { TableRow } from "../lib/sources-table";
+import { fmtInt } from "../lib/format";
+import { withBase } from "../lib/paths";
+
+export interface Props {
+  row: TableRow;
+  view: "overview" | "runs" | "rights";
+  /** The status-clock cell — present only on /status/sources/. */
+  nextRunDay?: string;
+  /** Figure specs for the numeral cells this page registers (UXR-34). */
+  figs?: Record<string, FigureSpec>;
+  /** The A–Z anchor id when this row opens its letter (in-page jump). */
+  azId?: string;
+  /** The window note the runs/errors cells carry — the release clock's
+   *  default texts; the status lane names its own windows (C-12). */
+  runsNote?: string;
+  errorsNote?: string;
+}
+
+const { row, view, nextRunDay, figs = {}, azId, runsNote = "", errorsNote = "failed in the 90-day window" } = Astro.props;
+const fig = (k: string) => figs[k];
+
+const outcomeSplit = (counts: Record<string, number>): string => {
+  const parts = Object.entries(counts)
+    .filter(([, n]) => n > 0)
+    .map(([k, n]) => `${n} ${k}`);
+  return parts.length ? parts.join(", ") : "none recorded";
+};
+
+const changeCell = (c: { value: string | null; basis: string } | null): { value: string | null; basis: string } =>
+  c ?? { value: null, basis: "not_recorded" };
+
+const upstream = changeCell(row.upstreamChange);
+const sigChange = changeCell(row.sigChange);
+---
+
+<tr
+  id={azId}
+  data-testid="source-table-row"
+  data-source={row.sourceId}
+  data-status={row.lifecycle}
+  data-lane={row.lane}
+  data-freshness={row.freshnessState}
+>
+  {view === "overview" && (
+    <>
+      <th scope="row" id={`src-${row.sourceId}`}>
+        <a href={withBase(`sources/${row.sourceId}/`)}>{row.name}</a>
+        {row.name !== row.sourceId && <><br /><code>{row.sourceId}</code></>}
+      </th>
+      <td data-testid="cell-publisher">
+        {row.publisher === "publisher_not_recorded"
+          ? <span class="sig-not-recorded">publisher not recorded</span>
+          : row.publisher}
+        {row.publisherType !== "not_recorded" && <> · {row.publisherType}</>}
+      </td>
+      <td data-testid="cell-class">
+        {row.classes === null
+          ? <span class="sig-not-recorded">not typed</span>
+          : row.classes.join(", ")}
+      </td>
+      <td data-testid="cell-geography">
+        {row.geography ?? <span class="sig-not-recorded">unresolved</span>}
+      </td>
+      <td data-testid="cell-status">
+        {row.lifecycle}
+        {row.flags.length > 0 && <> — {row.flags.join(", ")}</>}
+      </td>
+      <td data-testid="cell-freshness">
+        {row.freshnessState}
+        {row.freshnessEvaluatedAt && <> · evaluated <time datetime={row.freshnessEvaluatedAt}>{row.freshnessEvaluatedAt}</time></>}
+        {row.volatilityDominant && <> · {row.volatilityDominant}</>}
+        {row.staleness && fig("staleness") && (
+          <>
+            {" "}· stale{" "}
+            <Figure figure={fig("staleness")!} order="inline">{fmtInt(row.staleness.notEvaluable)}</Figure>
+            {" "}not evaluable of{" "}
+            <Figure figure={fig("staleness-eval")!} order="inline">{fmtInt(row.staleness.evaluable)}</Figure>
+            {" "}evaluable
+          </>
+        )}
+      </td>
+      <td data-testid="cell-claims" class="sig-table__num">
+        {row.publishedClaims === null
+          ? <span class="sig-not-recorded">not published</span>
+          : fig("claims")
+            ? <Figure figure={fig("claims")!} order="inline">{fmtInt(row.publishedClaims)}</Figure>
+            : fmtInt(row.publishedClaims)}
+        {row.publishedSites && <> · sites</>}
+      </td>
+      <td data-testid="cell-download">{row.downloadToken}</td>
+    </>
+  )}
+  {view === "runs" && (
+    <>
+      <th scope="row" id={`src-${row.sourceId}`}>
+        <a href={withBase(`sources/${row.sourceId}/`)}>{row.name}</a>
+        {row.name !== row.sourceId && <><br /><code>{row.sourceId}</code></>}
+      </th>
+      <td data-testid="cell-status">
+        {row.lifecycle}
+        {row.flags.length > 0 && <> — {row.flags.join(", ")}</>}
+      </td>
+      <td data-testid="cell-last-run">
+        {row.lastRun
+          ? <time datetime={row.lastRun}>{row.lastRun}</time>
+          : <span class="sig-not-recorded">{row.lastRunToken ?? "not recorded"}</span>}
+      </td>
+      <td data-testid="cell-upstream">
+        {upstream.value
+          ? <time datetime={upstream.value}>{upstream.value}</time>
+          : <span class="sig-not-recorded">{upstream.basis}</span>}
+      </td>
+      <td data-testid="cell-sig-change">
+        {sigChange.value
+          ? <time datetime={sigChange.value}>{sigChange.value}</time>
+          : <span class="sig-not-recorded">{sigChange.basis}</span>}
+      </td>
+      <td data-testid="cell-cadence">
+        {row.cadenceRule ?? <span class="sig-not-recorded">not recorded</span>}
+        {row.cadenceBasis && row.cadenceRule && <><br />{row.cadenceBasis}</>}
+      </td>
+      <td data-testid="cell-freshness">
+        {row.freshnessState}
+        {row.runRecordMissing && <> (run_record_missing)</>}
+        {row.freshnessEvaluatedAt && <><br />evaluated <time datetime={row.freshnessEvaluatedAt}>{row.freshnessEvaluatedAt}</time></>}
+      </td>
+      <td data-testid="cell-runs" class="sig-table__num">
+        {row.runsTotal === null
+          ? <span class="sig-not-recorded">none recorded</span>
+          : fig("runs")
+            ? <Figure figure={fig("runs")!} order="inline">{fmtInt(row.runsTotal)} · {outcomeSplit(row.runsByOutcome)}{runsNote ? ` (${runsNote})` : ""}</Figure>
+            : <>{fmtInt(row.runsTotal)} · {outcomeSplit(row.runsByOutcome)}{runsNote ? ` (${runsNote})` : ""}</>}
+      </td>
+      <td data-testid="cell-errors" class="sig-table__num">
+        {row.failedRecent === null
+          ? <span class="sig-not-recorded">none recorded</span>
+          : fig("errors")
+            ? <Figure figure={fig("errors")!} order="inline">{fmtInt(row.failedRecent)} {errorsNote}{row.openIssue ? " · 1 open issue" : ""}</Figure>
+            : <>{fmtInt(row.failedRecent)} {errorsNote}{row.openIssue ? " · 1 open issue" : ""}</>}
+      </td>
+      {nextRunDay !== undefined && <td data-testid="cell-next-run">{nextRunDay}</td>}
+    </>
+  )}
+  {view === "rights" && (
+    <>
+      <th scope="row" id={`src-${row.sourceId}`}>
+        <a href={withBase(`sources/${row.sourceId}/`)}>{row.name}</a>
+        {row.name !== row.sourceId && <><br /><code>{row.sourceId}</code></>}
+      </th>
+      <td data-testid="cell-publisher">
+        {row.publisher === "publisher_not_recorded"
+          ? <span class="sig-not-recorded">publisher not recorded</span>
+          : row.publisher}
+        {row.publisherType !== "not_recorded" && <> · {row.publisherType}</>}
+      </td>
+      <td data-testid="cell-licence">
+        {row.licenceSpdx ?? <span class="sig-not-recorded">rights not reviewed</span>}
+        {row.licenceAttribution && <><br />{row.licenceAttribution}</>}
+      </td>
+      <td data-testid="cell-redistribution">
+        {row.derivedStatus === "withheld_pending_rights_review"
+          ? "withheld pending rights review"
+          : row.derivedStatus}
+        {" · "}{row.lane}
+        {row.laneBasis && <><br />{row.laneBasis}</>}
+      </td>
+      <td data-testid="cell-download">{row.downloadToken}</td>
+      <td data-testid="cell-ground-truth">
+        {row.homepage
+          ? <a href={row.homepage} rel="external">{row.homepageHost ?? "upstream"}</a>
+          : <span class="sig-not-recorded">no upstream url recorded</span>}
+        {row.termsUrl && <> · <a href={row.termsUrl} rel="external">terms</a></>}
+      </td>
+    </>
+  )}
+</tr>
