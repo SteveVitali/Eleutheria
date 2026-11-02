@@ -39,9 +39,11 @@ Serving rules (K3 §5.4/§5.5 — the v1 withdrawal/deadline contract carried ov
   ``Cache-Control: public, max-age=31536000, immutable``; a ``latest`` answer
   follows the mutable pointer — ``max-age=300``.
 * **``format`` is a known parameter**: ``json`` (or absent) serves the
-  ``sig.search-results/2`` body; ``format=html`` answers a typed 501 — the
-  no-JS HTML representation is P36.39's (SRCH-04), never silently JSON to a
-  browser that asked for HTML.
+  ``sig.search-results/2`` body; ``format=html`` (or a browser
+  ``Accept: text/html``) serves the P36.39 no-JS representation —
+  ``exports.search_results_page`` over the same payload, site chrome +
+  stamp + typed sections + per-group paging + HTML error pages
+  (DR-C4-02/10).
 """
 
 from __future__ import annotations
@@ -72,6 +74,8 @@ from exports.search_query_v2 import (
     SearchQueryV2Error,
 )
 from policy.eligibility import TargetKind, access_decision, latest_disposition
+
+from exports import search_results_page as srp
 
 from .release_search import PUBLICATION_RE
 
@@ -413,14 +417,63 @@ class ReleaseSearchV2Store:
         with self._lock:
             return {"open_engines": len(self._engines)}
 
+    def site_release(self, pub: str) -> dict[str, Any] | None:
+        """The staged ``sig.site-release/1`` document for the stamp
+        (P35.13 / REL-02). ``None`` when the release carries none — the
+        page then renders unstamped, honestly."""
+        path = self.staged / f"releases/{pub}/release.json"
+        try:
+            doc = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return None
+        return doc if isinstance(doc, dict) else None
+
 
 def wants_html_v2(request: Any) -> bool:
     """``format=html`` or a browser ``Accept: text/html`` — the no-JS
-    negotiation signal (handled by the route's 501 until P36.39 lands the
-    representation)."""
+    negotiation signal (the same rule as the v1 route)."""
     fmt = request.query_params.get("format")
     accept = request.headers.get("accept", "")
     return fmt == "html" or (fmt is None and "text/html" in accept)
+
+
+def render_search_html_v2(
+    store: ReleaseSearchV2Store,
+    requested: str,
+    params: SearchParamsV2,
+    result: Mapping[str, Any],
+    pub: str,
+    was_latest: bool,
+) -> bytes:
+    """The no-JS HTML representation (P36.39 / SRCH-04) — the same verified
+    payload, the same bounds; the stamp rides the staged site-release
+    document when the release carries one."""
+    return srp.search_results_page_v2(
+        requested=requested,
+        params={
+            "q": params.q_raw or "",
+            "types": sorted(params.types) if params.types else [],
+            "filters": params.filters,
+            "cursor": f"{params.group}:{params.cursor}" if params.group and params.cursor else None,
+            "expand": "1" if params.expand_collapsed else None,
+        },
+        result=result,
+        site_release=store.site_release(pub),
+        was_latest=was_latest,
+    )
+
+
+def render_search_error_html_v2(requested: str, exc: SearchQueryV2Error) -> bytes:
+    """The no-JS error representation (DR-C4-10) — an HTML page for every
+    error status, carrying the same code/detail the JSON body has plus the
+    public-safe tombstone fields on a 410."""
+    return srp.search_results_error_page_v2(
+        requested=requested,
+        status=exc.status,
+        code=exc.code,
+        detail=exc.detail,
+        tombstone=exc.extra.get("tombstone"),
+    )
 
 
 def cache_control(was_latest: bool) -> str:
@@ -431,6 +484,8 @@ __all__ = [
     "KNOWN_PARAMS_V2",
     "ReleaseSearchV2Store",
     "cache_control",
+    "render_search_error_html_v2",
+    "render_search_html_v2",
     "search_v2_posture",
     "wants_html_v2",
 ]

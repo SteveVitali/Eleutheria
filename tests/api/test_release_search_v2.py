@@ -232,13 +232,61 @@ def test_cursor_context_mismatch_409(client: TestClient, released) -> None:
     assert r.json()["code"] == "cursor_context_mismatch"
 
 
-def test_format_html_is_a_typed_501(client: TestClient, released) -> None:
-    """P36.39 owns the no-JS representation — an explicit 501, never silent
-    JSON served as the negotiated type."""
+def test_format_html_serves_the_no_js_page(client: TestClient, released) -> None:
+    """P36.39 (SRCH-04 / SIG-SRCH-009): ``format=html`` answers the complete
+    no-JS representation — site chrome, stamp, typed cards and facet GET
+    links — over the same verified payload."""
     _reg, pub = released
-    r = _search(client, pub, format="html")
-    assert r.status_code == 501
-    assert r.json()["code"] == "html_representation_pending"
+    r = _search(client, pub, q="Site", format="html")
+    assert r.status_code == 200
+    assert r.headers["content-type"].startswith("text/html")
+    assert r.headers["cache-control"] == "public, max-age=31536000, immutable"
+    html = r.text
+    assert "<script" not in html
+    assert 'aria-label="Site"' in html
+    assert "Dispute or correct" in html
+    assert "licence groups searched" in html
+    assert "Cite this search" in html
+    assert f"/s/{pub}/search/?" in html
+
+
+def test_accept_text_html_negotiates_the_page(client: TestClient, released) -> None:
+    """A browser Accept header selects the HTML representation without an
+    explicit format= — the same negotiation rule as v1."""
+    _reg, pub = released
+    r = client.get(
+        f"/v1/releases/{pub}/search",
+        params={"q": "Site"},
+        headers={"accept": "text/html"},
+    )
+    assert r.status_code == 200
+    assert r.headers["content-type"].startswith("text/html")
+    assert "Search results" in r.text
+
+
+def test_html_error_pages_for_html_clients(client: TestClient, released) -> None:
+    """DR-C4-10: an HTML client gets an HTML page for every error status —
+    404 unknown publication, 422 refused params, 410 withdrawn."""
+    _reg, pub = released
+    r = client.get(
+        "/v1/releases/not-a-publication/search",
+        params={"format": "html"},
+    )
+    assert r.status_code == 404
+    assert r.headers["content-type"].startswith("text/html")
+    assert "unknown_publication" in r.text
+    r2 = _search(client, pub, format="html", limit=99)
+    assert r2.status_code == 422
+    assert r2.headers["content-type"].startswith("text/html")
+    registry, _pub = released
+    _deny(registry, TargetKind.RELEASE_ARTIFACT, pub, day=28)
+    r3 = _search(client, pub, format="html")
+    assert r3.status_code == 410
+    assert "safety_withdrawal" in r3.text
+    # A JSON client on the same failure still gets the JSON body.
+    r4 = _search(client, pub)
+    assert r4.status_code == 410
+    assert r4.json()["code"] == "withdrawn"
 
 
 def test_tampered_index_bytes_refused(client: TestClient, released, tmp_path: Path) -> None:

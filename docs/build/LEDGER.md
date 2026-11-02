@@ -8,8 +8,8 @@
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.39
-lastCompleted: P36.38
+nextTicket: P36.40
+lastCompleted: P36.39
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.38-search-api-serving-v2
+chainTip: r11/P36.39-no-js-search-results-page
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-10-31T08:12Z
+updatedAt: 2026-10-31T18:10Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1393,3 +1393,6 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-31 — P36.38 post-closeout record — `44a8744f` `ci: pass #401@44a8744f` 5/5 head-bound (run 41187132513: docs 2m27s + security 34s + composed 3m49s + python 15m17s + web 33m46s — the head after the fix arc `93e0f38c`+`368b446f`+`44a8744f`: cross-thread SQLite check_same_thread + serialized search, `live`-claim code spans, orient-budget cell compaction, projection regen) — boundary `gh run list --branch`/`gh pr checks` read · PR #401 OPEN on the stack for operator integration · `main` untouched · Gate status: IN-TICKET PAUSE (D-P36.38-1 `prepared_not_executed` — the roll is never pre-authorised OM-20, the operator's explicit verbatim go only) · deferrals +1/−0 · harness: devin-desktop/swe-2-high/subagent
 - 2026-10-31 — P36.38 correction — `2cbed894` docs-red (run 41189596409): orient recipe 49,364 B > 49,152 — this appended entry discloses the repair and re-weights the last-3 set; no committed line was edited · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-10-31 — P36.39 dispatch boundary-confirm — `ci: pass #401@780f6e35` 5/5 head-bound on the repaired record tip (run 41190042272; arc: `44a8744f` impl+closeout green; `2cbed894` orient-red → correction-append re-weight `780f6e35`) · P36.38 landed: `ReleaseSearchV2Store` federated v2 serving on `GET /v1/releases/{pub|latest}/search` (env-gated off by default; withdrawal barrier, verify-and-copy LRU, no query logging) + roll queued `D-P36.38-1` `prepared_not_executed` · `main` untouched · deferrals +1/−0 · dispatching P36.39 (row 380 — no-js search results page: `live_verification=false`; gate none; no OM-20; deps P36.38+P35.13+P36.21+P36.22 landed) · chainTip → r11/P36.38-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-10-31 — P36.39 done — row 380 (K13 SRCH-04; SIG-SRCH-002/006/007/008/009): `exports/search_results_page.py` renders `sig.search-results/2` to zero-JS HTML — chrome + stamp + dispute + per-group licences, typed sections, evidence-basis cards, facet GET links, per-group paging, empty states, HTML errors, cite this search · `format=html` served on the federated v2 route (typed-501 retired) · `/search/` gains the one federated GET form · tests 19+24 · impl `e979a791` · PR #402 OPEN · fix arc: national `/search/` wire bound re-recorded at 200,334 B under D-P35.51-2 · Gate status: none · ci: head-bound read follows · deferrals +0/−0 · chainTip → r11/P36.39-… · next → P36.40 · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-31 — P36.39 post-closeout record — `efdb1834` `ci: pass #402@efdb1834` 5/5 head-bound (run 41228514192: docs 2m3s · security 34s · composed 4m25s · python 19m51s · web 35m4s; record `reports/ci/p36_39_pr402.json`) · stack `blockedOn` ancestor `#400@9b210d1` docs-red (run 41182851571 — the same inherited orient-probe overage, repaired forward on this stack) · PR #402 OPEN on the stack for operator integration · `main` untouched · Gate status: none · deferrals +0/−0 · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-31 — P36.40 dispatch boundary-confirm — `ci: pass #402@44dfab75` 5/5 head-bound (run 41231664412; impl arc: interruption mid-closeout → resume; `/search/` national `totalInitialMaxBytes` 200,231 > bound 200,000 → honest re-record 200,334 < 210,000 under D-P35.51-2; `efdb1834` 5/5) · P36.39 landed: no-JS search results page — `format=html` federated GET form over the v2 route (SIG-SRCH-002/006-009) · `main` untouched · deferrals +0/−0 · dispatching P36.40 (row 381 — typeahead header element + search rewrite: `live_verification=false`; gate none; no OM-20; deps P36.31+P36.39+P35.50+P35.51+P36.20+P36.21 landed) · chainTip → r11/P36.39-… · harness: devin-desktop/swe-2-high/orchestrator
