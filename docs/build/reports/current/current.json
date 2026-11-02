@@ -1,13 +1,13 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "ab5948719472fba98965ecf6c897a6c260492b33",
+  "input_commit": "f8d97d9baca727845213cea6fafb5a5977135374",
   "manifest_inputs": 1167,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P36.49",
     "lastCompleted": "P36.48",
-    "blockedOn": "CI fail on",
+    "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2",
     "manifest": "docs/tickets/00_MANIFEST.md",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P36.48-sources-table-v2",
+    "chainTip": "r11/P36.48-sources-table-v3",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-02T04:51Z"
+    "updatedAt": "2026-11-02T17:22Z"
   },
   "counts": {
     "obligations": 212,
@@ -11264,8 +11264,8 @@
       },
       {
         "key": "P34.39b",
-        "obligations_cell": "the three queued monitoring legs (first-fire wave + `camreg_peel_on`); homes stay — this row carries the clock-guarded legs",
-        "gates_cell": "QUEUED hosted, date-bound (§(f3)), read-only — L1 at the wave close `2026-10-21T06:09Z` (per-fire AR-4); L2 at the `camreg_peel_on` fire `2026-10-29T12:00Z` + `lastAttemptTime` + a finished `sig-ingest-camreg-peel-on` execution; L3 after L2; else exit 42",
+        "obligations_cell": "the three queued monitoring legs (first-fire wave + `camreg_peel_on`)",
+        "gates_cell": "QUEUED hosted, date-bound (§(f3)), read-only — L1 at `2026-10-21T06:09Z` (per-fire AR-4); L2 at `camreg_peel_on` fire `2026-10-29T12:00Z` + `lastAttemptTime` + finished `sig-ingest-camreg-peel-on` execution; L3 after L2; else exit 42",
         "operator_cell": "nothing — the recorded schedule is the go (read-only); each routing row a leg emits becomes a DEFERRALS entry",
         "rerun_cell": "`implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true` (#246)",
         "obligations": []
@@ -11273,8 +11273,8 @@
       {
         "key": "P36.2",
         "obligations_cell": "queued D-P36.2-1 — the 12 P36.2 terms captures (IU1–IU5, Edmonton OGL, BidNet, 5 folded-set)",
-        "gates_cell": "public read-only GETs under the project UA (SIG-INGEST-036), `Crawl-delay: 5`; gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T01:53Z); terms land verbatim+sha256 under `reports/rights/p362/captures/`",
-        "operator_cell": "nothing until `live:P35.38a` — flips are operator's signed apply on `r11/sources-flips` (OP-26); terms lines ride GATE-G6 (S6R-28)",
+        "gates_cell": "public read-only GETs under project UA (SIG-INGEST-036), `Crawl-delay: 5`; gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T01:53Z); terms land verbatim+sha256 under `reports/rights/p362/captures/`",
+        "operator_cell": "nothing until `live:P35.38a` — flips are operator's signed apply on `r11/sources-flips` (OP-26); terms ride GATE-G6 (S6R-28)",
         "rerun_cell": "`implement-spec spec=docs/tickets/350_P36.2__rights-flip-decline-batch-and-terms-capture.md live_verification=true`",
         "obligations": [
           "D-P36.2-1"
@@ -11426,9 +11426,9 @@
       },
       {
         "key": "P36.12",
-        "obligations_cell": "Wave-B sequence L0→L10 (open → family days + `+0` → 917-portal probe → materialize+delta+resume); `doj_ctas_awards` never; missed leg reported",
-        "gates_cell": "hosted write, never pre-authorised; in-window only: excluded outside-14:00-20:00Z, outside 2026-10-26→11-05, AR-3 freeze/cut, materialize/G2 slot, 2026-10-29 peel-on first fire uncleared; verbatim ING-GO-B + `wave-b-gate` per leg",
-        "operator_cell": "record OP-26 flips + `date -u`; `wave-b.sh --apply --leg L0",
+        "obligations_cell": "queued Wave-B L0→L10 (open → family days + `+0` → 917-portal probe → materialize+delta+resume); `doj_ctas_awards` never; missed leg reported",
+        "gates_cell": "hosted write, never pre-authorised; excl. outside-14:00-20:00Z, outside 2026-10-26→11-05, AR-3 freeze/cut, materialize/G2 slot, 2026-10-29 peel-on first fire uncleared; verbatim ING-GO-B + `wave-b-gate` per leg",
+        "operator_cell": "OP-26 flips + `date -u`; `wave-b.sh --apply --leg L0",
         "rerun_cell": "…",
         "obligations": []
       },
@@ -11490,9 +11490,9 @@
       },
       {
         "key": "P35.41",
-        "obligations_cell": "queued connector-image roll: rebuild+redeploy the image carrying `records_digest`, upstream-declared marks + capture-mark headers",
-        "gates_cell": "QUEUED (OM-19 — deferred past AR-3 under merge-cascade hold, 2026-10-20T15:53Z digest); OM-20 — GATE-G4 §4 (P35.41; 2026-10-09T17:32Z; expires next sub-round GATE, OM-10); AR-3+AR-2 14:00–20:00Z weekdays, never 03:00–06:30Z; roll machinery + recording idempotent",
-        "operator_cell": "nothing until re-run; the roll redeploys already-permitted connectors inside existing ingestion permission",
+        "obligations_cell": "queued connector-image roll: rebuild+redeploy the image carrying `records_digest`, upstream marks + capture-mark headers",
+        "gates_cell": "QUEUED (OM-19 — merge-cascade hold, 2026-10-20T15:53Z digest); OM-20 — GATE-G4 §4 (P35.41; 2026-10-09T17:32Z; expires next sub-round GATE, OM-10); AR-3+AR-2 14:00–20:00Z weekdays, never 03:00–06:30Z; roll + recording idempotent",
+        "operator_cell": "nothing until re-run; roll redeploys already-permitted connectors inside existing permission",
         "rerun_cell": "`implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` (#338)",
         "obligations": []
       },
@@ -11557,8 +11557,8 @@
       {
         "key": "P35.2",
         "obligations_cell": "D-P35.2-1",
-        "gates_cell": "queued hosted write (no ADC, `SIG_GCP_PROJECT`); pre-authorised OM-20 (named verbatim on the GATE-G5 list); in-window: 14:00–20:00Z preferred, never 03:00–06:30Z, never AR-3 batch window, never before AR-2's on-demand backup; earliest 2026-10-27T14:00Z; packet `reports/p35.2-alert-roll/` prepared_not_executed",
-        "operator_cell": "nothing until re-run — verbatim apply sequence + AR-2 prestate list + per-leg rollback live in `docs/build/reports/p35.2-alert-roll/`; e-mail receipt confirmation stays D-P34.4-2",
+        "gates_cell": "queued hosted write (no ADC, `SIG_GCP_PROJECT`); pre-authorised OM-20 (named verbatim on the GATE-G5 list); 14:00–20:00Z preferred, never 03:00–06:30Z, never AR-3 batch window, never before AR-2's on-demand backup; earliest 2026-10-27T14:00Z; packet `reports/p35.2-alert-roll/` prepared_not_executed",
+        "operator_cell": "nothing until re-run — apply sequence + prestate + rollback live in `docs/build/reports/p35.2-alert-roll/`; e-mail receipt confirmation stays D-P34.4-2",
         "rerun_cell": "`implement-spec spec=docs/tickets/346_P35.2__alerting-as-code-and-escalation.md live_verification=true`",
         "obligations": [
           "D-P35.2-1"
@@ -11586,8 +11586,8 @@
       },
       {
         "key": "P36.76",
-        "obligations_cell": "queued D-P36.76-1 — the 12 leg-A bounded GETs (6 registration + 6 `/:8443` screens); D-P36.76-2 — leg B, operator's first-wire act",
-        "gates_cell": "bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records land under `reports/rights/p3676/`; leg B never agent execution",
+        "obligations_cell": "queued D-P36.76-1 — 12 leg-A bounded GETs (6 registration + 6 `/:8443` screens); D-P36.76-2 — leg B, operator's first-wire",
+        "gates_cell": "bounded public GETs under project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records under `reports/rights/p3676/`; leg B never agent execution",
         "operator_cell": "nothing until `live:P35.38a` — leg B is operator HG-03 + OP-26 (packet `p3676/leg-b-packet.md`)",
         "rerun_cell": "`implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true`",
         "obligations": [
@@ -11629,9 +11629,9 @@
       },
       {
         "key": "P36.79",
-        "obligations_cell": "queued D-P36.79-1 — the restricted-bucket object write of the sealed held-out relevance set (read-back digest verify; restore point = bucket versioning + committed sha256)",
-        "gates_cell": "pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6); contract window `any time outside 03:00-10:00Z` (guard exit 42 inside); `SIG_HELDOUT_AUTHOR` per apply; needs ADC + `SIG_GCP_PROJECT`",
-        "operator_cell": "nothing until ADC + `SIG_GCP_PROJECT` — one bounded object write; the set's sha256 is already committed",
+        "obligations_cell": "queued D-P36.79-1 — restricted-bucket object write of the sealed held-out relevance set (read-back digest verify; restore = bucket versioning + committed sha256)",
+        "gates_cell": "pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6); contract window `any time outside 03:00-10:00Z` (exit 42 inside); `SIG_HELDOUT_AUTHOR` per apply; needs ADC + `SIG_GCP_PROJECT`",
+        "operator_cell": "nothing until ADC + `SIG_GCP_PROJECT` — one bounded write; sha256 committed",
         "rerun_cell": "`implement-spec spec=docs/tickets/371_P36.79__held-out-search-relevance-set.md live_verification=true`",
         "obligations": [
           "D-P36.79-1"
@@ -11659,9 +11659,9 @@
       },
       {
         "key": "P36.75",
-        "obligations_cell": "queued D-P36.75-1 — the `hosted` append-only `configured_access` claim write (org-level `configured_sharing_partner`); restore point = claim-set digest list",
-        "gates_cell": "pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z or batch window day 6 00:00Z → day 13 12:00Z; `SIG_SHARE_LISTS_AUTHOR` per apply; ADC + `SIG_GCP_PROJECT` + `SIG_SHARE_WRITE_DSN` + `SIG_SHARE_SNAPSHOT`",
-        "operator_cell": "nothing until the `hosted` env — machinery + packet `reports/p36.75-flock-share-lists/` landed",
+        "obligations_cell": "queued D-P36.75-1 — `hosted` append-only `configured_access` claim write (org-level `configured_sharing_partner`); restore = claim-set digest list",
+        "gates_cell": "pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z + batch window day 6 00:00Z → day 13 12:00Z; `SIG_SHARE_LISTS_AUTHOR` per apply; ADC + `SIG_GCP_PROJECT` + `SIG_SHARE_WRITE_DSN` + `SIG_SHARE_SNAPSHOT`",
+        "operator_cell": "nothing until `hosted` env — machinery + packet `reports/p36.75-flock-share-lists/` landed",
         "rerun_cell": "`implement-spec spec=docs/tickets/385_P36.75__flock-share-lists-configured-access.md live_verification=true`",
         "obligations": [
           "D-P36.75-1"
@@ -25514,10 +25514,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "cd2062238c1b3aa481ee6a448cf4fdf9ac28e5d33649e7999614b470611f5f9e",
+  "manifest_sha256": "e0bf1ad04a20cb410e74a3b667d2470e2eec3bc972a4d955b8632a6a90f53aa3",
   "current_md": {
     "lines": 136,
-    "bytes": 20308,
+    "bytes": 20223,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

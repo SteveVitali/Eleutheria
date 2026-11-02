@@ -376,8 +376,8 @@ rerun_cell = '''`implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep
 key = "P34.39b"
 kind = "leg"
 obligations = []
-obligations_cell = '''the three queued monitoring legs (first-fire wave + `camreg_peel_on`); homes stay — this row carries the clock-guarded legs'''
-gates_cell = '''QUEUED hosted, date-bound (§(f3)), read-only — L1 at the wave close `2026-10-21T06:09Z` (per-fire AR-4); L2 at the `camreg_peel_on` fire `2026-10-29T12:00Z` + `lastAttemptTime` + a finished `sig-ingest-camreg-peel-on` execution; L3 after L2; else exit 42'''
+obligations_cell = '''the three queued monitoring legs (first-fire wave + `camreg_peel_on`)'''
+gates_cell = '''QUEUED hosted, date-bound (§(f3)), read-only — L1 at `2026-10-21T06:09Z` (per-fire AR-4); L2 at `camreg_peel_on` fire `2026-10-29T12:00Z` + `lastAttemptTime` + finished `sig-ingest-camreg-peel-on` execution; L3 after L2; else exit 42'''
 operator_cell = '''nothing — the recorded schedule is the go (read-only); each routing row a leg emits becomes a DEFERRALS entry'''
 rerun_cell = '''`implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true` (#246)'''
 
@@ -413,8 +413,8 @@ key = "P36.2"
 kind = "leg"
 obligations = ["D-P36.2-1"]
 obligations_cell = '''queued D-P36.2-1 — the 12 P36.2 terms captures (IU1–IU5, Edmonton OGL, BidNet, 5 folded-set)'''
-gates_cell = '''public read-only GETs under the project UA (SIG-INGEST-036), `Crawl-delay: 5`; gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T01:53Z); terms land verbatim+sha256 under `reports/rights/p362/captures/`'''
-operator_cell = '''nothing until `live:P35.38a` — flips are operator's signed apply on `r11/sources-flips` (OP-26); terms lines ride GATE-G6 (S6R-28)'''
+gates_cell = '''public read-only GETs under project UA (SIG-INGEST-036), `Crawl-delay: 5`; gated on `live:P35.38a` (`/data-collection/` 404 @2026-10-27T01:53Z); terms land verbatim+sha256 under `reports/rights/p362/captures/`'''
+operator_cell = '''nothing until `live:P35.38a` — flips are operator's signed apply on `r11/sources-flips` (OP-26); terms ride GATE-G6 (S6R-28)'''
 rerun_cell = '''`implement-spec spec=docs/tickets/350_P36.2__rights-flip-decline-batch-and-terms-capture.md live_verification=true`'''
 
   [[row.legs]]
@@ -820,9 +820,9 @@ rerun_cell = '''`implement-spec spec=docs/tickets/275_P35.15b__technology-backfi
 key = "P36.12"
 kind = "leg"
 obligations = []
-obligations_cell = '''Wave-B sequence L0→L10 (open → family days + `+0` → 917-portal probe → materialize+delta+resume); `doj_ctas_awards` never; missed leg reported'''
-gates_cell = '''hosted write, never pre-authorised; in-window only: excluded outside-14:00-20:00Z, outside 2026-10-26→11-05, AR-3 freeze/cut, materialize/G2 slot, 2026-10-29 peel-on first fire uncleared; verbatim ING-GO-B + `wave-b-gate` per leg'''
-operator_cell = '''record OP-26 flips + `date -u`; `wave-b.sh --apply --leg L0|…|L10 --inputs <json>` (no-go → 42); flips HG-03'''
+obligations_cell = '''queued Wave-B L0→L10 (open → family days + `+0` → 917-portal probe → materialize+delta+resume); `doj_ctas_awards` never; missed leg reported'''
+gates_cell = '''hosted write, never pre-authorised; excl. outside-14:00-20:00Z, outside 2026-10-26→11-05, AR-3 freeze/cut, materialize/G2 slot, 2026-10-29 peel-on first fire uncleared; verbatim ING-GO-B + `wave-b-gate` per leg'''
+operator_cell = '''OP-26 flips + `date -u`; `wave-b.sh --apply --leg L0|…|L10 --inputs <json>` (no-go → 42); flips HG-03'''
 rerun_cell = '''`implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true`'''
 
   [[row.legs]]
@@ -1047,9 +1047,9 @@ rerun_cell = '''`implement-spec spec=docs/tickets/305_P35.26__roles-and-time-bac
 key = "P35.41"
 kind = "leg"
 obligations = []
-obligations_cell = '''queued connector-image roll: rebuild+redeploy the image carrying `records_digest`, upstream-declared marks + capture-mark headers'''
-gates_cell = '''QUEUED (OM-19 — deferred past AR-3 under merge-cascade hold, 2026-10-20T15:53Z digest); OM-20 — GATE-G4 §4 (P35.41; 2026-10-09T17:32Z; expires next sub-round GATE, OM-10); AR-3+AR-2 14:00–20:00Z weekdays, never 03:00–06:30Z; roll machinery + recording idempotent'''
-operator_cell = '''nothing until re-run; the roll redeploys already-permitted connectors inside existing ingestion permission'''
+obligations_cell = '''queued connector-image roll: rebuild+redeploy the image carrying `records_digest`, upstream marks + capture-mark headers'''
+gates_cell = '''QUEUED (OM-19 — merge-cascade hold, 2026-10-20T15:53Z digest); OM-20 — GATE-G4 §4 (P35.41; 2026-10-09T17:32Z; expires next sub-round GATE, OM-10); AR-3+AR-2 14:00–20:00Z weekdays, never 03:00–06:30Z; roll + recording idempotent'''
+operator_cell = '''nothing until re-run; roll redeploys already-permitted connectors inside existing permission'''
 rerun_cell = '''`implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` (#338)'''
 
   [[row.legs]]
@@ -1233,8 +1233,8 @@ key = "P35.2"
 kind = "leg"
 obligations = ["D-P35.2-1"]
 obligations_cell = '''D-P35.2-1'''
-gates_cell = '''queued hosted write (no ADC, `SIG_GCP_PROJECT`); pre-authorised OM-20 (named verbatim on the GATE-G5 list); in-window: 14:00–20:00Z preferred, never 03:00–06:30Z, never AR-3 batch window, never before AR-2's on-demand backup; earliest 2026-10-27T14:00Z; packet `reports/p35.2-alert-roll/` prepared_not_executed'''
-operator_cell = '''nothing until re-run — verbatim apply sequence + AR-2 prestate list + per-leg rollback live in `docs/build/reports/p35.2-alert-roll/`; e-mail receipt confirmation stays D-P34.4-2'''
+gates_cell = '''queued hosted write (no ADC, `SIG_GCP_PROJECT`); pre-authorised OM-20 (named verbatim on the GATE-G5 list); 14:00–20:00Z preferred, never 03:00–06:30Z, never AR-3 batch window, never before AR-2's on-demand backup; earliest 2026-10-27T14:00Z; packet `reports/p35.2-alert-roll/` prepared_not_executed'''
+operator_cell = '''nothing until re-run — apply sequence + prestate + rollback live in `docs/build/reports/p35.2-alert-roll/`; e-mail receipt confirmation stays D-P34.4-2'''
 rerun_cell = '''`implement-spec spec=docs/tickets/346_P35.2__alerting-as-code-and-escalation.md live_verification=true`'''
 
   [[row.legs]]
@@ -1286,8 +1286,8 @@ rerun_cell = '''`implement-spec spec=docs/tickets/348_P35.23__real-data-regressi
 key = "P36.76"
 kind = "leg"
 obligations = ["D-P36.76-1", "D-P36.76-2"]
-obligations_cell = '''queued D-P36.76-1 — the 12 leg-A bounded GETs (6 registration + 6 `/:8443` screens); D-P36.76-2 — leg B, operator's first-wire act'''
-gates_cell = '''bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records land under `reports/rights/p3676/`; leg B never agent execution'''
+obligations_cell = '''queued D-P36.76-1 — 12 leg-A bounded GETs (6 registration + 6 `/:8443` screens); D-P36.76-2 — leg B, operator's first-wire'''
+gates_cell = '''bounded public GETs under project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records under `reports/rights/p3676/`; leg B never agent execution'''
 operator_cell = '''nothing until `live:P35.38a` — leg B is operator HG-03 + OP-26 (packet `p3676/leg-b-packet.md`)'''
 rerun_cell = '''`implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true`'''
 
@@ -1384,9 +1384,9 @@ rerun_cell = '''`implement-spec spec=docs/tickets/354_P36.13__api-rate-limits.md
 key = "P36.79"
 kind = "leg"
 obligations = ["D-P36.79-1"]
-obligations_cell = '''queued D-P36.79-1 — the restricted-bucket object write of the sealed held-out relevance set (read-back digest verify; restore point = bucket versioning + committed sha256)'''
-gates_cell = '''pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6); contract window `any time outside 03:00-10:00Z` (guard exit 42 inside); `SIG_HELDOUT_AUTHOR` per apply; needs ADC + `SIG_GCP_PROJECT`'''
-operator_cell = '''nothing until ADC + `SIG_GCP_PROJECT` — one bounded object write; the set's sha256 is already committed'''
+obligations_cell = '''queued D-P36.79-1 — restricted-bucket object write of the sealed held-out relevance set (read-back digest verify; restore = bucket versioning + committed sha256)'''
+gates_cell = '''pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6); contract window `any time outside 03:00-10:00Z` (exit 42 inside); `SIG_HELDOUT_AUTHOR` per apply; needs ADC + `SIG_GCP_PROJECT`'''
+operator_cell = '''nothing until ADC + `SIG_GCP_PROJECT` — one bounded write; sha256 committed'''
 rerun_cell = '''`implement-spec spec=docs/tickets/371_P36.79__held-out-search-relevance-set.md live_verification=true`'''
 
   [[row.legs]]
@@ -1438,9 +1438,9 @@ rerun_cell = '''`implement-spec spec=docs/tickets/379_P36.38__search-api-serving
 key = "P36.75"
 kind = "leg"
 obligations = ["D-P36.75-1"]
-obligations_cell = '''queued D-P36.75-1 — the `hosted` append-only `configured_access` claim write (org-level `configured_sharing_partner`); restore point = claim-set digest list'''
-gates_cell = '''pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z or batch window day 6 00:00Z → day 13 12:00Z; `SIG_SHARE_LISTS_AUTHOR` per apply; ADC + `SIG_GCP_PROJECT` + `SIG_SHARE_WRITE_DSN` + `SIG_SHARE_SNAPSHOT`'''
-operator_cell = '''nothing until the `hosted` env — machinery + packet `reports/p36.75-flock-share-lists/` landed'''
+obligations_cell = '''queued D-P36.75-1 — `hosted` append-only `configured_access` claim write (org-level `configured_sharing_partner`); restore = claim-set digest list'''
+gates_cell = '''pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z + batch window day 6 00:00Z → day 13 12:00Z; `SIG_SHARE_LISTS_AUTHOR` per apply; ADC + `SIG_GCP_PROJECT` + `SIG_SHARE_WRITE_DSN` + `SIG_SHARE_SNAPSHOT`'''
+operator_cell = '''nothing until `hosted` env — machinery + packet `reports/p36.75-flock-share-lists/` landed'''
 rerun_cell = '''`implement-spec spec=docs/tickets/385_P36.75__flock-share-lists-configured-access.md live_verification=true`'''
 
   [[row.legs]]
