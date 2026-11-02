@@ -21,9 +21,22 @@ interface Props {
   /** The wordmark's accessible name — WM-01's pinned literal, authored by
       the caller (BaseLayout) so the copy-batch pin keeps its file binding. */
   wordmarkLabel: string;
+  /**
+   * P36.40 (SIG-SRCH-010, K3 §6.2): the shard root the header search field's
+   * `<sig-typeahead>` reads — the ONE shared root every consumer names
+   * (UXR-23). Absent on routes whose type forbids the enhancement (T0 ships
+   * no `<script>`; the element never mounts where its module cannot load).
+   */
+  typeaheadShardRoot?: string;
+  /**
+   * Emit the allow-listed `/_kit/sig-typeahead.js` module beside the markup.
+   * T1 only — a T2 route admits just content-hashed `/_astro/` assets, and
+   * there `/search/`'s own island bundle registers the element instead.
+   */
+  typeaheadModule?: boolean;
 }
 
-const { sections, wordmarkLabel } = Astro.props;
+const { sections, wordmarkLabel, typeaheadShardRoot, typeaheadModule } = Astro.props;
 ---
 
 <header class="sig-header">
@@ -60,13 +73,34 @@ const { sections, wordmarkLabel } = Astro.props;
         </div>
       ))}
     </nav>
-    <form class="sig-search" method="get" action={withBase("search/")} role="search" data-testid="site-search">
-      <label class="sig-search__label">
-        <span class="sig-visually-hidden">{CHROME.searchPrompt}</span>
-        <input class="sig-search__input" type="search" name="q" placeholder={CHROME.search} autocomplete="off" />
-      </label>
-      <button class="sig-search__submit" type="submit">{CHROME.search}</button>
-    </form>
+    {/* P36.40 (SIG-SRCH-010): the header search affordance — a plain GET
+        form whose input upgrades to the APG combobox over the shared
+        `sig.typeahead-shard/1` set when the page type admits the element
+        (T1 loads the allow-listed /_kit module; on /search/ the island
+        bundle registers it). Without either it stays the complete no-JS
+        form below — the element only ever upgrades working markup. */}
+    {typeaheadShardRoot !== undefined ? (
+      <sig-typeahead shard-root={withBase(typeaheadShardRoot)} min-chars="2" data-testid="site-search-typeahead">
+        <form class="sig-search" method="get" action={withBase("search/")} role="search" data-testid="site-search">
+          <label class="sig-search__label">
+            <span class="sig-visually-hidden">{CHROME.searchPrompt}</span>
+            <input class="sig-search__input" type="search" name="q" placeholder={CHROME.search} autocomplete="off" />
+          </label>
+          <button class="sig-search__submit" type="submit">{CHROME.search}</button>
+        </form>
+      </sig-typeahead>
+    ) : (
+      <form class="sig-search" method="get" action={withBase("search/")} role="search" data-testid="site-search">
+        <label class="sig-search__label">
+          <span class="sig-visually-hidden">{CHROME.searchPrompt}</span>
+          <input class="sig-search__input" type="search" name="q" placeholder={CHROME.search} autocomplete="off" />
+        </label>
+        <button class="sig-search__submit" type="submit">{CHROME.search}</button>
+      </form>
+    )}
+    {typeaheadModule === true && (
+      <script is:inline type="module" src={withBase("_kit/sig-typeahead.js")}></script>
+    )}
     {/* K14 §5.3's mobile bar: a compact link to /search/ stands in for the
         field — the bar stays one row at 320 px so the H1 keeps its budget. */}
     <a class="sig-search-link" href={withBase("search/")} data-testid="site-search-link">{CHROME.search}</a>

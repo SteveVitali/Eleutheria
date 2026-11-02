@@ -22,6 +22,9 @@ import { displayJurisdiction, dossierDisplayTitle } from "../lib/jurisdictions";
 // P35.37 (SIG-TRANSP-013, J3 §5.4, UXR-34): the page's ONE figures[] registry —
 // every headline number is a <Figure> with a manifest artifact + JSON pointer.
 import { artifactHref, defineFigures, headlineTargets } from "../lib/figures";
+import { withBase } from "../lib/paths";
+import { TYPEAHEAD_SHARD_ROOT } from "../lib/typeahead-shards";
+import { CHROME } from "../lib/lexicon";
 
 const coverage = getCoverage();
 // Enforce the §32.5 honesty constraints at build time: a landing metric with a
@@ -174,6 +177,20 @@ const ENTRY_POINTS: { href: string; title: string; body: string; copy?: string }
     connected and governed, and the evidence behind each published figure. SIG
 {" "}<strong>reports</strong>; it does not endorse.
   </p>
+
+  {/* K13 §2.6's hero entry (P36.40, SIG-SRCH-010, UXR-23): the place search —
+      a plain GET to /search/ whose field upgrades to the shared-shards
+      `<sig-typeahead>` combobox with JS (the SAME `sig.typeahead-shard/1`
+      root the header element and every consumer reads). Without JS the form
+      is already complete. */}
+  <form method="get" action={withBase("search/")} class="sig-hero-search" data-testid="hero-search-form">
+    <sig-typeahead shard-root={withBase(TYPEAHEAD_SHARD_ROOT)} min-chars="2" data-testid="hero-search-typeahead">
+      <label for="hero-q">{CHROME.searchPrompt}</label>{" "}
+      <input id="hero-q" type="search" name="q" maxlength={200} size={34} placeholder="State, county, city, agency or vendor" />
+      {" "}<button type="submit">{CHROME.search}</button>
+    </sig-typeahead>
+  </form>
+  <script is:inline type="module" src={withBase("_kit/sig-typeahead.js")}></script>
 
   <!-- Jurisdiction reach: the local dossier made discoverable at scale. -->
   <section aria-labelledby="reach-heading" class="sig-landing-section">

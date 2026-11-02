@@ -89,6 +89,26 @@ for (const f of mapChunks) {
     fail(`${f} carries a react/compat signature — the /map/ bundle must not include React (SIG-UI-097)`);
   }
 }
+// P36.40 (SIG-UI-097): the same no-React gate for /search/ — the runtime
+// migration is THIS row, so the emitted page and its island chunk graph are
+// asserted react-free, never assumed.
+const searchHtmlPath = join(DIST, "search", "index.html");
+if (existsSync(searchHtmlPath)) {
+  const shtml = readFileSync(searchHtmlPath, "utf8");
+  for (const ref of [...shtml.matchAll(/(?:src|url)="([^"]+\.m?js)"/g)].map((m) => m[1])) {
+    // Boundary before 'r' — pReact.module.*.js is the shared Preact runtime.
+    if (/(^|[^a-z])react/i.test(ref)) fail(`/search/ references a react runtime asset: ${ref}`);
+  }
+  const searchChunks = readdirSync(astroDir).filter(
+    (f) => f.endsWith(".js") && /SearchIsland/i.test(f),
+  );
+  for (const f of searchChunks) {
+    const body = readFileSync(join(astroDir, f), "utf8");
+    if (/react-dom|createPortal|preact\/compat/.test(body)) {
+      fail(`${f} carries a react/compat signature — the /search/ bundle must not include React (SIG-UI-097)`);
+    }
+  }
+}
 // The vendored split: exactly the pinned files.
 const vendorDir = join(DIST, "map", "vendor");
 if (!existsSync(vendorDir)) fail("dist/map/vendor/ missing — prepare-map-vendor.mjs did not run");

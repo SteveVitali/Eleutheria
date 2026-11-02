@@ -7,7 +7,7 @@
     "pmtiles": "static PMTiles archives (the pmtiles:// protocol)"
   },
   "transitional": {
-    "react": "legacy island runtime — /network/ and /search/ only, until their own migration rows",
+    "react": "legacy island runtime — /network/ only, until its own migration row (P37.26/GX-09a removes it; P36.40 migrated /search/ to Preact)",
     "react-dom": "same"
   },
   "build_time_only": {

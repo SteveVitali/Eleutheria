@@ -2,6 +2,7 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-WATCH-001 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-WATCH-002 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-WATCH-003 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-WATCH-004 | `public` | `MISSING` | 2026-10-24 | — |

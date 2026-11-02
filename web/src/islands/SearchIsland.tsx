@@ -6,6 +6,13 @@
  * The client-side search / filter island (P27.9, DECISION-SPA = B, ADR-097;
  * P32.15 shared workspace state, SIG-FIND-004, ADR-134).
  *
+ * P36.40 (K3 SRCH-05, absorbs UXK0-6 for `/search/`): migrated to **Preact**
+ * (SIG-UI-097 — React must never reach the /search/ bundle). The mount is
+ * `client:only="preact"` — a `.tsx` island resolves to BOTH installed
+ * renderers and Astro's SSR check is ambiguous while @astrojs/react
+ * coexists on /network/ (GX-09a removes it; the P36.37 map precedent).
+ * The reserved box lives in the page markup the island replaces.
+ *
  * PROGRESSIVE ENHANCEMENT, NOT REPLACEMENT (SIG-UI-050): this island hydrates ONLY
  * on `/search/`; the released-corpus GET forms and the static browse index
  * (SIG-FIND-003, ADR-133 — the verified per-compartment FTS5 index, never a
@@ -27,8 +34,9 @@
  * navigation (`pushState`) Back can undo.
  */
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { ReactElement } from "react";
+/** @jsxImportSource preact */
+import { useEffect, useMemo, useRef, useState } from "preact/hooks";
+import type { JSX } from "preact";
 import {
   clearFocusOutOfScope,
   facetNoticeText,
@@ -36,7 +44,13 @@ import {
   recordRoutes,
   viewHref,
 } from "../lib/workspace-state/index";
-import { useWorkspaceState } from "./workspace";
+// The Preact-side workspace adapter (P36.37) is surface-generic — "list" is
+// this page's registered view; the React twin stays for /network/'s row.
+import { useMapWorkspace as useWorkspaceState } from "./map/workspace";
+// Registering `<sig-typeahead>` rides this island's own content-hashed
+// bundle — T2 routes admit only `/_astro/` module assets, so the corpus
+// form's element upgrades through the app surface itself (P36.40).
+import "../elements/sig-typeahead";
 
 export type SearchKind = "dossier" | "site" | "source";
 
@@ -91,11 +105,13 @@ function isDossierItem(v: unknown): v is SearchItem {
   );
 }
 
+const isBrowser = typeof window !== "undefined";
+
 export default function SearchIsland({
   items: listedItems,
   dossierIndexHref,
   release,
-}: SearchIslandProps): ReactElement {
+}: SearchIslandProps): JSX.Element {
   const { state, issues, ignored, update } = useWorkspaceState("list", { release });
   // The text field mirrors state.q (deep links, Back/Forward) but stays a
   // controlled local input while typing; committed to the URL on change via
@@ -165,7 +181,6 @@ export default function SearchIsland({
       setNotice("Selection cleared — the focused record is outside the current query.");
       update({ focus: null }, "replace");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft, state.kind.join(","), state.focus]);
 
   const focusedItem = useMemo(
@@ -190,6 +205,24 @@ export default function SearchIsland({
     // An empty selection reads as "all" — the canonical empty-facet default.
     update({ kind: next.size === GROUPS.length ? [] : [...next] });
   };
+
+  // SSR (client:load): the reserved box the app mounts into — the
+  // release-pinned GET forms above and the browse index below remain the
+  // complete no-JS equivalent; the box reserves the app's box without
+  // shipping dead controls.
+  if (!isBrowser) {
+    return (
+      <div className="sig-search-island" data-testid="search-island">
+        <div className="sig-island__placeholder" data-testid="search-island-placeholder" role="note">
+          <p className="sig-island__note">
+            The interactive filter loads when JavaScript runs — the
+            release-pinned search forms and the browse index below are the
+            complete equivalent.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="sig-search-island" data-testid="search-island">
@@ -232,10 +265,13 @@ export default function SearchIsland({
         placeholder="Type to filter (e.g. a jurisdiction, an agency, a source)…"
         value={draft}
         data-testid="search-input"
-        onChange={(e) => {
-          setDraft(e.target.value);
+        onInput={(e) => {
+          // Preact semantics: `onChange` is the DOM `change` event (fires on
+          // commit/blur); per-keystroke filtering needs `onInput`.
+          const value = e.currentTarget.value;
+          setDraft(value);
           setNotice(null);
-          commitQuery(e.target.value);
+          commitQuery(value);
         }}
       />
       <fieldset className="sig-search-island__facets" data-testid="search-kind-facets">

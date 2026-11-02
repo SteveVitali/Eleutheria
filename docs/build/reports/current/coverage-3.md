@@ -63,6 +63,7 @@
 | SIG-SRCH-008 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-SRCH-009 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-SRCH-010 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-SRCH-010 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-10-31 | SIG-SRCH-010:r11-1 |
 | SIG-SRCH-011 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-SRCH-012 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-SRCH-013 | `public` | `MISSING` | 2026-10-24 | — |
@@ -121,6 +122,5 @@
 | SIG-TRANSP-043 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRUST-004 | `hosted` | `MET-ENGINEERED(D-P32.3-1)` | 2026-10-01 | — |
 | SIG-TRUST-006 | `hosted` | `PARTIAL` | 2026-10-04 | — |
-| SIG-TRUST-006 | `implementation` | `MET-ENGINEERED(D-R11-ADR124-1)` | 2026-10-04 | — |
 
 ← back: CURRENT.md · next page: coverage-4.md
