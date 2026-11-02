@@ -78,6 +78,14 @@ sh docs/build/tools/merge_dryrun.sh   # read-only proof the open-PR stack integr
 History is **append-only** (P1–P3): never force-push or rewrite a shared branch; roll back with
 `git revert`, not `git reset --hard`.
 
+**Gate-affecting records are committed only by the operator, signed** (OP-25, SIG-SEC-010). A
+GATE DECISIONS `decision`/`waiver`/`pre-authorization` row, a signed readout `Status:` line and an
+`ingestion_permitted` false→true flip each need a commit signed with the operator's key in
+`docs/build/tools/record_policy/allowed_signers`; the `docs` job's G4c check
+(`check_gate_signatures.py`) fails the PR otherwise, and nothing later can repair it. An agent stages
+such a record alone and stops; the operator commits it with `commit -S` and `Harness: operator`. See
+[`AGENTS.md`](./AGENTS.md) Critical Gotcha 9.
+
 ## Amending the specification (SIG-ENG-003)
 
 `docs/2_canonical_design_spec.md` is a **build artifact** — never edit it directly. To change a
