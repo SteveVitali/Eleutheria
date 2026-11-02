@@ -934,7 +934,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "2c571629c6600e3f0fbcb33b7205dea852833cd04d74a215bf97775eaa2e2335"
+      "sha256": "c70c8e63362e81750b40d883c200a0b2796c7707d7579efacb5499f0fa41a334"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -2630,7 +2630,7 @@
     },
     {
       "path": "docs/build/tools/record_policy/return_pass.toml",
-      "sha256": "22e943c1b0f948e530caf06773572a44f2add3d204e1118f23d00c6b382fb520"
+      "sha256": "f739dc04800e15ac9348dfc7c1946602b313cec3517d19d757676bc4c6815b54"
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
