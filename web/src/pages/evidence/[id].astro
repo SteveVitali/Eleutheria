@@ -17,6 +17,7 @@ import ContestedMarker from "../../components/ContestedMarker.astro";
 import {
   assertClaimView,
   claimHighlightedDocument,
+  claimPaneFor,
   diffCaptures,
   isClaimContested,
   isSealed,
@@ -42,6 +43,10 @@ assertClaimView(view);
 // export mode `getCaptureDiff()` is null and no diff renders.
 const DIFF_CAPTURES = getCaptureDiff();
 const sealed = isSealed(view.capture);
+// SIG-EVUI-004 (K8 §4.3): the document pane is binding state × lane × Part
+// VIII — text_span / locator_only / metadata_only / run_record; a lane that
+// forbids bytes renders its typed state, never a broken render.
+const pane = claimPaneFor(view);
 const highlighted = claimHighlightedDocument(view);
 const meta = sealed ? sealedMetadata(view.capture) : null;
 const contested = isClaimContested(view);
@@ -71,26 +76,50 @@ const panel = panelForClaim(STATEMENTS, view.claim_id, { jsonHref: null });
       {contested && <ContestedMarker compact href="#conflicting-claims" />}
     </p>
 
-    <!-- The supporting document (SIG-UI-028), or the sealed metadata-only view (SIG-UI-030). -->
-    {sealed ? (
+    <!-- The document pane by binding state × lane × Part VIII (SIG-EVUI-004, amends SIG-UI-028). -->
+    {pane.kind === "metadata_only" ? (
       <div class="sig-sealed" data-testid="sealed-notice">
-        <h2>Sealed capture — bytes withheld</h2>
-        <p data-testid="sealed-reason">{meta!.sealed_reason}</p>
+        <h2>{sealed ? "Sealed capture — bytes withheld" : "Restricted capture — metadata only"}</h2>
+        <p data-testid="sealed-reason">{meta?.sealed_reason ?? pane.reason ?? "the lane forbids publishing these bytes"}</p>
         <p>
           SIG holds this capture but must not publish its bytes. Its existence, source,
           date, digest, and the claims it supports remain public (§17.5).
         </p>
       </div>
-    ) : (
+    ) : pane.kind === "text_span" && highlighted ? (
       <figure aria-label="Supporting document with the claim's span highlighted">
         <h2>Supporting document</h2>
         <blockquote class="sig-document" data-testid="document-text">
-          {highlighted!.before}
-          <mark class="sig-evidence-span" data-testid="highlighted-span">{highlighted!.highlighted}</mark>
-          {highlighted!.after}
+          {highlighted.before}
+          <mark class="sig-evidence-span" data-testid="highlighted-span">{highlighted.highlighted}</mark>
+          {highlighted.after}
         </blockquote>
         <figcaption>Highlighted at: {view.locator.description} ({view.locator.kind}).</figcaption>
       </figure>
+    ) : pane.kind === "locator_only" ? (
+      <div class="sig-locator-only" data-testid="locator-only-pane">
+        <h2>Locator — bytes not shown</h2>
+        <p>
+          This claim's source is on the <strong>{view.lane}</strong> lane, so SIG does not
+          publish the document bytes. The supporting location is described, not shown:
+        </p>
+        <p><strong>Locator:</strong> {view.locator.description} ({view.locator.kind}).</p>
+        <p>
+          Capture digest <code>{view.capture.content_digest}</code>, retrieved{" "}
+          {view.capture.captured_at}. View at source via the provenance panel below.
+        </p>
+      </div>
+    ) : (
+      <div class="sig-run-record" data-testid="run-record-pane">
+        <h2>No per-record document</h2>
+        <p>
+          {view.binding_status === "document_only"
+            ? "Extracted from a document; no page capture is held for this claim."
+            : view.binding_status === "not_recorded"
+              ? "No published evidence binding is recorded for this claim."
+              : "Recorded at run level — SIG did not keep a per-record copy of the source for this claim; the source's page lists the run and its captures."}
+        </p>
+      </div>
     )}
 
     <!-- The provenance chain (SIG-UI-028). -->

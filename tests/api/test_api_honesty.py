@@ -129,9 +129,12 @@ def test_non_public_tiers_never_claim_bytes() -> None:
 
 
 def test_source_uri_publishes_only_for_a_public_tier_capture() -> None:
-    """P35.31 (F-400 / SIG-TRANSP-020): the upstream URI is a public-tier fact —
-    a restricted or sealed capture's representation does not carry it at all."""
-    ok = _evidence_client(_meta(StorageTier.PUBLIC, "actual")).get("/v1/evidence/art:x/cap:x")
+    """P35.31 (F-400 / SIG-TRANSP-020) + P36.51 (J3 §5.5): the upstream URI is a
+    public-tier fact served in its S-6 form — a restricted or sealed capture's
+    representation does not carry it at all."""
+    ok = _evidence_client(
+        dataclasses.replace(_meta(StorageTier.PUBLIC, "actual"), lane="raw-ok")
+    ).get("/v1/evidence/art:x/cap:x")
     assert ok.json()["representation"]["source_uri"] == "https://example/x"
     for tier in (StorageTier.RESTRICTED, StorageTier.SEALED):
         body = _evidence_client(_meta(tier, "actual")).get("/v1/evidence/art:x/cap:x").json()

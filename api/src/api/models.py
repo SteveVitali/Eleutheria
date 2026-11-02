@@ -262,6 +262,20 @@ class EntityResponse(_Model):
     publication: PublicationTombstone | None = None
 
 
+class ClaimEvidenceBinding(_Model):
+    """One published ``claim_evidence`` row on a claim resource (SIG-EVUI-007).
+
+    ``href`` is the ``/v1/evidence/{artifact}/{capture}`` route — populated
+    only where both locators are public; ``None`` is the typed absent leg.
+    """
+
+    capture_id: str
+    artifact_id: str | None = None
+    role: str | None = None
+    binding_status: str = "not_recorded"
+    href: str | None = None
+
+
 class ClaimResponse(_InferenceMarked):
     """A single claim resource (§37.3 ``/claim/{id}``): provenance, not a verdict.
 
@@ -296,6 +310,22 @@ class ClaimResponse(_InferenceMarked):
     count_scope_jurisdiction: str | None = None
     evidence_origin: str | None = None
     evidence_capture_ids: list[str]
+    #: P36.51 (SIG-EVUI-007 / J3 §5.5): every published binding row — the
+    #: claim→capture→artifact links that let this claim reach ``/v1/evidence``.
+    #: Empty on a withheld claim or a claim with no published binding (the
+    #: typed absent state, never a dead link).
+    evidence: list[ClaimEvidenceBinding] = []
+    #: The primary binding's artifact id (first row in recorded order) —
+    #: ``None`` when no published binding exists.
+    artifact_id: str | None = None
+    #: The claim's binding state — the ``claim_evidence.binding_status``
+    #: closed vocabulary or the named absence ``not_recorded`` (SIG-EVUI-004:
+    #: typed states, never a blank).
+    binding_status: str = "not_recorded"
+    #: The ``/v1/evidence/{artifact}/{capture}`` route of the primary binding —
+    #: the provenance link J3 §5.5 names; ``None`` where no published binding
+    #: exists (a typed absence, never a dead href).
+    provenance: str | None = None
     resolution_ref: str
     coverage: CoverageStatement
     as_of: AsOfEcho
@@ -330,6 +360,14 @@ class EvidenceResponse(_Model):
     coverage: CoverageStatement
     as_of: AsOfEcho
     bytes_unavailable_reason: str | None = None
+    #: P36.51 (J3 §5.5): the byte-bearing marker (``actual`` | ``synthetic`` |
+    #: ``legacy``), or ``None`` on a sealed capture (whose representation stays
+    #: the §17.5 minimal field set) or an unclassified row.
+    capture_classification: str | None = None
+    #: P36.51 (J3 §5.5 / SIG-TRANSP-012): the S-6 publication form of the
+    #: capture's upstream URL — ``{status, url, host, path_sha256}``; ``None``
+    #: on a restricted/sealed capture, whose upstream URI is not a public fact.
+    upstream: dict[str, Any] | None = None
 
 
 class EntityRef(_Model):

@@ -210,6 +210,61 @@ def upstream_block(
     return out
 
 
+#: J3 §5.3's verbatim kind labels — the shared vocabulary the panel, the
+#: evidence-anchor capture history and the API mirror.
+_VIEW_ORIGINAL_LABELS: dict[str, str] = {
+    VO_DOWNLOAD_ORIGINAL: "Download original",
+    VO_DOWNLOAD_REDACTED: "Download redacted copy",
+    VO_VIEW_AT_SOURCE: "View at source",
+    VO_NOT_REDISTRIBUTABLE: "Not redistributable",
+    VO_RIGHTS_NOT_REVIEWED: "Rights not reviewed",
+    VO_NOT_RECORDED: "not_recorded",
+}
+
+
+def _view_original_kind(
+    *,
+    lane: str,
+    part_viii_class: str | None,
+    bytes_stored: bool,
+) -> tuple[str, str | None]:
+    """The J3 §5.3 kind + note for one lane × Part VIII × bytes-stored cell."""
+    if lane == "restricted" or part_viii_class in PART_VIII_SEALED_CLASSES:
+        reason = part_viii_class if part_viii_class in PART_VIII_SEALED_CLASSES else "terms"
+        return VO_NOT_REDISTRIBUTABLE, f"reason: {reason}"
+    if lane == "unknown":
+        return VO_RIGHTS_NOT_REVIEWED, None
+    if lane == "raw-ok":
+        if bytes_stored:
+            if part_viii_class in _P8_REDACTED_CLASSES:
+                return (
+                    VO_DOWNLOAD_REDACTED,
+                    "redacted copy served as a new capture; the original is never served",
+                )
+            return VO_DOWNLOAD_ORIGINAL, None
+        return VO_VIEW_AT_SOURCE, "SIG did not retain these bytes"
+    if lane in {"derived-only", "link-only"}:
+        return VO_VIEW_AT_SOURCE, None
+    return VO_NOT_RECORDED, None
+
+
+def _view_original_href(kind: str, upstream: Mapping[str, Any], raw_href: str | None) -> str | None:
+    """The href a §5.3 kind may carry: the S-6-scrubbed upstream for
+    ``view_at_source`` (a host-only upstream links the bare host; a withheld
+    one links nothing — no URL where a URL could name a person), or the
+    caller-minted raw-archive locator for the byte downloads (P36.51: minted
+    only where the release actually serves the bytes — a resolver that has no
+    raw object yields no link, never a dead route)."""
+    if kind == VO_VIEW_AT_SOURCE:
+        if upstream.get("url"):
+            return str(upstream["url"])
+        if upstream.get("host") and upstream.get("status") == UPSTREAM_HOST_ONLY:
+            return f"https://{upstream['host']}/"
+    if kind in {VO_DOWNLOAD_ORIGINAL, VO_DOWNLOAD_REDACTED}:
+        return raw_href
+    return None
+
+
 def view_original_block(
     *,
     binding_status: str,
@@ -217,54 +272,48 @@ def view_original_block(
     part_viii_class: str | None,
     bytes_stored: bool,
     upstream: Mapping[str, Any],
+    raw_href: str | None = None,
 ) -> dict[str, Any]:
     """The J3 §5.3 label state — the lane × Part VIII × bytes-stored table.
 
-    This row emits the LABEL + the safe href only: ``view_at_source`` links
-    the S-6-scrubbed upstream; the byte routes (``download_original`` /
-    ``download_redacted``) carry ``href: None`` — minting raw-byte links is
-    TX-08b's machinery (P36.51), not this row's.
+    ``view_at_source`` links the S-6-scrubbed upstream; the byte routes
+    (``download_original`` / ``download_redacted``) carry ``raw_href`` — the
+    TX-08b raw-archive locator the caller mints where the release serves the
+    capture's bytes — or ``None`` while the raw archive is unpublished (the
+    label still renders; a link is never minted to a route the release does
+    not carry).
     """
-    label = {
-        VO_DOWNLOAD_ORIGINAL: "Download original",
-        VO_DOWNLOAD_REDACTED: "Download redacted copy",
-        VO_VIEW_AT_SOURCE: "View at source",
-        VO_NOT_REDISTRIBUTABLE: "Not redistributable",
-        VO_RIGHTS_NOT_REVIEWED: "Rights not reviewed",
-        VO_NOT_RECORDED: "not_recorded",
-    }
     kind = VO_NOT_RECORDED
-    href: str | None = None
     note: str | None = None
     if binding_status in BINDING_STATES:
-        if lane == "restricted" or part_viii_class in PART_VIII_SEALED_CLASSES:
-            kind = VO_NOT_REDISTRIBUTABLE
-            reason = part_viii_class if part_viii_class in PART_VIII_SEALED_CLASSES else "terms"
-            note = f"reason: {reason}"
-        elif lane == "unknown":
-            kind = VO_RIGHTS_NOT_REVIEWED
-        elif lane == "raw-ok":
-            if bytes_stored:
-                if part_viii_class in _P8_REDACTED_CLASSES:
-                    kind = VO_DOWNLOAD_REDACTED
-                    note = "redacted copy served as a new capture; the original is never served"
-                else:
-                    kind = VO_DOWNLOAD_ORIGINAL
-            else:
-                kind = VO_VIEW_AT_SOURCE
-                note = "SIG did not retain these bytes"
-        elif lane in {"derived-only", "link-only"}:
-            kind = VO_VIEW_AT_SOURCE
-        else:
-            kind = VO_NOT_RECORDED
-    if kind == VO_VIEW_AT_SOURCE:
-        # The S-6 href only — a host-only upstream links the bare host; a
-        # withheld one links nothing (no URL where a URL could name a person).
-        if upstream.get("url"):
-            href = str(upstream["url"])
-        elif upstream.get("host") and upstream.get("status") == UPSTREAM_HOST_ONLY:
-            href = f"https://{upstream['host']}/"
-    return {"kind": kind, "label": label[kind], "href": href, "note": note}
+        kind, note = _view_original_kind(
+            lane=lane, part_viii_class=part_viii_class, bytes_stored=bytes_stored
+        )
+    href = _view_original_href(kind, upstream, raw_href)
+    return {"kind": kind, "label": _VIEW_ORIGINAL_LABELS[kind], "href": href, "note": note}
+
+
+def capture_view_original(
+    *,
+    lane: str,
+    part_viii_class: str | None,
+    bytes_stored: bool,
+    upstream: Mapping[str, Any],
+    raw_href: str | None = None,
+) -> dict[str, Any]:
+    """The J3 §5.3 label state for one recorded capture row (P36.51).
+
+    The decision table's entry condition — "is there a binding?" — is already
+    answered by the capture row itself (the artifact's capture history only
+    lists recorded captures), so unlike :func:`view_original_block` this form
+    needs no ``binding_status``: the lane × Part VIII × bytes-stored cell
+    applies directly. Same labels, same S-6-only or caller-minted hrefs.
+    """
+    kind, note = _view_original_kind(
+        lane=lane, part_viii_class=part_viii_class, bytes_stored=bytes_stored
+    )
+    href = _view_original_href(kind, upstream, raw_href)
+    return {"kind": kind, "label": _VIEW_ORIGINAL_LABELS[kind], "href": href, "note": note}
 
 
 def _binding_entries(details: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
@@ -598,6 +647,7 @@ __all__ = [
     "UPSTREAM_WITHHELD",
     "VALUE_NOT_PUBLISHED",
     "VIEW_ORIGINAL_KINDS",
+    "capture_view_original",
     "statement_row",
     "upstream_block",
     "view_original_block",

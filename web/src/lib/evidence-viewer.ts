@@ -121,8 +121,12 @@ export function isSealed(capture: Capture): boolean {
 
 /**
  * Validate a capture's tier invariants (SIG-UI-030, SIG-EVID-009/010): a sealed
- * capture MUST NOT carry document bytes and MUST explain why they are withheld; a
- * non-sealed capture MUST carry its document text so the span can be highlighted.
+ * capture MUST NOT carry document bytes and MUST explain why they are withheld.
+ * A non-sealed capture's missing document text is NOT an error by itself —
+ * SIG-EVUI-004 (amending SIG-UI-028) binds document bytes to the claim view's
+ * `pane`: only a `text_span` pane demands bytes; `locator_only`,
+ * `metadata_only` and `run_record` panes render typed states the lane forbids
+ * bytes for, never a broken render (`assertClaimView` enforces pane↔lane).
  */
 export function assertCaptureTier(capture: Capture): void {
   if (isSealed(capture)) {
@@ -137,12 +141,69 @@ export function assertCaptureTier(capture: Capture): void {
         `SIG-UI-030: sealed capture ${capture.capture_id} MUST explain why its bytes are withheld.`,
       );
     }
-  } else if (capture.document_text === undefined) {
-    throw new Error(
-      `SIG-UI-028: non-sealed capture ${capture.capture_id} MUST carry its document text so the ` +
-        "supporting span can be highlighted.",
-    );
   }
+}
+
+// --- The claim-viewer pane (SIG-EVUI-004 / K8 §4.3, amends SIG-UI-028) --------
+
+/** The J3 §5.1 binding states plus the named-absence fifth. */
+export const BINDING_STATES = [
+  "actual_capture",
+  "replayed",
+  "document_only",
+  "legacy_synthetic",
+  "not_recorded",
+] as const;
+export type BindingState = (typeof BINDING_STATES)[number];
+
+/** The disclosure lanes the document pane is decided against (J4 / J3 §5.3). */
+export const DISCLOSURE_LANES = [
+  "raw-ok",
+  "derived-only",
+  "link-only",
+  "restricted",
+  "unknown",
+] as const;
+export type DisclosureLane = (typeof DISCLOSURE_LANES)[number];
+
+/**
+ * The document-pane discriminated union (K8 §4.3): which of the four pane kinds
+ * the claim viewer renders, decided from binding state × lane × Part VIII —
+ * the model change SIG-EVUI-004 makes ("non-sealed ⇒ text" is gone).
+ *
+ *   text_span     — stored (or redacted) text with `<mark>` at the locator span;
+ *                   requires `capture.document_text` + a valid span.
+ *   locator_only  — derived-only / link-only: the locator described, hash/time
+ *                   shown, "View at source"; no document bytes.
+ *   metadata_only — restricted / sealed: metadata with the reason class, no
+ *                   URL where S-6 forbids (SIG-UI-030).
+ *   run_record    — document_only / legacy_synthetic / not_recorded: the
+ *                   run-level text, never an implied document.
+ */
+export interface ClaimPane {
+  kind: "text_span" | "locator_only" | "metadata_only" | "run_record";
+  /** metadata_only: the reason class shown (SIG-UI-030). */
+  reason?: string;
+  /** text_span over a field-screened capture: the redaction's method + version. */
+  redaction?: { method: string; version: string };
+}
+
+/** Decide the document pane from binding state × lane × Part VIII class (K8 §4.3). */
+export function claimPaneFor(view: ClaimView): ClaimPane {
+  if (view.pane) return view.pane;
+  if (isSealed(view.capture) || view.lane === "restricted") {
+    return { kind: "metadata_only", reason: view.capture.sealed_reason };
+  }
+  if (view.binding_status === "document_only" || view.binding_status === "legacy_synthetic") {
+    return { kind: "run_record" };
+  }
+  if (view.binding_status === "not_recorded") {
+    return { kind: "run_record" };
+  }
+  if (view.lane === "derived-only" || view.lane === "link-only") {
+    return { kind: "locator_only" };
+  }
+  return { kind: "text_span" };
 }
 
 /**
@@ -202,6 +263,14 @@ export interface ClaimView {
   value: string | number;
   /** The capture whose span supports the claim. */
   capture: Capture;
+  /** SIG-EVUI-004: the claim's J3 §5.1 binding state (typed, never blank). */
+  binding_status: BindingState;
+  /** SIG-EVUI-004: the disclosure lane the document pane is decided against. */
+  lane: DisclosureLane;
+  /** The Part VIII field-screen class, where one is recorded. */
+  part_viii_class?: string;
+  /** The explicit pane override; absent, `claimPaneFor` derives it (K8 §4.3). */
+  pane?: ClaimPane;
   /** The locator resolving to the supporting span in the capture's text (SIG-UI-028). */
   locator: Locator;
   /** The extraction method (§24 layer) and its version (SIG-UI-028). */
@@ -246,17 +315,49 @@ export function assertClaimView(view: ClaimView): void {
   if (view.history.length === 0) {
     throw new Error(`SIG-UI-028: the evidence view for ${view.claim_id} must include the full claim history.`);
   }
-  // A non-sealed capture's supporting span must resolve; a sealed capture has no
-  // bytes to highlight (its view is metadata-only, SIG-UI-030).
-  if (!isSealed(view.capture)) {
-    assertSpanValid(view.capture.document_text!, view.locator.span);
+  // SIG-EVUI-004: the pane is checked against the lane, never "non-sealed ⇒
+  // text". A lane/binding that forbids bytes never fails the build for
+  // missing text — it fails only when the pane itself is inconsistent.
+  const pane = claimPaneFor(view);
+  if (pane.kind === "text_span") {
+    if (isSealed(view.capture) || view.lane === "restricted") {
+      throw new Error(
+        `SIG-EVUI-004: ${view.claim_id} cannot render a text_span pane for a ` +
+          `${view.lane}/sealed capture — metadata_only is the only lawful pane.`,
+      );
+    }
+    if (view.lane === "derived-only" || view.lane === "link-only") {
+      throw new Error(
+        `SIG-EVUI-004: ${view.claim_id} cannot render a text_span pane on the ` +
+          `${view.lane} lane — the lane forbids showing the bytes (locator_only).`,
+      );
+    }
+    if (view.capture.document_text === undefined) {
+      throw new Error(
+        `SIG-UI-028: text_span pane for ${view.claim_id} has no document text — ` +
+          "the pane must be locator_only or run_record, never a broken render.",
+      );
+    }
+    assertSpanValid(view.capture.document_text, view.locator.span);
+  } else if (pane.kind === "metadata_only") {
+    if (view.capture.document_text !== undefined) {
+      throw new Error(
+        `SIG-EVUI-004: metadata_only pane for ${view.claim_id} carries document bytes.`,
+      );
+    }
+    if (!pane.reason && !view.capture.sealed_reason) {
+      throw new Error(
+        `SIG-EVUI-004: metadata_only pane for ${view.claim_id} must name its reason class.`,
+      );
+    }
   }
 }
 
-/** The highlighted supporting document for a claim view, or null when sealed (SIG-UI-030). */
+/** The highlighted supporting document for a claim view, or null unless text_span (SIG-EVUI-004). */
 export function claimHighlightedDocument(view: ClaimView): HighlightedDocument | null {
-  if (isSealed(view.capture)) return null;
-  return highlightSpan(view.capture.document_text!, view.locator.span);
+  if (claimPaneFor(view).kind !== "text_span") return null;
+  if (view.capture.document_text === undefined) return null;
+  return highlightSpan(view.capture.document_text, view.locator.span);
 }
 
 // --- Capture diffing, field by field (SIG-UI-029, §29.7) ---------------------

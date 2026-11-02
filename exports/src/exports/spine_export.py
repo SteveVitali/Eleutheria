@@ -361,7 +361,27 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "       CASE WHEN rr.redistributable = 'yes'"
         "            THEN COALESCE(ea.url, CASE WHEN ea.stable_locator ~ '^https?://'"
         "                                 THEN ea.stable_locator END)"
-        "            ELSE NULL END AS upstream_url"
+        "            ELSE NULL END AS upstream_url,"
+        # P36.51 (R11-K13-TX-08b / K8 §4.2, SIG-EVUI-004): the anchor page's
+        # capture HISTORY — one object per recorded evidence_capture row of the
+        # artifact (metadata only — bytes never travel, §17.5; the page marks
+        # sealed rows metadata-only by their storage_tier).
+        "       (SELECT json_agg(json_build_object("
+        "         'capture_id', ec.capture_id::text,"
+        "         'retrieved_at', ec.retrieved_at::text,"
+        "         'content_digest', ec.content_digest,"
+        "         'digest_blake3', ec.digest_blake3,"
+        "         'byte_size', ec.byte_size,"
+        "         'media_type', ec.media_type,"
+        "         'http_status', ec.http_status,"
+        "         'capture_method', ec.capture_method,"
+        "         'storage_tier', ec.storage_tier,"
+        "         'capture_classification', ec.capture_classification,"
+        "         'redaction_applied', ec.redaction_applied,"
+        "         'parent_capture_id', ec.parent_capture_id::text)"
+        "         ORDER BY ec.retrieved_at, ec.capture_id)"
+        "          FROM evidence_capture ec"
+        "         WHERE ec.artifact_id = ea.artifact_id) AS captures"
         "  FROM evidence_artifact ea"
         "  LEFT JOIN source_registry sr ON sr.source_id = ea.source_id"
         "  LEFT JOIN latest_decision ld"
@@ -2940,7 +2960,11 @@ def _watch(
     )
 
 
-def _evidence(raw: Mapping[str, Any], as_of: str) -> dict[str, Any]:
+def _evidence(
+    raw: Mapping[str, Any],
+    as_of: str,
+    lane_by_source: Mapping[str, Mapping[str, Any]] | None = None,
+) -> dict[str, Any]:
     """Surface 8 — EvidenceArtifact[] + ClaimView[] (§39.6). Metadata only; sealed
     captures never carry bytes (§17.5).
 
@@ -2948,6 +2972,15 @@ def _evidence(raw: Mapping[str, Any], as_of: str) -> dict[str, Any]:
     honest ``capture_classification`` (synthetic captures are run records —
     SIG-EVUI-D04), and the S-6-scrubbed ``upstream_url`` (the source's own
     link, present only where the query's effective-rights gate allows it).
+
+    P36.51 (R11-K13-TX-08b / K8 §4.2, SIG-EVUI-004/007, SIG-TRANSP-012): the
+    artifact carries its disclosure ``lane`` + Part VIII class (the same
+    ``lane_by_source`` map the statements rows read — unknown sources fail to
+    ``unknown``, never an assumed lane), the S-6 ``upstream`` block, and the
+    recorded ``captures`` history — each capture carrying its J3 §5.3
+    ``view_original`` label state (the raw-byte href stays ``None`` until the
+    TX-12 archive mints a locator; a label never implies a route the release
+    does not carry).
     """
     artifacts: list[dict[str, Any]] = []
     for r in raw.get("evidence_artifacts") or []:
@@ -2963,12 +2996,41 @@ def _evidence(raw: Mapping[str, Any], as_of: str) -> dict[str, Any]:
             source_name,
             capture_class,
             upstream_url,
-        ) = r
+        ) = r[:11]
+        # Column 12 (P36.51) is additive — a pre-P36.51 row shape feeds no
+        # capture history and the page renders the typed empty state.
+        captures_raw = r[11] if len(r) > 11 else []
+        sid = str(source_id)
+        lane_entry = (lane_by_source or {}).get(sid) or {}
+        decision = lane_entry.get("decision")
+        lane = str(getattr(decision, "lane", "unknown") or "unknown")
+        p8 = lane_entry.get("p8")
+        upstream = _stmt.upstream_block(
+            str(upstream_url) if upstream_url else None,
+            lane=lane,
+            gate_passed=True,  # the artifact published — the gate's own verdict
+            part_viii_class=str(p8) if p8 else None,
+        )
+        captures: list[dict[str, Any]] = []
+        for c in captures_raw or []:
+            if not isinstance(c, Mapping):
+                continue
+            cap = {str(k): v for k, v in dict(c).items()}
+            cap["view_original"] = _stmt.capture_view_original(
+                lane=lane,
+                part_viii_class=str(p8) if p8 else None,
+                bytes_stored=(
+                    str(cap.get("storage_tier") or "") == "public"
+                    and int(cap.get("byte_size") or 0) > 0
+                ),
+                upstream=upstream,
+            )
+            captures.append(cap)
         artifact: dict[str, Any] = {
             "artifact_id": str(artifact_id),
             "subject_id": "",
             "title": title or str(artifact_id),
-            "source": str(source_id),
+            "source": sid,
             "artifact_type": str(artifact_type),
             "directness": str(direct),
             "currency": str(published or ""),
@@ -2977,6 +3039,11 @@ def _evidence(raw: Mapping[str, Any], as_of: str) -> dict[str, Any]:
             "capture_status": str(capture_status),
             "permalink": str(locator),
             "as_of": as_of,
+            "lane": lane,
+            "lane_basis": getattr(decision, "basis", None) or "not_recorded",
+            "part_viii_class": str(p8) if p8 else None,
+            "upstream": upstream,
+            "captures": captures,
         }
         # Optional, additive fields — absent means "not known / not allowed",
         # never a fabricated value.
@@ -5438,7 +5505,7 @@ def build_spine_export(
                 else None
             ),
         ),
-        "evidence": _evidence(raw, dataset.as_of),
+        "evidence": _evidence(raw, dataset.as_of, lane_by_source=lane_by_source),
         "corrections": _corrections(raw),
         "research_queue": (
             _rekey_queue_cards(_research_queue(raw), _legacy_slug_map(keyed), keyed)

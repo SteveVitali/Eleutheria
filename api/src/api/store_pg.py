@@ -130,6 +130,7 @@ from resolution.partner_identity import natural_person_signal
 
 from .store import (
     SEARCH_DEFAULT_LIMIT,
+    ClaimBinding,
     ContradictionRecord,
     CrosswalkRecord,
     DossierRecord,
@@ -801,11 +802,33 @@ class PgReadStore:
         ).fetchone()
         if row is None:
             return None
-        capture_ids = tuple(
-            str(c[0])
-            for c in self._conn.execute(
-                "SELECT capture_id FROM claim_evidence WHERE claim_id = %s", (claim_id,)
-            ).fetchall()
+        # P36.51 (SIG-EVUI-007 / J3 §5.5): the published binding rows — the
+        # claim→capture→artifact link ``/v1/claim`` returns so a claim reaches
+        # ``/v1/evidence``. ``binding_status`` degrades to NULL on a pre-P32.2
+        # spine (the route then states ``not_recorded``, never a guessed state).
+        has_bs = self._conn.execute(
+            "SELECT EXISTS ("
+            "  SELECT 1 FROM information_schema.columns"
+            "   WHERE table_name = 'claim_evidence'"
+            "     AND column_name = 'binding_status')"
+        ).fetchone()
+        bs_col = "ce.binding_status" if (has_bs and has_bs[0]) else "NULL"
+        binding_rows = self._conn.execute(
+            f"SELECT ce.capture_id, ec.artifact_id, ce.role, {bs_col} "
+            "  FROM claim_evidence ce "
+            "  JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
+            " WHERE ce.claim_id = %s ORDER BY ce.capture_id, ce.role",
+            (claim_id,),
+        ).fetchall()
+        capture_ids = tuple(str(c[0]) for c in binding_rows)
+        bindings = tuple(
+            ClaimBinding(
+                capture_id=str(r[0]),
+                artifact_id=str(r[1]) if r[1] is not None else None,
+                role=str(r[2]) if r[2] is not None else None,
+                binding_status=str(r[3]) if r[3] is not None else None,
+            )
+            for r in binding_rows
         )
         asserted_at = row[11] or datetime.now(tz=UTC)
         obs, basis = observation_time(row[7], row[15])
@@ -840,6 +863,7 @@ class PgReadStore:
             claim=claim,
             asserted_at=asserted_at,
             capture_ids=capture_ids,
+            bindings=bindings,
             publication=None if publication.permitted else publication,
         )
 
@@ -961,6 +985,11 @@ class PgReadStore:
             capture_classification=None if row[7] is None else str(row[7]),
             seal_rules=seal_rules,
             derivative=self._capture_derivative(str(row[0])),
+            # P36.51 (J3 §5.5): the lane + Part VIII class the S-6-gated
+            # ``upstream`` form is computed from — the same derived pair the
+            # served tier was floored by.
+            lane=lane,
+            part_viii_class=str(row[14]) if row[14] else None,
         )
 
     def _capture_excerpt(self, capture_id: str) -> str | None:

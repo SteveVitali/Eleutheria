@@ -733,6 +733,35 @@ recomputes this index).</p>
 # --------------------------------------------------------------------------- #
 
 
+def _upstream_cell(upstream: Mapping[str, Any]) -> str:
+    """The S-6 publication form as a table cell (P36.51 / SIG-TRANSP-012):
+    full URL where the lane + gate allow, host + path-hash otherwise, the
+    named absence when nothing publishable was recorded."""
+    status = str(upstream.get("status") or "")
+    if status == "full_url" and upstream.get("url"):
+        return (
+            f'<a href="{_e(upstream["url"])}" rel="nofollow noopener">'
+            f"<code>{_e(upstream['url'])}</code></a>"
+        )
+    if status == "host_only" and upstream.get("host"):
+        host = _e(upstream["host"])
+        return (
+            f'<a href="https://{host}/" rel="nofollow noopener"><code>{host}</code></a>'
+            f' <span class="mut">#path_sha256:{_e(upstream.get("path_sha256"))}</span>'
+        )
+    return f"<em>{_e(status or 'no_upstream_url_recorded')}</em>"
+
+
+def _view_original_cell(vo: Mapping[str, Any]) -> str:
+    """The J3 §5.3 view-original label (+ href where the kind may carry one)."""
+    label = _e(vo.get("label") or "not_recorded")
+    if vo.get("href"):
+        label = f'<a href="{_e(vo["href"])}" rel="nofollow noopener">{label}</a>'
+    if vo.get("note"):
+        label += f' <span class="mut">({_e(vo["note"])})</span>'
+    return label
+
+
 def evidence_page(
     *,
     publication_id: str,
@@ -742,7 +771,54 @@ def evidence_page(
     stamp: Mapping[str, Any] | None = None,
 ) -> bytes:
     """``/r/<pub>/c/<comp>/evidence/<artifact_id>/`` — the released evidence
-    anchor page (metadata only — capture bytes never travel, §17.5)."""
+    anchor page (metadata only — capture bytes never travel, §17.5).
+
+    P36.51 (R11-K13-TX-08b / K8 §4.2, SIG-EVUI-004/007, SIG-TRANSP-012): the
+    anchor carries its disclosure lane + the S-6 upstream form, and the
+    recorded **capture history** — one row per capture with digest, bytes,
+    media type, HTTP status, method, classification (a ``synthetic`` capture
+    is labelled a run record) and the J3 §5.3 view-original state per row.
+    """
+    upstream = artifact.get("upstream") or {}
+    up_html = _upstream_cell(upstream)
+    captures = [c for c in (artifact.get("captures") or []) if isinstance(c, Mapping)]
+
+    def _cap_row(c: Mapping[str, Any]) -> str:
+        classification = _e(c.get("capture_classification") or "unclassified")
+        if str(c.get("capture_classification") or "") == "synthetic":
+            classification += (
+                ' <span class="mut">(run record — SIG did not store this document)</span>'
+            )
+        tier = str(c.get("storage_tier") or "")
+        digest = f"<code>{_e(c.get('content_digest'))}</code>"
+        if c.get("digest_blake3"):
+            digest += f'<br><code class="mut">b3:{_e(c["digest_blake3"])}</code>'
+        tier_note = (
+            ' <span class="mut">(metadata only — bytes withheld)</span>' if tier != "public" else ""
+        )
+        vo = c.get("view_original") or {}
+        return (
+            "<tr>"
+            f"<td><code>{_e(c.get('capture_id'))}</code></td>"
+            f"<td>{_e(c.get('retrieved_at') or '—')}</td>"
+            f"<td>{digest}</td>"
+            f"<td>{_e(c.get('byte_size') if c.get('byte_size') is not None else '—')}</td>"
+            f"<td>{_e(c.get('media_type') or '—')}</td>"
+            f"<td>{_e(c.get('http_status') if c.get('http_status') is not None else '—')}</td>"
+            f"<td>{_e(c.get('capture_method') or '—')}</td>"
+            f"<td>{classification}</td>"
+            f"<td>{_e(tier or '—')}{tier_note}</td>"
+            f"<td>{_view_original_cell(vo)}</td>"
+            "</tr>"
+        )
+
+    cap_rows = "".join(_cap_row(c) for c in captures) or (
+        '<tr><td colspan="10"><em>No captures are published for this artifact in '
+        "this release — an explicit empty state, not an omission.</em></td></tr>"
+    )
+    lane = artifact.get("lane") or "unknown"
+    p8 = artifact.get("part_viii_class")
+    lane_basis = artifact.get("lane_basis") or "not_recorded"
     body = f"""
 <p><span class="k">Artifact</span> <code>{_e(artifact.get("artifact_id"))}</code></p>
 <p><span class="k">Title</span> {_e(artifact.get("title"))}</p>
@@ -751,7 +827,19 @@ def evidence_page(
    <span class="k">Directness</span> {_e(artifact.get("directness"))}</p>
 <p><span class="k">Capture status</span> {_e(artifact.get("capture_status"))} ·
    <span class="k">Published through</span> {_e(artifact.get("currency")) or "—"}</p>
+<p><span class="k">Lane</span> {_e(lane)}
+   <span class="mut">(basis: {_e(lane_basis)})</span>
+   {f'· <span class="k">Part VIII class</span> {_e(p8)}' if p8 else ""}</p>
+<p><span class="k">Upstream</span> {up_html}</p>
 <p><span class="k">Stable locator</span> <code>{_e(artifact.get("permalink"))}</code></p>
+<h2>Capture history</h2>
+<p class="mut">One row per recorded capture — the K8 §4.2 block. Bytes never
+travel this namespace; a <code>synthetic</code> capture is a run record, not a
+stored document.</p>
+<table><tr><th>Capture</th><th>Retrieved</th><th>Digest</th><th>Bytes</th>
+<th>Media type</th><th>HTTP</th><th>Method</th><th>Classification</th>
+<th>Tier</th><th>View original</th></tr>
+{cap_rows}</table>
 <p class="mut">Capture bytes are not served from this namespace (§17.5 —
 sealed captures stay metadata-only). The locator identifies the pinned
 evidence object in the custody store.</p>
