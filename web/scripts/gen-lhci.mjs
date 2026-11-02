@@ -135,7 +135,7 @@ const EXPORT_URLS = [
   "/dossier/ok/print/index.html",
   "/sources/index.html",
   "/coverage-metrics/index.html",
-  "/data-freshness/index.html",
+  "/sources/runs/index.html",
   "/curate/index.html",
   "/map/index.html",
   "/network/index.html",
