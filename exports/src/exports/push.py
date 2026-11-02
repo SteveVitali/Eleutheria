@@ -313,6 +313,7 @@ def push_export_dir(
         results.append(PushedObject(side, key, sha, len(data), skipped=False))
     return results
 
+
 def build_s3_client(store: ObjectStore, endpoint_url: str | None = None) -> S3Client:
     """Build a real boto3 S3 client for ``store`` (reusing the evidence-store dependency).
 
