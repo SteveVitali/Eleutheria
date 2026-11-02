@@ -82,6 +82,18 @@ from policy.licensing import (
 from policy.licensing import (
     license_url as policy_license_url,
 )
+from policy.procurement_relevance import (
+    INPUT_PREDICATES,
+    NoticeRelevance,
+    ReviewedVocabulary,
+    classify_notice,
+    is_notice_subject,
+    load_reviewed_vocabulary,
+    relevance_doc,
+)
+from policy.procurement_relevance import (
+    SCHEMA as PROCUREMENT_RELEVANCE_SCHEMA,
+)
 from policy.rights import RightsRecord
 from policy.slug_history import (
     ENTITY_SLUG_HISTORY_SCHEMA,
@@ -271,6 +283,11 @@ _LABEL_FACT_PREDICATES: tuple[str, ...] = (
     "title",
     "vendor",
 )
+
+#: P36.30 (K2 GX-04): the notice-family predicates the procurement
+#: relevance rule reads — the closed ``policy.procurement_relevance``
+#: input set (ONE vocabulary: the query never hand-lists its own names).
+_NOTICE_RELEVANCE_PREDICATES: tuple[str, ...] = INPUT_PREDICATES
 
 EXPORT_QUERIES: dict[str, tuple[str, str]] = {
     # (guard-table, SELECT). source_registry names — node labels + PROV agents.
@@ -523,6 +540,36 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "   AND upper_inf(c.sys_period)"
         "   AND {PUB_CLAIM_GATE}"
         " ORDER BY c.subject_id, c.predicate_id, c.observed_at DESC, c.claim_id",
+    ),
+    # P36.30 (K2 GX-04 / D-K2-5, R11-K13-GX-04): the surveillance-relevance
+    # inputs for procurement notices — EVERY current publishable
+    # ``matched_keyword`` / product-classification claim value on the
+    # notice subject families. The rule needs the full value list (the
+    # label path's first-value-per-predicate read cannot carry it); the
+    # normalized ``value_text`` keeps the emitted ids in SIG's own
+    # reviewed-vocabulary space (term ids and classification codes, never
+    # verbatim source text).
+    "notice_relevance_facts": (
+        "claim",
+        "{EFFECTIVE}SELECT c.subject_id::text, c.predicate_id,"
+        "       COALESCE(c.value_text, c.raw_value::text), cs.source_id"
+        "  FROM claim c"
+        "  LEFT JOIN claim_source cs ON cs.claim_id = c.claim_id"
+        "  LEFT JOIN latest_decision ld"
+        "         ON ld.source_id = cs.source_id AND ld.prior_rights_id = c.rights_id"
+        "  JOIN rights_record rr ON rr.rights_id = COALESCE(ld.rights_id, c.rights_id)"
+        " WHERE c.predicate_id IN ("
+        + ",".join(f"'{p}'" for p in _NOTICE_RELEVANCE_PREDICATES)
+        + ")"
+        "   AND c.sensitivity_tier = 0"
+        "   AND upper_inf(c.sys_period)"
+        "   AND {PUB_CLAIM_GATE}"
+        "   AND EXISTS (SELECT 1 FROM entity_identifier ei"
+        "               WHERE ei.entity_id = c.subject_id"
+        "                 AND ei.scheme = 'sig.connector.subject'"
+        "                 AND (ei.value LIKE 'procurement\\_notice:%' ESCAPE '\\'"
+        "                      OR ei.value LIKE 'notice:%'))"
+        " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
     ),
     # P35.33 (J3 §3.1–3.3 + K9 C-4…C-7 + K10 C-13): the transparency
     # run/capture views, the per-source rights fields the interim lane
@@ -4805,6 +4852,57 @@ def _label_specs() -> tuple[Any, ...]:
 LABEL_COLUMN_SPECS = _label_specs()
 
 
+# --------------------------------------------------------------------------- #
+# P36.30 (K2 GX-04 / D-K2-5, R11-K13-GX-04): the procurement relevance rule — #
+# ONE classification over every notice-family entity in the label registry.   #
+# --------------------------------------------------------------------------- #
+
+
+def _notice_relevance_rows(
+    raw: Mapping[str, Any],
+    registry: Mapping[str, EntityLabel],
+    *,
+    vocab: ReviewedVocabulary,
+) -> list[NoticeRelevance]:
+    """``subject_key → fields`` from ``notice_relevance_facts``, classified.
+
+    Every notice-family entity in the label registry earns a verdict — an
+    entity with no publishable classification claims is ``not_classified``
+    (the typed absence the buyer-page row renders), never a missing row.
+    A withheld entity emits NO row (the same posture as the label
+    artifact). Rows sort by subject key for byte-stable output.
+    """
+    fields_by_subject: dict[str, dict[str, list[str]]] = {}
+    for row in raw.get("notice_relevance_facts") or []:
+        try:
+            sid, pred, val = str(row[0]), str(row[1]), row[2]
+        except (TypeError, IndexError):
+            continue
+        if val not in (None, ""):
+            fields_by_subject.setdefault(sid, {}).setdefault(pred, []).append(str(val))
+    out: list[NoticeRelevance] = []
+    for eid, label in registry.items():
+        if label.label_state == "withheld":
+            continue
+        skey = label.subject_key or ""
+        if not is_notice_subject(skey):
+            continue
+        # label_facts key on subject_id (the entity uuid, like every label
+        # query); fixture rows may key on the subject key — take both.
+        fields = fields_by_subject.get(eid) or fields_by_subject.get(skey) or {}
+        out.append(
+            classify_notice(
+                skey,
+                fields,
+                vocab=vocab,
+                entity_id=eid,
+                kind=label.kind,
+            )
+        )
+    out.sort(key=lambda r: (r.subject_key, r.entity_id or ""))
+    return out
+
+
 def build_spine_export(
     dataset: ShapedDataset,
     raw: Mapping[str, Any] | None = None,
@@ -5588,6 +5686,32 @@ def build_spine_export(
     web_counts[entity_history_path] = (
         len(entity_history_rows),
         len({r.uuid for r in entity_history_rows}),
+    )
+
+    # --- P36.30 (K2 GX-04 / D-K2-5, ``sig.procurement-relevance/1``): the
+    # procurement relevance rule — ONE classification over every
+    # notice-family entity in the registry (``matched_keyword`` +
+    # products/CPV/NAICS inputs, the connectors' reviewed vocabulary read
+    # as data). Surveillance surfaces (O1 supply graphs, entity pages —
+    # GX-08a/GX-06) filter on the emitted verdict; an unclassified notice
+    # is never silently dropped — it surfaces only as a buyer-page row
+    # carrying the H-13 'not classified as surveillance-related' label.
+    relevance_vocab = load_reviewed_vocabulary()
+    notice_rows = _notice_relevance_rows(raw, label_registry, vocab=relevance_vocab)
+    relevance_path = f"{_WEB_DIR}/procurement_relevance.json"
+    relevance_payload = relevance_doc(
+        notice_rows,
+        generated_at=generated_at,
+        publication=build_spec.release_id(),
+        vocab=relevance_vocab,
+    )
+    web_artifacts[relevance_path] = _web_bytes(relevance_payload)
+    web_licenses[relevance_path] = _SIG_SPDX
+    web_compartments[relevance_path] = _WEB_COMPARTMENT
+    web_schemas[relevance_path] = PROCUREMENT_RELEVANCE_SCHEMA
+    web_counts[relevance_path] = (
+        len(notice_rows),
+        sum(1 for r in notice_rows if r.relevance == "surveillance_related"),
     )
 
     disclosure = _terms_disclosure_payload(

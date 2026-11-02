@@ -82,6 +82,11 @@ import {
   ENTITY_SLUG_HISTORY_FIXTURE,
   type EntitySlugHistoryRow,
 } from "./entity-history";
+import {
+  PROCUREMENT_RELEVANCE_FIXTURE,
+  isProcurementRelevanceDoc,
+  type ProcurementRelevanceRow,
+} from "./procurement-relevance";
 
 // The committed fixtures the data layer serves in `fixtures` mode (and that the P27.5
 // fixture-export harness serialises into the export layout). The PAGES import none of
@@ -954,6 +959,26 @@ export function getEntitySlugHistory(): EntitySlugHistoryRow[] {
     rows?: EntitySlugHistoryRow[];
   };
   return parsed.rows ?? [];
+}
+
+/**
+ * P36.30 (K2 GX-04 / D-K2-5, `sig.procurement-relevance/1`): the
+ * procurement relevance verdicts — ONE classification every surveillance
+ * surface filters through (unclassified notices surface only as
+ * buyer-page rows, never silently dropped). Export mode reads the emitted
+ * `<exportDir>/web/procurement_relevance.json`; an absent file is the
+ * honest empty verdict set (the export pre-dates the artifact). Fixtures
+ * serve the committed fixture document.
+ */
+export function getProcurementRelevance(): ProcurementRelevanceRow[] {
+  if (dataSource() !== "export") return PROCUREMENT_RELEVANCE_FIXTURE.rows;
+  const path = `${exportDir()}/web/procurement_relevance.json`;
+  if (!existsSync(path)) return [];
+  const parsed = JSON.parse(readFileSync(path, "utf-8")) as unknown;
+  if (!isProcurementRelevanceDoc(parsed)) {
+    throw new Error(`${path}: expected a ${"sig.procurement-relevance/1"} object`);
+  }
+  return parsed.rows;
 }
 
 /**

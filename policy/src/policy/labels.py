@@ -163,6 +163,11 @@ _KIND_PREFIXES: tuple[tuple[str, str], ...] = (
     ("service:", "service"),
     ("organization:", "org"),
     ("organisation:", "org"),
+    # P36.30 (K2 GX-04): portal/federal procurement notices type as the K2
+    # "procurement notice" kind — the prefix the connector subjects mint
+    # under (`procurement_notice:<source>:<id>` → entity_type contract in
+    # the sink map, the notice kind on the public surface).
+    ("procurement_notice:", "notice"),
     ("notice:", "notice"),
     ("contract:", "contract"),
     ("award:", "contract"),

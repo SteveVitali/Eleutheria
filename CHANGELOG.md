@@ -24,6 +24,31 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Procurement relevance rule: the `sig.procurement-relevance/1`
+  verdict artifact — one classification over every notice-family
+  entity, the D-K2-5 exclusion posture and the H-13 buyer-page
+  label** (P36.30 / row 370; K2 GX-04/H-13, K13 §7 W1 GX-04;
+  `D-K2-5 [B-22] = as recommended: exclude unclassified
+  procurement` — the answered plan decision, carried verbatim;
+  serves SIG-UI-039/040, SIG-ENG-042) —
+  `policy/src/policy/procurement_relevance.py` is the ONE
+  classification every surface reads: a notice is
+  `surveillance_related` on a `matched_keyword` claim or a
+  product/CPV/NAICS value matching the connectors' committed
+  reviewed vocabulary (the agenda verbatim-scan terms, the TED
+  sweep keyword patterns and acquisition-term literals, the
+  verified CPV code set — read as data, sha256-bound; the NAICS
+  slot is declared and honestly empty today); everything else is
+  `not_classified` — never silently dropped, excluded from the
+  surveillance surfaces and surfaced only as a buyer-page row
+  labelled `not classified as surveillance-related` (K2 H-13).
+  `build_spine_export` emits `web/procurement_relevance.json`
+  (schema + publication binding + vocabulary evidence + counts,
+  SIG licence, web compartment) over a new
+  `notice_relevance_facts` query; `web/src/lib/procurement-relevance.ts`
+  mirrors the row types and the exclusion/buyer-row semantics
+  (`surveillanceNotices`, `buyerNoticeRows`, `noticeRowLabel`)
+  and `getProcurementRelevance` loads it build-time.
 - **Entity URL keys and slug history: the `sig.slug-history/1`
   append-only record, frozen-hash collision extension, the `/id/`
   redirect semantics and the export artifact the redirect generator
