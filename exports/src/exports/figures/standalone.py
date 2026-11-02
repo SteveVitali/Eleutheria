@@ -41,6 +41,29 @@ _RULES = """.sig-fig{max-width:100%;height:auto;background:var(--fig-bg)}
 .sig-fig-src-single.sig-fig-area,.sig-fig-src-single.sig-fig-point{fill:none;stroke:var(--fig-data);stroke-width:1.4}
 .sig-fig-contested{fill:none;stroke:var(--fig-contested);stroke-width:1.4}
 .sig-fig-locator-inset{stroke:var(--fig-ink);stroke-dasharray:2 2;fill:none}
+.sig-fig-node{fill:var(--fig-data);stroke:var(--fig-bg);stroke-width:1}
+.sig-fig-centre{fill:var(--fig-ink)}
+.sig-fig-node-group{fill:none;stroke:var(--fig-data);stroke-width:1.4}
+.sig-fig-node-label{fill:var(--fig-ink);font-size:var(--fig-font-xs)}
+.sig-fig-edge{fill:none;stroke:var(--fig-ink);stroke-width:1.4}
+.sig-fig-edge-muted{stroke:var(--fig-ink-muted)}
+.sig-fig-edge-acc-declared{stroke-dasharray:5 3}
+.sig-fig-sector{fill:none;stroke:var(--fig-rule-strong);stroke-width:.8}
+.sig-fig-axis{fill:none;stroke:var(--fig-rule-strong);stroke-width:1}
+.sig-fig-axis-label{fill:var(--fig-ink-muted);font-size:var(--fig-font-xs)}
+.sig-fig-bar{fill:var(--fig-data)}
+.sig-fig-mark{fill:var(--fig-data);stroke:var(--fig-bg);stroke-width:1}
+.sig-fig-mark-label{fill:var(--fig-ink);font-size:var(--fig-font-xs)}
+.sig-fig-legend{fill:var(--fig-ink-muted);font-size:var(--fig-font-xs)}
+.sig-fig-series-0{fill:var(--fig-series-0)}
+.sig-fig-series-1{fill:var(--fig-series-1)}
+.sig-fig-series-2{fill:var(--fig-series-2)}
+.sig-fig-series-3{fill:var(--fig-series-3)}
+.sig-fig-series-4{fill:var(--fig-series-4)}
+.sig-fig-series-5{fill:var(--fig-series-5)}
+.sig-fig-series-6{fill:var(--fig-series-6)}
+.sig-fig-series-7{fill:var(--fig-series-7)}
+.sig-fig-series-8{fill:var(--fig-series-8)}
 """
 
 
@@ -53,14 +76,28 @@ def _vars(lexicon: Lexicon, *, dark: bool) -> str:
         "fig-surface-2": "sig-surface-2",
         "fig-rule-strong": "sig-rule-strong",
         "fig-ink": "sig-ink",
+        "fig-ink-muted": "sig-ink-muted",
         "fig-data": lexicon.data_hue_token,
         "fig-data-fill": "sig-data-seq-400",
         "fig-contested": lexicon.mark_token(lexicon.contested_token),
         "fig-provisional": lexicon.mark_token(lexicon.provisional_token),
         "fig-absence": "sig-epi-absence-ink",
+        # The stacked-series ramp — interleaved steps of the sequential blue
+        # ramp for local contrast + the neutral 'other' (K5's 8+1 ceiling).
+        "fig-series-0": "sig-data-seq-400",
+        "fig-series-1": "sig-data-seq-200",
+        "fig-series-2": "sig-data-seq-600",
+        "fig-series-3": "sig-data-seq-300",
+        "fig-series-4": "sig-data-seq-700",
+        "fig-series-5": "sig-data-seq-100",
+        "fig-series-6": "sig-data-seq-500",
+        "fig-series-7": "sig-data-1",
+        "fig-series-8": "sig-rule-strong",
     }
     body = ";".join(f"--{k}:{sig_token_value(v, dark=dark)}" for k, v in pairs.items())
-    return f".sig-fig{{{body}}}"
+    # --fig-font-xs mirrors --sig-step--2 (0.8125rem = 13px): a literal
+    # because a downloaded SVG resolves rem against its own root anyway.
+    return f".sig-fig{{{body};--fig-font-xs:13px}}"
 
 
 def standalone_document(svg: str, lexicon: Lexicon | None = None) -> str:

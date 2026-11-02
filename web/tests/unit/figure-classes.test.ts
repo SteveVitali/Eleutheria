@@ -45,6 +45,31 @@ const STYLED_CLASSES = [
   "sig-fig-locator-inset",
   "sig-fig-caption",
   "sig-fig-legend",
+  // --- P36.28 (FIG-01b): graph + chart classes -------------------------
+  "sig-fig-node",
+  "sig-fig-node-group",
+  "sig-fig-centre",
+  "sig-fig-node-label",
+  "sig-fig-edge",
+  "sig-fig-edge-acc-configured",
+  "sig-fig-edge-acc-declared",
+  "sig-fig-edge-acc-observed",
+  "sig-fig-edge-muted",
+  "sig-fig-sector",
+  "sig-fig-axis",
+  "sig-fig-axis-label",
+  "sig-fig-bar",
+  "sig-fig-mark",
+  "sig-fig-mark-label",
+  "sig-fig-series-0",
+  "sig-fig-series-1",
+  "sig-fig-series-2",
+  "sig-fig-series-3",
+  "sig-fig-series-4",
+  "sig-fig-series-5",
+  "sig-fig-series-6",
+  "sig-fig-series-7",
+  "sig-fig-series-8",
 ] as const;
 
 const MARKER_CLASSES = [
@@ -55,6 +80,18 @@ const MARKER_CLASSES = [
   "sig-fig-locator",
   "sig-fig-sprite",
   "sig-fig-sprite-cell",
+  // --- P36.28 (FIG-01b) markers ----------------------------------------
+  "sig-fig-graph",
+  "sig-fig-ego",
+  "sig-fig-chart",
+  "sig-fig-neighbour",
+  "sig-fig-node-agency",
+  "sig-fig-node-vendor",
+  "sig-fig-node-product",
+  "sig-fig-node-site",
+  "sig-fig-node-source",
+  "sig-fig-node-instrument",
+  "sig-fig-node-entity",
 ] as const;
 
 describe("the figure-kit class vocabulary (P36.27)", () => {

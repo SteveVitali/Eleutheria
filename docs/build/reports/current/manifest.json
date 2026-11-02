@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "668f4c677a76f760fa1f6b0c3a9cc17334dadc8c",
+  "input_commit": "77a63da71c6cba1d5e19e7fbec982e966c3a3b61",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "e77c9619b5a28f02a1ed5b0257ec9e76111ced51e7023f15906087ee732a2469"
+      "sha256": "6927561ccca5404b97e08d32527f145c127f7a2c52dbfa1769fff46882ad71a8"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -634,7 +634,7 @@
     },
     {
       "path": "docs/adr/ADR-157-one-static-figure-kit-geography.md",
-      "sha256": "dba93af2f3639ceadb83022b8af9331b6530bd3edd68e4a50a11ed909de108bd"
+      "sha256": "a8096e3f04d51b32df6394ca4e5af75213803885c6053b21ebddcfe837f136f0"
     },
     {
       "path": "docs/adr/ADR-158-graph-exploration-as-aggregated-overviews.md",
@@ -901,24 +901,28 @@
       "sha256": "24c8a6677fd1fe23ddeb1864c961a893e9152d2df0652eca15a98fd053e791bb"
     },
     {
+      "path": "docs/adr/ADR-226-static-figure-kit-graphs-charts-legends.md",
+      "sha256": "90488dc2b6d08b3d8042de160df1c1b853a055deb0dc5959bdec0344219def33"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "66a668ca74f21cdc793884eea37f104f0bb6c57698d4e149124344e49195763b"
+      "sha256": "a29b89ac1e02bbcba5186dd325fa06798c2d49061a9293162b3c7f199a4f409f"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "0b93fe823922bae2acbcd2d9c9dede199459a9b4b0a922daed65bf4dc350ea65"
+      "sha256": "349644b259ceeda74929ec3a548d42ba442767e59ef09f13829cb1e003c49d61"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "466787b49bf0a4e501e6b1d9e942baa2b12a0f66fe8cec277db0e08afa166f83"
+      "sha256": "e4937f045d18b8622426940d58f2fb9a83b1ec2b90cdbbbd12b0d42112bf808c"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "43f2e26d51ad8e038fbb0880239f891fa82b80ac9a826222007694d133adca1c"
+      "sha256": "8c486c96baf908ffa86540f48c38a0628bca15bb10485aa61c308c6eac0d78b9"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "9716ddc4a37d747b958b3a22200d24df80320e12d02d895d0dc0b8707087996f"
+      "sha256": "250520e23bc0774724445e026dafaca8a355c45b6eb00e6fdbd24ca0464f8a2d"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -2351,6 +2355,10 @@
     {
       "path": "docs/build/runs/P36.27.md",
       "sha256": "df5640a1d873001db76ab04eff5a760fa37b5293860c3909392ab9de8e16ce81"
+    },
+    {
+      "path": "docs/build/runs/P36.28.md",
+      "sha256": "f4cfc0965106ae17ad287d3dad604b76fbf0ba175533b5cd3e2307f9592cd6ce"
     },
     {
       "path": "docs/build/runs/P36.3.md",

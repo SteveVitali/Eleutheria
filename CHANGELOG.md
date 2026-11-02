@@ -24,6 +24,29 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Static figure kit — graphs, charts and legends: deterministic
+  bipartite and radial layouts, four chart emitters, lexicon-generated
+  legends and table twins** (P36.28 / row 368; K6 §6.2/§6.3, K13 §7 W1
+  C-07 FIG-01b, K14 §4/UXK14-8, K5 DSRC-02 chart-component audit;
+  ADR-226 extends ADR-157; SIG-UI-125 — owner; serves SIG-UI-061/066/
+  131/133/134/039/040, SIG-ENG-042) — `exports/src/exports/figures/`
+  gains `graph_model.py` (`sig.figure-kit-graph/1` +
+  `sig.figure-kit-chart/1` plain-data specs), `layout.py` (closed-form
+  deterministic two-column bipartite and radial ego placement — no
+  iterative solver, no PRNG, no third-party layout dependency; the GPL
+  `igraph` wheel is never imported), `legend.py` (legends generated
+  from `lexicon.json` listing only the encodings the figure actually
+  emitted, in lexicon order, failing closed on unbound tokens),
+  `network_figure.py` (bipartite dossier networks + radial ego figures;
+  node/column/ego caps degrade by spec-declared `group_by` grouping —
+  group nodes carry labels and member ids in the table twin — and
+  refuse rather than silently prune), and `chart.py` (bar, strip,
+  stacked-bar and timeline only — other kinds refuse named). Every
+  figure ships `role="img"`/`<title>`/`<desc>` accessibility,
+  compound-path-per-edge-class edges, `table_columns`/`table_rows`
+  twins, and wide + narrow variants; print keeps figures unsplit and
+  greyscale-safe. `sig-exports figure` gains `network|ego|chart` +
+  `--out-narrow`.
 - **Static figure kit — geography: one deterministic Python renderer for
   every build-time map figure** (P36.27 / row 367; K6 NEW-3, D-K6-4;
   ADR-157; SIG-UI-066/094/123/124/131/134 — owner; serves SIG-UI-039/040,
