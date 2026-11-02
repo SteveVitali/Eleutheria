@@ -458,7 +458,7 @@ key = "P34.42b"
 kind = "leg"
 obligations = []
 obligations_cell = '''queued jobs IAM leg (G1-01/F-272 jobs + `roles/editor` removal; halves landed) — live-1 stopped at the 100/88 read; live-2 queued on P35.1a1's poststate'''
-gates_cell = '''queued hosted leg (AR-3+AR-2): excl. 03:00-06:30Z/d, never mid-class-run — exit 42; weekday 14:00-20:00Z, operator present; one-leg authorization ("Full P34.42b leg", 2026-10-14T17:09Z) still voided by live-1's 88-vs-100 read (OM-18); on `live:P35.1a1`'''
+gates_cell = '''queued hosted leg (AR-3+AR-2): excl. 03:00-06:30Z/d, never mid-class-run — exit 42; weekday 14:00-20:00Z, operator present; one-leg authorization ("Full P34.42b leg", 2026-10-14T17:09Z) still voided by live-1's 88-vs-100 read; on `live:P35.1a1`'''
 operator_cell = '''D-P34.42b-2 resolved 2026-10-14T19:34Z as "Create 12 paused jobs" — re-run on its own authorization; rollback replays the prestate'''
 rerun_cell = '''`implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` (#253; `live-1` stopped OM-18) · next `r11/P34.42b-live-2` post-`live:P35.1a1`'''
 
@@ -563,7 +563,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/256_P34.44b__quality-baseline-
 key = "P34.45"
 kind = "leg"
 obligations = []
-obligations_cell = '''queued append-only camera-site ER re-run (ruleset 3-interim) on the P34.43 host (OM-20 listed; ADR-153/206)'''
+obligations_cell = '''queued append-only camera-site ER re-run (ruleset 3-interim) on P34.43 host (OM-20 listed; ADR-153/206)'''
 gates_cell = '''queued hosted leg: earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z/d + monthly batch window (d6 00:00Z→d13 12:00Z) — exit 42; pre-authorised S5-3 "Both + list + P34.45" (expires GATE-G4); waits on `live:P34.43` + `live:P34.44b` + `live:P34.46` (GQ-24/A-20); AR-2 prestate'''
 operator_cell = '''nothing until window + live edges + ADC (`--check` only); `SIG_ER_RERUN_AUTHOR` gates apply; `ruleset_version='3-interim'` exit 42; rollback forward-only, never UPDATE/DELETE'''
 rerun_cell = '''`implement-spec spec=docs/tickets/257_P34.45__honest-evaluation-posture.md live_verification=true` (ER re-run leg)'''
