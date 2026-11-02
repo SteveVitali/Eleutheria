@@ -124,5 +124,6 @@
 | D-P36.78-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.78-live-<n>` dispatch or the operator | RETURN PASS — P36.78 | each leg's queued row flips `executed = true` with the persisted record's digest + `date -u` bounds in the run ledger; a challenge/403/interstitial leg records … |
 | D-P36.78-2 | OPEN | the operator | RETURN PASS — P36.78 | the staged packet `docs/build/reports/rights/p3678/leg-b-packet.md` enumerates preconditions + the verbatim command surface + the go lines (agent-drafted, blank… |
 | D-P36.13-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.13-live-<n>` dispatch or the operator | RETURN PASS — P36.13 | `rate-limit-enforcement.sh --verify` reads the serving posture back `enforce` and names the serving revision; the prestate/poststate describes sit under the sta… |
+| D-P36.79-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.79-live-<n>` dispatch or the operator | RETURN PASS — P36.79 | `gcloud storage cat` on the object sha256-matches `descriptor.json`; the run ledger records the `date -u` bounds + digest; SRCH-07 (P36.71) later verifies the s… |
 
 ← back: CURRENT.md

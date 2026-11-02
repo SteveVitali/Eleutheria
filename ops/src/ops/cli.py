@@ -5965,6 +5965,10 @@ def main(argv: list[str] | None = None) -> int:
         from . import rdc
 
         return rdc.main(raw[1:])
+    if raw and raw[0] == "held-out":
+        from . import held_out_relevance
+
+        return held_out_relevance.main(raw[1:])
     args = parser.parse_args(argv)
     if args.command == "up":
         return _cmd_up(args)

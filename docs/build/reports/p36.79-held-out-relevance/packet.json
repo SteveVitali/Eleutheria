@@ -1,0 +1,57 @@
+{
+  "access": {
+    "reader": "R11-K13-SRCH-07 (P36.71 \u2014 the search acceptance row)",
+    "rule": "readers: the acceptance row R11-K13-SRCH-07 (P36.71) only; tuning contexts (P36.31, P36.32, P36.38\u2026P36.40) read the committed sig.held-out-relevance-descriptor/1 \u2014 the digest \u2014 and never this set"
+  },
+  "author_env": "SIG_HELDOUT_AUTHOR (the recorded operator id, OM-20 scope discipline)",
+  "authority": "GATE-G5 \u00a74 (2026-10-25T18:40Z, LEDGER GATE DECISIONS): \"pre-authorise the 13 named 11C OM-20 rows: P35.2, P35.23, P36.13, P36.33, P36.43, P36.44, P36.46, P36.68, P36.75, P36.76, P36.77, P36.78, P36.79\" \u2014 P36.79 named verbatim; expires GATE-G6",
+  "bytes": 16422,
+  "counts": {
+    "honest": 7,
+    "queries": 55,
+    "top3": 48
+  },
+  "generation": {
+    "inputs": [
+      {
+        "path": "connectors/src/connectors/data/sources.toml",
+        "sha256": "049f97596b2fb7589affb824df9564bdbc803ea9b271a5112cd1e59f3f86fff2"
+      },
+      {
+        "path": "connectors/src/connectors/data/camera_registry_targets.toml",
+        "sha256": "09d08a1b1f6872aca6b1b043bca3281dd8a21f227a08846f198ac7c34b5bd6fb"
+      },
+      {
+        "path": "connectors/src/connectors/data/dot_511_targets.toml",
+        "sha256": "bc4c47c25e47e59598f98a024deb4f1b6f9a321f97df945a45a8cd5a46a31586"
+      }
+    ],
+    "method": "ops.held_out_relevance build_set()",
+    "pin_commit": "80d71cf153c5ef45780bae6966f89ee81d3a9233"
+  },
+  "label": "agent-authored held-out set; not independent",
+  "mutation": "one restricted-bucket object write (the sealed set); restore point = bucket versioning + this committed digest",
+  "notes": [
+    "the set's bytes are committed only as this sha256 \u2014 a resumed run re-derives deterministically from PIN_COMMIT inputs",
+    "no fixture, reader or export in the repo carries a set row \u2014 the seal boundary is asserted by tests/ops/test_held_out_relevance.py",
+    "the metric is estimand-labelled wherever it appears (SIG-CONF-012)"
+  ],
+  "object": "gs://<project>-sig-restricted/search/held-out/sig.held-out-relevance-set-1.json",
+  "planned_at": "2026-10-29T16:54:11Z",
+  "queue": {
+    "env_required": [
+      "SIG_GCP_PROJECT",
+      "ADC (gcloud auth application-default)",
+      "SIG_HELDOUT_AUTHOR",
+      "gcloud storage on PATH"
+    ],
+    "reason": "hosted env absent at this row \u2014 no ADC, SIG_GCP_PROJECT unset; the write stays armed, never fabricated",
+    "rerun": "implement-spec spec=docs/tickets/371_P36.79__held-out-search-relevance-set.md live_verification=true"
+  },
+  "record_type": "sig.held-out-relevance-seal/1",
+  "schema": "sig.held-out-relevance-seal/1",
+  "set_id": "sig.held-out.search-relevance/2026-10",
+  "sha256": "44c746836f709e9dde74e2a4834a1c8d0a3b447c7beb9cc43ffbdf91a7a8a1b0",
+  "status": "prepared_not_executed",
+  "window": "any time outside 03:00-10:00Z"
+}

@@ -277,6 +277,20 @@ export SIG_DBLOGINS_EARLIEST="${SIG_EXEC_EARLIEST}"
 # SIG_ATREST_NOW overrides the clock for the offline guard test only.
 export SIG_ATREST_EARLIEST="${SIG_EXEC_EARLIEST}"
 export SIG_ATREST_STATE_DIR="${SIG_ATREST_STATE_DIR:-${TMPDIR:-/tmp}/p34.49-atrest}"
+
+# --- the P36.79 held-out search relevance set seal (R11-K13-SRCH-00) -------
+# The ONE restricted-bucket object write of the row (OM-14): the sealed
+# `sig.held-out-relevance-set/1` under search/held-out/ on the PRIVATE
+# restricted bucket; only its sha256 is committed (B-28 = b). Pre-authorised
+# in-ticket — named verbatim in the GATE-G5 OM-20 list (2026-10-25T18:40Z,
+# expires GATE-G6). Contract window: any time outside 03:00-10:00Z (wider
+# than the usual AR-3 band — the row's own cell), plus SIG_HELDOUT_AUTHOR
+# per apply (OM-20 scope discipline). SIG_HELDOUT_NOW overrides the clock
+# for the offline guard test only.
+export SIG_HELDOUT_OBJECT="search/held-out/sig.held-out-relevance-set-1.json"
+export SIG_HELDOUT_EARLIEST="2026-10-24T00:00:00Z"   # contract day (2026-10-24 authorship)
+export SIG_HELDOUT_STATE_DIR="${SIG_HELDOUT_STATE_DIR:-${TMPDIR:-/tmp}/p36.79-heldout}"
+export SIG_HELDOUT_AUTHOR="${SIG_HELDOUT_AUTHOR:-}"
 export SIG_ATREST_REPORT_PREFIX="ops/probes/at-rest"   # the exec identity's only write scope
 export SIG_ATREST_DENY_OBJECT="ops/seal/deny-set.json"       # sig.seal-deny/1 — a new VERSION per update
 export SIG_ATREST_PUB002_OBJECT="ops/seal/pub002-listing.json"  # counts-only operator listing
