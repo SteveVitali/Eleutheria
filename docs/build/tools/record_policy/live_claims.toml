@@ -77,6 +77,10 @@ negate = [
     # NOT released, never asserts production posture.
     '\bunreleased\b',
     '\bpre-?live\b', '\bpre-?deploy', '\bpre-?public', '\bpre-?launch',
+    # P36.46: `pre-authorised` is the same disclosure class — a conditional
+    # authorisation granted before the act (the GATE-G5 OM-20 records say
+    # "pre-authorised only if …"), never an assertion the act is done.
+    '\bpre-?authori',
     '\bpending\b', '\bdeferred\b', '\bgate[ -]?pending\b', '\bgated\b', '\bqueued\b',
     '\bplanned\b', '\bowed\b', '\bowes\b', '\babsen', '\brefus',
     '\bblocked\b', '\bstopped\b', '\bpaused\b',
