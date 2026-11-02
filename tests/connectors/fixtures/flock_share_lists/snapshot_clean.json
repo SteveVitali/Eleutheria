@@ -1,0 +1,19 @@
+{"summary": {"portals": 3, "generated_by": "Eyes on Flock", "license": "CC-BY-SA-4.0"},
+ "portals": [
+  {"slug": "okc-pd", "state": "OK", "type": "police_department",
+   "portal_url": "https://transparency.flocksafety.com/okc-pd",
+   "data_last_updated": "2026-09-15", "total_cameras": 120,
+   "total_searches": 4600, "public_search_audit": true,
+   "organizations_shared_with": ["okhp", "tulsa-pd"],
+   "organizations_received_from": ["okhp"]},
+  {"slug": "okhp", "state": "OK", "type": "state_patrol",
+   "portal_url": "https://transparency.flocksafety.com/okhp",
+   "data_last_updated": "2026-09-15", "total_cameras": 40,
+   "organizations_shared_with": ["okc-pd"],
+   "organizations_received_from": ["okc-pd"]},
+  {"slug": "tulsa-pd", "state": "OK", "type": "police_department",
+   "portal_url": "https://transparency.flocksafety.com/tulsa-pd",
+   "data_last_updated": "2026-09-15",
+   "organizations_shared_with": [],
+   "organizations_received_from": []}
+ ]}

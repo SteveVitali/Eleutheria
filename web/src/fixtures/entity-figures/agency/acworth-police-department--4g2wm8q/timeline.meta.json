@@ -1,0 +1,53 @@
+{
+  "cap_actions": [],
+  "desc": {
+    "as_of_world": "2026-09-01",
+    "categories": 0,
+    "events": 3,
+    "series": [],
+    "title": "Acworth Police Department \u2014 dated events",
+    "unit": "events"
+  },
+  "edge_count": 0,
+  "gzip_bytes": 465,
+  "legend": [],
+  "mode": "timeline",
+  "narrow_viewbox": [
+    360,
+    264.0
+  ],
+  "node_count": 3,
+  "schema": "sig.figure-chart-meta/1",
+  "size_bytes": 1409,
+  "svg_narrow_bytes": 1377,
+  "table_columns": [
+    "date",
+    "event",
+    "kind",
+    "href"
+  ],
+  "table_rows": [
+    {
+      "date": "2020-01-28",
+      "event": "agency name recorded",
+      "href": null,
+      "kind": "agency_name"
+    },
+    {
+      "date": "2020-01-28",
+      "event": "configured sharing partner \u2014 Vigilant Solutions (LEARN)",
+      "href": null,
+      "kind": "configured sharing partner"
+    },
+    {
+      "date": "2020-01-28",
+      "event": "sharing partner degree \u2014 partners not named",
+      "href": null,
+      "kind": "sharing_partner_degree"
+    }
+  ],
+  "viewbox": [
+    720,
+    264.0
+  ]
+}

@@ -1,0 +1,246 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.42b (K2 GX-06a 06b / §4.2 print rule; K0 §4.10, SIG-UI-098/130/155) —
+// the entity print path: a standalone, zero-JS document (the page-type
+// registry classifies every `…/print/` T0 — no `<script>` ever ships).
+// The SVG ego and timeline print with their captions; the relationship
+// tables print in full (contract-A rows are ≤ 50; K2's 200-row rule names
+// the JSON twin beyond it); every `.sig-print-page` carries the running
+// head and footer — entity label, release, permalink, page n of N — so no
+// printed page is an orphan. Minted only for entities whose twin exists.
+import "../../../../styles/epistemic.css";
+import printCssUrl from "../../../../styles/print.css?url";
+import PrintChrome from "../../../../components/print/PrintChrome.astro";
+import EntityFigure from "../../../../components/entity/EntityFigure.astro";
+import { entityIndex } from "../../../../lib/entity-page";
+import type { EntityLabelRow } from "../../../../lib/entity-page";
+import { kindWord } from "../../../../lib/entity-pages";
+import { mergeEntityTwins } from "../../../../lib/entity-pages";
+import { entityTimeline } from "../../../../lib/entity-figures";
+import { getEntityFigures, getEntityLabelRows, getEntityPageTwins, getSiteMetadata } from "../../../../lib/data";
+import { getReleaseStamp } from "../../../../lib/release-stamp";
+import { withBase } from "../../../../lib/paths";
+import { defaultDescription } from "../../../../lib/meta";
+import { socialCardForRoute } from "../../../../lib/brand";
+
+export function getStaticPaths() {
+  const index = entityIndex(getEntityLabelRows());
+  // A keyed row mints a print page only when its twin shipped — a typed
+  // state never prints a fabricated document.
+  return index.rows
+    .filter((row) => getEntityPageTwins(row.url_type!, `${row.slug}--${row.hash}`).length > 0)
+    .map((row) => ({
+      params: { type: row.url_type, key: `${row.slug}--${row.hash}` },
+      props: { row },
+    }));
+}
+
+const { type, key } = Astro.params;
+const labelRow = Astro.props.row as EntityLabelRow;
+const twins = getEntityPageTwins(type!, key!);
+const merged = mergeEntityTwins(twins);
+const twin = merged.twin;
+const ART = getEntityFigures(type!, key!);
+const TIMELINE = entityTimeline(merged);
+const stamp = getReleaseStamp();
+const meta = getSiteMetadata();
+const printPath = withBase(`entity/${type}/${key}/print/`);
+const permalink = new URL(printPath, Astro.site ?? "https://surveillancegraph.org").href;
+// SIG-UI-154: the print route shares the T0 social card — og:url names this
+// route, canonical still names the entity page.
+const printCard = socialCardForRoute(printPath);
+const printOrigin = Astro.site ?? "https://surveillancegraph.org";
+const printUrl = new URL(printPath, printOrigin).href;
+const printCardUrl = printCard ? new URL(withBase(printCard.file), printOrigin).href : null;
+const printTitle = `${twin.label} — SIG entity page (print)`;
+const printDesc = defaultDescription(printTitle, "T0");
+const entityUrl = withBase(`entity/${type}/${key}/`);
+
+// The print page plan — brief, one page for the figures, one for the
+// relationship tables, one for cite + technical details. No orphan pages
+// (every page carries real content).
+const PAGES = [
+  { n: 1, total: 4, kind: "brief" },
+  { n: 2, total: 4, kind: "figures" },
+  { n: 3, total: 4, kind: "tables" },
+  { n: 4, total: 4, kind: "cite" },
+];
+---
+
+<!doctype html>
+<html lang="en" data-sig-chrome="print">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{printTitle}</title>
+    <meta name="description" content={printDesc} />
+    <link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
+    <link rel="alternate icon" type="image/png" sizes="32x32" href={withBase("favicon-32.png")} />
+    <link rel="apple-touch-icon" sizes="180x180" href={withBase("apple-touch-icon.png")} />
+    <link rel="canonical" href={new URL(entityUrl, Astro.site ?? "https://surveillancegraph.org").href} />
+    {printCard && (
+      <Fragment>
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Surveillance Infrastructure Graph" />
+        <meta property="og:title" content={printTitle} />
+        <meta property="og:description" content={printDesc} />
+        <meta property="og:url" content={printUrl} />
+        <meta property="og:image" content={printCardUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={printCard.alt} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={printTitle} />
+        <meta name="twitter:description" content={printDesc} />
+        <meta name="twitter:image" content={printCardUrl} />
+      </Fragment>
+    )}
+    {stamp && <meta name="sig-release" content={stamp.metaContent} />}
+    {stamp && <link rel="describedby" type="application/json" href={stamp.describedby} />}
+    <link rel="stylesheet" href={printCssUrl} />
+  </head>
+  <body>
+    <div class="sig-print-toolbar" role="note">
+      <p data-copy="EF-03">
+        Print or save this page as a PDF (your browser's Print dialog → “Save as PDF”).{" "}
+        <a href={entityUrl}>Back to the entity page.</a>
+      </p>
+    </div>
+
+    <main id="main">
+    {PAGES.map((page) => (
+      <div class="sig-print-page" data-testid="print-page" data-page-kind={page.kind}>
+        <PrintChrome part="head" place={twin.label} n={page.n} total={page.total} />
+
+        {page.kind === "brief" && (
+          <section data-testid="print-brief">
+            <h1>{twin.label}</h1>
+            <p class="sig-lede">
+              {kindWord(twin.kind)}
+              {twin.descriptor && <> — {twin.descriptor}</>}
+              {" · Not yet independently reviewed"}
+            </p>
+            {twin.withheld_notice && <p class="sig-entity-withheld">{twin.withheld_notice}</p>}
+            <p class="sig-table-note">{twin.er_disclosure}.</p>
+            {merged.summary.length > 0 && (
+              <ul role="list">
+                {merged.summary.map((s) => <li>{s.text}</li>)}
+              </ul>
+            )}
+            {merged.identifiers.length > 0 && (
+              <dl class="sig-identifiers" data-identifiers>
+                {merged.identifiers.map((i) => (
+                  <>
+                    <dt>{i.scheme}</dt>
+                    <dd><code>{i.value}</code></dd>
+                  </>
+                ))}
+              </dl>
+            )}
+          </section>
+        )}
+
+        {page.kind === "figures" && (
+          <section data-testid="print-figures">
+            <h2>Figures</h2>
+            <EntityFigure
+              kind="ego"
+              figure={ART.ego}
+              caption={`One hop out from ${twin.label} — the relationship table is this figure's long description.`}
+              alt={`${twin.label} — recorded relationships, drawn one hop out.`}
+            />
+            <EntityFigure
+              kind="timeline"
+              figure={ART.timeline}
+              caption={`Dated events SIG records for ${twin.label}.`}
+              alt={`${twin.label} — dated events on a time axis.`}
+            />
+            {TIMELINE.undated.length > 0 && (
+              <p class="sig-table-note" data-testid="print-timeline-undated">
+                Undated items: {TIMELINE.undated.map((u) => u.label).join("; ")}.
+              </p>
+            )}
+            <EntityFigure
+              kind="map"
+              figure={ART.map}
+              caption={twin.place_jkey ? `SIG records ${twin.label} in ${twin.place_jkey}.` : "Location not recorded."}
+              alt={twin.place_jkey ? `${twin.label} — the recorded place's boundary.` : "Location not recorded."}
+            />
+          </section>
+        )}
+
+        {page.kind === "tables" && (
+          <section data-testid="print-tables">
+            <h2>Relationships</h2>
+            {merged.relations.length === 0 && (
+              <p class="sig-no-record">No relationships recorded for this entity in this release.</p>
+            )}
+            {merged.relations.map((g, gi) => (
+              <section>
+                <h3>{g.relation} — {g.direction}{g.access_kind ? ` · ${g.access_kind.replaceAll("_", " ")}` : ""}</h3>
+                <div class="sig-table-wrap">
+                  <table class="sig-table" aria-label={`${g.relation} ${g.direction}`}>
+                    <thead>
+                      <tr>
+                        <th scope="col">Counterparty</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Currency</th>
+                        <th scope="col">Source</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {g.items.map((it) => (
+                        <tr>
+                          <td>{it.counterparty.label ?? it.counterparty.review_state ?? "not yet reviewed"}</td>
+                          <td>{it.role ?? "—"}</td>
+                          <td>{it.date_kind === "observed" && it.date ? it.date : "undated"}{it.historical ? " · historical" : ""}</td>
+                          <td>{(it.currency ?? "undated").toLowerCase()}</td>
+                          <td>{it.sources.map((s) => s.name ?? s.id).join(", ")}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {g.more > 0 && (
+                  <p class="sig-table-note">
+                    First {g.items.length} of {g.count} rows print here; all {g.count} ship in the JSON twin at {entityUrl}index.{twin.compartment}.json
+                  </p>
+                )}
+              </section>
+            ))}
+          </section>
+        )}
+
+        {page.kind === "cite" && (
+          <section data-testid="print-cite">
+            <h2>Cite this entity</h2>
+            <p>
+              SIG id: <code>{twin.cite.sig_id ?? twin.sig_id ?? "not recorded"}</code>
+              {" · release "}<code>{twin.publication}</code>
+            </p>
+            <h2>Technical details</h2>
+            <dl>
+              <dt>Entity id</dt>
+              <dd><code>{twin.entity_id}</code></dd>
+              <dt>Record schema</dt>
+              <dd><code>{twin.schema}</code></dd>
+              <dt>Compartments</dt>
+              <dd><code>{merged.compartments.join(", ")}</code></dd>
+            </dl>
+            <p class="sig-table-note">
+              The entity page and its provenance panels are the live record of these facts; this
+              print is a point-in-time copy of release {twin.publication}.
+            </p>
+          </section>
+        )}
+
+        <PrintChrome part="foot" place={twin.label} n={page.n} total={page.total} asOf={meta.asOf} permalink={permalink} stamp={stamp} />
+      </div>
+    ))}
+    </main>
+  </body>
+</html>

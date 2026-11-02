@@ -1,0 +1,30 @@
+{
+  "schema": "sig.status-lane-packet/1",
+  "status": "prepared_not_executed",
+  "row": "P36.43",
+  "recorded_at": "2026-11-01T00:00:00Z",
+  "authority": "GATE-G5 §4 13-row OM-20 list names P36.43 verbatim (2026-10-25T18:40Z, expires GATE-G6); window AR-3 + AR-2; D-J3-2 + D-J3-11 [B-19] = yes carried",
+  "mutation": "the sig-status-publish Cloud Run job + sig-sched-status-publish Cloud Scheduler trigger (every 6h — D-J3-11) + the scheduler-SA invoker binding; least-privilege identity (read-only v_transparency_* views + the scheduler list; no spine write, no release tree)",
+  "queued_because": "live_verification=false + hosted env absent (no SIG_GCP_PROJECT, no ADC, no pinned image digest, no recorded authorisation)",
+  "rerun_prompt": "implement-spec spec=docs/tickets/386_P36.43__status-lane.md live_verification=true",
+  "env_required": [
+    "SIG_GCP_PROJECT",
+    "ADC (gcloud application-default)",
+    "SIG_JOB_IMAGE (a @sha256: digest — never a mutable tag)",
+    "SIG_STATUS_AUTHOR",
+    "SIG_STATUS_SA_EMAIL",
+    "SIG_SCHEDULER_SA_EMAIL"
+  ],
+  "preconditions": [
+    "AR-3 + AR-2 window: outside 03:00-06:30Z and the monthly batch window (day 6 00:00Z to day 13 12:00Z)",
+    "the image digest exists in Artifact Registry (a rolled sig-ops image carrying ops.status_publish)",
+    "cadence.toml's status row is committed in the SAME re-run commit so live-diff's undeclared-trigger report stays clean"
+  ],
+  "verify": [
+    "gcloud run jobs describe sig-status-publish shows the pinned digest + the status SA",
+    "gcloud scheduler jobs describe sig-sched-status-publish shows '12 */6 * * *' Etc/UTC ENABLED",
+    "the first execution writes status/state.json + status/lane.json under the site bucket; state.json reads back as sig.status-heartbeat/1"
+  ],
+  "restore_point": "delete the trigger then the job: gcloud scheduler jobs delete sig-sched-status-publish && gcloud run jobs delete sig-status-publish (definition removal)",
+  "obligation": "D-P36.43-1"
+}

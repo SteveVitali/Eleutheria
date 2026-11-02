@@ -1,0 +1,28 @@
+{
+  "schema": "sig.figure-kit-chart/1",
+  "release": {
+    "label": "Surveillance Infrastructure Graph",
+    "publication_id": "sig-release-2026.09",
+    "as_of_world": "2026-09-01"
+  },
+  "kind": "timeline",
+  "title": "Acworth Police Department — dated events",
+  "unit": "events",
+  "events": [
+    {
+      "date": "2020-01-28",
+      "label": "agency name recorded",
+      "kind": "agency_name"
+    },
+    {
+      "date": "2020-01-28",
+      "label": "configured sharing partner — Vigilant Solutions (LEARN)",
+      "kind": "configured sharing partner"
+    },
+    {
+      "date": "2020-01-28",
+      "label": "sharing partner degree — partners not named",
+      "kind": "sharing_partner_degree"
+    }
+  ]
+}

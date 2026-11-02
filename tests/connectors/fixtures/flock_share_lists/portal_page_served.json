@@ -1,0 +1,9 @@
+{"schema": "sig.flock-portal-page/1", "slug": "sunnydale-pd",
+ "url": "https://transparency.flocksafety.com/sunnydale-pd",
+ "portal": {"slug": "sunnydale-pd", "state": "CA",
+   "portal_url": "https://transparency.flocksafety.com/sunnydale-pd",
+   "data_last_updated": "2026-09-16",
+   "organizations_shared_with": ["okhp"],
+   "organizations_received_from": []},
+ "terms_text": null, "terms_digest": null, "terms_truncated": false,
+ "refused_fields": []}

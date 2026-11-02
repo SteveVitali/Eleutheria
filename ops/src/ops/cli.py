@@ -1675,6 +1675,107 @@ def build_parser() -> argparse.ArgumentParser:
         "(scheduled-ops.sh publishes it to gs://…/ops/declared/live-diff.json)",
     )
 
+    # P36.43 (TX-07, SIG-TRANSP-021/034): the status lane — emit the status/**
+    # file set from scrubbed run records + the source universe, or emit + push
+    # status/** through the status-scoped publish leg (the OM-20 job create is
+    # ops/gcp/status-publish.sh's, not this verb's).
+    spub = sub.add_parser(
+        "status-publish",
+        help="P36.43 (SIG-TRANSP-021/034): the 6-hourly status lane — emit "
+        "status/{state.json,lane.json,index.html,sources/**,issues/,archive/**} "
+        "from scrubbed run records (exit 0 ok, 2 refusal, 42 queued on --apply "
+        "without the hosted env)",
+    )
+    spub.add_argument("--runs", required=True, help="transparency/runs.jsonl (sig.run-record/1)")
+    spub.add_argument(
+        "--sources", required=True, help="transparency/sources.json (sig.source-row/1)"
+    )
+    spub.add_argument("--cadence", default=None, help="ops/cadence.toml path (default: packaged)")
+    spub.add_argument(
+        "--scheduler-report",
+        default=None,
+        help="latest sig.live-diff/1 report for the drift flag (absent → not_evaluated)",
+    )
+    spub.add_argument(
+        "--release",
+        default=None,
+        help="release.json for the release/as-of label (absent → not_recorded)",
+    )
+    spub.add_argument("--status-time", required=True, help="the lane's status time (ISO-8601 UTC)")
+    spub.add_argument("--out", required=True, help="output directory (status/** written under it)")
+    spub.add_argument(
+        "--apply",
+        action="store_true",
+        help="also push status/** through the scoped publish leg — needs "
+        "SIG_STATUS_BUCKET; without it the leg queues (exit 42)",
+    )
+    spub.add_argument(
+        "--bucket", default=None, help="destination bucket (default: SIG_STATUS_BUCKET)"
+    )
+
+    # P36.44 (REL-07, SIG-REL-011 + SIG-OPS-008; D-G3-4 [B-9] = yes): the
+    # release cadence evaluator — the shared drift half the status lane
+    # names. `sig-sched-release-cut` invokes this verb (the OM-20 job create
+    # is ops/gcp/release-cadence.sh's, not this verb's).
+    rcad = sub.add_parser(
+        "release-cadence",
+        help="P36.44 (SIG-REL-011/OPS-008): evaluate the release cadence "
+        "over the registry — scheduled cut (first weekday on/after the 15th "
+        "at 14:00Z), Class-S-14d suppression, the ≥10%%/≥14d early trigger, "
+        "the 35-day max-age alert, the recorded AR-3 freeze (exit 0 ok, "
+        "2 refusal, 6 a recorded alert fired)",
+    )
+    rcad.add_argument(
+        "--registry",
+        default=None,
+        help="the release registry — gs://<bucket>[/<prefix>] or a local dir "
+        "(env SIG_RELEASE_REGISTRY; the local dir is the fixture leg)",
+    )
+    rcad.add_argument(
+        "--facts",
+        default=None,
+        help="JSON facts input: spine_eligible + release_published + "
+        "cut_running (the delta inputs the hosted job reads; absent → the "
+        "early trigger reports not_evaluable)",
+    )
+    rcad.add_argument("--spine-eligible", type=int, default=None)
+    rcad.add_argument("--release-published", type=int, default=None)
+    rcad.add_argument(
+        "--cut-running",
+        action="store_true",
+        help="assert a cut is in flight (the journal's in-flight fold ORs in)",
+    )
+    rcad.add_argument(
+        "--at", default=None, metavar="ISO-8601", help="evaluation instant (default: now)"
+    )
+    rcad.add_argument(
+        "--out",
+        default=None,
+        help="emit the sig.release-cadence/1 record under <out>/cadence/ "
+        "(append-only decision file + decisions.jsonl)",
+    )
+    rcad.add_argument(
+        "--alert",
+        action="store_true",
+        help="fire the recorded max-age alert when the release is >35 days old",
+    )
+    rcad.add_argument(
+        "--ledger",
+        default=None,
+        help="recorded-alert ledger path (default: SIG_ALERT_LOG/.sig/ops/alerts.jsonl)",
+    )
+    rcad.add_argument(
+        "--apply",
+        action="store_true",
+        help="journal the evaluation + fire the alert + run `release cut` "
+        "when the decision is cut (never inside AR-3 — the verb refuses too)",
+    )
+    rcad.add_argument(
+        "--skip-host-clock-check",
+        action="store_true",
+        help="record a declared skip of the §3.3 host-clock check on the cut leg",
+    )
+
     # P35.6 (I8 ACQ-01): the Round-11 acquisition plumbing — generator +
     # verification CLIs. Each forwards its argv tail to the module's own
     # argparse so flags live in one place (additive verbs only).
@@ -6113,6 +6214,14 @@ def main(argv: list[str] | None = None) -> int:
         return wave_verify.main(wv_tail)
     if args.command == "live-diff":
         return _cmd_live_diff(args)
+    if args.command == "status-publish":
+        from .status_publish import run_status_publish
+
+        return run_status_publish(args)
+    if args.command == "release-cadence":
+        from .release_cadence import run_release_cadence
+
+        return run_release_cadence(args)
     if args.command == "dispatch-due":
         return _cmd_dispatch_due(args)
     if args.command == "backfill-run-completions":

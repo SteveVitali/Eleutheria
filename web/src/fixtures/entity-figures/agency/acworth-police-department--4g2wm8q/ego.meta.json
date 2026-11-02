@@ -1,0 +1,140 @@
+{
+  "cap_actions": [],
+  "desc": {
+    "as_of_world": "2026-09-01",
+    "centre": "Acworth Police Department",
+    "edges": 2,
+    "neighbours": 2,
+    "sectors": [
+      "camera operator",
+      "configured sharing partner"
+    ],
+    "title": "Acworth Police Department \u2014 recorded relationships"
+  },
+  "edge_count": 2,
+  "gzip_bytes": 914,
+  "legend": [
+    {
+      "channel": "line",
+      "classes": [
+        "sig-fig-edge",
+        "sig-fig-edge-acc-configured"
+      ],
+      "id": "line:configured",
+      "label": "Set up to share",
+      "plain": "solid line \u2014 access kind only",
+      "spec": "access.CONFIGURED_ACCESS"
+    },
+    {
+      "channel": "line",
+      "classes": [
+        "sig-fig-edge"
+      ],
+      "id": "line:relation",
+      "label": "Recorded relation",
+      "plain": "A line is a recorded relation between the two columns.",
+      "spec": "K6 \u00a76.2"
+    },
+    {
+      "channel": "line",
+      "classes": [
+        "sig-fig-edge",
+        "sig-fig-edge-muted"
+      ],
+      "id": "currency:muted",
+      "label": "Historical or undated",
+      "plain": "Staleness is shown as muted ink with a date or word ('Historical, recorded 2020-01-28'), never by a line pattern and never hollow.",
+      "spec": "\u00a728.3"
+    },
+    {
+      "channel": "shape",
+      "classes": [
+        "sig-fig-node",
+        "sig-fig-node-agency"
+      ],
+      "id": "kind:agency",
+      "label": "agency",
+      "plain": "Entity kind uses shape (point, area, institution, vendor) \u2014 shape never carries epistemic state.",
+      "spec": "SIG-UI-133"
+    },
+    {
+      "channel": "shape",
+      "classes": [
+        "sig-fig-node",
+        "sig-fig-node-site"
+      ],
+      "id": "kind:site",
+      "label": "site",
+      "plain": "Entity kind uses shape (point, area, institution, vendor) \u2014 shape never carries epistemic state.",
+      "spec": "SIG-UI-133"
+    },
+    {
+      "channel": "shape",
+      "classes": [
+        "sig-fig-node",
+        "sig-fig-node-entity"
+      ],
+      "id": "kind:entity",
+      "label": "entity",
+      "plain": "Entity kind uses shape (point, area, institution, vendor) \u2014 shape never carries epistemic state.",
+      "spec": "SIG-UI-133"
+    }
+  ],
+  "mode": "ego-radial",
+  "narrow_viewbox": [
+    360,
+    396.0
+  ],
+  "node_count": 3,
+  "schema": "sig.figure-graph-meta/1",
+  "size_bytes": 2998,
+  "svg_narrow_bytes": 2982,
+  "table_columns": [
+    "counterparty",
+    "relation",
+    "direction",
+    "access_kind",
+    "date",
+    "date_kind",
+    "currency",
+    "support",
+    "sources",
+    "evidence"
+  ],
+  "table_rows": [
+    {
+      "access_kind": "\u2014",
+      "counterparty": "surveillance camera in usa-ga",
+      "currency": "aging",
+      "date": "\u2014",
+      "date_kind": "undated",
+      "direction": "inbound",
+      "evidence": [
+        "clm-cam-12"
+      ],
+      "href": "/entity/agency/acworth-police-department--4g2wm8q/",
+      "relation": "camera operator",
+      "sources": 1,
+      "support": "WEAKLY_SUPPORTED"
+    },
+    {
+      "access_kind": "configured",
+      "counterparty": "Vigilant Solutions (LEARN)",
+      "currency": "historical",
+      "date": "2020-01-28",
+      "date_kind": "single",
+      "direction": "outbound",
+      "evidence": [
+        "clm-apd-vigilant-1"
+      ],
+      "href": "/entity/org/vigilant-solutions-learn--7xk3mrt/",
+      "relation": "configured sharing partner",
+      "sources": 1,
+      "support": "WEAKLY_SUPPORTED"
+    }
+  ],
+  "viewbox": [
+    720,
+    724.0
+  ]
+}

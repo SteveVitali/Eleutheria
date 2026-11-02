@@ -1,0 +1,2 @@
+- 2026-11-01 — P36.42b make-check record — 11,344 passed / 4 failed / 7 errors — env classes only (GCP sentinel, p34-18 aliases ×2, port-5432 binds) + run-ledger claim-token repair · ci: head-bound read follows · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-01 — P36.42b pre-push record — memory_guard 0 · ledger_contract OK · return-pass 207 obligations/126 owed · projection regenerated + verified 1159/1159 · ci: head-bound read follows · harness: devin-desktop/swe-2-high/subagent

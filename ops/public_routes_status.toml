@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: Apache-2.0
+# The status lane's scoped allow-list (P36.43 / TX-07, SIG-OPS-003/004 carried).
+# DATA, not code — the only record of what the 6-hourly `sig-status-publish`
+# job may push through the status-scoped half of the one publish path
+# (ops/src/ops/status_publish.py). The lane publishes ONLY status/**: it never
+# touches records, claims or release trees, and it never deletes under
+# status/archive/** (append-only, P1–P3).
+
+[allowlist]
+top_level = [
+  "status",   # the status lane (J3 §7.1): state.json, lane.json, index.html,
+              # sources/**, issues/**, archive/<date>.json — nothing else
+]
+required = [
+  "status",
+]
+
+# Denied-route probes stay owned by ops/public_routes.toml's [[denied]] rows —
+# the lane's publish never adds one.

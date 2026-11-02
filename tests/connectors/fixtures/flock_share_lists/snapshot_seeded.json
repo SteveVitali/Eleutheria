@@ -1,0 +1,15 @@
+{"summary": {"portals": 4, "generated_by": "Eyes on Flock", "license": "CC-BY-SA-4.0"},
+ "portals": [
+  {"slug": "clean-pd", "state": "TX", "type": "police_department",
+   "data_last_updated": "2026-09-15",
+   "organizations_shared_with": ["okhp"]},
+  {"slug": "reasons-pd", "state": "KS", "data_last_updated": "2026-09-15",
+   "organizations_shared_with": ["okhp"], "top_search_reasons": ["stolen car"]},
+  {"slug": "audit-pd", "state": "TX", "data_last_updated": "2026-09-15",
+   "organizations_shared_with": ["okhp"],
+   "search_audit": [{"operator_id": "u-1", "reason": "x"}]},
+  {"slug": "operator-pd", "state": "MO", "data_last_updated": "2026-09-15",
+   "organizations_shared_with": ["okhp"], "operator_name": "redacted-name"},
+  {"slug": "badentry-pd", "state": "TX", "data_last_updated": "2026-09-15",
+   "organizations_shared_with": ["Jane Doe <j@example.com>"]}
+ ]}
