@@ -154,12 +154,33 @@ def _serve(
     release_registry = release_registry or os.environ.get("SIG_RELEASE_REGISTRY") or None
     release_search = None
     release_serving = None
+    release_search_v2 = None
     if release_registry:
         from .release_search import ReleaseSearchStore
+        from .release_search_v2 import ReleaseSearchV2Store
         from .release_serving import ReleaseServingStore
 
         release_search = ReleaseSearchStore(release_registry)
         release_serving = ReleaseServingStore(release_registry)
+        # P36.38: the federated v2 store — mounted only when the deploy env
+        # arms it (SIG_API_SEARCH_V2=on; the OM-20 roll, D-P36.38-1).
+        release_search_v2 = ReleaseSearchV2Store(release_registry)
+    # P34.25 (A-20=a): the promoted release this service is pinned to, where one
+    # exists — the live-spine basis label discloses it on every response; unset
+    # answers "not pinned".
+    release_id = os.environ.get("SIG_RELEASE_ID") or None
+    uvicorn.run(
+        create_app(
+            store,
+            release_search,
+            release_id=release_id,
+            release_serving=release_serving,
+            release_search_v2=release_search_v2,
+        ),
+        host=host,
+        port=port,
+    )
+    return 0
     # P34.25 (A-20=a): the promoted release this service is pinned to, where one
     # exists — the live-spine basis label discloses it on every response; unset
     # answers "not pinned".

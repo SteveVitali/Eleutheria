@@ -178,6 +178,14 @@ export SIG_RELEASE_REGISTRY_DIR="${SIG_RELEASE_MOUNT}/registry"  # --release-reg
 # (OM-20's scope discipline — silence is never consent).
 export SIG_WEB_STAGING="sig-web-staging"
 export SIG_API_STAGING="sig-api-staging"
+
+# P36.38 / D-K3-5 [B-30] = yes: sig-api serves the v2 search indexes from
+# verified local copies (Cloud Run local disk is memory — K3 §5.5), so the
+# service memory is 1 GiB (was the 512 MiB default; ≈ +$3/mo recorded). The
+# staged roll `ops/gcp/search-v2-roll.sh` applies it to the live service —
+# never pre-authorised (D-P36.38-1); provision emits it so a fresh deploy
+# matches the post-roll posture.
+export SIG_API_MEMORY="1Gi"
 export SIG_RELEASE_JOB="sig-release"
 export SIG_RELEASE_LIFECYCLE="ops/gcp/release-bucket-lifecycle.json"
 export SIG_RELEASE_EARLIEST="2026-10-13T12:00:00Z"  # same AR-3 freeze end as SIG_IAM_EARLIEST (declared later in this file)

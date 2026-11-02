@@ -112,7 +112,11 @@ provision_compute_decision() {
     --image "${service_image}" \
     --service-account "${SIG_API_SA_EMAIL}" \
     --min-instances=0 --max-instances=2 --allow-unauthenticated \
+    --memory "${SIG_API_MEMORY}" \
     --set-secrets="SIG_PG_PASSWORD=${SIG_SECRET_PG_PASSWORD}:latest"
+  # P36.38 / D-K3-5 [B-30] = yes: --memory 1Gi for the verified local v2
+  # search-index copies (K3 §5.5); SIG_API_SEARCH_V2 stays unset here — the
+  # federated route ships dark until the operator's roll (D-P36.38-1).
 }
 
 # 5b. DOCUMENTED ALTERNATIVE — Cloud SQL (managed PG+PostGIS) + Cloud Run only.

@@ -430,17 +430,30 @@ class SearchEngineV2:
         (``check_index_contract_v2`` — a kind/schema/tokenizer/app-id
         mismatch refuses). Integrity verification is the caller's job —
         ``open_release`` runs it from the manifest.
+
+        ``check_same_thread=False`` (P36.38): an engine is a serving object a
+        long-lived process holds across request threads (the API's
+        threadpool). These are read-only connections over verified,
+        immutable bytes — libsqlite3's serialized mode already arbitrates
+        concurrent reads per connection; the flag is only the Python-level
+        binding to the creating thread.
         """
         catalog_path = Path(catalog_path)
-        cconn = sqlite3.connect(f"file:{catalog_path}?mode=ro", uri=True)
+        cconn = sqlite3.connect(f"file:{catalog_path}?mode=ro", uri=True, check_same_thread=False)
         cmeta = check_index_contract_v2(cconn, kind="catalog")
         comps: list[CompartmentIndex] = []
         for rec_path, cref_path in members:
-            rconn = sqlite3.connect(f"file:{Path(rec_path)}?mode=ro", uri=True)
+            rconn = sqlite3.connect(
+                f"file:{Path(rec_path)}?mode=ro", uri=True, check_same_thread=False
+            )
             rmeta = check_index_contract_v2(rconn, kind="record-index")
             cconn2 = None
             if cref_path is not None:
-                cconn2 = sqlite3.connect(f"file:{Path(cref_path)}?mode=ro", uri=True)
+                cconn2 = sqlite3.connect(
+                    f"file:{Path(cref_path)}?mode=ro",
+                    uri=True,
+                    check_same_thread=False,
+                )
                 check_index_contract_v2(cconn2, kind="claim-ref")
             comps.append(
                 CompartmentIndex(

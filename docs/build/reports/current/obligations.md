@@ -127,5 +127,6 @@
 | D-P36.79-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.79-live-<n>` dispatch or the operator | RETURN PASS — P36.79 | `gcloud storage cat` on the object sha256-matches `descriptor.json`; the run ledger records the `date -u` bounds + digest; SRCH-07 (P36.71) later verifies the s… |
 | D-P36.33-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.33-live-<n>` dispatch or the operator | RETURN PASS — P36.33 | `curl -I` on the tile origin answers 200 + immutable; a `Range:` GET answers 206 + `Content-Range`; CORS headers present on an `Origin:` request; `sig-ops basem… |
 | D-P36.35-1 | OPEN | the release-publish path — the next REL/cutover row or P36.72b's promote | a release promotes with redirects.conf included, or a dedicated ops row lands the carry | `nginx -T` on sig-web shows `conf/redirects_*.conf` included; a retired slug answers a real 301/300/410 at the edge (the V5 crawl the acceptance row owns) |
+| D-P36.38-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.38-live-<n>` dispatch or the operator | RETURN PASS — P36.38 | `search-v2-roll.sh --verify` reads `SIG_API_SEARCH_V2=on` + `memory=1Gi` back and names the serving revision; the poststate probe `GET /v1/releases/latest/searc… |
 
 ← back: CURRENT.md
