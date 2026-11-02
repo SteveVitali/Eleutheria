@@ -722,6 +722,44 @@ def build_parser() -> argparse.ArgumentParser:
         "style-block variant served under the dedicated SVG policy)",
     )
 
+    bench = subparsers.add_parser(
+        "search-benchmark",
+        help="P36.32 (R11-K13-SRCH-02): the sig.search-benchmark/1 harness — "
+        "dev / release / held-out modes over a built release dir. Held-out "
+        "mode verifies the supplied object against the committed descriptor "
+        "sha256 and never reads a mismatched blob.",
+    )
+    bench.add_argument("--release", required=True, help="the built release dir")
+    bench.add_argument(
+        "--queries",
+        default=None,
+        help="a sig.search-benchmark-queries/1 file (default: the committed dev set)",
+    )
+    bench.add_argument(
+        "--mode",
+        choices=["dev", "release", "held-out"],
+        default="release",
+        help="dev/release run the committed or given query set; held-out "
+        "verifies + adapts the sealed set (the acceptance row's leg).",
+    )
+    bench.add_argument(
+        "--held-out",
+        default=None,
+        help="held-out mode: the sealed set object bytes — verified against "
+        "the committed descriptor sha256, never read otherwise",
+    )
+    bench.add_argument(
+        "--descriptor",
+        default=None,
+        help="held-out mode: the committed sig.held-out-relevance-descriptor/1 "
+        "(default: docs/build/reports/p36.79-held-out-relevance/descriptor.json)",
+    )
+    bench.add_argument(
+        "--generated-at",
+        default=None,
+        help="stamp the report's generated_at (ISO-8601) — the caller's clock",
+    )
+
     return parser
 
 
@@ -1680,7 +1718,61 @@ def main(argv: list[str] | None = None) -> int:
         return _run_boundaries(args)
     if args.command == "figure":
         return _run_figure(args)
+    if args.command == "search-benchmark":
+        return _run_search_benchmark(args)
     parser.print_help()
+    return 0
+
+
+def _run_search_benchmark(args: argparse.Namespace) -> int:
+    """The P36.32 benchmark leg — offline; the held-out digest is the
+    only sealed-set surface this reads (B-28 = b)."""
+    from . import search_benchmark as sb
+    from .search_index_v2 import SearchIndexV2Error
+    from .search_query_v2 import SearchEngineV2
+
+    queries_path = args.queries
+    if queries_path is None:
+        queries_path = Path(__file__).resolve().parent / "data" / "search_dev_queries.json"
+    try:
+        qset = sb.load_query_set(queries_path)
+        if args.mode == "held-out":
+            if not args.held_out:
+                print("sig-exports search-benchmark: --held-out is required")
+                return 2
+            desc = sb.load_held_out_descriptor(args.descriptor)
+            doc = sb.verify_held_out_blob(Path(args.held_out).read_bytes(), desc)
+            engine = SearchEngineV2.open_release(args.release)
+            try:
+                report = sb.run_benchmark(
+                    lambda q: engine.search(sb.engine_params(q)),
+                    sb.adapt_held_out_queries(doc),
+                    mode="held-out",
+                    set_id=desc.get("set_id"),
+                    release={
+                        "publication_id": engine.publication_id,
+                        "label": engine.release_label,
+                        "as_of_world": engine.as_of_world,
+                    },
+                    held_out_descriptor=desc,
+                    generated_at=args.generated_at,
+                )
+            finally:
+                engine.close()
+        else:
+            report = sb.run_release_benchmark(
+                args.release,
+                qset,
+                mode=args.mode,
+                generated_at=args.generated_at,
+            )
+    except sb.SearchBenchmarkError as e:
+        print(f"sig-exports search-benchmark: {e.code} — {e.detail}")
+        return 4
+    except SearchIndexV2Error as e:
+        print(f"sig-exports search-benchmark: {e.code} — {e.detail}")
+        return 4
+    print(json.dumps(report, indent=2, sort_keys=True))
     return 0
 
 
