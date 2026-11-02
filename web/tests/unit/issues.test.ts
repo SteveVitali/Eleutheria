@@ -8,6 +8,7 @@ import {
   ISSUES_FIXTURE,
   isIssueRecord,
   issueClassLabel,
+  issueLogPages,
   issuesBySource,
   issuesForSource,
   issueText,
@@ -50,6 +51,13 @@ describe("issues fixture", () => {
     const map = issuesBySource(ISSUES_FIXTURE);
     expect(map.has("demo_ingested_feed")).toBe(true);
     expect([...map.keys()]).toEqual([...map.keys()].sort());
+  });
+
+  it("paginates the source groups (K9 §6.1 fallback)", () => {
+    const pages = issueLogPages(ISSUES_FIXTURE);
+    expect(pages.length).toBe(1);
+    expect(pages[0]!.length).toBe(issuesBySource(ISSUES_FIXTURE).size);
+    expect(issueLogPages([])).toEqual([[]]);
   });
 
   it("class labels cover the vocabularies", () => {

@@ -38,6 +38,12 @@ DATA (dates, counts, hosts, licence ids), not drafted copy. The
 | IL-11 | /status/issues/ | Count | 37bac4952becf21ac5838d3c9ba82811bc421c857571e89634dcbe346681d54c | pending |
 | IL-12 | /status/issues/ | Issue | 48dc76dfa23ae03fea1372c5ed6c0e1bd62eaeca7bba6d804eb0afa87972f031 | pending |
 | IL-13 | /status/issues/ | The machine-readable log is issues.jsonl; curated entries are recorded in the committed known_issues.toml. | 3ea1f7b37aaae1efa55dc2b149dce09bd1f1199991afda9062ff1214600a9df6 | pending |
+| IL-14 | /status/issues/ | Pages: | 0f36bbc96bf26dbbc00740973db0e3b1d509ab24e0fe64ae9e90bea494b6f1c1 | pending |
+| IL-15 | /status/issues/ | first | a7937b64b8caa58f03721bb6bacf5c78cb235febe0e70b1b84cd99541461a08e | pending |
+| IL-16 | /status/issues/ | ‹ previous | a02ed4a2b620f9f3276fb50f9ffa1f0aa9f5bfa171549ba6dbf1cbcc5618f436 | pending |
+| IL-17 | /status/issues/ | Page {page} of {pages} — sources {first}–{last} of {total} | 7ef86e26d87cc55ba953deb6b7985106864cfa8744426590dc8c49024f978dc1 | pending |
+| IL-18 | /status/issues/ | next › | 93d4f7f677800a6cce5425c8657605e40ebb454a76c20c5656e801a17bb730ac | pending |
+| IL-19 | /status/issues/ | last | 3547cb112ac4489af2310c0626cdba6f3097a2ad5a3b42ddd3b59c76c7a079a3 | pending |
 | KI-01 | /sources/<id>/ | Known issues | 9e06846ba2df2bb2fb6494c1576cc9a2c882691c389d5d66ebb53f91d820a2fe | pending |
 | KI-02 | /sources/<id>/ | No issues are recorded for this source. | 71790056d1777c185652099f723e793ebea6ac17a88b784cedf146f7ef5b5162 | pending |
 | KI-03 | /sources/<id>/ | Class | 4f3a9bd003974a5ed8c9ad65d4aeda3b8a0db6fd903e36e83a3a950624b09bbd | pending |

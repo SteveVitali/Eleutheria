@@ -175,6 +175,23 @@ export function issuesBySource(issues: readonly SourceIssue[]): Map<string, Sour
   return map;
 }
 
+/** Sources per issues-log page — the K9 §6.1 pagination fallback keeps the
+ *  T1 document budget at export scale (`…/page/<n>/`). */
+export const ISSUES_PAGE_SIZE = 40;
+
+/** The log's source groups split into pages — `[page1, page2, …]`, each a
+ *  `[source_id, rows]` list. */
+export function issueLogPages(
+  issues: readonly SourceIssue[],
+): [string, SourceIssue[]][][] {
+  const entries = [...issuesBySource(issues).entries()];
+  const pages: [string, SourceIssue[]][][] = [];
+  for (let i = 0; i < entries.length; i += ISSUES_PAGE_SIZE) {
+    pages.push(entries.slice(i, i + ISSUES_PAGE_SIZE));
+  }
+  return pages.length ? pages : [[]];
+}
+
 /** Public labels for the issue classes (auto + curated vocabularies). */
 export const ISSUE_CLASS_LABELS: Record<string, string> = {
   robots_disallow: "robots.txt disallow",

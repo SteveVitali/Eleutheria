@@ -19,7 +19,11 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 BATCH_10 = REPO_ROOT / "docs/build/reports/copy-batches/batch-10.md"
 SOURCES = {
-    "IL": [REPO_ROOT / "web/src/pages/status/issues/index.astro"],
+    "IL": [
+        REPO_ROOT / "web/src/pages/status/issues/index.astro",
+        REPO_ROOT / "web/src/pages/status/issues/page/[n].astro",
+        REPO_ROOT / "web/src/components/IssuesSourceSections.astro",
+    ],
     "KI": [REPO_ROOT / "web/src/pages/sources/[id]/index.astro"],
 }
 NEW_IDS = re.compile(r"^(IL|KI)-\d+$")

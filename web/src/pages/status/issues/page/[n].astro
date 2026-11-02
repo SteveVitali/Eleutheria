@@ -1,0 +1,97 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// `/status/issues/page/<n>/` — the issues log's continuation pages
+// (P36.49 / TX-06; the K9 §6.1 pagination fallback the T1 document budget
+// triggers at export scale). T1, zero-JS; status-clock labelled, never a
+// citation.
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import Figure from "../../../../components/Figure.astro";
+import IssuesSourceSections from "../../../../components/IssuesSourceSections.astro";
+import { getStatusLane } from "../../../../lib/status-lane";
+import { getSiteMetadata } from "../../../../lib/data";
+import { fmtInt } from "../../../../lib/format";
+import { artifactHref, defineFigures } from "../../../../lib/figures";
+import { withBase } from "../../../../lib/paths";
+import {
+  getIssues,
+  issueLogPages,
+  sourceNameMap,
+  type SourceIssue,
+} from "../../../../lib/issues";
+
+export function getStaticPaths() {
+  const issues = getIssues();
+  const pages = issueLogPages(issues);
+  const total = new Set(issues.map((i) => i.source_id)).size;
+  let start = pages[0]?.length ?? 0;
+  return pages.slice(1).map((entries, i) => {
+    const first = start + 1;
+    start += entries.length;
+    return {
+      params: { n: String(i + 2) },
+      props: { entries, page: i + 2, pages: pages.length, first, last: start, total },
+    };
+  });
+}
+
+const { entries, page, pages, first, last, total } = Astro.props as {
+  entries: [string, SourceIssue[]][];
+  page: number;
+  pages: number;
+  first: number;
+  last: number;
+  total: number;
+};
+const names = sourceNameMap();
+const lane = getStatusLane();
+const meta = getSiteMetadata();
+const statusTime = lane?.status_time ?? meta.asOf.as_of_world;
+const releaseId = meta.releaseId;
+const asOfWorld = meta.asOf.as_of_world;
+
+const FIGURES = defineFigures(`status-issues-p${page}`, [
+  {
+    id: "log-page",
+    class: "headline" as const,
+    value: total,
+    artifact: "transparency/issues.jsonl",
+    pointer: "/",
+    definition: "#issues-pager",
+    href: artifactHref("transparency/issues.jsonl"),
+    breakdown: "#fig-log-page",
+    targets: [],
+  },
+]);
+const fig = FIGURES.find((x) => x.id === "log-page")!;
+---
+
+<BaseLayout title={`Issues log — page ${page}`} path={`/status/issues/page/${page}/`}>
+  <p data-copy="IL-01" data-testid="status-clock-label">
+    Issues as of <time datetime={statusTime}>{statusTime}</time> UTC — this
+    page is not a citation; the published data is release {releaseId} (data
+    as of {asOfWorld}).
+  </p>
+  <nav class="sig-pager" aria-label="Issues log pages" data-testid="issues-pager" id="issues-pager">
+    <span class="sig-sort__label" data-copy="IL-14">Pages:</span>{" "}
+    <a href={withBase("status/issues/")} data-testid="pager-first" data-copy="IL-15">first</a>{" "}
+    <a href={withBase(page === 2 ? "status/issues/" : `status/issues/page/${page - 1}/`)} data-testid="pager-prev" data-copy="IL-16">‹ previous</a>{" "}
+    <Figure figure={fig} order="inline">
+      <span data-copy="IL-17">
+        Page {page} of {pages} — sources {first}–{last} of {fmtInt(total)}
+      </span>
+    </Figure>{" "}
+    {page < pages && (
+      <>
+        <a href={withBase(`status/issues/page/${page + 1}/`)} data-testid="pager-next" data-copy="IL-18">next ›</a>{" "}
+        <a href={withBase(`status/issues/page/${pages}/`)} data-testid="pager-last" data-copy="IL-19">last</a>
+      </>
+    )}
+    {page === pages && (
+      <strong aria-current="page" data-copy="IL-19">last</strong>
+    )}
+  </nav>
+  <IssuesSourceSections entries={entries} names={names} />
+</BaseLayout>

@@ -1,0 +1,55 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.49 (TX-06): the issues log's per-source sections — one <section> per
+// source (open rows first), shared by /status/issues/ and its /page/<n>/
+// continuation routes (K9 §6.1 pagination, ADR-155 T1 document budget).
+import { issueClassLabel, issueText, type SourceIssue } from "../lib/issues";
+import { withBase } from "../lib/paths";
+
+interface Props {
+  entries: [string, SourceIssue[]][];
+  names: Map<string, string>;
+}
+const { entries, names } = Astro.props;
+---
+
+{entries.map(([sid, rows]) => (
+  <section aria-labelledby={`src-${sid}`} data-testid={`issue-source-${sid}`}>
+    <h3 id={`src-${sid}`}>
+      <a href={withBase(`sources/${sid}/`)}>{names.get(sid) ?? sid}</a>{" "}
+      <code>{sid}</code>
+    </h3>
+    <table class="sig-table">
+      <thead>
+        <tr>
+          <th scope="col" data-copy="IL-06">Class</th>
+          <th scope="col" data-copy="IL-07">Kind</th>
+          <th scope="col" data-copy="IL-08">Opened</th>
+          <th scope="col" data-copy="IL-09">Last seen</th>
+          <th scope="col" data-copy="IL-10">Closed</th>
+          <th scope="col" data-copy="IL-11">Count</th>
+          <th scope="col" data-copy="IL-12">Issue</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((issue) => (
+          <tr data-testid={`issue-${issue.issue_id}`}>
+            <td>{issueClassLabel(issue.issue_class)}</td>
+            <td>{issue.kind === "curated" ? "curated" : "auto"}</td>
+            <td><time datetime={issue.opened_at}>{issue.opened_at}</time></td>
+            <td>{issue.last_seen_at ?? "—"}</td>
+            <td>{issue.closed_at ?? "open"}</td>
+            <td>{issue.count ?? "—"}</td>
+            <td>
+              {issueText(issue)}
+              {issue.correction_ref ? <> — <code>{issue.correction_ref}</code></> : null}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+))}

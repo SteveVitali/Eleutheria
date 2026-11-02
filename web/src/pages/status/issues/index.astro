@@ -3,13 +3,16 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// `/status/issues/` — the issues log (P36.49 / TX-06, SIG-TRANSP-010,
-// J3 §7.3): auto-detected classes from run records + the curated
-// `known_issues.toml` entries, per source, opened/closed dates, append-only.
-// T1, zero-JS; the status clock labels every time-bearing cell — this page
-// is not a citation (SIG-TRANSP-034).
+// `/status/issues/` — the issues log, page 1 (P36.49 / TX-06,
+// SIG-TRANSP-010, J3 §7.3): auto-detected classes from run records + the
+// curated `known_issues.toml` entries, per source, opened/closed dates,
+// append-only. `…/page/<n>/` is the K9 §6.1 pagination fallback the T1
+// document budget triggers at export scale. T1, zero-JS; the status clock
+// labels every time-bearing cell — this page is not a citation
+// (SIG-TRANSP-034).
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Figure from "../../../components/Figure.astro";
+import IssuesSourceSections from "../../../components/IssuesSourceSections.astro";
 import { getStatusLane } from "../../../lib/status-lane";
 import { getSiteMetadata } from "../../../lib/data";
 import { fmtInt } from "../../../lib/format";
@@ -17,14 +20,12 @@ import { artifactHref, defineFigures } from "../../../lib/figures";
 import { withBase } from "../../../lib/paths";
 import {
   getIssues,
-  issueClassLabel,
-  issuesBySource,
-  issueText,
+  issueLogPages,
   sourceNameMap,
 } from "../../../lib/issues";
 
 const issues = getIssues();
-const bySource = issuesBySource(issues);
+const pages = issueLogPages(issues);
 const names = sourceNameMap();
 const lane = getStatusLane();
 const openCount = issues.filter((i) => i.closed_at === null).length;
@@ -68,6 +69,19 @@ const FIGURES = defineFigures(
           breakdown: "#fig-curated-issues",
           targets: [],
         },
+        // The pager's position numeral — one figure over the source set
+        // (the page-size constant is build config, not a measured fact).
+        {
+          id: "log-page",
+          class: "headline" as const,
+          value: new Set(issues.map((i) => i.source_id)).size,
+          artifact: "transparency/issues.jsonl",
+          pointer: "/",
+          definition: "#log-heading",
+          href: artifactHref("transparency/issues.jsonl"),
+          breakdown: "#fig-log-page",
+          targets: [],
+        },
       ]
     : [],
 );
@@ -77,6 +91,7 @@ const fig = (id: string) => {
   return f;
 };
 
+const sourceGroupCount = new Set(issues.map((i) => i.source_id)).size;
 const meta = getSiteMetadata();
 const statusTime = lane?.status_time ?? meta.asOf.as_of_world;
 const releaseId = meta.releaseId;
@@ -108,43 +123,21 @@ const asOfWorld = meta.asOf.as_of_world;
         closed entries across <span id="fig-curated-issues"><Figure figure={fig("curated-issues")} order="inline">{fmtInt(curatedCount)}</Figure></span>{" "}
         curated known issues.
       </p>
-      {[...bySource.entries()].map(([sid, rows]) => (
-        <section aria-labelledby={`src-${sid}`} data-testid={`issue-source-${sid}`}>
-          <h3 id={`src-${sid}`}>
-            <a href={withBase(`sources/${sid}/`)}>{names.get(sid) ?? sid}</a>{" "}
-            <code>{sid}</code>
-          </h3>
-          <table class="sig-table">
-            <thead>
-              <tr>
-                <th scope="col" data-copy="IL-06">Class</th>
-                <th scope="col" data-copy="IL-07">Kind</th>
-                <th scope="col" data-copy="IL-08">Opened</th>
-                <th scope="col" data-copy="IL-09">Last seen</th>
-                <th scope="col" data-copy="IL-10">Closed</th>
-                <th scope="col" data-copy="IL-11">Count</th>
-                <th scope="col" data-copy="IL-12">Issue</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((issue) => (
-                <tr data-testid={`issue-${issue.issue_id}`}>
-                  <td>{issueClassLabel(issue.issue_class)}</td>
-                  <td>{issue.kind === "curated" ? "curated" : "auto"}</td>
-                  <td><time datetime={issue.opened_at}>{issue.opened_at}</time></td>
-                  <td>{issue.last_seen_at ?? "—"}</td>
-                  <td>{issue.closed_at ?? "open"}</td>
-                  <td>{issue.count ?? "—"}</td>
-                  <td>
-                    {issueText(issue)}
-                    {issue.correction_ref ? <> — <code>{issue.correction_ref}</code></> : null}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
-      ))}
+      {pages.length > 1 && (
+        <nav class="sig-pager" aria-label="Issues log pages" data-testid="issues-pager" id="issues-pager">
+          <span class="sig-sort__label" data-copy="IL-14">Pages:</span>{" "}
+          <strong aria-current="page" data-copy="IL-15">first</strong>{" "}
+          <Figure figure={fig("log-page")} order="inline">
+            <span data-copy="IL-17">
+              Page 1 of {pages.length} — sources 1–{pages[0]!.length} of{" "}
+              {fmtInt(sourceGroupCount)}
+            </span>
+          </Figure>{" "}
+          <a href={withBase("status/issues/page/2/")} data-testid="pager-next" data-copy="IL-18">next ›</a>{" "}
+          <a href={withBase(`status/issues/page/${pages.length}/`)} data-testid="pager-last" data-copy="IL-19">last</a>
+        </nav>
+      )}
+      <IssuesSourceSections entries={pages[0]!} names={names} />
       <p data-copy="IL-13">
         The machine-readable log is{" "}
         <a href={artifactHref("transparency/issues.jsonl")}>issues.jsonl</a>;
