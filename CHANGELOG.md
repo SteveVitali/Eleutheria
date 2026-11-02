@@ -24,6 +24,22 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **Static figure kit — geography: one deterministic Python renderer for
+  every build-time map figure** (P36.27 / row 367; K6 NEW-3, D-K6-4;
+  ADR-157; SIG-UI-066/094/123/124/131/134 — owner; serves SIG-UI-039/040,
+  SIG-ENG-042) — `exports/src/exports/figures/` is the single home for
+  projection and fit, geometry simplification, the `static-12px@1`
+  binning rule, H3 areas vs tier-0 points behind fail-closed tier and
+  precision guards, jurisdiction and child outlines with links, locator
+  and index-sprite data, and honest typed not-drawn counts. Output is
+  byte-deterministic, CSP-safe SVG — no `<script>`, no `on*` attributes,
+  no external references — with `<title>`/`<desc>`/`role="img"`/
+  `aria-labelledby` accessibility and classes plus colour variables
+  bound to the shared lexicon and design tokens, never a forked palette.
+  A standalone document mode carries light/dark token variables for
+  P36.19's dedicated SVG response policy. `sig-exports figure
+  map|locator|sprite` is the build-time CLI; figure classes land in
+  `web/src/styles/epistemic.css` with a vocabulary/parity test.
 - **Print v2 — the council-brief page 1, running head and foot on every
   logical page, a terms-used list, a QR back to the pinned permalink,
   and declared print figures under the figure contract** (P36.26 /
