@@ -53,7 +53,12 @@ export interface StatusLaneDoc {
   sources_by_freshness: Record<string, number>;
   counts: { listed: number; gated: number; refused: number; withdrawn: number };
   sources: StatusSourceRow[];
-  issues: { classes: Record<string, number>; per_source: Record<string, string[]> };
+  issues: {
+    classes: Record<string, number>;
+    per_source: Record<string, string[]>;
+    /** P36.49 (TX-06): curated sig.source-issue/1 rows for listed sources. */
+    curated?: unknown[];
+  };
   robots_disregard: { hosts: number; events: number; decision_ref: string };
   scheduler_drift: {
     state: "ok" | "drift" | "not_evaluated";

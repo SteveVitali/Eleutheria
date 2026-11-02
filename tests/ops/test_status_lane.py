@@ -18,6 +18,7 @@ from ops.status_lane import (
     load_scheduler_report,
     load_source_rows,
     parse_status_time,
+    status_issues_index_html,
 )
 from ops.status_publish import (
     assert_status_tree,
@@ -357,3 +358,83 @@ def test_loaders_fail_closed(tmp_path: Path):
     recs = tmp_path / "r.jsonl"
     recs.write_text(json.dumps(_run("a", "2026-01-01T00:00:00Z")) + "\n")
     assert len(load_run_records(recs)) == 1
+
+
+# --- P36.49 (TX-06): the curated half of the issues log ---------------------
+
+
+def test_lane_carries_curated_known_issues_for_listed_sources():
+    lane = build_status_lane(
+        runs=[_run("alpha_feed", "2026-10-15T05:00:00Z")],
+        sources_doc=_sources_doc(),
+        status_time=parse_status_time(STATUS_TIME),
+        known_issues=[
+            {
+                "issue_id": "ki:alpha_feed:axis_swap:2026-01-01",
+                "source_id": "alpha_feed",
+                "issue_class": "axis_swap",
+                "opened_at": "2026-01-01T00:00:00Z",
+                "status": "open",
+                "closed_at": None,
+                "correction_ref": "sig.geometry-corrections/1",
+                "text": "drafted sentence",
+                "text_state": "pending_review",
+            }
+        ],
+    )
+    curated = lane["issues"]["curated"]
+    assert [r["source_id"] for r in curated] == ["alpha_feed"]
+    # pending_review text is dropped — never published (D-J3-12)
+    assert curated[0]["text"] is None and curated[0]["text_state"] == "pending_review"
+
+
+def test_lane_drops_curated_issues_for_count_only_sources():
+    lane = build_status_lane(
+        runs=[],
+        sources_doc=_sources_doc(),
+        status_time=parse_status_time(STATUS_TIME),
+        known_issues=[
+            {
+                "issue_id": "ki:gamma_registry:axis_swap:2026-01-01",
+                "source_id": "gamma_registry",
+                "issue_class": "axis_swap",
+                "opened_at": "2026-01-01T00:00:00Z",
+                "status": "open",
+                "closed_at": None,
+                "correction_ref": None,
+                "text": None,
+                "text_state": "pending_review",
+            }
+        ],
+    )
+    assert lane["issues"]["curated"] == []
+    html = status_issues_index_html(lane)
+    assert "gamma_registry" not in html
+    assert "No curated known issues" in html
+
+
+def test_status_issues_html_renders_the_curated_log():
+    lane = build_status_lane(
+        runs=[_run("alpha_feed", "2026-10-15T05:00:00Z")],
+        sources_doc=_sources_doc(),
+        status_time=parse_status_time(STATUS_TIME),
+        known_issues=[
+            {
+                "issue_id": "ki:alpha_feed:null_island:2026-01-01",
+                "source_id": "alpha_feed",
+                "issue_class": "null_island",
+                "opened_at": "2026-01-01T00:00:00Z",
+                "status": "open",
+                "closed_at": None,
+                "correction_ref": "sig.geometry-corrections/1",
+                "text": None,
+                "text_state": "pending_review",
+            }
+        ],
+    )
+    html = status_issues_index_html(lane)
+    assert "Curated known issues" in html
+    assert "alpha_feed" in html
+    assert "null_island" in html
+    assert "pending review" in html
+    assert "<script" not in html

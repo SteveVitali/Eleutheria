@@ -1,0 +1,111 @@
+# sig.known-issues/1 — P36.49 / TX-06 (SIG-TRANSP-010, J3 §7.3)
+#
+# The committed curated known-issues registry, keyed by source. Auto-detected
+# issue classes come from run records (exports.transparency.issue_records);
+# this file carries only the human-recorded entries — data-quality defects a
+# reviewer asserted, never a machine detection. Append-only: a resolved issue
+# gains `status = "closed"` + `closed_at` + `correction_ref`; a row is never
+# edited away.
+#
+#   issue_id        — stable id; `ki:<source>:<class>:<opened-date>` when unset
+#   source_id       — one registry row of connectors/…/sources.toml
+#   issue_class     — a CURATED_ISSUE_CLASSES member (exports.known_issues)
+#   opened_at       — full UTC instant the issue was recorded (`date -u`)
+#   status          — open | closed
+#   closed_at       — full UTC instant of the closing record; required iff
+#                     status = "closed", absent otherwise
+#   correction_ref  — the correction log entry / artifact that closes it
+#   text            — the public sentence — D-J3-12 [B-2] = OD-07 a: agent-
+#                     drafted until the operator confirms the batch verbatim
+#   text_state      — pending_review | confirmed; `pending_review` rows
+#                     publish class + dates only (the drafted `text` may be
+#                     recorded here for review but NEVER reaches a public
+#                     artifact — the emit drops it)
+#
+# Seeded 2026-11-02 with the F-322 geometry-defect groups recorded by
+# connectors/src/connectors/data/geometry_corrections.toml (sig.geometry-
+# corrections/1; P35.16 / R11-DATA-01). opened_at is the finding's recorded
+# time (2026-09-30T16:48Z); the correction write itself is the staged OM-19
+# leg, so every row stays `open` until a landed correction closes it.
+
+schema = "sig.known-issues/1"
+
+[[issue]]
+issue_id = "ki:camreg_nottingham_gb:axis_swap:2026-09-30"
+source_id = "camreg_nottingham_gb"
+issue_class = "axis_swap"
+opened_at = "2026-09-30T16:48:00Z"
+status = "open"
+correction_ref = "sig.geometry-corrections/1"
+text = "562 published camera points from this source carry transposed latitude/longitude pairs; the correction set is recorded under sig.geometry-corrections/1."
+text_state = "pending_review"
+
+[[issue]]
+issue_id = "ki:camreg_mark43:axis_swap:2026-09-30"
+source_id = "camreg_mark43"
+issue_class = "axis_swap"
+opened_at = "2026-09-30T16:48:00Z"
+status = "open"
+correction_ref = "sig.geometry-corrections/1"
+text = "561 published camera points from this source carry transposed latitude/longitude pairs; the correction set is recorded under sig.geometry-corrections/1."
+text_state = "pending_review"
+
+[[issue]]
+issue_id = "ki:camreg_trafficops_ca:wrong_jurisdiction:2026-09-30"
+source_id = "camreg_trafficops_ca"
+issue_class = "wrong_jurisdiction"
+opened_at = "2026-09-30T16:48:00Z"
+status = "open"
+correction_ref = "sig.geometry-corrections/1"
+text = "828 published camera points labelled California sit inside the declared Florida bound; the correction set is recorded under sig.geometry-corrections/1."
+text_state = "pending_review"
+
+[[issue]]
+issue_id = "ki:camreg_gmh_emc_ga:wrong_jurisdiction:2026-09-30"
+source_id = "camreg_gmh_emc_ga"
+issue_class = "wrong_jurisdiction"
+opened_at = "2026-09-30T16:48:00Z"
+status = "open"
+correction_ref = "sig.geometry-corrections/1"
+text = "Published camera points labelled Georgia (US) sit inside Mongolia; the correction set is recorded under sig.geometry-corrections/1."
+text_state = "pending_review"
+
+[[issue]]
+issue_id = "ki:camreg_bangla_bd:wrong_jurisdiction:2026-09-30"
+source_id = "camreg_bangla_bd"
+issue_class = "wrong_jurisdiction"
+opened_at = "2026-09-30T16:48:00Z"
+status = "open"
+correction_ref = "sig.geometry-corrections/1"
+text = "447 published camera points labelled Bangladesh sit inside Singapore; the correction set is recorded under sig.geometry-corrections/1."
+text_state = "pending_review"
+
+[[issue]]
+issue_id = "ki:camreg_oosgis_nl:wrong_jurisdiction:2026-09-30"
+source_id = "camreg_oosgis_nl"
+issue_class = "wrong_jurisdiction"
+opened_at = "2026-09-30T16:48:00Z"
+status = "open"
+correction_ref = "sig.geometry-corrections/1"
+text = "Published camera points labelled Netherlands sit inside Belgium; the correction set is recorded under sig.geometry-corrections/1."
+text_state = "pending_review"
+
+[[issue]]
+issue_id = "ki:dot_511_ga:null_island:2026-09-30"
+source_id = "dot_511_ga"
+issue_class = "null_island"
+opened_at = "2026-09-30T16:48:00Z"
+status = "open"
+correction_ref = "sig.geometry-corrections/1"
+text = "Published camera rows from this source assert (0,0) placeholder coordinates; the correction set is recorded under sig.geometry-corrections/1."
+text_state = "pending_review"
+
+[[issue]]
+issue_id = "ki:camreg_fl511_fl:null_island:2026-09-30"
+source_id = "camreg_fl511_fl"
+issue_class = "null_island"
+opened_at = "2026-09-30T16:48:00Z"
+status = "open"
+correction_ref = "sig.geometry-corrections/1"
+text = "Published camera rows from this source assert (0,0) placeholder coordinates; the correction set is recorded under sig.geometry-corrections/1."
+text_state = "pending_review"

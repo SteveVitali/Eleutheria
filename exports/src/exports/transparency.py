@@ -111,6 +111,8 @@ from policy.transparency import (
     valid_error_class,
 )
 
+from .known_issues import load_known_issues
+
 #: Schema ids (J3 §3.2; ``sig.execution-record/1`` is K10 §16.1's renamed
 #: + extended run record).
 RUN_RECORD_SCHEMA = "sig.run-record/1"
@@ -311,6 +313,10 @@ ISSUE_RECORD_FIELDS: tuple[str, ...] = (
     "closed_at",
     "count",
     "basis",
+    "kind",
+    "text",
+    "text_state",
+    "correction_ref",
 )
 
 FRESHNESS_RECORD_FIELDS: tuple[str, ...] = (
@@ -574,6 +580,22 @@ def _specs() -> tuple[tuple[Any, ...], ...]:
         _CS("closed_at", "when the issue closed (None while open)", dtype="datetime"),
         _CS("count", "the issue's occurrence count", dtype="integer", unit="count"),
         _CS("basis", "what evidence the issue stands on", nullable=False),
+        _CS(
+            "kind",
+            "how the issue entered the log: ``auto`` (detected from run "
+            "records) or ``curated`` (the committed ``known_issues.toml``)",
+            nullable=False,
+        ),
+        _CS(
+            "text",
+            "the operator-confirmed public sentence — null while "
+            "``text_state`` is ``pending_review`` (D-J3-12)",
+        ),
+        _CS("text_state", "``pending_review`` | ``confirmed`` on curated rows"),
+        _CS(
+            "correction_ref",
+            "the correction log entry or artifact that closes a curated issue",
+        ),
     )
     freshness_specs = (
         _CS(
@@ -2335,14 +2357,17 @@ def issue_records(
     freshness_rows: Sequence[Mapping[str, Any]],
     scheduler_drift: Mapping[str, bool] | None = None,
     at: datetime,
+    known_issues: Sequence[Mapping[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
     """Detect the J3 §7.3 auto issue classes into append-only instances
     keyed ``(source_id, class, opened_at)``: ``opened_at`` = the first
     observation showing the class, ``last_seen_at`` = the latest,
     ``closed_at`` = the first later execution not showing it (still-open
-    = null), ``count`` = the number of observations showing it. Curated
-    ``known_issues.toml`` issues are P36.49's — only the auto classes
-    land here.
+    = null), ``count`` = the number of observations showing it. P36.49
+    (TX-06): ``known_issues`` carries the validated
+    ``exports.known_issues`` entries — each lands as a ``kind="curated"``
+    row beside the ``kind="auto"`` detections, its drafted text dropped
+    while ``text_state`` is ``pending_review`` (D-J3-12).
     """
     instances: dict[tuple[str, str, str], dict[str, Any]] = {}
 
@@ -2373,6 +2398,10 @@ def issue_records(
             "closed_at": None,
             "count": 1,
             "basis": basis,
+            "kind": "auto",
+            "text": None,
+            "text_state": None,
+            "correction_ref": None,
         }
 
     # Executions ordered oldest-first per source; a stretch of executions
@@ -2439,6 +2468,15 @@ def issue_records(
             )
 
     out = [explicit_columns(v, ISSUE_RECORD_FIELDS) for v in instances.values()]
+    # P36.49: the curated half — validated ``known_issues.toml`` entries
+    # land as ``kind="curated"`` rows (unconfirmed text already dropped by
+    # ``curated_issue_records``; append-only like the auto instances).
+    if known_issues:
+        from .known_issues import curated_issue_records
+
+        out.extend(
+            explicit_columns(v, ISSUE_RECORD_FIELDS) for v in curated_issue_records(known_issues)
+        )
     out.sort(key=lambda r: (r["source_id"], r["issue_class"], r["opened_at"] or ""))
     return out
 
@@ -2470,6 +2508,8 @@ def emit_transparency_artifacts(
     site_source_ids: Iterable[str] = (),
     at: datetime,
     contributions_by_source: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
+    known_issues: Sequence[Mapping[str, Any]] | None | object = _UNSET,
+    known_issues_path: str | Path | None = None,
 ) -> dict[str, bytes]:
     """The ``transparency/`` release artifacts — every field through the
     scrub, every honesty token typed. ``raw`` is the export's guarded raw
@@ -2609,12 +2649,18 @@ def emit_transparency_artifacts(
         at=at,
     )
 
+    known_entries = cast(
+        "Sequence[Mapping[str, Any]] | None",
+        (load_known_issues(known_issues_path) if known_issues is _UNSET else known_issues),
+    )
+
     issues = issue_records(
         run_records=run_recs,
         capture_rows=capture_rows,
         freshness_rows=freshness,
         scheduler_drift=scheduler_drift,
         at=at,
+        known_issues=known_entries,
     )
 
     # P35.39 (SIG-TRANSP-016 / J3 §6.5): the column registry is fail-closed —

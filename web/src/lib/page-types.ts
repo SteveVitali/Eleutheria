@@ -283,6 +283,16 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
       "The status lane's per-source table (TX-07): the shared sources row component's Runs & freshness columns + Next run (day) at the status clock (K9 C-12, P36.48).",
   },
   {
+    patterns: ["/status/issues/", "/status/issues/page/**"],
+    type: "T1",
+    owner: "P36.49",
+    contract: "sig.source-issue/1",
+    noJsEquivalent: SELF,
+    examples: ["/status/issues/", "/status/issues/page/2/"],
+    notes:
+      "P36.49 (TX-06, SIG-TRANSP-010): the issues log — auto-detected classes + curated known_issues.toml entries per source, opened/closed dates, append-only, status-clock labelled.",
+  },
+  {
     patterns: ["/research-queue/**"],
     type: "T1",
     owner: "P35.50",
