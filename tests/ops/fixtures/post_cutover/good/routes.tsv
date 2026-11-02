@@ -39,3 +39,5 @@ route:https://surveillancegraph.org/favicon-32.png	route_9ae39b956a1c.txt
 route:https://surveillancegraph.org/apple-touch-icon.png	route_9568280ddf90.txt
 route:https://surveillancegraph.org/brand/	route_c9db3ab6a374.txt
 route:https://surveillancegraph.org/social/	route_f0e800c39b69.txt
+route:https://surveillancegraph.org/id/	route_db45e7788895.txt
+route:https://surveillancegraph.org/redirects.conf	route_418042588d88.txt

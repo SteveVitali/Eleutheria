@@ -200,6 +200,9 @@ export interface CorrectionEntry {
   /** True when the prior assertion exists but is itself gated — the honest
    *  withheld marker; its value/date stay off the public surface. */
   previous_withheld?: boolean;
+  /** P36.35 (D-K4-8): copy-batch ids binding this entry's drafted sentences
+   *  (migration entries only — `data-copy` on the rendered block). */
+  copyIds?: string;
 }
 
 /**
@@ -255,6 +258,124 @@ export function transparencyReport(entries: readonly CorrectionEntry[]): Transpa
     by_outcome[e.outcome] += 1;
   }
   return { by_category, by_outcome, total: entries.length };
+}
+
+// --- The K4 §8.2 §5 migration entries (P36.35 / JUR-05, D-K4-8) --------------
+//
+// One public corrections-log entry per migration CLASS, derived from the
+// `sig.jurisdiction-slug-history/1` rows themselves — the entries exist
+// because the history does, and name exactly the slugs it carries (merged
+// places, mislabelled records, the re-placed `unresolved` bucket). The
+// wording is agent-drafted under D-K4-8 / OD-07 — each entry's sentences
+// are bound in `docs/build/reports/copy-batches/batch-04.md` (`data-copy`
+// ids below) and ship `pending` the operator's verbatim confirmation.
+
+/** One history row shape (mirrors `SlugHistoryRow` without the data.ts import). */
+export interface MigrationHistoryRow {
+  slug: string;
+  kind: string;
+  successor?: string | string[];
+  note?: string;
+}
+
+/** The migration classes' drafted entry text (D-K4-8, agent-drafted). */
+const MIGRATION_COPY = {
+  merged: {
+    copyIds: "MG-01 MG-02",
+    what_changed:
+      "Dossier pages that each combined two places now answer with a split page " +
+      "naming both; each place has its own dossier.",
+    previous_value: "one dossier page covering two places",
+    corrected_value: "a split page naming both places, each with its own dossier",
+  },
+  mislabelled: {
+    copyIds: "MG-03 MG-04",
+    what_changed:
+      "Records shown under one country's dossier were found to be located in " +
+      "another; the old pages now explain where the records actually sit.",
+    previous_value: "records shown under the wrong country's dossier",
+    corrected_value: "a correction page naming where the records are now",
+  },
+  replaced: {
+    copyIds: "MG-05 MG-06",
+    what_changed:
+      "The 'unresolved' bucket is now the 'Not yet placed' data-quality report; " +
+      "records are never guessed into a jurisdiction.",
+    previous_value: "an 'unresolved' dossier page holding unplaced records",
+    corrected_value: "the 'Not yet placed' data-quality report",
+  },
+} as const;
+
+/**
+ * The migration corrections — one entry per class present in the history
+ * (K4 §8.2: merged places; mislabelled records incl. the partial
+ * re-placements; the re-placed `unresolved` bucket). `correctedAt` is the
+ * slug-history document's `generated_at` — the artifact's own date, never
+ * a made-up one. Rows are absent when their class has no history row —
+ * the log never advertises a migration that did not happen.
+ */
+export function migrationCorrections(
+  rows: readonly MigrationHistoryRow[],
+  correctedAt: string,
+): CorrectionEntry[] {
+  const splits = rows.filter((r) => r.kind === "split");
+  const corrected = rows.filter((r) => r.kind === "corrected");
+  const rekeyed = rows.filter((r) => r.kind === "moved" && r.successor === "unplaced");
+  const date = correctedAt.slice(0, 10);
+  const base = {
+    corrected_at: date,
+    reason:
+      "SIG's dossier URLs moved to canonical jurisdiction paths; the " +
+      "correction is recorded and the old address keeps resolving.",
+    reported_by: "SIG migration review",
+    category: "factual_error" as const,
+    outcome: "corrected" as const,
+    previous_belief_date: date,
+  };
+  const entries: (CorrectionEntry & { copyIds?: string })[] = [];
+  if (splits.length > 0) {
+    const names = splits.map((r) => `/dossier/${r.slug}/`).join(" and ");
+    entries.push({
+      ...base,
+      id: "migration-merged-places",
+      subject_id: `jurisdiction:${splits[0]!.slug}`,
+      subject_label: "Dossier pages that covered two places",
+      what_changed: `${names} — ${MIGRATION_COPY.merged.what_changed}`,
+      previous_value: MIGRATION_COPY.merged.previous_value,
+      corrected_value: MIGRATION_COPY.merged.corrected_value,
+      subject_path: `/dossier/${splits[0]!.slug}/`,
+      copyIds: MIGRATION_COPY.merged.copyIds,
+    });
+  }
+  if (corrected.length > 0) {
+    const names = corrected.map((r) => `/dossier/${r.slug}/`).join(" and ");
+    entries.push({
+      ...base,
+      id: "migration-mislabelled-records",
+      subject_id: `jurisdiction:${corrected[0]!.slug}`,
+      subject_label: "Records shown under the wrong country",
+      what_changed: `${names} — ${MIGRATION_COPY.mislabelled.what_changed}`,
+      previous_value: MIGRATION_COPY.mislabelled.previous_value,
+      corrected_value: MIGRATION_COPY.mislabelled.corrected_value,
+      subject_path: `/dossier/${corrected[0]!.slug}/`,
+      copyIds: MIGRATION_COPY.mislabelled.copyIds,
+    });
+  }
+  if (rekeyed.length > 0) {
+    const names = rekeyed.map((r) => `/dossier/${r.slug}/`).join(" and ");
+    entries.push({
+      ...base,
+      id: "migration-replaced-unresolved",
+      subject_id: `jurisdiction:${rekeyed[0]!.slug}`,
+      subject_label: "The 'unresolved' bucket, re-placed",
+      what_changed: `${names} — ${MIGRATION_COPY.replaced.what_changed}`,
+      previous_value: MIGRATION_COPY.replaced.previous_value,
+      corrected_value: MIGRATION_COPY.replaced.corrected_value,
+      subject_path: `/dossier/${rekeyed[0]!.slug}/`,
+      copyIds: MIGRATION_COPY.replaced.copyIds,
+    });
+  }
+  return entries;
 }
 
 /** The corrections log, newest correction first (§45.3 preserves history, in order). */

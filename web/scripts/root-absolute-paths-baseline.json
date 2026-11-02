@@ -599,6 +599,48 @@
       "token": "/dossiers/$",
       "count": 4,
       "reason": "P36.34: JSON-pointer prefixes into web/dossiers/index.json figure specs \u2014 artifact data, not links"
+    },
+    {
+      "file": "src/lib/redirects.ts",
+      "token": "/",
+      "count": 1,
+      "reason": "P36.35: the ONE redirect generator's conf-template path literals \u2014 `${...}` interpolation + the retired /task/new/ namespace \u2014 serving-config artifact data, never page links"
+    },
+    {
+      "file": "src/lib/redirects.ts",
+      "token": "/dossier/$",
+      "count": 1,
+      "reason": "P36.35: the ONE redirect generator's conf-template path literals \u2014 `${...}` interpolation + the retired /task/new/ namespace \u2014 serving-config artifact data, never page links"
+    },
+    {
+      "file": "src/lib/redirects.ts",
+      "token": "/entity/$",
+      "count": 1,
+      "reason": "P36.35: the ONE redirect generator's conf-template path literals \u2014 `${...}` interpolation + the retired /task/new/ namespace \u2014 serving-config artifact data, never page links"
+    },
+    {
+      "file": "src/lib/redirects.ts",
+      "token": "/id/$",
+      "count": 1,
+      "reason": "P36.35: the ONE redirect generator's conf-template path literals \u2014 `${...}` interpolation + the retired /task/new/ namespace \u2014 serving-config artifact data, never page links"
+    },
+    {
+      "file": "src/lib/redirects.ts",
+      "token": "/task/new/",
+      "count": 3,
+      "reason": "P36.35: the ONE redirect generator's conf-template path literals \u2014 `${...}` interpolation + the retired /task/new/ namespace \u2014 serving-config artifact data, never page links"
+    },
+    {
+      "file": "src/pages/id/[type]/[uuid].astro",
+      "token": "/id/$",
+      "count": 2,
+      "reason": "P36.35: the /id/<type>/<uuid> stub's own path template literal \u2014 route literal, not a link"
+    },
+    {
+      "file": "src/lib/corrections.ts",
+      "token": "/dossier/$",
+      "count": 6,
+      "reason": "P36.35: migration corrections build /dossier/<slug>/ subject_path + display literals from history rows \u2014 artifact data, not links"
     }
   ]
 }

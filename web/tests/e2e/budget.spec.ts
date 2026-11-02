@@ -13,7 +13,7 @@ import { test, expect } from "@playwright/test";
 import type { Page, APIRequestContext, Response } from "@playwright/test";
 import { gzipSync, brotliCompressSync } from "node:zlib";
 import budgetsJson from "./page-budgets.json" with { type: "json" };
-import { DISCOVERED_ROUTES } from "./pages";
+import { DISCOVERED_ROUTES, gotoSettled } from "./pages";
 import type { DiscoveredRoute } from "./pages";
 import {
   budgetForRoute,
@@ -295,9 +295,15 @@ test.describe("page-type budgets (SIG-UI-041, SIG-FIND-005, ADR-155)", () => {
     test(`${route.path} [${route.type}] initial-load byte budgets`, async ({ page, request }) => {
       const captured: CapturedResponse[] = [];
       installCapture(page, captured);
-      const resp = await page.goto(route.path);
+      const resp = await gotoSettled(page, route.path);
       expect(resp?.status()).toBe(200);
-      const documentRaw = (await resp?.body())?.length ?? 0;
+      // A K4 §8.2 instant-redirect stub navigates its own response away —
+      // the CDP resource is gone by the time the page settles, so its
+      // document bytes are re-read through the request API (identical
+      // bytes; the route's own document is still what is measured).
+      const documentRaw =
+        (await resp?.body().catch(() => null))?.length ??
+        (await (await request.get(route.path)).body()).length;
       await settle(page, route.path);
       const m = await measureResponses(request, captured, documentRaw);
       const { violations, gaps } = evaluateInitial(budgets, route.path, row, m);

@@ -11,3 +11,5 @@ web/src/pages/data-collection.astro	// sentence is agent-drafted into docs/build
 # parse + built-HTML spec-ref anchors) — an audited data read, not a records read.
 web/src/lib/lexicon.ts	const SPEC_PATH = join(repoRoot(), "docs", "2_canonical_design_spec.md");
 web/scripts/check-lexicon.mjs	const SPEC = join(WEB, "..", "docs", "2_canonical_design_spec.md");
+# P36.35: corrections.ts comments name the batch file for provenance — comment-only, not a records read.
+web/src/lib/corrections.ts	// are bound in `docs/build/reports/copy-batches/batch-04.md` (`data-copy`

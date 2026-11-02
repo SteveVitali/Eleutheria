@@ -207,6 +207,16 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
       "K2's latest-view entity pages — registered ahead of the GX-06a row that ships them (K0 classifies them now).",
   },
   {
+    patterns: ["/id/**"],
+    type: "T1",
+    owner: "P36.35",
+    contract: "sig.slug-history/1",
+    noJsEquivalent: SELF,
+    examples: ["/id/agency/agency:okcpd/"],
+    notes:
+      "JUR-05's `/id/<type>/<uuid>` static fallback — the canonical-id alias resolves through the one redirect generator; the stub is the no-include answer.",
+  },
+  {
     patterns: ["/sources/**"],
     type: "T1",
     owner: "P34.17",

@@ -15,21 +15,33 @@ import DisputeLink from "../components/DisputeLink.astro";
 import EmptyState from "../components/EmptyState.astro";
 import {
   CORRECTION_OUTCOME_META,
+  migrationCorrections,
   orderedCorrections,
   priorValuePermalink,
   transparencyReport,
 } from "../lib/corrections";
 import { RULESET_VERSION } from "../lib/fixtures";
-import { getCorrections, getCorrectionsProvenance } from "../lib/data";
+import { getCorrections, getCorrectionsProvenance, getSiteMetadata, getSlugHistory } from "../lib/data";
 
 // The corrections log + its provenance summary flow through the single data seam
 // (ADR-066): fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
 const CORRECTIONS = getCorrections();
 const CORRECTIONS_PROVENANCE = getCorrectionsProvenance();
+// P36.35 (JUR-05 / D-K4-8): the migration entries — one per class the slug
+// history carries, derived from the artifact itself (its generated_at is the
+// correction date, never a made-up one).
+const slugHistoryDoc = getSlugHistory();
+// The correction date is the build's own as-of (the migration took effect
+// with this release — the artifact's honest date, never a made-up one).
+const MIGRATION = migrationCorrections(
+  slugHistoryDoc,
+  getSiteMetadata().asOf.as_of_world,
+);
+const ALL = [...CORRECTIONS, ...MIGRATION];
 
 const origin = Astro.site?.origin;
-const entries = orderedCorrections(CORRECTIONS);
-const report = transparencyReport(CORRECTIONS);
+const entries = orderedCorrections(ALL);
+const report = transparencyReport(ALL);
 // The log's start date (QW-14): the earliest recorded correction, shown so the log
 // never reads as if it existed from the project's first day.
 const logStart = entries.map((e) => e.corrected_at).sort()[0] ?? null;
@@ -65,6 +77,7 @@ const logStart = entries.map((e) => e.corrected_at).sort()[0] ?? null;
         data-correction-id={e.id}
         data-category={e.category}
         data-outcome={e.outcome}
+        data-copy={e.copyIds}
       >
         <h3>{e.subject_label}</h3>
         <dl class="sig-correction__fields">

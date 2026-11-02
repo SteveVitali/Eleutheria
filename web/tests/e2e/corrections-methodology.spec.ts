@@ -3,7 +3,7 @@
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
 import { test, expect } from "@playwright/test";
-import { PHASE15_SURFACES, SHELL_PAGES } from "./pages";
+import { gotoSettled, PHASE15_SURFACES, SHELL_PAGES } from "./pages";
 
 test.describe("research queue (§39.7, SIG-UI-031)", () => {
   test("each task card states closing condition, evidence sought, assignee class, effort", async ({ page }) => {
@@ -299,7 +299,7 @@ test.describe("editorial standards (§41, SIG-UI-042/043/045/046)", () => {
 test.describe("'How we know this' module on every page (SIG-UI-044)", () => {
   for (const path of SHELL_PAGES) {
     test(`all six components present on ${path}`, async ({ page }) => {
-      await page.goto(path);
+      await gotoSettled(page, path);
       // P36.18 (UXK14-2, SIG-UI-145): the shared module stays one action away
       // inside the footer strip's disclosure — a native <details> toggle on
       // every page, record pages included.

@@ -7,9 +7,9 @@
 
 <!-- Values only (BM-LEDGER-02/08): ≤256 B/line; `returnPass:` ≤512 B; no history — PHASE LOG + git. -->
 ```
-projectStatus: IN_PROGRESS # P36.34 landed(375); queued legs on earlier rows
-nextTicket: P36.35 # row 376 — migration-and-redirect-generator
-lastCompleted: P36.34 # row 375 — grouped-dossier-index-and-navigation 2026-10-30
+projectStatus: IN_PROGRESS # P36.35 landed(376); queued legs on earlier rows
+nextTicket: P36.36 # row 377 — no-js-map-baseline-and-site-lists
+lastCompleted: P36.35 # row 376 — migration-and-single-redirect-generator 2026-10-30
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -20,7 +20,7 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh # R11 stacks on #190
 pinnedBaseSha: b051732c
-chainTip: r11/P36.34-grouped-dossier-index-directories-navigation # P36.34 landed on this tip; P36.35 stacks here
+chainTip: r11/P36.35-migration-and-single-redirect-generator # P36.35 landed on this tip; P36.36 stacks here
 benchmarkSet: N/A
 autonomy: checkpoint # Q-15 = a
 mergePolicy: OPERATOR # agents never merge
@@ -1376,3 +1376,8 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-10-30 — P36.34 correction — orient fold of the L1373 boundary line (BM-ORIENT-01 on `2956cb08`): trimmed ~440 B in place; pre-fold bytes archived `reports/memory-repair/LEDGER_phaselog_L1373_pre-fold.txt` · `seed-commit da48474b` declared · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-10-30 — P36.34 correction — the L1373 fold + Legend trim were in-place rewrites the append-only judge rejects per-commit (`da48474b`/`e3c244b6` docs-reds): both lines restored to committed bytes; head-cell corrections (stale `projectStatus`/`chainTip`/`updatedAt` — editable cells) stand; archived bytes `reports/memory-repair/LEDGER_phaselog_L1373_pre-fold.txt` · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-10-30 — P36.35 dispatch boundary-confirm — `ci: pass #397@511955dc` 5/5 head-bound (run 41144834870; arc: context-exhausted closeout → resume; CHANGELOG+claim respells; fold-class append-only rejections reverted; impl repairs — pinned copy/name/slug surfaces restored, index CSS route-scoped, /search/ corpus moved to fetched `sig.search-index/1`, P34.14 surface followed the seam) · P36.34 landed: `sig.dossier-index/2` grouped index + K4 §5.2 rows + sort/facet/A–Z routes + `search-index.ts` contract · `main` untouched · deferrals +0/−0 · dispatching P36.35 (row 376 — migration + single-redirect generator: `live_verification=false`; gate none; no OM-20/mutations; deps P36.34+P35.54+P35.59 landed) · chainTip → r11/P36.34-… · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-10-30 — P36.35 done — row 376 (K4 JUR-05; SIG-UI-058 + SIG-JUR-009/012): `redirects.ts` the ONE sig.redirects-conf/1 generator (jurisdiction history 301/300-served/200-noindex + print/.json aliases · entity sig.slug-history/1 301/300/410 + /id/ 302-via-shared-seam · handles_history honest-empty · fixed legacy /task/new/**→410 + gated data-freshness/network/evidence · renamed-source boundary DR-C6-01 · $is_args$args) · sigRedirects hook emits dist/redirects.conf + fails build on unresolved slug · moved-stub meta refresh + noindex stubs + /id/ fallback pages + fixture seed rows · /corrections/ migration entries (D-K4-8 pending verbatim, batch-04) · public_routes +id +redirects.conf · D-P36.35-1 conf/-carry filed · arc: static imports after Vite runner teardown, leading-/ emitted-route fix, orderedCorrections restore, /dossier/$ allowlist tokens · tests 874 unit + 218 e2e · PR #398 OPEN · Gate status: none · ci: head-bound read follows · deferrals +1/−0 · chainTip → r11/P36.35-… · next → P36.36 · harness: devin-desktop/swe-2-high/subagent
+- 2026-10-30 — P36.35 post-closeout record — `aa5a18fa` `ci: pending #398@aa5a18f` head-bound (run 41150385325 scheduled/in-queue at first read 20:3xZ; prior head `f89b4816` run 41150218808 in_progress at read) — boundary `reports/ci/p36_35_pr398.json` (sha-bound, recorded on head) · PR #398 OPEN on the stack for operator integration · `main` untouched · every pushed head verbatim in `runs/P36.35.md` · Gate status: none · deferrals +1/−0 (`D-P36.35-1` conf/-carry to the publish path) · no live leg, no production mutation, no OM-20 · harness: devin-desktop/swe-2-high/subagent
+
+- 2026-10-30 — P36.35 correction — `9f37d65a` docs-red (run 41150477629): run ledger missing its `Harness:` header (BM-HARNESS-01) + a bare `live` assert token at runs/P36.35.md:7 — header added, `302 live` wrapped in a code span; orient folded by this append · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-10-30 — P36.36 dispatch boundary-confirm — `ci: pass #398@2ffc75a1` 5/5 head-bound (run 41158532902; arc: `9f37d65a` docs-red header+claim `e7efe0c3`; web-red meta-refresh race `056d2225` gotoSettled + unique stub titles; python-reds probe captures `daf8682e` + perf-reuse allow `2ffc75a1`) · P36.35 landed: `redirects.ts` the ONE `sig.redirects-conf/1` generator + `/id/` stubs + `/corrections/` entries + build-hook failure on unresolved history · `main` untouched · deferrals +1/−0 (`D-P36.35-1` conf/ carry) · dispatching P36.36 (row 377 — no-js map baseline + site lists: `live_verification=false`; gate none; no OM-20; deps P36.27+P35.45+P36.34+P35.50 landed) · chainTip → r11/P36.35-… · harness: devin-desktop/swe-2-high/orchestrator
