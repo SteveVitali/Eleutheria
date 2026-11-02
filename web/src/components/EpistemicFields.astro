@@ -33,9 +33,11 @@ const values: Record<string, string> = {
     EPISTEMIC_FIELD_NAMES.map((name) => (
       <li class="sig-field" data-field={name} data-value={values[name]}>
         <span class="sig-field__name">{FIELD_TITLES[name]}</span>
+        {" "}
         {/* P36.17: the lexicon's label — never a re-cased enum (SIG-UI-143); a
             null currency renders the typed "Not applicable" state, not a bare
-            unknown (CP-5). */}
+            unknown (CP-5). P36.42a: a visible separator — the first public
+            mount (/entity/**) is swept for glued inline boundaries (NEW-7). */}
         <span class="sig-field__value">{epistemicFieldValueLabel(name, values[name]!)}</span>
       </li>
     ))

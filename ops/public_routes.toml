@@ -57,6 +57,7 @@ top_level = [
   "dispute",
   "dossier",
   "editorial-standards",
+  "entity",               # /entity/** — the Organizations hub + 06a entity pages (P36.42a / K2 GX-06a)
   "evidence",
   "glossary",            # the generated glossary (P36.17 / K14 §2.5)
   "id",                  # /id/<type>/<uuid> static fallback stubs (P36.35 / JUR-05)
@@ -110,6 +111,7 @@ required = [
   "dispute",
   "dossier",
   "editorial-standards",
+  "entity",               # /entity/** — the Organizations hub + 06a entity pages (P36.42a / K2 GX-06a)
   "evidence",
   "glossary",
   "map",

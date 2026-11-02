@@ -56,6 +56,12 @@ const COMPARTMENT_STREAM_RE = /^[a-z0-9_]+\/(sites|statements|record_claims)\.js
  * the P35.45 per-dossier artifacts — `web/dossiers/<slug-path>.json` — the
  * index document itself excepted (it carries no dossier record). */
 const PER_DOSSIER_RE = /^web\/dossiers\/[a-z0-9-]+(\/[a-z0-9-]+)*\.json$/;
+/** Byte-identical to LABEL_STREAM_RE / ENTITY_TWIN_RE in src/lib/figures.ts
+ * (pinned by test): the P36.41/42a entity artifacts — label streams and the
+ * `sig.entity-page/1` twins — admitted by pattern like the row streams. */
+const LABEL_STREAM_RE = /^labels\/[a-z0-9_]+\.jsonl$/;
+const ENTITY_TWIN_RE =
+  /^web\/entity\/[a-z0-9-]+\/[a-z0-9][a-z0-9-]*--[a-z0-9]+\/index\.[a-z0-9_]+\.json$/;
 
 /** The J3 §5.4 named page classes → dist globs. P36.36 (MAP-05): the dossier
  * class boundary — `/dossier/<path>/sites/**` is the map's no-JS list surface
@@ -111,6 +117,8 @@ function isListed(path, listed) {
   return (
     listed.has(path) ||
     COMPARTMENT_STREAM_RE.test(path) ||
+    LABEL_STREAM_RE.test(path) ||
+    ENTITY_TWIN_RE.test(path) ||
     (PER_DOSSIER_RE.test(path) && path !== "web/dossiers/index.json")
   );
 }

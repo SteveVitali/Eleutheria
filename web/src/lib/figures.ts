@@ -126,6 +126,17 @@ const COMPARTMENT_STREAM_RE = /^[a-z0-9_]+\/(sites|statements|record_claims)\.js
  */
 const PER_DOSSIER_RE = /^web\/dossiers\/[a-z0-9-]+(\/[a-z0-9-]+)*\.json$/;
 
+/**
+ * P36.41/P36.42a: the `sig.entity-label/1` row streams (`labels/<comp>.jsonl`
+ * under the export root) and the `sig.entity-page/1` twins
+ * (`web/entity/<url_type>/<slug>--<hash>/index.<comp>.json`) — unbounded sets
+ * the export manifest does not enumerate, admitted by pattern like the
+ * compartment streams.
+ */
+const LABEL_STREAM_RE = /^labels\/[a-z0-9_]+\.jsonl$/;
+const ENTITY_TWIN_RE =
+  /^web\/entity\/[a-z0-9-]+\/[a-z0-9][a-z0-9-]*--[a-z0-9]+\/index\.[a-z0-9_]+\.json$/;
+
 function repoRoot(): string {
   let dir = fileURLToPath(new URL(".", import.meta.url));
   for (;;) {
@@ -165,6 +176,8 @@ export function fixtureArtifactPaths(): string[] {
 /** True when `path` is a manifest-listed artifact `data-artifact` may name. */
 export function isManifestArtifact(path: string, listed?: readonly string[]): boolean {
   if (COMPARTMENT_STREAM_RE.test(path)) return true;
+  if (LABEL_STREAM_RE.test(path)) return true;
+  if (ENTITY_TWIN_RE.test(path)) return true;
   // P35.45 — per-dossier artifacts are emitted under web/dossiers/ but never
   // the index document itself (it carries no dossier record to point into).
   if (PER_DOSSIER_RE.test(path) && path !== "web/dossiers/index.json") return true;

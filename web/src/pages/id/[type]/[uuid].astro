@@ -12,11 +12,11 @@
 // so this page IS the no-include answer: a 0-second meta refresh where the
 // successor page exists in this build, else an honest explanation naming
 // what the identifier was recorded as — never a dead link (K13 R-6).
-import { existsSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import { getEntitySlugHistory } from "../../../lib/data";
+import { getEntityLabelRows, getEntitySlugHistory } from "../../../lib/data";
 import { resolveEntityRequest } from "../../../lib/entity-history";
+import { entityIndex } from "../../../lib/entity-page";
+import { emittedEntityPaths } from "../../../lib/entity-pages";
 import { withBase } from "../../../lib/paths";
 
 interface Props {
@@ -29,11 +29,11 @@ interface Props {
 }
 
 // The refresh/link fallback is honest only where the successor PAGE is
-// emitted — `/entity/**` surfaces ship with the GX-05/06 rows; until then a
-// resolved URL names its path without linking it (R-6: never link a 404).
-const ENTITY_PAGES_EMIT = existsSync(
-  fileURLToPath(new URL("../../entity", import.meta.url)),
-);
+// emitted — P36.42a emits `/entity/**`, but only for entities the label
+// registry keyed; a resolved URL whose page this build does not emit names
+// its path without linking it (R-6: never link a 404). Per-target, not a
+// coarse namespace gate.
+const EMITTED_ENTITY = emittedEntityPaths(entityIndex(getEntityLabelRows()));
 
 export function getStaticPaths() {
   const rows = getEntitySlugHistory();
@@ -62,8 +62,9 @@ export function getStaticPaths() {
 }
 
 const p = Astro.props as Props;
-const liveTarget = ENTITY_PAGES_EMIT ? p.target : undefined;
-const liveTargets = ENTITY_PAGES_EMIT ? (p.targets ?? []) : [];
+const liveTarget =
+  p.target !== undefined && EMITTED_ENTITY.has(p.target) ? p.target : undefined;
+const liveTargets = (p.targets ?? []).filter((t) => EMITTED_ENTITY.has(t));
 // Meta-refresh only for a single live successor — a split list and a
 // withdrawn key are pages, never refreshes.
 const refresh = (p.status === 301 || p.status === 302) && liveTarget ? liveTarget : null;

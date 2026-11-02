@@ -1,0 +1,169 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.42a (K2 GX-06a; SIG-UI-070/UXR-20, SIG-UI-080, A-10) — the `/entity/`
+// Organizations hub: the published entity types with counts, each linking its
+// paginated A–Z list, every count carrying the entity-resolution disclosure
+// verbatim (ER_DISCLOSURE — the contract constant, never re-worded). The A-10
+// typed states ride beside the counts: keyed entities are listed by name;
+// `not_yet_reviewed` rows render as typed states, never silent absences and
+// never raw identifiers (SIG-UI-053/108).
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EmptyState from "../../components/EmptyState.astro";
+import Figure from "../../components/Figure.astro";
+import { getEntityLabelRows } from "../../lib/data";
+import {
+  ER_DISCLOSURE,
+  entityIndex,
+  pageState,
+} from "../../lib/entity-page";
+import {
+  kindPlural,
+  kindWord,
+  reviewCountByUrlType,
+  NOT_YET_REVIEWED_STATE,
+} from "../../lib/entity-pages";
+import { defineFigures, ROOT_POINTER, target } from "../../lib/figures";
+import { withBase } from "../../lib/paths";
+
+const index = entityIndex(getEntityLabelRows());
+const totalPublished = index.rows.length;
+const totalReview = index.review_rows.length;
+
+// The ONE figures[] registry: one count figure per published type + the
+// total — each points into the label registry stream it derives from.
+const kindFigId = (kind: string) => `kind-${kind}-count`;
+const INDEX_FIGURES = defineFigures("entity-index", [
+  ...index.kinds.map((k) => ({
+    id: kindFigId(k.kind),
+    class: "dossier" as const,
+    value: k.count,
+    unit: k.count === 1 ? "entity" : "entities",
+    artifact: "labels/sig_graph.jsonl",
+    pointer: ROOT_POINTER,
+    definition: "#er-disclosure",
+    href: withBase(`entity/${k.kind}/`),
+    breakdown: `#fig-${kindFigId(k.kind)}`,
+    targets: [
+      target("record list", "A–Z list", { href: `entity/${k.kind}/` }),
+    ],
+  })),
+  ...(totalPublished > 0
+    ? [{
+        id: "entity-total",
+        class: "dossier" as const,
+        value: totalPublished,
+        unit: "entities",
+        artifact: "labels/sig_graph.jsonl",
+        pointer: ROOT_POINTER,
+        definition: "#er-disclosure",
+        href: "#entity-types",
+        breakdown: "#fig-entity-total",
+        targets: [
+          target("record list", "the type lists below", { href: "entity/" }),
+        ],
+      }]
+    : []),
+]);
+const figs = new Map(INDEX_FIGURES.map((f) => [f.id, f]));
+const withheldSeen = getEntityLabelRows().some(
+  (r) => pageState(r) === "withheld",
+);
+---
+
+<BaseLayout
+  title="Organizations"
+  path={withBase("entity/")}
+  crumbs={[{ label: "Organizations" }]}
+  lede="Organisations, agencies and registry portals SIG records — every page cites the claims behind it."
+>
+  <p class="sig-lede" data-copy="EN-01">
+    Organisations, agencies and registry portals SIG records — every page cites
+    the claims behind it.
+  </p>
+  <p data-copy="EN-02">
+    Each count below carries SIG's entity-resolution disclosure:{" "}
+    <strong>{ER_DISCLOSURE}</strong>. A name here is a published label from the
+    shared label registry — never a raw identifier.
+  </p>
+
+  {index.kinds.length === 0 && (
+    <EmptyState
+      parts={{
+        state: "No entities published yet",
+        missing:
+          "No entity has passed the label registry's publication rules in this release. Absence here means none published, not that none exist.",
+        nearby:
+          "The sources page lists what this release collected even before entities are keyed.",
+        action: { href: "sources/", label: "See the sources" },
+        change: "An entity type appears here once a release keys and pages it.",
+        cause: "not_published",
+        batchIds: {
+          state: "EN-10",
+          missing: "EN-11",
+          nearby: "EN-12",
+          action: "EN-13",
+          change: "EN-14",
+        },
+      }}
+    />
+  )}
+
+  {index.kinds.length > 0 && (
+    <section aria-labelledby="entity-types" data-testid="entity-types">
+      <h2 id="entity-types">Entity types</h2>
+      <p class="sig-table-note" data-copy="EN-03">
+        {totalPublished} keyed {totalPublished === 1 ? "entity" : "entities"} in
+        this release, counted with the entity-resolution disclosure beside each
+        type.
+      </p>
+      <ul class="sig-entity-types" role="list">
+        {index.kinds.map((k) => (
+          <li data-testid="entity-type-row" data-kind={k.kind}>
+            <Figure figure={figs.get(kindFigId(k.kind))!} order="value-first" tag="span">
+              {" "}<a href={withBase(`entity/${k.kind}/`)}>{kindPlural(k.kind)}</a>
+            </Figure>
+            <span class="sig-entity-type__note"> — {k.er_disclosure}</span>
+            {reviewCountByUrlType(index, k.kind) > 0 && (
+              <span class="sig-entity-type__review" data-testid="entity-type-review">
+                {" "}· {reviewCountByUrlType(index, k.kind)} {kindWord(k.kind)}{reviewCountByUrlType(index, k.kind) === 1 ? "" : "s"}{" "}
+                {NOT_YET_REVIEWED_STATE.state.toLowerCase()} —{" "}
+                <a href={withBase(`entity/${k.kind}/`)}>listed on the {kindPlural(k.kind)} page</a>
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {totalReview > 0 && (
+    <section aria-labelledby="entity-review" data-testid="entity-review">
+      <h2 id="entity-review">Pending review</h2>
+      <p data-copy="EN-04">
+        {totalReview} recorded {totalReview === 1 ? "organisation" : "organisations"} await the
+        registry auto-allow review — typed "not yet reviewed" rows, keyed no
+        page and shown no name until the review matches them.
+      </p>
+    </section>
+  )}
+
+  {withheldSeen && (
+    <p class="sig-table-note" data-testid="entity-withheld-note">
+      some relationships are not shown pending publication review
+    </p>
+  )}
+
+  <section aria-labelledby="er-disclosure" data-testid="er-disclosure">
+    <h2 id="er-disclosure">What the counts mean</h2>
+    <p>
+      <strong>Entity resolution.</strong> {ER_DISCLOSURE}.
+    </p>
+    <p data-copy="EN-05">
+      The A–Z lists carry only keyed, published entities; the typed
+      not-yet-reviewed rows beside them name a review state, never a name.
+    </p>
+  </section>
+</BaseLayout>

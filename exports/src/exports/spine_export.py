@@ -120,7 +120,7 @@ from tasks.vocabulary import Disposition
 from policy import disclosure as policy_disclosure
 from policy import withdrawals as policy_withdrawals
 
-from . import analytics, dedup, dossier_keys, dossier_sources, provo, source_licences
+from . import analytics, dedup, dossier_keys, dossier_sources, entity_page, provo, source_licences
 from . import column_registry as CR
 from . import compartments as C
 from . import placement as _placement
@@ -288,6 +288,26 @@ _LABEL_FACT_PREDICATES: tuple[str, ...] = (
 #: relevance rule reads — the closed ``policy.procurement_relevance``
 #: input set (ONE vocabulary: the query never hand-lists its own names).
 _NOTICE_RELEVANCE_PREDICATES: tuple[str, ...] = INPUT_PREDICATES
+
+#: P36.41 (K2 GX-05a): the SQL-side page-kind candidate set — organisations
+#: (``organization`` row or ``organisation``/``organization`` type/prefix),
+#: agencies (``agency:``/``department:`` subject keys) and registry portals
+#: (``platform:`` subject keys). Mirrors ``policy.labels``' ``kind_for``
+#: inputs; the emitted page kinds are the label registry's own resolution —
+#: this is a read bound, never a re-derivation of the kind decision.
+_PAGE_ENTITY_SQL: str = (
+    "SELECT e.entity_id FROM entity e"
+    "  LEFT JOIN organization o ON o.entity_id = e.entity_id"
+    "  WHERE o.entity_id IS NOT NULL"
+    "     OR e.entity_type IN ('organisation','organization')"
+    "     OR EXISTS (SELECT 1 FROM entity_identifier ei"
+    "         WHERE ei.entity_id = e.entity_id"
+    "           AND ei.scheme = 'sig.connector.subject'"
+    "           AND (ei.value LIKE 'agency:%' OR ei.value LIKE 'department:%'"
+    "                OR ei.value LIKE 'platform:%'"
+    "                OR ei.value LIKE 'organization:%'"
+    "                OR ei.value LIKE 'organisation:%'))"
+)
 
 EXPORT_QUERIES: dict[str, tuple[str, str]] = {
     # (guard-table, SELECT). source_registry names — node labels + PROV agents.
@@ -569,6 +589,36 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "                 AND ei.scheme = 'sig.connector.subject'"
         "                 AND (ei.value LIKE 'procurement\\_notice:%' ESCAPE '\\'"
         "                      OR ei.value LIKE 'notice:%'))"
+        " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
+    ),
+    # P36.41 (K2 §6.2 / A-10, R11-K13-GX-05a, ``sig.entity-page/1``): the
+    # publishable claims the entity-page twins build from — every claim whose
+    # subject OR object is a contract-A page-kind entity (organisations,
+    # agencies, portals — the SQL-side superset of ``exports.entity_page``'s
+    # PAGE_KINDS; the label registry's own kind resolution is the emitted
+    # truth, so an over-inclusion here is read, never emitted). Entity-ref
+    # claims ride BOTH directions: the page entity's outbound relationships
+    # and the inbound rows where a record names it (``buyer``,
+    # ``camera_operator`` …). The rights slot each claim rides lets the
+    # twin file under the compartment its content licenses to (ADR-106).
+    "entity_page_claims": (
+        "claim",
+        "{EFFECTIVE}SELECT c.subject_id::text, c.predicate_id,"
+        "       COALESCE(c.value_text, c.raw_value::text), c.claim_id::text,"
+        "       c.object_entity::text, c.observed_at,"
+        "       cs.source_id, rr.spdx_expression, rr.attribution_text,"
+        "       rr.redistributable, rr.derivative_permitted, rr.terms_url,"
+        "       rr.rights_id"
+        "  FROM claim c"
+        "  LEFT JOIN claim_source cs ON cs.claim_id = c.claim_id"
+        "  LEFT JOIN latest_decision ld"
+        "         ON ld.source_id = cs.source_id AND ld.prior_rights_id = c.rights_id"
+        "  JOIN rights_record rr ON rr.rights_id = COALESCE(ld.rights_id, c.rights_id)"
+        " WHERE c.sensitivity_tier = 0"
+        "   AND upper_inf(c.sys_period)"
+        "   AND {PUB_CLAIM_GATE}"
+        "   AND (c.subject_id IN (" + _PAGE_ENTITY_SQL + ")"
+        "        OR c.object_entity IN (" + _PAGE_ENTITY_SQL + "))"
         " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
     ),
     # P35.33 (J3 §3.1–3.3 + K9 C-4…C-7 + K10 C-13): the transparency
@@ -5713,6 +5763,58 @@ def build_spine_export(
         len(notice_rows),
         sum(1 for r in notice_rows if r.relevance == "surveillance_related"),
     )
+
+    # --- P36.41 (K2 §4.2/§6.2 / A-10, R11-K13-GX-05a, ``sig.entity-page/1``) --
+    # The contract-A entity twins — organisations, agencies and portals with
+    # their relationship rows and degree-only facts. A registry auto-allowed
+    # (keyed) entity emits one twin per compartment its facts license to —
+    # ``web/entity/<url_type>/<slug>--<hash>/index.<comp>.json`` — schema-
+    # registered so the release descriptor lists it (SIG-EXPORT-014). A
+    # ``not_yet_reviewed`` organisation emits no twin (its typed state rides
+    # ``labels/<comp>.jsonl`` — no key, no URL, never a broken page); a
+    # withheld or person entity emits nothing, ever.
+    page_identifiers: dict[str, list[tuple[str, str]]] = {}
+    for row in raw.get("entity_labels") or []:
+        try:
+            page_identifiers.setdefault(str(row[0]), []).append((str(row[1]), str(row[2])))
+        except (TypeError, IndexError):
+            continue
+    page_entity_types: dict[str, str] = {}
+    for row in raw.get("label_entities") or []:
+        try:
+            page_entity_types[str(row[0])] = str(row[1])
+        except (TypeError, IndexError):
+            continue
+    page_resolutions: dict[tuple[str, str], Mapping[str, Any]] = {}
+    for _res in raw.get("materialized_resolutions") or []:
+        try:
+            page_resolutions[(str(_res["subject_id"]), str(_res["predicate_id"]))] = _res
+        except (KeyError, TypeError):
+            continue
+    for path, (page_doc, page_comp) in sorted(
+        entity_page.entity_page_artifacts(
+            label_registry,
+            claim_rows=raw.get("entity_page_claims") or [],
+            edge_rows=m_edges,
+            identifiers=page_identifiers,
+            entity_types=page_entity_types,
+            resolutions=page_resolutions,
+            lineage=lineage_by_claim or {},
+            source_names=source_names,
+            entity_comps=label_comps,
+            default_compartment=sig_compartment,
+            publication=build_spec.release_id(),
+            generated_at=generated_at,
+            as_of=build_spec.as_of_snapshot,
+            retrieval=retrieval,
+            registry_license=registry,
+        ).items()
+    ):
+        web_artifacts[path] = _web_bytes(page_doc)
+        web_licenses[path] = str(comp_licenses.get(page_comp, _SIG_SPDX))
+        web_compartments[path] = page_comp
+        web_schemas[path] = entity_page.ENTITY_PAGE_SCHEMA
+        web_counts[path] = (1, 1)
 
     disclosure = _terms_disclosure_payload(
         slices.rows_by_compartment,

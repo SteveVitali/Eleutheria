@@ -82,9 +82,11 @@ export const NAV_SECTIONS: NavSection[] = [
     landing: "entity/",
     items: [
       { label: "Entity hub", route: "entity/" },
-      { label: "Organizations", route: "entity/organization/" },
+      { label: "Organisations", route: "entity/org/" },
+      { label: "Government bodies", route: "entity/agency/" },
+      { label: "Registry portals", route: "entity/portal/" },
     ],
-    match: ["entity/", "organization/"],
+    match: ["entity/"],
   },
   {
     id: "watch",
