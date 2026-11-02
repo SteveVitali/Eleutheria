@@ -484,6 +484,49 @@ export function sortRoute(view: TableView, key: string, dir: SortDir): string {
   return `${VIEWS[view].routeBase}sort/${key}/${dir}/`;
 }
 
+// ---------------------------------------------------------------------------
+// Pagination (K9 §6.1's fallback): a build check — the ADR-155 T1 document
+// budget, measured by the export-mode budgets leg — found the full row set
+// over the 150 KiB ceiling, so every table route paginates its sorted row
+// set at SOURCES_TABLE_PAGE_SIZE rows with sort preserved across pages.
+// Page 1 is the route itself; `page/<n>/` carries the continuations. The
+// fixtures corpus fits one page, so no continuation routes emit there.
+// ---------------------------------------------------------------------------
+
+/** Rows per table page — sized so the heaviest view's document stays under
+ *  the ratified T1 `documentMaxBytes` with headroom (the row byte weight is
+ *  dominated by the per-cell <Figure> evidence, which the defining standard
+ *  requires; never smoothed, measured by the budgets leg every run). */
+export const SOURCES_TABLE_PAGE_SIZE = 30;
+
+/** Slice `rows` (already in the route's sort order) to page `page` (1-based). */
+export function paginateRows<T>(
+  rows: readonly T[],
+  page: number,
+  size: number = SOURCES_TABLE_PAGE_SIZE,
+): { rows: T[]; page: number; pages: number; total: number } {
+  const total = rows.length;
+  const pages = Math.max(1, Math.ceil(total / size));
+  if (page < 1 || page > pages) {
+    throw new Error(`sources-table: page ${page} outside 1..${pages} (SIG-ENG-042)`);
+  }
+  const start = (page - 1) * size;
+  return { rows: rows.slice(start, start + size), page, pages, total };
+}
+
+/** The continuation page numbers a row set emits — `2..pages` (page 1 is
+ *  the base route; an empty list means the set fits one page and no
+ *  `page/<n>/` route emits). */
+export function pageNumbers(total: number, size: number = SOURCES_TABLE_PAGE_SIZE): number[] {
+  const pages = Math.ceil(total / size);
+  return Array.from({ length: Math.max(0, pages - 1) }, (_, i) => i + 2);
+}
+
+/** The continuation route for a base path — page 1 is the base itself. */
+export function pageRoute(base: string, page: number): string {
+  return page <= 1 ? base : `${base}page/${page}/`;
+}
+
 /** Every sort route a view emits (the getStaticPaths contract). */
 export function sortRoutesFor(view: TableView): { col: string; dir: SortDir }[] {
   const out: { col: string; dir: SortDir }[] = [];
@@ -592,20 +635,36 @@ export function facetRoute(dim: string, value: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// The A–Z jump list — in-page anchors (one un-paginated page per view;
-// letters key the FIRST row of each initial letter on the default sort).
+// The A–Z jump list — in-page anchors on the name sort (letters key the
+// FIRST row of each initial letter). Under pagination (K9 §6.1's fallback)
+// a letter's anchor lives on the name-sorted page that row lands on, so each
+// entry carries its `page` and the nav links across the continuation routes.
 // ---------------------------------------------------------------------------
 
 export function azIndex(rows: readonly TableRow[]): { letter: string; anchorId: string }[] {
+  return azPaged(rows).map(({ letter, anchorId }) => ({ letter, anchorId }));
+}
+
+/** The A–Z index with each letter's name-sorted page (1-based) — the nav
+ *  links to `pageRoute(base, letter.page)#anchorId`. */
+export function azPaged(
+  rows: readonly TableRow[],
+  size: number = SOURCES_TABLE_PAGE_SIZE,
+): { letter: string; anchorId: string; page: number }[] {
   const seen = new Set<string>();
-  const out: { letter: string; anchorId: string }[] = [];
-  for (const r of sortTable(rows, "source", "asc")) {
+  const out: { letter: string; anchorId: string; page: number }[] = [];
+  const nameSorted = sortTable(rows, "source", "asc");
+  nameSorted.forEach((r, pos) => {
     const letter = (nameKey(r.name)[0] ?? "#").toLocaleUpperCase();
     const key = /[A-Z]/.test(letter) ? letter : "#";
-    if (seen.has(key)) continue;
+    if (seen.has(key)) return;
     seen.add(key);
-    out.push({ letter: key, anchorId: `az-${key === "#" ? "other" : key}` });
-  }
+    out.push({
+      letter: key,
+      anchorId: `az-${key === "#" ? "other" : key}`,
+      page: Math.floor(pos / size) + 1,
+    });
+  });
   return out;
 }
 

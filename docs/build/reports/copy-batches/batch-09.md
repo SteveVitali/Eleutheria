@@ -58,6 +58,12 @@ DATA (dates, counts, hosts, licence ids), not drafted copy.
 | title | /sources/runs/ | Sources — runs and freshness | 6fa5a2ae2d96dac6ced55671abcb6880a7f672998d761aac9029612f899adc1c | pending |
 | title | /sources/rights/ | Sources — rights and downloads | 299fe49e568c87eae981a8a072afb0a13182e0ba9067bbee71658cefd16db68f | pending |
 | ST-33 | /sources/<table>/ | One-dimension filter — the full menu is below. No facet combination is pre-rendered; the CSV carries every row for multi-dimension work. | 88e18a871ff6ba814ac92beff25ea454b1a06965537351c214a8f6ecf60906af | pending |
+| ST-34 | /sources/<table>/ | Pages: | 0f36bbc96bf26dbbc00740973db0e3b1d509ab24e0fe64ae9e90bea494b6f1c1 | pending |
+| ST-35 | /sources/<table>/ | first | a7937b64b8caa58f03721bb6bacf5c78cb235febe0e70b1b84cd99541461a08e | pending |
+| ST-36 | /sources/<table>/ | ‹ previous | a02ed4a2b620f9f3276fb50f9ffa1f0aa9f5bfa171549ba6dbf1cbcc5618f436 | pending |
+| ST-37 | /sources/<table>/ | next › | 93d4f7f677800a6cce5425c8657605e40ebb454a76c20c5656e801a17bb730ac | pending |
+| ST-38 | /sources/<table>/ | last | 3547cb112ac4489af2310c0626cdba6f3097a2ad5a3b42ddd3b59c76c7a079a3 | pending |
+| ST-39 | /sources/<table>/ | Page {page} of {pages} — rows {start}–{end} of {total} rows | ba84cb051806f3004f11f71bfb223606b41905573e3a668deecaeac5b8b51d03 | pending |
 
 <!-- P36.48 supersession notes (append-only): batch-01 SL-01 ("Sources and
      licences") is superseded by ST-01 ("Sources") — the `/sources/` title

@@ -20,10 +20,18 @@ import {
   type FigureSpec,
 } from "../lib/figures";
 import {
+  azAnchorFor,
+  azPaged,
   facetMenu,
   facetRoute,
   facetRows,
   getTableRows,
+  pageRoute,
+  paginateRows,
+  SOURCES_TABLE_PAGE_SIZE,
+  sortRoute,
+  sortTable,
+  VIEWS,
   type SortDir,
   type TableRow,
   type TableView,
@@ -37,12 +45,49 @@ export interface Props {
   sortDir?: SortDir;
   /** A facet page filters the row set (the default sort renders — K9 §6.1). */
   facet?: { dim: string; value: string };
+  /** The continuation page (1-based; the base route is page 1 — K9 §6.1's
+   *  budget-triggered pagination fallback). */
+  page?: number;
 }
 
-const { view, sortKey = "source", sortDir = "asc", facet } = Astro.props;
+const { view, sortKey, sortDir, facet, page = 1 } = Astro.props;
 const { rows: allRows, rowIndex } = getTableRows();
-const rows = facet ? facetRows(allRows, facet.dim, facet.value) : allRows;
+const fullSet = facet ? facetRows(allRows, facet.dim, facet.value) : allRows;
 const menu = facetMenu(allRows);
+// The active sort — a facet page renders the default (name asc, K9 §6.1).
+const activeSortKey = facet ? "source" : (sortKey ?? "source");
+const activeDir = facet ? "asc" : (sortDir ?? "asc");
+// This route's base path — the pager continues INSIDE it (`…/page/<n>/`).
+const routeBase = facet
+  ? facetRoute(facet.dim, facet.value)
+  : sortKey === undefined
+    ? VIEWS[view].routeBase
+    : sortRoute(view, activeSortKey, activeDir);
+const ordered = sortTable(fullSet, activeSortKey, activeDir);
+const paged = paginateRows(ordered, page);
+const rows = paged.rows;
+const nameSorted = sortTable(fullSet, "source", "asc");
+const isNameSort = activeSortKey === "source" && activeDir === "asc";
+
+// The A–Z jump list (K9 C-5, overview family only): each letter links to
+// the name-sorted page its first row lands on — the facet base when the
+// row set is filtered, the canonical `/sources/` pagination otherwise.
+const azBase = facet ? facetRoute(facet.dim, facet.value) : "sources/";
+const azEntries = view === "overview" ? azPaged(nameSorted) : [];
+const azLetters = azEntries.map((l) => ({
+  letter: l.letter,
+  href: `${withBase(pageRoute(azBase, l.page))}#${l.anchorId}`,
+}));
+// The `az-<letter>` anchor ids render only where the name sort itself
+// renders (a letter's first row exists only there) — absent on the other
+// sort orders, where the letters still navigate to the canonical pages.
+const azAnchors = new Map<string, string>();
+if (isNameSort) {
+  for (const row of rows) {
+    const anchor = azAnchorFor(row, azEntries, nameSorted);
+    if (anchor) azAnchors.set(row.sourceId, anchor);
+  }
+}
 
 // JSON pointers are built through a non-literal slash so the root-absolute
 // containment rule never counts a pointer as a site path (the source-page
@@ -129,20 +174,38 @@ for (const row of rows) {
     });
   }
 }
+// One figure per dimension — the dim's whole value/count list sits inside
+// the region (the distribution is the figure; 12 dims keep the repeated
+// evidence line off every value on a page that repeats the menu per route).
 for (const dim of menu) {
-  for (const v of dim.values) {
-    specs.push({
-      id: `facet-${dim.dim.key}-${slug(v.value)}`,
-      class: "headline",
-      value: v.count,
-      artifact: SRC_ARTIFACT,
-      pointer: ROOT_POINTER,
-      definition: "#facets-heading",
-      href: artifactHref(SRC_ARTIFACT),
-      breakdown: `#facet-${dim.dim.key}`,
-      targets: [],
-    });
-  }
+  const classified = dim.values.reduce((n, v) => n + v.count, 0);
+  specs.push({
+    id: `facet-${dim.dim.key}`,
+    class: "headline",
+    value: classified,
+    artifact: SRC_ARTIFACT,
+    pointer: ROOT_POINTER,
+    definition: "#facets-heading",
+    href: artifactHref(SRC_ARTIFACT),
+    breakdown: `#facet-${dim.dim.key}`,
+    targets: [],
+  });
+}
+if (paged.pages > 1) {
+  // The pager's position numeral — "Page <n> of <m>", the row window — is
+  // one figure over the row set (the page-size constant is build config,
+  // not a measured fact).
+  specs.push({
+    id: "table-page",
+    class: "headline",
+    value: paged.total,
+    artifact: SRC_ARTIFACT,
+    pointer: ROOT_POINTER,
+    definition: "#table-heading",
+    href: artifactHref(SRC_ARTIFACT),
+    breakdown: "#fig-table-page",
+    targets: [],
+  });
 }
 const FIGURES = defineFigures(pageId, specs);
 const figFor = (row: TableRow, cell: string): FigureSpec | undefined => {
@@ -196,7 +259,7 @@ const HEADER_COPY: Record<string, string> = {
       {menu.map(({ dim, values }) => (
         <div id={`facet-${dim.key}`} data-testid="facet-dim" data-dim={dim.key}>
           <dt>{dim.label}</dt>
-          <dd>
+          <Figure figure={fig(`facet-${dim.key}`)} tag="dd" order="inline">
             {values.map((v, i) => (
               <>
                 {i > 0 && " "}
@@ -209,10 +272,10 @@ const HEADER_COPY: Record<string, string> = {
                 >
                   {v.value}
                 </a>{" "}
-                <Figure figure={fig(`facet-${dim.key}-${slug(v.value)}`)} order="inline">({fmtInt(v.count)})</Figure>
+                ({fmtInt(v.count)})
               </>
             ))}
-          </dd>
+          </Figure>
         </div>
       ))}
     </dl>
@@ -221,12 +284,35 @@ const HEADER_COPY: Record<string, string> = {
   <SourcesTable
     view={view}
     rows={rows}
-    sortKey={facet ? "source" : sortKey}
-    sortDir={facet ? "asc" : sortDir}
+    sortKey={activeSortKey}
+    sortDir={activeDir}
     caption={facet ? `Sources where ${facet.dim} is ${facet.value}` : undefined}
     figureSpecs={figFor}
     headerCopyIds={HEADER_COPY}
+    azLetters={azLetters}
+    azAnchors={azAnchors}
   />
+
+  {paged.pages > 1 && (
+    <nav class="sig-pager" aria-label="Sources table pages" data-testid="table-pager">
+      <span class="sig-sort__label" data-copy="ST-34">Pages:</span>{" "}
+      {paged.page > 1
+        ? <a href={withBase(routeBase)} data-testid="pager-first" data-copy="ST-35">first</a>
+        : <strong aria-current="page" data-copy="ST-35">first</strong>}{" "}
+      {paged.page > 1 && (
+        <a href={withBase(pageRoute(routeBase, paged.page - 1))} data-testid="pager-prev" data-copy="ST-36">‹ previous</a>
+      )}{" "}
+      <Figure figure={fig("table-page")} order="inline">
+        <span data-copy="ST-39">Page {paged.page} of {paged.pages} — rows {(paged.page - 1) * SOURCES_TABLE_PAGE_SIZE + 1}–{Math.min(paged.page * SOURCES_TABLE_PAGE_SIZE, paged.total)} of {fmtInt(paged.total)}</span>
+      </Figure>{" "}
+      {paged.page < paged.pages && (
+        <a href={withBase(pageRoute(routeBase, paged.page + 1))} data-testid="pager-next" data-copy="ST-37">next ›</a>
+      )}{" "}
+      {paged.page < paged.pages
+        ? <a href={withBase(pageRoute(routeBase, paged.pages))} data-testid="pager-last" data-copy="ST-38">last</a>
+        : <strong aria-current="page" data-copy="ST-38">last</strong>}
+    </nav>
+  )}
 
   <p data-copy="ST-28">
     Download this table:{" "}
