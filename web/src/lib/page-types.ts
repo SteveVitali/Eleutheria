@@ -227,13 +227,34 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
       "JUR-05's `/id/<type>/<uuid>` static fallback — the canonical-id alias resolves through the one redirect generator; the stub is the no-include answer.",
   },
   {
-    patterns: ["/sources/**"],
+    patterns: ["/sources/", "/sources/identifier-changed/"],
     type: "T1",
     owner: "P34.17",
     contract: "sig.source-licence-table/1",
     noJsEquivalent: SELF,
     examples: ["/sources/", "/sources/identifier-changed/"],
-    notes: "K9's sources table and source pages (a T1 ≤ 15 KiB enhancement row, never a fourth T2 surface — K0 §4.2).",
+    notes:
+      "The interim sources-and-licences table (P34.17) + the id-change note — literal rows so `/sources/<id>/` resolves to the source-page contract.",
+  },
+  {
+    patterns: ["/sources/*/"],
+    type: "T1",
+    owner: "P36.47",
+    contract: "sig.source-page/2",
+    noJsEquivalent: SELF,
+    examples: ["/sources/okc_camera_registry/"],
+    notes:
+      "P36.47 (UX10-3a): the per-source page A — a T1 zero-JS content page (K0 §4.2: never a fourth T2 surface). `/sources/<id>/<sub>/` (runs/captures/versions…) classifies through the `/sources/**` umbrella until page B (P36.69) claims it.",
+  },
+  {
+    patterns: ["/sources/**"],
+    type: "T1",
+    owner: "P36.69",
+    contract: "sig.source-page/2",
+    noJsEquivalent: SELF,
+    examples: ["/sources/okc_camera_registry/runs/"],
+    notes:
+      "The source-page sub-routes — page B (P36.69 / UX10-3b) claims runs/captures/versions/targets/entities/dossiers/changelog; registered ahead so no route ships unclassified.",
   },
   {
     patterns: ["/data-freshness/**"],

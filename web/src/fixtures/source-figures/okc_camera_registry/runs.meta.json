@@ -1,0 +1,53 @@
+{
+  "cap_actions": [],
+  "desc": {
+    "as_of_world": "2026-08-20",
+    "categories": 0,
+    "events": 3,
+    "series": [],
+    "title": "Recorded runs for OKC camera registry",
+    "unit": "executions"
+  },
+  "edge_count": 0,
+  "gzip_bytes": 377,
+  "legend": [],
+  "mode": "strip",
+  "narrow_viewbox": [
+    360,
+    108.0
+  ],
+  "node_count": 3,
+  "schema": "sig.figure-chart-meta/1",
+  "size_bytes": 875,
+  "svg_narrow_bytes": 879,
+  "table_columns": [
+    "date",
+    "event",
+    "kind",
+    "href"
+  ],
+  "table_rows": [
+    {
+      "date": "2026-09-15",
+      "event": "ok \u2014 38 claims inserted",
+      "href": null,
+      "kind": "ok"
+    },
+    {
+      "date": "2026-10-01",
+      "event": "partial \u2014 36 claims inserted",
+      "href": null,
+      "kind": "partial"
+    },
+    {
+      "date": "2026-10-15",
+      "event": "ok \u2014 38 claims inserted",
+      "href": null,
+      "kind": "ok"
+    }
+  ],
+  "viewbox": [
+    720,
+    108.0
+  ]
+}

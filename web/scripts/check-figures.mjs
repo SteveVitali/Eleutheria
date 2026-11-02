@@ -62,6 +62,11 @@ const PER_DOSSIER_RE = /^web\/dossiers\/[a-z0-9-]+(\/[a-z0-9-]+)*\.json$/;
 const LABEL_STREAM_RE = /^labels\/[a-z0-9_]+\.jsonl$/;
 const ENTITY_TWIN_RE =
   /^web\/entity\/[a-z0-9-]+\/[a-z0-9][a-z0-9-]*--[a-z0-9]+\/index\.[a-z0-9_]+\.json$/;
+/** Byte-identical to TRANSPARENCY_SOURCE_RE in src/lib/figures.ts (pinned by
+ *  test): the per-source transparency streams — unbounded like the
+ *  compartment streams, admitted by pattern (P36.46/P36.47). */
+const TRANSPARENCY_SOURCE_RE =
+  /^transparency\/sources\/[a-z0-9_-]+\/(executions|captures|targets|issues)\.jsonl$/;
 
 /** The J3 §5.4 named page classes → dist globs. P36.36 (MAP-05): the dossier
  * class boundary — `/dossier/<path>/sites/**` is the map's no-JS list surface
@@ -119,6 +124,7 @@ function isListed(path, listed) {
     COMPARTMENT_STREAM_RE.test(path) ||
     LABEL_STREAM_RE.test(path) ||
     ENTITY_TWIN_RE.test(path) ||
+    TRANSPARENCY_SOURCE_RE.test(path) ||
     (PER_DOSSIER_RE.test(path) && path !== "web/dossiers/index.json")
   );
 }
