@@ -961,7 +961,7 @@ class SpineExport:
     #: set — they supersede the bundle-scope copies the bundle wrote.
     metadata_artifacts: dict[str, bytes] = field(default_factory=dict)
 
-    def write_to(self, out_dir: Path | str) -> Path:
+    def write_to(self, out_dir: Path | str, *, signing_secret_b64: str | None = None) -> Path:
         """Materialise the whole export under ``out_dir`` (deterministic bytes)."""
         root = Path(out_dir)
         # 1) the compartmented bundle data tables + descriptors.
@@ -986,7 +986,18 @@ class SpineExport:
             target.write_bytes(data)
         # 4) the EXTENDED manifest (bundle + web + provenance + exclusions + metadata).
         (root / "manifest.json").write_bytes(self.manifest.to_bytes())
+        # 5) P36.50 (SIG-TRANSP-018, D-J3-8 = a): SHA256SUMS over every
+        #    manifest-listed member + manifest.json; the pipeline minisign
+        #    signature + public key land beside it when the OP-20 key is
+        #    provisioned (``signing_secret_b64`` — never a repo file).
+        from . import downloads as _dl
+
+        _dl.write_integrity_files(root, signing_secret_b64=signing_secret_b64)
         return root
+
+    def write_signed_to(self, out_dir: Path | str, signing_secret_b64: str) -> Path:
+        """Convenience wrapper kept for the pipeline call site."""
+        return self.write_to(out_dir, signing_secret_b64=signing_secret_b64)
 
     def summary(self) -> dict[str, Any]:
         """A deterministic build summary for the CLI (no timestamps of its own)."""
@@ -4970,6 +4981,8 @@ def build_spine_export(
     cadence_sources: Mapping[str, Mapping[str, str]] | None | object = _UNSET,
     scheduler_drift: Mapping[str, bool] | None = None,
     previous_entity_history: Sequence[Mapping[str, Any]] | None = None,
+    download_signing: bool = False,
+    mirror_registry_path: Path | None = None,
 ) -> SpineExport:
     """Assemble the national :class:`SpineExport` (pure — no database).
 
@@ -5859,6 +5872,14 @@ def build_spine_export(
     web_compartments[eval_path] = _WEB_COMPARTMENT
     web_schemas[eval_path] = "sig.resolution-eval/1"
 
+    # P36.50 (R11-K13-TX-10b, J3 §6.2/§6.7 — SIG-TRANSP-014/015): per-bundle
+    # ATTRIBUTION.txt/LICENCE.txt + the per-source slices (the K9 C-8
+    # statements slice + sites where applicable) — emitted from the same
+    # compartment payload the JSON form carries so the captured terms and the
+    # operator-accepted basis (ADR-183, no withdrawal) read identically.
+    from . import downloads as _dl
+
+    _comp_attribution_payloads: dict[str, dict[str, Any]] = {}
     for comp, rows in sorted(slices.rows_by_compartment.items()):
         comp_license = str(comp_licenses.get(comp, _SIG_SPDX))
         payload = _compartment_attribution(
@@ -5873,10 +5894,57 @@ def build_spine_export(
         )
         if payload is None:
             continue
+        _comp_attribution_payloads[comp] = payload
         path = f"{comp}/ATTRIBUTION.json"
         web_artifacts[path] = _web_bytes(payload)
         web_licenses[path] = comp_license
         web_compartments[path] = comp
+        path = f"{comp}/ATTRIBUTION.txt"
+        web_artifacts[path] = _dl.attribution_txt(payload, title=f"{comp} compartment")
+        web_licenses[path] = comp_license
+        web_compartments[path] = comp
+        path = f"{comp}/LICENCE.txt"
+        web_artifacts[path] = _dl.licence_txt(
+            comp_license,
+            policy_license_url(comp_license, registry),
+            compartment=comp,
+        )
+        web_licenses[path] = comp_license
+        web_compartments[path] = comp
+
+    # Per-source slices — one ``by-source/<id>/`` bundle per source whose
+    # rows landed in a compartment: its sites slice (when it contributes
+    # site rows), its per-source statements slice (K9 C-8), and its own
+    # ATTRIBUTION.txt/LICENCE.txt. A required-but-empty attribution refuses
+    # (SIG-TRANSP-015) — the slice inherits the compartment licence, never a
+    # re-computed one.
+    _slice_ids_by_comp: dict[str, dict[str, frozenset[str]]] = {
+        comp: _dl.slice_source_ids([{"source_id": r.source_id} for r in rows])
+        for comp, rows in slices.rows_by_compartment.items()
+    }
+    for comp, by_source in sorted(_slice_ids_by_comp.items()):
+        comp_license = str(comp_licenses.get(comp, _SIG_SPDX))
+        license_url = policy_license_url(comp_license, registry)
+        sites_csv = bundle.artifact_bytes.get(f"{comp}/sites.csv")
+        statements = web_artifacts.get(f"{comp}/statements.jsonl")
+        for sid, slice_ids in sorted(by_source.items()):
+            files, counts = _dl.emit_source_slice(
+                sid,
+                sites_csv=sites_csv,
+                statements_jsonl=statements,
+                slice_ids=slice_ids,
+                attribution_payload=_comp_attribution_payloads.get(comp),
+                license_id=comp_license,
+                license_url=license_url,
+            )
+            for path, data in files.items():
+                web_artifacts[path] = data
+                web_licenses[path] = comp_license
+                web_compartments[path] = comp
+                if path.endswith((".jsonl.gz", ".csv.gz")):
+                    web_counts[path] = (counts.get(path, 0), None)
+                    if path.endswith("statements.jsonl.gz"):
+                        web_schemas[path] = _stmt.STATEMENT_SCHEMA
 
     # --- P34.21b (E2-12): the dated attribution-correction record ------------
     # The /sources/ note renders only when THIS export's effective rights
@@ -6035,6 +6103,13 @@ def build_spine_export(
         provenance=provenance,
         provenance_jsonld=provenance_jsonld,
         exclusions=exclusions,
+        downloads_ctx={
+            "release_id": build_spec.release_id(),
+            "generated_at": generated_at,
+            "mirror": _dl.mirror_posture(mirror_registry_path),
+            "signed": download_signing,
+            "source_names": source_names,
+        },
     )
     return SpineExport(
         bundle=bundle,
@@ -6122,6 +6197,7 @@ def _extended_manifest(
     web_compartments: Mapping[str, str] | None = None,
     web_schemas: Mapping[str, str] | None = None,
     web_counts: Mapping[str, tuple[int, int | None]] | None = None,
+    downloads_ctx: Mapping[str, Any] | None = None,
 ) -> tuple[Manifest, dict[str, bytes]]:
     """Extend the bundle manifest with the web JSONs, tiles, provenance, exclusions.
 
@@ -6239,6 +6315,11 @@ def _extended_manifest(
     for art in artifacts:
         res = CR.assert_path_documented(art.path)
         if res is None:
+            if art.path.startswith("by-source/"):
+                # P36.50: the per-source slice directory is documented once
+                # as a pattern, not one row per emitted file (the dictionary
+                # page would otherwise list every slice file).
+                continue
             doc: dict[str, Any] = {
                 "path": art.path,
                 "media_type": art.media_type,
@@ -6341,6 +6422,27 @@ def _extended_manifest(
             "license": _SIG_SPDX,
         },
     ]
+    if downloads_ctx is not None:
+        dict_documents += [
+            {
+                "path": "by-source/<source_id>/",
+                "media_type": "directory",
+                "description": (
+                    "per-source slice directory — the source's sites.csv.gz "
+                    "(when it contributes site rows), its statements.jsonl.gz "
+                    "slice (the K9 C-8 per-source statements slice, sharing "
+                    "the compartment statements row schema) and its own "
+                    "ATTRIBUTION.txt/LICENCE.txt bundle files"
+                ),
+            },
+            {
+                "path": "web/downloads.json",
+                "media_type": "application/json",
+                "compartment": _WEB_COMPARTMENT,
+                "license": _SIG_SPDX,
+                "schema": "sig.download-listing/1",
+            },
+        ]
     dict_bytes = canonical_json(
         CR.dictionary_document(
             build_spec=bundle.build_spec,
@@ -6379,6 +6481,40 @@ def _extended_manifest(
             data=catalog_bytes,
         )
     )
+
+    # P36.50 (R11-K13-TX-10b, SIG-TRANSP-014/018, SIG-UI-082): the downloads
+    # listing ``web/downloads.json`` — every downloadable file with licence,
+    # format, size, row count and sha256, grouped by compartment / per-source
+    # slice / release-integrity / transparency-metadata, plus the R2-host
+    # download links (A-3 = a) and the signature block (D-J3-8 = a; the
+    # ``unsigned`` state is declared, never silent). Emitted last so the
+    # listing covers every other artifact; the listing names itself in the
+    # note rather than listing its own checksum.
+    if downloads_ctx is not None:
+        from . import downloads as _dl2
+
+        listing_bytes = canonical_json(
+            _dl2.download_listing(
+                artifacts,
+                release_id=str(downloads_ctx["release_id"]),
+                generated_at=str(downloads_ctx["generated_at"]),
+                mirror=dict(downloads_ctx["mirror"]),
+                signed=bool(downloads_ctx.get("signed")),
+                source_names=dict(downloads_ctx.get("source_names") or {}),
+            )
+        )
+        metadata_bytes["web/downloads.json"] = listing_bytes
+        artifacts.append(
+            Artifact.of(
+                name="downloads.json",
+                path="web/downloads.json",
+                media_type="application/json",
+                compartment=_WEB_COMPARTMENT,
+                license=_SIG_SPDX,
+                data=listing_bytes,
+                schema="sig.download-listing/1",
+            )
+        )
 
     return (
         Manifest(build_spec=bundle.build_spec, artifacts=tuple(artifacts)),
@@ -6613,6 +6749,7 @@ def run_spine_export(
     cadence_sources: Mapping[str, Mapping[str, str]] | None | object = _UNSET,
     scheduler_drift: Mapping[str, bool] | None = None,
     previous_entity_history: Sequence[Mapping[str, Any]] | None = None,
+    download_signing: bool = False,
 ) -> SpineExport:
     """Execute the read-only reads and assemble the national export.
 
@@ -6787,6 +6924,7 @@ def run_spine_export(
         cadence_sources=cadence_sources,
         scheduler_drift=scheduler_drift,
         previous_entity_history=previous_entity_history,
+        download_signing=download_signing,
     )
 
 

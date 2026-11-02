@@ -150,12 +150,12 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
   {
     patterns: ["/releases/*/data/**"],
     type: "T0",
-    owner: "P32.13",
-    contract: "sig.publication-catalog/1",
+    owner: "P36.50",
+    contract: "sig.download-listing/1",
     noJsEquivalent: SELF,
-    examples: ["/releases/p-abc123/data/catalog/"],
+    examples: ["/releases/p-abc123/data/", "/releases/p-abc123/data/catalog/"],
     notes:
-      "K0's `/releases/<pub>/data/**` listings — machine-readable release data listings are record-class pages.",
+      "K0's `/releases/<pub>/data/**` listings — the immutable downloads listing (P36.50, SIG-TRANSP-014/018) rendered by release_pages.py from the bound sig.download-listing/1; machine-readable release data listings are record-class pages.",
   },
   {
     patterns: [
@@ -348,6 +348,16 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
     examples: ["/releases/"],
     notes:
       "The release index — internal/injected today. Only `/releases/` itself is T1; `/releases/<pub>/data/**` is T0 and anything deeper fails closed until a row claims it.",
+  },
+  {
+    patterns: ["/data/", "/data/api/"],
+    type: "T1",
+    owner: "P36.50",
+    contract: "sig.download-listing/1",
+    noJsEquivalent: SELF,
+    examples: ["/data/", "/data/api/"],
+    notes:
+      "P36.50 (TX-10b, SIG-TRANSP-014): the downloads center — `/data/` renders the latest activated release's `sig.download-listing/1` (mutable convenience view; the immutable listing lives at `/releases/<pub>/data/`, T0); `/data/api/` documents the JSON twins + rate limits (J3 §6.10).",
   },
   {
     patterns: ["/data/**"],

@@ -86,6 +86,7 @@ from .release_pages import (
     jurisdiction_page,
     namespace_landing,
     record_page,
+    downloads_listing_page,
     release_landing,
     release_stamp_view,
     releases_index,
@@ -1422,6 +1423,46 @@ def build_release(
         compartment="metadata",
         licence="CC-BY-4.0",
     )
+
+    # P36.50 (R11-K13-TX-10b, SIG-TRANSP-014/018): the immutable downloads
+    # listing at /releases/<pub>/data/ — the export's sig.download-listing/1
+    # bound to this publication id, the T0 listing page, and bound copies of
+    # the integrity files (SHA256SUMS + the minisign pair when signed).
+    _dl_src = export_dir / "web" / "downloads.json"
+    if _dl_src.is_file():
+        bound = _read_json(_dl_src)
+        bound["publication_id"] = pub
+        if release_label is not None:
+            bound["release"] = {
+                "label": release_label,
+                "publication_id": pub,
+                "as_of_world": release_as_of_world,
+            }
+        emit(
+            f"releases/{pub}/data/download_listing.json",
+            canonical_json(bound),
+            compartment="metadata",
+            licence="CC-BY-4.0",
+        )
+        emit(
+            f"releases/{pub}/data/index.html",
+            downloads_listing_page(bound, stamp=release_stamp),
+            compartment="metadata",
+            licence="CC-BY-4.0",
+        )
+        for _side in (
+            "SHA256SUMS",
+            "SHA256SUMS.minisig",
+            "sig-release.minisign.pub",
+        ):
+            _sp = export_dir / _side
+            if _sp.is_file():
+                emit(
+                    f"releases/{pub}/data/{_side}",
+                    _sp.read_bytes(),
+                    compartment="metadata",
+                    licence="CC-BY-4.0",
+                )
     # The namespace root landing (P34.41 / C4 NEW-29): ``/r/<pub>/`` resolves
     # to a real page — never a 403 from a directory with no index. Immutable
     # like every other ``r/`` byte; covered by the manifest below.

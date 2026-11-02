@@ -59,6 +59,7 @@ import {
   SOURCE_ROWS_DOC_FIXTURE,
 } from "../src/lib/source-counts";
 import { DICTIONARY_FIXTURE } from "../src/lib/dictionary-fixture";
+import { DOWNLOAD_LISTING_FIXTURE } from "../src/lib/downloads-fixture";
 import { AS_OF, RULESET_VERSION } from "../src/lib/fixtures";
 
 // The repository root — import.meta.url is NOT stable across the esbuild
@@ -323,6 +324,14 @@ write(
 // The express-terms disclosure (sig.terms-disclosure/1) — a figure artifact on
 // /sources/; the data layer reads `web/terms_disclosure.json` in export mode.
 write("terms_disclosure.json", TERMS_DISCLOSURE_FIXTURE);
+
+// P36.50 (SIG-TRANSP-014): the downloads listing `web/downloads.json` —
+// emitted at `web/` like the real exporter; the data layer's
+// getDownloadListing reads it there in export mode. When overlaying a real
+// bundle, leave real bytes in place.
+if (!existsSync(join(outDir, "web", "downloads.json"))) {
+  write("downloads.json", DOWNLOAD_LISTING_FIXTURE);
+}
 
 // P35.40 (SIG-TRANSP-002/026/027, K9 §3.3): the source-universe pair the
 // counting surfaces read in export mode — `transparency/counts.json`

@@ -131,6 +131,11 @@ EXTERNAL_LINK_ROUTES: frozenset[str] = frozenset(
         # archive pages link with <link rel="alternate" type="application/ld+json">
         # — an activation overlay object emitted beside releases/catalog.json.
         "releases/catalog.jsonld",
+        # P36.50: the latest-view downloads center + API docs the
+        # /releases/<pub>/data/ page links to (Astro site-shell routes).
+        "data",
+        "data/api",
+        "data/dictionary",
     }
     | {href.strip("/") for _, href in SITE_NAV}
     | {DISPUTE_HREF.strip("/")}
@@ -1589,4 +1594,130 @@ required).</p>
         body=body,
         publication_id=publication_id,
         licence=licence,
+    )
+
+
+# --------------------------------------------------------------------------- #
+# The downloads listing — /releases/<pub>/data/ (P36.50, SIG-TRANSP-014/018)  #
+# --------------------------------------------------------------------------- #
+
+
+def _fmt_size(n: Any) -> str:
+    try:
+        b = int(n)
+    except (TypeError, ValueError):
+        return "—"
+    if b >= 1 << 20:
+        return f"{b / (1 << 20):.1f} MiB"
+    if b >= 1 << 10:
+        return f"{b / (1 << 10):.1f} KiB"
+    return f"{b} B"
+
+
+def downloads_listing_page(
+    listing: Mapping[str, Any],
+    *,
+    stamp: Mapping[str, Any] | None = None,
+) -> bytes:
+    """``/releases/<pub>/data/index.html`` — the immutable downloads listing.
+
+    T0 record page (the registry's ``/releases/*/data/**`` row): every
+    downloadable file of this release with licence, format, size, row count
+    and sha256, grouped the way the listing declares (compartments, per-source
+    slices, release + integrity files, transparency metadata), plus the
+    signature block and the verify instructions. Renders the bound
+    ``sig.download-listing/1`` document verbatim — never a second derivation.
+    """
+    pub = str(listing.get("publication_id") or "")
+    mirror = listing.get("mirror") or {}
+    sig = listing.get("signature") or {}
+    files = {str(f["path"]): f for f in listing.get("files") or []}
+
+    def _row(f: Mapping[str, Any]) -> str:
+        cells = (
+            f'<td><a href="{_e(str(f["href"]))}"><code>{_e(str(f["path"]))}</code></a></td>'
+            f"<td>{_e(str(f.get('format') or ''))}</td>"
+            f"<td>{_e(str(f.get('license') or ''))}</td>"
+            f"<td>{_e(_fmt_size(f.get('byte_size')))}</td>"
+            f"<td>{_e(str(f['row_count']) if f.get('row_count') is not None else '—')}</td>"
+            f"<td><code>{_e(str(f.get('sha256') or '')[:16])}…</code></td>"
+        )
+        return f"<tr>{cells}</tr>"
+
+    sections: list[str] = []
+    for group in listing.get("groups") or []:
+        rows = "".join(_row(files[p]) for p in group.get("files") or [] if p in files)
+        named = [p for p in group.get("files") or [] if p not in files]
+        title = str(group.get("title") or group.get("id") or "")
+        lic = str(group.get("license") or "")
+        head = (
+            f"<h2>{_e(title)}</h2>"
+            f'<p class="mut">Licence: <strong>{_e(lic)}</strong>'
+            + (
+                f" · source <code>{_e(str(group['source_id']))}</code>"
+                if group.get("source_id")
+                else ""
+            )
+            + "</p>"
+        )
+        table = (
+            "<table><thead><tr><th>File</th><th>Format</th><th>Licence</th>"
+            "<th>Size</th><th>Rows</th><th>sha256</th></tr></thead>"
+            f"<tbody>{rows}</tbody></table>"
+            if rows
+            else ""
+        )
+        named_line = (
+            "<p>Named integrity members (self-referential — they are named, "
+            "not listed): " + ", ".join(f"<code>{_e(p)}</code>" for p in named) + "</p>"
+            if named
+            else ""
+        )
+        sections.append(f"<section>{head}{table}{named_line}</section>")
+
+    sig = listing.get("signature") or {}
+    mirror = listing.get("mirror") or {}
+    state = str(sig.get("state") or "unsigned")
+    if state == "signed":
+        sig_text = (
+            "Signed by the SIG release pipeline "
+            f"({_e(str(sig.get('algorithm') or 'minisign'))}) — "
+            f"the signature proves integrity, never approval (SIG-REL-015). "
+            f"Public key: <code>{_e(str(sig.get('public_key_file') or ''))}</code>."
+        )
+    else:
+        sig_text = (
+            "Not yet signed — "
+            + _e(str(sig.get("reason") or "the pipeline key is not provisioned (OP-20)"))
+            + ". "
+            "SHA256SUMS still verifies every byte below."
+        )
+    body = f"""
+<p>This is the citable, immutable downloads listing for this release —
+{_e(str(listing.get("release_id") or ""))}. The mutable convenience view is
+<a href="/data/">/data/</a>; this URL names exactly these bytes forever.</p>
+<p class="mut">Every bundle's <code>ATTRIBUTION.txt</code>/<code>LICENCE.txt</code>
+states the captured terms and the operator-accepted basis verbatim (ADR-183 —
+no withdrawal): a bad bundle is corrected by a new release, never retracted
+silently. The public mirror is <code>{_e(str(mirror.get("base_url") or ""))}</code>
+({_e(str(mirror.get("provider") or ""))} · {_e(str(mirror.get("status") or ""))});
+links are the host's content-hash keys.</p>
+<section><h2>Integrity</h2>
+<p>{sig_text}</p>
+<p>Verify a download: <code>sha256sum -c SHA256SUMS</code> ·
+<code>minisign -Vm SHA256SUMS -p sig-release.minisign.pub</code> · the
+machine-readable listing is <a
+href="/releases/{_e(pub)}/data/download_listing.json"><code>download_listing.json</code></a>.</p></section>
+{"".join(sections)}
+"""
+    return _layout(
+        title="Downloads",
+        body=body,
+        publication_id=pub or None,
+        licence="per compartment (each bundle names its licence)",
+        stamp=stamp,
+        description=(
+            "The immutable downloads listing for this release — every file "
+            "with its licence, size, row count and sha256."
+        ),
     )

@@ -310,6 +310,13 @@ def build_parser() -> argparse.ArgumentParser:
         "manifest.json). This is the shaped intermediate, not the export bundle.",
     )
 
+    downloads = subparsers.add_parser(
+        "downloads", help="Downloads-center integrity: verify an export dir."
+    )
+    dsub = downloads.add_subparsers(dest="verb", required=True)
+    dver = dsub.add_parser("verify", help="Verify SHA256SUMS + minisig over an export dir.")
+    dver.add_argument("--in", dest="indir", required=True)
+
     push = subparsers.add_parser(
         "push",
         help="Upload a built export to an S3-compatible store under content-hash keys.",
@@ -1208,6 +1215,7 @@ def _run_build_from_spine(
         try:
             export = run_spine_export(
                 conn,
+                download_signing=bool(os.environ.get("SIG_RELEASE_MINISIGN_SECRET")),
                 as_of=as_of,
                 belief=belief_instant,
                 note=note,
@@ -1228,7 +1236,8 @@ def _run_build_from_spine(
     finally:
         conn.close()
 
-    export.write_to(out_dir)
+    secret = os.environ.get("SIG_RELEASE_MINISIGN_SECRET") or None
+    export.write_to(out_dir, signing_secret_b64=secret)
     summary = {
         "out_dir": out_dir,
         "spine_label": spine_label,
@@ -1622,6 +1631,18 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.command == "provo":
         return _run_provo(args.lineage_json, args.format)
+    if args.command == "downloads":
+        import json as _json
+
+        from .downloads import verify_downloads
+
+        if args.verb == "verify":
+            report = verify_downloads(args.indir)
+            print(_json.dumps(report, indent=2, sort_keys=True))
+            if report["failures"]:
+                return 3
+            return 0 if report["signed"] else 4
+
     if args.command == "build":
         if args.from_spine:
             if args.request_json is not None or args.jurisdiction is not None:

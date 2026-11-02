@@ -1,0 +1,152 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The downloads center (P36.50, R11-K13-TX-10b / J3 §6, SIG-TRANSP-014/015/018):
+// the latest activated release's download listing — a mutable convenience view
+// labelled "latest; cite the release URL" — rendered from the export's own
+// `sig.download-listing/1`, never a hand-maintained copy. Machine-readable
+// metadata is LINKED, never inlined (D-J3-7 / SIG-UI-082).
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getDownloadListing } from "../../lib/data";
+import { filesByPath, formatBytes } from "../../lib/downloads";
+import { getReleaseStamp } from "../../lib/release-stamp";
+import { withBase } from "../../lib/paths";
+
+const listing = getDownloadListing();
+const stamp = getReleaseStamp();
+const files = filesByPath(listing);
+const metadataBase = stamp ? `releases/${stamp.publicationId}` : null;
+const releaseDataHref = stamp ? `releases/${stamp.publicationId}/data/` : null;
+const sig = listing.signature;
+const mirror = listing.mirror;
+---
+
+<BaseLayout
+  title="Downloads & API"
+  path={withBase("data/")}
+  description="Every downloadable file of the latest release with its licence, format, size, row count and sha256 — compartment bundles, per-source slices, integrity files and transparency metadata."
+>
+  <p data-copy="DL-01">
+    This page lists the downloads of the <strong>latest activated release</strong>
+    {stamp ? (
+      <> — <code>{stamp.label}</code>, data as of {stamp.asOfWorld} — </>
+    ) : (
+      <> built into this site — </>
+    )}
+    a mutable convenience view; cite the fixed release URL below, not this page.
+  </p>
+  <p>
+    The citable, immutable listing:{" "}
+    {releaseDataHref ? (
+      <a href={withBase(releaseDataHref)}><code>/{releaseDataHref}</code></a>
+    ) : (
+      <code>/releases/&lt;pub&gt;/data/</code>
+    )}{" "}
+    · machine-readable:{" "}
+    {releaseDataHref ? (
+      <a href={withBase(`${releaseDataHref}download_listing.json`)}><code>download_listing.json</code></a>
+    ) : (
+      <code>download_listing.json</code>
+    )}{" "}
+    · linked metadata (never inlined): <a href={withBase("data/dictionary/")}>data dictionary</a> ·{" "}
+    {metadataBase ? (
+      <a href={withBase(`${metadataBase}/datapackage.json`)}><code>datapackage.json</code></a>
+    ) : (
+      <code>datapackage.json</code>
+    )}{" "}
+    · <a href={withBase("releases/catalog.jsonld")}><code>catalog.jsonld</code> (DCAT&nbsp;v3)</a> ·{" "}
+    <a href={withBase("provenance.jsonld")}><code>provenance.jsonld</code> (PROV-O)</a> ·{" "}
+    <a href={withBase("data/api/")}>API & JSON twins</a>
+  </p>
+  <p data-copy="DL-02">
+    Downloads are served from the zero-egress mirror{" "}
+    <code>{mirror.base_url}</code> ({mirror.provider}) as content-hash keys — a
+    URL names exactly these bytes forever.{" "}
+    {mirror.enabled
+      ? "The mirror is enabled."
+      : "The mirror is committed-disabled until the publish leg runs; links name the host the objects resolve on once pushed."}
+  </p>
+  <p data-copy="DL-03">
+    Every bundle's <code>ATTRIBUTION.txt</code>/<code>LICENCE.txt</code> states
+    the captured terms and the operator-accepted basis verbatim (no withdrawal —
+    a bad bundle is corrected by a new release, never retracted silently).
+  </p>
+
+  <section aria-labelledby="integrity-heading">
+    <h2 id="integrity-heading">Integrity</h2>
+    {sig.state === "signed" ? (
+      <p data-copy="DL-04">
+        Signed by the SIG release pipeline ({sig.algorithm}) — the signature
+        proves integrity, never approval. Public key:{" "}
+        <code>{sig.public_key_file}</code>.
+      </p>
+    ) : (
+      <p data-copy="DL-05">
+        Not yet signed — {sig.reason}. <code>{sig.checksum_file}</code> still
+        verifies every byte below.
+      </p>
+    )}
+    <p data-copy="DL-06">
+      Verify a download: <code>sha256sum -c {sig.checksum_file}</code> ·{" "}
+      <code>
+        minisign -Vm {sig.checksum_file} -p {sig.public_key_file}
+      </code>
+    </p>
+  </section>
+
+  {listing.groups.map((group) => {
+    const rows = (group.files || []).map((p) => files.get(p)).filter(Boolean);
+    const named = (group.files || []).filter((p) => !files.has(p));
+    return (
+      <section aria-labelledby={`g-${group.id.replace(/[^a-z0-9]/gi, "-")}`}>
+        <h2 id={`g-${group.id.replace(/[^a-z0-9]/gi, "-")}`}>{group.title}</h2>
+        <p class="mut">
+          Licence: <strong>{group.license}</strong>
+          {group.source_id && <> · source <code>{group.source_id}</code></>}
+          {group.compartment && <> · compartment <code>{group.compartment}</code></>}
+        </p>
+        {rows.length > 0 && (
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">File</th>
+                <th scope="col">Format</th>
+                <th scope="col">Licence</th>
+                <th scope="col">Size</th>
+                <th scope="col">Rows</th>
+                <th scope="col">sha256</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((f) => (
+                <tr>
+                  <td><a href={f!.href}><code>{f!.path}</code></a></td>
+                  <td><code>{f!.format}</code></td>
+                  <td>{f!.license}</td>
+                  <td>{formatBytes(f!.byte_size)}</td>
+                  <td>{f!.row_count ?? "—"}</td>
+                  <td><code>{f!.sha256.slice(0, 16)}…</code></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        {named.length > 0 && (
+          <p>
+            Named integrity members (self-referential — named, not listed):{" "}
+            {named.map((p) => <code>{p} </code>)}
+          </p>
+        )}
+      </section>
+    );
+  })}
+
+  <p class="mut" data-copy="DL-07">
+    {listing.counts.files} files · {formatBytes(listing.counts.bytes)} ·{" "}
+    {listing.counts.compartments} compartments · {listing.counts.sources}{" "}
+    per-source slices (each carries its statements slice — the claim-level
+    statements file — plus ATTRIBUTION.txt/LICENCE.txt).
+  </p>
+</BaseLayout>

@@ -167,12 +167,15 @@ def test_the_leg_pushes_content_hash_keys_with_immutable_cache(tmp_path: Path) -
         fetch=lambda url: (403, ""),  # listing denied — the origin stays private
     )
     outcome = leg.push()
-    assert outcome.uploaded == 2 and outcome.skipped == 0
+    # P36.50: manifest.json itself rides a content-hash key beside the two
+    # manifest artifacts (mirrors.toml's `carries` names it).
+    assert outcome.uploaded == 3 and outcome.skipped == 0
     assert outcome.non_listable is True
     for key, kwargs in client.objects.items():
         assert key.startswith("sig-test-1/")  # <release_id>/<path>.<sha12>
         assert kwargs["CacheControl"] == "public, max-age=31536000, immutable"
         assert kwargs["Bucket"] == "sig-bulk"
+    assert any("/manifest." in key for key in client.objects)
 
 
 def test_a_listing_origin_refuses_before_any_upload(tmp_path: Path) -> None:

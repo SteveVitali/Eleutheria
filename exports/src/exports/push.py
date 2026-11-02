@@ -271,8 +271,47 @@ def push_export_dir(
         )
         uploads += 1
         results.append(PushedObject(path, key, sha, len(data), skipped=False))
+    # P36.50 (D-J3-8 = a): the release's integrity members ride the same
+    # content-hash keys — SHA256SUMS, its minisign signature and the public
+    # key, plus manifest.json itself (mirrors.toml's `carries` names them).
+    # Same pacing + request-rate guard as the artifact loop (SIG-TRANSP-019).
+    for side in (
+        "manifest.json",
+        "SHA256SUMS",
+        "SHA256SUMS.minisig",
+        "sig-release.minisign.pub",
+    ):
+        p = Path(export_dir) / side
+        if not p.is_file():
+            continue
+        data = p.read_bytes()
+        sha = sha256_hex(data)
+        key = content_hash_key(release_id, side, sha)
+        if _object_exists(client, store.bucket, key):
+            results.append(PushedObject(side, key, sha, len(data), skipped=True))
+            continue
+        now = clock()
+        while put_times and put_times[0] <= now - 60.0:
+            put_times.popleft()
+        if len(put_times) >= limits.max_requests_per_minute:
+            raise PushRefusal(
+                f"push run refuses: put cadence would exceed "
+                f"{limits.max_requests_per_minute} requests/minute — the run "
+                "stops rather than racing the store (SIG-TRANSP-019)"
+            )
+        if uploads and limits.min_request_interval_s > 0:
+            sleep(limits.min_request_interval_s)
+        put_times.append(now)
+        client.put_object(
+            Bucket=store.bucket,
+            Key=key,
+            Body=data,
+            ContentType=_guess_content_type(side),
+            CacheControl=cache_control,
+        )
+        uploads += 1
+        results.append(PushedObject(side, key, sha, len(data), skipped=False))
     return results
-
 
 def build_s3_client(store: ObjectStore, endpoint_url: str | None = None) -> S3Client:
     """Build a real boto3 S3 client for ``store`` (reusing the evidence-store dependency).
