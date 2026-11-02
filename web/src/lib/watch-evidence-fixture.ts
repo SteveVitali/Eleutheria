@@ -309,7 +309,8 @@ export const SEALED_CLAIM_VIEW: ClaimView = {
  */
 export const DERIVED_ONLY_CLAIM_VIEW: ClaimView = {
   claim_id: "portal-device-count",
-  claim_label: "Active device count",
+  // A distinct label — QW-11 requires a unique <title> per route.
+  claim_label: "Portal-reported device count",
   value: 38,
   capture: {
     capture_id: "capture:portal-derived-okcpd",
