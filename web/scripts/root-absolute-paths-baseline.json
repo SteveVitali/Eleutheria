@@ -1,6 +1,6 @@
 {
   "schema": "sig.path-containment-baseline/1",
-  "measured_at": "2026-10-28T13:05:39Z",
+  "measured_at": "2026-10-29T10:08:59Z",
   "measured_by": "node web/scripts/check-root-absolute-paths.mjs --write-baseline",
   "rule": "quoted ('\"`') literal starting with '/' + URL-path chars, quote not preceded by '/', over /*-*-/ <!-- --> and //-comment-stripped text in web/src/** .astro/.ts/.tsx/.js/.jsx/.mjs/.mts/.css; allow-listed file+token+count exemptions subtracted",
   "scope": "web/src/**",
@@ -521,6 +521,36 @@
       "token": "/task/example-task-handle/",
       "count": 1,
       "reason": "P36.23: kit-B absence-chip O4 fixture href — helpHref spec data wrapped by withBase() inside AbsenceChip.astro, never emitted raw"
+    },
+    {
+      "file": "src/lib/entity-history.ts",
+      "token": "/entity/$",
+      "count": 2,
+      "reason": "P36.29: resolveEntityRequest canonical-URL template joins — artifact values (redirect targets), not link constructions"
+    },
+    {
+      "file": "src/lib/entity-history.ts",
+      "token": "/entity/agency/oklahoma-city-emergency-management--b9sdfah/",
+      "count": 1,
+      "reason": "P36.29: fixture row target mirrors emitted sig.slug-history/1 bytes — artifact data, not a link"
+    },
+    {
+      "file": "src/lib/entity-history.ts",
+      "token": "/entity/agency/oklahoma-city-police-department--z8t9rv5/",
+      "count": 1,
+      "reason": "P36.29: fixture merged-row target mirrors emitted sig.slug-history/1 bytes — artifact data, not a link"
+    },
+    {
+      "file": "src/lib/entity-history.ts",
+      "token": "/entity/agency/okcpd-north-division--sezzp58/",
+      "count": 1,
+      "reason": "P36.29: fixture split-row target mirrors emitted sig.slug-history/1 bytes — artifact data, not a link"
+    },
+    {
+      "file": "src/lib/entity-history.ts",
+      "token": "/entity/agency/okcpd-south-division--vsht0xe/",
+      "count": 1,
+      "reason": "P36.29: fixture split-row target mirrors emitted sig.slug-history/1 bytes — artifact data, not a link"
     }
   ]
 }

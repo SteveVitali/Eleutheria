@@ -78,6 +78,10 @@ import { STATEMENT_FIXTURES } from "./statements-fixture";
 import type { StatementRow } from "./provenance-panel";
 import { isDataDictionary, type DataDictionary } from "./dictionary";
 import { DICTIONARY_FIXTURE } from "./dictionary-fixture";
+import {
+  ENTITY_SLUG_HISTORY_FIXTURE,
+  type EntitySlugHistoryRow,
+} from "./entity-history";
 
 // The committed fixtures the data layer serves in `fixtures` mode (and that the P27.5
 // fixture-export harness serialises into the export layout). The PAGES import none of
@@ -929,6 +933,25 @@ export function getSlugHistory(): SlugHistoryRow[] {
   if (!existsSync(path)) return [];
   const parsed = JSON.parse(readFileSync(path, "utf-8")) as {
     rows?: SlugHistoryRow[];
+  };
+  return parsed.rows ?? [];
+}
+
+/**
+ * P36.29 (K2 GX-03, `sig.slug-history/1`): the entity URL-key history —
+ * the append-only record every entity-key request resolves against (rename
+ * 301 / split 300 / withdrawn 410 / `/id/<type>/<uuid>` → 302). Export mode
+ * reads the emitted `<exportDir>/web/entity_slug_history.json`; an absent
+ * file is the honest empty history (the export pre-dates the artifact).
+ * Fixtures (and the national overlay, which does not cover this artifact)
+ * serve the committed fixture document.
+ */
+export function getEntitySlugHistory(): EntitySlugHistoryRow[] {
+  if (dataSource() !== "export") return ENTITY_SLUG_HISTORY_FIXTURE.rows;
+  const path = `${exportDir()}/web/entity_slug_history.json`;
+  if (!existsSync(path)) return [];
+  const parsed = JSON.parse(readFileSync(path, "utf-8")) as {
+    rows?: EntitySlugHistoryRow[];
   };
   return parsed.rows ?? [];
 }

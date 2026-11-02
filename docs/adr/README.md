@@ -229,6 +229,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-224](ADR-224-t1-enhancement-kit-emission-admission-and-element-roster.md) | the T1 enhancement kit's emission, admission and element roster (P36.20) | P36.20 (UXK0-4, manifest row 360 — on `r11/P36.20-enhancement-kit-behaviour`) | accepted |
 | [ADR-225](ADR-225-workspace-state-2-registry-cite-this-view-and-facet-conformance.md) | the `sig.workspace-state/2` registry, "cite this view", and the surface × facet conformance harness (P36.21) | P36.21 (UXR-09/UXR-10, manifest row 361 — on `r11/P36.21-workspace-state-cite-this-view-facets`) | accepted |
 | [ADR-226](ADR-226-static-figure-kit-graphs-charts-legends.md) | the static figure kit's graph/chart/legend half: in-repo deterministic layouts, generated legends, table twins (P36.28) | P36.28 (R11-K13-FIG-01b, manifest row 368 — on | accepted |
+| [ADR-227](ADR-227-entity-url-key-permanence-slug-history.md) | entity URL-key permanence: frozen hash, verbatim append-only slug history, and the `/id/` redirect semantics (P36.29) | P36.29 (R11-K13-GX-03, manifest row 369 — on | accepted |
 
 ## Notes
 
