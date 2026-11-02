@@ -182,8 +182,17 @@ def test_island_links_never_carry_a_facet_the_target_ignores() -> None:
 
 def test_every_island_renders_the_ignored_facet_notice() -> None:
     """K6 NEW-1 (surface half): all three islands destructure `ignored` from
-    useWorkspaceState and render the facetNoticeText notice visibly."""
-    for island in ["MapIsland.tsx", "NetworkIsland.tsx", "SearchIsland.tsx"]:
+    useWorkspaceState and render the facetNoticeText notice visibly.
+
+    P36.37 moved the map island's render body to the Preact app shell
+    ``islands/map/MapApp.tsx`` — ``islands/MapIsland.tsx`` is now the thin
+    contract shim map.astro mounts — so the sweep scans the file that
+    actually renders the notice."""
+    for island in [
+        "map/MapApp.tsx",
+        "NetworkIsland.tsx",
+        "SearchIsland.tsx",
+    ]:
         src = (WEB_SRC / "islands" / island).read_text("utf-8")
         assert "ignored" in src, f"{island} never reads the ignored-param list"
         assert "facetNoticeText" in src, f"{island} never renders the notice"

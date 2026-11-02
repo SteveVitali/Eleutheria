@@ -302,3 +302,202 @@
   font-size: var(--sig-step--2);
   color: var(--sig-ink-muted);
 }
+
+/* P36.37 — the /map/ T2 app shell (K1 MAP-03a). Route-scoped: islands.css
+ * loads only on /map/ — nothing here is global (page-budget bound). */
+.sig-map-app__shell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sig-space-3);
+  align-items: stretch;
+}
+.sig-map-app__panel {
+  flex: 1 1 300px;
+  min-width: 260px;
+  max-width: 420px;
+}
+.sig-map-app__tabs {
+  display: flex;
+  gap: var(--sig-space-1);
+  border-bottom: var(--sig-border-thin) solid var(--sig-line);
+  margin-bottom: var(--sig-space-2);
+}
+.sig-map-app__tab {
+  min-height: 32px;
+  padding: var(--sig-space-1) var(--sig-space-3);
+  border: 0;
+  border-bottom: var(--sig-border-strong) solid transparent;
+  background: none;
+  cursor: pointer;
+  font-size: var(--sig-step--1);
+}
+.sig-map-app__tab.is-active {
+  border-bottom-color: var(--sig-data-1);
+  font-weight: 600;
+}
+.sig-map-app__tab:focus-visible {
+  outline: 3px solid var(--sig-data-1);
+  outline-offset: 1px;
+}
+.sig-map-app__status {
+  font-size: var(--sig-step--2);
+  color: var(--sig-ink-muted);
+  margin: var(--sig-space-1) 0;
+}
+.sig-map-app__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 340px;
+  overflow-y: auto;
+}
+.sig-map-app__row {
+  padding: var(--sig-space-1) var(--sig-space-2);
+  border-bottom: var(--sig-border-thin) solid var(--sig-line);
+  font-size: var(--sig-step--1);
+}
+.sig-map-app__row:focus-visible {
+  outline: 3px solid var(--sig-data-1);
+  outline-offset: -1px;
+}
+.sig-map-app__row-main {
+  display: block;
+  min-height: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  /* Interactive text takes the link channel — the AA-chosen step in every
+   * scheme (dark --sig-data-1 tops out at 4.43:1 on --sig-surface). */
+  color: var(--sig-link);
+  font-size: inherit;
+}
+.sig-map-app__row-meta {
+  display: block;
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--2);
+}
+.sig-map-app__row-links a {
+  font-size: var(--sig-step--2);
+  margin-right: var(--sig-space-3);
+}
+.sig-map-app__facet {
+  border: 0;
+  padding: 0;
+  margin: var(--sig-space-2) 0;
+  font-size: var(--sig-step--1);
+}
+.sig-map-app__facet legend {
+  padding: 0;
+  font-weight: 600;
+}
+.sig-map-app__option {
+  display: inline-block;
+  margin-right: var(--sig-space-4);
+  min-height: 24px;
+}
+.sig-map-app__count {
+  color: var(--sig-ink-muted);
+}
+/* SIG-UI-104: cannot-apply is grey text + a note — NO hatch (hatch means
+ * absence only in the epistemic language). */
+.sig-map-app__cannot {
+  color: var(--sig-ink-muted);
+  font-size: var(--sig-step--2);
+  margin: var(--sig-space-1) 0;
+}
+.sig-map-app__seen input {
+  font-size: var(--sig-step--2);
+  min-height: 24px;
+}
+.sig-map-app__fields {
+  margin: 0;
+}
+.sig-map-app__actions a,
+.sig-map-app__actions button {
+  font-size: var(--sig-step--2);
+  min-height: 24px;
+}
+.sig-map-app__actions button {
+  border: 0;
+  background: none;
+  padding: 0;
+  /* Interactive text takes the link channel — the AA-chosen step in every
+   * scheme (dark --sig-data-1 tops out at 4.43:1 on --sig-surface). */
+  color: var(--sig-link);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.sig-map-app__canvas-skeleton {
+  min-height: 420px;
+  background: var(--sig-surface-2);
+  border: var(--sig-border-thin) dashed var(--sig-line);
+}
+.sig-map-app__controls {
+  display: flex;
+  gap: var(--sig-space-4);
+  align-items: center;
+  margin-top: var(--sig-space-2);
+}
+.sig-map-app__panpad {
+  display: grid;
+  grid-template-areas: ". n ." "w . e" ". s .";
+  gap: var(--sig-space-1);
+}
+.sig-map-app__panpad button {
+  min-width: 32px;
+  min-height: 32px;
+  cursor: pointer;
+}
+.sig-map-app__panpad button[aria-label="Pan north"] { grid-area: n; }
+.sig-map-app__panpad button[aria-label="Pan west"] { grid-area: w; }
+.sig-map-app__panpad button[aria-label="Pan east"] { grid-area: e; }
+.sig-map-app__panpad button[aria-label="Pan south"] { grid-area: s; }
+.sig-map-app__basemap {
+  font-size: var(--sig-step--1);
+}
+.sig-map-app__legend {
+  margin-top: var(--sig-space-3);
+  font-size: var(--sig-step--1);
+}
+.sig-map-app__legend ul {
+  list-style: none;
+  padding: 0;
+  margin: var(--sig-space-1) 0;
+}
+.sig-map-app__legend li {
+  margin: var(--sig-space-1) 0;
+}
+.sig-map-app__swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  vertical-align: -2px;
+  margin-right: var(--sig-space-1);
+}
+/* The four status channels: one data hue; fill/hollow/ring/dashed carry the
+ * epistemic state — colour is never the only channel (SIG-UI-107). */
+.sig-map-app__swatch--solid {
+  background: var(--sig-data-1);
+}
+.sig-map-app__swatch--hollow {
+  border: var(--sig-border-strong) solid var(--sig-data-seq-700);
+  background: transparent;
+  box-sizing: border-box;
+}
+.sig-map-app__swatch--ring {
+  background: var(--sig-data-1);
+  border: var(--sig-border-strong) solid var(--sig-ink);
+  box-sizing: border-box;
+}
+.sig-map-app__swatch--dashed {
+  border: var(--sig-border-strong) dashed var(--sig-data-seq-400);
+  background: transparent;
+  box-sizing: border-box;
+}
+.sig-map-popup h3 {
+  margin: 0 0 var(--sig-space-1);
+  font-size: var(--sig-step--1);
+}

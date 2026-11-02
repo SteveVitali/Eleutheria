@@ -449,7 +449,7 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
       testIds: ["map-places-row", "map-attribution"],
     },
     examples: ["/map/"],
-    notes: "The T2 map surface — the K1 §5 no-JS baseline landed at P36.36; today's MapLibre island stays until its own migration rows.",
+    notes: "The T2 map surface — the K1 §5 no-JS baseline landed at P36.36; the Preact app shell over it landed at P36.37 (K1 MAP-03a).",
   },
   {
     patterns: ["/explore/"],

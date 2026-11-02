@@ -52,3 +52,4 @@ exports/out/
 # P35.52: the cached pinned tippecanoe build + generated tile fixtures
 # (scripts/ci/build_tippecanoe.sh, tile_verify_leg.sh)
 .cache/
+web/public/map/vendor/

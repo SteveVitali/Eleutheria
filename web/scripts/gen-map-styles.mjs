@@ -33,7 +33,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { layers } from "@protomaps/basemaps";
+import { layers, namedFlavor } from "@protomaps/basemaps";
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const LOCK_PATH = join(REPO, "ops", "basemap.lock.json");
@@ -74,16 +74,35 @@ function sigMeta(theme) {
 }
 
 function basemapLayers(flavor) {
-  return layers("protomaps", flavor, { lang: lock.style.lang })
+  // `layers()` needs the flavor OBJECT (namedFlavor) — a bare string is
+  // silently ignored and every colour slot serialises as `null` (P36.37 —
+  // the emitted styles had never been rendered and carried nine nulls).
+  return layers("protomaps", namedFlavor(flavor), { lang: lock.style.lang })
     .filter((l) => !DROPPED.has(l.id))
     .map((l) => {
       let out = l;
       if (MINZOOM_ADJUST[l.id] !== undefined) out = { ...out, minzoom: MINZOOM_ADJUST[l.id] };
+      // The emitted layers name the upstream `protomaps` source — the style
+      // declares it `basemap` (the lock's kill-switch URL), so repoint the
+      // reference (P36.37 — the style had never been rendered before).
+      if (out.source === "protomaps") out = { ...out, source: "basemap" };
       // place dots come from icon sprites — the posture serves none; strip the
       // icon-image reference so no sprite sheet is ever needed (K1 §2.1).
       if (out.layout && out.layout["icon-image"] !== undefined) {
         const { "icon-image": _drop, ...layout } = out.layout;
         out = { ...out, layout };
+      }
+      // Upstream emits `text-font` shapes the committed glyph set cannot
+      // honour: non-string entries (a font helper serialises as `null`) and
+      // `["case",…]` font-variant expressions. Both are style-validation
+      // errors MapLibre refuses (P36.37 hit them on places_country and
+      // places_locality), and the glyph manifest carries only Noto Sans
+      // Regular + Italic — a non-plain stack pins the committed Regular one.
+      if (out.layout && out.layout["text-font"] !== undefined) {
+        const tf = out.layout["text-font"];
+        if (!Array.isArray(tf) || !tf.every((f) => typeof f === "string" && f.length > 0)) {
+          out = { ...out, layout: { ...out.layout, "text-font": ["Noto Sans Regular"] } };
+        }
       }
       return out;
     });

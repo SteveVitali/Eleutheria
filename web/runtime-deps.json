@@ -1,0 +1,19 @@
+{
+  "schema": "sig.runtime-deps/1",
+  "note": "P36.37 (SIG-UI-097, K0 §4.7) — the browser-shipped runtime dependency allow-list. Browser code on a public bundle may come only from a package named under `browser`; the vendored MapLibre ESM split is pinned by scripts/prepare-map-vendor.mjs. `react` is listed under `transitional` — it may still ship on /network/ and /search/ until their migration rows, but MUST NOT appear in the /map/ bundle after this row.",
+  "browser": {
+    "preact": "the only island runtime (K0 D-K0-2; UXK0-6 absorbed here for /map/)",
+    "maplibre-gl": "the T2 map renderer (self-hosted ESM split under /map/vendor/)",
+    "pmtiles": "static PMTiles archives (the pmtiles:// protocol)"
+  },
+  "transitional": {
+    "react": "legacy island runtime — /network/ and /search/ only, until their own migration rows",
+    "react-dom": "same"
+  },
+  "build_time_only": {
+    "@protomaps/basemaps": "basemap style generation (scripts/gen-map-styles.mjs — never shipped)",
+    "minisearch": "reserved for typeahead shards (K0 §4.7)",
+    "sigma": "reserved for the T2 explorer (K0 §4.7)",
+    "graphology": "reserved for the T2 explorer (K0 §4.7)"
+  }
+}

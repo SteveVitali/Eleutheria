@@ -26,7 +26,6 @@ import {
   binJurisdictionKeys,
   contestedCount,
   coverageEncoding,
-  islandPoints,
   layerControlsWithData,
   layersWithData,
   boundedJurisdictionIndicators,
@@ -135,7 +134,6 @@ const TILE_SOURCES = getCompartmentTileSources();
 const EMPTY_TILE_STATE = dataSource() === "export" && TILE_SOURCES.length === 0;
 const ATTRIBUTION_LINE = mapAttributionLine(TILE_SOURCES);
 const ISLAND_POINT_COUNT = locatable.filter((a) => a.lat !== null && a.lon !== null).length;
-const ISLAND_FALLBACK_POINTS = TILE_SOURCES.length === 0 ? islandPoints(locatable) : [];
 
 const LATEST = getLatestReleaseTarget();
 const ISLAND_COMPARTMENTS = TILE_SOURCES.length > 0
@@ -145,6 +143,54 @@ const ISLAND_COMPARTMENTS = TILE_SOURCES.length > 0
       attribution: t.attribution,
     }))
   : (LATEST?.compartments.map((c) => ({ id: c.compartment, license: c.license })) ?? []);
+
+// P36.37 (K1 MAP-03a, SIG-UI-101/102): the bounded fixtures-mode records
+// payload — the located records' selection-panel + in-view fields, built from
+// the SAME sites model the lists use (one resolution, counts reconcile). The
+// tile path projects the model from sig.map-tiles/2 props instead; serialised
+// props stay under the document bound because only the fixtures build
+// (archives absent) carries them.
+import type { MapRecord } from "../islands/map/model";
+const ISLAND_RECORDS: MapRecord[] =
+  TILE_SOURCES.length === 0
+    ? [...sitesModel.lists.values()].flatMap((l) =>
+        l.rows
+          .filter((r) => r.lat !== null && r.lon !== null)
+          .map((r) => ({
+            id: r.id,
+            label: r.label,
+            technology: r.technology,
+            operator: r.operator === "not stated" ? null : r.operator,
+            sources: (r.sources ?? []).map((s) => ({
+              label: s,
+              href: withBase("sources/"),
+            })),
+            licence: r.licence,
+            jurisdiction: {
+              label: ASSET_BY_ID.get(r.id)?.jurisdiction ?? r.dossierSlug,
+              href: withBase(dossierPath(r.dossierSlug).replace(/^\//, "")),
+            },
+            firstSeen: r.firstSeen,
+            lastSeen: r.lastSeen,
+            status: (r.status === "corroborated"
+              ? "corroborated"
+              : r.status === "contested" || r.contested
+                ? "contested"
+                : r.status === "candidate"
+                  ? "candidate"
+                  : r.status === "single source"
+                    ? "single-source"
+                    : null) as MapRecord["status"],
+            precision: r.precision,
+            tier: r.tier,
+            lat: r.lat as number,
+            lon: r.lon as number,
+            compartment: r.compartment,
+            recordHref: siteRecordHref(r.id),
+            listHref: withBase(dossierSitesPath(r.dossierSlug)),
+          })),
+      )
+    : [];
 const meta = getSiteMetadata();
 const PLACEHOLDER_MAX_K = 24;
 const placeholderK = Math.max(0, ISLAND_COMPARTMENTS.length - 2);
@@ -217,14 +263,21 @@ const placeOptionLabel = (d: (typeof placeRows)[number]) =>
           </p>
         </div>
         <MapIsland
-          client:only="react"
+          client:only="preact"
           tiles={TILE_SOURCES}
-          points={ISLAND_FALLBACK_POINTS}
+          records={ISLAND_RECORDS}
           pointCount={ISLAND_POINT_COUNT}
           attribution={ATTRIBUTION_LINE}
           citationHref={mapCitationHref}
           release={LATEST?.publicationId ?? null}
           compartments={ISLAND_COMPARTMENTS}
+          styles={{
+            light: withBase("map/style-light.json"),
+            dark: withBase("map/style-dark.json"),
+            context: withBase("map/style-context.json"),
+          }}
+          vendorBase={withBase("map/vendor/")}
+          dictHref={withBase("map/dict.json")}
         />
       </>
     ) : (

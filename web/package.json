@@ -2,7 +2,7 @@
   "name": "@sig/web",
   "version": "0.1.0",
   "private": true,
-  "description": "SIG public web surface (Astro static-first, zero-JS-by-default) — the Phase-15 shell and the epistemic visual language every other surface consumes (SIG-UI-036/037). TypeScript is confined to this package (SIG-ENG-010).",
+  "description": "SIG public web surface (Astro static-first, zero-JS-by-default) \u2014 the Phase-15 shell and the epistemic visual language every other surface consumes (SIG-UI-036/037). TypeScript is confined to this package (SIG-ENG-010).",
   "license": "Apache-2.0",
   "type": "module",
   "engines": {
@@ -31,12 +31,17 @@
     "check:perf:national": "bash ../scripts/ci/national_budget_leg.sh all",
     "fixture:national": "uv run python ../scripts/ci/build_national_fixture.py --out national",
     "export:fixtures": "esbuild scripts/build-fixture-export.ts --bundle --platform=node --format=esm --packages=external --outfile=node_modules/.cache/build-fixture-export.mjs && node node_modules/.cache/build-fixture-export.mjs",
-    "check": "npm run typecheck && npm run test:unit && SIG_BUILD_INTERNAL=1 npm run build && npm run check:lhci && npm run check:map-styles && npm run check:licenses && npm run check:paths && npm run check:dom && npm run check:figures && npm run check:tokens && npm run check:lexicon && npm run check:copy && npm run test:e2e"
+    "check": "npm run typecheck && npm run test:unit && SIG_BUILD_INTERNAL=1 npm run build && npm run check:lhci && npm run check:map-styles && npm run check:licenses && npm run check:paths && npm run check:dom && npm run check:figures && npm run check:tokens && npm run check:lexicon && npm run check:copy && npm run check:runtime-deps && npm run test:e2e",
+    "prebuild": "node scripts/prepare-map-vendor.mjs",
+    "predev": "node scripts/prepare-map-vendor.mjs",
+    "check:runtime-deps": "node scripts/check-runtime-deps.mjs"
   },
   "dependencies": {
+    "@astrojs/preact": "6.0.5",
     "astro": "7.3.5",
     "maplibre-gl": "6.9.0",
     "pmtiles": "4.5.0",
+    "preact": "10.29.8",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },
