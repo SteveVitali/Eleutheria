@@ -1,0 +1,90 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.36 (K1 MAP-05): `/dossier/<path>/sites/page/<n>/` — pages ≥ 2 of the
+// per-dossier sites list. Pagination is by path so static hosting needs no
+// query strings; page 1 is `/dossier/<path>/sites/` itself.
+import BaseLayout from "../../../../../layouts/BaseLayout.astro";
+import SiteListTable from "../../../../../components/SiteListTable.astro";
+import { getDossiers, getDossierIndex, getJurisdictionKeyMap, getMapSites, getSiteMetadata } from "../../../../../lib/data";
+import { buildJurisdictionLookup, buildSitesModel, emittedSiteLists, sitePage, dossierSitesPagePath, dossierSitesCsvPath } from "../../../../../lib/sites";
+import type { SiteList } from "../../../../../lib/sites";
+import { dossierPath } from "../../../../../lib/dossier";
+import { dossierDisplayTitle } from "../../../../../lib/jurisdictions";
+import { withBase } from "../../../../../lib/paths";
+import type { Crumb } from "../../../../../lib/nav";
+
+export function getStaticPaths() {
+  const dossiers = getDossiers();
+  const lookup = buildJurisdictionLookup(
+    dossiers,
+    getDossierIndex(),
+    getJurisdictionKeyMap(),
+  );
+  const model = buildSitesModel(getMapSites(), lookup);
+  const bySlug = new Map(dossiers.map((d) => [d.slug, d]));
+  const out = [];
+  for (const list of emittedSiteLists(model)) {
+    for (let n = 2; n <= list.pages; n += 1) {
+      out.push({
+        params: { path: list.slug, n: String(n) },
+        props: { list, page: n, dossier: bySlug.get(list.slug) ?? null },
+      });
+    }
+  }
+  return out;
+}
+
+interface Props {
+  list: SiteList;
+  page: number;
+  dossier: import("../../../../../lib/dossier").Dossier | null;
+}
+const { list, page, dossier } = Astro.props;
+const meta = getSiteMetadata();
+const { rows, first, last } = sitePage(list, page);
+const name = dossier
+  ? dossierDisplayTitle(dossier.subject_label, dossier.jurisdiction)
+  : list.slug;
+const crumbs: Crumb[] = [
+  { label: "Places", href: withBase("dossier/") },
+  { label: name, href: withBase(dossierPath(list.slug).replace(/^\//, "")) },
+  { label: "Site list", href: withBase(dossierSitesPagePath(list.slug, 1)) },
+  { label: `Page ${page}` },
+];
+---
+
+<BaseLayout
+  title={`Site list, page ${page} — ${name}`}
+  path={withBase(dossierSitesPagePath(list.slug, page))}
+  noindex
+  crumbs={crumbs}
+  actions={[
+    { label: "Download this view (CSV)", href: withBase(dossierSitesCsvPath(list.slug)), testId: "sites-csv" },
+    { label: "Dossier", href: withBase(dossierPath(list.slug).replace(/^\//, "")), testId: "sites-dossier" },
+  ]}
+>
+  <p class="sig-lede" data-testid="sites-lede">
+    Every published record placed in{" "}
+    <a href={withBase(dossierPath(list.slug).replace(/^\//, ""))}>{name}</a> —
+    page {page} of {list.pages}.
+  </p>
+  <p class="sig-table-note" data-testid="sites-count">
+    Rows {first}–{last} of {list.rows.length} — {list.located} located,
+    {list.noPoint} with no published point.
+    {" "}Data as of <time datetime={meta.asOf.as_of_world}>{meta.asOf.as_of_world}</time>.
+  </p>
+  <SiteListTable list={list} rows={rows} />
+  <nav class="sig-pager" aria-label="Site list pages" data-testid="sites-pager">
+    <a href={withBase(dossierSitesPagePath(list.slug, page - 1))}>‹ Previous page</a>{" "}
+    <span>Page {page} of {list.pages}</span>
+    {page < list.pages && (
+      <>
+        {" "}
+        <a href={withBase(dossierSitesPagePath(list.slug, page + 1))}>Next page ›</a>
+      </>
+    )}
+  </nav>
+</BaseLayout>

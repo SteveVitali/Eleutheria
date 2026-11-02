@@ -441,6 +441,33 @@ export interface MapAsset {
   id: string;
   label: string;
   jurisdiction: string;
+  /** P36.36 (MAP-05 / SIG-UI-068/105): the canonical K4 jurisdiction key the
+   * record placed to (`us.census.geoid.place:4064000`,
+   * `iso3166-2:US-OK`, …) — the key the dossier sites lists resolve through.
+   * Optional on the wire — a pre-keyed export (or a flat fixture row) carries
+   * none; `sites.ts#assetJurisdictionKey` then falls back to a
+   * `scheme:value`-shaped `jurisdiction` field, and a record with no key at
+   * all is counted under the unresolvable set, never guessed. */
+  jurisdictionKey?: string | null;
+  /** P36.36 (MAP-05 site-list columns, K1 §5): the optional enrichment fields
+   * the per-dossier sites lists render. Every one is absent on a pre-P36.36
+   * wire — the cell then names the honest state ("not stated"), never a
+   * fabricated value (SIG-ENG-042). */
+  operator?: string | null;
+  /** Contributing source labels (the export emits ids; fixtures carry
+   * labels). `sources.length === 1` is the single-source count the places
+   * table's share column divides on. */
+  sources?: string[];
+  /** First/last seen dates (ISO-8601 `YYYY-MM-DD`). */
+  firstSeen?: string | null;
+  lastSeen?: string | null;
+  /** The corroboration/status word the list prints. */
+  status?: string | null;
+  /** The licence compartment the record draws in + its licence line — the
+   * group the cross-compartment list renders (K1 §5: "grouped by
+   * compartment with a licence line per group"). */
+  compartment?: string | null;
+  licence?: string | null;
   /** P35.15a / PKG-07: the subject's declared SKOS technology slug (`technology`
    * claim), or null when the record carries none. Optional on the wire —
    * pre-P35.15a export bytes do not carry the field. */

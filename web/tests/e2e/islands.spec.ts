@@ -28,7 +28,7 @@ test.describe("interactive map island (AC1, AC3)", () => {
     // ODbL / OSM attribution is shown on the map (a licence obligation, §42.3).
     await expect(page.locator(".maplibregl-ctrl-attrib")).toContainText("OpenStreetMap");
     // The tabular equivalent is NOT removed — progressive enhancement (SIG-UI-050).
-    await expect(page.getByTestId("map-asset-row").first()).toBeVisible();
+    await expect(page.getByTestId("map-places-row").first()).toBeVisible();
   });
 
   test("the combined /map/points.json is retired — the style carries per-compartment tiles (P31.15, Q9)", async ({ page, request }) => {

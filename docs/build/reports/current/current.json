@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "2ffc75a147969b7088f0abb34e484715fab0225b",
-  "manifest_inputs": 1151,
+  "input_commit": "e484dd2bf21efe3447943d3ec17c75f820c714a4",
+  "manifest_inputs": 1152,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P36.36",
-    "lastCompleted": "P36.35",
+    "nextTicket": "P36.37",
+    "lastCompleted": "P36.36",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.76,P36.77,P36.78,P36.79,P37.2",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P36.35-migration-and-single-redirect-generator",
+    "chainTip": "r11/P36.36-nojs-map-baseline-and-site-lists",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-30T21:40Z"
+    "updatedAt": "2026-10-30T23:35Z"
   },
   "counts": {
     "obligations": 206,
@@ -16386,8 +16386,8 @@
           "label": "historical/csv"
         },
         "SIG-UI-068": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/lib/sites.ts;web/src/pages/dossier/[...path]/sites/index.astro;web/src/pages/dossier/[...path]/sites/page/[n].astro;docs/build/runs/P36.36.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16608,8 +16608,8 @@
           "label": "historical/csv"
         },
         "SIG-UI-105": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/pages/map.astro;web/src/lib/sites.ts;web/src/lib/data.ts getMapOverview;docs/build/runs/P36.36.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -25098,10 +25098,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "6d82544187f1ba9e3d905b6e73cd2fbe96917ac5a2787dc525e1b95778169aa7",
+  "manifest_sha256": "2b1c7094acc556cefe7529a50f5ae97b04a6af390b8966fb0fbbd47c5af680b8",
   "current_md": {
     "lines": 131,
-    "bytes": 19600,
+    "bytes": 19593,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

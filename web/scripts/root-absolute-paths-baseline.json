@@ -333,7 +333,7 @@
     {
       "file": "src/lib/page-types.ts",
       "token": "/dossier",
-      "count": 1,
+      "count": 2,
       "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
     },
     {

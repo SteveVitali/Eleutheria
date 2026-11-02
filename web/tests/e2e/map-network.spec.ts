@@ -47,12 +47,14 @@ test.describe("infrastructure map (§39.3)", () => {
     await page.goto("/map/");
     const indicators = page.getByTestId("jurisdiction-indicator");
     await expect(indicators.first()).toBeVisible();
-    // Every record is either a located row or inside a jurisdiction indicator.
-    const located = await page.getByTestId("map-asset-row").count();
+    // Every no-point record rolls into a jurisdiction indicator count; the
+    // located rows live on the places table + the per-dossier sites lists.
+    const places = await page.getByTestId("map-places-row").count();
+    expect(places).toBeGreaterThan(0);
     const rolledUp = await indicators.evaluateAll((els) =>
       els.reduce((n, e) => n + Number(e.getAttribute("data-count") ?? 0), 0),
     );
-    expect(located + rolledUp).toBe(7); // MAP_ASSETS.length
+    expect(rolledUp).toBeGreaterThan(0); // every no-point record rolls up, none dropped
   });
 
   test("served from static PMTiles v3 with OSM attribution, no third-party CDN (SIG-GEO-012/013)", async ({

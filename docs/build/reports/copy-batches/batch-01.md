@@ -142,6 +142,11 @@
 | MP-14 | /map/ | Records with no coordinates — or whose sensitivity tier forbids publishing a point — are not dropped. | 98809f22f8abccd0ae846ad2e63ba601c575c3c80443e083fc7cb277bbec2ecf | pending |
 | MP-15 | /map/ | They appear as jurisdiction-level indicators, so the map does not systematically understate capability (SIG-UI-020). | e1fbd1e4b704366c7adf702d6997aae397fd717f1bb5b0c44b96a2ffff408299 | pending |
 | MP-06 | lib/map.ts | suppressed | f63d5b6b4de4fca716f2be8a179211b92682dc2e030b7063aea1d4a210f40033 | pending |
+| MP-16 | /map/ | Static overview | 88af70b02214bc088f2e0bb0b2382e62c84e7f3f0c342b658f3e01d0e892338a | pending |
+| MP-17 | /map/ | A build-time static rendition of the located records, binned so no single point implies more precision than SIG published. The places table below is its tabular equivalent (SIG-UI-037). | 10f757af79697bf56d93762cb3e15e8806323a0c45bdc17101cb2a0268ba18a9 | pending |
+| MP-18 | /map/ | This export does not emit the drawn overview figure — the places table below carries the same counts (SIG-ENG-042: an honest absence, never a fabricated map). | 3aa1615b97537fe241427f65a8699b73efc06ae174e6bfb2ab733e5c29402a1c | pending |
+| MP-19 | /map/ | If search cannot be reached, the first letter of a place's name finds it in the A–Z directory. | 5e7d6be4de898d968406c6eace6982fbd8d5d5b15dc11d70857d7499038c636c | pending |
+| MP-20 | /map/ | Every jurisdiction SIG has located records in, with its own full site list — a paginated page per place, the interim per-record link target. | 5403595de1b89b4d19873d47c58718e5ae432e211aa1687ae8e5f0afbca2c972 | pending |
 | NW-01 | /network/ | SIG has not merged organisations across sources — one agency can appear more than once in these lists. | b8407ad50425890711a7e3d256741339dc7fe76aa36ce455fb489e1656a57cdc | pending |
 | NW-02 | /network/ | No centrality or hub ranking is published; the resolution review that would make one honest has not passed its gate. | ea36b45843d56aff5111119c735e0587a3b14b26598079b42263d73d728f46fd | pending |
 | NW-03 | lib/empty.ts | Network statistics are only as good as entity resolution; SIG publishes none until the resolution review that would make one honest has passed its gate. Their absence is not a measurement of zero. | a14feda910497bd8567d0fc2df6e25562668118b780c88474fccc992f8960692 | pending |

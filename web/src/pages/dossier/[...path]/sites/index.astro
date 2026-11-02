@@ -1,0 +1,110 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.36 (K1 MAP-05 / UXR-18, SIG-UI-068/105): the per-dossier sites list —
+// the interim site-record link target. Until the release record tree
+// `/r/<pub>/` is publicly exposed (G2 ACT-24), a link to an individual site
+// record targets its row here (`…/sites/…#<key>`), never a 404. One list per
+// dossier with ≥ 1 located record, ≤ 100 rows per page, paginated by path;
+// the cross-compartment reading view groups rows by licence compartment with
+// a licence line per group. Page 1 lives here; pages ≥ 2 at `page/<n>/`.
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import SiteListTable from "../../../../components/SiteListTable.astro";
+import { getDossiers, getDossierIndex, getJurisdictionKeyMap, getMapSites, getIndexSprite, getSiteMetadata } from "../../../../lib/data";
+import { buildJurisdictionLookup, buildSitesModel, emittedSiteLists, sitePage, dossierSitesPagePath, dossierSitesCsvPath, NOT_STATED } from "../../../../lib/sites";
+import type { SiteList } from "../../../../lib/sites";
+import { dossierPath } from "../../../../lib/dossier";
+import { dossierDisplayTitle } from "../../../../lib/jurisdictions";
+import { withBase } from "../../../../lib/paths";
+import type { Crumb } from "../../../../lib/nav";
+
+export function getStaticPaths() {
+  const dossiers = getDossiers();
+  const lookup = buildJurisdictionLookup(
+    dossiers,
+    getDossierIndex(),
+    getJurisdictionKeyMap(),
+  );
+  const model = buildSitesModel(getMapSites(), lookup);
+  const bySlug = new Map(dossiers.map((d) => [d.slug, d]));
+  return emittedSiteLists(model).map((list) => ({
+    params: { path: list.slug },
+    props: { list, dossier: bySlug.get(list.slug) ?? null },
+  }));
+}
+
+interface Props {
+  list: SiteList;
+  dossier: import("../../../../lib/dossier").Dossier | null;
+}
+const { list, dossier } = Astro.props;
+const meta = getSiteMetadata();
+const sprite = getIndexSprite();
+const glyph = dossier?.jurisdiction_key
+  ? sprite?.glyphs.find((g) => g.jkey === dossier.jurisdiction_key) ?? null
+  : null;
+const { rows, first, last } = sitePage(list, 1);
+const name = dossier
+  ? dossierDisplayTitle(dossier.subject_label, dossier.jurisdiction)
+  : list.slug;
+const crumbs: Crumb[] = [{ label: "Places", href: withBase("dossier/") }];
+if (dossier && (dossier.chain?.length ?? 0) > 1) {
+  for (const link of dossier.chain!) {
+    crumbs.push({
+      label: link.name ?? link.jkey,
+      href: link.slug_path ? withBase(`dossier/${link.slug_path}/`) : undefined,
+    });
+  }
+} else {
+  crumbs.push({ label: name, href: withBase(dossierPath(list.slug).replace(/^\//, "")) });
+}
+crumbs.push({ label: "Site list" });
+---
+
+<BaseLayout
+  title={`Site list — ${name}`}
+  path={withBase(dossierSitesPagePath(list.slug, 1))}
+  crumbs={crumbs}
+  actions={[
+    { label: "Download this view (CSV)", href: withBase(dossierSitesCsvPath(list.slug)), testId: "sites-csv" },
+    ...(dossier
+      ? [{ label: "Dossier", href: withBase(dossierPath(list.slug).replace(/^\//, "")), testId: "sites-dossier" }]
+      : []),
+  ]}
+>
+  <p class="sig-lede" data-testid="sites-lede">
+    Every published record placed in <a href={withBase(dossierPath(list.slug).replace(/^\//, ""))}>{name}</a>,
+    grouped by licence compartment — the interim per-record link target
+    (each row answers <code>#{`{key}`}</code>). Coordinates print only at the
+    published precision.
+  </p>
+  {glyph && sprite?.svg && (
+    <svg
+      class="sig-locator-glyph"
+      viewBox={`${glyph.x} ${glyph.y} ${glyph.cell_px} ${glyph.cell_px}`}
+      width={glyph.cell_px * 2}
+      height={glyph.cell_px * 2}
+      role="img"
+      aria-label={`Outline locator for ${name}`}
+      data-testid="sites-locator"
+    >
+      <use href={withBase(sprite.svg)} />
+    </svg>
+  )}
+  <p class="sig-table-note" data-testid="sites-count">
+    {list.rows.length} record{list.rows.length === 1 ? "" : "s"} —
+    {list.located} located, {list.noPoint} with no published point
+    {list.contested > 0 && `, ${list.contested} contested`}.
+    {list.pages > 1 && ` Page 1 of ${list.pages} (rows ${first}–${last}).`}
+    {" "}Data as of <time datetime={meta.asOf.as_of_world}>{meta.asOf.as_of_world}</time>.
+  </p>
+  <SiteListTable list={list} rows={rows} />
+  {list.pages > 1 && (
+    <nav class="sig-pager" aria-label="Site list pages" data-testid="sites-pager">
+      <span>Page 1 of {list.pages}</span>{" "}
+      <a href={withBase(dossierSitesPagePath(list.slug, 2))}>Next page ›</a>
+    </nav>
+  )}
+</BaseLayout>
