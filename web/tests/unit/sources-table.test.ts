@@ -5,12 +5,17 @@ import { describe, expect, it } from "vitest";
 import {
   EXPORT_COLUMNS,
   FACET_DIMS,
+  SOURCES_TABLE_PAGE_SIZE,
   VIEWS,
   azIndex,
+  azPaged,
   facetRoutes,
   facetRows,
   freshnessVerdict,
   getTableRows,
+  pageNumbers,
+  pageRoute,
+  paginateRows,
   sortRoutesFor,
   sortTable,
   tableCsv,
@@ -128,5 +133,53 @@ describe("the A–Z jump list", () => {
     const letters = new Set(idx.map((e) => e.letter));
     expect(letters.size).toBe(idx.length);
     expect(idx.every((e) => e.anchorId.startsWith("az-"))).toBe(true);
+  });
+
+  it("each letter carries the name-sorted page its first row lands on", () => {
+    const idx = azPaged(rows, 2);
+    const nameSorted = sortTable(rows, "source", "asc");
+    for (const { letter, anchorId, page } of idx) {
+      const pos = nameSorted.findIndex((r) => {
+        const l = (r.name[0] ?? "#").toLocaleUpperCase();
+        return (/[A-Z]/.test(l) ? l : "#") === letter;
+      });
+      expect(anchorId).toBe(`az-${letter === "#" ? "other" : letter}`);
+      expect(page).toBe(Math.floor(pos / 2) + 1);
+    }
+  });
+});
+
+describe("pagination (K9 §6.1's budget fallback)", () => {
+  it("slices the sorted row set into size-bounded pages", () => {
+    const p1 = paginateRows(rows, 1, 3);
+    const p2 = paginateRows(rows, 2, 3);
+    expect(p1.rows).toEqual(rows.slice(0, 3));
+    expect(p2.rows).toEqual(rows.slice(3, 6));
+    expect(p1.pages).toBe(Math.ceil(rows.length / 3));
+    expect(p1.total).toBe(rows.length);
+  });
+
+  it("out-of-range pages fail loud (SIG-ENG-042)", () => {
+    expect(() => paginateRows(rows, 0, 3)).toThrow();
+    expect(() => paginateRows(rows, Math.ceil(rows.length / 3) + 1, 3)).toThrow();
+  });
+
+  it("continuation routes emit only past page 1", () => {
+    expect(pageNumbers(rows.length, rows.length + 10)).toEqual([]);
+    expect(pageNumbers(7, 3)).toEqual([2, 3]);
+    expect(pageNumbers(SOURCES_TABLE_PAGE_SIZE + 1)).toEqual([2]);
+  });
+
+  it("page 1 is the base route; continuations append page/<n>/", () => {
+    expect(pageRoute("sources/", 1)).toBe("sources/");
+    expect(pageRoute("sources/sort/status/asc/", 4)).toBe("sources/sort/status/asc/page/4/");
+    expect(pageRoute("sources/by/status/gated/", 2)).toBe("sources/by/status/gated/page/2/");
+  });
+
+  it("the full row set reassembles across pages in order (sort preserved)", () => {
+    const ordered = sortTable(rows, "claims", "desc");
+    const pages = Math.ceil(ordered.length / 2);
+    const reassembled = Array.from({ length: pages }, (_, i) => paginateRows(ordered, i + 1, 2).rows).flat();
+    expect(reassembled.map((r) => r.sourceId)).toEqual(ordered.map((r) => r.sourceId));
   });
 });

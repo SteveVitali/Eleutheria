@@ -230,6 +230,7 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
     patterns: [
       "/sources/",
       "/sources/identifier-changed/",
+      "/sources/page/**",
       "/sources/sort/**",
       "/sources/runs/**",
       "/sources/rights/**",
@@ -246,9 +247,10 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
       "/sources/rights/",
       "/sources/sort/status/asc/",
       "/sources/by/status/published/",
+      "/sources/page/2/",
     ],
     notes:
-      "P36.48 (UX9-3, SIG-TRANSP-001/028/033): the K9 sources table — three pre-rendered views (`/sources/` Overview, `/sources/runs/`, `/sources/rights/`), asc/desc sort routes and single-dimension facet routes over the canonical sig.source-row/1 rows, plus P34.17's licence disclosure and the id-change note. Literal `runs`/`rights`/`sort`/`by` segments outrank `/sources/*/` so a view never classifies as a source page.",
+      "P36.48 (UX9-3, SIG-TRANSP-001/028/033): the K9 sources table — three pre-rendered views (`/sources/` Overview, `/sources/runs/`, `/sources/rights/`), asc/desc sort routes and single-dimension facet routes over the canonical sig.source-row/1 rows, plus P34.17's licence disclosure and the id-change note. `…/page/<n>/` is the K9 §6.1 pagination fallback the T1 document budget triggers at scale. Literal `page`/`runs`/`rights`/`sort`/`by` segments outrank `/sources/*/` so a view never classifies as a source page.",
   },
   {
     patterns: ["/sources/*/"],

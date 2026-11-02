@@ -1,0 +1,28 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.48 fix arc (UX9-3, SIG-TRANSP-028, K9 §6.1): the Overview view's
+// continuation pages — `/sources/page/<n>/` carries the sorted row set past
+// the budget-measured page size (the T1 document ceiling's pagination
+// fallback). Page 1 is `/sources/` itself.
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import SourcesTablePage from "../../../components/SourcesTablePage.astro";
+import { getTableRows, pageNumbers } from "../../../lib/sources-table";
+import { withBase } from "../../../lib/paths";
+
+export function getStaticPaths() {
+  const { rows } = getTableRows();
+  return pageNumbers(rows.length).map((n) => ({
+    params: { n: String(n) },
+    props: { page: n },
+  }));
+}
+
+const { page } = Astro.props as { page: number };
+---
+
+<BaseLayout title={`Sources — page ${page}`} path={withBase(`sources/page/${page}/`)}>
+  <SourcesTablePage view="overview" page={page} />
+</BaseLayout>

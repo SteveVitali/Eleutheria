@@ -14,8 +14,6 @@ import type { FigureSpec } from "../lib/figures";
 import {
   SORT_SPECS,
   VIEWS,
-  azAnchorFor,
-  azIndex,
   sortTable,
   sortRoute,
   type SortDir,
@@ -26,6 +24,7 @@ import { withBase } from "../lib/paths";
 
 export interface Props {
   view: TableView;
+  /** The page slice — the route's sorted row set, already paginated. */
   rows: TableRow[];
   /** The active sort — the view root is the default (source asc). */
   sortKey?: string;
@@ -37,6 +36,12 @@ export interface Props {
   /** data-copy ids for the column headers (copy-batch rows). */
   headerCopyIds?: Record<string, string>;
   testid?: string;
+  /** The A–Z letters with their (possibly cross-page) hrefs — empty hides
+   *  the jump list (non-overview views carry no A–Z, K9 §6.1). */
+  azLetters?: { letter: string; href: string }[];
+  /** sourceId → `az-<letter>` anchor id for the letter-opening rows on
+   *  this page (populated only when the name sort itself renders). */
+  azAnchors?: Map<string, string>;
 }
 
 const {
@@ -48,6 +53,8 @@ const {
   figureSpecs,
   headerCopyIds = {},
   testid = "sources-table",
+  azLetters = [],
+  azAnchors,
 } = Astro.props;
 
 const VIEW_COPY: Record<TableView, string> = {
@@ -93,8 +100,6 @@ const cols: TableColumn[] = VIEWS[activeView].columns.map((key: string) => {
 });
 
 const sorted = sortTable(rows, sortKey, sortDir);
-const nameSorted = sortTable(rows, "source", "asc");
-const letters = view === "overview" ? azIndex(rows) : [];
 const CELL_FIG_KEY: Record<string, string[]> = {
   overview: ["claims", "staleness", "staleness-eval"],
   runs: ["runs", "errors"],
@@ -111,10 +116,6 @@ for (const row of sorted) {
     if (spec) figs[cell] = spec;
   }
   figMap.set(row.sourceId, figs);
-}
-const azMap = new Map<string, string | null>();
-for (const row of sorted) {
-  azMap.set(row.sourceId, azAnchorFor(row, letters, nameSorted));
 }
 ---
 
@@ -159,13 +160,13 @@ for (const row of sorted) {
     ))}
   </nav>
 
-  {letters.length > 0 && (
+  {azLetters.length > 0 && (
     <nav class="sig-az" aria-label="Jump to a letter" data-testid="az-index">
       <span class="sig-sort__label" data-copy="ST-09">A–Z:</span>{" "}
-      {letters.map((l, i) => (
+      {azLetters.map((l, i) => (
         <>
           {i > 0 && " "}
-          <a href={`#${l.anchorId}`} data-testid="az-link">{l.letter}</a>
+          <a href={l.href} data-testid="az-link">{l.letter}</a>
         </>
       ))}
     </nav>
@@ -184,7 +185,7 @@ for (const row of sorted) {
           row={row}
           view={view}
           figs={figMap.get(row.sourceId) ?? {}}
-          azId={azMap.get(row.sourceId) ?? undefined}
+          azId={azAnchors?.get(row.sourceId)}
         />
       ))}
     </tbody>
