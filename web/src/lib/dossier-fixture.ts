@@ -23,6 +23,7 @@
 import { isContested } from "./epistemic";
 import { AS_OF, DEVICE_COUNT_CLAIMS, OKCPD, RULESET_VERSION } from "./fixtures";
 import { JURISDICTION_DOSSIERS } from "./dossier-jurisdiction-fixture";
+import { GROUPED_FIXTURE_DOSSIERS } from "./dossier-grouped-fixture";
 import type { CompetingClaim } from "./epistemic";
 import type { Dossier, Figure } from "./dossier";
 
@@ -290,5 +291,14 @@ export const OKC_DOSSIER: Dossier = {
   ],
 };
 
-/** Every dossier the shell statically generates (drives `getStaticPaths`). */
-export const DOSSIERS: Dossier[] = [OKC_DOSSIER, ...JURISDICTION_DOSSIERS];
+/**
+ * Every dossier the shell statically generates (drives `getStaticPaths`).
+ * P36.34: the committed `sig.dossier-index/2` fixture corpus appends its
+ * miniature keyed registry (the canonical slug-path dossiers the grouped
+ * index groups) after the worked flat examples.
+ */
+export const DOSSIERS: Dossier[] = [
+  OKC_DOSSIER,
+  ...JURISDICTION_DOSSIERS,
+  ...GROUPED_FIXTURE_DOSSIERS,
+];

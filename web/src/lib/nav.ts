@@ -59,6 +59,7 @@ export const NAV_SECTIONS: NavSection[] = [
     landing: "dossier/",
     items: [
       { label: "Dossier index", route: "dossier/" },
+      { label: "A–Z directory", route: "dossier/a-z/" },
       { label: "Not yet placed", route: "dossier/unplaced/" },
     ],
     match: ["dossier/"],

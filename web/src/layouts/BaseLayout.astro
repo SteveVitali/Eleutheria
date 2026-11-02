@@ -301,6 +301,10 @@ const socialCardUrl = socialCard
       KIT_CHROME_MODULES.map((name) => (
         <script is:inline type="module" src={withBase(`_kit/${name}.js`)}></script>
       ))}
+    {/* The named head slot — a page-scoped resource (e.g. a route-scoped
+        stylesheet linked via `?url`, the print.css precedent) lands inside
+        <head> on ITS page only, never hoisted into the shared chunk. */}
+    <slot name="head" />
   </head>
   <body>
     <a class="sig-skip-link" href="#main">Skip to main content</a>

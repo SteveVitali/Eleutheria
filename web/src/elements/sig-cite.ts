@@ -68,15 +68,20 @@ class SigCite extends HTMLElement {
     const out = document.createElement("p");
     out.className = "sig-cite__formatted";
     out.dataset.enhancement = "";
-    out.textContent = formatCite(fields, "plain");
+    // The formatted citation is a literal (it ends in the permalink URL —
+    // K14 NEW-8's exempted identifier class): it renders inside <code> like
+    // every other literal on the page.
+    const outCode = document.createElement("code");
+    out.appendChild(outCode);
+    outCode.textContent = formatCite(fields, "plain");
     this.appendChild(out);
 
     select.addEventListener("change", () => {
-      out.textContent = formatCite(fields, select.value as CiteFormat);
+      outCode.textContent = formatCite(fields, select.value as CiteFormat);
     });
     copy.addEventListener("click", async () => {
       try {
-        await navigator.clipboard.writeText(out.textContent ?? "");
+        await navigator.clipboard.writeText(outCode.textContent ?? "");
         status.textContent = "Copied.";
       } catch {
         status.textContent = "Copy failed — select the text manually.";

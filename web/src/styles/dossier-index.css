@@ -1,0 +1,62 @@
+/* SPDX-License-Identifier: Apache-2.0
+ * Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+ * carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+ */
+
+/* --- P36.34 (K4 JUR-04): the grouped dossier index -------------------------- */
+/* Route-scoped: linked only by the /dossier/ index + its sort/facet/A–Z
+   directory pages (an explicit `?url` + <link slot="head">, the print.css
+   precedent) so unrelated routes — /search/ above all — never pay these
+   bytes against their ADR-155 initial-load budgets. The nesting indent is a
+   data-depth attribute (style-src-attr 'none' bans style="" — see
+   DossierIndexRow.astro). */
+
+.sig-dossier-index__item[data-depth="1"] {
+  margin-inline-start: var(--sig-space-5);
+}
+.sig-dossier-index__item[data-depth="2"] {
+  margin-inline-start: calc(var(--sig-space-5) * 2);
+}
+.sig-dossier-index__item[data-depth="3"] {
+  margin-inline-start: calc(var(--sig-space-5) * 3);
+}
+.sig-dossier-index__item[data-depth="4"] {
+  margin-inline-start: calc(var(--sig-space-5) * 4);
+}
+.sig-dossier-index__code {
+  font-size: var(--sig-step--2);
+  color: var(--sig-ink-muted);
+}
+.sig-index-glyph {
+  display: inline-block;
+  vertical-align: middle;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+}
+.sig-place-search {
+  margin: var(--sig-space-4) 0;
+  padding: var(--sig-space-3);
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-2);
+  background: var(--sig-surface);
+}
+.sig-place-search__note {
+  font-size: var(--sig-step--1);
+  color: var(--sig-ink-muted);
+}
+.sig-az-letters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sig-space-3);
+  list-style: none;
+  padding: 0;
+  font-size: var(--sig-step-1);
+}
+.sig-definitions dt {
+  font-weight: 700;
+  margin-top: var(--sig-space-2);
+}
+.sig-definitions dd {
+  margin-inline-start: var(--sig-space-4);
+}

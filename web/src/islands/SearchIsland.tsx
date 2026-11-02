@@ -51,7 +51,18 @@ export interface SearchItem {
 }
 
 export interface SearchIslandProps {
+  /** The bounded rows serialized with the island — the ≤ 200 capped sites and
+   *  the source rows. The dossier rows are deliberately absent: they ride the
+   *  fetched `dossierIndexHref` document (P36.34 repair). */
   items: SearchItem[];
+  /** `/search/index.json` (`sig.search-index/1`) — the dossier rows, fetched
+   *  on mount. The dossier index is the filter's one UNBOUNDED list — the
+   *  grouped `sig.dossier-index/2` corpus at fixture scale, thousands of rows
+   *  at real scale — and every serialized prop lands in the T2 document the
+   *  wire budget measures raw (ADR-155). A failed or malformed fetch is an
+   *  honest absence: the group stays unlisted and the browse links below
+   *  still reach every dossier. */
+  dossierIndexHref: string;
   /** The latest activated publication id for this build, or null (none). */
   release: string | null;
 }
@@ -68,7 +79,23 @@ const VIEW_LABELS: Record<string, string> = {
   network: "Connections",
 };
 
-export default function SearchIsland({ items, release }: SearchIslandProps): ReactElement {
+/** A fetched row is only trusted with the SearchItem shape — never blind-cast. */
+function isDossierItem(v: unknown): v is SearchItem {
+  if (typeof v !== "object" || v === null) return false;
+  const o = v as Record<string, unknown>;
+  return (
+    o.kind === "dossier" &&
+    typeof o.label === "string" &&
+    typeof o.sublabel === "string" &&
+    typeof o.href === "string"
+  );
+}
+
+export default function SearchIsland({
+  items: listedItems,
+  dossierIndexHref,
+  release,
+}: SearchIslandProps): ReactElement {
   const { state, issues, ignored, update } = useWorkspaceState("list", { release });
   // The text field mirrors state.q (deep links, Back/Forward) but stays a
   // controlled local input while typing; committed to the URL on change via
@@ -76,6 +103,39 @@ export default function SearchIsland({ items, release }: SearchIslandProps): Rea
   const [draft, setDraft] = useState(state.q);
   useEffect(() => setDraft(state.q), [state.q]);
   const [notice, setNotice] = useState<string | null>(null);
+
+  // P36.34 repair: the dossier rows arrive by fetch — the one unbounded list
+  // stays out of the serialized props the T2 document budget measures raw.
+  // A failed or malformed document is an honest absence (loud note below),
+  // never a silent empty index.
+  const [dossierItems, setDossierItems] = useState<SearchItem[]>([]);
+  const [indexFailed, setIndexFailed] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    fetch(dossierIndexHref)
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((doc: unknown) => {
+        if (cancelled) return;
+        const rows =
+          typeof doc === "object" && doc !== null && Array.isArray((doc as { items?: unknown }).items)
+            ? ((doc as { items: unknown[] }).items as unknown[])
+            : [];
+        setDossierItems(rows.filter(isDossierItem));
+      })
+      .catch(() => {
+        if (!cancelled) setIndexFailed(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [dossierIndexHref]);
+
+  // The original index order — dossiers first, then the serialized bounded
+  // rows — so the filter and the groups render identically either way.
+  const items = useMemo(() => [...dossierItems, ...listedItems], [dossierItems, listedItems]);
 
   const activeKinds = useMemo(
     () => new Set(state.kind.length ? state.kind : GROUPS.map((g) => g.kind)),
@@ -196,6 +256,11 @@ export default function SearchIsland({ items, release }: SearchIslandProps): Rea
         {draft.trim() !== "" ? ` for “${draft.trim()}”` : ""}.
         {notice ? ` ${notice}` : ""}
       </p>
+      {indexFailed && (
+        <p className="sig-island__note" role="status" data-testid="search-dossier-index-error">
+          The dossier index did not load — the browse links below still reach every dossier.
+        </p>
+      )}
 
       {state.focus && (
         <section className="sig-search-island__focus" data-testid="search-focus-pane" aria-label="Selected record">
