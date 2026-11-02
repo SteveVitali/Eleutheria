@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `408bb4899c5c96a44d28128c5cc973c5aba065b7` · inputs hashed: 1166 · wall-clock receipt: `receipt.json`
+> input_commit: `a67d05d9a17820bbc6ea9a441bde20d0dbfa0c1d` · inputs hashed: 1166 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -58,7 +58,7 @@
 | P35.5 | queued R2-mirror leg: R2 bucket + non-listable CDN domain, content-hash keys, immutable Cache-Control, $0 egress; landed PushLimits, --mirror seam, $50/mo ceili… | `implement-spec spec=docs/tickets/262_P35.5__zero-egress-distribution-host.md live_verification=true` (R2 push + origin-enable) |
 | P35.67 | queued L1 post-cutover checklist (`sig-ops post-cutover-probe --leg l1`) post-OP-09 + L2 cert-renewal read ≈ 2026-11-22; read-only OM-14; probe verb + checklist… | `implement-spec spec=docs/tickets/263_P35.67__post-dns-cutover-probe.md live_verification=true` (#265) |
 | P35.1a | queued write leg: reconcile Cloud Scheduler from ops/cadence.toml (inert PAUSED triggers + declared-bundle publish) + in-band live-diff; `live-1` stopped OM-18 … | `implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` (#266; `live-1` stopped OM-18) · retry `r11/P35… |
-| P35.1a1 | queued declared-job seed leg (row 287a): 12 declared-absent jobs on default-compute + `sig-scheduler` run.invoker + paused triggers; `seed-declared-jobs.sh` lan… | `implement-spec spec=docs/tickets/287a_P35.1a1__seed-declared-jobs-paused.md live_verification=true` (#296 — leg queued; production untouched) |
+| P35.1a1 | queued declared-job seed leg (row 287a): 12 declared-absent jobs on default-compute + `sig-scheduler` run.invoker + paused triggers; `seed-declared-jobs.sh` lan… | `implement-spec spec=docs/tickets/287a_P35.1a1__seed-declared-jobs-paused.md live_verification=true` (#296 — leg queued, production untouched) |
 | P35.11 | queued Wave-A sequence: L1 digest roll + seed load + serial legistar → usa_spending → procportal_nyc_ny; L2 `claims_added == 0` reruns; L3 resume post-green; S8… | L2 |
 | P35.14a | queued hosted write: `sqitch deploy closed_vocabulary` (INSERT-only — 280 predicates + 5,600 directness rows + CHECK) + verify + read-back | `implement-spec spec=docs/tickets/272_P35.14a__vocabulary-conformance-closed-vocabulary.md live_verification=true` (#274) |
 | P35.14b | queued hosted leg: `sqitch deploy entity_typing_mobility_check` (ACCESS EXCLUSIVE, `lock_timeout`) + typed-identity write (INSERT-only, +0); verify + read-back | `implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and-hosted-check-constraint.md live_verification=true` (#275) |
@@ -75,9 +75,9 @@
 | P35.41 | queued connector-image roll: rebuild+redeploy the image carrying `records_digest`, upstream-declared marks + capture-mark headers | `implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` (#338) |
 | P35.53 | D-P35.53-1 | `SIG_RELEASE_AUTHOR="$(git config user.name)" bash ops/gcp/release-infra.sh --apply all` or `implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-s… |
 | P35.59 | queued dark cutover (`web-cutover.sh --apply all`): AR-2 prestate → `staged/v/legacy-<YYYYMMDD>/` floor import → `conf/0`+carry+`serving.json` retire → `sig-web… | `SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all` or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_ver… |
-| P35.61 | queued live half of P32.22's recovery deferral + F-522 (audit+plan → pause → bounded `recovery-apply --authority <scope>` → +0 → freeze unpublished); packet `re… | `implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` (#359; `D-R10-LIVE-1` OPEN) |
+| P35.61 | queued live half of P32.22's recovery deferral + F-522 (audit+plan → pause → `recovery-apply` → +0 → freeze unpublished); packet `reports/p35.61-live-pass/` | queued `implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` (#359; `D-R10-LIVE-1` OPEN) |
 | P35.62 | queued live half of P32.23a's candidate deferral (`release-candidate` over `frozen_unpublished` → +0 rematerialize → export → stage + IAM origins → web build + … | `implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true` (#360) |
-| P35.63 | queued release-exposure leg (home P32.25): staged cut → `class_s` → unsigned HG-11 readout · promote — signed readout + go only; packet `reports/p35.63-first-mo… | `implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (resumes at L2's promote, cut byte-identical) (#362) |
+| P35.63 | queued release-exposure leg (home P32.25): staged cut → `class_s` → unsigned HG-11 readout · promote — signed readout + go only; packet `reports/p35.63-first-mo… | `implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (resumes at L2's promote, staged cut byte-identical) … |
 | P35.64 | queued 11B acceptance sweep + GATE-G5 packet: read-only crawl of the promoted release/API/`sig-public`/`sig-registry` + counts + packet refresh; `acceptance-swe… | `implement-spec spec=docs/tickets/342_P35.64__sub-round-11b-acceptance.md live_verification=true` (#363) |
 | P37.2 | Wave-C L1→L5 (pre-grow → tier bump → national run → 24 h soak → revert); missed leg reported; packet `reports/p37.2-wave-c/` | … |
 | P35.2 | D-P35.2-1 | `implement-spec spec=docs/tickets/346_P35.2__alerting-as-code-and-escalation.md live_verification=true` |
