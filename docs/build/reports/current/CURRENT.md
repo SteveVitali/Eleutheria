@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `ba6e4ff114e69843fc351227a9066c813597e13f` · inputs hashed: 1166 · wall-clock receipt: `receipt.json`
+> input_commit: `b5bf71fca5485024fa4117a810f53202f8c9c2ec` · inputs hashed: 1167 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -13,10 +13,10 @@
 
 ## Obligations
 
-- 211 obligations · **130 owed** (127 OPEN, 3 PARTIAL) · 81 terminal
-- 716 events (51 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 212 obligations · **131 owed** (128 OPEN, 3 PARTIAL) · 81 terminal
+- 717 events (51 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 130 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 131 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -55,9 +55,9 @@
 | P34.46 | queued L2 deploy slot (schema roll + ADR-159 dispositions + `sig-api` roll + `/status/` notice + trigger pause/resume) + L3 48 h soak | `implement-spec spec=docs/tickets/258_P34.46__round10-schema-allows-and-api-roll.md live_verification=true` (#261) |
 | P34.47 | queued 11A acceptance sweep + GATE-G4 packet leg (§13.1): read-only crawl of site/API/tiles/`sig-public` + counts + packet refresh; `acceptance-sweep` → `sig.pr… | `implement-spec spec=docs/tickets/259_P34.47__sub-round-11a-acceptance.md live_verification=true` (sweep + packet) |
 | P35.57 | queued API-roll leg: mount promoted release's registry on `sig-api` (`SIG_RELEASE_REGISTRY`), roll, verify `/v1/health` names the release; reads + V7 parity lan… | `implement-spec spec=docs/tickets/261_P35.57__api-release-parity.md live_verification=true` (mount+roll+verify) (#263) |
-| P35.5 | queued R2-mirror leg: R2 bucket + non-listable CDN, content-hash keys, immutable Cache-Control, $0 egress; PushLimits/--mirror/$50 ceiling/kill-switch landed | `implement-spec spec=docs/tickets/262_P35.5__zero-egress-distribution-host.md live_verification=true` (R2 push + origin-enable) |
+| P35.5 | queued R2-mirror leg: bucket + non-listable CDN, content-hash keys, immutable Cache-Control, $0 egress; PushLimits/--mirror/$50 ceiling/kill-switch landed | `implement-spec spec=docs/tickets/262_P35.5__zero-egress-distribution-host.md live_verification=true` (R2 push + origin-enable) |
 | P35.67 | queued L1 post-cutover checklist (`sig-ops post-cutover-probe --leg l1`) post-OP-09 + L2 cert-renewal read ≈ 2026-11-22; read-only OM-14; probe verb + checklist… | `implement-spec spec=docs/tickets/263_P35.67__post-dns-cutover-probe.md live_verification=true` (#265) |
-| P35.1a | queued write leg: reconcile Cloud Scheduler from ops/cadence.toml (inert PAUSED triggers + declared-bundle publish) + live-diff; `live-1` stopped OM-18; P34.42b… | `implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` (#266; `live-1` stopped OM-18) · retry `r11/P35… |
+| P35.1a | queued write leg: reconcile Cloud Scheduler from ops/cadence.toml (inert PAUSED triggers + declared-bundle publish) + live-diff; `live-1` stopped OM-18; P34.42b… | `implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` (#266) |
 | P35.1a1 | queued declared-job seed leg (row 287a): 12 declared-absent jobs on default-compute + `sig-scheduler` run.invoker + paused triggers; `seed-declared-jobs.sh` lan… | `implement-spec spec=docs/tickets/287a_P35.1a1__seed-declared-jobs-paused.md live_verification=true` (#296 — leg queued, production untouched) |
 | P35.11 | queued Wave-A: L1 digest roll + seed load + serial legistar → usa_spending → procportal_nyc_ny; L2 `claims_added == 0` reruns; L3 resume post-green; S8 tribal s… | L2 |
 | P35.14a | queued hosted write: `sqitch deploy closed_vocabulary` (INSERT-only — 280 predicates + 5,600 directness + CHECK) + verify + read-back | `implement-spec spec=docs/tickets/272_P35.14a__vocabulary-conformance-closed-vocabulary.md live_verification=true` (#274) |

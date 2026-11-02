@@ -132,5 +132,6 @@
 | D-P36.43-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.43-live-<n>` dispatch or the operator | RETURN PASS — P36.43 | `gcloud run jobs describe` shows the pinned digest + status SA; `gcloud scheduler jobs describe` shows `12 */6 * * *` ENABLED; the first execution writes `statu… |
 | D-P36.44-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.44-live-<n>` dispatch or the operator | RETURN PASS — P36.44 | `gcloud scheduler jobs describe sig-sched-release-cut` shows `0 14 15-17 * *` ENABLED → `sig-release:run`; `gcloud scheduler jobs describe sig-sched-materialize… |
 | D-P36.46-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.46-live-<n>` dispatch or the operator | RETURN PASS — P36.46 | the dry plan reports the WORM/repo counts (matched / `unmatched:*` / repo_record); the apply's appended rows match the imported record digests; the +0 re-run re… |
+| D-P36.48-1 | OPEN | the systemic render-floor optimisation row (the shared first-paint pipeline — fonts/CSS/head) | check:perf measures /sources/index.html LCP ≤ 1500 ms — the measured_gaps row then reads stale and must be removed | `npm run check:perf` measures `/sources/index.html` LCP ≤ 1500 ms → the measured_gaps row goes stale on its own and must be removed |
 
 ← back: CURRENT.md

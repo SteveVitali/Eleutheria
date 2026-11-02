@@ -79,8 +79,8 @@
           }
         },
         {
-          "//": "T1 content — script ≤ 20 KiB, document ≤ 150 KiB, perf ≥ 0.95, a11y 1.0, LCP ≤ 1.5 s, CLS ≤ 0.02, TBT ≤ 50 ms (K0 §4.3 verbatim). Excludes the T0/T2/T3 blocks.",
-          "matchingUrlPattern": "^(?:(?!/curate/|/map/|/network/|/explore/|/search/|/dispute/|/print/|/r/|/intake/|/40[0-9]).)*$",
+          "//": "T1 content — script ≤ 20 KiB, document ≤ 150 KiB, perf ≥ 0.95, a11y 1.0, LCP ≤ 1.5 s, CLS ≤ 0.02, TBT ≤ 50 ms (K0 §4.3 verbatim). Excludes the T0/T2/T3 blocks and the /sources/ index (its own block carries the recorded LCP measured gap).",
+          "matchingUrlPattern": "^(?:(?!/curate/|/map/|/network/|/explore/|/search/|/dispute/|/print/|/r/|/intake/|/40[0-9]|/sources/index\\.html).)*$",
           "assertions": {
             "resource-summary:script:size": [
               "error",
@@ -305,6 +305,70 @@
           "//": "WARN TWIN of the block above — assertMatrix allows one tuple per audit, so the ratified §4.3 ceilings this route's measured_gaps record report at warn here while the block above keeps the regression bounds as the error gate.",
           "warnTwin": true,
           "matchingUrlPattern": ".*/search/.*",
+          "assertions": {
+            "largest-contentful-paint": [
+              "warn",
+              {
+                "maxNumericValue": 1500
+              }
+            ]
+          }
+        },
+        {
+          "//": "T1 /sources/ index — identical T1 ceilings; the recorded measured gap bounds today's ≈ 1.51 s LCP at its regression bound as error, the ratified 1.5 s as warn — D-P36.48-1 (the heaviest T1 document rides the shared ~1.5 s first-paint floor; the metric reads LCP ≡ FCP).",
+          "matchingUrlPattern": "/sources/index\\.html$",
+          "assertions": {
+            "resource-summary:script:size": [
+              "error",
+              {
+                "maxNumericValue": 20480
+              }
+            ],
+            "resource-summary:document:size": [
+              "error",
+              {
+                "maxNumericValue": 153600
+              }
+            ],
+            "largest-contentful-paint": [
+              "error",
+              {
+                "maxNumericValue": 1600
+              }
+            ],
+            "cumulative-layout-shift": [
+              "error",
+              {
+                "maxNumericValue": 0.02
+              }
+            ],
+            "total-blocking-time": [
+              "error",
+              {
+                "maxNumericValue": 50
+              }
+            ],
+            "categories:performance": [
+              "error",
+              {
+                "minScore": 0.95
+              }
+            ],
+            "categories:accessibility": [
+              "error",
+              {
+                "minScore": 1
+              }
+            ],
+            "unminified-css": "off",
+            "uses-long-cache-ttl": "off",
+            "csp-xss": "off"
+          }
+        },
+        {
+          "//": "WARN TWIN of the block above — assertMatrix allows one tuple per audit, so the ratified §4.3 ceilings this route's measured_gaps record report at warn here while the block above keeps the regression bounds as the error gate.",
+          "warnTwin": true,
+          "matchingUrlPattern": "/sources/index\\.html$",
           "assertions": {
             "largest-contentful-paint": [
               "warn",
