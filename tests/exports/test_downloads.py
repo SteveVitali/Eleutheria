@@ -273,9 +273,7 @@ def test_release_emits_immutable_downloads_listing() -> None:
         )
         pub = rel.publication_id
         base = root / "rel" / "releases" / pub / "data"
-        listing = json.loads(
-            (base / "download_listing.json").read_text(encoding="utf-8")
-        )
+        listing = json.loads((base / "download_listing.json").read_text(encoding="utf-8"))
         assert listing["schema"] == "sig.download-listing/1"
         assert listing["publication_id"] == pub
         assert (base / "index.html").is_file()

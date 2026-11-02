@@ -1696,7 +1696,7 @@ def downloads_listing_page(
 <p>This is the citable, immutable downloads listing for this release —
 {_e(str(listing.get("release_id") or ""))}. The mutable convenience view is
 <a href="/data/">/data/</a>; this URL names exactly these bytes forever.</p>
-<p class="mut">Every bundle's <code>ATTRIBUTION.txt</code>/<code>LICENCE.txt</code>
+<p class="mut">Every bundle's <code>ATTRIBUTION.txt</code> · <code>LICENCE.txt</code>
 states the captured terms and the operator-accepted basis verbatim (ADR-183 —
 no withdrawal): a bad bundle is corrected by a new release, never retracted
 silently. The public mirror is <code>{_e(str(mirror.get("base_url") or ""))}</code>
