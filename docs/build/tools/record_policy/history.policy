@@ -1123,3 +1123,12 @@ seed-commit c96d0b117fa8522ac8743878a36058a030e090cf
 seed-commit 7283c82b7f3a7ce71fc485e9b85474bdd30c714d
 seed-commit 06ca9102b42ce906445c84727cdfb6f6ff96f9e3
 seed-commit 57c4690927025825030d290a2449d371178ed57f
+seed-commit 6875b608 6875b608108bf8278ea0933475afbcabaddb2ec3
+seed-commit 730acf47f2037523df44696d2b080d630fa98661
+
+# P36.33 orient fold (324d62e96dc057f8c7b460c55a812081e7df6079): the P36.33 correction entry tipped the
+# orient recipe to 49,157 B > 49,152 (run 41110556436 docs-red).
+# Folded in place ~674 -> ~290 B; facts preserved (format, row 871,
+# live-token respells, archive re-encode); pre-fold bytes archived at
+# docs/build/reports/memory-repair/LEDGER_correction_pre-P36.33-fold.txt
+seed-commit 324d62e96dc057f8c7b460c55a812081e7df6079

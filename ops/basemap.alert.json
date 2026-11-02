@@ -1,0 +1,22 @@
+{
+  "schema": "sig.basemap-alert/1",
+  "row": "P36.33",
+  "subject": "R2 basemap host (sig-basemap / tiles.surveillancegraph.org)",
+  "posture": "zero-cost guard — K1 §2.4: ≈$2/mo at 1k sessions, ≈$13 at 100k; a runaway is a denial-of-wallet, not a pricing surprise",
+  "alert": {
+    "provider": "cloudflare",
+    "kind": "usage-based-billing notification on the account",
+    "thresholds": [
+      { "metric": "r2_storage_gb", "warn": 200, "note": "planet build is ~138.5 GB — double it = something else landed" },
+      { "metric": "r2_class_b_ops_per_day", "warn": 2000000, "note": "≈ 2M reads/day ≈ 10x the 10k-session shape" },
+      { "metric": "projected_spend_usd_month", "warn": 10, "kill": 25 }
+    ],
+    "destination": "the P34.4 operator alert channel — env-configured, never a committed address (HG-09)",
+    "wiring": "declared here; the provider-side alert lands with the host create leg (D-P36.33-1) — the SIG-side join is `sig-ops egress-report --usage-usd` on the shared $50/month ceiling"
+  },
+  "kill_switch": {
+    "sig_side": "one committed flip — ops/basemap.lock.json serving.active_source: basemap → context (`sig-ops basemap kill-switch --apply`); every generated style then binds the same-origin context.pmtiles boundaries fallback (K1 §2.4 verbatim: 'a kill switch that points the style at the boundaries fallback')",
+    "provider_side": "operator act, never an agent's — disable the custom domain / R2 public access on sig-basemap",
+    "verification": "after the flip, the generated styles' basemap source URL is pmtiles:///tiles/context.pmtiles — `sig-ops basemap check` proves it"
+  }
+}

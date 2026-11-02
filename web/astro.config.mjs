@@ -12,6 +12,7 @@ import sharp from "sharp";
 import { resolveTileCopyList } from "./scripts/export-tiles.mjs";
 import { buildManifest, classifyDist, classifyRoute, writeManifest } from "./src/lib/page-types.ts";
 import { tightenT0Document } from "./src/lib/csp.ts";
+import { BASEMAP_TILE_ORIGIN } from "./src/lib/basemap.ts";
 import {
   renderCardSvg,
   renderLogoSvg,
@@ -403,7 +404,9 @@ export default defineConfig({
       directives: [
         "default-src 'self'",
         "img-src 'self' data: blob:",
-        "connect-src 'self'",
+        // P36.33 (MAP-02, SIG-UI-100): K0 §4.8's `connect-src 'self' <SIG tile
+        // origin>` — the basemap archive lives on the SIG tile host.
+        `connect-src 'self' ${BASEMAP_TILE_ORIGIN}`,
         "worker-src 'self' blob:",
         "font-src 'self'",
         "object-src 'none'",

@@ -20,6 +20,7 @@
 
 import type { PageType } from "../../src/lib/page-types";
 import { policyDirectives } from "../../src/lib/csp";
+import { BASEMAP_TILE_ORIGIN } from "../../src/lib/basemap";
 
 /** Every meta tag the sweep counts — Astro emits exactly one per page. */
 const META_TAG_RE = /<meta\s+http-equiv="content-security-policy"/gi;
@@ -67,6 +68,9 @@ export function cspViolations(type: PageType, html: string): string[] {
 
   for (const [name, tokens] of dirs) {
     for (const token of tokens) {
+      // K0 §4.8's own connect-src row names `<SIG tile origin>`: the one
+      // first-party host the policy may carry, and only on connect-src.
+      if (name === "connect-src" && token === BASEMAP_TILE_ORIGIN) continue;
       if (!ALLOWED_TOKEN.test(token)) {
         problems.push(`${name} carries ${token} — no hosts, no 'unsafe-*', no '*' (SIG-UI-040: no third-party runtime origins)`);
       }
@@ -103,7 +107,7 @@ export function cspViolations(type: PageType, html: string): string[] {
   } else {
     expect("default-src", ["'self'"]);
     expect("img-src", ["'self'", "data:", "blob:"]);
-    expect("connect-src", ["'self'"]);
+    expect("connect-src", ["'self'", BASEMAP_TILE_ORIGIN]);
     expect("worker-src", ["'self'", "blob:"]);
     const scriptSrc = dirs.get("script-src");
     if (scriptSrc === undefined) {

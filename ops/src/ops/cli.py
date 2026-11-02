@@ -2973,6 +2973,12 @@ def build_parser() -> argparse.ArgumentParser:
         "scan|seal-plan|seal-apply over the OCFL capture root "
         "(ops/at_rest_audit.toml); counts only, no byte is deleted",
     )
+    sub.add_parser(
+        "basemap",
+        help="P36.33 / SIG-UI-100 (K1 MAP-02, ADR-229): the basemap pipeline "
+        "+ host — check | glyphs | context-build | refresh | host | "
+        "kill-switch over ops/basemap.lock.json (sig.basemap-lock/1)",
+    )
     return parser
 
 
@@ -5969,6 +5975,10 @@ def main(argv: list[str] | None = None) -> int:
         from . import held_out_relevance
 
         return held_out_relevance.main(raw[1:])
+    if raw and raw[0] == "basemap":
+        from . import basemap
+
+        return basemap.main(raw[1:])
     args = parser.parse_args(argv)
     if args.command == "up":
         return _cmd_up(args)

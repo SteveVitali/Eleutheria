@@ -1,0 +1,29 @@
+{
+  "schema": "sig.basemap-host-packet/1",
+  "status": "prepared_not_executed",
+  "row": "P36.33",
+  "recorded_at": "2026-10-30T17:59:32Z",
+  "authority": "GATE-G5 §4 13-row OM-20 list names P36.33 verbatim (2026-10-25T18:40Z, expires GATE-G6); window AR-3 + AR-2",
+  "mutation": "the R2 basemap host create — bucket sig-basemap + CORS/Range/cache posture + custom domain tiles.surveillancegraph.org + first upload",
+  "queued_because": "live_verification=false + hosted env absent (no SIG_CF_*/SIG_R2_* creds) + OP-09 not landed",
+  "rerun_prompt": "implement-spec spec=docs/tickets/374_P36.33__basemap-pipeline-and-host.md live_verification=true",
+  "env_required": [
+    "SIG_CF_ACCOUNT_ID",
+    "SIG_CF_API_TOKEN",
+    "SIG_R2_ACCESS_KEY_ID",
+    "SIG_R2_SECRET_ACCESS_KEY",
+    "SIG_BASEMAP_AUTHOR"
+  ],
+  "preconditions": [
+    "OP-09 — DNS zone on Cloudflare (operator act)",
+    "outside AR-3 windows (batch day 6 00:00Z → day 13 12:00Z; daily 03:00-06:30Z)"
+  ],
+  "verify": [
+    "curl -I https://tiles.surveillancegraph.org/basemap/<build>.pmtiles → 200 + immutable cache-control",
+    "curl -r 0-1023 → 206 + Content-Range",
+    "Origin https://surveillancegraph.org GET → access-control-allow-origin + exposed Content-Range/ETag/Content-Length",
+    "anonymous GET on the bucket root → no listing document"
+  ],
+  "restore_point": "the host is re-creatable from ops/basemap.lock.json + the upstream archive",
+  "obligation": "D-P36.33-1"
+}

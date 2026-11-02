@@ -20,10 +20,11 @@ import {
   tightenT0Document,
 } from "../../src/lib/csp";
 import { cspMetaOf, cspViolations } from "../e2e/csp-policy-check";
+import { BASEMAP_TILE_ORIGIN } from "../../src/lib/basemap";
 
 // The shape Astro emits — same directive set every page, hashes varying.
 const EMITTED =
-  "default-src 'self';img-src 'self' data: blob:;connect-src 'self';" +
+  `default-src 'self';img-src 'self' data: blob:;connect-src 'self' ${BASEMAP_TILE_ORIGIN};` +
   "worker-src 'self' blob:;font-src 'self';object-src 'none';base-uri 'none';" +
   "form-action 'self'; script-src 'self' 'sha384-AAA=' 'sha384-BBB='; " +
   "script-src-attr 'none'; style-src 'self' 'sha384-CCC='; style-src-attr 'none';";

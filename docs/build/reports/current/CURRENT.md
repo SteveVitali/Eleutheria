@@ -4,19 +4,19 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `daf81e8de644e783f4e9caa8dfd2cf6852873bf7` · inputs hashed: 1147 · wall-clock receipt: `receipt.json`
+> input_commit: `730e35b6be99f399a1d3cf20c79ba9efd9a9f655` · inputs hashed: 1149 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.33` · lastCompleted `P36.32`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.34` · lastCompleted `P36.33`
 - chainTip `r11/P36.79-held-out-search-relevance-set` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-10-29T22:20Z`
 
 ## Obligations
 
-- 204 obligations · **123 owed** (120 OPEN, 3 PARTIAL) · 81 terminal
-- 709 events (51 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 205 obligations · **124 owed** (121 OPEN, 3 PARTIAL) · 81 terminal
+- 710 events (51 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 123 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 124 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -88,6 +88,7 @@
 | P36.78 | queued D-P36.78-1 — 5 leg-A GETs (the Sourcewell contract page + terms-use, the OMNIA supplier + contract-documents index + terms-of-use); D-P36.78-2 — leg B, o… | `implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true` |
 | P36.13 | queued D-P36.13-1 — the hosted-enforcement flip on `sig-api` (env `SIG_API_RATE_LIMIT=enforce` + hops 2; prestate describe = restore point) | `implement-spec spec=docs/tickets/354_P36.13__api-rate-limits.md live_verification=true` |
 | P36.79 | queued D-P36.79-1 — the restricted-bucket object write of the sealed held-out relevance set (read-back digest verify; restore point = bucket versioning + commit… | `implement-spec spec=docs/tickets/371_P36.79__held-out-search-relevance-set.md live_verification=true` |
+| P36.33 | queued D-P36.33-1 — the R2 basemap host create (bucket sig-basemap + CORS/Range/immutable + custom domain tiles.surveillancegraph.org + first upload); restore p… | `implement-spec spec=docs/tickets/374_P36.33__basemap-pipeline-and-host.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 
@@ -99,16 +100,7 @@
 
 ## Source funnel (recorded baseline, domain-labelled)
 
-| unit | recorded value | domain · date · evidence |
-|---|---|---|
-| discovered | `**339** registered `[sources.*]` + **27** researched candidates` | `implementation · 2026-09-27 · `sources.toml`, `source-candidates.csv`` |
-| reviewed | `rights blocks + disposition artifacts per source (`p293_dispositions.json` valid` | `implementation · 2026-09-27` |
-| permitted | `**236** `ingestion_permitted = true` (of 339)` | `implementation · 2026-09-27 · counted from `sources.toml`` |
-| mapped | `8 accountability sources wired (P31.12/13, shadow diff=0); earlier classes per t` | `fixture+implementation · recorded 2026-09-26` |
-| captured | `OCFL-backed captures behind every landed claim; per-job counts recorded per run ` | `hosted · recorded 2026-09-26 (P31.12/13 run ledgers)` |
-| extracted | `2,074,963 admissible claims on the hosted spine (after P30.2a materialization)` | `hosted · recorded 2026-09-24 (P30.2a run)` |
-| linked | `1,872,344 envelopes → 227,998 resolved sites (from 230,330 obs-level records, de` | `hosted · recorded 2026-09-24/25` |
-| published | `national surface live: export `sig-2026-09-27-ce480ab1` published to `…-sig-publ` | `public · recorded 2026-09-27 (P31.16 publish half)` |
+- `funnel` → see [funnel.md](funnel.md) (complete — 8 rows)
 
 ## Releases (recorded)
 
