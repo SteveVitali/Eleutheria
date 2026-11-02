@@ -1,0 +1,156 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// `/status/issues/` — the issues log (P36.49 / TX-06, SIG-TRANSP-010,
+// J3 §7.3): auto-detected classes from run records + the curated
+// `known_issues.toml` entries, per source, opened/closed dates, append-only.
+// T1, zero-JS; the status clock labels every time-bearing cell — this page
+// is not a citation (SIG-TRANSP-034).
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Figure from "../../../components/Figure.astro";
+import { getStatusLane } from "../../../lib/status-lane";
+import { getSiteMetadata } from "../../../lib/data";
+import { fmtInt } from "../../../lib/format";
+import { artifactHref, defineFigures } from "../../../lib/figures";
+import { withBase } from "../../../lib/paths";
+import {
+  getIssues,
+  issueClassLabel,
+  issuesBySource,
+  issueText,
+  sourceNameMap,
+} from "../../../lib/issues";
+
+const issues = getIssues();
+const bySource = issuesBySource(issues);
+const names = sourceNameMap();
+const lane = getStatusLane();
+const openCount = issues.filter((i) => i.closed_at === null).length;
+const closedCount = issues.length - openCount;
+const curatedCount = issues.filter((i) => i.kind === "curated").length;
+
+const FIGURES = defineFigures(
+  "status-issues",
+  issues.length
+    ? [
+        {
+          id: "open-issues",
+          class: "headline" as const,
+          value: openCount,
+          artifact: "transparency/issues.jsonl",
+          pointer: "/",
+          definition: "#log-heading",
+          href: artifactHref("transparency/issues.jsonl"),
+          breakdown: "#fig-open-issues",
+          targets: [],
+        },
+        {
+          id: "closed-issues",
+          class: "headline" as const,
+          value: closedCount,
+          artifact: "transparency/issues.jsonl",
+          pointer: "/",
+          definition: "#log-heading",
+          href: artifactHref("transparency/issues.jsonl"),
+          breakdown: "#fig-closed-issues",
+          targets: [],
+        },
+        {
+          id: "curated-issues",
+          class: "headline" as const,
+          value: curatedCount,
+          artifact: "transparency/issues.jsonl",
+          pointer: "/",
+          definition: "#log-heading",
+          href: artifactHref("transparency/issues.jsonl"),
+          breakdown: "#fig-curated-issues",
+          targets: [],
+        },
+      ]
+    : [],
+);
+const fig = (id: string) => {
+  const f = FIGURES.find((x) => x.id === id);
+  if (!f) throw new Error(`status-issues figures[]: no figure registered as "${id}"`);
+  return f;
+};
+
+const meta = getSiteMetadata();
+const statusTime = lane?.status_time ?? meta.asOf.as_of_world;
+const releaseId = meta.releaseId;
+const asOfWorld = meta.asOf.as_of_world;
+---
+
+<BaseLayout title="Issues log" path="/status/issues/">
+  <p data-copy="IL-01" data-testid="status-clock-label">
+    Issues as of <time datetime={statusTime}>{statusTime}</time> UTC — this
+    page is not a citation; the published data is release {releaseId} (data
+    as of {asOfWorld}).
+  </p>
+  <p data-copy="IL-02">
+    The log is append-only: a resolved issue gains a closed date, it is
+    never removed. Auto-detected entries come from recorded runs; curated
+    entries are the committed known-issues registry.
+  </p>
+
+  {issues.length === 0 ? (
+    <p data-copy="IL-03" data-testid="no-issues">
+      No issues are recorded in this build.
+    </p>
+  ) : (
+    <>
+      <h2 id="log-heading" data-copy="IL-04">The log</h2>
+      <p data-copy="IL-05" id="fig-open-issues">
+        <Figure figure={fig("open-issues")} order="inline">{fmtInt(openCount)}</Figure>{" "}
+        open and <span id="fig-closed-issues"><Figure figure={fig("closed-issues")} order="inline">{fmtInt(closedCount)}</Figure></span>{" "}
+        closed entries across <span id="fig-curated-issues"><Figure figure={fig("curated-issues")} order="inline">{fmtInt(curatedCount)}</Figure></span>{" "}
+        curated known issues.
+      </p>
+      {[...bySource.entries()].map(([sid, rows]) => (
+        <section aria-labelledby={`src-${sid}`} data-testid={`issue-source-${sid}`}>
+          <h3 id={`src-${sid}`}>
+            <a href={withBase(`sources/${sid}/`)}>{names.get(sid) ?? sid}</a>{" "}
+            <code>{sid}</code>
+          </h3>
+          <table class="sig-table">
+            <thead>
+              <tr>
+                <th scope="col" data-copy="IL-06">Class</th>
+                <th scope="col" data-copy="IL-07">Kind</th>
+                <th scope="col" data-copy="IL-08">Opened</th>
+                <th scope="col" data-copy="IL-09">Last seen</th>
+                <th scope="col" data-copy="IL-10">Closed</th>
+                <th scope="col" data-copy="IL-11">Count</th>
+                <th scope="col" data-copy="IL-12">Issue</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((issue) => (
+                <tr data-testid={`issue-${issue.issue_id}`}>
+                  <td>{issueClassLabel(issue.issue_class)}</td>
+                  <td>{issue.kind === "curated" ? "curated" : "auto"}</td>
+                  <td><time datetime={issue.opened_at}>{issue.opened_at}</time></td>
+                  <td>{issue.last_seen_at ?? "—"}</td>
+                  <td>{issue.closed_at ?? "open"}</td>
+                  <td>{issue.count ?? "—"}</td>
+                  <td>
+                    {issueText(issue)}
+                    {issue.correction_ref ? <> — <code>{issue.correction_ref}</code></> : null}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      ))}
+      <p data-copy="IL-13">
+        The machine-readable log is{" "}
+        <a href={artifactHref("transparency/issues.jsonl")}>issues.jsonl</a>;
+        curated entries are recorded in the committed{" "}
+        <code>known_issues.toml</code>.
+      </p>
+    </>
+  )}
+</BaseLayout>

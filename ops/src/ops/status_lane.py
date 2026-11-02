@@ -241,6 +241,7 @@ def build_status_lane(
     scheduler_report: Mapping[str, Any] | None = None,
     release: Mapping[str, Any] | None = None,
     status_time: datetime,
+    known_issues: Sequence[Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Build the ``sig.status-lane/1`` document.
 
@@ -376,6 +377,16 @@ def build_status_lane(
 
     listed_rows.sort(key=lambda r: r["source_id"])
 
+    # P36.49 (TX-06): the curated half of the issues log — validated
+    # ``known_issues.toml`` entries as ``sig.source-issue/1`` rows, listed
+    # sources only (S-11: a count-only source's curated entry can never
+    # name it on the lane). Pending-review text is already dropped by
+    # ``curated_issue_records`` (D-J3-12).
+    from exports.known_issues import curated_issue_records
+
+    listed_ids = {r["source_id"] for r in listed_rows}
+    curated = [r for r in curated_issue_records(known_issues or []) if r["source_id"] in listed_ids]
+
     # S-13: robots outcomes aggregate to host + outcome + count; a
     # ``disregarded`` row carries the GL-GATE-08 decision reference (D-J3-2
     # = yes, W2-6 — the disclosure is host + count, never a URL).
@@ -443,6 +454,7 @@ def build_status_lane(
         "issues": {
             "classes": dict(sorted(issue_class_counts.items())),
             "per_source": {k: issues_per_source[k] for k in sorted(issues_per_source)},
+            "curated": curated,
         },
         "robots_disregard": {
             "hosts": len({r["host"] for r in robots_disregard}),
@@ -593,7 +605,8 @@ Next-run values are shown to the day.</p>
 
 def status_issues_index_html(lane: Mapping[str, Any]) -> str:
     """``status/issues/index.html`` — the auto-detected issue-class summary
-    (counts + per-source class lists; the curated known-issues log is TX-06)."""
+    + the curated known-issues log (P36.49 / TX-06: opened/closed dates,
+    append-only; pending-review text renders the interim marker)."""
     classes = lane["issues"]["classes"]
     lines = (
         "".join(f"<li>{_e(cls)} — {_e(n)} source(s)</li>" for cls, n in classes.items())
@@ -603,14 +616,44 @@ def status_issues_index_html(lane: Mapping[str, Any]) -> str:
         f"<li><code>{_e(sid)}</code>: {_e(', '.join(cls))}</li>"
         for sid, cls in lane["issues"]["per_source"].items()
     )
+    curated_rows = []
+    for issue in sorted(
+        lane["issues"].get("curated") or [],
+        key=lambda r: (str(r.get("source_id") or ""), str(r.get("opened_at") or "")),
+    ):
+        state = "closed " + _e(issue.get("closed_at")) if issue.get("closed_at") else "open"
+        text = issue.get("text") or "known-issue text pending review"
+        ref = (
+            f" — see <code>{_e(issue['correction_ref'])}</code>"
+            if issue.get("correction_ref")
+            else ""
+        )
+        curated_rows.append(
+            "<tr>"
+            f"<td><code>{_e(issue['source_id'])}</code></td>"
+            f"<td>{_e(issue['issue_class'])}</td>"
+            f"<td>{_e(issue['opened_at'])}</td>"
+            f"<td>{state}</td>"
+            f"<td>{_e(text)}{ref}</td>"
+            "</tr>"
+        )
+    curated = (
+        "<table><thead><tr><th>Source</th><th>Class</th><th>Opened</th>"
+        f"<th>State</th><th>Issue</th></tr></thead><tbody>{''.join(curated_rows)}</tbody></table>"
+        if curated_rows
+        else "<p>No curated known issues recorded.</p>"
+    )
     body = f"""
 <h1>Issues</h1>
 <p>Status as of {_e(lane["status_time"])} UTC. Auto-detected issue classes from scrubbed run
-records — the append-only issues log and curated known issues ship separately.</p>
-<h2>Classes</h2>
+records plus the committed curated known issues — the log is append-only; a closed issue is
+a new entry state, never a removed row.</p>
+<h2>Auto-detected classes</h2>
 <ul>{lines}</ul>
 <h2>By source</h2>
 <ul>{per_source}</ul>
+<h2>Curated known issues</h2>
+{curated}
 """
     return _layout("Issues", body)
 

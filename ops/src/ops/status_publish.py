@@ -68,8 +68,11 @@ def emit_status_tree(
     scheduler_report_path: str | Path | None = None,
     release: Mapping[str, Any] | None = None,
     status_time: str,
+    known_issues_path: str | Path | None = None,
 ) -> dict[str, Path]:
     """Render the lane file set (``emit`` mode — the dry-run publish)."""
+    from exports.known_issues import load_known_issues
+
     runs = load_run_records(runs_path)
     sources = load_source_rows(sources_path)
     lane = build_status_lane(
@@ -79,6 +82,7 @@ def emit_status_tree(
         scheduler_report=load_scheduler_report(scheduler_report_path),
         release=release,
         status_time=parse_status_time(status_time),
+        known_issues=load_known_issues(known_issues_path),
     )
     return emit_status_files(lane, out_dir)
 
@@ -202,6 +206,7 @@ def run_status_publish(args: Any) -> int:
             scheduler_report_path=args.scheduler_report,
             release=release,
             status_time=args.status_time,
+            known_issues_path=args.known_issues,
         )
     except (StatusLaneError, OSError, json.JSONDecodeError) as exc:
         print(f"status-publish emit refused: {exc}")

@@ -1,11 +1,11 @@
 {
   "schema": "sig.path-containment-baseline/1",
-  "measured_at": "2026-11-01T16:16:09Z",
+  "measured_at": "2026-11-02T17:34:47Z",
   "measured_by": "node web/scripts/check-root-absolute-paths.mjs --write-baseline",
   "rule": "quoted ('\"`') literal starting with '/' + URL-path chars, quote not preceded by '/', over /*-*-/ <!-- --> and //-comment-stripped text in web/src/** .astro/.ts/.tsx/.js/.jsx/.mjs/.mts/.css; allow-listed file+token+count exemptions subtracted",
   "scope": "web/src/**",
   "plan_baseline": "G3 NEW-6 measured 85 sites / 36 files (0 BASE_URL uses) at 2026-09-30T18:47:42Z on the pre-refactor tree; re-measured at implement time per the P35.65 contract — the baseline may only shrink (P36.66a's sweep), never grow without a contract amendment",
-  "sites": 140,
+  "sites": 144,
   "files": {
     "src/components/HowWeKnowThis.astro": 3,
     "src/internal/contribution-back.astro": 2,
@@ -55,6 +55,7 @@
     "src/pages/sources.astro": 1,
     "src/pages/sources/identifier-changed.astro": 2,
     "src/pages/status.astro": 7,
+    "src/pages/status/issues/index.astro": 4,
     "src/pages/status/sources/index.astro": 4,
     "src/pages/style-guide.astro": 1,
     "src/pages/terms.astro": 1,

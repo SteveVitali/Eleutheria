@@ -1702,6 +1702,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="release.json for the release/as-of label (absent → not_recorded)",
     )
     spub.add_argument("--status-time", required=True, help="the lane's status time (ISO-8601 UTC)")
+    spub.add_argument(
+        "--known-issues",
+        default=None,
+        help="exports/…/data/known_issues.toml path (P36.49; default: packaged)",
+    )
     spub.add_argument("--out", required=True, help="output directory (status/** written under it)")
     spub.add_argument(
         "--apply",

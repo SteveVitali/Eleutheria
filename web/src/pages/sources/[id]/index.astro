@@ -43,6 +43,7 @@ import {
   type SourcePageModel,
 } from "../../../lib/source-page";
 import { resolveSourceId } from "../../../lib/alias";
+import { issueClassLabel, issuesForSource, issueText, getIssues } from "../../../lib/issues";
 
 export function getStaticPaths() {
   return getSourcePageIds().map((id) => ({ params: { id }, props: {} }));
@@ -62,6 +63,7 @@ const termsDisc = sourceTermsDisclosure(row.source_id);
 const contributions = row.contributions ?? [];
 const observedDays = observedCadenceDays(m.executions);
 const targets = m.extras.targets ?? null;
+const sourceIssues = m.registryOnly ? [] : issuesForSource(getIssues(), id);
 const slugify = (s: string): string => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 // JSON pointers are built through a non-literal slash so the root-absolute
 // containment rule never counts a pointer as a site path (same seam
@@ -461,6 +463,48 @@ const crumbs = [
             .
           </p>
         )}
+      </section>
+
+      {/* ===================== Known issues ===================== */}
+      {/* P36.49 (TX-06, SIG-TRANSP-010): the per-source section — auto
+          detections + curated known issues, open first; append-only. */}
+      <section aria-labelledby="issues-heading" data-testid="issues-section">
+        <h2 id="issues-heading" data-copy="KI-01">Known issues</h2>
+        {sourceIssues.length === 0 ? (
+          <p data-copy="KI-02" data-testid="issues-none">
+            No issues are recorded for this source.
+          </p>
+        ) : (
+          <table class="sig-table" data-testid="issues-table">
+            <thead>
+              <tr>
+                <th scope="col" data-copy="KI-03">Class</th>
+                <th scope="col" data-copy="KI-04">Kind</th>
+                <th scope="col" data-copy="KI-05">Opened</th>
+                <th scope="col" data-copy="KI-06">Closed</th>
+                <th scope="col" data-copy="KI-07">Issue</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sourceIssues.map((issue) => (
+                <tr>
+                  <td>{issueClassLabel(issue.issue_class)}</td>
+                  <td>{issue.kind === "curated" ? "curated" : "auto"}</td>
+                  <td><time datetime={issue.opened_at}>{issue.opened_at}</time></td>
+                  <td>{issue.closed_at ?? "open"}</td>
+                  <td>
+                    {issueText(issue)}
+                    {issue.correction_ref ? <> — <code>{issue.correction_ref}</code></> : null}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        <p data-copy="KI-08">
+          The full append-only log is{" "}
+          <a href={withBase("status/issues/")}>/status/issues/</a>.
+        </p>
       </section>
 
       {/* ===================== Ground truth ===================== */}
