@@ -148,10 +148,9 @@ const TRANSPARENCY_SOURCE_RE =
 
 /** Byte-identical to DOSSIER_SOURCES_RE in scripts/check-figures.mjs (pinned
  *  by test): P36.52's per-dossier `sig.dossier-sources/1` artifacts —
- *  `web/dossier_sources/<slug-path>.json`. The build check admits them by
- *  pattern for artifact-existence; `data-artifact` must instead name a
- *  manifest-LISTED path (the release manifest enumerates every emitted
- *  artifact — figure-artifacts.json lists the fixture set). */
+ *  `web/dossier_sources/<slug-path>.json` — an unbounded family like the
+ *  per-dossier artifacts (a real export emits slugs the fixture manifest
+ *  cannot enumerate), admitted by pattern the same way. */
 const DOSSIER_SOURCES_RE = /^web\/dossier_sources\/[a-z0-9-]+(\/[a-z0-9-]+)*\.json$/;
 
 function repoRoot(): string {
@@ -196,6 +195,7 @@ export function isManifestArtifact(path: string, listed?: readonly string[]): bo
   if (LABEL_STREAM_RE.test(path)) return true;
   if (ENTITY_TWIN_RE.test(path)) return true;
   if (TRANSPARENCY_SOURCE_RE.test(path)) return true;
+  if (DOSSIER_SOURCES_RE.test(path)) return true;
   // P35.45 — per-dossier artifacts are emitted under web/dossiers/ but never
   // the index document itself (it carries no dossier record to point into).
   if (PER_DOSSIER_RE.test(path) && path !== "web/dossiers/index.json") return true;
