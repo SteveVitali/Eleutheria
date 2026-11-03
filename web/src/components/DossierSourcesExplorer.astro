@@ -17,6 +17,7 @@ import {
   SORT_ROUTE_THRESHOLD,
   absenceReason,
   contributingSources,
+  dossierDownloadsPath,
   dossierSourcesJsonPath,
   dossierSourcesPagePath,
   dossierSourcesPath,
@@ -309,7 +310,13 @@ const disagreeTotal =
               </>
             )}
             <dt>Downloads</dt>
-            <dd>{s.downloads.length === 0 ? "not yet available — per-dossier downloads land with the downloads row (DSRC-03)" : "see the downloads block"}</dd>
+            <dd>{s.downloads.length === 0 ? "not emitted for this source in this release" : (
+              <ul class="sig-mut">
+                {s.downloads.map((f) => (
+                  <li><a href={f.href}><code>{f.name}</code></a> ({f.format}{typeof f.rows === "number" ? ` · ${f.rows} rows` : ""})</li>
+                ))}
+              </ul>
+            )}</dd>
           </dl>
         </details>
       );
@@ -403,12 +410,31 @@ const disagreeTotal =
     <h2 id="dsrc-downloads-heading">Downloads</h2>
     {doc.downloads.length === 0 ? (
       <p class="sig-table-note" data-testid="dsrc-downloads" data-copy="DS-14">
-        Downloads for this dossier are not yet available — per-dossier,
-        licence-compartmented files land with the downloads row (DSRC-03).
-        The dossier-sources JSON above is the machine-readable view.
+        {doc.download_recipes && !doc.download_recipes.materialised
+          ? "No materialised slices at this level — the downloads page carries the DuckDB/API recipe to slice the national files by jurisdiction key."
+          : "No per-dossier slices emitted in this release — the dossier-sources JSON above is the machine-readable view."}
       </p>
     ) : (
-      <ul>{doc.downloads.map((d) => <li>{JSON.stringify(d)}</li>)}</ul>
+      <>
+        <ul data-testid="dsrc-downloads">
+          {doc.downloads.map((g) => (
+            <li>
+              <code>{g.compartment}</code> — {g.license} ·{" "}
+              {g.files.map((f, i) => (
+                <>
+                  {i > 0 && " · "}
+                  <a href={f.href}><code>{f.name}</code></a>
+                </>
+              ))}
+            </li>
+          ))}
+        </ul>
+        <p class="sig-table-note">
+          <a href={withBase(dossierDownloadsPath(doc.jurisdiction.slug_path))} data-copy="DD-05">
+            All downloads for this dossier →
+          </a>
+        </p>
+      </>
     )}
     {doc.runs_file && (
       <p class="sig-table-note">

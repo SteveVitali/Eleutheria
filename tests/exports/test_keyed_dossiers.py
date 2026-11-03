@@ -237,9 +237,15 @@ def test_unplaced_report_shape_links_and_vocabulary(export) -> None:
     assert report["correction"]["corrections"] == "/corrections/"
     assert report["correction"]["research_queue"] == "/research-queue/"
     assert "intake" not in json.dumps(report["correction"])
-    # The download slot is a named absence — honest, not a dead link.
-    assert report["downloads"]["status"] == "not_emitted"
-    assert report["downloads"]["items"] == []
+    # P36.53 (DSRC-03): the unplaced slice now materialises — the slot names
+    # the emitted by-dossier/unplaced/<comp>/ files, never a dead link.
+    assert report["downloads"]["status"] == "emitted"
+    assert report["downloads"]["items"]
+    assert all(
+        f["path"].startswith("by-dossier/unplaced/")
+        for item in report["downloads"]["items"]
+        for f in item["files"]
+    )
     assert report["excluded_from"]
 
 

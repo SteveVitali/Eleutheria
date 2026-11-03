@@ -40,7 +40,9 @@ test.describe("the sources explorer", () => {
     await expect(page.getByTestId("dsrc-disagreements")).toContainText("not_evaluable");
     // previously contributed (D-K5-3): withdrawn + disappeared named below
     await expect(page.getByTestId("dsrc-previous")).toContainText("withdrawn");
-    await expect(page.getByTestId("dsrc-downloads")).toContainText("not yet available");
+    // P36.53 (DSRC-03): usa materialises per-compartment slices
+    await expect(page.getByTestId("dsrc-downloads")).toContainText("statements.jsonl.gz");
+    await expect(page.getByTestId("dsrc-downloads")).toContainText("ATTRIBUTION.txt");
     // zero <script> inside the explorer article (T1, SIG-DSRC-006)
     expect(await page.locator("article.sig-dsrc script").count()).toBe(0);
   });

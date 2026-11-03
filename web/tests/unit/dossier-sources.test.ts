@@ -14,6 +14,7 @@ import {
   DSRC_SORT_KEYS,
   SORT_ROUTE_THRESHOLD,
   contributingSources,
+  dossierDownloadsPath,
   dossierSourcesJsonPath,
   dossierSourcesPagePath,
   dossierSourcesPath,
@@ -173,5 +174,41 @@ describe("check-figures regex pin", () => {
     expect(chkM![1]).toBe(libM![1]);
     expect(isManifestArtifact("web/dossier_sources/usa/ok.json")).toBe(true);
     expect(isManifestArtifact("web/dossier_sources/usa/ok.runs.jsonl.gz")).toBe(false);
+  });
+});
+
+// P36.53 (DSRC-03): the downloads model — path helper, materialised entries,
+// and the county/place recipe block over the committed fixture corpus.
+describe("per-dossier downloads (P36.53)", () => {
+  it("dossierDownloadsPath names the T1 route", () => {
+    expect(dossierDownloadsPath("usa/ok")).toBe("dossier/usa/ok/downloads/");
+  });
+  it("materialised dossiers carry per-compartment slice entries", () => {
+    const usa = DOSSIER_SOURCES_FIXTURE["usa"];
+    expect(usa.downloads.length).toBeGreaterThan(0);
+    for (const g of usa.downloads) {
+      expect(g.directory.startsWith(`by-dossier/usa/`)).toBe(true);
+      const names = g.files.map((f) => f.name);
+      expect(names).toContain("ATTRIBUTION.txt");
+      expect(names).toContain("LICENCE.txt");
+      for (const f of g.files) {
+        expect(f.sha256).toHaveLength(64);
+        expect(f.href).toContain("files.surveillancegraph.org");
+      }
+    }
+    expect(usa.download_recipes?.materialised).toBe(true);
+  });
+  it("county/place dossiers are not materialised — the recipe block carries them", () => {
+    const harris = DOSSIER_SOURCES_FIXTURE["usa/tx/harris-county-48201"];
+    expect(harris.downloads).toHaveLength(0);
+    const r = harris.download_recipes;
+    expect(r?.materialised).toBe(false);
+    expect(r?.duckdb.files[0]?.sites).toContain("jurisdiction_chain");
+    expect(r?.api.endpoint).toContain("jurisdiction=us.census.geoid.county:48201");
+  });
+  it("source rows carry the by-source slice links", () => {
+    const ok = DOSSIER_SOURCES_FIXTURE["usa/ok"];
+    expect(ok.sources[0].downloads.length).toBeGreaterThan(0);
+    expect(ok.sources[0].downloads[0].path.startsWith("by-source/")).toBe(true);
   });
 });

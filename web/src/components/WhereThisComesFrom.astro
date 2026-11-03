@@ -14,6 +14,7 @@
 import Figure from "./Figure.astro";
 import {
   contributingSources,
+  dossierDownloadsPath,
   dossierSourcesPath,
   seenAt,
   latestRun,
@@ -68,7 +69,7 @@ const fmtDate = (iso: string | null): string => (iso ? iso.slice(0, 10) : "not_r
             Explore all {doc.totals.sources} source{doc.totals.sources === 1 ? "" : "s"} →
           </a>
         </Figure>{" "}
-        <span class="sig-mut" data-copy="DS-04">(downloads for this dossier are not yet available)</span>
+        <a href={withBase(dossierDownloadsPath(slug))} data-copy="DS-04">Download this dossier's data →</a>
       </p>
       <Figure figure={fig("dsrc-top-sources")} order="inline" tag="div">
         <table class="sig-table sig-wtcf-table" data-testid="dsrc-top-sources">

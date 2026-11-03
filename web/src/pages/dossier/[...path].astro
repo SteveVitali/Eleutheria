@@ -33,7 +33,7 @@ import type { Dossier } from "../../lib/dossier";
 import type { Crumb, PageAction } from "../../lib/nav";
 import { getDossierArtifactRef, getDossiers, getDossierProvenance, getDossierSources, getJurisdictionCompartments, getJurisdictionKeyMap, getSlugHistory, getUnplacedReport } from "../../lib/data";
 import WhereThisComesFrom from "../../components/WhereThisComesFrom.astro";
-import { DSRC_PROVENANCE_POINTER_BASE, dossierSourcesProvenance, dsrcArtifact, dsrcFigureSpecs } from "../../lib/dossier-sources";
+import { DSRC_PROVENANCE_POINTER_BASE, dossierDownloadsPath, dossierSourcesProvenance, dsrcArtifact, dsrcFigureSpecs } from "../../lib/dossier-sources";
 import { getSourcePageIds } from "../../lib/source-page";
 import type { SlugHistoryRow, UnplacedReport } from "../../lib/data";
 import { getReleaseStamp } from "../../lib/release-stamp";
@@ -480,6 +480,11 @@ if ((dossier.chain?.length ?? 0) > 1) {
 const actions: PageAction[] = [
   ...(dossier.links === undefined || dossier.links?.print
     ? [{ label: "Print", href: withBase(dossierPrintPath(dossier.slug)), testId: "print-link" }]
+    : []),
+  // P36.53 (DSRC-03): the downloads page mints for every dossier with a
+  // contribution artifact — materialised slices or the recipe block.
+  ...(dsrcDoc
+    ? [{ label: "Downloads", href: withBase(dossierDownloadsPath(dossier.slug)), testId: "downloads-link" }]
     : []),
   { label: "JSON", href: withBase(dossierJsonPath(dossier.slug)), testId: "api-link" },
 ];

@@ -217,6 +217,16 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
       "P36.52 (DSRC-02, SIG-DSRC-001…006/008/009): the per-dossier sources explorer — the contribution table, <details> per source, the static SVG over-time chart + table twin, sort routes above 25 sources, ≤50-row pagination (K5-P6). T1 zero-JS complete; leaf literals `sources`/`sort`/`page` outrank the `/dossier/**` umbrella.",
   },
   {
+    patterns: ["/dossier/**/downloads/"],
+    type: "T1",
+    owner: "P36.53",
+    contract: "sig.dossier-sources/1",
+    noJsEquivalent: SELF,
+    examples: ["/dossier/usa/downloads/", "/dossier/usa/ok/downloads/", "/dossier/usa/tx/harris-county-48201/downloads/"],
+    notes:
+      "P36.53 (DSRC-03, SIG-DSRC-007): per-dossier downloads — per-compartment slices materialised at country/admin-1 + the unplaced report (D-K5-1 as recommended), ATTRIBUTION/LICENCE per bundle, sha256/rows/bytes + R2-host content-hash links; county/place dossiers render the DuckDB/API recipe block instead. T1 zero-JS complete; leaf literal `downloads` outranks the `/dossier/**` umbrella.",
+  },
+  {
     patterns: ["/dossier/**"],
     type: "T1",
     owner: "P36.34",

@@ -420,6 +420,8 @@ class DossierContributionPlan:
     def render(
         self,
         transparency_artifacts: Mapping[str, bytes],
+        downloads: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
+        source_downloads: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
     ) -> dict[str, bytes]:
         """Emit ``web/dossier_sources/<slug-path>.json`` (+ ``.runs.jsonl.gz``).
 
@@ -427,13 +429,29 @@ class DossierContributionPlan:
         the sources.json/freshness/issues rows supply the registry display
         fields (name, licence, lifecycle, freshness_state, known issues) so the
         dossier source rows and the source page show one derivation.
+
+        P36.53 (DSRC-03): ``downloads`` maps a dossier slug → its emitted
+        ``by-dossier/<slug>/<compartment>/`` slice entries (country/admin-1
+        only — D-K5-1); ``source_downloads`` maps a slice source id → its
+        ``by-source/<id>/`` entries. Both default to empty — an absent slice
+        is an honest absence, never a fabricated link.
         """
         source_rows, freshness, issues = _read_back(transparency_artifacts)
+        downloads = dict(downloads or {})
+        source_downloads = dict(source_downloads or {})
         out: dict[str, bytes] = {}
         for key in sorted(self.dossiers):
             acc = self.dossiers[key]
             slug = self.slug_path(key)
-            doc = self._dossier_doc(acc, slug, source_rows, freshness, issues)
+            doc = self._dossier_doc(
+                acc,
+                slug,
+                source_rows,
+                freshness,
+                issues,
+                dossier_downloads=downloads.get(slug, ()),
+                source_downloads=source_downloads,
+            )
             path = f"{WEB_DIR}/{slug}.json"
             out[path] = (
                 json.dumps(doc, sort_keys=True, ensure_ascii=False, indent=2) + "\n"
@@ -455,6 +473,9 @@ class DossierContributionPlan:
         source_rows: Mapping[str, Mapping[str, Any]],
         freshness: Mapping[str, Mapping[str, Any]],
         issues: Mapping[str, list[str]],
+        *,
+        dossier_downloads: Sequence[Mapping[str, Any]] = (),
+        source_downloads: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
     ) -> dict[str, Any]:
         info = self.keyed.keys.get(acc.key) if self.keyed is not None else None
         jrow = self.engine.jurisdiction_row(acc.key) if self.engine is not None else None
@@ -504,7 +525,16 @@ class DossierContributionPlan:
         path = f"{WEB_DIR}/{slug}.json"
 
         source_docs = [
-            self._source_doc(acc, sid, sacc, source_rows, freshness, issues, runs_level)
+            self._source_doc(
+                acc,
+                sid,
+                sacc,
+                source_rows,
+                freshness,
+                issues,
+                runs_level,
+                source_downloads=(source_downloads or {}).get(sid, ()),
+            )
             for sid, sacc in sorted(acc.by_source.items())
         ]
         totals = self._totals(acc, source_docs)
@@ -573,7 +603,19 @@ class DossierContributionPlan:
                 ],
             },
             "runs_file": runs_file,
-            "downloads": [],
+            # P36.53 (DSRC-03, D-K5-1 = as recommended): the materialised
+            # ``by-dossier/<slug>/<comp>/`` slice entries (country/admin-1 +
+            # the unplaced sentinel) and, for every dossier, the slice
+            # recipe — county/place dossiers are never materialised; their
+            # readers slice the national files on the statements' placement
+            # columns (K5 §6).
+            "downloads": [dict(d) for d in dossier_downloads],
+            "download_recipes": _download_recipes(
+                acc,
+                slug,
+                jurisdiction=jurisdiction,
+                materialised=(level in RUNS_FILE_LEVELS or acc.key == _dk.UNPLACED),
+            ),
         }
 
     def _totals(
@@ -774,6 +816,7 @@ class DossierContributionPlan:
         freshness: Mapping[str, Mapping[str, Any]],
         issues: Mapping[str, list[str]],
         runs_level: bool,
+        source_downloads: Sequence[Mapping[str, Any]] = (),
     ) -> dict[str, Any]:
         reg = source_rows.get(source_id) or {}
         licence = reg.get("licence") or {}
@@ -873,7 +916,7 @@ class DossierContributionPlan:
                 }
                 for m in sorted(set(sacc.month_cfs) | set(sacc.month_crs) | set(sacc.month_rfs))
             ],
-            "downloads": [],
+            "downloads": [dict(d) for d in source_downloads],
             "known_issues": sorted(issues.get(source_id, ())),
         }
         return row
@@ -990,6 +1033,98 @@ _DEFINITIONS: dict[str, str] = {
     "series.claims_first_seen": "claims first sighted in the month",
     "series.claims_resighted": "claims sighted in the month that were first seen earlier",
 }
+
+
+def _download_recipes(
+    acc: _DossierAcc,
+    slug: str,
+    *,
+    jurisdiction: Mapping[str, Any],
+    materialised: bool,
+) -> dict[str, Any]:
+    """The D-K5-1 slice recipes every dossier doc carries (K5 §6).
+
+    Country/admin-1 slices are materialised (``downloads[]``); county/place
+    dossiers are never materialised — their readers slice the national
+    per-compartment files on the statements' ``placement`` columns or the
+    sites files' ``jurisdiction_chain``/``jurisdiction`` columns. The API
+    recipe names the release-namespaced federated search's jurisdiction
+    filter (``/v1/releases/{pub}/search`` — the ``?jurisdiction=`` parameter
+    the v2 engine accepts verbatim); there is no per-jurisdiction statements
+    endpoint, so the row-level pull stays the DuckDB recipe — stated
+    honestly, never a promised route that does not exist.
+    """
+    jkey = jurisdiction.get("jkey")
+    level = jurisdiction.get("level")
+    compartments = sorted(acc.compartments)
+    statements_pred: str | dict[str, str]
+    if acc.key == _dk.UNPLACED:
+        statements_pred = "placement.jurisdiction_key IS NULL"
+        sites_pred = "jurisdiction_key IS NULL"
+        api_jurisdiction = _dk.UNPLACED
+    elif jkey:
+        statements_pred = (
+            f"list_contains(placement.jurisdiction_chain, '{jkey}') "
+            f"OR placement.declared_jkey = '{jkey}'"
+        )
+        sites_pred = f"list_contains(jurisdiction_chain, '{jkey}') OR jurisdiction = '{acc.key}'"
+        api_jurisdiction = str(jkey)
+    else:
+        # A non-registry declared bucket — its membership is the declared
+        # ``jurisdiction`` column verbatim (never a guessed jkey).
+        statements_pred = {
+            "not_evaluable": (
+                "this dossier keys on a declared bucket, not a registry "
+                "jurisdiction key — the statements' placement columns do not "
+                "address it; filter the sites files' `jurisdiction` column "
+                f"on '{acc.key}'"
+            )
+        }
+        sites_pred = f"jurisdiction = '{acc.key}'"
+        api_jurisdiction = slug
+    duckdb_files: list[dict[str, Any]] = []
+    for comp in compartments:
+        entry: dict[str, Any] = {"compartment": comp}
+        if isinstance(statements_pred, str):
+            entry["statements"] = (
+                f"SELECT * FROM read_ndjson('{comp}/statements.jsonl') WHERE {statements_pred}"
+            )
+        else:
+            entry["statements"] = statements_pred
+        entry["sites"] = (
+            f"SELECT * FROM read_csv('{comp}/sites.csv', header = true) WHERE {sites_pred}"
+        )
+        duckdb_files.append(entry)
+    return {
+        "materialised": materialised,
+        "level": level,
+        "duckdb": {
+            "note": (
+                "DuckDB one-liners over this release's per-compartment files "
+                "— county/place dossiers are never materialised (D-K5-1): "
+                "slice the national files on the statements' placement "
+                "columns (jurisdiction_chain carries every ancestor key; "
+                "declared_jkey the declared-bucket side)."
+            ),
+            "files": duckdb_files,
+        },
+        "api": {
+            "endpoint": f"/v1/releases/{{pub}}/search?jurisdiction={api_jurisdiction}",
+            "note": (
+                "the release-namespaced federated search's jurisdiction "
+                "filter — a paged result view, not a bulk export; the "
+                "row-level pull is the DuckDB recipe above"
+            ),
+        },
+        "note": (
+            "Slices materialise at country/admin-1 only (D-K5-1 as "
+            "recommended); county/place readers use the recipe below."
+            if not materialised
+            else (
+                "Materialised per-compartment slices plus the same slice recipe for deeper filters."
+            )
+        ),
+    }
 
 
 def _read_back(

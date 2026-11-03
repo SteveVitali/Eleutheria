@@ -103,7 +103,7 @@ from policy.slug_history import (
     merge_history,
 )
 from policy.source_aliases import resolve_public_text
-from policy.transparency import TRANSPARENCY_SOURCE_VIEW_COLUMNS, LaneDecision
+from policy.transparency import TRANSPARENCY_SOURCE_VIEW_COLUMNS, LaneDecision, iso_utc
 from reconcile.materialize import (
     classify_access_kind,
     read_materialized_contradictions,
@@ -1742,6 +1742,7 @@ def _statements(
     lane_by_source: Mapping[str, Mapping[str, Any]],
     materialized_edges: Sequence[Mapping[str, Any]] = (),
     materialized_contradictions: Sequence[Mapping[str, Any]] = (),
+    sighting_rows: Sequence[Sequence[Any]] = (),
 ) -> dict[str, dict[str, Any]]:
     """P35.36 (R11-K13-TX-08a / J3 §5.1–5.2, SIG-TRANSP-011): the
     ``sig.statement/1`` per-compartment statements stream — one row per
@@ -1781,6 +1782,52 @@ def _statements(
     for contra in materialized_contradictions or []:
         for cid in (str(x) for x in (contra.get("claim_ids") or [])):
             by_subject.setdefault(cid, []).append(contra)
+    # P36.53 (DSRC-03 / K5 §6, SIG-DSRC-007): the statements' placement +
+    # sighting columns — the dossier-slice keys county/place readers filter
+    # on (D-K5-1). Placement reads the SAME ``placement@1`` results the
+    # sites rows carry, keyed (source, subject); sightings read the same
+    # ``claim_sightings`` aggregate the contribution artifacts accumulate —
+    # one derivation, never a parallel count.
+    placement_by_key: dict[tuple[str, str], dict[str, Any]] = {}
+    for r in slices.placement_results:
+        placement_by_key[(str(r.source_id or ""), str(r.record_id))] = {
+            "jurisdiction_key": r.jurisdiction_key,
+            "jurisdiction_chain": list(r.jurisdiction_chain),
+            "placement_basis": r.placement_basis,
+            "placement_check": r.placement_check,
+            "declared_jkey": r.declared_jkey,
+            "located_jkey": r.located_jkey,
+            "boundary_vintage": r.boundary_vintage,
+        }
+    sightings_by_claim: dict[str, list[Any]] = {}
+    for s in dossier_sources._parse_sightings(sighting_rows):
+        sightings_by_claim.setdefault(s.claim_id, []).append(s)
+
+    def _sighting_block(claim_id: str, source_id: str) -> dict[str, Any] | None:
+        cands = [
+            s for s in sightings_by_claim.get(claim_id, ()) if s.source_id == source_id
+        ] or list(sightings_by_claim.get(claim_id, ()))
+        if not cands:
+            return None
+        first = min(
+            (s for s in cands if s.first_seen_at is not None),
+            key=lambda s: (s.first_seen_at, s.claim_id),
+            default=None,
+        )
+        last = max(
+            (s for s in cands if s.last_seen_at is not None),
+            key=lambda s: (s.last_seen_at, s.claim_id),
+            default=None,
+        )
+        run_ids = sorted({rid for s in cands for rid in s.run_ids})
+        return {
+            "first_seen_at": iso_utc(first.first_seen_at) if first else None,
+            "last_seen_at": iso_utc(last.last_seen_at) if last else None,
+            "first_run_id": first.first_run_id if first else None,
+            "last_run_id": last.last_run_id if last else None,
+            "sighting_runs": len(run_ids),
+        }
+
     rows_by_comp: dict[str, list[dict[str, Any]]] = {}
     lic_by_comp: dict[str, str] = {}
     for c in sorted(claims, key=lambda c: c.claim_id):
@@ -1820,6 +1867,8 @@ def _statements(
             source_homepage=homepage,
             prior_recorded_at=prior_recorded_at,
             contradictions=by_subject.get(c.claim_id, ()),
+            placement=placement_by_key.get((str(c.source_id), c.subject_id)),
+            sightings=_sighting_block(c.claim_id, str(c.source_id)),
         )
         rows_by_comp.setdefault(comp, []).append(row)
     return {
@@ -5743,6 +5792,7 @@ def build_spine_export(
             lane_by_source=lane_by_source,
             materialized_edges=m_edges,
             materialized_contradictions=m_contradictions,
+            sighting_rows=list(raw.get("claim_sightings") or []),
         ).items()
     ):
         path = f"{comp}/statements.jsonl"
@@ -5989,6 +6039,26 @@ def build_spine_export(
         comp: _dl.slice_source_ids([{"source_id": r.source_id} for r in rows])
         for comp, rows in slices.rows_by_compartment.items()
     }
+    _dl_mirror = _dl.mirror_posture(mirror_registry_path)
+    _dl_release_id = build_spec.release_id()
+
+    def _file_entry(path: str, data: bytes, count: int | None) -> dict[str, Any]:
+        """One listing row for a slice file — sha256 + the R2 content-hash
+        href computed from the emitted bytes themselves (A-3 = a)."""
+        sha = sha256_hex(data)
+        entry: dict[str, Any] = {
+            "path": path,
+            "name": path.rsplit("/", 1)[-1],
+            "format": path.rsplit(".", 1)[-1],
+            "bytes": len(data),
+            "sha256": sha,
+            "href": _dl.download_href(str(_dl_mirror["base_url"]), _dl_release_id, path, sha),
+        }
+        if count is not None:
+            entry["rows"] = count
+        return entry
+
+    source_downloads: dict[str, list[dict[str, Any]]] = {}
     for comp, by_source in sorted(_slice_ids_by_comp.items()):
         comp_license = str(comp_licenses.get(comp, _SIG_SPDX))
         license_url = policy_license_url(comp_license, registry)
@@ -6012,6 +6082,103 @@ def build_spine_export(
                     web_counts[path] = (counts.get(path, 0), None)
                     if path.endswith("statements.jsonl.gz"):
                         web_schemas[path] = _stmt.STATEMENT_SCHEMA
+            # P36.53 (K5 §3.2): the dossier source row's downloads[] —
+            # the same by-source/<sid>/ files, listed once (never a
+            # re-computed slice).
+            source_downloads.setdefault(sid, []).extend(
+                _file_entry(p, d, counts.get(p)) for p, d in sorted(files.items())
+            )
+
+    # --- P36.53 (R11-K13-DSRC-03 / K5 §6, SIG-DSRC-007): the per-dossier
+    # slices — ``by-dossier/<slug>/<compartment>/`` (sites.csv.gz +
+    # statements.jsonl.gz + ATTRIBUTION.txt/LICENCE.txt) materialised for
+    # country/admin-1 dossiers and the ``unplaced`` sentinel only (D-K5-1
+    # "as recommended"; county/place readers get the recipe block inside
+    # the artifact, never a 4× materialisation). The dossier's member set
+    # is the contribution accumulation's own ``subjects`` — the same
+    # records its ``records`` figure counts; the permitted set is the
+    # compartment's gated slice sources, so an unflipped/refused source
+    # is refused by the builder with no override path (HG-03 E4).
+    downloads_by_slug: dict[str, list[dict[str, Any]]] = {}
+    dossier_names: dict[str, str] = {}
+    unplaced_download_items: list[dict[str, Any]] = []
+    for key, acc in sorted(contribution_plan.dossiers.items()):
+        info = (
+            contribution_plan.keyed.keys.get(key) if contribution_plan.keyed is not None else None
+        )
+        level = info.level if info is not None else None
+        is_unplaced = key == dossier_keys.UNPLACED
+        if not is_unplaced and level not in _dl.DOSSIER_SLICE_LEVELS:
+            continue
+        slug = contribution_plan.slug_path(key)
+        subjects = frozenset(acc.subjects)
+        entries: list[dict[str, Any]] = []
+        for comp in sorted(acc.compartments):
+            comp_license = str(comp_licenses.get(comp, _SIG_SPDX))
+            license_url = policy_license_url(comp_license, registry)
+            sites_csv = bundle.artifact_bytes.get(f"{comp}/sites.csv")
+            statements = web_artifacts.get(f"{comp}/statements.jsonl")
+            comp_source_ids = frozenset(
+                str(r.source_id).split("@", 1)[0]
+                for r in slices.rows_by_compartment.get(comp, ())
+                if str(r.data.get("entity_id") or "") in subjects
+            )
+            permitted = frozenset(
+                str(r.source_id).split("@", 1)[0] for r in slices.rows_by_compartment.get(comp, ())
+            )
+            files, counts = _dl.emit_dossier_slice(
+                slug,
+                comp,
+                sites_csv=sites_csv,
+                statements_jsonl=statements,
+                subject_ids=subjects,
+                source_ids=comp_source_ids,
+                permitted_source_ids=permitted,
+                attribution_payload=_comp_attribution_payloads.get(comp),
+                license_id=comp_license,
+                license_url=license_url,
+            )
+            if not files:
+                continue
+            for path, data in files.items():
+                web_artifacts[path] = data
+                web_licenses[path] = comp_license
+                web_compartments[path] = comp
+                if path.endswith((".jsonl.gz", ".csv.gz")):
+                    web_counts[path] = (counts.get(path, 0), None)
+                    if path.endswith("statements.jsonl.gz"):
+                        web_schemas[path] = _stmt.STATEMENT_SCHEMA
+            entries.append(
+                {
+                    "compartment": comp,
+                    "license": comp_license,
+                    "directory": f"{_dl.DOSSIER_SLICE_DIR}/{slug}/{comp}/",
+                    "files": [_file_entry(p, d, counts.get(p)) for p, d in sorted(files.items())],
+                }
+            )
+        if entries:
+            downloads_by_slug[slug] = entries
+            dossier_names[slug] = (
+                contribution_plan.keyed.display_name(key)
+                if contribution_plan.keyed is not None and key in contribution_plan.keyed.keys
+                else slug
+            )
+            if is_unplaced:
+                unplaced_download_items = entries
+
+    # K4 §5.5's download slot on the unplaced report — the materialised
+    # ``by-dossier/unplaced/<comp>/`` slices now fill it (DSRC-03); the
+    # report's own bytes are re-stamped so the slot names real files.
+    if unplaced_doc is not None and unplaced_download_items:
+        unplaced_doc["downloads"] = {
+            "status": "emitted",
+            "note": (
+                "Per-compartment downloads of this report — the same "
+                "by-dossier slices the jurisdiction dossiers carry."
+            ),
+            "items": unplaced_download_items,
+        }
+        web_artifacts[f"{_WEB_DIR}/unplaced.json"] = _web_bytes(unplaced_doc)
 
     # --- P34.21b (E2-12): the dated attribution-correction record ------------
     # The /sources/ note renders only when THIS export's effective rights
@@ -6056,7 +6223,11 @@ def build_spine_export(
     # The dossier contribution artifacts render AFTER sources.json exists —
     # the dossier source rows read the emitted registry fields back so both
     # surfaces show one derivation (TRANSP-040).
-    for path, data in contribution_plan.render(transparency_artifacts).items():
+    for path, data in contribution_plan.render(
+        transparency_artifacts,
+        downloads=downloads_by_slug,
+        source_downloads=source_downloads,
+    ).items():
         web_artifacts[path] = data
         web_licenses[path] = _SIG_SPDX
         web_compartments[path] = _WEB_COMPARTMENT
@@ -6173,9 +6344,10 @@ def build_spine_export(
         downloads_ctx={
             "release_id": build_spec.release_id(),
             "generated_at": generated_at,
-            "mirror": _dl.mirror_posture(mirror_registry_path),
+            "mirror": _dl_mirror,
             "signed": download_signing,
             "source_names": source_names,
+            "dossier_names": dossier_names,
         },
     )
     return SpineExport(
@@ -6492,6 +6664,18 @@ def _extended_manifest(
     if downloads_ctx is not None:
         dict_documents += [
             {
+                "path": "by-dossier/<slug-path>/<compartment>/",
+                "media_type": "directory",
+                "description": (
+                    "per-dossier slice directory (P36.53 / K5 §6, D-K5-1): "
+                    "country/admin-1 dossiers plus the unplaced report — the "
+                    "dossier's sites.csv.gz slice, its statements.jsonl.gz "
+                    "slice (sig.statement/1 rows on the dossier's member "
+                    "records, placement + sightings columns), and its own "
+                    "ATTRIBUTION.txt/LICENCE.txt"
+                ),
+            },
+            {
                 "path": "by-source/<source_id>/",
                 "media_type": "directory",
                 "description": (
@@ -6568,6 +6752,7 @@ def _extended_manifest(
                 mirror=dict(downloads_ctx["mirror"]),
                 signed=bool(downloads_ctx.get("signed")),
                 source_names=dict(downloads_ctx.get("source_names") or {}),
+                dossier_names=dict(downloads_ctx.get("dossier_names") or {}),
             )
         )
         metadata_bytes["web/downloads.json"] = listing_bytes

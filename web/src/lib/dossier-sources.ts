@@ -91,8 +91,49 @@ export interface DossierSourceRow {
   declared_here_located_elsewhere: number;
   contradictions: string[];
   series: SourceSeriesPoint[];
-  downloads: unknown[];
+  downloads: DossierDownloadFile[];
   known_issues: string[];
+}
+
+// ---------------------------------------------------------------------------
+// P36.53 (DSRC-03 / K5 §6, SIG-DSRC-007): the per-dossier download entries —
+// `by-dossier/<slug>/<compartment>/` slices materialised at country/admin-1
+// (D-K5-1 "as recommended"; the unplaced sentinel materialises too) and the
+// DuckDB/API recipe block every dossier carries (county/place readers slice
+// the national files on the statements' placement columns — never a 4×
+// materialisation).
+// ---------------------------------------------------------------------------
+
+export interface DossierDownloadFile {
+  path: string;
+  name: string;
+  format: string;
+  bytes: number;
+  sha256: string;
+  href: string;
+  rows?: number;
+}
+
+export interface DossierDownloadCompartment {
+  compartment: string;
+  license: string;
+  directory: string;
+  files: DossierDownloadFile[];
+}
+
+export interface DossierDownloadRecipes {
+  materialised: boolean;
+  level: string | null;
+  duckdb: {
+    note: string;
+    files: {
+      compartment: string;
+      statements: string | AbsenceToken;
+      sites: string;
+    }[];
+  };
+  api: { endpoint: string; note: string };
+  note?: string;
 }
 
 export interface DossierSourcesFigure {
@@ -166,7 +207,8 @@ export interface DossierSourcesDoc {
     declared_here_located_elsewhere: { jkey: string; records: number }[];
   };
   runs_file: string | null;
-  downloads: unknown[];
+  downloads: DossierDownloadCompartment[];
+  download_recipes?: DossierDownloadRecipes;
 }
 
 /** Fail-closed shape check — a malformed artifact fails the build (SIG-ENG-042). */
@@ -399,6 +441,10 @@ export function paginateSources(
 /** `/dossier/<path>/sources/` — the explorer index (records sort, page 1). */
 export function dossierSourcesPath(slug: string): string {
   return `dossier/${slug}/sources/`;
+}
+/** `/dossier/<path>/downloads/` — the per-dossier downloads page (P36.53). */
+export function dossierDownloadsPath(slug: string): string {
+  return `dossier/${slug}/downloads/`;
 }
 /** `/dossier/<path>/sources/index.json` — the JSON twin. */
 export function dossierSourcesJsonPath(slug: string): string {

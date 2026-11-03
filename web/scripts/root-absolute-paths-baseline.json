@@ -806,6 +806,36 @@
       "token": "/",
       "count": 2,
       "reason": "P36.52: the new /dossier/**/sources/** patterns shift the scanner's false `/*`-`*/` comment pairing, surfacing the pre-existing htmlFileToRoute `/` normalisation literals — path-shape data, not links"
+    },
+    {
+      "file": "src/lib/page-types.ts",
+      "token": "/dossier",
+      "count": 1,
+      "reason": "P36.53: the /dossier/**/downloads/ route pattern — the scanner's whitespace-preserving comment strip eats the `/**`/`*/` glob tail leaving a /dossier stub (same mechanism the P36.52 entry records) — pattern data, never a navigable link"
+    },
+    {
+      "file": "src/lib/page-types.ts",
+      "token": "/dossier/usa/downloads/",
+      "count": 1,
+      "reason": "P36.53: registry example route — match data, not a link (withBase() does not apply to the pattern table)"
+    },
+    {
+      "file": "src/lib/page-types.ts",
+      "token": "/dossier/usa/ok/downloads/",
+      "count": 1,
+      "reason": "P36.53: registry example route — match data, not a link (withBase() does not apply to the pattern table)"
+    },
+    {
+      "file": "src/lib/page-types.ts",
+      "token": "/dossier/usa/tx/harris-county-48201/downloads/",
+      "count": 1,
+      "reason": "P36.53: registry example route — match data, not a link (withBase() does not apply to the pattern table)"
+    },
+    {
+      "file": "src/lib/dossier-sources-fixture.ts",
+      "token": "/v1/releases/",
+      "count": 1,
+      "reason": "P36.53: the fixture sig.dossier-sources/1 download_recipes.api.endpoint mirrors the emitted artifact's API-path data verbatim — artifact bytes, not a link construction"
     }
   ]
 }

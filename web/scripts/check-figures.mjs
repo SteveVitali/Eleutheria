@@ -78,8 +78,10 @@ const DOSSIER_SOURCES_RE = /^web\/dossier_sources\/[a-z0-9-]+(\/[a-z0-9-]+)*\.js
  * not material figures. P36.52 (DSRC-02): `/dossier/<path>/sources/**` is the
  * same kind of row-data table surface — the explorer's material figures are
  * the artifact's `figures[]` (registered + contract-checked at build), the
- * per-source cells are row data. */
-const SKIP_SEGMENTS = new Set(["sites", "sources"]);
+ * per-source cells are row data. P36.53 (DSRC-03): `/dossier/<path>/downloads/`
+ * is the same class of surface — a file-listing table where byte sizes, row
+ * counts and SPDX version numerals are row data, not material figures. */
+const SKIP_SEGMENTS = new Set(["sites", "sources", "downloads"]);
 const PAGE_CLASSES = [
   { cls: "home", files: ["index.html"] },
   { cls: "dossier", dirs: ["dossier"], skipSegments: true },

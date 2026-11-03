@@ -138,7 +138,17 @@ function src(id: string, o: RowOpts): DossierSourceRow {
       { period: "2026-01", records_first_seen: o.records, claims_first_seen: o.claims, claims_resighted: 0 },
       { period: "2026-08", records_first_seen: 0, claims_first_seen: 0, claims_resighted: o.claims },
     ],
-    downloads: [],
+    downloads: [
+      {
+        path: `by-source/${id}/statements.jsonl.gz`,
+        name: "statements.jsonl.gz",
+        format: "jsonl.gz",
+        bytes: 2048,
+        rows: o.claims,
+        sha256: "e".repeat(64),
+        href: `https://files.surveillancegraph.org/demo-release/by-source/${id}/statements.eeeeeeeeeeee.jsonl.gz`,
+      },
+    ],
     known_issues: o.issues ?? [],
   };
 }
@@ -156,6 +166,7 @@ interface DocOpts {
   declaredElsewherePairs?: { jkey: string; records: number }[];
   contradictions?: string[];
   runsFile?: boolean;
+  compartments?: string[];
 }
 
 function doc(slug: string, o: DocOpts): DossierSourcesDoc {
@@ -262,7 +273,70 @@ function doc(slug: string, o: DocOpts): DossierSourcesDoc {
       declared_here_located_elsewhere: o.locatedElsewherePairs ?? [],
     },
     runs_file: o.runsFile === true ? `web/dossier_sources/${slug}.runs.jsonl.gz` : null,
-    downloads: [],
+    // P36.53 (DSRC-03): materialised per-compartment slices at
+    // country/admin-1 (D-K5-1), the recipe block on every dossier.
+    downloads:
+      o.level === "country" || o.level === "state_province"
+        ? (o.compartments ?? ["public_record"]).map((comp) => ({
+            compartment: comp,
+            license: "CC0-1.0",
+            directory: `by-dossier/${slug}/${comp}/`,
+            files: [
+              {
+                path: `by-dossier/${slug}/${comp}/sites.csv.gz`,
+                name: "sites.csv.gz",
+                format: "csv.gz",
+                bytes: 4096,
+                rows: Math.max(1, Math.floor(records / 2)),
+                sha256: "a".repeat(64),
+                href: `https://files.surveillancegraph.org/demo-release/by-dossier/${slug}/${comp}/sites.aaaaaaaaaaaa.csv.gz`,
+              },
+              {
+                path: `by-dossier/${slug}/${comp}/statements.jsonl.gz`,
+                name: "statements.jsonl.gz",
+                format: "jsonl.gz",
+                bytes: 8192,
+                rows: claims,
+                sha256: "b".repeat(64),
+                href: `https://files.surveillancegraph.org/demo-release/by-dossier/${slug}/${comp}/statements.bbbbbbbbbbbb.jsonl.gz`,
+              },
+              {
+                path: `by-dossier/${slug}/${comp}/ATTRIBUTION.txt`,
+                name: "ATTRIBUTION.txt",
+                format: "txt",
+                bytes: 1024,
+                sha256: "c".repeat(64),
+                href: `https://files.surveillancegraph.org/demo-release/by-dossier/${slug}/${comp}/ATTRIBUTION.cccccccccccc.txt`,
+              },
+              {
+                path: `by-dossier/${slug}/${comp}/LICENCE.txt`,
+                name: "LICENCE.txt",
+                format: "txt",
+                bytes: 512,
+                sha256: "d".repeat(64),
+                href: `https://files.surveillancegraph.org/demo-release/by-dossier/${slug}/${comp}/LICENCE.dddddddddddd.txt`,
+              },
+            ],
+          }))
+        : [],
+    download_recipes: {
+      materialised: o.level === "country" || o.level === "state_province",
+      level: o.level,
+      duckdb: {
+        note: "DuckDB one-liners over this release's per-compartment files — county/place dossiers are never materialised (D-K5-1): slice the national files on the statements' placement columns (jurisdiction_chain carries every ancestor key; declared_jkey the declared-bucket side).",
+        files: (o.compartments ?? ["public_record"]).map((comp) => ({
+          compartment: comp,
+          statements: o.jkey
+            ? `SELECT * FROM read_ndjson('${comp}/statements.jsonl') WHERE list_contains(placement.jurisdiction_chain, '${o.jkey}') OR placement.declared_jkey = '${o.jkey}'`
+            : { not_evaluable: "this dossier keys on a declared bucket, not a registry jurisdiction key" },
+          sites: `SELECT * FROM read_csv('${comp}/sites.csv', header = true) WHERE ${o.jkey ? `list_contains(jurisdiction_chain, '${o.jkey}') OR jurisdiction = '${o.jkey}'` : `jurisdiction = '${o.jkey ?? slug}'`}`,
+        })),
+      },
+      api: {
+        endpoint: `/v1/releases/{pub}/search?jurisdiction=${o.jkey ?? slug}`,
+        note: "the release-namespaced federated search's jurisdiction filter — a paged result view, not a bulk export; the row-level pull is the DuckDB recipe above",
+      },
+    },
   };
 }
 
@@ -318,6 +392,7 @@ function docs(): Record<string, DossierSourcesDoc> {
     locatedElsewherePairs: [{ jkey: "us.census.geoid.county:48201", records: 41 }],
     contradictions: ["ctr-demo-001"],
     runsFile: true,
+    compartments: ["public_record", "osm_physical"],
   });
   const ok = doc("usa/ok", {
     jkey: "iso3166-2:US-OK",
