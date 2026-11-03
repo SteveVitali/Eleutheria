@@ -4,7 +4,7 @@
      row needing new public sentences after batch-14: the K5 §5.5 "Show on the
      map" control + its records-list link on the sources explorer rows. (The
      two new explore-bar labels — `Search the release` / `Search within` —
-     live in batch-14, which owns the whole bar family and whose row test
+     are registered in batch-14, which owns the whole bar family and whose row test
      binds every `data-copy` in the dossier components.) Agent-
      drafted, pending verbatim confirmation. Append-only: rows are never
      deleted or edited in place — a correction is a new row superseding the
