@@ -1,0 +1,241 @@
+# Per-type public handle codes, plain-language type labels and title templates —
+# the K11 §3 registry file (P36.58 / R11-K13-RQ-01, SIG-RQ-001/003).
+#
+# `code`   — the one-token mnemonic the `T-<place>-<code>-<slug>-<hash>` handle
+#            embeds ([a-z]{2,10}, unique across rows, K11 §3).
+# `label`  — the plain-language type name the queue hub groups under (K11 §5.1).
+# `title`  — the title template; `{subject}` is the subject's public label and
+#            `{date}` the trigger's recorded date where one resolves. A row
+#            whose placeholders cannot resolve falls back to
+#            `<label>: <subject label>` — never a placeholder literal, never a
+#            raw identifier (SIG-RQ-001/003, agent-drafted copy per K11 §16).
+#
+# `catalog_pending = true` marks the routing-table target types RQ-02 (P37.35)
+# adds to the §33.2 catalog (`retention_unknown`, `sharing_unknown`): their
+# rows land ahead so the routing table can name them, and the loader admits
+# them only under this flag.
+#
+# Changes after this declaration are VERSIONED (§20): bump `version`, never
+# silently rewrite a landed row.
+
+version = "1.0.0"
+
+[[type]]
+task_type = "missing_physical_devices"
+code = "devices"
+label = "Unmapped devices"
+title = "Find the devices recorded for {subject} that are not yet mapped"
+
+[[type]]
+task_type = "missing_contract"
+code = "contract"
+label = "Missing contract"
+title = "Find the contract or purchase order behind {subject}"
+
+[[type]]
+task_type = "conflicting_retention"
+code = "retention"
+label = "Conflicting retention periods"
+title = "Resolve the conflicting retention periods recorded for {subject}"
+
+[[type]]
+task_type = "stale_evidence"
+code = "stale"
+label = "Stale evidence"
+title = "Refresh the stale evidence recorded for {subject}"
+
+[[type]]
+task_type = "orphaned_device"
+code = "orphan"
+label = "Unattributed device"
+title = "Identify who operates {subject}"
+
+[[type]]
+task_type = "new_sharing_node"
+code = "newnode"
+label = "New sharing node"
+title = "Check whether {subject} belongs in the data-sharing record"
+
+[[type]]
+task_type = "vendor_replacement"
+code = "vendor"
+label = "Vendor replacement"
+title = "Confirm the vendor replacement recorded for {subject}"
+
+[[type]]
+task_type = "portal_disappeared"
+code = "portal"
+label = "Portal disappeared"
+title = "Find out why the {subject} portal disappeared"
+
+[[type]]
+task_type = "portal_appeared_no_deployment"
+code = "newportal"
+label = "New portal, no deployment"
+title = "Confirm the deployment behind the new {subject} portal"
+
+[[type]]
+task_type = "contract_expiring"
+code = "renewal"
+label = "Contract expiring"
+title = "Find the renewal terms for the {subject} contract ending {date}"
+
+[[type]]
+task_type = "sharing_asymmetry"
+code = "asym"
+label = "One-sided sharing claim"
+title = "Confirm whether {subject} really shares data this way"
+
+[[type]]
+task_type = "device_jurisdiction_mismatch"
+code = "mismatch"
+label = "Jurisdiction mismatch"
+title = "Reconcile the jurisdictions recorded for {subject}"
+
+[[type]]
+task_type = "retention_changed_without_policy"
+code = "retpolicy"
+label = "Retention changed without policy"
+title = "Find the policy behind the retention change at {subject}"
+
+[[type]]
+task_type = "network_org_without_jurisdiction"
+code = "orgjur"
+label = "Organisation without a place"
+title = "Place {subject} in a jurisdiction"
+
+[[type]]
+task_type = "adoption_without_corroboration"
+code = "adopt"
+label = "Uncorroborated adoption"
+title = "Corroborate the reported adoption at {subject}"
+
+[[type]]
+task_type = "grant_without_deployment"
+code = "grant"
+label = "Grant without deployment"
+title = "Trace the {subject} grant to a deployment"
+
+[[type]]
+task_type = "vendor_acquisition_relink"
+code = "acquire"
+label = "Vendor acquisition"
+title = "Relink {subject} after the vendor acquisition"
+
+[[type]]
+task_type = "sole_source_tier_f_support"
+code = "tierf"
+label = "Single weak source"
+title = "Find independent support for the claim about {subject}"
+
+[[type]]
+task_type = "long_unverified_claim"
+code = "unver"
+label = "Long-unverified claim"
+title = "Re-verify the claim about {subject}"
+
+[[type]]
+task_type = "link_rot"
+code = "linkrot"
+label = "Dead link"
+title = "Find a live copy of the {subject} document"
+
+[[type]]
+task_type = "re_extraction_available"
+code = "reextract"
+label = "Re-extraction available"
+title = "Re-extract the {subject} record"
+
+[[type]]
+task_type = "candidate_duplicate_entities"
+code = "dup"
+label = "Possible duplicate"
+title = "Decide whether {subject} and its candidate are the same"
+
+[[type]]
+task_type = "litigation_without_docket"
+code = "docket"
+label = "Litigation without a docket"
+title = "Find the docket for the litigation involving {subject}"
+
+[[type]]
+task_type = "incident_only_secondary_sources"
+code = "incident"
+label = "Incident covered only by news"
+title = "Find primary records for the {subject} incident"
+
+[[type]]
+task_type = "unmapped_vocabulary_value"
+code = "vocab"
+label = "Unmapped value"
+title = "Map the {subject} value into the controlled vocabulary"
+
+[[type]]
+task_type = "authorized_not_deployed"
+code = "auth"
+label = "Authorised, not deployed"
+title = "Check whether the authorised {subject} was ever deployed"
+
+[[type]]
+task_type = "canceled_but_installed"
+code = "canceled"
+label = "Cancelled but installed"
+title = "Reconcile the cancelled-yet-installed status of {subject}"
+
+[[type]]
+task_type = "free_trial_capability"
+code = "trial"
+label = "Free-trial capability"
+title = "Check whether the {subject} free trial became a deployment"
+
+[[type]]
+task_type = "cooperative_contract_unexplored"
+code = "coop"
+label = "Cooperative contract"
+title = "Get the cooperative master contract behind {subject}"
+
+[[type]]
+task_type = "coverage_hole"
+code = "gap"
+label = "Coverage gap"
+title = "Find the missing record for {subject}"
+
+[[type]]
+task_type = "unresolved_contradiction_aging"
+code = "aging"
+label = "Ageing contradiction"
+title = "Resolve the open contradiction on {subject}"
+
+[[type]]
+task_type = "candidate_asset_awaiting_verification"
+code = "verify"
+label = "Candidate asset"
+title = "Verify the candidate asset at {subject}"
+
+[[type]]
+task_type = "contract_amendment_chain_incomplete"
+code = "amend"
+label = "Amendment chain incomplete"
+title = "Find the missing amendment in the {subject} contract chain"
+
+[[type]]
+task_type = "sharing_snapshot_stale"
+code = "share"
+label = "Stale sharing list"
+title = "Update who {subject} shares data with (last snapshot {date})"
+
+# --- routing-table target types (RQ-02 / P37.35 — catalog_pending) -----------
+
+[[type]]
+task_type = "retention_unknown"
+code = "unkret"
+label = "Retention period unknown"
+title = "Find the retention policy for {subject}"
+catalog_pending = true
+
+[[type]]
+task_type = "sharing_unknown"
+code = "unkshare"
+label = "Sharing partners unknown"
+title = "Find the data-sharing agreement for {subject}"
+catalog_pending = true

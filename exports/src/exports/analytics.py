@@ -63,7 +63,8 @@ SCHEMA_DENSITY_BINS = "sig/analytics-density-bins/1"
 SCHEMA_CENTRALITY = "sig/analytics-centrality/1"
 SCHEMA_DECISION_POINT = "sig/analytics-decision-point/1"
 SCHEMA_PROVENANCE = "sig/analytics-provenance/1"
-SCHEMA_QUEUE_META = "sig/analytics-queue-meta/1"
+# P36.58 (RQ-01): /2 — lanes, facets and the shard index join the v1 fields.
+SCHEMA_QUEUE_META = "sig/analytics-queue-meta/2"
 
 ANALYTICS_DIR = "web/analytics"
 #: The family the surfaces read — the manifest-stable filenames emitted under
@@ -762,25 +763,43 @@ def _provenance(
 # --------------------------------------------------------------------------- #
 
 
-def _queue_meta(dataset: ShapedDataset, raw: Mapping[str, Any]) -> dict[str, Any]:
-    """The queue's render as-of + live jurisdiction claims.
+def _queue_meta(
+    dataset: ShapedDataset,
+    raw: Mapping[str, Any],
+    *,
+    summary: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """The queue's render as-of + live jurisdiction claims (+ v2 lane/facet
+    index when the task export computed it).
 
     ``jurisdiction_claims`` is honestly EMPTY on the spine export: a §33.5
     jurisdiction claim is community-curation state (a local group claiming a
     jurisdiction), which the claim spine does not record today — never a
-    fabricated list.
-    """
+    fabricated list. ``summary`` is the P36.58 task-export v2 output — lane
+    counts (research / campaign members / metric-only field gaps), type and
+    assignee facet counts, per-place totals and the shard index; absent input
+    degrades to empty lanes (the pre-v2 posture, honest)."""
     tasks = list(raw.get("research_tasks") or [])
+    summary = dict(summary or {})
     return _envelope(
         SCHEMA_QUEUE_META,
         dataset.as_of,
         (
-            f"{len(tasks)} research tasks; jurisdiction claims are community-curation "
+            f"{len(tasks)} research tasks recorded; "
+            f"{summary.get('lanes', {}).get('research', 0)} on the public research lane; "
+            "jurisdiction claims are community-curation "
             "state the claim spine does not carry"
         ),
         (),
         queue_as_of=dataset.as_of[:10],
         jurisdiction_claims=[],
+        card_schema=summary.get("card_schema"),
+        handle_grammar=summary.get("handle_grammar"),
+        lanes=summary.get("lanes") or {},
+        tasks_by_type=summary.get("tasks_by_type") or {},
+        tasks_by_assignee=summary.get("tasks_by_assignee") or {},
+        tasks_by_place=summary.get("tasks_by_place") or [],
+        shards=summary.get("shards") or [],
     )
 
 
@@ -801,6 +820,7 @@ def build_analytics(
     registry: Mapping[str, Any] | None = None,
     placements: Mapping[str, Any] | None = None,
     dossier_scope_claims: Mapping[str, frozenset[str]] | None = None,
+    queue_summary: Mapping[str, Any] | None = None,
 ) -> list[AnalyticsArtifact]:
     """Emit the ``web/analytics/`` family for one shaped snapshot (pure).
 
@@ -853,7 +873,7 @@ def build_analytics(
                 dossier_scope_claims=dossier_scope_claims,
             ),
         ),
-        _artifact("queue_meta", _SIG_SPDX, _queue_meta(dataset, raw)),
+        _artifact("queue_meta", _SIG_SPDX, _queue_meta(dataset, raw, summary=queue_summary)),
     ]
     assert_analytics_separated(artifacts)
     return artifacts

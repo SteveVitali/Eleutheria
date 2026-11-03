@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://sig.example/schema/public_surface_contracts.schema.json",
-  "title": "SIG public-surface per-page data contracts (P27.1, LAUNCH.1 — FROZEN)",
+  "title": "SIG public-surface per-page data contracts (P27.1, LAUNCH.1 \u2014 FROZEN)",
   "description": "The frozen data shape each of the ten public web surfaces consumes. This is the interface P27.4 EMITS (the spine-backed export) and P27.5 RENDERS (the static web). Derived from the authoritative web/src/lib/*.ts interfaces + their *-fixture.ts exemplars + the SIG-UI /v1 dossier contract. These shapes are largely count-independent and are the stable contract the rest of the P27 chain inherits; only the row VALUES change when the spine grows (the OSM land / the P27.2 rights pass). Each surface names its source-of-truth TypeScript interface (`x_source`) so a drift check can assert the export still matches the web contract.",
   "type": "object",
   "required": [
@@ -18,107 +18,205 @@
   ],
   "properties": {
     "dossier_index": {
-      "description": "Surface 1 — the dossier index / national landing list. Page: /dossier + /. Producer: exports.web_dossier.build_web_dossiers → web/dossiers.json.",
+      "description": "Surface 1 \u2014 the dossier index / national landing list. Page: /dossier + /. Producer: exports.web_dossier.build_web_dossiers \u2192 web/dossiers.json.",
       "x_source": "web/src/lib/dossier.ts#Dossier[] (index via slug/subject_label/jurisdiction/asOf)",
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["slug", "subject_label", "jurisdiction", "asOf"],
+        "required": [
+          "slug",
+          "subject_label",
+          "jurisdiction",
+          "asOf"
+        ],
         "properties": {
-          "slug": { "type": "string" },
-          "subject_label": { "type": "string" },
-          "jurisdiction": { "type": "string" },
-          "asOf": { "$ref": "#/$defs/AsOfEcho" }
+          "slug": {
+            "type": "string"
+          },
+          "subject_label": {
+            "type": "string"
+          },
+          "jurisdiction": {
+            "type": "string"
+          },
+          "asOf": {
+            "$ref": "#/$defs/AsOfEcho"
+          }
         }
       }
     },
     "jurisdiction_dossier": {
-      "description": "Surface 2 — the per-jurisdiction dossier (§39.2, twelve sections). Page: /dossier/[slug]. Publication gate applied at build (§43.8, SIG-PUB-017).",
+      "description": "Surface 2 \u2014 the per-jurisdiction dossier (\u00a739.2, twelve sections). Page: /dossier/[slug]. Publication gate applied at build (\u00a743.8, SIG-PUB-017).",
       "x_source": "web/src/lib/dossier.ts#Dossier",
       "$ref": "#/$defs/Dossier"
     },
     "map_layer": {
-      "description": "Surface 3 — the infrastructure map layer (§39.3). Producer emits GeoJSON + PMTiles (ODbL compartment SEPARATE) + the tabular MapAsset[] equivalent + JurisdictionIndicator roll-up. Coordinates reduced per sensitivity tier (§19.4/§43.3); aggregate/point only, never a per-person field.",
+      "description": "Surface 3 \u2014 the infrastructure map layer (\u00a739.3). Producer emits GeoJSON + PMTiles (ODbL compartment SEPARATE) + the tabular MapAsset[] equivalent + JurisdictionIndicator roll-up. Coordinates reduced per sensitivity tier (\u00a719.4/\u00a743.3); aggregate/point only, never a per-person field.",
       "x_source": "web/src/lib/map.ts#MapLayer / MapAsset / JurisdictionIndicator",
       "type": "object",
-      "required": ["layers", "assets"],
+      "required": [
+        "layers",
+        "assets"
+      ],
       "properties": {
-        "layers": { "type": "array", "items": { "$ref": "#/$defs/MapLayer" } },
-        "assets": { "type": "array", "items": { "$ref": "#/$defs/MapAsset" } },
+        "layers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MapLayer"
+          }
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MapAsset"
+          }
+        },
         "jurisdiction_indicators": {
           "type": "array",
-          "items": { "$ref": "#/$defs/JurisdictionIndicator" }
+          "items": {
+            "$ref": "#/$defs/JurisdictionIndicator"
+          }
         }
       }
     },
     "network": {
-      "description": "Surface 4 — the sharing-edge network explorer (§39.4). The three §12.2 access-edge types MUST NOT be merged. Access paths carry per-hop evidence (SIG-UI-025).",
+      "description": "Surface 4 \u2014 the sharing-edge network explorer (\u00a739.4). The three \u00a712.2 access-edge types MUST NOT be merged. Access paths carry per-hop evidence (SIG-UI-025).",
       "x_source": "web/src/lib/network.ts#NetworkNode / NetworkEdge / AccessPath",
       "type": "object",
-      "required": ["nodes", "edges"],
+      "required": [
+        "nodes",
+        "edges"
+      ],
       "properties": {
-        "nodes": { "type": "array", "items": { "$ref": "#/$defs/NetworkNode" } },
-        "edges": { "type": "array", "items": { "$ref": "#/$defs/NetworkEdge" } },
-        "access_paths": { "type": "array", "items": { "$ref": "#/$defs/AccessPath" } }
+        "nodes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NetworkNode"
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NetworkEdge"
+          }
+        },
+        "access_paths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AccessPath"
+          }
+        }
       }
     },
     "data_freshness": {
-      "description": "Surface 5 — data-freshness per source (§32.4). Every FreshnessRow field is required (SIG-METRIC-007); staleness is measured against predicate volatility class, not absolute days.",
+      "description": "Surface 5 \u2014 data-freshness per source (\u00a732.4). Every FreshnessRow field is required (SIG-METRIC-007); staleness is measured against predicate volatility class, not absolute days.",
       "x_source": "web/src/lib/metrics.ts#FreshnessRow[]",
       "type": "array",
-      "items": { "$ref": "#/$defs/FreshnessRow" }
+      "items": {
+        "$ref": "#/$defs/FreshnessRow"
+      }
     },
     "coverage": {
-      "description": "Surface 6 — coverage metrics (§32.5). NEVER a population total: every metric carries a NAMED denominator (SIG-METRIC-008/009/010). is_population_total MUST be false.",
+      "description": "Surface 6 \u2014 coverage metrics (\u00a732.5). NEVER a population total: every metric carries a NAMED denominator (SIG-METRIC-008/009/010). is_population_total MUST be false.",
       "x_source": "web/src/lib/metrics.ts#CoverageMetric[]",
       "type": "array",
-      "items": { "$ref": "#/$defs/CoverageMetric" }
+      "items": {
+        "$ref": "#/$defs/CoverageMetric"
+      }
     },
     "watch": {
-      "description": "Surface 7 — the watch (§39.5). P35.43 (K7 WX-01 / F-481) emits the versioned `sig/watch/2` envelope — `sig.watch-item/1` items derived from publishable spine claims by exports/src/exports/watch.py, plus the per-place coverage block (SIG-WATCH-D04: an empty items list still carries coverage). The alert key is the DERIVED notice deadline, not the raw expiry (SIG-UI-014b/026); `contract_expiry` dates carry `date_certainty: upper_bound` and are never labelled deadlines. The web data layer projects the contract-kind items onto the legacy `ContractWatchItem[]` until the surface rows render v2 natively — the envelope is the artifact contract, the row type the render contract.",
-      "x_source": "exports/src/exports/watch.py#build_watch_payload (sig/watch/2) → web/src/lib/data.ts#WatchEnvelopeV2/WatchItemV2 → web/src/lib/watch.ts#ContractWatchItem[] (bridge)",
+      "description": "Surface 7 \u2014 the watch (\u00a739.5). P35.43 (K7 WX-01 / F-481) emits the versioned `sig/watch/2` envelope \u2014 `sig.watch-item/1` items derived from publishable spine claims by exports/src/exports/watch.py, plus the per-place coverage block (SIG-WATCH-D04: an empty items list still carries coverage). The alert key is the DERIVED notice deadline, not the raw expiry (SIG-UI-014b/026); `contract_expiry` dates carry `date_certainty: upper_bound` and are never labelled deadlines. The web data layer projects the contract-kind items onto the legacy `ContractWatchItem[]` until the surface rows render v2 natively \u2014 the envelope is the artifact contract, the row type the render contract.",
+      "x_source": "exports/src/exports/watch.py#build_watch_payload (sig/watch/2) \u2192 web/src/lib/data.ts#WatchEnvelopeV2/WatchItemV2 \u2192 web/src/lib/watch.ts#ContractWatchItem[] (bridge)",
       "type": "object",
-      "required": ["schema", "as_of", "generated_at", "build", "coverage", "items"],
+      "required": [
+        "schema",
+        "as_of",
+        "generated_at",
+        "build",
+        "coverage",
+        "items"
+      ],
       "properties": {
-        "schema": { "const": "sig/watch/2" },
-        "as_of": { "type": "string", "format": "date" },
-        "generated_at": { "type": "string" },
-        "build": { "type": "object" },
-        "coverage": { "$ref": "#/$defs/WatchCoverage" },
-        "items": { "type": "array", "items": { "$ref": "#/$defs/WatchItem" } }
+        "schema": {
+          "const": "sig/watch/2"
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date"
+        },
+        "generated_at": {
+          "type": "string"
+        },
+        "build": {
+          "type": "object"
+        },
+        "coverage": {
+          "$ref": "#/$defs/WatchCoverage"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/WatchItem"
+          }
+        }
       }
     },
     "evidence": {
-      "description": "Surface 8 — the evidence recommender (§39.5a) + evidence viewer (§39.6). Ranking MUST NOT use persuasion/sentiment (SIG-UI-027b). Sealed captures carry metadata only, no bytes (§17.5).",
+      "description": "Surface 8 \u2014 the evidence recommender (\u00a739.5a) + evidence viewer (\u00a739.6). Ranking MUST NOT use persuasion/sentiment (SIG-UI-027b). Sealed captures carry metadata only, no bytes (\u00a717.5).",
       "x_source": "web/src/lib/recommender.ts#EvidenceArtifact[] + web/src/lib/evidence-viewer.ts#ClaimView/Capture",
       "type": "object",
-      "required": ["artifacts"],
+      "required": [
+        "artifacts"
+      ],
       "properties": {
-        "artifacts": { "type": "array", "items": { "$ref": "#/$defs/EvidenceArtifact" } },
-        "claim_views": { "type": "array", "items": { "$ref": "#/$defs/ClaimView" } }
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EvidenceArtifact"
+          }
+        },
+        "claim_views": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ClaimView"
+          }
+        }
       }
     },
     "corrections": {
-      "description": "Surface 9 — the public corrections log (§39.8) + transparency report. History is never rewritten: the prior value stays citable at its belief-time (SIG-GOV-005).",
+      "description": "Surface 9 \u2014 the public corrections log (\u00a739.8) + transparency report. History is never rewritten: the prior value stays citable at its belief-time (SIG-GOV-005).",
       "x_source": "web/src/lib/corrections.ts#CorrectionEntry[] + TransparencyReport",
       "type": "array",
-      "items": { "$ref": "#/$defs/CorrectionEntry" }
+      "items": {
+        "$ref": "#/$defs/CorrectionEntry"
+      }
     },
     "research_queue": {
-      "description": "Surface 10 — the research queue (§39.7). Every task has a testable closing condition (SIG-TASK-002), never 'research this'.",
+      "description": "Surface 10 \u2014 the research queue (\u00a739.7). Every task has a testable closing condition (SIG-TASK-002), never 'research this'.",
       "x_source": "web/src/lib/research-queue.ts#ResearchTaskCard[]",
       "type": "array",
-      "items": { "$ref": "#/$defs/ResearchTaskCard" }
+      "items": {
+        "$ref": "#/$defs/ResearchTaskCard"
+      }
     }
   },
   "$defs": {
     "AsOfEcho": {
       "type": "object",
-      "required": ["as_of_world", "as_of_belief"],
+      "required": [
+        "as_of_world",
+        "as_of_belief"
+      ],
       "properties": {
-        "as_of_world": { "type": "string" },
-        "as_of_belief": { "type": "string" },
-        "belief_pinned": { "type": "boolean" }
+        "as_of_world": {
+          "type": "string"
+        },
+        "as_of_belief": {
+          "type": "string"
+        },
+        "belief_pinned": {
+          "type": "boolean"
+        }
       }
     },
     "Dossier": {
@@ -137,154 +235,546 @@
         "legal_regime"
       ],
       "properties": {
-        "slug": { "type": "string" },
-        "subject_label": { "type": "string" },
-        "jurisdiction": { "type": "string" },
-        "asOf": { "$ref": "#/$defs/AsOfEcho" },
-        "rulesetVersion": { "type": "string" },
-        "sections": { "type": "array", "items": { "$ref": "#/$defs/Section" } },
-        "gaps": { "type": "array", "items": { "$ref": "#/$defs/Gap" } },
-        "source_families": { "type": "array", "items": { "type": "string" } },
-        "lang": { "type": "string", "description": "BCP-47; defaults to 'en'." },
-        "jurisdictionCode": { "type": "string", "description": "e.g. US/FR/BE; selects the §43.8 publication adapter." }
+        "slug": {
+          "type": "string"
+        },
+        "subject_label": {
+          "type": "string"
+        },
+        "jurisdiction": {
+          "type": "string"
+        },
+        "asOf": {
+          "$ref": "#/$defs/AsOfEcho"
+        },
+        "rulesetVersion": {
+          "type": "string"
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Section"
+          }
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Gap"
+          }
+        },
+        "source_families": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "lang": {
+          "type": "string",
+          "description": "BCP-47; defaults to 'en'."
+        },
+        "jurisdictionCode": {
+          "type": "string",
+          "description": "e.g. US/FR/BE; selects the \u00a743.8 publication adapter."
+        }
       }
     },
     "Section": {
       "type": "object",
-      "required": ["section_id"],
+      "required": [
+        "section_id"
+      ],
       "properties": {
-        "section_id": { "type": "string" },
-        "figures": { "type": "array", "items": { "$ref": "#/$defs/Figure" } },
-        "rows": { "type": "array", "items": { "$ref": "#/$defs/Row" } }
+        "section_id": {
+          "type": "string"
+        },
+        "figures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Figure"
+          }
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Row"
+          }
+        }
       }
     },
     "Figure": {
       "type": "object",
-      "required": ["key", "label", "value", "support", "evidenceCount", "contested", "reconciliation"],
+      "required": [
+        "key",
+        "label",
+        "value",
+        "support",
+        "evidenceCount",
+        "contested",
+        "reconciliation"
+      ],
       "properties": {
-        "key": { "type": "string" },
-        "label": { "type": "string" },
-        "value": { "type": ["string", "number"] },
-        "unit": { "type": "string" },
-        "lowerBound": { "type": "boolean" },
-        "evidenceCount": { "type": "integer" },
-        "contested": { "type": "boolean" }
+        "key": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "string",
+            "number"
+          ]
+        },
+        "unit": {
+          "type": "string"
+        },
+        "lowerBound": {
+          "type": "boolean"
+        },
+        "evidenceCount": {
+          "type": "integer"
+        },
+        "contested": {
+          "type": "boolean"
+        }
       }
     },
     "Row": {
       "type": "object",
-      "required": ["label", "value"],
+      "required": [
+        "label",
+        "value"
+      ],
       "properties": {
-        "label": { "type": "string" },
-        "value": { "type": ["string", "number", "null"] },
-        "absence": { "type": "string", "enum": ["NOT_RESEARCHED", "NO_EVIDENCE_FOUND", "UNRESOLVED", "NOT_APPLICABLE"] },
-        "subject_id": { "type": "string" },
-        "predicate_id": { "type": "string" },
-        "documentUrl": { "type": "string" },
-        "note": { "type": "string" },
-        "isPublicEmployeeName": { "type": "boolean" },
-        "withheld": { "type": "boolean" },
-        "inferred": { "type": "boolean", "description": "P36.14 / SIG-RECON-052: true exactly when this row is an L4 derived fact (inference.derived_fact); absent or false on observed/resolved rows." },
-        "layer": { "type": "string", "enum": ["L4"], "description": "P36.14 / SIG-RECON-052: 'L4' exactly when inferred is true; absent otherwise." }
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "null"
+          ]
+        },
+        "absence": {
+          "type": "string",
+          "enum": [
+            "NOT_RESEARCHED",
+            "NO_EVIDENCE_FOUND",
+            "UNRESOLVED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "subject_id": {
+          "type": "string"
+        },
+        "predicate_id": {
+          "type": "string"
+        },
+        "documentUrl": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "isPublicEmployeeName": {
+          "type": "boolean"
+        },
+        "withheld": {
+          "type": "boolean"
+        },
+        "inferred": {
+          "type": "boolean",
+          "description": "P36.14 / SIG-RECON-052: true exactly when this row is an L4 derived fact (inference.derived_fact); absent or false on observed/resolved rows."
+        },
+        "layer": {
+          "type": "string",
+          "enum": [
+            "L4"
+          ],
+          "description": "P36.14 / SIG-RECON-052: 'L4' exactly when inferred is true; absent otherwise."
+        }
       }
     },
     "Gap": {
       "type": "object",
-      "required": ["label", "kind", "subject_id", "predicate_id"],
+      "required": [
+        "label",
+        "kind",
+        "subject_id",
+        "predicate_id"
+      ],
       "properties": {
-        "label": { "type": "string" },
-        "kind": { "type": "string", "enum": ["NOT_RESEARCHED", "NO_EVIDENCE_FOUND", "UNRESOLVED", "NOT_APPLICABLE"] },
-        "subject_id": { "type": "string" },
-        "predicate_id": { "type": "string" },
-        "sources_searched": { "type": "array", "items": { "type": "string" } }
+        "label": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "NOT_RESEARCHED",
+            "NO_EVIDENCE_FOUND",
+            "UNRESOLVED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "subject_id": {
+          "type": "string"
+        },
+        "predicate_id": {
+          "type": "string"
+        },
+        "sources_searched": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
     "MapLayer": {
       "type": "object",
-      "required": ["id", "label", "kind", "description"],
+      "required": [
+        "id",
+        "label",
+        "kind",
+        "description"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "label": { "type": "string" },
-        "kind": { "type": "string", "enum": ["observed", "derived"] },
-        "description": { "type": "string" }
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "observed",
+            "derived"
+          ]
+        },
+        "description": {
+          "type": "string"
+        }
       }
     },
     "MapAsset": {
       "type": "object",
-      "required": ["id", "label", "jurisdiction", "tier", "lat", "lon", "precision"],
+      "required": [
+        "id",
+        "label",
+        "jurisdiction",
+        "tier",
+        "lat",
+        "lon",
+        "precision"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "label": { "type": "string" },
-        "jurisdiction": { "type": "string" },
-        "tier": { "type": "integer", "enum": [0, 1, 2, 3], "description": "§19.4 sensitivity tier; drives coordinate reduction." },
-        "lat": { "type": ["number", "null"], "description": "null when no point is published (tier 3 / mobile / unknown)." },
-        "lon": { "type": ["number", "null"] },
-        "precision": { "type": "string", "description": "Published-precision description for the tabular equivalent." },
-        "locationAbsence": { "type": "string" }
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "jurisdiction": {
+          "type": "string"
+        },
+        "tier": {
+          "type": "integer",
+          "enum": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "description": "\u00a719.4 sensitivity tier; drives coordinate reduction."
+        },
+        "lat": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "null when no point is published (tier 3 / mobile / unknown)."
+        },
+        "lon": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "precision": {
+          "type": "string",
+          "description": "Published-precision description for the tabular equivalent."
+        },
+        "locationAbsence": {
+          "type": "string"
+        }
       }
     },
     "JurisdictionIndicator": {
       "type": "object",
-      "required": ["jurisdiction"],
-      "properties": { "jurisdiction": { "type": "string" } }
+      "required": [
+        "jurisdiction"
+      ],
+      "properties": {
+        "jurisdiction": {
+          "type": "string"
+        }
+      }
     },
     "NetworkNode": {
       "type": "object",
-      "required": ["id", "label", "type"],
+      "required": [
+        "id",
+        "label",
+        "type"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "label": { "type": "string" },
-        "type": { "type": "string", "description": "e.g. agency|vendor|rtcc; opaque." },
-        "label_basis": { "type": ["string", "null"], "description": "P35.29 (L-3): the closed sig.entity-label/1 basis vocabulary — source_name|source_title|key_name|slug_name|derived|fallback." },
-        "label_state": { "type": "string", "enum": ["not_yet_reviewed"], "description": "ADR-159 typed review state — rendered, never an improvised label." },
-        "degree": { "type": ["integer", "array"], "description": "P35.30 (SIG-INGEST-043c): a source-stated partner COUNT — a node attribute, never an edge." },
-        "degree_claim_ids": { "type": "array", "items": { "type": "string" }, "description": "The claims backing degree." },
-        "degree_observed_at": { "type": "string", "format": "date", "description": "When the degree was observed." }
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "description": "e.g. agency|vendor|rtcc; opaque."
+        },
+        "label_basis": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "P35.29 (L-3): the closed sig.entity-label/1 basis vocabulary \u2014 source_name|source_title|key_name|slug_name|derived|fallback."
+        },
+        "label_state": {
+          "type": "string",
+          "enum": [
+            "not_yet_reviewed"
+          ],
+          "description": "ADR-159 typed review state \u2014 rendered, never an improvised label."
+        },
+        "degree": {
+          "type": [
+            "integer",
+            "array"
+          ],
+          "description": "P35.30 (SIG-INGEST-043c): a source-stated partner COUNT \u2014 a node attribute, never an edge."
+        },
+        "degree_claim_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The claims backing degree."
+        },
+        "degree_observed_at": {
+          "type": "string",
+          "format": "date",
+          "description": "When the degree was observed."
+        }
       }
     },
     "NetworkEdge": {
       "type": "object",
-      "required": ["from", "to", "access_kind", "relation", "support", "evidence_count"],
+      "required": [
+        "from",
+        "to",
+        "access_kind",
+        "relation",
+        "support",
+        "evidence_count"
+      ],
       "properties": {
-        "from": { "type": "string" },
-        "to": { "type": "string" },
-        "access_kind": { "type": "string", "enum": ["configured_access", "observed_use", "declared_policy"], "description": "The three §12.2 edge types MUST NOT be merged." },
-        "relation": { "type": "string" },
-        "support": { "type": "string", "enum": ["CONFIRMED", "STRONGLY_SUPPORTED", "PROBABLE", "WEAKLY_SUPPORTED", "UNSUPPORTED"], "description": "The §10.7 support level — derived from the backing claim set's declared independence classes (P35.30), never a constant." },
-        "evidence_count": { "type": "integer" },
-        "evidence": { "type": "array", "items": { "type": "string" }, "description": "The supporting claim ids (P32.15, SIG-FIND-004) — the edge names its support, never only counts it." },
-        "predicate": { "type": "string", "description": "P35.30/D21: the relation words the claim predicate carries (unslugged — never a raw slot name)." },
-        "direction": { "type": "string", "description": "The reconciler's direction token (e.g. a_to_b)." },
-        "observed_at": { "type": ["string", "null"], "format": "date", "description": "The earliest evidenced observation date; null when undated." },
-        "date_kind": { "type": "string", "enum": ["observed", "undated"], "description": "undated is first-class — a 1970 placeholder renders undated, never a synthetic date (SIG-TIME-012 class honesty)." },
-        "valid_from_kind": { "type": "string", "enum": ["exact", "ongoing", "unknown", "before", "after", "never", "undated"], "description": "Valid-time START bound kind; unknown = never inferred (the single-snapshot rule)." },
-        "valid_to_kind": { "type": "string", "enum": ["exact", "ongoing", "unknown", "before", "after", "never", "undated"], "description": "Valid-time END bound kind." },
-        "valid_to": { "type": ["string", "null"], "format": "date", "description": "The valid-time end date when bounded." },
-        "source": { "type": ["string", "null"], "description": "The source DISPLAY names behind the edge, joined — never a raw source id." },
-        "sources": { "type": "array", "items": { "type": "string" }, "description": "The same display names as a list." },
-        "currency": { "type": ["string", "null"], "enum": ["CURRENT", "AGING", "STALE", "HISTORICAL", "UNDATED"], "description": "The §28.3 currency class derived at export (UNDATED = no evidenced date; null = unweightable — honest absence)." },
-        "historical": { "type": "boolean", "description": "True when the edge has ended or its currency is HISTORICAL — marked, out of the default current view (K2 §7 H-3)." },
-        "claim_ids": { "type": "array", "items": { "type": "string" }, "description": "The supporting claim ids under the D21 contract name (same set as evidence)." }
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "access_kind": {
+          "type": "string",
+          "enum": [
+            "configured_access",
+            "observed_use",
+            "declared_policy"
+          ],
+          "description": "The three \u00a712.2 edge types MUST NOT be merged."
+        },
+        "relation": {
+          "type": "string"
+        },
+        "support": {
+          "type": "string",
+          "enum": [
+            "CONFIRMED",
+            "STRONGLY_SUPPORTED",
+            "PROBABLE",
+            "WEAKLY_SUPPORTED",
+            "UNSUPPORTED"
+          ],
+          "description": "The \u00a710.7 support level \u2014 derived from the backing claim set's declared independence classes (P35.30), never a constant."
+        },
+        "evidence_count": {
+          "type": "integer"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The supporting claim ids (P32.15, SIG-FIND-004) \u2014 the edge names its support, never only counts it."
+        },
+        "predicate": {
+          "type": "string",
+          "description": "P35.30/D21: the relation words the claim predicate carries (unslugged \u2014 never a raw slot name)."
+        },
+        "direction": {
+          "type": "string",
+          "description": "The reconciler's direction token (e.g. a_to_b)."
+        },
+        "observed_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date",
+          "description": "The earliest evidenced observation date; null when undated."
+        },
+        "date_kind": {
+          "type": "string",
+          "enum": [
+            "observed",
+            "undated"
+          ],
+          "description": "undated is first-class \u2014 a 1970 placeholder renders undated, never a synthetic date (SIG-TIME-012 class honesty)."
+        },
+        "valid_from_kind": {
+          "type": "string",
+          "enum": [
+            "exact",
+            "ongoing",
+            "unknown",
+            "before",
+            "after",
+            "never",
+            "undated"
+          ],
+          "description": "Valid-time START bound kind; unknown = never inferred (the single-snapshot rule)."
+        },
+        "valid_to_kind": {
+          "type": "string",
+          "enum": [
+            "exact",
+            "ongoing",
+            "unknown",
+            "before",
+            "after",
+            "never",
+            "undated"
+          ],
+          "description": "Valid-time END bound kind."
+        },
+        "valid_to": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date",
+          "description": "The valid-time end date when bounded."
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The source DISPLAY names behind the edge, joined \u2014 never a raw source id."
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The same display names as a list."
+        },
+        "currency": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "CURRENT",
+            "AGING",
+            "STALE",
+            "HISTORICAL",
+            "UNDATED"
+          ],
+          "description": "The \u00a728.3 currency class derived at export (UNDATED = no evidenced date; null = unweightable \u2014 honest absence)."
+        },
+        "historical": {
+          "type": "boolean",
+          "description": "True when the edge has ended or its currency is HISTORICAL \u2014 marked, out of the default current view (K2 \u00a77 H-3)."
+        },
+        "claim_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The supporting claim ids under the D21 contract name (same set as evidence)."
+        }
       }
     },
     "AccessPath": {
       "type": "object",
-      "required": ["hops"],
+      "required": [
+        "hops"
+      ],
       "properties": {
         "hops": {
           "type": "array",
           "minItems": 1,
           "items": {
             "type": "object",
-            "required": ["from_org", "to_org", "edge_label", "scope", "confidence", "evidence"],
+            "required": [
+              "from_org",
+              "to_org",
+              "edge_label",
+              "scope",
+              "confidence",
+              "evidence"
+            ],
             "properties": {
-              "from_org": { "type": "string" },
-              "to_org": { "type": "string" },
-              "edge_label": { "type": "string" },
-              "scope": { "type": "string" },
-              "confidence": { "type": "string", "enum": ["possible", "probable", "certain"] },
-              "evidence": { "type": "array", "minItems": 1, "items": { "type": "string" }, "description": "SIG-UI-025: an unexplained hop is a forbidden edge (§3.1)." },
-              "expired": { "type": "boolean" }
+              "from_org": {
+                "type": "string"
+              },
+              "to_org": {
+                "type": "string"
+              },
+              "edge_label": {
+                "type": "string"
+              },
+              "scope": {
+                "type": "string"
+              },
+              "confidence": {
+                "type": "string",
+                "enum": [
+                  "possible",
+                  "probable",
+                  "certain"
+                ]
+              },
+              "evidence": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                },
+                "description": "SIG-UI-025: an unexplained hop is a forbidden edge (\u00a73.1)."
+              },
+              "expired": {
+                "type": "boolean"
+              }
             }
           }
         }
@@ -292,190 +782,716 @@
     },
     "FreshnessRow": {
       "type": "object",
-      "required": ["source", "last_successful_run", "last_content_change", "status", "stale_entity_count", "volatility_class"],
+      "required": [
+        "source",
+        "last_successful_run",
+        "last_content_change",
+        "status",
+        "stale_entity_count",
+        "volatility_class"
+      ],
       "properties": {
-        "source": { "type": "string" },
-        "last_successful_run": { "type": "string" },
-        "last_content_change": { "type": "string" },
-        "status": { "type": "string" },
-        "stale_entity_count": { "type": "integer" },
-        "volatility_class": { "type": "string" }
+        "source": {
+          "type": "string"
+        },
+        "last_successful_run": {
+          "type": "string"
+        },
+        "last_content_change": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "stale_entity_count": {
+          "type": "integer"
+        },
+        "volatility_class": {
+          "type": "string"
+        }
       }
     },
     "CoverageMetric": {
       "type": "object",
-      "required": ["id", "kind", "label", "value", "denominator", "population_note", "is_population_total"],
+      "required": [
+        "id",
+        "kind",
+        "label",
+        "value",
+        "denominator",
+        "population_note",
+        "is_population_total"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "kind": { "type": "string", "enum": ["counted_quantity", "records_derived_bound", "reconciliation_ratio", "survey_recall"] },
-        "label": { "type": "string" },
-        "value": { "type": "string" },
-        "denominator": { "type": "string", "description": "REQUIRED named denominator; 'reality'/'all …' is forbidden (SIG-METRIC-009)." },
-        "population_note": { "type": "string" },
-        "is_population_total": { "const": false, "description": "MUST be false — SIG never publishes a population total (SIG-METRIC-010)." },
-        "exclusions": { "type": "object", "additionalProperties": { "type": "integer" }, "description": "ED-42/F-134: optional per-class exclusion disclosure beside a reconciliation ratio — {conflicted, withheld, non_publishable, filtered}; numerator + excluded_total = denominator, never a clamped N-of-N." },
-        "excluded_total": { "type": "integer", "description": "The summed exclusion count disclosed beside the numerator (ED-42)." }
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "counted_quantity",
+            "records_derived_bound",
+            "reconciliation_ratio",
+            "survey_recall"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "denominator": {
+          "type": "string",
+          "description": "REQUIRED named denominator; 'reality'/'all \u2026' is forbidden (SIG-METRIC-009)."
+        },
+        "population_note": {
+          "type": "string"
+        },
+        "is_population_total": {
+          "const": false,
+          "description": "MUST be false \u2014 SIG never publishes a population total (SIG-METRIC-010)."
+        },
+        "exclusions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "description": "ED-42/F-134: optional per-class exclusion disclosure beside a reconciliation ratio \u2014 {conflicted, withheld, non_publishable, filtered}; numerator + excluded_total = denominator, never a clamped N-of-N."
+        },
+        "excluded_total": {
+          "type": "integer",
+          "description": "The summed exclusion count disclosed beside the numerator (ED-42)."
+        }
       }
     },
     "WatchItem": {
       "type": "object",
-      "description": "sig.watch-item/1 (P35.43, K7 §5.1) — one derived publishable watch record. `date_certainty` is first-class: `upper_bound` MUST NOT render as a deadline. `place.key` null + `place.check: unplaced` is honest unresolved placement, never a guess.",
-      "required": ["schema", "handle", "title", "kind", "date", "date_kind", "date_certainty", "timeline", "place", "subjects", "technology", "vendor", "status", "what_you_can_do", "evidence", "contested", "tasks", "first_seen", "last_checked", "source_ids"],
+      "description": "sig.watch-item/1 (P35.43, K7 \u00a75.1) \u2014 one derived publishable watch record. `date_certainty` is first-class: `upper_bound` MUST NOT render as a deadline. `place.key` null + `place.check: unplaced` is honest unresolved placement, never a guess.",
+      "required": [
+        "schema",
+        "handle",
+        "title",
+        "kind",
+        "date",
+        "date_kind",
+        "date_certainty",
+        "timeline",
+        "place",
+        "subjects",
+        "technology",
+        "vendor",
+        "status",
+        "what_you_can_do",
+        "evidence",
+        "contested",
+        "tasks",
+        "first_seen",
+        "last_checked",
+        "source_ids"
+      ],
       "properties": {
-        "schema": { "const": "sig.watch-item/1" },
-        "handle": { "type": "string", "description": "Deterministic W-<place>-<kind>-<slug>-<hash4> — never a retrieval timestamp or random id." },
-        "title": { "type": "string", "description": "P35.31-scrubbed label; a person-named source title never surfaces verbatim (K7 §6)." },
-        "kind": { "type": "string", "enum": ["renewal_deadline", "contract_expiry", "solicitation_deadline", "agenda_item", "legislative_action", "grant_period_end"] },
-        "date": { "type": "string", "format": "date" },
-        "date_kind": { "type": "string", "description": "WHAT the date is (notice_deadline/expiry/response_deadline/meeting/status_change/scheduled_action/period_end) — never a certainty claim." },
-        "date_certainty": { "type": "string", "enum": ["derived", "upper_bound", "stated"] },
-        "timeline": { "type": "array", "items": { "type": "object" }, "description": "The subject's other dated facts (posted/signed/period bounds/prior status), attributed to their claims." },
-        "place": { "type": "object", "description": "K7 §5.3 placement view — key/chain/basis/check from the P35.19 engine; key null is `unplaced`." },
-        "body": { "type": ["string", "null"], "description": "The deciding body (buyer/funder/tenant jurisdiction/bill jurisdiction) — claim-derived, scrubbed." },
-        "subjects": { "type": "array", "items": { "type": "string" }, "description": "The connector subject keys the item derives from." },
-        "technology": { "type": "array", "items": { "type": "object" }, "description": "Reviewed-vocab technology matches ({id,label}) — declared claims only." },
-        "vendor": { "type": "array", "items": { "type": "object" }, "description": "Reviewed-vocab vendor matches ({id,label}) — declared claims only." },
-        "status": { "type": "string", "enum": ["upcoming", "today", "recently_decided", "superseded", "withdrawn"] },
-        "what_you_can_do": { "type": "string", "description": "Procedural template text — tells a reader what they could do; never a position, never outreach (W-P4/W-P5)." },
-        "evidence": { "type": "array", "items": { "type": "object" }, "description": "Per-firing-claim anchors: claim/predicate/source + bound artifact ids + the S-6-gated upstream link." },
-        "termination": { "type": "object", "description": "Contract kinds only — the TerminationInput wire (auto_renews/notice_window_days/expiry_date) the web's resolveTermination derives from." },
-        "contested": { "type": "boolean" },
-        "tasks": { "type": "array", "items": { "type": "object" }, "description": "Open research tasks on the item's subjects (e.g. contract_expiring — renewal terms unknown)." },
-        "first_seen": { "type": ["string", "null"], "format": "date" },
-        "last_checked": { "type": "string", "description": "The export's generated_at — the item's own check stamp." },
-        "source_ids": { "type": "array", "items": { "type": "string" } }
+        "schema": {
+          "const": "sig.watch-item/1"
+        },
+        "handle": {
+          "type": "string",
+          "description": "Deterministic W-<place>-<kind>-<slug>-<hash4> \u2014 never a retrieval timestamp or random id."
+        },
+        "title": {
+          "type": "string",
+          "description": "P35.31-scrubbed label; a person-named source title never surfaces verbatim (K7 \u00a76)."
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "renewal_deadline",
+            "contract_expiry",
+            "solicitation_deadline",
+            "agenda_item",
+            "legislative_action",
+            "grant_period_end"
+          ]
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "date_kind": {
+          "type": "string",
+          "description": "WHAT the date is (notice_deadline/expiry/response_deadline/meeting/status_change/scheduled_action/period_end) \u2014 never a certainty claim."
+        },
+        "date_certainty": {
+          "type": "string",
+          "enum": [
+            "derived",
+            "upper_bound",
+            "stated"
+          ]
+        },
+        "timeline": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "The subject's other dated facts (posted/signed/period bounds/prior status), attributed to their claims."
+        },
+        "place": {
+          "type": "object",
+          "description": "K7 \u00a75.3 placement view \u2014 key/chain/basis/check from the P35.19 engine; key null is `unplaced`."
+        },
+        "body": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The deciding body (buyer/funder/tenant jurisdiction/bill jurisdiction) \u2014 claim-derived, scrubbed."
+        },
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The connector subject keys the item derives from."
+        },
+        "technology": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Reviewed-vocab technology matches ({id,label}) \u2014 declared claims only."
+        },
+        "vendor": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Reviewed-vocab vendor matches ({id,label}) \u2014 declared claims only."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "upcoming",
+            "today",
+            "recently_decided",
+            "superseded",
+            "withdrawn"
+          ]
+        },
+        "what_you_can_do": {
+          "type": "string",
+          "description": "Procedural template text \u2014 tells a reader what they could do; never a position, never outreach (W-P4/W-P5)."
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Per-firing-claim anchors: claim/predicate/source + bound artifact ids + the S-6-gated upstream link."
+        },
+        "termination": {
+          "type": "object",
+          "description": "Contract kinds only \u2014 the TerminationInput wire (auto_renews/notice_window_days/expiry_date) the web's resolveTermination derives from."
+        },
+        "contested": {
+          "type": "boolean"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Open research tasks on the item's subjects (e.g. contract_expiring \u2014 renewal terms unknown)."
+        },
+        "first_seen": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "last_checked": {
+          "type": "string",
+          "description": "The export's generated_at \u2014 the item's own check stamp."
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
     "WatchCoverage": {
       "type": "object",
-      "description": "SIG-WATCH-D04 — the honest coverage statement the envelope always carries: every dossier-index place row (items count may be 0), the monitored-portal statement from the committed tenant registries, per-kind counts, and the read-only sizing count (watch_subject_counts).",
-      "required": ["places", "by_kind", "items_total", "last_checked"],
+      "description": "SIG-WATCH-D04 \u2014 the honest coverage statement the envelope always carries: every dossier-index place row (items count may be 0), the monitored-portal statement from the committed tenant registries, per-kind counts, and the read-only sizing count (watch_subject_counts).",
+      "required": [
+        "places",
+        "by_kind",
+        "items_total",
+        "last_checked"
+      ],
       "properties": {
-        "monitored": { "type": "object", "description": "Registered tenant jurisdictions — the portals/bodies SIG actually checks." },
-        "places": { "type": "array", "items": { "type": "object" } },
-        "by_kind": { "type": "object", "additionalProperties": { "type": "integer" } },
-        "items_total": { "type": "integer" },
-        "sizing": { "type": "object", "description": "Per-family {subjects, claims} counts under the same gates the producer read." },
-        "last_checked": { "type": "string" }
+        "monitored": {
+          "type": "object",
+          "description": "Registered tenant jurisdictions \u2014 the portals/bodies SIG actually checks."
+        },
+        "places": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "by_kind": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "items_total": {
+          "type": "integer"
+        },
+        "sizing": {
+          "type": "object",
+          "description": "Per-family {subjects, claims} counts under the same gates the producer read."
+        },
+        "last_checked": {
+          "type": "string"
+        }
       }
     },
     "ContractWatchItem": {
       "type": "object",
-      "required": ["contract_id", "subject_label", "jurisdiction", "termination", "renewal_window_days", "approving_body", "next_scheduled_meeting", "replacement_procurement", "contested"],
+      "required": [
+        "contract_id",
+        "subject_label",
+        "jurisdiction",
+        "termination",
+        "renewal_window_days",
+        "approving_body",
+        "next_scheduled_meeting",
+        "replacement_procurement",
+        "contested"
+      ],
       "properties": {
-        "contract_id": { "type": "string" },
-        "subject_label": { "type": "string" },
-        "jurisdiction": { "type": "string" },
+        "contract_id": {
+          "type": "string"
+        },
+        "subject_label": {
+          "type": "string"
+        },
+        "jurisdiction": {
+          "type": "string"
+        },
         "termination": {
           "type": "object",
           "properties": {
-            "auto_renews": { "type": "boolean" },
-            "notice_window_days": { "type": ["integer", "null"] },
-            "expiry_date": { "type": ["string", "null"] }
+            "auto_renews": {
+              "type": "boolean"
+            },
+            "notice_window_days": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "expiry_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
           }
         },
-        "renewal_window_days": { "type": ["integer", "null"] },
-        "approving_body": { "type": ["string", "null"] },
-        "next_scheduled_meeting": { "type": ["string", "null"] },
-        "replacement_procurement": { "type": ["string", "null"] },
-        "contested": { "type": "boolean" }
+        "renewal_window_days": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "approving_body": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "next_scheduled_meeting": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "replacement_procurement": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "contested": {
+          "type": "boolean"
+        }
       }
     },
     "EvidenceArtifact": {
       "type": "object",
-      "required": ["artifact_id", "subject_id", "title", "source", "artifact_type", "directness", "currency", "touches_open_contradiction", "answers_open_task", "capture_status", "permalink", "as_of"],
+      "required": [
+        "artifact_id",
+        "subject_id",
+        "title",
+        "source",
+        "artifact_type",
+        "directness",
+        "currency",
+        "touches_open_contradiction",
+        "answers_open_task",
+        "capture_status",
+        "permalink",
+        "as_of"
+      ],
       "properties": {
-        "artifact_id": { "type": "string" },
-        "subject_id": { "type": "string" },
-        "title": { "type": "string" },
-        "source": { "type": "string" },
-        "artifact_type": { "type": "string" },
-        "directness": { "type": "string" },
-        "currency": { "type": "string" },
-        "touches_open_contradiction": { "type": "boolean" },
-        "answers_open_task": { "type": "boolean" },
-        "capture_status": { "type": "string" },
-        "permalink": { "type": "string" },
-        "as_of": { "type": "string" }
+        "artifact_id": {
+          "type": "string"
+        },
+        "subject_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "artifact_type": {
+          "type": "string"
+        },
+        "directness": {
+          "type": "string"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "touches_open_contradiction": {
+          "type": "boolean"
+        },
+        "answers_open_task": {
+          "type": "boolean"
+        },
+        "capture_status": {
+          "type": "string"
+        },
+        "permalink": {
+          "type": "string"
+        },
+        "as_of": {
+          "type": "string"
+        }
       }
     },
     "ClaimView": {
       "type": "object",
-      "required": ["claim_id", "claim_label", "value", "capture", "locator", "extraction_method", "extraction_version", "review_status", "conflicting_claims", "history"],
+      "required": [
+        "claim_id",
+        "claim_label",
+        "value",
+        "capture",
+        "locator",
+        "extraction_method",
+        "extraction_version",
+        "review_status",
+        "conflicting_claims",
+        "history"
+      ],
       "properties": {
-        "claim_id": { "type": "string" },
-        "claim_label": { "type": "string" },
-        "value": { "type": ["string", "number"] },
-        "capture": { "$ref": "#/$defs/Capture" },
-        "extraction_method": { "type": "string" },
-        "extraction_version": { "type": "string" },
-        "review_status": { "type": "string" },
-        "conflicting_claims": { "type": "array" },
-        "history": { "type": "array" }
+        "claim_id": {
+          "type": "string"
+        },
+        "claim_label": {
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "string",
+            "number"
+          ]
+        },
+        "capture": {
+          "$ref": "#/$defs/Capture"
+        },
+        "extraction_method": {
+          "type": "string"
+        },
+        "extraction_version": {
+          "type": "string"
+        },
+        "review_status": {
+          "type": "string"
+        },
+        "conflicting_claims": {
+          "type": "array"
+        },
+        "history": {
+          "type": "array"
+        }
       }
     },
     "Capture": {
       "type": "object",
-      "required": ["capture_id", "artifact_id", "storage_tier", "captured_at", "content_digest", "acquisition_method", "fields"],
+      "required": [
+        "capture_id",
+        "artifact_id",
+        "storage_tier",
+        "captured_at",
+        "content_digest",
+        "acquisition_method",
+        "fields"
+      ],
       "properties": {
-        "capture_id": { "type": "string" },
-        "artifact_id": { "type": "string" },
-        "storage_tier": { "type": "string", "description": "'sealed' ⇒ bytes withheld, metadata only (§17.5)." },
-        "captured_at": { "type": "string" },
-        "content_digest": { "type": "string" },
-        "acquisition_method": { "type": "string" },
-        "document_text": { "type": "string", "description": "Absent when sealed." },
-        "sealed_reason": { "type": "string" },
-        "fields": { "type": "object" }
+        "capture_id": {
+          "type": "string"
+        },
+        "artifact_id": {
+          "type": "string"
+        },
+        "storage_tier": {
+          "type": "string",
+          "description": "'sealed' \u21d2 bytes withheld, metadata only (\u00a717.5)."
+        },
+        "captured_at": {
+          "type": "string"
+        },
+        "content_digest": {
+          "type": "string"
+        },
+        "acquisition_method": {
+          "type": "string"
+        },
+        "document_text": {
+          "type": "string",
+          "description": "Absent when sealed."
+        },
+        "sealed_reason": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "object"
+        }
       }
     },
     "CorrectionEntry": {
       "type": "object",
-      "required": ["id", "subject_id", "subject_label", "what_changed", "corrected_at", "reason", "reported_by", "category", "outcome", "previous_value", "corrected_value", "previous_belief_date", "subject_path"],
+      "required": [
+        "id",
+        "subject_id",
+        "subject_label",
+        "what_changed",
+        "corrected_at",
+        "reason",
+        "reported_by",
+        "category",
+        "outcome",
+        "previous_value",
+        "corrected_value",
+        "previous_belief_date",
+        "subject_path"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "subject_id": { "type": "string" },
-        "subject_label": { "type": "string" },
-        "what_changed": { "type": "string" },
-        "corrected_at": { "type": "string" },
-        "reason": { "type": "string" },
-        "reported_by": { "type": "string", "description": "Role/handle or 'anonymous'; identity never forced (SIG-GOV-002)." },
-        "category": { "type": "string" },
-        "outcome": { "type": "string" },
-        "previous_value": { "type": "string" },
-        "corrected_value": { "type": "string" },
-        "previous_belief_date": { "type": "string", "description": "Belief-time at which the erroneous value still re-resolves (SIG-GOV-005)." },
-        "subject_path": { "type": "string" },
-        "previous_claim_id": { "type": "string", "description": "P32.16a (SIG-FIND-008): the superseded/retracted claim this entry revises — the log names BOTH assertions." },
-        "revises_claim": { "type": "string", "description": "The claim this entry revises (= previous_claim_id for a revision)." },
-        "retraction_of": { "type": "string", "description": "The claim this entry retracts (retraction outcome)." },
-        "previous_withheld": { "type": "boolean", "description": "True when the prior assertion exists but is itself gated — its value/date stay off the public surface." }
+        "id": {
+          "type": "string"
+        },
+        "subject_id": {
+          "type": "string"
+        },
+        "subject_label": {
+          "type": "string"
+        },
+        "what_changed": {
+          "type": "string"
+        },
+        "corrected_at": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "reported_by": {
+          "type": "string",
+          "description": "Role/handle or 'anonymous'; identity never forced (SIG-GOV-002)."
+        },
+        "category": {
+          "type": "string"
+        },
+        "outcome": {
+          "type": "string"
+        },
+        "previous_value": {
+          "type": "string"
+        },
+        "corrected_value": {
+          "type": "string"
+        },
+        "previous_belief_date": {
+          "type": "string",
+          "description": "Belief-time at which the erroneous value still re-resolves (SIG-GOV-005)."
+        },
+        "subject_path": {
+          "type": "string"
+        },
+        "previous_claim_id": {
+          "type": "string",
+          "description": "P32.16a (SIG-FIND-008): the superseded/retracted claim this entry revises \u2014 the log names BOTH assertions."
+        },
+        "revises_claim": {
+          "type": "string",
+          "description": "The claim this entry revises (= previous_claim_id for a revision)."
+        },
+        "retraction_of": {
+          "type": "string",
+          "description": "The claim this entry retracts (retraction outcome)."
+        },
+        "previous_withheld": {
+          "type": "boolean",
+          "description": "True when the prior assertion exists but is itself gated \u2014 its value/date stay off the public surface."
+        }
       }
     },
     "ResearchTaskCard": {
       "type": "object",
-      "required": ["task_type", "subject_id", "subject_label", "closing_condition", "evidence_sought", "assignee_class", "effort_estimate", "geographic_scope", "jurisdiction", "dispositions", "priority"],
+      "required": [
+        "task_type",
+        "subject_id",
+        "subject_label",
+        "closing_condition",
+        "evidence_sought",
+        "assignee_class",
+        "effort_estimate",
+        "geographic_scope",
+        "jurisdiction",
+        "dispositions",
+        "priority"
+      ],
       "properties": {
-        "task_id": { "type": "string", "description": "The research_task row id — the card's unique stable identity (P34.12 / K11 RQ-00). Optional: emitted since P34.12; absent from older exports, which stay valid." },
-        "task_type": { "type": "string" },
-        "subject_id": { "type": "string" },
-        "subject_label": { "type": "string" },
-        "closing_condition": { "type": "string", "description": "Testable; never 'research this' (SIG-TASK-002)." },
-        "evidence_sought": { "type": "string" },
-        "assignee_class": { "type": "string" },
-        "effort_estimate": { "type": "string" },
-        "geographic_scope": { "type": "string" },
-        "jurisdiction": { "type": "string" },
-        "dispositions": { "type": "array", "items": { "type": "string" } },
-        "priority": { "type": "number" },
-        "trigger": {
-          "description": "P29.2 — what made the detector fire (the materialized contradiction/coverage/relationship the task cites as its trigger). Optional: absent for a legacy/hand-inserted task.",
-          "type": "object",
-          "required": ["kind", "ref"],
-          "properties": {
-            "kind": { "type": "string", "description": "contradiction | coverage | relationship" },
-            "ref": { "type": "string", "description": "the materialized row id" }
+        "task_id": {
+          "type": "string",
+          "description": "The research_task row id \u2014 the card's unique stable identity (P34.12 / K11 RQ-00). Optional: emitted since P34.12; absent from older exports, which stay valid."
+        },
+        "task_type": {
+          "type": "string"
+        },
+        "subject_id": {
+          "type": "string"
+        },
+        "subject_label": {
+          "type": "string"
+        },
+        "closing_condition": {
+          "type": "string",
+          "description": "Testable; never 'research this' (SIG-TASK-002)."
+        },
+        "evidence_sought": {
+          "type": "string"
+        },
+        "assignee_class": {
+          "type": "string"
+        },
+        "effort_estimate": {
+          "type": "string"
+        },
+        "geographic_scope": {
+          "type": "string"
+        },
+        "jurisdiction": {
+          "type": "string"
+        },
+        "dispositions": {
+          "type": "array",
+          "items": {
+            "type": "string"
           }
+        },
+        "priority": {
+          "type": "number"
+        },
+        "trigger": {
+          "description": "P29.2 \u2014 what made the detector fire (the materialized contradiction/coverage/relationship the task cites as its trigger). Optional: absent for a legacy/hand-inserted task.",
+          "type": "object",
+          "required": [
+            "kind",
+            "ref"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "description": "contradiction | coverage | relationship"
+            },
+            "ref": {
+              "type": "string",
+              "description": "the materialized row id"
+            },
+            "detail": {
+              "type": "object",
+              "description": "P36.58: the resolved trigger row's own detail (predicate/absence kind / contradiction type+severity / edge access kind+dates), or {resolves:false}."
+            }
+          }
+        },
+        "handle": {
+          "type": "string",
+          "description": "P36.58 (SIG-RQ-001): the K11 \u00a73 handle T-<place>-<code>-<slug>-<hash>."
+        },
+        "title": {
+          "type": "string",
+          "description": "P36.58 (SIG-RQ-001): the per-type public title, derived never a placeholder."
+        },
+        "subject_url": {
+          "type": "string",
+          "description": "P36.58: the subject's K2 entity-page URL when the label registry mints one."
+        },
+        "subject_key": {
+          "type": "string"
+        },
+        "place": {
+          "type": "object",
+          "description": "P36.58 (K11 \u00a74.3): the attributed place \u2014 key/slug/name; unplaced is a named bucket.",
+          "properties": {
+            "key": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "slug": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        },
+        "place_basis": {
+          "type": "string",
+          "description": "task_jurisdiction | subject_place | dossier_placement | tenant | recorded | unplaced"
+        },
+        "lane": {
+          "type": "string",
+          "description": "research | campaign | metric (SIG-RQ-006, gap_routing.toml)"
+        },
+        "predicate_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "P36.58 (SIG-RQ-005): the missing predicate(s) the task names, from its recorded trigger."
+        },
+        "status": {
+          "type": "string"
+        },
+        "disposition": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string"
+        },
+        "detector_version": {
+          "type": "string"
         }
       }
     }

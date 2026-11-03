@@ -68,8 +68,11 @@ CLOSING_CONDITION_TEXT: dict[str, str] = {
     "missing_contract": (
         "the procurement record (contract/purchase order) for the deployment is on file"
     ),
+    # P36.58 (SIG-RQ-005 / K11 RC-6): subject-grain wording — a coverage_hole
+    # task's subject is one record (a camera, an agency row), so the closing
+    # condition names the subject, never "the jurisdiction" the older text did.
     "coverage_hole": (
-        "evidence for the jurisdiction is obtained, OR a CoverageRecord records the searched "
+        "evidence for the subject is obtained, OR a CoverageRecord records the searched "
         "absence"
     ),
     "unmapped_vocabulary_value": "the source value is mapped into the controlled vocabulary",

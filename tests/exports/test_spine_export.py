@@ -654,8 +654,11 @@ def test_research_queue_unclassified_type_is_honestly_not_yet_classified() -> No
     assert card["geographic_scope"] == NOT_YET_CLASSIFIED
     assert card["jurisdiction"] == "jurY"
     assert set(card["dispositions"]) == {d.value for d in Disposition}
-    # The trigger citation (P29.2) survives the reshape.
-    assert card["trigger"] == {"kind": "contradiction", "ref": "trigger-9"}
+    # The trigger citation (P29.2) survives the reshape — P36.58 adds the
+    # honest "no resolvable trigger" detail marker.
+    assert card["trigger"]["kind"] == "contradiction"
+    assert card["trigger"]["ref"] == "trigger-9"
+    assert card["trigger"]["detail"] == {"resolves": False}
     jsonschema.validate(
         _web(export, "research_queue"), _sub(SCHEMA["properties"]["research_queue"])
     )

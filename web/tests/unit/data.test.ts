@@ -275,7 +275,7 @@ beforeAll(() => {
   );
   w(
     "queue_meta",
-    analyticsEnvelope("sig/analytics-queue-meta/1", {
+    analyticsEnvelope("sig/analytics-queue-meta/2", {
       queue_as_of: "2026-09-22",
       jurisdiction_claims: [{ jurisdiction_id: "j1" }],
     }),

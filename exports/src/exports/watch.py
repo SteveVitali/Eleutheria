@@ -1256,6 +1256,7 @@ _RESEARCH_TASK_COLUMNS: tuple[str, ...] = (
     "detector_version",
     "trigger_kind",
     "trigger_ref",
+    "generated_at",
 )
 
 
