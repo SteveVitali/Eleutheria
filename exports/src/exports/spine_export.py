@@ -115,12 +115,22 @@ from resolution.partner_identity import natural_person_signal
 from tasks.catalog import catalog as _task_catalog
 from tasks.contribution import LeverageLedger
 from tasks.osm_feed import ingest_changesets, leverage_metric_json, parse_changesets
+from tasks.routing import load_gap_routing, load_task_codes
 from tasks.vocabulary import Disposition
 
 from policy import disclosure as policy_disclosure
 from policy import withdrawals as policy_withdrawals
 
-from . import analytics, dedup, dossier_keys, dossier_sources, entity_page, provo, source_licences
+from . import (
+    analytics,
+    dedup,
+    dossier_keys,
+    dossier_sources,
+    entity_page,
+    provo,
+    source_licences,
+    task_export,
+)
 from . import column_registry as CR
 from . import compartments as C
 from . import placement as _placement
@@ -331,7 +341,7 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "research_task",
         "SELECT rt.task_id::text, rt.task_type, rt.subject_id::text, rt.jurisdiction_id::text,"
         "       rt.priority, rt.status, rt.disposition, rt.closing_condition,"
-        "       rt.detector_version, rt.trigger_kind, rt.trigger_ref"
+        "       rt.detector_version, rt.trigger_kind, rt.trigger_ref, rt.generated_at"
         "  FROM research_task rt"
         # P32.5/ADR-124: a task about a withheld subject does not surface on the
         # public research queue — the subject still exists on the spine for
@@ -3196,13 +3206,15 @@ def _research_queue(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
     registry = _task_catalog()
     out: list[dict[str, Any]] = []
     for r in raw.get("research_tasks") or []:
-        task_id, task_type, subject_id, jurisdiction_id, priority, status, disp, closing, _det = r[
+        task_id, task_type, subject_id, jurisdiction_id, priority, status, disp, closing, det = r[
             :9
         ]
         # P29.2: trigger_kind/trigger_ref cite what made the detector fire — present when the
         # detector run wrote the row, absent (None) for a legacy/hand-inserted row.
         trigger_kind = r[9] if len(r) > 9 else None
         trigger_ref = r[10] if len(r) > 10 else None
+        # P36.58 (RQ-01): generated_at rides the v2 card's History block.
+        generated = r[11] if len(r) > 11 else None
         spec = registry.get(str(task_type)) if str(task_type) in registry else None
         card: dict[str, Any] = {
             "task_id": str(task_id),
@@ -3227,7 +3239,15 @@ def _research_queue(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
                 else [d.value for d in Disposition]
             ),
             "priority": float(priority) if priority is not None else 0.0,
+            "status": str(status or "generated"),
+            "detector_version": str(det or ""),
         }
+        if disp:
+            card["disposition"] = str(disp)
+        if generated:
+            card["generated_at"] = (
+                generated.isoformat() if hasattr(generated, "isoformat") else str(generated)
+            )
         if trigger_kind:
             card["trigger"] = {"kind": str(trigger_kind), "ref": str(trigger_ref or "")}
         out.append(card)
@@ -5554,6 +5574,38 @@ def build_spine_export(
     # lane derivation feeds statements, provenance AND the watch, never two).
     stmt_source_registry = load_source_registry()
     lane_by_source = _claim_lane_map(raw, stmt_source_registry)
+
+    # --- P36.58 (R11-K13-RQ-01, K11 §3–§5): task export v2 -------------------
+    # The research lane's v2 cards: task_id + trigger detail + the named
+    # predicate(s), the shared label registry's subject label/url, §4.3
+    # jurisdiction attribution, the K11 §3 handle + title, and the routing
+    # table's lanes (per-object field gaps aggregate to M-campaigns; registry-
+    # only fields stay in coverage metrics, counted — never silently dropped).
+    _queue_leaf_by_subject: dict[str, str] = (
+        {
+            s: key
+            for key, acc in contribution_plan.dossiers.items()
+            if key != dossier_keys.UNPLACED
+            for s in acc.leaf_subjects
+        }
+        if keyed is not None
+        else {}
+    )
+    queue_v2 = task_export.build_queue(
+        (
+            _rekey_queue_cards(_research_queue(raw), _legacy_slug_map(keyed), keyed)
+            if keyed is not None
+            else _research_queue(raw)
+        ),
+        raw,
+        label_registry=label_registry,
+        keyed=keyed,
+        slug_map=(_legacy_slug_map(keyed) if keyed is not None else {}),
+        leaf_by_subject=_queue_leaf_by_subject,
+        routing=load_gap_routing(),
+        codes=load_task_codes(),
+        generated_at=generated_at,
+    )
     dossiers = (
         []
         if keyed is not None
@@ -5629,11 +5681,9 @@ def build_spine_export(
         ),
         "evidence": _evidence(raw, dataset.as_of, lane_by_source=lane_by_source),
         "corrections": _corrections(raw),
-        "research_queue": (
-            _rekey_queue_cards(_research_queue(raw), _legacy_slug_map(keyed), keyed)
-            if keyed is not None
-            else _research_queue(raw)
-        ),
+        # P36.58 (RQ-01): the v2 card set — the research lane only; campaign
+        # members ride ``web/tasks/campaign/**`` shards + the queue_meta index.
+        "research_queue": queue_v2.cards,
     }
     web_artifacts: dict[str, bytes] = {}
     for name, payload in surfaces.items():
@@ -5709,8 +5759,50 @@ def build_spine_export(
         # P35.43: the versioned watch envelope declares its schema id in-band
         # (``schema``) and here, so the manifest names it like the row streams.
         f"{_WEB_DIR}/watch.json": SCHEMA_WATCH,
+        # P36.58 (RQ-01): the v2 queue cards — additive over the P34.12 card.
+        f"{_WEB_DIR}/research_queue.json": task_export.CARD_SCHEMA,
     }
     web_counts: dict[str, tuple[int, int | None]] = {}
+
+    # --- P36.58: the task-export v2 artifacts --------------------------------
+    # ``web/task_handles_history.json`` (the JUR-05 redirect generator's
+    # `*_handles_history.json` family — id-aliases + the rename history) and
+    # the per-lane/place ``web/tasks/<lane>/<slug>.jsonl.gz`` shards. Licence
+    # is computed like map.json's: the cards embed subject labels derived from
+    # the subjects' claim slices, so the union of those licences labels the
+    # files (a mixed label lands the set in web_mixed — ADR-106 §4).
+    _queue_subject_licences = {
+        lic
+        for card in queue_v2.cards
+        for lic in slices.licences_by_subject.get(str(card.get("subject_id") or ""), ())
+    }
+    _queue_license = (
+        surface_license(_queue_subject_licences) if _queue_subject_licences else _SIG_SPDX
+    )
+    _queue_compartment = (
+        C.compartment_for_license(_queue_license, None, registry) or _WEB_COMPARTMENT
+    )
+    handles_path = f"{_WEB_DIR}/task_handles_history.json"
+    web_artifacts[handles_path] = _web_bytes(queue_v2.handles_history)
+    web_licenses[handles_path] = _SIG_SPDX
+    web_compartments[handles_path] = _WEB_COMPARTMENT
+    web_schemas[handles_path] = task_export.HANDLES_HISTORY_SCHEMA
+    for shard_path, blob in sorted(queue_v2.shards.items()):
+        web_artifacts[shard_path] = blob
+        web_licenses[shard_path] = _queue_license
+        web_compartments[shard_path] = str(_queue_compartment)
+        web_schemas[shard_path] = (
+            task_export.CAMPAIGN_SCHEMA if "/campaign/" in shard_path else task_export.CARD_SCHEMA
+        )
+        web_counts[shard_path] = (
+            sum(
+                int(s["rows"])
+                for s in queue_v2.summary.get("shards", ())
+                if s.get("path") == shard_path
+            ),
+            None,
+        )
+
     # --- P35.45: the keyed dossier artifact set (placement-bound only) -----
     # ``web/dossiers/<slug-path>.json`` per D-K4-3 page + the v2 index, the
     # ``unplaced`` report, the key map + append-only slug history, and the
@@ -5807,6 +5899,8 @@ def build_spine_export(
             if keyed is not None
             else None
         ),
+        # P36.58 (RQ-01): the v2 lane/facet/shard index the queue surfaces read.
+        queue_summary=queue_v2.summary,
     ):
         web_artifacts[art.path] = _web_bytes(art.payload)
         web_licenses[art.path] = art.license

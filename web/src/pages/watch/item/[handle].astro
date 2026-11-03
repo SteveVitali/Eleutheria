@@ -1,0 +1,203 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.59 (K7 WX-04a, SIG-WATCH-002/003): the watch item page —
+// `/watch/item/<handle>/`. The ONE alert date with its kind + certainty (an
+// `upper_bound` never labels "deadline"), the dates timeline, the body, the
+// subjects, the evidence links — supporting claims (linked to the evidence
+// viewer when a route exists) + the upstream document per the J3 §5.3 lane
+// table — the procedural "what you can do", the related research tasks and
+// the place link. T1 zero-JS.
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ContestedMarker from "../../../components/ContestedMarker.astro";
+import EmptyState from "../../../components/EmptyState.astro";
+import { watchContext } from "../../../lib/watch-context";
+import { getEvidence, getStatementIndex } from "../../../lib/data";
+import {
+  evidenceRows,
+  itemDateLabel,
+  itemPlaceHref,
+  STATUS_LABELS,
+  upstreamDisplay,
+  WATCH_KIND_LABELS,
+} from "../../../lib/watch-v2";
+import type { WatchItemV2 } from "../../../lib/watch-v2";
+import { panelForClaim } from "../../../lib/provenance-panel";
+import ProvenancePanelShell from "../../../components/ProvenancePanelShell.astro";
+import { withBase } from "../../../lib/paths";
+
+export function getStaticPaths() {
+  const { envelope } = watchContext();
+  return envelope.items.map((item) => ({
+    params: { handle: item.handle },
+    props: { item },
+  }));
+}
+
+const { item } = Astro.props as { item: WatchItemV2 };
+const { envelope, pages, names } = watchContext();
+const dl = itemDateLabel(item);
+const placeHref = itemPlaceHref(item, pages);
+// Claim links resolve only when the evidence viewer actually emits the
+// claim's route — never a dead link (the claim id renders verbatim else).
+const claimRoutes = new Set(getEvidence().claimViews.map((v) => v.claim_id));
+const STATEMENTS = getStatementIndex();
+const evidence = evidenceRows(item);
+const tasks = item.tasks ?? [];
+const placePage = item.place?.key ? pages.find((p) => p.key === item.place!.key) : pages.find((p) => p.unplaced);
+const placeDisplay = item.place?.key ? (names.get(item.place.key) ?? placePage?.name ?? item.place.key) : "Not yet placed";
+---
+
+<BaseLayout title={`Watch item — ${item.title}`} path={withBase(`watch/item/${item.handle}/`)}>
+  <article class="sig-watch-item-page" data-testid="watch-item-page" data-handle={item.handle} data-kind={item.kind} data-certainty={item.date_certainty} data-contested={item.contested ? "true" : "false"}>
+    <p class="sig-watch-item-page__kind">
+      {WATCH_KIND_LABELS[item.kind]} · <span data-testid="item-status">{STATUS_LABELS[item.status ?? "upcoming"]}</span>{" "}
+      {item.contested && <ContestedMarker compact />}
+    </p>
+
+    <h2>The date</h2>
+    <p data-testid="item-date">
+      <strong><time datetime={item.date}>{item.date}</time></strong> — {dl.kindLabel},{" "}
+      <span data-testid="item-certainty">{dl.certaintyLabel}</span>.
+      {item.date_certainty === "upper_bound" && (
+        <> The real deadline may be earlier — this is the latest possible date, not a deadline.</>
+      )}
+    </p>
+    {item.termination && (
+      <dl class="sig-watch-termination" data-testid="item-termination">
+        <div><dt>Contract expiry</dt><dd>{item.termination.expiry_date ?? "not_recorded"}</dd></div>
+        <div>
+          <dt>Auto-renewal</dt>
+          <dd>
+            {item.termination.auto_renews === null || item.termination.auto_renews === undefined
+              ? "renewal terms not on record"
+              : item.termination.auto_renews
+                ? "auto-renews"
+                : "does not auto-renew"}
+          </dd>
+        </div>
+        <div><dt>Notice window</dt><dd>{item.termination.notice_window_days ?? "not_recorded"}</dd></div>
+      </dl>
+    )}
+
+    {(item.timeline ?? []).length > 0 && (
+      <>
+        <h2>Timeline</h2>
+        <ol class="sig-watch-timeline" data-testid="item-timeline">
+          {item.timeline!.map((t) => (
+            <li data-testid="timeline-row" data-kind={t.kind}>
+              <time datetime={t.date}>{t.date}</time> — {t.kind}
+            </li>
+          ))}
+        </ol>
+      </>
+    )}
+
+    <h2>The decision</h2>
+    <dl class="sig-watch-meta">
+      <div><dt>Body</dt><dd data-testid="item-body">{item.body ?? "not_recorded"}</dd></div>
+      <div>
+        <dt>Place</dt>
+        <dd data-testid="item-place">
+          {placeHref ? <a href={withBase(placeHref)}>{placeDisplay}</a> : placeDisplay}
+          {item.place?.basis && <> (placed by {item.place.basis})</>}
+        </dd>
+      </div>
+      <div>
+        <dt>Subjects</dt>
+        <dd data-testid="item-subjects">
+          {(item.subjects ?? []).length > 0
+            ? item.subjects!.map((s) => <code>{s}</code>)
+            : "not_recorded"}
+        </dd>
+      </div>
+      {(item.technology ?? []).length > 0 && (
+        <div><dt>Technology</dt><dd>{item.technology!.map((t) => t.label).join(", ")}</dd></div>
+      )}
+      {(item.vendor ?? []).length > 0 && (
+        <div><dt>Vendor</dt><dd>{item.vendor!.map((v) => v.label).join(", ")}</dd></div>
+      )}
+      <div><dt>First seen</dt><dd>{item.first_seen ?? "not_recorded"}</dd></div>
+      <div><dt>Last checked</dt><dd>{item.last_checked?.slice(0, 10) ?? envelope.generated_at ?? "not_recorded"}</dd></div>
+      <div><dt>Sources</dt><dd>{(item.source_ids ?? []).join(", ") || "not_recorded"}</dd></div>
+    </dl>
+
+    {item.what_you_can_do && (
+      <>
+        <h2>What you can do</h2>
+        <p data-testid="item-what-you-can-do">{item.what_you_can_do}</p>
+        <p class="sig-watch-procedural-note">
+          This is procedural information only — SIG recommends no position.
+        </p>
+      </>
+    )}
+
+    <h2 id="evidence-heading">Evidence ({evidence.length} claim{evidence.length === 1 ? "" : "s"})</h2>
+    {evidence.length === 0 && (
+      <p data-testid="item-evidence-none">
+        This item's supporting claims carry no published evidence binding — the
+        item itself was derived from publishable claims; the binding rows are
+        the named absence, never fabricated.
+      </p>
+    )}
+    <ul class="sig-watch-evidence" aria-labelledby="evidence-heading">
+      {evidence.map((e) => {
+        const up = upstreamDisplay(e.upstream);
+        return (
+          <li data-testid="item-evidence" data-claim-id={e.claim_id}>
+            <p>
+              Claim{" "}
+              {claimRoutes.has(e.claim_id) ? (
+                <a href={withBase(`evidence/${e.claim_id}/`)} data-testid="evidence-claim-link"><code>{e.claim_id}</code></a>
+              ) : (
+                <code>{e.claim_id}</code>
+              )}{" "}
+              — <code>{e.predicate ?? "not_recorded"}</code>
+              {e.source_id && <> · source <code>{e.source_id}</code></>}
+            </p>
+            <p data-testid="evidence-upstream">
+              Upstream:{" "}
+              {up.href ? (
+                <a href={up.href} rel="external" data-testid="upstream-link"><code>{up.display}</code></a>
+              ) : (
+                <code>{up.display}</code>
+              )}
+            </p>
+            {(e.artifact_ids ?? []).length > 0 && (
+              <p>Artifacts: {e.artifact_ids!.map((a) => <code>{a}</code>)}</p>
+            )}
+            {/* The shared provenance panel for the claim — the same
+                sig.provenance-panel/1 every surface renders; a claim with no
+                statement row renders its named-absence state. */}
+            <ProvenancePanelShell panel={panelForClaim(STATEMENTS, e.claim_id, { jsonHref: null })} />
+          </li>
+        );
+      })}
+    </ul>
+
+    {tasks.length > 0 && (
+      <>
+        <h2>Open research tasks</h2>
+        <ul class="sig-watch-tasks" data-testid="item-tasks">
+          {tasks.map((t) => (
+            <li data-task-id={t.task_id}>
+              <a href={withBase(`research-queue/#task-${t.task_id}`)}>{t.task_id}</a>
+              {" "}— {t.task_type ?? "not_recorded"} ({t.status ?? "open"})
+            </li>
+          ))}
+        </ul>
+      </>
+    )}
+
+    {placePage && (
+      <p>
+        <a href={withBase(`watch/place/${placePage.path}/`)} data-testid="item-place-page">
+          All decisions for {placePage.unplaced ? "unplaced items" : (names.get(placePage.key ?? "") ?? placePage.name)} →
+        </a>
+      </p>
+    )}
+    <p><a href={withBase("watch/feeds/")}>Subscribe to the watch feeds →</a></p>
+  </article>
+</BaseLayout>

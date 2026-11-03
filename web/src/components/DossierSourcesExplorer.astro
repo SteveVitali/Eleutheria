@@ -37,6 +37,8 @@ import {
 } from "../lib/dossier-sources";
 import { overTimeLegend, overTimeSvg } from "../lib/dossier-sources-chart";
 import { getSourcePageIds } from "../lib/source-page";
+import { getLatestReleaseTarget } from "../lib/data";
+import { showOnMapHref, sourceRecordsHref } from "../lib/explore-links";
 import { fmtInt, groupDigits } from "../lib/format";
 import { withBase } from "../lib/paths";
 import type { FigureSpec } from "../lib/figures";
@@ -108,6 +110,15 @@ const disagreeTotal =
   doc.totals.declared_here_located_elsewhere +
   doc.totals.located_here_declared_elsewhere +
   doc.totals.contradictions_open;
+// P36.57 (VIZ-03, K5 §5.5, SIG-UI-055/126): each contributing row carries the
+// "Show on the map" control — the scoped `sig.workspace-state/2` map link
+// (the target names any facet it cannot apply, SIG-UI-060) plus the no-JS
+// records list on the release-pinned federated route (`type=record` +
+// `format=html`, K3 SRCH-04). A source with no point-located records here
+// names that absence instead of minting a "show" link to an empty view; an
+// unactivated release names the list's absence likewise.
+const jkey = doc.jurisdiction.jkey;
+const showmapTarget = getLatestReleaseTarget();
 ---
 
 <article class="sig-dsrc" data-testid="dsrc-explorer">
@@ -163,7 +174,7 @@ const disagreeTotal =
         <tr>
           <th>Source</th><th>Publisher type</th><th>Records</th><th>Share</th>
           <th>Located / declared</th><th>Claims</th><th>First seen</th><th>Last seen</th>
-          <th>Latest run</th><th>Licence</th>
+          <th>Latest run</th><th>Licence</th><th>Map / list</th>
         </tr>
       </thead>
       <tbody>
@@ -194,6 +205,27 @@ const disagreeTotal =
                 {run.status && <> · {run.status}{s.freshness_state !== "not_recorded" && <> · {s.freshness_state}</>}</>}
               </td>
               <td>{s.licence.spdx ?? "not_recorded"}</td>
+              <td data-testid="dsrc-showmap-cell">
+                {s.located_by_point > 0 ? (
+                  <a
+                    href={withBase(showOnMapHref(jkey, s.source_id))}
+                    data-testid="dsrc-show-on-map"
+                    data-copy="SM-01"
+                  >Show on the map</a>
+                ) : (
+                  <span class="sig-mut">no located records</span>
+                )}
+                {" · "}
+                {showmapTarget ? (
+                  <a
+                    href={sourceRecordsHref(showmapTarget.federatedSearchHref, jkey, s.source_id)}
+                    data-testid="dsrc-source-records"
+                    data-copy="SM-02"
+                  >records list</a>
+                ) : (
+                  <span class="sig-mut">no activated release</span>
+                )}
+              </td>
             </tr>
           );
         })}

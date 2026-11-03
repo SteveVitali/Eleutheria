@@ -343,11 +343,22 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
   {
     patterns: ["/watch/**"],
     type: "T1",
-    owner: "P35.50",
+    owner: "P36.59",
     contract: "sig.watch-item/1",
     noJsEquivalent: SELF,
-    examples: ["/watch/", "/watch/federal-funding/"],
-    notes: "K7's watch pages.",
+    examples: [
+      "/watch/",
+      "/watch/page/2/",
+      "/watch/place/usa/tx/",
+      "/watch/kind/solicitation_deadline/",
+      "/watch/vendor/flock_safety/",
+      "/watch/technology/alpr/",
+      "/watch/item/W-usa-tx-agenda-cb-1-7k2q/",
+      "/watch/history/usa/ok/",
+      "/watch/feeds/",
+    ],
+    notes:
+      "K7's decision-calendar watch (P36.59 / WX-04a): the index + page/<n>, per-place pages on K4 display paths (state → children) with the coverage statement, the kind/vendor/technology facets, item pages, the per-place history archive and the feeds directory — all over `sig/watch/2`. The feed files themselves (*.ics/.xml/.json/opml) are WX-04b's T0 data surface.",
   },
   {
     patterns: ["/evidence/**"],

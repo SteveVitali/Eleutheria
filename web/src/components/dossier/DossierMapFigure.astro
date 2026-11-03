@@ -1,0 +1,139 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.55 (VIZ-02, SIG-UI-123/129/132/134): Figure 1 — the at-a-glance map.
+// The inline SVG comes from the restricted `sig.dossier-visuals/1` build
+// input, inlined only through `assertInlineSvgSafe` (no scripts, handlers,
+// styles, data-* or external refs — the produced-work contract). The caption
+// cites the published `figures[]` twin (agent-drafted-labelled) and carries
+// release, as-of, "not a census" and every drawn compartment. Every numeral
+// the block renders sits inside a sig-figure region (J3 §5.4) — the
+// figcaption IS the records-total figure region, the recon line the
+// records-drawn one, and the typed empty state is wrapped in the same
+// figure so the records_total it names stays registered. A dossier whose
+// doc emits no figure — or whose figure drew 0 located records — renders
+// the typed empty state, never a blank map (SIG-UI-123/ENG-042).
+import EmptyState from "../EmptyState.astro";
+import Figure from "../Figure.astro";
+import {
+  figureCountsReconcile,
+  isDrawnMap,
+  notDrawnTotal,
+  type DossierVisualsDoc,
+  type DossierFigureTwin,
+} from "../../lib/dossier-visuals";
+import { withBase } from "../../lib/paths";
+import { fmtInt } from "../../lib/format";
+import type { FigureSpec } from "../../lib/figures";
+
+interface Props {
+  /** The dossier's visuals doc — `null` when the build emits none. */
+  doc: DossierVisualsDoc | null;
+  /** The published `figures[]` twin's fig-map row, when minted. */
+  twin: DossierFigureTwin | null;
+  /** The dossier's own record count (SIG-UI-132's reconcile target). */
+  dossierRecords: number | null;
+  /** The page's figure registry specs for the map counters. */
+  specs: ReadonlyMap<string, FigureSpec>;
+  /** The emitted sites-list route for this dossier, when one was minted. */
+  sitesHref?: string | null;
+}
+
+const { doc, twin, specs } = Astro.props;
+const map = doc && isDrawnMap(doc.map) ? doc.map : null;
+const drawn = map !== null && map.desc.records_drawn > 0;
+const recon = map ? figureCountsReconcile(map, Astro.props.dossierRecords) : null;
+const fig = (id: string): FigureSpec | undefined => specs.get(id);
+const elsewhere = map ? map.not_drawn.located_elsewhere.reduce((n, r) => n + r.records, 0) : 0;
+const typedMissing =
+  doc === null
+    ? "This release emitted no dossier-visuals input for this page — a publication gap, not a finding that nothing is recorded here."
+    : !isDrawnMap(doc.map)
+      ? `${doc.map.reason} — ${fmtInt((doc.map as { records_total: number }).records_total)} published record${(doc.map as { records_total: number }).records_total === 1 ? "" : "s"} still carry their facts below.`
+      : "The published records for this place carry no draw-able point — the figure would have nothing honest to show.";
+---
+
+<figure class="sig-fig1" data-testid="dossier-map-figure" id="fig-map">
+  {map === null || !drawn ? (
+    <Figure
+      figure={
+        fig("map-total") ??
+        ({
+          id: "map-figure-state",
+          class: "dossier",
+          artifact: "web/dossiers.json",
+          pointer: "/",
+          href: "",
+          value: "state",
+          definition: "#fig-map",
+          breakdown: "#fig-map",
+          targets: [],
+        } as FigureSpec)
+      }
+      order="inline"
+      tag="div"
+    >
+      <EmptyState
+        parts={{
+          state:
+            doc === null
+              ? "No figure artifact in this build"
+              : !isDrawnMap(doc.map)
+                ? "No verified outline for this jurisdiction"
+                : "No located records to draw",
+          missing: typedMissing,
+          nearby:
+            "The places table, sites list and every section below carry the same recorded facts — the map is never the only carrier.",
+          action: { href: "research-queue/", label: "See the research queue" },
+          change: "The figure appears with a release that emits its verified inputs.",
+          cause: "not_published",
+          batchIds: {
+            state: doc === null ? "MF-01" : !isDrawnMap(doc.map) ? "MF-10" : "MF-11",
+            missing: doc === null ? "MF-02" : !isDrawnMap(doc.map) ? "MF-08" : "MF-09",
+            nearby: "MF-03",
+            change: "MF-05",
+          },
+        }}
+      />
+    </Figure>
+  ) : (
+    <>
+      <div class="sig-fig1__canvas" data-testid="fig1-canvas">
+        <Fragment set:html={map.svg} />
+      </div>
+      <Figure figure={fig("map-total") as FigureSpec} order="inline" tag="figcaption" class="sig-fig1__caption" testid="fig1-caption">
+        <span class="sig-fig1__title" data-copy="MF-06">Figure 1</span>{" "}
+        <span>{twin?.caption ??
+          `Where SIG's published records are in ${doc!.jurisdiction.name}.`}</span>{" "}
+        <span class="sig-fig1__release">
+          Release <code>{map.desc.release}</code> · boundary {map.boundary_vintage} · not a census
+          — counts show what the named sources publish.
+        </span>{" "}
+        {map.compartments_drawn.length > 0 && (
+          <span class="sig-fig1__licence" data-copy="MF-07">
+            Drawn compartments: {map.compartments_drawn.join(", ")}.
+          </span>
+        )}{" "}
+        <span class="sig-fig1__links">
+          {Astro.props.sitesHref && <a href={withBase(Astro.props.sitesHref)}>Sites list →</a>}{" "}
+          <a href={withBase(`map/?v=1&jurisdiction=${encodeURIComponent(doc!.jurisdiction.jkey)}`)}>Open full map →</a>
+          {twin?.links?.download && <>{" "}<a href={withBase(twin.links.download)}>Download figure (SVG) →</a></>}
+        </span>
+      </Figure>
+      {recon && drawn && fig("map-recon") && (
+        <Figure figure={fig("map-recon") as FigureSpec} order="inline" tag="p" class="sig-table-note">
+          <span data-testid="fig1-recon" data-reconciles={recon.reconciles ? "true" : "false"}>
+            {fmtInt(recon.drawn)} drawn of {fmtInt(recon.total)} published records;{" "}
+            {fmtInt(notDrawnTotal(map.not_drawn))} not drawn (
+            {map.not_drawn.declared_no_point} no published point
+            {elsewhere > 0 && `, ${elsewhere} located elsewhere`}
+            {map.not_drawn.conflicting > 0 && `, ${map.not_drawn.conflicting} conflicting`}
+            {map.not_drawn.tier3 > 0 && `, ${map.not_drawn.tier3} tier 3`}).
+          </span>
+        </Figure>
+      )}
+    </>
+  )}
+</figure>

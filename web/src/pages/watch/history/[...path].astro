@@ -1,0 +1,70 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.59 (K7 WX-04a): `/watch/history/<path>/` — the per-place history
+// archive: the items whose alert date has passed (the producer's
+// `recently_decided` window — the envelope's declared
+// `build.windows.recently_decided_days` — plus withdrawn/superseded).
+// `…/page/<n>/` rides the rest param. Emitted only for places that HAVE
+// past items — a place page links it only when it exists.
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import WatchList from "../../../components/WatchList.astro";
+import { watchContext } from "../../../lib/watch-context";
+import {
+  historyItems,
+  pageCount,
+  pageNumbers,
+  pageSlice,
+  watchPlaceHref,
+} from "../../../lib/watch-v2";
+import type { WatchPlacePage } from "../../../lib/watch-v2";
+import { withBase } from "../../../lib/paths";
+
+export function getStaticPaths() {
+  const { envelope, pages } = watchContext();
+  const asOf = envelope.as_of ?? "";
+  const out: { params: { path: string }; props: { page: WatchPlacePage; n: number } }[] = [];
+  for (const page of pages) {
+    const items = historyItems(envelope.items, page.key, asOf);
+    if (items.length === 0) continue;
+    for (const n of pageNumbers(items.length)) {
+      out.push({
+        params: { path: n > 1 ? `${page.path}/page/${n}` : page.path },
+        props: { page, n },
+      });
+    }
+  }
+  return out;
+}
+
+const { page, n } = Astro.props as { page: WatchPlacePage; n: number };
+const { envelope, pages, names } = watchContext();
+const asOf = envelope.as_of ?? "";
+const items = historyItems(envelope.items, page.key, asOf);
+const shown = pageSlice(items, n);
+const total = pageCount(items.length);
+const name = names.get(page.key ?? "") ?? page.name;
+const days = envelope.build?.windows?.recently_decided_days ?? 30;
+---
+
+<BaseLayout title={`Watch history — ${name}${n > 1 ? ` — page ${n}` : ""}`} path={withBase(`watch/history/${page.path}/${n > 1 ? `page/${n}/` : ""}`)}>
+  <p>
+    Past decisions for <strong>{name}</strong> — items whose alert date passed
+    within the declared {days}-day window, plus withdrawn and superseded items.
+    Older items age out of this archive with the release cadence; nothing here
+    is a claim that no earlier decision happened.
+  </p>
+  <ol class="sig-watch-list">
+    {shown.map((item) => <WatchList item={item} pages={pages} />)}
+  </ol>
+  {total > 1 && (
+    <p class="sig-watch-pagination">
+      Page {n} of {total} —
+      {n > 1 && <> <a href={withBase(`watch/history/${page.path}/${n - 1 > 1 ? `page/${n - 1}/` : ""}`)}>← previous</a></>}
+      {n < total && <> <a href={withBase(`watch/history/${page.path}/page/${n + 1}/`)}>next page →</a></>}
+    </p>
+  )}
+  <p><a href={withBase(watchPlaceHref(page.path))}>Upcoming decisions for {name} →</a></p>
+</BaseLayout>

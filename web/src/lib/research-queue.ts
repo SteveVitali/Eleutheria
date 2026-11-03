@@ -139,7 +139,32 @@ export interface ResearchTaskCard {
    * relationship this task cites as its trigger (P29.2, every generated task cites its
    * trigger). Optional: absent for a legacy or hand-inserted task.
    */
-  trigger?: { kind: string; ref: string };
+  trigger?: { kind: string; ref: string; detail?: Record<string, unknown> };
+
+  // --- P36.58 (RQ-01, sig.queue-card/2): all optional — a card produced by a
+  // pre-v2 export still parses and renders the honest absence.
+  /** The K11 §3 handle `T-<place>-<code>-<slug>-<hash>` (SIG-RQ-001). */
+  handle?: string;
+  /** The per-type public title — derived, never a placeholder (SIG-RQ-001). */
+  title?: string;
+  /** The subject's K2 entity-page URL when the label registry mints one. */
+  subject_url?: string;
+  /** K11 §4.3 attribution — the attributed place or the named unplaced bucket. */
+  place?: { key: string | null; slug: string; name: string | null };
+  /** The attribution basis: task_jurisdiction | subject_place | dossier_placement | tenant | recorded | unplaced. */
+  place_basis?: string;
+  /** The routing lane: research | campaign | metric (SIG-RQ-006, gap_routing.toml). */
+  lane?: string;
+  /** The missing predicate(s) the task names, from its recorded trigger (SIG-RQ-005). */
+  predicate_ids?: string[];
+  /** The recorded task state (generated | assigned | in_progress | ...). */
+  status?: string;
+  /** The recorded disposition, when the task reached one. */
+  disposition?: string;
+  /** The row's recorded generated_at. */
+  generated_at?: string;
+  /** The detector version that minted the row. */
+  detector_version?: string;
 }
 
 /** The set of dispositions a task may reach, by assignee class (§33.4 mirror of catalog). */

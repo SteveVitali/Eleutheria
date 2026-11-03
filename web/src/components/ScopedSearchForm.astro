@@ -1,0 +1,102 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.56 (K3 SRCH-06 / SIG-UI-128; cites SIG-SRCH-009, SIG-UI-059) — the ONE
+// scoped-search GET form: "Search within <place>" on dossiers
+// (`jurisdiction=<jkey>` — the contract parameter carries the descendants
+// scope, SIG-UI-059) and "Search this source" on source pages
+// (`source=<id>`). The action is the release-pinned federated route, so the
+// form answers a complete server-rendered results page with zero JS — the
+// `<sig-typeahead>` wrapper only upgrades the same field's suggestions (the
+// `scope` attribute narrows them to the scope's subtree/source).
+//
+// `scope === null` (a dossier with no canonical jurisdiction key) renders
+// the release-wide form with the scope absence stated — never a guessed
+// key, never a silently unscoped "within" claim.
+import { withBase } from "../lib/paths";
+import { TYPEAHEAD_SHARD_ROOT } from "../lib/typeahead-shards";
+import {
+  scopedSearchParam,
+  typeaheadScopeValue,
+  type ScopedSearchScope,
+} from "../lib/scoped-search";
+
+interface Props {
+  scope: ScopedSearchScope | null;
+  /** The release-pinned federated search action (null → the named-empty
+      state; a scoped form is never emitted without a real target). */
+  searchHref: string | null;
+  /** Heading text + the landmark anchor each mount point owns. */
+  heading: string;
+  testid: string;
+}
+
+const { scope, searchHref, heading, testid } = Astro.props;
+const hidden = scope !== null ? scopedSearchParam(scope) : null;
+const scopeAttr = scope !== null ? typeaheadScopeValue(scope) : null;
+const headingId = `${testid}-heading`;
+const buttonText =
+  scope === null
+    ? "Search the release"
+    : scope.param === "jurisdiction"
+      ? `Search within ${scope.label}`
+      : `Search ${scope.label}`;
+---
+
+<section class="sig-scoped-search" aria-labelledby={headingId} data-testid={testid}>
+  <h2 id={headingId}>{heading}</h2>
+  {searchHref !== null ? (
+    <>
+    <form method="get" action={searchHref} data-testid={`${testid}-form`}>
+      <input type="hidden" name="format" value="html" />
+      {hidden !== null && (
+        <input
+          type="hidden"
+          name={hidden.name}
+          value={hidden.value}
+          data-testid={`${testid}-scope`}
+        />
+      )}
+      {scopeAttr !== null ? (
+        <sig-typeahead
+          shard-root={withBase(TYPEAHEAD_SHARD_ROOT)}
+          min-chars="2"
+          scope={scopeAttr}
+          data-testid={`${testid}-typeahead`}
+        >
+          <label>
+            Words or an exact identifier{" "}
+            <input type="search" name="q" maxlength={200} size={30} />
+          </label>{" "}
+          <button type="submit">{buttonText}</button>
+        </sig-typeahead>
+      ) : (
+        <>
+          <label>
+            Words or an exact identifier{" "}
+            <input type="search" name="q" maxlength={200} size={30} />
+          </label>{" "}
+          <button type="submit">{buttonText}</button>
+        </>
+      )}
+      <p class="sig-island__note">
+        {scope === null
+          ? "This dossier has no canonical jurisdiction key, so the form searches the whole release — a keyed dossier scopes the same search to the place and its descendants. The release-pinned search answers a server-rendered page; no JavaScript needed."
+          : scope.param === "jurisdiction"
+            ? `Scoped to records placed in ${scope.label} and its descendant places — the release-pinned search answers a server-rendered page; no JavaScript needed.`
+            : `Scoped to this source's published records — the release-pinned search answers a server-rendered page; no JavaScript needed.`}
+      </p>
+    </form>
+    {/* The page-local element names its own module (ADR-224) — the
+        allow-listed kit entry; T1 pages only (the mount points are T1). */}
+    <script is:inline type="module" src={withBase("_kit/sig-typeahead.js")}></script>
+    </>
+  ) : (
+    <p data-testid={`${testid}-empty`}>
+      <em>No immutable release is activated for this surface yet</em> — the
+      scoped search form appears here once a release is activated.
+    </p>
+  )}
+</section>

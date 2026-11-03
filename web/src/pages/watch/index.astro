@@ -1,0 +1,124 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.59 (K7 WX-04a, SIG-WATCH-001…004/010): the watch index — "Upcoming
+// decisions", the next `build.windows.list_days` of `sig.watch-item/1` items,
+// sorted by date, ≤50 per page (`/watch/page/<n>/`). Header counts by kind
+// and place, the coverage summary ("SIG checks N tenants; last checked …"),
+// the subscribe block and the facet nav. T1 zero-JS — every fact renders
+// without a script.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EmptyState from "../../components/EmptyState.astro";
+import WatchList from "../../components/WatchList.astro";
+import { watchContext } from "../../lib/watch-context";
+import {
+  facetValues,
+  kindsPresent,
+  listItems,
+  pageCount,
+  pageSlice,
+  WATCH_KIND_LABELS,
+  watchHistoryHref,
+  watchKindHref,
+  watchPlaceHref,
+  watchTechnologyHref,
+  watchVendorHref,
+} from "../../lib/watch-v2";
+import { withBase } from "../../lib/paths";
+
+const { envelope, pages, names } = watchContext();
+const items = listItems(envelope);
+const shown = pageSlice(items, 1);
+const morePages = pageCount(items.length) - 1;
+const kinds = kindsPresent(envelope.items);
+const vendors = facetValues(envelope.items, "vendor");
+const techs = facetValues(envelope.items, "technology");
+const coverage = envelope.coverage;
+const checked = coverage?.last_checked ?? envelope.generated_at ?? envelope.as_of;
+---
+
+<BaseLayout title="Watch — upcoming decisions" path={withBase("watch/")}>
+  <p>
+    The watch is SIG's <strong>decision calendar</strong>: upcoming public decisions
+    about surveillance technology, by place, vendor and technology — contract
+    renewals and expiries, solicitation deadlines, council agenda items,
+    legislative actions and grant periods. Every item names its one alert date,
+    what kind of date it is and how certain it is, and links to its evidence.
+  </p>
+  <p class="sig-watch-clocks">
+    Watch checked <time datetime={checked}>{checked?.slice(0, 10)}</time>
+    {envelope.as_of && <> · data as of <time datetime={envelope.as_of}>{envelope.as_of}</time></>}.
+  </p>
+
+  <h2 id="upcoming-heading">Upcoming decisions ({items.length})</h2>
+  {items.length === 0 && <EmptyState surface="watch" />}
+  <ol class="sig-watch-list" aria-labelledby="upcoming-heading">
+    {shown.map((item) => <WatchList item={item} pages={pages} />)}
+  </ol>
+  {morePages > 0 && (
+    <p class="sig-watch-pagination" data-testid="watch-pagination">
+      Showing {shown.length} of {items.length} —{" "}
+      <a href={withBase("watch/page/2/")}>next page →</a>
+    </p>
+  )}
+
+  <h2 id="coverage-heading">Coverage</h2>
+  <p data-testid="watch-coverage-summary">
+    SIG checks <strong>{coverage?.monitored?.tenants_registered ?? 0}</strong>{" "}
+    registered agenda/procurement tenants
+    {(coverage?.monitored?.tenant_jurisdictions?.length ?? 0) > 0 && (
+      <> ({coverage!.monitored!.tenant_jurisdictions!.join(", ")})</>
+    )};
+    watch last checked <time datetime={checked}>{checked?.slice(0, 10)}</time>. Items are
+    derived only from publishable claims — a private claim never surfaces.
+  </p>
+  {coverage?.by_kind && (
+    <dl class="sig-watch-kindcounts" data-testid="watch-kind-counts">
+      {kinds.map((k) => (
+        <div>
+          <dt>{WATCH_KIND_LABELS[k]}</dt>
+          <dd>{coverage.by_kind?.[k] ?? 0}</dd>
+        </div>
+      ))}
+    </dl>
+  )}
+
+  <h2 id="places-heading">By place</h2>
+  <ul class="sig-watch-places" aria-labelledby="places-heading">
+    {pages.map((p) => (
+      <li data-testid="watch-place-link" data-place={p.path}>
+        <a href={withBase(watchPlaceHref(p.path))}>{names.get(p.key ?? "") ?? p.name}</a>
+        {p.coverage && <> — {p.coverage.items} item{p.coverage.items === 1 ? "" : "s"}</>}
+      </li>
+    ))}
+  </ul>
+
+  <h2 id="facets-heading">By kind, vendor and technology</h2>
+  <ul class="sig-watch-facets" aria-labelledby="facets-heading">
+    {kinds.map((k) => (
+      <li data-testid="watch-kind-link">
+        <a href={withBase(watchKindHref(k))}>{WATCH_KIND_LABELS[k]}</a> ({coverage?.by_kind?.[k] ?? 0})
+      </li>
+    ))}
+    {vendors.map((v) => (
+      <li data-testid="watch-vendor-link">
+        <a href={withBase(watchVendorHref(v.id))}>{v.label}</a> ({v.items})
+      </li>
+    ))}
+    {techs.map((t) => (
+      <li data-testid="watch-tech-link">
+        <a href={withBase(watchTechnologyHref(t.id))}>{t.label}</a> ({t.items})
+      </li>
+    ))}
+  </ul>
+
+  <h2 id="subscribe-heading">Subscribe</h2>
+  <p>
+    Subscriptions are pull feeds — SIG keeps no email list and no accounts.
+    The feed directory lists every subscription this release emits and how to
+    route one into a calendar app or reader.
+  </p>
+  <p><a href={withBase("watch/feeds/")} data-testid="feeds-link">See the feeds →</a></p>
+</BaseLayout>

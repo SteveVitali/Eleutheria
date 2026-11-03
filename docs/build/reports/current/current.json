@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "bc1e9cb14418cf9a8768a1475cfcb62c44d6594b",
-  "manifest_inputs": 1173,
+  "input_commit": "9557cd56a334f46bbc722a7fa8ffdde8a2434138",
+  "manifest_inputs": 1178,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P36.55",
-    "lastCompleted": "P36.54",
+    "nextTicket": "P36.60",
+    "lastCompleted": "P36.59",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2",
@@ -17,21 +17,21 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P36.54-dossier-map-and-locator-figures",
+    "chainTip": "r11/P36.59-watch-pages-and-item-pages",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-03T06:37Z"
+    "updatedAt": "2026-11-03T18:05Z"
   },
   "counts": {
-    "obligations": 213,
-    "owed": 132,
-    "open": 129,
+    "obligations": 215,
+    "owed": 134,
+    "open": 131,
     "partial": 3,
     "terminal": 81,
-    "events": 718,
+    "events": 720,
     "transitions": 51,
     "coverage_assessments": 502,
     "coverage_historical_rows": 994,
@@ -11102,6 +11102,102 @@
           "recorded_at": "2026-11-02"
         }
       ]
+    },
+    {
+      "id": "D-P36.56-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P36.56-1:e0",
+      "kind": "F",
+      "owner": "the search-engine row that grows chain-aware jurisdiction filtering (SRCH-07 P36.71 acceptance or a dedicated engine change)",
+      "landing": "an engine test where jurisdiction=<parent-jkey> returns records keyed to descendant jkeys — subtree resolved via jurisdiction_chain or the place-catalog parent links — and a within=/location= request either applies or refuses typed, never silently unscoped",
+      "landing_source": "event-head",
+      "backlog_home": "BL-086",
+      "item": "The v2 federated search applies `jurisdiction=` leaf-exact (`records.place_key = ?`), not SIG-UI-059's \"a filter including descendants\": a `jurisdiction=iso3166-2:US-OK` request returns only records keyed to Oklahoma itself — county/place records under it (their own leaf jkeys) are excluded, so \"Search within <place>\" under-covers on any dossier with descendants. `within=` and `location=` are also silently dropped on the v2 route (declared in `KNOWN_PARAMS_V2` but absent from the route signature + `parse_params_v2`) — P36.38's \"typed 422\" claim does not hold for them today",
+      "unblocked_by": "owner: the search-engine row that grows chain-aware jurisdiction filtering (SRCH-07 P36.71 acceptance or a dedicated engine change) · trigger: that row's dispatch",
+      "verify": "an engine test: `jurisdiction=<parent-jkey>` returns records whose `place_key` is a descendant jkey (the subtree resolved via the record's `jurisdiction_chain` or the place-catalog parent links); a `within=`/`location=` request either applies or refuses with a typed status, never silently unscoped",
+      "proxy": "the scoped forms emit `jurisdiction=<jkey>` — the contract parameter, correct by definition — and the form copy states the descendants scope; the gap is recorded here, never smoothed; the typeahead `scope` filter (which IS this row's surface) applies subtree membership client-side correctly",
+      "line": 1539,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P36.56",
+          "backlog_home": "BL-086",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "exports/src/exports/search_query_v2.py",
+            "api/src/api/release_search_v2.py",
+            "web/src/lib/scoped-search.ts",
+            "web/src/components/ScopedSearchForm.astro"
+          ],
+          "observed_at": "2026-11-03",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P36.56 (row 399) for the row it added — the v2 federated search applies jurisdiction= leaf-exact on records.place_key, not SIG-UI-059's 'a filter including descendants': the scoped dossier forms emit the contract parameter (a repeated jurisdiction= collapses to the last value on the single-value route, and within=/location= are silently dropped — declared in KNOWN_PARAMS_V2 but absent from the route signature and parse_params_v2, so P36.38's typed-422 claim does not hold for them today); descendant expansion is an engine-side change owned by the search-engine row that grows chain-aware filtering",
+          "event_id": "D-P36.56-1:e0",
+          "obligation_id": "D-P36.56-1",
+          "owner": "the search-engine row that grows chain-aware jurisdiction filtering (SRCH-07 P36.71 acceptance or a dedicated engine change)",
+          "landing": "an engine test where jurisdiction=<parent-jkey> returns records keyed to descendant jkeys — subtree resolved via jurisdiction_chain or the place-catalog parent links — and a within=/location= request either applies or refuses typed, never silently unscoped",
+          "anchor": {
+            "row_line": 1539,
+            "row_sha256": "9c0ff8d23e56e6b058b6aaa9bd5b2541c65438402fb8778eeba6252af91362d2",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-11-03"
+        }
+      ]
+    },
+    {
+      "id": "D-P36.56-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P36.56-2:e0",
+      "kind": "V",
+      "owner": "the T1 initial-bytes optimisation row (a future K13 perf row)",
+      "landing": "budget.spec.ts measures /dossier/ totalInitialMaxBytes <= 174,080 B — the measured_gaps row goes stale and must be removed",
+      "landing_source": "event-head",
+      "backlog_home": "BL-086",
+      "item": "`/dossier/` `totalInitialMaxBytes` is 80 B over the ratified ≤ 170 KiB T1 ceiling (174,160 B gzip vs 174,080 B): P36.56's scoped-search work grew the shared `/_kit/sig-typeahead.js` module ~116 B gzip (the `scope` attribute + `scopeMatches`), tipping the already-at-ceiling index document",
+      "unblocked_by": "owner: the T1 initial-bytes optimisation row (a future K13 perf row) · trigger: that row's dispatch — or at once when the wire measure reads ≤ 174,080 B",
+      "verify": "`npm --prefix web run test:e2e` budget.spec.ts measures `/dossier/` `totalInitialMaxBytes` ≤ 174,080 B → the measured_gaps row goes stale and must be removed",
+      "proxy": "176,128 B regression bound is the error gate; the ratified 174,080 B still reports every run (bounded+loud, never a smoothed ceiling)",
+      "line": 1540,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P36.56",
+          "backlog_home": "BL-086",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "web/tests/e2e/page-budgets.json",
+            "web/src/elements/sig-typeahead.ts"
+          ],
+          "observed_at": "2026-11-03",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P36.56 (row 399) for the row it added — /dossier/ totalInitialMaxBytes measures 80 B over the ratified <= 170 KiB T1 ceiling (174,160 B gzip vs 174,080 B) after the shared sig-typeahead.js module grew ~116 B gzip for the scope attribute + scopeMatches; recorded bounded+loud in measured_gaps (176,128 B regression bound), owner the T1 initial-bytes optimisation row",
+          "event_id": "D-P36.56-2:e0",
+          "obligation_id": "D-P36.56-2",
+          "owner": "the T1 initial-bytes optimisation row (a future K13 perf row)",
+          "landing": "budget.spec.ts measures /dossier/ totalInitialMaxBytes <= 174,080 B — the measured_gaps row goes stale and must be removed",
+          "anchor": {
+            "row_line": 1540,
+            "row_sha256": "4ebf8c906dc31b69ccbaa9ec2319baefa4b9852e61d7ae5d8a24ce3ad12ff358",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-11-03"
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -15619,31 +15715,31 @@
         },
         "SIG-UI-026": {
           "verdict": "MET",
-          "evidence": "web/tests/unit/watch.test.ts:5;web/src/pages/watch.astro:53",
+          "evidence": "web/tests/unit/watch.test.ts:5;web/src/lib/watch.ts:5",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-027": {
           "verdict": "MET",
-          "evidence": "web/tests/unit/watch.test.ts:53;web/src/pages/watch.astro:9",
+          "evidence": "web/tests/unit/watch.test.ts:53;web/src/pages/watch/feeds/index.astro:5",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-027a": {
           "verdict": "MET",
-          "evidence": "web/tests/unit/recommender.test.ts:5;web/src/pages/watch.astro:10",
+          "evidence": "web/tests/unit/recommender.test.ts:5;web/src/lib/recommender.ts:5",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-027b": {
           "verdict": "MET",
-          "evidence": "web/tests/unit/recommender.test.ts:6;web/src/pages/watch.astro:129",
+          "evidence": "web/tests/unit/recommender.test.ts:6;web/src/lib/recommender.ts:5",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-027c": {
           "verdict": "MET",
-          "evidence": "web/tests/unit/recommender.test.ts:121;web/src/pages/watch.astro:11",
+          "evidence": "web/tests/unit/recommender.test.ts:121;web/src/pages/watch/citations.txt.ts:5",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16698,8 +16794,8 @@
           "label": "historical/csv"
         },
         "SIG-UI-055": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "web/src/lib/explore-links.ts;web/src/components/dossier/DossierExploreBar.astro;web/src/components/DossierSourcesExplorer.astro;docs/build/runs/P36.57.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16782,8 +16878,8 @@
           "label": "historical/csv"
         },
         "SIG-UI-069": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/lib/dossier-template.ts;web/src/components/dossier/DossierHeaderStrip.astro;web/src/components/dossier/DossierNextDecisions.astro;web/src/components/dossier/OtherPublicResources.astro;web/src/components/dossier/DossierMapFigure.astro;web/src/pages/dossier/[...path].astro;docs/build/runs/P36.55.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17352,8 +17448,8 @@
           "label": "historical/csv"
         },
         "SIG-UI-126": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/lib/explore-links.ts;web/src/components/dossier/DossierExploreBar.astro;web/src/components/DossierSourcesExplorer.astro;docs/build/runs/P36.57.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17364,14 +17460,14 @@
           "label": "historical/csv"
         },
         "SIG-UI-128": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P36.56-1;D-R10-PUBLISH-1)",
+          "evidence": "web/src/components/ScopedSearchForm.astro;web/src/lib/scoped-search.ts;web/src/elements/sig-typeahead.ts;web/src/elements/typeahead-model.ts;web/src/lib/typeahead-shards.ts;web/src/pages/dossier/[...path].astro;web/src/pages/sources/[id]/index.astro;docs/build/runs/P36.56.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-129": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/pages/dossier/[...path].astro;web/tests/e2e/page-budgets.json;web/tests/e2e/budget.spec.ts;web/lighthouserc.json;docs/build/runs/P36.55.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17388,8 +17484,8 @@
           "label": "historical/csv"
         },
         "SIG-UI-132": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/lib/dossier-visuals.ts;web/src/lib/dossier-visuals-fixture.ts;web/src/lib/dossier-template.ts;web/src/components/dossier/DossierMapFigure.astro;docs/build/runs/P36.55.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17406,26 +17502,26 @@
           "label": "historical/csv"
         },
         "SIG-WATCH-001": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/pages/watch/index.astro;web/src/lib/watch-v2.ts",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-WATCH-002": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/lib/watch-v2.ts;web/src/pages/watch/item/[handle].astro;web/src/components/WatchList.astro",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-WATCH-003": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/pages/watch/item/[handle].astro;web/src/lib/watch-v2.ts;web/src/components/ProvenancePanelShell.astro",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-WATCH-004": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/pages/watch/place/[...path].astro;web/src/components/WatchCoverage.astro;web/src/lib/watch-v2.ts",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17454,14 +17550,14 @@
           "label": "historical/csv"
         },
         "SIG-WATCH-009": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/components/dossier/DossierNextDecisions.astro;web/src/lib/dossier-template.ts;web/src/lib/public-resources.ts;docs/build/runs/P36.55.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-WATCH-010": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/components/WatchCoverage.astro;web/src/lib/empty.ts;web/src/lib/watch-v2.ts",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17526,8 +17622,8 @@
           "label": "historical/csv"
         },
         "SIG-RQ-001": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "exports/src/exports/task_export.py;tasks/src/tasks/data/task_codes.toml;docs/build/runs/P36.58.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17538,8 +17634,8 @@
           "label": "historical/csv"
         },
         "SIG-RQ-003": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/task_export.py;exports/src/exports/spine_export.py;docs/build/runs/P36.58.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17550,14 +17646,14 @@
           "label": "historical/csv"
         },
         "SIG-RQ-005": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "tasks/src/tasks/data/gap_routing.toml;tasks/src/tasks/routing.py;exports/src/exports/task_export.py;docs/build/runs/P36.58.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-RQ-006": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/task_export.py;tasks/src/tasks/data/gap_routing.toml;docs/build/runs/P36.58.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -25683,10 +25779,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "d0771ccfc574eaa49a4fdbeb93b8e5c24905ff8953a084744bf6cdd197cf88a9",
+  "manifest_sha256": "0914d6a19ce396fdfc4c4673c824116634706acfb7d5f55dc2b3d700d2353482",
   "current_md": {
     "lines": 136,
-    "bytes": 20238,
+    "bytes": 20233,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

@@ -1,0 +1,42 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.55 (VIZ-02): the network-figure slot — Figs 2–5 on their sections as
+// TYPED EMPTY STATES until VIZ-01b lands the dossier network content (the
+// visuals doc's `networks[]` is empty by contract today). A slot that one
+// day carries a drawn figure renders it; a slot with no evidenced edge is
+// never drawn (SIG-UI-125).
+import EmptyState from "../EmptyState.astro";
+import type { NetworkSlot } from "../../lib/dossier-visuals";
+
+interface Props {
+  /** The slot's declared figure id + title (K6 §4.1). */
+  figure: string;
+  title: string;
+  /** The visuals doc's `networks[]` entries (empty until VIZ-01b). */
+  slots: NetworkSlot[];
+}
+
+const { figure, title, slots } = Astro.props;
+const emitted = slots.find((s) => s.figure_id === figure || s.kind === figure);
+---
+
+{emitted === undefined ? (
+  <div class="sig-network-slot" data-testid="network-figure-slot" data-figure={figure}>
+    <EmptyState
+      parts={{
+        state: `The '${title}' figure`,
+        missing:
+          "No dossier network figure is emitted in this release — the edge model that makes one honest is not landed yet (VIZ-01b's content).",
+        nearby:
+          "The rows and figures on this page carry the recorded facts the figure would summarise.",
+        action: { href: "network/", label: "See the published network" },
+        change: "The figure appears with a release that emits its evidenced edges.",
+        cause: "not_published",
+        batchIds: { missing: "NF-01", nearby: "NF-02", action: "NF-03", change: "NF-04" },
+      }}
+    />
+  </div>
+) : null}

@@ -1,0 +1,49 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.59 (K7 WX-04a): `/watch/kind/<k>/page/<n>/` — the facet's pagination
+// fallback (K9 §6.1), emitted only for pages 2..N.
+import BaseLayout from "../../../../../layouts/BaseLayout.astro";
+import WatchList from "../../../../../components/WatchList.astro";
+import { watchContext } from "../../../../../lib/watch-context";
+import {
+  itemsForKind,
+  kindsPresent,
+  pageCount,
+  pageNumbers,
+  pageSlice,
+  WATCH_KIND_LABELS,
+  type WatchKind,
+} from "../../../../../lib/watch-v2";
+import { withBase } from "../../../../../lib/paths";
+
+export function getStaticPaths() {
+  const { envelope } = watchContext();
+  const out: { params: { k: string; n: string }; props: { k: WatchKind; n: number } }[] = [];
+  for (const k of kindsPresent(envelope.items)) {
+    for (const n of pageNumbers(itemsForKind(envelope.items, k).length).filter((x) => x > 1)) {
+      out.push({ params: { k, n: String(n) }, props: { k, n } });
+    }
+  }
+  return out;
+}
+
+const { k, n } = Astro.props as { k: WatchKind; n: number };
+const { envelope, pages } = watchContext();
+const items = itemsForKind(envelope.items, k);
+const shown = pageSlice(items, n);
+const total = pageCount(items.length);
+---
+
+<BaseLayout title={`Watch — ${WATCH_KIND_LABELS[k]}, page ${n}`} path={withBase(`watch/kind/${k}/page/${n}/`)}>
+  <p>
+    {WATCH_KIND_LABELS[k]} — page {n} of {total}.{" "}
+    <a href={withBase(`watch/kind/${k}/${n > 2 ? `page/${n - 1}/` : ""}`)}>← previous</a>
+    {n < total && <> · <a href={withBase(`watch/kind/${k}/page/${n + 1}/`)}>next page →</a></>}
+  </p>
+  <ol class="sig-watch-list">
+    {shown.map((item) => <WatchList item={item} pages={pages} />)}
+  </ol>
+</BaseLayout>

@@ -1,0 +1,88 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.59 (K7 WX-04a, SIG-WATCH-004/010): the per-place watch page —
+// `/watch/place/<path>/` on the K4 display path (`usa/tx/…`), covering the
+// place AND its registry children, WITH the coverage statement (bodies
+// monitored, last checked). `/watch/place/<path>/page/<n>/` rides the same
+// rest param (K9 §6.1). An empty result ALWAYS shows its typed cause class
+// with the coverage statement (SIG-WATCH-010).
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import WatchList from "../../../components/WatchList.astro";
+import WatchCoverage from "../../../components/WatchCoverage.astro";
+import { watchContext } from "../../../lib/watch-context";
+import {
+  itemsForPlace,
+  pageCount,
+  pageNumbers,
+  pageSlice,
+  parsePlacePath,
+  watchHistoryHref,
+} from "../../../lib/watch-v2";
+import type { WatchPlacePage } from "../../../lib/watch-v2";
+import { withBase } from "../../../lib/paths";
+
+export function getStaticPaths() {
+  const { envelope, pages } = watchContext();
+  const out: { params: { path: string }; props: { page: WatchPlacePage; n: number } }[] = [];
+  for (const page of pages) {
+    const items = itemsForPlace(envelope.items, page.key);
+    for (const n of pageNumbers(items.length)) {
+      out.push({
+        params: { path: n > 1 ? `${page.path}/page/${n}` : page.path },
+        props: { page, n },
+      });
+    }
+  }
+  return out;
+}
+
+const { page, n } = Astro.props as { page: WatchPlacePage; n: number };
+const parsed = parsePlacePath(Astro.params.path ?? "");
+if (!parsed) throw new Error(`watch place: unparseable path "${Astro.params.path}"`);
+const { envelope, pages, names } = watchContext();
+const items = itemsForPlace(envelope.items, page.key);
+const shown = pageSlice(items, n);
+const total = pageCount(items.length);
+const name = names.get(page.key ?? "") ?? page.name;
+const title = `${page.unplaced ? "Watch — not yet placed" : `Watch — ${name}`}${n > 1 ? ` — page ${n}` : ""}`;
+const history = items.filter(
+  (i) => i.date < (envelope.as_of ?? "") || i.status === "recently_decided" || i.status === "withdrawn" || i.status === "superseded",
+);
+---
+
+<BaseLayout title={title} path={withBase(`watch/place/${page.path}/${n > 1 ? `page/${n}/` : ""}`)}>
+  <p>
+    Upcoming public decisions about surveillance technology
+    {page.unplaced ? " that SIG cannot yet place" : <> for <strong>{name}</strong> and the places under it</>}
+    — the place page covers a jurisdiction and its registry children.
+  </p>
+
+  <WatchCoverage page={page} coverage={envelope.coverage} name={name} pages={pages} names={names} />
+
+  {items.length > 0 && (
+    <>
+      <h2 id="place-heading">Decisions for {name} ({items.length})</h2>
+      <ol class="sig-watch-list" aria-labelledby="place-heading">
+        {shown.map((item) => <WatchList item={item} pages={pages} />)}
+      </ol>
+      {total > 1 && (
+        <p class="sig-watch-pagination" data-testid="watch-pagination">
+          Page {n} of {total} —
+          {n > 1 && <> <a href={withBase(`watch/place/${page.path}/${n - 1 > 1 ? `page/${n - 1}/` : ""}`)}>← previous</a></>}
+          {n < total && <> <a href={withBase(`watch/place/${page.path}/page/${n + 1}/`)}>next page →</a></>}
+        </p>
+      )}
+    </>
+  )}
+
+  {history.length > 0 && (
+    <p>
+      <a href={withBase(watchHistoryHref(page.path))} data-testid="watch-history-link">
+        Past decisions for {name} ({history.length}) →
+      </a>
+    </p>
+  )}
+</BaseLayout>

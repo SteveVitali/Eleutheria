@@ -1,0 +1,42 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.59 (K7 WX-04a): the vendor facet route — `/watch/vendor/<id>/`, the
+// reviewed-vocab term id the items' match claims declared (C-10 / GX-03
+// keys — never an inferred vendor).
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import WatchList from "../../../components/WatchList.astro";
+import { watchContext } from "../../../lib/watch-context";
+import { facetValues, itemsForVendor, pageCount, pageSlice } from "../../../lib/watch-v2";
+import { withBase } from "../../../lib/paths";
+
+export function getStaticPaths() {
+  const { envelope } = watchContext();
+  return facetValues(envelope.items, "vendor").map((v) => ({
+    params: { id: v.id },
+    props: { value: v },
+  }));
+}
+
+const { value } = Astro.props as { value: { id: string; label: string; items: number } };
+const { envelope, pages } = watchContext();
+const items = itemsForVendor(envelope.items, value.id);
+const shown = pageSlice(items, 1);
+const total = pageCount(items.length);
+---
+
+<BaseLayout title={`Watch — vendor: ${value.label}`} path={withBase(`watch/vendor/${value.id}/`)}>
+  <p>
+    Upcoming decisions matching vendor <strong>{value.label}</strong> ({items.length}).
+  </p>
+  <ol class="sig-watch-list">
+    {shown.map((item) => <WatchList item={item} pages={pages} />)}
+  </ol>
+  {total > 1 && (
+    <p class="sig-watch-pagination">
+      Page 1 of {total} — <a href={withBase(`watch/vendor/${value.id}/page/2/`)}>next page →</a>
+    </p>
+  )}
+</BaseLayout>

@@ -1,0 +1,58 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.55 (VIZ-02, K6 §4.1): the locator — the place inside its parent, drawn
+// from the shared `sig.locator-symbols/1` sheet's parent glyph + the visuals
+// doc's `child_d`. Typed statuses render honestly: a country has no parent
+// context; a key the pack mints no geometry for names that. A missing sheet
+// glyph never renders a dead `<use>` — the typed state stands instead.
+import {
+  locatorGlyph,
+  type DossierVisualsDoc,
+  type LocatorSymbols,
+} from "../../lib/dossier-visuals";
+import { withBase } from "../../lib/paths";
+
+interface Props {
+  doc: DossierVisualsDoc | null;
+  symbols: LocatorSymbols | null;
+}
+
+const { doc, symbols } = Astro.props;
+const glyph = doc ? locatorGlyph(doc, symbols) : null;
+const status = doc && !("child_d" in doc.locator) ? doc.locator.status : null;
+const copyId =
+  doc === null
+    ? "LC-01"
+    : status === "no_parent_context"
+      ? "LC-02"
+      : status === "no_boundary_geometry"
+        ? "LC-03"
+        : "LC-04";
+---
+
+<aside class="sig-locator" data-testid="dossier-locator" aria-label="Where this place sits">
+  {glyph ? (
+    <svg
+      viewBox={`0 0 ${glyph.viewbox[0]} ${glyph.viewbox[1]}`}
+      class="sig-locator__svg"
+      role="img"
+      aria-label={doc ? `${doc.jurisdiction.name} inside its parent jurisdiction` : "Locator"}
+    >
+      <path d={glyph.parentD} class="sig-fig-child" />
+      <path d={glyph.childD} class="sig-fig-locator-inset" />
+    </svg>
+  ) : (
+    <p class="sig-locator__status" data-testid="locator-status" data-copy={copyId}>
+      {doc === null
+        ? "No locator in this build"
+        : status === "no_parent_context"
+          ? "No parent context — this dossier is a top-level jurisdiction"
+          : status === "no_boundary_geometry"
+            ? "No parent boundary geometry in this release"
+            : "The parent-context symbol sheet is not in this build"}
+    </p>
+  )}
+</aside>

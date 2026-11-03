@@ -1,0 +1,26 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.55 (UXR-06 / D3-Q4 [B-27] = yes): the neutral 'Other public resources'
+// block — the peer public resources a reader may also find useful, labelled
+// "SIG does not endorse". Content-neutral by the answered decision: NO
+// avoidance routing and NO plate lookup, ever.
+import { PUBLIC_RESOURCES } from "../../lib/public-resources";
+---
+
+<section class="sig-other-resources" data-testid="other-public-resources" aria-labelledby="other-resources-heading">
+  <h2 id="other-resources-heading" data-copy="OR-01">Other public resources</h2>
+  <p class="sig-table-note" data-copy="OR-02">
+    Public resources a reader may also find useful — SIG does not endorse
+    them, and this list never carries avoidance routing or plate lookups.
+  </p>
+  <ul class="sig-other-resources__list">
+    {PUBLIC_RESOURCES.map((r) => (
+      <li>
+        <a href={r.url} rel="external">{r.name}</a> — {r.tells}
+      </li>
+    ))}
+  </ul>
+</section>

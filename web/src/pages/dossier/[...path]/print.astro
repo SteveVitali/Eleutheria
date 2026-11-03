@@ -37,6 +37,10 @@ import { artifactHref, defineFigures } from "../../../lib/figures";
 import { dossierFigureSpecs, figureSpecMap } from "../../../lib/dossier-figures";
 import { defaultDescription } from "../../../lib/meta";
 import { socialCardForRoute } from "../../../lib/brand";
+// P36.55 (VIZ-02, SIG-UI-130): the locator prints on page 1 and the map's
+// own static SVG leads the figure pages — never a placeholder over a
+// drawable figure.
+import { getDossierVisuals, getLocatorSymbols, locatorGlyph, isDrawnMap } from "../../../lib/dossier-visuals";
 
 // P35.45 (D-K4-3 / K4 §5.3): print/CSV/runs mint ONLY for country + admin-1
 // dossiers — the registry levels `country` and `state_province`
@@ -133,6 +137,11 @@ const printCite = citationBlock({
       }
     : null,
 });
+// P36.55: the restricted visuals doc — its locator glyph prints on the
+// brief (page 1) and the map's static rendition leads the figure pages.
+const visualsDoc = getDossierVisuals(dossier.slug);
+const printLocator = visualsDoc ? locatorGlyph(visualsDoc, getLocatorSymbols()) : null;
+const mapSvg = visualsDoc && isDrawnMap(visualsDoc.map) ? visualsDoc.map.svg : null;
 const FIGURES = defineFigures(
   `dossier/${dossier.slug}/print`,
   dossierFigureSpecs(dossier, "print", {
@@ -226,6 +235,7 @@ const specMap = figureSpecMap(FIGURES);
             qr={qr}
             permalink={link}
             specMap={specMap}
+            locator={printLocator}
           >
             {/* JD-02/JD-07 stay in THIS file: the P34.14 copy-binding tests
                 parse the route source, so the guarded elements are passed to
@@ -248,6 +258,7 @@ const specMap = figureSpecMap(FIGURES);
             place={jurisdiction.label}
             asOf={dossier.asOf}
             permalink={link}
+            svg={page.figure.kind === "map" && mapSvg ? mapSvg : undefined}
           />
         )}
 

@@ -1,0 +1,683 @@
+# The explicit coverage-gap routing table (K11 §4.1, P36.58 / R11-K13-RQ-01,
+# SIG-RQ-005): predicate → presentation lane. It replaces the retired substring
+# match (`_RECORDS_OBTAINABLE_MARKERS`) as the routing authority: every §32.1
+# peer-class `tracked` predicate names a lane here, and the routing matrix test
+# iterates the tracked sets so an uncovered predicate fails loudly.
+#
+# Lanes (D-K11-1, answered "as recommended"):
+#   research — a public research task (the task's recorded `task_type` stands;
+#              `route` names the type the table asserts for RQ-02 re-mints).
+#   campaign — a per-object field gap presented as an aggregated mapping
+#              campaign by (place, predicate), never an individual task.
+#   metric   — coverage metrics only: the source does not publish the field and
+#              there is nothing to map or request (D-K11-1's second half).
+#
+# `grain` is the subject grain the closing condition must match (SIG-RQ-005):
+#   subject | jurisdiction. `template` names the §36 request-template family a
+#   records-obtainable route drafts from.
+#
+# `route` values may name the RQ-02 catalog-pending types (`retention_unknown`,
+#   `sharing_unknown`) — declared so the detector rewiring lands as data review
+#   there, never a silent route. Today those gaps are recorded as the legacy
+#   substring-driven types; the card names the real predicate regardless.
+#
+# Changes after this declaration are VERSIONED (§20): bump `version`.
+
+version = "1.0.0"
+
+# --- agency/records-obtainable gaps → the research lane ------------------------
+
+[[route]]
+predicate = "configured_retention_days"
+lane = "research"
+route = "retention_unknown"        # catalog-pending (RQ-02); today: missing_contract
+template = "surveillance_policy"
+grain = "subject"
+
+[[route]]
+predicate = "retention_period"
+lane = "research"
+route = "retention_unknown"        # catalog-pending (RQ-02); today: missing_contract
+template = "surveillance_policy"
+grain = "subject"
+
+[[route]]
+predicate = "configured_sharing_partner"
+lane = "research"
+route = "sharing_unknown"          # catalog-pending (RQ-02); today: missing_contract
+template = "data_sharing_agreement"
+grain = "subject"
+
+[[route]]
+predicate = "sharing_partner_degree"
+lane = "research"
+route = "sharing_unknown"          # catalog-pending (RQ-02); today: missing_contract
+template = "data_sharing_agreement"
+grain = "subject"
+
+[[route]]
+predicate = "pooled_lookup_participation"
+lane = "research"
+route = "sharing_unknown"          # catalog-pending (RQ-02); today: missing_contract
+template = "data_sharing_agreement"
+grain = "subject"
+
+[[route]]
+predicate = "sharing_restriction"
+lane = "research"
+route = "sharing_unknown"          # catalog-pending (RQ-02); today: missing_contract
+template = "data_sharing_agreement"
+grain = "subject"
+
+# --- procurement/contract predicates → missing_contract ------------------------
+
+[[route]]
+predicate = "amount"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "award_date"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "buyer"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "conditions"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "contract_signed_date"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "contract_value"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "country"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "currency"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "description"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "document"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "federal_award_id"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "funder"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "instrument_type"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "lifecycle_transition"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "notice_type"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "parent_cooperative_contract"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "period"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "place_of_performance"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "posted_date"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "procurement_state"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "products"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "recipient"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "renewal_options"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "response_deadline"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "seller"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "signed_date"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "start_date"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "title"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "acquisition_channel"
+lane = "research"
+route = "missing_contract"
+template = "alpr_contract"
+grain = "subject"
+
+# --- remaining agency/policy/evidence gaps → research (recorded type stands) ---
+
+[[route]]
+predicate = "active_device_count"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "deployment_exists"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "hit_volume_observed"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "hotlist_hit_windowed_count"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "non_hit_proportion_observed"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "portal_exists"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "portal_last_updated_declared"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "portal_stated_prohibited_use"
+lane = "research"
+route = "retention_unknown"        # policy-document gap; catalog-pending (RQ-02)
+template = "surveillance_policy"
+grain = "subject"
+
+[[route]]
+predicate = "scan_volume_observed"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "usage_search_windowed_count"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "vehicles_detected_windowed_count"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "vendor"
+lane = "research"
+route = "missing_contract"          # the vendor identity lives on the procurement record
+template = "alpr_contract"
+grain = "subject"
+
+[[route]]
+predicate = "claimed_device_count"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "contracted_device_count"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "mapped_device_count"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "acquisition_method"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "as_of"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "authorization_state"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "citation"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "constrains_technology"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "effective_from"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "enacting_body"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "implements_technology"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "jurisdiction"
+lane = "research"
+grain = "jurisdiction"
+
+[[route]]
+predicate = "statutory_citation"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "sunset_date"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "use_restriction"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "disclosure_field_state"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "legal_authority"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "ordinance_citation"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "technology"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "request_text"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "requesting_party"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "response_date"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "response_status"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "target_agency"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "bill_chamber"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "bill_external_id"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "bill_identifier"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "bill_jurisdiction"
+lane = "research"
+grain = "jurisdiction"
+
+[[route]]
+predicate = "bill_session"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "bill_status"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "bill_status_date"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "bill_title"
+lane = "research"
+grain = "subject"
+
+[[route]]
+predicate = "ai_surveillance_supplier"
+lane = "research"
+grain = "jurisdiction"
+
+[[route]]
+predicate = "ai_surveillance_tech_from_china"
+lane = "research"
+grain = "jurisdiction"
+
+[[route]]
+predicate = "ai_surveillance_tech_from_us"
+lane = "research"
+grain = "jurisdiction"
+
+[[route]]
+predicate = "facial_recognition_status"
+lane = "research"
+grain = "jurisdiction"
+
+[[route]]
+predicate = "smart_city_surveillance"
+lane = "research"
+grain = "jurisdiction"
+
+[[route]]
+predicate = "smart_policing"
+lane = "research"
+grain = "jurisdiction"
+
+[[route]]
+predicate = "uses_ai_surveillance"
+lane = "research"
+grain = "jurisdiction"
+
+[[route]]
+predicate = "uses_facial_recognition"
+lane = "research"
+grain = "jurisdiction"
+
+# --- OSM-mappable per-object field gaps → mapping campaigns (D-K11-1 a) --------
+
+[[route]]
+predicate = "asset_type"
+lane = "campaign"
+grain = "subject"
+
+[[route]]
+predicate = "brand"
+lane = "campaign"
+grain = "subject"
+
+[[route]]
+predicate = "brand_qid"
+lane = "campaign"
+grain = "subject"
+
+[[route]]
+predicate = "camera_mount"
+lane = "campaign"
+grain = "subject"
+
+[[route]]
+predicate = "camera_type"
+lane = "campaign"
+grain = "subject"
+
+[[route]]
+predicate = "direction"
+lane = "campaign"
+grain = "subject"
+
+[[route]]
+predicate = "first_observed"
+lane = "campaign"
+grain = "subject"
+
+[[route]]
+predicate = "manufacturer"
+lane = "campaign"
+grain = "subject"
+
+[[route]]
+predicate = "manufacturer_qid"
+lane = "campaign"
+grain = "subject"
+
+[[route]]
+predicate = "mapping_source"
+lane = "campaign"
+grain = "subject"
+
+[[route]]
+predicate = "operator_qid"
+lane = "campaign"
+grain = "subject"
+
+[[route]]
+predicate = "operator_stated"
+lane = "campaign"
+grain = "subject"
+
+[[route]]
+predicate = "operator_type"
+lane = "campaign"
+grain = "subject"
+
+[[route]]
+predicate = "power_arrangement"
+lane = "campaign"
+grain = "subject"
+
+[[route]]
+predicate = "surveillance_zone"
+lane = "campaign"
+grain = "subject"
+
+# --- registry-only field gaps → coverage metrics only (D-K11-1 b) --------------
+# The registry source does not publish these fields for its own objects; there
+# is nothing to request and nothing OSM can fix about the registry row — the
+# gap stays visible in coverage metrics, never mints public work.
+
+[[route]]
+predicate = "camera_coordinate_source"
+lane = "metric"
+grain = "subject"
+
+[[route]]
+predicate = "camera_county"
+lane = "metric"
+grain = "subject"
+
+[[route]]
+predicate = "camera_direction"
+lane = "metric"
+grain = "subject"
+
+[[route]]
+predicate = "camera_external_ref"
+lane = "metric"
+grain = "subject"
+
+[[route]]
+predicate = "camera_jurisdiction"
+lane = "metric"
+grain = "subject"
+
+[[route]]
+predicate = "camera_latitude"
+lane = "metric"
+grain = "subject"
+
+[[route]]
+predicate = "camera_longitude"
+lane = "metric"
+grain = "subject"
+
+[[route]]
+predicate = "camera_name"
+lane = "metric"
+grain = "subject"
+
+[[route]]
+predicate = "camera_operator"
+lane = "metric"
+grain = "subject"
+
+[[route]]
+predicate = "camera_roadway"
+lane = "metric"
+grain = "subject"
+
+[[route]]
+predicate = "camera_status"
+lane = "metric"
+grain = "subject"
+
+[[route]]
+predicate = "external_id"
+lane = "metric"
+grain = "subject"

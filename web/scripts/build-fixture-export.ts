@@ -291,9 +291,50 @@ analytic(
 analytic(
   "queue_meta",
   envelope(
-    "sig/analytics-queue-meta/1",
-    `${RESEARCH_QUEUE.length} research tasks; jurisdiction claims are community-curation state the claim spine does not carry`,
-    { queue_as_of: QUEUE_AS_OF, jurisdiction_claims: JURISDICTION_CLAIMS },
+    // P36.58 (RQ-01): the /2 envelope — lanes/facets/shard index computed from
+    // the fixture queue so fixture builds see the real export's v2 shape.
+    "sig/analytics-queue-meta/2",
+    `${RESEARCH_QUEUE.length} research tasks recorded; ${RESEARCH_QUEUE.length} on the public research lane; jurisdiction claims are community-curation state the claim spine does not carry`,
+    {
+      queue_as_of: QUEUE_AS_OF,
+      jurisdiction_claims: JURISDICTION_CLAIMS,
+      card_schema: "sig.queue-card/2",
+      handle_grammar: "k11-handle/1",
+      lanes: {
+        research: RESEARCH_QUEUE.length,
+        campaigns: 0,
+        campaign_members: 0,
+        metric_only_members: 0,
+        curation: {
+          exported: false,
+          note: "curation-lane work happens in the loopback curation app (D-K11-5)",
+        },
+      },
+      tasks_by_type: Object.fromEntries(
+        [...new Set(RESEARCH_QUEUE.map((t) => t.task_type))].sort().map((tt) => [
+          tt,
+          RESEARCH_QUEUE.filter((t) => t.task_type === tt).length,
+        ]),
+      ),
+      tasks_by_assignee: Object.fromEntries(
+        [...new Set(RESEARCH_QUEUE.map((t) => t.assignee_class))].sort().map((a) => [
+          a,
+          RESEARCH_QUEUE.filter((t) => t.assignee_class === a).length,
+        ]),
+      ),
+      tasks_by_place: Object.values(
+        RESEARCH_QUEUE.reduce<Record<string, { slug: string; name: string | null; tasks: number }>>(
+          (acc, t) => {
+            const slug = t.place?.slug ?? t.jurisdiction.toLowerCase().replace(/\s+/g, "-") ?? "unplaced";
+            const row = (acc[slug] ??= { slug, name: t.place?.name ?? t.jurisdiction, tasks: 0 });
+            row.tasks += 1;
+            return acc;
+          },
+          {},
+        ),
+      ).sort((a, b) => b.tasks - a.tasks || a.slug.localeCompare(b.slug)),
+      shards: [],
+    },
   ),
 );
 

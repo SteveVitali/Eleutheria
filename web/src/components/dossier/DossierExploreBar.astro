@@ -1,0 +1,34 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.55 (VIZ-02, SIG-UI-069) landed the bar; P36.57 (VIZ-03, SIG-UI-055/126)
+// mints its links as canonical `sig.workspace-state/2` — the map, the graph
+// explorer and the scoped search, each carrying the dossier's jurisdiction
+// key (SIG-UI-126's "for its jurisdiction"; K14 §4.6's `jurisdiction=`
+// facet). A target that cannot apply a received facet says so visibly on
+// arrival — the P36.21 conformance harness renders the unapplied-facet
+// notice (SIG-UI-060/UXR-10), so the facet rides every link and is never
+// silently dropped. An unkeyed dossier emits the links without the facet —
+// never a guessed key.
+import { withBase } from "../../lib/paths";
+import { exploreLinks } from "../../lib/explore-links";
+import type { Dossier } from "../../lib/dossier";
+
+interface Props {
+  dossier: Dossier;
+  /** The place's canonical key (jurisdiction facet value) when keyed. */
+  jkey: string | null;
+}
+
+const { dossier, jkey } = Astro.props;
+const name = dossier.display_name ?? dossier.name ?? dossier.jurisdiction;
+const links = exploreLinks(jkey);
+---
+
+<nav class="sig-explore-bar" data-testid="dossier-explore-bar" aria-label="Explore this dossier">
+  <a class="sig-explore-bar__link" data-testid="explore-map" href={withBase(links.map)} data-copy="EB-01">Explore on the map →</a>{" "}
+  <a class="sig-explore-bar__link" data-testid="explore-network" href={withBase(links.graph)} data-copy="EB-02">See connections →</a>{" "}
+  <a class="sig-explore-bar__link" data-testid="explore-search" href={withBase(links.search)} data-copy={jkey ? "EB-04" : "EB-03"}>{jkey ? `Search within ${name} →` : "Search the release →"}</a>
+</nav>

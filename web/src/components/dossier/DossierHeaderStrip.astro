@@ -1,0 +1,91 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.55 (VIZ-02, SIG-UI-069): the header strip — the K4 row fields at the
+// top of every dossier (records, located, sources, evidence classes, open
+// questions, disagreements, freshness, children). Every numeral is a
+// registered figure (the strip specs the page computes); a field the record
+// does not carry shows `not_recorded`, never a fabricated value.
+import Figure from "../Figure.astro";
+import { fmtInt } from "../../lib/format";
+import type { Dossier } from "../../lib/dossier";
+import type { DossierIndexRow } from "../../lib/data";
+import type { FigureSpec } from "../../lib/figures";
+
+interface Props {
+  dossier: Dossier;
+  /** The matching `sig.dossier-index/2` row when one exists (keyed dossiers). */
+  row: DossierIndexRow | null;
+  /** The strip's figure specs keyed by field id. */
+  specs: ReadonlyMap<string, FigureSpec>;
+}
+
+const { dossier, row, specs } = Astro.props;
+const levelLabel = dossier.level?.replace(/_/g, " ") ?? "unkeyed dossier";
+const spec = (id: string): FigureSpec | undefined => specs.get(id);
+const cells: { id: string; label: string; value: number | undefined; suffix?: string }[] = [
+  { id: "strip-records", label: "Records", value: row?.records ?? dossier.rollup?.records },
+  { id: "strip-sources", label: "Sources", value: row?.sources?.count },
+  { id: "strip-questions", label: "Open questions", value: row?.open_questions },
+  {
+    id: "strip-disagreements",
+    label: "Disagreements",
+    value:
+      (row?.disagreements?.declared_here_located_elsewhere ?? dossier.disagreements?.declared_here_located_elsewhere ?? 0) +
+      (row?.disagreements?.located_here_declared_elsewhere ?? dossier.disagreements?.located_here_declared_elsewhere ?? 0),
+  },
+  { id: "strip-children", label: "Children", value: row?.children?.count ?? dossier.children?.length },
+];
+const located = row?.located;
+---
+
+<div class="sig-header-strip" data-testid="dossier-header-strip" id="dossier-header-strip">
+  <dl class="sig-header-strip__grid">
+    <div class="sig-header-strip__cell">
+      <dt>Level</dt>
+      <dd data-testid="strip-level">{levelLabel}</dd>
+    </div>
+    {cells.map((c) => (
+      <div class="sig-header-strip__cell">
+        <dt>{c.label}</dt>
+        <dd data-testid={c.id}>
+          {c.value === undefined ? (
+            <span>not_recorded</span>
+          ) : spec(c.id) ? (
+            <Figure figure={spec(c.id) as FigureSpec} order="inline">{fmtInt(c.value)}{c.suffix ?? ""}</Figure>
+          ) : (
+            <span>{fmtInt(c.value)}</span>
+          )}
+        </dd>
+      </div>
+    ))}
+    <div class="sig-header-strip__cell">
+      <dt>Located</dt>
+      <dd data-testid="strip-located">
+        {located?.by_point !== undefined && located?.of !== undefined && spec("strip-located") ? (
+          <Figure figure={spec("strip-located") as FigureSpec} order="inline">
+            {fmtInt(located.by_point)} of {fmtInt(located.of)} located
+          </Figure>
+        ) : located?.by_point !== undefined && located?.of !== undefined ? (
+          <span>{fmtInt(located.by_point)} of {fmtInt(located.of)} located</span>
+        ) : (
+          <span>not_recorded</span>
+        )}
+      </dd>
+    </div>
+    <div class="sig-header-strip__cell">
+      <dt>Freshness</dt>
+      <dd data-testid="strip-freshness">
+        {row?.freshness?.newest ? (
+          <span>newest <time datetime={row.freshness.newest}>{row.freshness.newest}</time>
+            {row.freshness.oldest && <> · oldest <time datetime={row.freshness.oldest}>{row.freshness.oldest}</time></>}
+          </span>
+        ) : (
+          <span>not_recorded</span>
+        )}
+      </dd>
+    </div>
+  </dl>
+</div>

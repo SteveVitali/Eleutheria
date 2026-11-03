@@ -17,15 +17,13 @@
 import {
   isShard,
   matchEntries,
+  scopeMatches,
   shardKey,
   type TypeaheadEntry,
   type TypeaheadShard,
 } from "./typeahead-model";
 
-const uid = (() => {
-  let n = 0;
-  return () => `sig-typeahead-${++n}`;
-})();
+let uidN = 0;
 
 // P36.40: SSR-safe — a T2 island bundle imports this module to register the
 // element under its own `/_astro/` graph, and Astro evaluates the island's
@@ -52,8 +50,12 @@ class SigTypeahead extends HTMLElementBase {
     const minChars = Number(this.getAttribute("min-chars") ?? "2");
     const keyLen = Number(this.getAttribute("key-len") ?? "2");
     const maxItems = Number(this.getAttribute("max-items") ?? "8");
+    // P36.56 (SRCH-06): the optional `scope` attribute narrows suggestions
+    // to a jurisdiction subtree or one source — suggestions outside the
+    // scope never render, and the no-JS form stays complete regardless.
+    const scope = this.getAttribute("scope");
 
-    const id = uid();
+    const id = `sig-typeahead-${++uidN}`;
     const popup = document.createElement("div");
     popup.className = "sig-typeahead-popup";
     popup.dataset.enhancement = "";
@@ -80,18 +82,20 @@ class SigTypeahead extends HTMLElementBase {
     let active = -1;
     let open = false;
 
+    const emptyShard = (key: string): TypeaheadShard => ({
+      schema: "sig.typeahead-shard/1",
+      key,
+      entries: [],
+    });
     const loadShard = (key: string): Promise<TypeaheadShard> => {
       let p = shards.get(key);
       if (p === undefined) {
         p = fetch(`${root}${key}.json`)
           .then((r) => (r.ok ? r.json() : null))
-          .then(
-            (doc): TypeaheadShard =>
-              isShard(doc) && doc.key === key
-                ? doc
-                : { schema: "sig.typeahead-shard/1", key, entries: [] },
+          .then((doc): TypeaheadShard =>
+            isShard(doc) && doc.key === key ? doc : emptyShard(key),
           )
-          .catch((): TypeaheadShard => ({ schema: "sig.typeahead-shard/1", key, entries: [] }));
+          .catch((): TypeaheadShard => emptyShard(key));
         shards.set(key, p);
       }
       return p;
@@ -107,29 +111,23 @@ class SigTypeahead extends HTMLElementBase {
       }
     };
 
+    const span = (cls: string, text: string) => {
+      const s = document.createElement("span");
+      s.className = cls;
+      s.textContent = text;
+      return s;
+    };
     const render = () => {
-      while (list.firstChild !== null) list.removeChild(list.firstChild);
+      list.replaceChildren();
       options.forEach((entry, i) => {
         const li = document.createElement("li");
         li.className = "sig-typeahead-option";
         li.id = `${id}-opt-${i}`;
         li.setAttribute("role", "option");
         li.setAttribute("aria-selected", String(i === active));
-        const text = document.createElement("span");
-        text.textContent = entry.label;
-        li.appendChild(text);
-        if (entry.kind !== undefined && entry.kind !== "") {
-          const kind = document.createElement("span");
-          kind.className = "sig-typeahead-kind";
-          kind.textContent = entry.kind;
-          li.append(" ", kind);
-        }
-        if (entry.detail !== undefined && entry.detail !== "") {
-          const detail = document.createElement("span");
-          detail.className = "sig-typeahead-detail";
-          detail.textContent = entry.detail;
-          li.append(" ", detail);
-        }
+        li.appendChild(span("", entry.label));
+        if (entry.kind) li.append(" ", span("sig-typeahead-kind", entry.kind));
+        if (entry.detail) li.append(" ", span("sig-typeahead-detail", entry.detail));
         li.addEventListener("pointerdown", (e) => {
           // pointerdown (not click) so the choice lands before blur closes.
           e.preventDefault();
@@ -139,19 +137,16 @@ class SigTypeahead extends HTMLElementBase {
       });
     };
 
+    const close = () => {
+      options = [];
+      setOpen(false);
+      status.textContent = "";
+    };
     const refresh = async () => {
       const q = input.value.trim();
-      if (q.length < minChars) {
-        options = [];
-        setOpen(false);
-        status.textContent = "";
-        return;
-      }
-      const key = shardKey(q, keyLen);
+      const key = q.length < minChars ? null : shardKey(q, keyLen);
       if (key === null) {
-        options = [];
-        setOpen(false);
-        status.textContent = "";
+        close();
         return;
       }
       let shard = await loadShard(key);
@@ -166,7 +161,9 @@ class SigTypeahead extends HTMLElementBase {
       }
       // A slower shard reply must never overwrite a newer query.
       if (input.value.trim() !== q) return;
-      options = matchEntries(shard.entries, q).slice(0, maxItems);
+      options = matchEntries(shard.entries, q)
+        .filter((e) => scopeMatches(e, scope))
+        .slice(0, maxItems);
       // Nothing pre-selected: Enter still submits the plain GET form unless
       // the user actively arrows onto an option (the no-JS path, preserved).
       active = -1;
@@ -203,8 +200,7 @@ class SigTypeahead extends HTMLElementBase {
         // No active option: the event propagates and the GET form submits —
         // the no-JS path, preserved.
       } else if (e.key === "Escape") {
-        setOpen(false);
-        status.textContent = "";
+        close();
       }
     });
     input.addEventListener("blur", () => {

@@ -1,0 +1,117 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.55 (VIZ-02, SIG-WATCH-009, K7 §5.3's dossier block): 'Next decisions
+// (N)' — the first three watch items for the place plus the link to its
+// watch page. P36.59 (WX-04a) lands the per-place page: a keyed dossier
+// links `/watch/place/<slug_path>/` (the K4 display path — emitted only
+// when the page exists, never a dead link) and lists the `sig.watch-item/1`
+// rows matched on its `jurisdiction_key` (the same place+children rule the
+// place page applies — the block's count equals the page's). An unkeyed
+// dossier keeps the v1 renewal-watch rows matched by name. D-K7-3 is
+// carried verbatim: the place's OFFICIAL agenda portal is always linked
+// when one is registered — peer services stay behind C5's link policy.
+import ContestedMarker from "../ContestedMarker.astro";
+import Figure from "../Figure.astro";
+import type { FigureSpec } from "../../lib/figures";
+import { itemDateLabel, watchItemHref } from "../../lib/watch-v2";
+import type { WatchItemV2 } from "../../lib/watch-v2";
+import { resolveWatchItem, watchICalPath, watchRssPath } from "../../lib/watch";
+import type { ContractWatchItem } from "../../lib/watch";
+import { agendaPortalFor, type AgendaPortal } from "../../lib/public-resources";
+import type { Dossier } from "../../lib/dossier";
+import { withBase } from "../../lib/paths";
+
+interface Props {
+  dossier: Dossier;
+  /** The v2 watch items matched to this place's jurisdiction key. */
+  itemsV2: WatchItemV2[];
+  /** The legacy renewal-watch rows matched by name (unkeyed fallback). */
+  items: ContractWatchItem[];
+  /** The emitted watch place path for this dossier (`usa/ok/…`), or null. */
+  watchPlacePath?: string | null;
+  /** The registered figure for the (N) heading count. */
+  spec?: FigureSpec;
+}
+
+const { dossier, itemsV2, items, watchPlacePath, spec } = Astro.props;
+const shown = itemsV2.slice(0, 3);
+const shownLegacy = itemsV2.length === 0 ? items.slice(0, 3) : [];
+const count = itemsV2.length > 0 ? itemsV2.length : items.length;
+const portal: AgendaPortal | null = agendaPortalFor(dossier);
+const name = dossier.display_name ?? dossier.name ?? dossier.jurisdiction;
+const placeHref = watchPlacePath ? `watch/place/${watchPlacePath}/` : null;
+---
+
+<section class="sig-next-decisions" data-testid="next-decisions" aria-labelledby="next-decisions-heading">
+  <h2 id="next-decisions-heading">Next decisions ({spec ? <Figure figure={spec} order="inline">{count}</Figure> : count})</h2>
+  {shown.length > 0 ? (
+    <ul class="sig-next-decisions__list">
+      {shown.map((item) => {
+        const dl = itemDateLabel(item);
+        return (
+          <li class="sig-next-decisions__item" data-testid="next-decision-item" data-handle={item.handle}>
+            <a href={withBase(watchItemHref(item.handle))}><strong>{item.title}</strong></a>{" "}
+            {item.contested && <ContestedMarker compact />}
+            <br />
+            <span class="sig-next-decisions__date">
+              <time datetime={item.date}>{item.date}</time> — {dl.kindLabel}, {dl.certaintyLabel}
+              {item.body && <> · {item.body}</>}
+            </span>
+          </li>
+        );
+      })}
+    </ul>
+  ) : shownLegacy.length > 0 ? (
+    <ul class="sig-next-decisions__list">
+      {shownLegacy.map((raw) => {
+        const item = resolveWatchItem(raw);
+        return (
+          <li class="sig-next-decisions__item" data-testid="next-decision-item">
+            <strong>{item.subject_label}</strong>{" "}
+            {item.contested && <ContestedMarker compact />}
+            <br />
+            <span class="sig-next-decisions__date">
+              Decision {item.next_decision_date ? (
+                <time datetime={item.next_decision_date}>{item.next_decision_date}</time>
+              ) : (
+                "date not_recorded"
+              )}
+              {item.approving_body && <> · {item.approving_body}</>}
+            </span>
+          </li>
+        );
+      })}
+    </ul>
+  ) : (
+    <p class="sig-table-note" data-testid="next-decisions-none" data-copy="ND-01">
+      SIG is not tracking a dated upcoming decision for {name}. That is a gap
+      in what SIG has recorded — not a finding that no decision is pending.
+    </p>
+  )}
+  <p class="sig-next-decisions__links">
+    {placeHref ? (
+      <a href={withBase(placeHref)} data-testid="watch-place-link" data-copy="ND-02">
+        Watch upcoming decisions for {name} →
+      </a>
+    ) : (
+      <a href={withBase("watch/")} data-copy="ND-02">Watch upcoming decisions →</a>
+    )}
+    {itemsV2.length === 0 && items.length > 0 && (
+      <>
+        {" · "}
+        <a href={withBase(watchICalPath(items[0]!.jurisdiction).replace(/^\//, ""))}>iCal</a>
+        {" · "}
+        <a href={withBase(watchRssPath(items[0]!.jurisdiction).replace(/^\//, ""))}>RSS</a>
+      </>
+    )}
+    {portal && (
+      <>
+        {" · "}
+        <a href={portal.url} rel="external" data-testid="agenda-portal">{portal.label} (official) →</a>
+      </>
+    )}
+  </p>
+</section>

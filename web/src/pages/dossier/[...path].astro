@@ -31,8 +31,25 @@ import Figure from "../../components/Figure.astro";
 import { applyPublicationPolicy, dossierLang, dossierJsonPath, dossierPath, dossierPrintPath, sectionTitlesFor, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG, unplacedPath } from "../../lib/dossier";
 import type { Dossier } from "../../lib/dossier";
 import type { Crumb, PageAction } from "../../lib/nav";
-import { getDossierArtifactRef, getDossiers, getDossierProvenance, getDossierSources, getJurisdictionCompartments, getJurisdictionKeyMap, getSlugHistory, getUnplacedReport } from "../../lib/data";
+import { getDossierArtifactRef, getDossierIndex, getDossiers, getDossierProvenance, getDossierSources, getJurisdictionCompartments, getJurisdictionKeyMap, getLatestReleaseTarget, getSlugHistory, getUnplacedReport, getWatch, getWatchV2 } from "../../lib/data";
 import WhereThisComesFrom from "../../components/WhereThisComesFrom.astro";
+// P36.55 (VIZ-02, SIG-UI-069): the ONE dossier template — the v2 blocks in
+// SIG-UI-010 order: header strip, At a glance with Figure 1 + locator and
+// the Explore bar, network-figure slots (typed empty states until VIZ-01b),
+// Where this comes from, Next decisions, Other public resources.
+import DossierHeaderStrip from "../../components/dossier/DossierHeaderStrip.astro";
+import DossierMapFigure from "../../components/dossier/DossierMapFigure.astro";
+import DossierLocator from "../../components/dossier/DossierLocator.astro";
+import DossierExploreBar from "../../components/dossier/DossierExploreBar.astro";
+import ScopedSearchForm from "../../components/ScopedSearchForm.astro";
+import DossierNextDecisions from "../../components/dossier/DossierNextDecisions.astro";
+import OtherPublicResources from "../../components/dossier/OtherPublicResources.astro";
+import NetworkFigureSlot from "../../components/dossier/NetworkFigureSlot.astro";
+import { NETWORK_SLOT_SECTIONS, decisionsForDossier, decisionsForDossierV2, templatePlan } from "../../lib/dossier-template";
+import { watchContext } from "../../lib/watch-context";
+import { buildJurisdictionLookup, buildSitesModel, emittedSiteLists } from "../../lib/sites";
+import { getMapSites } from "../../lib/data";
+import { figMapTwin, getDossierVisuals, getLocatorSymbols } from "../../lib/dossier-visuals";
 import { DSRC_PROVENANCE_POINTER_BASE, dossierDownloadsPath, dossierSourcesProvenance, dsrcArtifact, dsrcFigureSpecs } from "../../lib/dossier-sources";
 import { getSourcePageIds } from "../../lib/source-page";
 import type { SlugHistoryRow, UnplacedReport } from "../../lib/data";
@@ -459,6 +476,124 @@ if (FIGURES.length === 0) {
   );
 }
 const specMap = figureSpecMap(FIGURES);
+// P36.55 (VIZ-02): the v2 template's data — the restricted visuals doc
+// (map + locator + network slots), the fig-map twin the page captions from,
+// the index row the header strip reads its K4 fields from, and the watch
+// items 'Next decisions' lists. Every numeral these blocks render registers
+// its own spec below so the bare-numeral check still passes (J3 §5.4).
+const visualsDoc = getDossierVisuals(dossier.slug);
+const locatorSymbols = getLocatorSymbols();
+const mapTwin = figMapTwin(dossier, visualsDoc);
+const INDEX_ROWS = getDossierIndex();
+const indexRowIndex = INDEX_ROWS.findIndex(
+  (r) => (r.slug_path ?? r.slug) === dossier.slug,
+);
+const indexRow = indexRowIndex >= 0 ? INDEX_ROWS[indexRowIndex]! : null;
+const watchItems = decisionsForDossier(getWatch(), dossier);
+// P36.59 (WX-04a): the v2 items matched on the dossier's jurisdiction_key
+// (the place page's own place+children rule) + the emitted watch place path
+// for the block's link — never a dead route.
+const watchItemsV2 = decisionsForDossierV2(getWatchV2().items, dossier);
+const WATCH_PAGES = watchContext().pages;
+const watchPlaceRow = dossier.jurisdiction_key
+  ? WATCH_PAGES.find((p) => p.key === dossier.jurisdiction_key)
+  : undefined;
+const watchPlacePath = watchPlaceRow?.path ?? null;
+// The "Sites list →" link resolves only when a sites page was actually
+// emitted for this dossier (emittedSiteLists is the same gate the sites
+// route builds paths from) — never a dead link.
+const SITES_LIST_SLUGS = new Set(
+  emittedSiteLists(
+    buildSitesModel(
+      getMapSites(),
+      buildJurisdictionLookup(getDossiers(), getDossierIndex(), getJurisdictionKeyMap()),
+    ),
+  ).map((l) => l.slug),
+);
+const sitesHref = SITES_LIST_SLUGS.has(dossier.slug) ? `dossier/${dossier.slug}/sites/` : null;
+const ptrFor = (rest: string): string =>
+  ref === null || ref.index === null ? rest || "/" : `/${ref.index}${rest}`;
+const stripSpec = (
+  id: string,
+  value: number | string,
+  pointer: string,
+  artifact?: string,
+) => ({
+  id,
+  class: "dossier" as const,
+  artifact: artifact ?? ref!.artifact,
+  pointer,
+  href: artifact ? artifactHref(artifact) : ref ? artifactHref(ref.artifact) : "",
+  value,
+  definition: "#dossier-header-strip",
+  breakdown: "#dossier-header-strip",
+  targets: dossierTargets({
+    recordList,
+    provenanceHref: "#hwkt-heading",
+    perSourceSlices: null,
+  }),
+});
+// The header strip's numerals: every spec points into the dossier's own
+// (manifest-listed) artifact — the row field when the doc carries it, the
+// doc root when the strip reads the index row (the figure names the dossier
+// record the count derives from; the index artifact is not manifest-listed
+// in fixture builds so it can never be a figure's evidence route).
+const STRIP_SPECS = new Map();
+const put = (id: string, value: number | undefined, pointer: string, artifact?: string) => {
+  if (value === undefined) return;
+  STRIP_SPECS.set(id, stripSpec(id, value, pointer, artifact));
+};
+put(
+  "strip-records",
+  indexRow?.records ?? dossier.rollup?.records,
+  dossier.rollup?.records !== undefined ? ptrFor("/rollup/records") : ptrFor(""),
+);
+put("strip-located", indexRow?.located?.by_point, ptrFor(""));
+put("strip-sources", indexRow?.sources?.count, ptrFor(""));
+put("strip-questions", indexRow?.open_questions, ptrFor(""));
+put(
+  "strip-children",
+  indexRow?.children?.count ?? (dossier.children ? dossier.children.length : undefined),
+  dossier.children ? ptrFor("/children") : ptrFor(""),
+);
+STRIP_SPECS.set(
+  "strip-disagreements",
+  stripSpec(
+    "strip-disagreements",
+    (indexRow?.disagreements?.declared_here_located_elsewhere ?? dossier.disagreements?.declared_here_located_elsewhere ?? 0) +
+      (indexRow?.disagreements?.located_here_declared_elsewhere ?? dossier.disagreements?.located_here_declared_elsewhere ?? 0),
+    dossier.disagreements ? ptrFor("/disagreements") : ptrFor(""),
+  ),
+);
+// The map figure's counters — the twin's own metadata pointers.
+const mapMeta = visualsDoc && "desc" in visualsDoc.map ? visualsDoc.map : null;
+if (mapMeta) {
+  for (const [id, ptr, v] of [
+    ["map-drawn", "/figures/0/meta/desc/records_drawn", mapMeta.desc.records_drawn],
+    ["map-total", "/figures/0/meta/desc/records_total", mapMeta.desc.records_total],
+    ["map-not-drawn", "/figures/0/meta/not_drawn", mapMeta.not_drawn.declared_no_point],
+    ["map-recon", "/figures/0/meta/desc", mapMeta.desc.records_drawn],
+  ] as [string, string, number][]) {
+    STRIP_SPECS.set(id, stripSpec(id, v, ptrFor(ptr)));
+  }
+} else if (visualsDoc && dossier.rollup?.records !== undefined) {
+  // The typed map absence still names the dossier's record figure — its
+  // pointer is the dossier artifact's roll-up, not the visuals doc.
+  STRIP_SPECS.set(
+    "map-total",
+    stripSpec("map-total", dossier.rollup.records, ptrFor("/rollup/records")),
+  );
+}
+// 'Next decisions (N)' — N counts the dossier's watch items; the figure's
+// pointer names the dossier's own row (the index artifact where one exists,
+// the dossier artifact otherwise) — a derived count over a real record.
+STRIP_SPECS.set("next-decisions", stripSpec("next-decisions", watchItemsV2.length > 0 ? watchItemsV2.length : watchItems.length, ptrFor("")));
+const plan = templatePlan(dossier);
+// P36.56 (SRCH-06, SIG-UI-128): the scoped-search GET form — scoped to this
+// dossier's jkey (the contract parameter carries its descendants,
+// SIG-UI-059) and pinned to the release's federated route. A dossier with
+// no canonical key renders the release-wide form with the absence stated.
+const scopedSearchTarget = getLatestReleaseTarget();
 // P36.18 (UXK14-2, SIG-UI-150): the page-header band's breadcrumb — the
 // canonical chain this dossier sits under (country > state > county > place),
 // every ancestor its own dossier page (P35.45). A legacy flat dossier carries
@@ -533,24 +668,65 @@ return (
     <WhatWeDontKnow gaps={dossier.gaps} variant="summary" specs={specMap} />
   </section>
 
-  {/* P36.52 (DSRC-02, K5 §4.1): "Where this comes from" — the top sources,
-      the totals line and the explorer link; replaces the bare-id "Sources:"
-      row. */}
-  <WhereThisComesFrom slug={dossier.slug} doc={dsrcDoc} figs={dsrcFigs} sourcePageIds={sourcePageIds} />
-
-  {dossier.sections.map((section) => {
+  {/* P36.55 (VIZ-02, SIG-UI-069): the ONE template — the v2 render plan the
+      twelve §39.2 sections and the new blocks compose through (every section
+      a value or a typed empty state). */}
+  {plan.map((unit) => {
+    if (unit.kind === "header-strip") {
+      return <DossierHeaderStrip dossier={dossier} row={indexRow} specs={STRIP_SPECS} />;
+    }
+    if (unit.kind === "where-this-comes-from") {
+      return <WhereThisComesFrom slug={dossier.slug} doc={dsrcDoc} figs={dsrcFigs} sourcePageIds={sourcePageIds} />;
+    }
+    if (unit.kind === "next-decisions") {
+      return <DossierNextDecisions dossier={dossier} items={watchItems} itemsV2={watchItemsV2} watchPlacePath={watchPlacePath} spec={STRIP_SPECS.get("next-decisions")} />;
+    }
+    if (unit.kind === "other-public-resources") {
+      return <OtherPublicResources />;
+    }
+    if (unit.kind === "rollup") {
+      return null; // the roll-up block renders below, last in the plan
+    }
+    const section = unit.section;
     const action = SECTION_ACTION_BLOCKS[section.section_id];
     const noRecord =
       section.section_id !== "what_we_dont_know" && sectionIsEmpty(section) && !action;
+    const slot = NETWORK_SLOT_SECTIONS[section.section_id];
     return (
       <section aria-labelledby={`sec-${section.section_id}`} data-testid="dossier-section" data-section-id={section.section_id}>
         <h2 id={`sec-${section.section_id}`}>{SECTION_TITLES[section.section_id]}</h2>
+        {section.section_id === "at_a_glance" && (
+          <>
+            <DossierLocator doc={visualsDoc} symbols={locatorSymbols} />
+            <DossierMapFigure
+              doc={visualsDoc}
+              twin={mapTwin}
+              dossierRecords={dossier.rollup?.records ?? indexRow?.records ?? null}
+              specs={STRIP_SPECS}
+              sitesHref={sitesHref}
+            />
+            <DossierExploreBar dossier={dossier} jkey={dossier.jurisdiction_key ?? null} />
+            <ScopedSearchForm
+              scope={dossier.jurisdiction_key
+                ? {
+                    param: "jurisdiction",
+                    value: dossier.jurisdiction_key,
+                    label: dossier.display_name ?? dossier.name ?? dossier.jurisdiction,
+                  }
+                : null}
+              searchHref={scopedSearchTarget?.federatedSearchHref ?? null}
+              heading="Search"
+              testid="dossier-scoped-search"
+            />
+          </>
+        )}
         {section.section_id === "what_we_dont_know" ? (
           <WhatWeDontKnow gaps={dossier.gaps} variant="section" specs={specMap} />
         ) : (
           <DossierSection section={section} specs={specMap} />
         )}
         {action && <ActionBlocks dossier={dossier} which={action} specs={specMap} />}
+        {slot && <NetworkFigureSlot figure={slot.figure} title={slot.title} slots={visualsDoc?.networks ?? []} />}
         {noRecord && (
           <p class="sig-no-record" data-testid="section-no-record" data-copy="DS-01">{NO_RECORD_IN_SIG}</p>
         )}

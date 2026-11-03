@@ -26,6 +26,17 @@ export interface TypeaheadEntry {
   alt?: string[];
   /** The destination the option navigates to. */
   href: string;
+  /**
+   * P36.56 (SRCH-06 scope): a place entry's canonical jurisdiction key and
+   * its root-first ancestor chain (self last — the same ancestry
+   * `jurisdiction_chain` records). A `jurisdiction:<jkey>` scope matches an
+   * entry when the scope key sits in this chain — the place itself and its
+   * descendants, never a guessed ancestry.
+   */
+  jkey?: string;
+  chain?: string[];
+  /** P36.56: a source entry's registry id — `source:<id>` scope key. */
+  source_id?: string;
 }
 
 export interface TypeaheadShard {
@@ -80,6 +91,25 @@ export function shardKey(query: string, keyLen = 2): string | null {
 }
 
 /**
+ * P36.56 (SRCH-06) — the `<sig-typeahead>` `scope` attribute:
+ * `jurisdiction:<jkey>` keeps only the place whose chain holds the scope
+ * key (the place itself and its descendants — `jurisdiction_chain`
+ * semantics); `source:<id>` keeps the named source entry. Anything
+ * unparseable scopes to nothing rather than widening — the element simply
+ * falls back to the complete no-JS form submit.
+ */
+export function scopeMatches(
+  entry: TypeaheadEntry,
+  scope: string | null,
+): boolean {
+  const m = scope == null ? null : /^(\w+):(.+)$/.exec(scope);
+  if (m === null) return true;
+  return m[1] === "jurisdiction"
+    ? (entry.chain ?? (entry.jkey ? [entry.jkey] : [])).includes(m[2]!)
+    : m[1] === "source" && entry.source_id === m[2];
+}
+
+/**
  * Rank entries for a query: a label-word prefix beats a bare substring;
  * ties keep shard order (the shard's own ranking). Alternates (`alt`)
  * match like the label but never render — "OKC" still surfaces "Oklahoma
@@ -100,7 +130,13 @@ export function matchEntries(
   };
   const scoreEntry = (entry: TypeaheadEntry): number => {
     let s = score(entry.label);
-    for (const alt of entry.alt ?? []) s = Math.min(s === -1 ? 2 : s, score(alt));
+    // An alternate only ever HELPS — a non-matching alt must never demote a
+    // label that matched (P36.56 fix: `min(s, -1)` dropped every entry whose
+    // code alt — "US", "OK" — missed the query).
+    for (const alt of entry.alt ?? []) {
+      const a = score(alt);
+      if (a >= 0) s = Math.min(s === -1 ? 2 : s, a);
+    }
     return s;
   };
   return entries

@@ -28,22 +28,45 @@ async function expectOnlyAllowListedKitModules(page: Page): Promise<void> {
   }
 }
 
-test("the watch + recommender + citation list render without JS (SIG-UI-037)", async ({ page }) => {
+test("the watch index, place page, item page and feeds render without JS (SIG-UI-037)", async ({
+  page,
+}) => {
   await page.goto("/watch/");
   await expect(page.getByTestId("watch-item").first()).toBeVisible();
-  // Subscription links are plain anchors (a no-JS user can still subscribe).
-  await expect(page.getByTestId("ical-link").first()).toBeVisible();
-  await expect(page.getByTestId("rss-link").first()).toBeVisible();
-  // The recommendation and citation lists are plain lists.
-  await expect(page.getByTestId("recommended-artifact").first()).toBeVisible();
-  await expect(page.getByTestId("citation-entry").first()).toBeVisible();
-  await expect(page.getByTestId("neutrality-note")).toBeVisible();
+  await expect(page.getByTestId("watch-coverage-summary")).toBeVisible();
+  await expect(page.getByTestId("feeds-link")).toBeVisible();
+  await expectOnlyAllowListedKitModules(page);
+
+  await page.goto("/watch/place/usa/ok/");
+  await expect(page.getByTestId("watch-coverage")).toBeVisible();
+  await expect(page.getByTestId("watch-item").first()).toBeVisible();
+
+  // The empty state is typed and honest without JS (SIG-WATCH-010).
+  await page.goto("/watch/place/deu/");
+  await expect(page.getByTestId("watch-coverage")).toHaveAttribute("data-cause", "not_monitored");
+  await expect(page.getByTestId("empty-state")).toBeVisible();
+
+  // The item page's evidence + upstream links are plain anchors.
+  await page.goto("/watch/item/W-us-solicitation-n9-cd34/");
+  await expect(page.getByTestId("item-date")).toBeVisible();
+  await expect(page.getByTestId("upstream-link").first()).toBeVisible();
+  await expectOnlyAllowListedKitModules(page);
+
+  // The feeds directory's subscription links are plain anchors.
+  await page.goto("/watch/feeds/");
+  await expect(page.getByTestId("feed-ics").first()).toBeVisible();
+  await expect(page.getByTestId("feed-rss").first()).toBeVisible();
 });
 
-test("the decision date, not the expiry, is in the static HTML (SIG-UI-014b)", async ({ page }) => {
-  await page.goto("/watch/");
-  const auto = page.locator("[data-testid='watch-item'][data-contract-id='contract:okcpd-alpr']");
-  await expect(auto).toHaveAttribute("data-decision-date", "2027-01-02");
+test("the one alert date with its certainty is in the static HTML (SIG-WATCH-002)", async ({
+  page,
+}) => {
+  await page.goto("/watch/item/W-us-ok-oklahoma-city-4064000-renewal-c100-ab12/");
+  await expect(page.getByTestId("item-date")).toContainText("2027-01-02");
+  await expect(page.getByTestId("item-certainty")).toHaveText("derived");
+  // The upper-bound expiry never says "deadline".
+  await page.goto("/watch/item/W-us-ok-expiry-rtcc-77cd/");
+  await expect(page.getByTestId("item-certainty")).toHaveText("latest possible date");
 });
 
 test("the evidence viewer highlights the span + diffs captures without JS (SIG-UI-028/029)", async ({
