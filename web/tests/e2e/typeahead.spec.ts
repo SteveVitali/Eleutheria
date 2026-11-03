@@ -83,7 +83,9 @@ test.describe("the header typeahead (SIG-SRCH-010)", () => {
     const input = header.locator("input[name='q']");
     await input.fill("ok");
     const list = header.locator("[role='listbox']");
-    await expect(list).toBeVisible();
+    // The island bundle + shard fetch can exceed the 5 s default under
+    // parallel-suite load — same hardening as scoped-search.spec.ts.
+    await expect(list).toBeVisible({ timeout: 15_000 });
     await expect(list.getByRole("option").first()).toContainText("Oklahoma");
   });
 });
