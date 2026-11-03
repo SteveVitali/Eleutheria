@@ -120,7 +120,7 @@ export const EVIDENCE_ARTIFACTS: EvidenceArtifact[] = [
     place_key: "usa/ok/oklahoma-city-4064000",
     captures: [
       {
-        capture_id: "capture:contract-okcpd-alpr-v1",
+        capture_id: "capture:okcpd-contract-2026-07",
         retrieved_at: "2026-07-01T14:22:00Z",
         content_digest: "sha256:ab12cd34ef56ab12cd34ef56ab12cd34ef56ab12cd34ef56ab12cd34ef56ab12",
         byte_size: 412_700,
@@ -173,7 +173,7 @@ export const EVIDENCE_ARTIFACTS: EvidenceArtifact[] = [
     // P36.60: two real captures of the same artifact — the §4.4 diff pair.
     captures: [
       {
-        capture_id: "capture:portal-okcpd-2026-06",
+        capture_id: "capture:okcpd-portal-2026-06",
         retrieved_at: "2026-06-01T09:00:00Z",
         content_digest: "sha256:1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff",
         byte_size: 58_400,
@@ -186,7 +186,7 @@ export const EVIDENCE_ARTIFACTS: EvidenceArtifact[] = [
         fields: { active_device_count: 40, retention_days: 30, network_partners: 142 },
       },
       {
-        capture_id: "capture:portal-okcpd-2026-08",
+        capture_id: "capture:okcpd-portal-2026-08",
         retrieved_at: "2026-08-01T09:00:00Z",
         content_digest: "sha256:aaaa1111bbbb2222cccc3333dddd4444eeee5555ffff66667777888899990000",
         byte_size: 59_100,

@@ -56,7 +56,7 @@ const rows = diffFields(from, to);
   <p>
     <a href={withBase(`evidence/artifact/${handle}/`)}>← {artifactTitle(a)}</a>
   </p>
-  <section class="sig-capture-diff" data-testid="capture-diff" data-artifact-id={a.artifact_id}>
+  <section class="sig-capture-diff" data-testid="artifact-capture-diff" data-artifact-id={a.artifact_id}>
     <p>
       What changed between captures —
       Two captures of the same artifact, diffed field by field —

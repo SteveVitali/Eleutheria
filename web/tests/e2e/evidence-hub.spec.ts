@@ -68,7 +68,7 @@ test.describe("artifact pages (§4.2)", () => {
     await page.goto(`/evidence/artifact/${PORTAL_HANDLE}/`);
     await expect(page.getByTestId("capture-row")).toHaveCount(2);
     await page.getByTestId("diff-link").first().click();
-    await expect(page.getByTestId("capture-diff")).toBeVisible();
+    await expect(page.getByTestId("artifact-capture-diff")).toBeVisible();
     // active_device_count changed between the June and August captures.
     const rows = page.getByTestId("diff-field");
     await expect(rows).toHaveCount(3);

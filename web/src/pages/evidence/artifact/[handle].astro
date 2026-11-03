@@ -258,7 +258,7 @@ const citingWatch = (getWatchV2()?.items ?? []).filter((i) =>
 
     <h2 id="cite-heading">Cite</h2>
     <p>
-      Stable locator <code>{a.permalink}</code>, as of {a.as_of}.{" "}
+      Stable locator <code>{withBase(`evidence/artifact/${handle}/`)}</code>, as of {a.as_of}.{" "}
       <a href={withBase("dispute/")}>Dispute or correct this record →</a>
     </p>
   </article>

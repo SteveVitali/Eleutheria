@@ -149,8 +149,8 @@ describe("the §4.4 diff (SIG-EVUI-005 — real captures of the same artifact on
     const pairs = diffPairs(byId("snapshot:portal-2026-08"));
     expect(pairs).toHaveLength(1);
     expect(parseDiffPair(`${pairs[0]!.from.capture_id}..${pairs[0]!.to.capture_id}`)).toEqual([
-      "capture:portal-okcpd-2026-06",
-      "capture:portal-okcpd-2026-08",
+      "capture:okcpd-portal-2026-06",
+      "capture:okcpd-portal-2026-08",
     ]);
     const rows = diffFields(pairs[0]!.from, pairs[0]!.to);
     expect(rows.find((r) => r.field === "active_device_count")?.changed).toBe(true);
