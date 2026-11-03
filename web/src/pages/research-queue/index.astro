@@ -1,0 +1,163 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.61 (K11 RQ-03a, SIG-RQ-004, SIG-UI-079/031): the research-queue hub —
+// what the queue is, how to help (the pick → do → report strip), start-here
+// entries by place/role/type, the counts that reconcile, the first ≤50 cards
+// (K9 §6.1 pagination through `/research-queue/page/<n>/`), the D-K11-1
+// campaign lane, the sharded downloads note and the facet nav. T1 zero-JS.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EmptyState from "../../components/EmptyState.astro";
+import QueueCard from "../../components/QueueCard.astro";
+import QueueCampaignCard from "../../components/QueueCampaignCard.astro";
+import { assertUniqueTaskAnchors } from "../../lib/research-queue";
+import {
+  SORT_LABELS,
+  facetValues,
+  pageCount,
+  pageSlice,
+  placeFacets,
+  queueCampaignsHref,
+  queuePlaceHref,
+  queueRoleHref,
+  queueSortHref,
+  queueTypeHref,
+  sortQueue,
+} from "../../lib/queue-hub";
+import {
+  getQueueAsOf,
+  getQueueCampaigns,
+  getJurisdictionClaims,
+  getQueueMeta,
+  getResearchQueue,
+  getResearchQueueProvenance,
+} from "../../lib/data";
+import { withBase } from "../../lib/paths";
+
+const CARDS = getResearchQueue();
+const CLAIMS = getJurisdictionClaims();
+const AS_OF = getQueueAsOf();
+const META = getQueueMeta();
+const CAMPAIGNS = getQueueCampaigns();
+const PROVENANCE = getResearchQueueProvenance();
+
+const ordered = sortQueue(CARDS, CLAIMS, AS_OF, "priority");
+assertUniqueTaskAnchors(ordered);
+const shown = pageSlice(ordered, 1);
+const pages = pageCount(ordered.length);
+const places = placeFacets(CARDS);
+const types = facetValues(CARDS, "task_type");
+const roles = facetValues(CARDS, "assignee_class");
+const lanes = META.lanes ?? {};
+---
+
+<BaseLayout title="Research queue" path={withBase("research-queue/")} provenance={PROVENANCE} provenanceName="research queue" provenancePointerBase="/surfaces/research_queue">
+  <p>
+    The research queue turns every open gap into <strong>actionable work</strong>. Each
+    task states what would <strong>close</strong> it, what <strong>evidence</strong> is
+    sought, <strong>who</strong> it is for, and how much <strong>effort</strong> it is.
+    Absence is an invitation, not a dead end.
+  </p>
+  <p class="sig-queue-note" data-testid="no-leaderboard-note">
+    There is no volume leaderboard. Recognition is qualitative and tied to verified
+    contributions — volume incentives produce low-quality submissions at scale (SIG-TASK-012).
+  </p>
+
+  <h2 id="help-heading">How to help</h2>
+  <p data-copy="RQ-02">Pick a task, do the work — file the request, check the portal, map in OpenStreetMap — then report what you found so the next release carries it.</p>
+
+  <h2 id="start-heading">Start here</h2>
+  <p data-copy="RQ-04">Start here — pick a place, a kind of work or a role.</p>
+  <ul class="sig-queue-start" aria-labelledby="start-heading">
+    {places.length > 0 && (
+      <li data-testid="start-place">
+        Tasks by place — {places.map((p, i) => (
+          <>
+            {i > 0 && ", "}
+            <a href={withBase(queuePlaceHref(p.slug))}>{p.name}</a> ({p.tasks})
+          </>
+        ))}.
+      </li>
+    )}
+    {roles.length > 0 && (
+      <li data-testid="start-role">
+        Tasks by role — {roles.map((r, i) => (
+          <>
+            {i > 0 && ", "}
+            <a href={withBase(queueRoleHref(r.id))}>{r.label}</a> ({r.tasks})
+          </>
+        ))}.
+      </li>
+    )}
+    {types.length > 0 && (
+      <li data-testid="start-type">
+        Tasks by kind — {types.map((t, i) => (
+          <>
+            {i > 0 && ", "}
+            <a href={withBase(queueTypeHref(t.id))}>{t.label}</a> ({t.tasks})
+          </>
+        ))}.
+      </li>
+    )}
+  </ul>
+
+  <h2 id="queue-heading">Open research tasks ({ordered.length})</h2>
+  {ordered.length === 0 && <EmptyState surface="researchQueue" />}
+  <p class="sig-queue-sortnav" data-testid="sort-nav">
+    Sort:{" "}
+    {(Object.keys(SORT_LABELS) as (keyof typeof SORT_LABELS)[]).map((k, i) => (
+      <>
+        {i > 0 && " · "}
+        {k === "priority" ? SORT_LABELS[k] : <a href={withBase(queueSortHref(k))}>{SORT_LABELS[k]}</a>}
+      </>
+    ))}
+  </p>
+  <ol class="sig-queue" aria-labelledby="queue-heading">
+    {shown.map((card) => <QueueCard card={card} claims={CLAIMS} asOf={AS_OF} />)}
+  </ol>
+  {pages > 1 && (
+    <p class="sig-queue-pagination" data-testid="queue-pagination">
+      Showing {shown.length} of {ordered.length} —{" "}
+      <a href={withBase(`research-queue/page/2/`)}>next page →</a>
+    </p>
+  )}
+
+  <h2 id="campaigns-heading">Mapping campaigns ({CAMPAIGNS.length})</h2>
+  <p data-copy="RQ-05">Field gaps on individual mapped objects aggregate into per-place mapping campaigns, never thousands of separate cards.</p>
+  {(lanes.campaign_members ?? 0) > 0 && (
+    <p data-testid="campaign-lane-counts">
+      {lanes.campaigns ?? CAMPAIGNS.length} campaigns covering{" "}
+      {lanes.campaign_members} records
+      {(lanes.metric_only_members ?? 0) > 0 && (
+        <>; {lanes.metric_only_members} further field gaps are held to coverage metrics only</>
+      )}.
+    </p>
+  )}
+  {CAMPAIGNS.length > 0 && (
+    <ol class="sig-campaigns" aria-labelledby="campaigns-heading">
+      {CAMPAIGNS.slice(0, 5).map((c) => <QueueCampaignCard campaign={c} />)}
+    </ol>
+  )}
+  {CAMPAIGNS.length > 5 && (
+    <p><a href={withBase(queueCampaignsHref())} data-testid="campaigns-link">All campaigns ({CAMPAIGNS.length}) →</a></p>
+  )}
+  {(lanes.curation?.exported === false || lanes.curation?.note) && (
+    <p class="sig-queue-note" data-testid="curation-note">
+      {lanes.curation?.note ?? "curation-lane work happens in the loopback curation app (D-K11-5)"}
+    </p>
+  )}
+
+  <h2 id="downloads-heading">Downloads</h2>
+  <p data-copy="RQ-06">The full queue ships as sharded JSONL files by lane and place; no single file is over 25 MB.</p>
+  {(META.shards ?? []).length > 0 && (
+    <ul class="sig-queue-shards" data-testid="queue-shards">
+      {META.shards!.map((s) => (
+        <li>
+          <code>{s.path}</code> — {s.rows} rows
+        </li>
+      ))}
+    </ul>
+  )}
+</BaseLayout>

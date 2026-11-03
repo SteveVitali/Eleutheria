@@ -1,0 +1,157 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.61 (K11 RQ-03a, SIG-RQ-004): the per-place queue page —
+// `/research-queue/place/<slug-path>/` on the card's `place.slug` (the K4
+// display path), covering the place AND its slug-path children (state →
+// cities). `…/page/<n>/`, `…/sort/<k>/` and `…/sort/<k>/page/<n>/` ride the
+// same rest param; `…/type/<t>/` (+ page/sort) mints only for places with
+// more than PLACE_TYPE_THRESHOLD tasks (K11 §5.2).
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import QueueCard from "../../../components/QueueCard.astro";
+import {
+  QUEUE_SORTS,
+  PLACE_TYPE_THRESHOLD,
+  SORT_LABELS,
+  childFacets,
+  facetValues,
+  nestedTypeFacets,
+  pageCount,
+  pageNumbers,
+  pageSlice,
+  parseQueuePlacePath,
+  placeFacets,
+  queuePlaceHref,
+  queuePlaceTypeHref,
+  sortQueue,
+  tasksForPlace,
+  tasksForType,
+  typeLabel,
+  type QueueSort,
+} from "../../../lib/queue-hub";
+import {
+  getJurisdictionClaims,
+  getQueueAsOf,
+  getResearchQueue,
+} from "../../../lib/data";
+import { withBase } from "../../../lib/paths";
+
+export function getStaticPaths() {
+  // The route path separator — built, never a `"/"` literal site (SIG-REL-008).
+  const PS = String.fromCharCode(47);
+  const cards = getResearchQueue();
+  const claims = getJurisdictionClaims();
+  const asOf = getQueueAsOf();
+  const out: {
+    params: { path: string };
+    props: { slug: string; type?: string; sort: QueueSort; n: number };
+  }[] = [];
+  for (const facet of placeFacets(cards)) {
+    const items = tasksForPlace(cards, facet.slug);
+    const facets = facet.slug === "unplaced" ? [] : nestedTypeFacets(cards, facet.slug);
+    const variants: { type?: string; sort: QueueSort }[] = [{ sort: "priority" }];
+    for (const k of QUEUE_SORTS.filter((x) => x !== "priority")) variants.push({ sort: k });
+    for (const tf of facets) {
+      variants.push({ type: tf.id, sort: "priority" });
+      for (const k of QUEUE_SORTS.filter((x) => x !== "priority")) {
+        variants.push({ type: tf.id, sort: k });
+      }
+    }
+    for (const v of variants) {
+      const scoped = v.type ? tasksForType(items, v.type) : items;
+      for (const n of pageNumbers(scoped.length)) {
+        out.push({
+          params: {
+            path:
+              facet.slug +
+              (v.type ? `${PS}type${PS}${v.type}` : "") +
+              (v.sort !== "priority" ? `${PS}sort${PS}${v.sort}` : "") +
+              (n > 1 ? `${PS}page${PS}${n}` : ""),
+          },
+          props: { slug: facet.slug, type: v.type, sort: v.sort, n },
+        });
+      }
+    }
+  }
+  return out;
+}
+
+const { slug, type, sort, n } = Astro.props as {
+  slug: string;
+  type?: string;
+  sort: QueueSort;
+  n: number;
+};
+const parsed = parseQueuePlacePath(Astro.params.path ?? "");
+if (!parsed || parsed.path !== slug) {
+  throw new Error(`queue place: unparseable path "${Astro.params.path}" (SIG-ENG-042)`);
+}
+const CARDS = getResearchQueue();
+const CLAIMS = getJurisdictionClaims();
+const AS_OF = getQueueAsOf();
+const placeItems = tasksForPlace(CARDS, slug);
+const items = sortQueue(type ? tasksForType(placeItems, type) : placeItems, CLAIMS, AS_OF, sort);
+const shown = pageSlice(items, n);
+const total = pageCount(items.length);
+const facets = placeFacets(CARDS);
+const facet = facets.find((f) => f.slug === slug);
+const name = facet?.name ?? (slug === "unplaced" ? "Not yet placed" : slug);
+const children = childFacets(facets, slug);
+const nested = slug === "unplaced" ? [] : nestedTypeFacets(CARDS, slug);
+const href = (s: QueueSort, p: number) =>
+  type ? queuePlaceTypeHref(slug, type, s, p) : queuePlaceHref(slug, s, p);
+---
+
+<BaseLayout
+  title={`Research queue — ${name}${type ? `, ${typeLabel(type)}` : ""}${sort !== "priority" ? ` · ${SORT_LABELS[sort]}` : ""}${n > 1 ? ` — page ${n}` : ""}`}
+  path={withBase(`research-queue/place/${Astro.params.path}/`)}
+>
+  <p>
+    Open research tasks {slug === "unplaced" ? "that SIG cannot yet place" : <>for <strong>{name}</strong> and the places under it</>}
+    {type && <> of type <strong>{typeLabel(type)}</strong></>} ({items.length}).{" "}
+    <a href={withBase("research-queue/")}>Back to the queue hub</a>
+  </p>
+  {children.length > 0 && !type && (
+    <p data-testid="place-children">
+      Places under {name}:{" "}
+      {children.map((c, i) => (
+        <>
+          {i > 0 && ", "}
+          <a href={withBase(queuePlaceHref(c.slug))}>{c.name}</a> ({c.tasks})
+        </>
+      ))}
+    </p>
+  )}
+  {nested.length > 0 && !type && (
+    <p class="sig-queue-sortnav" data-testid="place-types">
+      By type here:{" "}
+      {nested.map((t, i) => (
+        <>
+          {i > 0 && " · "}
+          <a href={withBase(queuePlaceTypeHref(slug, t.id))}>{t.label}</a> ({t.tasks})
+        </>
+      ))}
+    </p>
+  )}
+  <p class="sig-queue-sortnav" data-testid="sort-nav">
+    Sort:{" "}
+    {QUEUE_SORTS.map((k, i) => (
+      <>
+        {i > 0 && " · "}
+        {k === sort ? SORT_LABELS[k] : <a href={withBase(href(k, 1))}>{SORT_LABELS[k]}</a>}
+      </>
+    ))}
+  </p>
+  <ol class="sig-queue">
+    {shown.map((card) => <QueueCard card={card} claims={CLAIMS} asOf={AS_OF} />)}
+  </ol>
+  {total > 1 && (
+    <p class="sig-queue-pagination" data-testid="queue-pagination">
+      Page {n} of {total} —
+      {n > 1 && <> <a href={withBase(href(sort, n - 1))}>← previous</a></>}
+      {n < total && <> <a href={withBase(href(sort, n + 1))}>next page →</a></>}
+    </p>
+  )}
+</BaseLayout>

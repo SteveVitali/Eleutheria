@@ -1,0 +1,56 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.61 (K11 RQ-03a): `/research-queue/role/<assignee>/page/<n>/` — the role facet's
+// pagination fallback (K9 §6.1), emitted only for pages 2..N.
+import BaseLayout from "../../../../../layouts/BaseLayout.astro";
+import QueueCard from "../../../../../components/QueueCard.astro";
+import {
+  pageCount,
+  pageNumbers,
+  pageSlice,
+  queueRoleHref,
+  sortQueue,
+  tasksForRole,
+  roleLabel,
+  facetValues,
+} from "../../../../../lib/queue-hub";
+import {
+  getJurisdictionClaims,
+  getQueueAsOf,
+  getResearchQueue,
+} from "../../../../../lib/data";
+import { withBase } from "../../../../../lib/paths";
+
+export function getStaticPaths() {
+  const cards = getResearchQueue();
+  const out: { params: { r: string; n: string }; props: { r: string; n: number } }[] = [];
+  for (const f of facetValues(cards, "assignee_class")) {
+    for (const n of pageNumbers(f.tasks).filter((x) => x > 1)) {
+      out.push({ params: { r: f.id, n: String(n) }, props: { r: f.id, n } });
+    }
+  }
+  return out;
+}
+
+const { r, n } = Astro.props as { r: string; n: number };
+const CARDS = getResearchQueue();
+const CLAIMS = getJurisdictionClaims();
+const AS_OF = getQueueAsOf();
+const items = sortQueue(tasksForRole(CARDS, r), CLAIMS, AS_OF, "priority");
+const shown = pageSlice(items, n);
+const total = pageCount(items.length);
+---
+
+<BaseLayout title={`Research queue — ${roleLabel(r)}, page ${n}`} path={withBase(`research-queue/role/${r}/page/${n}/`)}>
+  <p>
+    {roleLabel(r)} — page {n} of {total}.{" "}
+    <a href={withBase(n > 2 ? queueRoleHref(r, "priority", n - 1) : `research-queue/role/${r}/`)}>← previous</a>
+    {n < total && <> · <a href={withBase(queueRoleHref(r, "priority", n + 1))}>next page →</a></>}
+  </p>
+  <ol class="sig-queue">
+    {shown.map((card) => <QueueCard card={card} claims={CLAIMS} asOf={AS_OF} />)}
+  </ol>
+</BaseLayout>

@@ -1,0 +1,50 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.61 (K11 RQ-03a): `/research-queue/page/<n>/` — the hub's pagination
+// fallback (K9 §6.1), emitted only for pages 2..N (page 1 IS the hub).
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import QueueCard from "../../../components/QueueCard.astro";
+import {
+  pageCount,
+  pageNumbers,
+  pageSlice,
+  sortQueue,
+} from "../../../lib/queue-hub";
+import {
+  getJurisdictionClaims,
+  getQueueAsOf,
+  getResearchQueue,
+} from "../../../lib/data";
+import { withBase } from "../../../lib/paths";
+
+export function getStaticPaths() {
+  const cards = getResearchQueue();
+  const items = sortQueue(cards, getJurisdictionClaims(), getQueueAsOf(), "priority");
+  return pageNumbers(items.length)
+    .filter((n) => n > 1)
+    .map((n) => ({ params: { n: String(n) }, props: { n } }));
+}
+
+const { n } = Astro.props as { n: number };
+const CARDS = getResearchQueue();
+const CLAIMS = getJurisdictionClaims();
+const AS_OF = getQueueAsOf();
+const items = sortQueue(CARDS, CLAIMS, AS_OF, "priority");
+const shown = pageSlice(items, n);
+const total = pageCount(items.length);
+---
+
+<BaseLayout title={`Research queue — page ${n}`} path={withBase(`research-queue/page/${n}/`)}>
+  <p>
+    Open research tasks — page {n} of {total}.{" "}
+    {n > 2 && <a href={withBase(`research-queue/page/${n - 1}/`)}>← previous</a>}
+    {n === 2 && <a href={withBase("research-queue/")}>← first page</a>}
+    {n < total && <> · <a href={withBase(`research-queue/page/${n + 1}/`)}>next page →</a></>}
+  </p>
+  <ol class="sig-queue">
+    {shown.map((card) => <QueueCard card={card} claims={CLAIMS} asOf={AS_OF} />)}
+  </ol>
+</BaseLayout>

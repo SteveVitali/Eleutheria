@@ -1,0 +1,59 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.61 (K11 RQ-03a): `/research-queue/sort/<k>/page/<n>/` — the sort route's
+// pagination fallback (K9 §6.1), emitted only for pages 2..N.
+import BaseLayout from "../../../../../layouts/BaseLayout.astro";
+import QueueCard from "../../../../../components/QueueCard.astro";
+import {
+  QUEUE_SORTS,
+  SORT_LABELS,
+  pageCount,
+  pageNumbers,
+  pageSlice,
+  queueSortHref,
+  sortQueue,
+  type QueueSort,
+} from "../../../../../lib/queue-hub";
+import {
+  getJurisdictionClaims,
+  getQueueAsOf,
+  getResearchQueue,
+} from "../../../../../lib/data";
+import { withBase } from "../../../../../lib/paths";
+
+export function getStaticPaths() {
+  const cards = getResearchQueue();
+  const claims = getJurisdictionClaims();
+  const asOf = getQueueAsOf();
+  const out: { params: { k: string; n: string }; props: { k: QueueSort; n: number } }[] = [];
+  for (const k of QUEUE_SORTS.filter((x) => x !== "priority")) {
+    const items = sortQueue(cards, claims, asOf, k);
+    for (const n of pageNumbers(items.length).filter((x) => x > 1)) {
+      out.push({ params: { k, n: String(n) }, props: { k, n } });
+    }
+  }
+  return out;
+}
+
+const { k, n } = Astro.props as { k: QueueSort; n: number };
+const CARDS = getResearchQueue();
+const CLAIMS = getJurisdictionClaims();
+const AS_OF = getQueueAsOf();
+const items = sortQueue(CARDS, CLAIMS, AS_OF, k);
+const shown = pageSlice(items, n);
+const total = pageCount(items.length);
+---
+
+<BaseLayout title={`Research queue — ${SORT_LABELS[k]}, page ${n}`} path={withBase(`research-queue/sort/${k}/page/${n}/`)}>
+  <p>
+    {SORT_LABELS[k]} — page {n} of {total}.{" "}
+    <a href={withBase(n > 2 ? queueSortHref(k, n - 1) : `research-queue/sort/${k}/`)}>← previous</a>
+    {n < total && <> · <a href={withBase(queueSortHref(k, n + 1))}>next page →</a></>}
+  </p>
+  <ol class="sig-queue">
+    {shown.map((card) => <QueueCard card={card} claims={CLAIMS} asOf={AS_OF} />)}
+  </ol>
+</BaseLayout>

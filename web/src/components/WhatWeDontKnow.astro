@@ -10,6 +10,7 @@
 // invitation, not a dead end. NO_EVIDENCE_FOUND gaps name the sources searched.
 import AbsenceHatch from "./AbsenceHatch.astro";
 import Figure from "./Figure.astro";
+import { withBase } from "../lib/paths";
 import { ABSENCE_KIND_META } from "../lib/epistemic";
 import { NO_RECORD_IN_SIG } from "../lib/dossier";
 import type { Gap } from "../lib/dossier";
@@ -67,3 +68,9 @@ const { gaps, variant, specs } = Astro.props;
     );
   })}
 </ul>
+{/* P36.61 (RQ-03a, SIG-UI-079): open research questions are one action away —
+    every dossier's 'What we don't know' section links the queue. */}
+<p class="sig-gaps__queue-link" data-testid={`gaps-queue-link-${variant}`}>
+  <span data-copy="RQ-07">Open gaps become tasks in the research queue.</span>{" "}
+  <a href={withBase("research-queue/")}>See the research queue</a>
+</p>

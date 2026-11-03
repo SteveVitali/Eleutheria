@@ -25,6 +25,7 @@
  */
 
 import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { gunzipSync } from "node:zlib";
 import { fileURLToPath } from "node:url";
 import { DOSSIERS } from "./dossier-fixture";
 import { JURISDICTION_DOSSIERS } from "./dossier-jurisdiction-fixture";
@@ -49,6 +50,7 @@ import type { EvidenceArtifact, DecisionPoint } from "./recommender";
 import type { ClaimView, Capture } from "./evidence-viewer";
 import type { CorrectionEntry } from "./corrections";
 import type { ResearchTaskCard, JurisdictionClaim } from "./research-queue";
+import type { QueueCampaign, QueueMeta } from "./queue-hub";
 import type { ProvenanceSummary } from "./provenance";
 import { DEFAULT_PROVENANCE } from "./provenance";
 import type { HostileReaderReview } from "./editorial";
@@ -129,6 +131,7 @@ import {
   RESEARCH_QUEUE_PROVENANCE,
   JURISDICTION_CLAIMS,
   QUEUE_AS_OF,
+  QUEUE_CAMPAIGNS,
   GENERATED_RATIONALE_TEMPLATES,
 } from "./corrections-methodology-fixture";
 import {
@@ -2018,6 +2021,91 @@ export function getQueueAsOf(): string {
     });
   }
   return QUEUE_AS_OF;
+}
+
+/**
+ * P36.61 (RQ-03a): the `sig/analytics-queue-meta/2` summary the hub renders —
+ * lane counts, the per-dimension facet tallies and the shard index. Export
+ * mode reads `web/analytics/queue_meta.json`; fixtures derive the same shape
+ * from the committed queue so the two paths can never drift apart.
+ */
+export function getQueueMeta(): QueueMeta {
+  if (dataSource() === "export") {
+    return readAnalytics("queue_meta", (env, path) => {
+      const meta = env as unknown as QueueMeta;
+      if (typeof meta !== "object" || meta === null) {
+        throw new Error(`${path}: expected a queue_meta envelope object`);
+      }
+      return meta;
+    });
+  }
+  const byType: Record<string, number> = {};
+  const byAssignee: Record<string, number> = {};
+  const byPlace = new Map<string, { slug: string; name: string | null; tasks: number }>();
+  for (const card of RESEARCH_QUEUE) {
+    byType[card.task_type] = (byType[card.task_type] ?? 0) + 1;
+    const a = String(card.assignee_class);
+    byAssignee[a] = (byAssignee[a] ?? 0) + 1;
+    const slug =
+      card.place?.slug ?? (card.jurisdiction.toLowerCase().replace(/\s+/g, "-") || "unplaced");
+    const row = byPlace.get(slug) ?? {
+      slug,
+      name: card.place?.name ?? card.jurisdiction,
+      tasks: 0,
+    };
+    row.tasks += 1;
+    byPlace.set(slug, row);
+  }
+  return {
+    card_schema: "sig.queue-card/2",
+    handle_grammar: "k11-handle/1",
+    queue_as_of: QUEUE_AS_OF,
+    lanes: {
+      research: RESEARCH_QUEUE.length,
+      campaigns: QUEUE_CAMPAIGNS.length,
+      campaign_members: QUEUE_CAMPAIGNS.reduce((n, c) => n + c.member_count, 0),
+      metric_only_members: 0,
+      curation: {
+        exported: false,
+        note: "curation-lane work happens in the loopback curation app (D-K11-5)",
+      },
+    },
+    tasks_by_type: Object.fromEntries(Object.entries(byType).sort(([a], [b]) => a.localeCompare(b))),
+    tasks_by_assignee: Object.fromEntries(
+      Object.entries(byAssignee).sort(([a], [b]) => a.localeCompare(b)),
+    ),
+    tasks_by_place: [...byPlace.values()].sort(
+      (a, b) => b.tasks - a.tasks || a.slug.localeCompare(b.slug),
+    ),
+    shards: [],
+  };
+}
+
+/**
+ * P36.61 (RQ-03a): the `sig.queue-campaign/1` rows — export mode reads the
+ * `web/tasks/campaign/*.jsonl.gz` shards (SIG-RQ-010 shard set; an absent
+ * directory is the honest "no campaigns emitted" state, never a fabricated
+ * row). Fixtures mode returns the committed campaign fixture.
+ */
+export function getQueueCampaigns(): QueueCampaign[] {
+  if (dataSource() !== "export") return QUEUE_CAMPAIGNS;
+  const dir = `${exportDir()}/web/tasks/campaign`;
+  if (!existsSync(dir)) return [];
+  const rows: QueueCampaign[] = [];
+  for (const file of readdirSync(dir).filter((f) => f.endsWith(".jsonl.gz")).sort()) {
+    const body = gunzipSync(readFileSync(`${dir}/${file}`)).toString("utf-8");
+    for (const [i, line] of body.split("\n").entries()) {
+      if (!line.trim()) continue;
+      const row = JSON.parse(line) as QueueCampaign;
+      if (typeof row.handle !== "string" || row.handle === "") {
+        throw new Error(
+          `${dir}/${file}#${i + 1}: a sig.queue-campaign/1 row lacks its handle (SIG-ENG-042)`,
+        );
+      }
+      rows.push(row);
+    }
+  }
+  return rows;
 }
 
 /**

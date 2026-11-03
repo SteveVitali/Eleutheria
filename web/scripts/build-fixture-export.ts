@@ -19,6 +19,7 @@
  */
 
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { gzipSync } from "node:zlib";
 import { execFileSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -41,6 +42,7 @@ import {
   RESEARCH_QUEUE_PROVENANCE,
   JURISDICTION_CLAIMS,
   QUEUE_AS_OF,
+  QUEUE_CAMPAIGNS,
 } from "../src/lib/corrections-methodology-fixture";
 import {
   WATCH_ITEMS,
@@ -288,6 +290,20 @@ analytic(
     },
   ),
 );
+// P36.61 (RQ-03a): the campaign shard bytes — computed once so queue_meta's
+// shard index reports the real row byte counts.
+const campaignShardBytes = new Map<string, Buffer>(
+  Object.entries(
+    QUEUE_CAMPAIGNS.reduce<Record<string, typeof QUEUE_CAMPAIGNS>>((acc, c) => {
+      const slug = c.place?.slug ?? "unplaced";
+      (acc[slug] ??= []).push(c);
+      return acc;
+    }, {}),
+  ).map(([slug, rows]) => [
+    slug,
+    gzipSync(Buffer.from(rows.map((r) => JSON.stringify(r)).join("\n") + "\n", "utf-8")),
+  ]),
+);
 analytic(
   "queue_meta",
   envelope(
@@ -302,8 +318,8 @@ analytic(
       handle_grammar: "k11-handle/1",
       lanes: {
         research: RESEARCH_QUEUE.length,
-        campaigns: 0,
-        campaign_members: 0,
+        campaigns: QUEUE_CAMPAIGNS.length,
+        campaign_members: QUEUE_CAMPAIGNS.reduce((n, c) => n + c.member_count, 0),
         metric_only_members: 0,
         curation: {
           exported: false,
@@ -333,10 +349,35 @@ analytic(
           {},
         ),
       ).sort((a, b) => b.tasks - a.tasks || a.slug.localeCompare(b.slug)),
-      shards: [],
+      // P36.61 (RQ-03a): the campaign shard index — mirrors the real export's
+      // `web/tasks/campaign/<slug>.jsonl.gz` rows so export-mode builds see
+      // the queue_meta shard table populated.
+      shards: QUEUE_CAMPAIGNS.map((c) => {
+        const slug = c.place?.slug ?? "unplaced";
+        return {
+          path: `web/tasks/campaign/${slug}.jsonl.gz`,
+          lane: "campaign",
+          place_slug: slug,
+          rows: 1,
+          bytes: campaignShardBytes.get(slug)?.length ?? 0,
+        };
+      }),
     },
   ),
 );
+
+// P36.61 (RQ-03a): the `web/tasks/campaign/*.jsonl.gz` shards — the same
+// layout `task_export.build_queue` emits (one gzipped JSONL per place slug).
+for (const [slug, blob] of campaignShardBytes) {
+  const rel = join("tasks", "campaign", `${slug}.jsonl.gz`);
+  mkdirSync(dirname(join(webDir, rel)), { recursive: true });
+  writeFileSync(join(webDir, rel), blob);
+  writtenArtifacts.push({
+    path: `web/${rel.split("\\").join("/")}`,
+    compartment: "sig_graph",
+    license: "CC-BY-4.0",
+  });
+}
 
 // P30.3 — the SIG-PUB-017 FR/BE demonstration dossiers remain an OPTIONAL
 // presentation overlay (deliberately demo; ops/publish.py refuses the whole

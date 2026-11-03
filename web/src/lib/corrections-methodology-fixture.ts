@@ -15,6 +15,7 @@
 
 import type { JurisdictionClaim, ResearchTaskCard } from "./research-queue";
 import { dispositionsFor } from "./research-queue";
+import type { QueueCampaign } from "./queue-hub";
 import type { CorrectionEntry } from "./corrections";
 import type { CoverageMetric, FreshnessRow } from "./metrics";
 import type { ProvenanceSummary } from "./provenance";
@@ -42,6 +43,15 @@ export const RESEARCH_QUEUE: ResearchTaskCard[] = [
     jurisdiction: "Oklahoma City",
     dispositions: dispositionsFor("field_mapper"),
     priority: 0.8,
+    handle: "T-usa-ok-oklahoma-city-devices-pd-k1v9",
+    title: "Map the Oklahoma City PD devices SIG cannot place",
+    place: { key: "iso3166-2:US-OK", slug: "usa/ok/oklahoma-city-4064000", name: "Oklahoma City" },
+    place_basis: "task_jurisdiction",
+    lane: "research",
+    predicate_ids: ["device_coordinates"],
+    status: "generated",
+    generated_at: "2026-08-18",
+    detector_version: "queue-detectors-2026.08",
   },
   {
     task_id: "fx-okc-conflicting-retention",
@@ -57,6 +67,15 @@ export const RESEARCH_QUEUE: ResearchTaskCard[] = [
     dispositions: dispositionsFor("records_requester"),
     priority: 0.7,
     trigger: { kind: "contradiction", ref: "policy_configuration_divergence:okcpd:retention" },
+    handle: "T-usa-ok-oklahoma-city-retention-pd-q1c4",
+    title: "Resolve Oklahoma City PD's retention period: policy vs configuration",
+    place: { key: "iso3166-2:US-OK", slug: "usa/ok/oklahoma-city-4064000", name: "Oklahoma City" },
+    place_basis: "task_jurisdiction",
+    lane: "research",
+    predicate_ids: ["configured_retention_days"],
+    status: "generated",
+    generated_at: "2026-08-19",
+    detector_version: "queue-detectors-2026.08",
   },
   {
     task_id: "fx-okc-contract-expiring",
@@ -71,6 +90,14 @@ export const RESEARCH_QUEUE: ResearchTaskCard[] = [
     jurisdiction: "Oklahoma City",
     dispositions: dispositionsFor("local_group"),
     priority: 0.9,
+    handle: "T-usa-ok-oklahoma-city-renewal-flock-8h2d",
+    title: "Find the renewal terms for Oklahoma City PD's ALPR contract ending 2027-01-02",  // future-ok: real-world: recorded contract decision date
+    place: { key: "iso3166-2:US-OK", slug: "usa/ok/oklahoma-city-4064000", name: "Oklahoma City" },
+    place_basis: "task_jurisdiction",
+    lane: "research",
+    status: "generated",
+    generated_at: "2026-08-17",
+    detector_version: "queue-detectors-2026.08",
   },
   {
     task_id: "fx-tulsa-coverage-hole",
@@ -85,6 +112,15 @@ export const RESEARCH_QUEUE: ResearchTaskCard[] = [
     jurisdiction: "Tulsa",
     dispositions: dispositionsFor("local_group"),
     priority: 0.5,
+    handle: "T-usa-ok-tulsa-coverage-first-m4p2",
+    title: "Find the first surveillance evidence on file for Tulsa",
+    place: { key: "iso3166-2:US-OK", slug: "usa/ok/tulsa-4075000", name: "Tulsa" },
+    place_basis: "task_jurisdiction",
+    lane: "research",
+    predicate_ids: ["any_evidence"],
+    status: "generated",
+    generated_at: "2026-08-20",
+    detector_version: "queue-detectors-2026.08",
   },
   {
     task_id: "fx-portal-snapshot-link-rot",
@@ -99,6 +135,39 @@ export const RESEARCH_QUEUE: ResearchTaskCard[] = [
     jurisdiction: "(global)",
     dispositions: dispositionsFor("developer"),
     priority: 0.4,
+    handle: "T-unplaced-linkrot-portal-7z3t",
+    title: "Relink the transparency-portal snapshot whose source URL now 404s",
+    place: { key: null, slug: "unplaced", name: "Not yet placed" },
+    place_basis: "unplaced",
+    lane: "research",
+    status: "generated",
+    generated_at: "2026-08-16",
+    detector_version: "queue-detectors-2026.08",
+  },
+];
+
+/**
+ * P36.61 (RQ-03a): the `sig.queue-campaign/1` fixture — one aggregated
+ * field-gap campaign (SIG-RQ-006 / D-K11-1) over the Oklahoma City place.
+ */
+export const QUEUE_CAMPAIGNS: QueueCampaign[] = [
+  {
+    schema: "sig.queue-campaign/1",
+    kind: "campaign",
+    handle: "M-usa-ok-oklahoma-city-operator-osm-5f0a",
+    predicate_id: "operator",
+    subject_class: "osm_surveillance_camera",
+    place: { key: "iso3166-2:US-OK", slug: "usa/ok/oklahoma-city-4064000", name: "Oklahoma City" },
+    member_count: 3,
+    members: [
+      { task_id: "fx-cam-01", subject_id: "osm:node:101", subject_label: "Surveillance camera #101" },
+      { task_id: "fx-cam-02", subject_id: "osm:node:102", subject_label: "Surveillance camera #102" },
+      { task_id: "fx-cam-03", subject_id: "osm:node:103", subject_label: "Surveillance camera #103" },
+    ],
+    contribution: {
+      kind: "osm-field-gap",
+      note: "a field-level mapping gap on individual records, aggregated",
+    },
   },
 ];
 

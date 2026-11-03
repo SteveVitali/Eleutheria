@@ -1,0 +1,36 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.61 (K11 RQ-03a): `/research-queue/campaigns/page/<n>/` — the campaigns
+// list's pagination fallback (K9 §6.1), emitted only for pages 2..N.
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import QueueCampaignCard from "../../../../components/QueueCampaignCard.astro";
+import { pageCount, pageNumbers, pageSlice, queueCampaignsHref } from "../../../../lib/queue-hub";
+import { getQueueCampaigns } from "../../../../lib/data";
+import { withBase } from "../../../../lib/paths";
+
+export function getStaticPaths() {
+  const items = getQueueCampaigns();
+  return pageNumbers(items.length)
+    .filter((n) => n > 1)
+    .map((n) => ({ params: { n: String(n) }, props: { n } }));
+}
+
+const { n } = Astro.props as { n: number };
+const CAMPAIGNS = getQueueCampaigns();
+const shown = pageSlice(CAMPAIGNS, n);
+const total = pageCount(CAMPAIGNS.length);
+---
+
+<BaseLayout title={`Research queue — campaigns, page ${n}`} path={withBase(`research-queue/campaigns/page/${n}/`)}>
+  <p>
+    Mapping campaigns — page {n} of {total}.{" "}
+    <a href={withBase(n > 2 ? queueCampaignsHref(n - 1) : "research-queue/campaigns/")}>← previous</a>
+    {n < total && <> · <a href={withBase(queueCampaignsHref(n + 1))}>next page →</a></>}
+  </p>
+  <ol class="sig-campaigns">
+    {shown.map((c) => <QueueCampaignCard campaign={c} />)}
+  </ol>
+</BaseLayout>

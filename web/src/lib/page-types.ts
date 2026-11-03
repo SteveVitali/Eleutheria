@@ -325,11 +325,22 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
   {
     patterns: ["/research-queue/**"],
     type: "T1",
-    owner: "P35.50",
-    contract: "none",
+    owner: "P36.61",
+    contract: "sig.queue-card/2",
     noJsEquivalent: SELF,
-    examples: ["/research-queue/"],
-    notes: "K11's queue — paginated static routes (K11 §5) until its own enhancement row.",
+    examples: [
+      "/research-queue/",
+      "/research-queue/page/2/",
+      "/research-queue/sort/newest/",
+      "/research-queue/place/usa/ok/",
+      "/research-queue/place/usa/ok/oklahoma-city-4064000/",
+      "/research-queue/place/usa/tx/type/share/",
+      "/research-queue/type/missing_contract/",
+      "/research-queue/role/records_requester/",
+      "/research-queue/campaigns/",
+    ],
+    notes:
+      "P36.61 (K11 RQ-03a, SIG-RQ-004): the queue hub — ≤50 cards per page (K9 §6.1), no-JS facet routes by place/type/role, sort routes (priority/newest/oldest), the campaign list over `sig.queue-campaign/1`; task + campaign detail pages are P36.62's (`/task/**`, `/research-queue/campaign/<handle>/`).",
   },
   {
     patterns: ["/task/**"],

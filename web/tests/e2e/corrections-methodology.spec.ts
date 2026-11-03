@@ -15,13 +15,16 @@ test.describe("research queue (§39.7, SIG-UI-031)", () => {
     await expect(card.getByTestId("effort-estimate")).not.toBeEmpty();
   });
 
-  test("supports geographic filtering (§33.5)", async ({ page }) => {
+  test("supports geographic filtering through the place facet routes (§33.5, SIG-RQ-004)", async ({ page }) => {
     await page.goto("/research-queue/");
-    const filters = page.getByTestId("jurisdiction-filter");
-    await expect(filters.first()).toBeVisible();
-    const jurisdictions = await filters.evaluateAll((els) => els.map((e) => e.getAttribute("data-jurisdiction")));
-    expect(jurisdictions).toContain("Oklahoma City");
-    expect(jurisdictions).toContain("Tulsa");
+    // P36.61: the in-page jurisdiction anchors became real place facet routes.
+    const start = page.getByTestId("start-place");
+    await expect(start).toBeVisible();
+    await expect(start).toContainText("Oklahoma City");
+    await expect(start).toContainText("Tulsa");
+    await start.locator("a", { hasText: "Oklahoma City" }).click();
+    await expect(page).toHaveURL(/\/research-queue\/place\/usa\/ok\/oklahoma-city-4064000\//);
+    await expect(page.getByTestId("task-card").first()).toBeVisible();
   });
 
   test("claiming grants priority, never exclusivity (SIG-TASK-010/011)", async ({ page }) => {
@@ -46,7 +49,7 @@ test.describe("research queue (§39.7, SIG-UI-031)", () => {
     await expect(page.getByTestId("no-leaderboard-note")).toBeVisible();
   });
 
-  test("every task card carries a UNIQUE id and every jurisdiction filter anchor resolves (P34.12 / RQ-00)", async ({
+  test("every task card carries a UNIQUE id (P34.12 / RQ-00)", async ({
     page,
   }) => {
     await page.goto("/research-queue/");
@@ -61,18 +64,6 @@ test.describe("research queue (§39.7, SIG-UI-031)", () => {
       return Array.from(counts).filter(([, n]) => n > 1).map(([id]) => id);
     });
     expect(dupes).toEqual([]);
-    // Every filter link names an element that exists — and it is a task card's.
-    const filters = page.getByTestId("jurisdiction-filter");
-    const hrefs = await filters.locator("a").evaluateAll((els) =>
-      els.map((e) => e.getAttribute("href")),
-    );
-    expect(hrefs.length).toBeGreaterThan(0);
-    for (const href of hrefs) {
-      expect(href).toMatch(/^#/);
-      const target = page.locator(href!);
-      await expect(target).toHaveCount(1);
-      await expect(target).toHaveAttribute("data-testid", "task-card");
-    }
     // A card id derives from the task, not the jurisdiction: two cards in one
     // jurisdiction (the fixture's two Oklahoma City tasks) carry distinct ids.
     const okcCards = page.locator("[data-testid='task-card'][data-jurisdiction='Oklahoma City']");

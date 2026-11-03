@@ -408,6 +408,13 @@
 | DC-31 | /data-collection/ | That refused state is kept distinct from an unresolved rights review — a refusal closes the conversation where an unresolved record invites it — and a source carrying a recorded reservation is refused by the ingestion gate outright. | 436d2b74f19ab6a16e2bda9f61f5ad1ba95b29e861cdf9354bbe73125ea09d2e | pending |
 | DC-32 | /data-collection/ | A stop request is recorded on the opt-out register described above and takes effect on the next fetch run. | f7ccfc9a6b6407b44a19b9ab6511ef562a98258e90bd77e12d51297947fbc41f | pending |
 
+| RQ-02 | /research-queue/ | Pick a task, do the work — file the request, check the portal, map in OpenStreetMap — then report what you found so the next release carries it. | 919e66c7402c854c0c16e43b5e07eda32942cfb5924d0209329ff4763b2598de | pending |
+| RQ-03 | / | The gaps SIG has turned into tasks — pick one you can close, by place, kind of work or role. | 402aedcf91d5f111700acf2e391b565feae1d4a20ef91cee32bba76cdec2570a | pending |
+| RQ-04 | /research-queue/ | Start here — pick a place, a kind of work or a role. | da7f23a4aa9ee7bfaefe6236cec05fff42c57154597a4a1e5949555506afa0e3 | pending |
+| RQ-05 | /research-queue/ | Field gaps on individual mapped objects aggregate into per-place mapping campaigns, never thousands of separate cards. | c931b4d95e76bcf1c2726a1694f00b7fe4406fd43e7ab5bf76c43eef9a4b5692 | pending |
+| RQ-06 | /research-queue/ | The full queue ships as sharded JSONL files by lane and place; no single file is over 25 MB. | db7c212055ca0dc052435f026aa02623d4bc05b2c7aac80d4d86611c29098802 | pending |
+| RQ-07 | component/WhatWeDontKnow | Open gaps become tasks in the research queue. | c44a15d0322a4c5c01cde9baa38490bd790443722ac094ccd3937cefb31d4c83 | pending |
+
 ## Confirmation log
 
 <!-- The operator's verbatim confirmation lands here at the copy-batch sitting:

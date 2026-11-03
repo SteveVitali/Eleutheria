@@ -95,6 +95,9 @@ ASTRO_PAGES = {
     # P36.59 (WX-04a): the old single-file watch page split into the
     # route family — the /watch/ rows now bind the index file.
     "/watch/": "web/src/pages/watch/index.astro",
+    # P36.61 (RQ-03a): the queue hub moved into the route family — the
+    # /research-queue/ rows bind the index file.
+    "/research-queue/": "web/src/pages/research-queue/index.astro",
     "/methodology/": "web/src/pages/methodology.astro",
     "/404.html": "web/src/pages/404.astro",
     "/403/": "web/src/pages/403.astro",

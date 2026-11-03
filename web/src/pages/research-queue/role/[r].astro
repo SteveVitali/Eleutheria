@@ -1,0 +1,67 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.61 (K11 RQ-03a, SIG-RQ-004): `/research-queue/role/<task_type>/` — the
+// one-dimension role facet route (+ `…/page/<n>/` and `…/sort/<k>/`).
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import QueueCard from "../../../components/QueueCard.astro";
+import {
+  QUEUE_SORTS,
+  SORT_LABELS,
+  facetValues,
+  pageCount,
+  pageSlice,
+  queueRoleHref,
+  sortQueue,
+  tasksForRole,
+  roleLabel,
+} from "../../../lib/queue-hub";
+import {
+  getJurisdictionClaims,
+  getQueueAsOf,
+  getResearchQueue,
+} from "../../../lib/data";
+import { withBase } from "../../../lib/paths";
+
+export function getStaticPaths() {
+  return facetValues(getResearchQueue(), "assignee_class").map((f) => ({
+    params: { r: f.id },
+    props: { r: f.id },
+  }));
+}
+
+const { r } = Astro.props as { r: string };
+const CARDS = getResearchQueue();
+const CLAIMS = getJurisdictionClaims();
+const AS_OF = getQueueAsOf();
+const items = sortQueue(tasksForRole(CARDS, r), CLAIMS, AS_OF, "priority");
+const shown = pageSlice(items, 1);
+const total = pageCount(items.length);
+const label = roleLabel(r);
+---
+
+<BaseLayout title={`Research queue — ${label}`} path={withBase(`research-queue/role/${r}/`)}>
+  <p>
+    Open research tasks of role <strong>{label}</strong> ({items.length}).{" "}
+    <a href={withBase("research-queue/")}>Back to the queue hub</a>
+  </p>
+  <p class="sig-queue-sortnav">
+    Sort:{" "}
+    {QUEUE_SORTS.map((k, i) => (
+      <>
+        {i > 0 && " · "}
+        {k === "priority" ? SORT_LABELS[k] : <a href={withBase(queueRoleHref(r, k))}>{SORT_LABELS[k]}</a>}
+      </>
+    ))}
+  </p>
+  <ol class="sig-queue">
+    {shown.map((card) => <QueueCard card={card} claims={CLAIMS} asOf={AS_OF} />)}
+  </ol>
+  {total > 1 && (
+    <p class="sig-queue-pagination" data-testid="queue-pagination">
+      Page 1 of {total} — <a href={withBase(queueRoleHref(r, "priority", 2))}>next page →</a>
+    </p>
+  )}
+</BaseLayout>
