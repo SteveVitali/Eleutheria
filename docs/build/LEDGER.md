@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.57
-lastCompleted: P36.56
+nextTicket: P36.58
+lastCompleted: P36.57
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.56-scoped-search-forms
+chainTip: r11/P36.57-explore-bar-and-scoped-search
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-03T10:10Z
+updatedAt: 2026-11-03T14:36Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1474,3 +1474,5 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-03 — P36.56 done — `ci: pass #424@4609df6` (run 41620831241, 5/5 head-bound: docs 1m47s · security 32s · composed 4m15s · python 21m16s · web 37m12s) · Gate status: none (row 399 plan cell executes the ticket contract; no answered decisions) · deferrals +2/−0 (D-P36.56-1 OPEN — v2 `jurisdiction=` leaf-exact, descendant expansion owed by the search-engine row; D-P36.56-2 OPEN verified-met — the DONE flip needs a status date a same-day flip cannot mint) · chainTip → r11/P36.56-scoped-search-forms · next → P36.57 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-03 — P36.56 post-closeout record — `4609df62` `ci: pass #424@4609df6` 5/5 head-bound (run 41620831241 — the same read; arc: `8bc91cf1` impl → `8fb8b0a2` matcher alt-fold + full-ancestry jkey chains → `3bbb6376` /dossier/ budget + coverage verdicts + records → `4609df62` live-claim phrasing + projection → closeout record) · reds fixed forward — 41614600625 (typeahead alt-fold demotion + chains truncated at non-page parents + stale `measured_gaps` + MISSING verdicts), 41618988261 (live-claim cell phrasing + stale projection) · PR #424 OPEN on the stack for operator integration · `main` untouched · no OM-20; no mutations · owned verdicts: SIG-UI-128 → MET-ENGINEERED(D-P36.56-1;D-R10-PUBLISH-1) → BL-085 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-03 — dispatch boundary-confirm — P36.56's green read recorded (`ci: pass #424@4609df6`, run 41620831241; record tip `38a27cdf` also 5/5 head-bound, run 41628875265); `blockedOn` (nothing); chainTip `r11/P36.56-scoped-search-forms` · nextTicket P36.57 (row 400 — explore bar + scoped search; live_verification=false; gate none; deps P36.55/P36.56/P36.20/P36.21 landed) — fresh implement-spec sub-agent on `r11/P36.57-explore-bar-and-scoped-search` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-03 — P36.57 done — `ci: pass #425@bb1ad00` (run 41647174127, 5/5 head-bound: docs 2m34s · security 30s · composed 4m1s · python 20m29s · web 46m4s) · Gate status: none (row 400 plan cell executes the ticket contract; `S6: A-12 = a` carried verbatim, no answered decisions) · deferrals +0/−0 (D-P36.56-1 stays OPEN — search-engine row owns `jurisdiction=` descendants; D-P36.56-2 verified-met, DONE flip still owed a fresh status date) · chainTip → r11/P36.57-explore-bar-and-scoped-search · next → P36.58 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-03 — P36.57 post-closeout record — `bb1ad00c` `ci: pass #425@bb1ad00` 5/5 head-bound (run 41647174127; arc: `20ea6617` impl → `ef453b45` projection regen → `2685688f` EB-03/04→batch-14 fix → `bb1ad00c` `live`-token rephrase → closeout record) · reds fixed forward — 41636475422 (stale projection), 41638096735 (batch-14 binding), 41643313877 (live-claim token) · PR #425 OPEN on the stack for operator integration · `main` untouched · no OM-20; no mutations · owned verdicts: SIG-UI-055 → PARTIAL → P37.64, SIG-UI-126 → MET-ENGINEERED(D-R10-PUBLISH-1) → BL-085 · harness: devin-desktop/swe-2-high/subagent
