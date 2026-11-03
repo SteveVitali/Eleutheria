@@ -2271,3 +2271,28 @@ sig-typeahead {
 }
 
 
+
+/* P36.52 (DSRC-02) — the dossier sources explorer + "Where this comes from". */
+.sig-dsrc-share { display: inline-flex; align-items: center; gap: var(--sig-space-2); }
+.sig-dsrc-share__bar {
+  display: inline-block;
+  width: calc(var(--share, 0) * 0.6px);
+  min-width: 2px;
+  height: 0.7em;
+  background: var(--sig-accent, #3557c4);
+}
+.sig-dsrc-swatch {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin-right: 0.3em;
+  vertical-align: -0.1em;
+}
+.sig-dsrc-legend { list-style: none; padding: 0; font-size: var(--sig-step--1); }
+.sig-dsrc-chart { max-width: 100%; height: auto; }
+.sig-wtcf-table .sig-figure__evidence { display: none; }
+.sig-dsrc-table .sig-figure__evidence { display: none; }
+@media print {
+  /* K5 §4.2: the explorer prints as an appendix — <details> expanded. */
+  .sig-dsrc details.sig-dsrc-source > *:not(summary) { display: block !important; }
+}

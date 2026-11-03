@@ -31,7 +31,10 @@ import Figure from "../../components/Figure.astro";
 import { applyPublicationPolicy, dossierLang, dossierJsonPath, dossierPath, dossierPrintPath, sectionTitlesFor, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG, unplacedPath } from "../../lib/dossier";
 import type { Dossier } from "../../lib/dossier";
 import type { Crumb, PageAction } from "../../lib/nav";
-import { getDossierArtifactRef, getDossiers, getDossierProvenance, getJurisdictionCompartments, getJurisdictionKeyMap, getSlugHistory, getUnplacedReport } from "../../lib/data";
+import { getDossierArtifactRef, getDossiers, getDossierProvenance, getDossierSources, getJurisdictionCompartments, getJurisdictionKeyMap, getSlugHistory, getUnplacedReport } from "../../lib/data";
+import WhereThisComesFrom from "../../components/WhereThisComesFrom.astro";
+import { dossierSourcesProvenance, dsrcArtifact, dsrcFigureSpecs } from "../../lib/dossier-sources";
+import { getSourcePageIds } from "../../lib/source-page";
 import type { SlugHistoryRow, UnplacedReport } from "../../lib/data";
 import { getReleaseStamp } from "../../lib/release-stamp";
 import { displayJurisdiction, dossierDisplayTitle } from "../../lib/jurisdictions";
@@ -413,7 +416,18 @@ const combinesList = jurisdiction.combines ? jurisdiction.combines.join(" and ")
 // per-dossier provenance row the export emitted for this slug. `undefined` (no
 // emitted row) renders the site-wide summary labelled site-wide, never site
 // totals under the dossier's name.
-const provenance = getDossierProvenance(dossier.slug);
+// P36.52 (DSRC-02): the `sig.dossier-sources/1` artifact's own
+// `provenance_summary` is the preferred dossier-scope row (its figures
+// resolve inside the artifact itself, never under `/surfaces/site`); the
+// analytics row is the back-compat fallback.
+const dsrcDoc = getDossierSources(dossier.slug);
+const dsrcProvenance = dsrcDoc ? dossierSourcesProvenance(dsrcDoc) : undefined;
+const provenance = dsrcProvenance ?? getDossierProvenance(dossier.slug);
+const sourcePageIds = new Set(getSourcePageIds());
+const DSRC_FIGURES = dsrcDoc
+  ? defineFigures(`dossier/${dossier.slug}/sources-block`, dsrcFigureSpecs(dsrcDoc))
+  : [];
+const dsrcFigs = Object.fromEntries(DSRC_FIGURES.map((f) => [f.id, f]));
 
 // The figure-evidence registry. `ref` names the dossier's position in its
 // manifest-listed artifact; the record-list target (`/r/<pub>/c/<comp>/…`)
@@ -476,7 +490,8 @@ return (
   lang={lang}
   provenance={provenance}
   provenanceName={`${jurisdiction.name} dossier`}
-  provenancePointerBase={`/surfaces/dossiers/${dossier.slug}`}
+  provenancePointerBase={dsrcDoc ? "/provenance_summary" : `/surfaces/dossiers/${dossier.slug}`}
+  provenanceArtifact={dsrcDoc ? dsrcArtifact(dossier.slug) : undefined}
   recordPath={recordList ? withBase(recordList) : undefined}
   crumbs={crumbs}
   crumbsTestId="dossier-breadcrumb"
@@ -512,6 +527,11 @@ return (
     </p>
     <WhatWeDontKnow gaps={dossier.gaps} variant="summary" specs={specMap} />
   </section>
+
+  {/* P36.52 (DSRC-02, K5 §4.1): "Where this comes from" — the top sources,
+      the totals line and the explorer link; replaces the bare-id "Sources:"
+      row. */}
+  <WhereThisComesFrom slug={dossier.slug} doc={dsrcDoc} figs={dsrcFigs} sourcePageIds={sourcePageIds} />
 
   {dossier.sections.map((section) => {
     const action = SECTION_ACTION_BLOCKS[section.section_id];

@@ -103,6 +103,8 @@ import {
   isProcurementRelevanceDoc,
   type ProcurementRelevanceRow,
 } from "./procurement-relevance";
+import { DOSSIER_SOURCES_FIXTURE } from "./dossier-sources-fixture";
+import { isDossierSourcesDoc, type DossierSourcesDoc } from "./dossier-sources";
 
 // The committed fixtures the data layer serves in `fixtures` mode (and that the P27.5
 // fixture-export harness serialises into the export layout). The PAGES import none of
@@ -316,6 +318,52 @@ export function getDossiers(): Dossier[] {
 /** The SIG-PUB-017 demo dossiers in export mode: only when the bundle ships them (P30.3). */
 function jurisdictionDemos(): Dossier[] {
   return readPresentation<Dossier[]>("jurisdiction_dossiers", []);
+}
+
+// ---------------------------------------------------------------------------
+// P36.52 (DSRC-02): the `sig.dossier-sources/1` contribution artifacts —
+// `web/dossier_sources/<slug-path>.json` (nested paths mirroring the
+// canonical jurisdiction chain). Fixtures mode serves the committed corpus;
+// export mode walks the emitted directory. A missing artifact is an honest
+// absence (the explorer route is never emitted for a dossier without one —
+// the "Where this comes from" block says so rather than linking a 404).
+// ---------------------------------------------------------------------------
+
+let _dossierSourcesCache: Map<string, DossierSourcesDoc> | null = null;
+
+/** Every emitted `sig.dossier-sources/1` document, keyed by dossier slug path. */
+export function getDossierSourcesMap(): Map<string, DossierSourcesDoc> {
+  if (_dossierSourcesCache !== null) return _dossierSourcesCache;
+  const map = new Map<string, DossierSourcesDoc>();
+  if (dataSource() !== "export") {
+    for (const [slug, doc] of Object.entries(DOSSIER_SOURCES_FIXTURE)) map.set(slug, doc);
+  } else {
+    const dir = `${exportDir()}/web/dossier_sources`;
+    if (existsSync(dir)) {
+      const files: string[] = [];
+      const walk = (sub: string): void => {
+        for (const entry of readdirSync(`${dir}${sub}`, { withFileTypes: true })) {
+          if (entry.isDirectory()) walk(`${sub}/${entry.name}`);
+          else if (entry.name.endsWith(".json")) files.push(`${sub}/${entry.name}`);
+        }
+      };
+      walk("");
+      for (const f of files.sort()) {
+        const parsed: unknown = JSON.parse(readFileSync(`${dir}${f}`, "utf-8"));
+        if (!isDossierSourcesDoc(parsed, `${dir}${f}`)) {
+          throw new Error(`${dir}${f}: not a valid sig.dossier-sources/1 artifact`);
+        }
+        map.set((parsed as DossierSourcesDoc).jurisdiction.slug_path, parsed as DossierSourcesDoc);
+      }
+    }
+  }
+  _dossierSourcesCache = map;
+  return map;
+}
+
+/** One dossier's contribution artifact — `null` when the release emitted none. */
+export function getDossierSources(slug: string): DossierSourcesDoc | null {
+  return getDossierSourcesMap().get(slug) ?? null;
 }
 
 /**

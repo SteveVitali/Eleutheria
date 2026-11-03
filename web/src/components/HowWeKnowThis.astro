@@ -50,6 +50,12 @@ interface Props {
    * module passes its own `surfaces/<name>` key — e.g. `/surfaces/dossiers/<slug>`).
    */
   pointerBase?: string;
+  /**
+   * P36.52: the artifact the module's figures resolve inside — default
+   * `web/analytics/provenance.json`; a page-scoped module on another
+   * artifact (e.g. `web/dossier_sources/<slug>.json`) passes its own path.
+   */
+  artifact?: string;
 }
 
 const provenance = Astro.props.provenance ?? DEFAULT_PROVENANCE;
@@ -68,7 +74,7 @@ const range = provenance.date_range;
 // module's source count is the `published` lifecycle partition count from
 // `transparency/counts.json` (the K9 §3.3 "218" mapping); a page-scoped
 // module renders its own provenance count under the surface's label.
-const HWKT_ARTIFACT = "web/analytics/provenance.json";
+const HWKT_ARTIFACT = Astro.props.artifact ?? "web/analytics/provenance.json";
 const HWKT_HREF = artifactHref(HWKT_ARTIFACT);
 const COUNTS_ARTIFACT = "transparency/counts.json";
 const COUNTS_HREF = artifactHref(COUNTS_ARTIFACT);

@@ -70,6 +70,13 @@ interface Props {
    */
   provenancePointerBase?: string;
   /**
+   * P36.52 (DSRC-02): the manifest-listed artifact the page-scoped HWKT
+   * module's figures resolve inside — default `web/analytics/provenance.json`;
+   * a dossier-sources surface points them into `web/dossier_sources/<slug>.json`
+   * (never `/surfaces/site` — the site-scope rule's build check).
+   */
+  provenanceArtifact?: string;
+  /**
    * `minimal` renders only the page slot — no "How we know this", dispute or
    * citation module (P34.13 / QW-11): the branded error pages and the /terms
    * forwarder are chrome-light by design.
@@ -355,7 +362,7 @@ const socialCardUrl = socialCard
               own provenance row — scope "page" above). */}
           <details class="sig-footer__details" data-testid="chrome-details">
             <summary class="sig-footer__details-summary">{CHROME.howWeKnowThis}</summary>
-            <HowWeKnowThis provenance={provenance} scope={provenanceScope} pageName={Astro.props.provenanceName} pointerBase={Astro.props.provenancePointerBase ?? "/surfaces/site"} />
+            <HowWeKnowThis provenance={provenance} scope={provenanceScope} pageName={Astro.props.provenanceName} pointerBase={Astro.props.provenancePointerBase ?? "/surfaces/site"} artifact={Astro.props.provenanceArtifact} />
             {/* P34.17: the interim release stamp (A-20 honesty — the site is a dated
                 snapshot; the API may be newer) + the publication-basis label (H-6 /
                 ADR-167 — the recorded no-legal-review posture). Both ship as pending

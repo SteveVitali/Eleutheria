@@ -146,6 +146,12 @@ const ENTITY_TWIN_RE =
 const TRANSPARENCY_SOURCE_RE =
   /^transparency\/sources\/[a-z0-9_-]+\/(executions|captures|targets|issues)\.jsonl$/;
 
+/** Byte-identical to DOSSIER_SOURCES_RE in scripts/check-figures.mjs (pinned
+ *  by test): P36.52's per-dossier `sig.dossier-sources/1` artifacts —
+ *  `web/dossier_sources/<slug-path>.json` — unbounded like the per-dossier
+ *  artifacts, admitted by pattern. */
+const DOSSIER_SOURCES_RE = /^web\/dossier_sources\/[a-z0-9-]+(\/[a-z0-9-]+)*\.json$/;
+
 function repoRoot(): string {
   let dir = fileURLToPath(new URL(".", import.meta.url));
   for (;;) {
@@ -188,6 +194,7 @@ export function isManifestArtifact(path: string, listed?: readonly string[]): bo
   if (LABEL_STREAM_RE.test(path)) return true;
   if (ENTITY_TWIN_RE.test(path)) return true;
   if (TRANSPARENCY_SOURCE_RE.test(path)) return true;
+  if (DOSSIER_SOURCES_RE.test(path)) return true;
   // P35.45 — per-dossier artifacts are emitted under web/dossiers/ but never
   // the index document itself (it carries no dossier record to point into).
   if (PER_DOSSIER_RE.test(path) && path !== "web/dossiers/index.json") return true;

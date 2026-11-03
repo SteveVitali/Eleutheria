@@ -1,0 +1,116 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.52 (DSRC-02, K5 §4.1): "Where this comes from" — the block every
+// dossier carries: the totals line, the top contributing sources and the
+// explorer link. It replaces the old bare "Sources: id, id" row — every
+// source is a name linked to its source page (K5-P5, SIG-DSRC-002), ids
+// secondary. When the release emitted no sig.dossier-sources/1 artifact for
+// this dossier the block names the absence rather than linking a 404 (R-6).
+// The dossier class is figure-swept (UXR-34): every numeral below sits
+// inside a <Figure> region — sibling regions only (regions never nest).
+import Figure from "./Figure.astro";
+import {
+  contributingSources,
+  dossierSourcesPath,
+  seenAt,
+  latestRun,
+  type DossierSourcesDoc,
+} from "../lib/dossier-sources";
+import { fmtInt } from "../lib/format";
+import { withBase } from "../lib/paths";
+import type { FigureSpec } from "../lib/figures";
+
+interface Props {
+  slug: string;
+  doc: DossierSourcesDoc | null;
+  /** Top-N rows shown on the dossier page; the explorer carries the rest. */
+  top?: number;
+  figs: Record<string, FigureSpec>;
+  sourcePageIds: Set<string>;
+}
+
+const { slug, doc, top = 5, figs, sourcePageIds } = Astro.props;
+const fig = (id: string): FigureSpec => {
+  const f = figs[id];
+  if (!f) throw new Error(`dossier ${slug}: "Where this comes from" has no figure "${id}"`);
+  return f;
+};
+const contributing = doc ? [...contributingSources(doc)].sort((a, b) => b.records - a.records) : [];
+const shown = contributing.slice(0, top);
+const rest = Math.max(0, contributing.length - shown.length);
+const fmtDate = (iso: string | null): string => (iso ? iso.slice(0, 10) : "not_recorded");
+---
+
+<section aria-labelledby="wtcf-heading" class="sig-wtcf" data-testid="dsrc-block">
+  <h2 id="wtcf-heading">Where this comes from</h2>
+  {doc === null ? (
+    <p class="sig-table-note" data-testid="dsrc-block-absent" data-copy="DS-01">
+      The per-source contribution detail for this dossier is not published in
+      this release — the <a href={withBase("sources/")}>sources table</a> lists
+      every source SIG tracks.
+    </p>
+  ) : (
+    <>
+      <p class="sig-dsrc-headline" data-testid="dsrc-headline" data-copy="DS-02">
+        <Figure figure={fig("dsrc-records")} order="inline"><strong>{fmtInt(doc.totals.records)} records</strong></Figure>{" "}
+        from <Figure figure={fig("dsrc-sources")} order="inline">{doc.totals.sources}</Figure> source
+        {doc.totals.sources === 1 ? "" : "s"} · first seen by SIG{" "}
+        <Figure figure={fig("dsrc-first-seen")} order="inline"><time datetime={doc.totals.first_seen_at ?? undefined}>{fmtDate(doc.totals.first_seen_at)}</time></Figure>{" "}
+        · last seen by SIG{" "}
+        <Figure figure={fig("dsrc-last-seen")} order="inline"><time datetime={doc.totals.last_seen_at ?? undefined}>{fmtDate(doc.totals.last_seen_at)}</time></Figure>
+      </p>
+      <p data-testid="dsrc-explorer-link">
+        <Figure figure={fig("dsrc-explore")} order="inline">
+          <a href={withBase(dossierSourcesPath(slug))} data-copy="DS-03">
+            Explore all {doc.totals.sources} source{doc.totals.sources === 1 ? "" : "s"} →
+          </a>
+        </Figure>{" "}
+        <span class="sig-mut" data-copy="DS-04">(downloads for this dossier are not yet available)</span>
+      </p>
+      <Figure figure={fig("dsrc-top-sources")} order="inline" tag="div">
+        <table class="sig-table sig-wtcf-table" data-testid="dsrc-top-sources">
+          <thead>
+            <tr><th>Source</th><th>Records</th><th>Share</th><th>First seen</th><th>Last seen</th><th>Latest run</th><th>Licence</th></tr>
+          </thead>
+          <tbody>
+            {shown.map((s) => {
+              const run = latestRun(s);
+              const last = seenAt(s.last_seen);
+              return (
+                <tr data-source-id={s.source_id}>
+                  <td>
+                    {sourcePageIds.has(s.source_id)
+                      ? <a href={withBase(s.source_page.replace(/^\//, ""))}>{s.name}</a>
+                      : s.name}{" "}
+                    <span class="sig-mut">({s.publisher_type ?? "type not_recorded"})</span>
+                  </td>
+                  <td>{fmtInt(s.records)}</td>
+                  <td>{Math.round(s.share * 100)}%</td>
+                  <td>{fmtDate(seenAt(s.first_seen))}</td>
+                  <td>{s.sightings === "run_level_only" ? "run_level_only" : fmtDate(last)}</td>
+                  <td>{run ? `${fmtDate(run.finished_at)} · ${run.status ?? "status not_recorded"}` : "not_recorded"}</td>
+                  <td>{s.licence.spdx ?? "not_recorded"}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </Figure>
+      {rest > 0 && (
+        <p class="sig-table-note">
+          <Figure figure={fig("dsrc-rest")} order="inline">
+            <a href={withBase(dossierSourcesPath(slug))}>{rest} more source{rest === 1 ? "" : "s"} →</a>
+          </Figure>
+        </p>
+      )}
+      <p class="sig-table-note" data-copy="DS-05">
+        The full "How we know this" provenance for <em>this dossier</em> (not
+        site-wide) is at the foot of this page; the explorer reconciles every
+        figure above to its sources.
+      </p>
+    </>
+  )}
+</section>

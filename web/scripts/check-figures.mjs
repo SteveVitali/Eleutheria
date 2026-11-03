@@ -67,13 +67,19 @@ const ENTITY_TWIN_RE =
  *  compartment streams, admitted by pattern (P36.46/P36.47). */
 const TRANSPARENCY_SOURCE_RE =
   /^transparency\/sources\/[a-z0-9_-]+\/(executions|captures|targets|issues)\.jsonl$/;
+/** Byte-identical to DOSSIER_SOURCES_RE in src/lib/figures.ts (pinned by
+ *  test): P36.52's per-dossier sig.dossier-sources/1 artifacts. */
+const DOSSIER_SOURCES_RE = /^web\/dossier_sources\/[a-z0-9-]+(\/[a-z0-9-]+)*\.json$/;
 
 /** The J3 §5.4 named page classes → dist globs. P36.36 (MAP-05): the dossier
  * class boundary — `/dossier/<path>/sites/**` is the map's no-JS list surface
  * (K13 route table: "sites files + placement", a T1 table page like
  * `/sources/`), not the dossier template; its per-row numerals are row data,
- * not material figures. */
-const SKIP_SEGMENTS = new Set(["sites"]);
+ * not material figures. P36.52 (DSRC-02): `/dossier/<path>/sources/**` is the
+ * same kind of row-data table surface — the explorer's material figures are
+ * the artifact's `figures[]` (registered + contract-checked at build), the
+ * per-source cells are row data. */
+const SKIP_SEGMENTS = new Set(["sites", "sources"]);
 const PAGE_CLASSES = [
   { cls: "home", files: ["index.html"] },
   { cls: "dossier", dirs: ["dossier"], skipSegments: true },
@@ -125,6 +131,7 @@ function isListed(path, listed) {
     LABEL_STREAM_RE.test(path) ||
     ENTITY_TWIN_RE.test(path) ||
     TRANSPARENCY_SOURCE_RE.test(path) ||
+    DOSSIER_SOURCES_RE.test(path) ||
     (PER_DOSSIER_RE.test(path) && path !== "web/dossiers/index.json")
   );
 }

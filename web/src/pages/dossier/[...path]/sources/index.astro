@@ -1,0 +1,83 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.52 (DSRC-02, SIG-DSRC-001…006/008/009): the per-dossier sources
+// explorer — page 1 of the default (records) sort. Continuations live at
+// `page/<n>/`, alternate sorts at `sort/<key>/` (only when the dossier has
+// > SORT_ROUTE_THRESHOLD sources, K5 §4.2). Zero-JS complete, T1.
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import DossierSourcesExplorer from "../../../../components/DossierSourcesExplorer.astro";
+import { getDossiers, getDossierSourcesMap } from "../../../../lib/data";
+import {
+  dossierSourcesJsonPath,
+  dossierSourcesPath,
+  dossierSourcesProvenance,
+  dsrcArtifact,
+  dsrcFigureSpecs,
+  type DossierSourcesDoc,
+} from "../../../../lib/dossier-sources";
+import { dossierHref } from "../../../../lib/dossier-sources";
+import { dossierPath } from "../../../../lib/dossier";
+import { getSourcePageIds } from "../../../../lib/source-page";
+import { defineFigures } from "../../../../lib/figures";
+import { dossierDisplayTitle } from "../../../../lib/jurisdictions";
+import { withBase } from "../../../../lib/paths";
+import type { Crumb } from "../../../../lib/nav";
+import type { Dossier } from "../../../../lib/dossier";
+
+export function getStaticPaths() {
+  const docs = getDossierSourcesMap();
+  const bySlug = new Map(getDossiers().map((d) => [d.slug, d]));
+  return [...docs.entries()].map(([slug, doc]) => ({
+    params: { path: slug },
+    props: { doc, dossier: bySlug.get(slug) ?? null },
+  }));
+}
+
+interface Props { doc: DossierSourcesDoc; dossier: Dossier | null }
+const { doc, dossier } = Astro.props;
+const slug = doc.jurisdiction.slug_path;
+const name = dossier
+  ? dossierDisplayTitle(dossier.subject_label, dossier.jurisdiction)
+  : doc.jurisdiction.name;
+const FIGURES = defineFigures(`dossier/${slug}/sources`, dsrcFigureSpecs(doc));
+const figs = Object.fromEntries(FIGURES.map((f) => [f.id, f]));
+const provenance = dossierSourcesProvenance(doc);
+const sourcePageIds = new Set(getSourcePageIds());
+const crumbs: Crumb[] = [{ label: "Places", href: withBase("dossier/") }];
+if ((dossier?.chain?.length ?? 0) > 1) {
+  for (const link of dossier!.chain!) {
+    crumbs.push({ label: link.name ?? link.jkey, href: link.slug_path ? withBase(`dossier/${link.slug_path}/`) : undefined });
+  }
+} else {
+  crumbs.push({ label: name, href: withBase(dossierPath(slug).replace(/^\//, "")) });
+}
+crumbs.push({ label: "Sources" });
+const artifact = dsrcArtifact(slug);
+---
+
+<BaseLayout
+  title={`Sources — ${name}`}
+  path={withBase(dossierSourcesPath(slug))}
+  provenance={provenance}
+  provenanceName={`${doc.jurisdiction.name} dossier sources`}
+  provenancePointerBase="/provenance_summary"
+  provenanceArtifact={artifact}
+  crumbs={crumbs}
+  actions={[
+    { label: "Dossier", href: withBase(dossierHref(slug)), testId: "dsrc-dossier" },
+    { label: "JSON", href: withBase(dossierSourcesJsonPath(slug)), testId: "dsrc-json-action" },
+  ]}
+>
+  <DossierSourcesExplorer
+    doc={doc}
+    dossierSlug={slug}
+    dossierName={name}
+    sort="records"
+    page={1}
+    figs={figs}
+    sourcePageIds={sourcePageIds}
+  />
+</BaseLayout>
