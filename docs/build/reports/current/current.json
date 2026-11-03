@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "df3ad33eb7e3a8316af2f96235e5340a1bb0e71a",
-  "manifest_inputs": 1177,
+  "input_commit": "4630335938c295fc6b09be56bcb3c05bc553bc88",
+  "manifest_inputs": 1178,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P36.59",
@@ -15715,31 +15715,31 @@
         },
         "SIG-UI-026": {
           "verdict": "MET",
-          "evidence": "web/tests/unit/watch.test.ts:5;web/src/pages/watch.astro:53",
+          "evidence": "web/tests/unit/watch.test.ts:5;web/src/lib/watch.ts:5",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-027": {
           "verdict": "MET",
-          "evidence": "web/tests/unit/watch.test.ts:53;web/src/pages/watch.astro:9",
+          "evidence": "web/tests/unit/watch.test.ts:53;web/src/pages/watch/feeds/index.astro:5",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-027a": {
           "verdict": "MET",
-          "evidence": "web/tests/unit/recommender.test.ts:5;web/src/pages/watch.astro:10",
+          "evidence": "web/tests/unit/recommender.test.ts:5;web/src/lib/recommender.ts:5",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-027b": {
           "verdict": "MET",
-          "evidence": "web/tests/unit/recommender.test.ts:6;web/src/pages/watch.astro:129",
+          "evidence": "web/tests/unit/recommender.test.ts:6;web/src/lib/recommender.ts:5",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-027c": {
           "verdict": "MET",
-          "evidence": "web/tests/unit/recommender.test.ts:121;web/src/pages/watch.astro:11",
+          "evidence": "web/tests/unit/recommender.test.ts:121;web/src/pages/watch/citations.txt.ts:5",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17502,26 +17502,26 @@
           "label": "historical/csv"
         },
         "SIG-WATCH-001": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/pages/watch/index.astro;web/src/lib/watch-v2.ts",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-WATCH-002": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/lib/watch-v2.ts;web/src/pages/watch/item/[handle].astro;web/src/components/WatchList.astro",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-WATCH-003": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/pages/watch/item/[handle].astro;web/src/lib/watch-v2.ts;web/src/components/ProvenancePanelShell.astro",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-WATCH-004": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/pages/watch/place/[...path].astro;web/src/components/WatchCoverage.astro;web/src/lib/watch-v2.ts",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17556,8 +17556,8 @@
           "label": "historical/csv"
         },
         "SIG-WATCH-010": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "web/src/components/WatchCoverage.astro;web/src/lib/empty.ts;web/src/lib/watch-v2.ts",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -25779,7 +25779,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "cc346845fab4c448d6b149d90495dc6041879b0b3970c12d1180f35f0792cbb2",
+  "manifest_sha256": "a2b9f472a6b1d8a15f61393a98881d33efabdfb743fe7ed4e2e960ff53110e2e",
   "current_md": {
     "lines": 136,
     "bytes": 20221,

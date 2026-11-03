@@ -1023,7 +1023,9 @@ def test_p34_20_export_build_watch_empty_states_have_five_parts(
     # P36.59 (WX-04a): the watch split into the route family — `watch` stays
     # on /watch/, `watchSubscriptions` moved to /watch/feeds/; the
     # recommender/citations blocks left the index for WX-05's surface.
-    watch_html = (web_build_empty_surfaces.dist / "watch" / "index.html").read_text(encoding="utf-8")
+    watch_html = (web_build_empty_surfaces.dist / "watch" / "index.html").read_text(
+        encoding="utf-8"
+    )
     feeds_html = (web_build_empty_surfaces.dist / "watch" / "feeds" / "index.html").read_text(
         encoding="utf-8"
     )
