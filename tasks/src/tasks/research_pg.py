@@ -72,8 +72,7 @@ CLOSING_CONDITION_TEXT: dict[str, str] = {
     # task's subject is one record (a camera, an agency row), so the closing
     # condition names the subject, never "the jurisdiction" the older text did.
     "coverage_hole": (
-        "evidence for the subject is obtained, OR a CoverageRecord records the searched "
-        "absence"
+        "evidence for the subject is obtained, OR a CoverageRecord records the searched absence"
     ),
     "unmapped_vocabulary_value": "the source value is mapped into the controlled vocabulary",
     "sharing_asymmetry": (
