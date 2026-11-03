@@ -31,9 +31,6 @@
  * ONE type facet and ONE role facet — the per-dimension facet counts sum to
  * the lane total, never a second counting path.
  *
- * The drafted public sentences this row authored are sha256-pinned copy-batch
- * rows (`docs/build/reports/copy-batches/batch-01.md`, RQ-02…RQ-07; B-2) —
- * `QUEUE_COPY` carries the verbatim text so the source-file check binds it.
  */
 
 import {
