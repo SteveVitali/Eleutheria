@@ -41,6 +41,8 @@ DATA (dates, counts, source names), not drafted copy.
 | LC-04 | /dossier/&lt;path&gt;/ | The parent-context symbol sheet is not in this build | 7462a531ef3cba2b4375e63ba431975621b5ebd08f0e2fc085505ffad5d011d6 | pending |
 | EB-01 | /dossier/&lt;path&gt;/ | Explore on the map → | 0d0f57b2895f138416339ea11af25b2cd385497c9293d89d5ec06e5836c46b17 | pending |
 | EB-02 | /dossier/&lt;path&gt;/ | See connections → | 78c2615a2bd49b81b50cc792b6fa5050fa4f3ebaf8dc2511965f98e342f291a4 | pending |
+| EB-03 | /dossier/&lt;path&gt;/ | Search the release → | 2932c0865650cd401ec4035db8ea3b7cf8c5ad71ba0a68aefde6ea41fcb97808 | pending |
+| EB-04 | /dossier/&lt;path&gt;/ | Search within {name} → | e7e4dfeed0c4da82ea46d8b9d41d5fe1b999aaa16e4674065c1e4ee1b8c1172d | pending |
 | ND-01 | /dossier/&lt;path&gt;/ | SIG is not tracking a dated upcoming decision for {name}. That is a gap in what SIG has recorded — not a finding that no decision is pending. | d51e1064ca8fff9f3515a1871a4f5e55816c9c263c5cbd3e8a6073f34734f68f | pending |
 | ND-02 | /dossier/&lt;path&gt;/ | Watch upcoming decisions → | 26c1fe812ca7e9a9fb246499847ce48164f3f74f22ad8e4371f75b1530896cc5 | pending |
 | OR-01 | /dossier/&lt;path&gt;/ | Other public resources | d346235ec4dc0e84f25978b514c7fabf740bcd69321dabcfd5ddc6ba8334b9b9 | pending |
