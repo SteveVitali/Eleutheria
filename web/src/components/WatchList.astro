@@ -1,0 +1,86 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.59 (K7 WX-04a): the shared watch-item row the index, place, facet and
+// history pages render — one row per `sig.watch-item/1`: the ONE alert date
+// with its kind + certainty (an `upper_bound` never labels "deadline",
+// SIG-WATCH-002), the place link (K4 display path), the body, the
+// technology/vendor facets, the evidence count, the status word and the
+// contested marker (SIG-UI-008). T1 zero-JS — every fact renders without a
+// script.
+import ContestedMarker from "./ContestedMarker.astro";
+import {
+  CERTAINTY_LABELS,
+  itemDateLabel,
+  itemPlaceHref,
+  STATUS_LABELS,
+  WATCH_KIND_LABELS,
+  watchItemHref,
+} from "../lib/watch-v2";
+import type { WatchItemV2, WatchPlacePage } from "../lib/watch-v2";
+import { withBase } from "../lib/paths";
+
+interface Props {
+  item: WatchItemV2;
+  /** The emitted place pages — the row's place link resolves through them. */
+  pages: readonly WatchPlacePage[];
+}
+
+const { item, pages } = Astro.props;
+const dl = itemDateLabel(item);
+const placePage = item.place?.key
+  ? pages.find((p) => p.key === item.place!.key)
+  : pages.find((p) => p.unplaced);
+const placeHref = placePage ? `watch/place/${placePage.path}/` : itemPlaceHref(item, pages);
+const placeName = placePage ? placePage.name : (item.place?.key ?? "Not yet placed");
+const vendorIds = (item.vendor ?? []).map((v) => v.label);
+const techIds = (item.technology ?? []).map((t) => t.label);
+---
+
+<li
+  class="sig-watch-item"
+  data-testid="watch-item"
+  data-handle={item.handle}
+  data-kind={item.kind}
+  data-certainty={item.date_certainty}
+  data-status={item.status ?? "upcoming"}
+  data-contested={item.contested ? "true" : "false"}
+>
+  <a class="sig-watch-item__title" href={withBase(watchItemHref(item.handle))}>{item.title}</a>{" "}
+  {item.contested && <ContestedMarker compact />}
+  <dl class="sig-watch-item__fields">
+    <div>
+      <dt>Date</dt>
+      <dd data-testid="watch-date">
+        <time datetime={item.date}>{item.date}</time> — {dl.kindLabel},{" "}
+        <span data-testid="watch-certainty">{dl.certaintyLabel}</span>
+      </dd>
+    </div>
+    <div>
+      <dt>Place</dt>
+      <dd data-testid="watch-place">
+        {placeHref ? <a href={withBase(placeHref)}>{placeName ?? "Not yet placed"}</a> : (placeName ?? "Not yet placed")}
+      </dd>
+    </div>
+    <div><dt>Body</dt><dd>{item.body ?? "not_recorded"}</dd></div>
+    <div><dt>Kind</dt><dd data-testid="watch-kind">{WATCH_KIND_LABELS[item.kind]}</dd></div>
+    <div>
+      <dt>Technology</dt>
+      <dd>{techIds.length > 0 ? techIds.join(", ") : "not_recorded"}</dd>
+    </div>
+    <div>
+      <dt>Vendor</dt>
+      <dd>{vendorIds.length > 0 ? vendorIds.join(", ") : "not_recorded"}</dd>
+    </div>
+    <div>
+      <dt>Evidence</dt>
+      <dd data-testid="watch-evidence-count">{(item.evidence ?? []).length} claim(s)</dd>
+    </div>
+    <div>
+      <dt>Status</dt>
+      <dd data-testid="watch-status">{STATUS_LABELS[item.status ?? "upcoming"]}</dd>
+    </div>
+  </dl>
+</li>

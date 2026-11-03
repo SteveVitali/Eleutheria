@@ -1,0 +1,108 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.59 (K7 WX-04a, SIG-WATCH-004/010): the per-place coverage statement —
+// what bodies/portals SIG monitors, when it last checked, and the honest
+// typed empty state when the place has no upcoming items. An empty result
+// ALWAYS arrives beside this statement (SIG-WATCH-004); the cause class is
+// the actual one — not connected / not monitored / none found — never a
+// "research gap" (SIG-WATCH-010). D-K7-3 carried verbatim: the place's
+// OFFICIAL agenda portal is linked when one is registered.
+import EmptyState from "./EmptyState.astro";
+import { coverageStatement, placeEmptiness } from "../lib/watch-v2";
+import type { WatchCoverage, WatchPlacePage } from "../lib/watch-v2";
+import { agendaPortalFor } from "../lib/public-resources";
+import type { EmptyCause, EmptyStateParts } from "../lib/empty";
+import { withBase } from "../lib/paths";
+
+interface Props {
+  page: WatchPlacePage;
+  coverage?: WatchCoverage;
+  /** The dossier-index display name for this place's key (when known). */
+  name?: string;
+  /** All emitted place pages — descendant monitoring resolves through them. */
+  pages?: readonly WatchPlacePage[];
+  /** jkey → display name (the monitored names are display strings). */
+  names?: ReadonlyMap<string, string>;
+}
+
+const { page, coverage } = Astro.props;
+const stmt = coverageStatement(page, coverage);
+const name = Astro.props.name ?? page.name;
+const emptiness = placeEmptiness(page, coverage, Astro.props.pages ?? [page], Astro.props.names);
+const portal = page.key ? agendaPortalFor({ jurisdiction_key: page.key, slug: page.path }) : null;
+
+const CAUSE: Record<typeof emptiness, EmptyCause> = {
+  not_connected: "not_connected",
+  not_monitored: "not_monitored",
+  none_found: "none_recorded",
+};
+
+// The five-part typed empty states (K7 §5.6's copy carried verbatim; the
+// cause class is the actual one — SIG-WATCH-010).
+const PARTS: Record<typeof emptiness, EmptyStateParts> = {
+  not_connected: {
+    state: "The watch is not yet connected",
+    missing:
+      "The watch is not yet connected to SIG's procurement and agenda data, so no upcoming decision appears here. SIG holds some dated records (for example federal solicitations) that will appear here once it is.",
+    nearby: "The watch index lists every upcoming decision SIG tracks in this release.",
+    action: { href: "watch/", label: "See the watch index" },
+    change: "The watch fills in with a release once the procurement and agenda feeds are connected.",
+    cause: CAUSE.not_connected,
+    batchIds: {},
+  },
+  not_monitored: {
+    state: `SIG does not yet monitor a decision body for ${name}`,
+    missing: `SIG does not yet check any agenda or procurement source for ${name}. Decisions in bodies SIG does not check will not appear here.`,
+    nearby: portal
+      ? `${name}'s official agenda portal is linked below — SIG links official portals even where it does not yet monitor (the operator's D-K7-3 answer).`
+      : "The watch index lists the places and bodies SIG does check.",
+    action: { href: "research-queue/", label: "See the research queue" },
+    change: "A registered agenda or procurement source for this place would bring it into the monitored set.",
+    cause: CAUSE.not_monitored,
+    batchIds: {},
+  },
+  none_found: {
+    state: `No upcoming decisions found for ${name}`,
+    missing: `No upcoming decisions found for ${name} as of ${stmt.lastChecked ?? "this release's build"}. SIG checks: ${stmt.tenantJurisdictions.length > 0 ? stmt.tenantJurisdictions.join(", ") : "no agenda or procurement tenant is registered yet"}. Decisions in bodies SIG does not check will not appear here.`,
+    nearby: "The watch index lists every upcoming decision SIG tracks in this release.",
+    action: { href: "watch/", label: "See the watch index" },
+    change: "New items appear with a release as the monitored sources publish them.",
+    cause: CAUSE.none_found,
+    batchIds: {},
+  },
+};
+const parts = PARTS[emptiness];
+---
+
+<aside class="sig-watch-coverage" data-testid="watch-coverage" data-cause={emptiness}>
+  <h2>Coverage</h2>
+  <p>
+    SIG checks <strong>{stmt.tenantsRegistered}</strong> registered agenda/procurement
+    tenant{stmt.tenantsRegistered === 1 ? "" : "s"}
+    {stmt.tenantJurisdictions.length > 0 && (
+      <> ({stmt.tenantJurisdictions.join(", ")})</>
+    )}.
+    {stmt.lastChecked && (
+      <> Watch last checked <time datetime={stmt.lastChecked}>{stmt.lastChecked.slice(0, 10)}</time>.</>
+    )}
+    {page.unplaced && (
+      <> This is the data-quality bucket for items SIG cannot yet place — not a jurisdiction.</>
+    )}
+  </p>
+  {page.coverage && (
+    <p data-testid="watch-coverage-place">
+      This place: <strong>{page.coverage.items}</strong> item{page.coverage.items === 1 ? "" : "s"} tracked
+      {(page.coverage.kinds ?? []).length > 0 && <> ({page.coverage.kinds!.join(", ")})</>}.
+    </p>
+  )}
+  {portal && (
+    <p>
+      Official agenda portal:{" "}
+      <a href={portal.url} rel="external" data-testid="agenda-portal">{portal.label}</a>.
+    </p>
+  )}
+  <EmptyState parts={parts} />
+</aside>

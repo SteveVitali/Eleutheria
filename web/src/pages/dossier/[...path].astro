@@ -31,7 +31,7 @@ import Figure from "../../components/Figure.astro";
 import { applyPublicationPolicy, dossierLang, dossierJsonPath, dossierPath, dossierPrintPath, sectionTitlesFor, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG, unplacedPath } from "../../lib/dossier";
 import type { Dossier } from "../../lib/dossier";
 import type { Crumb, PageAction } from "../../lib/nav";
-import { getDossierArtifactRef, getDossierIndex, getDossiers, getDossierProvenance, getDossierSources, getJurisdictionCompartments, getJurisdictionKeyMap, getLatestReleaseTarget, getSlugHistory, getUnplacedReport, getWatch } from "../../lib/data";
+import { getDossierArtifactRef, getDossierIndex, getDossiers, getDossierProvenance, getDossierSources, getJurisdictionCompartments, getJurisdictionKeyMap, getLatestReleaseTarget, getSlugHistory, getUnplacedReport, getWatch, getWatchV2 } from "../../lib/data";
 import WhereThisComesFrom from "../../components/WhereThisComesFrom.astro";
 // P36.55 (VIZ-02, SIG-UI-069): the ONE dossier template — the v2 blocks in
 // SIG-UI-010 order: header strip, At a glance with Figure 1 + locator and
@@ -45,7 +45,8 @@ import ScopedSearchForm from "../../components/ScopedSearchForm.astro";
 import DossierNextDecisions from "../../components/dossier/DossierNextDecisions.astro";
 import OtherPublicResources from "../../components/dossier/OtherPublicResources.astro";
 import NetworkFigureSlot from "../../components/dossier/NetworkFigureSlot.astro";
-import { NETWORK_SLOT_SECTIONS, decisionsForDossier, templatePlan } from "../../lib/dossier-template";
+import { NETWORK_SLOT_SECTIONS, decisionsForDossier, decisionsForDossierV2, templatePlan } from "../../lib/dossier-template";
+import { watchContext } from "../../lib/watch-context";
 import { buildJurisdictionLookup, buildSitesModel, emittedSiteLists } from "../../lib/sites";
 import { getMapSites } from "../../lib/data";
 import { figMapTwin, getDossierVisuals, getLocatorSymbols } from "../../lib/dossier-visuals";
@@ -489,6 +490,15 @@ const indexRowIndex = INDEX_ROWS.findIndex(
 );
 const indexRow = indexRowIndex >= 0 ? INDEX_ROWS[indexRowIndex]! : null;
 const watchItems = decisionsForDossier(getWatch(), dossier);
+// P36.59 (WX-04a): the v2 items matched on the dossier's jurisdiction_key
+// (the place page's own place+children rule) + the emitted watch place path
+// for the block's link — never a dead route.
+const watchItemsV2 = decisionsForDossierV2(getWatchV2().items, dossier);
+const WATCH_PAGES = watchContext().pages;
+const watchPlaceRow = dossier.jurisdiction_key
+  ? WATCH_PAGES.find((p) => p.key === dossier.jurisdiction_key)
+  : undefined;
+const watchPlacePath = watchPlaceRow?.path ?? null;
 // The "Sites list →" link resolves only when a sites page was actually
 // emitted for this dossier (emittedSiteLists is the same gate the sites
 // route builds paths from) — never a dead link.
@@ -577,7 +587,7 @@ if (mapMeta) {
 // 'Next decisions (N)' — N counts the dossier's watch items; the figure's
 // pointer names the dossier's own row (the index artifact where one exists,
 // the dossier artifact otherwise) — a derived count over a real record.
-STRIP_SPECS.set("next-decisions", stripSpec("next-decisions", watchItems.length, ptrFor("")));
+STRIP_SPECS.set("next-decisions", stripSpec("next-decisions", watchItemsV2.length > 0 ? watchItemsV2.length : watchItems.length, ptrFor("")));
 const plan = templatePlan(dossier);
 // P36.56 (SRCH-06, SIG-UI-128): the scoped-search GET form — scoped to this
 // dossier's jkey (the contract parameter carries its descendants,
@@ -669,7 +679,7 @@ return (
       return <WhereThisComesFrom slug={dossier.slug} doc={dsrcDoc} figs={dsrcFigs} sourcePageIds={sourcePageIds} />;
     }
     if (unit.kind === "next-decisions") {
-      return <DossierNextDecisions dossier={dossier} items={watchItems} spec={STRIP_SPECS.get("next-decisions")} />;
+      return <DossierNextDecisions dossier={dossier} items={watchItems} itemsV2={watchItemsV2} watchPlacePath={watchPlacePath} spec={STRIP_SPECS.get("next-decisions")} />;
     }
     if (unit.kind === "other-public-resources") {
       return <OtherPublicResources />;

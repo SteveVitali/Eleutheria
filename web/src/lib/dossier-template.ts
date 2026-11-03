@@ -94,3 +94,22 @@ export function decisionsForDossier<T extends { jurisdiction: string }>(
   );
   return items.filter((i) => names.has(i.jurisdiction));
 }
+
+/**
+ * The v2 watch items for a dossier's place (P36.59 / SIG-WATCH-009): the
+ * items whose `place.key` is the dossier's `jurisdiction_key`, OR whose
+ * `place.chain` contains it — identical to the place page's own coverage
+ * rule (place + registry children), so the block's count equals the place
+ * page's. An unkeyed dossier matches nothing (it never fabricates a place
+ * binding); the page keeps the v1 name-match for it. Sorted by the one
+ * alert date.
+ */
+export function decisionsForDossierV2<
+  T extends { date: string; handle: string; place?: { key?: string | null; chain?: string[] } | null },
+>(items: readonly T[], dossier: Dossier): T[] {
+  const key = dossier.jurisdiction_key;
+  if (!key) return [];
+  return items
+    .filter((i) => i.place?.key === key || (i.place?.chain ?? []).includes(key))
+    .sort((a, b) => a.date.localeCompare(b.date) || a.handle.localeCompare(b.handle));
+}

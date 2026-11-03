@@ -106,6 +106,8 @@ import {
 import { DOSSIER_SOURCES_FIXTURE } from "./dossier-sources-fixture";
 import { isDossierSourcesDoc, type DossierSourcesDoc } from "./dossier-sources";
 import { fixtureFigureTwin } from "./dossier-visuals-fixture";
+import { isWatchKind, type WatchEnvelopeV2, type WatchItemV2 } from "./watch-v2";
+import { WATCH_V2_FIXTURE } from "./watch-v2-fixture";
 
 // The committed fixtures the data layer serves in `fixtures` mode (and that the P27.5
 // fixture-export harness serialises into the export layout). The PAGES import none of
@@ -580,7 +582,7 @@ export function getCoverage(): CoverageMetric[] {
  * contract — the other §5.2 kinds have no renewal watch representation and are
  * the v2 surface's own concern (the §39.5 render rows land in a later ticket).
  */
-interface WatchItemV2 {
+interface LegacyWatchItemRow {
   handle?: string;
   kind?: string;
   title?: string;
@@ -593,7 +595,7 @@ interface WatchItemV2 {
 }
 
 /** The `sig/watch/2` envelope — `items` is the versioned item list. */
-interface WatchEnvelopeV2 {
+interface LegacyWatchEnvelope {
   schema?: string;
   items?: unknown;
 }
@@ -604,7 +606,7 @@ interface WatchEnvelopeV2 {
  * artifact until the surface rows render v2 natively (P35.43 back-compat).
  * Non-contract kinds return `null` (no termination semantics to carry).
  */
-function watchItemToContractRow(item: WatchItemV2): ContractWatchItem | null {
+function watchItemToContractRow(item: LegacyWatchItemRow): ContractWatchItem | null {
   const termination = item.termination;
   if (termination == null) return null;
   const place = item.place ?? null;
@@ -634,13 +636,46 @@ export function getWatch(): ContractWatchItem[] {
     if (Array.isArray(p)) {
       return dropWithdrawn(p as ContractWatchItem[]);
     }
-    const env = p as WatchEnvelopeV2;
-    const items = requireArray(env?.items, `${path}#items`) as WatchItemV2[];
+    const env = p as LegacyWatchEnvelope;
+    const items = requireArray(env?.items, `${path}#items`) as LegacyWatchItemRow[];
     return dropWithdrawn(
       items
         .map(watchItemToContractRow)
         .filter((row): row is ContractWatchItem => row !== null),
     );
+  });
+}
+
+/**
+ * The `sig/watch/2` envelope — the K7 decision calendar's wire artifact
+ * (P36.59, WX-04a). Export: `web/watch.json`.
+ *
+ *   - `fixtures` mode — the committed `WATCH_V2_FIXTURE` envelope.
+ *   - `export` mode — the emitted envelope; `items` is a required array
+ *     (fail loud when absent). A bare `ContractWatchItem[]` array is a
+ *     pre-P35.43 artifact: the v2 surface renders `items: []` with no
+ *     coverage block — the `not_connected` typed state, never fabricated
+ *     coverage (the v1 rows still drive the legacy subscription feeds
+ *     through `getWatch()`).
+ */
+export function getWatchV2(): WatchEnvelopeV2 {
+  if (dataSource() !== "export") return WATCH_V2_FIXTURE;
+  return readExportArtifact("watch.json", (p, path) => {
+    if (Array.isArray(p)) return { schema: "sig/watch/2", items: [] };
+    const env = p as WatchEnvelopeV2;
+    const items = requireArray(env?.items, `${path}#items`) as WatchItemV2[];
+    for (const item of items) {
+      if (typeof item.handle !== "string" || item.handle === "") {
+        throw new Error(`${path}#items: a sig.watch-item/1 row lacks its handle (SIG-ENG-042)`);
+      }
+      if (!isWatchKind(String(item.kind))) {
+        throw new Error(
+          `${path}#items: unknown watch kind "${String(item.kind)}" on ${item.handle} — ` +
+            "a producer/schema drift, never rendered (SIG-ENG-042)",
+        );
+      }
+    }
+    return env;
   });
 }
 

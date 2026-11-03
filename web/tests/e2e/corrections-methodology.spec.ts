@@ -331,9 +331,11 @@ test.describe("seven outline surfaces + the corrections log exist (P15.5 AC1)", 
     });
   }
 
-  test("the recommender lives on /watch/ and the viewer at /evidence/*", async ({ page }) => {
+  test("the decision calendar lives on /watch/ and the viewer at /evidence/*", async ({ page }) => {
+    // P36.59 (K7 WX-04a): /watch/ is the sig/watch/2 decision calendar; the
+    // scoped recommender moved off the index (WX-05's surface).
     await page.goto("/watch/");
-    await expect(page.getByTestId("recommended-artifact").first()).toBeVisible();
+    await expect(page.getByTestId("watch-item").first()).toBeVisible();
     await page.goto("/evidence/active-device-count/");
     await expect(page.getByTestId("highlighted-span")).toBeVisible();
   });

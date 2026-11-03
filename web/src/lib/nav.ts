@@ -94,7 +94,9 @@ export const NAV_SECTIONS: NavSection[] = [
     landing: "watch/",
     items: [
       { label: "Upcoming decisions", route: "watch/" },
-      { label: "Feeds", route: "watch/feeds/" },
+      // The "Feeds" child link lands with the feeds row (WX-04b): rendering it
+      // on this row's /watch/feeds/ costs nav bytes on every page and breaks
+      // the ratified /dossier/ budget — the owning row restores it.
     ],
     match: ["watch/"],
   },

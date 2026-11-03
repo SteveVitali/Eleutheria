@@ -1,0 +1,64 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.59 (K7 WX-04a): `/watch/feeds/` — the subscription directory: every
+// feed this release emits, plus the how-to for calendar apps, feed readers
+// and RSS-to-email relays. SIG keeps no email list and no accounts — every
+// subscription is a pull feed the reader controls (W-P5). The per-place v2
+// feed set (every dossier place, empty or not — D-K7-5) is the feeds row's
+// surface (WX-04b); this directory lists only what the build emits today,
+// never a planned route.
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import EmptyState from "../../../components/EmptyState.astro";
+import { getWatch } from "../../../lib/data";
+import {
+  itemsForJurisdiction,
+  watchICalPath,
+  watchJurisdictions,
+  watchRssPath,
+} from "../../../lib/watch";
+import { withBase } from "../../../lib/paths";
+
+const WATCH_ITEMS = getWatch();
+const jurisdictions = watchJurisdictions(WATCH_ITEMS);
+---
+
+<BaseLayout title="Watch feeds" path={withBase("watch/feeds/")}>
+  <p>
+    Watch subscriptions are <strong>pull feeds</strong>: add one to a calendar app or
+    feed reader and your app fetches updates — SIG keeps <strong>no email list and
+    no accounts</strong> and sends nothing. To route a feed to email, use any
+    RSS-to-email relay you choose; SIG does not endorse a vendor.
+  </p>
+
+  <h2 id="feeds-heading">Feeds this release emits</h2>
+  {jurisdictions.length === 0 && <EmptyState surface="watchSubscriptions" />}
+  <ul class="sig-feed-list" aria-labelledby="feeds-heading" data-testid="feed-list">
+    {jurisdictions.map((j) => (
+      <li data-testid="feed-row" data-jurisdiction={j}>
+        <strong>{j}</strong> — {itemsForJurisdiction(WATCH_ITEMS, j).length} dated item(s):{" "}
+        <a data-testid="feed-ics" href={withBase(watchICalPath(j).replace(/^\//, ""))}>iCal (.ics)</a>
+        {" · "}
+        <a data-testid="feed-rss" href={withBase(watchRssPath(j).replace(/^\//, ""))}>RSS (.xml)</a>
+      </li>
+    ))}
+  </ul>
+  <p>
+    These are the renewal-watch subscriptions keyed on each contract's derived
+    decision date. A feed for the full decision calendar — per place, including
+    places with zero items, as iCal/RSS/JSON Feed plus an OPML bundle — ships
+    with the feeds surface (the operator's D-K7-5 answer: every place, so
+    subscribers can come early).
+  </p>
+
+  <h2>How to subscribe</h2>
+  <ul>
+    <li><strong>Calendar app</strong> — copy an <code>.ics</code> link into your app's "subscribe to calendar" (or "add by URL") field; the app refreshes it on its own schedule.</li>
+    <li><strong>Feed reader</strong> — paste an <code>.xml</code> link into any RSS reader; new items appear as the release publishes them.</li>
+    <li><strong>Email</strong> — an RSS-to-email relay you control can mail feed items to you; SIG sends nothing itself.</li>
+  </ul>
+
+  <p><a href={withBase("watch/")}>Upcoming decisions →</a></p>
+</BaseLayout>

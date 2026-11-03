@@ -66,6 +66,8 @@ export const EMPTY_CAUSES = [
   "not_researched",
   /** A feed or pipeline is not connected yet — a pipeline gap. */
   "not_connected",
+  /** SIG does not yet monitor a body/portal for this place (P36.59). */
+  "not_monitored",
   /** Recorded or computable but not yet released — a publication gap. */
   "not_published",
   /** Held behind a review gate (e.g. the resolution review). */
