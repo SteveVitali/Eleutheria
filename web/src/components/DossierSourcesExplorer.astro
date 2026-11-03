@@ -81,8 +81,11 @@ const lastSeenCell = (s: DossierSourceRow): { text: string; absence?: string } =
 const latestRunCell = (s: DossierSourceRow): { text: string; href: string | null; status: string | null } => {
   const r = latestRun(s);
   if (r === null) return { text: "not_recorded", href: null, status: null };
+  // The artifact's runs_page names the deferred per-source runs sub-route;
+  // until it lands the resolvable target is the source page's conduct table
+  // (R-6: never a 404 link on a public page).
   const href = sourcePageIds.has(s.source_id)
-    ? `${withBase(s.runs_page.replace(/^\//, ""))}#run-${r.run_id}`
+    ? `${withBase(s.source_page.replace(/^\//, ""))}#conduct-heading`
     : null;
   return { text: fmtDate(r.finished_at), href, status: r.status };
 };
@@ -245,10 +248,12 @@ const disagreeTotal =
       return (
         <details class="sig-dsrc-source" data-testid="dsrc-source-detail" data-source-id={s.source_id}>
           <summary>
-            {link.linked ? <a href={link.href!}>{s.name}</a> : s.name}{" "}
+            {s.name}{" "}
             <span class="sig-mut">{fmtInt(s.records)} records · {fmtShare(s.share)} · {s.licence.spdx ?? "licence not_recorded"}</span>
           </summary>
           <dl class="sig-fields">
+            <dt>Source page</dt>
+            <dd>{link.linked ? <a href={link.href!}>{s.source_page}</a> : "no source page in this release"}</dd>
             <dt>Source id</dt><dd><code>{s.source_id}</code></dd>
             <dt>Publisher</dt><dd>{s.publisher ?? "not_recorded"}{s.publisher_type ? ` (${s.publisher_type})` : ""}</dd>
             <dt>Lifecycle</dt><dd>{s.lifecycle ?? "not_recorded"}</dd>
