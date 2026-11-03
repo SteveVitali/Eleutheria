@@ -141,7 +141,8 @@ const placeOptionLabel = (d: IndexRowType) =>
     </span>
     </sig-typeahead>
   </form>
-  <script is:inline type="module" src={withBase("_kit/sig-typeahead.js")}></script>
+  {/* The header already emits the allow-listed `/_kit/sig-typeahead.js`
+      module on this route — one tag registers every element. */}
   <p class="sig-table-note">
     Sort:{" "}
     {SORT_KEYS.map((k, i) => (

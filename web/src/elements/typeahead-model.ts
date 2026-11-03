@@ -102,13 +102,11 @@ export function scopeMatches(
   entry: TypeaheadEntry,
   scope: string | null,
 ): boolean {
-  const i = scope?.indexOf(":") ?? -1;
-  if (i < 1) return true;
-  const v = scope!.slice(i + 1).trim();
-  const k = scope!.slice(0, i);
-  return k === "jurisdiction"
-    ? (entry.chain ?? (entry.jkey ? [entry.jkey] : [])).includes(v)
-    : k === "source" && entry.source_id === v;
+  const m = scope == null ? null : /^(\w+):(.+)$/.exec(scope);
+  if (m === null) return true;
+  return m[1] === "jurisdiction"
+    ? (entry.chain ?? (entry.jkey ? [entry.jkey] : [])).includes(m[2]!)
+    : m[1] === "source" && entry.source_id === m[2];
 }
 
 /**
