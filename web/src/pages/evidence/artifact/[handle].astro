@@ -31,6 +31,7 @@ import {
   placeDisplayName,
 } from "../../../lib/evidence-hub";
 import { artifactTypeLabel, RUN_RECORD_LABEL } from "../../../lib/evidence-artifacts";
+import { DIRECTNESS_CLASSES } from "../../../lib/badges";
 import { NOT_RECORDED } from "../../../lib/provenance-panel";
 import { getEvidence, getStatementIndex, getWatchV2 } from "../../../lib/data";
 import { getSourcePageIds } from "../../../lib/source-page";
@@ -104,7 +105,10 @@ const citingWatch = (getWatchV2()?.items ?? []).filter((i) =>
       </div>
       <div><dt>Disclosure lane</dt><dd data-testid="artifact-lane">{laneLabel(a.lane)}{a.lane_basis && a.lane_basis !== "not_recorded" ? ` (${a.lane_basis.replace(/_/g, " ")})` : ""}</dd></div>
       <div><dt>Capture status</dt><dd data-testid="artifact-status">{a.capture_status.replace(/_/g, " ")}</dd></div>
-      <div><dt>Directness</dt><dd><Badge kind="directness" value={a.directness} /></dd></div>
+      {/* The §10.5 badge only where the export recorded a D1–D6 class — a
+          from-spine row carries its `primary_or_secondary` value verbatim in
+          this field, and the recorded value renders, never a fabricated class. */}
+      <div><dt>Directness</dt><dd>{(DIRECTNESS_CLASSES as readonly string[]).includes(a.directness) ? <Badge kind="directness" value={a.directness} /> : a.directness}</dd></div>
       <div><dt>As of</dt><dd>{a.as_of}</dd></div>
     </dl>
 

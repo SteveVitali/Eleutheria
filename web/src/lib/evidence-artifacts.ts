@@ -39,6 +39,20 @@ export const UPSTREAM_LINK_LABEL = "the source's own link (recorded as a claim)"
 export const ARTIFACTS_EMPTY =
   "No published artifacts in this release — the list appears once the export carries them.";
 
+/**
+ * The batch-02 row ids each copy constant binds (B-2 / P34.20): the hub page
+ * and the shared artifact rows carry them as `data-copy` attributes — how the
+ * republish copy gate and the binding suite resolve a rendered sentence back
+ * to its sha256-pinned row.
+ */
+export const ARTIFACT_COPY = {
+  heading: "EW-23",
+  intro: "EW-24",
+  runRecord: "EW-25",
+  upstreamLink: "EW-26",
+  empty: "EW-27",
+} as const;
+
 /** One group in the by-source artifact list. */
 export interface ArtifactGroup {
   /** The artifact `source` id (stable key). */

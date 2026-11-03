@@ -26,6 +26,13 @@ import {
   pageSlice,
 } from "../../lib/evidence-hub";
 import { evidencePath, isClaimContested, isSealed } from "../../lib/evidence-viewer";
+import {
+  ARTIFACTS_EMPTY,
+  ARTIFACTS_HEADING,
+  ARTIFACTS_INTRO,
+  ARTIFACT_COPY,
+  UPSTREAM_LINK_LABEL,
+} from "../../lib/evidence-artifacts";
 import { getEvidence } from "../../lib/data";
 import { withBase } from "../../lib/paths";
 
@@ -51,7 +58,8 @@ const allRunRecords = roll.artifacts > 0 && roll.runRecords === roll.artifacts;
     extracted from a capture). This page is the state of
     the evidence in this release — browse the artifacts, open one to see its captures and the
     claims it supports, or open a claim's full evidence view. Links to a source's own page
-    are the source's own links, recorded as a claim — never presented as captures SIG holds.
+    — <em data-copy={ARTIFACT_COPY.upstreamLink}>{UPSTREAM_LINK_LABEL}</em> —
+    are never presented as captures SIG holds.
   </p>
 
   {allRunRecords && (
@@ -65,7 +73,7 @@ const allRunRecords = roll.artifacts > 0 && roll.runRecords === roll.artifacts;
 
   <h2 id="state-heading">State of the evidence</h2>
   <dl class="sig-evidence-rollup" data-testid="evidence-rollup" data-artifacts={roll.artifacts} data-run-records={roll.runRecords}>
-    <div><dt>Published artifacts</dt><dd>{roll.artifacts}</dd></div>
+    <div><dt data-copy={ARTIFACT_COPY.heading}>{ARTIFACTS_HEADING}</dt><dd>{roll.artifacts}</dd></div>
     <div><dt>Run records (no stored document)</dt><dd>{roll.runRecords} ({runRecordShare}%)</dd></div>
     <div><dt>Recorded captures</dt><dd>{roll.capturesRecorded === 0 ? "not recorded" : roll.capturesRecorded}</dd></div>
     <div><dt>Captures with stored bytes</dt><dd>{roll.captures === 0 ? "not recorded" : `${roll.capturesWithBytes} of ${roll.captures}`}</dd></div>
@@ -74,6 +82,9 @@ const allRunRecords = roll.artifacts > 0 && roll.runRecords === roll.artifacts;
 
   <h2 id="browse-heading">Browse artifacts ({sorted.length})</h2>
   {sorted.length === 0 && <EmptyState surface="evidenceIndex" />}
+  {sorted.length === 0 && (
+    <p data-testid="artifacts-empty" data-copy={ARTIFACT_COPY.empty}>{ARTIFACTS_EMPTY}</p>
+  )}
   <ArtifactRows artifacts={shown} handles={handles} testid="evidence-artifact-row" />
   {totalPages > 1 && (
     <p class="sig-evidence-pagination" data-testid="evidence-pagination">
@@ -83,6 +94,7 @@ const allRunRecords = roll.artifacts > 0 && roll.runRecords === roll.artifacts;
   )}
 
   <h2 id="facets-heading">Browse by</h2>
+  <p data-copy={ARTIFACT_COPY.intro}>{ARTIFACTS_INTRO}</p>
   <ul class="sig-evidence-facets" aria-labelledby="facets-heading">
     {([
       ["Source", "source", roll.bySource, "facet-source"],

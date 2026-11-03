@@ -19,7 +19,7 @@ import {
   laneLabel,
   latestCapture,
 } from "../lib/evidence-hub";
-import { artifactTypeLabel, RUN_RECORD_LABEL } from "../lib/evidence-artifacts";
+import { ARTIFACT_COPY, artifactTypeLabel, RUN_RECORD_LABEL } from "../lib/evidence-artifacts";
 import { NOT_RECORDED } from "../lib/provenance-panel";
 import type { EvidenceArtifact } from "../lib/recommender";
 import { withBase } from "../lib/paths";
@@ -50,7 +50,7 @@ const { artifacts, handles, testid = "evidence-artifact-row" } = Astro.props;
       >
         <p class="sig-artifact-row__title">
           <a href={withBase(artifactHref(handle!))} data-testid="artifact-link">{artifactTitle(a)}</a>
-          {state === "legacy_synthetic" && <> — <em data-testid="run-record-label">{RUN_RECORD_LABEL}</em></>}
+          {state === "legacy_synthetic" && <> — <em data-testid="run-record-label" data-copy={ARTIFACT_COPY.runRecord}>{RUN_RECORD_LABEL}</em></>}
         </p>
         <p class="sig-artifact-row__meta">
           {a.source_name ?? a.source} · {artifactTypeLabel(a.artifact_type)} ·{" "}
