@@ -412,7 +412,10 @@ export function changedFields(a: Capture, b: Capture): FieldChange[] {
   return diffCaptures(a, b).filter((c) => c.changed);
 }
 
-/** The canonical page path for an evidence viewer (trailing slash — SIG-UI-035). */
+/** The canonical page path for an evidence viewer (trailing slash —
+ *  SIG-UI-035). P36.60 (EV-02 / K13 §2.5): claim views live at
+ *  `/evidence/claim/<id>/`; the retired `/evidence/<id>/` address answers a
+ *  moved stub + the JUR-05 generator's 301. */
 export function evidencePath(claimId: string): string {
-  return `/evidence/${claimId}/`;
+  return `/evidence/claim/${claimId}/`;
 }

@@ -1,0 +1,65 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.60 (EV-02, SIG-EVUI-001): `/evidence/source/<id>/` (+ `…/page/<n>/`) —
+// one source's published artifacts (J3 G-11 one-dimension facet, ≤ 50 rows).
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ArtifactRows from "../../../components/ArtifactRows.astro";
+import EmptyState from "../../../components/EmptyState.astro";
+import { getEvidence } from "../../../lib/data";
+import { getSourcePageIds } from "../../../lib/source-page";
+import {
+  artifactHandles,
+  artifactsForSource,
+  pageCount,
+  pageSlice,
+  parseFacetPath,
+  sourceFacets,
+} from "../../../lib/evidence-hub";
+import { withBase } from "../../../lib/paths";
+
+export const getStaticPaths: GetStaticPaths = () => {
+  const { artifacts } = getEvidence();
+  const out: { params: { path: string }; props: { id: string; page: number } }[] = [];
+  for (const f of sourceFacets(artifacts)) {
+    const items = artifactsForSource(artifacts, f.id);
+    for (const n of Array.from({ length: pageCount(items.length) }, (_, i) => i + 1)) {
+      out.push({
+        params: { path: n === 1 ? f.id : `${f.id}/page/${n}` },
+        props: { id: f.id, page: n },
+      });
+    }
+  }
+  return out;
+};
+
+const { id, page } = Astro.props as { id: string; page: number };
+const parsed = parseFacetPath(id) ?? { id, page };
+const { artifacts } = getEvidence();
+const items = artifactsForSource(artifacts, parsed.id);
+const shown = pageSlice(items, page);
+const total = pageCount(items.length);
+const label = items[0]?.source_name ?? parsed.id;
+const sourceId = items[0]?.source;
+const sourceHref =
+  sourceId && new Set(getSourcePageIds()).has(sourceId) ? withBase(`sources/${sourceId}/`) : null;
+---
+
+<BaseLayout title={`Evidence — source ${label}`} path={withBase(`evidence/source/${parsed.id}/`)}>
+  <p>
+    Published artifacts from <strong>{label}</strong> ({items.length}).{" "}
+    {sourceHref !== null && <a href={sourceHref} data-testid="source-page-link">The source's page →</a>}
+  </p>
+  {items.length === 0 && <EmptyState surface="evidenceIndex" />}
+  <ArtifactRows artifacts={shown} handles={artifactHandles(artifacts)} />
+  {total > 1 && (
+    <p class="sig-evidence-pagination" data-testid="evidence-pagination">
+      Page {page} of {total} —
+      {page > 1 && <a href={withBase(`evidence/source/${parsed.id}/${page > 2 ? `page/${page - 1}/` : ""}`)}>← previous</a>}
+      {page < total && <> <a href={withBase(`evidence/source/${parsed.id}/page/${page + 1}/`)}>next page →</a></>}
+    </p>
+  )}
+</BaseLayout>

@@ -18,6 +18,7 @@ import { redirectRules, renderRedirectsConf } from "./src/lib/redirects.ts";
 import {
   getSlugHistory,
   getEntitySlugHistory,
+  getEvidence,
   getHandleHistories,
   getJurisdictionKeyMap,
   getUnplacedReport,
@@ -375,6 +376,7 @@ function sigRedirects() {
           jurisdictionLevels,
           entityHistory,
           handleRows,
+          evidenceClaims: getEvidence().claimViews.map((v) => v.claim_id),
           emittedRoutes,
         });
         // SIG-JUR-009: every historical slug resolves — a stub page OR a rule.

@@ -146,7 +146,7 @@ export const PHASE15_SURFACES = {
   network: "/network/",
   watch: "/watch/",
   evidence_recommender: "/watch/",
-  evidence_viewer: "/evidence/active-device-count/",
+  evidence_viewer: "/evidence/claim/active-device-count/",
   research_queue: "/research-queue/",
   corrections_log: "/corrections/",
 } as const;

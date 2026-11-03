@@ -49,5 +49,20 @@ test.describe("JUR-05 migration stubs", () => {
     expect(conf).toContain("sig.redirects-conf/1");
     expect(conf).toContain("location = /dossier/unresolved/");
     expect(conf).toContain("location /task/new/ { return 410; }");
+    // P36.60 (EV-02 / K13 §2.5): the retired `/evidence/<id>/` claim address
+    // 301s to `/evidence/claim/<id>/` through this same generator.
+    expect(conf).toContain(
+      "location = /evidence/active-device-count/ { return 301 /evidence/claim/active-device-count/$is_args$args; }",
+    );
+  });
+
+  test("the retired /evidence/<id>/ address answers a moved stub, never a 404", async ({ page }) => {
+    const html = readFileSync(
+      join(process.cwd(), "dist/evidence/active-device-count/index.html"),
+      "utf-8",
+    );
+    expect(html).toContain('http-equiv="refresh"');
+    expect(html).toContain("/evidence/claim/active-device-count/");
+    expect(html).toContain('name="robots" content="noindex"');
   });
 });

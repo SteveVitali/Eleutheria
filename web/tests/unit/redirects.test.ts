@@ -240,6 +240,7 @@ describe("the one-generator contract (SIG-UI-058)", () => {
     const ALLOWED = new Set([
       "pages/dossier/[...path].astro",
       "pages/id/[type]/[uuid].astro",
+      "pages/evidence/[id].astro",
       "lib/redirects.ts",
     ]);
     const offenders: string[] = [];

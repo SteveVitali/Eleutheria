@@ -76,6 +76,10 @@ export interface RedirectInputs {
   entityHistory: readonly EntitySlugHistoryRow[];
   /** RQ/WX/EV handle-history rows (absent artifacts contribute none). */
   handleRows?: readonly HandleHistoryRow[];
+  /** P36.60 (EV-02 / K13 §2.5): the claim ids the retired `/evidence/<id>/`
+   *  address served — each 301s to `/evidence/claim/<id>/` once the claim
+   *  route exists in this build. */
+  evidenceClaims?: readonly string[];
   /** The routes this build emitted (`/dossier/usa/ok/` shaped, trailing
    *  slash) — a 3xx rule is emitted only when its target exists, and a
    *  fixed-legacy rule only once its source route retired. */
@@ -281,6 +285,23 @@ function legacyRules(inputs: RedirectInputs): RedirectRule[] {
           kind: "moved",
         });
       }
+    }
+  }
+  // `/evidence/<id>/` → `/evidence/claim/<id>/` (P36.60 / EV-02): the retired
+  // bare claim address 301s to the canonical claim route — one exact rule per
+  // published claim id, gated on the successor being emitted (the moved stub
+  // page stays the static fallback, exactly like a `moved` dossier slug).
+  for (const id of inputs.evidenceClaims ?? []) {
+    const target = `/evidence/claim/${id}/`;
+    if (emitted.has(target)) {
+      out.push({
+        from: `/evidence/${id}/`,
+        status: 301,
+        target,
+        family: "legacy",
+        kind: "moved",
+        note: "the claim viewer's canonical address",
+      });
     }
   }
   // `/network/` → `/explore/` — emitted once GX-09a's explorer exists and

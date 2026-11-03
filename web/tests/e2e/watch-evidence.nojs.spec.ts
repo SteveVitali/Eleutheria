@@ -72,7 +72,7 @@ test("the one alert date with its certainty is in the static HTML (SIG-WATCH-002
 test("the evidence viewer highlights the span + diffs captures without JS (SIG-UI-028/029)", async ({
   page,
 }) => {
-  await page.goto("/evidence/active-device-count/");
+  await page.goto("/evidence/claim/active-device-count/");
   await expect(page.getByTestId("highlighted-span")).toHaveText("forty-two (42)");
   await expect(page.getByTestId("conflicting-claim").first()).toBeVisible();
   await expect(page.getByTestId("history-event").first()).toBeVisible();
@@ -82,29 +82,31 @@ test("the evidence viewer highlights the span + diffs captures without JS (SIG-U
 });
 
 test("a sealed capture is metadata-only without JS (SIG-UI-030)", async ({ page }) => {
-  await page.goto("/evidence/operator-roster-size/");
+  await page.goto("/evidence/claim/operator-roster-size/");
   await expect(page.getByTestId("sealed-notice")).toBeVisible();
   await expect(page.getByTestId("document-text")).toHaveCount(0);
   await expect(page.getByTestId("capture-digest")).toContainText("sha256:");
 });
 
-test("the interim artifact list renders grouped by source, zero-JS (P34.20, K8 NEW-6)", async ({
+test("the evidence hub lists the published artifacts, zero-JS (P36.60, EV-02)", async ({
   page,
 }) => {
   await page.goto("/evidence/");
-  // Every fixture artifact is listed, grouped by source.
-  await expect(page.getByTestId("artifact-group").first()).toBeVisible();
-  await expect(page.getByTestId("artifact-item")).toHaveCount(8);
+  // Every fixture artifact is listed in the browse table.
+  await expect(page.getByTestId("evidence-artifact-row")).toHaveCount(8);
   // A synthetic capture is a run record — never presented as a stored capture
-  // (SIG-EVUI-D04).
+  // (SIG-EVUI-D04 → 003).
   const runRecords = page.getByTestId("run-record-label");
   await expect(runRecords).toHaveCount(2);
   await expect(runRecords.first()).toHaveText("run record — SIG did not store this document");
   // The upstream link is labelled as the source's own link, recorded as a claim
   // — never presented as a capture (K8 NEW-9).
-  await expect(page.getByTestId("upstream-link").first()).toHaveText(
-    "the source's own link (recorded as a claim)",
-  );
+  await expect(page.getByTestId("artifact-upstream").first()).toBeVisible();
+  // The facet nav exposes all five dimensions; a facet page lists its rows.
+  await expect(page.getByTestId("facet-dim")).toHaveCount(5);
+  // The state-of-the-evidence roll-up counts artifacts + run records.
+  await expect(page.getByTestId("evidence-rollup")).toHaveAttribute("data-artifacts", "8");
+  await expect(page.getByTestId("evidence-rollup")).toHaveAttribute("data-run-records", "2");
   // The page ships no executable JavaScript — only inert, allow-listed
   // /_kit/ module entries (SIG-UI-036, ADR-155).
   await expectOnlyAllowListedKitModules(page);

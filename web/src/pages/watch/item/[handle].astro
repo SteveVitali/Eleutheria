@@ -15,6 +15,7 @@ import ContestedMarker from "../../../components/ContestedMarker.astro";
 import EmptyState from "../../../components/EmptyState.astro";
 import { watchContext } from "../../../lib/watch-context";
 import { getEvidence, getStatementIndex } from "../../../lib/data";
+import { artifactHandles, artifactHref } from "../../../lib/evidence-hub";
 import {
   evidenceRows,
   itemDateLabel,
@@ -43,6 +44,9 @@ const placeHref = itemPlaceHref(item, pages);
 // Claim links resolve only when the evidence viewer actually emits the
 // claim's route — never a dead link (the claim id renders verbatim else).
 const claimRoutes = new Set(getEvidence().claimViews.map((v) => v.claim_id));
+// P36.60 (EV-02): artifact links resolve through the one handle map — an id
+// with no emitted page renders verbatim (never a dead link).
+const artifactHandlesMap = artifactHandles(getEvidence().artifacts);
 const STATEMENTS = getStatementIndex();
 const evidence = evidenceRows(item);
 const tasks = item.tasks ?? [];
@@ -150,7 +154,7 @@ const placeDisplay = item.place?.key ? (names.get(item.place.key) ?? placePage?.
             <p>
               Claim{" "}
               {claimRoutes.has(e.claim_id) ? (
-                <a href={withBase(`evidence/${e.claim_id}/`)} data-testid="evidence-claim-link"><code>{e.claim_id}</code></a>
+                <a href={withBase(`evidence/claim/${e.claim_id}/`)} data-testid="evidence-claim-link"><code>{e.claim_id}</code></a>
               ) : (
                 <code>{e.claim_id}</code>
               )}{" "}
@@ -166,7 +170,16 @@ const placeDisplay = item.place?.key ? (names.get(item.place.key) ?? placePage?.
               )}
             </p>
             {(e.artifact_ids ?? []).length > 0 && (
-              <p>Artifacts: {e.artifact_ids!.map((a) => <code>{a}</code>)}</p>
+              <p>
+                Artifacts:{" "}
+                {e.artifact_ids!.map((aid) =>
+                  artifactHandlesMap.has(aid) ? (
+                    <a href={withBase(artifactHref(artifactHandlesMap.get(aid)!))} data-testid="evidence-artifact-link"><code>{aid}</code></a>
+                  ) : (
+                    <code>{aid}</code>
+                  ),
+                )}
+              </p>
             )}
             {/* The shared provenance panel for the claim — the same
                 sig.provenance-panel/1 every surface renders; a claim with no

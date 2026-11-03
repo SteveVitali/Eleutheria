@@ -3,45 +3,111 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// The evidence viewer index (§39.6). Lists the claims whose full evidence view is
-// available — each links to the document with its supporting span highlighted, the
-// provenance chain, the conflicting claims, the capture diff, and (for sealed
-// captures) the metadata-only representation. Static, zero-JS (SIG-UI-036/037).
-//
-// P34.20 (K8 NEW-6, F-416): while no claim is bound to a publishable document
-// view, the page ALSO carries the interim artifact list — the published
-// artifacts from evidence.json grouped by source, with the honest run-record
-// label on synthetic captures (SIG-EVUI-D04) and the source's own link where
-// the export's S-6 gate emitted one (K8 NEW-9).
+// P36.60 (K8 EV-02, SIG-EVUI-001/003/005/008): the evidence hub — §4.1.
+// "What evidence means" intro, the state-of-the-evidence roll-up (claims by
+// binding state, artifacts by classification + lane, captures with bytes vs
+// digest-only), the current-state banner, the browse-artifacts table (≤ 50
+// rows — K9 §6.1 pagination via /evidence/page/<n>/), the claim-views index,
+// the facet nav and the JSON twin. T1 zero-JS; every fact shows without a
+// script. D-K8-4 [B-44]: the synthetic run-record artifacts show with honest
+// labels — never as stored documents.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ContestedMarker from "../../components/ContestedMarker.astro";
 import EmptyState from "../../components/EmptyState.astro";
-import { evidencePath, isClaimContested, isSealed } from "../../lib/evidence-viewer";
+import ArtifactRows from "../../components/ArtifactRows.astro";
 import {
-  ARTIFACTS_EMPTY,
-  ARTIFACTS_HEADING,
-  ARTIFACTS_INTRO,
-  RUN_RECORD_LABEL,
-  UPSTREAM_LINK_LABEL,
-  artifactTypeLabel,
-  artifactsBySource,
-  isRunRecord,
-} from "../../lib/evidence-artifacts";
+  artifactHandles,
+  artifactHref,
+  byArtifactIndex,
+  claimHref,
+  evidenceRollup,
+  latestCapture,
+  pageCount,
+  pageSlice,
+} from "../../lib/evidence-hub";
+import { evidencePath, isClaimContested, isSealed } from "../../lib/evidence-viewer";
 import { getEvidence } from "../../lib/data";
+import { withBase } from "../../lib/paths";
 
 // The evidence claim-views + published artifacts flow through the single data
 // seam (ADR-066): fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
 const { artifacts, claimViews: CLAIM_VIEWS } = getEvidence();
-const ARTIFACT_GROUPS = artifactsBySource(artifacts);
+const handles = artifactHandles(artifacts);
+const sorted = [...artifacts].sort(byArtifactIndex);
+const shown = pageSlice(sorted, 1);
+const totalPages = pageCount(sorted.length);
+const roll = evidenceRollup(artifacts);
+const runRecordShare =
+  roll.artifacts === 0 ? 0 : Math.round((roll.runRecords / roll.artifacts) * 100);
+// SIG-EVUI-008: the current-state banner names the actual cause — a pipeline
+// gap (claims not yet bound to stored documents), never a research gap.
+const allRunRecords = roll.artifacts > 0 && roll.runRecords === roll.artifacts;
 ---
 
-<BaseLayout title="Evidence viewer" path="/evidence/">
+<BaseLayout title="Evidence" path="/evidence/">
   <p>
-    The evidence viewer shows the document with the supporting span highlighted at its
-    locator, the extraction method and version, the review status, the conflicting
-    claims, the capture date and digest, the acquisition method, and the full claim
-    history. Sealed captures are shown metadata-only, with an explanation of why the
-    bytes are withheld.
+    SIG's evidence is three things: an <strong>artifact</strong> (a document or dataset SIG
+    read), a <strong>capture</strong> (a dated, hashed copy or record of that read), and a <strong>claim</strong> (one statement
+    extracted from a capture). This page is the state of
+    the evidence in this release — browse the artifacts, open one to see its captures and the
+    claims it supports, or open a claim's full evidence view.
+  </p>
+
+  {allRunRecords && (
+    <p class="sig-evidence-banner" data-testid="evidence-state-banner">
+      Every published artifact currently points to a <strong>run-level record</strong>: SIG
+      logged which source run produced it, but did not keep a per-record copy of the page or
+      file it came from. Each source's page lists what was fetched, when, and its hash — the
+      run record is labelled honestly, never presented as a stored document.
+    </p>
+  )}
+
+  <h2 id="state-heading">State of the evidence</h2>
+  <dl class="sig-evidence-rollup" data-testid="evidence-rollup" data-artifacts={roll.artifacts} data-run-records={roll.runRecords}>
+    <div><dt>Published artifacts</dt><dd>{roll.artifacts}</dd></div>
+    <div><dt>Run records (no stored document)</dt><dd>{roll.runRecords} ({runRecordShare}%)</dd></div>
+    <div><dt>Recorded captures</dt><dd>{roll.capturesRecorded === 0 ? "not recorded" : roll.capturesRecorded}</dd></div>
+    <div><dt>Captures with stored bytes</dt><dd>{roll.captures === 0 ? "not recorded" : `${roll.capturesWithBytes} of ${roll.captures}`}</dd></div>
+    <div><dt>Claim evidence views</dt><dd>{CLAIM_VIEWS.length}</dd></div>
+  </dl>
+
+  <h2 id="browse-heading">Browse artifacts ({sorted.length})</h2>
+  {sorted.length === 0 && <EmptyState surface="evidenceIndex" />}
+  <ArtifactRows artifacts={shown} handles={handles} testid="evidence-artifact-row" />
+  {totalPages > 1 && (
+    <p class="sig-evidence-pagination" data-testid="evidence-pagination">
+      Showing {shown.length} of {sorted.length} —{" "}
+      <a href={withBase("evidence/page/2/")}>next page →</a>
+    </p>
+  )}
+
+  <h2 id="facets-heading">Browse by</h2>
+  <ul class="sig-evidence-facets" aria-labelledby="facets-heading">
+    {([
+      ["Source", "source", roll.bySource, "facet-source"],
+      ["Type", "type", roll.byType, "facet-type"],
+      ["Lane", "lane", roll.byLane, "facet-lane"],
+      ["Capture state", "state", roll.byState, "facet-state"],
+      ["Place", "place", roll.byPlace, "facet-place"],
+    ] as const).map(([dimLabel, dim, facets, tid]) => (
+      <li data-testid="facet-dim" data-dim={dim}>
+        <strong>{dimLabel}:</strong>{" "}
+        {facets.map((f, i) => (
+          <>
+            {i > 0 && ", "}
+            <a href={withBase(`evidence/${dim}/${f.id}/`)} data-testid={tid}>{f.label} ({f.items})</a>
+          </>
+        ))}
+      </li>
+    ))}
+  </ul>
+
+  <h2 id="claim-views-heading">Claim evidence views ({CLAIM_VIEWS.length})</h2>
+  <p>
+    The full evidence view shows the document with the supporting span highlighted at its
+    locator, the extraction method and version, the review status, the conflicting claims,
+    the capture date and digest, the acquisition method, and the full claim history. Sealed
+    captures are shown metadata-only, with an explanation of why the bytes are withheld.
   </p>
   {CLAIM_VIEWS.length === 0 && <EmptyState surface="evidenceIndex" />}
   <ul class="sig-evidence-index">
@@ -54,23 +120,9 @@ const ARTIFACT_GROUPS = artifactsBySource(artifacts);
     ))}
   </ul>
 
-  <h2 id="artifacts-heading" data-copy="EW-23">{ARTIFACTS_HEADING}</h2>
-  <p data-copy="EW-24">{ARTIFACTS_INTRO}</p>
-  {ARTIFACT_GROUPS.length === 0 && <p data-testid="artifacts-empty" data-copy="EW-27">{ARTIFACTS_EMPTY}</p>}
-  {ARTIFACT_GROUPS.map((group) => (
-    <section data-testid="artifact-group" data-source-id={group.sourceId}>
-      <h3>{group.sourceName} ({group.artifacts.length})</h3>
-      <ul class="sig-artifact-list" aria-label={group.sourceName}>
-        {group.artifacts.map((artifact) => (
-          <li data-testid="artifact-item" data-artifact-id={artifact.artifact_id} data-run-record={isRunRecord(artifact) ? "true" : "false"}>
-            {artifact.title} — {artifactTypeLabel(artifact.artifact_type)}
-            {isRunRecord(artifact) && <> — <em data-testid="run-record-label" data-copy="EW-25">{RUN_RECORD_LABEL}</em></>}
-            {artifact.upstream_url && (
-              <> — <a data-testid="upstream-link" data-copy="EW-26" href={artifact.upstream_url} rel="external">{UPSTREAM_LINK_LABEL}</a></>
-            )}
-          </li>
-        ))}
-      </ul>
-    </section>
-  ))}
+  <h2 id="downloads-heading">Machine-readable</h2>
+  <p>
+    <a href={withBase("evidence/index.json")} data-testid="evidence-json-twin">The artifact index as JSON</a>{" "}
+    — every artifact page and claim view also carries a <code>.json</code> twin.
+  </p>
 </BaseLayout>

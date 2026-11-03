@@ -1,0 +1,40 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.60 (EV-02): the shared facet-list body — one dimension's filtered
+// artifact rows + the pagination line. T1 zero-JS.
+import ArtifactRows from "./ArtifactRows.astro";
+import EmptyState from "./EmptyState.astro";
+import type { EvidenceArtifact } from "../lib/recommender";
+import { pageCount, pageSlice } from "../lib/evidence-hub";
+import { withBase } from "../lib/paths";
+
+interface Props {
+  /** The facet route's own base (`evidence/type/<id>/`). */
+  base: string;
+  label: string;
+  dim: string;
+  items: EvidenceArtifact[];
+  handles: ReadonlyMap<string, string>;
+  page: number;
+}
+const { base, label, dim, items, handles, page } = Astro.props;
+const shown = pageSlice(items, page);
+const total = pageCount(items.length);
+---
+
+<p>
+  Published artifacts — {dim} <strong>{label}</strong> ({items.length}).{" "}
+  <a href={withBase("evidence/")}>All evidence →</a>
+</p>
+{items.length === 0 && <EmptyState surface="evidenceIndex" />}
+<ArtifactRows artifacts={shown} handles={handles} />
+{total > 1 && (
+  <p class="sig-evidence-pagination" data-testid="evidence-pagination">
+    Page {page} of {total} —
+    {page > 1 && <a href={withBase(`${base}${page > 2 ? `page/${page - 1}/` : ""}`)}>← previous</a>}
+    {page < total && <> <a href={withBase(`${base}page/${page + 1}/`)}>next page →</a></>}
+  </p>
+)}
