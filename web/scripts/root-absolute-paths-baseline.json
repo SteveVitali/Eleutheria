@@ -836,6 +836,84 @@
       "token": "/v1/releases/",
       "count": 1,
       "reason": "P36.53: the fixture sig.dossier-sources/1 download_recipes.api.endpoint mirrors the emitted artifact's API-path data verbatim — artifact bytes, not a link construction"
+    },
+    {
+      "file": "src/lib/dossier-visuals-fixture.ts",
+      "token": "/dossier/$",
+      "count": 2,
+      "reason": "P36.55: fixture sig.dossier-visuals/1 child hrefs + twin sites link mirror the emitted wire literals — artifact data, not link constructions"
+    },
+    {
+      "file": "src/lib/dossier-visuals.ts",
+      "token": "/dossier/$",
+      "count": 1,
+      "reason": "P36.55: figMapTwin's sites link mirrors the emitted sig.dossier/2 twin wire literal — artifact data, not a link"
+    },
+    {
+      "file": "src/lib/dossier-visuals.ts",
+      "token": "/figures/dossier/$",
+      "count": 1,
+      "reason": "P36.55: figMapTwin's download link mirrors the emitted twin wire literal — artifact data, not a link"
+    },
+    {
+      "file": "src/pages/dossier/[...path].astro",
+      "token": "/",
+      "count": 1,
+      "reason": "P36.55: ptrFor's bare-root fallback + `/${ref.index}` template head — JSON pointers, not links"
+    },
+    {
+      "file": "src/pages/dossier/[...path].astro",
+      "token": "/rollup/records",
+      "count": 2,
+      "reason": "P36.55: JSON pointer /rollup/records into the dossier artifact (strip-records + the typed-absence map-total spec) — a pointer, not a link"
+    },
+    {
+      "file": "src/pages/dossier/[...path].astro",
+      "token": "/children",
+      "count": 1,
+      "reason": "P36.55: JSON pointer into the dossier artifact (the strip/map figure specs) — a pointer, not a link"
+    },
+    {
+      "file": "src/pages/dossier/[...path].astro",
+      "token": "/disagreements",
+      "count": 1,
+      "reason": "P36.55: JSON pointer into the dossier artifact (the strip/map figure specs) — a pointer, not a link"
+    },
+    {
+      "file": "src/pages/dossier/[...path].astro",
+      "token": "/figures/0/meta/desc/records_drawn",
+      "count": 1,
+      "reason": "P36.55: JSON pointer into the dossier artifact (the strip/map figure specs) — a pointer, not a link"
+    },
+    {
+      "file": "src/pages/dossier/[...path].astro",
+      "token": "/figures/0/meta/desc/records_total",
+      "count": 1,
+      "reason": "P36.55: JSON pointer into the dossier artifact (the strip/map figure specs) — a pointer, not a link"
+    },
+    {
+      "file": "src/pages/dossier/[...path].astro",
+      "token": "/figures/0/meta/not_drawn",
+      "count": 1,
+      "reason": "P36.55: JSON pointer into the dossier artifact (the strip/map figure specs) — a pointer, not a link"
+    },
+    {
+      "file": "src/pages/dossier/[...path].astro",
+      "token": "/$",
+      "count": 1,
+      "reason": "P36.55: ptrFor's `/${ref.index}` template head — a JSON pointer into the dossier artifact, not a link"
+    },
+    {
+      "file": "src/pages/dossier/[...path].astro",
+      "token": "/figures/0/meta/desc",
+      "count": 1,
+      "reason": "P36.55: JSON pointer into the named artifact (the strip/map/next-decisions figure specs) — a pointer, not a link"
+    },
+    {
+      "file": "src/components/dossier/DossierMapFigure.astro",
+      "token": "/",
+      "count": 1,
+      "reason": "P36.55: the bare-root JSON pointer in the empty-state fallback figure spec — a pointer, not a link"
     }
   ]
 }

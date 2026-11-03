@@ -337,6 +337,23 @@ export interface Dossier {
    * emits the labelled placeholder for kinds it cannot yet draw).
    */
   print_figures?: { kind: string; title: string; state?: string; note?: string }[];
+
+  // --- P36.55 (K6 VIZ-02 / §9.2): the published figures twin --------------
+  /**
+   * The `figures[]` metadata twin on a `sig.dossier/2` (P36.54 emits it):
+   * figure id + agent-drafted-labelled caption + desc counts + links —
+   * NEVER geometry (the visuals doc under `inputs/` stays restricted,
+   * SIG-UI-134). The page cites the fig-map row's caption and reconciles
+   * its counts; a dossier with no twin renders the map's own caption.
+   */
+  figures?: {
+    figure_id: string;
+    kind: string;
+    caption?: string | null;
+    caption_drafted?: string;
+    meta?: unknown;
+    links?: { sites?: string; download?: string | null };
+  }[];
 }
 
 /** The BCP-47 language tag for a dossier (defaults to English). */

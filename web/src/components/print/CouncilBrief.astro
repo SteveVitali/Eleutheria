@@ -28,6 +28,8 @@ interface Props {
   qr: { viewBox: number; d: string };
   permalink: string;
   specMap: Map<string, FigureSpec>;
+  /** P36.55 (SIG-UI-130): the place-inside-parent locator glyph on page 1. */
+  locator?: { parentD: string; childD: string; viewbox: [number, number] } | null;
 }
 
 const {
@@ -40,6 +42,7 @@ const {
   qr,
   permalink,
   specMap,
+  locator,
 } = Astro.props;
 
 const u = glance.unknowns;
@@ -54,6 +57,18 @@ if (u.unknown > 0) unknownBits.push(`${u.unknown} recorded unknown`);
   <p class="sig-print-brief__kicker" data-copy="PV-01">Council brief</p>
   <h1>{pageTitle}</h1>
   <p class="sig-dossier-jurisdiction">{jurisdictionLabel}</p>
+  {locator && (
+    <svg
+      class="sig-print-brief__locator"
+      viewBox={`0 0 ${locator.viewbox[0]} ${locator.viewbox[1]}`}
+      role="img"
+      aria-label={`${jurisdictionLabel} inside its parent jurisdiction`}
+      data-testid="brief-locator"
+    >
+      <path d={locator.parentD} class="sig-fig-child" />
+      <path d={locator.childD} class="sig-fig-locator-inset" />
+    </svg>
+  )}
   {/* The combines/unmapped sentences (copy rows JD-02/JD-07) are rendered by
       the PAGE via this slot — the P34.14 copy-binding tests parse the route
       file itself, so the guarded elements must live there, not in here. */}

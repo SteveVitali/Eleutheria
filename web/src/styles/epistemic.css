@@ -2308,3 +2308,26 @@ sig-typeahead {
   /* K5 §4.2: the explorer prints as an appendix — <details> expanded. */
   .sig-dsrc details.sig-dsrc-source > *:not(summary) { display: block !important; }
 }
+
+/* P36.55 (VIZ-02): the v2 dossier template blocks. */
+.sig-header-strip__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: var(--sig-space-2) var(--sig-space-3);
+  margin: var(--sig-space-2) 0 var(--sig-space-3);
+}
+.sig-header-strip__cell dt { font-size: var(--sig-step--2); text-transform: uppercase; letter-spacing: 0.04em; color: var(--sig-ink-muted); }
+.sig-header-strip__cell dd { margin: 0; }
+.sig-locator { float: right; margin: 0 0 var(--sig-space-2) var(--sig-space-3); }
+.sig-locator__svg { width: 10rem; height: auto; }
+.sig-locator__status { font-size: var(--sig-step--1); color: var(--sig-ink-muted); max-width: 10rem; }
+.sig-fig1 { margin: var(--sig-space-3) 0; }
+.sig-fig1__canvas :is(svg) { width: 100%; height: auto; display: block; }
+.sig-fig1__caption { font-size: var(--sig-step--1); margin-top: var(--sig-space-1); }
+.sig-fig1__title { font-weight: 600; }
+.sig-explore-bar { display: flex; flex-wrap: wrap; gap: var(--sig-space-2); margin: var(--sig-space-2) 0 var(--sig-space-3); }
+.sig-explore-bar__link { display: inline-block; min-height: 44px; padding: var(--sig-space-2) var(--sig-space-3); border: var(--sig-border-thin) solid currentColor; border-radius: var(--sig-radius-2); text-decoration: none; }
+.sig-next-decisions__item { margin-bottom: var(--sig-space-1); }
+.sig-next-decisions__links { margin-top: var(--sig-space-2); }
+.sig-other-resources__list li { margin-bottom: var(--sig-space-1); }
+.sig-print-brief__locator { float: right; width: 2.2cm; height: auto; margin-left: var(--sig-space-3); }

@@ -12,6 +12,7 @@
 // fabricated visual and never a silent omission.
 import type { PrintFigureDecl } from "../../lib/print";
 import type { AsOfEcho } from "../../lib/fixtures";
+import { assertInlineSvgSafe } from "../../lib/entity-figures";
 
 interface Props {
   figure: PrintFigureDecl;
@@ -20,9 +21,16 @@ interface Props {
   place: string;
   asOf: AsOfEcho;
   permalink: string;
+  /**
+   * P36.55 (VIZ-02, SIG-UI-130): the static figure bytes when the build
+   * carries them — the map's own SVG prints (never a placeholder over a
+   * drawable figure), inlined through the same safety contract.
+   */
+  svg?: string;
 }
 
 const { figure, ordinal, place, asOf, permalink } = Astro.props;
+const svg = Astro.props.svg ? assertInlineSvgSafe(Astro.props.svg, `print figure ${figure.kind}`) : null;
 
 const KIND_CAPTION: Record<PrintFigureDecl["kind"], { copy: string; text: string }> = {
   map: { copy: "PV-09", text: "Map — the recorded sites' geography." },
@@ -36,6 +44,16 @@ const placeholderNote =
 ---
 
 <figure class="sig-print-figure" data-figure-kind={figure.kind} data-testid="print-figure">
+  {svg !== null ? (
+    <div
+      class={`sig-print-figure__canvas sig-print-figure__canvas--${figure.kind}`}
+      role="img"
+      aria-label={figure.title}
+      data-testid="print-figure-svg"
+    >
+      <Fragment set:html={svg} />
+    </div>
+  ) : (
   <div
     class={`sig-print-figure__canvas sig-print-figure__canvas--${figure.kind}`}
     role="img"
@@ -50,6 +68,7 @@ const placeholderNote =
       </span>
     )}
   </div>
+  )}
   <figcaption class="sig-print-figure__caption">
     {/* `{" "}` between every inline part — the K14 glue check flags adjacent
         inline elements with no separator as fused words in extracted text. */}

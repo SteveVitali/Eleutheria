@@ -1,0 +1,31 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.55 (VIZ-02, SIG-UI-069): the Explore bar — the three sideways links
+// under Figure 1 ("Explore on the map · See connections · Search within
+// {place}"). Links carry the workspace-state jurisdiction facet only where
+// the target surface DECLARES it today (`/map/` and `/search/` list
+// `jurisdiction`; `/network/` gets the plain link) — a target that cannot
+// apply a facet never receives one silently. VIZ-03 (P36.56/57) owns the
+// state-carrying `sig.workspace-state/2` upgrade + the scoped GET form.
+import { withBase } from "../../lib/paths";
+import type { Dossier } from "../../lib/dossier";
+
+interface Props {
+  dossier: Dossier;
+  /** The place's canonical key (jurisdiction facet value) when keyed. */
+  jkey: string | null;
+}
+
+const { dossier, jkey } = Astro.props;
+const name = dossier.display_name ?? dossier.name ?? dossier.jurisdiction;
+const scoped = jkey ? `&jurisdiction=${encodeURIComponent(jkey)}` : "";
+---
+
+<nav class="sig-explore-bar" data-testid="dossier-explore-bar" aria-label="Explore this dossier">
+  <a class="sig-explore-bar__link" data-testid="explore-map" href={withBase(`map/?v=1${scoped}`)} data-copy="EB-01">Explore on the map →</a>{" "}
+  <a class="sig-explore-bar__link" data-testid="explore-network" href={withBase("network/")} data-copy="EB-02">See connections →</a>{" "}
+  <a class="sig-explore-bar__link" data-testid="explore-search" href={withBase(`search/?v=1${scoped}`)}>Search within {name} →</a>
+</nav>

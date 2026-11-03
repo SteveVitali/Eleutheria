@@ -105,6 +105,7 @@ import {
 } from "./procurement-relevance";
 import { DOSSIER_SOURCES_FIXTURE } from "./dossier-sources-fixture";
 import { isDossierSourcesDoc, type DossierSourcesDoc } from "./dossier-sources";
+import { fixtureFigureTwin } from "./dossier-visuals-fixture";
 
 // The committed fixtures the data layer serves in `fixtures` mode (and that the P27.5
 // fixture-export harness serialises into the export layout). The PAGES import none of
@@ -262,7 +263,16 @@ function layoutDir(): string {
  */
 export function getDossiers(): Dossier[] {
   if (dataSource() !== "export") {
-    return DOSSIERS.map((d) => applyPublicationPolicy(d));
+    // P36.55 (VIZ-02): the committed visuals fixture mints each dossier's
+    // `figures[]` twin (the export emits it on `sig.dossier/2`; the fixture
+    // corpus attaches the same shape so every render path reads one wire).
+    return DOSSIERS.map((d) => {
+      const twin = d.figures ? undefined : fixtureFigureTwin(
+        d.slug,
+        d.level === "country" || d.level === "state_province",
+      );
+      return applyPublicationPolicy(twin ? { ...d, figures: twin } : d);
+    });
   }
   // P35.45: the per-dossier artifact set — `web/dossiers/<slug-path>.json`
   // (nested paths mirroring the canonical jurisdiction chain) — supersedes
