@@ -84,6 +84,13 @@ class CaptureMetadata:
     #: ``parent_capture_id = capture_id``). Every excerpt surface serves the
     #: derivative, never the parent's raw bytes, where one exists.
     derivative: RedactionDerivative | None = None
+    #: P36.51 (R11-K13-TX-08b / J3 §5.5, SIG-TRANSP-012): the disclosure lane +
+    #: Part VIII class the store's read path recorded or derived for the
+    #: capture's source — the S-6 inputs the ``upstream`` publication form is
+    #: computed from. ``None`` = not recorded (the caller treats it as the
+    #: fail-closed ``unknown`` lane, never an assumed lane).
+    lane: str | None = None
+    part_viii_class: str | None = None
 
 
 def bytes_available(meta: CaptureMetadata) -> bool:
@@ -181,6 +188,9 @@ def public_representation(meta: CaptureMetadata) -> dict[str, object]:
         # Existence, source, date, digest, claims supported — and nothing else.
         base["exists"] = True
         return base
+    # P36.51 (J3 §5.5): the byte-bearing marker is a public fact of every
+    # non-sealed representation — a ``synthetic`` capture is a run record.
+    base["capture_classification"] = meta.capture_classification
     base["title"] = meta.title
     base["byte_size"] = meta.byte_size
     base["excerpt"] = publishable_excerpt(meta)

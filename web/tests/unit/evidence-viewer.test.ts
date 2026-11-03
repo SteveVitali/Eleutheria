@@ -13,6 +13,7 @@ import {
   changedFields,
   claimContestedMarker,
   claimHighlightedDocument,
+  claimPaneFor,
   diffCaptures,
   highlightSpan,
   isClaimContested,
@@ -22,9 +23,11 @@ import {
 import type { Capture, ClaimView } from "../../src/lib/evidence-viewer";
 import {
   CONTRACT_CAPTURE,
+  DERIVED_ONLY_CLAIM_VIEW,
   DEVICE_COUNT_CLAIM_VIEW,
   PORTAL_CAPTURE_AUGUST,
   PORTAL_CAPTURE_JUNE,
+  RUN_RECORD_CLAIM_VIEW,
   SEALED_CAPTURE,
   SEALED_CLAIM_VIEW,
 } from "../../src/lib/watch-evidence-fixture";
@@ -123,10 +126,57 @@ describe("sealed captures are metadata-only with an explanation (SIG-UI-030, §1
     expect(() => assertCaptureTier(noReason)).toThrow(/SIG-UI-030/);
   });
 
-  it("a non-sealed capture MUST carry its document text", () => {
+  it("a non-sealed capture MAY lack text when the lane forbids bytes (SIG-EVUI-004)", () => {
+    // Amends the pre-EVUI-004 "non-sealed ⇒ text" rule: missing text is only an
+    // error when the claim's pane is text_span.
     const missing: Capture = { ...PORTAL_CAPTURE_JUNE };
     delete (missing as { document_text?: string }).document_text;
-    expect(() => assertCaptureTier(missing)).toThrow(/SIG-UI-028/);
+    expect(() => assertCaptureTier(missing)).not.toThrow();
     expect(() => sealedMetadata(CONTRACT_CAPTURE)).toThrow(/SIG-UI-030/);
+  });
+});
+
+describe("the document pane is binding state × lane × Part VIII (SIG-EVUI-004)", () => {
+  it("derives each §4.3 pane kind from binding_status × lane", () => {
+    expect(claimPaneFor(DEVICE_COUNT_CLAIM_VIEW).kind).toBe("text_span"); // raw-ok + actual
+    expect(claimPaneFor(SEALED_CLAIM_VIEW).kind).toBe("metadata_only"); // restricted/sealed
+    expect(claimPaneFor(DERIVED_ONLY_CLAIM_VIEW).kind).toBe("locator_only"); // derived-only
+    expect(claimPaneFor(RUN_RECORD_CLAIM_VIEW).kind).toBe("run_record"); // legacy_synthetic
+  });
+
+  it("a lane that forbids bytes never fails the build for missing text", () => {
+    expect(DERIVED_ONLY_CLAIM_VIEW.capture.document_text).toBeUndefined();
+    expect(() => assertClaimView(DERIVED_ONLY_CLAIM_VIEW)).not.toThrow();
+    expect(() => assertClaimView(RUN_RECORD_CLAIM_VIEW)).not.toThrow();
+    expect(claimHighlightedDocument(DERIVED_ONLY_CLAIM_VIEW)).toBeNull();
+  });
+
+  it("a text_span pane without bytes IS a failure, and a leaked byte pane is refused", () => {
+    const noText: ClaimView = {
+      ...DERIVED_ONLY_CLAIM_VIEW,
+      lane: "raw-ok",
+      pane: { kind: "text_span" },
+    };
+    expect(() => assertClaimView(noText)).toThrow(/SIG-UI-028|SIG-EVUI-004/);
+    const leakedPane: ClaimView = {
+      ...DERIVED_ONLY_CLAIM_VIEW,
+      pane: { kind: "text_span" },
+    };
+    expect(() => assertClaimView(leakedPane)).toThrow(/SIG-EVUI-004/);
+    const restrictedSpan: ClaimView = {
+      ...SEALED_CLAIM_VIEW,
+      pane: { kind: "text_span" },
+    };
+    expect(() => assertClaimView(restrictedSpan)).toThrow(/SIG-EVUI-004/);
+  });
+
+  it("a metadata_only pane must name its reason class and carry no bytes", () => {
+    const noReason: ClaimView = {
+      ...SEALED_CLAIM_VIEW,
+      pane: { kind: "metadata_only" },
+      capture: { ...SEALED_CAPTURE },
+    };
+    delete (noReason.capture as { sealed_reason?: string }).sealed_reason;
+    expect(() => assertClaimView(noReason)).toThrow(/SIG-EVUI-004|SIG-UI-030/);
   });
 });

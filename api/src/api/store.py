@@ -71,6 +71,22 @@ class StoreHealth:
 
 
 @dataclass(frozen=True)
+class ClaimBinding:
+    """One published ``claim_evidence`` row (P36.51 / SIG-EVUI-007, J3 §5.5).
+
+    The claim→capture→artifact link ``/v1/claim`` returns so a claim can reach
+    ``/v1/evidence``: ``capture_id`` + ``artifact_id`` + the §26 role + the
+    ``binding_status`` closed vocabulary (``None`` on a spine that never
+    recorded it — the route renders the named ``not_recorded`` absence).
+    """
+
+    capture_id: str
+    artifact_id: str | None = None
+    role: str | None = None
+    binding_status: str | None = None
+
+
+@dataclass(frozen=True)
 class StoredClaim:
     """A claim plus the belief instant it was asserted at (T5, its sys_period start).
 
@@ -83,6 +99,10 @@ class StoredClaim:
     claim: Claim
     asserted_at: datetime
     capture_ids: tuple[str, ...] = ()
+    #: P36.51 (SIG-EVUI-007): the published binding rows — capture/artifact ids,
+    #: role and binding status — richer than the flat ``capture_ids`` list the
+    #: field predates. Empty when no binding is published.
+    bindings: tuple[ClaimBinding, ...] = ()
     #: P32.5/ADR-124 (SIG-TRUST-006): the shared selector's denial, when the
     #: claim may not be publicly represented — the route renders this as a
     #: truthful tombstone (policy version + safe reason), never the value.
@@ -251,6 +271,7 @@ class InMemoryStore:
         self._claims_by_id: dict[str, StoredClaim] = {}
         self._entities: dict[tuple[str, str], EntityRecord] = {}
         self._captures_meta: dict[tuple[str, str], CaptureMetadata] = {}
+        self._capture_artifact: dict[str, str] = {}
         self._rights: dict[str, RightsRecord] = {}
         self._coverage: dict[str, list[CoverageRecord]] = {}
         self._snapshot_captures: list[Capture] = []
@@ -272,6 +293,7 @@ class InMemoryStore:
 
     def add_capture(self, meta: CaptureMetadata, *, artifact_id: str) -> None:
         self._captures_meta[(artifact_id, meta.capture_id)] = meta
+        self._capture_artifact[meta.capture_id] = artifact_id
 
     def add_rights(self, record: RightsRecord) -> None:
         self._rights[record.source_id] = record
@@ -313,7 +335,23 @@ class InMemoryStore:
         return self._entities.get((entity_type, entity_id))
 
     def stored_claim(self, claim_id: str) -> StoredClaim | None:
-        return self._claims_by_id.get(claim_id)
+        stored = self._claims_by_id.get(claim_id)
+        if stored is None or stored.bindings:
+            return stored
+        # P36.51 (SIG-EVUI-007): a claim seeded with flat ``capture_ids``
+        # derives its binding rows from the registered captures — the demo
+        # store's claims gain artifact ids so ``/v1/claim`` can reach
+        # ``/v1/evidence``; an unregistered capture keeps ``artifact_id=None``
+        # (the typed absent leg, never a fabricated id).
+        bindings = tuple(
+            ClaimBinding(
+                capture_id=cid,
+                artifact_id=self._capture_artifact.get(cid),
+                binding_status="legacy_synthetic",
+            )
+            for cid in stored.capture_ids
+        )
+        return replace(stored, bindings=bindings)
 
     def capture(self, artifact_id: str, capture_id: str) -> CaptureMetadata | None:
         return self._captures_meta.get((artifact_id, capture_id))

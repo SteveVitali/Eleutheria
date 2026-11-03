@@ -19,6 +19,7 @@ from datetime import date
 from typing import Any
 
 from evidence.tiers import StorageTier
+from exports.statements import upstream_block
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from fastapi.responses import JSONResponse
 from policy.sensitivity import apply_tier, geo_tier_for, published_precision
@@ -37,6 +38,7 @@ from .envelope import (
 from .models import (
     ChangeEvent,
     ChangesResponse,
+    ClaimEvidenceBinding,
     ClaimResponse,
     ContradictionCollection,
     ContradictionResponse,
@@ -342,6 +344,13 @@ def build_router() -> APIRouter:
         # answers with a truthful tombstone — value/raw_value/evidence links
         # nulled, the reason category + policy version stated.
         withheld = stored.publication is not None
+        # P36.51 (SIG-EVUI-007 / J3 §5.5): the published binding rows become
+        # navigable — each carries its /v1/evidence href where both locators
+        # are public; the claim's primary binding (first recorded row) fills
+        # ``artifact_id``/``binding_status``/``provenance``. A withheld claim
+        # nulls every evidence leg exactly like ``evidence_capture_ids``.
+        bindings = [] if withheld else list(stored.bindings)
+        primary = bindings[0] if bindings else None
         return ClaimResponse(
             claim_id=c.claim_id,
             subject_id=c.subject_id,
@@ -358,6 +367,27 @@ def build_router() -> APIRouter:
             count_scope_jurisdiction=c.count_scope_jurisdiction,
             evidence_origin=c.evidence_origin,
             evidence_capture_ids=[] if withheld else list(stored.capture_ids),
+            evidence=[
+                ClaimEvidenceBinding(
+                    capture_id=b.capture_id,
+                    artifact_id=b.artifact_id,
+                    role=b.role,
+                    binding_status=b.binding_status or "not_recorded",
+                    href=(
+                        f"/v1/evidence/{b.artifact_id}/{b.capture_id}" if b.artifact_id else None
+                    ),
+                )
+                for b in bindings
+            ],
+            artifact_id=primary.artifact_id if primary else None,
+            binding_status=(
+                (primary.binding_status or "not_recorded") if primary else "not_recorded"
+            ),
+            provenance=(
+                f"/v1/evidence/{primary.artifact_id}/{primary.capture_id}"
+                if primary and primary.artifact_id
+                else None
+            ),
             resolution_ref=f"/v1/resolution/{c.subject_id}/{c.predicate_id}",
             coverage=empty_coverage(f"claim:{claim_id}"),
             as_of=asof.echo(),
@@ -390,6 +420,23 @@ def build_router() -> APIRouter:
         # a public-tier capture not recorded byte-bearing does not claim it,
         # and the safe reason is disclosed.
         rep = public_representation(meta)
+        # P36.51 (J3 §5.5 / SIG-TRANSP-012): the upstream URL publishes only in
+        # its S-6-gated form — a public-tier capture whose lane forbids the
+        # full URL serves the host + path-hash block and drops ``source_uri``
+        # (the raw URL is never a public fact the lane did not permit).
+        upstream: dict[str, Any] | None = None
+        if meta.tier is StorageTier.PUBLIC:
+            upstream = upstream_block(
+                meta.source_uri or None,
+                lane=meta.lane or "unknown",
+                gate_passed=True,  # the capture is served — the gate's verdict
+                part_viii_class=meta.part_viii_class,
+            )
+            rep["upstream"] = upstream
+            if upstream.get("status") == "full_url":
+                rep["source_uri"] = upstream.get("url")
+            else:
+                rep.pop("source_uri", None)
         asof.apply_cache(response)
         return EvidenceResponse(
             artifact_id=artifact_id,
@@ -400,6 +447,12 @@ def build_router() -> APIRouter:
             coverage=empty_coverage(f"evidence:{artifact_id}/{capture_id}"),
             as_of=asof.echo(),
             bytes_unavailable_reason=bytes_unavailable_reason(meta),
+            capture_classification=(
+                str(rep["capture_classification"])
+                if rep.get("capture_classification") is not None
+                else None
+            ),
+            upstream=upstream,
         )
 
     # --- /search (collection: licence + coverage) -----------------------------

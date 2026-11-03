@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.50
-lastCompleted: P36.49
+nextTicket: P36.52
+lastCompleted: P36.51
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.49-known-issues-and-issues-log
+chainTip: r11/P36.51-evidence-anchors-view-original-claim-api-fixes
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-02T17:22Z
+updatedAt: 2026-11-03T00:21Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1455,3 +1455,11 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-02 — P36.48 post-closeout record — `ci: pass #415@f8d97d9` (run 41484237296, 5/5 head-bound on the operator-signed commit) · #413→#414→#415 repair arc + every pushed head verbatim in `runs/P36.48.md`; ADR-230 measured_gap (1500/1510/1600) landed under the signed GATE DECISIONS row · `blockedOn` clears; chainTip → r11/P36.48-sources-table-v3; queued legs stay QUEUED · companion orient fold-3: 8 map cells compacted bound-token-verbatim, archived `reports/memory-repair/return_pass_cells_pre-P36.49-orient3.txt` · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-11-02 — dispatch boundary-confirm — P36.48's green read recorded (`ci: pass #415@f8d97d9`, run 41484237296); `blockedOn` (nothing); chainTip `r11/P36.48-sources-table-v3` (record tip `0890e60e`'s own run pending — the green read stands head-bound on `f8d97d9b`) · nextTicket P36.49 (row 392 — known issues + issues log: `known_issues.toml`, `issues.jsonl`, `/status/issues/` + per-source section; live_verification=false; depends P35.33; `D-J3-12 [B-2] = OD-07 a` carried verbatim) — fresh implement-spec sub-agent dispatched on `r11/P36.49-known-issues-and-issues-log` · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-11-02 — P36.49 done — `ci: head-bound read follows` · Gate status: `D-J3-12 [B-2] = OD-07 a (batches of ~25 confirmed verbatim; 'description pending review' until then)` — the plan cell, verbatim · deferrals +0/−0 · chainTip → r11/P36.48-… · next → P36.50 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-02 — P36.49 post-closeout record — `9a96dfb3` `ci: pass #416@9a96dfb` 5/5 head-bound (run 41506418886; arc: `5e3bf62b` impl → `3924969c` matrix owed_legs → `8a8fb365` projection → `9a96dfb3` pagination fix) · PR #416 OPEN on the stack for operator integration · `main` untouched · Gate status: `D-J3-12 [B-2] = OD-07 a` carried verbatim; no OM-20; no mutations · deferrals +0/−0 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-02 — dispatch boundary-confirm — P36.49's green read recorded (`ci: pass #416@9a96dfb`, run 41506418886; #416 merged by the operator 19:41Z as `822046c6` — #415 also merged 19:34Z as `56cc14b7`; the stack integrates per-PR into `main`) · `blockedOn` (nothing); chainTip `r11/P36.49-known-issues-and-issues-log` · nextTicket P36.50 (row 393 — downloads center: `/data/`, `/releases/<pub>/data/`, per-source slices, per-bundle ATTRIBUTION/LICENCE (`D-J3-5 [A-8] = b`/ADR-183), `SHA256SUMS` + minisign (`D-J3-8 [B-20] = a`, key OP-20), `/data/api/`; live_verification=false; deps P35.5/P34.5/P34.21b landed) — fresh implement-spec sub-agent on `r11/P36.50-downloads-center` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-02 — P36.50 done — `ci: pass #418@7f8ce64` (run 41527592911) · Gate status: `D-J3-5 [A-8] = b`, `D-J3-8 [B-20] = a`, `A-3 = a`, `D-J3-7` carried verbatim · deferrals +1/−0 (`D-P36.50-1` — OP-20 key, operator custody) · chainTip → r11/P36.50-downloads-center · next → P36.51 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-02 — P36.50 post-closeout record — `7f8ce64a` `ci: pass #418@7f8ce64` 5/5 head-bound (run 41527592911; arc: `7cdf9ae1` impl → `dd4c2367` changelog → `08267b36` lint+projection → `1ef29ec2` format+glue+link → `7f8ce64a` format+projection) · PR #418 OPEN on the stack for operator integration · `main` untouched · no OM-20; no mutations; no fabricated key/signature — `unsigned` declared · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-02 — dispatch boundary-confirm — P36.50's green read recorded (`ci: pass #418@7f8ce64`, run 41527592911); `blockedOn` (nothing); chainTip `r11/P36.50-downloads-center` · nextTicket P36.51 (row 394 — evidence anchors / view-original / claim-API fixes; live_verification=false; gate none; deps P35.36/P34.34b landed) — fresh implement-spec sub-agent on `r11/P36.51-evidence-anchors-view-original-claim-api-fixes` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-02 — P36.51 done — `ci: head-bound read follows` · Gate status: none (row 394 carries no answered decisions) · deferrals +0/−0 · chainTip → r11/P36.51-evidence-anchors-view-original-claim-api-fixes · next → P36.52 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-02 — P36.51 post-closeout record — `564dd74a` `ci: pass #419@564dd74` 5/5 head-bound (run 41546640758; arc: `2492d678` impl → `7ed6db71` matrix-reroute+changelog+records → `1b534939` title+projection → `2aa8a141` closeout record+README → `564dd74a` owned-rows verdicts) · PR #419 OPEN on the stack for operator integration · `main` untouched · no OM-20; no mutations · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-02 — dispatch boundary-confirm — P36.51's green read recorded (`ci: pass #419@564dd74`, run 41546640758); `blockedOn` (nothing); chainTip `r11/P36.51-evidence-anchors-view-original-claim-api-fixes` · nextTicket P36.52 (row 395 — dossier "Where this comes from" + sources explorer; live_verification=false; gate none; deps P35.44/P36.34/P35.37/P36.28 landed) — fresh implement-spec sub-agent on `r11/P36.52-dossier-sources-explorer` · harness: devin-desktop/swe-2-high/orchestrator

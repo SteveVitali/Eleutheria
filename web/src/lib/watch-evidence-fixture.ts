@@ -247,6 +247,9 @@ export const DEVICE_COUNT_CLAIM_VIEW: ClaimView = {
   claim_label: "Active device count",
   value: 42,
   capture: CONTRACT_CAPTURE,
+  // SIG-EVUI-004: raw-ok + actual_capture → the text_span pane.
+  binding_status: "actual_capture",
+  lane: "raw-ok",
   locator: {
     kind: "char_range",
     description: "Master agreement, service-scope clause",
@@ -284,6 +287,9 @@ export const SEALED_CLAIM_VIEW: ClaimView = {
   claim_label: "Authorized operator count",
   value: 17,
   capture: SEALED_CAPTURE,
+  // SIG-EVUI-004: restricted lane + sealed tier → the metadata_only pane.
+  binding_status: "actual_capture",
+  lane: "restricted",
   locator: {
     kind: "page",
     description: "Roster appendix (sealed)",
@@ -296,8 +302,74 @@ export const SEALED_CLAIM_VIEW: ClaimView = {
   history: [{ asserted_at: "2026-05-12", event: "asserted", value: 17, note: "From the sealed roster record." }],
 };
 
+/**
+ * A derived-only claim view (SIG-EVUI-004): the lane forbids showing bytes, so
+ * the claim renders the `locator_only` pane — the locator described, the
+ * capture hash + time shown, never a broken render over missing text.
+ */
+export const DERIVED_ONLY_CLAIM_VIEW: ClaimView = {
+  claim_id: "portal-device-count",
+  // A distinct label — QW-11 requires a unique <title> per route.
+  claim_label: "Portal-reported device count",
+  value: 38,
+  capture: {
+    capture_id: "capture:portal-derived-okcpd",
+    artifact_id: "artifact:okcpd-portal",
+    storage_tier: "public",
+    captured_at: "2026-08-01",
+    content_digest: "sha256:aaaa1111bbbb2222cccc3333dddd4444eeee5555ffff66667777888899990000",
+    acquisition_method: "http_get",
+    fields: { active_device_count: 38 },
+  },
+  binding_status: "actual_capture",
+  lane: "derived-only",
+  locator: {
+    kind: "json_pointer",
+    description: "JSON pointer /features/12/properties/device_count",
+    span: { start: 0, end: 1 },
+  },
+  extraction_method: "selector extraction (parsing layer L2)",
+  extraction_version: "parser-2026.07",
+  review_status: "unreviewed",
+  conflicting_claims: [],
+  history: [{ asserted_at: "2026-08-02", event: "asserted", value: 38, note: "From the derived portal feed." }],
+};
+
+/** A legacy synthetic claim view (SIG-EVUI-004): no per-record copy — run_record pane. */
+export const RUN_RECORD_CLAIM_VIEW: ClaimView = {
+  claim_id: "camera-registry-count",
+  claim_label: "Registered camera count",
+  value: 7049,
+  capture: {
+    capture_id: "capture:registry-run-okc",
+    artifact_id: "artifact:okc-camera-registry-run",
+    storage_tier: "public",
+    captured_at: "2026-06-01",
+    content_digest: "sha256:bbbb2222cccc3333dddd4444eeee5555ffff6666aaaa77778888999900001111",
+    acquisition_method: "http_get",
+    fields: { camera_count: 7049 },
+  },
+  binding_status: "legacy_synthetic",
+  lane: "raw-ok",
+  locator: {
+    kind: "run_record",
+    description: "Run-level record — no per-claim locator",
+    span: { start: 0, end: 1 },
+  },
+  extraction_method: "run aggregate",
+  extraction_version: "connector-2026.05",
+  review_status: "unreviewed",
+  conflicting_claims: [],
+  history: [{ asserted_at: "2026-06-02", event: "asserted", value: 7049, note: "Recorded by the registry ingest run." }],
+};
+
 /** Every claim the evidence viewer statically generates (drives `getStaticPaths`). */
-export const CLAIM_VIEWS: ClaimView[] = [DEVICE_COUNT_CLAIM_VIEW, SEALED_CLAIM_VIEW];
+export const CLAIM_VIEWS: ClaimView[] = [
+  DEVICE_COUNT_CLAIM_VIEW,
+  SEALED_CLAIM_VIEW,
+  DERIVED_ONLY_CLAIM_VIEW,
+  RUN_RECORD_CLAIM_VIEW,
+];
 
 // --- Capture diffing (SIG-UI-029, §29.7) -------------------------------------
 

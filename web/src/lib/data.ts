@@ -85,6 +85,8 @@ import { STATEMENT_FIXTURES } from "./statements-fixture";
 import type { StatementRow } from "./provenance-panel";
 import { isDataDictionary, type DataDictionary } from "./dictionary";
 import { DICTIONARY_FIXTURE } from "./dictionary-fixture";
+import { isDownloadListing, type DownloadListing } from "./downloads";
+import { DOWNLOAD_LISTING_FIXTURE } from "./downloads-fixture";
 import {
   ENTITY_SLUG_HISTORY_FIXTURE,
   type EntitySlugHistoryRow,
@@ -2303,4 +2305,28 @@ export function getReferenceGraph(): { nodes: GraphNode[]; edges: GraphEdge[] } 
 /** The worked entity fixture (OKCPD) the reference map's popup renders. */
 export function getReferenceEntity(): EntityFixture {
   return OKCPD;
+}
+
+/**
+ * The `sig.download-listing/1` document the `/data/` downloads center renders
+ * (P36.50). `export` mode reads `<exportDir>/web/downloads.json` fail-loud;
+ * `fixtures`/`national` serve the committed fixture.
+ */
+export function getDownloadListing(): DownloadListing {
+  if (dataSource() === "export") {
+    const path = `${exportDir()}/web/downloads.json`;
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(readFileSync(path, "utf-8"));
+    } catch (e) {
+      throw new Error(
+        `export-mode build requires ${path} — the export predates P36.50 or the file is malformed: ${e}`,
+      );
+    }
+    if (!isDownloadListing(parsed)) {
+      throw new Error(`${path}: not a valid sig.download-listing/1 document`);
+    }
+    return parsed;
+  }
+  return DOWNLOAD_LISTING_FIXTURE;
 }

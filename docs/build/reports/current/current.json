@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "3924969c1386c4943e31c1e5d69f366fcdb6436c",
-  "manifest_inputs": 1168,
+  "input_commit": "d2e1eeb9b59ace55b7786b5c881286f5cc33ec59",
+  "manifest_inputs": 1170,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P36.50",
-    "lastCompleted": "P36.49",
+    "nextTicket": "P36.52",
+    "lastCompleted": "P36.51",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2",
@@ -17,21 +17,21 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P36.49-known-issues-and-issues-log",
+    "chainTip": "r11/P36.51-evidence-anchors-view-original-claim-api-fixes",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-02T17:22Z"
+    "updatedAt": "2026-11-03T00:21Z"
   },
   "counts": {
-    "obligations": 212,
-    "owed": 131,
-    "open": 128,
+    "obligations": 213,
+    "owed": 132,
+    "open": 129,
     "partial": 3,
     "terminal": 81,
-    "events": 717,
+    "events": 718,
     "transitions": 51,
     "coverage_assessments": 494,
     "coverage_historical_rows": 994,
@@ -11053,6 +11053,55 @@
           "recorded_at": "2026-11-02"
         }
       ]
+    },
+    {
+      "id": "D-P36.50-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P36.50-1:e0",
+      "kind": "V",
+      "owner": "the operator (key creation + provision)",
+      "landing": "SIG_RELEASE_MINISIGN_SECRET provisioned in the release pipeline's secret store (Secret Manager) at or before the first public release after OP-09/OM-20 — a signed export dir then passes sig-exports downloads verify with signed:true and minisign -V exits 0 against sig-release.minisign.pub",
+      "landing_source": "event-head",
+      "backlog_home": "BL-086",
+      "item": "The OP-20 pipeline minisign key creation + the first signed release verification (`SIG_RELEASE_MINISIGN_SECRET` provisioned → a build emits `SHA256SUMS.minisig` + `sig-release.minisign.pub` → `sig-exports downloads verify --in <export_dir>` reports `state: signed` and `minisign -Vm SHA256SUMS -p sig-release.minisign.pub` passes; the mirror leg then pushes the side files per `ops/mirrors.toml`)",
+      "unblocked_by": "owner: the operator (key creation + provision) · trigger: `SIG_RELEASE_MINISIGN_SECRET` provisioned in the release pipeline's secret store (Secret Manager) at or before the first public release after OP-09/OM-20",
+      "verify": "a signed export dir passes `sig-exports downloads verify` with `signed: true`, `minisign -V` against `sig-release.minisign.pub` exits 0, the listing's `signature.state` reads `signed`, and the pushed mirror carries `SHA256SUMS`/`SHA256SUMS.minisig`/`sig-release.minisign.pub` at their content-hash keys",
+      "proxy": "the `unsigned` state is declared on the listing + both pages (`sig.download-listing/1` `signature.state` + `reason`); 15 exports tests pin the minisign primitive (RFC 8032 vectors), the signed/unsigned emission, and `verify_downloads` pass/tamper states",
+      "line": 1538,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P36.50",
+          "backlog_home": "BL-086",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "exports/src/exports/downloads.py",
+            "exports/src/exports/minisign.py",
+            "exports/src/exports/cli.py",
+            "ops/mirrors.toml"
+          ],
+          "observed_at": "2026-11-02",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P36.50 (row 393) for the row it added — the OP-20 pipeline minisign key creation + the first signed release verification queued for the operator: the key is operator custody (SIG-REL-015 / SIG-SEC-010 custody split — the pipeline key signs manifests, never gate records); no key or signature may be fabricated, so P36.50 ships the honest `unsigned` declaration with the machinery + tests landed; owner and landing read from the row's owner:/trigger: cell",
+          "event_id": "D-P36.50-1:e0",
+          "obligation_id": "D-P36.50-1",
+          "owner": "the operator (key creation + provision)",
+          "landing": "SIG_RELEASE_MINISIGN_SECRET provisioned in the release pipeline's secret store (Secret Manager) at or before the first public release after OP-09/OM-20 — a signed export dir then passes sig-exports downloads verify with signed:true and minisign -V exits 0 against sig-release.minisign.pub",
+          "anchor": {
+            "row_line": 1538,
+            "row_sha256": "bf3d1d416911594e99423df659f52fd5ad0458d10254bc3a14c114a71548e568",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-11-02"
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -13782,7 +13831,7 @@
         },
         "SIG-LIC-012": {
           "verdict": "PARTIAL",
-          "evidence": "docs/2_canonical_design_spec.md:6079",
+          "evidence": "exports/src/exports/downloads.py;web/src/pages/data/index.astro",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16277,8 +16326,8 @@
           "label": "historical/csv"
         },
         "SIG-REL-015": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "exports/src/exports/minisign.py;exports/src/exports/downloads.py;exports/src/exports/cli.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16433,8 +16482,8 @@
           "label": "historical/csv"
         },
         "SIG-TRANSP-012": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "exports/src/exports/statements.py;exports/src/exports/release_pages.py;exports/src/exports/spine_export.py;api/src/api/routes.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16445,14 +16494,14 @@
           "label": "historical/csv"
         },
         "SIG-TRANSP-014": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/downloads.py;exports/src/exports/spine_export.py;exports/src/exports/release.py;exports/src/exports/release_pages.py;web/src/lib/downloads.ts;web/src/lib/downloads-fixture.ts;web/src/pages/data/index.astro;web/src/pages/data/api.astro",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-TRANSP-015": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/downloads.py;exports/src/exports/spine_export.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16469,8 +16518,8 @@
           "label": "historical/csv"
         },
         "SIG-TRANSP-018": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P36.50-1;D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/downloads.py;exports/src/exports/minisign.py;exports/src/exports/spine_export.py;exports/src/exports/release.py;exports/src/exports/cli.py;exports/src/exports/push.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16811,8 +16860,8 @@
           "label": "historical/csv"
         },
         "SIG-UI-082": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "web/src/lib/downloads.ts;web/src/pages/data/index.astro;web/src/pages/data/api.astro;exports/src/exports/release_pages.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17435,8 +17484,8 @@
           "label": "historical/csv"
         },
         "SIG-EVUI-004": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "web/src/lib/evidence-viewer.ts;web/src/pages/evidence/[id].astro;exports/src/exports/release_pages.py;exports/src/exports/statements.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17453,8 +17502,8 @@
           "label": "historical/csv"
         },
         "SIG-EVUI-007": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "api/src/api/routes.py;api/src/api/store.py;api/src/api/store_pg.py;api/src/api/models.py;exports/src/exports/published_record.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -25514,10 +25563,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "33612f1e35f6b955be59e441af32080f65340c70c592a6b6c14a943a499f2c52",
+  "manifest_sha256": "30c62d077bbf2d6fcefe3a024d979cf6cbfad0e59e79c6f29c69444f78f84eb1",
   "current_md": {
     "lines": 136,
-    "bytes": 20234,
+    "bytes": 20253,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

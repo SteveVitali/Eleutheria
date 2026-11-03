@@ -1,0 +1,70 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// `/data/api/` (P36.50, J3 §6.1/§6.10, C2 NEW-8 / C2 P7-T1): the API + JSON
+// twins documentation — read-only, release-pinned, with terms, tiers and the
+// numeric rate limits, and the "equivalent request" convention (J2 PC-3).
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getReleaseStamp } from "../../lib/release-stamp";
+import { withBase } from "../../lib/paths";
+
+const stamp = getReleaseStamp();
+---
+
+<BaseLayout
+  title="API & JSON twins"
+  path={withBase("data/api/")}
+  description="The read-only public API and JSON twins — release-pinned routes, terms, rate limits and the equivalent-request convention."
+>
+  <p data-copy="AP-01">
+    The public API is <strong>read-only</strong>. Every transparency page on
+    this site has a JSON twin, and the API serves the same release-backed data
+    — the API URL a page's facts came from is its <em>equivalent request</em>.
+  </p>
+  <section aria-labelledby="twin-heading">
+    <h2 id="twin-heading">JSON twins</h2>
+    <p data-copy="AP-02">
+      A page's machine-readable twin is named in its <em>Technical details</em>{" "}
+      or beside its download links — the same rows, licences and counts the HTML
+      shows. The release-pinned twin is the citable form; the site-root twin is
+      the mutable latest view.
+    </p>
+  </section>
+  <section aria-labelledby="routes-heading">
+    <h2 id="routes-heading">Routes</h2>
+    <table>
+      <thead><tr><th scope="col">Route</th><th scope="col">Answers</th></tr></thead>
+      <tbody>
+        <tr><td><code>/v1/releases</code></td><td>the activated release catalog</td></tr>
+        <tr><td><code>/v1/releases/&#123;pub&#125;</code></td><td>one release's descriptor, manifest digests and compartments</td></tr>
+        <tr><td><code>/v1/releases/&#123;pub&#125;/sources</code></td><td>the source rows the release published</td></tr>
+        <tr><td><code>/v1/releases/&#123;pub&#125;/sources/&#123;id&#125;/runs</code></td><td>a source's run/capture records in the release</td></tr>
+        <tr><td><code>/v1/releases/&#123;pub&#125;/search?q=…</code></td><td>release-namespaced search over the pinned index (when enabled)</td></tr>
+        <tr><td><code>/v1/export</code></td><td>the download catalog of the latest activated release — mirror URLs, sizes, sha256, licences</td></tr>
+      </tbody>
+    </table>
+    <p class="mut" data-copy="AP-03">
+      Release-pinned routes answer from the immutable release files. Anything a
+      route serves beyond the pinned release is labelled{" "}
+      <em>live, not a citation</em>.
+    </p>
+  </section>
+  <section aria-labelledby="limits-heading">
+    <h2 id="limits-heading">Terms & rate limits</h2>
+    <ul data-copy="AP-04">
+      <li>30 requests per 60 seconds per client, burst 10 — a 429 answer names the retry.</li>
+      <li>Read-only; no API key. Bulk data belongs to the downloads, not repeated paging.</li>
+      <li>Each response's data carries the compartment licence of the release it came from.</li>
+      <li>No query logging for search; requests are never tied to a reader's identity.</li>
+    </ul>
+    <p class="mut">
+      {stamp ? (
+        <>Current release: <code>{stamp.label}</code> · <a href={withBase("data/")}>downloads</a> · <a href={withBase("status/")}>status</a></>
+      ) : (
+        <>This is a development build — no activated release is named.</>
+      )}
+    </p>
+  </section>
+</BaseLayout>
