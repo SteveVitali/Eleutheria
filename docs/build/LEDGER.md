@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.52
-lastCompleted: P36.51
+nextTicket: P36.55
+lastCompleted: P36.54
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.51-evidence-anchors-view-original-claim-api-fixes
+chainTip: r11/P36.54-dossier-map-and-locator-figures
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-03T00:21Z
+updatedAt: 2026-11-03T06:37Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1463,3 +1463,9 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-02 — P36.51 done — `ci: head-bound read follows` · Gate status: none (row 394 carries no answered decisions) · deferrals +0/−0 · chainTip → r11/P36.51-evidence-anchors-view-original-claim-api-fixes · next → P36.52 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-02 — P36.51 post-closeout record — `564dd74a` `ci: pass #419@564dd74` 5/5 head-bound (run 41546640758; arc: `2492d678` impl → `7ed6db71` matrix-reroute+changelog+records → `1b534939` title+projection → `2aa8a141` closeout record+README → `564dd74a` owned-rows verdicts) · PR #419 OPEN on the stack for operator integration · `main` untouched · no OM-20; no mutations · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-02 — dispatch boundary-confirm — P36.51's green read recorded (`ci: pass #419@564dd74`, run 41546640758); `blockedOn` (nothing); chainTip `r11/P36.51-evidence-anchors-view-original-claim-api-fixes` · nextTicket P36.52 (row 395 — dossier "Where this comes from" + sources explorer; live_verification=false; gate none; deps P35.44/P36.34/P35.37/P36.28 landed) — fresh implement-spec sub-agent on `r11/P36.52-dossier-sources-explorer` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-03 — P36.52 done — `ci: pass #420@7f034326` (run 41566100737, 5/5 head-bound) · Gate status: none (row 395 plan cell carries no answered decisions beyond D-K5-2/D-K5-3 carried verbatim — K5-P3 labels + "previously contributed" rendering) · deferrals +0/−0 · chainTip → r11/P36.52-dossier-sources-explorer · next → P36.53 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-03 — P36.52 post-closeout record — `7f034326` `ci: pass #420@7f034326` 5/5 head-bound (run 41566100737: docs 2m41s · security 29s · composed 4m22s · python 17m20s · web ~44m; arc: `2cea4a84` impl → `96243cbe` records → `16b4a9f9` PR-progress → `8ae6e5eb` token/manifest repair → `85e7a16e` a11y+link repair → `7f034326` export-mode family repair → closeout) · reds fixed forward — 41554231761 (raspberry literal + containment + manifest-test + stale projection), 41562486818 (axe nested-interactive `<a>` in `<summary>` + deferred `/runs/` 404s), 41564027676 (unbounded `dossier_sources/` family → pattern admission like PER_DOSSIER) · PR #420 OPEN on the stack for operator integration · `main` untouched · no OM-20; no mutations · owned verdicts: SIG-DSRC-001…006/008/009 → MET-ENGINEERED(D-R10-PUBLISH-1) (007 stays its owning row's) · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-03 — dispatch boundary-confirm — P36.52's green read recorded (`ci: pass #420@7f034326`, run 41566100757 — verifier: run 41566100737, 5/5 head-bound); `blockedOn` (nothing); chainTip `r11/P36.52-dossier-sources-explorer` · correction (append-only): the P36.52 boundary-confirm at `1338a128` is stamped `2026-11-02` — written at `2026-11-03T00:23Z`; correct date is 2026-11-03 · nextTicket P36.53 (row 396 — per-dossier downloads: `/dossier/…/downloads/` slices; `D-J3-5 [A-8] = b`, `D-K5-1 [B-22]`, `HG-03 E4 (K4 NEW-4)` per GATE-P A-7/B-41 — unflipped sources stay out of slices; live_verification=false; deps landed) — fresh implement-spec sub-agent on `r11/P36.53-per-dossier-downloads` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-03 — dispatch boundary-confirm — P36.53's green read recorded (`ci: pass #421@fc8ac3ac`, run 41576634994); `blockedOn` (nothing); chainTip `r11/P36.53-per-dossier-downloads` · correction (append-only): the P36.53 boundary-confirm wrote run `41566100757` — the verifier was `41566100737` · nextTicket P36.54 (row 397 — dossier map + locator figures; live_verification=false; gate none; deps P36.27/P35.45 landed) — fresh implement-spec sub-agent on `r11/P36.54-dossier-map-and-locator-figures` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-03 — P36.54 done — `ci: pass #422@bc1e9cb1` (run 41586278246, 5/5 head-bound) · Gate status: none (row 397 plan cell carries no answered decisions) · deferrals +0/−0 · chainTip → r11/P36.54-dossier-map-and-locator-figures · next → P36.55 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-03 — P36.54 post-closeout record — `bc1e9cb1` `ci: pass #422@bc1e9cb1` 5/5 head-bound (run 41586278246: docs 2m38s · security 26s · composed 4m25s · python 21m46s · web 45m43s; arc: `c3e9da18` impl → `3e5307e2` records → `921d5acd` projection → `c763d7f4` changelog → `bc1e9cb1` inherited-range repair → closeout) · reds fixed forward — 41582731175 (stale projection — new run-ledger input), 41583052095 (changelog_gate: spine_export public-behaviour path), 41583638819 (inherited README range 1-395 vs landed 396 — P36.53 gap, repaired forward) · PR #422 OPEN on the stack for operator integration · `main` untouched · no OM-20; no mutations · owned verdicts: none (VIZ-01a requirement ids cited; owning rows downstream) · harness: devin-desktop/swe-2-high/subagent

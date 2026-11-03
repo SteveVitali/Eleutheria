@@ -52,14 +52,22 @@
 | SIG-DOS-004 | `public` | `MET-ENGINEERED(D-P32.19-1;D-R10-SOURCES-1;D-R10-HUMAN-1)` | 2026-10-01 | — |
 | SIG-DOS-005 | `public` | `MET-ENGINEERED(D-P32.20-1;D-R10-SOURCES-1;D-R10-HUMAN-1)` | 2026-10-01 | — |
 | SIG-DSRC-001 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-DSRC-001 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-03 | SIG-DSRC-001:r11-1 |
 | SIG-DSRC-002 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-DSRC-002 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-03 | SIG-DSRC-002:r11-1 |
 | SIG-DSRC-003 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-DSRC-003 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-03 | SIG-DSRC-003:r11-1 |
 | SIG-DSRC-004 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-DSRC-004 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-03 | SIG-DSRC-004:r11-1 |
 | SIG-DSRC-005 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-DSRC-005 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-03 | SIG-DSRC-005:r11-1 |
 | SIG-DSRC-006 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-DSRC-006 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-03 | SIG-DSRC-006:r11-1 |
 | SIG-DSRC-007 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-DSRC-008 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-DSRC-008 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-03 | SIG-DSRC-008:r11-1 |
 | SIG-DSRC-009 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-DSRC-009 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-03 | SIG-DSRC-009:r11-1 |
 | SIG-ENG-002 | `implementation` | `PARTIAL` | 2026-10-01 | — |
 | SIG-ENG-004 | `implementation` | `N/A-RATIONALE` | 2026-10-01 | — |
 | SIG-ENG-005 | `implementation` | `PARTIAL` | 2026-10-01 | — |
@@ -114,13 +122,5 @@
 | SIG-EPIS-022 | `implementation` | `MET` | 2026-10-01 | — |
 | SIG-EPIS-024 | `implementation` | `MET` | 2026-10-06 | — |
 | SIG-EPIS-026 | `implementation` | `MET` | 2026-10-06 | — |
-| SIG-EPIS-027 | `implementation` | `MET` | 2026-10-06 | — |
-| SIG-EPIS-029 | `hosted` | `PARTIAL` | 2026-10-01 | — |
-| SIG-EVAL-001 | `public` | `PARTIAL` | 2026-10-01 | — |
-| SIG-EVAL-002 | `public` | `PARTIAL` | 2026-10-01 | — |
-| SIG-EVAL-003 | `public` | `AT-RISK-INTEGRATION` | 2026-10-01 | — |
-| SIG-EVAL-004 | `hosted` | `WAIVED(ADR-153)` | 2026-10-01 | — |
-| SIG-EVAL-005 | `public` | `MISSING` | 2026-10-01 | — |
-| SIG-EVAL-006 | `public` | `MISSING` | 2026-10-01 | — |
 
 ← back: CURRENT.md · next page: coverage-2.md

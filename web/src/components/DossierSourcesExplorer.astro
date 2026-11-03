@@ -1,0 +1,455 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.52 (DSRC-02, SIG-DSRC-001…006/008/009): the sources explorer body —
+// shared by `/dossier/<path>/sources/` and every sort/continuation route so
+// the JSON twin's facts render identically on all of them (SIG-DSRC-009).
+// Zero-JS complete (SIG-DSRC-006): the contribution table is a real table,
+// per-source detail is `<details>`, the over-time chart is a static SVG with
+// a `<table>` twin, sort is a GET route. Every cell is a value or a named
+// absence (`run_level_only`, `not_recorded`, `not_evaluable`, `not_typed`,
+// `not_published`) — never a bare 0 for "not measured" (K5-P4, SIG-ENG-042).
+import Figure from "./Figure.astro";
+import {
+  DSRC_SORT_KEYS,
+  SORT_ROUTE_THRESHOLD,
+  absenceReason,
+  contributingSources,
+  dossierDownloadsPath,
+  dossierSourcesJsonPath,
+  dossierSourcesPagePath,
+  dossierSourcesPath,
+  dossierSourcesSortPagePath,
+  dossierSourcesSortPath,
+  latestRun,
+  overTimeModel,
+  paginateSources,
+  previousContributors,
+  previousContributionReason,
+  seenAt,
+  seenRun,
+  sortSources,
+  type DossierSourceRow,
+  type DossierSourcesDoc,
+  type DsrcSortKey,
+} from "../lib/dossier-sources";
+import { overTimeLegend, overTimeSvg } from "../lib/dossier-sources-chart";
+import { getSourcePageIds } from "../lib/source-page";
+import { fmtInt, groupDigits } from "../lib/format";
+import { withBase } from "../lib/paths";
+import type { FigureSpec } from "../lib/figures";
+
+interface Props {
+  doc: DossierSourcesDoc;
+  /** The dossier's own page path (crumb target). */
+  dossierSlug: string;
+  dossierName: string;
+  sort: DsrcSortKey;
+  page: number;
+  /** The page's figures[] registry entries for the material figures shown. */
+  figs: Record<string, FigureSpec>;
+  /** Source ids with a `/sources/<id>/` page in this build (link guard, R-6). */
+  sourcePageIds: Set<string>;
+}
+
+const { doc, dossierSlug, dossierName, sort, page, figs, sourcePageIds } = Astro.props;
+const contributing = sortSources(contributingSources(doc), sort);
+const previous = previousContributors(doc);
+const paging = paginateSources(contributing, page);
+const sortable = doc.sources.length > SORT_ROUTE_THRESHOLD;
+const model = overTimeModel(doc);
+const chartSvg = overTimeSvg(model, `Monthly records first seen by SIG — ${doc.jurisdiction.name}`);
+const legend = overTimeLegend(model);
+const fmtShare = (v: number): string => `${Math.round(v * 100)}%`;
+const fmtDate = (iso: string | null): string => (iso ? iso.slice(0, 10) : "");
+const fig = (id: string): FigureSpec => {
+  const f = figs[id];
+  if (!f) throw new Error(`dossier-sources explorer: no figure registered as "${id}"`);
+  return f;
+};
+const sourceCell = (s: DossierSourceRow) =>
+  sourcePageIds.has(s.source_id)
+    ? { href: withBase(s.source_page.replace(/^\//, "")), linked: true }
+    : { href: null, linked: false };
+const lastSeenCell = (s: DossierSourceRow): { text: string; absence?: string } => {
+  const at = seenAt(s.last_seen);
+  if (at !== null) return { text: fmtDate(at) };
+  const reason = absenceReason(s.last_seen);
+  return { text: s.sightings === "run_level_only" ? "run_level_only" : "not_recorded", absence: reason ?? undefined };
+};
+const latestRunCell = (s: DossierSourceRow): { text: string; href: string | null; status: string | null } => {
+  const r = latestRun(s);
+  if (r === null) return { text: "not_recorded", href: null, status: null };
+  // The artifact's runs_page names the deferred per-source runs sub-route;
+  // until it lands the resolvable target is the source page's conduct table
+  // (R-6: never a 404 link on a public page).
+  const href = sourcePageIds.has(s.source_id)
+    ? `${withBase(s.source_page.replace(/^\//, ""))}#conduct-heading`
+    : null;
+  return { text: fmtDate(r.finished_at), href, status: r.status };
+};
+const notReassertedCell = (s: DossierSourceRow): string => {
+  const v = s.not_reasserted_in_latest_complete_run;
+  if (typeof v === "number") return fmtInt(v);
+  return `not_evaluable`;
+};
+const techCell = (m: Record<string, number> | "not_typed"): [string, number][] | "not_typed" =>
+  m === "not_typed" ? "not_typed" : Object.entries(m);
+const sortHref = (key: DsrcSortKey): string =>
+  withBase(key === sort ? dossierSourcesPath(dossierSlug) : dossierSourcesSortPath(dossierSlug, key));
+const pageHref = (n: number): string =>
+  sort === "records"
+    ? withBase(dossierSourcesPagePath(dossierSlug, n))
+    : withBase(dossierSourcesSortPagePath(dossierSlug, sort, n));
+const disagreeTotal =
+  doc.totals.coordinate_conflicts_intra_source +
+  doc.totals.declared_here_located_elsewhere +
+  doc.totals.located_here_declared_elsewhere +
+  doc.totals.contradictions_open;
+---
+
+<article class="sig-dsrc" data-testid="dsrc-explorer">
+  {/* ============ header: totals + named definitions + release ============ */}
+  <p class="sig-lede" data-testid="dsrc-lede" data-copy="DS-10">
+    Every source that contributed to{" "}
+    <a href={withBase(`dossier/${dossierSlug}/`)}>{dossierName}</a> — what it
+    added, when SIG saw it, and where sources disagree.
+  </p>
+  <p class="sig-table-note" data-testid="dsrc-release">
+    Data as of <time datetime={doc.release.as_of_world}>{doc.release.as_of_world}</time> · release{" "}
+    {doc.release.label}
+    {doc.jurisdiction.boundary_vintage && <> · boundaries {doc.jurisdiction.boundary_vintage}</>}
+    {doc.placement.rules && <> · placement {doc.placement.rules}</>}
+  </p>
+  <dl class="sig-dsrc-totals" data-testid="dsrc-totals">
+    <div><dt><a href="#dsrc-def-records">Records</a></dt><dd><Figure figure={fig("dsrc-records")} order="inline">{fmtInt(doc.totals.records)}</Figure></dd></div>
+    <div><dt><a href="#dsrc-def-claims">Claims</a></dt><dd><Figure figure={fig("dsrc-claims")} order="inline">{fmtInt(doc.totals.claims)}</Figure></dd></div>
+    <div><dt><a href="#dsrc-def-sources">Sources</a></dt><dd><Figure figure={fig("dsrc-sources")} order="inline">{fmtInt(doc.totals.sources)}</Figure></dd></div>
+    <div><dt><a href="#dsrc-def-located">Located by point</a></dt><dd><Figure figure={fig("dsrc-records-placed")} order="inline">{fmtInt(doc.totals.located_by_point)}</Figure></dd></div>
+    <div><dt>First seen by SIG</dt><dd>{fmtDate(doc.totals.first_seen_at) || "not_recorded"}</dd></div>
+    <div><dt>Last seen by SIG</dt><dd>{fmtDate(doc.totals.last_seen_at) || "not_recorded"}</dd></div>
+    <div><dt>Licence compartments</dt><dd>{doc.totals.compartments.join(", ") || "not_recorded"}</dd></div>
+  </dl>
+  <p class="sig-table-note">
+    <a href={withBase(dossierSourcesJsonPath(dossierSlug))} data-testid="dsrc-json">JSON</a> — the same
+    data, machine-readable (the artifact this page renders).
+  </p>
+
+  {/* ============ the contribution table ============ */}
+  <section aria-labelledby="dsrc-table-heading">
+    <h2 id="dsrc-table-heading">Sources contributing to this dossier</h2>
+    {sortable ? (
+      <p class="sig-table-note" data-testid="dsrc-sort-nav">
+        Sort:{" "}
+        {DSRC_SORT_KEYS.map((k, i) => (
+          <>
+            {i > 0 && " · "}
+            {k === sort ? <strong>{k}</strong> : <a href={sortHref(k)}>{k}</a>}
+          </>
+        ))}
+      </p>
+    ) : (
+      <p class="sig-table-note">Sorted by records (sort routes mint only above {SORT_ROUTE_THRESHOLD} sources).</p>
+    )}
+    {paging.pages > 1 && (
+      <p class="sig-table-note" data-testid="dsrc-pager-info">
+        Page {paging.page} of {paging.pages} — rows {paging.first}–{paging.last} of {paging.total}.
+      </p>
+    )}
+    <table class="sig-table sig-dsrc-table" data-testid="dsrc-table">
+      <thead>
+        <tr>
+          <th>Source</th><th>Publisher type</th><th>Records</th><th>Share</th>
+          <th>Located / declared</th><th>Claims</th><th>First seen</th><th>Last seen</th>
+          <th>Latest run</th><th>Licence</th>
+        </tr>
+      </thead>
+      <tbody>
+        {paging.rows.map((s) => {
+          const link = sourceCell(s);
+          const last = lastSeenCell(s);
+          const run = latestRunCell(s);
+          return (
+            <tr data-source-id={s.source_id}>
+              <td>
+                {link.linked ? <a href={link.href!}>{s.name}</a> : <>{s.name} <em class="sig-mut">(no source page in this release)</em></>}
+                {" "}<code class="sig-mut">{s.source_id}</code>
+              </td>
+              <td>{s.publisher_type ?? "not_recorded"}</td>
+              <td>{fmtInt(s.records)}</td>
+              <td>
+                <span class="sig-dsrc-share" style={`--share:${Math.round(s.share * 100)}`}>
+                  <span class="sig-dsrc-share__bar" aria-hidden="true" />
+                  <span class="sig-dsrc-share__num">{fmtShare(s.share)}</span>
+                </span>
+              </td>
+              <td>{fmtInt(s.located_by_point)} / {fmtInt(s.placed_by_declared)}</td>
+              <td>{fmtInt(s.claims)}</td>
+              <td>{seenAt(s.first_seen) ? fmtDate(seenAt(s.first_seen)) : "not_recorded"}</td>
+              <td>{last.absence ? <span title={last.absence}>{last.text}</span> : last.text}</td>
+              <td>
+                {run.href ? <a href={run.href}>{run.text}</a> : run.text}
+                {run.status && <> · {run.status}{s.freshness_state !== "not_recorded" && <> · {s.freshness_state}</>}</>}
+              </td>
+              <td>{s.licence.spdx ?? "not_recorded"}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+    {paging.pages > 1 && (
+      <nav class="sig-pager" aria-label="Source table pages" data-testid="dsrc-pager">
+        {paging.page > 1 && <a href={pageHref(paging.page - 1)}>‹ Previous</a>}{" "}
+        <span>Page {paging.page} of {paging.pages}</span>{" "}
+        {paging.page < paging.pages && <a href={pageHref(paging.page + 1)}>Next page ›</a>}
+      </nav>
+    )}
+  </section>
+
+  {/* ============ previously contributed (D-K5-3 = yes) ============ */}
+  {previous.length > 0 && (
+    <section aria-labelledby="dsrc-previous-heading">
+      <h2 id="dsrc-previous-heading">Previously contributed</h2>
+      <p class="sig-table-note" data-copy="DS-11">
+        Sources that no longer contribute — with when SIG first and last saw
+        them, and why they stopped.
+      </p>
+      <table class="sig-table" data-testid="dsrc-previous">
+        <thead><tr><th>Source</th><th>Records</th><th>First seen</th><th>Last seen</th><th>Why it stopped</th></tr></thead>
+        <tbody>
+          {previous.map((s) => {
+            const link = sourceCell(s);
+            return (
+              <tr data-source-id={s.source_id}>
+                <td>
+                  {link.linked ? <a href={link.href!}>{s.name}</a> : s.name}{" "}
+                  <code class="sig-mut">{s.source_id}</code>
+                </td>
+                <td>{fmtInt(s.records)}</td>
+                <td>{seenAt(s.first_seen) ? fmtDate(seenAt(s.first_seen)) : "not_recorded"}</td>
+                <td>{lastSeenCell(s).text}</td>
+                <td>{previousContributionReason(s)}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </section>
+  )}
+
+  {/* ============ per-source detail — one <details> each ============ */}
+  <section aria-labelledby="dsrc-detail-heading">
+    <h2 id="dsrc-detail-heading">Per-source detail</h2>
+    {paging.rows.map((s) => {
+      const run = latestRun(s);
+      const tech = techCell(s.records_by_technology);
+      const link = sourceCell(s);
+      return (
+        <details class="sig-dsrc-source" data-testid="dsrc-source-detail" data-source-id={s.source_id}>
+          <summary>
+            {s.name}{" "}
+            <span class="sig-mut">{fmtInt(s.records)} records · {fmtShare(s.share)} · {s.licence.spdx ?? "licence not_recorded"}</span>
+          </summary>
+          <dl class="sig-fields">
+            <dt>Source page</dt>
+            <dd>{link.linked ? <a href={link.href!}>{s.source_page}</a> : "no source page in this release"}</dd>
+            <dt>Source id</dt><dd><code>{s.source_id}</code></dd>
+            <dt>Publisher</dt><dd>{s.publisher ?? "not_recorded"}{s.publisher_type ? ` (${s.publisher_type})` : ""}</dd>
+            <dt>Lifecycle</dt><dd>{s.lifecycle ?? "not_recorded"}</dd>
+            <dt>Sightings</dt><dd>{s.sightings}{s.sightings === "run_level_only" && <> — {absenceReason(s.last_seen)}</>}</dd>
+            <dt>Not re-asserted in latest complete run</dt>
+            <dd title={absenceReason(s.not_reasserted_in_latest_complete_run) ?? undefined}>{notReassertedCell(s)}</dd>
+            <dt>First / last run</dt>
+            <dd>
+              {seenRun(s.first_seen) ?? "not_recorded"} / {seenRun(s.last_seen) ?? (s.sightings === "run_level_only" ? "run_level_only" : "not_recorded")}
+              {run && <> · latest: {run.run_id} ({run.status ?? "status not_recorded"})</>}
+            </dd>
+            <dt>Claims by predicate</dt>
+            <dd>
+              {Object.entries(s.claims_by_predicate).length > 0
+                ? Object.entries(s.claims_by_predicate).map(([p, n], i) => (<>{i > 0 && ", "}<code>{p}</code> {fmtInt(n)}</>))
+                : "not_recorded"}
+            </dd>
+            <dt>Records by entity type</dt>
+            <dd>
+              {Object.entries(s.records_by_entity_type).length > 0
+                ? Object.entries(s.records_by_entity_type).map(([t, n], i) => (<>{i > 0 && ", "}{t} {fmtInt(n)}</>))
+                : "not_recorded"}
+            </dd>
+            <dt>Records by technology</dt>
+            <dd>{tech === "not_typed" ? "not_typed" : tech.map(([t, n], i) => (<>{i > 0 && ", "}{t} {fmtInt(n)}</>))}</dd>
+            <dt>Placement checks</dt>
+            <dd>
+              {Object.entries(s.placement_checks).length > 0
+                ? Object.entries(s.placement_checks).map(([c, n], i) => (<>{i > 0 && ", "}{c} {fmtInt(n)}</>))
+                : "not_recorded"}
+            </dd>
+            <dt>Licence</dt>
+            <dd>{s.licence.spdx ?? "not_recorded"}{s.licence.compartments?.length ? ` · ${s.licence.compartments.join(", ")}` : ""}{s.licence.attribution ? ` · ${s.licence.attribution}` : ""}</dd>
+            {s.known_issues.length > 0 && (
+              <>
+                <dt>Known issues</dt>
+                <dd>{s.known_issues.map((k, i) => (<>{i > 0 && " "}<span>{k}</span></>))}</dd>
+              </>
+            )}
+            {s.series.length > 0 && (
+              <>
+                <dt>Contribution over time</dt>
+                <dd>
+                  <table class="sig-table sig-dsrc-series">
+                    <thead><tr><th>Period</th><th>Records first seen</th><th>Claims first seen</th><th>Claims re-sighted</th></tr></thead>
+                    <tbody>
+                      {s.series.map((p) => (
+                        <tr><td>{p.period}</td><td>{fmtInt(p.records_first_seen)}</td><td>{fmtInt(p.claims_first_seen)}</td><td>{fmtInt(p.claims_resighted)}</td></tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </dd>
+              </>
+            )}
+            <dt>Downloads</dt>
+            <dd>{s.downloads.length === 0 ? "not emitted for this source in this release" : (
+              <ul class="sig-mut">
+                {s.downloads.map((f) => (
+                  <li><a href={f.href}><code>{f.name}</code></a> ({f.format}{typeof f.rows === "number" ? ` · ${f.rows} rows` : ""})</li>
+                ))}
+              </ul>
+            )}</dd>
+          </dl>
+        </details>
+      );
+    })}
+  </section>
+
+  {/* ============ over time — static SVG + table twin ============ */}
+  {model.periods.length > 0 && (
+    <section aria-labelledby="dsrc-time-heading">
+      <h2 id="dsrc-time-heading">Contribution over time</h2>
+      <p class="sig-table-note" data-copy="DS-12">
+        Monthly records first seen by SIG, per source — a capture time, never
+        an installation date.
+      </p>
+      <Fragment set:html={chartSvg} />
+      <ul class="sig-dsrc-legend" data-testid="dsrc-legend">
+        {legend.map((l) => (
+          <li><span class={`sig-dsrc-swatch ${l.cls}`} aria-hidden="true" /> {l.name} — {fmtInt(l.total)}</li>
+        ))}
+      </ul>
+      <table class="sig-table sig-dsrc-series" data-testid="dsrc-time-table">
+        <thead>
+          <tr><th>Period</th>{model.series.map((s) => <th>{s.name}</th>)}<th>Total</th></tr>
+        </thead>
+        <tbody>
+          {model.periods.map((p, i) => (
+            <tr>
+              <td>{p}</td>
+              {model.series.map((s) => <td>{fmtInt(s.values[i] ?? 0)}</td>)}
+              <td>{fmtInt(model.totals[i] ?? 0)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )}
+
+  {/* ============ where sources agree or disagree ============ */}
+  <section aria-labelledby="dsrc-disagree-heading">
+    <h2 id="dsrc-disagree-heading">Where sources disagree or overlap</h2>
+    {disagreeTotal === 0 && typeof doc.cross_source.colocated_pairs === "object" && (
+      <p class="sig-table-note" data-copy="DS-13">No recorded disagreement on this dossier — and where two sources may describe the same installation is not evaluable yet ({absenceReason(doc.cross_source.colocated_pairs)}).</p>
+    )}
+    <dl class="sig-fields" data-testid="dsrc-disagreements">
+      <dt>Intra-source coordinate conflicts</dt>
+      <dd><Figure figure={fig("dsrc-conflicts")} order="inline">{fmtInt(doc.totals.coordinate_conflicts_intra_source)}</Figure></dd>
+      <dt>Declared here, located elsewhere</dt>
+      <dd><Figure figure={fig("dsrc-declared-elsewhere")} order="inline">{fmtInt(doc.totals.declared_here_located_elsewhere)}</Figure></dd>
+      <dt>Located here, declared elsewhere</dt>
+      <dd>{fmtInt(doc.totals.located_here_declared_elsewhere)}</dd>
+      <dt>Open contradictions</dt>
+      <dd>
+        {doc.cross_source.contradictions.length > 0
+          ? doc.cross_source.contradictions.map((c, i) => (<>{i > 0 && ", "}<code>{c.contradiction_id}</code></>))
+          : "none recorded"}
+      </dd>
+      <dt>Co-located records from different sources</dt>
+      <dd>{typeof doc.cross_source.colocated_pairs === "number" ? fmtInt(doc.cross_source.colocated_pairs) : <>not_evaluable — {absenceReason(doc.cross_source.colocated_pairs)}</>}</dd>
+    </dl>
+    {(doc.placement.declared_here_located_elsewhere.length > 0 ||
+      doc.placement.declared_elsewhere_located_here.length > 0) && (
+      <table class="sig-table" data-testid="dsrc-placement-pairs">
+        <thead><tr><th>Pair</th><th>Jurisdiction</th><th>Records</th></tr></thead>
+        <tbody>
+          {doc.placement.declared_here_located_elsewhere.map((p) => (
+            <tr><td>declared here, located elsewhere</td><td><code>{p.jkey}</code></td><td>{fmtInt(p.records)}</td></tr>
+          ))}
+          {doc.placement.declared_elsewhere_located_here.map((p) => (
+            <tr><td>declared elsewhere, located here</td><td><code>{p.jkey}</code></td><td>{fmtInt(p.records)}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+  </section>
+
+  {/* ============ placement ============ */}
+  <section aria-labelledby="dsrc-placement-heading">
+    <h2 id="dsrc-placement-heading">How records reached this jurisdiction</h2>
+    <table class="sig-table" data-testid="dsrc-placement">
+      <thead><tr><th>Placement basis</th><th>Records</th></tr></thead>
+      <tbody>
+        {Object.entries(doc.placement.by_basis).map(([b, n]) => (
+          <tr><td><code>{b}</code></td><td>{fmtInt(n)}</td></tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+
+  {/* ============ downloads + runs file ============ */}
+  <section aria-labelledby="dsrc-downloads-heading">
+    <h2 id="dsrc-downloads-heading">Downloads</h2>
+    {doc.downloads.length === 0 ? (
+      <p class="sig-table-note" data-testid="dsrc-downloads" data-copy="DS-14">
+        {doc.download_recipes && !doc.download_recipes.materialised
+          ? "No materialised slices at this level — the downloads page carries the DuckDB/API recipe to slice the national files by jurisdiction key."
+          : "No per-dossier slices emitted in this release — the dossier-sources JSON above is the machine-readable view."}
+      </p>
+    ) : (
+      <>
+        <ul data-testid="dsrc-downloads">
+          {doc.downloads.map((g) => (
+            <li>
+              <code>{g.compartment}</code> — {g.license} ·{" "}
+              {g.files.map((f, i) => (
+                <>
+                  {i > 0 && " · "}
+                  <a href={f.href}><code>{f.name}</code></a>
+                </>
+              ))}
+            </li>
+          ))}
+        </ul>
+        <p class="sig-table-note">
+          <a href={withBase(dossierDownloadsPath(doc.jurisdiction.slug_path))} data-copy="DD-05">
+            All downloads for this dossier →
+          </a>
+        </p>
+      </>
+    )}
+    {doc.runs_file && (
+      <p class="sig-table-note">
+        Per-run contribution rows: <a href={withBase(`artifact/${doc.runs_file}`)}><code>{doc.runs_file}</code></a>
+      </p>
+    )}
+  </section>
+
+  {/* ============ named definitions (the footnote targets) ============ */}
+  <section aria-labelledby="dsrc-defs-heading">
+    <h2 id="dsrc-defs-heading">What the numbers mean</h2>
+    <dl class="sig-fields" data-testid="dsrc-definitions">
+      {Object.entries(doc.definitions).map(([k, v]) => (
+        <><dt id={`dsrc-def-${k.replace(/[^a-z0-9_-]/gi, "-")}`}><code>{k}</code></dt><dd>{v}</dd></>
+      ))}
+    </dl>
+  </section>
+</article>

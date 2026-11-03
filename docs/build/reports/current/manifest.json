@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "d2e1eeb9b59ace55b7786b5c881286f5cc33ec59",
+  "input_commit": "bc1e9cb14418cf9a8768a1475cfcb62c44d6594b",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -930,15 +930,15 @@
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "d96cce52ed7fee7694d364e6fab9e719898f02b1e8c314fa3106b0fad0f80a44"
+      "sha256": "3a353ac3da15969d3f64954afd1fdfa42be83891b50cb6849c84584b3af7f1eb"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "f0210cb635f086d53139a6f93c7128f417120b3400a353788b16a5c7b0906f56"
+      "sha256": "08721decb79e08ae56d62f57d18b370f9ed7ee45c5acdb9b80db0115670287f8"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "171dbd3b1daf4249dd53f49963dff05f90b1cded970f1936a9f33132833f0c0a"
+      "sha256": "06cfe9446b08476fa38f958a49606d9c8891bc55cb19cb1c199949a8921f5aa6"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -1014,7 +1014,7 @@
     },
     {
       "path": "docs/build/reports/obligations/coverage_assessments.jsonl",
-      "sha256": "1b001f11d474397c6e4d4d83489aa7b15be4e9cf3b7d0b49d25f23c7752010cc"
+      "sha256": "54ed125a0ac6dd9b86e2d924814e01ea16d891553e3d05cfe06d902bf15ecb19"
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
@@ -2483,6 +2483,18 @@
     {
       "path": "docs/build/runs/P36.51.md",
       "sha256": "8b64777ac3b2a78e54df67a67d9237e369a3fb876905b9771b86e085376664ad"
+    },
+    {
+      "path": "docs/build/runs/P36.52.md",
+      "sha256": "36c0b0459652682dffc7f77f7efb2113dcd78473a99cfa7997079f1e143e4c94"
+    },
+    {
+      "path": "docs/build/runs/P36.53.md",
+      "sha256": "71533bdd07ab17186745fe278a06e09b742fb80a01534faa44b326a45c47ae2b"
+    },
+    {
+      "path": "docs/build/runs/P36.54.md",
+      "sha256": "38790312b7aaa614ec5ba6fb3af18acb7cdcd25d712143f59aff8a749f16e28f"
     },
     {
       "path": "docs/build/runs/P36.6.md",

@@ -16,6 +16,7 @@ import {
   classTargets,
   defineFigures,
   isManifestArtifact,
+  PER_DOSSIER_RE,
   type FigureSpec,
 } from "../../src/lib/figures";
 import {
@@ -107,7 +108,11 @@ describe("defineFigures — the page registry contract (UXR-34, J3 §5.4)", () =
     expect(isManifestArtifact("web/dossiers/usa/ca/verdin-county-06037.json")).toBe(true);
     // The index document carries no dossier record — never a figure target.
     expect(isManifestArtifact("web/dossiers/index.json")).toBe(true); // listed path
-    expect(isManifestArtifact("web/dossier_sources/usa.json")).toBe(false);
+    // P36.52: the sig.dossier-sources/1 family is pattern-admitted like the
+    // per-dossier artifacts (a real export emits slugs no fixture manifest
+    // can enumerate) — via DOSSIER_SOURCES_RE, never the P35.45 pattern.
+    expect(isManifestArtifact("web/dossier_sources/usa.json")).toBe(true);
+    expect(PER_DOSSIER_RE.test("web/dossier_sources/usa.json")).toBe(false);
     expect(isManifestArtifact("web/dossiers.json")).toBe(true); // the v1 monolith
   });
 

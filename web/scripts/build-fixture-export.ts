@@ -20,7 +20,7 @@
 
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { MAP_LAYERS, partitionByLocatability } from "../src/lib/map";
@@ -51,6 +51,7 @@ import {
 import { DEFAULT_PROVENANCE } from "../src/lib/provenance";
 import { DOSSIERS } from "../src/lib/dossier-fixture";
 import { JURISDICTION_DOSSIERS } from "../src/lib/dossier-jurisdiction-fixture";
+import { DOSSIER_SOURCES_FIXTURE } from "../src/lib/dossier-sources-fixture";
 import { LEVERAGE_METRIC_FIXTURE } from "../src/lib/leverage-fixture";
 import { SOURCES_FIXTURE } from "../src/lib/sources";
 import { TERMS_DISCLOSURE_FIXTURE } from "../src/lib/terms-disclosure";
@@ -304,6 +305,17 @@ write(join("presentation", `jurisdiction_dossiers.json`), JURISDICTION_DOSSIERS)
 
 if (!existsSync(join(webDir, "dossiers.json"))) write("dossiers.json", DOSSIERS);
 if (!existsSync(join(webDir, "leverage.json"))) write("leverage.json", LEVERAGE_METRIC_FIXTURE);
+
+// P36.52 (DSRC-02): the per-dossier `sig.dossier-sources/1` artifacts —
+// `web/dossier_sources/<slug-path>.json`, nested like the real exporter's
+// layout. The release manifest enumerates every emitted file, so the
+// harness serialises the committed fixture docs verbatim and the manifest
+// rows below keep export-mode figure verification on the real path.
+for (const [slug, doc] of Object.entries(DOSSIER_SOURCES_FIXTURE)) {
+  const rel = join("dossier_sources", `${slug}.json`);
+  mkdirSync(dirname(join(webDir, rel)), { recursive: true });
+  write(rel, doc);
+}
 
 // P35.37 (SIG-TRANSP-013, J3 §5.4): the figure-evidence artifacts —
 // `web/sources.json` (the sig.source-licence-table/1 the /sources/ figures

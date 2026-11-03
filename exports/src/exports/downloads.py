@@ -230,8 +230,8 @@ def _gzip(data: bytes) -> bytes:
     return buf.getvalue()
 
 
-def _csv_slice(csv_bytes: bytes, source_ids: frozenset[str]) -> tuple[bytes, int]:
-    """Filter a ``sites.csv`` stream to the given slice source ids."""
+def _csv_slice_on(csv_bytes: bytes, field: str, values: frozenset[str]) -> tuple[bytes, int]:
+    """Filter a ``sites.csv`` stream to rows whose ``field`` is in ``values``."""
     text = csv_bytes.decode("utf-8")
     reader = csv.reader(io.StringIO(text))
     rows = list(reader)
@@ -239,29 +239,39 @@ def _csv_slice(csv_bytes: bytes, source_ids: frozenset[str]) -> tuple[bytes, int
         return b"", 0
     header = rows[0]
     try:
-        idx = header.index("source_id")
+        idx = header.index(field)
     except ValueError as exc:
-        raise DownloadError("sites.csv carries no source_id column") from exc
+        raise DownloadError(f"sites.csv carries no {field} column") from exc
     out = io.StringIO()
     writer = csv.writer(out, lineterminator="\n")
     writer.writerow(header)
     kept = 0
     for row in rows[1:]:
-        if idx < len(row) and row[idx] in source_ids:
+        if idx < len(row) and row[idx] in values:
             writer.writerow(row)
             kept += 1
     return out.getvalue().encode("utf-8"), kept
 
 
-def _jsonl_slice(jsonl_bytes: bytes, source_ids: frozenset[str]) -> tuple[bytes, int]:
-    """Filter a ``statements.jsonl`` stream to the given slice source ids."""
+def _csv_slice(csv_bytes: bytes, source_ids: frozenset[str]) -> tuple[bytes, int]:
+    """Filter a ``sites.csv`` stream to the given slice source ids."""
+    return _csv_slice_on(csv_bytes, "source_id", source_ids)
+
+
+def _jsonl_slice_on(jsonl_bytes: bytes, field: str, values: frozenset[str]) -> tuple[bytes, int]:
+    """Filter a ``statements.jsonl`` stream to rows whose ``field`` is in ``values``."""
     kept: list[bytes] = []
     for line in jsonl_bytes.splitlines(keepends=True):
         if not line.strip():
             continue
-        if str(json.loads(line).get("source_id")) in source_ids:
+        if str(json.loads(line).get(field)) in values:
             kept.append(line)
     return b"".join(kept), len(kept)
+
+
+def _jsonl_slice(jsonl_bytes: bytes, source_ids: frozenset[str]) -> tuple[bytes, int]:
+    """Filter a ``statements.jsonl`` stream to the given slice source ids."""
+    return _jsonl_slice_on(jsonl_bytes, "source_id", source_ids)
 
 
 def slice_source_ids(rows: Sequence[Mapping[str, Any]]) -> dict[str, frozenset[str]]:
@@ -339,6 +349,120 @@ def emit_source_slice(
         payload, title=f"per-source slice {source_id}"
     )
     files[f"{prefix}/LICENCE.txt"] = licence_txt(license_id, license_url, compartment=source_id)
+    return files, counts
+
+
+# --------------------------------------------------------------------------- #
+# Per-dossier slices (P36.53 / K5 §6, SIG-DSRC-007) — country/admin-1 only     #
+# --------------------------------------------------------------------------- #
+
+#: D-K5-1 [B-22] "as recommended": country and admin-1 dossier slices are
+#: materialised; county/place dossiers slice the national files by the
+#: statements' placement columns (the recipe block) — never a materialised
+#: file (≈4× the national bytes, R-K5-4). ``unplaced`` is materialised too —
+#: the data-quality report's own rows are a named, downloadable set.
+DOSSIER_SLICE_LEVELS: frozenset[str] = frozenset({"country", "state_province"})
+DOSSIER_SLICE_DIR = "by-dossier"
+
+
+def _base_source_id(source_id: str) -> str:
+    """The base source id of a (possibly rights-suffixed) slice key."""
+    return source_id.split("@", 1)[0]
+
+
+def dossier_attribution_payload(
+    source_ids: frozenset[str],
+    compartment_payload: Mapping[str, Any],
+) -> dict[str, Any] | None:
+    """The dossier-compartment slice of a compartment attribution payload.
+
+    ``source_ids`` are the dossier's contributing BASE source ids inside this
+    compartment. A contributing source with no attribution row fails loudly —
+    the bundle would otherwise ship required-but-empty attribution
+    (SIG-TRANSP-015); returns ``None`` only for a dossier with no
+    contributing source in this compartment (no bundle is emitted then).
+    """
+    if not source_ids:
+        return None
+    payload_sources = list(compartment_payload.get("sources") or [])
+    missing = source_ids - {_base_source_id(str(s.get("source_id")) or "") for s in payload_sources}
+    if missing:
+        raise DownloadError(
+            f"dossier slice: sources {sorted(missing)} have no attribution row "
+            "in the compartment payload — the bundle would ship "
+            "required-but-empty attribution (SIG-TRANSP-015)"
+        )
+    sources = [
+        s
+        for s in payload_sources
+        if _base_source_id(str(s.get("source_id")) or "") in source_ids
+        or str(s.get("source_id") or "") in source_ids
+        or set(s.get("slice_source_ids") or ()) & source_ids
+    ]
+    return {**dict(compartment_payload), "sources": sources}
+
+
+def emit_dossier_slice(
+    slug_path: str,
+    compartment: str,
+    *,
+    sites_csv: bytes | None,
+    statements_jsonl: bytes | None,
+    subject_ids: frozenset[str],
+    source_ids: frozenset[str],
+    permitted_source_ids: frozenset[str],
+    attribution_payload: Mapping[str, Any] | None,
+    license_id: str,
+    license_url: str | None,
+) -> tuple[dict[str, bytes], dict[str, int]]:
+    """The ``by-dossier/<slug>/<compartment>/`` files for one dossier slice.
+
+    ``subject_ids`` is the dossier's member-record set (the same subjects its
+    ``records`` figure counts); ``source_ids`` its contributing base sources
+    inside this compartment; ``permitted_source_ids`` the compartment's own
+    gated slice sources — the ingestion/licence gates' verdict. A dossier
+    naming a source outside the permitted set is REFUSED here with no
+    override path: an unflipped (``ingestion_permitted=false``) or
+    licence-refused source never reaches a download slice (HG-03 E4, K4
+    NEW-4). Returns ``(files, row_counts)``; ``({}, {})`` when the dossier
+    carries no rows in this compartment (no bundle then — never an empty one).
+    """
+    unpermitted = {s for s in source_ids if s not in permitted_source_ids}
+    if unpermitted:
+        raise DownloadError(
+            f"by-dossier/{slug_path}/{compartment}: sources "
+            f"{sorted(unpermitted)} are outside the compartment's gated slice "
+            "set — an unflipped source never reaches a dossier download "
+            "(HG-03 E4; the gate decides, the builder only enforces)"
+        )
+    files: dict[str, bytes] = {}
+    counts: dict[str, int] = {}
+    prefix = f"{DOSSIER_SLICE_DIR}/{slug_path}/{compartment}"
+    if sites_csv is not None:
+        data, kept = _csv_slice_on(sites_csv, "entity_id", subject_ids)
+        if kept:
+            files[f"{prefix}/sites.csv.gz"] = _gzip(data)
+            counts[f"{prefix}/sites.csv.gz"] = kept
+    if statements_jsonl is not None:
+        data, kept = _jsonl_slice_on(statements_jsonl, "entity_id", subject_ids)
+        if kept:
+            files[f"{prefix}/statements.jsonl.gz"] = _gzip(data)
+            counts[f"{prefix}/statements.jsonl.gz"] = kept
+    if not files:
+        return {}, {}
+    payload = dossier_attribution_payload(source_ids, attribution_payload or {})
+    if payload is None:
+        raise DownloadError(
+            f"by-dossier/{slug_path}/{compartment} has no contributing source "
+            "with an attribution row — the bundle would ship "
+            "required-but-empty attribution (SIG-TRANSP-015)"
+        )
+    files[f"{prefix}/ATTRIBUTION.txt"] = attribution_txt(
+        payload, title=f"dossier {slug_path} · {compartment} compartment"
+    )
+    files[f"{prefix}/LICENCE.txt"] = licence_txt(
+        license_id, license_url, compartment=f"dossier {slug_path} · {compartment}"
+    )
     return files, counts
 
 
@@ -483,6 +607,8 @@ def verify_downloads(export_dir: Path | str) -> dict[str, Any]:
 def _file_kind(path: str) -> str:
     if path.startswith("by-source/"):
         return "source-slice"
+    if path.startswith(f"{DOSSIER_SLICE_DIR}/"):
+        return "dossier-slice"
     if path.endswith(("/ATTRIBUTION.txt", "/LICENCE.txt", "/ATTRIBUTION.json")):
         return "attribution"
     if path.startswith("web/") or path.startswith("transparency/"):
@@ -506,6 +632,7 @@ def download_listing(
     mirror: Mapping[str, Any],
     signed: bool,
     source_names: Mapping[str, str] | None = None,
+    dossier_names: Mapping[str, str] | None = None,
     publication_id: str | None = None,
     release: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
@@ -547,6 +674,11 @@ def download_listing(
             row["schema"] = str(_g("schema"))
         if path.startswith("by-source/") and len(parts) > 1:
             row["source_id"] = parts[1]
+        if path.startswith(f"{DOSSIER_SLICE_DIR}/") and len(parts) > 3:
+            # by-dossier/<slug-path>/<compartment>/<file> — the slug keeps its
+            # own path segments (usa/ca/harris-county-48201).
+            row["dossier_slug"] = "/".join(parts[1:-2])
+            row["dossier_compartment"] = parts[-2]
         files.append(row)
     files.sort(key=lambda r: str(r["path"]))
 
@@ -587,6 +719,32 @@ def download_listing(
                 "compartment": comp,
                 "license": lic,
                 "files": s_files,
+            }
+        )
+    dossier_slugs = sorted(
+        {
+            str(f["dossier_slug"])
+            for f in files
+            if f.get("kind") == "dossier-slice" and f.get("dossier_slug")
+        }
+    )
+    names = dict(dossier_names or {})
+    for slug in dossier_slugs:
+        d_files = [str(f["path"]) for f in files if f.get("dossier_slug") == slug]
+        comp = next(
+            (str(f["dossier_compartment"]) for f in files if f.get("dossier_slug") == slug),
+            "",
+        )
+        lic = next((str(f["license"]) for f in files if f.get("dossier_slug") == slug), "")
+        groups.append(
+            {
+                "id": f"dossier:{slug}",
+                "kind": "dossier",
+                "title": names.get(slug) or slug,
+                "dossier_slug": slug,
+                "compartment": comp,
+                "license": lic,
+                "files": d_files,
             }
         )
     release_files = [
@@ -645,6 +803,7 @@ def download_listing(
             "bytes": sum(int(f["byte_size"]) for f in files),
             "compartments": len(by_comp),
             "sources": len(source_ids),
+            "dossier_slices": len(dossier_slugs),
         },
         "metadata": {
             "datapackage": "datapackage.json",
@@ -680,9 +839,13 @@ __all__ = [
     "SHA256SUMS_FILE",
     "SIG_CHANGES_NOTICE",
     "VERIFY_SCHEMA",
+    "DOSSIER_SLICE_DIR",
+    "DOSSIER_SLICE_LEVELS",
     "attribution_txt",
+    "dossier_attribution_payload",
     "download_href",
     "download_listing",
+    "emit_dossier_slice",
     "emit_source_slice",
     "licence_txt",
     "mirror_posture",

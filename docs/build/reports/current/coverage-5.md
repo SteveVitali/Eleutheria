@@ -2,6 +2,14 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-UI-145 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-UI-146 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-UI-147 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-UI-148 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-UI-149 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-UI-150 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-UI-151 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-UI-152 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-UI-153 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-UI-154 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-UI-155 | `public` | `MISSING` | 2026-10-24 | — |

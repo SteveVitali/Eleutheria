@@ -2271,3 +2271,40 @@ sig-typeahead {
 }
 
 
+
+/* P36.52 (DSRC-02) — the dossier sources explorer + "Where this comes from". */
+.sig-dsrc-share { display: inline-flex; align-items: center; gap: var(--sig-space-2); }
+.sig-dsrc-share__bar {
+  display: inline-block;
+  width: calc(var(--share, 0) * 0.6px);
+  min-width: 2px;
+  height: 0.7em;
+  background: var(--sig-data-1);
+}
+/* FIG-01b series fills — the single-hue data ramp plus one neutral step
+ * (K14 §4.7: one categorical hue; the reserved raspberry/amber stay
+ * disagreement/provisional only). `background` covers the HTML legend
+ * swatch; `fill` the SVG marks. */
+.sig-dsrc-fill--0 { fill: var(--sig-data-1); background: var(--sig-data-1); }
+.sig-dsrc-fill--1 { fill: var(--sig-data-seq-300); background: var(--sig-data-seq-300); }
+.sig-dsrc-fill--2 { fill: var(--sig-data-seq-600); background: var(--sig-data-seq-600); }
+.sig-dsrc-fill--3 { fill: var(--sig-data-seq-200); background: var(--sig-data-seq-200); }
+.sig-dsrc-fill--4 { fill: var(--sig-data-seq-700); background: var(--sig-data-seq-700); }
+.sig-dsrc-fill--5 { fill: var(--sig-data-seq-400); background: var(--sig-data-seq-400); }
+.sig-dsrc-fill--6 { fill: var(--sig-data-seq-100); background: var(--sig-data-seq-100); }
+.sig-dsrc-fill--7 { fill: var(--sig-ink-muted); background: var(--sig-ink-muted); }
+.sig-dsrc-swatch {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin-right: var(--sig-space-1);
+  vertical-align: -0.1em;
+}
+.sig-dsrc-legend { list-style: none; padding: 0; font-size: var(--sig-step--1); }
+.sig-dsrc-chart { max-width: 100%; height: auto; }
+.sig-wtcf-table .sig-figure__evidence { display: none; }
+.sig-dsrc-table .sig-figure__evidence { display: none; }
+@media print {
+  /* K5 §4.2: the explorer prints as an appendix — <details> expanded. */
+  .sig-dsrc details.sig-dsrc-source > *:not(summary) { display: block !important; }
+}

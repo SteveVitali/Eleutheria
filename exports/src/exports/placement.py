@@ -431,6 +431,27 @@ class PlacementEngine:
         they never mutate the verified registry)."""
         return self._rows
 
+    def jurisdiction_outlines(self) -> dict[str, Any]:
+        """``jkey → GeoJSON geometry object`` over the verified pack index.
+
+        P36.54 (VIZ-01a): the static-figure composition reads the SAME
+        verified geometries the placement ruleset minted — the drawn outline
+        is exactly the boundary the recorded chain was decided on (SIG-JUR-003),
+        never a second display dataset that could disagree. ``Polygon`` /
+        ``MultiPolygon`` objects decoded from ``ST_AsGeoJSON``; a jkey whose
+        geometry never minted is simply absent (the caller renders the typed
+        absence, never a stub shape).
+        """
+        import json as _json
+
+        out: dict[str, Any] = {}
+        for jkey, gj in self._con.execute(
+            "SELECT jkey, ST_AsGeoJSON(geom) FROM bounds ORDER BY jkey"
+        ).fetchall():
+            doc = _json.loads(gj)
+            out[str(jkey)] = doc.get("geometry") or doc
+        return out
+
     def ancestor_chains(self) -> Mapping[str, tuple[str, ...]]:
         """Every key's recorded root-first chain — ``ancestor_chain`` for the
         whole registry in one read (P35.45's slug-path derivation)."""

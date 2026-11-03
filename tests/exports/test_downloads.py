@@ -311,3 +311,124 @@ def test_release_without_listing_is_back_compat() -> None:
         )
         pub = rel.publication_id
         assert not (root / "rel" / "releases" / pub / "data").exists()
+
+
+# --- P36.53 (DSRC-03 / K5 §6, SIG-DSRC-007): per-dossier slices --------------
+
+
+def test_emit_dossier_slice_files_and_attribution() -> None:
+    payload = {
+        "license": "CC-BY-4.0",
+        "license_url": "https://u",
+        "attribution_required": True,
+        "sources": [
+            {"source_id": "s1", "name": "S1", "rows": 3, "license": "CC-BY-4.0"},
+            {"source_id": "s2", "name": "S2", "rows": 1, "license": "CC-BY-4.0"},
+        ],
+    }
+    files, counts = downloads.emit_dossier_slice(
+        "usa/ok",
+        "sig_graph",
+        sites_csv=b"entity_id,source_id\nS0,s1\nS1,s2\n",
+        statements_jsonl=(
+            b'{"entity_id":"S0","source_id":"s1"}\n{"entity_id":"S1","source_id":"s2"}\n'
+        ),
+        subject_ids=frozenset({"S0"}),
+        source_ids=frozenset({"s1"}),
+        permitted_source_ids=frozenset({"s1", "s2"}),
+        attribution_payload=payload,
+        license_id="CC-BY-4.0",
+        license_url="https://u",
+    )
+    assert set(files) == {
+        "by-dossier/usa/ok/sig_graph/sites.csv.gz",
+        "by-dossier/usa/ok/sig_graph/statements.jsonl.gz",
+        "by-dossier/usa/ok/sig_graph/ATTRIBUTION.txt",
+        "by-dossier/usa/ok/sig_graph/LICENCE.txt",
+    }
+    assert counts["by-dossier/usa/ok/sig_graph/sites.csv.gz"] == 1
+    assert counts["by-dossier/usa/ok/sig_graph/statements.jsonl.gz"] == 1
+    attr = files["by-dossier/usa/ok/sig_graph/ATTRIBUTION.txt"].decode()
+    assert "S1" in attr and "S2" not in attr  # filtered to contributing sources
+
+
+def test_emit_dossier_slice_refuses_unflipped_source() -> None:
+    """The gate pin: a slice naming a source outside the compartment's
+    gated set is refused — an unflipped source never reaches a download."""
+    with pytest.raises(downloads.DownloadError, match="unflipped"):
+        downloads.emit_dossier_slice(
+            "usa/ok",
+            "sig_graph",
+            sites_csv=b"entity_id\nS0\n",
+            statements_jsonl=b'{"entity_id":"S0"}\n',
+            subject_ids=frozenset({"S0"}),
+            source_ids=frozenset({"unflipped_source"}),
+            permitted_source_ids=frozenset({"s1"}),
+            attribution_payload={"license": "CC0-1.0", "sources": [{"source_id": "s1"}]},
+            license_id="CC0-1.0",
+            license_url=None,
+        )
+
+
+def test_emit_dossier_slice_refuses_missing_attribution() -> None:
+    with pytest.raises(downloads.DownloadError):
+        downloads.emit_dossier_slice(
+            "usa/ok",
+            "sig_graph",
+            sites_csv=b"entity_id\nS0\n",
+            statements_jsonl=b'{"entity_id":"S0"}\n',
+            subject_ids=frozenset({"S0"}),
+            source_ids=frozenset({"s1"}),
+            permitted_source_ids=frozenset({"s1"}),
+            attribution_payload={"license": "CC0-1.0", "sources": []},
+            license_id="CC0-1.0",
+            license_url=None,
+        )
+
+
+def test_emit_dossier_slice_empty_compartment_emits_nothing() -> None:
+    files, counts = downloads.emit_dossier_slice(
+        "usa/ok",
+        "sig_graph",
+        sites_csv=b"entity_id\nOTHER\n",
+        statements_jsonl=b'{"entity_id":"OTHER"}\n',
+        subject_ids=frozenset({"S0"}),
+        source_ids=frozenset({"s1"}),
+        permitted_source_ids=frozenset({"s1"}),
+        attribution_payload=None,
+        license_id="CC0-1.0",
+        license_url=None,
+    )
+    assert files == {} and counts == {}
+
+
+def test_listing_groups_dossier_slices() -> None:
+    arts = [
+        {
+            "path": "by-dossier/usa/ok/sig_graph/statements.jsonl.gz",
+            "license": "CC-BY-4.0",
+            "compartment": "sig_graph",
+            "byte_size": 10,
+            "sha256": "a" * 64,
+        },
+        {
+            "path": "by-dossier/usa/ok/sig_graph/ATTRIBUTION.txt",
+            "license": "CC-BY-4.0",
+            "compartment": "sig_graph",
+            "byte_size": 5,
+            "sha256": "b" * 64,
+        },
+    ]
+    doc = downloads.download_listing(
+        arts,
+        release_id="rel-1",
+        generated_at="2026-11-03T00:00:00Z",
+        mirror={"base_url": "https://files.surveillancegraph.org"},
+        signed=False,
+        dossier_names={"usa/ok": "Oklahoma"},
+    )
+    dg = [g for g in doc["groups"] if g["kind"] == "dossier"]
+    assert dg and dg[0]["dossier_slug"] == "usa/ok" and dg[0]["title"] == "Oklahoma"
+    assert doc["counts"]["dossier_slices"] == 1
+    assert doc["files"][0]["kind"] == "dossier-slice"
+    assert doc["files"][0]["dossier_compartment"] == "sig_graph"

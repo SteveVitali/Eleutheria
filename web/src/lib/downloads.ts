@@ -16,7 +16,7 @@ export const DOWNLOAD_LISTING_SCHEMA = "sig.download-listing/1";
 export interface DownloadFile {
   path: string;
   name: string;
-  kind: "compartment" | "source-slice" | "attribution" | "transparency" | string;
+  kind: "compartment" | "source-slice" | "dossier-slice" | "attribution" | "transparency" | string;
   format: string;
   media_type: string;
   compartment: string | null;
@@ -27,14 +27,17 @@ export interface DownloadFile {
   row_count?: number;
   schema?: string;
   source_id?: string;
+  dossier_slug?: string;
+  dossier_compartment?: string;
 }
 
 export interface DownloadGroup {
   id: string;
-  kind: "compartment" | "source" | "release" | "transparency" | string;
+  kind: "compartment" | "source" | "dossier" | "release" | "transparency" | string;
   title: string;
   license?: string;
   source_id?: string;
+  dossier_slug?: string;
   compartment?: string;
   files: string[];
 }

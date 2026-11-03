@@ -1,0 +1,153 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.53 (DSRC-03, SIG-DSRC-007, K5 §6): the per-dossier downloads page —
+// per-compartment slices materialised at country/admin-1 + the unplaced
+// report (D-K5-1 "as recommended"), every bundle carrying ATTRIBUTION.txt /
+// LICENCE.txt with sha256, rows and bytes on R2-host content-hash links
+// (A-3 = a); county/place dossiers render the DuckDB + API recipe block
+// (their readers slice the national files on the statements' placement
+// columns — never a materialised file). T1, zero-JS complete.
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import { getDossiers, getDossierSourcesMap } from "../../../../lib/data";
+import {
+  dossierDownloadsPath,
+  dossierSourcesJsonPath,
+  dossierSourcesPath,
+  dossierHref,
+  absenceReason,
+  type DossierSourcesDoc,
+} from "../../../../lib/dossier-sources";
+import { dossierPath } from "../../../../lib/dossier";
+import { getDownloadListing } from "../../../../lib/data";
+import { formatBytes } from "../../../../lib/downloads";
+import { fmtInt } from "../../../../lib/format";
+import { dossierDisplayTitle } from "../../../../lib/jurisdictions";
+import { withBase } from "../../../../lib/paths";
+import type { Crumb } from "../../../../lib/nav";
+import type { Dossier } from "../../../../lib/dossier";
+
+export function getStaticPaths() {
+  const docs = getDossierSourcesMap();
+  const bySlug = new Map(getDossiers().map((d) => [d.slug, d]));
+  return [...docs.entries()].map(([slug, doc]) => ({
+    params: { path: slug },
+    props: { doc, dossier: bySlug.get(slug) ?? null },
+  }));
+}
+
+interface Props { doc: DossierSourcesDoc; dossier: Dossier | null }
+const { doc, dossier } = Astro.props;
+const slug = doc.jurisdiction.slug_path;
+const name = dossier
+  ? dossierDisplayTitle(dossier.subject_label, dossier.jurisdiction)
+  : doc.jurisdiction.name;
+const recipes = doc.download_recipes;
+const listing = getDownloadListing();
+const mirror = listing.mirror;
+const sig = listing.signature;
+const crumbs: Crumb[] = [{ label: "Places", href: withBase("dossier/") }];
+if ((dossier?.chain?.length ?? 0) > 1) {
+  for (const link of dossier!.chain!) {
+    crumbs.push({ label: link.name ?? link.jkey, href: link.slug_path ? withBase(`dossier/${link.slug_path}/`) : undefined });
+  }
+} else {
+  crumbs.push({ label: name, href: withBase(dossierPath(slug).replace(/^\//, "")) });
+}
+crumbs.push({ label: "Downloads" });
+const sha = (s: string) => `${s.slice(0, 16)}…`;
+---
+
+<BaseLayout
+  title={`Downloads — ${name}`}
+  path={withBase(dossierDownloadsPath(slug))}
+  crumbs={crumbs}
+  actions={[
+    { label: "Dossier", href: withBase(dossierHref(slug)), testId: "dd-dossier" },
+    { label: "Sources", href: withBase(dossierSourcesPath(slug)), testId: "dd-sources" },
+    { label: "JSON", href: withBase(dossierSourcesJsonPath(slug)), testId: "dd-json-action" },
+  ]}
+>
+  <article class="sig-dld" data-testid="dld-page">
+    <p data-copy="DD-01">
+      Downloads for the <strong>{name}</strong> dossier — one file set per
+      licence compartment (a file never mixes licences).{" "}
+      {recipes?.materialised
+        ? "This dossier's slices are materialised at this level."
+        : "County and place dossiers are not materialised — slice the national files with the recipe below."}
+      {" "}Every bundle's <code>ATTRIBUTION.txt</code> · <code>LICENCE.txt</code> states
+      the captured terms and the operator-accepted basis verbatim (no
+      withdrawal — a bad bundle is corrected by a new release, never
+      retracted silently). Served from{" "}
+      <code>{mirror.base_url}</code> as content-hash keys{" "}
+      {mirror.enabled ? "(the mirror is enabled)." : "(committed-disabled until the publish leg runs — links resolve once objects are pushed)."}
+    </p>
+
+    {doc.downloads.length === 0 && (
+      <p class="sig-table-note" data-testid="dld-none" data-copy="DD-02">
+        No materialised slices for this dossier in this release —{" "}
+        {recipes && !recipes.materialised
+          ? "use the recipe below to slice the national files by jurisdiction key."
+          : "the dossier-sources JSON above is the machine-readable view."}
+      </p>
+    )}
+
+    {doc.downloads.map((group) => (
+      <section aria-labelledby={`dld-${group.compartment}`} data-testid="dld-group">
+        <h2 id={`dld-${group.compartment}`}>
+          <code>{group.compartment}</code> compartment — {group.license}
+        </h2>
+        <table class="sig-table" data-testid="dld-table">
+          <thead>
+            <tr><th>File</th><th>Format</th><th>Rows</th><th>Bytes</th><th>sha256</th></tr>
+          </thead>
+          <tbody>
+            {group.files.map((f) => (
+              <tr>
+                <td><a href={f.href}><code>{f.name}</code></a></td>
+                <td><code>{f.format}</code></td>
+                <td>{f.rows !== undefined ? fmtInt(f.rows) : "—"}</td>
+                <td>{formatBytes(f.bytes)}</td>
+                <td><code>{sha(f.sha256)}</code></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    ))}
+
+    {recipes && (
+      <section aria-labelledby="dld-recipes-heading" data-testid="dld-recipes">
+        <h2 id="dld-recipes-heading">
+          {recipes.materialised ? "Slice further (recipe)" : "Get this dossier's rows (recipe)"}
+        </h2>
+        <p data-copy="DD-03">{recipes.duckdb.note}</p>
+        {recipes.duckdb.files.map((f) => (
+          <section aria-labelledby={`dld-rec-${f.compartment}`}>
+            <h3 id={`dld-rec-${f.compartment}`}><code>{f.compartment}</code></h3>
+            {typeof f.statements === "string" ? (
+              <pre><code>{f.statements}</code></pre>
+            ) : (
+              <p class="sig-table-note">statements: {absenceReason(f.statements)}</p>
+            )}
+            <pre><code>{f.sites}</code></pre>
+          </section>
+        ))}
+        <p data-copy="DD-04">
+          API equivalent —{" "}
+          <code>{recipes.api.endpoint.replace("{pub}", "latest")}</code>{" "}
+          on the read API (see <a href={withBase("data/api/")}>API & JSON twins</a>)
+          — {recipes.api.note}
+        </p>
+        <p class="sig-table-note">
+          Integrity: <code>{sig.checksum_file}</code> verifies every file;{" "}
+          {sig.state === "signed"
+            ? `signed by the SIG release pipeline (${sig.algorithm}) — verify with minisign -Vm ${sig.checksum_file} -p ${sig.public_key_file}.`
+            : `not yet signed — ${sig.reason}`}
+        </p>
+      </section>
+    )}
+  </article>
+</BaseLayout>

@@ -12,7 +12,7 @@
 // never drift.
 import type { APIRoute, GetStaticPaths } from "astro";
 import { fixtureArtifactPaths } from "../../lib/figures";
-import { getReleaseArtifactPayload } from "../../lib/data";
+import { getDossierSourcesMap, getReleaseArtifactPayload } from "../../lib/data";
 import { getSourcePageIds } from "../../lib/source-page";
 
 // One pre-rendered route per figure-addressable artifact. The committed list
@@ -26,6 +26,13 @@ export const getStaticPaths: GetStaticPaths = () =>
     ...fixtureArtifactPaths(),
     ...getSourcePageIds().map(
       (id) => `transparency/sources/${id}/executions.jsonl`,
+    ),
+    // P36.52: every emitted sig.dossier-sources/1 document — the pattern-
+    // admitted family the explorer's figures name as data-artifact, so the
+    // visible "source" link resolves in fixtures AND export mode (the real
+    // manifest lists slugs the committed fixture list cannot enumerate).
+    ...[...getDossierSourcesMap().keys()].map(
+      (slug) => `web/dossier_sources/${slug}.json`,
     ),
   ]
     .filter((p) => getReleaseArtifactPayload(p) !== null)

@@ -354,6 +354,8 @@ def statement_row(
     source_homepage: str | None = None,
     prior_recorded_at: Mapping[str, str | None] | None = None,
     contradictions: Sequence[Mapping[str, Any]] = (),
+    placement: Mapping[str, Any] | None = None,
+    sightings: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """One ``sig.statement/1`` row — the published per-claim provenance record.
 
@@ -511,6 +513,23 @@ def statement_row(
     }
     if access_kind is not None:
         row["access_kind"] = access_kind
+    # P36.53 (R11-K13-DSRC-03 / K5 §6, SIG-DSRC-007): the dossier-download
+    # slice keys — the claim's ``placement@1`` verdict (jurisdiction key,
+    # chain, basis, check, declared/located jkeys, boundary vintage) and its
+    # ``claim_sightings`` instants (first/last seen + first/last run +
+    # sighting-run count). Both carry the named-absence object when the
+    # spine recorded none — a county/place consumer slices the national
+    # files on these columns (D-K5-1), so absence is never a silent null.
+    row["placement"] = (
+        dict(placement)
+        if placement is not None
+        else {"not_recorded": "no placement result recorded for this claim's subject"}
+    )
+    row["sightings"] = (
+        dict(sightings)
+        if sightings is not None
+        else {"not_recorded": "no claim_sightings row recorded for this claim"}
+    )
     return row
 
 
@@ -625,6 +644,24 @@ def _statement_specs() -> tuple[Any, ...]:
             "sparse: absent on ordinary observation claims",
             enum_source="linkml:enum:AccessKind",
             declared_values=("unclassified",),
+        ),
+        _CS(
+            "placement",
+            "the claim subject's placement@1 verdict: jurisdiction_key, "
+            "jurisdiction_chain, placement_basis, placement_check, "
+            "declared_jkey, located_jkey, boundary_vintage — or the "
+            "``not_recorded`` object (P36.53 / K5 §6; county/place slices "
+            "filter on jurisdiction_chain + declared_jkey)",
+            dtype="object",
+            nullable=False,
+        ),
+        _CS(
+            "sightings",
+            "the claim's claim_sightings instants: first_seen_at, "
+            "last_seen_at, first_run_id, last_run_id, sighting_runs — or "
+            "the ``not_recorded`` object (P36.53 / K5 §6)",
+            dtype="object",
+            nullable=False,
         ),
     )
 
