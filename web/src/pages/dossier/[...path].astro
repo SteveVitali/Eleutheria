@@ -33,7 +33,7 @@ import type { Dossier } from "../../lib/dossier";
 import type { Crumb, PageAction } from "../../lib/nav";
 import { getDossierArtifactRef, getDossiers, getDossierProvenance, getDossierSources, getJurisdictionCompartments, getJurisdictionKeyMap, getSlugHistory, getUnplacedReport } from "../../lib/data";
 import WhereThisComesFrom from "../../components/WhereThisComesFrom.astro";
-import { dossierSourcesProvenance, dsrcArtifact, dsrcFigureSpecs } from "../../lib/dossier-sources";
+import { DSRC_PROVENANCE_POINTER_BASE, dossierSourcesProvenance, dsrcArtifact, dsrcFigureSpecs } from "../../lib/dossier-sources";
 import { getSourcePageIds } from "../../lib/source-page";
 import type { SlugHistoryRow, UnplacedReport } from "../../lib/data";
 import { getReleaseStamp } from "../../lib/release-stamp";
@@ -490,7 +490,7 @@ return (
   lang={lang}
   provenance={provenance}
   provenanceName={`${jurisdiction.name} dossier`}
-  provenancePointerBase={dsrcDoc ? "/provenance_summary" : `/surfaces/dossiers/${dossier.slug}`}
+  provenancePointerBase={dsrcDoc ? DSRC_PROVENANCE_POINTER_BASE : `/surfaces/dossiers/${dossier.slug}`}
   provenanceArtifact={dsrcDoc ? dsrcArtifact(dossier.slug) : undefined}
   recordPath={recordList ? withBase(recordList) : undefined}
   crumbs={crumbs}

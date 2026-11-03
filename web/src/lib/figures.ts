@@ -124,7 +124,7 @@ const COMPARTMENT_STREAM_RE = /^[a-z0-9_]+\/(sites|statements|record_claims)\.js
  * enumerate it, so a strict pattern stands in for enumeration. The index
  * document itself is excluded — it carries no dossier record to point into.
  */
-const PER_DOSSIER_RE = /^web\/dossiers\/[a-z0-9-]+(\/[a-z0-9-]+)*\.json$/;
+export const PER_DOSSIER_RE = /^web\/dossiers\/[a-z0-9-]+(\/[a-z0-9-]+)*\.json$/;
 
 /**
  * P36.41/P36.42a: the `sig.entity-label/1` row streams (`labels/<comp>.jsonl`
@@ -148,8 +148,10 @@ const TRANSPARENCY_SOURCE_RE =
 
 /** Byte-identical to DOSSIER_SOURCES_RE in scripts/check-figures.mjs (pinned
  *  by test): P36.52's per-dossier `sig.dossier-sources/1` artifacts —
- *  `web/dossier_sources/<slug-path>.json` — unbounded like the per-dossier
- *  artifacts, admitted by pattern. */
+ *  `web/dossier_sources/<slug-path>.json`. The build check admits them by
+ *  pattern for artifact-existence; `data-artifact` must instead name a
+ *  manifest-LISTED path (the release manifest enumerates every emitted
+ *  artifact — figure-artifacts.json lists the fixture set). */
 const DOSSIER_SOURCES_RE = /^web\/dossier_sources\/[a-z0-9-]+(\/[a-z0-9-]+)*\.json$/;
 
 function repoRoot(): string {
@@ -194,7 +196,6 @@ export function isManifestArtifact(path: string, listed?: readonly string[]): bo
   if (LABEL_STREAM_RE.test(path)) return true;
   if (ENTITY_TWIN_RE.test(path)) return true;
   if (TRANSPARENCY_SOURCE_RE.test(path)) return true;
-  if (DOSSIER_SOURCES_RE.test(path)) return true;
   // P35.45 — per-dossier artifacts are emitted under web/dossiers/ but never
   // the index document itself (it carries no dossier record to point into).
   if (PER_DOSSIER_RE.test(path) && path !== "web/dossiers/index.json") return true;

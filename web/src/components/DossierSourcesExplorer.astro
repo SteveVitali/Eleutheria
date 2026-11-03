@@ -322,7 +322,7 @@ const disagreeTotal =
       <Fragment set:html={chartSvg} />
       <ul class="sig-dsrc-legend" data-testid="dsrc-legend">
         {legend.map((l) => (
-          <li><span class="sig-dsrc-swatch" style={`background:${l.fill}`} aria-hidden="true" /> {l.name} — {fmtInt(l.total)}</li>
+          <li><span class={`sig-dsrc-swatch ${l.cls}`} aria-hidden="true" /> {l.name} — {fmtInt(l.total)}</li>
         ))}
       </ul>
       <table class="sig-table sig-dsrc-series" data-testid="dsrc-time-table">

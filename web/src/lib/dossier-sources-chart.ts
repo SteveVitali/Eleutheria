@@ -18,18 +18,11 @@ const PAD_L = 44;
 const PAD_B = 34;
 const PAD_T = 12;
 const PAD_R = 8;
-/** The kit palette — series cycle through the epistemic marks. */
-const FILLS = [
-  "var(--sig-accent, #3557c4)",
-  "var(--sig-accent-2, #2f8f5b)",
-  "var(--sig-warn, #b07617)",
-  "var(--sig-danger, #b03a5b)",
-  "var(--sig-ink-2, #5a6472)",
-  "var(--sig-accent-3, #7a5bc4)",
-  "var(--sig-accent-4, #2f7f9f)",
-  "var(--sig-accent-5, #9a6b2f)",
-  "var(--sig-ink-3, #8a93a1)",
-];
+/** Series fills are class-based (the strict CSP allows no style attributes);
+ * the hues live in `.sig-dsrc-fill--N` — the single-hue data ramp plus one
+ * neutral step, never the reserved raspberry/amber (K14 §4.3). */
+const FILL_CLASSES = 8;
+const fillClass = (i: number): string => `sig-dsrc-fill sig-dsrc-fill--${i % FILL_CLASSES}`;
 
 const esc = (s: string): string =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -53,10 +46,10 @@ export function overTimeSvg(model: OverTimeModel, title: string): string {
   );
   // axis + baseline + one labelled tick per end of the value axis
   parts.push(
-    `<line x1="${PAD_L}" y1="${HEIGHT - PAD_B}" x2="${WIDTH - PAD_R}" y2="${HEIGHT - PAD_B}" stroke="currentColor" stroke-width="2"/>`,
+    `<line x1="${PAD_L}" y1="${HEIGHT - PAD_B}" x2="${WIDTH - PAD_R}" y2="${HEIGHT - PAD_B}" stroke="currentColor" stroke-width="2" />`,
   );
   parts.push(
-    `<line x1="${PAD_L}" y1="${PAD_T}" x2="${PAD_L}" y2="${HEIGHT - PAD_B}" stroke="currentColor" stroke-width="2"/>`,
+    `<line x1="${PAD_L}" y1="${PAD_T}" x2="${PAD_L}" y2="${HEIGHT - PAD_B}" stroke="currentColor" stroke-width="2" />`,
   );
   parts.push(
     `<text x="${PAD_L - 6}" y="${PAD_T + 8}" text-anchor="end" font-size="11" fill="currentColor">${fnum(max)}</text>`,
@@ -73,7 +66,7 @@ export function overTimeSvg(model: OverTimeModel, title: string): string {
       const h = Math.max(1, (v / max) * plotH);
       y -= h;
       parts.push(
-        `<rect x="${fnum(cx - barW / 2)}" y="${fnum(y)}" width="${fnum(barW)}" height="${fnum(h)}" fill="${FILLS[si % FILLS.length]}"><title>${esc(s.name)} — ${esc(p)}: ${v} records first seen</title></rect>`,
+        `<rect class="${fillClass(si)}" x="${fnum(cx - barW / 2)}" y="${fnum(y)}" width="${fnum(barW)}" height="${fnum(h)}"><title>${esc(s.name)} — ${esc(p)}: ${v} records first seen</title></rect>`,
       );
     });
     // the total above the stack (direct label, no legend lookup needed)
@@ -89,10 +82,12 @@ export function overTimeSvg(model: OverTimeModel, title: string): string {
 }
 
 /** The legend rows — name + swatch + series total (direct labels, K14). */
-export function overTimeLegend(model: OverTimeModel): { name: string; fill: string; total: number }[] {
+export function overTimeLegend(
+  model: OverTimeModel,
+): { name: string; cls: string; total: number }[] {
   return model.series.map((s, i) => ({
     name: s.name,
-    fill: FILLS[i % FILLS.length]!,
+    cls: fillClass(i),
     total: s.values.reduce((n, v) => n + v, 0),
   }));
 }

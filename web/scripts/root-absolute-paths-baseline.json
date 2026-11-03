@@ -668,6 +668,144 @@
       "token": "/robots_disregard/events",
       "count": 1,
       "reason": "P36.46 repair: figure pointer — a JSON pointer into status/lane.json (robots-disregard fetch count, D-J3-2), not a link"
+    },
+    {
+      "file": "src/lib/dossier-sources.ts",
+      "token": "/provenance_summary",
+      "count": 1,
+      "reason": "P36.52: DSRC_PROVENANCE_POINTER_BASE — the HWKT pointerBase key inside web/dossier_sources/<slug>.json, a JSON pointer not a link"
+    },
+    {
+      "file": "src/lib/dossier-sources.ts",
+      "token": "/totals/records",
+      "count": 1,
+      "reason": "P36.52: figure pointer — a JSON pointer into web/dossier_sources/<slug>.json, not a link"
+    },
+    {
+      "file": "src/lib/dossier-sources.ts",
+      "token": "/totals/claims",
+      "count": 1,
+      "reason": "P36.52: figure pointer — a JSON pointer into web/dossier_sources/<slug>.json, not a link"
+    },
+    {
+      "file": "src/lib/dossier-sources.ts",
+      "token": "/totals/sources",
+      "count": 3,
+      "reason": "P36.52: figure pointers (/totals/sources on dsrc-sources/dsrc-explore/dsrc-rest) — JSON pointers into web/dossier_sources/<slug>.json, not links"
+    },
+    {
+      "file": "src/lib/dossier-sources.ts",
+      "token": "/totals/located_by_point",
+      "count": 1,
+      "reason": "P36.52: figure pointer — a JSON pointer into web/dossier_sources/<slug>.json, not a link"
+    },
+    {
+      "file": "src/lib/dossier-sources.ts",
+      "token": "/totals/coordinate_conflicts_intra_source",
+      "count": 1,
+      "reason": "P36.52: figure pointer — a JSON pointer into web/dossier_sources/<slug>.json, not a link"
+    },
+    {
+      "file": "src/lib/dossier-sources.ts",
+      "token": "/totals/declared_here_located_elsewhere",
+      "count": 1,
+      "reason": "P36.52: figure pointer — a JSON pointer into web/dossier_sources/<slug>.json, not a link"
+    },
+    {
+      "file": "src/lib/dossier-sources.ts",
+      "token": "/totals/first_seen_at",
+      "count": 1,
+      "reason": "P36.52: figure pointer — a JSON pointer into web/dossier_sources/<slug>.json, not a link"
+    },
+    {
+      "file": "src/lib/dossier-sources.ts",
+      "token": "/totals/last_seen_at",
+      "count": 1,
+      "reason": "P36.52: figure pointer — a JSON pointer into web/dossier_sources/<slug>.json, not a link"
+    },
+    {
+      "file": "src/lib/dossier-sources.ts",
+      "token": "/sources",
+      "count": 1,
+      "reason": "P36.52: dsrc-top-sources figure pointer (/sources) — a JSON pointer into web/dossier_sources/<slug>.json, not a link"
+    },
+    {
+      "file": "src/lib/dossier-sources-fixture.ts",
+      "token": "/sources/$",
+      "count": 2,
+      "reason": "P36.52: source_page + runs_page fields of the sig.dossier-sources/1 fixture document — emitted artifact bytes mirroring release data, not link construction"
+    },
+    {
+      "file": "src/lib/dossier-sources-fixture.ts",
+      "token": "/totals/records",
+      "count": 1,
+      "reason": "P36.52: fixture figure pointer — a JSON pointer into the artifact's totals, not a link"
+    },
+    {
+      "file": "src/lib/dossier-sources-fixture.ts",
+      "token": "/totals/records_placed",
+      "count": 1,
+      "reason": "P36.52: fixture figure pointer — a JSON pointer into the artifact's totals, not a link"
+    },
+    {
+      "file": "src/lib/dossier-sources-fixture.ts",
+      "token": "/totals/claims",
+      "count": 1,
+      "reason": "P36.52: fixture figure pointer — a JSON pointer into the artifact's totals, not a link"
+    },
+    {
+      "file": "src/lib/dossier-sources-fixture.ts",
+      "token": "/totals/sources",
+      "count": 1,
+      "reason": "P36.52: fixture figure pointer — a JSON pointer into the artifact's totals, not a link"
+    },
+    {
+      "file": "src/lib/dossier-sources-fixture.ts",
+      "token": "/totals/coordinate_conflicts_intra_source",
+      "count": 1,
+      "reason": "P36.52: fixture figure pointer — a JSON pointer into the artifact's totals, not a link"
+    },
+    {
+      "file": "src/lib/dossier-sources-fixture.ts",
+      "token": "/totals/declared_here_located_elsewhere",
+      "count": 1,
+      "reason": "P36.52: fixture figure pointer — a JSON pointer into the artifact's totals, not a link"
+    },
+    {
+      "file": "src/lib/page-types.ts",
+      "token": "/dossier",
+      "count": 2,
+      "reason": "P36.52: the /dossier/**/sources/** route patterns + the notes' `dossier/**` mention — the scanner's block-comment strip eats the `/**`/`*/` glob tails leaving a /dossier stub — pattern data, never a navigable link"
+    },
+    {
+      "file": "src/lib/page-types.ts",
+      "token": "/dossier/usa/sources/",
+      "count": 1,
+      "reason": "P36.52: registry example route — match data, not a link (withBase() does not apply to the pattern table)"
+    },
+    {
+      "file": "src/lib/page-types.ts",
+      "token": "/dossier/usa/ok/sources/",
+      "count": 1,
+      "reason": "P36.52: registry example route — match data, not a link (withBase() does not apply to the pattern table)"
+    },
+    {
+      "file": "src/lib/page-types.ts",
+      "token": "/dossier/usa/sources/sort/first-seen/",
+      "count": 1,
+      "reason": "P36.52: registry example route — match data, not a link (withBase() does not apply to the pattern table)"
+    },
+    {
+      "file": "src/lib/page-types.ts",
+      "token": "/dossier/usa/sources/sort/name/page/2/",
+      "count": 1,
+      "reason": "P36.52: registry example route — match data, not a link (withBase() does not apply to the pattern table)"
+    },
+    {
+      "file": "src/lib/page-types.ts",
+      "token": "/",
+      "count": 2,
+      "reason": "P36.52: the new /dossier/**/sources/** patterns shift the scanner's false `/*`-`*/` comment pairing, surfacing the pre-existing htmlFileToRoute `/` normalisation literals — path-shape data, not links"
     }
   ]
 }

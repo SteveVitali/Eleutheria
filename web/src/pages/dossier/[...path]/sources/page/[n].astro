@@ -10,6 +10,7 @@ import DossierSourcesExplorer from "../../../../../components/DossierSourcesExpl
 import { getDossiers, getDossierSourcesMap } from "../../../../../lib/data";
 import {
   DSRC_PAGE_SIZE,
+  DSRC_PROVENANCE_POINTER_BASE,
   contributingSources,
   dossierSourcesPagePath,
   dossierSourcesProvenance,
@@ -54,7 +55,7 @@ const crumbs: Crumb[] = [{ label: "Places", href: withBase("dossier/") }, { labe
   path={withBase(dossierSourcesPagePath(slug, n))}
   provenance={provenance}
   provenanceName={`${doc.jurisdiction.name} dossier sources`}
-  provenancePointerBase="/provenance_summary"
+  provenancePointerBase={DSRC_PROVENANCE_POINTER_BASE}
   provenanceArtifact={dsrcArtifact(slug)}
   crumbs={crumbs}
 >

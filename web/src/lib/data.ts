@@ -2335,6 +2335,13 @@ export function getReleaseArtifactPayload(artifactPath: string): unknown | null 
         artifactPath,
       );
       if (m) return getSourceExecutionsArtifact(m[1]!);
+      // P36.52: the per-dossier sig.dossier-sources/1 documents the explorer's
+      // figures point at — served by the same data-layer payload the page
+      // renders (fixtures corpus or the export's own emitted file).
+      const dsrc = /^web\/dossier_sources\/([a-z0-9-]+(?:\/[a-z0-9-]+)*)\.json$/.exec(
+        artifactPath,
+      );
+      if (dsrc) return getDossierSources(dsrc[1]!);
       return null;
     }
   }

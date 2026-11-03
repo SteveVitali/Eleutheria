@@ -496,6 +496,10 @@ export function dsrcArtifact(slug: string): string {
   return `web/dossier_sources/${slug}.json`;
 }
 
+/** The HWKT pointerBase for a dossier-sources provenance block — a JSON
+ * pointer inside `web/dossier_sources/<slug>.json`, never a route. */
+export const DSRC_PROVENANCE_POINTER_BASE = "/provenance_summary";
+
 const dsrcTargets = (slug: string): FigureTarget[] => [
   { kind: "rows", label: "artifact JSON", href: artifactHref(dsrcArtifact(slug)) },
   {
