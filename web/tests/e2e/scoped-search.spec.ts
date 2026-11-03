@@ -60,6 +60,12 @@ test.describe("dossier scoped search (SIG-UI-128)", () => {
     await expect(list).toBeVisible({ timeout: 10000 });
     const texts = await list.getByRole("option").allTextContents();
     expect(texts.length).toBeGreaterThan(0);
+    // A subtree place appears — "Oklahoma" itself — never just the
+    // out-of-scope registry/research entries that also key under "ok".
+    expect(texts.some((t) => t.startsWith("Oklahoma"))).toBe(true);
+    // An out-of-scope sibling (Texas, sources, the OKC research dossier)
+    // is never suggested under a jurisdiction scope.
+    expect(texts.some((t) => t.startsWith("Texas"))).toBe(false);
   });
 
   test("a county dossier scopes to the county key", async ({ page }) => {

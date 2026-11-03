@@ -27,7 +27,7 @@
  * never a form without a real target.
  */
 
-import { getDossierIndex } from "./data";
+import { getDossierIndex, getDossiers, getJurisdictionKeyMap } from "./data";
 
 export interface ScopedSearchScope {
   /** The facet the GET form carries — `jurisdiction` or `source`. */
@@ -59,27 +59,55 @@ export function scopedSearchParam(scope: ScopedSearchScope): {
 }
 
 /**
- * The root-first ancestor chain for `jkey` — self last — walked through the
- * dossier index's `parent_jkey` links (the same ancestry `jurisdiction_chain`
- * records per record). Unknown jkeys yield `[jkey]` (self-only); a cycle or a
- * missing parent stops at the last resolvable ancestor rather than looping —
- * the emitted chain only ever contains real index keys.
+ * jkey → parent_jkey across every surface that records registry ancestry:
+ * the canonical `sig.jurisdiction-key-map/1` (export mode — every registry
+ * key, page-backed or not), each dossier's own root-first `chain` field
+ * (fixtures + keyed exports — a below-threshold ancestor like Norman's
+ * Cleveland County still names its parent inside a child's chain), and the
+ * index rows' `parent_jkey` links. The dossier index alone is NOT a
+ * sufficient ancestry source: it carries page rows only, so a non-page
+ * intermediate would truncate the walk at the first page-less parent.
+ */
+export function jkeyParentMap(
+  rows: ReturnType<typeof getDossierIndex> = getDossierIndex(),
+): Map<string, string | null> {
+  const out = new Map<string, string | null>();
+  const keyMap = getJurisdictionKeyMap();
+  if (keyMap !== null) {
+    for (const [jkey, row] of keyMap) out.set(jkey, row.parent_jkey ?? null);
+  }
+  for (const d of getDossiers()) {
+    const chain = d.chain ?? [];
+    for (let i = 1; i < chain.length; i++) {
+      const child = chain[i]?.jkey;
+      const parent = chain[i - 1]?.jkey;
+      if (child) out.set(child, parent ?? null);
+    }
+  }
+  for (const r of rows) {
+    if (r.jkey && !out.has(r.jkey)) out.set(r.jkey, r.parent_jkey ?? null);
+  }
+  return out;
+}
+
+/**
+ * The root-first ancestor chain for `jkey` — self last — walked through
+ * `parents` (see `jkeyParentMap`: the same ancestry `jurisdiction_chain`
+ * records per record). Unknown jkeys yield `[jkey]` (self-only); a cycle or
+ * a missing parent stops at the last resolvable ancestor rather than
+ * looping — the emitted chain only ever contains real registry keys.
  */
 export function jkeyChain(
   jkey: string,
-  rows: ReturnType<typeof getDossierIndex> = getDossierIndex(),
+  parents: Map<string, string | null> = jkeyParentMap(),
 ): string[] {
-  const byKey = new Map<string, (typeof rows)[number]>();
-  for (const r of rows) {
-    if (r.jkey) byKey.set(r.jkey, r);
-  }
   const chain: string[] = [];
   const seen = new Set<string>();
   let cur: string | null | undefined = jkey;
   while (cur && !seen.has(cur)) {
     seen.add(cur);
     chain.unshift(cur);
-    cur = byKey.get(cur)?.parent_jkey ?? null;
+    cur = parents.has(cur) ? (parents.get(cur) ?? null) : null;
   }
   return chain;
 }
@@ -88,11 +116,12 @@ export function jkeyChain(
 export function jkeySubtree(
   jkey: string,
   rows: ReturnType<typeof getDossierIndex> = getDossierIndex(),
+  parents: Map<string, string | null> = jkeyParentMap(rows),
 ): string[] {
   const out: string[] = [];
   for (const r of rows) {
     if (!r.jkey) continue;
-    if (jkeyChain(r.jkey, rows).includes(jkey)) out.push(r.jkey);
+    if (jkeyChain(r.jkey, parents).includes(jkey)) out.push(r.jkey);
   }
   return out;
 }

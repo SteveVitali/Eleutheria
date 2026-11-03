@@ -35,7 +35,7 @@
 
 import { getDossierIndex, getMapSites, getSourceRows } from "./data";
 import { dossierDisplayTitle } from "./jurisdictions";
-import { jkeyChain } from "./scoped-search";
+import { jkeyChain, jkeyParentMap } from "./scoped-search";
 import { dossierPath } from "./dossier";
 import { withBase } from "./paths";
 import type { TypeaheadEntry, TypeaheadShard } from "../elements/typeahead-model";
@@ -84,6 +84,9 @@ export function typeaheadCatalog(): TypeaheadCatalogEntry[] {
   // ancestor chain for the typeahead `scope` filter (parent_jkey walk —
   // the same ancestry `jurisdiction_chain` records).
   const indexRows = getDossierIndex();
+  // The ancestry map reaches past the index's page rows — a non-page
+  // intermediate (Norman's Cleveland County) still resolves its ancestors.
+  const parents = jkeyParentMap(indexRows);
   for (const d of indexRows) {
     const label = d.display_name ?? d.name ?? dossierDisplayTitle(d.subject_label, d.jurisdiction);
     const detail = [
@@ -104,7 +107,7 @@ export function typeaheadCatalog(): TypeaheadCatalogEntry[] {
       // P36.56: scope fields — the keyed places carry their chain so a
       // `jurisdiction:<jkey>` scope matches the place + its descendants; an
       // unkeyed row carries none and a scoped form simply never suggests it.
-      ...(d.jkey ? { jkey: d.jkey, chain: jkeyChain(d.jkey, indexRows) } : {}),
+      ...(d.jkey ? { jkey: d.jkey, chain: jkeyChain(d.jkey, parents) } : {}),
     });
   }
   for (const s of getSourceRows().sources) {

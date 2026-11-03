@@ -132,7 +132,13 @@ export function matchEntries(
   };
   const scoreEntry = (entry: TypeaheadEntry): number => {
     let s = score(entry.label);
-    for (const alt of entry.alt ?? []) s = Math.min(s === -1 ? 2 : s, score(alt));
+    // An alternate only ever HELPS — a non-matching alt must never demote a
+    // label that matched (P36.56 fix: `min(s, -1)` dropped every entry whose
+    // code alt — "US", "OK" — missed the query).
+    for (const alt of entry.alt ?? []) {
+      const a = score(alt);
+      if (a >= 0) s = Math.min(s === -1 ? 2 : s, a);
+    }
     return s;
   };
   return entries

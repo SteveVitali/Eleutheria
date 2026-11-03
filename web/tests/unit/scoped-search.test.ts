@@ -54,6 +54,18 @@ describe("jkeyChain / jkeySubtree (descendants via jurisdiction_chain)", () => {
     expect(jkeyChain("iso3166-1:US")).toEqual(["iso3166-1:US"]);
   });
 
+  it("reaches past a non-page ancestor (Norman through Cleveland County)", () => {
+    // Cleveland County (40131) mints no dossier page — it is absent from
+    // the index — but Norman's own dossier chain names its parentage, so
+    // the walk still resolves the full ancestry.
+    expect(jkeyChain("us.census.geoid.place:4055000")).toEqual([
+      "iso3166-1:US",
+      "iso3166-2:US-OK",
+      "us.census.geoid.county:40131",
+      "us.census.geoid.place:4055000",
+    ]);
+  });
+
   it("an unknown or unkeyed row yields self-only — never a guessed ancestry", () => {
     expect(jkeyChain("no-such-key:XX")).toEqual(["no-such-key:XX"]);
   });
@@ -67,12 +79,36 @@ describe("jkeyChain / jkeySubtree (descendants via jurisdiction_chain)", () => {
         "us.census.geoid.place:4064000",
       ]),
     );
-    // Cleveland County has no dossier page in the fixture (below the
-    // publication threshold) — it is absent from the index, so absent
-    // from the subtree too.
+    // Norman sits under US-OK through the non-page Cleveland County —
+    // the subtree holds it via the full ancestry, not the index alone.
+    expect(sub).toContain("us.census.geoid.place:4055000");
+    // Cleveland County itself has no dossier page, so no catalog entry
+    // suggests it — but its jkey still resolves inside Norman's chain.
     expect(sub).not.toContain("us.census.geoid.county:40131");
     expect(sub).not.toContain("iso3166-2:US-TX");
     expect(sub).not.toContain("iso3166-1:US");
+  });
+});
+
+describe("matchEntries alternate scoring (P36.56 regression)", () => {
+  it("a non-matching alt never demotes a label that matched", () => {
+    // The shipped fixture alt list pairs the subject label with the bare
+    // country code — "Oklahoma" + alt "US" must still surface under "ok".
+    const entries = [
+      {
+        label: "Oklahoma, United States",
+        href: "/dossier/usa/ok/",
+        alt: ["Surveillance infrastructure — Oklahoma, United States", "US"],
+      },
+      { label: "OKC camera registry", href: "/sources/", alt: [] },
+    ];
+    const matched = matchEntries(entries, "ok").map((e) => e.label);
+    expect(matched).toContain("Oklahoma, United States");
+    expect(matched[0]).toBe("Oklahoma, United States"); // label match leads
+    // And an alt-only hit still surfaces the entry ("US" → Oklahoma).
+    expect(matchEntries(entries, "us").map((e) => e.label)).toContain(
+      "Oklahoma, United States",
+    );
   });
 });
 
