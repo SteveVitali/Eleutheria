@@ -2,6 +2,14 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-EPIS-027 | `implementation` | `MET` | 2026-10-06 | — |
+| SIG-EPIS-029 | `hosted` | `PARTIAL` | 2026-10-01 | — |
+| SIG-EVAL-001 | `public` | `PARTIAL` | 2026-10-01 | — |
+| SIG-EVAL-002 | `public` | `PARTIAL` | 2026-10-01 | — |
+| SIG-EVAL-003 | `public` | `AT-RISK-INTEGRATION` | 2026-10-01 | — |
+| SIG-EVAL-004 | `hosted` | `WAIVED(ADR-153)` | 2026-10-01 | — |
+| SIG-EVAL-005 | `public` | `MISSING` | 2026-10-01 | — |
+| SIG-EVAL-006 | `public` | `MISSING` | 2026-10-01 | — |
 | SIG-EVAL-007 | `public` | `MISSING` | 2026-10-01 | — |
 | SIG-EVID-001 | `hosted` | `PARTIAL` | 2026-10-01 | — |
 | SIG-EVID-019 | `hosted` | `MET-ENGINEERED(D-P21.5-1;D-R11-ARCHIVE-1)` | 2026-10-01 | — |
@@ -114,13 +122,5 @@
 | SIG-OPS-005 | `hosted` | `MISSING` | 2026-10-01 | — |
 | SIG-OPS-006 | `hosted` | `MISSING` | 2026-10-01 | — |
 | SIG-OPS-007 | `hosted` | `MISSING` | 2026-10-01 | — |
-| SIG-OPS-008 | `hosted` | `MISSING` | 2026-10-01 | — |
-| SIG-OPS-009 | `hosted` | `MISSING` | 2026-10-01 | — |
-| SIG-OPS-010 | `hosted` | `MISSING` | 2026-10-01 | — |
-| SIG-OPS-011 | `hosted` | `MISSING` | 2026-10-01 | — |
-| SIG-OPS-012 | `hosted` | `MISSING` | 2026-10-01 | — |
-| SIG-PUB-001 | `implementation` | `MET` | 2026-10-06 | — |
-| SIG-PUB-002 | `public` | `PARTIAL` | 2026-10-03 | — |
-| SIG-PUB-002 | `public` | `PARTIAL` | 2026-10-03 | SIG-PUB-002:r11-1 |
 
 ← back: CURRENT.md · next page: coverage-3.md

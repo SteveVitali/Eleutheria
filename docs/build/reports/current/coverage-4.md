@@ -2,6 +2,14 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-TRANSP-034 | `public` | `MISSING` | 2026-10-05 | — |
+| SIG-TRANSP-035 | `public` | `MISSING` | 2026-10-05 | — |
+| SIG-TRANSP-036 | `public` | `MISSING` | 2026-10-05 | — |
+| SIG-TRANSP-037 | `public` | `MISSING` | 2026-10-05 | — |
+| SIG-TRANSP-038 | `public` | `MISSING` | 2026-10-05 | — |
+| SIG-TRANSP-039 | `public` | `MISSING` | 2026-10-05 | — |
+| SIG-TRANSP-040 | `public` | `MISSING` | 2026-10-05 | — |
+| SIG-TRANSP-041 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-042 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-043 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRUST-004 | `hosted` | `MET-ENGINEERED(D-P32.3-1)` | 2026-10-01 | — |
@@ -114,13 +122,5 @@
 | SIG-UI-142 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-UI-143 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-UI-144 | `public` | `MISSING` | 2026-10-24 | — |
-| SIG-UI-145 | `public` | `MISSING` | 2026-10-24 | — |
-| SIG-UI-146 | `public` | `MISSING` | 2026-10-24 | — |
-| SIG-UI-147 | `public` | `MISSING` | 2026-10-24 | — |
-| SIG-UI-148 | `public` | `MISSING` | 2026-10-24 | — |
-| SIG-UI-149 | `public` | `MISSING` | 2026-10-24 | — |
-| SIG-UI-150 | `public` | `MISSING` | 2026-10-24 | — |
-| SIG-UI-151 | `public` | `MISSING` | 2026-10-24 | — |
-| SIG-UI-152 | `public` | `MISSING` | 2026-10-24 | — |
 
 ← back: CURRENT.md · next page: coverage-5.md

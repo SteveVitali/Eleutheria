@@ -2,6 +2,14 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-OPS-008 | `hosted` | `MISSING` | 2026-10-01 | — |
+| SIG-OPS-009 | `hosted` | `MISSING` | 2026-10-01 | — |
+| SIG-OPS-010 | `hosted` | `MISSING` | 2026-10-01 | — |
+| SIG-OPS-011 | `hosted` | `MISSING` | 2026-10-01 | — |
+| SIG-OPS-012 | `hosted` | `MISSING` | 2026-10-01 | — |
+| SIG-PUB-001 | `implementation` | `MET` | 2026-10-06 | — |
+| SIG-PUB-002 | `public` | `PARTIAL` | 2026-10-03 | — |
+| SIG-PUB-002 | `public` | `PARTIAL` | 2026-10-03 | SIG-PUB-002:r11-1 |
 | SIG-PUB-003d | `implementation` | `PARTIAL` | 2026-10-06 | — |
 | SIG-PUB-006 | `implementation` | `MET` | 2026-10-06 | — |
 | SIG-PUB-007 | `public` | `AT-RISK-INTEGRATION` | 2026-10-01 | — |
@@ -114,13 +122,5 @@
 | SIG-TRANSP-032 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-033 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-033 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-01 | SIG-TRANSP-033:r11-1 |
-| SIG-TRANSP-034 | `public` | `MISSING` | 2026-10-05 | — |
-| SIG-TRANSP-035 | `public` | `MISSING` | 2026-10-05 | — |
-| SIG-TRANSP-036 | `public` | `MISSING` | 2026-10-05 | — |
-| SIG-TRANSP-037 | `public` | `MISSING` | 2026-10-05 | — |
-| SIG-TRANSP-038 | `public` | `MISSING` | 2026-10-05 | — |
-| SIG-TRANSP-039 | `public` | `MISSING` | 2026-10-05 | — |
-| SIG-TRANSP-040 | `public` | `MISSING` | 2026-10-05 | — |
-| SIG-TRANSP-041 | `public` | `MISSING` | 2026-10-05 | — |
 
 ← back: CURRENT.md · next page: coverage-4.md
