@@ -31,7 +31,7 @@ import Figure from "../../components/Figure.astro";
 import { applyPublicationPolicy, dossierLang, dossierJsonPath, dossierPath, dossierPrintPath, sectionTitlesFor, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG, unplacedPath } from "../../lib/dossier";
 import type { Dossier } from "../../lib/dossier";
 import type { Crumb, PageAction } from "../../lib/nav";
-import { getDossierArtifactRef, getDossierIndex, getDossiers, getDossierProvenance, getDossierSources, getJurisdictionCompartments, getJurisdictionKeyMap, getSlugHistory, getUnplacedReport, getWatch } from "../../lib/data";
+import { getDossierArtifactRef, getDossierIndex, getDossiers, getDossierProvenance, getDossierSources, getJurisdictionCompartments, getJurisdictionKeyMap, getLatestReleaseTarget, getSlugHistory, getUnplacedReport, getWatch } from "../../lib/data";
 import WhereThisComesFrom from "../../components/WhereThisComesFrom.astro";
 // P36.55 (VIZ-02, SIG-UI-069): the ONE dossier template — the v2 blocks in
 // SIG-UI-010 order: header strip, At a glance with Figure 1 + locator and
@@ -41,6 +41,7 @@ import DossierHeaderStrip from "../../components/dossier/DossierHeaderStrip.astr
 import DossierMapFigure from "../../components/dossier/DossierMapFigure.astro";
 import DossierLocator from "../../components/dossier/DossierLocator.astro";
 import DossierExploreBar from "../../components/dossier/DossierExploreBar.astro";
+import ScopedSearchForm from "../../components/ScopedSearchForm.astro";
 import DossierNextDecisions from "../../components/dossier/DossierNextDecisions.astro";
 import OtherPublicResources from "../../components/dossier/OtherPublicResources.astro";
 import NetworkFigureSlot from "../../components/dossier/NetworkFigureSlot.astro";
@@ -578,6 +579,11 @@ if (mapMeta) {
 // the dossier artifact otherwise) — a derived count over a real record.
 STRIP_SPECS.set("next-decisions", stripSpec("next-decisions", watchItems.length, ptrFor("")));
 const plan = templatePlan(dossier);
+// P36.56 (SRCH-06, SIG-UI-128): the scoped-search GET form — scoped to this
+// dossier's jkey (the contract parameter carries its descendants,
+// SIG-UI-059) and pinned to the release's federated route. A dossier with
+// no canonical key renders the release-wide form with the absence stated.
+const scopedSearchTarget = getLatestReleaseTarget();
 // P36.18 (UXK14-2, SIG-UI-150): the page-header band's breadcrumb — the
 // canonical chain this dossier sits under (country > state > county > place),
 // every ancestor its own dossier page (P35.45). A legacy flat dossier carries
@@ -690,6 +696,18 @@ return (
               sitesHref={sitesHref}
             />
             <DossierExploreBar dossier={dossier} jkey={dossier.jurisdiction_key ?? null} />
+            <ScopedSearchForm
+              scope={dossier.jurisdiction_key
+                ? {
+                    param: "jurisdiction",
+                    value: dossier.jurisdiction_key,
+                    label: dossier.display_name ?? dossier.name ?? dossier.jurisdiction,
+                  }
+                : null}
+              searchHref={scopedSearchTarget?.federatedSearchHref ?? null}
+              heading="Search"
+              testid="dossier-scoped-search"
+            />
           </>
         )}
         {section.section_id === "what_we_dont_know" ? (

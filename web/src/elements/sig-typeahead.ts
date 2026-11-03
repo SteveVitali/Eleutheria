@@ -17,6 +17,7 @@
 import {
   isShard,
   matchEntries,
+  scopeMatches,
   shardKey,
   type TypeaheadEntry,
   type TypeaheadShard,
@@ -52,6 +53,10 @@ class SigTypeahead extends HTMLElementBase {
     const minChars = Number(this.getAttribute("min-chars") ?? "2");
     const keyLen = Number(this.getAttribute("key-len") ?? "2");
     const maxItems = Number(this.getAttribute("max-items") ?? "8");
+    // P36.56 (SRCH-06): the optional `scope` attribute narrows suggestions
+    // to a jurisdiction subtree or one source — suggestions outside the
+    // scope never render, and the no-JS form stays complete regardless.
+    const scope = this.getAttribute("scope");
 
     const id = uid();
     const popup = document.createElement("div");
@@ -166,7 +171,9 @@ class SigTypeahead extends HTMLElementBase {
       }
       // A slower shard reply must never overwrite a newer query.
       if (input.value.trim() !== q) return;
-      options = matchEntries(shard.entries, q).slice(0, maxItems);
+      options = matchEntries(shard.entries, q)
+        .filter((e) => scopeMatches(e, scope))
+        .slice(0, maxItems);
       // Nothing pre-selected: Enter still submits the plain GET form unless
       // the user actively arrows onto an option (the no-JS path, preserved).
       active = -1;

@@ -26,6 +26,17 @@ export interface TypeaheadEntry {
   alt?: string[];
   /** The destination the option navigates to. */
   href: string;
+  /**
+   * P36.56 (SRCH-06 scope): a place entry's canonical jurisdiction key and
+   * its root-first ancestor chain (self last — the same ancestry
+   * `jurisdiction_chain` records). A `jurisdiction:<jkey>` scope matches an
+   * entry when the scope key sits in this chain — the place itself and its
+   * descendants, never a guessed ancestry.
+   */
+  jkey?: string;
+  chain?: string[];
+  /** P36.56: a source entry's registry id — `source:<id>` scope key. */
+  source_id?: string;
 }
 
 export interface TypeaheadShard {
@@ -77,6 +88,27 @@ export function shardKey(query: string, keyLen = 2): string | null {
     0,
     keyLen,
   );
+}
+
+/**
+ * P36.56 (SRCH-06) — the `<sig-typeahead>` `scope` attribute:
+ * `jurisdiction:<jkey>` keeps only the place whose chain holds the scope
+ * key (the place itself and its descendants — `jurisdiction_chain`
+ * semantics); `source:<id>` keeps the named source entry. Anything
+ * unparseable scopes to nothing rather than widening — the element simply
+ * falls back to the complete no-JS form submit.
+ */
+export function scopeMatches(
+  entry: TypeaheadEntry,
+  scope: string | null,
+): boolean {
+  const i = scope?.indexOf(":") ?? -1;
+  if (i < 1) return true;
+  const v = scope!.slice(i + 1).trim();
+  const k = scope!.slice(0, i);
+  return k === "jurisdiction"
+    ? (entry.chain ?? (entry.jkey ? [entry.jkey] : [])).includes(v)
+    : k === "source" && entry.source_id === v;
 }
 
 /**

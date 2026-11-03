@@ -26,6 +26,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import EmptyState from "../../../components/EmptyState.astro";
+import ScopedSearchForm from "../../../components/ScopedSearchForm.astro";
+import { getLatestReleaseTarget } from "../../../lib/data";
 import Figure from "../../../components/Figure.astro";
 import { assertInlineSvgSafe } from "../../../lib/entity-figures";
 import { artifactHref, defineFigures, freshnessTargets, perSourceTargets, target, type FigureSpec } from "../../../lib/figures";
@@ -62,6 +64,11 @@ const coverage = coverageClass(m);
 const termsDisc = sourceTermsDisclosure(row.source_id);
 const contributions = row.contributions ?? [];
 const observedDays = observedCadenceDays(m.executions);
+// P36.56 (SRCH-06): "Search this source" — a zero-JS GET scoped to
+// `source=<id>` on the release-pinned federated route. Registry-only
+// sources (gated/refused/withdrawn lanes) publish no searchable records,
+// so the form mounts only on the full page — never on the S-11 page.
+const scopedSearchTarget = m.registryOnly ? null : getLatestReleaseTarget();
 const targets = m.extras.targets ?? null;
 const sourceIssues = m.registryOnly ? [] : issuesForSource(getIssues(), id);
 const slugify = (s: string): string => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -433,6 +440,18 @@ const crumbs = [
           )}
         </dl>
       </section>
+
+      {/* ===================== Search this source (P36.56 / SRCH-06) ===================== */}
+      <ScopedSearchForm
+        scope={{
+          param: "source",
+          value: row.source_id,
+          label: row.name ?? row.source_id,
+        }}
+        searchHref={scopedSearchTarget?.federatedSearchHref ?? null}
+        heading="Search this source"
+        testid="source-scoped-search"
+      />
 
       {/* ===================== About ===================== */}
       <section aria-labelledby="about-heading" data-testid="about-section">
