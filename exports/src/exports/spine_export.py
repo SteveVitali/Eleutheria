@@ -980,6 +980,12 @@ class SpineExport:
     #: ``schemas/*.tableschema.json``) regenerated over the extended artifact
     #: set — they supersede the bundle-scope copies the bundle wrote.
     metadata_artifacts: dict[str, bytes] = field(default_factory=dict)
+    #: P36.54 (VIZ-01a, SIG-UI-134/DV12): the **restricted** build inputs —
+    #: ``inputs/dossier-visuals/<slug>.json`` geometry docs the Astro build
+    #: consumes and the publish path never serves. Written to disk for the
+    #: downstream build, never manifest-listed (K6 §9.1/DV12: the release
+    #: manifest carries no ``dossier_visuals`` path).
+    restricted_artifacts: dict[str, bytes] = field(default_factory=dict)
 
     def write_to(self, out_dir: Path | str, *, signing_secret_b64: str | None = None) -> Path:
         """Materialise the whole export under ``out_dir`` (deterministic bytes)."""
@@ -991,6 +997,12 @@ class SpineExport:
             target.write_bytes(data)
         # 2) the web-consumption JSONs (+ tiles) and the PROV-O lineage.
         for path, data in self.web_artifacts.items():
+            target = root / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(data)
+        # 2b) the restricted build inputs (P36.54) — on disk for the Astro
+        #     build only; deliberately absent from the manifest below.
+        for path, data in self.restricted_artifacts.items():
             target = root / path
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(data)
@@ -5475,6 +5487,67 @@ def build_spine_export(
         }
         dossier_index_doc["measurement"] = dossier_measurement
 
+    # --- P36.54 (K6 VIZ-01a): dossier map + locator figures --------------------
+    # Restricted ``sig.dossier-visuals/1`` geometry per D-K4-3 page (never
+    # manifest-listed, SIG-UI-134), the ``figures[]`` metadata twin injected
+    # into each ``sig.dossier/2``, the soft ``coverage_by_jurisdiction.json``
+    # (D-K1-4 pending — the 'rule pending' legend), the locator symbol sheet
+    # and the country/admin-1 standalone SVG downloads (D-K6-5).
+    restricted_artifacts: dict[str, bytes] = {}
+    dossier_visuals_out: dict[str, Any] | None = None
+    if placement is not None and keyed is not None:
+        from . import dossier_visuals as _dv
+        from . import static_map as _dv_sm
+        from .compartments import compartment_for_license as _cfl
+        from .shaping import GEO_PREDICATES as _GEO_PREDS
+
+        _lic_comp: dict[str, str] = {}
+        for _lics in slices.licences_by_subject.values():
+            for _lic in _lics:
+                if _lic not in _lic_comp:
+                    try:
+                        _lic_comp[_lic] = _cfl(_lic, None, None)
+                    except Exception:  # noqa: BLE001 — an unmapped licence is honest
+                        _lic_comp[_lic] = "unknown"
+        _vintages = {
+            str(k): str(v)
+            for k, v in ((placement.pack_manifest or {}).get("vintages") or {}).items()
+        }
+        _release_info = {
+            "label": build_spec.release_id(),
+            "publication_id": None,
+            "as_of_world": dataset.as_of,
+        }
+        dossier_visuals_out = _dv.build_dossier_visuals(
+            dataset=dataset,
+            contribution_plan=contribution_plan,
+            keyed=keyed,
+            pages=dossier_pages,
+            outlines_geojson=placement.jurisdiction_outlines(),
+            registry_rows=placement.jurisdiction_rows(),
+            licences_by_subject=slices.licences_by_subject,
+            compartment_of_lic=_lic_comp,
+            geo_predicates=frozenset(_GEO_PREDS),
+            release=_release_info,
+            vintages=_vintages,
+            placement_results=slices.placement_results,
+        )
+        for _jkey, _doc in dossier_visuals_out["docs"].items():
+            _slug = keyed.keys[_jkey].slug_path
+            restricted_artifacts[f"{_dv.VISUALS_DIR}/{_slug}.json"] = _dv.visuals_bytes(_doc)
+        restricted_artifacts[f"{_dv.VISUALS_DIR}/index.json"] = _dv.visuals_bytes(
+            dossier_visuals_out["report"]
+        )
+        restricted_artifacts[f"{_dv.VISUALS_DIR}/locator-symbols.json"] = _dv.visuals_bytes(
+            dossier_visuals_out["locator_index"]
+        )
+        # The published metadata twin — ``figures[]`` on each sig.dossier/2
+        # (id + caption + desc counts + links + rule; NO geometry, K6 §9.2).
+        for _doc in dossier_docs:
+            _twin = dossier_visuals_out["figures_twin"].get(_doc["jurisdiction_key"])
+            if _twin is not None:
+                _doc["figures"] = _twin
+
     # --- the ten P27.1-contract web surfaces ------------------------------------
     # The statements lane map is derived BEFORE the surfaces so the watch's
     # evidence links pass the identical J3 §5.3 upstream gate (P35.43 — one
@@ -5673,6 +5746,39 @@ def build_spine_export(
             web_licenses[path] = _SIG_SPDX
             web_compartments[path] = _WEB_COMPARTMENT
             web_schemas[path] = DBRIGHT_REREVIEW_SCHEMA
+        # P36.54 (K6 VIZ-01a): the public produced-work figure artifacts —
+        # the soft coverage table (CC-BY-4.0 SIG metadata, K1 §7), the
+        # locator symbol sheet + index (boundary geometry is registry
+        # public-domain data), and the standalone SVG downloads for
+        # country + admin-1 dossiers (D-K6-5; licence = the drawn
+        # compartments' union like map.json).
+        if dossier_visuals_out is not None:
+            path = _dv.COVERAGE_PATH
+            web_artifacts[path] = _web_bytes(dossier_visuals_out["coverage"])
+            web_licenses[path] = _SIG_SPDX
+            web_compartments[path] = _WEB_COMPARTMENT
+            web_schemas[path] = _dv_sm.COVERAGE_SCHEMA
+            if dossier_visuals_out["locator_svg"] is not None:
+                path = _dv.LOCATOR_SVG_PATH
+                web_artifacts[path] = dossier_visuals_out["locator_svg"].encode("utf-8")
+                web_licenses[path] = _SIG_SPDX
+                web_compartments[path] = _WEB_COMPARTMENT
+            path = _dv.LOCATOR_INDEX_PATH
+            web_artifacts[path] = _web_bytes(dossier_visuals_out["locator_index"])
+            web_licenses[path] = _SIG_SPDX
+            web_compartments[path] = _WEB_COMPARTMENT
+            web_schemas[path] = _dv_sm.LOCATOR_SYMBOLS_SCHEMA
+            for _jkey, _svg in sorted(dossier_visuals_out["standalone"].items()):
+                _slug = keyed.keys[_jkey].slug_path
+                path = f"{_dv.STANDALONE_DIR}/{_slug}.svg"
+                web_artifacts[path] = _svg.encode("utf-8")
+                _lics = {
+                    lic
+                    for subj in contribution_plan.dossiers[_jkey].placed_subjects
+                    for lic in slices.licences_by_subject.get(subj, ())
+                }
+                web_licenses[path] = surface_license(_lics) if _lics else _SIG_SPDX
+                web_compartments[path] = _WEB_COMPARTMENT
     for art in analytics.build_analytics(
         dataset,
         raw,
@@ -6358,6 +6464,7 @@ def build_spine_export(
         manifest=manifest,
         tile_renderers=tile_renderers,
         metadata_artifacts=metadata_artifacts,
+        restricted_artifacts=restricted_artifacts,
     )
 
 
