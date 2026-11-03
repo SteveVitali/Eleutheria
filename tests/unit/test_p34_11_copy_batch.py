@@ -51,7 +51,17 @@ P34_ID = re.compile(
 # fixture route is gone, so T-01 ("Return to the dossier index.") is recorded
 # history that can never ship — kept in the batch (append-only) but bound to
 # nothing. Asserted retired, never silently dropped.
-RETIRED_ROWS = {"T-01": "web/src/pages/task/new/[slug].astro"}
+RETIRED_ROWS = {
+    "T-01": "web/src/pages/task/new/[slug].astro",
+    # P36.59 (WX-04a): the citation-export block sentences W-05/06/07 were
+    # bound to elements in the old single-file watch page — the page split
+    # into the route family and the scoped recommender block left /watch/
+    # (WX-05's surface). The batch rows stay recorded (append-only) but bind
+    # nothing until WX-05 carries them on its own surface.
+    "W-05": "web/src/pages/watch.astro",
+    "W-06": "web/src/pages/watch.astro",
+    "W-07": "web/src/pages/watch.astro",
+}
 
 # Rows P34.17 superseded with corrected sentences (the batch is append-only —
 # the old rows stay recorded, bound to nothing): CL-03 → CL-06 (the
@@ -82,7 +92,9 @@ ASTRO_PAGES = {
     "/network/": "web/src/pages/network.astro",
     "/search/": "web/src/pages/search.astro",
     "/corrections/": "web/src/pages/corrections.astro",
-    "/watch/": "web/src/pages/watch.astro",
+    # P36.59 (WX-04a): the old single-file watch page split into the
+    # route family — the /watch/ rows now bind the index file.
+    "/watch/": "web/src/pages/watch/index.astro",
     "/methodology/": "web/src/pages/methodology.astro",
     "/404.html": "web/src/pages/404.astro",
     "/403/": "web/src/pages/403.astro",

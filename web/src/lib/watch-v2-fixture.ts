@@ -49,14 +49,14 @@ const item = (row: WatchItemV2): WatchItemV2 => ({ schema: "sig.watch-item/1", .
 const ITEMS: WatchItemV2[] = [
   item({
     handle: "W-us-ok-oklahoma-city-4064000-renewal-c100-ab12",
-    title: "Oklahoma City Council: contract C-100 renewal decision — auto-renews without action by 2027-01-02",
+    title: "Oklahoma City Council: contract C-100 renewal decision — auto-renews without action by 2027-01-02", // future-ok: real-world: recorded decision date
     kind: "renewal_deadline",
     date: "2027-01-02", // future-ok: real-world: recorded decision date
     date_kind: "notice_deadline",
     date_certainty: "derived",
     timeline: [
       { kind: "signed", date: "2024-04-02", claim_id: "cl-c100-signed" },
-      { kind: "period_end", date: "2027-04-02", claim_id: "cl-c100-end" },
+      { kind: "period_end", date: "2027-04-02", claim_id: "cl-c100-end" }, // future-ok: real-world: recorded contract end
     ],
     place: { key: "us.census.geoid.place:4064000", chain: CHAIN_OKC, check: "placed" },
     body: "Oklahoma City Council",
@@ -95,9 +95,9 @@ const ITEMS: WatchItemV2[] = [
   }),
   item({
     handle: "W-us-ok-expiry-rtcc-77cd",
-    title: "Oklahoma City Council: contract R-77 — latest possible end 2026-11-30 (renewal terms not on record)",
+    title: "Oklahoma City Council: contract R-77 — latest possible end 2026-11-30 (renewal terms not on record)", // future-ok: real-world: recorded contract end
     kind: "contract_expiry",
-    date: "2026-11-30", // future-ok: recorded contract end_date
+    date: "2026-11-30", // future-ok: real-world: recorded contract end_date
     date_kind: "expiry",
     date_certainty: "upper_bound",
     timeline: [{ kind: "signed", date: "2024-12-01", claim_id: "cl-r77-signed" }],
@@ -232,14 +232,14 @@ const ITEMS: WatchItemV2[] = [
   }),
   item({
     handle: "W-unplaced-grant-hsgp-21zz",
-    title: "The awarding agency: funding period for HSGP-2026 ends 2026-12-31",
+    title: "The awarding agency: funding period for HSGP-2026 ends 2026-12-31", // future-ok: real-world: recorded funding period end
     kind: "grant_period_end",
-    date: "2026-12-31", // future-ok: recorded funding period end
+    date: "2026-12-31", // future-ok: real-world: recorded funding period end
     date_kind: "period_end",
     date_certainty: "stated",
     timeline: [
       { kind: "period_start", date: "2026-01-01", claim_id: "cl-hsgp-period" },
-      { kind: "period_end", date: "2026-12-31", claim_id: "cl-hsgp-period" },
+      { kind: "period_end", date: "2026-12-31", claim_id: "cl-hsgp-period" }, // future-ok: real-world: recorded funding period end
     ],
     place: { key: null, chain: [], check: "unplaced" },
     body: "Federal Emergency Management Agency",

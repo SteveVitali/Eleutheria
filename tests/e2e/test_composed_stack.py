@@ -1020,8 +1020,14 @@ def test_p34_20_export_build_watch_empty_states_have_five_parts(
     """AC1/K14 §6.4 — every cause-class empty state on /watch/ renders all
     five parts: state label, missing+why, nearby, action, when-it-may-change."""
     assert web_build_empty_surfaces.returncode == 0
-    html = (web_build_empty_surfaces.dist / "watch" / "index.html").read_text(encoding="utf-8")
-    for surface in ("watch", "watchSubscriptions", "recommender", "citations"):
+    # P36.59 (WX-04a): the watch split into the route family — `watch` stays
+    # on /watch/, `watchSubscriptions` moved to /watch/feeds/; the
+    # recommender/citations blocks left the index for WX-05's surface.
+    watch_html = (web_build_empty_surfaces.dist / "watch" / "index.html").read_text(encoding="utf-8")
+    feeds_html = (web_build_empty_surfaces.dist / "watch" / "feeds" / "index.html").read_text(
+        encoding="utf-8"
+    )
+    for surface, html in (("watch", watch_html), ("watchSubscriptions", feeds_html)):
         block = _empty_state_block(html, surface)
         for part in ("state", "missing", "nearby", "action", "change"):
             assert f'data-testid="empty-state-{part}"' in block, (
