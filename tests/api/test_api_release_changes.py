@@ -100,6 +100,5 @@ def test_v1_changes_route_serves_the_release(serving, store) -> None:
     assert body["release"]["publication_id"] == p2
     # the since filter applies to the release doc's events unchanged
     all_events = client.get("/v1/changes", params={"since": "2020-01-01"}).json()["events"]
-    # future-ok: synthetic: a far-future since cursor yields no events
-    none_events = client.get("/v1/changes", params={"since": "2999-01-01"}).json()["events"]
+    none_events = client.get("/v1/changes", params={"since": "2999-01-01"}).json()["events"]  # future-ok: synthetic: a far-future since cursor yields no events
     assert len(all_events) == len(body["events"]) and none_events == []
