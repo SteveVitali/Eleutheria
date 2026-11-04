@@ -478,8 +478,10 @@ def _empty_selectors(gen: int) -> bytes:
 
 #: The nginx ``if ($var = "…")`` literal a selector component lands in —
 #: fail closed on any character outside the conf-safe set (compat fields
-#: are dates + ruleset ids, which are alnum plus ``-._~:+`` in practice).
-_SELECTOR_SAFE = re.compile(r"^[A-Za-z0-9._~:+|-]*$")
+#: are dates + ruleset ids, which are alnum plus ``-._~:+/`` in practice —
+#: the ruleset id is the ``<tag>/<semver>`` form, e.g. ``p27.3/1.0.0``,
+#: and ``/`` parses verbatim inside the double-quoted literal).
+_SELECTOR_SAFE = re.compile(r"^[A-Za-z0-9._~:+/|-]*$")
 
 
 def _selector_patterns(entry: dict[str, Any]) -> list[tuple[str, str]]:
