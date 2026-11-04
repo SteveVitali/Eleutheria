@@ -192,7 +192,9 @@ def test_page_states_the_contract_content() -> None:
     source = _page_source()
     assert CONTACT_URL in source
     assert "robots_disregarded" in source
-    assert 'href="/dispute/"' in source
+    # P36.66a: the opt-out route goes through the base-path helper (SIG-UI-075)
+    # — same emitted link under the root base, self-contained under /s/<pub>/.
+    assert 'href={withBase("dispute/")}' in source
     # P36.1b: the full conduct policy is carried verbatim (the eight CR-* rows)
     # and the page names the register, the reservation refusal and the
     # disallow-is-not-a-reservation distinction.
