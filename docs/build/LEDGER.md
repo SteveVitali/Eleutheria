@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.65
-lastCompleted: P36.64
+nextTicket: P36.66a
+lastCompleted: P36.65
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.64-home-about-how-it-works-methodology
+chainTip: r11/P36.65-onboarding-content
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-04T05:14Z
+updatedAt: 2026-11-04T14:05Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1496,3 +1496,5 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-04 — dispatch boundary-confirm — P36.63's green read recorded (`ci: pass #431@fe5a139`, run 41778648097; #431 merged by the operator 05:45Z as `37e643e4` — #428/#429/#430 also integrated); `blockedOn` (nothing); chainTip `r11/P36.63-records-request-drafts` · nextTicket P36.64 (row 407 — home/about/how-it-works/methodology; `D-K14-1` tagline + copy-batch-1 verbatim constraint + `D-K14-7` omit-who-runs-SIG carried verbatim; live_verification=false; deps landed) — fresh implement-spec sub-agent on `r11/P36.64-home-about-how-it-works-methodology` · harness: devin-desktop/swe-2-high/orchestrator
 
 - 2026-11-04 — P36.64 done — `ci: pass #432@5129a86` 5/5 head-bound (run 41810608366: docs 2m39s · security 31s · composed 4m8s · python 21m24s · web 52m45s) · Gate status: none (K14 UXK14-6; owns SIG-UI-135…142; `D-K14-1 [C-4]` tagline-only shipped + `D-K14-7 [C-5]` carried verbatim — no "who runs SIG" anywhere) · deferrals +2/−1 (opened D-P36.64-1 `/dossier/` wire +D-P36.64-2 `/` lcpMs, closed D-P36.56-2 verified-met) · chainTip → r11/P36.64-home-about-how-it-works-methodology · next → P36.65 · harness: devin-desktop/swe-2-high/subagent- 2026-11-04 — dispatch boundary-confirm — P36.64's green read recorded (`ci: pass #432@5129a86`, run 41810608366; record tip `eda67ed9`'s own run pending — docs-only delta); `blockedOn` (nothing); chainTip `r11/P36.64-home-about-how-it-works-methodology` · nextTicket P36.65 (row 408 — onboarding content; live_verification=false; gate none; deps P36.23/P36.17/P36.55 landed) — fresh implement-spec sub-agent on `r11/P36.65-onboarding-content` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-04 — P36.65 done — `ci: pass #433@dac5704` 5/5 head-bound (run 41833898424: docs 2m20s · security 30s · composed 4m16s · python 21m32s · web 46m17s) · Gate status: none (K14 UXK14-11; owns none of the new §56.11 ids — serves cited SIG-UI-039/040/086/137/151 + SIG-ENG-042) · deferrals +0/−0 (D-P36.64-1 re-recorded 174,571 B, bound holds; D-P36.64-2 no `/` weight — both OPEN) · chainTip → r11/P36.65-onboarding-content · next → P36.66a · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-04 — P36.65 post-closeout record — head `dac5704a` 5/5 green head-bound (`ci: pass #433@dac5704`, run 41833898424, ci_boundary ~14:05Z) · fix arc: projection regen `a93caf33` (docs-red) → `is:inline` styles `dac5704a` (web lcpMs red — component CSS had landed in the shared chunk every T1 page pays) · matrix repair: 9 stale open verdicts (SIG-UI-056 + SIG-UI-135…142) flipped MET with evidence — P36.64's owed verdict updates (SIG-ENG-041) · `main` untouched · deferrals +0/−0 · chainTip → r11/P36.65-onboarding-content (open) · next → P36.66a · harness: devin-desktop/swe-2-high/subagent
