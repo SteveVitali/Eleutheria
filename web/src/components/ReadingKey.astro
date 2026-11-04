@@ -54,7 +54,10 @@ if (items.length === 0) {
   </ul>
 </details>
 
-<style>
+{/* Inline, not bundled: the key mounts on dossier + about pages only —
+    a component <style> lands in the shared chunk every T1 page pays
+    render-blocking bytes for (the ~1.5 s LCP floor leaves no headroom). */}
+<style is:inline>
   .sig-reading-key {
     border-block: 1px solid var(--rule, #d5d9e0);
     margin-block: var(--space-3, 1rem);
