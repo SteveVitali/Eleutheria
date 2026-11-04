@@ -144,17 +144,18 @@ def test_export_queue_shaper_has_no_placeholders_and_the_label_is_shared() -> No
 
 
 def test_queue_page_renders_unique_task_anchors_and_live_filters() -> None:
-    src = _source("web/src/pages/research-queue.astro")
-    assert "assertUniqueTaskAnchors(capped.rows)" in src
-    assert "jurisdictionAnchors(capped.rows)" in src
-    assert "taskAnchor(card)" in src
+    src = _source("web/src/pages/research-queue/index.astro")
+    assert "assertUniqueTaskAnchors(" in src
+    card = _source("web/src/components/QueueCard.astro")
+    assert "taskAnchor(card)" in card
     # The retired duplicate-id scheme must not return.
     assert "jurisdiction-${" not in src and "id={`jurisdiction-" not in src
+    assert "jurisdiction-${" not in card and "id={`jurisdiction-" not in card
 
 
 def test_queue_page_names_its_provenance_scope() -> None:
     """C3 NEW-13: the queue's 'How we know this' names the page it describes."""
-    src = _source("web/src/pages/research-queue.astro")
+    src = _source("web/src/pages/research-queue/index.astro")
     assert 'provenanceName="research queue"' in src
     comp = _source("web/src/components/HowWeKnowThis.astro")
     assert 'data-copy="HW-10"' in comp

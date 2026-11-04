@@ -308,6 +308,10 @@ test("no words glued at inline-element boundaries in built text (K14 NEW-7)", as
 test("no ungrouped 5+-digit number in public text — identifiers excepted (K14 NEW-8)", async ({
   page,
 }) => {
+  // The sweep drives a real browser through every public route — the queue's
+  // K11 §5 route family (P36.61) adds ~60 routes; the default 30s budget no
+  // longer fits. Bounded at 120s, same precedent as budget.spec.ts.
+  test.setTimeout(120_000);
   for (const path of PUBLIC_PAGES) {
     await gotoSettled(page, path);
     const text = await page.evaluate(() => {

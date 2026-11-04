@@ -1,0 +1,61 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.61 (K11 RQ-03a): `/research-queue/role/<assignee>/sort/<k>/` — the role facet's
+// sort routes (+ `…/page/<n>/`).
+import BaseLayout from "../../../../../layouts/BaseLayout.astro";
+import QueueCard from "../../../../../components/QueueCard.astro";
+import {
+  QUEUE_SORTS,
+  SORT_LABELS,
+  facetValues,
+  pageCount,
+  pageSlice,
+  queueRoleHref,
+  sortQueue,
+  tasksForRole,
+  roleLabel,
+  type QueueSort,
+} from "../../../../../lib/queue-hub";
+import {
+  getJurisdictionClaims,
+  getQueueAsOf,
+  getResearchQueue,
+} from "../../../../../lib/data";
+import { withBase } from "../../../../../lib/paths";
+
+export function getStaticPaths() {
+  const out: { params: { r: string; k: string }; props: { r: string; k: QueueSort } }[] = [];
+  for (const f of facetValues(getResearchQueue(), "assignee_class")) {
+    for (const k of QUEUE_SORTS.filter((x) => x !== "priority")) {
+      out.push({ params: { r: f.id, k }, props: { r: f.id, k } });
+    }
+  }
+  return out;
+}
+
+const { r, k } = Astro.props as { r: string; k: QueueSort };
+const CARDS = getResearchQueue();
+const CLAIMS = getJurisdictionClaims();
+const AS_OF = getQueueAsOf();
+const items = sortQueue(tasksForRole(CARDS, r), CLAIMS, AS_OF, k);
+const shown = pageSlice(items, 1);
+const total = pageCount(items.length);
+---
+
+<BaseLayout title={`Research queue — ${roleLabel(r)}, ${SORT_LABELS[k]}`} path={withBase(`research-queue/role/${r}/sort/${k}/`)}>
+  <p>
+    {roleLabel(r)} — {SORT_LABELS[k].toLowerCase()} ({items.length}).{" "}
+    <a href={withBase(`research-queue/role/${r}/`)}>Back to {roleLabel(r)}</a>
+  </p>
+  <ol class="sig-queue">
+    {shown.map((card) => <QueueCard card={card} claims={CLAIMS} asOf={AS_OF} />)}
+  </ol>
+  {total > 1 && (
+    <p class="sig-queue-pagination">
+      Page 1 of {total} — <a href={withBase(queueRoleHref(r, k, 2))}>next page →</a>
+    </p>
+  )}
+</BaseLayout>
