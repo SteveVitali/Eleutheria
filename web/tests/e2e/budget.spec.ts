@@ -306,7 +306,7 @@ test.describe("page-type budgets (SIG-UI-041, SIG-FIND-005, ADR-155)", () => {
         (await (await request.get(route.path)).body()).length;
       await settle(page, route.path);
       const m = await measureResponses(request, captured, documentRaw);
-      const { violations, gaps } = evaluateInitial(budgets, route.path, row, m);
+      const { violations, gaps } = evaluateInitial(budgets, route.path, row, m, true);
       for (const g of gaps) {
         // The recorded gap is reported LOUD every run — never smoothed.
         test.info().annotations.push({

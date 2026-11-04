@@ -55,6 +55,15 @@ export interface MeasuredGap {
    * reading stale). Absent = the gap applies to every build.
    */
   data_source?: string;
+  /**
+   * `"wire"` = the gap is recorded on the wire (transferred) measure — the
+   * ratified byte ceiling is defined wire-measured, and the static
+   * file-count leg's measure is a smaller quantity it cannot evaluate:
+   * only the wire suite applies the row and stale-checks it; the static
+   * leg skips it entirely (never flags it stale on a different quantity).
+   * Absent = every leg evaluates the row on its own measure.
+   */
+  measure?: "wire";
 }
 
 export interface PageBudgets {
@@ -190,6 +199,9 @@ export function evaluateInitial(
   route: string,
   row: BudgetRow,
   m: PhaseMeasure,
+  /** true when `m` is the wire suite's network measure — wire-declared gap
+   * rows apply and stale-check there; every other measure skips them. */
+  isWireMeasure = false,
 ): { violations: BudgetViolation[]; gaps: GapReport[] } {
   const violations: BudgetViolation[] = [];
   const gaps: GapReport[] = [];
@@ -200,6 +212,7 @@ export function evaluateInitial(
       (g) =>
         g.route === route &&
         g.metric === metric &&
+        (g.measure !== "wire" || isWireMeasure) &&
         (g.data_source === undefined || g.data_source === source),
     );
     // A source-scoped row overrides the unscoped one — the national leg binds
@@ -326,6 +339,7 @@ export function evaluatePostAction(
       (g) =>
         g.route === route &&
         g.metric === metric &&
+        (g.measure !== "wire" || isWireMeasure) &&
         (g.data_source === undefined || g.data_source === source),
     );
     return (
