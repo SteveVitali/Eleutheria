@@ -67,7 +67,17 @@ RETIRED_ROWS = {
 # with the batch-16 rows — the old rows stay recorded (append-only), bound to
 # nothing. Retirement is for a removed page (index.astro lives); superseded is
 # the mechanism for replaced copy.
-RETIRED_HOME_ROWS = {"HO-02", "HO-03", "HO-10", "HO-11", "HO-12", "HO-20", "HO-21", "HO-30", "RQ-03"}
+RETIRED_HOME_ROWS = {
+    "HO-02",
+    "HO-03",
+    "HO-10",
+    "HO-11",
+    "HO-12",
+    "HO-20",
+    "HO-21",
+    "HO-30",
+    "RQ-03",
+}
 
 # Rows P34.17 superseded with corrected sentences (the batch is append-only —
 # the old rows stay recorded, bound to nothing): CL-03 → CL-06 (the
@@ -83,7 +93,17 @@ RETIRED_HOME_ROWS = {"HO-02", "HO-03", "HO-10", "HO-11", "HO-12", "HO-20", "HO-2
 # MP-08 ("Record" column head) and MP-09 (the truncation note) with it — the
 # same sentences now live on the sites lists / places table, so the rows are
 # superseded, never dropped.
-SUPERSEDED_ROWS = {"CL-03", "M-20", "DC-19", "HW-05", "DI-04", "UP-04", "DC-03", "MP-08", "MP-09"} | RETIRED_HOME_ROWS
+SUPERSEDED_ROWS = {
+    "CL-03",
+    "M-20",
+    "DC-19",
+    "HW-05",
+    "DI-04",
+    "UP-04",
+    "DC-03",
+    "MP-08",
+    "MP-09",
+} | RETIRED_HOME_ROWS
 
 # batch `page` value → the .astro source whose rendered elements bind its rows.
 ASTRO_PAGES = {
@@ -169,10 +189,14 @@ def _all_batch_rows() -> dict[str, list[dict[str, str]]]:
     out: dict[str, list[dict[str, str]]] = {}
     for bf in sorted((REPO_ROOT / "docs/build/reports/copy-batches").glob("batch-*.md")):
         for line in bf.read_text(encoding="utf-8").splitlines():
-            m = re.match(r"^\| ([A-Z0-9]+-\d+) \| (.+?) \| (.+?) \| ([0-9a-f]{64}) \| (\w+) \|$", line)
+            m = re.match(
+                r"^\| ([A-Z0-9]+-\d+) \| (.+?) \| (.+?) \| ([0-9a-f]{64}) \| (\w+) \|$", line
+            )
             if m:
                 rid, page, text, sha, status = m.groups()
-                out.setdefault(rid, []).append({"page": page, "text": text, "sha256": sha, "status": status})
+                out.setdefault(rid, []).append(
+                    {"page": page, "text": text, "sha256": sha, "status": status}
+                )
     return out
 
 
@@ -280,10 +304,7 @@ def test_every_data_copy_element_renders_its_rows() -> None:
             actual = _norm(_resolve(rendered))
             # each id must have SOME batch row whose text the element carries
             # (ids may re-pin across batches; multi-id elements join the texts).
-            ok = all(
-                any(_norm(c["text"]) in actual for c in rows[rid])
-                for rid in ids
-            )
+            ok = all(any(_norm(c["text"]) in actual for c in rows[rid]) for rid in ids)
             assert ok, f"{rel} element {ids}: {actual!r} matches no batch row"
 
 

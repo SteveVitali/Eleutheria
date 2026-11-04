@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "6be40dfa62bb4ee880eab90129d8af8986297668",
-  "manifest_inputs": 1182,
+  "input_commit": "13ced9d8fb5294cf51abc01a7b3ec0f9460dc3a4",
+  "manifest_inputs": 1183,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P36.64",
@@ -26,14 +26,14 @@
     "updatedAt": "2026-11-04T05:14Z"
   },
   "counts": {
-    "obligations": 215,
+    "obligations": 216,
     "owed": 134,
     "open": 131,
     "partial": 3,
-    "terminal": 81,
-    "events": 720,
-    "transitions": 51,
-    "coverage_assessments": 502,
+    "terminal": 82,
+    "events": 722,
+    "transitions": 52,
+    "coverage_assessments": 510,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -11154,11 +11154,11 @@
     },
     {
       "id": "D-P36.56-2",
-      "status": "OPEN",
-      "status_source": "event-head D-P36.56-2:e0",
+      "status": "DONE",
+      "status_source": "event-head D-P36.56-2:e1",
       "kind": "V",
       "owner": "the T1 initial-bytes optimisation row (a future K13 perf row)",
-      "landing": "budget.spec.ts measures /dossier/ totalInitialMaxBytes <= 174,080 B — the measured_gaps row goes stale and must be removed",
+      "landing": "budget.spec.ts measures /dossier/ totalInitialMaxBytes <= 174,080 B — met at the P36.56 head, flip queued to the first differently-dated run",
       "landing_source": "event-head",
       "backlog_home": "BL-086",
       "item": "`/dossier/` `totalInitialMaxBytes` is 80 B over the ratified ≤ 170 KiB T1 ceiling (174,160 B gzip vs 174,080 B): P36.56's scoped-search work grew the shared `/_kit/sig-typeahead.js` module ~116 B gzip (the `scope` attribute + `scopeMatches`), tipping the already-at-ceiling index document",
@@ -11196,6 +11196,74 @@
             "interpretation": "preserved"
           },
           "recorded_at": "2026-11-03"
+        },
+        {
+          "schema": "obligation-event/1",
+          "kind": "transition",
+          "seq": 1,
+          "expected_previous_event": "D-P36.56-2:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P36.64",
+          "backlog_home": "BL-086",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P36.56.md",
+            "docs/build/runs/P36.57.md",
+            "web/tests/e2e/page-budgets.json"
+          ],
+          "observed_at": "2026-11-04",
+          "source_commit": "WORKTREE",
+          "reason": "P36.64 (row 407) closes the queued DONE flip: the /dossier/ wire measure was verified-met on both legs at the P36.56 head (CI run 41614600625: 174,061 B <= 174,080 B; local budget.spec.ts green, measured_gaps row went stale and was removed) — the flip waited only on a run dated differently than the row's 2026-11-03 dates (the register grammar requires a status date absent from the row); 2026-11-04 mints it",
+          "event_id": "D-P36.56-2:e1",
+          "obligation_id": "D-P36.56-2",
+          "owner": "the T1 initial-bytes optimisation row (a future K13 perf row)",
+          "landing": "budget.spec.ts measures /dossier/ totalInitialMaxBytes <= 174,080 B — met at the P36.56 head, flip queued to the first differently-dated run",
+          "recorded_at": "2026-11-04"
+        }
+      ]
+    },
+    {
+      "id": "D-P36.64-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P36.64-1:e0",
+      "kind": "V",
+      "owner": "the T1 initial-bytes optimisation row (a future K13 perf row)",
+      "landing": "budget.spec.ts measures /dossier/ totalInitialMaxBytes <= 174,080 B — the measured_gaps row goes stale and is removed",
+      "landing_source": "event-head",
+      "backlog_home": "BL-086",
+      "item": "`/dossier/` `totalInitialMaxBytes` is 165 B over the ratified ≤ 170 KiB T1 ceiling (174,245 B gzip vs 174,080 B): the shared header/footer navigation gained the About section's \"About & how it works\" child on every route when `/about/` activated under the pre-registered nav declaration (SIG-UI-140's nav+footer linkage — the item is required, the bytes are real)",
+      "unblocked_by": "owner: the T1 initial-bytes optimisation row (a future K13 perf row) · trigger: that row's dispatch — or at once when the wire measure reads ≤ 174,080 B",
+      "verify": "`npm --prefix web run test:e2e` budget.spec.ts measures `/dossier/` `totalInitialMaxBytes` ≤ 174,080 B → the measured_gaps row goes stale and must be removed",
+      "proxy": "176,128 B regression bound is the error gate; the ratified 174,080 B still reports every run (bounded+loud, never a smoothed ceiling)",
+      "line": 1541,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P36.64",
+          "backlog_home": "BL-086",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "web/tests/e2e/page-budgets.json",
+            "web/src/lib/nav.ts",
+            "web/src/pages/about.astro"
+          ],
+          "observed_at": "2026-11-04",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P36.64 (row 407) for the row it added — /dossier/ totalInitialMaxBytes measures 165 B over the ratified <= 170 KiB T1 ceiling (174,245 B gzip vs 174,080 B) after the shared nav gained the About section's 'About & how it works' child on every route under the pre-registered nav declaration (SIG-UI-140's required nav+footer linkage); recorded bounded+loud in measured_gaps (176,128 B regression bound), owner the T1 initial-bytes optimisation row",
+          "event_id": "D-P36.64-1:e0",
+          "obligation_id": "D-P36.64-1",
+          "owner": "the T1 initial-bytes optimisation row (a future K13 perf row)",
+          "landing": "budget.spec.ts measures /dossier/ totalInitialMaxBytes <= 174,080 B — the measured_gaps row goes stale and is removed",
+          "anchor": {
+            "row_sha256": "9e7f7d39de3ff089503fd059bd16d505be4ef111d2957c716f92c45cec019135"
+          },
+          "recorded_at": "2026-11-04"
         }
       ]
     }
@@ -22527,6 +22595,16 @@
         "assessment_id": "SIG-UI-135:r11-1"
       },
       {
+        "requirement_id": "SIG-UI-135",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-11-04",
+        "code_revision": "r11/P36.64-home-about-how-it-works-methodology",
+        "limitations": "P36.64 landing verdict (row 407, UXK14-6): tagline H1 + GET place search + release stamp above the fold; e2e viewport-top budgets ≤120px@390 / ≤160px@1440. MET-ENGINEERED — a live-served verdict arrives only with the release publish path (D-R10-PUBLISH-1).",
+        "supersedes": "SIG-UI-135:r11-1",
+        "assessment_id": "SIG-UI-135:r11-2"
+      },
+      {
         "requirement_id": "SIG-UI-136",
         "domain": "public",
         "verdict": "MISSING",
@@ -22535,6 +22613,16 @@
         "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-02) entering the matrix as MISSING with its owner's routing (P36.64); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-UI-136:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-136",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-11-04",
+        "code_revision": "r11/P36.64-home-about-how-it-works-methodology",
+        "limitations": "P36.64 landing verdict (row 407, UXK14-6): ≤6 headline figures (2 reach + 2 coverage) inside ≤5 viewport heights at 390px; e2e scrollHeight measure. MET-ENGINEERED — a live-served verdict arrives only with the release publish path (D-R10-PUBLISH-1).",
+        "supersedes": "SIG-UI-136:r11-1",
+        "assessment_id": "SIG-UI-136:r11-2"
       },
       {
         "requirement_id": "SIG-UI-137",
@@ -22547,6 +22635,16 @@
         "assessment_id": "SIG-UI-137:r11-1"
       },
       {
+        "requirement_id": "SIG-UI-137",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-11-04",
+        "code_revision": "r11/P36.64-home-about-how-it-works-methodology",
+        "limitations": "P36.64 landing verdict (row 407, UXK14-6): advocate/journalist/organizer start-here paths, 3–4 steps each, every step's route asserted 200-resolving. MET-ENGINEERED — a live-served verdict arrives only with the release publish path (D-R10-PUBLISH-1).",
+        "supersedes": "SIG-UI-137:r11-1",
+        "assessment_id": "SIG-UI-137:r11-2"
+      },
+      {
         "requirement_id": "SIG-UI-138",
         "domain": "public",
         "verdict": "MISSING",
@@ -22555,6 +22653,16 @@
         "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-04) entering the matrix as MISSING with its owner's routing (P36.64); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-UI-138:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-138",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-11-04",
+        "code_revision": "r11/P36.64-home-about-how-it-works-methodology",
+        "limitations": "P36.64 landing verdict (row 407, UXK14-6): example chips emitted only while the §6.2 contract holds — target resolves, fragment's answer element exists, no UUID/raw key; contract-failing targets never offered. MET-ENGINEERED — a live-served verdict arrives only with the release publish path (D-R10-PUBLISH-1).",
+        "supersedes": "SIG-UI-138:r11-1",
+        "assessment_id": "SIG-UI-138:r11-2"
       },
       {
         "requirement_id": "SIG-UI-139",
@@ -22567,6 +22675,16 @@
         "assessment_id": "SIG-UI-139:r11-1"
       },
       {
+        "requirement_id": "SIG-UI-139",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-11-04",
+        "code_revision": "r11/P36.64-home-about-how-it-works-methodology",
+        "limitations": "P36.64 landing verdict (row 407, UXK14-6): lib/capabilities.ts the ONE registry — five verbs bound to release metrics; a 0 metric renders its being-built label, never the promise. MET-ENGINEERED — a live-served verdict arrives only with the release publish path (D-R10-PUBLISH-1).",
+        "supersedes": "SIG-UI-139:r11-1",
+        "assessment_id": "SIG-UI-139:r11-2"
+      },
+      {
         "requirement_id": "SIG-UI-140",
         "domain": "public",
         "verdict": "MISSING",
@@ -22575,6 +22693,16 @@
         "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-06) entering the matrix as MISSING with its owner's routing (P36.64); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-UI-140:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-140",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-11-04",
+        "code_revision": "r11/P36.64-home-about-how-it-works-methodology",
+        "limitations": "P36.64 landing verdict (row 407, UXK14-6): /about/ T1 — what SIG is, five how-it-works steps, capability table, is-not facts, recorded maintainer model + review status, cite/correct/reuse, Other public resources; nav+footer linked. MET-ENGINEERED — a live-served verdict arrives only with the release publish path (D-R10-PUBLISH-1).",
+        "supersedes": "SIG-UI-140:r11-1",
+        "assessment_id": "SIG-UI-140:r11-2"
       },
       {
         "requirement_id": "SIG-UI-141",
@@ -22587,6 +22715,16 @@
         "assessment_id": "SIG-UI-141:r11-1"
       },
       {
+        "requirement_id": "SIG-UI-141",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-11-04",
+        "code_revision": "r11/P36.64-home-about-how-it-works-methodology",
+        "limitations": "P36.64 landing verdict (row 407, UXK14-6): InBrief ≤80 words + one link on /about/, /editorial-standards/, /coverage-metrics/ (+ existing /methodology/, /glossary/). MET-ENGINEERED — a live-served verdict arrives only with the release publish path (D-R10-PUBLISH-1).",
+        "supersedes": "SIG-UI-141:r11-1",
+        "assessment_id": "SIG-UI-141:r11-2"
+      },
+      {
         "requirement_id": "SIG-UI-142",
         "domain": "public",
         "verdict": "MISSING",
@@ -22595,6 +22733,16 @@
         "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source DR-K14-08) entering the matrix as MISSING with its owner's routing (P36.64); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-UI-142:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-142",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-11-04",
+        "code_revision": "r11/P36.64-home-about-how-it-works-methodology",
+        "limitations": "P36.64 landing verdict (row 407, UXK14-6): first glossary-term use links via native popover (Term.astro) — exercised on the new About prose; print term lists unchanged. MET-ENGINEERED — a live-served verdict arrives only with the release publish path (D-R10-PUBLISH-1).",
+        "supersedes": "SIG-UI-142:r11-1",
+        "assessment_id": "SIG-UI-142:r11-2"
       },
       {
         "requirement_id": "SIG-UI-143",
@@ -25276,9 +25424,19 @@
           "assessed_at": "2026-10-24"
         },
         {
+          "requirement": "SIG-UI-135",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-11-04"
+        },
+        {
           "requirement": "SIG-UI-136",
           "verdict": "MISSING",
           "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-136",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-11-04"
         },
         {
           "requirement": "SIG-UI-137",
@@ -25286,9 +25444,19 @@
           "assessed_at": "2026-10-24"
         },
         {
+          "requirement": "SIG-UI-137",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-11-04"
+        },
+        {
           "requirement": "SIG-UI-138",
           "verdict": "MISSING",
           "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-138",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-11-04"
         },
         {
           "requirement": "SIG-UI-139",
@@ -25296,9 +25464,19 @@
           "assessed_at": "2026-10-24"
         },
         {
+          "requirement": "SIG-UI-139",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-11-04"
+        },
+        {
           "requirement": "SIG-UI-140",
           "verdict": "MISSING",
           "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-140",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-11-04"
         },
         {
           "requirement": "SIG-UI-141",
@@ -25306,9 +25484,19 @@
           "assessed_at": "2026-10-24"
         },
         {
+          "requirement": "SIG-UI-141",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-11-04"
+        },
+        {
           "requirement": "SIG-UI-142",
           "verdict": "MISSING",
           "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-142",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-11-04"
         },
         {
           "requirement": "SIG-UI-143",
@@ -25779,7 +25967,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "7ed1886d37b56940c8ed343d1e3e8f5f40cbfc298255157f1322120c2d883c59",
+  "manifest_sha256": "1854f7b260613c9f896a857b6a5e81fdd0dc64e85dd73b3f00fb034efbb27c96",
   "current_md": {
     "lines": 136,
     "bytes": 20229,
