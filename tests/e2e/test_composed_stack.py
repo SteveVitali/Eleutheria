@@ -1200,7 +1200,13 @@ def test_p35_13_built_site_carries_the_release_stamp(
     assert dossier.exists()
     html = dossier.read_text(encoding="utf-8")
     assert f'<meta name="sig-release" content="{label} {pub}">' in html
-    assert '<link rel="describedby" type="application/json" href="/release.json">' in html
+    # P36.66a: describedby names the immutable namespaced descriptor
+    # (/releases/<pub>/release.json) — the outside-the-base join (rootPath),
+    # never the mutable root release.json.
+    assert (
+        f'<link rel="describedby" type="application/json" '
+        f'href="/releases/{pub}/release.json">' in html
+    )
     assert f"Release {label} · data as of" in html
     assert "This is the latest view." in html
     assert f"/r/{pub}/" in html
