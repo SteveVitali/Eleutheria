@@ -61,10 +61,18 @@ def _batch_text(rid: str) -> str:
 
 
 def test_task_new_route_is_gone_from_pages_and_libs() -> None:
-    """The fixture intake surface is retired wholesale (RQ-00 / F-274): the page,
-    the slug codec lib, its unit test, the absence registry and the dossier
-    derivation no longer exist anywhere the site can reach."""
-    assert not (REPO_ROOT / "web/src/pages/task").exists(), "web/src/pages/task/ must not exist"
+    """The fixture intake surface is retired wholesale (RQ-00 / F-274): the
+    `/task/new/` namespace, the slug codec lib, its unit test, the absence
+    registry and the dossier derivation stay absent. P36.62 (RQ-03b) mints the
+    REAL `/task/<handle>/` pages — the namespace is present but the retired
+    `new/` prefix can never return."""
+    assert not (REPO_ROOT / "web/src/pages/task/new").exists(), (
+        "web/src/pages/task/new/ must never return (RQ-00)"
+    )
+    # The real RQ-03b routes P36.62 ships — the living namespace the allowlist
+    # already expects (`task` publishable, `/task/new/` denied).
+    assert (REPO_ROOT / "web/src/pages/task/[slug].astro").exists()
+    assert (REPO_ROOT / "web/src/pages/task/[handle].json.ts").exists()
     assert not (REPO_ROOT / "web/src/lib/task.ts").exists()
     assert not (REPO_ROOT / "web/tests/unit/task.test.ts").exists()
     for rel in ["web/src/lib/fixtures.ts", "web/src/lib/dossier.ts"]:
@@ -101,11 +109,15 @@ def test_no_task_new_link_or_generated_copy_anywhere_public() -> None:
     assert offenders == [], "retired intake surface artifacts remain:\n" + "\n".join(offenders)
 
 
-def test_absence_hatch_is_a_named_absence_not_a_link() -> None:
-    """SIG-UI-007's gap affordance degrades to a named absence until RQ-03 ships
-    real `/task/<handle>/` pages — never a mock intake link."""
+def test_absence_hatch_is_a_named_absence_or_a_real_task_link() -> None:
+    """SIG-UI-007's gap affordance stays a named absence — and since P36.62
+    (RQ-03b / SIG-RQ-008) may link the caller-resolved REAL task/campaign page,
+    never a mock intake route. The unlinked path must still render (a gap with
+    no queued task names the absence)."""
     src = _source("web/src/components/AbsenceHatch.astro")
-    assert "<a" not in src and "absenceTaskHref" not in src
+    # The retired intake seam stays gone: no /task/new/ LINK (the doc comment
+    # may still NAME the retired seam) and no absenceTaskHref seam.
+    assert TASK_NEW_LINK.search(src) is None and "absenceTaskHref" not in src
     markers = (
         'data-testid="absence-hatch"',
         "data-absence-kind",
@@ -114,6 +126,9 @@ def test_absence_hatch_is_a_named_absence_not_a_link() -> None:
     )
     for marker in markers:
         assert marker in src, f"AbsenceHatch lost {marker}"
+    # The link path resolves only through the one path helper and renders the
+    # named-absence fallback alongside it — never an unconditional link.
+    assert "withBase(" in src and "{resolved ? (" in src
 
 
 def test_export_queue_shaper_has_no_placeholders_and_the_label_is_shared() -> None:

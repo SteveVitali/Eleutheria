@@ -166,6 +166,18 @@
       "reason": "P35.37: provenance pointerBase \u2014 a key inside web/analytics/provenance.json, not a link (file moved by P36.61 RQ-03a)"
     },
     {
+      "file": "src/pages/task/[slug].astro",
+      "token": "/surfaces/research_queue",
+      "count": 1,
+      "reason": "P35.37: provenance pointerBase \u2014 a key inside web/analytics/provenance.json, not a link (P36.62 RQ-03b)"
+    },
+    {
+      "file": "src/pages/research-queue/campaign/[handle].astro",
+      "token": "/surfaces/research_queue",
+      "count": 1,
+      "reason": "P35.37: provenance pointerBase \u2014 a key inside web/analytics/provenance.json, not a link (P36.62 RQ-03b)"
+    },
+    {
       "file": "src/pages/dossier/[...path].astro",
       "token": "/surfaces/dossiers/$",
       "count": 1,

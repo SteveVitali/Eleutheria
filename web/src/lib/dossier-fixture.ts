@@ -142,7 +142,10 @@ export const OKC_DOSSIER: Dossier = {
       label: "Retention window (days)",
       kind: "NO_EVIDENCE_FOUND",
       subject_id: "agency:okcpd",
-      predicate_id: "retention_days",
+      // P36.62 (RQ-03b): the coverage-vocabulary predicate id — it matches the
+      // retention task's named missing predicate, so this gap resolves to
+      // `/task/<handle>/` (SIG-RQ-008).
+      predicate_id: "configured_retention_days",
       sources_searched: ["portal", "records request", "council minutes 2023–2026"],
     },
     {
@@ -156,7 +159,9 @@ export const OKC_DOSSIER: Dossier = {
       label: "At least 7 active devices are unmapped",
       kind: "NOT_RESEARCHED",
       subject_id: "agency:okcpd",
-      predicate_id: "unmapped_devices",
+      // P36.62: the device-coordinates coverage gap — resolves to the
+      // unmapped-devices task page (SIG-RQ-008).
+      predicate_id: "device_coordinates",
       note: "38 reported active, 31 independently mapped — locate and map at least seven.",
     },
   ],
@@ -217,7 +222,7 @@ export const OKC_DOSSIER: Dossier = {
       section_id: "configuration_and_retention",
       rows: [
         { label: "Policy written retention (days)", value: null, note: "Policy document not located." },
-        { label: "Configured retention (days)", value: null, absence: "NO_EVIDENCE_FOUND", subject_id: "agency:okcpd", predicate_id: "retention_days" },
+        { label: "Configured retention (days)", value: null, absence: "NO_EVIDENCE_FOUND", subject_id: "agency:okcpd", predicate_id: "configured_retention_days" },
         { label: "Vendor default retention (days)", value: 30, documentUrl: "/v1/claim/vendor-default" },
       ],
     },

@@ -19,6 +19,8 @@ import type { Section } from "../lib/dossier";
 // numeral-bearing row come from the page's figure registry.
 import { dossierFigId, dossierRowId } from "../lib/dossier-figures";
 import type { FigureSpec } from "../lib/figures";
+import { getQueueCampaigns, getResearchQueue } from "../lib/data";
+import { resolveGapLink } from "../lib/task-page";
 
 interface Props {
   section: Section;
@@ -29,6 +31,10 @@ interface Props {
 const { section, specs } = Astro.props;
 const figures = section.figures ?? [];
 const rows = section.rows ?? [];
+// P36.62 (RQ-03b / SIG-RQ-008): an absence row resolves to its real task or
+// campaign page — or stays the named absence, never a guessed link.
+const GAP_CARDS = getResearchQueue();
+const GAP_CAMPAIGNS = getQueueCampaigns();
 ---
 
 {figures.map((f) => <DossierFigure figure={f} spec={specs?.get(dossierFigId(f.key))} />)}
@@ -65,12 +71,22 @@ const rows = section.rows ?? [];
                 </span>
               )}{" "}
               {r.absence ? (
-                <AbsenceHatch
-                  kind={r.absence}
-                  subject_id={r.subject_id ?? ""}
-                  predicate_id={r.predicate_id ?? ""}
-                  predicate_label={r.label}
-                />
+                (() => {
+                  const link = resolveGapLink(
+                    { subject_id: r.subject_id ?? "", predicate_id: r.predicate_id ?? "" },
+                    GAP_CARDS,
+                    GAP_CAMPAIGNS,
+                  );
+                  return (
+                    <AbsenceHatch
+                      kind={r.absence}
+                      subject_id={r.subject_id ?? ""}
+                      predicate_id={r.predicate_id ?? ""}
+                      predicate_label={r.label}
+                      {...(link.kind !== "none" ? { href: link.href } : {})}
+                    />
+                  );
+                })()
               ) : (
                 <>
                   <span

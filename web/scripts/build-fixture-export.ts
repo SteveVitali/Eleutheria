@@ -366,6 +366,22 @@ analytic(
   ),
 );
 
+// P36.62 (RQ-03b): the `web/task_handles_history.json` artifact — the same
+// shape `task_export.build_queue` emits: the `/task/<task_id>/` id-aliases
+// the redirect generator folds into `redirects.conf`.
+write("task_handles_history.json", {
+  schema: "sig.handles-history/1",
+  family: "task",
+  generated_at: QUEUE_AS_OF,
+  note: "Fixture corpus: rows are id-aliases — /task/<task_id>/ 301s to the current handle (K11 §3).",
+  rows: RESEARCH_QUEUE.filter((c) => c.task_id && c.handle).map((c) => ({
+    old: `/task/${c.task_id}/`,
+    target: `/task/${c.handle}/`,
+    kind: "id-alias",
+    note: "canonical task id → public handle",
+  })),
+});
+
 // P36.61 (RQ-03a): the `web/tasks/campaign/*.jsonl.gz` shards — the same
 // layout `task_export.build_queue` emits (one gzipped JSONL per place slug).
 for (const [slug, blob] of campaignShardBytes) {

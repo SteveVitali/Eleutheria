@@ -31,8 +31,10 @@ const sample = (campaign.members ?? []).slice(0, 5);
   data-place={slug}
 >
   <h3 data-testid="campaign-title">
-    Add the <code>{campaign.predicate_id}</code> field on {campaign.member_count}{" "}
-    {campaign.subject_class.replace(/_/g, " ")} records in {placeName}
+    <a href={withBase(`research-queue/campaign/${campaign.handle}/`)} data-testid="campaign-link">
+      Add the <code>{campaign.predicate_id}</code> field on {campaign.member_count}{" "}
+      {campaign.subject_class.replace(/_/g, " ")} records in {placeName}
+    </a>
   </h3>
   <dl class="sig-campaign-card__fields">
     <div>

@@ -21,8 +21,10 @@ import {
   getEvidence,
   getHandleHistories,
   getJurisdictionKeyMap,
+  getResearchQueue,
   getUnplacedReport,
 } from "./src/lib/data.ts";
+import { taskHandleRows } from "./src/lib/task-page.ts";
 import {
   renderCardSvg,
   renderLogoSvg,
@@ -369,7 +371,13 @@ function sigRedirects() {
         }
         const slugHistory = getSlugHistory();
         const entityHistory = getEntitySlugHistory();
-        const handleRows = getHandleHistories().map((r) => ({ ...r, family: "handle" }));
+        // P36.62 (RQ-03b / SIG-RQ-009): the task id-alias rows — the export's
+        // `*_handles_history` artifact rows (rename history + id-aliases)
+        // merged with the per-card derivation so `/task/<task_id>/` resolves
+        // in every mode (the static stub is the no-include fallback).
+        const handleRows = taskHandleRows(getResearchQueue(), getHandleHistories())
+          .filter((r) => emittedRoutes.has(r.target))
+          .map((r) => ({ ...r, family: "handle" }));
         const rules = redirectRules({
           slugHistory,
           jurisdictionTargets,

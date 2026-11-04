@@ -338,18 +338,20 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
       "/research-queue/type/missing_contract/",
       "/research-queue/role/records_requester/",
       "/research-queue/campaigns/",
+      "/research-queue/campaign/M-usa-ok-oklahoma-city-operator-osm-5f0a/",
     ],
     notes:
-      "P36.61 (K11 RQ-03a, SIG-RQ-004): the queue hub — ≤50 cards per page (K9 §6.1), no-JS facet routes by place/type/role, sort routes (priority/newest/oldest), the campaign list over `sig.queue-campaign/1`; task + campaign detail pages are P36.62's (`/task/**`, `/research-queue/campaign/<handle>/`).",
+      "P36.61 (K11 RQ-03a, SIG-RQ-004): the queue hub — ≤50 cards per page (K9 §6.1), no-JS facet routes by place/type/role, sort routes (priority/newest/oldest), the campaign list over `sig.queue-campaign/1`. P36.62 (RQ-03b) adds the campaign detail pages (`/research-queue/campaign/<handle>/`); task pages live at `/task/**`.",
   },
   {
     patterns: ["/task/**"],
     type: "T1",
-    owner: "P35.50",
-    contract: "none",
+    owner: "P36.62",
+    contract: "sig.task-page/1",
     noJsEquivalent: SELF,
-    examples: ["/task/abc-123/"],
-    notes: "K11's task pages (RQ-03's row ships them); the retired `/task/new/` fixtures stay un-emitted.",
+    examples: ["/task/T-usa-ok-oklahoma-city-retention-pd-q1c4/", "/task/fx-okc-conflicting-retention/"],
+    notes:
+      "P36.62 (K11 RQ-03b / SIG-RQ-002/009): the §5.3 task detail pages (every block a value or a named absence) + the `/task/<task_id>/` id-alias stubs that redirect to the current handle; the retired `/task/new/` fixtures stay un-emitted (410 via the include).",
   },
   {
     patterns: ["/watch/**"],

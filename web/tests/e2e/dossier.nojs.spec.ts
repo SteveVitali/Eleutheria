@@ -29,7 +29,10 @@ test("a gap hatch is a named absence without JS — no mock task page (P34.12 / 
   await expect(hatch).toBeVisible();
   await expect(hatch).not.toHaveAttribute("href", /.*/);
   await expect(hatch).toHaveAttribute("data-absence-kind", /.+/);
-  await expect(page.locator('a[href^="/task/"]')).toHaveCount(0);
+  // P36.62 (RQ-03b / SIG-RQ-008): real task pages exist now — gap links
+  // resolve to /task/<handle>/ or name the absence; the retired mock
+  // /task/new/ namespace still never appears.
+  await expect(page.locator('a[href^="/task/new/"]')).toHaveCount(0);
 });
 
 test("a reconciliation opens without JS via native <details> (SIG-UI-014)", async ({ page }) => {

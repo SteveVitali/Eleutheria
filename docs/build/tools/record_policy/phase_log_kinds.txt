@@ -25,3 +25,4 @@ boundary-confirm
 dispatch boundary-confirm
 interruption
 harness-switch
+record-tip confirm
