@@ -61,6 +61,7 @@ from policy.eligibility import (
     latest_disposition,
 )
 
+from . import release_changes as RC
 from . import release_identity as RI
 from . import search_index_v2 as SIV2
 from . import site_release as SR
@@ -681,6 +682,9 @@ def build_release(
     technology_vocab_path: Path | str | None = None,
     search_aliases_path: Path | str | None = None,
     jurisdiction_registry_path: Path | str | None = None,
+    previous_release: Path | str | None = None,
+    previous_publication_id: str | None = None,
+    previous_export_dir: Path | str | None = None,
 ) -> ReleaseBuild:
     """Build the immutable release bundle from an export directory.
 
@@ -1416,10 +1420,39 @@ def build_release(
             "ruleset_version": _repro_block.get("ruleset_version"),
         },
     }
+    # P36.67 (R11-K13-TX-14, J3 §8.4, SIG-TRANSP-024): the per-release
+    # id-level diff + human changelog — ``r/<pub>/transparency/changes/``
+    # and ``releases/<pub>/CHANGELOG.md``, manifest-pinned like every other
+    # release byte. The previous release is a build-time input (a built
+    # release dir, a registry root, or a staged tree); absent → the first
+    # release's honest baseline (every record added, ``previous: null``).
+    # The landing links it; ``changes.json`` backs ``/v1/changes``.
+    changes_prev = RC.resolve_previous(previous_release, previous_publication_id)
+    changes_docs = RC.release_changes_documents(
+        out_dir,
+        pub,
+        descriptor,
+        prev_root=changes_prev[0] if changes_prev else None,
+        prev_pub=changes_prev[1] if changes_prev else None,
+        prev_descriptor=(
+            _read_json(changes_prev[0] / f"releases/{changes_prev[1]}/descriptor.json")
+            if changes_prev
+            and (changes_prev[0] / f"releases/{changes_prev[1]}/descriptor.json").is_file()
+            else None
+        ),
+        prev_sources=RC.load_source_rows(previous_export_dir),
+        cur_sources=RC.load_source_rows(export_dir),
+    )
+
     landing_rel = f"releases/{pub}/index.html"
     emit(
         landing_rel,
-        release_landing(catalog_entry, dossiers=dossiers, stamp=release_stamp),
+        release_landing(
+            catalog_entry,
+            dossiers=dossiers,
+            stamp=release_stamp,
+            changes=changes_docs,
+        ),
         compartment="metadata",
         licence="CC-BY-4.0",
     )
@@ -1472,6 +1505,22 @@ def build_release(
         compartment="metadata",
         licence="CC-BY-4.0",
     )
+
+    for _rel, _data, _comp_lic, _lic in RC.emitted_changes_artifacts(out_dir, pub, changes_docs):
+        emit(_rel, _data, compartment=_comp_lic, licence=_lic)
+
+    # SIG-UI-087 (UXR-37): release pages carry no live-clock values — a
+    # status-lane marker, next-run phrase or relative-time value on any
+    # emitted page fails the build (they live only under /status/** with
+    # the status clock). Re-scanned at validation so a tampered or
+    # hand-edited tree fails activation too.
+    _clock_failures = RC.live_clock_release_failures(out_dir)
+    if _clock_failures:
+        raise ReleaseError(
+            "live-clock value(s) on release pages — release surfaces are "
+            "pinned to their own as-of, never the reader's clock "
+            "(SIG-UI-087):\n  " + "\n  ".join(_clock_failures[:10])
+        )
 
     # --- the integrity manifest (external digest over every emitted artifact) - #
     artifacts.sort(key=lambda a: a["path"])
@@ -1948,6 +1997,10 @@ def validate_release(release_dir: Path | str) -> ValidationReport:
     # known site-shell/overlay route; a broken link is a release failure
     # naming the page and the target.
     failures.extend(link_crawl_failures(release_dir))
+    # SIG-UI-087 (P36.67): release pages never carry live-clock values —
+    # a tampered or pre-lint tree fails validation the same way the build
+    # refuses one.
+    failures.extend(RC.live_clock_release_failures(release_dir))
     return ValidationReport(
         publication_id=pub,
         state="complete" if not failures else "incomplete",

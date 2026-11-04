@@ -750,14 +750,19 @@ def build_router() -> APIRouter:
             raise HTTPException(
                 status_code=400, detail=f"invalid since parameter: {since!r} is not an ISO date"
             ) from exc
-        payload = _release_payload(
-            request,
-            "changes",
-            None,
-            release,
-            absent_status=503,
-            absent_code="release_artifact_absent",
-        )
+        serving = _release_serving(request)
+        payload: dict[str, Any] | None = None
+        if serving is not None:
+            # P36.67 (TX-14, SIG-TRANSP-024): /v1/changes is backed by the
+            # release's own record-id diff — the manifest-pinned
+            # sig.release-changes-feed/1 document, never an api-slice twin.
+            _mark_release(request)
+            payload, identity = serving.changes_document(
+                release,
+                absent_status=503,
+                absent_code="release_artifact_absent",
+            )
+            _mark_release(request, identity)
         if payload is not None:
             # The release document is a fixed snapshot; ``since`` filters its
             # events the same way the live feed filters the spine's.

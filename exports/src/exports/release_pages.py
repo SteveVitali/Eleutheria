@@ -1090,6 +1090,7 @@ def release_landing(
     *,
     dossiers: Sequence[Mapping[str, Any]] = (),
     stamp: Mapping[str, Any] | None = None,
+    changes: Mapping[str, Any] | None = None,
 ) -> bytes:
     """``/releases/<pub>/index.html`` — the release landing: descriptor +
     integrity digest + compartment inventory + download pointers.
@@ -1145,6 +1146,30 @@ def release_landing(
     release_json_link = (
         ' ·\n   <a href="release.json"><code>release.json</code></a>' if stamp is not None else ""
     )
+    # P36.67 (TX-14, SIG-TRANSP-024): the release-bound changelog section —
+    # the id-level diff totals against the previous activated release (or
+    # the first release's baseline), linking CHANGELOG.md + the
+    # sig.release-changes/1 index under the immutable namespace.
+    changes_block = ""
+    if changes:
+        _tot = changes.get("totals") or {}
+        _prev = (changes.get("index") or {}).get("previous")
+        _prev_label = (
+            f"{_e((_prev or {}).get('label') or (_prev or {}).get('publication_id'))}"
+            if _prev
+            else "baseline — no previous release"
+        )
+        changes_block = (
+            "<h2>Changes</h2>\n"
+            f"<p>Against {_prev_label}: "
+            f"<strong>+{_e(_tot.get('added', 0))} added · "
+            f"−{_e(_tot.get('removed', 0))} removed · "
+            f"~{_e(_tot.get('changed', 0))} changed</strong>.</p>\n"
+            '<p><a href="CHANGELOG.md"><code>CHANGELOG.md</code></a> · '
+            f'<a href="/r/{_e(pub)}/transparency/changes/index.json">'
+            "<code>changes/index.json</code></a> — the record-id-keyed diff "
+            "backing <code>/v1/changes</code>.</p>\n"
+        )
     body = f"""
 <p><span class="k">Publication</span> <code>{_e(pub)}</code></p>
 <p><span class="k">Data release</span> <code>{_e(entry.get("data_release_id"))}</code> ·
@@ -1154,6 +1179,7 @@ def release_landing(
    <span class="k">Ruleset</span> {_e(repro.get("ruleset_version"))} ·
    <span class="k">Policy</span> {_e(repro.get("policy_version"))}</p>
 {empty_block}
+{changes_block}
 <h2>Compartments</h2>
 <table><tr><th>Compartment</th><th>Licence</th><th>Records</th><th>Artifacts</th></tr>
 {comp_rows}</table>
