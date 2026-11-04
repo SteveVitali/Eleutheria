@@ -261,7 +261,7 @@ function assertMatrix(source = "fixtures") {
   blocks.push({
     "//": "T1 content — script ≤ 20 KiB, document ≤ 150 KiB, perf ≥ 0.95, a11y 1.0, LCP ≤ 1.5 s, CLS ≤ 0.02, TBT ≤ 50 ms (K0 §4.3 verbatim). Excludes the T0/T2/T3 blocks and the /sources/ index (its own block carries the recorded LCP measured gap).",
     matchingUrlPattern:
-      "^(?:(?!/curate/|/map/|/network/|/explore/|/search/|/dispute/|/print/|/r/|/intake/|/40[0-9]|/sources/index\\.html).)*$",
+      "^(?:(?!/curate/|/map/|/network/|/explore/|/search/|/dispute/|/print/|/r/|/intake/|/40[0-9]|/sources/index\\.html|://[^/]*/index\\.html$).)*$",
     assertions: assertionsFor(T1, null, source),
   });
   const surfaceBlocks = (note, pattern, row, route) => {
@@ -304,6 +304,12 @@ function assertMatrix(source = "fixtures") {
     "/sources/index\\.html$",
     T1,
     "/sources/",
+  );
+  surfaceBlocks(
+    "T1 / home — identical T1 ceilings; the recorded measured gap bounds today's ≈ 1.51 s LCP at its regression bound as error, the ratified 1.5 s as warn — D-P36.64-2 (the K14 section stack's document + one route-scoped stylesheet ride the shared ~1.5 s first-paint floor).",
+    "://[^/]*/index\\.html$",
+    T1,
+    "/",
   );
   blocks.push({
     "//": "T3 curation (/curate/**, ADR-068 unchanged) — a11y 1.0 enforced; performance advisory only; no byte budgets.",

@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "130a4548f5e41cda846242068853b0e4c6ccfd81",
+  "input_commit": "666f715a66f74e0c53a73a76f663d4f4cf711a43",
   "manifest_inputs": 1183,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -26,12 +26,12 @@
     "updatedAt": "2026-11-04T05:14Z"
   },
   "counts": {
-    "obligations": 216,
-    "owed": 134,
-    "open": 131,
+    "obligations": 217,
+    "owed": 135,
+    "open": 132,
     "partial": 3,
     "terminal": 82,
-    "events": 722,
+    "events": 723,
     "transitions": 52,
     "coverage_assessments": 510,
     "coverage_historical_rows": 994,
@@ -11262,6 +11262,50 @@
           "landing": "budget.spec.ts measures /dossier/ totalInitialMaxBytes <= 174,080 B — the measured_gaps row goes stale and is removed",
           "anchor": {
             "row_sha256": "9e7f7d39de3ff089503fd059bd16d505be4ef111d2957c716f92c45cec019135"
+          },
+          "recorded_at": "2026-11-04"
+        }
+      ]
+    },
+    {
+      "id": "D-P36.64-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P36.64-2:e0",
+      "kind": "V",
+      "owner": "the T1 initial-bytes optimisation row (a future K13 perf row)",
+      "landing": "Lighthouse lcpMs on / <= 1,500 ms — the measured_gaps row goes stale and is removed",
+      "landing_source": "event-head",
+      "backlog_home": "BL-086",
+      "item": "`/` `lcpMs` is ~14 ms over the ratified ≤ 1,500 ms ceiling (1,514 ms on the generated-lhci leg — all three runs 1,508.8–1,513.9): the K14 section stack adds a small amount of document + one route-scoped stylesheet over the old landing's LCP, on top of the shared render-blocking css every T1 page already pays",
+      "unblocked_by": "owner: the T1 initial-bytes optimisation row (a future K13 perf row) · trigger: that row's dispatch — or at once when the lhci leg reads ≤ 1,500 ms",
+      "verify": "`npm --prefix web run check:perf` Lighthouse `lcpMs` on `/` ≤ 1,500 ms → the measured_gaps row goes stale and must be removed",
+      "proxy": "1,600 ms regression bound is the error gate; the ratified 1,500 ms still reports every run (bounded+loud, never a smoothed ceiling)",
+      "line": 1542,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P36.64",
+          "backlog_home": "BL-086",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "web/tests/e2e/page-budgets.json",
+            "web/src/pages/index.astro",
+            "web/src/styles/k14-home.css"
+          ],
+          "observed_at": "2026-11-04",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P36.64 (row 407) for the row it added — / lcpMs measures ~14 ms over the ratified <= 1,500 ms ceiling (1,514 ms on the generated-lhci leg: the K14 section stack's document + one route-scoped stylesheet over the old landing's LCP); recorded bounded+loud in measured_gaps (1,600 ms regression bound), owner the T1 initial-bytes optimisation row",
+          "event_id": "D-P36.64-2:e0",
+          "obligation_id": "D-P36.64-2",
+          "owner": "the T1 initial-bytes optimisation row (a future K13 perf row)",
+          "landing": "Lighthouse lcpMs on / <= 1,500 ms — the measured_gaps row goes stale and is removed",
+          "anchor": {
+            "row_sha256": "290b31898ec7ccbc36584fec8e685fcbad28186b542f0b14911414edc6c28db9"
           },
           "recorded_at": "2026-11-04"
         }
@@ -25967,7 +26011,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "10f581da0eed6b2914a526bf5c072c98e347a295a609b3a977b3a9a2aca37282",
+  "manifest_sha256": "fc44a2a715618fd56cebfa160edbfb57ba0bf3fc9cb0a59c4a70df00dd6ea5da",
   "current_md": {
     "lines": 136,
     "bytes": 20229,
