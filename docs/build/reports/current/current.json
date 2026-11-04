@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "65af033824f73b44f72d44d3cd0a913cb4ac11c8",
+  "input_commit": "d10a1e44b587cbbd2a837326f648606a2c3e75b0",
   "manifest_inputs": 1181,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -16938,8 +16938,8 @@
           "label": "historical/csv"
         },
         "SIG-UI-079": {
-          "verdict": "PARTIAL",
-          "evidence": "web/src/components/WhatWeDontKnow.astro;web/src/pages/index.astro;web/src/pages/research-queue/index.astro;web/src/components/QueueCard.astro",
+          "verdict": "MET",
+          "evidence": "web/src/lib/task-page.ts;web/src/components/WhatWeDontKnow.astro;web/src/components/DossierSection.astro;web/src/components/AbsenceHatch.astro;web/src/pages/research-queue/index.astro;docs/build/runs/P36.62.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17628,8 +17628,8 @@
           "label": "historical/csv"
         },
         "SIG-RQ-002": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "web/src/lib/task-page.ts;web/src/pages/task/[slug].astro;web/src/pages/task/[handle].json.ts;docs/build/runs/P36.62.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17664,14 +17664,14 @@
           "label": "historical/csv"
         },
         "SIG-RQ-008": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "web/src/lib/task-page.ts;web/src/components/WhatWeDontKnow.astro;web/src/components/DossierSection.astro;web/src/components/AbsenceHatch.astro;docs/build/runs/P36.62.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-RQ-009": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "web/src/pages/task/[slug].astro;web/src/lib/task-page.ts;web/src/lib/redirects.ts;web/astro.config.mjs;docs/build/runs/P36.62.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -25779,7 +25779,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "6b594bbfe819ca77b739bc5a6be74ff2f508f90e52b3a8fa79a22abc04df90e4",
+  "manifest_sha256": "51f6209d568c55113e11abfe3e8cb7d80c1f08addd5f8d7587849806f5cafc61",
   "current_md": {
     "lines": 136,
     "bytes": 20230,
