@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "bb7498691cd26f23e5c044130c1677ba3d8872a2",
+  "input_commit": "975b2f00a59a5b9df385729b624c648d0e145955",
   "manifest_inputs": 1188,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -31,8 +31,8 @@
     "open": 133,
     "partial": 3,
     "terminal": 82,
-    "events": 724,
-    "transitions": 52,
+    "events": 726,
+    "transitions": 53,
     "coverage_assessments": 510,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
@@ -11314,14 +11314,14 @@
     {
       "id": "D-P36.68-1",
       "status": "OPEN",
-      "status_source": "event-head D-P36.68-1:e0",
+      "status_source": "event-head D-P36.68-1:e2",
       "kind": "V",
-      "owner": "the OM-19 leg-runner — the orchestrator's r11/P36.68-live-<n> dispatch or the operator",
+      "owner": "the OM-19 leg-runner — the orchestrator's `r11/P36.68-mirror-<n>` dispatch or the operator",
       "landing": "sig-ops mirror-push --name r2-public --export-dir <export> --release-dir <release> --apply records objects + the non-listable probe inside AR-3 + AR-2",
       "landing_source": "event-head",
       "backlog_home": "BL-086",
       "item": "The mirror writes (OM-20 named mutation): content-addressed pushes of the per-source extracts + `versions.json` — `sig-ops mirror-push --name r2-public --export-dir <export> --release-dir <release> --apply` (digest-verified against the release's integrity manifest; restore point = content-addressed objects + the index diff)",
-      "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P36.68-live-<n>` dispatch or the operator · trigger: `implement-spec spec=docs/tickets/412_P36.68__per-source-extracts-and-version-index.md live_verification=true` with the mirror row enabled + R2 creds exported, inside `AR-3 + AR-2`",
+      "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P36.68-mirror-<n>` dispatch or the operator · trigger: `implement-spec spec=docs/tickets/412_P36.68__per-source-extracts-and-version-index.md live_verification=true` with the mirror row enabled + R2 creds exported, inside `AR-3 + AR-2`",
       "verify": "`push_release_paths` is digest-verified (integrity-manifest sha256 per path, content-hash keys, no overwrite — a re-push is an append-only no-op); the mirror outcome records objects/uploaded/skipped/bytes + the non-listable probe verdict; a staged versions.json on the mirror resolves a `GET` 200 with the pushed sha256",
       "proxy": "machinery landed + fixture-verified (`tests/exports/test_p36_68_source_versions.py` — content-hash keys, skip-on-existing, unlisted/mismatch refusals; `MirrorPushLeg --release-dir` plan + refusal paths)",
       "line": 1543,
@@ -11352,6 +11352,28 @@
           "anchor": {
             "row_sha256": "a245955f2f98ab05df3ff31168931ed7f39aebd327cdf9826e477c3bb98fa3e3"
           },
+          "recorded_at": "2026-11-04"
+        },
+        {
+          "schema": "obligation-event/1",
+          "kind": "transition",
+          "seq": 1,
+          "expected_previous_event": "D-P36.68-1:e0",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P36.68",
+          "backlog_home": "BL-086",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P36.68.md"
+          ],
+          "observed_at": "2026-11-04",
+          "source_commit": "WORKTREE",
+          "reason": "owner-field respell (OPEN→OPEN field refresh, no status move) — the e0 anchor named the OM-19 dispatch branch r11/P36.68-mirror-<n> as r11/P36.68-live-<n> until the check_live_claims respell; semantics verbatim (same leg-runner, same trigger, same verification), spelling only.",
+          "event_id": "D-P36.68-1:e2",
+          "obligation_id": "D-P36.68-1",
+          "owner": "the OM-19 leg-runner — the orchestrator's `r11/P36.68-mirror-<n>` dispatch or the operator",
+          "landing": "sig-ops mirror-push --name r2-public --export-dir <export> --release-dir <release> --apply records objects + the non-listable probe inside AR-3 + AR-2",
           "recorded_at": "2026-11-04"
         }
       ]
@@ -26056,7 +26078,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "ba562d8f4f2ce42c5ef1ae311da3be1a534b6d79486ac5509b08ce193d2b9b8a",
+  "manifest_sha256": "c67f7a2524ffb160453758777e895c4a2c734830d15c08ac0bc29ed6eaebe105",
   "current_md": {
     "lines": 136,
     "bytes": 20244,
