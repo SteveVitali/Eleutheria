@@ -1,0 +1,49 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.60 (EV-02, SIG-EVUI-001): `/evidence/lane/<lane>/` (+ `…/page/<n>/`).
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import EvidenceFacet from "../../../components/EvidenceFacet.astro";
+import { getEvidence } from "../../../lib/data";
+import {
+  artifactHandles,
+  artifactsForLane,
+  laneFacets,
+  laneLabel,
+  pageCount,
+} from "../../../lib/evidence-hub";
+import { withBase } from "../../../lib/paths";
+
+export const getStaticPaths: GetStaticPaths = () => {
+  const { artifacts } = getEvidence();
+  const out: { params: { path: string }; props: { id: string; page: number } }[] = [];
+  for (const f of laneFacets(artifacts)) {
+    const items = artifactsForLane(artifacts, f.id);
+    for (const n of Array.from({ length: pageCount(items.length) }, (_, i) => i + 1)) {
+      out.push({
+        params: { path: n === 1 ? f.id : `${f.id}/page/${n}` },
+        props: { id: f.id, page: n },
+      });
+    }
+  }
+  return out;
+};
+
+const { id, page } = Astro.props as { id: string; page: number };
+const { artifacts } = getEvidence();
+const items = artifactsForLane(artifacts, id);
+---
+
+<BaseLayout title={`Evidence — ${laneLabel(id)}`} path={withBase(`evidence/lane/${id}/`)}>
+  <EvidenceFacet
+    base={`evidence/lane/${id}/`}
+    dim="on the"
+    label={laneLabel(id)}
+    items={items}
+    handles={artifactHandles(artifacts)}
+    page={page}
+  />
+</BaseLayout>

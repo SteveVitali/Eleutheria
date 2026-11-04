@@ -336,7 +336,7 @@ test.describe("seven outline surfaces + the corrections log exist (P15.5 AC1)", 
     // scoped recommender moved off the index (WX-05's surface).
     await page.goto("/watch/");
     await expect(page.getByTestId("watch-item").first()).toBeVisible();
-    await page.goto("/evidence/active-device-count/");
+    await page.goto("/evidence/claim/active-device-count/");
     await expect(page.getByTestId("highlighted-span")).toBeVisible();
   });
 });

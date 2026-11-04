@@ -27,7 +27,7 @@ import { fileURLToPath } from "node:url";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import EmptyState from "../../../components/EmptyState.astro";
 import ScopedSearchForm from "../../../components/ScopedSearchForm.astro";
-import { getLatestReleaseTarget } from "../../../lib/data";
+import { getEvidence, getLatestReleaseTarget } from "../../../lib/data";
 import Figure from "../../../components/Figure.astro";
 import { assertInlineSvgSafe } from "../../../lib/entity-figures";
 import { artifactHref, defineFigures, freshnessTargets, perSourceTargets, target, type FigureSpec } from "../../../lib/figures";
@@ -46,6 +46,7 @@ import {
 } from "../../../lib/source-page";
 import { resolveSourceId } from "../../../lib/alias";
 import { issueClassLabel, issuesForSource, issueText, getIssues } from "../../../lib/issues";
+import { sourceSlug } from "../../../lib/evidence-hub";
 
 export function getStaticPaths() {
   return getSourcePageIds().map((id) => ({ params: { id }, props: {} }));
@@ -69,6 +70,10 @@ const observedDays = observedCadenceDays(m.executions);
 // sources (gated/refused/withdrawn lanes) publish no searchable records,
 // so the form mounts only on the full page — never on the S-11 page.
 const scopedSearchTarget = m.registryOnly ? null : getLatestReleaseTarget();
+// P36.60 (EV-02): link in — this source's published artifacts list on the
+// evidence facet; a source carrying none gets no dead route (R-6).
+const { artifacts: EVIDENCE_ARTIFACTS_LIST } = getEvidence();
+const hasEvidence = EVIDENCE_ARTIFACTS_LIST.some((a) => a.source === row.source_id);
 const targets = m.extras.targets ?? null;
 const sourceIssues = m.registryOnly ? [] : issuesForSource(getIssues(), id);
 const slugify = (s: string): string => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -391,6 +396,9 @@ const crumbs = [
         )}
         {" · "}
         <a href={withBase(`status/sources/#src-${id}`)} data-copy="SP-02">runs since this release →</a>
+        {hasEvidence && (
+          <>{" · "}<a href={withBase(`evidence/source/${sourceSlug(row.source_id)}/`)} data-testid="source-evidence-link">evidence artifacts →</a></>
+        )}
       </p>
       {missing && (
         <p class="sig-notice" data-testid="run-record-missing" data-copy="SP-03">

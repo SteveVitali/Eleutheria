@@ -363,11 +363,23 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
   {
     patterns: ["/evidence/**"],
     type: "T1",
-    owner: "P35.50",
-    contract: "sig.statement/1",
+    owner: "P36.60",
+    contract: "sig.evidence-artifact/1",
     noJsEquivalent: SELF,
-    examples: ["/evidence/", "/evidence/active-device-count/"],
-    notes: "K8's evidence viewer — static pages + their `.json` twins.",
+    examples: [
+      "/evidence/",
+      "/evidence/page/2/",
+      "/evidence/source/public-records-request-city-procurement/",
+      "/evidence/type/contract/",
+      "/evidence/lane/raw-ok/",
+      "/evidence/state/legacy_synthetic/",
+      "/evidence/place/usa/ok/oklahoma-city-4064000/",
+      "/evidence/artifact/E-usa-ok-oklahoma-city-contract-executed-okcpd-flock-7k2q/",
+      "/evidence/claim/active-device-count/",
+      "/evidence/active-device-count/",
+    ],
+    notes:
+      "K8's evidence hub (P36.60 / EV-02): the index + page/<n>, source/type/lane/state/place facet lists, artifact pages and their .json twins, the §4.4 capture diff, the claim viewer at /evidence/claim/<id>/ (+ moved stubs + the JUR-05 301 at the retired /evidence/<id>/) — all T1 zero-JS.",
   },
   {
     patterns: ["/research-dossier/**"],

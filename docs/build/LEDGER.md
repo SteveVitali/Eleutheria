@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.60
-lastCompleted: P36.59
+nextTicket: P36.61
+lastCompleted: P36.60
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.59-watch-pages-and-item-pages
+chainTip: r11/P36.60-evidence-hub-and-artifact-pages
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-03T18:05Z
+updatedAt: 2026-11-03T19:40Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1481,3 +1481,7 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-03 — dispatch boundary-confirm — P36.57's green read recorded (`ci: pass #425@bb1ad00`, run 41647174127); `blockedOn` (nothing); chainTip `r11/P36.57-explore-bar-and-scoped-search` · nextTicket P36.58 (row 401 — task export v2; live_verification=false; gate none; deps P35.29/P35.19/P35.31 landed) — fresh implement-spec sub-agent on `r11/P36.58-task-export-v2` · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-11-03 — dispatch boundary-confirm — P36.58's green read recorded (`ci: pass #426@a474c40`, run 41659715348); `blockedOn` (nothing); chainTip `r11/P36.58-task-export-v2` · nextTicket P36.59 (row 402 — watch pages + item pages; live_verification=false; gate none; deps P35.43/P36.34/P36.58/P35.36/P35.42 landed) — fresh implement-spec sub-agent on `r11/P36.59-watch-pages-and-item-pages` · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-11-03 — dispatch boundary-confirm — P36.59's green read recorded (`ci: pass #427@b96f74e`, run 41691094066); `blockedOn` (nothing); chainTip `r11/P36.59-watch-pages-and-item-pages` · nextTicket P36.60 (row 403 — evidence hub + artifact pages; `D-K8-4 [B-44]` carried verbatim; live_verification=false; deps P35.31/P35.33/P36.51/P36.47/P36.58/P36.15(S2) landed) — fresh implement-spec sub-agent on `r11/P36.60-evidence-hub-and-artifact-pages` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-03 — P36.60 done — `ci: pass #428@871b6e82` (run 41716401103, 5/5 head-bound: docs 2m53s · security 52s · composed 4m37s · python 17m43s · web 41m12s) · Gate status: `D-K8-4 [B-44] = as recommended` carried verbatim · deferrals +0/−0 · chainTip → r11/P36.60-evidence-hub-and-artifact-pages · next → P36.61 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-03 — P36.60 done — 5/5 head-bound (run 41716401103) · Gate status: `D-K8-4 [B-44] = as recommended` carried verbatim · deferrals +0/−0 · chainTip → r11/P36.60-evidence-hub-and-artifact-pages · next → P36.61 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-03 — P36.60 post-closeout record — `871b6e82` `ci: pass #428@871b6e82` 5/5 head-bound (run 41716401103; red 41708831236 fixed forward — EW-23..27 `data-copy` re-bind + verbatim non-D-class directness) · PR #428 OPEN · `main` untouched · no OM-20/mutations · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-03 — dispatch boundary-confirm — P36.60's green read recorded (`ci: pass #428@871b6e82`, run 41716401103; record tip `8fc331a6` also 5/5 head-bound, run 41723113193 — python-red repair `EW-23..27` re-bound + export-mode `primary` directness crash fixed forward, no tests loosened); `blockedOn` (nothing); chainTip `r11/P36.60-evidence-hub-and-artifact-pages` · nextTicket P36.61 (row 404 — queue hub facets + cards; live_verification=false; gate none; deps P36.58/P36.34/P36.22 landed) — fresh implement-spec sub-agent on `r11/P36.61-queue-hub-facets-cards` · harness: devin-desktop/swe-2-high/orchestrator

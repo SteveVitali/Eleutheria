@@ -71,7 +71,7 @@ const ITEMS: WatchItemV2[] = [
         claim_id: "cl-c100-end",
         predicate: "end_date",
         source_id: "okc_contracts",
-        artifact_ids: ["art-c100"],
+        artifact_ids: ["contract:okcpd-alpr"],
         upstream: {
           status: "full_url",
           url: "https://www.okc.gov/contracts/C-100.pdf",
@@ -114,7 +114,7 @@ const ITEMS: WatchItemV2[] = [
         claim_id: "cl-r77-end",
         predicate: "end_date",
         source_id: "okc_contracts",
-        artifact_ids: ["art-r77"],
+        artifact_ids: ["snapshot:portal-2026-08"],
         upstream: {
           status: "host_only",
           host: "data.okc.gov",
@@ -150,7 +150,7 @@ const ITEMS: WatchItemV2[] = [
         claim_id: "cl-n9-deadline",
         predicate: "response_deadline",
         source_id: "sam_gov",
-        artifact_ids: ["art-n9"],
+        artifact_ids: ["news:paywalled-2026-08"],
         upstream: {
           status: "full_url",
           url: "https://sam.gov/opp/N-9/view",
@@ -185,7 +185,7 @@ const ITEMS: WatchItemV2[] = [
         claim_id: "cl-cb4279-meeting",
         predicate: "meeting_date",
         source_id: "legistar",
-        artifact_ids: ["art-cb4279"],
+        artifact_ids: [],
         upstream: { status: "withheld_by_policy" },
       },
     ],

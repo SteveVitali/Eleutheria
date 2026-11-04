@@ -216,7 +216,7 @@ test.describe("contested values are marked at every appearance (SIG-UI-008)", ()
     await page.goto(`/watch/item/${OKC_HANDLE}/`);
     await expect(page.getByTestId("contested-marker").first()).toBeVisible();
     // The conflicting-claims view.
-    await page.goto("/evidence/active-device-count/");
+    await page.goto("/evidence/claim/active-device-count/");
     await expect(page.getByTestId("evidence-view")).toHaveAttribute("data-contested", "true");
     await expect(page.getByTestId("contested-marker").first()).toBeVisible();
   });
@@ -226,7 +226,7 @@ test.describe("evidence viewer (§39.6) — agentic", () => {
   test("renders the document with the supporting span highlighted at its locator (SIG-UI-028)", async ({
     page,
   }) => {
-    await page.goto("/evidence/active-device-count/");
+    await page.goto("/evidence/claim/active-device-count/");
     await expect(page.getByTestId("highlighted-span")).toHaveText("forty-two (42)");
     await expect(page.getByTestId("extraction-method")).toBeVisible();
     await expect(page.getByTestId("extraction-version")).not.toBeEmpty();
@@ -239,7 +239,7 @@ test.describe("evidence viewer (§39.6) — agentic", () => {
   });
 
   test("diffs two captures of the same artifact, field by field (SIG-UI-029)", async ({ page }) => {
-    await page.goto("/evidence/active-device-count/");
+    await page.goto("/evidence/claim/active-device-count/");
     const diff = page.getByTestId("capture-diff");
     await expect(diff).toBeVisible();
     await expect(diff.locator("[data-testid='diff-field'][data-field='active_device_count']")).toHaveAttribute(
@@ -253,7 +253,7 @@ test.describe("evidence viewer (§39.6) — agentic", () => {
   });
 
   test("renders a sealed capture metadata-only with an explanation (SIG-UI-030)", async ({ page }) => {
-    await page.goto("/evidence/operator-roster-size/");
+    await page.goto("/evidence/claim/operator-roster-size/");
     const view = page.getByTestId("evidence-view");
     await expect(view).toHaveAttribute("data-sealed", "true");
     await expect(page.getByTestId("sealed-notice")).toBeVisible();

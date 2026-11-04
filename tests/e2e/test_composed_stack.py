@@ -1062,7 +1062,7 @@ def test_p34_20_export_build_evidence_lists_artifacts_grouped_by_source(
         )["artifacts"]
     )
     assert expected > 0, "the fixture export must carry artifacts to list"
-    items = html.count('data-testid="artifact-item"')
+    items = html.count('data-testid="evidence-artifact-row"')
     assert items == expected, f"listed rows {items} != evidence.json artifacts {expected}"
     # synthetic captures are run records, never presented as captures — every
     # `capture_classification = 'synthetic'` artifact carries the exact label
@@ -1079,8 +1079,8 @@ def test_p34_20_export_build_evidence_lists_artifacts_grouped_by_source(
     assert html.count('data-testid="run-record-label"') == synthetic
     assert html.count("run record — SIG did not store this document") == synthetic
     # an upstream link is the source's own link, recorded as a claim (K8 NEW-9)
-    assert 'data-testid="upstream-link"' in html
-    assert "own link (recorded as a claim)" in html
+    assert 'data-testid="artifact-upstream"' in html
+    assert "recorded as a claim" in html
     # zero-JS (SIG-UI-036): the only <script> tags a T1 content page may carry
     # are inert, allow-listed /_kit/ module entries (ADR-155, UXK0-4)
     _assert_only_allowlisted_kit_modules(html, "/evidence/")
@@ -1110,9 +1110,9 @@ def test_p34_20_export_build_carries_no_fixture_capture_diff(
         offenders
     )
     # no claim-view routes exist at all (claim_views was empty)
-    evidence_dir = dist / "evidence"
-    routes = [p for p in evidence_dir.iterdir() if p.is_dir()] if evidence_dir.exists() else []
-    assert routes == [], f"unexpected evidence claim routes: {routes}"
+    claim_dir = dist / "evidence" / "claim"
+    claim_routes = [p for p in claim_dir.iterdir() if p.is_dir()] if claim_dir.exists() else []
+    assert claim_routes == [], f"unexpected evidence claim routes: {claim_routes}"
 
 
 # --- P35.13: the built site carries the release provenance stamp ----------------

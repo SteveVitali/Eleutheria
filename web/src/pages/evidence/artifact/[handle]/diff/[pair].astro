@@ -1,0 +1,82 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.60 (K8 EV-02 §4.4 / SIG-UI-029, SIG-EVUI-005): the capture diff page —
+// `/evidence/artifact/<handle>/diff/<capA>..<capB>/`. Emitted ONLY for a
+// consecutive capture pair where BOTH rows carry extracted fields (the diff
+// compares real captures of the same artifact — never the fixture pair in an
+// export build; an export row carries no field map, so no route mints).
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../../../../layouts/BaseLayout.astro";
+import {
+  artifactHandles,
+  artifactTitle,
+  diffFields,
+  diffPairParam,
+  diffPairs,
+} from "../../../../../lib/evidence-hub";
+import { getEvidence } from "../../../../../lib/data";
+import type { ArtifactCaptureRow, EvidenceArtifact } from "../../../../../lib/recommender";
+import { withBase } from "../../../../../lib/paths";
+
+export const getStaticPaths: GetStaticPaths = () => {
+  const { artifacts } = getEvidence();
+  const handles = artifactHandles(artifacts);
+  const out: {
+    params: { handle: string; pair: string };
+    props: { artifact: EvidenceArtifact; handle: string; from: ArtifactCaptureRow; to: ArtifactCaptureRow };
+  }[] = [];
+  for (const a of artifacts) {
+    const handle = handles.get(a.artifact_id)!;
+    for (const p of diffPairs(a)) {
+      out.push({
+        params: { handle, pair: diffPairParam(p) },
+        props: { artifact: a, handle, from: p.from, to: p.to },
+      });
+    }
+  }
+  return out;
+};
+
+const { artifact: a, handle, from, to } = Astro.props as {
+  artifact: EvidenceArtifact;
+  handle: string;
+  from: ArtifactCaptureRow;
+  to: ArtifactCaptureRow;
+};
+const rows = diffFields(from, to);
+---
+
+<BaseLayout
+  title={`Evidence — capture diff, ${artifactTitle(a)}`}
+  path={withBase(`evidence/artifact/${handle}/diff/${diffPairParam({ from, to })}/`)}
+>
+  <p>
+    <a href={withBase(`evidence/artifact/${handle}/`)}>← {artifactTitle(a)}</a>
+  </p>
+  <section class="sig-capture-diff" data-testid="artifact-capture-diff" data-artifact-id={a.artifact_id}>
+    <p>
+      What changed between captures —
+      Two captures of the same artifact, diffed field by field —
+      {from.retrieved_at?.slice(0, 10)} (<code>{from.content_digest}</code>) vs{" "}
+      {to.retrieved_at?.slice(0, 10)} (<code>{to.content_digest}</code>).
+    </p>
+    <table>
+      <thead>
+        <tr><th>Field</th><th>{rows[0]?.from_date}</th><th>{rows[0]?.to_date}</th><th>Changed?</th></tr>
+      </thead>
+      <tbody>
+        {rows.map((c) => (
+          <tr data-testid="diff-field" data-field={c.field} data-changed={c.changed ? "true" : "false"}>
+            <td>{c.field}</td>
+            <td>{c.from_value === null ? "—" : String(c.from_value)}</td>
+            <td>{c.to_value === null ? "—" : String(c.to_value)}</td>
+            <td>{c.changed ? "changed" : "unchanged"}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+</BaseLayout>

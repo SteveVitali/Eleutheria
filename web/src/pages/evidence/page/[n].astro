@@ -1,0 +1,42 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.60 (EV-02): `/evidence/page/<n>/` — the artifact index's pagination
+// fallback (K9 §6.1): emitted only for pages 2..N (page 1 IS `/evidence/`).
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ArtifactRows from "../../../components/ArtifactRows.astro";
+import { getEvidence } from "../../../lib/data";
+import {
+  artifactHandles,
+  byArtifactIndex,
+  pageCount,
+  pageNumbers,
+  pageSlice,
+} from "../../../lib/evidence-hub";
+import { withBase } from "../../../lib/paths";
+
+export function getStaticPaths() {
+  const items = [...getEvidence().artifacts].sort(byArtifactIndex);
+  return pageNumbers(items.length)
+    .filter((n) => n > 1)
+    .map((n) => ({ params: { n: String(n) }, props: { n } }));
+}
+
+const { n } = Astro.props as { n: number };
+const { artifacts } = getEvidence();
+const items = [...artifacts].sort(byArtifactIndex);
+const shown = pageSlice(items, n);
+const total = pageCount(items.length);
+---
+
+<BaseLayout title={`Evidence — page ${n}`} path={withBase(`evidence/page/${n}/`)}>
+  <p>
+    Published artifacts — page {n} of {total}.{" "}
+    {n > 2 && <a href={withBase(`evidence/page/${n - 1}/`)}>← previous</a>}
+    {n === 2 && <a href={withBase("evidence/")}>← first page</a>}
+    {n < total && <> · <a href={withBase(`evidence/page/${n + 1}/`)}>next page →</a></>}
+  </p>
+  <ArtifactRows artifacts={shown} handles={artifactHandles(artifacts)} />
+</BaseLayout>

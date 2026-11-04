@@ -112,6 +112,70 @@ export interface EvidenceArtifact {
    * stored capture.
    */
   upstream_url?: string;
+  /**
+   * P36.51 (R11-K13-TX-08b / K8 §4.2): the disclosure lane the export decided
+   * for the artifact's source (`raw-ok` | `derived-only` | `link-only` |
+   * `restricted` | `unknown`). Absent on pre-P36.51 rows and fixtures.
+   */
+  lane?: string;
+  /** The lane decision's basis (the export's `lane_basis`). */
+  lane_basis?: string;
+  /** The Part VIII class the lane decision recorded (sealed classes withhold). */
+  part_viii_class?: string | null;
+  /**
+   * P36.51: the S-6 publication form of the upstream URL — the same
+   * `status`/`url`/`host`/`path_sha256` block `sig.statement/1` rows carry.
+   */
+  upstream?: {
+    status?: string;
+    url?: string | null;
+    host?: string | null;
+    path_sha256?: string | null;
+  } | null;
+  /**
+   * P36.51: the artifact's recorded capture history — one metadata row per
+   * `evidence_capture` (bytes never travel, §17.5). A synthetic row is a run
+   * record, never a stored document.
+   */
+  captures?: ArtifactCaptureRow[];
+  /**
+   * P36.60 (EV-02): the artifact's place binding — the K4 slug path of the
+   * jurisdiction the artifact documents (`usa/ok/oklahoma-city-4064000`).
+   * Absent means the export carries no place for the artifact (today: every
+   * row) — the place facet's `unplaced` bucket is the honest answer.
+   */
+  place_key?: string | null;
+  /** The publisher display name where the registry records one. */
+  publisher?: string | null;
+}
+
+/**
+ * One `evidence_capture` row as `evidence.json` emits it (P36.51) — metadata
+ * only; `fields` appears only in the committed fixture corpus so the §4.4
+ * field-by-field diff can run over real capture data (SIG-EVUI-005).
+ */
+export interface ArtifactCaptureRow {
+  capture_id: string;
+  retrieved_at?: string;
+  content_digest?: string;
+  digest_blake3?: string | null;
+  byte_size?: number | null;
+  media_type?: string;
+  http_status?: number | null;
+  capture_method?: string;
+  storage_tier?: string;
+  capture_classification?: string;
+  redaction_applied?: boolean;
+  parent_capture_id?: string | null;
+  /** The J3 §5.3 label state the export minted for this capture. */
+  view_original?: {
+    kind?: string;
+    label?: string;
+    href?: string | null;
+    note?: string | null;
+  };
+  /** Fixture-only: the extracted fields the §4.4 diff compares. */
+  fields?: Record<string, unknown>;
 }
 
 // --- SIG-UI-027b: the neutrality guard (structural) --------------------------

@@ -1,0 +1,269 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.60 (K8 EV-02 / SIG-EVUI-002,003,006,010): the artifact page —
+// `/evidence/artifact/<E-handle>/`, the §4.2 blocks: header (human title,
+// source, type, place, classification, lane), upstream (S-6 publication
+// form), the capture history (classification shown per row — a synthetic row
+// is a run record), claims supported, contradictions, status, rights, used
+// by, equivalent requests, cite. Every field is a value or a named absence.
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Badge from "../../../components/Badge.astro";
+import ContestedMarker from "../../../components/ContestedMarker.astro";
+import {
+  ARTIFACT_STATE_LABELS,
+  artifactContradictions,
+  artifactHandles,
+  artifactState,
+  artifactTitle,
+  artifactUpstream,
+  capturesOf,
+  captureViewOriginal,
+  claimsForArtifact,
+  classificationLabel,
+  claimHref,
+  diffPairParam,
+  diffPairs,
+  laneLabel,
+  placeDisplayName,
+} from "../../../lib/evidence-hub";
+import { artifactTypeLabel, RUN_RECORD_LABEL } from "../../../lib/evidence-artifacts";
+import { DIRECTNESS_CLASSES } from "../../../lib/badges";
+import { NOT_RECORDED } from "../../../lib/provenance-panel";
+import { getEvidence, getStatementIndex, getWatchV2 } from "../../../lib/data";
+import { getSourcePageIds } from "../../../lib/source-page";
+import type { EvidenceArtifact } from "../../../lib/recommender";
+import { withBase } from "../../../lib/paths";
+
+export const getStaticPaths: GetStaticPaths = () => {
+  const { artifacts } = getEvidence();
+  const handles = artifactHandles(artifacts);
+  return artifacts.map((a) => ({
+    params: { handle: handles.get(a.artifact_id)! },
+    props: { artifact: a, handle: handles.get(a.artifact_id)! },
+  }));
+};
+
+const { artifact: a, handle } = Astro.props as { artifact: EvidenceArtifact; handle: string };
+// The source's own page link — only when the export's source registry id is
+// an emitted `/sources/<id>/` page (never a dead route over a display string).
+const sourcePage = new Set(getSourcePageIds()).has(a.source) ? `sources/${a.source}/` : null;
+const STATEMENTS = getStatementIndex();
+const claims = claimsForArtifact(STATEMENTS, a.artifact_id);
+const contradictions = artifactContradictions(STATEMENTS, a.artifact_id);
+const claimRoutes = new Set(getEvidence().claimViews.map((v) => v.claim_id));
+const caps = capturesOf(a);
+const pairs = diffPairs(a);
+const state = artifactState(a);
+const up = artifactUpstream(a);
+// Used by: the watch items citing this artifact (K7), and whether it answers
+// an open research task (K11) — the §4.2 "used by" block.
+const citingWatch = (getWatchV2()?.items ?? []).filter((i) =>
+  (i.evidence ?? []).some((e) => (e.artifact_ids ?? []).includes(a.artifact_id)),
+);
+---
+
+<BaseLayout title={`Evidence — ${artifactTitle(a)}`} path={withBase(`evidence/artifact/${handle}/`)}>
+  <article class="sig-artifact-page" data-testid="artifact-page" data-artifact-id={a.artifact_id} data-handle={handle} data-state={state}>
+    <p class="sig-artifact-lede">
+      {artifactTypeLabel(a.artifact_type)} from{" "}
+      {sourcePage !== null ? (
+        <a href={withBase(sourcePage)} data-testid="artifact-source">{a.source_name ?? a.source}</a>
+      ) : (
+        <span data-testid="artifact-source">{a.source_name ?? a.source}</span>
+      )}{" "}
+      — {ARTIFACT_STATE_LABELS[state] ?? state}
+      {state === "legacy_synthetic" && <> (<em data-testid="run-record-label">{RUN_RECORD_LABEL}</em>)</>}.
+    </p>
+
+    <dl class="sig-artifact-meta">
+      <div><dt>Handle</dt><dd><code>{handle}</code></dd></div>
+      <div><dt>Type</dt><dd>{artifactTypeLabel(a.artifact_type)}</dd></div>
+      <div>
+        <dt>Source</dt>
+        <dd>
+          {sourcePage !== null ? (
+            <a href={withBase(sourcePage)}>{a.source_name ?? a.source}</a>
+          ) : (
+            (a.source_name ?? a.source)
+          )}
+        </dd>
+      </div>
+      <div><dt>Publisher</dt><dd>{a.publisher ?? NOT_RECORDED}</dd></div>
+      <div>
+        <dt>Place</dt>
+        <dd>
+          {a.place_key ? (
+            <a href={withBase(`evidence/place/${a.place_key}/`)} data-testid="artifact-place">{placeDisplayName(a.place_key)}</a>
+          ) : (
+            "not recorded"
+          )}
+        </dd>
+      </div>
+      <div><dt>Disclosure lane</dt><dd data-testid="artifact-lane">{laneLabel(a.lane)}{a.lane_basis && a.lane_basis !== "not_recorded" ? ` (${a.lane_basis.replace(/_/g, " ")})` : ""}</dd></div>
+      <div><dt>Capture status</dt><dd data-testid="artifact-status">{a.capture_status.replace(/_/g, " ")}</dd></div>
+      {/* The §10.5 badge only where the export recorded a D1–D6 class — a
+          from-spine row carries its `primary_or_secondary` value verbatim in
+          this field, and the recorded value renders, never a fabricated class. */}
+      <div><dt>Directness</dt><dd>{(DIRECTNESS_CLASSES as readonly string[]).includes(a.directness) ? <Badge kind="directness" value={a.directness} /> : a.directness}</dd></div>
+      <div><dt>As of</dt><dd>{a.as_of}</dd></div>
+    </dl>
+
+    <h2 id="upstream-heading">Upstream</h2>
+    <p data-testid="artifact-upstream">
+      {up.href ? (
+        <a href={up.href} rel="external"><code>{up.display}</code></a>
+      ) : (
+        <code>{up.display}</code>
+      )}
+    </p>
+    <p class="sig-artifact-upstream-note">
+      The source's own link, recorded as a claim — never presented as a capture SIG holds.
+    </p>
+
+    <h2 id="captures-heading">Captures ({caps.length === 0 ? "none recorded" : caps.length})</h2>
+    {caps.length === 0 ? (
+      <p data-testid="captures-empty">
+        No capture row is recorded for this artifact in this release — the capture history
+        appears when the export carries one.
+      </p>
+    ) : (
+      <table class="sig-captures" data-testid="captures-table">
+        <thead>
+          <tr>
+            <th scope="col">Retrieved</th>
+            <th scope="col">SHA-256 digest</th>
+            <th scope="col">Bytes</th>
+            <th scope="col">Media type</th>
+            <th scope="col">HTTP</th>
+            <th scope="col">Method</th>
+            <th scope="col">Classification</th>
+            <th scope="col">Changed?</th>
+            <th scope="col">View original</th>
+          </tr>
+        </thead>
+        <tbody>
+          {caps.map((c, i) => {
+            const vo = captureViewOriginal(c);
+            const prev = i > 0 ? caps[i - 1]! : null;
+            const changed =
+              prev === null
+                ? null
+                : prev.content_digest !== c.content_digest;
+            return (
+              <tr data-testid="capture-row" data-capture-id={c.capture_id} data-classification={c.capture_classification ?? NOT_RECORDED}>
+                <td>{c.retrieved_at ?? NOT_RECORDED}</td>
+                <td><code class="sig-digest">{c.content_digest ?? NOT_RECORDED}</code>{c.digest_blake3 ? <><br /><code class="sig-digest">{c.digest_blake3}</code></> : null}</td>
+                <td>{c.byte_size === null || c.byte_size === undefined ? NOT_RECORDED : c.byte_size.toLocaleString("en-US")}</td>
+                <td>{c.media_type ?? NOT_RECORDED}</td>
+                <td>{c.http_status ?? NOT_RECORDED}</td>
+                <td>{c.capture_method ?? NOT_RECORDED}</td>
+                <td data-testid="capture-classification">
+                  {c.capture_classification === "synthetic" ? (
+                    <em>{classificationLabel(c)}</em>
+                  ) : (
+                    classificationLabel(c)
+                  )}
+                </td>
+                <td>{changed === null ? "—" : changed ? "changed" : "unchanged"}</td>
+                <td>
+                  {vo.href ? (
+                    <a href={vo.href} rel="external" data-testid="view-original">{vo.label}</a>
+                  ) : (
+                    <span data-testid="view-original">{vo.label}</span>
+                  )}
+                  {vo.note && <> <span class="sig-view-original-note" data-testid="view-original-note">({vo.note})</span></>}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    )}
+    {pairs.length > 0 && (
+      <p data-testid="diff-links">
+        {pairs.map((p) => (
+          <a href={withBase(`evidence/artifact/${handle}/diff/${diffPairParam(p)}/`)} data-testid="diff-link">
+            What changed between captures →
+          </a>
+        ))}
+      </p>
+    )}
+
+    <h2 id="claims-heading">Claims supported ({claims.length === 0 ? "none recorded" : claims.length})</h2>
+    {claims.length === 0 ? (
+      <p data-testid="claims-empty">
+        No claim statement in this release names this artifact as its evidence — claims are
+        bound to artifacts as the export records them.
+      </p>
+    ) : (
+      <ul class="sig-artifact-claims" data-testid="claims-list">
+        {claims.map((s) => (
+          <li data-testid="artifact-claim" data-claim-id={s.claim_id}>
+            {claimRoutes.has(s.claim_id) ? (
+              <a href={withBase(claimHref(s.claim_id))}>{s.claim_id}</a>
+            ) : (
+              <code>{s.claim_id}</code>
+            )}{" "}
+            — <code>{s.predicate_id ?? NOT_RECORDED}</code>{" "}
+            {(s.contradictions?.contradiction_ids?.length ?? 0) > 0 && <ContestedMarker compact />}
+          </li>
+        ))}
+      </ul>
+    )}
+
+    <h2 id="contradictions-heading">Contradictions</h2>
+    {contradictions.length === 0 ? (
+      <p data-testid="no-contradictions">No open contradiction touches this artifact's claims.</p>
+    ) : (
+      <ul data-testid="contradictions-list">
+        {contradictions.map((c) => (
+          <li data-testid="contradiction"><ContestedMarker compact /> <code>{c}</code></li>
+        ))}
+      </ul>
+    )}
+
+    <h2 id="rights-heading">Rights</h2>
+    <dl class="sig-artifact-rights">
+      <div><dt>Licence</dt><dd>{NOT_RECORDED}</dd></div>
+      <div><dt>Redistribution lane</dt><dd>{laneLabel(a.lane)}</dd></div>
+    </dl>
+    <p class="sig-artifact-rights-note">
+      The licence and attribution the artifact's rights record carries render on the source's
+      page; the export does not repeat them per artifact.
+    </p>
+
+    <h2 id="usedby-heading">Used by</h2>
+    {citingWatch.length === 0 && !a.answers_open_task ? (
+      <p data-testid="usedby-empty">No watch item or open task in this release cites this artifact.</p>
+    ) : (
+      <ul data-testid="usedby-list">
+        {citingWatch.map((w) => (
+          <li data-testid="usedby-watch">
+            <a href={withBase(`watch/item/${w.handle}/`)}>{w.title}</a> — watch item ({w.kind.replace(/_/g, " ")})
+          </li>
+        ))}
+        {a.answers_open_task && (
+          <li data-testid="usedby-task">
+            <a href={withBase("research-queue/")}>The research queue</a> — this artifact answers an open task.
+          </li>
+        )}
+      </ul>
+    )}
+
+    <h2 id="requests-heading">Equivalent requests</h2>
+    <ul>
+      <li><a href={withBase(`evidence/artifact/${handle}.json`)} data-testid="artifact-json-twin">This artifact as JSON</a></li>
+      <li>API mirror: not available on this static surface ({NOT_RECORDED})</li>
+    </ul>
+
+    <h2 id="cite-heading">Cite</h2>
+    <p>
+      Stable locator <code>{withBase(`evidence/artifact/${handle}/`)}</code>, as of {a.as_of}.{" "}
+      <a href={withBase("dispute/")}>Dispute or correct this record →</a>
+    </p>
+  </article>
+</BaseLayout>
