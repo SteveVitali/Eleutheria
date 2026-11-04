@@ -7,20 +7,26 @@
 // "we don't know" a visible, NAMED absence rather than missing text. P34.12
 // (K11 §5.5 / RQ-00, F-113/F-274): the fixture `/task/new/<slug>/` intake pages
 // are retired — the hatch no longer links to a mock "generated task" page (the
-// link implied a task had been created when nothing had). The hatch now renders
+// link implied a task had been created when nothing had). The hatch renders
 // as a named absence: the kind label plus machine-readable subject/predicate
-// attributes. The real per-task page arrives with RQ-03 (`/task/<handle>/`).
+// attributes. P36.62 (RQ-03b / SIG-RQ-008): when the caller resolves the gap
+// to its real task or campaign page (`href`), the hatch IS the link — one
+// action from the absence to the work, never a mock page or a dead link.
 import { ABSENCE_KIND_META, type AbsenceKind } from "../lib/epistemic";
+import { withBase } from "../lib/paths";
 
 interface Props {
   kind: AbsenceKind;
   subject_id: string;
   predicate_id: string;
   predicate_label: string;
+  /** The resolved task/campaign route (base-relative) — the gap's invitation. */
+  href?: string;
 }
 
-const { kind, subject_id, predicate_id, predicate_label } = Astro.props;
+const { kind, subject_id, predicate_id, predicate_label, href } = Astro.props;
 const meta = ABSENCE_KIND_META[kind];
+const resolved = href ? withBase(href) : null;
 ---
 
 <span
@@ -29,11 +35,16 @@ const meta = ABSENCE_KIND_META[kind];
   data-absence-kind={kind}
   data-absence-subject={subject_id}
   data-absence-predicate={predicate_id}
+  {...(resolved ? { "data-task-href": resolved } : {})}
   aria-label={`${predicate_label}: ${meta.label}`}
 >
   {/* P36.23 (K14 §3.4/§4.6): the kind's symbol rides the hatch next to the
       label — the four kinds read apart by symbol + text, never by a second
       texture (SIG-UI-007). */}
   <span class="sig-absence-hatch__symbol" aria-hidden="true">{meta.symbol}</span>
-  {meta.label}
+  {resolved ? (
+    <a href={resolved} class="sig-absence-hatch__link" data-testid="absence-task-link">{meta.label}</a>
+  ) : (
+    meta.label
+  )}
 </span>

@@ -241,6 +241,7 @@ describe("the one-generator contract (SIG-UI-058)", () => {
       "pages/dossier/[...path].astro",
       "pages/id/[type]/[uuid].astro",
       "pages/evidence/[id].astro",
+      "pages/task/[slug].astro",
       "lib/redirects.ts",
     ]);
     const offenders: string[] = [];

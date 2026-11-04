@@ -1,0 +1,131 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.62 (K11 RQ-03b / SIG-RQ-006): `/research-queue/campaign/<handle>/` —
+// the campaign detail page (K11 §5.4): the missing field, its subject class,
+// the place and count, why it matters, how to contribute (the OSM guide
+// link; a MapRoulette cooperative challenge only once HG-08 registration
+// exists — the honest absence states it), the paginated member list with
+// subject links, and the download shard it rides. T1 zero-JS.
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import {
+  getQueueCampaigns,
+  getQueueMeta,
+  getResearchQueueProvenance,
+} from "../../../lib/data";
+import {
+  CAMPAIGN_MEMBERS_PAGE,
+  campaignWhy,
+} from "../../../lib/task-page";
+import { queuePlaceHref } from "../../../lib/queue-hub";
+import type { QueueCampaign } from "../../../lib/queue-hub";
+import { withBase } from "../../../lib/paths";
+
+export function getStaticPaths() {
+  return getQueueCampaigns().map((campaign) => ({
+    params: { handle: campaign.handle },
+    props: { campaign },
+  }));
+}
+
+const { campaign } = Astro.props as { campaign: QueueCampaign };
+const slug = campaign.place?.slug ?? "unplaced";
+const placeName = campaign.place?.name ?? "Not yet placed";
+const members = (campaign.members ?? []).slice(0, CAMPAIGN_MEMBERS_PAGE);
+const truncated = (campaign.members ?? []).length > CAMPAIGN_MEMBERS_PAGE;
+const meta = getQueueMeta();
+const shard = (meta.shards ?? []).find(
+  (s) => s.lane === "campaign" && s.place_slug === slug,
+);
+const provenance = getResearchQueueProvenance();
+---
+
+<BaseLayout
+  title={`Add the ${campaign.predicate_id} field — ${placeName}`}
+  path={withBase(`research-queue/campaign/${campaign.handle}/`)}
+  provenance={provenance}
+  provenanceName="research queue"
+  provenancePointerBase="/surfaces/research_queue"
+  crumbs={[
+    { label: "Research queue", href: withBase("research-queue/") },
+    { label: "Campaigns", href: withBase("research-queue/campaigns/") },
+    { label: campaign.handle },
+  ]}
+>
+  <article
+    class="sig-campaign-page"
+    data-testid="campaign-page"
+    data-handle={campaign.handle}
+    data-predicate={campaign.predicate_id}
+    data-subject-class={campaign.subject_class}
+    data-place={slug}
+  >
+    <p class="sig-campaign-page__summary" data-testid="campaign-summary">
+      A mapping campaign: <code>{campaign.predicate_id}</code> is missing on{" "}
+      <strong>{campaign.member_count}</strong> {campaign.subject_class.replace(/_/g, " ")} records
+      in <a href={withBase(queuePlaceHref(slug))}>{placeName}</a>.
+    </p>
+    <p class="sig-task-page__handle">Handle <code data-testid="campaign-handle">{campaign.handle}</code></p>
+
+    <h2>Why it matters</h2>
+    <p data-testid="campaign-why">{campaignWhy(campaign)}</p>
+
+    <h2>How to contribute</h2>
+    {campaign.contribution?.kind === "osm-field-gap" ? (
+      <>
+        <p data-testid="campaign-contribution">
+          These are OpenStreetMap field gaps — edit the tagged records in
+          OpenStreetMap itself (the <code>{campaign.predicate_id}</code> key on each
+          record). Changes reach SIG through the OSM changeset feed.
+        </p>
+        <p data-testid="campaign-maproulette">
+          No MapRoulette cooperative challenge is registered for this campaign —
+          the registration is an operator decision that is still open, so this
+          page names that absence instead of linking a challenge that does not exist.
+        </p>
+      </>
+    ) : (
+      <p data-testid="campaign-contribution">
+        This field is not published by the source — there is nothing to map.
+        The gap stays named as a coverage fact, not volunteer work.
+      </p>
+    )}
+
+    <h2>Records ({campaign.member_count})</h2>
+    {members.length > 0 ? (
+      <>
+        <ul data-testid="campaign-members">
+          {members.map((m) => (
+            <li data-subject={m.subject_id}>
+              {m.subject_url ? (
+                <a href={withBase(m.subject_url.replace(/^\//, ""))}>{m.subject_label}</a>
+              ) : (
+                m.subject_label ?? m.subject_id
+              )}
+            </li>
+          ))}
+        </ul>
+        {(truncated || campaign.member_count > members.length) && (
+          <p data-testid="campaign-members-note">
+            The list shows the {members.length} member rows this release emits for the
+            campaign; the count above is the recorded total.
+          </p>
+        )}
+      </>
+    ) : (
+      <p data-testid="campaign-members">The export records the count but emits no member rows for this campaign.</p>
+    )}
+
+    <h2>Download</h2>
+    {shard ? (
+      <p data-testid="campaign-download">
+        The campaign lane ships as a sharded JSONL file per place: <code>{shard.path}</code>
+        {shard.rows !== undefined && <> — {shard.rows} row(s)</>}.
+      </p>
+    ) : (
+      <p data-testid="campaign-download">No shard is emitted for this place's campaign lane in this release.</p>
+    )}
+  </article>
+</BaseLayout>

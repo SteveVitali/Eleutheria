@@ -1,0 +1,255 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.62 (K11 RQ-03b / SIG-RQ-002, SIG-RQ-009): `/task/<slug>/` serves TWO
+// kinds of route from one param —
+//
+//   * `/task/<handle>/` — the task detail page (K11 §5.3 blocks; every
+//     block a value or a named absence);
+//   * `/task/<task_id>/` — the id-alias stub: the canonical id 301s to the
+//     handle through the generated `redirects.conf`; this page is the
+//     no-include static fallback (0-second meta refresh + a link), so the
+//     alias never 404s where the include cannot run (SIG-RQ-009).
+//
+// A slug that is neither an emitted handle nor a recorded task id mints no
+// route (fail closed, SIG-ENG-042). T1 zero-JS.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import {
+  getDossiers,
+  getJurisdictionClaims,
+  getQueueAsOf,
+  getResearchQueue,
+  getResearchQueueProvenance,
+} from "../../lib/data";
+import {
+  DISPOSITION_META,
+  claimStatusFor,
+  type ResearchTaskCard,
+} from "../../lib/research-queue";
+import {
+  howToAct,
+  relatedTasks,
+  statusLine,
+  taskJsonHref,
+  triggerSentence,
+  unknownNote,
+  whyItMatters,
+} from "../../lib/task-page";
+import {
+  queuePlaceHref,
+  queueTypeHref,
+  queueRoleHref,
+  roleLabel,
+  typeLabel,
+} from "../../lib/queue-hub";
+import { withBase } from "../../lib/paths";
+
+type TaskProps = { kind: "task"; card: ResearchTaskCard };
+type AliasProps = { kind: "alias"; card: ResearchTaskCard };
+type Props = TaskProps | AliasProps;
+
+export function getStaticPaths() {
+  const cards = getResearchQueue();
+  const out: { params: { slug: string }; props: Props }[] = [];
+  const emitted = new Set<string>();
+  for (const card of cards) {
+    if (!card.handle) continue;
+    if (emitted.has(card.handle)) {
+      throw new Error(`task pages: duplicate handle ${card.handle} — a handle collision is a build error`);
+    }
+    emitted.add(card.handle);
+    out.push({ params: { slug: card.handle }, props: { kind: "task", card } });
+  }
+  for (const card of cards) {
+    if (!card.task_id || !card.handle || card.task_id === card.handle) continue;
+    if (emitted.has(card.task_id)) {
+      throw new Error(
+        `task pages: task id ${card.task_id} collides with an emitted route — ` +
+          "an id-alias can never shadow a task page",
+      );
+    }
+    emitted.add(card.task_id);
+    out.push({ params: { slug: card.task_id }, props: { kind: "alias", card } });
+  }
+  return out;
+}
+
+const p = Astro.props as Props;
+
+// --- the alias stub (/task/<task_id>/ → /task/<handle>/) --------------------- //
+let aliasTarget: string | null = null;
+if (p.kind === "alias") aliasTarget = withBase(`task/${p.card.handle}/`);
+
+// --- the task detail page ----------------------------------------------------- //
+const card = p.kind === "task" ? p.card : null;
+const CLAIMS = card ? getJurisdictionClaims() : [];
+const AS_OF = card ? getQueueAsOf() : "";
+const claim = card ? claimStatusFor(card, CLAIMS, AS_OF) : null;
+const related = card ? relatedTasks(card, getResearchQueue()) : [];
+const emittedDossiers = card ? new Set(getDossiers().map((d) => d.slug)) : new Set<string>();
+const dossierSlug =
+  card?.place?.slug && emittedDossiers.has(card.place.slug) ? card.place.slug : null;
+const unknown = card ? unknownNote(card) : null;
+const isDraftRole =
+  card !== null && (card.assignee_class === "records_requester" || card.assignee_class === "document_reviewer");
+const provenance = card ? getResearchQueueProvenance() : undefined;
+---
+
+{p.kind === "alias" && card === null ? (
+  <BaseLayout title={`Task identifier ${p.card.task_id} — redirect`} path={withBase(`task/${p.card.task_id}/`)} noindex>
+    <meta slot="head" http-equiv="refresh" content={`0; url=${aliasTarget}`} />
+    <p class="sig-lede" data-testid="task-alias-stub" data-task-id={p.card.task_id}>
+      This task identifier resolves to the task's current handle — its page lives at{" "}
+      <a href={aliasTarget}><code>{p.card.handle}</code></a>.
+    </p>
+    <p class="sig-table-note">Canonical task id: <code>{p.card.task_id}</code></p>
+  </BaseLayout>
+) : card !== null ? (
+<BaseLayout
+  title={card.title ?? card.subject_label}
+  path={withBase(`task/${card.handle}/`)}
+  provenance={provenance}
+  provenanceName="research queue"
+  provenancePointerBase="/surfaces/research_queue"
+  crumbs={[
+    { label: "Research queue", href: withBase("research-queue/") },
+    { label: card.handle ?? "task" },
+  ]}
+>
+  <article class="sig-task-page" data-testid="task-page" data-handle={card.handle} data-task-type={card.task_type} data-status={card.status ?? "generated"}>
+    <p class="sig-task-page__status" data-testid="task-status-line">
+      {statusLine(card, claim?.claimed_by ?? null)}
+    </p>
+    <p class="sig-task-page__handle">
+      Handle <code data-testid="task-handle">{card.handle}</code> ·{" "}
+      <a href={withBase(queueTypeHref(card.task_type))}>{typeLabel(card.task_type)}</a> ·{" "}
+      <a href={withBase(queueRoleHref(card.assignee_class))}>{roleLabel(card.assignee_class)}</a> ·{" "}
+      effort: {card.effort_estimate}
+    </p>
+
+    <h2>What's unknown</h2>
+    <p data-testid="task-unknown">{unknown ?? "The task does not record an absence kind — the gap it names is stated under Closing condition."}</p>
+    <p data-testid="task-evidence-sought"><strong>Evidence sought:</strong> {card.evidence_sought}</p>
+    {(card.predicate_ids ?? []).length > 0 && (
+      <p data-testid="task-predicates">
+        <strong>Missing predicate(s):</strong> {card.predicate_ids!.join(", ")}
+      </p>
+    )}
+
+    <h2>Why it matters</h2>
+    <p data-testid="task-why">{whyItMatters(card)}</p>
+
+    <h2>Subject and place</h2>
+    <p data-testid="task-subject">
+      {card.subject_url ? (
+        <a href={withBase(card.subject_url.replace(/^\//, ""))}>{card.subject_label}</a>
+      ) : (
+        card.subject_label
+      )}
+    </p>
+    <p data-testid="task-place">
+      Place: <a href={withBase(queuePlaceHref(card.place?.slug ?? "unplaced"))}>{card.place?.name ?? card.jurisdiction}</a>
+      {card.place_basis && <> — attributed by <code>{card.place_basis}</code></>}
+      {dossierSlug && (
+        <> · <a href={withBase(`dossier/${dossierSlug}/`)} data-testid="task-dossier-link">the dossier</a></>
+      )}
+    </p>
+    {claim?.claimed && (
+      <p data-testid="task-claim">
+        Claimed by <strong>{claim.claimed_by}</strong>, expiring {claim.expires_at} — a claim grants
+        priority, never exclusivity; anyone may still work this task.
+      </p>
+    )}
+
+    <h2>What SIG already has</h2>
+    {card.trigger?.detail ? (
+      <p data-testid="task-trigger-detail">{triggerSentence(card)}</p>
+    ) : (
+      <p data-testid="task-trigger-detail">No recorded evidence detail — the task names what is missing, not what is known.</p>
+    )}
+
+    <h2>Triggered by</h2>
+    <p data-testid="task-trigger">
+      {card.trigger ? (
+        <>A <code>{card.trigger.kind}</code> detector record, ref <code>{card.trigger.ref}</code>.</>
+      ) : (
+        <>No trigger is recorded for this task — it may predate trigger recording.</>
+      )}
+    </p>
+
+    <h2>Suggested sources</h2>
+    <p data-testid="task-sources">
+      No place-and-technology source shortlist is emitted for this task in this release —{" "}
+      <a href={withBase("sources/")}>the sources index</a> lists every source SIG tracks.
+    </p>
+
+    <h2>Records-request draft</h2>
+    <p data-testid="task-draft">
+      {isDraftRole ? (
+        <>No draft request is published for this task in this release. When the drafts
+        export lands, a DRAFT request (statute, citation, template version, residency
+        note) renders here — SIG sends nothing; you file it; the filer is left blank.</>
+      ) : (
+        <>This task is not a records-request or document-review task — no draft applies.</>
+      )}
+    </p>
+
+    <h2>Closing condition</h2>
+    <p data-testid="task-closing">{card.closing_condition}</p>
+
+    <h2>How to act</h2>
+    <ol data-testid="task-how-to-act">
+      {howToAct(card).map((step) => <li>{step}</li>)}
+    </ol>
+    <p data-testid="task-report">
+      Report what you found through the channel SIG names for it — the contribution-path
+      wiring names it; this page never invents one.
+    </p>
+
+    <h2>Possible outcomes</h2>
+    <ul data-testid="task-dispositions">
+      {card.dispositions.map((d) => (
+        <li><code>{d}</code> — {DISPOSITION_META[d]}</li>
+      ))}
+    </ul>
+
+    <h2>History</h2>
+    <dl data-testid="task-history">
+      {card.generated_at && <><dt>Generated</dt><dd>{card.generated_at}</dd></>}
+      {card.detector_version && <><dt>Detector version</dt><dd>{card.detector_version}</dd></>}
+      <dt>Status</dt><dd>{card.status ?? "generated"}</dd>
+      {card.disposition && <><dt>Disposition</dt><dd>{card.disposition}</dd></>}
+    </dl>
+
+    <h2>Related</h2>
+    {related.length > 0 ? (
+      <ul data-testid="task-related">
+        {related.slice(0, 10).map((r) => (
+          <li>
+            {r.handle ? (
+              <a href={withBase(`task/${r.handle}/`)}>{r.title ?? r.subject_label}</a>
+            ) : (
+              r.title ?? r.subject_label
+            )}{" "}
+            — {typeLabel(r.task_type)}
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p data-testid="task-related">No other open tasks share this subject, place or type.</p>
+    )}
+
+    <h2>Technical details</h2>
+    <dl data-testid="task-technical">
+      <dt>Task id</dt><dd><code>{card.task_id ?? "not recorded"}</code></dd>
+      <dt>Subject id</dt><dd><code>{card.subject_id}</code></dd>
+      {card.trigger && <><dt>Trigger ref</dt><dd><code>{card.trigger.ref}</code></dd></>}
+      {card.task_id && <><dt>API</dt><dd><code>/v1/task/{card.task_id}</code></dd></>}
+      <dt>JSON twin</dt>
+      <dd><a href={withBase(taskJsonHref(card.handle!))} data-testid="task-json-twin">{taskJsonHref(card.handle!)}</a></dd>
+    </dl>
+  </article>
+</BaseLayout>
+) : null}

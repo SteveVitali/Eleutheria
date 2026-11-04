@@ -57,7 +57,13 @@ const evidDate = evidenceDateOf(card);
   data-effort={card.effort_estimate}
   data-claimed={claim.claimed ? "true" : "false"}
 >
-  <h3>{card.title ?? card.subject_label}</h3>
+  <h3>
+    {card.handle ? (
+      <a href={withBase(`task/${card.handle}/`)} data-testid="task-link">{card.title ?? card.subject_label}</a>
+    ) : (
+      card.title ?? card.subject_label
+    )}
+  </h3>
   <dl class="sig-task-card__fields">
     {card.handle && (
       <div>

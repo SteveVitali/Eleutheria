@@ -14,6 +14,8 @@ import { withBase } from "../lib/paths";
 import { ABSENCE_KIND_META } from "../lib/epistemic";
 import { NO_RECORD_IN_SIG } from "../lib/dossier";
 import type { Gap } from "../lib/dossier";
+import { getQueueCampaigns, getResearchQueue } from "../lib/data";
+import { resolveGapLink } from "../lib/task-page";
 // P35.37 (SIG-TRANSP-013): a gap label carrying a numeral is a dossier-class
 // figure — the page passes its registry specs keyed `gap-<variant>-<i>`.
 import type { FigureSpec } from "../lib/figures";
@@ -27,6 +29,11 @@ interface Props {
 }
 
 const { gaps, variant, specs } = Astro.props;
+
+// P36.62 (RQ-03b / SIG-RQ-008): every gap resolves to its real task or
+// campaign page — or carries the named absence, never a guessed link.
+const GAP_CARDS = getResearchQueue();
+const GAP_CAMPAIGNS = getQueueCampaigns();
 ---
 
 {gaps.length === 0 && (
@@ -38,6 +45,7 @@ const { gaps, variant, specs } = Astro.props;
 <ul class="sig-gaps" data-testid={`what-we-dont-know-${variant}`}>
   {gaps.map((g, gi) => {
     const spec = specs?.get(`gap-${variant}-${gi}`);
+    const link = resolveGapLink(g, GAP_CARDS, GAP_CAMPAIGNS);
     const body = (
       <>
         <span class="sig-gaps__label">{g.label}</span>
@@ -47,7 +55,29 @@ const { gaps, variant, specs } = Astro.props;
           subject_id={g.subject_id}
           predicate_id={g.predicate_id}
           predicate_label={g.label}
+          {...(link.kind !== "none" ? { href: link.href } : {})}
         />
+        {link.kind !== "none" && (
+          <>
+            {" "}
+            <a
+              href={withBase(link.href)}
+              class="sig-gaps__task"
+              data-testid={`gap-task-${variant}`}
+              data-link-kind={link.kind}
+            >
+              {link.kind === "task" ? "the open task" : "the mapping campaign"}
+            </a>
+          </>
+        )}
+        {link.kind === "none" && (
+          <>
+            {" "}
+            <span class="sig-gaps__no-task" data-testid={`gap-no-task-${variant}`}>
+              {link.reason}
+            </span>
+          </>
+        )}
         {g.kind === "NO_EVIDENCE_FOUND" && g.sources_searched && (
           <>
             {" "}

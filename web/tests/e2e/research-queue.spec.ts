@@ -56,8 +56,10 @@ test.describe("the task card (K11 §5.1)", () => {
     await expect(
       card.locator("a[href='/research-queue/place/usa/ok/oklahoma-city-4064000/']"),
     ).toHaveCount(1);
-    // No card ever links to a /task/ page that does not exist yet (P36.62's).
-    await expect(card.locator("a[href^='/task/']")).toHaveCount(0);
+    // P36.62 (RQ-03b): the card's one link is its real task page.
+    const link = card.getByTestId("task-link");
+    await expect(link).toHaveCount(1);
+    await expect(link).toHaveAttribute("href", /^\/task\/T-/);
   });
 });
 
@@ -139,8 +141,7 @@ test.describe("SIG-UI-079 — the queue is reachable from absences", () => {
   });
 
   test("O4 leg-a — an absence chip's Help-find-it link reaches the queue", async ({ page }) => {
-    // The K13 O4 journey's a-half: chip → hub → place facet → card (the
-    // /task/<handle>/ leg lands with P36.62).
+    // The K13 O4 journey's a-half: chip → hub → place facet → card.
     await page.goto("/research-queue/");
     await page
       .getByTestId("start-place")
@@ -148,5 +149,112 @@ test.describe("SIG-UI-079 — the queue is reachable from absences", () => {
       .click();
     await expect(page).toHaveURL(new RegExp(`${OKC_PLACE}$`));
     await expect(page.getByTestId("closing-condition").first()).not.toBeEmpty();
+  });
+});
+
+test.describe("P36.62 (RQ-03b) — task pages, campaigns, gap links, redirects", () => {
+  const TASK = "/task/T-usa-ok-oklahoma-city-retention-pd-q1c4/";
+  const CAMPAIGN = "/research-queue/campaign/M-usa-ok-oklahoma-city-operator-osm-5f0a/";
+
+  test("the task page renders every §5.3 block as a value or a named absence", async ({
+    page,
+  }) => {
+    await page.goto(TASK);
+    await expect(page.getByTestId("task-page")).toBeVisible();
+    for (const id of [
+      "task-status-line",
+      "task-handle",
+      "task-unknown",
+      "task-evidence-sought",
+      "task-predicates",
+      "task-why",
+      "task-subject",
+      "task-place",
+      "task-trigger-detail",
+      "task-trigger",
+      "task-sources",
+      "task-draft",
+      "task-closing",
+      "task-how-to-act",
+      "task-report",
+      "task-dispositions",
+      "task-history",
+      "task-related",
+      "task-technical",
+      "task-json-twin",
+    ]) {
+      await expect(page.getByTestId(id), id).toBeVisible();
+    }
+    // Oklahoma City is claimed — the line names priority, never exclusivity.
+    await expect(page.getByTestId("task-status-line")).toContainText("anyone may still work this task");
+    // The closing condition names the predicate — the block is never blank.
+    await expect(page.getByTestId("task-predicates")).toContainText("configured_retention_days");
+    // No raw UUID is a heading (SIG-RQ-001).
+    const heads = await page.locator("h1, h2, h3").allTextContents();
+    for (const h of heads) {
+      expect(h).not.toMatch(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
+    }
+  });
+
+  test("the JSON twin carries sig.task-page/1 with the card fields", async ({ page }) => {
+    const res = await page.goto("/task/T-usa-ok-oklahoma-city-retention-pd-q1c4.json");
+    expect(res?.status()).toBe(200);
+    const body = await res!.json();
+    expect(body.schema).toBe("sig.task-page/1");
+    expect(body.handle).toBe("T-usa-ok-oklahoma-city-retention-pd-q1c4");
+    expect(body.predicate_ids).toContain("configured_retention_days");
+    expect(body.closing_condition).toBeTruthy();
+  });
+
+  test("the campaign page shows the field, count, why and the honest contribution note", async ({
+    page,
+  }) => {
+    await page.goto(CAMPAIGN);
+    await expect(page.getByTestId("campaign-page")).toBeVisible();
+    await expect(page.getByTestId("campaign-summary")).toContainText("3");
+    await expect(page.getByTestId("campaign-why")).not.toBeEmpty();
+    await expect(page.getByTestId("campaign-members")).toBeVisible();
+    // MapRoulette is the named absence until HG-08 registers — never a dead link.
+    await expect(page.getByTestId("campaign-maproulette")).toContainText("No MapRoulette");
+  });
+
+  test("a dossier gap resolves to the real task page — never a mock (SIG-RQ-008)", async ({
+    page,
+  }) => {
+    await page.goto("/dossier/oklahoma-city/");
+    const link = page.getByTestId("gap-task-section").first();
+    await expect(link).toBeVisible();
+    await expect(link).toHaveAttribute("href", TASK);
+    // …and a gap with no queued task names the absence, never a guessed link.
+    await expect(page.getByTestId("gap-no-task-section").first()).toBeVisible();
+    // The resolved gap IS the landing task — click through (O4 leg-b).
+    await link.click();
+    await expect(page).toHaveURL(new RegExp(`${TASK}$`));
+    await expect(page.getByTestId("task-closing")).not.toBeEmpty();
+  });
+
+  test("a typed-absence row resolves to the same task page", async ({ page }) => {
+    await page.goto("/dossier/oklahoma-city/");
+    const hatch = page
+      .getByTestId("absence-hatch")
+      .filter({ has: page.locator(`a[href='${TASK}']`) });
+    await expect(hatch.first()).toBeVisible();
+  });
+
+  test("the /task/<task_id>/ alias stub resolves to the handle (SIG-RQ-009)", async ({
+    page,
+    request,
+  }) => {
+    // The stub IS a 0-second meta-refresh + link — assert its markup at
+    // request level (a browser follows the refresh straight to the page).
+    const res = await request.get("/task/fx-okc-conflicting-retention/");
+    expect(res.status()).toBe(200);
+    const html = await res.text();
+    expect(html).toContain('data-testid="task-alias-stub"');
+    expect(html).toContain(`url=${TASK}`);
+    expect(html).toContain(`href="${TASK}"`);
+    // …and the generated include covers the same id-alias (the 301 leg).
+    await page.goto(TASK);
+    await expect(page.getByTestId("task-page")).toBeVisible();
   });
 });
