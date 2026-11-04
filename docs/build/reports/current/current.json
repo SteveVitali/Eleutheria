@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "eda67ed9d4ae7dc5552674224e7ce8ee9d53221c",
-  "manifest_inputs": 1183,
+  "input_commit": "7d151cc960feb924009526b73df89551881e6b2b",
+  "manifest_inputs": 1184,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P36.65",
@@ -16912,8 +16912,8 @@
           "label": "historical/csv"
         },
         "SIG-UI-056": {
-          "verdict": "PARTIAL",
-          "evidence": "web/src/lib/source-page.ts;web/src/pages/sources/[id]/index.astro;web/src/lib/source-counts.ts",
+          "verdict": "MET",
+          "evidence": "web/src/pages/about.astro;web/src/components/dossier/OtherPublicResources.astro",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17794,50 +17794,50 @@
           "label": "historical/csv"
         },
         "SIG-UI-135": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "web/src/pages/index.astro;web/src/styles/k14-home.css",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-136": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "web/src/pages/index.astro;web/src/lib/onboarding.ts",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-137": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "web/src/lib/onboarding.ts;web/src/pages/index.astro;web/src/lib/reading-key.ts",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-138": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "web/src/lib/onboarding.ts;web/src/pages/index.astro",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-139": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "web/src/lib/capabilities.ts;web/src/pages/index.astro;web/src/pages/about.astro",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-140": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "web/src/pages/about.astro;web/src/pages/glossary.astro",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-141": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "web/src/components/InBrief.astro;web/src/pages/editorial-standards.astro;web/src/pages/coverage-metrics.astro",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-142": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "web/src/components/Term.astro;web/src/pages/glossary.astro",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -26011,7 +26011,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "eee258ddb2c6d2e409967c07e42e5cbd6c47f16be92b31119e9a4dca450cc3eb",
+  "manifest_sha256": "ffbf5485d36db285d6b5c1ef8f98be93bc86ceab41b5bebb23cc3930d7e6b0f0",
   "current_md": {
     "lines": 136,
     "bytes": 20242,
