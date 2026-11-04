@@ -27,6 +27,8 @@ import IncompletenessBanner from "../../components/IncompletenessBanner.astro";
 import WhatWeDontKnow from "../../components/WhatWeDontKnow.astro";
 import DossierSection from "../../components/DossierSection.astro";
 import ActionBlocks from "../../components/ActionBlocks.astro";
+import ReadingKey from "../../components/ReadingKey.astro";
+import { dossierReadingKey } from "../../lib/reading-key";
 import Figure from "../../components/Figure.astro";
 import { applyPublicationPolicy, dossierLang, dossierJsonPath, dossierPath, dossierPrintPath, sectionTitlesFor, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG, unplacedPath } from "../../lib/dossier";
 import type { Dossier } from "../../lib/dossier";
@@ -610,9 +612,17 @@ if ((dossier.chain?.length ?? 0) > 1) {
 } else {
   crumbs.push({ label: pageTitle });
 }
+// P36.65 (UXK14-11, K14 §6.3): the per-page reading key — computed from the
+// dossier's own model so it lists ONLY the symbols this page renders.
+const readingKey = dossierReadingKey(dossier);
 // The band's actions — the print form mints only for country + admin-1
 // dossiers (P35.45 / D-K4-3); `links.print` names the minted set.
 const actions: PageAction[] = [
+  // The key link rides only when the page carries at least one symbol — a
+  // symbol-free dossier mounts no key and the action would point nowhere.
+  ...(readingKey.length > 0
+    ? [{ label: "How to read this page", href: "#reading-key", testId: "reading-key-link" }]
+    : []),
   ...(dossier.links === undefined || dossier.links?.print
     ? [{ label: "Print", href: withBase(dossierPrintPath(dossier.slug)), testId: "print-link" }]
     : []),
@@ -656,6 +666,9 @@ return (
     Inventory overview — built automatically from published claims. The
     evidence-complete reviewed-portfolio form is being built.
   </p>
+
+  {/* P36.65 (UXK14-11): the reading key — only the symbols this page carries. */}
+  {readingKey.length > 0 && <ReadingKey items={readingKey} />}
 
   <IncompletenessBanner dossier={dossier} spec={specMap.get("banner")} />
 

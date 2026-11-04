@@ -1,0 +1,191 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.65 (UXK14-11; K14 §6.3 "an annotated page instead") — "How to read a
+// dossier" (T1, zero client JS): the annotated walk of a dossier's parts,
+// GENERATED from the release's golden dossier (lib/onboarding.ts — the first
+// joined dossier, ≥3 named sources + a recorded disagreement) so it
+// regenerates each release and never goes stale the way screenshots do.
+// Every numbered callout links the live section it describes; with no joined
+// dossier the page names that absence honestly and annotates the template
+// contract itself, links pointed at the dossier index.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ReadingKey from "../../components/ReadingKey.astro";
+import EmptyState from "../../components/EmptyState.astro";
+import { goldenPlace } from "../../lib/onboarding";
+import { dossierReadingKey } from "../../lib/reading-key";
+import { getDossiers } from "../../lib/data";
+import { dossierPath, sectionTitlesFor, dossierLang } from "../../lib/dossier";
+import { templatePlan, NETWORK_SLOT_SECTIONS } from "../../lib/dossier-template";
+import { withBase } from "../../lib/paths";
+
+const golden = goldenPlace();
+// The dossier object the golden card stands on — the callouts read its real
+// sections so the annotation is data-true, never hand-picked.
+const dossier = golden ? getDossiers().find((d) => dossierPath(d.slug) === golden.href)! : null;
+const lang = dossier ? dossierLang(dossier) : "en";
+const SECTION_TITLES = sectionTitlesFor(lang);
+const base = dossier ? dossierPath(dossier.slug) : withBase("dossier/");
+
+interface Callout {
+  /** The part's name (rendered beside its number). */
+  title: string;
+  /** What to look for — drafted copy (HD-* batch rows). */
+  body: string;
+  bodyCopy: string;
+  /** The live anchor the callout links (empty = the dossier root). */
+  anchor: string;
+}
+
+const callouts: Callout[] = [
+  {
+    title: "The header",
+    body: "The place's name, where it sits in the tree, the release the page was built from, and the Cite, Print, Downloads and JSON actions.",
+    bodyCopy: "HD-03",
+    anchor: "",
+  },
+  {
+    title: "How to read this page",
+    body: "A collapsible key listing only the symbols this page carries — expand it whenever a marker is unfamiliar.",
+    bodyCopy: "HD-04",
+    anchor: "#reading-key",
+  },
+  {
+    title: "The header strip",
+    body: "The record's level, counts and freshness in one strip — where the place sits, how much is covered, and when the data was current.",
+    bodyCopy: "HD-18",
+    anchor: "#dossier-header-strip",
+  },
+  {
+    title: "The incompleteness banner",
+    body: "One honest count of the fields the record does not yet cover — the number is an invitation to look, never a verdict on the place.",
+    bodyCopy: "HD-05",
+    anchor: "#incompleteness-banner",
+  },
+  {
+    title: "What we don't know (summary)",
+    body: "The headline gaps up front — each labelled by kind, each linking the task that would close it.",
+    bodyCopy: "HD-06",
+    anchor: "#summary-gaps-heading",
+  },
+];
+if (dossier) {
+  for (const unit of templatePlan(dossier)) {
+    if (unit.kind === "section") {
+      callouts.push({
+        title: SECTION_TITLES[unit.section.section_id] ?? unit.section.section_id,
+        body:
+          unit.section.section_id === "at_a_glance"
+            ? "The locator, the record map, and the section's figures — every numeral expands to the sources and rule behind it."
+            : unit.section.section_id === "what_we_dont_know"
+              ? "The full gap list — each entry a typed absence, never a blank cell."
+              : unit.section.section_id === "how_we_know_this"
+                ? "The provenance for this page's own figures — sources, runs and review status at dossier scope."
+                : NETWORK_SLOT_SECTIONS[unit.section.section_id] !== undefined
+                  ? "The section's facts and rows; a figure slot waits here until the network figures ship — an empty slot is a typed state, never a hole."
+                  : "The section's facts and rows — a value, a typed absence, or an explicit unknown; never a silent blank.",
+        bodyCopy: "HD-07",
+        anchor: `#sec-${unit.section.section_id}`,
+      });
+    } else if (unit.kind === "where-this-comes-from") {
+      callouts.push({
+        title: "Where this comes from",
+        body: "The sources the page is built on and what each contributes.",
+        bodyCopy: "HD-08",
+        anchor: "#wtcf-heading",
+      });
+    } else if (unit.kind === "next-decisions") {
+      callouts.push({
+        title: "Next decisions",
+        body: "The dated decisions SIG tracks for this place — or the named reason none appear yet.",
+        bodyCopy: "HD-09",
+        anchor: "#next-decisions-heading",
+      });
+    } else if (unit.kind === "other-public-resources") {
+      callouts.push({
+        title: "Other public resources",
+        body: "Outside projects a reader may also find useful — linked, never endorsed.",
+        bodyCopy: "HD-10",
+        anchor: "#other-resources-heading",
+      });
+    }
+  }
+  // The roll-up block renders only when the dossier has children or a rollup —
+  // a callout must never link an anchor the page does not carry.
+  if ((dossier.children?.length ?? 0) > 0 || dossier.rollup !== undefined) {
+    callouts.push({
+      title: "Child jurisdictions",
+      body: "The places this dossier rolls up — a child with no page is a named absence, not a dead link.",
+      bodyCopy: "HD-11",
+      anchor: "#rollup-heading",
+    });
+  }
+}
+---
+
+<BaseLayout
+  title="How to read a dossier"
+  path="/about/how-to-read-a-dossier/"
+  lede="An annotated walk through a SIG dossier, generated from this release's own example."
+  crumbs={[
+    { label: "About", href: withBase("about/") },
+    { label: "How to read a dossier" },
+  ]}
+>
+  <p class="sig-lede" data-copy="HD-01">
+    A dossier is one place's record: what is deployed, who runs it, what it
+    costs, who can see the data, and what SIG does not yet know. This page
+    walks the parts top to bottom.
+  </p>
+  {dossier ? (
+    <>
+      <p data-testid="annotated-source" data-copy="HD-02">
+        Every numbered note below links the live section it describes — the
+        example is this release's own dossier for{" "}
+        <a href={base}>{golden!.name}</a>, so the walk can never drift from
+        what the page renders.
+      </p>
+      {/* The same key the dossier itself carries — exhibited here so the
+          reader sees it once, explained. */}
+      <ReadingKey items={dossierReadingKey(dossier)} />
+    </>
+  ) : (
+    <>
+      <EmptyState
+        parts={{
+          state: "No joined example dossier in this release",
+          missing:
+            "The annotated walk regenerates from the release's golden dossier — a joined place (three or more sources and a recorded disagreement). This release has none, so the walk annotates the template contract instead of a live page.",
+          nearby: "The dossier index lists every place the release does publish.",
+          action: { href: "dossier/", label: "Browse the dossier index" },
+          change: "The walk re-anchors to a real dossier with the first release that joins one.",
+          cause: "none_recorded",
+          batchIds: {
+            state: "HD-12",
+            missing: "HD-13",
+            nearby: "HD-14",
+            action: "HD-15",
+            change: "HD-16",
+          },
+        }}
+      />
+    </>
+  )}
+  <ol class="sig-callouts" data-testid="dossier-callouts">
+    {callouts.map((c) => (
+      <li class="sig-callout" data-testid="dossier-callout">
+        <a class="sig-callout__title" href={`${base}${c.anchor}`}>
+          {c.title}
+        </a>{" "}
+        — <span data-copy={c.bodyCopy}>{c.body}</span>
+      </li>
+    ))}
+  </ol>
+  <p data-copy="HD-17">
+    Numbers are never bare: expand any figure to see the evidence behind it,
+    and look for the markers the key names — support, contested, the absence
+    kinds, and provisional.
+  </p>
+</BaseLayout>
