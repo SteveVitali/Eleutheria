@@ -33,6 +33,7 @@
  *   adapter owns `history.pushState`/`popstate`.
  */
 
+import { withBase } from "../paths";
 import type { LocationFilter } from "../workspace-state";
 import {
   PARAM_BY_NAME,
@@ -692,7 +693,7 @@ export function workspaceHref2(
 ): string {
   const wire = toWireState(state);
   const serialised = serializeWorkspaceState2(wire);
-  const base = path ?? SURFACE_PATHS[VIEW_SURFACE[wire.view]];
+  const base = withBase(path ?? SURFACE_PATHS[VIEW_SURFACE[wire.view]]);
   return serialised ? `${base}?${serialised}` : base;
 }
 

@@ -27,6 +27,7 @@
 
 import { existsSync, readFileSync } from "node:fs";
 import { dataSource, exportDir } from "./data";
+import { rootPath } from "./paths";
 
 /** The wire schema id the stamp reads (emitted by `exports.site_release`). */
 export const SITE_RELEASE_SCHEMA = "sig.site-release/1";
@@ -143,7 +144,7 @@ export function validateSiteReleaseDoc(doc: unknown, path: string): ReleaseStamp
     builtAt: stampInstant(o.built_at as string),
     commit8: code.commit.slice(0, 8),
     commitHref: code.url,
-    describedby: "/release.json",
+    describedby: rootPath(`releases/${pub}/release.json`),
     metaContent: `${o.label} ${pub}`,
     releaseBlock: {
       label: o.label,

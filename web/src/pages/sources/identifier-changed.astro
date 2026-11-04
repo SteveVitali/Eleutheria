@@ -10,6 +10,7 @@
 // mapping (the mapping stays in the restricted map). `data-notice` marks the
 // B-2 notice string. noindex: the page must never surface in search.
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { withBase } from "../../lib/paths";
 ---
 
 <BaseLayout
@@ -19,5 +20,5 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   noindex={true}
 >
   <p data-notice="N-5">This identifier has changed.</p>
-  <p><a data-copy="GN-02" href="/sources/">Go to the sources and licences page</a></p>
+  <p><a data-copy="GN-02" href={withBase("sources/")}>Go to the sources and licences page</a></p>
 </BaseLayout>

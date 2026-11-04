@@ -32,6 +32,7 @@
 
 import { beliefPinnedPermalink } from "./citation";
 import type { AsOfEcho } from "./fixtures";
+import { withBase } from "./paths";
 
 // --- The §45.1 intake categories (SIG-GOV-001) -------------------------------
 
@@ -123,13 +124,13 @@ export const DISPUTE_PATH = "/dispute/";
  * carries, so the channel is one link away from anywhere.
  */
 export function disputeHref(about?: { subject_id?: string; predicate_id?: string; as_of_belief?: string }): string {
-  if (!about) return DISPUTE_PATH;
+  if (!about) return withBase(DISPUTE_PATH);
   const q = new URLSearchParams();
   if (about.subject_id) q.set("subject", about.subject_id);
   if (about.predicate_id) q.set("predicate", about.predicate_id);
   if (about.as_of_belief) q.set("as_of_belief", about.as_of_belief);
   const qs = q.toString();
-  return qs ? `${DISPUTE_PATH}?${qs}` : DISPUTE_PATH;
+  return qs ? `${withBase(DISPUTE_PATH)}?${qs}` : withBase(DISPUTE_PATH);
 }
 
 // --- The correction log entry (SIG-UI-032, §45.3) ----------------------------

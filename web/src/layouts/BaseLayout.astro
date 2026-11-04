@@ -33,7 +33,7 @@ import { groupDigits } from "../lib/format";
 import { navForRoutes } from "../lib/nav";
 import type { Crumb, PageAction } from "../lib/nav";
 import { releaseRoutes } from "../lib/release-routes";
-import { withBase, BASE } from "../lib/paths";
+import { withBase, rootPath, BASE } from "../lib/paths";
 import { classifyRoute } from "../lib/page-types";
 import { TYPEAHEAD_SHARD_ROOT } from "../lib/typeahead-shards";
 import { T2_ROBOTS_CONTENT } from "../lib/workspace-state/index";
@@ -251,7 +251,11 @@ const isT2 =
 // absolute URL, resolved against the canonical origin through withBase so a
 // snapshot build names its own copy.
 const socialCard = socialCardForRoute(path);
-const canonicalUrl = new URL(path, Astro.site ?? CANONICAL_ORIGIN).href;
+// P36.66a (SIG-UI-075 / SIG-REL-008): the canonical goes through withBase too —
+// a snapshot page's canonical names its own `/s/<pub>/` copy (self-contained:
+// no same-origin link escapes the prefix), and under the root base nothing
+// changes.
+const canonicalUrl = new URL(withBase(path), Astro.site ?? CANONICAL_ORIGIN).href;
 const socialCardUrl = socialCard
   ? new URL(withBase(socialCard.file), Astro.site ?? CANONICAL_ORIGIN).href
   : null;
@@ -276,7 +280,7 @@ const socialCardUrl = socialCard
     <!-- P34.13 (QW-11): the SIG favicon — served from /favicon.svg (a file
          the allow-list names); P36.25 replaced the interim letter mark with
          the node-link glyph. -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
     {/* P36.25 (SIG-UI-154, K14 §4.12): the favicon set — the 32 px PNG is the
         `alternate icon` fallback for browsers without SVG favicons (so it is
         never fetched where the SVG suffices), and the 180 px touch icon for
@@ -315,8 +319,8 @@ const socialCardUrl = socialCard
         the release's publication-bound Frictionless descriptor (`describedby`)
         and the DCAT 3 series catalog (`alternate`). Both are LINKED files;
         JSON-LD is never inlined on a public page. */}
-    {stamp && <link rel="describedby" type="application/json" href={withBase(`releases/${stamp.publicationId}/datapackage.json`)} />}
-    {stamp && <link rel="alternate" type="application/ld+json" href={withBase("releases/catalog.jsonld")} />}
+    {stamp && <link rel="describedby" type="application/json" href={rootPath(`releases/${stamp.publicationId}/datapackage.json`)} />}
+    {stamp && <link rel="alternate" type="application/ld+json" href={rootPath("releases/catalog.jsonld")} />}
     {loadKitChrome &&
       KIT_CHROME_MODULES.map((name) => (
         <script is:inline type="module" src={withBase(`_kit/${name}.js`)}></script>
@@ -383,7 +387,7 @@ const socialCardUrl = socialCard
                 </p>
                 <p class="sig-footer__stamp-basis" data-testid="release-stamp-basis" data-copy="RS-05">
                   This is the latest view. Cite the fixed copy:{" "}
-                  <a href={`/r/${stamp.publicationId}/`}><code>/r/{stamp.publicationId}/</code></a>.
+                  <a href={rootPath(`r/${stamp.publicationId}/`)}><code>/r/{stamp.publicationId}/</code></a>.
                   The public API also serves newer, unreleased records, labelled "live".
                 </p>
               </Fragment>

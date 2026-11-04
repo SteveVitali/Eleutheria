@@ -19,6 +19,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import InBrief from "../components/InBrief.astro";
 import { EDITORIAL_CASES, assertReviewReleasable, openFindings } from "../lib/editorial";
 import { getHostileReaderReview } from "../lib/data";
+import { withBase } from "../lib/paths";
 
 // The recorded hostile-reader review flows through the single data seam (ADR-066);
 // `null` is the honest "never performed" state — NOT a releasable review.
@@ -41,7 +42,7 @@ const open = review ? openFindings(review) : [];
   </InBrief>
   <p data-copy="ES-01">
     SIG's editorial standards are what make its record usable as evidence. The{" "}
-    <a href="/style-guide/">style guide</a> codifies the register rules; this page
+    <a href={withBase("style-guide/")}>style guide</a> codifies the register rules; this page
     records the worked example cases and the state of the hostile-reader review that
     gates each dossier template version.
   </p>

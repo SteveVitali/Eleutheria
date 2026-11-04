@@ -11,6 +11,7 @@
 // LABELLED suggestion and is NEVER pre-selected (SIG-LLM-001/002).
 import CurateLayout from "../../layouts/CurateLayout.astro";
 import { REVIEW_QUEUE, ER_DECISIONS, curationAction } from "../../lib/curation";
+import { withBase } from "../../lib/paths";
 
 export function getStaticPaths() {
   return REVIEW_QUEUE.map((item) => ({ params: { id: item.item_id } }));
@@ -22,7 +23,7 @@ const action = curationAction(`review-queue/${encodeURIComponent(item.item_id)}/
 ---
 
 <CurateLayout title="Compare and decide" path="/curate/">
-  <p><a href="/curate/">← Back to the review queue</a></p>
+  <p><a href={withBase("curate/")}>← Back to the review queue</a></p>
   <p data-testid="compare-summary">{item.summary}</p>
 
   <div class="sig-compare" data-testid="entity-compare">

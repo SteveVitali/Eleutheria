@@ -26,6 +26,7 @@ import { getSourceCounts } from "../lib/data";
 // surfaces/<name> key for a page-scoped module).
 import { artifactHref, defineFigures } from "../lib/figures";
 import { firstNumeral } from "../lib/dossier-figures";
+import { withBase } from "../lib/paths";
 
 interface Props {
   provenance?: ProvenanceSummary;
@@ -212,10 +213,10 @@ const hwktFig = (id: string) => HWKT_FIGURES.find((f) => f.id === id)!;
     </div>
   </dl>
   <p class="sig-hwkt__links">
-    <a href="/methodology/" data-testid="methodology-link">Methodology</a>
+    <a href={withBase("methodology/")} data-testid="methodology-link">Methodology</a>
     {" · "}
-    <a href="/sources/runs/" data-testid="data-freshness-link">Runs and freshness</a>
+    <a href={withBase("sources/runs/")} data-testid="data-freshness-link">Runs and freshness</a>
     {" · "}
-    <a href="/coverage-metrics/" data-testid="coverage-metrics-link">Coverage metrics</a>
+    <a href={withBase("coverage-metrics/")} data-testid="coverage-metrics-link">Coverage metrics</a>
   </p>
 </section>

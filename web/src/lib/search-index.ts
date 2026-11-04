@@ -14,6 +14,7 @@
 
 import { getDossierIndex } from "./data";
 import { dossierPath } from "./dossier";
+import { withBase } from "./paths";
 import { displayJurisdiction, dossierDisplayTitle } from "./jurisdictions";
 
 /** The emitted document's schema id. */
@@ -37,6 +38,6 @@ export function dossierSearchItems(): DossierSearchItem[] {
     kind: "dossier",
     label: dossierDisplayTitle(d.subject_label, d.jurisdiction),
     sublabel: d.display_name ?? d.name ?? displayJurisdiction(d.jurisdiction).label,
-    href: dossierPath(d.slug),
+    href: withBase(dossierPath(d.slug)),
   }));
 }

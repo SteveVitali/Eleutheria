@@ -53,7 +53,7 @@ const headlineCoverage = coverage.slice(0, HEADLINE_COVERAGE_MAX);
 const slug = (s: string): string =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const golden = goldenPlace();
-const goldenRef = golden ? getDossierArtifactRef(golden.href.replace(/^\/dossier\//, "").replace(/\/$/, "")) : null;
+const goldenRef = golden ? getDossierArtifactRef(golden.route.replace(/^\/dossier\//, "").replace(/\/$/, "")) : null;
 const gptr = (rest: string) => (goldenRef && goldenRef.index !== null ? `/${goldenRef.index}${rest}` : rest || "/");
 const GOLDEN_SPECS =
   golden && goldenRef
@@ -64,10 +64,10 @@ const GOLDEN_SPECS =
           value: f.value,
           artifact: goldenRef.artifact,
           pointer: gptr(f.pointerRest),
-          definition: `${golden.href.slice(1)}#sec-how_we_know_this`,
+          definition: `${golden.route.slice(1)}#sec-how_we_know_this`,
           href: artifactHref(goldenRef.artifact),
           breakdown: `#fig-golden-fact-${i}`,
-          targets: headlineTargets({ recordList: golden.href }),
+          targets: headlineTargets({ recordList: golden.route }),
         })),
         {
           id: "golden-sources",
@@ -75,10 +75,10 @@ const GOLDEN_SPECS =
           value: golden.sources.length,
           artifact: goldenRef.artifact,
           pointer: gptr("/source_families"),
-          definition: `${golden.href.slice(1)}#sec-how_we_know_this`,
+          definition: `${golden.route.slice(1)}#sec-how_we_know_this`,
           href: artifactHref(goldenRef.artifact),
           breakdown: "#fig-golden-sources",
-          targets: headlineTargets({ recordList: golden.href }),
+          targets: headlineTargets({ recordList: golden.route }),
         },
         ...(golden.disagreement?.sides ?? []).map((side, j) => ({
           id: `golden-side-${j}`,
@@ -86,10 +86,10 @@ const GOLDEN_SPECS =
           value: side.text,
           artifact: goldenRef.artifact,
           pointer: gptr(side.pointerRest),
-          definition: `${golden.href.slice(1)}#sec-what_is_deployed`,
+          definition: `${golden.route.slice(1)}#sec-what_is_deployed`,
           href: artifactHref(goldenRef.artifact),
           breakdown: `#fig-golden-side-${j}`,
-          targets: headlineTargets({ recordList: golden.href }),
+          targets: headlineTargets({ recordList: golden.route }),
         })),
       ]
     : [];

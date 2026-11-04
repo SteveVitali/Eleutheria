@@ -17,12 +17,13 @@ interface Props {
   path: string;
 }
 const { title, path } = Astro.props;
+import { withBase } from "../lib/paths";
 const NAV = [
-  { href: "/curate/", label: "Review queue" },
-  { href: "/curate/contradictions/", label: "Contradictions" },
-  { href: "/curate/tasks/", label: "Tasks" },
-  { href: "/curate/submit/", label: "Submit evidence" },
-  { href: "/curate/revert/", label: "Revert" },
+  { href: withBase("curate/"), label: "Review queue" },
+  { href: withBase("curate/contradictions/"), label: "Contradictions" },
+  { href: withBase("curate/tasks/"), label: "Tasks" },
+  { href: withBase("curate/submit/"), label: "Submit evidence" },
+  { href: withBase("curate/revert/"), label: "Revert" },
 ];
 ---
 

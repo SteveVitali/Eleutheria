@@ -12,6 +12,7 @@
 // mode; the committed fixture backs the default build (SIG-DATA-*, ADR-066).
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getLeverageMetric, dataSource } from "../lib/data";
+import { withBase } from "../lib/paths";
 
 const metric = getLeverageMetric();
 const source = dataSource();
@@ -64,7 +65,7 @@ const inFlight =
       This is a <strong>task outcome</strong>, not a contributor ranking: SIG keeps
       <strong>no leaderboards</strong> and no per-mapper rankings (SIG-CONTRIB-016g,
       §33.6). The activity is disclosed on SIG's
-      <a href="/methodology/">Organised Editing activity page</a>.
+      <a href={withBase("methodology/")}>Organised Editing activity page</a>.
     </p>
   </section>
 </BaseLayout>

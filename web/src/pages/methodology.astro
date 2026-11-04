@@ -18,6 +18,7 @@ import { getResolutionEval } from "../lib/data";
 // `web/evaluation.json` in export mode), never a hard-coded constant — and
 // each rendered metric is an evaluation-class <Figure> pointing into it.
 import { artifactHref, defineFigures, evaluationTargets } from "../lib/figures";
+import { withBase } from "../lib/paths";
 
 const eval_ = getResolutionEval();
 const FIGURES = defineFigures("methodology", eval_.metrics.map((m, i) => ({
@@ -74,7 +75,7 @@ const FIGURES = defineFigures("methodology", eval_.metrics.map((m, i) => ({
     A missing row is never silently omitted. SIG distinguishes four kinds of absence —
     not researched, none found (with the sources searched named), stated
     absent, and unresolved — and each is a clickable invitation to{" "}
-    <a href="/research-queue/">research it</a>.
+    <a href={withBase("research-queue/")}>research it</a>.
   </p>
 
   <h2>What SIG does not do</h2>
@@ -85,7 +86,7 @@ const FIGURES = defineFigures("methodology", eval_.metrics.map((m, i) => ({
     are not independent, and the estimator's known failure mode is understating the very
     thing SIG exists to document. SIG publishes counted quantities with{" "}
     <strong>named denominators</strong> and records-derived bounds instead — never a
-    total. See the <a href="/coverage-metrics/">coverage metrics</a>.
+    total. See the <a href={withBase("coverage-metrics/")}>coverage metrics</a>.
   </p>
 
   <h2 id="resolution-eval">How well SIG resolves entities (SIG measuring its own method)</h2>
@@ -152,8 +153,8 @@ const FIGURES = defineFigures("methodology", eval_.metrics.map((m, i) => ({
 
   <h2>Freshness and coverage</h2>
   <ul>
-    <li><a href="/sources/runs/">Sources — runs and freshness</a> — per source: last successful run, last upstream change, last change in SIG's records, cadence, and the freshness verdict with staleness counts measured against predicate volatility (§32.4, K9 §5).</li>
-    <li><a href="/coverage-metrics/">Coverage metrics</a> — counted quantities with named denominators, records-derived bounds, reconciliation ratios, and measured survey recall (§32.5).</li>
-    <li><a href="/style-guide/">Editorial style guide</a> and <a href="/editorial-standards/">editorial standards</a> — the register rules that govern every published sentence, including generated text.</li>
+    <li><a href={withBase("sources/runs/")}>Sources — runs and freshness</a> — per source: last successful run, last upstream change, last change in SIG's records, cadence, and the freshness verdict with staleness counts measured against predicate volatility (§32.4, K9 §5).</li>
+    <li><a href={withBase("coverage-metrics/")}>Coverage metrics</a> — counted quantities with named denominators, records-derived bounds, reconciliation ratios, and measured survey recall (§32.5).</li>
+    <li><a href={withBase("style-guide/")}>Editorial style guide</a> and <a href={withBase("editorial-standards/")}>editorial standards</a> — the register rules that govern every published sentence, including generated text.</li>
   </ul>
 </BaseLayout>

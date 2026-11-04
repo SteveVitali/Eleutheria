@@ -22,6 +22,7 @@ import ContestedMarker from "../components/ContestedMarker.astro";
 import AbsenceHatch from "../components/AbsenceHatch.astro";
 import ContradictionRange from "../components/ContradictionRange.astro";
 import { SUPPORT_LEVELS, ABSENCE_KINDS, ABSENCE_KIND_META, isContested } from "../lib/epistemic";
+import { withBase } from "../lib/paths";
 import {
   getReferenceEntity,
   getReferenceMapSites,
@@ -130,7 +131,7 @@ const nodeX = (i: number) => 60 + i * 140;
     <p>
       A static, zero-JS reference map with no third-party tile dependency.
       <strong>Everything the map shows is also in the table below</strong> — the table is
-      the equivalent, not a fallback. The product map lives at <a href="/map/">/map/</a>.
+      the equivalent, not a fallback. The product map lives at <a href={withBase("map/")}>/map/</a>.
     </p>
     <figure aria-labelledby="refmap-caption">
       <svg
@@ -211,7 +212,7 @@ const nodeX = (i: number) => 60 + i * 140;
     <p>
       A static, zero-JS reference relationship graph. <strong>Every edge is also in the
       list below</strong> — the list is the equivalent, not a fallback. The product
-      network explorer lives at <a href="/network/">/network/</a>.
+      network explorer lives at <a href={withBase("network/")}>/network/</a>.
     </p>
     <figure aria-labelledby="refgraph-caption">
       <svg

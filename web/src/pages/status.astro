@@ -13,7 +13,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Figure from "../components/Figure.astro";
 import { getSiteMetadata } from "../lib/data";
 import { getReleaseStamp } from "../lib/release-stamp";
-import { withBase } from "../lib/paths";
+import { withBase, rootPath } from "../lib/paths";
 // P36.43 (TX-07, SIG-TRANSP-021/034): the status lane — the second clock.
 // `getStatusLane()` reads the lane job's `sig.status-lane/1` doc (fixtures:
 // the committed fixture; export: `<exportDir>/status/lane.json` when the
@@ -188,7 +188,7 @@ const stamp = getReleaseStamp();
       <p data-copy="ST-16" data-testid="lane-count-only">
         <Figure figure={fig("listed")} order="inline">{listedCount}</Figure>{" "}
         scheduled sources are listed on{" "}
-        <a href={withBase("/status/sources/")}>/status/sources/</a>;{" "}
+        <a href={withBase("status/sources/")}>/status/sources/</a>;{" "}
         <Figure figure={fig("count-only")} order="inline">{countOnly}</Figure>{" "}
         gated, refused or withdrawn sources appear as counts only.
       </p>
@@ -230,7 +230,7 @@ const stamp = getReleaseStamp();
       <code>{stamp.publicationShort}</code> ·{" "}
       <a href={stamp.describedby}>release.json</a>.
       This is the latest view. Cite the fixed copy:{" "}
-      <a href={withBase(`/r/${stamp.publicationId}/`)}><code>/r/{stamp.publicationId}/</code></a>.
+      <a href={rootPath(`r/${stamp.publicationId}/`)}><code>/r/{stamp.publicationId}/</code></a>.
       The public API also serves newer, unreleased records, labelled "live".
     </p>
   ) : releaseId ? (
@@ -248,7 +248,7 @@ const stamp = getReleaseStamp();
   <h2 id="reports-heading" data-copy="ST-09">Reports</h2>
   <p data-copy="ST-06">
     Corrections and safety reports arrive by e-mail — the{" "}
-    <a href="/dispute/">dispute page</a> states the address and the handling
+    <a href={withBase("dispute/")}>dispute page</a> states the address and the handling
     order. SIG promises no response time.
   </p>
 </BaseLayout>

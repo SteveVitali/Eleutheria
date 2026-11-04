@@ -11,6 +11,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import EmptyState from "../../components/EmptyState.astro";
 import { getResearchDossierPortfolio } from "../../lib/data";
+import { withBase } from "../../lib/paths";
 import {
   researchDossierPath,
   researchDossierJsonPath,
@@ -34,7 +35,7 @@ const dossiers = [...portfolio.dossiers].sort((a, b) =>
     documented search and a precise follow-up task.
   </p>
   <p>
-    This is <strong>not</strong> the <a href="/dossier/">inventory overview</a>, which
+    This is <strong>not</strong> the <a href={withBase("dossier/")}>inventory overview</a>, which
     is built mechanically from published claims.
   </p>
   <p data-copy="RD-04">
@@ -46,7 +47,7 @@ const dossiers = [...portfolio.dossiers].sort((a, b) =>
   <ul class="sig-dossier-index" role="list" data-testid="research-dossier-index">
     {dossiers.map((d) => (
       <li class="sig-dossier-index__item" data-testid="research-dossier-item" data-slug={researchDossierSlug(d)}>
-        <a class="sig-dossier-index__link" href={researchDossierPath(researchDossierSlug(d))}>
+        <a class="sig-dossier-index__link" href={withBase(researchDossierPath(researchDossierSlug(d)))}>
           <span class="sig-dossier-index__subject">{d.subject.label}</span>
           <span class="sig-dossier-index__place">{d.subject.jurisdiction}</span>
         </a>
@@ -57,7 +58,7 @@ const dossiers = [...portfolio.dossiers].sort((a, b) =>
           <span aria-hidden="true"> · </span>
           {reviewLabel(d.review_status)}
           <span aria-hidden="true"> · </span>
-          <a href={researchDossierJsonPath(researchDossierSlug(d))}>JSON</a>
+          <a href={withBase(researchDossierJsonPath(researchDossierSlug(d)))}>JSON</a>
         </span>
       </li>
     ))}

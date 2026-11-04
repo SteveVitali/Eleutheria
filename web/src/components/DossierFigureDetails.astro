@@ -13,6 +13,7 @@
 import SupportGlyph from "./SupportGlyph.astro";
 import ContestedMarker from "./ContestedMarker.astro";
 import { groupDigits } from "../lib/format";
+import { dataHref } from "../lib/paths";
 import type { Figure } from "../lib/dossier";
 
 interface Props {
@@ -68,7 +69,7 @@ const { figure, unresolved, suffix, lb } = Astro.props;
               <td>{c.tier}</td>
               <td><time datetime={c.date}>{c.date}</time></td>
               <td>
-                <a href={c.documentUrl} aria-label={`Source document for the ${c.source} claim (${c.value})`}>
+                <a href={dataHref(c.documentUrl)} aria-label={`Source document for the ${c.source} claim (${c.value})`}>
                   document
                 </a>
               </td>

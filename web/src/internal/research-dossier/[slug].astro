@@ -13,6 +13,7 @@
 // inventory overview at /dossier/.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getResearchDossierPortfolio } from "../../lib/data";
+import { withBase } from "../../lib/paths";
 import {
   acquisitionLabel,
   derivedAcquisition,
@@ -94,7 +95,7 @@ function locatorText(x: ResearchAssertion): string {
   <p class="sig-kind" data-testid="research-dossier-kind" data-copy="RD-02">
     <strong>Research dossier — {reviewLabel(dossier.review_status)}</strong> — an
     evidence-complete twelve-question portfolio, distinct from the
-    <a href="/dossier/">inventory overview</a>.
+    <a href={withBase("dossier/")}>inventory overview</a>.
     As-of world {dossier.as_of.world}, belief {dossier.as_of.belief}.
   </p>
   {posture.has && (
@@ -140,7 +141,7 @@ function locatorText(x: ResearchAssertion): string {
       </ul>
     )}
     <p>
-      <a href={researchDossierJsonPath(slug)} data-testid="api-link">JSON (API form)</a>
+      <a href={withBase(researchDossierJsonPath(slug))} data-testid="api-link">JSON (API form)</a>
     </p>
   </section>
 

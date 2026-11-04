@@ -34,8 +34,11 @@ export interface GoldenFact {
 }
 
 export interface GoldenPlace {
-  /** The dossier's canonical page path. */
+  /** The emitted dossier link (withBase'd — renders under any base). */
   href: string;
+  /** The dossier's route id, sans base — slug derivation and figure paths use
+   *  this, never the emitted href. */
+  route: string;
   /** The reader-facing name. */
   name: string;
   /** The dossier's raw jurisdiction key (the page resolves displayTitle). */
@@ -109,7 +112,8 @@ export function goldenPlace(dossiers: readonly Dossier[] = getDossiers()): Golde
   if (!d) return null;
   const decision = councilDecision(d);
   return {
-    href: dossierPath(d.slug),
+    href: withBase(dossierPath(d.slug)),
+    route: dossierPath(d.slug),
     name: dossierDisplayTitle(d.subject_label, d.jurisdiction),
     jurisdiction: d.jurisdiction,
     subject: d.subject_label,
@@ -250,7 +254,7 @@ export function exampleQuestions(
     push({
       template: "disagree",
       question: `Where do sources disagree about ${joined.display_name ?? joined.jurisdiction}?`,
-      href: `${dossierPath(joined.slug)}#sec-what_is_deployed`,
+      href: `${withBase(dossierPath(joined.slug))}#sec-what_is_deployed`,
     });
   }
   const multi = dossiers.find((d) => (d.source_families?.length ?? 0) >= 2);
@@ -258,7 +262,7 @@ export function exampleQuestions(
     push({
       template: "recorded",
       question: `What is recorded in ${multi.display_name ?? multi.jurisdiction}?`,
-      href: dossierPath(multi.slug),
+      href: withBase(dossierPath(multi.slug)),
     });
   }
   const watched = dossiers.find((d) => d.jurisdiction_key && watchKeys.has(d.jurisdiction_key));
@@ -266,7 +270,7 @@ export function exampleQuestions(
     push({
       template: "decision",
       question: `What's up for a decision in ${watched.display_name ?? watched.jurisdiction}?`,
-      href: dossierPath(watched.slug),
+      href: withBase(dossierPath(watched.slug)),
     });
   }
   const gaps = dossiers.find((d) => (d.gaps?.length ?? 0) > 0);
@@ -274,7 +278,7 @@ export function exampleQuestions(
     push({
       template: "unknown",
       question: `What doesn't SIG know about ${gaps.display_name ?? gaps.jurisdiction}?`,
-      href: `${dossierPath(gaps.slug)}#sec-what_we_dont_know`,
+      href: `${withBase(dossierPath(gaps.slug))}#sec-what_we_dont_know`,
     });
   }
   return out.slice(0, limit);

@@ -39,6 +39,8 @@
  * (`web/tests/unit/workspace-state.test.ts`) and shared verbatim by every island.
  */
 
+import { rootPath, withBase } from "./paths";
+
 export const WORKSPACE_STATE_VERSION = "1";
 export const WORKSPACE_SCHEMA = "sig.workspace-state/1";
 
@@ -323,7 +325,7 @@ export function serializeWorkspaceState(state: WorkspaceState): URLSearchParams 
 
 /** `path?…` with the canonical parameter order. */
 export function workspaceHref(path: string, state: WorkspaceState): string {
-  return `${path}?${serializeWorkspaceState(state).toString()}`;
+  return `${withBase(path)}?${serializeWorkspaceState(state).toString()}`;
 }
 
 /** The link to the same investigation state on another view (S4 §7). */
@@ -392,11 +394,11 @@ export function recordRoutes(
 ): { pageHref: string; jsonHref: string; compartmentHref: string } | null {
   const parts = splitRecordKey(recordKey);
   if (!parts) return null;
-  const base = `/r/${publicationId}/c/${parts.compartment}/entity/${parts.entityType}/${parts.entityId}`;
+  const base = rootPath(`r/${publicationId}/c/${parts.compartment}/entity/${parts.entityType}/${parts.entityId}`);
   return {
     pageHref: `${base}/`,
     jsonHref: `${base}.json`,
-    compartmentHref: `/r/${publicationId}/c/${parts.compartment}/`,
+    compartmentHref: rootPath(`r/${publicationId}/c/${parts.compartment}/`),
   };
 }
 
@@ -406,5 +408,5 @@ export function evidenceAnchorHref(
   compartment: string,
   artifactId: string,
 ): string {
-  return `/r/${publicationId}/c/${compartment}/evidence/${artifactId}/`;
+  return rootPath(`r/${publicationId}/c/${compartment}/evidence/${artifactId}/`);
 }

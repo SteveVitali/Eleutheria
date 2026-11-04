@@ -468,6 +468,13 @@ function sigPageTypes() {
 // (SIG-UI-037).
 export default defineConfig({
   output: "static",
+  // P36.66a (SIG-UI-075 / TX-13b, D-J3-6 [B-19] = yes): the deploy base seam.
+  // A `/s/<pub>/` snapshot is the SAME build run with `SIG_BASE_PATH=/s/<pub>`
+  // — `import.meta.env.BASE_URL` then re-resolves every `withBase()` call site
+  // inside the snapshot prefix with no template edits (P35.65's helper). The
+  // default `/` keeps the latest-view build byte-identical; P36.66b's staging
+  // machinery drives the env, this row only opens the seam.
+  base: process.env.SIG_BASE_PATH || "/",
   // P27.9 (DECISION-SPA = B, ADR-097 extending ADR-068): React arrives via
   // @astrojs/react. It renders to STATIC HTML at build time by default (no client
   // JS) — client JavaScript ships ONLY for components carrying an explicit

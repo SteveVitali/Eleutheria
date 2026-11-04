@@ -227,7 +227,7 @@ const placeOptionLabel = (d: IndexRowType) =>
     <section aria-labelledby="unplaced-heading" data-testid="dossier-index-unplaced">
       <h2 id="unplaced-heading">Not a jurisdiction</h2>
       <p>
-        <a href={unplacedPath()} data-testid="unplaced-link">Not yet placed — the data-quality report</a>{" "}
+        <a href={withBase(unplacedPath())} data-testid="unplaced-link">Not yet placed — the data-quality report</a>{" "}
         — <Figure figure={figs.get("unplaced-records")!} order="inline">{unplaced.records}</Figure> published
         record{unplaced.records === 1 ? "" : "s"} could not be
         placed under the recorded placement checks. It is excluded from the jurisdiction
