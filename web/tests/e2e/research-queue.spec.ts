@@ -258,3 +258,118 @@ test.describe("P36.62 (RQ-03b) — task pages, campaigns, gap links, redirects",
     await expect(page.getByTestId("task-page")).toBeVisible();
   });
 });
+
+test.describe("P36.63 (RQ-04) — records-request drafts (SIG-RQ-007/010)", () => {
+  const TASK = "/task/T-usa-ok-oklahoma-city-retention-pd-q1c4/";
+  const VA_TASK = "/task/T-usa-va-fairfax-county-contract-pd-d8r2/";
+
+  test("a records-requester task renders the DRAFT — statute, citation, template, never sent", async ({
+    page,
+  }) => {
+    await page.goto(TASK);
+    await expect(page.getByTestId("draft-banner")).toContainText("DRAFT");
+    await expect(page.getByTestId("draft-banner")).toContainText("SIG sends nothing");
+    await expect(page.getByTestId("draft-statute")).toContainText("Oklahoma Open Records Act");
+    await expect(page.getByTestId("draft-statute")).toContainText("24A.1");
+    await expect(page.getByTestId("draft-template")).toContainText("v1");
+    await expect(page.getByTestId("draft-body")).toContainText(
+      "Pursuant to the Oklahoma Open Records Act",
+    );
+    await expect(page.getByTestId("draft-residency")).toContainText(
+      "No residency restriction",
+    );
+    await expect(page.getByTestId("draft-never-sent")).toContainText("not legal advice");
+    // The DRAFT label is on every view of the draft.
+    await expect(page.getByTestId("task-draft")).toHaveAttribute("data-draft-status", "drafted");
+    // The download link resolves to the .txt twin.
+    const dl = page.getByTestId("draft-download");
+    await expect(dl).toHaveAttribute(
+      "href",
+      "/task/T-usa-ok-oklahoma-city-retention-pd-q1c4.draft.txt",
+    );
+  });
+
+  test("there is no transmit path — no form, no mailto, no send affordance", async ({ page }) => {
+    await page.goto(TASK);
+    // Scoped to the task article: the chrome's GET search form/button is
+    // header chrome, never a transmit path — the draft block itself offers
+    // no form, no button and no mailto.
+    const article = page.getByTestId("task-page");
+    await expect(article.locator("form")).toHaveCount(0);
+    await expect(article.locator("a[href^='mailto:']")).toHaveCount(0);
+    await expect(article.locator("button")).toHaveCount(0);
+    const main = await article.innerHTML();
+    expect(main).not.toMatch(/<form|mailto:|<button/);
+  });
+
+  test("a residency-restricted state's draft carries the routing note", async ({ page }) => {
+    await page.goto(VA_TASK);
+    await expect(page.getByTestId("draft-banner")).toContainText("DRAFT");
+    await expect(page.getByTestId("draft-residency")).toContainText(
+      "restricts public-records requests to residents",
+    );
+    await expect(page.getByTestId("draft-statute")).toContainText(
+      "Virginia Freedom of Information Act",
+    );
+  });
+
+  test("a task in a non-draft role names the absence — never a guessed draft", async ({
+    page,
+  }) => {
+    await page.goto("/task/T-usa-ok-oklahoma-city-devices-pd-k1v9/");
+    await expect(page.getByTestId("task-draft")).toContainText(
+      "not a records-request or document-review task",
+    );
+    await expect(page.getByTestId("draft-body")).toHaveCount(0);
+  });
+
+  test("the .txt download serves the draft text with the DRAFT banner", async ({ request }) => {
+    const res = await request.get("/task/T-usa-ok-oklahoma-city-retention-pd-q1c4.draft.txt");
+    expect(res.status()).toBe(200);
+    expect(res.headers()["content-type"]).toContain("text/plain");
+    const body = await res.text();
+    expect(body).toContain("DRAFT PUBLIC-RECORDS REQUEST");
+    expect(body).toContain("Okla. Stat. tit. 51 § 24A.1");
+    expect(body).toContain("SIG sends nothing; you file it; the filer is left blank.");
+    expect(body).toContain("[the contributor who files this request");
+  });
+
+  test("the per-place bundle serves every draft for the place — 0 sent", async ({ request }) => {
+    const okc = await request.get("/research-queue/drafts/usa/ok/oklahoma-city-4064000.txt");
+    expect(okc.status()).toBe(200);
+    const okcBody = await okc.text();
+    expect(okcBody).toContain("DRAFT");
+    expect(okcBody).toContain("0 sent");
+    expect(okcBody).toContain("Oklahoma Open Records Act");
+    const va = await request.get("/research-queue/drafts/usa/va/fairfax-county-51059.txt");
+    const vaBody = await va.text();
+    expect(vaBody).toContain("Virginia Freedom of Information Act");
+    expect(vaBody).toContain("restricts public-records requests to residents");
+  });
+
+  test("the hub and the place page link the bundle; the card carries the draft badge", async ({
+    page,
+  }) => {
+    await page.goto("/research-queue/");
+    const link = page
+      .getByTestId("draft-bundles")
+      .locator("a[href='/research-queue/drafts/usa/ok/oklahoma-city-4064000.txt']");
+    await expect(link).toHaveCount(1);
+    await page.goto("/research-queue/place/usa/ok/oklahoma-city-4064000/");
+    await expect(page.getByTestId("draft-bundle-link")).toBeVisible();
+    // The badge marks only the draft-bearing card, links to the draft block.
+    const badge = page.getByTestId("draft-badge").first();
+    await expect(badge).toContainText("DRAFT request available");
+    await expect(badge.locator("a")).toHaveAttribute(
+      "href",
+      "/task/T-usa-ok-oklahoma-city-retention-pd-q1c4/#records-request-draft",
+    );
+    // The JSON twin carries the DRAFT row.
+    const res = await page.request.get("/task/T-usa-ok-oklahoma-city-retention-pd-q1c4.json");
+    const body = await res.json();
+    expect(body.records_request_draft.status).toBe("drafted");
+    expect(body.draft_download).toBe(
+      "task/T-usa-ok-oklahoma-city-retention-pd-q1c4.draft.txt",
+    );
+  });
+});

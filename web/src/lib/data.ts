@@ -50,6 +50,11 @@ import type { EvidenceArtifact, DecisionPoint } from "./recommender";
 import type { ClaimView, Capture } from "./evidence-viewer";
 import type { CorrectionEntry } from "./corrections";
 import type { ResearchTaskCard, JurisdictionClaim } from "./research-queue";
+import {
+  assertDraftsNeverSent,
+  parseDraftsEnvelope,
+  type RecordsRequestDraft,
+} from "./records-drafts";
 import type { QueueCampaign, QueueMeta } from "./queue-hub";
 import type { ProvenanceSummary } from "./provenance";
 import { DEFAULT_PROVENANCE } from "./provenance";
@@ -129,6 +134,7 @@ import {
   CORRECTIONS_PROVENANCE,
   RESEARCH_QUEUE,
   RESEARCH_QUEUE_PROVENANCE,
+  RECORDS_REQUEST_DRAFTS,
   JURISDICTION_CLAIMS,
   QUEUE_AS_OF,
   QUEUE_CAMPAIGNS,
@@ -721,6 +727,34 @@ export function getResearchQueue(): ResearchTaskCard[] {
     "research_queue.json",
     (p, path) => dropWithdrawn(requireArray(p, path) as ResearchTaskCard[]),
   );
+}
+
+/**
+ * P36.63 (RQ-04, SIG-RQ-007/010) — the records-request drafts persisted into
+ * the export as `web/records_request_drafts.json` (the
+ * `sig.records-request-drafts/1` envelope — the detector's
+ * `records_requests.json` shape verbatim, DRAFT state). Export mode: a
+ * MISSING artifact is honest absence (a pre-drafts export renders the named
+ * absence on each eligible task — the same posture `getQueueCampaigns` takes
+ * for an absent campaign dir); a malformed envelope, a non-`drafted` row or a
+ * nonzero `sent` count fails LOUD (DRAFT, NEVER SEND — SIG-RQ-007). Fixtures
+ * mode serves the committed corpus, run through the same never-send gate so a
+ * fixture edit can never mint a `sent` state either.
+ */
+export function getRecordsRequestDrafts(): RecordsRequestDraft[] {
+  if (dataSource() !== "export") {
+    assertDraftsNeverSent(RECORDS_REQUEST_DRAFTS, "fixture RECORDS_REQUEST_DRAFTS");
+    return RECORDS_REQUEST_DRAFTS;
+  }
+  const path = `${exportDir()}/web/records_request_drafts.json`;
+  if (!existsSync(path)) return [];
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(readFileSync(path, "utf-8"));
+  } catch (cause) {
+    throw new Error(`${path}: not valid JSON`, { cause });
+  }
+  return parseDraftsEnvelope(parsed, path);
 }
 
 /** Surface 1 — the dossier index / national landing list (§39.2). Export: `web/dossiers/index.json` (v2) or `web/dossier_index.json` (v1). */

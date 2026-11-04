@@ -38,6 +38,7 @@ import {
   COVERAGE_METRICS,
   CORRECTIONS,
   RESEARCH_QUEUE,
+  RECORDS_REQUEST_DRAFTS,
   CORRECTIONS_PROVENANCE,
   RESEARCH_QUEUE_PROVENANCE,
   JURISDICTION_CLAIMS,
@@ -182,6 +183,17 @@ write("watch.json", WATCH_ITEMS);
 write("evidence.json", { artifacts: EVIDENCE_ARTIFACTS, claim_views: CLAIM_VIEWS });
 write("corrections.json", CORRECTIONS);
 write("research_queue.json", RESEARCH_QUEUE);
+// P36.63 (RQ-04, SIG-RQ-007/010): the `sig.records-request-drafts/1` envelope —
+// the detector's `records_requests.json` shape verbatim (DRAFT state,
+// `sent: 0` always), persisted into the export so export-mode builds exercise
+// the real draft seam.
+write("records_request_drafts.json", {
+  schema: "sig.records-request-drafts/1",
+  status: "drafted",
+  drafted: RECORDS_REQUEST_DRAFTS.length,
+  sent: 0,
+  requests: RECORDS_REQUEST_DRAFTS,
+});
 write(
   "dossier_index.json",
   DOSSIERS.map((d) => ({

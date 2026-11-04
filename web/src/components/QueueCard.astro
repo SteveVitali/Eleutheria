@@ -28,6 +28,8 @@ import {
   roleLabel,
   evidenceDateOf,
 } from "../lib/queue-hub";
+import { DRAFT_ANCHOR, draftForTask } from "../lib/records-drafts";
+import { getRecordsRequestDrafts } from "../lib/data";
 import { withBase } from "../lib/paths";
 
 interface Props {
@@ -38,6 +40,9 @@ interface Props {
 
 const { card, claims, asOf } = Astro.props;
 const claim = claimStatusFor(card, claims, asOf);
+// P36.63 (RQ-04, SIG-RQ-007): the "draft request available" badge — rendered
+// only when the export persists a draft for this task (never a dead link).
+const hasDraft = draftForTask(card, getRecordsRequestDrafts()) !== null;
 const slug = placeSlugOf(card);
 const placeName = card.place?.name ?? placeNameOf(card);
 const evidDate = evidenceDateOf(card);
@@ -135,6 +140,13 @@ const evidDate = evidenceDateOf(card);
       </div>
     )}
   </dl>
+
+  {hasDraft && card.handle && (
+    <p class="sig-task-card__draft" data-testid="draft-badge">
+      <a href={withBase(`task/${card.handle}/#${DRAFT_ANCHOR}`)}>DRAFT request available</a>
+      {" "}— SIG sends nothing; you file it.
+    </p>
+  )}
 
   <!-- Claiming with expiry (SIG-TASK-010/011, D-K11-6): priority, never exclusivity. -->
   <p class="sig-task-card__claim" data-testid="claim-status">
