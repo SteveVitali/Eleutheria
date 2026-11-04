@@ -198,6 +198,11 @@ def read_release_meta(store: rp.Store, pub: str) -> dict[str, Any]:
             compat = entry.get("compat") or {}
             if isinstance(compat, dict):
                 meta["as_of_world"] = compat.get("as_of_world")
+                # P36.66b: the selector rows' other two axes — the
+                # compat index is date-grained (day-grain UTC dates
+                # verbatim from the catalog entry, never re-derived).
+                meta["as_of_belief"] = compat.get("as_of_belief")
+                meta["ruleset_version"] = compat.get("ruleset_version")
     desc_body = store.read(f"staged/releases/{pub}/descriptor.json")
     if desc_body is not None:
         try:
@@ -451,6 +456,145 @@ def _empty_selectors(gen: int) -> bytes:
     ).encode()
 
 
+# --------------------------------------------------------------------------- #
+# selectors.conf — the J3 §8.3 edge selector registry (P36.66b, TX-13b b)    #
+# --------------------------------------------------------------------------- #
+#
+# ``resolve_selector``'s contract (exports/release.py) moved to the edge with
+# no app server: a request carrying any ``as_of_world=`` / ``as_of_belief=`` /
+# ``ruleset=`` selector is answered by THIS include, never by the static
+# file — exact match → 302 into ``/s/<pub>/``; ambiguous → 409 naming the
+# candidate releases; unmatched → 404 ("SIG never substitutes a different
+# cut"); malformed → 400. Selectors are date-grained (J3 NEW-4): an
+# ``as_of_*`` instant normalises to its UTC date, exactly as
+# ``_normalise_selector`` does.
+#
+# The include is server-context (nginx.conf includes it inside ``server``),
+# so the body carries rewrite-module directives only — ``set`` + ``if`` +
+# ``return``, evaluated in order during the rewrite phase. The selector key
+# is ``${sig_sel_w}|${sig_sel_b}|${sig_sel_r}`` with absent params empty, so
+# one key string covers every non-empty selector subset: a query naming only
+# ``as_of_world`` arrives as ``<w>||``.
+
+#: The nginx ``if ($var = "…")`` literal a selector component lands in —
+#: fail closed on any character outside the conf-safe set (compat fields
+#: are dates + ruleset ids, which are alnum plus ``-._~:+`` in practice).
+_SELECTOR_SAFE = re.compile(r"^[A-Za-z0-9._~:+|-]*$")
+
+
+def _selector_patterns(entry: dict[str, Any]) -> list[tuple[str, str]]:
+    """Every non-empty ``w|b|r`` key one compat entry resolves — all 7
+    subset patterns (full + partial), keyed ``world|belief|ruleset``."""
+    w = str(entry.get("as_of_world") or "")
+    b = str(entry.get("as_of_belief") or "")
+    r = str(entry.get("ruleset_version") or "")
+    pub = str(entry.get("publication_id") or "")
+    out: list[tuple[str, str]] = []
+    for ws in (w, ""):
+        for bs in (b, ""):
+            for rs in (r, ""):
+                if ws == "" and bs == "" and rs == "":
+                    continue  # the no-selector case is never a rule
+                out.append((f"{ws}|{bs}|{rs}", pub))
+    return out
+
+
+def selector_rows(store: rp.Store, pubs: set[str]) -> list[dict[str, Any]]:
+    """The compat row each promoted pub contributes to the selector map —
+    read from its own staged ``catalog_entry.json`` compat block (the
+    release's declared as-of pair + ruleset, never re-derived). A pub
+    whose compat block is absent contributes nothing — its selectors
+    fall through to the 404 rule, the honest no-match answer."""
+    rows: list[dict[str, Any]] = []
+    for p in sorted(pubs):
+        meta = read_release_meta(store, p)
+        rows.append(
+            {
+                "publication_id": p,
+                "as_of_world": meta.get("as_of_world"),
+                "as_of_belief": meta.get("as_of_belief"),
+                "ruleset_version": meta.get("ruleset_version"),
+            }
+        )
+    return rows
+
+
+def render_selectors_conf(
+    rows: list[dict[str, Any]],
+    *,
+    gen: int,
+    current_pub: str | None = None,
+) -> bytes:
+    """``selectors.conf`` — the generated edge selector registry.
+
+    Rule order (first match wins — a ``return`` ends the rewrite phase):
+    1. normalise ``as_of_world``/``as_of_belief`` to their UTC date head
+       (a leading ISO date on an instant form);
+    2. malformed → ``400`` (a selector value that survives normalisation
+       carrying non-date characters);
+    3. each unique selector key with exactly one matching release →
+       ``302 /s/<pub>$uri``;
+    4. each selector key matching more than one release → ``409``
+       naming the candidate ``/releases/<pub>/`` landings;
+    5. any selector param present with no rule hit → ``404`` naming the
+       current release — never a substituted cut.
+    """
+    # key → the distinct pub set it resolves to
+    by_key: dict[str, set[str]] = {}
+    for row in rows:
+        for key, pub in _selector_patterns(row):
+            by_key.setdefault(key, set()).add(pub)
+
+    lines = [
+        "# sig.selectors-conf — the J3 §8.3 selector routes, conf generation",
+        f"# {gen}. Composed by `sig-ops release promote` from the promoted set's",
+        "# compat entries — resolve_selector's contract at the edge (exact →",
+        "# 302 /s/<pub>/, ambiguous → 409, unmatched → 404, malformed → 400).",
+        "# Selectors are date-grained (NEW-4); a request with no selector",
+        "# param never touches this file's rules.",
+        'set $sig_sel_w "$arg_as_of_world";',
+        'set $sig_sel_b "$arg_as_of_belief";',
+        'set $sig_sel_r "$arg_ruleset";',
+        # An instant form reduces to its UTC date head — the compat index
+        # is day-grained; the anchored match mirrors _normalise_selector's
+        # date-or-instant contract.
+        'if ($sig_sel_w ~ "^([0-9]{4}-[0-9]{2}-[0-9]{2})[T ]") { set $sig_sel_w $1; }',
+        'if ($sig_sel_b ~ "^([0-9]{4}-[0-9]{2}-[0-9]{2})[T ]") { set $sig_sel_b $1; }',
+        'set $sig_sel_key "${sig_sel_w}|${sig_sel_b}|${sig_sel_r}";',
+        'set $sig_sel_any "${arg_as_of_world}${arg_as_of_belief}${arg_ruleset}";',
+        "# malformed selectors → 400 (a value that is not a date or an",
+        "# instant headed by one — the resolver's 'invalid' status).",
+        'if ($sig_sel_w ~ "[^0-9-]") { return 400; }',
+        'if ($sig_sel_b ~ "[^0-9-]") { return 400; }',
+    ]
+    for key in sorted(by_key):
+        if not _SELECTOR_SAFE.match(key):
+            raise rp.PipelineError(
+                "bad-selector",
+                f"selector key {key!r} carries a conf-unsafe character — "
+                "refusing to emit a line nginx cannot parse",
+            )
+        pubs = sorted(by_key[key])
+        if len(pubs) == 1:
+            lines.append(f'if ($sig_sel_key = "{key}") {{ return 302 /s/{pubs[0]}$uri; }}')
+        else:
+            candidates = " ".join(f"/releases/{p}/" for p in pubs)
+            lines.append(
+                f'if ($sig_sel_key = "{key}") {{ return 409 '
+                f'"selector is ambiguous — candidates: {candidates}"; }}'
+            )
+    current = f"/releases/{current_pub}/" if current_pub else "/releases/"
+    lines += [
+        "# a selector nothing matches → 404: no release covers that as-of;",
+        "# SIG never substitutes a different cut (the nearest real releases",
+        "# live under /releases/ and the current one is named).",
+        f'if ($sig_sel_any != "") {{ return 404 '
+        f'"no release covers that selector — SIG never substitutes a '
+        f'different cut; the current release is {current}"; }}',
+    ]
+    return ("\n".join(lines) + "\n").encode("utf-8")
+
+
 def catalog_v2(
     store: rp.Store,
     *,
@@ -606,8 +750,13 @@ def compose_generation(
                 store, prior_gen, "withdrawn.conf", placeholder=_empty_withdrawn(gen)
             )
         ),
-        "selectors.conf": _carry_or_placeholder(
-            store, prior_gen, "selectors.conf", placeholder=_empty_selectors(gen)
+        # P36.66b (TX-13b b): the selector registry is composed fresh each
+        # generation from the promoted set's compat entries (J3 §8.3 —
+        # the file's writer is this verb; promote owns the edge rules,
+        # reversal verbs carry them byte-identical since the promoted
+        # set never shrinks).
+        "selectors.conf": render_selectors_conf(
+            selector_rows(store, promoted), gen=gen, current_pub=pub
         ),
         "labels.conf": render_labels_conf(read_label_map(store), gen=gen),
         "releases/index.html": releases_index_html(catalog, gen=gen),
