@@ -246,6 +246,7 @@ export function statusRowToTableRow(s: StatusSourceRow): TableRow {
     runsByOutcome: { ...s.runs_7d.by_outcome },
     failedRecent: s.errors.failed_30d,
     openIssue: s.issue_classes.length > 0,
+    download: null,
     downloadToken: "not_published",
     registryOnly: false,
   };

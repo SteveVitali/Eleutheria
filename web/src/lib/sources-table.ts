@@ -51,7 +51,8 @@ import {
   type SourceFreshness,
 } from "./source-page";
 import { AS_OF } from "./fixtures";
-import { dataSource, exportDir } from "./data";
+import { dataSource, exportDir, getDownloadListing } from "./data";
+import type { DownloadFile } from "./downloads";
 import { existsSync, readFileSync } from "node:fs";
 
 export const SOURCES_TABLE_SCHEMA = "sig.sources-table/1";
@@ -109,8 +110,15 @@ export interface TableRow {
   runsByOutcome: Record<string, number>;
   failedRecent: number | null;
   openIssue: boolean;
-  /** The download cell — `download_host_pending` until UX9-4's extracts
-   *  ship (K9 §12 order note); `withheld`/`not_published` per state. */
+  /** The K9 col-16 download cell (P36.68 / UX9-4): the latest derived
+   *  extract resolved from the release's `sig.download-listing/1` —
+   *  the `sites.csv.gz` when present, else the `statements.jsonl.gz`
+   *  slice every published source carries (K9 C-8). `null` → the row's
+   *  named absence token stands in `downloadToken`. */
+  download: { href: string; bytes: number; name: string; format: string; fileIndex: number } | null;
+  /** The cell's named-absence token: `downloadable` when `download` is
+   *  wired, `extract_not_emitted` for a published row with no slice in the
+   *  listing, `withheld`/`not_published` per state. */
   downloadToken: string;
   registryOnly: boolean;
 }
@@ -252,10 +260,29 @@ export function derivedStatus(row: SourceRow): DerivedStatus {
   return "not_published";
 }
 
-/** The K9 col 16 download cell — UX9-4's extracts have not shipped, so the
- *  column is the named interim token per state (K9 §12: `download_host_pending`). */
-export function downloadToken(row: SourceRow): string {
-  if (row.lifecycle_state === "published") return "download_host_pending";
+/** The K9 col-16 download cell (P36.68 / UX9-4): the latest derived
+ *  extract from the `sig.download-listing/1` — `sites.csv.gz` when the
+ *  source contributes site rows, else the always-present
+ *  `statements.jsonl.gz` slice (K9 C-8). `null` names the honest absence. */
+export function downloadFile(
+  row: SourceRow,
+  sliceFiles: readonly (DownloadFile & { fileIndex: number })[] | null,
+): { href: string; bytes: number; name: string; format: string; fileIndex: number } | null {
+  if (row.lifecycle_state !== "published" || !sliceFiles || sliceFiles.length === 0) return null;
+  const pick =
+    sliceFiles.find((f) => f.name === "sites.csv.gz") ??
+    sliceFiles.find((f) => f.name === "statements.jsonl.gz") ??
+    null;
+  return pick
+    ? { href: pick.href, bytes: pick.byte_size, name: pick.name, format: pick.format, fileIndex: pick.fileIndex }
+    : null;
+}
+
+/** The cell's named-absence token per state — `download_host_pending`
+ *  retired with UX9-4: a published row now reads `downloadable` when the
+ *  listing carries its slice, `extract_not_emitted` when it does not. */
+export function downloadToken(row: SourceRow, file: { href: string } | null): string {
+  if (row.lifecycle_state === "published") return file ? "downloadable" : "extract_not_emitted";
   if (row.lifecycle_state === "gated" || row.lifecycle_state === "refused") return "withheld";
   return "not_published";
 }
@@ -289,6 +316,7 @@ export function composeRow(
   freshness: SourceFreshness | null,
   executions: readonly ExecutionRecord[] | null,
   asOf: string,
+  sliceFiles: readonly (DownloadFile & { fileIndex: number })[] | null = null,
 ): TableRow {
   const verdict = freshnessVerdict(row, freshness, executions);
   const exec = executionSummary(executions, asOf);
@@ -338,17 +366,32 @@ export function composeRow(
     runsByOutcome: exec.byOutcome,
     failedRecent: exec.failedRecent,
     openIssue: (row.status_flags ?? []).includes("open_issue"),
-    downloadToken: downloadToken(row),
+    download: downloadFile(row, sliceFiles),
+    downloadToken: downloadToken(row, downloadFile(row, sliceFiles)),
     registryOnly: isRegistryOnlyShape(row),
   };
 }
 
 /** The whole table — every registry row, the canonical order (name
  *  case-folded, source_id tiebreak) the default sort renders. */
+/** source_id → its `by-source/<id>/` slice files in the release listing
+ *  (P36.68 / UX9-4 — the K9 col-16 download cell's data). */
+function sliceFilesBySource(): Map<string, (DownloadFile & { fileIndex: number })[]> {
+  const map = new Map<string, (DownloadFile & { fileIndex: number })[]>();
+  getDownloadListing().files.forEach((f, fileIndex) => {
+    if (f.kind !== "source-slice" || !f.source_id) return;
+    const list = map.get(f.source_id) ?? [];
+    list.push({ ...f, fileIndex });
+    map.set(f.source_id, list);
+  });
+  return map;
+}
+
 export function getTableRows(): { rows: TableRow[]; asOf: string; rowIndex: Map<string, number> } {
   const doc = sourcesDoc();
   const freshnessMap =
     dataSource() === "export" ? exportFreshnessMap() : new Map(Object.entries(SOURCE_FRESHNESS_FIXTURE));
+  const slices = sliceFilesBySource();
   const rows = doc.sources.map((raw) => {
     const extras =
       dataSource() === "export" ? null : (SOURCE_PAGE_EXTRAS_FIXTURE[raw.source_id] ?? null);
@@ -356,7 +399,7 @@ export function getTableRows(): { rows: TableRow[]; asOf: string; rowIndex: Map<
       dataSource() === "export"
         ? exportExecutions(raw.source_id)
         : (SOURCE_EXECUTIONS_FIXTURE[raw.source_id] ?? null);
-    return composeRow(raw, extras, freshnessMap.get(raw.source_id) ?? null, executions, doc.as_of);
+    return composeRow(raw, extras, freshnessMap.get(raw.source_id) ?? null, executions, doc.as_of, slices.get(raw.source_id) ?? null);
   });
   rows.sort((a, b) => nameKey(a.name).localeCompare(nameKey(b.name)) || a.sourceId.localeCompare(b.sourceId));
   const rowIndex = new Map(doc.sources.map((r, i) => [r.source_id, i]));
@@ -440,7 +483,7 @@ export const SORT_SPECS: Record<string, SortSpec> = {
   status: { key: "status", value: (r) => rank(STATE_ORDER, r.lifecycle) },
   freshness: { key: "freshness", value: (r) => rank(VERDICT_ORDER, r.freshnessState) },
   claims: { key: "claims", value: (r) => r.publishedClaims },
-  download: { key: "download", value: (r) => (r.downloadToken === "download_host_pending" ? null : r.downloadToken) },
+  download: { key: "download", value: (r) => r.download?.bytes ?? null },
   last_run: { key: "last_run", value: (r) => r.lastRun },
   upstream: { key: "upstream", value: (r) => timeVal(r.upstreamChange) },
   sig_change: { key: "sig_change", value: (r) => timeVal(r.sigChange) },
@@ -570,7 +613,7 @@ export const FACET_DIMS: readonly FacetDim[] = [
   {
     key: "downloadable",
     label: "downloadable",
-    values: (r) => [r.downloadToken === "download_host_pending" ? "no" : r.downloadToken],
+    values: (r) => [r.download ? "yes" : r.downloadToken],
   },
   { key: "has-issues", label: "open issues", values: (r) => [r.openIssue ? "yes" : "no"] },
 ];
@@ -730,7 +773,7 @@ export const EXPORT_COLUMNS: readonly ExportColumn[] = [
   { name: "executions_total", title: "Executions recorded", type: "number", cell: (r) => r.runsTotal ?? -1 },
   { name: "failed_90d", title: "Failed executions, trailing 90d", type: "number", cell: (r) => r.failedRecent ?? -1 },
   { name: "open_issue", title: "Open issue", type: "boolean", cell: (r) => r.openIssue },
-  { name: "download", title: "Download", type: "string", cell: (r) => r.downloadToken },
+  { name: "download", title: "Download", type: "string", cell: (r) => r.download?.href ?? r.downloadToken },
   { name: "homepage", title: "Ground-truth homepage", type: "string", cell: (r) => r.homepage ?? "no_upstream_url_recorded" },
   { name: "homepage_host", title: "Ground-truth host", type: "string", cell: (r) => r.homepageHost ?? "not_recorded" },
   { name: "terms_url", title: "Ground-truth terms", type: "string", cell: (r) => r.termsUrl ?? "terms_not_captured" },

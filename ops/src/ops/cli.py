@@ -416,6 +416,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="a built export/release tree carrying manifest.json.",
     )
     mp.add_argument(
+        "--release-dir",
+        default=None,
+        help="(P36.68) a built release tree whose "
+        "r/<pub>/transparency/sources/*/versions.json set rides the same "
+        "content-hash keys — digest-verified against the release's own "
+        "integrity manifest.",
+    )
+    mp.add_argument(
         "--mirrors",
         default=None,
         help="ops/mirrors.toml path (default: the committed file / SIG_OPS_MIRRORS).",
@@ -3740,6 +3748,7 @@ def _cmd_mirror_push(args: argparse.Namespace) -> int:
         egress_config=EgressConfig.from_toml(config_path) if config_path.is_file() else None,
         usage_gb=args.usage_gb,
         usage_usd=args.usage_usd,
+        release_dir=Path(args.release_dir).resolve() if args.release_dir else None,
     )
     try:
         if not args.apply:

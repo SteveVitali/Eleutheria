@@ -101,9 +101,9 @@ const cols: TableColumn[] = VIEWS[activeView].columns.map((key: string) => {
 
 const sorted = sortTable(rows, sortKey, sortDir);
 const CELL_FIG_KEY: Record<string, string[]> = {
-  overview: ["claims", "staleness", "staleness-eval"],
+  overview: ["claims", "staleness", "staleness-eval", "download"],
   runs: ["runs", "errors"],
-  rights: [],
+  rights: ["download"],
 };
 
 // Pre-computed per-row figure maps — a block-bodied arrow inside a JSX

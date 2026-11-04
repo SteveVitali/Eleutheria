@@ -17,6 +17,7 @@ import Figure from "./Figure.astro";
 import type { FigureSpec } from "../lib/figures";
 import type { TableRow } from "../lib/sources-table";
 import { fmtInt } from "../lib/format";
+import { formatBytes } from "../lib/downloads";
 import { withBase } from "../lib/paths";
 
 export interface Props {
@@ -105,7 +106,12 @@ const sigChange = changeCell(row.sigChange);
             : fmtInt(row.publishedClaims)}
         {row.publishedSites && <> · sites</>}
       </td>
-      <td data-testid="cell-download">{row.downloadToken}</td>
+      <td data-testid="cell-download">
+        {row.download
+          ? <a href={row.download.href} rel="external">{row.download.name}</a>
+            <> · <Figure figure={fig("download")!} order="inline">{formatBytes(row.download.bytes)}</Figure></>
+          : row.downloadToken}
+      </td>
     </>
   )}
   {view === "runs" && (
@@ -182,7 +188,12 @@ const sigChange = changeCell(row.sigChange);
         {" · "}{row.lane}
         {row.laneBasis && <><br />{row.laneBasis}</>}
       </td>
-      <td data-testid="cell-download">{row.downloadToken}</td>
+      <td data-testid="cell-download">
+        {row.download
+          ? <a href={row.download.href} rel="external">{row.download.name}</a>
+            <> · <Figure figure={fig("download")!} order="inline">{formatBytes(row.download.bytes)}</Figure></>
+          : row.downloadToken}
+      </td>
       <td data-testid="cell-ground-truth">
         {row.homepage
           ? <a href={row.homepage} rel="external">{row.homepageHost ?? "upstream"}</a>

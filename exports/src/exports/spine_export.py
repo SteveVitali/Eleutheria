@@ -6273,6 +6273,8 @@ def build_spine_export(
                 attribution_payload=_comp_attribution_payloads.get(comp),
                 license_id=comp_license,
                 license_url=license_url,
+                compartment=comp,
+                release_id=_dl_release_id,
             )
             for path, data in files.items():
                 web_artifacts[path] = data

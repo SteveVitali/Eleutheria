@@ -14,6 +14,7 @@
     "web/analytics/density_bins.json",
     "web/analytics/provenance.json",
     "web/leverage.json",
+    "web/downloads.json",
     "status/lane.json",
     "status/state.json",
     "transparency/sources.json",
