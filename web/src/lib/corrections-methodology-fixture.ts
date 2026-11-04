@@ -15,6 +15,7 @@
 
 import type { JurisdictionClaim, ResearchTaskCard } from "./research-queue";
 import { dispositionsFor } from "./research-queue";
+import type { RecordsRequestDraft } from "./records-drafts";
 import type { QueueCampaign } from "./queue-hub";
 import type { CorrectionEntry } from "./corrections";
 import type { CoverageMetric, FreshnessRow } from "./metrics";
@@ -123,6 +124,33 @@ export const RESEARCH_QUEUE: ResearchTaskCard[] = [
     detector_version: "queue-detectors-2026.08",
   },
   {
+    // P36.63 (RQ-04): a document-reviewer task in a residency-restricted state
+    // (Virginia is one of the six §36 residency states) — the draft carries the
+    // routing-to-local-filers note (SIG-TASK-016a/b).
+    task_id: "fx-va-piggyback-contract",
+    task_type: "cooperative_contract_unexplored",
+    subject_id: "agency:fx-co-pd",
+    subject_label: "Fairfax County PD — cooperative purchase rides an unseen master agreement",
+    closing_condition: "The master cooperative-purchasing agreement the ALPR buy rides on is produced, or its absence is recorded.",
+    evidence_sought: "The master cooperative contract (state or regional purchasing agreement) Fairfax County PD's ALPR purchase references.",
+    assignee_class: "document_reviewer",
+    effort_estimate: "moderate",
+    geographic_scope: "jurisdiction",
+    jurisdiction: "Fairfax County",
+    dispositions: dispositionsFor("document_reviewer"),
+    priority: 0.6,
+    trigger: { kind: "coverage", ref: "coverage:master_record:fx-co-pd" },
+    handle: "T-usa-va-fairfax-county-contract-pd-d8r2",
+    title: "Find the master agreement Fairfax County PD's ALPR purchase rides on",
+    place: { key: "iso3166-2:US-VA", slug: "usa/va/fairfax-county-51059", name: "Fairfax County" },
+    place_basis: "task_jurisdiction",
+    lane: "research",
+    predicate_ids: ["master_record"],
+    status: "generated",
+    generated_at: "2026-08-19",
+    detector_version: "queue-detectors-2026.08",
+  },
+  {
     task_id: "fx-portal-snapshot-link-rot",
     task_type: "link_rot",
     subject_id: "artifact:portal-snapshot-2026-07",
@@ -186,6 +214,73 @@ export const JURISDICTION_CLAIMS: JurisdictionClaim[] = [
 
 /** The as-of date the queue is rendered at (the claim above is live on this date). */
 export const QUEUE_AS_OF = "2026-08-20";
+
+// --- Records-request drafts (P36.63 / RQ-04, SIG-RQ-007) ---------------------
+
+/**
+ * The `sig.records-request-drafts/1` rows the export persists (DRAFT state).
+ * Verbatim `tasks.detect.RecordsRequestDraft.as_dict()` output — the rows here
+ * are the engine's own emit for these two fixture tasks (statute, citation,
+ * template version, residency note, request body all verbatim-recorded,
+ * SIG-TRANSP). Every row is `status: "drafted"`, always — there is no other
+ * legal value and no transmit path exists (SIG-RQ-007; ADR-171).
+ */
+export const RECORDS_REQUEST_DRAFTS: RecordsRequestDraft[] = [
+  {
+    status: "drafted",
+    task_type: "conflicting_retention",
+    subject_id: "agency:okcpd",
+    jurisdiction_id: "OK",
+    trigger_kind: "contradiction",
+    trigger_ref: "policy_configuration_divergence:okcpd:retention",
+    records_law_key: "OK",
+    jurisdiction_name: "Oklahoma",
+    target_agency: "Oklahoma City Police Department",
+    records_contact: "(records contact to be determined at filing time)",
+    record_type: "surveillance_policy",
+    statute_name: "Oklahoma Open Records Act",
+    statutory_citation: "Okla. Stat. tit. 51 § 24A.1",
+    records_sought:
+      "all current policies, standard operating procedures, retention schedules, and audit records governing Oklahoma City Police Department's use of surveillance technology, including any surveillance-use or civil-liberties impact policies adopted under local ordinance",
+    draft_body:
+      "Pursuant to the Oklahoma Open Records Act (Okla. Stat. tit. 51 § 24A.1), I request copies of the following public records held by Oklahoma City Police Department: all current policies, standard operating procedures, retention schedules, and audit records governing Oklahoma City Police Department's use of surveillance technology, including any surveillance-use or civil-liberties impact policies adopted under local ordinance.\n\nPlease provide responsive records in electronic format where available. If any portion is withheld, please cite the specific statutory exemption for each redaction. If you anticipate fees exceeding $25, please contact me with an itemised estimate before proceeding. I would appreciate a response within the Reasonable time (prompt) your law provides.\n\n[Filing is a public act attributable to the filer; the acknowledgement is completed at filing time (SIG-TASK-018).]\n\nSubmitted by: [the contributor who files this request — completed at filing time]. Records contact: (records contact to be determined at filing time).",
+    response_deadline: "Reasonable time (prompt)",
+    appeal_path: "Civil action in district court",
+    residency_restricted: false,
+    routing_note: "",
+    template_version: "v1",
+    template_set_version: "2026.09.01",
+    table_version: "2026.09.01",
+  },
+  {
+    status: "drafted",
+    task_type: "cooperative_contract_unexplored",
+    subject_id: "agency:fx-co-pd",
+    jurisdiction_id: "VA",
+    trigger_kind: "coverage",
+    trigger_ref: "coverage:master_record:fx-co-pd",
+    records_law_key: "VA",
+    jurisdiction_name: "Virginia",
+    target_agency: "Fairfax County Police Department",
+    records_contact: "(records contact to be determined at filing time)",
+    record_type: "alpr_contract",
+    statute_name: "Virginia Freedom of Information Act",
+    statutory_citation: "Va. Code § 2.2-3700",
+    records_sought:
+      "all contracts, purchase orders, invoices, and service agreements with automated licence-plate-reader (ALPR) vendors (including but not limited to Flock Safety, Motorola/Vigilant, and Genetec), for the period the earliest available date to present",
+    draft_body:
+      "Pursuant to the Virginia Freedom of Information Act (Va. Code § 2.2-3700), I request copies of the following public records held by Fairfax County Police Department: all contracts, purchase orders, invoices, and service agreements with automated licence-plate-reader (ALPR) vendors (including but not limited to Flock Safety, Motorola/Vigilant, and Genetec), for the period the earliest available date to present.\n\nPlease provide responsive records in electronic format where available. If any portion is withheld, please cite the specific statutory exemption for each redaction and release all reasonably segregable non-exempt portions. If you anticipate fees exceeding $25, please contact me with an itemised estimate before proceeding. I would appreciate a response within the 5 business days (extendable by 7) your law provides.\n\n[Filing is a public act attributable to the filer; the acknowledgement is completed at filing time (SIG-TASK-018).]\n\nSubmitted by: [the contributor who files this request — completed at filing time]. Records contact: (records contact to be determined at filing time).",
+    response_deadline: "5 business days (extendable by 7)",
+    appeal_path:
+      "Petition for mandamus/injunction in general district or circuit court; FOIA Council (advisory)",
+    residency_restricted: true,
+    routing_note:
+      "Virginia restricts public-records requests to residents (Va. Code § 2.2-3700); this draft must be filed by a resident of the jurisdiction — route to the local filers (§33.5, SIG-TASK-016a/016b).",
+    template_version: "v1",
+    template_set_version: "2026.09.01",
+    table_version: "2026.09.01",
+  },
+];
 
 // --- Public corrections log (§39.8, SIG-UI-032; §45.3) -----------------------
 

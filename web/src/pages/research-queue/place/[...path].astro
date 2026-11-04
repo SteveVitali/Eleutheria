@@ -34,8 +34,10 @@ import {
 import {
   getJurisdictionClaims,
   getQueueAsOf,
+  getRecordsRequestDrafts,
   getResearchQueue,
 } from "../../../lib/data";
+import { draftBundleFiles, draftBundleHref, placeDraftBundles } from "../../../lib/records-drafts";
 import { withBase } from "../../../lib/paths";
 
 export function getStaticPaths() {
@@ -100,6 +102,12 @@ const facet = facets.find((f) => f.slug === slug);
 const name = facet?.name ?? (slug === "unplaced" ? "Not yet placed" : slug);
 const children = childFacets(facets, slug);
 const nested = slug === "unplaced" ? [] : nestedTypeFacets(CARDS, slug);
+// P36.63 (RQ-04, SIG-RQ-007/010): the per-place draft bundle — emitted only
+// when ≥ 1 covered task carries a persisted draft (never a dead link).
+const placeDraftBundle = !type
+  ? placeDraftBundles(CARDS, getRecordsRequestDrafts(), facets.filter((f) => f.slug === slug))[0]
+  : undefined;
+const bundleFiles = placeDraftBundle ? draftBundleFiles([placeDraftBundle]) : [];
 const href = (s: QueueSort, p: number) =>
   type ? queuePlaceTypeHref(slug, type, s, p) : queuePlaceHref(slug, s, p);
 ---
@@ -133,6 +141,18 @@ const href = (s: QueueSort, p: number) =>
           <a href={withBase(queuePlaceTypeHref(slug, t.id))}>{t.label}</a> ({t.tasks})
         </>
       ))}
+    </p>
+  )}
+  {placeDraftBundle && bundleFiles.length > 0 && (
+    <p class="sig-queue-note" data-testid="draft-bundle-link">
+      <strong>DRAFT</strong> records requests for {name} ({placeDraftBundle.entries.length} drafted, 0 sent):{" "}
+      {bundleFiles.map((f, i) => (
+        <>
+          {i > 0 && " · "}
+          <a href={withBase(f.path)}>download the bundle{f.drafts < placeDraftBundle.entries.length ? ` (part ${i + 1} of ${bundleFiles.length})` : ""} (.txt)</a>
+        </>
+      ))}{" "}
+      — SIG sends nothing; you file it.
     </p>
   )}
   <p class="sig-queue-sortnav" data-testid="sort-nav">

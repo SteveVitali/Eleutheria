@@ -17,6 +17,7 @@
 import type { ResearchTaskCard } from "./research-queue";
 import type { QueueCampaign } from "./queue-hub";
 import { typeLabel, roleLabel } from "./queue-hub";
+import { draftTxtHref, type RecordsRequestDraft } from "./records-drafts";
 
 export const TASK_PAGE_SCHEMA = "sig.task-page/1";
 
@@ -193,7 +194,11 @@ export function relatedTasks(
 /** The machine-readable twin — the same fields the HTML page renders. */
 export function taskPageTwin(
   card: ResearchTaskCard,
-  opts: { claimedBy: string | null; related: readonly ResearchTaskCard[] },
+  opts: {
+    claimedBy: string | null;
+    related: readonly ResearchTaskCard[];
+    draft?: RecordsRequestDraft | null;
+  },
 ): Record<string, unknown> {
   return {
     schema: TASK_PAGE_SCHEMA,
@@ -223,6 +228,12 @@ export function taskPageTwin(
     generated_at: card.generated_at ?? null,
     detector_version: card.detector_version ?? null,
     disposition: card.disposition ?? null,
+    // P36.63 (RQ-04, SIG-RQ-007): the persisted DRAFT row verbatim when the
+    // export publishes one for this task — `status` is always "drafted"; the
+    // download is a document, never a transmit path (ADR-171).
+    records_request_draft: opts.draft ?? null,
+    draft_download:
+      opts.draft && card.handle ? draftTxtHref(card.handle) : null,
     related_handles: opts.related.map((c) => c.handle).filter((h): h is string => Boolean(h)),
   };
 }

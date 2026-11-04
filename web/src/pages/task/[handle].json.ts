@@ -10,10 +10,12 @@ import type { APIRoute, GetStaticPaths } from "astro";
 import {
   getJurisdictionClaims,
   getQueueAsOf,
+  getRecordsRequestDrafts,
   getResearchQueue,
 } from "../../lib/data";
 import { claimStatusFor, type ResearchTaskCard } from "../../lib/research-queue";
 import { relatedTasks, taskPageTwin } from "../../lib/task-page";
+import { draftForTask } from "../../lib/records-drafts";
 
 export const getStaticPaths: GetStaticPaths = () => {
   return getResearchQueue()
@@ -25,7 +27,11 @@ export const GET: APIRoute = ({ props }) => {
   const { card } = props as { card: ResearchTaskCard };
   const claim = claimStatusFor(card, getJurisdictionClaims(), getQueueAsOf());
   const related = relatedTasks(card, getResearchQueue());
-  const body = taskPageTwin(card, { claimedBy: claim.claimed_by, related });
+  const body = taskPageTwin(card, {
+    claimedBy: claim.claimed_by,
+    related,
+    draft: draftForTask(card, getRecordsRequestDrafts()),
+  });
   return new Response(JSON.stringify(body, null, 2) + "\n", {
     headers: { "content-type": "application/json; charset=utf-8" },
   });

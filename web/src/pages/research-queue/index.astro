@@ -31,12 +31,18 @@ import {
   getQueueCampaigns,
   getJurisdictionClaims,
   getQueueMeta,
+  getRecordsRequestDrafts,
   getResearchQueue,
   getResearchQueueProvenance,
 } from "../../lib/data";
+import { draftBundleFiles, draftBundleLinks, placeDraftBundles } from "../../lib/records-drafts";
 import { withBase } from "../../lib/paths";
 
 const CARDS = getResearchQueue();
+// P36.63 (RQ-04, SIG-RQ-007/010): the per-place draft bundles this build emits.
+const DRAFT_BUNDLES = draftBundleLinks(
+  draftBundleFiles(placeDraftBundles(CARDS, getRecordsRequestDrafts(), placeFacets(CARDS))),
+);
 const CLAIMS = getJurisdictionClaims();
 const AS_OF = getQueueAsOf();
 const META = getQueueMeta();
@@ -159,5 +165,27 @@ const lanes = META.lanes ?? {};
         </li>
       ))}
     </ul>
+  )}
+  {DRAFT_BUNDLES.length > 0 && (
+    <>
+      <p data-testid="draft-bundles-note">
+        Records-request drafts, bundled per place — every file is a DRAFT; 0 sent.
+        SIG sends nothing; you file each request yourself.
+      </p>
+      <ul class="sig-queue-shards" data-testid="draft-bundles">
+        {DRAFT_BUNDLES.map((b) => (
+          <li>
+            {b.placeName} —{" "}
+            {b.files.map((f, i) => (
+              <>
+                {i > 0 && " · "}
+                <a href={withBase(f.href)}>download ({f.label})</a>
+              </>
+            ))}{" "}
+            ({b.files.reduce((n, f) => n + f.drafts, 0)} drafted)
+          </li>
+        ))}
+      </ul>
+    </>
   )}
 </BaseLayout>

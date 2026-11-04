@@ -20,6 +20,7 @@ import {
   getDossiers,
   getJurisdictionClaims,
   getQueueAsOf,
+  getRecordsRequestDrafts,
   getResearchQueue,
   getResearchQueueProvenance,
 } from "../../lib/data";
@@ -37,6 +38,14 @@ import {
   unknownNote,
   whyItMatters,
 } from "../../lib/task-page";
+import {
+  DRAFT_ANCHOR,
+  NEVER_SENT_LINE,
+  draftForTask,
+  draftTxtHref,
+  isDraftRole,
+  residencyLine,
+} from "../../lib/records-drafts";
 import {
   queuePlaceHref,
   queueTypeHref,
@@ -92,8 +101,8 @@ const emittedDossiers = card ? new Set(getDossiers().map((d) => d.slug)) : new S
 const dossierSlug =
   card?.place?.slug && emittedDossiers.has(card.place.slug) ? card.place.slug : null;
 const unknown = card ? unknownNote(card) : null;
-const isDraftRole =
-  card !== null && (card.assignee_class === "records_requester" || card.assignee_class === "document_reviewer");
+const draft = card ? draftForTask(card, getRecordsRequestDrafts()) : null;
+const draftRole = card !== null && isDraftRole(card.assignee_class);
 const provenance = card ? getResearchQueueProvenance() : undefined;
 ---
 
@@ -185,16 +194,64 @@ const provenance = card ? getResearchQueueProvenance() : undefined;
       <a href={withBase("sources/")}>the sources index</a> lists every source SIG tracks.
     </p>
 
-    <h2>Records-request draft</h2>
-    <p data-testid="task-draft">
-      {isDraftRole ? (
-        <>No draft request is published for this task in this release. When the drafts
-        export lands, a DRAFT request (statute, citation, template version, residency
-        note) renders here — SIG sends nothing; you file it; the filer is left blank.</>
-      ) : (
-        <>This task is not a records-request or document-review task — no draft applies.</>
-      )}
-    </p>
+    <h2 id={DRAFT_ANCHOR}>Records-request draft</h2>
+    {draft ? (
+      <div class="sig-draft" data-testid="task-draft" data-draft-status={draft.status}>
+        <p class="sig-queue-note" data-testid="draft-banner">
+          <strong>DRAFT</strong> — {NEVER_SENT_LINE}
+        </p>
+        <dl class="sig-task-page__fields">
+          <div>
+            <dt>Statute</dt>
+            <dd data-testid="draft-statute">{draft.statute_name} ({draft.statutory_citation})</dd>
+          </div>
+          <div>
+            <dt>Agency</dt>
+            <dd data-testid="draft-agency">{draft.target_agency}</dd>
+          </div>
+          <div>
+            <dt>Template</dt>
+            <dd data-testid="draft-template">
+              {draft.record_type} {draft.template_version} — set {draft.template_set_version}, law table {draft.table_version}
+            </dd>
+          </div>
+          <div>
+            <dt>Response due</dt>
+            <dd>{draft.response_deadline}</dd>
+          </div>
+          <div>
+            <dt>Appeal path</dt>
+            <dd>{draft.appeal_path}</dd>
+          </div>
+          <div>
+            <dt>Records contact</dt>
+            <dd>{draft.records_contact}</dd>
+          </div>
+        </dl>
+        <p class="sig-queue-note" data-testid="draft-residency">{residencyLine(draft)}</p>
+        <p data-testid="draft-records-sought"><strong>Records sought:</strong> {draft.records_sought}</p>
+        <pre class="sig-draft__body" data-testid="draft-body">{draft.draft_body}</pre>
+        <p>
+          <a href={withBase(draftTxtHref(card.handle!))} data-testid="draft-download">
+            Download the draft (.txt)
+          </a>
+          {" "}— a document the filer may send by hand; this page has no transmit path.
+        </p>
+        <p class="sig-queue-note" data-testid="draft-never-sent">
+          A template, not legal advice — the statute cited is the law of record, and
+          filing is a public act attributable to the filer (SIG-TASK-018).
+        </p>
+      </div>
+    ) : (
+      <p data-testid="task-draft">
+        {draftRole ? (
+          <>No draft request is published for this task in this release — the task stays
+          queued and the absence is named, never a guessed draft.</>
+        ) : (
+          <>This task is not a records-request or document-review task — no draft applies.</>
+        )}
+      </p>
+    )}
 
     <h2>Closing condition</h2>
     <p data-testid="task-closing">{card.closing_condition}</p>
