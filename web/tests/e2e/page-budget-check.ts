@@ -332,6 +332,9 @@ export function evaluatePostAction(
   const violations: BudgetViolation[] = [];
   const gaps: GapReport[] = [];
   const reportedGaps = new Set<string>();
+  // Post-action measures exist only in the wire suite — a wire-declared gap
+  // row always applies here (the same isWireMeasure=true as the caller's).
+  const isWireMeasure = true;
 
   const gapFor = (metric: string) => {
     const source = measurementSource();
