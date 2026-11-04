@@ -15,6 +15,7 @@
 // national density bins), which K13 §2.6 places on this page (UXW0-1).
 import BaseLayout from "../layouts/BaseLayout.astro";
 import EmptyState from "../components/EmptyState.astro";
+import InBrief from "../components/InBrief.astro";
 import Figure from "../components/Figure.astro";
 import { assertCoverageMetrics } from "../lib/metrics";
 import { getCoverage, getMapDensityBins } from "../lib/data";
@@ -78,6 +79,15 @@ const fig = (id: string) => {
 ---
 
 <BaseLayout title="Coverage metrics" path="/coverage-metrics/">
+  {/* P36.64 (SIG-UI-141): the plain layer first — <=80 words, precise text
+      one action away, unchanged. */}
+  <InBrief href="#metrics">
+    <span data-copy="IB-01">SIG publishes counted quantities with named denominators, bounds derived
+    from its own records, and measured recall — never a total and never an
+    estimated population. This page lists every coverage figure and what it
+    is counted against.
+  </span>
+  </InBrief>
   <p>
     SIG publishes what it can honestly measure: <strong>counted quantities with named
     denominators</strong>, records-derived bounds, per-agency reconciliation ratios, and

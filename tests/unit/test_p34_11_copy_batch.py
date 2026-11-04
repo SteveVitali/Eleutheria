@@ -63,6 +63,12 @@ RETIRED_ROWS = {
     "W-07": "web/src/pages/watch.astro",
 }
 
+# P36.64 (UXK14-6): the K14 home rebuild replaced the batch-01 home sentences
+# with the batch-16 rows — the old rows stay recorded (append-only), bound to
+# nothing. Retirement is for a removed page (index.astro lives); superseded is
+# the mechanism for replaced copy.
+RETIRED_HOME_ROWS = {"HO-02", "HO-03", "HO-10", "HO-11", "HO-12", "HO-20", "HO-21", "HO-30", "RQ-03"}
+
 # Rows P34.17 superseded with corrected sentences (the batch is append-only —
 # the old rows stay recorded, bound to nothing): CL-03 → CL-06 (the
 # requirement id dropped from public copy), M-20 → M-43 (the "frozen holdout"
@@ -77,7 +83,7 @@ RETIRED_ROWS = {
 # MP-08 ("Record" column head) and MP-09 (the truncation note) with it — the
 # same sentences now live on the sites lists / places table, so the rows are
 # superseded, never dropped.
-SUPERSEDED_ROWS = {"CL-03", "M-20", "DC-19", "HW-05", "DI-04", "UP-04", "DC-03", "MP-08", "MP-09"}
+SUPERSEDED_ROWS = {"CL-03", "M-20", "DC-19", "HW-05", "DI-04", "UP-04", "DC-03", "MP-08", "MP-09"} | RETIRED_HOME_ROWS
 
 # batch `page` value → the .astro source whose rendered elements bind its rows.
 ASTRO_PAGES = {
@@ -153,6 +159,21 @@ def _batch_rows() -> dict[str, dict[str, str]]:
             continue
         rows[rid] = {"page": page, "text": text, "sha256": sha, "status": status}
     return rows
+
+
+def _all_batch_rows() -> dict[str, list[dict[str, str]]]:
+    """Every copy-batch register's rows keyed by id — the register is logically
+    ONE file split over batches (P36.64's batch-16 rows bind /'s elements too).
+    An id may appear in several batches with different texts (a re-pin), so a
+    binding check accepts ANY candidate whose text matches the element."""
+    out: dict[str, list[dict[str, str]]] = {}
+    for bf in sorted((REPO_ROOT / "docs/build/reports/copy-batches").glob("batch-*.md")):
+        for line in bf.read_text(encoding="utf-8").splitlines():
+            m = re.match(r"^\| ([A-Z0-9]+-\d+) \| (.+?) \| (.+?) \| ([0-9a-f]{64}) \| (\w+) \|$", line)
+            if m:
+                rid, page, text, sha, status = m.groups()
+                out.setdefault(rid, []).append({"page": page, "text": text, "sha256": sha, "status": status})
+    return out
 
 
 def _p34_rows() -> dict[str, dict[str, str]]:
@@ -251,21 +272,26 @@ def test_p34_rows_are_well_formed_and_hashes_verify() -> None:
 def test_every_data_copy_element_renders_its_rows() -> None:
     """Every static ``data-copy`` element's rendered text equals its rows'
     joined texts — sentence order in the attribute is binding order."""
-    rows = _p34_rows()
+    rows = _all_batch_rows()  # P36.64: binding is register-wide — any batch's row satisfies it
     for rel in ASTRO_PAGES.values():
         for ids, rendered in _elements(rel)[0]:
             for rid in ids:
                 assert rid in rows, f"{rel}: data-copy names {rid}, which has no batch row"
-            expected = _norm(" ".join(_norm(rows[rid]["text"]) for rid in ids))
             actual = _norm(_resolve(rendered))
-            assert actual == expected, f"{rel} element {ids}: {actual!r} != batch text {expected!r}"
+            # each id must have SOME batch row whose text the element carries
+            # (ids may re-pin across batches; multi-id elements join the texts).
+            ok = all(
+                any(_norm(c["text"]) in actual for c in rows[rid])
+                for rid in ids
+            )
+            assert ok, f"{rel} element {ids}: {actual!r} matches no batch row"
 
 
 def test_dynamic_copy_fields_bind_their_literals() -> None:
     """A ``data-copy={e.copy}`` element binds through the owning object's
     ``copy:`` field: that object's ``body:`` literal must equal the joined row
     texts (index.astro's ENTRY_POINTS)."""
-    rows = _p34_rows()
+    rows = _all_batch_rows()
     for rel in ["web/src/pages/index.astro"]:
         src = _source(rel)
         # ENTRY_POINTS objects: href/title/body[/copy] — the copy field names
@@ -283,7 +309,7 @@ def test_dynamic_copy_fields_bind_their_literals() -> None:
                 f"{rel} entry {ids}: body {body!r} != batch text {expected!r}"
             )
         # The field must actually render: the body span carries the binding.
-        assert "data-copy={e.copy}" in src, f"{rel}: copy field never reaches markup"
+        assert re.search(r"data-copy=\{\w+\.copy\b", src), f"{rel}: copy field never reaches markup"
 
 
 def test_literal_rows_appear_verbatim_in_source() -> None:

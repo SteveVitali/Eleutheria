@@ -926,6 +926,18 @@
       "token": "/",
       "count": 1,
       "reason": "P36.55: the bare-root JSON pointer in the empty-state fallback figure spec \u2014 a pointer, not a link"
+    },
+    {
+      "file": "src/pages/about.astro",
+      "token": "/about/",
+      "count": 1,
+      "reason": "P36.64: the BaseLayout `path` prop \u2014 the page's canonical path declaration for the citation/permalink (same construction every page uses), not a link"
+    },
+    {
+      "file": "src/lib/onboarding.ts",
+      "token": "/sections/$",
+      "count": 3,
+      "reason": "P36.64: JSON-pointer rests into the dossier artifact (sections[].figures/rows + reconciliation claims) for the golden card's Figure specs \u2014 pointers, not links"
     }
   ]
 }

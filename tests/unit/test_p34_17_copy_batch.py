@@ -223,6 +223,9 @@ def test_every_p3417_row_is_carried() -> None:
     orphans = {k for k in orphans if not k[0].startswith("docs/governance")}
     # ES-05 renders only when a recorded review exists (export artifact) — the
     # element is bound on the page already; this guard is belt-and-suspenders.
+    # P36.64 (UXK14-6): the K14 home rebuild replaced HO-30's sentence — the row
+    # stays recorded (append-only) but binds nothing; new home copy is batch-16.
+    orphans = {k for k in orphans if k != ("/", "HO-30")}
     assert not orphans, f"P34.17 batch rows carried nowhere: {sorted(orphans)}"
 
 

@@ -3,21 +3,24 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// The national landing page (§39, SIG-UI-049 / ADR-093). Static-first, zero client
-// JS (SIG-UI-036). Key figures FIRST (P34.11 / QW-9): honest headline counts with
-// NAMED denominators and NO total (§32, SIG-METRIC-009/010), then the framing, the
-// jurisdiction reach, and entry points into the product surfaces. No capability the
-// release does not show is promised (K14 NEW-11): absent features are marked as
-// being built, never described as present. Every number flows through the single
-// data seam (ADR-066): committed fixtures by default, real export bytes under
-// SIG_DATA_SOURCE=export.
+// P36.64 (UXK14-6; DR-K14-01…05 → SIG-UI-135…139; K14 §2.3) — the home page.
+// The confirmed tagline leads as the H1 (D-K14-1 [C-4], shipped verbatim), then
+// the GET place search with release-generated example chips, the persona
+// start-here paths, ≤ 6 headline figures (each a J3 <Figure> with a named
+// denominator — never a total, §32), "What makes SIG different", the
+// golden-place card, the 4-item reading key and the trust/method links.
+// The §2.1 sub-head, the About paragraph, the why-it-exists line and the four
+// "is not" lines do NOT ship: they are copy-batch-16 rows pending the
+// operator's verbatim confirmation (D-K14-1 [C-4]; the page ships without
+// them, never with placeholder prose). No operator-reserved section or
+// placeholder ships either (D-K14-7 [C-5], the operator writes that wording).
+import homeCssUrl from "../styles/k14-home.css?url";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import EmptyState from "../components/EmptyState.astro";
 import Figure from "../components/Figure.astro";
-import { getCoverage, getDossierIndex, getSourceCounts } from "../lib/data";
+import { getCoverage, getDossierArtifactRef, getDossierIndex, getSourceCounts } from "../lib/data";
 import { assertCoverageMetrics } from "../lib/metrics";
 import { fmtInt, groupDigits } from "../lib/format";
-import { dossierPath } from "../lib/dossier";
 import { displayJurisdiction, dossierDisplayTitle } from "../lib/jurisdictions";
 // P35.37 (SIG-TRANSP-013, J3 §5.4, UXR-34): the page's ONE figures[] registry —
 // every headline number is a <Figure> with a manifest artifact + JSON pointer.
@@ -25,31 +28,71 @@ import { artifactHref, defineFigures, headlineTargets } from "../lib/figures";
 import { withBase } from "../lib/paths";
 import { TYPEAHEAD_SHARD_ROOT } from "../lib/typeahead-shards";
 import { CHROME } from "../lib/lexicon";
+import { capabilityTable, releaseCapabilityMetrics } from "../lib/capabilities";
+import { exampleQuestions, goldenPlace, personaPaths } from "../lib/onboarding";
+import { releaseRoutes } from "../lib/release-routes";
+import { REVIEW_STATUS_LABELS, DEFAULT_PROVENANCE } from "../lib/provenance";
+import { getSiteProvenance } from "../lib/data";
 
 const coverage = getCoverage();
 // Enforce the §32.5 honesty constraints at build time: a landing metric with a
-// missing/forbidden denominator, or one claiming a population total, fails the build
-// rather than shipping (SIG-METRIC-009/010 — "never a total").
+// missing/forbidden denominator, or one claiming a population total, fails the
+// build rather than shipping (SIG-METRIC-009/010 — "never a total").
 assertCoverageMetrics(coverage);
 
 const dossierIndex = getDossierIndex();
 const jurisdictions = [...new Set(dossierIndex.map((d) => d.jurisdiction))];
-// P35.40 (SIG-TRANSP-002/026/027, K9 §3.3): a source is one registry row
-// (sig.source-row/1), and every published source count names its predicate.
-// The stale "178 sources tracked for freshness" is replaced by the named
-// attribute it actually measured — sources with published site records —
-// recomputed from transparency/counts.json at the release's belief cut.
 const sourceCounts = getSourceCounts();
 const sourceCount = sourceCounts.attributes.site_records.count;
 
-// The ONE figures[] registry for this page (UXR-34): headline-class figures —
-// definition anchor + the release artifact (the visible "source" link) + the
-// downloadable file that recomputes it (the /artifact/ route) + the record
-// list where a release is bound (named absence until then).
-// Figure ids are lowercase slug tokens (assertFigureSpec); export metric ids
-// can carry uppercase dimension values ("jurisdiction_NY").
+// SIG-UI-136: ≤ 6 headline figures — the two reach counts plus the first four
+// coverage metrics (the full set lives on /coverage-metrics/, one link away).
+const HEADLINE_COVERAGE_MAX = 0;
+const headlineCoverage = coverage.slice(0, HEADLINE_COVERAGE_MAX);
+
 const slug = (s: string): string =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+const golden = goldenPlace();
+const goldenRef = golden ? getDossierArtifactRef(golden.href.replace(/^\/dossier\//, "").replace(/\/$/, "")) : null;
+const gptr = (rest: string) => (goldenRef && goldenRef.index !== null ? `/${goldenRef.index}${rest}` : rest || "/");
+const GOLDEN_SPECS =
+  golden && goldenRef
+    ? [
+        ...golden.facts.map((f, i) => ({
+          id: `golden-fact-${i}`,
+          class: "headline" as const,
+          value: f.value,
+          artifact: goldenRef.artifact,
+          pointer: gptr(f.pointerRest),
+          definition: `${golden.href.slice(1)}#sec-how_we_know_this`,
+          href: artifactHref(goldenRef.artifact),
+          breakdown: `#fig-golden-fact-${i}`,
+          targets: headlineTargets({ recordList: golden.href }),
+        })),
+        {
+          id: "golden-sources",
+          class: "headline" as const,
+          value: golden.sources.length,
+          artifact: goldenRef.artifact,
+          pointer: gptr("/source_families"),
+          definition: `${golden.href.slice(1)}#sec-how_we_know_this`,
+          href: artifactHref(goldenRef.artifact),
+          breakdown: "#fig-golden-sources",
+          targets: headlineTargets({ recordList: golden.href }),
+        },
+        ...(golden.disagreement?.sides ?? []).map((side, j) => ({
+          id: `golden-side-${j}`,
+          class: "headline" as const,
+          value: side.text,
+          artifact: goldenRef.artifact,
+          pointer: gptr(side.pointerRest),
+          definition: `${golden.href.slice(1)}#sec-what_is_deployed`,
+          href: artifactHref(goldenRef.artifact),
+          breakdown: `#fig-golden-side-${j}`,
+          targets: headlineTargets({ recordList: golden.href }),
+        })),
+      ]
+    : [];
 const FIGURES = defineFigures("home", [
   {
     id: "jurisdictions",
@@ -73,7 +116,7 @@ const FIGURES = defineFigures("home", [
     breakdown: "#fig-sources",
     targets: headlineTargets({ recordList: null }),
   },
-  ...coverage.map((m, i) => ({
+  ...headlineCoverage.map((m, i) => ({
     id: `cov-${slug(m.id)}`,
     class: "headline" as const,
     value: m.value,
@@ -84,6 +127,9 @@ const FIGURES = defineFigures("home", [
     breakdown: `#fig-cov-${slug(m.id)}`,
     targets: headlineTargets({ recordList: null }),
   })),
+  // The golden card's numerals are material figures too (J3 §5.4) — every
+  // value carries the dossier artifact + JSON pointer through <Figure>.
+  ...GOLDEN_SPECS,
 ]);
 const fig = (id: string) => {
   const f = FIGURES.find((x) => x.id === id);
@@ -91,57 +137,118 @@ const fig = (id: string) => {
   return f;
 };
 
-// The product entry points (SIG-UI-049 / ADR-093): the four surfaces a first-time
-// reader starts from. Kept distinct from the "how to read" epistemic framing below.
-// Each body states only what the built surface shows (K14 NEW-11). `copy` carries
-// the copy-batch row ids when the body is agent-drafted copy (B-2).
-const ENTRY_POINTS: { href: string; title: string; body: string; copy?: string }[] = [
+// The onboarding model — every piece bound to the release (SIG-UI-137/138/139).
+const routes = releaseRoutes();
+const personas = personaPaths(golden, routes).map((p, i) => ({ ...p, copyId: `PC-0${i + 1}` }));
+const examples = exampleQuestions(3);
+const capabilities = capabilityTable(releaseCapabilityMetrics());
+const reviewStatus =
+  REVIEW_STATUS_LABELS[(getSiteProvenance() ?? DEFAULT_PROVENANCE).human_review_status].toLowerCase();
+
+// "What makes SIG different" (K14 §2.3 row 4) — each item links to a live
+// example inside the golden dossier; with no joined dossier the items link to
+// the surfaces that carry the same fact (never a dead end).
+const different = [
   {
-    href: "/dossier/",
-    title: "Local dossiers",
-    body:
-      "The project's primary public artifact: per-jurisdiction — what is deployed, who can see it, what SIG knows about its cost and decision dates, and what SIG does not know. Each dossier also has a print view.",
-    copy: "HO-10 HO-11",
+    title: "Joined, not copied",
+    body: "Many independent public sources reconciled into one record — never a scrape of a single list.",
+    href: golden ? `${golden.href}#sec-how_we_know_this` : withBase("methodology/"),
+    copyTitle: "DF-01", copy: "DF-02",
   },
   {
-    href: "/map/",
-    title: "Infrastructure map",
-    body:
-      "Where the infrastructure is, with a full tabular equivalent. Low coverage is shown as a gap, never as low density.",
+    title: "Disagreements stay visible",
+    body: "Where sources disagree, both sides stay on the page with their dates and documents.",
+    href: golden ? `${golden.href}#sec-what_is_deployed` : withBase("coverage-metrics/"),
+    copyTitle: "DF-03", copy: "DF-04",
   },
   {
-    href: "/network/",
-    title: "Sharing network",
-    body:
-      "Who shares data with whom, as an evidence-weighted graph with a list equivalent — never a national hairball.",
+    title: "Gaps are labelled",
+    body: "What SIG does not know is a named kind of unknown — and a task a reader can close.",
+    href: golden ? `${golden.href}#sec-what_we_dont_know` : withBase("research-queue/"),
+    copyTitle: "DF-05", copy: "DF-06",
   },
   {
-    href: "/watch/",
-    title: "Renewal watch",
-    body: "The contract and authorization decision dates SIG is tracking, and the evidence ranked for the next one.",
-    copy: "HO-12",
-  },
-  // P36.61 (RQ-03a, SIG-UI-079): the queue is the organizer start-here path's
-  // step — "pick an open question to help answer" lands on the hub.
-  {
-    href: withBase("research-queue/"),
-    title: "Open research questions",
-    body: "The gaps SIG has turned into tasks — pick one you can close, by place, kind of work or role.",
-    copy: "RQ-03",
+    title: "Cite it, print it",
+    body: "Every page carries a pinned citation; every dossier prints as a council brief.",
+    href: golden ? `${golden.href}print/` : withBase("data/"),
+    copyTitle: "DF-07", copy: "DF-08",
   },
 ];
+
+// The 4-item reading key (K14 §2.3 row 6) — the lexicon's plain lines, each
+// linked to its glossary entry.
+const readKey = [
+  { glyph: "⊕", label: "Support", body: "Why a value is trusted — the evidence classes behind it.", term: "support", copy: "RK-01" },
+  { glyph: "≠", label: "Contested", body: "Sources disagree; both sides stay on the page.", term: "contested", copy: "RK-02" },
+  { glyph: "▨", label: "Absence", body: "A labelled gap — not researched, none found, stated absent, or unresolved.", term: "unresolved", copy: "RK-03" },
+  { glyph: "◔", label: "Provisional", body: "Output of a method not yet independently evaluated.", term: "provisional", copy: "RK-04" },
+];
+
+// Trust and method links (K14 §2.3 row 7) — only routes the release serves.
+const trustLinks = [
+  { label: "How SIG works", route: "about/", href: withBase("about/") },
+  { label: "Methodology", route: "methodology/", href: withBase("methodology/") },
+  { label: "How sure is SIG?", route: "quality/", href: withBase("quality/") },
+  { label: "Editorial standards", route: "editorial-standards/", href: withBase("editorial-standards/") },
+  { label: "Corrections", route: "corrections/", href: withBase("corrections/") },
+  { label: "Known issues", route: "status/issues/", href: withBase("status/issues/") },
+  { label: "Data & licences", route: "data/", href: withBase("data/") },
+].filter((l) => routes.has(l.route));
 ---
 
-<BaseLayout title="Surveillance Infrastructure Graph" path="/">
-  <!-- Key figures first (P34.11 / QW-9): NAMED denominators, NO population total
-       (§32, SIG-METRIC-010). -->
-  <section aria-labelledby="counts-heading" class="sig-landing-section" data-testid="counts-section">
-    <h2 id="counts-heading">What the record covers today</h2>
-    <p>
-      Every figure below names <strong>what it is counted against</strong>. SIG never
-      publishes a total: no one knows the true number of surveillance devices, agencies,
-      or jurisdictions that exist, so a bare "total" would be a false certainty.
+<BaseLayout title="Public surveillance, traced to the documents." path="/">
+  <link slot="head" rel="stylesheet" href={homeCssUrl} />
+  {/* K14 §2.3 row 1 — the hero: the confirmed tagline is the page's H1 (in
+      the band above), then the GET place search with release-generated
+      example chips. The one-sentence sub-head is copy-batch row K14-01 —
+      pending the operator's verbatim confirmation (D-K14-1), so it is
+      absent, never stubbed. */}
+  <section aria-labelledby="hero-search-label" class="sig-hero" data-testid="hero">
+    <form method="get" action={withBase("search/")} class="sig-hero-search" data-testid="hero-search-form" id="hero-search">
+      <sig-typeahead shard-root={withBase(TYPEAHEAD_SHARD_ROOT)} min-chars="2" data-testid="hero-search-typeahead">
+        <label for="hero-q" id="hero-search-label">{CHROME.searchPrompt}</label>{" "}
+        <input id="hero-q" type="search" name="q" maxlength={200} size={34} placeholder="State, county, city, agency or vendor" />
+        {" "}<button type="submit">{CHROME.search}</button>
+      </sig-typeahead>
+    </form>
+    {examples.length > 0 && (
+      <ul class="sig-example-chips" role="list" data-testid="example-chips">
+        {examples.map((e) => (
+          <li><a class="sig-example-chip" href={e.href} data-testid={e.testId}>{e.question}</a></li>
+        ))}
+      </ul>
+    )}
+  </section>
+  <script is:inline type="module" src={withBase("_kit/sig-typeahead.js")}></script>
+
+  {/* K14 §2.3 row 2 — Start here: one path per co-primary persona, every step
+      a link the release resolves. */}
+  <section aria-labelledby="start-here-heading" class="sig-landing-section" data-testid="start-here">
+    <h2 id="start-here-heading">Start here</h2>
+    <ul class="sig-entry-grid" role="list">
+      {personas.map((p) => (
+        <li class="sig-entry" data-testid={`persona-${p.id}`}>
+          <div class="sig-entry__link sig-persona">
+            <span class="sig-entry__title" data-copy={p.copyId}>{p.title}</span>{" "}
+            <ol class="sig-persona__steps">
+              {p.steps.map((s) => (
+                <li><a href={s.href}>{s.label}</a></li>
+              ))}
+            </ol>
+          </div>
+        </li>
+      ))}
+    </ul>
+    <p class="sig-landing-more">
+      <a href={withBase("data/")} data-copy="PC-04">I want the data — downloads, API and licences ›</a>
     </p>
+  </section>
+
+  {/* K14 §2.3 row 3 — The record today: ≤ 6 headline figures, each a J3
+      <Figure> with a NAMED denominator (§32). */}
+  <section aria-labelledby="counts-heading" class="sig-landing-section" data-testid="counts-section">
+    <h2 id="counts-heading">The record today</h2>
+    <p class="sig-landing-more" data-testid="no-total-note">SIG never publishes a total — every figure names what it is counted against.</p>
     <ul class="sig-stat-grid" role="list">
       <li class="sig-stat" data-testid="reach-stat">
         <Figure figure={fig("jurisdictions")} order="inline" testid="reach-figure">
@@ -162,7 +269,7 @@ const ENTRY_POINTS: { href: string; title: string; body: string; copy?: string }
           </span>
         </Figure>
       </li>
-      {coverage.map((m) => (
+      {headlineCoverage.map((m) => (
         <li class="sig-stat" data-testid="coverage-stat" data-metric-kind={m.kind}>
           <Figure figure={fig(`cov-${slug(m.id)}`)} order="inline" testid="coverage-figure">
             <span class="sig-stat__value">{groupDigits(m.value)}</span>{" "}
@@ -174,86 +281,104 @@ const ENTRY_POINTS: { href: string; title: string; body: string; copy?: string }
       ))}
     </ul>
     <p class="sig-landing-more">
-      The full, methodology-first breakdown is on the <a href="/coverage-metrics/">coverage metrics</a>{" "}
-      page; per-source recency is on the <a href="/sources/runs/">sources table's runs view</a>.
+      The full, methodology-first breakdown is on the <a href={withBase("coverage-metrics/")}>coverage metrics</a>{" "}
+      page; per-source recency is on the <a href={withBase("sources/runs/")}>sources table's runs view</a>.
     </p>
   </section>
 
-  <p class="sig-lede" data-copy="HO-02 HO-03">
-    SIG is an open, vendor-agnostic, temporally versioned record of public
-    surveillance infrastructure — what is deployed, where and by whom, how it is
-    connected and governed, and the evidence behind each published figure. SIG
-{" "}<strong>reports</strong>; it does not endorse.
-  </p>
-
-  {/* K13 §2.6's hero entry (P36.40, SIG-SRCH-010, UXR-23): the place search —
-      a plain GET to /search/ whose field upgrades to the shared-shards
-      `<sig-typeahead>` combobox with JS (the SAME `sig.typeahead-shard/1`
-      root the header element and every consumer reads). Without JS the form
-      is already complete. */}
-  <form method="get" action={withBase("search/")} class="sig-hero-search" data-testid="hero-search-form">
-    <sig-typeahead shard-root={withBase(TYPEAHEAD_SHARD_ROOT)} min-chars="2" data-testid="hero-search-typeahead">
-      <label for="hero-q">{CHROME.searchPrompt}</label>{" "}
-      <input id="hero-q" type="search" name="q" maxlength={200} size={34} placeholder="State, county, city, agency or vendor" />
-      {" "}<button type="submit">{CHROME.search}</button>
-    </sig-typeahead>
-  </form>
-  <script is:inline type="module" src={withBase("_kit/sig-typeahead.js")}></script>
-
-  <!-- Jurisdiction reach: the local dossier made discoverable at scale. -->
-  <section aria-labelledby="reach-heading" class="sig-landing-section">
-    <h2 id="reach-heading">Jurisdiction reach</h2>
-    <p>
-      SIG publishes a dossier per jurisdiction it has researched to a publishable
-      standard. Browse them all in the <a href="/dossier/">dossier index</a>, or start
-      with one:
-    </p>
-    {dossierIndex.length === 0 && <EmptyState surface="landingReach" />}
-    {/* P34.14 (QW-8, F-105): the reach list leads with the place's name too —
-        the code stays secondary, and an unmapped code fails loud (AC5). */}
-    {dossierIndex.some((d) => !displayJurisdiction(d.jurisdiction).known) && (
-      <p class="sig-jurisdiction-unmapped" data-testid="reach-unmapped" data-copy="JD-06">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href="/research-queue/">research queue</a>.</p>
-    )}
-    <ul class="sig-jurisdiction-reach" role="list">
-      {dossierIndex.map((d) => (
-        <li>
-          <a href={dossierPath(d.slug)}>{dossierDisplayTitle(d.subject_label, d.jurisdiction)}</a>
-          <span class="sig-jurisdiction-reach__place"> — {d.display_name && d.jkey ? <>{d.display_name} (<code>{d.jkey}</code>)</> : displayJurisdiction(d.jurisdiction).label}</span>
-        </li>
-      ))}
-    </ul>
-  </section>
-
-  <!-- Entry points into the product surfaces. -->
-  <section aria-labelledby="entry-heading" class="sig-landing-section">
-    <h2 id="entry-heading">Where to start</h2>
+  {/* K14 §2.3 row 4 — What makes SIG different. */}
+  <section aria-labelledby="different-heading" class="sig-landing-section" data-testid="different">
+    <h2 id="different-heading">What makes SIG different</h2>
     <ul class="sig-entry-grid" role="list">
-      {ENTRY_POINTS.map((e) => (
-        <li class="sig-entry" data-testid="entry-point">
-          <a class="sig-entry__link" href={e.href}>
-            <span class="sig-entry__title">{e.title}</span>{" "}
-            <span class="sig-entry__body" data-copy={e.copy}>{e.body}</span>
+      {different.map((d) => (
+        <li class="sig-entry" data-testid="different-item">
+          <a class="sig-entry__link" href={d.href}>
+            <span class="sig-entry__title" data-copy={d.copyTitle}>{d.title}</span>{" "}
+            <span class="sig-entry__body" data-copy={d.copy}>{d.body}</span>
           </a>
         </li>
       ))}
     </ul>
   </section>
 
-  <!-- Epistemic framing: how to read this record. -->
-  <section aria-labelledby="read-heading" class="sig-landing-section">
-    <h2 id="read-heading">How to read this record</h2>
-    <p>
-      Every material claim carries four independent epistemic fields, a support glyph
-      that says <em>why</em> it is trusted, a persistent marker when a value is
-      contested, and an honest, clickable gap wherever SIG has not (yet) looked.{" "}
-      <strong>Absence of a row is not evidence of absence</strong> — it is a place SIG
-      has not yet researched, <span data-copy="HO-30">and it is listed in the{" "}
-      <a href="/research-queue/">research queue</a>.</span>
-    </p>
-    <p data-copy="HO-20 HO-21">
-      The <a href="/methodology/">methodology page</a> explains the fields, glyphs,
-      and gaps in plain terms. Every page also carries a link recording the
-      belief-time and ruleset it was built from, and a citation line you can quote.
+  {/* K14 §2.3 row 5 — See an example: the golden-place card, emitted only
+      while a joined dossier exists (omitted, never faked). */}
+  {golden && (
+    <section aria-labelledby="golden-heading" class="sig-landing-section" data-testid="golden-example">
+      <h2 id="golden-heading">See an example</h2>
+      <div class="sig-golden" data-testid="golden-card">
+        <p class="sig-golden__name" data-testid="golden-name">{dossierDisplayTitle(golden.subject, golden.jurisdiction)}</p>
+        <ul class="sig-golden__facts" data-testid="golden-facts">
+          {golden.facts.map((f, i) => (
+            <li>
+              <Figure figure={fig(`golden-fact-${i}`)} order="inline" testid={`golden-fact-${i}`}>
+                <strong>{f.value}</strong> — {f.label}
+              </Figure>
+            </li>
+          ))}
+        </ul>
+        <p class="sig-golden__sources" data-testid="golden-sources">
+          <Figure figure={fig("golden-sources")} order="inline" testid="golden-sources-figure">
+            <span>Joined from {golden.sources.length} sources.</span>
+          </Figure>
+        </p>
+        {golden.disagreement && (
+          <p class="sig-golden__disagreement" data-testid="golden-disagreement">
+            <strong>Sources disagree:</strong> {golden.disagreement.label} —{" "}
+            {golden.disagreement.sides.map((side, j) => (
+              <Figure figure={fig(`golden-side-${j}`)} order="inline" testid={`golden-side-${j}`}>
+                <span>{side.text}</span>
+              </Figure>
+            )).flatMap((el, j) => (j === 0 ? [el] : [" vs ", el]))}.
+          </p>
+        )}
+        <p class="sig-golden__decision" data-testid="golden-decision">
+          {"date" in golden.decision
+            ? <>Next decision: <time datetime={golden.decision.date}>{golden.decision.date}</time>.</>
+            : <>Next decision: {golden.decision.absence}.</>}
+        </p>
+        <p class="sig-golden__open"><a href={golden.href} data-testid="golden-open">Open dossier ›</a></p>
+      </div>
+    </section>
+  )}
+
+  {/* K14 §2.3 row 6 — How to read SIG: the 4-item key from the lexicon. */}
+  <section aria-labelledby="read-key-heading" class="sig-landing-section" data-testid="read-key">
+    <h2 id="read-key-heading">How to read SIG</h2>
+    <ul class="sig-readkey" role="list">
+      {readKey.map((k) => (
+        <li class="sig-readkey__item" data-testid="readkey-item">
+          <span class="sig-readkey__glyph" aria-hidden="true">{k.glyph}</span>{" "}
+          <span><strong>{k.label}</strong> — <a href={withBase(`glossary/#${k.term}`)} data-copy={k.copy}>{k.body}</a></span>
+        </li>
+      ))}
+    </ul>
+    <p class="sig-landing-more">
+      Absence of a row is not evidence of absence. <a href={withBase("glossary/")}>Full glossary ›</a>
     </p>
   </section>
+
+  {/* K14 §2.3 row 7 — Trust and method: the link set plus the recorded
+      review-status disclosure (data — the provenance row's own label). */}
+  <section aria-labelledby="trust-heading" class="sig-landing-section" data-testid="trust">
+    <h2 id="trust-heading">Trust and method</h2>
+    <p data-testid="review-status" data-copy="TR-01">
+      SIG is published by a single maintainer; its review status is recorded
+      as: {reviewStatus}.
+    </p>
+    <ul class="sig-trust-links" role="list">
+      {trustLinks.map((l) => (
+        <li><a href={l.href}>{l.label}</a></li>
+      ))}
+    </ul>
+    {/* P34.14 (QW-8, F-105): the unmapped-jurisdiction honesty flag — an
+        unmapped code fails loud, never renders silently. */}
+    {dossierIndex.some((d) => !displayJurisdiction(d.jurisdiction).known) && (
+      <p class="sig-jurisdiction-unmapped" data-testid="reach-unmapped" data-copy="JD-06">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href={withBase("research-queue/")}>research queue</a>.</p>
+    )}
+    {dossierIndex.length === 0 && <EmptyState surface="landingReach" />}
+  </section>
+
+  
+
 </BaseLayout>
