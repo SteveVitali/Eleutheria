@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.66b
-lastCompleted: P36.66a
+nextTicket: P36.67
+lastCompleted: P36.66b
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.66a-withbase-sweep
+chainTip: r11/P36.66b-site-snapshots-and-edge-selectors
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-04T15:45Z
+updatedAt: 2026-11-04T18:00Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1503,3 +1503,5 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-04 — P36.66a post-closeout record — head `fad2e3f0` 5/5 green head-bound (`ci: pass #434@fad2e3f`, run 41851266698, ci_boundary ~15:45Z) · fix arc: describedby pin forward `5367643b` (composed e2e) → matrix verdict shape + `check_live_claims` phrasing `c6d9397c` → projection regen `5fbb740f` → CHANGELOG entry `fad2e3f0` (changelog gate) · `main` untouched · deferrals +0/−0 · chainTip → r11/P36.66a-withbase-sweep (open) · next → P36.66b · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-04 — dispatch boundary-confirm — P36.66a's green read recorded (`ci: pass #434@fad2e3f`, run 41851266698); `blockedOn` (nothing); chainTip `r11/P36.66a-withbase-sweep` · nextTicket P36.66b (row 410 — site snapshots + edge selectors; `Live stage: publish` BUT `live_verification=false` — snapshot build/staging/withdrawal machinery + `selectors.conf` ship under `D-J3-6 [B-19] = yes`; exposure rides the operator's next HG-11 Class S cut; dep P36.66a landed) — fresh implement-spec sub-agent on `r11/P36.66b-site-snapshots-and-edge-selectors` · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-11-04 — P36.66b correction — the committed P36.66a post-closeout line above carried a bare assert token (`live-claim` inside its fix-arc phrasing) — corpus-leg violation on `27db7155`'s head run; respelled in place to `check_live_claims` (semantics verbatim; the mutable run-ledger twin `runs/P36.66a.md:63` respelled identically) · pre-edit bytes archived `reports/memory-repair/LEDGER_phaselog_L1503_pre-P36.66a-liveclaim-respell.txt` sha256:b768917f7cc2bd2c974360d60dc64f1ac6b02df1feda0bf217a30794459617f4 · this repair commit declared `seed-commit` in `record_policy/history.policy` next commit · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-04 — P36.66b done — `ci: pass #435@fefc6f6` 5/5 head-bound (run 41870981790: docs 1m51s · security 39s · composed 4m39s · python 19m53s · web 55m13s) · Gate status: none (K13 TX-13b split b — owns SIG-REL-008 → MET-ENGINEERED(D-R10-PUBLISH-1); `D-J3-6 [B-19] = yes` carried verbatim — exposure rides the operator's next HG-11 Class S cut, never ticked here) · deferrals +0/−0 · chainTip → r11/P36.66b-site-snapshots-and-edge-selectors · next → P36.67 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-04 — P36.66b post-closeout record — head `fefc6f6e` 5/5 green head-bound (`ci: pass #435@fefc6f6`, run 41870981790, ci_boundary ~17:55Z) · fix arc: `7509ed8c` selector `/` + committed-line `check_live_claims` respell (archived, declared `eb1a1a89`) → `fefc6f6e` projection regen; pmtiles-replay env-flake logged PMTILES-REPLAY-1 · `main` untouched · deferrals +0/−0 · chainTip → r11/P36.66b-site-snapshots-and-edge-selectors (open) · next → P36.67 · harness: devin-desktop/swe-2-high/subagent
