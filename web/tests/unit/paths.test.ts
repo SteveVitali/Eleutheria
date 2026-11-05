@@ -78,3 +78,41 @@ describe("withBase — reads the configured base", () => {
     }
   });
 });
+
+// --------------------------------------------------------------------- //
+// P36.66a (SIG-UI-075 / SIG-REL-008): the sweep helpers — rootPath() for the
+// declared outside-the-base namespaces and dataHref() for artifact-data paths.
+// --------------------------------------------------------------------- //
+
+import { rootPath, dataHref, OUTSIDE_BASE_PREFIXES } from "../../src/lib/paths";
+
+describe("rootPath — the declared outside-the-base join (P36.66a)", () => {
+  it("joins at the deploy root, never under the configured base", () => {
+    expect(rootPath("r/p-abc/c/graph/")).toBe("/r/p-abc/c/graph/");
+    expect(rootPath("/releases/p-abc/")).toBe("/releases/p-abc/");
+    expect(rootPath("v1/releases/x/search")).toBe("/v1/releases/x/search");
+  });
+  it("normalises slashes exactly like joinBase", () => {
+    expect(rootPath("//evil")).toBe("/evil");
+    expect(rootPath("")).toBe("/");
+  });
+});
+
+describe("dataHref — artifact-data paths (P36.66a)", () => {
+  it("in-site paths re-base like any other link", () => {
+    expect(dataHref("/map/")).toBe(withBase("/map/"));
+    expect(dataHref("map/")).toBe("map/");
+  });
+  it("declared exception namespaces pass through raw", () => {
+    for (const p of OUTSIDE_BASE_PREFIXES) {
+      expect(dataHref(`${p}x/`)).toBe(`${p}x/`);
+    }
+    expect(dataHref("/v1/claim/contract")).toBe("/v1/claim/contract");
+    expect(dataHref("/r/p-x/c/g/")).toBe("/r/p-x/c/g/");
+  });
+  it("external + fragment + relative values are untouched", () => {
+    expect(dataHref("https://x.example/a")).toBe("https://x.example/a");
+    expect(dataHref("#frag")).toBe("#frag");
+    expect(dataHref("rel/path")).toBe("rel/path");
+  });
+});

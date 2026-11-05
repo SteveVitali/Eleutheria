@@ -42,7 +42,7 @@ const latest = getLatestReleaseTarget();
 // generic /map/ link when its record is citable.
 const entityComps = latest ? getEntityCompartments() : new Map();
 const siteHref = (id: string): string =>
-  releasedRecordHref(latest, entityComps, id) ?? "/map/";
+  releasedRecordHref(latest, entityComps, id) ?? withBase("map/");
 
 // The `focus` id a listed site hands to the workspace: the self-describing
 // record_key where the release maps it (islands resolve its record JSON /
@@ -82,7 +82,7 @@ const INDEX: SearchItem[] = [
     kind: "source" as const,
     label: r.source,
     sublabel: `status: ${r.status}`,
-    href: "/sources/runs/",
+    href: withBase("sources/runs/"),
   })),
 ];
 
@@ -105,7 +105,7 @@ const hasUnmapped =
   <ViewSwitch view="list" release={latest?.publicationId ?? null} />
 
   {hasUnmapped && (
-    <p class="sig-jurisdiction-unmapped" data-testid="search-unmapped" data-copy="JD-05">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href="/research-queue/">research queue</a>.</p>
+    <p class="sig-jurisdiction-unmapped" data-testid="search-unmapped" data-copy="JD-05">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href={withBase("research-queue/")}>research queue</a>.</p>
   )}
 
   <!-- P32.14 (SIG-FIND-003): released-corpus search — the complete corpus, one
@@ -219,16 +219,16 @@ const hasUnmapped =
     <p>Without JavaScript, browse the record directly:</p>
     <ul>
       <li>
-        <a href="/dossier/">Dossier index</a> — {dossiers.length} jurisdiction dossier{dossiers.length === 1 ? "" : "s"}.
+        <a href={withBase("dossier/")}>Dossier index</a> — {dossiers.length} jurisdiction dossier{dossiers.length === 1 ? "" : "s"}.
       </li>
       <li>
-        <a href="/map/">Infrastructure map</a> — {sites.length} mapped site{sites.length === 1 ? "" : "s"} (tabular equivalent on the page).
+        <a href={withBase("map/")}>Infrastructure map</a> — {sites.length} mapped site{sites.length === 1 ? "" : "s"} (tabular equivalent on the page).
       </li>
       <li>
-        <a href="/sources/runs/">Sources — runs and freshness</a> — {sources.length} registry source{sources.length === 1 ? "" : "s"} with a recorded freshness status (P35.40: one source is one registry row).
+        <a href={withBase("sources/runs/")}>Sources — runs and freshness</a> — {sources.length} registry source{sources.length === 1 ? "" : "s"} with a recorded freshness status (P35.40: one source is one registry row).
       </li>
       <li>
-        <a href="/network/">Network explorer</a> and the <a href="/research-queue/">research queue</a> for what is not yet researched.
+        <a href={withBase("network/")}>Network explorer</a> and the <a href={withBase("research-queue/")}>research queue</a> for what is not yet researched.
       </li>
     </ul>
     {cappedSites.truncated && (

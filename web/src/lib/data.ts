@@ -25,6 +25,7 @@
  */
 
 import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { rootPath, withBase } from "./paths";
 import { gunzipSync } from "node:zlib";
 import { fileURLToPath } from "node:url";
 import { DOSSIERS } from "./dossier-fixture";
@@ -1430,14 +1431,14 @@ export function getReleaseSearchTargets(): ReleaseSearchTarget[] {
   return getReleaseCatalog().publications.map((e) => ({
     publicationId: e.publication_id,
     recordCount: e.record_count,
-    landingHref: `/releases/${e.publication_id}/`,
+    landingHref: rootPath(`releases/${e.publication_id}/`),
     federatedSearchHref: `${base}/v1/releases/${e.publication_id}/search`,
     compartments: e.compartments.map((c) => ({
       compartment: c.compartment,
       license: c.license,
       recordCount: c.record_count,
       searchHref: `${base}/v1/releases/${e.publication_id}/compartments/${c.compartment}/search`,
-      overviewHref: `/r/${e.publication_id}/c/${c.compartment}/`,
+      overviewHref: rootPath(`r/${e.publication_id}/c/${c.compartment}/`),
     })),
   }));
 }
@@ -1466,7 +1467,7 @@ export function releasedRecordHref(
   if (!target) return null;
   const m = entityComps.get(entityId);
   return m
-    ? `/r/${target.publicationId}/c/${m.compartment}/entity/${m.entityType}/${entityId}/`
+    ? rootPath(`r/${target.publicationId}/c/${m.compartment}/entity/${m.entityType}/${entityId}/`)
     : null;
 }
 
@@ -1690,7 +1691,7 @@ export function getCompartmentTileSources(): CompartmentTileSource[] {
     .map((a) => ({
       compartment: String(a.compartment),
       license: String(a.license),
-      path: `/tiles/${a.path!.slice("web/tiles/".length)}`,
+      path: withBase(`tiles/${a.path!.slice("web/tiles/".length)}`),
       // P34.21a / E2-12: the drawn sources' own credit, never the generic line.
       attribution: compartmentAttributionFromIndex(String(a.compartment)),
     }))

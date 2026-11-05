@@ -9,6 +9,7 @@
 // plain anchors and lists, usable without JavaScript.
 import CurateLayout from "../../layouts/CurateLayout.astro";
 import { REVIEW_QUEUE, orderByImpact } from "../../lib/curation";
+import { withBase } from "../../lib/paths";
 
 const items = orderByImpact(REVIEW_QUEUE);
 ---
@@ -30,7 +31,7 @@ const items = orderByImpact(REVIEW_QUEUE);
         data-kind={item.kind}
       >
         <h2>
-          <a href={`/curate/${encodeURIComponent(item.item_id)}/`} data-testid="review-link">
+          <a href={withBase(`curate/${encodeURIComponent(item.item_id)}/`)} data-testid="review-link">
             {item.left.label} ~ {item.right.label}
           </a>
         </h2>

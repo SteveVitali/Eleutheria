@@ -93,7 +93,7 @@ describe("getReleaseStamp — export mode", () => {
     expect(stamp!.commitHref).toBe(
       `https://github.com/SteveVitali/Eleutheria/commit/${COMMIT}`,
     );
-    expect(stamp!.describedby).toBe("/release.json");
+    expect(stamp!.describedby).toBe(`/releases/${PUB}/release.json`);
     expect(stamp!.metaContent).toBe(`sig-2026-10-15.1 ${PUB}`);
     expect(stamp!.releaseBlock).toEqual({
       label: "sig-2026-10-15.1",

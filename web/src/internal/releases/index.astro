@@ -9,6 +9,7 @@
 // artifacts, they never edit bytes. Static, zero-JS.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getReleaseCatalog } from "../../lib/data";
+import { rootPath } from "../../lib/paths";
 
 const CATALOG = getReleaseCatalog();
 const PUBS = CATALOG.publications;
@@ -30,7 +31,7 @@ const PUBS = CATALOG.publications;
       {PUBS.map((e) => (
         <li data-testid="release-entry">
           <h2>
-            <a href={`/releases/${e.publication_id}/`} data-testid="release-link">
+            <a href={rootPath(`releases/${e.publication_id}/`)} data-testid="release-link">
               <code>{e.publication_id}</code>
             </a>
           </h2>

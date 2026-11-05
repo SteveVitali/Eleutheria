@@ -62,3 +62,36 @@ export function joinBase(base: string, path: string): string {
 export function withBase(path: string): string {
   return joinBase(BASE, path);
 }
+
+/**
+ * P36.66a (SIG-UI-075 / SIG-REL-008): the deliberate OUTSIDE-the-base join —
+ * join at the deploy root, never under the configured `/s/<pub>/` base. A
+ * snapshot keeps every same-origin link inside its own prefix EXCEPT the
+ * namespaces the release model stages at root: the `/r/<pub>/` record
+ * namespace, the `/releases/` catalog, and the live services a snapshot never
+ * contains (`/v1/` API — labelled "live, not a citation" per SIG-UI-076 — and
+ * the `/intake/` receiver). Call it for exactly those; every in-site link
+ * still goes through `withBase()`.
+ */
+export function rootPath(path: string): string {
+  return joinBase("/", path);
+}
+
+/**
+ * Namespaces a snapshot never contains — the declared SIG-REL-008 exceptions
+ * (`/r/` records, `/releases/`) plus the live services (`/v1/` API, the
+ * `/intake/` receiver). Exported for the mount check's identical list.
+ */
+export const OUTSIDE_BASE_PREFIXES = ["/r/", "/releases/", "/v1/", "/intake/"] as const;
+
+/**
+ * A path carried in ARTIFACT DATA (e.g. a claim row's `documentUrl`): when it
+ * names an in-site route it re-bases like any other link; when it names an
+ * outside-the-snapshot namespace (or is not root-absolute at all) it passes
+ * through unchanged. The one wrap point for data-sourced hrefs.
+ */
+export function dataHref(path: string): string {
+  if (!path.startsWith("/")) return path;
+  if (OUTSIDE_BASE_PREFIXES.some((p) => path.startsWith(p))) return path;
+  return withBase(path);
+}

@@ -47,6 +47,7 @@ import {
 // The Preact-side workspace adapter (P36.37) is surface-generic — "list" is
 // this page's registered view; the React twin stays for /network/'s row.
 import { useMapWorkspace as useWorkspaceState } from "./map/workspace";
+import { withBase } from "../lib/paths";
 // Registering `<sig-typeahead>` rides this island's own content-hashed
 // bundle — T2 routes admit only `/_astro/` module assets, so the corpus
 // form's element upgrades through the app surface itself (P36.40).
@@ -378,7 +379,7 @@ export default function SearchIsland({
         <p data-testid="search-empty">
           No match in this list. Nothing found here is not evidence of absence — try the
           released-corpus search above, the full browse index below, or the{" "}
-          <a href="/research-queue/">research queue</a>.
+          <a href={withBase("research-queue/")}>research queue</a>.
         </p>
       )}
     </div>

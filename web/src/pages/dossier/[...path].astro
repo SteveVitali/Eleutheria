@@ -112,13 +112,13 @@ export function getStaticPaths() {
   const keyMap = getJurisdictionKeyMap();
   const hrefFor = (jkey: string): StubTarget | null => {
     if (jkey === "unplaced") {
-      return { label: "Not yet placed — the data-quality report", href: unplacedPath() };
+      return { label: "Not yet placed — the data-quality report", href: withBase(unplacedPath()) };
     }
     const row = keyMap?.get(jkey);
     if (row?.slug_path) {
       return {
         label: row.display_name ?? row.name ?? jkey,
-        href: dossierPath(row.slug_path),
+        href: withBase(dossierPath(row.slug_path)),
       };
     }
     return null;
@@ -758,7 +758,7 @@ return (
           {dossier.children!.map((c, ci) => (
             <li data-jkey={c.jkey}>
               {c.page && c.slug_path ? (
-                <a href={dossierPath(c.slug_path)}>{c.name ?? c.jkey}</a>
+                <a href={withBase(dossierPath(c.slug_path))}>{c.name ?? c.jkey}</a>
               ) : (
                 <span>{c.name ?? c.jkey} <em>(no dossier — below the publication threshold)</em></span>
               )}

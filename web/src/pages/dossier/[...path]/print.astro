@@ -85,7 +85,7 @@ const link = dossierPermalink(dossier, origin);
 const printPath = dossierPrintPath(dossier.slug);
 const printCard = socialCardForRoute(printPath);
 const printOrigin = Astro.site ?? "https://surveillancegraph.org";
-const printUrl = new URL(printPath, printOrigin).href;
+const printUrl = new URL(withBase(printPath), printOrigin).href;
 const printCardUrl = printCard ? new URL(withBase(printCard.file), printOrigin).href : null;
 const printTitle = `${pageTitle} — SIG dossier (print)`;
 const printDesc = defaultDescription(printTitle, "T0");
@@ -174,7 +174,7 @@ const specMap = figureSpecMap(FIGURES);
     <link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
     <link rel="alternate icon" type="image/png" sizes="32x32" href={withBase("favicon-32.png")} />
     <link rel="apple-touch-icon" sizes="180x180" href={withBase("apple-touch-icon.png")} />
-    <link rel="canonical" href={new URL(dossierPath(dossier.slug), Astro.site ?? "https://surveillancegraph.org").href} />
+    <link rel="canonical" href={new URL(withBase(dossierPath(dossier.slug)), Astro.site ?? "https://surveillancegraph.org").href} />
     {/* P36.25 (SIG-UI-154): the same OG/Twitter block as BaseLayout — the
         print route is T0 and shares the T0 card; og:url names this route
         itself (the shared object), while link rel=canonical still names the
@@ -211,7 +211,7 @@ const specMap = figureSpecMap(FIGURES);
     <div class="sig-print-toolbar" role="note">
       <p>
         Print or save this page as a PDF (your browser's Print dialog → “Save as PDF”).{" "}
-        <a href={dossierPath(dossier.slug)}>Back to the interactive dossier.</a>
+        <a href={withBase(dossierPath(dossier.slug))}>Back to the interactive dossier.</a>
       </p>
     </div>
 

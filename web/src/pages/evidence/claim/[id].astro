@@ -25,7 +25,7 @@ import {
 } from "../../../lib/evidence-viewer";
 import type { ClaimView } from "../../../lib/evidence-viewer";
 import { getEvidence, getCaptureDiff, getStatementIndex } from "../../../lib/data";
-import { withBase } from "../../../lib/paths";
+import { withBase, dataHref } from "../../../lib/paths";
 import { panelForClaim } from "../../../lib/provenance-panel";
 // P36.23 (UXK14-3b, SIG-UI-083): the page mounts the panel's Astro shell —
 // the same one renderer + the shell stylesheet.
@@ -149,7 +149,7 @@ const panel = panelForClaim(STATEMENTS, view.claim_id, { jsonHref: null });
         {view.conflicting_claims.map((c) => (
           <li data-testid="conflicting-claim" data-claim-id={c.claimId}>
             <strong>{String(c.value)}</strong> — {c.source} ({c.tier}, {c.date}).{" "}
-            <a href={c.documentUrl}>document</a>
+            <a href={dataHref(c.documentUrl)}>document</a>
             {c.differentQuantityNote && <p class="sig-different-quantity">{c.differentQuantityNote}</p>}
           </li>
         ))}

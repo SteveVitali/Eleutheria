@@ -15,6 +15,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { categoriesByPriority, intakeAvailability } from "../lib/corrections";
 import { disputeIntakeEmail, INTAKE_EMAIL_MARKER } from "../lib/intake";
+import { withBase } from "../lib/paths";
 
 const categories = categoriesByPriority();
 const intake = intakeAvailability();
@@ -89,7 +90,7 @@ const intakeAddress = email ?? "the operator's address";
   </p>
   <p data-copy="DP-14">
     Dispositions and their outcomes are counted in the public{" "}
-    <a href="/corrections/">corrections log's transparency report</a>. A
+    <a href={withBase("corrections/")}>corrections log's transparency report</a>. A
     correction, once made, appears there in full.
   </p>
 </BaseLayout>

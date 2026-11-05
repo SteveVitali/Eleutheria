@@ -17,6 +17,7 @@
 // tests/unit/test_conduct_text.py fails when a sentence claims conduct the
 // code does not implement. The page ships publicly in republish #1 (P34.17).
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { withBase } from "../lib/paths";
 ---
 
 <BaseLayout title="How SIG collects data" path="/data-collection/">
@@ -165,7 +166,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   <h2 data-copy="DC-17">Ask SIG to stop</h2>
   <p data-copy="DC-18 DC-20 DC-32">
     To ask SIG to stop fetching a site you operate, open a request through this
-    site's <a href="/dispute/">dispute channel</a>. The dispute page names the
+    site's <a href={withBase("dispute/")}>dispute channel</a>. The dispute page names the
     contact address and states its own operating status. A stop request is
     recorded on the opt-out register described above and takes effect on the
     next fetch run.

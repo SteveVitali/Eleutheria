@@ -22,6 +22,7 @@ import {
 } from "../lib/corrections";
 import { RULESET_VERSION } from "../lib/fixtures";
 import { getCorrections, getCorrectionsProvenance, getSiteMetadata, getSlugHistory } from "../lib/data";
+import { withBase } from "../lib/paths";
 
 // The corrections log + its provenance summary flow through the single data seam
 // (ADR-066): fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
@@ -56,7 +57,7 @@ const logStart = entries.map((e) => e.corrected_at).sort()[0] ?? null;
   </p>
   <p data-copy="CL-07">
     Reports and corrections arrive by e-mail — the{" "}
-    <a href="/dispute/">dispute page</a> states the address and the handling order.
+    <a href={withBase("dispute/")}>dispute page</a> states the address and the handling order.
   </p>
   {logStart && (
     <p class="sig-log-start" data-testid="log-start" data-copy="CL-02">

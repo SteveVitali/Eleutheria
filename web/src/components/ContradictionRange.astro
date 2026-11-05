@@ -19,6 +19,7 @@
 import { contradictionRange, plotPosition } from "../lib/epistemic";
 import type { CompetingClaim } from "../lib/epistemic";
 import { lexiconState } from "../lib/lexicon";
+import { dataHref } from "../lib/paths";
 
 interface Props {
   claims: CompetingClaim[];
@@ -83,7 +84,7 @@ const label = `${state.label} range`;
         <li data-testid="competing-claim" data-claim-id={c.claimId}>
           <strong>{c.value}{suffix}</strong> — {c.source}
           <span class="sig-range__meta"> (tier {c.tier}, {c.date})</span>
-          <a href={c.documentUrl} aria-label={`Source document for the ${c.source} claim (${c.value})`}> document</a>
+          <a href={dataHref(c.documentUrl)} aria-label={`Source document for the ${c.source} claim (${c.value})`}> document</a>
           {c.differentQuantityNote && (
             <p class="sig-range__note" data-testid="different-quantity-note">
               <em>Different quantity:</em> {c.differentQuantityNote}
