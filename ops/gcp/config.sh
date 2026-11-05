@@ -75,6 +75,33 @@ export SIG_KMS_KEY_NAME="sig-image-sign"
 export SIG_COSIGN_KEY_URI="gcpkms://projects/${SIG_GCP_PROJECT}/locations/${SIG_KMS_LOCATION}/keyRings/${SIG_KMS_RING}/cryptoKeys/${SIG_KMS_KEY_NAME}/cryptoKeyVersions/1"
 export SIG_SECB_RECORD_PREFIX="ops/security/"
 
+# --- P37.4b restricted-byte access posture (ops/gcp/restricted-access.sh,
+# ADR-232, SIG-SEC-005/SIG-EVID-012) ------------------------------------------
+# The named OM-20 mutation's second half: the audited restricted-byte access
+# function (`sig-ops restricted-access read` logs sig.restricted-access/1
+# under ops/access-log/ BEFORE the fetch), the scheduled purge of expired log
+# rows (sig-access-log-purge, weekly), the GCS Data Access audit logs
+# (storage.googleapis.com DATA_READ+DATA_WRITE with the declared mechanical
+# readers exempted — G1-13's volume control), the retention sink (a PRIVATE
+# audit-logs bucket with a 90-day delete lifecycle + the log-volume alert
+# def, FEA-18), and Cloud SQL sslMode ENCRYPTED_ONLY (G1-14). The gate cell
+# names the log-volume cost read before and after — the prestate/cost legs
+# record the byte_count/billing series into the state dir (measured, never
+# smoothed).
+export SIG_RACC_STATE_DIR="${SIG_RACC_STATE_DIR:-${TMPDIR:-/tmp}/p37.4b-racc}"
+export SIG_RACC_AUTHOR="${SIG_RACC_AUTHOR:-}"
+export SIG_RACC_NOW="${SIG_RACC_NOW:-}"
+export SIG_BUCKET_AUDIT_LOGS="${SIG_GCP_PROJECT}-sig-audit-logs"   # the retention sink (PRIVATE)
+export SIG_RACC_SINK="sig-data-access"
+export SIG_RACC_ALERT_DEF="ops/gcp/data-access-alert-policy.json"
+export SIG_RACC_PURGE_JOB="sig-access-log-purge"
+export SIG_RACC_PURGE_SCHED="sig-sched-access-log-purge"
+export SIG_RACC_PURGE_CRON="0 10 * * 0"   # weekly Sun 10:00Z — outside the 03:00-10:00Z band
+export SIG_RACC_LOG_PREFIX="ops/access-log/"
+export SIG_RACC_PURGE_PREFIX="ops/access-log-purge/"
+export SIG_RACC_LIFECYCLE="ops/gcp/audit-logs-lifecycle.json"
+export SIG_RACC_EXEMPT_SAS="sig-ingest-rt sig-export-rt sig-replica-rt"  # mechanical bulk readers (G1-13)
+
 # Artifact Registry (the API image) + Cloud Run service (min-instances 0).
 export SIG_AR_REPO="sig"
 export SIG_AR_HOST="${SIG_GCP_REGION}-docker.pkg.dev"

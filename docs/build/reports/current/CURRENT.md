@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `0d4e3f7a1974edced27100271565ba975bd3de9b` · inputs hashed: 1200 · wall-clock receipt: `receipt.json`
+> input_commit: `f94e62a9fc199775d1544c0ddcbd8f2e77d5ab30` · inputs hashed: 1202 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -13,10 +13,10 @@
 
 ## Obligations
 
-- 223 obligations · **140 owed** (137 OPEN, 3 PARTIAL) · 83 terminal
-- 733 events (54 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 224 obligations · **141 owed** (138 OPEN, 3 PARTIAL) · 83 terminal
+- 734 events (54 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 140 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 141 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -99,6 +99,7 @@
 | P36.73 | queued 11C acceptance sweep + GATE-G6 packet refresh: read-only crawl of the promoted core-surfaces release/routes/budgets/labels/changelog/mirrors + the packet… | `implement-spec spec=docs/tickets/419_P36.73__sub-round-11c-acceptance.md live_verification=true` (#444) |
 | P37.3 | queued D-P37.3-1 — the named OM-20 mutation (GATE-G6 §4 names P37.3 verbatim): evidence-store.sh --apply legs | `implement-spec spec=docs/tickets/421_P37.3__evidence-store-hardening.md live_verification=true` |
 | P37.4a | D-P37.4a-1 | `implement-spec spec=docs/tickets/422_P37.4a__security-baseline-scan-sbom-signing.md live_verification=true` |
+| P37.4b | D-P37.4b-1: queued OM-20 mutation (GATE-G6 §4): `restricted-access.sh --apply` — DATA_READ/WRITE `auditConfigs` + `sig-data-access`→90d + alert + `ENCRYPTED_ONL… | `implement-spec spec=docs/tickets/423_P37.4b__security-baseline-restricted-access-audit-logs.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 

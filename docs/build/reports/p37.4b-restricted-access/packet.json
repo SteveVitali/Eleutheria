@@ -1,0 +1,22 @@
+{
+  "schema": "sig.restricted-access-packet/1",
+  "row": "P37.4b",
+  "status": "prepared_not_executed",
+  "authority": "GATE-G6 §4 (2026-11-05T15:20Z, \"Approve all 15 (rec.)\", names P37.4b verbatim; expires GATE-ACCEPT-R11)",
+  "mutation": "the restricted-byte access posture — audited access, Data Access audit logs + exclusion filter, ENCRYPTED_ONLY",
+  "script": "ops/gcp/restricted-access.sh",
+  "legs": ["prestate", "audit", "sink", "iam", "ssl", "job", "cost", "probe", "verify"],
+  "queued_reason": "SIG_GCP_PROJECT unset; gcloud config project is not the SIG project",
+  "window": "never 03:00-10:00Z (exit 42)",
+  "env_required": ["SIG_GCP_PROJECT", "ADC", "SIG_RACC_AUTHOR"],
+  "restore_points": [
+    "prestate captures: policy-pre.json + sql-pre.json + sinks + log-volume BEFORE (sha256 sidecars)",
+    "restore-point.sh sqlpoint (AR-2)",
+    "rollback: policy-pre.json re-set, sslMode back, name-checked deletes — buckets/log objects never deleted"
+  ],
+  "records": [
+    "sig.restricted-access/1 under ops/access-log/ (the audited read writes it log-first)",
+    "sig.access-log-purge/1 under ops/access-log-purge/ (the sweep audits itself)"
+  ],
+  "rerun": "implement-spec spec=docs/tickets/423_P37.4b__security-baseline-restricted-access-audit-logs.md live_verification=true"
+}
