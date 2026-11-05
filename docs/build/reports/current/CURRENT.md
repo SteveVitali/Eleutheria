@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `12bd23f049dd5c21a3046396728bcce804eb6232` · inputs hashed: 1198 · wall-clock receipt: `receipt.json`
+> input_commit: `bcc46adeb3610a4c6c70d6f2eb3b612642605c1c` · inputs hashed: 1198 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -97,7 +97,7 @@
 | P36.71 | queued D-P36.71-1 — post-promotion search-acceptance verify legs (real-release --enforce run, staging p95 at 1 vCPU, budgets+Lighthouse+axe, cost readout, A1/J2… | `implement-spec spec=docs/tickets/414_P36.71__search-acceptance-and-activation.md live_verification=true` |
 | P36.72b | queued D-P36.72b-1 — core-surfaces Class S promote (`release promote --class class_s --approval <signed-readout>` + P-mode verify); restore = `release rollback`… | `implement-spec spec=docs/tickets/416_P36.72b__core-surfaces-walkthroughs-and-promotion.md live_verification=true` |
 | P36.73 | queued 11C acceptance sweep + GATE-G6 packet refresh: read-only crawl of the promoted core-surfaces release/routes/budgets/labels/changelog/mirrors + the packet… | `implement-spec spec=docs/tickets/419_P36.73__sub-round-11c-acceptance.md live_verification=true` (#444) |
-| P37.3 | queued D-P37.3-1 — the named OM-20 mutation (GATE-G6 §4 names P37.3 verbatim): evidence-store.sh --apply — evidence bucket 365d unlocked retention, additive cap… | `implement-spec spec=docs/tickets/421_P37.3__evidence-store-hardening.md live_verification=true` |
+| P37.3 | queued D-P37.3-1 — the named OM-20 mutation (GATE-G6 §4 names P37.3 verbatim): evidence-store.sh --apply legs | `implement-spec spec=docs/tickets/421_P37.3__evidence-store-hardening.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 

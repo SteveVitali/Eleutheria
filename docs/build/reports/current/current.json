@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "12bd23f049dd5c21a3046396728bcce804eb6232",
+  "input_commit": "bcc46adeb3610a4c6c70d6f2eb3b612642605c1c",
   "manifest_inputs": 1198,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -12274,9 +12274,9 @@
       },
       {
         "key": "P37.3",
-        "obligations_cell": "queued D-P37.3-1 — the named OM-20 mutation (GATE-G6 §4 names P37.3 verbatim): evidence-store.sh --apply — evidence bucket 365d unlocked retention, additive captures copy, ingest-without-delete IAM, DR bucket + replica/export-copy jobs, captures-volume repoint, retention-delete probe",
-        "gates_cell": "pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting) — 'Approve all 15 (rec.)' 2026-11-05T15:20Z; window `AR-3 + AR-2` verbatim — excluded: inside 03:00-10:00Z daily; while an ingest execution runs (repoint leg); needs SIG_GCP_PROJECT + ADC + SIG_EVSTORE_AUTHOR (+ SIG_BACKUP_PROJECT for the export-copy leg)",
-        "operator_cell": "nothing until the leg-runner dispatch lands the env — machinery + packet committed `prepared_not_executed` (reports/p37.3-evidence-hardening/)",
+        "obligations_cell": "queued D-P37.3-1 — the named OM-20 mutation (GATE-G6 §4 names P37.3 verbatim): evidence-store.sh --apply legs",
+        "gates_cell": "pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting) — 'Approve all 15 (rec.)' 2026-11-05T15:20Z; window `AR-3 + AR-2` verbatim; excluded: inside 03:00-10:00Z daily; while an ingest execution runs (repoint leg); needs SIG_GCP_PROJECT + ADC + SIG_EVSTORE_AUTHOR (+ SIG_BACKUP_PROJECT for the export-copy leg)",
+        "operator_cell": "nothing until the leg-runner lands the env — packet committed `prepared_not_executed` (reports/p37.3-evidence-hardening/)",
         "rerun_cell": "`implement-spec spec=docs/tickets/421_P37.3__evidence-store-hardening.md live_verification=true`",
         "obligations": [
           "D-P37.3-1"
@@ -26339,10 +26339,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "fe898142c2e732b4c5f6506566c9bee3e2fea9f48e451183e0453233279a3804",
+  "manifest_sha256": "25305e33bcef08ce982f62225f0d9ef47bcabadcd1751af528e198c4f3c9540c",
   "current_md": {
     "lines": 134,
-    "bytes": 20347,
+    "bytes": 20291,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
