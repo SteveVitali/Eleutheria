@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "605b67f64b540ed349951f725468637e57aedede",
-  "manifest_inputs": 1198,
+  "input_commit": "298c9695e0bfd31ce4177aac59f44be2686442ac",
+  "manifest_inputs": 1200,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.4a",
-    "lastCompleted": "P37.3",
+    "nextTicket": "P37.4b",
+    "lastCompleted": "P37.4a",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,27 +17,27 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.3-evidence-store-hardening",
+    "chainTip": "r11/P37.4a-security-baseline-scan-sbom-signing",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-05T16:02Z"
+    "updatedAt": "2026-11-05T20:40Z"
   },
   "counts": {
-    "obligations": 222,
-    "owed": 139,
-    "open": 136,
+    "obligations": 223,
+    "owed": 140,
+    "open": 137,
     "partial": 3,
     "terminal": 83,
-    "events": 731,
+    "events": 733,
     "transitions": 54,
     "coverage_assessments": 510,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 74,
+    "return_pass_rows": 75,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -11600,6 +11600,58 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P37.4a-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P37.4a-1:e0",
+      "kind": "V",
+      "owner": "the OM-19 leg-runner — the orchestrator's `r11/P37.4a-live-<n>` dispatch or the operator",
+      "landing": "RETURN PASS — P37.4a",
+      "landing_source": "return-pass-map/1",
+      "backlog_home": "BL-087",
+      "item": "The P37.4a named mutation (OM-20, GATE-G6 §4 pre-authorised): `ops/gcp/security-baseline.sh --apply` — `prestate` (AR-2) → `apis` (containeranalysis/containerscanning/ondemandscanning/cloudkms) → `kms` (`sig-release` keyring + `sig-image-sign` EC P-256 HSM key) → `sign` (cosign sign + verify every deployed digest, `sig.image-signature/1` → `ops/security/`) → `probe` (≥1 signature per digest + scanning API) → `verify`",
+      "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P37.4a-live-<n>` dispatch or the operator · trigger: `implement-spec spec=docs/tickets/422_P37.4a__security-baseline-scan-sbom-signing.md live_verification=true` with `SIG_GCP_PROJECT` + ADC + `SIG_SECB_AUTHOR` exported + cosign on PATH, outside 03:00–10:00Z",
+      "verify": "`security-baseline.sh --verify` names the enabled APIs + key; the queued `probe` leg's cosign verify finds ≥1 signature per deployed digest; `ops/security/` records exist on the release bucket; `SIG_SECB_SIGNING=1` arms the deploy hook",
+      "proxy": "the machinery is committed + fixture-verified (`test_security_baseline.py`/`test_sbom.py` — plan/guards/records/SBOM determinism + sums coverage + signature verify); the packet is committed `prepared_not_executed` (`reports/p37.4a-security-baseline/`); `--check` prints the full plan offline (exit 0); the window guard exits 42 inside the daily band",
+      "line": 1548,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P37.4a",
+          "backlog_home": "BL-087",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/reports/p37.4a-security-baseline/PACKET.md",
+            "docs/build/reports/p37.4a-security-baseline/packet.json",
+            "ops/gcp/security-baseline.sh",
+            "ops/src/ops/security_baseline.py",
+            "exports/src/exports/sbom.py",
+            "tests/ops/test_security_baseline.py",
+            "tests/exports/test_sbom.py"
+          ],
+          "observed_at": "2026-11-05",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P37.4a (row 422) for the row it added — the named OM-20 mutation (GATE-G6 §4 names P37.4a verbatim, expires GATE-ACCEPT-R11) is QUEUED prepared_not_executed: the security-baseline production writes (scan APIs + KMS keyring/key + cosign signatures over deployed digests + deploy-path wiring) — SIG_GCP_PROJECT unset in the engineering dispatch, never fabricated",
+          "event_id": "D-P37.4a-1:e0",
+          "obligation_id": "D-P37.4a-1",
+          "owner": "the OM-19 leg-runner — the orchestrator's `r11/P37.4a-live-<n>` dispatch or the operator",
+          "landing": "`security-baseline.sh --verify` names the enabled APIs + the signing key; the `probe` leg's cosign verify finds >=1 signature per deployed digest and records under `ops/security/` — inside the window, with SIG_GCP_PROJECT + ADC + SIG_SECB_AUTHOR + cosign on PATH",
+          "recorded_at": "2026-11-05",
+          "anchor": {
+            "row_line": 1548,
+            "row_sha256": "7813e9d359ef3c9544a3489cc27c9b1fcc12452a23be16bcbc37df61e9cae7ce",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -12133,7 +12185,7 @@
       },
       {
         "key": "P36.76",
-        "obligations_cell": "queued D-P36.76-1 — 12 leg-A bounded GETs (6 registration + 6 `/:8443` screens); D-P36.76-2 — leg B, operator's first-wire",
+        "obligations_cell": "D-P36.76-1 D-P36.76-2",
         "gates_cell": "bounded public GETs under project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records under `reports/rights/p3676/`; leg B never agent execution",
         "operator_cell": "nothing until `live:P35.38a` — leg B is operator HG-03 + OP-26 (packet `p3676/leg-b-packet.md`)",
         "rerun_cell": "`implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true`",
@@ -12144,7 +12196,7 @@
       },
       {
         "key": "P36.77",
-        "obligations_cell": "queued D-P36.77-1 — 11 leg-A GETs (4 api_document + 3 api_project + 2 DocumentCloud + ToS + /foi/); D-P36.77-2 — leg B, operator's first-wire act",
+        "obligations_cell": "D-P36.77-1 D-P36.77-2",
         "gates_cell": "bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records under `reports/rights/p3677/`; leg B never agent execution",
         "operator_cell": "nothing until `live:P35.38a` — leg B is operator HG-03 + OP-26 (packet `p3677/leg-b-packet.md`)",
         "rerun_cell": "`implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true`",
@@ -12155,7 +12207,7 @@
       },
       {
         "key": "P36.78",
-        "obligations_cell": "queued D-P36.78-1 — 5 leg-A GETs (Sourcewell + OMNIA contract/terms pages); D-P36.78-2 — leg B, operator's first-wire act",
+        "obligations_cell": "D-P36.78-1 D-P36.78-2",
         "gates_cell": "bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records under `reports/rights/p3678/`; leg B never agent execution",
         "operator_cell": "nothing until `live:P35.38a` — leg B is operator HG-03 + OP-26 (packet `p3678/leg-b-packet.md`)",
         "rerun_cell": "`implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true`",
@@ -12166,7 +12218,7 @@
       },
       {
         "key": "P36.13",
-        "obligations_cell": "queued D-P36.13-1 — the hosted-enforcement flip on `sig-api` (env `SIG_API_RATE_LIMIT=enforce` + hops 2; prestate describe = restore point)",
+        "obligations_cell": "D-P36.13-1",
         "gates_cell": "pre-authorised: OM-20 GATE-G5 (expires GATE-G6); AR-3 freeze/batch windows exit 42; `SIG_RATELIMIT_AUTHOR` per apply; needs ADC + `SIG_GCP_PROJECT`; D-K3-6 deferred",
         "operator_cell": "nothing until ADC + `SIG_GCP_PROJECT` — a bounded env update, never schema/gate",
         "rerun_cell": "`implement-spec spec=docs/tickets/354_P36.13__api-rate-limits.md live_verification=true`",
@@ -12176,7 +12228,7 @@
       },
       {
         "key": "P36.79",
-        "obligations_cell": "queued D-P36.79-1 — restricted-bucket object write of the sealed held-out relevance set (read-back digest verify; restore = bucket versioning + committed sha256)",
+        "obligations_cell": "D-P36.79-1",
         "gates_cell": "pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6); contract window `any time outside 03:00-10:00Z` (exit 42 inside); `SIG_HELDOUT_AUTHOR` per apply; needs ADC + `SIG_GCP_PROJECT`",
         "operator_cell": "nothing until ADC + `SIG_GCP_PROJECT` — one bounded write; sha256 committed",
         "rerun_cell": "`implement-spec spec=docs/tickets/371_P36.79__held-out-search-relevance-set.md live_verification=true`",
@@ -12186,7 +12238,7 @@
       },
       {
         "key": "P36.33",
-        "obligations_cell": "queued D-P36.33-1 — R2 basemap host create (bucket sig-basemap + CORS/Range/immutable + domain tiles.surveillancegraph.org + first upload); restorable from basemap.lock.json + upstream",
+        "obligations_cell": "D-P36.33-1",
         "gates_cell": "pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6); window AR-3 + AR-2 — outside batch window day 6 00:00Z → day 13 12:00Z + daily 03:00-06:30Z; `SIG_BASEMAP_AUTHOR` per apply; needs SIG_CF_*/SIG_R2_* env + OP-09",
         "operator_cell": "nothing until OP-09 + Cloudflare/R2 env — pipeline, styles, glyphs, lock landed",
         "rerun_cell": "`implement-spec spec=docs/tickets/374_P36.33__basemap-pipeline-and-host.md live_verification=true`",
@@ -12206,7 +12258,7 @@
       },
       {
         "key": "P36.75",
-        "obligations_cell": "queued D-P36.75-1 — `hosted` append-only `configured_access` claim write (org-level `configured_sharing_partner`); restore = claim-set digest list",
+        "obligations_cell": "D-P36.75-1",
         "gates_cell": "pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z + batch window day 6 00:00Z → day 13 12:00Z; `SIG_SHARE_LISTS_AUTHOR` per apply; ADC + `SIG_GCP_PROJECT` + `SIG_SHARE_WRITE_DSN` + `SIG_SHARE_SNAPSHOT`",
         "operator_cell": "nothing until `hosted` env — machinery + packet `reports/p36.75-flock-share-lists/` landed",
         "rerun_cell": "`implement-spec spec=docs/tickets/385_P36.75__flock-share-lists-configured-access.md live_verification=true`",
@@ -12216,7 +12268,7 @@
       },
       {
         "key": "P36.43",
-        "obligations_cell": "queued D-P36.43-1 — the `sig-status-publish` job create + `sig-sched-status-publish` 6h trigger + invoker binding; restore = delete trigger then job",
+        "obligations_cell": "D-P36.43-1",
         "gates_cell": "pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z or batch window day 6 00:00Z → day 13 12:00Z; `SIG_STATUS_AUTHOR` per apply; ADC + `SIG_GCP_PROJECT` + `SIG_JOB_IMAGE` + SA emails",
         "operator_cell": "nothing until the `hosted` env — packet `reports/p36.43-status-lane/` landed",
         "rerun_cell": "`implement-spec spec=docs/tickets/386_P36.43__status-lane.md live_verification=true`",
@@ -12226,7 +12278,7 @@
       },
       {
         "key": "P36.44",
-        "obligations_cell": "queued D-P36.44-1 — the `sig-sched-release-cut` + `sig-sched-materialize` Cloud Scheduler trigger creates; restore = delete both triggers",
+        "obligations_cell": "D-P36.44-1",
         "gates_cell": "pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z or batch window day 6 00:00Z → day 13 12:00Z; `SIG_CADENCE_AUTHOR` per apply; ADC + `SIG_GCP_PROJECT` + `SIG_SCHEDULER_SA_EMAIL` + both jobs",
         "operator_cell": "nothing until the `hosted` env — packet `reports/p36.44-release-cadence/` landed",
         "rerun_cell": "`implement-spec spec=docs/tickets/387_P36.44__release-cadence-automation.md live_verification=true`",
@@ -12280,6 +12332,16 @@
         "rerun_cell": "`implement-spec spec=docs/tickets/421_P37.3__evidence-store-hardening.md live_verification=true`",
         "obligations": [
           "D-P37.3-1"
+        ]
+      },
+      {
+        "key": "P37.4a",
+        "obligations_cell": "D-P37.4a-1",
+        "gates_cell": "pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting); excluded: inside 03:00-10:00Z daily; env SIG_GCP_PROJECT+ADC+SIG_SECB_AUTHOR+cosign",
+        "operator_cell": "none — env + script; additive writes",
+        "rerun_cell": "`implement-spec spec=docs/tickets/422_P37.4a__security-baseline-scan-sbom-signing.md live_verification=true`",
+        "obligations": [
+          "D-P37.4a-1"
         ]
       }
     ]
@@ -26339,13 +26401,12 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "4190acab2521ee836ad7ceddc7f68319744141cfac3d3b9403f02eaf1a1aeda7",
+  "manifest_sha256": "66436045fd9ebdf03f2c4ce98b76ca11afd40d037ddeff024843ca6605bbec43",
   "current_md": {
-    "lines": 134,
-    "bytes": 20291,
+    "lines": 141,
+    "bytes": 20074,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
-      "adrs.md",
       "coverage-1.md",
       "coverage-2.md",
       "coverage-3.md",

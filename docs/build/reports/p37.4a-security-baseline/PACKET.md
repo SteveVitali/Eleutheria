@@ -19,17 +19,18 @@ bucket: recorded `prepared_not_executed`, never fabricated (OM-19). Re-run:
 with `SIG_GCP_PROJECT` + ADC + `SIG_SECB_AUTHOR` exported and cosign on PATH,
 outside 03:00–10:00Z.
 
-**Legs and restore points (AR-2):**
-- `prestate` — enabled-APIs list, KMS keyrings, deployed digests captured with
-  sha256 sidecars + `restore-point.sh sqlpoint` before any write.
+**Legs and restore points (AR-2) — the scripted plan; none executed (queued):**
+- `prestate` — planned captures: enabled-APIs list, KMS keyrings, deployed
+  digests → sha256 sidecars + `restore-point.sh sqlpoint`, before any write.
 - `apis` — `containeranalysis`, `containerscanning`, `ondemandscanning`,
   `cloudkms` enabled (additive; disable is never scripted).
 - `kms` — `sig-release` keyring @ `global` + `sig-image-sign` EC P-256 HSM
   signing key; rollback = `versions disable 1` (never destroy).
-- `sign` — `cosign sign --key gcpkms://… <digest>` for every deployed digest +
+- `sign` — planned `cosign sign --key gcpkms://… <digest>` per deployed digest +
   `cosign verify`; `sig.image-signature/1` records →
   `gs://<release-bucket>/ops/security/` (append-only).
-- `probe` — ≥1 signature per deployed digest MUST verify + scanning API live.
+- `probe` — queued acceptance: ≥1 signature per deployed digest MUST verify +
+  scanning API live once the leg runs.
 - Deploy-path wiring — `lib.sh security_sign_image` inside `web.sh`; armed
   `SIG_SECB_SIGNING=1` (config.sh default `0` until the leg exists).
 
