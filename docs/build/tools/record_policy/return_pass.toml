@@ -1499,3 +1499,19 @@ rerun_cell = "`implement-spec spec=docs/tickets/389_P36.46__execution-keyed-inge
   excluded = ["daily 03:00-06:30Z", "batch window day 6 → day 13 12:00Z"]
   go = "pre-authorised: `SIG_BACKFILL_AUTHOR`"
   rerun = "implement-spec spec=docs/tickets/389_P36.46__execution-keyed-ingestion-history.md live_verification=true"
+[[row]]
+key = "P36.71"
+kind = "leg"
+obligations = ["D-P36.71-1"]
+obligations_cell = "queued D-P36.71-1 — post-promotion search-acceptance verify legs (real-release --enforce run, staging p95 at 1 vCPU, budgets+Lighthouse+axe, cost readout, A1/J2 walkthroughs)"
+gates_cell = "none — rides P36.72b's HG-11 promote; the staging leg needs the P36.38 roll + ADC + SIG_GCP_PROJECT"
+operator_cell = "nothing until the promote — machinery + packet landed under reports/p36.71-search-acceptance/"
+rerun_cell = "`implement-spec spec=docs/tickets/414_P36.71__search-acceptance-and-activation.md live_verification=true`"
+
+  [[row.legs]]
+  id = "P36.71-verify"
+  obligations = ["D-P36.71-1"]
+  earliest = "after P36.72b's promote (HG-11); the roll + sealed-object legs' own obligations landed"
+  excluded = []
+  go = "none"
+  rerun = "implement-spec spec=docs/tickets/414_P36.71__search-acceptance-and-activation.md live_verification=true"

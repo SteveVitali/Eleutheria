@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "56a82197a39af1326cb534d8129f2d60b83add4e",
-  "manifest_inputs": 1189,
+  "input_commit": "62cc21ed755f15abc358ed752c545ab993d4a366",
+  "manifest_inputs": 1190,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P36.71",
-    "lastCompleted": "P36.69",
+    "nextTicket": "P36.72a",
+    "lastCompleted": "P36.71",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,27 +17,27 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P36.69-source-page-b",
+    "chainTip": "r11/P36.71-search-acceptance-and-activation",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-05T02:07Z"
+    "updatedAt": "2026-11-05T02:24Z"
   },
   "counts": {
-    "obligations": 218,
+    "obligations": 219,
     "owed": 136,
     "open": 133,
     "partial": 3,
-    "terminal": 82,
-    "events": 726,
-    "transitions": 53,
+    "terminal": 83,
+    "events": 728,
+    "transitions": 54,
     "coverage_assessments": 510,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 70,
+    "return_pass_rows": 71,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -11105,8 +11105,8 @@
     },
     {
       "id": "D-P36.56-1",
-      "status": "OPEN",
-      "status_source": "event-head D-P36.56-1:e0",
+      "status": "DONE",
+      "status_source": "event-head D-P36.56-1:e1",
       "kind": "F",
       "owner": "the search-engine row that grows chain-aware jurisdiction filtering (SRCH-07 P36.71 acceptance or a dedicated engine change)",
       "landing": "an engine test where jurisdiction=<parent-jkey> returns records keyed to descendant jkeys — subtree resolved via jurisdiction_chain or the place-catalog parent links — and a within=/location= request either applies or refuses typed, never silently unscoped",
@@ -11149,6 +11149,32 @@
             "interpretation": "preserved"
           },
           "recorded_at": "2026-11-03"
+        },
+        {
+          "schema": "obligation-event/1",
+          "kind": "transition",
+          "seq": 1,
+          "expected_previous_event": "D-P36.56-1:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P36.71",
+          "backlog_home": "BL-086",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "exports/src/exports/search_query_v2.py",
+            "api/src/api/app.py",
+            "api/src/api/release_search_v2.py",
+            "tests/exports/test_search_query_v2.py",
+            "tests/api/test_release_search_v2.py"
+          ],
+          "observed_at": "2026-11-05",
+          "source_commit": "WORKTREE",
+          "reason": "P36.71 (SRCH-07 — the named owner row) closed it: jurisdiction= is chain-aware via SearchEngineV2.jurisdiction_subtree over the catalog place docs' recorded meta.parent links (_record_filters binds place_key IN (subtree ∩ compartment keys)); within=/location= refuse typed 422 unsupported_query through parse_params_v2 + the route signature — never silently unscoped. Verified by test_jurisdiction_filter_includes_descendants + test_within_and_location_refuse_typed_422 (34 passed) and the route 422 pin (26 passed).",
+          "event_id": "D-P36.56-1:e1",
+          "obligation_id": "D-P36.56-1",
+          "owner": "the search-engine row that grows chain-aware jurisdiction filtering (SRCH-07 P36.71 acceptance or a dedicated engine change)",
+          "landing": "an engine test where jurisdiction=<parent-jkey> returns records keyed to descendant jkeys — subtree resolved via jurisdiction_chain or the place-catalog parent links — and a within=/location= request either applies or refuses typed, never silently unscoped",
+          "recorded_at": "2026-11-05"
         }
       ]
     },
@@ -11375,6 +11401,54 @@
           "owner": "the OM-19 leg-runner — the orchestrator's `r11/P36.68-mirror-<n>` dispatch or the operator",
           "landing": "sig-ops mirror-push --name r2-public --export-dir <export> --release-dir <release> --apply records objects + the non-listable probe inside AR-3 + AR-2",
           "recorded_at": "2026-11-04"
+        }
+      ]
+    },
+    {
+      "id": "D-P36.71-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P36.71-1:e0",
+      "kind": "V",
+      "owner": "the OM-19 leg-runner — the orchestrator's `r11/P36.71-accept-<n>` dispatch or the operator",
+      "landing": "RETURN PASS — P36.71",
+      "landing_source": "return-pass-map/1",
+      "backlog_home": "BL-086",
+      "item": "The post-promotion search-acceptance verify legs (`docs/build/reports/p36.71-search-acceptance/` PACKET): (1) real-release acceptance — `sig-exports search-acceptance --release <promoted> --held-out <sealed-blob> --enforce` → dev top-3 ≥ 0.90, held-out ≥ 0.80, 0 misleading top hits, index bytes ≤ 150 MiB (SIG-SRCH-013/014); (2) staging p95 ≤ 300 ms at 1 vCPU measured on the staged service — gcsfuse vs local copy (needs the P36.38 roll D-P36.38-1 applied); (3) budgets + Lighthouse on the real release (`check:perf`), axe in both JS states; (4) the SIG-UI-081 cost readout — the billing export vs the $300/month ceiling (`--billing`); (5) the A1/J2 walkthroughs cold-walked on the promoted release, recorded agent-verified (P4), 390 px + 1440 px",
+      "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P36.71-accept-<n>` dispatch or the operator · trigger: `implement-spec spec=docs/tickets/414_P36.71__search-acceptance-and-activation.md live_verification=true` after P36.72b promotes (and D-P36.38-1/D-P36.79-1 land for the staging + sealed-object legs)",
+      "verify": "the verify leg's `sig.search-acceptance/1` report lands `verdict: pass` on the promoted release: dev ≥ 0.90, held-out ≥ 0.80 (the fetched object sha256-verified against the committed descriptor), 0 misleading, bytes ≤ 150 MiB; staging p95 recorded ≤ 300 ms; the cost block measured within $300/month; A1/J2 recorded agent-verified",
+      "proxy": "the `sig.search-acceptance/1` battery + CLI landed and is fixture-verified (`tests/exports/test_search_acceptance.py`); the seal read ran now — emit + sha256 verify green against the committed descriptor; `--enforce` gates exit 4 on unmet thresholds; misleading > 0 always fails the report verdict",
+      "line": 1544,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P36.71",
+          "backlog_home": "BL-086",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/reports/p36.71-search-acceptance/",
+            "exports/src/exports/search_acceptance.py",
+            "tests/exports/test_search_acceptance.py"
+          ],
+          "observed_at": "2026-11-05",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P36.71 (row 414) for the row it added — the post-promotion search-acceptance verify legs are QUEUED prepared_not_executed: real-release --enforce acceptance (dev≥0.90/held-out≥0.80/0 misleading/bytes≤150MiB), staging p95≤300ms at 1 vCPU (needs D-P36.38-1), budgets+Lighthouse+axe both JS states, the SIG-UI-081 cost readout, and the A1/J2 agent-verified walkthroughs — the promote is P36.72b's HG-11 act, never this row's",
+          "event_id": "D-P36.71-1:e0",
+          "obligation_id": "D-P36.71-1",
+          "owner": "the OM-19 leg-runner — the orchestrator's `r11/P36.71-accept-<n>` dispatch or the operator",
+          "landing": "the verify leg's sig.search-acceptance/1 report lands verdict: pass on the promoted release (dev≥0.90, held-out≥0.80 against the sha256-verified sealed object, 0 misleading, bytes≤150MiB); staging p95≤300ms; cost within $300/month; A1/J2 agent-verified",
+          "anchor": {
+            "row_line": 1544,
+            "row_sha256": "9c7c2a62243e70cda761061781530ab828cd80f85e37e2b17486f12e84225481",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-11-05"
         }
       ]
     }
@@ -12019,6 +12093,16 @@
         "rerun_cell": "`implement-spec spec=docs/tickets/389_P36.46__execution-keyed-ingestion-history.md live_verification=true`",
         "obligations": [
           "D-P36.46-1"
+        ]
+      },
+      {
+        "key": "P36.71",
+        "obligations_cell": "queued D-P36.71-1 — post-promotion search-acceptance verify legs (real-release --enforce run, staging p95 at 1 vCPU, budgets+Lighthouse+axe, cost readout, A1/J2 walkthroughs)",
+        "gates_cell": "none — rides P36.72b's HG-11 promote; the staging leg needs the P36.38 roll + ADC + SIG_GCP_PROJECT",
+        "operator_cell": "nothing until the promote — machinery + packet landed under reports/p36.71-search-acceptance/",
+        "rerun_cell": "`implement-spec spec=docs/tickets/414_P36.71__search-acceptance-and-activation.md live_verification=true`",
+        "obligations": [
+          "D-P36.71-1"
         ]
       }
     ]
@@ -17129,8 +17213,8 @@
           "label": "historical/csv"
         },
         "SIG-UI-081": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P36.71-1;D-P36.38-1;D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/search_acceptance.py;docs/build/reports/p36.71-search-acceptance/",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17471,14 +17555,14 @@
           "label": "historical/csv"
         },
         "SIG-SRCH-013": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P36.71-1;D-P36.38-1;D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/search_acceptance.py;exports/src/exports/search_benchmark.py;docs/build/reports/p36.71-search-acceptance/",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-SRCH-014": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P36.71-1;D-P36.38-1;D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/search_acceptance.py;docs/build/reports/p36.71-search-acceptance/",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -26078,12 +26162,13 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "6f895cbf23a2cf44fdcb8b3945f4ed79ac403d6183caedf85c5c38e4861a6995",
+  "manifest_sha256": "1d1868ce8ee4c897b74c161effa25d219ed35696cf7e7913a15408b0905a05a6",
   "current_md": {
-    "lines": 136,
-    "bytes": 20220,
+    "lines": 131,
+    "bytes": 19707,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
+      "adrs.md",
       "coverage-1.md",
       "coverage-2.md",
       "coverage-3.md",
