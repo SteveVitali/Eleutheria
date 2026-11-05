@@ -1286,7 +1286,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/348_P35.23__real-data-regressi
 key = "P36.76"
 kind = "leg"
 obligations = ["D-P36.76-1", "D-P36.76-2"]
-obligations_cell = '''queued D-P36.76-1 — 12 leg-A bounded GETs (6 registration + 6 `/:8443` screens); D-P36.76-2 — leg B, operator's first-wire'''
+obligations_cell = '''D-P36.76-1 D-P36.76-2'''
 gates_cell = '''bounded public GETs under project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records under `reports/rights/p3676/`; leg B never agent execution'''
 operator_cell = '''nothing until `live:P35.38a` — leg B is operator HG-03 + OP-26 (packet `p3676/leg-b-packet.md`)'''
 rerun_cell = '''`implement-spec spec=docs/tickets/351_P36.76__axon-connect-connector.md live_verification=true`'''
@@ -1313,7 +1313,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/351_P36.76__axon-connect-conne
 key = "P36.77"
 kind = "leg"
 obligations = ["D-P36.77-1", "D-P36.77-2"]
-obligations_cell = '''queued D-P36.77-1 — 11 leg-A GETs (4 api_document + 3 api_project + 2 DocumentCloud + ToS + /foi/); D-P36.77-2 — leg B, operator's first-wire act'''
+obligations_cell = '''D-P36.77-1 D-P36.77-2'''
 gates_cell = '''bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records under `reports/rights/p3677/`; leg B never agent execution'''
 operator_cell = '''nothing until `live:P35.38a` — leg B is operator HG-03 + OP-26 (packet `p3677/leg-b-packet.md`)'''
 rerun_cell = '''`implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true`'''
@@ -1340,7 +1340,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/352_P36.77__documentcloud-muck
 key = "P36.78"
 kind = "leg"
 obligations = ["D-P36.78-1", "D-P36.78-2"]
-obligations_cell = '''queued D-P36.78-1 — 5 leg-A GETs (Sourcewell + OMNIA contract/terms pages); D-P36.78-2 — leg B, operator's first-wire act'''
+obligations_cell = '''D-P36.78-1 D-P36.78-2'''
 gates_cell = '''bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records under `reports/rights/p3678/`; leg B never agent execution'''
 operator_cell = '''nothing until `live:P35.38a` — leg B is operator HG-03 + OP-26 (packet `p3678/leg-b-packet.md`)'''
 rerun_cell = '''`implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true`'''
@@ -1366,7 +1366,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-c
 key = "P36.13"
 kind = "leg"
 obligations = ["D-P36.13-1"]
-obligations_cell = '''queued D-P36.13-1 — the hosted-enforcement flip on `sig-api` (env `SIG_API_RATE_LIMIT=enforce` + hops 2; prestate describe = restore point)'''
+obligations_cell = '''D-P36.13-1'''
 gates_cell = '''pre-authorised: OM-20 GATE-G5 (expires GATE-G6); AR-3 freeze/batch windows exit 42; `SIG_RATELIMIT_AUTHOR` per apply; needs ADC + `SIG_GCP_PROJECT`; D-K3-6 deferred'''
 operator_cell = '''nothing until ADC + `SIG_GCP_PROJECT` — a bounded env update, never schema/gate'''
 rerun_cell = '''`implement-spec spec=docs/tickets/354_P36.13__api-rate-limits.md live_verification=true`'''
@@ -1384,7 +1384,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/354_P36.13__api-rate-limits.md
 key = "P36.79"
 kind = "leg"
 obligations = ["D-P36.79-1"]
-obligations_cell = '''queued D-P36.79-1 — restricted-bucket object write of the sealed held-out relevance set (read-back digest verify; restore = bucket versioning + committed sha256)'''
+obligations_cell = '''D-P36.79-1'''
 gates_cell = '''pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6); contract window `any time outside 03:00-10:00Z` (exit 42 inside); `SIG_HELDOUT_AUTHOR` per apply; needs ADC + `SIG_GCP_PROJECT`'''
 operator_cell = '''nothing until ADC + `SIG_GCP_PROJECT` — one bounded write; sha256 committed'''
 rerun_cell = '''`implement-spec spec=docs/tickets/371_P36.79__held-out-search-relevance-set.md live_verification=true`'''
@@ -1402,7 +1402,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/371_P36.79__held-out-search-re
 key = "P36.33"
 kind = "leg"
 obligations = ["D-P36.33-1"]
-obligations_cell = '''queued D-P36.33-1 — R2 basemap host create (bucket sig-basemap + CORS/Range/immutable + domain tiles.surveillancegraph.org + first upload); restorable from basemap.lock.json + upstream'''
+obligations_cell = '''D-P36.33-1'''
 gates_cell = '''pre-authorised: OM-20 named at GATE-G5 (expires GATE-G6); window AR-3 + AR-2 — outside batch window day 6 00:00Z → day 13 12:00Z + daily 03:00-06:30Z; `SIG_BASEMAP_AUTHOR` per apply; needs SIG_CF_*/SIG_R2_* env + OP-09'''
 operator_cell = '''nothing until OP-09 + Cloudflare/R2 env — pipeline, styles, glyphs, lock landed'''
 rerun_cell = '''`implement-spec spec=docs/tickets/374_P36.33__basemap-pipeline-and-host.md live_verification=true`'''
@@ -1438,7 +1438,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/379_P36.38__search-api-serving
 key = "P36.75"
 kind = "leg"
 obligations = ["D-P36.75-1"]
-obligations_cell = '''queued D-P36.75-1 — `hosted` append-only `configured_access` claim write (org-level `configured_sharing_partner`); restore = claim-set digest list'''
+obligations_cell = '''D-P36.75-1'''
 gates_cell = '''pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z + batch window day 6 00:00Z → day 13 12:00Z; `SIG_SHARE_LISTS_AUTHOR` per apply; ADC + `SIG_GCP_PROJECT` + `SIG_SHARE_WRITE_DSN` + `SIG_SHARE_SNAPSHOT`'''
 operator_cell = '''nothing until `hosted` env — machinery + packet `reports/p36.75-flock-share-lists/` landed'''
 rerun_cell = '''`implement-spec spec=docs/tickets/385_P36.75__flock-share-lists-configured-access.md live_verification=true`'''
@@ -1455,7 +1455,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/385_P36.75__flock-share-lists-
 key = "P36.43"
 kind = "leg"
 obligations = ["D-P36.43-1"]
-obligations_cell = '''queued D-P36.43-1 — the `sig-status-publish` job create + `sig-sched-status-publish` 6h trigger + invoker binding; restore = delete trigger then job'''
+obligations_cell = '''D-P36.43-1'''
 gates_cell = '''pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z or batch window day 6 00:00Z → day 13 12:00Z; `SIG_STATUS_AUTHOR` per apply; ADC + `SIG_GCP_PROJECT` + `SIG_JOB_IMAGE` + SA emails'''
 operator_cell = '''nothing until the `hosted` env — packet `reports/p36.43-status-lane/` landed'''
 rerun_cell = '''`implement-spec spec=docs/tickets/386_P36.43__status-lane.md live_verification=true`'''
@@ -1471,7 +1471,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/386_P36.43__status-lane.md liv
 key = "P36.44"
 kind = "leg"
 obligations = ["D-P36.44-1"]
-obligations_cell = '''queued D-P36.44-1 — the `sig-sched-release-cut` + `sig-sched-materialize` Cloud Scheduler trigger creates; restore = delete both triggers'''
+obligations_cell = '''D-P36.44-1'''
 gates_cell = '''pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z or batch window day 6 00:00Z → day 13 12:00Z; `SIG_CADENCE_AUTHOR` per apply; ADC + `SIG_GCP_PROJECT` + `SIG_SCHEDULER_SA_EMAIL` + both jobs'''
 operator_cell = '''nothing until the `hosted` env — packet `reports/p36.44-release-cadence/` landed'''
 rerun_cell = '''`implement-spec spec=docs/tickets/387_P36.44__release-cadence-automation.md live_verification=true`'''
@@ -1569,15 +1569,15 @@ rerun_cell = "`implement-spec spec=docs/tickets/421_P37.3__evidence-store-harden
 key = "P37.4a"
 kind = "leg"
 obligations = ["D-P37.4a-1"]
-obligations_cell = '''D-P37.4a-1: queued OM-20 mutation (GATE-G6 §4 pre-authorised): `security-baseline.sh --apply` — scan APIs + `sig-release`/`sig-image-sign` KMS key + cosign signatures over deployed digests + `ops/security/` records; `SIG_SECB_SIGNING=1` arms the deploy hook'''
-gates_cell = '''`hosted` write; OM-20 named verbatim — go: pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting); AR-3+AR-2 — excluded: inside 03:00-10:00Z daily; needs SIG_GCP_PROJECT + ADC + SIG_SECB_AUTHOR + cosign on PATH'''
-operator_cell = '''nothing — the leg-runner exports env and runs the script; every write additive (rollback = `versions disable 1` + un-arm)'''
+obligations_cell = '''D-P37.4a-1'''
+gates_cell = '''pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting); excluded: inside 03:00-10:00Z daily; env SIG_GCP_PROJECT+ADC+SIG_SECB_AUTHOR+cosign'''
+operator_cell = '''none — env + script; additive writes'''
 rerun_cell = '''`implement-spec spec=docs/tickets/422_P37.4a__security-baseline-scan-sbom-signing.md live_verification=true`'''
 
   [[row.legs]]
   id = "P37.4a-security-baseline"
   obligations = ["D-P37.4a-1"]
-  earliest = "outside 03:00-10:00Z with SIG_GCP_PROJECT + ADC + SIG_SECB_AUTHOR + cosign on PATH"
+  earliest = "outside 03:00-10:00Z; env per gates cell"
   excluded = ["inside 03:00-10:00Z daily"]
   go = "pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting)"
   rerun = "implement-spec spec=docs/tickets/422_P37.4a__security-baseline-scan-sbom-signing.md live_verification=true"

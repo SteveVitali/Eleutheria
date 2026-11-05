@@ -71,8 +71,8 @@ export SIG_SECB_NOW="${SIG_SECB_NOW:-}"
 export SIG_SECB_SIGNING="${SIG_SECB_SIGNING:-0}"
 export SIG_KMS_LOCATION="global"
 export SIG_KMS_RING="sig-release"
-export SIG_KMS_KEY="sig-image-sign"
-export SIG_COSIGN_KEY_URI="gcpkms://projects/${SIG_GCP_PROJECT}/locations/${SIG_KMS_LOCATION}/keyRings/${SIG_KMS_RING}/cryptoKeys/${SIG_KMS_KEY}/cryptoKeyVersions/1"
+export SIG_KMS_KEY_NAME="sig-image-sign"
+export SIG_COSIGN_KEY_URI="gcpkms://projects/${SIG_GCP_PROJECT}/locations/${SIG_KMS_LOCATION}/keyRings/${SIG_KMS_RING}/cryptoKeys/${SIG_KMS_KEY_NAME}/cryptoKeyVersions/1"
 export SIG_SECB_RECORD_PREFIX="ops/security/"
 
 # Artifact Registry (the API image) + Cloud Run service (min-instances 0).

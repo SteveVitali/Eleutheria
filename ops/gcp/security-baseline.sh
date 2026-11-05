@@ -118,7 +118,7 @@ plan() {
   cat <<EOF
 PLAN: security-baseline (${ACTION}) — project ${SIG_GCP_PROJECT} region ${SIG_GCP_REGION}
 PLAN: apis        enable containeranalysis/containerscanning/ondemandscanning/cloudkms
-PLAN: kms         keyring ${SIG_KMS_RING} @ ${SIG_KMS_LOCATION}, key ${SIG_KMS_KEY}
+PLAN: kms         keyring ${SIG_KMS_RING} @ ${SIG_KMS_LOCATION}, key ${SIG_KMS_KEY_NAME}
                   (asymmetric-signing ec-sign-p256-sha256, protection hsm —
                   key material never leaves GCP; verify via the public key)
 PLAN: sign        cosign sign --yes --key ${SIG_COSIGN_KEY_URI} <digest>
@@ -169,10 +169,10 @@ do_apis() {
 }
 
 do_kms() {
-  _log "-- kms: ${SIG_KMS_RING} @ ${SIG_KMS_LOCATION} + ${SIG_KMS_KEY} --"
+  _log "-- kms: ${SIG_KMS_RING} @ ${SIG_KMS_LOCATION} + ${SIG_KMS_KEY_NAME} --"
   run gcloud kms keyrings create "${SIG_KMS_RING}" \
     --project "${SIG_GCP_PROJECT}" --location "${SIG_KMS_LOCATION}"
-  run gcloud kms keys create "${SIG_KMS_KEY}" \
+  run gcloud kms keys create "${SIG_KMS_KEY_NAME}" \
     --project "${SIG_GCP_PROJECT}" --location "${SIG_KMS_LOCATION}" \
     --keyring "${SIG_KMS_RING}" --purpose asymmetric-signing \
     --default-algorithm ec-sign-p256-sha256 --protection-level hsm
@@ -238,7 +238,7 @@ do_probe() {
 
 do_verify() {
   _log "-- verify: APIs + key + signature objects --"
-  run gcloud kms keys describe "${SIG_KMS_KEY}" \
+  run gcloud kms keys describe "${SIG_KMS_KEY_NAME}" \
     --project "${SIG_GCP_PROJECT}" --location "${SIG_KMS_LOCATION}" \
     --keyring "${SIG_KMS_RING}" --format='value(primary.state,purpose)'
   run gcloud services list --enabled --project "${SIG_GCP_PROJECT}" \
@@ -251,7 +251,7 @@ do_rollback() {
   _log "-- rollback (printed; the leg's writes are additive — never deleted) --"
   _log "  un-arm the deploy hook: export SIG_SECB_SIGNING=0"
   _log "  disable the key version: gcloud kms keys versions disable 1 \\"
-  _log "    --key ${SIG_KMS_KEY} --keyring ${SIG_KMS_RING} --location ${SIG_KMS_LOCATION}"
+  _log "    --key ${SIG_KMS_KEY_NAME} --keyring ${SIG_KMS_RING} --location ${SIG_KMS_LOCATION}"
   _log "  signature objects stay — append-only attestation history (P1-P3)"
 }
 
