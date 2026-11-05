@@ -1180,3 +1180,19 @@ seed-commit 574ba962
 # findings attributed to f469dcb5's rewritten line only; no other commit
 # borrows the exemption.
 seed-commit f469dcb5
+
+# ── P36.71 inherited-repair: LEDGER PHASE LOG L1518 live-claim respell ───────
+# Commit 6f8ebd92 respelled one committed PHASE LOG line (LEDGER.md:1518, the
+# P36.69 post-closeout record, inherited onto the P36.71 branch from the red
+# base tip bd90b169): the bare assert token `live` inside its waived-ancestor
+# phrasing (`the respells live on descendant branches`) was a corpus
+# check_live_claims violation with no sig.probe-run/1 citation. Respelled in
+# place to `ride` — semantics verbatim (same carried-respell disposition,
+# #299 precedent). Pre-edit bytes archived
+# docs/build/reports/memory-repair/LEDGER_phaselog_L1518_pre-P36.69-liveclaim-respell.txt
+# (sha256:7a2094c1061b28c6ec4d29c26d8c0ab70a4794d718ec500c722f170c5475da67),
+# disclosed by the dated `P36.71 correction` PHASE LOG entry appended in the
+# same commit. The branch rule forbids force-push, so the declaration lands
+# here, the next commit. Scope: the append-only findings attributed to
+# 6f8ebd92's rewritten line only; no other commit borrows the exemption.
+seed-commit 6f8ebd92
