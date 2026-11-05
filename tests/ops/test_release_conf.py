@@ -356,14 +356,18 @@ def test_second_promote_carries_and_extends(tmp_path):
         now=NOW,
     )
     gen2["withdrawn.conf"] += deny.encode()
-    gen2["selectors.conf"] = b"# selector marker s1\n"
     rc.write_generation(store, 2, gen2)
     r = _promote(tmp_path, PUB2)
     assert r["conf_gen"] == 3
     assert set(r["promoted_pubs"]) == {PUB1, PUB2}
     w3 = store.read("registry/conf/3/withdrawn.conf").decode()
     assert deny in w3  # carried byte-identical
-    assert store.read("registry/conf/3/selectors.conf") == b"# selector marker s1\n"
+    # P36.66b: selectors.conf is composed fresh each generation from the
+    # promoted set's compat entries (the J3 §8.3 writer this row lands) —
+    # never the hand-carried placeholder; both promoted pubs' keys appear.
+    s3 = store.read("registry/conf/3/selectors.conf").decode()
+    assert "sig.selectors-conf" in s3
+    assert "return 302" in s3 or "return 409" in s3
     latest = json.loads(store.read("registry/conf/3/latest.json"))
     assert latest["publication_id"] == PUB2
     assert latest["previous"] == PUB1

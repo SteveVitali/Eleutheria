@@ -2580,6 +2580,33 @@ def build_parser() -> argparse.ArgumentParser:
         help="(v2) the JUR-01 jurisdiction-boundaries content root",
     )
 
+    psites = rsub.add_parser(
+        "sites",
+        help="P36.66b (TX-13b b, ADR-161/162, D-J3-6 [B-19] = yes): assemble "
+        "the v/<pub>/ + s/<pub>/ site trees under work-dir from the two "
+        "export-mode Astro builds (SIG_BASE_PATH=/ and /s/<pub>) — copies "
+        "release.json into both roots, emits s/<pub>/page_index.json (the "
+        "withdrawal index) + the v/ entity stubs + compat_index.json, and "
+        "refuses a snapshot whose same-origin links escape the base",
+    )
+    _rel_common(psites)
+    psites.add_argument("--work-dir", required=True, help="the built release tree dir")
+    psites.add_argument(
+        "--latest-dist",
+        default=None,
+        help="the Astro dist of the base-/ export-mode build → v/<pub>/",
+    )
+    psites.add_argument(
+        "--snapshot-dist",
+        default=None,
+        help="the Astro dist of the SIG_BASE_PATH=/s/<pub> build → s/<pub>/",
+    )
+    psites.add_argument(
+        "--publication",
+        default=None,
+        help="the p-<sha256> id (default: the tree's lone releases/<pub>/)",
+    )
+
     pstage = rsub.add_parser(
         "stage",
         help="upload staged/{r,v,s,releases}/<pub>/ if-generation-match=0 — "

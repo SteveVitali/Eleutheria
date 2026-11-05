@@ -1562,6 +1562,18 @@ def run_verb(args: Any) -> dict[str, Any]:
             renderer_revision=getattr(args, "renderer_revision", None),
             break_lock=break_lock,
         )
+    if verb == "sites":
+        from . import site_trees
+
+        return site_trees.verb_sites(
+            store,
+            apply_=apply_,
+            work_dir=args.work_dir,
+            latest_dist=getattr(args, "latest_dist", None),
+            snapshot_dist=getattr(args, "snapshot_dist", None),
+            publication_id=getattr(args, "publication", None),
+            break_lock=break_lock,
+        )
     if verb == "stage":
         return verb_stage(
             store,

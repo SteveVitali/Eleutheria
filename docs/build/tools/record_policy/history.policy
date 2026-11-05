@@ -1139,3 +1139,15 @@ seed-commit 324d62e96dc057f8c7b460c55a812081e7df6079
 # docs/build/reports/memory-repair/LEDGER_phaselog_L1373_pre-fold.txt
 seed-commit da48474b87d1ecfa8c4bb97f5f7fa65b41c6e14f
 seed-commit 849a0ef1
+
+# P36.66b committed-line assert-token respell (7509ed8c — P36.66a post-closeout
+# line at LEDGER.md:1503 carried a bare `live-claim` assert token; corpus-leg
+# violation on 27db7155's head run 41862618417). Respelled in place to the
+# code-spanned `check_live_claims` tool name — semantics verbatim. Pre-edit
+# bytes archived docs/build/reports/memory-repair/LEDGER_phaselog_L1503_pre-P36.66a-liveclaim-respell.txt
+# (sha256:b768917f7cc2bd2c974360d60dc64f1ac6b02df1feda0bf217a30794459617f4),
+# disclosed by the appended P36.66b `correction` entry in the same commit.
+# The branch rule forbids force-push, so the declaration lands here, the next
+# commit. Scope: the append-only findings attributed to 7509ed8c's rewritten
+# line only; no other commit borrows the exemption.
+seed-commit 7509ed8c
