@@ -35,7 +35,7 @@ import { panelFromStatement } from "../../lib/provenance-panel";
 import { errorPage, ERROR_KINDS } from "../../lib/errors";
 import { getDossiers } from "../../lib/data";
 import type { StatCell } from "../../components/StatRow.astro";
-import type { EmptyStateParts } from "../../lib/empty";
+import { emptyKindParts, type EmptyStateParts } from "../../lib/empty";
 
 // The ONE figures[] registry for this harness (UXR-34) — every stat/card
 // numeral renders through <Figure> against manifest-listed artifacts.
@@ -245,36 +245,13 @@ const PANEL_FULL = panelFromStatement(
 );
 const PANEL_ABSENT = panelFromStatement(undefined, "fixture-claim-unpublished");
 
-// The three non-absence causes have no aggregate surface yet — the harness
-// mounts them by contract so the full typed vocabulary renders somewhere.
+// P36.65: the three non-absence causes now carry canonical kind copy in
+// `empty.ts` — the harness mounts the registry's rows so the full typed
+// vocabulary renders somewhere.
 const NON_ABSENCE_PARTS: EmptyStateParts[] = [
-  {
-    state: "No records match this filter",
-    missing: "The filter returned nothing — this is not an absence in the record.",
-    nearby: "The unfiltered list holds every record this view covers.",
-    action: { href: "/component-kit/", label: "Clear filters" },
-    change: "The filter result changes only when the records or the filter change.",
-    cause: "filtered_none",
-    batchIds: {},
-  },
-  {
-    state: "This record cannot be redistributed",
-    missing: "The licence on this data does not permit SIG to republish it — a rights hold, not a gap.",
-    nearby: "The source registry names where the record lives upstream.",
-    action: { href: "/sources/", label: "See the sources" },
-    change: "The record appears only if its licence posture changes.",
-    cause: "not_redistributable",
-    batchIds: {},
-  },
-  {
-    state: "This surface is temporarily limited",
-    missing: "A serving fault limits this view right now — it is not an absence in the record.",
-    nearby: "The status page records any known serving fault.",
-    action: { href: "/status/", label: "Check the status page" },
-    change: "The view returns when the fault clears.",
-    cause: "degraded",
-    batchIds: {},
-  },
+  emptyKindParts("filtered_none", { action: { href: "/component-kit/" } }),
+  emptyKindParts("not_redistributable"),
+  emptyKindParts("degraded"),
 ];
 
 // The banner needs a real dossier shape — the fixtures corpus always carries

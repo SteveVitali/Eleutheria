@@ -1,0 +1,83 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.65 (UXK14-11; K14 §6.3) — the per-page reading key: a "How to read this
+// page" `<details>` that lists ONLY the symbols the page carries (the model in
+// `lib/reading-key.ts` computes them), each with its lexicon glyph, label,
+// one-line meaning and a glossary link. Native HTML, zero client JS — no
+// overlay, no tour, no storage.
+import { withBase } from "../lib/paths";
+import {
+  READING_KEY_SUMMARY,
+  READING_KEY_SUMMARY_BATCH_ID,
+  READING_KEY_GLOSSARY_LABEL,
+  READING_KEY_GLOSSARY_BATCH_ID,
+} from "../lib/reading-key";
+import type { ReadingKeyItem } from "../lib/reading-key";
+
+interface Props {
+  /** The symbols this page renders — computed from the page's model. */
+  items: ReadingKeyItem[];
+}
+
+const { items } = Astro.props;
+if (items.length === 0) {
+  throw new Error("ReadingKey: an empty key never renders — the page carries no symbols to explain");
+}
+---
+
+<details class="sig-reading-key" id="reading-key" data-testid="reading-key">
+  <summary class="sig-reading-key__summary" data-copy={READING_KEY_SUMMARY_BATCH_ID}>
+    {READING_KEY_SUMMARY}
+  </summary>
+  <ul class="sig-reading-key__list" role="list">
+    {
+      items.map((item) => (
+        <li class="sig-reading-key__item" data-testid="reading-key-item" data-key={item.id}>
+          {item.glyph !== "" && (
+            <span class="sig-reading-key__glyph" aria-hidden="true">
+              {item.glyph}
+            </span>
+          )}{" "}
+          <strong>{item.label}</strong> — {item.plain}{" "}
+          <a
+            href={item.term === null ? withBase("glossary/") : withBase(`glossary/#${item.term}`)}
+            data-copy={READING_KEY_GLOSSARY_BATCH_ID}
+          >
+            {READING_KEY_GLOSSARY_LABEL}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</details>
+
+{/* Inline, not bundled: the key mounts on dossier + about pages only —
+    a component <style> lands in the shared chunk every T1 page pays
+    render-blocking bytes for (the ~1.5 s LCP floor leaves no headroom). */}
+<style is:inline>
+  .sig-reading-key {
+    border-block: 1px solid var(--rule, #d5d9e0);
+    margin-block: var(--space-3, 1rem);
+    padding-block: var(--space-1, 0.25rem);
+  }
+  .sig-reading-key__summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .sig-reading-key__list {
+    list-style: none;
+    margin-block: var(--space-2, 0.5rem) 0;
+    padding-inline-start: 0;
+  }
+  .sig-reading-key__item {
+    margin-block: var(--space-1, 0.25rem);
+  }
+  .sig-reading-key__glyph {
+    display: inline-block;
+    min-width: 2ch;
+    text-align: center;
+  }
+</style>

@@ -479,12 +479,6 @@
     },
     {
       "file": "src/internal/component-kit/index.astro",
-      "token": "/sources/",
-      "count": 2,
-      "reason": "P36.22: internal component-kit harness fixture href \u2014 card/step/table spec data wrapped by withBase() inside Card.astro/DataTable.astro, never emitted raw"
-    },
-    {
-      "file": "src/internal/component-kit/index.astro",
       "token": "/research-queue/",
       "count": 2,
       "reason": "P36.22: internal component-kit harness fixture href \u2014 card/step/table spec data wrapped by withBase() inside Card.astro/DataTable.astro, never emitted raw"
@@ -506,18 +500,6 @@
       "token": "/attributes/site_records/count",
       "count": 1,
       "reason": "P36.22: harness figure JSON pointer into a manifest-listed artifact \u2014 schema data, not a navigable link"
-    },
-    {
-      "file": "src/internal/component-kit/index.astro",
-      "token": "/sources/",
-      "count": 1,
-      "reason": "P36.23: kit-B empty-state fixture action href \u2014 EmptyStateParts spec data wrapped by withBase() inside EmptyState.astro, never emitted raw"
-    },
-    {
-      "file": "src/internal/component-kit/index.astro",
-      "token": "/status/",
-      "count": 1,
-      "reason": "P36.23: kit-B degraded empty-state fixture action href \u2014 EmptyStateParts spec data wrapped by withBase() inside EmptyState.astro, never emitted raw"
     },
     {
       "file": "src/internal/component-kit/index.astro",
@@ -938,6 +920,18 @@
       "token": "/sections/$",
       "count": 3,
       "reason": "P36.64: JSON-pointer rests into the dossier artifact (sections[].figures/rows + reconciliation claims) for the golden card's Figure specs \u2014 pointers, not links"
+    },
+    {
+      "file": "src/pages/about/how-to-read-a-dossier.astro",
+      "token": "/about/how-to-read-a-dossier/",
+      "count": 1,
+      "reason": "P36.65: the page's own canonical path declaration passed to BaseLayout's `path` prop \u2014 the same exemption class as src/pages/about.astro's `/about/` literal (a route identity, not a link construction)"
+    },
+    {
+      "file": "src/internal/component-kit/index.astro",
+      "token": "/sources/",
+      "count": 2,
+      "reason": "P36.22: internal component-kit harness fixture href \u2014 card/step/table spec data wrapped by withBase() inside Card.astro/DataTable.astro, never emitted raw"
     }
   ]
 }

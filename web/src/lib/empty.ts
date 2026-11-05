@@ -143,6 +143,139 @@ export interface EmptyStateParts {
   batchIds: Partial<Record<"state" | "missing" | "nearby" | "action" | "change", string>>;
 }
 
+/**
+ * P36.65 (UXK14-11, K14 §6.4): the canonical five-part copy for the cause
+ * classes that have no dedicated aggregate surface — `filtered_none` (a
+ * filter matched nothing), `not_redistributable` (a rights hold), `degraded`
+ * (a temporary serving limit) and `not_monitored` (SIG checks no body or
+ * portal for the place — the watch coverage statement's cause). Every typed
+ * EmptySurface KIND now has its copy in this one registry, and the coverage
+ * test fails loud when a cause has neither a surface entry nor a kind row
+ * (SIG-UI-086/151).
+ */
+/**
+ * The causes whose copy lives in `EMPTY_KIND_PARTS` — declared literally so
+ * `Record` completeness is checked: a cause with no surface and no kind row
+ * is a compile error, never a silent missing kind.
+ */
+export type EmptyKindCause =
+  | "filtered_none"
+  | "not_redistributable"
+  | "degraded"
+  | "not_monitored";
+
+export const EMPTY_KIND_PARTS: Record<EmptyKindCause, EmptyStateParts> = {
+  filtered_none: {
+    state: "No records match this filter",
+    missing: "The filter returned nothing — this is not an absence in the record.",
+    nearby: "The unfiltered list holds every record this view covers.",
+    // The clear-filters target is the caller's own unfiltered route — the
+    // canonical copy names the LABEL only; `emptyKindParts` requires the
+    // caller's `action.href` for this cause (a same-page fragment would lie
+    // about clearing a filter it cannot see).
+    action: { href: "", label: "Clear filters" },
+    change: "The filter result changes only when the records or the filter change.",
+    cause: "filtered_none",
+    batchIds: {
+      state: "EK-01",
+      missing: "EK-02",
+      nearby: "EK-03",
+      action: "EK-04",
+      change: "EK-05",
+    },
+  },
+  not_redistributable: {
+    state: "This record cannot be redistributed",
+    missing: "The licence on this data does not permit SIG to republish it — a rights hold, not a gap.",
+    nearby: "The source registry names where the record lives upstream.",
+    action: { href: ROUTES.sources, label: "See the sources" },
+    change: "The record appears only if its licence posture changes.",
+    cause: "not_redistributable",
+    batchIds: {
+      state: "EK-06",
+      missing: "EK-07",
+      nearby: "EK-08",
+      action: "EK-09",
+      change: "EK-10",
+    },
+  },
+  degraded: {
+    state: "This surface is temporarily limited",
+    missing: "A serving fault limits this view right now — it is not an absence in the record.",
+    nearby: "The status page records any known serving fault.",
+    action: { href: "status/", label: "Check the status page" },
+    change: "The view returns when the fault clears.",
+    cause: "degraded",
+    batchIds: {
+      state: "EK-11",
+      missing: "EK-12",
+      nearby: "EK-13",
+      action: "EK-14",
+      change: "EK-15",
+    },
+  },
+  not_monitored: {
+    state: "SIG does not yet monitor a decision body for this place",
+    missing:
+      "SIG does not yet check any agenda or procurement source for this place. Decisions in bodies SIG does not check will not appear here.",
+    nearby: "The watch index lists the places and bodies SIG does check.",
+    action: { href: ROUTES.researchQueue, label: "See the research queue" },
+    change: "A registered agenda or procurement source for this place would bring it into the monitored set.",
+    cause: "not_monitored",
+    batchIds: {
+      state: "EK-16",
+      missing: "EK-17",
+      nearby: "EK-18",
+      action: "EK-19",
+      change: "EK-20",
+    },
+  },
+};
+
+/**
+ * The canonical five-part copy for a cause class with no dedicated surface.
+ * Fail closed: a cause whose copy lives per-surface (or nowhere) throws —
+ * callers must pass `surface` for surfaced causes (SIG-ENG-042).
+ *
+ * `filtered_none` additionally requires `overrides.action.href` — the
+ * clear-filters target is the caller's own unfiltered route and the canonical
+ * row carries no href that could lie about clearing a filter it cannot see.
+ */
+export function emptyKindParts(
+  cause: EmptyCause,
+  overrides?: { action?: { href: string; label?: string } },
+): EmptyStateParts {
+  const parts = (EMPTY_KIND_PARTS as Partial<Record<EmptyCause, EmptyStateParts>>)[cause];
+  if (parts === undefined) {
+    throw new Error(
+      `emptyKindParts: "${cause}" has no kind-level copy — use a named surface (its copy is per-surface)`,
+    );
+  }
+  if (cause === "filtered_none") {
+    const href = overrides?.action?.href;
+    if (!href) {
+      throw new Error(
+        'emptyKindParts("filtered_none") needs overrides.action.href — the caller\'s own unfiltered route',
+      );
+    }
+    return {
+      ...parts,
+      action: { href, label: overrides?.action?.label ?? parts.action.label },
+    };
+  }
+  return parts;
+}
+
+/**
+ * Whether a cause class has copy anywhere — a surfaced entry or a kind row.
+ * The coverage test asserts every `EmptyCause` is covered (a missing kind
+ * fails the build check).
+ */
+export function emptyCauseCovered(cause: EmptyCause): boolean {
+  if (cause in EMPTY_KIND_PARTS) return true;
+  return Object.values(COPY).some((c) => c.parts?.cause === cause);
+}
+
 export interface EmptyStateCopy {
   /** A short, honest heading — states that the surface is empty, not that reality is. */
   heading: string;
