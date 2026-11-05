@@ -1,0 +1,6 @@
+/* P36.64 (UXK14-6 / SIG-UI-140): About-only blocks — route-scoped `?url`
+   (the dossier-index.css precedent). Design tokens only (SIG-UI-146). */
+.sig-steps { margin: var(--sig-space-3) 0 0; padding-left: var(--sig-space-5); }
+.sig-steps li { margin-bottom: var(--sig-space-2); }
+.sig-capability { list-style: none; margin: var(--sig-space-3) 0 0; padding: 0; }
+.sig-capability__row { margin-bottom: var(--sig-space-2); }

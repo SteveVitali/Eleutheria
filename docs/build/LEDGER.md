@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.64
-lastCompleted: P36.63
+nextTicket: P36.65
+lastCompleted: P36.64
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -20,7 +20,7 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.63-records-request-drafts
+chainTip: r11/P36.64-home-about-how-it-works-methodology
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
@@ -1491,3 +1491,8 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-04 — P36.62 post-closeout record — `cdb8fad8` `ci: pass #430@cdb8fad` 5/5 head-bound (run 41752206287; arc: `65af0338` impl → `d10a1e44` records+projection → `cdb8fad8` verdict re-route + retired-intake invariants → green) · reds fixed forward — 41750091888 (docs: 4 open verdicts routed at the landed row → MET/public; python: `test_p34_12_queue_truth` retired-intake invariants converted to the landed semantics), 41749892631 (same docs gate on the impl head) · PR #430 OPEN on the stack for operator integration · `main` untouched · no OM-20/mutations · owned verdicts: SIG-RQ-002, SIG-RQ-008, SIG-RQ-009, SIG-UI-079 → MET (public, covered+tested) · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-04 — P36.62 record-tip confirm — `183b86e1` `ci: pass #430@183b86e` 5/5 head-bound (run 41759043683 — docs 1m20s · security 31s · composed 4m13s · python 20m6s · web ~49m over two attempts; attempt-1 red was a national-Lighthouse LCP flake on `/dispute/` — a route the record diff never touches; web attempt-2 green) · arc: `d3dd7d87` post-closeout record → `183b86e1` projection regen after the index-cell restore (41758441261's docs red) · PR #430 OPEN on the stack · `main` untouched · no OM-20/mutations · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-04 — dispatch boundary-confirm — P36.62's green read recorded (`ci: pass #430@183b86e`, run 41759043683; record tip `423da827` also 5/5 head-bound, run 41770081852 — matrix re-verdicts + retired-intake invariant repaired forward); `blockedOn` (nothing); chainTip `r11/P36.62-task-and-campaign-pages` · nextTicket P36.63 (row 406 — records-request drafts; `D-K11-3 [B-22] = yes` carried verbatim; live_verification=false; dep P36.58 landed) — fresh implement-spec sub-agent on `r11/P36.63-records-request-drafts` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-04 — P36.63 done — `ci: pass #431@fe5a139` 5/5 head-bound (run 41778648097: docs 1m57s · security 31s · composed 4m18s · python 22m25s · web 50m19s) — operator merged #428/#429/#430/#431 mid-read (merge `37e643e4`, 05:45:05Z); the green read is on the merged head's own checks · Gate status: none (K11 RQ-04; owns SIG-RQ-007/SIG-RQ-010; `D-K11-3 [B-22] = yes` + ADR-171 carried verbatim) · deferrals +0/−0 · chainTip → r11/P36.63-records-request-drafts · next → P36.64 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-04 — P36.63 post-closeout record — `fe5a139b` `ci: pass #431@fe5a139` 5/5 head-bound (run 41778648097) · arc: `b3038d85` impl → `f098ae28` records+projection → `fe5a139b` matrix-comma repair → green · operator merged #431 mid-web-leg (`37e643e4`); `main` integration operator-handled · no OM-20/mutations · owned verdicts: SIG-RQ-007, SIG-RQ-010 → MET (public, covered+tested) · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-04 — dispatch boundary-confirm — P36.63's green read recorded (`ci: pass #431@fe5a139`, run 41778648097; #431 merged by the operator 05:45Z as `37e643e4` — #428/#429/#430 also integrated); `blockedOn` (nothing); chainTip `r11/P36.63-records-request-drafts` · nextTicket P36.64 (row 407 — home/about/how-it-works/methodology; `D-K14-1` tagline + copy-batch-1 verbatim constraint + `D-K14-7` omit-who-runs-SIG carried verbatim; live_verification=false; deps landed) — fresh implement-spec sub-agent on `r11/P36.64-home-about-how-it-works-methodology` · harness: devin-desktop/swe-2-high/orchestrator
+
+- 2026-11-04 — P36.64 done — `ci: pass #432@5129a86` 5/5 head-bound (run 41810608366: docs 2m39s · security 31s · composed 4m8s · python 21m24s · web 52m45s) · Gate status: none (K14 UXK14-6; owns SIG-UI-135…142; `D-K14-1 [C-4]` tagline-only shipped + `D-K14-7 [C-5]` carried verbatim — no "who runs SIG" anywhere) · deferrals +2/−1 (opened D-P36.64-1 `/dossier/` wire +D-P36.64-2 `/` lcpMs, closed D-P36.56-2 verified-met) · chainTip → r11/P36.64-home-about-how-it-works-methodology · next → P36.65 · harness: devin-desktop/swe-2-high/subagent- 2026-11-04 — dispatch boundary-confirm — P36.64's green read recorded (`ci: pass #432@5129a86`, run 41810608366; record tip `eda67ed9`'s own run pending — docs-only delta); `blockedOn` (nothing); chainTip `r11/P36.64-home-about-how-it-works-methodology` · nextTicket P36.65 (row 408 — onboarding content; live_verification=false; gate none; deps P36.23/P36.17/P36.55 landed) — fresh implement-spec sub-agent on `r11/P36.65-onboarding-content` · harness: devin-desktop/swe-2-high/orchestrator

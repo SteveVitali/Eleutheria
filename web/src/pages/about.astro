@@ -1,0 +1,158 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.64 (UXK14-6; DR-K14-05/06 → SIG-UI-139/140; K14 §2.4; UXR-06 / D3-Q4)
+// — About & how it works (T1, zero client JS). What SIG is (agent-drafted
+// copy-batch rows — the K14 §2.1 paragraph itself stays UNRENDERED pending
+// the operator's verbatim confirmation, D-K14-1 [C-4]), how it works in five
+// steps, what SIG can and cannot tell you (the release-bound capability
+// table + honest "is not" facts), the maintainer model and independent-review
+// status as recorded in the provenance row, how to cite/correct/reuse, the
+// neutral 'Other public resources' block (SIG does not endorse), and the
+// known-issues link.
+//
+// D-K14-7 [C-5]: the operator-reserved section or its placeholder never ships — the
+// operator writes that wording; this page names only the recorded maintainer
+// model and review status. The four K14 "is not" lines, the About paragraph
+// and the why-it-exists line are copy-batch-16 rows pending verbatim
+// confirmation — absent here, never stubbed.
+import aboutCssUrl from "../styles/k14-about.css?url";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import InBrief from "../components/InBrief.astro";
+import Term from "../components/Term.astro";
+import { PUBLIC_RESOURCES } from "../lib/public-resources";
+import { capabilityTable, releaseCapabilityMetrics } from "../lib/capabilities";
+import { getCorrections, getSiteProvenance } from "../lib/data";
+import { REVIEW_STATUS_LABELS, DEFAULT_PROVENANCE } from "../lib/provenance";
+import { releaseRoutes } from "../lib/release-routes";
+import { withBase } from "../lib/paths";
+import { fmtInt } from "../lib/format";
+
+const routes = releaseRoutes();
+const capabilities = capabilityTable(releaseCapabilityMetrics());
+const reviewStatus =
+  REVIEW_STATUS_LABELS[(getSiteProvenance() ?? DEFAULT_PROVENANCE).human_review_status].toLowerCase();
+const correctionsCount = getCorrections().length;
+
+// How it works in five steps (K14 §2.4.3) — each step links its precise
+// methodology section.
+const steps = [
+  { name: "Collect", nameCopy: "AB-10", body: "Public sources, each with a recorded rights review.", bodyCopy: "AB-40", href: withBase("data-collection/") },
+  { name: "Capture", nameCopy: "AB-11", body: "A dated, hashed copy is kept where the licence allows.", bodyCopy: "AB-41", href: withBase("methodology/#evidence-tiers") },
+  { name: "Extract claims", nameCopy: "AB-12", body: "Each fact carries its source, date and how directly the source supports it.", bodyCopy: "AB-42", href: withBase("methodology/#evidence-tiers") },
+  { name: "Reconcile", nameCopy: "AB-13", body: "The same agency, vendor or camera is matched across sources; every disagreement is kept.", bodyCopy: "AB-43", href: withBase("methodology/") },
+  { name: "Publish releases", nameCopy: "AB-14", body: "Dated, citable and downloadable; corrections are added, never overwritten.", bodyCopy: "AB-44", href: withBase("corrections/") },
+];
+
+// "What SIG is not" — honest facts of the record, in words already shipped
+// elsewhere. The four K14 "is not" lines stay unrendered pending verbatim
+// confirmation (D-K14-1); these statements are the recorded record facts.
+const isNot = [
+  { body: "SIG reports; it does not endorse.", copy: "AB-20" },
+  { body: "SIG never publishes a total: every figure names what it is counted against.", copy: "AB-21" },
+  { body: "SIG publishes dated, citable releases — not a live feed.", copy: "AB-22" },
+  { body: "SIG links to the projects that map cameras; it does not rebuild them.", copy: "AB-23" },
+];
+
+const citeLinks = [
+  { label: "Cite a page — every page carries a pinned citation behind its Cite disclosure", route: null },
+  { label: `Dispute or correct — the corrections log holds ${fmtInt(correctionsCount)} entries`, route: "corrections/", href: withBase("corrections/") },
+  { label: "Reuse the data — downloads and per-compartment licences", route: "data/", href: withBase("data/") },
+  { label: "Known issues — the running log per source", route: "status/issues/", href: withBase("status/issues/") },
+].filter((l) => l.route === null || routes.has(l.route));
+---
+
+<BaseLayout title="About SIG — what it is and how it works" path="/about/">
+  <link slot="head" rel="stylesheet" href={aboutCssUrl} />
+  <InBrief href="#how-it-works">
+    <span data-copy="IB-03">SIG joins public records about surveillance infrastructure into one
+    record per place, keeps every fact linked to its source, and publishes it
+    as dated, citable releases. This page says what SIG is, how it works, and
+    what it is not.
+  </span>
+  </InBrief>
+
+  <h2 id="what-sig-is">What SIG is</h2>
+  <p data-copy="AB-01 AB-02">
+    SIG — the Surveillance Infrastructure Graph — is an open record of the
+    surveillance technology public agencies use and of the contracts,
+    policies and data-sharing arrangements behind it. Every{" "}
+    <Term term="claim">claim</Term> stays linked to the{" "}
+    <Term term="source">source</Term> it came from; where sources disagree,
+    both sides stay on the page.
+  </p>
+  <h2 id="how-it-works">How it works, in five steps</h2>
+  <ol class="sig-steps" data-testid="how-steps">
+    {steps.map((s) => (
+      <li data-testid="how-step">
+        <strong data-copy={s.nameCopy}>{s.name}.</strong>{" "}
+        <span data-copy={s.bodyCopy}>{s.body}</span>{" "}
+        <a href={s.href}>details ›</a>
+      </li>
+    ))}
+  </ol>
+
+  <h2 id="capabilities">What SIG can and cannot tell you</h2>
+  <p data-copy="AB-24">
+    Each line below is measured against this release: a capability the data
+    does not yet show is marked as being built, never promised.
+  </p>
+  <ul class="sig-capability" role="list" data-testid="capability-table">
+    {capabilities.map((c) => (
+      <li class="sig-capability__row" data-testid={`capability-${c.id}`} data-live={c.live}>
+        {c.live
+          ? <><strong>{c.verb}</strong> — <a href={c.href}>{c.promise}</a></>
+          : <><strong>{c.verb}</strong> — <span data-testid={`capability-being-built-${c.id}`}>{c.beingBuilt}</span></>}
+      </li>
+    ))}
+  </ul>
+  <h3>What SIG is not</h3>
+  <ul data-testid="is-not">
+    {isNot.map((n) => (
+      <li data-copy={n.copy}>{n.body}</li>
+    ))}
+  </ul>
+
+  <h2 id="maintainer">Maintenance and review status</h2>
+  <p data-copy="AB-25">
+    SIG is published under a sole-maintainer posture; automated checks run
+    on every build, and the record's review status is recorded as:
+    {reviewStatus}.
+  </p>
+  <p data-copy="AB-26">
+    No second independent reviewer exists yet; nothing on this site states
+    or implies otherwise. Provisional labels mark method output that has not
+    been independently evaluated.
+  </p>
+  <p class="sig-basis" data-copy="AB-27 AB-28">
+    Published on the maintainer's own rights and publication decisions. No
+    lawyer's written opinion has been obtained; nothing here states that this
+    publication has been cleared by counsel.
+  </p>
+
+  <h2 id="cite-correct-reuse">How to cite, correct and reuse</h2>
+  <ul data-testid="cite-links">
+    {citeLinks.map((l) => (
+      <li>{l.href ? <a href={l.href}>{l.label}</a> : <span>{l.label}</span>}</li>
+    ))}
+  </ul>
+
+  <section class="sig-other-resources" data-testid="other-public-resources" aria-labelledby="other-resources-heading">
+    <h2 id="other-resources-heading" data-copy="AB-29">Other public resources</h2>
+    <p class="sig-table-note" data-copy="AB-30">
+      Public resources a reader may also find useful — SIG does not endorse
+      them, and this list never carries avoidance routing or plate lookups.
+    </p>
+    <ul class="sig-other-resources__list">
+      {PUBLIC_RESOURCES.map((r) => (
+        <li>
+          <a href={r.url} rel="external">{r.name}</a> — {r.tells}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+
+</BaseLayout>

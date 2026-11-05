@@ -58,10 +58,12 @@ test.describe("national landing page (SIG-UI-049 / ADR-093)", () => {
     for (const l of labels) expect(l.toLowerCase()).not.toContain("total number of");
   });
 
-  test("the landing shows jurisdiction reach and product entry points", async ({ page }) => {
+  test("the landing shows headline figures, persona paths and the differentiators", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByTestId("reach-stat")).toBeVisible();
-    expect(await page.getByTestId("entry-point").count()).toBeGreaterThanOrEqual(3);
+    // P36.64 (UXK14-6): the persona start-here cards and the "What makes SIG
+    // different" set replaced the flat entry-point grid.
+    expect(await page.getByTestId("different-item").count()).toBeGreaterThanOrEqual(3);
     // Absence framing is on the landing (SIG-UI-011/007).
     await expect(page.getByText(/absence of a row is not evidence of absence/i)).toBeVisible();
   });

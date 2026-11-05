@@ -36,9 +36,11 @@ test("the dossier index leads with place names, codes secondary, no-JS", async (
   }
 });
 
-test("the home page reach list leads with place names, no-JS", async ({ page }) => {
-  await page.goto("/");
-  const places = page.locator(".sig-jurisdiction-reach__place");
+test("the dossier index leads with place names, no-JS", async ({ page }) => {
+  // P36.64 (UXK14-6): the 55-item reach list left the home page per K14
+  // ("removed from home"); the per-jurisdiction list lives on /dossier/.
+  await page.goto("/dossier/");
+  const places = page.locator(".sig-dossier-index__place");
   const count = await places.count();
   expect(count).toBeGreaterThan(0);
   for (let i = 0; i < count; i++) {

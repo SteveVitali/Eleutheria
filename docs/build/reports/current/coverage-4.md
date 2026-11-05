@@ -113,14 +113,14 @@
 | SIG-UI-133 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-UI-134 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-UI-135 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-UI-135 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-04 | SIG-UI-135:r11-1 |
 | SIG-UI-136 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-UI-136 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-04 | SIG-UI-136:r11-1 |
 | SIG-UI-137 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-UI-137 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-04 | SIG-UI-137:r11-1 |
 | SIG-UI-138 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-UI-138 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-04 | SIG-UI-138:r11-1 |
 | SIG-UI-139 | `public` | `MISSING` | 2026-10-24 | — |
-| SIG-UI-140 | `public` | `MISSING` | 2026-10-24 | — |
-| SIG-UI-141 | `public` | `MISSING` | 2026-10-24 | — |
-| SIG-UI-142 | `public` | `MISSING` | 2026-10-24 | — |
-| SIG-UI-143 | `public` | `MISSING` | 2026-10-24 | — |
-| SIG-UI-144 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-UI-139 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-04 | SIG-UI-139:r11-1 |
 
 ← back: CURRENT.md · next page: coverage-5.md

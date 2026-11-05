@@ -1,0 +1,42 @@
+/* P36.64 (UXK14-6 / SIG-UI-135…139): home-only blocks — route-scoped via
+   `?url` + the head slot (the dossier-index.css precedent): linked on `/`
+   only, never hoisted into the shared chunk (the /dossier/ wire budget has
+   ~19 B headroom). Design tokens only (SIG-UI-146). */
+.sig-hero { margin: 0 0 var(--sig-space-4); }
+.sig-hero-search { margin: var(--sig-space-2) 0; }
+.sig-example-chips { list-style: none; margin: var(--sig-space-2) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--sig-space-2); }
+.sig-example-chip { display: inline-block; min-height: 44px; padding: var(--sig-space-2) var(--sig-space-3); border: var(--sig-border-thin) solid var(--sig-rule); border-radius: var(--sig-radius-2); text-decoration: none; font-size: var(--sig-step--1); }
+.sig-example-chip:hover, .sig-example-chip:focus-visible { border-color: var(--sig-link); }
+.sig-persona { cursor: default; }
+.sig-persona__steps { margin: 0; padding-left: var(--sig-space-5); font-size: var(--sig-step--1); }
+.sig-persona__steps li { margin-bottom: var(--sig-space-1); }
+.sig-golden { border: var(--sig-border-thin) solid var(--sig-rule); border-radius: var(--sig-radius-2); padding: var(--sig-space-4); background: var(--sig-surface-2); max-width: var(--sig-measure); }
+.sig-golden__name { font-size: var(--sig-step-2); font-weight: 700; margin: 0; }
+.sig-golden__facts { margin: 0 0 var(--sig-space-3); padding-left: var(--sig-space-5); }
+.sig-golden__facts li { margin-bottom: var(--sig-space-1); }
+.sig-golden__sources, .sig-golden__disagreement, .sig-golden__decision { font-size: var(--sig-step--1); margin: 0 0 var(--sig-space-2); }
+.sig-golden__open { margin: 0; font-weight: 600; }
+.sig-readkey { list-style: none; margin: var(--sig-space-3) 0 0; padding: 0; }
+.sig-readkey__item { margin-bottom: var(--sig-space-2); }
+.sig-readkey__glyph { display: inline-block; min-width: 1.5em; font-weight: 700; }
+.sig-trust-links { list-style: none; margin: var(--sig-space-3) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--sig-space-2) var(--sig-space-5); }
+@media (max-width: 40rem) {
+  /* SIG-UI-136: the <= 5-viewport home budget at 390 px. */
+  .sig-landing-section { margin-top: var(--sig-space-4); }
+  .sig-stat-grid { grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: var(--sig-space-2); }
+  .sig-stat { padding: var(--sig-space-3); }
+  .sig-stat__value { font-size: var(--sig-step-3); }
+  .sig-stat__denominator { font-size: var(--sig-step--2); }
+  .sig-stat__note { display: none; }
+  .sig-entry-grid { grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: var(--sig-space-2); }
+  .sig-entry__link { padding: var(--sig-space-2); }
+  .sig-persona__steps { font-size: var(--sig-step--2); padding-left: 0; list-style: none; }
+  .sig-persona__steps li { display: inline; margin-bottom: 0; }
+  .sig-persona__steps li + li::before { content: " → "; color: var(--sig-ink-muted); }
+  .sig-golden { padding: var(--sig-space-3); }
+  .sig-golden__facts { margin-bottom: var(--sig-space-2); padding-left: var(--sig-space-4); }
+  .sig-golden__facts li { margin-bottom: 0; }
+  .sig-golden__open { display: inline; }
+  .sig-readkey { display: flex; flex-wrap: wrap; gap: var(--sig-space-1) var(--sig-space-4); margin-top: var(--sig-space-2); }
+  .sig-readkey__item { margin-bottom: 0; font-size: var(--sig-step--2); }
+}

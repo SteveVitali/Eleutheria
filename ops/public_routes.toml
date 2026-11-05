@@ -27,6 +27,7 @@
 # Every top-level entry (directory or file) of the synced web tree must appear
 # here. Order is for humans; the check is a set membership.
 top_level = [
+  "about",
   "index.html",          # the homepage
   "404.html",            # the branded 404 (P34.13 / QW-11) — nginx maps error_page 404 onto it
   "403",                 # the branded 403 page (P34.13; its error_page wiring is P34.40's)
@@ -84,6 +85,7 @@ top_level = [
 # allow-list edit. The P34.13/P36.22 chrome entries (404/403/410/500 pages + flat copies,
 # favicon, sitemap, /terms) are emitted by every build.
 required = [
+  "about",
   "index.html",
   "404.html",
   "403",

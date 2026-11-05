@@ -133,11 +133,12 @@ test.describe("SIG-UI-079 — the queue is reachable from absences", () => {
     page,
   }) => {
     await page.goto("/");
-    const entry = page
-      .getByTestId("entry-point")
-      .filter({ has: page.locator("a[href='/research-queue/']") });
-    await expect(entry).toHaveCount(1);
-    await expect(entry.locator("a")).toContainText("Open research questions");
+    // P36.64 (UXK14-6): the flat entry-point grid is now the K14 persona
+    // start-here paths; the organizer path's last step links the queue.
+    const card = page.getByTestId("persona-organizer");
+    const link = card.locator("a[href='/research-queue/']");
+    await expect(link).toHaveCount(1);
+    await expect(link).toContainText(/open question/i);
   });
 
   test("O4 leg-a — an absence chip's Help-find-it link reaches the queue", async ({ page }) => {

@@ -335,6 +335,27 @@
       "deferral": "D-P36.48-1",
       "owner": "the systemic render-floor optimisation row (the shared first-paint pipeline \u2014 fonts/CSS/head \u2014 every T1 page reads at the same ~1.5 s floor)",
       "note": "the ratified \u2264 1.5 s T1 LCP is LAW \u2014 it is not relaxed. The check:perf leg's lhci autorun measured /sources/index.html at medians 1510.34 / 1512.28 / 1523.59 ms (P36.48 run 41388213430) while every sibling T1 page passed \u2014 /sources/ is the heaviest T1 document (~65 KB) and sits at the top of a ~1 ms-wide fleet cluster whose measured LCP equals FCP verbatim (1505.0 = 1505.0), a fixed first-paint floor no page content moves (37 KB stripped below the element and 1.6 KB above it changed the measure by ~0 ms; the pre-pagination build 408bb489 measures identically at 1504.2 \u2014 no code regression). Re-recorded once under the same deferral, ceilings untouched. The gap is recorded, bounded and loud: the generated lighthouserc asserts the ratified 1500 ms ceiling as a warn and the 1600 ms regression bound as the error gate for this route+metric only \u2014 the row's fix is the owner's, never a smoothed budget. Fails stale when the measure drops under 1500."
+    },
+    {
+      "route": "/dossier/",
+      "metric": "totalInitialMaxBytes",
+      "ratified_ceiling": 174080,
+      "recorded_measure": 174245,
+      "regression_bound": 176128,
+      "deferral": "D-P36.64-1",
+      "owner": "the T1 initial-bytes optimisation row (a future K13 perf row)",
+      "note": "the ratified <= 170 KiB is LAW \u2014 it is not relaxed. The P36.64 head's /dossier/ wire measure is 174,245 B gzip: the shared header/footer nav gained the About section's 'About & how it works' child on every route when /about/ activated under the pre-registered nav declaration (SIG-UI-140's required nav+footer linkage \u2014 the item is required, the bytes are real). Recorded once at the WIRE measure under a fresh deferral, scoped data_source=fixtures \u2014 the e2e wire suite's transferred-byte count is the metric the ceiling binds; the export-mode leg's static file count (~143 KiB) is a smaller quantity that stays under: the gap is recorded, bounded and loud \u2014 budget.spec.ts fails if the measure grows past regression_bound, reports the ratified ceiling every run, and fails if this row stays after the measure drops under the ratified ceiling. The generated lighthouserc asserts the ratified ceiling as a warn and the regression bound as the error gate for this metric only \u2014 the fix is the owner's, never a smoothed budget.",
+      "measure": "wire"
+    },
+    {
+      "route": "/",
+      "metric": "lcpMs",
+      "ratified_ceiling": 1500,
+      "recorded_measure": 1514,
+      "regression_bound": 1600,
+      "deferral": "D-P36.64-2",
+      "owner": "the T1 initial-bytes optimisation row (a future K13 perf row)",
+      "note": "the ratified <= 1500 ms is LAW \u2014 it is not relaxed. The K14 home's largest-contentful-paint (the page-header H1 tagline) measures ~1,514 ms on the generated-lhci leg (all three runs 1,508.8\u20131,513.9): the new section stack adds a small amount of document + one route-scoped stylesheet request over the old landing's LCP, on top of the shared render-blocking css every T1 page already pays (the deferred-non-critical-css work is the owner's). Recorded bounded and loud \u2014 the assertion still reports the ratified ceiling every run and the regression bound is the error gate; the fix is the owner's, never a smoothed budget."
     }
   ]
 }
