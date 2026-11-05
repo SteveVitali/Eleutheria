@@ -99,6 +99,13 @@ SIG_CHANGES_NOTICE = (
 #: a file cannot hash itself.
 _SELF_NAMED = (SHA256SUMS_FILE, MINISIG_FILE, PUBKEY_FILE)
 
+# P37.4a (SIG-SEC-006): declared sidecars that ARE listed in SHA256SUMS without
+# being manifest members — the deterministic CycloneDX SBOM is emitted beside
+# the sums and verified by the same signature.
+SBOM_FILE = "sbom.cdx.json"
+SBOM_MINISIG_FILE = "sbom.cdx.json.minisig"
+SIDECAR_SUMS_MEMBERS = (SBOM_FILE,)
+
 
 class DownloadError(RuntimeError):
     """A downloads contract violation — always loud, never partial."""
@@ -587,6 +594,10 @@ def write_integrity_files(
         (str(a["path"]), str(a["sha256"])) for a in manifest.get("artifacts") or []
     ]
     entries.append((MANIFEST_FILE, sha256_hex((root / MANIFEST_FILE).read_bytes())))
+    for sidecar in SIDECAR_SUMS_MEMBERS:
+        sidecar_path = root / sidecar
+        if sidecar_path.is_file():
+            entries.append((sidecar, sha256_hex(sidecar_path.read_bytes())))
     sums = sha256sums_bytes(entries)
     (root / SHA256SUMS_FILE).write_bytes(sums)
     result: dict[str, Any] = {
@@ -662,7 +673,12 @@ def verify_downloads(export_dir: Path | str) -> dict[str, Any]:
                 failures.append(f"{a['path']}: manifest artifact missing from SHA256SUMS")
         if MANIFEST_FILE not in listed:
             failures.append("manifest.json missing from SHA256SUMS")
-        for extra in set(listed) - {str(a["path"]) for a in artifacts} - {MANIFEST_FILE}:
+        for extra in (
+            set(listed)
+            - {str(a["path"]) for a in artifacts}
+            - {MANIFEST_FILE}
+            - set(SIDECAR_SUMS_MEMBERS)
+        ):
             failures.append(f"{extra}: in SHA256SUMS but not a manifest member")
 
     sig_path = root / MINISIG_FILE

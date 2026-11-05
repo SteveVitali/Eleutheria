@@ -1488,6 +1488,8 @@ def build_release(
             "SHA256SUMS",
             "SHA256SUMS.minisig",
             "sig-release.minisign.pub",
+            "sbom.cdx.json",
+            "sbom.cdx.json.minisig",
         ):
             _sp = export_dir / _side
             if _sp.is_file():

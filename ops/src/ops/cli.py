@@ -6164,6 +6164,10 @@ def main(argv: list[str] | None = None) -> int:
         from . import pg_export_copy
 
         return pg_export_copy.main(raw[1:])
+    if raw and raw[0] == "security-baseline":
+        from . import security_baseline
+
+        return security_baseline.main(raw[1:])
     if raw and raw[0] == "basemap":
         from . import basemap
 

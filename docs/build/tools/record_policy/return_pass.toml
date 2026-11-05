@@ -1565,3 +1565,19 @@ rerun_cell = "`implement-spec spec=docs/tickets/421_P37.3__evidence-store-harden
   excluded = ["inside 03:00-10:00Z daily", "while an ingest execution runs (repoint leg)"]
   go = "pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting)"
   rerun = "implement-spec spec=docs/tickets/421_P37.3__evidence-store-hardening.md live_verification=true"
+[[row]]
+key = "P37.4a"
+kind = "leg"
+obligations = ["D-P37.4a-1"]
+obligations_cell = '''D-P37.4a-1: queued OM-20 mutation (GATE-G6 §4 pre-authorised): `security-baseline.sh --apply` — scan APIs + `sig-release`/`sig-image-sign` KMS key + cosign signatures over deployed digests + `ops/security/` records; `SIG_SECB_SIGNING=1` arms the deploy hook'''
+gates_cell = '''`hosted` write; OM-20 named verbatim — go: pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting); AR-3+AR-2 — excluded: inside 03:00-10:00Z daily; needs SIG_GCP_PROJECT + ADC + SIG_SECB_AUTHOR + cosign on PATH'''
+operator_cell = '''nothing — the leg-runner exports env and runs the script; every write additive (rollback = `versions disable 1` + un-arm)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/422_P37.4a__security-baseline-scan-sbom-signing.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P37.4a-security-baseline"
+  obligations = ["D-P37.4a-1"]
+  earliest = "outside 03:00-10:00Z with SIG_GCP_PROJECT + ADC + SIG_SECB_AUTHOR + cosign on PATH"
+  excluded = ["inside 03:00-10:00Z daily"]
+  go = "pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting)"
+  rerun = "implement-spec spec=docs/tickets/422_P37.4a__security-baseline-scan-sbom-signing.md live_verification=true"

@@ -95,6 +95,9 @@ do_service() {
   local pinned
   pinned="$(pin_image_digest "${IMAGE}")"
   _log "   pinned: ${pinned}"
+  # P37.4a / ADR-231: sign the digest being deployed (armed SIG_SECB_SIGNING=1;
+  # unarmed prints the pending cosign commands — never silently absent).
+  security_sign_image "${pinned}"
   # Reproduce-and-replace the live mount shape — READ LIVE, never guessed. The
   # hand-made P30.3 service mounts the same bucket as volume `site` at
   # /usr/share/nginx/html on port 80; the repo-owned image serves /mnt/sig-web

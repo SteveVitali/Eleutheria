@@ -1,0 +1,15 @@
+{
+  "schema": "sig.security-baseline-packet/1",
+  "row": "P37.4a",
+  "status": "prepared_not_executed",
+  "authority": "GATE-G6 §4 (2026-11-05T15:20Z, \"Approve all 15 (rec.)\", names P37.4a verbatim; expires GATE-ACCEPT-R11)",
+  "mutation": "security-baseline production writes — scan/SBOM/cosign wiring into the deploy path",
+  "script": "ops/gcp/security-baseline.sh",
+  "legs": ["prestate", "apis", "kms", "sign", "probe", "verify"],
+  "queued_reason": "SIG_GCP_PROJECT unset; gcloud config project is not the SIG project; cosign absent on PATH",
+  "window": "never 03:00-10:00Z (exit 42)",
+  "env_required": ["SIG_GCP_PROJECT", "ADC", "SIG_SECB_AUTHOR", "cosign on PATH"],
+  "restore_points": ["prestate captures + sha256 sidecars", "restore-point.sh sqlpoint (AR-2)", "rollback: versions disable 1 + SIG_SECB_SIGNING=0 — additive writes, never deleted"],
+  "records": ["sig.image-signature/1 under ops/security/ on the release bucket"],
+  "rerun": "implement-spec spec=docs/tickets/422_P37.4a__security-baseline-scan-sbom-signing.md live_verification=true"
+}

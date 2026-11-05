@@ -1028,12 +1028,19 @@ class SpineExport:
             target.write_bytes(data)
         # 4) the EXTENDED manifest (bundle + web + provenance + exclusions + metadata).
         (root / "manifest.json").write_bytes(self.manifest.to_bytes())
+        # 4b) P37.4a (SIG-SEC-006, R11-OPS-08): the deterministic CycloneDX SBOM
+        #     rendered from the committed pylock.toml — emitted BEFORE the
+        #     integrity files so SHA256SUMS covers it (``sbom.cdx.json`` is a
+        #     declared sidecar member of the sums, like manifest.json — see
+        #     downloads.SIDECAR_SUMS_MEMBERS).
+        from . import downloads as _dl
+        from . import sbom as _sbom
+
+        _sbom.emit_sbom(root, signing_secret_b64=signing_secret_b64)
         # 5) P36.50 (SIG-TRANSP-018, D-J3-8 = a): SHA256SUMS over every
         #    manifest-listed member + manifest.json; the pipeline minisign
         #    signature + public key land beside it when the OP-20 key is
         #    provisioned (``signing_secret_b64`` — never a repo file).
-        from . import downloads as _dl
-
         _dl.write_integrity_files(root, signing_secret_b64=signing_secret_b64)
         return root
 
