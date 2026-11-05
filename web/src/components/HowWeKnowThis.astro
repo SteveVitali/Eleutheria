@@ -82,9 +82,17 @@ const COUNTS_HREF = artifactHref(COUNTS_ARTIFACT);
 const sitePublished = scope === "site" ? getSourceCounts().lifecycle.published : null;
 const sourcesValue = sitePublished?.count ?? provenance.source_independence_count;
 const sourcesArtifact = sitePublished ? COUNTS_ARTIFACT : HWKT_ARTIFACT;
+// P36.72a: the pointer must name the field the NAMED ARTIFACT actually
+// carries — a `sig.dossier-sources/1` doc stores the contributing-source
+// count as `sources_with_published_claims` (the same number
+// dossierSourcesProvenance exposes as source_independence_count), while the
+// analytics provenance shape uses `source_independence_count`.
+const sourcesField = HWKT_ARTIFACT.startsWith("web/dossier_sources/")
+  ? "sources_with_published_claims"
+  : "source_independence_count";
 const sourcesPointer = sitePublished
   ? "/lifecycle/published/count"
-  : `${pointerBase}/source_independence_count`;
+  : `${pointerBase}/${sourcesField}`;
 const sourcesLabel = sitePublished
   ? "Sources with published claims"
   : (provenance.source_label ?? "Contributing sources");
