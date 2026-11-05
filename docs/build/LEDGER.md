@@ -8,11 +8,11 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.73
-lastCompleted: PLAN-11D
+nextTicket: GATE-G6
+lastCompleted: P36.73
 blockedOn: (nothing)
 pauseRequested: false
-returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2
+returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2
 manifest: docs/tickets/00_MANIFEST.md
 canonicalSpec: docs/2_canonical_design_spec.md
 memoryRoot: docs/build
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/PLAN-11D-contracts-for-11d-and-tail
+chainTip: r11/P36.73-sub-round-11c-acceptance
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-05T12:55Z
+updatedAt: 2026-11-05T14:42Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -474,6 +474,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | P36.46 | queued D-P36.46-1 — `hosted` report backfill (INSERT-only, +0; restore = appended-set digests) | pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z or batch window day 6 → day 13 12:00Z; `SIG_BACKFILL_AUTHOR` | nothing until the `hosted` env — machinery + packet landed | `implement-spec spec=docs/tickets/389_P36.46__execution-keyed-ingestion-history.md live_verification=true` |
 | P36.71 | queued D-P36.71-1 — post-promotion search-acceptance verify legs (real-release --enforce run, staging p95 at 1 vCPU, budgets+Lighthouse+axe, cost readout, A1/J2 walkthroughs) | none — rides P36.72b's HG-11 promote; the staging leg needs the P36.38 roll + ADC + SIG_GCP_PROJECT | nothing until the promote — machinery + packet landed under reports/p36.71-search-acceptance/ | `implement-spec spec=docs/tickets/414_P36.71__search-acceptance-and-activation.md live_verification=true` |
 | P36.72b | queued D-P36.72b-1 — core-surfaces Class S promote (`release promote --class class_s --approval <signed-readout>` + P-mode verify); restore = `release rollback` re-points `latest` | never pre-authorised — HG-11 `signed_readout` under `registry/approvals/` at the GATE-G6 sitting; excluded inside AR-3 windows (expected >= 2026-11-13T12:00Z); needs `SIG_RELEASE_REGISTRY` + ADC/`SIG_GCP_PROJECT` + staged candidate + pinned images | the operator's verbatim signed readout at the GATE-G6 sitting — packet `reports/p36.72b-promotion/` landed (never promoted) | `implement-spec spec=docs/tickets/416_P36.72b__core-surfaces-walkthroughs-and-promotion.md live_verification=true` |
+| P36.73 | queued 11C acceptance sweep + GATE-G6 packet refresh: read-only crawl of the promoted core-surfaces release/routes/budgets/labels/changelog/mirrors + the packet re-draft; `acceptance-sweep-11c` → `sig.probe-run/1` + tools | `hosted` read-only — `acceptance-sweep-11c` exit 42 before `live:P36.72b` promotes (the promoted release must exist); L2 on the operator's verbatim signed HG-11 readout at the GATE-G6 sitting, never pre-authorised | nothing until `live:P36.72b` promotes — read-only; GATE-G6 packet presented only when no leg is due | `implement-spec spec=docs/tickets/419_P36.73__sub-round-11c-acceptance.md live_verification=true` (#444) |
 
 Sources: OPERATIONAL_READINESS §(f3) + `UNIVERSE_DISPOSED.csv` + plan §9.2/§8.6 + `data/round11_plan.csv`. Non-row homes: 9 ticket + 9 later-phase + 7 decision + 2 already-done. Keying (T5 γ) = LANDED R10 ticket (archived `reports/memory-repair/return_pass_cells_pre-P36.49-orient.txt`).
 
@@ -1535,3 +1536,6 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-05 — PLAN-11D done — row 418 `Kind: plan` — D1–D12 `mode=extend`: 90 contracts rows 421–510 execute-grade (11D P37 + P38 tail; gate markers 504/510 hand-authored, U-009 verbatim) · D12 Phase-4: 0 skeletons, 0 fwd deps, max load ≈35k tok ÷3; re-split 76 rows/65.0 runs not fired; OM-20 draft 15 headers (expires GATE-ACCEPT-R11); outreach-owed 19 rows; req-index regen (`req_index: current`); README stale-cell repair 416→417 · `make check` 11,106/14 local-fails/625 Docker-err · deferrals +0/−0 · legs 0 · next P36.73(419) · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-05 — PLAN-11D post-closeout record — head `4f6e88d9` 5/5 green head-bound (`ci: pass #443@4f6e88d`, run 42016664150, read ~12:50Z: docs 2m46s · security 37s · composed 4m20s · python 21m52s · web 1h2m9s attempt-2) · boundary exit 3 = carried waived-ancestor `#442@c981fec` python (#299 precedent, the new head itself 5/5) · web attempt-1 red = LH-PERF-1 LCP flake, logged `flake_log.csv` + rerun-requested → green · `main` untouched · chainTip r11/PLAN-11D-contracts-for-11d-and-tail (open) · next → P36.73 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-05 — dispatch boundary-confirm — PLAN-11D's green read recorded (`ci: pass #443@4f6e88d`, run 42016664150; 90 full 11D+tail contracts authored, draft 11D OM-20 list 15 rows, re-split not fired); `blockedOn` (nothing); chainTip `r11/PLAN-11D-contracts-for-11d-and-tail` · nextTicket P36.73 (row 419 — **capstone**: sub-round 11C acceptance — `live`-read sweep + the GATE-G6 packet; `Live stage: read-only`, no mutations; gate none; deps P36.72b/P36.70/PLAN-11D landed) — fresh implement-spec sub-agent on `r11/P36.73-sub-round-11c-acceptance` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-05 — P36.73 done — row 419 `Kind: capstone` — 11C acceptance: `sig-ops acceptance-sweep-11c` machinery + gate (exit 42 while `P36.72b-promote` queued) → suppressed `sig.probe-run/1` `acceptance/11C-probe-run.json` (never a pass) · `acceptance_report_11c`→`11C.md` (rows 344–420 honest layers; 6 exit items queued) + `gate_packet_11c`→`readouts/GATE-G6.md` (S5-2 PENDING, sha256 7ecdede4ddc9, PLAN-11D's 15-row OM-20 draft verbatim, ING-GO-D + Wave-D flip set carried never answered) · 29+14 fixture tests · RETURN PASS `kind: leg` row `P36.73-sweep-packet` · deferrals +0/−0 · legs 0 · next GATE-G6(420) · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-05 — P36.73 post-closeout record — head `847a6a4` 5/5 green head-bound (`ci: pass #444@847a6a4`, run 42038977274, read 14:42Z (docs 2m12s · security 41s · composed 4m32s · python 17m36s · web 50m34s)) · `main` untouched · next → GATE-G6 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-05 — P36.73 correction — sanctioned respell of the inherited L1537 bare-assert token `live`-read (orchestrator dispatch line, landed at 541614c1) — semantics verbatim; pre-bytes archived `reports/memory-repair/LEDGER_phaselog_L1537_pre-P36.73-liveclaim-respell.txt` sha256:f016049f7d32274fc8475be15b47a17ad14d7fa932c6021e709e22d3cf46c390; `seed-commit 90d3508f` declared in `record_policy/history.policy` · harness: devin-desktop/swe-2-high/subagent
