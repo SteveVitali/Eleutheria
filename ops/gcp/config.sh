@@ -299,6 +299,21 @@ export SIG_HELDOUT_OBJECT="search/held-out/sig.held-out-relevance-set-1.json"
 export SIG_HELDOUT_EARLIEST="2026-10-24T00:00:00Z"   # contract day (2026-10-24 authorship)
 export SIG_HELDOUT_STATE_DIR="${SIG_HELDOUT_STATE_DIR:-${TMPDIR:-/tmp}/p36.79-heldout}"
 export SIG_HELDOUT_AUTHOR="${SIG_HELDOUT_AUTHOR:-}"
+
+# The P36.70 second-release acceptance rehearsal (row 417, R11-REL-11): the
+# bounded, reversible rollback + withdrawal rehearsal legs on the second
+# activated release (P36.72b's). Class S under operator
+# sig.operator-authority/1 records — the B-9 standing go is valid now but
+# expires at GATE-G6, when the P36.72b-promoted precondition lands (the
+# contract's own fallback). Contract window (verbatim): "after P36.72b
+# promotes (>= 2026-11-13T12:00Z); weekday 14:00-20:00Z".
+export SIG_REHEARSAL_EARLIEST="2026-11-13T12:00:00Z"  # contract window open
+export SIG_REHEARSAL_REGISTRY="${SIG_RELEASE_REGISTRY:-${SIG_RELEASE_REGISTRY_URI}}"
+export SIG_REHEARSAL_STATE_DIR="${SIG_REHEARSAL_STATE_DIR:-${TMPDIR:-/tmp}/p36.70-rehearsal}"
+export SIG_REHEARSAL_AUTHOR="${SIG_REHEARSAL_AUTHOR:-}"        # the recorded operator id
+export SIG_REHEARSAL_GO="${SIG_REHEARSAL_GO:-}"                # authorities/<name> go record (rollback)
+export SIG_REHEARSAL_AUTHORITY="${SIG_REHEARSAL_AUTHORITY:-}"  # authorities/<name> takedown record
+export SIG_REHEARSAL_ENTITY="${SIG_REHEARSAL_ENTITY:-}"        # low-stakes entity id(s), ≤4
 export SIG_ATREST_REPORT_PREFIX="ops/probes/at-rest"   # the exec identity's only write scope
 export SIG_ATREST_DENY_OBJECT="ops/seal/deny-set.json"       # sig.seal-deny/1 — a new VERSION per update
 export SIG_ATREST_PUB002_OBJECT="ops/seal/pub002-listing.json"  # counts-only operator listing

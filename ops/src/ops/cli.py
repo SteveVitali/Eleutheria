@@ -6117,6 +6117,10 @@ def main(argv: list[str] | None = None) -> int:
         from . import held_out_relevance
 
         return held_out_relevance.main(raw[1:])
+    if raw and raw[0] == "release-rehearsal":
+        from . import release_rehearsal
+
+        return release_rehearsal.main(raw[1:])
     if raw and raw[0] == "basemap":
         from . import basemap
 
