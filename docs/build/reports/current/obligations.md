@@ -138,5 +138,6 @@
 | D-P36.64-2 | OPEN | the T1 initial-bytes optimisation row (a future K13 perf row) | Lighthouse lcpMs on / <= 1,500 ms — the measured_gaps row goes stale and is removed | `npm --prefix web run check:perf` Lighthouse `lcpMs` on `/` ≤ 1,500 ms → the measured_gaps row goes stale and must be removed |
 | D-P36.68-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.68-mirror-<n>` dispatch or the operator | sig-ops mirror-push --name r2-public --export-dir <export> --release-dir <release> --apply records objects + the non-listable probe inside AR-3 + AR-2 | `push_release_paths` is digest-verified (integrity-manifest sha256 per path, content-hash keys, no overwrite — a re-push is an append-only no-op); the mirror ou… |
 | D-P36.71-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.71-accept-<n>` dispatch or the operator | RETURN PASS — P36.71 | the verify leg's `sig.search-acceptance/1` report lands `verdict: pass` on the promoted release: dev ≥ 0.90, held-out ≥ 0.80 (the fetched object sha256-verified… |
+| D-P36.72b-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.72b-live-<n>` dispatch or the operator | RETURN PASS — P36.72b | the release journal records a `promoted` event for the candidate `p-<sha256>`; `release verify --mode P` reads green on every public origin; `registry/conf/<gen… |
 
 ← back: CURRENT.md

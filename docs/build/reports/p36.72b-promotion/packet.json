@@ -1,0 +1,58 @@
+{
+  "schema": "sig.core-surfaces-promotion/1",
+  "ticket": "P36.72b",
+  "manifest_row": 416,
+  "family": "R11-K13-ACC-PLACES",
+  "branch": "r11/P36.72b-core-surfaces-walkthroughs-and-promotion",
+  "pr_base": "r11/P36.72a-core-surfaces-crawl-parity-number-truth",
+  "produced": "2026-11-05",
+  "live_verification": false,
+  "status": "prepared_not_executed",
+  "layer_reached": ["engineered", "fixture-verified"],
+  "authority": {
+    "gate_status_verbatim": "IN-TICKET PAUSE: HG-11 Class S readout for the core-surfaces release (same sitting as GATE-G6)",
+    "om20_status": "never pre-authorised — the Class S promotion is the operator's HG-11 act at the GATE-G6 sitting, never this row's",
+    "live_window_verbatim": "release cut never inside AR-3 windows (expected >= 2026-11-13T12:00Z)",
+    "live_leg_verbatim": "1: promote after HG-11 (0.5 leg run)",
+    "mutation": "the Class S promotion — metadata-only (registry/conf/<gen+1> + the api→web digest rolls; zero release bytes copied); restore point: the prior release stays published and sig-ops release rollback re-points latest"
+  },
+  "evidence_package": {
+    "acceptance_readout": {
+      "path": "docs/build/reports/p36.72a-acceptance/READOUT.md",
+      "machine_twin": "docs/build/reports/p36.72a-acceptance/readout.json",
+      "readout_schema": "sig.core-surfaces-acceptance/1",
+      "verdict": "pass (fixture-verified) — 506/506"
+    },
+    "walkthrough_record": {
+      "path": "docs/build/reports/p36.72b-promotion/WALKTHROUGHS.md",
+      "journeys": ["A1", "A2", "A3", "A4", "O1", "O3", "O4", "J1"],
+      "verification": "agent-verified — never user research",
+      "fresh_run": "npx playwright test acceptance-walkthroughs — 9/9 passed 2026-11-05 over the SIG_BUILD_INTERNAL=1 fixture build"
+    },
+    "signable_readout": "the sig.release-readout/1 pair is drafted at the sitting by sig-ops release classify --apply under registry/readouts/<pub>.{json,md} — agent-drafted, signature slot empty by construction; this packet packages the evidence, it is not the document signed"
+  },
+  "queued_leg": {
+    "id": "promote-after-hg11",
+    "obligation": "D-P36.72b-1",
+    "precondition": "the operator's sig.promotion-approval/1 kind=signed_readout record under registry/approvals/ naming the candidate publication_id, class class_s, signature + basis present — written at the GATE-G6 sitting, never by an agent",
+    "verbs": [
+      "sig-ops release promote --registry $SIG_RELEASE_REGISTRY --publication <p-sha256> --approval <readout-name> --class class_s --api-image <repo>/sig-api@sha256:<64> --web-image <repo>/sig-web@sha256:<64> --project <gcp-project> --region <gcp-region> --min-instances 1 --apply --execute-rolls",
+      "sig-ops release verify --registry $SIG_RELEASE_REGISTRY --work-dir <tree> --publication <p-sha256> --mode P --origin <each public origin> --api-origin <api origin> --apply"
+    ],
+    "env_required": [
+      "SIG_RELEASE_REGISTRY (the private release bucket)",
+      "ADC / SIG_GCP_PROJECT",
+      "the staged candidate p-<sha256> (cut/build/stage/verify-S legs at the sitting)",
+      "the signed-readout object name under registry/approvals/",
+      "digest-pinned sig-api/sig-web images + project/region for --execute-rolls"
+    ],
+    "window": "at/after the GATE-G6 sitting, never inside AR-3 windows",
+    "rerun": "implement-spec spec=docs/tickets/416_P36.72b__core-surfaces-walkthroughs-and-promotion.md live_verification=true",
+    "done_when": "the journal records `promoted` for the candidate AND the P-mode verify reads green on every public origin"
+  },
+  "named_limits": [
+    "no candidate publication exists in this environment — the pub id resolves at the sitting; nothing is fabricated",
+    "fixture-scope redirect targets (D-P36.35-1 lineage), external bucket/API/intake rows (D-P36.71-1, D-R10-PUBLISH-1), /s/<pub>/ + /v1/releases/… parity legs ride the promoted release — recorded, never claimed",
+    "J2/J3/J4/J5/O2 journeys are not this row's (P36.71 / later W3 surfaces / TX-13b) — recorded in WALKTHROUGHS.md"
+  ]
+}
