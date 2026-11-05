@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "fb26d25041ef01f6160a3de3bcb908ccfd6a36af",
+  "input_commit": "c981fec17765c0db6c1e4affffd814fd995032e6",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -2637,6 +2637,10 @@
       "sha256": "a8b633fcd414c9e725b6e7036f068deed56154293fd40d11a94c3dbfe5564d99"
     },
     {
+      "path": "docs/build/runs/PLAN-11D.md",
+      "sha256": "cfd8e3b788810113813bf39e67841f6ab6d4933fe93a73c5eacc4e7441ae7eee"
+    },
+    {
       "path": "docs/build/runs/SEED-01-04-06-07.md",
       "sha256": "2a2d624970f020e019f119bbacf58a99167dd5822710e7e6a02677b0157fe3bd"
     },
@@ -2742,7 +2746,7 @@
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
-      "sha256": "78825b254044f7bd862b215473c34d9092caacf3476e25d92b022824763d02bc"
+      "sha256": "c34d28c4d567c73e3fe3f2d695e957ced20911977be3342ae4f85c35aca8d0ba"
     },
     {
       "path": "docs/tickets/161_P32.1__baseline-and-memory-audit.md",
@@ -3802,363 +3806,363 @@
     },
     {
       "path": "docs/tickets/421_P37.3__evidence-store-hardening.md",
-      "sha256": "aad752b746ac5036b0c52e8fbd394d4901d10ca0b1c3adc8d7a5ba13014bbcbb"
+      "sha256": "421de9a0c8b99aeab2fef647c553bd0ea45df7ad345965791e6531abfb05db88"
     },
     {
       "path": "docs/tickets/422_P37.4a__security-baseline-scan-sbom-signing.md",
-      "sha256": "fd1825c0aa2f343d6f211b9296e9d6c87631c49941c76df043ac3ca546e5fce2"
+      "sha256": "badd6dddfe008a80166fa8ed9aab67140976a4eac09d139a6a9e6eddb8716968"
     },
     {
       "path": "docs/tickets/423_P37.4b__security-baseline-restricted-access-audit-logs.md",
-      "sha256": "2e6a89cb86000c98150001a6211ed6bcecd3406acad9720e20c0bdeab7808c7f"
+      "sha256": "8573e82645b449a99e673e45fc51f2f5d56b72b8a8018747c6a3af3ef8212799"
     },
     {
       "path": "docs/tickets/424_P37.5a__ingestion-hardening-unwired-function-scan.md",
-      "sha256": "2a966f56ee58714581a6e517240284ecc7b5c0bf99b1e3dc1e1bbf285a3576a4"
+      "sha256": "4eb2ca6bec93212be77d6f8f0422da98b4a3ba8b490d8a53d6d7b94601a3bb6b"
     },
     {
       "path": "docs/tickets/425_P37.5b__manual-acquisition-and-disappearance-events.md",
-      "sha256": "71cc25a5e430e2c89ef163c58ef7fc2429352e8072b69160a2d2b409b9e89106"
+      "sha256": "ea7694d4e645ecbaeae683eb49ea68d3699ebe61f0734750dfa1c7abf157a580"
     },
     {
       "path": "docs/tickets/426_P37.6__registry-rights-record-hygiene.md",
-      "sha256": "6374976cc036059f35a1f9405d326da71536d6640bb67bcc259d424df2c8f135"
+      "sha256": "5478699abba5f6eacf71984723302ebb47ce6a0609e6bf3b457e2d918555d18a"
     },
     {
       "path": "docs/tickets/427_P37.7__public-editorial-decision-log.md",
-      "sha256": "7a95b7cc7c4b6ad14c879d1cdcf436aeb1f598f2ebb5efb27c27894b1ab81b20"
+      "sha256": "eaf5f4607329e2ffb070d93a5aabfc408a6ae0ce8e42d5c7ae027f072ac32be4"
     },
     {
       "path": "docs/tickets/428_P37.8__legal-demand-posture-and-counts.md",
-      "sha256": "1284ad5212ca3f2784e54165ba36d7fad9c9fd25c63efa5a27ef6bfb1e12398d"
+      "sha256": "61ea55e49c39ce08634b52b2bec835eb4b5d7f9fba9599aca574582c119ffcd3"
     },
     {
       "path": "docs/tickets/429_P37.71__single-operator-deletion-and-purge-function.md",
-      "sha256": "7803148e31a61b8bbeb3eaf8765dc3d406ca3db3aea38b03651531a5c126f9c8"
+      "sha256": "96a141bef900fb6077fed51cf89ffca83f36a017eb56e618c6b02f2ee206598f"
     },
     {
       "path": "docs/tickets/430_P37.9__lifecycle-into-dossier-timeline.md",
-      "sha256": "9896b0cfaf79c3ad224eed84fac95d1dc2769cbb540054fe62dcd5642361750c"
+      "sha256": "edfbddf96b9d0f0d7b6dced26b590042f28f2e93d1e1b8070f6a31170cb75246"
     },
     {
       "path": "docs/tickets/431_P37.10__asset-promotion-gate.md",
-      "sha256": "8147291e4b98c3e9333841c3c35fc41f513deec7f788c11110e6a16146b22646"
+      "sha256": "679e045ba6a2aa63a6260d996a0e46151b344fbed571d26053281053ffc6197d"
     },
     {
       "path": "docs/tickets/432_P37.11__sam-gov-sweep-resume.md",
-      "sha256": "9f1e9956c71e30144a3a2b5914717a5556475a6dadd54c0a3a39d0204b4970d0"
+      "sha256": "b3ac026a3fe9b68e233c36fc1c3eae97d166ddf1b02d4422168916b0e27eb54d"
     },
     {
       "path": "docs/tickets/433_P37.12__keyed-us-511-wiring.md",
-      "sha256": "750fdbce9c0dd940d036fffbcf857ffb263812ee7a41b151aa8fe4d61067f5a6"
+      "sha256": "df9eab69b10a9b645b58d60bbbb2b9e9ee8233b5097b0c38db42e9b3437fcfa2"
     },
     {
       "path": "docs/tickets/434_P37.70__keyed-au-traffic-camera-apis.md",
-      "sha256": "59745818e481ff797d312669c41bbb5067909a924dcfee44c1672bf9a7d46676"
+      "sha256": "e31dfac363798e865d4c85f1d18358c180028ae77d7ebc734c09b2f7591763f3"
     },
     {
       "path": "docs/tickets/435_P37.13__registry-completeness-and-discovery-sweep.md",
-      "sha256": "78c6a3064bc3f4950e574d18872319a555508405fef6c562dc1f05e9f430c526"
+      "sha256": "b5d3d07d1fcee6ced44f61df491f0ef2d7e20de1d999dfd63d4f398ff6daf5cc"
     },
     {
       "path": "docs/tickets/436_P37.14__statute-seeded-records-leads.md",
-      "sha256": "8b942a2ebc4a90e7a865b3c8553cb9f065a0647ff01f1fb9ced896c4f150a2fb"
+      "sha256": "f3daed0be03ce56a34b3cc89215f58dd1e48181a88f7d6e150779f47d473f143"
     },
     {
       "path": "docs/tickets/437_P37.15__scheduled-parser-canary.md",
-      "sha256": "a9b5daf030c7f57635f80944ff046fc319c441ed6de9bc9d09846ca8ae62e3f3"
+      "sha256": "729234dd14ca8b1aefac6f76d622e3bc666093ebee3021d21220dd562e4cb45a"
     },
     {
       "path": "docs/tickets/438_P37.16a__dossier-live-captures-first-two-families.md",
-      "sha256": "461a0479f37d8be9481b368be9adb66e30d1ea27e5fb4c6159812256e76d5c6f"
+      "sha256": "68c164a83cab654ec3de17f4a1f4234dc6fc8d10cee202dab8f21fe0689e922c"
     },
     {
       "path": "docs/tickets/439_P37.16b__dossier-live-captures-last-two-families.md",
-      "sha256": "2d9476203403431c4fd82847ad7280839e4edcb089bcdfae1afc925ebe7b9bfa"
+      "sha256": "41ab55ad2fdb72001725e7e406fe79a8c0a1c78fb66b21a7989e892c0249b4f4"
     },
     {
       "path": "docs/tickets/440_P37.17__tile-properties-v2-and-map-dictionary.md",
-      "sha256": "11fef0e361b274131ae3a0eabe94e1ef0597baac40f460209125438c93e81639"
+      "sha256": "9e1b01292a5d43e44683d7c692a9a1aa14138cef769da1924c400f133e76c1be"
     },
     {
       "path": "docs/tickets/441_P37.18__map-filters-in-view-list-keyboard.md",
-      "sha256": "e4649eea00b8caf72aa2d34951a0d8303c1538a9964ce5625b244b519d096f5e"
+      "sha256": "41bdc56bf1032265a7b9d4e10c24d785f389ca5ef53f8a3a2e094ceb4c42a292"
     },
     {
       "path": "docs/tickets/442_P37.72__my-location-map-pan-control.md",
-      "sha256": "817e65b9634f2ce510eb3d7308f15ab93a8b6943272f01ec9df54b293c905861"
+      "sha256": "e030490da349df463c9f57f5f0179cf6877b282b2b7e5030f4c68d356a6f8425"
     },
     {
       "path": "docs/tickets/443_P37.19__map-place-search.md",
-      "sha256": "8ca7ef6c2653a5833d58a1f09aecf5162b25a18d3fcb84bc2338f3f3da9aa7bd"
+      "sha256": "3961875b3f19adbef83a3b52592d5ac83639440cd3adb2f41f031df7cd8b10a4"
     },
     {
       "path": "docs/tickets/444_P37.20__release-pinned-bbox-api.md",
-      "sha256": "c36d09d5e496ea3da733bc1f926b7beaa507da676720c79868e7a9ea2da0a57d"
+      "sha256": "2eaa13b04268f5079f599bbe804428a4cec3e3e77588bdb73f840ae1c0ac19d4"
     },
     {
       "path": "docs/tickets/445_P37.21__access-closures-and-degree-only-facts.md",
-      "sha256": "ee4d5d05b9d45da7be21b2b45fdd243f1853c1f2100ae8313323a0d134346d6d"
+      "sha256": "a152690e425ade7d148e8c5a6c2e421509282d975353c9abaafbe521dcff86b8"
     },
     {
       "path": "docs/tickets/446_P37.22__entity-data-contract-b.md",
-      "sha256": "d0921cb4efe04270903aa0fded57a8defbff4011be087f2c86e7815965e9201c"
+      "sha256": "c6fd7a8a54a9a80b7e5c5d3d534e7d3b3e811a59455722d5927a0ae7a61638bd"
     },
     {
       "path": "docs/tickets/447_P37.23__entity-pages-b.md",
-      "sha256": "93af1e86c2851ad6cb1437d84bc6118dade8d3079a7bdbed9ba3058a2f2ee582"
+      "sha256": "f2f5214ceed77ea882d988eac3374186a968b679ef3be34aa930334e831d5294"
     },
     {
       "path": "docs/tickets/448_P37.24__overview-builder-a.md",
-      "sha256": "a9e464fef7cfaecad58e6afa710ce4b0238e912a8b0ca7da980a8571f8ffac55"
+      "sha256": "8d2a79881eb5c4558e9fbc71a343bc98c4bd671b1a59e460d7e02815facd9cd6"
     },
     {
       "path": "docs/tickets/449_P37.25__overview-builder-b.md",
-      "sha256": "98c6d3a9fd340db7ca2a7bf0ac08d85e1d76370723d80cdf55d8bf61b502ce3f"
+      "sha256": "680bdc6d0739fec761af0187e4cf42ee1a2a17c706dc4f0fe496320cc93356d2"
     },
     {
       "path": "docs/tickets/450_P37.26__graph-explorer-a.md",
-      "sha256": "552bce95f3bcb70a77fd92da3ae90df188679867e9697582eb5571d20710938c"
+      "sha256": "8ba527ecd17eb7af129e037eb904b3dfd21a5e2b31a1378d73d811ae636344bd"
     },
     {
       "path": "docs/tickets/451_P37.27__graph-explorer-b.md",
-      "sha256": "58c8b1970932990c7f2584bcec3c1b7d9dcc625d17b17f7fccbc5a4da2eece2d"
+      "sha256": "3a32506b7407081486ccb14224da318fb0cb735636e7dc9f78f39d8a84b5c4fb"
     },
     {
       "path": "docs/tickets/452_P37.28__dossier-network-figures.md",
-      "sha256": "1719c8eef4ba96cadf7bd191fd69186397544380d7327ac40bc7768e90837fc4"
+      "sha256": "3f10b40157c24db5a73382f72bb8e0dfe9fced2ea9168f0a25ee234d59229635"
     },
     {
       "path": "docs/tickets/453_P37.29__in-place-map-on-dossiers.md",
-      "sha256": "bf31c2acd9421a61f874c9310daf702966c5c090dd1707184a5f59c7553e06e8"
+      "sha256": "92ca1aec243adbff90594117c23c0349ea9a9b768eede4369e799da18f87a80c"
     },
     {
       "path": "docs/tickets/454_P37.30__evidence-recommender-repair.md",
-      "sha256": "5c1a43ab38ed639a731f561f3b7323319cd9c20ec93ae2dcc824f981805a7d04"
+      "sha256": "acfd548f2dd83e062792ea878638becb03f3169fd2b69bbbce1243a884aab166"
     },
     {
       "path": "docs/tickets/455_P37.31__dated-decision-predicates.md",
-      "sha256": "64c0999004d20a88a350d09a5d884012093ecb83c493d3815ccf5fda04c2570c"
+      "sha256": "4fdaec6396f7ad9fac6de266d247f5caae4d4043ee9d13ed41c26ff26364f102"
     },
     {
       "path": "docs/tickets/456_P37.32__contract-expiring-detector.md",
-      "sha256": "3703574c1b3dba829dbeedaf1bc1e24bb755b8cc0494893704c8a03a2baa3992"
+      "sha256": "deb8b5cc3e5628166599a7fffb29d3b265e9f5d6c3107f48513f30bf74e6ff4f"
     },
     {
       "path": "docs/tickets/457_P37.33__watch-lane-and-cadence.md",
-      "sha256": "c68e05e62fcaa7f1e980ac68535dd724780c84e5d3d3f6acc81b9c6b305ca647"
+      "sha256": "79b7f4ba17b1ed3775ec100ec2482fd528ab8ab39f5d6aa7f2dc57631e877d75"
     },
     {
       "path": "docs/tickets/458_P37.34__watch-feeds-v2.md",
-      "sha256": "7adc9b8309b37105becb640fb9e5f3b725c7bd5965b06bc9a8c8295b615635bc"
+      "sha256": "bf7e0776438f6ff61d32d117cd2cf7f764d5d4e24dae125552503cb816b6c41b"
     },
     {
       "path": "docs/tickets/459_P37.35__detector-routing-and-mapping-campaigns.md",
-      "sha256": "bdc2188ed373a91029034fa4d40194f83755b413c952fc308bfbdcc3a8e08b91"
+      "sha256": "8b5bc72722a2ccb6a25c9146e0528edb8500e74e68178d45f5470e8410b3c5ca"
     },
     {
       "path": "docs/tickets/460_P37.36__raw-archive.md",
-      "sha256": "a7a4b08a72e8b5011bf4f7a2f69d2c53c684eea4d72ddbcb95d6412ca2680c3b"
+      "sha256": "0f73bcd780077c595e5b42a49948e5a3cadd364e0d6d7ea51762b58e08a02910"
     },
     {
       "path": "docs/tickets/461_P37.37__claim-viewer-v2-and-capture-diff.md",
-      "sha256": "56fa62c055ed9908e4c3ed851701924ea3108446eb23d0115878a52ae4cdbb62"
+      "sha256": "beb8c603f36a139553cf4026ee2009ac044f2fef2869776d50cfac3d3830ef13"
     },
     {
       "path": "docs/tickets/462_P37.38__disagreements-browser.md",
-      "sha256": "394617ea191dee5434b0be07364a6be70ec4aea656e5dc150ca73099ba4f1aba"
+      "sha256": "0279ba8d9f6934ac683d9a377cc8da82ed930d138968b7f252043eeda6fd13a8"
     },
     {
       "path": "docs/tickets/463_P37.39__quality-basis-on-ux-surfaces.md",
-      "sha256": "814f63d2274067e2f69812ef81034ea57e1e25c6b9984bd276f5b4c9c4ad39b2"
+      "sha256": "5d1e532b9878344b654add52d3c36d2f323c6fb38f2bb95d2e3f596f12cd2c0a"
     },
     {
       "path": "docs/tickets/464_P37.40__changes-page-and-feeds.md",
-      "sha256": "04c021eeebd732750feddf6644d2897c6a0761a9f3270de3e842fd60bf77c018"
+      "sha256": "09acbbd15cd700d6833e359e412b5a28c861bb55db5690d1bd598e5e81aa1a42"
     },
     {
       "path": "docs/tickets/465_P37.41__source-changelog.md",
-      "sha256": "fdcf09af030787a4d47c4417f965026c0598bcef1830b0786d44d722e27dccc7"
+      "sha256": "1c3db77ed35114738ee1fb72f8b219bff6f56270728589047eed545518b05a9e"
     },
     {
       "path": "docs/tickets/466_P37.42__api-parity.md",
-      "sha256": "3a82280eca69a54f1b7d74f9981dcda7f48b673c8aa6167edb05b88d89ab7bb4"
+      "sha256": "9292e75bae6ac86836fcc7497bbf9555a7e44411f8685885c0f95f391aa85edf"
     },
     {
       "path": "docs/tickets/467_P37.43__search-result-export.md",
-      "sha256": "49b6a0554e45d9510c41daf7988243e55a07017d9703c486fbdcce64f436e96d"
+      "sha256": "6fb112456447b6834d04ac0b9d8b749f495fef391b39a66a8a16f9622c0825df"
     },
     {
       "path": "docs/tickets/468_P37.44__mechanical-evaluation-report.md",
-      "sha256": "159b6775c1168bef1c0c8fd976baf4d88eaffc869dddff2749c19d3ad6d4e78f"
+      "sha256": "4fc80f5cd431cd35b88c4080e818e038e0916827d01be566cc7c2285c33dc53c"
     },
     {
       "path": "docs/tickets/469_P37.45__public-quality-page-and-basis-fields.md",
-      "sha256": "3695d293577e47387ab83219f9a9f121b4feabe6ad5717795d57c213e537c045"
+      "sha256": "8afa9d237c82fc6e2552a2373bbb3bf1555b7781c55cd149e74c0b0138bf7ec5"
     },
     {
       "path": "docs/tickets/470_P37.46a__organisation-crosswalk-intake.md",
-      "sha256": "db5ef0747d35111197fcc9cd8e85e767a476924dd0277e9c1e83089df30f1d97"
+      "sha256": "ca823a04edd61aa6a8917c06e8837ef4020fae3bcedaeb27d169a69f33981fef"
     },
     {
       "path": "docs/tickets/471_P37.46b__organisation-cascade-materializer.md",
-      "sha256": "fd661771732057bfaf512e8d06a7bf519fb3466ba98d36b3d57961aa652477bf"
+      "sha256": "de83faa665544956225e2a160b6878edf9d9b0e18d006da75a8a784adafe8f91"
     },
     {
       "path": "docs/tickets/472_P37.47__tier-2-reuse-wave.md",
-      "sha256": "881a6384ba5287b292c697e1c1a53db8b6466f6c27522a7aeb73e7e20b951385"
+      "sha256": "85f7c1992fb816f6b3976cd6ae9bbb6c12c0ce289baf0a8569b9045674762290"
     },
     {
       "path": "docs/tickets/473_P37.48__aggregate-lanes.md",
-      "sha256": "cb88b8a8a9ed246131401096cb40e15b186c309d40775dda4928a775f794cf6d"
+      "sha256": "03e51e6ed6704c2f713e88e0f030d15978a011bea49c10af11054d40537637e7"
     },
     {
       "path": "docs/tickets/474_P37.49__federal-datasets-family.md",
-      "sha256": "b8f679bbb8dd60d317749ecea50ee22fa9079bb6c4cef9d49a37e1acc838bdf1"
+      "sha256": "76d2f446d65a68fbb8c16cbb6a7266ebdbecd559fef586e57e51de2d1748a22f"
     },
     {
       "path": "docs/tickets/475_P37.50__agenda-platforms-v2.md",
-      "sha256": "e3cd7650d4de494f443d0f100d487b597863152222be2e08823d510836568eab"
+      "sha256": "2420ee839b1c7011113e5946d2fc710e51559b85a10da66819cfb1e2336d2496"
     },
     {
       "path": "docs/tickets/476_P37.51__puerto-rico-sutra-ocpr.md",
-      "sha256": "47d15871eade9cf20be805d91d0191cf37e0dd41ed836d99d2de2eba2f41c93f"
+      "sha256": "441cdf5ee4cdf05d747ff9cfa0cbf6a4faa67d145220188eb8de4cd2d15ae4fd"
     },
     {
       "path": "docs/tickets/477_P37.52__document-list-pages.md",
-      "sha256": "614d617845de327037a0787a976c2e5f90d7e174c19c71f2abffa27a2459c4d1"
+      "sha256": "31bf500992a697b22bc49e7fd51884250d36350fd9ef34edc0325ea12a74647f"
     },
     {
       "path": "docs/tickets/478_P37.53__programme-level-lane.md",
-      "sha256": "1c13349f71e8aae9a8dc69eeed214e1370d58b0b7a9968d49da9145f2e588d35"
+      "sha256": "75dd6deb383a29c468da636c1f5459c69c6e50e21dee1880e022602c32f89514"
     },
     {
       "path": "docs/tickets/479_P37.69a__international-open-data-portals.md",
-      "sha256": "202cb71343c6b9ad9f62707ec7d87d9e3d646e0852e827094724c5d858dfdce9"
+      "sha256": "0f445f61199c39ccdd9658e9b612aa6e3627e1df0b49db08b49959b2b8e2e678"
     },
     {
       "path": "docs/tickets/480_P37.69b__ogc-wfs-family.md",
-      "sha256": "3c3d586c1fa6d4d2aa244dbd4e02eb489180441139214ff27785c92da6316776"
+      "sha256": "13ac7ec17e601f307439733b2df2c1af364e638df3bc8d6eb9b47bc2239bec7b"
     },
     {
       "path": "docs/tickets/481_P37.54__wave-d-activation.md",
-      "sha256": "44959cf13df4c6ed17d1fa316bd9602c5211e9ea2e9abae40e4b13ad68ed0142"
+      "sha256": "a1ff4cce4bf8776b3a551fcc639f9854aff033788a27545ac9c6433273713eee"
     },
     {
       "path": "docs/tickets/482_P37.55__archival-deposits.md",
-      "sha256": "584f71943a55424a07b469dcbc3a78f29c72677ff7d6e83a484a504329f80179"
+      "sha256": "43bc3291bc424ad5342ea8f7d8eb9c446e38c2f29f3ecea43ad6edd61c966271"
     },
     {
       "path": "docs/tickets/483_P37.56__wacz-capture-html-sources.md",
-      "sha256": "02937b4f0cccdb86eeb7d1e7f389c5bc838442552374b03dbc64a3fc76db8d2a"
+      "sha256": "96b80d56eb2bad67beb0ab94ac3d0eee64acd3bf5b181f97d134831eb3aee47c"
     },
     {
       "path": "docs/tickets/484_P37.57a__projection-rebuild-ci-layer-direction-test.md",
-      "sha256": "86cf568bcda8254f3acf78e71af6cdf7d50b2b3e3973edea79f5b4a55db40599"
+      "sha256": "c18bf870cc9953f1069878572837bc430fc0cae02ff47062fe34cede10754f54"
     },
     {
       "path": "docs/tickets/485_P37.57b__whole-graph-audits.md",
-      "sha256": "0a4f903bcfa67b1633f2e26fa258a4586232fac2cab21f379179968cf3c95982"
+      "sha256": "446785d43b4c8001e4307ee67cfa934d88a55003bc06753c9d3e618bc8a70245"
     },
     {
       "path": "docs/tickets/486_P37.58__schema-conformance-generated-vs-deployed.md",
-      "sha256": "3435b339f6b7d83cc17330839edd3d1507ed583225079dd89113c3b405932381"
+      "sha256": "6e86b53f89c2ca7e811269b2db2c177aeb3df7d1f930bf5ad9cc45a0a42f2e9f"
     },
     {
       "path": "docs/tickets/487_P37.59__intake-operation-dark.md",
-      "sha256": "1378b872094f4841774628183bb0d76733fc8f27b322d4c2b13390c6e4d17db5"
+      "sha256": "43f0937a2781bcdd674b8c3d7e134d91c62233bc10d1a312b0286f77ae97795f"
     },
     {
       "path": "docs/tickets/488_P37.60__visual-regression-and-operator-gallery.md",
-      "sha256": "f192d65c4cce30bfb83370a1898c225cd77a903b65c1cc12533e0e061dda4fdf"
+      "sha256": "4d918d7f17b666a0b7dd3adf4b5e7c59386aa87d5a43b7deb615126ada2572d0"
     },
     {
       "path": "docs/tickets/489_P37.61__t1-table-and-filter-enhancements.md",
-      "sha256": "6ac5d134648710569c8af36bf89e3edea756f4934b0b42d81084e0edb96459b9"
+      "sha256": "a72e2b7683ffef6701bc42a1dae927eb87d0dcd5d17c388b3072c106b26ee29d"
     },
     {
       "path": "docs/tickets/490_P37.62__contribution-path-wiring.md",
-      "sha256": "c75721c03aa8fd325b3e65f1334421808f14d3d29c41d89e7f4c960339de4d6f"
+      "sha256": "b9588e3089d7eeedbfecb4125a6a21d0d74d2cd36adb4c737929c2a5dbca9e54"
     },
     {
       "path": "docs/tickets/491_P37.63__map-acceptance-and-republish.md",
-      "sha256": "e5cab9d095c6a0b838cdb2abd6216722f03a44a368c18506316b9c9f2bc38493"
+      "sha256": "e37ec4251da3395184ad54395d93af6fd389cb79195d1d9eb8e347d8390fa874"
     },
     {
       "path": "docs/tickets/492_P37.64__entity-graph-dossier-figure-acceptance.md",
-      "sha256": "6a382da24c508210d3bf3a6a9e5bbd1d77dadff628627c02b19c59519e0362f3"
+      "sha256": "b1915db6c7e0199061ac206eb6fa527f9686e335e30df4dccac55e673cd15918"
     },
     {
       "path": "docs/tickets/493_P37.65a__final-release-cut-crawl-scrub-audit.md",
-      "sha256": "fce698735d9a12f367b88de17c8b59cbe242572635f4cc0669a9dae97bc536a8"
+      "sha256": "77f4ad44bde26e1b5d025eb78e9cd898396b7bff4aabc2d88273dc6983830300"
     },
     {
       "path": "docs/tickets/494_P37.65b__final-readout-and-promotion.md",
-      "sha256": "5bf0e861bd8d3e4c31ebe061baa88b8c0d0433dc86da91ef9380aeeafa79ce7b"
+      "sha256": "2a2b2a81187a943ec84c612614a88c6527738e9acd4e09cf3857ff25af2fb236"
     },
     {
       "path": "docs/tickets/495_P37.66__coverage-outcome-and-acquisition-closeout.md",
-      "sha256": "0260032d76d73057ca7f2da8a6210c48361b821e05dd81280624f7aa1a617fec"
+      "sha256": "4763ecd59c2bf34e6d4dce27536f3af2fde6617d6dfd08146d23aeb311ead179"
     },
     {
       "path": "docs/tickets/496_P37.67__stream-l-re-measure.md",
-      "sha256": "d302d9ff05b1cf402fbd8e57cdb428b45d5be51164f191d7fb2dfa85bb0d281e"
+      "sha256": "ba3736ba65775f7f2d440fd569f04bdaa5531a12b4e1700634436a44dbb6dc56"
     },
     {
       "path": "docs/tickets/497_P37.68a__ux-capstone-advocate-journeys.md",
-      "sha256": "baf9ae84755c5e2915486f174b7d4c959cd98a9653fc4d5a0c641278c8f96b6d"
+      "sha256": "98f5687768c8bfedaf01ed6c40f08a3ed2059842ce16307134b708a09b9ec343"
     },
     {
       "path": "docs/tickets/498_P37.68b__ux-capstone-journalist-journeys.md",
-      "sha256": "897f495a18e51239068916ee6a4f530c30ce09e1fb6b2d7058abdb7e02013b94"
+      "sha256": "f9dff793fffb72b4dfe501b15eb5fade8db650eb4539047df034ada66dfecf83"
     },
     {
       "path": "docs/tickets/499_P37.68c__ux-capstone-organizer-journeys.md",
-      "sha256": "4138bb375f73c01f135768c8423ff784792693a5641efc906bfb352943b33b12"
+      "sha256": "66a0b3cf7a1e224d69b6cf3283e2816dc7c53c1aa76c44d45b432a30e965ccfd"
     },
     {
       "path": "docs/tickets/500_P37.68d__ux-capstone-per-ask-checks-and-walkthrough-packet.md",
-      "sha256": "bf2903558bca2a3e483d5e81447c17f336b706693e049bf2f748e0ff33455cfd"
+      "sha256": "7417c864e67d81e552dec26f98321583b5c228ad50a81c1ee30e58b2018bdf36"
     },
     {
       "path": "docs/tickets/501_P38.1a__round11-gap-analysis-11a-11b.md",
-      "sha256": "6ba53bf53b0f28a0da41fd5eae74cc92ec1db7c4cd06710223688f91f513b8a3"
+      "sha256": "184278dca507876bd73edf1c910269a6507c9f299aae6c30396b81ba03d17119"
     },
     {
       "path": "docs/tickets/502_P38.1b__round11-gap-analysis-11c-11d-and-composed-verification.md",
-      "sha256": "7769b6d0694ebedf850098903b5e53d71a3c16fb34850910a8f3dba0d708c927"
+      "sha256": "5914c67c7cc1ca1bd4d3776b00c90c6baa780ecaf477d14ffd8dd01fbaf63351"
     },
     {
       "path": "docs/tickets/503_P38.2__round11-gap-closure-and-acceptance-packet.md",
-      "sha256": "a9c9b4057f3693cd5c0e7c7fc805504e37515f5b0589b55f7ddb48c41d8a60f7"
+      "sha256": "605c44cbaf09c97aa8555a6e0b13a7f42c64bc1939e8db2346c0b3f8d5512a9b"
     },
     {
       "path": "docs/tickets/504_GATE-ACCEPT-R11__round11-acceptance.md",
-      "sha256": "d8aa5d19f238c91a89b01bf0bffcff12b23a510184284de0aec0956a0dad26cd"
+      "sha256": "a029a14468591db454a598e0523822243dc63ff36fb696a11deb8e3f381dd9b1"
     },
     {
       "path": "docs/tickets/505_P38.3a__round11-backlog-and-operational-readiness.md",
-      "sha256": "2fcf27432211367c4edd2b1cf99d79d3db12fd46087d8ecda1234f32395a6573"
+      "sha256": "822289b4d2b46e2a80e0271425f34143c767795a8a9aac04bf9f19aeebb450ed"
     },
     {
       "path": "docs/tickets/506_P38.3b__round11-spec-reconciliation.md",
-      "sha256": "c44f0c80f213879abcf32bc9c2655ef10ed9f386bfd7c6239e892cfb30265f5d"
+      "sha256": "910c9aa802ce9fc562ee477841f820a103e2b2bad00f43cb04ab99f210cccc3a"
     },
     {
       "path": "docs/tickets/507_P38.3c__round11-integration-plan.md",
-      "sha256": "7e8af93daf1e6c1f3f47cd047abada32c48d2ccc1dae12ae8e71c97d032a0921"
+      "sha256": "09aa759a341b9a0875133ee89d842e5bcbda0dcc6467d462557ca62bd3015439"
     },
     {
       "path": "docs/tickets/508_P38.4__round11-docs-refresh.md",
-      "sha256": "fc82a0b683aa5cbb7240870bff3d31c19d3f20a35bf25ef565118441e09dfeae"
+      "sha256": "55d5fafbfb8c7e8b1fec596d0354dd7d29ac84e6df9fe646be16db951920698f"
     },
     {
       "path": "docs/tickets/509_P38.5__announce-readiness-review.md",
-      "sha256": "2c5656aad353980be8b563423dad3b9b454b71128cbc2735b37af24c5d3c5477"
+      "sha256": "6b9f68096c2c1ec6b55f508756af8774cda12e7d0a64a472fd258564fbdec27d"
     },
     {
       "path": "docs/tickets/510_GATE-ANNOUNCE__announce-decision.md",
-      "sha256": "3c75a57ec588dc6665fab5481bafdb1913d7e1e36e484c3f05f4c19ecfa44ab8"
+      "sha256": "7fe7cae7361be5c12cd564ea263f2c6d6dc0527f581efdce2609e1789c555ffb"
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
@@ -4774,7 +4778,7 @@
     },
     {
       "path": "docs/tickets/REQUIREMENT_INDEX_R11.md",
-      "sha256": "075d9485c863621575d94076e9bca48bda6bcb685c3d602ec96bd764b7d5b10f"
+      "sha256": "6da4cef2969b77b46316668419989490a97a8e31855ba211d3684382cb8255e4"
     },
     {
       "path": "docs/tickets/_TEMPLATE.md",
