@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.70
-lastCompleted: P36.72b
+nextTicket: PLAN-11D
+lastCompleted: P36.70
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.72b-core-surfaces-walkthroughs-and-promotion
+chainTip: r11/P36.70-second-release-acceptance
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-05T07:02Z
+updatedAt: 2026-11-05T10:18Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1529,3 +1529,5 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-05 — P36.72b done — head-bound `ci:` read pending at this entry · Gate status: IN-TICKET PAUSE — `IN-TICKET PAUSE: HG-11 Class S readout for the core-surfaces release (same sitting as GATE-G6)` carried verbatim; the promote leg stays QUEUED `D-P36.72b-1` (never pre-authorised — the operator's act, OM-19 re-run recorded) · deferrals +1/−0 · chainTip → r11/P36.72b-core-surfaces-walkthroughs-and-promotion · next → P36.70 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-05 — P36.72b post-closeout record — head `eeb141d1` 5/5 green head-bound (`ci: pass #441@eeb141d`, run 41987561461, read 08:21Z; boundary `reports/ci/p36_72b_boundary.json` exit 3 = carried waived-ancestor `#439@193552a` python PY-STUB-1 flake-exhausted — #299 precedent, the new head itself 5/5; #440 python re-run 41982802276 pending at read) · `main` untouched · chainTip r11/P36.72b-core-surfaces-walkthroughs-and-promotion (open) · next → P36.70 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-05 — dispatch boundary-confirm — P36.72b's green read recorded (`ci: pass #441@eeb141d`, run 41987561461); `blockedOn` (nothing); chainTip `r11/P36.72b-core-surfaces-walkthroughs-and-promotion` · nextTicket P36.70 (row 417 — second-release acceptance; `D-G3-3 [B-9] = a` carried verbatim: the Class R standing go is valid NOW (G5-renewed, expires G6 or 2026-11-24, whichever first) BUT the rehearsal leg's precondition — P36.72b promoted, window `>= 2026-11-13T12:00Z` — cannot land before the operator's G6 sitting, at which point the go expires and the contract's own fallback applies (Class S, IN-TICKET PAUSE) → `live_verification=false` run ships the acceptance machinery + stages the rehearsal; the leg queues for the operator (OM-19 re-run `live_verification=true`); deps landed) — fresh implement-spec sub-agent on `r11/P36.70-second-release-acceptance` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-05 — P36.70 done — Gate status: conditional in-ticket pause — `D-G3-3 [B-9] = a` carried verbatim (the G5-renewed go expires at GATE-G6, when the P36.72b-promoted precondition lands → Class S under operator authority records; the rehearsal leg stays QUEUED `D-P36.70-1`, never pre-authorised beyond them) · deferrals +1/−0 · chainTip → r11/P36.70-second-release-acceptance · next → PLAN-11D · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-05 — P36.70 post-closeout record — head `6a4446c9` 5/5 green head-bound (`ci: pass #442@6a4446c`, run 42001721088, read ~10:15Z; boundary `reports/ci/p36_70_pr442.json` exit 3 = carried waived-ancestor `#440@2d5ac1f` python PY-STUB-1 flake-exhausted — #299 precedent, the new head itself 5/5) · fix arc: `ecf9b3d2` impl+records → `5d8a9591` live-claim negates → `610c5339` projection → `6a4446c9` future-ok markers · `main` untouched · next → PLAN-11D · harness: devin-desktop/swe-2-high/subagent
