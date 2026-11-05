@@ -1151,3 +1151,16 @@ seed-commit 849a0ef1
 # commit. Scope: the append-only findings attributed to 7509ed8c's rewritten
 # line only; no other commit borrows the exemption.
 seed-commit 7509ed8c
+
+# P36.67 committed-line assert-token respell (574ba962 — the P36.67 dispatch
+# boundary-confirm line at LEDGER.md:1508 carried two bare `live-claim` assert
+# tokens; corpus-leg violations on 865588c3's head run 41901994438). Respelled
+# in place to the code-spanned `check_live_claims` tool name — semantics
+# verbatim. Pre-edit bytes archived
+# docs/build/reports/memory-repair/LEDGER_phaselog_L1508_pre-P36.67-liveclaim-respell.txt
+# (sha256:def440cb5bd196e73581430b94d9c85fb3376e359395ad492c10ab9c55704113),
+# disclosed by the appended P36.67 `correction` entry in the same commit.
+# The branch rule forbids force-push, so the declaration lands here, the next
+# commit. Scope: the append-only findings attributed to 574ba962's rewritten
+# line only; no other commit borrows the exemption.
+seed-commit 574ba962

@@ -15,7 +15,10 @@ machine-readable JSON twins of its site-visible answers under
 artifact):
 
     /v1/export                ->  r/<pub>/api/export.json
-    /v1/changes               ->  r/<pub>/api/changes.json
+    /v1/changes               ->  r/<pub>/transparency/changes/changes.json
+                                  (P36.67 / TX-14: the sig.release-changes/1
+                                  diff's own feed doc — J3 §8.4's "/v1/changes
+                                  backed by these files"; not an api-slice doc)
     /v1/sources               ->  r/<pub>/api/sources.json
     /v1/sources/<id>          ->  r/<pub>/api/sources/<id>.json
     /v1/dossier/<scope>       ->  r/<pub>/api/dossier/<scope path>.json
@@ -356,6 +359,43 @@ class ReleaseServingStore:
                 absent_code,
                 f"release {pub} holds no api/{family} document for {name!r}",
             ) from None
+        return self._serve_document(pub, rel, ident, absent_status, absent_code, name)
+
+    def changes_document(
+        self,
+        requested_pub: str | None,
+        *,
+        absent_status: int = 404,
+        absent_code: str = "scope_not_available",
+    ) -> tuple[dict[str, Any], ReleaseIdentity]:
+        """P36.67 (TX-14, SIG-TRANSP-024, J3 §8.4): ``/v1/changes`` is backed
+        by the release's own id-level diff — the manifest-pinned
+        ``r/<pub>/transparency/changes/changes.json``
+        (``sig.release-changes-feed/1``), not an api-slice document. Serving
+        keeps the same verified + withdrawal-checked + identity-checked
+        contract as the slice."""
+        pub = self.resolve_publication(requested_pub)
+        ident = self.identity(pub)
+        rel = f"r/{pub}/transparency/changes/changes.json"
+        if not (self.staged / rel).is_file():
+            # A release built before TX-14 carries no diff doc — the older
+            # api-slice ``api/changes.json`` (when emitted + pinned) keeps
+            # answering; absent either way → the typed absence, never a
+            # fabricated feed.
+            rel = api_path(pub, "changes")
+        return self._serve_document(
+            pub, rel, ident, absent_status, absent_code, "the release changes"
+        )
+
+    def _serve_document(
+        self,
+        pub: str,
+        rel: str,
+        ident: ReleaseIdentity,
+        absent_status: int,
+        absent_code: str,
+        name: str | None,
+    ) -> tuple[dict[str, Any], ReleaseIdentity]:
         # The withdrawal barrier dominates, re-evaluated per request: a
         # release-level (or route-level) deny answers 410, never stale bytes.
         access = route_access(self.registry_root, rel)
@@ -372,7 +412,7 @@ class ReleaseServingStore:
             raise ReleaseServingError(
                 absent_status,
                 absent_code,
-                f"release {pub} holds no api/{family} document for {name or 'the family index'}",
+                f"release {pub} holds no document at {rel} for {name or 'the family index'}",
             ) from None
         if not isinstance(payload, dict):
             raise ReleaseServingError(

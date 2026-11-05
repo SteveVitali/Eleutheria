@@ -396,6 +396,27 @@ def build_parser() -> argparse.ArgumentParser:
         "(default: ops/disclosures.toml).",
     )
     rbuild.add_argument("--page-size", type=int, default=50)
+    rbuild.add_argument(
+        "--changes-against",
+        default=None,
+        help="(P36.67 / TX-14) the previous activated release to diff "
+        "against — a built release dir, a registry root (the latest "
+        "pointer resolves the previous publication), or a staged tree. "
+        "Absent: the first release's baseline (every record added).",
+    )
+    rbuild.add_argument(
+        "--previous-publication",
+        default=None,
+        help="the previous release's publication id when --changes-against "
+        "cannot resolve it unambiguously.",
+    )
+    rbuild.add_argument(
+        "--previous-export-dir",
+        default=None,
+        help="the previous release's export dir (its transparency/sources.json "
+        "drives the per-source added/retired/newly-failing/lane-changed "
+        "classes; absent → the honest not_evaluable source section).",
+    )
 
     rval = rsub.add_parser("validate", help="Re-verify a built release's integrity manifest.")
     rval.add_argument("--release", required=True)
@@ -1894,6 +1915,9 @@ def _run_release(args: argparse.Namespace) -> int:
                 built_at=args.built_at,
                 boundaries_root=args.boundaries_root,
                 disclosures_path=Path(args.disclosures_toml) if args.disclosures_toml else None,
+                previous_release=args.changes_against,
+                previous_publication_id=args.previous_publication,
+                previous_export_dir=args.previous_export_dir,
             )
         except rel.ReleaseError as e:
             print(f"sig-exports release build: refused — {e}")
