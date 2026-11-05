@@ -1,6 +1,6 @@
 # GATE-G6 — pending readout
 
-Status: PENDING. No approval, human work or publication is asserted.
+Status: SIGNED. The operator answered every non-batch line verbatim; the GATE DECISIONS rows carry each answer. No approval, human work or publication is asserted beyond the recorded lines.
 
 Contract: `docs/tickets/420_GATE-G6__11c-check-in.md`.
 Decision domain: the 11C check-in — budget, publication, rights (ING-GO-D
@@ -96,7 +96,7 @@ lines each need a verbatim answer; silence = pause (OM-18), never consent.
 
 <!-- Appended only at signing, by the commit that moves Status:. -->
 
-Operator decision (verbatim, received <date -u> via <channel>): "<exact words>"
-GATE DECISIONS row: <date -u of the row> | GATE-G6
-Operator confirmation (verbatim, <date -u>): "<words>" — covers agent-drafted sha256:7ecdede4ddc9
+Operator decision (verbatim, received 2026-11-05 via the Devin Desktop orchestration session): "approved, continue" — plus the session's recorded AskUserQuestion selections: §2 promote "Approve the promote (rec.)", §4 OM-20 "Approve all 15 (rec.)", §5 Class R "Renew verbatim (rec.)", §3 rights "Approve ING-GO-D + flip list (rec.)".
+GATE DECISIONS rows: 2026-11-05T15:20Z | GATE-G6 (eight rows — the sitting, the §2 HG-11 Class S promote, the §4 15-row OM-20 list, the §4 expired-legs default, the §5 Class R renewal, §3 ING-GO-D, the §3 Wave-D HG-03 flip list, the batch lines)
+Operator confirmation (verbatim, 2026-11-05): the message and selections quoted above — covers agent-drafted sha256:7ecdede4ddc9
 Signed by: repository operator. Recorded by devin-desktop/swe-2-high/subagent, which does not sign.

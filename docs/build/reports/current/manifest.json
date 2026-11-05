@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "fa25211d3b5616b9dafd26891fe4dd9addc0cc94",
+  "input_commit": "a3e0e0b08d4b78bf507ddfa3a5d32412af44bce8",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -938,7 +938,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "b863feaf524c179b002b330330113fb866ba2e1fc14c57a4f8b0335eb009f4a2"
+      "sha256": "cc8295a75be4da59fbe73bb0571d06e23a9ab427669f9369330e90c4cd11c2a1"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -982,7 +982,7 @@
     },
     {
       "path": "docs/build/readouts/GATE-G6.md",
-      "sha256": "e146a2a0072877a14efaa5ef0110cc3ff86f270bc438d32d609fd064652335e2"
+      "sha256": "9210589f4606e39785d10dc0395d1b505caf340f8be4c032df5ccd666361a65b"
     },
     {
       "path": "docs/build/readouts/HUMAN-H1.md",
