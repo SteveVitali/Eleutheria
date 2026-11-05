@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `9ec2ae80ccc36081a560cf946e19176ce949ac9a` · inputs hashed: 1196 · wall-clock receipt: `receipt.json`
+> input_commit: `238a8a234c8eeb0bafaee247a990a4837a16ccdb` · inputs hashed: 1196 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -96,7 +96,6 @@
 | P36.46 | queued D-P36.46-1 — `hosted` report backfill (INSERT-only, +0; restore = appended-set digests) | `implement-spec spec=docs/tickets/389_P36.46__execution-keyed-ingestion-history.md live_verification=true` |
 | P36.71 | queued D-P36.71-1 — post-promotion search-acceptance verify legs (real-release --enforce run, staging p95 at 1 vCPU, budgets+Lighthouse+axe, cost readout, A1/J2… | `implement-spec spec=docs/tickets/414_P36.71__search-acceptance-and-activation.md live_verification=true` |
 | P36.72b | queued D-P36.72b-1 — core-surfaces Class S promote (`release promote --class class_s --approval <signed-readout>` + P-mode verify); restore = `release rollback`… | `implement-spec spec=docs/tickets/416_P36.72b__core-surfaces-walkthroughs-and-promotion.md live_verification=true` |
-| P36.73 | queued 11C acceptance sweep + GATE-G6 packet refresh: read-only crawl of the promoted core-surfaces release/routes/budgets/labels/changelog/mirrors + the packet… | `implement-spec spec=docs/tickets/419_P36.73__sub-round-11c-acceptance.md live_verification=true` (#444) |
 
 ## Known inconsistencies (preserved, never synthesized)
 

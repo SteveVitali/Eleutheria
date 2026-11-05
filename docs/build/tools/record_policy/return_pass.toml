@@ -1532,20 +1532,3 @@ rerun_cell = "`implement-spec spec=docs/tickets/416_P36.72b__core-surfaces-walkt
   go = "verbatim-go: the operator's signed `sig.promotion-approval/1` `kind=signed_readout` naming the candidate pub (HG-11)"
   rerun = "implement-spec spec=docs/tickets/416_P36.72b__core-surfaces-walkthroughs-and-promotion.md live_verification=true"
   live_dependants = ["P36.70", "P36.71"]
-[[row]]
-key = "P36.73"
-kind = "leg"
-obligations = []
-obligations_cell = '''queued 11C acceptance sweep + GATE-G6 packet refresh: read-only crawl of the promoted core-surfaces release/routes/budgets/labels/changelog/mirrors + the packet re-draft; `acceptance-sweep-11c` → `sig.probe-run/1` + tools'''
-gates_cell = '''`hosted` read-only — `acceptance-sweep-11c` exit 42 before `live:P36.72b` promotes (the promoted release must exist); L2 on the operator's verbatim signed HG-11 readout at the GATE-G6 sitting, never pre-authorised'''
-operator_cell = '''nothing until `live:P36.72b` promotes — read-only; GATE-G6 packet presented only when no leg is due'''
-rerun_cell = '''`implement-spec spec=docs/tickets/419_P36.73__sub-round-11c-acceptance.md live_verification=true` (#444)'''
-
-  [[row.legs]]
-  id = "P36.73-sweep-packet"
-  obligations = []
-  earliest = '''after `live:P36.72b` promotes — the recorded window `after P36.72 promotion` verbatim; the real precondition is the operator's signed HG-11 readout at the GATE-G6 sitting'''
-  excluded = ["before `live:P36.72b` promotes (the promoted release must exist)"]
-  go = '''none — read-only sweeps and reads (the promoted release existing is the precondition, not a go)'''
-  rerun = '''implement-spec spec=docs/tickets/419_P36.73__sub-round-11c-acceptance.md live_verification=true'''
-  live_dependants = ["GATE-G6"]
