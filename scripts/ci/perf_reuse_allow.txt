@@ -13,3 +13,7 @@ web/src/lib/lexicon.ts	const SPEC_PATH = join(repoRoot(), "docs", "2_canonical_d
 web/scripts/check-lexicon.mjs	const SPEC = join(WEB, "..", "docs", "2_canonical_design_spec.md");
 # P36.35: corrections.ts comments name the batch file for provenance — comment-only, not a records read.
 web/src/lib/corrections.ts	// are bound in `docs/build/reports/copy-batches/batch-04.md` (`data-copy`
+# P36.72a: the ROUTES.csv acceptance check reads the 09-27 advertised-route
+# manifest as its input fixture — an audited data read (the CSV is the check's
+# own committed subject), not a records read.
+web/tests/e2e/acceptance.ts	"docs/build/planning/2026-09-30-next-phase/review/ROUTES.csv",
