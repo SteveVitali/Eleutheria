@@ -8,7 +8,7 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.72b
+nextTicket: P36.70
 lastCompleted: P36.72a
 blockedOn: (nothing)
 pauseRequested: false
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.72a-core-surfaces-crawl-parity-number-truth
+chainTip: r11/P36.72b-core-surfaces-walkthroughs-and-promotion
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-05T05:06Z
+updatedAt: 2026-11-05T07:02Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)

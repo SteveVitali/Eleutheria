@@ -1,11 +1,11 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "4fe8be15b1887cb85cf3e07939e37c530424b0c6",
+  "input_commit": "77566bde171e404b473a4b2e6fdb01ffeefae88b",
   "manifest_inputs": 1192,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P36.72b",
+    "nextTicket": "P36.70",
     "lastCompleted": "P36.72a",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P36.72a-core-surfaces-crawl-parity-number-truth",
+    "chainTip": "r11/P36.72b-core-surfaces-walkthroughs-and-promotion",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-05T05:06Z"
+    "updatedAt": "2026-11-05T07:02Z"
   },
   "counts": {
     "obligations": 220,
@@ -38,8 +38,8 @@
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
     "return_pass_rows": 72,
-    "known_inconsistencies": 0,
-    "conflicted": 0
+    "known_inconsistencies": 1,
+    "conflicted": 1
   },
   "obligations": [
     {
@@ -26218,13 +26218,22 @@
       }
     ]
   },
-  "known_inconsistencies": [],
-  "incomplete": false,
+  "known_inconsistencies": [
+    {
+      "check": "ledger/next-not-lowest",
+      "severity": "error",
+      "file": "docs/build/LEDGER.md",
+      "obligation": "P36.70",
+      "evidence": "nextTicket: P36.70; lowest open row: P36.72b",
+      "message": "nextTicket 'P36.70' is not the lowest chain row that has not landed ('P36.72b'; superseded-by/deferred/unused and HUMAN rows skipped — V2)"
+    }
+  ],
+  "incomplete": true,
   "stale_sources": [],
-  "manifest_sha256": "020a39bd8f97bcfba63bbf6978dfc4503e4379d9946b715a27a182324bb4092b",
+  "manifest_sha256": "01b8c0be5bfc105eaf01de14e600d37156bd724c715d65d7c3611d1f89ab6a99",
   "current_md": {
-    "lines": 132,
-    "bytes": 19803,
+    "lines": 134,
+    "bytes": 19805,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
