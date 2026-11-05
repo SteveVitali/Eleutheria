@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.69
-lastCompleted: P36.68
+nextTicket: P36.71
+lastCompleted: P36.69
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.68-per-source-extracts-and-version-index
+chainTip: r11/P36.69-source-page-b
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-04T20:35Z
+updatedAt: 2026-11-05T02:07Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1513,3 +1513,5 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-05 — P36.68 done — `ci: pass #437@750f660` 5/5 head-bound (run 41932416436: security 39s · docs 1m53s · composed 4m34s · python 22m13s · web 52m14s) · Gate status: none (K13 UX9-4 — owns SIG-TRANSP-032 → MET-ENGINEERED(D-P36.68-1;D-R10-PUBLISH-1); the OM-20 mirror-write leg QUEUED `prepared_not_executed` — GATE-G5 §4 names P36.68 verbatim but `r2-public` disabled/OP-09 unlanded/no creds/outside AR-3; `D-J3-5 [A-8] = b` + `D-K9-2 [B-22] = a` + `A-3 = a` carried verbatim; `live_verification=false`) · deferrals +1 (`D-P36.68-1`)/−0 · chainTip → r11/P36.68-per-source-extracts-and-version-index · next → P36.69 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-05 — P36.68 post-closeout record — head `750f6605` 5/5 green head-bound (`ci: pass #437@750f660`, run 41932416436, read ~00:10Z) · fix arc: `975b2f00` impl+records (docs-red: `-live-` dispatch token in the generated obligations cell) → `f469dcb5` sanctioned respell `-mirror-` (archived, events `D-P36.68-1:e1`/`:e2`) → `750f6605` `seed-commit` declaration → green · `main` untouched · mirror-write leg queued `D-P36.68-1` · chainTip → r11/P36.68-per-source-extracts-and-version-index (open) · next → P36.69 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-04 — dispatch boundary-confirm — P36.68's green read recorded (`ci: pass #437@750f660`, run 41932416436; OM-20 mirror-write leg QUEUED honestly as `D-P36.68-1` — `r2-public` disabled, OP-09 unlanded, no creds, outside AR-3 — pre-authorisation recorded, nothing executed); `blockedOn` (nothing); chainTip `r11/P36.68-per-source-extracts-and-version-index` · nextTicket P36.69 (row 413 — source page B; `D-J3-2 [B-19] = yes` scrubbed-run-log publication carried verbatim; live_verification=false; deps landed) — fresh implement-spec sub-agent on `r11/P36.69-source-page-b` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-05 — P36.69 done — `ci: pass #438@a69796c` 5/5 head-bound (run 41946998725: security 32s · docs 2m22s · composed 4m40s · python 19m50s · web 50m13s) · Gate status: none (K13 UX10-3b — owns SIG-TRANSP-005/008/040/041/043 → MET-ENGINEERED(D-R10-PUBLISH-1); `D-J3-2 [B-19] = yes` + `D-K9-2`/`D-K10-2` carried verbatim; `live_verification=false`) · deferrals +0/−0 (`D-P36.68-1` stays OPEN, not this row's leg) · chainTip → r11/P36.69-source-page-b · next → P36.71 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-05 — P36.69 post-closeout record — head `a69796c3` 5/5 green head-bound (`ci: pass #438@a69796c`, run 41946998725, read 02:07Z) · fix arc: e2e 42→0 — section h1s → h2 (layout owns the h1), `demoEntityBulk` unpadded (K14 NEW-8), spec locators → named *-heading h2s + `1050`/`1000` per K14 §3.6, `okc_council_minutes` P8-5 + raw-ok+retained capture (per-source redacted cell); coverage verdicts routed BL-085 · carried waived-ancestor reds #432@444a679 + #434@2633dd8 + #435@03dc29f (post-closeout dispatch-tip state, #299 precedent — the respells live on descendant branches) · `main` untouched · chainTip → r11/P36.69-source-page-b (open) · next → P36.71 · harness: devin-desktop/swe-2-high/subagent
