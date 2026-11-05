@@ -9,7 +9,7 @@
 ```
 projectStatus: IN_PROGRESS
 nextTicket: P36.70
-lastCompleted: P36.72a
+lastCompleted: P36.72b
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -1526,3 +1526,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-05 — P36.72a post-closeout record — head `b0837db9` 5/5 green head-bound (`ci: pass #440@b0837db`, run 41975393004, read 06:44Z; boundary `reports/ci/p36_72a_boundary.json` exit 3 = the carried waived-ancestor read `#435@03dc29f` python PY-STUB-1 flake-exhausted — #299 precedent, the new head itself 5/5 pass) · fix arc: `623d5bb3` impl+records+sanctioned respell (archived, `seed-commit` declared) → `dea1c7a2` index+history+flake-log+projection → `b0837db9` perf_reuse allow-list audit (python red on the first head run repaired forward) · `main` untouched · chainTip → r11/P36.72a-core-surfaces-crawl-parity-number-truth (open) · next → P36.72b · harness: devin-desktop/swe-2-high/subagent
 
 - 2026-11-05 — dispatch boundary-confirm — P36.72a's green read recorded (`ci: pass #440@b0837db`, run 41975393004; acceptance battery + Class S readout landed); `blockedOn` (nothing); chainTip `r11/P36.72a-core-surfaces-crawl-parity-number-truth` · nextTicket P36.72b (row 416 — core-surfaces walkthroughs + promotion; **HG-11 row**: `IN-TICKET PAUSE: HG-11 Class S readout … (same sitting as GATE-G6)` carried verbatim — never pre-authorised, the promote is the operator's act; live window `>= 2026-11-13T12:00Z` outside AR-3; `live_verification=false` — the row stages walkthroughs + the readout and PAUSES at the promote leg; OM-19 re-run prompt resumes at promote) — fresh implement-spec sub-agent on `r11/P36.72b-core-surfaces-walkthroughs-and-promotion` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-05 — P36.72b done — head-bound `ci:` read pending at this entry · Gate status: IN-TICKET PAUSE — `IN-TICKET PAUSE: HG-11 Class S readout for the core-surfaces release (same sitting as GATE-G6)` carried verbatim; the promote leg stays QUEUED `D-P36.72b-1` (never pre-authorised — the operator's act, OM-19 re-run recorded) · deferrals +1/−0 · chainTip → r11/P36.72b-core-surfaces-walkthroughs-and-promotion · next → P36.70 · harness: devin-desktop/swe-2-high/subagent
