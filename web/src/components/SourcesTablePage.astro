@@ -106,6 +106,7 @@ const CELL_FIG_ID: Record<string, (sid: string) => string> = {
   "staleness-eval": (sid) => `eval-${sid}`,
   runs: (sid) => `runs-${sid}`,
   errors: (sid) => `errors-${sid}`,
+  download: (sid) => `download-${sid}`,
 };
 
 // The ONE figures[] registry for this page (UXR-34): per-cell figures
@@ -169,6 +170,21 @@ for (const row of rows) {
       pointer: ROOT_POINTER,
       definition: "#table-heading",
       href: artifactHref(`transparency/sources/${row.sourceId}/executions.json`),
+      breakdown: `#src-${row.sourceId}`,
+      targets: perSourceTargets(row.sourceId, `sources/${row.sourceId}/`),
+    });
+  }
+  // P36.68 (UX9-4, K9 col 16): the rendered download size is a measured
+  // figure — the listing's own `byte_size`, pointed at its own row.
+  if (row.download !== null) {
+    specs.push({
+      id: `download-${sid}`,
+      class: "per_source",
+      value: row.download.bytes,
+      artifact: "web/downloads.json",
+      pointer: `${J}files${J}${row.download.fileIndex}${J}byte_size`,
+      definition: "#table-heading",
+      href: artifactHref("web/downloads.json"),
       breakdown: `#src-${row.sourceId}`,
       targets: perSourceTargets(row.sourceId, `sources/${row.sourceId}/`),
     });

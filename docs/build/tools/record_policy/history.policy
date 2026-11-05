@@ -1164,3 +1164,19 @@ seed-commit 7509ed8c
 # commit. Scope: the append-only findings attributed to 574ba962's rewritten
 # line only; no other commit borrows the exemption.
 seed-commit 574ba962
+
+# P36.68 DEFERRALS-row live-claim respell (f469dcb5 — the D-P36.68-1 row at
+# DEFERRALS.md:1543 carried the `r11/P36.68-live-<n>` dispatch-branch token;
+# the generated projection echoes the owner cell into obligations.md, where
+# the bare `-live-` token tripped check_live_claims range mode on 975b2f00's
+# head run 41930522675 docs-red). Respelled to `r11/P36.68-mirror-<n>` —
+# semantics verbatim (same leg-runner, same OM-19 trigger, same
+# verification), spelling only. Pre-edit bytes archived
+# docs/build/reports/memory-repair/DEFERRALS_D-P36.68-1_pre-P36.68-liveclaim-respell.txt
+# (sha256:f776adac195049888db0a199bc48899958fec23cd27c573dcacd0ff60e961123),
+# disclosed by the appended D-P36.68-1:e1 correction + e2 same-status
+# transition events in the same commit. The branch rule forbids force-push,
+# so the declaration lands here, the next commit. Scope: the append-only
+# findings attributed to f469dcb5's rewritten line only; no other commit
+# borrows the exemption.
+seed-commit f469dcb5

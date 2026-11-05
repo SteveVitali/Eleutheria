@@ -103,11 +103,23 @@ describe("the freshness verdict (K9 §5.1)", () => {
 });
 
 describe("derived redistribution + downloads", () => {
-  it("published rows are download_host_pending until UX9-4", () => {
+  it("published rows resolve their latest extract from the listing (UX9-4)", () => {
     for (const r of rows) {
-      if (r.lifecycle === "published") expect(r.downloadToken).toBe("download_host_pending");
+      if (r.lifecycle === "published") {
+        expect(r.downloadToken).toBe("downloadable");
+        expect(r.download).not.toBeNull();
+        expect(r.download!.href).toContain("files.surveillancegraph.org");
+        expect(r.download!.bytes).toBeGreaterThan(0);
+      }
       if (r.lifecycle === "gated") expect(derivedStatus(SOURCE_ROWS_DOC_FIXTURE.sources.find((s) => s.source_id === r.sourceId)!)).toBe("withheld_pending_rights_review");
+      if (r.lifecycle === "ingested_not_published") expect(r.downloadToken).toBe("not_published");
     }
+    // sites-carrying sources link the csv.gz; statements-only sources the
+    // always-present statements slice (K9 C-8)
+    const withSites = rows.find((r) => r.sourceId === "okc_camera_registry")!;
+    expect(withSites.download!.name).toBe("sites.csv.gz");
+    const noSites = rows.find((r) => r.sourceId === "okc_council_minutes")!;
+    expect(noSites.download!.name).toBe("statements.jsonl.gz");
   });
 });
 

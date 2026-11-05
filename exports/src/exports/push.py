@@ -35,7 +35,7 @@ from __future__ import annotations
 import json
 import time
 from collections import deque
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
@@ -314,6 +314,142 @@ def push_export_dir(
     return results
 
 
+def release_integrity_digests(release_dir: str | Path, pub: str) -> dict[str, str]:
+    """``{release-relative path: sha256}`` from ``releases/<pub>/integrity_manifest.json``.
+
+    The digest-verified basis of :func:`push_release_paths` — a pushed
+    object is the manifest's own bytes or nothing (P36.68 / UX9-4;
+    "content-addressed, digest-verified").
+    """
+    path = Path(release_dir) / "releases" / pub / "integrity_manifest.json"
+    if not path.is_file():
+        raise PushRefusal(
+            f"{path} is absent — the release-tree push verifies every pushed "
+            "path against the integrity manifest; refusing (SIG-TRANSP-019)"
+        )
+    manifest = json.loads(path.read_text(encoding="utf-8"))
+    out: dict[str, str] = {}
+    for a in manifest.get("artifacts") or []:
+        out[str(a["path"])] = str(a["sha256"])
+    return out
+
+
+def resolve_release_pub(release_dir: str | Path) -> str:
+    """The one ``releases/p-*`` publication id a built release tree carries —
+    ambiguous or absent trees refuse."""
+    pubs = sorted(p.name for p in (Path(release_dir) / "releases").glob("p-*") if p.is_dir())
+    if len(pubs) != 1:
+        raise PushRefusal(
+            f"{release_dir} holds {len(pubs)} releases — expected exactly one; "
+            "name the tree carrying a single publication (SIG-TRANSP-019)"
+        )
+    return pubs[0]
+
+
+def push_release_paths(
+    release_dir: str | Path,
+    store: ObjectStore,
+    client: S3Client,
+    *,
+    paths: Sequence[str],
+    pub: str | None = None,
+    strip_prefix: str | None = None,
+    cache_control: str = IMMUTABLE_CACHE_CONTROL,
+    limits: PushLimits | None = None,
+    sleep: Callable[[float], None] | None = None,
+    clock: Callable[[], float] | None = None,
+) -> list[PushedObject]:
+    """Push a BOUNDED set of release-tree paths under content-hash keys
+    (P36.68 / UX9-4 — the versions.json mirror writes).
+
+    Every named path must exist on disk AND match its
+    ``integrity_manifest.json`` sha256 — the push is digest-verified, never
+    a trust-the-disk copy. Keys are ``content_hash_key(pub, path, sha)``;
+    ``strip_prefix`` removes a leading path prefix before keying so
+    ``r/<pub>/transparency/…`` objects land in the export's own
+    ``transparency/`` namespace (``<pub>/transparency/sources/<id>/
+    versions.<sha12>.json``). The same per-file/per-run caps and
+    request-rate guard as the export push apply; an over-cap or unlisted
+    path refuses before any upload.
+    """
+    assert_low_egress(store)
+    limits = limits or PushLimits()
+    clock = clock or time.monotonic
+    sleep = sleep or time.sleep
+    release_dir = Path(release_dir)
+    pub = pub or resolve_release_pub(release_dir)
+    digests = release_integrity_digests(release_dir, pub)
+    if len(paths) > limits.max_run_objects:
+        raise PushRefusal(
+            f"push refuses: {len(paths)} paths exceed the per-run object cap "
+            f"({limits.max_run_objects}) — split the set (SIG-TRANSP-019)"
+        )
+    total = 0
+    staged: list[tuple[str, bytes, str]] = []
+    for rel in paths:
+        p = release_dir / rel
+        if not p.is_file():
+            raise PushRefusal(
+                f"push refuses: {rel} absent under {release_dir} — a named "
+                "path that does not exist is never skipped silently"
+            )
+        declared = digests.get(rel)
+        if declared is None:
+            raise PushRefusal(
+                f"push refuses: {rel} is not an integrity-manifest artifact — "
+                "the release-tree push is manifest-bounded (SIG-TRANSP-019)"
+            )
+        data = p.read_bytes()
+        if sha256_hex(data) != declared:
+            raise PushRefusal(
+                f"push refuses: {rel} on-disk sha256 != the integrity "
+                "manifest's — digest verification failed, nothing was pushed"
+            )
+        if len(data) > limits.max_file_bytes:
+            raise PushRefusal(
+                f"push refuses: {rel} is {len(data)} bytes, over the per-file "
+                f"cap ({limits.max_file_bytes}) (SIG-TRANSP-019)"
+            )
+        total += len(data)
+        staged.append((rel, data, declared))
+    if total > limits.max_run_bytes:
+        raise PushRefusal(
+            f"push refuses: {total} bytes over the per-run byte cap "
+            f"({limits.max_run_bytes}) (SIG-TRANSP-019)"
+        )
+    results: list[PushedObject] = []
+    put_times: deque[float] = deque()
+    uploads = 0
+    for rel, data, sha in staged:
+        key_path = rel if strip_prefix is None else rel.removeprefix(strip_prefix)
+        key = content_hash_key(pub, key_path, sha)
+        if _object_exists(client, store.bucket, key):
+            results.append(PushedObject(rel, key, sha, len(data), skipped=True))
+            continue
+        now = clock()
+        while put_times and put_times[0] <= now - 60.0:
+            put_times.popleft()
+        if len(put_times) >= limits.max_requests_per_minute:
+            raise PushRefusal(
+                "push refuses: put cadence would exceed "
+                f"{limits.max_requests_per_minute} requests/minute — the run "
+                "stops rather than racing the store (SIG-TRANSP-019)"
+            )
+        if uploads and limits.min_request_interval_s > 0:
+            sleep(limits.min_request_interval_s)
+        put_times.append(now)
+        client.put_object(
+            Bucket=store.bucket,
+            Key=key,
+            Body=data,
+            ContentType=_guess_content_type(rel),
+            CacheControl=cache_control,
+        )
+        uploads += 1
+        results.append(PushedObject(rel, key, sha, len(data), skipped=False))
+    return results
+
+
 def build_s3_client(store: ObjectStore, endpoint_url: str | None = None) -> S3Client:
     """Build a real boto3 S3 client for ``store`` (reusing the evidence-store dependency).
 
@@ -353,6 +489,9 @@ __all__ = [
     "check_push_limits",
     "content_hash_key",
     "push_export_dir",
+    "push_release_paths",
+    "release_integrity_digests",
+    "resolve_release_pub",
     "build_s3_client",
     "push_summary",
 ]

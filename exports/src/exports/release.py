@@ -65,6 +65,7 @@ from . import release_changes as RC
 from . import release_identity as RI
 from . import search_index_v2 as SIV2
 from . import site_release as SR
+from . import source_versions as SV
 from .manifest import Artifact, canonical_json, sha256_hex
 from .published_record import (
     PROJECTION_VERSION,
@@ -1508,6 +1509,93 @@ def build_release(
 
     for _rel, _data, _comp_lic, _lic in RC.emitted_changes_artifacts(out_dir, pub, changes_docs):
         emit(_rel, _data, compartment=_comp_lic, licence=_lic)
+
+    # P36.68 (R11-K13-UX9-4, K9 §7.2, SIG-TRANSP-032): the per-source
+    # version index — ``r/<pub>/transparency/sources/<id>/versions.json``
+    # (``sig.source-versions/1``). One entry per activated release
+    # containing the source: the extract files from the export's own
+    # download listing (never a parallel derivation), the per-source
+    # added/removed/changed counts from the TX-14 diff, and the
+    # append-only superset — prior entries inherited verbatim from the
+    # previous release's versions.json, or a manifest-only entry when the
+    # predecessor predates the index (D-K9-2 = a).
+    _sv_listing: dict[str, Any] = {}
+    _sv_lp = export_dir / "web" / "downloads.json"
+    if _sv_lp.is_file():
+        try:
+            _sv_listing = _read_json(_sv_lp)
+        except (OSError, ValueError):
+            _sv_listing = {}
+    _sv_diff_by_source = SV.per_source_diff_counts(
+        changes_docs["compartments"],
+        cur_root=out_dir,
+        cur_pub=pub,
+        prev_root=changes_prev[0] if changes_prev else None,
+        prev_pub=changes_prev[1] if changes_prev else None,
+    )
+    _sv_prev_pub = changes_prev[1] if changes_prev else None
+    _sv_prev_root = changes_prev[0] if changes_prev else None
+    _sv_prev_integrity: dict[str, Any] = {}
+    if (
+        _sv_prev_root is not None
+        and _sv_prev_pub is not None
+        and (_sv_prev_root / f"releases/{_sv_prev_pub}/integrity_manifest.json").is_file()
+    ):
+        try:
+            _sv_prev_integrity = _read_json(
+                _sv_prev_root / f"releases/{_sv_prev_pub}/integrity_manifest.json"
+            )
+        except (OSError, ValueError):
+            _sv_prev_integrity = {}
+    _sv_prev_descriptor = (
+        _read_json(_sv_prev_root / f"releases/{_sv_prev_pub}/descriptor.json")
+        if _sv_prev_root is not None
+        and _sv_prev_pub is not None
+        and (_sv_prev_root / f"releases/{_sv_prev_pub}/descriptor.json").is_file()
+        else None
+    )
+    _sv_cur_sources = RC.load_source_rows(export_dir) or {}
+    _sv_prev_sources = RC.load_source_rows(previous_export_dir) or {}
+    for _sv_sid in sorted(_sv_cur_sources):
+        _sv_row = _sv_cur_sources[_sv_sid]
+        _sv_files = SV.slice_files_from_listing(_sv_listing, _sv_sid)
+        _sv_prev_entries = SV.load_previous_versions(_sv_prev_root, _sv_prev_pub, _sv_sid)
+        _sv_entries: list[dict[str, Any]] = list(_sv_prev_entries or [])
+        if _sv_prev_entries is None and _sv_prev_pub is not None and _sv_sid in _sv_prev_sources:
+            _sv_entries.append(
+                SV.manifest_only_entry(
+                    _sv_sid,
+                    release=SV.release_block(_sv_prev_descriptor, _sv_prev_pub),
+                    manifest_files=SV.manifest_files_from_integrity(_sv_prev_integrity, _sv_sid),
+                    published_claims=SV.published_claims_of(_sv_prev_sources[_sv_sid]),
+                )
+            )
+        _sv_prev_sha = next(
+            (str(e.get("slice_sha256")) for e in reversed(_sv_entries) if e.get("slice_sha256")),
+            None,
+        )
+        _sv_diff = _sv_diff_by_source.get(_sv_sid)
+        _sv_entries.append(
+            SV.version_entry(
+                _sv_sid,
+                release=SV.release_block(descriptor, pub),
+                files=_sv_files,
+                diff_counts=_sv_diff
+                if _sv_diff is not None
+                else (
+                    {"added": 0, "removed": 0, "changed": 0} if changes_prev is not None else None
+                ),
+                baseline=changes_prev is None,
+                previous_slice_sha=_sv_prev_sha,
+                published_claims=SV.published_claims_of(_sv_row),
+            )
+        )
+        emit(
+            f"r/{pub}/transparency/sources/{_sv_sid}/versions.json",
+            canonical_json(SV.versions_document(_sv_sid, _sv_entries, name=_sv_row.get("name"))),
+            compartment="metadata",
+            licence="CC-BY-4.0",
+        )
 
     # SIG-UI-087 (UXR-37): release pages carry no live-clock values — a
     # status-lane marker, next-run phrase or relative-time value on any

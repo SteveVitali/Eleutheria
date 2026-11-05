@@ -190,6 +190,7 @@ class MirrorPushLeg:
         egress_config: EgressConfig | None = None,
         usage_gb: float | None = None,
         usage_usd: float | None = None,
+        release_dir: str | Path | None = None,
     ) -> None:
         self.mirrors_path = Path(mirrors_path)
         self.name = name
@@ -202,8 +203,33 @@ class MirrorPushLeg:
         self.egress_config = egress_config
         self.usage_gb = usage_gb
         self.usage_usd = usage_usd
+        # P36.68 (UX9-4): the release tree whose bounded versions-index set
+        # rides the same content-hash keys — ``None`` keeps the export-only leg.
+        self.release_dir = Path(release_dir) if release_dir is not None else None
         self._entry: MirrorEntry | None = None
         self._egress_report: EgressReport | None = None
+
+    def _release_paths(self) -> tuple[str, list[str]]:
+        """The bounded ``(pub, paths)`` set the release-tree leg pushes —
+        ``r/<pub>/transparency/sources/<id>/versions.json`` only (P36.68).
+        An absent release dir or missing versions set fails loudly."""
+        from exports.push import resolve_release_pub
+
+        assert self.release_dir is not None
+        pub = resolve_release_pub(self.release_dir)
+        root = self.release_dir / "r" / pub / "transparency" / "sources"
+        paths = (
+            sorted(p.relative_to(self.release_dir).as_posix() for p in root.glob("*/versions.json"))
+            if root.is_dir()
+            else []
+        )
+        if not paths:
+            raise MirrorRefusal(
+                f"{self.release_dir} carries no "
+                f"r/{pub}/transparency/sources/*/versions.json — the "
+                "versions-index mirror set is empty; refusing (P36.68)"
+            )
+        return pub, paths
 
     def _resolve(self) -> MirrorEntry:
         """The mirror row, refusing disabled/unregistered/non-object-store rows."""
@@ -272,7 +298,7 @@ class MirrorPushLeg:
         check_push_limits(self.export_dir, manifest, limits)
         self._egress_join()
         artifacts = manifest.get("artifacts", [])
-        return [
+        lines = [
             f"mirror {self.name}: preflight OK — provider {store.provider} "
             f"(egress class {store.egress_class}), bucket {store.bucket}",
             f"  {len(artifacts)} artifact(s) under content-hash keys, caps within "
@@ -280,6 +306,13 @@ class MirrorPushLeg:
             f"{limits.max_run_objects} objects / {limits.max_run_bytes} B, "
             f"≤ {limits.max_requests_per_minute} req/min)",
         ]
+        if self.release_dir is not None:
+            pub, rel_paths = self._release_paths()
+            lines.append(
+                f"  release tree {pub}: {len(rel_paths)} versions-index "
+                "path(s) under digest-verified content-hash keys (P36.68)"
+            )
+        return lines
 
     def push(self) -> MirrorPushOutcome:
         """Run the leg: non-listable probe first, then the content-hash upload."""
@@ -308,6 +341,23 @@ class MirrorPushLeg:
                 sleep=self.sleep,
                 clock=self.clock,
             )
+            if self.release_dir is not None:
+                from exports.push import push_release_paths
+
+                pub, rel_paths = self._release_paths()
+                results.extend(
+                    push_release_paths(
+                        self.release_dir,
+                        store,
+                        client,
+                        paths=rel_paths,
+                        pub=pub,
+                        strip_prefix=f"r/{pub}/",
+                        limits=self.limits,
+                        sleep=self.sleep,
+                        clock=self.clock,
+                    )
+                )
         except PushRefusal as exc:
             # one refusal type in the ops layer — the CLI's refusal path
             raise MirrorRefusal(str(exc)) from exc

@@ -62,6 +62,12 @@ from .push import content_hash_key
 SCHEMA = "sig.download-listing/1"
 #: The verify report schema.
 VERIFY_SCHEMA = "sig.download-verify/1"
+#: The per-source extract package schema (``by-source/<id>/datapackage.json``,
+#: P36.68 / UX9-4 — the per-source Frictionless resource list SIG-TRANSP-032
+#: requires beside the extract files themselves).
+SOURCE_EXTRACT_SCHEMA = "sig.source-extract/1"
+#: The Frictionless data-package profile the per-source package declares.
+DATAPACKAGE_PROFILE = "https://datapackage.org/profiles/2.0/datapackage.json"
 
 SHA256SUMS_FILE = "SHA256SUMS"
 MINISIG_FILE = "SHA256SUMS.minisig"
@@ -306,6 +312,77 @@ def source_attribution_payload(
     return {**dict(compartment_payload), "sources": sources}
 
 
+def source_datapackage(
+    source_id: str,
+    files: Mapping[str, bytes],
+    counts: Mapping[str, int],
+    *,
+    license_id: str,
+    license_url: str | None,
+    compartment: str,
+    release_id: str | None = None,
+) -> bytes:
+    """The ``by-source/<source_id>/datapackage.json`` — the per-source
+    Frictionless package (P36.68 / UX9-4, SIG-TRANSP-032).
+
+    One resource per emitted file, each carrying its format, byte size and
+    sha256 — the extract's identity is its own bytes', never a parallel
+    derivation. ``license_url`` falls back to the LicenseRef posture the
+    ATTRIBUTION.txt states (a LicenseRef has no canonical URL).
+    """
+    resources: list[dict[str, Any]] = []
+    for path in sorted(files):
+        data = files[path]
+        name = path.rsplit("/", 1)[-1]
+        res: dict[str, Any] = {
+            "name": name,
+            "path": name,
+            "format": _format_of(path),
+            "mediatype": {
+                "csv.gz": "text/csv",
+                "jsonl.gz": "application/x-ndjson",
+                "json": "application/json",
+                "txt": "text/plain",
+            }.get(_format_of(path), "application/octet-stream"),
+            "bytes": len(data),
+            "sha256": sha256_hex(data),
+        }
+        if counts.get(path) is not None:
+            res["rows"] = int(counts[path])
+        if name == "statements.jsonl.gz":
+            res["schema"] = "sig.statement/1"
+        resources.append(res)
+    doc: dict[str, Any] = {
+        "schema": SOURCE_EXTRACT_SCHEMA,
+        "profile": "data-package",
+        "$schema": DATAPACKAGE_PROFILE,
+        "name": f"sig-source-{source_id}",
+        "title": f"SIG per-source extract — {source_id}",
+        "source_id": source_id,
+        "compartment": compartment,
+        "licenses": [
+            {
+                "name": license_id,
+                **({"path": license_url} if license_url else {}),
+                "title": license_id,
+            }
+        ],
+        "resources": resources,
+        "note": (
+            "Per-release derived extract of one source — sites where "
+            "applicable, statements always (K9 C-8). sha256/bytes are "
+            "computed over the emitted files themselves; registry "
+            "attribution and captured terms live in ATTRIBUTION.txt "
+            "beside this file (SIG-TRANSP-032)."
+        ),
+    }
+    if release_id:
+        doc["release_id"] = release_id
+    from .manifest import canonical_json
+
+    return canonical_json(doc)
+
+
 def emit_source_slice(
     source_id: str,
     *,
@@ -315,11 +392,14 @@ def emit_source_slice(
     attribution_payload: Mapping[str, Any] | None,
     license_id: str,
     license_url: str | None,
+    compartment: str | None = None,
+    release_id: str | None = None,
 ) -> tuple[dict[str, bytes], dict[str, int]]:
     """The ``by-source/<source_id>/`` files for one source.
 
     Returns ``(files, row_counts)``: the statements slice always (K9 C-8),
-    the sites slice when the source contributes site rows, plus the bundle's
+    the sites slice when the source contributes site rows, the per-source
+    ``datapackage.json`` resource list (SIG-TRANSP-032), plus the bundle's
     ATTRIBUTION.txt / LICENCE.txt (SIG-TRANSP-015 — a required-but-empty
     attribution refuses loudly).
     """
@@ -349,6 +429,15 @@ def emit_source_slice(
         payload, title=f"per-source slice {source_id}"
     )
     files[f"{prefix}/LICENCE.txt"] = licence_txt(license_id, license_url, compartment=source_id)
+    files[f"{prefix}/datapackage.json"] = source_datapackage(
+        source_id,
+        files,
+        counts,
+        license_id=license_id,
+        license_url=license_url,
+        compartment=compartment or source_id,
+        release_id=release_id,
+    )
     return files, counts
 
 
@@ -838,6 +927,7 @@ __all__ = [
     "SCHEMA",
     "SHA256SUMS_FILE",
     "SIG_CHANGES_NOTICE",
+    "SOURCE_EXTRACT_SCHEMA",
     "VERIFY_SCHEMA",
     "DOSSIER_SLICE_DIR",
     "DOSSIER_SLICE_LEVELS",
@@ -852,6 +942,7 @@ __all__ = [
     "sha256sums_bytes",
     "slice_source_ids",
     "source_attribution_payload",
+    "source_datapackage",
     "verify_downloads",
     "write_integrity_files",
 ]
