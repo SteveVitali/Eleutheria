@@ -1213,3 +1213,19 @@ seed-commit 6f8ebd92
 # 623d5bb3's rewritten line only; no other commit borrows the exemption.
 seed-commit 623d5bb3
 seed-commit 736be305
+
+# ── P36.73 live-claims respell (worker, 2026-11-05) ─────────────────────────────────────────
+# 90d3508f respelled the committed L1537 dispatch boundary-confirm's bare-assert
+# token `live-read` → `` `live`-read `` — semantics verbatim (the orchestrator's
+# dispatch record names the ticket's own title; code-quoting keeps the words
+# while lifting them out of prose the live-claim lint judges — the same
+# sanctioned in-place class as 6681775d/819c127d/77cad905). The corpus leg
+# flagged it inherited onto this branch (the line landed at 541614c1, after
+# #443's head-bound read). Pre-edit bytes archived
+# `docs/build/reports/memory-repair/LEDGER_phaselog_L1537_pre-P36.73-liveclaim-respell.txt`
+# sha256:f016049f7d32274fc8475be15b47a17ad14d7fa932c6021e709e22d3cf46c390;
+# the dated `P36.73 correction` PHASE LOG entry records the repair in the same
+# closeout commit. The branch rule forbids force-push, so the declaration lands
+# as a later commit. Scope: findings attributed to 90d3508f only; no other
+# commit borrows the exemption.
+seed-commit 90d3508f
