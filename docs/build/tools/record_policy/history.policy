@@ -1229,3 +1229,19 @@ seed-commit 736be305
 # as a later commit. Scope: findings attributed to 90d3508f only; no other
 # commit borrows the exemption.
 seed-commit 90d3508f
+
+# P37.4a DEFERRALS-row live-claim respell (f2562bf9 — the D-P37.4a-1 row's
+# how-to-verify cell carried `the `probe` leg's cosign verify finds ≥1
+# signature per deployed digest` in assert vocabulary on a QUEUED leg; the
+# generated projection echoes the cell into reports/current/obligations.md,
+# where the first post-anchor regen re-judged it as a brand-new live claim on
+# run 42082405796's red docs+python legs). Respelled to `the queued `probe`
+# leg's …` — semantics verbatim (the same acceptance check on a
+# prepared_not_executed leg), spelling only. Pre-edit bytes archived
+# `docs/build/reports/memory-repair/DEFERRALS_D-P37.4a-1_pre-P37.4a-liveclaim-respell.txt`
+# sha256:f45d9c5dc355e8ee1385eef1bc33224c4a559df5629527d8ecf7b30adb7d4a26;
+# disclosed by the appended D-P37.4a-1:e1 correction event in the same commit.
+# The branch rule forbids force-push, so the declaration lands here, the next
+# commit. Scope: the append-only findings attributed to f2562bf9's rewritten
+# line only; no other commit borrows the exemption.
+seed-commit f2562bf9
