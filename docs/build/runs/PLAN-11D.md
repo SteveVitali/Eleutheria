@@ -11,7 +11,8 @@ Harness: devin-desktop/swe-2-high/subagent
 Started: 2026-11-05T10:27Z (`date -u` at branch start; branch
 `r11/PLAN-11D-contracts-for-11d-and-tail` at `c981fec1` on
 `r11/P36.70-second-release-acceptance`)
-PR: (recorded at the D12-close push — the whole row ships on one head)
+PR: #443 (base `r11/P36.70-second-release-acceptance`; opened at the D12-close push — the whole row ships on one head)
+Closed: 2026-11-05T12:55Z (`date -u` at closeout; last acceptance criterion = the pre-closeout head green on all five required checks, recorded in the OM gap table)
 
 ## Spec / Base / Branch / Config
 
@@ -543,23 +544,30 @@ filled per context, completed at closeout.
 |---|---|---|
 | OM-01 harness/model recorded; commits trailered | ok (D1–D12) | header + every commit trailer `Harness: devin-desktop/swe-2-high/subagent`; `check_trailers --range` clean (recorded at the commit) |
 | OM-04 dates from `date -u` / git / GitHub (source named) | ok (D1–D12) | header + per-context Started/Closed stamps anchored to `date -u` |
-| OM-05 CI read at every boundary; red → blockedOn | (filled at closeout) | head-bound read recorded as the `ci:` line after push |
+| OM-05 CI read at every boundary; red → blockedOn | ok | `ci: pass #443@4f6e88d` 5/5 head-bound (run 42016664150; web attempt-2 1h2m9s after the LH-PERF-1 LCP flake on attempt 1 — flake logged, rerun green); ancestor `#442@c981fec` python read recorded verbatim in the Boundary record |
 | OM-06 every AC names its layer | ok (D1–D12) | every contract's ACs tag a layer |
 | OM-14 production mutations (none this row) | n/a | none — planning row, `live_verification=false`; the drafted OM-20 list is for GATE-G6 and nothing ran |
 | OM-13 protected records appended only | ok (D1–D12) | ledger/manifest/index appended; the 90 numbered skeletons are this row's own deliverable — the sanctioned skeleton→contract rewrite class (PLAN-11B/11C precedent) |
 | OM-15 no test asserts a living record's current value | ok (D1–D12) | no test touched; no living cell asserted |
 | OM-07/08/09 gate records verbatim | ok (D1–D12) | every contract's gate cell carries the plan row's operator words verbatim; the two gate markers carry their guard sentences; nothing decided by this row |
 | OM-16 size budget | ok (D1–D12) | twelve contexts on the ≤8-row seam (D11 takes the 10-row tail per the contract's own table); every contract's Load re-measured under ~150k loaded tokens; the single-session dispatch actual recorded above |
-| OM-02 closeout is one commit after the PR exists | (filled at closeout) | |
+| OM-02 closeout is one commit after the PR exists | ok | closeout commit = Closed stamp + OM gap table + boundary record + BUILD_INDEX row 418 + LEDGER advance + README row range + projection regen |
 | OM-19 windows / live legs (none this row) | n/a | none for this row — the written contracts carry their own windows/legs verbatim; no leg ran or was queued by this row |
 | OM-20 pre-authorisation | n/a | not an OM-20 row — it drafts the 11D list (15 rows with written `Production mutations` headers) for GATE-G6 to name; nothing pre-authorised here |
 | OM-03 rows only from the ratified plan | ok | rows 421–510 are the ratified chain rows; D12 evaluated the re-split rule with counts — 76 engineering rows / 65.0 runs, under both thresholds, not fired |
 | PR-1 branch from chainTip; PR base = previous branch | ok | branch from `c981fec1` on `r11/P36.70-second-release-acceptance`; PR base = that branch |
-| CI-2/CI-6 pre-closeout head green | (filled at closeout) | |
-| P11 local gate | (filled at closeout) | `make check` + `make docs-check` recorded at the commit; Docker-gated legs noted |
+| CI-2/CI-6 pre-closeout head green | ok | `ci: pass #443@4f6e88d` — all five required checks head-bound (run 42016664150; docs 2m46s, security 37s, composed 4m20s, python 21m52s, web 1h2m9s attempt-2) |
+| P11 local gate | ok (with recorded limits) | `make check` 11,106 passed / 2 skipped / 14 machine-local fails / 625 Docker-gated errors — `SIG_GCP_PROJECT` unset (fail-closed by design), `test_p34_18_aliases` ×2 (pre-existing), Docker daemon unreachable (db/e2e legs error locally, run in CI); `make docs-check` green after projection regen |
 | CI-8 CI config changed | no | no workflow/toolchain change this row |
 
 ## Boundary record (post-closeout)
 
-(filled at closeout — the head-bound `ci:` line, run ids, and any
-carried ancestor reads, verbatim.)
+`ci: pass #443@4f6e88d` — 5/5 head-bound on the pre-closeout tip (run
+`42016664150`: docs 2m46s, security 37s, composed 4m20s, python
+21m52s, web 1h2m9s attempt-2; `logs/ci_boundary_443.json`). The
+boundary read exited 3 on a **carried waived-ancestor** class (#299
+precedent): `#442@c981fec` python failure on the base branch's own
+head — not this head's tree; the new head itself 5/5. Web attempt-1
+red was a Lighthouse LCP flake (`LH-PERF-1`; flake_log rows
+443/…/web/failure + rerun-requested); attempt-2 green. Every red was
+ancestor or flake, recorded verbatim; no check loosened.
