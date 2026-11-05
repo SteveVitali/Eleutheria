@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `b91f8e582365201704171b4ca496bce6d874b274` · inputs hashed: 1196 · wall-clock receipt: `receipt.json`
+> input_commit: `077ff56b9e476207f1cab52e1dd555121f05067e` · inputs hashed: 1196 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -100,10 +100,7 @@
 
 ## Known inconsistencies (preserved, never synthesized)
 
-| check | obligation | message |
-|---|---|---|
-| ledger/last-completed | GATE-G6 | lastCompleted 'GATE-G6' has no BUILD_INDEX row |
-| ledger/next-not-lowest | P37.3 | nextTicket 'P37.3' is not the lowest chain row that has not landed ('GATE-G6'; superseded-by/deferred/unused and HUMAN rows skipped — V2) |
+- none — every P32.1 baseline conflict is either reconciled by a recorded event interpretation (old values preserved on the anchor) or documented in `reconciliations.json`; anything new would appear here and fail `verify`
 
 ## Evidence domains — recorded evidence only
 

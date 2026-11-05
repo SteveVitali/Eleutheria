@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "b91f8e582365201704171b4ca496bce6d874b274",
+  "input_commit": "077ff56b9e476207f1cab52e1dd555121f05067e",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -930,7 +930,7 @@
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "87f06ef90e18f709b854945d4148b9c70d9e3d15a2e006c0cb561d6b9edb84ff"
+      "sha256": "27f49d6ef1eb9245b776131f24bba800ad84b4dba1a109ea3fe46f354af74bc1"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
