@@ -1,0 +1,102 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.69 (UX10-3b, K9 §6.1, D-K10-2): `/sources/<id>/entities/page/<n>/` —
+// entity-browse continuation pages (cap: 10 pages × 100 rows).
+import BaseLayout from "../../../../../layouts/BaseLayout.astro";
+import SourceSubnav from "../../../../../components/SourceSubnav.astro";
+import SourcePager from "../../../../../components/SourcePager.astro";
+import Figure from "../../../../../components/Figure.astro";
+import { artifactHref, defineFigures, perSourceTargets, type FigureSpec } from "../../../../../lib/figures";
+import { withBase } from "../../../../../lib/paths";
+import { getSourcePage, type SourcePageModel } from "../../../../../lib/source-page";
+import { resolveSourceId } from "../../../../../lib/alias";
+import {
+  getPageBIds,
+  getSourceVersions,
+  getSourceEntities,
+  entityBrowse,
+  pageSlice,
+  recordHref,
+  SUBPAGE_SIZE,
+  ENTITY_BROWSE_CAP,
+} from "../../../../../lib/source-page-b";
+import { fmtInt } from "../../../../../lib/format";
+
+export function getStaticPaths() {
+  return getPageBIds().flatMap((id) => {
+    const browse = entityBrowse(getSourceEntities(id));
+    return Array.from({ length: browse.pages - 1 }, (_, i) => ({
+      params: { id, n: String(i + 2) },
+    }));
+  });
+}
+
+const id = resolveSourceId(String(Astro.params.id ?? "")) ?? "";
+const page = Number(Astro.params.n);
+const model = getSourcePage(id);
+if (model === null) throw new Error(`entities/page: no row for "${id}"`);
+const m = model as SourcePageModel;
+const row = m.row;
+const browse = entityBrowse(getSourceEntities(id));
+const slice = pageSlice(browse.rows, page);
+const offset = (page - 1) * SUBPAGE_SIZE;
+const J = String.fromCharCode(47);
+const EART = `transparency/sources/${id}/entities.json`;
+const FIGURES = defineFigures(`source-entities-${id}-p${page}`, [
+  {
+    id: "entities-total", class: "per_source", value: browse.total, artifact: EART,
+    pointer: `${J}entities`, definition: "#entities-heading", href: artifactHref(EART),
+    breakdown: "#fig-entities-total", targets: perSourceTargets(id, `sources/${id}/entities/`),
+  } satisfies FigureSpec,
+  {
+    id: "entities-page", class: "per_source", value: browse.total, artifact: EART,
+    pointer: `${J}entities`, definition: "#entities-heading", href: artifactHref(EART),
+    breakdown: "#fig-entities-total", targets: perSourceTargets(id, `sources/${id}/entities/`),
+  } satisfies FigureSpec,
+]);
+const fig = (fid: string) => FIGURES.find((x) => x.id === fid)!;
+const has = {
+  runs: true,
+  captures: true,
+  versions: getSourceVersions(id) !== null,
+  entities: true,
+  dossiers: (row.contributions ?? []).length > 0,
+};
+const crumbs = [
+  { label: "Sources", href: withBase("sources/") },
+  { label: row.name, href: withBase(`sources/${id}/`) },
+  { label: "Entities", href: withBase(`sources/${id}/entities/`) },
+  { label: `Page ${page}` },
+];
+---
+
+<BaseLayout title={`${row.name} — entities, page ${page}`} path={withBase(`sources/${id}/entities/page/${page}/`)} crumbs={crumbs}>
+  <SourceSubnav id={id} name={row.name} has={has} current="entities" />
+  <section aria-labelledby="entities-heading">
+    <h2 id="entities-heading">Published entities — {row.name}</h2>
+    <p id="fig-entities-total">
+      <Figure figure={fig("entities-total")} order="inline">
+        {fmtInt(browse.total)} published entities cite this source{browse.capped && <> — the first {fmtInt(ENTITY_BROWSE_CAP)} show (the published cap)</>}.
+      </Figure>
+    </p>
+    <SourcePager base={`sources/${id}/entities`} page={page} pages={browse.pages} first={offset + 1} last={offset + slice.length} total={browse.rows.length} noun="entities" label="Entities" figure={fig("entities-page")} />
+    <table class="sig-table" data-testid="entities-table">
+      <thead>
+        <tr><th scope="col">Entity</th><th scope="col">Type</th><th scope="col">Jurisdiction</th><th scope="col">First seen</th><th scope="col">Last seen</th><th scope="col">Record</th></tr>
+      </thead>
+      <tbody>
+        {slice.map((e) => (
+          <tr data-testid="entity-row" data-entity-id={e.entity_id}>
+            <td>{e.label}</td><td>{e.entity_type}</td><td>{e.jurisdiction ?? "not recorded"}</td>
+            <td>{e.first_seen ?? "not recorded"}</td><td>{e.last_seen ?? "not recorded"}</td>
+            <td>{e.record_href !== null ? <a href={recordHref(e.record_href)!}>record →</a> : "record link pending"}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <p><a href={withBase(`sources/${id}/entities/`)}>First page</a> · <a href={withBase(`sources/${id}/entities/index.json`)}>index.json</a></p>
+  </section>
+</BaseLayout>

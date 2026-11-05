@@ -1,0 +1,131 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.69 (UX10-3b, K10 §9): one <details> per recorded execution — the
+// execution-keyed run history (started/finished/duration, outcome, mode,
+// fetched/parsed, claims considered/inserted/duplicate, rejected by class,
+// errors by class, disappearances, robots per host, code identity, link
+// basis). D-J3-2 [B-19] = yes — carried verbatim: robots outcomes disclose
+// as host + count only, never per-URL detail.
+import { fmtInt } from "../lib/format";
+import { withBase } from "../lib/paths";
+import type { ExecutionRecord } from "../lib/source-page";
+
+interface Props {
+  id: string;
+  executions: ExecutionRecord[];
+  hasCaptures: boolean;
+}
+
+const { id, executions, hasCaptures } = Astro.props;
+
+const num = (v: unknown): string | null =>
+  typeof v === "number" ? fmtInt(v) : null;
+const countOf = (m: Record<string, number> | null | undefined): number =>
+  m ? Object.values(m).reduce((a, b) => a + b, 0) : 0;
+const classList = (m: Record<string, number> | null | undefined): string | null =>
+  m && Object.keys(m).length > 0
+    ? Object.entries(m).map(([k, n]) => `${k} ×${fmtInt(n)}`).join(" · ")
+    : null;
+const robotsCells = (rs: ExecutionRecord["robots"]): string | null =>
+  rs.length > 0
+    ? rs.map((r) => `${r.host}: ${r.outcome} ×${fmtInt(r.count)}`).join(" · ")
+    : null;
+
+---
+
+<div class="sig-runs" data-testid="runs-list">
+  {executions.map((e) => {
+    const inserted = typeof e.claims_inserted === "number" ? e.claims_inserted : null;
+    const code = e.code_identity;
+    return (
+      <details class="sig-run" data-testid="run-row">
+          <summary>
+            <time datetime={e.started_at ?? undefined}>{e.started_at ?? "not recorded"}</time>
+            {" — "}{e.outcome}
+            {inserted !== null && <> — {fmtInt(inserted)} claims inserted</>}
+            {e.duration_seconds !== null && <> — {fmtInt(e.duration_seconds)}s</>}
+          </summary>
+          <dl class="sig-fields">
+            <dt data-copy="RB-01">Started (UTC)</dt>
+            <dd>{e.started_at ?? "not recorded"} — {e.started_basis}</dd>
+            <dt data-copy="RB-02">Finished / duration</dt>
+            <dd>
+              {e.finished_at
+                ? <>{e.finished_at}{e.duration_seconds !== null && <> — {fmtInt(e.duration_seconds)} seconds</>}</>
+                : "no completion recorded (execution may have been killed)"}
+            </dd>
+            <dt data-copy="RB-03">Outcome</dt>
+            <dd>{e.outcome}{e.mode ? <> — mode <code>{e.mode}</code></> : null}{e.kind ? <> · kind <code>{e.kind}</code></> : null}</dd>
+            <dt data-copy="RB-04">Claims</dt>
+            <dd>
+              considered {num(e.claims_considered) ?? "not recorded"} · inserted{" "}
+              {num(e.claims_inserted) ?? "not recorded"} · duplicate{" "}
+              {num(e.claims_duplicate) ?? "not recorded"}
+            </dd>
+            <dt data-copy="RB-05">Fetched / parsed</dt>
+            <dd>
+              {num(e.fetches) ?? "not recorded"} fetched · {num(e.records_emitted) ?? "not recorded"} records emitted
+              {hasCaptures && <> — <a href={withBase(`sources/${id}/captures/`)}>captures →</a></>}
+            </dd>
+            {classList(e.rejected) && (
+              <>
+                <dt data-copy="RB-06">Rejected by class</dt>
+                <dd>{classList(e.rejected)}</dd>
+              </>
+            )}
+            {(e.error_class || classList(e.error_classes)) && (
+              <>
+                <dt data-copy="RB-07">Errors</dt>
+                <dd>{classList(e.error_classes) ?? e.error_class}</dd>
+              </>
+            )}
+            {e.disappearances !== null && e.disappearances !== undefined && e.disappearances > 0 && (
+              <>
+                <dt data-copy="RB-08">Disappearances</dt>
+                <dd>{fmtInt(e.disappearances)}</dd>
+              </>
+            )}
+            {robotsCells(e.robots) && (
+              <>
+                <dt data-copy="RB-09">Robots outcomes</dt>
+                <dd data-testid="run-robots">{robotsCells(e.robots)}</dd>
+              </>
+            )}
+            {classList(e.document_outcomes) && (
+              <>
+                <dt data-copy="RB-10">Document outcomes</dt>
+                <dd>{classList(e.document_outcomes)}</dd>
+              </>
+            )}
+            {e.rate_limit_events !== null && e.rate_limit_events !== undefined && e.rate_limit_events > 0 && (
+              <>
+                <dt data-copy="RB-11">Rate-limit events</dt>
+                <dd>{fmtInt(e.rate_limit_events)}</dd>
+              </>
+            )}
+            {e.quota_reached && <><dt data-copy="RB-12">Quota</dt><dd>a recorded quota stopped this execution early</dd></>}
+            {e.budget_reached && <><dt data-copy="RB-13">Budget</dt><dd>a recorded byte/time budget stopped this execution early</dd></>}
+            <dt data-copy="RB-14">Code identity</dt>
+            <dd>
+              {typeof code.connector_name === "string" ? code.connector_name : "not recorded"}
+              {typeof code.connector_version === "string" && <> {code.connector_version}</>}
+              {" — "}
+              {typeof code.code_commit === "string" && code.code_commit !== "unknown" && code.code_commit !== ""
+                ? <code>{code.code_commit}</code>
+                : <>not recorded{e.shared_run ? " (shared run)" : ""}</>}
+              {" "}<span class="mut">({code.basis})</span>
+            </dd>
+            <dt data-copy="RB-15">Link basis</dt>
+            <dd>
+              {e.link_basis ?? "not recorded"}
+              {e.clock_basis && <> — clock: {e.clock_basis}</>}
+              {e.execution_key && <> · <code>{e.execution_key}</code></>}
+            </dd>
+          </dl>
+      </details>
+    );
+  })}
+</div>

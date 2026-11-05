@@ -47,6 +47,15 @@ import {
 import { resolveSourceId } from "../../../lib/alias";
 import { issueClassLabel, issuesForSource, issueText, getIssues } from "../../../lib/issues";
 import { sourceSlug } from "../../../lib/evidence-hub";
+import SourceSubnav from "../../../components/SourceSubnav.astro";
+import {
+  getSourceCaptures,
+  getSourceVersions,
+  getSourceEntities,
+  entityBrowse,
+  sortedCaptures,
+  ENTITY_BROWSE_CAP,
+} from "../../../lib/source-page-b";
 
 export function getStaticPaths() {
   return getSourcePageIds().map((id) => ({ params: { id }, props: {} }));
@@ -76,6 +85,21 @@ const { artifacts: EVIDENCE_ARTIFACTS_LIST } = getEvidence();
 const hasEvidence = EVIDENCE_ARTIFACTS_LIST.some((a) => a.source === row.source_id);
 const targets = m.extras.targets ?? null;
 const sourceIssues = m.registryOnly ? [] : issuesForSource(getIssues(), id);
+// P36.69 (UX10-3b): the page-B sub-route disclosure set — a sibling route
+// renders only where the source carries the data it lists (R-6: never a
+// dead link); registry-only rows publish nothing but the S-11 record.
+const pageBCaptures = m.registryOnly ? null : getSourceCaptures(id);
+const pageBVersions = m.registryOnly ? null : getSourceVersions(id);
+const pageBBrowse = m.registryOnly ? null : entityBrowse(getSourceEntities(id));
+const subnavHas = {
+  runs: !m.registryOnly,
+  captures: !m.registryOnly, // the captures route emits for every non-registry source (a zero-capture page states its absence)
+  versions: pageBVersions !== null,
+  entities: (pageBBrowse?.rows.length ?? 0) > 0,
+  dossiers: !m.registryOnly && contributions.length > 0,
+};
+const latestCaptures = pageBCaptures === null ? [] : sortedCaptures(pageBCaptures).slice(-20).reverse();
+const latestVersionEntry = pageBVersions?.entries?.length ? pageBVersions.entries[pageBVersions.entries.length - 1] : null;
 const slugify = (s: string): string => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 // JSON pointers are built through a non-literal slash so the root-absolute
 // containment rule never counts a pointer as a site path (same seam
@@ -145,7 +169,7 @@ if (conduct !== null) {
     definition: "#conduct-heading",
     href: `#conduct-heading`,
     breakdown: "#fig-executions-recorded",
-    targets: freshnessTargets(id),
+    targets: freshnessTargets(id, `sources/${id}/runs/`),
   });
   for (const r of conduct.robotsByHost) {
     const total = Object.values(r.outcomes).reduce((a, b) => a + b, 0);
@@ -158,7 +182,7 @@ if (conduct !== null) {
       definition: "#conduct-heading",
       href: `#conduct-heading`,
       breakdown: `#fig-robots-${slugify(r.host)}`,
-      targets: freshnessTargets(id),
+      targets: freshnessTargets(id, `sources/${id}/runs/`),
     });
     const latest = conduct.latestRobots.find((x) => x.host === r.host);
     if (latest) {
@@ -171,7 +195,7 @@ if (conduct !== null) {
         definition: "#conduct-heading",
         href: `#conduct-heading`,
         breakdown: `#fig-robots-${slugify(r.host)}`,
-        targets: freshnessTargets(id),
+        targets: freshnessTargets(id, `sources/${id}/runs/`),
       });
     }
     const disregarded = r.outcomes.disregarded ?? 0;
@@ -185,7 +209,7 @@ if (conduct !== null) {
         definition: "#conduct-heading",
         href: `#conduct-heading`,
         breakdown: `#fig-robots-${slugify(r.host)}`,
-        targets: freshnessTargets(id),
+        targets: freshnessTargets(id, `sources/${id}/runs/`),
       });
     }
   }
@@ -199,7 +223,7 @@ if (conduct !== null) {
       definition: "#conduct-heading",
       href: "#conduct-heading",
       breakdown: `#fig-refusals-${slugify(klass)}`,
-      targets: freshnessTargets(id),
+      targets: freshnessTargets(id, `sources/${id}/runs/`),
     });
   }
   if (conduct.rateLimitEvents > 0) {
@@ -212,7 +236,7 @@ if (conduct !== null) {
       definition: "#conduct-heading",
       href: "#conduct-heading",
       breakdown: "#fig-rate-limit-events",
-      targets: freshnessTargets(id),
+      targets: freshnessTargets(id, `sources/${id}/runs/`),
     });
   }
 }
@@ -282,7 +306,7 @@ if (m.freshness?.volatility) {
       definition: "#about-heading",
       href: "#about-heading",
       breakdown: `#fig-volatility-${slugify(k)}`,
-      targets: freshnessTargets(id),
+      targets: freshnessTargets(id, `sources/${id}/runs/`),
     });
   }
 }
@@ -296,7 +320,7 @@ if (conduct && conduct.quotaReached > 0) {
     definition: "#conduct-heading",
     href: "#conduct-heading",
     breakdown: "#fig-quota-reached",
-    targets: freshnessTargets(id),
+    targets: freshnessTargets(id, `sources/${id}/runs/`),
   });
 }
 if (conduct && conduct.budgetReached > 0) {
@@ -309,8 +333,65 @@ if (conduct && conduct.budgetReached > 0) {
     definition: "#conduct-heading",
     href: "#conduct-heading",
     breakdown: "#fig-budget-reached",
-    targets: freshnessTargets(id),
+    targets: freshnessTargets(id, `sources/${id}/runs/`),
   });
+}
+// P36.69 (UX10-3b): the page-B section's counts ride inside <Figure>
+// regions like every other material number on this page (UXR-34 — the
+// check sweeps /sources/**).
+if (!m.registryOnly) {
+  if (m.executions !== null) {
+    add({
+      id: "pageb-executions",
+      class: "freshness",
+      value: m.executions.length,
+      artifact: `transparency/sources/${id}/executions.jsonl`,
+      pointer: J,
+      definition: "#pageb-heading",
+      href: artifactHref(`transparency/sources/${id}/executions.json`),
+      breakdown: "#fig-pageb-executions",
+      targets: freshnessTargets(id, `sources/${id}/runs/`),
+    });
+  }
+  if (pageBCaptures !== null) {
+    add({
+      id: "pageb-captures",
+      class: "per_source",
+      value: pageBCaptures.length,
+      artifact: `transparency/sources/${id}/captures.jsonl`,
+      pointer: J,
+      definition: "#pageb-heading",
+      href: artifactHref(`transparency/sources/${id}/captures.json`),
+      breakdown: "#fig-pageb-captures",
+      targets: perSourceTargets(id, `sources/${id}/captures/`),
+    });
+  }
+  if (pageBVersions !== null) {
+    add({
+      id: "pageb-versions",
+      class: "per_source",
+      value: pageBVersions.entry_count,
+      artifact: `transparency/sources/${id}/versions.json`,
+      pointer: `${J}entry_count`,
+      definition: "#pageb-heading",
+      href: artifactHref(`transparency/sources/${id}/versions.json`),
+      breakdown: "#fig-pageb-versions",
+      targets: perSourceTargets(id, `sources/${id}/versions/`),
+    });
+  }
+  if (pageBBrowse !== null && pageBBrowse.total > 0) {
+    add({
+      id: "pageb-entities",
+      class: "per_source",
+      value: pageBBrowse.total,
+      artifact: `transparency/sources/${id}/entities.json`,
+      pointer: `${J}entities`,
+      definition: "#pageb-heading",
+      href: artifactHref(`transparency/sources/${id}/entities.json`),
+      breakdown: "#fig-pageb-entities",
+      targets: perSourceTargets(id, `sources/${id}/entities/`),
+    });
+  }
 }
 
 const FIGURES = defineFigures(`source-${id}`, specs);
@@ -352,6 +433,9 @@ const crumbs = [
   crumbs={crumbs}
   lede={m.registryOnly ? undefined : `${row.name} — a registered SIG source (${row.lifecycle_state.replace(/_/g, " ")}).`}
 >
+  <Fragment slot="head">
+    <link rel="alternate" type="application/json" href={withBase(`sources/${id}/index.json`)} />
+  </Fragment>
   {/* ===================== S-11 registry-only page ===================== */}
   {m.registryOnly ? (
     <section aria-labelledby="registry-only-heading" data-testid="registry-only-page">
@@ -389,6 +473,7 @@ const crumbs = [
   ) : (
     <>
       {/* ===================== Header ===================== */}
+      <SourceSubnav id={id} name={row.name} has={subnavHas} current="source" />
       <p class="sig-source-meta" data-testid="source-header" data-copy="SP-01">
         <span data-testid="lifecycle-chip">{row.lifecycle_state.replace(/_/g, " ")}</span>
         {row.status_flags.length > 0 && (
@@ -845,6 +930,61 @@ const crumbs = [
         <p data-copy="SP-80">
           <a href={withBase(`status/sources/#src-${id}`)}>Runs since this release and the current verdict</a>{" "}
           live on the status lane — a different clock, never a citation.
+        </p>
+      </section>
+
+      {/* ===================== Page B: runs, captures, versions, entities, dossiers (P36.69) ===================== */}
+      <section aria-labelledby="pageb-heading" data-testid="page-b-sections">
+        <h2 id="pageb-heading" data-copy="PB-01">Recorded runs, captures, versions and entities</h2>
+        <dl class="sig-fields">
+          <dt data-copy="PB-02">Runs</dt>
+          <dd data-testid="pageb-runs">
+            {m.executions === null
+              ? "no execution records in this release"
+              : <><Figure figure={fig("pageb-executions")} order="inline">{fmtInt(m.executions.length)}</Figure> recorded executions — <a href={withBase(`sources/${id}/runs/`)}>the full run history →</a></>}
+          </dd>
+          <dt data-copy="PB-03">Captures</dt>
+          <dd data-testid="pageb-captures">
+            {pageBCaptures === null
+              ? "no capture records in this release"
+              : <><Figure figure={fig("pageb-captures")} order="inline">{fmtInt(pageBCaptures.length)}</Figure> recorded captures — <a href={withBase(`sources/${id}/captures/`)}>captures →</a>{" · "}<a href={withBase(`sources/${id}/captures/changes/`)}>record-set changes →</a></>}
+          </dd>
+          <dt data-copy="PB-04">Versions</dt>
+          <dd data-testid="pageb-versions">
+            {pageBVersions === null
+              ? "no version index in this release"
+              : <><Figure figure={fig("pageb-versions")} order="inline">{fmtInt(pageBVersions.entry_count)}</Figure> release version(s){latestVersionEntry?.state === "extract" && <> — latest extract published</>}{" — "}<a href={withBase(`sources/${id}/versions/`)}>versions and downloads →</a></>}
+          </dd>
+          <dt data-copy="PB-05">Entities</dt>
+          <dd data-testid="pageb-entities">
+            {pageBBrowse === null || pageBBrowse.total === 0
+              ? "no published entities cite this source in this build"
+              : <><Figure figure={fig("pageb-entities")} order="inline">{fmtInt(pageBBrowse.total)} published entities{pageBBrowse.capped && <> (the browse shows the first {fmtInt(ENTITY_BROWSE_CAP)})</>}</Figure>{" — "}<a href={withBase(`sources/${id}/entities/`)}>entity browse →</a></>}
+          </dd>
+          {contributions.length > 0 && (
+            <>
+              <dt data-copy="PB-06">Dossier contribution</dt>
+              <dd data-testid="pageb-dossiers">
+                <a href={withBase(`sources/${id}/dossiers/`)}>the full contribution table →</a>{" "}
+                (the same rows the dossier pages render — one shared artifact)
+              </dd>
+            </>
+          )}
+        </dl>
+        {latestCaptures.length > 0 && (
+          <p data-copy="PB-07" data-testid="latest-captures-note">
+            The most recent captures and every file action the lane allows
+            are on the{" "}
+            <a href={withBase(`sources/${id}/captures/`)}>captures page</a>.
+          </p>
+        )}
+        <p data-copy="PB-08">
+          Machine twins: <a href={withBase(`sources/${id}/index.json`)}>index.json</a>
+          {" · "}<a href={withBase(`sources/${id}/runs/index.json`)}>runs/index.json</a>
+          {subnavHas.captures && <>{" · "}<a href={withBase(`sources/${id}/captures/index.json`)}>captures/index.json</a></>}
+          {subnavHas.versions && <>{" · "}<a href={withBase(`sources/${id}/versions/index.json`)}>versions/index.json</a></>}
+          {subnavHas.entities && <>{" · "}<a href={withBase(`sources/${id}/entities/index.json`)}>entities/index.json</a></>}
+          {subnavHas.dossiers && <>{" · "}<a href={withBase(`sources/${id}/dossiers/index.json`)}>dossiers/index.json</a></>}
         </p>
       </section>
     </>

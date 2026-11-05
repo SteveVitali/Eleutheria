@@ -87,6 +87,7 @@ import {
   SOURCE_EXECUTIONS_FIXTURE,
   SOURCE_FRESHNESS_FIXTURE,
 } from "./source-page";
+import { getSourceCaptures, getSourceEntities, getSourceVersions } from "./source-page-b";
 import { getStatusLane } from "./status-lane";
 import { isResolutionEval, type ResolutionEval } from "./resolution-eval";
 import { STATEMENT_FIXTURES } from "./statements-fixture";
@@ -2503,6 +2504,26 @@ export function getReleaseArtifactPayload(artifactPath: string): unknown | null 
         artifactPath,
       );
       if (m) return getSourceExecutionsArtifact(m[1]!);
+      // P36.69: the per-source page-B documents the sub-pages' figures point
+      // at — the sig.source-versions/1 index and the sig.source-entities/1
+      // browse list (same payload the data layer surfaces).
+      const v = /^transparency\/sources\/([a-z0-9_-]+)\/versions\.json$/.exec(
+        artifactPath,
+      );
+      if (v) return getSourceVersions(v[1]!);
+      // P36.69: the per-source capture stream the captures figures point at —
+      // null when the source records none (the route then emits no link).
+      const c = /^transparency\/sources\/([a-z0-9_-]+)\/captures\.jsonl$/.exec(
+        artifactPath,
+      );
+      if (c) return getSourceCaptures(c[1]!);
+      const e = /^transparency\/sources\/([a-z0-9_-]+)\/entities\.json$/.exec(
+        artifactPath,
+      );
+      if (e) {
+        const rows = getSourceEntities(e[1]!);
+        return rows.length === 0 ? null : { schema: "sig.source-entities/1", source_id: e[1]!, entities: rows };
+      }
       // P36.52: the per-dossier sig.dossier-sources/1 documents the explorer's
       // figures point at — served by the same data-layer payload the page
       // renders (fixtures corpus or the export's own emitted file).

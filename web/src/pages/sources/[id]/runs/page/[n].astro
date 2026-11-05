@@ -1,0 +1,105 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.69 (UX10-3b, K9 §6.1): `/sources/<id>/runs/page/<n>/` — the run
+// history's continuation pages (emitted only when a source records more
+// than 100 executions). T1, zero-JS.
+import BaseLayout from "../../../../../layouts/BaseLayout.astro";
+import SourceSubnav from "../../../../../components/SourceSubnav.astro";
+import SourcePager from "../../../../../components/SourcePager.astro";
+import RunsList from "../../../../../components/RunsList.astro";
+import { artifactHref, defineFigures, freshnessTargets, type FigureSpec } from "../../../../../lib/figures";
+import { withBase } from "../../../../../lib/paths";
+import { getSourcePage, type SourcePageModel } from "../../../../../lib/source-page";
+import { resolveSourceId } from "../../../../../lib/alias";
+import {
+  getPageBIds,
+  getSourceVersions,
+  getSourceEntities,
+  SUBPAGE_SIZE,
+  pageCount,
+  pageSlice,
+} from "../../../../../lib/source-page-b";
+
+export function getStaticPaths() {
+  return getPageBIds().flatMap((id) => {
+    const model = getSourcePage(id);
+    const execs = model?.executions ?? [];
+    const pages = pageCount(execs.length);
+    return Array.from({ length: pages - 1 }, (_, i) => ({ params: { id, n: String(i + 2) } }));
+  });
+}
+
+const id = resolveSourceId(String(Astro.params.id ?? "")) ?? "";
+const page = Number(Astro.params.n);
+const model = getSourcePage(id);
+if (model === null) throw new Error(`sources/[id]/runs/page: no source-page row for "${id}"`);
+const m = model as SourcePageModel;
+const row = m.row;
+const executions = [...(m.executions ?? [])].sort((a, b) =>
+  String(b.started_at ?? b.finished_at ?? "").localeCompare(String(a.started_at ?? a.finished_at ?? "")),
+);
+const pages = pageCount(executions.length);
+const slice = pageSlice(executions, page);
+const offset = (page - 1) * SUBPAGE_SIZE;
+const has = {
+  runs: true,
+  captures: true,
+  versions: getSourceVersions(id) !== null,
+  entities: getSourceEntities(id).length > 0,
+  dossiers: (row.contributions ?? []).length > 0,
+};
+const J = String.fromCharCode(47);
+
+const specs: FigureSpec[] = [
+  {
+    id: "runs-page",
+    class: "freshness",
+    value: executions.length,
+    artifact: `transparency/sources/${id}/executions.jsonl`,
+    pointer: J,
+    definition: "#runs-heading",
+    href: artifactHref(`transparency/sources/${id}/executions.json`),
+    breakdown: "#fig-runs-page",
+    targets: freshnessTargets(id, `sources/${id}/runs/`),
+  },
+];
+const FIGURES = defineFigures(`source-runs-${id}-p${page}`, specs);
+const fig = (fid: string) => {
+  const f = FIGURES.find((x) => x.id === fid);
+  if (!f) throw new Error(`source-runs-${id}-p${page} figures[]: no figure "${fid}"`);
+  return f;
+};
+
+const crumbs = [
+  { label: "Sources", href: withBase("sources/") },
+  { label: row.name, href: withBase(`sources/${id}/`) },
+  { label: "Runs", href: withBase(`sources/${id}/runs/`) },
+  { label: `Page ${page}` },
+];
+---
+
+<BaseLayout title={`${row.name} — runs, page ${page}`} path={withBase(`sources/${id}/runs/page/${page}/`)} crumbs={crumbs}>
+  <SourceSubnav id={id} name={row.name} has={has} current="runs" />
+  <section aria-labelledby="runs-heading">
+    <h2 id="runs-heading">Runs — {row.name}</h2>
+    <SourcePager
+      base={`sources/${id}/runs`}
+      page={page}
+      pages={pages}
+      first={offset + 1}
+      last={offset + slice.length}
+      total={executions.length}
+      noun="executions"
+      label="Runs"
+      figure={fig("runs-page")}
+    />
+    <RunsList id={id} executions={slice} hasCaptures={has.captures} />
+    <p>
+      <a href={withBase(`sources/${id}/runs/`)}>First page</a> · machine twin{" "}
+      <a href={withBase(`sources/${id}/runs/index.json`)}>index.json</a>
+    </p>
+  </section>
+</BaseLayout>

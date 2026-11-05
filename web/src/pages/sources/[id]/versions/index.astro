@@ -1,0 +1,247 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.69 (UX10-3b, K10 §11, SIG-TRANSP-032/041): `/sources/<id>/versions/` —
+// the `sig.source-versions/1` index rendered: the latest released extract,
+// the per-release entries table (manifest-only prior releases labelled,
+// D-K9-2 = a) and the link to capture versions. T1, zero-JS.
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import SourceSubnav from "../../../../components/SourceSubnav.astro";
+import Figure from "../../../../components/Figure.astro";
+import { artifactHref, defineFigures, perSourceTargets, type FigureSpec } from "../../../../lib/figures";
+import { fmtInt } from "../../../../lib/format";
+import { formatBytes } from "../../../../lib/downloads";
+import { withBase } from "../../../../lib/paths";
+import { getSourcePage, type SourcePageModel } from "../../../../lib/source-page";
+import { resolveSourceId } from "../../../../lib/alias";
+import {
+  getPageBIds,
+  getSourceVersions,
+  getSourceEntities,
+} from "../../../../lib/source-page-b";
+
+export function getStaticPaths() {
+  return getPageBIds().filter((id) => getSourceVersions(id) !== null).map((id) => ({ params: { id } }));
+}
+
+const id = resolveSourceId(String(Astro.params.id ?? "")) ?? "";
+const model = getSourcePage(id);
+if (model === null) throw new Error(`sources/[id]/versions: no source-page row for "${id}" (SIG-ENG-042)`);
+const m = model as SourcePageModel;
+if (m.registryOnly) throw new Error(`sources/[id]/versions: registry-only "${id}" must not emit a versions page (S-11)`);
+const row = m.row;
+const doc = getSourceVersions(id);
+if (doc === null) throw new Error(`sources/[id]/versions: no versions.json for "${id}" — the route set drifted`);
+const entries = [...doc.entries].reverse(); // newest first for display
+const latest = entries.find((e) => e.state === "extract") ?? null;
+const J = String.fromCharCode(47);
+const VART = `transparency/sources/${id}/versions.json`;
+
+const specs: FigureSpec[] = [
+  {
+    id: "version-entries", class: "per_source", value: doc.entry_count, artifact: VART,
+    pointer: `${J}entry_count`, definition: "#versions-heading", href: artifactHref(VART),
+    breakdown: "#fig-version-entries", targets: perSourceTargets(id, `sources/${id}/versions/`),
+  },
+];
+for (const [i, e] of entries.entries()) {
+  const figId = `entry-${i}`;
+  if (e.rows?.sites !== null && e.rows?.sites !== undefined) {
+    specs.push({
+      id: `${figId}-sites`, class: "per_source", value: e.rows.sites, artifact: VART,
+      pointer: `${J}entries${J}${doc.entries.length - 1 - i}${J}rows${J}sites`,
+      definition: "#versions-heading", href: artifactHref(VART),
+      breakdown: `#fig-${figId}`, targets: perSourceTargets(id, `sources/${id}/versions/`),
+    });
+  }
+  if (e.rows?.statements !== null && e.rows?.statements !== undefined) {
+    specs.push({
+      id: `${figId}-statements`, class: "per_source", value: e.rows.statements, artifact: VART,
+      pointer: `${J}entries${J}${doc.entries.length - 1 - i}${J}rows${J}statements`,
+      definition: "#versions-heading", href: artifactHref(VART),
+      breakdown: `#fig-${figId}`, targets: perSourceTargets(id, `sources/${id}/versions/`),
+    });
+  }
+  if (e.published_claims !== null && e.published_claims !== undefined) {
+    specs.push({
+      id: `${figId}-claims`, class: "per_source", value: e.published_claims, artifact: VART,
+      pointer: `${J}entries${J}${doc.entries.length - 1 - i}${J}published_claims`,
+      definition: "#versions-heading", href: artifactHref(VART),
+      breakdown: `#fig-${figId}`, targets: perSourceTargets(id, `sources/${id}/versions/`),
+    });
+  }
+  if ((e.diff && e.diff.state === "evaluated") || e.diff?.state === "baseline") {
+    const total = (e.diff?.added ?? 0) + (e.diff?.removed ?? 0) + (e.diff?.changed ?? 0);
+    specs.push({
+      id: `${figId}-diff`, class: "per_source", value: total, artifact: VART,
+      pointer: `${J}entries${J}${doc.entries.length - 1 - i}${J}diff`,
+      definition: "#versions-heading", href: artifactHref(VART),
+      breakdown: `#fig-${figId}`, targets: perSourceTargets(id, `sources/${id}/versions/`),
+    });
+  }
+  // Per-file bytes figures — the files-cell numerals ride inside a <Figure>
+  // region like every other material number (UXR-34). Manifest-only entries
+  // skip the files cell (their bytes are not republished), so no spec
+  // registers for them. The latest-extract table re-uses the same entry's
+  // numbers under `latest-file-<j>-*` ids — the two renders never share an id.
+  if (e.state !== "manifest_only" && e.files.length > 0) {
+    for (const [j, f] of e.files.entries()) {
+      specs.push({
+        id: `${figId}-file-${j}-bytes`, class: "per_source", value: f.bytes, artifact: VART,
+        pointer: `${J}entries${J}${doc.entries.length - 1 - i}${J}files${J}${j}${J}bytes`,
+        definition: "#versions-heading", href: artifactHref(VART),
+        breakdown: `#fig-${figId}`, targets: perSourceTargets(id, `sources/${id}/versions/`),
+      });
+      if (e === latest) {
+        specs.push({
+          id: `latest-file-${j}-bytes`, class: "per_source", value: f.bytes, artifact: VART,
+          pointer: `${J}entries${J}${doc.entries.length - 1 - i}${J}files${J}${j}${J}bytes`,
+          definition: "#versions-heading", href: artifactHref(VART),
+          breakdown: "#fig-latest-file", targets: perSourceTargets(id, `sources/${id}/versions/`),
+        });
+        if (f.rows !== undefined) {
+          specs.push({
+            id: `latest-file-${j}-rows`, class: "per_source", value: f.rows, artifact: VART,
+            pointer: `${J}entries${J}${doc.entries.length - 1 - i}${J}files${J}${j}${J}rows`,
+            definition: "#versions-heading", href: artifactHref(VART),
+            breakdown: "#fig-latest-file", targets: perSourceTargets(id, `sources/${id}/versions/`),
+          });
+        }
+      }
+    }
+  }
+}
+const FIGURES = defineFigures(`source-versions-${id}`, specs);
+const fig = (fid: string) => {
+  const f = FIGURES.find((x) => x.id === fid);
+  if (!f) throw new Error(`source-versions-${id} figures[]: no figure "${fid}"`);
+  return f;
+};
+const has = {
+  runs: true,
+  captures: true,
+  versions: true,
+  entities: getSourceEntities(id).length > 0,
+  dossiers: (row.contributions ?? []).length > 0,
+};
+const crumbs = [
+  { label: "Sources", href: withBase("sources/") },
+  { label: row.name, href: withBase(`sources/${id}/`) },
+  { label: "Versions" },
+];
+const entryLabel = (e: (typeof entries)[number]): string =>
+  e.release.label ?? e.release.publication_id ?? "unlabelled release";
+---
+
+<BaseLayout title={`${row.name} — versions`} path={withBase(`sources/${id}/versions/`)} crumbs={crumbs}>
+  <Fragment slot="head">
+    <link rel="alternate" type="application/json" href={withBase(`sources/${id}/versions/index.json`)} />
+  </Fragment>
+  <SourceSubnav id={id} name={row.name} has={has} current="versions" />
+  <section aria-labelledby="versions-heading">
+    <h2 id="versions-heading" data-copy="VB-01">Versions and downloads — {row.name}</h2>
+    {doc.disclosures.map((d) => <p class="mut" data-copy="VB-02">{d}</p>)}
+
+    <h2 data-copy="VB-03">Latest released extract</h2>
+    {latest === null ? (
+      <p data-testid="latest-extract-none">No released extract is published for this source yet.</p>
+    ) : (
+      <table class="sig-table" data-testid="latest-extract">
+        <thead><tr><th scope="col">File</th><th scope="col">Format</th><th scope="col">Rows</th><th scope="col">Bytes</th><th scope="col">sha256</th></tr></thead>
+        <tbody>
+          {latest.files.map((f, j) => (
+            <tr data-testid="extract-file" id={j === 0 ? "fig-latest-file" : undefined}>
+              <td>{f.href ? <a href={f.href} rel="external">{f.name}</a> : f.name}</td>
+              <td>{f.format ?? "not recorded"}</td>
+              <td>{f.rows !== undefined ? <Figure figure={fig(`latest-file-${j}-rows`)} order="inline">{fmtInt(f.rows)}</Figure> : "not recorded"}</td>
+              <td><Figure figure={fig(`latest-file-${j}-bytes`)} order="inline">{formatBytes(f.bytes)}</Figure></td>
+              <td><code>sha256:{f.sha256.slice(0, 16)}…</code></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+    <p data-copy="VB-04">
+      Latest released data — never the latest run's data: runs land between
+      releases and publish in the next one.
+    </p>
+
+    <h2 id="fig-version-entries" data-copy="VB-05">
+      Release versions (<Figure figure={fig("version-entries")} order="inline">{fmtInt(doc.entry_count)}</Figure>)
+    </h2>
+    <table class="sig-table" data-testid="versions-table">
+      <thead>
+        <tr>
+          <th scope="col">Release</th><th scope="col">Data as of</th><th scope="col">State</th>
+          <th scope="col">Rows</th><th scope="col">Claims</th><th scope="col">Changed?</th>
+          <th scope="col">Added / removed / changed</th><th scope="col">Files</th>
+        </tr>
+      </thead>
+      <tbody>
+        {entries.map((e, i) => (
+          <tr data-testid="version-row" id={`fig-entry-${i}`}>
+            <td>{entryLabel(e)}</td>
+            <td>{e.release.as_of_world ?? "not recorded"}</td>
+            <td data-testid="version-state">
+              {e.state === "manifest_only" ? (
+                <>manifest only — not republished</>
+              ) : e.state === "extract_absent" ? (
+                <>extract absent</>
+              ) : (
+                <>extract</>
+              )}
+            </td>
+            <td>
+              {e.rows?.sites !== null && e.rows?.sites !== undefined ? (
+                <Figure figure={fig(`entry-${i}-sites`)} order="inline">{fmtInt(e.rows.sites)} sites</Figure>
+              ) : (e.rows?.statements !== null && e.rows?.statements !== undefined ? (
+                <Figure figure={fig(`entry-${i}-statements`)} order="inline">{fmtInt(e.rows.statements)} statements</Figure>
+              ) : "not recorded")}
+            </td>
+            <td>
+              {e.published_claims !== null && e.published_claims !== undefined ? (
+                <Figure figure={fig(`entry-${i}-claims`)} order="inline">{fmtInt(e.published_claims)}</Figure>
+              ) : "not recorded"}
+            </td>
+            <td>{e.changed === null || e.changed === undefined ? "not evaluated" : e.changed ? "yes" : "no"}</td>
+            <td>
+              {e.diff ? (
+                e.diff.state === "evaluated" || e.diff.state === "baseline" ? (
+                  <Figure figure={fig(`entry-${i}-diff`)} order="inline">
+                    {e.diff.state === "baseline" && <>(baseline) </>}
+                    +{fmtInt(e.diff.added)} / −{fmtInt(e.diff.removed)} / ~{fmtInt(e.diff.changed)}
+                  </Figure>
+                ) : e.diff.state === "not_evaluable" ? (
+                  "not evaluable"
+                ) : (
+                  e.diff.state.replace(/_/g, " ")
+                )
+              ) : "not recorded"}
+            </td>
+            <td>
+              {e.state === "manifest_only" ? (
+                <span class="mut" title={e.reason}>manifest-listed files — not republished</span>
+              ) : e.files.length === 0 ? (
+                <span class="mut" title={e.absence}>{e.absence ? "no extract emitted — see note" : "none"}</span>
+              ) : (
+                e.files.map((f, j) => (
+                  <div>
+                    {f.href ? <a href={f.href} rel="external">{f.name}</a> : f.name}{" "}
+                    <Figure figure={fig(`entry-${i}-file-${j}-bytes`)} order="inline"><span class="mut">({formatBytes(f.bytes)})</span></Figure>
+                  </div>
+                ))
+              )}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <p data-copy="VB-06">
+      Capture-level versions live on the{" "}
+      <a href={withBase(`sources/${id}/captures/changes/`)}>changes list</a>;
+      API equivalents publish with the release's <a href={withBase("data/api/")}>data API</a>.
+    </p>
+  </section>
+</BaseLayout>

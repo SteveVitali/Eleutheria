@@ -1,0 +1,127 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.69 (UX10-3b, K10 §12, SIG-TRANSP-008/040, SIG-DSRC-008): the dossier
+// contribution table — the shared artifact (P35.44) rendered verbatim with
+// its assignment basis per row, the same rows the dossier explorer renders
+// (parity by construction). T1, zero-JS.
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import SourceSubnav from "../../../../components/SourceSubnav.astro";
+import Figure from "../../../../components/Figure.astro";
+import { artifactHref, defineFigures, perSourceTargets, type FigureSpec } from "../../../../lib/figures";
+import { fmtInt } from "../../../../lib/format";
+import { withBase } from "../../../../lib/paths";
+import { getSourcePage, type SourcePageModel } from "../../../../lib/source-page";
+import { resolveSourceId } from "../../../../lib/alias";
+import {
+  getPageBIds,
+  getSourceVersions,
+  getSourceEntities,
+} from "../../../../lib/source-page-b";
+
+export function getStaticPaths() {
+  return getPageBIds()
+    .filter((id) => ((getSourcePage(id)?.row.contributions ?? []).length > 0))
+    .map((id) => ({ params: { id } }));
+}
+
+const id = resolveSourceId(String(Astro.params.id ?? "")) ?? "";
+const model = getSourcePage(id);
+if (model === null) throw new Error(`sources/[id]/dossiers: no row for "${id}" (SIG-ENG-042)`);
+const m = model as SourcePageModel;
+if (m.registryOnly) throw new Error(`sources/[id]/dossiers: registry-only "${id}" must not emit a dossiers page (S-11)`);
+const row = m.row;
+const contributions = row.contributions ?? [];
+const J = String.fromCharCode(47);
+const SART = "transparency/sources.json";
+
+const specs: FigureSpec[] = [
+  {
+    id: "dossier-contributions", class: "per_source", value: contributions.length, artifact: SART,
+    pointer: `${J}sources${J}${id}${J}contributions`, definition: "#dossiers-heading",
+    href: artifactHref(SART), breakdown: "#fig-dossier-contributions",
+    targets: perSourceTargets(id, `sources/${id}/dossiers/`),
+  },
+];
+for (const [i, c] of contributions.entries()) {
+  specs.push({
+    id: `contribution-${i}`, class: "per_source", value: c.records, artifact: SART,
+    pointer: `${J}sources${J}${id}${J}contributions${J}${i}${J}records`,
+    definition: "#dossiers-heading", href: artifactHref(SART),
+    breakdown: `#fig-contribution-${i}`, targets: perSourceTargets(id, `sources/${id}/dossiers/`),
+  });
+  if (typeof c.share_of_dossier === "number") {
+    specs.push({
+      id: `contribution-${i}-share`, class: "per_source", value: c.share_of_dossier, artifact: SART,
+      pointer: `${J}sources${J}${id}${J}contributions${J}${i}${J}share_of_dossier`,
+      definition: "#dossiers-heading", href: artifactHref(SART),
+      breakdown: `#fig-contribution-${i}`, targets: perSourceTargets(id, `sources/${id}/dossiers/`),
+    });
+  }
+}
+const FIGURES = defineFigures(`source-dossiers-${id}`, specs);
+const fig = (fid: string) => {
+  const f = FIGURES.find((x) => x.id === fid);
+  if (!f) throw new Error(`source-dossiers-${id} figures[]: no figure "${fid}"`);
+  return f;
+};
+const has = {
+  runs: true,
+  captures: true,
+  versions: getSourceVersions(id) !== null,
+  entities: getSourceEntities(id).length > 0,
+  dossiers: true,
+};
+const crumbs = [
+  { label: "Sources", href: withBase("sources/") },
+  { label: row.name, href: withBase(`sources/${id}/`) },
+  { label: "Dossier contribution" },
+];
+const BASIS_WORDS: Record<string, string> = {
+  declared_by_source: "declared by the source",
+  located_by_point: "located by point",
+  document_scope: "document scope",
+};
+---
+
+<BaseLayout title={`${row.name} — dossier contribution`} path={withBase(`sources/${id}/dossiers/`)} crumbs={crumbs}>
+  <Fragment slot="head">
+    <link rel="alternate" type="application/json" href={withBase(`sources/${id}/dossiers/index.json`)} />
+  </Fragment>
+  <SourceSubnav id={id} name={row.name} has={has} current="dossiers" />
+  <section aria-labelledby="dossiers-heading">
+    <h2 id="dossiers-heading" data-copy="DB-01">Dossier contribution — {row.name}</h2>
+    <p data-copy="DB-02">
+      This source's contribution to each dossier — one shared artifact with
+      the dossier pages, so the numbers are equal by construction
+      (SIG-DSRC-008). Each row states how records were assigned to the
+      jurisdiction (SIG-TRANSP-040).
+    </p>
+    <p id="fig-dossier-contributions" data-testid="contributions-total">
+      <Figure figure={fig("dossier-contributions")} order="inline">{fmtInt(contributions.length)}</Figure>{" "}
+      dossier groupings.
+    </p>
+    <table class="sig-table" data-testid="contributions-table">
+      <thead>
+        <tr><th scope="col">Dossier</th><th scope="col">Records</th><th scope="col">Share of dossier</th><th scope="col">Assignment basis</th></tr>
+      </thead>
+      <tbody>
+        {contributions.map((c, i) => (
+          <tr data-testid="contribution-row" id={`fig-contribution-${i}`}>
+            <td>{c.dossier_slug ? <a href={withBase(`dossier/${c.dossier_slug}/`)}>{c.dossier_key}</a> : c.dossier_key}</td>
+            <td><Figure figure={fig(`contribution-${i}`)} order="inline">{fmtInt(c.records)}</Figure></td>
+            <td>{typeof c.share_of_dossier === "number" ? <Figure figure={fig(`contribution-${i}-share`)} order="inline">{fmtInt(c.share_of_dossier)}</Figure> : (c.share_of_dossier ?? "not recorded")}</td>
+            <td data-testid="contribution-basis">{BASIS_WORDS[c.basis] ?? c.basis}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <p data-copy="DB-03">
+      The dossier explorer renders the same rows filtered by dossier — the
+      numbers cannot drift. Machine twin:{" "}
+      <a href={withBase(`sources/${id}/dossiers/index.json`)}>index.json</a>.
+    </p>
+  </section>
+</BaseLayout>
