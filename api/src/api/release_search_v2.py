@@ -89,8 +89,8 @@ KNOWN_PARAMS_V2 = frozenset(
         "source",
         "technology",
         "collection",
-        "location",  # recognized but unsupported by the v2 engine → typed 422
-        "within",  # recognized but unsupported by the v2 engine → typed 422
+        "location",  # recognized, unsupported by the v2 engine → typed 422 (P36.71)
+        "within",  # recognized, unsupported by the v2 engine → typed 422 (P36.71)
         "cursor",
         "expand",
         "limit",

@@ -788,6 +788,57 @@ def build_parser() -> argparse.ArgumentParser:
         help="stamp the report's generated_at (ISO-8601) — the caller's clock",
     )
 
+    acc = subparsers.add_parser(
+        "search-acceptance",
+        help="P36.71 (R11-K13-SRCH-07): the sig.search-acceptance/1 battery — "
+        "dev + held-out benchmarks, seal verify, thresholds, index bytes and "
+        "the A1/J2 journey legs over a built release dir.",
+    )
+    acc.add_argument("--release", required=True, help="the built release dir")
+    acc.add_argument(
+        "--queries",
+        default=None,
+        help="the dev sig.search-benchmark-queries/1 file (default: the committed dev set)",
+    )
+    acc.add_argument(
+        "--held-out",
+        default=None,
+        help="the sealed set object bytes — sha256-verified against the "
+        "committed descriptor, never read otherwise (B-28 = b)",
+    )
+    acc.add_argument(
+        "--emit-held-out",
+        action="store_true",
+        help="derive the sealed bytes via `python -m ops held-out emit` into a "
+        "temp dir (the acceptance row's sanctioned read; deleted after use)",
+    )
+    acc.add_argument(
+        "--descriptor",
+        default=None,
+        help="the committed sig.held-out-relevance-descriptor/1 (default: the repo one)",
+    )
+    acc.add_argument(
+        "--billing",
+        default=None,
+        help="a billing readout JSON for the SIG-UI-081 cost leg (absent → deferred)",
+    )
+    acc.add_argument(
+        "--posture",
+        default="local",
+        help="the measured posture named on the report (default: local)",
+    )
+    acc.add_argument(
+        "--enforce",
+        action="store_true",
+        help="exit 4 when any declared threshold is unmet (the verify leg's mode)",
+    )
+    acc.add_argument("--out", default=None, help="write the report JSON here (default: stdout)")
+    acc.add_argument(
+        "--generated-at",
+        default=None,
+        help="stamp the report's generated_at (ISO-8601) — the caller's clock",
+    )
+
     return parser
 
 
@@ -1762,6 +1813,8 @@ def main(argv: list[str] | None = None) -> int:
         return _run_figure(args)
     if args.command == "search-benchmark":
         return _run_search_benchmark(args)
+    if args.command == "search-acceptance":
+        return _run_search_acceptance(args)
     parser.print_help()
     return 0
 
@@ -1815,6 +1868,83 @@ def _run_search_benchmark(args: argparse.Namespace) -> int:
         print(f"sig-exports search-benchmark: {e.code} — {e.detail}")
         return 4
     print(json.dumps(report, indent=2, sort_keys=True))
+    return 0
+
+
+def _run_search_acceptance(args: argparse.Namespace) -> int:
+    """The P36.71 acceptance leg — offline; the sealed blob is digest-
+    verified, never read otherwise, and never written to the tree."""
+    import subprocess
+    import tempfile
+
+    from . import search_acceptance as sa
+    from . import search_benchmark as sb
+    from .search_index_v2 import SearchIndexV2Error
+    from .search_query_v2 import SearchQueryV2Error
+
+    blob: bytes | None = None
+    tmpdir: tempfile.TemporaryDirectory[str] | None = None
+    try:
+        if args.held_out:
+            blob = Path(args.held_out).read_bytes()
+        elif args.emit_held_out:
+            tmpdir = tempfile.TemporaryDirectory(prefix="sig-heldout-")
+            tmp = Path(tmpdir.name) / "set.json"
+            r = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "ops",
+                    "held-out",
+                    "emit",
+                    "--out",
+                    str(tmp),
+                ],
+                capture_output=True,
+                text=True,
+            )
+            if r.returncode != 0 or not tmp.is_file():
+                print(
+                    "sig-exports search-acceptance: held_out_emit — "
+                    f"`python -m ops held-out emit` failed: {r.stderr.strip()[:300]}"
+                )
+                return 4
+            blob = tmp.read_bytes()
+        desc = sb.load_held_out_descriptor(args.descriptor)
+        billing = None
+        if args.billing:
+            billing = json.loads(Path(args.billing).read_text(encoding="utf-8"))
+        report = sa.run_acceptance(
+            args.release,
+            dev_queries=args.queries,
+            held_out_blob=blob,
+            descriptor=desc,
+            billing=billing,
+            generated_at=args.generated_at,
+            posture=str(args.posture or "local"),
+        )
+    except sb.SearchBenchmarkError as e:
+        print(f"sig-exports search-acceptance: {e.code} — {e.detail}")
+        return 4
+    except (SearchIndexV2Error, SearchQueryV2Error) as e:
+        print(f"sig-exports search-acceptance: {e.code} — {e.detail}")
+        return 4
+    finally:
+        if tmpdir is not None:
+            tmpdir.cleanup()  # the sealed bytes leave no trace
+    out = json.dumps(report, indent=2, sort_keys=True)
+    if args.out:
+        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.out).write_text(out + "\n", encoding="utf-8")
+    else:
+        print(out)
+    if args.enforce and report["verdict"] != "pass":
+        print(
+            f"sig-exports search-acceptance: verdict {report['verdict']} — "
+            f"unmet: {', '.join(report['unmet']) or 'none'}",
+            file=sys.stderr,
+        )
+        return 4
     return 0
 
 

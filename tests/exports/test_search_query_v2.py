@@ -547,3 +547,41 @@ def test_committed_dev_query_set_loads():
     )
     assert len(doc["queries"]) >= 30
     assert doc["schema"] == sb.QUERY_SET_SCHEMA
+
+
+# --------------------------------------------------------------------------- #
+# P36.71 / D-P36.56-1 — chain-aware jurisdiction + typed refusals            #
+# --------------------------------------------------------------------------- #
+
+
+def test_jurisdiction_filter_includes_descendants(engine):
+    """SIG-UI-059's 'a filter including descendants' — a parent jkey scopes
+    to the key AND every place key beneath it in the catalog's recorded
+    parentage (D-P36.56-1 closure)."""
+    resp = _q(engine, None, jurisdiction="iso3166-1:MX", limit=50)
+    keys = {r["jurisdiction"] for g in resp["record_groups"] for r in g["results"]}
+    assert keys == {"iso3166-1:MX", "iso3166-2:MX-KL"}
+    # A leaf request keeps its old leaf-exact behaviour.
+    resp2 = _q(engine, None, jurisdiction="iso3166-2:MX-KL", limit=50)
+    keys2 = {r["jurisdiction"] for g in resp2["record_groups"] for r in g["results"]}
+    assert keys2 == {"iso3166-2:MX-KL"}
+    # An unrelated parent matches nothing — scoped, never silently unscoped.
+    resp3 = _q(engine, None, jurisdiction="iso3166-1:KS", limit=50)
+    assert not [r for g in resp3["record_groups"] for r in g["results"]]
+
+
+def test_jurisdiction_subtree_helper(engine):
+    assert engine.jurisdiction_subtree("iso3166-1:MX") == ["iso3166-1:MX", "iso3166-2:MX-KL"]
+    assert engine.jurisdiction_subtree("iso3166-2:MX-KL") == ["iso3166-2:MX-KL"]
+    assert engine.jurisdiction_subtree("unknown:XX") == ["unknown:XX"]
+
+
+def test_within_and_location_refuse_typed_422():
+    for kw in ({"within": "entity:ent-1"}, {"location": "located"}):
+        with pytest.raises(sqv.SearchQueryV2Error) as ei:
+            sqv.parse_params_v2(q="x", limit=10, **kw)
+        assert ei.value.status == 422
+        assert ei.value.code == "unsupported_query"
+    # Empty values behave like absent params.
+    p = sqv.parse_params_v2(q="x", limit=10, within="  ", location="")
+    assert p.filters == {}
