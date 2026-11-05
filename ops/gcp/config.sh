@@ -306,8 +306,8 @@ export SIG_HELDOUT_AUTHOR="${SIG_HELDOUT_AUTHOR:-}"
 # sig.operator-authority/1 records — the B-9 standing go is valid now but
 # expires at GATE-G6, when the P36.72b-promoted precondition lands (the
 # contract's own fallback). Contract window (verbatim): "after P36.72b
-# promotes (>= 2026-11-13T12:00Z); weekday 14:00-20:00Z".
-export SIG_REHEARSAL_EARLIEST="2026-11-13T12:00:00Z"  # contract window open
+# promotes (>= 2026-11-13T12:00Z); weekday 14:00-20:00Z".  # future-ok: scheduled: the contract window
+export SIG_REHEARSAL_EARLIEST="2026-11-13T12:00:00Z"  # contract window open — future-ok: scheduled: the contract window
 export SIG_REHEARSAL_REGISTRY="${SIG_RELEASE_REGISTRY:-${SIG_RELEASE_REGISTRY_URI}}"
 export SIG_REHEARSAL_STATE_DIR="${SIG_REHEARSAL_STATE_DIR:-${TMPDIR:-/tmp}/p36.70-rehearsal}"
 export SIG_REHEARSAL_AUTHOR="${SIG_REHEARSAL_AUTHOR:-}"        # the recorded operator id

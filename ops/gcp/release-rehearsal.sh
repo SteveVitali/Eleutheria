@@ -17,13 +17,13 @@
 #
 # Authority: D-G3-3 [B-9] = a — the first Class R promotion runs under the
 # standing go ONLY while valid (GATE-G5 renewed it verbatim; it expires at
-# GATE-G6 or 2026-11-24, whichever first). The rehearsal's precondition —
+# GATE-G6 or 2026-11-24, whichever first). The rehearsal's precondition —            # future-ok: scheduled: the standing-go expiry
 # P36.72b promoted — is the operator's HG-11 act AT the GATE-G6 sitting, so
 # the contract's own fallback applies: the leg runs Class S under operator
 # sig.operator-authority/1 records (registry/authorities/<name>.json — the
 # verbs verify them, never create them).
 #
-# Contract window (verbatim): "after P36.72b promotes (>= 2026-11-13T12:00Z);
+# Contract window (verbatim): "after P36.72b promotes (>= 2026-11-13T12:00Z);        # future-ok: scheduled: the contract window
 # weekday 14:00-20:00Z". The clock guard precedes the ADC gate so a queued
 # apply exits 42 cleanly.
 #
@@ -93,7 +93,7 @@ assert_window() {
   nowiso="$(_rehearsal_now)"
   if [[ "${nowiso}" < "${SIG_REHEARSAL_EARLIEST}" ]]; then
     _log "QUEUED (exit 42): now=${nowiso} < ${SIG_REHEARSAL_EARLIEST} — the"
-    _log "contract window opens after P36.72b promotes (>= 2026-11-13T12:00Z)."
+    _log "contract window opens after P36.72b promotes (>= 2026-11-13T12:00Z)."      # future-ok: scheduled: the contract window
     _log "re-run: ${RERUN}"
     exit 42
   fi
@@ -133,7 +133,7 @@ PLAN: sig-ops release-rehearsal run --registry ${SIG_REHEARSAL_REGISTRY} \\
   #   registry/rehearsals/; rolls land prepared_not_executed unless --execute-rolls
   # restore point: rollback-restore re-points latest; the allow order is the
   #   append-only reinstatement (byte-level restore = next release's staging)
-  # window: after P36.72b promotes (>= 2026-11-13T12:00Z); weekday 14:00-20:00Z
+  # window: after P36.72b promotes (>= 2026-11-13T12:00Z); weekday 14:00-20:00Z   # future-ok: scheduled: the contract window
   # authority: Class S (the standing go expires at GATE-G6) — SIG_REHEARSAL_GO +
   #   SIG_REHEARSAL_AUTHORITY name the operator's sig.operator-authority/1 records
 PLAN

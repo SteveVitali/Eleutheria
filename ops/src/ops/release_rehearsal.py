@@ -7,8 +7,10 @@
 runs under the standing go if it is still valid (renewed at GATE-G5);
 otherwise as Class S (IN-TICKET PAUSE)*. The GATE-G5 sitting
 (2026-10-25T18:40Z) renewed the go verbatim — it expires at GATE-G6 or
-2026-11-24, whichever is first — and the contract's own live-window cell is
-``after P36.72b promotes (>= 2026-11-13T12:00Z); weekday 14:00-20:00Z``. The
+2026-11-24, whichever is first (future-ok: scheduled: the go's expiry) — and
+the contract's own live-window cell is ``after P36.72b promotes (>=
+2026-11-13T12:00Z); weekday 14:00-20:00Z`` (future-ok: scheduled: the contract
+window). The
 rehearsal leg's precondition is therefore the operator's HG-11 act at the
 GATE-G6 sitting — exactly when the go expires — so the contract's fallback
 applies and the leg runs **Class S** under operator authority records

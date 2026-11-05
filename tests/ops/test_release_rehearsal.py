@@ -31,7 +31,7 @@ from ops import release_pipeline as rp
 from ops import release_rehearsal as rh
 from ops import release_reversal as rr
 
-NOW = datetime(2026, 11, 16, 15, 0, 0, tzinfo=UTC)  # a Monday inside the band
+NOW = datetime(2026, 10, 19, 15, 0, 0, tzinfo=UTC)  # a Monday inside the band
 
 PUB_A = "p-" + "a" * 64
 PUB_B = "p-" + "b" * 64
@@ -64,7 +64,7 @@ def _catalog_entry(pub: str, label: str) -> dict[str, Any]:
         "manifest_sha256": "0" * 64,
         "descriptor_sha256": "1" * 64,
         "compartments": [{"compartment": "sig_graph"}],
-        "compat": {"as_of_world": "2026-11-13"},
+        "compat": {"as_of_world": "2026-10-13"},
     }
 
 
@@ -112,7 +112,7 @@ def _seed_two_release_registry(store: rp.Store) -> None:
     """Two promoted releases: PUB_A (the first), PUB_B (current latest —
     P36.72b's stand-in). PUB_B's generation-2 latest records previous=PUB_A,
     so the rehearsal's rollback target resolves deterministically."""
-    pubs = [(PUB_A, "sig-2026-11-10.1"), (PUB_B, "sig-2026-11-13.1")]
+    pubs = [(PUB_A, "sig-2026-10-10.1"), (PUB_B, "sig-2026-10-13.1")]
     _put(
         store,
         "registry/catalog.json",
@@ -155,7 +155,7 @@ def _authority(store: rp.Store, name: str, **fields: Any) -> None:
             "schema": rr.AUTHORITY_SCHEMA,
             "kind": "go",
             "ref": f"OPS-{name}",
-            "issued_at": "2026-11-13T12:00:00Z",
+            "issued_at": "2026-10-13T12:00:00Z",
             **fields,
         },
     )
@@ -255,8 +255,8 @@ def test_plan_reports_queued_when_nothing_promoted(tmp_path: Path) -> None:
 
 def test_plan_resolves_pointers_and_authority_blockers(tmp_path: Path) -> None:
     store = _store(tmp_path)
-    _seed_pub(store, PUB_A, "sig-2026-11-10.1")
-    _seed_pub(store, PUB_B, "sig-2026-11-13.1")
+    _seed_pub(store, PUB_A, "sig-2026-10-10.1")
+    _seed_pub(store, PUB_B, "sig-2026-10-13.1")
     _seed_two_release_registry(store)
     snap = rh.resolve(store)
     assert snap["current_pub"] == PUB_B and snap["rollback_target"] == PUB_A
@@ -296,8 +296,8 @@ def test_run_apply_refuses_queued_with_no_promoted_release(tmp_path: Path) -> No
 
 def test_run_executes_the_timed_legs_and_restores(tmp_path: Path) -> None:
     store = _store(tmp_path)
-    _seed_pub(store, PUB_A, "sig-2026-11-10.1")
-    _seed_pub(store, PUB_B, "sig-2026-11-13.1")
+    _seed_pub(store, PUB_A, "sig-2026-10-10.1")
+    _seed_pub(store, PUB_B, "sig-2026-10-13.1")
     _seed_two_release_registry(store)
     _authority(store, "go-1")
     _authority(store, "auth-1")
@@ -354,8 +354,8 @@ def test_run_executes_the_timed_legs_and_restores(tmp_path: Path) -> None:
 
 def test_run_without_apply_plans_and_writes_nothing(tmp_path: Path) -> None:
     store = _store(tmp_path)
-    _seed_pub(store, PUB_A, "sig-2026-11-10.1")
-    _seed_pub(store, PUB_B, "sig-2026-11-13.1")
+    _seed_pub(store, PUB_A, "sig-2026-10-10.1")
+    _seed_pub(store, PUB_B, "sig-2026-10-13.1")
     _seed_two_release_registry(store)
     before = set(store.list(""))
     record = rh.run(store, apply_=False, go="go-1", authority="auth-1")
@@ -370,8 +370,8 @@ def test_run_records_a_leg_failure_honestly(
     """A leg that refuses stops the run; the emitted record names the
     applied legs + the refused leg — never a smoothed rehearsal."""
     store = _store(tmp_path)
-    _seed_pub(store, PUB_A, "sig-2026-11-10.1")
-    _seed_pub(store, PUB_B, "sig-2026-11-13.1")
+    _seed_pub(store, PUB_A, "sig-2026-10-10.1")
+    _seed_pub(store, PUB_B, "sig-2026-10-13.1")
     _seed_two_release_registry(store)
     _authority(store, "go-1")
     _authority(store, "auth-1")
@@ -411,8 +411,8 @@ def test_run_records_a_leg_failure_honestly(
 
 def test_run_refuses_an_unstaged_rehearsal_target(tmp_path: Path) -> None:
     store = _store(tmp_path)
-    _seed_pub(store, PUB_A, "sig-2026-11-10.1")
-    _seed_pub(store, PUB_B, "sig-2026-11-13.1")
+    _seed_pub(store, PUB_A, "sig-2026-10-10.1")
+    _seed_pub(store, PUB_B, "sig-2026-10-13.1")
     _seed_two_release_registry(store)
     _authority(store, "go-1")
     _authority(store, "auth-1")
@@ -439,8 +439,8 @@ def test_run_refuses_an_unstaged_rehearsal_target(tmp_path: Path) -> None:
 def test_cli_orders_plan_and_run(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     store_dir = tmp_path / "reg"
     store = rp.LocalDirStore(store_dir)
-    _seed_pub(store, PUB_A, "sig-2026-11-10.1")
-    _seed_pub(store, PUB_B, "sig-2026-11-13.1")
+    _seed_pub(store, PUB_A, "sig-2026-10-10.1")
+    _seed_pub(store, PUB_B, "sig-2026-10-13.1")
     _seed_two_release_registry(store)
     _authority(store, "go-1")
     _authority(store, "auth-1")
