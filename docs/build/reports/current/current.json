@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "a3e0e0b08d4b78bf507ddfa3a5d32412af44bce8",
+  "input_commit": "b91f8e582365201704171b4ca496bce6d874b274",
   "manifest_inputs": 1196,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "GATE-G6",
-    "lastCompleted": "P36.73",
+    "nextTicket": "P37.3",
+    "lastCompleted": "GATE-G6",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2",
@@ -38,8 +38,8 @@
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
     "return_pass_rows": 73,
-    "known_inconsistencies": 0,
-    "conflicted": 0
+    "known_inconsistencies": 2,
+    "conflicted": 2
   },
   "obligations": [
     {
@@ -26273,13 +26273,30 @@
       }
     ]
   },
-  "known_inconsistencies": [],
-  "incomplete": false,
+  "known_inconsistencies": [
+    {
+      "check": "ledger/last-completed",
+      "severity": "conflict",
+      "file": "docs/build/LEDGER.md",
+      "obligation": "GATE-G6",
+      "evidence": "lastCompleted: GATE-G6",
+      "message": "lastCompleted 'GATE-G6' has no BUILD_INDEX row"
+    },
+    {
+      "check": "ledger/next-not-lowest",
+      "severity": "error",
+      "file": "docs/build/LEDGER.md",
+      "obligation": "P37.3",
+      "evidence": "nextTicket: P37.3; lowest open row: GATE-G6",
+      "message": "nextTicket 'P37.3' is not the lowest chain row that has not landed ('GATE-G6'; superseded-by/deferred/unused and HUMAN rows skipped — V2)"
+    }
+  ],
+  "incomplete": true,
   "stale_sources": [],
-  "manifest_sha256": "4c94243418ae8aedc5537ea257455aabb9619e97a3e3290f44bd9785c67c92e5",
+  "manifest_sha256": "b746760b25e5d3ac6c266f27a981054c7b7467d846f5fb426c9036fc9d5ee583",
   "current_md": {
-    "lines": 133,
-    "bytes": 20070,
+    "lines": 136,
+    "bytes": 20154,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "adrs.md",
