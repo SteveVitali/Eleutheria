@@ -1549,3 +1549,19 @@ rerun_cell = '''`implement-spec spec=docs/tickets/419_P36.73__sub-round-11c-acce
   go = '''none — read-only sweeps and reads (the promoted release existing is the precondition, not a go)'''
   rerun = '''implement-spec spec=docs/tickets/419_P36.73__sub-round-11c-acceptance.md live_verification=true'''
   live_dependants = ["GATE-G6"]
+[[row]]
+key = "P37.3"
+kind = "leg"
+obligations = ["D-P37.3-1"]
+obligations_cell = "queued D-P37.3-1 — the named OM-20 mutation (GATE-G6 §4 names P37.3 verbatim): evidence-store.sh --apply — evidence bucket 365d unlocked retention, additive captures copy, ingest-without-delete IAM, DR bucket + replica/export-copy jobs, captures-volume repoint, retention-delete probe"
+gates_cell = "pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting) — 'Approve all 15 (rec.)' 2026-11-05T15:20Z; window `AR-3 + AR-2` verbatim — excluded: inside 03:00-10:00Z daily; while an ingest execution runs (repoint leg); needs SIG_GCP_PROJECT + ADC + SIG_EVSTORE_AUTHOR (+ SIG_BACKUP_PROJECT for the export-copy leg)"
+operator_cell = "nothing until the leg-runner dispatch lands the env — machinery + packet committed `prepared_not_executed` (reports/p37.3-evidence-hardening/)"
+rerun_cell = "`implement-spec spec=docs/tickets/421_P37.3__evidence-store-hardening.md live_verification=true`"
+
+  [[row.legs]]
+  id = "P37.3-evidence-store"
+  obligations = ["D-P37.3-1"]
+  earliest = "outside 03:00-10:00Z with SIG_GCP_PROJECT + ADC + SIG_EVSTORE_AUTHOR exported"
+  excluded = ["inside 03:00-10:00Z daily", "while an ingest execution runs (repoint leg)"]
+  go = "pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting)"
+  rerun = "implement-spec spec=docs/tickets/421_P37.3__evidence-store-hardening.md live_verification=true"

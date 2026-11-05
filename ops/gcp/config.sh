@@ -28,6 +28,37 @@ export SIG_BUCKET_PUBLIC="${SIG_GCP_PROJECT}-sig-public"        # published comp
 export SIG_BUCKET_RESTRICTED="${SIG_GCP_PROJECT}-sig-restricted" # non-published compartments + mirrors (PRIVATE)
 export SIG_BUCKET_BACKUPS="${SIG_GCP_PROJECT}-sig-backups"      # pg_dump + OCFL backup sync (PRIVATE)
 
+# P37.3 (SIG-STORE-048, ADR-177): the dedicated evidence bucket — the OCFL
+# capture store moves here under a 365-day UNLOCKED retention policy (B-14=a:
+# lawful takedowns + the WV-06 deletion path stay possible; lock only after
+# review) — and the weekly off-instance replica target (dual-region).
+export SIG_BUCKET_EVIDENCE="${SIG_GCP_PROJECT}-sig-evidence"      # the OCFL capture store (PRIVATE, retention 365d unlocked)
+export SIG_BUCKET_RESTRICTED_DR="${SIG_GCP_PROJECT}-sig-restricted-dr"  # weekly replica target (PRIVATE, dual-region)
+# The bucket every ingest job's captures volume mounts. The committed default
+# stays the restricted bucket until the D-P37.3-1 leg runs: evidence-store.sh
+# exports the evidence bucket itself for its repoint leg, and the leg's own
+# amendment flips this default — a pre-leg full reconcile can never mount a
+# job on a bucket that does not exist yet.
+export SIG_CAPTURE_BUCKET="${SIG_CAPTURE_BUCKET:-${SIG_BUCKET_RESTRICTED}}"
+# The second project the monthly-export cross-copy lands in (env-only; a
+# project id is never committed — GL-GATE-04).
+export SIG_BACKUP_PROJECT="${SIG_BACKUP_PROJECT:-}"
+export SIG_EXPORT_COPY_DEST="${SIG_BACKUP_PROJECT:+${SIG_BACKUP_PROJECT}-sig-backups}"
+
+# P37.3 evidence-store leg constants (evidence-store.sh): the contract's
+# retention in days (unlocked), the window the named mutation keeps (never
+# 03:00-10:00Z daily — the QA metadata band every ops mutation holds; the
+# repoint leg additionally refuses while an ingest execution runs), the
+# recorded-author env (OM-20 scope discipline), and the test-only clock seam.
+export SIG_EVSTORE_RETENTION_DAYS="365"
+export SIG_EVSTORE_STATE_DIR="${SIG_EVSTORE_STATE_DIR:-${TMPDIR:-/tmp}/p37.3-evstore}"
+export SIG_EVSTORE_AUTHOR="${SIG_EVSTORE_AUTHOR:-}"
+export SIG_EVSTORE_NOW="${SIG_EVSTORE_NOW:-}"
+export SIG_REPLICA_JOB="sig-restricted-replica"
+export SIG_REPLICA_SCHED="sig-sched-restricted-replica"
+export SIG_EXPORT_COPY_JOB="sig-pg-export-copy"
+export SIG_EXPORT_COPY_SCHED="sig-sched-pg-export-copy"
+
 # Artifact Registry (the API image) + Cloud Run service (min-instances 0).
 export SIG_AR_REPO="sig"
 export SIG_AR_HOST="${SIG_GCP_REGION}-docker.pkg.dev"

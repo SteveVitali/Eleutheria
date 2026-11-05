@@ -111,6 +111,24 @@ display_name = "SIG Cloud Scheduler invoker (ingestion jobs)"
 purpose = "the OIDC invoker identity every cadence trigger signs as — roles/run.invoker on the scheduled jobs only; never a workload identity"
 reserved = true
 
+# P37.3 (SIG-STORE-048, ADR-177): the off-instance copy jobs' identity —
+# `sig-restricted-replica` (weekly restricted → dual-region DR, excluding the
+# superseded evidence/captures/ prefix wholesale = the sealed-material
+# exclusion) and `sig-pg-export-copy` (monthly pg/monthly/ → the second
+# project's backups bucket). Declared reserved here; the D-P37.3-1 leg's own
+# amendment carries the full picture: flips reserved → bound under a
+# `replica` [[job_class]] claiming the two jobs, expected_job_count → 102,
+# and adds the bucket_role rows it applies (objectViewer on sig-restricted +
+# sig-backups, objectCreator+objectViewer on sig-restricted-dr — never a
+# delete anywhere; the second-project binding is applied on that project's
+# IAM, outside this declaration's scope). While the jobs are absent the map
+# correctly claims only live jobs.
+[[service_account]]
+id = "sig-replica-rt"
+display_name = "sig replica jobs runtime (reserved)"
+purpose = "reserved for P37.3 — the two off-instance copy jobs (restricted→DR weekly replica; monthly pg export → second project). Read-only on the sources, create+read on the DR target; no delete anywhere."
+reserved = true
+
 # --- project-level bindings (managed roles only — a basic role is refused) ----
 [[project_role]]
 service_account = "sig-api-rt"
@@ -243,6 +261,13 @@ role = "roles/storage.objectViewer"
 condition_title = "p34-43-captures-readonly"
 condition_prefix = "evidence/captures/"
 condition_description = "P34.43/SIG-CONF-013: the exec host reads the capture store under evidence/captures/ only — read-only by mount flag and by IAM"
+
+# P37.3's sig-evidence grants (sig-ingest-rt create+read + the conditioned
+# capture-rewrite, sig-quality-probe-rt's conditioned read, sig-probe-rt's
+# legacyBucketReader on both new buckets) ride the D-P37.3-1 leg's own
+# amendment — a binding on a not-yet-created bucket is never declared ahead
+# of the leg that creates it (a concurrent `bindings` leg would refuse on
+# the absent bucket). evidence-store.sh's `iam` leg applies exactly them.
 
 # The probe-run record: create under ops/probes/ ONLY — never a capture path,
 # never a delete (objectCreator carries no delete and no read of other objects;

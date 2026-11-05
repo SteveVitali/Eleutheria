@@ -100,7 +100,7 @@ verification surface (`uv run sig-ops --help` for the exact flags):
 
 | verb family | what it does | posture |
 |---|---|---|
-| `deploy`, `backup-drill`, `roll-jobs`, `probe-hosted`, `probe-history`, `cadence`, `scheduled-ingest`, `replay-ingest`, `backfill-run-completions`, `sink-bench` | GCP deploy/restore/roll, hosted probe sweeps → `ops/probes/` (append-only convention on `sig-restricted` — **not WORM**: P34.3 scripts object versioning + a 90-day noncurrent lifecycle (live leg window-queued) and the locked retention-policy evidence bucket remains P37.3's; SIG-STORE-048 forbids the WORM label until such a control is in force), the scheduled live-ingest audit trail → `ops/runs/` (`ops/cadence.toml`) | credentialed/hosted — operator ADC + gates |
+| `deploy`, `backup-drill`, `roll-jobs`, `probe-hosted`, `probe-history`, `cadence`, `scheduled-ingest`, `replay-ingest`, `backfill-run-completions`, `sink-bench` | GCP deploy/restore/roll, hosted probe sweeps → `ops/probes/` (append-only convention on `sig-restricted` — **not WORM**: P34.3 scripts object versioning + a 90-day noncurrent lifecycle (live leg window-queued) and the evidence bucket's retention policy is declared by P37.3 but stays un-applied while D-P37.3-1's leg is queued; SIG-STORE-048 forbids the WORM label until such a control is in force — see the evidence-store section below), the scheduled live-ingest audit trail → `ops/runs/` (`ops/cadence.toml`) | credentialed/hosted — operator ADC + gates |
 | `evidence-audit`, `recovery-plan`, `recovery-apply`, `recovery-freeze`, `recovery-fixture-seed` | the offline read-only legacy-evidence audit + bounded, dry-run-by-default recovery (ADR-125/141) | offline; `--apply` required to write |
 | `release-candidate`, `release-serve`, `release-publish`, `journey-verify`, `journey-intake`, `composed-verify` | the provisional-ruleset candidate build, the staging release-serving barrier, the staging publish+rollback rehearsal, the journey portfolio, and the composed Round-10 verification (ADR-132/142/143/144) | **offline/staging only** — no production serve; GATE-G3 owns publish |
 | `dossier-packet`, `dossier-packet-tulsa`, `dossier-packet-san-diego`, `seed-correct` | the reviewed three-dossier evidence sets + the authored OKC seed-correction packet (ADR-137/138/139) | offline fixture replay; `review.status=not_run` |
@@ -174,6 +174,26 @@ declared rules to `api`/`intake`/`web`; `tests/e2e/test_serving_topology.py`
 is the byte-for-byte proof, including the written-not-applied `/intake/*`
 rule (the receiver answers `503 receiver_not_operating` — composed only,
 never public).
+
+## Evidence store (P37.3, SIG-STORE-048, ADR-177)
+
+The OCFL capture store is protected two ways: the **dedicated evidence
+bucket** `<project>-sig-evidence` (private, UBLA, versioning, a **365-day
+unlocked** retention policy — B-14 = a: lawful takedowns and the WV-06
+operator-only deletion path stay possible; the policy is locked only after
+review) and the ingest identities' least-privilege posture (create + read +
+the conditioned `objectUser` rewrite under `evidence/captures/` only, ADR-201;
+the retention policy is what makes an ingest-SA delete attempt fail).
+Off-instance copies: a weekly `sig-restricted → <project>-sig-restricted-dr`
+(dual-region) replica that excludes `evidence/captures/` wholesale — the
+superseded store and every sealed capture live under exactly that prefix —
+and a monthly `pg/monthly/` copy of the logical export to a second-project
+bucket (`SIG_BACKUP_PROJECT`, env-only). `ops/gcp/evidence-store.sh` carries
+the legs (`--check` plans offline); the whole mutation is QUEUED under
+`D-P37.3-1` until a leg-runner dispatch lands ADC + `SIG_GCP_PROJECT` — the
+WORM claim above therefore stays honestly **not WORM** for `ops/probes/` and
+`ops/runs/` until the leg applies (the buckets' declared posture arrives
+with it).
 
 ## Go-public cut-over — executed (2026-09-16/24/27)
 

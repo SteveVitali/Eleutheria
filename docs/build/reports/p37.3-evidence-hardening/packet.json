@@ -1,0 +1,31 @@
+{
+  "schema": "sig.evidence-store-hardening/1",
+  "ticket": "P37.3",
+  "manifest_row": 421,
+  "status": "prepared_not_executed",
+  "authority": "GATE-G6 §4 (2026-11-05T15:20Z, \"Approve all 15 (rec.)\" — names P37.3 verbatim among the 15-row 11D OM-20 list; expires GATE-ACCEPT-R11)",
+  "decision_carried": "G1-RET [B-14] = a: 365-day unlocked retention (takedowns and the WV-06 deletion path stay possible)",
+  "window": "AR-3 + AR-2 (the contract cell verbatim); the script enforces never 03:00-10:00Z + the repoint leg refusing while an ingest execution runs",
+  "mutation": "the evidence-bucket retention policy write + the off-instance replica/cross-project copy jobs (OM-14 named mutation)",
+  "legs": [
+    "prestate — AR-2 restore point (describe/IAM/lifecycle JSON + sha256 sidecars)",
+    "bucket — create <project>-sig-evidence, 365d UNLOCKED retention, versioning, UBLA",
+    "captures — additive copy evidence/captures/ restricted→evidence; source never deleted",
+    "dr-bucket — create <project>-sig-restricted-dr dual-region nam4",
+    "iam — ingest create+read + conditioned objectUser (p37-3-capture-rewrite); exec conditioned read; probe legacyBucketReader; sig-replica-rt grants",
+    "jobs — sig-restricted-replica weekly + sig-pg-export-copy monthly + schedulers",
+    "repoint — every ingest job's captures volume → sig-evidence (fail-closed on a running ingest)",
+    "probe — retention-delete attempt MUST fail; copy parity; replica verify",
+    "verify — read-only outcome diff (retention_period_seconds=31536000, isLocked=false)"
+  ],
+  "restore_point": "IAM policies exported before grants; additive copies only; per-job prior volume spec recorded; rollback removes only this leg's creations and never deletes a bucket (WV-06 is the operator's)",
+  "env_required": ["SIG_GCP_PROJECT", "ADC (gcloud auth application-default login)", "SIG_EVSTORE_AUTHOR", "SIG_BACKUP_PROJECT (optional — the pg-export-copy leg queues without it)"],
+  "queued_reason": "SIG_GCP_PROJECT unset in the engineering dispatch — the leg stays QUEUED under D-P37.3-1, never fabricated (OM-19)",
+  "rerun": "implement-spec spec=docs/tickets/421_P37.3__evidence-store-hardening.md live_verification=true",
+  "pending_amendments_riding_the_leg": [
+    "ops/iam_identities.toml — sig-replica-rt reserved→bound, [[job_class]] replica claims the two jobs, expected_job_count→102, the sig-evidence/sig-restricted-dr bucket_role rows",
+    "ops/cadence.toml — the two [[maintenance]] rows state paused→enabled; [[buckets]] rows for sig-evidence + sig-restricted-dr land with the leg",
+    "ops/exec_host.toml — mount.bucket sig-restricted→sig-evidence",
+    "ops/gcp/config.sh — SIG_CAPTURE_BUCKET default flips to the evidence bucket"
+  ]
+}

@@ -173,6 +173,28 @@ class GcsBucket:
             if not page_token:
                 return names
 
+    def list_object_details(self, prefix: str) -> list[dict]:
+        """Object ``name`` + ``md5Hash`` + ``size`` under ``prefix`` (paginated).
+
+        P37.3: the replica/copy verify legs need the content fingerprint, not
+        just the name — one paged read carries the whole parity basis.
+        """
+        items: list[dict] = []
+        page_token: str | None = None
+        while True:
+            query = (
+                f"prefix={urllib.parse.quote(prefix)}&fields=items(name,md5Hash,size),nextPageToken"
+            )
+            if page_token:
+                query += f"&pageToken={urllib.parse.quote(page_token)}"
+            url = f"{_GCS_API}/storage/v1/b/{urllib.parse.quote(self.bucket)}/o?{query}"
+            _, payload = self._request("GET", url)
+            doc = json.loads(payload)
+            items.extend(doc.get("items", []))
+            page_token = doc.get("nextPageToken")
+            if not page_token:
+                return items
+
     def get_object(self, name: str) -> bytes:
         """Download one object's bytes."""
         url = (
@@ -291,6 +313,29 @@ class GcsBucket:
             return json.loads(payload)
         except ValueError:
             return {"name": name}
+
+    def copy_object_to(self, name: str, *, dest: GcsBucket, dest_name: str | None = None) -> dict:
+        """Server-side copy of ``name`` into ``dest`` (JSON API ``copyTo``).
+
+        P37.3 (SIG-STORE-048): the off-instance replica and the monthly-export
+        cross-project copy never download bytes through the job — ``copyTo``
+        is the storage-side clone, so the caller needs only read on the source
+        and create on the destination (no delete anywhere). ``dest`` shares
+        this client's token provider (the job's one service account holds both
+        grants — the dest bucket may live in another project). Returns the
+        destination object's metadata.
+        """
+        target = dest_name or name
+        url = (
+            f"{_GCS_API}/storage/v1/b/{urllib.parse.quote(self.bucket)}/o/"
+            f"{urllib.parse.quote(name, safe='')}/copyTo/b/"
+            f"{urllib.parse.quote(dest.bucket)}/o/{urllib.parse.quote(target, safe='')}"
+        )
+        _, payload = self._request("POST", url)
+        try:
+            return json.loads(payload)
+        except ValueError:
+            return {"name": target, "bucket": dest.bucket}
 
     def get_object_meta(self, name: str) -> dict | None:
         """One object's JSON metadata (``generation``, ``md5Hash``,
