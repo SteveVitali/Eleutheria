@@ -113,9 +113,7 @@ def test_batch_rows_are_well_formed_and_hashes_verify() -> None:
     assert rows, "batch-19 carries no rows"
     for rid, row in rows.items():
         assert rid.startswith("LD-"), f"{rid}: wrong id prefix for batch-19"
-        assert row["page"] in {ROUTE, "/corrections/"}, (
-            f"{rid}: bound to {row['page']!r}"
-        )
+        assert row["page"] in {ROUTE, "/corrections/"}, f"{rid}: bound to {row['page']!r}"
         assert row["status"] in VALID_STATUSES, f"{rid}: unknown status {row['status']!r}"
         assert row["sha256"] == hashlib.sha256(row["text"].encode("utf-8")).hexdigest(), (
             f"{rid}: sha256 does not verify the recorded text"
@@ -183,9 +181,7 @@ def test_counts_record_keeps_the_append_only_counts_only_shape() -> None:
     assert 'LEGAL_DEMAND_COUNTS_SCHEMA = "sig.legal-demand-counts/1"' in src
     assert 'LEGAL_DEMAND_POSTURE_SCHEMA = "sig.legal-demand-posture/1"' in src
     # the counts interface has no requester/case field — counts only
-    counts_iface = re.search(
-        r"export interface LegalDemandCounts \{(.*?)\}", src, re.S
-    )
+    counts_iface = re.search(r"export interface LegalDemandCounts \{(.*?)\}", src, re.S)
     assert counts_iface
     body = counts_iface.group(1)
     for forbidden in ("requester", "case", "identity", "detail"):
