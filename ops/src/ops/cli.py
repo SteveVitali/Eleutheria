@@ -4955,6 +4955,7 @@ def _cmd_scheduled_firstfire(args: argparse.Namespace) -> int:
 def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
     from .alerts import utcnow
     from .scheduled import (
+        latest_sweep_cursor,
         load_cadence,
         run_object_uri,
         scheduled_ingest,
@@ -5007,6 +5008,19 @@ def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
             if gcs is not None
             else None
         )
+        # P37.11 / ADR-236: the SAM.gov sweep's persisted rotating cursor — the
+        # prior run row seeds this run's resume offset so a budget below the
+        # keyword count pages coverage across windows (never restart-at-0).
+        seed_cursor = (
+            latest_sweep_cursor(
+                prefix=cadence.runs_gcs_prefix,
+                source=source,
+                gcs=gcs,
+                local_dir=local_dir,
+            )
+            if source == "sam_gov"
+            else None
+        )
         row = scheduled_ingest(
             source,
             sink_kind=args.sink,
@@ -5018,6 +5032,7 @@ def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
             logical_run=_logical_run_for(cadence, source, started, args),
             target_limit=args.target_limit,
             code_commit=os.environ.get("SIG_CODE_COMMIT", "").strip() or None,
+            sweep_cursor=seed_cursor,
         )
         written = store_run_row(row, prefix=cadence.runs_gcs_prefix, gcs=gcs, local_dir=local_dir)
         print(json.dumps(row.as_json(), sort_keys=True))

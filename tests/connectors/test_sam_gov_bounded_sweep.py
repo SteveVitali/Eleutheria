@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import dataclasses
 from collections.abc import Mapping
+from types import SimpleNamespace
 from typing import Any
 
 import httpx
@@ -33,6 +34,7 @@ from connectors.procurement import (
     sam_gov_search_targets,
     sam_gov_sweep_config,
     sam_gov_sweep_plan,
+    sam_gov_sweep_resume,
 )
 from connectors.registry import get
 from connectors.stages import FetchResult, InMemoryCaptureStore, InMemoryClaimSink, RunContext
@@ -117,13 +119,16 @@ def test_sweep_plan_empty_keywords_is_safe() -> None:
     assert sam_gov_sweep_plan([], budget=5, cursor=3) == ([], 0)
 
 
-def test_configured_budget_is_present_and_ge_keyword_count() -> None:
+def test_configured_budget_is_the_measured_daily_quota() -> None:
+    # P37.11 / ADR-236: the budget is the MEASURED daily quota — the key serves
+    # ~10 requests/day (documented free tier 10/day; hosted run rows served 11
+    # and 12 before the 429 wall), so 30 over-promised and every run starved the
+    # same tail restarting at 0. At 10 < the keyword count the persisted cursor
+    # pages coverage across weekly windows — never one run over quota.
     budget = sam_gov_daily_request_budget()
-    assert budget is not None and budget >= 1
+    assert budget == 10
     keywords = list(sam_gov_sweep_config().get("keywords", ()))
-    # The shipped budget covers the whole keyword space in one fresh-window run
-    # (so D-FEDERAL.1-1 closes with no by-design multi-day tail).
-    assert budget >= len(keywords)
+    assert budget < len(keywords)
 
 
 # --- generated targets carry the quota flag + no key in the URL ---------------
@@ -141,9 +146,10 @@ def test_search_targets_are_quota_governed_and_credential_free() -> None:
 def test_search_targets_cursor_rotates_the_prioritised_order() -> None:
     base = [t["index_keyword"] for t in sam_gov_search_targets(cursor=0)]
     rotated = [t["index_keyword"] for t in sam_gov_search_targets(cursor=1)]
-    # At the shipped budget (>= keyword count) both cover the whole space; the
-    # cursor only rotates the ORDER, so the sets match and the rotation shows.
-    assert set(base) == set(rotated)
+    # At the shipped measured-quota budget (< keyword count) each run selects
+    # one windowed page and the cursor rotates which page is covered.
+    budget = sam_gov_daily_request_budget()
+    assert len(base) == len(rotated) == budget
     assert rotated[0] == base[1]
 
 
@@ -247,3 +253,76 @@ def test_transport_default_retries_would_reprobe_contrast() -> None:
     transport = HttpxTransport(client=_mock_client(handler), max_retries=3, sleep=lambda _s: None)
     transport.request(_SAM_GOV_SEARCH + "?title=x", user_agent="SIG/test")
     assert len(calls) == 4  # 1 + 3 re-probes — exactly what SAM.gov must NOT do
+
+
+# --- the persisted rotating cursor (P37.11 / ADR-236, D-FEDERAL.1-1) ----------
+
+
+def test_sweep_resume_advances_just_past_the_last_issued_slice() -> None:
+    kws = [f"kw{i}" for i in range(5)]
+    # A fully issued page: resume at the next unissued keyword.
+    assert sam_gov_sweep_resume(kws, budget=2, cursor=0, skipped_keywords=set()) == 2
+    # A mid-page stop leaves the cursor at the deferred boundary, not at 0 —
+    # the starvation the unpersisted cursor caused is exactly this restart.
+    assert sam_gov_sweep_resume(kws, budget=2, cursor=0, skipped_keywords={"kw1"}) == 1
+    # A 429 on request one (an already-spent window): nothing issued, so the
+    # same page is retried on the next fresh window — cursor unchanged.
+    assert sam_gov_sweep_resume(kws, budget=2, cursor=3, skipped_keywords={"kw3", "kw4"}) == 3
+    # Wrap-around: the tail page folds into the head of the space.
+    assert sam_gov_sweep_resume(kws, budget=3, cursor=3, skipped_keywords=set()) == 1
+    assert sam_gov_sweep_resume([], budget=2, cursor=0, skipped_keywords=set()) == 0
+
+
+def test_two_consecutive_fires_advance_the_cursor_over_the_whole_space() -> None:
+    """The acceptance shape (P37.11): two consecutive fires advance the cursor
+    and the union of both fires covers the whole 19-keyword space."""
+    keywords = [str(k) for k in sam_gov_sweep_config().get("keywords", ())]
+    budget = sam_gov_daily_request_budget()
+    assert budget is not None and len(keywords) <= 2 * budget  # two fires suffice
+    # Fire 1 — seeds at 0, issues the first page, leaves cursor_next for fire 2.
+    page1 = {t["index_keyword"] for t in sam_gov_search_targets(cursor=0)}
+    c1 = sam_gov_sweep_resume(keywords, budget=budget, cursor=0, skipped_keywords=set())
+    # Fire 2 — resumes where fire 1 stopped and advances the cursor again.
+    page2 = {t["index_keyword"] for t in sam_gov_search_targets(cursor=c1)}
+    c2 = sam_gov_sweep_resume(keywords, budget=budget, cursor=c1, skipped_keywords=set())
+    assert c1 != 0 and c2 != c1  # two consecutive advances, recorded per run
+    assert page1 | page2 == set(keywords)
+
+
+def test_runner_records_sweep_cursor_and_next_on_the_fetch_record() -> None:
+    # The fetch record carries (cursor used, next cursor) — the WORM run row
+    # embeds the record, so the record itself is the persisted cursor. A
+    # skipped generated slice maps back to its keyword by the samgov:kw: id.
+    from connectors import runner as runner_mod
+
+    keywords = [str(k) for k in sam_gov_sweep_config().get("keywords", ())]
+    skipped_kw = "body camera"  # one of the selected slices deferred at the wall
+    assert skipped_kw in keywords
+    report = SimpleNamespace(sweep_skipped=[{"id": f"samgov:kw:{skipped_kw}"}])
+    cursor, nxt = runner_mod._sam_gov_sweep_cursor_fields(
+        {"sweep_cursor": 10, "targets": []}, report
+    )
+    budget = sam_gov_daily_request_budget()
+    selected, _ = sam_gov_sweep_plan(keywords, budget=budget, cursor=10)
+    assert skipped_kw in selected
+    assert cursor == 10
+    assert nxt == (10 + len(selected) - 1) % len(keywords)
+
+
+def test_runner_cursor_fields_map_a_supplied_slice_skip() -> None:
+    # A governed supplied slice (the live-targets seed row) maps back to its
+    # keyword via the recorded `title` query param when skipped.
+    from connectors import runner as runner_mod
+
+    supplied = {
+        "id": "samgov-lpr-opportunities-2026",
+        "url": _SAM_GOV_SEARCH
+        + "?limit=25&postedFrom=01/01/2026&postedTo=12/31/2026&title=license%20plate%20reader",
+        "kind": "opportunity_search",
+    }
+    report = SimpleNamespace(sweep_skipped=[{"id": "samgov-lpr-opportunities-2026"}])
+    cursor, nxt = runner_mod._sam_gov_sweep_cursor_fields(
+        {"sweep_cursor": 0, "targets": [supplied]}, report
+    )
+    assert cursor == 0
+    assert nxt == 9  # kw0 skipped of the 10-slice first page → resume at 9

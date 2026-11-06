@@ -234,3 +234,4 @@ ADR-232,9a202a202693c69df5490c34b1ee7a89e31f18ecb4a0b5869ef54a9b993486f6,quiet,P
 ADR-233,e540969e25e2688613a5c3172ba37348b953587c9ef15eeadeb4ecef46347ba9,quiet,P37.5a (row 424): the ADR authored its own trigger; quiet at authoring (register row appended with the ADR).,,BL-087,2026-11-06T01:40:00Z,adr,,
 ADR-234,fa9e9b6d1228993198c7ffd7f67564136a045de8edc1ff8b0878369664f55762,quiet,P37.5b (row 425): the ADR authored its own trigger; quiet at authoring (register row appended with the ADR).,,BL-087,2026-11-06T03:53:40Z,adr,,
 ADR-235,27c5707e1efe6b8a9bfc98e47c7d87f3fd2325e03a753635b607121d3240a333,quiet,P37.6 (row 426): the ADR authored its own trigger; quiet at authoring (register row appended with the ADR).,,BL-087,2026-11-06T07:10:00Z,adr,,
+ADR-236,9967d9973aede6971c43856cb4477868a7a732dc571840e7268a186bbc7dc49a,quiet,"P37.11 (row 432): the ADR authored its own trigger; quiet at authoring (register row appended with the ADR).",,BL-087,2026-11-06T22:57:17Z,adr,,

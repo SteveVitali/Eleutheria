@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "78bdaaa6c8129b683ed2b6927db7cb88d6158dd6",
+  "input_commit": "10ff29d93f8fd036bc5ecc99e60f8f78cfd0d4e6",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "6133ee97afd3db58eb127504248f721e2f09147abc8fa8d36ef7fe696f482011"
+      "sha256": "4ee63b1a9561352c5fda6339836bee45214e838fc3180b7685970f07c3059227"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -945,12 +945,16 @@
       "sha256": "deba492b8d0698691406c17e675c9930190dc7b14e43d2665cd80160d0a14bd1"
     },
     {
+      "path": "docs/adr/ADR-236-sam-gov-sweep-cursor-persistence-and-measured-quota-budget.md",
+      "sha256": "dce917597678958f10b2595474820d73e85e0fd6d84cb3160a703e2ed3ab7fdc"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "bb97914193b41ccd598c2c72a492905f9ffb88bf39fa80caddcd1eb8b67fec95"
+      "sha256": "ca9b3f4b1e54b52dc71540c9522ed1dcf5732247ffb9f2ea8d2f255671c6dcd3"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "a05c44cd53f83f01c0a9b64d9f8944c7bf1a4882eb7c2823f65b2021937d9ab5"
+      "sha256": "4f859d4eead84e3f042b697c461b2924f3e47c234781eb0fd52975c37c03bb73"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -962,7 +966,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "16e75b3e766b9cd44dbd2405cbbb29cbf4332e26e654afb5522298fdc21672e7"
+      "sha256": "f86032ccfff64258018f9e29f21193227efe1383991e7c16c088835c68bdb64e"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -1046,7 +1050,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "1e91ef7c08ace13b6136532e542a102cc886b33de459ce4dd8247c2326252bcf"
+      "sha256": "806a77fb83ef4d18923760ebcc24de28fe4d15aef2c2eb09ab7fd30bf4234596"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -2661,6 +2665,10 @@
       "sha256": "1d573263b6da09b62ae146d729bd4a11a5ab84af99889a414f228fd4fe3edfd8"
     },
     {
+      "path": "docs/build/runs/P37.11.md",
+      "sha256": "86b604ff941ac7c163928c4ee1713efb79dcfe08a94a0fb085c91d6a5d9aac24"
+    },
+    {
       "path": "docs/build/runs/P37.2.md",
       "sha256": "57820a1bd874a611c3c773e7c5581581d1376e0ab103186e886e6aeb2b95045b"
     },
@@ -2818,7 +2826,7 @@
     },
     {
       "path": "docs/build/tools/record_policy/return_pass.toml",
-      "sha256": "84eb8fc02fc3ccff4668400f4cca96cddfa53e52bce46ab8785a476206a4a243"
+      "sha256": "6e22be027260479fff5f09b0cf7ccb5a30fd9ceda78a31768e5e053088c26660"
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
@@ -4242,7 +4250,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "b8e71803bdcaeb3f9e045d5595d3a4a18f402e7b22d1c726f8487697c82b6de2"
+      "sha256": "4516cd1a0a6446a7683f8722ce3614c1e5ff8e4f77385e2ad5eb4cea6b03076a"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",

@@ -24,6 +24,14 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.11 — the persisted rotating SAM.gov sweep cursor + measured-quota
+  budget (R11-SRC-02, D-FEDERAL.1-1; ADR-236, amends ADR-089):**
+  `[sam_gov_sweep].daily_request_budget` is now `10` — the measured daily
+  api.data.gov quota — so a run stops at headroom, and the rotating
+  `sweep_cursor` persists on the run rows themselves
+  (`fetch_record.sweep_cursor`/`sweep_cursor_next`); the scheduled wrapper
+  seeds each run from the newest stored row, so the paged keyword tail is
+  covered across weekly fires instead of restarting at 0.
 - **P37.10 — the §43.5 asset-promotion gate (R11-DATA-06; SIG-PUB-012, cites
   SIG-ONTO-006/029, SIG-PUB-011/013):** `policy.promotion` is the only
   candidate→`PhysicalAsset` writer — `promotion_permitted()` returns the

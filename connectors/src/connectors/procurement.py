@@ -54,7 +54,7 @@ from __future__ import annotations
 
 import json
 import re
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from functools import cache
@@ -1012,6 +1012,39 @@ def sam_gov_sweep_plan(
     rotated = kws[start:] + kws[:start]
     selected = rotated[:take]
     return selected, (start + take) % n
+
+
+def sam_gov_sweep_resume(
+    keywords: Sequence[str],
+    *,
+    budget: int | None,
+    cursor: int,
+    skipped_keywords: Collection[str],
+) -> int:
+    """The cursor the NEXT SAM.gov run resumes from (P37.11 — D-FEDERAL.1-1).
+
+    The run issued the prefix of this run's selected slice up to the budget /
+    429 stop; ``skipped_keywords`` names the selected slices the driver deferred
+    (every ``sweep_skipped`` governed slice maps to one selected keyword). The
+    next run resumes just past the last issued selected slice —
+    ``(start + issued_selected) mod n`` — so deferred slices are picked up by
+    the following window instead of the run restarting at keyword 0 (the
+    starvation the unpersisted cursor caused). When nothing was skipped this
+    equals :func:`sam_gov_sweep_plan`'s own next offset; when the whole
+    selection was skipped (a 429 on request one) the cursor is unchanged and
+    the same slice is retried on the next fresh window. Matching is
+    case-insensitive — supplied-slice titles arrive already lowered.
+    """
+    kws = [str(k) for k in keywords]
+    n = len(kws)
+    if n == 0:
+        return 0
+    selected, _next = sam_gov_sweep_plan(kws, budget=budget, cursor=cursor)
+    if not selected:
+        return 0
+    skipped = {str(k).strip().lower() for k in skipped_keywords}
+    issued_selected = sum(1 for k in selected if k.strip().lower() not in skipped)
+    return ((cursor % n) + issued_selected) % n
 
 
 def sam_gov_search_targets(*, cursor: int = 0) -> list[dict[str, Any]]:

@@ -842,10 +842,12 @@ def test_prime_slice_normalizes_buyer_not_funder() -> None:
 
 
 def test_sam_gov_widened_keyword_targets_and_dedupe() -> None:
-    from connectors.procurement import sam_gov_search_targets
+    from connectors.procurement import sam_gov_daily_request_budget, sam_gov_search_targets
 
     targets = sam_gov_search_targets()
-    assert len(targets) >= 15
+    # P37.11 / ADR-236: the measured ~10/day quota pages the 19-keyword space —
+    # one run returns the budget's worth; the persisted cursor covers the rest.
+    assert len(targets) == sam_gov_daily_request_budget() == 10
     for t in targets:
         assert t["url"].startswith("https://api.sam.gov/prod/opportunities/v2/search?")
         assert "api_key" not in t["url"] and "X-Api-Key" not in t["url"]

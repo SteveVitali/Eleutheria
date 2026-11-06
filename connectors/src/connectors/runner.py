@@ -911,6 +911,14 @@ class FetchRecord:
     budget_reached: bool = False
     quota_reached: bool = False
     sweep_skipped: list[Mapping[str, Any]] = field(default_factory=list)
+    #: The persisted rotating sweep cursor (P37.11 / ADR-236): the keyword
+    #: offset this run resumed at (``None`` = no cursor machinery in play) and
+    #: the offset the next run resumes from — just past the last issued slice —
+    #: so a budget below the keyword count pages coverage across windows instead
+    #: of restarting at 0 each run. The scheduled wrapper seeds ``sweep_cursor``
+    #: from the previous run row's ``sweep_cursor_next``.
+    sweep_cursor: int | None = None
+    sweep_cursor_next: int | None = None
     #: Incremental restart (P31.4 / ADR-111): the number of fetches this execution
     #: issued, and the targets it did not re-fetch because an interrupted execution
     #: of the same logical run had already captured (``reprocessed``) or flushed
@@ -964,6 +972,8 @@ class FetchRecord:
             "budget_reached": self.budget_reached,
             "quota_reached": self.quota_reached,
             "sweep_skipped": [dict(s) for s in self.sweep_skipped],
+            "sweep_cursor": self.sweep_cursor,
+            "sweep_cursor_next": self.sweep_cursor_next,
             "fetches": self.fetches,
             "resumed": [dict(r) for r in self.resumed],
             "logical_run": self.logical_run,
@@ -1054,6 +1064,48 @@ def _retain_outcome_record(record: Mapping[str, Any]) -> bool:
     return record.get("record_kind") in _OUTCOME_RECORD_KINDS
 
 
+def _sam_gov_sweep_cursor_fields(
+    parameters: Mapping[str, Any], report: Any
+) -> tuple[int | None, int | None]:
+    """(cursor used, next cursor) for the SAM.gov rotating sweep (P37.11 / ADR-236).
+
+    The next offset sits just past the last issued selected slice: each skipped
+    governed slice maps back to its selected keyword — generated slices by their
+    ``samgov:kw:<keyword>`` id, a supplied search slice by the ``title`` param of
+    its recorded URL — so a budget/429 stop leaves the cursor exactly at the
+    deferred boundary rather than at 0 (the recorded starvation, D-FEDERAL.1-1).
+    """
+    from .procurement import (
+        _sam_gov_title_param,
+        sam_gov_daily_request_budget,
+        sam_gov_sweep_config,
+        sam_gov_sweep_resume,
+    )
+
+    keywords = [str(k) for k in sam_gov_sweep_config().get("keywords", ())]
+    if not keywords:
+        return None, None
+    budget = sam_gov_daily_request_budget()
+    cursor = int(parameters.get("sweep_cursor", 0) or 0)
+    skipped_ids = {str(s.get("id")) for s in getattr(report, "sweep_skipped", ()) or ()}
+    skipped_keywords: set[str] = set()
+    for tid in skipped_ids:
+        if tid.startswith("samgov:kw:"):
+            skipped_keywords.add(tid[len("samgov:kw:") :])
+    for target in parameters.get("targets", ()):
+        if str(target.get("id")) in skipped_ids:
+            kw = _sam_gov_title_param(str(target.get("url", "")))
+            if kw:
+                skipped_keywords.add(kw)
+    nxt = sam_gov_sweep_resume(
+        keywords,
+        budget=budget,
+        cursor=cursor,
+        skipped_keywords=skipped_keywords,
+    )
+    return cursor, nxt
+
+
 def _flushed_records(sink: Any) -> int:
     """Records a sink had flushed when a run raised (P31.4 / ADR-111).
 
@@ -1108,6 +1160,7 @@ def run_source(
     run_record_uri: str | None = None,
     logical_run: str | None = None,
     target_limit: int | None = None,
+    sweep_cursor: int | None = None,
 ) -> SourceRunReport:
     """Run one source in ``live`` / ``replay`` / ``shadow`` mode (P21.3).
 
@@ -1123,7 +1176,9 @@ def run_source(
     (source + cadence window): a restarted execution with the same key resumes an
     interrupted one instead of re-fetching everything. ``target_limit`` bounds a
     live run to its first N seed targets (a bounded slice; the run completes
-    ``partial``).
+    ``partial``). ``sweep_cursor`` (live, ``sam_gov``; P37.11 / ADR-236) seeds the
+    persisted rotating cursor — the keyword offset this run resumes at, read from
+    the previous run row's ``sweep_cursor_next``.
     """
     mode = RunMode(mode)
     # SIG-INGEST-008 (P37.5b): a registered manual-acquisition dependency has no
@@ -1147,6 +1202,7 @@ def run_source(
             run_record_uri=run_record_uri,
             logical_run=logical_run,
             target_limit=target_limit,
+            sweep_cursor=sweep_cursor,
         )
 
     if fixture is None:
@@ -1169,6 +1225,7 @@ def _run_live(
     run_record_uri: str | None = None,
     logical_run: str | None = None,
     target_limit: int | None = None,
+    sweep_cursor: int | None = None,
 ) -> SourceRunReport:
     # The gate is checked BEFORE any transport is constructed or any socket is
     # opened (SIG-INGEST-014/028): a non-green source is refused here.
@@ -1240,11 +1297,16 @@ def _run_live(
         # P26.19: bound the sweep to one daily quota window. The driver counts
         # every quota-governed slice against this budget and stops cleanly before
         # the 429 wall (headroom under the api.data.gov daily tier).
+        # P37.11 / ADR-236: the persisted rotating cursor — the scheduled wrapper
+        # seeds it from the previous run row so a budget below the keyword count
+        # pages coverage across windows instead of restarting at 0.
         from .procurement import sam_gov_daily_request_budget
 
         budget = sam_gov_daily_request_budget()
         if budget is not None:
             parameters["request_budget"] = budget
+        if sweep_cursor is not None:
+            parameters["sweep_cursor"] = int(sweep_cursor)
     # P31.4 / ADR-111: a PG run flushes each capture's claims as it goes, so it
     # keeps only the records its fetch record reports and the latest artifact per
     # stage — memory bounded by one capture, not the whole source.
@@ -1309,6 +1371,10 @@ def _run_live(
         )
         transport.close()
         raise
+    sweep_cursor_start: int | None = None
+    sweep_cursor_next: int | None = None
+    if source_id == "sam_gov":
+        sweep_cursor_start, sweep_cursor_next = _sam_gov_sweep_cursor_fields(parameters, report)
     fetch_record = FetchRecord(
         source_id=source_id,
         connector=connector.name,
@@ -1408,6 +1474,8 @@ def _run_live(
         budget_reached=report.budget_reached,
         quota_reached=report.quota_reached,
         sweep_skipped=[dict(s) for s in report.sweep_skipped],
+        sweep_cursor=sweep_cursor_start,
+        sweep_cursor_next=sweep_cursor_next,
         fetches=report.fetches,
         resumed=[dict(r) for r in report.resumed],
         logical_run=getattr(sink, "logical_run", None),
