@@ -142,6 +142,6 @@
 | D-P37.3-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P37.3-live-<n>` dispatch or the operator | RETURN PASS — P37.3 | `evidence-store.sh --verify` prints 0 DRIFT — `retention_period_seconds=31536000`, `isLocked=false`, the DR bucket + replica job present; the `probe` leg's dele… |
 | D-P37.4a-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P37.4a-live-<n>` dispatch or the operator | RETURN PASS — P37.4a | `security-baseline.sh --verify` names the enabled APIs + key; the queued `probe` leg's cosign verify finds ≥1 signature per deployed digest; `ops/security/` rec… |
 | D-P37.4b-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P37.4b-live-<n>` dispatch or the operator | RETURN PASS — P37.4b | the queued `verify` leg prints 0 DRIFT — the `auditConfig` carries `DATA_READ`+`DATA_WRITE` with the exempted members, `sig-data-access` routes to the 90d-lifec… |
-| D-P37.71-1 | OPEN | the operator (the in-ticket go) + the OM-19 leg-runner | RETURN PASS — P37.71 | the verify script prints 0 drift on the hosted spine; `pg_roles` shows `sig_purge_operator` NOLOGIN with no members granted by the migration; the claim_append_o… |
+| D-P37.71-1 | OPEN | the operator (the in-ticket go) + the OM-19 leg-runner | RETURN PASS — P37.71 | the verify script prints 0 drift on the `hosted` spine; `pg_roles` shows `sig_purge_operator` NOLOGIN with no members granted by the migration; the claim_append… |
 
 ← back: CURRENT.md

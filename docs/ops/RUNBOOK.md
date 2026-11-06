@@ -682,7 +682,7 @@ TX-11's mirror lands. Neither bucket is deleted by this row.
 
 *Labels: `human/operator-only` end to end — never agent-run, never
 pre-authorised. The mechanism is engineered + fixture-verified on a clone
-(P37.71); the hosted deploy of the `operator_purge` sqitch change and every
+(P37.71); the `hosted` deploy of the `operator_purge` sqitch change and every
 single use are separate in-ticket gos naming the material (WV-06/ADR-181,
 WV-11/ADR-189; `docs/governance/true-deletion-and-purge.md`).*
 
