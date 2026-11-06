@@ -471,6 +471,21 @@ def _validate() -> int:
         for msg in mode_violations:
             print(f"VALIDATION FAILED: SIG-INGEST-006 declaration: {msg}")
         return 1
+    # SIG-INGEST-008 (P37.5b): every source declaring manual acquisition is
+    # modelled in the manual-acquisition registry (and only those sources) —
+    # the build MUST NOT assume a manual dependency is fetchable, and a
+    # pending/acquired record's provenance honesty fails closed.
+    from .manual_acquisition import ManualAcquisitionError, manual_acquisition_violations
+
+    try:
+        acq_violations = manual_acquisition_violations()
+    except ManualAcquisitionError as exc:
+        print(f"VALIDATION FAILED: manual-acquisition registry malformed: {exc}")
+        return 1
+    if acq_violations:
+        for msg in acq_violations:
+            print(f"VALIDATION FAILED: SIG-INGEST-008 manual acquisition: {msg}")
+        return 1
     print("connectors registry self-checks OK")
     return 0
 
@@ -906,6 +921,7 @@ def _run(args: argparse.Namespace) -> int:
     from pathlib import Path
 
     from .live_targets import NoLiveTargets
+    from .manual_acquisition import ManualAcquisitionRequired
     from .net import RobotsDisallowed, RobotsUnretrievable
     from .runner import LiveGateRefused, RunMode, run_source
     from .sinks import resolve_commit_chunk_size
@@ -939,6 +955,11 @@ def _run(args: argparse.Namespace) -> int:
         print(f"REFUSED: live fetch for source {refused.source_id!r} is gated (exit 3):")
         for reason in refused.reasons:
             print(f"  - {reason}")
+        return 3
+    except ManualAcquisitionRequired as manual:
+        # A registered manual-acquisition dependency has no automatic fetch
+        # path in any mode (SIG-INGEST-008): the refusal names the runbook.
+        print(f"MANUAL ACQUISITION (exit 3): {manual}")
         return 3
     except NoLiveTargets as missing:
         # A green source with no configured live target: config gap, not a fetch.

@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: Apache-2.0
+# P37.5b — the manual-acquisition dependency registry (sig.manual-acquisitions/1,
+# SIG-INGEST-008). Each [[dependency]] models a source the build MUST NOT assume
+# is automatically fetchable: a human acquires it through the recorded access
+# path and the runbook (`runbook`), and the acquisition provenance —
+# identifier/doi + version + sha256 + acquired_at — lands here when
+# `status = "acquired"`. A `pending` row carries NO acquisition provenance (a
+# pending row claiming it is a fabricated record; the validate self-checks fail
+# closed on either half).
+
+schema = "sig.manual-acquisitions/1"
+
+[[dependency]]
+id = "leaic_crosswalk"
+source_id = "leaic_crosswalk"
+identifier = "ICPSR study 35158"
+doi = ""
+version = ""
+sha256 = ""
+acquired_at = ""
+status = "pending"
+access = "ICPSR account login → study 35158 → data-file download (terms review pending)"
+runbook = "docs/ops/manual-acquisition.md"
+notes = "ORI↔FIPS↔place crosswalk — the essential LEAIC bridge (§14.2, App-B Q9). Manual acquisition, never fetchable by the build."

@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "b2255e9b2d0bfcb29403e7e3edd84034257fef2d",
+  "input_commit": "38703a94e40a0a6db51d9e8761fe67c4889db7f6",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "4c0e9b32929f76ab528375fc0cf5fd222fb1f5d719de44dddc4165ab795f476d"
+      "sha256": "a8346d702fb2479aab380a51e1546e6edd049b87b75bf2fa7e19111e4a2f6635"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -937,8 +937,12 @@
       "sha256": "79ebc982091dce6101a11b1f61d5db31125ca35cdc66d21963026c7f1fc88fbd"
     },
     {
+      "path": "docs/adr/ADR-234-manual-acquisition-model-and-disappearance-persistence.md",
+      "sha256": "c8d266b6df680298fc3c86dde208fbca6afa5b796db594b10225e2a4d5e9ae6c"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "305162c95bd0a1be7fbf4f861d2f7b689a42ad20b9a6d1c4db7bca6ebff044f6"
+      "sha256": "c5989c2ce1f04b1f01eae1edc2ce52ca9eb58ffd67919356da0dc313c6d28adb"
     },
     {
       "path": "docs/build/BACKLOG.csv",
@@ -950,7 +954,7 @@
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "2dcbc3a1db7b6f651fde01bd8ec390adf02280f3e8425ee40c45d00c973a00f8"
+      "sha256": "91e7877ed184f4396832870ed11b3ca932579af48552c97e238f9f0fdbef8b7b"
     },
     {
       "path": "docs/build/LEDGER.md",
@@ -2667,6 +2671,10 @@
     {
       "path": "docs/build/runs/P37.5a.md",
       "sha256": "9606fa1620d12c3bd95a0ee3a6d964148c27c3fd2df3532c166aee17d5c1077b"
+    },
+    {
+      "path": "docs/build/runs/P37.5b.md",
+      "sha256": "edb09ff8ff7235e41fed31f5167be138b8023e541c6a7106906777b7b61e06ab"
     },
     {
       "path": "docs/build/runs/PLAN-11B.md",

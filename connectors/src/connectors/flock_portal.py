@@ -499,8 +499,13 @@ def portal_disappearance_task(slug: str, *, last_seen: date | None = None) -> di
     }
 
 
-def portal_appeared_task(slug: str, observed_at: date) -> dict[str, Any]:
+def portal_appeared_task(slug: str, observed_at: date | None) -> dict[str, Any]:
     """A research task for a newly appeared portal — 'no known deployment' handling."""
+    when = (
+        f"the snapshot for {observed_at.isoformat()}"
+        if observed_at is not None
+        else "an undated snapshot"
+    )
     return {
         "task_type": PORTAL_APPEARED_TASK,
         "subject_id": portal_id(slug),
@@ -511,7 +516,7 @@ def portal_appeared_task(slug: str, observed_at: date) -> dict[str, Any]:
         ),
         "detector_version": _DETECTOR_VERSION,
         "status": "generated",
-        "note": f"Portal {slug!r} appeared in the snapshot for {observed_at.isoformat()}.",
+        "note": f"Portal {slug!r} appeared in {when}.",
     }
 
 
@@ -519,7 +524,7 @@ def detect_portal_changes(
     previous_slugs: Iterable[str],
     current_slugs: Iterable[str],
     *,
-    current_snapshot_date: date,
+    current_snapshot_date: date | None,
     previous_snapshot_date: date | None = None,
     attribution: str = "",
 ) -> list[dict[str, Any]]:
