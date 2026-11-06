@@ -1,11 +1,11 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "10ff29d93f8fd036bc5ecc99e60f8f78cfd0d4e6",
+  "input_commit": "818eda171a6c87a8c11358a04e9940e3cba68c74",
   "manifest_inputs": 1215,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.11",
+    "nextTicket": "P37.12",
     "lastCompleted": "P37.10",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
@@ -38,8 +38,8 @@
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
     "return_pass_rows": 78,
-    "known_inconsistencies": 0,
-    "conflicted": 0
+    "known_inconsistencies": 1,
+    "conflicted": 1
   },
   "obligations": [
     {
@@ -26661,13 +26661,22 @@
       }
     ]
   },
-  "known_inconsistencies": [],
-  "incomplete": false,
+  "known_inconsistencies": [
+    {
+      "check": "ledger/next-not-lowest",
+      "severity": "error",
+      "file": "docs/build/LEDGER.md",
+      "obligation": "P37.12",
+      "evidence": "nextTicket: P37.12; lowest open row: P37.11",
+      "message": "nextTicket 'P37.12' is not the lowest chain row that has not landed ('P37.11'; superseded-by/deferred/unused and HUMAN rows skipped — V2)"
+    }
+  ],
+  "incomplete": true,
   "stale_sources": [],
-  "manifest_sha256": "ae7239dc5ec9277d05eeee133217bded98fda480f47ed801a064d9b45a2ac317",
+  "manifest_sha256": "c061d9b61292f2788b07d63d62b83d7a4ad67e99887cf7fed6c600a5190a61f9",
   "current_md": {
-    "lines": 144,
-    "bytes": 19539,
+    "lines": 146,
+    "bytes": 19540,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

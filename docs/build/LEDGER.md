@@ -8,7 +8,7 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P37.11
+nextTicket: P37.12
 lastCompleted: P37.10
 blockedOn: (nothing)
 pauseRequested: false

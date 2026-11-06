@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "10ff29d93f8fd036bc5ecc99e60f8f78cfd0d4e6",
+  "input_commit": "818eda171a6c87a8c11358a04e9940e3cba68c74",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -362,7 +362,7 @@
     },
     {
       "path": "docs/adr/ADR-089-bounded-quota-aware-sam-gov-sweep.md",
-      "sha256": "c7691d616ad2f4b56c6d50d6fc933758739a97815a46222b25ac7d9dbf299c80"
+      "sha256": "53d038702ae81eb423f3c099c10aecb726c623b983e06b9898fa171067f1dc17"
     },
     {
       "path": "docs/adr/ADR-090-national-public-surface-from-a-spine-built-export.md",
@@ -950,7 +950,7 @@
     },
     {
       "path": "docs/adr/README.md",
-      "sha256": "ca9b3f4b1e54b52dc71540c9522ed1dcf5732247ffb9f2ea8d2f255671c6dcd3"
+      "sha256": "ac4327737062ae7d5a94717e8779129d9d8a96ae5da8e5b2940b7bfb14023264"
     },
     {
       "path": "docs/build/BACKLOG.csv",
@@ -966,7 +966,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "f86032ccfff64258018f9e29f21193227efe1383991e7c16c088835c68bdb64e"
+      "sha256": "1ebf094515593776a1ddd74a9c368cc21461072f6a169377ba446f57944d48f0"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
