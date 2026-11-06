@@ -1196,3 +1196,19 @@ seed-commit f469dcb5
 # here, the next commit. Scope: the append-only findings attributed to
 # 6f8ebd92's rewritten line only; no other commit borrows the exemption.
 seed-commit 6f8ebd92
+
+# ── P36.72a inherited-repair: LEDGER PHASE LOG L1522 live-claim respell ──────
+# Commit 623d5bb3 respelled one committed PHASE LOG line (LEDGER.md:1522, the
+# P36.71 dispatch boundary-confirm, inherited onto the P36.72a branch from the
+# red base tip 4edfd91a): the bare assert token `live-claim` inside its
+# `matrix+live-claim reds` phrasing was a corpus check_live_claims violation
+# with no sig.probe-run/1 citation. Respelled in place to the code-spanned
+# `check_live_claims` tool name — semantics verbatim (same carried-respell
+# disposition, #299 precedent). Pre-edit bytes archived
+# docs/build/reports/memory-repair/LEDGER_phaselog_L1522_pre-P36.72a-liveclaim-respell.txt
+# (sha256:06b25e46e119fb72efb0f2d3630f4c34a2342452b47f51c55e1d412fce552db6),
+# disclosed by the dated `P36.72a correction` PHASE LOG entry appended in the
+# same commit. The branch rule forbids force-push, so the declaration lands
+# here, the next commit. Scope: the append-only findings attributed to
+# 623d5bb3's rewritten line only; no other commit borrows the exemption.
+seed-commit 623d5bb3

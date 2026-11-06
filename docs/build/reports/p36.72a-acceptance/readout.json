@@ -1,0 +1,96 @@
+{
+  "schema": "sig.core-surfaces-acceptance/1",
+  "ticket": "P36.72a",
+  "branch": "r11/P36.72a-core-surfaces-crawl-parity-number-truth",
+  "pr_base": "r11/P36.71-search-acceptance-and-activation",
+  "produced": "2026-11-05",
+  "live_verification": false,
+  "layer_reached": ["engineered", "fixture-verified"],
+  "publication_boundary": "read-only checks; the promote and HG-11 pause belong to P36.72b",
+  "corpus": {
+    "data_source": "fixtures",
+    "build_internal": true,
+    "discovered_routes": 477,
+    "routes_by_type": { "T0": 19, "T1": 447, "T2": 3, "T3": 8 },
+    "emitted_files": 1234,
+    "figure_regions": 5150,
+    "redirect_rules": 38,
+    "routes_csv_rows": 48
+  },
+  "legs": [
+    {
+      "id": "zero-404-crawl",
+      "requirements": ["SIG-JUR-D09"],
+      "spec": "web/tests/e2e/acceptance-crawl.spec.ts",
+      "scope": "every discovered route + every emitted non-HTML file answers 200; branded 404 on a never-published route",
+      "result": "pass"
+    },
+    {
+      "id": "historical-urls",
+      "requirements": ["SIG-UI-058", "SIG-JUR-D09"],
+      "spec": "web/tests/e2e/acceptance-crawl.spec.ts",
+      "scope": "all 38 dist/redirects.conf rules name a resolvable end-state; stub-emitted paths serve tombstone pages; fixture-scope un-emitted targets recorded",
+      "result": "pass"
+    },
+    {
+      "id": "bare-ids",
+      "requirements": ["SIG-JUR-D08", "SIG-DSRC-D02"],
+      "spec": "web/tests/e2e/acceptance-crawl.spec.ts",
+      "scope": "no dossier page h1 is a bare code/key/slug; no source id as visible prose outside secondary-id contexts",
+      "result": "pass"
+    },
+    {
+      "id": "parity",
+      "requirements": ["SIG-JUR-D06", "SIG-DSRC-D08", "SIG-DSRC-D09"],
+      "spec": "web/tests/e2e/acceptance-parity.spec.ts",
+      "scope": "HTML = JSON twin on every dossier; explorer rows = sig.dossier-sources/1 cells; source-dossier contribution parity; index rows = twin rollups",
+      "result": "pass"
+    },
+    {
+      "id": "number-truth",
+      "requirements": ["SIG-TRANSP-013"],
+      "spec": "web/tests/e2e/acceptance-number-truth.spec.ts",
+      "scope": "5,150 figure regions — every data-pointer resolves under the key-aware pointer language; numeric-leaf bindings equal rendered values; source links + breakdown anchors resolve",
+      "result": "pass",
+      "found_and_fixed": "hwkt-sources figure on dossier pages named provenance_summary/source_independence_count — a field sig.dossier-sources/1 does not emit; the module now names sources_with_published_claims (the field the artifact carries; identical by construction)"
+    },
+    {
+      "id": "routes-csv",
+      "requirements": ["SIG-JUR-D09", "SIG-UI-058"],
+      "spec": "web/tests/e2e/acceptance-routes-csv.spec.ts",
+      "scope": "bijective dispositions over all 48 advertised 09-27 rows: resolves / retired-redirect / internal-only / namespace / external",
+      "result": "pass"
+    },
+    {
+      "id": "axe-both-js-states",
+      "requirements": ["SIG-UI-037"],
+      "spec": "web/tests/e2e/a11y-scripts-off.spec.ts",
+      "scope": "axe WCAG 2.2 AA over every discovered route with JS on (a11y.spec.ts) and with every script refused (the no-JS render path); noscript notices asserted present",
+      "result": "pass"
+    },
+    {
+      "id": "agent-walkthroughs",
+      "requirements": ["SIG-UI-092"],
+      "spec": "web/tests/e2e/acceptance-walkthroughs.spec.ts",
+      "journeys": ["A1", "A2", "A3", "A4", "O1", "O3", "O4", "J1"],
+      "verification": "agent-verified — never represented as user research",
+      "result": "pass"
+    },
+    {
+      "id": "budgets",
+      "requirements": ["SIG-UI-092"],
+      "spec": "web/tests/e2e/budget.spec.ts",
+      "scope": "per-type wire budgets over every discovered route (pre-existing gate stamped by this row)",
+      "result": "pass"
+    }
+  ],
+  "named_limits": [
+    "fixture-scope redirect targets whose successor entities the corpus does not publish — recorded; the edge probe rides the include-carry leg (D-P36.35-1 lineage) with the promoted release",
+    "unserved figure artifacts named; their figures' reachability proven via the data-figure-link=source route",
+    "subject-bound figures counted, never inferred — only numeric-leaf bindings are asserted equal",
+    "external rows (bucket/API/intake URLs, X01 tiles) owned by the promoted-release legs (D-P36.71-1, D-R10-PUBLISH-1)",
+    "/s/<pub>/ and /v1/releases/… parity legs ride the promoted release — recorded, never claimed"
+  ],
+  "verdict": "pass",
+  "walkthrough_verification": "agent-verified"
+}

@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P36.72a
-lastCompleted: P36.71
+nextTicket: P36.72b
+lastCompleted: P36.72a
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.71-search-acceptance-and-activation
+chainTip: r11/P36.72a-core-surfaces-crawl-parity-number-truth
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-05T02:24Z
+updatedAt: 2026-11-05T05:06Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1519,4 +1519,9 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-05 — dispatch boundary-confirm — P36.69's green read recorded (`ci: pass #438@a69796c`, run 41946998725); `blockedOn` (nothing); chainTip `r11/P36.69-source-page-b` · nextTicket P36.71 (row 414 — search acceptance + activation; `Live stage: publish` BUT `live_verification=false` — the search acceptance machinery + verify leg land now; the publish/activate rides P36.72's Class S cut under HG-11, never by this row; `publish rides P36.72 Class S` carried verbatim; deps landed incl. earlier-sequence P36.79) — fresh implement-spec sub-agent on `r11/P36.71-search-acceptance-and-activation` · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-11-05 — P36.71 correction — the committed P36.69 post-closeout line above carried a bare assert token (`live` inside its waived-ancestor phrasing `the respells live on descendant branches`) — corpus-leg violation inherited onto the P36.71 branch from base tip `bd90b169`; respelled in place to `ride` (semantics verbatim — same carried-respell disposition, #299 precedent) · the mutable run-ledger twin respelled identically at `runs/P36.71.md:19` (`hosted` → post-publish) + `runs/P36.71.md:53` (`live` → the `none`-negated OM-19 form) · pre-edit bytes archived `reports/memory-repair/LEDGER_phaselog_L1518_pre-P36.69-liveclaim-respell.txt` sha256:7a2094c1061b28c6ec4d29c26d8c0ab70a4794d718ec500c722f170c5475da67 · this repair commit declared `seed-commit` in `record_policy/history.policy` next commit · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-05 — P36.71 post-closeout record — head `4ad7aafd` 5/5 green head-bound (`ci: pass #439@4ad7aaf`, run 41957846204, read 03:51Z: docs 2m45s · security 35s · composed 4m18s · python 22m48s · web 59m33s) · fix arc: inherited `bd90b169` reds repaired forward — L1518 liveclaim respell (archived, seed-commit declared) + TRANSP-003/009 re-verdicts + routing/UI-128 leg-drops · `main` untouched · chainTip → r11/P36.71-search-acceptance-and-activation · next → P36.72a · harness: devin-desktop/swe-2-high/subagent
-- 2026-11-05 — dispatch boundary-confirm — P36.71's green read recorded (`ci: pass #439@4ad7aaf`, run 41957846204; closeout tip `4edfd91a` also 5/5, run 41964309493; `D-P36.56-1` closed by the chain-aware jurisdiction subtree; inherited `bd90b169` matrix+live-claim reds repaired forward via sanctioned respell+seed-commit — ancestor stays red, waived per #299); `blockedOn` (nothing); chainTip `r11/P36.71-search-acceptance-and-activation` · nextTicket P36.72a (row 415 — core-surfaces crawl parity + number-truth checks; `none (checks; the HG-11 pause is P36.72b)` carried verbatim — read-only checks; live_verification=false; deps landed) — fresh implement-spec sub-agent on `r11/P36.72a-core-surfaces-crawl-parity-number-truth` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-05 — dispatch boundary-confirm — P36.71's green read recorded (`ci: pass #439@4ad7aaf`, run 41957846204; closeout tip `4edfd91a` also 5/5, run 41964309493; `D-P36.56-1` closed by the chain-aware jurisdiction subtree; inherited `bd90b169` matrix + `check_live_claims` reds repaired forward via sanctioned respell+seed-commit — ancestor stays red, waived per #299); `blockedOn` (nothing); chainTip `r11/P36.71-search-acceptance-and-activation` · nextTicket P36.72a (row 415 — core-surfaces crawl parity + number-truth checks; `none (checks; the HG-11 pause is P36.72b)` carried verbatim — read-only checks; live_verification=false; deps landed) — fresh implement-spec sub-agent on `r11/P36.72a-core-surfaces-crawl-parity-number-truth` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-05 — P36.72a correction — the committed P36.71 dispatch line above carried a bare assert token (`live-claim` inside `matrix+live-claim reds`) — corpus-leg violation inherited from base tip `4edfd91a`; respelled to the code-spanned `check_live_claims` tool name (semantics verbatim, #299) · bytes archived `reports/memory-repair/LEDGER_phaselog_L1522_pre-P36.72a-liveclaim-respell.txt` sha256:06b25e46e119fb72efb0f2d3630f4c34a2342452b47f51c55e1d412fce552db6 · `seed-commit` declared in `history.policy` next commit · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-05 — P36.72a done — `ci: pass #440@b0837db` 5/5 head-bound (run 41975393004: security 37s · docs 2m13s · composed 4m41s · python 17m45s · web 62m24s) · Gate status: none (`none (checks; the HG-11 pause is P36.72b)` carried verbatim; owns SIG-UI-092 → MET-ENGINEERED(D-P36.71-1;D-R10-PUBLISH-1); `live_verification=false`) · deferrals +0/−0 · chainTip → r11/P36.72a-core-surfaces-crawl-parity-number-truth · next → P36.72b · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-05 — P36.72a post-closeout record — head `b0837db9` 5/5 green head-bound (`ci: pass #440@b0837db`, run 41975393004, read 06:44Z; boundary `reports/ci/p36_72a_boundary.json` exit 3 = the carried waived-ancestor read `#435@03dc29f` python PY-STUB-1 flake-exhausted — #299 precedent, the new head itself 5/5 pass) · fix arc: `623d5bb3` impl+records+sanctioned respell (archived, `seed-commit` declared) → `dea1c7a2` index+history+flake-log+projection → `b0837db9` perf_reuse allow-list audit (python red on the first head run repaired forward) · `main` untouched · chainTip → r11/P36.72a-core-surfaces-crawl-parity-number-truth (open) · next → P36.72b · harness: devin-desktop/swe-2-high/subagent
+
+- 2026-11-05 — dispatch boundary-confirm — P36.72a's green read recorded (`ci: pass #440@b0837db`, run 41975393004; acceptance battery + Class S readout landed); `blockedOn` (nothing); chainTip `r11/P36.72a-core-surfaces-crawl-parity-number-truth` · nextTicket P36.72b (row 416 — core-surfaces walkthroughs + promotion; **HG-11 row**: `IN-TICKET PAUSE: HG-11 Class S readout … (same sitting as GATE-G6)` carried verbatim — never pre-authorised, the promote is the operator's act; live window `>= 2026-11-13T12:00Z` outside AR-3; `live_verification=false` — the row stages walkthroughs + the readout and PAUSES at the promote leg; OM-19 re-run prompt resumes at promote) — fresh implement-spec sub-agent on `r11/P36.72b-core-surfaces-walkthroughs-and-promotion` · harness: devin-desktop/swe-2-high/orchestrator
