@@ -1,0 +1,118 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.69 (UX10-3b, K10 §13, SIG-TRANSP-043): `/sources/<id>/entities/` —
+// published entities from the source, ordered jurisdiction → label →
+// record key, 100 per page, CAPPED at 10 pages with the total and the cap
+// stated (D-K10-2). Rows carry `data-entity-id` so the release's
+// page_index withdrawal index can tombstone them. T1, zero-JS.
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import SourceSubnav from "../../../../components/SourceSubnav.astro";
+import SourcePager from "../../../../components/SourcePager.astro";
+import Figure from "../../../../components/Figure.astro";
+import { artifactHref, defineFigures, perSourceTargets, type FigureSpec } from "../../../../lib/figures";
+import { fmtInt } from "../../../../lib/format";
+import { withBase } from "../../../../lib/paths";
+import { getSourcePage, type SourcePageModel } from "../../../../lib/source-page";
+import { resolveSourceId } from "../../../../lib/alias";
+import {
+  getPageBIds,
+  getSourceVersions,
+  getSourceEntities,
+  entityBrowse,
+  pageSlice,
+  recordHref,
+  ENTITY_BROWSE_CAP,
+} from "../../../../lib/source-page-b";
+
+export function getStaticPaths() {
+  return getPageBIds().filter((id) => getSourceEntities(id).length > 0).map((id) => ({ params: { id } }));
+}
+
+const id = resolveSourceId(String(Astro.params.id ?? "")) ?? "";
+const model = getSourcePage(id);
+if (model === null) throw new Error(`sources/[id]/entities: no source-page row for "${id}" (SIG-ENG-042)`);
+const m = model as SourcePageModel;
+if (m.registryOnly) throw new Error(`sources/[id]/entities: registry-only "${id}" must not emit an entities page (S-11)`);
+const row = m.row;
+const browse = entityBrowse(getSourceEntities(id));
+const page = 1;
+const slice = pageSlice(browse.rows, page);
+const J = String.fromCharCode(47);
+const EART = `transparency/sources/${id}/entities.json`;
+
+const specs: FigureSpec[] = [
+  {
+    id: "entities-total", class: "per_source", value: browse.total, artifact: EART,
+    pointer: `${J}entities`, definition: "#entities-heading", href: artifactHref(EART),
+    breakdown: "#fig-entities-total", targets: perSourceTargets(id, `sources/${id}/entities/`),
+  },
+];
+if (browse.pages > 1) specs.push({ ...specs[0]!, id: "entities-page" });
+const FIGURES = defineFigures(`source-entities-${id}`, specs);
+const fig = (fid: string) => {
+  const f = FIGURES.find((x) => x.id === fid);
+  if (!f) throw new Error(`source-entities-${id} figures[]: no figure "${fid}"`);
+  return f;
+};
+const has = {
+  runs: true,
+  captures: true, // the captures route emits for every non-registry source (a zero-capture page states its absence)
+  versions: getSourceVersions(id) !== null,
+  entities: true,
+  dossiers: (row.contributions ?? []).length > 0,
+};
+const crumbs = [
+  { label: "Sources", href: withBase("sources/") },
+  { label: row.name, href: withBase(`sources/${id}/`) },
+  { label: "Entities" },
+];
+---
+
+<BaseLayout title={`${row.name} — entities`} path={withBase(`sources/${id}/entities/`)} crumbs={crumbs}>
+  <Fragment slot="head">
+    <link rel="alternate" type="application/json" href={withBase(`sources/${id}/entities/index.json`)} />
+  </Fragment>
+  <SourceSubnav id={id} name={row.name} has={has} current="entities" />
+  <section aria-labelledby="entities-heading">
+    <h2 id="entities-heading" data-copy="EB-01">Published entities — {row.name}</h2>
+    <p id="fig-entities-total" data-testid="entities-total" data-copy="EB-02">
+      <Figure figure={fig("entities-total")} order="inline">
+        {fmtInt(browse.total)} published entities cite this source{browse.capped && (
+          <> — showing the first {fmtInt(ENTITY_BROWSE_CAP)} (the published cap);
+          the full set is in <a href={withBase(`sources/${id}/versions/`)}>the per-source extract</a>, the API and search</>
+        )}
+      </Figure>
+    </p>
+    {browse.pages > 1 && (
+      <SourcePager base={`sources/${id}/entities`} page={page} pages={browse.pages} first={1} last={slice.length} total={browse.rows.length} noun="entities" label="Entities" figure={fig("entities-page")} />
+    )}
+    <table class="sig-table" data-testid="entities-table">
+      <thead>
+        <tr>
+          <th scope="col">Entity</th><th scope="col">Type</th><th scope="col">Jurisdiction</th>
+          <th scope="col">First seen</th><th scope="col">Last seen</th><th scope="col">Record</th>
+        </tr>
+      </thead>
+      <tbody>
+        {slice.map((e) => (
+          <tr data-testid="entity-row" data-entity-id={e.entity_id}>
+            <td>{e.label}</td>
+            <td>{e.entity_type}</td>
+            <td>{e.jurisdiction ?? "not recorded"}</td>
+            <td>{e.first_seen ?? "not recorded"}</td>
+            <td>{e.last_seen ?? "not recorded"}</td>
+            <td>{e.record_href !== null ? <a href={recordHref(e.record_href)!}>record →</a> : "record link pending"}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <p data-copy="EB-03">
+      No per-claim pages publish (J3 G-10); the per-source statements slice is on{" "}
+      <a href={withBase(`sources/${id}/versions/`)}>versions</a>. Machine twin:{" "}
+      <a href={withBase(`sources/${id}/entities/index.json`)}>index.json</a>.
+    </p>
+  </section>
+</BaseLayout>

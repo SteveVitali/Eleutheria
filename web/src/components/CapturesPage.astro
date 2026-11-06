@@ -1,0 +1,111 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.69 (UX10-3b): the shared captures-page body — the sub-nav, heading,
+// count figure, pager and table for `/sources/<id>/captures/**` and
+// `…/captures/changes/**`. `view` selects the full or record-set-changes
+// list; `twin` names the machine-twin href.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SourceSubnav from "./SourceSubnav.astro";
+import SourcePager from "./SourcePager.astro";
+import CapturesTable from "./CapturesTable.astro";
+import Figure from "./Figure.astro";
+import { withBase } from "../lib/paths";
+import type { FigureSpec } from "../lib/figures";
+import type { CaptureRecord } from "../lib/source-page-b";
+
+interface Props {
+  id: string;
+  name: string;
+  partViiiClass: string | null;
+  has: { runs: boolean; captures: boolean; versions: boolean; entities: boolean; dossiers: boolean };
+  view: "all" | "changes";
+  totalAll: number;
+  rows: CaptureRecord[];
+  slice: CaptureRecord[];
+  page: number;
+  pages: number;
+  offset: number;
+  totalFigure: FigureSpec | null;
+  pageFigure: FigureSpec | null;
+  path: string;
+  title: string;
+}
+
+const { id, name, partViiiClass, has, view, totalAll, rows, slice, page, pages, offset, totalFigure, pageFigure, path, title } = Astro.props;
+const base = view === "changes" ? `sources/${id}/captures/changes` : `sources/${id}/captures`;
+const twin = view === "changes" ? `sources/${id}/captures/changes/index.json` : `sources/${id}/captures/index.json`;
+const crumbs = [
+  { label: "Sources", href: withBase("sources/") },
+  { label: name, href: withBase(`sources/${id}/`) },
+  view === "changes"
+    ? { label: "Captures", href: withBase(`sources/${id}/captures/`) }
+    : { label: "Captures" },
+  ...(view === "changes" ? [{ label: "Changes" }] : []),
+  ...(page > 1 ? [{ label: `Page ${page}` }] : []),
+];
+---
+
+<BaseLayout title={title} path={withBase(path)} crumbs={crumbs}>
+  <Fragment slot="head">
+    <link rel="alternate" type="application/json" href={withBase(twin)} />
+  </Fragment>
+  <SourceSubnav id={id} name={name} has={has} current={view === "changes" ? "changes" : "captures"} />
+  <section aria-labelledby="captures-heading">
+    <h2 id="captures-heading">
+      {view === "changes" ? <>Capture changes — {name}</> : <>Captures — {name}</>}
+    </h2>
+    {view === "changes" ? (
+      <p data-copy="CC-01">
+        Only the captures whose records digest (or upstream-declared date)
+        changed — the source's raw version history. Byte-only formatting
+        changes and unchanged rows stay on{" "}
+        <a href={withBase(`sources/${id}/captures/`)}>the full captures list</a>.
+      </p>
+    ) : (
+      <p data-copy="CB-21">
+        One row per recorded capture occurrence — full UTC time, digest,
+        bytes, media type, the record-set change kind and the file action
+        the source's lane and Part VIII class allow. A synthetic capture is
+        a run record, not a stored document.
+      </p>
+    )}
+    {rows.length === 0 ? (
+      <p data-testid="captures-none">
+        {view === "changes"
+          ? "No record-set change is recorded between published captures of this source."
+          : "No capture records are published for this source in this release."}
+      </p>
+    ) : (
+      <>
+        <p id="fig-captures-total" data-testid="captures-total">
+          {totalFigure && (
+            <Figure figure={totalFigure} order="inline">
+              {totalFigure.value}{" "}
+              {view === "changes" ? (
+                <>record-set changes of {totalAll} captures — <a href={withBase(`sources/${id}/captures/`)}>full list →</a></>
+              ) : (
+                "recorded captures"
+              )}
+            </Figure>
+          )}
+        </p>
+        {pages > 1 && pageFigure && (
+          <SourcePager base={base} page={page} pages={pages} first={offset + 1} last={offset + slice.length} total={rows.length} noun={view === "changes" ? "changes" : "captures"} label="Captures" figure={pageFigure} />
+        )}
+        <CapturesTable captures={slice} partViiiClass={partViiiClass} />
+      </>
+    )}
+    <p>
+      Machine twin: <a href={withBase(twin)}>index.json</a>
+      {view === "all" && has.captures && (
+        <> · record-set changes: <a href={withBase(`sources/${id}/captures/changes/`)}>captures/changes/</a></>
+      )}
+      {view === "changes" && (
+        <> · all captures: <a href={withBase(`sources/${id}/captures/`)}>captures/</a></>
+      )}
+    </p>
+  </section>
+</BaseLayout>

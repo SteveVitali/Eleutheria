@@ -496,7 +496,7 @@ export const SOURCE_ROWS_FIXTURE: SourceRow[] = [
     lane_evidence: null,
     lane_decision_authority: "rights review",
     lane_review_needed: false,
-    part_viii_class: null,
+    part_viii_class: "P8-5",
     licence: {
       spdx: "CC0-1.0",
       redistributable: true,

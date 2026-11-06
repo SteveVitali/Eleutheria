@@ -1,0 +1,78 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.69 (UX10-3b, K10 §3): `/sources/<id>/captures/changes/` — only the
+// captures whose records digest (or upstream-declared date) changed — the
+// source's raw version history. T1, zero-JS.
+import CapturesPage from "../../../../../components/CapturesPage.astro";
+import { artifactHref, defineFigures, perSourceTargets, type FigureSpec } from "../../../../../lib/figures";
+import { withBase } from "../../../../../lib/paths";
+import { getSourcePage, type SourcePageModel } from "../../../../../lib/source-page";
+import { resolveSourceId } from "../../../../../lib/alias";
+import {
+  getPageBIds,
+  getSourceCaptures,
+  getSourceVersions,
+  getSourceEntities,
+  changedCaptures,
+  sortedCaptures,
+  pageCount,
+  pageSlice,
+} from "../../../../../lib/source-page-b";
+
+export function getStaticPaths() {
+  return getPageBIds().map((id) => ({ params: { id } }));
+}
+
+const id = resolveSourceId(String(Astro.params.id ?? "")) ?? "";
+const model = getSourcePage(id);
+if (model === null) throw new Error(`sources/[id]/captures/changes: no source-page row for "${id}" (SIG-ENG-042)`);
+const m = model as SourcePageModel;
+if (m.registryOnly) throw new Error(`sources/[id]/captures/changes: registry-only "${id}" must not emit a changes page (S-11)`);
+const row = m.row;
+const captures = getSourceCaptures(id);
+const allRows = sortedCaptures(captures ?? []);
+const rows = changedCaptures(captures ?? []);
+const J = String.fromCharCode(47);
+const ART = `transparency/sources/${id}/captures.jsonl`;
+// The .jsonl stream serves at its .json twin route.
+const ART_HREF = `transparency/sources/${id}/captures.json`;
+const page = 1;
+const pages = pageCount(rows.length);
+const slice = pageSlice(rows, page);
+
+const specs: FigureSpec[] = [];
+if (rows.length > 0) {
+  specs.push({
+    id: "changes-total", class: "per_source", value: rows.length, artifact: ART,
+    pointer: J, definition: "#captures-heading", href: artifactHref(ART_HREF),
+    breakdown: "#fig-captures-total", targets: perSourceTargets(id, `sources/${id}/captures/changes/`),
+  });
+  if (pages > 1) specs.push({ ...specs[0]!, id: "changes-page" });
+}
+const FIGURES = defineFigures(`source-changes-${id}`, specs);
+const fig = (fid: string) => {
+  const f = FIGURES.find((x) => x.id === fid);
+  if (!f) throw new Error(`source-changes-${id} figures[]: no figure "${fid}"`);
+  return f;
+};
+const has = {
+  runs: true,
+  captures: true,
+  versions: getSourceVersions(id) !== null,
+  entities: getSourceEntities(id).length > 0,
+  dossiers: (row.contributions ?? []).length > 0,
+};
+---
+
+<CapturesPage
+  id={id} name={row.name} partViiiClass={row.part_viii_class} has={has}
+  view="changes" totalAll={allRows.length} rows={rows} slice={slice}
+  page={page} pages={pages} offset={0}
+  totalFigure={rows.length > 0 ? fig("changes-total") : null}
+  pageFigure={pages > 1 ? fig("changes-page") : null}
+  path={withBase(`sources/${id}/captures/changes/`)}
+  title={`${row.name} — capture changes`}
+/>

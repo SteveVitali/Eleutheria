@@ -1,0 +1,150 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.69 (UX10-3b, K10 §9, SIG-TRANSP-005): `/sources/<id>/runs/` — every
+// recorded execution for the source, newest first, one <details> per run,
+// 100 per page (K9 §6.1). T1, zero-JS. D-J3-2 [B-19] = yes — carried
+// verbatim: robots outcomes disclose host + count only.
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import SourceSubnav from "../../../../components/SourceSubnav.astro";
+import SourcePager from "../../../../components/SourcePager.astro";
+import RunsList from "../../../../components/RunsList.astro";
+import Figure from "../../../../components/Figure.astro";
+import { artifactHref, defineFigures, freshnessTargets, type FigureSpec } from "../../../../lib/figures";
+import { fmtInt } from "../../../../lib/format";
+import { withBase } from "../../../../lib/paths";
+import { getSourcePage, runRecordMissing, type SourcePageModel } from "../../../../lib/source-page";
+import { resolveSourceId } from "../../../../lib/alias";
+import {
+  getPageBIds,
+  getSourceVersions,
+  getSourceEntities,
+  pageCount,
+  pageSlice,
+} from "../../../../lib/source-page-b";
+
+export function getStaticPaths() {
+  return getPageBIds().map((id) => ({ params: { id } }));
+}
+
+const id = resolveSourceId(String(Astro.params.id ?? "")) ?? "";
+const model = getSourcePage(id);
+if (model === null) throw new Error(`sources/[id]/runs: no source-page row for "${id}" (SIG-ENG-042)`);
+const m = model as SourcePageModel;
+if (m.registryOnly) throw new Error(`sources/[id]/runs: registry-only source "${id}" must not emit a runs page (S-11)`);
+const row = m.row;
+const executions = [...(m.executions ?? [])].sort((a, b) =>
+  String(b.started_at ?? b.finished_at ?? "").localeCompare(String(a.started_at ?? a.finished_at ?? "")),
+);
+const missing = runRecordMissing(m);
+const versions = getSourceVersions(id);
+const entities = getSourceEntities(id);
+const has = {
+  runs: true,
+  captures: true, // the captures route emits for every non-registry source
+  versions: versions !== null,
+  entities: entities.length > 0,
+  dossiers: (row.contributions ?? []).length > 0,
+};
+
+const page = 1;
+const pages = pageCount(executions.length);
+const slice = pageSlice(executions, page);
+const J = String.fromCharCode(47);
+
+const specs: FigureSpec[] = [
+  {
+    id: "executions-total",
+    class: "freshness",
+    value: executions.length,
+    artifact: `transparency/sources/${id}/executions.jsonl`,
+    pointer: J,
+    definition: "#runs-heading",
+    href: artifactHref(`transparency/sources/${id}/executions.json`),
+    breakdown: "#fig-executions-total",
+    targets: freshnessTargets(id, `sources/${id}/runs/`),
+  },
+];
+if (pages > 1) {
+  specs.push({
+    id: "runs-page",
+    class: "freshness",
+    value: executions.length,
+    artifact: `transparency/sources/${id}/executions.jsonl`,
+    pointer: J,
+    definition: "#runs-heading",
+    href: artifactHref(`transparency/sources/${id}/executions.json`),
+    breakdown: "#fig-executions-total",
+    targets: freshnessTargets(id, `sources/${id}/runs/`),
+  });
+}
+const FIGURES = defineFigures(`source-runs-${id}`, specs);
+const fig = (fid: string) => {
+  const f = FIGURES.find((x) => x.id === fid);
+  if (!f) throw new Error(`source-runs-${id} figures[]: no figure "${fid}"`);
+  return f;
+};
+
+const crumbs = [
+  { label: "Sources", href: withBase("sources/") },
+  { label: row.name, href: withBase(`sources/${id}/`) },
+  { label: "Runs" },
+];
+---
+
+<BaseLayout title={`${row.name} — runs`} path={withBase(`sources/${id}/runs/`)} crumbs={crumbs}>
+  <Fragment slot="head">
+    <link rel="alternate" type="application/json" href={withBase(`sources/${id}/runs/index.json`)} />
+  </Fragment>
+  <SourceSubnav id={id} name={row.name} has={has} current="runs" />
+  <section aria-labelledby="runs-heading">
+    <h2 id="runs-heading" data-copy="RB-20">Runs — {row.name}</h2>
+    <p data-copy="RB-21">
+      One row per recorded execution, newest first — the run's own record,
+      never the shared run's. Robots outcomes disclose as host + count only
+      (SIG's disclosure decision D-J3-2); no raw log lines and no per-URL
+      detail publish here.
+    </p>
+    {missing && (
+      <p class="sig-notice" data-testid="run-record-missing" data-copy="RB-22">
+        SIG holds data from this source, but no record of the run that
+        loaded it exists.
+      </p>
+    )}
+    {executions.length === 0 ? (
+      <p data-copy="RB-23" data-testid="runs-none">
+        {missing
+          ? "SIG holds data from this source, but no record of the run that loaded it exists."
+          : "No executions are recorded for this source in this release."}
+      </p>
+    ) : (
+      <>
+        <p id="fig-executions-total" data-testid="executions-total">
+          <Figure figure={fig("executions-total")} order="inline">{fmtInt(executions.length)}</Figure>{" "}
+          recorded executions.
+        </p>
+        {pages > 1 && (
+          <SourcePager
+            base={`sources/${id}/runs`}
+            page={page}
+            pages={pages}
+            first={1}
+            last={slice.length}
+            total={executions.length}
+            noun="executions"
+            label="Runs"
+            figure={fig("runs-page")}
+          />
+        )}
+        <RunsList id={id} executions={slice} hasCaptures={has.captures} />
+      </>
+    )}
+    <p data-copy="RB-24">
+      The machine twin is <a href={withBase(`sources/${id}/runs/index.json`)}>index.json</a>{m.executions !== null && (
+        <>; the artifact is <a href={withBase(artifactHref(`transparency/sources/${id}/executions.json`))}>executions.jsonl</a></>
+      )}.
+    </p>
+  </section>
+</BaseLayout>

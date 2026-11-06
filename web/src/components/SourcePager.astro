@@ -1,0 +1,51 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.69 (UX10-3b, K9 §6.1): the source sub-page pager — first/prev/next/last
+// over the emitted `…/page/<n>/` continuation routes, the row window stated
+// through a <Figure> (the page's own material count).
+import Figure from "./Figure.astro";
+import { withBase } from "../lib/paths";
+import type { FigureSpec } from "../lib/figures";
+
+interface Props {
+  /** Route prefix under the source, e.g. `sources/okc/runs` (no slashes). */
+  base: string;
+  page: number;
+  pages: number;
+  first: number;
+  last: number;
+  total: number;
+  noun: string;
+  figure: FigureSpec;
+  label: string;
+}
+
+const { base, page, pages, first, last, total, noun, figure, label } = Astro.props;
+const pageHref = (n: number) => (n <= 1 ? withBase(`${base}/`) : withBase(`${base}/page/${n}/`));
+---
+
+{pages > 1 && (
+  <nav class="sig-pager" aria-label={`${label} pages`} data-testid="subpage-pager">
+    <a href={pageHref(1)} data-testid="pager-first">first</a>{" "}
+    {page > 1 ? (
+      <a href={pageHref(page - 1)} data-testid="pager-prev">‹ previous</a>
+    ) : (
+      <strong aria-current="page">first</strong>
+    )}{" "}
+    <Figure figure={figure} order="inline">
+      <span>
+        Page {page} of {pages} — {noun} {first}–{last} of {total}
+      </span>
+    </Figure>{" "}
+    {page < pages && (
+      <>
+        <a href={pageHref(page + 1)} data-testid="pager-next">next ›</a>{" "}
+        <a href={pageHref(pages)} data-testid="pager-last">last</a>
+      </>
+    )}
+    {page === pages && <strong aria-current="page">last</strong>}
+  </nav>
+)}

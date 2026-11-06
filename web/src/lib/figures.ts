@@ -138,13 +138,14 @@ const ENTITY_TWIN_RE =
   /^web\/entity\/[a-z0-9-]+\/[a-z0-9][a-z0-9-]*--[a-z0-9]+\/index\.[a-z0-9_]+\.json$/;
 
 /**
- * P36.46/P36.47: the per-source transparency streams —
- * `transparency/sources/<id>/{executions,captures,targets,issues}.jsonl` —
- * unbounded like the compartment streams; admitted by pattern (the manifest
- * does not enumerate per-source files).
+ * P36.46/P36.47/P36.69: the per-source transparency streams —
+ * `transparency/sources/<id>/{executions,captures,targets,issues}.jsonl` and
+ * the per-source documents `{versions,index,entities}.json` — unbounded
+ * like the compartment streams; admitted by pattern (the manifest does not
+ * enumerate per-source files).
  */
 const TRANSPARENCY_SOURCE_RE =
-  /^transparency\/sources\/[a-z0-9_-]+\/(executions|captures|targets|issues)\.jsonl$/;
+  /^transparency\/sources\/[a-z0-9_-]+\/((executions|captures|targets|issues)\.jsonl|(versions|index|entities)\.json)$/;
 
 /** Byte-identical to DOSSIER_SOURCES_RE in scripts/check-figures.mjs (pinned
  *  by test): P36.52's per-dossier `sig.dossier-sources/1` artifacts —

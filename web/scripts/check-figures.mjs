@@ -66,7 +66,7 @@ const ENTITY_TWIN_RE =
  *  test): the per-source transparency streams — unbounded like the
  *  compartment streams, admitted by pattern (P36.46/P36.47). */
 const TRANSPARENCY_SOURCE_RE =
-  /^transparency\/sources\/[a-z0-9_-]+\/(executions|captures|targets|issues)\.jsonl$/;
+  /^transparency\/sources\/[a-z0-9_-]+\/((executions|captures|targets|issues)\.jsonl|(versions|index|entities)\.json)$/;
 /** Byte-identical to DOSSIER_SOURCES_RE in src/lib/figures.ts (pinned by
  *  test): P36.52's per-dossier sig.dossier-sources/1 artifacts. */
 const DOSSIER_SOURCES_RE = /^web\/dossier_sources\/[a-z0-9-]+(\/[a-z0-9-]+)*\.json$/;
@@ -82,12 +82,28 @@ const DOSSIER_SOURCES_RE = /^web\/dossier_sources\/[a-z0-9-]+(\/[a-z0-9-]+)*\.js
  * is the same class of surface — a file-listing table where byte sizes, row
  * counts and SPDX version numerals are row data, not material figures. */
 const SKIP_SEGMENTS = new Set(["sites", "sources", "downloads"]);
+/** P36.69 (UX10-3b): the source page-B row surfaces under `/sources/<id>/`
+ *  are the same class of surface as the dossier's `sites`/`sources`/
+ *  `downloads` tables — a row list (one execution / capture / version
+ *  entry / entity / contribution per row) whose per-cell numerals are row
+ *  data, not material figures; the surface's material figures are the
+ *  page's own `figures[]` (registered + contract-checked at build). The
+ *  freshness class keeps `sources/runs/` (the P36.48 table view) measured —
+ *  it is walked under its own class, unaffected by this set. */
+const SOURCE_ROW_SEGMENTS = new Set([
+  "runs",
+  "captures",
+  "changes",
+  "versions",
+  "entities",
+  "dossiers",
+]);
 const PAGE_CLASSES = [
   { cls: "home", files: ["index.html"] },
-  { cls: "dossier", dirs: ["dossier"], skipSegments: true },
+  { cls: "dossier", dirs: ["dossier"], skipSegments: SKIP_SEGMENTS },
   { cls: "coverage", files: ["coverage-metrics/index.html"] },
   { cls: "freshness", dirs: ["sources/runs"] },
-  { cls: "sources", dirs: ["sources"] },
+  { cls: "sources", dirs: ["sources"], skipSegments: SOURCE_ROW_SEGMENTS },
   { cls: "data", files: ["data-collection/index.html"] },
   { cls: "status", files: ["status/index.html"] },
 ];
@@ -95,11 +111,11 @@ const PAGE_CLASSES = [
 const FIGURE_OPEN = "<!-- sig-figure -->";
 const FIGURE_CLOSE = "<!-- /sig-figure -->";
 
-function* walk(dir, skipSegments = false) {
+function* walk(dir, skipSegments = undefined) {
   for (const e of readdirSync(dir, { withFileTypes: true })) {
     const p = join(dir, e.name);
     if (e.isDirectory()) {
-      if (skipSegments && SKIP_SEGMENTS.has(e.name)) continue;
+      if (skipSegments !== undefined && skipSegments.has(e.name)) continue;
       yield* walk(p, skipSegments);
     } else if (e.isFile() && p.endsWith(".html")) yield p;
   }
@@ -213,7 +229,7 @@ function check(distDir) {
     for (const d of pc.dirs ?? []) {
       const dir = join(distDir, d);
       if (existsSync(dir)) {
-        for (const p of walk(dir, pc.skipSegments === true)) files.push({ cls: pc.cls, path: p });
+        for (const p of walk(dir, pc.skipSegments)) files.push({ cls: pc.cls, path: p });
       }
     }
   }

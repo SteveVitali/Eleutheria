@@ -1,0 +1,86 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P36.69 (UX10-3b, K10 §10, SIG-TRANSP-005/041): the captures table — one
+// row per recorded capture occurrence (full UTC retrieved_at, scrubbed
+// target, digest, bytes, media type, classification, records, the K9 §5.4
+// change kind) plus the J3 §5.3 file action (lane × Part VIII × bytes
+// stored). A synthetic capture is labelled a run record; a sealed tier
+// shows no URL, ever.
+import { fmtInt } from "../lib/format";
+import { formatBytes } from "../lib/downloads";
+import {
+  captureFileAction,
+  changeKindWord,
+  upstreamParts,
+  type CaptureRecord,
+} from "../lib/source-page-b";
+
+interface Props {
+  captures: CaptureRecord[];
+  partViiiClass: string | null;
+}
+
+const { captures, partViiiClass } = Astro.props;
+
+const targetCell = (t: string) => {
+  const up = upstreamParts(t);
+  if (t === "sealed") return "sealed (bytes withheld)";
+  if (t === "not_recorded") return "not recorded";
+  if (up.url) return up.url;
+  return t; // host#path_sha256:<hex> — the S-6 host-only form
+};
+---
+
+<table class="sig-table" data-testid="captures-table">
+  <thead>
+    <tr>
+      <th scope="col" data-copy="CB-01">Retrieved (UTC)</th>
+      <th scope="col" data-copy="CB-02">Target</th>
+      <th scope="col" data-copy="CB-03">Digest</th>
+      <th scope="col" data-copy="CB-04">Bytes · records</th>
+      <th scope="col" data-copy="CB-05">Media type</th>
+      <th scope="col" data-copy="CB-06">Classification</th>
+      <th scope="col" data-copy="CB-07">Change</th>
+      <th scope="col" data-copy="CB-08">File action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {captures.map((c) => {
+      const action = captureFileAction(c, partViiiClass);
+      return (
+        <tr data-testid="capture-row">
+          <td><time datetime={c.retrieved_at ?? undefined}>{c.retrieved_at ?? "not recorded"}</time></td>
+          <td data-testid="capture-target"><code>{targetCell(c.target)}</code></td>
+          <td>{c.digest ? <code>sha256:{c.digest.slice(0, 16)}…</code> : "not recorded"}</td>
+          <td>
+            {c.bytes !== null ? formatBytes(c.bytes) : "not recorded"}
+            {" · "}
+            {c.records !== null ? `${fmtInt(c.records)} records` : "records not recorded"}
+            {c.http_status !== null && <> · HTTP {c.http_status}</>}
+            {c.bytes_retained ? " · bytes retained" : " · bytes not retained"}
+          </td>
+          <td>{c.media_type ?? "not recorded"}</td>
+          <td>
+            {c.classification === "synthetic" ? (
+              <>synthetic <span class="mut">(run record — SIG did not store this document)</span></>
+            ) : (
+              c.classification ?? "not recorded"
+            )}
+          </td>
+          <td>{changeKindWord(c.changed_vs_prior)}</td>
+          <td data-testid="capture-action">
+            {action.href ? (
+              <a href={action.href} rel="external">{action.label}</a>
+            ) : (
+              action.label
+            )}
+            {action.note && <> — <span class="mut">{action.note}</span></>}
+          </td>
+        </tr>
+      );
+    })}
+  </tbody>
+</table>
