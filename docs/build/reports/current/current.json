@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "be0c81302266fb25381ff2377968d0c23d933dec",
+  "input_commit": "971d9fa28d45159552683be1533477063b96fdb2",
   "manifest_inputs": 1211,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -38,8 +38,8 @@
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
     "return_pass_rows": 77,
-    "known_inconsistencies": 1,
-    "conflicted": 1
+    "known_inconsistencies": 0,
+    "conflicted": 0
   },
   "obligations": [
     {
@@ -26549,22 +26549,13 @@
       }
     ]
   },
-  "known_inconsistencies": [
-    {
-      "check": "ledger/last-completed",
-      "severity": "conflict",
-      "file": "docs/build/LEDGER.md",
-      "obligation": "P37.71",
-      "evidence": "lastCompleted: P37.71",
-      "message": "lastCompleted 'P37.71''s BUILD_INDEX row names no existing evidence file"
-    }
-  ],
-  "incomplete": true,
+  "known_inconsistencies": [],
+  "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "83bfa5ca4443fe5e7d5f4b903e8d379e0fc6a0472cdcfcd1b8eb2d1c7f627d7e",
+  "manifest_sha256": "9734bad82a4b0554f642a36d74f1eabbde802365e7616caede8c7e650f3bbff9",
   "current_md": {
-    "lines": 145,
-    "bytes": 19361,
+    "lines": 143,
+    "bytes": 19428,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
