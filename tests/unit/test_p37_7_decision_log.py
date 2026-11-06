@@ -177,7 +177,14 @@ def test_log_record_keeps_the_append_only_shape() -> None:
     the contract (the vitest suite asserts the record's invariants)."""
     src = LIB_PATH.read_text(encoding="utf-8")
     assert 'EDITORIAL_DECISION_SCHEMA = "sig.editorial-decision/1"' in src
-    for cls in ("authority", "sensitivity_classification", "naming", "contested_claim", "deletion", "purge"):
+    for cls in (
+        "authority",
+        "sensitivity_classification",
+        "naming",
+        "contested_claim",
+        "deletion",
+        "purge",
+    ):
         assert f'"{cls}"' in src, f"class {cls} missing from the vocabulary"
     # every entry carries a gate_ref literal — the citation field
     assert src.count("gate_ref: {") == src.count("decision_id: "), (
