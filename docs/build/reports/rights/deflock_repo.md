@@ -49,8 +49,9 @@ REFERENCE (code studied; device data reconciled via osm_overpass under ODbL).
 
 ## Decision
 
-- [ ] permit ingestion — reviewer: ____ date: ____
-- SPDX to record: `MIT`   rights_reviewed_by (role, never a name): ____   rights_reviewed_on: ____
+- [x] permit ingestion — reviewer: maintainer (delegated) date: 2026-09-10
+- SPDX recorded: `MIT`   rights_reviewed_by: maintainer (delegated)   rights_reviewed_on: 2026-09-10
+FLIPPED 2026-09-10 (GL-GATE-03, RIGHTS.1 re-run) — the recorded answer (sources.toml notes; LEDGER GATE DECISIONS).
 
 ## Counsel-needed flag
 

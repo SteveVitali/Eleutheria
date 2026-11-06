@@ -40,8 +40,9 @@ REFERENCE (fetch + hold the government record).
 
 ## Decision
 
-- [ ] permit ingestion — reviewer: ____ date: ____
-- SPDX to record: `UNDETERMINED`   rights_reviewed_by (role, never a name): ____   rights_reviewed_on: ____
+- [x] permit ingestion — reviewer: maintainer (delegated) date: 2026-09-10
+- SPDX recorded: `CC0-1.0`   rights_reviewed_by: maintainer (delegated)   rights_reviewed_on: 2026-09-10
+FLIPPED 2026-09-10 (GL-GATE-03, RIGHTS.1 re-run) — the recorded answer (sources.toml notes; LEDGER GATE DECISIONS).
 
 ## Counsel-needed flag
 

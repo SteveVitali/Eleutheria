@@ -51,8 +51,9 @@ REFERENCE (fetch + hold derived facts); never the canonical editing DB (N7).
 
 ## Decision
 
-- [ ] permit ingestion — reviewer: ____ date: ____
-- SPDX to record: `ODbL-1.0`   rights_reviewed_by (role, never a name): ____   rights_reviewed_on: ____
+- [x] permit ingestion — reviewer: maintainer (delegated) date: 2026-09-16
+- SPDX recorded: `ODbL-1.0`   rights_reviewed_by: maintainer (delegated)   rights_reviewed_on: 2026-09-16
+FLIPPED 2026-09-16 (GL-GATE-06 blanket disposition, ODbL-1.0 — OSM policy corpus, ODbL compartment) — the recorded answer (sources.toml notes; LEDGER GATE DECISIONS).
 
 ## Counsel-needed flag
 

@@ -1398,9 +1398,11 @@ def tenant_targets(platform: str | None = None) -> list[dict[str, Any]]:
             "api_base": api_base,
             "external_id": tenant_id,
             "kind": "agenda_index",
-            # P26.3: each tenant host's own robots.txt decides, and the verdict
-            # is recorded per host (claims / refused / unretrievable) rather
-            # than the first refused tenant aborting the whole platform run.
+            # P26.3: each tenant host's own robots.txt is probed and the
+            # verdict recorded per host (claims / refused / unretrievable —
+            # declared posture, never a gate under GL-GATE-08/ADR-088/ADR-222)
+            # rather than the first refused tenant aborting the whole
+            # platform run.
             "record_refusals": True,
         }
         # P26.6 (SOURCES.6): the bounded document window rides the target row as
@@ -1509,8 +1511,10 @@ def platform_census() -> list[Mapping[str, Any]]:
     """The enumerated-but-not-ingested platform tenant census (P26.5).
 
     ``[[platform_census]]`` rows record vendor-tenant hosts the P26.5 enumeration
-    *found* but which are NOT live targets — a platform-wide robots ``Disallow: /``
-    (Granicus, PrimeGov-class walls), a platform with no bounded API surface
+    *found* but which are NOT live targets — a platform whose tenants declare a
+    robots ``Disallow: /`` posture (Granicus, PrimeGov-class — recorded per
+    RFC 9309, never a fetch gate under GL-GATE-08/ADR-088/ADR-222), a platform
+    with no bounded API surface
     (NovusAGENDA's WebForms postback portal, CivicPlus Agenda Center, IQM2,
     BoardDocs), or an unreachable host. They are registry data, never targets:
     :func:`tenant_targets` reads only ``[tenants.*]``. The census keeps the
@@ -1534,9 +1538,9 @@ def portal_registry() -> Mapping[str, Any]:
     Socrata contract/award datasets. No municipality→portal directory exists
     upstream; this is it. Every row carries ``enum_source`` enumeration
     provenance, and ``[[platform_census]]`` rows preserve the enumerated hosts
-    that are NOT ingest targets (robots walls, WAF challenges, unreachable
-    names, vendor infrastructure) — a host found and excluded is recorded, not
-    dropped (§3.1, SIG-METRIC-002a).
+    that are NOT ingest targets (declared-robots postures, WAF challenges,
+    unreachable names, vendor infrastructure) — a host found and excluded is
+    recorded, not dropped (§3.1, SIG-METRIC-002a).
     """
     return load_table("procurement_portal_tenants")
 

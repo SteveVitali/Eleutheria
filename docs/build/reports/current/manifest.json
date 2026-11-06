@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "606eaeaaf226bd5a7de8b7e5af7c02b06665f9e2",
+  "input_commit": "3ebcaaddfa27d7bbc3da3d1b1fe6939e451a6a69",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "a8346d702fb2479aab380a51e1546e6edd049b87b75bf2fa7e19111e4a2f6635"
+      "sha256": "6133ee97afd3db58eb127504248f721e2f09147abc8fa8d36ef7fe696f482011"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -941,12 +941,16 @@
       "sha256": "c8d266b6df680298fc3c86dde208fbca6afa5b796db594b10225e2a4d5e9ae6c"
     },
     {
+      "path": "docs/adr/ADR-235-registry-validation-over-partition-and-the-flip-record-rule.md",
+      "sha256": "deba492b8d0698691406c17e675c9930190dc7b14e43d2665cd80160d0a14bd1"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "c5989c2ce1f04b1f01eae1edc2ce52ca9eb58ffd67919356da0dc313c6d28adb"
+      "sha256": "bb97914193b41ccd598c2c72a492905f9ffb88bf39fa80caddcd1eb8b67fec95"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "d2ff777824a7745f0eb8b8bbc68b102b69affe8b87902b4a27731c6b6e168f1b"
+      "sha256": "a05c44cd53f83f01c0a9b64d9f8944c7bf1a4882eb7c2823f65b2021937d9ab5"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",

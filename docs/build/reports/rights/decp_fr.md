@@ -53,12 +53,16 @@ HG-03 review records a reviewer + date.
 
 ## Decision
 
-- [ ] permit ingestion — reviewer: maintainer (delegated) date: 2026-09-15 — **rights RESOLVED, flip HELD**
-- SPDX recorded: `LicenceOuverte-2.0` (confirmed `fr-lo` via the data.gouv.fr API 2026-09-15;
-  added to the accepted SPDX set by ADR-084, `relicensable_to` self-only pending HG-02 on
-  LO↔CC-BY compatibility). The source is **not flipped**: the France-cohort gate
-  (P24.6/D-JURIS.2-1) holds it for the P25.5 review. rights_reviewed_by: maintainer (delegated)   rights_reviewed_on: 2026-09-15
-
+- [x] permit ingestion — reviewer: maintainer (delegated) date: 2026-09-15
+- SPDX recorded: `etalab-2.0` (confirmed `fr-lo` via the data.gouv.fr API
+  2026-09-15; added to the accepted SPDX set by ADR-084, `relicensable_to`
+  self-only pending HG-02 on LO↔CC-BY compatibility). rights_reviewed_by:
+  maintainer (delegated)   rights_reviewed_on: 2026-09-15
+- FLIPPED 2026-09-15 (GL-GATE-03, operator-approved — the France cohort went
+  per-source) — the recorded answer (sources.toml notes; LEDGER GATE
+  DECISIONS). *P37.6 note:* this section previously read "rights RESOLVED,
+  flip HELD … The source is not flipped" — the pre-execution posture, since
+  superseded by the recorded 2026-09-15 flip above.
 ## Counsel-needed flag
 
 **YES — Licence Ouverte 2.0 disposition: the accepted SPDX set has no LO

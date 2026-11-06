@@ -67,3 +67,18 @@ PENDING REVIEW (D-SOURCES.9-2) — gated twice over: (1) `Disallow: /` refuses
 every path on every verified tenant, and (2) no terms were reachable to review.
 The source stays `ingestion_permitted=false`; the registered tenant rows exist
 so each host's refusal is recorded honestly per run.
+
+## Posture note — P37.6 (2026-11-06)
+
+This packet's access posture was recorded 2026-09-18, before **GL-GATE-08 /
+ADR-088 / ADR-222**: the `Disallow: /` above is a *declared* robots posture —
+probed and recorded per RFC 9309, and **never a fetch gate** under the current
+posture (a disregarded disallow would proceed, stamped `robots_disregarded`
+and disclosed). What still gates `bonfire` is unchanged and is the row's real
+blocker set: (1) terms were never captured verbatim — rights remain
+`UNDETERMINED`; (2) `compact_status` / `custody_posture` are unsatisfied
+(`not_contacted` + `LINK`); (3) no reviewed markup contract exists — a
+captured body is `ContentDrift` by construction; and (4) `/portal` answers a
+login redirect on both verified tenants. D-SOURCES.9-2 was closed WONTFIX
+2026-10-02 (P34.8 transition `PT-003`); the 2026-09-18 record above stands as
+the access-posture capture of that day.
