@@ -49,6 +49,9 @@ ALLOWED_TABLES: frozenset[str] = frozenset(
         "coverage_record",
         "research_task",
         "spine_watermark",
+        # P37.71 (ADR-189/WV-11): the public-safe tombstone — category + date +
+        # count, never deleted content; the audit half stays denied.
+        "purge_tombstone",
     }
 )
 
