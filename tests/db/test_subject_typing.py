@@ -257,7 +257,11 @@ def test_typed_identity_write_dry_run_apply_and_plus_zero(clean_dsn: str) -> Non
         assert row is not None and row[0] == "organization"
 
         # Decision rows carry the provenance the leg requires: the keyed
-        # subject, the prior recorded type, the map version that decided it.
+        # subject, the prior recorded type, the map version that decided it —
+        # read from the live map so a deliberate map revision (P37.10's
+        # candidate:/promoted: prefixes) never makes this pin stale.
+        from db.subject_types import map_version
+
         cols = conn.execute(
             "SELECT scheme, value, prior_type, entity_type, map_version "
             "FROM entity_type_decision ORDER BY value"
@@ -268,9 +272,15 @@ def test_typed_identity_write_dry_run_apply_and_plus_zero(clean_dsn: str) -> Non
                 "agency:test:hist-org",
                 "deployment",
                 "organization",
-                "1.0.0",
+                map_version(),
             ),
-            ("sig.connector.subject", "contract:test:hist-c", "deployment", "contract", "1.0.0"),
+            (
+                "sig.connector.subject",
+                "contract:test:hist-c",
+                "deployment",
+                "contract",
+                map_version(),
+            ),
         ]
 
 
