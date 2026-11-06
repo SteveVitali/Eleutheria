@@ -867,6 +867,12 @@
       "reason": "P37.7: the page's own canonical path declaration passed to BaseLayout's `path` prop \u2014 the same exemption class as src/pages/about.astro's `/about/` literal (a route identity, not a link construction)"
     },
     {
+      "file": "src/pages/about/legal-demands.astro",
+      "token": "/about/legal-demands/",
+      "count": 1,
+      "reason": "P37.8: the page's own canonical path declaration passed to BaseLayout's `path` prop \u2014 the same exemption class as src/pages/about.astro's `/about/` literal (a route identity, not a link construction)"
+    },
+    {
       "file": "src/internal/component-kit/index.astro",
       "token": "/sources/",
       "count": 2,

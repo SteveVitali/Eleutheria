@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "37394ec1f04f9619c3b348381b3e4fec6c356970",
-  "manifest_inputs": 1209,
+  "input_commit": "0be31b55b429b35e502d145491064fe4e068b7a2",
+  "manifest_inputs": 1210,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P37.8",
@@ -27,12 +27,12 @@
   },
   "counts": {
     "obligations": 224,
-    "owed": 141,
-    "open": 138,
+    "owed": 140,
+    "open": 137,
     "partial": 3,
-    "terminal": 83,
-    "events": 734,
-    "transitions": 54,
+    "terminal": 84,
+    "events": 735,
+    "transitions": 55,
     "coverage_assessments": 510,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
@@ -5224,11 +5224,11 @@
     },
     {
       "id": "D-R11-SEC003-1",
-      "status": "OPEN",
-      "status_source": "event-head D-R11-SEC003-1:e0",
+      "status": "DONE",
+      "status_source": "event-head D-R11-SEC003-1:e1",
       "kind": "F",
       "owner": "P37.8 (row 428: legal-demand posture + published counts)",
-      "landing": "P37.8",
+      "landing": "P37.8 lands: the written demand-response posture is published at /about/legal-demands/ — the five E2-10 sections, stating the text is not legal advice and has not been reviewed by counsel (ADR-167) — with the committed sig.legal-demand-counts/1 snapshot rendering received/complied/refused = 0 as of 2026-11-06 (counts only); the warrant canary is declined and stated as such; the same counts carry on /corrections/. Posture doc docs/governance/legal-demand-posture.md; copy pinned in batch-19 (B-2). Public-origin exposure rides D-R10-PUBLISH-1 (OPEN).",
       "landing_source": "event-head",
       "backlog_home": "BL-080",
       "item": "SIG-SEC-003's \"before the first demand\" clause: a written legal-demand response posture, published before the first demand, and the published legal-demand counts (received, complied with, refused; counts only, with an as-of date); the warrant canary is declined (ADR-166)",
@@ -5264,6 +5264,34 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "kind": "transition",
+          "seq": 1,
+          "expected_previous_event": "D-R11-SEC003-1:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P37.8",
+          "owner": "P37.8 (row 428: legal-demand posture + published counts)",
+          "landing": "P37.8 lands: the written demand-response posture is published at /about/legal-demands/ — the five E2-10 sections, stating the text is not legal advice and has not been reviewed by counsel (ADR-167) — with the committed sig.legal-demand-counts/1 snapshot rendering received/complied/refused = 0 as of 2026-11-06 (counts only); the warrant canary is declined and stated as such; the same counts carry on /corrections/. Posture doc docs/governance/legal-demand-posture.md; copy pinned in batch-19 (B-2). Public-origin exposure rides D-R10-PUBLISH-1 (OPEN).",
+          "backlog_home": "BL-080",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "web/src/pages/about/legal-demands.astro",
+            "web/src/lib/legal-demands.ts",
+            "docs/governance/legal-demand-posture.md",
+            "docs/build/reports/copy-batches/batch-19.md",
+            "tests/unit/test_p37_8_legal_demands.py",
+            "web/tests/unit/legal-demands.test.ts",
+            "web/tests/e2e/legal-demands.spec.ts"
+          ],
+          "observed_at": "2026-11-06",
+          "source_commit": "WORKTREE",
+          "reason": "P37.8 (row 428 — the named owner row) discharged the clause: the posture and the counts are published with an as-of date, the text states it is not legal advice and has not been reviewed by counsel (ADR-167), and the canary is declined and stated as such — every verify-clause item met at the engineered + fixture-verified layers; the public-origin serving half is D-R10-PUBLISH-1's standing scope, unchanged.",
+          "event_id": "D-R11-SEC003-1:e1",
+          "obligation_id": "D-R11-SEC003-1",
+          "recorded_at": "2026-11-06"
         }
       ]
     },
@@ -15594,8 +15622,8 @@
           "label": "historical/csv"
         },
         "SIG-SEC-003": {
-          "verdict": "MISSING",
-          "evidence": "docs/2_canonical_design_spec.md:6292",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "docs/2_canonical_design_spec.md:6292;web/src/pages/about/legal-demands.astro;web/src/lib/legal-demands.ts;docs/governance/legal-demand-posture.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -26463,7 +26491,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "fe180e77239ad8ce0d40152c88e88d6f836dcf224902f290478da436d4c175d0",
+  "manifest_sha256": "6eedfdfab65d866c411e55100e2164b3fb2011f5e4e4d07dab3876123953691e",
   "current_md": {
     "lines": 142,
     "bytes": 20369,
