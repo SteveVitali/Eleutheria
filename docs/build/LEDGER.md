@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P37.8
-lastCompleted: P37.7
+nextTicket: P37.71
+lastCompleted: P37.8
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P37.7-public-editorial-decision-log
+chainTip: r11/P37.8-legal-demand-posture-and-counts
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-06T13:54Z
+updatedAt: 2026-11-06T15:51Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1569,4 +1569,6 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-06 — dispatch boundary-confirm — P37.6's green read recorded (`ci: pass #450@27ce625`, run 42181059104); `blockedOn` (nothing); chainTip `r11/P37.6-registry-rights-record-hygiene` · nextTicket P37.7 (row 427 — public editorial decision log; `Q-E2-07 [A-4] = c and WV-02 waived` carried verbatim — ships under interim single-maintainer authority + public decision log; `Live stage: publish (next Class S release)` BUT `live_verification=false` — page machinery only, publication rides the operator's next Class S cut; dep P36.18 landed) — fresh implement-spec sub-agent on `r11/P37.7-public-editorial-decision-log` · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-11-06 — P37.7 done — row 427 `Kind: ticket` — public editorial decision log (no §56 `Owner:` ids; lands ADR-164/WV-02's compensating control — `Q-E2-07 [A-4] = c`; `Gate status: none`, `Live stage: publish (next Class S release)`, `live_verification=false`): T1 zero-JS `/about/editorial-decisions/` + `web/src/lib/editorial-decisions.ts` `sig.editorial-decision/1` (every published entry cites its recorded GATE DECISIONS row via `gate_ref`; retroactive entries keep their historical dates; WV-06/WV-11 tombstones carry category+date, never deleted content; disclosed interim single-maintainer posture, no fabricated board) · page-types registry concrete route + About nav + cross-links from `/about/` + `/editorial-standards/` · batch-18 seven sha256-pinned DL rows + ASTRO_PAGES registration · 23 new tests (11 vitest + 6 pytest + 6 e2e) · web check fully green (5,137 e2e incl. axe + nojs-parity) · `make check` env-class-only reds recorded · `main` untouched · chainTip → r11/P37.7-public-editorial-decision-log · next → P37.8 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-06 — P37.7 post-closeout record — head `bd21815a` 5/5 green head-bound (`ci: pass #451@bd21815`, run 42196780030, read 13:53Z; stack #450/#449/#448 pass; `logs/ci-P37.7.json`) · arc: `59cfcd0e` impl → `89f86086` records → `86dd755e` ruff → `5e2ebd7a` DL-03/allow-list → `bd21815a` projection regen (run 42195150192 docs red = stale digest, fixed forward) · `main` untouched · deferrals +0/−0 · next → P37.8 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-06 — P37.8 done — row 428 `Kind: ticket` — legal-demand posture + published counts (no §56 `Owner:` ids; lands ADR-166/A-4 = `Q-E2-09 [A-4] = c` + ADR-167; `Live stage: publish (next Class S release)`, `live_verification=false`): T1 zero-JS `/about/legal-demands/` — the written demand-response posture recorded before the first demand (holdings/minimisation · who receives legal process · preservation · user notice · publication of counts; not legal advice, no lawyer review; the warrant canary declined, never operated) + `web/src/lib/legal-demands.ts` `sig.legal-demand-posture/1` + `sig.legal-demand-counts/1` append-only snapshots (0/0/0 as of 2026-11-06 — counts only, no requester/case field) · the same record drives the `/corrections/` counts (design E2-10) · `docs/governance/legal-demand-posture.md` + batch-19 ten sha256-pinned LD rows (B-2) · registry T1 route + About nav + baseline exemption · 25 new tests (10 vitest + 8 pytest + 7 e2e) · `D-R11-SEC003-1` → DONE (event `D-R11-SEC003-1:e1`) · SIG-SEC-003 `MISSING → MET-ENGINEERED(D-R10-PUBLISH-1)` routing BL-085 · `main` untouched · chainTip → r11/P37.8-legal-demand-posture-and-counts · next → P37.71 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-06 — P37.8 post-closeout record — head `7a199a81` 5/5 green head-bound (`ci: pass #452@7a199a8`, run 42236675430, read 15:50Z: docs 2m3s · composed 4m25s · security 38s · python 22m20s · web 1h1m55s; `logs/ci-P37.8.json`) · arc: impl → `e80be063` ruff → `dc994c4a` projection regen → `7a199a81` counsel-vocabulary findings (LD-02/04/09 reworded + batch re-pin + governance README + allow-list) · web e2e typeahead flake re-run green · `main` untouched · deferrals +0/−1 (`D-R11-SEC003-1` DONE) · next → P37.71 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-06 — dispatch boundary-confirm — P37.7's green read recorded (`ci: pass #451@bd21815`, run 42196780030); `blockedOn` (nothing); chainTip `r11/P37.7-public-editorial-decision-log` · nextTicket P37.8 (row 428 — legal-demand posture + counts; `Q-E2-09 [A-4] = c` carried verbatim — written posture + published counts, canary declined, posture text via copy batch; `Live stage: publish (next Class S release)` BUT `live_verification=false` — machinery only; chain tip) — fresh implement-spec sub-agent on `r11/P37.8-legal-demand-posture-and-counts` · harness: devin-desktop/swe-2-high/orchestrator
