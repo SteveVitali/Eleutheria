@@ -921,6 +921,8 @@ class AccountabilityConnector(Connector):
 
     name = "accountability"
     version = "1.0.0"
+    ingestion_mode = "rest_api"
+    incrementality = "cursor/targeted report lookup per agency"
 
     # -- acquisition --
     def discover(self, ctx: RunContext) -> list[Mapping[str, Any]]:

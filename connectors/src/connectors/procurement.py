@@ -1921,6 +1921,8 @@ class ProcurementConnector(Connector):
 
     name = "procurement"
     version = "1.0.0"
+    ingestion_mode = "rest_api"
+    incrementality = "updated-since watermark / cursor"
 
     # -- acquisition --
     def discover(self, ctx: RunContext) -> list[Mapping[str, Any]]:

@@ -896,6 +896,8 @@ class CooperativeConnector(Connector):
 
     name = CONNECTOR_NAME
     version = "1.0.0"
+    ingestion_mode = "html_scraping"
+    incrementality = "normalized-content hashing on extracted structure"
 
     def __init__(
         self,

@@ -1004,6 +1004,8 @@ class DocumentCloudConnector(Connector):
 
     name = CONNECTOR_NAME
     version = "1.0.0"
+    ingestion_mode = "rest_api"
+    incrementality = "cursor or updated-since watermark"
 
     def __init__(
         self,

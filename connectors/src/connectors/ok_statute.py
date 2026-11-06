@@ -29,3 +29,5 @@ class OkStatuteConnector(OkcDocumentConnector):
 
     name = "ok_statute"
     version = "1.0.0"
+    ingestion_mode = "html_scraping"
+    incrementality = "normalized-content hashing on extracted structure"

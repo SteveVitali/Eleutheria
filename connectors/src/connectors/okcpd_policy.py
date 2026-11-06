@@ -28,3 +28,5 @@ class OkcpdPolicyConnector(OkcDocumentConnector):
 
     name = "okcpd_policy"
     version = "1.0.0"
+    ingestion_mode = "html_scraping"
+    incrementality = "normalized-content hashing on extracted structure"

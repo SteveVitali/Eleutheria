@@ -446,6 +446,8 @@ class AtlasConnector(Connector):
 
     name = "atlas"
     version = "1.0.0"
+    ingestion_mode = "bulk_file_download"
+    incrementality = "content-hash diff, then row-level diff"
 
     # -- acquisition --
     def discover(self, ctx: RunContext) -> list[Mapping[str, Any]]:

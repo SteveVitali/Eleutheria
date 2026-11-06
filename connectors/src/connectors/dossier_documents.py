@@ -1121,6 +1121,8 @@ class DossierDocumentsConnector(Connector):
 
     name = DOSSIER_DOCUMENTS
     version = "1.0.0"
+    ingestion_mode = "html_scraping"
+    incrementality = "normalized-content hashing on extracted structure"
 
     def discover(self, ctx: RunContext) -> list[Mapping[str, Any]]:
         return list(ctx.parameters.get("targets", []))

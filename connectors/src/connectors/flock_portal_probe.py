@@ -679,6 +679,8 @@ class FlockPortalProbeConnector(Connector):
 
     name = PROBE_CONNECTOR_NAME
     version = "1.0.0"
+    ingestion_mode = "html_scraping"
+    incrementality = "normalized-content hashing on extracted structure (probe-only)"
 
     def __init__(
         self,

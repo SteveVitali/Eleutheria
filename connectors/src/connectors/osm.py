@@ -871,6 +871,8 @@ class OSMConnector(Connector):
 
     name = "osm"
     version = "1.0.0"
+    ingestion_mode = "replication_diff"
+    incrementality = "sequence-number diffs / Overpass snapshots"
 
     def __init__(self, *, parcel_signal: ResidentialParcelSignal | None = None) -> None:
         # P35.66 (SIG-PUB-005/013): the declared residential-parcel signal the

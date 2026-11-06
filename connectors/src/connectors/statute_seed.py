@@ -611,6 +611,8 @@ class StateStatuteSeedConnector(Connector):
 
     name = "state_statute_seed"
     version = "1.1.0"  # P35.10: the statute_seed/2 origin-verified refresh
+    ingestion_mode = "manual"
+    incrementality = "one-time packaged seed asset — upload event"
 
     def discover(self, ctx: RunContext) -> list[Mapping[str, Any]]:
         return [

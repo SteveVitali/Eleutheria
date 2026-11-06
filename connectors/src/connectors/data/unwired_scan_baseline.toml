@@ -1,0 +1,535 @@
+# SPDX-License-Identifier: Apache-2.0
+# P37.5a unwired-scan adjudicated baseline (sig.unwired-scan/1).
+
+[[finding]]
+key = "connectors.accountability.AccountabilityConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.accountability.atlas_artifacts"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.accountability.canary_findings"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.accountability.factual_epistemic_statuses"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.accountability.forbidden_predicate_genres"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.agency_policy.AgencyPolicyConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.agency_registry.AgencyRegistryConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.agency_registry.field_map"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.agency_registry.source_ids"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.atlas.canary_findings"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.atlas.evidence_genres"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.atlas.forbidden_predicate_genres"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.atlas.vocab_version"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.audit_structural.AuditStructuralConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.audit_structural.camera_count_observation"
+disposition = "capability-half"
+owner = "the §29.1 count-reconciliation consumer (unscheduled)"
+note = "the audit camera-count observation half"
+
+[[finding]]
+key = "connectors.audit_structural.canary_findings"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.audit_structural.forbidden_predicate_genres"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.audit_structural.reconcile_camera_counts"
+disposition = "capability-half"
+owner = "the §29.1 count-reconciliation consumer (unscheduled)"
+note = "the audit count-reconcile half"
+
+[[finding]]
+key = "connectors.axon_connect.AxonConnectConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.claim_identity_ingest.diff_minting"
+disposition = "capability-half"
+owner = "nightly minting-parity probe (P34.44b harness)"
+note = "the emitted-vs-stored digest parity check's compare half"
+
+[[finding]]
+key = "connectors.claim_identity_ingest.read_rows"
+disposition = "capability-half"
+owner = "nightly minting-parity probe (P34.44b harness)"
+note = "the reconcile CSV codec's read half"
+
+[[finding]]
+key = "connectors.claim_identity_ingest.reconcile_rows"
+disposition = "capability-half"
+owner = "nightly minting-parity probe (P34.44b harness)"
+note = "the reconcile CSV codec's emit half"
+
+[[finding]]
+key = "connectors.claim_identity_ingest.write_rows"
+disposition = "capability-half"
+owner = "nightly minting-parity probe (P34.44b harness)"
+note = "the reconcile CSV codec's write half"
+
+[[finding]]
+key = "connectors.coarse_international.CoarseInternationalConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.cooperative.CooperativeConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.data_driven.DataDrivenConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.data_driven.source_id"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.data_driven.vocab_version"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.documentcloud.DocumentCloudConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.dot_511.Dot511Connector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.dot_511.canary_findings"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.dot_511.enumerated_outcomes"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.flock_portal.FlockPortalConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.flock_portal.canary_findings"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.flock_portal.detect_portal_changes"
+disposition = "capability-half"
+owner = "P37.5b"
+note = "portal change detection — the disappearance-events row wires it into the persisted event feed"
+
+[[finding]]
+key = "connectors.flock_portal.diff_portal_snapshots"
+disposition = "capability-half"
+owner = "P37.5b"
+note = "portal snapshot diff — the disappearance-events row wires it"
+
+[[finding]]
+key = "connectors.flock_portal.forbidden_predicate_genres"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.flock_portal.is_poll_due"
+disposition = "capability-half"
+owner = "P37.5b"
+note = "portal poll cadence — the disappearance-events row wires it"
+
+[[finding]]
+key = "connectors.flock_portal.portal_capture"
+disposition = "capability-half"
+owner = "P37.5b"
+note = "portal capture half — the disappearance-events row wires it"
+
+[[finding]]
+key = "connectors.flock_portal.portal_slugs"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.france_belgium.FranceBelgiumProcurementConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.france_belgium.FranceBelgiumRecordsConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.france_belgium.legal_instrument_forbidden_predicate_genres"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.france_belgium.source_ids"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.government_mandated_disclosure.GovernmentMandatedDisclosureConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.government_mandated_disclosure.deployment_genres"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.government_mandated_disclosure.disclosure_sources"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.government_mandated_disclosure.scope"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.lineage.build_lineage"
+disposition = "capability-half"
+owner = "the lineage emit path (unscheduled)"
+note = "the claim-lineage record builder — lineage_declarations consumes declarations, not this builder"
+
+[[finding]]
+key = "connectors.loader.run_connector"
+disposition = "capability-half"
+owner = "orchestration seam (SIG-ENG-013)"
+note = "the loader-side connector driver — production drives runner.run_source"
+
+[[finding]]
+key = "connectors.ok_statute.OkStatuteConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.okc_procurement.OkcProcurementConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.okcpd_policy.OkcpdPolicyConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.opt_out.opt_out_reasons"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.osm.OSMConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.osm.acquisition_mode"
+disposition = "capability-half"
+owner = "OSM replication-diff row (unscheduled)"
+note = "OSM replication/history acquisition half (§21.3)"
+
+[[finding]]
+key = "connectors.osm.assert_own_or_public_instance"
+disposition = "capability-half"
+owner = "OSM replication-diff row (unscheduled)"
+note = "OSM instance guard half"
+
+[[finding]]
+key = "connectors.osm.canary_findings"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.osm.element_content_digest"
+disposition = "capability-half"
+owner = "OSM replication-diff row (unscheduled)"
+note = "OSM element digest half"
+
+[[finding]]
+key = "connectors.osm.element_version_ref"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.osm.history_versions"
+disposition = "capability-half"
+owner = "OSM replication-diff row (unscheduled)"
+note = "OSM element history half"
+
+[[finding]]
+key = "connectors.osm.overpass_status_action"
+disposition = "capability-half"
+owner = "OSM replication-diff row (unscheduled)"
+note = "OSM Overpass status half"
+
+[[finding]]
+key = "connectors.osm.physical_asset_rows"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.osm.snapshot_content_diff"
+disposition = "capability-half"
+owner = "OSM replication-diff row (unscheduled)"
+note = "OSM snapshot diff half"
+
+[[finding]]
+key = "connectors.osm.snapshot_diff"
+disposition = "capability-half"
+owner = "OSM replication-diff row (unscheduled)"
+note = "OSM snapshot diff half"
+
+[[finding]]
+key = "connectors.osm.vocab_version"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.osm_import_study.assert_import_studied_before_scaled_contribution"
+disposition = "capability-half"
+owner = "contribution-back scale-out (tasks/, unscheduled)"
+note = "the scaled-contribution import-study gate"
+
+[[finding]]
+key = "connectors.pathways.PathwaysConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.pathways.all_conformance_pathways"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.pathways.deployment_genres"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.pipeline.run_stage"
+disposition = "capability-half"
+owner = "orchestration seam (SIG-INGEST-001/ENG-013)"
+note = "the separately-addressable stage runner — production drives the whole-run path"
+
+[[finding]]
+key = "connectors.procurement.ProcurementConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.procurement.content_person_naming_predicates"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.procurement.forbidden_predicate_genres"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.procurement.platform_census"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.procurement.portal_census"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.procurement.procurement_term_classes"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.procurement.tenant_discovery_negatives"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.publish_matrix.batch_drift"
+disposition = "capability-half"
+owner = "publish-matrix batch render (P36.45 batch binding; consumer unscheduled)"
+note = "the batch-description drift half"
+
+[[finding]]
+key = "connectors.publish_matrix.description_for"
+disposition = "capability-half"
+owner = "publish-matrix batch render (P36.45; consumer unscheduled)"
+note = "the per-field description half"
+
+[[finding]]
+key = "connectors.publish_matrix.published_field"
+disposition = "capability-half"
+owner = "publish-matrix batch render (P36.45; consumer unscheduled)"
+note = "the published-field render half"
+
+[[finding]]
+key = "connectors.publish_matrix.render_batch"
+disposition = "capability-half"
+owner = "publish-matrix batch render (P36.45; consumer unscheduled)"
+note = "the batch render half"
+
+[[finding]]
+key = "connectors.records.RecordsConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.records.forbidden_predicate_genres"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.registry.rights_records"
+disposition = "capability-half"
+owner = "registry read surface (unscheduled)"
+note = "the rights-record map accessor"
+
+[[finding]]
+key = "connectors.runner.is_review_status_green"
+disposition = "capability-half"
+owner = "the review-status gate consumer (unscheduled)"
+note = "the green-verdict helper — live_gate_reasons is the enforced path"
+
+[[finding]]
+key = "connectors.stages.get_connector"
+disposition = "capability-half"
+owner = "orchestration seam (SIG-INGEST-021)"
+note = "the name-registry lookup — runner resolves connectors through it"
+
+[[finding]]
+key = "connectors.stages.is_post_capture"
+disposition = "capability-half"
+owner = "framework egress-rule predicate (SIG-INGEST-002)"
+note = "the post-capture predicate — isolation enforces the rule today"
+
+[[finding]]
+key = "connectors.stages.may_egress"
+disposition = "capability-half"
+owner = "framework egress-rule predicate (SIG-INGEST-002)"
+note = "the egress predicate — isolation enforces the rule today"
+
+[[finding]]
+key = "connectors.statute_seed.StateStatuteSeedConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "parsing.clauses.clause_map"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "parsing.drift.assert_no_drift"
+disposition = "capability-half"
+owner = "scheduled parser canary (unscheduled)"
+note = "the drift-canary assert half"
+
+[[finding]]
+key = "parsing.drift.run_canary"
+disposition = "capability-half"
+owner = "scheduled parser canary (unscheduled)"
+note = "the drift-canary run half"
+
+[[finding]]
+key = "parsing.extraction.measure_accuracy"
+disposition = "capability-half"
+owner = "extraction evaluation path (§25, unscheduled)"
+note = "the gold-accuracy measurement half"
+
+[[finding]]
+key = "parsing.extraction.run_extraction"
+disposition = "capability-half"
+owner = "extraction evaluation path (§25, unscheduled)"
+note = "the extraction run half — sig-parsing extract wires extract_claims"
+
+[[finding]]
+key = "parsing.extraction.should_sample_for_review"
+disposition = "capability-half"
+owner = "extraction review sampling (§25, unscheduled)"
+note = "the review-sampling decision half"
+
+[[finding]]
+key = "parsing.genre.genre_permits_deployment_claim"
+disposition = "capability-half"
+owner = "§46 genre-gate consumer (unscheduled)"
+note = "the genre→deployment-claim gate helper"
+
+[[finding]]
+key = "parsing.layers.cheaper_of"
+disposition = "capability-half"
+owner = "the §24 parse dispatcher (unscheduled)"
+note = "layer-ordering comparator half"
+
+[[finding]]
+key = "parsing.layers.cheapest_sufficient"
+disposition = "capability-half"
+owner = "the §24 parse dispatcher (unscheduled)"
+note = "the cheapest-sufficient-layer selector half"

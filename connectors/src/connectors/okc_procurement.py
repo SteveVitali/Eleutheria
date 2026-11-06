@@ -30,3 +30,5 @@ class OkcProcurementConnector(OkcDocumentConnector):
 
     name = "okc_procurement"
     version = "1.0.0"
+    ingestion_mode = "rest_api"
+    incrementality = "updated-since watermark (Socrata)"

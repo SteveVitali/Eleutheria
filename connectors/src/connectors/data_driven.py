@@ -531,6 +531,8 @@ class DataDrivenConnector(Connector):
 
     name = "data_driven"
     version = "1.0.0"
+    ingestion_mode = "bulk_file_download"
+    incrementality = "content-hash diff on the published CSV"
 
     # -- acquisition --
     def discover(self, ctx: RunContext) -> list[Mapping[str, Any]]:
