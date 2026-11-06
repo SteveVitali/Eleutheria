@@ -1,0 +1,62 @@
+{
+  "schema": "sig.second-release-acceptance/1",
+  "ticket": "P36.70",
+  "manifest_row": 417,
+  "family": "R11-REL-11",
+  "branch": "r11/P36.70-second-release-acceptance",
+  "pr_base": "r11/P36.72b-core-surfaces-walkthroughs-and-promotion",
+  "produced": "2026-11-05",
+  "live_verification": false,
+  "status": "prepared_not_executed",
+  "layer_reached": ["engineered", "fixture-verified"],
+  "authority": {
+    "gate_status_verbatim": "D-G3-3 [B-9] = a: the first Class R promotion runs under the standing go if it is still valid (renewed at GATE-G5); otherwise as Class S (IN-TICKET PAUSE)",
+    "om20_status_verbatim": "conditional — the first Class R promotion runs under the standing go only if it is still valid (renewed at GATE-G5); otherwise the leg pauses in-ticket and runs as Class S",
+    "standing_go_verbatim": "Agents may promote a Class R release built from the same signed code whose diff stays within bounds (records −2%…+15%, no compartment <−5% or >+50%, no source loses >20%), with all checks green and no waivers; this go expires at the next sub-round gate or after 30 days, and is void on any ratchet regression, Part VIII screen change or new source.",
+    "standing_go_validity": "renewed verbatim at the GATE-G5 sitting (2026-10-25T18:40Z); expires GATE-G6 or 2026-11-24, whichever first; void on any ratchet regression, Part VIII screen change or new source — read from the record, never presumed",
+    "class_r_resolution": "the go is valid NOW, but the rehearsal leg's precondition — P36.72b promoted — is the operator's HG-11 act at the GATE-G6 sitting, exactly when the go expires → the contract's own fallback applies: the legs run Class S under operator sig.operator-authority/1 records (registry/authorities/<name>.json — the verbs verify them, never create them, SIG-SEC-010)",
+    "live_window_verbatim": "after P36.72b promotes (>= 2026-11-13T12:00Z); weekday 14:00-20:00Z",
+    "live_leg_verbatim": "1: rollback + withdrawal rehearsal after P36.72b promotes — the plan cell, verbatim (0.5 leg run)",
+    "mutation_verbatim": "the Class R promotion rehearsal (conditional on the standing go's validity) + the rollback/withdrawal rehearsal on a low-stakes record — bounded, reversible"
+  },
+  "machinery": {
+    "module": "ops/src/ops/release_rehearsal.py",
+    "cli": "sig-ops release-rehearsal {plan,orders,run}",
+    "runner": "ops/gcp/release-rehearsal.sh (--check prints the plan offline; --apply carries the window + author + authority-record guards, exit 42 QUEUED)",
+    "record_schema": "sig.release-rehearsal/1 — per-leg started_at/seconds/budget_s/within_budget + pre/post pointer state + receipts; appended under registry/rehearsals/ on --apply",
+    "legs": [
+      {"leg": "rollback-to-prior", "verb": "sig-ops release rollback --to <prior promoted pub|legacy floor> --reason <rehearsal> --go <name>", "budget_s": 600, "budget_basis": "G3 §8.1 ≤10 min command→verified [est → measured]"},
+      {"leg": "rollback-restore", "verb": "sig-ops release rollback --to <the promoted pub> --reason <restore> --go <name>", "budget_s": 600, "budget_basis": "same — the pointer ends where it started"},
+      {"leg": "withdraw-deny", "verb": "sig-ops release withdraw --disposition rehearsal-deny.json --authority <name>", "budget_s": 900, "budget_basis": "SIG-REL-D13 / D-G3-9 ≤15 min every-alias"},
+      {"leg": "withdraw-reinstate", "verb": "sig-ops release withdraw --disposition rehearsal-allow.json --authority <name>", "budget_s": 900, "budget_basis": "same — the allow order is the documented append-only reinstatement"}
+    ],
+    "bounds": "entity-kind low-stakes targets only, ≤4 (assert_bounded_orders); the reinstate order must name exactly the deny order's targets; a target with no staged entity route refuses (target-unstaged); rolls land prepared_not_executed unless --execute-rolls",
+    "restore_point": "rollback-restore re-points latest at the promoted release (the prior release stays published); the withdrawal's reinstate is a NEW allow disposition — byte-level restore is the next release's staging (the append-only contract, §8.3)",
+    "tests": "tests/ops/test_release_rehearsal.py — 10 fixture tests (orders deterministic+bounded, plan blockers, 4 timed legs restore, honest failure record, CLI exit codes incl. 42)"
+  },
+  "queued_leg": {
+    "id": "P36.70-rehearsal",
+    "obligation": "D-P36.70-1",
+    "precondition": "P36.72b's promote landed (D-P36.72b-1 — the operator's HG-11 signed readout at the GATE-G6 sitting) so ≥1 promoted release + a rollback target exist; then the operator's sig.operator-authority/1 go + takedown-authority records named for the two verb slots, SIG_RELEASE_REGISTRY + ADC/SIG_GCP_PROJECT present",
+    "command_surface": "ops/gcp/release-rehearsal.sh --apply (window guard: >= 2026-11-13T12:00Z, weekday 14:00-20:00Z; SIG_REHEARSAL_AUTHOR + SIG_REHEARSAL_GO + SIG_REHEARSAL_AUTHORITY + SIG_REHEARSAL_ENTITY)",
+    "env_required": [
+      "SIG_RELEASE_REGISTRY (the private release bucket) + ADC / SIG_GCP_PROJECT",
+      "the operator's authority records under registry/authorities/ (Class S fallback — the go expires at GATE-G6)",
+      "the promoted second release + a rollback target (P36.72b's promote; else a legacy floor)",
+      "the low-stakes entity id(s) the rehearsal withdraws (≤4, chosen at the sitting)"
+    ],
+    "window": ">= 2026-11-13T12:00Z; weekday 14:00-20:00Z (contract cell, verbatim)",
+    "rerun": "implement-spec spec=docs/tickets/417_P36.70__second-release-acceptance.md live_verification=true",
+    "done_when": "the sig.release-rehearsal/1 record lands status=rehearsed (all four legs applied, latest_restored=true, timings measured vs the 600s/900s budgets) + the journal carries the rolled-back + withdraw events; measured timings replace G3 §5.2's [est] figures"
+  },
+  "conditional_class_r": {
+    "verdict": "not executable this run and not expected at the re-run — the go's expiry (GATE-G6) is the same sitting that lands the rehearsal precondition; the contract's own fallback (Class S) is recorded, never re-decided",
+    "if_eligible_at_rerun": "an unexpected still-valid go + a Class-R-eligible candidate would run release classify → release promote --class class_r --approval <standing-go-name> through the landed P35.60 classifier — the record must quote GATE-G5's renewal verbatim, never presume it"
+  },
+  "named_limits": [
+    "no promoted release, no staged candidate, no authority records and no hosted env exist in this run — nothing is fabricated; the fixture registry stands in",
+    "the low-stakes record is chosen at the sitting (a non-Part-VIII entity route on the promoted release); the packet stages the machinery, never a fabricated target",
+    "P-mode verify + origin probes ride the promoted release's own verify leg — the rehearsal's legs are registry-bound; --origin probes are plumbed for the sitting",
+    "the rolls land prepared_not_executed unless the sitting passes --execute-rolls with digest-pinned images"
+  ]
+}
