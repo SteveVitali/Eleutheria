@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `3e8c2e59434d0bd173241d443a491a651de704ea` · inputs hashed: 1202 · wall-clock receipt: `receipt.json`
+> input_commit: `55383dba5108cba84f1091b67e12d20088e69506` · inputs hashed: 1204 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -103,7 +103,9 @@
 
 ## Known inconsistencies (preserved, never synthesized)
 
-- none — every P32.1 baseline conflict is either reconciled by a recorded event interpretation (old values preserved on the anchor) or documented in `reconciliations.json`; anything new would appear here and fail `verify`
+| check | obligation | message |
+|---|---|---|
+| adr/spec-appendix-mismatch | ADR-233 | ADR-233 exists but is not named anywhere in the canonical spec (Appendix F drift) |
 
 ## Evidence domains — recorded evidence only
 

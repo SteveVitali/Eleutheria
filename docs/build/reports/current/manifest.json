@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "3e8c2e59434d0bd173241d443a491a651de704ea",
+  "input_commit": "55383dba5108cba84f1091b67e12d20088e69506",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -933,12 +933,16 @@
       "sha256": "0903f9bc37d3dd3fa56960664e10458c391aeaf42f9f393519b21288a2fa0a71"
     },
     {
+      "path": "docs/adr/ADR-233-ingestion-mode-declaration-and-unwired-scan.md",
+      "sha256": "79ebc982091dce6101a11b1f61d5db31125ca35cdc66d21963026c7f1fc88fbd"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "7a966dc84cba6a7c25e6c30cde2d3197cfd6d7b438768ac5b7653413d8986604"
+      "sha256": "305162c95bd0a1be7fbf4f861d2f7b689a42ad20b9a6d1c4db7bca6ebff044f6"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "7ffebb9659ae7ec695b96b4a8eaa2656908d84661b87a47df5892725cbae0b0e"
+      "sha256": "0c0d5394a139dd3291abe9575d339057a970db74a1b7c695884e1f77cee2e6ea"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -946,7 +950,7 @@
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "dc480a36b9bba27faeab4d9e9f1d70f5eb65580a15702a846573b70b2d8bfbff"
+      "sha256": "2dcbc3a1db7b6f651fde01bd8ec390adf02280f3e8425ee40c45d00c973a00f8"
     },
     {
       "path": "docs/build/LEDGER.md",
@@ -2659,6 +2663,10 @@
     {
       "path": "docs/build/runs/P37.4b.md",
       "sha256": "1843a1b7e92b970a7c2e8f5cb2a6cc2f585fa96cdd5d4356f84f9ee40c7e2f61"
+    },
+    {
+      "path": "docs/build/runs/P37.5a.md",
+      "sha256": "de7aed350c4a65d386c7dd63c8331c76a6f771303eb05f942ad9a9b9dd5f9cf8"
     },
     {
       "path": "docs/build/runs/PLAN-11B.md",

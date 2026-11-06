@@ -1,0 +1,1305 @@
+{
+  "sig.unwired-scan/1": {
+    "drift": {
+      "new": [],
+      "resolved": [],
+      "unchanged": [
+        "connectors.accountability.AccountabilityConnector",
+        "connectors.accountability.atlas_artifacts",
+        "connectors.accountability.canary_findings",
+        "connectors.accountability.factual_epistemic_statuses",
+        "connectors.accountability.forbidden_predicate_genres",
+        "connectors.agency_policy.AgencyPolicyConnector",
+        "connectors.agency_registry.AgencyRegistryConnector",
+        "connectors.agency_registry.field_map",
+        "connectors.agency_registry.source_ids",
+        "connectors.atlas.canary_findings",
+        "connectors.atlas.evidence_genres",
+        "connectors.atlas.forbidden_predicate_genres",
+        "connectors.atlas.vocab_version",
+        "connectors.audit_structural.AuditStructuralConnector",
+        "connectors.audit_structural.camera_count_observation",
+        "connectors.audit_structural.canary_findings",
+        "connectors.audit_structural.forbidden_predicate_genres",
+        "connectors.audit_structural.reconcile_camera_counts",
+        "connectors.axon_connect.AxonConnectConnector",
+        "connectors.claim_identity_ingest.diff_minting",
+        "connectors.claim_identity_ingest.read_rows",
+        "connectors.claim_identity_ingest.reconcile_rows",
+        "connectors.claim_identity_ingest.write_rows",
+        "connectors.coarse_international.CoarseInternationalConnector",
+        "connectors.cooperative.CooperativeConnector",
+        "connectors.data_driven.DataDrivenConnector",
+        "connectors.data_driven.source_id",
+        "connectors.data_driven.vocab_version",
+        "connectors.documentcloud.DocumentCloudConnector",
+        "connectors.dot_511.Dot511Connector",
+        "connectors.dot_511.canary_findings",
+        "connectors.dot_511.enumerated_outcomes",
+        "connectors.flock_portal.FlockPortalConnector",
+        "connectors.flock_portal.canary_findings",
+        "connectors.flock_portal.detect_portal_changes",
+        "connectors.flock_portal.diff_portal_snapshots",
+        "connectors.flock_portal.forbidden_predicate_genres",
+        "connectors.flock_portal.is_poll_due",
+        "connectors.flock_portal.portal_capture",
+        "connectors.flock_portal.portal_slugs",
+        "connectors.france_belgium.FranceBelgiumProcurementConnector",
+        "connectors.france_belgium.FranceBelgiumRecordsConnector",
+        "connectors.france_belgium.legal_instrument_forbidden_predicate_genres",
+        "connectors.france_belgium.source_ids",
+        "connectors.government_mandated_disclosure.GovernmentMandatedDisclosureConnector",
+        "connectors.government_mandated_disclosure.deployment_genres",
+        "connectors.government_mandated_disclosure.disclosure_sources",
+        "connectors.government_mandated_disclosure.scope",
+        "connectors.lineage.build_lineage",
+        "connectors.loader.run_connector",
+        "connectors.ok_statute.OkStatuteConnector",
+        "connectors.okc_procurement.OkcProcurementConnector",
+        "connectors.okcpd_policy.OkcpdPolicyConnector",
+        "connectors.opt_out.opt_out_reasons",
+        "connectors.osm.OSMConnector",
+        "connectors.osm.acquisition_mode",
+        "connectors.osm.assert_own_or_public_instance",
+        "connectors.osm.canary_findings",
+        "connectors.osm.element_content_digest",
+        "connectors.osm.element_version_ref",
+        "connectors.osm.history_versions",
+        "connectors.osm.overpass_status_action",
+        "connectors.osm.physical_asset_rows",
+        "connectors.osm.snapshot_content_diff",
+        "connectors.osm.snapshot_diff",
+        "connectors.osm.vocab_version",
+        "connectors.osm_import_study.assert_import_studied_before_scaled_contribution",
+        "connectors.pathways.PathwaysConnector",
+        "connectors.pathways.all_conformance_pathways",
+        "connectors.pathways.deployment_genres",
+        "connectors.pipeline.run_stage",
+        "connectors.procurement.ProcurementConnector",
+        "connectors.procurement.content_person_naming_predicates",
+        "connectors.procurement.forbidden_predicate_genres",
+        "connectors.procurement.platform_census",
+        "connectors.procurement.portal_census",
+        "connectors.procurement.procurement_term_classes",
+        "connectors.procurement.tenant_discovery_negatives",
+        "connectors.publish_matrix.batch_drift",
+        "connectors.publish_matrix.description_for",
+        "connectors.publish_matrix.published_field",
+        "connectors.publish_matrix.render_batch",
+        "connectors.records.RecordsConnector",
+        "connectors.records.forbidden_predicate_genres",
+        "connectors.registry.rights_records",
+        "connectors.runner.is_review_status_green",
+        "connectors.stages.get_connector",
+        "connectors.stages.is_post_capture",
+        "connectors.stages.may_egress",
+        "connectors.statute_seed.StateStatuteSeedConnector",
+        "parsing.clauses.clause_map",
+        "parsing.drift.assert_no_drift",
+        "parsing.drift.run_canary",
+        "parsing.extraction.measure_accuracy",
+        "parsing.extraction.run_extraction",
+        "parsing.extraction.should_sample_for_review",
+        "parsing.genre.genre_permits_deployment_claim",
+        "parsing.layers.cheaper_of",
+        "parsing.layers.cheapest_sufficient"
+      ]
+    },
+    "findings": 99,
+    "packages": [
+      "connectors",
+      "parsing"
+    ],
+    "rows": [
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.accountability.AccountabilityConnector",
+        "kind": "class",
+        "line": 908,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/accountability.py",
+        "test_referers": [
+          "tests/connectors/test_accountability.py",
+          "tests/connectors/test_congress_gov_sweep.py",
+          "tests/connectors/test_credential_transport.py",
+          "tests/connectors/test_curated_index.py",
+          "tests/connectors/test_openstates_sweep.py",
+          "tests/connectors/test_oversight_reports.py",
+          "tests/partner_fixtures.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.accountability.atlas_artifacts",
+        "kind": "function",
+        "line": 148,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/accountability.py",
+        "test_referers": [
+          "tests/connectors/test_accountability.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.accountability.canary_findings",
+        "kind": "function",
+        "line": 873,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/accountability.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.accountability.factual_epistemic_statuses",
+        "kind": "function",
+        "line": 128,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/accountability.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.accountability.forbidden_predicate_genres",
+        "kind": "function",
+        "line": 170,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/accountability.py",
+        "test_referers": [
+          "tests/connectors/test_accountability.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.agency_policy.AgencyPolicyConnector",
+        "kind": "class",
+        "line": 36,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/agency_policy.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.agency_registry.AgencyRegistryConnector",
+        "kind": "class",
+        "line": 225,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/agency_registry.py",
+        "test_referers": [
+          "tests/connectors/test_credential_transport.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.agency_registry.field_map",
+        "kind": "function",
+        "line": 80,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/agency_registry.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.agency_registry.source_ids",
+        "kind": "function",
+        "line": 70,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/agency_registry.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.atlas.canary_findings",
+        "kind": "function",
+        "line": 337,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/atlas.py",
+        "test_referers": [
+          "tests/connectors/test_atlas.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.atlas.evidence_genres",
+        "kind": "function",
+        "line": 234,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/atlas.py",
+        "test_referers": [
+          "tests/connectors/test_atlas.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.atlas.forbidden_predicate_genres",
+        "kind": "function",
+        "line": 137,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/atlas.py",
+        "test_referers": [
+          "tests/connectors/test_atlas.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.atlas.vocab_version",
+        "kind": "function",
+        "line": 106,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/atlas.py",
+        "test_referers": [
+          "tests/connectors/test_atlas.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.audit_structural.AuditStructuralConnector",
+        "kind": "class",
+        "line": 851,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/audit_structural.py",
+        "test_referers": [
+          "tests/connectors/test_audit_structural.py",
+          "tests/db/test_p31_6_access_edges.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.audit_structural.camera_count_observation",
+        "kind": "function",
+        "line": 644,
+        "note": "the audit camera-count observation half",
+        "owner": "the \u00a729.1 count-reconciliation consumer (unscheduled)",
+        "path": "connectors/src/connectors/audit_structural.py",
+        "test_referers": [
+          "tests/connectors/test_audit_structural.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.audit_structural.canary_findings",
+        "kind": "function",
+        "line": 261,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/audit_structural.py",
+        "test_referers": [
+          "tests/connectors/test_audit_structural.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.audit_structural.forbidden_predicate_genres",
+        "kind": "function",
+        "line": 191,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/audit_structural.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.audit_structural.reconcile_camera_counts",
+        "kind": "function",
+        "line": 679,
+        "note": "the audit count-reconcile half",
+        "owner": "the \u00a729.1 count-reconciliation consumer (unscheduled)",
+        "path": "connectors/src/connectors/audit_structural.py",
+        "test_referers": [
+          "tests/connectors/test_audit_structural.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.axon_connect.AxonConnectConnector",
+        "kind": "class",
+        "line": 651,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/axon_connect.py",
+        "test_referers": [
+          "tests/connectors/test_axon_connect.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.claim_identity_ingest.diff_minting",
+        "kind": "function",
+        "line": 268,
+        "note": "the emitted-vs-stored digest parity check's compare half",
+        "owner": "nightly minting-parity probe (P34.44b harness)",
+        "path": "connectors/src/connectors/claim_identity_ingest.py",
+        "test_referers": [
+          "tests/connectors/test_claim_identity_ingest.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.claim_identity_ingest.read_rows",
+        "kind": "function",
+        "line": 225,
+        "note": "the reconcile CSV codec's read half",
+        "owner": "nightly minting-parity probe (P34.44b harness)",
+        "path": "connectors/src/connectors/claim_identity_ingest.py",
+        "test_referers": [
+          "tests/connectors/test_claim_identity_ingest.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.claim_identity_ingest.reconcile_rows",
+        "kind": "function",
+        "line": 164,
+        "note": "the reconcile CSV codec's emit half",
+        "owner": "nightly minting-parity probe (P34.44b harness)",
+        "path": "connectors/src/connectors/claim_identity_ingest.py",
+        "test_referers": [
+          "tests/connectors/test_claim_identity_ingest.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.claim_identity_ingest.write_rows",
+        "kind": "function",
+        "line": 208,
+        "note": "the reconcile CSV codec's write half",
+        "owner": "nightly minting-parity probe (P34.44b harness)",
+        "path": "connectors/src/connectors/claim_identity_ingest.py",
+        "test_referers": [
+          "tests/connectors/test_claim_identity_ingest.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.coarse_international.CoarseInternationalConnector",
+        "kind": "class",
+        "line": 632,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/coarse_international.py",
+        "test_referers": [
+          "tests/connectors/test_coarse_dataset_adapters.py",
+          "tests/connectors/test_coarse_international.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.cooperative.CooperativeConnector",
+        "kind": "class",
+        "line": 885,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/cooperative.py",
+        "test_referers": [
+          "tests/connectors/test_cooperative.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.data_driven.DataDrivenConnector",
+        "kind": "class",
+        "line": 517,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/data_driven.py",
+        "test_referers": [
+          "tests/connectors/test_data_driven.py",
+          "tests/db/test_p31_6_access_edges.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.data_driven.source_id",
+        "kind": "function",
+        "line": 111,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/data_driven.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.data_driven.vocab_version",
+        "kind": "function",
+        "line": 106,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/data_driven.py",
+        "test_referers": [
+          "tests/connectors/test_data_driven.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.documentcloud.DocumentCloudConnector",
+        "kind": "class",
+        "line": 995,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/documentcloud.py",
+        "test_referers": [
+          "tests/connectors/test_documentcloud.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.dot_511.Dot511Connector",
+        "kind": "class",
+        "line": 2456,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/dot_511.py",
+        "test_referers": [
+          "tests/connectors/test_acq11_p36_7.py",
+          "tests/connectors/test_dot_511.py",
+          "tests/connectors/test_dot_511_acq08.py",
+          "tests/connectors/test_dot_511_acq09.py",
+          "tests/connectors/test_dot_511_acq10.py",
+          "tests/connectors/test_subject_key_pins.py",
+          "tests/connectors/test_wave_b_replay.py",
+          "tests/partner_fixtures.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.dot_511.canary_findings",
+        "kind": "function",
+        "line": 3394,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/dot_511.py",
+        "test_referers": [
+          "tests/connectors/test_dot_511.py",
+          "tests/connectors/test_dot_511_acq08.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.dot_511.enumerated_outcomes",
+        "kind": "function",
+        "line": 1462,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/dot_511.py",
+        "test_referers": [
+          "tests/connectors/test_agenda_tenant_labels.py",
+          "tests/connectors/test_dot_511.py",
+          "tests/connectors/test_tribal_screened_lane.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.flock_portal.FlockPortalConnector",
+        "kind": "class",
+        "line": 786,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/flock_portal.py",
+        "test_referers": [
+          "tests/connectors/test_flock_portal.py",
+          "tests/db/test_p31_6_access_edges.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.flock_portal.canary_findings",
+        "kind": "function",
+        "line": 259,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/flock_portal.py",
+        "test_referers": [
+          "tests/connectors/test_flock_portal.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.flock_portal.detect_portal_changes",
+        "kind": "function",
+        "line": 518,
+        "note": "portal change detection \u2014 the disappearance-events row wires it into the persisted event feed",
+        "owner": "P37.5b",
+        "path": "connectors/src/connectors/flock_portal.py",
+        "test_referers": [
+          "tests/connectors/test_flock_portal.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.flock_portal.diff_portal_snapshots",
+        "kind": "function",
+        "line": 448,
+        "note": "portal snapshot diff \u2014 the disappearance-events row wires it",
+        "owner": "P37.5b",
+        "path": "connectors/src/connectors/flock_portal.py",
+        "test_referers": [
+          "tests/connectors/test_flock_portal.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.flock_portal.forbidden_predicate_genres",
+        "kind": "function",
+        "line": 149,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/flock_portal.py",
+        "test_referers": [
+          "tests/connectors/test_flock_portal.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.flock_portal.is_poll_due",
+        "kind": "function",
+        "line": 222,
+        "note": "portal poll cadence \u2014 the disappearance-events row wires it",
+        "owner": "P37.5b",
+        "path": "connectors/src/connectors/flock_portal.py",
+        "test_referers": [
+          "tests/connectors/test_flock_portal.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.flock_portal.portal_capture",
+        "kind": "function",
+        "line": 432,
+        "note": "portal capture half \u2014 the disappearance-events row wires it",
+        "owner": "P37.5b",
+        "path": "connectors/src/connectors/flock_portal.py",
+        "test_referers": [
+          "tests/connectors/test_flock_portal.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.flock_portal.portal_slugs",
+        "kind": "function",
+        "line": 289,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/flock_portal.py",
+        "test_referers": [
+          "tests/connectors/test_flock_portal.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.france_belgium.FranceBelgiumProcurementConnector",
+        "kind": "class",
+        "line": 1429,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/france_belgium.py",
+        "test_referers": [
+          "tests/connectors/test_france_belgium.py",
+          "tests/partner_fixtures.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.france_belgium.FranceBelgiumRecordsConnector",
+        "kind": "class",
+        "line": 1049,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/france_belgium.py",
+        "test_referers": [
+          "tests/connectors/test_france_belgium.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.france_belgium.legal_instrument_forbidden_predicate_genres",
+        "kind": "function",
+        "line": 232,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/france_belgium.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.france_belgium.source_ids",
+        "kind": "function",
+        "line": 94,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/france_belgium.py",
+        "test_referers": [
+          "tests/connectors/test_france_belgium.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.government_mandated_disclosure.GovernmentMandatedDisclosureConnector",
+        "kind": "class",
+        "line": 2097,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/government_mandated_disclosure.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.government_mandated_disclosure.deployment_genres",
+        "kind": "function",
+        "line": 201,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/government_mandated_disclosure.py",
+        "test_referers": [
+          "tests/connectors/test_government_mandated_disclosure.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.government_mandated_disclosure.disclosure_sources",
+        "kind": "function",
+        "line": 284,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/government_mandated_disclosure.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.government_mandated_disclosure.scope",
+        "kind": "function",
+        "line": 274,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/government_mandated_disclosure.py",
+        "test_referers": [
+          "tests/connectors/test_government_mandated_disclosure.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.lineage.build_lineage",
+        "kind": "function",
+        "line": 40,
+        "note": "the claim-lineage record builder \u2014 lineage_declarations consumes declarations, not this builder",
+        "owner": "the lineage emit path (unscheduled)",
+        "path": "connectors/src/connectors/lineage.py",
+        "test_referers": [
+          "tests/connectors/test_lineage.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.loader.run_connector",
+        "kind": "function",
+        "line": 161,
+        "note": "the loader-side connector driver \u2014 production drives runner.run_source",
+        "owner": "orchestration seam (SIG-ENG-013)",
+        "path": "connectors/src/connectors/loader.py",
+        "test_referers": [
+          "tests/unit/test_ingestion_gate.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.ok_statute.OkStatuteConnector",
+        "kind": "class",
+        "line": 27,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/ok_statute.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.okc_procurement.OkcProcurementConnector",
+        "kind": "class",
+        "line": 28,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/okc_procurement.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.okcpd_policy.OkcpdPolicyConnector",
+        "kind": "class",
+        "line": 26,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/okcpd_policy.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.opt_out.opt_out_reasons",
+        "kind": "function",
+        "line": 202,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/opt_out.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.osm.OSMConnector",
+        "kind": "class",
+        "line": 860,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/osm.py",
+        "test_referers": [
+          "tests/connectors/test_content_drift.py",
+          "tests/connectors/test_osm.py",
+          "tests/connectors/test_osm_camera_site.py",
+          "tests/e2e/test_composed_stack.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.osm.acquisition_mode",
+        "kind": "function",
+        "line": 732,
+        "note": "OSM replication/history acquisition half (\u00a721.3)",
+        "owner": "OSM replication-diff row (unscheduled)",
+        "path": "connectors/src/connectors/osm.py",
+        "test_referers": [
+          "tests/connectors/test_osm.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.osm.assert_own_or_public_instance",
+        "kind": "function",
+        "line": 754,
+        "note": "OSM instance guard half",
+        "owner": "OSM replication-diff row (unscheduled)",
+        "path": "connectors/src/connectors/osm.py",
+        "test_referers": [
+          "tests/connectors/test_osm.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.osm.canary_findings",
+        "kind": "function",
+        "line": 1564,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/osm.py",
+        "test_referers": [
+          "tests/connectors/test_osm.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.osm.element_content_digest",
+        "kind": "function",
+        "line": 452,
+        "note": "OSM element digest half",
+        "owner": "OSM replication-diff row (unscheduled)",
+        "path": "connectors/src/connectors/osm.py",
+        "test_referers": [
+          "tests/connectors/test_osm_camera_site.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.osm.element_version_ref",
+        "kind": "function",
+        "line": 346,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/osm.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.osm.history_versions",
+        "kind": "function",
+        "line": 372,
+        "note": "OSM element history half",
+        "owner": "OSM replication-diff row (unscheduled)",
+        "path": "connectors/src/connectors/osm.py",
+        "test_referers": [
+          "tests/connectors/test_osm.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.osm.overpass_status_action",
+        "kind": "function",
+        "line": 737,
+        "note": "OSM Overpass status half",
+        "owner": "OSM replication-diff row (unscheduled)",
+        "path": "connectors/src/connectors/osm.py",
+        "test_referers": [
+          "tests/connectors/test_osm.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.osm.physical_asset_rows",
+        "kind": "function",
+        "line": 811,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/osm.py",
+        "test_referers": [
+          "tests/connectors/test_osm.py",
+          "tests/connectors/test_osm_camera_site.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.osm.snapshot_content_diff",
+        "kind": "function",
+        "line": 492,
+        "note": "OSM snapshot diff half",
+        "owner": "OSM replication-diff row (unscheduled)",
+        "path": "connectors/src/connectors/osm.py",
+        "test_referers": [
+          "tests/connectors/test_osm_camera_site.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.osm.snapshot_diff",
+        "kind": "function",
+        "line": 441,
+        "note": "OSM snapshot diff half",
+        "owner": "OSM replication-diff row (unscheduled)",
+        "path": "connectors/src/connectors/osm.py",
+        "test_referers": [
+          "tests/connectors/test_osm.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.osm.vocab_version",
+        "kind": "function",
+        "line": 127,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/osm.py",
+        "test_referers": [
+          "tests/connectors/test_osm.py",
+          "tests/connectors/test_osm_camera_site.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.osm_import_study.assert_import_studied_before_scaled_contribution",
+        "kind": "function",
+        "line": 109,
+        "note": "the scaled-contribution import-study gate",
+        "owner": "contribution-back scale-out (tasks/, unscheduled)",
+        "path": "connectors/src/connectors/osm_import_study.py",
+        "test_referers": [
+          "tests/connectors/test_osm_import_study.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.pathways.PathwaysConnector",
+        "kind": "class",
+        "line": 644,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/pathways.py",
+        "test_referers": [
+          "tests/connectors/test_pathway_coverage.py",
+          "tests/connectors/test_pathways.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.pathways.all_conformance_pathways",
+        "kind": "function",
+        "line": 127,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/pathways.py",
+        "test_referers": [
+          "tests/connectors/test_pathway_coverage.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.pathways.deployment_genres",
+        "kind": "function",
+        "line": 104,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/pathways.py",
+        "test_referers": [
+          "tests/connectors/test_pathways.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.pipeline.run_stage",
+        "kind": "function",
+        "line": 746,
+        "note": "the separately-addressable stage runner \u2014 production drives the whole-run path",
+        "owner": "orchestration seam (SIG-INGEST-001/ENG-013)",
+        "path": "connectors/src/connectors/pipeline.py",
+        "test_referers": [
+          "tests/connectors/test_pipeline.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.procurement.ProcurementConnector",
+        "kind": "class",
+        "line": 1906,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/procurement.py",
+        "test_referers": [
+          "tests/connectors/test_acq11_p36_7.py",
+          "tests/connectors/test_agenda_documents.py",
+          "tests/connectors/test_agenda_keyword_pass.py",
+          "tests/connectors/test_credential_transport.py",
+          "tests/connectors/test_procurement.py",
+          "tests/connectors/test_procurement_portals.py",
+          "tests/connectors/test_sam_gov_bounded_sweep.py",
+          "tests/connectors/test_ted_eu.py",
+          "tests/partner_fixtures.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.procurement.content_person_naming_predicates",
+        "kind": "function",
+        "line": 1307,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/procurement.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.procurement.forbidden_predicate_genres",
+        "kind": "function",
+        "line": 260,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/procurement.py",
+        "test_referers": [
+          "tests/connectors/test_procurement.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.procurement.platform_census",
+        "kind": "function",
+        "line": 1508,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/procurement.py",
+        "test_referers": [
+          "tests/connectors/test_promoted_sources.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.procurement.portal_census",
+        "kind": "function",
+        "line": 1554,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/procurement.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.procurement.procurement_term_classes",
+        "kind": "function",
+        "line": 179,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/procurement.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.procurement.tenant_discovery_negatives",
+        "kind": "function",
+        "line": 1474,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/procurement.py",
+        "test_referers": [
+          "tests/connectors/test_procurement.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.publish_matrix.batch_drift",
+        "kind": "function",
+        "line": 311,
+        "note": "the batch-description drift half",
+        "owner": "publish-matrix batch render (P36.45 batch binding; consumer unscheduled)",
+        "path": "connectors/src/connectors/publish_matrix.py",
+        "test_referers": [
+          "tests/connectors/test_publish_matrix.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.publish_matrix.description_for",
+        "kind": "function",
+        "line": 179,
+        "note": "the per-field description half",
+        "owner": "publish-matrix batch render (P36.45; consumer unscheduled)",
+        "path": "connectors/src/connectors/publish_matrix.py",
+        "test_referers": [
+          "tests/connectors/test_publish_matrix.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.publish_matrix.published_field",
+        "kind": "function",
+        "line": 151,
+        "note": "the published-field render half",
+        "owner": "publish-matrix batch render (P36.45; consumer unscheduled)",
+        "path": "connectors/src/connectors/publish_matrix.py",
+        "test_referers": [
+          "tests/connectors/test_publish_matrix.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.publish_matrix.render_batch",
+        "kind": "function",
+        "line": 261,
+        "note": "the batch render half",
+        "owner": "publish-matrix batch render (P36.45; consumer unscheduled)",
+        "path": "connectors/src/connectors/publish_matrix.py",
+        "test_referers": [
+          "tests/connectors/test_publish_matrix.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.records.RecordsConnector",
+        "kind": "class",
+        "line": 696,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/records.py",
+        "test_referers": [
+          "tests/connectors/test_records.py"
+        ]
+      },
+      {
+        "disposition": "test-surface",
+        "key": "connectors.records.forbidden_predicate_genres",
+        "kind": "function",
+        "line": 135,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "connectors/src/connectors/records.py",
+        "test_referers": [
+          "tests/connectors/test_records.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.registry.rights_records",
+        "kind": "function",
+        "line": 885,
+        "note": "the rights-record map accessor",
+        "owner": "registry read surface (unscheduled)",
+        "path": "connectors/src/connectors/registry.py",
+        "test_referers": [
+          "tests/unit/test_registry_export_gate.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.runner.is_review_status_green",
+        "kind": "function",
+        "line": 691,
+        "note": "the green-verdict helper \u2014 live_gate_reasons is the enforced path",
+        "owner": "the review-status gate consumer (unscheduled)",
+        "path": "connectors/src/connectors/runner.py",
+        "test_referers": [
+          "tests/connectors/test_okc_documents.py",
+          "tests/connectors/test_promoted_sources.py",
+          "tests/connectors/test_runner.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.stages.get_connector",
+        "kind": "function",
+        "line": 643,
+        "note": "the name-registry lookup \u2014 runner resolves connectors through it",
+        "owner": "orchestration seam (SIG-INGEST-021)",
+        "path": "connectors/src/connectors/stages.py",
+        "test_referers": [
+          "tests/connectors/test_dossier_documents.py",
+          "tests/connectors/test_stages.py",
+          "tests/connectors/test_tribal_screened_lane.py",
+          "tests/exports/test_research_dossier.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.stages.is_post_capture",
+        "kind": "function",
+        "line": 84,
+        "note": "the post-capture predicate \u2014 isolation enforces the rule today",
+        "owner": "framework egress-rule predicate (SIG-INGEST-002)",
+        "path": "connectors/src/connectors/stages.py",
+        "test_referers": [
+          "tests/connectors/test_stages.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "connectors.stages.may_egress",
+        "kind": "function",
+        "line": 89,
+        "note": "the egress predicate \u2014 isolation enforces the rule today",
+        "owner": "framework egress-rule predicate (SIG-INGEST-002)",
+        "path": "connectors/src/connectors/stages.py",
+        "test_referers": [
+          "tests/connectors/test_stages.py"
+        ]
+      },
+      {
+        "disposition": "seam:name-registry",
+        "key": "connectors.statute_seed.StateStatuteSeedConnector",
+        "kind": "class",
+        "line": 605,
+        "note": "registered connector \u2014 resolved by name via get_connector (SIG-INGEST-021)",
+        "owner": "",
+        "path": "connectors/src/connectors/statute_seed.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "test-surface",
+        "key": "parsing.clauses.clause_map",
+        "kind": "function",
+        "line": 132,
+        "note": "committed-data accessor the suite reads directly; production reads it through the module's own flow",
+        "owner": "",
+        "path": "parsing/src/parsing/clauses.py",
+        "test_referers": []
+      },
+      {
+        "disposition": "capability-half",
+        "key": "parsing.drift.assert_no_drift",
+        "kind": "function",
+        "line": 106,
+        "note": "the drift-canary assert half",
+        "owner": "scheduled parser canary (unscheduled)",
+        "path": "parsing/src/parsing/drift.py",
+        "test_referers": [
+          "tests/parsing/test_drift.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "parsing.drift.run_canary",
+        "kind": "function",
+        "line": 174,
+        "note": "the drift-canary run half",
+        "owner": "scheduled parser canary (unscheduled)",
+        "path": "parsing/src/parsing/drift.py",
+        "test_referers": [
+          "tests/parsing/test_drift.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "parsing.extraction.measure_accuracy",
+        "kind": "function",
+        "line": 437,
+        "note": "the gold-accuracy measurement half",
+        "owner": "extraction evaluation path (\u00a725, unscheduled)",
+        "path": "parsing/src/parsing/extraction.py",
+        "test_referers": [
+          "tests/parsing/test_extraction.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "parsing.extraction.run_extraction",
+        "kind": "function",
+        "line": 358,
+        "note": "the extraction run half \u2014 sig-parsing extract wires extract_claims",
+        "owner": "extraction evaluation path (\u00a725, unscheduled)",
+        "path": "parsing/src/parsing/extraction.py",
+        "test_referers": [
+          "tests/parsing/test_extraction.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "parsing.extraction.should_sample_for_review",
+        "kind": "function",
+        "line": 420,
+        "note": "the review-sampling decision half",
+        "owner": "extraction review sampling (\u00a725, unscheduled)",
+        "path": "parsing/src/parsing/extraction.py",
+        "test_referers": [
+          "tests/parsing/test_extraction.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "parsing.genre.genre_permits_deployment_claim",
+        "kind": "function",
+        "line": 200,
+        "note": "the genre\u2192deployment-claim gate helper",
+        "owner": "\u00a746 genre-gate consumer (unscheduled)",
+        "path": "parsing/src/parsing/genre.py",
+        "test_referers": [
+          "tests/parsing/test_genre.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "parsing.layers.cheaper_of",
+        "kind": "function",
+        "line": 99,
+        "note": "layer-ordering comparator half",
+        "owner": "the \u00a724 parse dispatcher (unscheduled)",
+        "path": "parsing/src/parsing/layers.py",
+        "test_referers": [
+          "tests/parsing/test_layers.py"
+        ]
+      },
+      {
+        "disposition": "capability-half",
+        "key": "parsing.layers.cheapest_sufficient",
+        "kind": "function",
+        "line": 104,
+        "note": "the cheapest-sufficient-layer selector half",
+        "owner": "the \u00a724 parse dispatcher (unscheduled)",
+        "path": "parsing/src/parsing/layers.py",
+        "test_referers": [
+          "tests/parsing/test_layers.py"
+        ]
+      }
+    ]
+  }
+}
+
