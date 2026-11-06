@@ -1,0 +1,137 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P37.7 (R11-GOV-02; ADR-164 / WV-02; spec §46.2 compensating controls;
+// design E2-governance-options.md E2-03) — the public editorial decision
+// log, under About. T1 under ADR-155: static markup only — no <script>,
+// no island, no runtime dependency.
+//
+// The operator holds interim single-maintainer editorial authority
+// (SIG-GOV-015 waived, WV-02); this log is the public transparency that
+// stands in for separation. Every entry is a committed
+// `sig.editorial-decision/1` record in lib/editorial-decisions.ts —
+// append-only, citing the GATE DECISIONS row it logs; the 2026-09-22
+// class sign-offs and the naming-off and authority dispositions are
+// logged retroactively and dated as such (ADR-164). Deletion and purge
+// entries are tombstones — a category and a date, never content
+// (SIG-GOV-008). Drafted sentences are sha256-pinned in
+// docs/build/reports/copy-batches/batch-18.md (B-2) and bind through the
+// `data-copy` ids; tests/unit/test_p37_7_decision_log.py fails on drift.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import DisputeLink from "../../components/DisputeLink.astro";
+import {
+  DECISION_CLASS_LABELS,
+  EDITORIAL_DECISIONS,
+  logStartDate,
+  orderedDecisions,
+} from "../../lib/editorial-decisions";
+
+const entries = orderedDecisions(EDITORIAL_DECISIONS);
+const logStart = logStartDate(EDITORIAL_DECISIONS);
+const tombstones = entries.filter((e) => e.class === "deletion" || e.class === "purge");
+---
+
+<BaseLayout
+  title="Editorial decision log"
+  path="/about/editorial-decisions/"
+  crumbs={[
+    { label: "About", href: "../" },
+    { label: "Editorial decision log" },
+  ]}
+>
+  <p data-copy="DL-01 DL-02">
+    Every naming, sensitivity and contested-claim decision SIG makes is
+    recorded here — dated, with its scope, its rationale and its record
+    links. A deletion or a purge appears as a tombstone: its category and
+    its date, never the deleted content.
+  </p>
+  <p data-copy="DL-03">
+    SIG has no editorial board. Editorial decisions are made by one
+    maintainer under the recorded interim authority logged below —
+    disclosed, never presented as a board — and officer and person naming
+    is turned off.
+  </p>
+  {logStart && (
+    <p class="sig-log-start" data-testid="log-start" data-copy="DL-04">
+      This log begins <time datetime={logStart}>{logStart}</time>; entries
+      marked retroactive record decisions taken before it existed, dated as
+      their records are.
+    </p>
+  )}
+  <p data-copy="DL-05">
+    The log is append-only: a correction is a new entry, never an edit.
+  </p>
+
+  <DisputeLink />
+
+  <h2 id="log-heading">Decisions</h2>
+  <ol class="sig-editorial-decisions" aria-labelledby="log-heading">
+    {entries.map((e) => (
+      <li
+        class="sig-editorial-decision"
+        data-testid="editorial-decision"
+        data-decision-id={e.decision_id}
+        data-class={e.class}
+        data-retroactive={e.retroactive || undefined}
+      >
+        <h3>
+          <time datetime={e.decided_at}>{e.decided_at}</time>{" — "}
+          {DECISION_CLASS_LABELS[e.class]}
+          {e.retroactive && <span class="sig-retroactive"> (retroactive)</span>}
+        </h3>
+        {/* The record itself — decision text, scope, rationale, citation and
+            evidence — is a technical-details block: requirement ids and
+            record references live here, never in the page's running prose. */}
+        <div class="sig-editorial-decision__record" data-technical-details>
+          <p class="sig-editorial-decision__decision" data-testid="decision-text">{e.decision}</p>
+          <dl class="sig-editorial-decision__meta">
+            <dt>Scope</dt>
+            <dd data-testid="decision-scope">{e.scope}</dd>
+            <dt>Rationale</dt>
+            <dd data-testid="decision-rationale">{e.rationale}</dd>
+            {e.tombstone && (
+              <>
+                <dt>Tombstone</dt>
+                <dd data-testid="decision-tombstone">
+                  A deletion was recorded in category {e.tombstone.category} on{" "}
+                  <time datetime={e.decided_at}>{e.decided_at}</time>. The
+                  deleted content is never stated.
+                </dd>
+              </>
+            )}
+            <dt>Recorded decision</dt>
+            <dd data-testid="decision-gate-ref">
+              <code>{e.gate_ref.row}</code>
+              {" · recorded "}
+              <time datetime={e.gate_ref.recorded_at}>{e.gate_ref.recorded_at}</time>
+            </dd>
+            <dt>Evidence</dt>
+            <dd data-testid="decision-evidence">
+              <ul>
+                {e.evidence.map((link) => (
+                  <li>
+                    <code>{link}</code>
+                  </li>
+                ))}
+              </ul>
+            </dd>
+          </dl>
+        </div>
+      </li>
+    ))}
+  </ol>
+
+  <h2 id="tombstones-heading">Deletions and purges</h2>
+  {tombstones.length === 0 ? (
+    <p data-testid="tombstone-empty" data-copy="DL-06">
+      No deletions or purges are recorded.
+    </p>
+  ) : (
+    <p data-testid="tombstone-count" data-copy="DL-07">
+      Tombstone entries appear in the log above — a category and a date,
+      never content.
+    </p>
+  )}
+</BaseLayout>
