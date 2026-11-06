@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: PLAN-11D
-lastCompleted: P36.70
+nextTicket: P36.73
+lastCompleted: PLAN-11D
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P36.70-second-release-acceptance
+chainTip: r11/PLAN-11D-contracts-for-11d-and-tail
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-05T10:18Z
+updatedAt: 2026-11-05T12:55Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1532,3 +1532,6 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-05 — P36.70 done — Gate status: conditional in-ticket pause — `D-G3-3 [B-9] = a` carried verbatim (the G5-renewed go expires at GATE-G6, when the P36.72b-promoted precondition lands → Class S under operator authority records; the rehearsal leg stays QUEUED `D-P36.70-1`, never pre-authorised beyond them) · deferrals +1/−0 · chainTip → r11/P36.70-second-release-acceptance · next → PLAN-11D · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-05 — P36.70 post-closeout record — head `6a4446c9` 5/5 green head-bound (`ci: pass #442@6a4446c`, run 42001721088, read ~10:15Z; boundary `reports/ci/p36_70_pr442.json` exit 3 = carried waived-ancestor `#440@2d5ac1f` python PY-STUB-1 flake-exhausted — #299 precedent, the new head itself 5/5) · fix arc: `ecf9b3d2` impl+records → `5d8a9591` live-claim negates → `610c5339` projection → `6a4446c9` future-ok markers · `main` untouched · next → PLAN-11D · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-05 — dispatch boundary-confirm — P36.70's green read recorded (`ci: pass #442@6a4446c`, run 42001721088; rehearsal leg queued honestly as `D-P36.70-1` — Class S under the G6 expiry, nothing executed); `blockedOn` (nothing); chainTip `r11/P36.70-second-release-acceptance` · nextTicket PLAN-11D (row 418 — **Kind: plan**, `decompose-spec mode=extend` — authors the full 11D + tail contracts; dep PLAN-11C landed; plan-only, OM-03; no implementation, no gates) — fresh decompose-spec sub-agent · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-05 — PLAN-11D done — row 418 `Kind: plan` — D1–D12 `mode=extend`: 90 contracts rows 421–510 execute-grade (11D P37 + P38 tail; gate markers 504/510 hand-authored, U-009 verbatim) · D12 Phase-4: 0 skeletons, 0 fwd deps, max load ≈35k tok ÷3; re-split 76 rows/65.0 runs not fired; OM-20 draft 15 headers (expires GATE-ACCEPT-R11); outreach-owed 19 rows; req-index regen (`req_index: current`); README stale-cell repair 416→417 · `make check` 11,106/14 local-fails/625 Docker-err · deferrals +0/−0 · legs 0 · next P36.73(419) · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-05 — PLAN-11D post-closeout record — head `4f6e88d9` 5/5 green head-bound (`ci: pass #443@4f6e88d`, run 42016664150, read ~12:50Z: docs 2m46s · security 37s · composed 4m20s · python 21m52s · web 1h2m9s attempt-2) · boundary exit 3 = carried waived-ancestor `#442@c981fec` python (#299 precedent, the new head itself 5/5) · web attempt-1 red = LH-PERF-1 LCP flake, logged `flake_log.csv` + rerun-requested → green · `main` untouched · chainTip r11/PLAN-11D-contracts-for-11d-and-tail (open) · next → P36.73 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-05 — dispatch boundary-confirm — PLAN-11D's green read recorded (`ci: pass #443@4f6e88d`, run 42016664150; 90 full 11D+tail contracts authored, draft 11D OM-20 list 15 rows, re-split not fired); `blockedOn` (nothing); chainTip `r11/PLAN-11D-contracts-for-11d-and-tail` · nextTicket P36.73 (row 419 — **capstone**: sub-round 11C acceptance — live-read sweep + the GATE-G6 packet; `Live stage: read-only`, no mutations; gate none; deps P36.72b/P36.70/PLAN-11D landed) — fresh implement-spec sub-agent on `r11/P36.73-sub-round-11c-acceptance` · harness: devin-desktop/swe-2-high/orchestrator

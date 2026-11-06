@@ -1,4 +1,4 @@
-<!-- Generated 2026-10-25T00:15:52Z by docs/build/planning/2026-09-30-next-phase/tools/s13e/req_index.py (SEED-13e, Round-11 Stage B T3 close-out); regenerate, do not hand-edit. Planning, not execution evidence. -->
+<!-- Generated 2026-11-05T10:33:24Z by docs/build/planning/2026-09-30-next-phase/tools/s13e/req_index.py (SEED-13e, Round-11 Stage B T3 close-out); regenerate, do not hand-edit. Planning, not execution evidence. -->
 # Round-11 requirement → ticket index (rows 201–510)
 
 A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points here). It maps every requirement id cited by the 310 Round-11 chain contracts — the 60 full 11A contracts and the 250 `Kind: skeleton` contracts of 11B–tail — to the rows that own, deliver, extend or cite it, checks the 62 spec §56 ids against their `Owner:` lines, and lists every waived or amended id with its ADR (spec Appendix G.7). Skeleton rows name only the ids the plan row, the catalog or a Stage-B carry item gave them; **PLAN-11B, PLAN-11C and PLAN-11D extend this index** when they write their sub-round's contracts (re-run the generator; their own requirement-index deliverables point here). Requirement status stays in `docs/build/COVERAGE_MATRIX.csv` and the coverage-assessment events — nothing here is a verdict.
@@ -7,11 +7,11 @@ A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points
 
 ## Summary
 
-- Contracts scanned: **311** (221 full, 90 skeleton).
-- Distinct requirement ids cited: **456** — 258 of the 279 §56 ids and 198 ids defined before Round 11. §56 ids no contract cites: SIG-ENG-044, SIG-EVUI-009, SIG-EXPORT-015, SIG-GEO-014, SIG-TRANSP-042, SIG-UI-071, SIG-UI-072, SIG-UI-077, SIG-UI-078, SIG-UI-099, SIG-UI-117, SIG-UI-118, SIG-UI-119, SIG-UI-120, SIG-UI-121, SIG-UI-127, SIG-UI-152, SIG-WATCH-005, SIG-WATCH-006, SIG-WATCH-007, SIG-WATCH-008 (seed-owned; see §1).
+- Contracts scanned: **311** (311 full, 0 skeleton).
+- Distinct requirement ids cited: **476** — 278 of the 279 §56 ids and 198 ids defined before Round 11. §56 ids no contract cites: SIG-ENG-044 (seed-owned; see §1).
 - §56 ids with **no chain-row owner**: 4 — SIG-ENG-041 (owner SEED-15), SIG-ENG-044 (owner SEED-02), SIG-MEM-005 (owner SEED-02), SIG-MEM-012 (owner SEED-02) — owned by Stage-B seed units, not by a Round-11 row (spec §56.1 allows a seed-unit owner); they are verdicted at T4/T6 from the seed's own evidence.
 - §56 owner names that are not chain rows: 0.
-- §56 owner rows whose contract does not (yet) list the id as owned: 22 — SIG-EVUI-009→P37.37 (461), SIG-EXPORT-015→P37.24 (448), SIG-GEO-014→P37.17 (440), SIG-TRANSP-020→P37.36 (460), SIG-TRANSP-025→P37.42 (466), SIG-TRANSP-042→P37.41 (465), SIG-UI-071→P37.38 (462), SIG-UI-072→P37.40 (464), SIG-UI-077→P37.68a (497), SIG-UI-078→P37.68a (497), SIG-UI-099→P37.17 (440), SIG-UI-117→P37.24 (448), SIG-UI-118→P37.24 (448), SIG-UI-119→P37.26 (450), SIG-UI-120→P37.26 (450), SIG-UI-121→P37.26 (450), SIG-UI-127→P37.29 (453), SIG-UI-152→P37.60 (488), SIG-WATCH-005→P37.34 (458), SIG-WATCH-006→P37.34 (458), SIG-WATCH-007→P37.31 (455), SIG-WATCH-008→P37.31 (455).
+- §56 owner rows whose contract does not (yet) list the id as owned: 0.
 - Ids defined before Round 11 that no Round-11 row owns or delivers (cited only): 175 — their owners are the tickets the coverage matrix names (column *matrix `owning_tickets`* in §3, read at HEAD).
 - Appendix G.7: 16 waived ids (G.7.2), 29 amended ids (G.7.3, incl. the outreach set owed later-phase, R11-A15), 18 ids checked and deliberately not amended (G.7.5; the requirement stands) — table §2.
 
@@ -37,8 +37,8 @@ A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points
 | SIG-DSRC-002 | MUST | P36.52 (395) | — | yes | — | — |
 | SIG-DSRC-003 | MUST | P36.52 (395) | — | yes | — | — |
 | SIG-DSRC-004 | MUST | P36.52 (395) | P36.55 (398) | yes | — | — |
-| SIG-DSRC-005 | MUST | P36.52 (395) | P37.39 (463) | yes | — | — |
-| SIG-DSRC-006 | MUST | P36.52 (395) | P37.61 (489) | yes | — | — |
+| SIG-DSRC-005 | MUST | P36.52 (395) | P37.39 (463) | yes | P37.39 (463) also | — |
+| SIG-DSRC-006 | MUST | P36.52 (395) | P37.61 (489) | yes | P37.61 (489) also | — |
 | SIG-DSRC-007 | MUST | P36.53 (396) | — | yes | P36.68 (412) mentioned | — |
 | SIG-DSRC-008 | MUST | P36.52 (395) | P36.47 (390), P36.69 (413) | yes | — | — |
 | SIG-DSRC-009 | MUST | P36.52 (395) | — | yes | — | — |
@@ -52,16 +52,16 @@ A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points
 | SIG-EVUI-001 | MUST | P36.60 (403) | — | yes | — | — |
 | SIG-EVUI-002 | MUST | P36.60 (403) | — | yes | — | — |
 | SIG-EVUI-003 | MUST | P36.60 (403) | — | yes | — | — |
-| SIG-EVUI-004 | MUST | P36.51 (394) | P37.37 (461) | yes | — | — |
+| SIG-EVUI-004 | MUST | P36.51 (394) | P37.37 (461) | yes | P37.37 (461) also | — |
 | SIG-EVUI-005 | MUST | P36.60 (403) | — | yes | — | — |
 | SIG-EVUI-006 | MUST | P36.60 (403) | — | yes | — | — |
 | SIG-EVUI-007 | MUST | P36.51 (394) | — | yes | — | — |
 | SIG-EVUI-008 | MUST | P36.60 (403) | — | yes | — | — |
-| SIG-EVUI-009 | MUST | P37.37 (461) | — | no | — | owner contract is a skeleton without an Owner line |
+| SIG-EVUI-009 | MUST | P37.37 (461) | — | yes | — | — |
 | SIG-EVUI-010 | MUST | P36.29 (369) | P36.60 (403) | yes | — | — |
-| SIG-EXPORT-014 | MUST | P36.41 (382) | P37.24 (448), P36.30 (370) | yes | — | — |
-| SIG-EXPORT-015 | MUST | P37.24 (448) | P36.30 (370) | no | — | owner contract is a skeleton without an Owner line |
-| SIG-GEO-014 | MUST | P37.17 (440) | P35.52 (330) | no | — | owner contract is a skeleton without an Owner line |
+| SIG-EXPORT-014 | MUST | P36.41 (382) | P37.24 (448), P36.30 (370) | yes | P37.24 (448) also | — |
+| SIG-EXPORT-015 | MUST | P37.24 (448) | P36.30 (370) | yes | — | — |
+| SIG-GEO-014 | MUST | P37.17 (440) | P35.52 (330) | yes | — | — |
 | SIG-JUR-001 | MUST | P36.34 (375) | P35.17 (297) | yes | P36.54 (397) mentioned | — |
 | SIG-JUR-002 | MUST | P36.34 (375) | P35.17 (297), P35.18 (298) | yes | — | — |
 | SIG-JUR-003 | MUST | P36.34 (375) | P35.19 (299) | yes | — | — |
@@ -143,14 +143,14 @@ A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points
 | SIG-TRANSP-002 | MUST | P35.40 (319) | P35.35 (313) | yes | P35.35 (313) also | — |
 | SIG-TRANSP-003 | MUST | P36.47 (390) | P36.69 (413), P36.45 (388) | yes | — | — |
 | SIG-TRANSP-004 | MUST | P36.47 (390) | — | yes | P36.77 (352) cited; P36.78 (353) cited; P36.2 (350) mentioned | — |
-| SIG-TRANSP-005 | MUST | P36.69 (413) | P36.51 (394), P37.36 (460) | yes | — | — |
+| SIG-TRANSP-005 | MUST | P36.69 (413) | P36.51 (394), P37.36 (460) | yes | P37.36 (460) also | — |
 | SIG-TRANSP-006 | MUST | P36.46 (389) | P35.33 (311) | yes | P35.33 (311) also | — |
 | SIG-TRANSP-007 | MUST | P35.41 (320) | — | yes | — | — |
 | SIG-TRANSP-008 | MUST | P36.69 (413) | P35.44 (323) | yes | P35.44 (323) also | — |
 | SIG-TRANSP-009 | MUST | P36.47 (390) | P36.69 (413) | yes | — | — |
 | SIG-TRANSP-010 | MUST | P36.49 (392) | — | yes | — | — |
 | SIG-TRANSP-011 | MUST | P35.36 (315) | — | yes | — | — |
-| SIG-TRANSP-012 | MUST | P36.51 (394) | P37.36 (460) | yes | P35.36 (315) cited | — |
+| SIG-TRANSP-012 | MUST | P36.51 (394) | P37.36 (460) | yes | P37.36 (460) also; P35.36 (315) cited | — |
 | SIG-TRANSP-013 | MUST | P35.37 (316) | — | yes | — | — |
 | SIG-TRANSP-014 | MUST | P36.50 (393) | — | yes | — | — |
 | SIG-TRANSP-015 | MUST | P36.50 (393) | — | yes | — | — |
@@ -158,12 +158,12 @@ A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points
 | SIG-TRANSP-017 | MUST | P35.39 (318) | — | yes | — | — |
 | SIG-TRANSP-018 | MUST | P36.50 (393) | — | yes | — | — |
 | SIG-TRANSP-019 | MUST | P35.5 (262) | — | yes | — | — |
-| SIG-TRANSP-020 | MUST | P37.36 (460) | P35.31 (309) | no | P35.31 (309) also | owner contract is a skeleton without an Owner line |
+| SIG-TRANSP-020 | MUST | P37.36 (460) | P35.31 (309) | yes | P35.31 (309) also | — |
 | SIG-TRANSP-021 | MUST | P36.43 (386) | — | yes | — | — |
 | SIG-TRANSP-022 | MUST | P35.31 (309) | — | yes | P35.36 (315) cited; P35.56 (334) cited | — |
 | SIG-TRANSP-023 | MUST | P35.42 (321) | P36.66a (409), P36.66b (410) | yes | P35.54 (332) cited | — |
 | SIG-TRANSP-024 | MUST | P36.67 (411) | — | yes | — | — |
-| SIG-TRANSP-025 | MUST | P37.42 (466) | P35.57 (261) | no | P35.57 (261) cited; P35.36 (315) cited | owner contract is a skeleton without an Owner line |
+| SIG-TRANSP-025 | MUST | P37.42 (466) | P35.57 (261) | yes | P35.57 (261) cited; P35.36 (315) cited | — |
 | SIG-TRANSP-026 | MUST | P35.40 (319) | — | yes | — | — |
 | SIG-TRANSP-027 | MUST | P35.40 (319) | P36.48 (391) | yes | — | — |
 | SIG-TRANSP-028 | MUST | P36.48 (391) | — | yes | P35.40 (319) cited | — |
@@ -180,7 +180,7 @@ A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points
 | SIG-TRANSP-039 | MUST | P36.47 (390) | P36.46 (389) | yes | P35.33 (311) mentioned | — |
 | SIG-TRANSP-040 | MUST | P36.69 (413) | P35.44 (323) | yes | P35.44 (323) also | — |
 | SIG-TRANSP-041 | MUST | P36.69 (413) | P36.51 (394) | yes | — | — |
-| SIG-TRANSP-042 | MUST | P37.41 (465) | — | no | — | owner contract is a skeleton without an Owner line |
+| SIG-TRANSP-042 | MUST | P37.41 (465) | — | yes | — | — |
 | SIG-TRANSP-043 | MUST | P36.69 (413) | — | yes | — | — |
 | SIG-UI-051 | MUST | P36.18 (358) | P36.16 (356), P36.17 (357) | yes | — | — |
 | SIG-UI-052 | MUST | P36.21 (361) | P35.50 (328) | yes | — | — |
@@ -202,17 +202,17 @@ A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points
 | SIG-UI-068 | MUST | P36.36 (377) | P36.35 (376) | yes | — | — |
 | SIG-UI-069 | MUST | P36.55 (398) | — | yes | — | — |
 | SIG-UI-070 | MUST | P36.41 (382) | — | yes | — | — |
-| SIG-UI-071 | MUST | P37.38 (462) | — | no | — | owner contract is a skeleton without an Owner line |
-| SIG-UI-072 | MUST | P37.40 (464) | — | no | — | owner contract is a skeleton without an Owner line |
+| SIG-UI-071 | MUST | P37.38 (462) | — | yes | — | — |
+| SIG-UI-072 | MUST | P37.40 (464) | — | yes | — | — |
 | SIG-UI-073 | MUST | P36.31 (372) | — | yes | — | — |
 | SIG-UI-074 | MUST | P36.31 (372) | — | yes | — | — |
 | SIG-UI-075 | MUST | P36.66a (409) | P35.65 (314) | yes | P36.66b (410) mentioned | — |
 | SIG-UI-076 | MUST | P36.38 (379) | P36.66a (409) | yes | P36.67 (411) mentioned | — |
-| SIG-UI-077 | MUST | P37.68a (497) | — | no | — | owner contract is a skeleton without an Owner line |
-| SIG-UI-078 | MUST | P37.68a (497) | — | no | — | owner contract is a skeleton without an Owner line |
+| SIG-UI-077 | MUST | P37.68a (497) | — | yes | — | — |
+| SIG-UI-078 | MUST | P37.68a (497) | — | yes | — | — |
 | SIG-UI-079 | MUST | P36.61 (404) | P36.62 (405) | yes | — | — |
 | SIG-UI-080 | MUST | P36.41 (382) | — | yes | — | — |
-| SIG-UI-081 | MUST | P36.71 (414) | P37.63 (491), P37.68a (497) | yes | — | — |
+| SIG-UI-081 | MUST | P36.71 (414) | P37.63 (491), P37.68a (497) | yes | P37.63 (491) also; P37.68a (497) also | — |
 | SIG-UI-082 | SHOULD | P36.50 (393) | P35.39 (318) | yes | P36.68 (412) mentioned | — |
 | SIG-UI-083 | MUST | P36.22 (362) | P36.51 (394), P35.36 (315) | yes | P36.23 (363) mentioned | — |
 | SIG-UI-084 | MUST | P36.22 (362) | P35.37 (316) | yes | — | — |
@@ -230,7 +230,7 @@ A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points
 | SIG-UI-096 | MUST | P36.19 (359) | — | yes | — | — |
 | SIG-UI-097 | MUST | P36.37 (378) | P36.20 (360) | yes | — | — |
 | SIG-UI-098 | MUST | P36.26 (366) | — | yes | P36.42b (384) mentioned | — |
-| SIG-UI-099 | MUST | P37.17 (440) | P35.52 (330), P36.33 (374) | no | — | owner contract is a skeleton without an Owner line |
+| SIG-UI-099 | MUST | P37.17 (440) | P35.52 (330), P36.33 (374) | yes | — | — |
 | SIG-UI-100 | MUST | P36.33 (374) | — | yes | — | — |
 | SIG-UI-101 | MUST | P36.37 (378) | — | yes | — | — |
 | SIG-UI-102 | MUST | P36.37 (378) | P36.36 (377) | yes | — | — |
@@ -248,17 +248,17 @@ A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points
 | SIG-UI-114 | MUST | P36.41 (382) | P36.42a (383) | yes | P36.42a (383) mentioned | — |
 | SIG-UI-115 | MUST | P36.41 (382) | P36.42a (383) | yes | P36.42a (383) mentioned | — |
 | SIG-UI-116 | MUST | P36.41 (382) | P36.42a (383) | yes | P36.42a (383) mentioned | — |
-| SIG-UI-117 | MUST | P37.24 (448) | — | no | — | owner contract is a skeleton without an Owner line |
-| SIG-UI-118 | MUST | P37.24 (448) | — | no | — | owner contract is a skeleton without an Owner line |
-| SIG-UI-119 | MUST | P37.26 (450) | — | no | — | owner contract is a skeleton without an Owner line |
-| SIG-UI-120 | MUST | P37.26 (450) | — | no | — | owner contract is a skeleton without an Owner line |
-| SIG-UI-121 | MUST | P37.26 (450) | — | no | — | owner contract is a skeleton without an Owner line |
+| SIG-UI-117 | MUST | P37.24 (448) | — | yes | — | — |
+| SIG-UI-118 | MUST | P37.24 (448) | — | yes | — | — |
+| SIG-UI-119 | MUST | P37.26 (450) | — | yes | — | — |
+| SIG-UI-120 | MUST | P37.26 (450) | — | yes | — | — |
+| SIG-UI-121 | MUST | P37.26 (450) | — | yes | — | — |
 | SIG-UI-122 | MUST | P36.42a (383) | P36.51 (394) | yes | P36.42b (384) mentioned | — |
 | SIG-UI-123 | MUST | P36.27 (367) | P36.55 (398) | yes | P36.54 (397) mentioned | — |
 | SIG-UI-124 | MUST | P36.27 (367) | — | yes | P36.54 (397) mentioned | — |
-| SIG-UI-125 | MUST | P36.28 (368) | P37.28 (452) | yes | — | — |
+| SIG-UI-125 | MUST | P36.28 (368) | P37.28 (452) | yes | P37.28 (452) also | — |
 | SIG-UI-126 | MUST | P36.57 (400) | P36.21 (361) | yes | — | — |
-| SIG-UI-127 | MUST | P37.29 (453) | — | no | — | owner contract is a skeleton without an Owner line |
+| SIG-UI-127 | MUST | P37.29 (453) | — | yes | — | — |
 | SIG-UI-128 | MUST | P36.56 (399) | P36.57 (400) | yes | — | — |
 | SIG-UI-129 | MUST | P36.55 (398) | — | yes | — | — |
 | SIG-UI-130 | MUST | P36.26 (366) | — | yes | P36.42b (384) mentioned | — |
@@ -283,7 +283,7 @@ A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points
 | SIG-UI-149 | MUST | P36.17 (357) | — | yes | P36.16 (356) mentioned | — |
 | SIG-UI-150 | MUST | P36.18 (358) | — | yes | — | — |
 | SIG-UI-151 | MUST | P36.22 (362) | P36.18 (358) | yes | P36.23 (363) mentioned; P36.65 (408) mentioned | — |
-| SIG-UI-152 | MUST | P37.60 (488) | — | no | — | owner contract is a skeleton without an Owner line |
+| SIG-UI-152 | MUST | P37.60 (488) | — | yes | — | — |
 | SIG-UI-153 | MUST | P36.24 (364) | — | yes | — | — |
 | SIG-UI-154 | MUST | P36.25 (365) | — | yes | — | — |
 | SIG-UI-155 | MUST | P36.26 (366) | — | yes | — | — |
@@ -292,10 +292,10 @@ A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points
 | SIG-WATCH-002 | MUST | P36.59 (402) | — | yes | — | — |
 | SIG-WATCH-003 | MUST | P36.59 (402) | — | yes | — | — |
 | SIG-WATCH-004 | MUST | P36.59 (402) | P36.34 (375) | yes | — | — |
-| SIG-WATCH-005 | MUST | P37.34 (458) | P36.59 (402) | no | — | owner contract is a skeleton without an Owner line |
-| SIG-WATCH-006 | MUST | P37.34 (458) | — | no | — | owner contract is a skeleton without an Owner line |
-| SIG-WATCH-007 | MUST | P37.31 (455) | — | no | — | owner contract is a skeleton without an Owner line |
-| SIG-WATCH-008 | MUST | P37.31 (455) | — | no | — | owner contract is a skeleton without an Owner line |
+| SIG-WATCH-005 | MUST | P37.34 (458) | P36.59 (402) | yes | — | — |
+| SIG-WATCH-006 | MUST | P37.34 (458) | — | yes | — | — |
+| SIG-WATCH-007 | MUST | P37.31 (455) | — | yes | — | — |
+| SIG-WATCH-008 | MUST | P37.31 (455) | — | yes | — | — |
 | SIG-WATCH-009 | MUST | P36.55 (398) | P36.59 (402) | yes | — | — |
 | SIG-WATCH-010 | MUST | P36.59 (402) | — | yes | — | — |
 
@@ -316,10 +316,10 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-ENG-039 | R11-A17 | AMENDED (no MUST weakened) | none — authority: DRAFT-ENG-4 (B4 §5); F-32 | P34.32 (237) delivers |
 | SIG-EVAL-001 | G.7.5 | checked, not amended — the requirement stands | — | P34.45 (257) cited; P35.48 (327) cited |
 | SIG-EVAL-002 | G.7.5 | checked, not amended — the requirement stands | — | P35.48 (327) cited |
-| SIG-EVAL-004 | R11-W1 | WAIVED (clause): the preregistered 0.98 lower-bound clause, for the derivation-collapse tiers C0–C2 only; inferential tiers stay review-only (met fai… | ADR-153 | P34.45 (257) cited; P35.46 (325) cited; P35.47 (326) cited; P35.48 (327) mentioned; P38.2 (503) mentioned |
+| SIG-EVAL-004 | R11-W1 | WAIVED (clause): the preregistered 0.98 lower-bound clause, for the derivation-collapse tiers C0–C2 only; inferential tiers stay review-only (met fai… | ADR-153 | P34.45 (257) cited; P35.46 (325) cited; P35.47 (326) cited; P38.2 (503) cited; P35.48 (327) mentioned |
 | SIG-EVAL-005 | G.7.5 | checked, not amended — the requirement stands | — | — |
 | SIG-EVAL-005 | R11-A10 | AMENDED (no MUST weakened) | ADR-152, ADR-153 | — |
-| SIG-EVAL-006 | R11-A10 | AMENDED (no MUST weakened) | ADR-152, ADR-153 | P34.45 (257) cited; P37.44 (468) mentioned |
+| SIG-EVAL-006 | R11-A10 | AMENDED (no MUST weakened) | ADR-152, ADR-153 | P34.45 (257) cited; P37.44 (468) cited |
 | SIG-EVAL-007 | G.7.5 | checked, not amended — the requirement stands | — | — |
 | SIG-EVAL-007 | R11-A10 | AMENDED (no MUST weakened) | ADR-152, ADR-153 | — |
 | SIG-EVID-009 | R11-A7 | AMENDED (no MUST weakened) | ADR-162 | — |
@@ -328,11 +328,11 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-GOV-001 | R11-W2 | WAIVED (clause): SIG-GOV-001's one-click clause and all of SIG-GOV-002, for Round 11 (e-mail intake; senders disclose their address) | ADR-180 | P34.17 (220) cited; P34.37 (245) cited |
 | SIG-GOV-002 | R11-W2 | WAIVED (clause): SIG-GOV-001's one-click clause and all of SIG-GOV-002, for Round 11 (e-mail intake; senders disclose their address) | ADR-180 | P34.17 (220) cited; P34.37 (245) cited |
 | SIG-GOV-003 | R11-W3 | WAIVED (clause): the response-time (SLA) clause; the priority clause is met differently by the published handling order | ADR-186 | P34.17 (220) cited; GATE-ANNOUNCE (510) mentioned |
-| SIG-GOV-008 | R11-W4 | WAIVED (clause): the two-person clause; the scope and tombstone clauses stand | ADR-181 | P34.49 (254) cited; P37.71 (429) mentioned |
+| SIG-GOV-008 | R11-W4 | WAIVED (clause): the two-person clause; the scope and tombstone clauses stand | ADR-181 | P34.49 (254) cited; P37.71 (429) cited |
 | SIG-GOV-012 | R11-W5 | WAIVED (clause): a legal home before launch and retained legal-defence resources, "for now" (an individual legal home, disclosed) | ADR-165 | P34.16 (218) cited; P34.17 (220) cited |
 | SIG-GOV-013 | R11-W5 | WAIVED (clause): a legal home before launch and retained legal-defence resources, "for now" (an individual legal home, disclosed) | ADR-165 | P34.16 (218) cited; P34.17 (220) cited |
 | SIG-GOV-015 | R11-W6 | WAIVED (clause): the editorial board (interim single-maintainer authority + public decision log) | ADR-164 | P34.16 (218) cited |
-| SIG-GOV-017 | G.7.5 | checked, not amended — the requirement stands | — | PLAN-11D (418) mentioned; P37.72 (442) mentioned; P37.19 (443) mentioned |
+| SIG-GOV-017 | G.7.5 | checked, not amended — the requirement stands | — | P37.72 (442) cited; P37.19 (443) cited; PLAN-11D (418) mentioned |
 | SIG-GOV-024 | R11-A15 | owed later-phase, not waived (outreach timing) | ADR-171 | P35.6 (266) cited; P35.7 (267) cited; P35.8 (268) cited; P35.9 (269) cited; P35.10 (270) cited; P35.14a (272) cited; P35.14b (273) cited; P35.15a (274) cited; P35.15b (275) cited; P36.3 (276) cited; P36.4 (277) cited; P36.5 (278) cited; P36.6 (279) cited; P36… |
 | SIG-IDENT-027 | G.7.5 | checked, not amended — the requirement stands | — | — |
 | SIG-IDENT-028 | G.7.5 | checked, not amended — the requirement stands | — | P35.46 (325) cited |
@@ -348,16 +348,16 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-INGEST-046c | R11-A14 | AMENDED (no MUST weakened) | ADR-168, ADR-184 | P36.1a (265) owner; P34.38 (246) cited; P35.8 (268) cited; P35.9 (269) cited; P35.10 (270) cited; P35.11 (271) cited; P36.12 (290) cited; P36.1b (349) cited; P34.19 (219) mentioned |
 | SIG-LIC-004 | R11-A12 | AMENDED (no MUST weakened) | ADR-167, ADR-169, ADR-183 | P34.19 (219) cited; P36.2 (350) cited; P36.77 (352) mentioned |
 | SIG-LIC-006 | G.7.5 | checked, not amended — the requirement stands | — | — |
-| SIG-LIC-009 | R11-W9 | WAIVED (clause): the counsel-referral and counsel-requiring clauses; SIG-LIC-009's risk-register clause and SIG-INGEST-037's ADR-level-decision claus… | ADR-182 | P34.16 (218) cited; P37.69a (479) mentioned |
+| SIG-LIC-009 | R11-W9 | WAIVED (clause): the counsel-referral and counsel-requiring clauses; SIG-LIC-009's risk-register clause and SIG-INGEST-037's ADR-level-decision claus… | ADR-182 | P34.16 (218) cited; P37.69a (479) cited |
 | SIG-METRIC-007 | R11-A6 | AMENDED (no MUST weakened) | ADR-162 | — |
 | SIG-ONTO-060 | G.7.5 | checked, not amended — the requirement stands | — | P35.14a (272) cited; PLAN-11B (239) mentioned; P35.14b (273) mentioned |
-| SIG-PUB-002 | G.7.5 | checked, not amended — the requirement stands | ADR-185 | P34.18 (221) delivers; P34.21b (224) delivers; P34.26 (231) cited; P34.38 (246) cited; P34.49 (254) cited; P35.6 (266) cited; P36.74 (289) cited; P36.15 (287) mentioned; P37.71 (429) mentioned |
+| SIG-PUB-002 | G.7.5 | checked, not amended — the requirement stands | ADR-185 | P34.18 (221) delivers; P34.21b (224) delivers; P34.26 (231) cited; P34.38 (246) cited; P34.49 (254) cited; P35.6 (266) cited; P36.74 (289) cited; P37.71 (429) cited; P36.15 (287) mentioned |
 | SIG-PUB-003 | G.7.5 | checked, not amended — the requirement stands | ADR-185 | P34.49 (254) cited; P35.6 (266) cited |
 | SIG-PUB-003a | G.7.5 | checked, not amended — the requirement stands | ADR-185 | P36.74 (289) cited |
 | SIG-PUB-008 | R11-W7 | WAIVED (clause): the HG-11 second-reviewer role, for Round-11 releases; SIG-PUB-008's naming concurrence stands (nobody is named) | ADR-163 | P35.28 (286) cited; P35.29 (307) cited; P35.21 (347) cited |
 | SIG-RECON-058 | R11-A8 | AMENDED (no MUST weakened) | ADR-099, ADR-101 | P35.19 (299) cited; P35.20a (300) cited; P35.20b (301) cited; P37.1 (344) cited; P37.2 (345) cited |
-| SIG-SEC-003 | R11-A11 | AMENDED (no MUST weakened) | ADR-166 | PLAN-11D (418) mentioned; P37.8 (428) mentioned |
-| SIG-STORE-011 | R11-W12 | WAIVED (clause): append-only, for one operator-only purge function only; every other role and path stays append-only | ADR-189 | P34.18 (221) cited; P34.21a (223) cited; P34.26 (231) cited; P34.49 (254) cited; P34.46 (258) cited; P35.15b (275) cited; P37.71 (429) mentioned; GATE-ANNOUNCE (510) mentioned |
+| SIG-SEC-003 | R11-A11 | AMENDED (no MUST weakened) | ADR-166 | P37.8 (428) cited; PLAN-11D (418) mentioned |
+| SIG-STORE-011 | R11-W12 | WAIVED (clause): append-only, for one operator-only purge function only; every other role and path stays append-only | ADR-189 | P34.18 (221) cited; P34.21a (223) cited; P34.26 (231) cited; P34.49 (254) cited; P34.46 (258) cited; P35.15b (275) cited; P37.71 (429) cited; GATE-ANNOUNCE (510) mentioned |
 | SIG-UI-001 | G.7.5 | checked, not amended — the requirement stands | — | — |
 | SIG-UI-021 | R11-A2 | AMENDED (no MUST weakened) | ADR-158 | — |
 | SIG-UI-022 | G.7.5 | checked, not amended — the requirement stands | ADR-190 | P35.30 (308) cited |
@@ -405,8 +405,8 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-DSRC-002 | MUST | P36.52 (395) (§56) | — | — | — | — |
 | SIG-DSRC-003 | MUST | P36.52 (395) (§56) | — | — | — | — |
 | SIG-DSRC-004 | MUST | P36.52 (395) (§56) | — | — | — | — |
-| SIG-DSRC-005 | MUST | P36.52 (395) (§56) | — | — | — | — |
-| SIG-DSRC-006 | MUST | P36.52 (395) (§56) | — | — | — | — |
+| SIG-DSRC-005 | MUST | P36.52 (395) (§56) | P37.39 (463) | — | — | — |
+| SIG-DSRC-006 | MUST | P36.52 (395) (§56) | P37.61 (489) | — | — | — |
 | SIG-DSRC-007 | MUST | P36.53 (396) (§56) | — | P36.68 (412)* | — | — |
 | SIG-DSRC-008 | MUST | P36.52 (395) (§56) | — | — | — | — |
 | SIG-DSRC-009 | MUST | P36.52 (395) (§56) | — | — | — | — |
@@ -429,22 +429,24 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-EPIS-029 | MUST | — | — | P35.25 (304) | P35.25 | — |
 | SIG-EVAL-001 | MUST | — | — | P34.45 (257), P35.48 (327) | P32.9, P34.45 | G.7.5 checked, not amended — the requirement stands |
 | SIG-EVAL-002 | MUST | — | — | P35.48 (327) | P32.9 | G.7.5 checked, not amended — the requirement stands |
-| SIG-EVAL-003 | MUST | — | — | P37.44 (468)* | P32.10, P37.44 | — |
-| SIG-EVAL-004 | MUST | — | — | P34.45 (257), P35.46 (325), P35.47 (326), P35.48 (327)*, P38.2 (503)* | P32.10 | R11-W1 WAIVED (clause) — ADR-153 |
-| SIG-EVAL-006 | MUST | — | — | P34.45 (257), P37.44 (468)* | P32.23, P37.44 | R11-A10 AMENDED (no MUST weakened) — ADR-152, ADR-153 |
+| SIG-EVAL-003 | MUST | — | — | P37.44 (468) | P32.10, P37.44 | — |
+| SIG-EVAL-004 | MUST | — | — | P34.45 (257), P35.46 (325), P35.47 (326), P38.2 (503), P35.48 (327)* | P32.10 | R11-W1 WAIVED (clause) — ADR-153 |
+| SIG-EVAL-006 | MUST | — | — | P34.45 (257), P37.44 (468) | P32.23, P37.44 | R11-A10 AMENDED (no MUST weakened) — ADR-152, ADR-153 |
 | SIG-EVID-011 | MUST | — | — | P36.15 (287) | P02.2 | — |
 | SIG-EVUI-001 | MUST | P36.60 (403) (§56) | — | — | — | — |
 | SIG-EVUI-002 | MUST | P36.60 (403) (§56) | — | — | — | — |
 | SIG-EVUI-003 | MUST | P36.60 (403) (§56) | — | — | — | — |
-| SIG-EVUI-004 | MUST | P36.51 (394) (§56) | — | — | — | — |
+| SIG-EVUI-004 | MUST | P36.51 (394) (§56) | P37.37 (461) | — | — | — |
 | SIG-EVUI-005 | MUST | P36.60 (403) (§56) | — | — | — | — |
 | SIG-EVUI-006 | MUST | P36.60 (403) (§56) | — | — | — | — |
 | SIG-EVUI-007 | MUST | P36.51 (394) (§56) | — | — | — | — |
 | SIG-EVUI-008 | MUST | P36.60 (403) (§56) | — | — | — | — |
+| SIG-EVUI-009 | MUST | P37.37 (461) (§56) | — | — | — | — |
 | SIG-EVUI-010 | MUST | P36.29 (369) (§56) | — | — | — | — |
 | SIG-EXPORT-002 | MUST | — | — | P35.38b (317), P35.39 (318) | P14.2 | G.7.5 checked, not amended — the requirement stands |
 | SIG-EXPORT-006 | MUST | P34.21a (223) (delivers), P34.21b (224) (delivers) | — | P34.18 (221) | — | — |
-| SIG-EXPORT-014 | MUST | P36.41 (382) (§56) | — | — | — | — |
+| SIG-EXPORT-014 | MUST | P36.41 (382) (§56) | P37.24 (448) | — | — | — |
+| SIG-EXPORT-015 | MUST | P37.24 (448) (§56) | — | — | — | — |
 | SIG-FIND-001 | MUST | — | — | P34.34a (241), P34.40 (249), P34.41 (250) | P32.13 | — |
 | SIG-FIND-002 | MUST | — | — | P34.34a (241), P34.40 (249), P34.41 (250) | P32.13 | — |
 | SIG-FIND-003 | MUST | — | — | P34.36 (244) | P32.14 | — |
@@ -459,17 +461,18 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-GEO-010 | MUST | — | — | P35.52 (330) | — | — |
 | SIG-GEO-012 | MUST | — | — | P35.52 (330) | P15.3 | — |
 | SIG-GEO-013 | MUST | — | — | P35.52 (330) | P15.3 | — |
+| SIG-GEO-014 | MUST | P37.17 (440) (§56) | — | — | — | — |
 | SIG-GOV-001 | MUST | — | — | P34.17 (220), P34.37 (245) | P00.3, P15.5, P34.17 | R11-W2 WAIVED (clause) — ADR-180 |
 | SIG-GOV-002 | MUST | — | — | P34.17 (220), P34.37 (245) | P00.3, P15.5, P34.17 | R11-W2 WAIVED (clause) — ADR-180 |
 | SIG-GOV-003 | MUST | — | — | P34.17 (220), GATE-ANNOUNCE (510)* | P00.3, P15.5, P34.17 | R11-W3 WAIVED (clause) — ADR-186 |
-| SIG-GOV-007 | MUST | — | — | P34.19 (219), P34.41 (250), P34.49 (254), P36.15 (287), P37.71 (429)* | P00.3, P15.5 | — |
-| SIG-GOV-008 | MUST | — | — | P34.49 (254), P37.71 (429)* | P00.3, P15.5, P37.71 | R11-W4 WAIVED (clause) — ADR-181 |
+| SIG-GOV-007 | MUST | — | — | P34.19 (219), P34.41 (250), P34.49 (254), P36.15 (287), P37.71 (429) | P00.3, P15.5 | — |
+| SIG-GOV-008 | MUST | — | — | P34.49 (254), P37.71 (429) | P00.3, P15.5, P37.71 | R11-W4 WAIVED (clause) — ADR-181 |
 | SIG-GOV-011 | MUST | — | — | P34.37 (245) | P00.3, P15.5 | — |
 | SIG-GOV-012 | MUST | — | — | P34.16 (218), P34.17 (220) | P34.16 | R11-W5 WAIVED (clause) — ADR-165 |
 | SIG-GOV-013 | MUST | — | — | P34.16 (218), P34.17 (220) | P34.16 | R11-W5 WAIVED (clause) — ADR-165 |
 | SIG-GOV-014 | MUST | — | — | P34.16 (218) | — | — |
 | SIG-GOV-015 | MUST | — | — | P34.16 (218) | P34.16 | R11-W6 WAIVED (clause) — ADR-164 |
-| SIG-GOV-017 | MUST | — | — | PLAN-11D (418)*, P37.72 (442)*, P37.19 (443)* | — | G.7.5 checked, not amended — the requirement stands |
+| SIG-GOV-017 | MUST | — | — | P37.72 (442), P37.19 (443), PLAN-11D (418)* | — | G.7.5 checked, not amended — the requirement stands |
 | SIG-GOV-024 | MUST | — | — | P35.6 (266), P35.7 (267), P35.8 (268), P35.9 (269), P35.10 (270), P35.14a (272), P35.14b (273), P35.15a (274), P35.15b (275), P36.3 (276), P36.4 (277), P36.5 (278), P36.6 (279), P36.7 (280), P36.8 (281), P36.9a (282), P36.9b (283), P36.10 (284), P36.11 (285), P35.28 (286), P36.15 (287), P35.66 (288… | — | R11-A15 owed later-phase, not waived (outreach timing) — ADR-171 |
 | SIG-IDENT-004 | MUST | — | — | P35.16 (296), P35.19 (299) | P03.1 | — |
 | SIG-IDENT-005 | MUST | — | — | P35.17 (297), P35.18 (298), P35.19 (299), P35.24 (303), P35.25 (304) | P03.1 | — |
@@ -488,9 +491,9 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-INGEST-005 | MUST | — | — | P35.34 (312) | P37.5a, P37.5b | — |
 | SIG-INGEST-011 | MUST | — | — | P35.38a (203), P35.38b (317) | P07.2 | — |
 | SIG-INGEST-013 | MUST | P36.74 (289) | — | — | — | — |
-| SIG-INGEST-025a | MUST | — | — | P37.14 (436)* | P37.14 | — |
-| SIG-INGEST-025b | MUST | — | — | P37.14 (436)* | P37.14 | — |
-| SIG-INGEST-025c | MUST | — | — | P37.14 (436)* | P37.14 | — |
+| SIG-INGEST-025a | MUST | — | — | P37.14 (436) | P37.14 | — |
+| SIG-INGEST-025b | MUST | — | — | P37.14 (436) | P37.14 | — |
+| SIG-INGEST-025c | MUST | — | — | P37.14 (436) | P37.14 | — |
 | SIG-INGEST-027 | MUST | — | — | P35.6 (266), P36.4 (277), P36.5 (278), P36.6 (279), P36.7 (280), P36.8 (281), P36.9a (282), P36.9b (283), P36.10 (284), P36.11 (285), P36.12 (290) | P00.4 | — |
 | SIG-INGEST-028 | MUST | — | — | P35.6 (266), P36.4 (277), P36.5 (278), P36.6 (279), P36.7 (280), P36.8 (281), P36.9a (282), P36.9b (283), P36.10 (284), P36.11 (285), P36.12 (290) | P00.4, P04.3 | — |
 | SIG-INGEST-029 | MUST | — | — | P35.6 (266), P35.7 (267), P35.8 (268), P35.9 (269), P35.10 (270), P35.14a (272), P35.14b (273), P35.15a (274), P35.15b (275), P36.3 (276), P36.4 (277), P36.5 (278), P36.6 (279), P36.7 (280), P36.8 (281), P36.9a (282), P36.9b (283), P36.10 (284), P36.11 (285), P35.28 (286), P36.15 (287), P35.66 (288… | — | R11-A15 owed later-phase, not waived (outreach timing) — ADR-171 |
@@ -521,9 +524,9 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-LIC-004 | MUST | — | — | P34.19 (219), P36.2 (350), P36.77 (352)* | P00.2, P00.4, P14.1, P14.2 | R11-A12 AMENDED (no MUST weakened) — ADR-167, ADR-169, ADR-183 |
 | SIG-LIC-004a | MUST | P34.21a (223) (delivers) | — | P36.74 (289), P35.23 (348), P36.77 (352), P36.78 (353) | — | — |
 | SIG-LIC-004b | MUST | — | — | P36.74 (289)* | P00.2, P11.1 | — |
-| SIG-LIC-009 | MUST | — | — | P34.16 (218), P37.69a (479)* | P16.2, P36.2 | R11-W9 WAIVED (clause) — ADR-182 |
-| SIG-LIC-009a | MUST | — | — | P37.25 (449)* | P00.2, P14.2 | — |
-| SIG-LIC-010 | MUST | — | — | P37.25 (449)* | P04.1, P04.2, P14.2 | — |
+| SIG-LIC-009 | MUST | — | — | P34.16 (218), P37.69a (479) | P16.2, P36.2 | R11-W9 WAIVED (clause) — ADR-182 |
+| SIG-LIC-009a | MUST | — | — | P37.25 (449) | P00.2, P14.2 | — |
+| SIG-LIC-010 | MUST | — | — | P37.25 (449) | P04.1, P04.2, P14.2 | — |
 | SIG-LIC-011 | MUST | P34.21a (223) (delivers), P34.21b (224) (delivers) | — | P34.19 (219), P34.34a (241), P34.35 (243) | — | — |
 | SIG-MEM-002 | MUST | P34.30 (235) (delivers) | — | — | — | — |
 | SIG-MEM-003 | MUST | P34.30 (235) (delivers) | — | — | — | — |
@@ -559,8 +562,8 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-ONTO-056 | MUST | — | — | P35.14a (272), P35.15a (274), P35.15b (275), P36.3 (276) | P01.1 | — |
 | SIG-ONTO-057 | MUST | — | — | P35.14a (272) | P01.1, P35.14a | — |
 | SIG-ONTO-060 | MUST | — | — | P35.14a (272), PLAN-11B (239)*, P35.14b (273)* | P01.1, P35.14a | G.7.5 checked, not amended — the requirement stands |
-| SIG-ONTO-064 | MUST | — | — | P37.9 (430)* | P01.1, P37.9 | — |
-| SIG-ONTO-065 | MUST | — | — | P37.9 (430)* | P01.1, P37.9 | — |
+| SIG-ONTO-064 | MUST | — | — | P37.9 (430) | P01.1, P37.9 | — |
+| SIG-ONTO-065 | MUST | — | — | P37.9 (430) | P01.1, P37.9 | — |
 | SIG-OPS-001 | MUST | P34.6 (207) (§56) | — | P34.46 (258), P35.4 (293), P36.43 (386)* | — | — |
 | SIG-OPS-002 | MUST | P34.3 (204) (§56) | — | P34.6 (207), P37.2 (345) | — | — |
 | SIG-OPS-003 | MUST | P34.10 (212) (§56) | — | P34.17 (220), P34.21b (224), P34.40 (249), P35.3 (292), P35.56 (334), P34.11 (213)* | — | — |
@@ -573,7 +576,7 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-OPS-010 | SHOULD | P35.4 (293) (§56) | P35.55 (333) | P34.50 (208), P36.43 (386)* | — | — |
 | SIG-OPS-011 | MUST | P35.3 (292) (§56) | P35.58 (335), P35.2 (346) | P34.39a (247), P34.39b (248), P34.43 (253), P34.44b (256), P34.47 (259), P35.67 (263), P36.74 (289), P35.64 (342) | — | — |
 | SIG-OPS-012 | MUST | P35.3 (292) (§56) | — | P35.38a (203) | — | — |
-| SIG-PUB-002 | MUST | P34.18 (221) (delivers), P34.21b (224) (delivers) | — | P34.26 (231), P34.38 (246), P34.49 (254), P35.6 (266), P36.74 (289), P36.15 (287)*, P37.71 (429)* | — | G.7.5 checked, not amended — the requirement stands — ADR-185 |
+| SIG-PUB-002 | MUST | P34.18 (221) (delivers), P34.21b (224) (delivers) | — | P34.26 (231), P34.38 (246), P34.49 (254), P35.6 (266), P36.74 (289), P37.71 (429), P36.15 (287)* | — | G.7.5 checked, not amended — the requirement stands — ADR-185 |
 | SIG-PUB-003 | MUST | — | — | P34.49 (254), P35.6 (266) | — | G.7.5 checked, not amended — the requirement stands — ADR-185 |
 | SIG-PUB-003a | MUST | — | — | P36.74 (289) | — | G.7.5 checked, not amended — the requirement stands — ADR-185 |
 | SIG-PUB-004 | MUST | P35.66 (288) | — | P35.6 (266), P36.41 (382)* | — | — |
@@ -584,17 +587,17 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-PUB-009 | MUST | — | — | P35.28 (286) | — | — |
 | SIG-PUB-010 | MUST | — | — | P35.28 (286) | — | — |
 | SIG-PUB-011 | MUST | — | — | P35.66 (288), P37.1 (344)* | — | — |
-| SIG-PUB-012 | MUST | — | — | P35.66 (288), P37.10 (431)* | P37.10 | — |
+| SIG-PUB-012 | MUST | — | — | P35.66 (288), P37.10 (431) | P37.10 | — |
 | SIG-PUB-013 | MUST | P35.66 (288) | — | P37.1 (344) | — | — |
 | SIG-PUB-014 | MUST | — | — | P37.1 (344) | — | — |
 | SIG-PUB-014a | MUST | — | — | P36.15 (287) | — | — |
 | SIG-PUB-015 | MUST | P36.15 (287) | — | — | — | — |
 | SIG-PUB-016 | MUST | P36.15 (287) | — | — | — | — |
-| SIG-PUB-017 | MUST | — | — | P35.28 (286), P37.69a (479)* | P18.1 | — |
+| SIG-PUB-017 | MUST | — | — | P35.28 (286), P37.69a (479) | P18.1 | — |
 | SIG-RECON-013 | MUST | — | — | P35.15a (274) | — | — |
 | SIG-RECON-018 | MUST | — | — | P35.46 (325) | P35.25 | — |
-| SIG-RECON-039 | MUST | — | — | P37.9 (430)* | P08.2, P37.9 | — |
-| SIG-RECON-040 | MUST | — | — | P37.9 (430)* | P08.2, P37.9 | — |
+| SIG-RECON-039 | MUST | — | — | P37.9 (430) | P08.2, P37.9 | — |
+| SIG-RECON-040 | MUST | — | — | P37.9 (430) | P08.2, P37.9 | — |
 | SIG-RECON-041 | MUST | — | — | P36.5 (278) | P08.2 | — |
 | SIG-RECON-042 | MUST | — | — | P36.5 (278) | P08.2 | — |
 | SIG-RECON-052 | MUST | — | — | P36.14 (355) | P36.14 | — |
@@ -625,11 +628,11 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-RQ-008 | MUST | P36.62 (405) (§56) | — | — | — | — |
 | SIG-RQ-009 | MUST | P36.62 (405) (§56) | — | — | — | — |
 | SIG-RQ-010 | MUST | P36.63 (406) (§56) | — | — | — | — |
-| SIG-SEC-003 | MUST | — | — | PLAN-11D (418)*, P37.8 (428)* | P37.8 | R11-A11 AMENDED (no MUST weakened) — ADR-166 |
+| SIG-SEC-003 | MUST | — | — | P37.8 (428), PLAN-11D (418)* | P37.8 | R11-A11 AMENDED (no MUST weakened) — ADR-166 |
 | SIG-SEC-007 | MUST | P34.42a (251) (§56), P34.42b (252) (§56) | — | P34.40 (249), P34.43 (253) | — | — |
 | SIG-SEC-008 | MUST | P35.1a (264) (§56), P35.1b (291) (§56) | P35.2 (346) | PLAN-11B (239), P35.1c (291a), P35.13 (295) | — | — |
 | SIG-SEC-009 | SHOULD | P35.4 (293) (§56) | — | PLAN-11B (239), P34.42a (251), P34.42b (252) | — | — |
-| SIG-SEC-010 | MUST | P34.28 (233) (§56) | — | GATE-G4 (260), P35.53 (331), P35.54 (332), P35.55 (333), P35.58 (335), P35.59 (336), P35.60 (337), P35.63 (341), GATE-G5 (343), P36.73 (419), GATE-G6 (420) | — | — |
+| SIG-SEC-010 | MUST | P34.28 (233) (§56) | — | GATE-G4 (260), P35.53 (331), P35.54 (332), P35.55 (333), P35.58 (335), P35.59 (336), P35.60 (337), P35.63 (341), GATE-G5 (343), P36.73 (419), GATE-G6 (420), GATE-ACCEPT-R11 (504), GATE-ANNOUNCE (510) | — | — |
 | SIG-SEC-011 | MUST | P34.25 (229) (§56) | — | P34.43 (253), P34.46 (258) | — | — |
 | SIG-SRCH-001 | MUST | P36.38 (379) (§56) | — | — | — | — |
 | SIG-SRCH-002 | MUST | P36.39 (380) (§56) | — | — | — | — |
@@ -648,27 +651,27 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-STORE-003 | MUST | — | — | P35.1b (291), P35.1c (291a), P36.13 (354), P36.33 (374)* | — | — |
 | SIG-STORE-005 | MUST | — | — | P35.4 (293) | P37.57a, P37.57b | — |
 | SIG-STORE-006 | MUST | — | — | P35.12 (294) | P00.2 | — |
-| SIG-STORE-011 | MUST | — | — | P34.18 (221), P34.21a (223), P34.26 (231), P34.49 (254), P34.46 (258), P35.15b (275), P37.71 (429)*, GATE-ANNOUNCE (510)* | P02.1, P37.71 | R11-W12 WAIVED (clause) — ADR-189 |
+| SIG-STORE-011 | MUST | — | — | P34.18 (221), P34.21a (223), P34.26 (231), P34.49 (254), P34.46 (258), P35.15b (275), P37.71 (429), GATE-ANNOUNCE (510)* | P02.1, P37.71 | R11-W12 WAIVED (clause) — ADR-189 |
 | SIG-STORE-015 | MUST | — | — | P35.27 (306) | — | — |
 | SIG-STORE-025 | MUST | — | — | P35.6 (266) | P11.2, P12.1 | — |
 | SIG-STORE-037 | MUST | — | — | P35.14a (272) | P01.1, P35.14a | — |
 | SIG-STORE-041 | MUST | — | — | P34.24a (228), P34.24b (230), P35.14b (273)* | P02.1 | — |
 | SIG-STORE-044 | MUST | — | — | P35.14a (272) | P35.14a | — |
-| SIG-STORE-045 | MUST | — | — | P37.58 (486)* | P37.58 | — |
+| SIG-STORE-045 | MUST | — | — | P37.58 (486) | P37.58 | — |
 | SIG-STORE-048 | MUST | P37.3 (421) (§56) | P34.3 (204) | P34.42b (252), P35.61 (338) | — | — |
 | SIG-TIME-012 | MUST | — | — | P35.30 (308) | — | — |
 | SIG-TRANSP-001 | MUST | P36.48 (391) (§56) | P35.40 (319) | P35.56 (334)*, P36.17 (357)* | — | — |
 | SIG-TRANSP-002 | MUST | P35.40 (319) (§56) | P35.35 (313) | — | — | — |
 | SIG-TRANSP-003 | MUST | P36.47 (390) (§56) | — | — | — | — |
 | SIG-TRANSP-004 | MUST | P36.47 (390) (§56) | — | P36.77 (352), P36.78 (353), P36.2 (350)* | — | — |
-| SIG-TRANSP-005 | MUST | P36.69 (413) (§56) | — | — | — | — |
+| SIG-TRANSP-005 | MUST | P36.69 (413) (§56) | P37.36 (460) | — | — | — |
 | SIG-TRANSP-006 | MUST | P36.46 (389) (§56) | P35.33 (311) | — | — | — |
 | SIG-TRANSP-007 | MUST | P35.41 (320) (§56) | — | — | — | — |
 | SIG-TRANSP-008 | MUST | P36.69 (413) (§56) | P35.44 (323) | — | — | — |
 | SIG-TRANSP-009 | MUST | P36.47 (390) (§56) | — | — | — | — |
 | SIG-TRANSP-010 | MUST | P36.49 (392) (§56) | — | — | — | — |
 | SIG-TRANSP-011 | MUST | P35.36 (315) (§56) | — | — | — | — |
-| SIG-TRANSP-012 | MUST | P36.51 (394) (§56) | — | P35.36 (315) | — | — |
+| SIG-TRANSP-012 | MUST | P36.51 (394) (§56) | P37.36 (460) | P35.36 (315) | — | — |
 | SIG-TRANSP-013 | MUST | P35.37 (316) (§56) | — | — | — | — |
 | SIG-TRANSP-014 | MUST | P36.50 (393) (§56) | — | — | — | — |
 | SIG-TRANSP-015 | MUST | P36.50 (393) (§56) | — | — | — | — |
@@ -698,6 +701,7 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-TRANSP-039 | MUST | P36.47 (390) (§56) | — | P35.33 (311)* | — | — |
 | SIG-TRANSP-040 | MUST | P36.69 (413) (§56) | P35.44 (323) | — | — | — |
 | SIG-TRANSP-041 | MUST | P36.69 (413) (§56) | — | — | — | — |
+| SIG-TRANSP-042 | MUST | P37.41 (465) (§56) | — | — | — | — |
 | SIG-TRANSP-043 | MUST | P36.69 (413) (§56) | — | — | — | — |
 | SIG-TRUST-001 | MUST | — | — | P35.14a (272), P35.14b (273), P35.15b (275) | P32.2 | — |
 | SIG-TRUST-003 | MUST | — | — | P35.26 (305) | P32.3 | — |
@@ -715,8 +719,8 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-UI-026 | MUST | — | — | P35.43 (322)* | P15.4 | — |
 | SIG-UI-027 | MUST | — | — | P35.43 (322)* | P15.4 | — |
 | SIG-UI-027a | MUST | — | — | P35.43 (322)* | P15.4 | — |
-| SIG-UI-028 | MUST | — | — | P35.36 (315), P37.37 (461)* | P15.4 | — |
-| SIG-UI-029 | MUST | — | — | P34.20 (222), P37.37 (461)* | P15.4 | — |
+| SIG-UI-028 | MUST | — | — | P35.36 (315), P37.37 (461) | P15.4 | — |
+| SIG-UI-029 | MUST | — | — | P34.20 (222), P37.37 (461) | P15.4 | — |
 | SIG-UI-033 | MUST | — | — | P34.34a (241) | P15.5 | — |
 | SIG-UI-035 | MUST | — | — | P35.36 (315), P35.37 (316), P35.39 (318), P35.42 (321), P34.34a (241)* | — | R11-A4 AMENDED (no MUST weakened) — ADR-162 |
 | SIG-UI-036 | SHOULD | — | — | P35.50 (328), P35.51 (329), P35.56 (334), P34.34b (242)* | P15.5 | R11-A3 AMENDED (no MUST weakened) — ADR-155 |
@@ -749,13 +753,17 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-UI-068 | MUST | P36.36 (377) (§56) | — | — | — | — |
 | SIG-UI-069 | MUST | P36.55 (398) (§56) | — | — | — | — |
 | SIG-UI-070 | MUST | P36.41 (382) (§56) | — | — | — | — |
+| SIG-UI-071 | MUST | P37.38 (462) (§56) | — | — | — | — |
+| SIG-UI-072 | MUST | P37.40 (464) (§56) | — | — | — | — |
 | SIG-UI-073 | MUST | P36.31 (372) (§56) | — | — | — | — |
 | SIG-UI-074 | MUST | P36.31 (372) (§56) | — | — | — | — |
 | SIG-UI-075 | MUST | P36.66a (409) (§56) | — | P36.66b (410)* | — | — |
 | SIG-UI-076 | MUST | P36.38 (379) (§56) | — | P36.67 (411)* | — | — |
+| SIG-UI-077 | MUST | P37.68a (497) (§56) | — | — | — | — |
+| SIG-UI-078 | MUST | P37.68a (497) (§56) | — | — | — | — |
 | SIG-UI-079 | MUST | P36.61 (404) (§56) | — | — | — | — |
 | SIG-UI-080 | MUST | P36.41 (382) (§56) | — | — | — | — |
-| SIG-UI-081 | MUST | P36.71 (414) (§56) | — | — | — | — |
+| SIG-UI-081 | MUST | P36.71 (414) (§56) | P37.63 (491), P37.68a (497) | — | — | — |
 | SIG-UI-082 | SHOULD | P36.50 (393) (§56) | — | P36.68 (412)* | — | — |
 | SIG-UI-083 | MUST | P36.22 (362) (§56) | — | P36.23 (363)* | — | — |
 | SIG-UI-084 | MUST | P36.22 (362) (§56) | — | — | — | — |
@@ -773,6 +781,7 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-UI-096 | MUST | P36.19 (359) (§56) | — | — | — | — |
 | SIG-UI-097 | MUST | P36.37 (378) (§56) | — | — | — | — |
 | SIG-UI-098 | MUST | P36.26 (366) (§56) | — | P36.42b (384)* | — | — |
+| SIG-UI-099 | MUST | P37.17 (440) (§56) | — | — | — | — |
 | SIG-UI-100 | MUST | P36.33 (374) (§56) | — | — | — | — |
 | SIG-UI-101 | MUST | P36.37 (378) (§56) | — | — | — | — |
 | SIG-UI-102 | MUST | P36.37 (378) (§56) | — | — | — | — |
@@ -790,11 +799,17 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-UI-114 | MUST | P36.41 (382) (§56) | — | P36.42a (383)* | — | — |
 | SIG-UI-115 | MUST | P36.41 (382) (§56) | — | P36.42a (383)* | — | — |
 | SIG-UI-116 | MUST | P36.41 (382) (§56) | — | P36.42a (383)* | — | — |
+| SIG-UI-117 | MUST | P37.24 (448) (§56) | — | — | — | — |
+| SIG-UI-118 | MUST | P37.24 (448) (§56) | — | — | — | — |
+| SIG-UI-119 | MUST | P37.26 (450) (§56) | — | — | — | — |
+| SIG-UI-120 | MUST | P37.26 (450) (§56) | — | — | — | — |
+| SIG-UI-121 | MUST | P37.26 (450) (§56) | — | — | — | — |
 | SIG-UI-122 | MUST | P36.42a (383) (§56) | — | P36.42b (384)* | — | — |
 | SIG-UI-123 | MUST | P36.27 (367) (§56) | — | P36.54 (397)* | — | — |
 | SIG-UI-124 | MUST | P36.27 (367) (§56) | — | P36.54 (397)* | — | — |
-| SIG-UI-125 | MUST | P36.28 (368) (§56) | — | — | — | — |
+| SIG-UI-125 | MUST | P36.28 (368) (§56) | P37.28 (452) | — | — | — |
 | SIG-UI-126 | MUST | P36.57 (400) (§56) | — | — | — | — |
+| SIG-UI-127 | MUST | P37.29 (453) (§56) | — | — | — | — |
 | SIG-UI-128 | MUST | P36.56 (399) (§56) | — | — | — | — |
 | SIG-UI-129 | MUST | P36.55 (398) (§56) | — | — | — | — |
 | SIG-UI-130 | MUST | P36.26 (366) (§56) | — | P36.42b (384)* | — | — |
@@ -819,6 +834,7 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-UI-149 | MUST | P36.17 (357) (§56) | — | P36.16 (356)* | — | — |
 | SIG-UI-150 | MUST | P36.18 (358) (§56) | — | — | — | — |
 | SIG-UI-151 | MUST | P36.22 (362) (§56) | — | P36.23 (363)*, P36.65 (408)* | — | — |
+| SIG-UI-152 | MUST | P37.60 (488) (§56) | — | — | — | — |
 | SIG-UI-153 | MUST | P36.24 (364) (§56) | — | — | — | — |
 | SIG-UI-154 | MUST | P36.25 (365) (§56) | — | — | — | — |
 | SIG-UI-155 | MUST | P36.26 (366) (§56) | — | — | — | — |
@@ -827,6 +843,10 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-WATCH-002 | MUST | P36.59 (402) (§56) | — | — | — | — |
 | SIG-WATCH-003 | MUST | P36.59 (402) (§56) | — | — | — | — |
 | SIG-WATCH-004 | MUST | P36.59 (402) (§56) | — | — | — | — |
+| SIG-WATCH-005 | MUST | P37.34 (458) (§56) | — | — | — | — |
+| SIG-WATCH-006 | MUST | P37.34 (458) (§56) | — | — | — | — |
+| SIG-WATCH-007 | MUST | P37.31 (455) (§56) | — | — | — | — |
+| SIG-WATCH-008 | MUST | P37.31 (455) (§56) | — | — | — | — |
 | SIG-WATCH-009 | MUST | P36.55 (398) (§56) | — | — | — | — |
 | SIG-WATCH-010 | MUST | P36.59 (402) (§56) | — | — | — | — |
 
