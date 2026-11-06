@@ -6168,6 +6168,10 @@ def main(argv: list[str] | None = None) -> int:
         from . import security_baseline
 
         return security_baseline.main(raw[1:])
+    if raw and raw[0] == "restricted-access":
+        from . import restricted_access
+
+        return restricted_access.main(raw[1:])
     if raw and raw[0] == "basemap":
         from . import basemap
 

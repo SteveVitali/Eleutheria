@@ -4,19 +4,19 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `0d4e3f7a1974edced27100271565ba975bd3de9b` · inputs hashed: 1200 · wall-clock receipt: `receipt.json`
+> input_commit: `3e8c2e59434d0bd173241d443a491a651de704ea` · inputs hashed: 1202 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.4b` · lastCompleted `P37.4a`
-- chainTip `r11/P37.4a-security-baseline-scan-sbom-signing` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-05T22:22Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.5a` · lastCompleted `P37.4b`
+- chainTip `r11/P37.4b-security-baseline-restricted-access-audit-logs` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-05T22:22Z`
 
 ## Obligations
 
-- 223 obligations · **140 owed** (137 OPEN, 3 PARTIAL) · 83 terminal
-- 733 events (54 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 224 obligations · **141 owed** (138 OPEN, 3 PARTIAL) · 83 terminal
+- 734 events (54 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 140 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 141 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -99,6 +99,7 @@
 | P36.73 | queued 11C acceptance sweep + GATE-G6 packet refresh: read-only crawl of the promoted core-surfaces release/routes/budgets/labels/changelog/mirrors + the packet… | `implement-spec spec=docs/tickets/419_P36.73__sub-round-11c-acceptance.md live_verification=true` (#444) |
 | P37.3 | queued D-P37.3-1 — the named OM-20 mutation (GATE-G6 §4 names P37.3 verbatim): evidence-store.sh --apply legs | `implement-spec spec=docs/tickets/421_P37.3__evidence-store-hardening.md live_verification=true` |
 | P37.4a | D-P37.4a-1 | `implement-spec spec=docs/tickets/422_P37.4a__security-baseline-scan-sbom-signing.md live_verification=true` |
+| P37.4b | D-P37.4b-1: queued OM-20 mutation (GATE-G6 §4): `restricted-access.sh --apply` — DATA_READ/WRITE `auditConfigs` + `sig-data-access`→90d + alert + `ENCRYPTED_ONL… | `implement-spec spec=docs/tickets/423_P37.4b__security-baseline-restricted-access-audit-logs.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 

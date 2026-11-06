@@ -142,5 +142,6 @@
 | D-P36.70-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.70-rehearsal-<n>` dispatch or the operator | the sig.release-rehearsal/1 record lands status=rehearsed — four timed legs applied, latest_restored=true, measured vs the 600s/900s budgets — after P36.72b's p… | the `sig.release-rehearsal/1` record lands `status: rehearsed` — four legs applied, `latest_restored: true`, per-leg `seconds` measured vs the 600 s/900 s budge… |
 | D-P37.3-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P37.3-live-<n>` dispatch or the operator | RETURN PASS — P37.3 | `evidence-store.sh --verify` prints 0 DRIFT — `retention_period_seconds=31536000`, `isLocked=false`, the DR bucket + replica job present; the `probe` leg's dele… |
 | D-P37.4a-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P37.4a-live-<n>` dispatch or the operator | RETURN PASS — P37.4a | `security-baseline.sh --verify` names the enabled APIs + key; the queued `probe` leg's cosign verify finds ≥1 signature per deployed digest; `ops/security/` rec… |
+| D-P37.4b-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P37.4b-live-<n>` dispatch or the operator | RETURN PASS — P37.4b | the queued `verify` leg prints 0 DRIFT — the `auditConfig` carries `DATA_READ`+`DATA_WRITE` with the exempted members, `sig-data-access` routes to the 90d-lifec… |
 
 ← back: CURRENT.md

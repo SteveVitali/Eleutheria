@@ -1,0 +1,38 @@
+{
+  "alertStrategy": {
+    "autoClose": "86400s",
+    "notificationRateLimit": {
+      "period": "86400s"
+    }
+  },
+  "combiner": "OR",
+  "conditions": [
+    {
+      "conditionThreshold": {
+        "aggregations": [
+          {
+            "alignmentPeriod": "86400s",
+            "perSeriesAligner": "ALIGN_SUM"
+          }
+        ],
+        "comparison": "COMPARISON_GT",
+        "duration": "0s",
+        "filter": "metric.type = \"logging.googleapis.com/byte_count\" AND metric.labels.log : \"data_access\"",
+        "thresholdValue": 350000000.0,
+        "trigger": {
+          "count": 1
+        }
+      },
+      "displayName": "Data Access audit-log ingest > 350 MB/day (the +$5/mo S1a bound)"
+    }
+  ],
+  "displayName": "SIG — Data Access audit-log daily volume",
+  "documentation": {
+    "content": "The GCS Data Access audit logs (P37.4b, SIG-SEC-005, G1-13) are ingesting above the recorded +$5/mo (S1a) upper bound — ≈350 MB/day at the $0.50/GiB Cloud Logging tier beyond the free allotment. Check the exempted-members set and the sink filter before raising the threshold: `gcloud logging read 'protoPayload.serviceName=\"storage.googleapis.com\"' --project {project} --freshness=24h`. The cost read the contract names lives in the restricted-access leg's state dir (prestate + cost legs).",
+    "mimeType": "text/markdown"
+  },
+  "enabled": true,
+  "notificationChannels": [
+    "projects/{project}/notificationChannels/10808426210098728267"
+  ]
+}

@@ -8,11 +8,11 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P37.4b
-lastCompleted: P37.4a
+nextTicket: P37.5a
+lastCompleted: P37.4b
 blockedOn: (nothing)
 pauseRequested: false
-returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a
+returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b
 manifest: docs/tickets/00_MANIFEST.md
 canonicalSpec: docs/2_canonical_design_spec.md
 memoryRoot: docs/build
@@ -20,7 +20,7 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P37.4a-security-baseline-scan-sbom-signing
+chainTip: r11/P37.4b-security-baseline-restricted-access-audit-logs
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
@@ -485,6 +485,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | P36.73 | queued 11C acceptance sweep + GATE-G6 packet refresh: read-only crawl of the promoted core-surfaces release/routes/budgets/labels/changelog/mirrors + the packet re-draft; `acceptance-sweep-11c` → `sig.probe-run/1` + tools | `hosted` read-only — `acceptance-sweep-11c` exit 42 before `live:P36.72b` promotes (the promoted release must exist); L2 on the operator's verbatim signed HG-11 readout at the GATE-G6 sitting, never pre-authorised | nothing until `live:P36.72b` promotes — read-only; GATE-G6 packet presented only when no leg is due | `implement-spec spec=docs/tickets/419_P36.73__sub-round-11c-acceptance.md live_verification=true` (#444) |
 | P37.3 | queued D-P37.3-1 — the named OM-20 mutation (GATE-G6 §4 names P37.3 verbatim): evidence-store.sh --apply legs | pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting) — 'Approve all 15 (rec.)' 2026-11-05T15:20Z; window `AR-3 + AR-2` verbatim; excluded: inside 03:00-10:00Z daily; while an ingest execution runs (repoint leg); needs SIG_GCP_PROJECT + ADC + SIG_EVSTORE_AUTHOR (+ SIG_BACKUP_PROJECT for the export-copy leg) | nothing until the leg-runner lands the env — packet committed `prepared_not_executed` (reports/p37.3-evidence-hardening/) | `implement-spec spec=docs/tickets/421_P37.3__evidence-store-hardening.md live_verification=true` |
 | P37.4a | D-P37.4a-1 | pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting); excluded: inside 03:00-10:00Z daily; env SIG_GCP_PROJECT+ADC+SIG_SECB_AUTHOR+cosign | none — env + script; additive writes | `implement-spec spec=docs/tickets/422_P37.4a__security-baseline-scan-sbom-signing.md live_verification=true` |
+| P37.4b | D-P37.4b-1: queued OM-20 mutation (GATE-G6 §4): `restricted-access.sh --apply` — DATA_READ/WRITE `auditConfigs` + `sig-data-access`→90d + alert + `ENCRYPTED_ONLY` + purge | `hosted` write; OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); excluded: inside 03:00-10:00Z; needs SIG_GCP_PROJECT + ADC + SIG_RACC_AUTHOR | nothing — leg-runner exports env + runs | `implement-spec spec=docs/tickets/423_P37.4b__security-baseline-restricted-access-audit-logs.md live_verification=true` |
 
 Sources: OPERATIONAL_READINESS §(f3) + `UNIVERSE_DISPOSED.csv` + plan §9.2/§8.6 + `data/round11_plan.csv`. Non-row homes: 9 ticket + 9 later-phase + 7 decision + 2 already-done. Keying (T5 γ) = LANDED R10 ticket (archived `reports/memory-repair/return_pass_cells_pre-P36.49-orient.txt`).
 
@@ -1557,3 +1558,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-05 — P37.4a done — row 422 `Kind: ticket` — security baseline a-half (SIG-SEC-006 served; the OM-20 gate-status cell + `AR-3 + AR-2` carried; GATE-G6 §4 names P37.4a verbatim): deterministic CycloneDX SBOM per release (sums-covered + minisign, bound into `releases/<pub>/data/`) · `sig-ops security-baseline` + `security-baseline.sh` (apis/kms/sign/probe) · `security_sign_image` deploy hook · `SECURITY.md` · ADR-231 · packet + `D-P37.4a-1` — the named mutation QUEUED `prepared_not_executed` (`SIG_GCP_PROJECT` unset — OM-19) · `main` untouched · chainTip r11/P37.4a-security-baseline-scan-sbom-signing (open) · next → P37.4b · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-05 — P37.4a post-closeout record — head `645b9066` 5/5 green head-bound (`ci: pass #446@645b906`, run 42111534398, read 22:22Z; boundary `logs/ci-p37_4a-boundary.json` exit 3 = carried waived-ancestor `#445@f5b7614` docs check-build-memory — #444 precedent, the new head itself 5/5) · `main` untouched · next → P37.4b · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-05 — dispatch boundary-confirm — P37.4a's green read recorded (`ci: pass #446@645b906`, run 42111534398; mutation QUEUED `D-P37.4a-1` `prepared_not_executed`); `blockedOn` (nothing); chainTip `r11/P37.4a-security-baseline-scan-sbom-signing` · nextTicket P37.4b (row 423 — restricted-access audit logs + ENCRYPTED_ONLY posture; **OM-20 row PRE-AUTHORISED** — GATE-G6 §4 names it verbatim ("Approve all 15"), unexpired; logging/IAM config + log-volume cost read before and after; dep P37.4a landed) — fresh implement-spec sub-agent on `r11/P37.4b-security-baseline-restricted-access-audit-logs` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-06 — dispatch boundary-confirm — P37.4b's green read recorded (`ci: pass #447@d8aafad`, run 42132237383; mutation QUEUED `D-P37.4b-1` `prepared_not_executed`); `blockedOn` (nothing); chainTip `r11/P37.4b-security-baseline-restricted-access-audit-logs` · nextTicket P37.5a (row 424 — ingestion-hardening unwired-function scan; live_verification=false; gate none; chain tip) — fresh implement-spec sub-agent on `r11/P37.5a-ingestion-hardening-unwired-function-scan` · harness: devin-desktop/swe-2-high/orchestrator
