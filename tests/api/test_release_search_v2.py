@@ -215,6 +215,8 @@ def test_unsupported_params_422(client: TestClient, released) -> None:
         {"q": "x" * 201},
         {"cursor": "%%%bad%%%"},
         {"format": "yaml"},
+        {"within": "entity:ent-1"},  # P36.71 — typed refusal, never silently unscoped
+        {"location": "located"},
     ):
         r = _search(client, pub, **params)
         assert r.status_code == 422, (params, r.status_code)

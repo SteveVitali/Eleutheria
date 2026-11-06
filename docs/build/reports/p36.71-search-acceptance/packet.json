@@ -1,0 +1,53 @@
+{
+  "catalog": "R11-K13-SRCH-07",
+  "evidence": {
+    "posture": "fixture release",
+    "report": "docs/build/reports/p36.71-search-acceptance/acceptance-fixture.json"
+  },
+  "label": "agent-verified acceptance machinery; binding run rides the verify leg",
+  "legs": [
+    {
+      "cmd": "sig-exports search-acceptance --release <dir> --held-out <blob> --enforce",
+      "id": "real-release-acceptance",
+      "targets": {
+        "dev_top3": ">=0.90",
+        "held_out_top3": ">=0.80",
+        "index_bytes": "<=157286400",
+        "misleading": "==0"
+      }
+    },
+    {
+      "cmd": "staging benchmark at 1 vCPU (gcsfuse vs local copy) <=300ms",
+      "id": "staging-p95",
+      "requires": [
+        "D-P36.38-1",
+        "ADC",
+        "SIG_GCP_PROJECT"
+      ]
+    },
+    {
+      "cmd": "check:perf on the real release + axe both JS states",
+      "id": "budgets-lighthouse-axe"
+    },
+    {
+      "cmd": "--billing <billing-export.json> vs $300/month ceiling (SIG-UI-081)",
+      "id": "cost"
+    },
+    {
+      "cmd": "A1+J2 cold-walked on the promoted release, agent-verified, 390px+1440px",
+      "id": "journeys"
+    }
+  ],
+  "obligation": "D-P36.71-1",
+  "planned_at": "2026-11-05T02:20:39Z",
+  "record_type": "sig.search-acceptance-packet/1",
+  "rerun": "implement-spec spec=docs/tickets/414_P36.71__search-acceptance-and-activation.md live_verification=true",
+  "schema": "sig.search-acceptance-packet/1",
+  "seal": {
+    "descriptor": "docs/build/reports/p36.79-held-out-relevance/descriptor.json",
+    "read": "sig-ops held-out emit + verify \u2014 digest matches the committed descriptor; bucket object write D-P36.79-1 OPEN",
+    "sha256": "44c746836f709e9dde74e2a4834a1c8d0a3b447c7beb9cc43ffbdf91a7a8a1b0"
+  },
+  "status": "prepared_not_executed",
+  "ticket": "P36.71"
+}

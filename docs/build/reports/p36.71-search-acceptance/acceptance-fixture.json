@@ -1,0 +1,1364 @@
+{
+  "cost": {
+    "ceiling_usd": 300.0,
+    "note": "no billing export supplied \u2014 the hosted readout rides the verify leg",
+    "status": "deferred"
+  },
+  "dev": {
+    "queries": [
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-p01",
+        "judgement": "top3",
+        "kind": "place",
+        "latency_ms": 0.89,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 3,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-p02",
+        "judgement": "top3",
+        "kind": "place",
+        "latency_ms": 0.535,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 10,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-p03",
+        "judgement": "top3",
+        "kind": "place",
+        "latency_ms": 0.313,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 2,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-p04",
+        "judgement": "top3",
+        "kind": "place",
+        "latency_ms": 0.352,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 5,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-p05",
+        "judgement": "top3",
+        "kind": "place",
+        "latency_ms": 2.639,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-p06",
+        "judgement": "top3",
+        "kind": "place",
+        "latency_ms": 0.486,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 4,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-p07",
+        "judgement": "top3",
+        "kind": "place",
+        "latency_ms": 0.341,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 2,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-p08",
+        "judgement": "top3",
+        "kind": "place",
+        "latency_ms": 0.299,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-p09",
+        "judgement": "top3",
+        "kind": "place",
+        "latency_ms": 0.344,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 6,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-p10",
+        "judgement": "top3",
+        "kind": "place",
+        "latency_ms": 0.273,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 2,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-p11",
+        "judgement": "top3",
+        "kind": "place",
+        "latency_ms": 1.368,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-p12",
+        "judgement": "top3",
+        "kind": "place",
+        "latency_ms": 2.094,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "dev-a01",
+        "judgement": "top3",
+        "kind": "alias",
+        "latency_ms": 0.472,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 4,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "dev-a02",
+        "judgement": "top3",
+        "kind": "alias",
+        "latency_ms": 0.926,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 16,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "dev-a03",
+        "judgement": "top3",
+        "kind": "technology",
+        "latency_ms": 0.509,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 11,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "dev-a04",
+        "judgement": "top3",
+        "kind": "technology",
+        "latency_ms": 0.458,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 10,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "dev-a05",
+        "judgement": "top3",
+        "kind": "alias",
+        "latency_ms": 0.276,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 1,
+        "suggestion": null
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "dev-o01",
+        "judgement": "honest",
+        "kind": "organization",
+        "latency_ms": 0.294,
+        "misleading_top_hit": true,
+        "rank": null,
+        "results_returned": 1,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "dev-o02",
+        "judgement": "top3",
+        "kind": "organization",
+        "latency_ms": 0.286,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 3,
+        "suggestion": null
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "dev-o03",
+        "judgement": "honest",
+        "kind": "organization",
+        "latency_ms": 0.287,
+        "misleading_top_hit": true,
+        "rank": null,
+        "results_returned": 1,
+        "suggestion": null
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "dev-o04",
+        "judgement": "honest",
+        "kind": "organization",
+        "latency_ms": 3.509,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0,
+        "suggestion": null
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "dev-o05",
+        "judgement": "honest",
+        "kind": "organization",
+        "latency_ms": 2.115,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-t01",
+        "judgement": "top3",
+        "kind": "typo",
+        "latency_ms": 2.387,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0,
+        "suggestion": null
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "dev-t02",
+        "judgement": "honest",
+        "kind": "typo",
+        "latency_ms": 0.449,
+        "misleading_top_hit": true,
+        "rank": null,
+        "results_returned": 1,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-t03",
+        "judgement": "top3",
+        "kind": "typo",
+        "latency_ms": 1.913,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 4,
+        "suggestion": {
+          "corrected": "austin",
+          "original": "Austn"
+        }
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-t04",
+        "judgement": "top3",
+        "kind": "typo",
+        "latency_ms": 1.928,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 5,
+        "suggestion": {
+          "corrected": "maryland",
+          "original": "Marylnd"
+        }
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-r01",
+        "judgement": "top3",
+        "kind": "record",
+        "latency_ms": 2.262,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-r02",
+        "judgement": "top3",
+        "kind": "record",
+        "latency_ms": 2.219,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-r03",
+        "judgement": "top3",
+        "kind": "record",
+        "latency_ms": 2.075,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-s01",
+        "judgement": "top3",
+        "kind": "source",
+        "latency_ms": 1.419,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "dev-s02",
+        "judgement": "top3",
+        "kind": "source",
+        "latency_ms": 2.829,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "dev-s03",
+        "judgement": "top3",
+        "kind": "source",
+        "latency_ms": 0.491,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 5,
+        "suggestion": null
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "dev-i01",
+        "judgement": "top3",
+        "kind": "identifier",
+        "latency_ms": 0.109,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 1,
+        "suggestion": null
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "dev-d01",
+        "judgement": "honest",
+        "kind": "document",
+        "latency_ms": 2.456,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0,
+        "suggestion": null
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "dev-d02",
+        "judgement": "honest",
+        "kind": "document",
+        "latency_ms": 0.656,
+        "misleading_top_hit": true,
+        "rank": null,
+        "results_returned": 10,
+        "suggestion": null
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "dev-d03",
+        "judgement": "honest",
+        "kind": "document",
+        "latency_ms": 2.311,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0,
+        "suggestion": null
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "dev-d04",
+        "judgement": "honest",
+        "kind": "document",
+        "latency_ms": 2.698,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0,
+        "suggestion": null
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "dev-n01",
+        "judgement": "honest",
+        "kind": "negative",
+        "latency_ms": 1.461,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0,
+        "suggestion": null
+      }
+    ],
+    "summary": {
+      "answerable": 28,
+      "latency_ms": {
+        "max": 3.509,
+        "p50": 0.656,
+        "p95": 2.698
+      },
+      "misleading_top_hits": 4,
+      "mrr": 0.2857142857142857,
+      "per_kind": {
+        "alias": {
+          "hits": 3,
+          "misleading": 0,
+          "queries": 3,
+          "zero": 0
+        },
+        "document": {
+          "hits": 0,
+          "misleading": 1,
+          "queries": 4,
+          "zero": 3
+        },
+        "identifier": {
+          "hits": 1,
+          "misleading": 0,
+          "queries": 1,
+          "zero": 0
+        },
+        "negative": {
+          "hits": 0,
+          "misleading": 0,
+          "queries": 1,
+          "zero": 1
+        },
+        "organization": {
+          "hits": 1,
+          "misleading": 2,
+          "queries": 5,
+          "zero": 2
+        },
+        "place": {
+          "hits": 0,
+          "misleading": 0,
+          "queries": 12,
+          "zero": 3
+        },
+        "record": {
+          "hits": 0,
+          "misleading": 0,
+          "queries": 3,
+          "zero": 3
+        },
+        "source": {
+          "hits": 1,
+          "misleading": 0,
+          "queries": 3,
+          "zero": 2
+        },
+        "technology": {
+          "hits": 2,
+          "misleading": 0,
+          "queries": 2,
+          "zero": 0
+        },
+        "typo": {
+          "hits": 0,
+          "misleading": 1,
+          "queries": 4,
+          "zero": 1
+        }
+      },
+      "queries": 38,
+      "top3_success": 8,
+      "top3_success_rate": 0.2857142857142857,
+      "zero_result_rate": 0.39473684210526316
+    }
+  },
+  "generated_at": "2026-11-05T02:20:03Z",
+  "held_out": {
+    "queries": [
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H01",
+        "judgement": "top3",
+        "kind": "place-city",
+        "latency_ms": 0.587,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 2
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H02",
+        "judgement": "top3",
+        "kind": "place-city",
+        "latency_ms": 0.304,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H03",
+        "judgement": "top3",
+        "kind": "place-city",
+        "latency_ms": 0.295,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H04",
+        "judgement": "top3",
+        "kind": "place-city",
+        "latency_ms": 0.289,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H05",
+        "judgement": "top3",
+        "kind": "place-city",
+        "latency_ms": 0.283,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H06",
+        "judgement": "top3",
+        "kind": "place-city",
+        "latency_ms": 0.349,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 4
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H07",
+        "judgement": "top3",
+        "kind": "place-city",
+        "latency_ms": 0.286,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H08",
+        "judgement": "top3",
+        "kind": "place-city",
+        "latency_ms": 0.279,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H09",
+        "judgement": "top3",
+        "kind": "place-city",
+        "latency_ms": 0.282,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H10",
+        "judgement": "top3",
+        "kind": "place-admin1",
+        "latency_ms": 0.282,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H11",
+        "judgement": "top3",
+        "kind": "place-admin1",
+        "latency_ms": 0.279,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H12",
+        "judgement": "top3",
+        "kind": "place-admin1",
+        "latency_ms": 2.322,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H13",
+        "judgement": "top3",
+        "kind": "place-admin1",
+        "latency_ms": 1.908,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H14",
+        "judgement": "top3",
+        "kind": "place-admin1",
+        "latency_ms": 1.408,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H15",
+        "judgement": "top3",
+        "kind": "place-code",
+        "latency_ms": 0.871,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H16",
+        "judgement": "top3",
+        "kind": "place-code",
+        "latency_ms": 0.87,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H17",
+        "judgement": "top3",
+        "kind": "place-initials",
+        "latency_ms": 0.417,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 5
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H18",
+        "judgement": "top3",
+        "kind": "acronym",
+        "latency_ms": 0.304,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 2
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "H19",
+        "judgement": "top3",
+        "kind": "acronym",
+        "latency_ms": 1.537,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 13
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "H20",
+        "judgement": "top3",
+        "kind": "acronym",
+        "latency_ms": 0.403,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 8
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H21",
+        "judgement": "top3",
+        "kind": "acronym",
+        "latency_ms": 0.308,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 3
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "H22",
+        "judgement": "top3",
+        "kind": "technology",
+        "latency_ms": 0.36,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 8
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H23",
+        "judgement": "top3",
+        "kind": "technology",
+        "latency_ms": 0.144,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 2
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "H24",
+        "judgement": "top3",
+        "kind": "technology",
+        "latency_ms": 0.259,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "H25",
+        "judgement": "top3",
+        "kind": "technology",
+        "latency_ms": 0.361,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 7
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H26",
+        "judgement": "top3",
+        "kind": "org-vendor",
+        "latency_ms": 0.349,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 5
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H27",
+        "judgement": "top3",
+        "kind": "org-vendor",
+        "latency_ms": 0.392,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 7
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H28",
+        "judgement": "top3",
+        "kind": "org-vendor",
+        "latency_ms": 0.275,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H29",
+        "judgement": "top3",
+        "kind": "org-vendor",
+        "latency_ms": 0.292,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 2
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H30",
+        "judgement": "top3",
+        "kind": "org-agency",
+        "latency_ms": 3.584,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H31",
+        "judgement": "top3",
+        "kind": "org-agency",
+        "latency_ms": 4.532,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H32",
+        "judgement": "top3",
+        "kind": "org-agency",
+        "latency_ms": 0.315,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H33",
+        "judgement": "top3",
+        "kind": "org-agency",
+        "latency_ms": 0.33,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H34",
+        "judgement": "top3",
+        "kind": "org-agency",
+        "latency_ms": 2.785,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "H35",
+        "judgement": "top3",
+        "kind": "source-name",
+        "latency_ms": 0.137,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 2
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "H36",
+        "judgement": "top3",
+        "kind": "source-name",
+        "latency_ms": 0.157,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 4
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "H37",
+        "judgement": "top3",
+        "kind": "source-name",
+        "latency_ms": 0.112,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "H38",
+        "judgement": "top3",
+        "kind": "source-name",
+        "latency_ms": 0.098,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H39",
+        "judgement": "top3",
+        "kind": "source-domain",
+        "latency_ms": 1.969,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H40",
+        "judgement": "top3",
+        "kind": "source-domain",
+        "latency_ms": 1.391,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H41",
+        "judgement": "top3",
+        "kind": "source-domain",
+        "latency_ms": 1.244,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": true,
+        "hit_at_k": true,
+        "id": "H42",
+        "judgement": "top3",
+        "kind": "identifier",
+        "latency_ms": 0.087,
+        "misleading_top_hit": false,
+        "rank": 1,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H43",
+        "judgement": "top3",
+        "kind": "identifier",
+        "latency_ms": 1.514,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H44",
+        "judgement": "top3",
+        "kind": "record-label",
+        "latency_ms": 0.273,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H45",
+        "judgement": "top3",
+        "kind": "org-agency",
+        "latency_ms": 3.77,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H46",
+        "judgement": "top3",
+        "kind": "typo",
+        "latency_ms": 1.795,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H47",
+        "judgement": "top3",
+        "kind": "typo",
+        "latency_ms": 1.723,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": true,
+        "hit_at_k": false,
+        "id": "H48",
+        "judgement": "top3",
+        "kind": "typo",
+        "latency_ms": 1.544,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "H49",
+        "judgement": "honest",
+        "kind": "negative",
+        "latency_ms": 1.109,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "H50",
+        "judgement": "honest",
+        "kind": "negative",
+        "latency_ms": 1.097,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "H51",
+        "judgement": "honest",
+        "kind": "honest-gated",
+        "latency_ms": 0.245,
+        "misleading_top_hit": true,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "H52",
+        "judgement": "honest",
+        "kind": "honest-gated",
+        "latency_ms": 0.159,
+        "misleading_top_hit": true,
+        "rank": null,
+        "results_returned": 1
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "H53",
+        "judgement": "honest",
+        "kind": "honest-contract",
+        "latency_ms": 2.286,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "H54",
+        "judgement": "honest",
+        "kind": "honest-person",
+        "latency_ms": 2.96,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      },
+      {
+        "answerable": false,
+        "hit_at_k": false,
+        "id": "H55",
+        "judgement": "honest",
+        "kind": "honest-person",
+        "latency_ms": 2.656,
+        "misleading_top_hit": false,
+        "rank": null,
+        "results_returned": 0
+      }
+    ],
+    "seal": {
+      "blob_bytes": 16422,
+      "descriptor": "docs/build/reports/p36.79-held-out-relevance/descriptor.json",
+      "descriptor_sha256": "44c746836f709e9dde74e2a4834a1c8d0a3b447c7beb9cc43ffbdf91a7a8a1b0",
+      "read": "verified \u2014 sha256 equals the committed descriptor",
+      "set_id": "sig.held-out.search-relevance/2026-10"
+    },
+    "summary": {
+      "answerable": 48,
+      "latency_ms": {
+        "max": 4.532,
+        "p50": 0.36,
+        "p95": 2.96
+      },
+      "misleading_top_hits": 2,
+      "mrr": 0.20833333333333334,
+      "per_kind": {
+        "acronym": {
+          "hits": 2,
+          "misleading": 0,
+          "queries": 4,
+          "zero": 0
+        },
+        "honest-contract": {
+          "hits": 0,
+          "misleading": 0,
+          "queries": 1,
+          "zero": 1
+        },
+        "honest-gated": {
+          "hits": 0,
+          "misleading": 2,
+          "queries": 2,
+          "zero": 0
+        },
+        "honest-person": {
+          "hits": 0,
+          "misleading": 0,
+          "queries": 2,
+          "zero": 2
+        },
+        "identifier": {
+          "hits": 1,
+          "misleading": 0,
+          "queries": 2,
+          "zero": 1
+        },
+        "negative": {
+          "hits": 0,
+          "misleading": 0,
+          "queries": 2,
+          "zero": 2
+        },
+        "org-agency": {
+          "hits": 0,
+          "misleading": 0,
+          "queries": 6,
+          "zero": 4
+        },
+        "org-vendor": {
+          "hits": 0,
+          "misleading": 0,
+          "queries": 4,
+          "zero": 0
+        },
+        "place-admin1": {
+          "hits": 0,
+          "misleading": 0,
+          "queries": 5,
+          "zero": 3
+        },
+        "place-city": {
+          "hits": 0,
+          "misleading": 0,
+          "queries": 9,
+          "zero": 0
+        },
+        "place-code": {
+          "hits": 0,
+          "misleading": 0,
+          "queries": 2,
+          "zero": 2
+        },
+        "place-initials": {
+          "hits": 0,
+          "misleading": 0,
+          "queries": 1,
+          "zero": 0
+        },
+        "record-label": {
+          "hits": 0,
+          "misleading": 0,
+          "queries": 1,
+          "zero": 0
+        },
+        "source-domain": {
+          "hits": 0,
+          "misleading": 0,
+          "queries": 3,
+          "zero": 3
+        },
+        "source-name": {
+          "hits": 4,
+          "misleading": 0,
+          "queries": 4,
+          "zero": 0
+        },
+        "technology": {
+          "hits": 3,
+          "misleading": 0,
+          "queries": 4,
+          "zero": 0
+        },
+        "typo": {
+          "hits": 0,
+          "misleading": 0,
+          "queries": 3,
+          "zero": 0
+        }
+      },
+      "queries": 55,
+      "top3_success": 10,
+      "top3_success_rate": 0.20833333333333334,
+      "zero_result_rate": 0.32727272727272727
+    }
+  },
+  "index_bytes": {
+    "files": {
+      "r/p-2e4249d0d8f1f5dcc5b83b0b30d5cea89685e94ece17e43a9865c89185de5639/c/osm_physical/claim_ref.sqlite": 36864,
+      "r/p-2e4249d0d8f1f5dcc5b83b0b30d5cea89685e94ece17e43a9865c89185de5639/c/osm_physical/search_index.sqlite": 118784,
+      "r/p-2e4249d0d8f1f5dcc5b83b0b30d5cea89685e94ece17e43a9865c89185de5639/c/osm_physical/search_index_v2.sqlite": 61440,
+      "r/p-2e4249d0d8f1f5dcc5b83b0b30d5cea89685e94ece17e43a9865c89185de5639/c/sig_graph/claim_ref.sqlite": 36864,
+      "r/p-2e4249d0d8f1f5dcc5b83b0b30d5cea89685e94ece17e43a9865c89185de5639/c/sig_graph/search_index.sqlite": 118784,
+      "r/p-2e4249d0d8f1f5dcc5b83b0b30d5cea89685e94ece17e43a9865c89185de5639/c/sig_graph/search_index_v2.sqlite": 53248,
+      "releases/p-2e4249d0d8f1f5dcc5b83b0b30d5cea89685e94ece17e43a9865c89185de5639/search/catalog.sqlite": 2662400
+    },
+    "limit": 157286400,
+    "total": 3088384
+  },
+  "journeys": [
+    {
+      "checks": {
+        "records_reported": false,
+        "top_card_name": "",
+        "top_first_is_place": false
+      },
+      "id": "A1",
+      "shape": "named place first (K13 \u00a78 A1)",
+      "verdict": "no_evidence"
+    },
+    {
+      "checks": {
+        "all_in_subtree": true,
+        "distinct_place_keys": [],
+        "records_returned": 0,
+        "subtree_size": 1
+      },
+      "id": "J2",
+      "shape": "jurisdiction= scopes to key + descendants (D-P36.56-1)",
+      "verdict": "no_evidence"
+    }
+  ],
+  "posture": "fixture release (synthetic corpus \u2014 the binding run rides the verify leg)",
+  "release": {
+    "as_of_world": "",
+    "label": "",
+    "publication_id": "p-2e4249d0d8f1f5dcc5b83b0b30d5cea89685e94ece17e43a9865c89185de5639"
+  },
+  "schema": "sig.search-acceptance/1",
+  "thresholds": [
+    {
+      "id": "dev_top3",
+      "measured": 0.2857142857142857,
+      "requirement": "SIG-SRCH-013",
+      "target": ">= 0.9",
+      "verdict": "unmet"
+    },
+    {
+      "id": "held_out_top3",
+      "measured": 0.20833333333333334,
+      "requirement": "SIG-SRCH-013",
+      "target": ">= 0.8",
+      "verdict": "unmet"
+    },
+    {
+      "id": "misleading_top_hits",
+      "measured": 6,
+      "requirement": "SIG-SRCH-013",
+      "target": "== 0",
+      "verdict": "fail"
+    },
+    {
+      "id": "index_bytes",
+      "measured": 3088384,
+      "requirement": "SIG-SRCH-014",
+      "target": "<= 157286400",
+      "verdict": "pass"
+    }
+  ],
+  "unmet": [
+    "dev_top3",
+    "held_out_top3",
+    "misleading_top_hits"
+  ],
+  "verdict": "fail",
+  "wall_ms": 108.981
+}

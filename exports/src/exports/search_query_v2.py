@@ -161,6 +161,8 @@ def parse_params_v2(
     source: str | None = None,
     technology: str | None = None,
     collection: str | None = None,
+    within: str | None = None,
+    location: str | None = None,
     cursor: str | None = None,
     expand: str | None = None,
     limit: int | None,
@@ -174,12 +176,26 @@ def parse_params_v2(
     ``<group>:<token>`` — per-group paging, never a global page number
     mixing licences (K3 §6.5). ``expand=1`` re-opens collapsed word-hit
     groups (the acronym-alias "show them" affordance).
+
+    ``within`` (entity-scoped search — SRCH-09 territory) and ``location``
+    (the v1 ``location_kind`` facet the v2 record index does not carry) are
+    *recognized* parameters the v2 engine cannot apply: a request carrying
+    either refuses with a typed 422 — never silently unscoped (D-P36.56-1).
     """
     unsupported = sorted(str(e) for e in extra)
     if unsupported:
         raise SearchQueryV2Error(
             422, "unsupported_query", f"unsupported parameters: {', '.join(unsupported)}"
         )
+    for name, raw in (("within", within), ("location", location)):
+        if raw is not None and str(raw).strip():
+            raise SearchQueryV2Error(
+                422,
+                "unsupported_query",
+                f"{name} is recognized but not supported by the v2 search "
+                "engine — scope with jurisdiction= (descendants included) or "
+                "source= instead",
+            )
     type_set: set[str] | None = None
     if types:
         type_set = {str(t).strip() for t in types if str(t).strip()}
@@ -380,6 +396,10 @@ class CompartmentIndex:
     conn: sqlite3.Connection
     meta: dict[str, Any]
     claim_ref: sqlite3.Connection | None = None
+    #: Lazily-filled distinct ``place_key`` set — the candidates a
+    #: jurisdiction subtree is intersected with (records are immutable
+    #: release bytes, so the set never drifts under an open engine).
+    place_keys: frozenset[str] | None = None
 
 
 # --------------------------------------------------------------------------- #
@@ -414,6 +434,7 @@ class SearchEngineV2:
         self.as_of_world = as_of_world or self.catalog_meta.get("as_of_world")
         self._vocab: list[str] | None = None
         self._place_counts: dict[str, tuple[int, int]] = {}
+        self._place_children_map: dict[str, list[str]] | None = None
 
     # -- opening ------------------------------------------------------------ #
 
@@ -903,18 +924,75 @@ class SearchEngineV2:
         " place_text, source_id, source_name, technology"
     )
 
-    def _record_filters(self, params: SearchParamsV2) -> tuple[list[str], dict[str, Any]]:
+    def _place_children(self) -> dict[str, list[str]]:
+        """``parent jkey → child jkeys`` over the catalog's place docs —
+        the registry parentage recorded in each doc's ``meta`` (never
+        inferred from key strings)."""
+        if self._place_children_map is None:
+            children: dict[str, list[str]] = {}
+            for (meta_json,) in self.catalog.execute(
+                "SELECT meta FROM docs WHERE doc_type = 'place'"
+            ):
+                try:
+                    meta = json.loads(meta_json or "{}")
+                except ValueError:
+                    continue
+                jkey = str(meta.get("jkey") or "")
+                parent = str(meta.get("parent") or "")
+                if jkey and parent:
+                    children.setdefault(parent, []).append(jkey)
+            self._place_children_map = children
+        return self._place_children_map
+
+    def jurisdiction_subtree(self, jkey: str) -> list[str]:
+        """SIG-UI-059's "a filter including descendants" — the requested key
+        plus every place key beneath it in the catalog's recorded parentage
+        (P36.71 / D-P36.56-1). An unknown or leaf key yields itself, so a
+        leaf ``jurisdiction=`` request keeps its old leaf-exact behaviour."""
+        children = self._place_children()
+        seen = {jkey}
+        frontier = [jkey]
+        while frontier:
+            nxt: list[str] = []
+            for j in frontier:
+                for child in children.get(j, ()):
+                    if child not in seen:
+                        seen.add(child)
+                        nxt.append(child)
+            frontier = nxt
+        return sorted(seen)
+
+    def _record_filters(
+        self, comp: CompartmentIndex, params: SearchParamsV2
+    ) -> tuple[list[str], dict[str, Any]]:
         where: list[str] = []
         bind: dict[str, Any] = {}
         for name, col in (
             ("kind", "entity_type"),
-            ("jurisdiction", "place_key"),
             ("source", "source_id"),
             ("technology", "technology"),
         ):
             if name in params.filters:
                 where.append(f"r.{col} = :f_{name}")
                 bind[f"f_{name}"] = params.filters[name]
+        if "jurisdiction" in params.filters:
+            # Chain-aware scope (SIG-UI-059): the subtree of the requested
+            # jkey, intersected with the place keys this compartment
+            # actually carries — never silently leaf-exact, and a scope
+            # matching nothing says so (``1 = 0``), never silently unscoped.
+            if comp.place_keys is None:
+                comp.place_keys = frozenset(
+                    str(r[0]) for r in comp.conn.execute("SELECT DISTINCT place_key FROM records")
+                )
+            subtree = set(self.jurisdiction_subtree(params.filters["jurisdiction"]))
+            keys = sorted(k for k in comp.place_keys if k in subtree)
+            if not keys:
+                where.append("1 = 0")
+            else:
+                ph = ", ".join(f":f_jurisdiction_{i}" for i in range(len(keys)))
+                where.append(f"r.place_key IN ({ph})")
+                for i, key in enumerate(keys):
+                    bind[f"f_jurisdiction_{i}"] = key
         return where, bind
 
     def _group_total(
@@ -924,7 +1002,7 @@ class SearchEngineV2:
         tokens: list[str],
         deadline: float,
     ) -> int:
-        where, bind = self._record_filters(params)
+        where, bind = self._record_filters(comp, params)
         sql = "SELECT COUNT(*) FROM records r"
         if tokens:
             sql += (
@@ -950,7 +1028,7 @@ class SearchEngineV2:
         tokens: list[str],
         deadline: float,
     ) -> dict[str, list[tuple[str, int]]]:
-        where, bind = self._record_filters(params)
+        where, bind = self._record_filters(comp, params)
         base = " FROM records r"
         if tokens:
             base += " JOIN records_fts ON r.record_seq = records_fts.rowid"
@@ -1009,7 +1087,7 @@ class SearchEngineV2:
         only when a next page genuinely exists — the cursor always tracks
         the last EMITTED key, so re-evaluated denials never duplicate or
         skip a row (the v1 contract carried over)."""
-        where, bind = self._record_filters(params)
+        where, bind = self._record_filters(comp, params)
         target = params.limit + 1
         results: list[dict[str, Any]] = []
         last: tuple[int, float, str] | None = None
