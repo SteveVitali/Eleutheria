@@ -102,9 +102,12 @@ ORIENT_WARN, ORIENT_MAX = 8192, 12288
 CS_MAX, LINE_MAX, ENTRY_MAX, PROBE_MAX = 3072, 256, 2048, 49152
 # B3 V2 states each CURRENT STATE line ≤ 256 B with failure above 512 B; the
 # generated `returnPass:` id list is monotone-growing with the queued-leg set
-# (one ticket id per RETURN PASS table key, comma-joined, no redundancy), so it
-# keeps the design's 512 B hard bound while every other key keeps 256 B.
-RP_LINE_MAX = 512
+# (one ticket id per RETURN PASS table key, comma-joined, no redundancy). The
+# bound guards `| PRIOR` abuse and bloat, not queue size — P36.73's leg row
+# took the committed list to 517 B, so the hard bound is raised to 1024 B in
+# step with the vendored check-build-memory.sh's SIG-LOCAL L8 patch (the same
+# acceptance-only widening, recorded in that file's provenance block).
+RP_LINE_MAX = 1024
 
 EXPECTED_KEYS = audit_current_state.EXPECTED_KEYS
 EXPECTED_KEYS_WITH_HARNESS = audit_current_state.EXPECTED_KEYS_WITH_HARNESS

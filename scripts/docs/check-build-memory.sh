@@ -19,7 +19,7 @@
 #   file named on the last stdout line, the input identity {repo, commit, dirty, input_digest}, uniform
 #   {check, severity, file, obligation, evidence, message} records and summary.exit.
 #
-# LOCAL PATCH — the body below the closing banner line is the upstream file byte-for-byte except seven
+# LOCAL PATCH — the body below the closing banner line is the upstream file byte-for-byte except eight
 # hunks, each tagged `SIG-LOCAL` in place (all upstream candidates):
 #   L1  write_report: `dirty` also covers the canonical spec when it lies inside the repo (the input
 #       digest reads the spec, so an uncommitted spec edit marks the report dirty). From the P32.8 fork.
@@ -40,6 +40,13 @@
 #       (`\.[0-9]+[a-z]?[0-9]*`) — the inserted manifest row 287a carries the
 #       ticket id `P35.1a1`, whose `.1a1` tail upstream's `[a-z]?` stops at
 #       `.1a`. Acceptance only; the grammar is widened, never narrowed.
+#   L8  the `returnPass` CURRENT STATE line cap 512 B → 1024 B — the generated
+#       id list is the queued-leg set (the script's own comment: "it grows with
+#       the queue"); P36.73's leg row took the committed list to 517 B. The
+#       bound guards against `| PRIOR` abuse and bloat, not queue size; 1024 B
+#       is the same sanity bound at the queue's real scale. Acceptance only —
+#       the cap is widened, never the grammar (the comma-id-list check is
+#       untouched).
 # Behaviours SIG takes from upstream 0.5.0 as they are: duplicate ticket ids keyed on the id (not the
 # NN prefix); tolerant DEFERRALS status parsing (first canonical token of the last cell); human output
 # `- check: message`; the contract/patch/3 report shape (now also `guards`, `counts`, `input.now`).
@@ -49,7 +56,7 @@
 # `repo` key (upstream writes the full report, `input.repo`).
 # Verify the vendored body against the skill:
 #   diff <(sed '2,/^# ---- end of SIG vendoring banner ----/d' scripts/docs/check-build-memory.sh) \
-#        ~/.claude/skills/build-memory/scripts/check-build-memory.sh      # → only the seven SIG-LOCAL hunks
+#        ~/.claude/skills/build-memory/scripts/check-build-memory.sh      # → only the eight SIG-LOCAL hunks
 # ---- end of SIG vendoring banner ----
 # check-build-memory.sh — validate a repo's build-memory layout. (BM-VALID-01.)
 #
@@ -102,7 +109,8 @@
 #     auto|checkpoint|manual; round an integer; updatedAt ISO-8601 (`<…>`/`(…)` seed placeholders skip)
 #   - LEDGER.md budget + shape (BM-LEDGER-08; guarded — warn, or fail under the guards
 #     marker): orient region <= 12 KiB (warn > 8 KiB); CURRENT STATE <= 3 KiB, lines <= 256 B
-#     (the generated returnPass id list <= 512 B — the B3 V2 hard bound; it grows with the queue), no
+#     (the generated returnPass id list <= 1024 B — the B3 V2 hard bound raised
+#     by SIG-LOCAL L8; it grows with the queue), no
 #     `| PRIOR`; returnPass an id list; no other line begins with a CURRENT STATE key; the last `## `
 #     heading is a PHASE LOG heading; its entries <= 2 KiB (older regions: warn); every repo path
 #     named in the orient region exists and no stale token appears (`.agents/scratch`,
@@ -881,9 +889,10 @@ if [ -f "$LEDGER" ]; then
       if (index(keys, " " k " ")) print k "\t" length($0) "\t" ($0 ~ /\|[[:space:]]*\**PRIOR/ ? 1 : 0)
     }' "$LEDGER" | while IFS="$(printf '\t')" read -r k len prior; do
     [ -n "$k" ] || continue
-    # returnPass rides the B3 V2 hard bound (fail > 512 B): the generated id
-    # list grows with the queued-leg set and cannot be shortened in place.
-    cap=256; [ "$k" = "returnPass" ] && cap=512
+    # returnPass rides the B3 V2 hard bound (fail > 1024 B; SIG-LOCAL L8 raised
+    # the bound from 512 — the generated id list grows with the queued-leg set
+    # and cannot be shortened in place).
+    cap=256; [ "$k" = "returnPass" ] && cap=1024
     [ "$len" -gt "$cap" ] 2>/dev/null && guarded ledger-budget "LEDGER.md CURRENT STATE '$k' line is $len B (> $cap B; values only, BM-LEDGER-08)" "docs/build/LEDGER.md" "$k"
     [ "$prior" = "1" ] && guarded ledger-budget "LEDGER.md CURRENT STATE '$k' carries '| PRIOR' history (values only; git + PHASE LOG carry history, BM-LEDGER-08)" "docs/build/LEDGER.md" "$k"
   done

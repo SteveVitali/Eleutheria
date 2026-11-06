@@ -1092,6 +1092,41 @@ def build_parser() -> argparse.ArgumentParser:
     ac11.add_argument("--disclosure", action="append", default=[])
     ac11.add_argument("--reads-file", default=None)
 
+    ac12 = sub.add_parser(
+        "acceptance-sweep-11c",
+        help="P36.73 (plan S2 §4.3): the 11C live-read acceptance sweep "
+        "→ sig.probe-run/1 (read-only GETs over the promoted core-surfaces "
+        "release's routes — advertised-route resolve, wire-byte budgets, "
+        "label checks, changelog + mirrors, search-resolve, rate-limit "
+        "headers, withdrawals, dossiers, parity, disclosures, tiles — "
+        "caller-supplied). Gated on the promoted release existing "
+        "(P36.72b's promote leg out of the RETURN PASS queue) — exits 42 "
+        "queued otherwise; --check evaluates the gate only",
+    )
+    ac12.add_argument("--check", action="store_true", help="evaluate the gate only")
+    ac12.add_argument("--inputs", default=None, help="a recorded inputs JSON")
+    ac12.add_argument("--map", dest="map_path", default=None)
+    ac12.add_argument("--at", dest="at", default=None)
+    ac12.add_argument("--routes-file", default=None, help="a routes-spec JSON")
+    ac12.add_argument("--site-base", default=None)
+    ac12.add_argument("--record-out", default=None)
+    ac12.add_argument("--release-url", action="append", default=[])
+    ac12.add_argument("--route", action="append", default=[])
+    ac12.add_argument("--budget", action="append", default=[])
+    ac12.add_argument("--label-page", action="append", default=[])
+    ac12.add_argument("--changelog-url", action="append", default=[])
+    ac12.add_argument("--mirror-url", action="append", default=[])
+    ac12.add_argument("--search-url", action="append", default=[])
+    ac12.add_argument("--search-resolve", action="append", default=[])
+    ac12.add_argument("--ratelimit-url", action="append", default=[])
+    ac12.add_argument("--withdrawal-alias", action="append", default=[])
+    ac12.add_argument("--dossier", action="append", default=[])
+    ac12.add_argument("--network-url", default=None)
+    ac12.add_argument("--tile-url", action="append", default=[])
+    ac12.add_argument("--parity", action="append", default=[])
+    ac12.add_argument("--disclosure", action="append", default=[])
+    ac12.add_argument("--reads-file", default=None)
+
     # --- OBS.1 / GL-OBS-01: observability & alerting (ADR-077) ------------------
     keepalive = sub.add_parser(
         "keepalive-check",
@@ -6489,6 +6524,47 @@ def main(argv: list[str] | None = None) -> int:
             for v in vals:
                 tail += [opt, v]
         return acceptance_11b.main(tail)
+    if args.command == "acceptance-sweep-11c":
+        from . import acceptance_11c
+
+        tail = []
+        if args.check:
+            tail.append("--check")
+        if args.inputs:
+            tail += ["--inputs", args.inputs]
+        if args.map_path:
+            tail += ["--map", args.map_path]
+        if args.at:
+            tail += ["--at", args.at]
+        if args.routes_file:
+            tail += ["--routes-file", args.routes_file]
+        if args.site_base:
+            tail += ["--site-base", args.site_base]
+        if args.record_out:
+            tail += ["--record-out", args.record_out]
+        if args.network_url:
+            tail += ["--network-url", args.network_url]
+        if args.reads_file:
+            tail += ["--reads-file", args.reads_file]
+        for opt, vals in (
+            ("--release-url", args.release_url),
+            ("--route", args.route),
+            ("--budget", args.budget),
+            ("--label-page", args.label_page),
+            ("--changelog-url", args.changelog_url),
+            ("--mirror-url", args.mirror_url),
+            ("--search-url", args.search_url),
+            ("--search-resolve", args.search_resolve),
+            ("--ratelimit-url", args.ratelimit_url),
+            ("--withdrawal-alias", args.withdrawal_alias),
+            ("--dossier", args.dossier),
+            ("--tile-url", args.tile_url),
+            ("--parity", args.parity),
+            ("--disclosure", args.disclosure),
+        ):
+            for v in vals:
+                tail += [opt, v]
+        return acceptance_11c.main(tail)
     parser.print_help()
     return 0
 
