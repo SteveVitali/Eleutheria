@@ -51,7 +51,7 @@ test.describe("the legal-demands page (P37.8)", () => {
   }) => {
     await page.goto("/about/legal-demands/");
     await expect(page.locator("main")).toContainText("not legal advice");
-    await expect(page.locator("main")).toContainText("not been reviewed by counsel");
+    await expect(page.locator("main")).toContainText("no lawyer has reviewed it");
   });
 
   test("declines the warrant canary — never claims one", async ({ page }) => {

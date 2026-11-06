@@ -9,8 +9,9 @@ P37.8 (manifest row 428, R11-GOV-03). The public rendering lives at
 `/about/legal-demands/`; the same sentences ship there as sha256-pinned
 `data-copy` rows in `docs/build/reports/copy-batches/batch-19.md` (B-2 —
 agent-drafted, pending the operator's verbatim confirmation). This
-posture is not legal advice, and it has not been reviewed by counsel —
-SIG has no counsel. The operator adopted it on 2026-10-01. (ADR-167.)
+posture is not legal advice. No lawyer's written opinion has been
+obtained, and no lawyer has reviewed it. The operator adopted it on
+2026-10-01. (ADR-167.)
 
 SIG-SEC-003 (§44.3) requires the response posture for demands directed at
 SIG to be documented **before** the first demand arrives, and a
@@ -34,7 +35,7 @@ contributors, because none is held. (SIG-SEC-002.)
 
 The operator — an individual, disclosed as SIG's interim legal home —
 receives all legal process addressed to SIG. There is no organisation
-and no counsel. The channel is the e-mail address the dispute page
+and no lawyer. The channel is the e-mail address the dispute page
 names.
 
 ADR-165 records the interim legal home (SIG-GOV-012/013 waived, WV-01).
@@ -70,7 +71,7 @@ transparency scrub and Part VIII rules, ADR-162.)
 ## No warrant canary
 
 SIG does not operate a warrant canary. With one maintainer and no
-counsel, a scheduled canary cannot be maintained reliably, and a
+lawyer, a scheduled canary cannot be maintained reliably, and a
 lapsed canary would itself read as a signal — so the canary is
 declined, and this page says so.
 
@@ -79,7 +80,7 @@ declined, and this page says so.
 ## Records
 
 - Decision: `docs/adr/ADR-166-legal-demand-posture.md` (A-4, Q-E2-09 = c,
-  adopted 2026-10-01T04:03:25Z); counsel basis: ADR-167.
+  adopted 2026-10-01T04:03:25Z); the no counsel basis: ADR-167.
 - Public page + count record: `/about/legal-demands/`,
   `web/src/lib/legal-demands.ts` (`sig.legal-demand-posture/1` +
   `sig.legal-demand-counts/1`).
