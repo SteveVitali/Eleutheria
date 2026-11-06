@@ -140,5 +140,6 @@
 | D-P36.71-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.71-accept-<n>` dispatch or the operator | RETURN PASS — P36.71 | the verify leg's `sig.search-acceptance/1` report lands `verdict: pass` on the promoted release: dev ≥ 0.90, held-out ≥ 0.80 (the fetched object sha256-verified… |
 | D-P36.72b-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.72b-live-<n>` dispatch or the operator | RETURN PASS — P36.72b | the release journal records a `promoted` event for the candidate `p-<sha256>`; `release verify --mode P` reads green on every public origin; `registry/conf/<gen… |
 | D-P36.70-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P36.70-rehearsal-<n>` dispatch or the operator | the sig.release-rehearsal/1 record lands status=rehearsed — four timed legs applied, latest_restored=true, measured vs the 600s/900s budgets — after P36.72b's p… | the `sig.release-rehearsal/1` record lands `status: rehearsed` — four legs applied, `latest_restored: true`, per-leg `seconds` measured vs the 600 s/900 s budge… |
+| D-P37.3-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P37.3-live-<n>` dispatch or the operator | RETURN PASS — P37.3 | `evidence-store.sh --verify` prints 0 DRIFT — `retention_period_seconds=31536000`, `isLocked=false`, the DR bucket + replica job present; the `probe` leg's dele… |
 
 ← back: CURRENT.md

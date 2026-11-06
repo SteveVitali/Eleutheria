@@ -567,7 +567,7 @@ while IFS='|' read -r src cad cron job sched existing extra ttimeout sstate; do
     --tasks 1 --task-timeout "${ttimeout:-60m}" --max-retries 0 \
     --execution-environment gen2 \
     --remove-volume-mount "${CAPTURE_MOUNT}" --remove-volume captures \
-    --add-volume "name=captures,type=cloud-storage,bucket=${SIG_BUCKET_RESTRICTED}" \
+    --add-volume "name=captures,type=cloud-storage,bucket=${SIG_CAPTURE_BUCKET}" \
     --add-volume-mount "volume=captures,mount-path=${CAPTURE_MOUNT}" \
     --set-cloudsql-instances "${CONN}" \
     --set-env-vars "${INGEST_ENV}" \
@@ -639,7 +639,7 @@ while IFS='|' read -r bid bcad bcron bjob bsched bcount btimeout bstate bpuntil;
     --tasks 1 --task-timeout "${btimeout:-36h}" --max-retries 0 \
     --execution-environment gen2 \
     --remove-volume-mount "${CAPTURE_MOUNT}" --remove-volume captures \
-    --add-volume "name=captures,type=cloud-storage,bucket=${SIG_BUCKET_RESTRICTED}" \
+    --add-volume "name=captures,type=cloud-storage,bucket=${SIG_CAPTURE_BUCKET}" \
     --add-volume-mount "volume=captures,mount-path=${CAPTURE_MOUNT}" \
     --set-cloudsql-instances "${CONN}" \
     --set-env-vars "${INGEST_ENV}" \
@@ -679,7 +679,7 @@ run gcloud run jobs deploy "${SIG_RUN_JOB_REPLAY}" \
   --tasks 1 --task-timeout 60m --max-retries 0 \
   --execution-environment gen2 \
   --remove-volume-mount "${CAPTURE_MOUNT}" --remove-volume captures \
-  --add-volume "name=captures,type=cloud-storage,bucket=${SIG_BUCKET_RESTRICTED}" \
+  --add-volume "name=captures,type=cloud-storage,bucket=${SIG_CAPTURE_BUCKET}" \
   --add-volume-mount "volume=captures,mount-path=${CAPTURE_MOUNT}" \
   --set-cloudsql-instances "${CONN}" \
   --set-env-vars "${INGEST_ENV}" \

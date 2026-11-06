@@ -1218,6 +1218,35 @@ state = "paused"                 # INERT: stays PAUSED until D-P34.6-2's
 procedure = "ops/gcp/logical-export.sh --apply export --go <verbatim in-ticket go>"
 note = "Monthly `gcloud sql export sql` of the sig database to gs://<project>-sig-backups/pg/monthly/<YYYY-MM>/ — the logical export that lives OUTSIDE the Cloud SQL instance lifecycle (ADR-175). Queued under D-P34.6-2 until the first in-ticket go; P35.1a is the scheduler of record for the recurring trigger."
 
+# P37.3 (SIG-STORE-048, ADR-177): the two off-instance copy jobs the named
+# mutation creates. Same inert convention as pg-logical-export — declared
+# PAUSED; the D-P37.3-1 leg creates the target jobs on `sig-replica-rt` and
+# its own amendment flips `state` to "enabled" (a maintenance trigger is
+# never enabled by the reconcile).
+[[maintenance]]
+id = "restricted-replica"
+cadence = "weekly"
+cron = "0 9 * * 0"               # Sunday 09:00 UTC — outside the 03:00-10:00Z
+                                 # daily band every ops mutation holds
+scheduler = "sig-sched-restricted-replica"
+state = "paused"                 # INERT until D-P37.3-1 creates sig-restricted-replica
+target_job = "sig-restricted-replica"
+procedure = "ops/gcp/evidence-store.sh --apply jobs  # then resume the trigger"
+note = "Weekly `sig-ops restricted-replica run`: append-only copyTo of sig-restricted → <project>-sig-restricted-dr (dual-region nam4), `evidence/captures/` excluded wholesale — the dedicated evidence bucket supersedes it and every sealed capture lives under it (S4c: off-instance copies exclude sealed material). `dest == source − excluded` parity, sig.restricted-replica/1 record on the destination."
+
+[[maintenance]]
+id = "pg-export-copy"
+cadence = "monthly"
+cron = "30 14 2 * *"             # day 2, 14:30 UTC — after the day-1 12:00Z
+                                 # pg-logical-export window it copies forward
+scheduler = "sig-sched-pg-export-copy"
+state = "paused"                 # INERT until D-P37.3-1 creates sig-pg-export-copy
+                                 # (also needs SIG_BACKUP_PROJECT — the second
+                                 # project, env-only — else the leg stays queued)
+target_job = "sig-pg-export-copy"
+procedure = "ops/gcp/evidence-store.sh --apply jobs  # then resume the trigger"
+note = "Monthly `sig-ops pg-export-copy run`: append-only copyTo of pg/monthly/ on <project>-sig-backups → <SIG_BACKUP_PROJECT>-sig-backups — the monthly logical export one project further out (G1-03 long-term copy). `dest == source` under pg/monthly/, sig.pg-export-copy/1 on the destination."
+
 # --- P35.1a (SIG-OPS-005 / SIG-SEC-008): the scheduler-of-record declarations --
 #
 # cadence.toml is the single source of scheduling truth (ADR-174): every row

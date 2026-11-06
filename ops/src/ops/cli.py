@@ -6156,6 +6156,14 @@ def main(argv: list[str] | None = None) -> int:
         from . import release_rehearsal
 
         return release_rehearsal.main(raw[1:])
+    if raw and raw[0] == "restricted-replica":
+        from . import restricted_replica
+
+        return restricted_replica.main(raw[1:])
+    if raw and raw[0] == "pg-export-copy":
+        from . import pg_export_copy
+
+        return pg_export_copy.main(raw[1:])
     if raw and raw[0] == "basemap":
         from . import basemap
 

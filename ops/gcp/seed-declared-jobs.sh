@@ -465,7 +465,7 @@ emit_plan() {
       --args "$(job_args_for "${kind}" "${rid}")" \
       --tasks 1 --task-timeout "${ttimeout}" --max-retries 0 \
       --execution-environment gen2 \
-      --add-volume "name=captures,type=cloud-storage,bucket=${SIG_BUCKET_RESTRICTED}" \
+      --add-volume "name=captures,type=cloud-storage,bucket=${SIG_CAPTURE_BUCKET}" \
       --add-volume-mount "volume=captures,mount-path=${CAPTURE_MOUNT}" \
       --set-cloudsql-instances "${CONN}" \
       --set-env-vars "${INGEST_ENV}" \
@@ -575,7 +575,7 @@ while IFS='|' read -r kind rid job sched cron ttimeout; do
     --args "$(job_args_for "${kind}" "${rid}")" \
     --tasks 1 --task-timeout "${ttimeout}" --max-retries 0 \
     --execution-environment gen2 \
-    --add-volume "name=captures,type=cloud-storage,bucket=${SIG_BUCKET_RESTRICTED}" \
+    --add-volume "name=captures,type=cloud-storage,bucket=${SIG_CAPTURE_BUCKET}" \
     --add-volume-mount "volume=captures,mount-path=${CAPTURE_MOUNT}" \
     --set-cloudsql-instances "${CONN}" \
     --set-env-vars "${INGEST_ENV}" \

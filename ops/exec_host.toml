@@ -63,6 +63,10 @@ probe_prefix = "ops/probes/"
 # objectViewer conditioned to evidence/captures/ and no create/delete anywhere
 # on the bucket (the conditioned objectCreator exists ONLY for ops/probes/ —
 # asserted by the read-only IAM analysis).
+# P37.3: the capture store moves to the dedicated evidence bucket — the
+# D-P37.3-1 leg's own amendment flips `bucket` to "sig-evidence" and lands
+# the matching conditioned read (evidence-store.sh `iam` leg); until then
+# the mount stays on the restricted bucket where the captures still live.
 [mount]
 bucket = "sig-restricted"            # gs://${SIG_GCP_PROJECT}-sig-restricted
 path = "/mnt/captures"

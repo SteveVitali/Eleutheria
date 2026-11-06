@@ -103,11 +103,13 @@ def test_declaration_parses_and_declares_the_contract(decl) -> None:
         "sig-release-rt",
         "sig-status-rt",
         "sig-scheduler",
+        "sig-replica-rt",
     ]
     assert [sa.id for sa in decl.service_accounts if sa.reserved] == [
         "sig-release-rt",
         "sig-status-rt",
         "sig-scheduler",
+        "sig-replica-rt",
     ]
     # P34.43: sig-quality-probe-rt is no longer reserved — the [[oneoff]]
     # exec family binds it (its grants were always declared as P34.43's;
