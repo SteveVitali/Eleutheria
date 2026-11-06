@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "d351be7cac46f7f0cd19275dd88f26f625972ff0",
+  "input_commit": "d518ce09fbe76d01c272d85d822ed19a9b0ccd6b",
   "manifest_inputs": 1212,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.9",
-    "lastCompleted": "P37.71",
+    "nextTicket": "P37.10",
+    "lastCompleted": "P37.9",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.71",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.8-legal-demand-posture-and-counts",
+    "chainTip": "r11/P37.9-lifecycle-into-dossier-timeline",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-06T15:51Z"
+    "updatedAt": "2026-11-06T20:52Z"
   },
   "counts": {
     "obligations": 225,
@@ -15107,14 +15107,14 @@
           "label": "historical/csv"
         },
         "SIG-ONTO-064": {
-          "verdict": "PARTIAL",
-          "evidence": "docs/2_canonical_design_spec.md:2287",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "docs/2_canonical_design_spec.md:2287;tests/reconcile/test_lifecycle.py",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-ONTO-065": {
-          "verdict": "PARTIAL",
-          "evidence": "docs/2_canonical_design_spec.md:2292",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "docs/2_canonical_design_spec.md:2292;reconcile/src/reconcile/lifecycle.py;tests/reconcile/test_lifecycle.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -15557,13 +15557,13 @@
           "label": "historical/csv"
         },
         "SIG-RECON-039": {
-          "verdict": "PARTIAL",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
           "evidence": "tests/reconcile/test_lifecycle.py:4;reconcile/src/reconcile/lifecycle.py:4",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-RECON-040": {
-          "verdict": "AT-RISK-INTEGRATION",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
           "evidence": "tests/reconcile/test_lifecycle.py:4;reconcile/src/reconcile/lifecycle.py:4",
           "assessed": "",
           "label": "historical/csv"
@@ -26552,7 +26552,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "769a21b70d8f6b4ba4afcb0c2c64835f4b8d39ef0e0498f36f564c5112b23dd5",
+  "manifest_sha256": "f6b7a31119142141b0c5f57895fa737846b913397eeef3e0d76d8cb0d74d1706",
   "current_md": {
     "lines": 143,
     "bytes": 19428,
