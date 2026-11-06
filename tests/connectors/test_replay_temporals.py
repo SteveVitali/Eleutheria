@@ -35,7 +35,7 @@ _VALID = {
     "valid_to": "2026-12-31",
     "valid_from_kind": "exact",
     "valid_to_kind": "exact",
-    "valid_edtf": "2026-01-01/2026-12-31",
+    "valid_edtf": "2026-01-01/2026-12-31",  # future-ok: synthetic: fixture valid-window bound
 }
 _TEMPORAL_KEYS = (
     "observed_at",
