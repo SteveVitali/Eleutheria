@@ -59,6 +59,22 @@ export SIG_REPLICA_SCHED="sig-sched-restricted-replica"
 export SIG_EXPORT_COPY_JOB="sig-pg-export-copy"
 export SIG_EXPORT_COPY_SCHED="sig-sched-pg-export-copy"
 
+# --- P37.4a security baseline (ops/gcp/security-baseline.sh, ADR-231) --------
+# The named OM-20 mutation: enable Artifact Registry scanning + KMS, create the
+# sig-release keyring / sig-image-sign asymmetric key (key material never
+# leaves GCP), sign every deployed image digest with cosign, and wire the
+# signing hook into the deploy path (lib.sh `security_sign_image`, called by
+# web.sh after a digest-pinned deploy — armed when SIG_SECB_SIGNING=1).
+export SIG_SECB_STATE_DIR="${SIG_SECB_STATE_DIR:-${TMPDIR:-/tmp}/p37.4a-secb}"
+export SIG_SECB_AUTHOR="${SIG_SECB_AUTHOR:-}"
+export SIG_SECB_NOW="${SIG_SECB_NOW:-}"
+export SIG_SECB_SIGNING="${SIG_SECB_SIGNING:-0}"
+export SIG_KMS_LOCATION="global"
+export SIG_KMS_RING="sig-release"
+export SIG_KMS_KEY_NAME="sig-image-sign"
+export SIG_COSIGN_KEY_URI="gcpkms://projects/${SIG_GCP_PROJECT}/locations/${SIG_KMS_LOCATION}/keyRings/${SIG_KMS_RING}/cryptoKeys/${SIG_KMS_KEY_NAME}/cryptoKeyVersions/1"
+export SIG_SECB_RECORD_PREFIX="ops/security/"
+
 # Artifact Registry (the API image) + Cloud Run service (min-instances 0).
 export SIG_AR_REPO="sig"
 export SIG_AR_HOST="${SIG_GCP_REGION}-docker.pkg.dev"

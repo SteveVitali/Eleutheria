@@ -234,6 +234,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-228](ADR-228-held-out-search-relevance-set-sealed-derivation.md) | held-out search relevance set: sealed derivation, digest-only reader contract (P36.79) | P36.79 (R11-K13-SRCH-00, manifest row 371 — on | accepted |
 | [ADR-229](ADR-229-basemap-pipeline-and-r2-host.md) | The basemap pipeline — `sig.basemap-lock/1`, generated styles, self-hosted glyphs, the context fallback, and the R2 host posture | P36.33 (manifest row 374; run ledger `docs/build/runs/P36.33.md`) | Proposed (agent-drafted; implements MAP-02's half of ADR-156 §Decision 6) |
 | [ADR-230](ADR-230-sources-index-lcp-measured-gap.md) | The `/sources/` LCP measured gap — a bounded first-paint-floor accommodation under ADR-155 | P36.48 (manifest row 391; run ledger `docs/build/runs/P36.48.md`; PR #414) | Proposed (agent-drafted under an explicit operator decision) |
+| [ADR-231](ADR-231-security-baseline-scan-sbom-cosign-deploy-path.md) | The security baseline: deterministic release SBOM, Artifact-Registry scanning, cosign-over-Cloud-KMS image signing, and the deploy-path hook (P37.4a) | P37.4a (Round 11 / P37, row 422 — R11-OPS-08; serves SIG-SEC-006; | accepted |
 
 ## Notes
 

@@ -102,6 +102,25 @@ pin_image_digest() {
   esac
 }
 
+# `security_sign_image <digest-ref>` — the P37.4a deploy-path signing hook
+# (ADR-231). Armed when SIG_SECB_SIGNING=1: the caller signs the just-deployed
+# digest with cosign under the Cloud KMS key (key material never leaves GCP)
+# and verifies the signature lands. Unarmed: the planned commands are printed
+# so every deploy plan honestly shows the pending baseline leg (never silently
+# absent). A sign/verify failure refuses the deploy leg — an unsigned deploy is
+# a loud failure once armed, never smoothed.
+security_sign_image() {
+  local image="$1"
+  if [ "${SIG_SECB_SIGNING:-0}" != "1" ]; then
+    _plan "cosign sign --yes --key ${SIG_COSIGN_KEY_URI} ${image}   # pending baseline leg (SIG_SECB_SIGNING!=1)"
+    _plan "cosign verify --key ${SIG_COSIGN_KEY_URI} ${image} --insecure-ignore-tlog --insecure-ignore-sct"
+    return 0
+  fi
+  run cosign sign --yes --key "${SIG_COSIGN_KEY_URI}" "${image}"
+  run cosign verify --key "${SIG_COSIGN_KEY_URI}" "${image}" \
+    --insecure-ignore-tlog --insecure-ignore-sct
+}
+
 # `banner <title>` — a stable header for the plan output.
 banner() {
   _log "=============================================================="
