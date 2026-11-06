@@ -24,6 +24,24 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.9 — lifecycle into the dossier timeline (R11-DATA-05; SIG-RECON-039/040,
+  SIG-ONTO-064/065):** the §29.4 reconciler gains a production caller — the
+  dossier `timeline` section is populated wherever lifecycle evidence exists
+  (previously always empty; F2a NEW-1). `TimelineSlot.decided_state` lets a
+  single event-log transition decide the resolved current state
+  (SIG-RECON-039) while indeterminate windows stay `unordered_within_window`
+  (SIG-RECON-040); `lifecycle_events_from_claims` builds events from
+  `deployment_lifecycle_transition` (event log) and `lifecycle_transition`
+  (inferred) claim rows, listing undated transitions explicitly and never
+  ordering them; `detect_soft_constraints` adds the two missing SIG-ONTO-065
+  detectors — `physical=removed ∧ operational=active` flags a
+  `temporal_impossibility` data error + research task, and
+  `procurement=canceled ∧ operational=active` flags a wind-down research task
+  (soft constraints: flagged, never rejected). The `lifecycle_claims` gated
+  read feeds the flat and keyed `sig.dossier/2` dossier paths and the API
+  dossier fallback's `Timeline` section; `sig-reconcile` joins the exports
+  workspace deps.
+
 - **P37.71 — single-operator true deletion + the operator-only purge function**
   (ADR-181/WV-06, ADR-189/WV-11; SIG-GOV-007/008/009, SIG-STORE-011): the
   `operator_purge` sqitch change adds `sig_purge_claims` — the sole

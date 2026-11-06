@@ -76,6 +76,7 @@ from typing import Any, Concatenate, ParamSpec, TypeVar
 
 import policy.disclosure as policy_disclosure
 import psycopg
+import reconcile.lifecycle as reconcile_lifecycle
 from db.dispositions import (
     TargetKind,
     claim_eligible_sql,
@@ -1255,9 +1256,66 @@ class PgReadStore:
             sections=(
                 {"heading": "Subjects", "entities": subjects},
                 {"heading": "Sources", "sources": sorted(source_ids)},
+                # P37.9 (R11-DATA-05, §29.4): the lifecycle timeline — the same
+                # reconcile.lifecycle resolution the export emits (event-log
+                # transitions decide, SIG-RECON-039; indeterminate windows stay
+                # marked unordered, SIG-RECON-040). Empty when no lifecycle
+                # claims exist — an absent section would be indistinguishable
+                # from "not populated"; the empty list states it plainly.
+                {"heading": "Timeline", "events": self._lifecycle_timeline(entity_id)},
             ),
             source_ids=tuple(sorted(source_ids)),
         )
+
+    def _lifecycle_timeline(self, entity_id: str) -> list[dict[str, object]]:
+        """The entity's §29.4 lifecycle events, resolved compute-on-read (P37.9).
+
+        ``deployment_lifecycle_transition`` claims are the §23.7 event log and
+        outrank the inferred ``lifecycle_transition`` claims (SIG-RECON-039);
+        fuzzy-dated windows stay ``unordered_within_window`` (SIG-RECON-040);
+        fully-undated transitions list as ``date_kind="undated"`` and never
+        enter the ordering. Read-only; gated on the shared public selectors.
+        """
+        rows = self._conn.execute(
+            "SELECT c.subject_id::text, c.predicate_id, c.value_json::text, "
+            "       c.claim_id::text, c.observed_edtf, c.valid_edtf "
+            "  FROM claim c "
+            " WHERE c.subject_id = %s "
+            "   AND c.predicate_id IN ('lifecycle_transition', 'deployment_lifecycle_transition') "
+            "   AND c.sensitivity_tier = 0 "
+            f"  AND {claim_eligible_sql('c')} "  # P32.5 shared selector
+            f"  AND {_not_seeded_sql('c')} "  # P34.25/J4 NEW-6: seeded claims never serve
+            "   AND upper_inf(c.sys_period) "
+            " ORDER BY c.predicate_id, c.claim_id",
+            (entity_id,),
+        ).fetchall()
+        events = reconcile_lifecycle.lifecycle_events_from_claims(rows)
+        out: list[dict[str, object]] = []
+        for subject, evs in sorted(events.items()):
+            for e in reconcile_lifecycle.dated_events(evs):
+                out.append(
+                    {
+                        "subject_id": subject,
+                        "date": e.edtf,
+                        "track": e.track,
+                        "state": e.state,
+                        "evidence_kind": "event_log" if e.from_event_log else "inferred",
+                        "claim_id": e.claim_id or None,
+                    }
+                )
+            for e in reconcile_lifecycle.undated_events(evs):
+                out.append(
+                    {
+                        "subject_id": subject,
+                        "date": None,
+                        "date_kind": "undated",
+                        "track": e.track,
+                        "state": e.state,
+                        "evidence_kind": "event_log" if e.from_event_log else "inferred",
+                        "claim_id": e.claim_id or None,
+                    }
+                )
+        return out
 
     @_pooled
     def crosswalk_rows(self) -> list[CrosswalkRecord]:

@@ -127,6 +127,7 @@ from . import (
     dossier_keys,
     dossier_sources,
     entity_page,
+    lifecycle_timeline,
     provo,
     source_licences,
     task_export,
@@ -649,6 +650,26 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "   AND {PUB_CLAIM_GATE}"
         "   AND (c.subject_id IN (" + _PAGE_ENTITY_SQL + ")"
         "        OR c.object_entity IN (" + _PAGE_ENTITY_SQL + "))"
+        " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
+    ),
+    # P37.9 (R11-DATA-05, §29.4 SIG-RECON-039/040): the publishable lifecycle
+    # transition claims the dossier ``timeline`` section resolves through
+    # ``reconcile.lifecycle`` — ``deployment_lifecycle_transition`` rows are the
+    # §23.7 event log (preferred over the inferred ``lifecycle_transition``
+    # rows). The transition blob rides ``value_json``; the EDTF fallbacks ride
+    # the claim's own observed/valid EDTF columns so an EDTF-dated transition
+    # never needs the blob's ``date`` slot twice. Same claim gate + tier as
+    # every other claim read; a pre-P37.9 spine degrades to [] and the
+    # timeline section is empty — honest absence, never a fabricated event.
+    "lifecycle_claims": (
+        "claim",
+        "SELECT c.subject_id::text, c.predicate_id, c.value_json::text, c.claim_id::text,"
+        "       c.observed_edtf, c.valid_edtf"
+        "  FROM claim c"
+        " WHERE c.predicate_id IN ('lifecycle_transition', 'deployment_lifecycle_transition')"
+        "   AND c.sensitivity_tier = 0"
+        "   AND upper_inf(c.sys_period)"
+        "   AND {PUB_CLAIM_GATE}"
         " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
     ),
     # P35.33 (J3 §3.1–3.3 + K9 C-4…C-7 + K10 C-13): the transparency
@@ -3443,6 +3464,7 @@ def _dossiers(
     accountability_links: Sequence[Mapping[str, Any]] = (),
     coverage_rows: Sequence[Mapping[str, Any]] = (),
     entity_label_by_id: Mapping[str, str] | None = None,
+    lifecycle_events: Mapping[str, Sequence[Any]] | None = None,
 ) -> list[dict[str, Any]]:
     """Surfaces 1 + 2 — the dossier index / per-jurisdiction dossiers (§39.2).
 
@@ -3505,6 +3527,23 @@ def _dossiers(
                         "label": "Sources",
                         "value": ", ".join(group.source_ids) or "(none recorded)",
                     }
+                )
+            elif section_id == "timeline" and lifecycle_events:
+                # P37.9 (R11-DATA-05): the dossier's lifecycle timeline —
+                # event-log transitions decide where they speak once
+                # (SIG-RECON-039); fuzzy windows stay marked unordered
+                # (SIG-RECON-040); only subjects placed in this bucket emit
+                # rows (unattributed subjects are never guessed here).
+                subjects_here = {
+                    s.entity_id for s in dataset.sites if s.jurisdiction == group.jurisdiction
+                }
+                rows.extend(
+                    lifecycle_timeline.dossier_timeline_rows(
+                        subjects_here,
+                        lifecycle_events,
+                        label_by_id=label_by_id,
+                        as_of_edtf=as_of,
+                    )
                 )
             rows.extend(gov_rows.get(section_id, ()))
             if rows:
@@ -3731,6 +3770,7 @@ def _keyed_dossier_docs(
     coverage_rows: Sequence[Mapping[str, Any]],
     entity_label_by_id: Mapping[str, str],
     source_names: Mapping[str, str],
+    lifecycle_events: Mapping[str, Sequence[Any]] | None = None,
 ) -> list[dict[str, Any]]:
     """The P35.45 keyed dossier set — one doc per D-K4-3 page key.
 
@@ -3824,6 +3864,20 @@ def _keyed_dossier_docs(
                         "label": "Sources",
                         "value": ", ".join(names) or "(none recorded)",
                     }
+                )
+            elif section_id == "timeline" and lifecycle_events:
+                # P37.9 (R11-DATA-05): lifecycle events on the dossier's placed
+                # member subjects, resolved through reconcile.lifecycle —
+                # event-log transitions decide (SIG-RECON-039), indeterminate
+                # windows stay marked unordered (SIG-RECON-040), and the two
+                # owned SIG-ONTO-065 soft-constraint flags surface as rows.
+                srows.extend(
+                    lifecycle_timeline.dossier_timeline_rows(
+                        acc.placed_subjects,
+                        lifecycle_events,
+                        label_by_id=entity_label_by_id,
+                        as_of_edtf=as_of,
+                    )
                 )
             srows.extend(gov_rows.get(section_id, ()))
             if srows:
@@ -5217,6 +5271,14 @@ def build_spine_export(
     m_coverage = list(raw.get("materialized_coverage") or [])
     m_acct_links = list(raw.get("materialized_accountability_links") or [])
 
+    # P37.9 (R11-DATA-05): the publishable lifecycle transition claims,
+    # claim-row → subject's event list via reconcile.lifecycle (event-log vs
+    # inferred is decided inside the reconciler, SIG-RECON-039). An absent key
+    # is honest absence — every dossier's timeline section stays empty.
+    lifecycle_events_by_subject = lifecycle_timeline.events_by_subject(
+        raw.get("lifecycle_claims") or []
+    )
+
     # --- P35.47 (SIG-CONF-005 / GQ-10): the ONE dedup publication view ------
     # Built once over the latest completed camera-site ER run's links and the
     # export's own member records — every surface (sites rows, record_claims,
@@ -5464,6 +5526,7 @@ def build_spine_export(
                 eid: lbl.label for eid, lbl in label_registry.items() if lbl.label is not None
             },
             source_names=source_names,
+            lifecycle_events=lifecycle_events_by_subject,
         )
         dossier_index_doc = _dossier_index_v2(
             dossier_docs,
@@ -5625,6 +5688,7 @@ def build_spine_export(
             entity_label_by_id={
                 eid: lbl.label for eid, lbl in label_registry.items() if lbl.label is not None
             },
+            lifecycle_events=lifecycle_events_by_subject,
         )
     )
     surfaces: dict[str, Any] = {
