@@ -53,7 +53,7 @@ test.describe("the editorial decision log (P37.7)", () => {
 
   test("states the interim single-maintainer authority, never a board", async ({ page }) => {
     await page.goto("/about/editorial-decisions/");
-    await expect(page.locator("main")).toContainText("no editorial board");
+    await expect(page.locator("main")).toContainText("no independent review board");
     await expect(page.locator("main")).toContainText("single-maintainer");
     // naming stays off — the disclosed posture
     await expect(page.locator("main")).toContainText("naming");
