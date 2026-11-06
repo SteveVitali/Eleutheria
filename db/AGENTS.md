@@ -42,8 +42,12 @@ the full narrative.
    ships `deploy/`, `revert/`, `verify/` scripts and is listed in dependency order in `db/sqitch.plan`.
    Changes after P02.1 are **new** sqitch changes; dropping/retyping a claim column requires an ADR
    and a migration claim-set (SIG-STORE-042), not an in-place edit.
-2. **Append-only.** The claim spine is append-only; corrections are new rows, not updates. Don't add
-   `UPDATE`/`DELETE` paths against claim tables (`PgClaimSink` is insert-only by design).
+2. **Append-only — one recorded exception.** The claim spine is append-only; corrections are new
+   rows, not updates. Don't add `UPDATE`/`DELETE` paths against claim tables (`PgClaimSink` is
+   insert-only by design). The **sole** exception is `sig_purge_claims` (the `operator_purge`
+   change; ADR-189/WV-11, scoped to SIG-GOV-008 material) — executable only by the
+   `sig_purge_operator` role, never agent-run, never granted by a migration; each use is the
+   operator's in-ticket go leaving a `purge_tombstone` + `purge_audit` + public log entry.
 3. **Entities for identity-bearing identifiers are minted only through the guard.** Call
    `db.identity_guard.resolve_identities` inside a transaction. Never check `entity_identifier`, then
    insert an entity: two writers race, and the spine cannot delete the duplicate (ADR-110).
@@ -69,4 +73,5 @@ the full narrative.
 ## Don't
 
 - Don't hand-edit deployed schema or bypass the append-only / RLS constraints.
-- Don't write `UPDATE`/`DELETE` against claim tables or conflate the DuckDB analytics store with PG.
+- Don't write `UPDATE`/`DELETE` against claim tables (the sole exception is `sig_purge_claims`,
+  ADR-189 — operator-role only, never agent-run) or conflate the DuckDB analytics store with PG.

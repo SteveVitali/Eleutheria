@@ -2552,6 +2552,65 @@ def build_parser() -> argparse.ArgumentParser:
         "as its shape takes) plus a --go/--authority record under "
         "registry/authorities/ for --apply.",
     )
+    dlt = sub.add_parser(
+        "deletion",
+        help="P37.71 (ADR-181/WV-06 + ADR-189/WV-11; SIG-GOV-008): the ONE "
+        "operator-only true-deletion mechanism — deletion of named evidence "
+        "bytes / restricted objects / derived artifacts plus the sole "
+        "SIG-STORE-011 claim purge via sig_purge_claims. Every run verifies a "
+        "sig.deletion-order/1 naming the material verbatim + a "
+        "sig.operator-authority/1 record (checked, never created — "
+        "SIG-SEC-010); it leaves a tombstone (category + date, never "
+        "content), an internal audit record, the sig.editorial-decision/1 "
+        "entry for the public log, and a receipt. Never pre-authorised, "
+        "never agent-initiated — an operator act.",
+    )
+    dsub = dlt.add_subparsers(dest="deletion_command", required=True)
+
+    def _dlt_common(p: argparse.ArgumentParser) -> None:
+        p.add_argument("--order", required=True, help="the sig.deletion-order/1 file")
+        p.add_argument(
+            "--registry",
+            default=None,
+            help="the release registry (authorities + deletion records) — "
+            "gs://<bucket>[/<prefix>] or a local dir (env SIG_RELEASE_REGISTRY)",
+        )
+        p.add_argument(
+            "--evidence-store",
+            default=None,
+            help="the evidence object store — gs://… or dir (env SIG_EVIDENCE_STORE)",
+        )
+        p.add_argument(
+            "--restricted-store",
+            default=None,
+            help="the restricted object store — gs://… or dir (env SIG_RESTRICTED_STORE)",
+        )
+        p.add_argument(
+            "--artifact-store",
+            default=None,
+            help="the derived-artifact store — gs://… or dir (env SIG_DERIVED_STORE)",
+        )
+
+    dplan = dsub.add_parser("plan", help="validate the order + list what it names (read-only)")
+    _dlt_common(dplan)
+    dexec = dsub.add_parser(
+        "execute",
+        help="run the governed deletion under --authority (mutating; operator-only)",
+    )
+    _dlt_common(dexec)
+    dexec.add_argument("--authority", required=True, help="the authority record name")
+    dexec.add_argument(
+        "--dsn",
+        default=None,
+        help="the claim-spine DSN (env SIG_SPINE_DSN) — required when the order names claims",
+    )
+    dver = dsub.add_parser(
+        "verify", help="post-run probe: every named object must be absent (sig.probe-run/1)"
+    )
+    _dlt_common(dver)
+    dver.add_argument("--dsn", default=None, help="the claim-spine DSN (env SIG_SPINE_DSN)")
+    dver.add_argument("--record-out", default=None, help="write the probe record here")
+
     rsub = rel.add_subparsers(dest="release_command", required=True)
 
     def _rel_common(p: argparse.ArgumentParser) -> None:
@@ -6434,6 +6493,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_release_publish(args)
     if args.command == "release":
         return _cmd_release(args)
+    if args.command == "deletion":
+        return _cmd_deletion(args)
     if args.command == "composed-verify":
         return _cmd_composed_verify(args)
     if args.command == "roll-gate":
@@ -6664,6 +6725,98 @@ def _cmd_release(args: argparse.Namespace) -> int:
         ": ".join(parts) if verb == "status" else "\n".join([parts[0] + ": " + " ".join(parts[1:])])
     )
     return 0
+
+
+def _deletion_stores(args: argparse.Namespace) -> dict:
+    """Bind the three object surfaces an order may name — each only when the
+    option/env names it (an absent binding refuses at execute/verify, never
+    guesses)."""
+    from . import release_pipeline
+
+    stores: dict = {}
+    mapping = (
+        ("evidence_objects", args.evidence_store, "SIG_EVIDENCE_STORE"),
+        ("restricted_objects", args.restricted_store, "SIG_RESTRICTED_STORE"),
+        ("derived_artifacts", args.artifact_store, "SIG_DERIVED_STORE"),
+    )
+    for kind, opt, env in mapping:
+        uri = opt or os.environ.get(env)
+        if uri:
+            stores[kind] = release_pipeline.open_store(uri)
+    return stores
+
+
+def _cmd_deletion(args: argparse.Namespace) -> int:
+    """P37.71 (WV-06/WV-11): the operator-only true-deletion verb family."""
+    from . import operator_deletion as od
+    from . import probe_run, release_pipeline
+
+    registry_uri = args.registry or os.environ.get("SIG_RELEASE_REGISTRY")
+    if not registry_uri:
+        print("sig-ops deletion: --registry (or SIG_RELEASE_REGISTRY) is required", file=sys.stderr)
+        return 2
+    registry = release_pipeline.open_store(registry_uri)
+    stores = _deletion_stores(args)
+    try:
+        order = od.load_order(args.order)
+        if args.deletion_command == "plan":
+            plan = od.plan_deletion(order, stores)
+            print(json.dumps(plan, indent=2, sort_keys=True))
+            return 0
+        if args.deletion_command == "execute":
+            out = od.execute_deletion(
+                order,
+                registry=registry,
+                authority=args.authority,
+                stores=stores,
+                dsn=args.dsn or os.environ.get("SIG_SPINE_DSN"),
+            )
+            print(
+                f"sig-ops deletion execute: applied order={out['order_id']} "
+                f"operation={out['operation']} "
+                f"tombstone={out['tombstone']['tombstone_id']} "
+                f"decision_entry={out['decision_entry']['decision_id']}"
+            )
+            return 0
+        if args.deletion_command == "verify":
+
+            def _claim_absent(dsn: str, claim_id: str) -> bool:
+                import psycopg
+
+                with psycopg.connect(dsn) as c:
+                    row = c.execute(
+                        "SELECT 1 FROM claim WHERE claim_id = %s", (claim_id,)
+                    ).fetchone()
+                return row is None
+
+            dsn = args.dsn or os.environ.get("SIG_SPINE_DSN")
+            record = od.verify_deletion(
+                order,
+                stores=stores,
+                dsn=dsn,
+                claim_absent_fn=_claim_absent if dsn else None,
+            )
+            if args.record_out:
+                from pathlib import Path
+
+                digest = probe_run.write_record(record, Path(args.record_out))
+                print(
+                    f"sig-ops deletion verify: overall={record['overall']} "
+                    f"(record {args.record_out} sha256:{digest[:16]}…)"
+                )
+            else:
+                print(json.dumps(record, indent=2, sort_keys=True))
+            return 0 if record["overall"] == "pass" else 1
+    except release_pipeline.PipelineError as exc:
+        print(
+            f"sig-ops deletion {args.deletion_command}: REFUSED [{exc.code}] — {exc}",
+            file=sys.stderr,
+        )
+        return 2
+    except Exception as exc:  # noqa: BLE001 - a delete path fails LOUD
+        print(f"sig-ops deletion {args.deletion_command}: FAILED — {exc}", file=sys.stderr)
+        return 1
+    return 2
 
 
 def _cmd_release_publish(args: argparse.Namespace) -> int:

@@ -1597,3 +1597,19 @@ rerun_cell = '''`implement-spec spec=docs/tickets/423_P37.4b__security-baseline-
   excluded = ["inside 03:00-10:00Z"]
   go = "pre-authorised: GATE-G6 §4 (expiry: acceptance sitting)"
   rerun = "implement-spec spec=docs/tickets/423_P37.4b__security-baseline-restricted-access-audit-logs.md live_verification=true"
+[[row]]
+key = "P37.71"
+kind = "leg"
+obligations = ["D-P37.71-1"]
+obligations_cell = '''D-P37.71-1: the `operator_purge` hosted sqitch deploy — a never-pre-authorised in-ticket go (the claim table's append-only enforcement posture changes; may wait for the first use)'''
+gates_cell = '''`hosted` deploy; never pre-authorised — go: never pre-authorised — the operator's verbatim in-ticket go naming the deploy (expected with/before the first authorised purge use); needs the spine deployer + ADC/`SIG_GCP_PROJECT`'''
+operator_cell = '''the operator's go + env; the leg-runner deploys + grants nothing (membership stays operator-provisioned)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/429_P37.71__single-operator-deletion-and-purge-function.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P37.71-operator-purge-deploy"
+  obligations = ["D-P37.71-1"]
+  earliest = "with or before the first authorised purge use"
+  excluded = []
+  go = "verbatim-go: the operator's in-ticket go naming the deploy"
+  rerun = "implement-spec spec=docs/tickets/429_P37.71__single-operator-deletion-and-purge-function.md live_verification=true"

@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `858b88d066269029606b583069e69ab8bd606879` · inputs hashed: 1210 · wall-clock receipt: `receipt.json`
+> input_commit: `fd0725916593e93ce7a100d611d45abfdfd075fe` · inputs hashed: 1211 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -13,10 +13,10 @@
 
 ## Obligations
 
-- 224 obligations · **140 owed** (137 OPEN, 3 PARTIAL) · 84 terminal
-- 735 events (55 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 225 obligations · **141 owed** (138 OPEN, 3 PARTIAL) · 84 terminal
+- 736 events (55 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 140 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 141 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -100,6 +100,7 @@
 | P37.3 | queued D-P37.3-1 — the named OM-20 mutation (GATE-G6 §4 names P37.3 verbatim): evidence-store.sh --apply legs | `implement-spec spec=docs/tickets/421_P37.3__evidence-store-hardening.md live_verification=true` |
 | P37.4a | D-P37.4a-1 | `implement-spec spec=docs/tickets/422_P37.4a__security-baseline-scan-sbom-signing.md live_verification=true` |
 | P37.4b | D-P37.4b-1: queued OM-20 mutation (GATE-G6 §4): `restricted-access.sh --apply` — DATA_READ/WRITE `auditConfigs` + `sig-data-access`→90d + alert + `ENCRYPTED_ONL… | `implement-spec spec=docs/tickets/423_P37.4b__security-baseline-restricted-access-audit-logs.md live_verification=true` |
+| P37.71 | D-P37.71-1: the `operator_purge` hosted sqitch deploy — a never-pre-authorised in-ticket go (the claim table's append-only enforcement posture changes; may wait… | `implement-spec spec=docs/tickets/429_P37.71__single-operator-deletion-and-purge-function.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 
@@ -124,13 +125,7 @@
 
 ## Governing ADRs
 
-| ADR | scope | file |
-|---|---|---|
-| ADR-073 | build-memory v2 — docs/build/ is the committed memory root; LEDGER.md holds the  | docs/adr/ADR-073-build-memory-committed-under-docs-build-scratch-retired.md |
-| ADR-119 | P30.4 leak-scope policy — governs what a closeout/report may contain (referenced | docs/adr/ADR-119-project-id-leak-check-scoped-to-code-and-config.md |
-| ADR-120 | the Round-10 six-stream program + the memory extension this projection serves (S | docs/adr/ADR-120-six-stream-integrity-investigation-and-memory-extension.md |
-| ADR-125 | evidence-audit/1 + recovery-plan/1 — the offline audit/dry-run contracts the mem | docs/adr/ADR-125-legacy-evidence-audit-and-recovery-plan-contract.md |
-| ADR-126 | obligation-event/1 + coverage-assessment/1 + current-projection/1 + input-manife | docs/adr/ADR-126-obligation-events-and-current-projection.md |
+- `adrs` → see [adrs.md](adrs.md) (complete — 5 rows)
 
 ## Reading this view
 

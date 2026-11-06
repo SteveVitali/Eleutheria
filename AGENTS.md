@@ -112,9 +112,14 @@ Every Python package is `<pkg>/src/<pkg>/…` and exposes a CLI: `uv run python 
    the compact/custody posture permits it. `sig-connectors run --mode live` **refuses** (exit 3) any
    source whose review-status is not green. Never bypass the gate — flipping a source is a
    human/rights decision (gate **HG-03**), not a code change.
-5. **The claim spine is insert-only.** `PgClaimSink` (`db/src/db/claim_sink.py`) and `PgReadStore`
-   (`api/src/api/store_pg.py`) never `UPDATE`/`DELETE`; there is no update/delete path anywhere in
-   `db/`. Model corrections as new claims.
+5. **The claim spine is insert-only — with exactly one recorded exception.** `PgClaimSink`
+   (`db/src/db/claim_sink.py`) and `PgReadStore` (`api/src/api/store_pg.py`) never
+   `UPDATE`/`DELETE`; there is no update/delete path anywhere in `db/` except the one
+   operator-only purge function `sig_purge_claims` (the `operator_purge` sqitch change —
+   ADR-189/WV-11, the sole SIG-STORE-011 exception, scoped to SIG-GOV-008 material; executable
+   only by the `sig_purge_operator` role, which no migration or agent may grant). Model
+   corrections as new claims; the purge is never agent-run — each use is the operator's
+   in-ticket go.
 6. **Public pages are HTML-first; client JS is budgeted by page type (ADR-155).** The page-type
    registry (`web/src/lib/page-types.ts`, P35.50) is the single authority: the build classifies
    every emitted route, an unclassified — or double-classified — route **fails the build**, and the
@@ -212,5 +217,7 @@ operator-approved `D-R10-MEMORY-1` cutover.
   officer-naming gate, ODbL compartment separation; publication (`HG-01`/`HG-02`/`HG-11`); rights
   flips (`HG-03`); the frozen §47 layout (needs an ADR).
 - **Forbidden:** editing the generated spec, generated ontology, or a landed ADR body directly;
-  bypassing the ingestion gate; writing `UPDATE`/`DELETE` against the claim spine; committing scratch
+  bypassing the ingestion gate; writing `UPDATE`/`DELETE` against the claim spine (the sole
+  exception is `sig_purge_claims`, ADR-189 — executable only by the operator-held
+  `sig_purge_operator` role, never agent-run and never granted by a migration); committing scratch
   or secrets; merging/tagging/pushing `main`.

@@ -188,6 +188,39 @@ def build_parser() -> argparse.ArgumentParser:
         help="claims committed per transaction (default 1000)",
     )
 
+    pg = sub.add_parser(
+        "purge",
+        help="invoke the ONE operator-only purge function (P37.71 / ADR-189, "
+        "the sole SIG-STORE-011 exception): calls sig_purge_claims over --dsn, "
+        "which refuses unless the connecting role holds sig_purge_operator. "
+        "Each use needs the operator's in-ticket go naming the material "
+        "(--authority-ref); it leaves a tombstone + audit record, never content. "
+        "Never run by an agent.",
+    )
+    pg.add_argument("--dsn", required=True, help="PostgreSQL DSN for the spine")
+    pg.add_argument(
+        "--claim",
+        action="append",
+        default=[],
+        required=True,
+        help="a claim_id the go names (repeatable — the authorised set)",
+    )
+    pg.add_argument(
+        "--category",
+        required=True,
+        help="the tombstone category (closed vocabulary; see db.operator_purge.PURGE_CATEGORIES)",
+    )
+    pg.add_argument(
+        "--authority-ref",
+        required=True,
+        help="the in-ticket go naming the material (verbatim reference)",
+    )
+    pg.add_argument(
+        "--decision-entry-id",
+        default=None,
+        help="the sig.editorial-decision/1 id the log entry will carry",
+    )
+
     bench = sub.add_parser(
         "sink-bench",
         help="time PgClaimSink passes over synthetic OSM-shaped claims: claims/min and "
@@ -436,6 +469,28 @@ def _run_lineage_rematerialize(args: argparse.Namespace) -> int:
     return 0
 
 
+def _run_purge(args: argparse.Namespace) -> int:
+    """Invoke the operator-only purge function (P37.71 / ADR-189)."""
+    import json
+    import sys
+
+    from .operator_purge import PurgeError, purge_claims
+
+    try:
+        out = purge_claims(
+            args.dsn,
+            args.claim,
+            category=args.category,
+            authority_ref=args.authority_ref,
+            decision_entry_id=args.decision_entry_id,
+        )
+    except PurgeError as exc:
+        print(f"sig-db purge: REFUSED — {exc}", file=sys.stderr)
+        return 3
+    print(json.dumps(out, indent=2, sort_keys=True, default=str))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `db` CLI. Returns a process exit code."""
     parser = build_parser()
@@ -454,5 +509,7 @@ def main(argv: list[str] | None = None) -> int:
         return _run_lineage_rematerialize(args)
     if args.command == "sink-bench":
         return _run_sink_bench(args)
+    if args.command == "purge":
+        return _run_purge(args)
     parser.print_help()
     return 0

@@ -20,7 +20,7 @@ adopt the spec's policy, they do not redefine it.
 
 ## The policies
 
-Fourteen documents. **Status** is taken from each document itself: *adopted* (a first-class policy
+Fifteen documents. **Status** is taken from each document itself: *adopted* (a first-class policy
 in force), *protocol adopted; not yet run* (the procedure is fixed but its human step is gated),
 *published* (a live, machine-checked page), *template* (a recorded template/instrument a
 per-instance run fills in), *prepared; not ratified* (an operator packet for a built-but-gated
@@ -43,3 +43,4 @@ advice).
 | [Capability-scope amendment proposal](capability-scope-amendment-proposal.md) | the P35.14a (SEED-12b) record of the realised `capability.yaml` scope set diverging from SIG-ONTO-060's declared list: the evidence, the out-of-list enumeration, and the drafted amendment text — a proposal for the operator, never a silent relaxation of the closed list | proposed; not applied (G.7.5) | §13.4 | SIG-ONTO-060 |
 | [IRI base compatibility note](iri-base-compat-note.md) | the dated note for the P35.38b identity-base move to `surveillancegraph.org`: what changed, what stayed immutable, the append-only alias map, the recorded unregistered-domain residual | adopted (P35.38b / ADR-217) | §21.6, §38 | SIG-INGEST-016, SIG-EXPORT-002, F-184 (b-half) |
 | [Legal-demand response posture](legal-demand-posture.md) | the written demand-response posture recorded before the first demand: what SIG holds and minimises, who receives legal process, preservation, user notice, publication of counts — the warrant canary declined | adopted (P37.8 / ADR-166, A-4 = Q-E2-09 c; ADR-167) | §44.3 | SIG-SEC-003 |
+| [True deletion & the operator-only purge function](true-deletion-and-purge.md) | the WV-06/WV-11 design: what may be deleted at all (SIG-GOV-008 scope; suppression stays the primitive for everything else), how a governance-mode delete keeps the audit record, and the bounds of the one operator-only purge function — the sole SIG-STORE-011 exception, engineered and fixture-verified on a clone only | adopted design — mechanism built + tested on a clone; deploy and every use are separate in-ticket gos (P37.71 / ADR-181, ADR-189) | §45.4, §16.3 | SIG-GOV-007, SIG-GOV-008, SIG-GOV-009, SIG-STORE-011 |
