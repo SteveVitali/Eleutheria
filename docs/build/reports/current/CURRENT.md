@@ -4,19 +4,19 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `b131428cadf0f77fcd9d4818803e055dfb471d38` · inputs hashed: 1191 · wall-clock receipt: `receipt.json`
+> input_commit: `9f55e0cc7c5742503cc08e9070d2b1c026ee2bb3` · inputs hashed: 1192 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.72b` · lastCompleted `P36.72a`
-- chainTip `r11/P36.72a-core-surfaces-crawl-parity-number-truth` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-05T05:06Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P36.70` · lastCompleted `P36.72b`
+- chainTip `r11/P36.72b-core-surfaces-walkthroughs-and-promotion` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-05T07:02Z`
 
 ## Obligations
 
-- 219 obligations · **136 owed** (133 OPEN, 3 PARTIAL) · 83 terminal
-- 728 events (54 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 220 obligations · **137 owed** (134 OPEN, 3 PARTIAL) · 83 terminal
+- 729 events (54 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 136 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 137 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -47,26 +47,26 @@
 | P34.39b | the three queued monitoring legs (first-fire wave + `camreg_peel_on`) | `implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true` (#246) |
 | P36.2 | queued D-P36.2-1 — the 12 P36.2 terms captures (IU1–IU5, Edmonton OGL, BidNet, 5 folded-set) | `implement-spec spec=docs/tickets/350_P36.2__rights-flip-decline-batch-and-terms-capture.md live_verification=true` |
 | P34.40 | two queued legs of the dark serving-topology roll (L1 `sig-web` pinned-digest roll, L2 `/v1/*` URL-map → `sig-api`); halves landed | `implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true` (L1, then L2) (#250) |
-| P34.42b | queued jobs IAM leg (G1-01/F-272 jobs + `roles/editor` removal; halves landed) — live-1 stopped at the 100/88 read; live-2 queued on P35.1a1's poststate | `implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` (#253; `live-1` stopped OM-18) · next `r1… |
+| P34.42b | queued jobs IAM leg (G1-01/F-272 jobs + `roles/editor` removal); live-1 stopped at the 100/88 read; live-2 queued on P35.1a1's poststate | `implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` (#253; `live-1` stopped OM-18) · next `r1… |
 | P34.43 | queued L1 exec-host + `sig_audit` legs and L2 `sig_recovery` login (SIG-CONF-013); halves landed | `implement-spec spec=docs/tickets/253_P34.43__execution-host-and-least-privilege-db-logins.md live_verification=true` (#255) |
 | P34.49 | queued L1 read-only scan + L2 protective-seal leg (F-406, I7 S1–S9, SIG-PUB-002; ADR-203 deny set) — halves landed | `implement-spec spec=docs/tickets/254_P34.49__part-viii-at-rest-audit.md live_verification=true` (L1 scan, then L2 seal) |
-| P34.44b | queued L1 `sig-quality-probe` job+trigger + L2 baseline run + `apply-baselines` write; halves landed | `implement-spec spec=docs/tickets/256_P34.44b__quality-baseline-run-and-nightly-probe.md live_verification=true` (job+trigger, then baseline) |
+| P34.44b | queued L1 `sig-quality-probe` job+trigger + L2 baseline run + `apply-baselines` write | `implement-spec spec=docs/tickets/256_P34.44b__quality-baseline-run-and-nightly-probe.md live_verification=true` (job+trigger, then baseline) |
 | P34.45 | queued append-only camera-site ER re-run (ruleset 3-interim) on P34.43 host (OM-20 listed; ADR-153/206) | `implement-spec spec=docs/tickets/257_P34.45__honest-evaluation-posture.md live_verification=true` (ER re-run leg) |
 | P34.46 | queued L2 deploy slot (schema roll + ADR-159 dispositions + `sig-api` roll + `/status/` notice + trigger pause/resume) + L3 48 h soak | `implement-spec spec=docs/tickets/258_P34.46__round10-schema-allows-and-api-roll.md live_verification=true` (#261) |
 | P34.47 | queued 11A acceptance sweep + GATE-G4 packet leg (§13.1): read-only crawl of site/API/tiles/`sig-public` + counts + packet refresh; `acceptance-sweep` → `sig.pr… | `implement-spec spec=docs/tickets/259_P34.47__sub-round-11a-acceptance.md live_verification=true` (sweep + packet) |
-| P35.57 | queued API-roll leg: mount promoted release's registry on `sig-api` (`SIG_RELEASE_REGISTRY`), roll, verify `/v1/health` names the release; reads + V7 parity lan… | `implement-spec spec=docs/tickets/261_P35.57__api-release-parity.md live_verification=true` (mount+roll+verify) (#263) |
-| P35.5 | queued R2-mirror leg: bucket + non-listable CDN, content-hash keys, immutable Cache-Control, $0 egress; PushLimits/--mirror/$50 ceiling/kill-switch landed | `implement-spec spec=docs/tickets/262_P35.5__zero-egress-distribution-host.md live_verification=true` (R2 push + origin-enable) |
+| P35.57 | queued API-roll leg: mount promoted release's registry on `sig-api` (`SIG_RELEASE_REGISTRY`), roll, verify `/v1/health` names the release | `implement-spec spec=docs/tickets/261_P35.57__api-release-parity.md live_verification=true` (mount+roll+verify) (#263) |
+| P35.5 | queued R2-mirror leg: bucket + non-listable CDN, content-hash keys, immutable Cache-Control, $0 egress; limits/kill-switch landed | `implement-spec spec=docs/tickets/262_P35.5__zero-egress-distribution-host.md live_verification=true` (R2 push + origin-enable) |
 | P35.67 | queued L1 post-cutover checklist (`sig-ops post-cutover-probe --leg l1`) post-OP-09 + L2 cert-renewal read ≈ 2026-11-22; read-only OM-14; probe verb + checklist… | `implement-spec spec=docs/tickets/263_P35.67__post-dns-cutover-probe.md live_verification=true` (#265) |
 | P35.1a | queued write leg: reconcile Cloud Scheduler from ops/cadence.toml (inert PAUSED triggers + declared-bundle publish) + live-diff; `live-1` stopped OM-18; P34.42b… | `implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` (#266) |
-| P35.1a1 | queued declared-job seed leg (row 287a): 12 declared-absent jobs on default-compute + `sig-scheduler` run.invoker + paused triggers; `seed-declared-jobs.sh` lan… | `implement-spec spec=docs/tickets/287a_P35.1a1__seed-declared-jobs-paused.md live_verification=true` (#296 — leg queued, production untouched) |
-| P35.11 | queued Wave-A: L1 digest roll + seed load + serial legistar → usa_spending → procportal_nyc_ny; L2 `claims_added == 0` reruns; L3 resume post-green; S8 tribal s… | L2 |
+| P35.1a1 | queued declared-job seed leg (row 287a): 12 declared-absent jobs on default-compute + `sig-scheduler` run.invoker + paused triggers | `implement-spec spec=docs/tickets/287a_P35.1a1__seed-declared-jobs-paused.md live_verification=true` (#296 — leg queued, production untouched) |
+| P35.11 | queued Wave-A: L1 digest roll + seed load + legistar → usa_spending → procportal_nyc_ny; L2 `claims_added == 0` reruns; L3 resume post-green; S8 stays `ingestio… | L2 |
 | P35.14a | queued hosted write: `sqitch deploy closed_vocabulary` (INSERT-only — 280 predicates + 5,600 directness + CHECK) + verify + read-back | `implement-spec spec=docs/tickets/272_P35.14a__vocabulary-conformance-closed-vocabulary.md live_verification=true` (#274) |
-| P35.14b | queued hosted leg: `sqitch deploy entity_typing_mobility_check` (ACCESS EXCLUSIVE, `lock_timeout`) + typed-identity write (INSERT-only, +0); verify + read-back | `implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and-hosted-check-constraint.md live_verification=true` (#275) |
-| P35.15a | queued hosted write: INSERT-only `technology` vocab registration (`vocab_predicate` via P35.14a's `closed_vocabulary`) + missing-row INSERTs + read-back; backfi… | `implement-spec spec=docs/tickets/274_P35.15a__technology-typing-slug-and-facets.md live_verification=true` (#276) |
-| P35.15b | queued hosted write: INSERT-only `technology` backfill on `sig-pg` (dry-run → `--apply` → `+0`); claims link EXISTING captures; no UPDATE/DELETE/flip/fetch | `implement-spec spec=docs/tickets/275_P35.15b__technology-backfill.md live_verification=true` (#277) |
+| P35.14b | queued `hosted` leg: `sqitch deploy entity_typing_mobility_check` (ACCESS EXCLUSIVE, `lock_timeout`) + typed-identity INSERT (+0); verify + read-back | `implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and-hosted-check-constraint.md live_verification=true` (#275) |
+| P35.15a | queued `hosted` write: INSERT-only `technology` vocab registration (`vocab_predicate` via `closed_vocabulary`) + missing rows + read-back; backfill is P35.15b | `implement-spec spec=docs/tickets/274_P35.15a__technology-typing-slug-and-facets.md live_verification=true` (#276) |
+| P35.15b | queued `hosted` write: INSERT-only `technology` backfill on `sig-pg` (dry → apply → `+0`); claims link EXISTING captures; no UPDATE/DELETE | `implement-spec spec=docs/tickets/275_P35.15b__technology-backfill.md live_verification=true` (#277) |
 | P36.12 | queued Wave-B L0→L10 (open → family days + `+0` → 917-portal probe → materialize+delta+resume); `doj_ctas_awards` never; missed leg reported | … |
 | P35.1b | queued fleet-hygiene sweep (`ops/gcp/fleet-sweep.sh --apply all`): prestate + AR-2 → 4 cron reconciles → exit-64 guard roll → 6 `[[retired_jobs]]` deletes → AR … | `implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true` (#302) |
-| P35.1c | queued dispatcher-consolidation (`dispatcher-consolidation.sh --apply all`): prestate → `sig-sched-due` + hourly trigger + bindings → verify → 89 `[[retire_trig… | `implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true` (#303) |
+| P35.1c | queued dispatcher-consolidation (`--apply all`): prestate → `sig-sched-due` + hourly trigger + bindings → verify → 89 `[[retire_triggers]]` deletes → proof | `implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true` (#303) |
 | P35.16 | queued hosted correction-write: `sig-connectors geometry-corrections --dsn <hosted> --apply` — append-only INSERTs for the 7 F-322 groups + read-back | `implement-spec spec=docs/tickets/296_P35.16__geometry-defects-at-ingest.md live_verification=true` (#309) |
 | P35.17 | queued hosted boundary-source capture: OCFL `census_gazetteer_tiger` + `natural_earth_10m` (append-only digests) → live pack + registry + `boundaries_root` | `implement-spec spec=docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md live_verification=true` (#310) |
 | P35.24 | queued hosted legs: `sig-db subject-rekey --dsn <hosted> --apply` (append-only; count re-derived) + `/status/` basis notice (S6 A-20) + collision artifact | `implement-spec spec=docs/tickets/303_P35.24__truthful-subject-keys-and-re-keying.md live_verification=true` (#318) |
@@ -74,12 +74,12 @@
 | P35.26 | L1 merge · L2 EFF+OSM role-aware re-ingest (OSM in-ODbL; pre-state counts) · L3 edge rematerialize — 1970 at zero | `implement-spec spec=docs/tickets/305_P35.26__roles-and-time-backend.md live_verification=true` (#320) |
 | P35.41 | queued connector-image roll: rebuild+redeploy the image carrying `records_digest`, upstream marks + capture-mark headers | `implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` (#338) |
 | P35.53 | D-P35.53-1 | `SIG_RELEASE_AUTHOR="$(git config user.name)" bash ops/gcp/release-infra.sh --apply all` or `implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-s… |
-| P35.59 | queued dark cutover (`web-cutover.sh --apply all`): AR-2 prestate → `staged/v/legacy-<YYYYMMDD>/` floor import → `conf/0`+carry+`serving.json` retire → `sig-web… | `SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all` or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_ver… |
-| P35.61 | queued live half of P32.22's recovery deferral + F-522 (audit+plan → pause → `recovery-apply` → +0 → freeze unpublished); packet `reports/p35.61-live-pass/` | queued `implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` (#359; `D-R10-LIVE-1` OPEN) |
-| P35.62 | queued live half of P32.23a's candidate deferral (`release-candidate` over `frozen_unpublished` → +0 rematerialize → export → stage + IAM origins → web build + … | `implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true` (#360) |
-| P35.63 | queued release-exposure leg (home P32.25): staged cut → `class_s` → unsigned HG-11 readout · promote — signed readout + go only; packet `reports/p35.63-first-mo… | `implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (resumes at L2's promote, staged cut byte-identical) … |
+| P35.59 | queued dark cutover (`web-cutover.sh --apply all`): AR-2 prestate → `staged/v/legacy-<YYYYMMDD>/` floor import → `conf/0`+carry → `sig-web` roll → `route-compar… | `SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all` or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_ver… |
+| P35.61 | queued live half of P32.22's recovery deferral (audit+plan → pause → `recovery-apply` → +0 → freeze unpublished); packet `reports/p35.61-live-pass/` | `implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` (`D-R10-LIVE-1` OPEN) |
+| P35.62 | queued `release-candidate` over `frozen_unpublished` → +0 rematerialize → export → stage + IAM origins → web build + DR-C4-01 crawl; packet `reports/p35.62-prod… | queued `implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true` |
+| P35.63 | queued release-exposure leg (home P32.25): staged cut → `class_s` → HG-11 readout → promote — signed readout + go only, packet `reports/p35.63-first-model-relea… | queued `implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (resumes at L2's promote) (#362) |
 | P35.64 | queued 11B acceptance sweep + GATE-G5 packet: read-only crawl of promoted release/API/`sig-public`/`sig-registry` + counts + packet refresh; `acceptance-sweep-1… | `implement-spec spec=docs/tickets/342_P35.64__sub-round-11b-acceptance.md live_verification=true` (#363) |
-| P37.2 | Wave-C L1→L5 (pre-grow → tier bump → national run → 24 h soak → revert); missed leg reported; packet `reports/p37.2-wave-c/` | … |
+| P37.2 | Wave-C L1→L5 (pre-grow → tier bump → national run → 24 h soak → revert); packet `reports/p37.2-wave-c/` | … |
 | P35.2 | D-P35.2-1 | `implement-spec spec=docs/tickets/346_P35.2__alerting-as-code-and-escalation.md live_verification=true` |
 | P35.21 | D-P35.21-1 | `implement-spec spec=docs/tickets/347_P35.21__partner-name-audit-run.md live_verification=true` |
 | P35.23 | D-P35.23-1 | `implement-spec spec=docs/tickets/348_P35.23__real-data-regression-corpus.md live_verification=true` |
@@ -95,6 +95,7 @@
 | P36.44 | queued D-P36.44-1 — the `sig-sched-release-cut` + `sig-sched-materialize` Cloud Scheduler trigger creates; restore = delete both triggers | `implement-spec spec=docs/tickets/387_P36.44__release-cadence-automation.md live_verification=true` |
 | P36.46 | queued D-P36.46-1 — `hosted` report backfill (INSERT-only, +0; restore = appended-set digests) | `implement-spec spec=docs/tickets/389_P36.46__execution-keyed-ingestion-history.md live_verification=true` |
 | P36.71 | queued D-P36.71-1 — post-promotion search-acceptance verify legs (real-release --enforce run, staging p95 at 1 vCPU, budgets+Lighthouse+axe, cost readout, A1/J2… | `implement-spec spec=docs/tickets/414_P36.71__search-acceptance-and-activation.md live_verification=true` |
+| P36.72b | queued D-P36.72b-1 — core-surfaces Class S promote (`release promote --class class_s --approval <signed-readout>` + P-mode verify); restore = `release rollback`… | `implement-spec spec=docs/tickets/416_P36.72b__core-surfaces-walkthroughs-and-promotion.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 
