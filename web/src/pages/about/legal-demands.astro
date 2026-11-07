@@ -1,0 +1,157 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P37.8 (R11-GOV-03; ADR-166 / A-4 = Q-E2-09 c; ADR-167 counsel basis; spec
+// §44.3 SIG-SEC-003) — the legal-demand posture + published counts page,
+// under About. T1 under ADR-155: static markup only — no <script>, no
+// island, no runtime dependency.
+//
+// The operator adopted the written demand-response posture before the
+// first demand (ADR-166, A-4 2026-10-01T04:03:25Z): what SIG holds and how
+// it minimises it, who receives legal process, preservation handling, the
+// user-notice policy and the publication of counts. The warrant canary —
+// a SHOULD — is declined with its recorded rationale, never operated. The
+// counts render the committed append-only `sig.legal-demand-counts/1`
+// snapshot record in lib/legal-demands.ts — counts only, no requester
+// identity or case detail, each update a new dated snapshot. The posture
+// document of record is docs/governance/legal-demand-posture.md; the
+// drafted sentences are sha256-pinned in
+// docs/build/reports/copy-batches/batch-19.md (B-2) and bind through the
+// `data-copy` ids; tests/unit/test_p37_8_legal_demands.py fails on drift.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import DisputeLink from "../../components/DisputeLink.astro";
+import {
+  LEGAL_DEMAND_POSTURE,
+  latestCounts,
+} from "../../lib/legal-demands";
+import { fmtInt } from "../../lib/format";
+import { withBase } from "../../lib/paths";
+
+const counts = latestCounts();
+---
+
+<BaseLayout
+  title="Legal demands — posture and counts"
+  path="/about/legal-demands/"
+  crumbs={[
+    { label: "About", href: "../" },
+    { label: "Legal demands" },
+  ]}
+>
+  <p data-copy="LD-01">
+    This page is SIG's written posture for legal demands — subpoenas,
+    warrants, preservation letters and takedown demands — set down before
+    the first demand arrives, and the published count of demands received,
+    complied with and refused.
+  </p>
+  <p data-copy="LD-02">
+    This posture is not legal advice. No lawyer's written opinion has
+    been obtained, and no lawyer has reviewed it. The operator adopted
+    it on <time datetime="2026-10-01">2026-10-01</time>.
+  </p>
+
+  <h2 id="holdings-heading">What SIG holds</h2>
+  <p data-copy="LD-03">
+    SIG holds public records about surveillance infrastructure, the
+    evidence behind each claim, and the append-only record of decisions
+    and corrections. It holds no contributor accounts, no reader tracking,
+    and no per-person or plate data — not holding data is the main
+    protection.
+  </p>
+
+  <h2 id="process-heading">Who receives legal process</h2>
+  <p data-copy="LD-04">
+    The operator — an individual, disclosed as SIG's interim legal home —
+    receives all legal process addressed to SIG. There is no organisation
+    and no lawyer. The channel is the e-mail address the{" "}
+    <a href={withBase("dispute/")}>dispute page</a> names.
+  </p>
+
+  <h2 id="preservation-heading">Preservation requests</h2>
+  <p data-copy="LD-05">
+    A preservation request is logged with its date and scope. SIG's claim
+    record and evidence store are append-only and versioned, so
+    preservation is the default: a correction never overwrites or
+    deletes. A lawful preservation request is honoured as a recorded legal
+    hold on what exists.
+  </p>
+
+  <h2 id="notice-heading">User notice</h2>
+  <p data-copy="LD-06">
+    Where a demand seeks information about an identifiable person and the
+    law allows notice, SIG tells that person before complying. SIG holds
+    almost nothing about individuals, so in most cases there is no one to
+    notify.
+  </p>
+
+  <h2 id="counts-heading">Publication of counts</h2>
+  <p data-copy="LD-07">
+    The counts below are republished when a demand arrives or when a
+    demand's handling changes. Each update is a new dated snapshot
+    appended to the count record — counts only: never a requester's
+    identity or case detail.
+  </p>
+  {counts ? (
+    <>
+      <dl class="sig-legal-demand-counts" data-testid="legal-demand-counts">
+        <div>
+          <dt>Legal demands received</dt>
+          <dd data-testid="counts-received">{fmtInt(counts.received)}</dd>
+        </div>
+        <div>
+          <dt>Complied with</dt>
+          <dd data-testid="counts-complied">{fmtInt(counts.complied_with)}</dd>
+        </div>
+        <div>
+          <dt>Refused</dt>
+          <dd data-testid="counts-refused">{fmtInt(counts.refused)}</dd>
+        </div>
+      </dl>
+      <p data-testid="counts-as-of">
+        As of <time datetime={counts.as_of}>{counts.as_of}</time>{" "}
+        (snapshot <code>{counts.snapshot_id}</code>).
+      </p>
+    </>
+  ) : (
+    <p data-testid="counts-empty" data-copy="LD-08">
+      No count snapshot is recorded.
+    </p>
+  )}
+
+  <h2 id="canary-heading">No warrant canary</h2>
+  <p data-copy="LD-09">
+    SIG does not operate a warrant canary. With one maintainer and no
+    lawyer, a scheduled canary cannot be maintained reliably, and a
+    lapsed canary would itself read as a signal — so the canary is
+    declined, and this page says so.
+  </p>
+
+  <DisputeLink />
+
+  <div data-technical-details>
+    <h2 id="record-heading">The record</h2>
+    <dl class="sig-legal-demand-record">
+      <dt>Adopted</dt>
+      <dd data-testid="posture-adopted">
+        <time datetime={LEGAL_DEMAND_POSTURE.adopted_at}>
+          {LEGAL_DEMAND_POSTURE.adopted_at}
+        </time>
+        {" — "}{LEGAL_DEMAND_POSTURE.decision_ref}
+      </dd>
+      <dt>Decision</dt>
+      <dd><code>{LEGAL_DEMAND_POSTURE.adr}</code></dd>
+      <dt>Posture document</dt>
+      <dd><code>{LEGAL_DEMAND_POSTURE.document}</code></dd>
+      <dt>Count record</dt>
+      <dd><code>sig.legal-demand-counts/1</code> — web/src/lib/legal-demands.ts</dd>
+      <dt>Corrections log</dt>
+      <dd>
+        The same counts appear in the{" "}
+        <a href={withBase("corrections/")}>corrections log's transparency
+        report</a>.
+      </dd>
+    </dl>
+  </div>
+</BaseLayout>

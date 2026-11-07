@@ -22,6 +22,8 @@ import {
 } from "../lib/corrections";
 import { RULESET_VERSION } from "../lib/fixtures";
 import { getCorrections, getCorrectionsProvenance, getSiteMetadata, getSlugHistory } from "../lib/data";
+import { latestCounts } from "../lib/legal-demands";
+import { fmtInt } from "../lib/format";
 import { withBase } from "../lib/paths";
 
 // The corrections log + its provenance summary flow through the single data seam
@@ -43,6 +45,10 @@ const ALL = [...CORRECTIONS, ...MIGRATION];
 const origin = Astro.site?.origin;
 const entries = orderedCorrections(ALL);
 const report = transparencyReport(ALL);
+// P37.8 (R11-GOV-03; ADR-166; design E2-10): the legal-demand counts —
+// demands received, complied with and refused — from the same committed
+// `sig.legal-demand-counts/1` snapshot the legal-demands page renders.
+const legalDemands = latestCounts();
 // The log's start date (QW-14): the earliest recorded correction, shown so the log
 // never reads as if it existed from the project's first day.
 const logStart = entries.map((e) => e.corrected_at).sort()[0] ?? null;
@@ -150,4 +156,21 @@ const logStart = entries.map((e) => e.corrected_at).sort()[0] ?? null;
       </ul>
     </div>
   </div>
+
+  <!-- P37.8 (R11-GOV-03; ADR-166; design E2-10): legal-demand counts with
+       their as-of — the same `sig.legal-demand-counts/1` record the
+       legal-demands page renders, so the two surfaces can never disagree. -->
+  <h3 id="legal-demands-heading">Legal demands</h3>
+  {legalDemands && (
+    <p data-testid="legal-demand-counts">
+      As of <time datetime={legalDemands.as_of}>{legalDemands.as_of}</time>:
+      received {fmtInt(legalDemands.received)}, complied with{" "}
+      {fmtInt(legalDemands.complied_with)}, refused{" "}
+      {fmtInt(legalDemands.refused)}.
+    </p>
+  )}
+  <p data-copy="LD-10">
+    The written response posture and the count record sit on the{" "}
+    <a href={withBase("about/legal-demands/")}>legal-demands page</a>.
+  </p>
 </BaseLayout>

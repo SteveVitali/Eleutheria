@@ -524,6 +524,16 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
       "P37.7 (R11-GOV-02, ADR-164 / WV-02, spec §46.2): the public editorial decision log — the interim single-maintainer authority's append-only record under About. The leaf literal outranks the `/about/**` umbrella.",
   },
   {
+    patterns: ["/about/legal-demands/"],
+    type: "T1",
+    owner: "P37.8",
+    contract: "sig.legal-demand-counts/1",
+    noJsEquivalent: SELF,
+    examples: ["/about/legal-demands/"],
+    notes:
+      "P37.8 (R11-GOV-03, ADR-166 / A-4 = Q-E2-09 c, spec §44.3 SIG-SEC-003): the written legal-demand posture + the published counts (received / complied with / refused, counts only, as-of) under About; the warrant canary is declined, never operated. The leaf literal outranks the `/about/**` umbrella.",
+  },
+  {
     patterns: ["/about/**"],
     type: "T1",
     owner: "P35.50",

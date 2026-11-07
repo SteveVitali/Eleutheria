@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "37394ec1f04f9619c3b348381b3e4fec6c356970",
-  "manifest_inputs": 1209,
+  "input_commit": "858b88d066269029606b583069e69ab8bd606879",
+  "manifest_inputs": 1210,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.8",
-    "lastCompleted": "P37.7",
+    "nextTicket": "P37.71",
+    "lastCompleted": "P37.8",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b",
@@ -17,22 +17,22 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.7-public-editorial-decision-log",
+    "chainTip": "r11/P37.8-legal-demand-posture-and-counts",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-06T13:54Z"
+    "updatedAt": "2026-11-06T15:51Z"
   },
   "counts": {
     "obligations": 224,
-    "owed": 141,
-    "open": 138,
+    "owed": 140,
+    "open": 137,
     "partial": 3,
-    "terminal": 83,
-    "events": 734,
-    "transitions": 54,
+    "terminal": 84,
+    "events": 735,
+    "transitions": 55,
     "coverage_assessments": 510,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
@@ -5224,11 +5224,11 @@
     },
     {
       "id": "D-R11-SEC003-1",
-      "status": "OPEN",
-      "status_source": "event-head D-R11-SEC003-1:e0",
+      "status": "DONE",
+      "status_source": "event-head D-R11-SEC003-1:e1",
       "kind": "F",
       "owner": "P37.8 (row 428: legal-demand posture + published counts)",
-      "landing": "P37.8",
+      "landing": "P37.8 lands: the written demand-response posture is published at /about/legal-demands/ — the five E2-10 sections, stating the text is not legal advice and has not been reviewed by counsel (ADR-167) — with the committed sig.legal-demand-counts/1 snapshot rendering received/complied/refused = 0 as of 2026-11-06 (counts only); the warrant canary is declined and stated as such; the same counts carry on /corrections/. Posture doc docs/governance/legal-demand-posture.md; copy pinned in batch-19 (B-2). Public-origin exposure rides D-R10-PUBLISH-1 (OPEN).",
       "landing_source": "event-head",
       "backlog_home": "BL-080",
       "item": "SIG-SEC-003's \"before the first demand\" clause: a written legal-demand response posture, published before the first demand, and the published legal-demand counts (received, complied with, refused; counts only, with an as-of date); the warrant canary is declined (ADR-166)",
@@ -5264,6 +5264,34 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "kind": "transition",
+          "seq": 1,
+          "expected_previous_event": "D-R11-SEC003-1:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P37.8",
+          "owner": "P37.8 (row 428: legal-demand posture + published counts)",
+          "landing": "P37.8 lands: the written demand-response posture is published at /about/legal-demands/ — the five E2-10 sections, stating the text is not legal advice and has not been reviewed by counsel (ADR-167) — with the committed sig.legal-demand-counts/1 snapshot rendering received/complied/refused = 0 as of 2026-11-06 (counts only); the warrant canary is declined and stated as such; the same counts carry on /corrections/. Posture doc docs/governance/legal-demand-posture.md; copy pinned in batch-19 (B-2). Public-origin exposure rides D-R10-PUBLISH-1 (OPEN).",
+          "backlog_home": "BL-080",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "web/src/pages/about/legal-demands.astro",
+            "web/src/lib/legal-demands.ts",
+            "docs/governance/legal-demand-posture.md",
+            "docs/build/reports/copy-batches/batch-19.md",
+            "tests/unit/test_p37_8_legal_demands.py",
+            "web/tests/unit/legal-demands.test.ts",
+            "web/tests/e2e/legal-demands.spec.ts"
+          ],
+          "observed_at": "2026-11-06",
+          "source_commit": "WORKTREE",
+          "reason": "P37.8 (row 428 — the named owner row) discharged the clause: the posture and the counts are published with an as-of date, the text states it is not legal advice and has not been reviewed by counsel (ADR-167), and the canary is declined and stated as such — every verify-clause item met at the engineered + fixture-verified layers; the public-origin serving half is D-R10-PUBLISH-1's standing scope, unchanged.",
+          "event_id": "D-R11-SEC003-1:e1",
+          "obligation_id": "D-R11-SEC003-1",
+          "recorded_at": "2026-11-06"
         }
       ]
     },
@@ -15594,8 +15622,8 @@
           "label": "historical/csv"
         },
         "SIG-SEC-003": {
-          "verdict": "MISSING",
-          "evidence": "docs/2_canonical_design_spec.md:6292",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "docs/2_canonical_design_spec.md:6292;web/src/pages/about/legal-demands.astro;web/src/lib/legal-demands.ts;docs/governance/legal-demand-posture.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -26463,10 +26491,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "fe180e77239ad8ce0d40152c88e88d6f836dcf224902f290478da436d4c175d0",
+  "manifest_sha256": "57cebee89b89a6563cde3be68fcfaf5d9296c575d03d769058ec9bc91952113d",
   "current_md": {
     "lines": 142,
-    "bytes": 20369,
+    "bytes": 20372,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

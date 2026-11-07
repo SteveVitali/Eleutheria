@@ -135,6 +135,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { label: "How sure is SIG?", route: "quality/" },
       { label: "Editorial standards", route: "editorial-standards/" },
       { label: "Decision log", route: "about/editorial-decisions/" },
+      { label: "Legal demands", route: "about/legal-demands/" },
       { label: "Corrections", route: "corrections/" },
       { label: "Open questions", route: "research-queue/" },
       { label: "Dispute", route: "dispute/" },
