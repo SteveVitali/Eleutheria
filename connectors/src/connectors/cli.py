@@ -66,6 +66,20 @@ def build_parser() -> argparse.ArgumentParser:
     gate = sub.add_parser("gate", help="report the connector-loader gate verdict for a source")
     gate.add_argument("--source", required=True, help="source id to check")
     sub.add_parser("export-check", help="compute the export licence per compartment (SIG-LIC-010)")
+    uw = sub.add_parser(
+        "unwired-scan",
+        help=(
+            "P37.5a (F2a §6.5, F5 PKG-12): the mechanical public-function-with-"
+            "only-test-callers scan over the ingestion stack; prints the "
+            "sig.unwired-scan/1 report; --drift exits 3 when the live set has "
+            "drifted from the committed adjudicated baseline"
+        ),
+    )
+    uw.add_argument(
+        "--drift",
+        action="store_true",
+        help="exit 3 on new/resolved drift vs data/unwired_scan_baseline.toml",
+    )
     rekeyp = sub.add_parser(
         "rekey-personal-ids",
         help=(
@@ -446,6 +460,16 @@ def _validate() -> int:
             print(f"VALIDATION FAILED: publish matrix: {msg}")
         if len(matrix_violations) > 50:
             print(f"VALIDATION FAILED: … and {len(matrix_violations) - 50} more")
+        return 1
+    # SIG-INGEST-006 (P37.5a): every registered connector declares its
+    # ingestion mode (closed §21.3 vocabulary) and its incrementality
+    # strategy — an absent or out-of-vocabulary declaration fails closed.
+    from .ingestion_mode import ingestion_declaration_violations
+
+    mode_violations = ingestion_declaration_violations()
+    if mode_violations:
+        for msg in mode_violations:
+            print(f"VALIDATION FAILED: SIG-INGEST-006 declaration: {msg}")
         return 1
     print("connectors registry self-checks OK")
     return 0
@@ -968,6 +992,23 @@ def main(argv: list[str] | None = None) -> int:
         return _gate(args.source)
     if args.command == "export-check":
         return _export_check()
+    if args.command == "unwired-scan":
+        from .unwired_scan import baseline_drift, load_baseline, render_json, scan
+
+        baseline = load_baseline()
+        findings = scan()
+        print(render_json(findings, baseline))
+        if args.drift:
+            drift = baseline_drift(findings, baseline)
+            if drift["new"] or drift["resolved"]:
+                import sys
+
+                print(
+                    f"unwired-scan DRIFT: new={drift['new']} resolved={drift['resolved']}",
+                    file=sys.stderr,
+                )
+                return 3
+        return 0
     if args.command == "review-status":
         return _review_status(args.source)
     if args.command == "attribution-correction-list":

@@ -865,6 +865,8 @@ class AuditStructuralConnector(Connector):
 
     name = "audit_structural"
     version = "1.0.0"
+    ingestion_mode = "manual"
+    incrementality = "upload event (agency audit CSV export via records request)"
 
     # -- acquisition --
     def discover(self, ctx: RunContext) -> list[Mapping[str, Any]]:

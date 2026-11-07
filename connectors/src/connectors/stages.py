@@ -546,6 +546,14 @@ class Connector(ABC):
     #: Connector identity; stamped into lineage and the UA (SIG-INGEST-011/015).
     name: str = "connector"
     version: str = "0"
+    #: The declared §21.3 ingestion mode — a member of the closed
+    #: :data:`connectors.ingestion_mode.INGESTION_MODES` vocabulary — and the
+    #: connector's incrementality strategy (SIG-INGEST-006). Both are
+    #: REQUIRED of every registered connector; ``""`` is undeclared and fails
+    #: :func:`connectors.ingestion_mode.ingestion_declaration_violations`
+    #: (``sig-connectors validate`` + the declaration test enforce it).
+    ingestion_mode: str = ""
+    incrementality: str = ""
 
     # -- acquisition (source-specific) --
     @abstractmethod

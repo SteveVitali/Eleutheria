@@ -1062,6 +1062,8 @@ class FranceBelgiumRecordsConnector(Connector):
 
     name = "france_belgium_records"
     version = "1.0.0"
+    ingestion_mode = "rest_api"
+    incrementality = "updated-since watermark (records API)"
 
     def discover(self, ctx: RunContext) -> list[Mapping[str, Any]]:
         """Enumerate fetch targets — known lookups supplied on the run context."""
@@ -1437,6 +1439,8 @@ class FranceBelgiumProcurementConnector(Connector):
 
     name = "france_belgium_procurement"
     version = "1.0.0"
+    ingestion_mode = "rest_api"
+    incrementality = "updated-since watermark (DECP data.gouv API)"
 
     def discover(self, ctx: RunContext) -> list[Mapping[str, Any]]:
         return list(ctx.parameters.get("targets", []))

@@ -2465,6 +2465,8 @@ class Dot511Connector(Connector):
 
     name = "dot_511"
     version = "1.0.0"
+    ingestion_mode = "rest_api"
+    incrementality = "updated-since watermark / feature-layer query diff"
 
     def __init__(self, *, parcel_signal: ResidentialParcelSignal | None = None) -> None:
         # P35.66 (SIG-PUB-005/013): the declared residential-parcel signal the

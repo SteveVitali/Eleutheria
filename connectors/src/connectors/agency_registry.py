@@ -236,6 +236,8 @@ class AgencyRegistryConnector(Connector):
 
     name = "agency_registry"
     version = "1.0.0"
+    ingestion_mode = "rest_api"
+    incrementality = "updated-since watermark (CDE API)"
 
     # -- acquisition --
     def discover(self, ctx: RunContext) -> list[Mapping[str, Any]]:

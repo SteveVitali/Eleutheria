@@ -801,6 +801,8 @@ class FlockPortalConnector(Connector):
 
     name = "flock_portal"
     version = "1.0.0"
+    ingestion_mode = "html_scraping"
+    incrementality = "normalized-content hashing on extracted structure"
 
     # -- acquisition --
     def discover(self, ctx: RunContext) -> list[Mapping[str, Any]]:

@@ -644,6 +644,8 @@ class CoarseInternationalConnector(Connector):
 
     name = "coarse_international"
     version = "1.1.0"
+    ingestion_mode = "rest_api"
+    incrementality = "cursor / paged API queries"
 
     def discover(self, ctx: RunContext) -> list[Mapping[str, Any]]:
         return list(ctx.parameters.get("targets", []))

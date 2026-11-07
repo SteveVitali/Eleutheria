@@ -47,6 +47,8 @@ class AgencyPolicyConnector(OkcDocumentConnector):
 
     name = "agency_policy"
     version = "1.0.0"
+    ingestion_mode = "html_scraping"
+    incrementality = "normalized-content hashing on extracted structure"
 
     def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
         return extract_documents(self.name, parsed, source_id=ctx.source.id)

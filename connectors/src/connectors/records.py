@@ -710,6 +710,8 @@ class RecordsConnector(Connector):
 
     name = "records"
     version = "1.0.0"
+    ingestion_mode = "rest_api"
+    incrementality = "updated-since watermark (MuckRock API)"
 
     def __init__(self, *, token_cache: MuckRockTokenCache | None = None) -> None:
         self._token_cache = token_cache
