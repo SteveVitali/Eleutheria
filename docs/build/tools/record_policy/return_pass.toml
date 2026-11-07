@@ -1673,3 +1673,12 @@ obligations_cell = '''D-P37.13-1'''
 gates_cell = '''no gate — register-or-drop triage for the 23 `candidate-unregistered` Data Library datasets the 2026-11-07 sweep recorded (each stays unregistered until a ticket or the operator dispositions it)'''
 operator_cell = '''the next `sig.discovery-sweep/1` run or an acquisition-plan ticket — each candidate carries a `registered:`/`new-linked:`/`related:` disposition in the next candidates.csv diff'''
 rerun_cell = '''the next `sig.discovery-sweep/1` run (the recurring sweep) or the acquisition-plan ticket that takes the 23 candidates — `docs/build/reports/discovery-sweep/2026-11-07/candidates.csv`'''
+
+[[row]]
+key = "P37.14"
+kind = "obligation"
+obligations = ["D-P37.14-1"]
+obligations_cell = '''D-P37.14-1'''
+gates_cell = '''no gate — reviewed `session` data for the seed instruments (never derived from citation strings) + an exports surface that consumes `publishable`'''
+operator_cell = '''a data-review ticket populating `session`/`text_ref` per `statute_seed/2` entry + the export path honouring `publishable=false` under a test'''
+rerun_cell = '''a data-review ticket (seed-session population) or the exports ticket that first consumes the `legal_instrument` `publishable` verdict — `docs/adr/ADR-240-statute-seeded-records-leads.md` revisit trigger (b)'''

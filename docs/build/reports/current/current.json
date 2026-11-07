@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "ce7dc633fbdc47064e1ee45ab5862e9a05ae9bdc",
+  "input_commit": "f188a4712ea9dbd114caa125fb13d2f52deb47af",
   "manifest_inputs": 1223,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.14",
-    "lastCompleted": "P37.13",
+    "nextTicket": "P37.15",
+    "lastCompleted": "P37.14",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.70,P37.71",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.70,P37.71",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.13-registry-completeness-and-discovery-sweep",
+    "chainTip": "r11/P37.14-statute-seeded-records-leads",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-07T14:30Z"
+    "updatedAt": "2026-11-07T18:05Z"
   },
   "counts": {
     "obligations": 231,
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 81,
+    "return_pass_rows": 82,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -12052,8 +12052,8 @@
       "status_source": "event-head D-P37.14-1:e0",
       "kind": "F",
       "owner": "a data-review ticket populating session/text_ref per seed entry + the exports surface that first consumes publishable",
-      "landing": "each withheld seed-instrument verdict flips to publishable only with a committed session datum (a reviewed pass, never regex); the export legal_instruments surface honours publishable=false under a test",
-      "landing_source": "event-head",
+      "landing": "RETURN PASS — P37.14",
+      "landing_source": "return-pass-map/1",
       "backlog_home": "BL-087",
       "item": "seed-instrument `session` population + `publishable` consumption on the `legal_instruments` export surface (SIG-INGEST-025c follow-up): the P37.14 gate withholds every seed-emitted instrument citation (`session` unset — the `statute_seed/2` asset does not record sessions; `text_ref` rides each v2 `origin_url`), and no public surface yet consumes the stamped verdict",
       "unblocked_by": "owner: a data-review ticket populating `session`/`text_ref` per seed entry (the v2 citations name sessions in-text — `HB 58 (2026 RS)`, `Public Act 26-14 — substitute SB 397 (2026)` — a reviewed pass, never regex) + the exports surface that first consumes `publishable`",
@@ -12843,6 +12843,16 @@
         "rerun_cell": "the next `sig.discovery-sweep/1` run (the recurring sweep) or the acquisition-plan ticket that takes the 23 candidates — `docs/build/reports/discovery-sweep/2026-11-07/candidates.csv`",
         "obligations": [
           "D-P37.13-1"
+        ]
+      },
+      {
+        "key": "P37.14",
+        "obligations_cell": "D-P37.14-1",
+        "gates_cell": "no gate — reviewed `session` data for the seed instruments (never derived from citation strings) + an exports surface that consumes `publishable`",
+        "operator_cell": "a data-review ticket populating `session`/`text_ref` per `statute_seed/2` entry + the export path honouring `publishable=false` under a test",
+        "rerun_cell": "a data-review ticket (seed-session population) or the exports ticket that first consumes the `legal_instrument` `publishable` verdict — `docs/adr/ADR-240-statute-seeded-records-leads.md` revisit trigger (b)",
+        "obligations": [
+          "D-P37.14-1"
         ]
       }
     ]
@@ -14473,8 +14483,8 @@
           "label": "historical/csv"
         },
         "SIG-INGEST-025a": {
-          "verdict": "PARTIAL",
-          "evidence": "docs/2_canonical_design_spec.md:3631",
+          "verdict": "MET",
+          "evidence": "tasks/src/tasks/statute_leads.py;tasks/src/tasks/data/statute_leads.toml",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -26902,10 +26912,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "46a51f006836962f4784bd83e3234df60c89a67fbd0e7a8f7a9ccf5a4b7e9180",
+  "manifest_sha256": "ccd54b0b6db142fde6c837472d0c63cef57035526e33da7462ae4b163583b0cc",
   "current_md": {
-    "lines": 147,
-    "bytes": 19741,
+    "lines": 148,
+    "bytes": 19920,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

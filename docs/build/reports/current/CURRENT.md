@@ -4,12 +4,12 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `ce7dc633fbdc47064e1ee45ab5862e9a05ae9bdc` · inputs hashed: 1223 · wall-clock receipt: `receipt.json`
+> input_commit: `f188a4712ea9dbd114caa125fb13d2f52deb47af` · inputs hashed: 1223 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.14` · lastCompleted `P37.13`
-- chainTip `r11/P37.13-registry-completeness-and-discovery-sweep` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-07T14:30Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.15` · lastCompleted `P37.14`
+- chainTip `r11/P37.14-statute-seeded-records-leads` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-07T18:05Z`
 
 ## Obligations
 
@@ -105,6 +105,7 @@
 | P37.12 | D-P37.12-1 | `implement-spec spec=docs/tickets/433_P37.12__keyed-us-511-wiring.md live_verification=true` |
 | P37.70 | D-P37.70-1 | `implement-spec spec=docs/tickets/434_P37.70__keyed-au-traffic-camera-apis.md live_verification=true` |
 | P37.13 | D-P37.13-1 | the next `sig.discovery-sweep/1` run (the recurring sweep) or the acquisition-plan ticket that takes the 23 candidates — `docs/build/reports/discovery-sweep/202… |
+| P37.14 | D-P37.14-1 | a data-review ticket (seed-session population) or the exports ticket that first consumes the `legal_instrument` `publishable` verdict — `docs/adr/ADR-240-statut… |
 
 ## Known inconsistencies (preserved, never synthesized)
 
