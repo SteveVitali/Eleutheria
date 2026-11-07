@@ -44,7 +44,12 @@ docker run --rm -e PGPASSWORD=pw -v "$PWD/db":/repo -w /repo \
 
 ## Testing
 
-The claim-spine behaviour (append-only, corrections, the exclusion constraint,
+The claim-spine behaviour (append-only — with the single recorded exception of
+`sig_purge_claims`, the operator-only purge function of ADR-189/WV-11 added by
+the `operator_purge` sqitch change (P37.71): executable only by the
+`sig_purge_operator` role, scoped to SIG-GOV-008 material, leaving a
+`purge_tombstone` + `purge_audit` per use; corrections, the exclusion
+constraint,
 RLS, and the schema-integrity guards) is verified against a **real** PG18+PostGIS
 instance — never a mock. The tests (`tests/db/`) use `testcontainers` to launch
 the database and apply this sqitch plan to it, so all you need locally is a

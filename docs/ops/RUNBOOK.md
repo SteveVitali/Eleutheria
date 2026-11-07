@@ -678,6 +678,55 @@ root bytes remain the 90-day rollback floor source under D-R11-LATER-20
 ledger); `sig-public` stays frozen with its README pointer until J3
 TX-11's mirror lands. Neither bucket is deleted by this row.
 
+## 14. Purge material SIG must not hold
+
+*Labels: `human/operator-only` end to end — never agent-run, never
+pre-authorised. The mechanism is engineered + fixture-verified on a clone
+(P37.71); the `hosted` deploy of the `operator_purge` sqitch change and every
+single use are separate in-ticket gos naming the material (WV-06/ADR-181,
+WV-11/ADR-189; `docs/governance/true-deletion-and-purge.md`).*
+
+Two layers, one gate. A `sig.deletion-order/1` file names the material
+verbatim (no wildcards); a `sig.operator-authority/1` record under
+`registry/authorities/` is verified, never created (SIG-SEC-010). The run
+deletes named objects from the evidence / restricted / derived-artifact
+stores and calls `sig_purge_claims` — the ONE operator-only purge function,
+the sole SIG-STORE-011 exception — for named claim rows. Every run leaves a
+tombstone (category + date, never content), an audit record, the
+`sig.editorial-decision/1` entry for the public decision log, and a receipt.
+
+```bash
+# plan — validates the order + lists what it names (read-only)
+uv run sig-ops deletion plan --order <order.json> \
+    --registry "$SIG_RELEASE_REGISTRY" \
+    --evidence-store "$SIG_EVIDENCE_STORE" \
+    --restricted-store "$SIG_RESTRICTED_STORE" \
+    --artifact-store "$SIG_DERIVED_STORE"
+# execute — under the operator role + authority record; the claim leg
+# needs the spine DSN as the operator login (member of sig_purge_operator)
+uv run sig-ops deletion execute --order <order.json> --authority <name> \
+    --registry "$SIG_RELEASE_REGISTRY" \
+    --evidence-store "$SIG_EVIDENCE_STORE" \
+    --restricted-store "$SIG_RESTRICTED_STORE" \
+    --artifact-store "$SIG_DERIVED_STORE" \
+    --dsn "$SIG_SPINE_DSN"
+# the claim-row leg alone (same function, same refusals)
+uv run python -m db purge --dsn "$SIG_SPINE_DSN" \
+    --claim <uuid> --category <category> --authority-ref <go-ref>
+# verify — every named object must be absent (sig.probe-run/1)
+uv run sig-ops deletion verify --order <order.json> \
+    --registry "$SIG_RELEASE_REGISTRY" \
+    --evidence-store "$SIG_EVIDENCE_STORE" --dsn "$SIG_SPINE_DSN" \
+    --record-out <record.json>
+```
+
+The emitted decision entry
+(`registry/deletions/decision-entries/<order_id>.json`) is committed to
+`web/src/lib/editorial-decisions.ts` with the same go — the public log
+records the category and date, never the content. A claim any recorded
+decision references is refused (suppress instead, SIG-GOV-007); a claim and
+its correction purge together only when the go names both.
+
 ## Verifying this runbook
 
 ```bash
