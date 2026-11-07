@@ -1647,3 +1647,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/433_P37.12__keyed-us-511-wirin
   excluded = []
   go = "pre-authorised: GATE-G6 §4 (expiry: acceptance sitting)"
   rerun = "implement-spec spec=docs/tickets/433_P37.12__keyed-us-511-wiring.md live_verification=true"
+
+[[row]]
+key = "P37.70"
+kind = "leg"
+obligations = ["D-P37.70-1"]
+obligations_cell = '''D-P37.70-1'''
+gates_cell = '''`hosted` write; OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); window `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + the `sig-qldtraffic-key`/`sig-nsw-live-key` secrets (OP-13/HG-09) + the HG-03 flips'''
+operator_cell = '''OP-13 key registration + the HG-03 rights flips — then the leg-runner exports env + runs'''
+rerun_cell = '''`implement-spec spec=docs/tickets/434_P37.70__keyed-au-traffic-camera-apis.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P37.70-keyed-au-cameras"
+  obligations = ["D-P37.70-1"]
+  earliest = "inside `AR-3 + AR-2`, after OP-13 registration + the HG-03 flips"
+  excluded = []
+  go = "pre-authorised: GATE-G6 §4 (expiry: acceptance sitting)"
+  rerun = "implement-spec spec=docs/tickets/434_P37.70__keyed-au-traffic-camera-apis.md live_verification=true"

@@ -24,6 +24,23 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.70 — keyed AU traffic-camera API lanes wired behind env-declared
+  credentials (D-SOURCES.8-2, E4-R4c = b, OP-13; ADR-238):** the two
+  `keyed_api` enumerated rows — TMR's QLDTraffic `v1/webcams` and TfNSW's
+  Live Traffic `v1/live/cameras` — graduate to `[[targets]]` under two new
+  declared-contract GeoJSON kinds: `qldtraffic_geojson` (the `?apikey=`
+  credential rides the wire-only `auth_param` seam, never a recorded URL)
+  and `nsw_live_geojson` (the `Authorization: apikey` header). The strict
+  parse enforces `FeatureCollection`/Feature shape — and NSW's documented
+  `rights` member, whose absence is `ContentDrift`, never a silently
+  re-licensed read. The QLDTraffic lane replaces `camreg_qldc_au`'s gated
+  ArcGIS registry as QLD's authoritative lane (E4-R4c = b — recorded, not
+  deleted). Two gated `camreg_*` source rows (602 registered; every row
+  `ingestion_permitted=false`), `api_host` allowlist entries, the AU-NSW
+  detector extent, and paused cadence seats declaring the
+  `sig-qldtraffic-key`/`sig-nsw-live-key` Secret-Manager bindings complete
+  the wiring — the keyed live leg stays QUEUED under `D-P37.70-1` until
+  OP-13 registration + the HG-03 flips.
 - **P37.12 — keyed US 511 camera-API lanes wired behind env-declared
   credentials (D-SOURCES.7-2, OP-13; ADR-237):** the ten `keyed_api`/
   `access_restricted` enumerated 511 rows (FL, NY, AZ, NV, OH, PA, WI, AK,

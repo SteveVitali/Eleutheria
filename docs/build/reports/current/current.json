@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "0c773b7850a86e224a0d6cc0c1f37f8554c5c429",
-  "manifest_inputs": 1217,
+  "input_commit": "1c4fa8c3d22dcc847784f6777757910e41afbfe7",
+  "manifest_inputs": 1219,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P37.70",
     "lastCompleted": "P37.12",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.71",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.70,P37.71",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -26,18 +26,18 @@
     "updatedAt": "2026-11-07T02:20Z"
   },
   "counts": {
-    "obligations": 228,
-    "owed": 144,
-    "open": 141,
+    "obligations": 229,
+    "owed": 145,
+    "open": 142,
     "partial": 3,
     "terminal": 84,
-    "events": 739,
+    "events": 740,
     "transitions": 55,
     "coverage_assessments": 510,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 79,
+    "return_pass_rows": 80,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -11942,6 +11942,61 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P37.70-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P37.70-1:e0",
+      "kind": "V",
+      "owner": "the operator (OP-13 key registration + HG-03 flips) + the OM-19 leg-runner — the orchestrator's `r11/P37.70-live-<n>` dispatch",
+      "landing": "RETURN PASS — P37.70",
+      "landing_source": "return-pass-map/1",
+      "backlog_home": "BL-087",
+      "item": "The P37.70 named mutation (OM-20, GATE-G6 §4 pre-authorised): the keyed AU traffic-camera live legs — the two `sig-ingest-camreg-{qldtraffic,nsw-live}-au` job deployments + `sig-sched-*` trigger resumes on the rolled image, each keyed fetch producing captures + camera-registry claims on the hosted spine, and the +0 idempotent re-run count",
+      "unblocked_by": "owner: the operator (OP-13 key registration + HG-03 flips) + the OM-19 leg-runner — the orchestrator's `r11/P37.70-live-<n>` dispatch · trigger: `implement-spec spec=docs/tickets/434_P37.70__keyed-au-traffic-camera-apis.md live_verification=true` with `SIG_GCP_PROJECT` + ADC exported and the `sig-qldtraffic-key`/`sig-nsw-live-key` secrets provisioned, inside `AR-3 + AR-2`",
+      "verify": "a keyed `gcloud run jobs execute sig-ingest-camreg-<lane>-au` lands a run row with fetches/claims for its platform's camera registry; each lane's fetch record shows the credential-free URL (QLDTraffic's `?apikey=` rides only the wire request); an immediate re-run adds +0 rows; an unprovisioned lane records a `KeyNotProvisioned` refusal — zero egress",
+      "proxy": "the deterministic half is committed + fixture-verified (`tests/connectors/test_camera_registry_keyed.py` — graduation/expansion, the supersession record, zero-egress KeyNotProvisioned, wire-vs-recorded credential split, the strict declared-contract parsers incl. NSW's `rights` member, media-name exclusion, no-literal-in-tree); ADR-238 records the declared-contract GeoJSON approach; both cadence seats are `state = \"paused\"` with their `sig-*-key` bindings named",
+      "line": 1555,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "event_id": "D-P37.70-1:e0",
+          "obligation_id": "D-P37.70-1",
+          "ticket_id": "P37.70",
+          "backlog_home": "BL-087",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "expected_previous_event": null,
+          "observed_at": "2026-11-07",
+          "recorded_at": "2026-11-07",
+          "source_commit": "WORKTREE",
+          "owner": "the operator (OP-13 key registration + HG-03 flips) + the OM-19 leg-runner — the orchestrator's `r11/P37.70-live-<n>` dispatch",
+          "landing": "a keyed `gcloud run jobs execute sig-ingest-camreg-<lane>-au` lands a run row with fetches/claims for its platform's camera registry; each lane's fetch record shows the credential-free URL; an immediate re-run adds +0 rows; an unprovisioned lane records a `KeyNotProvisioned` refusal — inside `AR-3 + AR-2`, with `SIG_GCP_PROJECT` + ADC + the `sig-qldtraffic-key`/`sig-nsw-live-key` secrets provisioned",
+          "reason": "migration anchor appended by P37.70 (row 434) for the row it added — the named OM-20 mutation (GATE-G6 §4 names P37.70 verbatim 'Approve all 15', expires GATE-ACCEPT-R11) is QUEUED prepared_not_executed: the keyed AU traffic-camera live legs — the two sig-ingest-camreg-*-au job deployments + scheduler resumes + claim writes — SIG_GCP_PROJECT/SIG_QLDTRAFFIC_KEY/SIG_NSW_LIVE_KEY unset in the engineering dispatch and both source rows stay ingestion_permitted=false pending OP-13 (HG-09) + HG-03, never fabricated; the deterministic half (declared-contract GeoJSON kinds, the QLDTraffic supersession, cadence seats, ADR-238) is landed and fixture-verified",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/adr/ADR-238-keyed-au-traffic-camera-apis-geojson-declared-contracts.md",
+            "connectors/src/connectors/dot_511.py",
+            "connectors/src/connectors/runner.py",
+            "connectors/src/connectors/data/camera_registry_targets.toml",
+            "connectors/src/connectors/data/sources.toml",
+            "connectors/src/connectors/data/live_targets.toml",
+            "connectors/src/connectors/data/api_allowlist.toml",
+            "connectors/src/connectors/data/jurisdiction_extents.toml",
+            "ops/cadence.toml",
+            "tests/connectors/test_camera_registry_keyed.py"
+          ],
+          "anchor": {
+            "interpretation": "created",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "row_line": 1555,
+            "row_sha256": "068021445bdb062324924c7875008fed43fb615fe0055fbe7fce5a24e6c36a91"
+          }
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -12672,6 +12727,16 @@
         "rerun_cell": "`implement-spec spec=docs/tickets/433_P37.12__keyed-us-511-wiring.md live_verification=true`",
         "obligations": [
           "D-P37.12-1"
+        ]
+      },
+      {
+        "key": "P37.70",
+        "obligations_cell": "D-P37.70-1",
+        "gates_cell": "`hosted` write; OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); window `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + the `sig-qldtraffic-key`/`sig-nsw-live-key` secrets (OP-13/HG-09) + the HG-03 flips",
+        "operator_cell": "OP-13 key registration + the HG-03 rights flips — then the leg-runner exports env + runs",
+        "rerun_cell": "`implement-spec spec=docs/tickets/434_P37.70__keyed-au-traffic-camera-apis.md live_verification=true`",
+        "obligations": [
+          "D-P37.70-1"
         ]
       }
     ]
@@ -26731,10 +26796,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "8f4754125ad887c3b30d82af3799bf8c25a91fc993be85c5b3a08c007028dfca",
+  "manifest_sha256": "c3d965ca84ca241400026e623d28cc86da0cdd4ab3de533f3ad2138aca9e174a",
   "current_md": {
-    "lines": 145,
-    "bytes": 19657,
+    "lines": 146,
+    "bytes": 19785,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

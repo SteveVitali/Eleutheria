@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `0c773b7850a86e224a0d6cc0c1f37f8554c5c429` · inputs hashed: 1217 · wall-clock receipt: `receipt.json`
+> input_commit: `1c4fa8c3d22dcc847784f6777757910e41afbfe7` · inputs hashed: 1219 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -13,10 +13,10 @@
 
 ## Obligations
 
-- 228 obligations · **144 owed** (141 OPEN, 3 PARTIAL) · 84 terminal
-- 739 events (55 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 229 obligations · **145 owed** (142 OPEN, 3 PARTIAL) · 84 terminal
+- 740 events (55 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 144 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 145 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -103,6 +103,7 @@
 | P37.71 | D-P37.71-1 | `implement-spec spec=docs/tickets/429_P37.71__single-operator-deletion-and-purge-function.md live_verification=true` |
 | P37.11 | D-P37.11-1 | `implement-spec spec=docs/tickets/432_P37.11__sam-gov-sweep-resume.md live_verification=true` |
 | P37.12 | D-P37.12-1 | `implement-spec spec=docs/tickets/433_P37.12__keyed-us-511-wiring.md live_verification=true` |
+| P37.70 | D-P37.70-1 | `implement-spec spec=docs/tickets/434_P37.70__keyed-au-traffic-camera-apis.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 

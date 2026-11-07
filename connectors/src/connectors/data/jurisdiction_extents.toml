@@ -211,6 +211,12 @@ extent = [137.8, -29.3, 154.0, -9.0]
 note = "Queensland bound incl. the Torres Strait islands (declared detector extent)"
 
 [[extents]]
+code = "AU-NSW"
+scheme = "iso.3166_2"
+extent = [140.9, -37.6, 153.7, -28.0]
+note = "New South Wales bound (declared detector extent; P37.70 — the keyed TfNSW live-cameras lane)"
+
+[[extents]]
 code = "AU-TAS"
 scheme = "iso.3166_2"
 extent = [143.6, -43.8, 148.7, -39.3]

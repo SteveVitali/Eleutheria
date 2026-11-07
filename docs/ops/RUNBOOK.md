@@ -358,7 +358,9 @@ is their creation, which is not a rotation; `unknown` is the honest cell.
 | `sig-data-gov-key` | operator | `sig-ingest-rt` | `unknown` | upstream reissue → stdin version-add → next ingest run; `default-compute` revoke in-flight |
 | `sig-maproulette-api-key` | operator | — | `unknown` | **exposed in a session transcript (G1-12, accepted risk)**: no accessor binding today; it must be rotated before the MapRoulette contribution-back lane activates — the register cannot claim that rotation happened |
 | `sig-muckrock-refresh` | operator | `sig-ingest-rt` | `unknown` | upstream refresh-token reissue → stdin version-add → next ingest run; `default-compute` revoke in-flight |
+| `sig-nsw-live-key` | operator | `sig-ingest-rt` | `unknown` | declared, no version until OP-13 registers the key; upstream reissue → stdin version-add → next `sig-ingest-camreg-nsw-live-au` run |
 | `sig-openstates-key` | operator | `sig-ingest-rt` | `unknown` | upstream reissue → stdin version-add → next ingest run; `default-compute` revoke in-flight |
+| `sig-qldtraffic-key` | operator | `sig-ingest-rt` | `unknown` | declared, no version until OP-13 registers the key; upstream reissue → stdin version-add → next `sig-ingest-camreg-qldtraffic-au` run |
 | `sig-sam-gov-key` | operator | `sig-ingest-rt` | `unknown` | upstream reissue → stdin version-add → next ingest run; `default-compute` revoke in-flight |
 | `sig-us511-ak-key` | operator | `sig-ingest-rt` | `unknown` | declared, no version until OP-13 registers the key; upstream reissue → stdin version-add → next `sig-ingest-dot-511-ak` run |
 | `sig-us511-az-key` | operator | `sig-ingest-rt` | `unknown` | declared, no version until OP-13 registers the key; upstream reissue → stdin version-add → next `sig-ingest-dot-511-az` run |

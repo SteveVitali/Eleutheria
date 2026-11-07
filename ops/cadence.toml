@@ -751,6 +751,35 @@ state = "paused"
 secrets = { SIG_US511_NE_KEY = "sig-us511-ne-key" }
 note = "New England 511 (ME/NH/VT) Iteris/IBI-511 keyed cameras API (newengland511) — tri-state feed, jurisdiction sig.unresolved on the target."
 
+# --- P37.70 (D-SOURCES.8-2 / OP-13): the keyed AU traffic-camera lanes --------
+# Two graduated keyed lanes (data/camera_registry_targets.toml [[targets]]
+# kinds qldtraffic_geojson / nsw_live_geojson). Every row is declared
+# --paused AND its source row stays ingestion_permitted=false: the `secrets`
+# map is the wiring — the Secret-Manager name each SIG_*_KEY env binds to —
+# which the operator's OP-13 registration (HG-09) fills before the HG-03 flip
+# + the gated live leg. A paused row is skipped by the due dispatcher; an
+# unprovisioned key is a recorded KeyNotProvisioned refusal, zero egress.
+
+[[sources]]
+id = "camreg_qldtraffic_au"
+cadence = "monthly"
+cron = "5 5 28 * *"
+job = "sig-ingest-camreg-qldtraffic-au"
+scheduler = "sig-sched-camreg-qldtraffic-au"
+state = "paused"
+secrets = { SIG_QLDTRAFFIC_KEY = "sig-qldtraffic-key" }
+note = "QLDTraffic keyed webcams API (qld_qldtraffic_api) — the authoritative QLD lane replacing camreg_qldc_au (E4-R4c = b); key rides the ?apikey= wire param through the auth_param seam — never recorded in a URL (HG-09)."
+
+[[sources]]
+id = "camreg_nsw_live_au"
+cadence = "monthly"
+cron = "13 5 28 * *"
+job = "sig-ingest-camreg-nsw-live-au"
+scheduler = "sig-sched-camreg-nsw-live-au"
+state = "paused"
+secrets = { SIG_NSW_LIVE_KEY = "sig-nsw-live-key" }
+note = "TfNSW Live Traffic keyed cameras API (nsw_live_traffic_cameras); key rides the documented Authorization: apikey header — never the URL. The declared contract's `rights` member is the strict-parse licence check."
+
 # --- P26.9 (SOURCES.8): municipal / transit / non-US camera registries --------
 # Monthly registry refresh for the GL-GATE-06-resolved rows only — gated rows
 # get no job until their rights blocker resolves (D-SOURCES.8-1/-2).
@@ -1955,6 +1984,16 @@ reason = "D-P37.12-1: paused seat declared for the keyed 511 wave — the trigge
 name = "sig-sched-dot-511-newengland"
 disposition = "kept-declared-pin"
 reason = "D-P37.12-1: paused seat declared for the keyed 511 wave — the trigger was never deployed; the leg's dispatcher decision resolves it, never consolidated now"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-qldtraffic-au"
+disposition = "kept-declared-pin"
+reason = "D-P37.70-1: paused seat declared for the keyed AU traffic-camera wave — the trigger was never deployed; the leg's dispatcher decision resolves it, never consolidated now"
+
+[[retire_triggers]]
+name = "sig-sched-camreg-nsw-live-au"
+disposition = "kept-declared-pin"
+reason = "D-P37.70-1: paused seat declared for the keyed AU traffic-camera wave — the trigger was never deployed; the leg's dispatcher decision resolves it, never consolidated now"
 
 [[retire_triggers]]
 name = "sig-sched-camreg-batch-05"
