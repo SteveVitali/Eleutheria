@@ -409,6 +409,16 @@ def _validate() -> int:
         for msg in aggregate_violations:
             print(f"VALIDATION FAILED: P36.6 aggregate declaration: {msg}")
         return 1
+    # P37.12 (D-SOURCES.7-2): a keyed-API target must declare a SIG_* env-var
+    # NAME in `api_key_env` — and only keyed kinds may carry one — so a
+    # credential literal can never be committed as registry data (HG-09).
+    from .dot_511 import target_keyed_violations
+
+    keyed_violations = target_keyed_violations()
+    if keyed_violations:
+        for msg in keyed_violations:
+            print(f"VALIDATION FAILED: P37.12 keyed-API credential declaration: {msg}")
+        return 1
     # §26 rule 7 (P36.1a): the committed host-level opt-out register must parse
     # under the fail-closed rules — a malformed row is a validation failure,
     # never a silent "no opt-outs".

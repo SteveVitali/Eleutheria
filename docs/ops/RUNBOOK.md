@@ -360,6 +360,16 @@ is their creation, which is not a rotation; `unknown` is the honest cell.
 | `sig-muckrock-refresh` | operator | `sig-ingest-rt` | `unknown` | upstream refresh-token reissue → stdin version-add → next ingest run; `default-compute` revoke in-flight |
 | `sig-openstates-key` | operator | `sig-ingest-rt` | `unknown` | upstream reissue → stdin version-add → next ingest run; `default-compute` revoke in-flight |
 | `sig-sam-gov-key` | operator | `sig-ingest-rt` | `unknown` | upstream reissue → stdin version-add → next ingest run; `default-compute` revoke in-flight |
+| `sig-us511-ak-key` | operator | `sig-ingest-rt` | `unknown` | declared, no version until OP-13 registers the key; upstream reissue → stdin version-add → next `sig-ingest-dot-511-ak` run |
+| `sig-us511-az-key` | operator | `sig-ingest-rt` | `unknown` | declared, no version until OP-13 registers the key; upstream reissue → stdin version-add → next `sig-ingest-dot-511-az` run |
+| `sig-us511-ct-key` | operator | `sig-ingest-rt` | `unknown` | declared, no version until OP-13 registers the key; upstream reissue → stdin version-add → next `sig-ingest-dot-511-ct` run |
+| `sig-us511-fl-key` | operator | `sig-ingest-rt` | `unknown` | declared, no version until OP-13 registers the key; upstream reissue → stdin version-add → next `sig-ingest-dot-511-fl` run |
+| `sig-us511-ne-key` | operator | `sig-ingest-rt` | `unknown` | declared, no version until OP-13 registers the key; upstream reissue → stdin version-add → next `sig-ingest-dot-511-ne` (newengland511) run |
+| `sig-us511-nv-key` | operator | `sig-ingest-rt` | `unknown` | declared, no version until OP-13 registers the key; upstream reissue → stdin version-add → next `sig-ingest-dot-511-nvroads` run |
+| `sig-us511-ny-key` | operator | `sig-ingest-rt` | `unknown` | declared, no version until OP-13 registers the key; upstream reissue → stdin version-add → next `sig-ingest-dot-511-ny` run |
+| `sig-us511-oh-key` | operator | `sig-ingest-rt` | `unknown` | declared, no version until OP-13 registers the key; upstream reissue → stdin version-add → next `sig-ingest-dot-511-oh` run |
+| `sig-us511-pa-key` | operator | `sig-ingest-rt` | `unknown` | declared, no version until OP-13 registers the key; upstream reissue → stdin version-add → next `sig-ingest-dot-511-pa` run |
+| `sig-us511-wi-key` | operator | `sig-ingest-rt` | `unknown` | declared, no version until OP-13 registers the key; upstream reissue → stdin version-add → next `sig-ingest-dot-511-wi` run |
 | `sig-zenodo-client-id` | operator | `operator` | `unknown` | operator-run deposit credentials — no runtime consumer; rotate at the Zenodo console, update via stdin, next deposit uses it |
 | `sig-zenodo-client-secret` | operator | `operator` | `unknown` | as `sig-zenodo-client-id` |
 | `sig-zenodo-sandbox-token` | operator | `operator` | `unknown` | as `sig-zenodo-client-id`; sandbox posture — rotate before any real deposit anyway |

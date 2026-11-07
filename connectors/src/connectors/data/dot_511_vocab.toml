@@ -85,7 +85,13 @@
 # that failed its declared detector bound (axis_swap / null_island /
 # sign_flip / wrong_jurisdiction); a defect-marked point emits NO
 # device-point coordinate claims. Additive only.
-vocab_version = "2026.10.17"
+# 2026.11.07 (P37.12 / D-SOURCES.7-2): `DirectionOfTravel` direction alias
+# (the IBI-511 family's alternate direction column); media-blocklist names
+# for the keyed-API feed-content containers — `Views`/`CameraViews` (the
+# per-view image URL arrays), `Links`/`Href` (per-row link objects carrying
+# page/stream URLs). Values are recorded-excluded by name, never emitted.
+# Additive only.
+vocab_version = "2026.11.07"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `dot_511` connector may write ONLY the camera-registry surface — a
@@ -360,6 +366,9 @@ direction_fields = [
   "DirectionFacing",
   # P36.6 (ACQ-10): Tacoma AE's travel-direction label.
   "direction_of_travel",
+  # P37.12 (D-SOURCES.7-2): the IBI-511 keyed API family's alternate
+  # direction column (PEI-style `DirectionOfTravel` beside `Direction`).
+  "DirectionOfTravel",
 ]
 
 # --- the media blocklist ------------------------------------------------------
@@ -383,6 +392,11 @@ media_field_names = [
   # P26.16: device network fields + officer/editor person names on
   # batch layers — recorded on excluded_fields, never emitted.
   "ip_address", "ipaddress", "camera_ip_address_2", "cameraipaddress", "controlip", "switchip", "multisnsrip", "ptz_ip", "mac_address", "macaddress", "serialnumber", "serialnumberhousing", "serial_no", "encoderpath", "rtsp", "rtsp_uri", "rtmpt", "firmwareversion", "officer", "creator", "editor", "addedby", "modifiedby", "created_user", "last_edited_user", "enteredby", "lastmodifiedby", "lasteditor",
+  # P37.12 (D-SOURCES.7-2): the keyed 511 APIs' feed-content containers —
+  # the Iteris `Views` per-view image-URL array, OHGO's `CameraViews`
+  # (SmallUrl stills) and the `Links`/`Href` link objects on every row.
+  # Recorded-excluded by name; the feed content is never carried as a value.
+  "Views", "CameraViews", "Links", "Href",
 ]
 media_field_patterns = [
   "url", "image", "video", "snapshot", "screenshot", "hls", "stream", "thumb",

@@ -57,6 +57,7 @@ from .stages import (
     Connector,
     ContentDrift,
     FetchResult,
+    KeyNotProvisioned,
     RunContext,
     SchemaRefusal,
     ScreenedRefusal,
@@ -653,7 +654,13 @@ def _fetch_or_disappear(
     report.fetches += 1
     try:
         fetched = connector.fetch(ctx, target)
-    except (HostOptOut, ReservationRefused, ScreenedRefusal, SchemaRefusal) as exc:
+    except (
+        HostOptOut,
+        ReservationRefused,
+        ScreenedRefusal,
+        SchemaRefusal,
+        KeyNotProvisioned,
+    ) as exc:
         # P36.1a (§26 rule 7 / SIG-INGEST-046c): the two rights refusals are
         # recorded dispositions on ANY target — a host-level opt-out was
         # refused with zero egress (before the robots probe); a response

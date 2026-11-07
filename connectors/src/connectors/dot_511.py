@@ -48,6 +48,7 @@ Rules this adapter upholds:
 from __future__ import annotations
 
 import json
+import os
 import re
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
@@ -82,6 +83,7 @@ from .stages import (
     Connector,
     ContentDrift,
     FetchResult,
+    KeyNotProvisioned,
     RunContext,
     register,
 )
@@ -1279,6 +1281,124 @@ def _arcgis_outstatistics_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
     return out
 
 
+# --- the keyed 511 JSON API kinds (P37.12 / D-SOURCES.7-2, OP-13) --------------
+#
+# Two declared-contract, fail-closed kinds for the graduated keyed 511 rows:
+#
+# * ``iteris_511_rows`` — the Iteris/IBI-511 platform's ``/api/v2/get/cameras``
+#   family (fl511.com, 511ny.org, az511.gov, nvroads.com, 511pa.com, 511wi.gov,
+#   511.alaska.gov, ctroads.org, newengland511.org): a keyed developer API that
+#   answers a top-level JSON ARRAY of camera objects (the published schema of
+#   the sibling IBI-511 platforms — Id/Latitude/Longitude/Roadway/Direction/
+#   Location/Views[]). The ``key`` query param is the platform's only documented
+#   credential form — it rides the wire URL through the fetcher's ``auth_param``
+#   seam and is NEVER recorded (HG-09; the SAM.gov X-Api-Key discipline).
+# * ``ohgo_511_cameras`` — ODOT's OHGO public API ``/api/v1/cameras``: the
+#   documented ApiResult envelope ``{Results: [...], TotalResultCount,
+#   CurrentResultCount, ...}`` carrying camera-site objects
+#   ``{Id, Latitude, Longitude, Location, Description, CameraViews[]}``;
+#   the documented credential form is the ``Authorization: APIKEY <key>``
+#   request header (or ``?api-key=`` — the header is used so no secret ever
+#   lands in a URL). A response whose ``CurrentResultCount`` is below
+#   ``TotalResultCount`` is a TRUNCATED capture — ContentDrift, never a
+#   silently partial registry.
+#
+# Neither payload shape has been observed (every 2026-09-17 probe answered
+# 'Invalid Key'/401): the contract is DECLARED from the platforms' published
+# API documentation, and the strict parse fails closed as ContentDrift on any
+# deviation — a keyed run that meets a different shape stops and records.
+#
+#: The keyed kinds a registry ``[[targets]]`` row may declare.
+_KEYED_KINDS = frozenset({"iteris_511_rows", "ohgo_511_cameras"})
+
+#: A target's ``api_key_env`` declares the env-var NAME the operator's key is
+#: read from at fetch time (Secret-Manager bound in hosted runs, OP-13/HG-09).
+#: The value is never committed: a row carrying anything but a ``SIG_*`` env
+#: NAME (e.g. a key literal) is a registry defect — fail closed.
+_ENV_NAME_RE = re.compile(r"SIG_[A-Z0-9_]+")
+
+
+class KeyedSpecNotDeclared(Exception):
+    """A registry defect: a keyed-API target without a well-formed credential
+    declaration.
+
+    Deliberately NOT a per-record rejection: a keyed row without its
+    ``api_key_env`` env-name — or carrying a non-name value — is a broken
+    registry row and the run fails loudly rather than fetching unkeyed or
+    smuggling a literal credential into the committed table (HG-09).
+    """
+
+
+def _iteris_511_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Expand one Iteris/IBI-511 row into its single declared fetch target.
+
+    ``format=json`` is the documented response-format parameter (declared,
+    default json); the ``key`` credential is appended at fetch time through
+    ``auth_param`` and never lands in a recorded URL. Single-page by
+    contract: the cameras endpoint returns the full inventory in one JSON
+    array.
+    """
+    base = str(row["layer_url"]).rstrip("/")
+    return [{"url": f"{base}?format=json", "page": 0, "page_count": 1}]
+
+
+def _ohgo_511_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Expand one OHGO row into its single declared fetch target.
+
+    The key rides the documented ``Authorization: APIKEY`` header at fetch
+    time — the URL stays credential-free by construction (HG-09). The
+    endpoint is fetched un-paginated: the ApiResult envelope's own
+    ``CurrentResultCount``/``TotalResultCount`` is the truncation detector
+    the strict parse enforces.
+    """
+    base = str(row["layer_url"]).rstrip("/")
+    return [{"url": base, "page": 0, "page_count": 1}]
+
+
+def assert_target_keyed_spec(row: Mapping[str, Any]) -> str:
+    """The keyed target's declared ``api_key_env`` NAME, validated fail-closed.
+
+    Keyed kinds REQUIRE the declaration; a non-``SIG_*`` value — anything that
+    could be a credential literal — is refused as a registry defect (HG-09).
+    Non-keyed kinds return ``""`` (the field is inert elsewhere).
+    """
+    kind = str(row.get("kind") or "").strip()
+    env_name = str(row.get("api_key_env") or "").strip()
+    if kind not in _KEYED_KINDS:
+        if env_name:
+            raise KeyedSpecNotDeclared(
+                f"registry target {row.get('id')!r} declares api_key_env on a "
+                f"non-keyed kind {kind!r} — the credential declaration is "
+                f"keyed-kind data only"
+            )
+        return ""
+    if not _ENV_NAME_RE.fullmatch(env_name):
+        raise KeyedSpecNotDeclared(
+            f"registry target {row.get('id')!r} (kind {kind!r}) declares "
+            f"api_key_env={env_name!r} — the value must be a SIG_* env-var "
+            "NAME the operator provisions (OP-13/HG-09); a key literal in "
+            "the registry is refused by construction"
+        )
+    return env_name
+
+
+def target_keyed_violations() -> list[str]:
+    """``sig-connectors validate`` rules for the keyed-API declarations (P37.12).
+
+    Every ``iteris_511_rows``/``ohgo_511_cameras`` row must declare a
+    ``SIG_*`` env-var NAME in ``api_key_env`` — and no other kind may carry
+    one — so a credential literal can never be committed as registry data.
+    """
+    violations: list[str] = []
+    for row in target_table().get("targets", []):
+        label = f"target {row.get('id')!r} (source {row.get('source_id')!r})"
+        try:
+            assert_target_keyed_spec(row)
+        except KeyedSpecNotDeclared as exc:
+            violations.append(f"{label}: {exc}")
+    return violations
+
+
 def registry_targets(source_id: str) -> list[dict[str, Any]]:
     """The live fetch targets for one camera-registry source (identifiers, not content).
 
@@ -1322,6 +1442,11 @@ def expand_registry_rows(
         # and ArcGIS outStatistics queries emitting enforcement_count rows.
         "socrata_aggregate": _socrata_aggregate_pages,
         "arcgis_outstatistics": _arcgis_outstatistics_pages,
+        # P37.12 (D-SOURCES.7-2): the keyed 511 JSON API lanes — declared
+        # contract, single declared page each, credential env-resolved at
+        # fetch time (never in the registry, never in a recorded URL).
+        "iteris_511_rows": _iteris_511_pages,
+        "ohgo_511_cameras": _ohgo_511_pages,
     }
     out: list[dict[str, Any]] = []
     for row in rows:
@@ -1380,6 +1505,10 @@ def expand_registry_rows(
         # at expansion — a broken declaration is a registry defect, never a
         # guessed emit.
         aggregate = assert_target_aggregate(row)
+        # P37.12 (D-SOURCES.7-2): a keyed target's ``api_key_env`` env-var
+        # NAME is validated fail-closed here — a missing declaration or a
+        # non-name value (a possible key literal) is a registry defect.
+        api_key_env = assert_target_keyed_spec(row)
         declared_fields = {
             key: str(row.get(key)).strip()
             for key in ("camera_ref_field", "deployment_date_field")
@@ -1428,6 +1557,10 @@ def expand_registry_rows(
                 }
             for key, value in declared_fields.items():
                 target[key] = value
+            if api_key_env:
+                # The env-var NAME only — the credential itself is resolved
+                # from the environment at fetch time and never recorded.
+                target["api_key_env"] = api_key_env
             if where:
                 target["where"] = where
             if rpm is not None:
@@ -2481,9 +2614,28 @@ class Dot511Connector(Connector):
         return list(ctx.parameters.get("targets", []))
 
     def fetch(self, ctx: RunContext, target: Mapping[str, Any]) -> FetchResult:
-        """Obtain bytes for one target through the shared politeness layer only."""
+        """Obtain bytes for one target through the shared politeness layer only.
+
+        A keyed target (P37.12) resolves its credential from the declared
+        env var AT REQUEST TIME: absent, the fetch refuses before any egress
+        as :class:`KeyNotProvisioned` (recorded per-target — the operator's
+        OP-13 registration is the only route to the key). The Iteris ``key``
+        rides the wire URL through the fetcher's ``auth_param`` seam and is
+        never recorded; OHGO's ``APIKEY`` rides the documented Authorization
+        header so no credential ever lands in a URL (HG-09).
+        """
         assert ctx.fetcher is not None, "connectors fetch only through the shared layer"
-        return ctx.fetcher.fetch(str(target["url"]))
+        url = str(target["url"])
+        kind = str(target.get("kind") or "")
+        if kind in _KEYED_KINDS:
+            env_name = str(target.get("api_key_env") or "")
+            key = os.environ.get(env_name, "").strip()
+            if not key:
+                raise KeyNotProvisioned(str(target.get("id") or url), env_name)
+            if kind == "iteris_511_rows":
+                return ctx.fetcher.fetch(url, auth_param=("key", key))
+            return ctx.fetcher.fetch(url, headers={"Authorization": f"APIKEY {key}"})
+        return ctx.fetcher.fetch(url)
 
     # -- interpretation (pure functions of the capture) --
     def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:
@@ -2502,6 +2654,10 @@ class Dot511Connector(Connector):
             # JSON row array — the rows just carry the grouped subject/period/
             # count aliases the committed $select produces.
             return self._parse_socrata(ctx, capture, data, target)
+        if kind == "iteris_511_rows":
+            return self._parse_iteris_511(ctx, capture, data)
+        if kind == "ohgo_511_cameras":
+            return self._parse_ohgo_511(ctx, capture, data)
         try:
             doc = json.loads(data)
         except (ValueError, TypeError) as exc:
@@ -2603,6 +2759,115 @@ class Dot511Connector(Connector):
             )
         return {"kind": "socrata_rows", "payload": {"rows": doc}, "capture": capture}
 
+    def _parse_iteris_511(
+        self, ctx: RunContext, capture: CaptureRef, data: bytes
+    ) -> dict[str, Any]:
+        """Structure a captured Iteris/IBI-511 cameras payload (pure, P37.12).
+
+        The declared contract (the platform family's published API docs —
+        ``/api/v2/get/cameras?key=…&format=json``): a **top-level JSON array**
+        of camera objects. A keyed-out answer (``{"Message": "Invalid Key"}``
+        / ``{"Error": "…"}``), a non-JSON body (an SPA shell or WAF page —
+        several states are recorded migrating platforms), a non-array payload,
+        or a non-object row is :class:`ContentDrift` — recorded loud, never an
+        opaque crash and never a fabricated registry row.
+        """
+        try:
+            doc = json.loads(data)
+        except (ValueError, TypeError) as exc:
+            head = data[:64] if isinstance(data, (bytes, bytearray)) else str(data)[:64]
+            raise ContentDrift(
+                ctx.source.id,
+                "Iteris 511 API returned non-JSON content (SPA shell / WAF page)",
+                details=f"{len(data)} bytes; starts {head!r} ({exc.__class__.__name__})",
+            ) from exc
+        if isinstance(doc, Mapping):
+            raise ContentDrift(
+                ctx.source.id,
+                "Iteris 511 API returned an error envelope",
+                details=(
+                    f"Message={str(doc.get('Message') or doc.get('Error'))[:120]!r} "
+                    f"(top-level keys: {sorted(doc)})"
+                ),
+            )
+        if not isinstance(doc, list):
+            raise ContentDrift(
+                ctx.source.id,
+                "Iteris 511 API payload is not a camera row array",
+                details=f"got {type(doc).__name__}",
+            )
+        for index, row in enumerate(doc):
+            if not isinstance(row, Mapping):
+                raise ContentDrift(
+                    ctx.source.id,
+                    "an Iteris 511 camera row is not an object",
+                    details=f"rows[{index}] is {type(row).__name__}",
+                )
+        return {"kind": "iteris_511_rows", "payload": {"rows": doc}, "capture": capture}
+
+    def _parse_ohgo_511(self, ctx: RunContext, capture: CaptureRef, data: bytes) -> dict[str, Any]:
+        """Structure a captured OHGO ApiResult payload (pure, P37.12).
+
+        The declared contract (the platform's published docs —
+        ``/api/v1/cameras`` + ``Authorization: APIKEY``): a JSON object with a
+        ``Results`` row array and the ``TotalResultCount`` /
+        ``CurrentResultCount`` integrity counters. A truncated page
+        (``CurrentResultCount < TotalResultCount`` — the endpoint paginated
+        under the declared single-page contract), an error result, a non-JSON
+        body, or a non-object row is :class:`ContentDrift` — a partial camera
+        inventory is never emitted as complete.
+        """
+        try:
+            doc = json.loads(data)
+        except (ValueError, TypeError) as exc:
+            head = data[:64] if isinstance(data, (bytes, bytearray)) else str(data)[:64]
+            raise ContentDrift(
+                ctx.source.id,
+                "OHGO API returned non-JSON content (error / WAF page)",
+                details=f"{len(data)} bytes; starts {head!r} ({exc.__class__.__name__})",
+            ) from exc
+        if not isinstance(doc, Mapping):
+            raise ContentDrift(
+                ctx.source.id,
+                "OHGO API payload is not an ApiResult object",
+                details=f"got {type(doc).__name__}",
+            )
+        rows = doc.get("Results")
+        if not isinstance(rows, list):
+            raise ContentDrift(
+                ctx.source.id,
+                "OHGO ApiResult carries no 'Results' row array",
+                details=f"top-level keys: {sorted(doc)}",
+            )
+        try:
+            total = int(str(doc.get("TotalResultCount")))
+            current = int(str(doc.get("CurrentResultCount")))
+        except (TypeError, ValueError) as exc:
+            raise ContentDrift(
+                ctx.source.id,
+                "OHGO ApiResult lacks integer TotalResultCount/CurrentResultCount",
+                details=f"TotalResultCount={doc.get('TotalResultCount')!r} "
+                f"CurrentResultCount={doc.get('CurrentResultCount')!r}",
+            ) from exc
+        if current < total:
+            raise ContentDrift(
+                ctx.source.id,
+                "OHGO ApiResult is a truncated page under the declared single-page contract",
+                details=(
+                    f"CurrentResultCount={current} < TotalResultCount={total} — "
+                    "the endpoint paginated; the declared contract is broken, "
+                    "never emit a partial camera inventory"
+                ),
+            )
+        for index, row in enumerate(rows):
+            if not isinstance(row, Mapping):
+                raise ContentDrift(
+                    ctx.source.id,
+                    "an OHGO camera row is not an object",
+                    details=f"Results[{index}] is {type(row).__name__}",
+                )
+        return {"kind": "ohgo_511_cameras", "payload": {"rows": rows}, "capture": capture}
+
     def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
         """Raw camera records with row locators, media fields excluded by name (P2).
 
@@ -2619,7 +2884,7 @@ class Dot511Connector(Connector):
         target_kind = str(target.get("kind") or "")
         is_aggregate = target_kind in _AGGREGATE_KINDS
         out: list[Mapping[str, Any]] = []
-        if parsed.get("kind") == "socrata_rows":
+        if parsed.get("kind") in ("socrata_rows", "iteris_511_rows", "ohgo_511_cameras"):
             rows = doc["rows"]
             for index, row in enumerate(rows):
                 if not isinstance(row, Mapping):
@@ -2835,6 +3100,9 @@ _EXTRACTION_METHODS = {
     "socrata_rows": "socrata_rows_json",
     "socrata_aggregate": "socrata_rows_json",
     "arcgis_outstatistics": "arcgis_feature_json",
+    # P37.12 (D-SOURCES.7-2): the keyed 511 JSON API lanes.
+    "iteris_511_rows": "iteris_511_rows_json",
+    "ohgo_511_cameras": "ohgo_511_result_json",
 }
 
 

@@ -56,10 +56,10 @@ from __future__ import annotations
 
 import time
 from collections.abc import Callable, Iterable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from typing import Any, Protocol, runtime_checkable
-from urllib.parse import urlsplit
+from urllib.parse import urlencode, urlsplit
 from urllib.robotparser import RobotFileParser
 
 from policy.crawler import (
@@ -457,6 +457,7 @@ class PoliteFetcher:
         *,
         headers: Mapping[str, str] | None = None,
         body: bytes | None = None,
+        auth_param: tuple[str, str] | None = None,
     ) -> FetchResult:
         """Fetch ``url`` politely: robots-checked, rate-limited, UA-identified.
 
@@ -466,6 +467,17 @@ class PoliteFetcher:
         endpoints, §23.5) through the shared politeness layer rather than an HTTP
         client of its own (SIG-INGEST-011). Supplying a credential this way is
         *authentication*, not access-control circumvention (Rule 4 / SIG-INGEST-013).
+
+        ``auth_param`` (P37.12, D-SOURCES.7-2) carries a **query-parameter
+        credential** — e.g. the Iteris/IBI-511 ``?key=<developer key>`` the
+        platform's published API documents and offers no header form for. The
+        pair is appended to the WIRE url only: every recorded surface — the
+        opt-out log, ``conduct_decisions``, the robots verdict, ``per_fetch``
+        telemetry, the refusal/reservation records, and the returned
+        ``FetchResult.url`` that becomes the capture's ``source_uri`` — keeps
+        the credential-free ``url``. A keyed query string is a secret (HG-09):
+        it must never land in a run record, a capture URI or claim evidence,
+        the same discipline as the ``X-Api-Key`` header pattern.
 
         A non-``None`` ``body`` makes the request a **POST** (a documented
         API-mode pattern — e.g. USAspending's ``spending_by_award`` sub-award
@@ -526,9 +538,17 @@ class PoliteFetcher:
             kwargs["headers"] = headers
         if body is not None:
             kwargs["body"] = body
+        # The wire URL carries the credential (if any); every record below —
+        # conduct decisions, telemetry, refusals, FetchResult.url — keeps the
+        # credential-free ``url`` (HG-09; see the auth_param contract above).
+        wire_url = url
+        if auth_param is not None:
+            name, value = auth_param
+            sep = "&" if "?" in url else "?"
+            wire_url = f"{url}{sep}{urlencode({name: value})}"
         t0 = time.monotonic()
         try:
-            result = self._transport.request(url, user_agent=self._ua, **kwargs)
+            result = self._transport.request(wire_url, user_agent=self._ua, **kwargs)
         except Exception:
             # P35.34: a transport-level failure is still an issued egress —
             # recorded with its outcome, status/bytes honestly absent.
@@ -584,6 +604,11 @@ class PoliteFetcher:
                 "SIG does not defeat challenges (SIG-INGEST-013) — recorded, not retried.",
                 status=result.status,
             )
+        if auth_param is not None:
+            # The transport reports the WIRE url it was asked for; the recorded
+            # FetchResult.url — the future capture source_uri — keeps the
+            # credential-free url (HG-09; see the auth_param contract above).
+            result = replace(result, url=url)
         return result
 
 

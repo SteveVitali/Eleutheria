@@ -2426,3 +2426,38 @@ fields = [
   { field = "technology", literal = "security cameras", value = "surveillance cameras" },
   { field = "posted_date", literal = "July 25, 2024", value = "2024-07-25" },
 ]
+
+# --- P37.12 (D-SOURCES.7-2 / OP-13): the keyed US 511 JSON API lanes --------
+# Same "dot_511_targets" kind — each source resolves its live targets from the
+# graduated keyed [[targets]] rows of data/dot_511_targets.toml. The key comes
+# from the row's api_key_env at fetch time (HG-09 — never committed); an
+# unprovisioned env is a recorded KeyNotProvisioned refusal, zero egress.
+[dot_511_fl]
+kind = "dot_511_targets"
+
+[dot_511_ny]
+kind = "dot_511_targets"
+
+[dot_511_az]
+kind = "dot_511_targets"
+
+[dot_511_nvroads]
+kind = "dot_511_targets"
+
+[dot_511_oh]
+kind = "dot_511_targets"
+
+[dot_511_pa]
+kind = "dot_511_targets"
+
+[dot_511_wi]
+kind = "dot_511_targets"
+
+[dot_511_ak]
+kind = "dot_511_targets"
+
+[dot_511_ct]
+kind = "dot_511_targets"
+
+[dot_511_newengland]
+kind = "dot_511_targets"

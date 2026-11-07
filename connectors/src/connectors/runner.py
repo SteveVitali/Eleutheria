@@ -305,6 +305,21 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "dot_511_mo": "dot_511",
     "dot_511_tx": "dot_511",
     "dot_511_md": "dot_511",
+    # P37.12 (D-SOURCES.7-2 / OP-13): the ten graduated keyed US 511 JSON API
+    # sources (Iteris/IBI-511 + OHGO). All stay ingestion_permitted=false —
+    # the mapping makes the lane routable without making the source loadable;
+    # the operator's HG-03 flip is the only route to a live fetch, and an
+    # unprovisioned api_key_env is a recorded KeyNotProvisioned refusal.
+    "dot_511_fl": "dot_511",
+    "dot_511_ny": "dot_511",
+    "dot_511_az": "dot_511",
+    "dot_511_nvroads": "dot_511",
+    "dot_511_oh": "dot_511",
+    "dot_511_pa": "dot_511",
+    "dot_511_wi": "dot_511",
+    "dot_511_ak": "dot_511",
+    "dot_511_ct": "dot_511",
+    "dot_511_newengland": "dot_511",
     # P36.4 (ACQ-08): R11 official camera layers — five new gated `dot_511_*`
     # sources (de/vt/wv/mi/nc) plus three gated municipal `camreg_*` sources
     # (Lincoln/Omaha/Hyattsville); camreg_denver_co and camreg_seattle_wa were

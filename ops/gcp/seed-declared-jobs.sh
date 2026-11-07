@@ -624,15 +624,13 @@ done <<<"${ROWS}"
 date -u +%Y-%m-%dT%H:%M:%SZ > "${EVIDENCE_DIR}/post/date-end.txt"
 _sha256_rec "${EVIDENCE_DIR}/post/date-end.txt" >> "${EVIDENCE_DIR}/sha256s.txt"
 
-# The declared expected count is read from ops/iam_identities.toml (the
-# declaration is the source of truth — a drift there refuses loudly).
-EXPECTED_COUNT="$(cd "${_repo}" && uv run python - <<'PY'
-import tomllib
-with open("ops/iam_identities.toml", "rb") as fh:
-    doc = tomllib.load(fh)
-print(doc.get("expected_job_count", 0))
-PY
-)"
+# The poststate fleet target is THIS leg's contract — the 100-job fleet it was
+# written to leave (the 88 prior jobs + the 12 it seeds), never the live
+# iam pin: P37.12 declared ten keyed US 511 seats paused-not-yet-deployed
+# (pin 100 → 110), and this leg's verify must not refuse on a declaration
+# its own scope never created. A drift on the twelve contract rows or the
+# fleet size still refuses loudly.
+EXPECTED_COUNT=100
 _log "-- verifying: fleet count == declared ${EXPECTED_COUNT}, the twelve specs, PAUSED triggers, no executions --"
 uv run python - "${EVIDENCE_DIR}" "${EXPECTED_COUNT}" "${IMAGE}" \
     "${COMPUTE_SA}" "${SCHED_SA_EMAIL}" "${SIG_GCP_REGION}" "${SIG_GCP_PROJECT}" \

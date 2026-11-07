@@ -528,50 +528,227 @@ observed_count = 0
 enum_source = "r11-acq-01:AP-T2-105"
 notes = "ACQ-01 generated target (plan AP-T2-105, cand I5-C018). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
 technology = "fixed-camera-ptz"
-[[enumerated]]
+
+# --- P37.12 / D-SOURCES.7-2 (OP-13): the keyed US 511 JSON API lanes ---------
+# The ten `keyed_api`/`access_restricted` [[enumerated]] rows graduated to
+# [[targets]]: the connector wires the credential per-row through `api_key_env`
+# (the SIG_* env-var NAME — the operator registers the keys in Secret Manager,
+# OP-13/HG-09; no secret is ever committed). Absent the env binding a fetch
+# refuses as KeyNotProvisioned — zero egress, recorded per-target.
+#
+# DECLARED CONTRACT, NOT OBSERVED: every 2026-09-17 probe answered
+# 'Invalid Key'/401, so the payload contract below is declared from the
+# platform families' published API documentation — the Iteris/IBI-511
+# `api/v2/get/cameras` top-level JSON camera array (sibling-platform docs:
+# 511.alberta.ca, 511.gov.pe.ca) and OHGO's documented ApiResult envelope +
+# `Authorization: APIKEY` header. The strict parse fails closed as
+# ContentDrift on any deviation — a keyed run that meets a different shape
+# stops and records (OM-18).
+#
+# NOTE (recorded third-party, unverified — web 2026-11-07): reports indicate
+# some Iteris states are migrating to the Castle Rock "511x" platform behind
+# developer-access agreements; a migrated host answers drift, never a silent
+# emit. The 2026-09-17 keyed probe facts stay recorded on each row.
+#
+# Licence lead (all rows): LicenseRef-PublicRecord-FactualCompilation — the
+# GL-GATE-07 US public-record basis; every source row stays GATED
+# (ingestion_permitted=false) — the operator's rights flip is the only route
+# to a live fetch.
+
+[[targets]]
 id = "fl511_api"
-state = "FL"
+source_id = "dot_511_fl"
+kind = "iteris_511_rows"
 platform = "state_511_api"
+axis_order = "lon-lat"
+layer_url = "https://fl511.com/api/v2/get/cameras"
 url = "https://fl511.com/api/v2/get/cameras"
+api_key_env = "SIG_US511_FL_KEY"
+agency = "Florida Department of Transportation (FL511)"
+operator = "Florida Department of Transportation"
+state = "FL"
+jurisdiction_scheme = "us.state_abbr"
+coordinate_mode = "fields"
+technology = "fixed-camera-ptz"
 enum_source = "vendor_platform_probe"
-status = "keyed_api"
-note = "Iteris-platform 511 API answers HTTP 400 '<Error>Invalid Key</Error>' without a key (v1 paths 404). Keyed public API — HG-09 credential act owed."
+rights_note = "Iteris/IBI-511 keyed developer API; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US). Source row stays gated."
+notes = "Graduated from [[enumerated]] (P37.12 / D-SOURCES.7-2): the 2026-09-17 probe answered HTTP 400 '<Error>Invalid Key</Error>' without a key (v1 paths 404) — a keyed public API on the Iteris/IBI-511 platform; the payload contract is DECLARED from the platform family's published docs (top-level JSON camera array), never observed."
 
-[[enumerated]]
+[[targets]]
 id = "511ny_api"
-state = "NY"
+source_id = "dot_511_ny"
+kind = "iteris_511_rows"
 platform = "state_511_api"
+axis_order = "lon-lat"
+layer_url = "https://511ny.org/api/v2/get/cameras"
 url = "https://511ny.org/api/v2/get/cameras"
+api_key_env = "SIG_US511_NY_KEY"
+agency = "New York State Department of Transportation (511NY)"
+operator = "New York State Department of Transportation"
+state = "NY"
+jurisdiction_scheme = "us.state_abbr"
+coordinate_mode = "fields"
+technology = "fixed-camera-ptz"
 enum_source = "vendor_platform_probe"
-status = "keyed_api"
-note = "Iteris-platform 511 API answers HTTP 400 'Invalid Key' — keyed."
+rights_note = "Iteris/IBI-511 keyed developer API; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US). Source row stays gated."
+notes = "Graduated from [[enumerated]] (P37.12 / D-SOURCES.7-2): the 2026-09-17 probe answered HTTP 400 'Invalid Key'. Recorded third-party, unverified (web 2026-11-07): 511ny.org reportedly cut over to the Castle Rock '511x' platform ~2026-09-24..30 behind a Developer Access Agreement — a keyed run answers ContentDrift on any non-array payload, never a silent emit."
 
-[[enumerated]]
+[[targets]]
 id = "az511_api"
-state = "AZ"
+source_id = "dot_511_az"
+kind = "iteris_511_rows"
 platform = "state_511_api"
+axis_order = "lon-lat"
+layer_url = "https://az511.gov/api/v2/get/cameras"
 url = "https://az511.gov/api/v2/get/cameras"
+api_key_env = "SIG_US511_AZ_KEY"
+agency = "Arizona Department of Transportation (AZ511)"
+operator = "Arizona Department of Transportation"
+state = "AZ"
+jurisdiction_scheme = "us.state_abbr"
+coordinate_mode = "fields"
+technology = "fixed-camera-ptz"
 enum_source = "vendor_platform_probe"
-status = "keyed_api"
-note = "Iteris-platform 511 API answers HTTP 400 'Invalid Key' — keyed."
+rights_note = "Iteris/IBI-511 keyed developer API; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US). Source row stays gated."
+notes = "Graduated from [[enumerated]] (P37.12 / D-SOURCES.7-2): the 2026-09-17 probe answered HTTP 400 'Invalid Key' — the declared Iteris/IBI-511 row-array contract applies, never observed."
 
-[[enumerated]]
+[[targets]]
 id = "nvroads_api"
-state = "NV"
+source_id = "dot_511_nvroads"
+kind = "iteris_511_rows"
 platform = "state_511_api"
+axis_order = "lon-lat"
+layer_url = "https://www.nvroads.com/api/v2/get/cameras"
 url = "https://www.nvroads.com/api/v2/get/cameras"
+api_key_env = "SIG_US511_NV_KEY"
+agency = "Nevada Department of Transportation (NV Roads / 511)"
+operator = "Nevada Department of Transportation"
+state = "NV"
+jurisdiction_scheme = "us.state_abbr"
+coordinate_mode = "fields"
+technology = "fixed-camera-ptz"
 enum_source = "vendor_platform_probe"
-status = "keyed_api"
-note = "Iteris-platform 511 API answers HTTP 400 'Invalid Key' — keyed."
+rights_note = "Iteris/IBI-511 keyed developer API; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US). Source row stays gated."
+notes = "Graduated from [[enumerated]] (P37.12 / D-SOURCES.7-2): the 2026-09-17 probe answered HTTP 400 'Invalid Key'. Carries its own source row (dot_511_nvroads) — a keyed target never shares a source with the unkeyed ITS_ATM ArcGIS target under dot_511_nv, so an unprovisioned key is a recorded refusal on this lane alone."
 
-[[enumerated]]
+[[targets]]
 id = "ohgo_api"
-state = "OH"
+source_id = "dot_511_oh"
+kind = "ohgo_511_cameras"
 platform = "state_511_api"
+axis_order = "lon-lat"
+layer_url = "https://publicapi.ohgo.com/api/v1/cameras"
 url = "https://publicapi.ohgo.com/api/v1/cameras"
+api_key_env = "SIG_US511_OH_KEY"
+agency = "Ohio Department of Transportation (OHGO)"
+operator = "Ohio Department of Transportation"
+state = "OH"
+jurisdiction_scheme = "us.state_abbr"
+coordinate_mode = "fields"
+technology = "fixed-camera-ptz"
 enum_source = "vendor_platform_probe"
-status = "access_restricted"
-note = "OHGO public API answers HTTP 401 'API key required' with a documentation link — keyed public API (robots 404 → no_policy_4xx); HG-09 credential act owed."
+rights_note = "OHGO public API — the published intro states ODOT data 'is considered public domain and therefore freely available' (publicapi.ohgo.com); licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US). Source row stays gated."
+notes = "Graduated from [[enumerated]] (P37.12 / D-SOURCES.7-2): the 2026-09-17 probe answered HTTP 401 'API key required' (robots 404 → no_policy_4xx). The key rides the documented 'Authorization: APIKEY <key>' header — the platform's own documented alternative to ?api-key= — so no credential ever lands in a URL. The ApiResult envelope's TotalResultCount/CurrentResultCount is the truncation detector the strict parse enforces; the contract is DECLARED from the published docs (publicapi.ohgo.com/docs), never observed."
+
+[[targets]]
+id = "511pa"
+source_id = "dot_511_pa"
+kind = "iteris_511_rows"
+platform = "state_511_api"
+axis_order = "lon-lat"
+layer_url = "https://511pa.com/api/v2/get/cameras"
+url = "https://511pa.com/api/v2/get/cameras"
+api_key_env = "SIG_US511_PA_KEY"
+agency = "Pennsylvania Department of Transportation (511PA)"
+operator = "Pennsylvania Department of Transportation"
+state = "PA"
+jurisdiction_scheme = "us.state_abbr"
+coordinate_mode = "fields"
+technology = "fixed-camera-ptz"
+enum_source = "vendor_platform_probe"
+rights_note = "Iteris/IBI-511 keyed developer API; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US). Source row stays gated."
+notes = "Graduated from [[enumerated]] (P37.12 / D-SOURCES.7-2): the 2026-09-17 probe answered HTTP 400 'Invalid Key'. The runneals-owned 'PA DOT: Cameras' ArcGIS mirror stays enumerated unresolved_rights — non-state publisher authority, never a substitute for the keyed state origin."
+
+[[targets]]
+id = "511wi"
+source_id = "dot_511_wi"
+kind = "iteris_511_rows"
+platform = "state_511_api"
+axis_order = "lon-lat"
+layer_url = "https://511wi.gov/api/v2/get/cameras"
+url = "https://511wi.gov/api/v2/get/cameras"
+api_key_env = "SIG_US511_WI_KEY"
+agency = "Wisconsin Department of Transportation (511WI)"
+operator = "Wisconsin Department of Transportation"
+state = "WI"
+jurisdiction_scheme = "us.state_abbr"
+coordinate_mode = "fields"
+technology = "fixed-camera-ptz"
+enum_source = "vendor_platform_probe"
+rights_note = "Iteris/IBI-511 keyed developer API; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US). Source row stays gated."
+notes = "Graduated from [[enumerated]] (P37.12 / D-SOURCES.7-2): the 2026-09-17 probe answered HTTP 400 'Invalid Key' — the declared Iteris/IBI-511 row-array contract applies, never observed."
+
+[[targets]]
+id = "511alaska"
+source_id = "dot_511_ak"
+kind = "iteris_511_rows"
+platform = "state_511_api"
+axis_order = "lon-lat"
+layer_url = "https://511.alaska.gov/api/v2/get/cameras"
+url = "https://511.alaska.gov/api/v2/get/cameras"
+api_key_env = "SIG_US511_AK_KEY"
+agency = "Alaska Department of Transportation & Public Facilities (511 Alaska)"
+operator = "Alaska Department of Transportation & Public Facilities"
+state = "AK"
+jurisdiction_scheme = "us.state_abbr"
+coordinate_mode = "fields"
+technology = "fixed-camera-ptz"
+enum_source = "vendor_platform_probe"
+rights_note = "Iteris/IBI-511 keyed developer API; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US). Source row stays gated."
+notes = "Graduated from [[enumerated]] (P37.12 / D-SOURCES.7-2): the 2026-09-17 probe answered HTTP 400 'Invalid Key' — the declared Iteris/IBI-511 row-array contract applies, never observed."
+
+[[targets]]
+id = "ctroads"
+source_id = "dot_511_ct"
+kind = "iteris_511_rows"
+platform = "state_511_api"
+axis_order = "lon-lat"
+layer_url = "https://ctroads.org/api/v2/get/cameras"
+url = "https://ctroads.org/api/v2/get/cameras"
+api_key_env = "SIG_US511_CT_KEY"
+agency = "Connecticut Department of Transportation (CTroads)"
+operator = "Connecticut Department of Transportation"
+state = "CT"
+jurisdiction_scheme = "us.state_abbr"
+coordinate_mode = "fields"
+technology = "fixed-camera-ptz"
+enum_source = "vendor_platform_probe"
+rights_note = "Iteris/IBI-511 keyed developer API; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US). Source row stays gated."
+notes = "Graduated from [[enumerated]] (P37.12 / D-SOURCES.7-2): the 2026-09-17 probe answered HTTP 400 'Invalid Key' — the declared Iteris/IBI-511 row-array contract applies, never observed."
+
+[[targets]]
+id = "newengland511"
+source_id = "dot_511_newengland"
+kind = "iteris_511_rows"
+platform = "state_511_api"
+axis_order = "lon-lat"
+layer_url = "https://newengland511.org/api/v2/get/cameras"
+url = "https://newengland511.org/api/v2/get/cameras"
+api_key_env = "SIG_US511_NE_KEY"
+agency = "New England 511 (ME/NH/VT tri-state coalition)"
+state = "unresolved"
+jurisdiction_scheme = "sig.unresolved"
+coordinate_mode = "fields"
+technology = "fixed-camera-ptz"
+enum_source = "vendor_platform_probe"
+rights_note = "Iteris/IBI-511 keyed developer API; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US). Source row stays gated."
+notes = "Graduated from [[enumerated]] (P37.12 / D-SOURCES.7-2): the 2026-09-17 probe answered HTTP 400 'Invalid Key'. Tri-state (ME/NH/VT) feed — the per-row state subdivision is unverified until observed, so the row declares sig.unresolved like the other unresolved-jurisdiction targets; the `Source` column may name the member agency once keyed bytes exist. No `operator` — the coalition is composite (two+ parties stay text-only under SIG-TRUST-003)."
+
+# --- P37.12 / D-SOURCES.7-2: the ten keyed rows graduated to [[targets]] ----
+# fl511_api, 511ny_api, az511_api, nvroads_api, ohgo_api (access_restricted),
+# 511pa, 511wi, 511alaska, ctroads, newengland511 — now wired as keyed targets
+# above (credential env-declared, never committed; OP-13/HG-09 provisions the
+# keys). Their 2026-09-17 probe outcomes ride each target row's notes.
 
 [[enumerated]]
 id = "nebraska_511"
@@ -662,51 +839,6 @@ url = "https://drivenc.gov/api/v2/get/cameras"
 enum_source = "vendor_platform_probe"
 status = "robots_unretrievable"
 note = "robots.txt answers HTTP 200 with a '302 Found' interstitial body → unparseable; camera API path answers 302 HTML. NCDOT ArcGIS mirrors exist on org NuWFvHYDMVmmxMeM — corrected 2026-10-10 (M6, I5 NEW-5): the org is NCDOT-owned (state origin), not a non-state 'runneals' account."
-
-[[enumerated]]
-id = "511pa"
-state = "PA"
-platform = "state_511_api"
-url = "https://511pa.com/api/v2/get/cameras"
-enum_source = "vendor_platform_probe"
-status = "keyed_api"
-note = "Iteris-platform 511 API answers HTTP 400 'Invalid Key' — keyed. A runneals-owned 'PA DOT: Cameras' ArcGIS mirror exists (services.arcgis.com/G4S1dGvn7PIgYd6Y) — non-state publisher, authority unresolved."
-
-[[enumerated]]
-id = "511wi"
-state = "WI"
-platform = "state_511_api"
-url = "https://511wi.gov/api/v2/get/cameras"
-enum_source = "vendor_platform_probe"
-status = "keyed_api"
-note = "Iteris-platform 511 API answers HTTP 400 'Invalid Key' — keyed."
-
-[[enumerated]]
-id = "511alaska"
-state = "AK"
-platform = "state_511_api"
-url = "https://511.alaska.gov/api/v2/get/cameras"
-enum_source = "vendor_platform_probe"
-status = "keyed_api"
-note = "Iteris-platform 511 API answers HTTP 400 'Invalid Key' — keyed."
-
-[[enumerated]]
-id = "ctroads"
-state = "CT"
-platform = "state_511_api"
-url = "https://ctroads.org/api/v2/get/cameras"
-enum_source = "vendor_platform_probe"
-status = "keyed_api"
-note = "Iteris-platform 511 API answers HTTP 400 'Invalid Key' — keyed."
-
-[[enumerated]]
-id = "newengland511"
-state = "ME/NH/VT"
-platform = "state_511_api"
-url = "https://newengland511.org/api/v2/get/cameras"
-enum_source = "vendor_platform_probe"
-status = "keyed_api"
-note = "Iteris-platform tri-state 511 API answers HTTP 400 'Invalid Key' — keyed."
 
 [[enumerated]]
 id = "511nj"

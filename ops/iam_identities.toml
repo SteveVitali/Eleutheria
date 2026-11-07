@@ -30,15 +30,18 @@ schema = "sig.iam-identities/1"
 # P35.11/ACQ-07 +2: the two ADR-185 S8 tribal screened-lane jobs the Wave-A
 # cadence rows declare (created PAUSED; their sources stay gated until the
 # wave-open HG-03 flip list) — 98 → 100.
+# P37.12 (D-SOURCES.7-2) +10: the ten keyed US 511 JSON API jobs the Wave-D
+# cadence rows declare (created PAUSED; their sources stay gated until OP-13
+# registration + the HG-03 flip list) — 100 → 110.
 # P35.1b −6 (pending): the fleet-sweep deletes the six [[retired_jobs]] names
 # (the four egress probes + sig-sink-bench + sig-ingest-resume-test). After the
-# sweep lands, this count becomes 94 and the six names drop out of the
+# sweep lands, this count becomes 104 and the six names drop out of the
 # [[job_class]] `jobs` lists below — the amendment rides the sweep's apply run,
 # so the pin stays correct for a jobs-leg re-count BEFORE the sweep.
 # P35.1c +1 (pending): the sig-sched-due dispatcher job rides the dispatcher-
 # consolidation leg's apply run — after both pending legs land the count is
-# 95 (94 + 1); the pin stays at 100 so a re-count before them still matches.
-expected_job_count = 100
+# 105 (104 + 1); the pin stays at 110 so a re-count before them still matches.
+expected_job_count = 110
 
 # --- the three service runtime identities (P34.42a) ---------------------------
 [[service_account]]
@@ -442,6 +445,51 @@ jobs_revoke = ["default-compute"]
 name = "sig-sam-gov-key"
 consumers = ["sig-ingest-rt"]
 jobs_revoke = ["default-compute"]
+
+# P37.12 (D-SOURCES.7-2 / OP-13, HG-09): the ten keyed US 511 API keys. The
+# operator registers them in Secret Manager under these names; the ingest
+# class SA is the only declared runtime consumer (the keyed jobs mount them
+# as the SIG_US511_*_KEY env bindings declared in ops/cadence.toml). No
+# version exists until OP-13 — the declaration binds no value, only access.
+[[secret]]
+name = "sig-us511-fl-key"
+consumers = ["sig-ingest-rt"]
+
+[[secret]]
+name = "sig-us511-ny-key"
+consumers = ["sig-ingest-rt"]
+
+[[secret]]
+name = "sig-us511-az-key"
+consumers = ["sig-ingest-rt"]
+
+[[secret]]
+name = "sig-us511-nv-key"
+consumers = ["sig-ingest-rt"]
+
+[[secret]]
+name = "sig-us511-oh-key"
+consumers = ["sig-ingest-rt"]
+
+[[secret]]
+name = "sig-us511-pa-key"
+consumers = ["sig-ingest-rt"]
+
+[[secret]]
+name = "sig-us511-wi-key"
+consumers = ["sig-ingest-rt"]
+
+[[secret]]
+name = "sig-us511-ak-key"
+consumers = ["sig-ingest-rt"]
+
+[[secret]]
+name = "sig-us511-ct-key"
+consumers = ["sig-ingest-rt"]
+
+[[secret]]
+name = "sig-us511-ne-key"
+consumers = ["sig-ingest-rt"]
 
 [[secret]]
 name = "sig-zenodo-client-id"
