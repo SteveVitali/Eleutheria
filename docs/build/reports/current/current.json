@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "87b404fb3ea01b1ab8126e0db238c9e41336a239",
-  "manifest_inputs": 1215,
+  "input_commit": "85ae2e386620fcf4402ada43ccc323a9f6aa0339",
+  "manifest_inputs": 1217,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.12",
-    "lastCompleted": "P37.11",
+    "nextTicket": "P37.70",
+    "lastCompleted": "P37.12",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.71",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.71",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,27 +17,27 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.11-sam-gov-sweep-resume",
+    "chainTip": "r11/P37.12-keyed-us-511-wiring",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-07T00:50Z"
+    "updatedAt": "2026-11-07T02:20Z"
   },
   "counts": {
-    "obligations": 227,
-    "owed": 143,
-    "open": 140,
+    "obligations": 228,
+    "owed": 144,
+    "open": 141,
     "partial": 3,
     "terminal": 84,
-    "events": 738,
+    "events": 739,
     "transitions": 55,
     "coverage_assessments": 510,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 78,
+    "return_pass_rows": 79,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -11885,6 +11885,63 @@
           "to_status": "OPEN"
         }
       ]
+    },
+    {
+      "id": "D-P37.12-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P37.12-1:e0",
+      "kind": "V",
+      "owner": "the operator (OP-13 key registration + HG-03 flips) + the OM-19 leg-runner — the orchestrator's `r11/P37.12-live-<n>` dispatch",
+      "landing": "RETURN PASS — P37.12",
+      "landing_source": "return-pass-map/1",
+      "backlog_home": "BL-087",
+      "item": "The P37.12 named mutation (OM-20, GATE-G6 §4 pre-authorised): the keyed US 511 live legs — the ten `sig-ingest-dot-511-{fl,ny,az,nvroads,oh,pa,wi,ak,ct,newengland}` job deployments + `sig-sched-*` trigger resumes on the rolled image, each keyed fetch producing captures + camera-registry claims on the hosted spine, and the +0 idempotent re-run count",
+      "unblocked_by": "owner: the operator (OP-13 key registration + HG-03 flips) + the OM-19 leg-runner — the orchestrator's `r11/P37.12-live-<n>` dispatch · trigger: `implement-spec spec=docs/tickets/433_P37.12__keyed-us-511-wiring.md live_verification=true` with `SIG_GCP_PROJECT` + ADC exported and the `sig-us511-*-key` secrets provisioned, inside `AR-3 + AR-2`",
+      "verify": "a keyed `gcloud run jobs execute sig-ingest-dot-511-<lane>` lands a run row with fetches/claims for its platform's camera registry; each lane's fetch record shows the credential-free URL (the Iteris `?key=` rides only the wire request); an immediate re-run adds +0 rows; an unprovisioned lane records a `KeyNotProvisioned` refusal — zero egress",
+      "proxy": "the deterministic half is committed + fixture-verified (`tests/connectors/test_dot_511_keyed.py` — graduation/expansion, zero-egress KeyNotProvisioned, wire-vs-recorded credential split, the strict declared-contract parsers, media-name exclusion, no-literal-in-tree); ADR-237 records the `auth_param` seam + the declared-contract approach; every cadence seat is `state = \"paused\"` with its `sig-us511-*-key` binding named",
+      "line": 1553,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "event_id": "D-P37.12-1:e0",
+          "obligation_id": "D-P37.12-1",
+          "ticket_id": "P37.12",
+          "backlog_home": "BL-087",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "expected_previous_event": null,
+          "observed_at": "2026-11-07",
+          "recorded_at": "2026-11-07",
+          "source_commit": "WORKTREE",
+          "owner": "the operator (OP-13 key registration + HG-03 flips) + the OM-19 leg-runner — the orchestrator's `r11/P37.12-live-<n>` dispatch",
+          "landing": "a keyed `gcloud run jobs execute sig-ingest-dot-511-<lane>` lands a run row with fetches/claims for its platform's camera registry; each lane's fetch record shows the credential-free URL; an immediate re-run adds +0 rows; an unprovisioned lane records a `KeyNotProvisioned` refusal — inside `AR-3 + AR-2`, with `SIG_GCP_PROJECT` + ADC + the `sig-us511-*-key` secrets provisioned",
+          "reason": "migration anchor appended by P37.12 (row 433) for the row it added — the named OM-20 mutation (GATE-G6 §4 names P37.12 verbatim 'Approve all 15', expires GATE-ACCEPT-R11) is QUEUED prepared_not_executed: the keyed US 511 live legs — the ten sig-ingest-dot-511-* job deployments + scheduler resumes + claim writes — SIG_GCP_PROJECT/SIG_US511_* unset in the engineering dispatch and the ten source rows stay ingestion_permitted=false pending OP-13 (HG-09) + HG-03, never fabricated; the deterministic half (keyed kinds, auth_param seam, KeyNotProvisioned, cadence seats, ADR-237) is landed and fixture-verified",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/adr/ADR-237-keyed-us-511-credential-seam-and-declared-contracts.md",
+            "connectors/src/connectors/dot_511.py",
+            "connectors/src/connectors/net.py",
+            "connectors/src/connectors/stages.py",
+            "connectors/src/connectors/pipeline.py",
+            "connectors/src/connectors/data/dot_511_targets.toml",
+            "connectors/src/connectors/data/sources.toml",
+            "connectors/src/connectors/data/live_targets.toml",
+            "connectors/src/connectors/data/api_allowlist.toml",
+            "connectors/src/connectors/data/jurisdiction_extents.toml",
+            "ops/cadence.toml",
+            "tests/connectors/test_dot_511_keyed.py"
+          ],
+          "anchor": {
+            "interpretation": "created",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "row_line": 1553,
+            "row_sha256": "e0de28805d8cddd1885ad1066ef47342c7c211fc8e17a51325987f50b3e0fd46"
+          }
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -12605,6 +12662,16 @@
         "rerun_cell": "`implement-spec spec=docs/tickets/432_P37.11__sam-gov-sweep-resume.md live_verification=true`",
         "obligations": [
           "D-P37.11-1"
+        ]
+      },
+      {
+        "key": "P37.12",
+        "obligations_cell": "D-P37.12-1",
+        "gates_cell": "`hosted` write; OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); window `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + the sig-us511-*-key secrets (OP-13/HG-09) + the HG-03 flips",
+        "operator_cell": "OP-13 key registration + the HG-03 rights flips — then the leg-runner exports env + runs",
+        "rerun_cell": "`implement-spec spec=docs/tickets/433_P37.12__keyed-us-511-wiring.md live_verification=true`",
+        "obligations": [
+          "D-P37.12-1"
         ]
       }
     ]
@@ -26664,10 +26731,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "d0423efcb666839c4a3ae74ebb91d759fb5b259f5dff21ef115841fa917a6457",
+  "manifest_sha256": "39298dab5f0470f1b715b788912346f1ab0b4ab2588a0d17f8027ab8d20959ce",
   "current_md": {
-    "lines": 144,
-    "bytes": 19539,
+    "lines": 145,
+    "bytes": 19657,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
