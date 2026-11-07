@@ -784,8 +784,14 @@ class StateStatuteSeedConnector(Connector):
                     jurisdiction_scheme="us.state",
                     citation=_citation_for(entry, i),
                     # v2 rows carry a real ISO effective date; v1 rows carry
-                    # the enactment year the NCSL table recorded.
+                    # the enactment year the NCSL table recorded. text_ref is
+                    # the entry's verified origin (the legislature/governor
+                    # page the packet resolved the instrument at); session is
+                    # not recorded in the asset, so the legal-instrument-
+                    # publish/1 gate withholds these citations from publication
+                    # (SIG-INGEST-025c — session-less cites never publish).
                     effective_from=entry.effective_date or str(year),
+                    text_ref=entry.origin_url or None,
                     constrains_technology=("alpr",),
                     raw=dict(raw),
                 )

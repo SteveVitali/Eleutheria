@@ -1664,3 +1664,12 @@ rerun_cell = '''`implement-spec spec=docs/tickets/434_P37.70__keyed-au-traffic-c
   excluded = []
   go = "pre-authorised: GATE-G6 §4 (expiry: acceptance sitting)"
   rerun = "implement-spec spec=docs/tickets/434_P37.70__keyed-au-traffic-camera-apis.md live_verification=true"
+
+[[row]]
+key = "P37.13"
+kind = "obligation"
+obligations = ["D-P37.13-1"]
+obligations_cell = '''D-P37.13-1'''
+gates_cell = '''no gate — register-or-drop triage for the 23 `candidate-unregistered` Data Library datasets the 2026-11-07 sweep recorded (each stays unregistered until a ticket or the operator dispositions it)'''
+operator_cell = '''the next `sig.discovery-sweep/1` run or an acquisition-plan ticket — each candidate carries a `registered:`/`new-linked:`/`related:` disposition in the next candidates.csv diff'''
+rerun_cell = '''the next `sig.discovery-sweep/1` run (the recurring sweep) or the acquisition-plan ticket that takes the 23 candidates — `docs/build/reports/discovery-sweep/2026-11-07/candidates.csv`'''

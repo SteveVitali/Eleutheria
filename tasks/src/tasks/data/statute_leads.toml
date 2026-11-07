@@ -1,0 +1,154 @@
+# The statute-seeded records-leads table (P37.14, SIG-INGEST-025a/b/c).
+#
+# State reporting mandates are records-acquisition LEADS, never data feeds
+# (SIG-INGEST-025a): "this jurisdiction is required to hold X, therefore X is
+# requestable". One [[duties]] row per registered `future_statutory_disclosure_*`
+# duty named by the committed `state_alpr_statute_seed_2026.toml` duty table —
+# the generator refuses to run while a seed duty lacks a leads row or a leads
+# row names an unregistered duty (each statute duty produces a gap row or a
+# CoverageRecord — the catalog acceptance shape).
+#
+# `posture` decides the output kind:
+#   commenced    — the duty is in force; the mandated record is requestable
+#                  → a gap row (a records-acquisition lead).
+#   not_yet_due  — first reports due after `first_due`; absence before the due
+#                  date is a lawful not_applicable coverage state (the registry
+#                  rows' own rule) → CoverageRecord `not_applicable`.
+#   contingent   — the mandate itself is unverified (a bill is not an
+#                  appropriation) → CoverageRecord `not_researched`.
+#
+# `session`/`text_ref` carry the desk-researched statutory basis
+# (SIG-INGEST-025c): session only where the registered evidence names it
+# (administrative rules have no session); text_ref is the registered source's
+# reviewed text URL. Desk research only — nothing here fetched at generation.
+schema = "sig.statute-leads/1"
+table_version = "2026.11.07.1"
+
+# ---- the six registered future_statutory_disclosure_* duties ----------------
+
+[[duties]]
+duty_id = "future_statutory_disclosure_va"
+state = "Virginia"
+instrument_type = "statute"
+citation = "Va. Code § 2.2-5517(I/J/K)"
+session = ""            # the codified cite does not record the enactment session
+text_ref = "https://law.lis.virginia.gov/vacode/title2.2/chapter55.6/section2.2-5517/"
+posture = "commenced"
+first_due = "2026-04-01"   # subsection I agency reports; J aggregate 2026-07-01; K posting
+mandated_artifacts = [
+  "each agency's annual ALPR report to Virginia State Police (I)",
+  "the VSP aggregate report to the Governor/General Assembly/VSCC (J)",
+  "each agency's publicly posted ALPR policy and report (K)",
+]
+record_holder = "each Virginia ALPR-using agency; Virginia State Police"
+searched = []
+evidence = ["I7-U138", "I3-C041"]
+notes = "Va. Code § 2.2-5517 (eff. 2025-07-01): I/J/K duties commenced — the first reports were due 2026-04-01/2026-07-01. The mandated reports and postings are requestable records (SIG-INGEST-025b)."
+
+[[duties]]
+duty_id = "future_statutory_disclosure_nm"
+state = "New Mexico"
+instrument_type = "statute"
+citation = "SB 40 (2026) §A — Driver Privacy and Safety Act, Laws 2026, ch. 20"
+session = "26 Regular"
+text_ref = "https://www.nmlegis.gov/Sessions/26%20Regular/final/SB0040.PDF"
+posture = "not_yet_due"
+first_due = "2027-04-01"
+mandated_artifacts = [
+  "each ALPR-using law-enforcement agency's annual report to the Department of Public Safety (camera counts by mobile/stationary, databases compared, query counts and purposes)",
+]
+record_holder = "New Mexico Department of Public Safety; each ALPR-using law-enforcement agency"
+searched = []
+evidence = ["I7-U531", "I9a-C037"]
+notes = "First reports on or after 2027-04-01 (inferred: effective 2026-07-01 + April-1 cycle). Absence before the due date is a lawful not_applicable coverage state — nothing is requestable yet."
+
+[[duties]]
+duty_id = "future_statutory_disclosure_al"
+state = "Alabama"
+instrument_type = "regulation"
+citation = "Ala. Admin. Code r. 265-X-6"
+session = ""            # an administrative rule has no legislative session
+text_ref = "https://admincode.legislature.state.al.us/api/chapter/265-X-6"
+posture = "commenced"
+first_due = "2022-03-17"   # rule effective date — duties already commenced
+mandated_artifacts = [
+  "ALEA's triennial audits of every capturing agency (.07)",
+  "the annual report to the Justice Information Commission (.10)",
+]
+record_holder = "Alabama Law Enforcement Agency; Alabama Justice Information Commission"
+searched = ["I9a-C020 desk review (F024): the mandated publication was not located"]
+evidence = ["I7-U530", "I9a-C020"]
+notes = "Duty commenced 2022-03-17 (.05 registry submission once established, .07 triennial ALEA audits, .10 annual report). The mandated publication was not located at desk research — the records are requestable (SIG-INGEST-025b)."
+
+[[duties]]
+duty_id = "future_statutory_disclosure_ar"
+state = "Arkansas"
+instrument_type = "regulation"
+citation = "12 CAR 150-103(f)"
+session = ""            # an administrative rule has no legislative session
+text_ref = "https://media.ark.org/ardot/12-CAR-150-License-Plate-Reader-Rules.pdf"
+posture = "commenced"
+first_due = ""
+mandated_artifacts = [
+  "the Arkansas Highway Police compiled LPR statistics for general-public review (per Ark. Code 12-12-1805)",
+]
+record_holder = "Arkansas Highway Police"
+searched = ["I9a-C032 desk review (F048): the compiled publication was not located"]
+evidence = ["I7-U556", "I9a-C032"]
+notes = "12 CAR 150-103(f)(1): the Arkansas Highway Police compiles LPR statistics for general-public review; (f)(2) data retained 18 months. The compiled publication is not located — requestable (SIG-INGEST-025b)."
+
+[[duties]]
+duty_id = "future_statutory_disclosure_ut"
+state = "Utah"
+instrument_type = "statute"
+citation = "Utah Code 77-23e-106(3)(a) — SB 34 (2021)"
+session = "2021"        # le.utah.gov/~2021/bills/sbillenr/SB0034.htm (enrolled text)
+text_ref = "https://le.utah.gov/~2021/bills/sbillenr/SB0034.htm"
+posture = "commenced"
+first_due = "2021-08-01"   # annual on/after Aug 1, before Oct 15 cycle
+mandated_artifacts = [
+  "each government entity's annual facial-recognition report to the Government Operations Interim Committee (crime types, request counts, probable matches, image source)",
+]
+record_holder = "each Utah government entity using a facial-recognition system; the Government Operations Interim Committee"
+searched = ["I9a-C050 desk review (F078): the report publication was not located"]
+evidence = ["I7-U517", "I9a-C050"]
+notes = "A T11 facial-recognition duty registered beside the ALPR duty set — annual reports due on/after Aug 1, before Oct 15. Publication not located — requestable (SIG-INGEST-025b)."
+
+[[duties]]
+duty_id = "future_statutory_disclosure_mn"
+state = "Minnesota"
+instrument_type = "statute"
+citation = "HF 3198 (2025-26) — Northwest Metro Regional RTCC funding + report"
+session = "94th Legislature, 2025-2026"
+text_ref = "https://www.revisor.mn.gov/bills/94/2025/0/HF/3198/versions/latest"
+posture = "contingent"
+first_due = ""
+mandated_artifacts = [
+  "the Northwest Metro Regional RTCC report (contingent on HF 3198's enactment — UNVERIFIED)",
+]
+record_holder = "the Northwest Metro Regional RTCC (contingent)"
+searched = []
+evidence = ["I7-U532", "I9a-C051"]
+notes = "HF 3198 (2025-26) would fund the RTCC and require a report — enactment UNVERIFIED (a bill is not an appropriation, S5 guard). Registered as a contingent lead only: the mandate's existence is not established, so the generator emits a not_researched CoverageRecord, never a requestable lead."
+
+# ---- one-time artifacts (desk research only — no capture) -------------------
+#
+# A one-time mandated-adjacent artifact is captured/modelled as an artifact
+# (state_auditor_survey, §23.6, SIG-INGEST-047) with its own capture_status and
+# MUST NOT create an expectation of recurrence — the absence of a follow-up is
+# itself a CoverageRecord fact (SIG-INGEST-025b).
+
+[[one_time_artifacts]]
+artifact_id = "ca_state_auditor_2019_118"
+title = "California State Auditor Report 2019-118 — Automated License Plate Readers (381-agency survey)"
+artifact_type = "state_auditor_survey"
+source_ids = ["ca_state_auditor", "statrep_ca_california_auditor_alpr"]
+url = "https://information.auditor.ca.gov/reports/2019-118/index.html"
+published = "2020-02"
+survey_rows = 381
+capture_status = "not_attempted"   # desk research only — the registered rows stay ingestion_permitted=false (HG-03); no bytes captured
+recurrence_expected = false
+no_follow_up_basis = "no recurring audit exists: the recurring-audit bill was vetoed on audit cost and the successor's audit clause is appropriation-contingent and never uses 'publish' (spec §22.3, SIG-INGEST-025a)"
+searched = ["the California State Auditor reports index (no follow-up ALPR survey)", "the California legislative record (vetoed recurring-audit bill; appropriation-contingent successor clause)"]
+evidence = ["SRC-011", "docs/build/reports/rights/ca_state_auditor.md"]
+notes = "The 381-row agency survey is published as an HTML table with no CSV/XLSX/JSON export — exactly one relevant artifact; the state produces no recurring dataset and no central registry of the agency policies the statute requires (SIG-INGEST-025a)."

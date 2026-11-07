@@ -201,6 +201,13 @@ def build_parser() -> argparse.ArgumentParser:
     dis.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
     dis.add_argument("--role", default=None, help="optional role to SET ROLE to")
 
+    sl = sub.add_parser(
+        "statute-leads",
+        help="statute-seeded records leads (P37.14, SIG-INGEST-025a/b/c): each "
+        "statute duty produces a gap row or a CoverageRecord; desk research only",
+    )
+    sl.add_argument("--json", action="store_true", help="emit the JSON projection")
+
     acq = sub.add_parser(
         "acquisition",
         help="the gap-driven reviewed source-candidate queue (P32.11, §55.6, "
@@ -695,6 +702,8 @@ def main(argv: list[str] | None = None) -> int:
         return _portal_changes(args)
     if args.command == "disappearances":
         return _disappearances(args)
+    if args.command == "statute-leads":
+        return _statute_leads(args)
     parser.print_help()
     return 0
 
@@ -800,4 +809,30 @@ def _disappearances(args: argparse.Namespace) -> int:
     finally:
         conn.close()
     print(json.dumps(rows, indent=2, default=str))
+    return 0
+
+
+def _statute_leads(args: argparse.Namespace) -> int:
+    """The mandate→gap generator (P37.14, SIG-INGEST-025a/b/c) — desk research only."""
+    from .statute_leads import generate_leads
+
+    result = generate_leads()
+    if args.json:
+        print(json.dumps(result.as_dict(), indent=2, default=str))
+        return 0
+    print(f"statute-seeded records leads — {result.as_dict()['duty_count']} duties")
+    for lead in result.gap_rows:
+        print(
+            f"  GAP   {lead.duty_id} ({lead.state}): "
+            f"{len(lead.mandated_artifacts)} mandated artifact(s) requestable — "
+            f"{lead.statutory_citation}"
+        )
+    for cov in result.coverage:
+        print(f"  COVER {cov.jurisdiction_id}: {cov.absence_kind} — {cov.search_method}")
+    for artifact in result.artifacts:
+        print(
+            f"  ART   {artifact.artifact_id}: {artifact.artifact_type} "
+            f"capture_status={artifact.capture_status} "
+            f"recurrence_expected={artifact.recurrence_expected} (desk research only)"
+        )
     return 0

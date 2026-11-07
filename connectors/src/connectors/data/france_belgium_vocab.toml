@@ -19,7 +19,11 @@
 # The connector's own vocabulary version, stamped onto every run (§20).
 # 2026.09.17 — P25.5: added [raa_index] (the resource-index adapter's reviewed
 # fan-out bounds) and [madada_feed] (the Atom feed's safe-metadata field set).
-vocab_version = "2026.09.17"
+# 2026.11.07 — P37.14 (SIG-INGEST-025c): +session +text_ref on the
+# LegalInstrument allowlist — a legislative citation MUST cite session and
+# resolve to text or it MUST NOT be published (the legal-instrument-publish/1
+# gate verdict stamps the emitted record).
+vocab_version = "2026.11.07-p37.14"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `france_belgium_records` connector may write ONLY the §11.14 LegalInstrument
@@ -31,6 +35,10 @@ legal_instrument_predicate_allowlist = [
   "enacting_body",
   "jurisdiction",
   "citation",
+  # P37.14 (SIG-INGEST-025c): the session + text-resolution a legislative
+  # citation MUST carry to publish.
+  "session",
+  "text_ref",
   "effective_from",
   "effective_to",
   "sunset_date",

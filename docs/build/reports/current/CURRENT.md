@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `141c294929ba9d088bdd9263af9dec25a8053148` · inputs hashed: 1221 · wall-clock receipt: `receipt.json`
+> input_commit: `fbe1eeda49c0c3c5459d0152764796382ccecade` · inputs hashed: 1222 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -104,6 +104,7 @@
 | P37.11 | D-P37.11-1 | `implement-spec spec=docs/tickets/432_P37.11__sam-gov-sweep-resume.md live_verification=true` |
 | P37.12 | D-P37.12-1 | `implement-spec spec=docs/tickets/433_P37.12__keyed-us-511-wiring.md live_verification=true` |
 | P37.70 | D-P37.70-1 | `implement-spec spec=docs/tickets/434_P37.70__keyed-au-traffic-camera-apis.md live_verification=true` |
+| P37.13 | D-P37.13-1 | the next `sig.discovery-sweep/1` run (the recurring sweep) or the acquisition-plan ticket that takes the 23 candidates — `docs/build/reports/discovery-sweep/202… |
 
 ## Known inconsistencies (preserved, never synthesized)
 

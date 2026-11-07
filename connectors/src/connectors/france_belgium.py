@@ -747,6 +747,40 @@ class InvalidLegalInstrument(Exception):
     """Raised when a LegalInstrument violates the §11.14 vocabulary contract."""
 
 
+#: The instrument types whose citations are *legislative* — a bill/session-law
+#: citation is ambiguous across sessions (SIG-INGEST-025c: two later bills
+#: shared the ALPR bill's number and both were Budget Acts), so a session is
+#: required to publish. Executive/administrative instruments (executive_order,
+#: regulation, prefectoral_order, court_order, …) have no session — the gate
+#: requires only that their citation resolves to text.
+SESSION_REQUIRED_INSTRUMENT_TYPES: frozenset[str] = frozenset({"statute", "ordinance"})
+
+#: The publish-gate contract stamped onto every ``legal_instrument`` record
+#: (§20 — a gate change is a new version, never a silent re-decision).
+LEGAL_INSTRUMENT_PUBLISH_GATE = "legal-instrument-publish/1"
+
+
+@dataclass(frozen=True)
+class InstrumentPublishVerdict:
+    """The SIG-INGEST-025c publication verdict for one instrument citation.
+
+    A ``LegalInstrument`` claim MUST cite session and text, and a citation that
+    cannot be resolved to text MUST NOT be published. ``publishable`` is the
+    gate's answer; ``reasons`` names every withholding basis so a withheld
+    citation is explained, never silently dropped.
+    """
+
+    publishable: bool
+    reasons: tuple[str, ...]
+    gate: str = LEGAL_INSTRUMENT_PUBLISH_GATE
+
+
+def _text_ref_resolves(text_ref: str | None) -> bool:
+    """Whether ``text_ref`` resolves to the instrument's text (URL or urn ref)."""
+    ref = (text_ref or "").strip()
+    return ref.startswith(("http://", "https://", "urn:"))
+
+
 @dataclass(frozen=True)
 class LegalInstrument:
     """The runtime shape of a §11.14 ``LegalInstrument`` — this ticket is its first consumer.
@@ -773,6 +807,13 @@ class LegalInstrument:
     effective_from: str | None = None
     effective_to: str | None = None
     sunset_date: str | None = None
+    #: The legislative session the citation resolves to (SIG-INGEST-025c) —
+    #: e.g. "2026 Regular". Bill numbers are reused across sessions, so a
+    #: legislative citation is publishable only beside its session.
+    session: str | None = None
+    #: A reference that resolves to the instrument's text (a fetch-shaped URL
+    #: or a ``urn:`` artifact ref) — the page the citation was verified at.
+    text_ref: str | None = None
     constrains_technology: tuple[str, ...] = ()
     constrains_capability: tuple[str, ...] = ()
     requires_authorization_of: tuple[str, ...] = ()
@@ -817,6 +858,8 @@ class LegalInstrument:
             "enacting_body": self.enacting_body,
             "jurisdiction": self.jurisdiction,
             "citation": self.citation,
+            "session": self.session,
+            "text_ref": self.text_ref,
             "effective_from": self.effective_from,
             "effective_to": self.effective_to,
             "sunset_date": self.sunset_date,
@@ -831,6 +874,36 @@ class LegalInstrument:
             values["requires_authorization_of"] = list(self.requires_authorization_of)
         return values
 
+    def publish_verdict(self) -> InstrumentPublishVerdict:
+        """The SIG-INGEST-025c publication verdict for this instrument's citation.
+
+        A ``LegalInstrument`` claim MUST cite session and text, and a citation
+        that cannot be resolved to text MUST NOT be published — bill numbers
+        are reused across sessions and subjects (the California case: two later
+        bills sharing the ALPR bill's number were Budget Acts), so a
+        legislative instrument (``statute``/``ordinance``) withholds without a
+        recorded session, and every instrument withholds when its citation
+        cannot resolve to text. The verdict is deterministic from the recorded
+        fields and travels with the emitted record.
+        """
+        reasons: list[str] = []
+        if not (self.citation or "").strip():
+            reasons.append("the instrument carries no citation")
+        if not _text_ref_resolves(self.text_ref):
+            reasons.append(
+                "the citation cannot be resolved to text — an unresolved "
+                "citation MUST NOT be published (SIG-INGEST-025c)"
+            )
+        if (
+            self.instrument_type in SESSION_REQUIRED_INSTRUMENT_TYPES
+            and not (self.session or "").strip()
+        ):
+            reasons.append(
+                "a legislative citation requires the session — bill numbers are "
+                "reused across sessions (SIG-INGEST-025c)"
+            )
+        return InstrumentPublishVerdict(publishable=not reasons, reasons=tuple(reasons))
+
     def claim_rows(self) -> list[dict[str, Any]]:
         """The append-only claim rows for this instrument, confined to the allowlist (P2).
 
@@ -840,6 +913,7 @@ class LegalInstrument:
         preserved beside every typed value (P2). ``enacting_body`` and ``jurisdiction``
         carry a **candidate** identifier, never a resolution (SIG-INGEST-034).
         """
+        verdict = self.publish_verdict()
         rows: list[dict[str, Any]] = [
             _stamp(
                 {
@@ -851,6 +925,12 @@ class LegalInstrument:
                     "predicate_surface": self.predicate_values(),
                     "instrument_type": self.instrument_type,
                     "abstract_instrument_type": self.abstract_instrument_type,
+                    # SIG-INGEST-025c — the publication verdict travels with the
+                    # record: a citation that cannot resolve to session+text is
+                    # stamped unpublishable, never silently emitted as public.
+                    "publishable": verdict.publishable,
+                    "publish_gate": verdict.gate,
+                    "publish_gate_reasons": list(verdict.reasons),
                 },
                 source_id=self.source_id,
             )

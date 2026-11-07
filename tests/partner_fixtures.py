@@ -171,6 +171,12 @@ GOLDEN_PROCUREMENT_VOCAB = "2026.09.18-p26.15"
 #: re-computed under P32.3 at `2026.10.10.1`.
 GOLDEN_DOT511_VOCAB = "2026.10.10.1"
 
+#: Same normalization for the France/Belgium vocabulary (P37.14 / INGEST-025c
+#: bumped it to 2026.11.07 — `session`/`text_ref` joined the
+#: legal-instrument allowlist; a vocabulary migration restamps provenance,
+#: never claim content).
+GOLDEN_FRANCE_BELGIUM_VOCAB = "2026.09.17"
+
 
 def golden_digest(run_key: str, record: Mapping[str, Any]) -> str:
     """`content_digest` comparable to the base-commit golden for ``run_key``.
@@ -185,6 +191,7 @@ def golden_digest(run_key: str, record: Mapping[str, Any]) -> str:
     """
     from connectors.accountability import vocab_version as _acc_vv
     from connectors.dot_511 import vocab_version as _dot_vv
+    from connectors.france_belgium import vocab_version as _fb_vv
     from connectors.procurement import vocab_version as _proc_vv
 
     # P35.22: the golden digests were computed under the pre-P35.22 whole-row
@@ -195,6 +202,17 @@ def golden_digest(run_key: str, record: Mapping[str, Any]) -> str:
 
     if "axis_order" in record or "geometry_defect" in record:
         record = {k: v for k, v in record.items() if k not in ("axis_order", "geometry_defect")}
+    # P37.14 (SIG-INGEST-025c): the legal-instrument-publish/1 verdict stamps
+    # (`publishable`/`publish_gate`/`publish_gate_reasons`) ride the emitted
+    # `legal_instrument` record — additive provenance like the P35.16 stamps,
+    # never a rewrite of base-commit claim content (the gate's own tests pin
+    # the verdict; this diff proves the claims themselves are unchanged).
+    if "publish_gate" in record:
+        record = {
+            k: v
+            for k, v in record.items()
+            if k not in ("publishable", "publish_gate", "publish_gate_reasons")
+        }
     if "vocab_version" in record:
         vv = str(record["vocab_version"])
         if vv == str(_acc_vv()):
@@ -203,4 +221,6 @@ def golden_digest(run_key: str, record: Mapping[str, Any]) -> str:
             record = {**record, "vocab_version": GOLDEN_PROCUREMENT_VOCAB}
         elif vv == str(_dot_vv()):
             record = {**record, "vocab_version": GOLDEN_DOT511_VOCAB}
+        elif vv == str(_fb_vv()):
+            record = {**record, "vocab_version": GOLDEN_FRANCE_BELGIUM_VOCAB}
     return content_digest(record)
