@@ -1630,3 +1630,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/432_P37.11__sam-gov-sweep-resu
   excluded = []
   go = "pre-authorised: GATE-G6 §4 (expiry: acceptance sitting)"
   rerun = "implement-spec spec=docs/tickets/432_P37.11__sam-gov-sweep-resume.md live_verification=true"
+
+[[row]]
+key = "P37.12"
+kind = "leg"
+obligations = ["D-P37.12-1"]
+obligations_cell = '''D-P37.12-1'''
+gates_cell = '''`hosted` write; OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); window `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + the sig-us511-*-key secrets (OP-13/HG-09) + the HG-03 flips'''
+operator_cell = '''OP-13 key registration + the HG-03 rights flips — then the leg-runner exports env + runs'''
+rerun_cell = '''`implement-spec spec=docs/tickets/433_P37.12__keyed-us-511-wiring.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P37.12-keyed-us-511"
+  obligations = ["D-P37.12-1"]
+  earliest = "inside `AR-3 + AR-2`, after OP-13 registration + the HG-03 flips"
+  excluded = []
+  go = "pre-authorised: GATE-G6 §4 (expiry: acceptance sitting)"
+  rerun = "implement-spec spec=docs/tickets/433_P37.12__keyed-us-511-wiring.md live_verification=true"

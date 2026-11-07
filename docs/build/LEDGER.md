@@ -12,7 +12,7 @@ nextTicket: P37.12
 lastCompleted: P37.11
 blockedOn: (nothing)
 pauseRequested: false
-returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.71
+returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.71
 manifest: docs/tickets/00_MANIFEST.md
 canonicalSpec: docs/2_canonical_design_spec.md
 memoryRoot: docs/build
@@ -488,6 +488,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | P37.4b | D-P37.4b-1 | `hosted` write; OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); excluded: inside 03:00-10:00Z; needs SIG_GCP_PROJECT + ADC + SIG_RACC_AUTHOR | nothing — leg-runner exports env + runs | `implement-spec spec=docs/tickets/423_P37.4b__security-baseline-restricted-access-audit-logs.md live_verification=true` |
 | P37.71 | D-P37.71-1 | `hosted` deploy; never pre-authorised — go: the operator's verbatim in-ticket go; needs the spine deployer + ADC/`SIG_GCP_PROJECT` | the operator's go + env | `implement-spec spec=docs/tickets/429_P37.71__single-operator-deletion-and-purge-function.md live_verification=true` |
 | P37.11 | D-P37.11-1 | `hosted` write; OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); window `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + SIG_SAM_GOV_KEY | nothing — leg-runner exports env + runs; the row closes only after two weekly fires advance the cursor | `implement-spec spec=docs/tickets/432_P37.11__sam-gov-sweep-resume.md live_verification=true` |
+| P37.12 | D-P37.12-1 | `hosted` write; OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); window `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + the sig-us511-*-key secrets (OP-13/HG-09) + the HG-03 flips | OP-13 key registration + the HG-03 rights flips — then the leg-runner exports env + runs | `implement-spec spec=docs/tickets/433_P37.12__keyed-us-511-wiring.md live_verification=true` |
 
 Sources: OPERATIONAL_READINESS §(f3) + `UNIVERSE_DISPOSED.csv` + plan §9.2/§8.6 + `data/round11_plan.csv`. Non-row homes: 9 ticket + 9 later-phase + 7 decision + 2 already-done. Keying (T5 γ) = LANDED R10 ticket (archived `reports/memory-repair/return_pass_cells_pre-P36.49-orient.txt`).
 

@@ -162,8 +162,11 @@ def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[st
     # so it does not join flip-ready). P36.77 registered `muckrock_public`
     # — the MuckRock public /foi/ page lane of the released-materials
     # connector — ingestion_permitted=false pending the operator's leg-B
-    # flip (589 → 590; loadable unchanged).
-    assert "registered sources: 590" in out
+    # flip (589 → 590; loadable unchanged). P37.12 (D-SOURCES.7-2) registered
+    # the ten keyed US 511 JSON API sources (dot_511_{fl,ny,az,nvroads,oh,pa,
+    # wi,ak,ct,newengland}) — every row stays ingestion_permitted=false
+    # pending the operator's HG-03 flip (590 → 600; loadable unchanged).
+    assert "registered sources: 600" in out
     assert "self-checks OK" in out
 
 
@@ -323,10 +326,13 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # registered `muckrock_public` — the MuckRock public /foi/ page lane of
     # the released-materials connector (589 → 590; ingestion_permitted=false
     # pending the operator's leg-B flip; its rights stay UNDETERMINED so it
-    # does not join flip-ready — loadable unchanged).
+    # does not join flip-ready — loadable unchanged). P37.12 (D-SOURCES.7-2)
+    # registered the ten keyed US 511 JSON API sources (590 → 600) — every row
+    # stays ingestion_permitted=false with UNDETERMINED rights, so flip-ready
+    # and loadable are both unchanged.
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 590" in out
+    assert "registered sources: 600" in out
     assert "flip-ready: 2" in out
     assert "flip-ready: census_gazetteer_tiger" in out
     assert "flip-ready: natural_earth_10m" in out

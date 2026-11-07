@@ -613,3 +613,80 @@ endpoint_prefix = "/od/rest/"
 tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
 rate_limit_per_min = 5
 counsel_reviewed = false
+
+# --- P37.12 (D-SOURCES.7-2 / OP-13): the keyed US 511 developer APIs ---------
+# The graduated keyed lanes are DOCUMENTED keyed APIs — registered-key,
+# rate-limited access under each platform's developer terms, not crawling.
+# The Iteris/IBI-511 family shares the api/v2/get/* contract (the sibling
+# 511.alberta.ca / 511.gov.pe.ca docs name key/format/lang + the cameras row
+# array); OHGO documents Authorization: APIKEY (or ?api-key= — the header is
+# used). counsel_reviewed=false pending HG-02 like every entry.
+[[api_host]]
+host = "fl511.com"
+endpoint_prefix = "/api/"
+tos_basis = "FL511 Iteris/IBI-511 developer API — registered-key documented programmatic access (key query param per the platform family's published docs)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "511ny.org"
+endpoint_prefix = "/api/"
+tos_basis = "511NY Iteris/IBI-511 developer API — registered-key documented programmatic access (key query param per the platform family's published docs)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "az511.gov"
+endpoint_prefix = "/api/"
+tos_basis = "AZ511 Iteris/IBI-511 developer API — registered-key documented programmatic access (key query param per the platform family's published docs)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "www.nvroads.com"
+endpoint_prefix = "/api/"
+tos_basis = "NV Roads Iteris/IBI-511 developer API — registered-key documented programmatic access (key query param per the platform family's published docs)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "publicapi.ohgo.com"
+endpoint_prefix = "/api/"
+tos_basis = "OHGO public API — registration-gated documented programmatic access (Authorization: APIKEY header per the published docs; ODOT data stated 'public domain ... freely available' on the API intro)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "511pa.com"
+endpoint_prefix = "/api/"
+tos_basis = "511PA Iteris/IBI-511 developer API — registered-key documented programmatic access (key query param per the platform family's published docs)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "511wi.gov"
+endpoint_prefix = "/api/"
+tos_basis = "511WI Iteris/IBI-511 developer API — registered-key documented programmatic access (key query param per the platform family's published docs)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "511.alaska.gov"
+endpoint_prefix = "/api/"
+tos_basis = "511 Alaska Iteris/IBI-511 developer API — registered-key documented programmatic access (key query param per the platform family's published docs)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "ctroads.org"
+endpoint_prefix = "/api/"
+tos_basis = "CTroads Iteris/IBI-511 developer API — registered-key documented programmatic access (key query param per the platform family's published docs)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "newengland511.org"
+endpoint_prefix = "/api/"
+tos_basis = "New England 511 (ME/NH/VT) Iteris/IBI-511 developer API — registered-key documented programmatic access (key query param per the platform family's published docs)."
+rate_limit_per_min = 10
+counsel_reviewed = false

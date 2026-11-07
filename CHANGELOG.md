@@ -24,6 +24,24 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.12 — keyed US 511 camera-API lanes wired behind env-declared
+  credentials (D-SOURCES.7-2, OP-13; ADR-237):** the ten `keyed_api`/
+  `access_restricted` enumerated 511 rows (FL, NY, AZ, NV, OH, PA, WI, AK,
+  CT, New England 511) graduate to `[[targets]]` under two new
+  declared-contract kinds — `iteris_511_rows` (strict top-level camera
+  array; an error envelope, shell page or non-object row is `ContentDrift`)
+  and `ohgo_511_cameras` (the ApiResult envelope; a truncated page is
+  `ContentDrift`, never a partial inventory). `PoliteFetcher` gains a
+  wire-only `auth_param` seam — the Iteris `?key=` reaches the transport
+  but never a recorded URL — while OHGO's key rides the documented
+  `Authorization: APIKEY` header; an unprovisioned `api_key_env` env name
+  raises `KeyNotProvisioned` before any egress and lands on
+  `report.refusals`. Ten gated `dot_511_*` source rows (600 registered;
+  every row `ingestion_permitted=false`), `api_host` allowlist entries,
+  `us.state_abbr` detector extents, vocab 2026.11.07, and paused cadence
+  seats declaring the `sig-us511-*-key` Secret-Manager bindings complete
+  the wiring — the keyed live leg stays QUEUED under `D-P37.12-1` until
+  OP-13 registration + the HG-03 flips.
 - **P37.11 — the persisted rotating SAM.gov sweep cursor + measured-quota
   budget (R11-SRC-02, D-FEDERAL.1-1; ADR-236, amends ADR-089):**
   `[sam_gov_sweep].daily_request_budget` is now `10` — the measured daily

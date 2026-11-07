@@ -155,6 +155,29 @@ class SchemaRefusal(Exception):
         super().__init__(f"{url!r} refused by the mirror schema: {reason}")
 
 
+class KeyNotProvisioned(Exception):
+    """A keyed target's declared credential env var is unset — zero egress.
+
+    Raised by a connector's ``fetch()`` BEFORE the politeness layer is asked
+    for anything: the target row declares an ``api_key_env`` NAME (HG-09 —
+    the secret lives in Secret Manager/env only, never in the registry), and
+    an absent env binding means the run is unprovisioned, not the source
+    unreachable. The driver records it on ``report.refusals`` exactly like
+    the rights refusals — a per-target recorded disposition, never a crash
+    that abandons the run's remaining targets and never a fabricated
+    disappearance. The exception carries the env var NAME and the target id,
+    never a credential value.
+    """
+
+    def __init__(self, target_id: str, env_name: str) -> None:
+        self.target_id = target_id
+        self.env_name = env_name
+        super().__init__(
+            f"keyed target {target_id!r} is unprovisioned: ${env_name} is unset "
+            "(HG-09 — the operator registers the key; zero egress issued)"
+        )
+
+
 class ScreenedRefusal(Exception):
     """A connector's in-memory Part VIII screen refused the fetched bytes.
 
@@ -471,6 +494,8 @@ class Fetcher(Protocol):
     :class:`connectors.net.PoliteFetcher` is the implementation. Optional
     ``headers`` carry a per-request credential (e.g. a Bearer JWT) through the
     shared seam for an authenticated source (§23.5); most connectors omit them.
+    Optional ``auth_param`` (P37.12) carries a query-parameter credential on the
+    wire URL only — every recorded surface keeps the credential-free ``url``.
     """
 
     def fetch(
@@ -479,6 +504,7 @@ class Fetcher(Protocol):
         *,
         headers: Mapping[str, str] | None = None,
         body: bytes | None = None,
+        auth_param: tuple[str, str] | None = None,
     ) -> FetchResult: ...
 
 
@@ -666,6 +692,7 @@ __all__ = [
     "POST_CAPTURE_STAGES",
     "RunContext",
     "STAGE_ORDER",
+    "KeyNotProvisioned",
     "SchemaRefusal",
     "ScreenedRefusal",
     "Stage",

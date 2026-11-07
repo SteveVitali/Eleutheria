@@ -18559,3 +18559,300 @@ lane = "unknown"
 evidence = "no J4 redistribution-matrix row recorded for this registry source (redistribution.csv covers 342 of the registered ids); undeclared — the fail-closed default stands and the interim rights-record basis never reaches public"
 review_needed = true
 
+
+# --- P37.12 (D-SOURCES.7-2 / OP-13): the keyed US 511 JSON API lanes ---------
+# The ten graduated keyed 511 targets (data/dot_511_targets.toml [[targets]]
+# kind iteris_511_rows / ohgo_511_cameras). Each row's api_key_env names the
+# SIG_* env var the operator's Secret-Manager key binds to (OP-13/HG-09) — no
+# key is ever committed. ALL TEN STAY GATED: ingestion_permitted=false —
+# the operator's HG-03 rights flip is the only route to a live fetch. The
+# named mutation (the keyed live run) is gate-pending under OM-20/GATE-G6.
+
+[sources.dot_511_fl]
+name = "Florida 511 (FL511) camera API — Iteris/IBI-511 keyed feed"
+source_kind = "government_portal"
+homepage_url = "https://fl511.com/api/v2/get/cameras"
+default_tier = "R1"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (Iteris/IBI-511 v2 keyed JSON camera registry — registry rows only; connector map wired by P37.12)"
+auth_model = "api key ($SIG_US511_FL_KEY, HG-09 — auth, not the rights basis)"
+cadence = "monthly"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.12 (D-SOURCES.7-2): graduated from the 2026-09-17 enumerated keyed_api record (fl511_api — HTTP 400 'Invalid Key'). Key declared on the target row's api_key_env; Secret-Manager binding 'sig-us511-fl-key' (OP-13). Licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US) is seed evidence for the rights review, not a resolved record; rights UNDETERMINED."
+publisher = "Florida Department of Transportation (FL511)"
+jurisdiction_scheme = "us.state_abbr"
+jurisdiction = "FL"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
+[sources.dot_511_fl.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.dot_511_fl.redistribution]
+lane = "unknown"
+evidence = "no J4 redistribution-matrix row recorded for this registry source (redistribution.csv covers 342 of the registered ids); undeclared — the fail-closed default stands and the interim rights-record basis never reaches public"
+review_needed = true
+
+
+[sources.dot_511_ny]
+name = "511NY camera API — Iteris/IBI-511 keyed feed"
+source_kind = "government_portal"
+homepage_url = "https://511ny.org/api/v2/get/cameras"
+default_tier = "R1"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (Iteris/IBI-511 v2 keyed JSON camera registry — registry rows only; connector map wired by P37.12)"
+auth_model = "api key ($SIG_US511_NY_KEY, HG-09 — auth, not the rights basis)"
+cadence = "monthly"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.12 (D-SOURCES.7-2): graduated from the 2026-09-17 enumerated keyed_api record (511ny_api — HTTP 400 'Invalid Key'). Recorded third-party, unverified (web 2026-11-07): 511ny.org reportedly migrated to the Castle Rock '511x' platform ~2026-09-24..30 behind a Developer Access Agreement — the strict parse fails closed as ContentDrift on a migrated payload. Key: 'sig-us511-ny-key' (OP-13). Licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US); rights UNDETERMINED."
+publisher = "New York State Department of Transportation (511NY)"
+jurisdiction_scheme = "us.state_abbr"
+jurisdiction = "NY"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
+[sources.dot_511_ny.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.dot_511_ny.redistribution]
+lane = "unknown"
+evidence = "no J4 redistribution-matrix row recorded for this registry source (redistribution.csv covers 342 of the registered ids); undeclared — the fail-closed default stands and the interim rights-record basis never reaches public"
+review_needed = true
+
+
+[sources.dot_511_az]
+name = "AZ511 camera API — Iteris/IBI-511 keyed feed"
+source_kind = "government_portal"
+homepage_url = "https://az511.gov/api/v2/get/cameras"
+default_tier = "R1"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (Iteris/IBI-511 v2 keyed JSON camera registry — registry rows only; connector map wired by P37.12)"
+auth_model = "api key ($SIG_US511_AZ_KEY, HG-09 — auth, not the rights basis)"
+cadence = "monthly"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.12 (D-SOURCES.7-2): graduated from the 2026-09-17 enumerated keyed_api record (az511_api — HTTP 400 'Invalid Key'). Key: 'sig-us511-az-key' (OP-13). Licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US); rights UNDETERMINED."
+publisher = "Arizona Department of Transportation (AZ511)"
+jurisdiction_scheme = "us.state_abbr"
+jurisdiction = "AZ"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
+[sources.dot_511_az.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.dot_511_az.redistribution]
+lane = "unknown"
+evidence = "no J4 redistribution-matrix row recorded for this registry source (redistribution.csv covers 342 of the registered ids); undeclared — the fail-closed default stands and the interim rights-record basis never reaches public"
+review_needed = true
+
+
+[sources.dot_511_nvroads]
+name = "NV Roads 511 camera API — Iteris/IBI-511 keyed feed"
+source_kind = "government_portal"
+homepage_url = "https://www.nvroads.com/api/v2/get/cameras"
+default_tier = "R1"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (Iteris/IBI-511 v2 keyed JSON camera registry — registry rows only; connector map wired by P37.12)"
+auth_model = "api key ($SIG_US511_NV_KEY, HG-09 — auth, not the rights basis)"
+cadence = "monthly"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.12 (D-SOURCES.7-2): graduated from the 2026-09-17 enumerated keyed_api record (nvroads_api — HTTP 400 'Invalid Key'). Distinct upstream from dot_511_nv's ITS_ATM ArcGIS layer — a keyed target never shares a source row with an unkeyed one. Key: 'sig-us511-nv-key' (OP-13). Licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US); rights UNDETERMINED."
+publisher = "Nevada Department of Transportation (NV Roads / 511)"
+jurisdiction_scheme = "us.state_abbr"
+jurisdiction = "NV"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
+[sources.dot_511_nvroads.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.dot_511_nvroads.redistribution]
+lane = "unknown"
+evidence = "no J4 redistribution-matrix row recorded for this registry source (redistribution.csv covers 342 of the registered ids); undeclared — the fail-closed default stands and the interim rights-record basis never reaches public"
+review_needed = true
+
+
+[sources.dot_511_oh]
+name = "OHGO public camera API — ODOT keyed feed"
+source_kind = "government_portal"
+homepage_url = "https://publicapi.ohgo.com/api/v1/cameras"
+default_tier = "R1"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (OHGO v1 keyed JSON camera registry, Authorization: APIKEY header — registry rows only; connector map wired by P37.12)"
+auth_model = "api key ($SIG_US511_OH_KEY, HG-09 — auth, not the rights basis)"
+cadence = "monthly"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.12 (D-SOURCES.7-2): graduated from the 2026-09-17 enumerated access_restricted record (ohgo_api — HTTP 401 'API key required'). The published API intro states ODOT data 'is considered public domain and therefore freely available' (publicapi.ohgo.com, declared-from-docs 2026-11-07); licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US); rights UNDETERMINED pending review. Key: 'sig-us511-oh-key' (OP-13)."
+publisher = "Ohio Department of Transportation (OHGO)"
+jurisdiction_scheme = "us.state_abbr"
+jurisdiction = "OH"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
+[sources.dot_511_oh.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.dot_511_oh.redistribution]
+lane = "unknown"
+evidence = "no J4 redistribution-matrix row recorded for this registry source (redistribution.csv covers 342 of the registered ids); undeclared — the fail-closed default stands and the interim rights-record basis never reaches public"
+review_needed = true
+
+
+[sources.dot_511_pa]
+name = "511PA camera API — Iteris/IBI-511 keyed feed"
+source_kind = "government_portal"
+homepage_url = "https://511pa.com/api/v2/get/cameras"
+default_tier = "R1"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (Iteris/IBI-511 v2 keyed JSON camera registry — registry rows only; connector map wired by P37.12)"
+auth_model = "api key ($SIG_US511_PA_KEY, HG-09 — auth, not the rights basis)"
+cadence = "monthly"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.12 (D-SOURCES.7-2): graduated from the 2026-09-17 enumerated keyed_api record (511pa — HTTP 400 'Invalid Key'). Key: 'sig-us511-pa-key' (OP-13). Licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US); rights UNDETERMINED."
+publisher = "Pennsylvania Department of Transportation (511PA)"
+jurisdiction_scheme = "us.state_abbr"
+jurisdiction = "PA"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
+[sources.dot_511_pa.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.dot_511_pa.redistribution]
+lane = "unknown"
+evidence = "no J4 redistribution-matrix row recorded for this registry source (redistribution.csv covers 342 of the registered ids); undeclared — the fail-closed default stands and the interim rights-record basis never reaches public"
+review_needed = true
+
+
+[sources.dot_511_wi]
+name = "511WI camera API — Iteris/IBI-511 keyed feed"
+source_kind = "government_portal"
+homepage_url = "https://511wi.gov/api/v2/get/cameras"
+default_tier = "R1"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (Iteris/IBI-511 v2 keyed JSON camera registry — registry rows only; connector map wired by P37.12)"
+auth_model = "api key ($SIG_US511_WI_KEY, HG-09 — auth, not the rights basis)"
+cadence = "monthly"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.12 (D-SOURCES.7-2): graduated from the 2026-09-17 enumerated keyed_api record (511wi — HTTP 400 'Invalid Key'). Key: 'sig-us511-wi-key' (OP-13). Licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US); rights UNDETERMINED."
+publisher = "Wisconsin Department of Transportation (511WI)"
+jurisdiction_scheme = "us.state_abbr"
+jurisdiction = "WI"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
+[sources.dot_511_wi.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.dot_511_wi.redistribution]
+lane = "unknown"
+evidence = "no J4 redistribution-matrix row recorded for this registry source (redistribution.csv covers 342 of the registered ids); undeclared — the fail-closed default stands and the interim rights-record basis never reaches public"
+review_needed = true
+
+
+[sources.dot_511_ak]
+name = "511 Alaska camera API — Iteris/IBI-511 keyed feed"
+source_kind = "government_portal"
+homepage_url = "https://511.alaska.gov/api/v2/get/cameras"
+default_tier = "R1"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (Iteris/IBI-511 v2 keyed JSON camera registry — registry rows only; connector map wired by P37.12)"
+auth_model = "api key ($SIG_US511_AK_KEY, HG-09 — auth, not the rights basis)"
+cadence = "monthly"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.12 (D-SOURCES.7-2): graduated from the 2026-09-17 enumerated keyed_api record (511alaska — HTTP 400 'Invalid Key'). Key: 'sig-us511-ak-key' (OP-13). Licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US); rights UNDETERMINED."
+publisher = "Alaska Department of Transportation & Public Facilities (511 Alaska)"
+jurisdiction_scheme = "us.state_abbr"
+jurisdiction = "AK"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
+[sources.dot_511_ak.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.dot_511_ak.redistribution]
+lane = "unknown"
+evidence = "no J4 redistribution-matrix row recorded for this registry source (redistribution.csv covers 342 of the registered ids); undeclared — the fail-closed default stands and the interim rights-record basis never reaches public"
+review_needed = true
+
+
+[sources.dot_511_ct]
+name = "CTroads camera API — Iteris/IBI-511 keyed feed"
+source_kind = "government_portal"
+homepage_url = "https://ctroads.org/api/v2/get/cameras"
+default_tier = "R1"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (Iteris/IBI-511 v2 keyed JSON camera registry — registry rows only; connector map wired by P37.12)"
+auth_model = "api key ($SIG_US511_CT_KEY, HG-09 — auth, not the rights basis)"
+cadence = "monthly"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.12 (D-SOURCES.7-2): graduated from the 2026-09-17 enumerated keyed_api record (ctroads — HTTP 400 'Invalid Key'). Key: 'sig-us511-ct-key' (OP-13). Licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US); rights UNDETERMINED."
+publisher = "Connecticut Department of Transportation (CTroads)"
+jurisdiction_scheme = "us.state_abbr"
+jurisdiction = "CT"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
+[sources.dot_511_ct.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.dot_511_ct.redistribution]
+lane = "unknown"
+evidence = "no J4 redistribution-matrix row recorded for this registry source (redistribution.csv covers 342 of the registered ids); undeclared — the fail-closed default stands and the interim rights-record basis never reaches public"
+review_needed = true
+
+
+[sources.dot_511_newengland]
+name = "New England 511 camera API — Iteris/IBI-511 tri-state keyed feed (ME/NH/VT)"
+source_kind = "government_portal"
+homepage_url = "https://newengland511.org/api/v2/get/cameras"
+default_tier = "R1"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (Iteris/IBI-511 v2 keyed JSON camera registry — registry rows only; connector map wired by P37.12)"
+auth_model = "api key ($SIG_US511_NE_KEY, HG-09 — auth, not the rights basis)"
+cadence = "monthly"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.12 (D-SOURCES.7-2): graduated from the 2026-09-17 enumerated keyed_api record (newengland511 — HTTP 400 'Invalid Key'). Tri-state feed — the per-row subdivision is unverified until observed (jurisdiction sig.unresolved on the target). Key: 'sig-us511-ne-key' (OP-13). Licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US); rights UNDETERMINED."
+publisher = "New England 511 (ME/NH/VT tri-state coalition)"
+jurisdiction_scheme = "sig.unresolved"
+jurisdiction = "unresolved"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
+[sources.dot_511_newengland.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.dot_511_newengland.redistribution]
+lane = "unknown"
+evidence = "no J4 redistribution-matrix row recorded for this registry source (redistribution.csv covers 342 of the registered ids); undeclared — the fail-closed default stands and the interim rights-record basis never reaches public"
+review_needed = true

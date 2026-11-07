@@ -541,3 +541,36 @@ code = "US"
 scheme = "iso.3166_1_alpha2"
 extent = [-180.0, 17.0, -63.0, 72.0]
 note = "United States national bound incl. Alaska, Hawaiʻi and the island territories (declared detector extent)"
+
+# P37.12 (D-SOURCES.7-2): us.state_abbr detector bounds for the five keyed-API
+# states the P26.7 extents table lacked (declared detector bounds).
+
+[[extents]]
+code = "AK"
+scheme = "us.state_abbr"
+extent = [-180.0, 51.0, -129.9, 71.5]
+note = "Alaska administrative bound, margined for the Aleutian chain crossing the antimeridian convention (declared detector extent)"
+
+[[extents]]
+code = "CT"
+scheme = "us.state_abbr"
+extent = [-73.8, 40.9, -71.7, 42.1]
+note = "Connecticut administrative bound, margined for the Long Island Sound shore (declared detector extent)"
+
+[[extents]]
+code = "NV"
+scheme = "us.state_abbr"
+extent = [-120.1, 34.9, -113.9, 42.1]
+note = "Nevada administrative bound (declared detector extent)"
+
+[[extents]]
+code = "OH"
+scheme = "us.state_abbr"
+extent = [-84.9, 38.3, -80.4, 42.1]
+note = "Ohio administrative bound, margined for the Lake Erie shore (declared detector extent)"
+
+[[extents]]
+code = "WI"
+scheme = "us.state_abbr"
+extent = [-92.9, 42.4, -86.7, 47.1]
+note = "Wisconsin administrative bound, margined for the Great Lakes shore (declared detector extent)"

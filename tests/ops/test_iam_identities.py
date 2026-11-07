@@ -150,15 +150,17 @@ def test_declaration_parses_and_declares_the_contract(decl) -> None:
     assert jobs_rule is not None
     assert jobs_rule.grant == ("sig-probe-rt", "sig-quality-probe-rt")
     assert jobs_rule.revoke == ("allUsers", "default-compute")
-    # The 14-secret consumer matrix is complete (P34.43 adds the two DB-login
+    # The 24-secret consumer matrix is complete (P34.43 adds the two DB-login
     # credentials consumed by the exec identity alone; P34.45 adds the third —
-    # the write-capable sig_materialize_login password); the services-leg
-    # accessor grant set is sig-api-rt on sig-pg-password plus the operator-
-    # approved D-P34.42a-1 option (a) grant — sig-alerts-rt on its own
-    # sig-alert-webhook-token (the receiver mounts it; the leg-1 refusal),
-    # the jobs-leg grants are the job-class consumers, and the five job-only
-    # secrets carry a jobs_revoke on default-compute.
-    assert len(decl.secrets) == 14
+    # the write-capable sig_materialize_login password; P37.12 adds the ten
+    # keyed US 511 keys the ingest class alone consumes — declared, no
+    # version until OP-13); the services-leg accessor grant set is sig-api-rt
+    # on sig-pg-password plus the operator-approved D-P34.42a-1 option (a)
+    # grant — sig-alerts-rt on its own sig-alert-webhook-token (the receiver
+    # mounts it; the leg-1 refusal), the jobs-leg grants are the job-class
+    # consumers, and the five job-only secrets carry a jobs_revoke on
+    # default-compute.
+    assert len(decl.secrets) == 24
     api_env = next(s for s in decl.secrets if s.name == "sig-api-env")
     assert api_env.consumers == ()  # recorded, 0 versions, never deleted
     hook = next(s for s in decl.secrets if s.name == "sig-alert-webhook-token")

@@ -642,6 +642,115 @@ job = "sig-ingest-dot-511-mo"
 scheduler = "sig-sched-dot-511-mo"
 note = "MoDOT layer (871, FeatureServer/1); conditional public grant evaluated under public terms (disclaimer + revocation) — monthly cadence honours the conditions."
 
+# --- P37.12 (D-SOURCES.7-2 / OP-13): the keyed US 511 JSON API lanes ----------
+# Ten graduated keyed lanes (data/dot_511_targets.toml [[targets]] kinds
+# iteris_511_rows / ohgo_511_cameras). Every row is declared --paused AND its
+# source row stays ingestion_permitted=false: the `secrets` map is the wiring
+# — the Secret-Manager name each SIG_US511_* env binds to — which the
+# operator's OP-13 registration (HG-09) fills before the HG-03 flip + the
+# gated live leg. A paused row is skipped by the due dispatcher; an
+# unprovisioned key is a recorded KeyNotProvisioned refusal, zero egress.
+
+[[sources]]
+id = "dot_511_fl"
+cadence = "monthly"
+cron = "7 4 28 * *"
+job = "sig-ingest-dot-511-fl"
+scheduler = "sig-sched-dot-511-fl"
+state = "paused"
+secrets = { SIG_US511_FL_KEY = "sig-us511-fl-key" }
+note = "FL511 Iteris/IBI-511 keyed cameras API (fl511_api); key rides the ?key= wire param through the auth_param seam — never recorded in a URL (HG-09)."
+
+[[sources]]
+id = "dot_511_ny"
+cadence = "monthly"
+cron = "11 4 28 * *"
+job = "sig-ingest-dot-511-ny"
+scheduler = "sig-sched-dot-511-ny"
+state = "paused"
+secrets = { SIG_US511_NY_KEY = "sig-us511-ny-key" }
+note = "511NY Iteris/IBI-511 keyed cameras API (511ny_api); reported 511x platform migration 2026-09 — the strict parse records ContentDrift on a migrated payload."
+
+[[sources]]
+id = "dot_511_az"
+cadence = "monthly"
+cron = "17 4 28 * *"
+job = "sig-ingest-dot-511-az"
+scheduler = "sig-sched-dot-511-az"
+state = "paused"
+secrets = { SIG_US511_AZ_KEY = "sig-us511-az-key" }
+note = "AZ511 Iteris/IBI-511 keyed cameras API (az511_api)."
+
+[[sources]]
+id = "dot_511_nvroads"
+cadence = "monthly"
+cron = "23 4 28 * *"
+job = "sig-ingest-dot-511-nvroads"
+scheduler = "sig-sched-dot-511-nvroads"
+state = "paused"
+secrets = { SIG_US511_NV_KEY = "sig-us511-nv-key" }
+note = "NV Roads Iteris/IBI-511 keyed cameras API (nvroads_api) — the keyed lane's own seat, distinct from dot_511_nv's gated ITS_ATM ArcGIS target."
+
+[[sources]]
+id = "dot_511_oh"
+cadence = "monthly"
+cron = "29 4 28 * *"
+job = "sig-ingest-dot-511-oh"
+scheduler = "sig-sched-dot-511-oh"
+state = "paused"
+secrets = { SIG_US511_OH_KEY = "sig-us511-oh-key" }
+note = "OHGO public cameras API (ohgo_api); key rides the documented Authorization: APIKEY header — never the URL. ApiResult TotalResultCount is the truncation detector."
+
+[[sources]]
+id = "dot_511_pa"
+cadence = "monthly"
+cron = "35 4 28 * *"
+job = "sig-ingest-dot-511-pa"
+scheduler = "sig-sched-dot-511-pa"
+state = "paused"
+secrets = { SIG_US511_PA_KEY = "sig-us511-pa-key" }
+note = "511PA Iteris/IBI-511 keyed cameras API (511pa)."
+
+[[sources]]
+id = "dot_511_wi"
+cadence = "monthly"
+cron = "41 4 28 * *"
+job = "sig-ingest-dot-511-wi"
+scheduler = "sig-sched-dot-511-wi"
+state = "paused"
+secrets = { SIG_US511_WI_KEY = "sig-us511-wi-key" }
+note = "511WI Iteris/IBI-511 keyed cameras API (511wi)."
+
+[[sources]]
+id = "dot_511_ak"
+cadence = "monthly"
+cron = "47 4 28 * *"
+job = "sig-ingest-dot-511-ak"
+scheduler = "sig-sched-dot-511-ak"
+state = "paused"
+secrets = { SIG_US511_AK_KEY = "sig-us511-ak-key" }
+note = "511 Alaska Iteris/IBI-511 keyed cameras API (511alaska)."
+
+[[sources]]
+id = "dot_511_ct"
+cadence = "monthly"
+cron = "53 4 28 * *"
+job = "sig-ingest-dot-511-ct"
+scheduler = "sig-sched-dot-511-ct"
+state = "paused"
+secrets = { SIG_US511_CT_KEY = "sig-us511-ct-key" }
+note = "CTroads Iteris/IBI-511 keyed cameras API (ctroads)."
+
+[[sources]]
+id = "dot_511_newengland"
+cadence = "monthly"
+cron = "59 4 28 * *"
+job = "sig-ingest-dot-511-newengland"
+scheduler = "sig-sched-dot-511-newengland"
+state = "paused"
+secrets = { SIG_US511_NE_KEY = "sig-us511-ne-key" }
+note = "New England 511 (ME/NH/VT) Iteris/IBI-511 keyed cameras API (newengland511) — tri-state feed, jurisdiction sig.unresolved on the target."
+
 # --- P26.9 (SOURCES.8): municipal / transit / non-US camera registries --------
 # Monthly registry refresh for the GL-GATE-06-resolved rows only — gated rows
 # get no job until their rights blocker resolves (D-SOURCES.8-1/-2).
@@ -1796,6 +1905,56 @@ reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a)
 name = "sig-sched-camreg-batch-04"
 disposition = "retired"
 reason = "consolidated into the hourly sig-sched-due dispatcher (G1-TRIM B-13=a); the cadence row remains the due-set input"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-fl"
+disposition = "kept-declared-pin"
+reason = "D-P37.12-1: paused seat declared for the keyed 511 wave — the trigger was never deployed; the leg's dispatcher decision resolves it, never consolidated now"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-ny"
+disposition = "kept-declared-pin"
+reason = "D-P37.12-1: paused seat declared for the keyed 511 wave — the trigger was never deployed; the leg's dispatcher decision resolves it, never consolidated now"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-az"
+disposition = "kept-declared-pin"
+reason = "D-P37.12-1: paused seat declared for the keyed 511 wave — the trigger was never deployed; the leg's dispatcher decision resolves it, never consolidated now"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-nvroads"
+disposition = "kept-declared-pin"
+reason = "D-P37.12-1: paused seat declared for the keyed 511 wave — the trigger was never deployed; the leg's dispatcher decision resolves it, never consolidated now"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-oh"
+disposition = "kept-declared-pin"
+reason = "D-P37.12-1: paused seat declared for the keyed 511 wave — the trigger was never deployed; the leg's dispatcher decision resolves it, never consolidated now"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-pa"
+disposition = "kept-declared-pin"
+reason = "D-P37.12-1: paused seat declared for the keyed 511 wave — the trigger was never deployed; the leg's dispatcher decision resolves it, never consolidated now"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-wi"
+disposition = "kept-declared-pin"
+reason = "D-P37.12-1: paused seat declared for the keyed 511 wave — the trigger was never deployed; the leg's dispatcher decision resolves it, never consolidated now"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-ak"
+disposition = "kept-declared-pin"
+reason = "D-P37.12-1: paused seat declared for the keyed 511 wave — the trigger was never deployed; the leg's dispatcher decision resolves it, never consolidated now"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-ct"
+disposition = "kept-declared-pin"
+reason = "D-P37.12-1: paused seat declared for the keyed 511 wave — the trigger was never deployed; the leg's dispatcher decision resolves it, never consolidated now"
+
+[[retire_triggers]]
+name = "sig-sched-dot-511-newengland"
+disposition = "kept-declared-pin"
+reason = "D-P37.12-1: paused seat declared for the keyed 511 wave — the trigger was never deployed; the leg's dispatcher decision resolves it, never consolidated now"
 
 [[retire_triggers]]
 name = "sig-sched-camreg-batch-05"
