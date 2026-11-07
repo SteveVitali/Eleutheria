@@ -38,6 +38,9 @@ dependencies = [
     # there is no cycle even though api depends on sig-exports.
     "sig-inference",
     "sig-parsing",
+    # P37.9 (R11-DATA-05): the dossier timeline resolves through
+    # reconcile.lifecycle (§29.4) — reconcile → ontology/db only, no cycle.
+    "sig-reconcile",
     # P36.15 (SIG-PUB-015/016): dossier excerpts are derivative-sourced through
     # evidence.tiers.publishable_excerpt — sig-evidence is a leaf (blake3/boto3
     # only), so there is no cycle even though api/connectors depend on exports.
@@ -62,6 +65,7 @@ sig-db = { workspace = true }
 sig-tasks = { workspace = true }
 sig-inference = { workspace = true }
 sig-parsing = { workspace = true }
+sig-reconcile = { workspace = true }
 sig-evidence = { workspace = true }
 
 [build-system]

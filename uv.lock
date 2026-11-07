@@ -2610,6 +2610,7 @@ dependencies = [
     { name = "sig-inference" },
     { name = "sig-parsing" },
     { name = "sig-policy" },
+    { name = "sig-reconcile" },
     { name = "sig-resolution" },
     { name = "sig-tasks" },
 ]
@@ -2626,6 +2627,7 @@ requires-dist = [
     { name = "sig-inference", editable = "inference" },
     { name = "sig-parsing", editable = "parsing" },
     { name = "sig-policy", editable = "policy" },
+    { name = "sig-reconcile", editable = "reconcile" },
     { name = "sig-resolution", editable = "resolution" },
     { name = "sig-tasks", editable = "tasks" },
 ]
