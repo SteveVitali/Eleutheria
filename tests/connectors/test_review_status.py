@@ -169,8 +169,10 @@ def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[st
     # P37.70 (D-SOURCES.8-2) registered the two keyed AU traffic-camera sources
     # (camreg_qldtraffic_au + camreg_nsw_live_au) — every row stays
     # ingestion_permitted=false pending the operator's HG-03 flip
-    # (600 → 602; loadable unchanged).
-    assert "registered sources: 602" in out
+    # (600 → 602; loadable unchanged). P37.13 (SIG-INGEST-041)
+    # registered the eight datalib_* LINK roster rows (602 → 610; loadable
+    # unchanged — every row stays ingestion_permitted=false).
+    assert "registered sources: 610" in out
     assert "self-checks OK" in out
 
 
@@ -336,10 +338,13 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # and loadable are both unchanged. P37.70 (D-SOURCES.8-2) registered the
     # two keyed AU traffic-camera sources (600 → 602) — every row stays
     # ingestion_permitted=false with UNDETERMINED rights, so flip-ready and
+    # loadable are both unchanged. P37.13 (SIG-INGEST-041) registered the
+    # eight datalib_* LINK roster rows (602 → 610) — every row stays
+    # ingestion_permitted=false with UNDETERMINED rights, so flip-ready and
     # loadable are both unchanged.
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 602" in out
+    assert "registered sources: 610" in out
     assert "flip-ready: 2" in out
     assert "flip-ready: census_gazetteer_tiger" in out
     assert "flip-ready: natural_earth_10m" in out

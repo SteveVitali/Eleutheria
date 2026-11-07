@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "98827a73a5074496f010829a874a0ec7ce993801",
+  "input_commit": "1cdfe961a58e0419b8b0a4fff270ba231b3566e4",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "424665688cd2319c194da7de2ffe7c542ddfc7c0acfa4b6f9f2124ab6de831e1"
+      "sha256": "28588cf80f9e168bf64b0021632065763627a09691457adb2941790158a3d9c9"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -957,12 +957,16 @@
       "sha256": "ccce798e11d254f4e1b51fab63fddb3147bd3354f1ae60314334be35f4c5f8a4"
     },
     {
+      "path": "docs/adr/ADR-239-data-library-roster-and-recurring-discovery-sweep.md",
+      "sha256": "94275206a902e3373bbfa93d8d47f96606b531106a05cb644643a1e1134779f7"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "8f89d3ff91b1d3acc4f9f63485ef63d1a1f67520f8d64479fff363db9eec8a77"
+      "sha256": "f0ff3c012368a71c83ed8c1549c7ae1ec5fc129813052b8e7e6383e018fc9b5c"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "89f36d7461c1139a60bf7ba5b53ffb1c36e3da220ccb6b500e9f53ee5901c89f"
+      "sha256": "971476c60f86b512203f10ef88f7b2756de3f21778aee392362c4aaed7d0217e"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -1058,7 +1062,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "649d2f5b49ae6e4d3b2fcc56d094cbe0029845892dedb858d35b9fa651c61869"
+      "sha256": "fd9e9c1d34a29a3ea1fb59c76bc5f3b30b489089e1ec2ca0e8ec65578cd998f0"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -2681,6 +2685,10 @@
       "sha256": "152cced3776d088fc34807b11c614f190a5fac7121d57e93e0d1979cd2710015"
     },
     {
+      "path": "docs/build/runs/P37.13.md",
+      "sha256": "9d3ebe7e328a48c295334e4a55bbfcd400826d3374886bcfaaabc994ffe355e7"
+    },
+    {
       "path": "docs/build/runs/P37.2.md",
       "sha256": "57820a1bd874a611c3c773e7c5581581d1376e0ab103186e886e6aeb2b95045b"
     },
@@ -4266,7 +4274,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "c2be5958462115b5b3f0d696ae3b93f3fdf2819789eca30b1dd608cdede1266b"
+      "sha256": "dda8098e939895a0fdc8ff4b5aeb99c6f6858afe1f2e6251273bdf8822d15018"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",

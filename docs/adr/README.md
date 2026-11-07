@@ -242,6 +242,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-236](ADR-236-sam-gov-sweep-cursor-persistence-and-measured-quota-budget.md) | SAM.gov sweep: persist the rotating cursor, set the budget to the measured quota (P37.11) | P37.11 (Round 11 / P37, row 432 — R11-SRC-02; the named home of | accepted |
 | [ADR-237](ADR-237-keyed-us-511-credential-seam-and-declared-contracts.md) | Keyed US 511 lanes: a wire-only query-param credential seam and declared-contract, fail-closed parse (P37.12) | P37.12 (Round 11 / P37, row 433 — the named home of D-SOURCES.7-2's | accepted |
 | [ADR-238](ADR-238-keyed-au-traffic-camera-apis-geojson-declared-contracts.md) | Keyed AU traffic-camera lanes: declared-contract GeoJSON kinds and the QLDTraffic supersession (P37.70) | P37.70 (Round 11 / P37, row 434 — the named home of D-SOURCES.8-2's | accepted |
+| [ADR-239](ADR-239-data-library-roster-and-recurring-discovery-sweep.md) | The §22.7 Data Library roster artifact and the recurring discovery sweep (P37.13) | P37.13 (Round 11 / P37, row 435 — F2a group 12; SIG-INGEST-041 + SIG-INGEST-048) | accepted |
 
 ## Notes
 
