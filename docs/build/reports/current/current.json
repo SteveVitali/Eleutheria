@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "dfa9b5506fb09dd22d4108bcdf1cb5e0e2e7d75b",
-  "manifest_inputs": 1223,
+  "input_commit": "ac5ea7eb4e1102c93497cc0a61bb157b14ee8edb",
+  "manifest_inputs": 1224,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P37.15",
     "lastCompleted": "P37.14",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.70,P37.71",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.70,P37.71",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -26,18 +26,18 @@
     "updatedAt": "2026-11-07T18:05Z"
   },
   "counts": {
-    "obligations": 231,
-    "owed": 147,
-    "open": 144,
+    "obligations": 232,
+    "owed": 148,
+    "open": 145,
     "partial": 3,
     "terminal": 84,
-    "events": 742,
+    "events": 743,
     "transitions": 55,
     "coverage_assessments": 510,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 82,
+    "return_pass_rows": 83,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -12093,6 +12093,53 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P37.15-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P37.15-1:e0",
+      "kind": "F",
+      "owner": "the audit-connector owner (a canary_findings file_kind='portal_public_audit' branch or a declared non-canary lane)",
+      "landing": "an audit_portal_public family replays clean in the parser canary, or the lane is declared non-canary with its reason in the spec",
+      "landing_source": "event-head",
+      "backlog_home": "BL-025",
+      "item": "model the `portal_public_audit` audit lane in `connectors.audit_structural.canary_findings`: its committed fixture (`Source Organization,Camera Count` — the public roster, not the searching-org aggregate) carries no searching-organization column, so the canary's aggregate branch cannot evaluate it; the parser-canary spec (`tests/parser_canary/spec.toml`) covers the four lanes the canary models today",
+      "unblocked_by": "owner: the audit-connector owner (a `canary_findings` `file_kind='portal_public_audit'` branch or a declared non-canary lane) · trigger: the next audit_structural change or a parser-canary spec extension",
+      "verify": "a `[[family]]` row for `audit_portal_public` replays clean in `sig-ops parser-canary run`, or the lane is declared non-canary with its reason in the spec",
+      "proxy": "the spec comment names the excluded lane and this row — the coverage gap is recorded, never smoothed",
+      "line": 1558,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "event_id": "D-P37.15-1:e0",
+          "obligation_id": "D-P37.15-1",
+          "ticket_id": "P37.15",
+          "backlog_home": "BL-025",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "expected_previous_event": null,
+          "observed_at": "2026-11-07",
+          "recorded_at": "2026-11-07",
+          "source_commit": "WORKTREE",
+          "owner": "the audit-connector owner (a canary_findings file_kind='portal_public_audit' branch or a declared non-canary lane)",
+          "landing": "an audit_portal_public family replays clean in the parser canary, or the lane is declared non-canary with its reason in the spec",
+          "reason": "migration anchor appended by P37.15 (row 437) for the row it added — the portal_public_audit committed fixture carries no searching-organization column (the public roster is not the searching-org aggregate), so canary_findings' aggregate branch cannot model it; the spec covers the four lanes the canary models",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "tests/parser_canary/spec.toml",
+            "connectors/src/connectors/audit_structural.py"
+          ],
+          "anchor": {
+            "interpretation": "created",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "row_line": 1558,
+            "row_sha256": "f9fe76b59576e4181a7f0dfab1f3a9b0445afcac82c095b08deb75639e87ba60"
+          }
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -12854,6 +12901,14 @@
         "obligations": [
           "D-P37.14-1"
         ]
+      },
+      {
+        "key": "P37.15",
+        "obligations_cell": "the queued `hosted` parser-canary leg — `prepared_not_executed` while `SIG_GCP_PROJECT`/ADC are absent",
+        "gates_cell": "`hosted` write (scheduled job); OM-20 GATE-G6 §4 11D OM-20 list (expiry: GATE-ACCEPT-R11); `AR-3 + AR-2`; excluded 03:00-06:30Z + batch-window-day6T00:00Z-day13T12:00Z; needs SIG_GCP_PROJECT + ADC",
+        "operator_cell": "export `SIG_GCP_PROJECT` + ADC — then the leg-runner runs `ops/gcp/parser-canary.sh --apply all` (window-gated, restore point + rollback declared)",
+        "rerun_cell": "`implement-spec spec=docs/tickets/437_P37.15__scheduled-parser-canary.md live_verification=true`",
+        "obligations": []
       }
     ]
   },
@@ -26912,10 +26967,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "2c45b520d4ccd1e14f237a7b5ebc2f52c83019e8457c48c44ccf6aae9cc229d6",
+  "manifest_sha256": "bdbadbc3151f16c384aeb5b6870a5e8f7246b532e3e3468cde03a432b4aff916",
   "current_md": {
-    "lines": 148,
-    "bytes": 19920,
+    "lines": 149,
+    "bytes": 20137,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

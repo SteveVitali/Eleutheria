@@ -442,6 +442,27 @@ export SIG_RDC_EARLIEST="${SIG_EXEC_EARLIEST}"    # same AR-3 window
 export SIG_RDC_STATE_DIR="${SIG_RDC_STATE_DIR:-${TMPDIR:-/tmp}/p35.23-rdc}"
 export SIG_RDC_IMAGE="${SIG_RDC_IMAGE:-}"         # a ${SIG_API_IMAGE}:<tag> | @sha256
 
+# --- the scheduled parser canary (P37.15 / BL-025 canary part, G6 §4) ------
+# The permanent `sig-parser-canary` Cloud Run job — the daily fixture-replay
+# canary per parser family: replay every declared family's committed sample
+# through the family's own parse + canary_findings path, raise the typed
+# `parser_drift` issue (the report's typed-issue entries + the recorded-alert
+# seam) on drift — plus its `sig-sched-parser-canary` trigger, declared in
+# ops/parser_canary.toml (sig.parser-canary/1, rendered by
+# `sig-ops parser-canary job`). Same OM-19 window as the quality/rdc legs:
+# applies ≥ SIG_PARSER_CANARY_EARLIEST, never 03:00–06:30Z, never inside the
+# day-6→13 batch window; SIG_PARSER_CANARY_NOW overrides the clock for the
+# offline guard test only. The runtime identity is sig-quality-probe-rt —
+# its conditioned objectCreator on ops/probes/ is the exact write surface;
+# no new grant, no DB, the one secret is the alert webhook token.
+export SIG_PARSER_CANARY_JOB="sig-parser-canary"
+export SIG_PARSER_CANARY_SCHED="sig-sched-parser-canary"
+export SIG_PARSER_CANARY_TOML="ops/parser_canary.toml"
+export SIG_PARSER_CANARY_PREFIX="ops/probes/parser-canary/"  # inside the conditioned ops/probes/ scope
+export SIG_PARSER_CANARY_EARLIEST="${SIG_EXEC_EARLIEST}"     # same AR-3 window
+export SIG_PARSER_CANARY_STATE_DIR="${SIG_PARSER_CANARY_STATE_DIR:-${TMPDIR:-/tmp}/p37.15-parser-canary}"
+export SIG_PARSER_CANARY_IMAGE="${SIG_PARSER_CANARY_IMAGE:-}"  # a ${SIG_API_IMAGE}:<tag> | @sha256
+
 # --- the v3-interim camera-site ER re-run (P34.45 / ADR-153+206, OM-20) ------
 # The ONE append-only ER re-run under `sig_materialize_login` on the P34.43
 # exec host (ops/gcp/er-rerun.sh). Same contract window as the IAM/quality

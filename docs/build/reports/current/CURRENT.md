@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `dfa9b5506fb09dd22d4108bcdf1cb5e0e2e7d75b` · inputs hashed: 1223 · wall-clock receipt: `receipt.json`
+> input_commit: `ac5ea7eb4e1102c93497cc0a61bb157b14ee8edb` · inputs hashed: 1224 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -13,10 +13,10 @@
 
 ## Obligations
 
-- 231 obligations · **147 owed** (144 OPEN, 3 PARTIAL) · 84 terminal
-- 742 events (55 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 232 obligations · **148 owed** (145 OPEN, 3 PARTIAL) · 84 terminal
+- 743 events (55 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 147 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 148 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -106,6 +106,7 @@
 | P37.70 | D-P37.70-1 | `implement-spec spec=docs/tickets/434_P37.70__keyed-au-traffic-camera-apis.md live_verification=true` |
 | P37.13 | D-P37.13-1 | the next `sig.discovery-sweep/1` run (the recurring sweep) or the acquisition-plan ticket that takes the 23 candidates — `docs/build/reports/discovery-sweep/202… |
 | P37.14 | D-P37.14-1 | a data-review ticket (seed-session population) or the exports ticket that first consumes the `legal_instrument` `publishable` verdict — `docs/adr/ADR-240-statut… |
+| P37.15 | the queued `hosted` parser-canary leg — `prepared_not_executed` while `SIG_GCP_PROJECT`/ADC are absent | `implement-spec spec=docs/tickets/437_P37.15__scheduled-parser-canary.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 

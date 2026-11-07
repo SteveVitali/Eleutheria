@@ -24,6 +24,23 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.15 — scheduled parser canary (BL-025 canary part; SIG-PARSE-007/008,
+  RISK-P7-06):** a daily fixture-replay canary per parser family that raises
+  the typed `parser_drift` issue on drift. `tests/parser_canary/` carries the
+  committed `sig.parser-canary-spec/1` registry + a sealed corpus of real
+  captured samples (nine module families — every connectors module shipping a
+  `canary_findings` deterministic core — plus a `parsing.drift` structural
+  family); `sig-ops parser-canary` (`check`/`run`/`scheduled`/`job`) replays
+  each family's parse + canary path and emits `sig.parser-canary-report/1`
+  with typed `sig.parser-canary-issue/1` entries + the shared
+  `sig.probe-run/1` envelope, firing the recorded-alert seam on any issue.
+  `ops/parser_canary.toml` (`sig.parser-canary/1`) declares the permanent
+  `sig-parser-canary` Cloud Run job (sig-quality-probe-rt, conditioned
+  `ops/probes/` create only) + its `sig-sched-parser-canary` daily trigger;
+  `ops/gcp/parser-canary.sh` owns the windowed mutations (deploy + trigger +
+  the canary run itself — GATE-G6 §4 names P37.15; the leg is QUEUED
+  `prepared_not_executed` while `SIG_GCP_PROJECT`/ADC are absent). The corpus
+  rides the workload image (`tests/parser_canary/` COPYed into `/app`).
 - **P37.14 — statute-seeded records leads: the mandate→gap generator, the
   one-time auditor-survey artifact, and the LegalInstrument session/text
   publish gate (SIG-INGEST-025a, SIG-INGEST-025b, SIG-INGEST-025c; ADR-240):**

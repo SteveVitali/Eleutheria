@@ -1,0 +1,6 @@
+{
+  "records": [
+    {"id": "r-1", "agency": "OKC PD", "attachments": [{"name": "contract.pdf"}]},
+    {"id": "r-2", "agency": "Tulsa PD", "attachments": [{"name": "invoice.pdf"}]}
+  ]
+}

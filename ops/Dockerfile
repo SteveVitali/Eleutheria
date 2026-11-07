@@ -71,6 +71,13 @@ COPY evidence ./evidence
 # exact corpus manifest + committed member bytes each run evaluates.
 COPY tests/rdc ./tests/rdc
 
+# P37.15 (BL-025 canary part, SIG-PARSE-007/008): the sealed parser-canary
+# corpus rides the image — the scheduled sig-parser-canary job runs
+# `sig-ops parser-canary scheduled --corpus /app/tests/parser_canary`
+# (ops/parser_canary.toml), so the image digest pins the exact family
+# registry + committed samples each run replays.
+COPY tests/parser_canary ./tests/parser_canary
+
 # Install uv and the read-API package (+ its transitive workspace deps) into the
 # system env. Installing ./api pulls sig-reconcile/-inference/-policy/-evidence/
 # -db/-resolution/-exports from the local workspace. ./connectors is installed

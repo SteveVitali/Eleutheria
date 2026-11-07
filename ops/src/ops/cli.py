@@ -6222,6 +6222,10 @@ def main(argv: list[str] | None = None) -> int:
         from . import rdc
 
         return rdc.main(raw[1:])
+    if raw and raw[0] == "parser-canary":
+        from . import parser_canary
+
+        return parser_canary.main(raw[1:])
     if raw and raw[0] == "held-out":
         from . import held_out_relevance
 

@@ -82,6 +82,7 @@ EXECUTABLE_SCRIPTS = [
     "partner-name-audit.sh",
     "rate-limit-enforcement.sh",
     "search-v2-roll.sh",
+    "parser-canary.sh",
 ]
 
 

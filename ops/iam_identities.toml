@@ -45,6 +45,9 @@ schema = "sig.iam-identities/1"
 # P35.1c +1 (pending): the sig-sched-due dispatcher job rides the dispatcher-
 # consolidation leg's apply run — after both pending legs land the count is
 # 107 (106 + 1); the pin stays at 112 so a re-count before them still matches.
+# P37.15 +1 (pending): the sig-parser-canary job rides the parser-canary
+# leg's apply run — the pin stays at 112 so a re-count before it still
+# matches; the count amendment lands with the leg's own apply.
 expected_job_count = 112
 
 # --- the three service runtime identities (P34.42a) ---------------------------
@@ -98,7 +101,7 @@ purpose = "sig-materialize — Cloud SQL client + read on the restricted bucket 
 [[service_account]]
 id = "sig-quality-probe-rt"
 display_name = "sig quality probe runtime"
-purpose = "sig-exec-* one-off execution host + P34.44b's scheduled probe + P35.23's sig-rdc-probe (the restricted-corpus lane reads evidence/captures/ and writes ops/probes/rdc/ — inside the same conditioned grants, no new scope) — Cloud SQL client, conditioned read on evidence/captures/, conditioned create on ops/probes/, the two DB-login secrets; nothing else"
+purpose = "sig-exec-* one-off execution host + P34.44b's scheduled probe + P35.23's sig-rdc-probe (the restricted-corpus lane reads evidence/captures/ and writes ops/probes/rdc/ — inside the same conditioned grants, no new scope) + P37.15's sig-parser-canary (the fixture-replay canary writes ops/probes/parser-canary/ + mounts the alert webhook token — inside the same conditioned grants + the already-declared webhook consumer, no new scope) — Cloud SQL client, conditioned read on evidence/captures/, conditioned create on ops/probes/, the two DB-login secrets; nothing else"
 
 [[service_account]]
 id = "sig-release-rt"
