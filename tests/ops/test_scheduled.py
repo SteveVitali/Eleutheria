@@ -384,17 +384,31 @@ class _SweepFetchRecord:
     """A fetch record carrying the P26.19 quota-bounded sweep bookkeeping."""
 
     def __init__(
-        self, *, sweep_requests: int, sweep_budget: int, quota_reached: bool, budget_reached: bool
+        self,
+        *,
+        sweep_requests: int,
+        sweep_budget: int,
+        quota_reached: bool,
+        budget_reached: bool,
+        sweep_cursor: int | None = None,
+        sweep_cursor_next: int | None = None,
     ) -> None:
         self.sweep_requests = sweep_requests
         self.sweep_budget = sweep_budget
         self.quota_reached = quota_reached
         self.budget_reached = budget_reached
         self.sweep_skipped = [{"id": "samgov:kw:x", "reason": "quota_reached"}]
+        self.sweep_cursor = sweep_cursor
+        self.sweep_cursor_next = sweep_cursor_next
         self.robots_disregarded: list[dict] = []
 
     def to_dict(self) -> dict[str, object]:
-        return {"claim_count": 0, "sweep_requests": self.sweep_requests}
+        return {
+            "claim_count": 0,
+            "sweep_requests": self.sweep_requests,
+            "sweep_cursor": self.sweep_cursor,
+            "sweep_cursor_next": self.sweep_cursor_next,
+        }
 
 
 class _SweepReport:
@@ -429,6 +443,125 @@ def test_scheduled_ingest_ok_run_logs_the_request_count_when_budget_bounded() ->
     assert row.outcome == "ok" and row.exit_code == 0
     assert "30/30 sweep request(s)" in row.detail
     assert "budget_reached" in row.detail
+
+
+# --- the persisted rotating sweep cursor (P37.11 / ADR-236) --------------------
+
+
+def test_scheduled_ingest_forwards_the_seeded_cursor_and_logs_it() -> None:
+    seen: dict[str, object] = {}
+
+    def runner(source: str, **kw: object) -> object:
+        seen.update(kw)
+        return _SweepReport(
+            _SweepFetchRecord(
+                sweep_requests=10,
+                sweep_budget=10,
+                quota_reached=False,
+                budget_reached=True,
+                sweep_cursor=10,
+                sweep_cursor_next=0,
+            )
+        )
+
+    row = S.scheduled_ingest("sam_gov", runner=runner, sweep_cursor=10)
+    # The seeded offset reaches the runner, and the audit row logs a→b.
+    assert seen["sweep_cursor"] == 10
+    assert "sweep cursor 10→0" in row.detail
+
+
+def test_latest_sweep_cursor_reads_the_newest_run_row() -> None:
+    store = FakeGcs()
+    bucket = store.bucket_client()
+    for started, cur, nxt in (
+        ("2026-10-26T05:00:00+00:00", 0, 10),
+        ("2026-11-02T05:00:00+00:00", 10, 0),
+    ):
+        row = S.RunRow(
+            kind="scheduled-ingest",
+            source="sam_gov",
+            mode="live",
+            outcome="ok",
+            exit_code=0,
+            started_at=started,
+            duration_seconds=1.0,
+            fetch_record={
+                "sweep_requests": 10,
+                "sweep_cursor": cur,
+                "sweep_cursor_next": nxt,
+            },
+        )
+        S.store_run_row(row, prefix="ops/runs", gcs=bucket)
+    # The newest row wins — its sweep_cursor_next seeds the next run.
+    assert S.latest_sweep_cursor(prefix="ops/runs", source="sam_gov", gcs=bucket) == 0
+
+
+def test_latest_sweep_cursor_falls_back_to_sweep_requests_then_zero(tmp_path: Path) -> None:
+    # A pre-P37.11 row predates the cursor fields: its issued request count is
+    # exactly where it stopped, so it seeds the first paged run.
+    row = S.RunRow(
+        kind="scheduled-ingest",
+        source="sam_gov",
+        mode="live",
+        outcome="quota_reached",
+        exit_code=0,
+        started_at="2026-09-22T16:50:32+00:00",
+        duration_seconds=60.0,
+        fetch_record={"sweep_requests": 12, "sweep_budget": 30},
+    )
+    S.store_run_row(row, prefix="ops/runs", local_dir=tmp_path)
+    assert S.latest_sweep_cursor(prefix="ops/runs", source="sam_gov", local_dir=tmp_path) == 12
+    # A source with no stored rows resumes at 0 — the sweep's own default.
+    assert (
+        S.latest_sweep_cursor(prefix="ops/runs", source="sam_gov", local_dir=tmp_path / "empty")
+        == 0
+    )
+
+
+def test_two_consecutive_scheduled_fires_advance_the_persisted_cursor(tmp_path: Path) -> None:
+    """The acceptance shape (P37.11): two consecutive fires advance the cursor —
+    the second run seeds from the first run's stored row."""
+    store = FakeGcs()
+    bucket = store.bucket_client()
+    pages = {0: (10, 10), 10: (9, 0)}  # cursor -> (requests issued, next stored)
+
+    def runner(source: str, **kw: object) -> object:
+        issued, nxt = pages[int(kw["sweep_cursor"])]
+        return _SweepReport(
+            _SweepFetchRecord(
+                sweep_requests=issued,
+                sweep_budget=10,
+                quota_reached=False,
+                budget_reached=True,
+                sweep_cursor=int(kw["sweep_cursor"]),
+                sweep_cursor_next=nxt,
+            )
+        )
+
+    # Fire 1 — no stored rows, seeds 0, stores the row carrying cursor_next=10.
+    c1 = S.latest_sweep_cursor(prefix="ops/runs", source="sam_gov", gcs=bucket)
+    assert c1 == 0
+    row1 = S.scheduled_ingest(
+        "sam_gov",
+        runner=runner,
+        sweep_cursor=c1,
+        now="2026-10-26T05:00:00+00:00",
+    )
+    S.store_run_row(row1, prefix="ops/runs", gcs=bucket, local_dir=tmp_path)
+    # Fire 2 — seeds from fire 1's stored row: the cursor advanced to 10.
+    c2 = S.latest_sweep_cursor(prefix="ops/runs", source="sam_gov", gcs=bucket)
+    assert c2 == 10
+    row2 = S.scheduled_ingest(
+        "sam_gov",
+        runner=runner,
+        sweep_cursor=c2,
+        now="2026-11-02T05:00:00+00:00",
+    )
+    S.store_run_row(row2, prefix="ops/runs", gcs=bucket, local_dir=tmp_path)
+    # After both fires the cursor wrapped — the space is covered across windows.
+    assert S.latest_sweep_cursor(prefix="ops/runs", source="sam_gov", gcs=bucket) == 0
+    assert "sweep cursor 0→10" in row1.detail
+    assert "sweep cursor 10→0" in row2.detail
 
 
 def test_store_run_row_writes_local_mirror_and_gcs_object(tmp_path: Path) -> None:

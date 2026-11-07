@@ -539,7 +539,7 @@ cron = "0 5 * * 1"               # every Monday 05:00 UTC — a FRESH quota wind
 job = "sig-ingest-sam-gov"
 scheduler = "sig-sched-sam-gov"
 secrets = { SIG_SAM_GOV_KEY = "sig-sam-gov-key" }  # keyed live since P26.4 (2026-09-17)
-note = "Bounded opportunity search over the documented public API; key rides the X-Api-Key header from $SIG_SAM_GOV_KEY (HG-09, Secret Manager). Keyless the API 404s — a recorded disappearance. P26.19: the sweep is bounded to ONE daily api.data.gov window (daily_request_budget in procurement_vocab.toml [sam_gov_sweep]) and stops cleanly at the 429 wall (quota_reached, never re-probed). The cron fires 05:00 UTC — 5h AFTER the documented 00:00 UTC daily reset — so the run always meets a fresh window (the earlier '0 5 1 * 1' also fired on the 1st of month; a clean weekly Monday is unambiguous)."
+note = "Bounded opportunity search over the documented public API; key rides the X-Api-Key header from $SIG_SAM_GOV_KEY (HG-09, Secret Manager). Keyless the API 404s — a recorded disappearance. P26.19: the sweep is bounded to ONE daily api.data.gov window (daily_request_budget in procurement_vocab.toml [sam_gov_sweep]) and stops cleanly at the 429 wall (quota_reached, never re-probed). P37.11 / ADR-236: the budget is the measured ~10/day quota and the rotating sweep_cursor persists via the ops/runs rows (fetch_record.sweep_cursor_next seeds the next run), so the paged tail is covered across weekly fires instead of restarting at 0. The cron fires 05:00 UTC — 5h AFTER the documented 00:00 UTC daily reset — so the run always meets a fresh window (the earlier '0 5 1 * 1' also fired on the 1st of month; a clean weekly Monday is unambiguous)."
 
 [[sources]]
 id = "openstates"

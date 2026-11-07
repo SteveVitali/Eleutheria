@@ -4,19 +4,19 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `78bdaaa6c8129b683ed2b6927db7cb88d6158dd6` · inputs hashed: 1213 · wall-clock receipt: `receipt.json`
+> input_commit: `87b404fb3ea01b1ab8126e0db238c9e41336a239` · inputs hashed: 1215 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.11` · lastCompleted `P37.10`
-- chainTip `r11/P37.10-asset-promotion-gate` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-06T22:45Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.12` · lastCompleted `P37.11`
+- chainTip `r11/P37.11-sam-gov-sweep-resume` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-07T00:50Z`
 
 ## Obligations
 
-- 226 obligations · **142 owed** (139 OPEN, 3 PARTIAL) · 84 terminal
-- 737 events (55 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 227 obligations · **143 owed** (140 OPEN, 3 PARTIAL) · 84 terminal
+- 738 events (55 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 142 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 143 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -101,6 +101,7 @@
 | P37.4a | D-P37.4a-1 | `implement-spec spec=docs/tickets/422_P37.4a__security-baseline-scan-sbom-signing.md live_verification=true` |
 | P37.4b | D-P37.4b-1 | `implement-spec spec=docs/tickets/423_P37.4b__security-baseline-restricted-access-audit-logs.md live_verification=true` |
 | P37.71 | D-P37.71-1 | `implement-spec spec=docs/tickets/429_P37.71__single-operator-deletion-and-purge-function.md live_verification=true` |
+| P37.11 | D-P37.11-1 | `implement-spec spec=docs/tickets/432_P37.11__sam-gov-sweep-resume.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 

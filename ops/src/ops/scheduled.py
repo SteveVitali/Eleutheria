@@ -1045,6 +1045,7 @@ def scheduled_ingest(
     logical_run: str | None = None,
     target_limit: int | None = None,
     code_commit: str | None = None,
+    sweep_cursor: int | None = None,
 ) -> RunRow:
     """Run one source live through the gated connector and shape the run row.
 
@@ -1067,8 +1068,11 @@ def scheduled_ingest(
     cadence-window key: a re-execution inside the same window resumes an
     interrupted one (flushed pages are skipped but counted as seen; captured pages
     are re-processed from the stored capture). ``target_limit`` bounds the run to
-    its first N targets (a measured slice). Both are passed only when set, so a
-    runner that predates them is called exactly as before.
+    its first N targets (a measured slice). ``sweep_cursor`` (P37.11 / ADR-236,
+    ``sam_gov``) is the persisted rotating keyword offset this run resumes at —
+    seeded from the previous run row's ``sweep_cursor_next`` by
+    :func:`latest_sweep_cursor`. All are passed only when set, so a runner that
+    predates them is called exactly as before.
     """
     if runner is None:
         from connectors.runner import RunMode, run_source
@@ -1095,6 +1099,10 @@ def scheduled_ingest(
         # The rolled image digest (``SIG_CODE_COMMIT``, ADR-111): recorded on the
         # run, and a restart resumes only the marks of runs on the same code.
         extra["code_commit"] = code_commit
+    if sweep_cursor is not None:
+        # P37.11 / ADR-236: the persisted rotating sweep cursor, seeded from the
+        # previous run row (see ``latest_sweep_cursor``).
+        extra["sweep_cursor"] = int(sweep_cursor)
     try:
         report = runner(
             source_id,
@@ -1141,6 +1149,12 @@ def scheduled_ingest(
                 parts.append(f"quota_reached — {len(skipped)} slice(s) deferred, not re-probed")
             elif getattr(fr, "budget_reached", False):
                 parts.append(f"budget_reached — {len(skipped)} slice(s) deferred to next window")
+        # P37.11 / ADR-236: the rotating cursor this run resumed at and the offset
+        # the next run resumes from — the persisted paging proof on the audit row.
+        cur = getattr(fr, "sweep_cursor", None)
+        nxt = getattr(fr, "sweep_cursor_next", None)
+        if cur is not None or nxt is not None:
+            parts.append(f"sweep cursor {cur}→{nxt}")
         detail = "; ".join(parts)
     except Exception as exc:  # noqa: BLE001 - the outcome IS the exception class
         name = type(exc).__name__
@@ -1174,6 +1188,73 @@ def scheduled_ingest(
         fetch_record=fetch_record,
         ingest_run_id=ingest_run_id,
     )
+
+
+def latest_run_row_json(
+    *,
+    prefix: str,
+    source: str,
+    gcs: GcsBucket | None = None,
+    local_dir: Path | None = None,
+) -> dict[str, Any] | None:
+    """The newest stored run row for ``source`` (P37.11 / ADR-236).
+
+    Run-row object names carry ``<date>/<ts>`` so the lexicographic maximum is
+    the latest execution — newest candidates first, the first parseable row
+    wins (a corrupt or non-run object under the prefix never wedges the read;
+    it is skipped, and a source with no stored rows gets ``None`` — its own
+    default, never a fabricated position). The GCS WORM store is authoritative
+    when a bucket is configured; the local mirror is the fallback only.
+    """
+    candidates: list[Any] = []
+    if gcs is not None:
+        base = f"{prefix.rstrip('/')}/{source}/"
+        for name in sorted(gcs.list_objects(base), reverse=True):
+            candidates.append(("gcs", name))
+    elif local_dir is not None:
+        mirror = Path(local_dir) / source
+        if mirror.is_dir():
+            for path in sorted(mirror.glob("*.json"), reverse=True):
+                candidates.append(("local", path))
+    for where, name in candidates:
+        try:
+            raw = (
+                gcs.get_object(name)
+                if where == "gcs" and gcs is not None
+                else Path(name).read_bytes()
+            )
+            row = json.loads(raw.decode("utf-8"))
+        except Exception:  # noqa: BLE001 - an unreadable row never wedges the read
+            continue
+        if isinstance(row, dict) and row.get("source") == source:
+            return row
+    return None
+
+
+def latest_sweep_cursor(
+    *,
+    prefix: str,
+    source: str,
+    gcs: GcsBucket | None = None,
+    local_dir: Path | None = None,
+) -> int:
+    """The keyword offset ``source``'s next sweep resumes from (P37.11 / ADR-236).
+
+    The newest stored run row carries ``fetch_record.sweep_cursor_next`` — the
+    offset this run's rotating cursor left for the next window. A pre-P37.11 row
+    predates the field but still records ``sweep_requests`` — how many governed
+    slices issued before its stop — which is exactly where it stopped, so it
+    seeds the first paged run. A source with no stored rows resumes at 0.
+    """
+    row = latest_run_row_json(prefix=prefix, source=source, gcs=gcs, local_dir=local_dir)
+    fr = (row or {}).get("fetch_record") or {}
+    nxt = fr.get("sweep_cursor_next")
+    if nxt is not None:
+        return int(nxt)
+    issued = fr.get("sweep_requests")
+    if issued:
+        return int(issued)
+    return 0
 
 
 def store_run_row(
@@ -1256,6 +1337,8 @@ __all__ = [
     "TargetSpec",
     "fold_probe_history",
     "hosted_pg_dsn",
+    "latest_run_row_json",
+    "latest_sweep_cursor",
     "load_cadence",
     "load_cadence_external",
     "parse_cadence_doc",

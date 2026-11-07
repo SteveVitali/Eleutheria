@@ -1092,11 +1092,15 @@ posted_to   = "12/31/2026"
 # comfortably inside ONE fresh window WITH HEADROOM and never burn it into a
 # failure. `daily_request_budget` is the per-run request cap the sweep stops at
 # BEFORE the hard 429 wall (a refused request still counts, so we never re-probe
-# past it — SIG-INGEST-012/013). It is >= the keyword count above, so one
-# fresh-window run covers the whole prioritised keyword space; if an operator
-# lowers it below the keyword count the persisted `sweep_cursor` pages the
-# remaining keywords across successive daily windows (never one run over quota).
-daily_request_budget = 30
+# past it — SIG-INGEST-012/013). P37.11 / ADR-236 (D-FEDERAL.1-1): the budget is
+# the MEASURED quota — the key serves ~10 requests/day (documented free tier 10
+# requests/day, R4 F4.24; hosted run rows served 11 and 12 before the 429 wall:
+# `sig-ingest-sam-gov-z99t7` 2026-09-22 12/30, the 2026-09-28 cron 11/30), so 30
+# over-promised and every run starved the same 7-slice tail restarting at 0.
+# At 10 < the 19-keyword count the persisted `sweep_cursor` pages the remaining
+# keywords across successive weekly windows (two fires cover the space), never
+# one run over quota.
+daily_request_budget = 10
 
 # ===========================================================================
 # P26.15 (SOURCES.14) — the EU tender sweep: TED (Tenders Electronic Daily)

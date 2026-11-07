@@ -1613,3 +1613,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/429_P37.71__single-operator-de
   excluded = []
   go = "verbatim-go: the operator's in-ticket go naming the deploy"
   rerun = "implement-spec spec=docs/tickets/429_P37.71__single-operator-deletion-and-purge-function.md live_verification=true"
+
+[[row]]
+key = "P37.11"
+kind = "leg"
+obligations = ["D-P37.11-1"]
+obligations_cell = '''D-P37.11-1'''
+gates_cell = '''`hosted` write; OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); window `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + SIG_SAM_GOV_KEY'''
+operator_cell = '''nothing — leg-runner exports env + runs; the row closes only after two weekly fires advance the cursor'''
+rerun_cell = '''`implement-spec spec=docs/tickets/432_P37.11__sam-gov-sweep-resume.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P37.11-sam-gov-resume"
+  obligations = ["D-P37.11-1"]
+  earliest = "inside `AR-3 + AR-2`"
+  excluded = []
+  go = "pre-authorised: GATE-G6 §4 (expiry: acceptance sitting)"
+  rerun = "implement-spec spec=docs/tickets/432_P37.11__sam-gov-sweep-resume.md live_verification=true"

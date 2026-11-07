@@ -113,3 +113,7 @@ never re-probe a 429; stop cleanly before the wall.**
   shares the key, or the reset moved) — re-examine the schedule/window assumption.
 - The other **api.data.gov-keyed sources** (congress_gov, fbi_cde) exhibit the same
   re-burn — generalise the no-429-retry treatment beyond `sam_gov` by a new ADR.
+
+## Status updates
+
+- **Status:** Amended by ADR-236 (2026-11-06) — the budget is the measured ~10/day quota (< the keyword count) and the rotating `sweep_cursor` persists on the run rows; the no-re-probe stop, `quota_governed` counting and `max_retries=0` transport are unchanged.

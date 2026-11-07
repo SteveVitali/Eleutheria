@@ -8,11 +8,11 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P37.11
-lastCompleted: P37.10
+nextTicket: P37.12
+lastCompleted: P37.11
 blockedOn: (nothing)
 pauseRequested: false
-returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.71
+returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.71
 manifest: docs/tickets/00_MANIFEST.md
 canonicalSpec: docs/2_canonical_design_spec.md
 memoryRoot: docs/build
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P37.10-asset-promotion-gate
+chainTip: r11/P37.11-sam-gov-sweep-resume
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-06T22:45Z
+updatedAt: 2026-11-07T00:50Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -487,6 +487,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | P37.4a | D-P37.4a-1 | pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting); excluded: inside 03:00-10:00Z daily; env SIG_GCP_PROJECT+ADC+SIG_SECB_AUTHOR+cosign | none — env + script; additive writes | `implement-spec spec=docs/tickets/422_P37.4a__security-baseline-scan-sbom-signing.md live_verification=true` |
 | P37.4b | D-P37.4b-1 | `hosted` write; OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); excluded: inside 03:00-10:00Z; needs SIG_GCP_PROJECT + ADC + SIG_RACC_AUTHOR | nothing — leg-runner exports env + runs | `implement-spec spec=docs/tickets/423_P37.4b__security-baseline-restricted-access-audit-logs.md live_verification=true` |
 | P37.71 | D-P37.71-1 | `hosted` deploy; never pre-authorised — go: the operator's verbatim in-ticket go; needs the spine deployer + ADC/`SIG_GCP_PROJECT` | the operator's go + env | `implement-spec spec=docs/tickets/429_P37.71__single-operator-deletion-and-purge-function.md live_verification=true` |
+| P37.11 | D-P37.11-1 | `hosted` write; OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); window `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + SIG_SAM_GOV_KEY | nothing — leg-runner exports env + runs; the row closes only after two weekly fires advance the cursor | `implement-spec spec=docs/tickets/432_P37.11__sam-gov-sweep-resume.md live_verification=true` |
 
 Sources: OPERATIONAL_READINESS §(f3) + `UNIVERSE_DISPOSED.csv` + plan §9.2/§8.6 + `data/round11_plan.csv`. Non-row homes: 9 ticket + 9 later-phase + 7 decision + 2 already-done. Keying (T5 γ) = LANDED R10 ticket (archived `reports/memory-repair/return_pass_cells_pre-P36.49-orient.txt`).
 
@@ -1581,3 +1582,6 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-06 — P37.10 done — row 431 `Kind: ticket` — the §43.5 asset-promotion gate (R11-DATA-06; `live_verification=false`, `Live stage: none`, gate none): `policy.promotion` is the only candidate→`PhysicalAsset` writer — `promotion_permitted()` the single gate, `promotion_claims()` the single claim producer behind a private gate token; corroboration-only refused `corroboration_only` (SIG-PUB-012) · field/imagery/documentary confirmation + actor/document reference → `field_confirmed`/`imagery_confirmed`/`record_confirmed`; residential-parcel bar holds even with confirmation (SIG-PUB-013) · `candidate:`/`promoted:` map prefixes mint `candidate_asset`/`physical_asset` (map 1.1.0) · 15 unit + 4 composed-db tests over the real spine · `D-P37.10-1` opened (`production`-caller leg; event `D-P37.10-1:e0`) · `main` untouched · chainTip → r11/P37.10-asset-promotion-gate · next → P37.11 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-06 — P37.10 post-closeout record — head `1cae570` 5/5 green head-bound (`ci: pass #455@1cae570`, run 42300537779, read 22:44Z: docs 2m15s · security 42s · composed 4m24s · python 19m58s · web 49m20s); `ci_boundary.py` exit 3 = carried waived-ancestor `#452@fd07259` docs (run 42248548399, #299 precedent — new head itself 5/5) · `main` untouched · deferrals +1/−0 · next → P37.11 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-06 — dispatch boundary-confirm — P37.10's green read recorded (`ci: pass #455@1cae570`, run 42300537779; `D-P37.10-1` opened — writer wiring deferral); `blockedOn` (nothing); chainTip `r11/P37.10-asset-promotion-gate` · nextTicket P37.11 (row 432 — SAM.gov sweep resume; **OM-20 row PRE-AUTHORISED** — GATE-G6 §4 names it verbatim ("Approve all 15"), unexpired; `hosted` sweep resume with claim writes, scheduler change; chain tip) — fresh implement-spec sub-agent on `r11/P37.11-sam-gov-sweep-resume` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-07 — P37.11 done — row 432 `Kind: ticket` — SAM.gov sweep resume (R11-SRC-02, D-FEDERAL.1-1; `live_verification=false`, `Live stage: none`, OM-20 pre-authorised GATE-G6 §4): `[sam_gov_sweep].daily_request_budget` 30→10 (measured quota, ADR-236 amends ADR-089) · `fetch_record.sweep_cursor`/`sweep_cursor_next` persist the rotating cursor on the run rows; `latest_sweep_cursor` seeds each scheduled run (GCS authoritative, local fallback) · `sam_gov_sweep_resume` leaves the cursor just past the last issued selected slice — 10 < 19 keywords → the paged tail covers across weekly fires (two-fire shape fixture-verified) · `D-P37.11-1` opened (`hosted` resume leg QUEUED `prepared_not_executed`; event `D-P37.11-1:e0`) · `main` untouched · chainTip → r11/P37.11-sam-gov-sweep-resume · next → P37.12 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-07 — P37.11 post-closeout record — head `4e333c53` 5/5 green head-bound (`ci: pass #456@4e333c5`, run 42314747188, read 00:49Z: docs 2m43s · security 33s · composed 3m31s · python 22m5s · web 55m) · `ci_boundary.py` exit 3 = carried waived-ancestor `#455@10ff29d` web (run 42307167116 — the #299 precedent; the new head itself 5/5) · `main` untouched · deferrals +1/−0 · next → P37.12 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-07 — dispatch boundary-confirm — P37.11's green read recorded (`ci: pass #456@4e333c5`, run 42314747188; `D-P37.11-1` opened — `hosted` sweep leg queued `prepared_not_executed`); `blockedOn` (nothing); chainTip `r11/P37.11-sam-gov-sweep-resume` · nextTicket P37.12 (row 433 — keyed US 511 wiring; **OM-20 row PRE-AUTHORISED** — GATE-G6 §4 names it verbatim, unexpired; `hosted` fetch + claim writes, not just machinery; OP-13 keys the operator-held prerequisite — queues if absent; deps landed) — fresh implement-spec sub-agent on `r11/P37.12-keyed-us-511-wiring` · harness: devin-desktop/swe-2-high/orchestrator
