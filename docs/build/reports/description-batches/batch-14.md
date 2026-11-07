@@ -36,11 +36,11 @@ no confirmed row here. An unconfirmed source publishes
 | D14-18 | civicplus | `CivicPlus` — a government portal source. | f440d5378d660f3996f6bfa1a95de18ca15648d51d10ab9bf9890d5af6d85cbf | pending |
 | D14-19 | congress_gov | `Congress.gov API (Library of Congress)` — a government portal source. | de314fe6b67ecf516631ae8167c90498098328ef97d9c3a23b741cf5a03892fa | pending |
 | D14-20 | courtlistener_recap | `CourtListener / RECAP` — a court system source. | d37705b7d1693bb6df9e9796eca610031658392e51c8ade6f91d947a90bdb271 | pending |
-| D14-21 | declarationcamera_be | `declarationcamera.be (BE national camera register)` — a government portal source. | d6b45e7523d732706e027eea94900a1cd216a15a3bb21610592d3ee5d2fb8b9a | pending |
-| D14-22 | decp_fr | `DECP (FR procurement)` — a government portal source. | 48e1e557b2a6e71b65eefc05ff414cfa2a4e53103786a64f1d43ef67c7fc3a64 | pending |
-| D14-23 | deflock | `DeFlock` — an upstream project source. | 8c887b69e4c3caee214e7270538c8aeff2799abd3eff08b4295f6f2046c8ba29 | pending |
-| D14-24 | deflock_app_repo | `DeFlock — app repo (FoggedLens/deflock-app)` — an upstream project source. | e1e5c030fb888b4543c05c6a161d0b78a323761b7fa315f196facae3fadac4ea | pending |
-| D14-25 | deflock_repo | `DeFlock — canonical repo (FoggedLens/deflock)` — an upstream project source. | b48a68888729a6afa3eb7e45ee9a51fef77c11e4099605b6c04f6b7e20105961 | pending |
+| D14-21 | datalib_aaron_swartz_day | `Aaron Swartz Day Police Surveillance Project (crowdsourced public-records campaign corpus)` — a community source published by `Aaron Swartz Day and International Hackathon`. | e3c7a56be10728129ebe88c714778e7444c89190e09babd97f0f162a5a9a253d | pending |
+| D14-22 | datalib_atlas_border_communities | `Atlas of Surveillance: Border Communities (EFF — surveillance in the 23 US counties on the Mexico border)` — an upstream project source published by `Electronic Frontier Foundation`. | b7d9a9178a311032ff155554a8acfbbe60a8453775c034c019354102fccb8f55 | pending |
+| D14-23 | datalib_clearview_ai_table | `Clearview AI Table (BuzzFeed News — entities whose employees ran Clearview facial-recognition searches)` — a news publisher source published by `BuzzFeed News`. | bd384a1807b6de1a17bd6576935787c093da2547a74ceb2b2caadababfc12526 | pending |
+| D14-24 | datalib_federally_funded_bwc | `Federally Funded Body-Worn Cameras (EFF-compiled — DOJ/BJA grant-recipient agencies)` — an upstream project source published by `Electronic Frontier Foundation (upstream: US DOJ Bureau of Justice Assistance)`. | 56148884aa20f316ab9e6f0ab8a5e83f83669e01954894f6ca3d5f41039c413b | pending |
+| D14-25 | datalib_mediajustice_em_map | `Electronic Monitoring Hotspot Map (MediaJustice Challenging E-Carceration project)` — an upstream project source published by `MediaJustice`. | 5394e9909ff52e7ec25148e812ed3f9858b8ff46961bf9dc22a574b709c48b6d | pending |
 
 ## Confirmation log
 
