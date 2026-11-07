@@ -4,11 +4,11 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `448dd536f4e279b9a3ab8b8cb3cf15048451fd67` · inputs hashed: 1219 · wall-clock receipt: `receipt.json`
+> input_commit: `23a272841330ba8fe7f94001971d635b43b7a190` · inputs hashed: 1219 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.70` · lastCompleted `P37.12`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.13` · lastCompleted `P37.12`
 - chainTip `r11/P37.12-keyed-us-511-wiring` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-07T02:20Z`
 
 ## Obligations
@@ -107,7 +107,9 @@
 
 ## Known inconsistencies (preserved, never synthesized)
 
-- none — every P32.1 baseline conflict is either reconciled by a recorded event interpretation (old values preserved on the anchor) or documented in `reconciliations.json`; anything new would appear here and fail `verify`
+| check | obligation | message |
+|---|---|---|
+| ledger/next-not-lowest | P37.13 | nextTicket 'P37.13' is not the lowest chain row that has not landed ('P37.70'; superseded-by/deferred/unused and HUMAN rows skipped — V2) |
 
 ## Evidence domains — recorded evidence only
 
