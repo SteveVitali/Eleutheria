@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P37.10-asset-promotion-gate
+chainTip: r11/P37.11-sam-gov-sweep-resume
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-06T22:45Z
+updatedAt: 2026-11-07T00:50Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1582,3 +1582,5 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-06 — P37.10 done — row 431 `Kind: ticket` — the §43.5 asset-promotion gate (R11-DATA-06; `live_verification=false`, `Live stage: none`, gate none): `policy.promotion` is the only candidate→`PhysicalAsset` writer — `promotion_permitted()` the single gate, `promotion_claims()` the single claim producer behind a private gate token; corroboration-only refused `corroboration_only` (SIG-PUB-012) · field/imagery/documentary confirmation + actor/document reference → `field_confirmed`/`imagery_confirmed`/`record_confirmed`; residential-parcel bar holds even with confirmation (SIG-PUB-013) · `candidate:`/`promoted:` map prefixes mint `candidate_asset`/`physical_asset` (map 1.1.0) · 15 unit + 4 composed-db tests over the real spine · `D-P37.10-1` opened (`production`-caller leg; event `D-P37.10-1:e0`) · `main` untouched · chainTip → r11/P37.10-asset-promotion-gate · next → P37.11 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-06 — P37.10 post-closeout record — head `1cae570` 5/5 green head-bound (`ci: pass #455@1cae570`, run 42300537779, read 22:44Z: docs 2m15s · security 42s · composed 4m24s · python 19m58s · web 49m20s); `ci_boundary.py` exit 3 = carried waived-ancestor `#452@fd07259` docs (run 42248548399, #299 precedent — new head itself 5/5) · `main` untouched · deferrals +1/−0 · next → P37.11 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-06 — dispatch boundary-confirm — P37.10's green read recorded (`ci: pass #455@1cae570`, run 42300537779; `D-P37.10-1` opened — writer wiring deferral); `blockedOn` (nothing); chainTip `r11/P37.10-asset-promotion-gate` · nextTicket P37.11 (row 432 — SAM.gov sweep resume; **OM-20 row PRE-AUTHORISED** — GATE-G6 §4 names it verbatim ("Approve all 15"), unexpired; `hosted` sweep resume with claim writes, scheduler change; chain tip) — fresh implement-spec sub-agent on `r11/P37.11-sam-gov-sweep-resume` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-07 — P37.11 done — row 432 `Kind: ticket` — SAM.gov sweep resume (R11-SRC-02, D-FEDERAL.1-1; `live_verification=false`, `Live stage: none`, OM-20 pre-authorised GATE-G6 §4): `[sam_gov_sweep].daily_request_budget` 30→10 (measured quota, ADR-236 amends ADR-089) · `fetch_record.sweep_cursor`/`sweep_cursor_next` persist the rotating cursor on the run rows; `latest_sweep_cursor` seeds each scheduled run (GCS authoritative, local fallback) · `sam_gov_sweep_resume` leaves the cursor just past the last issued selected slice — 10 < 19 keywords → the paged tail covers across weekly fires (two-fire shape fixture-verified) · `D-P37.11-1` opened (`hosted` resume leg QUEUED `prepared_not_executed`; event `D-P37.11-1:e0`) · `main` untouched · chainTip → r11/P37.11-sam-gov-sweep-resume · next → P37.12 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-07 — P37.11 post-closeout record — head `4e333c53` 5/5 green head-bound (`ci: pass #456@4e333c5`, run 42314747188, read 00:49Z: docs 2m43s · security 33s · composed 3m31s · python 22m5s · web 55m) · `ci_boundary.py` exit 3 = carried waived-ancestor `#455@10ff29d` web (run 42307167116 — the #299 precedent; the new head itself 5/5) · `main` untouched · deferrals +1/−0 · next → P37.12 · harness: devin-desktop/swe-2-high/subagent
