@@ -185,7 +185,8 @@ def test_scheduled_run_suppresses_inside_the_quiet_band(tmp_path: Path) -> None:
 
 
 def test_scheduled_run_suppresses_inside_the_batch_window(tmp_path: Path) -> None:
-    code, record, _ = _run_scheduled(tmp_path, now="2026-11-08T01:45:00Z")  # future-ok: scheduled: a day-8 batch-window instant the clock guard must suppress
+    # future-ok: scheduled: a day-8 batch-window instant the clock guard must suppress
+    code, record, _ = _run_scheduled(tmp_path, now="2026-11-08T01:45:00Z")
     assert code == 0
     assert record["checks"]["window"]["verdict"] == "skipped"
     assert "batch-window" in record["checks"]["window"]["reason"]
