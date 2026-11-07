@@ -690,3 +690,23 @@ endpoint_prefix = "/api/"
 tos_basis = "New England 511 (ME/NH/VT) Iteris/IBI-511 developer API — registered-key documented programmatic access (key query param per the platform family's published docs)."
 rate_limit_per_min = 10
 counsel_reviewed = false
+
+# --- P37.70 (D-SOURCES.8-2 / OP-13): the keyed AU traffic-camera APIs -------
+# DOCUMENTED keyed APIs — registered-key, rate-limited access under each
+# platform's developer terms, not crawling. QLDTraffic's published API spec
+# documents the `?apikey=` param (rides the wire URL only — never recorded);
+# the TfNSW API Gateway documents the `Authorization: apikey` header.
+# counsel_reviewed=false pending HG-02 like every entry.
+[[api_host]]
+host = "api.qldtraffic.qld.gov.au"
+endpoint_prefix = "/v1/"
+tos_basis = "QLDTraffic developer API — registered-key documented programmatic access (apikey query param per the published API specification)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "api.transport.nsw.gov.au"
+endpoint_prefix = "/v1/"
+tos_basis = "TfNSW API Gateway — registered application-key documented programmatic access (Authorization: apikey header per the published API Basics / Live Traffic Developer Guide)."
+rate_limit_per_min = 10
+counsel_reviewed = false

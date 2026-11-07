@@ -241,6 +241,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-235](ADR-235-registry-validation-over-partition-and-the-flip-record-rule.md) | Registry validation over partition, and the flip-record consistency rule (P37.6) | P37.6 (Round 11 / P37, row 426 — R11-GOV-05; answers the ADR-021 and | accepted |
 | [ADR-236](ADR-236-sam-gov-sweep-cursor-persistence-and-measured-quota-budget.md) | SAM.gov sweep: persist the rotating cursor, set the budget to the measured quota (P37.11) | P37.11 (Round 11 / P37, row 432 — R11-SRC-02; the named home of | accepted |
 | [ADR-237](ADR-237-keyed-us-511-credential-seam-and-declared-contracts.md) | Keyed US 511 lanes: a wire-only query-param credential seam and declared-contract, fail-closed parse (P37.12) | P37.12 (Round 11 / P37, row 433 — the named home of D-SOURCES.7-2's | accepted |
+| [ADR-238](ADR-238-keyed-au-traffic-camera-apis-geojson-declared-contracts.md) | Keyed AU traffic-camera lanes: declared-contract GeoJSON kinds and the QLDTraffic supersession (P37.70) | P37.70 (Round 11 / P37, row 434 — the named home of D-SOURCES.8-2's | accepted |
 
 ## Notes
 

@@ -5925,7 +5925,7 @@ auth_model = "none"
 cadence = "monthly"
 verified = true
 last_verified = 2026-09-18
-notes = "P26.9. GATED — item eebb997724054f8a816efde37a5b40a6 'CCTV Cameras (External View)' (240 rows) licenseInfo says only 'Currently available for external use' — not a licence grant. The authoritative QLDTraffic v1 API is token-gated (enumerated; CC-BY-3.0/4.0 on the CKAN dataset). Blocker: licence grant or QLDTraffic API-key registration + terms (D-SOURCES.8-1/-2)."
+notes = "P26.9. GATED — item eebb997724054f8a816efde37a5b40a6 'CCTV Cameras (External View)' (240 rows) licenseInfo says only 'Currently available for external use' — not a licence grant. The authoritative QLDTraffic v1 API is token-gated (enumerated; CC-BY-3.0/4.0 on the CKAN dataset). Blocker: licence grant or QLDTraffic API-key registration + terms (D-SOURCES.8-1/-2). P37.70 (E4-R4c = b): the keyed QLDTraffic lane `camreg_qldtraffic_au` REPLACES this ArcGIS registry as QLD's authoritative lane — this row stays gated as the enumeration record."
 volatility_class = "SLOW"
 volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
 [sources.camreg_qldc_au.rights]
@@ -5939,6 +5939,64 @@ evidence_uri = "docs/build/planning/2026-09-30-next-phase/data/redistribution.cs
 decision_authority = "D-J3-1 [B-19]"
 part_viii_class = "none-known"
 review_needed = false
+
+
+[sources.camreg_qldtraffic_au]
+name = "QLDTraffic v1 webcams API — TMR keyed GeoJSON feed"
+source_kind = "government_portal"
+homepage_url = "https://api.qldtraffic.qld.gov.au/v1/webcams"
+default_tier = "R1"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (QLDTraffic v1 keyed GeoJSON webcam registry — registry rows only; connector map wired by P37.70)"
+auth_model = "api key ($SIG_QLDTRAFFIC_KEY, HG-09 — auth, not the rights basis)"
+cadence = "monthly"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.70 (D-SOURCES.8-2, E4-R4c = b): graduated from the 2026-09-18 enumerated keyed_api record (qld_qldtraffic_api — HTTP 401 'Missing Authentication Token'). The authoritative QLD camera-registry lane — replaces camreg_qldc_au's gated ArcGIS registry (the QLDTraffic API is the documented lane). Key declared on the target row's api_key_env; Secret-Manager binding 'sig-qldtraffic-key' (OP-13). Licence lead CC-BY-3.0/CC-BY-4.0 on the CKAN dataset (data.qld.gov.au 'Traffic and travel information GeoJSON API') is seed evidence for the rights review, not a resolved record; rights UNDETERMINED."
+publisher = "Queensland Government (QLDTraffic / TMR)"
+jurisdiction_scheme = "iso.3166_2"
+jurisdiction = "AU-QLD"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
+[sources.camreg_qldtraffic_au.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.camreg_qldtraffic_au.redistribution]
+lane = "unknown"
+evidence = "no J4 redistribution-matrix row recorded for this registry source (redistribution.csv covers 342 of the registered ids); undeclared — the fail-closed default stands and the interim rights-record basis never reaches public"
+review_needed = true
+
+
+[sources.camreg_nsw_live_au]
+name = "TfNSW Live Traffic cameras API — keyed GeoJSON feed"
+source_kind = "government_portal"
+homepage_url = "https://api.transport.nsw.gov.au/v1/live/cameras"
+default_tier = "R1"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (TfNSW API-Gateway v1 live/cameras keyed GeoJSON camera registry — registry rows only; connector map wired by P37.70)"
+auth_model = "api key ($SIG_NSW_LIVE_KEY, HG-09 — auth, not the rights basis)"
+cadence = "monthly"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.70 (D-SOURCES.8-2): graduated from the 2026-09-18 enumerated keyed_api record (nsw_live_traffic_cameras — HTTP 401; robots.txt HTTP 500, no policy recorded). The TfNSW API-Gateway requires a registered application key (Authorization: apikey header). Key declared on the target row's api_key_env; Secret-Manager binding 'sig-nsw-live-key' (OP-13). Licence leads CC-BY on the open-data datasets nsw-2-live-traffic-cameras / nsw-rms-live-traffic-cameras + the Developer Guide's in-band `rights` member are seed evidence for the rights review, not a resolved record; rights UNDETERMINED."
+publisher = "Transport for NSW"
+jurisdiction_scheme = "iso.3166_2"
+jurisdiction = "AU-NSW"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface — dominant declared predicate class SLOW (§28.3 observed-rate recalibration; P35.20b)"
+[sources.camreg_nsw_live_au.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.camreg_nsw_live_au.redistribution]
+lane = "unknown"
+evidence = "no J4 redistribution-matrix row recorded for this registry source (redistribution.csv covers 342 of the registered ids); undeclared — the fail-closed default stands and the interim rights-record basis never reaches public"
+review_needed = true
 
 
 [sources.camreg_donegal_ie]

@@ -2461,3 +2461,15 @@ kind = "dot_511_targets"
 
 [dot_511_newengland]
 kind = "dot_511_targets"
+
+# --- P37.70 (D-SOURCES.8-2 / OP-13): the keyed AU traffic-camera GeoJSON lanes
+# Same "dot_511_targets" kind — each source resolves its live targets from the
+# graduated keyed [[targets]] rows of data/camera_registry_targets.toml. The
+# key comes from the row's api_key_env at fetch time (HG-09 — never
+# committed); an unprovisioned env is a recorded KeyNotProvisioned refusal,
+# zero egress.
+[camreg_qldtraffic_au]
+kind = "dot_511_targets"
+
+[camreg_nsw_live_au]
+kind = "dot_511_targets"

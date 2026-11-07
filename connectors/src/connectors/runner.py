@@ -320,6 +320,14 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "dot_511_ak": "dot_511",
     "dot_511_ct": "dot_511",
     "dot_511_newengland": "dot_511",
+    # P37.70 (D-SOURCES.8-2 / OP-13): the two graduated keyed AU traffic-camera
+    # API sources (QLDTraffic + TfNSW Live Traffic — GeoJSON FeatureCollection
+    # lanes). Both stay ingestion_permitted=false — the mapping makes the lane
+    # routable without making the source loadable; the operator's HG-03 flip
+    # is the only route to a live fetch, and an unprovisioned api_key_env is
+    # a recorded KeyNotProvisioned refusal.
+    "camreg_qldtraffic_au": "dot_511",
+    "camreg_nsw_live_au": "dot_511",
     # P36.4 (ACQ-08): R11 official camera layers — five new gated `dot_511_*`
     # sources (de/vt/wv/mi/nc) plus three gated municipal `camreg_*` sources
     # (Lincoln/Omaha/Hyattsville); camreg_denver_co and camreg_seattle_wa were

@@ -64,7 +64,23 @@ def test_unpaused_run_plans_no_ingest_pause() -> None:
     creates = [ln for ln in out.splitlines() if "scheduler jobs create" in ln]
     assert not any("NEW triggers paused on create" in ln for ln in creates)
     pause_lines = [ln for ln in out.splitlines() if "scheduler jobs pause" in ln]
-    ingest_pauses = [ln for ln in pause_lines if "sig-sched-r11-" in ln or "sig-sched-camreg" in ln]
+    from ops.scheduled import load_cadence
+
+    declared_paused = {
+        s.scheduler
+        for s in load_cadence(REPO_ROOT / "ops/cadence.toml").sources
+        if s.state == "paused"
+    }
+    # P37.70 (D-SOURCES.8-2): the two keyed AU ingest seats are declared
+    # state=paused (created PAUSED; OP-13 + the HG-03 flips pending) — a
+    # plain run keeps them paused (kept-declared-pin), so their pause lines
+    # are expected. Every *enabled* ingest/batch trigger still plans no pause.
+    ingest_pauses = [
+        ln
+        for ln in pause_lines
+        if ("sig-sched-r11-" in ln or "sig-sched-camreg" in ln)
+        and not any(sched in ln for sched in declared_paused)
+    ]
     assert not ingest_pauses, ingest_pauses
 
 

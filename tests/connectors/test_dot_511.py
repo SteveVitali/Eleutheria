@@ -321,8 +321,11 @@ def test_enumerated_negative_outcomes_are_preserved() -> None:
     rows = enumerated_outcomes()
     assert len(rows) >= 20
     statuses = {r["status"] for r in rows}
+    # P37.70 (D-SOURCES.8-2): the last two enumerated keyed_api rows
+    # (qld_qldtraffic_api + nsw_live_traffic_cameras) graduated to [[targets]]
+    # — `keyed_api` no longer appears in the enumerated register (the rows are
+    # preserved as targets, never silently dropped).
     assert {
-        "keyed_api",
         "access_restricted",
         "robots_unretrievable",
         "spa_shell",
@@ -939,10 +942,14 @@ def test_enumerated_p26_9_negative_outcomes_are_preserved() -> None:
     rows = {r["id"]: r for r in enumerated_outcomes()}
     assert "nyc_tmc_cameras" in rows
     assert "tfl_jamcams" in rows
-    assert "nsw_live_traffic_cameras" in rows
-    assert "qld_qldtraffic_api" in rows
+    # P37.70 (D-SOURCES.8-2) graduated the two keyed AU rows to [[targets]] —
+    # still recorded, never silently dropped (E4-R4c = b).
+    targets = {t["id"] for t in dot_511.target_table()["targets"]}
+    assert "nsw_live_traffic_cameras" in targets
+    assert "qld_qldtraffic_api" in targets
     statuses = {r["status"] for r in rows.values()}
-    assert {"keyed_api", "unresolved_rights", "access_restricted", "not_found"} <= statuses
+    # `keyed_api` leaves the enumerated register with the graduation.
+    assert {"unresolved_rights", "access_restricted", "not_found"} <= statuses
 
 
 def test_socrata_replay_and_shadow_are_deterministic() -> None:

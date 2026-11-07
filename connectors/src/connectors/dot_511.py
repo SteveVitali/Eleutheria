@@ -1308,8 +1308,37 @@ def _arcgis_outstatistics_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
 # API documentation, and the strict parse fails closed as ContentDrift on any
 # deviation — a keyed run that meets a different shape stops and records.
 #
+# --- the keyed AU traffic-camera API kinds (P37.70 / D-SOURCES.8-2, OP-13) ---
+#
+# Two more declared-contract, fail-closed kinds for the graduated keyed AU
+# rows — both answer GeoJSON FeatureCollections:
+#
+# * ``qldtraffic_geojson`` — TMR's QLDTraffic API ``/v1/webcams`` (the
+#   authoritative QLD camera registry; E4-R4c = b — it replaces the gated
+#   `camreg_qldc_au` ArcGIS lane). The published API specification documents
+#   a GeoJSON FeatureCollection of webcam Features and the ``?apikey=``
+#   credential parameter — it rides the wire URL through the fetcher's
+#   ``auth_param`` seam and is NEVER recorded (HG-09).
+# * ``nsw_live_geojson`` — TfNSW's Live Traffic cameras API
+#   ``/v1/live/cameras``: the Developer Guide documents a GeoJSON
+#   FeatureCollection carrying a ``rights`` member ({copyright, licence})
+#   plus camera Features ``{type: "Feature", id, geometry: Point,
+#   properties}``; the documented credential form is the
+#   ``Authorization: apikey <key>`` request header — the URL stays
+#   credential-free by construction (HG-09).
+#
+# Neither payload has been observed (the 2026-09-18 probes answered 401/'Missing
+# Authentication Token'): the contract is DECLARED from each platform's
+# published developer documentation — the strict parse fails closed as
+# ContentDrift on any deviation (an error envelope, a non-JSON shell, a
+# non-FeatureCollection type, a non-Feature row, or — for NSW — a missing
+# documented ``rights`` member): a keyed run that meets a different shape
+# stops and records (OM-18).
+#
 #: The keyed kinds a registry ``[[targets]]`` row may declare.
-_KEYED_KINDS = frozenset({"iteris_511_rows", "ohgo_511_cameras"})
+_KEYED_KINDS = frozenset(
+    {"iteris_511_rows", "ohgo_511_cameras", "qldtraffic_geojson", "nsw_live_geojson"}
+)
 
 #: A target's ``api_key_env`` declares the env-var NAME the operator's key is
 #: read from at fetch time (Secret-Manager bound in hosted runs, OP-13/HG-09).
@@ -1350,6 +1379,30 @@ def _ohgo_511_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
     endpoint is fetched un-paginated: the ApiResult envelope's own
     ``CurrentResultCount``/``TotalResultCount`` is the truncation detector
     the strict parse enforces.
+    """
+    base = str(row["layer_url"]).rstrip("/")
+    return [{"url": base, "page": 0, "page_count": 1}]
+
+
+def _qldtraffic_geojson_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Expand one QLDTraffic row into its single declared fetch target (P37.70).
+
+    The ``apikey`` credential is appended at fetch time through ``auth_param``
+    and never lands in a recorded URL (HG-09). Single-page by contract: the
+    ``/v1/webcams`` endpoint returns the full webcam inventory in one GeoJSON
+    FeatureCollection.
+    """
+    base = str(row["layer_url"]).rstrip("/")
+    return [{"url": base, "page": 0, "page_count": 1}]
+
+
+def _nsw_live_geojson_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Expand one TfNSW live-cameras row into its single declared fetch target.
+
+    The key rides the documented ``Authorization: apikey`` header at fetch
+    time — the URL stays credential-free by construction (HG-09). The endpoint
+    is fetched un-paginated: the Developer Guide documents ONE FeatureCollection
+    file carrying the whole camera inventory.
     """
     base = str(row["layer_url"]).rstrip("/")
     return [{"url": base, "page": 0, "page_count": 1}]
@@ -1447,6 +1500,11 @@ def expand_registry_rows(
         # fetch time (never in the registry, never in a recorded URL).
         "iteris_511_rows": _iteris_511_pages,
         "ohgo_511_cameras": _ohgo_511_pages,
+        # P37.70 (D-SOURCES.8-2): the keyed AU traffic-camera GeoJSON lanes —
+        # declared contract, single declared page each, credential env-resolved
+        # at fetch time (never in the registry, never in a recorded URL).
+        "qldtraffic_geojson": _qldtraffic_geojson_pages,
+        "nsw_live_geojson": _nsw_live_geojson_pages,
     }
     out: list[dict[str, Any]] = []
     for row in rows:
@@ -1700,6 +1758,28 @@ def socrata_point_geometry(fields: Mapping[str, Any]) -> dict[str, Any] | None:
             # defect, never a silent relabel); `named` keeps the flag off
             # the positional interpretation.
             return {"x": value["longitude"], "y": value["latitude"], "named": True}
+    return None
+
+
+def _geojson_point_geometry(geometry: Any) -> dict[str, Any] | None:
+    """The ``{"x": lon, "y": lat}`` shape from a GeoJSON Point member (P37.70).
+
+    A keyed-AU Feature's ``geometry`` is a positional ``{"type": "Point",
+    "coordinates": [lon, lat]}`` — returned in the same ``x``/``y`` shape the
+    ArcGIS path produces so downstream validation (and the declared
+    ``axis_order=lon-lat``) is identical. A non-Point or a short coordinate
+    list yields ``None`` — the record then fails closed in
+    :func:`extract_coordinate`, never a guessed position.
+    """
+    if not isinstance(geometry, Mapping):
+        return None
+    coords = geometry.get("coordinates")
+    if (
+        str(geometry.get("type")).lower() == "point"
+        and isinstance(coords, (list, tuple))
+        and len(coords) >= 2
+    ):
+        return {"x": coords[0], "y": coords[1]}
     return None
 
 
@@ -2634,7 +2714,15 @@ class Dot511Connector(Connector):
                 raise KeyNotProvisioned(str(target.get("id") or url), env_name)
             if kind == "iteris_511_rows":
                 return ctx.fetcher.fetch(url, auth_param=("key", key))
-            return ctx.fetcher.fetch(url, headers={"Authorization": f"APIKEY {key}"})
+            if kind == "ohgo_511_cameras":
+                return ctx.fetcher.fetch(url, headers={"Authorization": f"APIKEY {key}"})
+            if kind == "qldtraffic_geojson":
+                # P37.70: QLDTraffic's documented `?apikey=` param rides the
+                # wire URL only — never a recorded surface (HG-09).
+                return ctx.fetcher.fetch(url, auth_param=("apikey", key))
+            # nsw_live_geojson: the documented `Authorization: apikey` header —
+            # no credential lands in a URL.
+            return ctx.fetcher.fetch(url, headers={"Authorization": f"apikey {key}"})
         return ctx.fetcher.fetch(url)
 
     # -- interpretation (pure functions of the capture) --
@@ -2658,6 +2746,8 @@ class Dot511Connector(Connector):
             return self._parse_iteris_511(ctx, capture, data)
         if kind == "ohgo_511_cameras":
             return self._parse_ohgo_511(ctx, capture, data)
+        if kind in ("qldtraffic_geojson", "nsw_live_geojson"):
+            return self._parse_geojson_cameras(ctx, capture, data, kind=kind)
         try:
             doc = json.loads(data)
         except (ValueError, TypeError) as exc:
@@ -2868,6 +2958,86 @@ class Dot511Connector(Connector):
                 )
         return {"kind": "ohgo_511_cameras", "payload": {"rows": rows}, "capture": capture}
 
+    def _parse_geojson_cameras(
+        self, ctx: RunContext, capture: CaptureRef, data: bytes, *, kind: str
+    ) -> dict[str, Any]:
+        """Structure a captured keyed-AU GeoJSON camera payload (pure, P37.70).
+
+        The declared contract (each platform's published developer docs —
+        QLDTraffic ``/v1/webcams`` and TfNSW ``/v1/live/cameras``): a JSON
+        object with ``type == "FeatureCollection"`` and a ``features`` list of
+        ``{type: "Feature", …, geometry, properties}`` objects. TfNSW's
+        Developer Guide also documents a ``rights`` member — its absence under
+        the declared contract is drift, never a silently re-licensed read.
+        A keyed-out answer (a 401 envelope / a non-JSON shell or WAF page), a
+        non-FeatureCollection document, a non-object feature, or a row whose
+        ``type`` is not ``"Feature"`` or whose ``properties`` is not an object
+        is :class:`ContentDrift` — recorded loud, never an opaque crash and
+        never a fabricated registry row.
+        """
+        label = "QLDTraffic" if kind == "qldtraffic_geojson" else "TfNSW live-cameras"
+        try:
+            doc = json.loads(data)
+        except (ValueError, TypeError) as exc:
+            head = data[:64] if isinstance(data, (bytes, bytearray)) else str(data)[:64]
+            raise ContentDrift(
+                ctx.source.id,
+                f"{label} API returned non-JSON content (error envelope / WAF page)",
+                details=f"{len(data)} bytes; starts {head!r} ({exc.__class__.__name__})",
+            ) from exc
+        if not isinstance(doc, Mapping):
+            raise ContentDrift(
+                ctx.source.id,
+                f"{label} API payload is not a GeoJSON FeatureCollection object",
+                details=f"got {type(doc).__name__}",
+            )
+        if doc.get("type") != "FeatureCollection":
+            raise ContentDrift(
+                ctx.source.id,
+                f"{label} API payload type is not 'FeatureCollection'",
+                details=f"type={doc.get('type')!r} (top-level keys: {sorted(doc)})",
+            )
+        features = doc.get("features")
+        if not isinstance(features, list):
+            raise ContentDrift(
+                ctx.source.id,
+                f"{label} FeatureCollection carries no 'features' list",
+                details=f"top-level keys: {sorted(doc)}",
+            )
+        if kind == "nsw_live_geojson" and not isinstance(doc.get("rights"), Mapping):
+            # The Developer Guide's declared contract carries a `rights`
+            # member ({copyright, licence}) — its absence is drift under the
+            # declared contract, never a silently re-licensed read.
+            raise ContentDrift(
+                ctx.source.id,
+                "TfNSW live-cameras FeatureCollection lacks the documented 'rights' member",
+                details=f"top-level keys: {sorted(doc)}",
+            )
+        for index, feature in enumerate(features):
+            if not isinstance(feature, Mapping):
+                raise ContentDrift(
+                    ctx.source.id,
+                    f"a {label} feature is not an object",
+                    details=f"features[{index}] is {type(feature).__name__}",
+                )
+            if feature.get("type") != "Feature":
+                raise ContentDrift(
+                    ctx.source.id,
+                    f"a {label} feature's type is not 'Feature'",
+                    details=f"features[{index}].type={feature.get('type')!r}",
+                )
+            if not isinstance(feature.get("properties"), Mapping):
+                raise ContentDrift(
+                    ctx.source.id,
+                    f"a {label} feature carries no 'properties' object",
+                    details=f"features[{index}].properties={feature.get('properties')!r}",
+                )
+        return {
+            "kind": kind,
+            "payload": {"rows": features, "rights": doc.get("rights")},
+            "capture": capture,
+        }
+
     def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
         """Raw camera records with row locators, media fields excluded by name (P2).
 
@@ -2884,16 +3054,41 @@ class Dot511Connector(Connector):
         target_kind = str(target.get("kind") or "")
         is_aggregate = target_kind in _AGGREGATE_KINDS
         out: list[Mapping[str, Any]] = []
-        if parsed.get("kind") in ("socrata_rows", "iteris_511_rows", "ohgo_511_cameras"):
+        _ROW_ARRAY_KINDS = (
+            "socrata_rows",
+            "iteris_511_rows",
+            "ohgo_511_cameras",
+            # P37.70 (D-SOURCES.8-2): the keyed AU GeoJSON lanes — each `rows`
+            # member is a GeoJSON Feature, normalised to (properties + the
+            # Feature `id`, Point coordinates) below.
+            "qldtraffic_geojson",
+            "nsw_live_geojson",
+        )
+        _GEOJSON_KINDS = ("qldtraffic_geojson", "nsw_live_geojson")
+        if parsed.get("kind") in _ROW_ARRAY_KINDS:
             rows = doc["rows"]
+            is_geojson = str(parsed.get("kind") or "") in _GEOJSON_KINDS
             for index, row in enumerate(rows):
                 if not isinstance(row, Mapping):
                     raise ContentDrift(
                         ctx.source.id,
-                        "a Socrata row is not an object",
+                        "a row-array member is not an object",
                         details=f"rows[{index}] is {type(row).__name__}",
                     )
-                fields, excluded = partition_fields(row)
+                geojson_geometry: dict[str, Any] | None = None
+                fields_src: Mapping[str, Any]
+                if is_geojson:
+                    # A GeoJSON Feature: the registry fields live under
+                    # `properties` (plus the top-level `id` when published)
+                    # and the published point under `geometry.coordinates`
+                    # ([lon, lat] — the row declares axis_order=lon-lat).
+                    fields_src = dict(row.get("properties") or {})
+                    if row.get("id") not in (None, ""):
+                        fields_src.setdefault("id", row["id"])
+                    geojson_geometry = _geojson_point_geometry(row.get("geometry"))
+                else:
+                    fields_src = row
+                fields, excluded = partition_fields(fields_src)
                 if is_aggregate:
                     # P36.6 (ACQ-10): the row is a grouped subject × period
                     # count record — never geometry, never a per-violation row.
@@ -2933,7 +3128,9 @@ class Dot511Connector(Connector):
                         # as non-None so the record fails closed rather than
                         # silently asserting "no geometry".
                         "geometry": (
-                            socrata_area_geometry(fields)
+                            geojson_geometry
+                            if is_geojson
+                            else socrata_area_geometry(fields)
                             if str(target.get("geometry_kind") or "").strip() == "area"
                             else socrata_line_geometry_probe(fields)
                             if str(target.get("geometry_kind") or "").strip() == "line"
@@ -3103,6 +3300,9 @@ _EXTRACTION_METHODS = {
     # P37.12 (D-SOURCES.7-2): the keyed 511 JSON API lanes.
     "iteris_511_rows": "iteris_511_rows_json",
     "ohgo_511_cameras": "ohgo_511_result_json",
+    # P37.70 (D-SOURCES.8-2): the keyed AU traffic-camera GeoJSON lanes.
+    "qldtraffic_geojson": "geojson_feature_collection",
+    "nsw_live_geojson": "geojson_feature_collection",
 }
 
 

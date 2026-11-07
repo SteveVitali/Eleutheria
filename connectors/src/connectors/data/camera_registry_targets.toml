@@ -810,7 +810,7 @@ jurisdiction_scheme = "iso.3166_2"
 observed_count = 240
 verified = 2026-09-18
 object_id_field = "objectid"
-notes = "Item eebb997724054f8a816efde37a5b40a6 'CCTV Cameras (External View)'; licenseInfo says only 'Currently available for external use' — not a licence grant → GATED unresolved_rights. latitude2/longitude2 fields; the authoritative QLDTraffic API is token-gated (enumerated below)."
+notes = "Item eebb997724054f8a816efde37a5b40a6 'CCTV Cameras (External View)'; licenseInfo says only 'Currently available for external use' — not a licence grant → GATED unresolved_rights. latitude2/longitude2 fields. P37.70 (E4-R4c = b): superseded as QLD's registry lane by the keyed QLDTraffic API (camreg_qldtraffic_au:qld_qldtraffic_api) — this verified row stays in [[targets]] under its gated source; the replacement is the authoritative lane."
 
 [[targets]]
 id = "donegal_ie_traffic_cameras"
@@ -5379,25 +5379,41 @@ status = "unresolved_rights"
 verified = 2026-09-18
 notes = "TfL JamCam place API: HTTP 200 JSON (~1.1MB JamCam place records with lat/lon + imageUrl additionalProperty). The tfl.gov.uk terms page returned a 403 verification/WAF wall this run → GATED unresolved_rights (terms not capturable). imageUrl media field blocklisted."
 
-[[enumerated]]
+[[targets]]
 id = "nsw_live_traffic_cameras"
+axis_order = "lon-lat"
+technology = "fixed-camera-cctv"
+source_id = "camreg_nsw_live_au"
+kind = "nsw_live_geojson"
 platform = "keyed_api"
 url = "https://api.transport.nsw.gov.au/v1/live/cameras"
+layer_url = "https://api.transport.nsw.gov.au/v1/live/cameras"
+api_key_env = "SIG_NSW_LIVE_KEY"
 agency = "Transport for NSW"
 state = "AU-NSW"
-status = "keyed_api"
+jurisdiction_scheme = "iso.3166_2"
+coordinate_mode = "geometry"
 verified = 2026-09-18
-notes = "TfNSW live-traffic camera API: HTTP 401 without an API key (open-data datasets nsw-2-live-traffic-cameras / nsw-rms-live-traffic-cameras carry CC-BY but the API requires registration). robots.txt returned HTTP 500 → no policy recorded. Blocker: API-key registration + terms review (D-SOURCES.8-2)."
+rights_note = "TfNSW API-Gateway keyed developer API (registered application key, Authorization: apikey header per the published docs); the open-data datasets nsw-2-live-traffic-cameras / nsw-rms-live-traffic-cameras carry CC-BY and the Developer Guide's declared contract carries an in-band `rights` member ({copyright, licence}) — seed evidence for the rights review, not a resolved record; the source row stays gated."
+notes = "Graduated from [[enumerated]] (P37.70 / D-SOURCES.8-2): the 2026-09-18 probe answered HTTP 401 without an API key and robots.txt returned HTTP 500 (no policy recorded). The payload contract is DECLARED from the TfNSW Live Traffic Developer Guide — one GeoJSON FeatureCollection of camera Features ({type, id, geometry: Point, properties}) plus the documented `rights` member — never observed; the strict parse fails closed as ContentDrift on any deviation (missing `rights` included). Blocker that remains: OP-13 API-key registration + terms review + the HG-03 flip (D-P37.70-1)."
 
-[[enumerated]]
+[[targets]]
 id = "qld_qldtraffic_api"
+axis_order = "lon-lat"
+technology = "fixed-camera-cctv"
+source_id = "camreg_qldtraffic_au"
+kind = "qldtraffic_geojson"
 platform = "keyed_api"
 url = "https://api.qldtraffic.qld.gov.au/v1/webcams"
+layer_url = "https://api.qldtraffic.qld.gov.au/v1/webcams"
+api_key_env = "SIG_QLDTRAFFIC_KEY"
 agency = "Queensland Government (QLDTraffic / TMR)"
 state = "AU-QLD"
-status = "keyed_api"
+jurisdiction_scheme = "iso.3166_2"
+coordinate_mode = "geometry"
 verified = 2026-09-18
-notes = "QLDTraffic v1 API (webcams + floodcams): HTTP 401 without a token; robots.txt HTTP 403 'Missing Authentication Token' → no policy. CKAN dataset carries CC-BY-3.0/CC-BY-4.0 but the API is token-gated. Blocker: API-key registration + terms review (D-SOURCES.8-2)."
+rights_note = "QLDTraffic keyed developer API (registered token, `?apikey=` param per the published API specification); the CKAN dataset (data.qld.gov.au 'Traffic and travel information GeoJSON API') carries CC-BY-3.0/CC-BY-4.0 — seed evidence for the rights review, not a resolved record; the source row stays gated."
+notes = "Graduated from [[enumerated]] (P37.70 / D-SOURCES.8-2, E4-R4c = b): the 2026-09-18 probe answered HTTP 401 'Missing Authentication Token' (robots.txt HTTP 403 — no policy recorded). The payload contract is DECLARED from the published QLDTraffic API specification — one GeoJSON FeatureCollection of webcam Features — never observed; the strict parse fails closed as ContentDrift on any deviation. This lane REPLACES the gated camreg_qldc_au ArcGIS registry (E4-R4c = b: use the QLDTraffic API, CC-BY per CKAN, instead). Blocker that remains: OP-13 key registration + terms review + the HG-03 flip (D-P37.70-1)."
 
 [[enumerated]]
 id = "nzta_cameras_token_layer"
