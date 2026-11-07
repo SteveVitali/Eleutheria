@@ -768,7 +768,7 @@ job = "sig-ingest-camreg-qldtraffic-au"
 scheduler = "sig-sched-camreg-qldtraffic-au"
 state = "paused"
 secrets = { SIG_QLDTRAFFIC_KEY = "sig-qldtraffic-key" }
-note = "QLDTraffic keyed webcams API (qld_qldtraffic_api) — the authoritative QLD lane replacing camreg_qldc_au (E4-R4c = b); key rides the ?apikey= wire param through the auth_param seam — never recorded in a URL (HG-09)."
+note = "QLDTraffic keyed webcams API (qld_qldtraffic_api) — the authoritative QLD lane replacing camreg_qldc_au (E4-R4c = b); key rides the `apikey` wire param through the auth_param seam — never recorded in a URL (HG-09)."
 
 [[sources]]
 id = "camreg_nsw_live_au"
