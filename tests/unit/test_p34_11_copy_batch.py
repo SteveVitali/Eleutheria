@@ -132,6 +132,9 @@ ASTRO_PAGES = {
     "/data-collection/": "web/src/pages/data-collection.astro",
     "/editorial-standards/": "web/src/pages/editorial-standards.astro",
     "/style-guide/": "web/src/pages/style-guide.astro",
+    # P37.7 (R11-GOV-02): the editorial decision log's DL-* rows live in
+    # batch-18; this suite binds them the same way.
+    "/about/editorial-decisions/": "web/src/pages/about/editorial-decisions.astro",
     "component/HowWeKnowThis": "web/src/components/HowWeKnowThis.astro",
     "component/Citation": "web/src/components/Citation.astro",
     "component/WhatWeDontKnow": "web/src/components/WhatWeDontKnow.astro",

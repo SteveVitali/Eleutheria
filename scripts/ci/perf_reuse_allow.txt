@@ -17,3 +17,23 @@ web/src/lib/corrections.ts	// are bound in `docs/build/reports/copy-batches/batc
 # manifest as its input fixture — an audited data read (the CSV is the check's
 # own committed subject), not a records read.
 web/tests/e2e/acceptance.ts	"docs/build/planning/2026-09-30-next-phase/review/ROUTES.csv",
+# P37.7: the editorial decision log's entries CITE their records — the
+# sig.editorial-decision/1 contract's gate_ref/evidence fields name the
+# LEDGER GATE DECISIONS row and record paths verbatim (the catalogue
+# acceptance shape: every entry cites its GATE DECISIONS row). Record
+# citations rendered as public text, not a records read.
+web/src/lib/editorial-decisions.ts	*     names the LEDGER § GATE DECISIONS row the entry logs.
+web/src/lib/editorial-decisions.ts	row: 'docs/build/LEDGER.md § GATE DECISIONS — 2026-09-16 "operator dispositions, post-go-public" (HG-11 resolved-by-operator)',
+web/src/lib/editorial-decisions.ts	"docs/build/reports/okc/concurrence.md",
+web/src/lib/editorial-decisions.ts	"docs/tickets/DEFERRALS.md — D-P21.4-2",
+web/src/lib/editorial-decisions.ts	"docs/adr/ADR-163-single-maintainer-publication-posture.md",
+web/src/lib/editorial-decisions.ts	row: 'docs/build/LEDGER.md § GATE DECISIONS — 2026-09-22 "P27.2 / HG-02 + Part VIII sign-off"',
+web/src/lib/editorial-decisions.ts	"docs/build/runs/P27.2.md",
+web/src/lib/editorial-decisions.ts	"docs/tickets/DEFERRALS.md — D-LEGAL.1-1",
+web/src/lib/editorial-decisions.ts	"docs/adr/ADR-164-interim-editorial-authority-and-public-decision-log.md",
+web/src/lib/editorial-decisions.ts	row: "docs/build/LEDGER.md § GATE DECISIONS — 2026-10-01T05:03:05Z GATE-P (plan ratification), A-23 part 1 / WV-02 (ratification log round 9) and A-4 (round 3)",
+web/src/lib/editorial-decisions.ts	"docs/build/planning/2026-09-30-next-phase/feedback/RATIFICATION_LOG.md — rounds 3 and 9",
+web/src/lib/editorial-decisions.ts	"docs/2_canonical_design_spec.md §46.2 (the WV-02 waiver note)",
+# P37.7: the page header names its copy batch for provenance — comment-only,
+# not a records read (the corrections.ts precedent).
+web/src/pages/about/editorial-decisions.astro	// docs/build/reports/copy-batches/batch-18.md (B-2) and bind through the

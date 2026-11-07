@@ -59,6 +59,7 @@ const isNot = [
 const citeLinks = [
   { label: "Cite a page — every page carries a pinned citation behind its Cite disclosure", route: null },
   { label: `Dispute or correct — the corrections log holds ${fmtInt(correctionsCount)} entries`, route: "corrections/", href: withBase("corrections/") },
+  { label: "Editorial decision log — every naming, sensitivity and contested-claim decision, dated", route: "about/editorial-decisions/", href: withBase("about/editorial-decisions/") },
   { label: "Reuse the data — downloads and per-compartment licences", route: "data/", href: withBase("data/") },
   { label: "Known issues — the running log per source", route: "status/issues/", href: withBase("status/issues/") },
 ].filter((l) => l.route === null || routes.has(l.route));

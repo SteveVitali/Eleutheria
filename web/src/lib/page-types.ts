@@ -514,6 +514,16 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
       "The internal UXK14-3a/3b harness — fixture data exercising every component-kit visual component (kit A's structure plus P36.23's epistemic kit B); never published.",
   },
   {
+    patterns: ["/about/editorial-decisions/"],
+    type: "T1",
+    owner: "P37.7",
+    contract: "sig.editorial-decision/1",
+    noJsEquivalent: SELF,
+    examples: ["/about/editorial-decisions/"],
+    notes:
+      "P37.7 (R11-GOV-02, ADR-164 / WV-02, spec §46.2): the public editorial decision log — the interim single-maintainer authority's append-only record under About. The leaf literal outranks the `/about/**` umbrella.",
+  },
+  {
     patterns: ["/about/**"],
     type: "T1",
     owner: "P35.50",
