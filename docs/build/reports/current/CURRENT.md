@@ -4,19 +4,19 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `433ebcfed45ffe9a73e21bb2b3db98b72463bc78` · inputs hashed: 1212 · wall-clock receipt: `receipt.json`
+> input_commit: `78bdaaa6c8129b683ed2b6927db7cb88d6158dd6` · inputs hashed: 1213 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.10` · lastCompleted `P37.9`
-- chainTip `r11/P37.9-lifecycle-into-dossier-timeline` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-06T20:52Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.11` · lastCompleted `P37.10`
+- chainTip `r11/P37.10-asset-promotion-gate` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-06T22:45Z`
 
 ## Obligations
 
-- 225 obligations · **141 owed** (138 OPEN, 3 PARTIAL) · 84 terminal
-- 736 events (55 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 226 obligations · **142 owed** (139 OPEN, 3 PARTIAL) · 84 terminal
+- 737 events (55 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 141 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 142 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 

@@ -24,6 +24,21 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.10 — the §43.5 asset-promotion gate (R11-DATA-06; SIG-PUB-012, cites
+  SIG-ONTO-006/029, SIG-PUB-011/013):** `policy.promotion` is the only
+  candidate→`PhysicalAsset` writer — `promotion_permitted()` returns the
+  recorded decision with every refusal named (a closed vocabulary:
+  `residential_parcel`, `corroboration_only`, `decided`, `already_promoted`,
+  `unprovenanced_confirmation`, `unknown_status`, `missing_subject`), and
+  `promotion_claims()` mints the promoted asset's claim set only behind a
+  permitted decision — a corroboration count alone never promotes (the
+  catalog acceptance shape). Promotion requires a recorded field, imagery or
+  documentary confirmation carrying its actor/document reference; the
+  `promoted:`/`candidate:` subject-map families (map 1.1.0) mint
+  `physical_asset`/`candidate_asset` by construction, and the gated
+  `PromotionWrite` cannot be fabricated without the gate. Verified at
+  unit + composed-db layers over the real spine (`tests/db/test_asset_promotion.py`).
+
 - **P37.9 — lifecycle into the dossier timeline (R11-DATA-05; SIG-RECON-039/040,
   SIG-ONTO-064/065):** the §29.4 reconciler gains a production caller — the
   dossier `timeline` section is populated wherever lifecycle evidence exists

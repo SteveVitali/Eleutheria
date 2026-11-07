@@ -23,7 +23,7 @@
 
 # The map version, recorded on every `entity_type_decision` row the
 # typed-identity write lands so a later revision can supersede honestly.
-version = "1.0.0"
+version = "1.1.0"
 
 [prefixes."accountability:"]
 entity_type = "accountability_event"
@@ -52,6 +52,10 @@ note = "§11.7 — deployment subjects of audit-workbook lifecycle/count claims 
 [prefixes."audit_org:"]
 entity_type = "organization"
 note = "§11.2 — searching/source organisations of audit claims (audit_structural.py ORG_ID_PREFIX)."
+
+[prefixes."candidate:"]
+entity_type = "candidate_asset"
+note = "§11.9 — RF/heuristic lead subjects `candidate:<family>:<id>` (SIG-ONTO-029/030); a candidate never appears in a public device layer until promoted under §43.5 (SIG-PUB-011)."
 
 [prefixes."ccops:"]
 entity_type = "policy"
@@ -104,6 +108,10 @@ note = "§11.7 — conformance-pathway adoption subjects `pathways:<family>:<pat
 [prefixes."procurement_notice:"]
 entity_type = "contract"
 note = "§11.11 — a portal procurement notice/award is contract-lifecycle evidence; the subject is the procurement action the notice describes (procurement.py)."
+
+[prefixes."promoted:"]
+entity_type = "physical_asset"
+note = "§11.8 — a §43.5-promoted candidate's asset subject `promoted:<candidate-subject>`; emitted only by `policy.promotion.promotion_claims` behind `promotion_permitted` — never corroboration count alone (SIG-PUB-012)."
 
 [prefixes."records:"]
 entity_type = "records_request"
