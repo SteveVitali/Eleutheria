@@ -462,11 +462,13 @@ def test_pilot_targets_on_green_sources_named(readout):
 
 
 def test_five_families_carry_drafted_screens(entries):
-    """P34.38 / ADR-185 §2 (E4-B2 → B-42): every pilot family carries a
-    drafted ``screening_required`` preflight recorded by ``agent (draft)`` —
-    a flagless screen, since the draft found no unremediable excluded
-    category. The B-42 'agent clears, disclosed' clear is recorded by the
-    P37.16a/b capture rows, never here."""
+    """P34.38 / ADR-185 §2 (E4-B2 → B-42): every pilot family carries its
+    Part VIII preflight state — the two P37.16a families (SRC-001 OKC,
+    SRC-002 Tulsa) are recorded ``clear`` by the agent screen, disclosed
+    "cleared by agent screen, no human review"; the remaining families keep
+    the drafted ``screening_required`` preflight recorded by ``agent
+    (draft)`` — a flagless screen, since the draft found no unremediable
+    excluded category. Their B-42 clears land at P37.16b."""
     selected = {cid for f in select_batch(entries).families for cid in f.candidate_ids}
     assert selected == {
         "SRC-001",
@@ -479,7 +481,13 @@ def test_five_families_carry_drafted_screens(entries):
         "SRC-011",
     }
     for e in entries:
-        if e.passport.candidate_id in selected:
+        cid = e.passport.candidate_id
+        if cid in ("SRC-001", "SRC-002"):
+            # P37.16a: the B-42 agent clear, recorded + disclosed.
+            assert e.passport.preflight.status == PreflightStatus.CLEAR
+            assert not e.passport.preflight.flags
+            assert "cleared by agent screen, no human review" in e.passport.preflight.notes
+        elif cid in selected:
             assert e.passport.preflight.status == PreflightStatus.SCREENING_REQUIRED
             assert not e.passport.preflight.flags
             assert "agent (draft)" in e.passport.preflight.notes

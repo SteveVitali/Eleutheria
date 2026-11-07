@@ -24,6 +24,23 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.16a — the dossier live-capture executor + the B-42 agent Part VIII
+  screen (D-P32.18-1 + D-P32.19-1; SIG-DOS-003/004 owed legs):**
+  `ops.dossier_live_pass` runs a family's
+  `sig.dossier-live-return-pass/1` — per-source HG-03-line check at the
+  loader gate, the recorded Part VIII `clear`, and the operator's verbatim
+  go (IN-TICKET PAUSE, never pre-authorised under OM-20) — then fetches
+  each target once through the reviewed stack with honest outcomes
+  (`captured`/`access_restricted`/`link_rotted`/`unreachable`/
+  `rights_refused`/`content_drift`/`too_large`/`not_attempted`) and
+  rebuilds the `sig.dossier-packet/1` so no stand-in survives an attempted
+  doc. The B-42 'Agent clears, disclosed' screens are recorded:
+  `sig.part-viii-clear/1` per family + queue `preflight.status = "clear"`
+  on SRC-001/SRC-002 ('cleared by agent screen, no human review').
+  `sig-ops dossier-live-pass` + `dossier-part-viii-clear` verbs (exit 42
+  queued). Both capture legs are QUEUED `prepared_not_executed` — no go,
+  `dossier_okc`/`dossier_tulsa` unflipped (the operator's OP-26 apply).
+
 - **P37.15 — scheduled parser canary (BL-025 canary part; SIG-PARSE-007/008,
   RISK-P7-06):** a daily fixture-replay canary per parser family that raises
   the typed `parser_drift` issue on drift. `tests/parser_canary/` carries the

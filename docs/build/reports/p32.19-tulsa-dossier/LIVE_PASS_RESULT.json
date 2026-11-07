@@ -1,0 +1,91 @@
+{
+  "deferral": "D-P32.19-1",
+  "evaluated_at": "2026-11-07T22:31:28.650722+00:00",
+  "family": "tulsa",
+  "go_recorded_by": null,
+  "non_goals": [
+    "no source rights flip inside this packet",
+    "no operator-gate completion",
+    "no records request sent (drafted_not_sent stays)",
+    "no publication or public release"
+  ],
+  "note": "no capture ran — the leg is staged, never executed; the committed stand-ins stay the honest posture and nothing here is a live capture",
+  "operator_go": {
+    "present": false,
+    "requirement": "IN-TICKET PAUSE (never pre-authorised under OM-20: capture runs touching Part VIII-screened families); explicit verbatim go for the capture run",
+    "verbatim": null
+  },
+  "operator_go_requirement": "IN-TICKET PAUSE (never pre-authorised under OM-20: capture runs touching Part VIII-screened families); explicit verbatim go for the capture run",
+  "packet_id": "tulsa-dossier-live-pass",
+  "paused_reasons": [
+    "operator_go_absent — IN-TICKET PAUSE (never pre-authorised under OM-20: capture runs touching Part VIII-screened families); explicit verbatim go for the capture run",
+    "hg03_lines_pending — the operator's flips are not applied for: dossier_tulsa (OP-26; the agent never flips a source)"
+  ],
+  "preconditions": {
+    "hg03_lines": {
+      "applied": false,
+      "lines": {
+        "dossier_tulsa": {
+          "note": "refused at the loader gate — the operator's HG-03 flip (prepared on r11/sources-flips, OP-26) is not applied; the agent never flips a source",
+          "reasons": [
+            "ingestion_permitted=false (not flipped by a reviewer, SIG-INGEST-028)",
+            "compact_status='not_contacted' does not permit ingestion (§22.4)",
+            "rights block is UNDETERMINED (SIG-LIC-004)",
+            "no recorded review metadata (rights_reviewed_by/on, SIG-INGEST-038)"
+          ],
+          "status": "pending"
+        }
+      }
+    },
+    "part_viii": {
+      "candidates": {
+        "SRC-002": {
+          "disclosure": "cleared by agent screen, no human review",
+          "notes": "B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z; ADR-185 §2): cleared 2026-11-07 by the P37.16a agent screen — lanes S5 (officer names in policy text → the §43.4 naming gate stands), S6 (free-text excerpts → SIG-PUB-014a screen), S7 (incidental private names → extraction-time suppression) are enforced mechanically at claim build; 'cleared by agent screen, no human review'; record: docs/build/reports/p32.19-tulsa-dossier/PART_VIII_CLEAR.json",
+          "status": "clear"
+        }
+      },
+      "cleared": true
+    }
+  },
+  "schema": "sig.dossier-live-pass-result/1",
+  "status": "prepared_not_executed",
+  "targets": [
+    {
+      "doc_id": "tulsa-mou-template",
+      "outcome": "not_attempted",
+      "source_id": "dossier_tulsa",
+      "url": "https://www.tulsapolice.org/files/camera-integration-mou-template.pdf"
+    },
+    {
+      "doc_id": "tulsa-policy-113c",
+      "outcome": "not_attempted",
+      "source_id": "dossier_tulsa",
+      "url": "https://www.tulsapolice.org/files/policy-113c-alpr.pdf"
+    },
+    {
+      "doc_id": "tulsa-policy-113e",
+      "outcome": "not_attempted",
+      "source_id": "dossier_tulsa",
+      "url": "https://www.tulsapolice.org/files/policy-113e-alpr-sharing.pdf"
+    },
+    {
+      "doc_id": "tpd-flock-page",
+      "outcome": "not_attempted",
+      "source_id": "dossier_tulsa",
+      "url": "https://www.tulsapolice.org/flock-safety"
+    },
+    {
+      "doc_id": "tpd-policies-index",
+      "outcome": "not_attempted",
+      "source_id": "dossier_tulsa",
+      "url": "https://www.tulsapolice.org/policies-and-procedures"
+    },
+    {
+      "doc_id": "tulsa-corridor-safety-guide",
+      "outcome": "not_attempted",
+      "source_id": "dossier_tulsa",
+      "url": "https://www.cityoftulsa.org/government/departments/planning-and-neighborhoods/community-planning/commercial-corridor-safety-guide/"
+    }
+  ]
+}
