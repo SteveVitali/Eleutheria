@@ -170,6 +170,37 @@ def build_parser() -> argparse.ArgumentParser:
         help="write <out>/records_requests.json (the drafted-not-sent records requests)",
     )
 
+    pc = sub.add_parser(
+        "portal-changes",
+        help="the flock_portal change feed over two captured snapshots (P37.5b): "
+        "appearance/disappearance events + tasks + per-field diff; --dsn persists "
+        "the research-task rows append-only (SIG-INGEST-009/010/035)",
+    )
+    pc.add_argument("--previous", required=True, help="the previous captured snapshot JSON")
+    pc.add_argument("--current", required=True, help="the current captured snapshot JSON")
+    pc.add_argument(
+        "--now", default=None, help="ISO date for the poll-due decision (default: today)"
+    )
+    pc.add_argument(
+        "--last-observed",
+        default=None,
+        help="ISO date of the last observed upstream snapshot (poll-due input)",
+    )
+    pc.add_argument(
+        "--dsn",
+        default=None,
+        help="PostgreSQL DSN — persist the research-task rows (off: emit only)",
+    )
+    pc.add_argument("--role", default=None, help="optional role to SET ROLE to")
+
+    dis = sub.add_parser(
+        "disappearances",
+        help="the queryable disappearance read (SIG-INGEST-010): which "
+        "artifacts carry disappeared_observed_at + their research tasks",
+    )
+    dis.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    dis.add_argument("--role", default=None, help="optional role to SET ROLE to")
+
     acq = sub.add_parser(
         "acquisition",
         help="the gap-driven reviewed source-candidate queue (P32.11, §55.6, "
@@ -660,6 +691,10 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "detect":
         return _detect(args)
+    if args.command == "portal-changes":
+        return _portal_changes(args)
+    if args.command == "disappearances":
+        return _disappearances(args)
     parser.print_help()
     return 0
 
@@ -701,4 +736,68 @@ def _detect(args: argparse.Namespace) -> int:
         )
         print(f"# wrote {out_dir / 'records_requests.json'} — {len(drafts)} DRAFTED, 0 sent")
     print("# records requests are DRAFTED, never sent (operator-gated external side effect).")
+    return 0
+
+
+# --------------------------------------------------------------------------- #
+# Disappearance persistence + the portal change feed (P37.5b, §17.6)
+# --------------------------------------------------------------------------- #
+def _portal_changes(args: argparse.Namespace) -> int:
+    """Drive the flock_portal change feed over two captured snapshots.
+
+    Emits the ``sig.portal-changes/1`` report; with ``--dsn`` the
+    ``record_kind='research_task'`` rows persist append-only through
+    :mod:`tasks.disappearance_pg` (the claim rows are emitted for the claim
+    path — a run asserts them, this verb never fabricates an ingest).
+    """
+    from datetime import date
+
+    from connectors.portal_changes import (
+        canonical_json,
+        load_snapshot,
+        portal_change_feed,
+    )
+
+    now = date.fromisoformat(args.now) if args.now else date.today()
+    last = date.fromisoformat(args.last_observed) if args.last_observed else None
+    feed = portal_change_feed(
+        load_snapshot(args.previous),
+        load_snapshot(args.current),
+        now=now,
+        last_observed_snapshot=last,
+    )
+    report = feed.as_dict()
+    if args.dsn:
+        import psycopg
+
+        from .disappearance_pg import insert_task_row
+
+        written = existing = 0
+        conn = psycopg.connect(args.dsn, autocommit=True)
+        try:
+            if args.role:
+                conn.execute(f"SET ROLE {args.role}")
+            for row in feed.task_rows():
+                outcome = insert_task_row(conn, row, trigger_kind="portal_change_feed")
+                written += outcome == "written"
+                existing += outcome == "existing"
+        finally:
+            conn.close()
+        report["persisted"] = {"tasks_written": written, "tasks_existing": existing}
+    print(canonical_json(report), end="")
+    return 0
+
+
+def _disappearances(args: argparse.Namespace) -> int:
+    """The queryable disappearance read (SIG-INGEST-010)."""
+    import psycopg
+
+    from .disappearance_pg import disappeared_artifacts
+
+    conn = psycopg.connect(args.dsn, autocommit=True)
+    try:
+        rows = disappeared_artifacts(conn, role=args.role)
+    finally:
+        conn.close()
+    print(json.dumps(rows, indent=2, default=str))
     return 0

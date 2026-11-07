@@ -178,36 +178,7 @@ disposition = "test-surface"
 note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
 
 [[finding]]
-key = "connectors.flock_portal.detect_portal_changes"
-disposition = "capability-half"
-owner = "P37.5b"
-note = "portal change detection — the disappearance-events row wires it into the persisted event feed"
-
-[[finding]]
-key = "connectors.flock_portal.diff_portal_snapshots"
-disposition = "capability-half"
-owner = "P37.5b"
-note = "portal snapshot diff — the disappearance-events row wires it"
-
-[[finding]]
 key = "connectors.flock_portal.forbidden_predicate_genres"
-disposition = "test-surface"
-note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
-
-[[finding]]
-key = "connectors.flock_portal.is_poll_due"
-disposition = "capability-half"
-owner = "P37.5b"
-note = "portal poll cadence — the disappearance-events row wires it"
-
-[[finding]]
-key = "connectors.flock_portal.portal_capture"
-disposition = "capability-half"
-owner = "P37.5b"
-note = "portal capture half — the disappearance-events row wires it"
-
-[[finding]]
-key = "connectors.flock_portal.portal_slugs"
 disposition = "test-surface"
 note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
 

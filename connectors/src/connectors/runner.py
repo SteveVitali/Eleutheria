@@ -1126,6 +1126,12 @@ def run_source(
     ``partial``).
     """
     mode = RunMode(mode)
+    # SIG-INGEST-008 (P37.5b): a registered manual-acquisition dependency has no
+    # automatic fetch path in ANY mode — the documented human procedure is the
+    # acquisition path, and ``run`` refuses before a connector resolves.
+    from .manual_acquisition import assert_automatic_acquirable
+
+    assert_automatic_acquirable(source_id)
     connector = _connector_for(source_id, connector_name)
 
     if mode is RunMode.LIVE:

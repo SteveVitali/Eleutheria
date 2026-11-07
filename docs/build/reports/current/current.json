@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "b2255e9b2d0bfcb29403e7e3edd84034257fef2d",
-  "manifest_inputs": 1204,
+  "input_commit": "606eaeaaf226bd5a7de8b7e5af7c02b06665f9e2",
+  "manifest_inputs": 1206,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.5b",
-    "lastCompleted": "P37.5a",
+    "nextTicket": "P37.6",
+    "lastCompleted": "P37.5b",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b",
@@ -17,7 +17,7 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.5a-ingestion-hardening-unwired-function-scan",
+    "chainTip": "r11/P37.5b-manual-acquisition-and-disappearance-events",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
@@ -13926,8 +13926,8 @@
           "label": "historical/csv"
         },
         "SIG-INGEST-008": {
-          "verdict": "PARTIAL",
-          "evidence": "docs/2_canonical_design_spec.md:3463",
+          "verdict": "MET",
+          "evidence": "connectors/src/connectors/manual_acquisition.py;connectors/src/connectors/data/manual_acquisitions.toml;connectors/src/connectors/runner.py;docs/ops/manual-acquisition.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -13938,8 +13938,8 @@
           "label": "historical/csv"
         },
         "SIG-INGEST-010": {
-          "verdict": "PARTIAL",
-          "evidence": "docs/2_canonical_design_spec.md:3473",
+          "verdict": "MET",
+          "evidence": "tasks/src/tasks/disappearance_pg.py;db/deploy/disappearance_event_grant.sql;connectors/src/connectors/portal_changes.py;tests/db/test_disappearance_persist.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -26463,10 +26463,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "4bf9ed9889b77dbec9bb76f836571265606787ac1fad7bd66c8bc8281ec42d98",
+  "manifest_sha256": "cd733899b10a220398afcaf9ef49b44285852c728482cd7efb9b89dbf2437e26",
   "current_md": {
     "lines": 142,
-    "bytes": 20384,
+    "bytes": 20385,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

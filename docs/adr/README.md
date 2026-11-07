@@ -237,6 +237,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-231](ADR-231-security-baseline-scan-sbom-cosign-deploy-path.md) | The security baseline: deterministic release SBOM, Artifact-Registry scanning, cosign-over-Cloud-KMS image signing, and the deploy-path hook (P37.4a) | P37.4a (Round 11 / P37, row 422 — R11-OPS-08; serves SIG-SEC-006; | accepted |
 | [ADR-232](ADR-232-restricted-byte-access-audit-posture.md) | The restricted-byte access posture: one audited access function, GCS Data Access audit logs with a retention sink + exclusion filter, and Cloud SQL ENCRYPTED_ONLY (P37.4b) | P37.4b (Round 11 / P37, row 423 — R11-OPS-08; serves SIG-SEC-005 + | accepted |
 | [ADR-233](ADR-233-ingestion-mode-declaration-and-unwired-scan.md) | Connector-level ingestion-mode declarations and the adjudicated unwired-function scan (P37.5a) | P37.5a (Round 11 / P37, row 424 — R11-DEBT-03; serves SIG-INGEST-005 | accepted |
+| [ADR-234](ADR-234-manual-acquisition-model-and-disappearance-persistence.md) | Manual-acquisition registry + the disappearance event-column writer (P37.5b) | P37.5b (Round 11 / P37, row 425 — R11-DEBT-03; serves SIG-INGEST-008, | accepted |
 
 ## Notes
 
