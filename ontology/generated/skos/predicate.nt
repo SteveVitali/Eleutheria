@@ -2357,6 +2357,16 @@
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/seller> <https://ontology.surveillancegraph.org/schema/resolutionStrategy> "authoritative_source_wins" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/seller> <https://ontology.surveillancegraph.org/schema/valueDatatype> "string" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/seller> <https://ontology.surveillancegraph.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/session> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/session> <http://www.w3.org/2004/02/skos/core#definition> "The legislative session a LegalInstrument citation resolves to (SIG-INGEST-025c — bill numbers are reused across sessions, so a legislative citation requires its session to publish)." .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/session> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0> .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/session> <http://www.w3.org/2004/02/skos/core#prefLabel> "session"@en .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/session> <https://ontology.surveillancegraph.org/schema/cardinality> "single" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/session> <https://ontology.surveillancegraph.org/schema/halfLife> "infinite" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/session> <https://ontology.surveillancegraph.org/schema/objectKind> "literal" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/session> <https://ontology.surveillancegraph.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/session> <https://ontology.surveillancegraph.org/schema/valueDatatype> "string" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/session> <https://ontology.surveillancegraph.org/schema/volatilityClass> "IMMUTABLE" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/sharing_partner> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/sharing_partner> <http://www.w3.org/2004/02/skos/core#definition> "A sharing partner the mandated disclosure states." .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/sharing_partner> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0> .
@@ -2541,6 +2551,16 @@
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/technology_category> <https://ontology.surveillancegraph.org/schema/resolutionStrategy> "max_support" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/technology_category> <https://ontology.surveillancegraph.org/schema/valueDatatype> "string" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/technology_category> <https://ontology.surveillancegraph.org/schema/volatilityClass> "SLOW" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/text_ref> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/text_ref> <http://www.w3.org/2004/02/skos/core#definition> "A reference resolving to the instrument's text (a fetch-shaped URL or urn ref) — the page the citation was verified at (SIG-INGEST-025c)." .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/text_ref> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0> .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/text_ref> <http://www.w3.org/2004/02/skos/core#prefLabel> "text_ref"@en .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/text_ref> <https://ontology.surveillancegraph.org/schema/cardinality> "single" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/text_ref> <https://ontology.surveillancegraph.org/schema/halfLife> "infinite" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/text_ref> <https://ontology.surveillancegraph.org/schema/objectKind> "literal" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/text_ref> <https://ontology.surveillancegraph.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/text_ref> <https://ontology.surveillancegraph.org/schema/valueDatatype> "string" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/text_ref> <https://ontology.surveillancegraph.org/schema/volatilityClass> "IMMUTABLE" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/third_party_integration> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/third_party_integration> <http://www.w3.org/2004/02/skos/core#definition> "A third-party system the deployment's configuration integrates with (§11.15 ConfigurationState; an entity_ref carried by the object seam)." .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/third_party_integration> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0> .

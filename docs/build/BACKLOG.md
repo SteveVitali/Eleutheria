@@ -1,5 +1,6 @@
-wrote /Users/stevenvitali/Eleutheria/docs/build/BACKLOG.md (138104 bytes)
-anding`. Machine-readable form: `BACKLOG.csv`; themes:
+# BACKLOG — the one normalized post-build backlog (P20.1)
+
+Grouped by `landing`. Machine-readable form: `BACKLOG.csv`; themes:
 `reports/BACKLOG_THEMES.md`; the id space (`BL-nnn`) and the `landing` enum
 are owned by P20.1 (extended by P24.5: `closed-by:P<n>.<m>`, `P<n>+` phase
 buckets). Every RISK deferred row, every ADR revisit trigger, and every LD
