@@ -66,7 +66,7 @@ def test_every_duty_id_is_a_registered_source() -> None:
 
 def test_each_statute_duty_produces_a_gap_row_or_a_coverage_record() -> None:
     result = generate_leads()
-    outputs = {l.duty_id for l in result.gap_rows}
+    outputs = {lead.duty_id for lead in result.gap_rows}
     for d in load_leads_table()[0]:
         # exactly one of lead / coverage per duty — never both, never none.
         if d.requestable:
@@ -80,7 +80,7 @@ def test_each_statute_duty_produces_a_gap_row_or_a_coverage_record() -> None:
 
 
 def test_commenced_duties_emit_requestable_leads() -> None:
-    leads = {l.duty_id: l for l in generate_leads().gap_rows}
+    leads = {lead.duty_id: lead for lead in generate_leads().gap_rows}
     for duty_id in (
         "future_statutory_disclosure_va",
         "future_statutory_disclosure_al",
