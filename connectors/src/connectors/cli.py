@@ -36,7 +36,13 @@ from . import __version__
 from .ecosystem import GroupStatus, local_groups, partners
 from .loader import assert_export_compatible, is_loadable, source_export_license
 from .registry import get, sources
-from .review import flip_ready, gate_breakdown, is_flip_ready, review_metadata_violations
+from .review import (
+    flip_ready,
+    gate_breakdown,
+    is_flip_ready,
+    review_metadata_violations,
+    rights_record_consistency_violations,
+)
 from .stages import registered_connectors, stage_names
 
 if TYPE_CHECKING:
@@ -327,6 +333,16 @@ def _validate() -> int:
     violations = review_metadata_violations(srcs)
     if violations:
         for msg in violations:
+            print(f"VALIDATION FAILED: {msg}")
+        return 1
+    # P37.6 / ADR-235: the record half of the same rule — a flipped row's
+    # packet path resolves, its notes carry the recorded FLIPPED marker + the
+    # review date, and the ADR-194 resolver tuple (attribution / terms_url /
+    # explicit retrieval_date) is complete. Drift here is audit-ability loss,
+    # never a living state.
+    consistency = rights_record_consistency_violations(srcs)
+    if consistency:
+        for msg in consistency:
             print(f"VALIDATION FAILED: {msg}")
         return 1
     # F-330 (P35.6, S1): the Part VIII layer-field denylist is a registration

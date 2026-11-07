@@ -27,13 +27,32 @@ state so a human can act (SIG-LIC-009: a recorded reviewer role, not a legal opi
 
 from __future__ import annotations
 
+import re
 from collections.abc import Iterable
 from dataclasses import dataclass
+from datetime import date
+from pathlib import Path
 
 from policy.rights import is_refused, is_undetermined
 
 from .loader import compact_permits_ingestion, custody_permits_fetch
 from .registry import SourceRecord, sources
+
+#: The repository root derived from this module's location
+#: (``connectors/src/connectors/review.py`` → 3 levels up). ``review_packet``
+#: values are repo-relative paths; existence is checked against this root.
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+
+#: The recorded flip marker (P37.6 / ADR-235): a flip's registry note reads
+#: ``FLIPPED <YYYY-MM-DD> (<gate|ADR>…)``.
+_FLIPPED_MARKER = re.compile(r"FLIPPED \d{4}-\d{2}-\d{2}")
+
+#: The loader's ``retrieval_date`` fallback for a rights block that carries no
+#: explicit key (``connectors.registry._rights_record``: ``date(2026, 8, 20)``).
+#: The fallback exists so an UNDETERMINED row stays well-formed; a *reviewed*
+#: row that still carries it simply never recorded its terms retrieval — the
+#: sentinel value is exactly the drift this audit flags.
+_FALLBACK_RETRIEVAL = date(2026, 8, 20)
 
 
 def has_rights_block(record: SourceRecord) -> bool:
@@ -154,6 +173,71 @@ def review_metadata_violations(records: Iterable[SourceRecord] | None = None) ->
     return violations
 
 
+def rights_record_consistency_violations(
+    records: Iterable[SourceRecord] | None = None,
+) -> list[str]:
+    """The rights-record consistency rule (P37.6 / ADR-235, SIG-INGEST-028/038).
+
+    Extends :func:`review_metadata_violations` over the **record** half of a
+    flip: a row with ``ingestion_permitted = true`` asserts a recorded human
+    review, so every field that makes that review auditable must be present
+    and self-consistent — never implied:
+
+    * ``review_packet`` names a repo-relative path that **resolves to an
+      existing file** — the packet the review was recorded in (a per-source
+      packet or a batch annex such as ``rights/annex/p2616/<id>.md``). A
+      missing field or a dead path is drift the reader cannot audit.
+    * ``notes`` carries the recorded flip marker ``FLIPPED <YYYY-MM-DD>``
+      (the Record-rule form: date + gate/ADR citation) **and** the
+      ``rights_reviewed_on`` ISO date — the review act and the flip act are
+      distinct recorded events (P27.2's reviewed-then-flipped rows carry
+      both dates).
+    * The ADR-194 resolver tuple is complete: ``rights.attribution`` and
+      ``rights.terms_url`` are populated, and ``rights.retrieval_date`` is an
+      explicit recorded date (never the loader's ``2026-08-20`` fallback, which
+      marks a block that recorded no retrieval), so the claim sink's
+      ``(source_id, spdx, attribution, terms_url)`` rights-record key never
+      mints a mis-attributed record (SIG-CONTRIB-020).
+
+    Returns one message per offending source, naming the id, so
+    ``sig-connectors validate`` can report it. An empty list means the rule
+    holds across the set.
+    """
+    records = list(records) if records is not None else sources()
+    violations: list[str] = []
+    for r in records:
+        if not r.ingestion_permitted:
+            continue
+        problems: list[str] = []
+        if not r.review_packet:
+            problems.append("review_packet (the recorded review's packet path)")
+        elif not (_REPO_ROOT / r.review_packet).is_file():
+            problems.append(f"a review_packet that resolves ({r.review_packet!r} is not a file)")
+        if not _FLIPPED_MARKER.search(r.notes or ""):
+            problems.append("the recorded flip marker 'FLIPPED <YYYY-MM-DD>' in notes")
+        if r.rights_reviewed_on is not None and str(r.rights_reviewed_on) not in (r.notes or ""):
+            problems.append(
+                "the rights_reviewed_on date inside notes (the review act and the "
+                "flip act are distinct recorded events)"
+            )
+        if not r.rights.attribution.strip():
+            problems.append("rights.attribution (ADR-194 resolver tuple)")
+        if not r.rights.terms_url.strip():
+            problems.append("rights.terms_url (ADR-194 resolver tuple)")
+        if r.rights.retrieval_date == _FALLBACK_RETRIEVAL:
+            problems.append(
+                "an explicit rights.retrieval_date (the row still carries the "
+                "loader's 2026-08-20 fallback — no terms retrieval was recorded)"
+            )
+        if problems:
+            violations.append(
+                f"source {r.id!r} has ingestion_permitted=true but is missing "
+                f"{', '.join(problems)}; a flip's record is incomplete or "
+                "inconsistent (P37.6 / ADR-235, SIG-INGEST-028/038)."
+            )
+    return violations
+
+
 __all__ = [
     "GateBreakdown",
     "flip_ready",
@@ -162,4 +246,5 @@ __all__ = [
     "has_rights_block",
     "is_flip_ready",
     "review_metadata_violations",
+    "rights_record_consistency_violations",
 ]

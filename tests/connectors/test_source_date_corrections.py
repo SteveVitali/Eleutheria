@@ -71,9 +71,11 @@ def test_recorded_values_are_untouched_and_effective_shows_true() -> None:
 
 def test_uncorrected_fields_read_the_recorded_value() -> None:
     """Fields with no correction resolve to their recorded value verbatim —
-    e.g. osm_overpass's rights.retrieval_date was never chain-dated."""
+    e.g. osm_overpass's rights.retrieval_date (the P37.6 audit repaired the
+    seed-era placeholder to the packet-verbatim fetch, 2026-09-09 — still an
+    uncorrected field, no date_corrections entry)."""
     rec = get("osm_overpass")
-    assert rec.effective_date("rights.retrieval_date") == date(2026, 8, 20)
+    assert rec.effective_date("rights.retrieval_date") == date(2026, 9, 9)
     assert get("deflock_repo").effective_date("last_verified") == date(2026, 8, 20)
 
 

@@ -41,8 +41,9 @@ MIRROR (primary deployment seed; supersession allowed).
 
 ## Decision
 
-- [ ] permit ingestion — reviewer: ____ date: ____
-- SPDX to record: `CC-BY-4.0`   rights_reviewed_by (role, never a name): ____   rights_reviewed_on: ____
+- [x] permit ingestion — reviewer: maintainer (delegated) date: 2026-09-15
+- SPDX recorded: `CC-BY-4.0`   rights_reviewed_by: maintainer (delegated)   rights_reviewed_on: 2026-09-15
+FLIPPED 2026-09-15 (GL-GATE-03, P25.3) — the recorded answer (sources.toml notes; LEDGER GATE DECISIONS).
 
 ## Counsel-needed flag
 

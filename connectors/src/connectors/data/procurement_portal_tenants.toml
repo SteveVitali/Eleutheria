@@ -57,8 +57,11 @@
 #     public-domain-class licence; Chicago's carries NO licence metadata → the
 #     source stays rights-gated (D-SOURCES.9-1), the tenant row documents it.
 #   * bonfire — both verified *.bonfirehub.com tenants answer robots.txt
-#     `User-agent: *` / `Disallow: /` (platform-wide): every fetch is a recorded
-#     robots refusal while the wall stands (D-SOURCES.9-2).
+#     `User-agent: *` / `Disallow: /` (platform-wide): a DECLARED posture probed
+#     and recorded per RFC 9309 — under GL-GATE-08/ADR-088/ADR-222 it never
+#     gates a fetch. The standing blockers are rights (no terms captured
+#     verbatim) + engineering (no reviewed markup contract; `/portal` login
+#     redirects) — D-SOURCES.9-2, WONTFIX 2026-10-02.
 #   * opengov — procurement.opengov.com answers every `/portal/<agency>` path
 #     (and robots.txt itself, an HTML 200 SPA shell) behind a Cloudflare managed
 #     challenge (`cf-mitigated: challenge`, HTTP 403) → recorded disappearances
