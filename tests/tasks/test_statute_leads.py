@@ -97,8 +97,7 @@ def test_commenced_duties_emit_requestable_leads() -> None:
 def test_nm_not_yet_due_is_a_not_applicable_coverage() -> None:
     cov = next(c for c in generate_leads().coverage if "New Mexico" in c.jurisdiction_id)
     assert cov.absence_kind == "not_applicable"
-    # future-ok: real-world: the registered duty's first-reports due date
-    assert "2027-04-01" in (cov.search_method or "")
+    assert "2027-04-01" in (cov.search_method or "")  # future-ok: real-world: duty deadline
 
 
 def test_mn_contingent_duty_is_a_not_researched_coverage() -> None:
