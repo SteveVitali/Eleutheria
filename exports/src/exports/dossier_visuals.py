@@ -198,6 +198,7 @@ def build_dossier_visuals(
     vintages: Mapping[str, str],
     placement_results: Sequence[Any] = (),
     sites_href_prefix: str = "/dossier/",
+    coverage_verdicts: Mapping[str, str] | None = None,
 ) -> dict[str, Any]:
     """Emit every dossier's visuals bundle — the one entry point.
 
@@ -232,8 +233,9 @@ def build_dossier_visuals(
                 {
                     "jkey": c,
                     "rings": [[[float(x), float(y)] for x, y in r] for r in crings],
-                    # D-K1-4: every child is rule_pending until MAP-01b's rule lands.
-                    "coverage": "rule_pending",
+                    # P37.17 (D-K1-4 = yes): the real declared-scope verdict
+                    # when bound; rule_pending remains the unbound posture.
+                    "coverage": (coverage_verdicts or {}).get(c, "rule_pending"),
                     "href": href,
                 }
             )

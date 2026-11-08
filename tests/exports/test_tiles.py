@@ -430,7 +430,13 @@ def test_emit_assigns_layers_and_zoom_bands() -> None:
     assert {f["tippecanoe"]["minzoom"] for f in cells} == {b[0] for b in T.CELL_BANDS}
     assert {f["tippecanoe"]["maxzoom"] for f in cells} == {b[1] for b in T.CELL_BANDS}
     for f in cells:
-        assert set(f["properties"]) == {"h3", "n", "ns", "jp"}
+        # P37.17: cells carry the core keys plus the §3.3 facet counts
+        # (t_<code>, v_<slot>, s1, sx) — never a key outside the allowlist.
+        props = set(f["properties"])
+        assert {"h3", "n", "ns", "jp", "s1", "sx"} <= props
+        assert props <= {"h3", "n", "ns", "jp", "s1", "sx"} | {
+            k for k in props if k[0] in ("t", "v") and k[1:2] == "_" and k[2:].isdigit()
+        }
     # sites: tier zoom band per SITE_MINZOOM_BY_TIER; tier 3 absent; props rk+tr
     by_rk = {f["properties"]["rk"]: f for f in sites}
     assert "sig_graph:deployment:d1" not in by_rk

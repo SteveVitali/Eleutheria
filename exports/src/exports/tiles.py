@@ -110,17 +110,54 @@ TIER2_H3_RESOLUTION = 8
 #: it without failing.
 TILE_SIZE_LIMIT_BYTES = 500 * 1024
 TILE_SIZE_WARN_BYTES = 200 * 1024
-#: This row's emitted property vocabularies (K1 §3.3, MAP-01a subset — the
-#: remaining facets ``lb``/``tc``/``vd``/``op``/``sr``/``j``/``f``/``l``/``st``/
-#: ``pm``/``co`` and the cell facet keys are MAP-01b's; the verifier's admitted
-#: set already covers them so their later addition stays contract-clean).
-SITE_PROPERTY_KEYS = ("rk", "tr")
-CELL_PROPERTY_KEYS = ("h3", "n", "ns", "jp")
-#: The full §3.3 vocabularies the verifier admits (key-name allowlists).
-ALLOWED_SITE_KEYS = frozenset(
-    {"rk", "lb", "tc", "vd", "op", "oe", "sr", "j", "f", "l", "st", "tr", "pm", "co"}
+#: This row's emitted property vocabularies (K1 §3.3 — the full MAP-01b set
+#: landed by P37.17). ``sr``/``tc``/``vd`` index into ``web/map/dict.json``
+#: (``sig.map-dict/1``) — a missing dictionary entry degrades to the honest
+#: absence (``sr`` omitted; ``tc``/``vd`` = 0 = unclassified/unknown).
+SITE_PROPERTY_KEYS = (
+    "rk",
+    "lb",
+    "tc",
+    "vd",
+    "op",
+    "oe",
+    "sr",
+    "j",
+    "f",
+    "l",
+    "st",
+    "tr",
+    "pm",
+    "co",
 )
-ALLOWED_CELL_KEYS = frozenset({"h3", "n", "ns", "jp", "s1", "sx"})
+CELL_PROPERTY_KEYS = ("h3", "n", "ns", "jp", "s1", "sx")
+#: The full §3.3 vocabularies the verifier admits (key-name allowlists).
+ALLOWED_SITE_KEYS = frozenset(SITE_PROPERTY_KEYS)
+ALLOWED_CELL_KEYS = frozenset(CELL_PROPERTY_KEYS)
+#: ``st`` codes (K1 §3.3/§3.5): 0 corroborated (≥ 2 registry sources — the
+#: UXR-14 interim until L3 CONF-07b's ``n_independent_lineages`` ships: the
+#: legend says 'republications not yet collapsed') · 1 single source ·
+#: 2 contested (open contradiction on location or type) · 3 provisional
+#: (candidate lifecycle). Precedence: contested > provisional > corroborated
+#: > single — an open contradiction is the most epistemically significant
+#: state and is never hidden under a count (P37.17, ADR-241).
+STATUS_CORROBORATED = 0
+STATUS_SINGLE_SOURCE = 1
+STATUS_CONTESTED = 2
+STATUS_PROVISIONAL = 3
+#: ``pm`` — the tier's published uncertainty radius in metres (K1 §3.3/§3.4):
+#: tier 0 → 0 (location as published; a source-declared accuracy rides the
+#: ``point_uncertainty_m`` row field when one exists), tier 1 → the declared
+#: 0.01° truncation step (≈ 1,113 m at 111,320 m/deg), tier 2 → the declared
+#: 1,000 m grid bin (policy sensitivity table).
+UNCERTAINTY_M_BY_TIER: dict[int, int] = {0: 0, 1: 1113, 2: 1000}
+#: ``vd`` slots (K1 §3.3): 0 = unknown/unstated, 1..8 = the release's top
+#: vendors by record count (``dict.json`` binds slot → label), 9 = other.
+VENDOR_SLOT_UNKNOWN = 0
+VENDOR_SLOT_OTHER = 9
+VENDOR_SLOT_TOP_MAX = 8
+#: ``tc`` code 0 = unclassified (K1 §3.3).
+TECH_CODE_UNCLASSIFIED = 0
 #: K4 key used when a record's jurisdiction is unresolved/conflicted (§3.3).
 UNPLACED_JURISDICTION_KEY = "unplaced"
 _UNRESOLVED_JURISDICTION_MARKERS = frozenset(
@@ -290,26 +327,69 @@ class _CellAcc(TypedDict):
     n: int
     sources: set[str]
     jurisdictions: dict[str, int]
+    tech_counts: dict[int, int]
+    vendor_counts: dict[int, int]
+    status_counts: dict[int, int]
     sum_lat: float
     sum_lon: float
 
 
-def map_tile_features(
+class _MergedRecord(TypedDict):
+    """One (record, published-position) unit the v2 emit draws once.
+
+    A record sliced by several sources lands several input rows; slices that
+    resolve to the SAME published point merge into one feature (a record is
+    drawn once — ``rk`` links one record page, never a stack of identical
+    markers), while slices resolving to DIFFERENT points keep their honest
+    disagreement as separate features (P37.17).
+    """
+
+    rk: str
+    lon: float
+    lat: float
+    tier: int
+    label: str | None
+    technology: str | None
+    vendor_key: str | None
+    operator_label: str | None
+    operator_key: str | None
+    sources: set[str]
+    jkey: str
+    first_seen: int | None
+    last_seen: int | None
+    contested: bool
+    provisional: bool
+    uncertainty_m: int
+
+
+def _yyyymm(value: object) -> int | None:
+    """Coerce a ``yyyymm`` int (or an ISO ``YYYY-MM[-DD]`` string) to the int."""
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value if 190001 <= value <= 220012 else None
+    if isinstance(value, str) and len(value) >= 7 and value[4] == "-":
+        try:
+            return int(value[:4]) * 100 + int(value[5:7])
+        except ValueError:
+            return None
+    return None
+
+
+def _merged_records(
     features: Sequence[Mapping[str, object]],
     compartment: str,
-) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
-    """Emit the ``sig.map-tiles/2`` feature set for one compartment.
+) -> list[_MergedRecord]:
+    """Group located input rows into the one-drawn-feature-per-(rk, point) set.
 
-    Returns ``(cells_features, sites_features)`` — both carry a
-    ``"tippecanoe": {"layer", "minzoom", "maxzoom"}`` member both renderers
-    honour. Every input feature must be a located published point: the
-    public-layer refusal runs on the FULL properties before any reduction
-    (a refused subject is a build error, never a silently dropped feature).
-    Non-located features (null geometry) are skipped; non-Point geometry is a
-    contract violation and raises.
+    Every input feature is a published slice row. The public-layer refusal
+    runs on the FULL properties before any reduction (a refused subject is a
+    build error, never a silently dropped feature). Non-located features
+    (null geometry) are skipped; non-Point geometry is a contract violation
+    and raises — the same postures the row-per-slice emit held.
     """
-    cell_acc: dict[tuple[int, str], _CellAcc] = {}
-    sites: list[dict[str, object]] = []
+    groups: dict[tuple[str, float, float], _MergedRecord] = {}
+    order: list[tuple[str, float, float]] = []
     for feat in features:
         if not isinstance(feat, Mapping):
             continue
@@ -329,49 +409,194 @@ def map_tile_features(
         if not isinstance(coords, (list, tuple)) or len(coords) < 2:
             raise ValueError("sig.map-tiles/2 point feature missing coordinates")
         lon, lat = float(coords[0]), float(coords[1])
-        tier = int(props.get("sensitivity_tier") or 0)
+        tier_raw = props.get("sensitivity_tier")
+        if tier_raw is None:
+            tier_raw = props.get("tier")
+        tier = int(tier_raw or 0)
         if tier not in (0, 1, 2, 3):
             raise ValueError(f"sensitivity_tier {tier} outside 0–3")
+        rk = record_key(
+            compartment,
+            str(props.get("entity_type") or "(unknown)"),
+            str(props.get("entity_id") or ""),
+        )
+        key = (rk, lon, lat)
+        rec = groups.get(key)
+        if rec is None:
+            jkey = props.get("jurisdiction_key") or props.get("jurisdiction")
+            jkey_s = str(jkey) if jkey else UNPLACED_JURISDICTION_KEY
+            if jkey_s in _UNRESOLVED_JURISDICTION_MARKERS:
+                jkey_s = UNPLACED_JURISDICTION_KEY
+            pm = props.get("point_uncertainty_m")
+            rec = _MergedRecord(
+                rk=rk,
+                lon=lon,
+                lat=lat,
+                tier=tier,
+                label=(str(props["label"]) if props.get("label") else None),
+                technology=(str(props["technology"]) if props.get("technology") else None),
+                vendor_key=(str(props["vendor_key"]) if props.get("vendor_key") else None),
+                operator_label=(
+                    str(props["operator_label"]) if props.get("operator_label") else None
+                ),
+                operator_key=(
+                    str(props["operator_key"]) if props.get("operator_key") else None
+                ),
+                sources=set(),
+                jkey=jkey_s,
+                first_seen=None,
+                last_seen=None,
+                contested=False,
+                provisional=False,
+                uncertainty_m=(
+                    int(pm)
+                    if isinstance(pm, int) and pm >= 0
+                    else UNCERTAINTY_M_BY_TIER.get(tier, 0)
+                ),
+            )
+            groups[key] = rec
+            order.append(key)
+        # Merge slice-level facts across the record's rows at this position.
+        source_ids = props.get("source_ids")
+        if isinstance(source_ids, (list, tuple)) and source_ids:
+            rec["sources"].update(str(s) for s in source_ids)
+        elif props.get("source_id"):
+            rec["sources"].add(str(props["source_id"]))
+        else:
+            rec["sources"].add("(unattributed)")
+        fs, ls = _yyyymm(props.get("first_seen")), _yyyymm(props.get("last_seen"))
+        if fs is not None:
+            rec["first_seen"] = fs if rec["first_seen"] is None else min(rec["first_seen"], fs)
+        if ls is not None:
+            rec["last_seen"] = ls if rec["last_seen"] is None else max(rec["last_seen"], ls)
+        # an open contradiction on location or type marks the record contested
+        if props.get("point_status") == "conflicted" or props.get("technology_status") == (
+            "conflicted"
+        ):
+            rec["contested"] = True
+        if props.get("lifecycle") == "candidate":
+            rec["provisional"] = True
+        # a finer tier on any slice wins (the published floor)
+        rec["tier"] = max(rec["tier"], tier)
+        if rec["uncertainty_m"] == 0:
+            rec["uncertainty_m"] = UNCERTAINTY_M_BY_TIER.get(rec["tier"], 0)
+    return [groups[k] for k in order]
+
+
+def _record_status(rec: _MergedRecord) -> int:
+    """The ``st`` code — contested > provisional > corroborated > single.
+
+    Corroborated counts *registry sources* (the UXR-14 interim): mirrors and
+    republishes count once CONF-07b's ``n_independent_lineages`` ships; until
+    then the legend names the proxy verbatim ('republications not yet
+    collapsed').
+    """
+    if rec["contested"]:
+        return STATUS_CONTESTED
+    if rec["provisional"]:
+        return STATUS_PROVISIONAL
+    return STATUS_CORROBORATED if len(rec["sources"]) >= 2 else STATUS_SINGLE_SOURCE
+
+
+def map_tile_features(
+    features: Sequence[Mapping[str, object]],
+    compartment: str,
+    *,
+    source_index: Mapping[tuple[str, str], int] | None = None,
+    tech_codes: Mapping[str, int] | None = None,
+    vendor_slots: Mapping[str, int] | None = None,
+) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
+    """Emit the ``sig.map-tiles/2`` feature set for one compartment.
+
+    Returns ``(cells_features, sites_features)`` — both carry a
+    ``"tippecanoe": {"layer", "minzoom", "maxzoom"}`` member both renderers
+    honour. Slices of one record sharing a published point merge into a
+    single drawn feature carrying the full §3.3 vocabulary; the optional
+    ``source_index`` (``(source_id, compartment) → sr``), ``tech_codes``
+    (slug → ``tc``) and ``vendor_slots`` (vendor key → ``vd``) come from the
+    release's ``sig.map-dict/1`` — absent, the honest ``0``/omitted states
+    are emitted (a v2 archive may always be produced without its dictionary).
+    """
+    records = _merged_records(features, compartment)
+    # ``co``: entities sharing the exact coordinate — distinct rks per point.
+    coord_rks: dict[tuple[float, float], set[str]] = {}
+    for rec in records:
+        coord_rks.setdefault((rec["lon"], rec["lat"]), set()).add(rec["rk"])
+
+    cell_acc: dict[tuple[int, str], _CellAcc] = {}
+    sites: list[dict[str, object]] = []
+    for rec in records:
+        lon, lat, tier = rec["lon"], rec["lat"], rec["tier"]
+        st = _record_status(rec)
+        tc = int((tech_codes or {}).get(rec["technology"] or "", TECH_CODE_UNCLASSIFIED))
+        vd = int((vendor_slots or {}).get(rec["vendor_key"] or "", VENDOR_SLOT_UNKNOWN))
 
         # cells: the record aggregates into one cell per zoom band at its
-        # published (already tier-transformed) position.
-        source_ids = props.get("source_ids")
-        source_key: tuple[str, ...] = (
-            tuple(sorted(str(s) for s in source_ids))
-            if isinstance(source_ids, (list, tuple)) and source_ids
-            else ("(unattributed)",)
-        )
-        jkey = str(props.get("jurisdiction") or UNPLACED_JURISDICTION_KEY)
-        if jkey in _UNRESOLVED_JURISDICTION_MARKERS:
-            jkey = UNPLACED_JURISDICTION_KEY
+        # published (already tier-transformed) position — facet counts ride
+        # beside ``n``/``ns`` (``t_<code>``, ``v_<slot>``, ``s1``, ``sx``).
         for band_i, (_zmin, _zmax, res) in enumerate(CELL_BANDS):
             cell = h3.latlng_to_cell(lat, lon, res)
             acc = cell_acc.setdefault(
                 (band_i, cell),
-                _CellAcc(n=0, sources=set(), jurisdictions={}, sum_lat=0.0, sum_lon=0.0),
+                _CellAcc(
+                    n=0,
+                    sources=set(),
+                    jurisdictions={},
+                    tech_counts={},
+                    vendor_counts={},
+                    status_counts={},
+                    sum_lat=0.0,
+                    sum_lon=0.0,
+                ),
             )
             acc["n"] += 1
-            acc["sources"].update(source_key)
-            acc["jurisdictions"][jkey] = acc["jurisdictions"].get(jkey, 0) + 1
+            acc["sources"].update(rec["sources"])
+            acc["jurisdictions"][rec["jkey"]] = acc["jurisdictions"].get(rec["jkey"], 0) + 1
+            acc["tech_counts"][tc] = acc["tech_counts"].get(tc, 0) + 1
+            acc["vendor_counts"][vd] = acc["vendor_counts"].get(vd, 0) + 1
+            acc["status_counts"][st] = acc["status_counts"].get(st, 0) + 1
             acc["sum_lat"] += lat
             acc["sum_lon"] += lon
 
         # sites: tier 3 is never tiled (§3.4 — nothing is drawn).
         if tier == 3:
             continue
-        rk = record_key(
-            compartment,
-            str(props.get("entity_type") or "(unknown)"),
-            str(props.get("entity_id") or ""),
-        )
         geometry: dict[str, object] = (
             {"type": "Point", "coordinates": [lon, lat]} if tier < 2 else _tier2_polygon(lon, lat)
         )
+        props: dict[str, object] = {
+            "rk": rec["rk"],
+            "tr": tier,
+            "tc": tc,
+            "vd": vd,
+            "j": rec["jkey"],
+            "st": st,
+            "pm": rec["uncertainty_m"],
+            "co": len(coord_rks[(lon, lat)]),
+        }
+        if rec["label"]:
+            props["lb"] = rec["label"]
+        if rec["operator_label"]:
+            props["op"] = rec["operator_label"]
+        if rec["operator_key"]:
+            props["oe"] = rec["operator_key"]
+        if rec["first_seen"] is not None:
+            props["f"] = rec["first_seen"]
+        if rec["last_seen"] is not None:
+            props["l"] = rec["last_seen"]
+        if source_index:
+            idx = [
+                source_index[(s, compartment)]
+                for s in rec["sources"]
+                if (s, compartment) in source_index
+            ]
+            if idx:
+                props["sr"] = min(idx)
         sites.append(
             {
                 "type": "Feature",
                 "geometry": geometry,
-                "properties": {"rk": rk, "tr": tier},
+                "properties": props,
                 "tippecanoe": {
                     "layer": SITES_LAYER,
                     "minzoom": SITE_MINZOOM_BY_TIER[tier],
@@ -385,6 +610,19 @@ def map_tile_features(
         zmin, zmax, _res = CELL_BANDS[band_i]
         n = acc["n"]
         jp = sorted(acc["jurisdictions"].items(), key=lambda kv: (-kv[1], kv[0]))[0][0]
+        cprops: dict[str, object] = {
+            "h3": cell,
+            "n": n,
+            "ns": len(acc["sources"]),
+            "jp": jp,
+            # the status facets: s1 = single-source records, sx = the rest
+            "s1": acc["status_counts"].get(STATUS_SINGLE_SOURCE, 0),
+            "sx": n - acc["status_counts"].get(STATUS_SINGLE_SOURCE, 0),
+        }
+        for code, count in sorted(acc["tech_counts"].items()):
+            cprops[f"t_{code}"] = count
+        for slot, count in sorted(acc["vendor_counts"].items()):
+            cprops[f"v_{slot}"] = count
         cells.append(
             {
                 "type": "Feature",
@@ -392,12 +630,7 @@ def map_tile_features(
                     "type": "Point",
                     "coordinates": [acc["sum_lon"] / n, acc["sum_lat"] / n],
                 },
-                "properties": {
-                    "h3": cell,
-                    "n": n,
-                    "ns": len(acc["sources"]),
-                    "jp": jp,
-                },
+                "properties": cprops,
                 "tippecanoe": {
                     "layer": CELLS_LAYER,
                     "minzoom": zmin,
@@ -409,17 +642,29 @@ def map_tile_features(
     return cells, sites
 
 
-def map_tile_geojson(geojson_bytes: bytes, compartment: str) -> bytes:
+def map_tile_geojson(
+    geojson_bytes: bytes,
+    compartment: str,
+    *,
+    source_index: Mapping[tuple[str, str], int] | None = None,
+    tech_codes: Mapping[str, int] | None = None,
+    vendor_slots: Mapping[str, int] | None = None,
+) -> bytes:
     """Compile a compartment sites.geojson into the ``sig.map-tiles/2`` emit.
 
     The returned FeatureCollection holds the ``cells`` + ``sites`` features —
     each with its ``"tippecanoe"`` layer/minzoom/maxzoom member — in canonical
-    JSON so the tippecanoe input is itself deterministic.
+    JSON so the tippecanoe input is itself deterministic. The optional
+    ``sig.map-dict/1`` index maps ride through to :func:`map_tile_features`.
     """
     doc = json.loads(geojson_bytes)
     features = doc.get("features")
     cells, sites = map_tile_features(
-        list(features) if isinstance(features, list) else [], compartment
+        list(features) if isinstance(features, list) else [],
+        compartment,
+        source_index=source_index,
+        tech_codes=tech_codes,
+        vendor_slots=vendor_slots,
     )
     out = {"type": "FeatureCollection", "features": cells + sites}
     return json.dumps(out, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode(
@@ -1297,8 +1542,8 @@ def tippecanoe_version() -> str | None:
 
 
 #: The pure-Python renderer's version stamp — bumped when the encoding contract
-#: changes (v2 = the P35.52 two-layer/parity renderer).
-PYTHON_RENDERER_VERSION = "sig.map-tiles/2+py.2"
+#: changes (v3 = the P37.17 full §3.3 property emit).
+PYTHON_RENDERER_VERSION = "sig.map-tiles/2+py.3"
 
 
 #: Tippecanoe flag prefixes that must never reach a ``sig.map-tiles/2``
@@ -1473,6 +1718,9 @@ def render_compartment_sites_pmtiles(
     license_id: str,
     *,
     attribution: str | None = None,
+    source_index: Mapping[tuple[str, str], int] | None = None,
+    tech_codes: Mapping[str, int] | None = None,
+    vendor_slots: Mapping[str, int] | None = None,
 ) -> RenderedTiles:
     """Render one compartment's sites.geojson → a ``sig.map-tiles/2`` archive.
 
@@ -1495,17 +1743,25 @@ def render_compartment_sites_pmtiles(
         attribution = (
             ODBL_ATTRIBUTION if license_id == "ODbL-1.0" else f"© The SIG project — {license_id}"
         )
-    emit = map_tile_geojson(geojson_bytes, compartment)
+    emit = map_tile_geojson(
+        geojson_bytes,
+        compartment,
+        source_index=source_index,
+        tech_codes=tech_codes,
+        vendor_slots=vendor_slots,
+    )
     emit_doc = json.loads(emit)
     emit_features: list[Mapping[str, object]] = emit_doc.get("features") or []
     source_doc = json.loads(geojson_bytes)
     source_features = source_doc.get("features")
-    located = sum(
-        1
-        for f in (source_features if isinstance(source_features, list) else [])
-        if isinstance(f, Mapping)
-        and isinstance(f.get("geometry"), Mapping)
-        and f["geometry"].get("type") == "Point"
+    # ``counts.points`` = the published located records the emit drew — the
+    # merged (record, position) count, incl. tier-3 (cells count them).
+    located = len(
+        _merged_records(
+            [f for f in (source_features if isinstance(source_features, list) else [])
+             if isinstance(f, Mapping)],
+            compartment,
+        )
     )
     cells_by_band = {f"{b[0]}-{b[1]}": 0 for b in CELL_BANDS}
     for feat in emit_features:
@@ -1644,6 +1900,7 @@ __all__ = [
     "tiles_index_entry",
     "map_tile_features",
     "map_tile_geojson",
+    "_merged_records",
     "assert_retention_argv",
     "render_pmtiles",
     "render_pmtiles_file",

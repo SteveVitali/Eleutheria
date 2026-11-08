@@ -1121,6 +1121,7 @@ def _site_row_data(
     *,
     placement: _placement.PlacementResult | None = None,
     labels: Mapping[str, EntityLabel] | None = None,
+    map_fields: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """The per-(site, source, rights) export row — geometry + provenance keys.
 
@@ -1166,6 +1167,12 @@ def _site_row_data(
     }
     if placement is not None:
         row.update(placement.sites_columns())
+    if map_fields:
+        # P37.17 (MAP-01b, ADR-241): the additive ``sig.map-tiles/2`` facet
+        # columns — first/last seen (``f``/``l``), operator (``op``/``oe``),
+        # vendor (``vd`` slot key) and the source-declared uncertainty radius
+        # (``pm``). All nullable; the tile emit drops the honest nulls.
+        row.update(map_fields)
     return row
 
 
@@ -1383,6 +1390,7 @@ def _slice_sites(
     defect_flags: Mapping[str, frozenset[str]] | None = None,
     labels: Mapping[str, EntityLabel] | None = None,
     dedup_view: dedup.DedupView | None = None,
+    map_enrichment: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> _SiteSlices:
     """Licence-slice every site per (source, rights_id) into per-compartment rows.
 
@@ -1489,6 +1497,7 @@ def _slice_sites(
                             rights,
                             placement=placements.get((source_id, site.entity_id)),
                             labels=labels,
+                            map_fields=(map_enrichment or {}).get(site.entity_id),
                         ),
                     )
                 )
@@ -1563,6 +1572,73 @@ def _slice_sites(
         nested_members=tuple(nested),
         emitted_member_subjects=frozenset(emitted_member_subjects),
     )
+
+
+def _map_enrichment(
+    claims: Sequence[ShapingClaim],
+    label_facts: Sequence[Any],
+    entity_page_claims: Sequence[Any],
+    label_registry: Mapping[str, EntityLabel],
+) -> dict[str, dict[str, Any]]:
+    """P37.17 (MAP-01b, ADR-241): the per-subject ``sig.map-tiles/2`` facet fields.
+
+    Record-level derivations over the export's own snapshot: ``first_seen``/
+    ``last_seen`` are the min/max ``yyyymm`` of the subject's publishable
+    claims (claim valid time); ``operator_label`` the first publishable
+    ``camera_operator``/``operator_stated`` label-fact value;
+    ``operator_key`` the resolved operator entity's url-key when a
+    ``camera_operator`` claim carries a page-kind ``object_entity`` the label
+    registry names (``oe``); ``vendor_label``/``vendor_key`` the first
+    ``vendor``/``manufacturer`` value and its normalized slot key. Every
+    field is nullable — the honest absent state, never guessed.
+    """
+    first: dict[str, int] = {}
+    last: dict[str, int] = {}
+    for c in claims:
+        if not c.publishable or c.observed_at is None:
+            continue
+        ym = int(c.observed_at.year) * 100 + int(c.observed_at.month)
+        sid = str(c.subject_id)
+        first[sid] = min(first.get(sid, ym), ym)
+        last[sid] = max(last.get(sid, ym), ym)
+    op_lbl: dict[str, str] = {}
+    vend_lbl: dict[str, str] = {}
+    for row in label_facts:
+        try:
+            subj, pred, val = str(row[0]), str(row[1]), row[2]
+        except (TypeError, IndexError):
+            continue
+        if not val:
+            continue
+        if pred in ("camera_operator", "operator_stated"):
+            op_lbl.setdefault(subj, str(val))
+        elif pred in ("vendor", "manufacturer"):
+            vend_lbl.setdefault(subj, str(val))
+    op_key: dict[str, str] = {}
+    for row in entity_page_claims:
+        try:
+            subj, pred, obj = str(row[0]), str(row[1]), row[4]
+        except (TypeError, IndexError):
+            continue
+        if pred != "camera_operator" or not obj:
+            continue
+        lbl = label_registry.get(str(obj))
+        if lbl is not None and lbl.slug and lbl.hash:
+            op_key.setdefault(subj, f"{lbl.slug}--{lbl.hash}")
+        elif lbl is not None and lbl.hash:
+            op_key.setdefault(subj, str(lbl.hash))
+    out: dict[str, dict[str, Any]] = {}
+    for sid in set(first) | set(op_lbl) | set(op_key) | set(vend_lbl):
+        vlabel = vend_lbl.get(sid)
+        out[sid] = {
+            "first_seen": first.get(sid),
+            "last_seen": last.get(sid),
+            "operator_label": op_lbl.get(sid),
+            "operator_key": op_key.get(sid),
+            "vendor_label": vlabel,
+            "vendor_key": (" ".join(vlabel.lower().split()) if vlabel else None),
+        }
+    return out
 
 
 def _claim_access_kind(predicate_id: str | None, materialized_kind: str | None) -> str | None:
@@ -5370,6 +5446,12 @@ def build_spine_export(
         defect_flags=defect_flags,
         labels=label_registry,
         dedup_view=dedup_view,
+        map_enrichment=_map_enrichment(
+            claims,
+            raw.get("label_facts") or (),
+            raw.get("entity_page_claims") or (),
+            label_registry,
+        ),
     )
     site_rows, site_index, site_exclusions = (
         slices.rows_by_compartment,
@@ -5577,6 +5659,86 @@ def build_spine_export(
         }
         dossier_index_doc["measurement"] = dossier_measurement
 
+    # --- P37.17 (MAP-01b, ADR-241): the real declared-scope coverage rule ----
+    # D-K1-4 [B-22] = yes: a source covers the jurisdictions in its declared
+    # ``sources.toml`` scope; crowdsourced globals are listed, never counted.
+    _map_registry_sources: dict[str, Any] = {}
+    try:
+        from . import map_dict as _md
+
+        _map_registry_sources = dict(_md.load_source_registry_sources())
+    except Exception:  # noqa: BLE001 — an unreadable registry degrades honestly
+        _map_registry_sources = {}
+    _coverage_verdicts: dict[str, str] = {}
+    _coverage_observed: dict[str, dict[str, Any]] = {}
+    _coverage_doc: dict[str, Any] | None = None
+    _dict_doc: dict[str, Any] | None = None
+    _dict_source_index: dict[tuple[str, str], int] = {}
+    _dict_tech_codes: dict[str, int] = {}
+    _dict_vendor_slots: dict[str, int] = {}
+    _release_info_cov = {
+        "label": build_spec.release_id(),
+        "publication_id": None,
+        "as_of_world": dataset.as_of,
+    }
+    if placement is not None:
+        from . import map_dict as _md
+
+        _ancestors = placement.ancestor_chains()
+        _scopes = _md.declared_scopes(_map_registry_sources)
+        _globals = _md.crowdsourced_globals(_map_registry_sources)
+        _all_jkeys = sorted(placement.jurisdiction_rows())
+        for comp, comp_rows in slices.rows_by_compartment.items():
+            for _r in comp_rows:
+                d = _r.data
+                jk = str(d.get("jurisdiction_key") or d.get("jurisdiction") or "unplaced")
+                obs = _coverage_observed.setdefault(jk, {"sources": set(), "technologies": set()})
+                if d.get("source_id"):
+                    obs["sources"].add(str(d["source_id"]))
+                if d.get("technology"):
+                    obs["technologies"].add(str(d["technology"]))
+        try:
+            _dict_tech_codes = _md.technology_codes()
+        except Exception:  # noqa: BLE001 — vocab unreadable → honest 0 codes
+            _dict_tech_codes = {}
+        _vend_counts: dict[str, int] = {}
+        _vend_labels: dict[str, str] = {}
+        for comp_rows in slices.rows_by_compartment.values():
+            for _r in comp_rows:
+                vk = _r.data.get("vendor_key")
+                if vk:
+                    _vend_counts[str(vk)] = _vend_counts.get(str(vk), 0) + 1
+                    _vend_labels.setdefault(str(vk), str(_r.data.get("vendor_label") or vk))
+        _dict_vendor_slots = _md.vendor_slot_map(_vend_counts)
+        _coverage_doc = _md.coverage_doc(
+            _coverage_observed,
+            release=_release_info_cov,
+            scopes=_scopes,
+            global_sources=_globals,
+            ancestors=_ancestors,
+            all_jkeys=_all_jkeys,
+        )
+        _coverage_verdicts = {
+            jk: str(row.get("coverage") or "not_covered")
+            for jk, row in (_coverage_doc.get("jurisdictions") or {}).items()
+        }
+        _map_rows = [
+            {**_r.data, "_compartment": comp}
+            for comp, comp_rows in slices.rows_by_compartment.items()
+            for _r in comp_rows
+        ]
+        _dict_doc, _dict_source_index = _md.build_map_dict(
+            _map_rows,
+            release=_release_info_cov,
+            source_names={str(k): str(v) for k, v in (source_names or {}).items()},
+            registry_sources=_map_registry_sources,
+            tech_codes=_dict_tech_codes,
+            vendor_slots=_dict_vendor_slots,
+            vendor_labels=_vend_labels,
+            jurisdictions=placement.jurisdiction_rows(),
+            ancestor_chains=_ancestors,
+        )
+
     # --- P36.54 (K6 VIZ-01a): dossier map + locator figures --------------------
     # Restricted ``sig.dossier-visuals/1`` geometry per D-K4-3 page (never
     # manifest-listed, SIG-UI-134), the ``figures[]`` metadata twin injected
@@ -5621,6 +5783,7 @@ def build_spine_export(
             release=_release_info,
             vintages=_vintages,
             placement_results=slices.placement_results,
+            coverage_verdicts=_coverage_verdicts,
         )
         for _jkey, _doc in dossier_visuals_out["docs"].items():
             _slug = keyed.keys[_jkey].slug_path
@@ -5917,10 +6080,21 @@ def build_spine_export(
         # compartments' union like map.json).
         if dossier_visuals_out is not None:
             path = _dv.COVERAGE_PATH
-            web_artifacts[path] = _web_bytes(dossier_visuals_out["coverage"])
+            # P37.17 (D-K1-4 = yes): the real declared-scope coverage table
+            # replaces the soft rule-pending emission.
+            web_artifacts[path] = _web_bytes(
+                _coverage_doc if _coverage_doc is not None else dossier_visuals_out["coverage"]
+            )
             web_licenses[path] = _SIG_SPDX
             web_compartments[path] = _WEB_COMPARTMENT
             web_schemas[path] = _dv_sm.COVERAGE_SCHEMA
+            # P37.17 (MAP-01b): the ``sig.map-dict/1`` field dictionary.
+            if _dict_doc is not None:
+                path = "web/map/dict.json"
+                web_artifacts[path] = _web_bytes(_dict_doc)
+                web_licenses[path] = _SIG_SPDX
+                web_compartments[path] = _WEB_COMPARTMENT
+                web_schemas[path] = "sig.map-dict/1"
             if dossier_visuals_out["locator_svg"] is not None:
                 path = _dv.LOCATOR_SVG_PATH
                 web_artifacts[path] = dossier_visuals_out["locator_svg"].encode("utf-8")
@@ -6550,6 +6724,9 @@ def build_spine_export(
             geojson_bytes,
             pt.license,
             attribution=attribution,
+            source_index=_dict_source_index,
+            tech_codes=_dict_tech_codes,
+            vendor_slots=_dict_vendor_slots,
         )
         tile_path = f"{_WEB_DIR}/tiles/{pt.compartment}-sites.{rendered.sha256[:8]}.pmtiles"
         web_artifacts[tile_path] = rendered.data
@@ -6648,6 +6825,9 @@ def _render_tiles(
     license_id: str,
     *,
     attribution: str | None = None,
+    source_index: Mapping[tuple[str, str], int] | None = None,
+    tech_codes: Mapping[str, int] | None = None,
+    vendor_slots: Mapping[str, int] | None = None,
 ) -> RenderedTiles:
     """Render one compartment's sites.geojson → a ``sig.map-tiles/2`` archive.
 
@@ -6658,7 +6838,13 @@ def _render_tiles(
     E2-12); absent it, the licence-level fallback stands.
     """
     return render_compartment_sites_pmtiles(
-        compartment, geojson_bytes, license_id, attribution=attribution
+        compartment,
+        geojson_bytes,
+        license_id,
+        attribution=attribution,
+        source_index=source_index,
+        tech_codes=tech_codes,
+        vendor_slots=vendor_slots,
     )
 
 
