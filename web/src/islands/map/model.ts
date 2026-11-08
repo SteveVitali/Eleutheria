@@ -104,6 +104,15 @@ export interface MapRecord {
   recordHref: string | null;
   /** The site-list (cross-compartment reading view) link for the record's dossier. */
   listHref: string | null;
+  /**
+   * P37.19 (MAP-04): the record's canonical jurisdiction key and its
+   * root-first ancestor chain (self last) — the `jurisdiction=` facet
+   * matches a record when a facet key sits in this chain (the place itself
+   * and its descendants, `jurisdiction_chain` semantics). `null`/absent
+   * means unkeyed — a facet never guesses it in.
+   */
+  jkey?: string | null;
+  chain?: string[];
 }
 
 // ------------------------------------------------------------ tile props //
@@ -288,7 +297,7 @@ export function seenOverlaps(
   return true;
 }
 
-/** Whether a record passes the active facets (technology/status/seen). */
+/** Whether a record passes the active facets (technology/status/seen/jurisdiction). */
 export function recordPasses(rec: MapRecord, facets: MapFacets): boolean {
   if (facets.technology.length > 0 && !facets.technology.includes(rec.technology)) {
     return false;
@@ -297,7 +306,29 @@ export function recordPasses(rec: MapRecord, facets: MapFacets): boolean {
     return false;
   }
   if (facets.seen && !seenOverlaps(rec, facets.seen)) return false;
+  const jur = (facets as MapFacetsV2).jurisdiction;
+  if (jur !== undefined && jur.length > 0 && !jkeyWithin(rec.jkey ?? null, rec.chain, jur)) {
+    return false;
+  }
   return true;
+}
+
+/**
+ * P37.19 (MAP-04, C-11): the `jurisdiction=` facet matches descendants —
+ * a record/site passes when its own jkey's ancestor chain (self included)
+ * contains a selected key. An unkeyed record or an unknown chain matches
+ * only when the record's own key IS the selected one — never a guessed
+ * ancestry.
+ */
+export function jkeyWithin(
+  jkey: string | null | undefined,
+  chain: readonly string[] | undefined,
+  selected: readonly string[],
+): boolean {
+  if (selected.length === 0) return true;
+  if (!jkey) return false;
+  const ancestry = chain && chain.length > 0 ? chain : [jkey];
+  return selected.some((s) => ancestry.includes(s));
 }
 
 /**
@@ -586,11 +617,14 @@ export interface TileCellProps {
 // -------------------------------------------------------- facet extension //
 
 /** MAP-03b's added facet dims (vendor/operator/source — wire values are the
- * entity keys / source ids of sig.workspace-state/2). */
+ * entity keys / source ids of sig.workspace-state/2); P37.19 adds the
+ * descendants-inclusive `jurisdiction` facet (C-11: a filter, distinct
+ * from `frame=`'s framing-only state). */
 export interface MapFacetsV2 extends MapFacets {
   vendor: string[];
   operator: string[];
   source: string[];
+  jurisdiction: string[];
 }
 
 /** Whether a `sites`-layer feature passes every active facet (tile path). */
@@ -626,6 +660,11 @@ export function tileSitePasses(
     if (fInt === null && lInt === null) return false;
     if (fInt !== null && fInt > to) return false;
     if (lInt !== null && lInt < from) return false;
+  }
+  if (f.jurisdiction.length > 0) {
+    const j = typeof p.j === "string" && p.j !== "" ? p.j : null;
+    const chain = j ? (d.jurisdictions[j]?.chain ?? [j]) : undefined;
+    if (!jkeyWithin(j, chain, f.jurisdiction)) return false;
   }
   return true;
 }
@@ -673,8 +712,30 @@ export function tileFacetExpr(f: MapFacetsV2, d: FacetDict): unknown[] | null {
       ["all", ["has", "l"], [">=", ["get", "l"], from]],
     ]);
   }
+  if (f.jurisdiction.length > 0) {
+    // Descendants-inclusive (C-11): the drawn feature's `j` must sit in the
+    // selected subtree — expanded over the dictionary's chains. An empty
+    // expansion honestly matches nothing rather than everything.
+    const allowed = jurisdictionSubtreeKeys(f.jurisdiction, d);
+    if (allowed.length === 0) return ["==", 1, 0];
+    parts.push(["in", ["get", "j"], ["literal", allowed]]);
+  }
   if (parts.length === 0) return null;
   return parts.length === 1 ? (parts[0] as unknown[]) : ["all", ...parts];
+}
+
+/** Every dict jkey inside any selected `jurisdiction=` subtree (self + descendants). */
+export function jurisdictionSubtreeKeys(
+  selected: readonly string[],
+  d: FacetDict,
+): string[] {
+  if (selected.length === 0) return [];
+  const out = new Set<string>(selected);
+  for (const [jkey, j] of Object.entries(d.jurisdictions)) {
+    const chain = Array.isArray(j.chain) && j.chain.length > 0 ? j.chain : [jkey];
+    if (selected.some((s) => chain.includes(s))) out.add(jkey);
+  }
+  return [...out].sort();
 }
 
 // --------------------------------------------------------- zoom honesty //
@@ -724,6 +785,9 @@ export function cellSlice(f: MapFacetsV2, d: FacetDict): CellSlice {
   if (f.seen) cannot.push("seen");
   if (f.operator.length > 0) cannot.push("operator");
   if (f.source.length > 0) cannot.push("source");
+  // A cell's `jp` is a plurality key — the count cells cannot slice a
+  // jurisdiction subtree honestly, so the facet cannot apply below z10.
+  if (f.jurisdiction.length > 0) cannot.push("jurisdiction");
   if (cannot.length > 0) return { kind: "cannot", dims: cannot };
   if (sliceable.length > 1) {
     return { kind: "cannot", dims: sliceable.map((s) => s.dim) };
@@ -782,6 +846,12 @@ export function cannotApplyNotes(
         note: `Source filtering applies from zoom ${NATIONAL_ZOOM_MAX + 1} — the map is showing every record, not a filtered set.`,
       });
     }
+    if (f.jurisdiction.length > 0) {
+      out.push({
+        dim: "jurisdiction",
+        note: `Place filtering applies from zoom ${NATIONAL_ZOOM_MAX + 1} — the count cells cannot slice a place subtree, so the map is showing every record in the area, not a filtered set.`,
+      });
+    }
     if (
       f.status.length > 0 &&
       !(f.status.length === 1 && f.status[0] === "single-source")
@@ -817,6 +887,7 @@ export function effectiveFacets(
   if (blocked.has("operator")) out.operator = [];
   if (blocked.has("source")) out.source = [];
   if (blocked.has("status")) out.status = [];
+  if (blocked.has("jurisdiction")) out.jurisdiction = [];
   if (blocked.has("joint")) {
     out.technology = [];
     out.vendor = [];
@@ -990,7 +1061,8 @@ export function activeFacetCount(f: MapFacetsV2): number {
     (f.seen ? 1 : 0) +
     (f.vendor.length > 0 ? 1 : 0) +
     (f.operator.length > 0 ? 1 : 0) +
-    (f.source.length > 0 ? 1 : 0)
+    (f.source.length > 0 ? 1 : 0) +
+    (f.jurisdiction.length > 0 ? 1 : 0)
   );
 }
 
@@ -1044,4 +1116,38 @@ export function geoFailureNote(kind: GeoFailure): string {
     default:
       return "Your position could not be determined — the map stays where it is.";
   }
+}
+
+// ------------------------------------------------- MAP-04 place framing //
+
+/** A `[w,s,e,n]` bounds box in degrees (registry/dict shape). */
+export type BoundsBox = [number, number, number, number];
+
+/**
+ * The map viewport a bounds box resolves to — the same deterministic fold
+ * `bbox=` applies in `sig.workspace-state/2` (centre + span-derived zoom
+ * clamped to the public tile range). `frame=<jkey>` folds through this —
+ * the jkey→bounds table the state module deferred to this row.
+ */
+export function boundsViewport(
+  b: BoundsBox,
+): { z: number; lat: number; lon: number } {
+  const [w, s, e, n] = b;
+  const span = Math.max(e - w, n - s);
+  const z = Math.max(0, Math.min(14, Math.floor(Math.log2(360 / Math.max(span, 1e-9)))));
+  const d = z <= 5 ? 1 : z <= 10 ? 2 : z <= 14 ? 3 : 4;
+  const r = (v: number) => Math.round(v * 10 ** d) / 10 ** d;
+  return { z, lat: r((s + n) / 2), lon: r((w + e) / 2) };
+}
+
+/** Merge several jkey bounds into one fitBounds box (null when none carry one). */
+export function unionBounds(boxes: readonly (BoundsBox | null | undefined)[]): BoundsBox | null {
+  const real = boxes.filter((b): b is BoundsBox => Array.isArray(b) && b.length === 4);
+  if (real.length === 0) return null;
+  return [
+    Math.min(...real.map((b) => b[0])),
+    Math.min(...real.map((b) => b[1])),
+    Math.max(...real.map((b) => b[2])),
+    Math.max(...real.map((b) => b[3])),
+  ];
 }

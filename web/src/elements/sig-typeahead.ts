@@ -25,6 +25,11 @@ import {
 
 let uidN = 0;
 
+/** P37.19 (MAP-04): the cancelable event the element dispatches BEFORE a
+ * suggestion navigates — `detail` is the chosen `TypeaheadEntry`; a host
+ * that preventDefaults owns the choice itself. */
+export const SIG_TYPEAHEAD_SELECT = "sig-typeahead-select";
+
 // P36.40: SSR-safe — a T2 island bundle imports this module to register the
 // element under its own `/_astro/` graph, and Astro evaluates the island's
 // module graph during server-side rendering where `HTMLElement` does not
@@ -131,7 +136,16 @@ class SigTypeahead extends HTMLElementBase {
         li.addEventListener("pointerdown", (e) => {
           // pointerdown (not click) so the choice lands before blur closes.
           e.preventDefault();
-          window.location.assign(entry.href);
+          // P37.19 (MAP-04): `sig-typeahead-select` — a cancelable
+          // pre-navigation event carrying the chosen entry. A host surface
+          // (the map's place box) may preventDefault and apply the choice
+          // itself (frame/filter) instead of navigating.
+          const sel = new CustomEvent<TypeaheadEntry>(SIG_TYPEAHEAD_SELECT, {
+            detail: entry,
+            bubbles: true,
+            cancelable: true,
+          });
+          if (this.dispatchEvent(sel)) window.location.assign(entry.href);
         });
         list.appendChild(li);
       });
@@ -195,7 +209,12 @@ class SigTypeahead extends HTMLElementBase {
       } else if (e.key === "Enter") {
         if (open && active >= 0 && options[active] !== undefined) {
           e.preventDefault();
-          window.location.assign(options[active].href);
+          const sel = new CustomEvent<TypeaheadEntry>(SIG_TYPEAHEAD_SELECT, {
+            detail: options[active],
+            bubbles: true,
+            cancelable: true,
+          });
+          if (this.dispatchEvent(sel)) window.location.assign(options[active].href);
         }
         // No active option: the event propagates and the GET form submits —
         // the no-JS path, preserved.

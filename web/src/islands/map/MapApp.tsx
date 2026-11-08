@@ -19,6 +19,7 @@
  */
 
 /** @jsxImportSource preact */
+import { createElement } from "preact";
 import { useCallback, useEffect, useMemo, useRef, useState } from "preact/hooks";
 import type { JSX } from "preact";
 import type {
@@ -58,6 +59,7 @@ import { withBase } from "../../lib/paths";
 import { useMapWorkspace } from "./workspace";
 import {
   activeFacetCount,
+  boundsViewport,
   buildFacetDict,
   cannotApplyNotes,
   cellSlice,
@@ -88,7 +90,17 @@ import {
   tileFacetExpr,
   tilePlaceRowsInView,
   tileSiteRowsInView,
+  unionBounds,
+  type BoundsBox,
 } from "./model";
+// P37.19 (MAP-04): the place box is the SAME `<sig-typeahead>` element —
+// registering it rides this island's content-hashed bundle (T2: no `/_kit/`
+// src); the element's cancelable `sig-typeahead-select` lets the map apply
+// the choice (frame / jurisdiction=) instead of navigating.
+import "../../elements/sig-typeahead";
+import { SIG_TYPEAHEAD_SELECT } from "../../elements/sig-typeahead";
+import type { TypeaheadEntry } from "../../elements/typeahead-model";
+import { parseCoordinates } from "../../lib/coordinates";
 import type {
   FacetDict,
   InViewRow,
@@ -139,6 +151,15 @@ export interface MapAppProps {
   unplotted: number;
   /** P37.18: jkey → dossier href for tile-path place/jurisdiction links. */
   jurisdictionHrefs: Record<string, string>;
+  /** P37.19 (MAP-04): jkey → {name, bbox, chain} — the frames `jurisdiction=`
+   * and `frame=` resolve through (dict-shaped; fixtures carry the committed
+   * table, export mode the emitted `sig.map-dict/1` jurisdictions). */
+  jurisdictionFrames: Record<
+    string,
+    { name?: string; bbox?: BoundsBox; chain?: string[] }
+  >;
+  /** P37.19: the ONE typeahead shard root the place box reads (UXR-23). */
+  shardRoot: string;
 }
 
 // ------------------------------------------------------------ small bits //
@@ -476,7 +497,30 @@ function mergeStyleInto(base: StyleSpecification, overlay: OverlaySpec): StyleSp
 // ==================================================================== app //
 
 export default function MapApp(props: MapAppProps): JSX.Element {
-  const { state, issues, ignored, update } = useMapWorkspace("map", { release: props.release });
+  // P37.19 (MAP-04): jkey → bbox — the props table first, the loaded dict
+  // merged over it (same fields, either source may be absent).
+  const frameTable = useMemo(() => {
+    const out: Record<string, { name?: string; bbox?: BoundsBox; chain?: string[] }> = {
+      ...props.jurisdictionFrames,
+    };
+    return out;
+  }, [props.jurisdictionFrames]);
+  const dictRef = useRef<MapDict | null>(null);
+  const frameBounds = useCallback(
+    (jkey: string) => {
+      const bbox =
+        frameTable[jkey]?.bbox ??
+        (dictRef.current?.jurisdictions?.[jkey]?.bbox as BoundsBox | undefined) ??
+        null;
+      return bbox ? boundsViewport(bbox) : null;
+    },
+    [frameTable],
+  );
+  const { state, issues, ignored, update } = useMapWorkspace(
+    "map",
+    { release: props.release },
+    { frameBounds },
+  );
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const mlRef = useRef<MaplibreModule | null>(null);
@@ -538,6 +582,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
       vendor: state.vendor,
       operator: state.operator,
       source: state.source,
+      jurisdiction: state.jurisdiction,
     }),
     [
       state.technology,
@@ -546,10 +591,140 @@ export default function MapApp(props: MapAppProps): JSX.Element {
       state.vendor,
       state.operator,
       state.source,
+      state.jurisdiction,
     ],
   );
 
   const facetDict: FacetDict = useMemo(() => buildFacetDict(dict), [dict]);
+
+  // ------------------------------------------------------- MAP-04 place //
+  // The place-search box state: the last registry place the user framed or
+  // filtered to (drives the "Filter to this place" ↔ "Show this area" chip),
+  // the honest no-match note, and the jkey set whose frame we last applied
+  // (the effect frames `jurisdiction=` once, only when no `at=` is given —
+  // C-11).
+  const [placeChoice, setPlaceChoice] = useState<{ jkey: string; label: string } | null>(null);
+  const [placeNote, setPlaceNote] = useState<string | null>(null);
+  const searchWrapRef = useRef<HTMLDivElement | null>(null);
+  const placeInputRef = useRef<HTMLInputElement | null>(null);
+  const framedJurisdiction = useRef<string>("");
+
+  const placeName = useCallback(
+    (jkey: string) =>
+      frameTable[jkey]?.name ?? dict?.jurisdictions?.[jkey]?.name ?? jkey,
+    [frameTable, dict],
+  );
+
+  /** fitBounds over the union of the given jkeys' recorded bboxes. */
+  const fitJurisdictions = useCallback(
+    (jkeys: readonly string[]) => {
+      const map = mapRef.current;
+      if (!map) return false;
+      const merged = unionBounds(
+        jkeys.map(
+          (j) =>
+            frameTable[j]?.bbox ??
+            (dict?.jurisdictions?.[j]?.bbox as BoundsBox | undefined) ??
+            null,
+        ),
+      );
+      if (!merged) return false;
+      map.fitBounds(
+        [
+          [merged[0], merged[1]],
+          [merged[2], merged[3]],
+        ],
+        { padding: 40 },
+      );
+      return true;
+    },
+    [frameTable, dict],
+  );
+
+  // `jurisdiction=` frames on the registry bbox only when no `at=` is given
+  // (C-11) — and once per distinct facet set (a later place choice that
+  // cleared `at` reframes; a plain pan never retriggers).
+  const jurisdictionKey = state.jurisdiction.join("|");
+  useEffect(() => {
+    if (!ready || jurisdictionKey === "" || state.at !== null) return;
+    if (framedJurisdiction.current === jurisdictionKey) return;
+    if (fitJurisdictions(state.jurisdiction)) {
+      framedJurisdiction.current = jurisdictionKey;
+    }
+  }, [jurisdictionKey, state.at, ready, state.jurisdiction, fitJurisdictions]);
+
+  // `frame=<jkey>` canonicalised at parse when the props table knew the key;
+  // a dict-only key resolves here once the dictionary lands (the interim
+  // posture otherwise round-trips the frame param untouched).
+  useEffect(() => {
+    if (!ready || state.frame === null) return;
+    const b = dict?.jurisdictions?.[state.frame]?.bbox;
+    if (!Array.isArray(b) || b.length !== 4) return;
+    const v = boundsViewport(b as BoundsBox);
+    update({ frame: null, at: v }, "replace");
+  }, [state.frame, dict, ready, update]);
+
+  // A chosen suggestion: `jurisdiction=<jkey>` is the FILTER state (descendants
+  // included); framing still applies when `at` is cleared. A populated place
+  // (no jkey) frames at its published point — never a filter it cannot have.
+  const choosePlace = useCallback(
+    (entry: TypeaheadEntry) => {
+      setPlaceNote(null);
+      if (entry.jkey) {
+        framedJurisdiction.current = entry.jkey;
+        fitJurisdictions([entry.jkey]);
+        update({ jurisdiction: [entry.jkey], at: null });
+        setPlaceChoice({ jkey: entry.jkey, label: entry.label });
+        return;
+      }
+      if (typeof entry.lat === "number" && typeof entry.lon === "number") {
+        const map = mapRef.current;
+        const z = Math.max(map?.getZoom() ?? 10, 10);
+        map?.easeTo({ center: [entry.lon, entry.lat], zoom: z });
+        update({ at: { z: Math.round(z), lat: entry.lat, lon: entry.lon } });
+        setPlaceChoice(null);
+      }
+    },
+    [fitJurisdictions, update],
+  );
+
+  // The element's cancelable select — the map applies the choice itself.
+  useEffect(() => {
+    const el = searchWrapRef.current;
+    if (!el) return;
+    const onSelect = (e: Event) => {
+      e.preventDefault();
+      const entry = (e as CustomEvent<TypeaheadEntry>).detail;
+      if (entry) choosePlace(entry);
+    };
+    el.addEventListener(SIG_TYPEAHEAD_SELECT, onSelect);
+    return () => el.removeEventListener(SIG_TYPEAHEAD_SELECT, onSelect);
+  }, [choosePlace]);
+
+  /** Submit without a chosen option: a coordinate pair jumps locally —
+   *  parsed in the browser, no request is ever made (K1 §4.2). */
+  const onPlaceSubmit = (e: { preventDefault(): void }) => {
+    e.preventDefault();
+    const q = placeInputRef.current?.value.trim() ?? "";
+    if (q === "") return;
+    const coords = parseCoordinates(q);
+    const map = mapRef.current;
+    if (coords && map) {
+      const z = Math.max(map.getZoom(), 10);
+      const d = viewportDecimals(z);
+      const r = (v: number) => Math.round(v * 10 ** d) / 10 ** d;
+      map.easeTo({ center: [coords.lon, coords.lat], zoom: z });
+      update({
+        at: { z: Math.round(z), lat: r(coords.lat), lon: r(coords.lon) },
+      });
+      setPlaceChoice(null);
+      setPlaceNote(null);
+      return;
+    }
+    setPlaceNote(
+      "No place suggestion or coordinates matched — pick a suggestion, or enter coordinates like 35.47, -97.52.",
+    );
+  };
 
   // Zoom honesty (SIG-UI-104, C-03): a facet that cannot apply at this zoom
   // never silently narrows — it is dropped from the effective set and the
@@ -585,7 +760,10 @@ export default function MapApp(props: MapAppProps): JSX.Element {
     fetch(props.dictHref)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((doc) => {
-        if (live && isMapDict(doc)) setDict(doc);
+        if (live && isMapDict(doc)) {
+          dictRef.current = doc;
+          setDict(doc);
+        }
       })
       .catch(() => {
         /* the dictionary is optional — the facets degrade honestly */
@@ -1563,6 +1741,94 @@ export default function MapApp(props: MapAppProps): JSX.Element {
           The basemap is unavailable — records draw over a plain background.
         </p>
       )}
+
+      {/* P37.19 (MAP-04): the place box — same `<sig-typeahead>` + same
+          shards as every other entry (SIG-UI-073/074), scoped to
+          `kind:place`. Choosing a registry place lands the
+          `jurisdiction=` filter + frame; a populated place or typed
+          coordinates frames locally — no keystroke or request leaves. */}
+      <div className="sig-map-app__search" ref={searchWrapRef}>
+        <form
+          className="sig-map-app__searchform"
+          onSubmit={onPlaceSubmit}
+          data-testid="map-place-search"
+        >
+          {createElement(
+            "sig-typeahead",
+            { "shard-root": props.shardRoot, scope: "kind:place", "min-chars": "2" },
+            <label htmlFor="map-app-place-q">Find a place on the map</label>,
+            " ",
+            <input
+              id="map-app-place-q"
+              ref={placeInputRef}
+              type="search"
+              name="q"
+              maxLength={200}
+              size={30}
+              placeholder="Place or coordinates (35.47, -97.52)"
+              data-testid="map-place-input"
+            />,
+            " ",
+            <button type="submit" data-testid="map-place-go">
+              Show
+            </button>,
+          )}
+        </form>
+        {placeNote && (
+          <p className="sig-island__note" role="status" data-testid="map-place-note">
+            {placeNote}
+          </p>
+        )}
+        {state.jurisdiction.length > 0 ? (
+          <p className="sig-island__note sig-map-app__placechip" data-testid="place-filter">
+            Filtering to{" "}
+            {state.jurisdiction.map((j) => placeName(j)).join(", ")} — records
+            outside the place subtree are hidden.{" "}
+            <button
+              type="button"
+              className="sig-map-app__tool"
+              data-testid="place-show-area"
+              onClick={() => {
+                // "Show this area" — the framing-only state (the canonical
+                // at= link stays; the facet drops). Distinct, linkable (C-11).
+                update({ jurisdiction: [] });
+              }}
+            >
+              Show this area instead
+            </button>{" "}
+            <button
+              type="button"
+              className="sig-map-app__tool"
+              data-testid="place-clear-filter"
+              onClick={() => {
+                framedJurisdiction.current = "";
+                update({ jurisdiction: [], at: null });
+                setPlaceChoice(null);
+              }}
+            >
+              Clear
+            </button>
+          </p>
+        ) : (
+          placeChoice !== null && (
+            <p className="sig-island__note sig-map-app__placechip" data-testid="place-frame">
+              Showing {placeChoice.label} — not filtering.{" "}
+              <button
+                type="button"
+                className="sig-map-app__tool"
+                data-testid="place-apply-filter"
+                onClick={() => {
+                  framedJurisdiction.current = placeChoice.jkey;
+                  fitJurisdictions([placeChoice.jkey]);
+                  update({ jurisdiction: [placeChoice.jkey], at: null });
+                }}
+              >
+                Filter to this place
+              </button>
+            </p>
+          )
+        )}
+      </div>
 
       <div className="sig-map-app__shell">
         <div

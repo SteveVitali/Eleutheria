@@ -14,6 +14,7 @@
 
 import { useCallback, useEffect, useState } from "preact/hooks";
 import {
+  canonicaliseWorkspaceState,
   ISLAND_SURFACE,
   parseWorkspaceState2,
   SURFACE_VIEW,
@@ -22,7 +23,7 @@ import {
   VIEW_SURFACE,
   workspaceHref2,
 } from "../../lib/workspace-state/index";
-import type { IslandView, IslandWorkspaceState } from "../../lib/workspace-state/index";
+import type { IslandView, IslandWorkspaceState, Viewport } from "../../lib/workspace-state/index";
 
 export interface WorkspaceRuntime {
   state: IslandWorkspaceState;
@@ -36,6 +37,7 @@ const isBrowser = typeof window !== "undefined";
 export function useMapWorkspace(
   view: IslandView,
   defaults: { release?: string | null } = {},
+  opts: { frameBounds?: (jkey: string) => Viewport | null } = {},
 ): WorkspaceRuntime {
   const seed = () => ({
     release: defaults.release ?? null,
@@ -43,8 +45,15 @@ export function useMapWorkspace(
   });
   const viewMismatch = (named: string) =>
     `The address names the "${named}" view; this page is ${ISLAND_SURFACE[view]} — it does not apply here.`;
+  // P37.19 (MAP-04): the `frame=<jkey>` fold — the map row owns the
+  // jkey→bounds table `canonicaliseWorkspaceState` deferred to; a resolved
+  // frame lands as `at=` with the receipt in `notes` (never re-emitted).
+  const fold = (s: ReturnType<typeof parseWorkspaceState2>) => {
+    const folded = canonicaliseWorkspaceState(s.state, { frameBounds: opts.frameBounds });
+    return { ...s, state: folded.state, notes: [...s.notes, ...folded.notes] };
+  };
   const read = () => {
-    const parsed = parseWorkspaceState2(window.location.search, seed());
+    const parsed = fold(parseWorkspaceState2(window.location.search, seed()));
     const issues = [...parsed.issues, ...parsed.notes];
     if (VIEW_SURFACE[parsed.state.view] !== ISLAND_SURFACE[view]) {
       issues.push(viewMismatch(parsed.state.view));
@@ -75,7 +84,7 @@ export function useMapWorkspace(
 
   useEffect(() => {
     const onPop = () => {
-      const parsed = parseWorkspaceState2(window.location.search, seed());
+      const parsed = fold(parseWorkspaceState2(window.location.search, seed()));
       const issues = [...parsed.issues, ...parsed.notes];
       if (VIEW_SURFACE[parsed.state.view] !== ISLAND_SURFACE[view]) {
         issues.push(viewMismatch(parsed.state.view));

@@ -185,6 +185,7 @@ const F2 = (over: Partial<MapFacetsV2> = {}): MapFacetsV2 => ({
   vendor: [],
   operator: [],
   source: [],
+  jurisdiction: [],
   ...over,
 });
 
@@ -377,5 +378,42 @@ describe("my-location pan target (P37.72)", () => {
       expect(msg).not.toMatch(/near you|camera|watching|enable|settings/i);
     }
     expect(geoFailureNote("denied")).toContain("Nothing was read or sent");
+  });
+});
+
+// ------------------------------------------------------------------ P37.19
+describe("jurisdiction facet + place framing (P37.19 / MAP-04)", () => {
+  it("recordPasses honours the descendants-inclusive jurisdiction facet", async () => {
+    const { recordPasses } = await import("../../src/islands/map/model");
+    const rec = REC({
+      jkey: "us.census.geoid.place:4064000",
+      chain: ["iso3166-1:US", "iso3166-2:US-OK", "us.census.geoid.county:40109", "us.census.geoid.place:4064000"],
+    });
+    expect(recordPasses(rec, F2({ jurisdiction: ["iso3166-2:US-OK"] }))).toBe(true);
+    expect(recordPasses(rec, F2({ jurisdiction: ["iso3166-2:US-TX"] }))).toBe(false);
+    // An unkeyed record is never guessed in.
+    expect(recordPasses(REC({ jkey: null, chain: undefined }), F2({ jurisdiction: ["iso3166-2:US-OK"] }))).toBe(false);
+  });
+
+  it("the facet cannot slice count cells (tile mode below z10); it applies elsewhere", async () => {
+    const { cannotApplyNotes, effectiveFacets, cellSlice } = await import("../../src/islands/map/model");
+    const f = F2({ jurisdiction: ["iso3166-2:US-OK"] });
+    const notes = cannotApplyNotes(f, 4, true);
+    expect(notes.map((n) => n.dim)).toContain("jurisdiction");
+    expect(effectiveFacets(f, 4, true).jurisdiction).toEqual([]);
+    expect(cellSlice(f, { techCodeBySlug: new Map(), techSlugByCode: new Map(), vendorSlotByKey: new Map(), vendorBySlot: new Map(), sourceByIndex: new Map(), sourceIndexById: new Map(), jurisdictions: {} }).kind).toBe("cannot");
+    // z ≥ 10 on tiles, and the fixtures path at any zoom: the facet applies.
+    expect(cannotApplyNotes(f, 12, true).map((n) => n.dim)).not.toContain("jurisdiction");
+    expect(cannotApplyNotes(f, 4, false).map((n) => n.dim)).not.toContain("jurisdiction");
+  });
+
+  it("boundsViewport folds [w,s,e,n] like bbox=; unionBounds merges", async () => {
+    const { boundsViewport, unionBounds } = await import("../../src/islands/map/model");
+    const v = boundsViewport([-97.65, 35.29, -97.3, 35.68]);
+    expect(v.lat).toBeCloseTo(35.49, 1);
+    expect(v.lon).toBeCloseTo(-97.48, 1);
+    expect(v.z).toBeGreaterThanOrEqual(7);
+    expect(unionBounds([[-97.65, 35.29, -97.3, 35.68], null, [-98, 35, -97, 36]])).toEqual([-98, 35, -97, 36]);
+    expect(unionBounds([null])).toBeNull();
   });
 });
