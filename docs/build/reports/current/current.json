@@ -1,11 +1,11 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "706725983162e6bd31c2a126ae5196ccf49ff749",
+  "input_commit": "33f555c58b3fbccbc28e0c0325199dd180f5ae23",
   "manifest_inputs": 1232,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.20",
+    "nextTicket": "P37.21",
     "lastCompleted": "P37.19",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
@@ -17,7 +17,7 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.19-map-place-search",
+    "chainTip": "r11/P37.20-release-pinned-bbox-api",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
@@ -38,8 +38,8 @@
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
     "return_pass_rows": 84,
-    "known_inconsistencies": 0,
-    "conflicted": 0
+    "known_inconsistencies": 1,
+    "conflicted": 1
   },
   "obligations": [
     {
@@ -13059,9 +13059,9 @@
       {
         "key": "P37.20",
         "obligations_cell": "D-P37.20-1",
-        "gates_cell": "never pre-auth (OM-20); outside batch window day 6 00:00Z → day 13 12:00Z + daily 03:00-06:30Z; `SIG_BBOX_AUTHOR` + ADC + `SIG_GCP_PROJECT`",
-        "operator_cell": "the verbatim go + author env — code/runner/packet landed (routes ship dark)",
-        "rerun_cell": "`implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true`",
+        "gates_cell": "OM-20; x 03:00-06:30Z + day6T00:00Z-day13T12:00Z; verbatim `SIG_BBOX_AUTHOR`",
+        "operator_cell": "verbatim go + ADC + `SIG_GCP_PROJECT`",
+        "rerun_cell": "implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true",
         "obligations": [
           "D-P37.20-1"
         ]
@@ -27150,13 +27150,22 @@
       }
     ]
   },
-  "known_inconsistencies": [],
-  "incomplete": false,
+  "known_inconsistencies": [
+    {
+      "check": "ledger/next-not-lowest",
+      "severity": "error",
+      "file": "docs/build/LEDGER.md",
+      "obligation": "P37.21",
+      "evidence": "nextTicket: P37.21; lowest open row: P37.20",
+      "message": "nextTicket 'P37.21' is not the lowest chain row that has not landed ('P37.20'; superseded-by/deferred/unused and HUMAN rows skipped — V2)"
+    }
+  ],
+  "incomplete": true,
   "stale_sources": [],
-  "manifest_sha256": "fd1af7c81f4e56599cc1bb56524e9bc09a046fe66e03c01cefab630e46c04b20",
+  "manifest_sha256": "787f7d503dd25f3a4086902ba6cd9675ff5954b8fd4f310e8bae234fc2ba0c10",
   "current_md": {
-    "lines": 150,
-    "bytes": 19850,
+    "lines": 152,
+    "bytes": 19856,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

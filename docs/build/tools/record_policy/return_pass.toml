@@ -1705,15 +1705,14 @@ key = "P37.20"
 kind = "leg"
 obligations = ["D-P37.20-1"]
 obligations_cell = '''D-P37.20-1'''
-gates_cell = '''never pre-auth (OM-20); outside batch window day 6 00:00Z → day 13 12:00Z + daily 03:00-06:30Z; `SIG_BBOX_AUTHOR` + ADC + `SIG_GCP_PROJECT`'''
-operator_cell = '''the verbatim go + author env — code/runner/packet landed (routes ship dark)'''
-rerun_cell = '''`implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true`'''
+gates_cell = '''OM-20; x 03:00-06:30Z + day6T00:00Z-day13T12:00Z; verbatim `SIG_BBOX_AUTHOR`'''
+operator_cell = '''verbatim go + ADC + `SIG_GCP_PROJECT`'''
+rerun_cell = '''implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true'''
 
   [[row.legs]]
   id = "P37.20-roll"
   obligations = ["D-P37.20-1"]
-  earliest = '''the verbatim go (`SIG_BBOX_AUTHOR`) + ADC + `SIG_GCP_PROJECT`; outside AR-3 windows'''
-  excluded = ["batch window day 6 00:00Z → day 13 12:00Z", "daily 03:00-06:30Z"]
-  go = '''verbatim-go: `SIG_BBOX_AUTHOR` per apply'''
-  rerun = '''implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true'''
-  live_dependants = []
+  earliest = '''the verbatim go'''
+  excluded = ["03:00-06:30Z", "day6T00:00Z-day13T12:00Z"]
+  go = '''verbatim-go: `SIG_BBOX_AUTHOR`'''
+  rerun = '''none'''
