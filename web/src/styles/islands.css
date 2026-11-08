@@ -587,7 +587,7 @@
   width: 36px;
   height: 4px;
   margin: 0 auto;
-  border-radius: 2px;
+  border-radius: 50%;
   background: var(--sig-ink-muted);
 }
 .sig-map-app__peek {
@@ -659,7 +659,7 @@
   }
   .sig-map-print {
     display: block;
-    font-size: 10pt;
+    font-size: 83%;
   }
   .sig-map-print__meta {
     margin: 0 0 6pt;
@@ -667,7 +667,7 @@
   .sig-map-print__table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 9pt;
+    font-size: 75%;
   }
   .sig-map-print__table th,
   .sig-map-print__table td {
