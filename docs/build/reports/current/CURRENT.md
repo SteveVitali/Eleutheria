@@ -4,12 +4,12 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `33f555c58b3fbccbc28e0c0325199dd180f5ae23` · inputs hashed: 1232 · wall-clock receipt: `receipt.json`
+> input_commit: `8f89c439e42fcd7e43c093e19fc1f34afa2493f0` · inputs hashed: 1232 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.21` · lastCompleted `P37.19`
-- chainTip `r11/P37.20-release-pinned-bbox-api` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-08T08:58Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.20` · lastCompleted `P37.19`
+- chainTip `r11/P37.19-map-place-search` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-08T08:58Z`
 
 ## Obligations
 
@@ -107,13 +107,10 @@
 | P37.13 | D-P37.13-1 | the next `sig.discovery-sweep/1` run or acq-plan ticket — `discovery-sweep/2026-11-07/candidates.csv` |
 | P37.14 | D-P37.14-1 | a data-review ticket or exports consumer of `publishable` — `ADR-240` revisit trigger (b) |
 | P37.15 | queued leg | `implement-spec spec=docs/tickets/437_P37.15__scheduled-parser-canary.md live_verification=true` |
-| P37.20 | D-P37.20-1 | implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true |
 
 ## Known inconsistencies (preserved, never synthesized)
 
-| check | obligation | message |
-|---|---|---|
-| ledger/next-not-lowest | P37.21 | nextTicket 'P37.21' is not the lowest chain row that has not landed ('P37.20'; superseded-by/deferred/unused and HUMAN rows skipped — V2) |
+- none — every P32.1 baseline conflict is either reconciled by a recorded event interpretation (old values preserved on the anchor) or documented in `reconciliations.json`; anything new would appear here and fail `verify`
 
 ## Evidence domains — recorded evidence only
 
