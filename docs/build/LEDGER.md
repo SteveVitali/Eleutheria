@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P37.18
-lastCompleted: P37.17
+nextTicket: P37.72
+lastCompleted: P37.18
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.70,P37.71
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P37.17-tile-properties-v2-and-map-dictionary
+chainTip: r11/P37.18-map-filters-in-view-list-keyboard
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-08T07:36Z
+updatedAt: 2026-11-08T08:58Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1614,3 +1614,5 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-08 — P37.17 done — row 440 `Kind: ticket` — tile-properties v2 + map dictionary and coverage table (K1 MAP-01b §3.3; `D-K1-4 [B-22] = yes` carried verbatim — implemented, never re-decided; `live_verification=false`): the full `sig.map-tiles/2` §3.3 emit lands in the spine export — per-(record, source) slices sharing a published point merge into one drawn feature (`rk` per record, never stacked markers; different honest positions stay separate); sites `rk lb tc vd op oe sr j f l st tr pm co`, cells `h3 n ns jp s1 sx` + `t_<code>`/`v_<slot>` facets; `st` precedence contested(2)>provisional(3)>corroborated(0, ≥2 registry sources — UXR-14 interim until L3 CONF-07b)>single(1); `pm` tier-declared uncertainty; tier 3 never tiled · `exports.map_dict` (`sig.map-dict/1`): `web/map/dict.json` (`sr`/`tc`/`vd` dictionaries, j chains+bboxes, per-j unplotted, facet totals) + real `declared-scope@1` `coverage_by_jurisdiction.json` (declared scope covers jkey+descendants; crowdsourced/scope-less listed never counted) · six additive `sites` columns registered (SIG-TRANSP-016); dossier children draw `covered`/`not_covered` · **ADR-241** (quiet at authoring; trigger + BL-087 + Appendix F + adr-index recorded) · `tests/exports` 1337 green; `make check` env-class reds recorded (Docker down, SIG_GCP_PROJECT, handle-list artifact — identical on base) · coverage: SIG-GEO-014+SIG-UI-099 → MET; SIG-ACQ-004+SIG-DOS-005 → BL-087 (SIG-ENG-041) · `main` untouched · chainTip → r11/P37.17-tile-properties-v2-and-map-dictionary · next → P37.18 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-08 — P37.17 post-closeout record — head `d0eda48f` 5/5 green head-bound (`ci: pass #464@d0eda48`, run 42444446510, read 04:47Z: docs 2m32s · security 37s · composed 4m15s · python 14m46s · web 55m23s) · `ci_boundary.py` exit 3 — `blockedOn` ancestor `#460@ac5ea7e` docs (carried; #463/`9efbe802`+#462/`03340651` post-record dispatch reds; landed tips green) · fix arc — column registry + rule_pending test re-verdict + ADR-241 registration + env reds recorded · `main` untouched · deferrals +0/−0 · next → P37.18 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-08 — dispatch boundary-confirm — P37.17's green read recorded (`ci: pass #464@d0eda48`, run 42444446510); `blockedOn` (nothing); chainTip `r11/P37.17-tile-properties-v2-and-map-dictionary` · nextTicket P37.18 (row 441 — map filters + in-view list + keyboard; live_verification=false; gate none; deps landed) — fresh implement-spec sub-agent on `r11/P37.18-map-filters-in-view-list-keyboard` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-08 — P37.18 done — row 441 `Kind: ticket` — map filters, In-view list, keyboard, mobile and print (K1 MAP-03b = R11-K13-MAP-03b; gate `none` carried verbatim; `live_verification=false`; owns no §56 `Owner:` — serves P36.37's SIG-UI-095/102/104): `/map/` island over `sig.map-tiles/2` + `sig.map-dict/1` — facet filters (technology/vendor/operator/status/seen-range) with counts over cells+site props (`tc vd oe sr f l st`; §3.2 marginal slices `t_<code>`/`v_<slot>`/`s1`, joint slices honestly `cannot`); C-03 zoom honesty — cannot-apply filters grey + carry a note, never the absence hatch, and dropped facets never silently narrow the draw; synchronized In-view list/table (≤50 rows, distance/label-id deterministic, J5 sortable table view, rk→props selection, jp place rows with single-source share below the site band); 1 s-debounced `aria-live` settled-view announcements; keyboard contract (canvas Enter → list, Enter selects, Escape clears + focus return; roving arrows); mobile bottom sheet peek/half/full with `map.setPadding`; print view (list + legend/attribution + as-of + cite — canvas never prints); "Download this view" CSV with licence-provenance comments; `data-greyed` map-paint toggle; dict fetch with honest EMPTY degradation · `map.astro` asOf/unplotted/jurisdictionHrefs + `tabindex=0` scroll wraps (axe 2.1.1) · unit +15 → 1248/1248 vitest; new `map-filters.spec.ts` 7/7 incl. axe at 390/1440 px · coverage: none routed (verified) · `main` untouched · chainTip → r11/P37.18-map-filters-in-view-list-keyboard · next → P37.72 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-08 — P37.18 post-closeout record — head `e01a9fba` 5/5 green head-bound (`ci: pass #465@e01a9fb`, run 42460723181, read 08:53Z: docs 1m53s · security 33s · composed 3m38s · python 16m5s · web 56m15s) · `ci_boundary.py` exit 3 — `blockedOn` ancestor `#464@7d2a273` docs (carried; #463/`9efbe802`+#462/`03340651` post-record dispatch reds; landed tips green) · `main` untouched · deferrals +0/−0 · next → P37.72 · harness: devin-desktop/swe-2-high/subagent
