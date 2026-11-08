@@ -3,6 +3,7 @@
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
 | SIG-ACQ-004 | `hosted` | `MET-ENGINEERED(D-P32.21-1)` | 2026-10-01 | — |
+| SIG-ACQ-004 | `hosted` | `MET-ENGINEERED(D-P32.21-1)` | 2026-11-08 | SIG-ACQ-004:r11-1 |
 | SIG-CHART-001 | `implementation` | `MET` | 2026-10-06 | — |
 | SIG-CHART-002 | `implementation` | `MET` | 2026-10-06 | — |
 | SIG-CHART-003 | `implementation` | `MET` | 2026-10-06 | — |
@@ -51,6 +52,7 @@
 | SIG-DOS-003 | `public` | `MET-ENGINEERED(D-P32.18-1;D-R10-SOURCES-1;D-R10-HUMAN-1)` | 2026-10-01 | — |
 | SIG-DOS-004 | `public` | `MET-ENGINEERED(D-P32.19-1;D-R10-SOURCES-1;D-R10-HUMAN-1)` | 2026-10-01 | — |
 | SIG-DOS-005 | `public` | `MET-ENGINEERED(D-P32.20-1;D-R10-SOURCES-1;D-R10-HUMAN-1)` | 2026-10-01 | — |
+| SIG-DOS-005 | `public` | `MET-ENGINEERED(D-P32.20-1;D-R10-SOURCES-1;D-R10-HUMAN-1)` | 2026-11-08 | SIG-DOS-005:r11-1 |
 | SIG-DSRC-001 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-DSRC-001 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-03 | SIG-DSRC-001:r11-1 |
 | SIG-DSRC-002 | `public` | `MISSING` | 2026-10-24 | — |
@@ -120,7 +122,5 @@
 | SIG-EPIS-018 | `implementation` | `MET` | 2026-10-01 | — |
 | SIG-EPIS-019 | `implementation` | `MET` | 2026-10-06 | — |
 | SIG-EPIS-022 | `implementation` | `MET` | 2026-10-01 | — |
-| SIG-EPIS-024 | `implementation` | `MET` | 2026-10-06 | — |
-| SIG-EPIS-026 | `implementation` | `MET` | 2026-10-06 | — |
 
 ← back: CURRENT.md · next page: coverage-2.md

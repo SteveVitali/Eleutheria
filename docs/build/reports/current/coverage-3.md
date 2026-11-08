@@ -2,6 +2,8 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-OPS-006 | `hosted` | `MISSING` | 2026-10-01 | — |
+| SIG-OPS-007 | `hosted` | `MISSING` | 2026-10-01 | — |
 | SIG-OPS-008 | `hosted` | `MISSING` | 2026-10-01 | — |
 | SIG-OPS-009 | `hosted` | `MISSING` | 2026-10-01 | — |
 | SIG-OPS-010 | `hosted` | `MISSING` | 2026-10-01 | — |
@@ -120,7 +122,5 @@
 | SIG-TRANSP-030 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-031 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-032 | `public` | `MISSING` | 2026-10-05 | — |
-| SIG-TRANSP-033 | `public` | `MISSING` | 2026-10-05 | — |
-| SIG-TRANSP-033 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-01 | SIG-TRANSP-033:r11-1 |
 
 ← back: CURRENT.md · next page: coverage-4.md
