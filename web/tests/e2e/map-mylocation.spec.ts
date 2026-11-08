@@ -100,7 +100,7 @@ test.describe("my-location pan control (P37.72)", () => {
         value: {
           getCurrentPosition: (
             _s: unknown,
-            err?: (e: { code: number; message: string }) => void,
+            err?: (e: GeolocationPositionError) => void,
           ) =>
             err?.({
               code: 1,
