@@ -22,10 +22,12 @@ single render-core owner), and emits:
 * ``inputs/dossier-visuals/locator-symbols.json`` + the public produced-work
   sheet ``web/figures/locator-symbols.svg`` — the ``sig.locator-symbols/1``
   parent-context glyphs every dossier locator + the JUR-04 index cite.
-* ``web/map/coverage_by_jurisdiction.json`` — MAP-01b's coverage table in
-  its **soft** posture (``rule_version: "rule-pending@1"``, the K6 §5.1
-  verbatim legend) — every figure child draws ``rule_pending`` until the
-  C3/L3 rule lands (D-K1-4).
+* ``web/map/coverage_by_jurisdiction.json`` — MAP-01b's coverage table.
+  P37.17 (D-K1-4 = yes, ADR-241): the real ``declared-scope@1`` rule emits
+  from ``exports.map_dict.coverage_doc`` when bound — children draw
+  ``covered``/``not_covered``; an unbound build keeps the honest soft
+  fallback (``rule_version: "rule-pending@1"``, the K6 §5.1 verbatim
+  legend, ``rule_pending`` children).
 * ``web/figures/dossier/<slug-path>.svg`` — the standalone download for
   country + admin-1 dossiers only (D-K6-5), the P36.19 standalone document.
 

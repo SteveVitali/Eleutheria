@@ -1334,6 +1334,42 @@ def _sites_specs() -> tuple[Any, ...]:
             "the L3 §5.2 display text for the lineage count (e.g. "
             "``Listed by 1 source.`` / ``Seen independently by N sources: …``)",
         ),
+        # P37.17 (MAP-01b, ADR-241): the additive ``sig.map-tiles/2`` facet
+        # columns — merged into the row by ``_map_enrichment``; all nullable
+        # (the honest absent state; the tile emit drops the nulls).
+        _CS(
+            "first_seen",
+            "the earliest ``yyyymm`` of the record's publishable claims "
+            "(claim valid time) — the map tile's ``f`` facet",
+            dtype="integer",
+        ),
+        _CS(
+            "last_seen",
+            "the latest ``yyyymm`` of the record's publishable claims "
+            "(claim valid time) — the map tile's ``l`` facet",
+            dtype="integer",
+        ),
+        _CS(
+            "operator_label",
+            "the first publishable ``camera_operator``/``operator_stated`` "
+            "label-fact value — the map tile's ``op`` facet",
+        ),
+        _CS(
+            "operator_key",
+            "the resolved operator entity's label-registry url-key "
+            "(``slug--hash``) when a ``camera_operator`` claim carries a "
+            "page-kind ``object_entity`` — the map tile's ``oe`` facet",
+        ),
+        _CS(
+            "vendor_label",
+            "the first publishable ``vendor``/``manufacturer`` label-fact "
+            "value — the display string behind the map tile's ``vd`` slot",
+        ),
+        _CS(
+            "vendor_key",
+            "the normalized ``vendor_label`` slot key (lower-cased, "
+            "whitespace-collapsed) the map dictionary binds to a ``vd`` slot",
+        ),
         # The request-surface ``sites`` table may carry this — the
         # observation-level record marker (SIG-RECON-058) a hand-built
         # request emits directly.
@@ -5688,7 +5724,7 @@ def build_spine_export(
         _scopes = _md.declared_scopes(_map_registry_sources)
         _globals = _md.crowdsourced_globals(_map_registry_sources)
         _all_jkeys = sorted(placement.jurisdiction_rows())
-        for comp, comp_rows in slices.rows_by_compartment.items():
+        for comp_rows in slices.rows_by_compartment.values():
             for _r in comp_rows:
                 d = _r.data
                 jk = str(d.get("jurisdiction_key") or d.get("jurisdiction") or "unplaced")

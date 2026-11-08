@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "2843c0b6e478c9ef2479a79c0ab14ceb11b9349d",
+  "input_commit": "4c6299a32caf0ed5017efdb5635f0e3af11f0dd6",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "549e3aee554ee32ed561af50c200fecbf3631bb1ef0f83297ad7b3cb1299b32b"
+      "sha256": "933859cf39431e54acf305934a29136c280964d7fa2efe4b68477e94bfd957f7"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -965,12 +965,16 @@
       "sha256": "4fd83f9286248720ff0fa2262bdd66d3fe763c627de115ed12a5986b19661e47"
     },
     {
+      "path": "docs/adr/ADR-241-tile-properties-v2-map-dictionary-and-declared-scope-coverage.md",
+      "sha256": "251d6bd9fc393dbbcae4fd49fe85212c7faf9e89c1ab9f631b2bcdecffab0668"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "a927c361b9862ddcb1af03d859111ddbaf5cdf729b976afe683cd0e22b79ddef"
+      "sha256": "e6494479b58d1f00c935da4f30b7fe439ae35c1f6f3060e5949f4519e50c16e3"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "2fa07460360d38a3039e401934a80542370c3eeb87058cc842493c4bbe46b6e4"
+      "sha256": "347bf19b6461678b6272e1e83239c84cb4f117aa07d335de496923780ed320e5"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -978,7 +982,7 @@
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "8a54123cfe49213712b7174d006fddc26c503b1368c53839844e6cba7554e3ad"
+      "sha256": "0fb21b565c2bcdbfd55e0c56c95e35dd7070f82fa58a3daa45ccf2ac21ac31f2"
     },
     {
       "path": "docs/build/LEDGER.md",
@@ -2707,6 +2711,10 @@
     {
       "path": "docs/build/runs/P37.16b.md",
       "sha256": "d4fce025127dfd4e7abd8fa4e3010cec84711ce6d06c99c3508c7ed8b6eb4f15"
+    },
+    {
+      "path": "docs/build/runs/P37.17.md",
+      "sha256": "13176ffe4ced91a5c5bedf6c5589794a3038cce7471137144fe88cd761dd341b"
     },
     {
       "path": "docs/build/runs/P37.2.md",

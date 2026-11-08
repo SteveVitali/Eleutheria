@@ -439,9 +439,7 @@ def _merged_records(
                 operator_label=(
                     str(props["operator_label"]) if props.get("operator_label") else None
                 ),
-                operator_key=(
-                    str(props["operator_key"]) if props.get("operator_key") else None
-                ),
+                operator_key=(str(props["operator_key"]) if props.get("operator_key") else None),
                 sources=set(),
                 jkey=jkey_s,
                 first_seen=None,
@@ -1758,8 +1756,11 @@ def render_compartment_sites_pmtiles(
     # merged (record, position) count, incl. tier-3 (cells count them).
     located = len(
         _merged_records(
-            [f for f in (source_features if isinstance(source_features, list) else [])
-             if isinstance(f, Mapping)],
+            [
+                f
+                for f in (source_features if isinstance(source_features, list) else [])
+                if isinstance(f, Mapping)
+            ],
             compartment,
         )
     )

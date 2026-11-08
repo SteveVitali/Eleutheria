@@ -24,6 +24,27 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.17 — tile properties v2, the public map dictionary and the
+  coverage table (D-K1-4 [B-22] = yes; SIG-GEO-014 + SIG-UI-099 owned
+  legs; UXR-14 draft carried):** the spine export now emits the full
+  K1 §3.3 `sig.map-tiles/2` contract — per-(record, source) slices that
+  share a published point merge into one drawn feature (`rk` per
+  record, never stacked markers) while different honest positions stay
+  separate; sites carry `rk lb tc vd op oe sr j f l st tr pm co` and
+  cells carry `h3 n ns jp s1 sx` + `t_<code>`/`v_<slot>` facets.
+  Status `st` precedence is contested(2) > provisional(3) >
+  corroborated(0, ≥2 registry sources — the UXR-14 interim legend
+  "republications not yet collapsed" until L3 CONF-07b lands) >
+  single(1); `pm` is the tier-declared uncertainty and tier 3 stays
+  out of tiles. A new `exports/map_dict.py` emits
+  `web/map/dict.json` (`sig.map-dict/1`: source/technology/vendor
+  code dictionaries, jurisdiction chains + bboxes, per-jurisdiction
+  unplotted counts, national facet totals) and the coverage artifact
+  now implements the real `declared-scope@1` rule — declared
+  `sources.toml` scope covers a jurisdiction and its descendants;
+  `publisher_type = "crowdsourced"`/scope-less sources are listed but
+  never counted (ADR-241).
+
 - **P37.16b — the last two live-capture families: San Diego + the
   acquisition pilot (D-P32.20-1 + D-P32.21-1; SIG-DOS-005/SIG-ACQ-004 owed
   legs):** `ops.dossier_live_pass` now executes both return-pass shapes —

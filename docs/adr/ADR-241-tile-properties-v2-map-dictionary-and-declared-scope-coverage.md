@@ -1,8 +1,16 @@
 # ADR-241 — Tile properties v2, the `sig.map-dict/1` dictionary, and the declared-scope coverage rule
 
-- **Status:** Accepted (P37.17, 2026-11-08)
-- **Decides:** the full `sig.map-tiles/2` §3.3 property emit, the `sig.map-dict/1` public map dictionary, and the real `declared-scope@1` coverage rule applying D-K1-4 [B-22] = **yes** (the operator's word, quoted verbatim — implemented, never re-decided).
-- **Owned ids:** SIG-GEO-014, SIG-UI-099 (§56, Owner: P37.17). UXR-14 carried as a later-family draft.
+- Date: 2026-11-08
+- Status: accepted
+- Ticket: P37.17 (Round 11 / P37, row 440; SIG-GEO-014, SIG-UI-099)
+- Base: `r11/P37.16b-dossier-live-captures-last-two-families`
+- Related: K1 MAP-01b §3.3 (the `sig.map-tiles/2` contract), D-K1-4 [B-22]
+  = yes (the declared-scope coverage verdict — implemented verbatim,
+  never re-decided), `sig.map-dict/1` and `sig.jurisdiction-coverage/1`,
+  ADR-156/P35.52 (the tile pipeline this completes), ADR-134/ADR-155 (the
+  map island budget posture), L3 CONF-07b (`n_independent_lineages` —
+  the interim `st` rule this keeps honest), UXR-14 (carried as a
+  later-family draft).
 
 ## Context
 

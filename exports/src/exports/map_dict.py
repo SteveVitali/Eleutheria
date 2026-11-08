@@ -43,9 +43,7 @@ COVERAGE_LEGEND = (
 )
 MAP_DICT_PATH = "web/map/dict.json"
 
-_ONTOLOGY_VOCAB = (
-    Path(__file__).resolve().parents[4] / "ontology" / "vocab" / "technology.yaml"
-)
+_ONTOLOGY_VOCAB = Path(__file__).resolve().parents[4] / "ontology" / "vocab" / "technology.yaml"
 
 #: ``jurisdiction_scheme`` → the canonical K4 jkey prefix.
 _SCHEME_PREFIX = {
@@ -257,14 +255,14 @@ def build_map_dict(
                 used.add(v)
     jdocs: dict[str, Any] = {}
     for jkey in sorted(used):
-        row = jurisdictions.get(jkey)
-        if row is None:
+        jrow = jurisdictions.get(jkey)
+        if jrow is None:
             continue
         jdocs[jkey] = {
-            "name": row.get("name"),
-            "level": row.get("level"),
+            "name": jrow.get("name"),
+            "level": jrow.get("level"),
             "chain": list(ancestor_chains.get(jkey, ())) + [jkey],
-            "bbox": row.get("bbox"),
+            "bbox": jrow.get("bbox"),
         }
 
     unplotted: dict[str, int] = {}

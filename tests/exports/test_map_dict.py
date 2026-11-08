@@ -179,7 +179,11 @@ def test_declared_scope_coverage_counts_scoped_sources_only() -> None:
         scopes={"dot_511_ok": "iso3166-2:US-OK", "dot_511_tx": "iso3166-2:US-TX"},
         global_sources={"osm_overpass"},
         ancestors={"us.census.geoid.county:40109": ("iso3166-1:US", "iso3166-2:US-OK")},
-        all_jkeys=["iso3166-2:US-OK", "us.census.geoid.county:40109", "us.census.geoid.county:48201"],
+        all_jkeys=[
+            "iso3166-2:US-OK",
+            "us.census.geoid.county:40109",
+            "us.census.geoid.county:48201",
+        ],
     )
     rows = doc["jurisdictions"]
     # the declared OK scope covers the state AND its descendants
