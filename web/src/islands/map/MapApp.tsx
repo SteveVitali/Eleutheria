@@ -2141,7 +2141,13 @@ export default function MapApp(props: MapAppProps): JSX.Element {
         <h2>Map view — {rowsArePlaces ? "places" : "records"} in view</h2>
         <p className="sig-map-print__meta">
           {statusLine || `${viewCount} records in view`} · Data as of {props.asOf}
-          {state.release ? ` · release ${state.release}` : ""}.
+          {state.release ? (
+            <>
+              {" · release "}
+              <code>{state.release}</code>
+            </>
+          ) : null}
+          .
         </p>
         <p className="sig-map-print__meta">
           Cite this view: <a href={props.citationHref}>{props.citationHref}</a>
@@ -2205,8 +2211,15 @@ export default function MapApp(props: MapAppProps): JSX.Element {
           jurisdiction indicators and the places table carry them).
         </p>
         <p className="sig-island__note" data-testid="legend-vintage">
-          Data: {state.release ? `release ${state.release}` : "this build"} · as
-          of {props.asOf}.
+          Data:{" "}
+          {state.release ? (
+            <>
+              release <code>{state.release}</code>
+            </>
+          ) : (
+            "this build"
+          )}{" "}
+          · as of {props.asOf}.
         </p>
       </details>
 
