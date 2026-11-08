@@ -11,7 +11,10 @@ import {
   facetCannotApply,
   facetOptionCounts,
   facetOptions,
+  geoFailureNote,
   IN_VIEW_MAX,
+  myLocationTarget,
+  MY_LOCATION_MIN_ZOOM,
   OPERATOR_NOT_STATED,
   parseSeenRange,
   placeRowsInView,
@@ -341,5 +344,38 @@ describe("in-view table + sheet + download helpers", () => {
     expect(activeFacetCount(F2({ technology: ["a"], seen: { from: "2020-01", to: "2021-01" } }))).toBe(2);
     expect(sheetPeekText(137, 2)).toBe("137 records in view · Filters (2)");
     expect(sheetPeekText(1, 0)).toBe("1 record in view");
+  });
+});
+
+// P37.72 (D-K1-7, SIG-GOV-017 analysis docs/build/reports/p37.72-gov017-analysis):
+// the 'My location' control ONLY pans the map — the model pins the frame and
+// the proximity-free copy contract.
+describe("my-location pan target (P37.72)", () => {
+  it("centres on the position and raises zoom only to the site-band floor", () => {
+    expect(MY_LOCATION_MIN_ZOOM).toBe(NATIONAL_ZOOM_MAX + 1);
+    expect(myLocationTarget(-97.51, 35.47, 3)).toEqual({
+      center: [-97.51, 35.47],
+      zoom: MY_LOCATION_MIN_ZOOM,
+    });
+    // A deeper zoom is kept — a floor, never a zoom-out.
+    expect(myLocationTarget(-97.51, 35.47, 14)).toEqual({
+      center: [-97.51, 35.47],
+      zoom: 14,
+    });
+    // Inside the cells band the floor still applies.
+    expect(myLocationTarget(-97.51, 35.47, NATIONAL_ZOOM_MAX)).toEqual({
+      center: [-97.51, 35.47],
+      zoom: MY_LOCATION_MIN_ZOOM,
+    });
+  });
+  it("failure copy is honest and carries no proximity wording", () => {
+    const kinds = ["unsupported", "denied", "unavailable", "timeout"] as const;
+    for (const k of kinds) {
+      const msg = geoFailureNote(k);
+      expect(msg).toContain("map stays where it is");
+      // Contract-banned: no 'near you', no camera/watch framing, no nag.
+      expect(msg).not.toMatch(/near you|camera|watching|enable|settings/i);
+    }
+    expect(geoFailureNote("denied")).toContain("Nothing was read or sent");
   });
 });

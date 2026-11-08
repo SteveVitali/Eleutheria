@@ -67,9 +67,11 @@ import {
   facetCannotApply,
   facetOptionCounts,
   facetOptions,
+  geoFailureNote,
   inBounds,
   IN_VIEW_MAX,
   isMapDict,
+  myLocationTarget,
   parseSeenRange,
   placeRowsInView,
   recordPasses,
@@ -505,6 +507,8 @@ export default function MapApp(props: MapAppProps): JSX.Element {
   const [dict, setDict] = useState<MapDict | null>(null);
   const [greyed, setGreyed] = useState(false);
   const [ariaLine, setAriaLine] = useState("");
+  const [geoPending, setGeoPending] = useState(false);
+  const [geoNote, setGeoNote] = useState<string | null>(null);
   const [selection, setSelection] = useState<SelectionPanelModel | null>(null);
   const [statements, setStatements] = useState<StatementRow[]>([]);
   const popupRef = useRef<import("maplibre-gl").Popup | null>(null);
@@ -1354,6 +1358,48 @@ export default function MapApp(props: MapAppProps): JSX.Element {
   };
   const panBy = (dx: number, dy: number) => mapRef.current?.panBy([dx, dy]);
 
+  // P37.72 (D-K1-7, K1 §4.1/§4.2) — 'My location': a ONE-SHOT browser
+  // geolocation read after this explicit click that only pans the map. The
+  // position never leaves the browser — never sent to SIG, never stored,
+  // never marked on the canvas — and no 'cameras near you' list/count/alert/
+  // proximity notice is produced. The SIG-GOV-017 analysis this honours:
+  // docs/build/reports/p37.72-gov017-analysis/PACKET.md.
+  const locateMe = () => {
+    if (geoPending) return;
+    const geo = typeof navigator !== "undefined" ? navigator.geolocation : undefined;
+    if (!geo) {
+      setGeoNote(geoFailureNote("unsupported"));
+      return;
+    }
+    setGeoPending(true);
+    setGeoNote(null);
+    geo.getCurrentPosition(
+      (pos) => {
+        setGeoPending(false);
+        const map = mapRef.current;
+        if (!map) return;
+        map.easeTo(
+          myLocationTarget(pos.coords.longitude, pos.coords.latitude, map.getZoom()),
+        );
+      },
+      (err) => {
+        setGeoPending(false);
+        setGeoNote(
+          geoFailureNote(
+            err.code === err.PERMISSION_DENIED
+              ? "denied"
+              : err.code === err.TIMEOUT
+                ? "timeout"
+                : "unavailable",
+          ),
+        );
+      },
+      // No high-accuracy GPS fix is needed for a framing pan; a cached
+      // position is fine and faster. One shot — never watchPosition.
+      { enableHighAccuracy: false, timeout: 10_000, maximumAge: 300_000 },
+    );
+  };
+
   // P37.18 (K1 §4.6): "Download this view" — the in-view rows as CSV with
   // ADR-224's `#` licence provenance lines; the canvas is never downloaded.
   const downloadView = () => {
@@ -2038,6 +2084,25 @@ export default function MapApp(props: MapAppProps): JSX.Element {
             <button type="button" aria-label="Pan west" onClick={() => panBy(-80, 0)}>←</button>
             <button type="button" aria-label="Pan east" onClick={() => panBy(80, 0)}>→</button>
             <button type="button" aria-label="Pan south" onClick={() => panBy(0, 80)}>↓</button>
+          </div>
+          <div className="sig-map-app__myloc">
+            <button
+              type="button"
+              data-testid="my-location"
+              aria-busy={geoPending || undefined}
+              disabled={geoPending}
+              onClick={locateMe}
+            >
+              {geoPending ? "Locating…" : "My location"}
+            </button>
+            <span className="sig-island__note">
+              Pans the map only — the position stays in this browser.
+            </span>
+            {geoNote && (
+              <p className="sig-island__note" role="status" data-testid="my-location-note">
+                {geoNote}
+              </p>
+            )}
           </div>
           <label className="sig-map-app__basemap">
             Basemap{" "}
