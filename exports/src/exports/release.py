@@ -997,7 +997,16 @@ def build_release(
             # (coords AND point_status == "resolved" → a published point at
             # the recorded precision), so a withheld or unresolved pair can
             # never reach the bbox answer.
-            _located = bool(_coords) and str(row.get("point_status") or "") == "resolved"
+            _lat: float | None = None
+            _lon: float | None = None
+            if (
+                isinstance(_coords, (list, tuple))
+                and len(_coords) >= 2
+                and str(row.get("point_status") or "") == "resolved"
+            ):
+                _lon = float(_coords[0])
+                _lat = float(_coords[1])
+            _located = _lat is not None and _lon is not None
             search_rows.append(
                 {
                     "record_key": record.record_key,
@@ -1016,8 +1025,8 @@ def build_release(
                     # label's recorded basis is K2's rule (P35.29).
                     "label_basis": record.label.get("basis"),
                     "location_kind": ("public-point" if row.get("geometry") else "no-public-point"),
-                    "lat": float(_coords[1]) if _located else None,
-                    "lon": float(_coords[0]) if _located else None,
+                    "lat": _lat,
+                    "lon": _lon,
                     "precision": str(row.get("precision") or "") if _located else None,
                     "source_id": str(row.get("source_id") or ""),
                     "technology": str(row.get("technology") or ""),
