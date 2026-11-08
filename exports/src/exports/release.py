@@ -990,6 +990,14 @@ def build_release(
             # P32.14 (SIG-FIND-003): one normalized index row per eligible
             # record — unlocated + unreported-jurisdiction records are indexed
             # by construction (every row of the bound projection).
+            _geom = row.get("geometry")
+            _coords = _geom.get("coordinates") if isinstance(_geom, dict) else None
+            # P37.20 (K1 MAP-06): the published point feeds the release's
+            # spatial index — the exact rule ``record_from_site_row`` applies
+            # (coords AND point_status == "resolved" → a published point at
+            # the recorded precision), so a withheld or unresolved pair can
+            # never reach the bbox answer.
+            _located = bool(_coords) and str(row.get("point_status") or "") == "resolved"
             search_rows.append(
                 {
                     "record_key": record.record_key,
@@ -1008,6 +1016,9 @@ def build_release(
                     # label's recorded basis is K2's rule (P35.29).
                     "label_basis": record.label.get("basis"),
                     "location_kind": ("public-point" if row.get("geometry") else "no-public-point"),
+                    "lat": float(_coords[1]) if _located else None,
+                    "lon": float(_coords[0]) if _located else None,
+                    "precision": str(row.get("precision") or "") if _located else None,
                     "source_id": str(row.get("source_id") or ""),
                     "technology": str(row.get("technology") or ""),
                     "claim_ids": [a.claim_id for a in record.claim_anchors],

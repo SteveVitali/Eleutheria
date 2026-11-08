@@ -175,6 +175,48 @@ def test_claim_ref_exact_lookup(tmp_path: Path) -> None:
     assert n == 3
 
 
+def test_site_points_rtree_indexes_public_points(tmp_path: Path) -> None:
+    """P37.20 (K1 MAP-06): the release's spatial index — one degenerate
+    rtree box per published point keyed on record_seq; a record without a
+    public point has no entry and NULLs."""
+    rows = _records()
+    rows[0]["lat"], rows[0]["lon"], rows[0]["precision"] = 35.46, -97.5, "full_precision"
+    # rk-a carries no point — indexed, never in the rtree.
+    out, _, desc = _build_record_index(tmp_path, rows=rows)
+    conn = sqlite3.connect(f"file:{out}?mode=ro", uri=True)
+    pts = conn.execute("SELECT id, minX, maxX, minY, maxY FROM site_points").fetchall()
+    # rows sort by record_key — rk-a is seq 1, rk-b (the located row) seq 2.
+    # The rtree stores float32 internally (a published-precision point is
+    # well inside its rounding).
+    assert len(pts) == 1
+    pid, x1, x2, y1, y2 = pts[0]
+    assert pid == 2
+    assert x1 == pytest.approx(-97.5) and x2 == pytest.approx(-97.5)
+    assert y1 == pytest.approx(35.46) and y2 == pytest.approx(35.46)
+    hits = [
+        r[0]
+        for r in conn.execute(
+            "SELECT r.record_key FROM site_points sp JOIN records r ON r.record_seq = sp.id"
+            " WHERE sp.minX >= -98 AND sp.maxX <= -97 AND sp.minY >= 35 AND sp.maxY <= 36"
+        )
+    ]
+    assert hits == ["rk-b"]
+    miss = conn.execute(
+        "SELECT COUNT(*) FROM site_points sp"
+        " WHERE sp.minX >= -90 AND sp.maxX <= -89 AND sp.minY >= 40 AND sp.maxY <= 41"
+    ).fetchone()[0]
+    assert miss == 0
+    coords = {
+        r[0]: r[1:]
+        for r in conn.execute("SELECT record_key, lat, lon, point_precision FROM records")
+    }
+    conn.close()
+    assert coords["rk-b"] == (35.46, -97.5, "full_precision")
+    assert coords["rk-a"] == (None, None, None)
+    assert desc["scope"]["located_records"] == 1
+    assert "site_points" in desc["format"]["spatial_index"]
+
+
 def test_record_index_is_deterministic(tmp_path: Path) -> None:
     out1, cr1, d1 = _build_record_index(tmp_path / "a")
     out2, cr2, d2 = _build_record_index(tmp_path / "b")

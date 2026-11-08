@@ -1700,3 +1700,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/437_P37.15__scheduled-parser-c
   go = "pre-authorised: GATE-G6 §4 11D OM-20 list (expiry: GATE-ACCEPT-R11)"
   rerun = "implement-spec spec=docs/tickets/437_P37.15__scheduled-parser-canary.md live_verification=true"
 
+[[row]]
+key = "P37.20"
+kind = "leg"
+obligations = ["D-P37.20-1"]
+obligations_cell = '''D-P37.20-1'''
+gates_cell = '''never pre-auth (OM-20); outside batch window day 6 00:00Z → day 13 12:00Z + daily 03:00-06:30Z; `SIG_BBOX_AUTHOR` + ADC + `SIG_GCP_PROJECT`'''
+operator_cell = '''the verbatim go + author env — code/runner/packet landed (routes ship dark)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P37.20-roll"
+  obligations = ["D-P37.20-1"]
+  earliest = '''the verbatim go (`SIG_BBOX_AUTHOR`) + ADC + `SIG_GCP_PROJECT`; outside AR-3 windows'''
+  excluded = ["batch window day 6 00:00Z → day 13 12:00Z", "daily 03:00-06:30Z"]
+  go = '''verbatim-go: `SIG_BBOX_AUTHOR` per apply'''
+  rerun = '''implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true'''
+  live_dependants = []
