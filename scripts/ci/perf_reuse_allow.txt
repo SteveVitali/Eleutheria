@@ -40,3 +40,10 @@ web/src/pages/about/editorial-decisions.astro	// docs/build/reports/copy-batches
 # P37.8: the page header names its copy batch for provenance — comment-only,
 # not a records read (the corrections.ts precedent).
 web/src/pages/about/legal-demands.astro	// docs/build/reports/copy-batches/batch-19.md (B-2) and bind through the
+# P37.72: the my-location comments name the committed GOV-017 analysis packet
+# for provenance — comment-only citations, not a records read (the
+# corrections.ts / editorial-decisions.astro precedent).
+web/src/islands/map/MapApp.tsx	// docs/build/reports/p37.72-gov017-analysis/PACKET.md.
+web/src/islands/map/model.ts	// docs/build/reports/p37.72-gov017-analysis/PACKET.md.
+web/tests/e2e/map-mylocation.spec.ts	// The SIG-GOV-017 analysis it honours: docs/build/reports/p37.72-gov017-analysis.
+web/tests/unit/map-app-model.test.ts	// P37.72 (D-K1-7, SIG-GOV-017 analysis docs/build/reports/p37.72-gov017-analysis):
