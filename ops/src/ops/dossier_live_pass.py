@@ -1,12 +1,13 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
-"""The bounded live-capture pass for the Round-10 dossier families (P37.16a).
+"""The bounded live-capture pass for the Round-10 dossier families (P37.16a/b).
 
 The ``sig.dossier-live-return-pass/1`` packets the offline dossier rows
-committed (``LIVE_RETURN_PASS.json`` — ``D-P32.18-1`` / ``D-P32.19-1``, both
-``prepared_not_executed``) gain an **executor**, under the plan cell's own
-terms:
+committed (``LIVE_RETURN_PASS.json`` — ``D-P32.18-1`` / ``D-P32.19-1`` /
+``D-P32.20-1``, all ``prepared_not_executed``) plus the acquisition pilot's
+``sig.acq-pilot-return-pass/1`` packet (``ACQ_PILOT_RETURN_PASS.json`` —
+``D-P32.21-1``) gain an **executor**, under the plan cell's own terms:
 
 * **HG-03 lines** — every source a target rides (the family's ``dossier_*``
   row plus each ``existing_source``) must be green at the loader gate
@@ -47,6 +48,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -56,6 +58,8 @@ from typing import Any
 _REPO = Path(__file__).resolve().parents[3]
 
 LIVE_PASS_RESULT_SCHEMA = "sig.dossier-live-pass-result/1"
+DOSSIER_PASS_SCHEMA = "sig.dossier-live-return-pass/1"
+ACQ_PILOT_PASS_SCHEMA = "sig.acq-pilot-return-pass/1"
 PART_VIII_CLEAR_SCHEMA = "sig.part-viii-clear/1"
 SCREENS_PATH = "docs/build/reports/acquisition/PART_VIII_SCREENS.json"
 
@@ -89,6 +93,11 @@ OUTCOME_RIGHTS_REFUSED = "rights_refused"  # opt-out register / reservation
 OUTCOME_CONTENT_DRIFT = "content_drift"  # connector's own refusal on bytes
 OUTCOME_TOO_LARGE = "too_large"  # over the family's byte bound
 OUTCOME_NOT_ATTEMPTED = "not_attempted"  # gate refused — never fetched
+#: A ``metadata_only_preflight`` target — E4-B3 rejected the workbook path
+#: permanently; the link/label metadata rides the index-page capture and the
+#: row-level bytes are NEVER fetched (no workbook/XLSX/ZIP/sharedStrings or
+#: row-level plate/person/query transport, ever).
+OUTCOME_METADATA_ONLY = "metadata_only"
 
 OUTCOMES: tuple[str, ...] = (
     OUTCOME_CAPTURED,
@@ -99,6 +108,7 @@ OUTCOMES: tuple[str, ...] = (
     OUTCOME_CONTENT_DRIFT,
     OUTCOME_TOO_LARGE,
     OUTCOME_NOT_ATTEMPTED,
+    OUTCOME_METADATA_ONLY,
 )
 
 
@@ -118,20 +128,31 @@ def _real_resolver(sid: str) -> Any:
 
 
 # --------------------------------------------------------------------------- #
-# Family registry (this split: the first two families; P37.16b extends it)     #
+# Family registry (P37.16a: okc + tulsa; P37.16b: san-diego + acq-pilot)       #
 # --------------------------------------------------------------------------- #
 
 
 @dataclass(frozen=True)
 class Family:
-    """One dossier family's live-pass wiring (all data, no authority)."""
+    """One live-pass family's wiring (all data, no authority).
+
+    Two packet shapes ride this machinery: a dossier family's flat
+    ``sig.dossier-live-return-pass/1`` (``targets`` at top level, every doc
+    defaulting to ``source_id``) and the acquisition pilot's
+    ``sig.acq-pilot-return-pass/1`` (``families[].targets[]`` — each sub-family
+    carries ``registered_source``/``candidate_ids``/``document_cap``/
+    ``excluded_candidate_ids``/``retry_budget_per_target``; a target's source
+    resolves ``existing_source`` > the candidate's ``same_source`` queue link
+    > the sub-family's ``registered_source``).
+    """
 
     key: str
-    #: The family's own gated connector source row.
+    #: The family's own gated connector source row (the dossier default; the
+    #: pilot resolves per target and leaves this empty).
     source_id: str
     #: The acquisition-queue candidates the Part VIII clear lands on.
     candidates: tuple[str, ...]
-    #: The ``PART_VIII_SCREENS.json`` family name the draft screen is under.
+    #: The primary ``PART_VIII_SCREENS.json`` family name.
     screen_family: str
     #: The DEFERRALS obligation this pass discharges (when it executes).
     deferral: str
@@ -139,15 +160,29 @@ class Family:
     report_dir: str
     #: The committed packet's filename inside the report directory.
     pass_packet_name: str
-    #: The ops module whose ``build_packet()`` composes the base packet.
-    packet_module: str
-    #: The packet schema's dossier id (for artifact naming).
+    #: The ops module whose ``build_packet()`` composes the base packet —
+    #: ``None`` for the pilot (no dossier packet, no stand-ins to retire;
+    #: the executed pass emits a ``funnel_overlay`` instead).
+    packet_module: str | None
+    #: The committed packet's schema id.
+    packet_schema: str = DOSSIER_PASS_SCHEMA
+    #: Additional drafted screens this family clears (the pilot's second
+    #: sub-family); one ``sig.part-viii-clear/1`` per screen.
+    screen_families: tuple[str, ...] = ()
     result_name: str = "LIVE_PASS_RESULT.json"
     clear_name: str = "PART_VIII_CLEAR.json"
 
     @property
     def report_path(self) -> Path:
         return _REPO / self.report_dir
+
+    @property
+    def all_screen_families(self) -> tuple[str, ...]:
+        return (self.screen_family,) + tuple(self.screen_families)
+
+    @property
+    def is_pilot(self) -> bool:
+        return self.packet_schema == ACQ_PILOT_PASS_SCHEMA
 
 
 FAMILIES: dict[str, Family] = {
@@ -171,6 +206,28 @@ FAMILIES: dict[str, Family] = {
         pass_packet_name="LIVE_RETURN_PASS.json",
         packet_module="ops.tulsa_dossier_packet",
     ),
+    "san-diego": Family(
+        key="san-diego",
+        source_id="dossier_san_diego",
+        candidates=("SRC-003", "SRC-004", "SRC-005"),
+        screen_family="san-diego-municipal",
+        deferral="D-P32.20-1",
+        report_dir="docs/build/reports/p32.20-san-diego-dossier",
+        pass_packet_name="LIVE_RETURN_PASS.json",
+        packet_module="ops.san_diego_dossier_packet",
+    ),
+    "acq-pilot": Family(
+        key="acq-pilot",
+        source_id="",
+        candidates=("SRC-006", "SRC-007", "SRC-011"),
+        screen_family="oklahoma-state",
+        screen_families=("california-state-auditor",),
+        deferral="D-P32.21-1",
+        report_dir="docs/build/reports/p32.21-acquisition-pilot",
+        pass_packet_name="ACQ_PILOT_RETURN_PASS.json",
+        packet_module=None,
+        packet_schema=ACQ_PILOT_PASS_SCHEMA,
+    ),
 }
 
 
@@ -189,25 +246,102 @@ def family(key: str) -> Family:
 
 
 def load_pass_packet(fam: Family, packet: Mapping[str, Any] | None = None) -> dict[str, Any]:
-    """The family's committed ``sig.dossier-live-return-pass/1`` packet."""
+    """The family's committed return-pass packet (``packet_schema``-checked)."""
     if packet is not None:
         out = dict(packet)
     else:
         out = json.loads((fam.report_path / fam.pass_packet_name).read_text(encoding="utf-8"))
-    if out.get("schema") != "sig.dossier-live-return-pass/1":
+    if out.get("schema") != fam.packet_schema:
         raise ValueError(
-            f"{fam.pass_packet_name} is not a sig.dossier-live-return-pass/1 packet "
+            f"{fam.pass_packet_name} is not a {fam.packet_schema} packet "
             f"(schema={out.get('schema')!r})"
         )
     return out
 
 
-def family_sources(fam: Family, packet: Mapping[str, Any]) -> list[str]:
+def _same_source_map(entries: list[Any] | None = None) -> dict[str, str]:
+    """candidate_id → the registry row its ``same_source`` link names (E4-B6 —
+    the gated P34.38 row IS the candidate; acquisition rides that row, never a
+    second onboarding)."""
+    if entries is None:
+        from tasks.acquisition import build_queue
+
+        entries = build_queue()
+    out: dict[str, str] = {}
+    for e in entries:
+        for ln in e.passport.registry_links:
+            if str(ln.kind) == "same_source" or getattr(ln.kind, "value", "") == "same_source":
+                out.setdefault(e.passport.candidate_id, str(ln.source_id))
+    return out
+
+
+def packet_targets(
+    fam: Family,
+    packet: Mapping[str, Any],
+    *,
+    same_source: Mapping[str, str] | None = None,
+) -> list[dict[str, Any]]:
+    """The packet's targets, normalized to one flat row each.
+
+    Every row carries ``source_id`` (``existing_source`` > the candidate's
+    ``same_source`` queue link > the sub-family's ``registered_source`` > the
+    family's own ``source_id``), plus ``candidate_id``/``sub_family``/
+    ``excluded``/``retry_budget`` context the pilot shape declares.
+    """
+    if fam.is_pilot:
+        ss = dict(same_source) if same_source is not None else _same_source_map()
+        rows: list[dict[str, Any]] = []
+        for sub in packet.get("families", []):
+            registered = str(sub.get("registered_source") or "")
+            excluded = {str(c) for c in sub.get("excluded_candidate_ids", [])}
+            budget = sub.get("retry_budget_per_target")
+            cap = sub.get("document_cap")
+            for t in sub.get("targets", []):
+                cid = str(t.get("candidate_id") or "")
+                sid = str(t.get("existing_source") or ss.get(cid) or registered)
+                rows.append(
+                    {
+                        **dict(t),
+                        "source_id": sid,
+                        "candidate_id": cid,
+                        "sub_family": str(sub.get("family") or ""),
+                        "document_cap": int(cap) if cap is not None else None,
+                        "retry_budget": int(
+                            t.get("bounded_retries")
+                            if t.get("bounded_retries") is not None
+                            else (budget if budget is not None else 0)
+                        ),
+                        "excluded": cid in excluded,
+                    }
+                )
+        return rows
+    out = []
+    for t in packet.get("targets", []):
+        out.append(
+            {
+                **dict(t),
+                "source_id": str(t.get("existing_source") or fam.source_id),
+                "candidate_id": str(t.get("candidate_id") or ""),
+                "sub_family": str(t.get("sub_family") or ""),
+                "document_cap": None,
+                "retry_budget": int(t.get("bounded_retries") or 0),
+                "excluded": False,
+            }
+        )
+    return out
+
+
+def family_sources(
+    fam: Family,
+    packet: Mapping[str, Any],
+    *,
+    same_source: Mapping[str, str] | None = None,
+) -> list[str]:
     """Every registry source a packet target rides, in packet order."""
     out: list[str] = []
-    for t in packet.get("targets", []):
-        sid = str(t.get("existing_source") or fam.source_id)
-        if sid not in out:
+    for t in packet_targets(fam, packet, same_source=same_source):
+        sid = t["source_id"]
+        if sid and sid not in out:
             out.append(sid)
     return out
 
@@ -246,6 +380,7 @@ def part_viii_state(
     fam: Family,
     *,
     entries: list[Any] | None = None,
+    candidates: tuple[str, ...] | None = None,
 ) -> dict[str, Any]:
     """The family's queue-candidate preflight state (B-42's ``clear``)."""
     if entries is None:
@@ -255,7 +390,7 @@ def part_viii_state(
     by_id = {e.passport.candidate_id: e.passport for e in entries}
     out: dict[str, Any] = {}
     cleared = True
-    for cid in fam.candidates:
+    for cid in candidates if candidates is not None else fam.candidates:
         p = by_id.get(cid)
         status = str(p.preflight.status.value) if p is not None else "missing"
         out[cid] = {
@@ -316,16 +451,19 @@ LANE_ENFORCEMENTS: dict[str, dict[str, str]] = {
 _LANE_ID_RE = re.compile(r"\bS[1-9]\b")
 
 
-def _draft_screen(fam: Family, screens: Mapping[str, Any] | None = None) -> dict[str, Any]:
+def _draft_screen(
+    fam: Family,
+    screens: Mapping[str, Any] | None = None,
+    screen_family: str | None = None,
+) -> dict[str, Any]:
     """The family's drafted screen from ``PART_VIII_SCREENS.json``."""
+    name = screen_family or fam.screen_family
     if screens is None:
         screens = json.loads((_REPO / SCREENS_PATH).read_text(encoding="utf-8"))
     for s in screens.get("screens", []):
-        if str(s.get("family")) == fam.screen_family:
+        if str(s.get("family")) == name:
             return dict(s)
-    raise KeyError(
-        f"no drafted Part VIII screen for family {fam.screen_family!r} in {SCREENS_PATH}"
-    )
+    raise KeyError(f"no drafted Part VIII screen for family {name!r} in {SCREENS_PATH}")
 
 
 def screen_family(
@@ -333,15 +471,19 @@ def screen_family(
     *,
     screens: Mapping[str, Any] | None = None,
     packet: Mapping[str, Any] | None = None,
+    screen_family_name: str | None = None,
 ) -> dict[str, Any]:
     """Evaluate the family's drafted screen — the B-42 agent screen itself.
 
     Every drafted lane must resolve to a named mechanical enforcement that
     runs at claim build (the extraction guards are the controls — B-42 leaves
     no human check); a lane with none fails the screen closed. The verdict is
-    the agent's, disclosed — never a human review.
+    the agent's, disclosed — never a human review. The pilot clears one screen
+    per sub-family (``screen_family_name``); dossier families clear their
+    single ``screen_family``.
     """
-    draft = _draft_screen(fam, screens)
+    name = screen_family_name or fam.screen_family
+    draft = _draft_screen(fam, screens, name)
     preflight = draft.get("preflight") or {}
     lanes: list[dict[str, Any]] = []
     unenforced: list[str] = []
@@ -371,12 +513,14 @@ def screen_family(
     controls_present = callable(assert_part_viii_safe) and callable(assert_person_naming_permitted)
     pkt = load_pass_packet(fam, packet)
     verdict = "clear" if (not unenforced and controls_present and lanes) else "held"
+    members = {str(m) for m in draft.get("members", [])}
     return {
-        "family": fam.screen_family,
+        "family": name,
         "verdict": verdict,
         "screener": "agent",
         "disclosure": AGENT_CLEAR_DISCLOSURE,
         "authority": B42_AUTHORITY,
+        "members": sorted(members),
         "draft": {
             "status": str(preflight.get("status", "")),
             "screener": str(preflight.get("screener", "")),
@@ -387,8 +531,16 @@ def screen_family(
         "unenforced_lanes": unenforced,
         "controls_verified": controls_present,
         "targets": [
-            {"doc_id": str(t.get("doc_id", "")), "url": str(t.get("url", ""))}
-            for t in pkt.get("targets", [])
+            {
+                "doc_id": str(t.get("doc_id", "")),
+                "url": str(t.get("url", "")),
+                "source_id": str(t.get("source_id") or ""),
+            }
+            for t in packet_targets(fam, pkt)
+            if not fam.is_pilot
+            or not name
+            or t.get("candidate_id") in members
+            or t.get("sub_family") == name
         ],
         "notes": str(preflight.get("notes", "")),
         "held_reason": (
@@ -416,16 +568,21 @@ def clear_record(
     screens: Mapping[str, Any] | None = None,
     packet: Mapping[str, Any] | None = None,
     queue_state: Mapping[str, Any] | None = None,
+    screen_family_name: str | None = None,
 ) -> dict[str, Any]:
     """The ``sig.part-viii-clear/1`` record — the family's B-42 clear, disclosed."""
-    screen = screen_family(fam, screens=screens, packet=packet)
-    state = queue_state if queue_state is not None else part_viii_state(fam)
+    screen = screen_family(
+        fam, screens=screens, packet=packet, screen_family_name=screen_family_name
+    )
+    members = tuple(c for c in fam.candidates if c in set(screen["members"]))
+    scoped = members or fam.candidates
+    state = queue_state if queue_state is not None else part_viii_state(fam, candidates=scoped)
     on = screened_on or datetime.now(UTC).date().isoformat()
     return {
         "schema": PART_VIII_CLEAR_SCHEMA,
-        "family": fam.screen_family,
+        "family": screen["family"],
         "deferral": fam.deferral,
-        "candidates": list(fam.candidates),
+        "candidates": list(scoped),
         "status": screen["verdict"],
         "screener": "agent",
         "screened_on": on,
@@ -448,10 +605,21 @@ def clear_record(
     }
 
 
-def write_clear(fam: Family, out_dir: Path | None = None, **kw: Any) -> Path:
-    """Emit ``PART_VIII_CLEAR.json`` into the family report dir (or ``out_dir``)."""
-    record = clear_record(fam, **kw)
-    out = (out_dir or fam.report_path) / fam.clear_name
+def write_clear(
+    fam: Family,
+    out_dir: Path | None = None,
+    screen_family_name: str | None = None,
+    **kw: Any,
+) -> Path:
+    """Emit the ``sig.part-viii-clear/1`` record into the family report dir
+    (or ``out_dir``). A single-screen family writes ``PART_VIII_CLEAR.json``;
+    the pilot writes ``PART_VIII_CLEAR.<screen>.json`` per sub-family."""
+    record = clear_record(fam, screen_family_name=screen_family_name, **kw)
+    name = fam.clear_name
+    if len(fam.all_screen_families) > 1:
+        stem = name.removesuffix(".json")
+        name = f"{stem}.{record['family']}.json"
+    out = (out_dir or fam.report_path) / name
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(
         json.dumps(record, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
@@ -460,9 +628,53 @@ def write_clear(fam: Family, out_dir: Path | None = None, **kw: Any) -> Path:
     return out
 
 
+def write_clears(fam: Family, out_dir: Path | None = None, **kw: Any) -> list[Path]:
+    """Emit one ``sig.part-viii-clear/1`` per drafted screen the family carries."""
+    return [
+        write_clear(fam, out_dir=out_dir, screen_family_name=name, **kw)
+        for name in fam.all_screen_families
+    ]
+
+
 # --------------------------------------------------------------------------- #
 # Preconditions + the staged pause                                             #
 # --------------------------------------------------------------------------- #
+
+
+def packet_integrity(fam: Family, packet: Mapping[str, Any]) -> dict[str, Any]:
+    """The packet's own declared bounds, checked — a packet that over-runs its
+    caps or smuggles an excluded candidate into the acquired batch fails
+    closed, never fetches.
+
+    For the pilot: every sub-family's targets must stay inside its
+    ``document_cap`` and none may name an ``excluded_candidate_ids`` member;
+    the declared ``protocols`` are the reviewed ceiling (no new protocol
+    families). Dossier packets carry no such caps — integrity is the flat
+    ``targets`` list existing at all.
+    """
+    rows = packet_targets(fam, packet)
+    problems: list[str] = []
+    if fam.is_pilot:
+        by_sub: dict[str, list[dict[str, Any]]] = {}
+        caps: dict[str, int | None] = {}
+        for t in rows:
+            by_sub.setdefault(str(t["sub_family"]), []).append(t)
+            caps.setdefault(str(t["sub_family"]), t.get("document_cap"))
+        for name, ts in by_sub.items():
+            cap = caps.get(name)
+            if cap is not None and len(ts) > cap:
+                problems.append(f"{name}: {len(ts)} targets > document_cap {cap}")
+        for t in rows:
+            if t["excluded"]:
+                problems.append(
+                    f"{t.get('doc_id')}: candidate {t['candidate_id']} is excluded "
+                    "from the acquired batch — never a capture target"
+                )
+            if not t.get("source_id"):
+                problems.append(f"{t.get('doc_id')}: resolves to no registry source")
+    elif not rows:
+        problems.append("the packet declares no targets")
+    return {"ok": not problems, "problems": problems}
 
 
 def preconditions(
@@ -476,16 +688,18 @@ def preconditions(
     """Every leg precondition, evaluated honestly."""
     hg03 = hg03_lines(fam, packet, gate=gate)
     pv = part_viii_state(fam, entries=entries)
+    integrity = packet_integrity(fam, packet)
     go = (operator_go or "").strip()
     return {
         "hg03_lines": hg03,
         "part_viii": pv,
+        "packet_integrity": integrity,
         "operator_go": {
             "present": bool(go),
             "verbatim": go or None,
             "requirement": OPERATOR_GO_REQUIREMENT,
         },
-        "ready": bool(hg03["applied"] and pv["cleared"] and go),
+        "ready": bool(hg03["applied"] and pv["cleared"] and integrity["ok"] and go),
     }
 
 
@@ -503,6 +717,8 @@ def _paused_reasons(pre: Mapping[str, Any]) -> list[str]:
     uncleared = [c for c, s in pre["part_viii"]["candidates"].items() if s["status"] != "clear"]
     if uncleared:
         out.append("part_viii_clear_missing — " + ", ".join(uncleared) + " is not recorded clear")
+    for p in pre.get("packet_integrity", {}).get("problems", []):
+        out.append("packet_integrity — " + p)
     return out
 
 
@@ -586,11 +802,20 @@ def _outcome_row(
 
 def _byte_cap(fam: Family, target: Mapping[str, Any]) -> int | None:
     """The family's document byte bound (a per-target override wins — E4-B4's
-    pattern), else the adapter vocabulary's ``max_document_bytes``."""
+    pattern), else the adapter vocabulary's ``max_document_bytes``.
+
+    A declared ``byte_bound_exception`` (E4-B4 — e.g. the ~16 MB PAB
+    recommendation) is **not** an approved method: absent a numeric override
+    the adapter bound still caps the fetch, so an over-bound capture lands
+    ``too_large``, honest. Pilot ``document_capture`` targets ride the same
+    bound — "resource bounds identical to the replay path".
+    """
     for key in ("byte_bound", "max_document_bytes"):
         if target.get(key) is not None:
             return int(target[key])
-    if str(target.get("kind")) == "clause_fields":
+    if str(target.get("kind")) in ("clause_fields", "document_capture") or target.get(
+        "byte_bound_exception"
+    ):
         from connectors.dossier_documents import resource_bounds
 
         bound = resource_bounds().get("max_document_bytes")
@@ -851,6 +1076,7 @@ def execute(
             gate_cache[sid] = list(gate_fn(sid))
         return gate_cache[sid]
 
+    rows = packet_targets(fam, packet)
     target_rows: dict[str, dict[str, Any]] = {}
     for sid in family_sources(fam, packet):
         for lt_row in live_targets(sid):
@@ -858,32 +1084,103 @@ def execute(
             target_rows[f"{sid}:{key}"] = dict(lt_row)
             target_rows[f"{sid}:{lt_row.get('url')}"] = dict(lt_row)
 
+    # The pilot's per-sub-family document cap is a hard bound — targets past
+    # the cap are refused before any fetch (the committed packet is inside;
+    # the guard is the fail-closed check, never a second selection).
+    sub_count: dict[str, int] = {}
     outcomes: list[dict[str, Any]] = []
     emitted: dict[str, list[dict[str, Any]]] = {}
-    for target in packet.get("targets", []):
-        source_id = str(target.get("existing_source") or fam.source_id)
-        reasons = _gate(source_id)
-        if reasons:
-            outcomes.append(
-                _outcome_row(
-                    target,
-                    source_id,
+    for target in rows:
+        source_id = str(target["source_id"])
+        started = time.monotonic()
+
+        def _row(
+            outcome: str,
+            *,
+            detail: str,
+            _t: Mapping[str, Any] = target,
+            _s: str = source_id,
+        ) -> dict[str, Any]:
+            r = _outcome_row(_t, _s, outcome, detail=detail)
+            if _t.get("candidate_id"):
+                r["candidate_id"] = _t["candidate_id"]
+            if _t.get("sub_family"):
+                r["sub_family"] = _t["sub_family"]
+            return r
+
+        if str(target.get("kind")) == "metadata_only_preflight":
+            # E4-B3 — SRC-027's workbook path is rejected permanently: the
+            # link/label metadata rides the index-page capture; nothing here
+            # is ever fetched (no workbook/XLSX/ZIP/sharedStrings or
+            # row-level plate/person/query transport).
+            out = _row(
+                OUTCOME_METADATA_ONLY,
+                detail=(
+                    "metadata-only under E4-B3 (SRC-027 rejected permanently): "
+                    "link/label metadata rides the index-page capture — the "
+                    "workbook/XLSX/ZIP/sharedStrings or row-level bytes are "
+                    "never transported, so this target is never fetched"
+                ),
+            )
+            out["elapsed_seconds"] = round(time.monotonic() - started, 3)
+            outcomes.append(out)
+            continue
+        if target["excluded"]:
+            out = _row(
+                OUTCOME_NOT_ATTEMPTED,
+                detail=(
+                    f"candidate {target['candidate_id']} is excluded from the "
+                    "acquired batch — never fetched"
+                ),
+            )
+            out["elapsed_seconds"] = round(time.monotonic() - started, 3)
+            outcomes.append(out)
+            continue
+        cap = target.get("document_cap")
+        if target.get("sub_family") and cap is not None:
+            sub = str(target["sub_family"])
+            sub_count[sub] = sub_count.get(sub, 0) + 1
+            if sub_count[sub] > cap:
+                out = _row(
                     OUTCOME_NOT_ATTEMPTED,
                     detail=(
-                        f"source {source_id!r} is not green at the loader gate "
-                        f"({' ; '.join(reasons)}) — the HG-03 line is the "
-                        "operator's, never bypassed"
+                        f"over the sub-family's document_cap {cap} — the "
+                        "reviewed bound is hard, never fetched"
                     ),
                 )
+                out["elapsed_seconds"] = round(time.monotonic() - started, 3)
+                outcomes.append(out)
+                continue
+        reasons = _gate(source_id)
+        if reasons:
+            out = _row(
+                OUTCOME_NOT_ATTEMPTED,
+                detail=(
+                    f"source {source_id!r} is not green at the loader gate "
+                    f"({' ; '.join(reasons)}) — the HG-03 line is the "
+                    "operator's, never bypassed"
+                ),
             )
+            out["elapsed_seconds"] = round(time.monotonic() - started, 3)
+            outcomes.append(out)
             continue
         doc_id = str(target.get("doc_id") or target.get("id") or "")
         trow = target_rows.get(f"{source_id}:{doc_id}") or target_rows.get(
             f"{source_id}:{target.get('url')}"
         )
-        out: dict[str, Any]
         if trow is None:
-            out = _fetch_only_target(fam, target, source_id, fetcher=fetcher, captures=captures)
+            # A reviewed lead with no field map: fetch + archive + outcome,
+            # bounded retries on transport-level unreachable only — a refusal
+            # or a 4xx is recorded, never retried past its basis.
+            budget = int(target.get("retry_budget") or 0)
+            attempts = 0
+            while True:
+                attempts += 1
+                out = _fetch_only_target(fam, target, source_id, fetcher=fetcher, captures=captures)
+                if out["outcome"] != OUTCOME_UNREACHABLE or attempts > budget:
+                    break
+            if attempts > 1:
+                out["attempts"] = attempts
             records: list[dict[str, Any]] = []
         else:
             out, records = _run_connector_target(
@@ -895,6 +1192,10 @@ def execute(
                 captures=captures,
                 source_resolver=resolver,
             )
+        for key in ("candidate_id", "sub_family"):
+            if target.get(key):
+                out[key] = target[key]
+        out["elapsed_seconds"] = round(time.monotonic() - started, 3)
         outcomes.append(out)
         if records:
             # The packet keeps only the reproducible record payload — the
@@ -1044,10 +1345,12 @@ def result_record(
             {
                 "doc_id": str(t.get("doc_id", "")),
                 "url": str(t.get("url", "")),
-                "source_id": str(t.get("existing_source") or fam.source_id),
+                "source_id": str(t.get("source_id") or ""),
+                "candidate_id": str(t.get("candidate_id") or ""),
+                "sub_family": str(t.get("sub_family") or ""),
                 "outcome": OUTCOME_NOT_ATTEMPTED,
             }
-            for t in packet.get("targets", [])
+            for t in packet_targets(fam, packet)
         ],
         "non_goals": list(packet.get("non_goals", [])),
         "note": (
@@ -1112,12 +1415,6 @@ def run_pass(
         gate=gate,
         source_resolver=source_resolver,
     )
-    # Rebuild the packet binding the real captures — stand-ins are no longer
-    # served for any doc the pass attempted.
-    import importlib
-
-    base = importlib.import_module(fam.packet_module).build_packet()
-    rebuilt = rebuild_packet(fam, base, outcomes, emitted=emitted, rebuilt_at=evaluated_at)
     record = result_record(
         fam,
         pkt,
@@ -1127,10 +1424,23 @@ def run_pass(
         evaluated_at=evaluated_at,
         go_recorded_by=go_recorded_by,
     )
-    record["rebuilt_packet"] = {
-        "records": len(rebuilt["records"]),
-        "note": "the rebuilt sig.dossier-packet/1 — stand-ins no longer served",
-    }
+    if fam.packet_module is not None:
+        # Rebuild the packet binding the real captures — stand-ins are no
+        # longer served for any doc the pass attempted.
+        import importlib
+
+        base = importlib.import_module(fam.packet_module).build_packet()
+        rebuilt = rebuild_packet(fam, base, outcomes, emitted=emitted, rebuilt_at=evaluated_at)
+        record["rebuilt_packet"] = {
+            "records": len(rebuilt["records"]),
+            "note": "the rebuilt sig.dossier-packet/1 — stand-ins no longer served",
+        }
+    else:
+        # The pilot carries no dossier packet and no stand-ins — the executed
+        # pass's evidence is the honest outcome set plus the funnel-stage
+        # overlay (capture/extraction/link_support counts + measured seconds)
+        # the re-run folds into the family's funnel rows.
+        record["funnel_overlay"] = funnel_overlay(pkt, outcomes)
     (dest / fam.result_name).write_text(
         json.dumps(record, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
         encoding="utf-8",
@@ -1138,9 +1448,64 @@ def run_pass(
     return record, 0
 
 
+def funnel_overlay(packet: Mapping[str, Any], outcomes: list[dict[str, Any]]) -> dict[str, Any]:
+    """The executed pilot pass's funnel-stage summary — measured, never
+    estimated: per sub-family the capture/extraction/link_support counts the
+    recorded outcomes support plus the measured wall-clock seconds.
+
+    ``extraction`` counts emitted connector claims only (a fetch-only reviewed
+    lead mints nothing off an unreviewed parse); ``link_support`` counts
+    captured docs — the honest residue of a bounded slice.
+    """
+    subs: dict[str, dict[str, Any]] = {}
+    for sub in packet.get("families", []):
+        subs[str(sub.get("family") or "")] = {
+            "candidate_ids": [str(c) for c in sub.get("candidate_ids", [])],
+            "document_cap": sub.get("document_cap"),
+            "capture": {"attempted": 0, "captured": 0},
+            "extraction": {"emitted_records": 0},
+            "link_support": {"captured_docs": 0},
+            "measured_seconds": 0.0,
+            "outcomes": {},
+        }
+    emitted_total = 0
+    for o in outcomes:
+        name = str(o.get("sub_family") or "")
+        if name not in subs:
+            subs[name] = {
+                "candidate_ids": [],
+                "document_cap": None,
+                "capture": {"attempted": 0, "captured": 0},
+                "extraction": {"emitted_records": 0},
+                "link_support": {"captured_docs": 0},
+                "measured_seconds": 0.0,
+                "outcomes": {},
+            }
+        s = subs[name]
+        s["capture"]["attempted"] += 1
+        s["measured_seconds"] += float(o.get("elapsed_seconds") or 0.0)
+        s["outcomes"][o["outcome"]] = s["outcomes"].get(o["outcome"], 0) + 1
+        if o["outcome"] == OUTCOME_CAPTURED:
+            s["capture"]["captured"] += 1
+            s["link_support"]["captured_docs"] += 1
+        emitted_total += int(o.get("emitted_records") or 0)
+        s["extraction"]["emitted_records"] += int(o.get("emitted_records") or 0)
+    return {
+        "basis": (
+            "real captures executed under the operator's verbatim go — "
+            "measured wall-clock seconds per target; a fetch-only reviewed "
+            "lead mints no claim off an unreviewed parse"
+        ),
+        "emitted_records_total": emitted_total,
+        "sub_families": subs,
+    }
+
+
 __all__ = [
+    "ACQ_PILOT_PASS_SCHEMA",
     "AGENT_CLEAR_DISCLOSURE",
     "B42_AUTHORITY",
+    "DOSSIER_PASS_SCHEMA",
     "FAMILIES",
     "LANE_ENFORCEMENTS",
     "LIVE_PASS_RESULT_SCHEMA",
@@ -1150,6 +1515,7 @@ __all__ = [
     "OUTCOME_CAPTURED",
     "OUTCOME_CONTENT_DRIFT",
     "OUTCOME_LINK_ROTTED",
+    "OUTCOME_METADATA_ONLY",
     "OUTCOME_NOT_ATTEMPTED",
     "OUTCOME_RIGHTS_REFUSED",
     "OUTCOME_TOO_LARGE",
@@ -1161,8 +1527,11 @@ __all__ = [
     "execute",
     "family",
     "family_sources",
+    "funnel_overlay",
     "hg03_lines",
     "load_pass_packet",
+    "packet_integrity",
+    "packet_targets",
     "part_viii_state",
     "preconditions",
     "rebuild_packet",
@@ -1170,4 +1539,5 @@ __all__ = [
     "run_pass",
     "screen_family",
     "write_clear",
+    "write_clears",
 ]

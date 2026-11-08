@@ -1,0 +1,138 @@
+{
+  "deferral": "D-P32.20-1",
+  "evaluated_at": "2026-11-08T00:09:30.081644+00:00",
+  "family": "san-diego",
+  "go_recorded_by": null,
+  "non_goals": [
+    "no source rights flip inside this packet",
+    "no operator-gate completion",
+    "no records request sent (drafted_not_sent stays)",
+    "no publication or public release",
+    "no network-audit workbook or row-level content acquisition"
+  ],
+  "note": "no capture ran — the leg is staged, never executed; the committed stand-ins stay the honest posture and nothing here is a live capture",
+  "operator_go": {
+    "present": false,
+    "requirement": "IN-TICKET PAUSE (never pre-authorised under OM-20: capture runs touching Part VIII-screened families); explicit verbatim go for the capture run",
+    "verbatim": null
+  },
+  "operator_go_requirement": "IN-TICKET PAUSE (never pre-authorised under OM-20: capture runs touching Part VIII-screened families); explicit verbatim go for the capture run",
+  "packet_id": "san-diego-dossier-live-pass",
+  "paused_reasons": [
+    "operator_go_absent — IN-TICKET PAUSE (never pre-authorised under OM-20: capture runs touching Part VIII-screened families); explicit verbatim go for the capture run",
+    "hg03_lines_pending — the operator's flips are not applied for: dossier_san_diego (OP-26; the agent never flips a source)"
+  ],
+  "preconditions": {
+    "hg03_lines": {
+      "applied": false,
+      "lines": {
+        "dossier_san_diego": {
+          "note": "refused at the loader gate — the operator's HG-03 flip (prepared on r11/sources-flips, OP-26) is not applied; the agent never flips a source",
+          "reasons": [
+            "ingestion_permitted=false (not flipped by a reviewer, SIG-INGEST-028)",
+            "compact_status='not_contacted' does not permit ingestion (§22.4)",
+            "rights block is UNDETERMINED (SIG-LIC-004)",
+            "no recorded review metadata (rights_reviewed_by/on, SIG-INGEST-038)"
+          ],
+          "status": "pending"
+        }
+      }
+    },
+    "part_viii": {
+      "candidates": {
+        "SRC-003": {
+          "disclosure": "cleared by agent screen, no human review",
+          "notes": "B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z; ADR-185 §2): cleared 2026-11-08 by the P37.16b agent screen — lanes S5 (officer names → the §43.4 naming gate stands), S6 (free-text excerpts → SIG-PUB-014a screen), S7 (incidental private names → extraction-time suppression) are enforced mechanically at claim build (the naming gate + the forbidden-token guard); 'cleared by agent screen, no human review'; record: docs/build/reports/p32.20-san-diego-dossier/PART_VIII_CLEAR.json",
+          "status": "clear"
+        },
+        "SRC-004": {
+          "disclosure": "cleared by agent screen, no human review",
+          "notes": "B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z; ADR-185 §2): cleared 2026-11-08 by the P37.16b agent screen — lanes S6 (free-text excerpts → SIG-PUB-014a screen), S7 (incidental private names → extraction-time suppression), S9 (Ubicquia signature blocks name persons → suppressed at extraction; the §43.4 naming gate on any officer/person name) are enforced mechanically at claim build (the naming gate + the forbidden-token guard); 'cleared by agent screen, no human review'; record: docs/build/reports/p32.20-san-diego-dossier/PART_VIII_CLEAR.json",
+          "status": "clear"
+        },
+        "SRC-005": {
+          "disclosure": "cleared by agent screen, no human review",
+          "notes": "B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z; ADR-185 §2): cleared 2026-11-08 by the P37.16b agent screen — lanes S5 (officer names → the §43.4 naming gate stands), S6 (free-text excerpts → SIG-PUB-014a screen), S7 (incidental private names → extraction-time suppression) are enforced mechanically at claim build (the naming gate + the forbidden-token guard); 'cleared by agent screen, no human review'; record: docs/build/reports/p32.20-san-diego-dossier/PART_VIII_CLEAR.json",
+          "status": "clear"
+        }
+      },
+      "cleared": true
+    }
+  },
+  "schema": "sig.dossier-live-pass-result/1",
+  "status": "prepared_not_executed",
+  "targets": [
+    {
+      "candidate_id": "",
+      "doc_id": "sd-asr-2025-vigilant",
+      "outcome": "not_attempted",
+      "source_id": "dossier_san_diego",
+      "sub_family": "",
+      "url": "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf"
+    },
+    {
+      "candidate_id": "",
+      "doc_id": "sd-ubicquia-agreement-2023",
+      "outcome": "not_attempted",
+      "source_id": "dossier_san_diego",
+      "sub_family": "",
+      "url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf"
+    },
+    {
+      "candidate_id": "",
+      "doc_id": "sd-technology-index",
+      "outcome": "not_attempted",
+      "source_id": "dossier_san_diego",
+      "sub_family": "",
+      "url": "https://www.sandiego.gov/police/data-transparency/technology"
+    },
+    {
+      "candidate_id": "",
+      "doc_id": "sd-pab-index",
+      "outcome": "not_attempted",
+      "source_id": "dossier_san_diego",
+      "sub_family": "",
+      "url": "https://www.sandiego.gov/pab/reports"
+    },
+    {
+      "candidate_id": "",
+      "doc_id": "sd-alpr-program-page",
+      "outcome": "not_attempted",
+      "source_id": "dossier_san_diego",
+      "sub_family": "",
+      "url": "https://www.sandiego.gov/police/data-transparency/technology?tech=alpr"
+    },
+    {
+      "candidate_id": "",
+      "doc_id": "sd-alpr-use-policy",
+      "outcome": "not_attempted",
+      "source_id": "dossier_san_diego",
+      "sub_family": "",
+      "url": "https://www.sandiego.gov/sites/default/files/alpr-use-policy.pdf"
+    },
+    {
+      "candidate_id": "",
+      "doc_id": "sd-pab-recommendation-2025",
+      "outcome": "not_attempted",
+      "source_id": "dossier_san_diego",
+      "sub_family": "",
+      "url": "https://www.sandiego.gov/sites/default/files/pab-final-recommendation-alpr-2025.pdf"
+    },
+    {
+      "candidate_id": "",
+      "doc_id": "sd-council-memo-2025-12-10",
+      "outcome": "not_attempted",
+      "source_id": "dossier_san_diego",
+      "sub_family": "",
+      "url": "https://www.sandiego.gov/city-clerk/officialdocs/council-documents"
+    },
+    {
+      "candidate_id": "",
+      "doc_id": "sd-network-audit-links",
+      "outcome": "not_attempted",
+      "source_id": "dossier_san_diego",
+      "sub_family": "",
+      "url": "https://www.sandiego.gov/police/data-transparency/technology?tech=alpr"
+    }
+  ]
+}

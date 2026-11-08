@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "d9810e6756657cc9dfa01466af5d6b56304646f2",
+  "input_commit": "03340651ec1426b4152e8ff1c529fb7e3498eb28",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -978,7 +978,7 @@
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "74eba7e1bee098e6f4151abc8eb5487b39157eff5276e8203e98e3c20c6e0d94"
+      "sha256": "8a54123cfe49213712b7174d006fddc26c503b1368c53839844e6cba7554e3ad"
     },
     {
       "path": "docs/build/LEDGER.md",
@@ -2705,6 +2705,10 @@
       "sha256": "539bff6003250c4382106b7f385e6de4cb37cf54d5dc6e9a16a49fa849091dab"
     },
     {
+      "path": "docs/build/runs/P37.16b.md",
+      "sha256": "50d2dfeaa66e346be2cb08cff3fa39550aefa347bfa14ea8f0344719c456ae77"
+    },
+    {
       "path": "docs/build/runs/P37.2.md",
       "sha256": "57820a1bd874a611c3c773e7c5581581d1376e0ab103186e886e6aeb2b95045b"
     },
@@ -4290,7 +4294,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "49d0cb9d4d905e1b62c6d2557c5c98882209b8b952344580cc7d879a8aa1c924"
+      "sha256": "b55e61ef6d3b6a5834e680a3c3235178ac8c536e3983e5b292245e2d20dbb04f"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",

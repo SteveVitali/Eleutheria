@@ -1,0 +1,141 @@
+{
+  "deferral": "D-P32.21-1",
+  "evaluated_at": "2026-11-08T00:09:30.420515+00:00",
+  "family": "acq-pilot",
+  "go_recorded_by": null,
+  "non_goals": [
+    "no source rights flip or ingestion_permitted change",
+    "no operator-gate completion or fabricated approval ref",
+    "no records request sent and no outreach",
+    "no spending",
+    "no publication or public release",
+    "no broad blind crawler — targets are the reviewed URLs only",
+    "no workbook/XLSX/ZIP/sharedStrings or row-level plate/person/query transport — SRC-027 stays metadata-only outside the acquired batch"
+  ],
+  "note": "no capture ran — the leg is staged, never executed; the committed stand-ins stay the honest posture and nothing here is a live capture",
+  "operator_go": {
+    "present": false,
+    "requirement": "IN-TICKET PAUSE (never pre-authorised under OM-20: capture runs touching Part VIII-screened families); explicit verbatim go for the capture run",
+    "verbatim": null
+  },
+  "operator_go_requirement": "IN-TICKET PAUSE (never pre-authorised under OM-20: capture runs touching Part VIII-screened families); explicit verbatim go for the capture run",
+  "packet_id": "acq-pilot-p32.21-live-pass",
+  "paused_reasons": [
+    "operator_go_absent — IN-TICKET PAUSE (never pre-authorised under OM-20: capture runs touching Part VIII-screened families); explicit verbatim go for the capture run",
+    "hg03_lines_pending — the operator's flips are not applied for: ok_dac_uved, ok_omes_contracts, ca_state_auditor (OP-26; the agent never flips a source)"
+  ],
+  "preconditions": {
+    "hg03_lines": {
+      "applied": false,
+      "lines": {
+        "ca_state_auditor": {
+          "note": "refused at the loader gate — the operator's HG-03 flip (prepared on r11/sources-flips, OP-26) is not applied; the agent never flips a source",
+          "reasons": [
+            "ingestion_permitted=false (not flipped by a reviewer, SIG-INGEST-028)",
+            "compact_status='not_contacted' does not permit ingestion (§22.4)",
+            "rights block is UNDETERMINED (SIG-LIC-004)",
+            "no recorded review metadata (rights_reviewed_by/on, SIG-INGEST-038)"
+          ],
+          "status": "pending"
+        },
+        "ok_dac_uved": {
+          "note": "refused at the loader gate — the operator's HG-03 flip (prepared on r11/sources-flips, OP-26) is not applied; the agent never flips a source",
+          "reasons": [
+            "ingestion_permitted=false (not flipped by a reviewer, SIG-INGEST-028)",
+            "compact_status='not_contacted' does not permit ingestion (§22.4)",
+            "rights block is UNDETERMINED (SIG-LIC-004)",
+            "no recorded review metadata (rights_reviewed_by/on, SIG-INGEST-038)"
+          ],
+          "status": "pending"
+        },
+        "ok_omes_contracts": {
+          "note": "refused at the loader gate — the operator's HG-03 flip (prepared on r11/sources-flips, OP-26) is not applied; the agent never flips a source",
+          "reasons": [
+            "ingestion_permitted=false (not flipped by a reviewer, SIG-INGEST-028)",
+            "compact_status='not_contacted' does not permit ingestion (§22.4)",
+            "rights block is UNDETERMINED (SIG-LIC-004)",
+            "no recorded review metadata (rights_reviewed_by/on, SIG-INGEST-038)"
+          ],
+          "status": "pending"
+        },
+        "ok_statute": {
+          "note": "green at the loader gate — the operator's HG-03 flip is applied",
+          "reasons": [],
+          "status": "applied"
+        }
+      }
+    },
+    "part_viii": {
+      "candidates": {
+        "SRC-006": {
+          "disclosure": "cleared by agent screen, no human review",
+          "notes": "B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z; ADR-185 §2): cleared 2026-11-08 by the P37.16b agent screen — lanes S6 (free-text excerpts → SIG-PUB-014a screen), S7 (incidental private names → extraction-time suppression) are enforced mechanically at claim build (the §43.4 naming gate + the forbidden-token guard); 'cleared by agent screen, no human review'; record: docs/build/reports/p32.21-acquisition-pilot/PART_VIII_CLEAR.oklahoma-state.json",
+          "status": "clear"
+        },
+        "SRC-007": {
+          "disclosure": "cleared by agent screen, no human review",
+          "notes": "B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z; ADR-185 §2): cleared 2026-11-08 by the P37.16b agent screen — lanes S6 (free-text excerpts → SIG-PUB-014a screen), S7 (incidental staff/private names → extraction-time suppression) are enforced mechanically at claim build (the §43.4 naming gate + the forbidden-token guard); 'cleared by agent screen, no human review'; record: docs/build/reports/p32.21-acquisition-pilot/PART_VIII_CLEAR.oklahoma-state.json",
+          "status": "clear"
+        },
+        "SRC-011": {
+          "disclosure": "cleared by agent screen, no human review",
+          "notes": "B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z; ADR-185 §2): cleared 2026-11-08 by the P37.16b agent screen — lanes S5 (respondent/officer names → the §43.4 naming gate stands), S6 (free-text excerpts → SIG-PUB-014a screen), S7 (incidental private names → extraction-time suppression) are enforced mechanically at claim build (the naming gate + the forbidden-token guard); 'cleared by agent screen, no human review'; record: docs/build/reports/p32.21-acquisition-pilot/PART_VIII_CLEAR.california-state-auditor.json",
+          "status": "clear"
+        }
+      },
+      "cleared": true
+    }
+  },
+  "schema": "sig.dossier-live-pass-result/1",
+  "status": "prepared_not_executed",
+  "targets": [
+    {
+      "candidate_id": "SRC-007",
+      "doc_id": "src-007-target-1",
+      "outcome": "not_attempted",
+      "source_id": "ok_dac_uved",
+      "sub_family": "oklahoma-state",
+      "url": "https://oklahoma.gov/dac/about/staff/about-the-uved-program.html"
+    },
+    {
+      "candidate_id": "SRC-007",
+      "doc_id": "src-007-target-2",
+      "outcome": "not_attempted",
+      "source_id": "ok_statute",
+      "sub_family": "oklahoma-state",
+      "url": "https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582"
+    },
+    {
+      "candidate_id": "SRC-006",
+      "doc_id": "src-006-target-1",
+      "outcome": "not_attempted",
+      "source_id": "ok_omes_contracts",
+      "sub_family": "oklahoma-state",
+      "url": "https://oklahoma.gov/omes/divisions/central-purchasing/agency-resources/statewide-contracts.html"
+    },
+    {
+      "candidate_id": "SRC-006",
+      "doc_id": "src-006-target-2",
+      "outcome": "not_attempted",
+      "source_id": "ok_omes_contracts",
+      "sub_family": "oklahoma-state",
+      "url": "https://oklahoma.gov/omes/services/purchasing/solicitations/0900000569.html"
+    },
+    {
+      "candidate_id": "SRC-011",
+      "doc_id": "src-011-target-1",
+      "outcome": "not_attempted",
+      "source_id": "ca_state_auditor",
+      "sub_family": "california-state-auditor",
+      "url": "https://information.auditor.ca.gov/reports/2019-118/index.html"
+    },
+    {
+      "candidate_id": "SRC-011",
+      "doc_id": "src-011-target-2",
+      "outcome": "not_attempted",
+      "source_id": "ca_state_auditor",
+      "sub_family": "california-state-auditor",
+      "url": "https://information.auditor.ca.gov/reports/2019-118/surveys.html"
+    }
+  ]
+}

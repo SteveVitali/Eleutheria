@@ -197,9 +197,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     dlp = sub.add_parser(
         "dossier-live-pass",
-        help="P37.16a (D-P32.18-1 / D-P32.19-1): run — or stage — a dossier "
-        "family's bounded sig.dossier-live-return-pass/1. The pass executes "
-        "only on the operator's explicit verbatim go (IN-TICKET PAUSE, never "
+        help="P37.16a/b (D-P32.18-1 / D-P32.19-1 / D-P32.20-1 / D-P32.21-1): "
+        "run — or stage — a family's bounded return pass "
+        "(sig.dossier-live-return-pass/1 for okc | tulsa | san-diego; "
+        "sig.acq-pilot-return-pass/1 for acq-pilot). The pass executes only "
+        "on the operator's explicit verbatim go (IN-TICKET PAUSE, never "
         "pre-authorised under OM-20) with every HG-03 line applied and the "
         "family's Part VIII clear recorded; otherwise nothing fetches, the "
         "sig.dossier-live-pass-result/1 records prepared_not_executed, and "
@@ -208,8 +210,8 @@ def build_parser() -> argparse.ArgumentParser:
     dlp.add_argument(
         "--family",
         required=True,
-        choices=["okc", "tulsa"],
-        help="the dossier family (this split: okc | tulsa)",
+        choices=["okc", "tulsa", "san-diego", "acq-pilot"],
+        help="the live-pass family (okc | tulsa | san-diego | acq-pilot)",
     )
     dlp.add_argument(
         "--out",
@@ -240,13 +242,19 @@ def build_parser() -> argparse.ArgumentParser:
 
     dpc = sub.add_parser(
         "dossier-part-viii-clear",
-        help="P37.16a (B-42 'Agent clears, disclosed', ADR-185 §2): evaluate "
-        "a dossier family's drafted Part VIII screen against its mechanical "
-        "enforcements and emit the sig.part-viii-clear/1 record — disclosed "
-        "'cleared by agent screen, no human review'. --check verifies the "
-        "queue rows carry the recorded clear",
+        help="P37.16a/b (B-42 'Agent clears, disclosed', ADR-185 §2): evaluate "
+        "a family's drafted Part VIII screen(s) against their mechanical "
+        "enforcements and emit the sig.part-viii-clear/1 record(s) — disclosed "
+        "'cleared by agent screen, no human review' (the pilot emits one "
+        "record per drafted screen). --check verifies the queue rows carry "
+        "the recorded clear",
     )
-    dpc.add_argument("--family", required=True, choices=["okc", "tulsa"], help="the dossier family")
+    dpc.add_argument(
+        "--family",
+        required=True,
+        choices=["okc", "tulsa", "san-diego", "acq-pilot"],
+        help="the live-pass family",
+    )
     dpc.add_argument(
         "--out",
         default=None,
@@ -3583,7 +3591,12 @@ def _cmd_dossier_live_pass(args: argparse.Namespace) -> int:
 
 
 def _cmd_dossier_part_viii_clear(args: argparse.Namespace) -> int:
-    from .dossier_live_pass import clear_record, family, part_viii_state, write_clear
+    from .dossier_live_pass import (
+        clear_record,
+        family,
+        part_viii_state,
+        write_clears,
+    )
 
     fam = family(args.family)
     if args.check:
@@ -3595,15 +3608,19 @@ def _cmd_dossier_part_viii_clear(args: argparse.Namespace) -> int:
             print(f"  {cid}: preflight {st['status']}{' — OK' if good else ' — not clear'}")
         print(f"  part-viii clear recorded: {ok} ({state['candidates'] and 'disclosed'})")
         return 0 if ok else 2
-    out = write_clear(
+    paths = write_clears(
         fam,
         out_dir=Path(args.out) if args.out else None,
         screened_on=args.screened_on,
     )
-    record = clear_record(fam, screened_on=args.screened_on)
-    print(f"  {record['schema']}: {out}")
-    print(f"  status: {record['status']} — {record['disclosure']}")
-    return 0 if record["status"] == "clear" else 3
+    worst = 0
+    for name, out in zip(fam.all_screen_families, paths, strict=True):
+        record = clear_record(fam, screened_on=args.screened_on, screen_family_name=name)
+        print(f"  {record['schema']}: {out}")
+        print(f"  status: {record['status']} — {record['disclosure']}")
+        if record["status"] != "clear":
+            worst = 3
+    return worst
 
 
 def _cmd_seed_correct(args: argparse.Namespace) -> int:
