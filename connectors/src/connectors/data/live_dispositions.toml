@@ -107,6 +107,38 @@ disposition = "reference"
 [sources.civicplus]
 disposition = "link_only"
 
+[sources.datalib_aaron_swartz_day]
+disposition = "link_only"
+note = "P37.13 §22.7 roster registration (SIG-INGEST-041)"
+
+[sources.datalib_atlas_border_communities]
+disposition = "link_only"
+note = "P37.13 §22.7 roster registration (SIG-INGEST-041)"
+
+[sources.datalib_clearview_ai_table]
+disposition = "link_only"
+note = "P37.13 §22.7 roster registration (SIG-INGEST-041)"
+
+[sources.datalib_federally_funded_bwc]
+disposition = "link_only"
+note = "P37.13 §22.7 roster registration (SIG-INGEST-041)"
+
+[sources.datalib_mediajustice_em_map]
+disposition = "link_only"
+note = "P37.13 §22.7 roster registration (SIG-INGEST-041)"
+
+[sources.datalib_public_safety_drones]
+disposition = "link_only"
+note = "P37.13 §22.7 roster registration (SIG-INGEST-041)"
+
+[sources.datalib_ring_neighbors_partnerships]
+disposition = "link_only"
+note = "P37.13 §22.7 roster registration (SIG-INGEST-041)"
+
+[sources.datalib_who_has_your_face]
+disposition = "link_only"
+note = "P37.13 §22.7 roster registration (SIG-INGEST-041)"
+
 [sources.deflock]
 disposition = "reference"
 

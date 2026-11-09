@@ -1,0 +1,9 @@
+query_id,engine_or_tool,query_or_url,run_at,hits_kept,notes
+P37.13-Q001,WebFetch,"https://www.atlasofsurveillance.org/data-library",2026-11-07T06:45Z,42,index enumerated — 42 dataset sections found
+P37.13-Q002,urllib GET,"https://www.atlasofsurveillance.org/data-library",2026-11-07T06:46Z,42,"byte-exact fetch: 55,418 B; sha256 0a0d364c05f00f31… (truncated); title/link pairs parsed per entry"
+P37.13-Q003,spec-parse,"docs/research/_meta/spec_src/51b_partIV_s22_6_seeded_registry.md §22.7",2026-11-07,16,"the roster table parses to 16 rows (F2a-verdicts.md confirms 16 not 17)"
+P37.13-Q004,spec-parse,"docs/research/_meta/spec_src/51b_partIV_s22_6_seeded_registry.md §22.6 H2",2026-11-07,7,"SIG-INGEST-048 project table: sm_alpr, eyes_off_eugene, panopti_ca, private_eyes, flock_finder, flock_ajith_fyi, ringmast4r_flock — all already registered"
+P37.13-Q005,registry-diff,"connectors/src/connectors/data/sources.toml",2026-11-07,602,"602 registered ids before this ticket; per-roster-entry adjudication below"
+P37.13-Q006,registry-lookup,"statrep_us_upturn_mass_extraction_2020 + statrep_us_wiretap_summary_tables + statrep_ca_california_auditor_alpr + ca_state_auditor",2026-11-07,4,"ACQ-01 generated rows (P35.6) already cover three roster entries the F2a verdict counted missing — mapping recorded, no duplicate row written"
+P37.13-Q007,registry-lookup,"camreg_us_body_worn_camera + grant_nj_oag_bwc + grant_ma_eopss_bwc + grant_oh_ocjs_bwc + faa_drone_waivers + gao_surveillance_reports",2026-11-07,6,"related-but-distinct artifacts: related: dispositions recorded on the candidate rows, never counted as roster covers"
+P37.13-Q008,registry-diff,"data/data_library_roster.toml vs registry()",2026-11-07,16,"every roster entry's covers resolve — 11 pre-registered + 8 new LINK rows; sig-connectors roster + validate green"

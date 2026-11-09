@@ -18914,3 +18914,257 @@ redistributable = false
 lane = "unknown"
 evidence = "no J4 redistribution-matrix row recorded for this registry source (redistribution.csv covers 342 of the registered ids); undeclared — the fail-closed default stands and the interim rights-record basis never reaches public"
 review_needed = true
+
+# --- P37.13 (SIG-INGEST-041, row 435): the §22.7 Data Library roster ---------
+# The EFF Data Library index (atlas_data_library) is the Phase 17 ingestion
+# backlog; every roster entry is registered LINK until its rights are reviewed
+# (SIG-INGEST-041). Eight entries were already covered — eff_data_driven,
+# aclu_cell_site_simulators, the ACQ-01 generated rows
+# (statrep_us_upturn_mass_extraction_2020, statrep_us_wiretap_summary_tables,
+# statrep_ca_california_auditor_alpr alongside ca_state_auditor) and the three
+# P21.8 coarse-international rows (carnegie_ai_gsi,
+# facial_recognition_world_map, aspi_mapping_chinas_tech_giants). The eight
+# rows below register the remainder. Each stays ingestion_permitted=false —
+# the operator's HG-03 line flips them, never this ticket — and every one
+# carries rights UNDETERMINED. The roster mapping itself lives in
+# data/data_library_roster.toml (sig.data-library-roster/1); the discovery
+# sweep that produced it is docs/build/reports/discovery-sweep/2026-11-07/.
+
+[sources.datalib_who_has_your_face]
+name = "Who Has Your Face? (EFF — government photo databases shared for facial recognition)"
+publisher_type = "ngo"
+source_kind = "upstream_project"
+homepage_url = "https://whohasyourface.org/"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+auth_model = "none"
+cadence = "unknown (index lists 'Last Updated: March 19, 2020')"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.13 §22.7 roster registration (SIG-INGEST-041; F2a group 12). EFF dataset: which state officials — often driver-licence agencies — share your image or allow it for facial-recognition lookups; dataset CSV at whohasyourface.org. STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line; rights UNDETERMINED (EFF site licence CC-BY-4.0 is the eff_data_driven precedent's lead, not a resolved record for this artifact). Spec roster: 'Who Has Your Face? | Face recognition; reference databases | priority 2'."
+publisher = "Electronic Frontier Foundation"
+jurisdiction_scheme = "iso.3166_2"
+jurisdiction = "US"
+[sources.datalib_who_has_your_face.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.datalib_who_has_your_face.redistribution]
+lane = "link-only"
+evidence = "sources.toml [sources.datalib_who_has_your_face] (custody LINK, redistributable=false); attribution: nothing published"
+evidence_uri = "docs/build/reports/discovery-sweep/2026-11-07/SWEEP.md#datalib_who_has_your_face"
+decision_authority = "P37.13 (§22.7 roster; LINK custody by construction)"
+part_viii_class = "none-known"
+review_needed = false
+
+
+[sources.datalib_clearview_ai_table]
+name = "Clearview AI Table (BuzzFeed News — entities whose employees ran Clearview facial-recognition searches)"
+publisher_type = "journalism"
+source_kind = "news_publisher"
+homepage_url = "https://www.buzzfeednews.com/article/ryanmac/facial-recognition-local-police-clearview-ai-table"
+default_tier = "R4"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+auth_model = "none"
+cadence = "unknown (index lists 'Last Updated: April 6, 2021')"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.13 §22.7 roster registration (SIG-INGEST-041; F2a group 12). BuzzFeed News searchable table of taxpayer-funded entities (tribal/local/state police, university police, DAs' offices, federal agencies) whose employees ran ≥1 Clearview scan as of Feb 2020, from a leaked usage list + public-records corroboration. STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line; rights UNDETERMINED. Spec roster: 'Clearview AI usage table (BuzzFeed) | Face recognition | priority 2'."
+publisher = "BuzzFeed News"
+jurisdiction_scheme = "iso.3166_2"
+jurisdiction = "US"
+[sources.datalib_clearview_ai_table.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.datalib_clearview_ai_table.redistribution]
+lane = "link-only"
+evidence = "sources.toml [sources.datalib_clearview_ai_table] (custody LINK, redistributable=false); attribution: nothing published"
+evidence_uri = "docs/build/reports/discovery-sweep/2026-11-07/SWEEP.md#datalib_clearview_ai_table"
+decision_authority = "P37.13 (§22.7 roster; LINK custody by construction)"
+part_viii_class = "none-known"
+review_needed = false
+
+
+[sources.datalib_public_safety_drones]
+name = "Public Safety Drones (Bard College Center for the Study of the Drone — law-enforcement / fire UAS dataset)"
+publisher_type = "academic"
+source_kind = "academic"
+homepage_url = "https://dronecenter.bard.edu/projects/public-safety-drones-project/public-safety-drones-3rd-edition/"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+auth_model = "none"
+cadence = "unknown (index lists 'Last Updated: March 2020')"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.13 §22.7 roster registration (SIG-INGEST-041; F2a group 12). Bard CSD's comprehensive dataset of drones operated by US law-enforcement and fire agencies (3rd ed.). Related, never the same artifact: the agency drone flight-log camreg_* rows and the state drone-report statrep_* rows are per-jurisdiction statutory feeds; this is the national curated dataset the roster names. STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line; rights UNDETERMINED. Spec roster: 'Public-safety drone datasets | robotics-aerial | priority 6'."
+publisher = "Bard College — Center for the Study of the Drone"
+jurisdiction_scheme = "iso.3166_2"
+jurisdiction = "US"
+[sources.datalib_public_safety_drones.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.datalib_public_safety_drones.redistribution]
+lane = "link-only"
+evidence = "sources.toml [sources.datalib_public_safety_drones] (custody LINK, redistributable=false); attribution: nothing published"
+evidence_uri = "docs/build/reports/discovery-sweep/2026-11-07/SWEEP.md#datalib_public_safety_drones"
+decision_authority = "P37.13 (§22.7 roster; LINK custody by construction)"
+part_viii_class = "none-known"
+review_needed = false
+
+
+[sources.datalib_ring_neighbors_partnerships]
+name = "Ring/Neighbors Partnerships (EFF-compiled map of Ring law-enforcement partnerships — historical)"
+publisher_type = "ngo"
+source_kind = "upstream_project"
+homepage_url = "https://blog.ring.com/2019/08/28/working-together-for-safer-neighborhoods-introducing-the-neighbors-active-law-enforcement-map/"
+default_tier = "R4"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+auth_model = "none"
+cadence = "ended (Ring retired the public partnership map; the spec records 'Category retired 2024 — absence ≠ program ended', SIG-ONTO-059)"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.13 §22.7 roster registration (SIG-INGEST-041; F2a group 12). EFF-compiled dataset of Ring↔law-enforcement partnerships — partnership dates and footage-request counts; Ring retired the public map, so the artifact is a historical dataset whose absence is never read as the program ending (SIG-ONTO-059). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line; rights UNDETERMINED. Spec roster: 'Ring / Neighbors historical partnerships | Private-camera request | priority 1'."
+publisher = "Electronic Frontier Foundation (upstream: Ring Inc.)"
+jurisdiction_scheme = "iso.3166_2"
+jurisdiction = "US"
+[sources.datalib_ring_neighbors_partnerships.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.datalib_ring_neighbors_partnerships.redistribution]
+lane = "link-only"
+evidence = "sources.toml [sources.datalib_ring_neighbors_partnerships] (custody LINK, redistributable=false); attribution: nothing published"
+evidence_uri = "docs/build/reports/discovery-sweep/2026-11-07/SWEEP.md#datalib_ring_neighbors_partnerships"
+decision_authority = "P37.13 (§22.7 roster; LINK custody by construction)"
+part_viii_class = "none-known"
+review_needed = false
+
+
+[sources.datalib_federally_funded_bwc]
+name = "Federally Funded Body-Worn Cameras (EFF-compiled — DOJ/BJA grant-recipient agencies)"
+publisher_type = "ngo"
+source_kind = "upstream_project"
+homepage_url = "https://www.eff.org/document/bureau-justice-assistance-body-worn-camera-program-data"
+default_tier = "R4"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+auth_model = "none"
+cadence = "unknown (index lists 'Last Updated: 2020')"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.13 §22.7 roster registration (SIG-INGEST-041; F2a group 12). EFF's dataset, scraped and compiled from BJA PDFs and pages, of the local law-enforcement agencies DOJ funded for body-worn cameras. Related, never the same artifact: camreg_us_body_worn_camera is the OJP-hosted BWC Toolkit resource dataset and the state grant_*_bwc rows are per-state programs. STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line; rights UNDETERMINED. Spec roster: 'Federally funded body cameras | Body-worn video (§13.1) | priority 5'."
+publisher = "Electronic Frontier Foundation (upstream: US DOJ Bureau of Justice Assistance)"
+jurisdiction_scheme = "iso.3166_2"
+jurisdiction = "US"
+[sources.datalib_federally_funded_bwc.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.datalib_federally_funded_bwc.redistribution]
+lane = "link-only"
+evidence = "sources.toml [sources.datalib_federally_funded_bwc] (custody LINK, redistributable=false); attribution: nothing published"
+evidence_uri = "docs/build/reports/discovery-sweep/2026-11-07/SWEEP.md#datalib_federally_funded_bwc"
+decision_authority = "P37.13 (§22.7 roster; LINK custody by construction)"
+part_viii_class = "none-known"
+review_needed = false
+
+
+[sources.datalib_aaron_swartz_day]
+name = "Aaron Swartz Day Police Surveillance Project (crowdsourced public-records campaign corpus)"
+publisher_type = "crowdsourced"
+source_kind = "community"
+homepage_url = "https://www.aaronswartzday.org/psp/"
+default_tier = "R4"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+auth_model = "none"
+cadence = "unknown (index lists 'Last Updated: September 17, 2020')"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.13 §22.7 roster registration (SIG-INGEST-041; F2a group 12). Records compiled by the ongoing Aaron Swartz Day / International Hackathon campaign filing public-records requests with local law enforcement (primarily California) on surveillance technology; document corpus at aaronswartzday.org/asdpsp-alldocs-dec2019. STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line; rights UNDETERMINED. Spec roster: 'Aaron Swartz Day Police Surveillance Project | Multi | priority 7'."
+publisher = "Aaron Swartz Day and International Hackathon"
+jurisdiction_scheme = "iso.3166_2"
+jurisdiction = "US"
+[sources.datalib_aaron_swartz_day.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.datalib_aaron_swartz_day.redistribution]
+lane = "link-only"
+evidence = "sources.toml [sources.datalib_aaron_swartz_day] (custody LINK, redistributable=false); attribution: nothing published"
+evidence_uri = "docs/build/reports/discovery-sweep/2026-11-07/SWEEP.md#datalib_aaron_swartz_day"
+decision_authority = "P37.13 (§22.7 roster; LINK custody by construction)"
+part_viii_class = "none-known"
+review_needed = false
+
+
+[sources.datalib_mediajustice_em_map]
+name = "Electronic Monitoring Hotspot Map (MediaJustice Challenging E-Carceration project)"
+publisher_type = "ngo"
+source_kind = "upstream_project"
+homepage_url = "https://mediajustice.org/electronic-monitoring-hotspots/"
+default_tier = "R4"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+auth_model = "none"
+cadence = "unknown (index lists 'Last Updated: March 19, 2021')"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.13 §22.7 roster registration (SIG-INGEST-041; F2a group 12). MediaJustice's Challenging E-Carceration project findings — national trends and local struggles over electronic monitoring and punitive technologies; map artifact. Part VIII is binding: the map is used as program/jurisdiction context, never to locate or name a monitored person. STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line; rights UNDETERMINED. Spec roster: 'Electronic monitoring (MediaJustice) | person-monitoring | priority 7'."
+publisher = "MediaJustice"
+jurisdiction_scheme = "iso.3166_2"
+jurisdiction = "US"
+[sources.datalib_mediajustice_em_map.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.datalib_mediajustice_em_map.redistribution]
+lane = "link-only"
+evidence = "sources.toml [sources.datalib_mediajustice_em_map] (custody LINK, redistributable=false); attribution: nothing published"
+evidence_uri = "docs/build/reports/discovery-sweep/2026-11-07/SWEEP.md#datalib_mediajustice_em_map"
+decision_authority = "P37.13 (§22.7 roster; LINK custody by construction)"
+part_viii_class = "none-known"
+review_needed = false
+
+
+[sources.datalib_atlas_border_communities]
+name = "Atlas of Surveillance: Border Communities (EFF — surveillance in the 23 US counties on the Mexico border)"
+publisher_type = "ngo"
+source_kind = "upstream_project"
+homepage_url = "https://www.eff.org/pages/atlas-surveillance-us-mexico-border-communities"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+auth_model = "none"
+cadence = "unknown (index lists 'Last Updated: January 10, 2020')"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.13 §22.7 roster registration (SIG-INGEST-041; F2a group 12). EFF's dataset of local, state and federal surveillance — incl. checkpoint/covert ALPR — in the 23 US counties along the southern border; a curated subset view of the Atlas research. STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line; rights UNDETERMINED (the eff_data_driven CC-BY-4.0 precedent is a lead, not a resolved record). Spec roster: 'Atlas Border Communities | ALPR (checkpoint/covert) | priority 1'."
+publisher = "Electronic Frontier Foundation"
+jurisdiction_scheme = "iso.3166_2"
+jurisdiction = "US"
+[sources.datalib_atlas_border_communities.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.datalib_atlas_border_communities.redistribution]
+lane = "link-only"
+evidence = "sources.toml [sources.datalib_atlas_border_communities] (custody LINK, redistributable=false); attribution: nothing published"
+evidence_uri = "docs/build/reports/discovery-sweep/2026-11-07/SWEEP.md#datalib_atlas_border_communities"
+decision_authority = "P37.13 (§22.7 roster; LINK custody by construction)"
+part_viii_class = "none-known"
+review_needed = false

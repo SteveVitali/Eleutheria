@@ -8,11 +8,11 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P37.13
-lastCompleted: P37.70
+nextTicket: P37.14
+lastCompleted: P37.13
 blockedOn: (nothing)
 pauseRequested: false
-returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.70,P37.71
+returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.70,P37.71
 manifest: docs/tickets/00_MANIFEST.md
 canonicalSpec: docs/2_canonical_design_spec.md
 memoryRoot: docs/build
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P37.70-keyed-au-traffic-camera-apis
+chainTip: r11/P37.13-registry-completeness-and-discovery-sweep
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-07T06:30Z
+updatedAt: 2026-11-07T14:30Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -490,6 +490,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | P37.11 | D-P37.11-1 | `hosted` write; OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); window `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + SIG_SAM_GOV_KEY | nothing — leg-runner exports env + runs; the row closes only after two weekly fires advance the cursor | `implement-spec spec=docs/tickets/432_P37.11__sam-gov-sweep-resume.md live_verification=true` |
 | P37.12 | D-P37.12-1 | `hosted` write; OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); window `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + the sig-us511-*-key secrets (OP-13/HG-09) + the HG-03 flips | OP-13 key registration + the HG-03 rights flips — then the leg-runner exports env + runs | `implement-spec spec=docs/tickets/433_P37.12__keyed-us-511-wiring.md live_verification=true` |
 | P37.70 | D-P37.70-1 | `hosted` write; OM-20 GATE-G6 §4 (expiry: acceptance sitting); `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + `sig-qldtraffic-key`/`sig-nsw-live-key` (OP-13/HG-09) + HG-03 | OP-13 key registration + the HG-03 rights flips — then the leg-runner exports env + runs | `implement-spec spec=docs/tickets/434_P37.70__keyed-au-traffic-camera-apis.md live_verification=true` |
+| P37.13 | D-P37.13-1 | no gate — register-or-drop triage for the 23 `candidate-unregistered` Data Library datasets the 2026-11-07 sweep recorded (each stays unregistered until a ticket or the operator dispositions it) | the next `sig.discovery-sweep/1` run or an acquisition-plan ticket — each candidate carries a `registered:`/`new-linked:`/`related:` disposition in the next candidates.csv diff | the next `sig.discovery-sweep/1` run (the recurring sweep) or the acquisition-plan ticket that takes the 23 candidates — `docs/build/reports/discovery-sweep/2026-11-07/candidates.csv` |
 
 Sources: OPERATIONAL_READINESS §(f3) + `UNIVERSE_DISPOSED.csv` + plan §9.2/§8.6 + `data/round11_plan.csv`. Non-row homes: 9 ticket + 9 later-phase + 7 decision + 2 already-done. Keying (T5 γ) = LANDED R10 ticket (archived `reports/memory-repair/return_pass_cells_pre-P36.49-orient.txt`).
 
@@ -1593,3 +1594,6 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-07 — P37.70 done — row 434 `Kind: ticket` — keyed AU traffic-camera APIs: QLDTraffic + NSW `Live Traffic` (D-SOURCES.8-2 a; E4-R4c b engineering half; `live_verification=false`, `Live stage: none`, OM-20 pre-authorised GATE-G6 §4): two `keyed_api`/`access_restricted` `[[enumerated]]` AU rows → `[[targets]]` under two declared-contract GeoJSON kinds (`qldtraffic_geojson` `apikey` wire param via `auth_param` + `nsw_live_geojson` `Authorization: apikey` header; strict `FeatureCollection` parse → `ContentDrift`) · `camreg_qldc_au` supersession recorded, nothing deleted · two gated sources (602, all `ingestion_permitted=false`) · two `state=paused` cadence seats + `sig-{qldtraffic,nsw-live}-key` on `sig-ingest-rt` (expected_job_count 112) · ADR-238 · `D-P37.70-1` opened (keyed `live` legs QUEUED `prepared_not_executed`; event `D-P37.70-1:e0`) · `main` untouched · chainTip → r11/P37.70-keyed-au-traffic-camera-apis · next → P37.13 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-07 — P37.70 post-closeout record — head `09f60a9a` 5/5 green head-bound (`ci: pass #458@09f60a9`, run 42343317952, read 06:30Z: docs 2m47s · security 33s · composed 4m36s · python 17m39s · web 54m37s) · `ci_boundary.py` exit 3 = carried waived-ancestor `#455@10ff29d` web (run 42307167116 — the #299 precedent; the new head itself 5/5) · `main` untouched · deferrals +1/−0 · next → P37.13 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-07 — dispatch boundary-confirm — P37.70's green read recorded (`ci: pass #458@09f60a9`, run 42343317952; `D-P37.70-1` opened — keyed AU legs queued `prepared_not_executed`, OP-13 keys absent); `blockedOn` (nothing); chainTip `r11/P37.70-keyed-au-traffic-camera-apis` · nextTicket P37.13 (row 435 — registry-completeness + discovery sweep; live_verification=false; gate none; dep landed) — fresh implement-spec sub-agent on `r11/P37.13-registry-completeness-and-discovery-sweep` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-07 — P37.13 done — row 435 `Kind: ticket` — registry completeness + recurring discovery sweep (R11-SRC-04; SIG-INGEST-041 + SIG-INGEST-048; `live_verification=false`, `Live stage: none`, gate none): the §22.7 Data Library roster is 16/16 registered — the F2a "11 missing" resolves as **8 new `datalib_*` LINK rows + 3 ACQ-01-pre-covered** (`statrep_us_upturn_mass_extraction_2020`, `statrep_us_wiretap_summary_tables`, CA auditor pair); every new row `custody_posture=LINK`, `ingestion_permitted=false`, rights UNDETERMINED — HG-03 flips stay the operator's · `sig.data-library-roster/1` (`data_library_roster.toml`) + `connectors.data_library_roster` + `sig-connectors roster` + the 9-test roster suite (spec-source parse, covers resolve, LINK+gated) · `sig.discovery-sweep/1` + first dated sweep `2026-11-07/` (index 55,418 B sha256 `0a0d364c…` — 42 datasets, 19 registered, 23 `candidate-unregistered`) with query log + candidates.csv · ADR-239 + BL-087 home · `D-P37.13-1` opened (23-candidate triage; event `D-P37.13-1:e0`) · `main` untouched · chainTip → r11/P37.13-registry-completeness-and-discovery-sweep · next → P37.14 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-07 — P37.13 post-closeout record — head `9f437f0a` 5/5 green head-bound (`ci: pass #459@9f437f0`, run 42350872693, read 14:30Z: docs 1m55s · security 35s · composed 4m25s · python 17m47s · web 55m13s) · `ci_boundary.py` exit 0 — the head itself 5/5, no carried waived ancestor; web attempt-1 job `128338523395` was cancelled at the GitHub 360-min platform timeout 13:20:47Z during National Lighthouse (runner-side stall — prior run's full web leg was ~55 min) and `gh run rerun --failed` re-ran it to `success` at 14:28:23Z on the same head SHA (attempt 2, `128417939100`) · `main` untouched · deferrals +1/−0 · next → P37.14 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-07 — dispatch boundary-confirm — P37.13's green read recorded (`ci: pass #459@9f437f0`, run 42350872693 — web attempt-1 platform-timed-out at 360-min on National Lighthouse, attempt-2 rerun green same SHA; `D-P37.13-1` opened — discovery-sweep cadence); `blockedOn` (nothing); chainTip `r11/P37.13-registry-completeness-and-discovery-sweep` · nextTicket P37.14 (row 436 — statute-seeded records leads; live_verification=false; gate none; dep landed) — fresh implement-spec sub-agent on `r11/P37.14-statute-seeded-records-leads` · harness: devin-desktop/swe-2-high/orchestrator

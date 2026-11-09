@@ -1,0 +1,192 @@
+# SPDX-License-Identifier: Apache-2.0
+# sig.data-library-roster/1 — the §22.7 EFF Data Library specialist-dataset
+# backlog (SIG-INGEST-041; P37.13, row 435). One [[entry]] per spec-roster row,
+# in spec-table order; `spec_dataset` is the spec's dataset cell verbatim,
+# `dataset` the entry's title on the Data Library index as enumerated by the
+# 2026-11-07 discovery sweep (docs/build/reports/discovery-sweep/2026-11-07/).
+# `covers` names the registry source id(s) in sources.toml that carry the
+# entry — a roster row with no covering source fails the roster test
+# (tests/connectors/test_data_library_roster.py). `registered_by` records which
+# ticket registered the covering row; `mapping` is `exact` when the covering
+# row is the same upstream artifact and `equivalent` when it is the same
+# dataset from the authoritative upstream (the index links a mirror).
+schema = "sig.data-library-roster/1"
+index_source = "atlas_data_library"
+index_url = "https://www.atlasofsurveillance.org/data-library"
+spec_ref = "docs/2_canonical_design_spec.md §22.7 (SIG-INGEST-041)"
+
+[[entry]]
+roster_key = "vigilant-data-driven-alpr"
+spec_dataset = "Vigilant / Data Driven ALPR data"
+dataset = "Data Driven - Automated License Plate Reader Data"
+technology = "ALPR (vendor-neutral, historical)"
+priority = "1 — also Phase 12"
+mapping = "exact"
+covers = ["eff_data_driven"]
+registered_by = "P21.1-era registry (flipped GL-GATE-03 2026-09-15; data_driven connector P21.8)"
+note = "The 2018 EFF/MuckRock Data Driven release — Vigilant ALPR usage + sharing reports."
+
+[[entry]]
+roster_key = "who-has-your-face"
+spec_dataset = "Who Has Your Face?"
+dataset = "Who Has Your Face?"
+technology = "Face recognition; reference databases"
+priority = "2"
+mapping = "exact"
+covers = ["datalib_who_has_your_face"]
+registered_by = "P37.13"
+note = "Government photo databases (incl. driver-licence agencies) shared for facial recognition."
+
+[[entry]]
+roster_key = "clearview-ai-usage-table"
+spec_dataset = "Clearview AI usage table (BuzzFeed)"
+dataset = "Clearview AI Table"
+technology = "Face recognition"
+priority = "2"
+mapping = "exact"
+covers = ["datalib_clearview_ai_table"]
+registered_by = "P37.13"
+note = "BuzzFeed News table of taxpayer-funded entities whose employees ran Clearview searches."
+
+[[entry]]
+roster_key = "cell-site-simulator-datasets"
+spec_dataset = "Cell-site simulator datasets (ACLU)"
+dataset = "Cell-site Simulators"
+technology = "comms-intercept"
+priority = "3"
+mapping = "equivalent"
+covers = ["aclu_cell_site_simulators"]
+registered_by = "P21.1-era registry (SRC list)"
+note = "The spec names the ACLU aggregation; the index entry is Kevin Collier's map aggregating ACLU and other research — the same dataset class from the recorded upstream."
+
+[[entry]]
+roster_key = "upturn-mass-extraction"
+spec_dataset = "Upturn *Mass Extraction*"
+dataset = "Mass Extraction - Mobile Device Forensic Tools"
+technology = "device-forensics"
+priority = "4"
+mapping = "exact"
+covers = ["statrep_us_upturn_mass_extraction_2020"]
+registered_by = "P35.6 (R11-ACQ-01 generated row, AP-T2-192 / cand I4-C163)"
+note = "Same upstream artifact (upturn.org Mass Extraction 2020 + Appendix C agency table); the generated row pre-covered this roster entry before P37.13."
+
+[[entry]]
+roster_key = "public-safety-drones"
+spec_dataset = "Public-safety drone datasets"
+dataset = "Public Safety Drones"
+technology = "robotics-aerial"
+priority = "6"
+mapping = "exact"
+covers = ["datalib_public_safety_drones"]
+registered_by = "P37.13"
+note = "Bard College Center for the Study of the Drone national dataset — the per-jurisdiction camreg/statrep drone rows are related, never this artifact."
+
+[[entry]]
+roster_key = "ring-neighbors-partnerships"
+spec_dataset = "Ring / Neighbors historical partnerships"
+dataset = "Ring/Neighbors Partnerships"
+technology = "Private-camera request. Category retired 2024 — absence ≠ program ended (SIG-ONTO-059)"
+priority = "1"
+mapping = "exact"
+covers = ["datalib_ring_neighbors_partnerships"]
+registered_by = "P37.13"
+note = "Historical EFF-compiled dataset; Ring retired the public map — absence is never read as the program ending."
+
+[[entry]]
+roster_key = "california-alpr-survey"
+spec_dataset = "California ALPR survey data (CA DOJ / SB 34)"
+dataset = "California Automated License Plate Readers"
+technology = "ALPR; state reporting mandates"
+priority = "1"
+mapping = "equivalent"
+covers = ["ca_state_auditor", "statrep_ca_california_auditor_alpr"]
+registered_by = "P34.38 gated row + P35.6 (R11-ACQ-01 generated row, AP-T2 series)"
+note = "The index links EFF's raw-CPRA mirror of the California State Auditor's 2019-118 survey; the registry rows carry the auditor's own publication — the same survey dataset from the authoritative upstream."
+
+[[entry]]
+roster_key = "federally-funded-body-cameras"
+spec_dataset = "Federally funded body cameras"
+dataset = "Federally Funded Body-Worn Cameras"
+technology = "Body-worn video (§13.1)"
+priority = "5"
+mapping = "exact"
+covers = ["datalib_federally_funded_bwc"]
+registered_by = "P37.13"
+note = "EFF-compiled BJA grant-recipient dataset; camreg_us_body_worn_camera (OJP toolkit) and the state grant_*_bwc rows are related, never this artifact."
+
+[[entry]]
+roster_key = "wiretap-reports"
+spec_dataset = "Wiretap reports"
+dataset = "Wiretap Reports"
+technology = "comms-intercept"
+priority = "3"
+mapping = "exact"
+covers = ["statrep_us_wiretap_summary_tables"]
+registered_by = "P35.6 (R11-ACQ-01 generated row, AP-T2-002 / cand I4-C085)"
+note = "Same upstream artifact (uscourts.gov annual Wiretap Reports, tables back to 1997); the generated row pre-covered this roster entry before P37.13."
+
+[[entry]]
+roster_key = "aaron-swartz-day-psp"
+spec_dataset = "Aaron Swartz Day Police Surveillance Project"
+dataset = "Aaron Swartz Day Police Surveillance Project"
+technology = "Multi"
+priority = "7"
+mapping = "exact"
+covers = ["datalib_aaron_swartz_day"]
+registered_by = "P37.13"
+note = "Crowdsourced public-records campaign corpus (primarily California agencies)."
+
+[[entry]]
+roster_key = "mediajustice-electronic-monitoring"
+spec_dataset = "Electronic monitoring (MediaJustice)"
+dataset = "Electronic Monitoring Hotspot Map"
+technology = "person-monitoring"
+priority = "7"
+mapping = "exact"
+covers = ["datalib_mediajustice_em_map"]
+registered_by = "P37.13"
+note = "Challenging E-Carceration findings map; program/jurisdiction context only — Part VIII binds, never a person's location or name."
+
+[[entry]]
+roster_key = "atlas-border-communities"
+spec_dataset = "Atlas Border Communities"
+dataset = "Atlas of Surveillance: Border Communities"
+technology = "ALPR (checkpoint/covert)"
+priority = "1"
+mapping = "exact"
+covers = ["datalib_atlas_border_communities"]
+registered_by = "P37.13"
+note = "EFF's 23-border-counties surveillance dataset."
+
+[[entry]]
+roster_key = "carnegie-ai-gsi"
+spec_dataset = "AI Global Surveillance Index (Carnegie)"
+dataset = "AI Global Surveillance Index"
+technology = "Country-level; coarse granularity (OL-5.3-02)"
+priority = "8"
+mapping = "exact"
+covers = ["carnegie_ai_gsi"]
+registered_by = "P21.8-era registry (flipped HG-02 2026-09-15/16)"
+note = "Coarse country-granularity only (SIG-INGEST-042)."
+
+[[entry]]
+roster_key = "facial-recognition-world-map"
+spec_dataset = "Facial Recognition World Map"
+dataset = "The Facial Recognition World Map"
+technology = "Country-level"
+priority = "8"
+mapping = "exact"
+covers = ["facial_recognition_world_map"]
+registered_by = "P21.8-era registry (flipped HG-02 2026-09-15/16)"
+note = "Coarse country-granularity only (SIG-INGEST-042)."
+
+[[entry]]
+roster_key = "aspi-mapping-chinas-tech-giants"
+spec_dataset = "Mapping China's Tech Giants (ASPI)"
+dataset = "Mapping China’s Tech Giants"
+technology = "Vendor-level, international"
+priority = "8"
+mapping = "exact"
+covers = ["aspi_mapping_chinas_tech_giants"]
+registered_by = "P21.8-era registry (flipped HG-02 2026-09-15/16)"
+note = "Vendor-level international; coarse granularity rule applies."

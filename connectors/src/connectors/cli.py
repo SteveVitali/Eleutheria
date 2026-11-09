@@ -72,6 +72,14 @@ def build_parser() -> argparse.ArgumentParser:
     gate = sub.add_parser("gate", help="report the connector-loader gate verdict for a source")
     gate.add_argument("--source", required=True, help="source id to check")
     sub.add_parser("export-check", help="compute the export licence per compartment (SIG-LIC-010)")
+    sub.add_parser(
+        "roster",
+        help=(
+            "the §22.7 Data Library roster coverage audit (SIG-INGEST-041, "
+            "P37.13); prints every roster entry with its covering registry "
+            "id(s) and exits 3 when an entry's covers do not resolve"
+        ),
+    )
     uw = sub.add_parser(
         "unwired-scan",
         help=(
@@ -1039,6 +1047,11 @@ def main(argv: list[str] | None = None) -> int:
         return _gate(args.source)
     if args.command == "export-check":
         return _export_check()
+    if args.command == "roster":
+        from .data_library_roster import coverage, coverage_report
+
+        print(coverage_report())
+        return 3 if any(row.unresolved for row in coverage()) else 0
     if args.command == "unwired-scan":
         from .unwired_scan import baseline_drift, load_baseline, render_json, scan
 

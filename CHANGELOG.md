@@ -24,6 +24,24 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.13 — the §22.7 Data Library roster fully registered + the recurring
+  discovery sweep (SIG-INGEST-041, SIG-INGEST-048; ADR-239):** the EFF Data
+  Library index is the Phase 17 ingestion backlog, and all 16 spec-roster
+  entries now map to registry ids — 8 pre-covered (incl. three the P35.6
+  ACQ-01 generation registered) + 8 new `datalib_*` LINK rows
+  (`ingestion_permitted=false`, rights UNDETERMINED; the operator's HG-03
+  line flips them, never this registration). The mapping is a committed
+  artifact — `connectors/src/connectors/data/data_library_roster.toml`
+  (`sig.data-library-roster/1`) with `exact`/`equivalent` verdicts — audited
+  by `connectors/data_library_roster.py`, `sig-connectors roster`, and the
+  roster test, which re-derives the 16 rows from the spec source table and
+  fails on any uncovered entry or dangling cover. The first recurring
+  discovery sweep (`sig.discovery-sweep/1`, continuing Stream I's method)
+  enumerates the fetched index (55,418 B, sha256 `0a0d364c…`, 42 datasets)
+  plus the §22.7/§22.6-H2 documented surfaces: 19 registered, 23
+  `candidate-unregistered` recorded with query log + candidates CSV under
+  `docs/build/reports/discovery-sweep/2026-11-07/` and triaged by
+  `D-P37.13-1`.
 - **P37.70 — keyed AU traffic-camera API lanes wired behind env-declared
   credentials (D-SOURCES.8-2, E4-R4c = b, OP-13; ADR-238):** the two
   `keyed_api` enumerated rows — TMR's QLDTraffic `v1/webcams` and TfNSW's

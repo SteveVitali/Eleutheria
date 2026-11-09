@@ -147,5 +147,6 @@
 | D-P37.11-1 | OPEN | the OM-19 leg-runner — the orchestrator's `r11/P37.11-live-<n>` dispatch or the operator | RETURN PASS — P37.11 | a `gcloud run jobs execute sig-ingest-sam-gov` on the rolled image lands a run row whose `fetch_record.sweep_cursor` reads the prior row's `sweep_cursor_next` (… |
 | D-P37.12-1 | OPEN | the operator (OP-13 key registration + HG-03 flips) + the OM-19 leg-runner — the orchestrator's `r11/P37.12-live-<n>` dispatch | RETURN PASS — P37.12 | a keyed `gcloud run jobs execute sig-ingest-dot-511-<lane>` lands a run row with fetches/claims for its platform's camera registry; each lane's fetch record sho… |
 | D-P37.70-1 | OPEN | the operator (OP-13 key registration + HG-03 flips) + the OM-19 leg-runner — the orchestrator's `r11/P37.70-live-<n>` dispatch | RETURN PASS — P37.70 | a keyed `gcloud run jobs execute sig-ingest-camreg-<lane>-au` lands a run row with fetches/claims for its platform's camera registry; each lane's fetch record s… |
+| D-P37.13-1 | OPEN | the next discovery sweep / an ACQ planning pass / the operator's plan | RETURN PASS — P37.13 | each candidate carries a `registered:` / `new-linked:` / `related:` disposition in the next sweep's `candidates.csv` diff — moved dispositions are the coverage … |
 
 ← back: CURRENT.md

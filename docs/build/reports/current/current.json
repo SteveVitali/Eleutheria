@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "98827a73a5074496f010829a874a0ec7ce993801",
-  "manifest_inputs": 1219,
+  "input_commit": "fbe1eeda49c0c3c5459d0152764796382ccecade",
+  "manifest_inputs": 1221,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.13",
-    "lastCompleted": "P37.70",
+    "nextTicket": "P37.14",
+    "lastCompleted": "P37.13",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.70,P37.71",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.70,P37.71",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,27 +17,27 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.70-keyed-au-traffic-camera-apis",
+    "chainTip": "r11/P37.13-registry-completeness-and-discovery-sweep",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-07T06:30Z"
+    "updatedAt": "2026-11-07T14:30Z"
   },
   "counts": {
-    "obligations": 229,
-    "owed": 145,
-    "open": 142,
+    "obligations": 230,
+    "owed": 146,
+    "open": 143,
     "partial": 3,
     "terminal": 84,
-    "events": 740,
+    "events": 741,
     "transitions": 55,
     "coverage_assessments": 510,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 80,
+    "return_pass_rows": 81,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -11997,6 +11997,54 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P37.13-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P37.13-1:e0",
+      "kind": "F",
+      "owner": "the next discovery sweep / an ACQ planning pass / the operator's plan",
+      "landing": "RETURN PASS — P37.13",
+      "landing_source": "return-pass-map/1",
+      "backlog_home": "BL-087",
+      "item": "register-or-drop triage for the 23 `candidate-unregistered` Data Library datasets recorded by the 2026-11-07 discovery sweep (`docs/build/reports/discovery-sweep/2026-11-07/candidates.csv` — Data Driven 2, CalECPA search-warrant disclosures, the state BWC surveys/grant lists, Brennan social-media directory, Prison Policy contracts library, National Police Funding Database, Surveillance Watch, Archivo de la Vigilancia, and 14 more)",
+      "unblocked_by": "owner: the next discovery sweep / an ACQ planning pass / the operator's plan · trigger: the next `sig.discovery-sweep/1` run or an acquisition-plan ticket that takes the candidates",
+      "verify": "each candidate carries a `registered:` / `new-linked:` / `related:` disposition in the next sweep's `candidates.csv` diff — moved dispositions are the coverage gain",
+      "proxy": "the sweep report + `candidates.csv` are committed with the query log; `related:` rows name the nearby registered artifacts so no candidate double-registers",
+      "line": 1556,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "event_id": "D-P37.13-1:e0",
+          "obligation_id": "D-P37.13-1",
+          "ticket_id": "P37.13",
+          "backlog_home": "BL-087",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "expected_previous_event": null,
+          "observed_at": "2026-11-07",
+          "recorded_at": "2026-11-07",
+          "source_commit": "WORKTREE",
+          "owner": "the next discovery sweep / an ACQ planning pass / the operator's plan",
+          "landing": "each of the 23 candidate-unregistered Data Library datasets carries a registered:/new-linked:/related: disposition in the next sweep's candidates.csv diff",
+          "reason": "migration anchor appended by P37.13 (row 435) for the row it added — the 2026-11-07 discovery sweep enumerated 23 documented-but-unregistered Data Library datasets (candidate-unregistered in candidates.csv); per-dataset registration is out of scope for the roster ticket and rides this deferral",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/reports/discovery-sweep/2026-11-07/SWEEP.md",
+            "docs/build/reports/discovery-sweep/2026-11-07/candidates.csv",
+            "docs/adr/ADR-239-data-library-roster-and-recurring-discovery-sweep.md"
+          ],
+          "anchor": {
+            "interpretation": "created",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "row_line": 1556,
+            "row_sha256": "d4216f287d51b1bb192a5d5b0dd870d3585077a66b441e9f838e0e9224e8176d"
+          }
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -12737,6 +12785,16 @@
         "rerun_cell": "`implement-spec spec=docs/tickets/434_P37.70__keyed-au-traffic-camera-apis.md live_verification=true`",
         "obligations": [
           "D-P37.70-1"
+        ]
+      },
+      {
+        "key": "P37.13",
+        "obligations_cell": "D-P37.13-1",
+        "gates_cell": "no gate — register-or-drop triage for the 23 `candidate-unregistered` Data Library datasets the 2026-11-07 sweep recorded (each stays unregistered until a ticket or the operator dispositions it)",
+        "operator_cell": "the next `sig.discovery-sweep/1` run or an acquisition-plan ticket — each candidate carries a `registered:`/`new-linked:`/`related:` disposition in the next candidates.csv diff",
+        "rerun_cell": "the next `sig.discovery-sweep/1` run (the recurring sweep) or the acquisition-plan ticket that takes the 23 candidates — `docs/build/reports/discovery-sweep/2026-11-07/candidates.csv`",
+        "obligations": [
+          "D-P37.13-1"
         ]
       }
     ]
@@ -26796,10 +26854,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "d0405f740079b5756a866f43f23b3122cb95027712a660e5b5febcd542cb210f",
+  "manifest_sha256": "92e65f2f0722135188c9d6186a3fb4f3d4461db19ebd8a583c2c43779c3b5dcc",
   "current_md": {
-    "lines": 146,
-    "bytes": 19536,
+    "lines": 147,
+    "bytes": 19741,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
