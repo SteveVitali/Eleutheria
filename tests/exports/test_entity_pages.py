@@ -484,3 +484,314 @@ def test_export_emits_entity_page_twins():
     assert doc["schema"] == "sig.entity-page/1"
     assert doc["label"] == "Acme Surveillance LLC"
     assert doc["review_state"] == "published"
+
+
+# ---------------------------------------------------------------------------
+# Access closures (GX-07 / P37.21) — D-K2-2 = a, descriptive only
+# ---------------------------------------------------------------------------
+
+from exports.entity_page import (  # noqa: E402
+    CLOSURE_MAX_PATHS_PER_DIRECTION,
+    _closure_for_compartment,
+    access_closures,
+    closure_edge_pools,
+)
+
+
+def _edge_row(frm: str, to: str, cid: str, kind: str = "configured_access", **over) -> dict:
+    """A materialized ``relationship`` row (the ``read_materialized_edges`` shape)."""
+    row = {
+        "from_entity": frm,
+        "to_entity": to,
+        "edge_type": kind,
+        "access_kind": kind,
+        "direction": "a_to_b",
+        "valid_from_kind": "unknown",
+        "valid_to_kind": "ongoing",
+        "asserted_by": frm,
+        "observed_at": "2020-01-28",
+        "valid_from": None,
+        "valid_to": None,
+        "evidence_claim": cid,
+        "evidence_claims": [cid],
+        "relationship_id": f"rel-{cid}",
+    }
+    row.update(over)
+    return row
+
+
+def _closure_labels(*ids: str) -> dict:
+    return {eid: _label(eid, "org", label=f"Org {eid[-2:]}") for eid in ids}
+
+
+def test_closure_pools_reverse_for_the_inbound_question():
+    a, b = _eid(), _eid()
+    out_pool, in_pool = closure_edge_pools([_edge_row(a, b, "c1")])
+    assert out_pool[0].from_org == a and out_pool[0].to_org == b
+    # the inbound pool runs the same evidence in the holder's direction.
+    assert in_pool[0].from_org == b and in_pool[0].to_org == a
+    assert in_pool[0].evidence == ("c1",)
+
+
+def test_access_closures_emit_both_directions_with_hops_and_evidence():
+    a, b, c = _eid(), _eid(), _eid()
+    labels = _closure_labels(a, b, c)
+    edges = [_edge_row(a, b, "c1"), _edge_row(b, c, "c2")]
+    pools = closure_edge_pools(edges)
+    ctx = _ctx()
+    kw = dict(
+        labels=labels,
+        source_names=ctx["source_names"],
+        claim_sources=ctx["claim_sources"],
+        as_of=ctx["as_of"],
+    )
+
+    groups, withheld = access_closures(a, pools, **kw)
+    assert not withheld
+    assert [g["direction"] for g in groups] == ["outbound"]
+    grp = groups[0]
+    assert grp["question"] == "whose data this entity can reach"
+    assert grp["counts"] == {"publishable": 1, "historical": 0, "speculative": 0}
+    (path,) = grp["paths"]
+    assert path["source"] == a and path["target"] == c
+    assert path["hop_count"] == 2 and path["temporal_status"] == "live"
+    assert path["speculative"] is False
+    # per-hop evidence + labelled endpoints (SIG-UI-025 / §3.1).
+    assert [h["evidence"] for h in path["hops"]] == [["c1"], ["c2"]]
+    assert path["hops"][0]["from"]["label"] is not None
+    assert path["hops"][1]["to"]["entity_id"] == c
+    assert path["claim_ids"] == ["c1", "c2"]
+
+    groups_c, _ = access_closures(c, pools, **kw)
+    assert [g["direction"] for g in groups_c] == ["inbound"]
+    ipath = groups_c[0]["paths"][0]
+    # the chain reads in the real accessor → … → entity direction.
+    assert ipath["source"] == a and ipath["target"] == c
+    assert [h["from_org"] for h in ipath["hops"]] == [a, b]
+    assert ipath["hops"][0]["to_org"] == b
+
+    # B has only direct (one-hop) edges — a 1-hop path is the observation,
+    # already a relationship row, never a closure inference.
+    groups_b, _ = access_closures(b, pools, **kw)
+    assert groups_b == []
+
+
+def test_access_closures_mark_historical_and_speculative():
+    a, b, c, d, e = (_eid() for _ in range(5))
+    labels = _closure_labels(a, b, c, d, e)
+    ctx = _ctx()
+    kw = dict(
+        labels=labels,
+        source_names=ctx["source_names"],
+        claim_sources=ctx["claim_sources"],
+        as_of=ctx["as_of"],
+    )
+
+    # a path through a recorded end bound is labelled historical (live vs
+    # historical — never present-tense, never dropped).
+    ended = _edge_row(b, c, "c2", valid_to_kind="exact", valid_to="2019-01-01")
+    groups, _ = access_closures(a, closure_edge_pools([_edge_row(a, b, "c1"), ended]), **kw)
+    assert groups[0]["counts"]["historical"] == 1
+    assert groups[0]["paths"][0]["temporal_status"] == "historical"
+
+    # ≤ 3 hops publishable; beyond is labelled speculative (SIG-RECON-050).
+    chain = [
+        _edge_row(a, b, "c1"),
+        _edge_row(b, c, "c2"),
+        _edge_row(c, d, "c3"),
+        _edge_row(d, e, "c4"),
+    ]
+    groups, _ = access_closures(a, closure_edge_pools(chain), **kw)
+    flat = [p for g in groups for p in g["paths"]]
+    spec = [p for p in flat if p["speculative"]]
+    assert spec and all(p["hop_count"] > 3 for p in spec)
+    assert groups[0]["counts"]["speculative"] == len(spec)
+
+
+def test_access_closures_never_compose_observed_use():
+    a, b, c = _eid(), _eid(), _eid()
+    labels = _closure_labels(a, b, c)
+    edges = [_edge_row(a, b, "c1", "observed_use"), _edge_row(b, c, "c2", "observed_use")]
+    groups, _ = access_closures(
+        a,
+        closure_edge_pools(edges),
+        labels=labels,
+        source_names={},
+        claim_sources={},
+        as_of=date(2026, 9, 22),
+    )
+    # SIG-RECON-049 #2 — use is not access; the chain never forms.
+    assert groups == []
+
+
+def test_access_closures_drop_a_path_through_a_withheld_org():
+    a, b, c = _eid(), _eid(), _eid()
+    labels = _closure_labels(a, c)
+    labels[b] = _label(b, "org", label_state="withheld")
+    edges = [_edge_row(a, b, "c1"), _edge_row(b, c, "c2")]
+    groups, withheld = access_closures(
+        a,
+        closure_edge_pools(edges),
+        labels=labels,
+        source_names={},
+        claim_sources={},
+        as_of=date(2026, 9, 22),
+    )
+    # SIG-UI-080 — the withheld hop is never named or counted; the whole
+    # path drops and the twin's notice sentence covers the absence.
+    assert groups == []
+    assert withheld is True
+
+
+def test_access_closures_need_an_as_of_snapshot():
+    # no snapshot pin → no live/historical marking is ever guessed.
+    a, b, c = _eid(), _eid(), _eid()
+    labels = _closure_labels(a, b, c)
+    arts = entity_page_artifacts(
+        labels,
+        claim_rows=[],
+        edge_rows=[_edge_row(a, b, "c1"), _edge_row(b, c, "c2")],
+        identifiers={},
+        entity_types={},
+        resolutions={},
+        lineage={},
+        source_names={},
+        entity_comps={},
+        default_compartment="sig_graph",
+        publication=PUB,
+        generated_at=GEN,
+        as_of=None,
+        retrieval=date(2026, 9, 22),
+    )
+    for _, (doc, _comp) in arts.items():
+        assert doc["access"]["closures"] == []
+
+
+def test_degree_only_facts_carry_the_d_k2_3_sentences():
+    eid = _eid()
+    rows = [
+        _claim_row(eid, "sharing_partner_degree", "851", "c1"),
+        _claim_row(eid, "sharing_partner_degree", "1", "c2"),
+    ]
+    degree = degree_only_facts(
+        eid,
+        page_claims(rows)[eid],
+        source_names={"src_a": "EFF"},
+        claim_sources={},
+        as_of=None,
+    )
+    assert degree[0]["sentences"] == [
+        "Shared with 1 agency — partners not named",
+        "Shared with 851 agencies — partners not named",
+    ]
+
+
+def test_closure_compartment_filing_requires_every_hops_evidence():
+    a, b, c = _eid(), _eid(), _eid()
+    labels = _closure_labels(a, b, c)
+    edges = [_edge_row(a, b, "c1"), _edge_row(b, c, "c2")]
+    groups, _ = access_closures(
+        a,
+        closure_edge_pools(edges),
+        labels=labels,
+        source_names={},
+        claim_sources={},
+        as_of=date(2026, 9, 22),
+    )
+    # c2 licenses elsewhere → the whole path stays out of sig_graph (ADR-106);
+    # a mixed-compartment path files under NEITHER — the derived fact can't
+    # be split across incompatible licences.
+    filed = _closure_for_compartment(
+        groups,
+        {"c1": "sig_graph", "c2": "osm_odbl"},
+        compartment="sig_graph",
+        default_compartment="sig_graph",
+    )
+    assert filed == []
+    assert (
+        _closure_for_compartment(
+            groups,
+            {"c1": "sig_graph", "c2": "osm_odbl"},
+            compartment="osm_odbl",
+            default_compartment="sig_graph",
+        )
+        == []
+    )
+    # both hops' evidence in the compartment → the path files whole.
+    other = _closure_for_compartment(
+        groups,
+        {"c1": "osm_odbl", "c2": "osm_odbl"},
+        compartment="osm_odbl",
+        default_compartment="sig_graph",
+    )
+    assert [p["claim_ids"] for g in other for p in g["paths"]] == [["c1", "c2"]]
+
+
+def test_closure_group_caps_paths_and_reports_more():
+    a = _eid()
+    partners = [_eid() for _ in range(3)]
+    third = [_eid() for _ in range(2)]
+    labels = _closure_labels(a, *partners, *third)
+    edges = [_edge_row(a, p, f"c{i}") for i, p in enumerate(partners)]
+    edges += [
+        _edge_row(p, t, f"d{i}")
+        for i, (p, t) in enumerate([(partners[0], third[0]), (partners[1], third[1])])
+    ]
+    groups, _ = access_closures(
+        a,
+        closure_edge_pools(edges),
+        labels=labels,
+        source_names={},
+        claim_sources={},
+        as_of=date(2026, 9, 22),
+    )
+    filed = _closure_for_compartment(
+        groups,
+        {},
+        compartment="sig_graph",
+        default_compartment="sig_graph",
+    )
+    assert filed[0]["path_count"] == 2
+    assert filed[0]["more"] == 0
+    assert len(filed[0]["paths"]) == 2
+    assert CLOSURE_MAX_PATHS_PER_DIRECTION >= 2  # the cap constant exists
+
+
+def test_artifacts_emit_closures_only_in_their_compartment():
+    a, b, c = _eid(), _eid(), _eid()
+    labels = _closure_labels(a, b, c)
+    labels[a] = _label(a, "agency", label="Acme PD")
+    edges = [_edge_row(a, b, "c1"), _edge_row(b, c, "c2")]
+    rows = [
+        _claim_row(a, "configured_sharing_partner", None, "c1", obj=b),
+        _claim_row(b, "configured_sharing_partner", None, "c2", obj=c),
+    ]
+    arts = entity_page_artifacts(
+        labels,
+        claim_rows=rows,
+        edge_rows=edges,
+        identifiers={},
+        entity_types={},
+        resolutions={},
+        lineage={},
+        source_names={"src_a": "EFF"},
+        # A files under two compartments; the closure evidence licenses to
+        # sig_graph, so only the sig_graph twin carries the path (ADR-106).
+        entity_comps={a: {"sig_graph", "osm_odbl"}},
+        default_compartment="sig_graph",
+        publication=PUB,
+        generated_at=GEN,
+        as_of=date(2026, 9, 22),
+        retrieval=date(2026, 9, 22),
+    )
+    a_docs = {p: d for p, (d, _) in arts.items() if "/agency/" in p}
+    sig_doc = a_docs["web/entity/agency/acme-surveillance-llc--4g2wm8q/index.sig_graph.json"]
+    osm_doc = a_docs["web/entity/agency/acme-surveillance-llc--4g2wm8q/index.osm_odbl.json"]
+    assert sig_doc["access"]["closures"]
+    (grp,) = sig_doc["access"]["closures"]
+    assert grp["direction"] == "outbound"
+    assert grp["paths"][0]["target"] == c
+    assert osm_doc["access"]["closures"] == []
+    # the inbound closure rides the far entity's twin the same way.
+    c_docs = [d for _p, (d, _c) in arts.items() if d["entity_id"] == c]
+    assert c_docs and all(d["access"]["closures"][0]["direction"] == "inbound" for d in c_docs)

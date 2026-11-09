@@ -162,16 +162,77 @@ export interface EntityRelationGroup {
 
 /** A degree-only fact — a source-stated partner COUNT carried as a node
  * attribute ("Shared with N — partners not named", SIG-INGEST-043c / H-4 /
- * SIG-UI-117). Never a relation item, never an edge. */
+ * SIG-UI-117). Never a relation item, never an edge. `sentences` carries
+ * the D-K2-3 node-attribute sentences verbatim, one per stated count. */
 export interface DegreeOnlyFact {
   predicate: string;
   counts: number[];
+  sentences: string[];
   claim_ids: string[];
   observed_at: string | null;
   date_kind: "observed" | "undated";
   currency: string | null;
   historical: boolean;
   sources: { id: string; name?: string | null }[];
+}
+
+/** One hop in an access closure — the AccessEdge projection with the shared
+ * counterparty views and the per-hop evidence (claim ids + sources). The
+ * endpoints are rendered through the label registry, never as raw ids. */
+export interface AccessClosureHop {
+  from_org: string;
+  to_org: string;
+  edge_label: string;
+  scope: string;
+  confidence: string;
+  evidence: string[];
+  edge_id: string;
+  asserted_by: string;
+  valid_from: string | null;
+  valid_to: string | null;
+  valid_from_kind: string;
+  valid_to_kind: string;
+  from: EntityCounterparty;
+  to: EntityCounterparty;
+  sources: { id: string; name?: string | null }[];
+}
+
+/** One derived reachability path (GX-07 / P37.21). Always multi-hop — a
+ * one-hop path is the direct edge, already a relationship row. Carries the
+ * full hop list and every safety label (SIG-RECON-049/050): `speculative`
+ * beyond the published hop threshold, `temporal_status` "live" vs
+ * "historical" through an expired hop. `direction` is relative to the page
+ * entity: "inbound" answers "who can reach this entity's data" (the
+ * accessor sits at `source`), "outbound" answers "whose data it can reach". */
+export interface AccessClosurePath {
+  source: string;
+  target: string;
+  direction: "inbound" | "outbound" | string;
+  hop_count: number;
+  confidence: string;
+  scope: string;
+  temporal_status: "live" | "historical" | string;
+  speculative: boolean;
+  is_headline: boolean;
+  hops: AccessClosureHop[];
+  rationale: string;
+  claim_ids: string[];
+  source_party: EntityCounterparty;
+  target_party: EntityCounterparty;
+}
+
+/** The closure group for one direction (GX-07). `counts.publishable` = live
+ * and ≤ the speculative threshold; `more` is the emitted-cap remainder and
+ * `path_count` the true total — never a smoothed count (D-K2-2 = a:
+ * descriptive only; no centrality or rankings). */
+export interface AccessClosureGroup {
+  direction: "inbound" | "outbound" | string;
+  question: string;
+  as_of: string;
+  counts: { publishable: number; historical: number; speculative: number };
+  path_count: number;
+  paths: AccessClosurePath[];
+  more: number;
 }
 
 /** A mechanical summary line — every number carries its group and claim
@@ -210,8 +271,9 @@ export interface EntityPageTwin {
   claims: EntityClaimGroup[];
   relations: EntityRelationGroup[];
   access: {
-    /** The GX-07 closures (P37.21) — typed empty under contract A. */
-    closures: unknown[];
+    /** The GX-07 closures (P37.21) — per-direction groups; empty when the
+     * entity's graph yields no multi-hop path. */
+    closures: AccessClosureGroup[];
     degree_only: DegreeOnlyFact[];
   };
   /** Contract-B sections — typed empty under contract A. */
@@ -269,6 +331,7 @@ export function isEntityPageTwin(doc: unknown): doc is EntityPageTwin {
   if (typeof doc.label !== "string" || doc.label === "") return false;
   if (!Array.isArray(doc.claims) || !Array.isArray(doc.relations)) return false;
   if (!isObj(doc.access) || !Array.isArray(doc.access.degree_only)) return false;
+  if (!Array.isArray(doc.access.closures)) return false;
   if (!isObj(doc.cite)) return false;
   return true;
 }
@@ -547,11 +610,119 @@ export const ENTITY_PAGE_TWIN_FIXTURE: EntityPageTwin = {
     },
   ],
   access: {
-    closures: [],
+    // GX-07 (P37.21) — a 2-hop outbound closure over the fixture's
+    // configured-access chain, per-hop evidence + party views intact.
+    closures: [
+      {
+        direction: "outbound",
+        question: "whose data this entity can reach",
+        as_of: "2026-09-01",
+        counts: { publishable: 1, historical: 0, speculative: 0 },
+        path_count: 1,
+        more: 0,
+        paths: [
+          {
+            source: "0190cafe-0000-7000-8000-0000000000a1",
+            target: "0190cafe-0000-7000-8000-0000000000f6",
+            direction: "outbound",
+            hop_count: 2,
+            confidence: "probable",
+            scope: "partner",
+            temporal_status: "live",
+            speculative: false,
+            is_headline: true,
+            rationale:
+              "… can reach … via 2 hop(s); confidence is the path minimum; scope is the narrowest hop.",
+            claim_ids: ["clm-apd-vigilant-1", "clm-vig-lookup-1"],
+            source_party: {
+              entity_id: "0190cafe-0000-7000-8000-0000000000a1",
+              kind: "agency",
+              label: "Acworth Police Department",
+              label_basis: "source_name",
+              url: fixtureEntityUrl("agency", "acworth-police-department", "4g2wm8q"),
+              key: "acworth-police-department--4g2wm8q",
+            },
+            target_party: {
+              entity_id: "0190cafe-0000-7000-8000-0000000000f6",
+              kind: "portal",
+              label: "Multi-state LEARN lookup pool",
+              label_basis: "source_name",
+              url: null,
+              key: null,
+            },
+            hops: [
+              {
+                from_org: "0190cafe-0000-7000-8000-0000000000a1",
+                to_org: "0190cafe-0000-7000-8000-0000000000b2",
+                edge_label: "configured_access",
+                scope: "partner",
+                confidence: "probable",
+                evidence: ["clm-apd-vigilant-1"],
+                edge_id: "rel-fixture-1",
+                asserted_by: "0190cafe-0000-7000-8000-0000000000a1",
+                valid_from: null,
+                valid_to: null,
+                valid_from_kind: "unknown",
+                valid_to_kind: "ongoing",
+                from: {
+                  entity_id: "0190cafe-0000-7000-8000-0000000000a1",
+                  kind: "agency",
+                  label: "Acworth Police Department",
+                  label_basis: "source_name",
+                  url: fixtureEntityUrl("agency", "acworth-police-department", "4g2wm8q"),
+                  key: "acworth-police-department--4g2wm8q",
+                },
+                to: {
+                  entity_id: "0190cafe-0000-7000-8000-0000000000b2",
+                  kind: "org",
+                  label: "Vigilant Solutions (LEARN)",
+                  label_basis: "source_name",
+                  url: fixtureEntityUrl("org", "vigilant-solutions-learn", "7xk3mrt"),
+                  key: "vigilant-solutions-learn--7xk3mrt",
+                },
+                sources: [{ id: "eff_data_driven", name: "EFF Data Driven" }],
+              },
+              {
+                from_org: "0190cafe-0000-7000-8000-0000000000b2",
+                to_org: "0190cafe-0000-7000-8000-0000000000f6",
+                edge_label: "configured_access",
+                scope: "partner",
+                confidence: "probable",
+                evidence: ["clm-vig-lookup-1"],
+                edge_id: "rel-fixture-2",
+                asserted_by: "0190cafe-0000-7000-8000-0000000000b2",
+                valid_from: null,
+                valid_to: null,
+                valid_from_kind: "unknown",
+                valid_to_kind: "ongoing",
+                from: {
+                  entity_id: "0190cafe-0000-7000-8000-0000000000b2",
+                  kind: "org",
+                  label: "Vigilant Solutions (LEARN)",
+                  label_basis: "source_name",
+                  url: fixtureEntityUrl("org", "vigilant-solutions-learn", "7xk3mrt"),
+                  key: "vigilant-solutions-learn--7xk3mrt",
+                },
+                to: {
+                  entity_id: "0190cafe-0000-7000-8000-0000000000f6",
+                  kind: "portal",
+                  label: "Multi-state LEARN lookup pool",
+                  label_basis: "source_name",
+                  url: null,
+                  key: null,
+                },
+                sources: [{ id: "eff_data_driven", name: "EFF Data Driven" }],
+              },
+            ],
+          },
+        ],
+      },
+    ],
     degree_only: [
       {
         predicate: "sharing_partner_degree",
         counts: [851],
+        sentences: ["Shared with 851 agencies — partners not named"],
         claim_ids: ["clm-apd-degree-1"],
         observed_at: "2020-01-28",
         date_kind: "observed",

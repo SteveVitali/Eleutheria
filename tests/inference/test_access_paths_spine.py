@@ -15,6 +15,7 @@ from typing import Any
 
 from inference.access_paths import (
     DEFAULT_MATERIALIZED_SCOPE,
+    HISTORICAL,
     access_edges_from_materialized,
     close_access_paths_over_spine,
 )
@@ -125,3 +126,50 @@ def test_close_over_spine_does_not_chain_observed_use() -> None:
     conn = _FakeConn([_edge(A, B, "observed_use", "o-ab"), _edge(B, C, "observed_use", "o-bc")])
     closure = close_access_paths_over_spine(conn, source=A, as_of=date(2026, 9, 1))
     assert closure.paths == ()
+
+
+def test_adaptor_carries_the_full_evidence_claims_set() -> None:
+    # GX-07 (P37.21): a materialized row's ``evidence_claims`` carries the whole
+    # backing set — the hop's per-hop evidence is the full set, sorted, never
+    # just the representative ``evidence_claim``.
+    row = _edge(A, B, "configured_access", "c-ab-1")
+    row["evidence_claims"] = ["c-ab-2", "c-ab-1", "c-ab-2"]
+    edges = access_edges_from_materialized([row])
+    assert edges[0].evidence == ("c-ab-1", "c-ab-2")
+
+
+def test_adaptor_maps_an_ended_bound_kind_to_known_with_the_date() -> None:
+    # Live vs historical (GX-07): a recorded valid-period end — bound-kind
+    # ``exact``/``before``/``after`` with its ``valid_to`` date — maps onto the
+    # closure's ``known`` so the hop can expire the path at as-of.
+    row = _edge(A, B)
+    row["valid_to_kind"] = "exact"
+    row["valid_to"] = "2020-01-28"
+    (e,) = access_edges_from_materialized([row])
+    assert e.valid_to_kind == "known"
+    assert e.valid_to == date(2020, 1, 28)
+    assert e.temporal_status(date(2026, 9, 1)) == "expired"
+    assert e.temporal_status(date(2019, 1, 1)) == "valid"
+
+
+def test_adaptor_marks_a_continuing_edge_ongoing_and_the_rest_unknown() -> None:
+    row = _edge(A, B)
+    row["valid_to_kind"] = "never"
+    (e,) = access_edges_from_materialized([row])
+    assert e.valid_to_kind == "ongoing" and e.valid_to is None
+    row["valid_to_kind"] = "undated"
+    (e,) = access_edges_from_materialized([row])
+    assert e.valid_to_kind == "unknown" and e.valid_to is None
+
+
+def test_close_over_spine_marks_a_path_through_an_ended_hop_historical() -> None:
+    # A -> B -> C where B -> C recorded its end: the path is labelled
+    # historical — kept visible, never dropped and never present-tense.
+    ended = _edge(B, C, "configured_access", "c-bc")
+    ended["valid_to_kind"] = "exact"
+    ended["valid_to"] = date(2020, 1, 28)
+    conn = _FakeConn([_edge(A, B, "configured_access", "c-ab"), ended])
+    closure = close_access_paths_over_spine(conn, source=A, as_of=date(2026, 9, 1))
+    two_hop = [p for p in closure.paths if p.hop_count == 2]
+    assert two_hop and two_hop[0].temporal_status == HISTORICAL
+    assert two_hop[0].is_headline is False

@@ -24,6 +24,29 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.21 — Access closures and degree-only facts (K2 GX-07):** the
+  `sig.entity-page/1` twin's `access.closures` slot is now computed — the
+  build runs `inference.access_paths.close_access_paths` per entity over
+  the materialized relationship edges, in both directions ("who can reach
+  this entity's data" / "whose data it can reach"), each emitted path
+  multi-hop only (the direct edge is already a relationship row) with its
+  full hop list and per-hop evidence, live vs historical marking, ≤ 3 hops
+  publishable and `speculative` beyond (SIG-RECON-049/050), descriptive
+  only (D-K2-2 = a — no centrality, rankings or communities). A path whose
+  hops pass through a withheld or unlabelled organisation drops whole
+  (SIG-UI-080's notice covers the absence); a path files under a licence
+  compartment only when every hop's evidence licenses there (ADR-106) and
+  groups cap at 100 emitted paths with the true `path_count` + `more`.
+  `access.degree_only` facts now carry the D-K2-3 node-attribute
+  `sentences` verbatim ("Shared with N agencies — partners not named",
+  SIG-INGEST-043c). `inference.access_paths.access_edges_from_materialized`
+  now reads the row's `valid_to` + bound kinds (`exact`/`before`/`after` →
+  `known`) and the full `evidence_claims` set, so a recorded end marks a
+  path historical. The web mirror (`entity-page.ts` types +
+  `entity-pages.ts` merge + the Access section's SSR rendering) shows the
+  chains, marks and `#claim-` evidence links with JS off — the page stays
+  T1, no new script.
+
 - **P37.20 — Release-pinned bbox API (K1 MAP-06):** the per-compartment
   `sig.release-search-index/2` record index gains the release's spatial
   index — a `site_points` R*Tree keyed on `record_seq` plus `lat`/`lon`/

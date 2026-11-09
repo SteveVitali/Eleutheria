@@ -23,6 +23,8 @@
  */
 
 import type {
+  AccessClosureGroup,
+  AccessClosurePath,
   DegreeOnlyFact,
   EntityClaimGroup,
   EntityLabelRow,
@@ -100,6 +102,7 @@ export interface MergedEntityPage {
   claims: EntityClaimGroup[];
   relations: EntityRelationGroup[];
   degreeOnly: DegreeOnlyFact[];
+  closures: AccessClosureGroup[];
   claimIds: string[];
 }
 
@@ -111,6 +114,22 @@ function itemKey(it: EntityRelationItem): string {
     it.date ?? "",
     it.claim_ids,
   ]);
+}
+
+/** The dedupe key for a closure path across compartment twins — direction +
+ * the ordered org chain (a path is its hop list; identical chains merge). */
+function closurePathKey(p: AccessClosurePath): string {
+  return JSON.stringify([p.direction, p.hops.map((h) => h.to_org), p.source]);
+}
+
+function closureCounts(paths: AccessClosurePath[]): AccessClosureGroup["counts"] {
+  const counts = { publishable: 0, historical: 0, speculative: 0 };
+  for (const p of paths) {
+    if (p.speculative) counts.speculative += 1;
+    else if (p.temporal_status === "historical") counts.historical += 1;
+    else counts.publishable += 1;
+  }
+  return counts;
 }
 
 /** Union the compartment twins for one entity key. `twins` is non-empty —
@@ -127,6 +146,7 @@ export function mergeEntityTwins(twins: readonly EntityPageTwin[]): MergedEntity
   const claims = new Map<string, EntityClaimGroup>();
   const groups = new Map<string, EntityRelationGroup>();
   const degrees = new Map<string, DegreeOnlyFact>();
+  const closureGroups = new Map<string, AccessClosureGroup>();
   const claimIds = new Set<string>();
 
   for (const t of twins) {
@@ -169,7 +189,33 @@ export function mergeEntityTwins(twins: readonly EntityPageTwin[]): MergedEntity
       degrees.set(`${d.predicate}:${[...d.claim_ids].sort().join(",")}`, d);
       d.claim_ids.forEach((c) => claimIds.add(c));
     }
+    for (const g of t.access.closures ?? []) {
+      const gk = g.direction;
+      const existing = closureGroups.get(gk);
+      if (existing === undefined) {
+        closureGroups.set(gk, { ...g, paths: [...g.paths] });
+      } else {
+        const seen = new Set(existing.paths.map(closurePathKey));
+        for (const p of g.paths) {
+          if (!seen.has(closurePathKey(p))) existing.paths.push(p);
+        }
+        // `more` is each twin's own emitted-cap remainder; the merged view
+        // keeps the MAX — a conservative lower bound on un-emitted paths
+        // (the same overflow can sit behind two compartments, never summed).
+        existing.more = Math.max(existing.more, g.more);
+      }
+      for (const p of g.paths) p.claim_ids.forEach((c) => claimIds.add(c));
+    }
   }
+
+  // Re-count the merged groups so the figures describe exactly the merged
+  // path set — never a sum that could double-count a path filed under two
+  // compartments.
+  const closures = [...closureGroups.values()].map((g) => ({
+    ...g,
+    counts: closureCounts(g.paths),
+    path_count: g.paths.length,
+  }));
 
   return {
     twin,
@@ -179,6 +225,7 @@ export function mergeEntityTwins(twins: readonly EntityPageTwin[]): MergedEntity
     claims: [...claims.values()],
     relations: [...groups.values()],
     degreeOnly: [...degrees.values()],
+    closures,
     claimIds: [...claimIds].sort(),
   };
 }

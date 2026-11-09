@@ -24,7 +24,18 @@ The laws the contract carries (K2 §7 honesty rules + §56.11 owner ids):
 * H-3 / SIG-UI-088 / SIG-UI-116 — historical and undated relationships are
   marked (``historical`` / ``date_kind == "undated"``), never present-tense.
 * H-4 / SIG-UI-117 — degree-only facts are node attributes (``access.
-  degree_only``), never drawn as edges and never emitted as relation items.
+  degree_only``), never drawn as edges and never emitted as relation items;
+  D-K2-3 = "node attribute sentences only (SIG-INGEST-043c)" — each fact
+  carries its ``sentences`` verbatim, one per stated count.
+* GX-07 (P37.21, D-K2-2 = a — descriptive only) — ``access.closures`` carries
+  the per-entity access-path closures computed at build through
+  ``inference.access_paths.close_access_paths``: both directions (who can
+  reach this entity's data / whose data it can reach), each path with its
+  full hop list and per-hop evidence, live vs historical marking, ≤ 3 hops
+  publishable and ``speculative`` beyond (SIG-RECON-049/050). A one-hop path
+  is an observation — it already rides the relationship rows — so a closure
+  emits only multi-hop (derived) paths. No centrality, rankings or labelled
+  communities (D-K2-2 = a).
 * SIG-UI-080 — where the publication gate withholds a counterparty (a
   withheld or unregistered partner entity), the twin sets
   ``withheld_notice`` to the mandated sentence and drops the row whole;
@@ -40,10 +51,17 @@ The laws the contract carries (K2 §7 honesty rules + §56.11 owner ids):
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date, datetime
 from typing import Any
 
+from inference.access_paths import (
+    HISTORICAL,
+    AccessEdge,
+    AccessPath,
+    access_edges_from_materialized,
+    close_access_paths,
+)
 from policy.labels import EntityLabel, sanitize_label
 from policy.licensing import compute_export_license, export_refusal_reason
 from policy.rights import RightsRecord
@@ -90,6 +108,28 @@ _ENDED_TO_KINDS: frozenset[str] = frozenset({"exact", "before", "after"})
 
 #: ``reconcile.weight.currency`` C-codes → the web's currency words.
 _CURRENCY_WORDS = {"C1": "CURRENT", "C2": "AGING", "C3": "STALE", "C4": "HISTORICAL"}
+
+#: GX-07 (P37.21) — the closure group directions in contract order. ``inbound``
+#: answers "who can reach this entity's data" (the accessor sits at the path's
+#: source); ``outbound`` answers "whose data this entity can reach" (the entity
+#: is the accessor).
+_CLOSURE_DIRECTIONS: tuple[str, str] = ("inbound", "outbound")
+
+_CLOSURE_QUESTIONS = {
+    "inbound": "who can reach this entity's data",
+    "outbound": "whose data this entity can reach",
+}
+
+#: The per-direction cap on emitted closure paths — a bounded build-time
+#: emission in the closure's deterministic order (shorter paths first). A
+#: page whose graph yields more paths carries the true ``path_count`` and the
+#: remainder in ``more`` — never a smoothed count.
+CLOSURE_MAX_PATHS_PER_DIRECTION = 100
+
+#: The minimum hop count a closure path carries: a one-hop path is the direct
+#: edge — an observation already rendered in the relationship rows — not a
+#: closure inference (SIG-RECON-050 keeps it out of headline figures too).
+CLOSURE_MIN_HOPS = 2
 
 #: The degree-count predicate family (SIG-INGEST-043c / K2 §7 H-4) — a
 #: source-stated partner COUNT, an attribute, never an edge. Mirrors
@@ -729,6 +769,7 @@ def degree_only_facts(
         {
             "predicate": "; ".join(predicates),
             "counts": counts,
+            "sentences": _degree_sentences(predicates, counts),
             "claim_ids": claim_ids,
             "observed_at": observed,
             "date_kind": "observed" if observed else "undated",
@@ -737,6 +778,217 @@ def degree_only_facts(
             "sources": [{"id": sid, "name": source_names.get(sid)} for sid in source_ids],
         }
     ]
+
+
+def _degree_sentences(predicates: Sequence[str], counts: Sequence[int]) -> list[str]:
+    """The D-K2-3 node-attribute sentences, one per stated count.
+
+    ``sharing_partner_degree`` reads "Shared with N agencies — partners not
+    named" (SIG-INGEST-043c, verbatim K2 §4.2 row 6); an unknown degree
+    predicate degrades to a mechanical "predicate: N" line — never an
+    improvised narrative, and never an edge.
+    """
+    if list(predicates) == ["sharing_partner_degree"]:
+        return [
+            f"Shared with {n} {'agency' if n == 1 else 'agencies'} — partners not named"
+            for n in counts
+        ]
+    return [f"{_predicate_words(predicates)}: {n}" for n in counts]
+
+
+# ---------------------------------------------------------------------------
+# Access-path closures (GX-07 / P37.21 — D-K2-2 = a, descriptive only).
+# ---------------------------------------------------------------------------
+
+
+def closure_edge_pools(
+    edge_rows: Sequence[Mapping[str, Any]],
+) -> tuple[list[AccessEdge], list[AccessEdge]]:
+    """``(outbound, inbound)`` closure pools over the materialized edge rows.
+
+    ``outbound`` is :func:`inference.access_paths.access_edges_from_materialized`
+    verbatim — accessor → data-holder edges for "whose data this entity can
+    reach". ``inbound`` is the same edge set with every endpoint swapped, so a
+    closure run from the entity over the reversed pool enumerates the real
+    accessor → … → entity chains that answer "who can reach this entity's
+    data" (the caller re-orients each path's hops before emission).
+    """
+    out_edges = access_edges_from_materialized(edge_rows)
+    in_edges = [replace(e, from_org=e.to_org, to_org=e.from_org) for e in out_edges]
+    return out_edges, in_edges
+
+
+def _closure_path(
+    path: AccessPath,
+    *,
+    direction: str,
+    parties: Mapping[str, Mapping[str, Any]],
+    source_names: Mapping[str, str],
+    claim_sources: Mapping[str, set[str]],
+) -> dict[str, Any]:
+    """The emitted path record — every hop list stays intact (SIG-UI-025)."""
+    view = path.public_view()
+    hops: list[dict[str, Any]] = []
+    for h in path.hops:
+        hv = h.hop_view()
+        hv["from"] = parties[h.from_org]
+        hv["to"] = parties[h.to_org]
+        hv["sources"] = [
+            {"id": sid, "name": source_names.get(sid)}
+            for sid in sorted({s for cid in h.evidence for s in claim_sources.get(cid, ())})
+        ]
+        hops.append(hv)
+    view["hops"] = hops
+    view["direction"] = direction
+    view["source_party"] = parties[path.source]
+    view["target_party"] = parties[path.target]
+    view["claim_ids"] = list(path.input_claim_ids)
+    return view
+
+
+def access_closures(
+    subject_id: str,
+    edge_pools: tuple[Sequence[AccessEdge], Sequence[AccessEdge]],
+    *,
+    labels: Mapping[str, EntityLabel],
+    source_names: Mapping[str, str],
+    claim_sources: Mapping[str, set[str]],
+    as_of: date,
+) -> tuple[list[dict[str, Any]], bool]:
+    """The per-entity access closures — ``(groups, withheld)``.
+
+    Runs the P12.2 closure (:func:`close_access_paths` — the bounded,
+    labelled enumeration, consumed never re-implemented) from ``subject_id``
+    over both pools (``closure_edge_pools``) and emits one group per
+    direction that produced a path. Only multi-hop paths emit: a one-hop
+    path is the direct edge, already a relationship row.
+
+    Each group carries ``counts.publishable`` (a path of ≤ the speculative
+    threshold that no expired hop taints — live, in the closure's own
+    vocabulary), ``counts.historical`` (a path through an expired hop) and
+    ``counts.speculative`` (beyond the published hop threshold — labelled,
+    never a headline figure). Every path keeps its full hop list and
+    per-hop evidence — an unexplained "A can reach B" is the forbidden
+    unexplained edge (§3.1, SIG-RECON-049 #5).
+
+    An organisation on a path that the publication gate withholds (a
+    withheld, person or unlabelled entity) drops the whole path — the
+    twin's ``withheld_notice`` sentence covers the absence (SIG-UI-080);
+    the withheld hop is never named or counted. Returns ``withheld=True``
+    so the caller folds it into ``withheld_relationships``.
+    """
+    out_edges, in_edges = edge_pools
+    groups: list[dict[str, Any]] = []
+    withheld = False
+    for direction, pool in (("outbound", out_edges), ("inbound", in_edges)):
+        closure = close_access_paths(pool, source=subject_id, as_of=as_of)
+        counts = {"publishable": 0, "historical": 0, "speculative": 0}
+        paths: list[dict[str, Any]] = []
+        for p in closure.paths:
+            if p.hop_count < CLOSURE_MIN_HOPS:
+                continue
+            if direction == "inbound":
+                # Re-orient the reversed-space chain into the real
+                # accessor → … → entity direction (orientation leaves the
+                # hop-count / confidence / scope / temporal labels intact).
+                hops = tuple(
+                    replace(h, from_org=h.to_org, to_org=h.from_org) for h in reversed(p.hops)
+                )
+                p = AccessPath(
+                    hops=hops,
+                    as_of=as_of,
+                    speculative_hop_threshold=p.speculative_hop_threshold,
+                )
+            parties: dict[str, dict[str, Any]] = {}
+            drop = False
+            for org in p.orgs:
+                cp, gone = _counterparty(org, labels)
+                if gone:
+                    drop = True
+                    break
+                assert cp is not None
+                parties[org] = cp
+            if drop:
+                withheld = True
+                continue
+            if p.speculative:
+                counts["speculative"] += 1
+            elif p.temporal_status == HISTORICAL:
+                counts["historical"] += 1
+            else:
+                counts["publishable"] += 1
+            paths.append(
+                _closure_path(
+                    p,
+                    direction=direction,
+                    parties=parties,
+                    source_names=source_names,
+                    claim_sources=claim_sources,
+                )
+            )
+        if not paths:
+            continue
+        groups.append(
+            {
+                "direction": direction,
+                "question": _CLOSURE_QUESTIONS[direction],
+                "as_of": as_of.isoformat(),
+                "counts": counts,
+                "path_count": len(paths),
+                "paths": paths,
+            }
+        )
+    # Contract order — deterministic, matches _CLOSURE_DIRECTIONS' order.
+    groups.sort(key=lambda g: _CLOSURE_DIRECTIONS.index(g["direction"]))
+    return groups, withheld
+
+
+def _closure_for_compartment(
+    groups: Sequence[Mapping[str, Any]],
+    claim_comp: Mapping[str, str],
+    *,
+    compartment: str,
+    default_compartment: str,
+) -> list[dict[str, Any]]:
+    """The closure groups filed under one licence compartment.
+
+    A path stays in the compartment only when every hop's evidence licenses
+    there — a closure whose backing claim sits in another compartment would
+    leak it (ADR-106). Paths are re-counted per compartment so the twin's
+    figures describe exactly what the file carries, then capped at
+    :data:`CLOSURE_MAX_PATHS_PER_DIRECTION` with the true remainder in
+    ``more``.
+    """
+    out: list[dict[str, Any]] = []
+    for g in groups:
+        paths = [
+            p
+            for p in g["paths"]
+            if all(
+                claim_comp.get(cid, default_compartment) == compartment for cid in p["claim_ids"]
+            )
+        ]
+        if not paths:
+            continue
+        counts = {"publishable": 0, "historical": 0, "speculative": 0}
+        for p in paths:
+            if p["speculative"]:
+                counts["speculative"] += 1
+            elif p["temporal_status"] == HISTORICAL:
+                counts["historical"] += 1
+            else:
+                counts["publishable"] += 1
+        kept = paths[:CLOSURE_MAX_PATHS_PER_DIRECTION]
+        out.append(
+            {
+                **{k: v for k, v in g.items() if k != "paths"},
+                "counts": counts,
+                "path_count": len(paths),
+                "paths": kept,
+                "more": len(paths) - len(kept),
+            }
+        )
+    return out
 
 
 def summary_lines(relations: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
@@ -781,6 +1033,7 @@ def build_twin(
     claims: Sequence[Mapping[str, Any]] = (),
     relations: Sequence[Mapping[str, Any]] = (),
     degree_only: Sequence[Mapping[str, Any]] = (),
+    closures: Sequence[Mapping[str, Any]] = (),
     withheld_relationships: bool = False,
 ) -> dict[str, Any]:
     """One ``sig.entity-page/1`` twin (K2 §6.2, contract A).
@@ -820,9 +1073,11 @@ def build_twin(
         "claims": list(claims),
         "relations": list(relations),
         "access": {
-            # GX-07 (P37.21) computes the closures; contract A emits the
-            # typed-empty slot so the record shape is stable across waves.
-            "closures": [],
+            # GX-07 (P37.21) — the build-time closures; a typed empty list
+            # when the entity's graph yields no multi-hop path (or no
+            # ``as_of`` pins the snapshot — the live/historical marking is
+            # never guessed).
+            "closures": list(closures),
             "degree_only": list(degree_only),
         },
         # Contract-B sections (P37.22) — typed empty under contract A.
@@ -902,6 +1157,14 @@ def entity_page_artifacts(
                 c, rights, registry=registry_license, default_compartment=default_compartment
             )
 
+    # GX-07 — the closure pools are built once over the whole materialized
+    # edge set; each published entity runs the bounded closure from itself.
+    # An absent ``as_of`` pins no snapshot, so no live/historical marking is
+    # computed and the closure slot stays typed-empty (never guessed).
+    pools: tuple[list[AccessEdge], list[AccessEdge]] = (
+        closure_edge_pools(edge_rows) if as_of is not None else ([], [])
+    )
+
     artifacts: dict[str, tuple[dict[str, Any], str]] = {}
     for eid, label in sorted(registry.items()):
         if page_state(label) != PAGE_STATE_PUBLISHED:
@@ -932,6 +1195,18 @@ def entity_page_artifacts(
         degree = degree_only_facts(
             eid, own, source_names=source_names, claim_sources=sources_of, as_of=as_of
         )
+        if as_of is not None:
+            closures, closure_withheld = access_closures(
+                eid,
+                pools,
+                labels=registry,
+                source_names=source_names,
+                claim_sources=sources_of,
+                as_of=as_of,
+            )
+            withheld = withheld or closure_withheld
+        else:
+            closures = []
         comps = set(entity_comps.get(eid) or {default_compartment})
         for c in own:
             comps.add(claim_comp.get(c.claim_id, default_compartment))
@@ -959,6 +1234,9 @@ def entity_page_artifacts(
                 for d in degree
                 if {claim_comp.get(cid, default_compartment) for cid in d["claim_ids"]} <= {comp}
             ]
+            comp_closures = _closure_for_compartment(
+                closures, claim_comp, compartment=comp, default_compartment=default_compartment
+            )
             doc = build_twin(
                 label,
                 publication=publication,
@@ -969,6 +1247,7 @@ def entity_page_artifacts(
                 claims=comp_claims,
                 relations=comp_rel,
                 degree_only=comp_degree,
+                closures=comp_closures,
                 withheld_relationships=withheld,
             )
             path = f"web/entity/{label.url_type}/{label.slug}--{label.hash}/index.{comp}.json"
@@ -980,6 +1259,8 @@ __all__ = [
     "ACCESS_KINDS",
     "CLAIM_IDS_PER_ITEM",
     "CLAIM_ROW_LEN",
+    "CLOSURE_MAX_PATHS_PER_DIRECTION",
+    "CLOSURE_MIN_HOPS",
     "DEGREE_PREDICATES",
     "ENTITY_PAGE_SCHEMA",
     "ER_DISCLOSURE",
@@ -993,10 +1274,12 @@ __all__ = [
     "REVIEW_WITHHELD",
     "WITHHELD_RELATIONSHIPS_NOTICE",
     "PageClaim",
+    "access_closures",
     "build_twin",
     "claim_groups",
     "claim_rights",
     "claim_source_map",
+    "closure_edge_pools",
     "degree_only_facts",
     "entity_page_artifacts",
     "page_claims",

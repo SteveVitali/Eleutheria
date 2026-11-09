@@ -68,8 +68,22 @@ test.describe("the 06a entity page (SIG-UI-114/115/116/122)", () => {
     ).toHaveCount(1);
     // The "more" posture names the true total.
     await expect(page.locator('[data-testid="relation-more"]')).toContainText("all 3");
-    // Degree-only is a sentence, never a relation row (H-4 / SIG-UI-117).
+    // Degree-only is a sentence, never a relation row (H-4 / SIG-UI-117,
+    // D-K2-3 verbatim).
     await expect(page.locator('[data-testid="degree-fact"]')).toContainText("partners not named");
+    // GX-07 closures: the outbound group renders the 2-hop path with its
+    // labelled hop chain and per-hop evidence links (SIG-UI-025).
+    const closures = page.locator('[data-testid="access-closure-outbound"]');
+    await expect(closures).toHaveCount(1);
+    const path = closures.locator('[data-testid="access-path"]');
+    await expect(path).toHaveCount(1);
+    await expect(path.locator('[data-testid="access-path-chain"]')).toContainText(
+      "Multi-state LEARN lookup pool",
+    );
+    await expect(path).toContainText("2 hops");
+    await expect(
+      path.locator('a[href="#claim-clm-vig-lookup-1"]'),
+    ).toHaveCount(1);
     // Downloads carry the JSON twin; cite names the SIG id.
     await expect(
       page.locator('a[href="/entity/agency/acworth-police-department--4g2wm8q/index.sig_graph.json"]'),

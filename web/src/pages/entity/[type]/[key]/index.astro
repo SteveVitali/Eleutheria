@@ -367,12 +367,15 @@ const NULL_FIELD = "—";
         ))}
       </section>
 
-      {/* §4.2 row 6 — access: contract A carries degree-only facts (H-4:
-          node attributes as sentences, never edges) and the GX-07 closure
-          slot as a typed empty. */}
+      {/* §4.2 row 6 — access: degree-only facts (H-4: node attributes as
+          sentences, never edges — D-K2-3) and the GX-07 closures (P37.21):
+          multi-hop paths in both directions with their full hop list and
+          per-hop evidence, live vs historical, ≤ 3 hops publishable and
+          labelled speculative beyond (SIG-RECON-049/050). Descriptive only —
+          no centrality, rankings or communities (D-K2-2 = a). */}
       <section aria-labelledby="access-heading" data-testid="entity-access">
         <h2 id="access-heading">Access</h2>
-        {merged.degreeOnly.length === 0 && (
+        {merged.degreeOnly.length === 0 && merged.closures.length === 0 && (
           <p class="sig-table-note" data-testid="access-empty">
             No degree-only or access-path facts are published for this entity in
             this release.
@@ -381,13 +384,78 @@ const NULL_FIELD = "—";
         {merged.degreeOnly.map((d, i) => (
           <p data-testid="degree-fact">
             <Figure figure={figs.get(`degree-${i}`)!} order="inline">
-              {d.predicate === "sharing_partner_degree"
-                ? `Shared with ${d.counts.join(" + ")} — partners not named`
-                : `${d.predicate}: ${d.counts.join(", ")}`}
+              {(d.sentences ?? []).length > 0
+                ? d.sentences.join("; ")
+                : d.predicate === "sharing_partner_degree"
+                  ? `Shared with ${d.counts.join(" + ")} — partners not named`
+                  : `${d.predicate}: ${d.counts.join(", ")}`}
             </Figure>
             {d.historical && <span class="sig-temporal-mark" data-testid="historical-mark"> · historical</span>}
             {d.sources.length > 0 && <> · source: {d.sources.map((s) => s.name ?? s.id).join(", ")}</>}
           </p>
+        ))}
+        {merged.closures.map((g) => (
+          <div data-testid={`access-closure-${g.direction}`}>
+            <h3>
+              {g.direction === "inbound"
+                ? "Who can reach this entity's data"
+                : "Whose data this entity can reach"}
+            </h3>
+            <p class="sig-table-note">
+              As of {g.as_of}: {g.counts.publishable}{" "}
+              {g.counts.publishable === 1 ? "path" : "paths"} within the published
+              three-hop bound
+              {g.counts.historical > 0 && ` · ${g.counts.historical} historical`}
+              {g.counts.speculative > 0 &&
+                ` · ${g.counts.speculative} speculative (beyond three hops — labelled, never a headline figure)`}
+              {g.more > 0 && ` · ${g.more} more in the JSON twin`}
+              .
+            </p>
+            <ol class="sig-closure-list">
+              {g.paths.map((p) => (
+                <li data-testid="access-path" data-temporal={p.temporal_status}>
+                  <span data-testid="access-path-chain">
+                    {p.hops.map((h, hi) => (
+                      <>
+                        {hi === 0 &&
+                          (h.from.url ? (
+                            <a href={withBase(h.from.url.replace(/^\//, ""))}>
+                              {h.from.label ?? h.from.review_state ?? "not yet reviewed"}
+                            </a>
+                          ) : (
+                            <span>{h.from.label ?? h.from.review_state ?? "not yet reviewed"}</span>
+                          ))}
+                        {" —"}
+                        {accessKindWord(h.edge_label) ?? h.edge_label}→{" "}
+                        {h.to.url ? (
+                          <a href={withBase(h.to.url.replace(/^\//, ""))}>
+                            {h.to.label ?? h.to.review_state ?? "not yet reviewed"}
+                          </a>
+                        ) : (
+                          <span>{h.to.label ?? h.to.review_state ?? "not yet reviewed"}</span>
+                        )}
+                      </>
+                    ))}
+                  </span>
+                  {" · "}
+                  {p.hop_count} hops · confidence {p.confidence} · scope {p.scope}
+                  {p.temporal_status === "historical" && (
+                    <span class="sig-temporal-mark" data-testid="historical-mark"> · historical</span>
+                  )}
+                  {p.speculative && (
+                    <span class="sig-temporal-mark" data-testid="speculative-mark"> · speculative — beyond the published hop bound</span>
+                  )}
+                  {" · evidence: "}
+                  {p.claim_ids.map((cid, ci) => (
+                    <>
+                      {ci > 0 && " · "}
+                      <a href={`#claim-${cid}`}>{cid}</a>
+                    </>
+                  ))}
+                </li>
+              ))}
+            </ol>
+          </div>
         ))}
       </section>
 

@@ -24,6 +24,8 @@ import {
   pageState,
   reviewRecord,
 } from "../../src/lib/entity-page";
+import type { EntityPageTwin } from "../../src/lib/entity-page";
+import { mergeEntityTwins } from "../../src/lib/entity-pages";
 import { getEntityLabelRows, getEntityPageTwins } from "../../src/lib/data";
 
 const RAW_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -101,10 +103,48 @@ describe("the twin contract", () => {
   it("carries degree-only facts as node attributes, never relation items", () => {
     const degree = ENTITY_PAGE_TWIN_FIXTURE.access.degree_only[0];
     expect(degree.counts).toEqual([851]);
+    // D-K2-3 — the node-attribute sentence rides the fact verbatim.
+    expect(degree.sentences).toEqual(["Shared with 851 agencies — partners not named"]);
     for (const grp of ENTITY_PAGE_TWIN_FIXTURE.relations) {
       expect(grp.relation).not.toContain("degree");
     }
-    expect(ENTITY_PAGE_TWIN_FIXTURE.access.closures).toEqual([]);
+  });
+
+  it("carries the GX-07 closures with hop lists and per-hop evidence", () => {
+    const groups = ENTITY_PAGE_TWIN_FIXTURE.access.closures;
+    expect(groups).toHaveLength(1);
+    const grp = groups[0]!;
+    expect(grp.direction).toBe("outbound");
+    expect(grp.counts.publishable).toBe(1);
+    const path = grp.paths[0]!;
+    // multi-hop only — the direct edge is already a relationship row.
+    expect(path.hop_count).toBeGreaterThanOrEqual(2);
+    expect(path.hops).toHaveLength(path.hop_count);
+    // per-hop evidence + labelled endpoints — never an unexplained edge.
+    for (const hop of path.hops) {
+      expect(hop.evidence.length).toBeGreaterThan(0);
+      expect(hop.from.label ?? hop.from.review_state).toBeTruthy();
+      expect(hop.to.label ?? hop.to.review_state).toBeTruthy();
+    }
+    // no path asserts a raw identifier as a label anywhere (SIG-UI-108).
+    for (const hop of path.hops) {
+      if (hop.from.label != null) expect(RAW_ID_RE.test(hop.from.label)).toBe(false);
+      if (hop.to.label != null) expect(RAW_ID_RE.test(hop.to.label)).toBe(false);
+    }
+  });
+
+  it("merges closure groups across compartment twins without double-counting", () => {
+    const second: EntityPageTwin = JSON.parse(JSON.stringify(ENTITY_PAGE_TWIN_FIXTURE));
+    second.compartment = "osm_odbl";
+    const merged = mergeEntityTwins([ENTITY_PAGE_TWIN_FIXTURE, second]);
+    expect(merged.closures).toHaveLength(1);
+    // the identical chain filed under both compartments renders once, and
+    // its counts are re-derived over the merged set — never summed.
+    expect(merged.closures[0]!.paths).toHaveLength(1);
+    expect(merged.closures[0]!.counts.publishable).toBe(1);
+    expect(merged.closures[0]!.path_count).toBe(1);
+    // closure claim ids ride claimIds so their #claim- panels resolve.
+    expect(merged.claimIds).toContain("clm-vig-lookup-1");
   });
 
   it("carries the four epistemic fields on every claim group", () => {
