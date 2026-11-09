@@ -195,6 +195,74 @@ def build_parser() -> argparse.ArgumentParser:
         "--out", required=True, help="output directory for the committed artifact set"
     )
 
+    dlp = sub.add_parser(
+        "dossier-live-pass",
+        help="P37.16a (D-P32.18-1 / D-P32.19-1): run — or stage — a dossier "
+        "family's bounded sig.dossier-live-return-pass/1. The pass executes "
+        "only on the operator's explicit verbatim go (IN-TICKET PAUSE, never "
+        "pre-authorised under OM-20) with every HG-03 line applied and the "
+        "family's Part VIII clear recorded; otherwise nothing fetches, the "
+        "sig.dossier-live-pass-result/1 records prepared_not_executed, and "
+        "the command exits 42 (queued)",
+    )
+    dlp.add_argument(
+        "--family",
+        required=True,
+        choices=["okc", "tulsa"],
+        help="the dossier family (this split: okc | tulsa)",
+    )
+    dlp.add_argument(
+        "--out",
+        default=None,
+        help="output directory (default: the family's committed report dir)",
+    )
+    dlp.add_argument(
+        "--go",
+        default=None,
+        help="the operator's explicit verbatim go for the capture run "
+        "(required to execute — never pre-authorised under OM-20)",
+    )
+    dlp.add_argument(
+        "--go-file",
+        default=None,
+        help="a file carrying the operator's verbatim go (alternative to --go)",
+    )
+    dlp.add_argument(
+        "--capture-dir",
+        default=None,
+        help="OCFL captures root for an executed pass (default .sig/captures)",
+    )
+    dlp.add_argument(
+        "--check",
+        action="store_true",
+        help="evaluate and print the preconditions only — never fetches, never writes (read-only)",
+    )
+
+    dpc = sub.add_parser(
+        "dossier-part-viii-clear",
+        help="P37.16a (B-42 'Agent clears, disclosed', ADR-185 §2): evaluate "
+        "a dossier family's drafted Part VIII screen against its mechanical "
+        "enforcements and emit the sig.part-viii-clear/1 record — disclosed "
+        "'cleared by agent screen, no human review'. --check verifies the "
+        "queue rows carry the recorded clear",
+    )
+    dpc.add_argument("--family", required=True, choices=["okc", "tulsa"], help="the dossier family")
+    dpc.add_argument(
+        "--out",
+        default=None,
+        help="output directory (default: the family's committed report dir)",
+    )
+    dpc.add_argument(
+        "--screened-on",
+        default=None,
+        help="the screen date (default: today's date -u)",
+    )
+    dpc.add_argument(
+        "--check",
+        action="store_true",
+        help="verify the queue candidates carry the recorded clear — read-only",
+    )
+
     seedfix = sub.add_parser(
         "seed-correct",
         help="P32.18: apply the authored OKC seed-correction packet to a spine "
@@ -3475,6 +3543,69 @@ def _cmd_dossier_packet_san_diego(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_dossier_live_pass(args: argparse.Namespace) -> int:
+    from .dossier_live_pass import family, load_pass_packet, preconditions, run_pass
+
+    fam = family(args.family)
+    packet = load_pass_packet(fam)
+    if args.check:
+        go = args.go or (
+            Path(args.go_file).read_text(encoding="utf-8").strip() if args.go_file else None
+        )
+        pre = preconditions(fam, packet, operator_go=go)
+        for sid, line in pre["hg03_lines"]["lines"].items():
+            print(f"  hg03 {sid}: {line['status']} — {line['note']}")
+        for cid, st in pre["part_viii"]["candidates"].items():
+            print(f"  part-viii {cid}: {st['status']} ({st['disclosure']})")
+        print(f"  operator_go present: {pre['operator_go']['present']}")
+        print(f"  ready: {pre['ready']}")
+        return 0 if pre["ready"] else 42
+    go = args.go or (
+        Path(args.go_file).read_text(encoding="utf-8").strip() if args.go_file else None
+    )
+    record, code = run_pass(
+        fam,
+        operator_go=go,
+        out_dir=Path(args.out) if args.out else None,
+        capture_dir=Path(args.capture_dir) if args.capture_dir else None,
+    )
+    status = record["status"]
+    if code != 0:
+        print(f"dossier-live-pass {fam.key}: QUEUED — {status}", file=sys.stderr)
+        for reason in record["paused_reasons"]:
+            print(f"  {reason}", file=sys.stderr)
+        print(f"  result: {record['schema']} written", file=sys.stderr)
+    else:
+        print(f"dossier-live-pass {fam.key}: {status}")
+        for t in record["targets"]:
+            print(f"  {t['doc_id']}: {t['outcome']}")
+    return code
+
+
+def _cmd_dossier_part_viii_clear(args: argparse.Namespace) -> int:
+    from .dossier_live_pass import clear_record, family, part_viii_state, write_clear
+
+    fam = family(args.family)
+    if args.check:
+        state = part_viii_state(fam)
+        ok = True
+        for cid, st in state["candidates"].items():
+            good = st["status"] == "clear"
+            ok = ok and good
+            print(f"  {cid}: preflight {st['status']}{' — OK' if good else ' — not clear'}")
+        print(f"  part-viii clear recorded: {ok} ({state['candidates'] and 'disclosed'})")
+        return 0 if ok else 2
+    out = write_clear(
+        fam,
+        out_dir=Path(args.out) if args.out else None,
+        screened_on=args.screened_on,
+    )
+    record = clear_record(fam, screened_on=args.screened_on)
+    print(f"  {record['schema']}: {out}")
+    print(f"  status: {record['status']} — {record['disclosure']}")
+    return 0 if record["status"] == "clear" else 3
+
+
 def _cmd_seed_correct(args: argparse.Namespace) -> int:
     import json as _json
 
@@ -6269,6 +6400,10 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_dossier_packet_tulsa(args)
     if args.command == "dossier-packet-san-diego":
         return _cmd_dossier_packet_san_diego(args)
+    if args.command == "dossier-live-pass":
+        return _cmd_dossier_live_pass(args)
+    if args.command == "dossier-part-viii-clear":
+        return _cmd_dossier_part_viii_clear(args)
     if args.command == "seed-correct":
         return _cmd_seed_correct(args)
     if args.command == "egress-report":

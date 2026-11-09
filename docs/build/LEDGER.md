@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P37.16a
-lastCompleted: P37.15
+nextTicket: P37.16b
+lastCompleted: P37.16a
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.70,P37.71
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P37.14-statute-seeded-records-leads
+chainTip: r11/P37.16a-dossier-live-captures-first-two-families
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-07T18:05Z
+updatedAt: 2026-11-08T00:02Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1605,3 +1605,6 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-07 — P37.15 done — row 437 `Kind: ticket` — scheduled parser canary (R11-SRC-06, BL-025 canary part; `live_verification=false`, OM-20 named `hosted` canary job + trigger + run — GATE-G6 §4 names P37.15 verbatim, unexpired — QUEUED `prepared_not_executed`: `parser-canary.sh --apply` exits on absent `SIG_GCP_PROJECT`, zero mutations): `tests/parser_canary/` (`sig.parser-canary-spec/1`, 10 families — 9 `canary_findings` + `parsing.drift` structural) + `ops/src/ops/parser_canary{,_job}.py` + `sig-ops parser-canary` + `ops/parser_canary.toml` (`sig.parser-canary/1` — `sig-parser-canary` on `sig-quality-probe-rt`, conditioned `ops/probes/` create only, cron 01:45Z d1-5/14-31) + `ops/gcp/parser-canary.sh` + Dockerfile corpus COPY + iam/return_pass notes · mutated-fixture tests → typed `parser_drift` · `D-P37.15-1` opened (`portal_public_audit` lane unmodelled by `canary_findings`; `D-P37.15-1:e0`) · `main` untouched · chainTip → r11/P37.15-scheduled-parser-canary · next → P37.16a · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-07 — P37.15 post-closeout record — head `8feb7113` 5/5 green head-bound (`ci: pass #461@8feb711`, run 42410850550, read 21:05Z); fix arc — docs `next-not-lowest` (P37.15 in `returnPass` → `nextTicket P37.16a`) + orient fold in RETURN PASS cells (sanctioned; L1602-4 PHASE-LOG fold memory_guard-unwritten, restored) + digest regen + README range + `future-ok` marker · `main` untouched · deferrals +1/−0 · next → P37.16a · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-07 — dispatch boundary-confirm — P37.15's green read recorded (`ci: pass #461@8feb711`, run 42410850550; closeout head `4b9ef141` also 5/5 run 42416198589; `D-P37.15-1` opened — portal_public_audit lane unmodelled); `blockedOn` (nothing); chainTip `r11/P37.15-scheduled-parser-canary` · nextTicket P37.16a (row 438 — dossier `live` captures, first two families; **IN-TICKET PAUSE class — never pre-authorised under OM-20**: the capture run stops for the operator's explicit verbatim go; `HG-03 E4-B1/B5/B6 [A-7] = a` GL-GATE-07 batch-wide for the 23 targets, flips operator-executed (OP-26); `E4-B2 = 'Agent clears, disclosed'` carried verbatim; `live_verification=false` — machinery + pauses land, no capture run) — fresh implement-spec sub-agent on `r11/P37.16a-dossier-live-captures-first-two-families` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-08 — P37.16a done — row 438 `Kind: ticket` — dossier `live` captures, first two families (D-P32.18-1 OKC + D-P32.19-1 Tulsa; `live_verification=false`; IN-TICKET PAUSE class — never pre-authorised under OM-20): `ops.dossier_live_pass` (`sig.dossier-live-pass-result/1` — HG-03-line gate via `live_gate_reasons`, Part VIII `clear` check, verbatim-go gate; bounded fetch through `PoliteFetcher`/`OcflCaptureStore`/registered connector; honest outcomes `captured`/`access_restricted`(403 never retried)/`link_rotted`/`too_large`/`rights_refused`; rebuild drops stand-ins bound to attempted docs) + `sig-ops dossier-live-pass`/`dossier-part-viii-clear` verbs · B-42 'Agent clears, disclosed' recorded — `sig.part-viii-clear/1` ×2 (`PART_VIII_CLEAR.json`, "cleared by agent screen, no human review") + queue `preflight.status="clear"` SRC-001/002 · both capture legs QUEUED `prepared_not_executed` (operator go absent + HG-03 flips unapplied, OP-26) — `LIVE_PASS_RESULT.json` ×2 · `tests/ops/test_dossier_live_pass.py` 15 tests · coverage: SIG-ACQ-004+SIG-DOS-005 re-routed P37.16b, DOS-003/004 progress notes · `main` untouched · chainTip → r11/P37.16a-dossier-live-captures-first-two-families · next → P37.16b · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-08 — P37.16a post-closeout record — head `4c350168` 5/5 green head-bound (`ci: pass #462@4c35016`, run 42422446335, read 00:01Z: docs 2m10s · security 38s · composed 4m27s · python 18m09s · web 62m) · `ci_boundary.py` exit 3 — head 5/5, `blockedOn` ancestor `#460@ac5ea7e` docs (carried red, pre-repair head; landed tip `f188a471` green) · fix arc — `check_live_claims` 6 violations → code-quoted `live`/`production` tokens · `main` untouched · deferrals +0/−0 · next → P37.16b · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-08 — dispatch boundary-confirm — P37.16a's green read recorded (`ci: pass #462@4c35016`, run 42422446335; OKC+Tulsa capture legs queued `prepared_not_executed` — operator go absent + HG-03 flips pending OP-26); `blockedOn` (nothing); chainTip `r11/P37.16a-dossier-live-captures-first-two-families` · nextTicket P37.16b (row 439 — dossier `live` captures, last two families; **IN-TICKET PAUSE class — never pre-authorised under OM-20**: the capture run stops for the operator's explicit verbatim go; `HG-03 E4-B1/B5/B6 [A-7] = a` GL-GATE-07 batch-wide, flips operator-executed (OP-26); `E4-B2 = 'Agent clears, disclosed'` carried verbatim; dep landed) — fresh implement-spec sub-agent on `r11/P37.16b-dossier-live-captures-last-two-families` · harness: devin-desktop/swe-2-high/orchestrator

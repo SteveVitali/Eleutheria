@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "4b9ef141a2ae09c87ef33c6ae274f5e1df5cf6b9",
-  "manifest_inputs": 1224,
+  "input_commit": "d9810e6756657cc9dfa01466af5d6b56304646f2",
+  "manifest_inputs": 1225,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.16a",
-    "lastCompleted": "P37.15",
+    "nextTicket": "P37.16b",
+    "lastCompleted": "P37.16a",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.70,P37.71",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.14-statute-seeded-records-leads",
+    "chainTip": "r11/P37.16a-dossier-live-captures-first-two-families",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-07T18:05Z"
+    "updatedAt": "2026-11-08T00:02Z"
   },
   "counts": {
     "obligations": 232,
@@ -31,8 +31,8 @@
     "open": 145,
     "partial": 3,
     "terminal": 84,
-    "events": 743,
-    "transitions": 55,
+    "events": 745,
+    "transitions": 57,
     "coverage_assessments": 510,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
@@ -5000,12 +5000,12 @@
     {
       "id": "D-P32.18-1",
       "status": "OPEN",
-      "status_source": "event-head D-P32.18-1:e0",
+      "status_source": "event-head D-P32.18-1:e1",
       "kind": "P",
-      "owner": "operator",
+      "owner": "the operator (HG-03 apply + verbatim go, OP-26) then the live_verification=true re-run",
       "landing": "RETURN PASS — P32.18",
       "landing_source": "return-pass-map/1",
-      "backlog_home": "BL-058",
+      "backlog_home": "BL-087",
       "item": "the bounded live-source RETURN PASS for the OKC dossier: actual byte captures of the six reviewed targets — the OKCPD Flock usage page, the council memo PDF, the Amendment 1 PDF (signature/execution state on real pages), the OSCN 47 O.S. §7-606.1 statutory version, the 6th-edition ops manual §5-118, and the purchasing index route to executed C241032 (edge WAF may refuse — the refusal is recorded) — replacing the committed stand-ins so the dossier's capture digests bind real bytes",
       "unblocked_by": "HG-03 operator review per target (published-URL ownership screen) + Part VIII preflight; then the same ticket contract re-dispatched with `live_verification=true`",
       "verify": "per-target green registry/rights basis; captured digests recorded against the reviewed URLs; a rebuilt `sig.dossier-packet/1` whose fact-to-capture ledger binds real captures; measured acquisition under the family/document/protocol caps",
@@ -5039,18 +5039,42 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P32.18-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P32.18-1",
+          "seq": 1,
+          "expected_previous_event": "D-P32.18-1:e0",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P37.16a",
+          "owner": "the operator (HG-03 apply + verbatim go, OP-26) then the live_verification=true re-run",
+          "landing": "capture machinery + agent screen landed; leg queued prepared_not_executed",
+          "backlog_home": "BL-087",
+          "evidence_refs": [
+            "docs/build/reports/p32.18-okc-dossier/LIVE_PASS_RESULT.json",
+            "docs/build/reports/p32.18-okc-dossier/PART_VIII_CLEAR.json",
+            "ops/src/ops/dossier_live_pass.py",
+            "docs/tickets/438_P37.16a__dossier-live-captures-first-two-families.md"
+          ],
+          "observed_at": "2026-11-07",
+          "recorded_at": "2026-11-07",
+          "source_commit": "c43f95f675bdcc76c9e83acd713b11299cd06c59",
+          "reason": "progress note, not a close (P37.16a): the bounded live-capture executor + the B-42 Part VIII screen landed — SRC-001 records `clear` ('cleared by agent screen, no human review', sig.part-viii-clear/1) and the result record is `prepared_not_executed` (operator go absent; the family's dossier_* HG-03 flip unapplied — the prepared r11/sources-flips apply is OP-26's, never the agent's). Still owed: the operator's HG-03 apply + verbatim go, then the live_verification=true re-run."
         }
       ]
     },
     {
       "id": "D-P32.19-1",
       "status": "OPEN",
-      "status_source": "event-head D-P32.19-1:e0",
+      "status_source": "event-head D-P32.19-1:e1",
       "kind": "P",
-      "owner": "operator",
+      "owner": "the operator (HG-03 apply + verbatim go, OP-26) then the live_verification=true re-run",
       "landing": "RETURN PASS — P32.19",
       "landing_source": "return-pass-map/1",
-      "backlog_home": "BL-058",
+      "backlog_home": "BL-087",
       "item": "the bounded live-source RETURN PASS for the Tulsa dossier: actual byte captures of the three registered dossier targets — TPD Policy 113C, TPD Policy 113E and the public camera-integration MOU template — plus the reviewed leads (the TPD Flock page's registration-vs-integration distinction and operation-since date, the policies index's current-version check on the 2023 files, the Commercial Corridor Safety Guide count lead with its date/scope established), replacing the committed stand-ins so the dossier's capture digests bind real bytes",
       "unblocked_by": "HG-03 operator review per target (published-URL ownership screen) + Part VIII preflight; then the same ticket contract re-dispatched with `live_verification=true`",
       "verify": "per-target green registry/rights basis; captured digests recorded against the reviewed URLs; a rebuilt `sig.dossier-packet/1` whose fact-to-capture ledger binds real captures; measured acquisition under the family/document/protocol caps",
@@ -5084,6 +5108,30 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P32.19-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P32.19-1",
+          "seq": 1,
+          "expected_previous_event": "D-P32.19-1:e0",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P37.16a",
+          "owner": "the operator (HG-03 apply + verbatim go, OP-26) then the live_verification=true re-run",
+          "landing": "capture machinery + agent screen landed; leg queued prepared_not_executed",
+          "backlog_home": "BL-087",
+          "evidence_refs": [
+            "docs/build/reports/p32.19-tulsa-dossier/LIVE_PASS_RESULT.json",
+            "docs/build/reports/p32.19-tulsa-dossier/PART_VIII_CLEAR.json",
+            "ops/src/ops/dossier_live_pass.py",
+            "docs/tickets/438_P37.16a__dossier-live-captures-first-two-families.md"
+          ],
+          "observed_at": "2026-11-07",
+          "recorded_at": "2026-11-07",
+          "source_commit": "c43f95f675bdcc76c9e83acd713b11299cd06c59",
+          "reason": "progress note, not a close (P37.16a): the bounded live-capture executor + the B-42 Part VIII screen landed — SRC-002 records `clear` ('cleared by agent screen, no human review', sig.part-viii-clear/1) and the result record is `prepared_not_executed` (operator go absent; the family's dossier_* HG-03 flip unapplied — the prepared r11/sources-flips apply is OP-26's, never the agent's). Still owed: the operator's HG-03 apply + verbatim go, then the live_verification=true re-run."
         }
       ]
     },
@@ -26967,10 +27015,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "e54f75dc82e05756abd5327bef66afe84da3dd94acf04fa92ed51b437cbed683",
+  "manifest_sha256": "55b0e69c270e0ab227069ab61cb0208eeea393c8d7eabaf47256e0d6a84ccb30",
   "current_md": {
     "lines": 149,
-    "bytes": 19740,
+    "bytes": 19754,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

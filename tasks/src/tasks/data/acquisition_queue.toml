@@ -49,7 +49,7 @@ links = [
 lineage_class = "independent_account"
 lineage_group = "okc-municipal"
 municipal_publication = true
-preflight = { status = "screening_required", notes = "ADR-185 drafted screen recorded 2026-10-07 by agent (draft) — lanes S6 (free-text excerpts), S7 (incidental staff/private names redacted at extraction); the B-42 'agent clears, disclosed' clear is recorded by the P37.16a/b capture rows, never here; draft: docs/build/reports/acquisition/PART_VIII_SCREENS.json" }
+preflight = { status = "clear", notes = "B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z; ADR-185 §2): cleared 2026-11-07 by the P37.16a agent screen — lanes S6 (free-text excerpts → SIG-PUB-014a screen) and S7 (incidental staff/private names → extraction-time suppression) are enforced mechanically at claim build (the §43.4 naming gate + the forbidden-token guard); 'cleared by agent screen, no human review'; record: docs/build/reports/p32.18-okc-dossier/PART_VIII_CLEAR.json" }
 dimensions = { G = 3, R = 3, I = 2, U = 2, T = 2, J = 3, E = 2, A = 2, S = 0 }
 dimension_evidence = "P0 dossier (G=3) closing owned-vs-partner + retention gap (R=3); same OKC publisher as permitted rows (I=2); 2-page memo+amendment (U=2); announced retention change (T=2); S2 city (J=3); effort M (E=2); intermittent 403 (A=2); no personal fields flagged (S=0)"
 extra_questions = [
@@ -67,7 +67,7 @@ links = [
 lineage_class = "independent_account"
 lineage_group = "tulsa-municipal"
 municipal_publication = true
-preflight = { status = "screening_required", notes = "ADR-185 drafted screen recorded 2026-10-07 by agent (draft) — lanes S5 (officer names in policy text — §43.4 naming gate stands), S6 (free-text excerpts), S7 (incidental private names); the B-42 'agent clears, disclosed' clear is recorded by the P37.16a/b capture rows, never here; draft: docs/build/reports/acquisition/PART_VIII_SCREENS.json" }
+preflight = { status = "clear", notes = "B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z; ADR-185 §2): cleared 2026-11-07 by the P37.16a agent screen — lanes S5 (officer names in policy text → the §43.4 naming gate stands), S6 (free-text excerpts → SIG-PUB-014a screen), S7 (incidental private names → extraction-time suppression) are enforced mechanically at claim build; 'cleared by agent screen, no human review'; record: docs/build/reports/p32.19-tulsa-dossier/PART_VIII_CLEAR.json" }
 dimensions = { G = 3, R = 3, I = 3, U = 2, T = 2, J = 3, E = 2, A = 2, S = 0 }
 dimension_evidence = "P0 dossier (G=3); fixed Flock-vs-Axon + registration-vs-integration + policy terms (R=3); net-new TPD publisher (I=3); HTML+MOU+policy docs (U=2); current policies page (T=2); S2 city (J=3); effort M (E=2); executed contract not found in bounded search (A=2); none flagged (S=0)"
 extra_questions = [

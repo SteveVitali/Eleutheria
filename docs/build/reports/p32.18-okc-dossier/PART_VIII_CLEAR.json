@@ -1,0 +1,66 @@
+{
+  "authority": "E4-B2 / B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z, decision_catalog round 18; ADR-185 §2)",
+  "candidates": [
+    "SRC-001"
+  ],
+  "controls_verified": true,
+  "deferral": "D-P32.18-1",
+  "disclosure": "cleared by agent screen, no human review",
+  "draft": {
+    "screened_on": "2026-10-07",
+    "screener": "agent (draft)",
+    "source": "docs/build/reports/acquisition/PART_VIII_SCREENS.json",
+    "status": "screening_required"
+  },
+  "family": "okc-municipal",
+  "lanes": [
+    {
+      "drafted": "S6 free-text excerpts",
+      "enforced": true,
+      "enforcement": "the SIG-PUB-014a excerpt screen — connectors.okc_documents.assert_part_viii_safe scans every predicate id and verbatim raw value for the forbidden-token set before any claim is built; facts only, no free-text carry-through"
+    },
+    {
+      "drafted": "S7 incidental private names",
+      "enforced": true,
+      "enforcement": "extraction-time suppression — the reviewed field maps emit configured fields only (no free-text carry-through), and the forbidden-token guard + naming gate refuse anything person-level that reaches claim build"
+    }
+  ],
+  "note": "the Part VIII sign-off this family's capture run requires (E4-B2 → B-42 'Agent clears, disclosed'): the agent screened the family's drafted lanes against their mechanical enforcements and cleared it — 'cleared by agent screen, no human review' is the honest label every readout carries",
+  "queue_preflight": {
+    "SRC-001": {
+      "disclosure": "cleared by agent screen, no human review",
+      "notes": "B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z; ADR-185 §2): cleared 2026-11-07 by the P37.16a agent screen — lanes S6 (free-text excerpts → SIG-PUB-014a screen) and S7 (incidental staff/private names → extraction-time suppression) are enforced mechanically at claim build (the §43.4 naming gate + the forbidden-token guard); 'cleared by agent screen, no human review'; record: docs/build/reports/p32.18-okc-dossier/PART_VIII_CLEAR.json",
+      "status": "clear"
+    }
+  },
+  "schema": "sig.part-viii-clear/1",
+  "screened_on": "2026-11-07",
+  "screener": "agent",
+  "status": "clear",
+  "targets": [
+    {
+      "doc_id": "okc-flock-usage-2026",
+      "url": "https://www.okc.gov/departments/police/flock-safety-lpr-usage"
+    },
+    {
+      "doc_id": "okc-council-memo-2026-08",
+      "url": "https://www.okc.gov/files/police/flock-council-memo-august-2026.pdf"
+    },
+    {
+      "doc_id": "okc-flock-amendment-2026",
+      "url": "https://www.okc.gov/files/police/flock-amendment-1-2026.pdf"
+    },
+    {
+      "doc_id": "okc-statute-47-7-606-1",
+      "url": "https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582"
+    },
+    {
+      "doc_id": "okc-ops-manual-5-118",
+      "url": "https://www.okc.gov/files/assets/city/v/2/police/documents/operations-manual-6th-edition-june-15-2026.pdf"
+    },
+    {
+      "doc_id": "okc-purchasing-index",
+      "url": "https://www.okc.gov/departments/finance/purchasing"
+    }
+  ]
+}

@@ -1965,14 +1965,24 @@ def check_pilot(
                     v.append(f"screens: {fam} screens {cid} — outside the acquired batch")
                     continue
                 e = by_id.get(cid)
-                if (
-                    e is not None
-                    and e.passport.preflight.status != PreflightStatus.SCREENING_REQUIRED
-                ):
-                    v.append(
-                        f"screens: {cid} queue preflight is "
-                        f"{e.passport.preflight.status.value}, not screening_required"
-                    )
+                if e is not None:
+                    st = e.passport.preflight.status
+                    if st == PreflightStatus.CLEAR:
+                        # P37.16a/b — the B-42 'agent clears, disclosed' clear
+                        # lands on the capture rows; a clear MUST carry the
+                        # disclosure, never a bare flip.
+                        if "cleared by agent screen, no human review" not in (
+                            e.passport.preflight.notes
+                        ):
+                            v.append(
+                                f"screens: {cid} queue preflight is clear without "
+                                "the B-42 disclosure note"
+                            )
+                    elif st != PreflightStatus.SCREENING_REQUIRED:
+                        v.append(
+                            f"screens: {cid} queue preflight is "
+                            f"{st.value}, not screening_required or a disclosed clear"
+                        )
     if not readout["descriptive_only"]:
         v.append("descriptive-only label missing")
     # P31 non-duplication across the whole batch.

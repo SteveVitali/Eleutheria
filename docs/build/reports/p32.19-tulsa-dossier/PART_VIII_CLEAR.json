@@ -1,0 +1,71 @@
+{
+  "authority": "E4-B2 / B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z, decision_catalog round 18; ADR-185 §2)",
+  "candidates": [
+    "SRC-002"
+  ],
+  "controls_verified": true,
+  "deferral": "D-P32.19-1",
+  "disclosure": "cleared by agent screen, no human review",
+  "draft": {
+    "screened_on": "2026-10-07",
+    "screener": "agent (draft)",
+    "source": "docs/build/reports/acquisition/PART_VIII_SCREENS.json",
+    "status": "screening_required"
+  },
+  "family": "tulsa-municipal",
+  "lanes": [
+    {
+      "drafted": "S5 officer names (§43.4 naming gate stands)",
+      "enforced": true,
+      "enforcement": "the §43.4 naming gate — connectors.okc_documents.assert_person_naming_permitted runs on every claim; a person-named predicate is refused by default (SIG-PUB-007/008 stands; names suppressed, never emitted)"
+    },
+    {
+      "drafted": "S6 free-text excerpts",
+      "enforced": true,
+      "enforcement": "the SIG-PUB-014a excerpt screen — connectors.okc_documents.assert_part_viii_safe scans every predicate id and verbatim raw value for the forbidden-token set before any claim is built; facts only, no free-text carry-through"
+    },
+    {
+      "drafted": "S7 incidental private names",
+      "enforced": true,
+      "enforcement": "extraction-time suppression — the reviewed field maps emit configured fields only (no free-text carry-through), and the forbidden-token guard + naming gate refuse anything person-level that reaches claim build"
+    }
+  ],
+  "note": "the Part VIII sign-off this family's capture run requires (E4-B2 → B-42 'Agent clears, disclosed'): the agent screened the family's drafted lanes against their mechanical enforcements and cleared it — 'cleared by agent screen, no human review' is the honest label every readout carries",
+  "queue_preflight": {
+    "SRC-002": {
+      "disclosure": "cleared by agent screen, no human review",
+      "notes": "B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z; ADR-185 §2): cleared 2026-11-07 by the P37.16a agent screen — lanes S5 (officer names in policy text → the §43.4 naming gate stands), S6 (free-text excerpts → SIG-PUB-014a screen), S7 (incidental private names → extraction-time suppression) are enforced mechanically at claim build; 'cleared by agent screen, no human review'; record: docs/build/reports/p32.19-tulsa-dossier/PART_VIII_CLEAR.json",
+      "status": "clear"
+    }
+  },
+  "schema": "sig.part-viii-clear/1",
+  "screened_on": "2026-11-07",
+  "screener": "agent",
+  "status": "clear",
+  "targets": [
+    {
+      "doc_id": "tulsa-mou-template",
+      "url": "https://www.tulsapolice.org/files/camera-integration-mou-template.pdf"
+    },
+    {
+      "doc_id": "tulsa-policy-113c",
+      "url": "https://www.tulsapolice.org/files/policy-113c-alpr.pdf"
+    },
+    {
+      "doc_id": "tulsa-policy-113e",
+      "url": "https://www.tulsapolice.org/files/policy-113e-alpr-sharing.pdf"
+    },
+    {
+      "doc_id": "tpd-flock-page",
+      "url": "https://www.tulsapolice.org/flock-safety"
+    },
+    {
+      "doc_id": "tpd-policies-index",
+      "url": "https://www.tulsapolice.org/policies-and-procedures"
+    },
+    {
+      "doc_id": "tulsa-corridor-safety-guide",
+      "url": "https://www.cityoftulsa.org/government/departments/planning-and-neighborhoods/community-planning/commercial-corridor-safety-guide/"
+    }
+  ]
+}
