@@ -1,0 +1,56 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P37.24 (K2 GX-08a) — the /graphs/ hub: every overview this release ships,
+// its question, its counts and the H-8 disclosure.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getGraphIndex } from "../../lib/data";
+import { withBase } from "../../lib/paths";
+
+const rows = getGraphIndex();
+---
+
+<BaseLayout
+  title="Overview graphs"
+  path={withBase("graphs/")}
+  crumbs={[{ label: "Explore", href: withBase("map/") }, { label: "Overview graphs" }]}
+  lede="Static overview graphs — each answers one question over the release's recorded relationships. Node positions carry no geographic meaning."
+>
+  <p class="sig-lede" data-copy="GO-01">
+    Static overview graphs — each answers one question over the release's
+    recorded relationships. Node positions carry no geographic meaning.
+  </p>
+  {rows.length === 0 && (
+    <section class="sig-empty" data-testid="empty-state">
+      <p class="sig-empty__heading" data-testid="empty-state-state" data-copy="GO-02">No overview graphs in this release</p>
+      <p class="sig-empty__text" data-copy="GO-03">
+        This release emits no sig.graph-overview/1 artifacts — an honest
+        absence, never a hidden one. The entity pages carry the same evidence.
+      </p>
+      <p class="sig-empty__text"><a href={withBase("entity/")}>Browse entities</a></p>
+    </section>
+  )}
+  {rows.length > 0 && (
+    <table class="sig-table" data-testid="graphs-index">
+      <thead>
+        <tr><th>Overview</th><th>Question</th><th>Nodes</th><th>Edges</th></tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr data-testid="graphs-index-row">
+            <td><a href={withBase(`graphs/${r.id}/`)}>{r.title}</a></td>
+            <td>{r.question}</td>
+            <td class="sig-num">{r.nodes}</td>
+            <td class="sig-num">{r.edges}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+  <p class="sig-table-note">
+    <strong>Entity resolution.</strong> SIG has not merged organisations
+    across sources; one agency can appear more than once.
+  </p>
+</BaseLayout>

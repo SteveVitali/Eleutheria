@@ -122,6 +122,17 @@ import {
 import { DOSSIER_SOURCES_FIXTURE } from "./dossier-sources-fixture";
 import { isDossierSourcesDoc, type DossierSourcesDoc } from "./dossier-sources";
 import { fixtureFigureTwin } from "./dossier-visuals-fixture";
+import {
+  decodeGraphIndex,
+  decodeOverview,
+  mergeOverviews,
+  type GraphIndexEntry,
+  type GraphOverview,
+} from "./graph-overview";
+import {
+  GRAPH_INDEX_FIXTURE,
+  GRAPH_OVERVIEW_FIXTURES,
+} from "./graph-overview-fixture";
 import { isWatchKind, type WatchEnvelopeV2, type WatchItemV2 } from "./watch-v2";
 import { WATCH_V2_FIXTURE } from "./watch-v2-fixture";
 
@@ -1476,6 +1487,79 @@ export function getProcurementRelevance(): ProcurementRelevanceRow[] {
     throw new Error(`${path}: expected a ${"sig.procurement-relevance/1"} object`);
   }
   return parsed.rows;
+}
+
+/**
+ * P37.24 (K2 GX-08a, `sig.graph-overview/1`): the overview docs —
+ * `<exportDir>/web/graph/<ov>/<comp>.json` per compartment in export mode
+ * (the page unions them, ADR-106); the committed fixture set otherwise.
+ * A missing overview directory is the honest empty set.
+ */
+export function getGraphOverviewDocs(id: string): GraphOverview[] {
+  if (dataSource() !== "export") {
+    return (GRAPH_OVERVIEW_FIXTURES[id] ?? []).map(decodeOverview);
+  }
+  const dir = `${exportDir()}/web/graph/${id}`;
+  if (!existsSync(dir)) return [];
+  const out: GraphOverview[] = [];
+  for (const entry of readdirSync(dir).sort()) {
+    if (!entry.endsWith(".json")) continue;
+    out.push(decodeOverview(JSON.parse(readFileSync(`${dir}/${entry}`, "utf-8"))));
+  }
+  return out;
+}
+
+/** The merged (all-compartment) overview for one id, or null. */
+export function getGraphOverview(id: string): GraphOverview | null {
+  return mergeOverviews(getGraphOverviewDocs(id));
+}
+
+/** The `sig.graph-index/1` overview manifest rows. */
+export function getGraphIndex(): GraphIndexEntry[] {
+  if (dataSource() !== "export") return GRAPH_INDEX_FIXTURE;
+  const path = `${exportDir()}/web/graph/index.json`;
+  if (!existsSync(path)) return [];
+  return decodeGraphIndex(JSON.parse(readFileSync(path, "utf-8")));
+}
+
+/** The bytes of a per-compartment overview download (SVG/CSV/JSON). Export
+ *  mode serves the emitted file verbatim; fixtures mode derives the same
+ *  shapes from the committed fixture doc so no named download is dead. */
+export function getGraphOverviewFile(id: string, file: string): string | null {
+  if (dataSource() === "export") {
+    const path = `${exportDir()}/web/graph/${id}/${file}`;
+    return existsSync(path) ? readFileSync(path, "utf-8") : null;
+  }
+  const doc = (GRAPH_OVERVIEW_FIXTURES[id] ?? [])[0];
+  const ov = doc ? decodeOverview(doc) : null;
+  if (!ov) return null;
+  if (file === `${ov.compartment}.json`) return JSON.stringify(doc, null, 2) + "\n";
+  if (file === `nodes.${ov.compartment}.csv`)
+    return (
+      "node_id,label,kind,place_key,href,member_count,label_basis\n" +
+      ov.nodes.map((n) => `${n.key},"${n.label}",${n.band},${n.place ?? ""},${n.href ?? ""},${n.count || ""},`).join("\n") +
+      "\n"
+    );
+  if (file === `edges.${ov.compartment}.csv`)
+    return (
+      "source_id,target_id,relation,predicates,date,date_kind,currency,support,sources,claim_ids,evidence_count,historical\n" +
+      ov.edges.map((e) => `${e.src},${e.dst},${e.relation},,${e.date ?? ""},${e.dateKind},${e.currency},,"${e.sources.join(";")}",,${e.evidenceCount},`).join("\n") +
+      "\n"
+    );
+  if (file === `overview.${ov.compartment}.svg`) {
+    const w = Math.ceil(Math.max(0, ...ov.nodes.map((n) => n.x)) + 60);
+    const h = Math.ceil(Math.max(0, ...ov.nodes.map((n) => n.y)) + 40);
+    const byKey = new Map(ov.nodes.map((n) => [n.key, n]));
+    const lines = ov.edges
+      .map((e) => {
+        const a = byKey.get(e.src), b = byKey.get(e.dst);
+        return a && b ? `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="#888" stroke-width="0.5" />` : "";
+      })
+      .join("");
+    const dots = ov.nodes.map((n) => `<circle cx="${n.x}" cy="${n.y}" r="4" />`).join("");
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" role="img"><title>${ov.title}</title>${lines}${dots}</svg>`;
+  }
+  return null;
 }
 
 /**

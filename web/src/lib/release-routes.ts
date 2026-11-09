@@ -36,7 +36,7 @@
 
 import { existsSync, readFileSync } from "node:fs";
 import { basename, join } from "node:path";
-import { dataSource, exportDir, getEntityLabelRows, getUnplacedReport } from "./data";
+import { dataSource, exportDir, getEntityLabelRows, getGraphIndex, getUnplacedReport } from "./data";
 import { entityIndex } from "./entity-page";
 
 /**
@@ -126,6 +126,11 @@ export function releaseRoutes(): Set<string> {
     for (const k of entityIndex(getEntityLabelRows()).kinds) {
       routes.add(`entity/${k.kind}/`);
     }
+  }
+  // P37.24 (GX-08a): `/graphs/<ov>/` emits exactly for the overviews the
+  // index names — the same condition the rest route's getStaticPaths uses.
+  if (`${PAGES_PREFIX}graphs/[...parts].astro` in PAGE_MODULES) {
+    for (const r of getGraphIndex()) routes.add(`graphs/${r.id}/`);
   }
 
   // --- The release pipeline's declared served routes (export mode only) ---

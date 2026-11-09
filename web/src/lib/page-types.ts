@@ -237,6 +237,16 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
       "K4's dossier tree: the grouped index (P36.34 / sig.dossier-index/2), dossiers at every level, the A–Z directory, sort/facet GET routes, the unplaced report and JUR-05's slug stubs.",
   },
   {
+    patterns: ["/graphs/**"],
+    type: "T1",
+    owner: "P37.24",
+    contract: "sig.graph-overview/1",
+    noJsEquivalent: SELF,
+    examples: ["/graphs/", "/graphs/supply/", "/graphs/supply/page/2/", "/graphs/supply/usa/tx/"],
+    notes:
+      "K2 GX-08a's static overview graphs — the precomputed SVG + paginated adjacency table + per-compartment downloads; the per-place drill-downs ride the same rest route. T1 zero-JS complete (the interactive /explore/ is GX-09a's separate T2 surface).",
+  },
+  {
     patterns: ["/entity/**"],
     type: "T1",
     owner: "P36.42a",
