@@ -11,18 +11,18 @@
   "events": [
     {
       "date": "2020-01-28",
-      "label": "agency name recorded",
-      "kind": "agency_name"
-    },
-    {
-      "date": "2020-01-28",
       "label": "configured sharing partner — Vigilant Solutions (LEARN)",
-      "kind": "configured sharing partner"
+      "kind": "observed"
     },
     {
       "date": "2020-01-28",
-      "label": "sharing partner degree — partners not named",
-      "kind": "sharing_partner_degree"
+      "label": "first seen — EFF Data Driven",
+      "kind": "first_seen"
+    },
+    {
+      "date": "2020-01-28",
+      "label": "posted date",
+      "kind": "stated"
     }
   ]
 }
