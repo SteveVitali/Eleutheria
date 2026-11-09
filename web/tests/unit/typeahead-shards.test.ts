@@ -213,3 +213,27 @@ describe("the shared-shards rule (UXR-23) — one root, every consumer", () => {
     }
   });
 });
+
+// ------------------------------------------------------------------ P37.19
+describe("MAP-04 — cities layer + kind scope (P37.19, OD-09 = a)", () => {
+  const catalog = typeaheadCatalog();
+
+  it("the Natural Earth populated-places subset joins as kind=place with points", () => {
+    const canberra = catalog.find((e) => e.label.startsWith("Canberra"));
+    expect(canberra, "Canberra must never answer zero (K1 §4.2 / C2 NEW-10)").toBeDefined();
+    expect(canberra!.kind).toBe("place");
+    expect(canberra!.jkey).toBeUndefined(); // a populated place, never a jurisdiction
+    expect(typeof canberra!.lat).toBe("number");
+    expect(canberra!.href).toContain("map/?at=");
+    expect(canberra!.detail).toContain("Natural Earth"); // OD-09 = a — never a hosted geocoder
+  });
+
+  it("scope 'kind:place' keeps only place suggestions", async () => {
+    const { scopeMatches } = await import("../../src/elements/typeahead-model");
+    const place = catalog.find((e) => e.kind === "place")!;
+    const source = catalog.find((e) => e.kind === "source")!;
+    expect(scopeMatches(place, "kind:place")).toBe(true);
+    expect(scopeMatches(source, "kind:place")).toBe(false);
+    expect(scopeMatches(place, "kind:technology")).toBe(false);
+  });
+});

@@ -24,6 +24,20 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.19 — Map place search (K1 MAP-04; OD-09 [B-23] = a Natural Earth;
+  D-K1-7 [B-44] = yes carried via P37.72; SIG-GOV-017 cited):** the `/map/`
+  place box is the same `<sig-typeahead>` over the same release-pinned
+  shards (SIG-UI-073/074), scoped to `kind:place` — the K4 registry plus
+  the Natural Earth populated-places subset (the committed `sig.place-cities/1`
+  fixture; never a hosted geocoder — "Canberra" no longer answers zero).
+  Choosing a registry place lands the descendants-inclusive `jurisdiction=`
+  filter and frames the registry bbox; a "Show this area instead" chip
+  keeps the framing-only `at=` state — the two states are distinct and
+  both linkable (`frame=` canonicalises to `at=` through the new
+  jkey→bounds fold). Typed coordinates ("35.4676, -97.5164", hemisphere
+  letters too) parse locally and jump — no keystroke or request leaves the
+  browser. The no-JS GET form stays complete (`/search/?type=place` + the
+  A–Z fallback; no `/map/place/` route — C-24).
 - **P37.72 — 'My location' map-pan control (D-K1-7 [B-44] = yes;
   SIG-GOV-017 cited, analysis first):** the `/map/` chrome gains a "My
   location" button that only pans the map — a one-shot

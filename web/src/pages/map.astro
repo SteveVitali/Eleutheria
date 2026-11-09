@@ -40,6 +40,7 @@ import {
   dataSource,
   getDossiers,
   getDossierIndex,
+  getJurisdictionFrames,
   getJurisdictionKeyMap,
   getJurisdictionSlugPaths,
   getMapSites,
@@ -51,6 +52,7 @@ import {
   capRows,
 } from "../lib/data";
 import {
+  assetJurisdictionKey,
   buildJurisdictionLookup,
   buildSitesModel,
   buildPlaceTable,
@@ -58,6 +60,8 @@ import {
   dossierSitesPath,
   dossierSitesHref,
 } from "../lib/sites";
+import { jkeyChain, jkeyParentMap } from "../lib/scoped-search";
+import { TYPEAHEAD_SHARD_ROOT } from "../lib/typeahead-shards";
 import { dossierPath } from "../lib/dossier";
 import { beliefPinnedPermalink } from "../lib/citation";
 import { withBase } from "../lib/paths";
@@ -145,6 +149,22 @@ const ISLAND_COMPARTMENTS = TILE_SOURCES.length > 0
     }))
   : (LATEST?.compartments.map((c) => ({ id: c.compartment, license: c.license })) ?? []);
 
+// P37.19 (MAP-04): the place frames the island resolves `jurisdiction=` /
+// `frame=` through — the emitted `sig.map-dict/1` jurisdictions in export
+// mode, the committed fixture table here; ancestor chains come off the
+// canonical parent map so a non-page intermediate still resolves.
+const PLACE_PARENTS = jkeyParentMap(getDossierIndex());
+const JURISDICTION_FRAMES: Record<
+  string,
+  { name?: string; bbox?: [number, number, number, number]; chain?: string[] }
+> = {};
+for (const [jkey, frame] of Object.entries(getJurisdictionFrames())) {
+  JURISDICTION_FRAMES[jkey] = {
+    ...frame,
+    chain: jkeyChain(jkey, PLACE_PARENTS),
+  };
+}
+
 // P36.37 (K1 MAP-03a, SIG-UI-101/102): the bounded fixtures-mode records
 // payload — the located records' selection-panel + in-view fields, built from
 // the SAME sites model the lists use (one resolution, counts reconcile). The
@@ -189,6 +209,17 @@ const ISLAND_RECORDS: MapRecord[] =
             compartment: r.compartment,
             recordHref: siteRecordHref(r.id),
             listHref: withBase(dossierSitesPath(r.dossierSlug)),
+            // P37.19: the record's canonical key + ancestry for the
+            // descendants-inclusive `jurisdiction=` facet.
+            jkey: (() => {
+              const a = ASSET_BY_ID.get(r.id);
+              return a ? assetJurisdictionKey(a) : null;
+            })(),
+            chain: (() => {
+              const a = ASSET_BY_ID.get(r.id);
+              const jk = a ? assetJurisdictionKey(a) : null;
+              return jk ? jkeyChain(jk, PLACE_PARENTS) : undefined;
+            })(),
           })),
       )
     : [];
@@ -293,6 +324,8 @@ const placeOptionLabel = (d: (typeof placeRows)[number]) =>
           asOf={AS_OF_LINE}
           unplotted={UNPLOTTED}
           jurisdictionHrefs={JURISDICTION_HREFS}
+          jurisdictionFrames={JURISDICTION_FRAMES}
+          shardRoot={withBase(TYPEAHEAD_SHARD_ROOT)}
         />
       </>
     ) : (
@@ -332,13 +365,18 @@ const placeOptionLabel = (d: (typeof placeRows)[number]) =>
   )}
 
   <!-- The place form (K1 §5 / C-24): a zero-JS GET to the release-pinned
-       search's place kind; the A–Z directory is the static fallback. -->
+       search's place kind; the A–Z directory is the static fallback.
+       P37.19 (MAP-04): with JS the field upgrades to the shared-shards APG
+       combobox scoped to `kind:place` — the element is registered by the
+       map island's own content-hashed bundle (no `/_kit/` src on a T2
+       route); without JS the form is already complete. -->
   <form
     method="get"
     action={withBase("search/")}
     class="sig-place-search"
     data-testid="place-search-form"
   >
+    <sig-typeahead shard-root={withBase(TYPEAHEAD_SHARD_ROOT)} scope="kind:place" min-chars="2" data-testid="map-place-typeahead">
     <label for="map-place-q">Find a place:</label>{" "}
     <input id="map-place-q" type="search" name="q" maxlength={200} size={30} placeholder="State, county or city" list="map-place-names" />
     <input type="hidden" name="type" value="place" />
@@ -352,6 +390,7 @@ const placeOptionLabel = (d: (typeof placeRows)[number]) =>
       If search cannot be reached, the first letter of a place's name finds it in the{" "}
       <a href={withBase("dossier/a-z/")}>A–Z directory</a>.
     </span>
+    </sig-typeahead>
   </form>
 
   <!-- Layers (SIG-UI-016): observed layers, plus DERIVED layers flagged distinct. -->

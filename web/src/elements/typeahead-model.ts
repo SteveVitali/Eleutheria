@@ -37,6 +37,15 @@ export interface TypeaheadEntry {
   chain?: string[];
   /** P36.56: a source entry's registry id — `source:<id>` scope key. */
   source_id?: string;
+  /**
+   * P37.19 (MAP-04): a populated-place entry's published point — the
+   * Natural Earth cities subset (OD-09 = a) is not a SIG jurisdiction, so
+   * it carries coordinates instead of a jkey and the map frames it at its
+   * own zoom rather than through a registry bbox. Registry places never
+   * carry these (their frames resolve through the jkey).
+   */
+  lat?: number;
+  lon?: number;
 }
 
 export interface TypeaheadShard {
@@ -104,9 +113,15 @@ export function scopeMatches(
 ): boolean {
   const m = scope == null ? null : /^(\w+):(.+)$/.exec(scope);
   if (m === null) return true;
-  return m[1] === "jurisdiction"
-    ? (entry.chain ?? (entry.jkey ? [entry.jkey] : [])).includes(m[2]!)
-    : m[1] === "source" && entry.source_id === m[2];
+  if (m[1] === "jurisdiction") {
+    return (entry.chain ?? (entry.jkey ? [entry.jkey] : [])).includes(m[2]!);
+  }
+  if (m[1] === "source") return entry.source_id === m[2];
+  // P37.19 (MAP-04): `kind:<k>` keeps one suggestion class — the map's
+  // place box scopes to `kind:place` so a source or technology entry never
+  // competes with a place name for the same keystroke.
+  if (m[1] === "kind") return entry.kind === m[2];
+  return false;
 }
 
 /**

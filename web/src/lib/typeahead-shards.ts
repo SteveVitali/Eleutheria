@@ -33,7 +33,7 @@
  * loss fails the build, it is never emitted silently.
  */
 
-import { getDossierIndex, getMapSites, getSourceRows } from "./data";
+import { getDossierIndex, getMapCities, getMapSites, getSourceRows } from "./data";
 import { dossierDisplayTitle } from "./jurisdictions";
 import { jkeyChain, jkeyParentMap } from "./scoped-search";
 import { dossierPath } from "./dossier";
@@ -135,6 +135,28 @@ export function typeaheadCatalog(): TypeaheadCatalogEntry[] {
       kind: "technology",
       href: withBase(`search/?technology=${encodeURIComponent(slug)}`),
       detail: "technology — records classified under it",
+    });
+  }
+  // P37.19 (MAP-04, OD-09 [B-23] = a "Natural Earth"): the non-US
+  // populated-places subset rides the SAME shards as `kind=place` — "the
+  // map place search" and every other entry resolve a city name through
+  // the one gazetteer (SIG-UI-073/074). A city is not a jurisdiction: it
+  // carries its published point (`lat`/`lon`) instead of a jkey, and its
+  // linkable destination is the map's own framing URL — the `at=` viewport
+  // is the honest landing for a place that has no dossier.
+  const cities = getMapCities();
+  for (const c of cities.cities) {
+    const label = c.admin
+      ? `${c.name}, ${c.admin}, ${c.country}`
+      : `${c.name}, ${c.country}`;
+    entries.push({
+      label,
+      kind: "place",
+      href: withBase(`map/?at=10/${c.lat.toFixed(4)}/${c.lon.toFixed(4)}`),
+      detail: `populated place — ${cities.attribution.replace(/\.$/, "")}`,
+      alt: [c.name, c.country_a2].filter((s) => s !== label),
+      lat: c.lat,
+      lon: c.lon,
     });
   }
   return entries;

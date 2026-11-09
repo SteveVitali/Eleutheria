@@ -47,3 +47,6 @@ web/src/islands/map/MapApp.tsx	// docs/build/reports/p37.72-gov017-analysis/PACK
 web/src/islands/map/model.ts	// docs/build/reports/p37.72-gov017-analysis/PACKET.md.
 web/tests/e2e/map-mylocation.spec.ts	// The SIG-GOV-017 analysis it honours: docs/build/reports/p37.72-gov017-analysis.
 web/tests/unit/map-app-model.test.ts	// P37.72 (D-K1-7, SIG-GOV-017 analysis docs/build/reports/p37.72-gov017-analysis):
+# P37.19: the cities fixture's header comment cites the committed rights
+# packet path for provenance — comment-only, never a rights-data read.
+web/src/lib/map-places-fixture.ts	* boundary pack (`natural_earth_10m`, `docs/build/reports/rights/

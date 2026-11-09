@@ -61,6 +61,8 @@ import type { ProvenanceSummary } from "./provenance";
 import { DEFAULT_PROVENANCE } from "./provenance";
 import type { HostileReaderReview } from "./editorial";
 import type { CompartmentTileSource } from "./map-tiles";
+import { MAP_CITIES_FIXTURE, MAP_PLACE_FRAMES_FIXTURE } from "./map-places-fixture";
+import type { PlaceCitiesDoc, PlaceFrame } from "./map-places-fixture";
 import { RELEASE_CATALOG_FIXTURE } from "./releases-fixture";
 import type { ReleaseCatalog } from "./releases";
 import type { MapSite, GraphNode, GraphEdge, EntityFixture, AsOfEcho } from "./fixtures";
@@ -1037,6 +1039,69 @@ export function getJurisdictionKeyMap(): Map<string, JurisdictionKeyMapRow> | nu
   const out = new Map<string, JurisdictionKeyMapRow>();
   for (const r of rows) if (r && typeof r.jkey === "string") out.set(r.jkey, r);
   return out;
+}
+
+/**
+ * P37.19 (K1 MAP-04, OD-09 [B-23] = a "Natural Earth") — the populated-places
+ * cities layer the shared typeahead's `kind=place` entries draw from. The
+ * real Natural Earth capture stays HG-03-gated (`natural_earth_10m`), so
+ * fixtures mode serves the committed `sig.place-cities/1` fixture — public-
+ * domain names and coordinates, the same fixture-bypass posture the boundary
+ * pack records. An export that has already landed the gated capture may emit
+ * `web/cities.json`; absent means the layer honestly is not there yet — an
+ * export build without it carries no cities, never a fabricated set.
+ */
+export function getMapCities(): PlaceCitiesDoc {
+  if (dataSource() === "export") {
+    const path = `${layoutDir()}/web/cities.json`;
+    if (existsSync(path)) {
+      const parsed = JSON.parse(readFileSync(path, "utf-8")) as PlaceCitiesDoc;
+      if (parsed.schema === "sig.place-cities/1" && Array.isArray(parsed.cities)) {
+        return parsed;
+      }
+    }
+    return { ...MAP_CITIES_FIXTURE, cities: [] };
+  }
+  return MAP_CITIES_FIXTURE;
+}
+
+/**
+ * jkey → {name, bbox, chain} — the frames the map resolves `jurisdiction=` and
+ * `frame=` through. Export mode reads the emitted `sig.map-dict/1`
+ * `jurisdictions` map (`web/map/dict.json`); fixtures mode serves the
+ * committed frame table for the grouped-registry fixture keys. Missing keys
+ * simply do not frame (honest absence — never a guessed extent).
+ */
+export function getJurisdictionFrames(): Record<string, PlaceFrame> {
+  const out: Record<string, PlaceFrame> = {};
+  if (dataSource() === "export") {
+    const path = `${layoutDir()}/web/map/dict.json`;
+    if (existsSync(path)) {
+      try {
+        const parsed = JSON.parse(readFileSync(path, "utf-8")) as {
+          jurisdictions?: Record<string, {
+            name?: string;
+            bbox?: number[] | null;
+            chain?: string[];
+          }>;
+        };
+        for (const [jkey, j] of Object.entries(parsed.jurisdictions ?? {})) {
+          out[jkey] = {
+            ...(j.name ? { name: j.name } : {}),
+            ...(Array.isArray(j.bbox) && j.bbox.length === 4
+              ? { bbox: j.bbox as [number, number, number, number] }
+              : {}),
+            ...(Array.isArray(j.chain) ? { chain: j.chain } : {}),
+          };
+        }
+        return out;
+      } catch {
+        // a malformed dict is an honest absence — no frames, never a crash
+      }
+    }
+    return out;
+  }
+  return { ...MAP_PLACE_FRAMES_FIXTURE };
 }
 
 /** jkey → slug path, or null when the export is not placement-bound. */
