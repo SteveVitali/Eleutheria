@@ -24,6 +24,30 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.14 — statute-seeded records leads: the mandate→gap generator, the
+  one-time auditor-survey artifact, and the LegalInstrument session/text
+  publish gate (SIG-INGEST-025a, SIG-INGEST-025b, SIG-INGEST-025c; ADR-240):**
+  state reporting mandates are records-acquisition leads, never data feeds —
+  `tasks.statute_leads` + the committed `data/statute_leads.toml`
+  (`sig.statute-leads/1`) emit exactly one output per registered
+  `future_statutory_disclosure_*` duty: a `StatuteRecordsLead` gap row for
+  commenced duties whose mandated record is requestable (VA §2.2-5517 I/J/K,
+  AL 265-X-6, AR 12 CAR 150-103(f), UT 77-23e-106(3)(a)), a `CoverageRecord`
+  `not_applicable` for a not-yet-due duty (NM, first reports 2027-04-01) or
+  `not_researched` for an unverified mandate (MN HF 3198, contingent). The
+  seed↔table↔registry join is fail-closed — every statute duty produces a
+  gap row or a CoverageRecord (`sig-tasks statute-leads`). The CA State
+  Auditor 2019-118 survey is desk-research modelled as a one-time
+  `state_auditor_survey` artifact (`capture_status = not_attempted`,
+  `recurrence_expected = false`) plus a `searched_not_found` CoverageRecord
+  for the absent follow-up — the gated source rows stay
+  `ingestion_permitted=false`. `LegalInstrument` gains `session`/`text_ref`
+  (france_belgium vocab `2026.11.07-p37.14`) and `publish_verdict()` under
+  `legal-instrument-publish/1`: a legislative citation without a session or
+  without text resolution is stamped `publishable=false` on the emitted
+  record — the F2a-flagged session-less `SB 34` citation can no longer
+  publish. The RecordsRequest→task link stays R11-K13-RQ-04's scope; nothing
+  is filed, sent, fetched, or flipped.
 - **P37.13 — the §22.7 Data Library roster fully registered + the recurring
   discovery sweep (SIG-INGEST-041, SIG-INGEST-048; ADR-239):** the EFF Data
   Library index is the Phase 17 ingestion backlog, and all 16 spec-roster

@@ -81,7 +81,7 @@
       "subscription",
       "recommendation"
     ],
-    "count": 287,
+    "count": 289,
     "ids": [
       "accountability_event",
       "acquisition_channel",
@@ -332,6 +332,7 @@
       "role_assignment",
       "scan_volume_observed",
       "seller",
+      "session",
       "sharing_partner",
       "sharing_partner_degree",
       "sharing_restriction",
@@ -351,6 +352,7 @@
       "target_agency",
       "technology",
       "technology_category",
+      "text_ref",
       "third_party_integration",
       "title",
       "traffic_camera",

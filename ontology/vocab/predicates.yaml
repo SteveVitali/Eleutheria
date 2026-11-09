@@ -9476,3 +9476,71 @@ predicates:
     subscription: D6
     recommendation: D6
   object_kind: literal
+- predicate_id: session
+  value_datatype: string
+  cardinality: single
+  definition: The legislative session a LegalInstrument citation resolves to
+    (SIG-INGEST-025c — bill numbers are reused across sessions, so a legislative
+    citation requires its session to publish).
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/session
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P37.14 assessment: the legislative origin page (bill_index/bill record) D1;
+  # a recorded connector_run observation D3; all other genres D6.
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D1
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
+  object_kind: literal
+- predicate_id: text_ref
+  value_datatype: string
+  cardinality: single
+  definition: A reference resolving to the instrument's text (a fetch-shaped
+    URL or urn ref) — the page the citation was verified at
+    (SIG-INGEST-025c).
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/text_ref
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P37.14 assessment: the legislative origin page D1; a recorded
+  # connector_run observation D3; all other genres D6.
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D1
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D4
+    template: D6
+    subscription: D6
+    recommendation: D6
+  object_kind: literal
