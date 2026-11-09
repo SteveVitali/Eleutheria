@@ -1261,8 +1261,15 @@ seed-commit f2562bf9
 # The branch rule forbids force-push, so the declaration lands here, the
 # next commit. `5b19d803` is the same repair's first condense attempt —
 # `memory_guard` flagged it and the commit was carried forward, never
-# force-pushed; the final trim at 6f53ce10 subsumed its text. Scope: the
-# append-only findings attributed to 5b19d803's and 6f53ce10's rewritten
-# lines only; no other commit borrows the exemption.
+# force-pushed; the final trim at 6f53ce10 subsumed its text. `31aba6bf`
+# respelled the appended correction entry's `done` token — the audit
+# tool's PHASE_LOG_DONE_RE reads any id + `done` substring as a landing,
+# so the entry had marked P37.25 done early (`done-uncovered` +
+# `next-not-lowest` on run 42693329488); pre-edit bytes archived
+# `reports/memory-repair/LEDGER_phaselog_L1643_pre-P37.25-done-respell.txt`
+# (sha256:bb3d9ddc2a1053c9f400fa749d7046d2df233564d3b2eedcedc520e7a8e1c8ce).
+# Scope: the append-only findings attributed to 5b19d803's, 6f53ce10's and
+# 31aba6bf's rewritten lines only; no other commit borrows the exemption.
 seed-commit 5b19d803
 seed-commit 6f53ce10
+seed-commit 31aba6bf
