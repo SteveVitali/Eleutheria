@@ -6,8 +6,9 @@
 The four 08a overviews — O0 ``types`` (what SIG holds, by kind, and how kinds
 connect, gaps included), O1 ``supply`` (who sells surveillance technology to
 whom, relevance-gated per D-K2-5 / H-13), O3 ``funding`` (who funds whom) and
-O4 ``operators`` (who runs the cameras, where — the NEW-2 fix: ``published_by``
-is provenance, never an operator edge) — emitted per licence compartment from
+O4 ``operators`` (which bodies run the cameras, where — the NEW-2 fix:
+``published_by`` is provenance, never an operator edge) — emitted per licence
+compartment from
 the export's ONE snapshot.
 
 The laws the contract carries (SIG-UI-117/118, SIG-EXPORT-015, K2 §7):
@@ -89,7 +90,10 @@ OVERVIEWS: tuple[tuple[str, str, str], ...] = (
     ("types", "Type map", "What does SIG hold, by kind, and how do kinds connect?"),
     ("supply", "Supply", "Who sells surveillance technology to whom?"),
     ("funding", "Funding", "Who funds whom?"),
-    ("operators", "Operators", "Who runs the cameras, where?"),
+    # D-K14-7: the K2 question wording is reworded — "who runs the" is a
+    # banned token under web/src until the operator writes the About
+    # "who runs SIG" wording (tests/unit/test_p36_64_copy_batch.py).
+    ("operators", "Operators", "Which bodies run the cameras, and where?"),
 )
 
 #: Literal-party predicates — a text value naming an organisation (O0's

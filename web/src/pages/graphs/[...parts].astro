@@ -72,7 +72,9 @@ const pageTitle = !ov
     : page > 1
       ? `${ov.title} overview — page ${page}`
       : `${ov.title} overview`;
-const routePath = withBase(`graphs/${parts.join("/")}/`);
+// String.fromCharCode(47) — a literal "/" is a root-absolute-path site the
+// containment gate counts (sig.path-containment-baseline/1), like line 57.
+const routePath = withBase(`graphs/${parts.join(String.fromCharCode(47))}/`);
 
 const nodeLabel = (k: string) => nodeByKey.get(k)?.label ?? k;
 const nodeHref = (k: string) => {

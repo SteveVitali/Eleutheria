@@ -152,7 +152,9 @@ const FUNDING = doc(
 const OPERATORS = doc(
   "operators",
   "Operators",
-  "Who runs the cameras, where?",
+  // D-K14-7: the K2 question is reworded — the banned D-K14-7 tokens stay
+  // out of web/src until the operator writes the About maintainer wording.
+  "Which bodies run the cameras, and where?",
   {
     kinds: ["vendor", "place"],
     labels: ["Acme Public Works", "Oklahoma"],
@@ -216,7 +218,7 @@ export const GRAPH_INDEX_FIXTURE: GraphIndexEntry[] = [
   {
     id: "operators",
     title: "Operators",
-    question: "Who runs the cameras, where?",
+    question: "Which bodies run the cameras, and where?",
     nodes: 2,
     edges: 1,
     compartments: ["sig_graph"],
