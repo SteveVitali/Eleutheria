@@ -57,23 +57,50 @@ import {
 import { withBase } from "../../lib/paths";
 import { useMapWorkspace } from "./workspace";
 import {
+  activeFacetCount,
+  buildFacetDict,
+  cannotApplyNotes,
+  cellSlice,
+  cellSliceValue,
+  dedupeTileSites,
+  effectiveFacets,
   facetCannotApply,
   facetOptionCounts,
   facetOptions,
   inBounds,
   IN_VIEW_MAX,
+  isMapDict,
   parseSeenRange,
   placeRowsInView,
   recordPasses,
   seenRangeWire,
   selectionFromRecord,
   selectionFromTileProps,
+  sheetPeekText,
   siteRowsInView,
+  sortInViewRows,
   statusCode,
+  STATUS_BY_CODE,
   STATUS_CODE,
   STATUS_TEXT,
+  tileFacetExpr,
+  tilePlaceRowsInView,
+  tileSiteRowsInView,
 } from "./model";
-import type { InViewRow, MapFacets, MapRecord, SelectionPanelModel } from "./model";
+import type {
+  FacetDict,
+  InViewRow,
+  InViewSort,
+  MapDict,
+  MapFacets,
+  MapFacetsV2,
+  MapRecord,
+  SelectionPanelModel,
+  TileCellProps,
+  TileSiteFeature,
+  TileSiteProps,
+} from "./model";
+import { toCsv, type TableModel, type TableRowModel } from "../../elements/table-model";
 import type { StatementRow } from "../../lib/provenance-panel";
 import type { MaplibreModule } from "./vendor";
 
@@ -104,12 +131,21 @@ export interface MapAppProps {
   vendorBase: string;
   /** The release data dictionary (technology/source labels; optional). */
   dictHref: string;
+  /** P37.18: the data as-of line the print view + legend carry. */
+  asOf: string;
+  /** P37.18: records with no published point in this build (legend line). */
+  unplotted: number;
+  /** P37.18: jkey → dossier href for tile-path place/jurisdiction links. */
+  jurisdictionHrefs: Record<string, string>;
 }
 
 // ------------------------------------------------------------ small bits //
 
 const GEOJSON_SOURCE = "sig-infrastructure";
 const FOCUS_SOURCE = "sig-focus";
+/** P37.18: the hover/keyboard-focus highlight ring (SIG-UI-095 parity for the
+ * pointer's hover — a row hover or focus highlights the drawn feature). */
+const HOVER_SOURCE = "sig-hover";
 const SUMMED_CELLS_SOURCE = "sig-cells-summed";
 const SUMMED_CELLS_LAYER = "sig-cells-summed-layer";
 const SUMMED_CELLS_LABEL = "sig-cells-summed-label";
@@ -320,6 +356,35 @@ function buildOverlay(props: MapAppProps): OverlaySpec {
       compartments.push(t.compartment);
       sourceIds.push(sourceId);
     }
+    // P37.18: the selection + hover rings draw on the tile path too — the
+    // In-view list's select/hover needs a highlight target there as well.
+    sources[FOCUS_SOURCE] = { type: "geojson", data: EMPTY_FC };
+    sources[HOVER_SOURCE] = { type: "geojson", data: EMPTY_FC };
+    layers.push(
+      {
+        id: "sig-focus-ring",
+        type: "circle",
+        source: FOCUS_SOURCE,
+        paint: {
+          "circle-color": "rgba(0,0,0,0)",
+          "circle-radius": 12,
+          "circle-stroke-color": SIG_INK,
+          "circle-stroke-width": 3,
+        },
+      } as import("maplibre-gl").LayerSpecification,
+      {
+        id: "sig-hover-ring",
+        type: "circle",
+        source: HOVER_SOURCE,
+        paint: {
+          "circle-color": "rgba(0,0,0,0)",
+          "circle-radius": 10,
+          "circle-stroke-color": SIG_DATA_SEQ_700,
+          "circle-stroke-width": 2,
+          "circle-stroke-opacity": 0.85,
+        },
+      } as import("maplibre-gl").LayerSpecification,
+    );
     sources[SUMMED_CELLS_SOURCE] = { type: "geojson", data: EMPTY_FC };
     layers.push(
       {
@@ -366,17 +431,32 @@ function buildOverlay(props: MapAppProps): OverlaySpec {
       layers.push({ ...l, source: GEOJSON_SOURCE } as import("maplibre-gl").LayerSpecification);
     }
     sources[FOCUS_SOURCE] = { type: "geojson", data: EMPTY_FC };
-    layers.push({
-      id: "sig-focus-ring",
-      type: "circle",
-      source: FOCUS_SOURCE,
-      paint: {
-        "circle-color": "rgba(0,0,0,0)",
-        "circle-radius": 12,
-        "circle-stroke-color": SIG_INK,
-        "circle-stroke-width": 3,
-      },
-    } as import("maplibre-gl").LayerSpecification);
+    sources[HOVER_SOURCE] = { type: "geojson", data: EMPTY_FC };
+    layers.push(
+      {
+        id: "sig-focus-ring",
+        type: "circle",
+        source: FOCUS_SOURCE,
+        paint: {
+          "circle-color": "rgba(0,0,0,0)",
+          "circle-radius": 12,
+          "circle-stroke-color": SIG_INK,
+          "circle-stroke-width": 3,
+        },
+      } as import("maplibre-gl").LayerSpecification,
+      {
+        id: "sig-hover-ring",
+        type: "circle",
+        source: HOVER_SOURCE,
+        paint: {
+          "circle-color": "rgba(0,0,0,0)",
+          "circle-radius": 10,
+          "circle-stroke-color": SIG_DATA_SEQ_700,
+          "circle-stroke-width": 2,
+          "circle-stroke-opacity": 0.85,
+        },
+      } as import("maplibre-gl").LayerSpecification,
+    );
     sourceIds.push(GEOJSON_SOURCE);
   }
   return { sources, layers, sourceIds, compartments };
@@ -414,6 +494,17 @@ export default function MapApp(props: MapAppProps): JSX.Element {
   const [viewRows, setViewRows] = useState<InViewRow[]>([]);
   const [viewCount, setViewCount] = useState(0);
   const [statusLine, setStatusLine] = useState("");
+  // P37.18 (MAP-03b): the list's table view (J5), the mobile bottom sheet
+  // snap point (K1 §4.1), the release dictionary, and the drawn-set honesty
+  // state (active facets that cannot apply at this zoom — C-03).
+  const [viewMode, setViewMode] = useState<"list" | "table">("list");
+  const [tableSort, setTableSort] = useState<InViewSort>("distance");
+  const [tableDir, setTableDir] = useState<"asc" | "desc">("asc");
+  const [snap, setSnap] = useState<"peek" | "half" | "full">("half");
+  const [isNarrow, setIsNarrow] = useState(false);
+  const [dict, setDict] = useState<MapDict | null>(null);
+  const [greyed, setGreyed] = useState(false);
+  const [ariaLine, setAriaLine] = useState("");
   const [selection, setSelection] = useState<SelectionPanelModel | null>(null);
   const [statements, setStatements] = useState<StatementRow[]>([]);
   const popupRef = useRef<import("maplibre-gl").Popup | null>(null);
@@ -423,21 +514,55 @@ export default function MapApp(props: MapAppProps): JSX.Element {
   const drawnSourceIds = useRef<string[]>([]);
   const tileCompartments = useRef<string[]>([]);
   const moveTimer = useRef<number | null>(null);
+  const ariaTimer = useRef<number | null>(null);
   const appliedUrl = useRef<string>("");
+  // P37.18 tile-path working state: the deduped drawn sites + cells of the
+  // current view, and rk → {props, lngLat} for list-driven selection.
+  const tileByRk = useRef<Map<string, { props: TileSiteProps; lngLat: { lng: number; lat: number } }>>(
+    new Map(),
+  );
+  const greyPaints = useRef<Map<string, Record<string, unknown>>>(new Map());
 
   // ------------------------------------------------------------ facets //
-  const facets: MapFacets = useMemo(
+  // P37.18: the v2 facet set adds vendor/operator/source (wire = entity keys
+  // / source ids) — applied over the sig.map-tiles/2 props on the tile path.
+  const facets: MapFacetsV2 = useMemo(
     () => ({
       technology: state.technology,
       status: state.status,
       seen: parseSeenRange(state.seen),
+      vendor: state.vendor,
+      operator: state.operator,
+      source: state.source,
     }),
-    [state.technology, state.status, state.seen],
+    [
+      state.technology,
+      state.status,
+      state.seen,
+      state.vendor,
+      state.operator,
+      state.source,
+    ],
+  );
+
+  const facetDict: FacetDict = useMemo(() => buildFacetDict(dict), [dict]);
+
+  // Zoom honesty (SIG-UI-104, C-03): a facet that cannot apply at this zoom
+  // never silently narrows — it is dropped from the effective set and the
+  // drawn layers grey with a note (no hatch).
+  const tileMode = props.tiles.length > 0;
+  const cannot = useMemo(
+    () => cannotApplyNotes(facets, zoom, tileMode),
+    [facets, zoom, tileMode],
+  );
+  const appliedFacets = useMemo(
+    () => effectiveFacets(facets, zoom, tileMode),
+    [facets, zoom, tileMode],
   );
 
   const filteredRecords = useMemo(
-    () => props.records.filter((r) => recordPasses(r, facets)),
-    [props.records, facets],
+    () => props.records.filter((r) => recordPasses(r, appliedFacets)),
+    [props.records, appliedFacets],
   );
 
   const activeCompartments = useMemo(
@@ -447,6 +572,42 @@ export default function MapApp(props: MapAppProps): JSX.Element {
         : new Set(props.compartments.map((c) => c.id)),
     [state.collection, state.collectionSpecified, props.compartments],
   );
+
+  // P37.18: the release dictionary (`sig.map-dict/1`) — tile path only; a
+  // missing/stale dict degrades to the EMPTY lookups, never a crash.
+  useEffect(() => {
+    if (!isBrowser || props.tiles.length === 0) return;
+    let live = true;
+    fetch(props.dictHref)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((doc) => {
+        if (live && isMapDict(doc)) setDict(doc);
+      })
+      .catch(() => {
+        /* the dictionary is optional — the facets degrade honestly */
+      });
+    return () => {
+      live = false;
+    };
+  }, [props.dictHref, props.tiles.length]);
+
+  // P37.18 (K1 §4.1): the mobile bottom sheet — < 960 px the panel becomes a
+  // sheet over the canvas; the map pads by the sheet's height so framing
+  // never lands under it.
+  useEffect(() => {
+    if (!isBrowser) return;
+    const mq = window.matchMedia("(max-width: 959px)");
+    const apply = () => setIsNarrow(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !isNarrow) return;
+    const bottom = snap === "peek" ? 88 : snap === "half" ? 260 : 420;
+    map.setPadding({ bottom });
+  }, [isNarrow, snap, ready]);
 
   // -------------------------------------------------------- layer style //
   const chooseStyle = useCallback(
@@ -601,7 +762,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
           // SIG-UI-095 keyboard contract on the capture path — the renderer's
           // own canvas key handling stops propagation, so a container-level
           // capture listener carries Enter/Escape (Enter → the In-view list;
-          // Escape → clear selection).
+          // Escape → clear selection and return focus to the invoking row).
           container.addEventListener(
             "keydown",
             (e) => {
@@ -615,6 +776,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
                 e.preventDefault();
               } else if (e.key === "Escape") {
                 if (state.focus !== null) update({ focus: null });
+                focusReturnRef.current?.focus();
               }
             },
             true,
@@ -661,18 +823,128 @@ export default function MapApp(props: MapAppProps): JSX.Element {
       const c = map.getCenter();
       const z = map.getZoom();
       setZoom(z);
-      if (z <= NATIONAL_CELLS_MAXZOOM) {
-        const { rows, matching } = placeRowsInView(filteredRecords, facets, bounds);
+      let line = "";
+      if (tileMode) {
+        // Tile path (K1 §3.2/§4.6): the cells re-sum in the browser (dedupe
+        // (compartment, h3)); the sites list reads the drawn v2 features.
+        const hrefs = {
+          jurisdictionHref: (jkey: string) =>
+            props.jurisdictionHrefs[jkey] ?? null,
+          recordPageHref: (rk: string) => {
+            const rel = state.release ?? props.release;
+            return rel ? (recordRoutes(rel, rk)?.pageHref ?? null) : null;
+          },
+        };
+        if (z <= NATIONAL_CELLS_MAXZOOM) {
+          const slice = cellSlice(appliedFacets, facetDict);
+          const cells: { props: TileCellProps; compartment: string; lon: number; lat: number }[] =
+            [];
+          for (const comp of tileCompartments.current) {
+            if (!activeCompartments.has(comp)) continue;
+            const feats = map.querySourceFeatures(compartmentSourceId(comp), {
+              sourceLayer: "cells",
+            });
+            for (const f of feats) {
+              const g = f.geometry as { type?: string; coordinates?: unknown };
+              if (g.type !== "Point" || !Array.isArray(g.coordinates)) continue;
+              const [lon, lat] = g.coordinates as number[];
+              if (!inBounds({ lat, lon }, bounds)) continue;
+              cells.push({
+                props: (f.properties ?? {}) as TileCellProps,
+                compartment: comp,
+                lon,
+                lat,
+              });
+            }
+          }
+          // The drawn sum rides the same slice — the cells' `n` becomes the
+          // facet's marginal count, never a joint guess (§3.2). Dedupe is by
+          // h3 only: each archive carries its own compartment's cells, so a
+          // shared h3 in two compartments sums honestly (never merged bytes).
+          const src = map.getSource(SUMMED_CELLS_SOURCE) as
+            | { setData?: (d: unknown) => void }
+            | undefined;
+          if (src?.setData) {
+            const dedup = new Map<string, { n: number; lon: number; lat: number }>();
+            for (const c of cells) {
+              const h3 = String(c.props.h3 ?? "");
+              if (h3 === "") continue;
+              const d = dedup.get(h3) ?? { n: 0, lon: c.lon, lat: c.lat };
+              d.n += cellSliceValue(c.props, slice);
+              dedup.set(h3, d);
+            }
+            const summed = [...dedup.values()].map((d) => ({
+              type: "Feature" as const,
+              geometry: { type: "Point" as const, coordinates: [d.lon, d.lat] },
+              properties: { n: d.n },
+            }));
+            src.setData({ type: "FeatureCollection", features: summed });
+          }
+          const { rows, matching } = tilePlaceRowsInView(cells, slice, facetDict, hrefs);
+          setViewRows(rows);
+          setViewCount(matching);
+          line = `${matching} record${matching === 1 ? "" : "s"} in view — grouped by place`;
+        } else {
+          const centre = { lat: c.lat, lon: c.lng };
+          const sites: TileSiteFeature[] = [];
+          const byRk = tileByRk.current;
+          byRk.clear();
+          for (const comp of tileCompartments.current) {
+            if (!activeCompartments.has(comp)) continue;
+            for (const f of map.querySourceFeatures(compartmentSourceId(comp), {
+              sourceLayer: "sites",
+            })) {
+              const g = f.geometry as { type?: string; coordinates?: unknown };
+              let lon: number | null = null;
+              let lat: number | null = null;
+              if (g.type === "Point" && Array.isArray(g.coordinates)) {
+                [lon, lat] = g.coordinates as number[];
+              } else if (
+                g.type === "Polygon" &&
+                Array.isArray(g.coordinates) &&
+                Array.isArray((g.coordinates as number[][][])[0])
+              ) {
+                const ring = (g.coordinates as number[][][])[0];
+                const n = ring.length || 1;
+                lon = ring.reduce((a, p) => a + p[0]!, 0) / n;
+                lat = ring.reduce((a, p) => a + p[1]!, 0) / n;
+              }
+              if (lon === null || lat === null || !inBounds({ lat, lon }, bounds)) continue;
+              const props = (f.properties ?? {}) as TileSiteProps;
+              const rk = String(props.rk ?? "");
+              if (rk) byRk.set(rk, { props, lngLat: { lng: lon, lat } });
+              sites.push({ props, lat, lon, compartment: comp });
+            }
+          }
+          const deduped = dedupeTileSites(sites);
+          const { rows, matching } = tileSiteRowsInView(
+            deduped,
+            appliedFacets,
+            facetDict,
+            centre,
+            hrefs,
+          );
+          setViewRows(rows);
+          setViewCount(matching);
+          line = `${matching} record${matching === 1 ? "" : "s"} in view`;
+        }
+      } else if (z <= NATIONAL_CELLS_MAXZOOM) {
+        const { rows, matching } = placeRowsInView(filteredRecords, appliedFacets, bounds);
         setViewRows(rows);
         setViewCount(matching);
-        setStatusLine(`${matching} record${matching === 1 ? "" : "s"} in view — grouped by place`);
+        line = `${matching} record${matching === 1 ? "" : "s"} in view — grouped by place`;
       } else {
         const centre = { lat: c.lat, lon: c.lng };
-        const { rows, matching } = siteRowsInView(filteredRecords, facets, bounds, centre);
+        const { rows, matching } = siteRowsInView(filteredRecords, appliedFacets, bounds, centre);
         setViewRows(rows);
         setViewCount(matching);
-        setStatusLine(`${matching} record${matching === 1 ? "" : "s"} in view`);
+        line = `${matching} record${matching === 1 ? "" : "s"} in view`;
       }
+      setStatusLine(line);
+      // Live region, debounced 1 s (K1 §4.6): the announcements land after
+      // the move settles, never mid-gesture.
+      if (ariaTimer.current !== null) window.clearTimeout(ariaTimer.current);
+      ariaTimer.current = window.setTimeout(() => setAriaLine(line), 1000);
       // SIG-UI-103: the viewport round-trips through `at=` (replaceState —
       // pan/zoom never grows history; precision follows §3.4).
       const d = viewportDecimals(z);
@@ -684,7 +956,17 @@ export default function MapApp(props: MapAppProps): JSX.Element {
         update({ at }, "replace");
       }
     }, 300);
-  }, [filteredRecords, facets, update]);
+  }, [
+    filteredRecords,
+    appliedFacets,
+    tileMode,
+    facetDict,
+    activeCompartments,
+    state.release,
+    props.release,
+    props.jurisdictionHrefs,
+    update,
+  ]);
 
   // ------------------------------------------------- selection effects //
   useEffect(() => {
@@ -822,6 +1104,14 @@ export default function MapApp(props: MapAppProps): JSX.Element {
     });
   }, [state.focus, state.release, props.release, recordById]);
 
+  // P37.18 (K1 §4.6): selecting a record scrolls its In-view row into view.
+  useEffect(() => {
+    if (!isBrowser || state.focus === null) return;
+    listRef.current
+      ?.querySelector<HTMLElement>(`[data-record-id="${CSS.escape(state.focus)}"]`)
+      ?.scrollIntoView({ block: "nearest" });
+  }, [state.focus, viewRows]);
+
   // ---------------------------------------------- tile-prop selection //
   const selectTileProps = useCallback(
     (p: Record<string, unknown>, lngLat: { lng: number; lat: number }) => {
@@ -894,6 +1184,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
+    const facetExpr = tileMode ? tileFacetExpr(appliedFacets, facetDict) : null;
     for (const comp of tileCompartments.current) {
       const layerId = compartmentLayerId(comp);
       for (const suffix of ["", "-c", "-1", "-2", "-2-ring", "-3", "-cells"]) {
@@ -902,6 +1193,72 @@ export default function MapApp(props: MapAppProps): JSX.Element {
           map.setLayoutProperty(id, "visibility", activeCompartments.has(comp) ? "visible" : "none");
         }
       }
+    }
+    // Facet narrowing on the drawn site layers (sig.map-tiles/2 props).
+    if (tileMode) {
+      for (const comp of tileCompartments.current) {
+        const layerId = compartmentLayerId(comp);
+        const statusBases: Record<string, unknown[]> = {
+          "": ["all", ["!=", ["get", "tr"], 2], ["==", ["get", "st"], 0]],
+          "-c": ["all", ["!=", ["get", "tr"], 2], ["==", ["get", "st"], 0]],
+          "-1": ["all", ["!=", ["get", "tr"], 2], ["==", ["get", "st"], 1]],
+          "-2": ["all", ["!=", ["get", "tr"], 2], ["==", ["get", "st"], 2]],
+          "-2-ring": ["all", ["!=", ["get", "tr"], 2], ["==", ["get", "st"], 2]],
+          "-3": ["all", ["!=", ["get", "tr"], 2], ["==", ["get", "st"], 3]],
+          "-cells": ["==", ["get", "tr"], 2],
+        };
+        for (const [suffix, base] of Object.entries(statusBases)) {
+          const id = `${layerId}${suffix}`;
+          if (!map.getLayer(id)) continue;
+          map.setFilter(id as never, facetExpr ? (["all", base, facetExpr] as never) : (base as never));
+        }
+      }
+    }
+    // Zoom honesty (C-03): active facets that cannot apply grey the drawn
+    // layers — desaturated, never hatched; the note names them.
+    const wantGrey = cannot.length > 0;
+    if (wantGrey !== greyed || (wantGrey && greyPaints.current.size === 0)) {
+      const GREY = "hsl(220deg 8% 55%)";
+      const ids = tileMode
+        ? [
+            SUMMED_CELLS_LAYER,
+            SUMMED_CELLS_LABEL,
+            ...tileCompartments.current.flatMap((comp) =>
+              ["", "-c", "-1", "-2", "-2-ring", "-3", "-cells"].map(
+                (s) => `${compartmentLayerId(comp)}${s}`,
+              ),
+            ),
+          ]
+        : ["sig-pts-0", "sig-pts-1", "sig-pts-2", "sig-pts-2-ring", "sig-pts-3"];
+      if (wantGrey) {
+        for (const id of ids) {
+          if (!map.getLayer(id)) continue;
+          const l = map.getLayer(id) as { type?: string };
+          const props =
+            l.type === "circle"
+              ? ["circle-color", "circle-stroke-color"]
+              : l.type === "fill"
+                ? ["fill-color"]
+                : l.type === "symbol"
+                  ? ["text-color"]
+                  : [];
+          const saved: Record<string, unknown> = {};
+          for (const p of props) {
+            saved[p] = map.getPaintProperty(id, p as never);
+            map.setPaintProperty(id, p as never, GREY as never);
+          }
+          greyPaints.current.set(id, saved);
+        }
+      } else {
+        for (const [id, saved] of greyPaints.current) {
+          if (!map.getLayer(id)) continue;
+          for (const [p, v] of Object.entries(saved)) {
+            map.setPaintProperty(id, p as never, v as never);
+          }
+        }
+        greyPaints.current.clear();
+      }
+      setGreyed(wantGrey);
     }
     // Fixtures path: the drawn point set re-filters client-side (few records).
     const src = map.getSource(GEOJSON_SOURCE) as { setData?: (d: unknown) => void } | undefined;
@@ -917,7 +1274,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
     }
     refreshList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeCompartments, filteredRecords, ready]);
+  }, [activeCompartments, filteredRecords, appliedFacets, facetDict, cannot.length, ready, tileMode]);
 
   // --------------------------------------------------------- keyboard //
   // SIG-UI-095: features reachable as focusable list items; Escape returns
@@ -929,15 +1286,116 @@ export default function MapApp(props: MapAppProps): JSX.Element {
       first?.focus();
     } else if (e.key === "Escape") {
       if (state.focus !== null) update({ focus: null });
+      focusReturnRef.current?.focus();
     }
   };
+  // P37.18 (K1 §4.6/§4.7): roving arrow-key navigation inside the In-view
+  // list; Escape clears the selection and returns focus to the invoking row
+  // (J4); a row hover/focus draws the highlight ring where a point is known.
+  const moveRowFocus = (from: HTMLElement, delta: number) => {
+    const rows = [...(listRef.current?.querySelectorAll<HTMLElement>("[data-row]") ?? [])];
+    const i = rows.indexOf(from);
+    const next = rows[i + delta];
+    next?.querySelector<HTMLElement>("button, a")?.focus();
+  };
+  const setHoverPoint = (row: InViewRow | null) => {
+    const src = mapRef.current?.getSource(HOVER_SOURCE) as
+      | { setData?: (d: unknown) => void }
+      | undefined;
+    src?.setData?.(
+      row && typeof row.lat === "number" && typeof row.lon === "number"
+        ? {
+            type: "FeatureCollection",
+            features: [
+              {
+                type: "Feature",
+                geometry: { type: "Point", coordinates: [row.lon, row.lat] },
+                properties: {},
+              },
+            ],
+          }
+        : EMPTY_FC,
+    );
+  };
   const onRowKeyDown = (e: JSX.TargetedKeyboardEvent<HTMLLIElement>) => {
+    const li = e.currentTarget;
     if (e.key === "Escape") {
-      (containerRef.current?.querySelector("canvas") as HTMLElement | null)?.focus();
-      update({ focus: null });
+      focusReturnRef.current?.focus();
+      if (state.focus !== null) update({ focus: null });
+    } else if (e.key === "ArrowDown") {
+      moveRowFocus(li, 1);
+      e.preventDefault();
+    } else if (e.key === "ArrowUp") {
+      moveRowFocus(li, -1);
+      e.preventDefault();
+    } else if (e.key === "Home") {
+      listRef.current
+        ?.querySelector<HTMLElement>("[data-row] button, [data-row] a")
+        ?.focus();
+      e.preventDefault();
+    } else if (e.key === "End") {
+      const rows = [...(listRef.current?.querySelectorAll<HTMLElement>("[data-row]") ?? [])];
+      rows[rows.length - 1]?.querySelector<HTMLElement>("button, a")?.focus();
+      e.preventDefault();
+    }
+  };
+  const selectRow = (row: InViewRow, el: HTMLElement | null) => {
+    if (el) focusReturnRef.current = el;
+    if (row.selectId) {
+      const hit = tileByRk.current.get(row.selectId);
+      if (tileMode && hit) {
+        selectTileProps(hit.props as Record<string, unknown>, hit.lngLat);
+        if (isNarrow) setSnap("half");
+      } else {
+        update({ focus: row.selectId });
+        if (isNarrow) setSnap("half");
+      }
     }
   };
   const panBy = (dx: number, dy: number) => mapRef.current?.panBy([dx, dy]);
+
+  // P37.18 (K1 §4.6): "Download this view" — the in-view rows as CSV with
+  // ADR-224's `#` licence provenance lines; the canvas is never downloaded.
+  const downloadView = () => {
+    const columns = [
+      { index: 0, id: "record", label: "Record" },
+      { index: 1, id: "technology", label: "Technology" },
+      { index: 2, id: "operator", label: "Operator" },
+      { index: 3, id: "status", label: "Status" },
+      { index: 4, id: "distance_km", label: "Distance (km)" },
+      { index: 5, id: "licence", label: "Licence" },
+    ];
+    const rows: TableRowModel[] = sortedRows.map((r) => {
+      // The row's licence is its compartment's SPDX when the wire carries no
+      // per-row line — the compartment licence IS what the row ships under.
+      const licence =
+        r.licence ?? props.compartments.find((c) => c.id === r.compartment)?.license ?? null;
+      return {
+        cells: [
+          r.selectId ?? r.id,
+          r.technology ?? r.meta,
+          r.operator ?? "",
+          r.statusText ?? "",
+          r.selectId ? r.distanceKm.toFixed(2) : "",
+          licence ?? "",
+        ],
+        facets: {},
+        licences: licence ? [licence] : [],
+        ...(r.compartment ? { compartment: r.compartment } : {}),
+      };
+    });
+    const model: TableModel = { columns, rows };
+    const label = rowsArePlaces
+      ? "map places-in-view list"
+      : "map records-in-view list";
+    const csv = toCsv(model, rows.map((_, i) => i), columns.map((c) => c.id), label);
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    a.download = "sig-map-in-view.csv";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+  const printView = () => window.print();
 
   // ------------------------------------------------------------- misc //
   const toggleCompartment = (id: string) => {
@@ -948,7 +1406,10 @@ export default function MapApp(props: MapAppProps): JSX.Element {
     update({ collection: full ? [] : [...next], collectionSpecified: !full });
   };
 
-  const toggleFacetValue = (facet: "technology" | "status", value: string) => {
+  const toggleFacetValue = (
+    facet: "technology" | "status" | "vendor" | "operator" | "source",
+    value: string,
+  ) => {
     const cur = facets[facet] as string[];
     const next = cur.includes(value) ? cur.filter((v) => v !== value) : [...cur, value];
     update({ [facet]: next });
@@ -958,6 +1419,45 @@ export default function MapApp(props: MapAppProps): JSX.Element {
   const techOptions = facetOptions(filteredRecords, (r) => r.technology);
   const techCounts = facetOptionCounts(filteredRecords, (r) => r.technology);
   const statusCounts = facetOptionCounts(filteredRecords, (r) => r.status);
+  // P37.18: tile-path facet options resolve through the dictionary — the
+  // national totals are dict's measured counts, the in-view counts come from
+  // the drawn features (tileByRk holds the current viewport set).
+  const tileTechOptions = tileMode
+    ? [...facetDict.techCodeBySlug.keys()].sort((a, b) => a.localeCompare(b))
+    : [];
+  const tileTechCounts = new Map<string, number>();
+  const tileStatusCounts = new Map<string, number>();
+  const tileVendorCounts = new Map<string, number>();
+  const tileOperatorCounts = new Map<string, number>();
+  const tileSourceCounts = new Map<string, number>();
+  if (tileMode) {
+    for (const { props: p } of tileByRk.current.values()) {
+      if (typeof p.tc === "number" && p.tc > 0) {
+        const slug = facetDict.techSlugByCode.get(p.tc) ?? `code ${p.tc}`;
+        tileTechCounts.set(slug, (tileTechCounts.get(slug) ?? 0) + 1);
+      }
+      if (typeof p.st === "number") {
+        const st = STATUS_BY_CODE[p.st];
+        if (st) tileStatusCounts.set(st, (tileStatusCounts.get(st) ?? 0) + 1);
+      }
+      if (typeof p.vd === "number") {
+        const v = facetDict.vendorBySlot.get(p.vd);
+        if (v) tileVendorCounts.set(v.key, (tileVendorCounts.get(v.key) ?? 0) + 1);
+      }
+      if (typeof p.oe === "string" && p.oe !== "") {
+        tileOperatorCounts.set(p.oe, (tileOperatorCounts.get(p.oe) ?? 0) + 1);
+      }
+      if (typeof p.sr === "number") {
+        const s = facetDict.sourceByIndex.get(p.sr);
+        if (s) tileSourceCounts.set(s.id, (tileSourceCounts.get(s.id) ?? 0) + 1);
+      }
+    }
+  }
+  const sortedRows = useMemo(
+    () => sortInViewRows(viewRows, tableSort, tableDir),
+    [viewRows, tableSort, tableDir],
+  );
+  const activeFilters = activeFacetCount(facets);
 
   // ----------------------------------------------------------- render //
   // SSR (client:idle): the shell skeleton — the reserved box the app mounts
@@ -1002,6 +1502,11 @@ export default function MapApp(props: MapAppProps): JSX.Element {
         </p>
       )}
 
+      {cannot.length > 0 && (
+        <p className="sig-island__note" role="status" data-testid="filters-cannot-apply">
+          {cannot.map((n) => n.note).join(" ")}
+        </p>
+      )}
       {basemapState === "context" && (
         <p className="sig-island__note" role="status" data-testid="basemap-fallback">
           The basemap is unavailable — the map shows the boundaries fallback.
@@ -1014,7 +1519,47 @@ export default function MapApp(props: MapAppProps): JSX.Element {
       )}
 
       <div className="sig-map-app__shell">
-        <div className="sig-map-app__panel">
+        <div
+          className={
+            isNarrow ? "sig-map-app__panel sig-map-app__panel--sheet" : "sig-map-app__panel"
+          }
+          data-snap={isNarrow ? snap : undefined}
+          data-testid="map-sheet"
+        >
+          {isNarrow && (
+            <div className="sig-map-app__sheetbar" data-testid="sheet-bar">
+              <button
+                type="button"
+                className="sig-map-app__grabber"
+                aria-label={
+                  snap === "full" ? "Collapse the panel sheet" : "Expand the panel sheet"
+                }
+                data-testid="sheet-grabber"
+                onClick={() =>
+                  setSnap(snap === "peek" ? "half" : snap === "half" ? "full" : "peek")
+                }
+              >
+                <span className="sig-map-app__grabber-mark" aria-hidden="true" />
+              </button>
+              <span className="sig-map-app__peek" data-testid="sheet-peek" aria-live="off">
+                {sheetPeekText(viewCount, activeFilters)}
+              </span>
+              <span className="sig-map-app__snaps" role="group" aria-label="Sheet position">
+                {(["peek", "half", "full"] as const).map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    className={snap === s ? "sig-map-app__tool is-active" : "sig-map-app__tool"}
+                    aria-pressed={snap === s}
+                    data-testid={`sheet-snap-${s}`}
+                    onClick={() => setSnap(s)}
+                  >
+                    {s === "peek" ? "Peek" : s === "half" ? "Half" : "Full"}
+                  </button>
+                ))}
+              </span>
+            </div>
+          )}
           <div className="sig-map-app__tabs" role="tablist" aria-label="Map panels">
             {(
               [
@@ -1042,61 +1587,194 @@ export default function MapApp(props: MapAppProps): JSX.Element {
               <p className="sig-map-app__status" role="status" data-testid="inview-status">
                 {statusLine || `${viewCount} records in view`}
               </p>
-              <ul className="sig-map-app__list" data-testid="inview-list" aria-label="Records in view">
-                {viewRows.map((row) => (
-                  <li
-                    key={row.id}
-                    data-row
-                    className="sig-map-app__row"
-                    tabIndex={0}
-                    onKeyDown={onRowKeyDown}
-                  >
-                    {row.selectId ? (
-                      <button
-                        type="button"
-                        className="sig-map-app__row-main"
-                        data-testid={`inview-select-${row.id}`}
-                        onClick={() => update({ focus: row.selectId })}
-                      >
-                        {row.label}
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        className="sig-map-app__row-main"
-                        onClick={() => {
-                          if (row.frame) {
-                            mapRef.current?.easeTo({
-                              center: [row.frame.lon, row.frame.lat],
-                              zoom: row.frame.zoom,
-                            });
-                          }
-                        }}
-                      >
-                        {row.label}
-                      </button>
-                    )}
-                    <span className="sig-map-app__row-meta">{row.meta}</span>
-                    <span className="sig-map-app__row-links">
-                      {row.selectId && row.listHref ? (
-                        <a href={row.listHref} data-testid={`inview-record-${row.id}`}>
-                          Open record
-                        </a>
-                      ) : null}
-                      {row.dossierHref ? <a href={row.dossierHref}>Dossier</a> : null}
-                    </span>
-                  </li>
-                ))}
-                {viewRows.length === 0 && (
-                  <li className="sig-map-app__row" data-testid="inview-empty">
-                    No published records in this view — the places table below
-                    lists every jurisdiction.
-                  </li>
-                )}
-              </ul>
+              <p className="sig-map-app__viewtools">
+                <button
+                  type="button"
+                  className={viewMode === "list" ? "sig-map-app__tool is-active" : "sig-map-app__tool"}
+                  aria-pressed={viewMode === "list"}
+                  data-testid="inview-list-toggle"
+                  onClick={() => setViewMode("list")}
+                >
+                  List
+                </button>{" "}
+                <button
+                  type="button"
+                  className={viewMode === "table" ? "sig-map-app__tool is-active" : "sig-map-app__tool"}
+                  aria-pressed={viewMode === "table"}
+                  data-testid="inview-table-toggle"
+                  onClick={() => setViewMode("table")}
+                >
+                  Table
+                </button>{" "}
+                <button
+                  type="button"
+                  className="sig-map-app__tool"
+                  data-testid="download-view"
+                  onClick={downloadView}
+                >
+                  Download this view (CSV)
+                </button>{" "}
+                <button
+                  type="button"
+                  className="sig-map-app__tool"
+                  data-testid="print-view"
+                  onClick={printView}
+                >
+                  Print this view
+                </button>
+              </p>
+              {viewMode === "table" ? (
+                <div className="sig-map-app__table-wrap">
+                  <table className="sig-map-app__table" data-testid="inview-table">
+                    <thead>
+                      <tr>
+                        {(
+                          [
+                            ["label", rowsArePlaces ? "Place" : "Record"],
+                            ["technology", "Technology"],
+                            ["status", "Status"],
+                            ["distance", "Distance (km)"],
+                          ] as const
+                        ).map(([key, label]) => (
+                          <th
+                            key={key}
+                            scope="col"
+                            aria-sort={
+                              tableSort === key
+                                ? tableDir === "desc"
+                                  ? "descending"
+                                  : "ascending"
+                                : "none"
+                            }
+                          >
+                            <button
+                              type="button"
+                              className="sig-map-app__sort"
+                              data-testid={`inview-sort-${key}`}
+                              onClick={() => {
+                                if (tableSort === key) {
+                                  setTableDir(tableDir === "asc" ? "desc" : "asc");
+                                } else {
+                                  setTableSort(key);
+                                  setTableDir("asc");
+                                }
+                              }}
+                            >
+                              {label}
+                            </button>
+                          </th>
+                        ))}
+                        <th scope="col">Open</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sortedRows.map((row) => (
+                        <tr key={row.id}>
+                          <th scope="row">
+                            {row.selectId ? (
+                              <button
+                                type="button"
+                                className="sig-map-app__row-main"
+                                onClick={(e) => selectRow(row, e.currentTarget)}
+                              >
+                                {row.label}
+                              </button>
+                            ) : (
+                              row.label
+                            )}
+                          </th>
+                          <td>{row.technology ?? "—"}</td>
+                          <td>{row.statusText ?? "—"}</td>
+                          <td>{row.selectId ? row.distanceKm.toFixed(1) : "—"}</td>
+                          <td>
+                            {row.selectId && row.listHref ? (
+                              <a href={row.listHref}>Open record</a>
+                            ) : null}
+                            {row.dossierHref ? <a href={row.dossierHref}>Dossier</a> : null}
+                          </td>
+                        </tr>
+                      ))}
+                      {sortedRows.length === 0 && (
+                        <tr>
+                          <td colspan={5}>No published records in this view.</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <ul className="sig-map-app__list" data-testid="inview-list" aria-label="Records in view">
+                  {viewRows.map((row) => (
+                    <li
+                      key={row.id}
+                      data-row
+                      data-record-id={row.selectId ?? undefined}
+                      className="sig-map-app__row"
+                      tabIndex={0}
+                      onKeyDown={onRowKeyDown}
+                      onMouseEnter={() => setHoverPoint(row)}
+                      onMouseLeave={() => setHoverPoint(null)}
+                      onFocus={() => setHoverPoint(row)}
+                      onBlur={() => setHoverPoint(null)}
+                    >
+                      {row.selectId ? (
+                        <button
+                          type="button"
+                          className="sig-map-app__row-main"
+                          data-testid={`inview-select-${row.id}`}
+                          onClick={(e) => selectRow(row, e.currentTarget)}
+                        >
+                          {row.label}
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className="sig-map-app__row-main"
+                          onClick={() => {
+                            if (row.bbox) {
+                              mapRef.current?.fitBounds(
+                                [
+                                  [row.bbox[0], row.bbox[1]],
+                                  [row.bbox[2], row.bbox[3]],
+                                ],
+                                { padding: 40 },
+                              );
+                            } else if (row.frame) {
+                              mapRef.current?.easeTo({
+                                center: [row.frame.lon, row.frame.lat],
+                                zoom: row.frame.zoom,
+                              });
+                            }
+                          }}
+                        >
+                          {row.label}
+                        </button>
+                      )}
+                      <span className="sig-map-app__row-meta">{row.meta}</span>
+                      <span className="sig-map-app__row-links">
+                        {row.selectId && row.listHref ? (
+                          <a href={row.listHref} data-testid={`inview-record-${row.id}`}>
+                            Open record
+                          </a>
+                        ) : null}
+                        {row.dossierHref ? <a href={row.dossierHref}>Dossier</a> : null}
+                      </span>
+                    </li>
+                  ))}
+                  {viewRows.length === 0 && (
+                    <li className="sig-map-app__row" data-testid="inview-empty">
+                      No published records in this view — the places table below
+                      lists every jurisdiction.
+                    </li>
+                  )}
+                </ul>
+              )}
               {viewCount > IN_VIEW_MAX && (
                 <p className="sig-map-app__status">
-                  Showing {IN_VIEW_MAX} of {viewCount} — zoom in or filter to narrow the list.
+                  Showing {IN_VIEW_MAX} of {viewCount} — zoom in or filter to
+                  narrow the list; the{" "}
+                  <a href="#places-heading">places table</a> lists every
+                  jurisdiction.
                 </p>
               )}
             </div>
@@ -1167,13 +1845,79 @@ export default function MapApp(props: MapAppProps): JSX.Element {
                 )}
               </fieldset>
 
-              <fieldset className="sig-map-app__facet" data-testid="filter-future">
-                <legend>Vendor · operator · source</legend>
-                <p className="sig-map-app__cannot">
-                  These facets land with the typed tile properties (MAP-01b) —
-                  they are named here, never faked.
-                </p>
-              </fieldset>
+              {tileMode && dict !== null && (
+                <>
+                  <fieldset className="sig-map-app__facet" data-testid="filter-vendor">
+                    <legend>Vendor — {facetDict.vendorBySlot.size} named</legend>
+                    {[...facetDict.vendorBySlot.values()].map((v) => (
+                      <label key={v.key} className="sig-map-app__option">
+                        <input
+                          type="checkbox"
+                          checked={facets.vendor.includes(v.key)}
+                          onChange={() => toggleFacetValue("vendor", v.key)}
+                          data-testid={`filter-vendor-${v.key}`}
+                        />{" "}
+                        {v.label}{" "}
+                        <span className="sig-map-app__count">
+                          ({tileVendorCounts.get(v.key) ?? 0} in view
+                          {dict.totals.by_vendor_slot?.[String(v.slot)] !== undefined
+                            ? ` · ${dict.totals.by_vendor_slot[String(v.slot)]} nationwide`
+                            : ""}
+                          )
+                        </span>
+                      </label>
+                    ))}
+                  </fieldset>
+                  <fieldset className="sig-map-app__facet" data-testid="filter-operator">
+                    <legend>Operator</legend>
+                    {[...tileOperatorCounts.keys()].sort().map((k) => (
+                      <label key={k} className="sig-map-app__option">
+                        <input
+                          type="checkbox"
+                          checked={facets.operator.includes(k)}
+                          onChange={() => toggleFacetValue("operator", k)}
+                          data-testid={`filter-operator-${k}`}
+                        />{" "}
+                        {k} <span className="sig-map-app__count">({tileOperatorCounts.get(k)})</span>
+                      </label>
+                    ))}
+                    {tileOperatorCounts.size === 0 && (
+                      <p className="sig-map-app__cannot">
+                        No resolved operator keys in view — operators resolve
+                        through the entity build; text operators stay in the
+                        list rows.
+                      </p>
+                    )}
+                  </fieldset>
+                  <fieldset className="sig-map-app__facet" data-testid="filter-source">
+                    <legend>Source — {facetDict.sourceIndexById.size} in this release</legend>
+                    {[...facetDict.sourceByIndex.values()].map((s) => (
+                      <label key={s.id} className="sig-map-app__option">
+                        <input
+                          type="checkbox"
+                          checked={facets.source.includes(s.id)}
+                          onChange={() => toggleFacetValue("source", s.id)}
+                          data-testid={`filter-source-${s.id}`}
+                        />{" "}
+                        {s.name}{" "}
+                        <span className="sig-map-app__count">
+                          ({tileSourceCounts.get(s.id) ?? 0} in view{s.licence ? ` · ${s.licence}` : ""})
+                        </span>
+                      </label>
+                    ))}
+                  </fieldset>
+                </>
+              )}
+              {(!tileMode || dict === null) && (
+                <fieldset className="sig-map-app__facet" data-testid="filter-future">
+                  <legend>Vendor · operator · source</legend>
+                  <p className="sig-map-app__cannot">
+                    {tileMode
+                      ? "These facets resolve through the release dictionary — it has not loaded yet, so they stay named here, never faked."
+                      : "These facets apply over the typed tile properties (sig.map-tiles/2) — this build carries no tile archives, so they stay named here, never faked."}
+                  </p>
+                </fieldset>
+              )}
             </div>
           )}
 
@@ -1276,6 +2020,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
           data-failed={failed ? "true" : "false"}
           data-drawn={drawn ? "true" : "false"}
           data-point-count={props.pointCount}
+          data-greyed={greyed ? "true" : "false"}
           ref={containerRef}
           onKeyDown={onCanvasKeyDown}
         >
@@ -1319,6 +2064,51 @@ export default function MapApp(props: MapAppProps): JSX.Element {
         </div>
       </div>
 
+      {/* P37.18: the debounced live region (K1 §4.6 — 1 s, never mid-gesture). */}
+      <p className="sig-visually-hidden" role="status" aria-live="polite" data-testid="map-aria-live">
+        {ariaLine}
+      </p>
+
+      {/* P37.18 (K1 §5): the print view — the In-view list, the legend, the
+          attribution, the as-of line and the cite URL; the canvas never
+          prints. */}
+      <div className="sig-map-print" aria-hidden="false" data-testid="map-print">
+        <h2>Map view — {rowsArePlaces ? "places" : "records"} in view</h2>
+        <p className="sig-map-print__meta">
+          {statusLine || `${viewCount} records in view`} · Data as of {props.asOf}
+          {state.release ? ` · release ${state.release}` : ""}.
+        </p>
+        <p className="sig-map-print__meta">
+          Cite this view: <a href={props.citationHref}>{props.citationHref}</a>
+        </p>
+        <table className="sig-map-print__table">
+          <thead>
+            <tr>
+              <th scope="col">{rowsArePlaces ? "Place" : "Record"}</th>
+              <th scope="col">Technology</th>
+              <th scope="col">Operator</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedRows.map((r) => (
+              <tr key={r.id}>
+                <th scope="row">{r.label}</th>
+                <td>{r.technology ?? "—"}</td>
+                <td>{r.operator ?? "—"}</td>
+                <td>{r.statusText ?? "—"}</td>
+              </tr>
+            ))}
+            {sortedRows.length === 0 && (
+              <tr>
+                <td colSpan={4}>No published records in this view.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+        <p className="sig-map-print__meta">{ATTRIBUTION_PRINT(props.attribution)}</p>
+      </div>
+
       <details className="sig-map-app__legend" data-testid="map-legend">
         <summary>Legend</summary>
         <ul>
@@ -1344,6 +2134,15 @@ export default function MapApp(props: MapAppProps): JSX.Element {
           facet, the list and text, never a colour key. Not yet available:
           field of view (modelled), service areas, RTCCs and hubs.
         </p>
+        <p className="sig-island__note" data-testid="legend-unplotted">
+          Records with no published point:{" "}
+          {dict?.totals.unplotted_rows ?? props.unplotted} (SIG-UI-020 — the
+          jurisdiction indicators and the places table carry them).
+        </p>
+        <p className="sig-island__note" data-testid="legend-vintage">
+          Data: {state.release ? `release ${state.release}` : "this build"} · as
+          of {props.asOf}.
+        </p>
       </details>
 
       <p className="sig-island__note" data-testid="map-compartment-attribution">
@@ -1365,6 +2164,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
 }
 
 const OPERATOR_FALLBACK = "Operator not stated by any source";
+const ATTRIBUTION_PRINT = (line: string) => `Attribution: ${line}`;
 
 function activeAttribution(
   compartments: readonly CompartmentOption[],

@@ -501,3 +501,169 @@
   margin: 0 0 var(--sig-space-1);
   font-size: var(--sig-step--1);
 }
+
+/* P37.18 (K1 MAP-03b) — the in-view table, download/print tools, the mobile
+ * bottom sheet and the print view. */
+.sig-map-app__viewtools {
+  margin: var(--sig-space-1) 0;
+  font-size: var(--sig-step--2);
+}
+.sig-map-app__tool {
+  min-height: 24px;
+  padding: 0 var(--sig-space-2);
+  border: var(--sig-border-thin) solid var(--sig-line);
+  background: none;
+  cursor: pointer;
+  font-size: inherit;
+}
+.sig-map-app__tool.is-active {
+  border-color: var(--sig-data-1);
+  font-weight: 600;
+}
+.sig-map-app__tool:focus-visible {
+  outline: 3px solid var(--sig-data-1);
+  outline-offset: 1px;
+}
+.sig-map-app__table-wrap {
+  max-height: 340px;
+  overflow: auto;
+}
+.sig-map-app__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--sig-step--2);
+}
+.sig-map-app__table th,
+.sig-map-app__table td {
+  text-align: left;
+  padding: var(--sig-space-1) var(--sig-space-2);
+  border-bottom: var(--sig-border-thin) solid var(--sig-line);
+}
+.sig-map-app__sort {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.sig-map-app__sort:focus-visible {
+  outline: 3px solid var(--sig-data-1);
+  outline-offset: 1px;
+}
+
+/* K1 §4.1 — the mobile bottom sheet (< 960 px): three snap points (peek ≈
+ * 88 px, half, full); the sheet carries the same tabs and never covers the
+ * framed map (the app pads the map by the snap height). */
+.sig-map-app__sheetbar {
+  display: flex;
+  align-items: center;
+  gap: var(--sig-space-2);
+  padding: var(--sig-space-1) 0;
+  border-bottom: var(--sig-border-thin) solid var(--sig-line);
+}
+.sig-map-app__grabber {
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.sig-map-app__grabber-mark {
+  display: block;
+  width: 36px;
+  height: 4px;
+  margin: 0 auto;
+  border-radius: 2px;
+  background: var(--sig-ink-muted);
+}
+.sig-map-app__peek {
+  font-size: var(--sig-step--1);
+  font-weight: 600;
+}
+.sig-map-app__snaps {
+  margin-left: auto;
+  font-size: var(--sig-step--2);
+}
+@media (max-width: 959px) {
+  .sig-map-app__shell {
+    position: relative;
+    display: block;
+  }
+  .sig-map-app__canvas {
+    min-height: 60dvh;
+  }
+  .sig-map-app__panel--sheet {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    max-width: none;
+    background: var(--sig-surface);
+    border-top: var(--sig-border-strong) solid var(--sig-line);
+    overflow-y: auto;
+  }
+  .sig-map-app__panel--sheet[data-snap="peek"] {
+    max-height: 88px;
+    overflow: hidden;
+  }
+  .sig-map-app__panel--sheet[data-snap="half"] {
+    max-height: 45dvh;
+  }
+  .sig-map-app__panel--sheet[data-snap="full"] {
+    max-height: 88dvh;
+  }
+  .sig-map-app__panel--sheet[data-snap="peek"] .sig-map-app__tabs,
+  .sig-map-app__panel--sheet[data-snap="peek"] .sig-map-app__tabpanel {
+    display: none;
+  }
+  .sig-map-app__panpad button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+@media (min-width: 960px) {
+  .sig-map-app__sheetbar {
+    display: none;
+  }
+}
+
+/* K1 §5 — the canvas is never printed; the print view carries the In-view
+ * list, attribution, the as-of line and the cite URL. */
+.sig-map-print {
+  display: none;
+}
+@media print {
+  .sig-map-app__shell,
+  .sig-map-app__controls,
+  .sig-map-app__legend,
+  .sig-view-links,
+  .sig-map-app .sig-island__note {
+    display: none;
+  }
+  .sig-map-print {
+    display: block;
+    font-size: 10pt;
+  }
+  .sig-map-print__meta {
+    margin: 0 0 6pt;
+  }
+  .sig-map-print__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt;
+  }
+  .sig-map-print__table th,
+  .sig-map-print__table td {
+    text-align: left;
+    padding: 2pt 6pt;
+    border-bottom: 0.5pt solid var(--sig-line);
+  }
+}
+.sig-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

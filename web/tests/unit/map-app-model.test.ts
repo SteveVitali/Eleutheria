@@ -155,3 +155,191 @@ describe("in-view list (SIG-UI-102)", () => {
     expect(rows.find((r) => r.id === "X")?.dossierHref).toBe("/x/");
   });
 });
+
+// ------------------------------------------------------------- P37.18 (MAP-03b)
+import {
+  activeFacetCount,
+  buildFacetDict,
+  cannotApplyNotes,
+  cellSlice,
+  cellSliceValue,
+  dedupeTileSites,
+  effectiveFacets,
+  isMapDict,
+  sheetPeekText,
+  sortInViewRows,
+  tileFacetExpr,
+  tilePlaceRowsInView,
+  tileSitePasses,
+  tileSiteRowsInView,
+} from "../../src/islands/map/model";
+import type { MapDict, MapFacetsV2 } from "../../src/islands/map/model";
+
+const F2 = (over: Partial<MapFacetsV2> = {}): MapFacetsV2 => ({
+  technology: [],
+  status: [],
+  seen: null,
+  vendor: [],
+  operator: [],
+  source: [],
+  ...over,
+});
+
+const DICT: MapDict = {
+  schema: "sig.map-dict/1",
+  contract: "sig.map-tiles/2",
+  sources: [
+    { index: 0, id: "src-a", name: "Feed A", licence: "CC-BY-4.0", compartment: "sig_graph" },
+    { index: 1, id: "src-b", name: "Feed B", licence: "ODbL-1.0", compartment: "osm_physical" },
+  ],
+  technologies: [
+    { code: 1, slug: "alpr-fixed", label: "alpr fixed" },
+    { code: 2, slug: "cctv", label: "cctv" },
+  ],
+  vendor_slots: [{ slot: 3, key: "org:flock", label: "Flock Safety" }],
+  jurisdictions: {
+    "us.census.geoid.place:4064000": {
+      name: "Oklahoma City",
+      level: "municipality",
+      bbox: [-98.0, 35.3, -97.2, 35.8],
+    },
+  },
+  unplotted: { "us.census.geoid.place:4064000": 4 },
+  totals: { slice_rows: 10, by_technology: { "alpr-fixed": 7 }, unplotted_rows: 4 },
+};
+const FD = buildFacetDict(DICT);
+
+describe("sig.map-dict/1 (P37.18)", () => {
+  it("guards the document shape and builds the facet lookups", () => {
+    expect(isMapDict(DICT)).toBe(true);
+    expect(isMapDict({ schema: "sig.map-dict/1" })).toBe(false);
+    expect(FD.techCodeBySlug.get("alpr-fixed")).toBe(1);
+    expect(FD.vendorSlotByKey.get("org:flock")).toBe(3);
+    expect(FD.sourceIndexById.get("src-b")).toBe(1);
+  });
+});
+
+describe("tile-path facets over sig.map-tiles/2 props", () => {
+  const p = { rk: "r1", lb: "Rec", tc: 1, vd: 3, oe: "org:okc-pd", sr: 1, st: 0, tr: 0, f: 202601, l: 202609 };
+  it("passes/narrows each facet dim honestly", () => {
+    expect(tileSitePasses(p, F2(), FD)).toBe(true);
+    expect(tileSitePasses(p, F2({ technology: ["alpr-fixed"] }), FD)).toBe(true);
+    expect(tileSitePasses(p, F2({ technology: ["cctv"] }), FD)).toBe(false);
+    expect(tileSitePasses(p, F2({ vendor: ["org:flock"] }), FD)).toBe(true);
+    expect(tileSitePasses(p, F2({ vendor: ["org:other"] }), FD)).toBe(false);
+    expect(tileSitePasses(p, F2({ operator: ["org:okc-pd"] }), FD)).toBe(true);
+    expect(tileSitePasses(p, F2({ operator: ["org:x"] }), FD)).toBe(false);
+    expect(tileSitePasses(p, F2({ source: ["src-b"] }), FD)).toBe(true);
+    expect(tileSitePasses(p, F2({ source: ["src-a"] }), FD)).toBe(false);
+    expect(tileSitePasses(p, F2({ status: ["corroborated"] }), FD)).toBe(true);
+    expect(
+      tileSitePasses(p, F2({ seen: { from: "2026-02", to: "2026-03" } }), FD),
+    ).toBe(true);
+    expect(
+      tileSitePasses(p, F2({ seen: { from: "2025-01", to: "2025-12" } }), FD),
+    ).toBe(false);
+    // absent dates can never satisfy a date facet (honest absence)
+    expect(
+      tileSitePasses({ ...p, f: undefined, l: undefined }, F2({ seen: { from: "2020-01", to: "2029-12" } }), FD),
+    ).toBe(false);
+  });
+  it("builds a MapLibre filter expression for the site layers", () => {
+    expect(tileFacetExpr(F2(), FD)).toBeNull();
+    const expr = tileFacetExpr(F2({ technology: ["alpr-fixed"], status: ["contested"] }), FD);
+    expect(JSON.stringify(expr)).toContain('"in"');
+    expect(JSON.stringify(expr)).toContain('"tc"');
+  });
+});
+
+describe("zoom honesty (SIG-UI-104, C-03 — grey, never hatch)", () => {
+  it("seen cannot apply in the cells band; applies from z10", () => {
+    const f = F2({ seen: { from: "2026-01", to: "2026-06" } });
+    const notes = cannotApplyNotes(f, 6, true);
+    expect(notes.map((n) => n.dim)).toContain("seen");
+    expect(cannotApplyNotes(f, 12, true)).toEqual([]);
+    const eff = effectiveFacets(f, 6, true);
+    expect(eff.seen).toBeNull();
+    expect(effectiveFacets(f, 12, true).seen).not.toBeNull();
+  });
+  it("operator/source cannot slice cells below z10 on the tile path", () => {
+    const f = F2({ operator: ["org:x"], source: ["src-a"] });
+    const dims = cannotApplyNotes(f, 3, true).map((n) => n.dim);
+    expect(dims).toEqual(expect.arrayContaining(["operator", "source"]));
+    const eff = effectiveFacets(f, 3, true);
+    expect(eff.operator).toEqual([]);
+    expect(eff.source).toEqual([]);
+    // fixtures mode: the point set is individually drawn — the dims apply.
+    expect(cannotApplyNotes(f, 3, false)).toEqual([]);
+  });
+  it("joint facet dims can't slice cells; single dims slice via marginal props", () => {
+    expect(cellSlice(F2(), FD)).toEqual({ kind: "n" });
+    expect(cellSlice(F2({ technology: ["alpr-fixed"] }), FD)).toEqual({
+      kind: "props",
+      keys: ["t_1"],
+      label: "technology",
+    });
+    expect(cellSlice(F2({ status: ["single-source"] }), FD)).toEqual({
+      kind: "props",
+      keys: ["s1"],
+      label: "status",
+    });
+    expect(cellSlice(F2({ technology: ["a"], vendor: ["b"] }), FD).kind).toBe("cannot");
+    expect(cellSlice(F2({ seen: { from: "2026-01", to: "2026-06" } }), FD).kind).toBe("cannot");
+    expect(cellSliceValue({ n: 5, t_1: 3, s1: 2 }, { kind: "props", keys: ["t_1"], label: "technology" })).toBe(3);
+  });
+});
+
+describe("tile-path in-view rows", () => {
+  const sites = dedupeTileSites([
+    { props: { rk: "r1", lb: "Near", tc: 1, st: 0 }, lat: 40, lon: -100, compartment: "c" },
+    { props: { rk: "r1", lb: "Near", tc: 1, st: 0 }, lat: 40, lon: -100, compartment: "c" }, // boundary dup
+    { props: { rk: "r2", lb: "Far", tc: 2, st: 1 }, lat: 41, lon: -100, compartment: "c" },
+  ]);
+  it("dedupes by rk, sorts by distance, caps at IN_VIEW_MAX", () => {
+    const { rows, matching } = tileSiteRowsInView(sites, F2(), FD, { lat: 40, lon: -100 });
+    expect(matching).toBe(2);
+    expect(rows[0]?.id).toBe("r1");
+    expect(rows[0]?.technology).toBe("alpr-fixed");
+  });
+  it("applies the active facets", () => {
+    const { matching } = tileSiteRowsInView(sites, F2({ technology: ["cctv"] }), FD, { lat: 40, lon: -100 });
+    expect(matching).toBe(1);
+  });
+  it("groups cells into places with single-source share", () => {
+    const cells = [
+      { props: { h3: "a", n: 4, s1: 1, jp: "us.census.geoid.place:4064000" }, compartment: "c1" },
+      { props: { h3: "a", n: 4, s1: 1, jp: "us.census.geoid.place:4064000" }, compartment: "c1" }, // dup
+      { props: { h3: "b", n: 2, s1: 0, jp: "unplaced" }, compartment: "c1" },
+    ];
+    const { rows, matching } = tilePlaceRowsInView(cells, { kind: "n" }, FD, {});
+    expect(matching).toBe(6);
+    const okc = rows.find((r) => r.id === "us.census.geoid.place:4064000");
+    expect(okc?.label).toContain("Oklahoma City");
+    expect(okc?.meta).toContain("1 source: 25%");
+    expect(okc?.bbox).toEqual([-98.0, 35.3, -97.2, 35.8]);
+    const sliced = tilePlaceRowsInView(cells, { kind: "props", keys: ["s1"], label: "status" }, FD, {});
+    expect(sliced.matching).toBe(1);
+  });
+});
+
+describe("in-view table + sheet + download helpers", () => {
+  it("sorts rows by the sortable keys, id-stable", () => {
+    const { rows } = tileSiteRowsInView(
+      dedupeTileSites([
+        { props: { rk: "b", lb: "B", tc: 2, st: 1 }, lat: 42, lon: -100, compartment: "c" },
+        { props: { rk: "a", lb: "A", tc: 1, st: 0 }, lat: 40, lon: -100, compartment: "c" },
+      ]),
+      F2(),
+      FD,
+      { lat: 40, lon: -100 },
+    );
+    expect(sortInViewRows(rows, "label", "asc").map((r) => r.id)).toEqual(["a", "b"]);
+    expect(sortInViewRows(rows, "distance", "desc")[0]?.id).toBe("b");
+  });
+  it("counts active facet dims and formats the peek line", () => {
+    expect(activeFacetCount(F2())).toBe(0);
+    expect(activeFacetCount(F2({ technology: ["a"], seen: { from: "2020-01", to: "2021-01" } }))).toBe(2);
+    expect(sheetPeekText(137, 2)).toBe("137 records in view · Filters (2)");
+    expect(sheetPeekText(1, 0)).toBe("1 record in view");
+  });
+});

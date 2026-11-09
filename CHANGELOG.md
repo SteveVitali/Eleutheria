@@ -24,6 +24,21 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.18 — map filters, In-view list, keyboard, mobile and print (K1
+  MAP-03b; serves SIG-UI-095/102/104):** the `/map/` T2 app completes its
+  second half — tile-path filters over the `sig.map-tiles/2` props
+  (`technology`/`vendor`/`operator`/`source`/`status`/`seen`, resolved through
+  `sig.map-dict/1`), the browser-side `cells` re-sum per K1 §3.2 (marginal
+  `t_<code>`/`v_<slot>`/`s1` props, joint slices honestly refused), the
+  drawn-set honesty rule (an active facet that cannot apply greys the drawn
+  layers with a note — C-03, never a hatch), the tile-path In-view list
+  (places below z10 deduped `(compartment,h3)`, records from z10 deduped
+  `rk`), a sortable table view (J5), the 1 s debounced live region, the
+  roving-arrow list keyboard contract with focus return (J4), the
+  three-snap-point mobile bottom sheet (K1 §4.1), the print view (the list,
+  legend, attribution, as-of and cite URL — the canvas never prints) and
+  "Download this view" CSV with ADR-224 licence provenance lines.
+
 - **P37.17 — tile properties v2, the public map dictionary and the
   coverage table (D-K1-4 [B-22] = yes; SIG-GEO-014 + SIG-UI-099 owned
   legs; UXR-14 draft carried):** the spine export now emits the full

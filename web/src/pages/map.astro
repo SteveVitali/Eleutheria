@@ -41,6 +41,7 @@ import {
   getDossiers,
   getDossierIndex,
   getJurisdictionKeyMap,
+  getJurisdictionSlugPaths,
   getMapSites,
   getMapDensityBins,
   getMapOverview,
@@ -192,6 +193,17 @@ const ISLAND_RECORDS: MapRecord[] =
       )
     : [];
 const meta = getSiteMetadata();
+// P37.18 (MAP-03b): the print/legend as-of line, the unplotted count and the
+// jkey → dossier hrefs the tile-path list + filters resolve through.
+const AS_OF_LINE = meta.asOf.as_of_world;
+const UNPLOTTED = MAP_ASSETS.length - locatable.length;
+const SLUG_BY_JKEY = getJurisdictionSlugPaths();
+const JURISDICTION_HREFS: Record<string, string> = {};
+if (SLUG_BY_JKEY) {
+  for (const [jkey, slugPath] of SLUG_BY_JKEY) {
+    if (slugPath) JURISDICTION_HREFS[jkey] = withBase(dossierPath(slugPath).replace(/^\//, ""));
+  }
+}
 const PLACEHOLDER_MAX_K = 24;
 const placeholderK = Math.max(0, ISLAND_COMPARTMENTS.length - 2);
 if (placeholderK > PLACEHOLDER_MAX_K) {
@@ -278,6 +290,9 @@ const placeOptionLabel = (d: (typeof placeRows)[number]) =>
           }}
           vendorBase={withBase("map/vendor/")}
           dictHref={withBase("map/dict.json")}
+          asOf={AS_OF_LINE}
+          unplotted={UNPLOTTED}
+          jurisdictionHrefs={JURISDICTION_HREFS}
         />
       </>
     ) : (
@@ -393,7 +408,7 @@ const placeOptionLabel = (d: (typeof placeRows)[number]) =>
   {places.totalRows === 0 && <EmptyState surface="mapAssets" />}
   {places.totalRows > 0 && (
     <>
-      <div class="sig-table-wrap" data-testid="assets-summary">
+      <div class="sig-table-wrap" tabindex={0} data-testid="assets-summary">
       <table class="sig-table" aria-labelledby="places-heading" data-testid="places-table">
         <thead>
           <tr>
@@ -514,7 +529,7 @@ const placeOptionLabel = (d: (typeof placeRows)[number]) =>
       full cell set ships in the export's <code>web/analytics/density_bins.json</code>.
     </p>
   )}
-  <div class="sig-table-wrap">
+  <div class="sig-table-wrap" tabindex={0}>
   <table class="sig-table" aria-labelledby="bins-table-heading">
     <thead>
       <tr>

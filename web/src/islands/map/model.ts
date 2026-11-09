@@ -10,6 +10,15 @@
  * is DOM-free so the same logic is unit-tested without a browser and the
  * fixtures path and the tile path share it.
  *
+ * P37.18 (K1 MAP-03b) extends the same pure half: the `sig.map-dict/1`
+ * document model and the tile-path filters (`sig.map-tiles/2` props —
+ * `tc`/`vd`/`oe`/`sr`/`f`/`l`/`st`), the browser-side `cells` summation
+ * (K1 §3.2 — marginal facet props `t_<code>`/`v_<slot>`/`s1`, never a joint
+ * slice the tiles do not carry), the zoom-honesty rule applied to DRAWN data
+ * (a filter that cannot apply greys the drawn set with a note — C-03, no
+ * hatch), the in-view table model + CSV download (K1 §4.6), and the mobile
+ * bottom-sheet snap model (K1 §4.1).
+ *
  * Copy rules (UXR-13 / SIG-UI-063): observation-level rows are "records" —
  * never "sites" or "cameras" in app copy. Links follow UXR-18 / SIG-UI-068:
  * a record link targets the dossier sites-list anchor until `/r/<pub>/` is
@@ -104,7 +113,11 @@ export interface TileSiteProps {
   rk?: string;
   lb?: string;
   tc?: number;
+  /** P37.17: vendor slot (dict `vendor_slots[]`); 0 = unknown. */
+  vd?: number;
   op?: string;
+  /** P37.17: operator entity key when resolved (the `operator=` wire value). */
+  oe?: string;
   sr?: number;
   j?: string;
   f?: number;
@@ -351,6 +364,18 @@ export interface InViewRow {
   dossierHref?: string | null;
   listHref?: string | null;
   distanceKm: number;
+  /** P37.18: the published point when the row carries one (hover highlight). */
+  lat?: number;
+  lon?: number;
+  /** P37.18: structured fields the sortable table view + CSV read. */
+  technology?: string;
+  operator?: string;
+  statusText?: string;
+  sourceText?: string | null;
+  licence?: string | null;
+  compartment?: string | null;
+  /** P37.18: a place row's registry bbox (`fitBounds` when present). */
+  bbox?: [number, number, number, number];
 }
 
 /** The cap K1 sets on the list (≤ 50 rows). */
@@ -393,6 +418,14 @@ export function siteRowsInView(
       dossierHref: r.jurisdiction.href,
       listHref: r.recordHref,
       distanceKm: distanceKm(r, centre),
+      lat: r.lat,
+      lon: r.lon,
+      technology: r.technology,
+      operator: r.operator ?? "not stated",
+      statusText: r.status ? STATUS_TEXT[r.status] : "not recorded",
+      sourceText: r.sources[0]?.label ?? null,
+      licence: r.licence,
+      compartment: r.compartment,
     }))
     .sort((a, b) => a.distanceKm - b.distanceKm || a.id.localeCompare(b.id))
     .slice(0, IN_VIEW_MAX);
@@ -436,4 +469,533 @@ export function placeRowsInView(
     .sort((a, b) => a.label.localeCompare(b.label))
     .slice(0, IN_VIEW_MAX);
   return { rows, matching };
+}
+
+// ============================================================ P37.18 (MAP-03b)
+
+/** The `sig.map-dict/1` document (P37.17) — the indices tile props resolve through. */
+export interface MapDictSource {
+  index: number;
+  id: string;
+  name: string;
+  publisher?: string | null;
+  licence?: string | null;
+  compartment?: string | null;
+  url?: string;
+}
+export interface MapDictTech {
+  code: number;
+  slug: string;
+  label: string;
+}
+export interface MapDictVendor {
+  slot: number;
+  key: string;
+  label: string;
+}
+export interface MapDictJurisdiction {
+  name?: string;
+  level?: string;
+  chain?: string[];
+  /** `[w, s, e, n]` degrees, or null. */
+  bbox?: number[] | null;
+}
+export interface MapDict {
+  schema: string;
+  contract?: string;
+  sources: MapDictSource[];
+  technologies: MapDictTech[];
+  vendor_slots: MapDictVendor[];
+  jurisdictions: Record<string, MapDictJurisdiction>;
+  unplotted: Record<string, number>;
+  totals: {
+    slice_rows?: number;
+    by_technology?: Record<string, number>;
+    by_vendor_slot?: Record<string, number>;
+    unplotted_rows?: number;
+  };
+}
+
+export function isMapDict(o: unknown): o is MapDict {
+  const d = o as Partial<MapDict> | null;
+  return (
+    d !== null &&
+    typeof d === "object" &&
+    d.schema === "sig.map-dict/1" &&
+    Array.isArray(d.sources) &&
+    Array.isArray(d.technologies) &&
+    typeof d.jurisdictions === "object" &&
+    d.jurisdictions !== null
+  );
+}
+
+/** The lookups the tile-path filters resolve through. */
+export interface FacetDict {
+  techCodeBySlug: Map<string, number>;
+  techSlugByCode: Map<number, string>;
+  vendorSlotByKey: Map<string, number>;
+  vendorBySlot: Map<number, MapDictVendor>;
+  sourceByIndex: Map<number, MapDictSource>;
+  sourceIndexById: Map<string, number>;
+  jurisdictions: Record<string, MapDictJurisdiction>;
+}
+
+export function buildFacetDict(dict: MapDict | null): FacetDict {
+  const techCodeBySlug = new Map<string, number>();
+  const techSlugByCode = new Map<number, string>();
+  for (const t of dict?.technologies ?? []) {
+    techCodeBySlug.set(t.slug, t.code);
+    techSlugByCode.set(t.code, t.slug);
+  }
+  const vendorSlotByKey = new Map<string, number>();
+  const vendorBySlot = new Map<number, MapDictVendor>();
+  for (const v of dict?.vendor_slots ?? []) {
+    vendorSlotByKey.set(v.key, v.slot);
+    vendorBySlot.set(v.slot, v);
+  }
+  const sourceByIndex = new Map<number, MapDictSource>();
+  const sourceIndexById = new Map<string, number>();
+  for (const s of dict?.sources ?? []) {
+    sourceByIndex.set(s.index, s);
+    sourceIndexById.set(s.id, s.index);
+  }
+  return {
+    techCodeBySlug,
+    techSlugByCode,
+    vendorSlotByKey,
+    vendorBySlot,
+    sourceByIndex,
+    sourceIndexById,
+    jurisdictions: dict?.jurisdictions ?? {},
+  };
+}
+
+export const EMPTY_FACET_DICT: FacetDict = buildFacetDict(null);
+
+/** The `cells` layer props (z0–9 aggregation, sig.map-tiles/2 §3.3). */
+export interface TileCellProps {
+  h3?: string;
+  n?: number;
+  ns?: number;
+  jp?: string;
+  s1?: number;
+  sx?: number;
+  [key: string]: unknown;
+}
+
+// -------------------------------------------------------- facet extension //
+
+/** MAP-03b's added facet dims (vendor/operator/source — wire values are the
+ * entity keys / source ids of sig.workspace-state/2). */
+export interface MapFacetsV2 extends MapFacets {
+  vendor: string[];
+  operator: string[];
+  source: string[];
+}
+
+/** Whether a `sites`-layer feature passes every active facet (tile path). */
+export function tileSitePasses(
+  p: TileSiteProps & { vd?: number; oe?: string },
+  f: MapFacetsV2,
+  d: FacetDict,
+): boolean {
+  if (f.technology.length > 0) {
+    const code = typeof p.tc === "number" ? p.tc : 0;
+    if (!f.technology.some((slug) => d.techCodeBySlug.get(slug) === code)) return false;
+  }
+  if (f.status.length > 0) {
+    const st = typeof p.st === "number" ? (STATUS_BY_CODE[p.st] ?? null) : null;
+    if (st === null || !f.status.includes(st)) return false;
+  }
+  if (f.vendor.length > 0) {
+    const slot = typeof p.vd === "number" ? p.vd : 0;
+    if (!f.vendor.some((k) => d.vendorSlotByKey.get(k) === slot)) return false;
+  }
+  if (f.operator.length > 0) {
+    if (typeof p.oe !== "string" || !f.operator.includes(p.oe)) return false;
+  }
+  if (f.source.length > 0) {
+    const idx = typeof p.sr === "number" ? p.sr : -1;
+    if (!f.source.some((id) => d.sourceIndexById.get(id) === idx)) return false;
+  }
+  if (f.seen) {
+    const fInt = typeof p.f === "number" ? p.f : null;
+    const lInt = typeof p.l === "number" ? p.l : null;
+    const from = Number(f.seen.from.replace("-", ""));
+    const to = Number(f.seen.to.replace("-", ""));
+    if (fInt === null && lInt === null) return false;
+    if (fInt !== null && fInt > to) return false;
+    if (lInt !== null && lInt < from) return false;
+  }
+  return true;
+}
+
+/**
+ * The MapLibre filter-expression fragment the active facets contribute for
+ * the `sites` layers (AND-ed with each status layer's base filter). `null`
+ * means no facet narrows the drawn set.
+ */
+export function tileFacetExpr(f: MapFacetsV2, d: FacetDict): unknown[] | null {
+  const parts: unknown[] = [];
+  if (f.technology.length > 0) {
+    const codes = f.technology
+      .map((s) => d.techCodeBySlug.get(s))
+      .filter((c): c is number => c !== undefined);
+    if (codes.length === 0) return ["==", 1, 0];
+    parts.push(["in", ["get", "tc"], ["literal", codes]]);
+  }
+  if (f.vendor.length > 0) {
+    const slots = f.vendor
+      .map((k) => d.vendorSlotByKey.get(k))
+      .filter((c): c is number => c !== undefined);
+    if (slots.length === 0) return ["==", 1, 0];
+    parts.push(["in", ["get", "vd"], ["literal", slots]]);
+  }
+  if (f.operator.length > 0) {
+    parts.push(["in", ["get", "oe"], ["literal", f.operator]]);
+  }
+  if (f.source.length > 0) {
+    const idxs = f.source
+      .map((id) => d.sourceIndexById.get(id))
+      .filter((c): c is number => c !== undefined);
+    if (idxs.length === 0) return ["==", 1, 0];
+    parts.push(["in", ["get", "sr"], ["literal", idxs]]);
+  }
+  if (f.seen) {
+    const from = Number(f.seen.from.replace("-", ""));
+    const to = Number(f.seen.to.replace("-", ""));
+    // seen = (f <= to) AND (l >= from OR l absent means open-ended→kept?)
+    // An absent `f`/`l` is honest absence — it cannot satisfy a date facet.
+    parts.push([
+      "all",
+      ["has", "f"],
+      ["<=", ["get", "f"], to],
+      ["all", ["has", "l"], [">=", ["get", "l"], from]],
+    ]);
+  }
+  if (parts.length === 0) return null;
+  return parts.length === 1 ? (parts[0] as unknown[]) : ["all", ...parts];
+}
+
+// --------------------------------------------------------- zoom honesty //
+
+/**
+ * Which `cells` prop a single active facet dimension slices by (K1 §3.2 —
+ * the cells carry MARGINAL counts `t_<code>` / `v_<slot>` / `s1`; a joint
+ * slice the tiles do not carry is honestly "cannot apply"). Returns
+ * `{kind:"n"}` (no facet narrows), `{kind:"props", keys}` (sum these props)
+ * or `{kind:"cannot"}` (active facets the cells cannot honour).
+ */
+export type CellSlice =
+  | { kind: "n" }
+  | { kind: "props"; keys: string[]; label: string }
+  | { kind: "cannot"; dims: string[] };
+
+export function cellSlice(f: MapFacetsV2, d: FacetDict): CellSlice {
+  const cannot: string[] = [];
+  const sliceable: { dim: string; keys: string[] }[] = [];
+  if (f.technology.length > 0) {
+    sliceable.push({
+      dim: "technology",
+      keys: f.technology
+        .map((s) => d.techCodeBySlug.get(s))
+        .filter((c): c is number => c !== undefined)
+        .map((c) => `t_${c}`),
+    });
+  }
+  if (f.vendor.length > 0) {
+    sliceable.push({
+      dim: "vendor",
+      keys: f.vendor
+        .map((k) => d.vendorSlotByKey.get(k))
+        .filter((c): c is number => c !== undefined)
+        .map((c) => `v_${c}`),
+    });
+  }
+  if (f.status.length > 0) {
+    // Cells carry s1 (single-source) + sx (everything else) — only the pure
+    // single-source selection slices honestly.
+    if (f.status.length === 1 && f.status[0] === "single-source") {
+      sliceable.push({ dim: "status", keys: ["s1"] });
+    } else {
+      cannot.push("status");
+    }
+  }
+  if (f.seen) cannot.push("seen");
+  if (f.operator.length > 0) cannot.push("operator");
+  if (f.source.length > 0) cannot.push("source");
+  if (cannot.length > 0) return { kind: "cannot", dims: cannot };
+  if (sliceable.length > 1) {
+    return { kind: "cannot", dims: sliceable.map((s) => s.dim) };
+  }
+  if (sliceable.length === 1) {
+    const s = sliceable[0];
+    return s.keys.length === 0
+      ? { kind: "cannot", dims: [s.dim] }
+      : { kind: "props", keys: s.keys, label: s.dim };
+  }
+  return { kind: "n" };
+}
+
+/** The value one cell contributes under the slice (deduped per (comp, h3)). */
+export function cellSliceValue(p: TileCellProps, slice: CellSlice): number {
+  if (slice.kind === "cannot") return typeof p.n === "number" ? p.n : 0;
+  if (slice.kind === "n") return typeof p.n === "number" ? p.n : 0;
+  let sum = 0;
+  for (const k of slice.keys) {
+    const v = p[k];
+    if (typeof v === "number") sum += v;
+  }
+  return sum;
+}
+
+/**
+ * The drawn-set honesty rule (SIG-UI-104, C-03): the dims whose ACTIVE
+ * selection cannot apply at this zoom/mode, each with the note to show.
+ * When non-empty, the drawn layers desaturate (grey, NO hatch) and the
+ * matching facets are dropped from `effectiveFacets` — the map and the list
+ * then show the same honestly-unfiltered set.
+ */
+export function cannotApplyNotes(
+  f: MapFacetsV2,
+  zoom: number,
+  tileMode: boolean,
+): { dim: string; note: string }[] {
+  const out: { dim: string; note: string }[] = [];
+  const atCellsBand = zoom <= NATIONAL_ZOOM_MAX;
+  if (f.seen && atCellsBand) {
+    out.push({
+      dim: "seen",
+      note: `Seen-date filtering applies from zoom ${NATIONAL_ZOOM_MAX + 1} — the map is showing every record, not a filtered set.`,
+    });
+  }
+  if (tileMode && atCellsBand) {
+    if (f.operator.length > 0) {
+      out.push({
+        dim: "operator",
+        note: `Operator filtering applies from zoom ${NATIONAL_ZOOM_MAX + 1} — the map is showing every record, not a filtered set.`,
+      });
+    }
+    if (f.source.length > 0) {
+      out.push({
+        dim: "source",
+        note: `Source filtering applies from zoom ${NATIONAL_ZOOM_MAX + 1} — the map is showing every record, not a filtered set.`,
+      });
+    }
+    if (
+      f.status.length > 0 &&
+      !(f.status.length === 1 && f.status[0] === "single-source")
+    ) {
+      out.push({
+        dim: "status",
+        note: `This status selection can't slice the count cells — it applies from zoom ${NATIONAL_ZOOM_MAX + 1}.`,
+      });
+    }
+    const joint =
+      (f.technology.length > 0 ? 1 : 0) +
+      (f.vendor.length > 0 ? 1 : 0) +
+      (f.status.length === 1 && f.status[0] === "single-source" ? 1 : 0);
+    if (joint > 1) {
+      out.push({
+        dim: "joint",
+        note: `Combined facets can't slice the count cells — they apply together from zoom ${NATIONAL_ZOOM_MAX + 1}.`,
+      });
+    }
+  }
+  return out;
+}
+
+/** The facet set that may HONESTLY narrow the drawn set at this zoom. */
+export function effectiveFacets(
+  f: MapFacetsV2,
+  zoom: number,
+  tileMode: boolean,
+): MapFacetsV2 {
+  const blocked = new Set(cannotApplyNotes(f, zoom, tileMode).map((n) => n.dim));
+  const out: MapFacetsV2 = { ...f };
+  if (blocked.has("seen")) out.seen = null;
+  if (blocked.has("operator")) out.operator = [];
+  if (blocked.has("source")) out.source = [];
+  if (blocked.has("status")) out.status = [];
+  if (blocked.has("joint")) {
+    out.technology = [];
+    out.vendor = [];
+  }
+  return out;
+}
+
+// ------------------------------------------------- tile-path in-view rows //
+
+/** One drawn site feature the viewport holds (deduped by `rk`). */
+export interface TileSiteFeature {
+  props: TileSiteProps & { vd?: number; oe?: string };
+  lat: number;
+  lon: number;
+  compartment: string;
+}
+
+/** Dedupe rendered/source features by `rk`, keeping the first seen. */
+export function dedupeTileSites(
+  features: { props: TileSiteFeature["props"]; lat: number; lon: number; compartment: string }[],
+): TileSiteFeature[] {
+  const seen = new Set<string>();
+  const out: TileSiteFeature[] = [];
+  for (const f of features) {
+    const rk = String(f.props.rk ?? "");
+    if (rk === "" || seen.has(rk)) continue;
+    seen.add(rk);
+    out.push(f);
+  }
+  return out;
+}
+
+/** The z≥10 tile-path list: passing records sorted by distance, capped at 50. */
+export function tileSiteRowsInView(
+  sites: readonly TileSiteFeature[],
+  facets: MapFacetsV2,
+  dict: FacetDict,
+  centre: { lat: number; lon: number },
+  hrefs: {
+    jurisdictionHref?: (jkey: string) => string | null;
+    recordPageHref?: (rk: string) => string | null;
+  } = {},
+): { rows: InViewRow[]; matching: number; passing: TileSiteFeature[] } {
+  const passing = sites.filter((f) => tileSitePasses(f.props, facets, dict));
+  const rows: InViewRow[] = passing
+    .map((f) => {
+      const p = f.props;
+      const rk = String(p.rk ?? "");
+      const st = typeof p.st === "number" ? (STATUS_BY_CODE[p.st] ?? null) : null;
+      const tech =
+        typeof p.tc === "number" && p.tc > 0
+          ? (dict.techSlugByCode.get(p.tc) ?? `code ${p.tc}`)
+          : "unclassified";
+      const src = typeof p.sr === "number" ? dict.sourceByIndex.get(p.sr) : undefined;
+      return {
+        id: rk,
+        label: String(p.lb ?? rk),
+        meta: `${tech} · ${p.op ?? "not stated"} · ${st ? STATUS_TEXT[st] : "not recorded"}`,
+        selectId: rk,
+        dossierHref:
+          typeof p.j === "string" ? (hrefs.jurisdictionHref?.(p.j) ?? null) : null,
+        listHref: rk ? (hrefs.recordPageHref?.(rk) ?? null) : null,
+        distanceKm: distanceKm({ lat: f.lat, lon: f.lon }, centre),
+        lat: f.lat,
+        lon: f.lon,
+        technology: tech,
+        operator: p.op ?? "not stated",
+        statusText: st ? STATUS_TEXT[st] : "not recorded",
+        sourceText: src?.name ?? null,
+        licence: src?.licence ?? null,
+        compartment: src?.compartment ?? f.compartment,
+      };
+    })
+    .sort((a, b) => a.distanceKm - b.distanceKm || a.id.localeCompare(b.id))
+    .slice(0, IN_VIEW_MAX);
+  return { rows, matching: passing.length, passing };
+}
+
+/**
+ * The z≤9 tile-path "Places in view": dedupe the drawn `cells` by
+ * `(compartment, h3)`, apply the single-dim slice, then group by the cell's
+ * plurality jurisdiction `jp` with its count + single-source share.
+ */
+export function tilePlaceRowsInView(
+  cells: { props: TileCellProps; compartment: string }[],
+  slice: CellSlice,
+  dict: FacetDict,
+  hrefs: { jurisdictionHref?: (jkey: string) => string | null } = {},
+): { rows: InViewRow[]; matching: number } {
+  const seen = new Set<string>();
+  const groups = new Map<
+    string,
+    { count: number; single: number; total: number; lat: number; lon: number }
+  >();
+  for (const c of cells) {
+    const h3 = String(c.props.h3 ?? "");
+    if (h3 === "") continue;
+    const key = `${c.compartment}|${h3}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const jp = String(c.props.jp ?? "unplaced");
+    const g = groups.get(jp) ?? { count: 0, single: 0, total: 0, lat: 0, lon: 0 };
+    g.count += cellSliceValue(c.props, slice);
+    g.single += typeof c.props.s1 === "number" ? c.props.s1 : 0;
+    g.total += typeof c.props.n === "number" ? c.props.n : 0;
+    groups.set(jp, g);
+  }
+  let matching = 0;
+  const rows: InViewRow[] = [];
+  for (const [jp, g] of groups) {
+    matching += g.count;
+    const jdoc = dict.jurisdictions[jp];
+    const name = jdoc?.name ?? jp;
+    const singleShare = g.total > 0 ? Math.round((g.single / g.total) * 100) : null;
+    const bbox =
+      Array.isArray(jdoc?.bbox) && jdoc.bbox.length === 4
+        ? (jdoc.bbox as [number, number, number, number])
+        : null;
+    rows.push({
+      id: jp,
+      label: `${name} — ${g.count} record${g.count === 1 ? "" : "s"}`,
+      meta:
+        `${g.count} record${g.count === 1 ? "" : "s"} in view` +
+        (singleShare !== null ? ` · 1 source: ${singleShare}%` : ""),
+      selectId: null,
+      frame: bbox
+        ? { lat: (bbox[1] + bbox[3]) / 2, lon: (bbox[0] + bbox[2]) / 2, zoom: NATIONAL_ZOOM_MAX + 1 }
+        : undefined,
+      bbox: bbox ?? undefined,
+      dossierHref: hrefs.jurisdictionHref?.(jp) ?? null,
+      listHref: null,
+      distanceKm: 0,
+    });
+  }
+  rows.sort((a, b) => a.label.localeCompare(b.label));
+  return { rows: rows.slice(0, IN_VIEW_MAX), matching };
+}
+
+// ------------------------------------------------------- table + download //
+
+/** Sortable keys for the in-view table (the screen-reader table view, J5). */
+export type InViewSort = "label" | "technology" | "status" | "distance";
+
+export function sortInViewRows(
+  rows: readonly InViewRow[],
+  key: InViewSort,
+  dir: "asc" | "desc",
+): InViewRow[] {
+  const d = dir === "desc" ? -1 : 1;
+  const by = (r: InViewRow): string | number =>
+    key === "distance" ? r.distanceKm
+    : key === "technology" ? (r.technology ?? r.meta)
+    : key === "status" ? (r.statusText ?? r.meta)
+    : r.label;
+  return [...rows].sort((a, b) => {
+    const av = by(a);
+    const bv = by(b);
+    const cmp =
+      typeof av === "number" && typeof bv === "number"
+        ? av - bv
+        : String(av).localeCompare(String(bv));
+    return cmp === 0 ? a.id.localeCompare(b.id) : d * cmp;
+  });
+}
+
+/** "Filters (N)" — the active facet-dimension count the peek line carries. */
+export function activeFacetCount(f: MapFacetsV2): number {
+  return (
+    (f.technology.length > 0 ? 1 : 0) +
+    (f.status.length > 0 ? 1 : 0) +
+    (f.seen ? 1 : 0) +
+    (f.vendor.length > 0 ? 1 : 0) +
+    (f.operator.length > 0 ? 1 : 0) +
+    (f.source.length > 0 ? 1 : 0)
+  );
+}
+
+/** The mobile sheet's peek line (K1 §4.1): "137 records in view · Filters (2)". */
+export function sheetPeekText(count: number, activeFacets: number): string {
+  const recs = `${count} record${count === 1 ? "" : "s"} in view`;
+  return activeFacets > 0 ? `${recs} · Filters (${activeFacets})` : recs;
 }
