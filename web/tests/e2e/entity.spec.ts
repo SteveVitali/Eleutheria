@@ -89,10 +89,25 @@ test.describe("the 06a entity page (SIG-UI-114/115/116/122)", () => {
       page.locator('a[href="/entity/agency/acworth-police-department--4g2wm8q/index.sig_graph.json"]'),
     ).not.toHaveCount(0);
     await expect(page.locator('[data-testid="cite-sig-id"]')).toContainText("sig:agency:");
-    // Contract-B sections render typed states, never gaps (SIG-UI-086).
-    await expect(page.locator('[data-testid="entity-contract-b"]')).toContainText(
-      "Not shipped in this record wave",
+    // Contract-B sections (P37.22) render the populated record — never
+    // unknown blobs and never silent gaps (SIG-UI-086).
+    const contractB = page.locator('[data-testid="entity-contract-b"]');
+    await expect(contractB).toContainText("first seen — EFF Data Driven");
+    await expect(contractB.locator('[data-testid="timeline-entry"]')).not.toHaveCount(0);
+    await expect(contractB.locator('[data-testid="related-dossiers"]')).toContainText("Georgia");
+    await expect(contractB.locator('[data-testid="related-tasks"] a')).toHaveCount(1);
+    await expect(contractB.locator('[data-testid="related-documents"]')).toContainText(
+      "EFF Data Driven 2020 export",
     );
+    // The contradiction record lists both sides' claim ids (H-7).
+    const contra = page.locator('[data-testid="entity-contradictions"]');
+    await expect(contra).toContainText("configured sharing partner");
+    await expect(contra.locator('a[href="#claim-clm-apd-vigilant-2"]')).toHaveCount(1);
+    // Downloads name only emitted files — the twin, relationships
+    // CSV/JSON and the sig.statement/1 slice.
+    const downloads = page.locator('[data-testid="entity-downloads"]');
+    await expect(downloads.locator('a[href="/entity/agency/acworth-police-department--4g2wm8q/statements.sig_graph.jsonl"]')).toHaveCount(1);
+    await expect(downloads.locator('a[href="/entity/agency/acworth-police-department--4g2wm8q/relationships.sig_graph.csv"]')).toHaveCount(1);
   });
 
   test("edge → provenance in one action, no JS needed (SIG-UI-122)", async ({ page }) => {
