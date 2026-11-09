@@ -62,7 +62,7 @@ describe("generated lighthouserc files (gen-lhci.mjs)", () => {
       // sources table's runs view — the K9 Lighthouse route coverage.
       "/sources/runs/index.html",
       "/map/index.html",
-      "/network/index.html",
+      "/explore/index.html",
       "/search/index.html",
       "/curate/index.html",
       "/dispute/index.html", // a T0 record surface

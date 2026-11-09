@@ -102,7 +102,7 @@
     min-height: 73rem;
   }
 }
-.sig-graph-island:has([data-testid="network-island"]) .sig-island__placeholder {
+.sig-graph-island:has([data-testid="explore-island"]) .sig-island__placeholder {
   display: none;
 }
 
@@ -131,7 +131,7 @@
   font-size: var(--sig-step--2);
 }
 
-/* --- Network island -------------------------------------------------------- */
+/* --- Explore island -------------------------------------------------------- */
 .sig-graph-island__layout {
   display: grid;
   grid-template-columns: 1fr;
@@ -683,4 +683,26 @@
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+}
+
+/* P37.26 (GX-09a): the explorer's sigma canvas + overview picker. The canvas
+   is a plain div sigma mounts WebGL into — an explicit height keeps the
+   reserved-box contract honest (no layout shift against the placeholder). */
+.sig-explore-island__canvas {
+  position: relative;
+  width: 100%;
+  height: 30rem;
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  background: var(--sig-surface-2);
+}
+.sig-explore-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sig-space-2);
+  padding: 0;
+  list-style: none;
+}
+.sig-explore-picker__btn[aria-pressed="true"] {
+  font-weight: 700;
+  text-decoration: underline;
 }

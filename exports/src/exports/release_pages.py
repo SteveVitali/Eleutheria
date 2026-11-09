@@ -60,7 +60,7 @@ def _typed_fallback_label(entity_type: Any, entity_id: Any) -> str:
 #: dropped from the public surface drops from this nav rather than 404ing.
 SITE_NAV: tuple[tuple[str, str], ...] = (
     ("Map", "/map/"),
-    ("Network", "/network/"),
+    ("Explore", "/explore/"),  # P37.26 (GX-09a): the T2 graph explorer — /network/ 301s here
     ("Search", "/search/"),
     ("Dossiers", "/dossier/"),
     ("Watch", "/watch/"),

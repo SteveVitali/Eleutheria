@@ -24,6 +24,22 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.26 — Graph explorer A (K2 GX-09a, SIG-UI-119/120/121):**
+  `/explore/` — the T2 graph explorer's first wave — ships: a Preact +
+  sigma/graphology island in a reserved SSR box over the
+  `sig.graph-overview/1` + `sig.graph-components/1` documents (`overview=`
+  picker, `focus=` node panel → entity pages, edge panels naming
+  relation/date/currency/sources/evidence with ≤2-action provenance), an
+  honest no-JS equivalent (the overview index, the default overview's
+  static figure + adjacency preview, the access-edge lists and the
+  precomputed access-path hop lists — SPECULATIVE beyond 3 hops), a
+  `sig.workspace-state/2` round-trip with live `cite-this-view` minting
+  `/s/<pub>/explore/?v=2&…`, and the centrality-withdrawn note. `/network/`
+  retires to a 301 at `/explore/?v=2&overview=access`. React leaves the
+  public bundles entirely (@astrojs/react out, `ProvenancePanel` → Preact,
+  sigma + graphology admitted under ADR-242) and the bundle-content gate
+  (`check-runtime-deps.mjs`) fails the build on any react byte in an
+  emitted chunk — UXK0-6 complete.
 - **P37.25 — Overview builder B (K2 GX-08b, §5.2/§6.4):** the
   `sig.graph-overview/1` catalogue completes — O2 `access` (who can search
   whose data; the Data Driven configured-access form today, the share-list

@@ -145,7 +145,7 @@ async function measureResponses(
  * a runner that never actually interacts). */
 const REPRESENTATIVES: Record<string, string> = {
   map: "/map/",
-  graph: "/network/",
+  graph: "/explore/",
   search: "/search/",
   T1: "/sources/",
 };

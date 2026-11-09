@@ -4,7 +4,7 @@
 
 /**
  * `sig.workspace-state/1` — the versioned URL-state contract shared by the three
- * public investigation islands (`/search/`, `/map/`, `/network/`) and the links
+ * public investigation islands (`/search/`, `/map/`, `/explore/`) and the links
  * between them (P32.15, SIG-FIND-004, ADR-134; S4 research §7 "Canonical query
  * state").
  *
@@ -51,7 +51,10 @@ export type WorkspaceView = (typeof WORKSPACE_VIEWS)[number];
 export const WORKSPACE_VIEW_PATHS: Record<WorkspaceView, string> = {
   list: "/search/",
   map: "/map/",
-  network: "/network/",
+  // P37.26 (GX-09a): the graph explorer's canonical route is `/explore/` —
+  // a link minted here names the current surface (the retired `/network/`
+  // 301s to it; old `view=network` URLs still resolve through the parser).
+  network: "/explore/",
 };
 
 /** The P32.14 released-index location-filter vocabulary (shared, not forked). */

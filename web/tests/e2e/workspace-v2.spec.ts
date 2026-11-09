@@ -13,7 +13,7 @@ import { test, expect } from "@playwright/test";
 
 const T2 = [
   { path: "/map/", surface: "map" },
-  { path: "/network/", surface: "graph" },
+  { path: "/explore/", surface: "graph" },
   { path: "/search/", surface: "search" },
 ] as const;
 
@@ -39,7 +39,7 @@ test.describe("T2 indexing posture + cite this view (K13 §2.5, K0 §4.5)", () =
       await expect(cite).toContainText(`/s/p-`);
       // The minted form is the snapshot-pinned v2 URL (J3 §8.1 interim —
       // shown as text until TX-13b's snapshots exist, never a dead link).
-      await expect(cite).toContainText(`/${surface === "graph" ? "network" : surface}/`);
+      await expect(cite).toContainText(`/${surface === "graph" ? "explore" : surface}/`);
       await expect(cite).toContainText("v=2");
     });
   }
@@ -86,7 +86,7 @@ test.describe("v2 deep links (SIG-UI-093)", () => {
       timeout: 20_000,
     });
     const netHref = await page.getByTestId("view-link-network").getAttribute("href");
-    expect(netHref).toContain("/network/?");
+    expect(netHref).toContain("/explore/?");
     expect(netHref).toContain("v=2");
     expect(netHref).toContain("view=graph");
   });
@@ -131,12 +131,12 @@ test.describe("canonicalisation receipts (K13 §2.5/C-11)", () => {
   test("the v1 view name network resolves as graph with a visible note", async ({
     page,
   }) => {
-    await page.goto("/network/?v=2&view=network");
+    await page.goto("/explore/?v=2&view=network");
     await expect(page.getByTestId("workspace-issues")).toContainText(
       'the v1 view "network"',
     );
     // The surface still works — the graph island renders.
-    await expect(page.getByTestId("network-island")).toBeVisible();
+    await expect(page.getByTestId("explore-island")).toBeVisible();
   });
 });
 

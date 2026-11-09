@@ -10,7 +10,7 @@
 //
 // P27.6 (SIG-UI-049 / ADR-093 §4): the former standalone `/reference-map/` and
 // `/reference-graph/` demo pages are FOLDED IN here. The product map lives at `/map/`
-// and the product network at `/network/`; the reference exemplars — the map popup and
+// and the product explorer at `/explore/`; the reference exemplars — the map popup and
 // the graph edge list that demonstrate SIG-UI-008's "persistent across render paths"
 // — belong with the rest of the visual-language reference, so the map↔reference-map
 // and network↔reference-graph duplication is resolved (one canonical product surface
@@ -206,13 +206,13 @@ const nodeX = (i: number) => 60 + i * 140;
   </section>
 
   <!-- Folded reference exemplar: the graph edge list (SIG-UI-037), with the persistent
-       contested marker on a contested edge. The product network is at /network/. -->
+       contested marker on a contested edge. The product explorer is at /explore/. -->
   <section id="reference-graph" aria-labelledby="refgraph-heading">
     <h2 id="refgraph-heading">Reference graph: diagram + list equivalent (SIG-UI-037)</h2>
     <p>
       A static, zero-JS reference relationship graph. <strong>Every edge is also in the
       list below</strong> — the list is the equivalent, not a fallback. The product
-      network explorer lives at <a href={withBase("network/")}>/network/</a>.
+      network explorer lives at <a href={withBase("explore/")}>/explore/</a>.
     </p>
     <figure aria-labelledby="refgraph-caption">
       <svg

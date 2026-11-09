@@ -35,6 +35,7 @@ R33,/curate/contradictions/,web/src/pages/curate/contradictions.astro,y,0,-,not-
 R34,/curate/revert/,web/src/pages/curate/revert.astro,y,0,-,not-probed,not-public,lhci-curate,none,removed by Track 0.2
 R35,/curate/submit/,web/src/pages/curate/submit.astro,y,0,-,not-probed,not-public,lhci-curate,none,removed by Track 0.2
 R36,/curate/tasks/,web/src/pages/curate/tasks.astro,y,0,-,not-probed,not-public,lhci-curate,none,removed by Track 0.2
+R37,/explore/,web/src/pages/explore/index.astro,y,1,-,not-probed,island,island-network,all (JS on+off),the GX-09a graph explorer — supersedes /network/ (301 -> /explore/?v=2&overview=access, P37.26)
 X01,/tiles/<compartment>-sites.pmtiles,web/astro.config.mjs (build hook),y,12,18621-27877075,206@REPUBLISH-2026-09-27 (sig_graph range),data,n/a,1 Range request,12 compartments incl. share-alike osm_physical (ODbL-1.0) portal (CC-BY-SA-4.0) dot511_ccbysa2 (CC-BY-SA-2.0); check licence posture + attribution
 X02,/_astro/*,build output,y,11,380-1048764,not-probed,asset,island budgets,via page loads,island JS/CSS bundles (MapIsland.CTk0rhO8.js 1048764 raw; maplibre worker 506723)
 X03,/robots.txt,web/public/robots.txt,y,1,245,200@2026-09-30T16:43Z,text,n/a,all,says terms are served at /terms (the API)

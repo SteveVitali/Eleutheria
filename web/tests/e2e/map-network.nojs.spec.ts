@@ -79,7 +79,7 @@ test("low-coverage ≠ low-density is encoded in the static HTML (SIG-UI-018)", 
 });
 
 test("network has a populated list equivalent without JS (SIG-UI-037)", async ({ page }) => {
-  await page.goto("/network/");
+  await page.goto("/explore/");
   // The three access-edge groups and their edges are plain lists.
   await expect(page.getByTestId("access-edge-group")).toHaveCount(3);
   await expect(page.getByTestId("access-edge").first()).toBeVisible();
@@ -91,7 +91,7 @@ test("network has a populated list equivalent without JS (SIG-UI-037)", async ({
 test("no centrality statistic or 'exact' identity claim renders (P34.15, K2 NEW-6, SIG-IDENT-030)", async ({
   page,
 }) => {
-  await page.goto("/network/");
+  await page.goto("/explore/");
   // The ranking is withdrawn — an abstention note, never a zero measurement
   // and never the retired "deterministic identity resolution … exact" claim.
   await expect(page.getByTestId("centrality-stat")).toHaveCount(0);

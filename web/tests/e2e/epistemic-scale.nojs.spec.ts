@@ -12,7 +12,7 @@ import { test, expect } from "@playwright/test";
 test("support glyphs on the network surface carry a consistent downgrade-reason channel", async ({
   page,
 }) => {
-  await page.goto("/network/");
+  await page.goto("/explore/");
   const glyphs = page.getByTestId("support-glyph");
   const n = await glyphs.count();
   expect(n).toBeGreaterThan(0);

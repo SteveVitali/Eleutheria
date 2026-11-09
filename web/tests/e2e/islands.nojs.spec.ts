@@ -24,9 +24,9 @@ test("map: without JS the island is inert but the tabular equivalent is usable",
 test("network: without JS the island is inert but the list equivalent is usable", async ({
   page,
 }) => {
-  await page.goto("/network/");
+  await page.goto("/explore/");
   await expect(page.getByTestId("graph-island-section")).toBeVisible();
-  await expect(page.getByTestId("network-island")).toHaveCount(0);
+  await expect(page.getByTestId("explore-island")).toHaveCount(0);
   // The no-JS fallback: the access-edge groups and access-path hops are present.
   await expect(page.getByTestId("access-edge").first()).toBeVisible();
   await expect(page.getByTestId("path-hop").first()).toBeVisible();

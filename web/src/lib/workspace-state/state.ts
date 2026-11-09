@@ -29,7 +29,7 @@
  *   falls back to its default; defaults are omitted on serialise, so the
  *   round-trip is byte-stable (`parse → serialise → parse` is the identity
  *   on canonical URLs).
- * - No history writes: this module is pure — the `islands/workspace.ts`
+ * - No history writes: this module is pure — the `islands/map/workspace.ts`
  *   adapter owns `history.pushState`/`popstate`.
  */
 

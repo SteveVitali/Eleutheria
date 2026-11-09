@@ -154,7 +154,7 @@ describe("defaults + view helpers", () => {
 
   it("viewHref preserves the whole investigation state across views", () => {
     const href = viewHref(FULL, "network");
-    expect(href.startsWith("/network/?")).toBe(true);
+    expect(href.startsWith("/explore/?")).toBe(true);
     const { state } = parseWorkspaceState(href.split("?")[1]!);
     expect({ ...state, view: "map" }).toEqual(FULL);
     expect(state.view).toBe("network");

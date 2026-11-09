@@ -137,7 +137,7 @@ describe("sig.social-card/1 — one static card per page type", () => {
     ["/dispute/", "T0"],
     ["/404.html", "T0"],
     ["/map/", "T2"],
-    ["/network/", "T2"],
+    ["/explore/", "T2"],
     ["/search/", "T2"],
   ])("route %s resolves the %s card", (path, type) => {
     const card = socialCardForRoute(path);

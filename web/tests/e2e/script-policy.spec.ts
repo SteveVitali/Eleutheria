@@ -102,7 +102,7 @@ test.describe("the discovery set itself", () => {
   test("every T2 route is one of the three classified explore surfaces today", () => {
     // Today's built T2 set — the registry's T2 rows are exactly these routes
     // until their migration rows land (/explore/ is registered, not emitted).
-    expect([...T2_PAGES].sort()).toEqual(["/map/", "/network/", "/search/"]);
+    expect([...T2_PAGES].sort()).toEqual(["/explore/", "/map/", "/search/"]);
   });
 
   test("the sweep covers T3 too (universal bans iterate /curate/**)", () => {

@@ -75,16 +75,17 @@ test.describe("infrastructure map (§39.3)", () => {
   });
 });
 
-test.describe("network explorer (§39.4)", () => {
-  test("defaults to an ego network (SIG-UI-022)", async ({ page }) => {
-    await page.goto("/network/");
-    await expect(page.getByTestId("network-view")).toHaveAttribute("data-default-view", "ego");
+test.describe("graph explorer (§39.4 successor — GX-09a)", () => {
+  test("defaults to the access overview in the reserved box (SIG-UI-022)", async ({ page }) => {
+    await page.goto("/explore/");
+    await expect(page.getByTestId("graph-island-section")).toBeVisible();
+    await expect(page.getByTestId("default-overview")).toBeVisible();
   });
 
   test("no centrality statistic is rendered — the ranking is withdrawn (P34.15, K2 NEW-6)", async ({
     page,
   }) => {
-    await page.goto("/network/");
+    await page.goto("/explore/");
     // SIG-IDENT-030 by abstention: no statistic, no disclosure element, and no
     // "exact"/"deterministic identity resolution" claim anywhere on the page.
     await expect(page.getByTestId("centrality-stat")).toHaveCount(0);
@@ -101,7 +102,7 @@ test.describe("network explorer (§39.4)", () => {
   test("three access edge types are distinct and not merged by default (SIG-UI-024)", async ({
     page,
   }) => {
-    await page.goto("/network/");
+    await page.goto("/explore/");
     // Three legend entries, each with a distinct glyph and a distinct dash pattern.
     const legend = page.getByTestId("access-legend-item");
     await expect(legend).toHaveCount(3);
@@ -121,7 +122,7 @@ test.describe("network explorer (§39.4)", () => {
   test("access paths show full hops + evidence, speculative beyond threshold (SIG-UI-025)", async ({
     page,
   }) => {
-    await page.goto("/network/");
+    await page.goto("/explore/");
     const paths = page.getByTestId("access-path");
     await expect(paths.first()).toBeVisible();
     // Every hop carries visible per-hop evidence.

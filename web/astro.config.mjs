@@ -3,7 +3,6 @@
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
 import { defineConfig } from "astro/config";
-import react from "@astrojs/react";
 import preact from "@astrojs/preact";
 import * as esbuild from "esbuild";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -475,13 +474,17 @@ export default defineConfig({
   // default `/` keeps the latest-view build byte-identical; P36.66b's staging
   // machinery drives the env, this row only opens the seam.
   base: process.env.SIG_BASE_PATH || "/",
-  // P27.9 (DECISION-SPA = B, ADR-097 extending ADR-068): React arrives via
-  // @astrojs/react. It renders to STATIC HTML at build time by default (no client
-  // JS) — client JavaScript ships ONLY for components carrying an explicit
-  // `client:*` directive, which in the public surface is exactly the three named
-  // islands (map / network / search). Every other page still ships zero `<script>`
-  // (SIG-UI-036/037); each island preserves its no-JS fallback (SIG-UI-050).
-  integrations: [react({ include: ["src/islands/NetworkIsland.tsx", "src/islands/workspace.ts"] }), preact({ include: ["src/islands/MapIsland.tsx", "src/islands/SearchIsland.tsx", "src/islands/map/**"] }), sigExportTiles(), sigInternalRoutes(), sigChrome(), sigEnhancementKit(), sigBrandAssets(), sigRedirects(), sigPageTypes()],
+  // P27.9 (DECISION-SPA = B, ADR-097 extending ADR-068); P37.26 (GX-09a,
+  // UXK0-6 last — ADR-242): **Preact is the only island runtime** — the
+  // @astrojs/react seat retired with the /network/ migration. Framework
+  // components still render to STATIC HTML at build time by default (no
+  // client JS) — client JavaScript ships ONLY for components carrying an
+  // explicit `client:*` directive, which in the public surface is exactly
+  // the three named islands (map / explore / search). Every other page
+  // still ships zero `<script>` (SIG-UI-036/037); each island preserves
+  // its no-JS fallback (SIG-UI-050). The bundle-content gate
+  // (scripts/check-runtime-deps.mjs) fails the build on any react byte.
+  integrations: [preact({ include: ["src/islands/**", "src/components/**"] }), sigExportTiles(), sigInternalRoutes(), sigChrome(), sigEnhancementKit(), sigBrandAssets(), sigRedirects(), sigPageTypes()],
   // The canonical public origin (P27.6 deliverable 4, ADR-093). This is the real
   // custom domain the launch surface is cited at; the belief-pinned permalinks
   // (SIG-UI-035) resolve against it. DNS/TLS cut-over completes in P27.10 — the

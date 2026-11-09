@@ -100,8 +100,11 @@ test.describe("every historical URL resolves (SIG-JUR-D09, SIG-UI-058)", () => {
       if (rule.target !== null) {
         // a 3xx landing on an emitted route is fully verified; a target the
         // fixture corpus does not publish (a successor entity never minted
-        // here) is recorded — the edge leg owns the full-set probe
-        if (!routeFile(rule.target)) {
+        // here) is recorded — the edge leg owns the full-set probe. The
+        // resolution check reads the target's PATH — a query-carrying
+        // target (P37.26's /explore/?v=2&overview=access) names the same
+        // emitted route with its selector state.
+        if (!routeFile(rule.target.split("?")[0]!)) {
           unemittedTargets.push(`${rule.from} → ${rule.target}`);
         } else {
           resolvedTargets += 1;

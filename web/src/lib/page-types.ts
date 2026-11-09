@@ -608,31 +608,17 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
   {
     patterns: ["/explore/"],
     type: "T2",
-    owner: "P37.17",
+    owner: "P37.26",
     contract: "sig.workspace-state/2",
     noJsEquivalent: {
       kind: "sections",
       description:
-        "static SVG overview graphs, adjacency/relationship tables and precomputed path hop lists (K0 §4.4)",
-      testIds: [],
+        "the overview index + the default overview's static figure and adjacency preview, the access-edge lists and the precomputed access-path hop lists (K0 §4.4 — `/graphs/**` carries the full tables)",
+      testIds: ["graph-overview-row", "access-edge", "path-hop"],
     },
     examples: ["/explore/"],
-    notes: "K0's graph-explorer surface — registered ahead of the GX-09a row that ships it.",
-  },
-  {
-    patterns: ["/network/"],
-    type: "T2",
-    owner: "P37.17",
-    contract: "sig.workspace-state/2",
-    noJsEquivalent: {
-      kind: "sections",
-      description:
-        "the ego-network figure caption plus the access-edge lists and access-path hop lists — the page's stated source of truth",
-      testIds: ["access-edge", "path-hop"],
-    },
-    examples: ["/network/"],
     notes:
-      "K0 records `/network/` becomes a redirect or a T1 page (the GX-09a row) — TODAY it is the network island surface, so it classifies as the T2 explore page it actually is (the registry describes the built surface, never the plan).",
+      "K0's graph-explorer surface — shipped at P37.26 (GX-09a): the Preact + sigma island in a reserved SSR box over `sig.graph-overview/1` docs; `/network/` 301s here (`?v=2&overview=access`) and is deliberately UNREGISTERED — a stray emission fails the build, never silently classifies.",
   },
   {
     patterns: ["/search/"],
