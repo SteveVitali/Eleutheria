@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P37.25
-lastCompleted: P37.24
+nextTicket: P37.26
+lastCompleted: P37.25
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.70,P37.71
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P37.24-overview-builder-a
+chainTip: r11/P37.25-overview-builder-b
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-09T19:50Z
+updatedAt: 2026-11-09T22:08Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1641,3 +1641,5 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-09 — P37.24 post-closeout record — head `50e22da6` 5/5 green head-bound (`ci: pass #472@50e22da`, run 42667300675, read 19:48Z: docs 2m27s · security 37s · composed 5m3s · python 23m15s · web 56m50s; `reports/ci/{p37_24_pr472,p37_24_pr472_final}.json`) · `ci_boundary.py` exit 3 — `blockedOn` ancestor `#469@aa46195` web (dispatch-sha red run 42557272556; landed tip `5c68d02e` green; carried-ancestor class) · `main` untouched · deferrals +0/−0 · next → P37.25 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-09 — dispatch boundary-confirm — P37.24's green read recorded (`ci: pass #472@50e22da`, run 42667300675); `blockedOn` (nothing); chainTip `r11/P37.24-overview-builder-a` · nextTicket P37.25 (row 449 — overview builder B; `D-K2-4 [A-22] = yes` + `compartments (S6R-12)` carried verbatim — the state×state Flock-sharing overview from the CC BY-SA share-list claims, published in the SA compartment with SA attribution (SIG-LIC-009a) or built per-compartment; SIG-LIC-010's build check must pass; `live_verification=false`; deps landed) — fresh implement-spec sub-agent on `r11/P37.25-overview-builder-b` · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-11-09 — P37.25 correction — the committed P37.24 row-448 landing entry above ran 2,403B over the 2 KiB current-region cap (BM-LEDGER-06), pushing the orient recipe to 49,536B > 48 KiB (BM-ORIENT-01) — the red `#472@6583f3c` carries on re-run (it landed in the post-green closeout). Trimmed in place to 1,737B — every required token verbatim (row, K13/K2 + §56 ids, arcs, verdicts, harness); detail lives in `runs/P37.24.md`. Pre-edit bytes archived `reports/memory-repair/LEDGER_phaselog_L1640_pre-P37.25-budget.txt`; the `seed-commit` exemption for this trim commit lands in `history.policy` the next commit per the P36.20/33 precedent · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-09 — P37.25 done — row 449 `Kind: ticket` — Overview builder B (`R11-K13-GX-08b` / K2 GX-08b; gate cell verbatim `D-K2-4 [A-22] = yes (OD-24 b)` — the P36.75 share-list `configured_access` claims feed the state × state Flock-sharing overview (A-11) · `compartments (S6R-12)`: built from the CC BY-SA share-list claims, published in the CC BY-SA compartment with SA attribution (SIG-LIC-009a) or built per compartment; SIG-LIC-010's build check must pass — implemented, never re-decided; `live_verification=false`; owns no §56 `Owner:` — cites SIG-LIC-009a/010): `graph_overview.py` 08b collectors — `access` (§12.2 access-kind edges; degree/set literals never mint), `governance` (subjects → jurisdiction/technology; bodies reversed body→instrument), `adoption` (subject → technology entity-ref/literal/`uses_*` word) · `MATRIX_MIN` 200 fold → admin-1 `place:` cells, weighted + `member_count` cell/`m` array/CSV column (SIG-EXPORT-015), `cap_actions` records the fold verbatim · per-place `places/<comp>.<jkey>.json` slice docs (`slice` marked; over-cap folds bounded) · `sig.graph-components/1` + `…-component/1` per compartment (union-find over publishable entity-refs; degree/withheld/review-pending excluded; `.part<n>` chunking; `singletons` counted never listed) · web `memberCount`/`slice`/`slices` decode + slice readers + components index + drill-down prefers slices; T1 unchanged — 485 routes classified · tests exports 20/20 (+9) / vitest 8 / e2e 6 · fix arcs `fe70fa7d` `a405fd13`/`76239ada` `5b19d803`/`6f53ce10` `787f6d6a`/`57f36657` `31aba6bf` `cab11966` — repaired never loosened · coverage: none routed (verified) · `live` leg `— none` · `main` untouched · chainTip → r11/P37.25-overview-builder-b · next → P37.26 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-09 — P37.25 post-closeout record — head `cab11966` 5/5 green head-bound (`ci: pass #473@cab1196`, run 42697891607, read 22:05Z; `reports/ci/p37_25_pr473.json`) · `ci_boundary.py` exit 3 — `blockedOn` ancestor `#472@6583f3c` docs (the P37.24 closeout head's PHASE-LOG-budget red this row repaired; carried-ancestor class) · `main` untouched · deferrals +0/−0 · next → P37.26 · harness: devin-desktop/swe-2-high/subagent
