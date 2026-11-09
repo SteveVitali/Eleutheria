@@ -63,6 +63,17 @@ const totalPages = Math.max(1, Math.ceil(scoped.edges.length / PER_PAGE));
 const page = Math.min(Math.max(1, pageNum), totalPages);
 const rows = scoped.edges.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
+// QW-11 — every emitted route carries a unique <title> (the description
+// template derives from it) and its own canonical path.
+const pageTitle = !ov
+  ? "Overview graph"
+  : placeName
+    ? `${ov.title} overview — ${placeName}`
+    : page > 1
+      ? `${ov.title} overview — page ${page}`
+      : `${ov.title} overview`;
+const routePath = withBase(`graphs/${parts.join("/")}/`);
+
 const nodeLabel = (k: string) => nodeByKey.get(k)?.label ?? k;
 const nodeHref = (k: string) => {
   const h = nodeByKey.get(k)?.href;
@@ -76,8 +87,8 @@ const edgeCls = (e: OverviewEdge) =>
 ---
 
 <BaseLayout
-  title={ov ? `${ov.title} overview` : "Overview graph"}
-  path={withBase(`graphs/${ovId}/`)}
+  title={pageTitle}
+  path={routePath}
   crumbs={[
     { label: "Overview graphs", href: withBase("graphs/") },
     { label: ov?.title ?? ovId },
@@ -111,9 +122,8 @@ const edgeCls = (e: OverviewEdge) =>
         <figure class="sig-figure" data-testid="graph-figure">
           <svg
             viewBox={`0 0 ${Math.ceil(maxX)} ${Math.ceil(maxY)}`}
-            role="img"
-            aria-label={`${ov.title} overview — static figure; the adjacency table below carries the same facts`}
           >
+            <title>{`${ov.title} overview — static figure; the adjacency table below carries the same facts`}</title>
             {scoped.edges.map((e) => {
               const a = nodeByKey.get(e.src), b = nodeByKey.get(e.dst);
               if (!a || !b) return null;
@@ -124,7 +134,9 @@ const edgeCls = (e: OverviewEdge) =>
             {scoped.nodes.map((n) => {
               const inner = <circle cx={n.x} cy={n.y} r={4} class={`sig-graph-node sig-graph-node-${n.band}`}><title>{n.label}</title></circle>;
               const href = nodeHref(n.key);
-              return href ? <a href={href}>{inner}</a> : inner;
+              // K14 NEW-7 — the trailing space keeps sibling <a> boundaries
+              // separated in the emitted markup.
+              return <>{href ? <a href={href}>{inner}</a> : inner}{" "}</>;
             })}
             {scoped.nodes.filter((n) => n.band === "kind" || n.band === "group").map((n) => (
               <text x={n.x + 8} y={n.y + 4} class="sig-graph-label">{n.label}</text>
