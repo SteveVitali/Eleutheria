@@ -322,8 +322,10 @@ def test_access_matrix_fold_at_scale_emits_weighted_cells_and_slices():
     assert sum(doc["edges"]["m"]) == len(labels)
     # the unfolded agency-level subgraph rides the per-place slices.
     slices = sorted(p for p in arts if "/places/" in p)
-    assert {"web/graph/access/places/sig_graph.usa-ok.json",
-            "web/graph/access/places/sig_graph.usa-tx.json"} <= set(slices)
+    assert {
+        "web/graph/access/places/sig_graph.usa-ok.json",
+        "web/graph/access/places/sig_graph.usa-tx.json",
+    } <= set(slices)
     sl = arts["web/graph/access/places/sig_graph.usa-ok.json"][0]
     assert sl["slice"] == "usa-ok" and sl["schema"] == go.OVERVIEW_SCHEMA
     assert any(not str(k).startswith("place:") for k in sl["nodes"]["id"])
@@ -392,7 +394,9 @@ def test_components_index_and_member_files_per_compartment():
     arts = _build(labels, rows)
     idx = arts["web/graph/components/sig_graph/index.json"][0]
     assert idx["schema"] == go.COMPONENTS_INDEX_SCHEMA
-    assert idx["components"] == [{"component_id": "cmp-0001", "size": 2, "files": ["cmp-0001.json"]}]
+    assert idx["components"] == [
+        {"component_id": "cmp-0001", "size": 2, "files": ["cmp-0001.json"]}
+    ]
     mem = arts["web/graph/components/sig_graph/cmp-0001.json"][0]
     assert mem["schema"] == go.COMPONENT_SCHEMA
     assert {m["k"] for m in mem["members"]} == {a, b}
@@ -408,8 +412,8 @@ def test_components_skip_withheld_and_degree_edges():
         c: _label(c),
     }
     rows = [
-        _crow(a, "buyer", None, "c1", obj=b),          # withheld endpoint — never joins
-        _crow(c, "sharing_partner_degree", "9", "c2"), # degree is not an edge
+        _crow(a, "buyer", None, "c1", obj=b),  # withheld endpoint — never joins
+        _crow(c, "sharing_partner_degree", "9", "c2"),  # degree is not an edge
     ]
     arts = _build(labels, rows)
     idx = arts["web/graph/components/sig_graph/index.json"][0]
