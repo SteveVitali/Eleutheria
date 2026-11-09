@@ -156,11 +156,25 @@ describe("the twin contract", () => {
     }
   });
 
-  it("keeps contract-B sections as typed empty values", () => {
-    expect(ENTITY_PAGE_TWIN_FIXTURE.contradictions).toEqual([]);
-    expect(ENTITY_PAGE_TWIN_FIXTURE.timeline).toEqual([]);
-    expect(ENTITY_PAGE_TWIN_FIXTURE.related).toEqual({});
-    expect(ENTITY_PAGE_TWIN_FIXTURE.downloads).toEqual([]);
+  it("carries the contract-B sections populated (P37.22)", () => {
+    // GX-05b — contradictions, timeline, related and downloads are
+    // first-class record sections, never unknown blobs.
+    expect(ENTITY_PAGE_TWIN_FIXTURE.contradictions.length).toBeGreaterThan(0);
+    expect(ENTITY_PAGE_TWIN_FIXTURE.contradictions[0]!.claim_ids.length).toBeGreaterThan(0);
+    const dated = ENTITY_PAGE_TWIN_FIXTURE.timeline.filter((e) => e.date !== null);
+    const undated = ENTITY_PAGE_TWIN_FIXTURE.timeline.filter((e) => e.date_kind === "undated");
+    expect(dated.length).toBeGreaterThan(0);
+    expect(undated.length).toBeGreaterThan(0);
+    expect(undated.every((e) => e.date === null)).toBe(true);
+    expect(ENTITY_PAGE_TWIN_FIXTURE.related.dossiers[0]!.url).toContain("dossier/");
+    expect(ENTITY_PAGE_TWIN_FIXTURE.related.tasks[0]!.url).toContain("task/");
+    expect(ENTITY_PAGE_TWIN_FIXTURE.related.watch).toEqual([]);
+    // every download names an emitted file under this entity's directory.
+    for (const d of ENTITY_PAGE_TWIN_FIXTURE.downloads) {
+      expect(d.path).toMatch(/^entity\/agency\/acworth-police-department--4g2wm8q\//);
+      expect(d.compartment).toBe("sig_graph");
+    }
+    expect(ENTITY_PAGE_TWIN_FIXTURE.downloads.some((d) => d.kind === "statements")).toBe(true);
   });
 
   it("carries SIG-UI-080's sentence verbatim where a counterparty withheld", () => {

@@ -72,10 +72,29 @@ from . import compartments as C
 #: The emitted document schema (K2 §6.2, contract A).
 ENTITY_PAGE_SCHEMA = "sig.entity-page/1"
 
-#: Contract A's page kinds (GX-05a): organisations, agencies and registry
-#: portals. Contract B (P37.22) appends the E2/E3 kinds; ``other``/``site``/
-#: ``jurisdiction`` kinds are never entity-page kinds (sites are T0 records).
-PAGE_KINDS: tuple[str, ...] = ("org", "agency", "portal")
+#: The per-entity relationships slice schema (contract B, P37.22) — the
+#: ``relationships.<comp>.json`` download, the twin's relation groups as a
+#: standalone artifact (K2 §4.2 row 12, J3 TX-10).
+ENTITY_RELATIONSHIPS_SCHEMA = "sig.entity-relationships/1"
+
+#: Contract A's page kinds (GX-05a) — organisations, agencies and registry
+#: portals — plus contract B's (GX-05b, P37.22): procurement notices,
+#: contracts, grants, bills, legal instruments/ordinances (``policy``) and
+#: accountability events (the E2 wave, K2 §4.3). ``atlas`` waits on K4
+#: placement + the relevance rule (E3); ``request`` is outside the 05b row;
+#: ``other``/``site``/``jurisdiction`` are never entity-page kinds (sites
+#: are T0 records).
+PAGE_KINDS: tuple[str, ...] = (
+    "org",
+    "agency",
+    "portal",
+    "notice",
+    "contract",
+    "grant",
+    "bill",
+    "policy",
+    "event",
+)
 
 #: The typed review states A-10 produces (labels' ``label_state`` vocabulary —
 #: ADR-159). ``not_yet_reviewed`` is visible; ``withheld`` is absence.
@@ -148,6 +167,16 @@ PAGE_STATE_WITHHELD = "withheld"
 #: Labelled, allowed, but not a contract-A page kind (contract B's scope —
 #: a keyed entity with no twin here is a typed absence, never a broken page).
 PAGE_STATE_UNPAGED = "unpaged"
+
+#: The ``related`` section's typed empty — the fixed key map every twin
+#: carries so the record shape stays stable (K2 §4.2 row 11, H-9).
+_EMPTY_RELATED: dict[str, Any] = {
+    "dossiers": [],
+    "sources": [],
+    "tasks": [],
+    "watch": [],
+    "documents": [],
+}
 
 
 def page_state(label: EntityLabel) -> str:
@@ -991,6 +1020,504 @@ def _closure_for_compartment(
     return out
 
 
+# ---------------------------------------------------------------------------
+# Contract-B sections (GX-05b / P37.22): timeline, contradictions, related,
+# downloads — the K2 §4.2 rows 8/9/11/12 the twin carries first-class.
+# ---------------------------------------------------------------------------
+
+
+#: The strict-ISO date a timeline entry may carry — a stated EDTF value
+#: matching it draws; anything else is listed as undated, never guessed.
+def _iso10(value: Any) -> str | None:
+    text = str(value or "")[:10]
+    if len(text) == 10 and text[4] == "-" and text[7] == "-":
+        try:
+            date.fromisoformat(text)
+        except ValueError:
+            return None
+        return text
+    return None
+
+
+def _is_stated_date(predicate_id: str) -> bool:
+    """True when the predicate registry types the value ``edtf`` — the
+    ontology's date-value marker (an unregistered predicate is never a
+    date, never a guessed one)."""
+    try:
+        from reconcile.weight import predicate_meta
+
+        return str(predicate_meta(predicate_id).get("value_datatype") or "") == "edtf"
+    except KeyError:
+        return False
+
+
+def _entry_sources(
+    claim_ids: Sequence[str], claim_sources: Mapping[str, set[str]], source_names: Mapping[str, str]
+) -> list[dict[str, Any]]:
+    return [
+        {"id": sid, "name": source_names.get(sid)}
+        for sid in sorted({s for cid in claim_ids for s in claim_sources.get(cid, ())})
+    ]
+
+
+def timeline_entries(
+    subject_id: str,
+    claims: Sequence[PageClaim],
+    *,
+    claim_groups: Sequence[Mapping[str, Any]],
+    relation_groups: Sequence[Mapping[str, Any]],
+    degree_facts: Sequence[Mapping[str, Any]],
+    sightings: Sequence[Mapping[str, Any]],
+    claim_sources: Mapping[str, set[str]],
+    source_names: Mapping[str, str],
+) -> list[dict[str, Any]]:
+    """The ``timeline[]`` section (K2 §4.2 row 9).
+
+    Dated entries in one sorted list — stated event dates (the notice's
+    posted, the contract's signed, the award, the bill-status and the
+    instrument's effective dates — predicates the registry types ``edtf``),
+    the record's own observation dates on claim groups, relation items and
+    degree facts, and first/last seen per source (K5 re-sightings). Facts
+    carrying no evidenced date are listed apart as ``undated`` entries
+    (``date: null``), never placed on the axis and never present-tense
+    (SIG-UI-116 / H-3). ``label`` is mechanical words — a relation or the
+    sentence "first seen — <source>", never a narrative.
+    """
+    entries: dict[tuple[str, str, str], dict[str, Any]] = {}
+
+    def put(
+        kind: str,
+        date_: str | None,
+        label: str,
+        *,
+        predicate: str | None,
+        claim_ids: Sequence[str],
+        sources: Sequence[Mapping[str, Any]],
+    ) -> None:
+        key = (kind, date_ or "", label)
+        if key in entries:
+            existing = entries[key]
+            merged = sorted(set(existing["claim_ids"]) | set(claim_ids))
+            existing["claim_ids"] = merged
+            return
+        entries[key] = {
+            "kind": kind,
+            "date": date_,
+            "date_kind": "observed" if date_ else "undated",
+            "label": label,
+            "predicate": predicate,
+            "claim_ids": sorted(set(claim_ids)),
+            "sources": list(sources),
+        }
+
+    for c in claims:
+        if c.subject_id != subject_id or not _is_stated_date(c.predicate_id):
+            continue
+        put(
+            "stated",
+            _iso10(c.value),
+            _predicate_words([c.predicate_id]),
+            predicate=c.predicate_id,
+            claim_ids=[c.claim_id],
+            sources=_entry_sources([c.claim_id], claim_sources, source_names),
+        )
+    for g in claim_groups:
+        put(
+            "observed",
+            g.get("observed_at"),
+            f"{g.get('relation', g.get('predicate', 'claim'))} recorded",
+            predicate=g.get("predicate"),
+            claim_ids=list(g.get("claim_ids") or ()),
+            sources=list(g.get("sources") or ()),
+        )
+    for g in relation_groups:
+        for it in g.get("items") or ():
+            cp = it.get("counterparty") or {}
+            cp_label = cp.get("label") or cp.get("review_state") or "not yet reviewed"
+            put(
+                "observed",
+                it.get("date"),
+                f"{g.get('relation', 'relationship')} — {cp_label}",
+                predicate=it.get("role"),
+                claim_ids=list(it.get("claim_ids") or ()),
+                sources=list(it.get("sources") or ()),
+            )
+    for d in degree_facts:
+        put(
+            "observed",
+            d.get("observed_at"),
+            f"{_predicate_words([str(d.get('predicate') or '')])} — partners not named",
+            predicate=str(d.get("predicate") or "") or None,
+            claim_ids=list(d.get("claim_ids") or ()),
+            sources=list(d.get("sources") or ()),
+        )
+
+    # first/last seen per source (K5 re-sightings) over the entity's claims.
+    own_claim_ids = {c.claim_id for c in claims if c.subject_id == subject_id}
+    by_source: dict[str, dict[str, Any]] = {}
+    for s in sightings:
+        cid = str(s.get("claim_id") or "")
+        if cid and cid not in own_claim_ids and s.get("subject_id") != subject_id:
+            continue
+        sid = str(s.get("source_id") or "")
+        if not sid:
+            continue
+        agg = by_source.setdefault(sid, {"first": None, "last": None, "claims": set()})
+        first, last = s.get("first_seen"), s.get("last_seen")
+        if first and (agg["first"] is None or str(first) < agg["first"]):
+            agg["first"] = str(first)
+        if last and (agg["last"] is None or str(last) > agg["last"]):
+            agg["last"] = str(last)
+        if cid:
+            agg["claims"].add(cid)
+    for sid, agg in sorted(by_source.items()):
+        name = source_names.get(sid) or sid
+        srcs = [{"id": sid, "name": source_names.get(sid)}]
+        cids = sorted(agg["claims"])
+        if agg["first"]:
+            put(
+                "first_seen",
+                str(agg["first"])[:10],
+                f"first seen — {name}",
+                predicate=None,
+                claim_ids=cids,
+                sources=srcs,
+            )
+        if agg["last"] and agg["last"] != agg["first"]:
+            put(
+                "last_seen",
+                str(agg["last"])[:10],
+                f"last seen — {name}",
+                predicate=None,
+                claim_ids=cids,
+                sources=srcs,
+            )
+
+    out = list(entries.values())
+    out.sort(key=lambda e: (e["date"] is None, e["date"] or "", e["kind"], e["label"]))
+    return out
+
+
+def contradiction_records(
+    subject_id: str,
+    claims: Sequence[PageClaim],
+    *,
+    contradiction_rows: Sequence[Mapping[str, Any]],
+    claim_groups: Sequence[Mapping[str, Any]],
+    claim_sources: Mapping[str, set[str]],
+    source_names: Mapping[str, str],
+) -> list[dict[str, Any]]:
+    """The ``contradictions[]`` section (K2 §4.2 row 8, H-7).
+
+    Every materialized §31 contradiction the entity's record touches — its
+    own subject rows and any row a claim of the entity's takes a side in —
+    plus the predicate-level conflicts the resolution envelope records when
+    no materialized row names them (a ``resolved_conflict`` /
+    ``unresolved_conflict`` state — competing values shown with both sides'
+    claims, SIG-UI-009). Both sides' claim ids stay listed; a contradiction
+    is kept visible, never silently reconciled.
+    """
+    own_claim_ids = {c.claim_id for c in claims}
+    out: list[dict[str, Any]] = []
+    covered_predicates: set[str] = set()
+    for row in contradiction_rows or ():
+        row_claims = sorted(str(x) for x in (row.get("claim_ids") or ()))
+        if str(row.get("subject_id")) != subject_id and not set(row_claims) & own_claim_ids:
+            continue
+        pred = str(row.get("predicate_id") or "")
+        covered_predicates.add(pred)
+        out.append(
+            {
+                "kind": "contradiction",
+                "contradiction_id": str(row.get("contradiction_id") or "") or None,
+                "predicate": pred,
+                "relation": _predicate_words([pred]),
+                "type": str(row.get("contradiction_type") or "") or None,
+                "status": str(row.get("status") or "") or None,
+                "severity": str(row.get("severity") or "") or None,
+                "claim_ids": row_claims,
+                "sources": _entry_sources(row_claims, claim_sources, source_names),
+            }
+        )
+    for g in claim_groups:
+        env = g.get("envelope") or {}
+        status = str(env.get("status") or "")
+        pred = str(g.get("predicate") or "")
+        if status not in ("resolved_conflict", "unresolved_conflict"):
+            continue
+        if pred in covered_predicates:
+            continue
+        cids = list(g.get("claim_ids") or ())
+        out.append(
+            {
+                "kind": "envelope_conflict",
+                "contradiction_id": None,
+                "predicate": pred,
+                "relation": g.get("relation") or _predicate_words([pred]),
+                "type": "predicate_conflict",
+                "status": status,
+                "severity": None,
+                "agreement": env.get("agreement"),
+                "claim_ids": cids,
+                "sources": list(g.get("sources") or ()),
+            }
+        )
+    out.sort(
+        key=lambda r: (
+            r["predicate"],
+            str(r.get("status") or ""),
+            str(r.get("contradiction_id") or ""),
+        )
+    )
+    return out
+
+
+def related_pages(
+    label: EntityLabel,
+    claims: Sequence[PageClaim],
+    *,
+    dossier_index: Mapping[str, Mapping[str, Any]],
+    task_index: Mapping[str, Sequence[Mapping[str, Any]]],
+    claim_documents: Mapping[str, set[str]],
+    doc_index: Mapping[str, Mapping[str, Any]],
+    claim_sources: Mapping[str, set[str]],
+    source_names: Mapping[str, str],
+) -> dict[str, Any]:
+    """The ``related{}`` section (K2 §4.2 row 11).
+
+    ``dossiers`` — the entity's recorded place's dossier (the K4 keyed
+    registry's slug path; no place → empty, never a guessed link).
+    ``sources`` — every source the entity's claims cite, each linking its
+    K10 source page. ``tasks`` — the research-queue tasks naming this
+    entity, with the K11 handle the queue minted (consumed, never
+    re-derived — the handle is the queue's own collision-resolved output).
+    ``documents`` — the evidence artifacts bound to the entity's claims
+    (K8; the page resolves the artifact handle through its evidence map).
+    ``watch`` — typed empty: no entity-scoped watch seam exists in this
+    contract wave.
+    """
+    subject_id = label.entity_id
+    dossiers: list[dict[str, Any]] = []
+    jkey = label.place_jkey
+    if jkey and jkey in dossier_index:
+        info = dossier_index[jkey]
+        slug_path = str(info.get("slug_path") or "")
+        if slug_path:
+            dossiers.append(
+                {
+                    "jkey": jkey,
+                    "slug_path": slug_path,
+                    "name": info.get("name"),
+                    "level": info.get("level"),
+                    "url": f"/dossier/{slug_path}/",
+                }
+            )
+    own = [c for c in claims if c.subject_id == subject_id]
+    own_ids = {c.claim_id for c in own}
+    source_ids = sorted(
+        {c.source_id for c in own if c.source_id}
+        | {s for cid in own_ids for s in claim_sources.get(cid, ())}
+    )
+    sources = [
+        {"id": sid, "name": source_names.get(sid), "url": f"/sources/{sid}/"} for sid in source_ids
+    ]
+    tasks: list[dict[str, Any]] = []
+    for card in task_index.get(subject_id) or ():
+        handle = str(card.get("handle") or "") or None
+        tasks.append(
+            {
+                "task_id": str(card.get("task_id") or "") or None,
+                "handle": handle,
+                "title": card.get("title"),
+                "task_type": str(card.get("task_type") or "") or None,
+                "status": str(card.get("status") or "") or None,
+                "url": f"/task/{handle}/" if handle else None,
+            }
+        )
+    tasks.sort(key=lambda t: (str(t.get("handle") or ""), str(t.get("task_id") or "")))
+    documents: list[dict[str, Any]] = []
+    seen_artifacts: dict[str, dict[str, Any]] = {}
+    for cid in sorted(own_ids):
+        for aid in sorted(claim_documents.get(cid) or ()):
+            meta = doc_index.get(aid)
+            if meta is None:
+                continue
+            entry = seen_artifacts.setdefault(
+                aid,
+                {
+                    "artifact_id": aid,
+                    "title": meta.get("title"),
+                    "artifact_type": meta.get("artifact_type"),
+                    "source_id": meta.get("source_id"),
+                    "source_name": meta.get("source_name"),
+                    "claim_ids": [],
+                },
+            )
+            entry["claim_ids"] = sorted(set(entry["claim_ids"]) | {cid})
+    documents = [
+        seen_artifacts[aid]
+        for aid in sorted(
+            seen_artifacts, key=lambda a: (str(seen_artifacts[a].get("title") or ""), a)
+        )
+    ]
+    return {
+        "dossiers": dossiers,
+        "sources": sources,
+        "tasks": tasks,
+        "watch": [],
+        "documents": documents,
+    }
+
+
+def download_entries(
+    url_type: str,
+    key: str,
+    compartment: str,
+    *,
+    has_statements: bool,
+) -> list[dict[str, Any]]:
+    """The ``downloads[]`` section (K2 §4.2 row 12, J3 TX-10).
+
+    Every entry names a file this export actually emits under
+    ``entity/<url_type>/<key>/`` — the JSON twin, the entity's
+    ``sig.statement/1`` slice (when claims file under the compartment) and
+    the relationships CSV/JSON. An entry is never listed for a file that
+    was not emitted.
+    """
+    base = f"entity/{url_type}/{key}"
+    out: list[dict[str, Any]] = [
+        {
+            "kind": "twin",
+            "format": "json",
+            "path": f"{base}/index.{compartment}.json",
+            "compartment": compartment,
+            "label": "JSON twin (sig.entity-page/1)",
+        },
+        {
+            "kind": "relationships",
+            "format": "csv",
+            "path": f"{base}/relationships.{compartment}.csv",
+            "compartment": compartment,
+            "label": "Relationships CSV",
+        },
+        {
+            "kind": "relationships",
+            "format": "json",
+            "path": f"{base}/relationships.{compartment}.json",
+            "compartment": compartment,
+            "label": "Relationships JSON",
+        },
+    ]
+    if has_statements:
+        out.append(
+            {
+                "kind": "statements",
+                "format": "jsonl",
+                "path": f"{base}/statements.{compartment}.jsonl",
+                "compartment": compartment,
+                "label": "Statements (sig.statement/1)",
+            }
+        )
+    return out
+
+
+_REL_CSV_COLUMNS: tuple[str, ...] = (
+    "relation",
+    "direction",
+    "access_kind",
+    "counterparty_label",
+    "counterparty_entity_id",
+    "counterparty_key",
+    "role",
+    "date",
+    "date_kind",
+    "currency",
+    "status",
+    "support",
+    "agreement",
+    "historical",
+    "sources",
+    "claim_ids",
+)
+
+
+def _relationships_specs() -> tuple[Any, ...]:
+    """The ``entity_relationships`` registry spec — declared beside its
+    writer (SIG-TRANSP-016); the CSV columns above in order."""
+    from .column_registry import ColumnSpec as _CS
+
+    return (
+        _CS("relation", "the relation in words (group key)", nullable=False),
+        _CS(
+            "direction",
+            "outbound | inbound",
+            nullable=False,
+            declared_values=("inbound", "outbound"),
+        ),
+        _CS("access_kind", "the §12.2 access kind, or empty on non-access relations"),
+        _CS("counterparty_label", "the shared label or typed review state"),
+        _CS("counterparty_entity_id", "the counterparty entity id"),
+        _CS("counterparty_key", "the counterparty's entity URL key"),
+        _CS("role", "the item's role predicate"),
+        _CS("date", "the observed date (empty when undated)"),
+        _CS(
+            "date_kind",
+            "observed | undated",
+            nullable=False,
+            declared_values=("observed", "undated"),
+        ),
+        _CS("currency", "the currency word (empty when uncomputed)"),
+        _CS("status", "the resolution status (empty when no envelope)"),
+        _CS("support", "the support floor word", nullable=False),
+        _CS("agreement", "the envelope agreement word"),
+        _CS(
+            "historical", "true when the item is marked historical", dtype="boolean", nullable=False
+        ),
+        _CS("sources", "the supporting source ids, ;-joined"),
+        _CS("claim_ids", "the supporting claim ids, ;-joined"),
+    )
+
+
+#: The ``entity_relationships`` resource's column specs (P35.39 registry).
+RELATIONSHIPS_COLUMN_SPECS = _relationships_specs()
+
+
+def relationships_csv(relation_groups: Sequence[Mapping[str, Any]]) -> bytes:
+    """The ``relationships.<comp>.csv`` bytes — the emitted groups flattened
+    one row per item, deterministic column and row order (the H-2 fields in
+    text; claim ids + sources ``;``-joined)."""
+    import csv
+    import io
+
+    buf = io.StringIO()
+    w = csv.writer(buf, lineterminator="\n")
+    w.writerow(_REL_CSV_COLUMNS)
+    for g in relation_groups:
+        for it in g.get("items") or ():
+            cp = it.get("counterparty") or {}
+            w.writerow(
+                [
+                    g.get("relation"),
+                    g.get("direction"),
+                    g.get("access_kind") or "",
+                    cp.get("label") or cp.get("review_state") or "",
+                    cp.get("entity_id") or "",
+                    cp.get("key") or "",
+                    it.get("role") or "",
+                    it.get("date") or "",
+                    it.get("date_kind"),
+                    it.get("currency") or "",
+                    it.get("status") or "",
+                    it.get("support") or "",
+                    it.get("agreement") or "",
+                    "true" if it.get("historical") else "false",
+                    ";".join(str(s.get("id")) for s in it.get("sources") or () if s.get("id")),
+                    ";".join(it.get("claim_ids") or ()),
+                ]
+            )
+    return buf.getvalue().encode("utf-8")
+
+
 def summary_lines(relations: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
     """ "Summary" — one mechanical count sentence per relationship group, the
     K2 §4.2 row-2 shape: every number carries its group and claim pointers
@@ -1034,6 +1561,10 @@ def build_twin(
     relations: Sequence[Mapping[str, Any]] = (),
     degree_only: Sequence[Mapping[str, Any]] = (),
     closures: Sequence[Mapping[str, Any]] = (),
+    contradictions: Sequence[Mapping[str, Any]] = (),
+    timeline: Sequence[Mapping[str, Any]] = (),
+    related: Mapping[str, Any] | None = None,
+    downloads: Sequence[Mapping[str, Any]] = (),
     withheld_relationships: bool = False,
 ) -> dict[str, Any]:
     """One ``sig.entity-page/1`` twin (K2 §6.2, contract A).
@@ -1080,11 +1611,13 @@ def build_twin(
             "closures": list(closures),
             "degree_only": list(degree_only),
         },
-        # Contract-B sections (P37.22) — typed empty under contract A.
-        "contradictions": [],
-        "timeline": [],
-        "related": {},
-        "downloads": [],
+        # Contract-B sections (P37.22 / GX-05b) — populated under contract
+        # B; a section the entity has no evidenced content for keeps its
+        # typed empty value (``[]`` / the fixed ``related`` key map).
+        "contradictions": list(contradictions),
+        "timeline": list(timeline),
+        "related": dict(related) if related is not None else _EMPTY_RELATED,
+        "downloads": list(downloads),
         "cite": {
             "publication": publication,
             "url": label.url,
@@ -1132,19 +1665,32 @@ def entity_page_artifacts(
     as_of: date | None,
     retrieval: date,
     registry_license: Mapping[str, Any] | None = None,
-) -> dict[str, tuple[dict[str, Any], str]]:
-    """``path → (twin doc, compartment)`` for every published contract-A page.
+    contradiction_rows: Sequence[Mapping[str, Any]] = (),
+    sighting_rows: Sequence[Mapping[str, Any]] = (),
+    task_index: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
+    dossier_index: Mapping[str, Mapping[str, Any]] | None = None,
+    claim_documents: Mapping[str, set[str]] | None = None,
+    doc_index: Mapping[str, Mapping[str, Any]] | None = None,
+    statement_rows: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
+) -> dict[str, tuple[Any, str]]:
+    """``path → (payload, compartment)`` for every published contract-page.
 
     Per-compartment filing (SIG-EXPORT-014 / ADR-106): the entity files under
     every compartment its twin inputs (label facts + page claims) license to;
     each emitted twin carries only the claims / relation items / degree facts
     whose backing evidence licenses to that file's compartment — an ODbL
-    claim never lands in a CC-BY twin.
+    claim never lands in a CC-BY twin. Contract-B sections follow the same
+    rule: a timeline/contradiction/document entry files only where every
+    claim it names licenses there (a mixed-compartment entry files under
+    neither — the derived fact cannot be split). ``payload`` is a twin or
+    relationships dict (JSON) for ``.json`` paths and bytes for the CSV /
+    statements.jsonl downloads — the caller writes bytes verbatim and
+    canonicalises dicts.
 
     A ``withheld`` entity emits nothing; a ``not_yet_reviewed`` organisation
     emits nothing either — its typed state rides ``labels/<comp>.jsonl`` and
     :func:`review_record` for the index surfaces (no key, no URL, never a
-    broken page); an ``unpaged`` kind emits nothing under contract A.
+    broken page); an ``unpaged`` kind emits nothing.
     """
     by_subject = page_claims(claim_rows)
     sources_of = claim_source_map(claim_rows)
@@ -1165,7 +1711,7 @@ def entity_page_artifacts(
         closure_edge_pools(edge_rows) if as_of is not None else ([], [])
     )
 
-    artifacts: dict[str, tuple[dict[str, Any], str]] = {}
+    artifacts: dict[str, tuple[Any, str]] = {}
     for eid, label in sorted(registry.items()):
         if page_state(label) != PAGE_STATE_PUBLISHED:
             continue
@@ -1207,6 +1753,38 @@ def entity_page_artifacts(
             withheld = withheld or closure_withheld
         else:
             closures = []
+        # Contract-B sections (GX-05b, P37.22) — computed once over the
+        # whole record, then filed per compartment on the same all-claims
+        # rule the closures obey.
+        page_contradictions = contradiction_records(
+            eid,
+            [*own, *inbound],
+            contradiction_rows=contradiction_rows,
+            claim_groups=groups,
+            claim_sources=sources_of,
+            source_names=source_names,
+        )
+        page_timeline = timeline_entries(
+            eid,
+            [*own, *inbound],
+            claim_groups=groups,
+            relation_groups=rel,
+            degree_facts=degree,
+            sightings=sighting_rows,
+            claim_sources=sources_of,
+            source_names=source_names,
+        )
+        page_related = related_pages(
+            label,
+            own,
+            dossier_index=dossier_index or {},
+            task_index=task_index or {},
+            claim_documents=claim_documents or {},
+            doc_index=doc_index or {},
+            claim_sources=sources_of,
+            source_names=source_names,
+        )
+        key = f"{label.slug}--{label.hash}"
         comps = set(entity_comps.get(eid) or {default_compartment})
         for c in own:
             comps.add(claim_comp.get(c.claim_id, default_compartment))
@@ -1237,6 +1815,19 @@ def entity_page_artifacts(
             comp_closures = _closure_for_compartment(
                 closures, claim_comp, compartment=comp, default_compartment=default_compartment
             )
+            comp_contradictions = _file_by_claims(
+                page_contradictions, claim_comp, comp, default_compartment
+            )
+            comp_timeline = _file_by_claims(page_timeline, claim_comp, comp, default_compartment)
+            comp_related = {
+                **page_related,
+                "documents": _file_by_claims(
+                    page_related["documents"], claim_comp, comp, default_compartment
+                ),
+            }
+            stmt_rows = [
+                r for r in (statement_rows or {}).get(comp, ()) if str(r.get("entity_id")) == eid
+            ]
             doc = build_twin(
                 label,
                 publication=publication,
@@ -1248,11 +1839,62 @@ def entity_page_artifacts(
                 relations=comp_rel,
                 degree_only=comp_degree,
                 closures=comp_closures,
+                contradictions=comp_contradictions,
+                timeline=comp_timeline,
+                related=comp_related,
+                downloads=download_entries(
+                    label.url_type or "entity",
+                    key,
+                    comp,
+                    has_statements=bool(stmt_rows),
+                ),
                 withheld_relationships=withheld,
             )
-            path = f"web/entity/{label.url_type}/{label.slug}--{label.hash}/index.{comp}.json"
-            artifacts[path] = (doc, comp)
+            base = f"web/entity/{label.url_type}/{key}"
+            artifacts[f"{base}/index.{comp}.json"] = (doc, comp)
+            artifacts[f"{base}/relationships.{comp}.json"] = (
+                {
+                    "schema": ENTITY_RELATIONSHIPS_SCHEMA,
+                    "entity_id": eid,
+                    "key": key,
+                    "compartment": comp,
+                    "publication": publication,
+                    "generated_at": generated_at,
+                    "relations": comp_rel,
+                },
+                comp,
+            )
+            artifacts[f"{base}/relationships.{comp}.csv"] = (
+                relationships_csv(comp_rel),
+                comp,
+            )
+            if stmt_rows:
+                from .manifest import canonical_json
+
+                artifacts[f"{base}/statements.{comp}.jsonl"] = (
+                    b"".join(canonical_json(r) for r in stmt_rows),
+                    comp,
+                )
     return artifacts
+
+
+def _file_by_claims(
+    entries: Sequence[Mapping[str, Any]],
+    claim_comp: Mapping[str, str],
+    compartment: str,
+    default_compartment: str,
+) -> list[dict[str, Any]]:
+    """The per-compartment filing for claim-keyed sections (timeline /
+    contradictions / related.documents): an entry files only where EVERY
+    claim it names licenses to this compartment — a mixed-compartment
+    derived fact cannot be split (ADR-106); an entry naming no claims is
+    metadata and files everywhere."""
+    return [
+        dict(e)
+        for e in entries
+        if {claim_comp.get(cid, default_compartment) for cid in (e.get("claim_ids") or ())}
+        <= {compartment}
+    ]
 
 
 __all__ = [
@@ -1263,6 +1905,7 @@ __all__ = [
     "CLOSURE_MIN_HOPS",
     "DEGREE_PREDICATES",
     "ENTITY_PAGE_SCHEMA",
+    "ENTITY_RELATIONSHIPS_SCHEMA",
     "ER_DISCLOSURE",
     "ITEMS_PER_RELATION",
     "PAGE_KINDS",
@@ -1280,11 +1923,16 @@ __all__ = [
     "claim_rights",
     "claim_source_map",
     "closure_edge_pools",
+    "contradiction_records",
     "degree_only_facts",
+    "download_entries",
     "entity_page_artifacts",
     "page_claims",
     "page_state",
     "relation_groups",
+    "related_pages",
+    "relationships_csv",
     "review_record",
     "summary_lines",
+    "timeline_entries",
 ]

@@ -323,17 +323,23 @@ def test_artifacts_emit_per_compartment_for_published_entities():
         as_of=date(2026, 9, 22),
         retrieval=date(2026, 9, 22),
     )
-    assert list(arts) == ["web/entity/agency/acme-surveillance-llc--4g2wm8q/index.sig_graph.json"]
-    doc, comp = arts[next(iter(arts))]
+    twin_path = "web/entity/agency/acme-surveillance-llc--4g2wm8q/index.sig_graph.json"
+    assert twin_path in arts
+    # contract B emits the download siblings beside the twin.
+    assert {p.rsplit(".", 1)[-1] for p in arts} == {"json", "csv"}
+    doc, comp = arts[twin_path]
     assert comp == "sig_graph"
     assert doc["schema"] == ENTITY_PAGE_SCHEMA
     assert doc["review_state"] == "published"
     assert doc["er_disclosure"] == ER_DISCLOSURE
     assert doc["identifiers"] == [{"scheme": "us.cgac.agency_code", "value": "OK-ACME"}]
-    # contract-B sections are typed empty under contract A.
-    for section in ("contradictions", "timeline", "downloads"):
-        assert doc[section] == []
-    assert doc["related"] == {}
+    # contract B (P37.22) — populated where evidence exists, typed empty
+    # where it does not.
+    assert doc["contradictions"] == []
+    assert doc["timeline"] and doc["timeline"][0]["date"] == "2020-01-28"
+    assert doc["downloads"] and doc["related"]["sources"] == [
+        {"id": "src_a", "name": "EFF", "url": "/sources/src_a/"}
+    ]
     assert doc["access"]["closures"] == []
 
 
@@ -369,9 +375,10 @@ def test_artifacts_skip_review_state_withheld_and_unpaged():
         retrieval=date(2026, 9, 22),
     )
     paths = list(arts)
-    assert len(paths) == 1
-    assert f"{keyed}" in paths[0] or keyed.replace("-", "") or True
-    assert "acme-surveillance-llc--4g2wm8q" in paths[0]
+    # only the keyed agency emits (twin + the contract-B download siblings);
+    # review/withheld/person/unpaged states emit nothing.
+    assert len(paths) == 3
+    assert all("acme-surveillance-llc--4g2wm8q" in p for p in paths)
 
 
 # ---------------------------------------------------------------------------
@@ -478,7 +485,7 @@ def test_export_emits_entity_page_twins():
         claims=parse_shaping_claims(rows),
         entity_types={s: "deployment" for s in subjects},
     )
-    twin_paths = [p for p in export.web_artifacts if p.startswith("web/entity/")]
+    twin_paths = [p for p in export.web_artifacts if p.startswith("web/entity/") and "/index." in p]
     assert len(twin_paths) == 1
     doc = json.loads(export.web_artifacts[twin_paths[0]].decode("utf-8"))
     assert doc["schema"] == "sig.entity-page/1"
@@ -663,7 +670,9 @@ def test_access_closures_need_an_as_of_snapshot():
         as_of=None,
         retrieval=date(2026, 9, 22),
     )
-    for _, (doc, _comp) in arts.items():
+    for _p, (doc, _comp) in arts.items():
+        if "/index." not in _p:
+            continue  # the download siblings are not twin docs
         assert doc["access"]["closures"] == []
 
 
@@ -761,6 +770,13 @@ def test_artifacts_emit_closures_only_in_their_compartment():
     a, b, c = _eid(), _eid(), _eid()
     labels = _closure_labels(a, b, c)
     labels[a] = _label(a, "agency", label="Acme PD")
+    # distinct keys — the shared fixture slug/hash would collide on path.
+    labels[b] = _label(
+        b, "org", label="Org b", slug="org-b", hash="7xk3mrb", url="/entity/org/org-b--7xk3mrb/"
+    )
+    labels[c] = _label(
+        c, "org", label="Org c", slug="org-c", hash="2rn6vqc", url="/entity/org/org-c--2rn6vqc/"
+    )
     edges = [_edge_row(a, b, "c1"), _edge_row(b, c, "c2")]
     rows = [
         _claim_row(a, "configured_sharing_partner", None, "c1", obj=b),
@@ -793,5 +809,271 @@ def test_artifacts_emit_closures_only_in_their_compartment():
     assert grp["paths"][0]["target"] == c
     assert osm_doc["access"]["closures"] == []
     # the inbound closure rides the far entity's twin the same way.
-    c_docs = [d for _p, (d, _c) in arts.items() if d["entity_id"] == c]
+    c_docs = [
+        d
+        for _p, (d, _c) in arts.items()
+        if "/index." in _p and isinstance(d, dict) and d.get("entity_id") == c
+    ]
     assert c_docs and all(d["access"]["closures"][0]["direction"] == "inbound" for d in c_docs)
+
+
+# ---------------------------------------------------------------------------
+# Contract B (GX-05b / P37.22): kinds, timeline, contradictions, related,
+# downloads — the §4.2 rows 8/9/11/12 the twin carries first-class.
+# ---------------------------------------------------------------------------
+
+from exports.entity_page import (  # noqa: E402
+    contradiction_records,
+    download_entries,
+    related_pages,
+    relationships_csv,
+    timeline_entries,
+)
+
+
+def test_page_state_published_for_contract_b_kinds():
+    for kind in ("notice", "contract", "grant", "bill", "policy", "event"):
+        lbl = _label(_eid(), kind=kind, url_type=kind)
+        assert page_state(lbl) == PAGE_STATE_PUBLISHED
+    # request/atlas/site stay outside the 05b row — typed unpaged.
+    for kind in ("request", "atlas", "site"):
+        assert page_state(_label(_eid(), kind=kind)) == PAGE_STATE_UNPAGED
+
+
+def test_timeline_entries_stated_observed_sightings_and_undated():
+    eid = _eid()
+    rows = [
+        _claim_row(eid, "posted_date", "2020-01-28", "c9"),
+        _claim_row(eid, "agency_name", "Acme PD", "c1", obs=None),
+    ]
+    by_subj = page_claims(rows)
+    groups = claim_groups(
+        eid,
+        by_subj[eid],
+        resolutions={},
+        lineage={},
+        source_names={"src_a": "EFF"},
+        claim_sources={"c9": {"src_a"}},
+        as_of=None,
+    )
+    entries = timeline_entries(
+        eid,
+        by_subj[eid],
+        claim_groups=groups,
+        relation_groups=[],
+        degree_facts=[],
+        sightings=[
+            {
+                "claim_id": "c9",
+                "subject_id": eid,
+                "source_id": "src_a",
+                "first_seen": "2020-01-29",
+                "last_seen": "2021-02-03",
+            }
+        ],
+        claim_sources={"c9": {"src_a"}},
+        source_names={"src_a": "EFF Data Driven"},
+    )
+    kinds = {e["kind"] for e in entries}
+    assert {"stated", "observed", "first_seen", "last_seen"} <= kinds
+    stated = [e for e in entries if e["kind"] == "stated"]
+    assert stated[0]["date"] == "2020-01-28" and stated[0]["label"] == "posted date"
+    first = [e for e in entries if e["kind"] == "first_seen"][0]
+    assert first["label"] == "first seen — EFF Data Driven"
+    # the undated claim group is listed apart, never placed on the axis.
+    undated = [e for e in entries if e["date_kind"] == "undated"]
+    assert undated and all(e["date"] is None for e in undated)
+    dated = [e for e in entries if e["date"]]
+    assert [e["date"] for e in dated] == sorted(e["date"] for e in dated)
+
+
+def test_contradiction_records_subject_overlap_and_envelope():
+    eid, other = _eid(), _eid()
+    rows = [_claim_row(eid, "agency_name", "Acme PD", "c1")]
+    by_subj = page_claims(rows)
+    groups = [
+        {
+            "predicate": "agency_name",
+            "relation": "agency name",
+            "envelope": {
+                "status": "unresolved_conflict",
+                "support": "STRONGLY_SUPPORTED",
+                "agreement": "unresolved_conflict",
+                "currency": "CURRENT",
+                "rationale": None,
+            },
+            "claim_ids": ["c1", "c2"],
+            "sources": [{"id": "src_a", "name": "EFF"}],
+        }
+    ]
+    contra = [
+        {
+            "contradiction_id": "contra-1",
+            "subject_id": other,
+            "predicate_id": "camera_latitude",
+            "contradiction_type": "coordinate",
+            "status": "open",
+            "severity": "low",
+            "claim_ids": ["c1", "c9"],
+        },
+        {
+            "contradiction_id": "contra-2",
+            "subject_id": _eid(),
+            "predicate_id": "other_pred",
+            "contradiction_type": "value",
+            "status": "open",
+            "severity": "low",
+            "claim_ids": ["cz"],
+        },
+    ]
+    recs = contradiction_records(
+        eid,
+        [*by_subj[eid]],
+        contradiction_rows=contra,
+        claim_groups=groups,
+        claim_sources={"c1": {"src_a"}, "c9": {"src_b"}, "cz": {"src_z"}},
+        source_names={"src_a": "EFF", "src_b": "Other", "src_z": "Zed"},
+    )
+    # the claim-overlap row lands; the unrelated subject's row never does.
+    ids = {r["contradiction_id"] for r in recs}
+    assert "contra-1" in ids and "contra-2" not in ids
+    env = [r for r in recs if r["kind"] == "envelope_conflict"]
+    assert (
+        env and env[0]["predicate"] == "agency_name" and env[0]["status"] == "unresolved_conflict"
+    )
+
+
+def test_related_pages_dossier_source_task_document():
+    eid = _eid()
+    lbl = _label(eid, "contract", url_type="contract", place_jkey="usa-ok")
+    rows = [_claim_row(eid, "posted_date", "2020-01-28", "c1")]
+    by_subj = page_claims(rows)
+    rel = related_pages(
+        lbl,
+        by_subj[eid],
+        dossier_index={"usa-ok": {"slug_path": "usa/ok", "name": "Oklahoma", "level": "admin1"}},
+        task_index={
+            eid: [
+                {
+                    "task_id": "t1",
+                    "handle": "T-usa-ok-verify-q1c4",
+                    "title": "Verify the award",
+                    "task_type": "verify",
+                    "status": "generated",
+                }
+            ]
+        },
+        claim_documents={"c1": {"art-1"}},
+        doc_index={
+            "art-1": {
+                "title": "The notice PDF",
+                "artifact_type": "document",
+                "source_id": "src_a",
+                "source_name": "EFF",
+            }
+        },
+        claim_sources={"c1": {"src_a"}},
+        source_names={"src_a": "EFF"},
+    )
+    assert rel["dossiers"][0]["url"] == "/dossier/usa/ok/"
+    assert rel["sources"] == [{"id": "src_a", "name": "EFF", "url": "/sources/src_a/"}]
+    assert rel["tasks"][0]["url"] == "/task/T-usa-ok-verify-q1c4/"
+    assert rel["documents"][0]["artifact_id"] == "art-1"
+    assert rel["watch"] == []
+
+
+def test_download_artifacts_emit_twin_relationships_csv_and_statements():
+    eid, partner = _eid(), _eid()
+    labels = {
+        eid: _label(eid, "contract", url_type="contract"),
+        partner: _label(partner, "org", label="Acme LLC"),
+    }
+    rows = [
+        _claim_row(eid, "posted_date", "2020-01-28", "c1"),
+        _claim_row(eid, "seller", None, "c2", obj=partner),
+    ]
+    arts = entity_page_artifacts(
+        labels,
+        claim_rows=rows,
+        edge_rows=[],
+        identifiers={},
+        entity_types={eid: "contract"},
+        resolutions={},
+        lineage={},
+        source_names={"src_a": "EFF"},
+        entity_comps={eid: {"sig_graph"}},
+        default_compartment="sig_graph",
+        publication=PUB,
+        generated_at=GEN,
+        as_of=None,
+        retrieval=date(2026, 9, 22),
+        statement_rows={
+            "sig_graph": [{"schema": "sig.statement/1", "entity_id": eid, "claim_id": "c1"}]
+        },
+    )
+    base = "web/entity/contract/acme-surveillance-llc--4g2wm8q"
+    assert f"{base}/index.sig_graph.json" in arts
+    rel_json, _ = arts[f"{base}/relationships.sig_graph.json"]
+    assert rel_json["schema"] == "sig.entity-relationships/1"
+    csv_bytes, _ = arts[f"{base}/relationships.sig_graph.csv"]
+    text = csv_bytes.decode("utf-8")
+    assert text.splitlines()[0].startswith("relation,direction")
+    assert "Acme LLC" in text
+    stmt_bytes, _ = arts[f"{base}/statements.sig_graph.jsonl"]
+    assert b'"entity_id"' in stmt_bytes and eid.encode() in stmt_bytes
+    doc, _ = arts[f"{base}/index.sig_graph.json"]
+    paths = {d["path"] for d in doc["downloads"]}
+    assert "entity/contract/acme-surveillance-llc--4g2wm8q/statements.sig_graph.jsonl" in paths
+    # populated contract-B slots — the record is never typed-empty here.
+    assert doc["timeline"] and doc["related"]["sources"]
+
+
+def test_contract_b_sections_file_per_compartment():
+    eid = _eid()
+    labels = {eid: _label(eid, "contract", url_type="contract")}
+    rows = [
+        _claim_row(eid, "posted_date", "2020-01-28", "c1"),
+        _claim_row(eid, "award_date", "2020-02-01", "c2", rid="rights-odbl", spdx="ODbL-1.0"),
+    ]
+    arts = entity_page_artifacts(
+        labels,
+        claim_rows=rows,
+        edge_rows=[],
+        identifiers={},
+        entity_types={eid: "contract"},
+        resolutions={},
+        lineage={},
+        source_names={"src_a": "EFF"},
+        entity_comps={eid: {"sig_graph"}},
+        default_compartment="sig_graph",
+        publication=PUB,
+        generated_at=GEN,
+        as_of=None,
+        retrieval=date(2026, 9, 22),
+    )
+    sig_doc, _ = arts["web/entity/contract/acme-surveillance-llc--4g2wm8q/index.sig_graph.json"]
+    odbl_doc, _ = arts["web/entity/contract/acme-surveillance-llc--4g2wm8q/index.osm_physical.json"]
+    sig_dates = {(e["kind"], e["date"]) for e in sig_doc["timeline"] if e["kind"] == "stated"}
+    odbl_dates = {(e["kind"], e["date"]) for e in odbl_doc["timeline"] if e["kind"] == "stated"}
+    assert sig_dates == {("stated", "2020-01-28")}
+    assert odbl_dates == {("stated", "2020-02-01")}
+
+
+def test_relationships_csv_deterministic_shape():
+    eid, partner = _eid(), _eid()
+    labels = {partner: _label(partner, "org", label="Acme LLC")}
+    rows = [_claim_row(eid, "seller", None, "c1", obj=partner)]
+    by_subj = page_claims(rows)
+    groups, _ = relation_groups(eid, by_subj[eid], edge_rows=[], labels=labels, **_ctx())
+    a = relationships_csv(groups)
+    assert a == relationships_csv(groups)
+    lines = a.decode().splitlines()
+    assert lines[0].split(",")[:3] == ["relation", "direction", "access_kind"]
+    assert lines[1].startswith("seller,outbound,")
+
+
+def test_download_entries_lists_only_emitted_files():
+    entries = download_entries("contract", "k--h", "sig_graph", has_statements=False)
+    kinds = {(e["kind"], e["format"]) for e in entries}
+    assert ("statements", "jsonl") not in kinds
+    assert ("twin", "json") in kinds and ("relationships", "csv") in kinds

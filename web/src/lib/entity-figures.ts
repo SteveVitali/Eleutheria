@@ -338,6 +338,35 @@ export function entityTimeline(merged: MergedEntityPage): EntityTimeline {
   const dated: TimelineEventSpec[] = [];
   const undated: EntityTimeline["undated"] = [];
 
+  // Contract B (P37.22): the twin's emitted `timeline[]` is the
+  // authoritative section — dated entries draw, undated items list.
+  if (merged.timeline.length > 0) {
+    for (const e of merged.timeline) {
+      if (e.date !== null && e.date_kind !== "undated")
+        dated.push({ date: e.date, label: e.label, kind: e.kind });
+      else undated.push({ label: e.label, claimId: e.claim_ids[0] ?? null });
+    }
+    dated.sort((a, b) => a.date.localeCompare(b.date) || a.label.localeCompare(b.label));
+    undated.sort((a, b) => a.label.localeCompare(b.label));
+    const spec: TimelineSpecDoc | null =
+      dated.length === 0
+        ? null
+        : {
+            schema: CHART_SPEC_SCHEMA,
+            release: releaseInfoFor(twin),
+            kind: "timeline",
+            title: `${twin.label} — dated events`,
+            unit: "events",
+            events: dated.map((e) => {
+              const out: TimelineEventSpec = { date: e.date, label: e.label };
+              if (e.href) out.href = e.href;
+              if (e.kind) out.kind = e.kind;
+              return out;
+            }),
+          };
+    return { spec, dated, undated };
+  }
+
   const pushDated = (date: string, label: string, kind: string) => {
     dated.push({ date, label, kind });
   };

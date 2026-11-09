@@ -317,7 +317,19 @@ _PAGE_ENTITY_SQL: str = (
     "           AND (ei.value LIKE 'agency:%' OR ei.value LIKE 'department:%'"
     "                OR ei.value LIKE 'platform:%'"
     "                OR ei.value LIKE 'organization:%'"
-    "                OR ei.value LIKE 'organisation:%'))"
+    "                OR ei.value LIKE 'organisation:%'"
+    # P37.22 (K2 GX-05b): the contract-B page kinds' subject-key families —
+    # the same prefixes ``policy.labels._KIND_PREFIXES`` resolves to
+    # notice/contract/grant/bill/policy/event (``request:``/``foia:``/
+    # ``atlas:`` stay outside the 05b row).
+    "                OR ei.value LIKE 'procurement\\_notice:%' ESCAPE '\\'"
+    "                OR ei.value LIKE 'notice:%'"
+    "                OR ei.value LIKE 'contract:%' OR ei.value LIKE 'award:%'"
+    "                OR ei.value LIKE 'grant:%' OR ei.value LIKE 'bill:%'"
+    "                OR ei.value LIKE 'policy:%' OR ei.value LIKE 'ordinance:%'"
+    "                OR ei.value LIKE 'statute:%' OR ei.value LIKE 'regulation:%'"
+    "                OR ei.value LIKE 'event:%' OR ei.value LIKE 'meeting:%'"
+    "                OR ei.value LIKE 'agenda:%'))"
 )
 
 EXPORT_QUERIES: dict[str, tuple[str, str]] = {
@@ -6260,6 +6272,7 @@ def build_spine_export(
     # watch's evidence links consume the same map); stmt_source_registry +
     # lane_by_source are already in scope here.
     _ = stmt_source_registry  # referenced above; kept for readability
+    stmt_rows_by_comp: dict[str, list[Mapping[str, Any]]] = {}
     for comp, payload in sorted(
         _statements(
             claims,
@@ -6284,6 +6297,9 @@ def build_spine_export(
         web_licenses[path] = str(payload["license"])
         web_compartments[path] = comp
         web_schemas[path] = _stmt.STATEMENT_SCHEMA
+        # P37.22 (GX-05b): the same rows feed the per-entity statements slice
+        # — the slice is this stream filtered on entity_id, never re-derived.
+        stmt_rows_by_comp[comp] = payload["rows"]
         web_counts[path] = (
             len(payload["rows"]),
             len({r["entity_id"] for r in payload["rows"]}),
@@ -6402,6 +6418,50 @@ def build_spine_export(
             page_resolutions[(str(_res["subject_id"]), str(_res["predicate_id"]))] = _res
         except (KeyError, TypeError):
             continue
+    # P37.22 (GX-05b) — the contract-B section inputs, each consumed never
+    # re-derived: the minted task handles ride the queue's own cards; the
+    # dossier links the keyed registry's slug paths; the documents the
+    # claim→artifact bindings joined to the published artifact metadata.
+    page_task_index: dict[str, list[Mapping[str, Any]]] = {}
+    for _card in queue_v2.cards:
+        _sid = str(_card.get("subject_id") or "")
+        if _sid:
+            page_task_index.setdefault(_sid, []).append(_card)
+    page_dossier_index: dict[str, Mapping[str, Any]] = (
+        {
+            jkey: {"slug_path": info.slug_path, "name": info.name, "level": info.level}
+            for jkey, info in keyed.keys.items()
+        }
+        if keyed is not None
+        else {}
+    )
+    page_claim_documents: dict[str, set[str]] = {}
+    for _b in raw.get("claim_binding_detail") or []:
+        try:
+            page_claim_documents.setdefault(str(_b[0]), set()).add(str(_b[2]))
+        except (TypeError, IndexError):
+            continue
+    page_doc_index: dict[str, Mapping[str, Any]] = {}
+    for _a in raw.get("evidence_artifacts") or []:
+        try:
+            page_doc_index[str(_a[0])] = {
+                "title": str(_a[2]) if _a[2] else None,
+                "artifact_type": str(_a[3]) if _a[3] else None,
+                "source_id": str(_a[1]) if _a[1] else None,
+                "source_name": str(_a[8]) if _a[8] else None,
+            }
+        except (TypeError, IndexError):
+            continue
+    page_sightings = [
+        {
+            "claim_id": s.claim_id,
+            "subject_id": s.subject_id,
+            "source_id": s.source_id,
+            "first_seen": s.first_seen_at.date().isoformat() if s.first_seen_at else None,
+            "last_seen": s.last_seen_at.date().isoformat() if s.last_seen_at else None,
+        }
+        for s in dossier_sources._parse_sightings(raw.get("claim_sightings") or [])
+    ]
     for path, (page_doc, page_comp) in sorted(
         entity_page.entity_page_artifacts(
             label_registry,
@@ -6419,12 +6479,25 @@ def build_spine_export(
             as_of=build_spec.as_of_snapshot,
             retrieval=retrieval,
             registry_license=registry,
+            contradiction_rows=m_contradictions,
+            sighting_rows=page_sightings,
+            task_index=page_task_index,
+            dossier_index=page_dossier_index,
+            claim_documents=page_claim_documents,
+            doc_index=page_doc_index,
+            statement_rows=stmt_rows_by_comp,
         ).items()
     ):
-        web_artifacts[path] = _web_bytes(page_doc)
+        web_artifacts[path] = page_doc if isinstance(page_doc, bytes) else _web_bytes(page_doc)
         web_licenses[path] = str(comp_licenses.get(page_comp, _SIG_SPDX))
         web_compartments[path] = page_comp
-        web_schemas[path] = entity_page.ENTITY_PAGE_SCHEMA
+        _schema = (
+            page_doc.get("schema")
+            if isinstance(page_doc, Mapping)
+            else (_stmt.STATEMENT_SCHEMA if path.endswith(".jsonl") else None)
+        )
+        if _schema:
+            web_schemas[path] = str(_schema)
         web_counts[path] = (1, 1)
 
     disclosure = _terms_disclosure_payload(

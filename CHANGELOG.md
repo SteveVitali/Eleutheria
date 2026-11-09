@@ -24,6 +24,33 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.22 — Entity data contract B (K2 GX-05b, §4.2 rows 8/9/11/12):** the
+  `sig.entity-page/1` twin's contract-B sections are now populated — and
+  the paged-kind set extends from organisations/agencies/portals to the E2
+  wave (notices, contracts, grants, bills, legal instruments as `policy`,
+  accountability events; `atlas`/`request` stay outside this row). The
+  `entity_page_claims` SQL-side superset gained the new kinds' subject-key
+  families. `timeline[]` carries stated event dates (the predicates the
+  registry types `edtf` — posted/signed/award/bill-status/effective), the
+  record's observation dates on claim groups, relation items and degree
+  facts, and first/last seen per source (`claim_sightings`); undated items
+  list as `date: null`, never drawn and never present-tense (SIG-UI-116).
+  `contradictions[]` keeps every materialized §31 contradiction the
+  entity's record touches plus the resolution-envelope conflicts it names —
+  both sides' claim ids listed, visible, never silently reconciled (H-7).
+  `related{}` links the recorded place's dossier (the keyed registry's slug
+  path), the sources the claims cite (`/sources/<id>/`), research-queue
+  tasks on the entity (the queue's own minted handles — consumed, never
+  re-derived), and the evidence documents bound to its claims. `downloads[]`
+  names only files the export actually emits per compartment — the JSON
+  twin, `relationships.<comp>.csv`/`.json` (`sig.entity-relationships/1`,
+  registry-declared per SIG-TRANSP-016) and the entity's `sig.statement/1`
+  statements slice. Every contract-B section files per licence compartment
+  on the same all-claims-license-here rule the closures obey (ADR-106), and
+  the page renders the populated sections server-side with the typed
+  absence kept when a section has no evidenced content — still T1, no new
+  script.
+
 - **P37.21 — Access closures and degree-only facts (K2 GX-07):** the
   `sig.entity-page/1` twin's `access.closures` slot is now computed — the
   build runs `inference.access_paths.close_access_paths` per entity over
