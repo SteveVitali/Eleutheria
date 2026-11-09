@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "d9810e6756657cc9dfa01466af5d6b56304646f2",
-  "manifest_inputs": 1225,
+  "input_commit": "2843c0b6e478c9ef2479a79c0ab14ceb11b9349d",
+  "manifest_inputs": 1226,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.16b",
-    "lastCompleted": "P37.16a",
+    "nextTicket": "P37.17",
+    "lastCompleted": "P37.16b",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.70,P37.71",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.16a-dossier-live-captures-first-two-families",
+    "chainTip": "r11/P37.16b-dossier-live-captures-last-two-families",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-08T00:02Z"
+    "updatedAt": "2026-11-08T02:06Z"
   },
   "counts": {
     "obligations": 232,
@@ -31,9 +31,9 @@
     "open": 145,
     "partial": 3,
     "terminal": 84,
-    "events": 745,
-    "transitions": 57,
-    "coverage_assessments": 510,
+    "events": 747,
+    "transitions": 59,
+    "coverage_assessments": 512,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -5138,12 +5138,12 @@
     {
       "id": "D-P32.20-1",
       "status": "OPEN",
-      "status_source": "event-head D-P32.20-1:e0",
+      "status_source": "event-head D-P32.20-1:e1",
       "kind": "P",
-      "owner": "operator",
+      "owner": "the operator (HG-03 apply + verbatim go, OP-26) then the live_verification=true re-run",
       "landing": "RETURN PASS — P32.20",
       "landing_source": "return-pass-map/1",
-      "backlog_home": "BL-058",
+      "backlog_home": "BL-087",
       "item": "the bounded live-source RETURN PASS for the San Diego dossier: actual byte captures of the four registered dossier targets — the 2025 SDPD Annual Surveillance Report (Vigilant section), the City–Ubicquia public-safety agreement (signature/execution state on real pages), the SDPD technology index and the PAB reports index — plus the reviewed leads (the ALPR Program detail page, the index-linked ALPR Use Policy behind its recorded 403, the ~16 MB PAB recommendation PDF over the byte bound, the 2025-12-10 council memorandum + FY27 budget response, and the 2024–2026 network-audit spreadsheet links **metadata-only** — no workbook/XLSX/ZIP/sharedStrings or row-level plate/person/query content ever), replacing the committed stand-ins so the dossier’s capture digests bind real bytes",
       "unblocked_by": "HG-03 operator review per target (published-URL ownership screen) + Part VIII preflight + the SRC-027 admissibility decision; then the same ticket contract re-dispatched with `live_verification=true`",
       "verify": "per-target green registry/rights basis; captured digests recorded against the reviewed URLs; a rebuilt `sig.dossier-packet/1` whose fact-to-capture ledger binds real captures; measured acquisition under the family/document/protocol caps; the PAB recommendation fetched under an approved method",
@@ -5177,18 +5177,42 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P32.20-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P32.20-1",
+          "seq": 1,
+          "expected_previous_event": "D-P32.20-1:e0",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P37.16b",
+          "owner": "the operator (HG-03 apply + verbatim go, OP-26) then the live_verification=true re-run",
+          "landing": "capture machinery + agent screen landed; leg queued prepared_not_executed",
+          "backlog_home": "BL-087",
+          "evidence_refs": [
+            "docs/build/reports/p32.20-san-diego-dossier/LIVE_PASS_RESULT.json",
+            "docs/build/reports/p32.20-san-diego-dossier/PART_VIII_CLEAR.json",
+            "ops/src/ops/dossier_live_pass.py",
+            "docs/tickets/439_P37.16b__dossier-live-captures-last-two-families.md"
+          ],
+          "observed_at": "2026-11-08",
+          "recorded_at": "2026-11-08",
+          "source_commit": "4c20112d82109595cf609142336327e9f731e251",
+          "reason": "progress note, not a close (P37.16b): the bounded live-capture executor + the B-42 Part VIII screen landed for the San Diego family — SRC-003/004/005 record clear ('cleared by agent screen, no human review', sig.part-viii-clear/1) and the result record is prepared_not_executed (operator go absent; the dossier_san_diego HG-03 flip unapplied — the prepared r11/sources-flips apply is OP-26's, never the agent's). The metadata_only_preflight target resolves metadata_only — SRC-027's workbook path stays rejected permanently (E4-B3). Still owed: the operator's HG-03 apply + verbatim go, then the live_verification=true re-run."
         }
       ]
     },
     {
       "id": "D-P32.21-1",
       "status": "OPEN",
-      "status_source": "event-head D-P32.21-1:e0",
+      "status_source": "event-head D-P32.21-1:e1",
       "kind": "P",
-      "owner": "operator",
+      "owner": "the operator (HG-03 apply + verbatim go, OP-26) then the live_verification=true re-run",
       "landing": "RETURN PASS — P32.21",
       "landing_source": "return-pass-map/1",
-      "backlog_home": "BL-058",
+      "backlog_home": "BL-087",
       "item": "the bounded live slices of the two incremental pilot families: **oklahoma-state** — the OMES statewide-contract index + one statewide-contract document (SRC-006) and the DAC UVED program page + the OSCN statute-version document (SRC-007); **california-state-auditor** — the 2019-118 audit index + the agency-survey page (SRC-011); ≤10 approved documents/aggregate rows per family over the existing html_text/pdf_text protocols, so the funnel's pending-live stages gain real captures, extraction, link-support and measured minutes",
       "unblocked_by": "HG-03 exact-target review per URL (the three rights lanes separately) + municipal-publication review where observed + Part VIII screening (both families are not_assessed); then the same ticket contract re-dispatched with `live_verification=true`",
       "verify": "per-target green registry/rights basis; captured digests recorded against the reviewed URLs; the funnel's capture/extraction/link stages populated from real captures with measured_minutes; the document/protocol caps verified on the executed slice",
@@ -5222,6 +5246,31 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P32.21-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P32.21-1",
+          "seq": 1,
+          "expected_previous_event": "D-P32.21-1:e0",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P37.16b",
+          "owner": "the operator (HG-03 apply + verbatim go, OP-26) then the live_verification=true re-run",
+          "landing": "capture machinery + agent screen landed; leg queued prepared_not_executed",
+          "backlog_home": "BL-087",
+          "evidence_refs": [
+            "docs/build/reports/p32.21-acquisition-pilot/LIVE_PASS_RESULT.json",
+            "docs/build/reports/p32.21-acquisition-pilot/PART_VIII_CLEAR.oklahoma-state.json",
+            "docs/build/reports/p32.21-acquisition-pilot/PART_VIII_CLEAR.california-state-auditor.json",
+            "ops/src/ops/dossier_live_pass.py",
+            "docs/tickets/439_P37.16b__dossier-live-captures-last-two-families.md"
+          ],
+          "observed_at": "2026-11-08",
+          "recorded_at": "2026-11-08",
+          "source_commit": "4c20112d82109595cf609142336327e9f731e251",
+          "reason": "progress note, not a close (P37.16b): the sig.acq-pilot-return-pass/1 packet gained the bounded live-capture executor (per-target same_source/registered_source resolution, document-cap + exclusion guards, bounded retries, measured seconds) and the B-42 Part VIII screen landed for both pilot sub-families — SRC-006/007/011 record clear ('cleared by agent screen, no human review', sig.part-viii-clear/1 ×2) and the result record is prepared_not_executed (operator go absent; ok_dac_uved/ok_omes_contracts/ca_state_auditor HG-03 flips unapplied — OP-26). Still owed: the operator's HG-03 apply + verbatim go, then the live_verification=true re-run."
         }
       ]
     },
@@ -18943,6 +18992,16 @@
         "assessment_id": "SIG-ACQ-004:r11-1"
       },
       {
+        "requirement_id": "SIG-ACQ-004",
+        "domain": "hosted",
+        "verdict": "MET-ENGINEERED(D-P32.21-1)",
+        "assessed_at": "2026-11-08",
+        "code_revision": "r11/P37.16b-dossier-live-captures-last-two-families",
+        "limitations": "P37.16b landing verdict (row 439): the sig.acq-pilot-return-pass/1 executor + both sub-family B-42 screens landed (sig.part-viii-clear/1 ×2, disclosed); the live leg stayed queued prepared_not_executed (no operator go; three gated rows unflipped — OP-26). MET-ENGINEERED — a live capture verdict arrives only with the operator's HG-03 apply + verbatim go (D-P32.21-1).",
+        "supersedes": "SIG-ACQ-004:r11-1",
+        "assessment_id": "SIG-ACQ-004:r11-2"
+      },
+      {
         "requirement_id": "SIG-CHART-001",
         "domain": "implementation",
         "verdict": "MET",
@@ -19421,6 +19480,16 @@
         "limitations": "engineering verified by the cited research at the achieved domain only; the owed live/operator/human legs are OPEN DEFERRALS rows and are not claimed; matrix row note carries the reasoning; previous matrix verdict MET",
         "supersedes": null,
         "assessment_id": "SIG-DOS-005:r11-1"
+      },
+      {
+        "requirement_id": "SIG-DOS-005",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-P32.20-1;D-R10-SOURCES-1;D-R10-HUMAN-1)",
+        "assessed_at": "2026-11-08",
+        "code_revision": "r11/P37.16b-dossier-live-captures-last-two-families",
+        "limitations": "P37.16b landing verdict (row 439): executor + B-42 agent screen landed for the san-diego family (sig.part-viii-clear/1, disclosed); the live capture leg stayed queued prepared_not_executed (no operator go; dossier_san_diego HG-03 flip unapplied — OP-26). MET-ENGINEERED — a live capture verdict arrives only with the operator's HG-03 apply + verbatim go (D-P32.20-1).",
+        "supersedes": "SIG-DOS-005:r11-1",
+        "assessment_id": "SIG-DOS-005:r11-2"
       },
       {
         "requirement_id": "SIG-DSRC-001",
@@ -24873,6 +24942,11 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-ACQ-004",
+          "verdict": "MET-ENGINEERED(D-P32.21-1)",
+          "assessed_at": "2026-11-08"
+        },
+        {
           "requirement": "SIG-CHART-017",
           "verdict": "PARTIAL",
           "assessed_at": "2026-10-01"
@@ -25220,6 +25294,11 @@
           "requirement": "SIG-DOS-005",
           "verdict": "MET-ENGINEERED(D-P32.20-1;D-R10-SOURCES-1;D-R10-HUMAN-1)",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-DOS-005",
+          "verdict": "MET-ENGINEERED(D-P32.20-1;D-R10-SOURCES-1;D-R10-HUMAN-1)",
+          "assessed_at": "2026-11-08"
         },
         {
           "requirement": "SIG-DSRC-001",
@@ -27015,10 +27094,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "55b0e69c270e0ab227069ab61cb0208eeea393c8d7eabaf47256e0d6a84ccb30",
+  "manifest_sha256": "2ceaca4e9517e3469d618d95eedbb714683d6e760d7fd8274ed4d26dd181bb6e",
   "current_md": {
     "lines": 149,
-    "bytes": 19754,
+    "bytes": 19752,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

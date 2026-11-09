@@ -24,6 +24,25 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.16b — the last two live-capture families: San Diego + the
+  acquisition pilot (D-P32.20-1 + D-P32.21-1; SIG-DOS-005/SIG-ACQ-004 owed
+  legs):** `ops.dossier_live_pass` now executes both return-pass shapes —
+  the dossier `sig.dossier-live-return-pass/1` (the `san-diego` family) and
+  the pilot's `sig.acq-pilot-return-pass/1` (`acq-pilot`): per-target source
+  resolution (`existing_source` > the candidate's `same_source` queue link
+  > the sub-family's `registered_source`), fail-closed document-cap and
+  excluded-candidate guards, bounded `unreachable` retries (a refusal or a
+  4xx is recorded, never retried), `elapsed_seconds` per target, and a
+  `funnel_overlay` on an executed pilot pass. The `metadata_only_preflight`
+  target resolves `metadata_only` — SRC-027's workbook path stays rejected
+  permanently (E4-B3), never fetched; `byte_bound_exception` still caps, so
+  the ~16 MB PAB recommendation lands `too_large`. The B-42 'Agent clears,
+  disclosed' screens are recorded: `sig.part-viii-clear/1` ×3 + queue
+  `preflight.status = "clear"` on SRC-003/004/005 + SRC-006/007/011
+  ('cleared by agent screen, no human review'). Both capture legs are
+  QUEUED `prepared_not_executed` — no go, the gated rows unflipped (the
+  operator's OP-26 apply).
+
 - **P37.16a — the dossier live-capture executor + the B-42 agent Part VIII
   screen (D-P32.18-1 + D-P32.19-1; SIG-DOS-003/004 owed legs):**
   `ops.dossier_live_pass` runs a family's

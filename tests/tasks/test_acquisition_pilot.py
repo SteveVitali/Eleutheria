@@ -463,12 +463,11 @@ def test_pilot_targets_on_green_sources_named(readout):
 
 def test_five_families_carry_drafted_screens(entries):
     """P34.38 / ADR-185 §2 (E4-B2 → B-42): every pilot family carries its
-    Part VIII preflight state — the two P37.16a families (SRC-001 OKC,
-    SRC-002 Tulsa) are recorded ``clear`` by the agent screen, disclosed
-    "cleared by agent screen, no human review"; the remaining families keep
-    the drafted ``screening_required`` preflight recorded by ``agent
-    (draft)`` — a flagless screen, since the draft found no unremediable
-    excluded category. Their B-42 clears land at P37.16b."""
+    Part VIII preflight state — all eight selected candidates are recorded
+    ``clear`` by the agent screen (P37.16a: SRC-001/002; P37.16b: SRC-003/
+    004/005 san-diego + SRC-006/007/011 pilot), disclosed "cleared by agent
+    screen, no human review"; the drafted ``agent (draft)`` screens stay in
+    PART_VIII_SCREENS.json — the screens artifact never claims the clear."""
     selected = {cid for f in select_batch(entries).families for cid in f.candidate_ids}
     assert selected == {
         "SRC-001",
@@ -482,15 +481,11 @@ def test_five_families_carry_drafted_screens(entries):
     }
     for e in entries:
         cid = e.passport.candidate_id
-        if cid in ("SRC-001", "SRC-002"):
-            # P37.16a: the B-42 agent clear, recorded + disclosed.
+        if cid in selected:
+            # P37.16a/b: the B-42 agent clear, recorded + disclosed.
             assert e.passport.preflight.status == PreflightStatus.CLEAR
             assert not e.passport.preflight.flags
             assert "cleared by agent screen, no human review" in e.passport.preflight.notes
-        elif cid in selected:
-            assert e.passport.preflight.status == PreflightStatus.SCREENING_REQUIRED
-            assert not e.passport.preflight.flags
-            assert "agent (draft)" in e.passport.preflight.notes
     # A FLAGGED screening_required still sits outside the batch entirely.
     for cid in ("SRC-024", "SRC-025"):
         assert cid not in selected

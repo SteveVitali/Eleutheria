@@ -1,0 +1,109 @@
+{
+  "authority": "E4-B2 / B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z, decision_catalog round 18; ADR-185 §2)",
+  "candidates": [
+    "SRC-003",
+    "SRC-004",
+    "SRC-005"
+  ],
+  "controls_verified": true,
+  "deferral": "D-P32.20-1",
+  "disclosure": "cleared by agent screen, no human review",
+  "draft": {
+    "screened_on": "2026-10-07",
+    "screener": "agent (draft)",
+    "source": "docs/build/reports/acquisition/PART_VIII_SCREENS.json",
+    "status": "screening_required"
+  },
+  "family": "san-diego-municipal",
+  "lanes": [
+    {
+      "drafted": "S5 officer names (§43.4 naming gate stands)",
+      "enforced": true,
+      "enforcement": "the §43.4 naming gate — connectors.okc_documents.assert_person_naming_permitted runs on every claim; a person-named predicate is refused by default (SIG-PUB-007/008 stands; names suppressed, never emitted)"
+    },
+    {
+      "drafted": "S6 free-text excerpts",
+      "enforced": true,
+      "enforcement": "the SIG-PUB-014a excerpt screen — connectors.okc_documents.assert_part_viii_safe scans every predicate id and verbatim raw value for the forbidden-token set before any claim is built; facts only, no free-text carry-through"
+    },
+    {
+      "drafted": "S7 incidental private names",
+      "enforced": true,
+      "enforcement": "extraction-time suppression — the reviewed field maps emit configured fields only (no free-text carry-through), and the forbidden-token guard + naming gate refuse anything person-level that reaches claim build"
+    },
+    {
+      "drafted": "S9 row-specific — Ubicquia signature blocks name persons; suppressed at extraction",
+      "enforced": true,
+      "enforcement": "the row's own screen — person-named fields are configured present_but_empty/absent or omitted from the field map, and the naming gate + forbidden-token guard refuse any that reach emit"
+    }
+  ],
+  "note": "the Part VIII sign-off this family's capture run requires (E4-B2 → B-42 'Agent clears, disclosed'): the agent screened the family's drafted lanes against their mechanical enforcements and cleared it — 'cleared by agent screen, no human review' is the honest label every readout carries",
+  "queue_preflight": {
+    "SRC-003": {
+      "disclosure": "cleared by agent screen, no human review",
+      "notes": "B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z; ADR-185 §2): cleared 2026-11-08 by the P37.16b agent screen — lanes S5 (officer names → the §43.4 naming gate stands), S6 (free-text excerpts → SIG-PUB-014a screen), S7 (incidental private names → extraction-time suppression) are enforced mechanically at claim build (the naming gate + the forbidden-token guard); 'cleared by agent screen, no human review'; record: docs/build/reports/p32.20-san-diego-dossier/PART_VIII_CLEAR.json",
+      "status": "clear"
+    },
+    "SRC-004": {
+      "disclosure": "cleared by agent screen, no human review",
+      "notes": "B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z; ADR-185 §2): cleared 2026-11-08 by the P37.16b agent screen — lanes S6 (free-text excerpts → SIG-PUB-014a screen), S7 (incidental private names → extraction-time suppression), S9 (Ubicquia signature blocks name persons → suppressed at extraction; the §43.4 naming gate on any officer/person name) are enforced mechanically at claim build (the naming gate + the forbidden-token guard); 'cleared by agent screen, no human review'; record: docs/build/reports/p32.20-san-diego-dossier/PART_VIII_CLEAR.json",
+      "status": "clear"
+    },
+    "SRC-005": {
+      "disclosure": "cleared by agent screen, no human review",
+      "notes": "B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z; ADR-185 §2): cleared 2026-11-08 by the P37.16b agent screen — lanes S5 (officer names → the §43.4 naming gate stands), S6 (free-text excerpts → SIG-PUB-014a screen), S7 (incidental private names → extraction-time suppression) are enforced mechanically at claim build (the naming gate + the forbidden-token guard); 'cleared by agent screen, no human review'; record: docs/build/reports/p32.20-san-diego-dossier/PART_VIII_CLEAR.json",
+      "status": "clear"
+    }
+  },
+  "schema": "sig.part-viii-clear/1",
+  "screened_on": "2026-11-08",
+  "screener": "agent",
+  "status": "clear",
+  "targets": [
+    {
+      "doc_id": "sd-asr-2025-vigilant",
+      "source_id": "dossier_san_diego",
+      "url": "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf"
+    },
+    {
+      "doc_id": "sd-ubicquia-agreement-2023",
+      "source_id": "dossier_san_diego",
+      "url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf"
+    },
+    {
+      "doc_id": "sd-technology-index",
+      "source_id": "dossier_san_diego",
+      "url": "https://www.sandiego.gov/police/data-transparency/technology"
+    },
+    {
+      "doc_id": "sd-pab-index",
+      "source_id": "dossier_san_diego",
+      "url": "https://www.sandiego.gov/pab/reports"
+    },
+    {
+      "doc_id": "sd-alpr-program-page",
+      "source_id": "dossier_san_diego",
+      "url": "https://www.sandiego.gov/police/data-transparency/technology?tech=alpr"
+    },
+    {
+      "doc_id": "sd-alpr-use-policy",
+      "source_id": "dossier_san_diego",
+      "url": "https://www.sandiego.gov/sites/default/files/alpr-use-policy.pdf"
+    },
+    {
+      "doc_id": "sd-pab-recommendation-2025",
+      "source_id": "dossier_san_diego",
+      "url": "https://www.sandiego.gov/sites/default/files/pab-final-recommendation-alpr-2025.pdf"
+    },
+    {
+      "doc_id": "sd-council-memo-2025-12-10",
+      "source_id": "dossier_san_diego",
+      "url": "https://www.sandiego.gov/city-clerk/officialdocs/council-documents"
+    },
+    {
+      "doc_id": "sd-network-audit-links",
+      "source_id": "dossier_san_diego",
+      "url": "https://www.sandiego.gov/police/data-transparency/technology?tech=alpr"
+    }
+  ]
+}

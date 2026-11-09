@@ -2,6 +2,8 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-EPIS-024 | `implementation` | `MET` | 2026-10-06 | — |
+| SIG-EPIS-026 | `implementation` | `MET` | 2026-10-06 | — |
 | SIG-EPIS-027 | `implementation` | `MET` | 2026-10-06 | — |
 | SIG-EPIS-029 | `hosted` | `PARTIAL` | 2026-10-01 | — |
 | SIG-EVAL-001 | `public` | `PARTIAL` | 2026-10-01 | — |
@@ -120,7 +122,5 @@
 | SIG-OPS-004 | `hosted` | `MISSING` | 2026-10-01 | — |
 | SIG-OPS-004 | `hosted` | `PARTIAL` | 2026-10-02 | SIG-OPS-004:r11-1 |
 | SIG-OPS-005 | `hosted` | `MISSING` | 2026-10-01 | — |
-| SIG-OPS-006 | `hosted` | `MISSING` | 2026-10-01 | — |
-| SIG-OPS-007 | `hosted` | `MISSING` | 2026-10-01 | — |
 
 ← back: CURRENT.md · next page: coverage-3.md

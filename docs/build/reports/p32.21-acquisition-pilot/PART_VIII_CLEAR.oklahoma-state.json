@@ -1,0 +1,68 @@
+{
+  "authority": "E4-B2 / B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z, decision_catalog round 18; ADR-185 §2)",
+  "candidates": [
+    "SRC-006",
+    "SRC-007"
+  ],
+  "controls_verified": true,
+  "deferral": "D-P32.21-1",
+  "disclosure": "cleared by agent screen, no human review",
+  "draft": {
+    "screened_on": "2026-10-07",
+    "screener": "agent (draft)",
+    "source": "docs/build/reports/acquisition/PART_VIII_SCREENS.json",
+    "status": "screening_required"
+  },
+  "family": "oklahoma-state",
+  "lanes": [
+    {
+      "drafted": "S6 free-text excerpts",
+      "enforced": true,
+      "enforcement": "the SIG-PUB-014a excerpt screen — connectors.okc_documents.assert_part_viii_safe scans every predicate id and verbatim raw value for the forbidden-token set before any claim is built; facts only, no free-text carry-through"
+    },
+    {
+      "drafted": "S7 incidental private names",
+      "enforced": true,
+      "enforcement": "extraction-time suppression — the reviewed field maps emit configured fields only (no free-text carry-through), and the forbidden-token guard + naming gate refuse anything person-level that reaches claim build"
+    }
+  ],
+  "note": "the Part VIII sign-off this family's capture run requires (E4-B2 → B-42 'Agent clears, disclosed'): the agent screened the family's drafted lanes against their mechanical enforcements and cleared it — 'cleared by agent screen, no human review' is the honest label every readout carries",
+  "queue_preflight": {
+    "SRC-006": {
+      "disclosure": "cleared by agent screen, no human review",
+      "notes": "B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z; ADR-185 §2): cleared 2026-11-08 by the P37.16b agent screen — lanes S6 (free-text excerpts → SIG-PUB-014a screen), S7 (incidental private names → extraction-time suppression) are enforced mechanically at claim build (the §43.4 naming gate + the forbidden-token guard); 'cleared by agent screen, no human review'; record: docs/build/reports/p32.21-acquisition-pilot/PART_VIII_CLEAR.oklahoma-state.json",
+      "status": "clear"
+    },
+    "SRC-007": {
+      "disclosure": "cleared by agent screen, no human review",
+      "notes": "B-42 'Agent clears, disclosed' (operator answer 2026-10-01T04:51:39Z; ADR-185 §2): cleared 2026-11-08 by the P37.16b agent screen — lanes S6 (free-text excerpts → SIG-PUB-014a screen), S7 (incidental staff/private names → extraction-time suppression) are enforced mechanically at claim build (the §43.4 naming gate + the forbidden-token guard); 'cleared by agent screen, no human review'; record: docs/build/reports/p32.21-acquisition-pilot/PART_VIII_CLEAR.oklahoma-state.json",
+      "status": "clear"
+    }
+  },
+  "schema": "sig.part-viii-clear/1",
+  "screened_on": "2026-11-08",
+  "screener": "agent",
+  "status": "clear",
+  "targets": [
+    {
+      "doc_id": "src-007-target-1",
+      "source_id": "ok_dac_uved",
+      "url": "https://oklahoma.gov/dac/about/staff/about-the-uved-program.html"
+    },
+    {
+      "doc_id": "src-007-target-2",
+      "source_id": "ok_statute",
+      "url": "https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582"
+    },
+    {
+      "doc_id": "src-006-target-1",
+      "source_id": "ok_omes_contracts",
+      "url": "https://oklahoma.gov/omes/divisions/central-purchasing/agency-resources/statewide-contracts.html"
+    },
+    {
+      "doc_id": "src-006-target-2",
+      "source_id": "ok_omes_contracts",
+      "url": "https://oklahoma.gov/omes/services/purchasing/solicitations/0900000569.html"
+    }
+  ]
+}
