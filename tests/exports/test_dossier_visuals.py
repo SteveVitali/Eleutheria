@@ -12,8 +12,9 @@ The placement-bound export emits, per D-K4-3 page:
   (SIG-UI-134 / DV12);
 * the published ``figures[]`` metadata twin on each ``sig.dossier/2`` (id,
   caption, desc counts, links, rule — NO geometry, K6 §9.2);
-* ``web/map/coverage_by_jurisdiction.json`` in its soft ``rule-pending@1``
-  posture with the K6 §5.1 verbatim legend;
+* ``web/map/coverage_by_jurisdiction.json`` under the real
+  ``declared-scope@1`` rule (D-K1-4 = yes, ADR-241 — P37.17 replaced the
+  soft ``rule-pending@1`` posture);
 * the ``sig.locator-symbols/1`` sheet + index and the country/admin-1
   standalone SVG downloads (D-K6-5);
 * the ``sig.dossier-visuals-index/1`` size/time report.
@@ -117,13 +118,18 @@ def test_map_figure_shape_and_honesty_counters(export) -> None:
     # DV12: no per-area numeric leak — no data-*, no per-area <title>.
     assert "data-" not in svg
     assert "<script" not in svg
-    # The children layer: US states — all rule_pending (D-K1-4 soft posture).
+    # The children layer: US states — the real declared-scope@1 rule
+    # (D-K1-4 = yes, ADR-241; the P35.x `rule_pending` soft posture is gone):
+    # a source's declared scope covers the child jkey and its descendants.
     kids = {c["jkey"]: c for c in usa["children"]}
     assert "us.census.geoid.county:06037" not in kids  # counties are grandchildren
-    assert kids["iso3166-2:US-CA"]["coverage"] == "rule_pending"
+    assert kids["iso3166-2:US-CA"]["coverage"] == "covered"
     assert kids["iso3166-2:US-CA"]["href"] == "/dossier/usa/ca/"
     # A state with no dossier page draws outline-only (no link).
     assert kids["iso3166-2:US-KS"]["href"] is None
+    # The rule honestly distinguishes "looked" from "not looked": the
+    # fixture's registry declares no scope covering Kansas.
+    assert kids["iso3166-2:US-KS"]["coverage"] == "not_covered"
 
 
 @_needs_duckdb
@@ -169,7 +175,7 @@ def test_county_children_via_containment(export) -> None:
     county = _visuals(export)["usa/ca/verdin-county-06037"]["map"]
     kids = {c["jkey"]: c for c in county["children"]}
     assert set(kids) == {"us.census.geoid.place:0644000"}  # Verdin city only
-    assert kids["us.census.geoid.place:0644000"]["coverage"] == "rule_pending"
+    assert kids["us.census.geoid.place:0644000"]["coverage"] == "covered"
     # Below the D-K4-3 page threshold → outline drawn, no drill-down link.
     assert kids["us.census.geoid.place:0644000"]["href"] is None
 
@@ -196,26 +202,37 @@ def test_locator_geometry_and_symbols(export) -> None:
 
 
 @_needs_duckdb
-def test_coverage_layer_is_soft_rule_pending(export) -> None:
+def test_coverage_layer_is_declared_scope(export) -> None:
+    """The real ``declared-scope@1`` coverage table (D-K1-4 = yes, ADR-241 —
+    P37.17 replaced the soft ``rule-pending@1`` emission)."""
     cov = json.loads(export.web_artifacts["web/map/coverage_by_jurisdiction.json"])
     assert cov["schema"] == "sig.jurisdiction-coverage/1"
-    assert cov["rule_version"] == "rule-pending@1"
-    assert cov["pending"] is True
-    assert cov["legend"] == ("Where SIG has looked: rule pending — hollow areas rest on one source")
+    assert cov["rule_version"] == "declared-scope@1"
+    assert cov["rule_decision"] == "D-K1-4"
+    assert cov["pending"] is False
+    assert cov["legend"] == (
+        "Where SIG has looked: a source counts where it declares coverage; "
+        "global crowdsourced sources (OSM, DeFlock) are listed but do not count"
+    )
+    # The corroboration legend names the L3 CONF-07b gap honestly (UXR-14).
+    assert cov["corroboration_legend"] == ("2+ source records; republications not yet collapsed")
     rows = cov["jurisdictions"]
-    assert set(rows) == {
-        "iso3166-1:US",
-        "iso3166-2:US-CA",
-        "iso3166-2:US-FL",
-        "us.census.geoid.county:06037",
-        "iso3166-1:GB",
-        "iso3166-1:ID",
-    }
+    # Declared scope covers a jkey and its descendants — the fixture's
+    # declared CA scope covers the state, the county and Verdin city.
+    assert rows["iso3166-2:US-CA"]["coverage"] == "covered"
+    assert rows["us.census.geoid.county:06037"]["coverage"] == "covered"
+    assert rows["us.census.geoid.place:0644000"]["coverage"] == "covered"
+    # Nothing declares Kansas or Indonesia — honestly "not looked".
+    assert rows["iso3166-2:US-KS"]["coverage"] == "not_covered"
+    assert rows["iso3166-1:ID"]["coverage"] == "not_covered"
     for row in rows.values():
-        assert row["coverage"] == "rule_pending"
-        assert row["basis"] == "records_present"
-        assert isinstance(row["sources"], list) and row["sources"]
+        assert row["coverage"] in ("covered", "not_covered")
+        assert row["basis"] == "declared_scope"
+        assert isinstance(row["observed_sources"], list)
+        assert isinstance(row["sources"], list)
         assert isinstance(row["technologies"], list)
+        # Crowdsourced/scope-less sources are listed, never counted (D-K1-4 (b)).
+        assert isinstance(row["global_sources_not_counted"], list)
 
 
 @_needs_duckdb
@@ -295,10 +312,11 @@ def test_no_placement_no_visuals() -> None:
 
 
 @_needs_duckdb
-def test_spec_children_are_all_rule_pending(export) -> None:
-    """Every emitted child in every figure is rule_pending — the soft layer
-    never asserts a covered/not-covered verdict (D-K1-4)."""
+def test_spec_children_all_carry_a_real_coverage_verdict(export) -> None:
+    """Every emitted child in every figure carries a closed-vocabulary
+    ``declared-scope@1`` verdict — ``covered``/``not_covered``, never the
+    retired soft ``rule_pending`` placeholder (D-K1-4 = yes, ADR-241)."""
     for doc in _visuals(export).values():
         m = doc["map"]
         for child in m.get("children", []):
-            assert child["coverage"] == "rule_pending"
+            assert child["coverage"] in ("covered", "not_covered")

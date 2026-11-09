@@ -244,6 +244,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-238](ADR-238-keyed-au-traffic-camera-apis-geojson-declared-contracts.md) | Keyed AU traffic-camera lanes: declared-contract GeoJSON kinds and the QLDTraffic supersession (P37.70) | P37.70 (Round 11 / P37, row 434 — the named home of D-SOURCES.8-2's | accepted |
 | [ADR-239](ADR-239-data-library-roster-and-recurring-discovery-sweep.md) | The §22.7 Data Library roster artifact and the recurring discovery sweep (P37.13) | P37.13 (Round 11 / P37, row 435 — F2a group 12; SIG-INGEST-041 + SIG-INGEST-048) | accepted |
 | [ADR-240](ADR-240-statute-seeded-records-leads.md) | Statute-seeded records leads: the mandate→gap generator, the one-time auditor-survey artifact, and the LegalInstrument session/text publish gate (P37.14) | P37.14 (Round 11 / P37, row 436 — F2a group 11 / R11-SRC-05; | accepted |
+| [ADR-241](ADR-241-tile-properties-v2-map-dictionary-and-declared-scope-coverage.md) | Tile properties v2, the `sig.map-dict/1` dictionary, and the declared-scope coverage rule | P37.17 (Round 11 / P37, row 440; SIG-GEO-014, SIG-UI-099) | accepted |
 
 ## Notes
 

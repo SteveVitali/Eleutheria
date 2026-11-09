@@ -58,6 +58,7 @@ from .tiles import (
     TILE_SIZE_LIMIT_BYTES,
     TILE_SIZE_WARN_BYTES,
     TileSizeLimitExceeded,
+    _merged_records,
     _unproject_xy,
     check_tile_sizes,
     map_tile_geojson,
@@ -273,7 +274,6 @@ def _expected(source_geojson: bytes, compartment: str) -> dict[str, object]:
         coords = geom.get("coordinates")
         if not isinstance(coords, (list, tuple)) or len(coords) < 2:
             continue
-        located += 1
         rk = record_key(
             compartment,
             str(props.get("entity_type") or "(unknown)"),
@@ -288,6 +288,10 @@ def _expected(source_geojson: bytes, compartment: str) -> dict[str, object]:
         if tier in SITE_MINZOOM_BY_TIER:
             for z in range(SITE_MINZOOM_BY_TIER[tier], 15):
                 per_zoom_rks[z].add(rk)
+    # P37.17: ``n`` counts merged (record, position) units — slice rows of one
+    # record sharing a point count once; a record at two honest positions
+    # counts twice. The conservation expectation is the emit's own merge.
+    located = len(_merged_records(src_feats, compartment))
     return {
         "located": located,
         "per_zoom_rks": per_zoom_rks,
