@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "42271ed1bbe8d4e538c47a472085de0d868a4ef3",
+  "input_commit": "1feebadca4894741d80ad6dcd3922f937fbb98d9",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -982,7 +982,7 @@
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "0fb21b565c2bcdbfd55e0c56c95e35dd7070f82fa58a3daa45ccf2ac21ac31f2"
+      "sha256": "f86b727d6a64d13449e902c664c8996631eadbfffad0189487f5ec4d6ae99860"
     },
     {
       "path": "docs/build/LEDGER.md",
@@ -1066,7 +1066,7 @@
     },
     {
       "path": "docs/build/reports/obligations/coverage_assessments.jsonl",
-      "sha256": "0dc5bcbfcdd2b2825d8d865aedf9cce0eb3ccdcbd855dc9ab0d8444c410db3ac"
+      "sha256": "ed80b79544680fe808f37291e517370146f85e5131beccc079d6b6462648cf3c"
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
