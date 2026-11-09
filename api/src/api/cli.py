@@ -155,7 +155,9 @@ def _serve(
     release_search = None
     release_serving = None
     release_search_v2 = None
+    release_bbox = None
     if release_registry:
+        from .release_bbox import ReleaseBboxStore
         from .release_search import ReleaseSearchStore
         from .release_search_v2 import ReleaseSearchV2Store
         from .release_serving import ReleaseServingStore
@@ -165,6 +167,9 @@ def _serve(
         # P36.38: the federated v2 store — mounted only when the deploy env
         # arms it (SIG_API_SEARCH_V2=on; the OM-20 roll, D-P36.38-1).
         release_search_v2 = ReleaseSearchV2Store(release_registry)
+        # P37.20: the bbox site-list store — mounted only when the deploy
+        # env arms it (SIG_API_BBOX=on; the OM-20 roll, D-P37.20-1).
+        release_bbox = ReleaseBboxStore(release_registry)
     # P34.25 (A-20=a): the promoted release this service is pinned to, where one
     # exists — the live-spine basis label discloses it on every response; unset
     # answers "not pinned".
@@ -176,6 +181,7 @@ def _serve(
             release_id=release_id,
             release_serving=release_serving,
             release_search_v2=release_search_v2,
+            release_bbox=release_bbox,
         ),
         host=host,
         port=port,

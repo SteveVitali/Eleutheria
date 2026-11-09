@@ -30,6 +30,16 @@ release projection — never the live claim spine (SIG-UI-076):
   table (SIG-SRCH-005 — case-sensitive acronym expansions, never
   word-matched).
 
+P37.20 (K1 MAP-06) adds the release's spatial index to the per-compartment
+record index — the "R-tree in the per-release SQLite" the row names: a
+``site_points`` R-Tree keyed on ``record_seq`` holding one degenerate box
+per published point (the record's ``lat``/``lon`` at the published
+precision — the same coordinates the JSON twin and the map tiles publish,
+never a withheld pair) plus nullable ``lat``/``lon``/``point_precision``
+columns on ``records``. Rows without a public point stay indexed but carry
+no R-Tree entry, so a bbox answer never implies a location the record does
+not publish.
+
 The alias registry itself is DATA, not code: ``data/search_aliases.toml``
 (K3 §4.4 — reviewed like a registry row; only abbreviations and official
 alternate names; every alias shows its expansion and its cited source).
@@ -238,11 +248,21 @@ CREATE TABLE records (
   place_text TEXT NOT NULL,
   source_id TEXT NOT NULL,
   source_name TEXT NOT NULL,
-  technology TEXT NOT NULL
+  technology TEXT NOT NULL,
+  lat REAL,
+  lon REAL,
+  point_precision TEXT
 );
 CREATE VIRTUAL TABLE records_fts USING fts5(
   name, place, source, tokenize='porter unicode61 remove_diacritics 2',
   content=''
+);
+-- P37.20 (K1 MAP-06): the release's spatial index — one degenerate box per
+-- published point (lat/lon already at the published precision). A record
+-- without a public point has NO entry: a bbox answer never implies a
+-- location the record does not publish.
+CREATE VIRTUAL TABLE site_points USING rtree(
+  id, minX, maxX, minY, maxY
 );
 CREATE INDEX records_place ON records (place_key, name, record_key);
 CREATE INDEX records_source ON records (source_id, name, record_key);
@@ -367,12 +387,17 @@ def build_record_index_v2(
     ``records`` carries one mapping per eligible released record with keys
     ``record_key, entity_id, entity_type, label, jurisdiction, claim_ids``
     (+ optional ``label_basis``, ``place_text``, ``source_id``,
-    ``technology``). ``source_names``/``place_names`` map ids/keys to the
-    registry display strings; an unmapped id falls back to the id itself so
-    nothing is silently dropped. Writes ``out`` (the record index) and
-    ``claim_ref_out`` (defaults to ``claim_ref.sqlite`` beside ``out``).
-    Returns the ``sig.release-search-index/2`` descriptor with the sibling
-    file digests under ``files``.
+    ``technology``, ``lat``, ``lon``, ``precision``). ``source_names``/
+    ``place_names`` map ids/keys to the registry display strings; an
+    unmapped id falls back to the id itself so nothing is silently dropped.
+    A row carrying BOTH ``lat`` and ``lon`` (the published point, already at
+    the published precision — populated only when the record publishes a
+    resolved point, never a withheld one) gets a ``site_points`` R*Tree
+    entry keyed on its ``record_seq`` (P37.20 / K1 MAP-06). Writes ``out``
+    (the record index) and ``claim_ref_out`` (defaults to
+    ``claim_ref.sqlite`` beside ``out``). Returns the
+    ``sig.release-search-index/2`` descriptor with the sibling file digests
+    under ``files``.
     """
     rows = sorted(records, key=lambda r: str(r["record_key"]))
     # Same fail-closed gate as v1 (P35.66, SIG-PUB-011/013): refuse BEFORE
@@ -396,10 +421,16 @@ def build_record_index_v2(
         "application_id": APPLICATION_ID_V2,
         "name_rule": INTERIM_NAME_RULE,
         "identifier_normalization": "trim+casefold",
+        # P37.20 (K1 MAP-06): the release's spatial index — one rtree box
+        # per published point keyed on record_seq.
+        "spatial_index": "site_points (rtree id,minX,maxX,minY,maxY; id=record_seq)",
     }
     # The scope + inputs are computed BEFORE the meta rows are written —
     # the descriptor and the in-file meta table must agree byte-for-byte.
     claim_ids_seen = sum(len(row.get("claim_ids") or []) for row in rows)
+    located_records = sum(
+        1 for row in rows if row.get("lat") is not None and row.get("lon") is not None
+    )
     derived_names = 0
     name_plan: list[tuple[str, str]] = []
     for row in rows:
@@ -418,6 +449,7 @@ def build_record_index_v2(
             "indexed_records": len(rows),
             "eligible_records": len(rows),
             "derived_names": derived_names,
+            "located_records": located_records,
             "claim_refs": claim_ids_seen,
             "excluded_records_by_reason": {},
         },
@@ -444,11 +476,17 @@ def build_record_index_v2(
             place_key = str(row.get("jurisdiction") or row.get("place_key") or "unreported")
             place_text = str(row.get("place_text") or place_names.get(place_key) or place_key)
             tech = str(row.get("technology") or "")
+            lat_f: float | None = None
+            lon_f: float | None = None
+            if row.get("lat") is not None and row.get("lon") is not None:
+                lat_f = float(row["lat"])
+                lon_f = float(row["lon"])
+            point = lat_f is not None and lon_f is not None
             conn.execute(
                 "INSERT INTO records (record_seq, record_key, entity_id,"
                 " entity_type, name, name_basis, place_key, place_text,"
-                " source_id, source_name, technology)"
-                " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                " source_id, source_name, technology, lat, lon, point_precision)"
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 (
                     seq,
                     rk,
@@ -461,8 +499,17 @@ def build_record_index_v2(
                     src,
                     source_name,
                     tech,
+                    lat_f,
+                    lon_f,
+                    str(row.get("precision")) if point and row.get("precision") else None,
                 ),
             )
+            if point:
+                # One degenerate box per published point — lon on X, lat on Y.
+                conn.execute(
+                    "INSERT INTO site_points (id, minX, maxX, minY, maxY) VALUES (?,?,?,?,?)",
+                    (seq, lon_f, lon_f, lat_f, lat_f),
+                )
             conn.execute(
                 "INSERT INTO records_fts (rowid, name, place, source) VALUES (?,?,?,?)",
                 (seq, name, place_text, f"{source_name} {src}".strip()),

@@ -38,6 +38,7 @@ from .dereference import (
 from .models import HealthResponse, TermsResponse
 from .prohibitions import assert_no_prohibited_routes, route_paths
 from .rate_limit import RateLimitConfig, RateLimitMiddleware, TokenBucketLimiter
+from .release_bbox import KNOWN_PARAMS_BBOX, ReleaseBboxError, ReleaseBboxStore
 from .release_search import KNOWN_PARAMS, ReleaseSearchStore, render_search_html
 from .release_search_v2 import KNOWN_PARAMS_V2, ReleaseSearchV2Store
 from .release_serving import (
@@ -80,6 +81,8 @@ def create_app(
     rate_limit: RateLimitConfig | None = None,
     release_search_v2: ReleaseSearchV2Store | None = None,
     search_v2: str | None = None,
+    release_bbox: ReleaseBboxStore | None = None,
+    bbox: str | None = None,
 ) -> FastAPI:
     """Build the read-API app over ``store`` (SIG-API-001).
 
@@ -116,6 +119,16 @@ def create_app(
     roll) or ``on`` (the route serves). An unknown posture fails closed at
     construction. The roll enabling it on the deployment is never
     pre-authorised — the operator's explicit verbatim go (D-P36.38-1).
+
+    ``release_bbox`` is the release-pinned bbox site-list store (P37.20,
+    K1 MAP-06) over the same activated registry; ``bbox`` is its serving
+    posture — ``None`` reads the deploy env ``SIG_API_BBOX``: ``off``
+    (default — the ``/v1/releases/{pub or latest}/[compartments/{comp}/]sites``
+    routes are not mounted at all; the public response is identical to
+    before this code landed — the OM-20 dark-ship ahead of the operator's
+    roll) or ``on`` (the routes serve). An unknown posture fails closed at
+    construction. The roll enabling it is never pre-authorised — the
+    operator's explicit verbatim go (D-P37.20-1).
     """
     if release_serving is None and release_search is not None:
         release_serving = ReleaseServingStore(release_search.registry_root)
@@ -132,6 +145,7 @@ def create_app(
     app.state.release_search = release_search
     app.state.release_serving = release_serving
     app.state.release_search_v2 = release_search_v2
+    app.state.release_bbox = release_bbox
     app.state.basis_release_id = release_id
     app.include_router(build_router())
 
@@ -350,6 +364,131 @@ def create_app(
                 # status — never a raw JSON body.
                 return HTMLResponse(
                     rs2.render_search_error_html_v2(
+                        str(request.path_params.get("publication_id") or "latest"),
+                        exc,
+                    ),
+                    status_code=exc.status,
+                    headers=headers,
+                )
+            return JSONResponse(
+                status_code=exc.status,
+                content={"detail": exc.detail, "code": exc.code, **exc.extra},
+                headers=headers,
+            )
+
+    # --- /v1/releases/{pub or latest}/[compartments/{comp}/]sites — P37.20 ---
+    # K1 MAP-06: the release-pinned bbox site list over the verified
+    # sig.release-search-index/2 record indexes' site_points R*Tree —
+    # per-compartment JSON + cross-compartment grouped HTML, ≤ 100 rows per
+    # page. Ships DARK — the routes mount only under SIG_API_BBOX=on (the
+    # OM-20 roll is the operator's verbatim go, D-P37.20-1); off mounts
+    # nothing and the answer is the same 404 the route gave before this
+    # code landed. No query logging (SIG-SRCH-012).
+    from . import release_bbox as rb
+
+    if (bbox or rb.bbox_posture(os.environ)) == "on":
+
+        def _sites_answer(
+            request: Request,
+            publication_id: str,
+            compartment: str | None,
+            bbox: str | None,
+            page: str | None,
+            format: str | None,
+        ) -> Response:
+            _mark_release_basis(
+                request,
+                publication_id if PUBLICATION_RE.match(publication_id) else None,
+            )
+            store: ReleaseBboxStore | None = request.app.state.release_bbox
+            if store is None:
+                raise ReleaseBboxError(
+                    503,
+                    "release_bbox_unconfigured",
+                    "release-pinned bbox serving is not configured on this service",
+                )
+            if format is not None and format not in ("json", "html"):
+                raise ReleaseBboxError(
+                    422,
+                    "unsupported_query",
+                    f"format must be json or html; got {format!r}",
+                )
+            unknown = sorted(set(request.query_params.keys()) - KNOWN_PARAMS_BBOX)
+            if unknown:
+                raise ReleaseBboxError(
+                    422,
+                    "unsupported_query",
+                    f"unsupported query parameters: {', '.join(unknown)}",
+                )
+            spans = rb.parse_bbox(bbox)
+            page_num = rb.parse_page(page)
+            result, pub, was_latest = store.sites(
+                publication_id, compartment, spans, page_num, str(bbox)
+            )
+            _mark_release_basis(request, pub)
+            if rb.wants_html(request):
+                view = result
+                if compartment is not None:
+                    # The grouped page renders the one requested group —
+                    # same payload shape as the cross-compartment answer.
+                    view = {
+                        **result,
+                        "groups": [
+                            {
+                                "compartment": compartment,
+                                "license": str(result.get("license") or ""),
+                                "matched": (result.get("scope") or {}).get("matched", 0),
+                                "results": result.get("results") or [],
+                            }
+                        ],
+                    }
+                return HTMLResponse(
+                    rb.render_sites_html(
+                        store,
+                        publication_id,
+                        str(bbox),
+                        page_num,
+                        view,
+                        pub,
+                        was_latest,
+                    ),
+                    headers={"Cache-Control": rb.cache_control(was_latest)},
+                )
+            return JSONResponse(
+                result,
+                headers={"Cache-Control": rb.cache_control(was_latest)},
+            )
+
+        @app.get("/v1/releases/{publication_id}/compartments/{compartment}/sites")
+        def released_sites_compartment(
+            request: Request,
+            publication_id: str,
+            compartment: str,
+            bbox: str | None = Query(default=None),
+            page: str | None = Query(default=None),
+            format: str | None = Query(default=None),
+        ) -> Response:
+            return _sites_answer(request, publication_id, compartment, bbox, page, format)
+
+        @app.get("/v1/releases/{publication_id}/sites")
+        def released_sites(
+            request: Request,
+            publication_id: str,
+            bbox: str | None = Query(default=None),
+            page: str | None = Query(default=None),
+            format: str | None = Query(default=None),
+        ) -> Response:
+            return _sites_answer(request, publication_id, None, bbox, page, format)
+
+        @app.exception_handler(ReleaseBboxError)
+        def _bbox_error(request: Request, exc: ReleaseBboxError) -> Response:
+            _mark_release_basis(request, str(request.path_params.get("publication_id") or ""))
+            headers = {"Retry-After": "5"} if exc.status == 503 else None
+            if rb.wants_html(request):
+                # DR-C4-10: an HTML client gets an HTML page for every error
+                # status — never a raw JSON body.
+                return HTMLResponse(
+                    rb.render_sites_error_html(
                         str(request.path_params.get("publication_id") or "latest"),
                         exc,
                     ),

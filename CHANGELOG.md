@@ -24,6 +24,24 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.20 — Release-pinned bbox API (K1 MAP-06):** the per-compartment
+  `sig.release-search-index/2` record index gains the release's spatial
+  index — a `site_points` R*Tree keyed on `record_seq` plus `lat`/`lon`/
+  `point_precision` columns, one degenerate box per published point at the
+  published precision (a withheld or unresolved pair can never reach it).
+  Two release-namespaced routes ship dark behind `SIG_API_BBOX` (default
+  `off` mounts nothing — the deploy flip is the operator's verbatim go,
+  never pre-authorised; queued `prepared_not_executed` as D-P37.20-1 with
+  the `ops/gcp/bbox-api-roll.sh` check/apply/verify runner and the
+  `reports/p37.20-bbox-api-roll/` packet):
+  `GET /v1/releases/{pub or latest}/compartments/{comp}/sites?bbox=&page=`
+  (per-compartment JSON, ≤ 100 rows per page, derived labels) and
+  `GET /v1/releases/{pub or latest}/sites` (the cross-compartment grouped
+  answer — `format=html` or a browser Accept selects the zero-JS grouped
+  page with per-group licence lines). Verify-and-copy serving, `latest`
+  via the conf-gen pointer, the access-time withdrawal barrier with
+  scope-count denials, antimeridian `bbox` splits, the 2 s query budget,
+  immutable/mutable cache headers, no query logging.
 - **P37.19 — Map place search (K1 MAP-04; OD-09 [B-23] = a Natural Earth;
   D-K1-7 [B-44] = yes carried via P37.72; SIG-GOV-017 cited):** the `/map/`
   place box is the same `<sig-typeahead>` over the same release-pinned
