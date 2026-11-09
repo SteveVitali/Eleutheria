@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "540dcebfdfbe8b596001162194f23ac76bd1a164",
+  "input_commit": "6a18374768c22a37dafc9c7d04e0110e5f52efb5",
   "manifest_inputs": 1239,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -14515,7 +14515,7 @@
         },
         "SIG-IDENT-030": {
           "verdict": "MET",
-          "evidence": "web/src/pages/network.astro;web/src/lib/map-network-fixture.ts;exports/src/exports/analytics.py;web/tests/unit/network.test.ts",
+          "evidence": "web/src/pages/explore/index.astro;web/src/lib/map-network-fixture.ts;exports/src/exports/analytics.py;web/tests/unit/network.test.ts",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -16915,19 +16915,19 @@
         },
         "SIG-UI-022": {
           "verdict": "WAIVED(ADR-190)",
-          "evidence": "web/tests/unit/network.test.ts:6;web/src/pages/network.astro:59",
+          "evidence": "web/tests/unit/network.test.ts:6;web/src/pages/explore/index.astro",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-023": {
           "verdict": "MET",
-          "evidence": "web/tests/unit/network.test.ts:6;web/src/pages/network.astro:116",
+          "evidence": "web/tests/unit/network.test.ts:6;web/src/pages/explore/index.astro",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-024": {
           "verdict": "MET",
-          "evidence": "web/tests/unit/network.test.ts:6;web/src/pages/network.astro:133",
+          "evidence": "web/tests/unit/network.test.ts:6;web/src/pages/explore/index.astro",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17023,7 +17023,7 @@
         },
         "SIG-UI-037": {
           "verdict": "MET",
-          "evidence": "web/tests/e2e/corrections-methodology.nojs.spec.ts:8;web/src/pages/network.astro:10",
+          "evidence": "web/tests/e2e/corrections-methodology.nojs.spec.ts:8;web/src/pages/explore/index.astro",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17131,7 +17131,7 @@
         },
         "SIG-UI-050": {
           "verdict": "MET",
-          "evidence": "web/astro.config.mjs;web/src/islands/MapIsland.tsx;web/src/islands/NetworkIsland.tsx;web/src/islands/SearchIsland.tsx;web/lighthouserc.json",
+          "evidence": "web/astro.config.mjs;web/src/islands/MapIsland.tsx;web/src/islands/ExploreIsland.tsx;web/src/islands/SearchIsland.tsx;web/lighthouserc.json",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17293,13 +17293,13 @@
         },
         "SIG-FIND-004": {
           "verdict": "MET",
-          "evidence": "web/src/islands/map/workspace.ts:1;web/src/islands/workspace.ts:1;web/src/islands/SearchIsland.tsx:1;web/src/islands/MapIsland.tsx:1;web/src/islands/NetworkIsland.tsx:1;web/src/components/ViewSwitch.astro:1;web/src/pages/search.astro:1;web/src/pages/map.astro:1;web/src/pages/network.astro:1;web/src/lib/network.ts:1;web/src/lib/map.ts:1",
+          "evidence": "web/src/islands/map/workspace.ts;web/src/islands/map/workspace.ts;web/src/islands/SearchIsland.tsx:1;web/src/islands/MapIsland.tsx:1;web/src/islands/ExploreIsland.tsx;web/src/components/ViewSwitch.astro:1;web/src/pages/search.astro:1;web/src/pages/map.astro:1;web/src/pages/explore/index.astro;web/src/lib/network.ts:1;web/src/lib/map.ts:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-FIND-005": {
           "verdict": "MET",
-          "evidence": "web/src/lib/network.ts:1;exports/src/exports/spine_export.py:1;web/src/islands/NetworkIsland.tsx:1;web/src/pages/network.astro:1;web/src/islands/MapIsland.tsx:1;web/lighthouserc.json:1;web/tests/e2e/page-budgets.json:1;web/scripts/measure-page-budgets.mjs:1",
+          "evidence": "web/src/lib/network.ts:1;exports/src/exports/spine_export.py:1;web/src/islands/ExploreIsland.tsx;web/src/pages/explore/index.astro;web/src/islands/MapIsland.tsx:1;web/lighthouserc.json:1;web/tests/e2e/page-budgets.json:1;web/scripts/measure-page-budgets.mjs:1",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -18049,7 +18049,7 @@
         },
         "SIG-UI-060": {
           "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
-          "evidence": "web/src/lib/workspace-state/conformance.ts;web/src/islands/MapIsland.tsx;web/src/islands/NetworkIsland.tsx;web/src/islands/SearchIsland.tsx;docs/build/runs/P36.21.md",
+          "evidence": "web/src/lib/workspace-state/conformance.ts;web/src/islands/MapIsland.tsx;web/src/islands/ExploreIsland.tsx;web/src/islands/SearchIsland.tsx;docs/build/runs/P36.21.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -18247,7 +18247,7 @@
         },
         "SIG-UI-093": {
           "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
-          "evidence": "web/src/lib/workspace-state/state.ts;web/src/islands/workspace.ts;docs/build/runs/P36.21.md",
+          "evidence": "web/src/lib/workspace-state/state.ts;web/src/islands/map/workspace.ts;docs/build/runs/P36.21.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -27198,7 +27198,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "3a5acb955afe1d5045a28251c24ee5c8e7fcd03586407b60da0575658a2f1617",
+  "manifest_sha256": "a86bef0c9a4b72638993a654be893a8b19cc020192163be34b8c14191a611876",
   "current_md": {
     "lines": 150,
     "bytes": 19850,
