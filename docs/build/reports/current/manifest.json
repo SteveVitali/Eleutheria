@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "63a4179517e1e2b48d5a4a928614beb198ce9c0a",
+  "input_commit": "540dcebfdfbe8b596001162194f23ac76bd1a164",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "933859cf39431e54acf305934a29136c280964d7fa2efe4b68477e94bfd957f7"
+      "sha256": "1b827e35898845736024ca95443b702eabc6c594177d949a916ac3cfe71a29a0"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -969,12 +969,16 @@
       "sha256": "251d6bd9fc393dbbcae4fd49fe85212c7faf9e89c1ab9f631b2bcdecffab0668"
     },
     {
+      "path": "docs/adr/ADR-242-explore-graph-explorer-preact-sigma-runtime-and-network-301.md",
+      "sha256": "bbb1da71e62e45b9e2d15a510f82d36ca6bf96c19a1658caa74df1e59f08977b"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "e6494479b58d1f00c935da4f30b7fe439ae35c1f6f3060e5949f4519e50c16e3"
+      "sha256": "e176397bc16d78f8dd049c8dbef9682ba377c41bccb7a148d705ce797739c563"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "347bf19b6461678b6272e1e83239c84cb4f117aa07d335de496923780ed320e5"
+      "sha256": "52147403d3dd5658b216bb577af112fb872b3aca113226a9a2116a346fd496e5"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -2751,6 +2755,10 @@
     {
       "path": "docs/build/runs/P37.25.md",
       "sha256": "80e6a96ba3f7db33bf6010e8941aa27587be2f9a42295fc1cab6f08d70e74ac1"
+    },
+    {
+      "path": "docs/build/runs/P37.26.md",
+      "sha256": "1f5cddecf459101ea2976cda5ffb51b9741bf42ca368ba96a5a3cf9ffa336ecc"
     },
     {
       "path": "docs/build/runs/P37.3.md",
