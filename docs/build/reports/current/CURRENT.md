@@ -4,11 +4,11 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `26efdbd51f78088990b98f723ebf88b9c5f5b1f8` · inputs hashed: 1235 · wall-clock receipt: `receipt.json`
+> input_commit: `d1a6d50cdefb8269f83269cceeb4ada487e60835` · inputs hashed: 1235 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.23` · lastCompleted `P37.22`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.24` · lastCompleted `P37.23`
 - chainTip `r11/P37.22-entity-data-contract-b` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-09T06:11Z`
 
 ## Obligations
