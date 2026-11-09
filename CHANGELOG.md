@@ -51,6 +51,26 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   absence kept when a section has no evidenced content — still T1, no new
   script.
 
+- **P37.23 — Entity pages B (K2 GX-06b, §4.2 rows 1–14 + the print rule):**
+  the second wave of entity-page surfaces over the contract-B record kinds.
+  Fixture twins now cover a `contract` (procurement record — buyer/seller
+  relations to the wave-A entities, stated posted/signed dates, an envelope
+  conflict on the contract value, the recorded place) and a `policy`
+  (legal instrument — the adopted-by inbound relation, stated ordinance
+  dates, the typed "location not recorded" map posture), so the 06a
+  template, the 06b figure companions (ego SVG, timeline strip, map
+  snippet) and the T0 print route exercise the record wave end to end. The
+  ego composition maps record kinds onto the kit's closed node vocabulary —
+  `bill`/`policy` draw as `instrument`, `notice`/`contract`/`grant`/`event`
+  as the honest generic `entity` (SIG-UI-131). The three named downloads
+  (`relationships.<comp>.json`/`csv`, `statements.<comp>.jsonl`) now serve
+  bytes — export mode reads the emitted artifacts verbatim, fixtures derive
+  the same shapes from the twin (`web/src/lib/entity-downloads.ts` mirrors
+  the exporter's `sig.entity-relationships/1` doc, declared CSV columns and
+  canonical statement slice) — so a download row is never a dead link
+  (K13 R-6). The hub lede names the record kinds (batch-20 `EB-01`,
+  superseding batch-05 `EN-01`); the page stays T1, no new script.
+
 - **P37.21 — Access closures and degree-only facts (K2 GX-07):** the
   `sig.entity-page/1` twin's `access.closures` slot is now computed — the
   build runs `inference.access_paths.close_access_paths` per entity over

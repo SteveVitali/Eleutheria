@@ -1,0 +1,75 @@
+{
+  "schema": "sig.figure-kit-graph/1",
+  "release": {
+    "label": "Surveillance Infrastructure Graph",
+    "publication_id": "sig-release-2026.09",
+    "as_of_world": "2026-09-01"
+  },
+  "kind": "ego",
+  "title": "Acworth ALPR expansion contract — recorded relationships",
+  "nodes": [
+    {
+      "key": "centre",
+      "label": "Acworth ALPR expansion contract",
+      "kind": "entity",
+      "side": "centre",
+      "href": "/entity/contract/acworth-alpr-expansion-contract--9p4kxwd/"
+    },
+    {
+      "key": "0190cafe-0000-7000-8000-0000000000a1",
+      "label": "Acworth Police Department",
+      "kind": "agency",
+      "side": "neighbour",
+      "href": "/entity/agency/acworth-police-department--4g2wm8q/",
+      "group_key": "agency",
+      "group_label": "Government bodies",
+      "group_href": "#rel-group-0",
+      "noun": "agencies"
+    },
+    {
+      "key": "0190cafe-0000-7000-8000-0000000000b2",
+      "label": "Vigilant Solutions (LEARN)",
+      "kind": "entity",
+      "side": "neighbour",
+      "href": "/entity/org/vigilant-solutions-learn--7xk3mrt/",
+      "group_key": "entity",
+      "group_label": "Entities",
+      "group_href": "#rel-group-1",
+      "noun": "entities"
+    }
+  ],
+  "edges": [
+    {
+      "source": "centre",
+      "target": "0190cafe-0000-7000-8000-0000000000a1",
+      "relation": "contract buyer",
+      "direction": "outbound",
+      "date_kind": "single",
+      "currency": "current",
+      "sources": [
+        "demo_permitted_portal"
+      ],
+      "claim_ids": [
+        "clm-contract-buyer-1"
+      ],
+      "date": "2020-01-28",
+      "support": "WEAKLY_SUPPORTED"
+    },
+    {
+      "source": "centre",
+      "target": "0190cafe-0000-7000-8000-0000000000b2",
+      "relation": "contract seller",
+      "direction": "outbound",
+      "date_kind": "single",
+      "currency": "current",
+      "sources": [
+        "demo_permitted_portal"
+      ],
+      "claim_ids": [
+        "clm-contract-seller-1"
+      ],
+      "date": "2020-01-28",
+      "support": "WEAKLY_SUPPORTED"
+    }
+  ]
+}

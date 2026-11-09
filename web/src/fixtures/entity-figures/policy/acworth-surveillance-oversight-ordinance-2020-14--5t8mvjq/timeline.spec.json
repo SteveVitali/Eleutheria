@@ -1,0 +1,28 @@
+{
+  "schema": "sig.figure-kit-chart/1",
+  "release": {
+    "label": "Surveillance Infrastructure Graph",
+    "publication_id": "sig-release-2026.09",
+    "as_of_world": "2026-09-01"
+  },
+  "kind": "timeline",
+  "title": "Acworth surveillance oversight ordinance 2020-14 — dated events",
+  "unit": "events",
+  "events": [
+    {
+      "date": "2020-03-10",
+      "label": "adopted date",
+      "kind": "stated"
+    },
+    {
+      "date": "2020-03-10",
+      "label": "last seen — OKC council minutes",
+      "kind": "last_seen"
+    },
+    {
+      "date": "2020-04-01",
+      "label": "effective date",
+      "kind": "stated"
+    }
+  ]
+}

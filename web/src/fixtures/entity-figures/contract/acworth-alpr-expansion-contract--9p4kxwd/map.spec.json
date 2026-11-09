@@ -1,0 +1,53 @@
+{
+  "schema": "sig.figure-kit-geo/1",
+  "release": {
+    "label": "Surveillance Infrastructure Graph",
+    "publication_id": "sig-release-2026.09",
+    "as_of_world": "2026-09-01"
+  },
+  "jurisdiction": {
+    "jkey": "usa-ga",
+    "slug_path": "usa/ga",
+    "level": "state_province",
+    "chain": [
+      "usa"
+    ],
+    "name": "Georgia, United States",
+    "provisional": false
+  },
+  "outline": [
+    [
+      [
+        -85.61,
+        35
+      ],
+      [
+        -80.84,
+        35
+      ],
+      [
+        -80.76,
+        32.03
+      ],
+      [
+        -81.05,
+        30.72
+      ],
+      [
+        -82.22,
+        30.39
+      ],
+      [
+        -85.61,
+        30.98
+      ],
+      [
+        -85.61,
+        35
+      ]
+    ]
+  ],
+  "children": [],
+  "records": [],
+  "boundary_vintage": "fixture-invented-outlines (P36.42b)"
+}

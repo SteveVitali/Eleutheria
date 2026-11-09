@@ -8,7 +8,9 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import {
+  ENTITY_PAGE_TWIN_CONTRACT_FIXTURE,
   ENTITY_PAGE_TWIN_FIXTURE,
+  ENTITY_PAGE_TWIN_POLICY_FIXTURE,
   type EntityRelationItem,
 } from "../../src/lib/entity-page";
 import { mergeEntityTwins } from "../../src/lib/entity-pages";
@@ -19,6 +21,7 @@ import {
   entityTimeline,
   figureAccessKind,
   figureCurrency,
+  nodeKind,
 } from "../../src/lib/entity-figures";
 
 const MERGED = mergeEntityTwins([ENTITY_PAGE_TWIN_FIXTURE]);
@@ -137,6 +140,55 @@ describe("entityMapSpec", () => {
     expect(spec.jurisdiction.jkey).toBe("usa-ga");
     const noPlace = mergeEntityTwins([{ ...ENTITY_PAGE_TWIN_FIXTURE, place_jkey: null }]);
     expect(entityMapSpec(noPlace, opts)).toBeNull();
+  });
+});
+
+describe("contract-B record kinds (P37.23 / GX-06b)", () => {
+  const CONTRACT = mergeEntityTwins([ENTITY_PAGE_TWIN_CONTRACT_FIXTURE]);
+  const POLICY = mergeEntityTwins([ENTITY_PAGE_TWIN_POLICY_FIXTURE]);
+  it("maps record kinds onto the closed kit vocabulary — bill/policy are instruments, the rest entities", () => {
+    expect(nodeKind("bill")).toBe("instrument");
+    expect(nodeKind("policy")).toBe("instrument");
+    for (const k of ["notice", "contract", "grant", "event"]) expect(nodeKind(k)).toBe("entity");
+    for (const k of [undefined, "atlas", "request"]) expect(nodeKind(k)).toBe("entity");
+  });
+  it("the contract ego centres an entity node; every neighbour links a real route", () => {
+    const spec = entityEgoSpec(CONTRACT)!;
+    const centre = spec.nodes.find((n) => n.side === "centre")!;
+    expect(centre.kind).toBe("entity");
+    const kinds = spec.nodes.filter((n) => n.side === "neighbour").map((n) => n.kind).sort();
+    expect(kinds).toEqual(["agency", "entity"]);
+    for (const n of spec.nodes) expect(n.href.startsWith("/")).toBe(true);
+    expect(spec.edges.every((e) => e.date_kind === "single")).toBe(true);
+  });
+  it("the policy ego centres an instrument node with an inbound edge", () => {
+    const spec = entityEgoSpec(POLICY)!;
+    const centre = spec.nodes.find((n) => n.side === "centre")!;
+    expect(centre.kind).toBe("instrument");
+    const edge = spec.edges.find((e) => e.relation === "adopted by")!;
+    expect(edge.direction).toBe("inbound");
+    expect(edge.target).toBe("centre");
+    const agency = spec.nodes.find((n) => n.kind === "agency")!;
+    expect(agency.group_label).toBe("Government bodies");
+  });
+  it("stated record dates draw on the timeline; undated items list apart", () => {
+    const tl = entityTimeline(CONTRACT);
+    expect(tl.dated.map((e) => e.date)).toEqual(["2020-01-15", "2020-01-28", "2020-02-03"]);
+    expect(tl.undated.some((u) => u.label.includes("renewal option"))).toBe(true);
+    const pl = entityTimeline(POLICY);
+    expect(pl.dated.map((e) => e.date)).toEqual(["2020-03-10", "2020-03-10", "2020-04-01"]);
+  });
+  it("a record kind with no recorded place composes no map spec", () => {
+    const opts = {
+      outline: [[[0, 0], [1, 0], [1, 1], [0, 0]]] as [number, number][][],
+      name: "Georgia, United States",
+      slugPath: "usa/ga",
+      level: "state_province",
+      chain: ["usa"],
+      boundaryVintage: "fixture-invented-outlines",
+    };
+    expect(entityMapSpec(POLICY, opts)).toBeNull();
+    expect(entityMapSpec(CONTRACT, opts)!.jurisdiction.jkey).toBe("usa-ga");
   });
 });
 

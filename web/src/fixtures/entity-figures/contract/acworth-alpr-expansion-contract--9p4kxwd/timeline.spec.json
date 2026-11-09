@@ -1,0 +1,28 @@
+{
+  "schema": "sig.figure-kit-chart/1",
+  "release": {
+    "label": "Surveillance Infrastructure Graph",
+    "publication_id": "sig-release-2026.09",
+    "as_of_world": "2026-09-01"
+  },
+  "kind": "timeline",
+  "title": "Acworth ALPR expansion contract — dated events",
+  "unit": "events",
+  "events": [
+    {
+      "date": "2020-01-15",
+      "label": "posted date",
+      "kind": "stated"
+    },
+    {
+      "date": "2020-01-28",
+      "label": "signed date",
+      "kind": "stated"
+    },
+    {
+      "date": "2020-02-03",
+      "label": "first seen — Demo permitted portal",
+      "kind": "first_seen"
+    }
+  ]
+}

@@ -586,6 +586,51 @@ export const ENTITY_LABEL_FIXTURES: EntityLabelRow[] = [
     subject_key: "organization:unverified-partner-llc",
     label_state: "not_yet_reviewed",
   },
+  {
+    // Contract B (P37.23 / GX-06b): a keyed procurement-record entity — the
+    // E2 record wave's buyer/seller page surface.
+    entity_id: "0190cafe-0000-7000-8000-0000000000e7",
+    sig_id: "sig:contract:0190cafe-0000-7000-8000-0000000000e7",
+    kind: "contract",
+    url_type: "contract",
+    label: "Acworth ALPR expansion contract",
+    descriptor: "Procurement record · usa-ga",
+    label_basis: "derived",
+    label_source_id: "demo_permitted_portal",
+    place_jkey: "usa-ga",
+    slug: "acworth-alpr-expansion-contract",
+    hash: "9p4kxwd",
+    url: fixtureEntityUrl("contract", "acworth-alpr-expansion-contract", "9p4kxwd"),
+    disambiguator: null,
+    component_id: "comp-1",
+    part8: "pass",
+    subject_key: "contract:acworth-alpr-expansion-2020",
+  },
+  {
+    // Contract B (P37.23 / GX-06b): a keyed legal-instrument entity — the
+    // record wave's adopted-by surface; no place is recorded, so the map
+    // snippet exercises its typed state.
+    entity_id: "0190cafe-0000-7000-8000-0000000000f8",
+    sig_id: "sig:policy:0190cafe-0000-7000-8000-0000000000f8",
+    kind: "policy",
+    url_type: "policy",
+    label: "Acworth surveillance oversight ordinance 2020-14",
+    descriptor: "Policy or ordinance",
+    label_basis: "source_title",
+    label_source_id: "okc_council_minutes",
+    place_jkey: null,
+    slug: "acworth-surveillance-oversight-ordinance-2020-14",
+    hash: "5t8mvjq",
+    url: fixtureEntityUrl(
+      "policy",
+      "acworth-surveillance-oversight-ordinance-2020-14",
+      "5t8mvjq",
+    ),
+    disambiguator: null,
+    component_id: "comp-1",
+    part8: "pass",
+    subject_key: "ordinance:acworth-2020-14",
+  },
 ];
 
 /** The published twin for the auto-allowed agency — relations both ways,
@@ -966,8 +1011,449 @@ export const ENTITY_PAGE_TWIN_FIXTURE: EntityPageTwin = {
   er_disclosure: ER_DISCLOSURE,
 };
 
+/** The published twin for the contract-B procurement record (P37.23 /
+ *  GX-06b) — buyer + seller relations to the wave-A entities, stated
+ *  posted/signed dates, an envelope conflict on the contract value, and
+ *  the recorded place drawing the map snippet. */
+export const ENTITY_PAGE_TWIN_CONTRACT_FIXTURE: EntityPageTwin = {
+  schema: ENTITY_PAGE_SCHEMA,
+  review_state: "published",
+  key: "acworth-alpr-expansion-contract--9p4kxwd",
+  entity_id: "0190cafe-0000-7000-8000-0000000000e7",
+  sig_id: "sig:contract:0190cafe-0000-7000-8000-0000000000e7",
+  kind: "contract",
+  url_type: "contract",
+  url: fixtureEntityUrl("contract", "acworth-alpr-expansion-contract", "9p4kxwd"),
+  label: "Acworth ALPR expansion contract",
+  descriptor: "Procurement record · usa-ga",
+  label_basis: "derived",
+  label_source_id: "demo_permitted_portal",
+  place_jkey: "usa-ga",
+  disambiguator: null,
+  publication: "sig-release-2026.09",
+  generated_at: "2026-09-01T00:00:00Z",
+  compartment: "sig_graph",
+  identifiers: [
+    { scheme: "sig.connector.subject", value: "contract:acworth-alpr-expansion-2020" },
+  ],
+  summary: [
+    {
+      text: "2 recorded outbound relationships — contract parties",
+      value: 2,
+      relation: "contract parties",
+      direction: "outbound",
+      claim_ids: ["clm-contract-buyer-1", "clm-contract-seller-1"],
+    },
+  ],
+  claims: [
+    {
+      predicate: "contract_value",
+      relation: "contract value",
+      envelope: {
+        status: "resolved",
+        support: "WEAKLY_SUPPORTED",
+        agreement: "CONTESTED",
+        currency: "CURRENT",
+        rationale: null,
+      },
+      values: ["$412,700", "$421,700"],
+      observed_at: "2020-01-28",
+      date_kind: "observed",
+      sources: [{ id: "demo_permitted_portal", name: "Demo permitted portal" }],
+      claim_ids: ["clm-contract-value-1", "clm-contract-value-2"],
+    },
+  ],
+  relations: [
+    {
+      relation: "contract buyer",
+      direction: "outbound",
+      access_kind: null,
+      count: 1,
+      items: [
+        {
+          counterparty: {
+            entity_id: "0190cafe-0000-7000-8000-0000000000a1",
+            kind: "agency",
+            label: "Acworth Police Department",
+            label_basis: "source_name",
+            url: fixtureEntityUrl("agency", "acworth-police-department", "4g2wm8q"),
+            key: "acworth-police-department--4g2wm8q",
+          },
+          relation: "contract buyer",
+          role: "buyer",
+          date: "2020-01-28",
+          date_kind: "observed",
+          currency: "CURRENT",
+          status: "resolved",
+          support: "WEAKLY_SUPPORTED",
+          agreement: "UNCONTESTED",
+          sources: [{ id: "demo_permitted_portal", name: "Demo permitted portal" }],
+          claim_ids: ["clm-contract-buyer-1"],
+          historical: false,
+        },
+      ],
+      more: 0,
+      claim_ids: ["clm-contract-buyer-1"],
+    },
+    {
+      relation: "contract seller",
+      direction: "outbound",
+      access_kind: null,
+      count: 1,
+      items: [
+        {
+          counterparty: {
+            entity_id: "0190cafe-0000-7000-8000-0000000000b2",
+            kind: "org",
+            label: "Vigilant Solutions (LEARN)",
+            label_basis: "source_name",
+            url: fixtureEntityUrl("org", "vigilant-solutions-learn", "7xk3mrt"),
+            key: "vigilant-solutions-learn--7xk3mrt",
+          },
+          relation: "contract seller",
+          role: "seller",
+          date: "2020-01-28",
+          date_kind: "observed",
+          currency: "CURRENT",
+          status: "resolved",
+          support: "WEAKLY_SUPPORTED",
+          agreement: "UNCONTESTED",
+          sources: [{ id: "demo_permitted_portal", name: "Demo permitted portal" }],
+          claim_ids: ["clm-contract-seller-1"],
+          historical: false,
+        },
+      ],
+      more: 0,
+      claim_ids: ["clm-contract-seller-1"],
+    },
+  ],
+  access: { closures: [], degree_only: [] },
+  contradictions: [
+    {
+      kind: "envelope_conflict",
+      contradiction_id: null,
+      predicate: "contract_value",
+      relation: "contract value",
+      type: "value_conflict",
+      status: "open",
+      severity: null,
+      agreement: "CONTESTED",
+      claim_ids: ["clm-contract-value-1", "clm-contract-value-2"],
+      sources: [{ id: "demo_permitted_portal", name: "Demo permitted portal" }],
+    },
+  ],
+  timeline: [
+    {
+      kind: "stated",
+      date: "2020-01-15",
+      date_kind: "observed",
+      label: "posted date",
+      predicate: "posted_date",
+      claim_ids: ["clm-contract-posted-1"],
+      sources: [{ id: "demo_permitted_portal", name: "Demo permitted portal" }],
+    },
+    {
+      kind: "stated",
+      date: "2020-01-28",
+      date_kind: "observed",
+      label: "signed date",
+      predicate: "signed_date",
+      claim_ids: ["clm-contract-signed-1"],
+      sources: [{ id: "demo_permitted_portal", name: "Demo permitted portal" }],
+    },
+    {
+      kind: "first_seen",
+      date: "2020-02-03",
+      date_kind: "observed",
+      label: "first seen — Demo permitted portal",
+      predicate: null,
+      claim_ids: ["clm-contract-buyer-1"],
+      sources: [{ id: "demo_permitted_portal", name: "Demo permitted portal" }],
+    },
+    {
+      kind: "observed",
+      date: null,
+      date_kind: "undated",
+      label: "renewal option — undated",
+      predicate: "renewal_option",
+      claim_ids: ["clm-contract-renewal-1"],
+      sources: [{ id: "demo_permitted_portal", name: "Demo permitted portal" }],
+    },
+  ],
+  related: {
+    dossiers: [
+      {
+        jkey: "usa-ga",
+        slug_path: "usa/ga",
+        name: "Georgia",
+        level: "admin1",
+        url: withBase("dossier/usa/ga/"),
+      },
+    ],
+    sources: [
+      {
+        id: "demo_permitted_portal",
+        name: "Demo permitted portal",
+        url: withBase("sources/demo_permitted_portal/"),
+      },
+    ],
+    tasks: [
+      {
+        task_id: "task-fixture-2",
+        handle: "T-usa-ga-alpr-contract-value-q2f7",
+        title: "Reconcile the two recorded contract values",
+        task_type: "reconcile_values",
+        status: "generated",
+        url: null,
+      },
+    ],
+    watch: [],
+    documents: [
+      {
+        artifact_id: "art-fixture-2",
+        title: "Acworth procurement portal — executed contract PDF",
+        artifact_type: "contract",
+        source_id: "demo_permitted_portal",
+        source_name: "Demo permitted portal",
+        claim_ids: ["clm-contract-signed-1"],
+      },
+    ],
+  },
+  downloads: [
+    {
+      kind: "twin",
+      format: "json",
+      path: `entity/contract/acworth-alpr-expansion-contract--9p4kxwd/index.sig_graph.json`,
+      compartment: "sig_graph",
+      label: "JSON twin (sig.entity-page/1)",
+    },
+    {
+      kind: "relationships",
+      format: "csv",
+      path: `entity/contract/acworth-alpr-expansion-contract--9p4kxwd/relationships.sig_graph.csv`,
+      compartment: "sig_graph",
+      label: "Relationships CSV",
+    },
+    {
+      kind: "relationships",
+      format: "json",
+      path: `entity/contract/acworth-alpr-expansion-contract--9p4kxwd/relationships.sig_graph.json`,
+      compartment: "sig_graph",
+      label: "Relationships JSON",
+    },
+    {
+      kind: "statements",
+      format: "jsonl",
+      path: `entity/contract/acworth-alpr-expansion-contract--9p4kxwd/statements.sig_graph.jsonl`,
+      compartment: "sig_graph",
+      label: "Statements (sig.statement/1)",
+    },
+  ],
+  cite: {
+    publication: "sig-release-2026.09",
+    url: fixtureEntityUrl("contract", "acworth-alpr-expansion-contract", "9p4kxwd"),
+    record_url: withBase(
+      "r/sig-release-2026.09/c/sig_graph/entity/contract/0190cafe-0000-7000-8000-0000000000e7/",
+    ),
+    sig_id: "sig:contract:0190cafe-0000-7000-8000-0000000000e7",
+  },
+  withheld_notice: null,
+  er_disclosure: ER_DISCLOSURE,
+};
+
+/** The published twin for the contract-B legal instrument (P37.23 /
+ *  GX-06b) — the adopted-by inbound relation, stated ordinance dates and
+ *  the typed "location not recorded" map posture (no place is recorded). */
+export const ENTITY_PAGE_TWIN_POLICY_FIXTURE: EntityPageTwin = {
+  schema: ENTITY_PAGE_SCHEMA,
+  review_state: "published",
+  key: "acworth-surveillance-oversight-ordinance-2020-14--5t8mvjq",
+  entity_id: "0190cafe-0000-7000-8000-0000000000f8",
+  sig_id: "sig:policy:0190cafe-0000-7000-8000-0000000000f8",
+  kind: "policy",
+  url_type: "policy",
+  url: fixtureEntityUrl(
+    "policy",
+    "acworth-surveillance-oversight-ordinance-2020-14",
+    "5t8mvjq",
+  ),
+  label: "Acworth surveillance oversight ordinance 2020-14",
+  descriptor: "Policy or ordinance",
+  label_basis: "source_title",
+  label_source_id: "okc_council_minutes",
+  place_jkey: null,
+  disambiguator: null,
+  publication: "sig-release-2026.09",
+  generated_at: "2026-09-01T00:00:00Z",
+  compartment: "sig_graph",
+  identifiers: [
+    { scheme: "sig.connector.subject", value: "ordinance:acworth-2020-14" },
+  ],
+  summary: [
+    {
+      text: "1 recorded inbound relationship — adopted by",
+      value: 1,
+      relation: "adopted by",
+      direction: "inbound",
+      claim_ids: ["clm-ordinance-adopted-1"],
+    },
+  ],
+  claims: [
+    {
+      predicate: "effective_date",
+      relation: "effective date",
+      envelope: {
+        status: "resolved",
+        support: "WEAKLY_SUPPORTED",
+        agreement: "UNCONTESTED",
+        currency: "CURRENT",
+        rationale: null,
+      },
+      values: ["2020-04-01"],
+      observed_at: "2020-03-10",
+      date_kind: "observed",
+      sources: [{ id: "okc_council_minutes", name: "OKC council minutes" }],
+      claim_ids: ["clm-ordinance-effective-1"],
+    },
+  ],
+  relations: [
+    {
+      relation: "adopted by",
+      direction: "inbound",
+      access_kind: null,
+      count: 1,
+      items: [
+        {
+          counterparty: {
+            entity_id: "0190cafe-0000-7000-8000-0000000000a1",
+            kind: "agency",
+            label: "Acworth Police Department",
+            label_basis: "source_name",
+            url: fixtureEntityUrl("agency", "acworth-police-department", "4g2wm8q"),
+            key: "acworth-police-department--4g2wm8q",
+          },
+          relation: "adopted by",
+          role: "adopting_body",
+          date: "2020-03-10",
+          date_kind: "observed",
+          currency: "CURRENT",
+          status: "resolved",
+          support: "WEAKLY_SUPPORTED",
+          agreement: "UNCONTESTED",
+          sources: [{ id: "okc_council_minutes", name: "OKC council minutes" }],
+          claim_ids: ["clm-ordinance-adopted-1"],
+          historical: false,
+        },
+      ],
+      more: 0,
+      claim_ids: ["clm-ordinance-adopted-1"],
+    },
+  ],
+  access: { closures: [], degree_only: [] },
+  contradictions: [],
+  timeline: [
+    {
+      kind: "stated",
+      date: "2020-03-10",
+      date_kind: "observed",
+      label: "adopted date",
+      predicate: "adopted_date",
+      claim_ids: ["clm-ordinance-adopted-1"],
+      sources: [{ id: "okc_council_minutes", name: "OKC council minutes" }],
+    },
+    {
+      kind: "stated",
+      date: "2020-04-01",
+      date_kind: "observed",
+      label: "effective date",
+      predicate: "effective_date",
+      claim_ids: ["clm-ordinance-effective-1"],
+      sources: [{ id: "okc_council_minutes", name: "OKC council minutes" }],
+    },
+    {
+      kind: "last_seen",
+      date: "2020-03-10",
+      date_kind: "observed",
+      label: "last seen — OKC council minutes",
+      predicate: null,
+      claim_ids: ["clm-ordinance-effective-1"],
+      sources: [{ id: "okc_council_minutes", name: "OKC council minutes" }],
+    },
+  ],
+  related: {
+    dossiers: [],
+    sources: [
+      {
+        id: "okc_council_minutes",
+        name: "OKC council minutes",
+        url: withBase("sources/okc_council_minutes/"),
+      },
+    ],
+    tasks: [],
+    watch: [],
+    documents: [
+      {
+        artifact_id: "art-fixture-3",
+        title: "Council minutes 2020-03-10 — ordinance 2020-14",
+        artifact_type: "minutes",
+        source_id: "okc_council_minutes",
+        source_name: "OKC council minutes",
+        claim_ids: ["clm-ordinance-adopted-1"],
+      },
+    ],
+  },
+  downloads: [
+    {
+      kind: "twin",
+      format: "json",
+      path: `entity/policy/acworth-surveillance-oversight-ordinance-2020-14--5t8mvjq/index.sig_graph.json`,
+      compartment: "sig_graph",
+      label: "JSON twin (sig.entity-page/1)",
+    },
+    {
+      kind: "relationships",
+      format: "csv",
+      path: `entity/policy/acworth-surveillance-oversight-ordinance-2020-14--5t8mvjq/relationships.sig_graph.csv`,
+      compartment: "sig_graph",
+      label: "Relationships CSV",
+    },
+    {
+      kind: "relationships",
+      format: "json",
+      path: `entity/policy/acworth-surveillance-oversight-ordinance-2020-14--5t8mvjq/relationships.sig_graph.json`,
+      compartment: "sig_graph",
+      label: "Relationships JSON",
+    },
+    {
+      kind: "statements",
+      format: "jsonl",
+      path: `entity/policy/acworth-surveillance-oversight-ordinance-2020-14--5t8mvjq/statements.sig_graph.jsonl`,
+      compartment: "sig_graph",
+      label: "Statements (sig.statement/1)",
+    },
+  ],
+  cite: {
+    publication: "sig-release-2026.09",
+    url: fixtureEntityUrl(
+      "policy",
+      "acworth-surveillance-oversight-ordinance-2020-14",
+      "5t8mvjq",
+    ),
+    record_url: withBase(
+      "r/sig-release-2026.09/c/sig_graph/entity/policy/0190cafe-0000-7000-8000-0000000000f8/",
+    ),
+    sig_id: "sig:policy:0190cafe-0000-7000-8000-0000000000f8",
+  },
+  withheld_notice: null,
+  er_disclosure: ER_DISCLOSURE,
+};
+
 /** The committed twin set the fixtures-mode data layer serves, keyed by
  * `<url_type>/<key>`. */
 export const ENTITY_PAGE_FIXTURES: Record<string, EntityPageTwin> = {
   "agency/acworth-police-department--4g2wm8q": ENTITY_PAGE_TWIN_FIXTURE,
+  "contract/acworth-alpr-expansion-contract--9p4kxwd":
+    ENTITY_PAGE_TWIN_CONTRACT_FIXTURE,
+  "policy/acworth-surveillance-oversight-ordinance-2020-14--5t8mvjq":
+    ENTITY_PAGE_TWIN_POLICY_FIXTURE,
 };

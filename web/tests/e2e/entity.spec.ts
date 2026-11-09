@@ -7,12 +7,21 @@ import { expect, test } from "@playwright/test";
 
 const HUB = "/entity/";
 const AGENCY = "/entity/agency/acworth-police-department--4g2wm8q/";
+const CONTRACT = "/entity/contract/acworth-alpr-expansion-contract--9p4kxwd/";
+const POLICY = "/entity/policy/acworth-surveillance-oversight-ordinance-2020-14--5t8mvjq/";
 
 test.describe("the Organizations hub (SIG-UI-070 / UXR-20)", () => {
   test("lists the published types with counts + the ER disclosure", async ({ page }) => {
     await page.goto(HUB);
     const rows = page.locator('[data-testid="entity-type-row"]');
-    await expect(rows).toHaveCount(3);
+    await expect(rows).toHaveCount(5); // agency, contract, org, policy, portal
+    // The contract-B record kinds list beside the organisation-class types.
+    await expect(page.locator('a[href="/entity/contract/"]').first()).toContainText(
+      "Procurement records",
+    );
+    await expect(page.locator('a[href="/entity/policy/"]').first()).toContainText(
+      "Policies and ordinances",
+    );
     await expect(page.locator('[data-testid="entity-types"]')).toContainText(
       "SIG has not merged organisations across sources",
     );
@@ -167,6 +176,88 @@ test.describe("the 06b figure companions (SIG-UI-094/122/130)", () => {
     await expect(page.locator("script")).toHaveCount(0);
     await expect(page.locator('[data-testid="print-page"]')).toHaveCount(4);
     await expect(page.locator('[data-testid="print-figures"] img')).not.toHaveCount(0);
+    await expect(page.locator('[data-testid="print-tables"] table')).not.toHaveCount(0);
+  });
+});
+
+test.describe("entity pages B — the contract-B record kinds (K2 GX-06b)", () => {
+  test("the procurement record renders the full 06a template", async ({ page }) => {
+    await page.goto(CONTRACT);
+    await expect(page.locator("h1")).toContainText("Acworth ALPR expansion contract");
+    await expect(page.locator('[data-testid="entity-header"]')).toContainText(
+      "Procurement record",
+    );
+    await expect(page.locator('[data-testid="entity-header"]')).toContainText(
+      "Not yet independently reviewed",
+    );
+    // Relationship tables: buyer + seller groups, both linked counterparties.
+    const groups = page.locator('[data-testid="relation-group"]');
+    await expect(groups).toHaveCount(2);
+    await expect(
+      page.locator('[data-testid="relation-row"] a[href="/entity/agency/acworth-police-department--4g2wm8q/"]'),
+    ).toHaveCount(1);
+    await expect(
+      page.locator('[data-testid="relation-row"] a[href="/entity/org/vigilant-solutions-learn--7xk3mrt/"]'),
+    ).toHaveCount(1);
+    // The envelope conflict lists both sides' claim ids (H-7 / J3).
+    const contra = page.locator('[data-testid="entity-contradictions"]');
+    await expect(contra).toContainText("contract value");
+    await expect(contra.locator('a[href="#claim-clm-contract-value-1"]')).toHaveCount(1);
+    await expect(contra.locator('a[href="#claim-clm-contract-value-2"]')).toHaveCount(1);
+    // Stated dates render in the timeline entries list.
+    const contractB = page.locator('[data-testid="entity-contract-b"]');
+    await expect(contractB).toContainText("posted date");
+    await expect(contractB).toContainText("signed date");
+    await expect(contractB.locator('[data-date-kind="undated"]')).toContainText("renewal option");
+    // Cite names the SIG id; every named download resolves — never a dead link.
+    await expect(page.locator('[data-testid="cite-sig-id"]')).toContainText("sig:contract:");
+    // Provenance: the contested claim's populated panel + the absent side's named absence.
+    await expect(page.locator("#claim-clm-contract-value-1")).toHaveCount(1);
+    await expect(page.locator("#claim-clm-contract-value-2")).toHaveCount(1);
+    // Access stays typed-empty on a record kind — never a fabricated edge.
+    await expect(page.locator('[data-testid="access-empty"]')).toContainText(
+      "No degree-only or access-path facts",
+    );
+  });
+
+  test("every named download serves bytes (K13 R-6 — no dead links)", async ({ request }) => {
+    const twin = await request.get(`${CONTRACT}index.sig_graph.json`);
+    expect(twin.status()).toBe(200);
+    expect((await twin.json()).schema).toBe("sig.entity-page/1");
+    const relJson = await request.get(`${CONTRACT}relationships.sig_graph.json`);
+    expect(relJson.status()).toBe(200);
+    expect((await relJson.json()).schema).toBe("sig.entity-relationships/1");
+    const relCsv = await request.get(`${CONTRACT}relationships.sig_graph.csv`);
+    expect(relCsv.status()).toBe(200);
+    expect(await relCsv.text()).toContain("contract buyer,outbound,");
+    const jsonl = await request.get(`${CONTRACT}statements.sig_graph.jsonl`);
+    expect(jsonl.status()).toBe(200);
+    expect(await jsonl.text()).toContain('"claim_id":"clm-contract-buyer-1"');
+  });
+
+  test("the record-kind figures draw — ego, timeline strip, map snippet", async ({
+    page,
+    request,
+  }) => {
+    await page.goto(CONTRACT);
+    await expect(page.locator('[data-testid="entity-figure-ego"] img')).toHaveCount(1);
+    const svg = await (await request.get(`${CONTRACT}ego.svg`)).text();
+    // Every drawn node links: the buyer agency and the seller org.
+    expect(svg).toContain('<a href="/entity/agency/acworth-police-department--4g2wm8q/"');
+    expect(svg).toContain('<a href="/entity/org/vigilant-solutions-learn--7xk3mrt/"');
+    await expect(page.locator('[data-testid="entity-figure-timeline"] img')).toHaveCount(1);
+    await expect(page.locator('[data-testid="entity-figure-map"] img')).toHaveCount(1);
+    await expect(page.locator('[data-testid="entity-figure-map-caption"]')).toContainText("usa-ga");
+    // The legal instrument centre keeps its own shape (SIG-UI-131).
+    const policySvg = await (await request.get(`${POLICY}ego.svg`)).text();
+    expect(policySvg).toContain("sig-fig-node-instrument");
+    // No recorded place → the typed map posture, never an empty drawing.
+    await page.goto(POLICY);
+    await expect(page.locator('[data-testid="entity-figure-map-absent"]')).toBeVisible();
+    await expect(page.locator('[data-testid="entity-figure-map-caption"]')).toHaveCount(0);
+    // The print route is T0 on a record kind too.
+    await page.goto(`${CONTRACT}print/`);
+    await expect(page.locator("script")).toHaveCount(0);
     await expect(page.locator('[data-testid="print-tables"] table')).not.toHaveCount(0);
   });
 });

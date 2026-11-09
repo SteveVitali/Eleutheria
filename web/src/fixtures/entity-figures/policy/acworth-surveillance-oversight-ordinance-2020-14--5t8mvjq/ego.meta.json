@@ -1,0 +1,91 @@
+{
+  "cap_actions": [],
+  "desc": {
+    "as_of_world": "2026-09-01",
+    "centre": "Acworth surveillance oversight ordinance 2020-14",
+    "edges": 1,
+    "neighbours": 1,
+    "sectors": [
+      "adopted by"
+    ],
+    "title": "Acworth surveillance oversight ordinance 2020-14 \u2014 recorded relationships"
+  },
+  "edge_count": 1,
+  "gzip_bytes": 693,
+  "legend": [
+    {
+      "channel": "line",
+      "classes": [
+        "sig-fig-edge"
+      ],
+      "id": "line:relation",
+      "label": "Recorded relation",
+      "plain": "A line is a recorded relation between the two columns.",
+      "spec": "K6 \u00a76.2"
+    },
+    {
+      "channel": "shape",
+      "classes": [
+        "sig-fig-node",
+        "sig-fig-node-agency"
+      ],
+      "id": "kind:agency",
+      "label": "agency",
+      "plain": "Entity kind uses shape (point, area, institution, vendor) \u2014 shape never carries epistemic state.",
+      "spec": "SIG-UI-133"
+    },
+    {
+      "channel": "shape",
+      "classes": [
+        "sig-fig-node",
+        "sig-fig-node-instrument"
+      ],
+      "id": "kind:instrument",
+      "label": "instrument",
+      "plain": "Entity kind uses shape (point, area, institution, vendor) \u2014 shape never carries epistemic state.",
+      "spec": "SIG-UI-133"
+    }
+  ],
+  "mode": "ego-radial",
+  "narrow_viewbox": [
+    360,
+    364.0
+  ],
+  "node_count": 2,
+  "schema": "sig.figure-graph-meta/1",
+  "size_bytes": 2000,
+  "svg_narrow_bytes": 1983,
+  "table_columns": [
+    "counterparty",
+    "relation",
+    "direction",
+    "access_kind",
+    "date",
+    "date_kind",
+    "currency",
+    "support",
+    "sources",
+    "evidence"
+  ],
+  "table_rows": [
+    {
+      "access_kind": "\u2014",
+      "counterparty": "Acworth Police Department",
+      "currency": "current",
+      "date": "2020-03-10",
+      "date_kind": "single",
+      "direction": "inbound",
+      "evidence": [
+        "clm-ordinance-adopted-1"
+      ],
+      "href": "/entity/agency/acworth-police-department--4g2wm8q/",
+      "relation": "adopted by",
+      "sources": 1,
+      "support": "WEAKLY_SUPPORTED"
+    }
+  ],
+  "viewbox": [
+    720,
+    724.0
+  ]
+}

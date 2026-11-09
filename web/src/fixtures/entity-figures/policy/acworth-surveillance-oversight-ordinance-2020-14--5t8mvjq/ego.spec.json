@@ -1,0 +1,48 @@
+{
+  "schema": "sig.figure-kit-graph/1",
+  "release": {
+    "label": "Surveillance Infrastructure Graph",
+    "publication_id": "sig-release-2026.09",
+    "as_of_world": "2026-09-01"
+  },
+  "kind": "ego",
+  "title": "Acworth surveillance oversight ordinance 2020-14 — recorded relationships",
+  "nodes": [
+    {
+      "key": "centre",
+      "label": "Acworth surveillance oversight ordinance 2020-14",
+      "kind": "instrument",
+      "side": "centre",
+      "href": "/entity/policy/acworth-surveillance-oversight-ordinance-2020-14--5t8mvjq/"
+    },
+    {
+      "key": "0190cafe-0000-7000-8000-0000000000a1",
+      "label": "Acworth Police Department",
+      "kind": "agency",
+      "side": "neighbour",
+      "href": "/entity/agency/acworth-police-department--4g2wm8q/",
+      "group_key": "agency",
+      "group_label": "Government bodies",
+      "group_href": "#rel-group-0",
+      "noun": "agencies"
+    }
+  ],
+  "edges": [
+    {
+      "source": "0190cafe-0000-7000-8000-0000000000a1",
+      "target": "centre",
+      "relation": "adopted by",
+      "direction": "inbound",
+      "date_kind": "single",
+      "currency": "current",
+      "sources": [
+        "okc_council_minutes"
+      ],
+      "claim_ids": [
+        "clm-ordinance-adopted-1"
+      ],
+      "date": "2020-03-10",
+      "support": "WEAKLY_SUPPORTED"
+    }
+  ]
+}

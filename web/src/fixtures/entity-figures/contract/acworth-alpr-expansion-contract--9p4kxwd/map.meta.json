@@ -1,0 +1,31 @@
+{
+  "boundary_vintage": "fixture-invented-outlines (P36.42b)",
+  "cap_actions": [],
+  "children": [],
+  "compartments_drawn": [],
+  "desc": {
+    "areas_drawn": 0,
+    "jurisdiction": "usa-ga",
+    "publication_id": "sig-release-2026.09",
+    "records_drawn": 0,
+    "records_total": 0,
+    "release": "Surveillance Infrastructure Graph"
+  },
+  "gzip_bytes": 611,
+  "h3_res": null,
+  "mode": "empty",
+  "not_drawn": {
+    "conflicting": 0,
+    "declared_no_point": 0,
+    "located_elsewhere": [],
+    "tier3": 0
+  },
+  "rule": "static-12px@1",
+  "schema": "sig.figure-geo-meta/1",
+  "size_bytes": 1015,
+  "viewbox": [
+    720.0,
+    520.0
+  ],
+  "zoom": 6.015
+}

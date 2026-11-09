@@ -351,6 +351,236 @@ const APD_NAME_STATEMENT: StatementRow = {
   },
 };
 
+/** Contract-B (P37.23 / GX-06b) — the contract buyer claim: the procurement
+ *  portal's executed-contract record backs the buyer relation
+ *  (`document_only`). */
+const CONTRACT_BUYER_STATEMENT: StatementRow = {
+  schema: "sig.statement/1",
+  claim_id: "clm-contract-buyer-1",
+  entity_id: "0190cafe-0000-7000-8000-0000000000e7",
+  predicate_id: "buyer",
+  observed_at: "2020-01-28",
+  source_id: "demo_permitted_portal",
+  value: "Acworth Police Department",
+  binding_status: "document_only",
+  lane: "raw-ok",
+  capture: null,
+  upstream: {
+    status: "no_upstream_url_recorded",
+    url: null,
+    host: null,
+    path_sha256: null,
+  },
+  view_original: { kind: "view_at_source", label: "View at source", href: null, note: null },
+  extraction: {
+    method: "portal row extraction",
+    extractor_name: "parsing",
+    extractor_version: "parser-2026.06",
+    review_status: "unreviewed",
+  },
+  epistemics: {
+    directness: "D3",
+    reliability: "W2",
+    integrity: "I3",
+    review_status: "unreviewed",
+  },
+  recorded: { run_id: "run:demo-portal-2020-02", at: "2020-02-03T00:00:00Z" },
+  supersession: {
+    revises_claim: null,
+    retraction_of: null,
+    prior_recorded_at: null,
+  },
+  contradictions: { contradiction_ids: [], competing_claim_ids: [] },
+  rights: {
+    spdx: "CC-BY-4.0",
+    attribution: "Demo permitted portal",
+    compartment: "sig_graph",
+  },
+};
+
+/** Contract-B — the contract seller claim (the same portal record). */
+const CONTRACT_SELLER_STATEMENT: StatementRow = {
+  schema: "sig.statement/1",
+  claim_id: "clm-contract-seller-1",
+  entity_id: "0190cafe-0000-7000-8000-0000000000e7",
+  predicate_id: "seller",
+  observed_at: "2020-01-28",
+  source_id: "demo_permitted_portal",
+  value: "Vigilant Solutions (LEARN)",
+  binding_status: "document_only",
+  lane: "raw-ok",
+  capture: null,
+  upstream: {
+    status: "no_upstream_url_recorded",
+    url: null,
+    host: null,
+    path_sha256: null,
+  },
+  view_original: { kind: "view_at_source", label: "View at source", href: null, note: null },
+  extraction: {
+    method: "portal row extraction",
+    extractor_name: "parsing",
+    extractor_version: "parser-2026.06",
+    review_status: "unreviewed",
+  },
+  epistemics: {
+    directness: "D3",
+    reliability: "W2",
+    integrity: "I3",
+    review_status: "unreviewed",
+  },
+  recorded: { run_id: "run:demo-portal-2020-02", at: "2020-02-03T00:00:00Z" },
+  supersession: {
+    revises_claim: null,
+    retraction_of: null,
+    prior_recorded_at: null,
+  },
+  contradictions: { contradiction_ids: [], competing_claim_ids: [] },
+  rights: {
+    spdx: "CC-BY-4.0",
+    attribution: "Demo permitted portal",
+    compartment: "sig_graph",
+  },
+};
+
+/** Contract-B — the contested contract value (one of the two recorded
+ *  sides; the second value's claim stays out of the index so the
+ *  `not_recorded` panel exercises beside the conflict). */
+const CONTRACT_VALUE_STATEMENT: StatementRow = {
+  schema: "sig.statement/1",
+  claim_id: "clm-contract-value-1",
+  entity_id: "0190cafe-0000-7000-8000-0000000000e7",
+  predicate_id: "contract_value",
+  observed_at: "2020-01-28",
+  source_id: "demo_permitted_portal",
+  value: "$412,700",
+  binding_status: "document_only",
+  lane: "raw-ok",
+  capture: null,
+  upstream: {
+    status: "no_upstream_url_recorded",
+    url: null,
+    host: null,
+    path_sha256: null,
+  },
+  view_original: { kind: "view_at_source", label: "View at source", href: null, note: null },
+  extraction: {
+    method: "portal row extraction",
+    extractor_name: "parsing",
+    extractor_version: "parser-2026.06",
+    review_status: "unreviewed",
+  },
+  epistemics: {
+    directness: "D3",
+    reliability: "W2",
+    integrity: "I3",
+    review_status: "unreviewed",
+  },
+  recorded: { run_id: "run:demo-portal-2020-02", at: "2020-02-03T00:00:00Z" },
+  supersession: {
+    revises_claim: null,
+    retraction_of: null,
+    prior_recorded_at: null,
+  },
+  contradictions: { contradiction_ids: [], competing_claim_ids: ["clm-contract-value-2"] },
+  rights: {
+    spdx: "CC-BY-4.0",
+    attribution: "Demo permitted portal",
+    compartment: "sig_graph",
+  },
+};
+
+/** Contract-B — the ordinance's adopted-by claim (the council minutes
+ *  record backs the inbound relation). */
+const ORDINANCE_ADOPTED_STATEMENT: StatementRow = {
+  schema: "sig.statement/1",
+  claim_id: "clm-ordinance-adopted-1",
+  entity_id: "0190cafe-0000-7000-8000-0000000000f8",
+  predicate_id: "adopted_by",
+  observed_at: "2020-03-10",
+  source_id: "okc_council_minutes",
+  value: "Acworth Police Department",
+  binding_status: "document_only",
+  lane: "raw-ok",
+  capture: null,
+  upstream: {
+    status: "no_upstream_url_recorded",
+    url: null,
+    host: null,
+    path_sha256: null,
+  },
+  view_original: { kind: "view_at_source", label: "View at source", href: null, note: null },
+  extraction: {
+    method: "minutes row extraction",
+    extractor_name: "parsing",
+    extractor_version: "parser-2026.06",
+    review_status: "unreviewed",
+  },
+  epistemics: {
+    directness: "D3",
+    reliability: "W2",
+    integrity: "I3",
+    review_status: "unreviewed",
+  },
+  recorded: { run_id: "run:council-minutes-2020-03", at: "2020-03-11T00:00:00Z" },
+  supersession: {
+    revises_claim: null,
+    retraction_of: null,
+    prior_recorded_at: null,
+  },
+  contradictions: { contradiction_ids: [], competing_claim_ids: [] },
+  rights: {
+    spdx: "CC-BY-4.0",
+    attribution: "OKC council minutes",
+    compartment: "sig_graph",
+  },
+};
+
+/** Contract-B — the ordinance's effective-date claim. */
+const ORDINANCE_EFFECTIVE_STATEMENT: StatementRow = {
+  schema: "sig.statement/1",
+  claim_id: "clm-ordinance-effective-1",
+  entity_id: "0190cafe-0000-7000-8000-0000000000f8",
+  predicate_id: "effective_date",
+  observed_at: "2020-03-10",
+  source_id: "okc_council_minutes",
+  value: "2020-04-01",
+  binding_status: "document_only",
+  lane: "raw-ok",
+  capture: null,
+  upstream: {
+    status: "no_upstream_url_recorded",
+    url: null,
+    host: null,
+    path_sha256: null,
+  },
+  view_original: { kind: "view_at_source", label: "View at source", href: null, note: null },
+  extraction: {
+    method: "minutes row extraction",
+    extractor_name: "parsing",
+    extractor_version: "parser-2026.06",
+    review_status: "unreviewed",
+  },
+  epistemics: {
+    directness: "D3",
+    reliability: "W2",
+    integrity: "I3",
+    review_status: "unreviewed",
+  },
+  recorded: { run_id: "run:council-minutes-2020-03", at: "2020-03-11T00:00:00Z" },
+  supersession: {
+    revises_claim: null,
+    retraction_of: null,
+    prior_recorded_at: null,
+  },
+  contradictions: { contradiction_ids: [], competing_claim_ids: [] },
+  rights: {
+    spdx: "CC-BY-4.0",
+    attribution: "OKC council minutes",
+    compartment: "sig_graph",
+  },
+};
+
 /** The `claim_id → sig.statement/1` fixture index — mirrors the export's
  *  per-compartment `statements.jsonl` files (fixtures mode's single
  *  `sig_graph` compartment). Claims absent from the index render the
@@ -362,4 +592,9 @@ export const STATEMENT_FIXTURES: StatementRow[] = [
   SCREENSHOT_STATEMENT,
   APD_VIGILANT_STATEMENT,
   APD_NAME_STATEMENT,
+  CONTRACT_BUYER_STATEMENT,
+  CONTRACT_SELLER_STATEMENT,
+  CONTRACT_VALUE_STATEMENT,
+  ORDINANCE_ADOPTED_STATEMENT,
+  ORDINANCE_EFFECTIVE_STATEMENT,
 ];
