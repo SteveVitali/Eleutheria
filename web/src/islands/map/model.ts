@@ -999,3 +999,49 @@ export function sheetPeekText(count: number, activeFacets: number): string {
   const recs = `${count} record${count === 1 ? "" : "s"} in view`;
   return activeFacets > 0 ? `${recs} · Filters (${activeFacets})` : recs;
 }
+
+// --------------------------------------------- 'My location' pan (P37.72) //
+// D-K1-7 [B-44] = yes · K1 §4.1/§4.2. The control ONLY pans the map: a
+// one-shot browser geolocation read after an explicit click; the position
+// never leaves the browser, is never sent to SIG, draws no marker, and
+// produces no 'cameras near you' list/count/alert/proximity notice of any
+// kind. The written SIG-GOV-017 analysis this pins lives at
+// docs/build/reports/p37.72-gov017-analysis/PACKET.md.
+
+/** The zoom floor the pan applies — the site band opens above the national cells (z10). */
+export const MY_LOCATION_MIN_ZOOM = 10;
+
+/**
+ * The frame the click produces: centre on the position; raise zoom only up
+ * to the site-band floor — a pan plus a floor, never a zoom-out and never a
+ * fit. The caller's moveend path writes the same zoom-rounded `at=` every
+ * pan writes; nothing person-keyed is computed or stored.
+ */
+export function myLocationTarget(
+  lon: number,
+  lat: number,
+  currentZoom: number,
+): { center: [number, number]; zoom: number } {
+  return { center: [lon, lat], zoom: Math.max(currentZoom, MY_LOCATION_MIN_ZOOM) };
+}
+
+/** The honest failure kinds the click can produce. */
+export type GeoFailure = "unsupported" | "denied" | "unavailable" | "timeout";
+
+/**
+ * The failure note — honest copy that leaves the map where it is and never
+ * nags, never promises, and never keys anything to the viewer ("near you"
+ * wording is contract-banned).
+ */
+export function geoFailureNote(kind: GeoFailure): string {
+  switch (kind) {
+    case "unsupported":
+      return "This browser offers no geolocation — the map stays where it is.";
+    case "denied":
+      return "Location permission was not granted — the map stays where it is. Nothing was read or sent.";
+    case "timeout":
+      return "The position request timed out — the map stays where it is.";
+    default:
+      return "Your position could not be determined — the map stays where it is.";
+  }
+}

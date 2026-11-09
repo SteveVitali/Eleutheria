@@ -24,6 +24,19 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.72 — 'My location' map-pan control (D-K1-7 [B-44] = yes;
+  SIG-GOV-017 cited, analysis first):** the `/map/` chrome gains a "My
+  location" button that only pans the map — a one-shot
+  `navigator.geolocation` read on an explicit click (never on load, never
+  `watchPosition`), the position never leaves the browser (no send, no
+  store, no marker; the URL keeps only the same zoom-rounded `at=` every
+  pan writes), and no 'cameras near you' list, count, alert or proximity
+  notice of any kind is produced. The written SIG-GOV-017 analysis —
+  `docs/build/reports/p37.72-gov017-analysis/PACKET.md` — finds the
+  bounded control compliant and pins the contract the e2e asserts
+  (click-only read, zero position bytes on the wire, honest
+  denial/unavailable copy, axe-clean chrome).
+
 - **P37.18 — map filters, In-view list, keyboard, mobile and print (K1
   MAP-03b; serves SIG-UI-095/102/104):** the `/map/` T2 app completes its
   second half — tile-path filters over the `sig.map-tiles/2` props

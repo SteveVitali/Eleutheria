@@ -77,3 +77,5 @@ date,pr,head_sha,check,flake_id,run_id,attempt,outcome
 2026-11-05T20:33Z,446,298c9695e0bfd31ce4177aac59f44be2686442ac,web,PMTILES-REPLAY-1 (unlisted — "/map/ [T2] initial-load: unmeasurable fetched resources /tiles/sig_graph-sites.70a45488.pmtiles — second adjudicated occurrence: identical spec green on the same run's first shard (✓ 1166 @ 18:37Z) and green locally on this exact code (3.3s; measured /map/ gaps inside the recorded D-P35.51-1 bounds); the branch range is ops/+records only — no tile-serving path touched"),42082405796,1,failure (unlisted — adjudicated env-flake; no rerun taken: the superseding repair head carries the same spec and its own head-bound run is the verdict)
 2026-11-07T17:01:27Z,459,fbe1eeda49c0c3c5459d0152764796382ccecade,python,PY-STUB-1,42382114624,1,failure
 2026-11-07T17:01:27Z,459,fbe1eeda49c0c3c5459d0152764796382ccecade,python,PY-STUB-1,42382114624,2,rerun-requested
+2026-11-08T11:14Z,466,4a136ce7,python,RUNNER-STALL-1,42470354990,1,failure (hosted runner lost communication at 57m01s — no failing step; infra flake, re-run requested)
+2026-11-08T11:14Z,466,4a136ce7,python,RUNNER-STALL-1,42470354990,2,rerun-requested

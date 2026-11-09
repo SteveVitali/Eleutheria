@@ -454,6 +454,19 @@
 .sig-map-app__panpad button[aria-label="Pan west"] { grid-area: w; }
 .sig-map-app__panpad button[aria-label="Pan east"] { grid-area: e; }
 .sig-map-app__panpad button[aria-label="Pan south"] { grid-area: s; }
+/* P37.72 (D-K1-7) — the 'My location' pan control (K1 §4.1: ≥32×32, ≥44×44
+ * on mobile); it sits in the same chrome row as the pan pad. */
+.sig-map-app__myloc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sig-space-1);
+  max-width: 16rem;
+}
+.sig-map-app__myloc button {
+  min-width: 32px;
+  min-height: 32px;
+  cursor: pointer;
+}
 .sig-map-app__basemap {
   font-size: var(--sig-step--1);
 }
@@ -574,7 +587,7 @@
   width: 36px;
   height: 4px;
   margin: 0 auto;
-  border-radius: 2px;
+  border-radius: 50%;
   background: var(--sig-ink-muted);
 }
 .sig-map-app__peek {
@@ -620,6 +633,10 @@
     min-width: 44px;
     min-height: 44px;
   }
+  .sig-map-app__myloc button {
+    min-width: 44px;
+    min-height: 44px;
+  }
 }
 @media (min-width: 960px) {
   .sig-map-app__sheetbar {
@@ -642,7 +659,7 @@
   }
   .sig-map-print {
     display: block;
-    font-size: 10pt;
+    font-size: 83%;
   }
   .sig-map-print__meta {
     margin: 0 0 6pt;
@@ -650,7 +667,7 @@
   .sig-map-print__table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 9pt;
+    font-size: 75%;
   }
   .sig-map-print__table th,
   .sig-map-print__table td {
