@@ -2,8 +2,10 @@
 /** P37.24 (GX-08a) — the sig.graph-overview/1 web mirror. */
 import { describe, expect, it } from "vitest";
 import {
+  COMPONENTS_INDEX_SCHEMA,
   GRAPH_INDEX_SCHEMA,
   GRAPH_OVERVIEW_SCHEMA,
+  decodeComponentsIndex,
   decodeGraphIndex,
   decodeOverview,
   mergeOverviews,
@@ -13,7 +15,12 @@ import {
   GRAPH_INDEX_FIXTURE,
   GRAPH_OVERVIEW_FIXTURES,
 } from "../../src/lib/graph-overview-fixture";
-import { getGraphIndex, getGraphOverview } from "../../src/lib/data";
+import {
+  getComponentsIndex,
+  getGraphIndex,
+  getGraphOverview,
+  getGraphOverviewPlace,
+} from "../../src/lib/data";
 
 describe("decodeOverview", () => {
   it("decodes the columnar doc to labelled nodes and H-2 edges", () => {
@@ -61,9 +68,39 @@ describe("overviewAtPlace", () => {
 describe("data layer", () => {
   it("serves the committed fixtures in fixtures mode", () => {
     const idx = getGraphIndex();
-    expect(idx.map((r) => r.id).sort()).toEqual(["funding", "operators", "supply", "types"]);
+    expect(idx.map((r) => r.id).sort()).toEqual([
+      "access",
+      "adoption",
+      "funding",
+      "governance",
+      "operators",
+      "supply",
+      "types",
+    ]);
     const ov = getGraphOverview("operators")!;
     expect(ov.edges.length).toBe(1);
+  });
+
+  it("decodes the access matrix + member counts and serves the place slice", () => {
+    const ov = getGraphOverview("access")!;
+    // S6R-12 — the share-list overview files under the CC BY-SA compartment.
+    expect(ov.compartment).toBe("portal");
+    expect(ov.capActions.join(" ")).toContain("matrix fold");
+    expect(Math.max(...ov.edges.map((e) => e.memberCount))).toBeGreaterThan(0);
+    const slice = getGraphOverviewPlace("access", "usa-ok")!;
+    expect(slice).not.toBeNull();
+    expect(slice.slice).toBe("usa-ok");
+    // the slice carries the unfolded agency-level egos, not place cells.
+    expect(slice.nodes.some((n) => n.band === "agency")).toBe(true);
+  });
+
+  it("decodes the components index", () => {
+    const idx = getComponentsIndex();
+    expect(idx.length).toBeGreaterThan(0);
+    expect(idx[0]!.components[0]!.componentId).toBe("cmp-0001");
+    expect(() =>
+      decodeComponentsIndex({ schema: COMPONENTS_INDEX_SCHEMA, components: [] }),
+    ).not.toThrow();
   });
 
   it("decodes the index document", () => {

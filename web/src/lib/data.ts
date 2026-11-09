@@ -123,15 +123,19 @@ import { DOSSIER_SOURCES_FIXTURE } from "./dossier-sources-fixture";
 import { isDossierSourcesDoc, type DossierSourcesDoc } from "./dossier-sources";
 import { fixtureFigureTwin } from "./dossier-visuals-fixture";
 import {
+  decodeComponentsIndex,
   decodeGraphIndex,
   decodeOverview,
   mergeOverviews,
+  type ComponentsIndexEntry,
   type GraphIndexEntry,
   type GraphOverview,
 } from "./graph-overview";
 import {
+  COMPONENTS_INDEX_FIXTURE,
   GRAPH_INDEX_FIXTURE,
   GRAPH_OVERVIEW_FIXTURES,
+  GRAPH_PLACE_FIXTURES,
 } from "./graph-overview-fixture";
 import { isWatchKind, type WatchEnvelopeV2, type WatchItemV2 } from "./watch-v2";
 import { WATCH_V2_FIXTURE } from "./watch-v2-fixture";
@@ -1514,6 +1518,63 @@ export function getGraphOverview(id: string): GraphOverview | null {
   return mergeOverviews(getGraphOverviewDocs(id));
 }
 
+/**
+ * P37.25 (GX-08b): the per-place slice docs a folded (matrix) overview
+ * emits — `<exportDir>/web/graph/<ov>/places/<comp>.<jkey>.json`, one per
+ * compartment, unioned like the national doc. `null` when the release
+ * emitted no slice for the place (an unfolded overview's drill-down then
+ * filters the national doc — the P37.24 path).
+ */
+export function getGraphOverviewPlaceDocs(
+  id: string,
+  placeKey: string,
+): GraphOverview[] {
+  if (dataSource() !== "export") {
+    return (GRAPH_PLACE_FIXTURES[`${id}/${placeKey}`] ?? []).map(decodeOverview);
+  }
+  const dir = `${exportDir()}/web/graph/${id}/places`;
+  if (!existsSync(dir)) return [];
+  const out: GraphOverview[] = [];
+  for (const entry of readdirSync(dir).sort()) {
+    if (!entry.endsWith(`.${placeKey}.json`)) continue;
+    const parsed = JSON.parse(readFileSync(`${dir}/${entry}`, "utf-8")) as {
+      slice?: string;
+    };
+    if (parsed.slice === placeKey) out.push(decodeOverview(parsed));
+  }
+  return out;
+}
+
+/** The merged slice for one place, or null when no slice docs exist. */
+export function getGraphOverviewPlace(
+  id: string,
+  placeKey: string,
+): GraphOverview | null {
+  return mergeOverviews(getGraphOverviewPlaceDocs(id, placeKey));
+}
+
+/**
+ * P37.25 (GX-08b, K2 §6.4): the `sig.graph-components/1` index docs —
+ * `<exportDir>/web/graph/components/<comp>/index.json` per compartment in
+ * export mode; the committed fixture rows otherwise. A missing directory
+ * is the honest empty index (a pre-P37.25 export).
+ */
+export function getComponentsIndex(): { compartment: string; components: ComponentsIndexEntry[] }[] {
+  if (dataSource() !== "export") return COMPONENTS_INDEX_FIXTURE;
+  const dir = `${exportDir()}/web/graph/components`;
+  if (!existsSync(dir)) return [];
+  const out: { compartment: string; components: ComponentsIndexEntry[] }[] = [];
+  for (const entry of readdirSync(dir).sort()) {
+    const path = `${dir}/${entry}/index.json`;
+    if (!existsSync(path)) continue;
+    out.push({
+      compartment: entry,
+      components: decodeComponentsIndex(JSON.parse(readFileSync(path, "utf-8"))),
+    });
+  }
+  return out;
+}
+
 /** The `sig.graph-index/1` overview manifest rows. */
 export function getGraphIndex(): GraphIndexEntry[] {
   if (dataSource() !== "export") return GRAPH_INDEX_FIXTURE;
@@ -1542,8 +1603,8 @@ export function getGraphOverviewFile(id: string, file: string): string | null {
     );
   if (file === `edges.${ov.compartment}.csv`)
     return (
-      "source_id,target_id,relation,predicates,date,date_kind,currency,support,sources,claim_ids,evidence_count,historical\n" +
-      ov.edges.map((e) => `${e.src},${e.dst},${e.relation},,${e.date ?? ""},${e.dateKind},${e.currency},,"${e.sources.join(";")}",,${e.evidenceCount},`).join("\n") +
+      "source_id,target_id,relation,predicates,date,date_kind,currency,support,sources,claim_ids,evidence_count,member_count,historical\n" +
+      ov.edges.map((e) => `${e.src},${e.dst},${e.relation},,${e.date ?? ""},${e.dateKind},${e.currency},,"${e.sources.join(";")}",,${e.evidenceCount},${e.memberCount || ""},`).join("\n") +
       "\n"
     );
   if (file === `overview.${ov.compartment}.svg`) {

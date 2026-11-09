@@ -1,15 +1,43 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
-"""The ``sig.graph-overview/1`` builder — P37.24 (K2 GX-08a / §5, §6.3).
+"""The ``sig.graph-overview/1`` builder — P37.24 (K2 GX-08a / §5, §6.3),
+extended by P37.25 (K2 GX-08b).
 
 The four 08a overviews — O0 ``types`` (what SIG holds, by kind, and how kinds
 connect, gaps included), O1 ``supply`` (who sells surveillance technology to
 whom, relevance-gated per D-K2-5 / H-13), O3 ``funding`` (who funds whom) and
 O4 ``operators`` (which bodies run the cameras, where — the NEW-2 fix:
-``published_by`` is provenance, never an operator edge) — emitted per licence
-compartment from
-the export's ONE snapshot.
+``published_by`` is provenance, never an operator edge) — plus the 08b set:
+O2 ``access`` (who can search whose data — Data Driven's configured-access
+form today; the Flock share-list ``configured_sharing_partner`` claims fold
+to the state × state weighted matrix at scale, never a national hairball —
+SIG-UI-021), O5 ``governance`` (which laws and ordinances govern which
+technologies where) and O7 ``adoption`` (which agencies use which technology,
+by state — the state × technology matrix at scale) — emitted per licence
+compartment from the export's ONE snapshot. The ``sig.graph-components/1``
+index (K2 §6.4) rides the same emission: per compartment, the
+weakly-connected components of the publishable entity-ref graph, one member
+file per component.
+
+The 08b laws the contract adds:
+
+* **the matrix fold** — O2/O5/O7 node-link overviews exist only at small
+  scale. Past ``MATRIX_MIN`` endpoints the foldable side collapses to its
+  admin-1 place and the edges merge into weighted cells (K2 §5.2 — the
+  declared aggregation, recorded in ``cap_actions``, never a smoothed cut).
+  Each folded edge carries ``member_count`` — the distinct folded member
+  nodes it aggregates.
+* **place slices** — a folded overview emits per-place detail docs at
+  ``web/graph/<ov>/places/<comp>.<jkey>.json`` (same
+  ``sig.graph-overview/1`` schema, ``slice`` marked): the state drill-down's
+  unfolded agency-level subgraph — "per-agency egos grouped by state" (K2
+  §5.2 O2). Out-of-place counterparties fold to their own place when a
+  slice would otherwise exceed the cap.
+* **CC BY-SA compartment** — the share-list claims stamp the ``portal``
+  (CC-BY-SA-4.0) compartment: access edges file exactly where their claim
+  set licenses to (SIG-LIC-009a), so the Flock matrix is published in the
+  CC BY-SA compartment or per compartment — never blended (S6R-12).
 
 The laws the contract carries (SIG-UI-117/118, SIG-EXPORT-015, K2 §7):
 
@@ -73,19 +101,26 @@ INDEX_SCHEMA = "sig.graph-index/1"
 #: The download resource schemas (SIG-TRANSP-016).
 GRAPH_NODES_SCHEMA = "sig.graph-nodes/1"
 GRAPH_EDGES_SCHEMA = "sig.graph-edges/1"
+#: The components contracts (K2 §6.4, SIG-EXPORT-D20).
+COMPONENTS_INDEX_SCHEMA = "sig.graph-components/1"
+COMPONENT_SCHEMA = "sig.graph-component/1"
 
 #: SIG-UI-118 / K2 §5 — the hard node bound, enforced after aggregation.
 NODE_CAP = 3000
 #: K2 O1 — a side's degree-1 literal counterparties beyond this count fold
 #: into one labelled group node per hub.
 COLLAPSE_MIN = 8
+#: K2 §5.2 — the node-link → matrix boundary. Past this many endpoints the
+#: foldable side collapses to admin-1 places (the state × state / state ×
+#: technology matrix; "never node-link nationally" — SIG-UI-021).
+MATRIX_MIN = 200
 
 #: The G-6 caption, verbatim — positions carry no geographic meaning.
 POSITION_NOTE = "position has no geographic meaning; nearby nodes share relationships"
 #: H-8 / SIG-UI-070 — the ER disclosure every count carries (entity_page's).
 ER_DISCLOSURE = _ep.ER_DISCLOSURE
 
-#: The 08a overview catalogue (O2/O5/O7 + components are GX-08b / P37.25).
+#: The overview catalogue — 08a (P37.24) plus the 08b set (P37.25, GX-08b).
 OVERVIEWS: tuple[tuple[str, str, str], ...] = (
     ("types", "Type map", "What does SIG hold, by kind, and how do kinds connect?"),
     ("supply", "Supply", "Who sells surveillance technology to whom?"),
@@ -94,7 +129,61 @@ OVERVIEWS: tuple[tuple[str, str, str], ...] = (
     # banned token under web/src until the operator writes the About
     # "who runs SIG" wording (tests/unit/test_p36_64_copy_batch.py).
     ("operators", "Operators", "Which bodies run the cameras, and where?"),
+    ("access", "Access", "Who can search whose data?"),
+    ("governance", "Governance", "Which laws and ordinances govern which technologies where?"),
+    ("adoption", "Adoption", "Which agencies use which technology, and where?"),
 )
+
+#: O2 access — the §12.2 access-edge predicates (the sharing/access family;
+#: DEGREE_PREDICATES and the ``*_set``/``*_count`` attribute predicates are
+#: deliberately absent — a count or set literal is never an edge).
+ACCESS_PREDS = frozenset(
+    {
+        "configured_sharing_partner",
+        "sharing_partner",
+        "federates_search_to",
+        "requests_data_from",
+        "distributes_list_to",
+        "live_stream_permitted_to",
+        "third_party_integration",
+        "holds_data_collected_by",
+        "configured_access_edge",
+        "observed_use_edge",
+    }
+)
+#: O5 governance — instrument/jurisdiction/technology/body predicates.
+GOVERNANCE_PLACE_PREDS = frozenset({"bill_jurisdiction", "in_jurisdiction"})
+GOVERNANCE_TECH_PREDS = frozenset(
+    {
+        "constrains_technology",
+        "constrains_capability",
+        "event_technologies",
+        "implements_technology",
+        "requires_authorization_of",
+        "technology",
+        "technology_category",
+    }
+)
+GOVERNANCE_BODY_PREDS = frozenset({"enacting_body", "oversight_body"})
+#: O7 adoption — "the agency uses the technology" predicates.
+ADOPTION_PREDS = frozenset(
+    {
+        "deployment_exists",
+        "in_use",
+        "uses_facial_recognition",
+        "uses_ai_surveillance",
+        "procured_technology",
+        "implements_technology",
+        "technology",
+        "technology_category",
+        "deployed",
+    }
+)
+#: The subject kinds O5 reads (bills, instruments/ordinances → ``policy``,
+#: and agenda items whose technologies are recorded — O6 folds into O5).
+GOVERNANCE_SUBJECT_KINDS = frozenset({"bill", "policy", "event"})
+#: Literal values that carry no party/technology name — never a node label.
+_BOOL_LITERALS = frozenset({"true", "false", "yes", "no", "1", "0"})
 
 #: Literal-party predicates — a text value naming an organisation (O0's
 #: kind→org edges + O1/O3/O4's literal counterparties).
@@ -125,6 +214,7 @@ BAND_ORDER: tuple[str, ...] = (
     "agency",
     "vendor",
     "site",
+    "technology",
     "instrument",
     "entity",
     "group",
@@ -142,7 +232,7 @@ _KIND_TO_BAND = {
     "event": "instrument",
 }
 #: figure-kit shape kinds for bands outside ``kind_shape_path``'s own map.
-_BAND_SHAPE = {"place": "site", "kind": "source", "entity": "entity"}
+_BAND_SHAPE = {"place": "site", "kind": "source", "entity": "entity", "technology": "entity"}
 
 _LAYOUT_PITCH = 18.0
 _LAYOUT_COLS = 14
@@ -183,6 +273,9 @@ class _Edge:
     claim_ids: set[str] = field(default_factory=set)
     source_ids: set[str] = field(default_factory=set)
     observed: set[str] = field(default_factory=set)
+    #: The distinct member nodes a matrix fold aggregated into this cell —
+    #: empty on an unfolded edge (``member_count`` 0 = not aggregated).
+    members: set[str] = field(default_factory=set)
     date_kind: str = "undated"
     historical: bool = False
 
@@ -647,6 +740,239 @@ def _operators(
     return nodes, edges
 
 
+def _access(
+    labels: Mapping[str, EntityLabel],
+    by_subject: Mapping[str, Sequence[_ep.PageClaim]],
+) -> tuple[dict[str, _Node], dict[tuple[str, str, str], _Edge]]:
+    """O2 — subject → sharing partner on the §12.2 access predicates.
+
+    Direction is the recorded edge direction (the subject's snapshot asserts
+    the configured access); the relation names the §12.2 access kind so the
+    three kinds stay visibly separate (SIG-UI-024). A literal partner value
+    runs the shared person screen before it can be a node (Part VIII); a
+    withheld or review-pending partner drops the whole edge (A-10).
+    """
+    nodes: dict[str, _Node] = {}
+    edges: dict[tuple[str, str, str], _Edge] = {}
+    relation_for = {
+        "configured_access": "configured access to",
+        "observed_use": "observed access to",
+        "declared_policy": "declared-policy access to",
+    }
+    for sid, claims in by_subject.items():
+        for c in claims:
+            if c.predicate_id not in ACCESS_PREDS:
+                continue
+            kind = _ep._access_kind_for(c.predicate_id) or "configured_access"
+            relation = relation_for.get(kind, "access to")
+            if c.object_entity:
+                dst = _entity_node(nodes, c.object_entity, labels)
+            else:
+                val = (c.value or "").strip()
+                dst = (
+                    _literal_node(nodes, val, band="agency")
+                    if val and val.lower() not in _BOOL_LITERALS
+                    else None
+                )
+            _add_edge(
+                edges,
+                src=_entity_node(nodes, sid, labels),
+                dst=dst,
+                relation=relation,
+                predicate=c.predicate_id,
+                claim_id=c.claim_id,
+                source_id=c.source_id,
+                observed=_norm_iso_date(c.observed_at),
+            )
+    return nodes, edges
+
+
+def _governance(
+    labels: Mapping[str, EntityLabel],
+    by_subject: Mapping[str, Sequence[_ep.PageClaim]],
+    places: Mapping[str, PlaceInfo],
+) -> tuple[dict[str, _Node], dict[tuple[str, str, str], _Edge]]:
+    """O5 — laws/ordinances → jurisdictions, technologies and bodies."""
+    nodes: dict[str, _Node] = {}
+    edges: dict[tuple[str, str, str], _Edge] = {}
+
+    def _juris_node(c: _ep.PageClaim) -> str | None:
+        if c.object_entity:
+            return _entity_node(nodes, c.object_entity, labels)
+        text = (c.value or "").strip()
+        if not text or text.lower() in _BOOL_LITERALS:
+            return None
+        key = f"place-lit:{text.lower()}"
+        if key not in nodes:
+            nodes[key] = _Node(key=key, label=text, band="place", basis="source_name")
+        return key
+
+    for sid, claims in by_subject.items():
+        sl = labels.get(sid)
+        if not _published(sl) or sl.kind not in GOVERNANCE_SUBJECT_KINDS:  # type: ignore[union-attr]
+            continue
+        skey = _entity_node(nodes, sid, labels)
+        for c in claims:
+            if c.predicate_id in GOVERNANCE_PLACE_PREDS:
+                _add_edge(
+                    edges,
+                    src=skey,
+                    dst=_juris_node(c),
+                    relation="in jurisdiction",
+                    predicate=c.predicate_id,
+                    claim_id=c.claim_id,
+                    source_id=c.source_id,
+                    observed=_norm_iso_date(c.observed_at),
+                )
+            elif c.predicate_id in GOVERNANCE_TECH_PREDS:
+                tech = (
+                    _entity_node(nodes, c.object_entity, labels)
+                    if c.object_entity
+                    else (
+                        _literal_node(nodes, (c.value or "").strip(), band="technology")
+                        if (c.value or "").strip()
+                        else None
+                    )
+                )
+                _add_edge(
+                    edges,
+                    src=skey,
+                    dst=tech,
+                    relation=c.predicate_id.replace("_", " "),
+                    predicate=c.predicate_id,
+                    claim_id=c.claim_id,
+                    source_id=c.source_id,
+                    observed=_norm_iso_date(c.observed_at),
+                )
+            elif c.predicate_id in GOVERNANCE_BODY_PREDS:
+                body = (
+                    _entity_node(nodes, c.object_entity, labels)
+                    if c.object_entity
+                    else (
+                        _literal_node(nodes, (c.value or "").strip(), band="agency")
+                        if (c.value or "").strip()
+                        else None
+                    )
+                )
+                _add_edge(
+                    edges,
+                    src=body,
+                    dst=skey,
+                    relation=("enacts" if c.predicate_id == "enacting_body" else "oversees"),
+                    predicate=c.predicate_id,
+                    claim_id=c.claim_id,
+                    source_id=c.source_id,
+                    observed=_norm_iso_date(c.observed_at),
+                )
+    return nodes, edges
+
+
+def _technology_key(
+    nodes: dict[str, _Node],
+    c: _ep.PageClaim,
+    labels: Mapping[str, EntityLabel],
+) -> str | None:
+    """The technology node a claim names — entity-ref, the recorded literal,
+    or the predicate-derived word for ``uses_*``/boolean deployments."""
+    if c.object_entity:
+        return _entity_node(nodes, c.object_entity, labels)
+    text = (c.value or "").strip()
+    if text and text.lower() not in _BOOL_LITERALS:
+        return _literal_node(nodes, text, band="technology")
+    if c.predicate_id.startswith("uses_"):
+        word = c.predicate_id[len("uses_") :].replace("_", " ")
+        key = f"tech:{word}"
+        if key not in nodes:
+            nodes[key] = _Node(key=key, label=word.title(), band="technology", basis="predicate")
+        return key
+    return None
+
+
+def _adoption(
+    labels: Mapping[str, EntityLabel],
+    by_subject: Mapping[str, Sequence[_ep.PageClaim]],
+) -> tuple[dict[str, _Node], dict[tuple[str, str, str], _Edge]]:
+    """O7 — agency/atlas subject → technology, on the adoption predicates."""
+    nodes: dict[str, _Node] = {}
+    edges: dict[tuple[str, str, str], _Edge] = {}
+    for sid, claims in by_subject.items():
+        for c in claims:
+            if c.predicate_id not in ADOPTION_PREDS:
+                continue
+            _add_edge(
+                edges,
+                src=_entity_node(nodes, sid, labels),
+                dst=_technology_key(nodes, c, labels),
+                relation="uses",
+                predicate=c.predicate_id,
+                claim_id=c.claim_id,
+                source_id=c.source_id,
+                observed=_norm_iso_date(c.observed_at),
+            )
+    return nodes, edges
+
+
+def _fold_to_places(
+    nodes: dict[str, _Node],
+    edges: dict[tuple[str, str, str], _Edge],
+    *,
+    foldable: Any,
+    places: Mapping[str, PlaceInfo],
+    ancestors: Mapping[str, tuple[str, ...]],
+    labels: Mapping[str, EntityLabel],
+) -> tuple[dict[str, _Node], dict[tuple[str, str, str], _Edge], dict[str, str], list[str]]:
+    """Fold every node ``foldable(key, node)`` selects to its admin-1 place.
+
+    Returns the folded (nodes, edges), the ``fold_map`` (original key → place
+    jkey or ``"unplaced"``), and the declared cap_actions. Folded member keys
+    ride each merged edge's ``members`` for the ``member_count`` cell weight.
+    """
+    fold_map: dict[str, str] = {}
+    for key, n in nodes.items():
+        if foldable(key, n):
+            jkey = n.place
+            if jkey is None and not key.startswith(
+                ("lit:", "place:", "tech:", "grp:", "place-lit:")
+            ):
+                jkey = getattr(labels.get(key), "place_jkey", None) or None
+            fold_map[key] = _admin1(ancestors, places, jkey) or "unplaced"
+
+    def _folded(key: str) -> str:
+        jkey = fold_map.get(key)
+        if jkey is None:
+            return key
+        fkey = f"place:{jkey}"
+        if fkey not in fnodes:
+            fnodes[fkey] = _Node(
+                key=fkey,
+                label=_place_name(places, jkey) if jkey != "unplaced" else "Not yet placed",
+                band="place",
+                place=None if jkey == "unplaced" else jkey,
+            )
+        return fkey
+
+    fedges: dict[tuple[str, str, str], _Edge] = {}
+    fnodes: dict[str, _Node] = {k: n for k, n in nodes.items() if k not in fold_map}
+    for (src, dst, rel), e in edges.items():
+        fs, fd = _folded(src), _folded(dst)
+        merged = fedges.setdefault((fs, fd, rel), _Edge(src=fs, dst=fd, relation=rel))
+        merged.predicates |= e.predicates
+        merged.claim_ids |= e.claim_ids
+        merged.source_ids |= e.source_ids
+        merged.observed |= e.observed
+        for end in (src, dst):
+            merged.members.add(end) if end in fold_map else None
+            merged.members |= {m for m in e.members}
+    folded_nodes = {k: n for k, n in fnodes.items()}
+    actions = [
+        f"matrix fold: {len(fold_map)} member nodes folded to "
+        f"{len(set(fold_map.values()))} place cells — {len(edges)} edges merged into "
+        f"{len(fedges)} weighted cells (agency-level detail on the place drill-downs "
+        "and each entity's page)"
+    ]
+    return folded_nodes, fedges, fold_map, actions
+
+
 # ---------------------------------------------------------------------------
 # Collapse + emit
 # ---------------------------------------------------------------------------
@@ -825,6 +1151,9 @@ def _edge_fields(
         "source_ids": sorted(e.source_ids),
         "claim_ids": sorted(e.claim_ids),
         "evidence_count": len(e.claim_ids),
+        # The matrix cell weight — distinct folded member nodes (0 on an
+        # unfolded edge).
+        "member_count": len(e.members),
         "historical": currency == "HISTORICAL",
     }
 
@@ -896,6 +1225,10 @@ def edge_column_specs() -> tuple[Any, ...]:
         _CS("sources", "the bound source names, ;-joined"),
         _CS("claim_ids", "the supporting claim anchors, ;-joined (SIG-EXPORT-015)"),
         _CS("evidence_count", "the claim count"),
+        _CS(
+            "member_count",
+            "the distinct folded member nodes a matrix cell aggregates (0 = unfolded edge)",
+        ),
         _CS("historical", "whether the edge is historical-marked"),
     )
 
@@ -977,17 +1310,54 @@ def build_overviews(
         ),
         "funding": lambda: _funding(labels, by_subject),
         "operators": lambda: _operators(labels, by_subject, value_claims, places, ancestors),
+        "access": lambda: _access(labels, by_subject),
+        "governance": lambda: _governance(labels, by_subject, places),
+        "adoption": lambda: _adoption(labels, by_subject),
     }
     collapse = {"supply": ("vendor", "other suppliers"), "funding": ("agency", "other recipients")}
+    # K2 §5.2 — the foldable side of each 08b matrix: O2 folds BOTH ends
+    # (every node is an agency/place cell), O5 folds the instrument subject
+    # side (nodes incident to the governance predicates), O7 folds the
+    # agency side. ``None`` folds nothing — the predicate decides per key.
+    foldable: dict[str, Any] = {
+        "access": lambda k, n: n.band in ("agency", "vendor", "entity") or k.startswith("lit:"),
+        "governance": lambda k, n: k in _gov_subjects,
+        "adoption": lambda k, n: n.band in ("agency", "entity"),
+    }
 
     out: dict[str, tuple[Any, str]] = {}
     index_rows: list[dict[str, Any]] = []
+    _gov_subjects: set[str] = set()
     for ov_id, title, question in OVERVIEWS:
         nodes, edges = collectors[ov_id]()
         actions: list[str] = []
         if ov_id in collapse:
             side, noun = collapse[ov_id]
             actions = _collapse_degree_one(nodes, edges, side=side, noun=noun)
+        # The declared 08b aggregation: past MATRIX_MIN endpoints the
+        # foldable side collapses to admin-1 place cells (the weighted
+        # matrix — SIG-UI-021, never a national hairball). Unfolded copies
+        # stay for the per-place slice docs.
+        u_nodes, u_edges = nodes, edges
+        fold_map: dict[str, str] = {}
+        if ov_id in foldable:
+            if ov_id == "governance":
+                _gov_subjects = {
+                    k
+                    for k, n in nodes.items()
+                    if not k.startswith(("lit:", "place:", "tech:", "grp:", "place-lit:", "kind:"))
+                    and getattr(labels.get(k), "kind", None) in GOVERNANCE_SUBJECT_KINDS
+                }
+            if len(nodes) > MATRIX_MIN:
+                nodes, edges, fold_map, fold_actions = _fold_to_places(
+                    nodes,
+                    edges,
+                    foldable=foldable[ov_id],
+                    places=places,
+                    ancestors=ancestors,
+                    labels=labels,
+                )
+                actions += fold_actions
         if len(nodes) > NODE_CAP:
             raise GraphOverviewError(
                 f"overview {ov_id}: {len(nodes)} nodes exceeds the {NODE_CAP} cap "
@@ -1018,6 +1388,16 @@ def build_overviews(
             if not node_comps[k]:
                 node_comps[k] = set(entity_comps.get(k) or {default_compartment})
         comp_list = sorted({c for s in edge_comps.values() for c in s} | {default_compartment})
+        # The unfolded edge set's compartment filing — the slice docs file
+        # under exactly the same rule (SIG-LIC-009a, S6R-12).
+        u_edge_comps: dict[tuple[str, str, str], set[str]] = {}
+        if fold_map:
+            for k, e in u_edges.items():
+                comps = {
+                    claim_comp.get(cid) or lit_comp.get(cid) or default_compartment
+                    for cid in e.claim_ids
+                }
+                u_edge_comps[k] = comps or {default_compartment}
         for comp in comp_list:
             c_nodes = {k: n for k, n in nodes.items() if comp in node_comps[k]}
             c_edges = {k: e for k, e in edges.items() if comp in edge_comps[k]}
@@ -1046,6 +1426,59 @@ def build_overviews(
                 _csv(erows, [c.name for c in EDGE_COLUMN_SPECS]),
                 comp,
             )
+            # The 08b slice docs — the unfolded agency-level subgraph per
+            # admin-1 cell a folded overview aggregated ("per-agency egos
+            # grouped by state", K2 §5.2 O2). Same schema, ``slice`` marked.
+            for jkey in sorted(set(fold_map.values())):
+                s_edges = {
+                    k: e
+                    for k, e in u_edges.items()
+                    if comp in u_edge_comps.get(k, {default_compartment})
+                    and (fold_map.get(e.src) == jkey or fold_map.get(e.dst) == jkey)
+                }
+                if not s_edges:
+                    continue
+                s_nodes: dict[str, _Node] = {}
+                for e in s_edges.values():
+                    for end in (e.src, e.dst):
+                        n = u_nodes.get(end)
+                        if n is not None:
+                            s_nodes[end] = n
+                # A slice over the cap folds its out-of-place
+                # counterparties to their own place cells — bounded, never
+                # a smoothed cut (the action rides the slice doc).
+                slice_actions: list[str] = []
+                if len(s_nodes) > NODE_CAP:
+                    inner_fold = {k: v for k, v in fold_map.items() if v != jkey and k in s_nodes}
+                    s_nodes, s_edges, _inner_map, inner_actions = _fold_to_places(
+                        s_nodes,
+                        s_edges,
+                        foldable=lambda k, n, f=inner_fold: k in f,
+                        places=places,
+                        ancestors=ancestors,
+                        labels=labels,
+                    )
+                    slice_actions += inner_actions
+                s_fields = {
+                    k: _edge_fields(e, lineage=lineage, as_of=as_of, source_names=source_names)
+                    for k, e in s_edges.items()
+                }
+                s_doc, _s_svg, _n, _e = _emit_doc(
+                    ov_id,
+                    title,
+                    question,
+                    s_nodes,
+                    s_edges,
+                    s_fields,
+                    _layout(s_nodes),
+                    publication=publication,
+                    generated_at=generated_at,
+                    as_of=as_of,
+                    compartment=comp,
+                    actions=slice_actions,
+                    slice=jkey,
+                )
+                out[f"{base}/places/{comp}.{jkey}.json"] = (s_doc, comp)
         index_rows.append(
             {
                 "id": ov_id,
@@ -1063,6 +1496,7 @@ def build_overviews(
                         if n.place and n.place in places and (places[n.place].slug_path or "")
                     }
                 ),
+                "slices": sorted(set(fold_map.values())),
             }
         )
     out["web/graph/index.json"] = (
@@ -1077,6 +1511,146 @@ def build_overviews(
         },
         default_compartment,
     )
+    out.update(
+        _component_artifacts(
+            labels,
+            by_subject,
+            claim_comp,
+            lit_comp,
+            entity_comps,
+            default_compartment=default_compartment,
+            publication=publication,
+            generated_at=generated_at,
+            as_of=as_of,
+        )
+    )
+    return out
+
+
+def _component_artifacts(
+    labels: Mapping[str, EntityLabel],
+    by_subject: Mapping[str, Sequence[_ep.PageClaim]],
+    claim_comp: Mapping[str, str],
+    lit_comp: Mapping[str, str],
+    entity_comps: Mapping[str, set[str]],
+    *,
+    default_compartment: str,
+    publication: str,
+    generated_at: str,
+    as_of: Any,
+) -> dict[str, tuple[Any, str]]:
+    """``sig.graph-components/1`` per compartment (K2 §6.4, SIG-EXPORT-D20).
+
+    The weakly-connected components of the publishable entity-ref graph —
+    every claim whose object is another published entity is an undirected
+    join — one index per compartment plus one member file per component of
+    ≤ ``NODE_CAP`` entities (a larger component splits into named parts;
+    the member list is flat, never a graph, so chunking is honest).
+    Size-1 components carry no path-search value: the index records their
+    count, never the members.
+    """
+    # comp → undirected entity pair set
+    comp_pairs: dict[str, set[tuple[str, str]]] = {}
+    for sid, claims in by_subject.items():
+        if not _published(labels.get(sid)):
+            continue
+        for c in claims:
+            oid = c.object_entity
+            if not oid or c.predicate_id in DEGREE_PREDICATES:
+                continue
+            if oid == sid or not _published(labels.get(oid)):
+                continue
+            comp = claim_comp.get(c.claim_id) or lit_comp.get(c.claim_id) or default_compartment
+            pair = (sid, oid) if sid < oid else (oid, sid)
+            comp_pairs.setdefault(comp, set()).add(pair)
+    out: dict[str, tuple[Any, str]] = {}
+    # The compartment set = every compartment an edge or entity files under
+    # plus the default (an empty graph still emits its index — honest).
+    comp_set = {default_compartment} | set(comp_pairs)
+    for s in entity_comps.values():
+        comp_set |= s
+    for comp in sorted(comp_set):
+        parent: dict[str, str] = {}
+
+        def find(x: str, p: dict[str, str] = parent) -> str:
+            while p.setdefault(x, x) != x:
+                p[x] = p[p[x]]
+                x = p[x]
+            return x
+
+        for a, b in sorted(comp_pairs.get(comp, ())):
+            ra, rb = find(a), find(b)
+            if ra != rb:
+                parent[rb] = ra
+        members: dict[str, set[str]] = {}
+        for node in parent:
+            members.setdefault(find(node), set()).add(node)
+        comps: list[dict[str, Any]] = []
+        singletons = 0
+        ranked = sorted(members.values(), key=lambda ms: (-len(ms), min(ms)))
+        for mem in ranked:
+            mem_sorted = sorted(mem)
+            if len(mem_sorted) < 2:
+                singletons += 1
+                continue
+            cid = f"cmp-{len(comps) + 1:04d}"
+            rows = [
+                {
+                    "k": eid,
+                    "l": labels[eid].label,
+                    "t": labels[eid].kind,
+                    "h": labels[eid].url,
+                }
+                for eid in mem_sorted
+                if eid in labels
+            ]
+            files: list[str] = []
+            for p in range(0, len(rows), NODE_CAP):
+                part = rows[p : p + NODE_CAP]
+                suffix = f".part{p // NODE_CAP}" if p else ""
+                fname = f"{cid}{suffix}.json"
+                files.append(fname)
+                out[f"web/graph/components/{comp}/{fname}"] = (
+                    {
+                        "schema": COMPONENT_SCHEMA,
+                        "component_id": cid,
+                        "compartment": comp,
+                        "release": {
+                            "label": publication,
+                            "as_of_world": str(as_of) if as_of else None,
+                        },
+                        "generated_at": generated_at,
+                        "size": len(rows),
+                        "members": part,
+                    },
+                    comp,
+                )
+            comps.append({"component_id": cid, "size": len(rows), "files": files})
+        # Singletons — published entities with no publishable entity-ref
+        # edge in this compartment — counted honestly, never listed.
+        singletons += len(
+            [
+                eid
+                for eid, cs in entity_comps.items()
+                if comp in cs
+                and _published(labels.get(eid))
+                and not any(eid in pair for pair in comp_pairs.get(comp, set()))
+            ]
+        )
+        out[f"web/graph/components/{comp}/index.json"] = (
+            {
+                "schema": COMPONENTS_INDEX_SCHEMA,
+                "compartment": comp,
+                "release": {
+                    "label": publication,
+                    "as_of_world": str(as_of) if as_of else None,
+                },
+                "generated_at": generated_at,
+                "components": comps,
+                "singletons": singletons,
+            },
+            comp,
+        )
     return out
 
 
@@ -1094,8 +1668,13 @@ def _emit_doc(
     as_of: Any,
     compartment: str,
     actions: Sequence[str],
+    slice: str | None = None,
 ) -> tuple[dict[str, Any], str, list[dict[str, Any]], list[dict[str, Any]]]:
-    """The columnar ``sig.graph-overview/1`` doc + SVG + CSV row sets."""
+    """The columnar ``sig.graph-overview/1`` doc + SVG + CSV row sets.
+
+    ``slice`` marks a per-place detail doc (the 08b matrix drill-down) — the
+    same schema with the place key it serves recorded.
+    """
     node_order = sorted(nodes.values(), key=lambda n: (n.band, n.label, n.key))
     idx = {n.key: i for i, n in enumerate(node_order)}
     dicts: dict[str, list[Any]] = {
@@ -1140,7 +1719,16 @@ def _emit_doc(
         narr["x"].append(round(x, 1))
         narr["y"].append(round(y, 1))
         narr["n"].append(n.count)
-    earr: dict[str, list[Any]] = {"s": [], "t": [], "p": [], "n": [], "y": [], "cur": [], "src": []}
+    earr: dict[str, list[Any]] = {
+        "s": [],
+        "t": [],
+        "p": [],
+        "n": [],
+        "y": [],
+        "cur": [],
+        "src": [],
+        "m": [],
+    }
     nrows: list[dict[str, Any]] = []
     erows: list[dict[str, Any]] = []
     for n in node_order:
@@ -1164,6 +1752,7 @@ def _emit_doc(
         earr["y"].append(_slot("dates", f["date"]) if f["date"] else -1)
         earr["cur"].append(_slot("currency", f["currency"] or "undated"))
         earr["src"].append([_slot("sources", s) for s in f["sources"]])
+        earr["m"].append(f["member_count"])
         erows.append(
             {
                 "source_id": e.src,
@@ -1177,6 +1766,7 @@ def _emit_doc(
                 "sources": f["sources"],
                 "claim_ids": f["claim_ids"],
                 "evidence_count": f["evidence_count"],
+                "member_count": f["member_count"],
                 "historical": f["historical"],
             }
         )
@@ -1199,6 +1789,8 @@ def _emit_doc(
         "position_note": POSITION_NOTE,
         "er_disclosure": ER_DISCLOSURE,
     }
+    if slice is not None:
+        doc["slice"] = slice
     svg = _emit_svg(
         nodes,
         [e for e in edges.values()],
@@ -1211,12 +1803,16 @@ def _emit_doc(
 
 
 __all__ = [
+    "ACCESS_PREDS",
+    "COMPONENT_SCHEMA",
+    "COMPONENTS_INDEX_SCHEMA",
     "EDGE_COLUMN_SPECS",
     "ER_DISCLOSURE",
     "GRAPH_EDGES_SCHEMA",
     "GRAPH_NODES_SCHEMA",
     "GraphOverviewError",
     "INDEX_SCHEMA",
+    "MATRIX_MIN",
     "NODE_CAP",
     "NODE_COLUMN_SPECS",
     "OPERATOR_PREDS",

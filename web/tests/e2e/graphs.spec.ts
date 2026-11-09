@@ -7,8 +7,9 @@ test.describe("/graphs/ overview pages", () => {
   test("hub lists every emitted overview", async ({ page }) => {
     await page.goto("/graphs/");
     const rows = page.getByTestId("graphs-index-row");
-    await expect(rows).toHaveCount(4);
+    await expect(rows).toHaveCount(7);
     await expect(page.getByRole("link", { name: "Supply" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Access" })).toBeVisible();
   });
 
   test("overview page: static figure + adjacency table with H-2 fields", async ({ page }) => {
@@ -40,6 +41,21 @@ test.describe("/graphs/ overview pages", () => {
     }
     const json = await (await request.get("/graph/supply/sig_graph.json")).json();
     expect(json.schema).toBe("sig.graph-overview/1");
+  });
+
+  test("access matrix shows the fold + slice drill-down carries agency egos", async ({
+    page,
+  }) => {
+    await page.goto("/graphs/access/");
+    await expect(page.getByText(/matrix fold/)).toBeVisible();
+    // matrix cells carry their member weight — never a smoothed count.
+    await expect(page.getByTestId("graph-edge-row").first()).toContainText("members");
+    await page.goto("/graphs/access/usa/ok/");
+    await expect(page.getByText(/Scoped to/)).toBeVisible();
+    // the slice shows the unfolded agency-level subgraph (K2 §5.2).
+    await expect(
+      page.getByTestId("graph-edges").getByText(/Acme City Police Department/).first(),
+    ).toBeVisible();
   });
 
   test("JS off shows the same facts", async ({ browser }) => {

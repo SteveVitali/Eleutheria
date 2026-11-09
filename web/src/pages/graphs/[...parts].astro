@@ -12,6 +12,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import {
   getGraphIndex,
   getGraphOverview,
+  getGraphOverviewPlace,
   getDossiers,
 } from "../../lib/data";
 import { overviewAtPlace } from "../../lib/graph-overview";
@@ -57,7 +58,17 @@ const placeName = placeKey
   ? (getDossiers().find((x) => x.slug === placeKey.split("-").join(String.fromCharCode(47)))?.subject_label ?? placeKey)
   : null;
 
-const scoped = ov && placeKey ? overviewAtPlace(ov, placeKey) : ov ? { nodes: ov.nodes, edges: ov.edges } : { nodes: [], edges: [] };
+// P37.25 (GX-08b): a folded (matrix) overview serves its per-place slice
+// doc on the drill-down — the unfolded agency-level subgraph. When no
+// slice exists the place filter over the national doc stands (P37.24).
+const sliceOv = ov && placeKey ? getGraphOverviewPlace(ovId, placeKey) : null;
+const scoped = sliceOv
+  ? { nodes: sliceOv.nodes, edges: sliceOv.edges }
+  : ov && placeKey
+    ? overviewAtPlace(ov, placeKey)
+    : ov
+      ? { nodes: ov.nodes, edges: ov.edges }
+      : { nodes: [], edges: [] };
 const nodeByKey = new Map(scoped.nodes.map((n: OverviewNode) => [n.key, n]));
 const totalPages = Math.max(1, Math.ceil(scoped.edges.length / PER_PAGE));
 const page = Math.min(Math.max(1, pageNum), totalPages);
@@ -159,7 +170,7 @@ const edgeCls = (e: OverviewEdge) =>
               <td>{e.date ?? <span class="sig-typed-state">undated</span>}</td>
               <td>{e.currency === "HISTORICAL" || e.dateKind === "undated" ? <span class="sig-typed-state">{e.currency.toLowerCase()}</span> : e.currency.toLowerCase()}</td>
               <td>{e.sources.join("; ")}</td>
-              <td class="sig-num">{e.evidenceCount}</td>
+              <td class="sig-num">{e.evidenceCount}{e.memberCount > 0 ? ` · ${e.memberCount} members` : ""}</td>
             </tr>
           ))}
         </tbody>
