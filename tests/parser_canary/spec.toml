@@ -1,0 +1,125 @@
+# SPDX-License-Identifier: Apache-2.0
+# sig.parser-canary-spec/1 — the committed per-parser-family fixture-replay
+# registry (P37.15; BL-025 canary part; SIG-PARSE-007/008). This file is DATA,
+# not code: `sig-ops parser-canary` loads it, replays every family's committed
+# sample through the family's own parse + canary_findings path, and raises a
+# typed issue (`parser_drift`) on any finding.
+#
+# The corpus is SEALED: each member under corpus/ is a real captured sample
+# committed at this spec's review (bytes mirrored from the source fixture at
+# 2026-11-07). A deliberate fixture update upstream does NOT silently move the
+# canary's pin — mirroring a new sample here is its own reviewed edit.
+#
+# [[family]] fields (kind = "module", the default):
+#   id            — the parser family's canary id (stamped on records + issues)
+#   module        — the connectors module holding the parser (allow-list in
+#                   ops.parser_canary — arbitrary imports are refused)
+#   parse         — "json" (json.loads) or the module's parse callable name
+#   canary        — the module's canary_findings callable name
+#   fixture       — the committed sample, relative to the corpus root
+#   wrap          — optional: wrap the parsed doc as {"<key>": <parsed>} before
+#                   the canary call (dot_511's feed envelope convention)
+#   canary_kwargs — optional extra keyword args to the canary callable
+#                   (audit_structural's file_kind)
+#
+# kind = "structural" families instead carry [[family.expectations]] rows
+# (description + a path tuple where "[]" means every list element) checked by
+# parsing.drift — the generic structural core the §24.3 canary is built on.
+schema = "sig.parser-canary-spec/1"
+
+# The closed issue vocabulary this surface may raise (deliberately parallel to
+# J3 §7.3's source-issue classes — a parser family is not an ingest source, so
+# the classes live here, never inside policy.freshness.AUTO_ISSUE_CLASSES):
+#   parser_drift  — a family's replay produced canary findings (the drift class)
+#   canary_error  — the replay itself failed (unreadable fixture, parse raise)
+issue_classes = ["parser_drift", "canary_error"]
+
+[[family]]
+id = "osm_overpass"
+module = "connectors.osm"
+parse = "json"
+canary = "canary_findings"
+fixture = "corpus/osm/overpass_snapshot.json"
+
+[[family]]
+id = "atlas_adoption_feed"
+module = "connectors.atlas"
+parse = "parse_csv"
+canary = "canary_findings"
+fixture = "corpus/atlas/adoption_feed.csv"
+
+[[family]]
+id = "accountability_issue_records"
+module = "connectors.accountability"
+parse = "parse_csv"
+canary = "canary_findings"
+fixture = "corpus/accountability/atlas_issue_records.csv"
+
+[[family]]
+id = "audit_organization"
+module = "connectors.audit_structural"
+parse = "parse_csv"
+canary = "canary_findings"
+fixture = "corpus/audit_structural/organization_audit.csv"
+canary_kwargs = { file_kind = "organization_audit" }
+
+[[family]]
+id = "audit_network"
+module = "connectors.audit_structural"
+parse = "parse_csv"
+canary = "canary_findings"
+fixture = "corpus/audit_structural/network_audit.csv"
+canary_kwargs = { file_kind = "network_audit" }
+
+[[family]]
+id = "audit_shared_networks"
+module = "connectors.audit_structural"
+parse = "parse_csv"
+canary = "canary_findings"
+fixture = "corpus/audit_structural/SharedNetworks.csv"
+canary_kwargs = { file_kind = "shared_networks" }
+
+[[family]]
+id = "audit_event_log"
+module = "connectors.audit_structural"
+parse = "parse_csv"
+canary = "canary_findings"
+fixture = "corpus/audit_structural/event_log.csv"
+canary_kwargs = { file_kind = "event_log" }
+# The fourth audit lane, portal_public_audit, is deliberately NOT a family:
+# its committed fixture carries no searching-organization column (the public
+# roster is not the searching-org aggregate) and canary_findings' aggregate
+# branch does not model it — a real coverage gap, filed D-P37.15-1, never a
+# smoothed pass and never a false alert.
+
+[[family]]
+id = "dot_511"
+module = "connectors.dot_511"
+parse = "json"
+wrap = "payload"
+canary = "canary_findings"
+fixture = "corpus/dot_511/ky_kytc.json"
+
+[[family]]
+id = "flock_portal"
+module = "connectors.flock_portal"
+parse = "parse_json"
+canary = "canary_findings"
+fixture = "corpus/flock_portal/snapshot_2026_09.json"
+
+[[family]]
+id = "records_index"
+kind = "structural"
+fixture = "corpus/records_index/records_index_ok.json"
+[[family.expectations]]
+description = "a top-level records list is present"
+path = ["records"]
+[[family.expectations]]
+description = "every record has an id"
+path = ["records", "[]", "id"]
+[[family.expectations]]
+description = "every record has an attachments list"
+path = ["records", "[]", "attachments"]
+[[family.expectations]]
+description = "every attachment has a name"
+path = ["records", "[]", "attachments", "[]", "name"]

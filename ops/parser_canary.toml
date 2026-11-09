@@ -1,0 +1,112 @@
+# SPDX-License-Identifier: Apache-2.0
+# THE committed declaration of the scheduled parser-canary job (P37.15;
+# BL-025 canary part, SIG-PARSE-007/008, RISK-P7-06 — sibling to
+# ops/rdc_probe.toml's sig.rdc-probe/1). This file is DATA, not code —
+# `sig-ops parser-canary job render` renders the mutation set;
+# ops/gcp/parser-canary.sh owns the (windowed, queued-live-leg) mutations
+# themselves.
+#
+# The job is the daily fixture-replay canary per parser family: the committed
+# tree under tests/parser_canary/ carries the per-family registry
+# (sig.parser-canary-spec/1) and the sealed corpus of real captured samples —
+# every upstream-facing parser family's own parse + canary_findings path, plus
+# a parsing.drift structural family. Each run:
+#
+#   1. re-checks the OM-19 windows — a fire inside 03:00–06:30Z or the
+#      monthly batch window records a `skipped` sig.probe-run/1 instead
+#      of running (defence in depth for a drifted/manual trigger);
+#   2. replays every declared family's committed sample through the family's
+#      own parse + canary_findings path — the deployed image's parsers are
+#      what is verified, never a re-fetch;
+#   3. writes sig.parser-canary-report/1 + sig.probe-run/1 as NEW timestamped
+#      objects under ops/probes/parser-canary/ — inside the conditioned
+#      ops/probes/ objectCreator scope; a drifted family lands as a typed
+#      `parser_drift` issue entry in the report and fires the recorded-alert
+#      seam (ops.alerts, ADR-077).
+#
+# The job needs no database and no capture-store read: the corpus rides the
+# workload image (tests/parser_canary/ is COPYed into /app — the image digest
+# pins the corpus version), and the bucket API auth is the runtime identity's
+# metadata-server token. Its one secret is the alert webhook token the
+# recorded-alert channel consumes (HG-09 — Secret Manager binding only).
+schema = "sig.parser-canary/1"
+
+# The job's exact name — rollback (pause trigger → delete trigger → delete
+# job) is name-checked against exactly these two names, never a pattern.
+job = "sig-parser-canary"
+
+# The runtime identity — the confidence program's scheduled-probe identity
+# (P34.43's reserved sig-quality-probe-rt, shared with sig-quality-probe and
+# P35.23's sig-rdc-probe): conditioned objectCreator on ops/probes/ only —
+# the exact write surface this job needs, nothing else; no DB grant, no
+# capture read (ops/iam_identities.toml).
+service_account = "sig-quality-probe-rt"
+
+# The workload image: the shared sig-api repository — resolved to a pinned
+# digest at apply time (ADR-111); an unpinned or `:latest` image is refused.
+image_repo = "sig-api"
+
+# Container shape: one task, no retries — a drifted/failed run is recorded,
+# alerted on, and the next scheduled fire runs fresh (a retry inside the
+# quiet band or the batch window is worse than a missed day). `container_args`
+# is the one in-container command line — the job verb renders `--args` by
+# joining these on commas (an element may never carry a comma).
+command = "sh"
+container_args = ["-c", "exec sig-ops parser-canary scheduled --corpus /app/tests/parser_canary"]
+tasks = 1
+max_retries = 0
+task_timeout = "600s"           # 10 min: nine bounded fixture replays, no fetches
+cpu = "1"
+memory = "1Gi"
+
+# The corpus root inside the image — tests/parser_canary/ is COPYed into /app
+# at build (ops/Dockerfile); the image digest pins the corpus version the job
+# runs.
+corpus_root = "/app/tests/parser_canary"
+
+# The bucket-relative prefix the two records land under — inside the IAM
+# `objectCreator` condition's `ops/probes/` scope exactly
+# (ops/iam_identities.toml), as
+# `<probe_prefix><yyyy-mm-dd>/<stamp>-parser-canary-report.json` and
+# `-probe-run.json`. Probe records are new objects only — never rewritten.
+probe_prefix = "ops/probes/parser-canary/"
+
+# The alert kind stamped on the recorded alert (ops/src/ops/alerts.py's
+# AlertLedger + the sig-alerts webhook channel).
+alert_kind = "parser-canary"
+
+# Every plain (non-secret) env var the job carries. The leg renders each
+# name's value at apply time — never a literal here (the project id is
+# env-derived, the alerts URL is resolved live).
+plain_env = [
+  "SIG_GCP_PROJECT",
+  "SIG_OPS_GCS_BUCKET",
+  "SIG_PARSER_CANARY_PROBE_PREFIX",
+  "SIG_PARSER_CANARY_JOB_NAME",
+  "SIG_PARSER_CANARY_ALERT_KIND",
+  "SIG_ALERT_WEBHOOK_URL",
+]
+
+# The Cloud Scheduler trigger. The contract's window (OM-19): off-peak,
+# NEVER 03:00–06:30Z, and never inside the monthly batch window (day 6
+# 00:00Z → day 13 12:00Z — the ingest batch owns those nights).
+# `45 1 1-5,14-31 * *` fires 01:45Z on days 1–5 and 14–31: the earliest
+# batch-window fire is structurally impossible (the dom field excludes
+# 6–13), 01:45Z is comfortably off-peak and outside the quiet band, and it
+# trails the rdc probe's 01:15Z fire by thirty minutes — the probes never
+# contend for the same first byte.
+# The job ITSELF re-checks both windows at run time and records a
+# `skipped` sig.probe-run/1 instead of running — defence in depth for a
+# manually invoked or drifted trigger (sig-ops parser-canary scheduled).
+[scheduler]
+name = "sig-sched-parser-canary"
+schedule = "45 1 1-5,14-31 * *"
+time_zone = "Etc/UTC"
+invoker = "sig-scheduler"       # the OIDC invoker identity (P25.7's)
+
+# The one secret env binding the job mounts — the alert webhook's caller
+# credential; the value lives in Secret Manager only (HG-09), the env var
+# carries it inside the container, never a file, never a command-line arg.
+[[secret_env]]
+env = "SIG_ALERT_WEBHOOK_TOKEN"
+secret = "sig-alert-webhook-token"    # the sig-alerts caller credential

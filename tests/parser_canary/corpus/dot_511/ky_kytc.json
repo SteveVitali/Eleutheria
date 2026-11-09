@@ -1,0 +1,85 @@
+{
+  "displayFieldName": "name",
+  "fieldAliases": {"OBJECTID": "OBJECTID", "name": "name"},
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "id", "type": "esriFieldTypeString", "alias": "id"},
+    {"name": "name", "type": "esriFieldTypeString", "alias": "name"},
+    {"name": "status", "type": "esriFieldTypeString", "alias": "status"},
+    {"name": "state", "type": "esriFieldTypeString", "alias": "state"},
+    {"name": "district", "type": "esriFieldTypeString", "alias": "district"},
+    {"name": "county", "type": "esriFieldTypeString", "alias": "county"},
+    {"name": "highway", "type": "esriFieldTypeString", "alias": "highway"},
+    {"name": "milemarker", "type": "esriFieldTypeDouble", "alias": "milemarker"},
+    {"name": "description", "type": "esriFieldTypeString", "alias": "description"},
+    {"name": "direction", "type": "esriFieldTypeString", "alias": "direction"},
+    {"name": "snapshot", "type": "esriFieldTypeString", "alias": "snapshot"},
+    {"name": "latitude", "type": "esriFieldTypeDouble", "alias": "latitude"},
+    {"name": "longitude", "type": "esriFieldTypeDouble", "alias": "longitude"},
+    {"name": "updateTS", "type": "esriFieldTypeString", "alias": "updateTS"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 101,
+        "id": "KYTC-0001",
+        "name": "I-65 at Exit 22",
+        "status": "Active",
+        "state": "KY",
+        "district": "4",
+        "county": "Warren",
+        "highway": "I-65",
+        "milemarker": 22.4,
+        "description": "I-65 southbound near Exit 22",
+        "direction": "SB",
+        "snapshot": "https://ky_tc.example.invalid/snap/0001.jpg",
+        "latitude": 36.9812,
+        "longitude": -86.4412,
+        "updateTS": "2026-09-17T04:00:00Z"
+      },
+      "geometry": {"x": -86.4412, "y": 36.9812}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 102,
+        "id": "KYTC-0002",
+        "name": "I-64 at MM 12",
+        "status": "Active",
+        "state": "KY",
+        "district": "5",
+        "county": "Jefferson",
+        "highway": "I-64",
+        "milemarker": 12.0,
+        "description": "I-64 east of Louisville",
+        "direction": "EB",
+        "snapshot": "https://ky_tc.example.invalid/snap/0002.jpg",
+        "latitude": 38.2211,
+        "longitude": -85.6211,
+        "updateTS": "2026-09-17T04:00:00Z"
+      },
+      "geometry": {"x": -85.6211, "y": 38.2211}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 103,
+        "id": "KYTC-0003",
+        "name": "US-27 at Somerset",
+        "status": "Inactive",
+        "state": "KY",
+        "district": "8",
+        "county": "Pulaski",
+        "highway": "US-27",
+        "milemarker": 48.7,
+        "description": "US-27 north of Somerset",
+        "direction": "NB",
+        "snapshot": "https://ky_tc.example.invalid/snap/0003.jpg",
+        "latitude": 37.0923,
+        "longitude": -84.6041,
+        "updateTS": "2026-09-17T04:00:00Z"
+      },
+      "geometry": {"x": -84.6041, "y": 37.0923}
+    }
+  ]
+}

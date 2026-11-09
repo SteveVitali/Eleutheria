@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "dfa9b5506fb09dd22d4108bcdf1cb5e0e2e7d75b",
-  "manifest_inputs": 1223,
+  "input_commit": "4b9ef141a2ae09c87ef33c6ae274f5e1df5cf6b9",
+  "manifest_inputs": 1224,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.15",
-    "lastCompleted": "P37.14",
+    "nextTicket": "P37.16a",
+    "lastCompleted": "P37.15",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.70,P37.71",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.70,P37.71",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -26,18 +26,18 @@
     "updatedAt": "2026-11-07T18:05Z"
   },
   "counts": {
-    "obligations": 231,
-    "owed": 147,
-    "open": 144,
+    "obligations": 232,
+    "owed": 148,
+    "open": 145,
     "partial": 3,
     "terminal": 84,
-    "events": 742,
+    "events": 743,
     "transitions": 55,
     "coverage_assessments": 510,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 82,
+    "return_pass_rows": 83,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -12093,6 +12093,53 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P37.15-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P37.15-1:e0",
+      "kind": "F",
+      "owner": "the audit-connector owner (a canary_findings file_kind='portal_public_audit' branch or a declared non-canary lane)",
+      "landing": "an audit_portal_public family replays clean in the parser canary, or the lane is declared non-canary with its reason in the spec",
+      "landing_source": "event-head",
+      "backlog_home": "BL-025",
+      "item": "model the `portal_public_audit` audit lane in `connectors.audit_structural.canary_findings`: its committed fixture (`Source Organization,Camera Count` — the public roster, not the searching-org aggregate) carries no searching-organization column, so the canary's aggregate branch cannot evaluate it; the parser-canary spec (`tests/parser_canary/spec.toml`) covers the four lanes the canary models today",
+      "unblocked_by": "owner: the audit-connector owner (a `canary_findings` `file_kind='portal_public_audit'` branch or a declared non-canary lane) · trigger: the next audit_structural change or a parser-canary spec extension",
+      "verify": "a `[[family]]` row for `audit_portal_public` replays clean in `sig-ops parser-canary run`, or the lane is declared non-canary with its reason in the spec",
+      "proxy": "the spec comment names the excluded lane and this row — the coverage gap is recorded, never smoothed",
+      "line": 1558,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "event_id": "D-P37.15-1:e0",
+          "obligation_id": "D-P37.15-1",
+          "ticket_id": "P37.15",
+          "backlog_home": "BL-025",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "expected_previous_event": null,
+          "observed_at": "2026-11-07",
+          "recorded_at": "2026-11-07",
+          "source_commit": "WORKTREE",
+          "owner": "the audit-connector owner (a canary_findings file_kind='portal_public_audit' branch or a declared non-canary lane)",
+          "landing": "an audit_portal_public family replays clean in the parser canary, or the lane is declared non-canary with its reason in the spec",
+          "reason": "migration anchor appended by P37.15 (row 437) for the row it added — the portal_public_audit committed fixture carries no searching-organization column (the public roster is not the searching-org aggregate), so canary_findings' aggregate branch cannot model it; the spec covers the four lanes the canary models",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "tests/parser_canary/spec.toml",
+            "connectors/src/connectors/audit_structural.py"
+          ],
+          "anchor": {
+            "interpretation": "created",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "row_line": 1558,
+            "row_sha256": "f9fe76b59576e4181a7f0dfab1f3a9b0445afcac82c095b08deb75639e87ba60"
+          }
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -12101,8 +12148,8 @@
       {
         "key": "P21.5",
         "obligations_cell": "D-P21.5-1",
-        "gates_cell": "external archival deposit; IN-TICKET PAUSE, never pre-authorised",
-        "operator_cell": "a verbatim go (history scan, then SWH; Zenodo DOIs for open compartments, B-6/B-21); the publish is OP-19",
+        "gates_cell": "external archival deposit; IN-TICKET PAUSE, never pre-auth",
+        "operator_cell": "a verbatim go (history scan, then SWH; Zenodo DOIs for open compartments, B-6/B-21); publish is OP-19",
         "rerun_cell": "chain 482 **P37.55** (11D, after P34.21b) (#61 — prepare-only re-run row 76, #76)",
         "obligations": [
           "D-P21.5-1"
@@ -12113,7 +12160,7 @@
         "obligations_cell": "D-P31.4-1",
         "gates_cell": "`hosted`, date-bound (§(f3)); read-only, no gate",
         "operator_cell": "operator's call on `D-P34.39a-1`",
-        "rerun_cell": "chain 247 **P34.39a** (11A — leg ran 2026-10-14 `fail` → `deferral-row`; a `P34.39a-live-2` re-read rides the call); verify = the D-P31.4-1 command; P34.39b carries the first-fire/peel-on reads",
+        "rerun_cell": "chain 247 **P34.39a** (11A — leg ran 2026-10-14 `fail` → `deferral-row`; a `P34.39a-live-2` re-read rides call); verify = D-P31.4-1 command; P34.39b carries first-fire/peel-on reads",
         "obligations": [
           "D-P31.4-1"
         ]
@@ -12121,7 +12168,7 @@
       {
         "key": "P32.18",
         "obligations_cell": "D-P32.18-1",
-        "gates_cell": "`hosted` capture; HG-03 + Part VIII; IN-TICKET PAUSE, never pre-authorised",
+        "gates_cell": "`hosted` capture; HG-03 + Part VIII; IN-TICKET PAUSE, never pre-auth",
         "operator_cell": "HG-03 flips (OP-26; GL-GATE-07, A-7); verbatim go per capture run; families screen-cleared, disclosed (B-42)",
         "rerun_cell": "chain rows 438 **P37.16a** + 439 **P37.16b** (11D family-split, PLAN-11D); packet `docs/build/reports/p32.18-okc-dossier/LIVE_RETURN_PASS.json`",
         "obligations": [
@@ -12131,7 +12178,7 @@
       {
         "key": "P32.19",
         "obligations_cell": "D-P32.19-1",
-        "gates_cell": "`hosted` capture; HG-03 + Part VIII; IN-TICKET PAUSE, never pre-authorised",
+        "gates_cell": "`hosted` capture; HG-03 + Part VIII; IN-TICKET PAUSE, never pre-auth",
         "operator_cell": "HG-03 flips (OP-26; GL-GATE-07, A-7); verbatim go per capture run; families screen-cleared, disclosed (B-42)",
         "rerun_cell": "chain rows 438 **P37.16a** + 439 **P37.16b** (11D family-split, PLAN-11D); packet `docs/build/reports/p32.19-tulsa-dossier/LIVE_RETURN_PASS.json`",
         "obligations": [
@@ -12141,7 +12188,7 @@
       {
         "key": "P32.20",
         "obligations_cell": "D-P32.20-1",
-        "gates_cell": "`hosted` capture; HG-03 + Part VIII; IN-TICKET PAUSE, never pre-authorised",
+        "gates_cell": "`hosted` capture; HG-03 + Part VIII; IN-TICKET PAUSE, never pre-auth",
         "operator_cell": "HG-03 flips (OP-26; GL-GATE-07, A-7); verbatim go per capture run; families screen-cleared, disclosed (B-42)",
         "rerun_cell": "chain rows 438 **P37.16a** + 439 **P37.16b** (11D family-split, PLAN-11D); packet `docs/build/reports/p32.20-san-diego-dossier/LIVE_RETURN_PASS.json`",
         "obligations": [
@@ -12151,7 +12198,7 @@
       {
         "key": "P32.21",
         "obligations_cell": "D-P32.21-1",
-        "gates_cell": "`hosted` capture; HG-03 + Part VIII; IN-TICKET PAUSE, never pre-authorised",
+        "gates_cell": "`hosted` capture; HG-03 + Part VIII; IN-TICKET PAUSE, never pre-auth",
         "operator_cell": "HG-03 flips (OP-26; GL-GATE-07, A-7); verbatim go per capture run; families screen-cleared, disclosed (B-42)",
         "rerun_cell": "chain rows 438 **P37.16a** + 439 **P37.16b** (11D family-split, PLAN-11D); packet `docs/build/reports/p32.21-acquisition-pilot/ACQ_PILOT_RETURN_PASS.json`",
         "obligations": [
@@ -12161,8 +12208,8 @@
       {
         "key": "P32.22",
         "obligations_cell": "`D-R10-LIVE-1`",
-        "gates_cell": "`hosted` write; IN-TICKET PAUSE, never pre-authorised",
-        "operator_cell": "explicit go + recorded `--authority` scope; operator review between plan and apply",
+        "gates_cell": "`hosted` IN-TICKET PAUSE, never pre-auth",
+        "operator_cell": "explicit go + recorded `--authority` scope; operator review between plan + apply",
         "rerun_cell": "chain 338 **P35.61** (11B — ≥48 h after P34.46, post-11B writes); packet `docs/build/reports/p32.22-bounded-recovery/LIVE_RETURN_PASS.json`",
         "obligations": [
           "D-R10-LIVE-1"
@@ -12172,7 +12219,7 @@
         "key": "P32.23a",
         "obligations_cell": "D-P32.23a-1",
         "gates_cell": "`hosted`, staged only; OM-20 named mutation",
-        "operator_cell": "list it on the GATE-G4 pre-authorisation, else in-ticket go (staged candidate, no publication)",
+        "operator_cell": "list it on GATE-G4 pre-authorisation, else in-ticket go (staged candidate, no publication)",
         "rerun_cell": "chain 339 **P35.62** (after P35.61); packet `docs/build/reports/p32.23a-release-candidate/LIVE_RETURN_PASS.json`",
         "obligations": [
           "D-P32.23a-1"
@@ -12181,7 +12228,7 @@
       {
         "key": "P32.25",
         "obligations_cell": "D-R10-PUBLISH-1",
-        "gates_cell": "public; HG-11 (the GATE-G3 signature does not transfer)",
+        "gates_cell": "public; HG-11 (GATE-G3 signature does not transfer)",
         "operator_cell": "sign a new candidate-specific HG-11 readout verbatim; be available 14:00–20:00Z outside AR-3 windows",
         "rerun_cell": "chain 341 **P35.63** (after P35.62); rollback cases `reports/p32.25-accepted-release-verification/LIVE_RETURN_PASS.json`",
         "obligations": [
@@ -12199,9 +12246,9 @@
       {
         "key": "P34.3",
         "obligations_cell": "D-P34.3-1",
-        "gates_cell": "`hosted`, `live`-window only (mutations never 03:00–10:00Z; `sig-pg` legs outside AR-3, no `sig-materialize`); 5 mutations pre-authorised (S5-3 11A list, expires GATE-G4); window guard exit 42",
-        "operator_cell": "a verbatim go outside the window, or `protect.sh --apply` directly (AR-2 backup gates the first patch)",
-        "rerun_cell": "the OM-19 `r11/P34.3-live-<n>` dispatch or `implement-spec spec=docs/tickets/204_P34.3__ops-data-protection.md live_verification=true`",
+        "gates_cell": "`hosted`, `live`-window only (mutations never 03:00–10:00Z; `sig-pg` legs outside AR-3, no `sig-materialize`); 5 mutations pre-auth (S5-3 11A list, expires GATE-G4); window guard x42",
+        "operator_cell": "a verbatim go outside window, or `protect.sh --apply` directly (AR-2 backup gates first patch)",
+        "rerun_cell": "`r11/P34.3-live-<n>` dispatch or `implement-spec spec=docs/tickets/204_P34.3__ops-data-protection.md live_verification=true`",
         "obligations": [
           "D-P34.3-1"
         ]
@@ -12209,9 +12256,9 @@
       {
         "key": "P34.4",
         "obligations_cell": "D-P34.4-1 D-P34.4-2",
-        "gates_cell": "`hosted`, `live`-window only (never 03:00–10:00Z; `sig-probe` roll outside AR-3; jobfail on a green sweep); mutations pre-authorised (S5-3, expires GATE-G4); -2 human check (B-31)",
-        "operator_cell": "confirm the `SIG-ALERT` e-mail arrived once the delivery test fires — record date + which e-mail in `runs/P34.4.md`; verbatim go outside the window for apply legs",
-        "rerun_cell": "the OM-19 `r11/P34.4-live-<n>` dispatch or `implement-spec spec=docs/tickets/205_P34.4__alerts-that-reach-a-human.md live_verification=true`",
+        "gates_cell": "`hosted`, `live`-window only (never 03:00–10:00Z; `sig-probe` roll outside AR-3; jobfail on a green sweep); mutations pre-auth (S5-3, expires GATE-G4); -2 human check (B-31)",
+        "operator_cell": "confirm the `SIG-ALERT` e-mail arrived once the delivery test fires — record date + which e-mail in `runs/P34.4.md`; verbatim go outside window for apply legs",
+        "rerun_cell": "`r11/P34.4-live-<n>` dispatch or `implement-spec spec=docs/tickets/205_P34.4__alerts-that-reach-a-human.md live_verification=true`",
         "obligations": [
           "D-P34.4-1",
           "D-P34.4-2"
@@ -12222,7 +12269,7 @@
         "obligations_cell": "D-P34.5-1 D-P34.5-2 D-P34.5-3",
         "gates_cell": "-1 human check → name-checked delete (`--fired-confirmed`); -2 operator console (OP-12); -3 on -2 + ~a day of rows",
         "operator_cell": "confirm the $0.01 test budget's alert e-mail (record date + which e-mail in `runs/P34.5.md`) so the delete leg runs; enable Billing → BigQuery export to `sig_billing_export` (OP-12)",
-        "rerun_cell": "-3: `implement-spec spec=docs/tickets/206_P34.5__cost-guard-budget-alert-billing-export.md live_verification=true` once `exportcheck` reads ≥1 row; -1: `cost-guard.sh --apply testbudget-delete --fired-confirmed \"<confirmation>\"`",
+        "rerun_cell": "-3: `implement-spec spec=docs/tickets/206_P34.5__cost-guard-budget-alert-billing-export.md live_verification=true` once exportcheck ≥1 row; -1: `cost-guard.sh --apply testbudget-delete --fired-confirmed \"<confirmation>\"`",
         "obligations": [
           "D-P34.5-1",
           "D-P34.5-2",
@@ -12233,7 +12280,7 @@
         "key": "P34.6",
         "obligations_cell": "D-P34.6-2 D-P34.6-3 D-P34.6-4 D-P34.6-5 D-P34.6-6",
         "gates_cell": "-2…-5 each need verbatim in-ticket go or GATE-G4 OM-20 listing (none on S5-3); -2/-5 `live`-window (never 03:00–10:00Z; -2 outside AR-3); -6 boundary-triggered (P34.46)",
-        "operator_cell": "record verbatim go per leg (`--go \"<verbatim go>\"`); -6 rides the P34.46 run, no operator step",
+        "operator_cell": "record verbatim go per leg (`--go \"<verbatim go>\"`); -6 rides P34.46 run, no operator step",
         "rerun_cell": "`logical-export.sh --apply export|lifecycle|relabel --go \"…\"`; `restore-drill.sh --apply fullrestore --go \"…\"`; -6: the drill re-run after P34.46's schema-changing deploy",
         "obligations": [
           "D-P34.6-2",
@@ -12247,8 +12294,8 @@
         "key": "P34.50",
         "obligations_cell": "D-P34.50-1",
         "gates_cell": "operator-only (OP-09; OM-14 — no agent mutation); execution sits by GATE-G4, before P35.5's R2 leg",
-        "operator_cell": "execute the `surveillancegraph.org` nameserver switch per `docs/build/reports/DNS_CUTOVER_RUNBOOK.md` (TTL step-down, grey-cloud, double-DS)",
-        "rerun_cell": "none — operator action; **P35.67** (row 263) is the verifying probe row",
+        "operator_cell": "execute `surveillancegraph.org` nameserver switch per `docs/build/reports/DNS_CUTOVER_RUNBOOK.md` (TTL step-down, grey-cloud, double-DS)",
+        "rerun_cell": "none — operator action; **P35.67** (row 263) is verifying probe row",
         "obligations": [
           "D-P34.50-1"
         ]
@@ -12256,8 +12303,8 @@
       {
         "key": "P34.17",
         "obligations_cell": "D-P34.17-1",
-        "gates_cell": "public; HG-11 (verbatim republish go, IN-TICKET PAUSE, never pre-authorised); batch #1 verbatim confirmation (B-2), `live:P34.3` on, probe-run ≤ 24 h, outside 03:00–10:00Z",
-        "operator_cell": "record the verbatim HG-11 go in GATE DECISIONS; confirm batch #1 verbatim",
+        "gates_cell": "public; HG-11 (verbatim republish go, IN-TICKET PAUSE, never pre-auth); batch #1 verbatim confirmation (B-2), `live:P34.3` on, probe-run ≤ 24 h, outside 03:00–10:00Z",
+        "operator_cell": "record verbatim HG-11 go in GATE DECISIONS; confirm batch #1 verbatim",
         "rerun_cell": "`implement-spec spec=docs/tickets/220_P34.17__web-honesty-wave-and-republish-1.md live_verification=true` (L2 `publish-web --apply` over `sig-2026-09-27-ce480ab1`)",
         "obligations": [
           "D-P34.17-1"
@@ -12267,7 +12314,7 @@
         "key": "P34.18",
         "obligations_cell": "D-P34.18-1",
         "gates_cell": "`hosted`; verbatim in-ticket go (IN-TICKET PAUSE — not on S5-3's 11A OM-20 list); `date -u` ≥ 2026-10-13T12:00Z outside 03:00–06:30Z (AR-3; pref. 14:00–20:00Z), AR-2 restore + pre-state, `probe-run/1` ≤ 24 h",
-        "operator_cell": "record the verbatim go in GATE DECISIONS; AR-2 backup SUCCESSFUL + a ≤ 24 h probe record",
+        "operator_cell": "record verbatim go in GATE DECISIONS; AR-2 backup SUCCESSFUL + a ≤ 24 h probe record",
         "rerun_cell": "`implement-spec spec=docs/tickets/221_P34.18__personal-handle-source-id-rename.md live_verification=true` (L2 insert-only rename + `sig-restricted` map + counts read-back)",
         "obligations": [
           "D-P34.18-1"
@@ -12276,8 +12323,8 @@
       {
         "key": "P34.21a",
         "obligations_cell": "D-P34.21a-1",
-        "gates_cell": "`hosted`, window-bound (≥2026-10-13T12:00Z, outside 03:00–06:30Z/d, pref. 14:00–20:00Z — AR-3); pre-authorised: S5-3 11A (expires GATE-G4; voided-by red probe/failed restore); `live:P34.3`, AR-2 restore + pre-state, `probe-run/1` ≤24 h",
-        "operator_cell": "pre-authorised — wait out window, re-check unexpired/un-voided; AR-2 + ≤ 24 h probe record",
+        "gates_cell": "`hosted`, window-bound (≥2026-10-13T12:00Z, outside 03:00–06:30Z/d, pref. 14-20Z — AR-3); pre-authorised: S5-3 11A (expires GATE-G4; void: red-probe/restore-fail); `live:P34.3`, AR-2 restore + pre-state, `probe-run/1` ≤24 h",
+        "operator_cell": "pre-auth — wait out window, re-check unexpired/un-voided; AR-2 + ≤ 24 h probe record",
         "rerun_cell": "`implement-spec spec=docs/tickets/223_P34.21a__attribution-gate-sink-rights-and-backfill.md live_verification=true` (L1 attribution-corrections dry-run→apply→read-back)",
         "obligations": [
           "D-P34.21a-1"
@@ -12286,7 +12333,7 @@
       {
         "key": "P34.21b",
         "obligations_cell": "D-P34.21b-1 D-P34.21b-2",
-        "gates_cell": "-1 public IAM inside AR-3 (never 03:00–10:00Z): verbatim A-0.2 go, `live:P34.3` + sha256 pre-state · -2 republish (never pre-authorised): verbatim republish go, D-P34.21a-1+D-P34.18-1 DONE, batch-02 confirmed, `probe-run/1` ≤24 h",
+        "gates_cell": "-1 public IAM inside AR-3 (never 03:00–10:00Z): verbatim A-0.2 go, `live:P34.3` + sha256 pre-state · -2 republish (never pre-auth): verbatim republish go, D-P34.21a-1+D-P34.18-1 DONE, batch-02 confirmed, `probe-run/1` ≤24 h",
         "operator_cell": "verbatim A-0.2 go (L1, `SIG_PUBLIC_GATE_GO`) + republish go (L2) in GATE DECISIONS; batch-02 confirmed; upstream legs DONE",
         "rerun_cell": "`implement-spec spec=docs/tickets/224_P34.21b__attribution-re-export-and-republish-2.md live_verification=true`",
         "obligations": [
@@ -12297,16 +12344,16 @@
       {
         "key": "P34.38",
         "obligations_cell": "BidNet terms-capture leg (works the E4-R6a answer; rights decision keeps its row-350 home) — now rides row 350's queue",
-        "gates_cell": "queued public read-only GET of bidnetdirect.com/terms under the project UA (SIG-INGEST-036, Crawl-delay 5); gated on `live:P35.38a`; go: none — recorded E4-R6a answer; terms land verbatim in `reports/rights/bidnet_direct.md`",
+        "gates_cell": "queued public read-only GET of bidnetdirect.com/terms under project UA (SIG-INGEST-036, Crawl-delay 5); gated on `live:P35.38a`; go: none — rec E4-R6a answer; terms land verbatim in `reports/rights/bidnet_direct.md`",
         "operator_cell": "nothing — wait for `live:P35.38a`; the captured-terms decision stays the operator's (GATE-G6 latest, S6R-28)",
-        "rerun_cell": "`implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-registry-rows.md live_verification=true` (BidNet terms capture; superseded by the P36.2 re-run line)",
+        "rerun_cell": "`implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-registry-rows.md live_verification=true` (BidNet terms capture; superseded by P36.2 re-run line)",
         "obligations": []
       },
       {
         "key": "P34.39b",
         "obligations_cell": "three monitoring legs (first-fire wave + `camreg_peel_on`)",
-        "gates_cell": "`hosted`, date-bound (§(f3)), read-only — L1 at `2026-10-21T06:09Z` (per-fire AR-4); L2 at `camreg_peel_on` fire `2026-10-29T12:00Z` + `lastAttemptTime` + finished `sig-ingest-camreg-peel-on` execution; L3 after L2; else exit 42",
-        "operator_cell": "nothing — the recorded schedule is the go (read-only); each routing row a leg emits becomes a DEFERRALS entry",
+        "gates_cell": "`hosted`, date-bound (§(f3)), read-only — L1 at `2026-10-21T06:09Z` (per-fire AR-4); L2 at `camreg_peel_on` fire `2026-10-29T12:00Z` + `lastAttemptTime` + finished `sig-ingest-camreg-peel-on` execution; L3 after L2; else x42",
+        "operator_cell": "nothing — rec schedule is go (read-only); each routing row a leg emits becomes a DEFERRALS entry",
         "rerun_cell": "`implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true`",
         "obligations": []
       },
@@ -12322,8 +12369,8 @@
       },
       {
         "key": "P34.40",
-        "obligations_cell": "two queued legs of the dark serving-topology roll (L1 `sig-web` pinned-digest roll, L2 `/v1/*` URL-map → `sig-api`); halves landed",
-        "gates_cell": "`hosted` legs (AR-3): earliest `2026-10-13T12:00Z` excl. 03:00-10:00Z daily — exit 42; pre-authorised L1 S5-3 (11A list; expires GATE-G4), L2 GATE-B GB-Q4 (11A list; expires GATE-G4); non-zero byte-compare stops",
+        "obligations_cell": "two queued legs of dark serving-topology roll (L1 `sig-web` pinned-digest roll, L2 `/v1/*` URL-map → `sig-api`); halves landed",
+        "gates_cell": "`hosted` (AR-3): earliest `2026-10-13T12:00Z` excl. 03:00-10:00Z daily; pre-auth L1 S5-3 (11A list; expires GATE-G4), L2 GATE-B GB-Q4 (11A list; expires GATE-G4); non-zero byte-compare stops",
         "operator_cell": "nothing until window + ADC — dry-run default; rollback = URL-map prestate re-import / prior-digest redeploy",
         "rerun_cell": "`implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true` (L1, then L2)",
         "obligations": []
@@ -12338,8 +12385,8 @@
       },
       {
         "key": "P34.43",
-        "obligations_cell": "L1 exec-host + `sig_audit` legs and L2 `sig_recovery` login (SIG-CONF-013); halves landed",
-        "gates_cell": "`hosted` legs (AR-3+AR-2): L1 earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z/d — exit 42; pre-authorised: S5-3 (11A list; expires GATE-G4); then 11B list or in-ticket go; waits on `live:P34.46`; voided-by red probe/failed restore; AR-2 + `sig-pg` backup; `/health` failure stops",
+        "obligations_cell": "L1 exec-host + `sig_audit` legs + L2 `sig_recovery` login (SIG-CONF-013); halves landed",
+        "gates_cell": "`hosted` (AR-3+AR-2): L1 earliest `2026-10-13T12:00Z` excl. 03:00-06:30Z/d; pre-authorised: S5-3 (11A list; expires GATE-G4); then 11B list or in-ticket go; waits on `live:P34.46`; void: red-probe/restore-fail; AR-2 + `sig-pg` backup; `/health` fail stops",
         "operator_cell": "nothing until window + gate + ADC — dry-run default; `audit_login` deploy is P34.46's; rollback drops only prestate-proven leg resources",
         "rerun_cell": "`implement-spec spec=docs/tickets/253_P34.43__execution-host-and-least-privilege-db-logins.md live_verification=true`",
         "obligations": []
@@ -12355,7 +12402,7 @@
       {
         "key": "P34.44b",
         "obligations_cell": "L1 `sig-quality-probe` job+trigger + L2 baseline run + `apply-baselines` write",
-        "gates_cell": "`hosted` legs (AR-3+AR-2): both ≥ 2026-10-13T12:00Z excl. 03:00-06:30Z/d + monthly batch window (d6 00:00Z→d13 12:00Z) — exit 42; pre-authorised S5-3 (11A list; expires GATE-G4); waits on `live:P34.43`; voided-by red probe/failed restore; AR-2 prestate + versioning ON",
+        "gates_cell": "`hosted` (AR-3+AR-2): both ≥2026-10-13T12:00Z x 03:00-06:30Z/d + monthly batch window (d6 00:00Z→d13 12:00Z); pre-auth S5-3 (11A list; expires GATE-G4); waits on `live:P34.43`; void: red-probe/restore-fail; AR-2 prestate + versioning ON",
         "operator_cell": "nothing until window + `live:P34.43` + ADC; rollback = exact-name delete of trigger + job",
         "rerun_cell": "`implement-spec spec=docs/tickets/256_P34.44b__quality-baseline-run-and-nightly-probe.md live_verification=true` (job+trigger, then baseline)",
         "obligations": []
@@ -12363,7 +12410,7 @@
       {
         "key": "P34.45",
         "obligations_cell": "append-only camera-site ER re-run (ruleset 3-interim) on P34.43 host (OM-20 listed; ADR-153/206)",
-        "gates_cell": "`hosted` leg: ≥ 2026-10-13T12:00Z excl. 03:00-06:30Z/d + monthly batch window (d6 00:00Z→d13 12:00Z) — exit 42; pre-authorised S5-3 \"Both + list + P34.45\" (expires GATE-G4); waits on `live:P34.43` + `live:P34.44b` + `live:P34.46` (GQ-24/A-20); AR-2 prestate",
+        "gates_cell": "`hosted` leg ≥ 2026-10-13T12:00Z excl. 03:00-06:30Z/d + monthly batch window (d6 00:00Z→d13 12:00Z); pre-auth S5-3 \"Both + list + P34.45\" (expires GATE-G4); waits on `live:P34.43` + `live:P34.44b` + `live:P34.46` (GQ-24/A-20); AR-2 prestate",
         "operator_cell": "nothing until window + `live` edges + ADC; `SIG_ER_RERUN_AUTHOR` gates apply; `ruleset_version='3-interim'` exit 42",
         "rerun_cell": "`implement-spec spec=docs/tickets/257_P34.45__honest-evaluation-posture.md live_verification=true` (ER re-run leg)",
         "obligations": []
@@ -12371,15 +12418,15 @@
       {
         "key": "P34.46",
         "obligations_cell": "L2 deploy slot (schema roll + ADR-159 dispositions + `sig-api` roll + `/status/` notice + trigger pause/resume) + L3 48 h soak",
-        "gates_cell": "`hosted`, never pre-authorised (IN-TICKET PAUSE — L44 ACCESS EXCLUSIVE): L2 verbatim in-ticket go, operator present, 14:00-20:00Z ≥ 2026-10-14T14:00Z (excl. weekends + outside-14:00-20:00Z), `live:P34.39a` pass, AR-2 SUCCESSFUL, roll-gate green; L3 48 h after L2",
-        "operator_cell": "record the verbatim in-ticket go (silence ≠ consent) + be present; drafts verbatim-confirmed; no `hosted` `sqitch revert`",
+        "gates_cell": "`hosted`, never pre-auth (PAUSE — L44 ACCESS EXCLUSIVE): L2 verbatim in-ticket go, op present, 14-20Z ≥ 2026-10-14T14:00Z (x weekends + outside-14:00-20:00Z), `live:P34.39a` pass, AR-2 SUCCESSFUL, roll-gate green; L3 48h after L2",
+        "operator_cell": "record verbatim in-ticket go (silence ≠ consent) + be present; drafts verbatim-confirmed; no `hosted` `sqitch revert`",
         "rerun_cell": "`implement-spec spec=docs/tickets/258_P34.46__round10-schema-allows-and-api-roll.md live_verification=true`",
         "obligations": []
       },
       {
         "key": "P34.47",
-        "obligations_cell": "11A acceptance sweep + GATE-G4 packet leg (§13.1): read-only crawl of site/API/tiles/`sig-public` + counts + packet refresh; `acceptance-sweep` → `sig.probe-run/1` + drafter landed",
-        "gates_cell": "`hosted`, read-only — `acceptance-sweep --check` exit 42 until `live:P34.46` L2 (verbatim go, `live:P34.39a` pass, 14:00-20:00Z ≥ 2026-10-14T14:00Z + roll-gate); GATE-G4 never presented while a leg is due",
+        "obligations_cell": "11A sweep + GATE-G4 packet leg (§13.1): read-only crawl + counts + packet refresh; `acceptance-sweep` → `sig.probe-run/1` + drafter landed",
+        "gates_cell": "`hosted`, read-only — `acceptance-sweep --check` x42 until `live:P34.46` L2 (verbatim go, `live:P34.39a` pass, 14-20Z ≥ 2026-10-14T14:00Z + roll-gate); GATE-G4 never presented while a leg is due",
         "operator_cell": "nothing until `live:P34.46` L2 — read-only; packet presented only when no leg is due",
         "rerun_cell": "`implement-spec spec=docs/tickets/259_P34.47__sub-round-11a-acceptance.md live_verification=true` (sweep + packet)",
         "obligations": []
@@ -12387,15 +12434,15 @@
       {
         "key": "P35.57",
         "obligations_cell": "API-roll leg: mount promoted release's registry on `sig-api` (`SIG_RELEASE_REGISTRY`), roll, verify `/v1/health` names the release",
-        "gates_cell": "`hosted` write, never pre-authorised (IN-TICKET PAUSE — changes public API bytes): GATE-G4 §2 verbatim go recorded; needs `live:P34.46` L2, registry mount, promoted release, AR-2 SUCCESSFUL, roll-gate green, AR-3 slot (excl. weekends + outside-14:00-20:00Z)",
-        "operator_cell": "GATE-G4 §2 go on record; roll in-slot (mount, roll, `/v1/health` verify); failed health read rolls back",
+        "gates_cell": "`hosted`, never pre-auth (PAUSE — public API bytes): G4§2 verbatim go recorded; needs `live:P34.46` L2, registry mount, promoted release, AR-2 SUCCESSFUL, roll-gate green, AR-3 slot (x weekends + outside-14:00-20:00Z)",
+        "operator_cell": "G4§2 go on record; roll in-slot (mount, roll, `/v1/health` verify); failed health read rolls back",
         "rerun_cell": "`implement-spec spec=docs/tickets/261_P35.57__api-release-parity.md live_verification=true` (mount+roll+verify)",
         "obligations": []
       },
       {
         "key": "P35.5",
         "obligations_cell": "R2-mirror leg: bucket + non-listable CDN, content-hash keys, immutable Cache-Control, $0 egress; limits/kill-switch landed",
-        "gates_cell": "`hosted` mirror write; OM-20 conditional — after OP-09 while GATE-G4 OM-20 11B list (P35.5, expires GATE-G5) stands; AR-3+AR-2 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z); R2 creds env-only (HG-09)",
+        "gates_cell": "`hosted` mirror write; OM-20 conditional — after OP-09 while GATE-G4 OM-20 11B list (P35.5, expires GATE-G5) stands; AR-3+AR-2 14-20Z (x weekends + outside-14:00-20:00Z); R2 creds env-only (HG-09)",
         "operator_cell": "OP-09 first (DNS_CUTOVER_RUNBOOK.md), then R2 creds env-only (HG-09); kill switch = R2_MIRROR_RUNBOOK.md",
         "rerun_cell": "`implement-spec spec=docs/tickets/262_P35.5__zero-egress-distribution-host.md live_verification=true` (R2 push + origin-enable)",
         "obligations": []
@@ -12403,7 +12450,7 @@
       {
         "key": "P35.67",
         "obligations_cell": "L1 post-cutover checklist (`sig-ops post-cutover-probe --leg l1`) post-OP-09 + L2 cert-renewal read ≈ 2026-11-22; read-only OM-14; probe verb + checklist landed",
-        "gates_cell": "`hosted`, read-only (argv contract pinned in tests); L1 needs `live:OP-09` (`dig` answers the Cloudflare pair); L2 calendar-bounded (≈2026-11-22)",
+        "gates_cell": "`hosted`, read-only (argv contract pinned in tests); L1 needs `live:OP-09` (`dig` answers Cloudflare pair); L2 calendar-bounded (≈2026-11-22)",
         "operator_cell": "OP-09 first (reports/DNS_CUTOVER_RUNBOOK.md); each leg lands probe-run.json + capture",
         "rerun_cell": "`implement-spec spec=docs/tickets/263_P35.67__post-dns-cutover-probe.md live_verification=true`",
         "obligations": []
@@ -12411,7 +12458,7 @@
       {
         "key": "P35.1a",
         "obligations_cell": "write leg: reconcile Cloud Scheduler from ops/cadence.toml (inert PAUSED triggers + declared-bundle publish) + `live`-diff; `live-1` stopped OM-18; P34.42b IAM first",
-        "gates_cell": "`hosted` write; OM-20 — GATE-G4 11B list (expires GATE-G5); monthly-export trigger PAUSED until D-P34.6-2's verbatim go; AR-3+AR-2 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z), operator present; on `live:P34.42b`",
+        "gates_cell": "`hosted` write; OM-20 — GATE-G4 11B list (expires GATE-G5); monthly-export trigger PAUSED until D-P34.6-2's verbatim go; AR-3+AR-2 14:00-20:00Z (x weekends + outside-14:00-20:00Z), operator present; on `live:P34.42b`",
         "operator_cell": "nothing until `live:P34.42b`; then `P35.1a-live-2` `--apply --paused`; rollback = recorded prestate",
         "rerun_cell": "`implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true`",
         "obligations": []
@@ -12419,47 +12466,47 @@
       {
         "key": "P35.1a1",
         "obligations_cell": "declared-job seed leg (row 287a): 12 declared-absent jobs on default-compute + `sig-scheduler` run.invoker + paused triggers",
-        "gates_cell": "`hosted` write; GATE DECISIONS row 321 verbatim \"Create 12 paused jobs\" (voided by failed AR-2/red probe); 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z) — exit 42",
+        "gates_cell": "`hosted` GATE DECISIONS row 321 verbatim \"Create 12 paused jobs\" (voided by failed AR-2/red probe); 14-20Z (x weekends + outside-14:00-20:00Z)",
         "operator_cell": "nothing until window + ADC + standing go; rollback replays `created.txt`; then `P34.42b-live-2` → `P35.1a-live-2` `--apply --paused`",
         "rerun_cell": "`implement-spec spec=docs/tickets/287a_P35.1a1__seed-declared-jobs-paused.md live_verification=true` (#296 — leg queued, `production` untouched)",
         "obligations": []
       },
       {
         "key": "P35.11",
-        "obligations_cell": "Wave-A: L1 digest roll + seed load + legistar → usa_spending → procportal_nyc_ny; L2 `claims_added == 0` reruns; L3 resume post-green; S8 stays `ingestion_permitted=false` pending OP-26",
-        "gates_cell": "`hosted` write, never pre-authorised (GATE-G4 never-list): 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z, outside 2026-10-19→23) — verbatim ING-GO-A + `wave-a-gate` exit 0, AR-2 + OM-14 prestate, serial, ordered-prefix",
+        "obligations_cell": "Wave-A: L1 digest roll + seed load + legistar → usa_spending → procportal_nyc_ny; L2 `claims_added==0` reruns; L3 resume post-green; S8 stays ingestion=false pending OP-26",
+        "gates_cell": "`hosted`, never pre-auth (GATE-G4 never-list): 14-20Z (x weekends + outside-14:00-20:00Z, outside 2026-10-19→23) — verbatim ING-GO-A + `wave-a-gate` exit 0, AR-2 + OM-14 prestate, serial, ordered-prefix",
         "operator_cell": "ING-GO-A verbatim + OP-26 HG-03 flips, AR-2 + OM-14 prestate, `wave-a.sh --apply --leg <L1",
         "rerun_cell": "L2",
         "obligations": []
       },
       {
         "key": "P35.14a",
-        "obligations_cell": "`hosted` write: `sqitch deploy closed_vocabulary` (INSERT-only — 280 predicates + 5,600 directness + CHECK) + verify + read-back",
-        "gates_cell": "`hosted` write; OM-20 — pre-authorised: GATE-G4 approve-all-19 (this row — INSERT-only vocabulary registration; expires next GATE, OM-10); AR-3 — first 14:00-20:00Z post-freeze, operator present, AR-2 prestate (excl. weekends + outside-14:00-20:00Z, before 2026-10-13T12:00Z AR-3 freeze); AC human-completed",
+        "obligations_cell": "`hosted`: `sqitch deploy closed_vocabulary` (INSERT-only — 280 predicates + 5,600 directness + CHECK) + verify + read-back",
+        "gates_cell": "`hosted` OM-20 pre-auth: GATE-G4 approve-all-19 (this row — INSERT-only vocabulary registration; expires next GATE, OM-10); AR-3 — first 14-20Z post-freeze, op present, AR-2 prestate (x weekends + outside-14:00-20:00Z, before 2026-10-13T12:00Z AR-3 freeze); AC human-done",
         "operator_cell": "AR-2 prestate, `sqitch deploy closed_vocabulary`, verify + read-back; rollback `sqitch revert`",
         "rerun_cell": "`implement-spec spec=docs/tickets/272_P35.14a__vocabulary-conformance-closed-vocabulary.md live_verification=true`",
         "obligations": []
       },
       {
         "key": "P35.14b",
-        "obligations_cell": "`hosted` leg: `sqitch deploy entity_typing_mobility_check` (ACCESS EXCLUSIVE, `lock_timeout`) + typed-identity INSERT (+0); verify + read-back",
-        "gates_cell": "`hosted` write; never pre-authorised (§3.3 ACCESS EXCLUSIVE): verbatim in-ticket go only; AR-2 SUCCESSFUL (excl. weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze); `live` AC human-completed",
+        "obligations_cell": "`hosted` leg `sqitch deploy entity_typing_mobility_check` (ACCESS EXCLUSIVE, `lock_timeout`) + typed-identity INSERT (+0); verify + read-back",
+        "gates_cell": "`hosted` never pre-auth (§3.3 ACCESS EXCLUSIVE): verbatim in-ticket go only; AR-2 SUCCESSFUL (x weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze); `live` AC human-done",
         "operator_cell": "verbatim go + `date -u`; AR-2 `SUCCESSFUL` + pre-state; `sqitch deploy --verify` + `lock_timeout`; dry → apply → read-back",
         "rerun_cell": "`implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and-hosted-check-constraint.md live_verification=true`",
         "obligations": []
       },
       {
         "key": "P35.15a",
-        "obligations_cell": "`hosted` write: INSERT-only `technology` vocab registration (`vocab_predicate` via `closed_vocabulary`) + missing rows + read-back; backfill is P35.15b",
-        "gates_cell": "`hosted` write; pre-authorised GATE-G4 approve-all-19 (this row — INSERT-only vocabulary registration; expires next GATE, OM-10); AR-2 prestate (excl. weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze); after `live:P35.14a`",
+        "obligations_cell": "`hosted`: INSERT-only `technology` vocab registration (`vocab_predicate` via `closed_vocabulary`) + missing rows + read-back; backfill is P35.15b",
+        "gates_cell": "`hosted` pre-auth GATE-G4 approve-all-19 (this row — INSERT-only vocabulary registration; expires next GATE, OM-10); AR-2 prestate (x weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze); after `live:P35.14a`",
         "operator_cell": "AR-2 prestate; verify `technology` in `vocab_predicate`, INSERT missing rows, read-back; rollback = seed revert",
         "rerun_cell": "`implement-spec spec=docs/tickets/274_P35.15a__technology-typing-slug-and-facets.md live_verification=true`",
         "obligations": []
       },
       {
         "key": "P35.15b",
-        "obligations_cell": "`hosted` write: INSERT-only `technology` backfill on `sig-pg` (dry → apply → `+0`); claims link EXISTING captures; no UPDATE/DELETE",
-        "gates_cell": "`hosted` write; pre-authorised GATE-G4 approve-all-19 (INSERT-only claim backfill; expires GATE-G5); AR-2 SUCCESSFUL + pre-state (excl. weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze, before `live:P35.15a`)",
+        "obligations_cell": "`hosted`: INSERT-only `technology` backfill on `sig-pg` (dry → apply → `+0`); claims link EXISTING captures; no UPDATE/DELETE",
+        "gates_cell": "`hosted` pre-auth GATE-G4 approve-all-19 (INSERT-only claim backfill; expires GATE-G5); AR-2 SUCCESSFUL + pre-state (x weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze, before `live:P35.15a`)",
         "operator_cell": "AR-2 + pre-state → verify `technology` + slugs → dry → apply → read-back → `claims_added=0`; `n_tup_upd`/`n_tup_del` stay 0",
         "rerun_cell": "`implement-spec spec=docs/tickets/275_P35.15b__technology-backfill.md live_verification=true`",
         "obligations": []
@@ -12467,15 +12514,15 @@
       {
         "key": "P36.12",
         "obligations_cell": "Wave-B L0→L10 (open → family days + `+0` → 917-portal probe → materialize+delta+resume); `doj_ctas_awards` never; missed leg reported",
-        "gates_cell": "`hosted` write, never pre-authorised; excl. outside-14:00-20:00Z, outside 2026-10-26→11-05, AR-3 freeze/cut, materialize/G2 slot, 2026-10-29 peel-on first fire uncleared; verbatim ING-GO-B + `wave-b-gate` per leg",
+        "gates_cell": "`hosted`, never pre-auth; excl. outside-14:00-20:00Z, outside 2026-10-26→11-05, AR-3 freeze/cut, materialize/G2 slot, 2026-10-29 peel-on first fire uncleared; verbatim ING-GO-B + `wave-b-gate` per leg",
         "operator_cell": "OP-26 flips + `date -u`; `wave-b.sh --apply --leg L0",
         "rerun_cell": "…",
         "obligations": []
       },
       {
         "key": "P35.1b",
-        "obligations_cell": "fleet-hygiene sweep (`ops/gcp/fleet-sweep.sh --apply all`): prestate + AR-2 → 4 cron reconciles → exit-64 guard roll → 6 `[[retired_jobs]]` deletes → AR policy → `sig-alerts`",
-        "gates_cell": "`hosted` write; OM-20 — GATE-G4 11B list (P35.1b; 2026-10-09T17:32Z; expires next GATE, OM-10); AR-3+AR-2 14:00-20:00Z (excl. weekends + outside-14:00-20:00Z) — exit 42; `SIG_SWEEP_AUTHOR` + AR-2 + prestate; after `--check` + #302",
+        "obligations_cell": "fleet-hygiene sweep (`ops/gcp/fleet-sweep.sh --apply all`): prestate+AR-2 → 4 cron reconciles → exit-64 roll → 6 `[[retired_jobs]]` deletes → AR policy → `sig-alerts`",
+        "gates_cell": "`hosted` OM-20 — GATE-G4 11B list (P35.1b; 2026-10-09T17:32Z; expires next GATE, OM-10); AR-3+AR-2 14-20Z (x weekends + outside-14:00-20:00Z); `SIG_SWEEP_AUTHOR` + AR-2 + prestate; after `--check` + #302",
         "operator_cell": "nothing until window + ADC + `SIG_SWEEP_AUTHOR`; rollback replays prestate + per-job recipes; consolidation = P35.1c",
         "rerun_cell": "`implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true`",
         "obligations": []
@@ -12483,32 +12530,32 @@
       {
         "key": "P35.1c",
         "obligations_cell": "dispatcher-consolidation (`--apply all`): prestate → `sig-sched-due` + hourly trigger + bindings → verify → 89 `[[retire_triggers]]` deletes → proof",
-        "gates_cell": "`hosted` write; OM-20 never pre-authorised — needs explicit GATE-G4 amendment naming row 291a (§4 names 291); excl. weekends + outside-14:00-20:00Z — exit 42; `SIG_CONSOL_AUTHOR` + prestate",
-        "operator_cell": "explicit GATE-G4 amendment naming row 291a (§4 names 291 — predates C13); nothing until amendment + window + ADC + `SIG_CONSOL_AUTHOR`; rollback deletes trigger+job, replays prestate",
+        "gates_cell": "`hosted` OM-20 never pre-auth — needs explicit GATE-G4 amendment naming row 291a (§4 names 291); x weekends + outside-14:00-20:00Z; `SIG_CONSOL_AUTHOR` + prestate",
+        "operator_cell": "explicit GATE-G4 amendment naming row 291a (§4 names 291 — predates C13); nothing until amendment + window + ADC + `SIG_CONSOL_AUTHOR`; rollback deletes job, replays prestate",
         "rerun_cell": "`implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true`",
         "obligations": []
       },
       {
         "key": "P35.16",
-        "obligations_cell": "`hosted` correction-write: `sig-connectors geometry-corrections --dsn <hosted> --apply` — append-only INSERTs for the 7 F-322 groups + read-back",
-        "gates_cell": "`hosted` write, never exercised; OM-20 — GATE-G4 §4 (P35.16 \"Approve all 19 (rec.)\", 2026-10-09T17:32Z; expires next GATE, OM-10); append-only INSERTs only; AR-3+AR-2 outside AR-3 freeze",
-        "operator_cell": "nothing until re-run — dry-run default; `--apply` only in-window; rollback forward-only (the claims stand)",
+        "obligations_cell": "`hosted` correction-write: `sig-connectors geometry-corrections --dsn <hosted> --apply` — append-only INSERTs for 7 F-322 groups + read-back",
+        "gates_cell": "`hosted`, never exercised; OM-20 — GATE-G4 §4 (P35.16 \"Approve all 19 (rec.)\", 2026-10-09T17:32Z; expires next GATE, OM-10); append-only INSERTs only; AR-3+AR-2 outside AR-3 freeze",
+        "operator_cell": "nothing until re-run — dry-run default; `--apply` only in-window; rollback forward-only (claims stand)",
         "rerun_cell": "`implement-spec spec=docs/tickets/296_P35.16__geometry-defects-at-ingest.md live_verification=true`",
         "obligations": []
       },
       {
         "key": "P35.17",
         "obligations_cell": "`hosted` boundary-source capture: OCFL `census_gazetteer_tiger` + `natural_earth_10m` (append-only digests) → `live` pack + registry + `boundaries_root`",
-        "gates_cell": "`hosted` write; both HG-03 flips the precondition (OP-26 — both stay `ingestion_permitted=false`); pre-authorised GATE-G4 §4 (P35.17 \"Approve all 19 (rec.)\", 2026-10-09T17:32Z; expires next GATE, OM-10); append-only OCFL only; AR-3+AR-2 outside AR-3 freeze",
+        "gates_cell": "`hosted` HG-03 flips precondition (OP-26 — both stay `ingestion_permitted=false`); pre-auth GATE-G4 §4 (P35.17 \"Approve all 19 (rec.)\", 2026-10-09T17:32Z; expires next GATE, OM-10); append-only OCFL only; AR-3+AR-2 outside AR-3 freeze",
         "operator_cell": "the HG-03 flips of both sources (operator-signed, OP-26), then re-run in-window",
         "rerun_cell": "`implement-spec spec=docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md live_verification=true`",
         "obligations": []
       },
       {
         "key": "P35.24",
-        "obligations_cell": "`hosted` legs: `sig-db subject-rekey --dsn <hosted> --apply` (append-only; count re-derived) + `/status/` basis notice (S6 A-20) + collision artifact",
-        "gates_cell": "`hosted` write — QUEUED, not run; OM-20 — GATE-G4 §4 (P35.24; 2026-10-09T17:32Z; expires next GATE); INSERTs + sys_period close; AR-3+AR-2 outside AR-3 freeze",
-        "operator_cell": "nothing until the `live` re-run — plan is the default; `--apply` in-window; rollback forward-only",
+        "obligations_cell": "`hosted`: `sig-db subject-rekey --dsn <hosted> --apply` (append-only; count re-derived) + `/status/` basis notice (S6 A-20) + collision artifact",
+        "gates_cell": "`hosted` — QUEUED, not run; OM-20 — GATE-G4 §4 (P35.24; 2026-10-09T17:32Z; expires next GATE); INSERTs + sys_period close; AR-3+AR-2 outside AR-3 freeze",
+        "operator_cell": "nothing until `live` re-run — plan is default; `--apply` in-window; rollback forward-only",
         "rerun_cell": "`implement-spec spec=docs/tickets/303_P35.24__truthful-subject-keys-and-re-keying.md live_verification=true`",
         "obligations": []
       },
@@ -12530,7 +12577,7 @@
       },
       {
         "key": "P35.41",
-        "obligations_cell": "connector-image roll: rebuild+redeploy the image carrying `records_digest`, upstream marks + capture-mark headers",
+        "obligations_cell": "connector-image roll: rebuild+redeploy image carrying `records_digest`, upstream marks + capture-mark headers",
         "gates_cell": "QUEUED (OM-19 — merge-cascade hold, 2026-10-20T15:53Z digest); OM-20 — GATE-G4 §4 (P35.41; 2026-10-09T17:32Z; expires next sub-round GATE, OM-10); AR-3+AR-2 14:00–20:00Z weekdays, never 03:00–06:30Z; roll + recording idempotent",
         "operator_cell": "nothing until re-run; roll redeploys already-permitted connectors inside existing permission",
         "rerun_cell": "`implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true`",
@@ -12539,9 +12586,9 @@
       {
         "key": "P35.53",
         "obligations_cell": "D-P35.53-1",
-        "gates_cell": "QUEUED (OM-19 — exit 42 2026-10-23T03:33Z); OM-20 — GATE-G4 §4 (P35.53); AR-3+AR-2 14:00–20:00Z weekdays, never 03:00–06:30Z, at/after `SIG_RELEASE_EARLIEST` 2026-10-13T12:00Z; ops idempotent",
-        "operator_cell": "nothing until re-run; leg creates private `…-sig-release` bucket, IAM-only staging origins + `sig-release` job under operator ADC (`SIG_RELEASE_AUTHOR` = `git config user.name`)",
-        "rerun_cell": "`SIG_RELEASE_AUTHOR=\"$(git config user.name)\" bash ops/gcp/release-infra.sh --apply all` or `implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-staging-origins.md live_verification=true`",
+        "gates_cell": "QUEUED (OM-19 2026-10-23T03:33Z); OM-20 — GATE-G4 §4 (P35.53); AR-3+AR-2 14:00–20:00Z weekdays, never 03:00–06:30Z, at/after `SIG_RELEASE_EARLIEST` 2026-10-13T12:00Z; ops idempotent",
+        "operator_cell": "none till re-run; leg creates private `…-sig-release` bucket, IAM-only staging origins + `sig-release` job under op ADC (`SIG_RELEASE_AUTHOR`=`git config user.name`)",
+        "rerun_cell": "`SIG_RELEASE_AUTHOR=$(git config user.name) bash ops/gcp/release-infra.sh --apply all` or `implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-staging-origins.md live_verification=true`",
         "obligations": [
           "D-P35.53-1"
         ]
@@ -12549,22 +12596,22 @@
       {
         "key": "P35.59",
         "obligations_cell": "dark cutover (`web-cutover.sh --apply all`): AR-2 prestate → `staged/v/legacy-<YYYYMMDD>/` floor import → `conf/0`+carry → `sig-web` roll → `route-compare`",
-        "gates_cell": "`hosted` write (exit 42 — 14:00–20:00Z weekdays, never 03:00–06:30Z); pre-authorised GATE-G4 §4 (P35.59; expires next GATE, OM-10); needs `live:P35.53` + `live:P34.40` L2",
-        "operator_cell": "nothing until window + both `live` prerequisites (`--check` only); rollback = traffic move to prior revision; `sig-web` untouched (90-day floor, D-G3-7)",
+        "gates_cell": "`hosted` (exit 42 — 14:00–20:00Z weekdays, never 03:00–06:30Z); pre-auth GATE-G4 §4 (P35.59; expires next GATE, OM-10); needs `live:P35.53` + `live:P34.40` L2",
+        "operator_cell": "nothing until window + both `live` prerequisites (`--check` only); rollback = traffic move → prior revision; `sig-web` untouched (90-day floor, D-G3-7)",
         "rerun_cell": "`SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all` or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_verification=true`",
         "obligations": []
       },
       {
         "key": "P35.61",
         "obligations_cell": "`live` half of P32.22's recovery deferral (audit+plan → pause → `recovery-apply` → +0 → freeze unpublished); packet `reports/p35.61-live-pass/`",
-        "gates_cell": "`hosted` write; never pre-authorised — L2 stop-and-pause, L3 verbatim go; 14:00–20:00Z weekdays excl. 03:00–06:30Z, weekends, before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2; ≥ 2026-10-26T14:00Z",
+        "gates_cell": "`hosted` never pre-auth — L2 stop-and-pause, L3 verbatim go; 14:00–20:00Z weekdays excl. 03:00–06:30Z, weekends, before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2; ≥ 2026-10-26T14:00Z",
         "operator_cell": "L2: operator reviews plan + fixes scope; L3: operator's verbatim in-ticket go naming the `--authority` scope — never on silence",
         "rerun_cell": "`implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` (`D-R10-LIVE-1` OPEN)",
         "obligations": []
       },
       {
         "key": "P35.62",
-        "obligations_cell": "`release-candidate` over `frozen_unpublished` → +0 rematerialize → export → stage + IAM origins → web build + DR-C4-01 crawl; packet `reports/p35.62-production-candidate/`",
+        "obligations_cell": "`release-candidate` over `frozen_unpublished` → +0 remat → export → stage+IAM origins → web build + DR-C4-01 crawl; packet `reports/p35.62-production-candidate/`",
         "gates_cell": "pre-authorised: GATE-G4 §4 (P35.62; expires next GATE, OM-10); 14:00–20:00Z weekdays excl. 03:00–06:30Z, weekends, before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.61` (snapshot), before `live:P35.53` (staged/ home); ≥ 2026-10-26T14:00Z; create-only",
         "operator_cell": "nothing until re-run — leg stages the candidate; activation/rollback/promotion are P35.63's under HG-11",
         "rerun_cell": "`implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true`",
@@ -12573,23 +12620,23 @@
       {
         "key": "P35.63",
         "obligations_cell": "release-exposure leg (home P32.25): staged cut → `class_s` → HG-11 readout → promote; packet `reports/p35.63-first-model-release/`",
-        "gates_cell": "`hosted` write, never pre-authorised (`p-17b713` never transfers); L2 go = verbatim signed HG-11 readout+go (operator); 14:00–20:00Z weekdays excl. 03:00–06:30Z, weekends, before `live:P35.62` (staged candidate), before `live:P35.53` (staged/ home), before `live:P35.59` (dark cutover), before `live:P35.61` (snapshot input), before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.57` (API-roll leg); ≥ 2026-10-26T14:00Z",
+        "gates_cell": "`hosted`, never pre-auth (`p-17b713` never transfers); L2 go = verbatim signed HG-11 readout+go (operator); 14:00–20:00Z weekdays excl. 03:00–06:30Z, weekends, before `live:P35.62` (staged candidate), before `live:P35.53` (staged/ home), before `live:P35.59` (dark cutover), before `live:P35.61` (snapshot input), before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.57` (API-roll leg); ≥ 2026-10-26T14:00Z",
         "operator_cell": "L1: operator's in-slot go for the staged cut; L2: operator's verbatim signed HG-11 candidate-specific readout + go — never on silence",
         "rerun_cell": "`implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (resumes at L2's promote)",
         "obligations": []
       },
       {
         "key": "P35.64",
-        "obligations_cell": "11B acceptance sweep + GATE-G5 packet: read-only crawl of promoted release/API/`sig-public`/`sig-registry` + counts + packet refresh; `acceptance-sweep-11b` → `sig.probe-run/1` + tools",
-        "gates_cell": "`hosted` read-only — `acceptance-sweep-11b` exit 42 before `live:P35.63` promotes (promoted first release must exist); L2 on verbatim signed HG-11 readout, never pre-authorised; 14:00–20:00Z ≥ 2026-10-26T14:00Z",
-        "operator_cell": "nothing until `live:P35.63` promotes — read-only; GATE-G5 packet presented only when no leg is due",
+        "obligations_cell": "11B sweep + G5 packet: read-only crawl + counts + packet refresh; `acceptance-sweep-11b` → `sig.probe-run/1` + tools",
+        "gates_cell": "`hosted` read-only — `acceptance-sweep-11b` x42 before `live:P35.63` promotes (promoted first release must exist); L2 on verbatim signed HG-11 readout, never pre-auth; 14:00–20:00Z ≥ 2026-10-26T14:00Z",
+        "operator_cell": "nothing until `live:P35.63` promotes — read-only; G5 packet presented only when no leg is due",
         "rerun_cell": "`implement-spec spec=docs/tickets/342_P35.64__sub-round-11b-acceptance.md live_verification=true`",
         "obligations": []
       },
       {
         "key": "P37.2",
         "obligations_cell": "Wave-C L1→L5 (pre-grow → tier bump → national run → 24 h soak → revert); packet `reports/p37.2-wave-c/`",
-        "gates_cell": "`hosted` write, never pre-authorised (tier-bump go = own pause); excl. outside 2026-11-16→20 (strict; earliest unmet), 03:00–06:30Z, AR-3 freeze/cut, materialize/G2/manual run, Wave-B r11 batch crons not held (FEA-15), soak < 24 h from the recorded run end, outside the 48 h grace (through 2026-11-22T00:00Z); verbatim ING-GO-C + `wave-c-gate` per leg (operator pause on L2)",
+        "gates_cell": "`hosted`, never pre-auth (tier-bump go = own pause); excl. outside 2026-11-16→20 (strict; earliest unmet), 03:00–06:30Z, AR-3 freeze/cut, materialize/G2/manual run, Wave-B r11 batch crons not held (FEA-15), soak < 24 h from the recorded run end, outside the 48 h grace (through 2026-11-22T00:00Z); verbatim ING-GO-C + `wave-c-gate` per leg (op pause on L2)",
         "operator_cell": "ING-GO-C recorded; verbatim in-ticket tier-bump go asked when L2 is due — never the ING-GO-C text; `wave-c.sh --apply --leg L1",
         "rerun_cell": "…",
         "obligations": []
@@ -12617,7 +12664,7 @@
       {
         "key": "P35.23",
         "obligations_cell": "D-P35.23-1",
-        "gates_cell": "`hosted` apply — no ADC/`SIG_GCP_PROJECT`/`SIG_RDC_IMAGE`; pre-authorised OM-20; ≥ `SIG_RDC_EARLIEST`, never 03:00–06:30Z or the day-6→13 batch window",
+        "gates_cell": "`hosted` apply — no ADC/`SIG_GCP_PROJECT`/`SIG_RDC_IMAGE`; pre-auth OM-20; ≥ `SIG_RDC_EARLIEST`, never 03:00–06:30Z or day-6→13 batch window",
         "operator_cell": "nothing until re-run — `rdc-slices.sh --apply all`; `D-P35.23-2…-11` stay OPEN",
         "rerun_cell": "`implement-spec spec=docs/tickets/348_P35.23__real-data-regression-corpus.md live_verification=true`",
         "obligations": [
@@ -12638,7 +12685,7 @@
       {
         "key": "P36.77",
         "obligations_cell": "D-P36.77-1 D-P36.77-2",
-        "gates_cell": "bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records under `reports/rights/p3677/`; leg B never agent execution",
+        "gates_cell": "bounded public GETs under project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records under `reports/rights/p3677/`; leg B never agent execution",
         "operator_cell": "nothing until `live:P35.38a` — leg B is operator HG-03 + OP-26 (packet `p3677/leg-b-packet.md`)",
         "rerun_cell": "`implement-spec spec=docs/tickets/352_P36.77__documentcloud-muckrock-connector.md live_verification=true`",
         "obligations": [
@@ -12649,7 +12696,7 @@
       {
         "key": "P36.78",
         "obligations_cell": "D-P36.78-1 D-P36.78-2",
-        "gates_cell": "bounded public GETs under the project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records under `reports/rights/p3678/`; leg B never agent execution",
+        "gates_cell": "bounded public GETs under project UA (SIG-INGEST-036), OM-20 named at GATE-G5 (expires GATE-G6); gated on `live:P35.38a` (`/data-collection/` 404); records under `reports/rights/p3678/`; leg B never agent execution",
         "operator_cell": "nothing until `live:P35.38a` — leg B is operator HG-03 + OP-26 (packet `p3678/leg-b-packet.md`)",
         "rerun_cell": "`implement-spec spec=docs/tickets/353_P36.78__sourcewell-omnia-contract-pages.md live_verification=true`",
         "obligations": [
@@ -12661,7 +12708,7 @@
         "key": "P36.13",
         "obligations_cell": "D-P36.13-1",
         "gates_cell": "pre-authorised: OM-20 GATE-G5 (expires GATE-G6); AR-3 freeze/batch windows exit 42; `SIG_RATELIMIT_AUTHOR` per apply; needs ADC + `SIG_GCP_PROJECT`; D-K3-6 deferred",
-        "operator_cell": "nothing until ADC + `SIG_GCP_PROJECT` — a bounded env update, never schema/gate",
+        "operator_cell": "nothing until ADC + `SIG_GCP_PROJECT` — bounded env update, never schema/gate",
         "rerun_cell": "`implement-spec spec=docs/tickets/354_P36.13__api-rate-limits.md live_verification=true`",
         "obligations": [
           "D-P36.13-1"
@@ -12690,7 +12737,7 @@
       {
         "key": "P36.38",
         "obligations_cell": "D-P36.38-1",
-        "gates_cell": "never pre-authorised (OM-20); outside batch window day 6 00:00Z → day 13 12:00Z + daily 03:00-06:30Z; `SIG_SEARCHV2_AUTHOR` + ADC + `SIG_GCP_PROJECT`",
+        "gates_cell": "never pre-auth (OM-20); outside batch window day 6 00:00Z → day 13 12:00Z + daily 03:00-06:30Z; `SIG_SEARCHV2_AUTHOR` + ADC + `SIG_GCP_PROJECT`",
         "operator_cell": "the verbatim go + author env — code/runner/packet landed (route ships dark)",
         "rerun_cell": "`implement-spec spec=docs/tickets/379_P36.38__search-api-serving-v2.md live_verification=true`",
         "obligations": [
@@ -12711,7 +12758,7 @@
         "key": "P36.43",
         "obligations_cell": "D-P36.43-1",
         "gates_cell": "pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z or batch window day 6 00:00Z → day 13 12:00Z; `SIG_STATUS_AUTHOR` per apply; ADC + `SIG_GCP_PROJECT` + `SIG_JOB_IMAGE` + SA emails",
-        "operator_cell": "nothing until the `hosted` env — packet `reports/p36.43-status-lane/` landed",
+        "operator_cell": "nothing until `hosted` env — packet `reports/p36.43-status-lane/` landed",
         "rerun_cell": "`implement-spec spec=docs/tickets/386_P36.43__status-lane.md live_verification=true`",
         "obligations": [
           "D-P36.43-1"
@@ -12721,7 +12768,7 @@
         "key": "P36.44",
         "obligations_cell": "D-P36.44-1",
         "gates_cell": "pre-authorised: OM-20 GATE-G5 (expires GATE-G6); never daily 03:00-06:30Z or batch window day 6 00:00Z → day 13 12:00Z; `SIG_CADENCE_AUTHOR` per apply; ADC + `SIG_GCP_PROJECT` + `SIG_SCHEDULER_SA_EMAIL` + both jobs",
-        "operator_cell": "nothing until the `hosted` env — packet `reports/p36.44-release-cadence/` landed",
+        "operator_cell": "nothing until `hosted` env — packet `reports/p36.44-release-cadence/` landed",
         "rerun_cell": "`implement-spec spec=docs/tickets/387_P36.44__release-cadence-automation.md live_verification=true`",
         "obligations": [
           "D-P36.44-1"
@@ -12759,9 +12806,9 @@
       },
       {
         "key": "P36.73",
-        "obligations_cell": "11C acceptance sweep + GATE-G6 packet refresh: read-only crawl of the promoted core-surfaces release/routes/budgets/labels/changelog/mirrors + the packet re-draft; `acceptance-sweep-11c` → `sig.probe-run/1` + tools",
+        "obligations_cell": "11C sweep + G6 packet refresh: read-only promoted crawl + packet re-draft; `acceptance-sweep-11c` → `sig.probe-run/1` + tools",
         "gates_cell": "`hosted` read-only — `acceptance-sweep-11c` exit 42 before `live:P36.72b` promotes (the promoted release must exist); L2 on the operator's verbatim signed HG-11 readout at the GATE-G6 sitting, never pre-authorised",
-        "operator_cell": "nothing until `live:P36.72b` promotes — read-only; GATE-G6 packet presented only when no leg is due",
+        "operator_cell": "nothing until `live:P36.72b` promotes — read-only; G6 packet presented only when no leg is due",
         "rerun_cell": "`implement-spec spec=docs/tickets/419_P36.73__sub-round-11c-acceptance.md live_verification=true`",
         "obligations": []
       },
@@ -12788,7 +12835,7 @@
       {
         "key": "P37.4b",
         "obligations_cell": "D-P37.4b-1",
-        "gates_cell": "`hosted` write; OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); excluded: inside 03:00-10:00Z; needs SIG_GCP_PROJECT + ADC + SIG_RACC_AUTHOR",
+        "gates_cell": "`hosted` OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); excluded: inside 03:00-10:00Z; needs SIG_GCP_PROJECT + ADC + SIG_RACC_AUTHOR",
         "operator_cell": "nothing — leg-runner exports env + runs",
         "rerun_cell": "`implement-spec spec=docs/tickets/423_P37.4b__security-baseline-restricted-access-audit-logs.md live_verification=true`",
         "obligations": [
@@ -12808,8 +12855,8 @@
       {
         "key": "P37.11",
         "obligations_cell": "D-P37.11-1",
-        "gates_cell": "`hosted` write; OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); window `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + SIG_SAM_GOV_KEY",
-        "operator_cell": "nothing — leg-runner exports env + runs; the row closes only after two weekly fires advance the cursor",
+        "gates_cell": "`hosted` OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); window `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + SIG_SAM_GOV_KEY",
+        "operator_cell": "nothing — leg-runner exports env + runs; row closes only after two weekly fires advance cursor",
         "rerun_cell": "`implement-spec spec=docs/tickets/432_P37.11__sam-gov-sweep-resume.md live_verification=true`",
         "obligations": [
           "D-P37.11-1"
@@ -12818,8 +12865,8 @@
       {
         "key": "P37.12",
         "obligations_cell": "D-P37.12-1",
-        "gates_cell": "`hosted` write; OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); window `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + the sig-us511-*-key secrets (OP-13/HG-09) + the HG-03 flips",
-        "operator_cell": "OP-13 key registration + the HG-03 rights flips — then the leg-runner exports env + runs",
+        "gates_cell": "`hosted` OM-20 — go: pre-authorised: GATE-G6 §4 (expiry: acceptance sitting); window `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + sig-us511-*-key secrets (OP-13/HG-09) + HG-03 flips",
+        "operator_cell": "OP-13 key registration + HG-03 rights flips — then leg-runner exports env + runs",
         "rerun_cell": "`implement-spec spec=docs/tickets/433_P37.12__keyed-us-511-wiring.md live_verification=true`",
         "obligations": [
           "D-P37.12-1"
@@ -12828,8 +12875,8 @@
       {
         "key": "P37.70",
         "obligations_cell": "D-P37.70-1",
-        "gates_cell": "`hosted` write; OM-20 GATE-G6 §4 (expiry: acceptance sitting); `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + `sig-qldtraffic-key`/`sig-nsw-live-key` (OP-13/HG-09) + HG-03",
-        "operator_cell": "OP-13 key registration + the HG-03 rights flips — then the leg-runner exports env + runs",
+        "gates_cell": "`hosted` OM-20 GATE-G6 §4 (expiry: acceptance sitting); `AR-3 + AR-2`; needs SIG_GCP_PROJECT + ADC + `sig-qldtraffic-key`/`sig-nsw-live-key` (OP-13/HG-09) + HG-03",
+        "operator_cell": "OP-13 key registration + HG-03 rights flips — then leg-runner exports env + runs",
         "rerun_cell": "`implement-spec spec=docs/tickets/434_P37.70__keyed-au-traffic-camera-apis.md live_verification=true`",
         "obligations": [
           "D-P37.70-1"
@@ -12838,9 +12885,9 @@
       {
         "key": "P37.13",
         "obligations_cell": "D-P37.13-1",
-        "gates_cell": "no gate — register-or-drop triage for the 23 `candidate-unregistered` Data Library datasets the 2026-11-07 sweep recorded (each stays unregistered until a ticket or the operator dispositions it)",
-        "operator_cell": "the next `sig.discovery-sweep/1` run or an acquisition-plan ticket — each candidate carries a `registered:`/`new-linked:`/`related:` disposition in the next candidates.csv diff",
-        "rerun_cell": "the next `sig.discovery-sweep/1` run (the recurring sweep) or the acquisition-plan ticket that takes the 23 candidates — `docs/build/reports/discovery-sweep/2026-11-07/candidates.csv`",
+        "gates_cell": "no gate — register-or-drop triage for 23 `candidate-unregistered` Data Library datasets 2026-11-07 sweep recorded (each stays unregistered until a ticket or op dispositions it)",
+        "operator_cell": "the next `sig.discovery-sweep/1` run or the acq ticket — each candidate carries a `registered:`/`new-linked:`/`related:` disposition in next diff",
+        "rerun_cell": "the next `sig.discovery-sweep/1` run or acq-plan ticket — `discovery-sweep/2026-11-07/candidates.csv`",
         "obligations": [
           "D-P37.13-1"
         ]
@@ -12848,12 +12895,20 @@
       {
         "key": "P37.14",
         "obligations_cell": "D-P37.14-1",
-        "gates_cell": "no gate — reviewed `session` data for the seed instruments (never derived from citation strings) + an exports surface that consumes `publishable`",
-        "operator_cell": "a data-review ticket populating `session`/`text_ref` per `statute_seed/2` entry + the export path honouring `publishable=false` under a test",
-        "rerun_cell": "a data-review ticket (seed-session population) or the exports ticket that first consumes the `legal_instrument` `publishable` verdict — `docs/adr/ADR-240-statute-seeded-records-leads.md` revisit trigger (b)",
+        "gates_cell": "no gate — reviewed `session` data for seed instruments (never regex) + an exports consumer of `publishable`",
+        "operator_cell": "a data-review ticket or an export honouring `publishable=false`",
+        "rerun_cell": "a data-review ticket or exports consumer of `publishable` — `ADR-240` revisit trigger (b)",
         "obligations": [
           "D-P37.14-1"
         ]
+      },
+      {
+        "key": "P37.15",
+        "obligations_cell": "queued leg",
+        "gates_cell": "GATE-G6 §4 11D OM-20 list (expiry: GATE-ACCEPT-R11); x 03:00-06:30Z + batch-window-day6T00:00Z-day13T12:00Z",
+        "operator_cell": "`SIG_GCP_PROJECT`+ADC",
+        "rerun_cell": "`implement-spec spec=docs/tickets/437_P37.15__scheduled-parser-canary.md live_verification=true`",
+        "obligations": []
       }
     ]
   },
@@ -26912,10 +26967,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "2c45b520d4ccd1e14f237a7b5ebc2f52c83019e8457c48c44ccf6aae9cc229d6",
+  "manifest_sha256": "e54f75dc82e05756abd5327bef66afe84da3dd94acf04fa92ed51b437cbed683",
   "current_md": {
-    "lines": 148,
-    "bytes": 19920,
+    "lines": 149,
+    "bytes": 19740,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
