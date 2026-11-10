@@ -739,7 +739,7 @@ return (
           <DossierSection section={section} specs={specMap} />
         )}
         {action && <ActionBlocks dossier={dossier} which={action} specs={specMap} />}
-        {slot && <NetworkFigureSlot figure={slot.figure} title={slot.title} slots={visualsDoc?.networks ?? []} />}
+        {slot && <NetworkFigureSlot figure={slot.figure} title={slot.title} slots={visualsDoc?.networks ?? []} slug={dossier.slug} />}
         {noRecord && (
           <p class="sig-no-record" data-testid="section-no-record" data-copy="DS-01">{NO_RECORD_IN_SIG}</p>
         )}

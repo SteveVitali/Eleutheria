@@ -23,6 +23,8 @@ import {
 import { withBase } from "../../lib/paths";
 import { SURFACE_PATHS } from "../../lib/workspace-state/index";
 import { fmtInt } from "../../lib/format";
+import { dsrcArtifact } from "../../lib/dossier-sources";
+import { artifactHref } from "../../lib/figures";
 
 interface Props {
   /** The slot's declared figure id + title (K6 §4.1). */
@@ -30,9 +32,14 @@ interface Props {
   title: string;
   /** The visuals doc's `networks[]` entries (P37.28's emitted rows). */
   slots: NetworkSlot[];
+  /** The dossier's slug path — names the `sig.dossier-sources/1` artifact
+   *  the drawn figure's sig-figure region points into (J3 §5.4/UXR-34). */
+  slug: string;
 }
 
-const { figure, title, slots } = Astro.props;
+const { figure, title, slots, slug } = Astro.props;
+const netArtifact = dsrcArtifact(slug);
+const netArtifactHref = artifactHref(netArtifact);
 const emitted = slots.find(
   (s) => s.slot === figure || s.figure_id === figure || s.kind === figure,
 );
@@ -48,7 +55,18 @@ const anchorAttrs = drawn?.anchor_attrs ?? {};
 
 <div class="sig-network-slot" data-testid="network-figure-slot" data-figure={figure}>
   {drawn ? (
-    <figure class="sig-net-figure" id={drawn.figure_id} data-testid="network-figure">
+    <Fragment set:html="<!-- sig-figure -->" />
+    <figure
+      class="sig-net-figure sig-figure"
+      id={drawn.figure_id}
+      data-testid="network-figure"
+      data-figure-id={drawn.figure_id}
+      data-figure-class="dossier"
+      data-artifact={netArtifact}
+      data-pointer="/figures"
+      data-breakdown={`#${drawn.figure_id}`}
+      data-figure-value={String(drawn.edges_drawn)}
+    >
       <p class="sig-net-skip">
         <a href={`#${drawn.figure_id}-table`}>Skip figure — go to the relationship table</a>
       </p>
@@ -89,6 +107,12 @@ const anchorAttrs = drawn?.anchor_attrs ?? {};
         <span class="sig-fig-links">
           <a href={withBase(drawn.explore_href)} data-testid="network-explore-link">Open in the explorer →</a>{" "}
           <a href={withBase(drawn.table_href)} data-testid="network-table-link">All {fmtInt(drawn.table_rows_total)} relationships →</a>
+        </span>
+        {" "}—{" "}
+        <span class="sig-figure__evidence" data-testid="network-figure-evidence">
+          <a class="sig-figure__link" href="#hwkt-heading" data-figure-link="definition">definition</a>
+          {" "}·{" "}
+          <a class="sig-figure__link" href={netArtifactHref} data-figure-link="source">source</a>
         </span>
       </figcaption>
       {Object.keys(anchorAttrs).length > 0 && (
@@ -143,6 +167,7 @@ const anchorAttrs = drawn?.anchor_attrs ?? {};
         </details>
       )}
     </figure>
+    <Fragment set:html="<!-- /sig-figure -->" />
   ) : absent ? (
     <EmptyState
       parts={{
