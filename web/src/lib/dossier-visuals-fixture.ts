@@ -21,6 +21,7 @@ import type {
   DossierVisualsDoc,
   LocatorSymbols,
   MapMeta,
+  NetworkSlot,
 } from "./dossier-visuals";
 import { DOSSIERS } from "./dossier-fixture";
 import type { Dossier } from "./dossier";
@@ -144,6 +145,168 @@ function meta(
 /** The parent-context glyph each drawn locator cites (fixture stand-in). */
 const PARENT_BLOB = blob(80, 50, 140, 86, 4242);
 
+// ---------------------------------------------------------------------------
+// P37.28 (K6 VIZ-01b): the fixture `networks[]` corpus — a small authored
+// stand-in proving the page's render contract (drawn figure, toggles, table
+// twin, typed absences). Same posture as the map stand-in above: the fixture
+// proves the contract, not the graph.
+// ---------------------------------------------------------------------------
+
+function fixtureNetSvg(variant: "wide" | "narrow", withAcc: boolean): string {
+  const w = variant === "wide" ? 720 : 360;
+  const nodes: string[] = [
+    `<a href="/entity/agency/oklahoma-city-police--a1b2c3d/"><path d="M10 40a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0 -9 0Z" class="sig-fig-node sig-fig-node-agency"/><text x="24" y="44" class="sig-fig-node-label">Oklahoma City Police…</text></a>`,
+    `<a href="/entity/agency/county-sheriff--e4f5g6h/"><path d="M10 60a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0 -9 0Z" class="sig-fig-node sig-fig-node-agency"/><text x="24" y="64" class="sig-fig-node-label">Oklahoma County Sheriff</text></a>`,
+    `<a href="/graphs/supply/usa-ok/"><path d="M${w - 24} 50a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0 -9 0Z" class="sig-fig-node sig-fig-node-vendor"/><text x="${w - 38}" y="54" class="sig-fig-node-label" text-anchor="end">Flock Safety</text></a>`,
+  ];
+  const edges = withAcc
+    ? `<g aria-hidden="true"><path d="M20 40C200 40 500 50 ${w - 34} 50" class="sig-fig-edge sig-fig-edge-acc-configured"/><path d="M20 60C200 60 500 52 ${w - 34} 50" class="sig-fig-edge sig-fig-edge-acc-declared"/><path d="M20 50C200 50 500 46 ${w - 34} 50" class="sig-fig-edge sig-fig-edge-acc-observed"/><path d="M20 55C200 55 500 55 ${w - 34} 50" class="sig-fig-edge sig-fig-edge-muted"/></g>`
+    : `<g aria-hidden="true"><path d="M20 50C200 50 500 50 ${w - 34} 50" class="sig-fig-edge"/></g>`;
+  return (
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} 120" class="sig-fig sig-fig-graph" role="img" ` +
+    `aria-label="Fixture stand-in ${variant} network figure">` +
+    `<title>Fixture stand-in network figure (${variant})</title>` +
+    `<desc>Fixture stand-in: 2 anchors, 1 counterparty, 4 recorded relations.</desc>` +
+    edges +
+    nodes.join("") +
+    `<text x="8" y="110" class="sig-fig-legend">configured (solid) · declared (dashed) · observed (double) · muted = historical/undated</text>` +
+    `</svg>`
+  );
+}
+
+const TWIN_COLS = [
+  "counterparty",
+  "relation",
+  "direction",
+  "access_kind",
+  "date",
+  "date_kind",
+  "currency",
+  "support",
+  "sources",
+  "evidence",
+];
+
+function drawnAccess(slug: string): NetworkSlot {
+  return {
+    figure_id: "fig-access",
+    slot: "fig-4",
+    family: "access",
+    overview: "access",
+    title: "Who can search this data",
+    status: "drawn",
+    svg: fixtureNetSvg("wide", true),
+    svg_narrow: fixtureNetSvg("narrow", true),
+    meta: {
+      schema: "sig.figure-graph-meta/1",
+      viewbox: [720, 120],
+      narrow_viewbox: [360, 120],
+      mode: "bipartite",
+      cap_actions: [],
+      legend: [
+        { id: "line:configured", label: "configured", plain: "a configured access edge (solid line)" },
+        { id: "line:declared", label: "declared", plain: "a declared-policy access edge (dashed line)" },
+        { id: "line:observed", label: "observed", plain: "an observed-use access edge (double line)" },
+        { id: "currency:muted", label: "historical or undated", plain: "muted ink marks a historical or undated edge" },
+      ],
+      table_columns: TWIN_COLS,
+      table_rows: [
+        {
+          counterparty: "Flock Safety",
+          href: "/graphs/access/usa-ok/",
+          relation: "configured access to",
+          direction: "outbound",
+          access_kind: "configured",
+          date: "2024-01-15",
+          date_kind: "single",
+          currency: "current",
+          support: "WEAKLY_SUPPORTED",
+          sources: 1,
+          evidence: ["claim-fixture-1"],
+        },
+        {
+          counterparty: "Oklahoma County Sheriff",
+          href: "/entity/agency/county-sheriff--e4f5g6h/",
+          relation: "declared-policy access to",
+          direction: "outbound",
+          access_kind: "declared",
+          date: "—",
+          date_kind: "undated",
+          currency: "aging",
+          support: "WEAKLY_SUPPORTED",
+          sources: 1,
+          evidence: ["claim-fixture-2"],
+        },
+      ],
+      node_count: 3,
+      edge_count: 2,
+      desc: { title: "Who can search this data", as_of_world: "2026-09-20", anchors: 2, counterparties: 1, edges: 2, drawn_edges: 2 },
+      size_bytes: 2400,
+      gzip_bytes: 900,
+    },
+    anchors_drawn: 2,
+    counterparties_drawn: 1,
+    edges_drawn: 2,
+    cap_actions: [],
+    toggle_kinds: ["configured", "declared", "observed"],
+    table_rows_total: 2,
+    table_href: `/graphs/access/${slug}/`,
+    explore_href: `/explore/?v=2&overview=access&jurisdiction=fixture:${slug}`,
+    anchor_attrs: {},
+    degree_facts: [
+      { count: 9, observed: "2024-03-01", sources: ["fixture-src"], claim_ids: ["claim-fixture-3"] },
+    ],
+    by_source: [{ source_id: "fixture-src", value: 2 }],
+  };
+}
+
+function emptyNet(slot: string, figureId: string, overview: string, title: string, status: string, reason: string, slug: string): NetworkSlot {
+  return {
+    figure_id: figureId,
+    slot,
+    family: overview,
+    overview,
+    title,
+    status,
+    reason,
+    anchors_total: status === "no_anchors" ? 0 : 2,
+    edges_total: 0,
+    degree_facts: [],
+    table_href: `/graphs/${overview}/${slug}/`,
+    explore_href: `/explore/?v=2&overview=${overview}&jurisdiction=fixture:${slug}`,
+  } as NetworkSlot;
+}
+
+/** The emitted `networks[]` — drawn on usa/ok (the fixture's worked dossier)
+ *  and typed absences everywhere else. `usa` (country) carries the
+ *  country_no_figure state (K2 G-2). */
+function buildNetworks(d: Dossier): NetworkSlot[] {
+  const slug = d.slug;
+  const country = (d.level ?? "") === "country" || slug === "usa" || slug === "can" || slug === "fra" || slug === "deu";
+  if (country) {
+    return [
+      emptyNet("fig-2", "fig-supply", "supply", "Who runs and supplies it", "country_no_figure", "no node-link figure at the national level — the national relationship set reads as a count table, never a hairball (K2 G-2)", "usa"),
+      emptyNet("fig-3", "fig-funding", "funding", "Who funds it", "country_no_figure", "no node-link figure at the national level — the national relationship set reads as a count table, never a hairball (K2 G-2)", "usa"),
+      emptyNet("fig-4", "fig-access", "access", "Who can search this data", "country_no_figure", "no node-link figure at the national level — the national relationship set reads as a count table, never a hairball (K2 G-2)", "usa"),
+      emptyNet("fig-5", "fig-policy", "governance", "Which rules apply", "country_no_figure", "no node-link figure at the national level — the national relationship set reads as a count table, never a hairball (K2 G-2)", "usa"),
+    ];
+  }
+  if (slug === "usa/ok") {
+    return [
+      emptyNet("fig-2", "fig-supply", "supply", "Who runs and supplies it", "no_evidenced_edges", "entities are placed here but carry no recorded relationship of this kind in this release", slug),
+      emptyNet("fig-3", "fig-funding", "funding", "Who funds it", "no_anchors", "SIG's release places no entity in this jurisdiction with a recorded relationship of this kind", slug),
+      drawnAccess(slug),
+      emptyNet("fig-5", "fig-policy", "governance", "Which rules apply", "no_anchors", "SIG's release places no entity in this jurisdiction with a recorded relationship of this kind", slug),
+    ];
+  }
+  return [
+    emptyNet("fig-2", "fig-supply", "supply", "Who runs and supplies it", "no_anchors", "SIG's release places no entity in this jurisdiction with a recorded relationship of this kind", slug),
+    emptyNet("fig-3", "fig-funding", "funding", "Who funds it", "no_anchors", "SIG's release places no entity in this jurisdiction with a recorded relationship of this kind", slug),
+    emptyNet("fig-4", "fig-access", "access", "Who can search this data", "no_anchors", "SIG's release places no entity in this jurisdiction with a recorded relationship of this kind", slug),
+    emptyNet("fig-5", "fig-policy", "governance", "Which rules apply", "no_anchors", "SIG's release places no entity in this jurisdiction with a recorded relationship of this kind", slug),
+  ];
+}
+
 function buildDoc(d: Dossier): DossierVisualsDoc {
   const jkey = d.jurisdiction_key ?? `fixture:${d.slug}`;
   const childRows = (d.children ?? []).map((c) => ({
@@ -183,7 +346,7 @@ function buildDoc(d: Dossier): DossierVisualsDoc {
     },
     map,
     locator,
-    networks: [], // VIZ-01b's content — typed slots until it lands.
+    networks: buildNetworks(d), // P37.28 (VIZ-01b) — drawn/typed entries.
     timeline_items: 0,
   };
 }

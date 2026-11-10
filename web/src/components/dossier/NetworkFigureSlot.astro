@@ -3,28 +3,164 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// P36.55 (VIZ-02): the network-figure slot — Figs 2–5 on their sections as
-// TYPED EMPTY STATES until VIZ-01b lands the dossier network content (the
-// visuals doc's `networks[]` is empty by contract today). A slot that one
-// day carries a drawn figure renders it; a slot with no evidenced edge is
-// never drawn (SIG-UI-125).
+// P37.28 (K6 VIZ-01b, SIG-UI-125/DV03): the dossier network figure — a
+// static bipartite SVG (wide + narrow variants) with every node a link,
+// the generated legend, the H-2 table twin as the figure's long
+// description, the zero-JS `:has()` access-kind toggles (K6 §6.4), a skip
+// link, the 'Open in the explorer' hand-off (sig.workspace-state/2), and
+// the H-4 degree-only sentences. A figure with no evidenced edge is never
+// drawn — the emitted typed absence renders the reason instead (V-7). All
+// inlined SVG bytes pass `assertInlineSvgSafe` at the doc read seam
+// (SIG-UI-096).
 import EmptyState from "../EmptyState.astro";
-import type { NetworkSlot } from "../../lib/dossier-visuals";
+import {
+  isDrawnNetwork,
+  type DrawnNetworkSlot,
+  type EmptyNetworkSlot,
+  type NetworkSlot,
+} from "../../lib/dossier-visuals";
+import { withBase } from "../../lib/paths";
+import { fmtInt } from "../../lib/format";
 
 interface Props {
   /** The slot's declared figure id + title (K6 §4.1). */
   figure: string;
   title: string;
-  /** The visuals doc's `networks[]` entries (empty until VIZ-01b). */
+  /** The visuals doc's `networks[]` entries (P37.28's emitted rows). */
   slots: NetworkSlot[];
 }
 
 const { figure, title, slots } = Astro.props;
-const emitted = slots.find((s) => s.figure_id === figure || s.kind === figure);
+const emitted = slots.find(
+  (s) => s.slot === figure || s.figure_id === figure || s.kind === figure,
+);
+const drawn = emitted && isDrawnNetwork(emitted) ? (emitted as DrawnNetworkSlot) : null;
+const absent = emitted && !drawn ? (emitted as EmptyNetworkSlot) : null;
+const TWIN_ROW_LIMIT = 50;
+const legend = drawn?.meta?.legend ?? [];
+const twinRows = drawn?.meta?.table_rows ?? [];
+const twinCols = drawn?.meta?.table_columns ?? [];
+const degreeFacts = drawn?.degree_facts ?? absent?.degree_facts ?? [];
+const anchorAttrs = drawn?.anchor_attrs ?? {};
 ---
 
-{emitted === undefined ? (
-  <div class="sig-network-slot" data-testid="network-figure-slot" data-figure={figure}>
+<div class="sig-network-slot" data-testid="network-figure-slot" data-figure={figure}>
+  {drawn ? (
+    <figure class="sig-net-figure" id={drawn.figure_id} data-testid="network-figure">
+      <p class="sig-net-skip">
+        <a href={`#${drawn.figure_id}-table`}>Skip figure — go to the relationship table</a>
+      </p>
+      {drawn.toggle_kinds.length > 0 && (
+        <fieldset class="sig-net-toggles" data-testid="network-toggles">
+          <legend>Show access kinds</legend>
+          {drawn.toggle_kinds.includes("configured") && (
+            <label><input type="checkbox" id="k-configured" checked /> configured</label>
+          )}
+          {drawn.toggle_kinds.includes("declared") && (
+            <label><input type="checkbox" id="k-declared" checked /> declared</label>
+          )}
+          {drawn.toggle_kinds.includes("observed") && (
+            <label><input type="checkbox" id="k-observed" checked /> observed</label>
+          )}
+          <label><input type="checkbox" id="k-historical" checked /> include historical and undated</label>
+        </fieldset>
+      )}
+      <div class="sig-fig-net sig-fig-net--wide" data-testid="network-figure-wide">
+        <Fragment set:html={drawn.svg} />
+      </div>
+      <div class="sig-fig-net sig-fig-net--narrow" data-testid="network-figure-narrow">
+        <Fragment set:html={drawn.svg_narrow} />
+      </div>
+      <figcaption class="sig-fig-caption" data-testid="network-figure-caption">
+        <strong>{drawn.title}.</strong>{" "}
+        {fmtInt(drawn.edges_drawn)} recorded relationship{drawn.edges_drawn === 1 ? "" : "s"}
+        {" "}between {fmtInt(drawn.anchors_drawn)} placed and{" "}
+        {fmtInt(drawn.counterparties_drawn)} counterpart{drawn.counterparties_drawn === 1 ? "y" : "ies"}.
+        {" "}Every node links; every edge carries its date or "undated".{" "}
+        {legend.length > 0 && (
+          <ul class="sig-fig-legend" data-testid="network-figure-legend">
+            {legend.map((l) => (
+              <li><strong>{l.label}:</strong> {l.plain}</li>
+            ))}
+          </ul>
+        )}
+        <span class="sig-fig-links">
+          <a href={withBase(drawn.explore_href)} data-testid="network-explore-link">Open in the explorer →</a>{" "}
+          <a href={withBase(drawn.table_href)} data-testid="network-table-link">All {fmtInt(drawn.table_rows_total)} relationships →</a>
+        </span>
+      </figcaption>
+      {Object.keys(anchorAttrs).length > 0 && (
+        <ul class="sig-net-anchor-attrs" data-testid="network-anchor-attrs">
+          {Object.entries(anchorAttrs).map(([key, attr]) => (
+            <li data-anchor={key}>{attr}</li>
+          ))}
+        </ul>
+      )}
+      {degreeFacts.length > 0 && (
+        <ul class="sig-net-degree" data-testid="network-degree-facts">
+          {degreeFacts.map((f) => (
+            <li>
+              Shared with {f.count ?? "?"} agencies — partners not named
+              {f.observed ? ` (recorded ${f.observed})` : " (undated)"}.
+            </li>
+          ))}
+        </ul>
+      )}
+      {twinRows.length > 0 && (
+        <details class="sig-net-twin" id={`${drawn.figure_id}-table`} data-testid="network-table-twin">
+          <summary>The relationship table ({fmtInt(drawn.table_rows_total)} rows)</summary>
+          <div class="sig-table-wrap">
+            <table class="sig-table">
+              <thead>
+                <tr>{twinCols.map((c) => <th scope="col">{c.replaceAll("_", " ")}</th>)}</tr>
+              </thead>
+              <tbody>
+                {twinRows.slice(0, TWIN_ROW_LIMIT).map((r) => (
+                  <tr>
+                    <td><a href={withBase(r.href)}>{r.counterparty}</a></td>
+                    <td>{r.relation}</td>
+                    <td>{r.direction}</td>
+                    <td>{r.access_kind}</td>
+                    <td>{r.date}</td>
+                    <td>{r.date_kind}</td>
+                    <td>{r.currency}</td>
+                    <td>{r.support}</td>
+                    <td>{r.sources}</td>
+                    <td>{(r.evidence ?? []).join(", ")}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {drawn.table_rows_total > TWIN_ROW_LIMIT && (
+            <p class="sig-table-note">
+              First {TWIN_ROW_LIMIT} of {fmtInt(drawn.table_rows_total)} —{" "}
+              <a href={withBase(drawn.table_href)}>all {fmtInt(drawn.table_rows_total)} relationships →</a>
+            </p>
+          )}
+        </details>
+      )}
+    </figure>
+  ) : absent ? (
+    <EmptyState
+      parts={{
+        state: `The '${absent.title}' figure`,
+        missing: absent.reason,
+        nearby:
+          "The rows and figures on this page carry the recorded facts the figure would summarise.",
+        action: { href: absent.table_href || `graphs/${absent.overview}/`, label: `See the ${absent.overview} overview` },
+        change: "The figure appears with a release that emits its evidenced edges.",
+        cause: absent.status === "no_evidenced_edges" ? "not_researched" : "not_published",
+        batchIds: {
+          state: "NF-05",
+          missing: "NF-06",
+          nearby: "NF-02",
+          action: "NF-07",
+          change: "NF-04",
+        },
+      }}
+    />
+  ) : (
     <EmptyState
       parts={{
         state: `The '${title}' figure`,
@@ -38,5 +174,16 @@ const emitted = slots.find((s) => s.figure_id === figure || s.kind === figure);
         batchIds: { missing: "NF-01", nearby: "NF-02", action: "NF-03", change: "NF-04" },
       }}
     />
-  </div>
-) : null}
+  )}
+  {degreeFacts.length > 0 && !drawn && (
+    <ul class="sig-net-degree" data-testid="network-degree-facts">
+      {degreeFacts.map((f) => (
+        <li>
+          Shared with {f.count ?? "?"} agencies — partners not named
+          {f.observed ? ` (recorded ${f.observed})` : " (undated)"}.
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
+</content>

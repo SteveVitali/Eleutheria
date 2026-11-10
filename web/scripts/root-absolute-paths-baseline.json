@@ -1,12 +1,13 @@
 {
   "schema": "sig.path-containment-baseline/1",
-  "measured_at": "2026-11-09T20:11:43Z",
+  "measured_at": "2026-11-10T05:13:03Z",
   "measured_by": "node web/scripts/check-root-absolute-paths.mjs --write-baseline",
   "rule": "quoted ('\"`') literal starting with '/' + URL-path chars, quote not preceded by '/', over /*-*-/ <!-- --> and //-comment-stripped text in web/src/** .astro/.ts/.tsx/.js/.jsx/.mjs/.mts/.css; allow-listed file+token+count exemptions subtracted",
   "scope": "web/src/**",
   "plan_baseline": "G3 NEW-6 measured 85 sites / 36 files (0 BASE_URL uses) at 2026-09-30T18:47:42Z on the pre-refactor tree; re-measured at implement time per the P35.65 contract — the baseline may only shrink (P36.66a's sweep), never grow without a contract amendment",
-  "sites": 9,
+  "sites": 26,
   "files": {
+    "src/lib/dossier-visuals-fixture.ts": 17,
     "src/lib/graph-overview-fixture.ts": 9
   },
   "allowlist": [

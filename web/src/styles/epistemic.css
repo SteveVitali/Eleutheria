@@ -2365,3 +2365,62 @@ sig-typeahead {
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
+
+/* P37.28 (K6 VIZ-01b): the dossier network figure — wide (720) and narrow
+ * (360) variants swap on the page's measure breakpoint; the SVG's own
+ * classes carry every encoding (one legend lexicon per page, V-8). */
+.sig-fig-net--narrow {
+  display: none;
+}
+
+@media (max-width: 40rem) {
+  .sig-fig-net--wide {
+    display: none;
+  }
+  .sig-fig-net--narrow {
+    display: block;
+  }
+}
+
+.sig-fig-net svg,
+.sig-fig1__canvas svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.sig-net-skip {
+  font-size: var(--sig-step--1);
+}
+
+.sig-net-toggles {
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  padding: var(--sig-space-2) var(--sig-space-3);
+  font-size: var(--sig-step--1);
+}
+
+.sig-net-toggles label {
+  margin-right: var(--sig-space-4);
+}
+
+.sig-net-anchor-attrs,
+.sig-net-degree {
+  font-size: var(--sig-step--1);
+  color: var(--sig-ink-muted);
+}
+
+.sig-net-twin {
+  margin-top: var(--sig-space-3);
+}
+
+@media print {
+  /* K6 §8: toggles print in their all-shown state and never print; a
+   * figure never splits across pages. */
+  .sig-net-toggles,
+  .sig-net-skip {
+    display: none;
+  }
+  .sig-net-figure,
+  .sig-net-twin {
+    break-inside: avoid;
+  }
+}

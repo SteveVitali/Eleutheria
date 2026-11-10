@@ -5823,6 +5823,23 @@ def build_spine_export(
             "publication_id": None,
             "as_of_world": dataset.as_of,
         }
+        # P37.28 (K6 VIZ-01b): the network-figure inputs — the same
+        # procurement-relevance verdicts + entity-page claim rows the
+        # overview emission below derives (the inputs hoisted into this
+        # block; the rule itself is never re-derived).
+        _dn_vocab = load_reviewed_vocabulary()
+        _dn_notice_rows = _notice_relevance_rows(raw, label_registry, vocab=_dn_vocab)
+        _dn_relevance = {
+            str(r.entity_id): str(r.relevance) for r in _dn_notice_rows if r.entity_id
+        }
+        _dn_relevance_fields: dict[str, dict[str, Any]] = {}
+        for _row in raw.get("notice_relevance_facts") or []:
+            try:
+                _dn_relevance_fields.setdefault(str(_row[0]), {}).setdefault(
+                    str(_row[1]), []
+                ).append(str(_row[2]))
+            except (TypeError, IndexError):
+                continue
         dossier_visuals_out = _dv.build_dossier_visuals(
             dataset=dataset,
             contribution_plan=contribution_plan,
@@ -5837,7 +5854,21 @@ def build_spine_export(
             vintages=_vintages,
             placement_results=slices.placement_results,
             coverage_verdicts=_coverage_verdicts,
+            labels=label_registry,
+            claim_rows=raw.get("entity_page_claims") or [],
+            value_claims=claims,
+            relevance=_dn_relevance,
+            relevance_fields=_dn_relevance_fields,
+            ancestors={
+                str(k): tuple(v) for k, v in placement.ancestor_chains().items()
+            },
+            source_names=source_names,
+            lineage=lineage_by_claim or {},
+            as_of=build_spec.as_of_snapshot,
         )
+        # The ``fig-*`` edge-count breakdowns ride the contribution plan into
+        # each ``sig.dossier-sources/1`` doc's ``figures[]`` (K6 §7.2).
+        contribution_plan.network_figures = dossier_visuals_out["figures_k5"]
         for _jkey, _doc in dossier_visuals_out["docs"].items():
             _slug = keyed.keys[_jkey].slug_path
             restricted_artifacts[f"{_dv.VISUALS_DIR}/{_slug}.json"] = _dv.visuals_bytes(_doc)

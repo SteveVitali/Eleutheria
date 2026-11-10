@@ -399,6 +399,11 @@ class DossierContributionPlan:
     #: published site rows vs the interval's upper bound, published as
     #: measured (``<= 1.02`` is the ratchet target; a miss is recorded).
     dedup_inflation: dict[str, dict[str, Any]] = field(default_factory=dict)
+    #: P37.28 (K6 VIZ-01b): the dossier network figures' ``fig-*`` edge-count
+    #: breakdowns by source — emitted by ``dossier_visuals.build_dossier_visuals``
+    #: and carried into this doc's ``figures[]`` so the figure ids reconcile
+    #: (K6 §7.2). Empty before a VIZ-01b-bound export.
+    network_figures: dict[str, list[Mapping[str, Any]]] = field(default_factory=dict)
 
     def slug_path(self, key: str) -> str:
         """The dossier artifact/URL path for a membership key — the registry
@@ -577,6 +582,7 @@ class DossierContributionPlan:
                 "scope": "dossier",
             },
             "figures": figures,
+            "network_figures": list(self.network_figures.get(acc.key, ())),
             "sources": source_docs,
             "cross_source": {
                 "colocated_pairs": {
@@ -781,6 +787,27 @@ class DossierContributionPlan:
         # verbatim L3 §5.2 display lives in the data contract. ``by_source``
         # stays empty: the interval is a cluster count that source slices
         # can never partition (deduplicate, never sum).
+        # P37.28 (K6 §7.2): the ``fig-*`` network-figure edge counts — by
+        # source, deduplicated (an edge's claim set can bind several
+        # sources; ``distinct``, never summed). The pointer resolves inside
+        # this doc's ``network_figures`` block.
+        for i, nf in enumerate(self.network_figures.get(acc.key, ())):
+            figures.append(
+                {
+                    "figure_id": str(nf["figure_id"]),
+                    "label": str(nf["label"]),
+                    "value": int(nf["edges"]),
+                    "definition": str(nf["figure_id"]),
+                    "artifact": path,
+                    "pointer": f"/network_figures/{i}",
+                    "by_source": list(nf["by_source"]),
+                    "sum_rule": "distinct",
+                    "sum_disclosure": (
+                        "an edge's supporting claims can bind several sources "
+                        "— deduplicate, never sum"
+                    ),
+                }
+            )
         interval = self.dedup_intervals.get(acc.key)
         if interval and "upper" in interval:
             figures.append(
