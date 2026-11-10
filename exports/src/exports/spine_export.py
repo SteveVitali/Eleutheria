@@ -405,7 +405,13 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "         'parent_capture_id', ec.parent_capture_id::text)"
         "         ORDER BY ec.retrieved_at, ec.capture_id)"
         "          FROM evidence_capture ec"
-        "         WHERE ec.artifact_id = ea.artifact_id) AS captures"
+        "         WHERE ec.artifact_id = ea.artifact_id) AS captures,"
+        # P37.30 (R11-K13-WX-05 / K7 §5.7, F-485): the §17.6 disappearance
+        # event — a recommender retrievability input (an observed disappearance
+        # ranks the artifact's live document as link_rotted; the stored capture
+        # stays the record, SIG-EVID-013). Additive column 13: a pre-P37.30 row
+        # shape degrades to ``disappeared_observed_at=None``.
+        "       ea.disappeared_observed_at::text"
         "  FROM evidence_artifact ea"
         "  LEFT JOIN source_registry sr ON sr.source_id = ea.source_id"
         "  LEFT JOIN latest_decision ld"
@@ -511,6 +517,54 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "   AND {PUB_ARTIFACT_GATE}"
         "   AND {CAPTURE_SEAL_GATE}"
         " ORDER BY ce.claim_id, ce.capture_id",
+    ),
+    # P37.30 (R11-K13-WX-05 / K7 §5.7, F-485, SIG-UI-027a): the recommender's
+    # score inputs — every publishable claim bound to an eligible artifact,
+    # with the epistemic axes the per-(artifact, subject) D/C derivation needs
+    # (``claim_directness`` → the §10.5 D-class; ``observed_at`` +
+    # ``predicate_id`` → the §28.3 currency-vs-volatility derivation at
+    # ``as_of``) plus the subject identity the score is scoped to and the
+    # ``object_entity`` the one-hop contract/agency neighbourhood is built
+    # from. The same claim→capture→artifact eligibility join as
+    # ``claim_binding_detail``/``evidence_bindings`` — the shared artifact
+    # gate, the capture-seal gate, the publishable-claim gate and effective
+    # rights — so a withheld claim or artifact never feeds a score. The
+    # artifact-side ``capture_status = 'captured'`` mirrors the emitted
+    # ``evidence_artifacts`` set exactly (the scores name the artifacts the
+    # surface actually lists); the ``sig.connector.subject`` LATERALs carry
+    # the canonical subject keys the watch item's ``subjects`` join on — a
+    # subject without a key joins by its entity id, never a guessed name.
+    "evidence_subject_claims": (
+        "claim_evidence",
+        "{EFFECTIVE}SELECT ea.artifact_id::text, c.subject_id::text, skey.subject_key,"
+        "       c.claim_id::text, c.predicate_id, c.claim_directness,"
+        "       c.observed_at::text, c.object_entity::text, okey.subject_key"
+        "  FROM claim c"
+        "  JOIN claim_evidence ce ON ce.claim_id = c.claim_id"
+        "  JOIN evidence_capture ec ON ce.capture_id = ec.capture_id"
+        "  JOIN evidence_artifact ea ON ec.artifact_id = ea.artifact_id"
+        "  LEFT JOIN claim_source cs ON cs.claim_id = c.claim_id"
+        "  LEFT JOIN latest_decision ld"
+        "       ON ld.source_id = cs.source_id AND ld.prior_rights_id = c.rights_id"
+        "  JOIN rights_record rr ON rr.rights_id = COALESCE(ld.rights_id, c.rights_id)"
+        "  LEFT JOIN LATERAL (SELECT ei.value AS subject_key"
+        "                     FROM entity_identifier ei"
+        "                    WHERE ei.entity_id = c.subject_id"
+        "                      AND ei.scheme = 'sig.connector.subject'"
+        "                     ORDER BY ei.value LIMIT 1) skey ON true"
+        "  LEFT JOIN LATERAL (SELECT ei.value AS subject_key"
+        "                     FROM entity_identifier ei"
+        "                    WHERE ei.entity_id = c.object_entity"
+        "                      AND ei.scheme = 'sig.connector.subject'"
+        "                     ORDER BY ei.value LIMIT 1) okey ON true"
+        " WHERE ea.sensitivity_tier = 0 AND ea.capture_status = 'captured'"
+        "   AND c.sensitivity_tier = 0"
+        "   AND upper_inf(c.sys_period)"
+        "   AND rr.redistributable = 'yes'"
+        "   AND {PUB_CLAIM_GATE}"
+        "   AND {PUB_ARTIFACT_GATE}"
+        "   AND {CAPTURE_SEAL_GATE}"
+        " ORDER BY ea.artifact_id, c.subject_id, c.claim_id",
     ),
     # P35.36 (R11-K13-TX-08a): the claim-level provenance fields the statements
     # row + panel need beyond the shaping row — review/epistemic status, the
@@ -3188,6 +3242,218 @@ def _watch(
     )
 
 
+#: P37.30 (R11-K13-WX-05 / K7 §5.7): positional columns of the
+#: ``evidence_subject_claims`` read (mirrors the SELECT order).
+_EVIDENCE_SUBJECT_CLAIM_COLUMNS: tuple[str, ...] = (
+    "artifact_id",
+    "subject_id",
+    "subject_key",
+    "claim_id",
+    "predicate_id",
+    "claim_directness",
+    "observed_at",
+    "object_entity",
+    "object_key",
+)
+
+#: The §10.5 directness classes, ranked (D1 most probative). ``D6`` is
+#: non-probative — it never contributes to a score pair (the same exclusion
+#: ``web/src/lib/recommender.ts#isAdmissible`` applies).
+_DIRECTNESS_RANK: dict[str, int] = {"D1": 1, "D2": 2, "D3": 3, "D4": 4, "D5": 5, "D6": 6}
+
+#: The §28.3 currency classes, ranked (C1 freshest — the web recommender's
+#: ``CURRENCY_SCORE`` ordering).
+_CURRENCY_RANK: dict[str, int] = {"C1": 1, "C2": 2, "C3": 3, "C4": 4}
+
+#: The retrievability vocabulary ``web/src/lib/recommender.ts#CaptureStatus``
+#: closes over — mapped from the spine's ``evidence_artifact.capture_status``
+#: vocabulary plus the §17.6 ``disappeared_observed_at`` event (K7 §5.7: a
+#: disappearance observed means the live document is link-rotted; the stored
+#: capture stays the record, SIG-EVID-013/014). An unmapped status raises —
+#: the gate only emits ``captured`` today, so a new status reaching the
+#: surface unmapped is a defect that fails loud, never a silent zero.
+_RETRIEVABILITY: dict[str, str] = {
+    "captured": "retrievable",
+    "access_restricted": "access_restricted",
+    "paywalled": "paywalled",
+    "link_rotted": "link_rotted",
+    "not_attempted": "link_rotted",
+}
+
+
+def _retrievability(capture_status: str, disappeared_observed_at: Any) -> str:
+    """The recommender's retrievability word for one artifact (K7 §5.7)."""
+    if disappeared_observed_at not in (None, ""):
+        return "link_rotted"
+    try:
+        return _RETRIEVABILITY[str(capture_status)]
+    except KeyError:
+        raise ValueError(
+            f"unmapped evidence_artifact.capture_status {capture_status!r} — "
+            "the recommender retrievability vocabulary covers "
+            f"{sorted(_RETRIEVABILITY)}; extend the map deliberately (SIG-ENG-042)"
+        ) from None
+
+
+def _iso_date(value: Any) -> date | None:
+    """A ``date`` from a SQL ``observed_at::text``/date/datetime value, or None."""
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.date()
+    if isinstance(value, date):
+        return value
+    try:
+        return date.fromisoformat(str(value).strip()[:10])
+    except ValueError:
+        return None
+
+
+def _subject_scores(
+    raw: Mapping[str, Any],
+    as_of_date: date,
+) -> tuple[dict[str, list[dict[str, Any]]], dict[str, dict[str, set[str]]], dict[str, int]]:
+    """P37.30 (K7 §5.7): per-(artifact, subject) score inputs.
+
+    Returns ``(scores_by_artifact, neighbours, uncomputable)``:
+
+    * ``scores_by_artifact`` — ``artifact_id → [subject_scores row]`` where each
+      row carries ``subject_id``/``subject_key``, the best §10.5 directness
+      class over the artifact's claims ABOUT THAT SUBJECT (D1 most probative;
+      D6 never contributes), the best §28.3 currency class over the same
+      claims (``reconcile.weight.currency`` at ``as_of``, never stored), and
+      the subject-scoped dispute flags (``touches_open_contradiction`` /
+      ``answers_open_task`` — the §39.5a inputs are "touching the subject",
+      so they live on the pair, not the artifact).
+    * ``neighbours`` — canonical key → neighbour canonical keys, the one-hop
+      contract/agency neighbourhood K7 §5.7 names: for every bound claim
+      ``(subject S, object_entity O)`` the two are mutual neighbours (the
+      claim links them — a document bearing on one bears on the decision's
+      subject one hop out). Canonical key = ``subject_key`` where recorded,
+      else the entity id.
+    * ``uncomputable`` — ``artifact_id → count`` of (artifact, subject) pairs
+      whose score could not be computed (no probative directness or no
+      derivable currency). They are COUNTED, never emitted — a score names
+      exactly what it measures, so an uncomputable pair is an honest absence
+      on the artifact row plus this recorded count (SIG-ENG-042), never a
+      zeroed score.
+
+    A pair whose only bound claims are non-probative (D6) or whose claims
+    lack every currency input (no ``observed_at``, unknown predicate) is
+    uncomputable. Withdrawn claims/entities never feed a score (the same
+    ``policy_withdrawals`` fail-closed the watch read applies).
+    """
+    from reconcile.weight import currency as _cur
+    from reconcile.weight import predicate_meta
+
+    contested_claims: set[str] = set()
+    contested_subjects: set[str] = set()
+    for c in raw.get("materialized_contradictions") or ():
+        if not isinstance(c, Mapping):
+            continue
+        for cid in c.get("claim_ids") or ():
+            contested_claims.add(str(cid))
+        if c.get("subject_id"):
+            contested_subjects.add(str(c["subject_id"]))
+    task_subjects: set[str] = set()
+    for r in raw.get("research_tasks") or ():
+        if isinstance(r, Mapping):
+            status, sid = str(r.get("status") or ""), str(r.get("subject_id") or "")
+        else:
+            try:
+                status, sid = str(r[5]), str(r[2])
+            except (TypeError, IndexError):
+                continue
+        if status not in {"resolved", "closed", "done", "completed", "withdrawn"} and sid:
+            task_subjects.add(sid)
+
+    claims_by_pair: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    neighbours: dict[str, dict[str, set[str]]] = {}
+    for r in raw.get("evidence_subject_claims") or ():
+        d = (
+            {c: r.get(c) for c in _EVIDENCE_SUBJECT_CLAIM_COLUMNS}
+            if isinstance(r, Mapping)
+            else dict(zip(_EVIDENCE_SUBJECT_CLAIM_COLUMNS, r, strict=False))
+        )
+        artifact_id = str(d.get("artifact_id") or "")
+        subject_id = str(d.get("subject_id") or "")
+        claim_id = str(d.get("claim_id") or "")
+        if not artifact_id or not subject_id:
+            continue
+        # P34.19/F-337 (SIG-GOV-007): the committed publication withdrawals
+        # bind score inputs exactly as they bind the watch read — a listed
+        # claim or subject entity never feeds a public score.
+        if policy_withdrawals.withdrawal_for_claim(claim_id) is not None:
+            continue
+        if policy_withdrawals.withdrawal_for_entity(subject_id) is not None:
+            continue
+        claims_by_pair.setdefault((artifact_id, subject_id), []).append(d)
+        # One hop of the contract/agency neighbourhood (K7 §5.7): a bound
+        # claim's subject and its object entity are mutual neighbours.
+        skey = str(d.get("subject_key") or "") or subject_id
+        oent = str(d.get("object_entity") or "")
+        if oent:
+            okey = str(d.get("object_key") or "") or oent
+            neighbours.setdefault(skey, {"id": set(), "key": set()})
+            neighbours.setdefault(okey, {"id": set(), "key": set()})
+            neighbours[skey]["key"].add(okey)
+            neighbours[okey]["key"].add(skey)
+            neighbours[skey]["id"].add(oent)
+            neighbours[okey]["id"].add(subject_id)
+
+    scores_by_artifact: dict[str, list[dict[str, Any]]] = {}
+    uncomputable: dict[str, int] = {}
+    for (artifact_id, subject_id), rows in sorted(claims_by_pair.items()):
+        subject_key = ""
+        for d in rows:
+            if d.get("subject_key"):
+                subject_key = str(d["subject_key"])
+                break
+        best_d: str | None = None
+        best_c: str | None = None
+        for d in rows:
+            direct = str(d.get("claim_directness") or "").strip().upper()
+            # D6 is non-probative (§10.5) — never a score input.
+            if direct in _DIRECTNESS_RANK and direct != "D6":
+                if best_d is None or _DIRECTNESS_RANK[direct] < _DIRECTNESS_RANK[best_d]:
+                    best_d = direct
+            observed = _iso_date(d.get("observed_at"))
+            if observed is not None:
+                try:
+                    meta = predicate_meta(str(d.get("predicate_id") or ""))
+                    c = _cur(
+                        volatility_class=str(meta.get("volatility_class", "")),
+                        half_life=str(meta.get("half_life", "")),
+                        observed_at=observed,
+                        as_of=as_of_date,
+                    )
+                except Exception:  # noqa: BLE001 - underivable → not an input
+                    c = ""
+                if c in _CURRENCY_RANK and (
+                    best_c is None or _CURRENCY_RANK[c] < _CURRENCY_RANK[best_c]
+                ):
+                    best_c = c
+        if best_d is None or best_c is None:
+            uncomputable[artifact_id] = uncomputable.get(artifact_id, 0) + 1
+            continue
+        pair_claims = {str(d.get("claim_id") or "") for d in rows}
+        row: dict[str, Any] = {
+            "subject_id": subject_id,
+            "directness": best_d,
+            "currency": best_c,
+            "touches_open_contradiction": bool(
+                subject_id in contested_subjects or pair_claims & contested_claims
+            ),
+            "answers_open_task": subject_id in task_subjects,
+        }
+        if subject_key:
+            row["subject_key"] = subject_key
+        scores_by_artifact.setdefault(artifact_id, []).append(row)
+    for rows in scores_by_artifact.values():
+        rows.sort(key=lambda r: (str(r.get("subject_key") or ""), r["subject_id"]))
+    return scores_by_artifact, neighbours, uncomputable
+
+
 def _evidence(
     raw: Mapping[str, Any],
     as_of: str,
@@ -3209,7 +3475,20 @@ def _evidence(
     ``view_original`` label state (the raw-byte href stays ``None`` until the
     TX-12 archive mints a locator; a label never implies a route the release
     does not carry).
+
+    P37.30 (R11-K13-WX-05 / K7 §5.7, F-485, SIG-UI-027a): the recommender
+    repair — the artifact now carries the score inputs the evidence
+    recommender reads, scoped to exactly what they measure: per
+    (artifact, subject) ``subject_scores`` rows (the best §10.5 D-class +
+    §28.3 C-class over the artifact's claims about THAT subject, plus the
+    subject-scoped dispute flags), the retrievability vocabulary mapped
+    from ``capture_status`` + ``disappeared_observed_at``, and the
+    envelope-level ``subject_neighbours`` one-hop map. A pair that cannot
+    be computed is counted under ``build.recommender_scores`` and emitted
+    nowhere — an uncomputable score fails typed, never a silent zero.
     """
+    as_of_date = date.fromisoformat(as_of[:10]) if as_of else date.today()
+    scores_by_artifact, neighbours, uncomputable = _subject_scores(raw, as_of_date)
     artifacts: list[dict[str, Any]] = []
     for r in raw.get("evidence_artifacts") or []:
         (
@@ -3228,6 +3507,9 @@ def _evidence(
         # Column 12 (P36.51) is additive — a pre-P36.51 row shape feeds no
         # capture history and the page renders the typed empty state.
         captures_raw = r[11] if len(r) > 11 else []
+        # Column 13 (P37.30) is additive — the §17.6 disappearance event the
+        # retrievability map reads; a pre-P37.30 row shape degrades to None.
+        disappeared_at = r[12] if len(r) > 12 else None
         sid = str(source_id)
         lane_entry = (lane_by_source or {}).get(sid) or {}
         decision = lane_entry.get("decision")
@@ -3254,17 +3536,38 @@ def _evidence(
                 upstream=upstream,
             )
             captures.append(cap)
+        scores = scores_by_artifact.get(str(artifact_id)) or []
+        # P37.30 (K7 §5.7, F-485): the honest headline fields. The pre-repair
+        # emission stuffed ``primary_or_secondary`` into ``directness`` and the
+        # EDTF publish date into ``currency`` — the NaN the recommender
+        # computed over. Now ``directness`` is the best §10.5 class over the
+        # artifact's bound claims (``not_recorded`` when no bound claim
+        # carries one — never the primary/secondary label relabelled as a
+        # class), ``currency`` the best §28.3 class at ``as_of``, and
+        # ``capture_status`` the retrievability vocabulary the recommender's
+        # type closes over. The spine values stay under their TRUE names —
+        # ``primary_or_secondary`` and ``published_at_edtf`` — additive, never
+        # dropped. ``subject_id`` names the artifact's subject only when the
+        # scored set says exactly one — the ``subject_scores`` list is the
+        # authoritative per-(artifact, subject) shape.
+        scores_by_d = sorted(scores, key=lambda s: _DIRECTNESS_RANK[s["directness"]])
+        scores_by_c = sorted(scores, key=lambda s: _CURRENCY_RANK[s["currency"]])
+        best_d = scores_by_d[0]["directness"] if scores_by_d else "not_recorded"
+        best_c = scores_by_c[0]["currency"] if scores_by_c else "not_recorded"
+        single_subject = (
+            str(scores[0].get("subject_key") or scores[0]["subject_id"]) if len(scores) == 1 else ""
+        )
         artifact: dict[str, Any] = {
             "artifact_id": str(artifact_id),
-            "subject_id": "",
+            "subject_id": single_subject,
             "title": title or str(artifact_id),
             "source": sid,
             "artifact_type": str(artifact_type),
-            "directness": str(direct),
-            "currency": str(published or ""),
-            "touches_open_contradiction": False,
-            "answers_open_task": False,
-            "capture_status": str(capture_status),
+            "directness": best_d,
+            "currency": best_c,
+            "touches_open_contradiction": any(s["touches_open_contradiction"] for s in scores),
+            "answers_open_task": any(s["answers_open_task"] for s in scores),
+            "capture_status": _retrievability(str(capture_status), disappeared_at),
             "permalink": str(locator),
             "as_of": as_of,
             "lane": lane,
@@ -3272,7 +3575,20 @@ def _evidence(
             "part_viii_class": str(p8) if p8 else None,
             "upstream": upstream,
             "captures": captures,
+            # The per-(artifact, subject) score inputs (K7 §5.7): each row
+            # names exactly the subject the D/C it carries is computed over —
+            # the subject-scoped shape the recommender filters on.
+            "subject_scores": scores,
         }
+        if direct:
+            artifact["primary_or_secondary"] = str(direct)
+        if published:
+            artifact["published_at_edtf"] = str(published)
+        if disappeared_at not in (None, ""):
+            artifact["disappeared_observed_at"] = str(disappeared_at)
+        uncomputable_n = uncomputable.get(str(artifact_id), 0)
+        if uncomputable_n:
+            artifact["subject_scores_uncomputable"] = uncomputable_n
         # Optional, additive fields — absent means "not known / not allowed",
         # never a fabricated value.
         if source_name:
@@ -3282,7 +3598,33 @@ def _evidence(
         if upstream_url:
             artifact["upstream_url"] = str(upstream_url)
         artifacts.append(artifact)
-    return {"artifacts": artifacts, "claim_views": []}
+    return {
+        "artifacts": artifacts,
+        "claim_views": [],
+        # The one-hop contract/agency neighbourhood (K7 §5.7): canonical
+        # subject key/entity-id → the subjects one claim-hop links it to. The
+        # recommender's scope is the decision's subjects PLUS this map.
+        "subject_neighbours": {
+            k: sorted(v["key"] | v["id"]) for k, v in sorted(neighbours.items())
+        },
+        "build": {
+            "recommender_scores": {
+                "pairs_emitted": sum(len(v) for v in scores_by_artifact.values()),
+                "pairs_uncomputable": sum(uncomputable.values()),
+                "basis": (
+                    "P37.30 (K7 §5.7 / F-485): per-(artifact, subject) score "
+                    "inputs — the best §10.5 directness class and the best "
+                    "§28.3 currency class over the artifact's claims about "
+                    "THAT subject (D6 non-probative never contributes), plus "
+                    "the subject-scoped dispute flags and the retrievability "
+                    "vocabulary mapped from capture_status + "
+                    "disappeared_observed_at (§17.6). A pair whose axes "
+                    "cannot be computed is counted here and emitted nowhere — "
+                    "an uncomputable score fails typed, never silently zero."
+                ),
+            }
+        },
+    }
 
 
 def _corrections(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
