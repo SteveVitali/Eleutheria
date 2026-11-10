@@ -24,6 +24,20 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.32 — `contract_expiring` detector + task ↔ item links (K7 WX-06,
+  absorbs K11 RQ-06):** the §33.2 catalog's #10 detector now runs in
+  `tasks.detect` — a contract subject whose recorded `end_date` falls inside
+  the 90-day firing window with its renewal terms not on record mints the
+  "renewal terms unknown" research task, citing the firing `end_date` claim
+  (`trigger_kind="contract"`). Renewal evidence mirrors the watch producer's
+  stated/`upper_bound` split verbatim: a recorded non-renewal or a derivable
+  auto-renewal needs no task. `research_pg` reads the current
+  (never-superseded) contract claims; the export's task cards now carry the
+  emitted watch item(s) on the same subject (`watch_items`), the item page
+  links each open task to its own `/task/<handle>/` page (queue anchor
+  fallback, never a dead route), and the task page links back to the watch
+  item — the task ↔ item pair K7 §5.8 names. The named hosted detector run
+  is OM-20 gate-pending (`D-P37.32-1`, QUEUED `prepared_not_executed`).
 - **P37.31 — Dated decision predicates (K7 WX-02, SIG-WATCH-007,
   SIG-WATCH-008, ADR-244):** the claim spine can now carry the dated
   decision facts the watch reads — `meeting_date` on agenda items and the
