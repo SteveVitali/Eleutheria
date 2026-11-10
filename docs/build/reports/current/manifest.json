@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "8225ecb429a2d8cfc2281c3cc8a48b6cd43453cd",
+  "input_commit": "eb39e508aa5fc652dc3c35417c4181b8d6cb98dc",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -974,7 +974,7 @@
     },
     {
       "path": "docs/adr/ADR-243-sig-activate-in-place-dossier-map-and-deferred-k1-mount.md",
-      "sha256": "ec06fc8d3dd3008662817afefef4202b47c02244d64a4537b2be57af3962e5a9"
+      "sha256": "cb2344e86e9ad9ff629142b411672848b555720c3acb51602e491d4bc5820711"
     },
     {
       "path": "docs/adr/README.md",
