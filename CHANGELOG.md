@@ -24,6 +24,18 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.28 — Dossier network figures (K2 GX-10):** the per-dossier
+  bipartite network figures — one drawn figure per relationship family
+  (access/supply/funding) or the typed absence, emitted into the
+  restricted `sig.dossier-visuals/1` build input by
+  `exports/dossier_networks.py` (K6 §6.2 kind × admin-1 grouping,
+  `sig.figure-graph-meta/1` meta block, `fig-*` edge-count breakdowns
+  reconciled into `dossier_sources`'s `figures[]` — deduplicated, never
+  summed). The dossier template's `NetworkFigureSlot` renders the kit's
+  static SVG (wide + narrow variants on the measure breakpoint), the
+  zero-JS `:has()` access-kind toggles (configured/declared/observed/
+  historical), the H-2 table twin as the figure's long description, and
+  the hand-offs to `/explore/` and the full `/graphs/<family>/` table.
 - **P37.27 — Graph explorer B (K2 GX-09b):** the `/explore/` second
   wave — `expand=` ego expansion over the new `sig.entity-twins/1`
   manifest endpoint (`/entity/<type>/<key>/index.json`; ≤ 10 expanded,
