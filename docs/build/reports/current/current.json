@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "bea8d6845660bafeac6345625a90efe4c5acbfa0",
-  "manifest_inputs": 1235,
+  "input_commit": "00f56c1fc211a1e7897168e69af993a0e9eb2723",
+  "manifest_inputs": 1236,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.24",
-    "lastCompleted": "P37.23",
+    "nextTicket": "P37.25",
+    "lastCompleted": "P37.24",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.70,P37.71",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.22-entity-data-contract-b",
+    "chainTip": "r11/P37.24-overview-builder-a",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-09T06:11Z"
+    "updatedAt": "2026-11-09T19:50Z"
   },
   "counts": {
     "obligations": 233,
@@ -33,7 +33,7 @@
     "terminal": 84,
     "events": 748,
     "transitions": 59,
-    "coverage_assessments": 512,
+    "coverage_assessments": 515,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -18396,14 +18396,14 @@
           "label": "historical/csv"
         },
         "SIG-UI-117": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/graph_overview.py;web/src/lib/graph-overview.ts;docs/build/runs/P37.24.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-UI-118": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/graph_overview.py;exports/src/exports/spine_export.py;web/src/pages/graphs/[...parts].astro;docs/build/runs/P37.24.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -18438,8 +18438,8 @@
           "label": "historical/csv"
         },
         "SIG-EXPORT-015": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/graph_overview.py;exports/src/exports/spine_export.py;exports/src/exports/column_registry.py;docs/build/runs/P37.24.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -20489,6 +20489,16 @@
         "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-EXPORT-D21) entering the matrix as MISSING with its owner's routing (P37.24); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-EXPORT-015:r11-1"
+      },
+      {
+        "requirement_id": "SIG-EXPORT-015",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-11-09",
+        "code_revision": "r11/P37.24-overview-builder-a",
+        "limitations": "P37.24 landing verdict (row 448): every emitted edge carries relation in words, date + date kind, currency class, sources and supporting claim ids — the edges.<comp>.csv download is the full-fidelity form (H-2 fields + claim ids); the columnar doc omits claim ids per K2 §6.3 (fetched on click through the entity pages). MET-ENGINEERED — the public-domain leg rides the open publish deferral (D-R10-PUBLISH-1).",
+        "supersedes": "SIG-EXPORT-015:r11-1",
+        "assessment_id": "SIG-EXPORT-015:r11-2"
       },
       {
         "requirement_id": "SIG-FIND-006",
@@ -23591,6 +23601,16 @@
         "assessment_id": "SIG-UI-117:r11-1"
       },
       {
+        "requirement_id": "SIG-UI-117",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-11-09",
+        "code_revision": "r11/P37.24-overview-builder-a",
+        "limitations": "P37.24 landing verdict (row 448): degree-only is never an edge — the sig.graph-overview/1 builder raises on the sharing_partner_degree predicate family (a structural guard, never an iteration), tested by the refusal leg. MET-ENGINEERED — the public-domain leg rides the open publish deferral (D-R10-PUBLISH-1).",
+        "supersedes": "SIG-UI-117:r11-1",
+        "assessment_id": "SIG-UI-117:r11-2"
+      },
+      {
         "requirement_id": "SIG-UI-118",
         "domain": "public",
         "verdict": "MISSING",
@@ -23599,6 +23619,16 @@
         "limitations": "new Round-11 requirement (the K13 UX set, §56.11; source SIG-UI-D30) entering the matrix as MISSING with its owner's routing (P37.24); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-UI-118:r11-1"
+      },
+      {
+        "requirement_id": "SIG-UI-118",
+        "domain": "public",
+        "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+        "assessed_at": "2026-11-09",
+        "code_revision": "r11/P37.24-overview-builder-a",
+        "limitations": "P37.24 landing verdict (row 448): each of the four 08a overviews is bounded — NODE_CAP = 3,000 refuses the build over cap (never a smoothed cut), degree-1 literal counterparties fold into labelled group nodes (the declared aggregation), per-compartment data files + static SVG + the paginated adjacency table + the /graph/ downloads all emit. MET-ENGINEERED — the public-domain leg rides the open publish deferral (D-R10-PUBLISH-1).",
+        "supersedes": "SIG-UI-118:r11-1",
+        "assessment_id": "SIG-UI-118:r11-2"
       },
       {
         "requirement_id": "SIG-UI-119",
@@ -25545,6 +25575,11 @@
           "assessed_at": "2026-10-24"
         },
         {
+          "requirement": "SIG-EXPORT-015",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-11-09"
+        },
+        {
           "requirement": "SIG-FIND-006",
           "verdict": "MET-ENGINEERED(D-P32.16-1;D-R10-PUBLISH-1)",
           "assessed_at": "2026-10-01"
@@ -26520,9 +26555,19 @@
           "assessed_at": "2026-10-24"
         },
         {
+          "requirement": "SIG-UI-117",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-11-09"
+        },
+        {
           "requirement": "SIG-UI-118",
           "verdict": "MISSING",
           "assessed_at": "2026-10-24"
+        },
+        {
+          "requirement": "SIG-UI-118",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "assessed_at": "2026-11-09"
         },
         {
           "requirement": "SIG-UI-119",
@@ -27153,10 +27198,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "49cefb8c52eab0a59354b55f9e26447b2b44f741da879911f5bb409d847c2e54",
+  "manifest_sha256": "4929f81e5075a550555e610de096f1084461a1454a787f818d803a3e7cf09b29",
   "current_md": {
     "lines": 150,
-    "bytes": 19854,
+    "bytes": 19850,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

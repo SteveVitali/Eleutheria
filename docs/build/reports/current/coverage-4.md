@@ -2,6 +2,7 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-TRANSP-032 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-033 | `public` | `MISSING` | 2026-10-05 | — |
 | SIG-TRANSP-033 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-01 | SIG-TRANSP-033:r11-1 |
 | SIG-TRANSP-034 | `public` | `MISSING` | 2026-10-05 | — |
@@ -97,7 +98,9 @@
 | SIG-UI-115 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-UI-116 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-UI-117 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-UI-117 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-09 | SIG-UI-117:r11-1 |
 | SIG-UI-118 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-UI-118 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-09 | SIG-UI-118:r11-1 |
 | SIG-UI-119 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-UI-120 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-UI-121 | `public` | `MISSING` | 2026-10-24 | — |
@@ -119,8 +122,5 @@
 | SIG-UI-136 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-UI-136 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-04 | SIG-UI-136:r11-1 |
 | SIG-UI-137 | `public` | `MISSING` | 2026-10-24 | — |
-| SIG-UI-137 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-04 | SIG-UI-137:r11-1 |
-| SIG-UI-138 | `public` | `MISSING` | 2026-10-24 | — |
-| SIG-UI-138 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-04 | SIG-UI-138:r11-1 |
 
 ← back: CURRENT.md · next page: coverage-5.md

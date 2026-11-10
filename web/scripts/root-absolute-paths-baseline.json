@@ -1339,6 +1339,72 @@
       "token": "/terms/",
       "count": 1,
       "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+    },
+    {
+      "file": "src/lib/graph-overview-fixture.ts",
+      "token": "/entity/org/",
+      "count": 1,
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+    },
+    {
+      "file": "src/lib/graph-overview-fixture.ts",
+      "token": "/entity/agency/",
+      "count": 1,
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+    },
+    {
+      "file": "src/lib/graph-overview-fixture.ts",
+      "token": "/entity/notice/",
+      "count": 1,
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+    },
+    {
+      "file": "src/lib/graph-overview-fixture.ts",
+      "token": "/entity/grant/",
+      "count": 1,
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+    },
+    {
+      "file": "src/lib/graph-overview-fixture.ts",
+      "token": "/entity/agency/acme-city-police--4g2wm8q/",
+      "count": 3,
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+    },
+    {
+      "file": "src/lib/graph-overview-fixture.ts",
+      "token": "/entity/org/vigilant-solutions--7x1k2mn/",
+      "count": 1,
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+    },
+    {
+      "file": "src/lib/graph-overview-fixture.ts",
+      "token": "/entity/org/meridian-surveillance--9p3qw7r/",
+      "count": 1,
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+    },
+    {
+      "file": "src/lib/graph-overview-fixture.ts",
+      "token": "/entity/agency/us-doj-byrne-jag--2h5k9qz/",
+      "count": 1,
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+    },
+    {
+      "file": "src/lib/graph-overview-fixture.ts",
+      "token": "/entity/org/acme-public-works--3r7t1vx/",
+      "count": 1,
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+    },
+    {
+      "file": "src/lib/graph-overview-fixture.ts",
+      "token": "/graphs/supply/usa/ok/",
+      "count": 1,
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+    },
+    {
+      "file": "src/lib/graph-overview-fixture.ts",
+      "token": "/graphs/operators/usa/ok/",
+      "count": 1,
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
     }
   ]
 }

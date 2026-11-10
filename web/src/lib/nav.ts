@@ -71,6 +71,7 @@ export const NAV_SECTIONS: NavSection[] = [
     items: [
       { label: "Map", route: "map/" },
       { label: "Graph explorer", route: "network/" },
+      { label: "Overview graphs", route: "graphs/" },
       { label: "Search", route: "search/" },
       { label: "Disagreements", route: "disagreements/" },
     ],

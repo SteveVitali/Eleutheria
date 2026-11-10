@@ -127,6 +127,7 @@ from . import (
     dossier_keys,
     dossier_sources,
     entity_page,
+    graph_overview,
     lifecycle_timeline,
     provo,
     source_licences,
@@ -631,7 +632,11 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "               WHERE ei.entity_id = c.subject_id"
         "                 AND ei.scheme = 'sig.connector.subject'"
         "                 AND (ei.value LIKE 'procurement\\_notice:%' ESCAPE '\\'"
-        "                      OR ei.value LIKE 'notice:%'))"
+        "                      OR ei.value LIKE 'notice:%'"
+        # P37.24 (GX-08a): the contract/award/grant families' fields too —
+        # the supply overview gates them through the ONE same rule.
+        "                      OR ei.value LIKE 'contract:%' OR ei.value LIKE 'award:%'"
+        "                      OR ei.value LIKE 'grant:%'))"
         " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
     ),
     # P36.41 (K2 §6.2 / A-10, R11-K13-GX-05a, ``sig.entity-page/1``): the
@@ -6499,6 +6504,65 @@ def build_spine_export(
         if _schema:
             web_schemas[path] = str(_schema)
         web_counts[path] = (1, 1)
+
+    # --- P37.24 (K2 GX-08a, R11-K13-GX-08a, ``sig.graph-overview/1``) -------
+    # The four 08a overviews — types / supply / funding / operators — per
+    # compartment, columnar (K2 §6.3), each with its static SVG + the
+    # nodes/edges CSV downloads; ``web/graph/index.json`` carries the hub
+    # manifest. ``published_by`` never mints an operator edge (NEW-2);
+    # degree-only facts can never mint any edge (SIG-UI-117). A withheld or
+    # review-pending entity is never a node.
+    _relevance_by_eid = {str(r.entity_id): str(r.relevance) for r in notice_rows if r.entity_id}
+    _relevance_fields: dict[str, dict[str, Any]] = {}
+    for _row in raw.get("notice_relevance_facts") or []:
+        try:
+            _relevance_fields.setdefault(str(_row[0]), {}).setdefault(str(_row[1]), []).append(
+                str(_row[2])
+            )
+        except (TypeError, IndexError):
+            continue
+    _places: dict[str, graph_overview.PlaceInfo] = {}
+    if keyed is not None:
+        for _jk, _info in keyed.keys.items():
+            _places[str(_jk)] = graph_overview.PlaceInfo(
+                name=str(_info.name or _jk),
+                slug_path=str(_info.slug_path or ""),
+                level=str(_info.level or ""),
+            )
+    _graph_ancestors: dict[str, tuple[str, ...]] = (
+        {str(k): tuple(v) for k, v in placement.ancestor_chains().items()}
+        if placement is not None
+        else {}
+    )
+    for _path, (_payload, _comp) in sorted(
+        graph_overview.build_overviews(
+            label_registry,
+            claim_rows=raw.get("entity_page_claims") or [],
+            value_claims=claims,
+            relevance=_relevance_by_eid,
+            relevance_fields=_relevance_fields,
+            lineage=lineage_by_claim or {},
+            source_names=source_names,
+            places=_places,
+            ancestors=_graph_ancestors,
+            entity_comps=label_comps,
+            default_compartment=sig_compartment,
+            publication=build_spec.release_id(),
+            generated_at=generated_at,
+            as_of=build_spec.as_of_snapshot,
+            retrieval=retrieval,
+            registry_license=registry,
+        ).items()
+    ):
+        web_artifacts[_path] = _payload if isinstance(_payload, bytes) else _web_bytes(_payload)
+        web_licenses[_path] = str(comp_licenses.get(_comp, _SIG_SPDX))
+        web_compartments[_path] = _comp
+        if _path.endswith(".json") and isinstance(_payload, Mapping) and _payload.get("schema"):
+            web_schemas[_path] = str(_payload["schema"])
+        elif "nodes." in _path.rsplit("/", 1)[-1]:
+            web_schemas[_path] = graph_overview.GRAPH_NODES_SCHEMA
+        elif "edges." in _path.rsplit("/", 1)[-1]:
+            web_schemas[_path] = graph_overview.GRAPH_EDGES_SCHEMA
 
     disclosure = _terms_disclosure_payload(
         slices.rows_by_compartment,

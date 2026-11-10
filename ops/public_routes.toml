@@ -60,6 +60,8 @@ top_level = [
   "entity",               # /entity/** — the Organizations hub + 06a entity pages (P36.42a / K2 GX-06a)
   "evidence",
   "glossary",            # the generated glossary (P36.17 / K14 §2.5)
+  "graph",               # /graph/<ov>/<file> — the per-compartment overview downloads (P37.24 / K2 GX-08a)
+  "graphs",              # /graphs/<ov>/** — the T1 overview pages (P37.24 / K2 GX-08a, SIG-UI-117/118)
   "id",                  # /id/<type>/<uuid> static fallback stubs (P36.35 / JUR-05)
   "redirects.conf",      # the ONE generated redirect include (P36.35 / SIG-UI-058) — a serving-config artifact the publish path carries into conf/
   "map",
@@ -114,6 +116,8 @@ required = [
   "entity",               # /entity/** — the Organizations hub + 06a entity pages (P36.42a / K2 GX-06a)
   "evidence",
   "glossary",
+  "graph",               # emitted by every build — the committed fixture set carries overview rows (P37.24)
+  "graphs",              # ditto — the T1 overview pages emit in fixtures mode too
   "map",
   "methodology",
   "network",

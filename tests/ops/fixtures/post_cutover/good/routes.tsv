@@ -43,3 +43,5 @@ route:https://surveillancegraph.org/brand/	route_c9db3ab6a374.txt
 route:https://surveillancegraph.org/social/	route_f0e800c39b69.txt
 route:https://surveillancegraph.org/id/	route_db45e7788895.txt
 route:https://surveillancegraph.org/redirects.conf	route_418042588d88.txt
+route:https://surveillancegraph.org/graph/	route_de4bc604d18d.txt
+route:https://surveillancegraph.org/graphs/	route_e7971fc3bcf8.txt

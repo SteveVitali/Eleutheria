@@ -285,6 +285,32 @@ def column_registry() -> dict[str, ResourceSpec]:
             schema_id=_ep.ENTITY_RELATIONSHIPS_SCHEMA,
         )
     )
+    from . import graph_overview as _go
+
+    reg(
+        _spec(
+            "graph_nodes",
+            "Graph overview nodes",
+            "The ``sig.graph-overview/1`` node rows — one row per node in a "
+            "per-compartment overview file (P37.24, K2 §5/§6.3; labels, bands, "
+            "place keys, links and member counts).",
+            _go.NODE_COLUMN_SPECS,
+            kind="table",
+            schema_id=_go.GRAPH_NODES_SCHEMA,
+        )
+    )
+    reg(
+        _spec(
+            "graph_edges",
+            "Graph overview edges",
+            "The ``sig.graph-overview/1`` edge rows — the H-2 fields plus the "
+            "supporting claim ids every overview edge carries (P37.24, "
+            "SIG-EXPORT-015).",
+            _go.EDGE_COLUMN_SPECS,
+            kind="table",
+            schema_id=_go.GRAPH_EDGES_SCHEMA,
+        )
+    )
     reg(
         _spec(
             "labels",
@@ -486,6 +512,13 @@ def resource_for_path(path: str) -> str | None:
                 return "statements"
             if stem.startswith("relationships."):
                 return "entity_relationships"
+        # P37.24 (GX-08a): the per-overview node/edge CSV downloads under
+        # ``web/graph/<ov>/`` — ``nodes.<comp>.csv`` / ``edges.<comp>.csv``.
+        if path.startswith("web/graph/"):
+            if stem.startswith("nodes."):
+                return "graph_nodes"
+            if stem.startswith("edges."):
+                return "graph_edges"
         # directory-scoped streams: labels/<comp>.jsonl, transparency/<name>.jsonl
         if path.startswith("labels/"):
             return "labels"

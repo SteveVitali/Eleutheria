@@ -2331,3 +2331,37 @@ sig-typeahead {
 .sig-next-decisions__links { margin-top: var(--sig-space-2); }
 .sig-other-resources__list li { margin-bottom: var(--sig-space-1); }
 .sig-print-brief__locator { float: right; width: 2.2cm; height: auto; margin-left: var(--sig-space-3); }
+
+/* P37.24 (GX-08a) — the /graphs/ static overview figure: edges muted for
+ * historical/undated (sig.lexicon/1 legend.currency), nodes the data-1 fill,
+ * group nodes hollow. */
+.sig-graph-edge {
+  fill: none;
+  stroke: var(--sig-ink);
+  stroke-width: 0.8;
+  stroke-opacity: 0.55;
+}
+.sig-graph-edge-historical,
+.sig-graph-edge-undated {
+  stroke: var(--sig-ink-muted);
+}
+.sig-graph-node {
+  fill: var(--sig-data-1);
+  stroke: var(--sig-surface);
+  stroke-width: 1;
+}
+.sig-graph-node-group {
+  fill: var(--sig-surface);
+  stroke: var(--sig-data-1);
+  stroke-width: 1.4;
+}
+.sig-graph-label {
+  fill: var(--sig-ink);
+  font-size: var(--sig-step--2);
+}
+.sig-graph-band {
+  fill: var(--sig-ink-muted);
+  font-size: var(--sig-step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

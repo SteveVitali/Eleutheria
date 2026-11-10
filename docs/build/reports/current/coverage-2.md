@@ -27,6 +27,7 @@
 | SIG-EVUI-010 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-EXPORT-014 | `public` | `MISSING` | 2026-10-24 | — |
 | SIG-EXPORT-015 | `public` | `MISSING` | 2026-10-24 | — |
+| SIG-EXPORT-015 | `public` | `MET-ENGINEERED(D-R10-PUBLISH-1)` | 2026-11-09 | SIG-EXPORT-015:r11-1 |
 | SIG-FIND-006 | `public` | `MET-ENGINEERED(D-P32.16-1;D-R10-PUBLISH-1)` | 2026-10-01 | — |
 | SIG-FIND-007 | `public` | `MET-ENGINEERED(D-R10-USERS-1;D-P32.23a-1;D-R10-PUBLISH-1)` | 2026-10-01 | — |
 | SIG-GEO-002 | `implementation` | `PARTIAL` | 2026-10-01 | — |
@@ -121,6 +122,5 @@
 | SIG-OPS-003 | `hosted` | `PARTIAL` | 2026-10-02 | SIG-OPS-003:r11-1 |
 | SIG-OPS-004 | `hosted` | `MISSING` | 2026-10-01 | — |
 | SIG-OPS-004 | `hosted` | `PARTIAL` | 2026-10-02 | SIG-OPS-004:r11-1 |
-| SIG-OPS-005 | `hosted` | `MISSING` | 2026-10-01 | — |
 
 ← back: CURRENT.md · next page: coverage-3.md

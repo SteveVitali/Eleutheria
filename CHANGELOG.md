@@ -71,6 +71,31 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   (K13 R-6). The hub lede names the record kinds (batch-20 `EB-01`,
   superseding batch-05 `EN-01`); the page stays T1, no new script.
 
+- **P37.24 — Overview builder A and /graphs/** (K2 GX-08a, §5/§6.3):** the
+  first wave of per-release overview graphs. `exports` emits
+  `sig.graph-overview/1` columnar documents — O0 `types` (every label kind,
+  gaps included, plus kind→kind edges), O1 `supply` (buyer→vendor,
+  relevance-gated through the one procurement rule, plus collapsed
+  manufacturer-site groups), O3 `funding` (funder→recipient on grants) and
+  O4 `operators` (operator→admin-1 place; `published_by` never mints an
+  operator edge — NEW-2) — per licence compartment under
+  `web/graph/<ov>/`, each with its static SVG (the deterministic banded
+  layout; positions carry no geographic meaning) and the
+  `nodes.`/`edges.<comp>.csv` downloads whose columns are registered
+  (`graph_nodes`/`graph_edges`; the CSV is the full-fidelity edge form —
+  claim ids ride it per SIG-EXPORT-015). A degree-1 literal counterparty
+  set past the collapse bound folds into a labelled group node; an
+  overview over the 3,000-node cap refuses the build, never truncates
+  (SIG-UI-118); `sharing_partner_degree` can never mint an edge
+  (SIG-UI-117); a withheld or review-pending entity is never a node and a
+  literal party that fails the person screen drops its edge. `web/` gains
+  the `/graphs/` T1 surface — the hub, `/graphs/<ov>/` with its precomputed
+  SVG + paginated adjacency table carrying every H-2 field with JS off,
+  `…/page/<n>/`, the per-place `…/<country>/<subdivision>/` drill-downs
+  (K2 C-10) and the `/graph/<ov>/<file>` download endpoints; registered in
+  the page-type registry, zero new script. The new public sentences ride
+  copy batch-21 (`GO-*`, `pending`).
+
 - **P37.21 — Access closures and degree-only facts (K2 GX-07):** the
   `sig.entity-page/1` twin's `access.closures` slot is now computed — the
   build runs `inference.access_paths.close_access_paths` per entity over
