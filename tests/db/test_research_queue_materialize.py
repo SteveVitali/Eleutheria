@@ -194,6 +194,9 @@ def _seed_contract(conn, *, subject_key, end_date, auto_renews=None, window=None
     )
 
     def _claim(predicate, *, text=None, num=None, boolean=None):
+        # claim_value_shape: a 'value' claim needs value_text (or an object) —
+        # the typed bool/num rides beside its text form, never instead of it.
+        raw = text if text is not None else (str(num) if num is not None else str(boolean))
         cur.execute(
             "INSERT INTO claim(subject_id,predicate_id,object_type,value_kind,"
             "value_text,value_num,value_bool,raw_value,observed_at,source_reliability,"
@@ -204,10 +207,10 @@ def _seed_contract(conn, *, subject_key, end_date, auto_renews=None, window=None
             (
                 subject,
                 predicate,
-                text,
+                text if text is not None else raw,
                 num,
                 boolean,
-                text if text is not None else (str(num) if num is not None else str(boolean)),
+                raw,
                 prereqs["author_id"],
                 prereqs["run_id"],
                 prereqs["rights_id"],
