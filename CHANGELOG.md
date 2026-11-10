@@ -24,6 +24,18 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.27 — Graph explorer B (K2 GX-09b):** the `/explore/` second
+  wave — `expand=` ego expansion over the new `sig.entity-twins/1`
+  manifest endpoint (`/entity/<type>/<key>/index.json`; ≤ 10 expanded,
+  ≤ 3,000 on canvas — a cap disclosed, a twin-less node a typed "no
+  machine-readable twin"); the facet filters (`kind`/`edge`/`currency`/
+  `dated`/`source`/`jurisdiction`/`technology` over the loaded graph,
+  the `active-filters` disclosure never letting a narrowed view read as
+  the whole — H-3/H-9); search-to-node (`q=` over the loaded graph +
+  the shared K3 typeahead shards); the path finder (`path=<a>~<b>` —
+  every hop evidenced, >3 hops SPECULATIVE, typed no-path/missing —
+  SIG-UI-120); the `hops=` neighbourhood ring; and the keyboard-accessible
+  sortable node list (`sort=`/`dir=`).
 - **P37.26 — Graph explorer A (K2 GX-09a, SIG-UI-119/120/121):**
   `/explore/` — the T2 graph explorer's first wave — ships: a Preact +
   sigma/graphology island in a reserved SSR box over the
