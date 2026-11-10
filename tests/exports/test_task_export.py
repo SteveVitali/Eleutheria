@@ -356,7 +356,7 @@ def test_contract_expiring_card_links_the_emitted_watch_item() -> None:
     item = {
         "handle": "W-us-ok-expiry-c200-77cd",
         "kind": "contract_expiry",
-        "title": "City of Test: contract C-200 — latest possible end 2027-01-31",  # future-ok: synthetic: fixture contract end
+        "title": "City of Test: contract C-200 ends 2027-01-31",  # future-ok: synthetic: fixture
         "subjects": ["contract:test:tenant:t1:C-200"],
     }
     labels = {
