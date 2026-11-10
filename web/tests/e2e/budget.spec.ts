@@ -398,7 +398,15 @@ test.describe("page-type budgets (SIG-UI-041, SIG-FIND-005, ADR-155)", () => {
       const measure = await measureResponses(request, post, 0);
       const { violations, gaps } =
         declared.kind === "activate"
-          ? evaluateActivate(budgets, path, row, measure)
+          ? evaluateActivate(
+              budgets,
+              path,
+              row,
+              measure,
+              // The activated box mounts the declared surface's app — its
+              // recorded overages (same hashed chunks) bound the measure.
+              declared.budget ? (REPRESENTATIVES[declared.budget] ?? path) : path,
+            )
           : evaluatePostAction(budgets, path, row, measure, latencyMs);
       for (const g of gaps) {
         test.info().annotations.push({
@@ -489,7 +497,7 @@ test.describe("page-type budgets (SIG-UI-041, SIG-FIND-005, ADR-155)", () => {
     // The declared interactions are all implemented.
     for (const [surface, decl] of Object.entries(budgets.interactions)) {
       expect(
-        ["scroll", "pan", "select-node", "type-query"],
+        ["scroll", "pan", "select-node", "type-query", "activate"],
         `interaction ${decl.kind} (${surface}) is not implemented in budget.spec.ts`,
       ).toContain(decl.kind);
     }

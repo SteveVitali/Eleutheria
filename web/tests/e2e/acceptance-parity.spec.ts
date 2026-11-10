@@ -16,7 +16,13 @@ import { emittedRoutes } from "./acceptance";
 
 const EMITTED = emittedRoutes();
 const dossierTwins = EMITTED.filter(
-  (p) => p.startsWith("/dossier/") && p.endsWith(".json") && !p.endsWith("/index.json"),
+  (p) =>
+    p.startsWith("/dossier/") &&
+    p.endsWith(".json") &&
+    !p.endsWith("/index.json") &&
+    // P37.29: map-embed.json is the embedded app's props payload, not a
+    // sig.dossier/2 twin — it has no HTML page counterpart by design.
+    !p.endsWith("/map-embed.json"),
 );
 const explorerTwins = EMITTED.filter((p) =>
   /^\/dossier\/.+\/sources\/index\.json$/.test(p),

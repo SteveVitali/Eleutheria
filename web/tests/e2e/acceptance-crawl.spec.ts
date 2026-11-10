@@ -164,7 +164,13 @@ test.describe("bare ids (SIG-JUR-D08, SIG-DSRC-D02)", () => {
     // emitted dossier set — derived, never a hand list)
     const failures: string[] = [];
     const twins = EMITTED.filter(
-      (p) => p.startsWith("/dossier/") && p.endsWith(".json") && !p.endsWith("/index.json"),
+      (p) =>
+        p.startsWith("/dossier/") &&
+        p.endsWith(".json") &&
+        !p.endsWith("/index.json") &&
+        // P37.29: map-embed.json is the embedded app's props payload, not a
+        // sig.dossier/2 twin — it has no HTML page counterpart by design.
+        !p.endsWith("/map-embed.json"),
     );
     const BARE_CODE = /^[A-Z]{2}(-[A-Z0-9]{1,3})?$|^\d{2,7}$|^[a-z]+:[a-z0-9_.-]+$/i;
     for (const twinPath of twins) {

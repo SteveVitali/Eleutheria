@@ -415,6 +415,12 @@ export function evaluateActivate(
   route: string,
   row: BudgetRow,
   post: PhaseMeasure,
+  /** The budget surface's own route (`/map/` for `budget: map`) — the
+   *  activated box IS that surface's app mounted in place, so its recorded
+   *  overages (the same hashed script family) bound the activation measure.
+   *  A gap row is never invented per dossier route: the T1 page's own
+   *  jsInitialBytes row binds the page load, the surface's gap binds the box. */
+  gapRoute: string = route,
 ): { violations: BudgetViolation[]; gaps: GapReport[] } {
   const violations: BudgetViolation[] = [];
   const gaps: GapReport[] = [];
@@ -424,7 +430,7 @@ export function evaluateActivate(
     const source = measurementSource();
     const matching = budgets.measured_gaps.filter(
       (g) =>
-        g.route === route &&
+        g.route === gapRoute &&
         g.metric === metric &&
         (g.data_source === undefined || g.data_source === source),
     );
