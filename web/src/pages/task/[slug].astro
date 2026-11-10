@@ -165,6 +165,17 @@ const provenance = card ? getResearchQueueProvenance() : undefined;
         <> · <a href={withBase(`dossier/${dossierSlug}/`)} data-testid="task-dossier-link">the dossier</a></>
       )}
     </p>
+    {(card.watch_items ?? []).length > 0 && (
+      <p data-testid="task-watch-item">
+        Watch:{" "}
+        {card.watch_items!.map((w, i) => (
+          <>
+            {i > 0 && " · "}
+            <a href={withBase(`watch/item/${w.handle}/`)}>{w.title ?? w.handle}</a>
+          </>
+        ))}
+      </p>
+    )}
     {claim?.claimed && (
       <p data-testid="task-claim">
         Claimed by <strong>{claim.claimed_by}</strong>, expiring {claim.expires_at} — a claim grants

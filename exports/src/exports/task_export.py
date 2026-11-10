@@ -264,7 +264,12 @@ def _subject_label(
 
 
 def _trigger_lookup(raw: Mapping[str, Any]) -> dict[tuple[str, str], Mapping[str, Any]]:
-    """``(kind, ref) → materialized row`` for trigger detail + predicate."""
+    """``(kind, ref) → materialized row`` for trigger detail + predicate.
+
+    P37.32 (K7 WX-06): a ``contract`` trigger resolves against the
+    ``watch_claims`` read — the ref is the firing ``end_date`` claim id the
+    ``contract_expiring`` detector cited, and the row is that claim itself.
+    """
     out: dict[tuple[str, str], Mapping[str, Any]] = {}
     for r in raw.get("materialized_coverage") or ():
         if isinstance(r, Mapping) and r.get("coverage_id"):
@@ -275,7 +280,36 @@ def _trigger_lookup(raw: Mapping[str, Any]) -> dict[tuple[str, str], Mapping[str
     for r in raw.get("materialized_edges") or ():
         if isinstance(r, Mapping) and r.get("relationship_id"):
             out[("relationship", str(r["relationship_id"]))] = r
+    # Contract claims — ``watch_claims`` rows keyed by claim_id, positional or
+    # mapping shaped (the read emits tuples; fixtures may carry dicts).
+    for r in raw.get("watch_claims") or ():
+        try:
+            if isinstance(r, Mapping):
+                row = r
+            else:
+                row = dict(zip(watch_claim_columns(), r, strict=False))
+            cid = row.get("claim_id")
+            if not cid:
+                continue
+            out[("contract", str(cid))] = {
+                "claim_id": str(cid),
+                "subject_key": row.get("subject_key"),
+                "predicate_id": row.get("predicate_id"),
+                "end_date": row.get("value_text") or row.get("raw_value"),
+                "observed_at": row.get("observed_at"),
+                "source_id": row.get("source_id"),
+            }
+        except (TypeError, AttributeError):
+            continue
     return out
+
+
+def watch_claim_columns() -> tuple[str, ...]:
+    """The ``watch_claims`` column order (``exports.watch.WATCH_CLAIMS_COLUMNS``),
+    looked up lazily so the shared constant stays the single authority."""
+    from .watch import WATCH_CLAIMS_COLUMNS
+
+    return WATCH_CLAIMS_COLUMNS
 
 
 def _trigger_detail(
@@ -283,11 +317,22 @@ def _trigger_detail(
 ) -> dict[str, Any]:
     """The trigger's own recorded detail, by kind — coverage names its
     predicate + absence kind + search state; a contradiction its type +
-    severity; a relationship edge its access kind + observation dates."""
+    severity; a relationship edge its access kind + observation dates; a
+    contract trigger (P37.32) the firing ``end_date`` claim — the recorded
+    end the task asks about."""
     row = lookup.get((kind, ref))
     if row is None:
         return {"resolves": False}
-    if kind == "coverage":
+    if kind == "contract":
+        out = {
+            "resolves": True,
+            "predicate_id": row.get("predicate_id"),
+            "end_date": row.get("end_date"),
+            "subject_key": row.get("subject_key"),
+            "observed_at": row.get("observed_at"),
+            "source_id": row.get("source_id"),
+        }
+    elif kind == "coverage":
         out = {
             "resolves": True,
             "predicate_id": row.get("predicate_id"),
@@ -428,6 +473,7 @@ def build_queue(
     routing: Mapping[str, Any],
     codes: TaskCodes,
     generated_at: str,
+    watch_items_by_subject: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
 ) -> QueueBuild:
     """Enrich the base cards into the v2 queue + shards + meta (pure).
 
@@ -435,6 +481,10 @@ def build_queue(
     ``_rekey_queue_cards``-processed when the caller keys dossiers); ``raw``
     supplies the materialized trigger rows; ``leaf_by_subject`` is the dossier
     accumulation's ``subject → leaf jkey`` map (empty pre-placement).
+    ``watch_items_by_subject`` (P37.32 / K7 WX-06) maps a watch item's subject
+    key to the emitted ``sig.watch-item/1`` rows about it — the task ↔ item
+    link (K7 §5.8): a card whose subject has a watch item links the item's own
+    emitted handle, never a re-derived one.
     """
     lookup = _trigger_lookup(raw)
     peer_types = _peer_entity_types()
@@ -479,6 +529,23 @@ def build_queue(
         card["subject_label"] = label
         if url:
             card["subject_url"] = url
+
+        # P37.32 (K7 WX-06 / §5.8): the task ↔ item link — the emitted watch
+        # item(s) on the SAME subject (the renewal-terms task pairs with the
+        # contract_expiry item; any other subject-matched item links the same
+        # way). The emitted handle is authoritative — never re-derived.
+        if watch_items_by_subject and subject_key:
+            wi = [
+                {
+                    "handle": str(w.get("handle") or ""),
+                    "kind": str(w.get("kind") or ""),
+                    "title": str(w.get("title") or ""),
+                }
+                for w in watch_items_by_subject.get(subject_key) or ()
+                if w.get("handle")
+            ]
+            if wi:
+                card["watch_items"] = wi
 
         # jurisdiction attribution (K11 §4.3 order, basis named).
         recorded_jur = str(card.get("jurisdiction") or "")
@@ -603,7 +670,8 @@ def build_queue(
         card["handle"] = e["handle"]
         trig_detail = (card.get("trigger") or {}).get("detail") or {}
         date = (
-            trig_detail.get("searched_at")
+            trig_detail.get("end_date")
+            or trig_detail.get("searched_at")
             or trig_detail.get("observed_at")
             or trig_detail.get("valid_from")
             or card.get("generated_at")

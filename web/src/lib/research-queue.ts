@@ -165,6 +165,13 @@ export interface ResearchTaskCard {
   generated_at?: string;
   /** The detector version that minted the row. */
   detector_version?: string;
+  /**
+   * P37.32 (K7 WX-06 / §5.8): the task ↔ item link — the emitted
+   * `sig.watch-item/1` rows about this task's subject (the `contract_expiring`
+   * renewal-terms task pairs with its `contract_expiry` item). The emitted
+   * handle is authoritative — the export never re-derives one.
+   */
+  watch_items?: { handle: string; kind: string; title?: string }[];
 }
 
 /** The set of dispositions a task may reach, by assignee class (§33.4 mirror of catalog). */

@@ -6230,6 +6230,28 @@ def build_spine_export(
     stmt_source_registry = load_source_registry()
     lane_by_source = _claim_lane_map(raw, stmt_source_registry)
 
+    # P37.32 (K7 WX-06): the watch payload builds BEFORE the queue so the
+    # task ↔ item link rides the emitted item handles — never a re-derived
+    # handle the placement engine might disagree with. The SAME payload the
+    # ``watch`` surface emits feeds the link (one derivation, never two).
+    _watch_payload = _watch(
+        raw,
+        dataset=dataset,
+        generated_at=generated_at,
+        placement=placement,
+        lane_by_source=lane_by_source,
+        keyed_places=(
+            [{"key": jkey, "slug": keyed.keys[jkey].slug_path} for jkey in sorted(dossier_pages)]
+            if keyed is not None
+            else None
+        ),
+    )
+    _watch_items_by_subject: dict[str, list[dict[str, Any]]] = {}
+    for _wi in _watch_payload.get("items") or ():
+        for _sk in _wi.get("subjects") or ():
+            if _sk:
+                _watch_items_by_subject.setdefault(str(_sk), []).append(_wi)
+
     # --- P36.58 (R11-K13-RQ-01, K11 §3–§5): task export v2 -------------------
     # The research lane's v2 cards: task_id + trigger detail + the named
     # predicate(s), the shared label registry's subject label/url, §4.3
@@ -6260,6 +6282,7 @@ def build_spine_export(
         routing=load_gap_routing(),
         codes=load_task_codes(),
         generated_at=generated_at,
+        watch_items_by_subject=_watch_items_by_subject,
     )
     dossiers = (
         []
@@ -6320,21 +6343,9 @@ def build_spine_export(
         ),
         "freshness": _freshness(dataset),
         "coverage": coverage_metrics,
-        "watch": _watch(
-            raw,
-            dataset=dataset,
-            generated_at=generated_at,
-            placement=placement,
-            lane_by_source=lane_by_source,
-            keyed_places=(
-                [
-                    {"key": jkey, "slug": keyed.keys[jkey].slug_path}
-                    for jkey in sorted(dossier_pages)
-                ]
-                if keyed is not None
-                else None
-            ),
-        ),
+        # P37.32: the payload built above — the same emission the task ↔
+        # item links resolved against (one derivation, never two).
+        "watch": _watch_payload,
         "evidence": _evidence(raw, dataset.as_of, lane_by_source=lane_by_source),
         "corrections": _corrections(raw),
         # P36.58 (RQ-01): the v2 card set — the research lane only; campaign
