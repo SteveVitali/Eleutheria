@@ -372,7 +372,7 @@ def build_dossier_visuals(
                     info,
                     net_prepared,
                     labels=labels,
-                    ancestors=ancestors,
+                    ancestors=ancestors or {},
                     places=net_places,
                     pages=frozenset(pages),
                     slug_of=lambda k: keyed.keys[k].slug_path,

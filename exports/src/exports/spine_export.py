@@ -5829,9 +5829,7 @@ def build_spine_export(
         # block; the rule itself is never re-derived).
         _dn_vocab = load_reviewed_vocabulary()
         _dn_notice_rows = _notice_relevance_rows(raw, label_registry, vocab=_dn_vocab)
-        _dn_relevance = {
-            str(r.entity_id): str(r.relevance) for r in _dn_notice_rows if r.entity_id
-        }
+        _dn_relevance = {str(r.entity_id): str(r.relevance) for r in _dn_notice_rows if r.entity_id}
         _dn_relevance_fields: dict[str, dict[str, Any]] = {}
         for _row in raw.get("notice_relevance_facts") or []:
             try:
@@ -5859,9 +5857,7 @@ def build_spine_export(
             value_claims=claims,
             relevance=_dn_relevance,
             relevance_fields=_dn_relevance_fields,
-            ancestors={
-                str(k): tuple(v) for k, v in placement.ancestor_chains().items()
-            },
+            ancestors={str(k): tuple(v) for k, v in placement.ancestor_chains().items()},
             source_names=source_names,
             lineage=lineage_by_claim or {},
             as_of=build_spec.as_of_snapshot,
