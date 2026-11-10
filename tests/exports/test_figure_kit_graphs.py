@@ -150,7 +150,9 @@ class TestNetworkFigure:
         res = build_network_figure(graph_spec_from_dict(_graph_doc()), lexicon)
         for svg in (res.svg, res.svg_narrow):
             assert svg.startswith("<svg") and svg.endswith(">\n")
-            assert 'role="img"' in svg and "aria-labelledby" in svg
+            # Every node is a link — the figure is interactive, so the root
+            # is a named group, never img (focusable descendants).
+            assert 'role="group"' in svg and "aria-labelledby" in svg
         assert res.viewbox[0] == 720
         assert res.narrow_viewbox[0] == 360
         assert res.viewbox[1] <= 520

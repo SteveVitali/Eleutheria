@@ -163,12 +163,12 @@ function fixtureNetSvg(variant: "wide" | "narrow", withAcc: boolean): string {
     ? `<g aria-hidden="true"><path d="M20 40C200 40 500 50 ${w - 34} 50" class="sig-fig-edge sig-fig-edge-acc-configured"/><path d="M20 60C200 60 500 52 ${w - 34} 50" class="sig-fig-edge sig-fig-edge-acc-declared"/><path d="M20 50C200 50 500 46 ${w - 34} 50" class="sig-fig-edge sig-fig-edge-acc-observed"/><path d="M20 55C200 55 500 55 ${w - 34} 50" class="sig-fig-edge sig-fig-edge-muted"/></g>`
     : `<g aria-hidden="true"><path d="M20 50C200 50 500 50 ${w - 34} 50" class="sig-fig-edge"/></g>`;
   return (
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} 120" class="sig-fig sig-fig-graph" role="img" ` +
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} 120" class="sig-fig sig-fig-graph" role="group" ` +
     `aria-label="Fixture stand-in ${variant} network figure">` +
     `<title>Fixture stand-in network figure (${variant})</title>` +
     `<desc>Fixture stand-in: 2 anchors, 1 counterparty, 4 recorded relations.</desc>` +
     edges +
-    nodes.join("") +
+    nodes.join("\n") +
     `<text x="8" y="110" class="sig-fig-legend">configured (solid) · declared (dashed) · observed (double) · muted = historical/undated</text>` +
     `</svg>`
   );
