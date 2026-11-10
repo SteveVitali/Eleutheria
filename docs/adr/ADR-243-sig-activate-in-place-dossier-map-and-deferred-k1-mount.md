@@ -11,11 +11,13 @@
   figure/map reconcile), SIG-UI-036/050/091 (cited — the enhancement
   contract), ADR-224 (the element-roster revisit trigger this ADR records),
   ADR-155/ADR-223 (cited — the page-type + CSP posture is unchanged)
-- Supersedes: nothing — this records ADR-224's named revisit trigger ("a
-  sixth element roster lands — its own ADR records its admission") and the
-  owned decisions the in-place mount needed; the governing contracts
-  (page types, budgets, the T2 set, the workspace-state contract) are
-  deliberately unchanged.
+- Supersedes: nothing
+
+This ADR records the named revisit trigger ADR-224 authored ("a sixth
+element roster lands — its own ADR records its admission") and the owned
+decisions the in-place mount needed; the governing contracts (page types,
+budgets, the T2 set, the workspace-state contract) are deliberately
+unchanged.
 
 ## Context
 
