@@ -176,6 +176,7 @@ import {
   WATCH_ITEMS,
   DECISION_POINT,
   EVIDENCE_ARTIFACTS,
+  EVIDENCE_SUBJECT_NEIGHBOURS,
   CLAIM_VIEWS,
   DIFF_CAPTURES,
 } from "./watch-evidence-fixture";
@@ -756,7 +757,11 @@ function assertScoreVocab(artifacts: readonly EvidenceArtifact[], path: string):
 
 export function getEvidence(): EvidenceData {
   if (dataSource() !== "export") {
-    return { artifacts: EVIDENCE_ARTIFACTS, claimViews: CLAIM_VIEWS, subjectNeighbours: {} };
+    return {
+      artifacts: EVIDENCE_ARTIFACTS,
+      claimViews: CLAIM_VIEWS,
+      subjectNeighbours: EVIDENCE_SUBJECT_NEIGHBOURS,
+    };
   }
   return readExportArtifact("evidence.json", (parsed, path) => {
     const o = parsed as {

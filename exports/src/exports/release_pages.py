@@ -826,7 +826,8 @@ def evidence_page(
    <span class="k">Type</span> {_e(artifact.get("artifact_type"))} ·
    <span class="k">Directness</span> {_e(artifact.get("directness"))}</p>
 <p><span class="k">Capture status</span> {_e(artifact.get("capture_status"))} ·
-   <span class="k">Published through</span> {_e(artifact.get("published_at_edtf") or artifact.get("currency")) or "—"}</p>
+   <span class="k">Published through</span>
+   {_e(artifact.get("published_at_edtf") or artifact.get("currency")) or "—"}</p>
 <p><span class="k">Lane</span> {_e(lane)}
    <span class="mut">(basis: {_e(lane_basis)})</span>
    {f'· <span class="k">Part VIII class</span> {_e(p8)}' if p8 else ""}</p>
