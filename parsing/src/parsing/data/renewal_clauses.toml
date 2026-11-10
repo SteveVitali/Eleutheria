@@ -1,0 +1,141 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The reviewed renewal-clause patterns (P37.31 / K7 WX-02) — versioned data (§20),
+# never hidden code. The P07.1 layer-3 reader (`parsing.renewals`) scans a captured
+# contract document's text for the renewal clause and reads three dated-decision
+# values verbatim:
+#
+#   * auto_renews          — does the contract renew automatically absent notice;
+#   * notice_window_days   — days before term end non-renewal notice is due;
+#   * renewal_term_months  — length of each stated renewal term (in months).
+#
+# Each [[rule]] names the predicate it feeds, the value it asserts (a literal
+# bool, or "capture" for the numeric capture group), the unit the capture is
+# stated in (days|months|years — the reader converts to the predicate's
+# declared unit and never guesses), and its patterns. Every pattern matches
+# case-insensitively over the captured text; `NUMBER` inside a pattern is the
+# reader's number alternation (a digit run or a reviewed English number word).
+# A value the document does not state is simply absent — the reader emits
+# nothing rather than inferring (§3.1).
+
+version = "1.0.0"
+
+# Number words the reader resolves (reviewed; a word outside this table does
+# not parse — the literal stands unread, never coerced).
+[number_words]
+one = 1
+two = 2
+three = 3
+four = 4
+five = 5
+six = 6
+seven = 7
+eight = 8
+nine = 9
+ten = 10
+eleven = 11
+twelve = 12
+thirteen = 13
+fourteen = 14
+fifteen = 15
+sixteen = 16
+seventeen = 17
+eighteen = 18
+nineteen = 19
+twenty = 20
+thirty = 30
+forty = 40
+fifty = 50
+sixty = 60
+seventy = 70
+eighty = 80
+ninety = 90
+hundred = 100
+
+# Affirmative automatic-renewal language — "renews automatically",
+# "auto-renews", "shall renew for successive terms", "unless either party gives
+# written notice". `value` is the boolean the clause asserts.
+[[rule]]
+id = "auto_renews_affirmative"
+predicate = "auto_renews"
+value = "true"
+unit = "none"
+patterns = [
+    "automatically\\s+renew",
+    "automatic\\s+renewal",
+    "auto[-\\s]?renew",
+    "renew(?:s|ed|ing)?\\s+automatically",
+    "renew\\s+for\\s+successive",
+    "successive\\s+renewal\\s+term",
+    "evergreen\\s+(?:contract|agreement|provision|term)",
+    "unless\\s+(?:either\\s+party|a\\s+party|one\\s+(?:of\\s+the\\s+)?part(?:y|ies))\\s+[^.]{0,60}?notice",
+    "absent\\s+[^.]{0,40}?notice\\s+[^.]{0,40}?renew",
+    "renew(?:s|ing)?\\s+unless\\s+[^.]{0,50}?notice",
+    "subject\\s+to\\s+(?:automatic|auto[-\\s]?)renewal",
+]
+
+# Explicit NEGATIVE renewal language — the contract states it does NOT renew
+# automatically. A bare "non-renewal" is deliberately absent here: it is part
+# of affirmative auto-renewal phrasing ("notice of non-renewal"), never a
+# negative signal on its own.
+[[rule]]
+id = "auto_renews_negative"
+predicate = "auto_renews"
+value = "false"
+unit = "none"
+patterns = [
+    "(?:shall|will|does|do|may|shall\\s+not|is|are)\\s+not\\s+(?:be\\s+)?(?:automatically\\s+|auto[-\\s]?)?renew",
+    "not\\s+(?:subject\\s+to\\s+)?(?:automatic|auto[-\\s]?)renewal",
+    "no\\s+(?:automatic|auto[-\\s]?)renewal",
+    "not\\s+renew\\s+automatically",
+    "terminate[sd]?\\s+(?:automatically\\s+)?(?:at|on)\\s+(?:the\\s+)?end\\s+of\\s+(?:its|the)\\s+(?:initial|current|then[-\\s]current)\\s+term\\s+unless\\s+renewed\\s+(?:in\\s+writing|by\\s+(?:mutual|written)\\s+(?:agreement|consent))",
+]
+
+# Days before term end by which non-renewal notice is due. The capture is the
+# day count the clause states; a month-stated window stays unstated (months are
+# not days — no silent conversion at a 30-day guess).
+[[rule]]
+id = "notice_window_days"
+predicate = "notice_window_days"
+value = "capture"
+unit = "days"
+patterns = [
+    "(?:at\\s+least|not\\s+less\\s+than|minimum\\s+of|no\\s+later\\s+than)\\s+(NUMBER)\\s+days'?\\s+(?:prior|before)[^.]{0,50}?(?:notice|non[-\\s]?renewal|termination|expiration|renewal)",
+    "(NUMBER)\\s+days'?\\s+(?:prior\\s+)?(?:written\\s+)?notice[^.]{0,50}?(?:non[-\\s]?renewal|termination|expiration|renewal|intent\\s+to)",
+    "(?:written\\s+)?notice[^.]{0,60}?(?:at\\s+least|not\\s+less\\s+than|minimum\\s+of)\\s+(NUMBER)\\s+days",
+    "(NUMBER)\\s+days'?\\s+(?:advance\\s+)?(?:written\\s+)?notice\\s+of\\s+(?:non[-\\s]?renewal|termination|intent\\s+not\\s+to\\s+renew)",
+    "notice\\s+of\\s+(?:non[-\\s]?renewal|termination|intent\\s+not\\s+to\\s+renew)[^.]{0,60}?(NUMBER)\\s+days",
+]
+
+# The stated renewal-term length, in months. A clause stated in years converts
+# at exactly 12 months per year (unit = "years"); the verbatim literal stays
+# raw_value so the recorded number is always re-derivable.
+[[rule]]
+id = "renewal_term_months"
+predicate = "renewal_term_months"
+value = "capture"
+unit = "months"
+patterns = [
+    "renewal\\s+term\\s+of\\s+(NUMBER)\\s+months?",
+    "(NUMBER)[-\\s]month\\s+renewal\\s+term",
+    "renew(?:s|ed|al|ing)?\\s+for\\s+(?:an?\\s+)?(?:additional\\s+|successive\\s+)?(?:term\\s+of\\s+)?(NUMBER)\\s+months?",
+    "(NUMBER)\\s+month(?:ly)?\\s+(?:successive\\s+)?renewal\\s+term",
+    "successive\\s+terms?\\s+of\\s+(NUMBER)\\s+months?",
+]
+
+[[rule]]
+id = "renewal_term_years"
+predicate = "renewal_term_months"
+value = "capture"
+unit = "years"
+patterns = [
+    "renewal\\s+term\\s+of\\s+(NUMBER)\\s+years?",
+    "(NUMBER)[-\\s]year\\s+renewal\\s+term",
+    "renew(?:s|ed|al|ing)?\\s+for\\s+(?:an?\\s+)?(?:additional\\s+|successive\\s+)?(?:term\\s+of\\s+)?(NUMBER)\\s+years?",
+    "(NUMBER)\\s+year(?:ly)?\\s+(?:successive\\s+)?renewal\\s+term",
+    "successive\\s+terms?\\s+of\\s+(NUMBER)\\s+years?",
+    "additional\\s+term[s]?\\s+of\\s+(NUMBER)\\s+years?",
+    "(NUMBER)\\s+additional\\s+one[-\\s]year\\s+terms?",
+]

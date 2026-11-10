@@ -349,6 +349,20 @@ classes:
         range: edtf
       renewal_options:
         range: string
+      auto_renews:
+        range: boolean
+        description: >-
+          Whether the contract renews automatically absent notice — the dated
+          renewal clause value the decision calendar derives a renewal_deadline
+          from (P37.31 / K7 WX-02).
+      notice_window_days:
+        range: integer
+        description: >-
+          Days before term end by which non-renewal notice is due (P37.31).
+      renewal_term_months:
+        range: integer
+        description: >-
+          Length in months of each stated renewal term (P37.31).
       products:
         range: Product
         multivalued: true
