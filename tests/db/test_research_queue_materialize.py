@@ -256,7 +256,7 @@ def test_contract_expiring_materializes_from_contract_claims(conn) -> None:
     assert len(got) == 1
     ttype, subj, tkind, tref, closing = got[0]
     assert ttype == "contract_expiring"
-    assert subj == subject
+    assert subj == str(subject)
     assert tkind == "contract"  # cites the firing end_date claim (K7 §5.8)
     assert tref == end_claim
     assert "renewal" in closing.lower()
