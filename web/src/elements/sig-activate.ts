@@ -56,7 +56,10 @@ class SigActivate extends HTMLElement {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "sig-activate__button";
-    button.dataset.enhancement = "";
+    // NOT [data-enhancement]: the button REPLACES the anchor (identical
+    // text) — the parity sweep compares main text, so the control's own
+    // label must count on both sides of the upgrade (SIG-UI-091). Only
+    // the injected chrome around it (the status note) is enhancement.
     button.setAttribute("aria-expanded", "false");
     const controls = this.getAttribute("target");
     if (controls) button.setAttribute("aria-controls", controls);

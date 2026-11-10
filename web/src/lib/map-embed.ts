@@ -127,29 +127,15 @@ export function buildMapEmbedDoc(slug: string): DossierMapEmbedDoc {
     return s ? withBase(dossierSitesHref(s, id)) : null;
   };
   // The payload IS the static figure's scope: the records the one-resolution
-  // sites model placed under this dossier's subtree (the deep-slug lists,
-  // slug == slug or a descendant), PLUS the rows whose assets name this
-  // dossier outright (an unkeyed flat dossier's records resolve to the keyed
-  // descendant's list — the flat dossier still draws them, so the activated
-  // box carries them too; SIG-UI-132's figure/map reconcile).
+  // sites model placed under this dossier's subtree (this slug's list plus
+  // every descendant dossier's list — SIG-UI-132's figure/map reconcile).
+  // An unkeyed flat dossier resolves no subtree rows of its own when the
+  // keyed descendants own them — its activated box shows the honest empty
+  // in-view and the static figure stays the complete equivalent, never a
+  // guessed record set.
   const scopeRows = [...sitesModel.lists.entries()]
-    .filter(
-      ([s]) =>
-        s === slug ||
-        s.startsWith(`${slug}/`),
-    )
+    .filter(([s]) => s === slug || s.startsWith(`${slug}/`))
     .flatMap(([, l]) => l.rows);
-  const seen = new Set(scopeRows.map((r) => r.id));
-  for (const l of sitesModel.lists.values()) {
-    for (const r of l.rows) {
-      if (seen.has(r.id)) continue;
-      const asset = ASSET_BY_ID.get(r.id);
-      if (asset && asset.dossierSlug === slug) {
-        scopeRows.push(r);
-        seen.add(r.id);
-      }
-    }
-  }
   const TILE_SOURCES = getCompartmentTileSources();
   const records: MapRecord[] =
     TILE_SOURCES.length === 0

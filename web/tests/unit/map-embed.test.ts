@@ -28,8 +28,11 @@ describe("dossier map-embed props document (VIZ-04)", () => {
     for (const slug of slugs) {
       const doc = getDossierVisuals(slug);
       expect(doc, slug).not.toBeNull();
-      expect(isDrawnMap(doc!.map), slug).toBe(true);
-      expect(doc!.map.desc.records_drawn, slug).toBeGreaterThan(0);
+      const map = doc!.map;
+      expect(isDrawnMap(map), slug).toBe(true);
+      if (isDrawnMap(map)) {
+        expect(map.desc.records_drawn, slug).toBeGreaterThan(0);
+      }
     }
   });
 
@@ -91,6 +94,16 @@ describe("dossier map-embed props document (VIZ-04)", () => {
         `usa/ok payload missing descendant record ${id}`,
       ).toBe(true);
     }
+  });
+
+  it("an unkeyed flat dossier resolves honestly — never a guessed record set", () => {
+    // oklahoma-city's records resolve to the keyed descendant dossier in
+    // the sites model: the flat dossier's payload is empty (the honest
+    // empty in-view — the figure stays the complete equivalent).
+    const flat = buildMapEmbedDoc("oklahoma-city");
+    expect(flat.embedded.jkey).toBeNull();
+    expect(flat.records).toEqual([]);
+    expect(flat.embedded.fallbackAt).toBeNull();
   });
 
   it("the embed context: frame seed via jkey; fallbackAt only when unkeyed", () => {

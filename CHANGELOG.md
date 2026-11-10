@@ -24,6 +24,21 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.29 — In-place map activation on dossiers (K6 VIZ-04,
+  SIG-UI-127/130/132):** every dossier Figure-1 now carries "Explore on
+  the interactive map" — a zero-JS scoped `/map/` link that `<sig-activate>`
+  (the sixth T1 kit element, ADR-224/243) upgrades to the activation
+  button ONLY on a desktop pointer+width match. The click mounts the K1
+  map app in embedded mode inside the figure's own reserved box — the
+  deferred shared `/map/` chunks fetch post-action only, never a T2
+  preload — with cooperative gestures, the filters row (technology ·
+  status · source), the In-view list and selection panel below the
+  canvas, "Open full map" / "Cite this view" hand-offs carrying the live
+  state, "Close interactive map" returning focus to the control, and the
+  honest failure notice. The embedded mount writes no browser history or
+  workspace URL (V-10); the static SVG stays in the DOM — the print and
+  no-JS rendition — and the activated box is budget-measured as a T2-map
+  box (`interactions.map-embed`, `budget: "map"`).
 - **P37.28 — Dossier network figures (K2 GX-10):** the per-dossier
   bipartite network figures — one drawn figure per relationship family
   (access/supply/funding) or the typed absence, emitted into the
