@@ -25,7 +25,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { existsSync } from "node:fs";
 
-import { ENTITY_PAGE_FIXTURES } from "../src/lib/entity-page";
+import { ENTITY_PAGE_FIXTURES } from "../src/lib/entity-page-fixtures";
 import { mergeEntityTwins } from "../src/lib/entity-pages";
 import { entityEgoSpec, entityMapSpec, entityTimeline } from "../src/lib/entity-figures";
 

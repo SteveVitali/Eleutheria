@@ -29,7 +29,7 @@ import {
   twinIndexHref,
 } from "../../src/lib/explore-graph";
 import type { OverviewEdge, OverviewNode } from "../../src/lib/graph-overview";
-import { ENTITY_PAGE_TWIN_FIXTURE } from "../../src/lib/entity-page";
+import { ENTITY_PAGE_TWIN_FIXTURE } from "../../src/lib/entity-page-fixtures";
 
 const node = (key: string, over: Partial<OverviewNode> = {}): OverviewNode => ({
   key,

@@ -103,12 +103,14 @@ import {
   type EntitySlugHistoryRow,
 } from "./entity-history";
 import {
-  ENTITY_LABEL_FIXTURES,
-  ENTITY_PAGE_FIXTURES,
   isEntityPageTwin,
   type EntityLabelRow,
   type EntityPageTwin,
 } from "./entity-page";
+import {
+  ENTITY_LABEL_FIXTURES,
+  ENTITY_PAGE_FIXTURES,
+} from "./entity-page-fixtures";
 import {
   relationshipsCsv,
   relationshipsDoc,

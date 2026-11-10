@@ -10,10 +10,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  ENTITY_LABEL_FIXTURES,
-  ENTITY_PAGE_FIXTURES,
   ENTITY_PAGE_SCHEMA,
-  ENTITY_PAGE_TWIN_FIXTURE,
   ER_DISCLOSURE,
   ITEMS_PER_RELATION,
   PAGE_KINDS,
@@ -24,6 +21,11 @@ import {
   pageState,
   reviewRecord,
 } from "../../src/lib/entity-page";
+import {
+  ENTITY_LABEL_FIXTURES,
+  ENTITY_PAGE_FIXTURES,
+  ENTITY_PAGE_TWIN_FIXTURE,
+} from "../../src/lib/entity-page-fixtures";
 import type { EntityPageTwin } from "../../src/lib/entity-page";
 import { mergeEntityTwins } from "../../src/lib/entity-pages";
 import { getEntityLabelRows, getEntityPageTwins } from "../../src/lib/data";

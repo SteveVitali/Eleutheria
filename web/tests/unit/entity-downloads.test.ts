@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 import {
   ENTITY_PAGE_TWIN_CONTRACT_FIXTURE,
   ENTITY_PAGE_TWIN_FIXTURE,
-} from "../../src/lib/entity-page";
+} from "../../src/lib/entity-page-fixtures";
 import {
   canonicalJsonLine,
   ENTITY_RELATIONSHIPS_SCHEMA,
