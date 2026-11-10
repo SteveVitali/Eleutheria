@@ -83,6 +83,7 @@ Name: sig
 | [audit_case_code_required](slots/audit_case_code_required.md) |  |
 | [audit_source_type](slots/audit_source_type.md) |  |
 | [authorization_state](slots/authorization_state.md) |  |
+| [auto_renews](slots/auto_renews.md) | Whether the contract renews automatically absent notice — the dated renewal c... |
 | [automaticity](slots/automaticity.md) | Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049) |
 | [award_date](slots/award_date.md) |  |
 | [binding_status](slots/binding_status.md) |  |
@@ -197,6 +198,7 @@ Name: sig
 | [normalization_id](slots/normalization_id.md) |  |
 | [normalization_version](slots/normalization_version.md) |  |
 | [normalizer_version](slots/normalizer_version.md) |  |
+| [notice_window_days](slots/notice_window_days.md) | Days before term end by which non-renewal notice is due (P37 |
 | [object_entity_ref](slots/object_entity_ref.md) | The resolved entity an entity_ref object names; never a person (Part VIII) |
 | [object_type](slots/object_type.md) |  |
 | [observation_count](slots/observation_count.md) |  |
@@ -256,6 +258,7 @@ Name: sig
 | [reliability](slots/reliability.md) |  |
 | [reliability_provisional](slots/reliability_provisional.md) |  |
 | [renewal_options](slots/renewal_options.md) |  |
+| [renewal_term_months](slots/renewal_term_months.md) | Length in months of each stated renewal term (P37 |
 | [request_text](slots/request_text.md) |  |
 | [requesting_party](slots/requesting_party.md) |  |
 | [requires_authorization_of](slots/requires_authorization_of.md) | CCOPS-style approval requirements |

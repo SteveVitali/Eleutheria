@@ -51,6 +51,8 @@ URI: [sig:class/Contract](https://ontology.surveillancegraph.org/schema/class/Co
         
       Contract : amount
         
+      Contract : auto_renews
+        
       Contract : buyer
         
           
@@ -69,6 +71,8 @@ URI: [sig:class/Contract](https://ontology.surveillancegraph.org/schema/class/Co
       Contract : end_date
         
       Contract : id
+        
+      Contract : notice_window_days
         
       Contract : parent_cooperative_contract
         
@@ -95,6 +99,8 @@ URI: [sig:class/Contract](https://ontology.surveillancegraph.org/schema/class/Co
       Contract : quantities
         
       Contract : renewal_options
+        
+      Contract : renewal_term_months
         
       Contract : seller
         
@@ -135,6 +141,9 @@ URI: [sig:class/Contract](https://ontology.surveillancegraph.org/schema/class/Co
 | [start_date](../slots/start_date.md) | 0..1 <br/> [Edtf](../types/Edtf.md) |  | direct |
 | [end_date](../slots/end_date.md) | 0..1 <br/> [Edtf](../types/Edtf.md) |  | direct |
 | [renewal_options](../slots/renewal_options.md) | 0..1 <br/> [String](../types/String.md) |  | direct |
+| [auto_renews](../slots/auto_renews.md) | 0..1 <br/> [Boolean](../types/Boolean.md) | Whether the contract renews automatically absent notice — the dated renewal c... | direct |
+| [notice_window_days](../slots/notice_window_days.md) | 0..1 <br/> [Integer](../types/Integer.md) | Days before term end by which non-renewal notice is due (P37 | direct |
+| [renewal_term_months](../slots/renewal_term_months.md) | 0..1 <br/> [Integer](../types/Integer.md) | Length in months of each stated renewal term (P37 | direct |
 | [products](../slots/products.md) | * <br/> [Product](../classes/Product.md) |  | direct |
 | [quantities](../slots/quantities.md) | * <br/> [Integer](../types/Integer.md) |  | direct |
 | [document](../slots/document.md) | 0..1 <br/> [Uriorcurie](../types/Uriorcurie.md) |  | direct |
@@ -263,6 +272,32 @@ attributes:
     domain_of:
     - Contract
     range: string
+  auto_renews:
+    name: auto_renews
+    description: Whether the contract renews automatically absent notice — the dated
+      renewal clause value the decision calendar derives a renewal_deadline from (P37.31
+      / K7 WX-02).
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
+    rank: 1000
+    domain_of:
+    - Contract
+    range: boolean
+  notice_window_days:
+    name: notice_window_days
+    description: Days before term end by which non-renewal notice is due (P37.31).
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
+    rank: 1000
+    domain_of:
+    - Contract
+    range: integer
+  renewal_term_months:
+    name: renewal_term_months
+    description: Length in months of each stated renewal term (P37.31).
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
+    rank: 1000
+    domain_of:
+    - Contract
+    range: integer
   products:
     name: products
     from_schema: https://ontology.surveillancegraph.org/schema/entities
@@ -389,6 +424,35 @@ attributes:
     domain_of:
     - Contract
     range: string
+  auto_renews:
+    name: auto_renews
+    description: Whether the contract renews automatically absent notice — the dated
+      renewal clause value the decision calendar derives a renewal_deadline from (P37.31
+      / K7 WX-02).
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
+    rank: 1000
+    owner: Contract
+    domain_of:
+    - Contract
+    range: boolean
+  notice_window_days:
+    name: notice_window_days
+    description: Days before term end by which non-renewal notice is due (P37.31).
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
+    rank: 1000
+    owner: Contract
+    domain_of:
+    - Contract
+    range: integer
+  renewal_term_months:
+    name: renewal_term_months
+    description: Length in months of each stated renewal term (P37.31).
+    from_schema: https://ontology.surveillancegraph.org/schema/entities
+    rank: 1000
+    owner: Contract
+    domain_of:
+    - Contract
+    range: integer
   products:
     name: products
     from_schema: https://ontology.surveillancegraph.org/schema/entities

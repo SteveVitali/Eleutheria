@@ -307,6 +307,16 @@
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/authorizes> <https://ontology.surveillancegraph.org/schema/resolutionStrategy> "authoritative_source_wins" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/authorizes> <https://ontology.surveillancegraph.org/schema/valueDatatype> "string" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/authorizes> <https://ontology.surveillancegraph.org/schema/volatilityClass> "SLOW" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/auto_renews> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/auto_renews> <http://www.w3.org/2004/02/skos/core#definition> "Whether a contract states it renews automatically absent notice (§11.11; P37.31 / K7 WX-02). Carried by the record or read verbatim from the captured contract's renewal clause by the P07.1 parser." .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/auto_renews> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0> .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/auto_renews> <http://www.w3.org/2004/02/skos/core#prefLabel> "auto_renews"@en .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/auto_renews> <https://ontology.surveillancegraph.org/schema/cardinality> "single" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/auto_renews> <https://ontology.surveillancegraph.org/schema/halfLife> "infinite" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/auto_renews> <https://ontology.surveillancegraph.org/schema/objectKind> "literal" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/auto_renews> <https://ontology.surveillancegraph.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/auto_renews> <https://ontology.surveillancegraph.org/schema/valueDatatype> "boolean" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/auto_renews> <https://ontology.surveillancegraph.org/schema/volatilityClass> "IMMUTABLE" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/award_date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/award_date> <http://www.w3.org/2004/02/skos/core#definition> "Date a funding instrument was awarded (§11.12)." .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/award_date> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0> .
@@ -1512,6 +1522,16 @@
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/matched_keyword> <https://ontology.surveillancegraph.org/schema/resolutionStrategy> "max_support" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/matched_keyword> <https://ontology.surveillancegraph.org/schema/valueDatatype> "string" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/matched_keyword> <https://ontology.surveillancegraph.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/meeting_date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/meeting_date> <http://www.w3.org/2004/02/skos/core#definition> "The date an agenda item's meeting or hearing is scheduled, as the agenda platform's own record states it (P37.31 / K7 WX-02). A rescheduled meeting supersedes by a new claim row." .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/meeting_date> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0> .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/meeting_date> <http://www.w3.org/2004/02/skos/core#prefLabel> "meeting_date"@en .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/meeting_date> <https://ontology.surveillancegraph.org/schema/cardinality> "single" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/meeting_date> <https://ontology.surveillancegraph.org/schema/halfLife> "12mo" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/meeting_date> <https://ontology.surveillancegraph.org/schema/objectKind> "literal" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/meeting_date> <https://ontology.surveillancegraph.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/meeting_date> <https://ontology.surveillancegraph.org/schema/valueDatatype> "edtf" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/meeting_date> <https://ontology.surveillancegraph.org/schema/volatilityClass> "MODERATE" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/mfa_required> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/mfa_required> <http://www.w3.org/2004/02/skos/core#definition> "Whether the deployment's configuration requires multi-factor authentication (§11.15 ConfigurationState — MFA fails the configuration-cut rule and is a config slot, SIG-ONTO-035)." .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/mfa_required> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0> .
@@ -1577,6 +1597,16 @@
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/notice_type> <https://ontology.surveillancegraph.org/schema/resolutionStrategy> "authoritative_source_wins" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/notice_type> <https://ontology.surveillancegraph.org/schema/valueDatatype> "string" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/notice_type> <https://ontology.surveillancegraph.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/notice_window_days> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/notice_window_days> <http://www.w3.org/2004/02/skos/core#definition> "Days before term end by which non-renewal notice is due under a contract's stated renewal clause (§11.11; P37.31 / K7 WX-02)." .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/notice_window_days> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0> .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/notice_window_days> <http://www.w3.org/2004/02/skos/core#prefLabel> "notice_window_days"@en .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/notice_window_days> <https://ontology.surveillancegraph.org/schema/cardinality> "single" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/notice_window_days> <https://ontology.surveillancegraph.org/schema/halfLife> "infinite" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/notice_window_days> <https://ontology.surveillancegraph.org/schema/objectKind> "literal" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/notice_window_days> <https://ontology.surveillancegraph.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/notice_window_days> <https://ontology.surveillancegraph.org/schema/valueDatatype> "integer" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/notice_window_days> <https://ontology.surveillancegraph.org/schema/volatilityClass> "IMMUTABLE" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/observed_use_edge> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/observed_use_edge> <http://www.w3.org/2004/02/skos/core#definition> "Observed-use sharing edge (windowed)." .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/observed_use_edge> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0> .
@@ -2202,6 +2232,16 @@
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/renewal_options> <https://ontology.surveillancegraph.org/schema/resolutionStrategy> "authoritative_source_wins" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/renewal_options> <https://ontology.surveillancegraph.org/schema/valueDatatype> "string" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/renewal_options> <https://ontology.surveillancegraph.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/renewal_term_months> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/renewal_term_months> <http://www.w3.org/2004/02/skos/core#definition> "Length in months of each renewal term a contract states (§11.11; P37.31 / K7 WX-02). A clause stated in years is recorded in months (×12); the verbatim literal stays raw_value." .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/renewal_term_months> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0> .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/renewal_term_months> <http://www.w3.org/2004/02/skos/core#prefLabel> "renewal_term_months"@en .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/renewal_term_months> <https://ontology.surveillancegraph.org/schema/cardinality> "single" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/renewal_term_months> <https://ontology.surveillancegraph.org/schema/halfLife> "infinite" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/renewal_term_months> <https://ontology.surveillancegraph.org/schema/objectKind> "literal" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/renewal_term_months> <https://ontology.surveillancegraph.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/renewal_term_months> <https://ontology.surveillancegraph.org/schema/valueDatatype> "integer" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/renewal_term_months> <https://ontology.surveillancegraph.org/schema/volatilityClass> "IMMUTABLE" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/replaced_by> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/replaced_by> <http://www.w3.org/2004/02/skos/core#definition> "§12.3 lifecycle edge: B's deployment supersedes A's for the same capability at the same organization (temporal substitution)." .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/replaced_by> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0> .

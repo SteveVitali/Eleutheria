@@ -183,5 +183,24 @@ def extract_renewal_terms(text: str) -> list[RenewalTerm]:
                     rule_id=rule_id,
                 )
             )
+    # A negated renewal clause ("does not automatically renew") contains the
+    # affirmative surface form inside it — the negation governs the SAME span,
+    # so an affirmative match overlapping a negative auto_renews match is
+    # dropped. Two genuinely different clauses disagreeing (one auto-renewal,
+    # one not) are in disjoint spans and both record — §3.1 keeps the
+    # disagreement visible, never silently reconciled.
+    negative_spans = [
+        (t.start, t.end) for t in out if t.predicate == "auto_renews" and t.value is False
+    ]
+    if negative_spans:
+        out = [
+            t
+            for t in out
+            if not (
+                t.predicate == "auto_renews"
+                and t.value is True
+                and any(t.start < ne and t.end > ns for ns, ne in negative_spans)
+            )
+        ]
     out.sort(key=lambda t: (t.start, t.predicate))
     return out

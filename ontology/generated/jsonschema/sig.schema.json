@@ -1035,6 +1035,13 @@
                         "null"
                     ]
                 },
+                "auto_renews": {
+                    "description": "Whether the contract renews automatically absent notice \u2014 the dated renewal clause value the decision calendar derives a renewal_deadline from (P37.31 / K7 WX-02).",
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
                 "buyer": {
                     "type": [
                         "string",
@@ -1062,6 +1069,13 @@
                 "id": {
                     "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
                     "type": "string"
+                },
+                "notice_window_days": {
+                    "description": "Days before term end by which non-renewal notice is due (P37.31).",
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
                 },
                 "parent_cooperative_contract": {
                     "description": "The master award being ridden (SIG-ONTO-032).",
@@ -1091,6 +1105,13 @@
                 "renewal_options": {
                     "type": [
                         "string",
+                        "null"
+                    ]
+                },
+                "renewal_term_months": {
+                    "description": "Length in months of each stated renewal term (P37.31).",
+                    "type": [
+                        "integer",
                         "null"
                     ]
                 },
