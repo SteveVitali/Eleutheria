@@ -152,12 +152,22 @@ const PARENT_BLOB = blob(80, 50, 140, 86, 4242);
 // proves the contract, not the graph.
 // ---------------------------------------------------------------------------
 
+// The fixture corpus only emits graph pages under /graphs/<family>/usa/ok/
+// and /graphs/<family>/usa/tx/ — any deeper (or other) jurisdiction slug
+// resolves to the family index, which is always emitted. A link must never
+// guess at a route the build does not emit.
+function graphHref(overview: string, slug: string): string {
+  const top = slug.split("/").slice(0, 2).join("/");
+  const emitted = top === "usa/ok" || (top === "usa/tx" && overview === "access");
+  return emitted ? `/graphs/${overview}/${top}/` : `/graphs/${overview}/`;
+}
+
 function fixtureNetSvg(variant: "wide" | "narrow", withAcc: boolean): string {
   const w = variant === "wide" ? 720 : 360;
   const nodes: string[] = [
-    `<a href="/entity/agency/oklahoma-city-police--a1b2c3d/"><path d="M10 40a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0 -9 0Z" class="sig-fig-node sig-fig-node-agency"/><text x="24" y="44" class="sig-fig-node-label">Oklahoma City Police…</text></a>`,
-    `<a href="/entity/agency/county-sheriff--e4f5g6h/"><path d="M10 60a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0 -9 0Z" class="sig-fig-node sig-fig-node-agency"/><text x="24" y="64" class="sig-fig-node-label">Oklahoma County Sheriff</text></a>`,
-    `<a href="/graphs/supply/usa-ok/"><path d="M${w - 24} 50a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0 -9 0Z" class="sig-fig-node sig-fig-node-vendor"/><text x="${w - 38}" y="54" class="sig-fig-node-label" text-anchor="end">Flock Safety</text></a>`,
+    `<a href="/entity/agency/acme-city-police--4g2wm8q/"><path d="M10 40a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0 -9 0Z" class="sig-fig-node sig-fig-node-agency"/><text x="24" y="44" class="sig-fig-node-label">Oklahoma City Police…</text></a>`,
+    `<a href="/entity/agency/acworth-police-department--4g2wm8q/"><path d="M10 60a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0 -9 0Z" class="sig-fig-node sig-fig-node-agency"/><text x="24" y="64" class="sig-fig-node-label">Oklahoma County Sheriff</text></a>`,
+    `<a href="/graphs/supply/usa/ok/"><path d="M${w - 24} 50a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0 -9 0Z" class="sig-fig-node sig-fig-node-vendor"/><text x="${w - 38}" y="54" class="sig-fig-node-label" text-anchor="end">Flock Safety</text></a>`,
   ];
   const edges = withAcc
     ? `<g aria-hidden="true"><path d="M20 40C200 40 500 50 ${w - 34} 50" class="sig-fig-edge sig-fig-edge-acc-configured"/><path d="M20 60C200 60 500 52 ${w - 34} 50" class="sig-fig-edge sig-fig-edge-acc-declared"/><path d="M20 50C200 50 500 46 ${w - 34} 50" class="sig-fig-edge sig-fig-edge-acc-observed"/><path d="M20 55C200 55 500 55 ${w - 34} 50" class="sig-fig-edge sig-fig-edge-muted"/></g>`
@@ -213,7 +223,7 @@ function drawnAccess(slug: string): NetworkSlot {
       table_rows: [
         {
           counterparty: "Flock Safety",
-          href: "/graphs/access/usa-ok/",
+          href: "/graphs/access/usa/ok/",
           relation: "configured access to",
           direction: "outbound",
           access_kind: "configured",
@@ -226,7 +236,7 @@ function drawnAccess(slug: string): NetworkSlot {
         },
         {
           counterparty: "Oklahoma County Sheriff",
-          href: "/entity/agency/county-sheriff--e4f5g6h/",
+          href: "/entity/agency/acworth-police-department--4g2wm8q/",
           relation: "declared-policy access to",
           direction: "outbound",
           access_kind: "declared",
@@ -250,7 +260,7 @@ function drawnAccess(slug: string): NetworkSlot {
     cap_actions: [],
     toggle_kinds: ["configured", "declared", "observed"],
     table_rows_total: 2,
-    table_href: `/graphs/access/${slug}/`,
+    table_href: graphHref("access", slug),
     explore_href: `/explore/?v=2&overview=access&jurisdiction=fixture:${slug}`,
     anchor_attrs: {},
     degree_facts: [
@@ -272,7 +282,7 @@ function emptyNet(slot: string, figureId: string, overview: string, title: strin
     anchors_total: status === "no_anchors" ? 0 : 2,
     edges_total: 0,
     degree_facts: [],
-    table_href: `/graphs/${overview}/${slug}/`,
+    table_href: graphHref(overview, slug),
     explore_href: `/explore/?v=2&overview=${overview}&jurisdiction=fixture:${slug}`,
   } as NetworkSlot;
 }
