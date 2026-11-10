@@ -59,7 +59,9 @@ test.describe("map filters, list, keyboard, mobile, print (P37.18)", () => {
 
   test("Download this view emits a CSV with licence provenance lines (O3)", async ({ page }) => {
     await ready(page, "/map/?at=12/35.47/-97.51");
-    await expect(page.getByTestId("inview-status")).toContainText("in view", { timeout: 15_000 });
+    // "in view" renders at 0 rows while the island loads — the licence
+    // lines derive from the in-view rows, so wait for a nonzero count.
+    await expect(page.getByTestId("inview-status")).toContainText(/[1-9]\d* records? in view/, { timeout: 15_000 });
     const [download] = await Promise.all([
       page.waitForEvent("download", { timeout: 10_000 }),
       page.getByTestId("download-view").click(),

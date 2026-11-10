@@ -29,6 +29,9 @@ export interface OverviewEdge {
   dst: string;
   relation: string;
   evidenceCount: number;
+  /** P37.25 (GX-08b) — distinct folded member nodes a matrix cell
+   *  aggregates (0 = unfolded edge). */
+  memberCount: number;
   date: string | null;
   dateKind: string;
   currency: string;
@@ -47,6 +50,9 @@ export interface GraphOverview {
   positionNote: string;
   erDisclosure: string;
   release: { label: string; asOf: string | null };
+  /** P37.25 — the admin-1 place key when this doc is a per-place detail
+   *  slice of a folded (matrix) overview; null on the national doc. */
+  slice: string | null;
 }
 
 interface RawDoc {
@@ -62,6 +68,7 @@ interface RawDoc {
   cap_actions?: string[];
   position_note?: string;
   er_disclosure?: string;
+  slice?: string;
   release?: { label?: string; as_of_world?: string | null };
 }
 
@@ -98,6 +105,7 @@ export function decodeOverview(doc: unknown): GraphOverview {
       dst: ids[Number((E.t ?? [])[i])] ?? "",
       relation: at("predicates", (E.p ?? [])[i]) ?? "",
       evidenceCount: Number((E.n ?? [])[i] ?? 0),
+      memberCount: Number((E.m ?? [])[i] ?? 0),
       date: at("dates", (E.y ?? [])[i]),
       dateKind: at("dates", (E.y ?? [])[i]) ? "observed" : "undated",
       currency: at("currency", (E.cur ?? [])[i]) ?? "undated",
@@ -123,6 +131,7 @@ export function decodeOverview(doc: unknown): GraphOverview {
       label: String(d.release?.label ?? ""),
       asOf: d.release?.as_of_world ? String(d.release.as_of_world) : null,
     },
+    slice: d.slice ? String(d.slice) : null,
   };
 }
 
@@ -178,6 +187,9 @@ export interface GraphIndexEntry {
   edges: number;
   compartments: string[];
   places: string[];
+  /** P37.25 — the admin-1 place keys carrying per-place slice docs
+   *  (`web/graph/<ov>/places/<comp>.<jkey>.json`) on folded overviews. */
+  slices: string[];
 }
 
 export function decodeGraphIndex(doc: unknown): GraphIndexEntry[] {
@@ -194,6 +206,30 @@ export function decodeGraphIndex(doc: unknown): GraphIndexEntry[] {
       edges: Number(r.edges ?? 0),
       compartments: (r.compartments ?? []) as string[],
       places: (r.places ?? []) as string[],
+      slices: (r.slices ?? []) as string[],
+    };
+  });
+}
+
+export const COMPONENTS_INDEX_SCHEMA = "sig.graph-components/1";
+
+export interface ComponentsIndexEntry {
+  componentId: string;
+  size: number;
+  files: string[];
+}
+
+/** Decode one `sig.graph-components/1` index doc — fail-closed on drift. */
+export function decodeComponentsIndex(doc: unknown): ComponentsIndexEntry[] {
+  const d = doc as { schema?: string; components?: unknown[] };
+  if (d?.schema !== COMPONENTS_INDEX_SCHEMA)
+    throw new Error(`not a ${COMPONENTS_INDEX_SCHEMA} document`);
+  return (d.components ?? []).map((c) => {
+    const r = c as Record<string, unknown>;
+    return {
+      componentId: String(r.component_id ?? ""),
+      size: Number(r.size ?? 0),
+      files: (r.files ?? []) as string[],
     };
   });
 }

@@ -223,7 +223,15 @@ def test_svg_and_downloads_emit_per_compartment():
     assert b"node_id" in arts["web/graph/funding/nodes.sig_graph.csv"][0]
     idx = arts["web/graph/index.json"][0]
     assert idx["schema"] == go.INDEX_SCHEMA
-    assert {r["id"] for r in idx["overviews"]} == {"types", "supply", "funding", "operators"}
+    assert {r["id"] for r in idx["overviews"]} == {
+        "types",
+        "supply",
+        "funding",
+        "operators",
+        "access",
+        "governance",
+        "adoption",
+    }
 
 
 def test_cap_refuses_over_3000_nodes():
@@ -255,3 +263,158 @@ def test_withheld_entity_is_never_a_node():
 
 def test_page_claims_smoke():
     assert page_claims([_crow("s", "buyer", "v", "c1")])["s"][0].predicate_id == "buyer"
+
+
+# ---------------------------------------------------------------------------
+# P37.25 (K2 GX-08b) — O2 access / O5 governance / O7 adoption + components.
+# ---------------------------------------------------------------------------
+
+
+def _many_fold_labels(n: int) -> dict[str, EntityLabel]:
+    labels: dict[str, EntityLabel] = {}
+    for i in range(n * 2):
+        eid = str(uuid.uuid4())
+        labels[eid] = _label(
+            eid,
+            "agency",
+            label=f"Agency {i:03d}",
+            place_jkey="usa-ok" if i % 2 == 0 else "usa-tx",
+        )
+    return labels
+
+
+def test_access_edges_carry_the_access_kind_relation():
+    a, b = _eid(), _eid()
+    labels = {a: _label(a, "agency"), b: _label(b, "agency")}
+    rows = [_crow(a, "configured_sharing_partner", None, "c1", obj=b)]
+    arts = _build(labels, rows)
+    doc = _doc(arts, "access")
+    assert doc["dict"]["predicates"] == ["configured access to"]
+    assert len(doc["edges"]["s"]) == 1
+
+
+def test_access_degree_or_set_never_mints_an_edge():
+    a = _eid()
+    labels = {a: _label(a, "agency")}
+    rows = [
+        _crow(a, "sharing_partner_degree", "68", "c1"),
+        _crow(a, "configured_sharing_partner_set", "x;y", "c2"),
+        _crow(a, "federal_sharing_enabled", "true", "c3"),
+    ]
+    arts = _build(labels, rows)
+    doc = _doc(arts, "access")
+    assert len(doc["edges"]["s"]) == 0
+
+
+def test_access_matrix_fold_at_scale_emits_weighted_cells_and_slices():
+    labels = _many_fold_labels(go.MATRIX_MIN + 10)
+    ids = sorted(labels)
+    rows = [
+        _crow(ids[i], "configured_sharing_partner", None, f"c{i}", obj=ids[i + 1])
+        for i in range(0, len(ids) - 1, 2)
+    ]
+    arts = _build(labels, rows)
+    doc = _doc(arts, "access")
+    # the national doc is the state × state matrix — place cells only.
+    assert all(k.startswith("place:") for k in doc["nodes"]["id"])
+    assert doc["cap_actions"] and "matrix fold" in doc["cap_actions"][0]
+    # every cell carries its member weight — never a smoothed count.
+    assert sum(doc["edges"]["m"]) == len(labels)
+    # the unfolded agency-level subgraph rides the per-place slices.
+    slices = sorted(p for p in arts if "/places/" in p)
+    assert {
+        "web/graph/access/places/sig_graph.usa-ok.json",
+        "web/graph/access/places/sig_graph.usa-tx.json",
+    } <= set(slices)
+    sl = arts["web/graph/access/places/sig_graph.usa-ok.json"][0]
+    assert sl["slice"] == "usa-ok" and sl["schema"] == go.OVERVIEW_SCHEMA
+    assert any(not str(k).startswith("place:") for k in sl["nodes"]["id"])
+    idx_row = next(r for r in arts["web/graph/index.json"][0]["overviews"] if r["id"] == "access")
+    assert set(idx_row["slices"]) == {"usa-ok", "usa-tx"}
+
+
+def test_access_under_threshold_stays_node_link():
+    a, b = _eid(), _eid()
+    labels = {a: _label(a, "agency"), b: _label(b, "agency")}
+    rows = [_crow(a, "configured_sharing_partner", None, "c1", obj=b)]
+    arts = _build(labels, rows)
+    doc = _doc(arts, "access")
+    assert not doc["cap_actions"]
+    assert not any("/places/" in p for p in arts)
+
+
+def test_governance_bill_to_technology_and_body():
+    bill, leg = _eid(), _eid()
+    labels = {
+        bill: _label(bill, "bill", subject_key="bill:sb1"),
+        leg: _label(leg, "agency", label="Legislature"),
+    }
+    rows = [
+        _crow(bill, "constrains_technology", "Automated licence plate readers", "c1"),
+        _crow(bill, "enacting_body", None, "c2", obj=leg),
+        _crow(bill, "bill_jurisdiction", "Oklahoma", "c3"),
+    ]
+    arts = _build(labels, rows)
+    doc = _doc(arts, "governance")
+    rels = sorted(set(doc["dict"]["predicates"]))
+    assert rels == ["constrains technology", "enacts", "in jurisdiction"]
+
+
+def test_governance_ignores_non_instrument_kinds():
+    org = _eid()
+    labels = {org: _label(org, "org")}
+    rows = [_crow(org, "constrains_technology", "ALPR", "c1")]
+    arts = _build(labels, rows)
+    assert len(_doc(arts, "governance")["edges"]["s"]) == 0
+
+
+def test_adoption_subject_to_technology_and_predicate_fallback():
+    ag, ag2 = _eid(), _eid()
+    labels = {
+        ag: _label(ag, "agency"),
+        ag2: _label(ag2, "atlas", subject_key="atlas:us.state_abbr:OK:Tulsa PD:alpr"),
+    }
+    rows = [
+        _crow(ag, "procured_technology", "Gunshot detection", "c1"),
+        _crow(ag2, "uses_facial_recognition", "true", "c2"),
+    ]
+    arts = _build(labels, rows)
+    doc = _doc(arts, "adoption")
+    labels_dict = doc["dict"]["labels"]
+    assert "Gunshot detection" in labels_dict
+    assert "Facial Recognition" in labels_dict
+    assert len(doc["edges"]["s"]) == 2
+    assert all(r == "uses" for r in doc["dict"]["predicates"])
+
+
+def test_components_index_and_member_files_per_compartment():
+    a, b, c = _eid(), _eid(), _eid()
+    labels = {a: _label(a), b: _label(b), c: _label(c)}
+    rows = [_crow(a, "buyer", None, "c1", obj=b)]
+    arts = _build(labels, rows)
+    idx = arts["web/graph/components/sig_graph/index.json"][0]
+    assert idx["schema"] == go.COMPONENTS_INDEX_SCHEMA
+    assert idx["components"] == [
+        {"component_id": "cmp-0001", "size": 2, "files": ["cmp-0001.json"]}
+    ]
+    mem = arts["web/graph/components/sig_graph/cmp-0001.json"][0]
+    assert mem["schema"] == go.COMPONENT_SCHEMA
+    assert {m["k"] for m in mem["members"]} == {a, b}
+    # the singleton is counted, never listed (no path value).
+    assert idx["singletons"] == 0  # c has no comp mapping → default only counted via edges
+
+
+def test_components_skip_withheld_and_degree_edges():
+    a, b, c = _eid(), _eid(), _eid()
+    labels = {
+        a: _label(a),
+        b: _label(b, label=None, label_state="withheld"),
+        c: _label(c),
+    }
+    rows = [
+        _crow(a, "buyer", None, "c1", obj=b),  # withheld endpoint — never joins
+        _crow(c, "sharing_partner_degree", "9", "c2"),  # degree is not an edge
+    ]
+    arts = _build(labels, rows)
+    idx = arts["web/graph/components/sig_graph/index.json"][0]
+    assert idx["components"] == []

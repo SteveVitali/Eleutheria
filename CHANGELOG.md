@@ -24,6 +24,29 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.25 — Overview builder B (K2 GX-08b, §5.2/§6.4):** the
+  `sig.graph-overview/1` catalogue completes — O2 `access` (who can search
+  whose data; the Data Driven configured-access form today, the share-list
+  `configured_sharing_partner` claims feeding the same builder), O5
+  `governance` (laws/ordinances → jurisdictions, technologies and bodies)
+  and O7 `adoption` (agency → technology). Past `MATRIX_MIN` (200)
+  endpoints a foldable side collapses to admin-1 place cells — the state ×
+  state / state × technology weighted matrix of K2 §5.2, `member_count`
+  carried per cell, `cap_actions` recording the fold (SIG-UI-021: never a
+  national hairball). Folded overviews emit per-place
+  `sig.graph-overview/1` slice docs (`web/graph/<ov>/places/<comp>.<jkey>.json`)
+  carrying the unfolded agency-level subgraph the `/graphs/<ov>/<country>/<sub>/`
+  drill-downs render — "per-agency egos grouped by state". Share-list edges
+  file under the CC-BY-SA `portal` compartment exactly like every other
+  claim (SIG-LIC-009a, S6R-12 — never blended). The `sig.graph-components/1`
+  index + per-component `sig.graph-component/1` member files emit per
+  compartment (K2 §6.4, SIG-EXPORT-D20): weakly-connected components of
+  the publishable entity-ref graph, ≤3,000 members per file, singletons
+  counted never listed. `edges.<comp>.csv` gains the `member_count` column
+  (SIG-EXPORT-015 full fidelity); the columnar doc gains the parallel `m`
+  array; the `sig.graph-index/1` rows name the emitted `slices`. Pages stay
+  T1 zero-JS — no new `<script>`, no budget change.
+
 - **P37.22 — Entity data contract B (K2 GX-05b, §4.2 rows 8/9/11/12):** the
   `sig.entity-page/1` twin's contract-B sections are now populated — and
   the paged-kind set extends from organisations/agencies/portals to the E2
