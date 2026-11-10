@@ -24,6 +24,19 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.31 — Dated decision predicates (K7 WX-02, SIG-WATCH-007,
+  SIG-WATCH-008, ADR-244):** the claim spine can now carry the dated
+  decision facts the watch reads — `meeting_date` on agenda items and the
+  Contract renewal triple `auto_renews` / `notice_window_days` /
+  `renewal_term_months` (ontology registry rows + the `Contract` schema
+  slots, regenerated artifacts committed). The procurement connector's
+  agenda normaliser emits `meeting_date` as a claim from the platform's
+  own record, the §11.11 `Contract` surface carries the stated renewal
+  triple, and the P07.1 parser layer (`parsing.renewals` over the
+  versioned `renewal_clauses.toml` pattern set) reads the same triple
+  verbatim out of captured contract documents — byte-range located and
+  Part VIII screened. A moved meeting or revised term supersedes by new
+  claims — append-only, never an edit.
 - **P37.30 — Evidence recommender repair (K7 WX-05, F-485, SIG-WATCH-007,
   SIG-UI-027a/b/c):** the evidence recommender's ranking is now
   subject-scoped and its scores real. `web/evidence.json` artifacts carry
