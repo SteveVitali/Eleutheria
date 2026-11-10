@@ -15,7 +15,7 @@ test("the static view switch links carry the versioned release state on all thre
   for (const [path, current] of [
     ["/search/", "view-switch-list"],
     ["/map/", "view-switch-map"],
-    ["/network/", "view-switch-network"],
+    ["/explore/", "view-switch-network"],
   ] as const) {
     await page.goto(path);
     const nav = page.getByTestId("view-switch");
@@ -50,7 +50,7 @@ test("map: unlocated records remain navigable as bounded indicators without JS",
 });
 
 test("network: edge supporting claims are visible without JS", async ({ page }) => {
-  await page.goto("/network/");
+  await page.goto("/explore/");
   // The static edge lists name their backing claims in a <details> — an edge is
   // never just a count (§3.1), and the three access types stay separate lists.
   const evidence = page.getByTestId("access-edge-evidence");

@@ -2,7 +2,7 @@
   "name": "@sig/web",
   "version": "0.1.0",
   "private": true,
-  "description": "SIG public web surface (Astro static-first, zero-JS-by-default) \u2014 the Phase-15 shell and the epistemic visual language every other surface consumes (SIG-UI-036/037). TypeScript is confined to this package (SIG-ENG-010).",
+  "description": "SIG public web surface (Astro static-first, zero-JS-by-default) — the Phase-15 shell and the epistemic visual language every other surface consumes (SIG-UI-036/037). TypeScript is confined to this package (SIG-ENG-010).",
   "license": "Apache-2.0",
   "type": "module",
   "engines": {
@@ -43,23 +43,21 @@
   "dependencies": {
     "@astrojs/preact": "6.0.5",
     "astro": "7.3.5",
+    "graphology": "0.26.0",
     "maplibre-gl": "6.9.0",
     "pmtiles": "4.5.0",
     "preact": "10.29.8",
-    "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "sigma": "3.0.3"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
-    "@astrojs/react": "6.0.5",
     "@axe-core/playwright": "4.13.0",
     "@lhci/cli": "0.15.1",
     "@playwright/test": "1.62.1",
     "@protomaps/basemaps": "^5.7.2",
     "@types/node": "22.10.2",
-    "@types/react": "19.3.0",
-    "@types/react-dom": "19.3.0",
     "license-checker-rseidelsohn": "5.0.1",
+    "preact-render-to-string": "6.8.2",
     "typescript": "5.9.3",
     "vitest": "4.1.11"
   }

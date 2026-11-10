@@ -25,7 +25,7 @@ test.describe("the one dossier template (SIG-UI-069)", () => {
     // The explore bar's three links.
     await expect(page.getByTestId("dossier-explore-bar")).toBeVisible();
     await expect(page.getByTestId("explore-map")).toHaveAttribute("href", /\/map\//);
-    await expect(page.getByTestId("explore-network")).toHaveAttribute("href", /\/network\//);
+    await expect(page.getByTestId("explore-network")).toHaveAttribute("href", /\/explore\//);
     await expect(page.getByTestId("explore-search")).toHaveAttribute("href", /\/search\//);
     // The twelve sections still render in order.
     const ids = await page

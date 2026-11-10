@@ -354,9 +354,9 @@
     },
     {
       "file": "src/lib/workspace-state/registry.ts",
-      "token": "/network/",
+      "token": "/explore/",
       "count": 1,
-      "reason": "P36.21: SURFACE_PATHS registry constant — the graph surface's interim route id until the GX-09a rename row"
+      "reason": "P37.26 (GX-09a): SURFACE_PATHS registry constant — the graph surface's canonical route id (the P36.21 interim /network/ seat retargeted by the rename row)"
     },
     {
       "file": "src/lib/workspace-state/registry.ts",
@@ -408,9 +408,9 @@
     },
     {
       "file": "src/internal/component-kit/index.astro",
-      "token": "/network/",
+      "token": "/explore/",
       "count": 3,
-      "reason": "P36.22: internal component-kit harness fixture href — card/step/table spec data wrapped by withBase() inside Card.astro/DataTable.astro, never emitted raw"
+      "reason": "P37.26 (GX-09a): internal component-kit harness fixture href — card/step/table spec data wrapped by withBase() inside Card.astro/DataTable.astro, never emitted raw (the P36.22 /network/ fixture hrefs retargeted)"
     },
     {
       "file": "src/internal/component-kit/index.astro",
@@ -1134,9 +1134,9 @@
     },
     {
       "file": "src/lib/workspace-state.ts",
-      "token": "/network/",
+      "token": "/explore/",
       "count": 1,
-      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P37.26 (GX-09a): canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction (the P36.66a /network/ seat retargeted)"
     },
     {
       "file": "src/pages/403.astro",
@@ -1235,10 +1235,10 @@
       "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
-      "file": "src/pages/network.astro",
-      "token": "/network/",
+      "file": "src/pages/explore/index.astro",
+      "token": "/explore/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P37.26 (GX-09a): the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw (the P36.66a /network/ seat retargeted)"
     },
     {
       "file": "src/pages/search.astro",

@@ -54,10 +54,10 @@ test.describe("interactive map island (AC1, AC3)", () => {
   });
 });
 
-test.describe("interactive network island (AC1)", () => {
-  test("hydrates and re-focuses the ego network on node selection", async ({ page }) => {
-    await page.goto("/network/");
-    const island = page.getByTestId("network-island");
+test.describe("interactive explore island (AC1)", () => {
+  test("mounts the overview canvas and selects a node", async ({ page }) => {
+    await page.goto("/explore/");
+    const island = page.getByTestId("explore-island");
     await expect(island).toBeVisible();
     // P34.15 (SIG-IDENT-030 by abstention): no centrality statistic renders —
     // the detail panel shows edges, never the withdrawn ranking.

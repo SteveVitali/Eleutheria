@@ -211,11 +211,19 @@ export function redirectRules(): RedirectRule[] {
   const conf = readFileSync(join(DIST_DIR, "redirects.conf"), "utf-8");
   const rules: RedirectRule[] = [];
   for (const line of conf.split("\n")) {
-    const m = /^location (= )?(\S+) \{\s*(.+?)\s*\}/.exec(line);
+    // Greedy body match — a query-carrying 3xx renders TWO `}` on the line
+    // (`if ($args) { return N <t>&$args; } return N <t>;`, P37.26's
+    // /network/ → /explore/?v=2&overview=access rule); both legs carry the
+    // same target, so the inner-if prefix is unwrapped and the trailing
+    // plain return is the parsed rule.
+    const m = /^location (= )?(\S+) \{\s*(.+)\}/.exec(line);
     if (!m) continue;
-    const body = m[3];
-    const ret = /^return (\d+)(?:\s+(\S+?)\$is_args\$args)?;/.exec(body);
-    const tf = /^try_files (\S+) =404;/.exec(body);
+    const innerIf = /^if \(\$args\) \{ return \d+ \S+?&\$args; \}\s*/.exec(m[3]!);
+    const body = innerIf ? m[3]!.slice(innerIf[0].length) : m[3];
+    // The target is optional and may carry its own query (P37.26) — capture
+    // it whole; callers read the path half and `$is_args$args` is stripped.
+    const ret = /^return (\d+)(?:\s+(\S+?))?;/.exec(body!);
+    const tf = /^try_files (\S+) =404;/.exec(body!);
     rules.push({
       from: m[2],
       match: m[1] ? "exact" : "prefix",

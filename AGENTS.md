@@ -23,7 +23,7 @@ A staged pipeline, each stage a plain CLI (SIG-ENG-013), over one canonical stor
   `api/` (FastAPI) serves the spine read-only (plus release-namespaced search and the
   deliberately non-operational intake receiver) → `web/` (Astro, static-first) renders the public
   surface from release bytes — zero-JS on public content pages, with named bounded islands
-  (`/curate/**` per ADR-068; `/map/`, `/network/`, `/search/` per ADR-097, budgeted per ADR-134).
+  (`/curate/**` per ADR-068; `/map/`, `/explore/`, `/search/` per ADR-097/ADR-242, budgeted per ADR-134).
 - `ontology/` is the single LinkML source of truth; `db` DDL, JSON Schema, OWL/SHACL and Pydantic
   are **generated** from it. `orchestration/`, `tasks/`, `policy/`, `evidence/`, `ops/` are the
   cross-cutting glue (scheduling, contribution-back, gates, the OCFL evidence store, runtime).
@@ -129,7 +129,8 @@ Every Python package is `<pkg>/src/<pkg>/…` and exposes a CLI: `uv run python 
    sources, queue, methodology, …) must show every fact with JS off (the `nojs-parity` spec diffs
    `main` text minus `[data-enhancement]`) and may load only allow-listed `type="module"`
    enhancement entries (`web/tests/e2e/t1-module-entries.json` — empty until UXK0-4 lands one).
-   **T2 explore** (`/map/`, `/network/`, `/search/` today; `/explore/` and the `/s/<pub>/` forms
+   **T2 explore** (`/map/`, `/explore/`, `/search/` today — `/network/` 301s to
+   `/explore/?v=2&overview=access` since P37.26/ADR-242; the `/s/<pub>/` forms
    are registered ahead of their rows) may be app-like but must keep URL state
    (`sig.workspace-state/2` per ADR-155; `/1` ships today), a server-rendered first paint, a
    named no-JS equivalent in the registry, and a JS-off notice on stateful URLs.

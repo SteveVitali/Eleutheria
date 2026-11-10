@@ -96,8 +96,8 @@ describe("type ordering — most-specific wins, never first-match", () => {
     expect(classified("/s/p-abc123/dossier/x/").type).toBe("T1");
   });
 
-  it("/network/ classifies as the T2 surface it currently is", () => {
-    expect(classified("/network/").type).toBe("T2");
+  it("/explore/ classifies T2; the retired /network/ carries no row", () => {
+    expect(classifyRoute("/network/").ok).toBe(false);
     expect(classified("/map/").type).toBe("T2");
     expect(classified("/search/").type).toBe("T2");
     expect(classified("/explore/").type).toBe("T2");

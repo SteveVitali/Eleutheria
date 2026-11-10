@@ -66,7 +66,7 @@ top_level = [
   "redirects.conf",      # the ONE generated redirect include (P36.35 / SIG-UI-058) — a serving-config artifact the publish path carries into conf/
   "map",
   "methodology",
-  "network",
+  "explore",             # /explore/ — the T2 graph explorer (P37.26 / K2 GX-09a; supersedes /network/)
   "research-queue",
   "search",
   "sources",             # the interim sources-and-licences page (P34.17 / R1.8)
@@ -120,7 +120,7 @@ required = [
   "graphs",              # ditto — the T1 overview pages emit in fixtures mode too
   "map",
   "methodology",
-  "network",
+  "explore",             # /explore/ — the T2 graph explorer (P37.26 / K2 GX-09a; supersedes /network/)
   "research-queue",
   "search",
   "sources",

@@ -304,13 +304,16 @@ function legacyRules(inputs: RedirectInputs): RedirectRule[] {
       });
     }
   }
-  // `/network/` → `/explore/` — emitted once GX-09a's explorer exists and
-  // the interim network page retired.
+  // `/network/` → `/explore/?v=2&overview=access` (P37.26 / GX-09a, K13
+  // C-16) — emitted once the explorer exists and the interim network page
+  // retired. The access overview is the successor surface: what /network/
+  // showed (the sharing/access network) is what `overview=access` opens on,
+  // and its static facts live at `/graphs/access/`.
   if (!emitted.has("/network/") && emitted.has("/explore/")) {
     out.push({
       from: "/network/",
       status: 301,
-      target: "/explore/",
+      target: "/explore/?v=2&overview=access",
       family: "legacy",
       kind: "moved",
       note: "the graph explorer supersedes the interim network island",
@@ -398,9 +401,18 @@ export function renderRedirectsConf(
   for (const r of rules) {
     const note = r.note ? `  # ${r.note}` : "";
     if (r.status === 301 || r.status === 302) {
-      lines.push(
-        `location = ${r.from} { return ${r.status} ${r.target}$is_args$args; }${note}`,
-      );
+      if (r.target!.includes("?")) {
+        // A query-carrying target (P37.26's `/explore/?v=2&overview=access`):
+        // `$is_args$args` would double the `?` — the selectors still ride
+        // through, merged onto the target's own query with `&$args`.
+        lines.push(
+          `location = ${r.from} { if ($args) { return ${r.status} ${r.target}&$args; } return ${r.status} ${r.target}; }${note}`,
+        );
+      } else {
+        lines.push(
+          `location = ${r.from} { return ${r.status} ${r.target}$is_args$args; }${note}`,
+        );
+      }
     } else if (r.status === 410 && r.from === "/task/new/") {
       lines.push(`location ${r.from} { return 410; }${note}`);
     } else if (r.status === 410) {

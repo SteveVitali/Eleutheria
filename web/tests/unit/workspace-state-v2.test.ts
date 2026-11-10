@@ -422,12 +422,12 @@ describe("surface/vocabulary mapping", () => {
     expect(islandToViewValue("network")).toBe("graph");
     expect(viewValueToIsland("graph")).toBe("network");
     expect(viewValueToIsland("table")).toBe("list");
-    expect(SURFACE_PATHS.graph).toBe("/network/");
+    expect(SURFACE_PATHS.graph).toBe("/explore/");
   });
 
   it("resolves the surface for a path, including /s/<pub>/ prefixes", () => {
     expect(surfaceForPath("/map/")).toBe("map");
-    expect(surfaceForPath("/network/")).toBe("graph");
+    expect(surfaceForPath("/explore/")).toBe("graph");
     expect(surfaceForPath("/search/")).toBe("search");
     expect(surfaceForPath("/s/p-abc/map/")).toBe("map");
     expect(surfaceForPath("/dossier/x/")).toBeNull();
@@ -466,7 +466,7 @@ describe("cite this view (K0 §4.5, J3 §8.1 interim)", () => {
       view: "network",
     };
     const href = workspaceHref2(island);
-    expect(href).toBe("/network/?v=2&view=graph&focus=a%3Ab%3Ac");
+    expect(href).toBe("/explore/?v=2&view=graph&focus=a%3Ab%3Ac");
   });
 });
 

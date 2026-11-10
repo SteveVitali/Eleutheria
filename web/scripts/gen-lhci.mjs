@@ -138,7 +138,7 @@ const EXPORT_URLS = [
   "/sources/runs/index.html",
   "/curate/index.html",
   "/map/index.html",
-  "/network/index.html",
+  "/explore/index.html",
   "/search/index.html",
   "/releases/index.html",
   "/research-dossier/index.html",
@@ -288,10 +288,10 @@ function assertMatrix(source = "fixtures") {
     "/map/",
   );
   surfaceBlocks(
-    "T2 graph (/network/ today, /explore/ when it lands) — script ≤ 120 KiB, document ≤ 100 KiB, perf ≥ 0.90, a11y 1.0, LCP ≤ 2.0 s, CLS ≤ 0.05, TBT ≤ 200 ms.",
+    "T2 graph (/explore/ — the /network/ 301 successor since P37.26) — script ≤ 120 KiB, document ≤ 100 KiB, perf ≥ 0.90, a11y 1.0, LCP ≤ 2.0 s, CLS ≤ 0.05, TBT ≤ 200 ms.",
     ".*/(network|explore)/.*",
     budgets.t2Surfaces.graph,
-    "/network/",
+    "/explore/",
   );
   surfaceBlocks(
     "T2 search — script ≤ 60 KiB (ratified; the recorded measured gap bounds today's ≈ 72 KB React runtime at 80 KiB error — D-P35.51-2), document ≤ 100 KiB, perf ≥ 0.95, a11y 1.0, LCP ≤ 1.5 s, CLS ≤ 0.02, TBT ≤ 100 ms.",

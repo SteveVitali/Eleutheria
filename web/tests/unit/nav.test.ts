@@ -20,7 +20,7 @@ const PUBLIC_ROUTES = new Set([
   "dossier/",
   "dossier/unplaced/",
   "map/",
-  "network/",
+  "explore/",
   "search/",
   "watch/",
   "sources/",

@@ -36,8 +36,15 @@ const deps = JSON.parse(readFileSync(join(WEB, "runtime-deps.json"), "utf8"));
 if (deps.schema !== "sig.runtime-deps/1") fail("runtime-deps.json schema drift");
 const allowed = new Set(Object.keys(deps.browser ?? {}));
 
-// 1 — the island graph's bare specifiers
-const roots = [join(WEB, "src", "islands", "MapIsland.tsx"), join(WEB, "src", "islands", "map")];
+// 1 — the island graphs' bare specifiers (P37.26: the /explore/ island joins
+// the gate — every bare module specifier in an island graph must be a
+// `browser` allow-list entry or a relative import).
+const roots = [
+  join(WEB, "src", "islands", "MapIsland.tsx"),
+  join(WEB, "src", "islands", "map"),
+  join(WEB, "src", "islands", "ExploreIsland.tsx"),
+  join(WEB, "src", "islands", "explore"),
+];
 const files = [];
 const stack = [...roots];
 while (stack.length) {
@@ -107,6 +114,19 @@ if (existsSync(searchHtmlPath)) {
     if (/react-dom|createPortal|preact\/compat/.test(body)) {
       fail(`${f} carries a react/compat signature — the /search/ bundle must not include React (SIG-UI-097)`);
     }
+  }
+}
+// P37.26 (GX-09a, UXK0-6 last — the BUNDLE-CONTENT gate): with the /network/
+// migration complete, react must appear in NO emitted public bundle — not
+// just the migrated pages'. Every `dist/_astro/*.js` chunk is scanned for a
+// react-runtime signature (`react-dom`, `createPortal`, `preact/compat`,
+// react's shared-internals marker), so a future page or island can never
+// re-admit react bytes silently.
+const reactSignatures = /react-dom|createPortal|preact\/compat|__SECRET_INTERNALS_DO_NOT_USE/;
+for (const f of readdirSync(astroDir).filter((f) => f.endsWith(".js"))) {
+  const body = readFileSync(join(astroDir, f), "utf8");
+  if (reactSignatures.test(body)) {
+    fail(`${f} carries a react/compat signature — no public bundle may include React (UXK0-6, ADR-242)`);
   }
 }
 // The vendored split: exactly the pinned files.

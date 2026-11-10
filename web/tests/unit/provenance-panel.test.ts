@@ -11,8 +11,8 @@
  * ONE contract → identical field set and wording wherever it renders.
  */
 
-import { renderToStaticMarkup } from "react-dom/server";
-import { createElement } from "react";
+import { renderToString } from "preact-render-to-string";
+import { createElement } from "preact";
 import { describe, expect, it } from "vitest";
 
 import ProvenancePanel from "../../src/components/ProvenancePanel";
@@ -32,7 +32,7 @@ import { STATEMENT_FIXTURES } from "../../src/lib/statements-fixture";
 import { BASE, withBase } from "../../src/lib/paths";
 
 const render = (panel: Parameters<typeof ProvenancePanel>[0]["panel"], anchor = true) =>
-  renderToStaticMarkup(createElement(ProvenancePanel, { panel, anchor }));
+  renderToString(createElement(ProvenancePanel, { panel, anchor }));
 
 describe("binding-state wording — J3 §5.1 verbatim", () => {
   const base: StatementRow = { claim_id: "c1", source_id: "src_a" };

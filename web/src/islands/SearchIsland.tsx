@@ -8,10 +8,10 @@
  *
  * P36.40 (K3 SRCH-05, absorbs UXK0-6 for `/search/`): migrated to **Preact**
  * (SIG-UI-097 — React must never reach the /search/ bundle). The mount is
- * `client:only="preact"` — a `.tsx` island resolves to BOTH installed
- * renderers and Astro's SSR check is ambiguous while @astrojs/react
- * coexists on /network/ (GX-09a removes it; the P36.37 map precedent).
- * The reserved box lives in the page markup the island replaces.
+ * `client:only="preact"` (the P36.37 map precedent; P37.26/ADR-242 retired
+ * @astrojs/react entirely — Preact is now the only island runtime and the
+ * bundle-content gate fails the build on any react byte). The reserved box
+ * lives in the page markup the island replaces.
  *
  * PROGRESSIVE ENHANCEMENT, NOT REPLACEMENT (SIG-UI-050): this island hydrates ONLY
  * on `/search/`; the released-corpus GET forms and the static browse index
@@ -45,7 +45,8 @@ import {
   viewHref,
 } from "../lib/workspace-state/index";
 // The Preact-side workspace adapter (P36.37) is surface-generic — "list" is
-// this page's registered view; the React twin stays for /network/'s row.
+// this page's registered view (P37.26 retired the React /network/ twin; the
+// adapter now serves /map/, /explore/ and /search/).
 import { useMapWorkspace as useWorkspaceState } from "./map/workspace";
 import { withBase } from "../lib/paths";
 // Registering `<sig-typeahead>` rides this island's own content-hashed

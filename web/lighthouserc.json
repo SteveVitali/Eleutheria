@@ -16,8 +16,8 @@
         "/research-dossier/okc-alpr/index.html",
         "/entity/index.html",
         "/coverage-metrics/index.html",
+        "/explore/index.html",
         "/map/index.html",
-        "/network/index.html",
         "/search/index.html",
         "/curate/index.html"
       ],
@@ -200,7 +200,7 @@
           }
         },
         {
-          "//": "T2 graph (/network/ today, /explore/ when it lands) — script ≤ 120 KiB, document ≤ 100 KiB, perf ≥ 0.90, a11y 1.0, LCP ≤ 2.0 s, CLS ≤ 0.05, TBT ≤ 200 ms.",
+          "//": "T2 graph (/explore/ — the /network/ 301 successor since P37.26) — script ≤ 120 KiB, document ≤ 100 KiB, perf ≥ 0.90, a11y 1.0, LCP ≤ 2.0 s, CLS ≤ 0.05, TBT ≤ 200 ms.",
           "matchingUrlPattern": ".*/(network|explore)/.*",
           "assertions": {
             "resource-summary:script:size": [

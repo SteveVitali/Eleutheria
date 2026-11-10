@@ -9,11 +9,13 @@
  *
  * One contract in (`sig.provenance-panel/1` — built once per claim by
  * `lib/provenance-panel.ts`), one markup out: a zero-JS `<details>` disclosure
- * whose `<dl>` carries J3 §5.2's verbatim field set in order. React renders it
+ * whose `<dl>` carries J3 §5.2's verbatim field set in order. Preact renders it
  * to static HTML at build time on content pages (no client directive ⇒ no
- * shipped script), and the same component mounts inside the `/network/` and
- * `/map/` islands — UXR-33's "one contract" rule: a divergent wording on any
- * surface is a defect, not a variant.
+ * shipped script; P37.26/ADR-242 completed the UXK0-6 migration — react is
+ * gone from every public bundle), and its /map/ island twin
+ * (`islands/map/claim-panels.tsx`) ports the same markup — UXR-33's "one
+ * contract" rule: a divergent wording on any surface is a defect, not a
+ * variant.
  *
  * The `#claim-<id>` anchor (J3 §5.1) lives on the panel itself — `anchor`
  * writes `id="claim-<claim_id>"`. Surfaces that repeat a claim (edge lists,
@@ -22,7 +24,8 @@
  * viewer.
  */
 
-import type { ReactElement, ReactNode } from "react";
+/** @jsxImportSource preact */
+import type { ComponentChildren, JSX } from "preact";
 // P36.23 (UXK14-3b): the panel's visual rules ride the GLOBAL epistemic
 // sheet (`styles/epistemic.css`, loaded by every layout) — a module-level
 // stylesheet import resolves through the shared facade chunk and lands an
@@ -41,7 +44,7 @@ interface Props {
   anchor?: boolean;
 }
 
-function Field({ label, children }: { label: string; children: ReactNode }): ReactElement {
+function Field({ label, children }: { label: string; children: ComponentChildren }): JSX.Element {
   return (
     <div className="pp-field">
       <dt>{label}</dt>
@@ -50,7 +53,7 @@ function Field({ label, children }: { label: string; children: ReactNode }): Rea
   );
 }
 
-export default function ProvenancePanel({ panel, anchor = true }: Props): ReactElement {
+export default function ProvenancePanel({ panel, anchor = true }: Props): JSX.Element {
   const claimId = panel.claim_id;
   const [src, capture, upstream, vo, epi, con, equiv] = [
     panel.source,

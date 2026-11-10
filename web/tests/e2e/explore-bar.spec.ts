@@ -26,7 +26,7 @@ test.describe("the dossier explore bar (SIG-UI-126)", () => {
     expect(map).toContain("view=map");
     expect(map).toContain(`jurisdiction=${OK_JKEY_ENC}`);
     const graph = await page.getByTestId("explore-network").getAttribute("href");
-    expect(graph).toContain("/network/?v=2");
+    expect(graph).toContain("/explore/?v=2");
     expect(graph).toContain("view=graph");
     expect(graph).toContain(`jurisdiction=${OK_JKEY_ENC}`);
     const search = await page.getByTestId("explore-search").getAttribute("href");
@@ -49,7 +49,7 @@ test.describe("the dossier explore bar (SIG-UI-126)", () => {
     await expect(page.getByTestId("facet-not-applied")).toContainText(
       "jurisdiction filter",
     );
-    await page.goto(`/network/?v=2&view=graph&jurisdiction=${OK_JKEY_ENC}`);
+    await page.goto(`/explore/?v=2&view=graph&jurisdiction=${OK_JKEY_ENC}`);
     await expect(page.getByTestId("facet-not-applied")).toContainText(
       "jurisdiction filter",
     );

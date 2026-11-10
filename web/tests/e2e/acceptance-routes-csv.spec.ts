@@ -47,7 +47,11 @@ const EXPECTED: Record<string, { disposition: Disposition; note: string }> = {
   R14: { disposition: "resolves", note: "map (T2)" },
   R15: { disposition: "resolves", note: "map style.json" },
   R16: { disposition: "resolves", note: "methodology" },
-  R17: { disposition: "resolves", note: "network (T2)" },
+  R17: {
+    disposition: "retired",
+    note: "/network/ 301s to /explore/?v=2&overview=access (P37.26 / GX-09a)",
+  },
+  R37: { disposition: "resolves", note: "explore (T2 graph)" },
   R18: { disposition: "resolves", note: "research queue" },
   R19: { disposition: "resolves", note: "search (T2)" },
   R20: { disposition: "resolves", note: "style-guide is a public surface" },

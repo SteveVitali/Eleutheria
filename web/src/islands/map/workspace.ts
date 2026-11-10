@@ -4,8 +4,9 @@
 
 /**
  * P36.37 — the Preact-side adapter for `sig.workspace-state/2` on the `/map/`
- * surface (the React twin `islands/workspace.ts` keeps serving the not-yet-
- * migrated islands). Same contract: parse `location.search` at mount, mirror
+ * surface. P37.26 (ADR-242): the React twin `islands/workspace.ts` retired
+ * with the /network/ island — this adapter now serves `/map/`, `/explore/`
+ * and `/search/`. Same contract: parse `location.search` at mount, mirror
  * committed state into `history` so Back/Forward restore it (SIG-UI-093),
  * and surface the parse receipts + unapplied-parameter names (SIG-UI-060).
  * SSR-safe: on the server it returns the seeded default so the `client:idle`

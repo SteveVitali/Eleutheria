@@ -44,8 +44,8 @@ export const T2_ROBOTS_CONTENT = "noindex,follow";
 /**
  * Mint the snapshot-pinned cite-this-view form: `/s/<pub>/<surface>/?v=2&…`
  * with the caller's state serialised. `surface` resolves its route through
- * the registry (`/map/`, `/network/`, `/search/`), so a later route rename
- * (GX-09a's `/explore/`) lands here in one place. `state` may be null for
+ * the registry (`/map/`, `/explore/`, `/search/` — P37.26/GX-09a renamed the
+ * graph surface to `/explore/` here in one place). `state` may be null for
  * the static affordance, which mints the base form.
  */
 export function citeViewHref(

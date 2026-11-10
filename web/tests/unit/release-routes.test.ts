@@ -19,7 +19,7 @@ describe("releaseRoutes — the served-route manifest (SIG-UI-051)", () => {
       "",
       "dossier/",
       "map/",
-      "network/",
+      "explore/",
       "search/",
       "watch/",
       "sources/",

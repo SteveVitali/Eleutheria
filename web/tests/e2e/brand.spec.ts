@@ -80,7 +80,7 @@ test("the brand's dashed edge is never an epistemic legend symbol (K14 §4.12)",
   expect(offMark, "the brand dash appears only inside the wordmark glyph").toBe(0);
   // On the T2 network page the epistemic legend edges keep their own dash
   // styles — distinct from the brand's 6 4.
-  await page.goto("/network/");
+  await page.goto("/explore/");
   const outside = await page.evaluate(() => {
     const dashed = [...document.querySelectorAll("line[stroke-dasharray='6 4']")];
     return dashed.filter((l) => !l.closest("svg.sig-wordmark__glyph")).length;

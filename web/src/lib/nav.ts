@@ -70,7 +70,7 @@ export const NAV_SECTIONS: NavSection[] = [
     landing: "map/",
     items: [
       { label: "Map", route: "map/" },
-      { label: "Graph explorer", route: "network/" },
+      { label: "Graph explorer", route: "explore/" },
       { label: "Overview graphs", route: "graphs/" },
       { label: "Search", route: "search/" },
       { label: "Disagreements", route: "disagreements/" },

@@ -143,7 +143,7 @@ export const JURISDICTION_DOSSIER_PAGES = pathsOf(
 export const PHASE15_SURFACES = {
   dossier: "/dossier/oklahoma-city/",
   map: "/map/",
-  network: "/network/",
+  explore: "/explore/",
   watch: "/watch/",
   evidence_recommender: "/watch/",
   evidence_viewer: "/evidence/claim/active-device-count/",

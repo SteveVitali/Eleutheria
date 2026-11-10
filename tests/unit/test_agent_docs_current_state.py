@@ -61,7 +61,7 @@ def test_root_agents_zero_js_is_scoped_to_public_content_pages() -> None:
     root = _read("AGENTS.md")
     # The bounded-island state must be stated, not implied.
     assert "public content pages" in root or "public *content* pages" in root
-    for island in ("/map/", "/network/", "/search/", "/curate/**"):
+    for island in ("/map/", "/explore/", "/search/", "/curate/**"):
         assert island in root, f"public island {island} dropped from root guidance"
     for adr in ("ADR-068", "ADR-097", "ADR-134"):
         assert adr in root, f"governing ADR {adr} dropped from root guidance"
@@ -73,7 +73,7 @@ def test_root_agents_zero_js_is_scoped_to_public_content_pages() -> None:
 def test_web_agents_names_all_island_exceptions_and_node_floor() -> None:
     web = _read("web/AGENTS.md")
     assert "the only exception" not in web
-    for island in ("/map/", "/network/", "/search/"):
+    for island in ("/map/", "/explore/", "/search/"):
         assert island in web, f"public island {island} dropped from web guidance"
     assert "ADR-097" in web and "ADR-134" in web and "ADR-068" in web
     # The toolchain ranges the guidance states are the ones web/package.json

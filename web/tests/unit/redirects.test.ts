@@ -26,7 +26,6 @@ const EMITTED = new Set([
   "/dossier/bd/",
   "/dossier/unresolved/",
   "/sources/",
-  "/network/",
   "/data-freshness/",
   "/explore/",
 ]);
@@ -157,10 +156,46 @@ describe("fixed legacy list + handles", () => {
     ).toThrow(/task\/new/);
   });
 
-  it("live pages outrank the fixed list — /data-freshness/ and /network/ carry no rule while emitted", () => {
+  it("live pages outrank the fixed list — /data-freshness/ carries no rule while emitted", () => {
     const rules = byFrom(redirectRules(inputs()));
     expect(rules.has("/data-freshness/")).toBe(false);
+  });
+
+  it("/network/ 301s to the query-carrying /explore/ successor (P37.26 / GX-09a, K13 C-16)", () => {
+    const rules = byFrom(redirectRules(inputs()));
+    // /network/ is no longer emitted — the legacy rule fires on the
+    // access overview (the successor surface for what /network/ showed).
+    expect(rules.get("/network/")).toMatchObject({
+      status: 301,
+      family: "legacy",
+      target: "/explore/?v=2&overview=access",
+    });
+    const hit = resolveRequest(redirectRules(inputs()), "/network/");
+    expect(hit?.status).toBe(301);
+    expect(hit?.target).toBe("/explore/?v=2&overview=access");
+  });
+
+  it("a stray /network/ emission suppresses the rule — the build fails on the unclassified route", () => {
+    const rules = byFrom(
+      redirectRules(inputs({ emittedRoutes: new Set(["/network/", "/explore/"]) })),
+    );
     expect(rules.has("/network/")).toBe(false);
+  });
+
+  it("the query-carrying 301 renders the if-$args merge branch, never a doubled ?", () => {
+    const rules = redirectRules(inputs());
+    const conf = renderRedirectsConf(rules, {
+      jurisdictions: 0,
+      entities: 0,
+      handles: 0,
+      routes: EMITTED.size,
+    });
+    // Selectors ride through merged onto the target's own query (`&$args`),
+    // never `$is_args$args` — that would double the `?`.
+    expect(conf).toContain(
+      "location = /network/ { if ($args) { return 301 /explore/?v=2&overview=access&$args; } return 301 /explore/?v=2&overview=access; }",
+    );
+    expect(conf).not.toContain("/explore/?v=2&overview=access$is_args$args");
   });
 
   it("retired source + existing successors → the /data-freshness/ map fires (K9 C-11)", () => {

@@ -3,11 +3,13 @@
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
 // P36.37 — the Preact twin of `components/FocusClaimPanels.tsx` +
-// `components/ProvenancePanel.tsx` for the /map/ app (SIG-UI-083/097). The
-// React originals still serve the not-yet-migrated /network/ island; this is
-// the same `sig.provenance-panel/1` contract and the same markup, ported —
-// divergent wording would be a defect, not a variant (UXR-33). Loaded lazily
-// by MapApp only when a selected record carries embedded statements.
+// `components/ProvenancePanel.tsx` for the /map/ app (SIG-UI-083/097).
+// P37.26 (ADR-242) retired the /network/ island and deleted the React
+// originals — the shared `components/ProvenancePanel.tsx` is now Preact and
+// this twin keeps the lazy focus-panel mount. Same
+// `sig.provenance-panel/1` contract, same markup — divergent wording would
+// be a defect, not a variant (UXR-33). Loaded lazily by MapApp only when a
+// selected record carries embedded statements.
 /** @jsxImportSource preact */
 import type { ComponentChildren, JSX } from "preact";
 import {

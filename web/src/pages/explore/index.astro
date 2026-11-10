@@ -1,0 +1,473 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The graph explorer (K2 GX-09a / P37.26, ADR-242; the /network/ successor —
+// K13 C-16: the interim page 301s here onto `?v=2&overview=access`). T2, the
+// third named explore surface: a Preact + sigma island in the reserved SSR
+// box loads the emitted `sig.graph-overview/1` docs, while the static half
+// carries the named no-JS equivalents — the overview index with the default
+// overview's figure + adjacency preview, the access-edge lists and the
+// precomputed access-path hop lists (the same lists /network/ carried —
+// they remain the source of truth, SIG-UI-037).
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EmptyState from "../../components/EmptyState.astro";
+import ViewSwitch from "../../components/ViewSwitch.astro";
+import NoJsStateNotice from "../../components/NoJsStateNotice.astro";
+import CiteThisView from "../../components/CiteThisView.astro";
+import {
+  ACCESS_EDGE_TYPES,
+  ACCESS_EDGE_STYLES,
+  DEFAULT_ACCESS_EDGE_FILTER,
+  edgeTemporal,
+  EGO_EDGE_LIMIT,
+  filterAccessEdges,
+  isCurrentEdge,
+  pathConfidence,
+  pathHopCount,
+  pathIsHeadline,
+  pathIsSpeculative,
+  pathOrgs,
+  pathSource,
+  pathTarget,
+  pathTemporalStatus,
+  SPECULATIVE_HOP_THRESHOLD,
+} from "../../lib/network";
+import NetworkEdgeItem from "../../components/NetworkEdgeItem.astro";
+import ProvenancePanelShell from "../../components/ProvenancePanelShell.astro";
+import {
+  getGraphIndex,
+  getGraphOverview,
+  getNetwork,
+  getNetworkFocusEntityId,
+  getLatestReleaseTarget,
+  getStatementIndex,
+  capRows,
+} from "../../lib/data";
+import { panelForClaim } from "../../lib/provenance-panel";
+import type { ProvenancePanelData, StatementRow } from "../../lib/provenance-panel";
+import { withBase } from "../../lib/paths";
+import ExploreIsland from "../../islands/ExploreIsland";
+import type { ExploreOverviewEntry } from "../../islands/ExploreIsland";
+import "../../styles/islands.css";
+
+// The default overview — the /network/ 301 lands on `?v=2&overview=access`
+// (K13 C-16), so the access overview is the first-paint figure and the
+// island's default too.
+const DEFAULT_OVERVIEW = "access";
+const OVERVIEW_INDEX = getGraphIndex();
+const OVERVIEWS: ExploreOverviewEntry[] = OVERVIEW_INDEX.map((r) => ({
+  id: r.id,
+  title: r.title,
+  question: r.question,
+  nodes: r.nodes,
+  edges: r.edges,
+  docs: r.compartments.map((c) => ({
+    compartment: c,
+    href: withBase(`graph/${r.id}/${c}.json`),
+  })),
+  pageHref: withBase(`graphs/${r.id}/`),
+}));
+const DEFAULT_ENTRY =
+  OVERVIEWS.find((o) => o.id === DEFAULT_OVERVIEW) ?? OVERVIEWS[0] ?? null;
+// The static first paint: the default overview's own emitted figure + a
+// bounded preview of its adjacency table (the full table lives at
+// /graphs/<ov>/ — R-1 keeps figure→table at one action).
+const DEFAULT_DOC = DEFAULT_ENTRY ? getGraphOverview(DEFAULT_ENTRY.id) : null;
+const DEFAULT_SVG_HREF = DEFAULT_ENTRY
+  ? withBase(`graph/${DEFAULT_ENTRY.id}/overview.${DEFAULT_ENTRY.docs[0]?.compartment ?? ""}.svg`)
+  : null;
+const ADJ_PREVIEW_LIMIT = 25;
+const adjacencyPreview = DEFAULT_DOC
+  ? capRows(DEFAULT_DOC.edges, ADJ_PREVIEW_LIMIT)
+  : null;
+
+// The sharing network + its ego-focus pick flow through the single data seam
+// (ADR-066) — the access lists and path closure the /network/ page carried,
+// kept verbatim as this surface's named no-JS equivalent.
+const { nodes: NETWORK_NODES, edges: NETWORK_EDGES, accessPaths: ACCESS_PATHS } = getNetwork();
+const FOCUS_ENTITY_ID = getNetworkFocusEntityId();
+const labelOf = (id: string) => NETWORK_NODES.find((n) => n.id === id)?.label ?? id;
+const hasNetwork = NETWORK_NODES.some((n) => n.id === FOCUS_ENTITY_ID);
+
+// The access-path list is bounded like the edge lists (P35.51) — the full
+// closure ships in the export artifact.
+const MAX_PATH_ITEMS = 200;
+
+const ACCESS_EDGE_GROUPS = ACCESS_EDGE_TYPES.map((k) => {
+  const edges = filterAccessEdges(NETWORK_EDGES, {
+    ...DEFAULT_ACCESS_EDGE_FILTER,
+    configured_access: k === "configured_access",
+    observed_use: k === "observed_use",
+    declared_policy: k === "declared_policy",
+  });
+  const current = edges.filter(isCurrentEdge);
+  const nonCurrent = edges.filter((e) => !isCurrentEdge(e));
+  return {
+    kind: k,
+    edges,
+    cappedEdges: capRows(current, EGO_EDGE_LIMIT),
+    cappedPast: capRows(nonCurrent, EGO_EDGE_LIMIT),
+  };
+});
+const DEGREE_NODES = capRows(
+  NETWORK_NODES.filter((n) => n.degree !== undefined),
+  EGO_EDGE_LIMIT,
+);
+const PATH_ITEMS = capRows(ACCESS_PATHS, MAX_PATH_ITEMS);
+
+// The publication the workspace `release=` param defaults to (P32.15).
+const LATEST = getLatestReleaseTarget();
+
+// P35.36 (UXR-33): `claim_id → sig.provenance-panel/1` — one panel per UNIQUE
+// claim the page names, rendered once in "Claim provenance" so each
+// `#claim-<id>` anchor resolves exactly once; the rows link it.
+const STATEMENTS = getStatementIndex();
+const PAGE_CLAIM_IDS = [
+  ...new Set([
+    ...ACCESS_EDGE_GROUPS.flatMap((g) =>
+      [...g.cappedEdges.rows, ...g.cappedPast.rows].flatMap((e) => e.evidence ?? []),
+    ),
+    ...DEGREE_NODES.rows.flatMap((n) => n.degree_claim_ids ?? []),
+    ...PATH_ITEMS.rows.flatMap((p) => p.hops.flatMap((h) => h.evidence)),
+  ]),
+].sort();
+const CLAIM_PANELS: Record<string, ProvenancePanelData> = Object.fromEntries(
+  PAGE_CLAIM_IDS.map((cid) => [cid, panelForClaim(STATEMENTS, cid)]),
+);
+---
+
+<BaseLayout title="Graph explorer" path="/explore/">
+  <p>
+    The graph explorer — the relationship view over the published entity graph.
+    It opens on an <strong>overview</strong> (bounded by the release's precomputed
+    layout — never a national hairball, SIG-UI-021/022) and the node and edge
+    panels hand off to the evidence. <strong>Everything the interactive view
+    shows is also in the static sections below</strong> — the overview index, the
+    figure, the access-edge lists and the path hop lists are the equivalent,
+    not a fallback.
+  </p>
+
+  <ViewSwitch view="network" release={LATEST?.publicationId ?? null} />
+
+  <section class="sig-island sig-graph-island" aria-labelledby="graph-island-heading" data-testid="graph-island-section">
+    <h2 id="graph-island-heading">Interactive explorer</h2>
+    <NoJsStateNotice
+      params={["release", "overview", "focus", "expand", "edge", "hops", "path", "jurisdiction", "technology", "view"]}
+      equivalents={[
+        { href: "#overview-heading", label: "the overview index and figure" },
+        { href: "#access-heading", label: "the access-edge lists" },
+        { href: "#paths-heading", label: "the access-path hop lists" },
+      ]}
+    />
+    <CiteThisView
+      view="network"
+      release={LATEST?.publicationId ?? null}
+      equivalents={[
+        { href: "#overview-heading", label: "the overview index and figure" },
+        { href: "#access-heading", label: "the access-edge lists" },
+      ]}
+    />
+    <p class="sig-island__note">
+      An opt-in interactive explorer (P37.26 / GX-09a; ADR-097/ADR-155). It draws
+      the published overview graphs — pick an overview, select a node or an edge
+      for its panel — over the release's own emitted data files. With JavaScript
+      disabled this block is empty and the <strong>sections below</strong> are the
+      full, usable surface (SIG-UI-037/050).
+    </p>
+    <div
+      class="sig-island__placeholder"
+      data-testid="graph-island-placeholder"
+      role="note"
+    >
+      <p class="sig-island__note">
+        The interactive explorer loads only when JavaScript runs — the
+        overview figure and the lists below carry the same nodes and edges and
+        are the complete equivalent.
+      </p>
+    </div>
+    {OVERVIEWS.length > 0 ? (
+      <ExploreIsland
+        client:only="preact"
+        overviews={OVERVIEWS}
+        defaultOverview={DEFAULT_OVERVIEW}
+        release={LATEST?.publicationId ?? null}
+      />
+    ) : (
+      <p class="sig-island__note">No publishable overview graphs in this build; the sections below carry what this release holds.</p>
+    )}
+  </section>
+
+  <!-- The overview index — every sig.graph-overview/1 doc this build emits,
+       each linking its static /graphs/<ov>/ page (the full adjacency tables
+       and per-place drill-downs). The default overview's figure + a bounded
+       adjacency preview render the first paint (K13 C-16). -->
+  <h2 id="overview-heading">Overview graphs</h2>
+  <p>
+    Each overview answers one question over the published graph; the interactive
+    explorer above draws the same emitted documents. The full adjacency tables,
+    per-place drill-downs and downloads live on each overview's page.
+  </p>
+  <table class="sig-table" aria-labelledby="overview-heading" data-testid="graph-overview-index">
+    <thead>
+      <tr>
+        <th scope="col">Overview</th>
+        <th scope="col">Question</th>
+        <th scope="col">Nodes</th>
+        <th scope="col">Edges</th>
+        <th scope="col">Compartments</th>
+        <th scope="col">Static page</th>
+      </tr>
+    </thead>
+    <tbody>
+      {OVERVIEWS.map((o) => (
+        <tr data-testid="graph-overview-row" data-overview={o.id}>
+          <th scope="row">{o.title}</th>
+          <td>{o.question}</td>
+          <td>{o.nodes}</td>
+          <td>{o.edges}</td>
+          <td>{o.docs.map((d) => d.compartment).join(", ")}</td>
+          <td><a href={o.pageHref}>{o.pageHref}</a></td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  {DEFAULT_DOC !== null && DEFAULT_ENTRY !== null && (
+    <section data-testid="default-overview">
+      <h3 id="default-overview-heading">
+        {DEFAULT_DOC.title} — the default overview
+      </h3>
+      <p class="sig-island__note">
+        {DEFAULT_DOC.question} {DEFAULT_DOC.positionNote} {DEFAULT_DOC.erDisclosure}
+        {DEFAULT_DOC.capActions.length > 0 && <> {DEFAULT_DOC.capActions.join(" ")}</>}
+      </p>
+      <figure aria-labelledby="default-overview-caption">
+        <img
+          src={DEFAULT_SVG_HREF}
+          alt={`Static ${DEFAULT_DOC.title} overview graph — ${DEFAULT_DOC.nodes.length} nodes, ${DEFAULT_DOC.edges.length} edges; the adjacency table follows.`}
+          data-testid="default-overview-figure"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption id="default-overview-caption">
+          The release's precomputed figure for this overview — the same file the
+          interactive canvas draws and the CSV downloads carry.
+        </figcaption>
+      </figure>
+      {adjacencyPreview !== null && (
+        <>
+          <div class="sig-table-wrap" tabindex={0}>
+            <table class="sig-table" data-testid="default-overview-adjacency" aria-labelledby="default-overview-heading">
+              <thead>
+                <tr>
+                  <th scope="col">From</th>
+                  <th scope="col">Relation</th>
+                  <th scope="col">To</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Currency</th>
+                  <th scope="col">Evidence</th>
+                </tr>
+              </thead>
+              <tbody>
+                {adjacencyPreview.rows.map((e) => {
+                  const nodeLabel = (k: string) =>
+                    DEFAULT_DOC.nodes.find((n) => n.key === k)?.label ?? k;
+                  return (
+                    <tr data-testid="default-overview-edge">
+                      <td>{nodeLabel(e.src)}</td>
+                      <td>{e.relation}</td>
+                      <td>{nodeLabel(e.dst)}</td>
+                      <td>{e.date ?? "undated"}</td>
+                      <td>{e.currency.toLowerCase()}</td>
+                      <td>{e.evidenceCount} claim{e.evidenceCount === 1 ? "" : "s"}{e.memberCount > 0 ? `; ${e.memberCount} members` : ""}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <p class="sig-table-note">
+            {adjacencyPreview.truncated
+              ? `Showing the first ${adjacencyPreview.shown} of ${adjacencyPreview.total} edges — the full adjacency table is on the overview's page:`
+              : "The full adjacency table is also on the overview's page:"}{" "}
+            <a href={DEFAULT_ENTRY.pageHref}>{DEFAULT_ENTRY.pageHref}</a>
+          </p>
+        </>
+      )}
+    </section>
+  )}
+
+  <!-- Centrality/hub statistics — WITHDRAWN (P34.15, D-K2-2, SIG-IDENT-030 by
+       abstention; SIG-UI-121): no ranking is published until organisation
+       entity resolution passes its gate; every count still carries the H-8
+       disclosure inline. -->
+  <h2 id="centrality-heading">Centrality &amp; hub statistics</h2>
+  <p data-copy="NW-01 NW-02" data-testid="centrality-withdrawn">
+    SIG has not merged organisations across sources — one agency can appear more
+    than once in these lists. No centrality or hub ranking is published; the
+    resolution review that would make one honest has not passed its gate.
+  </p>
+
+  <!-- The three access edge types: distinct legend + three unmerged lists. -->
+  <h2 id="access-heading">Access edges</h2>
+  <p>
+    The three access edge types are <strong>never merged by default</strong> and each is
+    independently filterable (SIG-UI-024). They are distinguished by a glyph and a dash
+    pattern — two non-colour channels, legible in greyscale and print.
+  </p>
+  <ul class="sig-access-legend" data-testid="access-legend">
+    {ACCESS_EDGE_TYPES.map((k) => {
+      const style = ACCESS_EDGE_STYLES[k];
+      return (
+        <li data-testid="access-legend-item" data-kind={k} data-glyph={style.glyph} data-dash={style.dash}>
+          <span class="sig-access-glyph" aria-hidden="true">{style.glyph}</span>
+          <svg width="40" height="10" aria-hidden="true">
+            <line x1="0" y1="5" x2="40" y2="5" stroke="var(--sig-ink)" stroke-width="2" stroke-dasharray={style.dash || undefined}></line>
+          </svg>
+          <strong>{style.label}</strong> — {style.meaning} <em>Never implies:</em> {style.neverImplies}
+        </li>
+      );
+    })}
+  </ul>
+
+  {ACCESS_EDGE_GROUPS.map(({ kind: k, edges, cappedEdges, cappedPast }) => {
+    const style = ACCESS_EDGE_STYLES[k];
+    return (
+      <section class="sig-access-group" data-testid="access-edge-group" data-kind={k}>
+        <h3>{style.glyph} {style.label}</h3>
+        {edges.length === 0 && <EmptyState surface="accessEdges" />}
+        <ul class="sig-edge-list">
+          {cappedEdges.rows.map((e) => <NetworkEdgeItem edge={e} labelOf={labelOf} />)}
+        </ul>
+        {cappedPast.total > 0 && (
+          <details class="sig-edge-past" data-testid="access-edge-past" data-kind={k}>
+            <summary>
+              {cappedPast.total} ended or undated {style.label.toLowerCase()} edge
+              {cappedPast.total === 1 ? "" : "s"} — visibly marked, out of the
+              current view
+            </summary>
+            <ul class="sig-edge-list">
+              {cappedPast.rows.map((e) => <NetworkEdgeItem edge={e} labelOf={labelOf} />)}
+            </ul>
+            {cappedPast.truncated && (
+              <p class="sig-table-note" data-testid="access-past-bounds-note">
+                Showing the first {cappedPast.shown} of {cappedPast.total} ended or
+                undated {style.label.toLowerCase()} edges; the full edge set ships
+                in the export.
+              </p>
+            )}
+          </details>
+        )}
+        {cappedEdges.truncated && (
+          <p class="sig-table-note" data-testid="access-edge-bounds-note">
+            Showing the first {cappedEdges.shown} of {cappedEdges.total} {style.label}
+            edges; the full edge set ships in the export.
+          </p>
+        )}
+      </section>
+    );
+  })}
+
+  {DEGREE_NODES.total > 0 && (
+    <section data-testid="partner-counts">
+      <h2 id="degree-heading">Recorded partner counts</h2>
+      <p data-copy="NW-04">
+        Some sources state a partner <strong>count</strong> without naming the
+        partners — "shared with N agencies". A count is a fact about the
+        entity, not a relationship: it is listed here as a node attribute and
+        is never drawn as an edge (SIG-INGEST-043c).
+      </p>
+      <ul class="sig-degree-list">
+        {DEGREE_NODES.rows.map((n) => (
+          <li data-testid="degree-node">
+            <strong>{n.label}</strong> — {Array.isArray(n.degree) ? n.degree.join("–") : n.degree}{" "}
+            partner{n.degree === 1 ? "" : "s"} recorded
+            {n.degree_observed_at ? `, observed ${n.degree_observed_at}` : " (undated)"}
+            {n.degree_claim_ids && n.degree_claim_ids.length > 0 && (
+              <span class="sig-path__evidence" data-testid="degree-evidence">
+                {" "}— evidence: {n.degree_claim_ids.join(", ")}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <!-- Access-path closure: full hop list, per-hop evidence, speculative label
+       (SIG-UI-120 — ≤ 3 hops publish, longer is labelled speculative, "no
+       path" is typed). -->
+  <h2 id="paths-heading">Access-path closure</h2>
+  <p>
+    "Can this entity reach that entity's data, through any chain?" Each path shows its{" "}
+    <strong>full hop list with per-hop evidence</strong>; confidence is the minimum over
+    the hops; and a path longer than {SPECULATIVE_HOP_THRESHOLD} hops is labelled{" "}
+    <strong>speculative</strong> and excluded from headline figures (SIG-UI-025,
+    SIG-RECON-050). A pair with no published chain answers the typed "no path",
+    never a fabricated route.
+  </p>
+  {!hasNetwork && <EmptyState surface="network" />}
+  {ACCESS_PATHS.length === 0 && hasNetwork && <EmptyState surface="accessPaths" />}
+  <ol class="sig-paths">
+    {PATH_ITEMS.rows.map((p) => (
+      <li
+        class="sig-path"
+        data-testid="access-path"
+        data-hop-count={pathHopCount(p)}
+        data-speculative={pathIsSpeculative(p) ? "true" : "false"}
+        data-headline={pathIsHeadline(p) ? "true" : "false"}
+        data-temporal={pathTemporalStatus(p)}
+      >
+        <p class="sig-path__summary">
+          <strong>{labelOf(pathSource(p))}</strong> can reach
+          <strong> {labelOf(pathTarget(p))}</strong>
+          {" "}— {pathHopCount(p)} hop{pathHopCount(p) === 1 ? "" : "s"},
+          confidence {pathConfidence(p)} (path minimum), {pathTemporalStatus(p)}.
+          {pathIsSpeculative(p) ? (
+            <span class="sig-path__speculative" data-testid="speculative-label">
+              {" "}SPECULATIVE — beyond the published hop threshold; not a headline figure.
+            </span>
+          ) : (
+            <span class="sig-path__finding"> A publishable finding.</span>
+          )}
+        </p>
+        <p class="sig-path__chain">{pathOrgs(p).map((o) => labelOf(o)).join(" → ")}</p>
+        <ol class="sig-path__hops">
+          {p.hops.map((h) => (
+            <li data-testid="path-hop" data-edge-label={h.edge_label}>
+              <strong>{labelOf(h.from_org)}</strong> → <strong>{labelOf(h.to_org)}</strong>
+              {" "}<span class="sig-path__hop-meta">
+                ({h.edge_label}, scope {h.scope}, {h.confidence})
+              </span>
+              {" "}<span class="sig-path__evidence" data-testid="hop-evidence">
+                evidence: {h.evidence.join(", ")}
+              </span>
+            </li>
+          ))}
+        </ol>
+      </li>
+    ))}
+  </ol>
+  {PATH_ITEMS.truncated && (
+    <p class="sig-table-note" data-testid="access-paths-bounds-note">
+      Showing the first {PATH_ITEMS.shown} of {PATH_ITEMS.total} access paths; the
+      full closure ships in the export.
+    </p>
+  )}
+
+  {PAGE_CLAIM_IDS.length > 0 && (
+    <section data-testid="claim-provenance">
+      <h2 id="claim-provenance-heading">Claim provenance</h2>
+      <p class="mut">
+        One provenance panel per named claim — J3 §5.1's binding states,
+        verbatim. A claim SIG cannot evidence shows the named absence, never
+        an implied document.
+      </p>
+      {PAGE_CLAIM_IDS.map((cid) => (
+        <ProvenancePanelShell panel={CLAIM_PANELS[cid]!} anchor />
+      ))}
+    </section>
+  )}
+</BaseLayout>

@@ -67,7 +67,7 @@ test.describe("zero violations under the page's own policy", () => {
     { path: "/dossier/oklahoma-city/print/" },
     { path: "/404.html" },
     { path: "/map/", ready: { testid: "map-island", attr: "data-ready" } },
-    { path: "/network/", ready: { testid: "network-island" } },
+    { path: "/explore/", ready: { testid: "explore-island" } },
     { path: "/search/", ready: { testid: "search-island" } },
   ];
   for (const c of CASES) {

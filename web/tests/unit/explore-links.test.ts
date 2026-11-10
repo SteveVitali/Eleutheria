@@ -31,7 +31,7 @@ describe("exploreLinks — the dossier explore bar (SIG-UI-126)", () => {
       "/map/?v=2&view=map&jurisdiction=iso3166-2%3AUS-OK",
     );
     expect(links.graph).toBe(
-      "/network/?v=2&view=graph&jurisdiction=iso3166-2%3AUS-OK",
+      "/explore/?v=2&view=graph&jurisdiction=iso3166-2%3AUS-OK",
     );
     expect(links.search).toBe(
       "/search/?v=2&view=list&jurisdiction=iso3166-2%3AUS-OK",
@@ -69,7 +69,7 @@ describe("exploreLinks — the dossier explore bar (SIG-UI-126)", () => {
       expect(parsed.state.jurisdiction).toEqual([]);
     }
     expect(links.map).toBe("/map/?v=2&view=map");
-    expect(links.graph).toBe("/network/?v=2&view=graph");
+    expect(links.graph).toBe("/explore/?v=2&view=graph");
     expect(links.search).toBe("/search/?v=2&view=list");
   });
 });

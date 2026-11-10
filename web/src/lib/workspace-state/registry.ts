@@ -38,8 +38,8 @@ export const WORKSPACE_REGISTRY_SCHEMA = "sig.workspace-state-registry/1";
 /**
  * The T2 surfaces workspace state applies to — the ADR-155 closed set. The
  * registry names them by their canonical surface ids; today's routes are in
- * `SURFACE_PATHS` (the graph explorer still answers at the v1 `/network/`
- * route until its GX-09a rename row — the registry is the single place that
+ * `SURFACE_PATHS` (P37.26 / GX-09a: the graph explorer answers at `/explore/`;
+ * the retired `/network/` 301s here — the registry is the single place that
  * indirection lives).
  */
 export type WorkspaceSurface = "map" | "graph" | "search";
@@ -53,7 +53,7 @@ export const WORKSPACE_SURFACES: readonly WorkspaceSurface[] = [
 /** The route each surface serves today (trailing-slash canonical form). */
 export const SURFACE_PATHS: Record<WorkspaceSurface, string> = {
   map: "/map/",
-  graph: "/network/",
+  graph: "/explore/",
   search: "/search/",
 };
 

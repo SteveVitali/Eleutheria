@@ -37,7 +37,12 @@ import {
  */
 export const APPLIED_PARAMS: Record<WorkspaceSurface, readonly string[]> = {
   map: ["release", "collection", "focus", "view"],
-  graph: ["release", "focus", "view"],
+  // P37.26 (GX-09a): the explorer applies `overview` — the address picks the
+  // sig.graph-overview/1 doc the island draws. Expansion/filters/the path
+  // finder are GX-09b's row — `edge`/`expand`/`hops`/`path`/`jurisdiction`/
+  // `technology`/`q` parse but are visibly named unapplied, never silently
+  // dropped (SIG-UI-060).
+  graph: ["release", "focus", "overview", "view"],
   search: ["release", "q", "kind", "focus", "view"],
 };
 

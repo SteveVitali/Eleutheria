@@ -16,19 +16,19 @@ test.describe("shared workspace state — deep links + restore (SIG-FIND-004)", 
     page,
   }) => {
     // Deep link + reload restore the SELECTED record (focus= the node id).
-    await page.goto("/network/?v=1&focus=agency:ocso&view=network");
-    const island = page.getByTestId("network-island");
+    await page.goto("/explore/?v=1&focus=place:usa-tx&view=network");
+    const island = page.getByTestId("explore-island");
     await expect(island).toBeVisible();
-    const ocso = page.getByTestId("graph-island-node").filter({ hasText: "Oklahoma County Sheriff" });
+    const ocso = page.getByTestId("graph-island-node").filter({ hasText: "Texas" });
     await expect(ocso).toHaveAttribute("aria-pressed", "true");
     await page.reload();
     await expect(ocso).toHaveAttribute("aria-pressed", "true");
 
     // Selecting another node pushes a history entry; Back restores the deep link.
-    const tulsa = page.getByTestId("graph-island-node").filter({ hasText: "Tulsa PD" });
+    const tulsa = page.getByTestId("graph-island-node").filter({ hasText: "Oklahoma" });
     await tulsa.click();
     await expect(tulsa).toHaveAttribute("aria-pressed", "true");
-    await expect(page).toHaveURL(/focus=agency%3Atulsa|focus=agency:tulsa/);
+    await expect(page).toHaveURL(/focus=place%3Ausa-ok|focus=place:usa-ok/);
     await page.goBack();
     await expect(ocso).toHaveAttribute("aria-pressed", "true");
     await page.goForward();
@@ -36,8 +36,10 @@ test.describe("shared workspace state — deep links + restore (SIG-FIND-004)", 
   });
 
   test("network: a focus that names no node stays navigable, never fabricated", async ({ page }) => {
-    await page.goto("/network/?v=1&focus=ccby3:deployment:no-such&view=network");
-    await expect(page.getByTestId("network-island")).toBeVisible();
+    // A record-key-shaped focus that no overview node carries — the miss is
+    // named and the released-record route is still offered.
+    await page.goto("/explore/?v=1&focus=ccby3:deployment:no-such&view=network");
+    await expect(page.getByTestId("explore-island")).toBeVisible();
     // The honest miss note + the default ego view still render.
     await expect(page.getByTestId("graph-focus-miss")).toBeVisible();
     await expect(page.getByTestId("graph-island-node").first()).toBeVisible();
@@ -69,7 +71,7 @@ test.describe("shared workspace state — deep links + restore (SIG-FIND-004)", 
     expect(mapHref).toContain("focus=");
     expect(mapHref).toContain("q=alpr");
     const netHref = await page.getByTestId("view-link-network").getAttribute("href");
-    expect(netHref).toContain("/network/?");
+    expect(netHref).toContain("/explore/?");
     expect(netHref).toContain("focus=");
   });
 
@@ -105,7 +107,7 @@ test.describe("shared workspace state — deep links + restore (SIG-FIND-004)", 
   });
 
   test("unknown state values fail visibly rather than silently defaulting", async ({ page }) => {
-    await page.goto("/network/?v=9&view=galaxy&page=x");
+    await page.goto("/explore/?v=9&view=galaxy&page=x");
     await expect(page.getByTestId("workspace-issues")).toBeVisible();
     await expect(page.getByTestId("workspace-issues")).toContainText(/version "9"/);
   });
@@ -116,7 +118,7 @@ test.describe("shared workspace state — deep links + restore (SIG-FIND-004)", 
     // The `jurisdiction` facet parses and round-trips, but no island applies
     // it — each view must say so visibly rather than render an unfiltered
     // view as if the filter held.
-    for (const path of ["/map/", "/network/", "/search/"]) {
+    for (const path of ["/map/", "/explore/", "/search/"]) {
       await page.goto(`${path}?v=1&jurisdiction=US-OK`);
       const notice = page.getByTestId("facet-not-applied");
       await expect(notice).toBeVisible();
@@ -124,7 +126,7 @@ test.describe("shared workspace state — deep links + restore (SIG-FIND-004)", 
       await expect(notice).toContainText(/does not apply/i);
     }
     // And the network announces a facet it does not apply even when others hold.
-    await page.goto("/network/?v=1&q=alpr&focus=agency:ocso");
+    await page.goto("/explore/?v=1&q=alpr&focus=place:usa-tx");
     const notice = page.getByTestId("facet-not-applied");
     await expect(notice).toContainText("text query");
     await expect(notice).not.toContainText("selected record");
@@ -205,17 +207,17 @@ test.describe("map island — focus + compartment switch (SIG-FIND-004)", () => 
 
 test.describe("keyboard operability (WCAG 2.2 AA)", () => {
   test("the network node buttons re-centre via keyboard alone", async ({ page }) => {
-    await page.goto("/network/");
-    const island = page.getByTestId("network-island");
+    await page.goto("/explore/");
+    const island = page.getByTestId("explore-island");
     await expect(island).toBeVisible();
-    // From the default ego centre (Oklahoma City PD) the first ring renders
-    // the OKC Real-Time Crime Center — a real node button, keyboard-focusable.
+    // The default access overview's place cells are real node buttons,
+    // keyboard-focusable.
     const target = page
       .getByTestId("graph-island-node")
-      .filter({ hasText: "OKC Real-Time Crime Center" });
+      .filter({ hasText: "Texas" });
     await target.focus();
     await page.keyboard.press("Enter");
     await expect(target).toHaveAttribute("aria-pressed", "true");
-    await expect(page).toHaveURL(/focus=rtcc%3Aokc|focus=rtcc:okc/);
+    await expect(page).toHaveURL(/focus=place%3Ausa-tx|focus=place:usa-tx/);
   });
 });
