@@ -78,7 +78,11 @@ const NODE_KINDS = new Set([
 ]);
 
 /** Entity kind → kit node kind. A plain `org` is an `entity` — never a
- *  `vendor` assertion the contract does not make. */
+ *  `vendor` assertion the contract does not make. Contract-B record kinds
+ *  (P37.23 / GX-06b): a bill or policy is a legal `instrument`; the
+ *  procurement/funding/accountability records carry the honest generic
+ *  `entity` shape — never a shape the kit vocabulary does not define
+ *  (SIG-UI-131: shape = kind, and the kit's kinds are closed). */
 export function nodeKind(kind: string | undefined): string {
   switch (kind) {
     case "agency":
@@ -87,6 +91,9 @@ export function nodeKind(kind: string | undefined): string {
       return "site";
     case "portal":
       return "source";
+    case "bill":
+    case "policy":
+      return "instrument";
     case "org":
     default:
       return kind && NODE_KINDS.has(kind) ? kind : "entity";
@@ -176,6 +183,7 @@ const KIND_GROUP_NOUN: Record<string, string> = {
   agency: "agencies",
   site: "sites",
   source: "portals",
+  instrument: "instruments",
   entity: "entities",
 };
 
@@ -183,6 +191,7 @@ const KIND_GROUP_LABEL: Record<string, string> = {
   agency: "Government bodies",
   site: "Sites",
   source: "Registry portals",
+  instrument: "Legal instruments",
   entity: "Entities",
 };
 

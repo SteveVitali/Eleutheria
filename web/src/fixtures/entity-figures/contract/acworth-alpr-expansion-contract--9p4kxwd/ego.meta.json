@@ -1,0 +1,107 @@
+{
+  "cap_actions": [],
+  "desc": {
+    "as_of_world": "2026-09-01",
+    "centre": "Acworth ALPR expansion contract",
+    "edges": 2,
+    "neighbours": 2,
+    "sectors": [
+      "contract buyer",
+      "contract seller"
+    ],
+    "title": "Acworth ALPR expansion contract \u2014 recorded relationships"
+  },
+  "edge_count": 2,
+  "gzip_bytes": 784,
+  "legend": [
+    {
+      "channel": "line",
+      "classes": [
+        "sig-fig-edge"
+      ],
+      "id": "line:relation",
+      "label": "Recorded relation",
+      "plain": "A line is a recorded relation between the two columns.",
+      "spec": "K6 \u00a76.2"
+    },
+    {
+      "channel": "shape",
+      "classes": [
+        "sig-fig-node",
+        "sig-fig-node-agency"
+      ],
+      "id": "kind:agency",
+      "label": "agency",
+      "plain": "Entity kind uses shape (point, area, institution, vendor) \u2014 shape never carries epistemic state.",
+      "spec": "SIG-UI-133"
+    },
+    {
+      "channel": "shape",
+      "classes": [
+        "sig-fig-node",
+        "sig-fig-node-entity"
+      ],
+      "id": "kind:entity",
+      "label": "entity",
+      "plain": "Entity kind uses shape (point, area, institution, vendor) \u2014 shape never carries epistemic state.",
+      "spec": "SIG-UI-133"
+    }
+  ],
+  "mode": "ego-radial",
+  "narrow_viewbox": [
+    360,
+    364.0
+  ],
+  "node_count": 3,
+  "schema": "sig.figure-graph-meta/1",
+  "size_bytes": 2447,
+  "svg_narrow_bytes": 2435,
+  "table_columns": [
+    "counterparty",
+    "relation",
+    "direction",
+    "access_kind",
+    "date",
+    "date_kind",
+    "currency",
+    "support",
+    "sources",
+    "evidence"
+  ],
+  "table_rows": [
+    {
+      "access_kind": "\u2014",
+      "counterparty": "Acworth Police Department",
+      "currency": "current",
+      "date": "2020-01-28",
+      "date_kind": "single",
+      "direction": "outbound",
+      "evidence": [
+        "clm-contract-buyer-1"
+      ],
+      "href": "/entity/agency/acworth-police-department--4g2wm8q/",
+      "relation": "contract buyer",
+      "sources": 1,
+      "support": "WEAKLY_SUPPORTED"
+    },
+    {
+      "access_kind": "\u2014",
+      "counterparty": "Vigilant Solutions (LEARN)",
+      "currency": "current",
+      "date": "2020-01-28",
+      "date_kind": "single",
+      "direction": "outbound",
+      "evidence": [
+        "clm-contract-seller-1"
+      ],
+      "href": "/entity/org/vigilant-solutions-learn--7xk3mrt/",
+      "relation": "contract seller",
+      "sources": 1,
+      "support": "WEAKLY_SUPPORTED"
+    }
+  ],
+  "viewbox": [
+    720,
+    724.0
+  ]
+}

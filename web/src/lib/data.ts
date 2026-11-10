@@ -110,6 +110,11 @@ import {
   type EntityPageTwin,
 } from "./entity-page";
 import {
+  relationshipsCsv,
+  relationshipsDoc,
+  statementsJsonl,
+} from "./entity-downloads";
+import {
   PROCUREMENT_RELEVANCE_FIXTURE,
   isProcurementRelevanceDoc,
   type ProcurementRelevanceRow,
@@ -1411,6 +1416,46 @@ export function getEntityFigureBytes(
 ): string | null {
   const path = `${entityFigureDir(urlType, key)}/${kind}.svg`;
   return existsSync(path) ? readFileSync(path, "utf-8") : null;
+}
+
+/**
+ * P37.23 (K2 GX-06b, §4.2 row 12): the entity downloads' served bytes.
+ * The twin's `downloads[]` names emitted files only — the routes serve
+ * them so no named download is a dead link (K13 R-6):
+ *
+ *   - `export` — `<dir>/web/entity/<urlType>/<key>/<file>` verbatim.
+ *   - `fixtures` — derived from the committed fixture twin through the
+ *     `entity-downloads` composers (the same emitted shapes — the
+ *     relationships doc is the twin's groups verbatim, the CSV the
+ *     declared column order, the jsonl the statement slice) and the
+ *     committed `sig.statement/1` fixtures.
+ */
+export type EntityDownloadFile =
+  | `relationships.${string}.json`
+  | `relationships.${string}.csv`
+  | `statements.${string}.jsonl`;
+
+export function getEntityDownloadBytes(
+  urlType: string,
+  key: string,
+  file: string,
+): string | null {
+  if (dataSource() === "export") {
+    const path = `${exportDir()}/web/entity/${urlType}/${key}/${file}`;
+    return existsSync(path) ? readFileSync(path, "utf-8") : null;
+  }
+  const twin = getEntityPageTwins(urlType, key).find((t) =>
+    file.endsWith(`.${t.compartment}.json`) ||
+    file.endsWith(`.${t.compartment}.csv`) ||
+    file.endsWith(`.${t.compartment}.jsonl`),
+  );
+  if (!twin) return null;
+  if (file === `relationships.${twin.compartment}.json`)
+    return JSON.stringify(relationshipsDoc(twin), null, 2) + "\n";
+  if (file === `relationships.${twin.compartment}.csv`) return relationshipsCsv(twin);
+  if (file === `statements.${twin.compartment}.jsonl`)
+    return statementsJsonl(twin, STATEMENT_FIXTURES);
+  return null;
 }
 
 /**

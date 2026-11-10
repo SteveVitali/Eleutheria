@@ -1,0 +1,53 @@
+{
+  "cap_actions": [],
+  "desc": {
+    "as_of_world": "2026-09-01",
+    "categories": 0,
+    "events": 3,
+    "series": [],
+    "title": "Acworth surveillance oversight ordinance 2020-14 \u2014 dated events",
+    "unit": "events"
+  },
+  "edge_count": 0,
+  "gzip_bytes": 501,
+  "legend": [],
+  "mode": "timeline",
+  "narrow_viewbox": [
+    360,
+    264.0
+  ],
+  "node_count": 3,
+  "schema": "sig.figure-chart-meta/1",
+  "size_bytes": 1435,
+  "svg_narrow_bytes": 1409,
+  "table_columns": [
+    "date",
+    "event",
+    "kind",
+    "href"
+  ],
+  "table_rows": [
+    {
+      "date": "2020-03-10",
+      "event": "adopted date",
+      "href": null,
+      "kind": "stated"
+    },
+    {
+      "date": "2020-03-10",
+      "event": "last seen \u2014 OKC council minutes",
+      "href": null,
+      "kind": "last_seen"
+    },
+    {
+      "date": "2020-04-01",
+      "event": "effective date",
+      "href": null,
+      "kind": "stated"
+    }
+  ],
+  "viewbox": [
+    720,
+    264.0
+  ]
+}

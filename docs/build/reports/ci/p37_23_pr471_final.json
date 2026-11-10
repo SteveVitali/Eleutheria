@@ -1,0 +1,389 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 471,
+  "pr": 471,
+  "head_sha": "d1a6d50cdefb8269f83269cceeb4ada487e60835",
+  "head_ref": "r11/P37.23-entity-pages-b",
+  "base": "r11/P37.22-entity-data-contract-b",
+  "read_at": "2026-11-09T07:35:07Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [
+    {
+      "pr": 471,
+      "head_ref": "r11/P37.23-entity-pages-b",
+      "head_sha": "d1a6d50cdefb8269f83269cceeb4ada487e60835",
+      "base": "r11/P37.22-entity-data-contract-b",
+      "pr_state": "OPEN",
+      "is_draft": false,
+      "mergeable": "MERGEABLE",
+      "state": "pass",
+      "detail": null
+    },
+    {
+      "pr": 470,
+      "head_ref": "r11/P37.22-entity-data-contract-b",
+      "head_sha": "5c3e24496e5dfe6b355d0c0cb6418aa7969ce081",
+      "base": "r11/P37.21-access-closures-and-degree-only-facts",
+      "pr_state": "OPEN",
+      "is_draft": false,
+      "mergeable": "MERGEABLE",
+      "state": "pass",
+      "detail": null
+    },
+    {
+      "pr": 469,
+      "head_ref": "r11/P37.21-access-closures-and-degree-only-facts",
+      "head_sha": "aa4619513c8e33895211e52e9ce7d8bf3a66e1af",
+      "base": "r11/P37.20-release-pinned-bbox-api",
+      "pr_state": "OPEN",
+      "is_draft": false,
+      "mergeable": "MERGEABLE",
+      "state": "fail",
+      "detail": "failure — Process completed with exit code 1. (run 42557272556)"
+    }
+  ],
+  "stack_stop": "base `r11/P37.20-release-pinned-bbox-api` is #468, already merged",
+  "stack_digest": "a30b4d8dfa711664316ce5851885975868988a9f3b2d84d47145360a07c94fdb",
+  "local_head": "d1a6d50cdefb8269f83269cceeb4ada487e60835",
+  "external": {
+    "read_at": "2026-11-09T07:35:09Z",
+    "since": "2026-11-09",
+    "fetch": "ok",
+    "main_sha": "85fd813a234fd925551e9df2523f8a3ca3b3fbb1",
+    "chain_descends": false,
+    "descends_note": "origin/main 85fd813 is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [
+      {
+        "child": 471,
+        "parent": 470,
+        "ancestor": true
+      },
+      {
+        "child": 470,
+        "parent": 469,
+        "ancestor": true
+      }
+    ],
+    "merged_since": [
+      {
+        "number": 468,
+        "head_ref": "r11/P37.20-release-pinned-bbox-api",
+        "head_sha": "143878a9c4fedbb10c0828dec7e29a7e7bd64cbd",
+        "base": "main",
+        "merged_at": "2026-11-09T06:40:09Z",
+        "on_stack": true
+      },
+      {
+        "number": 467,
+        "head_ref": "r11/P37.19-map-place-search",
+        "head_sha": "706725983162e6bd31c2a126ae5196ccf49ff749",
+        "base": "main",
+        "merged_at": "2026-11-09T06:40:02Z",
+        "on_stack": true
+      },
+      {
+        "number": 466,
+        "head_ref": "r11/P37.72-my-location-map-pan-control",
+        "head_sha": "8ff6a33bf4a0b33b8a82d38d2052f6b257c97e85",
+        "base": "main",
+        "merged_at": "2026-11-09T06:39:56Z",
+        "on_stack": true
+      },
+      {
+        "number": 465,
+        "head_ref": "r11/P37.18-map-filters-in-view-list-keyboard",
+        "head_sha": "b0190f27772fd1670c882cee4617a54f8dd0cffd",
+        "base": "main",
+        "merged_at": "2026-11-09T06:39:50Z",
+        "on_stack": true
+      },
+      {
+        "number": 464,
+        "head_ref": "r11/P37.17-tile-properties-v2-and-map-dictionary",
+        "head_sha": "7d2a273ea806e69dede4769e75a80335ecbe3304",
+        "base": "main",
+        "merged_at": "2026-11-09T06:39:37Z",
+        "on_stack": true
+      },
+      {
+        "number": 463,
+        "head_ref": "r11/P37.16b-dossier-live-captures-last-two-families",
+        "head_sha": "9efbe802946adb2850488b9532631de5f620648c",
+        "base": "main",
+        "merged_at": "2026-11-09T06:39:25Z",
+        "on_stack": true
+      },
+      {
+        "number": 462,
+        "head_ref": "r11/P37.16a-dossier-live-captures-first-two-families",
+        "head_sha": "03340651ec1426b4152e8ff1c529fb7e3498eb28",
+        "base": "main",
+        "merged_at": "2026-11-09T06:39:14Z",
+        "on_stack": true
+      },
+      {
+        "number": 461,
+        "head_ref": "r11/P37.15-scheduled-parser-canary",
+        "head_sha": "c43f95f675bdcc76c9e83acd713b11299cd06c59",
+        "base": "main",
+        "merged_at": "2026-11-09T06:39:02Z",
+        "on_stack": true
+      },
+      {
+        "number": 460,
+        "head_ref": "r11/P37.14-statute-seeded-records-leads",
+        "head_sha": "ac5ea7eb4e1102c93497cc0a61bb157b14ee8edb",
+        "base": "main",
+        "merged_at": "2026-11-09T06:38:50Z",
+        "on_stack": true
+      },
+      {
+        "number": 459,
+        "head_ref": "r11/P37.13-registry-completeness-and-discovery-sweep",
+        "head_sha": "9312e67a216e488783bd0cd301d52471f721dfda",
+        "base": "main",
+        "merged_at": "2026-11-09T06:38:37Z",
+        "on_stack": true
+      }
+    ],
+    "open_off_chain": []
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1"
+  ],
+  "reruns": [],
+  "checks": [
+    {
+      "pr": 471,
+      "name": "python",
+      "required": true,
+      "check_run_id": 129018647093,
+      "run_id": "42574307365",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-09T06:39:20Z",
+      "completed_at": "2026-11-09T06:58:39Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/42574307365/job/129018647093",
+      "waived": false
+    },
+    {
+      "pr": 471,
+      "name": "docs",
+      "required": true,
+      "check_run_id": 129018647477,
+      "run_id": "42574307365",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-09T06:39:20Z",
+      "completed_at": "2026-11-09T06:41:33Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/42574307365/job/129018647477",
+      "waived": false
+    },
+    {
+      "pr": 471,
+      "name": "composed",
+      "required": true,
+      "check_run_id": 129018647491,
+      "run_id": "42574307365",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-09T06:39:20Z",
+      "completed_at": "2026-11-09T06:44:04Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/42574307365/job/129018647491",
+      "waived": false
+    },
+    {
+      "pr": 471,
+      "name": "security",
+      "required": true,
+      "check_run_id": 129018647340,
+      "run_id": "42574307365",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-09T06:39:20Z",
+      "completed_at": "2026-11-09T06:39:52Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/42574307365/job/129018647340",
+      "waived": false
+    },
+    {
+      "pr": 471,
+      "name": "web",
+      "required": true,
+      "check_run_id": 129018647299,
+      "run_id": "42574307365",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-09T06:39:20Z",
+      "completed_at": "2026-11-09T07:30:45Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/42574307365/job/129018647299",
+      "waived": false
+    },
+    {
+      "pr": 470,
+      "name": "python",
+      "required": true,
+      "check_run_id": 129010732814,
+      "run_id": "42571808880",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-09T06:14:35Z",
+      "completed_at": "2026-11-09T06:39:08Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/42571808880/job/129010732814",
+      "waived": false
+    },
+    {
+      "pr": 470,
+      "name": "docs",
+      "required": true,
+      "check_run_id": 129010732813,
+      "run_id": "42571808880",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-09T06:14:35Z",
+      "completed_at": "2026-11-09T06:17:21Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/42571808880/job/129010732813",
+      "waived": false
+    },
+    {
+      "pr": 470,
+      "name": "composed",
+      "required": true,
+      "check_run_id": 129010732392,
+      "run_id": "42571808880",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-09T06:14:35Z",
+      "completed_at": "2026-11-09T06:19:02Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/42571808880/job/129010732392",
+      "waived": false
+    },
+    {
+      "pr": 470,
+      "name": "security",
+      "required": true,
+      "check_run_id": 129010732730,
+      "run_id": "42571808880",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-09T06:14:35Z",
+      "completed_at": "2026-11-09T06:15:17Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/42571808880/job/129010732730",
+      "waived": false
+    },
+    {
+      "pr": 470,
+      "name": "web",
+      "required": true,
+      "check_run_id": 129010732699,
+      "run_id": "42571808880",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-09T06:14:35Z",
+      "completed_at": "2026-11-09T07:04:01Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/42571808880/job/129010732699",
+      "waived": false
+    },
+    {
+      "pr": 469,
+      "name": "python",
+      "required": true,
+      "check_run_id": 128965784083,
+      "run_id": "42557272556",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-09T03:36:12Z",
+      "completed_at": "2026-11-09T03:51:44Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/42557272556/job/128965784083",
+      "waived": false
+    },
+    {
+      "pr": 469,
+      "name": "docs",
+      "required": true,
+      "check_run_id": 128965784350,
+      "run_id": "42557272556",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-09T03:36:13Z",
+      "completed_at": "2026-11-09T03:39:00Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/42557272556/job/128965784350",
+      "waived": false
+    },
+    {
+      "pr": 469,
+      "name": "composed",
+      "required": true,
+      "check_run_id": 128965784476,
+      "run_id": "42557272556",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-09T03:36:12Z",
+      "completed_at": "2026-11-09T03:40:38Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/42557272556/job/128965784476",
+      "waived": false
+    },
+    {
+      "pr": 469,
+      "name": "security",
+      "required": true,
+      "check_run_id": 128965784293,
+      "run_id": "42557272556",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-09T03:36:12Z",
+      "completed_at": "2026-11-09T03:36:46Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/42557272556/job/128965784293",
+      "waived": false
+    },
+    {
+      "pr": 469,
+      "name": "web",
+      "required": true,
+      "check_run_id": 128965784546,
+      "run_id": "42557272556",
+      "status": "completed",
+      "conclusion": "failure",
+      "bucket": "fail",
+      "started_at": "2026-11-09T03:36:12Z",
+      "completed_at": "2026-11-09T03:51:45Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/42557272556/job/128965784546",
+      "waived": false
+    }
+  ],
+  "waivers": 5,
+  "polls": 1,
+  "waited_s": 0.0,
+  "state": "fail",
+  "kind": "fail",
+  "line": "blockedOn: CI fail on #469@aa46195 (web): failure — Process completed with exit code 1. (run 42557272556)",
+  "exit": 3
+}
