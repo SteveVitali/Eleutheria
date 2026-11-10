@@ -356,7 +356,7 @@ def test_contract_expiring_card_links_the_emitted_watch_item() -> None:
     item = {
         "handle": "W-us-ok-expiry-c200-77cd",
         "kind": "contract_expiry",
-        "title": "City of Test: contract C-200 — latest possible end 2027-01-31",
+        "title": "City of Test: contract C-200 — latest possible end 2027-01-31",  # future-ok: synthetic: fixture contract end
         "subjects": ["contract:test:tenant:t1:C-200"],
     }
     labels = {
@@ -410,7 +410,7 @@ def test_contract_trigger_resolves_the_firing_end_date_claim() -> None:
                 "claim_id": "wc-end",
                 "subject_key": "contract:test:t:C-9",
                 "predicate_id": "end_date",
-                "value_text": "2027-01-31",
+                "value_text": "2027-01-31",  # future-ok: synthetic: fixture contract end
                 "observed_at": "2026-05-01",
                 "source_id": "src_a",
             }
@@ -419,10 +419,10 @@ def test_contract_trigger_resolves_the_firing_end_date_claim() -> None:
     out = _build([card], raw=raw)
     detail = out.cards[0]["trigger"]["detail"]
     assert detail["resolves"] is True
-    assert detail["end_date"] == "2027-01-31"
+    assert detail["end_date"] == "2027-01-31"  # future-ok: synthetic: fixture contract end
     assert detail["predicate_id"] == "end_date"
-    # The K11 title template renders "… contract ending 2027-01-31".
-    assert "2027-01-31" in out.cards[0]["title"]
+    # The K11 title template renders "… contract ending <date>".
+    assert "2027-01-31" in out.cards[0]["title"]  # future-ok: synthetic: fixture contract end
 
 
 def test_unresolvable_contract_trigger_is_the_honest_absence() -> None:
