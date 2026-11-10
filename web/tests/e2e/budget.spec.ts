@@ -18,6 +18,7 @@ import type { DiscoveredRoute } from "./pages";
 import {
   budgetForRoute,
   dataCeiling,
+  evaluateActivate,
   evaluateInitial,
   evaluatePostAction,
   surfaceForT2Route,
@@ -148,6 +149,9 @@ const REPRESENTATIVES: Record<string, string> = {
   graph: "/explore/",
   search: "/search/",
   T1: "/sources/",
+  // P37.29 (VIZ-04): the dossier's activated embedded map is measured as a
+  // T2-map box — same app, same data, same post-click ceilings.
+  "map-embed": "/dossier/usa/ok/",
 };
 
 interface InteractionResult {
@@ -280,6 +284,25 @@ async function runInteraction(page: Page, kind: string): Promise<InteractionResu
       );
       return { effectObserved: true, latencyMs: Date.now() - t0 };
     }
+    case "activate": {
+      // P37.29 (VIZ-04): the dossier's in-place activation. The click is the
+      // explicit reader action; the effect is the embedded map-island canvas
+      // reaching data-ready (the same latch the dossier-activate spec waits
+      // on) — the deferred module + props + vendor are the measured fetch.
+      const button = page.locator(".sig-activate__button").first();
+      await button.waitFor({ state: "visible", timeout: 30_000 });
+      const t0 = Date.now();
+      await button.click();
+      await page.waitForFunction(
+        () =>
+          document
+            .querySelector("[data-testid='map-island']")
+            ?.getAttribute("data-ready") === "true",
+        undefined,
+        { timeout: 60_000 },
+      );
+      return { effectObserved: true, latencyMs: Date.now() - t0 };
+    }
     default:
       throw new Error(`unimplemented interaction kind: ${kind}`);
   }
@@ -333,7 +356,12 @@ test.describe("page-type budgets (SIG-UI-041, SIG-FIND-005, ADR-155)", () => {
     const route: DiscoveredRoute | undefined = DISCOVERED_ROUTES.find((r) => r.path === path);
     const declared = budgets.interactions[surface];
     if (!route || !declared) continue;
-    const { row } = budgetForRoute(budgets, route);
+    // A declared `budget` field names the t2Surfaces row the leg is bounded
+    // by — the activated dossier map measures against the T2-map ceilings
+    // (P37.29), never its own T1 row's post-action ceilings.
+    const { row } = declared.budget
+      ? { row: budgets.t2Surfaces[declared.budget] }
+      : budgetForRoute(budgets, route);
     test(`${path} [${surface}] post-interaction budgets (${declared.kind})`, async ({
       page,
       request,
@@ -368,7 +396,10 @@ test.describe("page-type budgets (SIG-UI-041, SIG-FIND-005, ADR-155)", () => {
       ).toBe(true);
       await page.waitForLoadState("networkidle").catch(() => undefined);
       const measure = await measureResponses(request, post, 0);
-      const { violations, gaps } = evaluatePostAction(budgets, path, row, measure, latencyMs);
+      const { violations, gaps } =
+        declared.kind === "activate"
+          ? evaluateActivate(budgets, path, row, measure)
+          : evaluatePostAction(budgets, path, row, measure, latencyMs);
       for (const g of gaps) {
         test.info().annotations.push({
           type: "measured-gap",

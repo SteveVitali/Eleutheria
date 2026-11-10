@@ -47,6 +47,7 @@ import {
 import { jkeyChain, jkeyParentMap } from "./scoped-search";
 import { dossierPath } from "./dossier";
 import { beliefPinnedPermalink } from "./citation";
+import { SURFACE_PATHS } from "./workspace-state/index";
 import { withBase } from "./paths";
 import { TYPEAHEAD_SHARD_ROOT } from "./typeahead-shards";
 import { isDrawnMap, getDossierVisuals } from "./dossier-visuals";
@@ -229,7 +230,7 @@ export function buildMapEmbedDoc(slug: string): DossierMapEmbedDoc {
     };
   }
   const citationHref = beliefPinnedPermalink({
-    path: "/map/",
+    path: SURFACE_PATHS.map,
     title: "Infrastructure map",
     asOf: meta.asOf,
     rulesetVersion: meta.rulesetVersion,

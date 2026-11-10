@@ -2244,7 +2244,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
                 </fieldset>
               )}
 
-              <fieldset className="sig-map-app__facet">
+              <fieldset className="sig-map-app__facet" data-testid="filter-technology">
                 <legend>Technology — {techOptions.length} in view</legend>
                 {techOptions.map((t) => (
                   <label key={t} className="sig-map-app__option">
@@ -2259,7 +2259,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
                 ))}
               </fieldset>
 
-              <fieldset className="sig-map-app__facet">
+              <fieldset className="sig-map-app__facet" data-testid="filter-status">
                 <legend>Status</legend>
                 {(Object.keys(STATUS_TEXT) as (keyof typeof STATUS_TEXT)[]).map((s) => (
                   <label key={s} className="sig-map-app__option">

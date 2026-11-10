@@ -2329,7 +2329,7 @@ sig-typeahead {
 .sig-fig1__embed {
   position: absolute;
   inset: 0;
-  background: var(--sig-surface, #fff);
+  background: var(--sig-bg);
   overflow: auto;
   z-index: 1;
 }

@@ -118,6 +118,11 @@
     "search": {
       "kind": "type-query",
       "description": "type into the quick filter \u2014 measures the keystroke-shard data budget. Effect asserted: the rendered result set narrows."
+    },
+    "map-embed": {
+      "kind": "activate",
+      "budget": "map",
+      "description": "P37.29 (VIZ-04, SIG-UI-127): click the dossier's in-place map activation \u2014 the post-click fetch is the embedded K1 app's first load (deferred module chunk + shared chunks + the MapLibre vendor split + the props document + first-view data), so the t2Surfaces.map row's jsInitialBytes and firstViewMaxBytes are the ceilings (budget: map). Effect asserted: the embedded map-island canvas reaches data-ready. Activation latency is measured and attached, never gated \u2014 K6's \u2264 200 ms bound is selection\u2192panel inside the app."
     }
   },
   "measured_gaps": [

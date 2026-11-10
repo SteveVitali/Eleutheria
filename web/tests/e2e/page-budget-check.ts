@@ -70,7 +70,10 @@ export interface PageBudgets {
   schema: string;
   types: Record<"T0" | "T1" | "T3", BudgetRow>;
   t2Surfaces: Record<T2Surface, BudgetRow>;
-  interactions: Record<string, { kind: string; description: string }>;
+  interactions: Record<
+    string,
+    { kind: string; description: string; budget?: keyof PageBudgets["t2Surfaces"] }
+  >;
   measured_gaps: MeasuredGap[];
 }
 
@@ -394,5 +397,85 @@ export function evaluatePostAction(
   push("jsAfterActionBytes", scriptTotal(post, "brotli"), row.jsAfterActionBytes);
   push("dataPerInteractionBytes", dataBytes(post, "gzip"), dataCeiling(row));
   if (latencyMs !== null) push("interactionLatencyMs", latencyMs, row.interactionLatencyMs);
+  return { violations, gaps };
+}
+
+/**
+ * P37.29 (VIZ-04, SIG-UI-127): the activated T2-map leg on a dossier. The
+ * post-click fetch IS the embedded app's first-load — the deferred module
+ * chunk, the shared chunks, the MapLibre vendor split, the props document
+ * and the first-view data — so the T2-map row's `jsInitialBytes` and
+ * `firstViewMaxBytes` are the honest ceilings, never the tiny
+ * `jsAfterActionBytes` the T1 page's scroll leg uses. Activation latency is
+ * measured and attached, not gated (K6's ≤ 200 ms bound is the
+ * selection→panel latency inside the app, not the mount).
+ */
+export function evaluateActivate(
+  budgets: PageBudgets,
+  route: string,
+  row: BudgetRow,
+  post: PhaseMeasure,
+): { violations: BudgetViolation[]; gaps: GapReport[] } {
+  const violations: BudgetViolation[] = [];
+  const gaps: GapReport[] = [];
+  const reportedGaps = new Set<string>();
+
+  const gapFor = (metric: string) => {
+    const source = measurementSource();
+    const matching = budgets.measured_gaps.filter(
+      (g) =>
+        g.route === route &&
+        g.metric === metric &&
+        (g.data_source === undefined || g.data_source === source),
+    );
+    return (
+      matching.find((g) => g.data_source === source) ??
+      matching.find((g) => g.data_source === undefined) ??
+      null
+    );
+  };
+
+  const push = (metric: string, measured: number, ceiling: number | null) => {
+    if (ceiling === null) return;
+    const gap = gapFor(metric);
+    if (gap) {
+      if (!reportedGaps.has(metric)) {
+        reportedGaps.add(metric);
+        gaps.push({
+          route,
+          metric,
+          measured,
+          ratified: gap.ratified_ceiling,
+          bound: gap.regression_bound,
+          deferral: gap.deferral,
+        });
+      }
+      if (measured > gap.regression_bound) {
+        violations.push({
+          route,
+          metric,
+          measured,
+          ceiling: gap.regression_bound,
+          message:
+            `${route}: activation ${metric} = ${measured} exceeds the recorded ` +
+            `regression bound ${gap.regression_bound} (${gap.deferral}; ratified ${gap.ratified_ceiling} stands)`,
+        });
+      }
+      return;
+    }
+    if (measured > ceiling) {
+      violations.push({
+        route,
+        metric,
+        measured,
+        ceiling,
+        message: `${route}: activation ${metric} = ${measured} exceeds ${ceiling}`,
+      });
+    }
+  };
+
+  push("jsInitialBytes", scriptTotal(post, "gzip"), row.jsInitialBytes);
+  push("jsInitialBytes", scriptTotal(post, "brotli"), row.jsInitialBytes);
+  push("firstViewMaxBytes", dataBytes(post, "gzip"), row.dataPerInteraction?.firstViewMaxBytes ?? null);
   return { violations, gaps };
 }
