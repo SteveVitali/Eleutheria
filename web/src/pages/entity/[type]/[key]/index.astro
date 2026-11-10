@@ -508,49 +508,119 @@ const NULL_FIELD = "—";
         />
       </section>
 
-      {/* §4.2 rows 8/9/11 — contract-B sections as typed empty states under
-          contract A (the record shape is stable across waves). */}
+      {/* §4.2 row 8 — disagreements (H-7): every contradiction the record
+          touches, both sides' claims listed — visible, never silently
+          reconciled (contract B, P37.22). */}
+      {merged.contradictions.length > 0 && (
+        <section aria-labelledby="disagreements-heading" data-testid="entity-contradictions">
+          <h2 id="disagreements-heading">Disagreements</h2>
+          <ul role="list">
+            {merged.contradictions.map((c) => (
+              <li data-testid="contradiction-row">
+                <strong>{c.relation}</strong>
+                {c.type && <> · {c.type}</>}
+                {c.status && <> · {c.status}</>}
+                {c.severity && <> · severity: {c.severity}</>}
+                {" — claims: "}
+                {c.claim_ids.map((cid, ci) => (
+                  <>
+                    {ci > 0 && " · "}
+                    <a href={`#claim-${cid}`}>{cid}</a>
+                  </>
+                ))}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* §4.2 rows 9/11 — the emitted timeline and related pages (contract
+          B): dated entries + undated listed apart; related dossiers,
+          sources, tasks and documents. */}
       <section aria-labelledby="contractb-heading" data-testid="entity-contract-b">
-        <h2 id="contractb-heading">Disagreements, timeline and related pages</h2>
-        <EmptyState
-          parts={{
-            state: "Not shipped in this record wave",
-            missing:
-              "Contradiction records, the dated timeline and the related-pages block are contract-B sections — this release's entity record carries them as typed empty slots.",
-            nearby: "The relationships table and claim groups above carry this contract's facts.",
-            action: { href: `entity/${twin.url_type}/${key}/index.${twin.compartment}.json`, label: "Read the JSON twin" },
-            change: "These sections fill with the contract-B release.",
-            cause: "not_published",
-            batchIds: {
-              state: "EN-35",
-              missing: "EN-36",
-              nearby: "EN-37",
-              action: "EN-38",
-              change: "EN-39",
-            },
-          }}
-        />
+        <h2 id="contractb-heading">Timeline entries and related pages</h2>
+        {merged.timeline.length > 0 && (
+          <ul role="list" data-testid="timeline-entries">
+            {merged.timeline.map((e) => (
+              <li data-testid="timeline-entry" data-kind={e.kind} data-date-kind={e.date_kind}>
+                {e.date ? <time datetime={e.date}>{e.date}</time> : <span class="sig-temporal-mark">undated</span>}
+                {" — "}{e.label}
+              </li>
+            ))}
+          </ul>
+        )}
+        {merged.timeline.length === 0 &&
+          merged.related.dossiers.length === 0 &&
+          merged.related.sources.length === 0 &&
+          merged.related.tasks.length === 0 &&
+          merged.related.documents.length === 0 && (
+          <p class="sig-table-note" data-testid="contract-b-empty">
+            No dated events or related pages are recorded for this entity in this release.
+          </p>
+        )}
+        {merged.related.dossiers.length > 0 && (
+          <p data-testid="related-dossiers">
+            Dossiers:{" "}
+            {merged.related.dossiers.map((d, i) => (
+              <>
+                {i > 0 && " · "}
+                <a href={withBase(d.url.replace(/^\//, ""))}>{d.name ?? d.slug_path}</a>
+              </>
+            ))}
+          </p>
+        )}
+        {merged.related.sources.length > 0 && (
+          <p data-testid="related-sources">
+            Sources:{" "}
+            {merged.related.sources.map((s, i) => (
+              <>
+                {i > 0 && " · "}
+                <a href={withBase(s.url.replace(/^\//, ""))}>{s.name ?? s.id}</a>
+              </>
+            ))}
+          </p>
+        )}
+        {merged.related.tasks.length > 0 && (
+          <p data-testid="related-tasks">
+            Research tasks:{" "}
+            {merged.related.tasks.map((t, i) => (
+              <>
+                {i > 0 && " · "}
+                {t.url ? (
+                  <a href={withBase(t.url.replace(/^\//, ""))}>{t.title ?? t.handle}</a>
+                ) : (
+                  <span>{t.title ?? t.task_type ?? "recorded task"}</span>
+                )}
+              </>
+            ))}
+          </p>
+        )}
+        {merged.related.documents.length > 0 && (
+          <p data-testid="related-documents">
+            Documents:{" "}
+            {merged.related.documents.map((d, i) => (
+              <>
+                {i > 0 && " · "}
+                <span>{d.title ?? "recorded document"}{d.artifact_type ? ` (${d.artifact_type})` : ""}</span>
+              </>
+            ))}
+          </p>
+        )}
       </section>
 
-      {/* §4.2 row 12 — downloads: the JSON twin per compartment + the
-          typed-empty statements/relationships artifacts under contract A. */}
+      {/* §4.2 row 12 — downloads: every file the export emitted for this
+          entity (the JSON twin per compartment, relationships CSV/JSON,
+          the sig.statement/1 slice) — a row names only emitted files. */}
       <section aria-labelledby="downloads-heading" data-testid="entity-downloads">
         <h2 id="downloads-heading">Downloads</h2>
         <ul role="list">
-          {merged.compartments.map((comp) => (
-            <li data-testid="download-twin">
-              <a href={withBase(`entity/${type}/${key}/index.${comp}.json`)}>
-                JSON twin — {comp} compartment
-              </a>{" "}
-              (<code>sig.entity-page/1</code>)
+          {merged.downloads.map((d) => (
+            <li data-testid={`download-${d.kind}`}>
+              <a href={withBase(d.path)}>{d.label}</a>{" "}
+              (<code>{d.format}</code> · {d.compartment} compartment)
             </li>
           ))}
         </ul>
-        <p class="sig-table-note" data-copy="EN-07">
-          Per-compartment statement and relationship exports land with the
-          contract-B release; the JSON twin above is this entity's complete
-          record today.
-        </p>
       </section>
 
       {/* §4.2 row 13 — cite: the SIG id + record route ride the page's cite

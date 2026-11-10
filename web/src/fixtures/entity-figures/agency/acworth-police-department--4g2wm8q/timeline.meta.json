@@ -9,7 +9,7 @@
     "unit": "events"
   },
   "edge_count": 0,
-  "gzip_bytes": 465,
+  "gzip_bytes": 463,
   "legend": [],
   "mode": "timeline",
   "narrow_viewbox": [
@@ -18,7 +18,7 @@
   ],
   "node_count": 3,
   "schema": "sig.figure-chart-meta/1",
-  "size_bytes": 1409,
+  "size_bytes": 1405,
   "svg_narrow_bytes": 1377,
   "table_columns": [
     "date",
@@ -29,21 +29,21 @@
   "table_rows": [
     {
       "date": "2020-01-28",
-      "event": "agency name recorded",
-      "href": null,
-      "kind": "agency_name"
-    },
-    {
-      "date": "2020-01-28",
       "event": "configured sharing partner \u2014 Vigilant Solutions (LEARN)",
       "href": null,
-      "kind": "configured sharing partner"
+      "kind": "observed"
     },
     {
       "date": "2020-01-28",
-      "event": "sharing partner degree \u2014 partners not named",
+      "event": "first seen \u2014 EFF Data Driven",
       "href": null,
-      "kind": "sharing_partner_degree"
+      "kind": "first_seen"
+    },
+    {
+      "date": "2020-01-28",
+      "event": "posted date",
+      "href": null,
+      "kind": "stated"
     }
   ],
   "viewbox": [

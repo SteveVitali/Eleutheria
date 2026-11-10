@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P37.22
-lastCompleted: P37.21
+nextTicket: P37.23
+lastCompleted: P37.22
 blockedOn: (nothing)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.70,P37.71
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P37.21-access-closures-and-degree-only-facts
+chainTip: r11/P37.22-entity-data-contract-b
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-09T03:32Z
+updatedAt: 2026-11-09T06:11Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1631,3 +1631,6 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-09 — P37.21 done — row 445 `Kind: ticket` — Access closures and degree-only facts (`R11-K13-GX-07` / K2 GX-07; gate cell verbatim: `D-K2-2 [A-11] = a (descriptive only) · D-K2-3 [B-22] = as recommended` — implemented, never re-decided; `live_verification=false`; owns no §56 `Owner:` — cites SIG-UI-025, SIG-UI-080, SIG-UI-117, SIG-INGEST-043c, SIG-RECON-048/049/050, SIG-ONTO-042/044, SIG-EXPORT-014, SIG-UI-122): `inference/access_paths.py` adaptor now carries the materialized row's `valid_to` + bound-kind vocabulary (`exact`/`before`/`after`/`known` → `known`; `ongoing`/`never` → `ongoing`; else `unknown`) and the full `evidence_claims` set — a recorded end can expire the hop; `exports/entity_page.py` — `access.closures` computed per entity at build through the consumed `close_access_paths` (both directions, multi-hop only, every hop list + per-hop evidence intact, `live`/`historical`/`speculative` counts, ≤3 hops publishable, a withheld hop drops the path into `withheld_notice`, compartment filing requires every hop's evidence, 100-path cap + true `path_count`/`more`); `degree_only_facts.sentences` carries D-K2-3's node-attribute sentences verbatim; web mirror + the T1 SSR render of both question groups · tests: exports +10 / inference +4 / vitest +2 / e2e +1 · `make check` 11,524/3 env-reds identical-on-base · web check green but the `MAP-CSV-LICENCE-1` env flake (standalone re-run 7/7) · fix arc: `5c68d02e` — run ledger is a hashed projection input, it must land before the regen it feeds · coverage: none routed (verified) · `live` leg `— none` · `main` untouched · chainTip → r11/P37.21-access-closures-and-degree-only-facts · next → P37.22 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-09 — P37.21 post-closeout record — head `5c68d02e` 5/5 green head-bound (`ci: pass #469@5c68d02`, run 42550364703, read 03:32Z: docs 2m24s · security 34s · composed 4m33s · python 22m49s · web 57m0s; `reports/ci/p37_21_pr469.json`) · `ci_boundary.py` exit 3 — `blockedOn` ancestor `#467@7067259` docs (dispatch-sha red; landed tip `4c5b8f3b` green; carried-ancestor class) · `main` untouched · deferrals +0/−0 · next → P37.22 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-09 — dispatch boundary-confirm — P37.21's green read recorded (`ci: pass #469@5c68d02`, run 42550364703); `blockedOn` (nothing); chainTip `r11/P37.21-access-closures-and-degree-only-facts` · nextTicket P37.22 (row 446 — entity data contract B; live_verification=false; gate none; deps landed) — fresh implement-spec sub-agent on `r11/P37.22-entity-data-contract-b` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-09 — P37.22 done — row 446 `Kind: ticket` — Entity data contract B (`R11-K13-GX-05b` / K2 GX-05b; gate cell verbatim `none`; `live_verification=false`; owns no §56 `Owner:` — cites SIG-UI-004/009/024/070/080/088/108/110/114/115/116/117/122, SIG-EXPORT-014, SIG-TRANSP-016, SIG-RECON-055, SIG-INGEST-043c): `exports/entity_page.py` `PAGE_KINDS` + E2 wave (notice/contract/grant/bill/policy/event) + the four typed-empty slots populated — `timeline_entries` (stated edtf + record observations on claim groups/relation items/degree facts + first/last seen per source; undated `date: null` listed never drawn, SIG-UI-116), `contradiction_records` (materialized §31 + envelope conflicts, both sides' claim ids visible, H-7), `related_pages` (dossier keyed-registry path, `/sources/` links, queue-minted task handles, claim-bound documents; `watch` stays typed-empty), `download_entries` + `relationships_csv` + per-compartment `index`/`relationships`/`statements.<comp>.jsonl` artifacts via `_file_by_claims` (ADR-106) · `spine_export.py` 05b subject-key families + `stmt_rows_by_comp` + task/dossier/claim bindings + `m_contradictions` — consumed never re-derived · `column_registry.py` `entity_relationships` resource (SIG-TRANSP-016 fail-closed) · web mirror: typed slots + populated fixture twin + merge unions + timeline figure emitted-list-authoritative + SSR render, T1 script-free · tests exports +9 (31/31) / vitest 19+33 / e2e 9/9 · fix arc `942f085f`+`7c1ab497` — committed figure artifacts regenerated (`npm run fixture:entity-figures`), never a loosened assertion · coverage: none routed (verified) · `live` leg `— none` · `main` untouched · chainTip → r11/P37.22-entity-data-contract-b · next → P37.23 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-09 — P37.22 post-closeout record — head `7c1ab497` 5/5 green head-bound (`ci: pass #470@7c1ab49`, run 42560221527, read 05:06Z: docs 2m33s · security 33s · composed 4m23s · python 23m12s · web 55m41s; `reports/ci/p37_22_pr470_final.json`) · `ci_boundary.py` exit 3 — `blockedOn` ancestor `#469@aa46195` web (dispatch-sha red run 42557272556; landed tip `5c68d02e` green; carried-ancestor class) · `main` untouched · deferrals +0/−0 · next → P37.23 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-09 — dispatch boundary-confirm — P37.22's green read recorded (`ci: pass #470@7c1ab49`, run 42560221527); `blockedOn` (nothing); chainTip `r11/P37.22-entity-data-contract-b` · nextTicket P37.23 (row 447 — entity pages B; live_verification=false; gate none; deps landed) — fresh implement-spec sub-agent on `r11/P37.23-entity-pages-b` · harness: devin-desktop/swe-2-high/orchestrator

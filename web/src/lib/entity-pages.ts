@@ -27,11 +27,15 @@ import type {
   AccessClosurePath,
   DegreeOnlyFact,
   EntityClaimGroup,
+  EntityContradiction,
+  EntityDownload,
   EntityLabelRow,
   EntityPageTwin,
+  EntityRelated,
   EntityRelationGroup,
   EntityRelationItem,
   EntityReviewRecord,
+  EntityTimelineEntry,
 } from "./entity-page";
 import { withBase } from "./paths";
 
@@ -42,11 +46,24 @@ const KIND_WORDS: Record<string, string> = {
   org: "Organisation",
   agency: "Government body",
   portal: "Registry portal",
+  // Contract-B kinds (P37.22 / GX-05b) — mirrors policy.labels.KIND_WORDS.
+  notice: "Notice",
+  contract: "Procurement record",
+  grant: "Grant",
+  bill: "Bill",
+  policy: "Policy or ordinance",
+  event: "Agenda item",
 };
 const KIND_PLURALS: Record<string, string> = {
   org: "Organisations",
   agency: "Government bodies",
   portal: "Registry portals",
+  notice: "Notices",
+  contract: "Procurement records",
+  grant: "Grants",
+  bill: "Bills",
+  policy: "Policies and ordinances",
+  event: "Agenda items",
 };
 
 export function kindWord(kind: string): string {
@@ -103,6 +120,10 @@ export interface MergedEntityPage {
   relations: EntityRelationGroup[];
   degreeOnly: DegreeOnlyFact[];
   closures: AccessClosureGroup[];
+  contradictions: EntityContradiction[];
+  timeline: EntityTimelineEntry[];
+  related: EntityRelated;
+  downloads: EntityDownload[];
   claimIds: string[];
 }
 
@@ -217,6 +238,40 @@ export function mergeEntityTwins(twins: readonly EntityPageTwin[]): MergedEntity
     path_count: g.paths.length,
   }));
 
+  // Contract-B sections (P37.22) — unioned on each row's stable key; the
+  // same fact filed under two compartments merges, never duplicates.
+  const contradictions = new Map<string, EntityContradiction>();
+  const timeline = new Map<string, EntityTimelineEntry>();
+  const relatedDossiers = new Map<string, EntityRelated["dossiers"][number]>();
+  const relatedSources = new Map<string, EntityRelated["sources"][number]>();
+  const relatedTasks = new Map<string, EntityRelated["tasks"][number]>();
+  const relatedDocuments = new Map<string, EntityRelated["documents"][number]>();
+  const downloads = new Map<string, EntityDownload>();
+  for (const t of twins) {
+    for (const c of t.contradictions ?? [])
+      contradictions.set(`${c.contradiction_id ?? `${c.kind}:${c.predicate}`}`, c);
+    for (const e of t.timeline ?? [])
+      timeline.set(`${e.kind}:${e.date ?? ""}:${e.label}`, e);
+    for (const d of t.related?.dossiers ?? []) relatedDossiers.set(d.jkey, d);
+    for (const s of t.related?.sources ?? []) relatedSources.set(s.id, s);
+    for (const task of t.related?.tasks ?? [])
+      relatedTasks.set(task.handle ?? task.task_id ?? "", task);
+    for (const doc of t.related?.documents ?? []) relatedDocuments.set(doc.artifact_id, doc);
+    for (const d of t.downloads ?? []) downloads.set(d.path, d);
+  }
+  const related: EntityRelated = {
+    dossiers: [...relatedDossiers.values()],
+    sources: [...relatedSources.values()],
+    tasks: [...relatedTasks.values()].sort((a, b) =>
+      String(a.handle ?? "").localeCompare(String(b.handle ?? "")),
+    ),
+    watch: [],
+    documents: [...relatedDocuments.values()],
+  };
+  for (const c of contradictions.values()) c.claim_ids.forEach((x) => claimIds.add(x));
+  for (const e of timeline.values()) e.claim_ids.forEach((x) => claimIds.add(x));
+  for (const d of related.documents) d.claim_ids.forEach((x) => claimIds.add(x));
+
   return {
     twin,
     compartments,
@@ -226,6 +281,16 @@ export function mergeEntityTwins(twins: readonly EntityPageTwin[]): MergedEntity
     relations: [...groups.values()],
     degreeOnly: [...degrees.values()],
     closures,
+    contradictions: [...contradictions.values()],
+    timeline: [...timeline.values()].sort(
+      (a, b) =>
+        (a.date === null ? 1 : 0) - (b.date === null ? 1 : 0) ||
+        (a.date ?? "").localeCompare(b.date ?? "") ||
+        a.kind.localeCompare(b.kind) ||
+        a.label.localeCompare(b.label),
+    ),
+    related,
+    downloads: [...downloads.values()].sort((a, b) => a.path.localeCompare(b.path)),
     claimIds: [...claimIds].sort(),
   };
 }

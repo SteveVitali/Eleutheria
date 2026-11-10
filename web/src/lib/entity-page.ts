@@ -26,8 +26,21 @@ import { withBase } from "./paths";
 
 export const ENTITY_PAGE_SCHEMA = "sig.entity-page/1";
 
-/** Contract A's page kinds (the E1 wave — K2 §4.3). */
-export const PAGE_KINDS = ["org", "agency", "portal"] as const;
+/** The paged kinds — contract A's E1 wave (organisations, agencies,
+ *  portals) plus contract B's E2 wave (P37.22 / GX-05b: notices, contracts,
+ *  grants, bills, legal instruments as `policy`, accountability events).
+ *  `atlas` (E3) and `request` stay outside the 05b row. */
+export const PAGE_KINDS = [
+  "org",
+  "agency",
+  "portal",
+  "notice",
+  "contract",
+  "grant",
+  "bill",
+  "policy",
+  "event",
+] as const;
 export type PageKind = (typeof PAGE_KINDS)[number];
 
 /** The A-10 page-state vocabulary (ADR-159's `label_state` renders here). */
@@ -235,6 +248,87 @@ export interface AccessClosureGroup {
   more: number;
 }
 
+// ---------------------------------------------------------------------------
+// Contract-B sections (P37.22 / GX-05b, K2 §4.2 rows 8/9/11/12).
+// ---------------------------------------------------------------------------
+
+/** One timeline entry (§4.2 row 9): a stated event date, a record
+ *  observation, or a per-source first/last sighting. `date` is the strict
+ *  ISO day the entry draws at; `date_kind: "undated"` items are listed
+ *  apart, never placed on the axis and never present-tense (SIG-UI-116). */
+export interface EntityTimelineEntry {
+  kind: "stated" | "observed" | "first_seen" | "last_seen" | string;
+  date: string | null;
+  date_kind: "observed" | "undated" | string;
+  label: string;
+  predicate?: string | null;
+  claim_ids: string[];
+  sources: { id: string; name?: string | null }[];
+}
+
+/** One contradiction record (§4.2 row 8, H-7): a materialized §31
+ *  contradiction the entity's record touches (`kind: "contradiction"`) or
+ *  a predicate-level conflict the resolution envelope records
+ *  (`kind: "envelope_conflict"`). Both sides' claim ids stay listed —
+ *  visible, never silently reconciled (SIG-UI-009). */
+export interface EntityContradiction {
+  kind: "contradiction" | "envelope_conflict" | string;
+  contradiction_id: string | null;
+  predicate: string;
+  relation: string;
+  type: string | null;
+  status: string | null;
+  severity: string | null;
+  agreement?: string | null;
+  claim_ids: string[];
+  sources: { id: string; name?: string | null }[];
+}
+
+/** The `related` section (§4.2 row 11): dossier links (the recorded
+ *  place's K4 key), the sources the entity's claims cite (K10 pages),
+ *  research-queue tasks naming the entity (K11 handles), and the evidence
+ *  documents bound to its claims (K8; the page resolves the artifact
+ *  handle through its evidence map). `watch` stays typed-empty — no
+ *  entity-scoped watch seam exists in this contract wave. */
+export interface EntityRelated {
+  dossiers: {
+    jkey: string;
+    slug_path: string;
+    name?: string | null;
+    level?: string | null;
+    url: string;
+  }[];
+  sources: { id: string; name?: string | null; url: string }[];
+  tasks: {
+    task_id: string | null;
+    handle: string | null;
+    title?: string | null;
+    task_type: string | null;
+    status: string | null;
+    url: string | null;
+  }[];
+  watch: unknown[];
+  documents: {
+    artifact_id: string;
+    title?: string | null;
+    artifact_type?: string | null;
+    source_id?: string | null;
+    source_name?: string | null;
+    claim_ids: string[];
+  }[];
+}
+
+/** One downloads entry (§4.2 row 12, J3 TX-10): names a file this export
+ *  actually emitted under `entity/<url_type>/<key>/` — never a file that
+ *  was not emitted. */
+export interface EntityDownload {
+  kind: "twin" | "statements" | "relationships" | string;
+  format: "json" | "jsonl" | "csv" | string;
+  path: string;
+  compartment: string;
+  label: string;
+}
+
 /** A mechanical summary line — every number carries its group and claim
  * pointers (the `<Figure>` input; K2 §4.2 row 2). */
 export interface EntitySummaryLine {
@@ -276,11 +370,12 @@ export interface EntityPageTwin {
     closures: AccessClosureGroup[];
     degree_only: DegreeOnlyFact[];
   };
-  /** Contract-B sections — typed empty under contract A. */
-  contradictions: unknown[];
-  timeline: unknown[];
-  related: Record<string, unknown>;
-  downloads: unknown[];
+  /** Contract-B sections (P37.22) — populated under contract B; a section
+   *  with no evidenced content keeps its typed empty value. */
+  contradictions: EntityContradiction[];
+  timeline: EntityTimelineEntry[];
+  related: EntityRelated;
+  downloads: EntityDownload[];
   cite: {
     publication: string;
     url: string | null;
@@ -333,6 +428,13 @@ export function isEntityPageTwin(doc: unknown): doc is EntityPageTwin {
   if (!isObj(doc.access) || !Array.isArray(doc.access.degree_only)) return false;
   if (!Array.isArray(doc.access.closures)) return false;
   if (!isObj(doc.cite)) return false;
+  // Contract-B sections — the stable record shape (typed-empty or
+  // populated; a missing slot is a malformed twin, fail closed).
+  if (!Array.isArray(doc.contradictions) || !Array.isArray(doc.timeline)) return false;
+  if (!Array.isArray(doc.downloads)) return false;
+  if (!isObj(doc.related)) return false;
+  if (!Array.isArray(doc.related.dossiers) || !Array.isArray(doc.related.sources)) return false;
+  if (!Array.isArray(doc.related.tasks) || !Array.isArray(doc.related.documents)) return false;
   return true;
 }
 
@@ -732,10 +834,126 @@ export const ENTITY_PAGE_TWIN_FIXTURE: EntityPageTwin = {
       },
     ],
   },
-  contradictions: [],
-  timeline: [],
-  related: {},
-  downloads: [],
+  // Contract-B sections (P37.22) — populated: one materialized
+  // contradiction, a stated date + record observations + first/last seen,
+  // the related dossier/source/task, and the emitted download files.
+  contradictions: [
+    {
+      kind: "contradiction",
+      contradiction_id: "contra-fixture-1",
+      predicate: "configured_sharing_partner",
+      relation: "configured sharing partner",
+      type: "value_conflict",
+      status: "open",
+      severity: "moderate",
+      claim_ids: ["clm-apd-vigilant-1", "clm-apd-vigilant-2"],
+      sources: [{ id: "eff_data_driven", name: "EFF Data Driven" }],
+    },
+  ],
+  timeline: [
+    {
+      kind: "stated",
+      date: "2020-01-28",
+      date_kind: "observed",
+      label: "posted date",
+      predicate: "posted_date",
+      claim_ids: ["clm-apd-posted-1"],
+      sources: [{ id: "eff_data_driven", name: "EFF Data Driven" }],
+    },
+    {
+      kind: "observed",
+      date: "2020-01-28",
+      date_kind: "observed",
+      label: "configured sharing partner — Vigilant Solutions (LEARN)",
+      predicate: "configured_sharing_partner",
+      claim_ids: ["clm-apd-vigilant-1"],
+      sources: [{ id: "eff_data_driven", name: "EFF Data Driven" }],
+    },
+    {
+      kind: "first_seen",
+      date: "2020-01-28",
+      date_kind: "observed",
+      label: "first seen — EFF Data Driven",
+      predicate: null,
+      claim_ids: ["clm-apd-vigilant-1"],
+      sources: [{ id: "eff_data_driven", name: "EFF Data Driven" }],
+    },
+    {
+      kind: "observed",
+      date: null,
+      date_kind: "undated",
+      label: "camera operator — surveillance camera in usa-ga",
+      predicate: "camera_operator",
+      claim_ids: ["clm-cam-12"],
+      sources: [{ id: "dot_511_ga", name: "Georgia 511" }],
+    },
+  ],
+  related: {
+    dossiers: [
+      {
+        jkey: "usa-ga",
+        slug_path: "usa/ga",
+        name: "Georgia",
+        level: "admin1",
+        url: withBase("dossier/usa/ga/"),
+      },
+    ],
+    sources: [
+      { id: "eff_data_driven", name: "EFF Data Driven", url: withBase("sources/eff_data_driven/") },
+      { id: "dot_511_ga", name: "Georgia 511", url: withBase("sources/dot_511_ga/") },
+    ],
+    tasks: [
+      {
+        task_id: "task-fixture-1",
+        handle: "T-usa-ga-alpr-acworth-pd-q1c4",
+        title: "Confirm the current sharing partner list",
+        task_type: "verify_partner_list",
+        status: "generated",
+        url: withBase("task/T-usa-ga-alpr-acworth-pd-q1c4/"),
+      },
+    ],
+    watch: [],
+    documents: [
+      {
+        artifact_id: "art-fixture-1",
+        title: "EFF Data Driven 2020 export",
+        artifact_type: "dataset",
+        source_id: "eff_data_driven",
+        source_name: "EFF Data Driven",
+        claim_ids: ["clm-apd-vigilant-1"],
+      },
+    ],
+  },
+  downloads: [
+    {
+      kind: "twin",
+      format: "json",
+      path: `entity/agency/acworth-police-department--4g2wm8q/index.sig_graph.json`,
+      compartment: "sig_graph",
+      label: "JSON twin (sig.entity-page/1)",
+    },
+    {
+      kind: "relationships",
+      format: "csv",
+      path: `entity/agency/acworth-police-department--4g2wm8q/relationships.sig_graph.csv`,
+      compartment: "sig_graph",
+      label: "Relationships CSV",
+    },
+    {
+      kind: "relationships",
+      format: "json",
+      path: `entity/agency/acworth-police-department--4g2wm8q/relationships.sig_graph.json`,
+      compartment: "sig_graph",
+      label: "Relationships JSON",
+    },
+    {
+      kind: "statements",
+      format: "jsonl",
+      path: `entity/agency/acworth-police-department--4g2wm8q/statements.sig_graph.jsonl`,
+      compartment: "sig_graph",
+      label: "Statements (sig.statement/1)",
+    },
+  ],
   cite: {
     publication: "sig-release-2026.09",
     url: fixtureEntityUrl("agency", "acworth-police-department", "4g2wm8q"),

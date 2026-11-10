@@ -271,6 +271,20 @@ def column_registry() -> dict[str, ResourceSpec]:
             schema_id=statements.STATEMENT_SCHEMA,
         )
     )
+    from . import entity_page as _ep
+
+    reg(
+        _spec(
+            "entity_relationships",
+            "Entity relationships slice",
+            "The per-entity ``relationships.<comp>.csv``/``.json`` slice — the "
+            "twin's relation groups flattened one row per item (P37.22, K2 "
+            "§4.2 row 12).",
+            _ep.RELATIONSHIPS_COLUMN_SPECS,
+            kind="table",
+            schema_id=_ep.ENTITY_RELATIONSHIPS_SCHEMA,
+        )
+    )
     reg(
         _spec(
             "labels",
@@ -465,6 +479,13 @@ def resource_for_path(path: str) -> str | None:
     if ext in _TABULAR_EXTENSIONS:
         if stem in column_registry():
             return stem
+        # P37.22 (GX-05b): the per-entity download slices — the twin's
+        # statements stream and relationships CSV under ``web/entity/<t>/<k>/``.
+        if path.startswith("web/entity/"):
+            if stem.startswith("statements."):
+                return "statements"
+            if stem.startswith("relationships."):
+                return "entity_relationships"
         # directory-scoped streams: labels/<comp>.jsonl, transparency/<name>.jsonl
         if path.startswith("labels/"):
             return "labels"

@@ -109,6 +109,11 @@ describe("entityTimeline", () => {
             ),
           },
         ],
+        // Contract B: the emitted timeline is authoritative — a record
+        // with no dated facts carries only undated entries.
+        timeline: ENTITY_PAGE_TWIN_FIXTURE.timeline.filter(
+          (e) => e.date_kind === "undated",
+        ),
       },
     ]);
     const t2 = entityTimeline(undatedOnly);
