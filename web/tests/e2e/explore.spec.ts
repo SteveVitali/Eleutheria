@@ -22,6 +22,7 @@ test.describe("graph explorer /explore/ (GX-09a)", () => {
     await expect(access).toHaveAttribute("aria-pressed", "true");
     // Node buttons carry the budget interaction contract (select-node).
     const nodes = page.getByTestId("graph-island-node");
+    await expect(nodes.first()).toBeVisible();
     expect(await nodes.count()).toBeGreaterThan(1);
     // The workspace URL state minted v=2&view=graph.
     expect(page.url()).toContain("/explore/");
@@ -54,6 +55,7 @@ test.describe("graph explorer /explore/ (GX-09a)", () => {
     const island = page.getByTestId("explore-island");
     await expect(island).toBeVisible();
     const nodes = page.getByTestId("graph-island-node");
+    await expect(nodes.first()).toBeVisible();
     expect(await nodes.count()).toBeGreaterThan(0);
     // Pick the first non-focused node — aria-pressed flips to true.
     let target = -1;

@@ -115,7 +115,7 @@ ASTRO_PAGES = {
     "/dossier/[...path]/": "web/src/pages/dossier/[...path].astro",
     "/dossier/[...path]/print/": "web/src/pages/dossier/[...path]/print.astro",
     "/map/": "web/src/pages/map.astro",
-    "/network/": "web/src/pages/network.astro",
+    "/network/": "web/src/pages/explore/index.astro",
     "/search/": "web/src/pages/search.astro",
     "/corrections/": "web/src/pages/corrections.astro",
     # P36.59 (WX-04a): the old single-file watch page split into the

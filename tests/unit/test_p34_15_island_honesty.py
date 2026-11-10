@@ -86,7 +86,7 @@ def test_network_page_carries_no_centrality_or_exact_identity_claim() -> None:
     """K2 NEW-6 / D-K2-2: /network/ publishes no statistic element and no
     'deterministic identity resolution … exact' claim; the withdrawal note is
     honest abstention copy, not a zero measurement."""
-    body = _rendered_body(PAGES / "network.astro")
+    body = _rendered_body(PAGES / "explore/index.astro")
     for forbidden in (
         "centrality-stat",
         "er-disclosure",
@@ -96,7 +96,7 @@ def test_network_page_carries_no_centrality_or_exact_identity_claim() -> None:
         "exact",
     ):
         assert forbidden not in body, f"/network/ still carries {forbidden!r}"
-    src = (PAGES / "network.astro").read_text("utf-8")
+    src = (PAGES / "explore/index.astro").read_text("utf-8")
     assert "getNetworkCentrality" not in src and "CENTRALITY_STATS" not in src
     # The abstention is stated, not silent.
     assert 'data-testid="centrality-withdrawn"' in src
@@ -105,7 +105,7 @@ def test_network_page_carries_no_centrality_or_exact_identity_claim() -> None:
 def test_network_island_carries_no_centrality_rendering() -> None:
     """No centrality prop, element or import — the doc comment may name the
     withdrawal; code may not carry a statistic."""
-    src = (WEB_SRC / "islands/NetworkIsland.tsx").read_text("utf-8")
+    src = (WEB_SRC / "islands/ExploreIsland.tsx").read_text("utf-8")
     body = re.sub(r"/\*.*?\*/", "", src, flags=re.S)  # strip block comments
     for forbidden in (
         "centrality",
@@ -114,7 +114,7 @@ def test_network_island_carries_no_centrality_rendering() -> None:
         "CentralityStatistic",
         "selectedStats",
     ):
-        assert forbidden not in body, f"NetworkIsland still carries {forbidden!r}"
+        assert forbidden not in body, f"ExploreIsland still carries {forbidden!r}"
 
 
 def test_exported_analytics_abstains_from_the_ranking() -> None:
@@ -190,7 +190,7 @@ def test_every_island_renders_the_ignored_facet_notice() -> None:
     actually renders the notice."""
     for island in [
         "map/MapApp.tsx",
-        "NetworkIsland.tsx",
+        "ExploreIsland.tsx",
         "SearchIsland.tsx",
     ]:
         src = (WEB_SRC / "islands" / island).read_text("utf-8")
