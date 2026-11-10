@@ -710,7 +710,7 @@
 /* P37.27 (GX-09b) — the explorer's second wave: filter panel, search-to-node,
  *  the sortable node table and the path answer. */
 .sig-explore-filters {
-  border: 1px solid var(--sig-line, #d8d3cb);
+  border: var(--sig-border-thin) solid var(--sig-rule);
   border-radius: 4px;
   margin: 0.5rem 0;
   padding: 0.4rem 0.8rem;
@@ -762,6 +762,6 @@
   padding: 0;
 }
 .sig-explore-table .sig-explore-sort:focus-visible {
-  outline: 2px solid var(--sig-focus, #1f4e79);
-  outline-offset: 2px;
+  outline: 3px solid var(--sig-link);
+  outline-offset: 1px;
 }

@@ -74,14 +74,20 @@ export function isEntityTwinsIndex(doc: unknown): doc is EntityTwinsIndex {
   );
 }
 
+/** Join an emitted file name under an entity page href (the trailing-slash
+ *  guard is the one boundary check the path builders share). */
+export function twinPathHref(entityHref: string, path: string): string {
+  return `${entityHref.endsWith("/") ? entityHref : `${entityHref}/`}${path}`;
+}
+
 /** The manifest URL under an entity page href (`/entity/<t>/<k>/` → `…/index.json`). */
 export function twinIndexHref(entityHref: string): string {
-  return `${entityHref.endsWith("/") ? entityHref : `${entityHref}/`}index.json`;
+  return twinPathHref(entityHref, "index.json");
 }
 
 /** The twin doc URL under an entity page href. */
 export function twinDocHref(entityHref: string, compartment: string): string {
-  return `${entityHref.endsWith("/") ? entityHref : `${entityHref}/`}index.${compartment}.json`;
+  return twinPathHref(entityHref, `index.${compartment}.json`);
 }
 
 // ------------------------------------------------------------------ filters
@@ -529,10 +535,16 @@ export function searchGraphNodes(
     .map((x) => x.n);
 }
 
+/** `/entity/` route-class check on an emitted href — a prefix guard, never
+ *  a link construction (the island re-bases through `withBase`). */
+export function isEntityHref(href: string | null): href is string {
+  return href !== null && href.startsWith("/entity/");
+}
+
 /** The entity hrefs a twin/ego fetch may follow — `/entity/` links only
  *  (a /graphs/ or /dossier/ href is never a machine-readable twin). */
 export function entityHrefOf(node: OverviewNode): string | null {
-  return node.href !== null && node.href.startsWith("/entity/") ? node.href : null;
+  return isEntityHref(node.href) ? node.href : null;
 }
 
 export type { GraphOverview, OverviewEdge, OverviewNode, EntityPageTwin };

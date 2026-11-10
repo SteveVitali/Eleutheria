@@ -1407,6 +1407,18 @@
       "token": "/graphs/operators/usa/ok/",
       "count": 1,
       "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links — artifact data, never link constructions"
+    },
+    {
+      "file": "src/lib/explore-graph.ts",
+      "token": "/",
+      "count": 1,
+      "reason": "P37.27 (GX-09b): twinPathHref's endsWith(\"/\") trailing-slash join guard on emitted entity hrefs — a string-shape guard, not a link"
+    },
+    {
+      "file": "src/lib/explore-graph.ts",
+      "token": "/entity/",
+      "count": 1,
+      "reason": "P37.27 (GX-09b): isEntityHref's \"/entity/\" route-class prefix guard on emitted hrefs — a check, not a link (fetch sites re-base through withBase)"
     }
   ]
 }

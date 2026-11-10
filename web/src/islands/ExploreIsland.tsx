@@ -49,6 +49,7 @@ import {
   egoFromTwin,
   entityHrefOf,
   EXPAND_CAP,
+  isEntityHref,
   isEntityPageTwin,
   isEntityTwinsIndex,
   isNodeSort,
@@ -62,6 +63,7 @@ import {
   sortNodes,
   SPECULATIVE_HOPS,
   twinIndexHref,
+  twinPathHref,
   type ExploreFilters,
   type JurisdictionPlace,
 } from "../lib/explore-graph";
@@ -75,7 +77,7 @@ import {
 } from "../lib/workspace-state/index";
 import { matchEntries, shardKey } from "../elements/typeahead-model";
 import type { TypeaheadShard } from "../elements/typeahead-model";
-import { withBase } from "../lib/paths";
+import { rootPath, withBase } from "../lib/paths";
 import { useMapWorkspace } from "./map/workspace";
 
 /** One `sig.graph-index/1` row as the page passes it — doc hrefs already
@@ -237,7 +239,7 @@ export default function ExploreIsland({
     selfNode: OverviewNode | null = null,
   ) => {
     if (pendingEgos.current.has(key)) return;
-    if (href === null || !href.startsWith("/entity/")) {
+    if (!isEntityHref(href)) {
       setEgos((m) =>
         new Map(m).set(key, {
           status: "missing",
@@ -268,7 +270,7 @@ export default function ExploreIsland({
         }
         return Promise.all(
           manifest.twins.map((t) =>
-            fetch(hrefOf(`${href.endsWith("/") ? href : `${href}/`}${t.path}`))
+            fetch(hrefOf(twinPathHref(href, t.path)))
               .then((r) => {
                 if (!r.ok) throw new Error(`twin answered ${r.status}`);
                 return r.json() as Promise<unknown>;
@@ -536,6 +538,10 @@ export default function ExploreIsland({
     (scoped?.edges ?? []).filter((e) => e.src === key || e.dst === key);
 
   const distinct = <T,>(xs: T[]): T[] => [...new Set(xs)];
+  /** Shard entries carry base-joined hrefs; the entity class check and the
+   *  tail strip share this one prefix (withBase("entity/") — never a
+   *  literal). */
+  const entityPrefix = withBase("entity/");
   const bands = distinct((merged?.nodes ?? []).map((n) => n.band)).sort();
   const relations = distinct((merged?.edges ?? []).map((e) => e.relation)).sort();
   const sourceNames = distinct((merged?.edges ?? []).flatMap((e) => e.sources)).sort();
@@ -865,24 +871,33 @@ export default function ExploreIsland({
                   </li>
                 ))}
                 {shardMatches
-                  .filter((s) => !nodeMatches.some((n) => n.href === s.href.replace(/^\//, "/")))
+                  .filter(
+                    // The shard href is base-joined at build time; a node
+                    // href is root-relative — compare route identities.
+                    (s) => !nodeMatches.some((n) => n.href !== null && hrefOf(n.href) === s.href),
+                  )
                   .map((s) => (
                     <li key={s.href}>
-                      {s.href.startsWith(withBase("entity/")) || s.href.startsWith("/entity/") ? (
+                      {s.href.startsWith(entityPrefix) ? (
                         <button
                           type="button"
                           className="sig-graph-node-btn"
                           data-testid="search-entity-hit"
                           onClick={() => {
-                            const href = s.href.startsWith("/") ? s.href : `/${s.href}`;
-                            const key = `e:${href.split("/").filter(Boolean).pop()}`;
+                            // Strip the emitted base prefix to the root-relative
+                            // entity route (rootPath never emits a literal
+                            // leading-slash template); the twin fetch re-bases,
+                            // so a /s/<pub>/ base can never double-prefix.
+                            const tail = s.href.slice(entityPrefix.length);
+                            const href = rootPath(`entity/${tail}`);
+                            const key = `e:${tail.match(/([^/]+)\/?$/)?.[1] ?? tail}`;
                             const anchor = merged?.nodes[0];
                             // Deterministic ring spot near the first node —
                             // never a PRNG position.
                             const self: OverviewNode = {
                               key,
                               label: s.label,
-                              band: s.kind ?? "entity",
+                              band: "entity",
                               place: null,
                               href,
                               count: 0,

@@ -635,8 +635,8 @@ export const ENTITY_LABEL_FIXTURES: EntityLabelRow[] = [
     // P37.27 (GX-09b): the supply/access overviews' buyer node — a keyed
     // agency whose twin the explorer's expansion fetch resolves (the
     // overview fixture named the page before the twin existed).
-    entity_id: "0190cafe-0000-7000-8000-0000000000g9",
-    sig_id: "sig:agency:0190cafe-0000-7000-8000-0000000000g9",
+    entity_id: "0190cafe-0000-7000-8000-0000000000a9",
+    sig_id: "sig:agency:0190cafe-0000-7000-8000-0000000000a9",
     kind: "agency",
     url_type: "agency",
     label: "Acme City Police Department",
@@ -1481,8 +1481,8 @@ export const ENTITY_PAGE_TWIN_ACME_FIXTURE: EntityPageTwin = {
   schema: ENTITY_PAGE_SCHEMA,
   review_state: "published",
   key: "acme-city-police--4g2wm8q",
-  entity_id: "0190cafe-0000-7000-8000-0000000000g9",
-  sig_id: "sig:agency:0190cafe-0000-7000-8000-0000000000g9",
+  entity_id: "0190cafe-0000-7000-8000-0000000000a9",
+  sig_id: "sig:agency:0190cafe-0000-7000-8000-0000000000a9",
   kind: "agency",
   url_type: "agency",
   url: fixtureEntityUrl("agency", "acme-city-police", "4g2wm8q"),
@@ -1607,7 +1607,7 @@ export const ENTITY_PAGE_TWIN_ACME_FIXTURE: EntityPageTwin = {
     publication: "sig-release-2026.09",
     url: null,
     record_url: null,
-    sig_id: "sig:agency:0190cafe-0000-7000-8000-0000000000g9",
+    sig_id: "sig:agency:0190cafe-0000-7000-8000-0000000000a9",
   },
   withheld_notice: null,
   er_disclosure: ER_DISCLOSURE,
