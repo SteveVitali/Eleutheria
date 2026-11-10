@@ -381,10 +381,11 @@ def _cp_group_fields(
 ) -> dict[str, str]:
     """The counterparty's declared grouping — kind × admin-1 (K6 §6.2)."""
     admin1 = _admin1_of(n.place, ancestors, places)
-    label = (places.get(admin1) or _go.PlaceInfo("", "", "")).name or (
+    info = places.get(admin1) if admin1 is not None else None
+    label = (info or _go.PlaceInfo("", "", "")).name or (
         "Not yet placed" if admin1 is None else admin1.replace("_", " ")
     )
-    slug = (places.get(admin1) or _go.PlaceInfo("", "", "")).slug_path if admin1 else ""
+    slug = (info or _go.PlaceInfo("", "", "")).slug_path if admin1 else ""
     return {
         "group_key": f"{n.band}:{admin1 or 'unplaced'}",
         "group_label": label,
@@ -463,7 +464,8 @@ def _access_kind_of(e: _go._Edge) -> str | None:
     edge)."""
     kinds = {_ACCESS_KIND_TOKENS.get(_ep._access_kind_for(p) or "") for p in e.predicates}
     kinds.discard(None)
-    return sorted(kinds)[0] if len(kinds) == 1 else None
+    found = sorted(k for k in kinds if k is not None)
+    return found[0] if len(found) == 1 else None
 
 
 def _anchored_pairs(

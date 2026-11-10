@@ -76,12 +76,15 @@ test.describe("the one dossier template (SIG-UI-069)", () => {
     // the zero-JS `:has()` toggles, the H-2 table twin and the hand-offs.
     const fig = page.getByTestId("network-figure");
     await expect(fig).toHaveAttribute("id", "fig-access");
-    await expect(fig.locator("svg")).toBeVisible();
+    // The figure emits wide + narrow variants; the wide one shows at
+    // desktop width, the narrow one is CSS-hidden until the breakpoint.
+    const wide = page.getByTestId("network-figure-wide");
+    await expect(wide.locator("svg")).toBeVisible();
     // The access-kind toggles hide each kind without JavaScript.
     await expect(page.getByTestId("network-toggles")).toBeVisible();
-    await expect(fig.locator(".sig-fig-edge-acc-declared")).toBeVisible();
+    await expect(wide.locator(".sig-fig-edge-acc-declared")).toBeVisible();
     await page.getByLabel("declared").uncheck();
-    await expect(fig.locator(".sig-fig-edge-acc-declared")).toBeHidden();
+    await expect(wide.locator(".sig-fig-edge-acc-declared")).toBeHidden();
     await page.getByLabel("declared").check();
     // The H-2 table twin is the figure's long description.
     const twin = page.getByTestId("network-table-twin");
