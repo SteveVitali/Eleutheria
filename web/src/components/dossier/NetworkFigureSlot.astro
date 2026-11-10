@@ -20,6 +20,7 @@ import {
   type NetworkSlot,
 } from "../../lib/dossier-visuals";
 import { withBase } from "../../lib/paths";
+import { SURFACE_PATHS } from "../../lib/workspace-state/index";
 import { fmtInt } from "../../lib/format";
 
 interface Props {
@@ -148,7 +149,7 @@ const anchorAttrs = drawn?.anchor_attrs ?? {};
         missing: absent.reason,
         nearby:
           "The rows and figures on this page carry the recorded facts the figure would summarise.",
-        action: { href: absent.table_href || `/graphs/${absent.overview}/`, label: `See the ${absent.overview} overview` },
+        action: { href: absent.table_href, label: `See the ${absent.overview} overview` },
         change: "The figure appears with a release that emits its evidenced edges.",
         cause: absent.status === "no_evidenced_edges" ? "not_researched" : "not_published",
         batchIds: {
@@ -168,7 +169,7 @@ const anchorAttrs = drawn?.anchor_attrs ?? {};
           "No dossier network figure is emitted in this release — the edge model that makes one honest is not landed yet (VIZ-01b's content).",
         nearby:
           "The rows and figures on this page carry the recorded facts the figure would summarise.",
-        action: { href: "/explore/", label: "See the published graph" },
+        action: { href: SURFACE_PATHS.graph, label: "See the published graph" },
         change: "The figure appears with a release that emits its evidenced edges.",
         cause: "not_published",
         batchIds: { missing: "NF-01", nearby: "NF-02", action: "NF-03", change: "NF-04" },
