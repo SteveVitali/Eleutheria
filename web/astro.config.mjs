@@ -296,22 +296,27 @@ function sigEnhancementKit() {
           `// SPDX-License-Identifier: Apache-2.0\n` +
             `export * from "../_astro/${embedChunks[0]}";\n`,
         );
-        // The deferred stylesheet — MapLibre controls + the shared island
-        // chrome, link-injected by <sig-activate> at activation (post-action
-        // only; style-src 'self' admits the same-origin file).
-        await esbuild.build({
-          entryPoints: [
-            fileURLToPath(new URL("./src/islands/map/dossier-embed.css", import.meta.url)),
-          ],
-          outfile: join(outDir, "sig-map-embed.css"),
-          bundle: true,
-          minify: true,
-          loader: { ".css": "css" },
-          logLevel: "warning",
-        });
+        // The deferred stylesheet — two kit files so each stays inside its
+        // wire budget (SIG-UI-156): the vendored MapLibre controls and the
+        // shared island chrome, link-injected vendor-first by <sig-activate>
+        // at activation (post-action only; style-src 'self' admits the
+        // same-origin files).
+        for (const [entry, out] of [
+          ["./src/islands/map/dossier-embed.vendor.css", "sig-map-embed.vendor.css"],
+          ["./src/islands/map/dossier-embed.css", "sig-map-embed.css"],
+        ]) {
+          await esbuild.build({
+            entryPoints: [fileURLToPath(new URL(entry, import.meta.url))],
+            outfile: join(outDir, out),
+            bundle: true,
+            minify: true,
+            loader: { ".css": "css" },
+            logLevel: "warning",
+          });
+        }
         console.log(
           `sig-enhancement-kit: ${files.length} element module(s) emitted to /_kit/ ` +
-            `(+ sig-map-embed.js shim → ${embedChunks[0]}, sig-map-embed.css)`,
+            `(+ sig-map-embed.js shim → ${embedChunks[0]}, sig-map-embed.css + .vendor.css)`,
         );
       },
     },

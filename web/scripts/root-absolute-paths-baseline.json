@@ -1426,6 +1426,12 @@
       "token": "/graphs/$",
       "count": 2,
       "reason": "P37.28: graphHref()'s emitted-route templates — fixture link data mirroring /graphs/<family>/<slug>/ build routes; the file's role is fixture artifact data (17 sites baselined)"
+    },
+    {
+      "file": "src/components/dossier/NetworkFigureSlot.astro",
+      "token": "/figures",
+      "count": 1,
+      "reason": "P37.29 fix-forward: the sig-figure region's data-pointer \"/figures\" — a JSON pointer into web/dossier_sources/<slug>.json (the contribution plan's figures[] feed the figure's counts derive from), not a link"
     }
   ]
 }

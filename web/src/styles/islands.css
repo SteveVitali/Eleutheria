@@ -711,9 +711,9 @@
  *  the sortable node table and the path answer. */
 .sig-explore-filters {
   border: var(--sig-border-thin) solid var(--sig-rule);
-  border-radius: 4px;
-  margin: 0.5rem 0;
-  padding: 0.4rem 0.8rem;
+  border-radius: var(--sig-radius-1);
+  margin: var(--sig-space-2) 0;
+  padding: var(--sig-space-2) var(--sig-space-3);
 }
 .sig-explore-filters > summary {
   cursor: pointer;
@@ -722,8 +722,8 @@
 .sig-explore-filters__grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem 1.5rem;
-  padding-top: 0.5rem;
+  gap: var(--sig-space-3) var(--sig-space-5);
+  padding-top: var(--sig-space-2);
 }
 .sig-explore-filters fieldset {
   border: 0;
@@ -733,19 +733,19 @@
 }
 .sig-explore-filters legend {
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: var(--sig-step--1);
   padding: 0;
 }
 .sig-explore-filters label {
   display: block;
-  font-size: 0.9rem;
+  font-size: var(--sig-step--1);
 }
 .sig-explore-search {
-  margin: 0.6rem 0;
+  margin: var(--sig-space-2) 0;
 }
 .sig-explore-search__results {
   list-style: none;
-  margin: 0.35rem 0 0;
+  margin: var(--sig-space-1) 0 0;
   padding: 0;
   max-height: 16rem;
   overflow-y: auto;
@@ -782,12 +782,12 @@
   max-height: none;
 }
 .sig-map-embed__heading {
-  font-size: var(--sig-step-0, 1rem);
-  margin: 0 0 4px;
+  font-size: var(--sig-step-0);
+  margin: 0 0 var(--sig-space-1);
 }
 .sig-map-embed__actions {
-  margin: 0 0 8px;
-  font-size: var(--sig-step--1, 0.85rem);
+  margin: 0 0 var(--sig-space-2);
+  font-size: var(--sig-step--1);
 }
 @media print {
   .sig-map-app--embedded,

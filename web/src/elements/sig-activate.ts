@@ -117,10 +117,14 @@ class SigActivate extends HTMLElement {
       if (typeof mod.mountEmbeddedMap !== "function") {
         throw new Error("map-embed: no mountEmbeddedMap export");
       }
-      if (cssHref && !document.querySelector(`link[href="${cssHref}"]`)) {
+      // The `css` attribute is a whitespace-separated list (vendor styles
+      // first — the SIG-UI-156 split keeps each kit file inside its wire
+      // budget); each deduped link is injected in declared order.
+      for (const href of (cssHref ?? "").split(/\s+/).filter(Boolean)) {
+        if (document.querySelector(`link[href="${href}"]`)) continue;
         const link = document.createElement("link");
         link.rel = "stylesheet";
-        link.href = cssHref;
+        link.href = href;
         link.dataset.enhancement = "";
         document.head.appendChild(link);
       }

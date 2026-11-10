@@ -120,7 +120,7 @@ const typedMissing =
       <p class="sig-fig1__activate">
         <sig-activate
           app={withBase("_kit/sig-map-embed.js")}
-          css={withBase("_kit/sig-map-embed.css")}
+          css={`${withBase("_kit/sig-map-embed.vendor.css")} ${withBase("_kit/sig-map-embed.css")}`}
           props={withBase(mapEmbedPropsHref(doc!.jurisdiction.slug_path))}
           target="fig-map-embed"
           static-figure=".sig-fig1__static"
