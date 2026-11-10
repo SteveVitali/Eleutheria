@@ -24,6 +24,25 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.30 — Evidence recommender repair (K7 WX-05, F-485, SIG-WATCH-007,
+  SIG-UI-027a/b/c):** the evidence recommender's ranking is now
+  subject-scoped and its scores real. `web/evidence.json` artifacts carry
+  `subject_scores[]` — the per-(artifact, subject) pair the §39.5a axes are
+  computed over: the best §10.5 directness class and the best §28.3 currency
+  class (derived at `as_of` against predicate volatility, never stored) over
+  the artifact's claims about THAT subject, plus the subject-scoped dispute
+  flags and the retrievability vocabulary mapped from `capture_status` +
+  `disappeared_observed_at` (§17.6). The spine values moved to their true
+  names (`primary_or_secondary`, `published_at_edtf`) instead of being
+  stuffed into `directness`/`currency` — the pre-repair emission that
+  produced 255-of-255 NaN scores. `recommendEvidence` now ranks only
+  artifacts bearing on the decision's subject (the pair join plus the
+  one-hop contract/agency neighbourhood the emitted `subject_neighbours`
+  map records), every emitted score passes the build-time
+  `assertFiniteScore` guard, and `decision_point.json` gains the per-item
+  `decision_points[]` list — the "Evidence to bring" ranked list and its
+  exportable `citations.txt` (SIG-UI-027c) now live on each
+  `/watch/item/<handle>/` page, never nationally.
 - **P37.29 — In-place map activation on dossiers (K6 VIZ-04,
   SIG-UI-127/130/132):** every dossier Figure-1 now carries "Explore on
   the interactive map" — a zero-JS scoped `/map/` link that `<sig-activate>`
