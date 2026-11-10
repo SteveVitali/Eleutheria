@@ -101,14 +101,14 @@ test.describe("graph explorer /explore/ (GX-09a)", () => {
   });
 
   test("unapplied facets are visibly named, never silently applied", async ({ page }) => {
-    await page.goto("/explore/?v=2&view=graph&jurisdiction=iso3166-2%3AUS-OK&path=a%3Ab~c%3Ad");
+    // `seen` + `within` parse (registered) but the explorer does not apply
+    // them — the SIG-UI-060 notice names both rather than drop them.
+    await page.goto("/explore/?v=2&view=graph&seen=2020..2024&within=x");
     await expect(page.getByTestId("explore-island")).toBeVisible();
     const notice = page.getByTestId("facet-not-applied");
     await expect(notice).toBeVisible();
-    await expect(notice).toContainText("jurisdiction");
-    // `path` renders in the notice's plain-language vocabulary (registry
-    // label "a node pair") — named, never silently applied.
-    await expect(notice).toContainText("node pair");
+    await expect(notice).toContainText("seen range");
+    await expect(notice).toContainText("scope restriction");
   });
 
   test("the live cite view mints the snapshot-pinned form", async ({ page }) => {
@@ -154,9 +154,11 @@ test.describe("graph explorer /explore/ (GX-09a)", () => {
     expect(href).toContain("/explore/?v=2&view=graph&jurisdiction=");
     await page.goto(href!);
     await expect(page.getByTestId("explore-island")).toBeVisible();
-    // The dossier's jurisdiction facet is named unapplied (SIG-UI-060), and
-    // the two J2 overviews are one pick apart.
-    await expect(page.getByTestId("facet-not-applied")).toContainText("jurisdiction");
+    // The dossier's jurisdiction facet applies (P37.27): the access
+    // overview's Texas node matches the jkey's place subtree and the active
+    // filter is disclosed — never a silent filter.
+    await expect(page.getByTestId("active-filters")).toContainText("filter");
+    await expect(page.getByTestId("graph-island-node").filter({ hasText: "Texas" })).toHaveCount(1);
     await page.getByTestId("overview-pick").filter({ hasText: "Supply" }).click();
     await expect(page.getByTestId("explore-canvas")).toBeVisible();
     expect(page.url()).toContain("overview=supply");

@@ -162,12 +162,13 @@ test.describe("refusal + surface mismatch (SIG-UI-059)", () => {
   test("an unapplied registered parameter is named on every surface", async ({
     page,
   }) => {
-    // `sort` parses (registered) but no surface applies it — the notice names
-    // it on each T2 surface rather than silently dropping it.
+    // `within` parses (registered) but no surface applies it — the notice names
+    // it on each T2 surface rather than silently dropping it. (P37.27: `sort`
+    // is applied on the graph surface — the probe uses `within`.)
     for (const { path } of T2) {
-      await page.goto(`${path}?v=2&sort=name`);
+      await page.goto(`${path}?v=2&within=x`);
       await expect(page.getByTestId("facet-not-applied")).toContainText(
-        "sort key",
+        "scope restriction",
       );
     }
   });

@@ -706,3 +706,62 @@
   font-weight: 700;
   text-decoration: underline;
 }
+
+/* P37.27 (GX-09b) — the explorer's second wave: filter panel, search-to-node,
+ *  the sortable node table and the path answer. */
+.sig-explore-filters {
+  border: 1px solid var(--sig-line, #d8d3cb);
+  border-radius: 4px;
+  margin: 0.5rem 0;
+  padding: 0.4rem 0.8rem;
+}
+.sig-explore-filters > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.sig-explore-filters__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  padding-top: 0.5rem;
+}
+.sig-explore-filters fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 10rem;
+}
+.sig-explore-filters legend {
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0;
+}
+.sig-explore-filters label {
+  display: block;
+  font-size: 0.9rem;
+}
+.sig-explore-search {
+  margin: 0.6rem 0;
+}
+.sig-explore-search__results {
+  list-style: none;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  max-height: 16rem;
+  overflow-y: auto;
+}
+.sig-explore-table {
+  max-width: 100%;
+}
+.sig-explore-table .sig-explore-sort {
+  background: none;
+  border: 0;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+.sig-explore-table .sig-explore-sort:focus-visible {
+  outline: 2px solid var(--sig-focus, #1f4e79);
+  outline-offset: 2px;
+}

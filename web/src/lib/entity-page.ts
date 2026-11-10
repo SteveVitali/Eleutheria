@@ -631,6 +631,27 @@ export const ENTITY_LABEL_FIXTURES: EntityLabelRow[] = [
     part8: "pass",
     subject_key: "ordinance:acworth-2020-14",
   },
+  {
+    // P37.27 (GX-09b): the supply/access overviews' buyer node — a keyed
+    // agency whose twin the explorer's expansion fetch resolves (the
+    // overview fixture named the page before the twin existed).
+    entity_id: "0190cafe-0000-7000-8000-0000000000g9",
+    sig_id: "sig:agency:0190cafe-0000-7000-8000-0000000000g9",
+    kind: "agency",
+    url_type: "agency",
+    label: "Acme City Police Department",
+    descriptor: "Government body · usa-ok",
+    label_basis: "source_name",
+    label_source_id: "okc_procurement",
+    place_jkey: "usa-ok",
+    slug: "acme-city-police",
+    hash: "4g2wm8q",
+    url: fixtureEntityUrl("agency", "acme-city-police", "4g2wm8q"),
+    disambiguator: null,
+    component_id: "comp-1",
+    part8: "pass",
+    subject_key: "agency:acme-city-pd",
+  },
 ];
 
 /** The published twin for the auto-allowed agency — relations both ways,
@@ -1450,8 +1471,151 @@ export const ENTITY_PAGE_TWIN_POLICY_FIXTURE: EntityPageTwin = {
 
 /** The committed twin set the fixtures-mode data layer serves, keyed by
  * `<url_type>/<key>`. */
+/**
+ * P37.27 (GX-09b) — the Acme City PD twin the explorer's expansion fetches:
+ * two vendors recorded selling to it (inbound) and one configured sharing
+ * partner (outbound, historical). Relations keep the full H-2 field set so
+ * the expanded ego edges carry the same facts as overview edges.
+ */
+export const ENTITY_PAGE_TWIN_ACME_FIXTURE: EntityPageTwin = {
+  schema: ENTITY_PAGE_SCHEMA,
+  review_state: "published",
+  key: "acme-city-police--4g2wm8q",
+  entity_id: "0190cafe-0000-7000-8000-0000000000g9",
+  sig_id: "sig:agency:0190cafe-0000-7000-8000-0000000000g9",
+  kind: "agency",
+  url_type: "agency",
+  url: fixtureEntityUrl("agency", "acme-city-police", "4g2wm8q"),
+  label: "Acme City Police Department",
+  descriptor: "Government body · usa-ok",
+  label_basis: "source_name",
+  label_source_id: "okc_procurement",
+  place_jkey: "usa-ok",
+  disambiguator: null,
+  publication: "sig-release-2026.09",
+  generated_at: "2026-09-01T00:00:00Z",
+  compartment: "sig_graph",
+  identifiers: [
+    { scheme: "sig.connector.subject", value: "agency:acme-city-pd" },
+  ],
+  summary: [
+    {
+      text: "2 recorded inbound relationships — sells to",
+      value: 2,
+      relation: "sells to",
+      direction: "inbound",
+      claim_ids: ["clm-acme-vigilant-1", "clm-acme-meridian-1"],
+    },
+  ],
+  claims: [],
+  relations: [
+    {
+      relation: "sells to",
+      direction: "inbound",
+      access_kind: null,
+      count: 2,
+      items: [
+        {
+          counterparty: {
+            entity_id: "0190cafe-0000-7000-8000-0000000000b2",
+            kind: "org",
+            label: "Vigilant Solutions (LEARN)",
+            label_basis: "source_name",
+            url: fixtureEntityUrl("org", "vigilant-solutions-learn", "7xk3mrt"),
+            key: "vigilant-solutions-learn--7xk3mrt",
+          },
+          relation: "sells to",
+          role: "vendor",
+          date: "2020-01-28",
+          date_kind: "observed",
+          currency: "STALE",
+          status: null,
+          support: "WEAKLY_SUPPORTED",
+          agreement: null,
+          sources: [{ id: "okc_procurement", name: "OKC procurement" }],
+          claim_ids: ["clm-acme-vigilant-1"],
+          historical: true,
+        },
+        {
+          counterparty: {
+            kind: "org",
+            label: "Meridian Surveillance LLC",
+            literal: true,
+          },
+          relation: "sells to",
+          role: "vendor",
+          date: null,
+          date_kind: "undated",
+          currency: "UNDATED",
+          status: null,
+          support: "WEAKLY_SUPPORTED",
+          agreement: null,
+          sources: [{ id: "okc_procurement", name: "OKC procurement" }],
+          claim_ids: ["clm-acme-meridian-1"],
+          historical: false,
+        },
+      ],
+      more: 0,
+      claim_ids: ["clm-acme-vigilant-1", "clm-acme-meridian-1"],
+    },
+    {
+      relation: "configured access to",
+      direction: "outbound",
+      access_kind: "configured_access",
+      count: 1,
+      items: [
+        {
+          counterparty: {
+            entity_id: "0190cafe-0000-7000-8000-0000000000b2",
+            kind: "org",
+            label: "Vigilant Solutions (LEARN)",
+            label_basis: "source_name",
+            url: fixtureEntityUrl("org", "vigilant-solutions-learn", "7xk3mrt"),
+            key: "vigilant-solutions-learn--7xk3mrt",
+          },
+          relation: "configured access to",
+          role: "configured_sharing_partner",
+          date: "2020-01-28",
+          date_kind: "observed",
+          currency: "HISTORICAL",
+          status: "unresolved",
+          support: "WEAKLY_SUPPORTED",
+          agreement: null,
+          sources: [{ id: "eff_data_driven", name: "EFF Data Driven" }],
+          claim_ids: ["clm-acme-access-1"],
+          historical: true,
+        },
+      ],
+      more: 0,
+      claim_ids: ["clm-acme-access-1"],
+    },
+  ],
+  access: { closures: [], degree_only: [] },
+  contradictions: [],
+  timeline: [],
+  related: { dossiers: [], sources: [], tasks: [], watch: [], documents: [] },
+  downloads: [
+    {
+      kind: "twin",
+      format: "json",
+      path: "index.sig_graph.json",
+      compartment: "sig_graph",
+      label: "Entity record (JSON)",
+    },
+  ],
+  cite: {
+    publication: "sig-release-2026.09",
+    url: null,
+    record_url: null,
+    sig_id: "sig:agency:0190cafe-0000-7000-8000-0000000000g9",
+  },
+  withheld_notice: null,
+  er_disclosure: ER_DISCLOSURE,
+};
+
 export const ENTITY_PAGE_FIXTURES: Record<string, EntityPageTwin> = {
   "agency/acworth-police-department--4g2wm8q": ENTITY_PAGE_TWIN_FIXTURE,
+  "agency/acme-city-police--4g2wm8q": ENTITY_PAGE_TWIN_ACME_FIXTURE,
   "contract/acworth-alpr-expansion-contract--9p4kxwd":
     ENTITY_PAGE_TWIN_CONTRACT_FIXTURE,
   "policy/acworth-surveillance-oversight-ordinance-2020-14--5t8mvjq":
