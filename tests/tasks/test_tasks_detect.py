@@ -315,3 +315,142 @@ def test_empty_inputs_yield_empty_queue() -> None:
     assert res.queue == []
     assert res.drafts == []
     assert res.summary.generated == 0
+
+
+# --- catalog #10: contract_expiring over the WX-01 contract subjects (P37.32) -
+
+
+def _contract(
+    subject: str,
+    *,
+    end_date: str | None,
+    claim_id: str = "cend-1",
+    auto_renews: object = None,
+    notice_window_days: object = None,
+    jurisdiction: str | None = "jur1",
+) -> dict:
+    """One ``read_contract_expiry_inputs`` row: the subject's latest end_date
+    claim + whatever renewal-term claims are on record."""
+    row: dict = {
+        "subject_id": subject,
+        "subject_key": f"contract:test:{subject}",
+        "jurisdiction_id": jurisdiction,
+    }
+    if end_date is not None:
+        row["end_date"] = end_date
+        row["end_date_claim_id"] = claim_id
+    if auto_renews is not None:
+        row["auto_renews"] = auto_renews
+    if notice_window_days is not None:
+        row["notice_window_days"] = notice_window_days
+    return row
+
+
+def test_contract_within_window_no_terms_generates_contract_expiring() -> None:
+    # K7 §5.8: an end_date inside the 90-day window with renewal terms NOT on
+    # record opens the "renewal terms unknown" task — citing the firing claim.
+    res = run_detectors(
+        MaterializedInputs(contracts=[_contract("s1", end_date="2026-11-01")]),
+        now=NOW,
+    )
+    assert len(res.queue) == 1
+    task = res.queue[0]
+    assert task.task_type == "contract_expiring"
+    assert task.subject_id == "s1"
+    assert task.jurisdiction_id == "jur1"
+    assert task.trigger_kind == "contract"
+    assert task.trigger_ref == "cend-1"
+    assert res.summary.contracts_read == 1
+    assert res.summary.by_task_type == {"contract_expiring": 1}
+    assert res.summary.by_trigger_kind == {"contract": 1}
+
+
+def test_contract_end_beyond_window_generates_no_task() -> None:
+    res = run_detectors(
+        MaterializedInputs(contracts=[_contract("s1", end_date="2027-06-01")]),
+        now=NOW,
+    )
+    assert res.queue == []
+
+
+def test_recorded_non_renewal_is_renewal_evidence() -> None:
+    # auto_renews=false IS a recorded renewal term — the watch renders the end
+    # `stated`, never `upper_bound`; no "terms unknown" task (K7 §5.8 verbatim).
+    res = run_detectors(
+        MaterializedInputs(contracts=[_contract("s1", end_date="2026-11-01", auto_renews=False)]),
+        now=NOW,
+    )
+    assert res.queue == []
+
+
+def test_auto_renewal_with_window_is_renewal_evidence() -> None:
+    # auto_renews + notice_window_days → the renewal_deadline derives; no task.
+    res = run_detectors(
+        MaterializedInputs(
+            contracts=[
+                _contract("s1", end_date="2026-11-01", auto_renews=True, notice_window_days=90)
+            ]
+        ),
+        now=NOW,
+    )
+    assert res.queue == []
+
+
+def test_auto_renewal_without_window_still_fires() -> None:
+    # auto_renews alone leaves the notice deadline unknown — the item is
+    # `upper_bound` and the task stays open.
+    res = run_detectors(
+        MaterializedInputs(contracts=[_contract("s1", end_date="2026-11-01", auto_renews=True)]),
+        now=NOW,
+    )
+    assert [t.task_type for t in res.queue] == ["contract_expiring"]
+
+
+def test_contract_without_end_date_generates_no_task() -> None:
+    res = run_detectors(
+        MaterializedInputs(contracts=[_contract("s1", end_date=None)]),
+        now=NOW,
+    )
+    assert res.queue == []
+    assert res.summary.contracts_read == 1
+
+
+def test_nearer_expiry_outranks_farther() -> None:
+    # The catalog's `_expiry_priority` ranks on the real facts — nearer end ⇒
+    # higher urgency (§33.1), never a flattened constant.
+    res = run_detectors(
+        MaterializedInputs(
+            contracts=[
+                _contract("near", end_date="2026-09-28"),
+                _contract("far", end_date="2026-12-15"),
+            ]
+        ),
+        now=NOW,
+    )
+    prio = {t.subject_id: t.priority for t in res.queue}
+    assert prio["near"] > prio["far"]
+
+
+def test_contract_expiring_task_is_local_group_and_undrafted() -> None:
+    # LOCAL_GROUP work — not a records-requester, so no draft is minted.
+    res = run_detectors(
+        MaterializedInputs(contracts=[_contract("s1", end_date="2026-11-01")]),
+        now=NOW,
+        jurisdiction_resolver=_ok_resolver,
+    )
+    assert res.queue[0].spec.assignee_class == AssigneeClass.LOCAL_GROUP
+    assert res.drafts == []
+
+
+def test_contract_tasks_dedup_on_subject() -> None:
+    # SIG-TASK-007: two dated claims on ONE subject still mint one task.
+    res = run_detectors(
+        MaterializedInputs(
+            contracts=[
+                _contract("s1", end_date="2026-11-01", claim_id="cend-a"),
+                _contract("s1", end_date="2026-11-05", claim_id="cend-b"),
+            ]
+        ),
+        now=NOW,
+    )
+    assert len(res.queue) == 1

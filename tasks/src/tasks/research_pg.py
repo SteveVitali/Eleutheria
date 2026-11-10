@@ -12,7 +12,13 @@ materialized graph through the built read seams (never re-querying the spine its
   ``inference.materialize.read_materialized_coverage`` inside the caller's transaction. Each
   is guarded by the materializer's ``input_digest`` column exactly as
   ``exports.spine_export`` guards its reads — a spine whose Round-6 materializations have not
-  run degrades to an empty queue (no fabricated task, D-R6.x live gate).
+  run degrades to an empty queue (no fabricated task, D-R6.x live gate). The contract inputs
+  (:func:`read_contract_expiry_inputs`, P37.32 / K7 WX-06 — catalog #10's
+  ``contract_expiring`` detector) are not a materialization: they are the spine's own
+  current claims on ``contract:*`` subjects, the same subject family + predicate set the
+  P35.43 watch producer's ``watch_claims`` read carries, minus the publication gates a
+  public emission needs (a task is minted internally and gated at export by
+  ``{PUB_TASK_GATE}``).
 * **Write (append-only, idempotent).** :func:`materialize_research_queue` runs the detector
   catalog (:func:`tasks.detect.run_detectors`) and INSERTs each queued task into
   ``research_task`` with ``ON CONFLICT (task_type, subject_id) DO NOTHING`` — the SIG-TASK-007
@@ -49,6 +55,7 @@ __all__ = [
     "CLOSING_CONDITION_TEXT",
     "ResearchQueueSummary",
     "read_materialized_inputs",
+    "read_contract_expiry_inputs",
     "materialize_research_queue",
     "materialize_research_queue_from_dsn",
 ]
@@ -87,6 +94,14 @@ CLOSING_CONDITION_TEXT: dict[str, str] = {
     ),
     "sharing_snapshot_stale": (
         "a fresh configured-access observation (within the FAST volatility window) is captured"
+    ),
+    # P37.32 (K7 WX-06, catalog #10): the "renewal terms unknown" task — the
+    # wording mirrors the catalog's own closes (renewal evidence recorded, OR
+    # the recorded end date moves past the firing window).
+    "contract_expiring": (
+        "the contract's renewal terms are on record (auto_renews and its notice "
+        "window, or a recorded non-renewal), or the recorded end date passes the "
+        "firing window"
     ),
 }
 _GENERIC_CLOSING_CONDITION = (
@@ -154,7 +169,78 @@ def read_materialized_inputs(conn: Any, *, role: str | None = None) -> Materiali
         contradictions=_read("contradiction", read_materialized_contradictions),
         coverage=_read("coverage_record", read_materialized_coverage),
         edges=_read("relationship", read_materialized_edges),
+        contracts=read_contract_expiry_inputs(conn),
     )
+
+
+#: The contract predicates catalog #10 reads — the WX-01 contract surface:
+#: ``end_date`` fires; the renewal-term claims settle ``renewal_evidence``
+#: (P37.32 / K7 WX-06).
+_CONTRACT_EXPIRY_PREDICATES: tuple[str, ...] = (
+    "end_date",
+    "auto_renews",
+    "notice_window_days",
+    "renewal_term_months",
+    "renewal_options",
+)
+
+
+def read_contract_expiry_inputs(conn: Any) -> list[dict[str, Any]]:
+    """Read the current contract claims the catalog #10 detector runs over.
+
+    One row per ``contract:*`` subject: the latest recorded (never superseded)
+    claim of each firing/renewal predicate — ``end_date`` + its claim id (the
+    trigger the task cites) and the ``auto_renews``/``notice_window_days``/
+    ``renewal_term_months``/``renewal_options`` values ``renewal_evidence``
+    turns on. A claim another claim revises is dropped (the newest recording
+    wins, append-only). A schema mismatch or an absent subject-key surface
+    degrades to ``[]`` — honest absence, never a fabricated contract.
+    """
+    try:
+        rows = conn.execute(
+            "SELECT c.subject_id::text, skey.subject_key, c.predicate_id,"
+            "       c.claim_id::text, COALESCE(c.value_text, c.raw_value),"
+            "       c.value_num, c.value_bool"
+            "  FROM claim c"
+            "  JOIN LATERAL (SELECT ei.value AS subject_key"
+            "                FROM entity_identifier ei"
+            "               WHERE ei.entity_id = c.subject_id"
+            "                 AND ei.scheme = 'sig.connector.subject'"
+            "               ORDER BY ei.value LIMIT 1) skey ON true"
+            " WHERE skey.subject_key LIKE 'contract:%'"
+            "   AND upper_inf(c.sys_period)"
+            "   AND NOT EXISTS (SELECT 1 FROM claim c2"
+            "                   WHERE c2.revises_claim = c.claim_id)"
+            f"   AND c.predicate_id IN ({','.join(repr(p) for p in _CONTRACT_EXPIRY_PREDICATES)})"
+            " ORDER BY c.subject_id, c.predicate_id,"
+            "          lower(c.sys_period), c.claim_id",
+        ).fetchall()
+    except Exception:  # noqa: BLE001 - a schema-shape mismatch is honest absence
+        return []
+    by_subject: dict[str, dict[str, Any]] = {}
+    for subject_id, subject_key, predicate, claim_id, value, num, boolean in rows:
+        entry = by_subject.setdefault(
+            str(subject_id),
+            {
+                "subject_id": str(subject_id),
+                "subject_key": str(subject_key),
+                "jurisdiction_id": None,
+            },
+        )
+        if predicate == "end_date":
+            entry["end_date"] = str(value) if value else None
+            entry["end_date_claim_id"] = str(claim_id)
+        elif predicate == "auto_renews":
+            entry["auto_renews"] = bool(boolean) if boolean is not None else None
+        elif predicate == "notice_window_days":
+            entry["notice_window_days"] = int(num) if num is not None else None
+        elif predicate == "renewal_term_months":
+            entry["renewal_term_months"] = int(num) if num is not None else None
+        elif predicate == "renewal_options":
+            entry["renewal_options"] = str(value) if value else None
+    # A contract with no current end_date claim cannot fire — the undated case
+    # is a coverage question, never this detector's.
+    return [r for r in by_subject.values() if r.get("end_date_claim_id") and r.get("end_date")]
 
 
 def _entity_label(conn: Any, entity_id: str | None) -> str | None:
