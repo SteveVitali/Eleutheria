@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "0c94fc94ac7a61669f20b79e4acc91aa12b276f6",
+  "input_commit": "9b03c3136d44672b68289430136750668c777950",
   "manifest_inputs": 1246,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -12292,13 +12292,13 @@
       "status": "OPEN",
       "status_source": "event-head D-P37.31-1:e0",
       "kind": "V",
-      "owner": "the OM-19 leg-runner (the orchestrator live dispatch or the operator)",
-      "landing": "engineering landed (fixture-verified); the hosted re-ingest leg queued prepared_not_executed",
+      "owner": "the OM-19 leg-runner (the orchestrator `live` dispatch or the operator)",
+      "landing": "engineering landed (fixture-verified); the `hosted` re-ingest leg queued `prepared_not_executed`",
       "landing_source": "event-head",
       "backlog_home": "BL-087",
-      "item": "The P37.31 named mutation (OM-20, GATE-G6 §4 pre-authorised): the hosted re-ingest writing the dated decision predicates onto the production spine — the agenda `meeting_date` claims and the contract `auto_renews`/`notice_window_days`/`renewal_term_months` claims the §11.11 surface and the P07.1 renewal-clause read produce, plus the append-only wrong-date supersession on re-ingest",
+      "item": "The P37.31 named mutation (OM-20, GATE-G6 §4 pre-authorised): the `hosted` re-ingest writing the dated decision predicates onto the `production` spine — the agenda `meeting_date` claims and the contract `auto_renews`/`notice_window_days`/`renewal_term_months` claims the §11.11 surface and the P07.1 renewal-clause read produce, plus the append-only wrong-date supersession on re-ingest",
       "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P37.31-live-<n>` dispatch or the operator · trigger: `implement-spec spec=docs/tickets/455_P37.31__dated-decision-predicates.md live_verification=true` inside `AR-3 + AR-2`",
-      "verify": "the hosted claim spine carries `meeting_date` claims on agenda_item subjects and the renewal triple on contract subjects, each append-only (new rows, never UPDATE/DELETE); a re-ingest of a moved meeting lands a NEW superseding claim",
+      "verify": "the claim spine carries `meeting_date` claims on agenda_item subjects and the renewal triple on contract subjects, each append-only (new rows, never UPDATE/DELETE); a re-ingest of a moved meeting lands a NEW superseding claim",
       "proxy": "the deterministic half is committed + fixture-verified — `tests/connectors/test_dated_decision_predicates.py` (15) + `tests/parsing/test_renewals.py` (13); ADR-244 records the predicate rows + the append-only supersession",
       "line": 1570,
       "events": [
@@ -12322,11 +12322,11 @@
           "recorded_at": "2026-11-10",
           "obligation_id": "D-P37.31-1",
           "event_id": "D-P37.31-1:e0",
-          "landing": "engineering landed (fixture-verified); the hosted re-ingest leg queued prepared_not_executed",
-          "owner": "the OM-19 leg-runner (the orchestrator live dispatch or the operator)",
+          "landing": "engineering landed (fixture-verified); the `hosted` re-ingest leg queued `prepared_not_executed`",
+          "owner": "the OM-19 leg-runner (the orchestrator `live` dispatch or the operator)",
           "anchor": {
             "row_line": 1570,
-            "row_sha256": "fea7602425a93b6549487316176ea5452e0fe58ce38241b4102763fedfe3ecea",
+            "row_sha256": "d3a10f496e0915159024ff781d676d24dde8a2efe606ae8d4d3741dab78755a7",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -27245,7 +27245,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "78dca2102f09df25d972feb4f5331d840cd41d566f9dc937bd072e71248f524f",
+  "manifest_sha256": "2a7f6a7848b0b4fd672f6a04f48c229b83258c030d34c0160f26151f5908f15c",
   "current_md": {
     "lines": 150,
     "bytes": 19859,
