@@ -306,6 +306,13 @@ export function recordPasses(rec: MapRecord, facets: MapFacets): boolean {
     return false;
   }
   if (facets.seen && !seenOverlaps(rec, facets.seen)) return false;
+  // P37.29: the records path's Source facet — a record passes when any of
+  // its contributing-source labels is selected (the tile path applies the
+  // same facet over sig.map-tiles/2's sr index).
+  const src = (facets as MapFacetsV2).source;
+  if (src !== undefined && src.length > 0) {
+    if (!rec.sources.some((s) => src.includes(s.label))) return false;
+  }
   const jur = (facets as MapFacetsV2).jurisdiction;
   if (jur !== undefined && jur.length > 0 && !jkeyWithin(rec.jkey ?? null, rec.chain, jur)) {
     return false;

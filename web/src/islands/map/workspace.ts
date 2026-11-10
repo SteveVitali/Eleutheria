@@ -24,7 +24,7 @@ import {
   VIEW_SURFACE,
   workspaceHref2,
 } from "../../lib/workspace-state/index";
-import type { IslandView, IslandWorkspaceState, Viewport } from "../../lib/workspace-state/index";
+import type { IslandView, IslandWorkspaceState, Viewport, WorkspaceState2 } from "../../lib/workspace-state/index";
 
 export interface WorkspaceRuntime {
   state: IslandWorkspaceState;
@@ -37,12 +37,26 @@ const isBrowser = typeof window !== "undefined";
 
 export function useMapWorkspace(
   view: IslandView,
-  defaults: { release?: string | null } = {},
-  opts: { frameBounds?: (jkey: string) => Viewport | null } = {},
+  defaults: { release?: string | null; seed?: Partial<WorkspaceState2> } = {},
+  opts: {
+    frameBounds?: (jkey: string) => Viewport | null;
+    /**
+     * P37.29 (VIZ-04, K6 V-10 / SIG-UI-127): `url: false` is the EMBEDDED
+     * mode — the dossier mounts the app in place and the address bar belongs
+     * to the dossier, so the adapter never reads `location.search` (a
+     * dossier URL carries no workspace params), never writes history (no
+     * pushState/replaceState, no popstate listener), and seeds the state
+     * from `defaults.seed` (the dossier's jurisdiction) instead. "Open full
+     * map" carries the state to `/map/`; the embed itself mints nothing.
+     */
+    url?: boolean;
+  } = {},
 ): WorkspaceRuntime {
+  const url = opts.url !== false;
   const seed = () => ({
     release: defaults.release ?? null,
     view: SURFACE_VIEW[ISLAND_SURFACE[view]],
+    ...(defaults.seed ?? {}),
   });
   const viewMismatch = (named: string) =>
     `The address names the "${named}" view; this page is ${ISLAND_SURFACE[view]} — it does not apply here.`;
@@ -66,8 +80,10 @@ export function useMapWorkspace(
   };
 
   const [{ state, issues, ignored }, setCurrent] = useState(() => {
-    if (!isBrowser) {
-      // SSR: parse an empty query — the full registered defaults, never a stub.
+    if (!isBrowser || !url) {
+      // SSR — or the embedded mount, which seeds entirely from props: no
+      // location read, so a dossier URL's own parameters can never surface
+      // as unapplied-workspace receipts.
       const parsed = parseWorkspaceState2("?", seed());
       return {
         state: toIslandState(parsed.state, view),
@@ -84,6 +100,7 @@ export function useMapWorkspace(
   });
 
   useEffect(() => {
+    if (!url) return; // embedded: the dossier owns the address bar — no popstate
     const onPop = () => {
       const parsed = fold(parseWorkspaceState2(window.location.search, seed()));
       const issues = [...parsed.issues, ...parsed.notes];
@@ -98,19 +115,21 @@ export function useMapWorkspace(
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
-  }, [view]);
+  }, [view, url]);
 
   const update = useCallback(
     (patch: Partial<IslandWorkspaceState>, mode: "push" | "replace" = "push") => {
       setCurrent((current) => {
         const merged = { ...current.state, ...patch, view };
-        const href = workspaceHref2(merged, window.location.pathname);
-        if (mode === "push") window.history.pushState(null, "", href);
-        else window.history.replaceState(null, "", href);
+        if (url) {
+          const href = workspaceHref2(merged, window.location.pathname);
+          if (mode === "push") window.history.pushState(null, "", href);
+          else window.history.replaceState(null, "", href);
+        }
         return { ...current, state: merged };
       });
     },
-    [view],
+    [view, url],
   );
 
   return { state, issues, ignored, update };
