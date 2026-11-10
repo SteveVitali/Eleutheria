@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "36d24b41c33667b0f19d3266936c166039be8e5d",
+  "input_commit": "109dbb4fd89a586134b840a8f978e3204dea1a5e",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "1b827e35898845736024ca95443b702eabc6c594177d949a916ac3cfe71a29a0"
+      "sha256": "7a151dc33680f9b604ac45324026dccfff4e5df804474131e8d2cdd40669553a"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -973,8 +973,12 @@
       "sha256": "bbb1da71e62e45b9e2d15a510f82d36ca6bf96c19a1658caa74df1e59f08977b"
     },
     {
+      "path": "docs/adr/ADR-243-sig-activate-in-place-dossier-map-and-deferred-k1-mount.md",
+      "sha256": "ec06fc8d3dd3008662817afefef4202b47c02244d64a4537b2be57af3962e5a9"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "e176397bc16d78f8dd049c8dbef9682ba377c41bccb7a148d705ce797739c563"
+      "sha256": "34e61ce8f43429cd719fb6d2799841443ee501cbeaf4cd75e5510ada75570e3a"
     },
     {
       "path": "docs/build/BACKLOG.csv",
@@ -982,15 +986,15 @@
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "6efe556423421d1a6c75b240f699cb445eed6049df4f8c165a0d222e0e08f039"
+      "sha256": "7c58b57c6a7c7edeacf912ee562e837c50226a79eafa8568356dc5aa1f5358f8"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "fcc437dd5222d3885f076a1e13b180b6636f01d1e4c9cbf5dc7b83e1c6010b65"
+      "sha256": "3c1331d29b5d2b99ade60bbdd39caf823ac7a31b0b4d15991b9467a060923f54"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "8355f06b232b6c77fa896b4b24cfdfcae70765d7b0544658517c3c9e25aeb615"
+      "sha256": "7f1457aa11e2508d73dcb4d458f2849830cca51de8a7b422447cf2950f35ac28"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -2767,6 +2771,10 @@
     {
       "path": "docs/build/runs/P37.28.md",
       "sha256": "0b269b555730bdb44d00803287958e5c6c0ffaee9f26aab33f571e71ecc5cb18"
+    },
+    {
+      "path": "docs/build/runs/P37.29.md",
+      "sha256": "d297c23a8c7f59d7b6cb6531b4171ee22a9e8140c4a18050cda6390c47e612df"
     },
     {
       "path": "docs/build/runs/P37.3.md",
