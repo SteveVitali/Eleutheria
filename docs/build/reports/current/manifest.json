@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "3a62077293432d5d731dc99eeb5bf51c10952cdd",
+  "input_commit": "b641a00cc99353dd70fb4e062299c8ebd542e4a2",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "7a151dc33680f9b604ac45324026dccfff4e5df804474131e8d2cdd40669553a"
+      "sha256": "ce04900db8b486a5db96eaeb2affc6866bedd72dd27b8e92d6dd0f446b6ce026"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -977,12 +977,16 @@
       "sha256": "cb2344e86e9ad9ff629142b411672848b555720c3acb51602e491d4bc5820711"
     },
     {
+      "path": "docs/adr/ADR-244-dated-decision-predicates-meeting-date-and-the-contract-renewal-triple.md",
+      "sha256": "dda67fdfaedf1693d66e171f2cb45a6d2413291a8b7d28c98f79176033225cdb"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "34e61ce8f43429cd719fb6d2799841443ee501cbeaf4cd75e5510ada75570e3a"
+      "sha256": "1a41a7ca82695fdaef056779f5a8223b564439ba6dee390e21524e11d651fe80"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "b41c7e2d65b77f1c6c59356a54243dab08091d527989f27bdcedab6c2d2a407f"
+      "sha256": "3c08cd4a94099fb4390fbbbfcc42739b85c7106eab9485672ac2455a96e3f60f"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
