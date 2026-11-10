@@ -230,7 +230,7 @@
             "resource-summary:document:size": [
               "error",
               {
-                "maxNumericValue": 1800000
+                "maxNumericValue": 102400
               }
             ],
             "largest-contentful-paint": [
@@ -266,19 +266,6 @@
             "unminified-css": "off",
             "uses-long-cache-ttl": "off",
             "csp-xss": "off"
-          }
-        },
-        {
-          "//": "WARN TWIN of the block above — assertMatrix allows one tuple per audit, so the ratified §4.3 ceilings this route's measured_gaps record report at warn here while the block above keeps the regression bounds as the error gate.",
-          "warnTwin": true,
-          "matchingUrlPattern": ".*/(network|explore)/.*",
-          "assertions": {
-            "resource-summary:document:size": [
-              "warn",
-              {
-                "maxNumericValue": 102400
-              }
-            ]
           }
         },
         {
