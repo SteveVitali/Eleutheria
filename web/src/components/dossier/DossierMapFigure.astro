@@ -21,6 +21,7 @@ import {
   figureCountsReconcile,
   isDrawnMap,
   notDrawnTotal,
+  withBaseSvgHrefs,
   type DossierVisualsDoc,
   type DossierFigureTwin,
 } from "../../lib/dossier-visuals";
@@ -108,7 +109,7 @@ const typedMissing =
             same box and the SVG stays in the DOM (aria-hidden only after
             the first drawn render). */}
         <div class="sig-fig1__static" data-testid="fig1-static">
-          <Fragment set:html={map.svg} />
+          <Fragment set:html={withBaseSvgHrefs(map.svg)} />
         </div>
         <div id="fig-map-embed" class="sig-fig1__embed" data-testid="fig-map-embed" hidden />
       </div>

@@ -28,6 +28,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { dataSource, exportDir } from "./data";
 import { DOSSIER_VISUALS_FIXTURE, LOCATOR_SYMBOLS_FIXTURE } from "./dossier-visuals-fixture";
 import { assertInlineSvgSafe } from "./entity-figures";
+import { withBase } from "./paths";
 
 /** The emitted document id (K6 §9.1). */
 export const VISUALS_SCHEMA = "sig.dossier-visuals/1";
@@ -272,6 +273,20 @@ function validateDoc(parsed: unknown, path: string): DossierVisualsDoc {
     }
   }
   return doc;
+}
+
+/**
+ * P37.29 (fix-forward for the P37.28 carried `check:snapshot` red): the
+ * produced figure SVGs bake canonical root paths into their `<a href="/…">`
+ * links — record/entity/graph routes the export mints in canonical form.
+ * A `/s/<pub>/` snapshot deploy needs every same-origin link INSIDE the
+ * base (SIG-REL-008), so the inline seam rewrites `href="/…"` through
+ * `withBase` at render time — `href="/` becomes `href="${withBase("/")}`
+ * (identity on the root mount, `/s/<pub>/` under a snapshot). Link
+ * targets themselves are never altered — only the deploy prefix joins.
+ */
+export function withBaseSvgHrefs(svg: string): string {
+  return svg.replace(/href="\//g, `href="${withBase("/")}`);
 }
 
 /**

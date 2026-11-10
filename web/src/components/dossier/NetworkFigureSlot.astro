@@ -15,6 +15,7 @@
 import EmptyState from "../EmptyState.astro";
 import {
   isDrawnNetwork,
+  withBaseSvgHrefs,
   type DrawnNetworkSlot,
   type EmptyNetworkSlot,
   type NetworkSlot,
@@ -67,10 +68,10 @@ const anchorAttrs = drawn?.anchor_attrs ?? {};
         </fieldset>
       )}
       <div class="sig-fig-net sig-fig-net--wide" data-testid="network-figure-wide">
-        <Fragment set:html={drawn.svg} />
+        <Fragment set:html={withBaseSvgHrefs(drawn.svg)} />
       </div>
       <div class="sig-fig-net sig-fig-net--narrow" data-testid="network-figure-narrow">
-        <Fragment set:html={drawn.svg_narrow} />
+        <Fragment set:html={withBaseSvgHrefs(drawn.svg_narrow)} />
       </div>
       <figcaption class="sig-fig-caption" data-testid="network-figure-caption">
         <strong>{drawn.title}.</strong>{" "}
