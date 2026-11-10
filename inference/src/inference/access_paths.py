@@ -47,7 +47,7 @@ edges (SIG-RECON-034/037).
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 
@@ -485,7 +485,35 @@ def close_access_paths(
 DEFAULT_MATERIALIZED_SCOPE = "partner"
 
 
-def access_edges_from_materialized(rows: Iterable[dict[str, object]]) -> list[AccessEdge]:
+#: ``valid_to_kind`` values that record an END bound on the edge's valid time —
+#: the ``role_edges`` bound-kind vocabulary (``exact`` / ``before`` / ``after``
+#: bound the end; ``ongoing`` / ``never`` assert non-ending; ``unknown`` asserts
+#: nothing). Mapped onto the closure's ``known`` so a recorded end marks the
+#: hop ``expired`` once it has passed — the live-vs-historical input
+#: (:meth:`AccessEdge.temporal_status`).
+_ENDED_TO_KINDS: frozenset[str] = frozenset({"exact", "before", "after", "known"})
+
+#: ``valid_to_kind`` values asserting the edge does NOT end — translated
+#: verbatim onto the closure vocabulary.
+_NON_ENDING_TO_KINDS: frozenset[str] = frozenset({"ongoing", "never"})
+
+
+def _iso_date(value: object) -> date | None:
+    """An ISO date from a ``date``/``datetime``/ISO-string row cell, or ``None``."""
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.date()
+    if isinstance(value, date):
+        return value
+    text = str(value)[:10]
+    try:
+        return date.fromisoformat(text)
+    except ValueError:
+        return None
+
+
+def access_edges_from_materialized(rows: Iterable[Mapping[str, object]]) -> list[AccessEdge]:
     """Map materialized ``relationship`` edge rows into closure :class:`AccessEdge` inputs.
 
     Consumes the dataset produced by
@@ -494,16 +522,34 @@ def access_edges_from_materialized(rows: Iterable[dict[str, object]]) -> list[Ac
     composability off it and never rewrites it (SIG-ONTO-042): only ``configured_access``
     (and §12.3 ``federates_search_to``) compose. ``from_entity`` is the accessor and
     ``to_entity`` the data holder (the connector convention the materializer preserves).
-    Every edge carries its backing ``evidence_claim`` — closure refuses an unevidenced
-    hop (§3.1).
+    Every edge carries its backing evidence — the full ``evidence_claims`` set when the
+    row records it, else the representative ``evidence_claim``; closure refuses an
+    unevidenced hop (§3.1).
+
+    The row's ``valid_to`` / ``valid_to_kind`` are translated onto the closure's
+    bound-kind vocabulary: an ``exact``/``before``/``after`` (or ``known``) end
+    kind becomes ``known`` so a recorded end can expire the hop
+    (:data:`_ENDED_TO_KINDS`); ``ongoing``/``never`` stay ``ongoing``; anything
+    else asserts nothing and reads ``unknown``.
     """
     edges: list[AccessEdge] = []
     for r in rows:
-        evidence_claim = r.get("evidence_claim")
-        evidence = (str(evidence_claim),) if evidence_claim else ()
+        evidence_set = r.get("evidence_claims")
+        if isinstance(evidence_set, (list, tuple)) and evidence_set:
+            evidence = tuple(sorted({str(c) for c in evidence_set if c}))
+        else:
+            evidence_claim = r.get("evidence_claim")
+            evidence = (str(evidence_claim),) if evidence_claim else ()
         if not evidence:
             continue  # no unevidenced hop (§3.1, SIG-RECON-049 #5)
-        valid_from = r.get("valid_from")
+        valid_to_kind = str(r.get("valid_to_kind") or "unknown")
+        valid_to = _iso_date(r.get("valid_to"))
+        if valid_to_kind in _ENDED_TO_KINDS:
+            to_kind, to_bound = "known", valid_to
+        elif valid_to_kind in _NON_ENDING_TO_KINDS:
+            to_kind, to_bound = "ongoing", None
+        else:
+            to_kind, to_bound = "unknown", None
         edges.append(
             AccessEdge(
                 from_org=str(r["from_entity"]),
@@ -512,9 +558,10 @@ def access_edges_from_materialized(rows: Iterable[dict[str, object]]) -> list[Ac
                 scope=str(r.get("scope") or DEFAULT_MATERIALIZED_SCOPE),
                 evidence=evidence,
                 confidence="probable",
-                valid_from=date.fromisoformat(str(valid_from)) if valid_from else None,
+                valid_from=_iso_date(r.get("valid_from")),
                 valid_from_kind=str(r.get("valid_from_kind") or "unknown"),
-                valid_to_kind=str(r.get("valid_to_kind") or "ongoing"),
+                valid_to=to_bound,
+                valid_to_kind=to_kind,
                 edge_id=str(r.get("relationship_id") or ""),
                 asserted_by=str(r.get("asserted_by") or ""),
             )
