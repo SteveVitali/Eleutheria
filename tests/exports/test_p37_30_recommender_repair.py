@@ -348,7 +348,11 @@ def test_decision_point_emits_the_per_item_list() -> None:
         _site("A", "35.46", "-97.51", "Oklahoma"),
         raw_over={
             "watch_claims": [
-                _watch_claim(claim_id="wc-end", predicate_id="end_date", value_text="2027-04-02"),  # future-ok: synthetic: fixture contract end date,
+                _watch_claim(
+                    claim_id="wc-end",
+                    predicate_id="end_date",
+                    value_text="2027-04-02",  # future-ok: synthetic: fixture end
+                ),
                 _watch_claim(claim_id="wc-auto", predicate_id="auto_renews", value_bool=True),
                 _watch_claim(claim_id="wc-win", predicate_id="notice_window_days", value_num=90),
             ]
@@ -359,7 +363,7 @@ def test_decision_point_emits_the_per_item_list() -> None:
     dp = json.loads(export.web_artifacts["web/analytics/decision_point.json"].decode("utf-8"))
     # the headline stays the earliest derivable next_decision_date
     assert dp["decision_point"]["subject_id"] == "contract:src:tenant:body:C-1"
-    assert dp["decision_point"]["date"] == "2027-01-02"  # future-ok: synthetic: derived notice deadline
+    assert dp["decision_point"]["date"] == "2027-01-02"  # future-ok: synthetic: derived
     # and the per-item list carries the scoped decision the item page reads
     (point,) = dp["decision_points"]
     assert point["handle"] == item["handle"]
