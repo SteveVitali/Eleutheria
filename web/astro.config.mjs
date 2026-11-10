@@ -272,8 +272,46 @@ function sigEnhancementKit() {
             logLevel: "warning",
           });
         }
+        // P37.29 (K6 VIZ-04, SIG-UI-127): the deferred embedded-map seam.
+        // `MapIsland`'s `loadDossierEmbed` dynamic import makes Vite emit
+        // `/_astro/dossier-embed.<hash>.js` — a lazy chunk sharing every
+        // common module with the /map/ island verbatim ("the same hashed
+        // chunks /map/ uses"). This shim re-exports it under the STABLE
+        // name <sig-activate> resolves — the module is fetched ONLY after
+        // the reader's explicit click, never a T2 preload on a T1 page.
+        // Exactly one emitted chunk may match; zero or two is a loud build
+        // failure, never a guessed module (SIG-ENG-042).
+        const astroDir = join(distDir, "_astro");
+        const embedChunks = existsSync(astroDir)
+          ? readdirSync(astroDir).filter((f) => /^dossier-embed\.[\w-]+\.js$/.test(f))
+          : [];
+        if (embedChunks.length !== 1) {
+          throw new Error(
+            `sig-enhancement-kit: expected exactly one /_astro/dossier-embed.*.js ` +
+              `chunk, found ${embedChunks.length} — the embed seam moved`,
+          );
+        }
+        writeFileSync(
+          join(outDir, "sig-map-embed.js"),
+          `// SPDX-License-Identifier: Apache-2.0\n` +
+            `export * from "../_astro/${embedChunks[0]}";\n`,
+        );
+        // The deferred stylesheet — MapLibre controls + the shared island
+        // chrome, link-injected by <sig-activate> at activation (post-action
+        // only; style-src 'self' admits the same-origin file).
+        await esbuild.build({
+          entryPoints: [
+            fileURLToPath(new URL("./src/islands/map/dossier-embed.css", import.meta.url)),
+          ],
+          outfile: join(outDir, "sig-map-embed.css"),
+          bundle: true,
+          minify: true,
+          loader: { ".css": "css" },
+          logLevel: "warning",
+        });
         console.log(
-          `sig-enhancement-kit: ${files.length} element module(s) emitted to /_kit/`,
+          `sig-enhancement-kit: ${files.length} element module(s) emitted to /_kit/ ` +
+            `(+ sig-map-embed.js shim → ${embedChunks[0]}, sig-map-embed.css)`,
         );
       },
     },

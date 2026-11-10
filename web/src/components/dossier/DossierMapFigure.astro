@@ -24,6 +24,8 @@ import {
   type DossierVisualsDoc,
   type DossierFigureTwin,
 } from "../../lib/dossier-visuals";
+import { mapEmbedPropsHref } from "../../lib/map-embed";
+import { exploreLinks } from "../../lib/explore-links";
 import { withBase } from "../../lib/paths";
 import { fmtInt } from "../../lib/format";
 import type { FigureSpec } from "../../lib/figures";
@@ -101,8 +103,38 @@ const typedMissing =
   ) : (
     <>
       <div class="sig-fig1__canvas" data-testid="fig1-canvas">
-        <Fragment set:html={map.svg} />
+        {/* P37.29 (VIZ-04, SIG-UI-127): the static SVG is the reserved box
+            AND the print rendition — the embed overlay mounts inside the
+            same box and the SVG stays in the DOM (aria-hidden only after
+            the first drawn render). */}
+        <div class="sig-fig1__static" data-testid="fig1-static">
+          <Fragment set:html={map.svg} />
+        </div>
+        <div id="fig-map-embed" class="sig-fig1__embed" data-testid="fig-map-embed" hidden />
       </div>
+      {/* K6 §5.4: "Explore this map here" — the zero-JS anchor navigates to
+          the scoped /map/; with JS on a desktop pointer the element upgrades
+          it to the activation button. The allow-listed module sits beside
+          the markup it upgrades (page-local admission, ADR-224). */}
+      <p class="sig-fig1__activate">
+        <sig-activate
+          app={withBase("_kit/sig-map-embed.js")}
+          css={withBase("_kit/sig-map-embed.css")}
+          props={withBase(mapEmbedPropsHref(doc!.jurisdiction.slug_path))}
+          target="fig-map-embed"
+          static-figure=".sig-fig1__static"
+          data-testid="fig1-activate"
+        >
+          <a
+            class="sig-activate"
+            href={withBase(exploreLinks(doc!.jurisdiction.jkey).map)}
+            data-copy="SA-01"
+          >
+            Explore on the interactive map
+          </a>
+        </sig-activate>
+      </p>
+      <script is:inline type="module" src={withBase("_kit/sig-activate.js")}></script>
       <Figure figure={fig("map-total") as FigureSpec} order="inline" tag="figcaption" class="sig-fig1__caption" testid="fig1-caption">
         <span class="sig-fig1__title" data-copy="MF-06">Figure 1</span>{" "}
         <span>{twin?.caption ??

@@ -2323,8 +2323,37 @@ sig-typeahead {
 .sig-locator__status { font-size: var(--sig-step--1); color: var(--sig-ink-muted); max-width: 10rem; }
 .sig-fig1 { margin: var(--sig-space-3) 0; }
 .sig-fig1__canvas :is(svg) { width: 100%; height: auto; display: block; }
+/* P37.29 (VIZ-04): the reserved box the embed mounts into — the overlay
+ * covers the static SVG (which stays in the DOM for print) once activated. */
+.sig-fig1__canvas { position: relative; }
+.sig-fig1__embed {
+  position: absolute;
+  inset: 0;
+  background: var(--sig-surface, #fff);
+  overflow: auto;
+  z-index: 1;
+}
+.sig-fig1__embed[hidden] { display: none; }
+.sig-fig1__activate { margin: var(--sig-space-1) 0 0; }
+.sig-activate__button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--sig-link);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.sig-activate__button[aria-expanded="true"] { text-decoration: none; }
+.sig-activate__note { font-size: var(--sig-step--1); margin: var(--sig-space-1) 0 0; }
 .sig-fig1__caption { font-size: var(--sig-step--1); margin-top: var(--sig-space-1); }
 .sig-fig1__title { font-weight: 600; }
+@media print {
+  /* SIG-UI-130: no control or canvas may print — the static SVG stays. */
+  .sig-fig1__embed,
+  .sig-fig1__activate,
+  .sig-activate__note { display: none !important; }
+}
 .sig-explore-bar { display: flex; flex-wrap: wrap; gap: var(--sig-space-2); margin: var(--sig-space-2) 0 var(--sig-space-3); }
 .sig-explore-bar__link { display: inline-block; min-height: 44px; padding: var(--sig-space-2) var(--sig-space-3); border: var(--sig-border-thin) solid currentColor; border-radius: var(--sig-radius-2); text-decoration: none; }
 .sig-next-decisions__item { margin-bottom: var(--sig-space-1); }

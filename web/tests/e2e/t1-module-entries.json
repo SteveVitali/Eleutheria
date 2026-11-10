@@ -1,12 +1,13 @@
 {
   "schema": "sig.t1-module-entries/1",
-  "recorded_by": "P36.20",
-  "comment": "The UXK0-4 enhancement-kit entries (ADR-224): one emitted `/_kit/sig-*.js` module per custom-element source under `web/src/elements/`, admitted verbatim under the strict CSP's `script-src 'self'` (P36.19/ADR-223). T1 pages load only the entries their markup uses; T0 pages load nothing.",
+  "recorded_by": "P36.20; sig-activate admitted by P37.29 (K6 VIZ-04)",
+  "comment": "The UXK0-4 enhancement-kit entries (ADR-224): one emitted `/_kit/sig-*.js` module per custom-element source under `web/src/elements/`, admitted verbatim under the strict CSP's `script-src 'self'` (P36.19/ADR-223). T1 pages load only the entries their markup uses; T0 pages load nothing. P37.29 adds the sixth element (ADR-224's revisit-trigger clause — its own ADR records the admission): `/_kit/sig-activate.js` is the dossier's in-place map activation; the deferred map-app bundle it imports post-click is NOT a module entry (no <script> tag ever names it — the /_kit/sig-map-embed.js shim is a runtime-only re-export of the shared /_astro/ chunk).",
   "entries": [
     "/_kit/sig-cite.js",
     "/_kit/sig-copy.js",
     "/_kit/sig-details.js",
     "/_kit/sig-table.js",
-    "/_kit/sig-typeahead.js"
+    "/_kit/sig-typeahead.js",
+    "/_kit/sig-activate.js"
   ]
 }

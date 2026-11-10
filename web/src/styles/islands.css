@@ -765,3 +765,34 @@
   outline: 3px solid var(--sig-link);
   outline-offset: 1px;
 }
+
+/* P37.29 (K6 VIZ-04 / SIG-UI-127) — the embedded dossier mount: the canvas
+ * sits on top and the In-view list/filters/selection read BELOW it, never
+ * in a side panel (K6 §5.4 — the list is the keyboard + screen-reader path
+ * and is first in DOM order too). */
+.sig-map-app--embedded .sig-map-app__shell {
+  flex-direction: column;
+}
+.sig-map-app--embedded .sig-map-app__canvas {
+  order: -1;
+  min-height: 22rem;
+}
+.sig-map-app--embedded .sig-map-app__panel {
+  position: static;
+  max-height: none;
+}
+.sig-map-embed__heading {
+  font-size: var(--sig-step-0, 1rem);
+  margin: 0 0 4px;
+}
+.sig-map-embed__actions {
+  margin: 0 0 8px;
+  font-size: var(--sig-step--1, 0.85rem);
+}
+@media print {
+  .sig-map-app--embedded,
+  .sig-map-embed__heading,
+  .sig-map-embed__actions {
+    display: none !important;
+  }
+}

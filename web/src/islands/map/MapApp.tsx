@@ -172,12 +172,17 @@ export interface MapAppProps {
    * writes NO workspace URL (V-10) — state lives in memory only.
    */
   embedded?: {
-    /** The dossier's canonical jurisdiction key — seeds the filter + frame. */
+    /** The dossier's canonical jurisdiction key — seeds `frame=` (the
+     *  registry-bbox framing) and rides the "Open full map" hand-off as the
+     *  `jurisdiction=` facet. The PAYLOAD is the scope (the figure's own
+     *  records), so no facet may hide them (SIG-UI-132). */
     jkey: string | null;
     /** The dossier's display name (the embed region's heading). */
     placeLabel: string;
     /** The bound publication id for "Cite this view" — null when unbound. */
     publicationId: string | null;
+    /** The unkeyed-dossier framing fallback (payload bounds → `at=`). */
+    fallbackAt: { z: number; lat: number; lon: number } | null;
     /** "Close interactive map" — the element restores the static figure. */
     onClose: () => void;
     /** A mount/render failure the element turns into the honest notice. */
@@ -540,17 +545,21 @@ export default function MapApp(props: MapAppProps): JSX.Element {
     [frameTable],
   );
   const embedded = props.embedded !== undefined;
-  // P37.29 (VIZ-04): embedded mode seeds the dossier's jurisdiction facet
-  // (descendants-inclusive, matching the static figure's records) and keeps
-  // the whole state in memory — the dossier's address bar is never touched.
+  // P37.29 (VIZ-04): embedded mode seeds `frame=<jkey>` — the registry-bbox
+  // framing fold (the payload already IS the figure's records, so the
+  // descendants facet is never the scope mechanism) — or the payload-bounds
+  // `at` on an unkeyed dossier. State stays in memory; the dossier's
+  // address bar is never touched.
   const { state, issues, ignored, update } = useMapWorkspace(
     "map",
     {
       release: props.release,
-      seed:
-        embedded && props.embedded!.jkey
-          ? { jurisdiction: [props.embedded!.jkey] }
-          : {},
+      seed: embedded
+        ? {
+            frame: props.embedded!.jkey,
+            at: props.embedded!.jkey ? null : props.embedded!.fallbackAt,
+          }
+        : {},
     },
     { frameBounds, url: !embedded },
   );
@@ -1767,7 +1776,13 @@ export default function MapApp(props: MapAppProps): JSX.Element {
 
   const rowsArePlaces = zoom <= NATIONAL_CELLS_MAXZOOM;
 
-  const openFullMapHref = workspaceHref2(state);
+  // "Open full map" hands ALL state to /map/ — including the dossier's
+  // `jurisdiction=` facet the embed never applies as a filter (SIG-UI-126).
+  const openFullMapHref = workspaceHref2(
+    embedded && props.embedded!.jkey
+      ? { ...state, jurisdiction: [props.embedded!.jkey] }
+      : state,
+  );
   const embedCite =
     embedded && props.embedded!.publicationId
       ? citeViewHref(props.embedded!.publicationId, "map", state)
