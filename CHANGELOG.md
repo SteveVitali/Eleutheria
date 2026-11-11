@@ -24,6 +24,19 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.36 — raw-ok archive lane (J3 TX-12, SIG-TRANSP-020, D-J3-1 [B-19]):**
+  `exports/raw_archive.py` — raw captured bytes publish only for `raw-ok`
+  sources after the Part VIII byte screen (`raw/<multihash>` objects +
+  `raw/index.json` = `sig.raw-archive-index/1`); P8-5/6/8 captures emit
+  field-allowlist re-serialisations recorded as new captures
+  (`sig.raw-reserialisation/1`, append-only — the original is never served);
+  view-original wiring mints `raw/<multihash>` locators only for objects the
+  index serves; `release.py` denies staged `raw/` objects under a
+  `release_artifact` disposition; `ops/raw_withdrawal.py` rehearses the
+  delete/purge/tombstone withdrawal (410 web / 404 mirror). The hosted
+  archive write stays queued `prepared_not_executed` (D-P37.36-1, never
+  pre-authorised under OM-20; exposure rides P37.65 HG-11).
+
 - **P37.35 — detector routing + mapping campaigns (K11 RQ-02, SIG-RQ-005/006,
   D-K11-1):** coverage gaps route through the committed `gap_routing.toml`
   predicate→task table (retired substring match); catalog rows 35/36 land
