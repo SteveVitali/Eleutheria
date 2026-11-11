@@ -30,10 +30,11 @@ operator selection "Approve all 15 (rec.)".
 3. `gcloud run jobs add-iam-policy-binding sig-watch-publish …
    roles/run.invoker` for the scheduler SA.
 4. Flip `ops/cadence.toml`'s `[[maintenance]]` `watch-publish` row to
-   `state = "enabled"` **in the same re-run commit** so live-diff's
-   declared-vs-live report stays clean; the daily agenda /
-   twice-weekly sam_gov ingest cadence binds at the declaration-bundle
-   republish (`SIG_OPS_DECLARED_GCS`).
+   `state = "enabled"` in the same commit that records the leg — the
+   file is the declaration the daily comparison diffs against. The
+   daily agenda / twice-weekly sam_gov ingest cadence is the repo
+   declaration now; it binds at the declaration-bundle republish
+   (`SIG_OPS_DECLARED_GCS`).
 
 **Window:** `AR-3 + AR-2` — never inside 03:00–06:30Z or the monthly batch
 window (day 6 00:00Z → day 13 12:00Z); the script exits 42 (queued).
