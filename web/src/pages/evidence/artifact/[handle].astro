@@ -196,6 +196,16 @@ const citingWatch = (getWatchV2()?.items ?? []).filter((i) =>
         ))}
       </p>
     )}
+    {/* P37.37 (K8 EV-03 / KJ8-4): the typed absence — a diff page exists only
+        for two real captures carrying extracted fields; anything else is
+        stated, never fabricated (SIG-EVUI-005, amends SIG-UI-029). */}
+    {caps.length >= 1 && pairs.length === 0 && (
+      <p data-testid="diff-absence">
+        {caps.length === 1
+          ? "Only one capture of this artifact is recorded — a capture diff needs two real captures of the same artifact."
+          : "No two recorded captures of this artifact carry extracted fields — the field-by-field diff needs the recorded claim field maps."}
+      </p>
+    )}
 
     <h2 id="claims-heading">Claims supported ({claims.length === 0 ? "none recorded" : claims.length})</h2>
     {claims.length === 0 ? (

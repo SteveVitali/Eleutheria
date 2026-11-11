@@ -53,8 +53,13 @@ export interface Locator {
   kind: string;
   /** A human-readable description of the locator, e.g. "page 3, ¶2". */
   description: string;
-  /** The resolved character span in the capture's `document_text` (SIG-UI-028). */
-  span: TextSpan;
+  /**
+   * The resolved character span in the capture's `document_text` (SIG-UI-028).
+   * P37.37 (EV-03): OPTIONAL — a locator always renders (D-K8-1), but only a
+   * `byte_range`/`char_range` locator on a byte-showing pane resolves to a
+   * span; a non-span locator carries none rather than a fabricated range.
+   */
+  span?: TextSpan;
 }
 
 /** Throw if a span is out of bounds or empty for the given text (SIG-UI-028). */
@@ -112,6 +117,13 @@ export interface Capture {
   sealed_reason?: string;
   /** The extracted fields, keyed by field name — the unit of the field-by-field diff. */
   fields: Record<string, string | number>;
+  // P37.37 (EV-03): the capture metadata a generated view carries — the J3
+  // §5.3 view-original label (the P37.36 raw-archive href rides it), byte
+  // size, media type and the honest capture classification.
+  view_original?: { kind: string; label: string; href: string | null; note: string | null };
+  byte_size?: number | null;
+  media_type?: string | null;
+  capture_classification?: string | null;
 }
 
 /** Whether a capture is sealed (bytes withheld; metadata-only in public). */
@@ -179,9 +191,15 @@ export type DisclosureLane = (typeof DISCLOSURE_LANES)[number];
  *                   URL where S-6 forbids (SIG-UI-030).
  *   run_record    — document_only / legacy_synthetic / not_recorded: the
  *                   run-level text, never an implied document.
+ *   download      — P37.37 (EV-03): a raw-ok capture whose bytes the raw
+ *                   archive serves — locator + hash/time with the
+ *                   "Download original"/"Download redacted copy" link the
+ *                   `capture.view_original` label minted (P37.36's
+ *                   `served_href_map`); never inline text the release does
+ *                   not carry.
  */
 export interface ClaimPane {
-  kind: "text_span" | "locator_only" | "metadata_only" | "run_record";
+  kind: "text_span" | "locator_only" | "metadata_only" | "run_record" | "download";
   /** metadata_only: the reason class shown (SIG-UI-030). */
   reason?: string;
   /** text_span over a field-screened capture: the redaction's method + version. */
@@ -200,7 +218,9 @@ export function claimPaneFor(view: ClaimView): ClaimPane {
   if (view.binding_status === "not_recorded") {
     return { kind: "run_record" };
   }
-  if (view.lane === "derived-only" || view.lane === "link-only") {
+  if (view.lane === "derived-only" || view.lane === "link-only" || view.lane === "unknown") {
+    // P37.37: the unknown lane's "rights not reviewed" state is a locator
+    // pane — bytes are never shown on unreviewed rights.
     return { kind: "locator_only" };
   }
   return { kind: "text_span" };
@@ -271,6 +291,17 @@ export interface ClaimView {
   part_viii_class?: string;
   /** The explicit pane override; absent, `claimPaneFor` derives it (K8 §4.3). */
   pane?: ClaimPane;
+  /** P37.37: the claim's subject entity id (the subject link's target). */
+  subject_id?: string;
+  /**
+   * P37.37 (D-K8-1 [B-44]): the recorded excerpt — at most 300 characters,
+   * emitted only where the source's recorded terms permit quotation.
+   */
+  excerpt?: string;
+  /** P37.37: recorded open-contradiction ids touching this claim. */
+  contradiction_ids?: string[];
+  /** P37.37: the recorded competing claim ids (a real row only — never fabricated). */
+  competing_claim_ids?: string[];
   /** The locator resolving to the supporting span in the capture's text (SIG-UI-028). */
   locator: Locator;
   /** The extraction method (§24 layer) and its version (SIG-UI-028). */
@@ -284,9 +315,15 @@ export interface ClaimView {
   history: ClaimHistoryEvent[];
 }
 
-/** Whether a claim view is contested — it has one or more conflicting claims (SIG-UI-008). */
+/** Whether a claim view is contested — it has one or more conflicting claims,
+ *  or a recorded open contradiction names it (SIG-UI-008; P37.37's generated
+ *  views carry recorded ids, not fabricated competing rows). */
 export function isClaimContested(view: ClaimView): boolean {
-  return view.conflicting_claims.length > 0;
+  return (
+    view.conflicting_claims.length > 0 ||
+    (view.contradiction_ids?.length ?? 0) > 0 ||
+    (view.competing_claim_ids?.length ?? 0) > 0
+  );
 }
 
 /** The contested marker for a claim view (SIG-UI-008), or null when uncontested. */
@@ -338,7 +375,30 @@ export function assertClaimView(view: ClaimView): void {
           "the pane must be locator_only or run_record, never a broken render.",
       );
     }
+    if (view.locator.span === undefined) {
+      throw new Error(
+        `SIG-UI-028: text_span pane for ${view.claim_id} has a locator without a ` +
+          "resolvable span — the pane must be locator_only or run_record.",
+      );
+    }
     assertSpanValid(view.capture.document_text, view.locator.span);
+  } else if (pane.kind === "download") {
+    // P37.37 (EV-03): the download pane is the raw-ok lane's byte-showing
+    // form — it requires the raw-archive href the release actually minted;
+    // a link is never implied to a route the release does not carry, and
+    // download is never lawful off the raw-ok lane.
+    if (view.lane !== "raw-ok") {
+      throw new Error(
+        `SIG-EVUI-004: download pane for ${view.claim_id} is lawful only on the ` +
+          `raw-ok lane (recorded: ${view.lane}).`,
+      );
+    }
+    if (!view.capture.view_original?.href) {
+      throw new Error(
+        `SIG-EVUI-004: download pane for ${view.claim_id} has no served raw ` +
+          "href — the pane must be locator_only, never a dead link.",
+      );
+    }
   } else if (pane.kind === "metadata_only") {
     if (view.capture.document_text !== undefined) {
       throw new Error(
@@ -351,12 +411,31 @@ export function assertClaimView(view: ClaimView): void {
       );
     }
   }
+  // D-K8-1 [B-44] (P37.37): an excerpt is at most 300 characters and never
+  // rides a metadata-only pane — recorded terms gate the emission; the cap
+  // is asserted here so a violating row fails the build, never silently.
+  if (view.excerpt !== undefined) {
+    if (view.excerpt.length > EXCERPT_MAX_CHARS) {
+      throw new Error(
+        `SIG-EVUI-004: excerpt for ${view.claim_id} is ${view.excerpt.length} chars ` +
+          `— the recorded-terms excerpt cap is ${EXCERPT_MAX_CHARS} (D-K8-1).`,
+      );
+    }
+    if (pane.kind === "metadata_only") {
+      throw new Error(
+        `SIG-EVUI-004: ${view.claim_id} carries an excerpt on a metadata_only pane.`,
+      );
+    }
+  }
 }
+
+/** D-K8-1 [B-44]: the recorded excerpt's maximum length (chars). */
+export const EXCERPT_MAX_CHARS = 300;
 
 /** The highlighted supporting document for a claim view, or null unless text_span (SIG-EVUI-004). */
 export function claimHighlightedDocument(view: ClaimView): HighlightedDocument | null {
   if (claimPaneFor(view).kind !== "text_span") return null;
-  if (view.capture.document_text === undefined) return null;
+  if (view.capture.document_text === undefined || view.locator.span === undefined) return null;
   return highlightSpan(view.capture.document_text, view.locator.span);
 }
 

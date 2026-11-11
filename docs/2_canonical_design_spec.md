@@ -6101,12 +6101,25 @@ dates, suitable for attaching to public comment.
 
 ### 39.6 The evidence viewer
 
-**SIG-UI-028 (MUST).** MUST render the document with the supporting span highlighted at its
-locator, and MUST show: the claim; the extraction method and version; review status; conflicting
-claims; capture date and digest; acquisition method; and the full history of the claim.
+**SIG-UI-028 (MUST).** MUST render the claim's evidence view by its **binding state × disclosure
+lane × Part VIII class**: the document with the supporting span highlighted at its locator where
+the lane permits showing the bytes (a field-screened capture renders its recorded redacted
+derivative, never the parent); otherwise the locator, digest and the lane-appropriate reference —
+"Download original"/"Download redacted copy" where the release's raw archive serves the capture,
+"View at source", or the metadata-only representation of SIG-UI-030. A recorded locator is always
+shown; a recorded excerpt of **at most 300 characters** MAY be shown only where the source's
+recorded terms permit quotation. The view MUST show: the claim; the extraction method and version;
+review status; conflicting claims; capture date and digest; acquisition method; and the full
+history of the claim. Claim-view pages are generated for every document-genre claim with an
+`actual_capture` binding, up to a published cap per release (SIG-EVUI-009).
+*(Amended P37.37 — K8 EV-03, D-K8-1/D-K8-2: the "non-sealed ⇒ text" rule is replaced by the
+lane-aware pane model; SIG-EVUI-004 records the same amendment's binding states.)*
 
-**SIG-UI-029 (MUST).** MUST support **diffing two captures of the same artifact**, field by field,
-so "what changed on the portal between June and August" is directly visible (§29.7).
+**SIG-UI-029 (MUST).** MUST support **diffing two real recorded captures of the same artifact**,
+field by field, so "what changed on the portal between June and August" is directly visible
+(§29.7). A diff is computed only over captures the release actually carries — never fabricated
+pairs; where a second capture is not recorded the surface MUST state that typed absence.
+*(Amended P37.37 — K8 EV-03, SIG-EVUI-005: real capture pairs only.)*
 
 **SIG-UI-030 (MUST).** For `sealed` captures, MUST show the metadata-only representation with an
 explanation of why the bytes are withheld (§17.5).
