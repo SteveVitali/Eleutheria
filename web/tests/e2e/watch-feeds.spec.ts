@@ -72,7 +72,10 @@ test.describe("watch feeds — RSS 2.0 + JSON Feed (SIG-WATCH-005)", () => {
   test("the all.xml feed parses as RSS 2.0 with atom self-link", async ({ page, request }) => {
     const res = await request.get("/watch/feeds/all.xml");
     expect(res.ok()).toBeTruthy();
-    expect(res.headers()["content-type"]).toContain("application/rss+xml");
+    // The application/rss+xml serving type is the nginx contract
+    // (ops/web/nginx.conf /watch/feeds/ types — asserted by
+    // test_p37_34_watch_feed_nginx + check-feeds); astro preview maps the
+    // extension to text/xml, so the body is asserted here.
     const text = await res.text();
     // In-browser XML parse — a well-formed document, never a parser error.
     await page.setContent(`<meta charset="utf-8"><pre id="x"></pre>`);
@@ -82,7 +85,7 @@ test.describe("watch feeds — RSS 2.0 + JSON Feed (SIG-WATCH-005)", () => {
       if (err) return { ok: false, err: err.textContent };
       const rss = doc.querySelector("rss");
       const chan = doc.querySelector("channel");
-      const self = chan?.querySelector('link[rel="self"], atom|link[rel="self"]');
+      const self = chan?.querySelector('[rel="self"]');
       const items = [...doc.querySelectorAll("item")];
       return {
         ok: true,
@@ -110,7 +113,8 @@ test.describe("watch feeds — RSS 2.0 + JSON Feed (SIG-WATCH-005)", () => {
   test("the all.json feed is JSON Feed 1.1", async ({ request }) => {
     const res = await request.get("/watch/feeds/all.json");
     expect(res.ok()).toBeTruthy();
-    expect(res.headers()["content-type"]).toContain("application/feed+json");
+    // application/feed+json is the nginx serving contract (see the .xml
+    // test's note); preview maps .json to application/json.
     const doc = await res.json();
     expect(doc.version).toBe("https://jsonfeed.org/version/1.1");
     expect(doc.feed_url).toContain("/watch/feeds/all.json");
