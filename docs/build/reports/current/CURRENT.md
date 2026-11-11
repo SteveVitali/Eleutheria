@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `49afc697017f30aa5ab020c544fefd83acb93d20` · inputs hashed: 1247 · wall-clock receipt: `receipt.json`
+> input_commit: `f363a877bf77d7e62b9ae4945019c9dd43ef83af` · inputs hashed: 1247 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -13,10 +13,10 @@
 
 ## Obligations
 
-- 235 obligations · **151 owed** (148 OPEN, 3 PARTIAL) · 84 terminal
-- 750 events (59 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 236 obligations · **152 owed** (149 OPEN, 3 PARTIAL) · 84 terminal
+- 751 events (59 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 151 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 152 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
