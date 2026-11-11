@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "d3317e9f27405a158a92cf5386c3edf442be4959",
+  "input_commit": "efcc3a949a0c45380f9c5c45bdf70c63a557efe6",
   "manifest_inputs": 1252,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.36",
-    "lastCompleted": "P37.35",
+    "nextTicket": "P37.37",
+    "lastCompleted": "P37.36",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.70,P37.71",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.70,P37.71",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.35-detector-routing",
+    "chainTip": "r11/P37.36-raw-archive",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-11T09:25Z"
+    "updatedAt": "2026-11-11T12:28Z"
   },
   "counts": {
     "obligations": 238,
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 84,
+    "return_pass_rows": 85,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -13304,6 +13304,14 @@
         "obligations": [
           "D-P37.20-1"
         ]
+      },
+      {
+        "key": "P37.36",
+        "obligations_cell": "raw-ok archive write leg: raw/<multihash> + raw/index.json over the hosted store (P8 screen, reserialisation as new captures) → mirror/origin push → withdrawal rehearsal",
+        "gates_cell": "`hosted` archive write + publish; NEVER pre-authorised (OM-20, Part VIII-screened families) — operator explicit verbatim go only; AR-3+AR-2 (x 03:00-06:30Z + AR-3 batch windows); exposure rides P37.65 HG-11",
+        "operator_cell": "the operator's verbatim go (SIG_RAWARCHIVE_AUTHOR env-only), ADC + SIG_GCP_PROJECT present; kill switch = R2_MIRROR_RUNBOOK.md",
+        "rerun_cell": "`implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` (archive write + push + rehearsal)",
+        "obligations": []
       }
     ]
   },
@@ -27437,10 +27445,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "46c2282e34c163d1550b6f43bcb7ec5b1164d6403e2bbb3ca1721699c8dd6196",
+  "manifest_sha256": "d3db3e4e2fa91cc72c46805e60f32ef9610210cf5e2ddab8935e792abc8322b1",
   "current_md": {
-    "lines": 159,
-    "bytes": 20083,
+    "lines": 160,
+    "bytes": 20381,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

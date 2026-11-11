@@ -8,11 +8,11 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P37.36
-lastCompleted: P37.35
+nextTicket: P37.37
+lastCompleted: P37.36
 blockedOn: (nothing)
 pauseRequested: false
-returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.70,P37.71
+returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.70,P37.71
 manifest: docs/tickets/00_MANIFEST.md
 canonicalSpec: docs/2_canonical_design_spec.md
 memoryRoot: docs/build
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P37.35-detector-routing
+chainTip: r11/P37.36-raw-archive
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-11T09:25Z
+updatedAt: 2026-11-11T12:28Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -494,6 +494,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | P37.14 | D-P37.14-1 | no gate — reviewed `session` data for seed instruments (never regex) + an exports consumer of `publishable` | a data-review ticket or an export honouring `publishable=false` | a data-review ticket or exports consumer of `publishable` — `ADR-240` revisit trigger (b) |
 | P37.15 | queued leg | GATE-G6 §4 11D OM-20 list (expiry: GATE-ACCEPT-R11); x 03:00-06:30Z + batch-window-day6T00:00Z-day13T12:00Z | `SIG_GCP_PROJECT`+ADC | `implement-spec spec=docs/tickets/437_P37.15__scheduled-parser-canary.md live_verification=true` |
 | P37.20 | D-P37.20-1 | OM-20; x 03:00-06:30Z + day6T00:00Z-day13T12:00Z; verbatim `SIG_BBOX_AUTHOR` | verbatim go + ADC + `SIG_GCP_PROJECT` | implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true |
+| P37.36 | raw-ok archive write leg: raw/<multihash> + raw/index.json over the hosted store (P8 screen, reserialisation as new captures) → mirror/origin push → withdrawal rehearsal | `hosted` archive write + publish; NEVER pre-authorised (OM-20, Part VIII-screened families) — operator explicit verbatim go only; AR-3+AR-2 (x 03:00-06:30Z + AR-3 batch windows); exposure rides P37.65 HG-11 | the operator's verbatim go (SIG_RAWARCHIVE_AUTHOR env-only), ADC + SIG_GCP_PROJECT present; kill switch = R2_MIRROR_RUNBOOK.md | `implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` (archive write + push + rehearsal) |
 
 Sources: OPERATIONAL_READINESS §(f3) + `UNIVERSE_DISPOSED.csv` + plan §9.2/§8.6 + `data/round11_plan.csv`. Non-row homes: 9 ticket + 9 later-phase + 7 decision + 2 already-done. Keying (T5 γ) = LANDED ticket (pre-P36.49 cells archived `reports/memory-repair/`).
 
@@ -1675,3 +1676,6 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-11 — P37.35 done — row 459 `Kind: ticket` — Detector routing and mapping campaigns (`R11-K13-RQ-02` / K11 RQ-02; `D-K11-1 [B-22] = as recommended` implemented verbatim — GATE-G6 §4 2026-11-05T15:20Z names P37.35, expiry GATE-ACCEPT-R11; `live_verification=false`; no owned §56 ids — serves SIG-RQ-005/006): `tasks.detect` routes coverage gaps through `gap_routing.toml` (research mints asserted type + `predicate_ids`; campaign/metric lanes never per-object tasks; untracked → records-obtainable fallback); catalog rows 35/36 `retention_unknown`/`sharing_unknown` (§33.2 = 36; spec_src + R11-X4 + Phase-10 AC note); additive sqitch `research_task_predicates` (`predicate_ids text[]`, `disposition_reason text`, column-scoped `UPDATE (status, disposition, disposition_reason)` grant — disappearance_event_grant event-surface precedent, never a delete); contradiction/stale/coverage/contract candidates mint evidenced `jurisdiction:`-link attribution; campaigns aggregate by (jurisdiction, predicate, subject_class) — export sources members from materialized coverage; persisted `coverage_hole` rows supersede by disposition; closed/superseded leave the queue lanes · `task_codes`/`gap_routing` 1.1.0 · ADR-245 · tests detect lanes + catalog 36 + db predicate_ids/supersede/jurisdiction (762 db green locally) · repair arc: adr-index regen, Appendix F + ADR_TRIGGERS/BL-087 registration, sqitch record-date, live-claim QUEUED phrasing, unpersisted_columns, entity_ref seed, `'jurisdiction:%%'` psycopg escape, verify convention — repaired never loosened · live leg QUEUED `prepared_not_executed` (AR-3 window days 6–13) — `D-P37.35-1:e0` OPEN
 - 2026-11-11 — P37.35 post-closeout record — head `a26970bb` 5/5 green head-bound (`ci: pass #483@a26970b`, run 42984032509, read 09:14Z: docs 2m13s · security 33s · composed 4m15s · python 24m9s · web 1h7m7s; `reports/ci/p37_35_pr483.json`) · `ci_boundary.py` — `blockedOn` carried ancestor verbatim: `CI fail on #480@2b861ce (docs): failure — Process completed with exit code 2. (run 42927796541)` + `#481@ccc9ba5` — carried-ancestor reds, none authored here
 - 2026-11-11 — dispatch boundary-confirm — P37.35's green read recorded (`ci: pass #483@a26970b`, run 42984032509; carried `#480@2b861ce` + `#481@ccc9ba5` — verbatim) · `main` untouched · chainTip `r11/P37.35-detector-routing` · nextTicket P37.36 (row 460 — raw archive; in-ticket pause, never pre-authorised; deps landed) · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-11 — P37.36 done — row 460 `Kind: ticket` — Raw archive (raw-ok lane) (`R11-K13-TX-12` / J3 TX-12, K13 §7 W3; `live_verification=false`; plan cell `IN-TICKET PAUSE (never pre-authorised under OM-20: archive write touching Part VIII-screened families); explicit verbatim go · D-J3-1 [B-19] = yes: raw bytes for raw-ok sources only, after the Part VIII byte screen · append-only write = · exposure rides P37.65 HG-11`; owns **SIG-TRANSP-020**, cites SIG-TRANSP-005/012): `exports/raw_archive.py` — lane × Part VIII verdicts (raw-ok only; P8-1/2/4 + every non-raw-ok lane `never`; P8-5/6/8 `reserialise`; oversize `link_out`), Part VIII byte screen via `evidence.screen.screen_blob` under committed `sig.at-rest-audit-decl/1` (fail closed), field-allowlist re-serialisation as NEW captures (`sig.raw-reserialisation/1`, SIG-PUB-015/016 — never a mutation of the old), `raw/index.json` (`sig.raw-archive-index/1`), ≤50 MB cap, S-1 secret scan · view-original `raw_hrefs` wiring (SIG-TRANSP-012; redacted parents resolve the derivative) · `release.py` `raw/` file-route deny + namespace exemption · `ops/raw_withdrawal.py` delete/purge/tombstone rehearsal (410 web / 404 mirror, D20 verbatim) · `ops/gcp/raw-archive.sh` staged leg (exit 42 unauthorised) · `sig-exports raw-archive build` · tests exports +16 / ops +4 · fix arcs (return_pass membership → closeout, PACKET `hosted` code-span, `raw_hrefs` DECLARED_UNPRODUCED_READ_KEYS — repaired never loosened) · coverage SIG-TRANSP-020 → `MET-ENGINEERED(D-P37.36-1)` · live leg QUEUED `prepared_not_executed` — `D-P37.36-1` OPEN
+- 2026-11-11 — P37.36 post-closeout record — head `efcc3a94` 5/5 green head-bound (`ci: pass #484@efcc3a94`, run 43004039470, read 12:28Z: docs 2m30s · security 35s · composed 4m15s · python 24m22s · web green attempt 2 1h6m1s — attempt 1 PMTiles-fetch 30s timeout on the map-embed budget sweep, infra flake unrelated to the diff, `gh run rerun --job`; `reports/ci/p37_36_pr484.json`) · `ci_boundary.py` — `blockedOn` carried ancestor verbatim: `CI fail on #480@2b861ce (docs): failure — Process completed with exit code 2. (run 42927796541)` — the P37.32-closeout orient-budget, repaired `7381362e`, none authored here · `main` untouched · coverage +1 stamped (SIG-TRANSP-020 MET-ENGINEERED) · `D-P37.36-1` OPEN (live leg QUEUED `prepared_not_executed`, never pre-authorised) · next → P37.37 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-11 — dispatch boundary-confirm — P37.36's green read recorded (`ci: pass #484@efcc3a94`, run 43004039470; carried `CI fail on #480@2b861ce (docs)` — verbatim) · `main` untouched · chainTip `r11/P37.36-raw-archive` · nextTicket P37.37 (row 461) · harness: devin-desktop/swe-2-high/subagent
