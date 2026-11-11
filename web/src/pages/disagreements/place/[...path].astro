@@ -104,6 +104,18 @@ const FIGURES = defineFigures(`disagreements-place-${slug}`, [
   ),
 ]);
 const figs = new Map(FIGURES.map((f) => [f.id, f]));
+// QW-11: <title> must be unique across the site — two emitted docs can share a
+// jurisdiction name (the legacy `oklahoma-city` slug and the geoid
+// `usa/ok/oklahoma-city-4064000` both name "Oklahoma City"), so a collision
+// appends the dossier's own jurisdiction key — the dossier page's display
+// convention, never a fabricated name.
+const NAME_COLLIDES =
+  [...DOCS.values()].filter(
+    (d) => d.jurisdiction.name === DOC.jurisdiction.name,
+  ).length > 1;
+const TITLE_NAME = NAME_COLLIDES
+  ? `${MODEL.name} (${MODEL.jkey ?? slug})`
+  : MODEL.name;
 const KIND_COUNT =
   (MODEL.contradictions.length > 0 ? 1 : 0) +
   (MODEL.coordinate_conflicts.total > 0 ? 1 : 0) +
@@ -111,13 +123,13 @@ const KIND_COUNT =
 ---
 
 <BaseLayout
-  title={`Disagreements — ${MODEL.name}`}
+  title={`Disagreements — ${TITLE_NAME}`}
   path={withBase(disagreementPlacePath(slug))}
   crumbs={[
     { label: "Disagreements", href: withBase(DISAGREEMENTS_ROOT) },
     { label: MODEL.name },
   ]}
-  lede={`Recorded disagreements touching ${MODEL.name} — kept visible, labelled by kind.`}
+  lede={`Recorded disagreements touching ${TITLE_NAME} — kept visible, labelled by kind.`}
 >
   <p class="sig-lede" data-copy="CX-05">
     Every disagreement the release records for this place, labelled by kind —
