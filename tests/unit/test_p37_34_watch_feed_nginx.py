@@ -65,9 +65,7 @@ def test_legacy_watch_xml_serves_rss_type() -> None:
     # json under watch/feeds/ is feed+json — but the lane's own JSON docs
     # (state.json/lane.json/watch.json outside feeds/) keep
     # application/json via the stock mime table.
-    lane_json = re.search(
-        r'location /watch/feeds/ \{.*?application/json', text, re.S
-    )
+    lane_json = re.search(r"location /watch/feeds/ \{.*?application/json", text, re.S)
     assert lane_json is None or True  # scope check below is the guard
     feeds_block = re.search(r"location /watch/feeds/ \{(.*?)\n    \}", text, re.S)
     assert feeds_block is not None
