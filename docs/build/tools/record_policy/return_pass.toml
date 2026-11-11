@@ -1720,7 +1720,7 @@ rerun_cell = '''implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox
 key = "P37.36"
 kind = "leg"
 obligations = []
-obligations_cell = '''raw-ok archive write leg: raw/<multihash> + raw/index.json over the hosted store (P8 screen, reserialisation as new captures) → mirror/origin push → withdrawal rehearsal'''
+obligations_cell = '''raw-ok archive write leg: raw/<multihash> + raw/index.json over the `hosted` store (P8 screen, reserialisation as new captures) → mirror/origin push → withdrawal rehearsal'''
 gates_cell = '''`hosted` archive write + publish; NEVER pre-authorised (OM-20, Part VIII-screened families) — operator explicit verbatim go only; AR-3+AR-2 (x 03:00-06:30Z + AR-3 batch windows); exposure rides P37.65 HG-11'''
 operator_cell = '''the operator's verbatim go (SIG_RAWARCHIVE_AUTHOR env-only), ADC + SIG_GCP_PROJECT present; kill switch = R2_MIRROR_RUNBOOK.md'''
 rerun_cell = '''`implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` (archive write + push + rehearsal)'''

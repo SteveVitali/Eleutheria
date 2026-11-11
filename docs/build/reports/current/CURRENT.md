@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `efcc3a949a0c45380f9c5c45bdf70c63a557efe6` · inputs hashed: 1252 · wall-clock receipt: `receipt.json`
+> input_commit: `7ec74062f2473998e2d7b9dd4ab08e0ad2a683d0` · inputs hashed: 1252 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -108,7 +108,7 @@
 | P37.14 | D-P37.14-1 | a data-review ticket or exports consumer of `publishable` — `ADR-240` revisit trigger (b) |
 | P37.15 | queued leg | `implement-spec spec=docs/tickets/437_P37.15__scheduled-parser-canary.md live_verification=true` |
 | P37.20 | D-P37.20-1 | implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true |
-| P37.36 | raw-ok archive write leg: raw/<multihash> + raw/index.json over the hosted store (P8 screen, reserialisation as new captures) → mirror/origin push → withdrawal … | `implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` (archive write + push + rehearsal) |
+| P37.36 | raw-ok archive write leg: raw/<multihash> + raw/index.json over the `hosted` store (P8 screen, reserialisation as new captures) → mirror/origin push → withdrawa… | `implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` (archive write + push + rehearsal) |
 
 ## Known inconsistencies (preserved, never synthesized)
 
