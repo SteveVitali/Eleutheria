@@ -14,6 +14,7 @@
 // (v1 .ics/.xml, keyed on the derived decision date) still emit and list
 // last, honestly named.
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import EmptyState from "../../../components/EmptyState.astro";
 import WatchFeedLinks from "../../../components/WatchFeedLinks.astro";
 import { watchContext } from "../../../lib/watch-context";
 import {
@@ -53,6 +54,13 @@ const jurisdictions = watchJurisdictions(WATCH_ITEMS);
     Every feed exists even when it lists zero items — subscribe now and items
     appear as SIG records them.
   </p>
+
+  {envelope.items.length === 0 && (
+    // The scoped feed set exists even here (every feed is a valid empty
+    // feed — D-K7-5) but nothing is tracked yet: the surface says so with
+    // its cause class (K14 §6.4 five-part empty state, P34.20).
+    <EmptyState surface="watchSubscriptions" />
+  )}
 
   <h2 id="feeds-heading">Every feed this release emits</h2>
   <p>
