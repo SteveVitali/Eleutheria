@@ -26,6 +26,30 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.34 — watch feeds v2 (K7 WX-04b, SIG-WATCH-005, SIG-WATCH-006):** the
+  decision calendar's subscription set emits as T0-class static bytes under
+  `/watch/feeds/` — `all`, every place page (empty or not, D-K7-5), the six
+  kind scopes and the present vendor/technology facets, each as iCal
+  (`.ics`, RFC 5545 with `UID <handle>@surveillancegraph.org`,
+  `SEQUENCE` on a recorded date move, `STATUS:CANCELLED` on
+  withdrawn/superseded, `REFRESH-INTERVAL`/`X-PUBLISHED-TTL` P1D, a UTC
+  `VTIMEZONE` keeping empty calendars valid), RSS 2.0 (`.xml`,
+  `atom:link rel="self"`, `lastBuildDate`, `pubDate` = `first_seen`) and
+  JSON Feed 1.1 (`.json`), plus `/watch/feeds.opml` (OPML of all place
+  feeds) and a per-item `.ics` ("add to calendar"). Feed timestamps come
+  from the watch build's `generated_at`, never a fixture constant
+  (SIG-WATCH-006). `ops/web/nginx.conf` serves `text/calendar` /
+  `application/rss+xml` / `application/feed+json` scoped to the feed paths
+  (the legacy `/watch/<j>.ics|.xml` emitters get their real types too — K7
+  Q11's `application/octet-stream`/`text/xml` defect fixed) with
+  `max-age=3600`. `web/scripts/check-feeds.mjs` validates every emitted
+  feed (iCal shape/folding/UID/SEQUENCE/STATUS, RSS well-formedness +
+  self-link, JSON Feed 1.1, OPML outline→file resolution, per-place feed
+  coverage and the directory link crawl) inside `npm run check`; the
+  "Feeds" nav child is restored (it was staged for this row).
+  `docs/build/reports/copy-batches/batch-23.md` registers the new drafted
+  sentences (WF-01…04, pending operator confirmation).
+
 - **P37.33 — the watch lane + cadence (K7 WX-03, D-K7-2 [B-22] = the lane):**
   the daily `sig-watch-publish` step on the status lane's publish class —
   `sig-ops watch-publish` emits `watch/{state.json (sig.watch-heartbeat/1),
