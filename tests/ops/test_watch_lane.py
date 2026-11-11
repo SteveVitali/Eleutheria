@@ -51,10 +51,16 @@ def _payload() -> dict:
                 "handle": "W-usa-wa-agenda-cb-121279-7k2q",
                 "title": "Seattle City Council: agenda item CB 121279 (contract notice)",
                 "kind": "agenda_item",
-                "date": "2026-11-14",  # future-ok: synthetic: the fixture alert date the lane renders
+                "date": "2026-11-14",  # future-ok: synthetic: fixture alert date
                 "date_kind": "meeting",
                 "date_certainty": "stated",
-                "timeline": [{"kind": "meeting", "date": "2026-11-14",  # future-ok: synthetic: the fixture alert date the lane renders  # future-ok: synthetic: the fixture alert date the lane renders "claim_id": "claim-1"}],
+                "timeline": [
+                    {
+                        "kind": "meeting",
+                        "date": "2026-11-14",  # future-ok: synthetic: fixture alert date
+                        "claim_id": "claim-1",
+                    }
+                ],
                 "place": {"key": "iso3166-2:US-WA", "chain": ["iso3166-1:US", "iso3166-2:US-WA"]},
                 "body": "Seattle City Council",
                 "subjects": ["agenda_item:legistar:seattle_wa:CB 121279"],
@@ -81,7 +87,7 @@ def _payload() -> dict:
                 "handle": "W-unplaced-expiry-abcd-1q2w",
                 "title": "Contract ends (latest possible end)",
                 "kind": "contract_expiry",
-                "date": "2027-02-01",  # future-ok: synthetic: the fixture expiry date the lane renders
+                "date": "2027-02-01",  # future-ok: synthetic: fixture expiry date
                 "date_kind": "expiry",
                 "date_certainty": "upper_bound",
                 "timeline": [],
