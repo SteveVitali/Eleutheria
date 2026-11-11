@@ -10,15 +10,15 @@
 #            `<label>: <subject label>` — never a placeholder literal, never a
 #            raw identifier (SIG-RQ-001/003, agent-drafted copy per K11 §16).
 #
-# `catalog_pending = true` marks the routing-table target types RQ-02 (P37.35)
-# adds to the §33.2 catalog (`retention_unknown`, `sharing_unknown`): their
-# rows land ahead so the routing table can name them, and the loader admits
-# them only under this flag.
+# `catalog_pending = true` marks a routing-table target type the §33.2 catalog
+# has not yet registered (the loader admits the row only under this flag).
+# P37.35 (RQ-02) landed `retention_unknown`/`sharing_unknown` as §33.2 rows
+# 35/36 — no row is pending today; the flag stands for the next pending type.
 #
 # Changes after this declaration are VERSIONED (§20): bump `version`, never
 # silently rewrite a landed row.
 
-version = "1.0.0"
+version = "1.1.0"
 
 [[type]]
 task_type = "missing_physical_devices"
@@ -224,18 +224,16 @@ code = "share"
 label = "Stale sharing list"
 title = "Update who {subject} shares data with (last snapshot {date})"
 
-# --- routing-table target types (RQ-02 / P37.35 — catalog_pending) -----------
+# --- routing-table target types (RQ-02 / P37.35 — §33.2 rows 35/36) ----------
 
 [[type]]
 task_type = "retention_unknown"
 code = "unkret"
 label = "Retention period unknown"
 title = "Find the retention policy for {subject}"
-catalog_pending = true
 
 [[type]]
 task_type = "sharing_unknown"
 code = "unkshare"
 label = "Sharing partners unknown"
 title = "Find the data-sharing agreement for {subject}"
-catalog_pending = true

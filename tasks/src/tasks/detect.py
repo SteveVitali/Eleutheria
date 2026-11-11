@@ -53,7 +53,7 @@ is :mod:`tasks.research_pg`; this module is pure (dicts in, dataclasses out) and
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import datetime
 
@@ -67,10 +67,12 @@ from .records_request import (
     table_version,
     template_library,
 )
+from .routing import load_gap_routing
 from .spec import TaskTypeRegistry
 from .vocabulary import AssigneeClass
 
 __all__ = [
+    "CampaignAggregate",
     "MaterializedInputs",
     "JurisdictionInfo",
     "RecordsRequestDraft",
@@ -97,8 +99,13 @@ _SEVERITY_PRIORITY: dict[str, float] = {
 #: ``evidence_of_absence`` / ``not_applicable`` conclusion — is work to be done).
 _COVERAGE_GAP_ABSENCE: frozenset[str] = frozenset({"not_researched", "searched_not_found"})
 
-#: A coverage gap whose predicate is obtainable by a public-records request routes to the
-#: records-requester ``missing_contract`` task; any other gap is field/local ``coverage_hole``.
+#: The fallback for a coverage predicate the routing table does **not** name.
+#: ``tasks/data/gap_routing.toml`` is the routing authority for every §32.1
+#: peer-class ``tracked`` predicate (SIG-RQ-005); a predicate outside that
+#: declaration (never negative space for a declared class — e.g. a coverage
+#: row on an undeclared subject) keeps the pre-RQ-02 records-obtainable
+#: heuristic so the gap still mints an honest task. A marker match routes to
+#: the records-requester ``missing_contract``; anything else is ``coverage_hole``.
 _RECORDS_OBTAINABLE_MARKERS: tuple[str, ...] = (
     "contract",
     "procurement",
@@ -139,6 +146,10 @@ RECORDS_REQUEST_RECORD_TYPE: dict[str, str] = {
     "free_trial_capability": "alpr_contract",
     "missing_physical_devices": "camera_deployment",
     "sharing_snapshot_stale": "data_sharing_agreement",
+    # P37.35 (K11 RQ-02): the routing table's `template` column — the
+    # retention gap asks for the policy record, the sharing gap the agreement.
+    "retention_unknown": "surveillance_policy",
+    "sharing_unknown": "data_sharing_agreement",
 }
 _DEFAULT_RECORD_TYPE = "surveillance_policy"
 
@@ -167,6 +178,12 @@ class MaterializedInputs:
     #: own current claims, read under the same honest-absence posture). Absent/empty is
     #: honest: a spine with no dated contracts yields no ``contract_expiring`` tasks.
     contracts: Sequence[dict[str, object]] = ()
+    #: subject_id → attributed jurisdiction entity id (P37.35 / K11 RC-4).
+    #: The materialized contradiction/edge rows and the per-subject coverage
+    #: records carry no jurisdiction; ``research_pg`` supplies this map from
+    #: the subject's evidenced jurisdiction link so every attributable task is
+    #: minted placed — the rest stay ``None`` and surface as ``unplaced`` (K4).
+    jurisdictions: Mapping[str, str] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -268,6 +285,10 @@ class DetectorRunSummary:
     unroutable: int = 0
     by_task_type: dict[str, int] = field(default_factory=dict)
     by_trigger_kind: dict[str, int] = field(default_factory=dict)
+    #: P37.35 (D-K11-1): per-object coverage gaps routed to a mapping campaign
+    #: (never minted as individual research tasks) and to coverage metrics.
+    campaign_members: int = 0
+    metric_only_members: int = 0
     records_request_drafts: int = 0
     residency_routed_drafts: int = 0
 
@@ -284,9 +305,40 @@ class DetectorRunSummary:
             "unroutable": self.unroutable,
             "by_task_type": dict(sorted(self.by_task_type.items())),
             "by_trigger_kind": dict(sorted(self.by_trigger_kind.items())),
+            "campaign_members": self.campaign_members,
+            "metric_only_members": self.metric_only_members,
             "records_request_drafts": self.records_request_drafts,
             "residency_routed_drafts": self.residency_routed_drafts,
             "records_requests_sent": 0,  # always 0 — sending is operator-gated (never auto)
+        }
+
+
+@dataclass(frozen=True)
+class CampaignAggregate:
+    """One mapping campaign a detector run aggregated (P37.35 / SIG-RQ-006).
+
+    A per-object coverage gap routed to the ``campaign`` lane is never an
+    individual research task (D-K11-1): it aggregates with its siblings by
+    ``(jurisdiction, predicate, subject_class)`` — the unit a mapping campaign
+    page and a MapRoulette challenge (HG-08) present. ``coverage_refs`` are the
+    materialized coverage ids the members cite (the supersession refs for the
+    legacy per-camera ``coverage_hole`` rows this aggregation replaces).
+    """
+
+    jurisdiction_id: str | None
+    predicate_id: str
+    subject_class: str
+    member_subjects: tuple[str, ...]
+    coverage_refs: tuple[str, ...]
+
+    def as_dict(self) -> dict[str, object]:
+        return {
+            "jurisdiction_id": self.jurisdiction_id,
+            "predicate_id": self.predicate_id,
+            "subject_class": self.subject_class,
+            "member_count": len(self.member_subjects),
+            "member_subjects": list(self.member_subjects),
+            "coverage_refs": list(self.coverage_refs),
         }
 
 
@@ -298,6 +350,16 @@ class DetectorRunResult:
     queue: list[ResearchTask]
     drafts: list[RecordsRequestDraft]
     summary: DetectorRunSummary
+    #: The aggregated campaign-lane field gaps (D-K11-1) — never tasks.
+    campaigns: list[CampaignAggregate] = field(default_factory=list)
+    #: Coverage ids whose per-object gaps routed to campaign/metric lanes —
+    #: the refs a persisted ``coverage_hole`` row citing one is superseded by
+    #: (append-only disposition, never a delete).
+    field_gap_refs: tuple[str, ...] = ()
+    #: coverage_id → asserted task type for research-lane rows whose recorded
+    #: ``route`` differs from the table's (a persisted row minted under the
+    #: retired substring routing is superseded for the correct re-mint).
+    rerouted_refs: dict[str, str] = field(default_factory=dict)
 
 
 # --- candidate routing (materialized row → a catalog task) --------------------
@@ -325,6 +387,8 @@ def _parse_dt(value: object) -> datetime | None:
 
 def _contradiction_candidates(
     rows: Iterable[dict[str, object]],
+    *,
+    jurisdictions: Mapping[str, str],
 ) -> list[_Candidate]:
     out: list[_Candidate] = []
     for r in rows:
@@ -339,14 +403,52 @@ def _contradiction_candidates(
         if subject is None or cid is None:
             continue
         priority = _SEVERITY_PRIORITY.get(str(r.get("severity") or ""), 0.3)
-        out.append((slug, str(subject), None, "contradiction", str(cid), {"priority": priority}))
+        # P37.35 (K11 RC-4): a contradiction task carries the subject's
+        # attributed jurisdiction — `None` only when unattributable.
+        out.append(
+            (
+                slug,
+                str(subject),
+                jurisdictions.get(str(subject)),
+                "contradiction",
+                str(cid),
+                {"priority": priority},
+            )
+        )
     return out
+
+
+@dataclass(frozen=True)
+class _CoverageRoute:
+    """The pure outcome of routing one coverage gap row (detect-side)."""
+
+    task: _Candidate | None
+    campaign_member: tuple[str | None, str, str, str, str] | None
+    #: ``(jurisdiction, predicate, subject_class, subject, coverage_id)``
+    rerouted: tuple[str, str] | None  # ``(coverage_id, asserted slug)``
+    field_gap_ref: str | None
 
 
 def _coverage_candidates(
     rows: Iterable[dict[str, object]],
-) -> list[_Candidate]:
-    out: list[_Candidate] = []
+    *,
+    jurisdictions: Mapping[str, str],
+    routing: Mapping[str, object],
+    peer_types: frozenset[str],
+) -> list[_CoverageRoute]:
+    """Route coverage gaps through the explicit predicate→task table (SIG-RQ-005).
+
+    ``tasks/data/gap_routing.toml`` is the routing authority: a per-object gap
+    (a §32.1 peer-class member subject) follows its declared lane — ``research``
+    mints the asserted task type (``retention_unknown``/``sharing_unknown``/
+    ``missing_contract`` …), ``campaign`` aggregates into a mapping campaign and
+    ``metric`` stays coverage metrics (D-K11-1, never an individual task). Every
+    minted task records the predicate it seeks (``predicate_ids``). A predicate
+    the table does not name falls back to the pre-RQ-02 records-obtainable
+    heuristic — the table's coverage over the tracked set is test-pinned, so
+    the fallback only fires off the declared surface.
+    """
+    out: list[_CoverageRoute] = []
     for r in rows:
         if str(r.get("absence_kind") or "") not in _COVERAGE_GAP_ABSENCE:
             continue
@@ -357,22 +459,77 @@ def _coverage_candidates(
         if subj is None or cid is None:
             continue  # a gap with no subject/jurisdiction cannot be scoped to a queue
         predicate = str(r.get("predicate_id") or "")
-        records_obtainable = any(m in predicate for m in _RECORDS_OBTAINABLE_MARKERS)
-        slug = "missing_contract" if records_obtainable else "coverage_hole"
+        subject_class = str(r.get("subject_class") or "")
+        per_object = subject is not None and subject_class in peer_types
+        routed = routing.get(predicate)
+        lane = str(getattr(routed, "lane", "") or "")
+        place = str(jurisdiction) if jurisdiction is not None else jurisdictions.get(str(subj))
+        if per_object and lane == "campaign":
+            out.append(
+                _CoverageRoute(
+                    task=None,
+                    campaign_member=(
+                        place,
+                        predicate,
+                        subject_class,
+                        str(subject),
+                        str(cid),
+                    ),
+                    rerouted=None,
+                    field_gap_ref=str(cid),
+                )
+            )
+            continue
+        if per_object and lane == "metric":
+            out.append(
+                _CoverageRoute(
+                    task=None,
+                    campaign_member=None,
+                    rerouted=None,
+                    field_gap_ref=str(cid),
+                )
+            )
+            continue
+        slug: str
+        rerouted: tuple[str, str] | None = None
+        asserted = getattr(routed, "route", None) if lane == "research" else None
+        if asserted:
+            slug = str(asserted)
+            rerouted = (str(cid), slug)
+        elif routed is not None and lane in ("campaign", "metric"):
+            # A field-gap predicate on a non-peer subject: no campaign or
+            # metric meaning applies — the generic gap task is the honest row.
+            slug = "coverage_hole"
+        else:
+            slug = (
+                "missing_contract"
+                if any(m in predicate for m in _RECORDS_OBTAINABLE_MARKERS)
+                else "coverage_hole"
+            )
         out.append(
-            (
-                slug,
-                str(subj),
-                str(jurisdiction) if jurisdiction is not None else None,
-                "coverage",
-                str(cid),
-                {"priority": 0.5},
+            _CoverageRoute(
+                task=(
+                    slug,
+                    str(subj),
+                    place,
+                    "coverage",
+                    str(cid),
+                    {"priority": 0.5, "predicate_ids": (predicate,) if predicate else ()},
+                ),
+                campaign_member=None,
+                rerouted=rerouted,
+                field_gap_ref=None,
             )
         )
     return out
 
 
-def _edge_candidates(rows: Iterable[dict[str, object]], *, now: datetime) -> list[_Candidate]:
+def _edge_candidates(
+    rows: Iterable[dict[str, object]],
+    *,
+    now: datetime,
+    jurisdictions: Mapping[str, str],
+) -> list[_Candidate]:
     out: list[_Candidate] = []
     for r in rows:
         if str(r.get("access_kind") or "") != _STALE_ACCESS_KIND:
@@ -390,7 +547,9 @@ def _edge_candidates(rows: Iterable[dict[str, object]], *, now: datetime) -> lis
             (
                 "sharing_snapshot_stale",
                 str(subject),
-                None,
+                # P37.35 (K11 RC-4): the stale-edge task carries the subject's
+                # attributed jurisdiction — `None` only when unattributable.
+                jurisdictions.get(str(subject)),
                 "relationship",
                 str(rid),
                 {"priority": priority},
@@ -427,7 +586,12 @@ def _contract_renewal_evidence(row: dict[str, object]) -> bool:
     return auto is True and row.get("notice_window_days") is not None
 
 
-def _contract_candidates(rows: Iterable[dict[str, object]], *, now: datetime) -> list[_Candidate]:
+def _contract_candidates(
+    rows: Iterable[dict[str, object]],
+    *,
+    now: datetime,
+    jurisdictions: Mapping[str, str],
+) -> list[_Candidate]:
     """Catalog #10 — ``contract_expiring`` over the WX-01 contract subjects.
 
     One input row per contract subject (``end_date`` + the renewal-term claims on
@@ -456,7 +620,11 @@ def _contract_candidates(rows: Iterable[dict[str, object]], *, now: datetime) ->
             (
                 "contract_expiring",
                 str(subject),
-                str(jurisdiction) if jurisdiction is not None else None,
+                (
+                    str(jurisdiction)
+                    if jurisdiction is not None
+                    else jurisdictions.get(str(subject))
+                ),
                 _CONTRACT_TRIGGER_KIND,
                 str(claim_id),
                 {
@@ -496,13 +664,28 @@ def run_detectors(
         edges_read=len(inputs.edges),
         contracts_read=len(inputs.contracts),
     )
+    jurisdictions = inputs.jurisdictions
+    routing = load_gap_routing()
+    peer_types = _peer_entity_types()
 
     candidates = (
-        _contradiction_candidates(inputs.contradictions)
-        + _coverage_candidates(inputs.coverage)
-        + _edge_candidates(inputs.edges, now=now)
-        + _contract_candidates(inputs.contracts, now=now)
+        _contradiction_candidates(inputs.contradictions, jurisdictions=jurisdictions)
+        + _edge_candidates(inputs.edges, now=now, jurisdictions=jurisdictions)
+        + _contract_candidates(inputs.contracts, now=now, jurisdictions=jurisdictions)
     )
+    coverage_routes = _coverage_candidates(
+        inputs.coverage,
+        jurisdictions=jurisdictions,
+        routing=routing,
+        peer_types=peer_types,
+    )
+    for route in coverage_routes:
+        if route.task is not None:
+            candidates.append(route.task)
+        if route.campaign_member is not None:
+            summary.campaign_members += 1
+        elif route.field_gap_ref is not None:
+            summary.metric_only_members += 1
 
     seen: set[str] = set()
     for slug, subject_id, jurisdiction_id, trigger_kind, trigger_ref, facts in candidates:
@@ -522,6 +705,12 @@ def run_detectors(
         if task is None:
             summary.rate_limited += 1
             continue
+        # The task records the predicate(s) it seeks (SIG-RQ-005); a dedup
+        # merge unions the asserted set in, never a re-guess.
+        _preds = facts.get("predicate_ids")
+        pred_ids = tuple(str(p) for p in (_preds if isinstance(_preds, (list, tuple)) else ()) if p)
+        if pred_ids:
+            task.predicate_ids = tuple(sorted(set(task.predicate_ids) | set(pred_ids)))
         if task.task_id in seen:
             summary.deduplicated += 1
             continue
@@ -536,7 +725,51 @@ def run_detectors(
     summary.records_request_drafts = len(drafts)
     summary.residency_routed_drafts = sum(1 for d in drafts if d.residency_restricted)
 
-    return DetectorRunResult(pool=pool, queue=queue, drafts=drafts, summary=summary)
+    # Campaign aggregation (SIG-RQ-006 / D-K11-1): per-object campaign-lane
+    # gaps group by (jurisdiction, predicate, subject_class) — the unit the
+    # campaign surface and a MapRoulette challenge (HG-08) present.
+    groups: dict[tuple[str | None, str, str], dict[str, list[str]]] = {}
+    for route in coverage_routes:
+        member = route.campaign_member
+        if member is None:
+            continue
+        place, pred, sclass, subject, cov_ref = member
+        g = groups.setdefault((place, pred, sclass), {"subjects": [], "refs": []})
+        g["subjects"].append(subject)
+        g["refs"].append(cov_ref)
+    campaigns = [
+        CampaignAggregate(
+            jurisdiction_id=place,
+            predicate_id=pred,
+            subject_class=sclass,
+            member_subjects=tuple(sorted(g["subjects"])),
+            coverage_refs=tuple(sorted(g["refs"])),
+        )
+        for (place, pred, sclass), g in sorted(
+            groups.items(), key=lambda kv: (str(kv[0][0]), kv[0][1], kv[0][2])
+        )
+    ]
+    field_gap_refs = tuple(
+        sorted(route.field_gap_ref for route in coverage_routes if route.field_gap_ref)
+    )
+    rerouted_refs = {c[0]: c[1] for c in (r.rerouted for r in coverage_routes) if c}
+
+    return DetectorRunResult(
+        pool=pool,
+        queue=queue,
+        drafts=drafts,
+        summary=summary,
+        campaigns=campaigns,
+        field_gap_refs=field_gap_refs,
+        rerouted_refs=rerouted_refs,
+    )
+
+
+def _peer_entity_types() -> frozenset[str]:
+    """The §32.1 peer-class entity types (the per-object field-gap subjects)."""
+    from inference.peer_classes import load_peer_classes
+
+    return frozenset(pc.entity_type for pc in load_peer_classes())
 
 
 def records_request_drafts(

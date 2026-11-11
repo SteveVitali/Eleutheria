@@ -355,7 +355,9 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "research_task",
         "SELECT rt.task_id::text, rt.task_type, rt.subject_id::text, rt.jurisdiction_id::text,"
         "       rt.priority, rt.status, rt.disposition, rt.closing_condition,"
-        "       rt.detector_version, rt.trigger_kind, rt.trigger_ref, rt.generated_at"
+        "       rt.detector_version, rt.trigger_kind, rt.trigger_ref, rt.generated_at,"
+        # P37.35 (RQ-02): the task's recorded predicate set — NULL pre-change.
+        "       rt.predicate_ids"
         "  FROM research_task rt"
         # P32.5/ADR-124: a task about a withheld subject does not surface on the
         # public research queue — the subject still exists on the spine for
@@ -3714,9 +3716,13 @@ def _research_queue(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
         trigger_ref = r[10] if len(r) > 10 else None
         # P36.58 (RQ-01): generated_at rides the v2 card's History block.
         generated = r[11] if len(r) > 11 else None
+        # P37.35 (RQ-02): the recorded predicate set the task seeks — NULL on a
+        # pre-change row (trigger-derived predicate resolution stays the fallback).
+        stored_preds = list(r[12]) if len(r) > 12 and r[12] else []
         spec = registry.get(str(task_type)) if str(task_type) in registry else None
         card: dict[str, Any] = {
             "task_id": str(task_id),
+            "predicate_ids": stored_preds,
             "task_type": str(task_type),
             "subject_id": str(subject_id or task_id),
             "subject_label": str(subject_id or task_id),

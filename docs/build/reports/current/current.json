@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "f40b225fb4ec6b2c80e7640cff318f72b102ff87",
-  "manifest_inputs": 1249,
+  "input_commit": "0c05c321714ad4cb0ae9d3a061675723c8c2054e",
+  "manifest_inputs": 1251,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.35",
-    "lastCompleted": "P37.34",
+    "nextTicket": "P37.36",
+    "lastCompleted": "P37.35",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.70,P37.71",
@@ -17,21 +17,21 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.30-evidence-recommender-repair",
+    "chainTip": "r11/P37.35-detector-routing",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-10T08:40Z"
+    "updatedAt": "2026-11-11T09:25Z"
   },
   "counts": {
-    "obligations": 236,
-    "owed": 152,
-    "open": 149,
+    "obligations": 237,
+    "owed": 153,
+    "open": 150,
     "partial": 3,
     "terminal": 84,
-    "events": 751,
+    "events": 752,
     "transitions": 59,
     "coverage_assessments": 515,
     "coverage_historical_rows": 994,
@@ -12427,6 +12427,53 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P37.35-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P37.35-1:e0",
+      "kind": "V",
+      "owner": "the OM-19 leg-runner (the orchestrator `live` dispatch or the operator)",
+      "landing": "engineering landed (fixture-verified); the hosted detector re-run queued `prepared_not_executed` inside the AR-3 window",
+      "landing_source": "event-head",
+      "backlog_home": "BL-087",
+      "item": "The P37.35 named mutation (OM-20, GATE-G6 §4 pre-authorised): the `hosted` detector re-run under the new routing and mapping campaigns — writing `retention_unknown`/`sharing_unknown`/routed tasks with `predicate_ids`, the attributed jurisdictions, and the append-only `superseded` dispositions of the per-camera `coverage_hole` rows onto the `production` spine",
+      "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P37.35-live-<n>` dispatch or the operator · trigger: `implement-spec spec=docs/tickets/459_P37.35__detector-routing-and-mapping-campaigns.md live_verification=true` inside `AR-3 + AR-2` (restore point first)",
+      "verify": "the research_task table carries routed types with `predicate_ids`; per-camera `coverage_hole` rows cite campaign/metric coverage refs with `disposition = 'superseded'` + reason — a re-run adds +0 (dedup + terminal disposition)",
+      "proxy": "the deterministic half is committed + fixture-verified — `tests/tasks/test_tasks_detect.py` (lanes/predicate_ids/jurisdiction), `tests/db/test_research_queue_materialize.py` (predicate_ids persist, campaign-lane supersede, evidenced jurisdiction); ADR-245 records the routing/catalog/supersede decisions",
+      "line": 1573,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P37.35",
+          "backlog_home": "BL-087",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/459_P37.35__detector-routing-and-mapping-campaigns.md",
+            "docs/adr/ADR-245-detector-routing-predicate-table-and-catalog-rows-35-36.md"
+          ],
+          "observed_at": "2026-11-11",
+          "reason": "migration anchor appended by P37.35 (row 459) for the row it added — the OM-20 named hosted detector re-run under the new routing and mapping campaigns queued prepared_not_executed: live_verification=false dispatch, dispatch date inside the AR-3 monthly batch window (days 6-13), and no hosted env (SIG_GCP_PROJECT unset); the GATE-G6 §4 list dated 2026-11-05T15:20Z names P37.35 verbatim (operator selection \"Approve all 15 (rec.)\", expiry at the round-11 acceptance sitting); re-run prompt implement-spec spec=docs/tickets/459_P37.35__detector-routing-and-mapping-campaigns.md live_verification=true inside AR-3 + AR-2",
+          "source_commit": "WORKTREE",
+          "recorded_at": "2026-11-11",
+          "obligation_id": "D-P37.35-1",
+          "event_id": "D-P37.35-1:e0",
+          "landing": "engineering landed (fixture-verified); the hosted detector re-run queued `prepared_not_executed` inside the AR-3 window",
+          "owner": "the OM-19 leg-runner (the orchestrator `live` dispatch or the operator)",
+          "anchor": {
+            "row_line": 1573,
+            "row_sha256": "c2b0bf194d3c017b98f97f3bcf5ffcaedaaa9ec5058f15f86759a8041b83d7d6",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -19011,8 +19058,8 @@
           "label": "historical/csv"
         },
         "SIG-RQ-005": {
-          "verdict": "PARTIAL",
-          "evidence": "tasks/src/tasks/data/gap_routing.toml;tasks/src/tasks/routing.py;exports/src/exports/task_export.py;docs/build/runs/P36.58.md",
+          "verdict": "MET-ENGINEERED(D-P37.35-1)",
+          "evidence": "tasks/src/tasks/data/gap_routing.toml;tasks/src/tasks/routing.py;exports/src/exports/task_export.py;docs/build/runs/P36.58.md;tasks/src/tasks/detect.py;tasks/src/tasks/catalog.py;tasks/src/tasks/research_pg.py;db/deploy/research_task_predicates.sql;docs/build/runs/P37.35.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -27339,10 +27386,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "8b57f5860de1bb35a7042f8789ea6f7239ebe9b7870728af50365396d5a672fa",
+  "manifest_sha256": "7a9d6e9753bc3e2c21d036b0a5e781efb333d67e5d7495a12e7fd202640714ed",
   "current_md": {
     "lines": 159,
-    "bytes": 20094,
+    "bytes": 20083,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

@@ -78,6 +78,12 @@ class ResearchTask:
     #: minted from in-memory facts without a materialized provenance.
     trigger_kind: str | None = None
     trigger_ref: str | None = None
+    #: The missing predicate(s) the task seeks (SIG-RQ-005; P37.35 /
+    #: ``research_task.predicate_ids``). A task minted over the materialized
+    #: spine records the coverage predicate its trigger names; a dedup-merged
+    #: candidate unions its predicates in, so the field is exactly the set the
+    #: routing table asserted — never a guessed list.
+    predicate_ids: tuple[str, ...] = ()
 
     @property
     def task_type(self) -> str:

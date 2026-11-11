@@ -42,10 +42,11 @@ LANES: tuple[str, ...] = ("research", "campaign", "metric")
 #: must match its subject grain).
 GRAINS: tuple[str, ...] = ("subject", "jurisdiction")
 
-#: Task types the routing table may name before the catalog registers them —
-#: RQ-02 (P37.35) lands them in §33.2. Any other unregistered ``route`` value
-#: fails the load.
-PENDING_CATALOG_TYPES: frozenset[str] = frozenset({"retention_unknown", "sharing_unknown"})
+#: Task types the routing table may name before the catalog registers them.
+#: P37.35 (RQ-02) landed `retention_unknown`/`sharing_unknown` as §33.2 rows
+#: 35/36 — none is pending today; the mechanism stands for the next
+#: catalog-pending type. Any other unregistered ``route`` value fails the load.
+PENDING_CATALOG_TYPES: frozenset[str] = frozenset()
 
 
 @dataclass(frozen=True)

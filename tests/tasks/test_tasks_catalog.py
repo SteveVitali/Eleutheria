@@ -170,6 +170,15 @@ FIXTURES: dict[str, tuple[Facts, Facts]] = {
         {"configured_access_age_days": 365, "fast_threshold_days": 180},
         {"configured_access_age_days": 10, "fast_threshold_days": 180},
     ),
+    # P37.35 (K11 RQ-02, §33.2 rows 35/36).
+    "retention_unknown": (
+        {"deployment_evidenced": True, "retention_period_evidenced": False},
+        {"deployment_evidenced": True, "retention_period_evidenced": True},
+    ),
+    "sharing_unknown": (
+        {"deployment_evidenced": True, "sharing_record_evidenced": False},
+        {"deployment_evidenced": True, "sharing_record_evidenced": True},
+    ),
 }
 
 
@@ -180,18 +189,18 @@ def _by_slug() -> dict[str, TaskType]:
 # --- AC1 / SIG-TASK-003: the full catalog registers ---------------------------
 
 
-def test_catalog_has_exactly_the_34_types_of_the_count_authority() -> None:
-    """§33.2 is the count authority; the catalog is exactly 34 types, no duplicates."""
-    assert CATALOG_SIZE == 34
-    assert len(CATALOG_TASK_TYPES) == 34
+def test_catalog_has_exactly_the_36_types_of_the_count_authority() -> None:
+    """§33.2 is the count authority; the catalog is exactly 36 types, no duplicates."""
+    assert CATALOG_SIZE == 36
+    assert len(CATALOG_TASK_TYPES) == 36
     slugs = [tt.task_type for tt in CATALOG_TASK_TYPES]
-    assert len(set(slugs)) == 34, "catalog slugs must be unique"
+    assert len(set(slugs)) == 36, "catalog slugs must be unique"
 
 
 def test_building_the_catalog_registers_every_type() -> None:
     """A successful build is the SIG-TASK-002 proof: an untestable row would be refused."""
     registry = build_catalog()
-    assert len(registry) == 34
+    assert len(registry) == 36
     for tt in CATALOG_TASK_TYPES:
         assert tt.task_type in registry
 

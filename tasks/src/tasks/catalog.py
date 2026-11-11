@@ -4,7 +4,7 @@
 """The concrete task catalog of §33.2 (SIG-TASK-003/004).
 
 P10.1 owns the *engine* — the detector DSL, the lifecycle, dispositions, queues,
-anti-abuse. This module owns the **data**: the 34 enumerated task types of the
+anti-abuse. This module owns the **data**: the 36 enumerated task types of the
 §33.2 catalog, each registered against :mod:`tasks.spec` with a versioned
 ``detector`` query and a **testable** ``closing_condition``. It is the payload that
 turns the engine into a working research-coordination queue.
@@ -14,7 +14,8 @@ Two load-bearing disciplines are realized here:
 * **SIG-TASK-003** — every §33.2 row is a registered :class:`~tasks.spec.TaskType`.
   A type whose ``closing_condition`` is not evaluable cannot register (the registry
   refuses it), so a "research this" row is a catalog *defect*, not a TODO. §33.2 is
-  the count authority: :data:`CATALOG_SIZE` (34) is asserted, not assumed.
+  the count authority: :data:`CATALOG_SIZE` (36, after P37.35 appended rows 35/36)
+  is asserted, not assumed.
 * **SIG-TASK-004** — every §31 contradiction detector maps to a task type. The §31
   ``contradiction_type`` vocabulary (``reconcile.model.CONTRADICTION_TYPES``) is the
   authoritative detector taxonomy; :data:`CONTRADICTION_TASK_MAP` routes each of its
@@ -49,9 +50,10 @@ __all__ = [
 ]
 
 #: The §33.2 catalog has exactly this many task types. §33.2 is the count authority
-#: (the Part X AC was reconciled from "32" to "34"); this constant is asserted by the
-#: test suite so the catalog cannot silently drift from the spec.
-CATALOG_SIZE = 34
+#: (the Part X AC was reconciled from "32" to "34"; P37.35 appended rows 35/36 —
+#: `retention_unknown`/`sharing_unknown`, the K11 RQ-02 routing-table types); this
+#: constant is asserted by the test suite so the catalog cannot silently drift.
+CATALOG_SIZE = 36
 
 # --- disposition sets by assignee class (§33.4 vocabulary) --------------------
 # Every row draws its permitted outcomes from the §33.4 Disposition vocabulary. The
@@ -130,7 +132,7 @@ def _t(
 
 
 def _catalog_task_types() -> tuple[TaskType, ...]:
-    """The 34 §33.2 task types, in catalog order. Each detector/closing pair reads the
+    """The 36 §33.2 task types, in catalog order. Each detector/closing pair reads the
     documented `Facts` keys named in ``tests/tasks/test_tasks_catalog.py``."""
     A, E, G = AssigneeClass, EffortEstimate, GeographicScope
     return (
@@ -555,6 +557,35 @@ def _catalog_task_types() -> tuple[TaskType, ...]:
             effort=E.MODERATE,
             scope=G.JURISDICTION,
         ),
+        # 35 — Retention unknown: an evidenced deployment's retention period/policy
+        #      is not on record (P37.35 / K11 RQ-02, D-K11-1 "as recommended").
+        #      The routing table's `retention_unknown` route replaces the retired
+        #      substring match that sent retention gaps to `missing_contract`.
+        _t(
+            slug="retention_unknown",
+            version="v1",
+            fires=lambda f: (
+                bool(f.get("deployment_evidenced")) and not f.get("retention_period_evidenced")
+            ),
+            closes=lambda f: bool(f.get("retention_period_evidenced")),
+            assignee=A.RECORDS_REQUESTER,
+            effort=E.MODERATE,
+            scope=G.JURISDICTION,
+        ),
+        # 36 — Sharing unknown: an evidenced deployment's data-sharing record is
+        #      not on record (P37.35 / K11 RQ-02). The `data_sharing_agreement`
+        #      request template serves it (§36).
+        _t(
+            slug="sharing_unknown",
+            version="v1",
+            fires=lambda f: (
+                bool(f.get("deployment_evidenced")) and not f.get("sharing_record_evidenced")
+            ),
+            closes=lambda f: bool(f.get("sharing_record_evidenced")),
+            assignee=A.RECORDS_REQUESTER,
+            effort=E.MODERATE,
+            scope=G.JURISDICTION,
+        ),
     )
 
 
@@ -576,7 +607,7 @@ def _coverage_hole_priority(facts: Facts) -> float:
     return min(1.0, population / 1_000_000)
 
 
-#: The 34 §33.2 task types, in catalog order.
+#: The 36 §33.2 task types, in catalog order.
 CATALOG_TASK_TYPES: tuple[TaskType, ...] = _catalog_task_types()
 
 # --- SIG-TASK-004: the §31 contradiction detector → task type mapping ---------
