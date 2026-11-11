@@ -23,7 +23,6 @@ export const GET: APIRoute = () => {
     feedUrl: (scopePath, format) => abs(`watch/feeds/${scopePath}.${format}`),
     pageUrl: (pagePath) => abs(pagePath),
   });
-  void WATCH_OPML_PATH;
   return new Response(body, {
     headers: { "content-type": "text/x-opml; charset=utf-8" },
   });

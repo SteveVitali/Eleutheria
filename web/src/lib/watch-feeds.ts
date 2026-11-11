@@ -258,6 +258,14 @@ export function icalStamp(iso: string): string {
   return new Date(ms).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
 }
 
+/** Compact an ISO `YYYY-MM-DD` to the iCal DATE form `YYYYMMDD` (DTSTART). */
+export function icalDate(iso: string): string {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
+    throw new Error(`invalid ISO date for iCal: "${iso}"`);
+  }
+  return iso.replace(/-/g, "");
+}
+
 /** RFC 822 form for RSS `pubDate`/`lastBuildDate` (`Date#toUTCString`). */
 export function rssStamp(iso: string): string {
   const ms = Date.parse(iso.length === 10 ? `${iso}T00:00:00Z` : iso);
@@ -393,7 +401,7 @@ export function toWatchICal(opts: {
       "BEGIN:VEVENT",
       `UID:${feedUid(item)}`,
       `DTSTAMP:${dtstamp}`,
-      `DTSTART;VALUE=DATE:${icalStamp(item.date.slice(0, 10))}`,
+      `DTSTART;VALUE=DATE:${icalDate(item.date.slice(0, 10))}`,
       `SEQUENCE:${feedSequence(item)}`,
       `STATUS:${feedStatus(item)}`,
       `SUMMARY:${icalEscape(item.title)}`,
