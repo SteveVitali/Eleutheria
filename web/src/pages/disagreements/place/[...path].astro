@@ -107,15 +107,24 @@ const figs = new Map(FIGURES.map((f) => [f.id, f]));
 // QW-11: <title> must be unique across the site — two emitted docs can share a
 // jurisdiction name (the legacy `oklahoma-city` slug and the geoid
 // `usa/ok/oklahoma-city-4064000` both name "Oklahoma City"), so a collision
-// appends the dossier's own jurisdiction key — the dossier page's display
-// convention, never a fabricated name.
+// qualifies the name — the parent place's own name where a parent doc exists,
+// the jurisdiction key where it carries no ≥5-digit run (K14 NEW-8 — a geoid
+// is an identifier, never human-formatted digits in running text).
 const NAME_COLLIDES =
   [...DOCS.values()].filter(
     (d) => d.jurisdiction.name === DOC.jurisdiction.name,
   ).length > 1;
-const TITLE_NAME = NAME_COLLIDES
-  ? `${MODEL.name} (${MODEL.jkey ?? slug})`
-  : MODEL.name;
+const PARENT_SLUG = slug.split("/").slice(0, -1).join("/");
+const PARENT_NAME = PARENT_SLUG
+  ? DOCS.get(PARENT_SLUG)?.jurisdiction.name
+  : undefined;
+const QUALIFIED_NAME =
+  PARENT_NAME !== undefined
+    ? `${MODEL.name}, ${PARENT_NAME}`
+    : MODEL.jkey !== null && !/\d{5,}/.test(MODEL.jkey)
+      ? `${MODEL.name} (${MODEL.jkey})`
+      : MODEL.name;
+const TITLE_NAME = NAME_COLLIDES ? QUALIFIED_NAME : MODEL.name;
 const KIND_COUNT =
   (MODEL.contradictions.length > 0 ? 1 : 0) +
   (MODEL.coordinate_conflicts.total > 0 ? 1 : 0) +
