@@ -478,8 +478,12 @@ note = "okc.gov edge WAF 403s the index — a recorded link_rotted/access refusa
 
 [[sources]]
 id = "legistar"
-cadence = "monthly"
-cron = "0 5 20 * *"
+cadence = "daily"
+cron = "5 5 * * *"               # P37.33 (K7 WX-03 / D-K7-2 = the lane): watched
+                                 # agenda tenants move monthly → DAILY so agenda
+                                 # items reach the watch inside 24 h (SIG-WATCH-008).
+                                 # The declaration binds at the declaration-bundle
+                                 # republish (SIG_OPS_DECLARED_GCS).
 job = "sig-ingest-legistar"
 scheduler = "sig-sched-legistar"
 # P35.6 (ACQ-01): the widened keyword pass over the Verified InSite tenants is
@@ -490,24 +494,29 @@ note = "Verified InSite tenants (seattle/mesa/sanantonio) → matters+events ind
 
 [[sources]]
 id = "primegov"
-cadence = "monthly"
-cron = "0 5 21 * *"
+cadence = "daily"
+cron = "20 5 * * *"              # P37.33 (K7 WX-03 / D-K7-2 = the lane): watched
+                                 # agenda tenants → DAILY (SIG-WATCH-008); the
+                                 # robots Disallow:/ posture is unchanged —
+                                 # recorded robots_disregarded, never defeated.
 job = "sig-ingest-primegov"
 scheduler = "sig-sched-primegov"
 note = "PrimeGov tenants answer robots.txt Disallow:/ platform-wide — probed + recorded, never gating (GL-GATE-08 / ADR-088); fetches proceed marked robots_disregarded (D-SOURCES.2-4 resolved)."
 
 [[sources]]
 id = "civicclerk"
-cadence = "monthly"
-cron = "0 5 22 * *"
+cadence = "daily"
+cron = "35 5 * * *"              # P37.33 (K7 WX-03 / D-K7-2 = the lane): watched
+                                 # agenda tenants → DAILY (SIG-WATCH-008).
 job = "sig-ingest-civicclerk"
 scheduler = "sig-sched-civicclerk"
 note = "v1 API is IdentityServer-gated — anonymous reads 404 (recorded link_rotted); the api host's absent robots is recorded, never gating (GL-GATE-08 / ADR-088). The credential access path stays HG-09."
 
 [[sources]]
 id = "escribe"
-cadence = "monthly"
-cron = "0 5 23 * *"
+cadence = "daily"
+cron = "50 5 * * *"              # P37.33 (K7 WX-03 / D-K7-2 = the lane): watched
+                                 # agenda tenants → DAILY (SIG-WATCH-008).
 job = "sig-ingest-escribe"
 scheduler = "sig-sched-escribe"
 note = "P26.5: pub-{tenant}.escribemeetings.com GetCalendarMeetings JSON webmethod — the tenant's own calendar call, bounded date window; yields real meeting indexes."
@@ -534,8 +543,12 @@ note = "Agency registry slices (byStateAbbr) — verified live 2026-09-16 with t
 
 [[sources]]
 id = "sam_gov"
-cadence = "weekly"
-cron = "0 5 * * 1"               # every Monday 05:00 UTC — a FRESH quota window
+cadence = "twice-weekly"
+cron = "0 5 * * 1,4"             # P37.33 (K7 WX-03 / D-K7-2 = the lane): the SAM
+                                 # watch source moves weekly → TWICE-WEEKLY
+                                 # (Mon + Thu 05:00 UTC) so solicitation
+                                 # deadlines reach the watch inside the week;
+                                 # each fire still meets a FRESH quota window
 job = "sig-ingest-sam-gov"
 scheduler = "sig-sched-sam-gov"
 secrets = { SIG_SAM_GOV_KEY = "sig-sam-gov-key" }  # keyed live since P26.4 (2026-09-17)
@@ -1384,6 +1397,25 @@ state = "paused"                 # INERT until D-P37.3-1 creates sig-pg-export-c
 target_job = "sig-pg-export-copy"
 procedure = "ops/gcp/evidence-store.sh --apply jobs  # then resume the trigger"
 note = "Monthly `sig-ops pg-export-copy run`: append-only copyTo of pg/monthly/ on <project>-sig-backups → <SIG_BACKUP_PROJECT>-sig-backups — the monthly logical export one project further out (G1-03 long-term copy). `dest == source` under pg/monthly/, sig.pg-export-copy/1 on the destination."
+
+# P37.33 (K7 WX-03 / D-K7-2 [B-22] = the lane): the daily watch lane — the
+# `sig-watch-publish` step in the status lane's publish class. Same inert
+# convention as the rows above: declared PAUSED; the D-P37.33-1 leg creates
+# the `sig-watch-publish` Cloud Run job + this trigger on its --apply leg and
+# flips `state` to "enabled" in the same re-run commit (a maintenance trigger
+# is never enabled by the reconcile).
+[[maintenance]]
+id = "watch-publish"
+cadence = "daily"
+cron = "30 7 * * *"              # daily 07:30 UTC — after the agenda dailies'
+                                 # 05:0x fires + their 05:13/06:13 dispatches,
+                                 # so the lane publishes the day's agenda items
+                                 # the same morning (SIG-WATCH-008 within-24h)
+scheduler = "sig-sched-watch-publish"
+state = "paused"                 # INERT until D-P37.33-1 creates sig-watch-publish
+target_job = "sig-watch-publish"
+procedure = "ops/gcp/watch-publish.sh --apply  # the OM-20 leg (GATE-G6 §4 named P37.33)"
+note = "Daily `sig-ops watch-publish --apply`: re-render the watch/** file set from a fresh sig/watch/2 payload at the watch clock and push it through the watch-scoped publish path (ops/public_routes_watch.toml) — items reach subscribers between monthly releases (the second clock, W-P6). Restore point: pause the trigger ('lane job paused')."
 
 # --- P35.1a (SIG-OPS-005 / SIG-SEC-008): the scheduler-of-record declarations --
 #
