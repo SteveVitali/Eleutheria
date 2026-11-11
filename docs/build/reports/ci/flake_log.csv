@@ -94,3 +94,4 @@ date,pr,head_sha,check,flake_id,run_id,attempt,outcome
 2026-11-11T16:24,485,531f6f54,web,APT-DNS-1 (azure.archive.ubuntu.com / security.ubuntu.com font-package fetch — runner DNS),43041807861,6,failure
 2026-11-11T16:39,485,531f6f54,web,APT-DNS-1 (azure.archive.ubuntu.com / security.ubuntu.com font-package fetch — runner DNS),43041807861,7,failure
 2026-11-11T16:53,485,531f6f54,web,APT-DNS-1 (azure.archive.ubuntu.com / security.ubuntu.com font-package fetch — runner DNS),43041807861,8,failure
+2026-11-11T19:06,485,e22bf632,web,EXPLORE-SELECT-LATENCY-1 (post-action interactionLatencyMs 992 > regression bound 900 — environmental runner latency, 496 passed/1 failed),43076080619,1,failure
