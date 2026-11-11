@@ -246,6 +246,8 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-240](ADR-240-statute-seeded-records-leads.md) | Statute-seeded records leads: the mandate→gap generator, the one-time auditor-survey artifact, and the LegalInstrument session/text publish gate (P37.14) | P37.14 (Round 11 / P37, row 436 — F2a group 11 / R11-SRC-05; | accepted |
 | [ADR-241](ADR-241-tile-properties-v2-map-dictionary-and-declared-scope-coverage.md) | Tile properties v2, the `sig.map-dict/1` dictionary, and the declared-scope coverage rule | P37.17 (Round 11 / P37, row 440; SIG-GEO-014, SIG-UI-099) | accepted |
 | [ADR-242](ADR-242-explore-graph-explorer-preact-sigma-runtime-and-network-301.md) | The `/explore/` T2 graph explorer: Preact + sigma runtime, react retirement, and the `/network/` 301 | P37.26 (Round 11 / P37, row 450; SIG-UI-119, SIG-UI-120, SIG-UI-121) | accepted |
+| [ADR-243](ADR-243-sig-activate-in-place-dossier-map-and-deferred-k1-mount.md) | `<sig-activate>`: the sixth kit element and the dossier's deferred K1 mount (P37.29) | P37.29 (K6 VIZ-04, manifest row 453 — on `r11/P37.29-in-place-map-on-dossiers`) | accepted |
+| [ADR-244](ADR-244-dated-decision-predicates-meeting-date-and-the-contract-renewal-triple.md) | Dated decision predicates: `meeting_date` and the Contract renewal triple (P37.31) | P37.31 (K7 WX-02, manifest row 455 — on | accepted |
 
 ## Notes
 

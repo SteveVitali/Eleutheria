@@ -14,8 +14,10 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import ContestedMarker from "../../../components/ContestedMarker.astro";
 import EmptyState from "../../../components/EmptyState.astro";
 import { watchContext } from "../../../lib/watch-context";
-import { getEvidence, getStatementIndex } from "../../../lib/data";
+import { getEvidence, getDecisionPoints, getStatementIndex } from "../../../lib/data";
 import { artifactHandles, artifactHref } from "../../../lib/evidence-hub";
+import { recommendEvidence } from "../../../lib/recommender";
+import { artifactTitle } from "../../../lib/evidence-hub";
 import {
   evidenceRows,
   itemDateLabel,
@@ -23,6 +25,7 @@ import {
   STATUS_LABELS,
   upstreamDisplay,
   WATCH_KIND_LABELS,
+  watchDecisionPoint,
 } from "../../../lib/watch-v2";
 import type { WatchItemV2 } from "../../../lib/watch-v2";
 import { panelForClaim } from "../../../lib/provenance-panel";
@@ -49,6 +52,14 @@ const claimRoutes = new Set(getEvidence().claimViews.map((v) => v.claim_id));
 const artifactHandlesMap = artifactHandles(getEvidence().artifacts);
 const STATEMENTS = getStatementIndex();
 const evidence = evidenceRows(item);
+// P37.30 (K7 §5.7, F-485): the SUBJECT-SCOPED recommender — only artifacts
+// bearing on this item's subjects (or their one-hop neighbourhood) rank,
+// each on the (artifact, subject) pair the score names; a non-finite score
+// fails the build, never silently zero. The emitted decision_points entry
+// wins; the local derivation is the honest fallback.
+const evidenceData = getEvidence();
+const decision = getDecisionPoints().get(item.handle) ?? watchDecisionPoint(item);
+const ranked = recommendEvidence(evidenceData.artifacts, decision, evidenceData.subjectNeighbours);
 const tasks = item.tasks ?? [];
 const placePage = item.place?.key ? pages.find((p) => p.key === item.place!.key) : pages.find((p) => p.unplaced);
 const placeDisplay = item.place?.key ? (names.get(item.place.key) ?? placePage?.name ?? item.place.key) : "Not yet placed";
@@ -189,6 +200,47 @@ const placeDisplay = item.place?.key ? (names.get(item.place.key) ?? placePage?.
         );
       })}
     </ul>
+
+    <h2 id="recommend-heading">Evidence to bring ({ranked.length})</h2>
+    {ranked.length === 0 ? (
+      <p data-testid="recommend-empty">
+        No published evidence artifact is scored for this item's subject — the
+        supporting claims above are the recorded basis. When the release
+        carries scored artifacts that bear on this decision, they list here
+        ranked by evidentiary directness, recency and dispute status only.
+      </p>
+    ) : (
+      <>
+        <p class="sig-watch-recommend-note">
+          Ranked by evidentiary directness, recency, and dispute status only —
+          SIG recommends no position.{" "}
+          <a href={withBase(`watch/item/${item.handle}/citations.txt`)} data-testid="recommend-citations">
+            Download the citation list
+          </a>
+        </p>
+        <ol class="sig-watch-recommend" aria-labelledby="recommend-heading">
+          {ranked.map((r) => (
+            <li data-testid="recommend-item" data-artifact-id={r.artifact.artifact_id} data-score={r.score} data-subject={r.matched_subject}>
+              <p>
+                {artifactHandlesMap.has(r.artifact.artifact_id) ? (
+                  <a href={withBase(artifactHref(artifactHandlesMap.get(r.artifact.artifact_id)!))} data-testid="recommend-link">
+                    {artifactTitle(r.artifact)}
+                  </a>
+                ) : (
+                  artifactTitle(r.artifact)
+                )}{" "}
+                {r.contested && <ContestedMarker compact />}
+              </p>
+              <p class="sig-watch-recommend-why">
+                {r.artifact.artifact_type.replace(/_/g, " ")} · scored on <code>{r.matched_subject}</code> ·{" "}
+                {Object.entries(r.breakdown).filter(([, v]) => v > 0).map(([k]) => k.replace(/_/g, " ")).join(" · ") || "no axes"}
+                {" "}· capture {r.artifact.capture_status.replace(/_/g, " ")}
+              </p>
+            </li>
+          ))}
+        </ol>
+      </>
+    )}
 
     {tasks.length > 0 && (
       <>

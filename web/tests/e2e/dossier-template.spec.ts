@@ -45,7 +45,8 @@ test.describe("the one dossier template (SIG-UI-069)", () => {
       "what_we_dont_know",
       "how_we_know_this",
     ]);
-    // The network-figure slots are typed empty states until VIZ-01b.
+    // The network-figure slots (P37.28 / VIZ-01b): emitted entries render —
+    // the flat fixture dossier carries typed absences (no anchored entity).
     const slots = page.getByTestId("network-figure-slot");
     await expect(slots).toHaveCount(4);
     await expect(slots.first()).toHaveAttribute("data-figure", "fig-2");
@@ -67,6 +68,43 @@ test.describe("the one dossier template (SIG-UI-069)", () => {
     await expect(page.getByTestId("fig1-canvas").locator("svg")).toBeVisible();
     await expect(page.getByTestId("next-decisions")).toBeVisible();
     await expect(page.getByTestId("other-public-resources")).toBeVisible();
+  });
+
+  test("usa/ok draws the emitted access figure — toggles, table twin, links", async ({ page }) => {
+    await page.goto("/dossier/usa/ok/");
+    // P37.28 (SIG-UI-125/DV03): the drawn figure renders the kit's SVG,
+    // the zero-JS `:has()` toggles, the H-2 table twin and the hand-offs.
+    const fig = page.getByTestId("network-figure");
+    await expect(fig).toHaveAttribute("id", "fig-access");
+    // The figure emits wide + narrow variants; the wide one shows at
+    // desktop width, the narrow one is CSS-hidden until the breakpoint.
+    const wide = page.getByTestId("network-figure-wide");
+    await expect(wide.locator("svg")).toBeVisible();
+    // The access-kind toggles hide each kind without JavaScript.
+    await expect(page.getByTestId("network-toggles")).toBeVisible();
+    await expect(wide.locator(".sig-fig-edge-acc-declared")).toBeVisible();
+    await page.getByLabel("declared").uncheck();
+    await expect(wide.locator(".sig-fig-edge-acc-declared")).toBeHidden();
+    await page.getByLabel("declared").check();
+    // The H-2 table twin is the figure's long description.
+    const twin = page.getByTestId("network-table-twin");
+    await expect(twin).toContainText("configured access to");
+    await expect(twin).toContainText("undated");
+    // Skip link, explorer hand-off and the full-table link resolve.
+    await expect(page.getByTestId("network-explore-link")).toHaveAttribute(
+      "href",
+      /\/explore\/\?v=2&overview=access&jurisdiction=/,
+    );
+    await expect(page.getByTestId("network-table-link")).toHaveAttribute("href", /\/graphs\/access\//);
+    // The H-4 degree-only sentence renders beside the figure.
+    await expect(page.getByTestId("network-degree-facts")).toContainText(
+      "Shared with 9 agencies — partners not named",
+    );
+    // The typed absences keep their named reasons (never a blank frame).
+    const slots = page.getByTestId("network-figure-slot");
+    await expect(slots.first()).toContainText("no recorded relationship of this kind");
+    // A figure with no evidenced edge is never drawn (V-7).
+    await expect(slots.first().locator("svg")).toHaveCount(0);
   });
 
   test("usa/vi renders the typed map absence — never a blank map", async ({ page }) => {

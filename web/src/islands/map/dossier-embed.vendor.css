@@ -1,0 +1,7 @@
+/* P37.29 (K6 VIZ-04) — the vendored half of the deferred embedded-map
+ * stylesheet: MapLibre's own control styles, kept in a separate kit file
+ * from the design chrome so each emitted file stays inside its wire budget
+ * (SIG-UI-156 — the vendor styles carry no --sig-* tokens). Bundled by the
+ * sigEnhancementKit hook to /_kit/sig-map-embed.vendor.css and link-injected
+ * by <sig-activate> FIRST at activation, before the island chrome. */
+@import "maplibre-gl/dist/maplibre-gl.css";

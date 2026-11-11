@@ -56,7 +56,7 @@ import json
 import re
 from collections.abc import Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from functools import cache
 from html.parser import HTMLParser
 from typing import Any
@@ -74,6 +74,7 @@ from parsing.classification import (
 )
 from parsing.document import html_text, page_locator_for, pdf_text_pages, utf8_text
 from parsing.locator import Locator
+from parsing.renewals import extract_renewal_terms
 from resolution.partner_identity import natural_person_signal, partner_ref_rows
 
 from ._data import load_table
@@ -353,6 +354,11 @@ class Contract:
     acquisition_channel: str | None = None
     parent_cooperative_contract: str | None = None
     amends_contract: str | None = None
+    # P37.31 (K7 WX-02): the dated renewal-triple the decision calendar derives
+    # a renewal_deadline from — the stated values only, never inferred.
+    auto_renews: bool | None = None
+    notice_window_days: int | None = None
+    renewal_term_months: int | None = None
     lifecycle: tuple[LifecycleTransition, ...] = ()
     raw: Mapping[str, Any] = field(default_factory=dict)
 
@@ -411,6 +417,9 @@ class Contract:
             "start_date": self.start_date,
             "end_date": self.end_date,
             "renewal_options": self.renewal_options,
+            "auto_renews": self.auto_renews,
+            "notice_window_days": self.notice_window_days,
+            "renewal_term_months": self.renewal_term_months,
             "document": self.document,
             "acquisition_channel": self.acquisition_channel,
             "parent_cooperative_contract": self.parent_cooperative_contract,
@@ -3254,6 +3263,70 @@ class ProcurementConnector(Connector):
                         source_id=ctx.source.id,
                     )
                 )
+
+        # P37.31 (K7 WX-02 / P07.1): a contract-kind matter's captured document
+        # may carry the contract's own renewal clause — the parser reads the
+        # dated-decision triple verbatim (byte-range/page located, Part VIII
+        # screened exactly like the content_term literals). A document that
+        # states no clause emits nothing and the doc row records the honest
+        # `extracted: []`; a moved term supersedes by NEW claims on re-ingest,
+        # never an edit (the wrong-date supersession stays append-only).
+        if contract_subject is not None and text.strip():
+            renewal_suppressions: list[dict[str, Any]] = []
+            extracted_predicates: set[str] = set()
+            for term in extract_renewal_terms(text):
+                token = content_guard_token(term.literal)
+                if token is not None:
+                    renewal_suppressions.append(
+                        {
+                            "predicate": term.predicate,
+                            "rule_id": term.rule_id,
+                            "token": token,
+                            "literal": term.literal,
+                        }
+                    )
+                    continue
+                term_locator: Mapping[str, Any] | None = (
+                    page_locator_for(pages, term.literal)
+                    if pages
+                    else Locator.byte_range(term.start, term.end).to_row()
+                )
+                if term_locator is None:
+                    continue  # unlocatable → never emitted (SIG-PARSE-003, OL-24-18)
+                extracted_predicates.add(term.predicate)
+                rows.append(
+                    _stamp(
+                        {
+                            "record_kind": "claim",
+                            "subject_id": contract_subject,
+                            "predicate_id": assert_predicate_allowed(term.predicate),
+                            "value": term.value,
+                            "raw_value": term.literal,
+                            "renewal_clause_rule": term.rule_id,
+                            "observed_at": retrieved_date,
+                            "platform": platform,
+                            "tenant_id": tenant_id or None,
+                            "jurisdiction": jurisdiction,
+                            "document": doc_url,
+                            "document_subject": doc_subject,
+                            "evidence_genre": "agenda_document",
+                            "evidence": {
+                                "source_url": doc_url,
+                                "retrieved_date": retrieved_date,
+                                "extraction_method": method,
+                                "locator": term_locator,
+                            },
+                        },
+                        source_id=ctx.source.id,
+                    )
+                )
+            doc_row["renewal_terms"] = {
+                "extracted": sorted(extracted_predicates),
+                "suppressed": len(renewal_suppressions),
+            }
+            if renewal_suppressions:
+                suppressions.extend(renewal_suppressions)
+                doc_row["part_viii_suppressions"] = suppressions
         return rows
 
     def _normalize_agenda_item(
@@ -3312,6 +3385,35 @@ class ProcurementConnector(Connector):
                 jurisdiction, scheme="agenda.jurisdiction_name"
             )
         rows: list[dict[str, Any]] = [index_row]
+
+        # P37.31 (K7 WX-02): the item's meeting/hearing date — the platform's own
+        # record carries it (the same fields the `introduced` locator reads) but
+        # it was never a claim; the decision-calendar watch needs it on the
+        # agenda_item subject (K7 §5.2, SIG-WATCH-008). Emitted only when the
+        # record states a date: the ISO date is the typed value, the platform
+        # literal stays raw_value, and a moved meeting supersedes by a NEW claim
+        # on re-ingest — append-only, never an edit.
+        meeting_literal = _first_nonempty(
+            item,
+            ("MatterIntroDate", "startDateTime", "meetingDate", "StartDate"),
+        )
+        if meeting_literal:
+            rows.append(
+                _stamp(
+                    {
+                        "record_kind": "claim",
+                        "subject_id": subject,
+                        "predicate_id": assert_predicate_allowed("meeting_date"),
+                        "value": _iso_date_of(meeting_literal),
+                        "raw_value": meeting_literal,
+                        "platform": platform,
+                        "tenant_id": tenant_id or None,
+                        "jurisdiction": jurisdiction,
+                        "evidence_genre": "agenda_document",
+                    },
+                    source_id=ctx.source.id,
+                )
+            )
 
         patterns = [
             str(p).lower()
@@ -4625,6 +4727,9 @@ class ProcurementConnector(Connector):
             start_date=_opt_str(raw.get("start_date")),
             end_date=_opt_str(raw.get("end_date")),
             renewal_options=_opt_str(raw.get("renewal_options")),
+            auto_renews=_opt_bool(raw.get("auto_renews")),
+            notice_window_days=_opt_int(raw.get("notice_window_days")),
+            renewal_term_months=_opt_int(raw.get("renewal_term_months")),
             products=tuple(str(p) for p in raw.get("products", []) if p),
             quantities=tuple(int(q) for q in raw.get("quantities", []) if q is not None),
             document=_opt_str(raw.get("document")),
@@ -4716,6 +4821,30 @@ def _opt_int(value: Any) -> int | None:
     try:
         return int(value)
     except (TypeError, ValueError):
+        return None
+
+
+def _opt_bool(value: Any) -> bool | None:
+    """A stated boolean — bool/int literals and the reviewed text forms only."""
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, int) and value in (0, 1):
+        return bool(value)
+    text = str(value or "").strip().lower()
+    if text in ("true", "yes", "1"):
+        return True
+    if text in ("false", "no", "0"):
+        return False
+    return None
+
+
+def _iso_date_of(text: str | None) -> str | None:
+    """The ISO date a literal begins with, else ``None`` — raw_value stands (P2)."""
+    if not text:
+        return None
+    try:
+        return date.fromisoformat(text.strip()[:10]).isoformat()
+    except ValueError:
         return None
 
 

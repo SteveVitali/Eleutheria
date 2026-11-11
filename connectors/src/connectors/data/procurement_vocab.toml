@@ -141,6 +141,17 @@ predicate_allowlist = [
   "place_of_performance",
   "country",
   "title",
+  # P37.31 (K7 WX-02 / R11-K13-WX-02): the dated-decision predicates. `meeting_date`
+  # is the agenda platform's own meeting/hearing date claim on an agenda_item
+  # subject (the date sat in the raw `introduced` fields but was never a claim);
+  # the Contract renewal triple is emitted by the §11.11 surface when a record
+  # carries it AND read verbatim from captured contract clauses by the P07.1
+  # parser (the agenda_document path — byte-range located, Part VIII screened,
+  # superseding by new claims on re-ingest, never an edit).
+  "meeting_date",
+  "auto_renews",
+  "notice_window_days",
+  "renewal_term_months",
 ]
 
 # Predicate GENRES the procurement connector MUST NOT write (scope-creep guard,

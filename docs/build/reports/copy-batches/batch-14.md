@@ -51,6 +51,9 @@ DATA (dates, counts, source names), not drafted copy.
 | NF-02 | /dossier/&lt;path&gt;/ | The rows and figures on this page carry the recorded facts the figure would summarise. | 6ac0fb3221861ec91d93b4c726dd39e192c1b59e0b55055515cff1bbaeaf8c85 | pending |
 | NF-03 | /dossier/&lt;path&gt;/ | See the published network | a1848217b715ab6c51f7d31edb8bb6d9fdd83408db0363ca69b21ee77f680781 | pending |
 | NF-04 | /dossier/&lt;path&gt;/ | The figure appears with a release that emits its evidenced edges. | 989948da1f53e95d7c32b7653f12f71f64a1401eb788161023cc507a6244d7c2 | pending |
+| NF-05 | /dossier/&lt;path&gt;/ | The '{title}' figure | d1a07b9ea8f4fb0a3037222491b67502ebc4fbd2e8902fac172eb5247de5d82a | pending |
+| NF-06 | /dossier/&lt;path&gt;/ | {reason} | a4ba81b6cbe21f36ec1805c73e9f9226c9962e2e10ce33d9488d72ec3fd03052 | pending |
+| NF-07 | /dossier/&lt;path&gt;/ | See the {overview} overview | 5a3015d8405a00c68ed972af58f5405023a818d574a523893b7be85f45597606 | pending |
 
 ## Confirmation log
 

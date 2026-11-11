@@ -444,18 +444,42 @@ def _next_decision_date(termination: Mapping[str, Any]) -> str | None:
     return expiry_d.isoformat()
 
 
+#: The §39.5a decision vocabulary each ``sig.watch-item/1`` kind maps to
+#: (P37.30, K7 §5.7): the recommender's artifact-type relevance keys on the
+#: decision TYPE — the item's own ``kind`` rides along verbatim so a page
+#: always renders what the decision actually is.
+_DECISION_TYPE_BY_KIND: dict[str, str] = {
+    "renewal_deadline": "renewal",
+    "contract_expiry": "renewal",
+    "solicitation_deadline": "solicitation",
+    "agenda_item": "council_agenda_item",
+    "legislative_action": "legislative_action",
+    "grant_period_end": "grant_period_end",
+}
+
+
 def _decision_point(
     dataset: ShapedDataset, raw: Mapping[str, Any], registry: Mapping[str, Any] | None
 ) -> dict[str, Any]:
-    """The single tracked decision the evidence recommender ranks for.
+    """The tracked decisions the evidence recommender ranks for.
 
-    Rule (stated in the file): the earliest derivable ``next_decision_date``
-    across the renewal watch — expiry minus the notice window for an
-    auto-renewing contract, else the expiry itself (SIG-UI-014b); ties resolve
-    to the smallest subject key. ``null`` when no watch item carries a derivable
-    date (honest "none tracked", never a fabricated urgency).
+    Headline (kept): ``decision_point`` is the earliest derivable
+    ``next_decision_date`` across the renewal watch — expiry minus the notice
+    window for an auto-renewing contract, else the expiry itself
+    (SIG-UI-014b); ties resolve to the smallest subject key. ``null`` when no
+    watch item carries a derivable date (honest "none tracked", never a
+    fabricated urgency).
+
+    P37.30 (K7 §5.7): ``decision_points`` is the per-item list — ONE entry per
+    produced watch item, whatever its kind, so the ranked evidence list lives
+    on ``/watch/item/<handle>/`` and never nationally. Each entry names its
+    item's handle + kind + date verbatim and the subject keys the scoped
+    recommender filters on (``subject_ids`` — the subject the score measures,
+    plus the seed for the one-hop contract/agency neighbourhood the
+    ``subject_neighbours`` map in ``evidence.json`` expands).
     """
     candidates: list[tuple[str, str, dict[str, Any]]] = []
+    points: list[dict[str, Any]] = []
     n_watch = 0
     # P35.43 (K7 WX-01 / F-481): the analytic consumes the SAME produced watch
     # items the artifact emits — ``build_spine_export`` writes
@@ -467,6 +491,24 @@ def _decision_point(
     for row in raw.get("watch_items") or []:
         if not isinstance(row, Mapping):
             continue
+        subjects = [str(s) for s in (row.get("subjects") or []) if s]
+        handle = str(row.get("handle") or "")
+        kind = str(row.get("kind") or "")
+        # Every produced item gets a decision point — the per-item ranked
+        # list's scope (P37.30). The subject is the item's own subject keys;
+        # the type is the §39.5a vocabulary the kind maps to.
+        points.append(
+            {
+                "decision_type": _DECISION_TYPE_BY_KIND.get(kind, "renewal"),
+                "subject_id": subjects[0] if subjects else handle,
+                "subject_ids": subjects,
+                "label": str(row.get("title") or handle),
+                "date": str(row.get("date") or ""),
+                "handle": handle,
+                "kind": kind,
+                "date_certainty": str(row.get("date_certainty") or ""),
+            }
+        )
         termination = row.get("termination")
         if not isinstance(termination, Mapping):
             continue
@@ -474,8 +516,7 @@ def _decision_point(
         decision = _next_decision_date(termination)
         if decision is None:
             continue
-        subjects = row.get("subjects") or []
-        subject = str(subjects[0] if subjects else row.get("handle") or "")
+        subject = subjects[0] if subjects else handle
         candidates.append(
             (
                 decision,
@@ -483,24 +524,31 @@ def _decision_point(
                 {
                     "decision_type": "renewal",
                     "subject_id": subject,
+                    "subject_ids": subjects,
                     "label": str(row.get("title") or subject),
                     "date": decision,
+                    "handle": handle,
+                    "kind": kind,
+                    "date_certainty": str(row.get("date_certainty") or ""),
                 },
             )
         )
     point = sorted(candidates, key=lambda c: (c[0], c[1]))[0][2] if candidates else None
+    points.sort(key=lambda p: (p["date"], p["handle"]))
     return _envelope(
         SCHEMA_DECISION_POINT,
         dataset.as_of,
-        f"{n_watch} contracts on the renewal watch",
+        f"{n_watch} contracts on the renewal watch; {len(points)} watch items",
         (),
         rule=(
             "the earliest derivable next_decision_date across the watch "
             "(expiry minus notice_window_days for an auto-renewing contract, "
             "else the expiry itself — SIG-UI-014b); ties resolve to the "
-            "smallest subject key"
+            "smallest subject key; decision_points is the per-item list "
+            "(K7 §5.7 — the ranked evidence list lives on the item page)"
         ),
         decision_point=point,
+        decision_points=points,
     )
 
 

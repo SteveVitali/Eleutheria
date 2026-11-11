@@ -14,10 +14,13 @@
  *
  * The catalog is NAMED THINGS only (K3 §2.4 sets A/C — records never enter
  * the typeahead): places from the grouped dossier index, source registry
- * rows, and the technology labels the site corpus declares. Organisations
- * join when the `/entity/` surfaces ship (GX-06a — an entry must link an
- * existing page, R-6). The data layer is release-pinned in export mode, so
- * the emitted set is per-release by construction (SIG-UI-076).
+ * rows, the technology labels the site corpus declares, and — since the
+ * `/entity/` surfaces shipped (GX-06a) — the published entity rows, whose
+ * pages exist by construction (R-6). P37.27 (GX-09b) joins the entity rows
+ * so the explorer's search-to-node resolves an absent entity to its page
+ * and its twin manifest through the ONE shared shard set (C-10). The data
+ * layer is release-pinned in export mode, so the emitted set is per-release
+ * by construction (SIG-UI-076).
  *
  * Sharding is word-start (K3 §2.4): an entry lands under the first two
  * alphanumeric characters of EVERY word of its label and alternates —
@@ -33,7 +36,15 @@
  * loss fails the build, it is never emitted silently.
  */
 
-import { getDossierIndex, getMapCities, getMapSites, getSourceRows } from "./data";
+import {
+  getDossierIndex,
+  getEntityLabelRows,
+  getEntityPageTwins,
+  getMapCities,
+  getMapSites,
+  getSourceRows,
+} from "./data";
+import { pageState } from "./entity-page";
 import { dossierDisplayTitle } from "./jurisdictions";
 import { jkeyChain, jkeyParentMap } from "./scoped-search";
 import { dossierPath } from "./dossier";
@@ -157,6 +168,25 @@ export function typeaheadCatalog(): TypeaheadCatalogEntry[] {
       alt: [c.name, c.country_a2].filter((s) => s !== label),
       lat: c.lat,
       lon: c.lon,
+    });
+  }
+  // P37.27 (GX-09b): the published entity rows — one entry per keyed label
+  // row whose twin the release emits (R-6: the linked page exists by
+  // construction; a `not_yet_reviewed` row has no page, so it never
+  // enters). `kind: "entity"` is the suggestion class; the detail carries
+  // the kind word + basis the label registry recorded. The explorer's
+  // search-to-node reads the same shards and resolves the `/entity/` href
+  // to the twin manifest (`index.json`) — "an absent entity loads its ego".
+  for (const row of getEntityLabelRows()) {
+    if (pageState(row) !== "published") continue;
+    const key = `${row.slug}--${row.hash}`;
+    if (getEntityPageTwins(row.url_type!, key).length === 0) continue;
+    entries.push({
+      label: row.label!,
+      kind: "entity",
+      href: withBase(row.url!.replace(/^\//, "")),
+      detail: row.descriptor ?? row.kind,
+      alt: row.sig_id && row.sig_id !== row.label ? [row.sig_id] : [],
     });
   }
   return entries;

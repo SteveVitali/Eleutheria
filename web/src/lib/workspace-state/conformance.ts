@@ -38,11 +38,36 @@ import {
 export const APPLIED_PARAMS: Record<WorkspaceSurface, readonly string[]> = {
   map: ["release", "collection", "focus", "view"],
   // P37.26 (GX-09a): the explorer applies `overview` — the address picks the
-  // sig.graph-overview/1 doc the island draws. Expansion/filters/the path
-  // finder are GX-09b's row — `edge`/`expand`/`hops`/`path`/`jurisdiction`/
-  // `technology`/`q` parse but are visibly named unapplied, never silently
-  // dropped (SIG-UI-060).
-  graph: ["release", "focus", "overview", "view"],
+  // sig.graph-overview/1 doc the island draws. P37.27 (GX-09b): the second
+  // wave applies the graph-scope row — `expand` (twin ego load), `path`
+  // (the BFS path answer), `hops` (the neighbourhood ring), `edge` (the
+  // relation facet), plus the facets the loaded docs support: `kind`,
+  // `jurisdiction`, `technology`, `source`, `collection` (compartment doc
+  // selection), `currency`, `dated` (the UXR-09 range), `q` (search-to-node)
+  // and `sort`/`dir` (the descriptive node-list order). `seen`, `type`,
+  // `vendor`, `operator`, `status`, `location`, `frame`/`bbox`/`at`/`layers`/
+  // `basemap`, `page`, `cursor` and `within` still parse but are visibly
+  // named unapplied (SIG-UI-060).
+  graph: [
+    "release",
+    "q",
+    "kind",
+    "jurisdiction",
+    "technology",
+    "source",
+    "collection",
+    "dated",
+    "currency",
+    "focus",
+    "sort",
+    "dir",
+    "overview",
+    "hops",
+    "edge",
+    "expand",
+    "path",
+    "view",
+  ],
   search: ["release", "q", "kind", "focus", "view"],
 };
 

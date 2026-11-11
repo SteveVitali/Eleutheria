@@ -31,3 +31,15 @@ export type MapIslandProps = MapAppProps;
 export default function MapIsland(props: MapIslandProps): JSX.Element {
   return <MapApp {...props} />;
 }
+
+/**
+ * P37.29 (K6 VIZ-04, SIG-UI-127): the dossier's deferred embedded-map entry.
+ * The dynamic import here splits `./map/dossier-embed` into its own emitted
+ * chunk that shares every common module (Preact, MapApp, the model,
+ * workspace-state) with this island's chunk verbatim — the "same hashed
+ * chunks /map/ uses" K6 §5.4 requires, so a dossier activating in place pays
+ * no second download for the shared code. `<sig-activate>` reaches it
+ * through the stable `/_kit/sig-map-embed.js` shim the build hook writes —
+ * only after the reader's explicit click (no T2 preload on dossiers).
+ */
+export const loadDossierEmbed = () => import("./map/dossier-embed");

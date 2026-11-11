@@ -40,8 +40,9 @@ test.describe("the dossier explore bar (SIG-UI-126)", () => {
   }) => {
     // NEW-1/UXR-10: the links carry the jurisdiction facet; a surface that
     // cannot apply it says so visibly rather than showing unfiltered results
-    // as filtered. Today none of the three surfaces applies `jurisdiction`
-    // (APPLIED_PARAMS), so every explore link lands on the notice.
+    // as filtered. P37.27 (GX-09b): the explorer APPLIES jurisdiction now —
+    // its leg asserts the applied-filter disclosure (SIG-UI-060's other half);
+    // map and search still land on the not-applied notice.
     await page.goto(`/map/?v=2&view=map&jurisdiction=${OK_JKEY_ENC}`);
     await expect(page.getByTestId("map-island")).toHaveAttribute("data-ready", "true", {
       timeout: 20_000,
@@ -50,9 +51,8 @@ test.describe("the dossier explore bar (SIG-UI-126)", () => {
       "jurisdiction filter",
     );
     await page.goto(`/explore/?v=2&view=graph&jurisdiction=${OK_JKEY_ENC}`);
-    await expect(page.getByTestId("facet-not-applied")).toContainText(
-      "jurisdiction filter",
-    );
+    await expect(page.getByTestId("explore-island")).toBeVisible();
+    await expect(page.getByTestId("active-filters")).toContainText("filter");
     await page.goto(`/search/?v=2&view=list&jurisdiction=${OK_JKEY_ENC}`);
     await expect(page.getByTestId("facet-not-applied")).toContainText(
       "jurisdiction filter",

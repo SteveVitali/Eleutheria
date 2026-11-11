@@ -48,6 +48,7 @@
  */
 
 import { NOT_PUBLISHABLE, NOT_RECORDED, NO_UPSTREAM_URL } from "./provenance-panel";
+import type { DecisionPoint } from "./recommender";
 
 // --- The `sig.watch-item/1` + `sig/watch/2` wire types ---------------------- //
 
@@ -232,6 +233,40 @@ export interface WatchEnvelopeV2 {
  *  kind outside the §5.2 list is a producer/schema drift, never rendered. */
 export function isWatchKind(kind: string): kind is WatchKind {
   return (WATCH_KINDS as readonly string[]).includes(kind);
+}
+
+// --- P37.30 (K7 §5.7): the per-item decision point ------------------------- //
+
+/** The §39.5a decision vocabulary each watch kind maps to — the SAME mapping
+ * `exports/analytics.py#_DECISION_TYPE_BY_KIND` emits in `decision_points`
+ * (the per-item list); kept in lockstep by the unit suite. */
+export const DECISION_TYPE_BY_KIND: Record<WatchKind, DecisionPoint["decision_type"]> = {
+  renewal_deadline: "renewal",
+  contract_expiry: "renewal",
+  solicitation_deadline: "solicitation",
+  agenda_item: "council_agenda_item",
+  legislative_action: "legislative_action",
+  grant_period_end: "grant_period_end",
+};
+
+/**
+ * The decision point one watch item presents to the scoped recommender
+ * (P37.30 / K7 §5.7): the item's own kind → decision type, its subjects as
+ * the scope seed, its title + ONE alert date. The local derivation is the
+ * fallback when a pre-P37.30 export carries no `decision_points` list — the
+ * emitted entry wins when both exist (one source of truth).
+ */
+export function watchDecisionPoint(item: WatchItemV2): DecisionPoint {
+  return {
+    decision_type: DECISION_TYPE_BY_KIND[item.kind],
+    subject_id: item.subjects?.[0] ?? item.handle,
+    subject_ids: item.subjects ?? [],
+    label: item.title,
+    date: item.date,
+    handle: item.handle,
+    kind: item.kind,
+    date_certainty: item.date_certainty,
+  };
 }
 
 /**

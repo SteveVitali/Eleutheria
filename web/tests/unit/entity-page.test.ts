@@ -10,10 +10,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  ENTITY_LABEL_FIXTURES,
-  ENTITY_PAGE_FIXTURES,
   ENTITY_PAGE_SCHEMA,
-  ENTITY_PAGE_TWIN_FIXTURE,
   ER_DISCLOSURE,
   ITEMS_PER_RELATION,
   PAGE_KINDS,
@@ -24,6 +21,11 @@ import {
   pageState,
   reviewRecord,
 } from "../../src/lib/entity-page";
+import {
+  ENTITY_LABEL_FIXTURES,
+  ENTITY_PAGE_FIXTURES,
+  ENTITY_PAGE_TWIN_FIXTURE,
+} from "../../src/lib/entity-page-fixtures";
 import type { EntityPageTwin } from "../../src/lib/entity-page";
 import { mergeEntityTwins } from "../../src/lib/entity-pages";
 import { getEntityLabelRows, getEntityPageTwins } from "../../src/lib/data";
@@ -200,7 +202,8 @@ describe("entityIndex — the SIG-UI-070 hub data", () => {
   it("counts published kinds and carries the ER disclosure", () => {
     const idx = entityIndex(ENTITY_LABEL_FIXTURES);
     const kinds = Object.fromEntries(idx.kinds.map((k) => [k.kind, k.count]));
-    expect(kinds.agency).toBe(1);
+    // P37.27 (GX-09b): Acworth PD + the expansion fixture's Acme City PD.
+    expect(kinds.agency).toBe(2);
     expect(kinds.org).toBe(1);
     expect(kinds.portal).toBe(1);
     for (const k of idx.kinds) expect(k.er_disclosure).toBe(ER_DISCLOSURE);

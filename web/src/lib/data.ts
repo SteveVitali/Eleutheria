@@ -48,6 +48,7 @@ import type { NetworkNode, NetworkEdge, AccessPath } from "./network";
 import type { FreshnessRow, CoverageMetric } from "./metrics";
 import type { ContractWatchItem } from "./watch";
 import type { EvidenceArtifact, DecisionPoint } from "./recommender";
+import { CURRENCY_CODES, DIRECTNESS_CODES } from "./recommender";
 import type { ClaimView, Capture } from "./evidence-viewer";
 import type { CorrectionEntry } from "./corrections";
 import type { ResearchTaskCard, JurisdictionClaim } from "./research-queue";
@@ -103,12 +104,14 @@ import {
   type EntitySlugHistoryRow,
 } from "./entity-history";
 import {
-  ENTITY_LABEL_FIXTURES,
-  ENTITY_PAGE_FIXTURES,
   isEntityPageTwin,
   type EntityLabelRow,
   type EntityPageTwin,
 } from "./entity-page";
+import {
+  ENTITY_LABEL_FIXTURES,
+  ENTITY_PAGE_FIXTURES,
+} from "./entity-page-fixtures";
 import {
   relationshipsCsv,
   relationshipsDoc,
@@ -137,7 +140,12 @@ import {
   GRAPH_OVERVIEW_FIXTURES,
   GRAPH_PLACE_FIXTURES,
 } from "./graph-overview-fixture";
-import { isWatchKind, type WatchEnvelopeV2, type WatchItemV2 } from "./watch-v2";
+import {
+  isWatchKind,
+  watchDecisionPoint,
+  type WatchEnvelopeV2,
+  type WatchItemV2,
+} from "./watch-v2";
 import { WATCH_V2_FIXTURE } from "./watch-v2-fixture";
 
 // The committed fixtures the data layer serves in `fixtures` mode (and that the P27.5
@@ -168,6 +176,7 @@ import {
   WATCH_ITEMS,
   DECISION_POINT,
   EVIDENCE_ARTIFACTS,
+  EVIDENCE_SUBJECT_NEIGHBOURS,
   CLAIM_VIEWS,
   DIFF_CAPTURES,
 } from "./watch-evidence-fixture";
@@ -716,22 +725,67 @@ export function getWatchV2(): WatchEnvelopeV2 {
 export interface EvidenceData {
   artifacts: EvidenceArtifact[];
   claimViews: ClaimView[];
+  /**
+   * P37.30 (K7 §5.7): the one-hop contract/agency neighbourhood map the
+   * export emits — canonical subject key/id → the subjects one bound-claim
+   * hop links it to. Empty on fixtures and pre-repair exports.
+   */
+  subjectNeighbours: Record<string, string[]>;
+}
+
+/**
+ * P37.30 (K7 §5.7): validate the emitted `subject_scores` vocabulary — a
+ * score pair carrying a class outside `D1..D6`/`C1..C4` fails typed (the
+ * same guard the finite-score check applies), never silently zeroed.
+ */
+function assertScoreVocab(artifacts: readonly EvidenceArtifact[], path: string): void {
+  for (const a of artifacts) {
+    for (const s of a.subject_scores ?? []) {
+      if (!(DIRECTNESS_CODES as readonly string[]).includes(s.directness)) {
+        throw new Error(
+          `${path}: subject_scores on ${a.artifact_id} carries directness "${String(s.directness)}" — outside D1..D6`,
+        );
+      }
+      if (!(CURRENCY_CODES as readonly string[]).includes(s.currency)) {
+        throw new Error(
+          `${path}: subject_scores on ${a.artifact_id} carries currency "${String(s.currency)}" — outside C1..C4`,
+        );
+      }
+    }
+  }
 }
 
 export function getEvidence(): EvidenceData {
   if (dataSource() !== "export") {
-    return { artifacts: EVIDENCE_ARTIFACTS, claimViews: CLAIM_VIEWS };
+    return {
+      artifacts: EVIDENCE_ARTIFACTS,
+      claimViews: CLAIM_VIEWS,
+      subjectNeighbours: EVIDENCE_SUBJECT_NEIGHBOURS,
+    };
   }
   return readExportArtifact("evidence.json", (parsed, path) => {
-    const o = parsed as { artifacts?: unknown; claim_views?: unknown };
+    const o = parsed as {
+      artifacts?: unknown;
+      claim_views?: unknown;
+      subject_neighbours?: unknown;
+    };
     if (!Array.isArray(o?.artifacts)) {
       throw new Error(`${path}: expected an object with an "artifacts" array`);
     }
+    const artifacts = dropWithdrawn(o.artifacts as EvidenceArtifact[]);
+    assertScoreVocab(artifacts, path);
+    const neighbours: Record<string, string[]> = {};
+    if (o.subject_neighbours != null && typeof o.subject_neighbours === "object") {
+      for (const [k, v] of Object.entries(o.subject_neighbours as Record<string, unknown>)) {
+        neighbours[k] = Array.isArray(v) ? v.map(String) : [];
+      }
+    }
     return {
-      artifacts: dropWithdrawn(o.artifacts as EvidenceArtifact[]),
+      artifacts,
       claimViews: dropWithdrawn(
         (Array.isArray(o.claim_views) ? o.claim_views : []) as ClaimView[],
       ),
+      subjectNeighbours: neighbours,
     };
   });
 }
@@ -2229,6 +2283,33 @@ export function getDecisionPoint(): DecisionPoint | null {
     });
   }
   return DECISION_POINT;
+}
+
+/**
+ * P37.30 (K7 §5.7): the PER-ITEM decision points — `handle → DecisionPoint`.
+ * The export's `decision_point.json` carries the `decision_points` list
+ * (one entry per produced watch item); a pre-P37.30 export has no list, so
+ * each entry is derived from the v2 envelope's items via the same mapping —
+ * the ranked list lives on the item page, never nationally.
+ */
+export function getDecisionPoints(): Map<string, DecisionPoint> {
+  const out = new Map<string, DecisionPoint>();
+  if (dataSource() === "export") {
+    const points = readAnalytics("decision_point", (env) => {
+      const list = (env as { decision_points?: unknown }).decision_points;
+      return Array.isArray(list) ? (list as DecisionPoint[]) : [];
+    });
+    for (const p of points) {
+      if (typeof p.handle === "string" && p.handle) out.set(p.handle, p);
+    }
+  }
+  // Fixtures and pre-list exports alike: any item without an emitted entry
+  // derives locally through the same mapping (never a fabricated scope).
+  const items = dataSource() === "export" ? getWatchV2().items : WATCH_V2_FIXTURE.items;
+  for (const item of items) {
+    if (!out.has(item.handle)) out.set(item.handle, watchDecisionPoint(item));
+  }
+  return out;
 }
 
 /**

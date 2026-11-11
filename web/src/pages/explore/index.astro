@@ -37,6 +37,7 @@ import {
 import NetworkEdgeItem from "../../components/NetworkEdgeItem.astro";
 import ProvenancePanelShell from "../../components/ProvenancePanelShell.astro";
 import {
+  getDossierIndex,
   getGraphIndex,
   getGraphOverview,
   getNetwork,
@@ -48,6 +49,7 @@ import {
 import { panelForClaim } from "../../lib/provenance-panel";
 import type { ProvenancePanelData, StatementRow } from "../../lib/provenance-panel";
 import { withBase } from "../../lib/paths";
+import { TYPEAHEAD_SHARD_ROOT } from "../../lib/typeahead-shards";
 import ExploreIsland from "../../islands/ExploreIsland";
 import type { ExploreOverviewEntry } from "../../islands/ExploreIsland";
 import "../../styles/islands.css";
@@ -120,6 +122,27 @@ const PATH_ITEMS = capRows(ACCESS_PATHS, MAX_PATH_ITEMS);
 // The publication the workspace `release=` param defaults to (P32.15).
 const LATEST = getLatestReleaseTarget();
 
+// P37.27 (GX-09b): the jkey → place-prefix map the island's `jurisdiction=`
+// facet resolves through (SIG-UI-059's descendants-inclusive filter over
+// the docs' place keys — `usa` covers `usa-ok` by the `-` subtree rule).
+const JURISDICTION_PLACES = [
+  ...new Map(
+    getDossierIndex()
+      .filter(
+        (d): d is typeof d & { jkey: string } =>
+          typeof d.jkey === "string" && typeof (d.slug_path ?? d.slug) === "string",
+      )
+      .map((d) => [
+        d.jkey,
+        {
+          jkey: d.jkey,
+          place: (d.slug_path ?? d.slug)!.replace(/\//g, "-"),
+          label: d.display_name ?? d.name ?? d.jkey,
+        },
+      ]),
+  ).values(),
+];
+
 // P35.36 (UXR-33): `claim_id → sig.provenance-panel/1` — one panel per UNIQUE
 // claim the page names, rendered once in "Claim provenance" so each
 // `#claim-<id>` anchor resolves exactly once; the rows link it.
@@ -154,7 +177,7 @@ const CLAIM_PANELS: Record<string, ProvenancePanelData> = Object.fromEntries(
   <section class="sig-island sig-graph-island" aria-labelledby="graph-island-heading" data-testid="graph-island-section">
     <h2 id="graph-island-heading">Interactive explorer</h2>
     <NoJsStateNotice
-      params={["release", "overview", "focus", "expand", "edge", "hops", "path", "jurisdiction", "technology", "view"]}
+      params={["release", "overview", "focus", "expand", "edge", "hops", "path", "kind", "jurisdiction", "technology", "source", "collection", "dated", "currency", "q", "sort", "dir", "view"]}
       equivalents={[
         { href: "#overview-heading", label: "the overview index and figure" },
         { href: "#access-heading", label: "the access-edge lists" },
@@ -170,11 +193,12 @@ const CLAIM_PANELS: Record<string, ProvenancePanelData> = Object.fromEntries(
       ]}
     />
     <p class="sig-island__note">
-      An opt-in interactive explorer (P37.26 / GX-09a; ADR-097/ADR-155). It draws
-      the published overview graphs — pick an overview, select a node or an edge
-      for its panel — over the release's own emitted data files. With JavaScript
-      disabled this block is empty and the <strong>sections below</strong> are the
-      full, usable surface (SIG-UI-037/050).
+      An opt-in interactive explorer (P37.26/27 / GX-09a/b; ADR-097/ADR-155).
+      It draws the published overview graphs — pick an overview, filter it,
+      search to a node, expand a node's relationships or find a path — over
+      the release's own emitted data files. With JavaScript disabled this
+      block is empty and the <strong>sections below</strong> are the full,
+      usable surface (SIG-UI-037/050).
     </p>
     <div
       class="sig-island__placeholder"
@@ -193,6 +217,8 @@ const CLAIM_PANELS: Record<string, ProvenancePanelData> = Object.fromEntries(
         overviews={OVERVIEWS}
         defaultOverview={DEFAULT_OVERVIEW}
         release={LATEST?.publicationId ?? null}
+        jurisdictionPlaces={JURISDICTION_PLACES}
+        shardRoot={withBase(TYPEAHEAD_SHARD_ROOT)}
       />
     ) : (
       <p class="sig-island__note">No publishable overview graphs in this build; the sections below carry what this release holds.</p>

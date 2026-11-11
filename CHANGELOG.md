@@ -24,6 +24,77 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.31 — Dated decision predicates (K7 WX-02, SIG-WATCH-007,
+  SIG-WATCH-008, ADR-244):** the claim spine can now carry the dated
+  decision facts the watch reads — `meeting_date` on agenda items and the
+  Contract renewal triple `auto_renews` / `notice_window_days` /
+  `renewal_term_months` (ontology registry rows + the `Contract` schema
+  slots, regenerated artifacts committed). The procurement connector's
+  agenda normaliser emits `meeting_date` as a claim from the platform's
+  own record, the §11.11 `Contract` surface carries the stated renewal
+  triple, and the P07.1 parser layer (`parsing.renewals` over the
+  versioned `renewal_clauses.toml` pattern set) reads the same triple
+  verbatim out of captured contract documents — byte-range located and
+  Part VIII screened. A moved meeting or revised term supersedes by new
+  claims — append-only, never an edit.
+- **P37.30 — Evidence recommender repair (K7 WX-05, F-485, SIG-WATCH-007,
+  SIG-UI-027a/b/c):** the evidence recommender's ranking is now
+  subject-scoped and its scores real. `web/evidence.json` artifacts carry
+  `subject_scores[]` — the per-(artifact, subject) pair the §39.5a axes are
+  computed over: the best §10.5 directness class and the best §28.3 currency
+  class (derived at `as_of` against predicate volatility, never stored) over
+  the artifact's claims about THAT subject, plus the subject-scoped dispute
+  flags and the retrievability vocabulary mapped from `capture_status` +
+  `disappeared_observed_at` (§17.6). The spine values moved to their true
+  names (`primary_or_secondary`, `published_at_edtf`) instead of being
+  stuffed into `directness`/`currency` — the pre-repair emission that
+  produced 255-of-255 NaN scores. `recommendEvidence` now ranks only
+  artifacts bearing on the decision's subject (the pair join plus the
+  one-hop contract/agency neighbourhood the emitted `subject_neighbours`
+  map records), every emitted score passes the build-time
+  `assertFiniteScore` guard, and `decision_point.json` gains the per-item
+  `decision_points[]` list — the "Evidence to bring" ranked list and its
+  exportable `citations.txt` (SIG-UI-027c) now live on each
+  `/watch/item/<handle>/` page, never nationally.
+- **P37.29 — In-place map activation on dossiers (K6 VIZ-04,
+  SIG-UI-127/130/132):** every dossier Figure-1 now carries "Explore on
+  the interactive map" — a zero-JS scoped `/map/` link that `<sig-activate>`
+  (the sixth T1 kit element, ADR-224/243) upgrades to the activation
+  button ONLY on a desktop pointer+width match. The click mounts the K1
+  map app in embedded mode inside the figure's own reserved box — the
+  deferred shared `/map/` chunks fetch post-action only, never a T2
+  preload — with cooperative gestures, the filters row (technology ·
+  status · source), the In-view list and selection panel below the
+  canvas, "Open full map" / "Cite this view" hand-offs carrying the live
+  state, "Close interactive map" returning focus to the control, and the
+  honest failure notice. The embedded mount writes no browser history or
+  workspace URL (V-10); the static SVG stays in the DOM — the print and
+  no-JS rendition — and the activated box is budget-measured as a T2-map
+  box (`interactions.map-embed`, `budget: "map"`).
+- **P37.28 — Dossier network figures (K2 GX-10):** the per-dossier
+  bipartite network figures — one drawn figure per relationship family
+  (access/supply/funding) or the typed absence, emitted into the
+  restricted `sig.dossier-visuals/1` build input by
+  `exports/dossier_networks.py` (K6 §6.2 kind × admin-1 grouping,
+  `sig.figure-graph-meta/1` meta block, `fig-*` edge-count breakdowns
+  reconciled into `dossier_sources`'s `figures[]` — deduplicated, never
+  summed). The dossier template's `NetworkFigureSlot` renders the kit's
+  static SVG (wide + narrow variants on the measure breakpoint), the
+  zero-JS `:has()` access-kind toggles (configured/declared/observed/
+  historical), the H-2 table twin as the figure's long description, and
+  the hand-offs to `/explore/` and the full `/graphs/<family>/` table.
+- **P37.27 — Graph explorer B (K2 GX-09b):** the `/explore/` second
+  wave — `expand=` ego expansion over the new `sig.entity-twins/1`
+  manifest endpoint (`/entity/<type>/<key>/index.json`; ≤ 10 expanded,
+  ≤ 3,000 on canvas — a cap disclosed, a twin-less node a typed "no
+  machine-readable twin"); the facet filters (`kind`/`edge`/`currency`/
+  `dated`/`source`/`jurisdiction`/`technology` over the loaded graph,
+  the `active-filters` disclosure never letting a narrowed view read as
+  the whole — H-3/H-9); search-to-node (`q=` over the loaded graph +
+  the shared K3 typeahead shards); the path finder (`path=<a>~<b>` —
+  every hop evidenced, >3 hops SPECULATIVE, typed no-path/missing —
+  SIG-UI-120); the `hops=` neighbourhood ring; and the keyboard-accessible
+  sortable node list (`sort=`/`dir=`).
 - **P37.26 — Graph explorer A (K2 GX-09a, SIG-UI-119/120/121):**
   `/explore/` — the T2 graph explorer's first wave — ships: a Preact +
   sigma/graphology island in a reserved SSR box over the

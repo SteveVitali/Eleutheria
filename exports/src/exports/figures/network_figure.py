@@ -405,6 +405,9 @@ def _emit_node(
     t.add(_truncate(node.label, label_chars))
     a.add(t)
     root.add(a)
+    # A text boundary between sibling links — adjacent <a> elements must not
+    # glue in extracted text (K14 NEW-7).
+    root.add("\n")
 
 
 def _figure_root(
@@ -414,7 +417,9 @@ def _figure_root(
     title_text: str,
     desc_text: str,
 ) -> El:
-    root = svg_root(viewbox, classes, ids[0], ids[1])
+    # Every drawn node is an <a href> — the figure is interactive, so the
+    # root carries role="group" (never "img"; focusable descendants).
+    root = svg_root(viewbox, classes, ids[0], ids[1], role="group")
     title = El("title")
     title.attr("id", ids[0])
     title.add(title_text)
@@ -812,6 +817,7 @@ def build_ego_figure(spec: GraphFigureSpec, lexicon: Lexicon | None = None) -> S
         ct.add(_truncate(centre.label, label_chars))
         a.add(ct)
         root.add(a)
+        root.add("\n")
 
         for _rel, nodes in sectors:
             for n in nodes:

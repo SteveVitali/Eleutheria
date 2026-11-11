@@ -54,7 +54,9 @@ import {
   recordRoutes,
   viewportDecimals,
   viewHref,
+  workspaceHref2,
 } from "../../lib/workspace-state/index";
+import { citeViewHref, CITE_VIEW_UNBOUND } from "../../lib/workspace-state/cite";
 import { withBase } from "../../lib/paths";
 import { useMapWorkspace } from "./workspace";
 import {
@@ -160,6 +162,32 @@ export interface MapAppProps {
   >;
   /** P37.19: the ONE typeahead shard root the place box reads (UXR-23). */
   shardRoot: string;
+  /**
+   * P37.29 (K6 VIZ-04, SIG-UI-127): the EMBEDDED mode — the dossier's
+   * in-place activation mounts the same app as a subset of the /map/ chrome
+   * (K6 §5.4): no view-switch nav, no place search, no "My location"; a
+   * filters row (technology · status · source); the In-view list below the
+   * canvas; the selection panel; "Open full map" / "Cite this view" hand-offs
+   * minted from the live state; "Close interactive map". The embedded mount
+   * writes NO workspace URL (V-10) — state lives in memory only.
+   */
+  embedded?: {
+    /** The dossier's canonical jurisdiction key — seeds `frame=` (the
+     *  registry-bbox framing) and rides the "Open full map" hand-off as the
+     *  `jurisdiction=` facet. The PAYLOAD is the scope (the figure's own
+     *  records), so no facet may hide them (SIG-UI-132). */
+    jkey: string | null;
+    /** The dossier's display name (the embed region's heading). */
+    placeLabel: string;
+    /** The bound publication id for "Cite this view" — null when unbound. */
+    publicationId: string | null;
+    /** The unkeyed-dossier framing fallback (payload bounds → `at=`). */
+    fallbackAt: { z: number; lat: number; lon: number } | null;
+    /** "Close interactive map" — the element restores the static figure. */
+    onClose: () => void;
+    /** A mount/render failure the element turns into the honest notice. */
+    onFailed: () => void;
+  };
 }
 
 // ------------------------------------------------------------ small bits //
@@ -516,10 +544,24 @@ export default function MapApp(props: MapAppProps): JSX.Element {
     },
     [frameTable],
   );
+  const embedded = props.embedded !== undefined;
+  // P37.29 (VIZ-04): embedded mode seeds `frame=<jkey>` — the registry-bbox
+  // framing fold (the payload already IS the figure's records, so the
+  // descendants facet is never the scope mechanism) — or the payload-bounds
+  // `at` on an unkeyed dossier. State stays in memory; the dossier's
+  // address bar is never touched.
   const { state, issues, ignored, update } = useMapWorkspace(
     "map",
-    { release: props.release },
-    { frameBounds },
+    {
+      release: props.release,
+      seed: embedded
+        ? {
+            frame: props.embedded!.jkey,
+            at: props.embedded!.jkey ? null : props.embedded!.fallbackAt,
+          }
+        : {},
+    },
+    { frameBounds, url: !embedded },
   );
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -856,6 +898,9 @@ export default function MapApp(props: MapAppProps): JSX.Element {
           zoom: state.at?.z ?? 3,
           attributionControl: false,
           fadeDuration: 0,
+          // K6 §5.4 (G8): on the dossier the page scroll wins by default —
+          // Ctrl/⌘+scroll or two fingers drives the embedded canvas.
+          ...(embedded ? { cooperativeGestures: true } : {}),
         });
         mapRef.current = map;
         const markDrawn = (ev?: unknown) => {
@@ -993,6 +1038,20 @@ export default function MapApp(props: MapAppProps): JSX.Element {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // P37.29: a mount failure reaches the element — it restores the static
+  // figure and shows the failure notice (the embed overlay is removed).
+  const onFailedRef = useRef<(() => void) | null>(props.embedded?.onFailed ?? null);
+  onFailedRef.current = props.embedded?.onFailed ?? null;
+  useEffect(() => {
+    if (failed) onFailedRef.current?.();
+  }, [failed]);
+
+  // K6 §5.4: after activation focus moves to the map region's heading.
+  const embedHeadingRef = useRef<HTMLHeadingElement | null>(null);
+  useEffect(() => {
+    if (embedded && ready) embedHeadingRef.current?.focus();
+  }, [embedded, ready]);
 
   // --------------------------------------------------- in-view refresh //
   const refreshList = useCallback(() => {
@@ -1643,6 +1702,21 @@ export default function MapApp(props: MapAppProps): JSX.Element {
   const techOptions = facetOptions(filteredRecords, (r) => r.technology);
   const techCounts = facetOptionCounts(filteredRecords, (r) => r.technology);
   const statusCounts = facetOptionCounts(filteredRecords, (r) => r.status);
+  // P37.29: the records path's Source facet options — every distinct
+  // contributing-source label on the in-scope records (the tile path reads
+  // the dict). A record counts once per source it carries.
+  const recordSourceOptions = useMemo(() => {
+    const set = new Set<string>();
+    for (const r of props.records) for (const s of r.sources) set.add(s.label);
+    return [...set].sort((a, b) => a.localeCompare(b));
+  }, [props.records]);
+  const recordSourceCounts = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const r of filteredRecords) {
+      for (const s of r.sources) m.set(s.label, (m.get(s.label) ?? 0) + 1);
+    }
+    return m;
+  }, [filteredRecords]);
   // P37.18: tile-path facet options resolve through the dictionary — the
   // national totals are dict's measured counts, the in-view counts come from
   // the drawn features (tileByRk holds the current viewport set).
@@ -1702,8 +1776,62 @@ export default function MapApp(props: MapAppProps): JSX.Element {
 
   const rowsArePlaces = zoom <= NATIONAL_CELLS_MAXZOOM;
 
+  // "Open full map" hands ALL state to /map/ — including the dossier's
+  // `jurisdiction=` facet the embed never applies as a filter (SIG-UI-126).
+  const openFullMapHref = workspaceHref2(
+    embedded && props.embedded!.jkey
+      ? { ...state, jurisdiction: [props.embedded!.jkey] }
+      : state,
+  );
+  const embedCite =
+    embedded && props.embedded!.publicationId
+      ? citeViewHref(props.embedded!.publicationId, "map", state)
+      : null;
+
   return (
-    <div data-testid="map-island-root" className="sig-map-app">
+    <div
+      data-testid="map-island-root"
+      className={embedded ? "sig-map-app sig-map-app--embedded" : "sig-map-app"}
+      {...(embedded ? { "data-embed": "true" } : {})}
+    >
+      {/* P37.29 (K6 §5.4): the embedded region heading — the focus target
+          after activation — plus the hand-offs and the close control. */}
+      {embedded && (
+        <>
+          <h2
+            className="sig-map-embed__heading"
+            tabIndex={-1}
+            ref={embedHeadingRef}
+            data-testid="map-embed-heading"
+          >
+            Interactive map — {props.embedded!.placeLabel}
+          </h2>
+          <p className="sig-map-embed__actions" data-testid="map-embed-actions">
+            <a href={openFullMapHref} data-testid="embed-open-full">
+              Open full map
+            </a>
+            {" · "}
+            {embedCite !== null ? (
+              <a href={embedCite} data-testid="embed-cite">
+                Cite this view
+              </a>
+            ) : (
+              <span className="sig-island__note" data-testid="embed-cite-note">
+                {CITE_VIEW_UNBOUND}
+              </span>
+            )}
+            {" · "}
+            <button
+              type="button"
+              data-testid="embed-close"
+              onClick={() => props.embedded!.onClose()}
+            >
+              Close interactive map
+            </button>
+          </p>
+        </>
+      )}
+      {!embedded && (
       <nav className="sig-view-links" aria-label="Investigation views" data-testid="island-view-links">
         {ISLAND_VIEWS.map((v) =>
           v === state.view ? (
@@ -1715,6 +1843,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
           ),
         )}
       </nav>
+      )}
       {issues.length > 0 && (
         <p className="sig-island__note" role="status" data-testid="workspace-issues">
           {issues.join(" ")}
@@ -1746,7 +1875,10 @@ export default function MapApp(props: MapAppProps): JSX.Element {
           shards as every other entry (SIG-UI-073/074), scoped to
           `kind:place`. Choosing a registry place lands the
           `jurisdiction=` filter + frame; a populated place or typed
-          coordinates frames locally — no keystroke or request leaves. */}
+          coordinates frames locally — no keystroke or request leaves.
+          P37.29: never mounted in embedded mode (K6 §5.4 — no place search
+          on the dossier; the embed is already scoped to the place). */}
+      {!embedded && (
       <div className="sig-map-app__search" ref={searchWrapRef}>
         <form
           className="sig-map-app__searchform"
@@ -1829,6 +1961,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
           )
         )}
       </div>
+      )}
 
       <div className="sig-map-app__shell">
         <div
@@ -2094,7 +2227,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
 
           {tab === "filters" && (
             <div className="sig-map-app__tabpanel" role="tabpanel" data-testid="map-filters">
-              {props.compartments.length > 0 && (
+              {props.compartments.length > 0 && !embedded && (
                 <fieldset className="sig-island__compartments" data-testid="map-compartments">
                   <legend>Licence compartments</legend>
                   {props.compartments.map((c) => (
@@ -2111,7 +2244,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
                 </fieldset>
               )}
 
-              <fieldset className="sig-map-app__facet">
+              <fieldset className="sig-map-app__facet" data-testid="filter-technology">
                 <legend>Technology — {techOptions.length} in view</legend>
                 {techOptions.map((t) => (
                   <label key={t} className="sig-map-app__option">
@@ -2126,7 +2259,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
                 ))}
               </fieldset>
 
-              <fieldset className="sig-map-app__facet">
+              <fieldset className="sig-map-app__facet" data-testid="filter-status">
                 <legend>Status</legend>
                 {(Object.keys(STATUS_TEXT) as (keyof typeof STATUS_TEXT)[]).map((s) => (
                   <label key={s} className="sig-map-app__option">
@@ -2142,6 +2275,9 @@ export default function MapApp(props: MapAppProps): JSX.Element {
                 ))}
               </fieldset>
 
+              {/* P37.29: the embedded filters row is K6 §5.4's subset —
+                  technology · status · source. */}
+              {!embedded && (
               <fieldset className="sig-map-app__facet" data-testid="filter-seen-fieldset">
                 <legend>Seen</legend>
                 {seenCannot ? (
@@ -2156,8 +2292,56 @@ export default function MapApp(props: MapAppProps): JSX.Element {
                   />
                 )}
               </fieldset>
+              )}
 
-              {tileMode && dict !== null && (
+              {embedded && !tileMode && (
+                /* P37.29: the records path's Source facet — the fixture
+                   payload's own contributing-source labels, filtered over
+                   `recordPasses` (never a fabricated option set). */
+                <fieldset className="sig-map-app__facet" data-testid="filter-source">
+                  <legend>Source</legend>
+                  {recordSourceOptions.map((s) => (
+                    <label key={s} className="sig-map-app__option">
+                      <input
+                        type="checkbox"
+                        checked={facets.source.includes(s)}
+                        onChange={() => toggleFacetValue("source", s)}
+                        data-testid={`filter-source-${s}`}
+                      />{" "}
+                      {s}{" "}
+                      <span className="sig-map-app__count">
+                        ({recordSourceCounts.get(s) ?? 0})
+                      </span>
+                    </label>
+                  ))}
+                  {recordSourceOptions.length === 0 && (
+                    <p className="sig-map-app__cannot">
+                      No contributing sources recorded on these records.
+                    </p>
+                  )}
+                </fieldset>
+              )}
+              {embedded && tileMode && dict !== null && (
+                <fieldset className="sig-map-app__facet" data-testid="filter-source">
+                  <legend>Source — {facetDict.sourceByIndex.size} in this release</legend>
+                  {[...facetDict.sourceByIndex.values()].map((s) => (
+                    <label key={s.id} className="sig-map-app__option">
+                      <input
+                        type="checkbox"
+                        checked={facets.source.includes(s.id)}
+                        onChange={() => toggleFacetValue("source", s.id)}
+                        data-testid={`filter-source-${s.id}`}
+                      />{" "}
+                      {s.name}{" "}
+                      <span className="sig-map-app__count">
+                        ({tileSourceCounts.get(s.id) ?? 0} in view{s.licence ? ` · ${s.licence}` : ""})
+                      </span>
+                    </label>
+                  ))}
+                </fieldset>
+              )}
+
+              {!embedded && tileMode && dict !== null && (
                 <>
                   <fieldset className="sig-map-app__facet" data-testid="filter-vendor">
                     <legend>Vendor — {facetDict.vendorBySlot.size} named</legend>
@@ -2220,7 +2404,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
                   </fieldset>
                 </>
               )}
-              {(!tileMode || dict === null) && (
+              {!embedded && (!tileMode || dict === null) && (
                 <fieldset className="sig-map-app__facet" data-testid="filter-future">
                   <legend>Vendor · operator · source</legend>
                   <p className="sig-map-app__cannot">
@@ -2351,6 +2535,9 @@ export default function MapApp(props: MapAppProps): JSX.Element {
             <button type="button" aria-label="Pan east" onClick={() => panBy(80, 0)}>→</button>
             <button type="button" aria-label="Pan south" onClick={() => panBy(0, 80)}>↓</button>
           </div>
+          {/* P37.29: no "My location" on the dossier — Permissions-Policy
+              keeps geolocation to /map/ only (K6 §5.4). */}
+          {!embedded && (
           <div className="sig-map-app__myloc">
             <button
               type="button"
@@ -2370,6 +2557,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
               </p>
             )}
           </div>
+          )}
           <label className="sig-map-app__basemap">
             Basemap{" "}
             <select

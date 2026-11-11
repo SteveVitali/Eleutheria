@@ -1,12 +1,13 @@
 {
   "schema": "sig.path-containment-baseline/1",
-  "measured_at": "2026-11-09T20:11:43Z",
+  "measured_at": "2026-11-10T05:13:03Z",
   "measured_by": "node web/scripts/check-root-absolute-paths.mjs --write-baseline",
   "rule": "quoted ('\"`') literal starting with '/' + URL-path chars, quote not preceded by '/', over /*-*-/ <!-- --> and //-comment-stripped text in web/src/** .astro/.ts/.tsx/.js/.jsx/.mjs/.mts/.css; allow-listed file+token+count exemptions subtracted",
   "scope": "web/src/**",
   "plan_baseline": "G3 NEW-6 measured 85 sites / 36 files (0 BASE_URL uses) at 2026-09-30T18:47:42Z on the pre-refactor tree; re-measured at implement time per the P35.65 contract — the baseline may only shrink (P36.66a's sweep), never grow without a contract amendment",
-  "sites": 9,
+  "sites": 26,
   "files": {
+    "src/lib/dossier-visuals-fixture.ts": 17,
     "src/lib/graph-overview-fixture.ts": 9
   },
   "allowlist": [
@@ -1407,6 +1408,30 @@
       "token": "/graphs/operators/usa/ok/",
       "count": 1,
       "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links — artifact data, never link constructions"
+    },
+    {
+      "file": "src/lib/explore-graph.ts",
+      "token": "/",
+      "count": 1,
+      "reason": "P37.27 (GX-09b): twinPathHref's endsWith(\"/\") trailing-slash join guard on emitted entity hrefs — a string-shape guard, not a link"
+    },
+    {
+      "file": "src/lib/explore-graph.ts",
+      "token": "/entity/",
+      "count": 1,
+      "reason": "P37.27 (GX-09b): isEntityHref's \"/entity/\" route-class prefix guard on emitted hrefs — a check, not a link (fetch sites re-base through withBase)"
+    },
+    {
+      "file": "src/lib/dossier-visuals-fixture.ts",
+      "token": "/graphs/$",
+      "count": 2,
+      "reason": "P37.28: graphHref()'s emitted-route templates — fixture link data mirroring /graphs/<family>/<slug>/ build routes; the file's role is fixture artifact data (17 sites baselined)"
+    },
+    {
+      "file": "src/components/dossier/NetworkFigureSlot.astro",
+      "token": "/figures",
+      "count": 1,
+      "reason": "P37.29 fix-forward: the sig-figure region's data-pointer \"/figures\" — a JSON pointer into web/dossier_sources/<slug>.json (the contribution plan's figures[] feed the figure's counts derive from), not a link"
     }
   ]
 }

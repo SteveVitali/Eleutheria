@@ -118,6 +118,121 @@ describe("the neutrality guarantee (SIG-UI-027b)", () => {
   });
 });
 
+describe("subject scoping + the finite-score guard (P37.30 / K7 §5.7 / F-485)", () => {
+  const exportArtifact = (id: string, scores: unknown): EvidenceArtifact =>
+    ({
+      artifact_id: id,
+      subject_id: "",
+      title: `Artifact ${id}`,
+      source: "x",
+      artifact_type: "contract",
+      directness: "not_recorded" as never,
+      currency: "not_recorded" as never,
+      touches_open_contradiction: false,
+      answers_open_task: false,
+      capture_status: "retrievable",
+      permalink: "https://surveillancegraph.org/evidence/x",
+      as_of: "2026-09-22",
+      subject_scores: scores,
+    }) as EvidenceArtifact;
+
+  const pair = (subject_id: string, over: Partial<Record<string, unknown>> = {}) => ({
+    subject_id,
+    directness: "D1",
+    currency: "C1",
+    touches_open_contradiction: false,
+    answers_open_task: false,
+    ...over,
+  });
+
+  it("ranks ONLY artifacts bearing on the decision's subject (SIG-WATCH-007)", () => {
+    const bearing = exportArtifact("a-bearing", [pair("contract:x")]);
+    const elsewhere = exportArtifact("b-elsewhere", [pair("contract:other")]);
+    const flat = { ...EVIDENCE_ARTIFACTS[0]!, artifact_id: "c-flat", subject_id: "contract:x" };
+    const ranked = recommendEvidence([bearing, elsewhere, flat], {
+      decision_type: "renewal",
+      subject_id: "contract:x",
+      label: "C-x renewal",
+      date: "2027-01-01",
+    });
+    const ids = ranked.map((r) => r.artifact.artifact_id);
+    expect(ids).toContain("a-bearing");
+    expect(ids).toContain("c-flat");
+    expect(ids).not.toContain("b-elsewhere");
+  });
+
+  it("scores on the matched pair's axes — the score names what it measures", () => {
+    const a = exportArtifact("a", [
+      pair("contract:x", { directness: "D3", currency: "C4" }),
+      pair("contract:y", { directness: "D1", currency: "C1" }),
+    ]);
+    const [r] = recommendEvidence([a], {
+      decision_type: "renewal",
+      subject_id: "contract:x",
+      label: "d",
+      date: "2027-01-01",
+    })!;
+    expect(r!.breakdown.directness).toBe(40); // D3, not the pair-D1 of contract:y
+    expect(r!.breakdown.currency).toBe(0); // C4
+    expect(r!.matched_subject).toBe("contract:x");
+    expect(r!.scored_subjects).toEqual(["contract:x"]);
+  });
+
+  it("the one-hop neighbourhood admits the contract/agency neighbour", () => {
+    const a = exportArtifact("a", [pair("organisation:council", { subject_key: "organisation:council" })]);
+    const ranked = recommendEvidence(
+      [a],
+      { decision_type: "renewal", subject_id: "contract:x", label: "d", date: "2027-01-01" },
+      { "contract:x": ["organisation:council"] },
+    );
+    expect(ranked.map((r) => r.artifact.artifact_id)).toContain("a");
+    expect(ranked[0]!.matched_subject).toBe("organisation:council");
+  });
+
+  it("a D6 pair is never admissible to the scoped ranking", () => {
+    const a = exportArtifact("a", [pair("contract:x", { directness: "D6" })]);
+    expect(
+      recommendEvidence([a], {
+        decision_type: "renewal",
+        subject_id: "contract:x",
+        label: "d",
+        date: "2027-01-01",
+      }),
+    ).toEqual([]);
+  });
+
+  it("a non-finite score fails the build — never silently zero (SIG-WATCH-007)", () => {
+    // A flat row with an out-of-vocabulary axis value produces NaN; the guard
+    // throws rather than emit the pre-repair 255-of-255 NaN list.
+    const bad = {
+      ...EVIDENCE_ARTIFACTS[0]!,
+      artifact_id: "bad",
+      subject_id: "contract:x",
+      currency: "2026-06" as never,
+    };
+    expect(() =>
+      recommendEvidence([bad], {
+        decision_type: "renewal",
+        subject_id: "contract:x",
+        label: "d",
+        date: "2027-01-01",
+      }),
+    ).toThrow(/non-finite|NaN|finite/i);
+  });
+
+  it("an artifact outside every scope emits an honest empty list, not an error", () => {
+    const a = exportArtifact("a", [pair("contract:z")]);
+    expect(
+      recommendEvidence([a], {
+        decision_type: "renewal",
+        subject_id: "contract:x",
+        label: "d",
+        date: "2027-01-01",
+      }),
+    ).toEqual([]);
+  });
+});
+
 describe("exportable citation list with permalinks + as-of dates (SIG-UI-027c)", () => {
   it("every citation entry carries a permalink and an as-of date, in rank order", () => {
     const entries = citationList(rank());

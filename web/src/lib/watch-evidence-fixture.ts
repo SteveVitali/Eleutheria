@@ -305,6 +305,18 @@ export const EVIDENCE_ARTIFACTS: EvidenceArtifact[] = [
   },
 ];
 
+/**
+ * P37.30 (K7 §5.7): the fixture's one-hop neighbourhood map — the OKC
+ * renewal item's contract subject and the `agency:okcpd` subject the fixture
+ * artifacts are scoped to are mutual neighbours (the contract's agency).
+ * The scoped recommender expands the item's scope through this map exactly
+ * as it expands the export's `subject_neighbours`.
+ */
+export const EVIDENCE_SUBJECT_NEIGHBOURS: Record<string, string[]> = {
+  "contract:okc_contracts:tenant:okc:C-100": ["agency:okcpd"],
+  "agency:okcpd": ["contract:okc_contracts:tenant:okc:C-100"],
+};
+
 // --- The evidence viewer (SIG-UI-028/029/030) --------------------------------
 
 /** The executed-contract document text; the span highlights the device-count clause. */

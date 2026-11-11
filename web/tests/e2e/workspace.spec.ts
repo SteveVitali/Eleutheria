@@ -115,20 +115,24 @@ test.describe("shared workspace state — deep links + restore (SIG-FIND-004)", 
   test("an unsupported facet shows the notice on each island (P34.15, K6 NEW-1)", async ({
     page,
   }) => {
-    // The `jurisdiction` facet parses and round-trips, but no island applies
-    // it — each view must say so visibly rather than render an unfiltered
-    // view as if the filter held.
-    for (const path of ["/map/", "/explore/", "/search/"]) {
+    // The `jurisdiction` facet parses and round-trips; on /map/ and /search/
+    // it stays unapplied — each view must say so visibly rather than render
+    // an unfiltered view as if the filter held. (P37.27/GX-09b: the explorer
+    // applies it — the applied-filter disclosure is asserted there.)
+    for (const path of ["/map/", "/search/"]) {
       await page.goto(`${path}?v=1&jurisdiction=US-OK`);
       const notice = page.getByTestId("facet-not-applied");
       await expect(notice).toBeVisible();
       await expect(notice).toContainText("jurisdiction filter");
       await expect(notice).toContainText(/does not apply/i);
     }
-    // And the network announces a facet it does not apply even when others hold.
-    await page.goto("/explore/?v=1&q=alpr&focus=place:usa-tx");
+    // On the explorer, jurisdiction applies — the disclosure names it.
+    await page.goto("/explore/?v=2&view=graph&jurisdiction=US-OK");
+    await expect(page.getByTestId("active-filters")).toContainText("filter");
+    // And the explorer announces a facet it does not apply even when others hold.
+    await page.goto("/explore/?v=1&status=open&focus=place:usa-tx");
     const notice = page.getByTestId("facet-not-applied");
-    await expect(notice).toContainText("text query");
+    await expect(notice).toContainText("status");
     await expect(notice).not.toContainText("selected record");
     // No ignored facet → no notice.
     await page.goto("/map/?v=1&focus=device:okc-001&view=map");

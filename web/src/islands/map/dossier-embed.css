@@ -1,0 +1,9 @@
+/* P37.29 (K6 VIZ-04) — the design half of the deferred embedded-map
+ * stylesheet: the shared island chrome the embedded app renders under
+ * (the vendored MapLibre controls ride _kit/sig-map-embed.vendor.css,
+ * link-injected first — SIG-UI-156 keeps each emitted file inside its
+ * wire budget). Bundled by the sigEnhancementKit hook to
+ * /_kit/sig-map-embed.css and link-injected by <sig-activate> at
+ * activation (post-action only — the dossier ships no map chrome up
+ * front). The dossier's own figure styles stay in epistemic.css. */
+@import "../../styles/islands.css";

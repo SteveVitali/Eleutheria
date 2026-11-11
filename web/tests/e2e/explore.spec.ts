@@ -101,14 +101,14 @@ test.describe("graph explorer /explore/ (GX-09a)", () => {
   });
 
   test("unapplied facets are visibly named, never silently applied", async ({ page }) => {
-    await page.goto("/explore/?v=2&view=graph&jurisdiction=iso3166-2%3AUS-OK&path=a%3Ab~c%3Ad");
+    // `seen` + `within` parse (registered) but the explorer does not apply
+    // them — the SIG-UI-060 notice names both rather than drop them.
+    await page.goto("/explore/?v=2&view=graph&seen=2020..2024&within=x");
     await expect(page.getByTestId("explore-island")).toBeVisible();
     const notice = page.getByTestId("facet-not-applied");
     await expect(notice).toBeVisible();
-    await expect(notice).toContainText("jurisdiction");
-    // `path` renders in the notice's plain-language vocabulary (registry
-    // label "a node pair") — named, never silently applied.
-    await expect(notice).toContainText("node pair");
+    await expect(notice).toContainText("seen range");
+    await expect(notice).toContainText("scope restriction");
   });
 
   test("the live cite view mints the snapshot-pinned form", async ({ page }) => {
@@ -154,13 +154,86 @@ test.describe("graph explorer /explore/ (GX-09a)", () => {
     expect(href).toContain("/explore/?v=2&view=graph&jurisdiction=");
     await page.goto(href!);
     await expect(page.getByTestId("explore-island")).toBeVisible();
-    // The dossier's jurisdiction facet is named unapplied (SIG-UI-060), and
-    // the two J2 overviews are one pick apart.
-    await expect(page.getByTestId("facet-not-applied")).toContainText("jurisdiction");
+    // The dossier's jurisdiction facet applies (P37.27): the access
+    // overview's Texas node matches the jkey's place subtree and the active
+    // filter is disclosed — never a silent filter.
+    await expect(page.getByTestId("active-filters")).toContainText("filter");
+    await expect(page.getByTestId("graph-island-node").filter({ hasText: "Texas" })).toHaveCount(1);
     await page.getByTestId("overview-pick").filter({ hasText: "Supply" }).click();
     await expect(page.getByTestId("explore-canvas")).toBeVisible();
     expect(page.url()).toContain("overview=supply");
     await page.getByTestId("overview-pick").filter({ hasText: "Access" }).click();
     expect(page.url()).toContain("overview=access");
+  });
+});
+
+test.describe("graph explorer /explore/ 09b (GX-09b)", () => {
+  test("facet filters narrow honestly and disclose themselves", async ({ page }) => {
+    await page.goto("/explore/?v=2&view=graph&overview=governance");
+    await expect(page.getByTestId("explore-island")).toBeVisible();
+    const nodes = page.getByTestId("graph-island-node");
+    await expect(nodes.first()).toBeVisible();
+    expect(await nodes.count()).toBeGreaterThanOrEqual(4);
+    // kind=agency narrows to the single agency node — the filter is stated.
+    await page.goto("/explore/?v=2&view=graph&overview=governance&kind=agency");
+    await expect(page.getByTestId("active-filters")).toBeVisible();
+    const agencies = page.getByTestId("graph-island-node").filter({ hasText: "Legislature" });
+    await expect(agencies).toHaveCount(1);
+    expect(await page.getByTestId("graph-island-node").count()).toBeLessThan(4);
+  });
+
+  test("search-to-node finds a node in the loaded graph", async ({ page }) => {
+    await page.goto("/explore/?v=2&view=graph&overview=governance");
+    await expect(page.getByTestId("explore-island")).toBeVisible();
+    await page.getByTestId("explore-search-input").fill("Oklahoma Legislature");
+    const hit = page.getByTestId("search-node-hit").filter({ hasText: "Legislature" });
+    await expect(hit.first()).toBeVisible();
+    await hit.first().click();
+    expect(page.url()).toContain("focus=");
+    await expect(page.getByTestId("graph-island-detail")).toBeVisible();
+  });
+
+  test("the path finder lists every hop; a missing endpoint is named", async ({ page }) => {
+    await page.goto("/explore/?v=2&view=graph&overview=governance&path=tech:alpr~e-ok-leg");
+    await expect(page.getByTestId("explore-island")).toBeVisible();
+    const hops = page.getByTestId("island-path-hop");
+    await expect(hops.first()).toBeVisible();
+    expect(await hops.count()).toBeGreaterThanOrEqual(2);
+    await expect(page.getByTestId("path-panel-title")).toBeVisible();
+    // A pair naming a node outside the overview is a typed answer, never dropped.
+    await page.goto("/explore/?v=2&view=graph&overview=governance&path=e-sb1234~nosuchnode");
+    await expect(page.getByTestId("path-missing")).toBeVisible();
+  });
+
+  test("expansion loads the twin ego; a twin-less node answers typed", async ({ page }) => {
+    await page.goto("/explore/?v=2&view=graph&overview=adoption&expand=e-acme-pd");
+    await expect(page.getByTestId("explore-island")).toBeVisible();
+    // The twin loads — nodes beyond the emitted pair render or the ego note names the bounded result.
+    await expect(page.getByTestId("graph-island-node").first()).toBeVisible();
+    expect(page.url()).toContain("expand=e-acme-pd");
+    // tech:alpr has no entity page — the typed no-twin answer, never a fabricated ego.
+    await page.goto("/explore/?v=2&view=graph&overview=adoption&focus=tech:alpr&expand=tech:alpr");
+    await expect(page.getByTestId("explore-island")).toBeVisible();
+    await expect(page.getByTestId("ego-note")).toContainText("twin");
+  });
+
+  test("the keyboard node list sorts and the sort rides the URL", async ({ page }) => {
+    await page.goto("/explore/?v=2&view=graph&overview=governance");
+    await expect(page.getByTestId("explore-island")).toBeVisible();
+    await expect(page.getByTestId("explore-node-table")).toBeVisible();
+    await page.getByTestId("sort-kind").click();
+    expect(page.url()).toContain("sort=kind");
+    await expect(page.getByTestId("sort-kind")).toHaveAttribute("aria-pressed", "true");
+    await page.getByTestId("sort-kind").click();
+    expect(page.url()).toContain("dir=desc");
+  });
+
+  test("hops= scopes the neighbourhood ring around the focus", async ({ page }) => {
+    await page.goto("/explore/?v=2&view=graph&overview=governance&focus=e-ok-leg&hops=1");
+    await expect(page.getByTestId("explore-island")).toBeVisible();
+    await expect(page.getByTestId("graph-island-node").first()).toBeVisible();
+    // The hops note or the scoped node set states the ring bound.
+    const notes = page.locator("[data-testid='hops-note'], [data-testid='active-filters'], .sig-island__note");
+    await expect(notes.first()).toBeVisible();
   });
 });

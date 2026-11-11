@@ -1273,3 +1273,18 @@ seed-commit f2562bf9
 seed-commit 5b19d803
 seed-commit 6f53ce10
 seed-commit 31aba6bf
+
+# P37.30 (row 454) — the closeout's two PHASE LOG entries (`done` +
+# `post-closeout record`, committed at `19f25b44`) ran 2,727 B and pushed the
+# orient recipe to 49,784 B > 48 KiB (BM-ORIENT-01) — the docs job's
+# `docs-check-build-memory` red on the records head. `3a83ba70` trimmed both
+# entries in place to the required tokens verbatim (row 454, `R11-K13-WX-05`
+# / K7 WX-05, gate `none` carried, F-485 closed, the deliverable summary,
+# fix arcs, the `blockedOn` verdict verbatim, `main` untouched, chainTip,
+# next, harness) — detail lives in `runs/P37.30.md`. Pre-edit bytes archived
+# `reports/memory-repair/LEDGER_phaselog_pre-P37.30-budget.txt`
+# (sha256:1a2deab5340b13e99fd429055dc11c189ce503bd728632a47f071770c98183df). The branch rule forbids force-push, so the declaration
+# lands here, the next commit.
+# Scope: the append-only findings attributed to 3a83ba70's rewritten lines
+# only; no other commit borrows the exemption.
+seed-commit 3a83ba70

@@ -95,6 +95,9 @@
 --     * Slot: start_date
 --     * Slot: end_date
 --     * Slot: renewal_options
+--     * Slot: auto_renews Description: Whether the contract renews automatically absent notice — the dated renewal clause value the decision calendar derives a renewal_deadline from (P37.31 / K7 WX-02).
+--     * Slot: notice_window_days Description: Days before term end by which non-renewal notice is due (P37.31).
+--     * Slot: renewal_term_months Description: Length in months of each stated renewal term (P37.31).
 --     * Slot: document
 --     * Slot: acquisition_channel
 --     * Slot: parent_cooperative_contract Description: The master award being ridden (SIG-ONTO-032).
@@ -991,6 +994,9 @@ CREATE TABLE "Contract" (
 	start_date TEXT,
 	end_date TEXT,
 	renewal_options TEXT,
+	auto_renews BOOLEAN,
+	notice_window_days INTEGER,
+	renewal_term_months INTEGER,
 	document TEXT,
 	acquisition_channel VARCHAR(21),
 	parent_cooperative_contract TEXT,

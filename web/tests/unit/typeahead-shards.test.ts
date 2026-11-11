@@ -29,18 +29,24 @@ const SRC = fileURLToPath(new URL("../../src", import.meta.url));
 describe("typeaheadCatalog — named things only (K3 §2.4)", () => {
   const catalog = typeaheadCatalog();
 
-  it("carries places, sources and technologies — records never enter", () => {
+  it("carries places, sources, technologies and entities — records never enter", () => {
     const kinds = new Set(catalog.map((e) => e.kind));
     expect(kinds.has("place")).toBe(true);
     expect(kinds.has("source")).toBe(true);
+    expect(kinds.has("entity")).toBe(true);
     for (const e of catalog) expect(e.kind).not.toBe("record");
+    for (const e of catalog.filter((x) => x.kind === "entity")) {
+      expect(e.href).toMatch(/^\/entity\//);
+    }
   });
 
   it("every entry links an existing page of its kind (R-6)", () => {
     for (const e of catalog) {
       expect(e.href.startsWith("/")).toBe(true);
       expect(e.label.length).toBeGreaterThan(0);
-      expect(e.href).not.toMatch(/\/entity\//); // no entity pages yet — orgs join with GX-06a
+      // P37.27 (GX-09b): entity rows join once their pages exist — every
+      // /entity/ href names a keyed, published entity (R-6).
+      if (e.href.includes("/entity/")) expect(e.kind).toBe("entity");
     }
   });
 });

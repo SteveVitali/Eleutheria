@@ -115,16 +115,19 @@ def svg_root(
     title_id: str,
     desc_id: str,
     *,
+    role: str = "img",
     extra: tuple[tuple[str, str], ...] = (),
 ) -> El:
     """The root ``<svg>`` for a figure — ``role="img"`` + ``aria-labelledby``
-    into the emitted ``<title>``/``<desc>`` pair (SIG-UI-131)."""
+    into the emitted ``<title>``/``<desc>`` pair (SIG-UI-131). Figures whose
+    nodes are links pass ``role="group"`` — ``img`` may not carry focusable
+    descendants (axe nested-interactive)."""
     w, h = viewbox
     root = El("svg")
     root.attr("xmlns", "http://www.w3.org/2000/svg")
     root.attr("viewBox", f"0 0 {w:g} {h:g}")
     root.attr("class", " ".join(classes))
-    root.attr("role", "img")
+    root.attr("role", role)
     root.attr("aria-labelledby", f"{title_id} {desc_id}")
     for name, value in extra:
         root.attr(name, value)

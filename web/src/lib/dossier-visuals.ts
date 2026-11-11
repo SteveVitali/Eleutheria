@@ -28,6 +28,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { dataSource, exportDir } from "./data";
 import { DOSSIER_VISUALS_FIXTURE, LOCATOR_SYMBOLS_FIXTURE } from "./dossier-visuals-fixture";
 import { assertInlineSvgSafe } from "./entity-figures";
+import { withBase } from "./paths";
 
 /** The emitted document id (K6 §9.1). */
 export const VISUALS_SCHEMA = "sig.dossier-visuals/1";
@@ -118,12 +119,104 @@ export interface TypedLocator {
 
 export type VisualsLocator = DrawnLocator | TypedLocator;
 
-/** A network-figure slot (VIZ-01b's content — typed status until it lands). */
-export interface NetworkSlot {
-  figure_id?: string;
-  kind?: string;
-  status?: string;
+/** The H-2 relationship-table row the kit's table twin carries verbatim. */
+export interface NetworkEdgeRow {
+  counterparty: string;
+  href: string;
+  relation: string;
+  direction: string;
+  access_kind: string;
+  date: string;
+  date_kind: string;
+  currency: string;
+  support: string;
+  sources: number;
+  evidence: string[];
+}
+
+/** One generated legend entry (lexicon-bound — only encodings present). */
+export interface NetworkLegendRow {
+  id?: string;
+  label?: string;
+  plain?: string;
   [k: string]: unknown;
+}
+
+/** The kit's `sig.figure-graph-meta/1` block a drawn figure carries. */
+export interface NetworkFigureMeta {
+  schema: string;
+  viewbox: [number, number];
+  narrow_viewbox: [number, number];
+  mode: string;
+  cap_actions: string[];
+  legend: NetworkLegendRow[];
+  table_columns: string[];
+  table_rows: NetworkEdgeRow[];
+  node_count: number;
+  edge_count: number;
+  desc: { anchors: number; counterparties: number; edges: number; [k: string]: unknown };
+  size_bytes: number;
+  gzip_bytes: number;
+  [k: string]: unknown;
+}
+
+/** An H-4 degree-only fact — a partner COUNT, a sentence, never an edge. */
+export interface NetworkDegreeFact {
+  count: number | null;
+  observed: string | null;
+  sources: string[];
+  claim_ids: string[];
+}
+
+/** A drawn network figure — the kit's wide + narrow SVGs plus metadata. */
+export interface DrawnNetworkSlot {
+  figure_id: string;
+  slot?: string;
+  family: string;
+  overview: string;
+  title: string;
+  status: "drawn";
+  svg: string;
+  svg_narrow: string;
+  meta: NetworkFigureMeta;
+  anchors_drawn: number;
+  counterparties_drawn: number;
+  edges_drawn: number;
+  cap_actions: string[];
+  toggle_kinds: string[];
+  table_rows_total: number;
+  table_href: string;
+  explore_href: string;
+  anchor_attrs?: Record<string, string>;
+  degree_facts: NetworkDegreeFact[];
+  by_source: { source_id: string; value: number }[];
+  [k: string]: unknown;
+}
+
+/** The typed absence — a figure with no evidenced edge is never drawn
+ *  (K6 V-7); the emitted reason is a value, never a blank frame. */
+export interface EmptyNetworkSlot {
+  figure_id: string;
+  slot?: string;
+  family: string;
+  overview: string;
+  title: string;
+  status: "country_no_figure" | "no_anchors" | "no_evidenced_edges" | "over_cap" | string;
+  reason: string;
+  anchors_total: number;
+  edges_total: number;
+  degree_facts?: NetworkDegreeFact[];
+  table_href: string;
+  explore_href: string;
+  [k: string]: unknown;
+}
+
+/** A network-figure slot — drawn or typed-absent (P37.28, K6 VIZ-01b). */
+export type NetworkSlot = DrawnNetworkSlot | EmptyNetworkSlot;
+
+/** True when the slot carries a drawn figure (vs the typed absence). */
+export function isDrawnNetwork(slot: NetworkSlot | undefined): slot is DrawnNetworkSlot {
+  return slot?.status === "drawn" && typeof (slot as DrawnNetworkSlot).svg === "string";
 }
 
 export interface DossierVisualsDoc {
@@ -173,7 +266,27 @@ function validateDoc(parsed: unknown, path: string): DossierVisualsDoc {
     // only bytes satisfying the one kit's no-script/no-handler contract.
     assertInlineSvgSafe(doc.map.svg, `${path}#map`);
   }
+  for (const slot of doc.networks ?? []) {
+    if (isDrawnNetwork(slot)) {
+      assertInlineSvgSafe(slot.svg, `${path}#${slot.figure_id}`);
+      assertInlineSvgSafe(slot.svg_narrow, `${path}#${slot.figure_id}-narrow`);
+    }
+  }
   return doc;
+}
+
+/**
+ * P37.29 (fix-forward for the P37.28 carried `check:snapshot` red): the
+ * produced figure SVGs bake canonical root paths into their `<a href="/…">`
+ * links — record/entity/graph routes the export mints in canonical form.
+ * A `/s/<pub>/` snapshot deploy needs every same-origin link INSIDE the
+ * base (SIG-REL-008), so the inline seam rewrites `href="/…"` through
+ * `withBase` at render time — `href="/` becomes `href="${withBase("/")}`
+ * (identity on the root mount, `/s/<pub>/` under a snapshot). Link
+ * targets themselves are never altered — only the deploy prefix joins.
+ */
+export function withBaseSvgHrefs(svg: string): string {
+  return svg.replace(/href="\//g, `href="${withBase("/")}`);
 }
 
 /**

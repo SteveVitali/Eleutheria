@@ -3,11 +3,11 @@
 // P36.42a (K2 GX-06a): the entity page-model helpers — merge, pagination,
 // kind/direction words and the typed-absence model.
 import { describe, expect, it } from "vitest";
+import { entityIndex } from "../../src/lib/entity-page";
 import {
-  ENTITY_PAGE_TWIN_FIXTURE,
-  entityIndex,
   ENTITY_LABEL_FIXTURES,
-} from "../../src/lib/entity-page";
+  ENTITY_PAGE_TWIN_FIXTURE,
+} from "../../src/lib/entity-page-fixtures";
 import type { EntityPageTwin } from "../../src/lib/entity-page";
 import {
   accessKindWord,

@@ -29,8 +29,10 @@ import {
   upstreamDisplay,
   WATCH_KINDS,
   WATCH_PAGE_SIZE,
+  watchDecisionPoint,
   type WatchItemV2,
 } from "../../src/lib/watch-v2";
+import { DECISION_TYPES } from "../../src/lib/recommender";
 import { WATCH_V2_FIXTURE } from "../../src/lib/watch-v2-fixture";
 import { watchContext } from "../../src/lib/watch-context";
 
@@ -204,5 +206,31 @@ describe("evidenceRows — deterministic order", () => {
       ],
     };
     expect(evidenceRows(item).map((e) => e.claim_id)).toEqual(["a", "b"]);
+  });
+});
+
+describe("watchDecisionPoint — the per-item decision (P37.30 / K7 §5.7)", () => {
+  it("maps every watch kind onto the §39.5a vocabulary the export emits", () => {
+    const item = ENV.items[0]!;
+    const point = watchDecisionPoint(item);
+    expect(point.handle).toBe(item.handle);
+    expect(point.subject_id).toBe(item.subjects?.[0]);
+    expect(point.subject_ids).toEqual(item.subjects);
+    expect(point.date).toBe(item.date);
+    expect(point.kind).toBe(item.kind);
+    expect(DECISION_TYPES).toContain(point.decision_type);
+  });
+
+  it("falls back to the handle when the item carries no subjects", () => {
+    const point = watchDecisionPoint({
+      handle: "h",
+      title: "t",
+      kind: "agenda_item",
+      date: "2026-01-01",
+      date_kind: "meeting",
+      date_certainty: "stated",
+    });
+    expect(point.subject_id).toBe("h");
+    expect(point.decision_type).toBe("council_agenda_item");
   });
 });

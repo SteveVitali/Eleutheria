@@ -550,7 +550,14 @@ def test_empty_supplementary_surfaces_emit_honest_absence() -> None:
     assert watch["coverage"]["places"], "coverage rows for the dossier places"
     assert _web(export, "corrections") == []
     assert _web(export, "research_queue") == []
-    assert _web(export, "evidence") == {"artifacts": [], "claim_views": []}
+    evidence = _web(export, "evidence")
+    assert evidence["artifacts"] == []
+    assert evidence["claim_views"] == []
+    # P37.30 (F-485): the recommender-score envelope fields emit the honest
+    # empty state — no pairs, no neighbours, the zero counts recorded.
+    assert evidence["subject_neighbours"] == {}
+    assert evidence["build"]["recommender_scores"]["pairs_emitted"] == 0
+    assert evidence["build"]["recommender_scores"]["pairs_uncomputable"] == 0
     # network: no classifiable sharing edges → honest empty typed network.
     assert _web(export, "network")["edges"] == []
 

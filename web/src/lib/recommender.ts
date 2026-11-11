@@ -36,17 +36,40 @@ import { CONTESTED_MARKER } from "./epistemic";
 
 // --- Decision points ---------------------------------------------------------
 
-/** The kinds of upcoming decision point the recommender ranks evidence for (§39.5a). */
-export const DECISION_TYPES = ["renewal", "council_agenda_item", "hearing"] as const;
+/** The kinds of upcoming decision point the recommender ranks evidence for (§39.5a).
+ * P37.30 (K7 §5.7): extended additively with the watch kinds the per-item
+ * decision points carry (`solicitation`, `legislative_action`,
+ * `grant_period_end`; `contract_expiry` maps onto `renewal`). */
+export const DECISION_TYPES = [
+  "renewal",
+  "council_agenda_item",
+  "hearing",
+  "solicitation",
+  "legislative_action",
+  "grant_period_end",
+] as const;
 export type DecisionType = (typeof DECISION_TYPES)[number];
 
 /** An upcoming decision a person is preparing for (a renewal, agenda item, hearing). */
 export interface DecisionPoint {
   decision_type: DecisionType;
+  /** The subject the decision is about — the watch item's first subject key. */
   subject_id: string;
+  /**
+   * P37.30 (K7 §5.7): the full subject set the scoped ranking reads — the
+   * decision's subject plus any sibling keys the item carries (the seed for
+   * the one-hop contract/agency neighbourhood).
+   */
+  subject_ids?: string[];
   label: string;
   /** The date the decision falls (ISO), e.g. the `next_decision_date`. */
   date: string;
+  /** The watch item's handle this decision point belongs to (per-item list). */
+  handle?: string;
+  /** The `sig.watch-item/1` kind, verbatim. */
+  kind?: string;
+  /** The item's `date_certainty`, verbatim (an `upper_bound` is never a deadline). */
+  date_certainty?: string;
 }
 
 // --- The evidence artifact (only the §39.5a-admissible inputs) ---------------
@@ -64,6 +87,28 @@ export const CAPTURE_STATUSES = ["retrievable", "paywalled", "link_rotted", "acc
 export type CaptureStatus = (typeof CAPTURE_STATUSES)[number];
 
 /**
+ * The per-(artifact, subject) score input the export emits (P37.30, K7 §5.7):
+ * the best §10.5 directness class and the best §28.3 currency class over the
+ * artifact's claims about THIS subject, plus the subject-scoped dispute flags.
+ * A pair that cannot be computed is emitted nowhere — a score names exactly
+ * what it measures.
+ */
+export interface SubjectScore {
+  /** The claim subject (entity id) the pair's axes are computed over. */
+  subject_id: string;
+  /** The subject's canonical `sig.connector.subject` key — what a watch item's `subjects` carry. */
+  subject_key?: string;
+  /** The best §10.5 directness class over the pair's probative claims (D6 excluded). */
+  directness: DirectnessCode;
+  /** The best §28.3 currency class over the pair's claims at the export's `as_of`. */
+  currency: CurrencyCode;
+  /** An open contradiction touches THIS subject (§39.5a — subject-scoped). */
+  touches_open_contradiction?: boolean;
+  /** An open research task names THIS subject. */
+  answers_open_task?: boolean;
+}
+
+/**
  * An evidence artifact, carrying ONLY the inputs §39.5a admits. The shape is
  * deliberately closed to the six ranking axes plus the citation metadata; it has no
  * field for persuasiveness, sentiment, or predicted vote effect — the neutrality
@@ -71,6 +116,12 @@ export type CaptureStatus = (typeof CAPTURE_STATUSES)[number];
  */
 export interface EvidenceArtifact {
   artifact_id: string;
+  /**
+   * The artifact's subject — the `subject_scores` list is the authoritative
+   * per-(artifact, subject) shape; the flat field names THE single scored
+   * subject, and stays empty on fixtures rows that carry it directly or on
+   * export rows with zero/multiple scored subjects.
+   */
   subject_id: string;
   /** Plain-language title for the citation list. */
   title: string;
@@ -147,6 +198,21 @@ export interface EvidenceArtifact {
   place_key?: string | null;
   /** The publisher display name where the registry records one. */
   publisher?: string | null;
+  /**
+   * P37.30 (K7 §5.7): the per-(artifact, subject) score inputs — the
+   * authoritative scoped shape. Absent on fixture rows (which carry the flat
+   * `subject_id`/`directness`/`currency` directly) and on pre-repair exports.
+   */
+  subject_scores?: SubjectScore[];
+  /** P37.30: the count of (artifact, subject) pairs whose score could not be
+   * computed — recorded honestly, never smoothed into a zeroed score. */
+  subject_scores_uncomputable?: number;
+  /** The spine's own `primary_or_secondary` value under its true name (P37.30). */
+  primary_or_secondary?: string;
+  /** The artifact's EDTF publication date under its true name (P37.30). */
+  published_at_edtf?: string;
+  /** The §17.6 disappearance event timestamp, when one was observed (P37.30). */
+  disappeared_observed_at?: string | null;
 }
 
 /**
@@ -270,11 +336,115 @@ const ARTIFACT_TYPE_RELEVANCE: Record<DecisionType, Record<string, number>> = {
     meeting_minutes: 15,
     portal_snapshot: 10,
   },
+  // P37.30 (K7 §5.7): the watch kinds beyond §39.5a's three — the same
+  // never-negative convention (an unmodelled artifact type is un-boosted,
+  // never buried).
+  solicitation: {
+    solicitation: 30,
+    portal_snapshot: 25,
+    contract: 15,
+    amendment: 10,
+    policy: 10,
+    meeting_minutes: 10,
+  },
+  legislative_action: {
+    policy: 30,
+    accountability_event: 20,
+    meeting_minutes: 20,
+    agenda: 15,
+    portal_snapshot: 10,
+    contract: 10,
+  },
+  grant_period_end: {
+    contract: 20,
+    policy: 20,
+    portal_snapshot: 15,
+    invoice: 15,
+    budget_line: 15,
+    meeting_minutes: 10,
+  },
 };
 
 /** Whether an artifact is admissible to the recommendation at all (D6 is not, §10.5). */
 export function isAdmissible(artifact: EvidenceArtifact): boolean {
   return artifact.directness !== "D6";
+}
+
+// --- P37.30 (K7 §5.7): subject scoping + the finite-score guard ----------- //
+
+/** Ordinal rank for the directness/currency classes (lower is stronger). */
+const DIRECTNESS_ORD: Record<DirectnessCode, number> = { D1: 1, D2: 2, D3: 3, D4: 4, D5: 5, D6: 6 };
+const CURRENCY_ORD: Record<CurrencyCode, number> = { C1: 1, C2: 2, C3: 3, C4: 4 };
+
+/** The subject a score row is scoped to — its canonical key, else the id. */
+function scoreSubject(s: SubjectScore): string {
+  return s.subject_key ?? s.subject_id;
+}
+
+/**
+ * The subject scope a decision point ranks against (K7 §5.7): the decision's
+ * own subjects PLUS the one-hop contract/agency neighbourhood the export's
+ * `subject_neighbours` map records (a bound claim's subject and its object
+ * entity are mutual neighbours — a document bearing on one bears on the
+ * decision's subject one hop out).
+ */
+export function subjectScope(
+  decision: DecisionPoint,
+  neighbours: Record<string, readonly string[]> = {},
+): Set<string> {
+  const scope = new Set<string>([decision.subject_id, ...(decision.subject_ids ?? [])]);
+  for (const s of [...scope]) {
+    for (const n of neighbours[s] ?? []) scope.add(n);
+  }
+  return scope;
+}
+
+/**
+ * The score pairs through which an artifact bears on the decision's subject
+ * scope (K7 §5.7 — "rank only artifacts that bear on the decision's
+ * subject"). An artifact with `subject_scores` bears through the pairs
+ * naming a scoped subject (a D6 pair is never admissible — the export never
+ * emits one, and a fixture row smuggling one is dropped here); a flat row
+ * (fixtures / pre-repair exports) bears through its `subject_id` only.
+ */
+export function matchingScores(
+  artifact: EvidenceArtifact,
+  scope: ReadonlySet<string>,
+): SubjectScore[] {
+  if (artifact.subject_scores) {
+    return artifact.subject_scores.filter(
+      (s) =>
+        s.directness !== "D6" &&
+        (scope.has(s.subject_id) || (s.subject_key !== undefined && scope.has(s.subject_key))),
+    );
+  }
+  if (scope.has(artifact.subject_id) && artifact.directness !== "D6") {
+    return [
+      {
+        subject_id: artifact.subject_id,
+        directness: artifact.directness,
+        currency: artifact.currency,
+        touches_open_contradiction: artifact.touches_open_contradiction,
+        answers_open_task: artifact.answers_open_task,
+      },
+    ];
+  }
+  return [];
+}
+
+/**
+ * The build-time NaN guard (K7 §5.7, F-485): a non-finite score fails the
+ * build LOUDLY — the pre-repair export returned 255 of 255 `NaN` rows and
+ * nothing caught it; an uncomputable score fails typed, never silently zero.
+ */
+export function assertFiniteScore(score: number, artifactId: string): void {
+  if (!Number.isFinite(score)) {
+    throw new Error(
+      `SIG-UI-027a: non-finite evidence score for artifact ${artifactId} — ` +
+        "the emitted score must be finite; an uncomputable score fails typed, " +
+        "never silently zero (K7 §5.7 / F-485).",
+    );
+  }
 }
 
 /** The relevance bonus for an artifact type given the decision type (0 if unmodelled). */
@@ -295,25 +465,38 @@ export interface ScoreBreakdown {
 /**
  * The per-axis score breakdown for an artifact against a decision (SIG-UI-027a). A
  * pure function of the six admissible axes ONLY; there is no path by which any other
- * signal can enter the total (SIG-UI-027b).
+ * signal can enter the total (SIG-UI-027b). P37.30: the D/C/dispute axes come
+ * from the matched (artifact, subject) pair when one is supplied — a score
+ * names exactly what it measures.
  */
-export function scoreBreakdown(artifact: EvidenceArtifact, decision: DecisionPoint): ScoreBreakdown {
-  if (artifact.directness === "D6") {
+export function scoreBreakdown(
+  artifact: EvidenceArtifact,
+  decision: DecisionPoint,
+  pair?: SubjectScore,
+): ScoreBreakdown {
+  const directness = pair?.directness ?? artifact.directness;
+  if (directness === "D6") {
     throw new Error("SIG-UI-027a: a D6 (non-probative) artifact is not admissible to the ranking (§10.5).");
   }
   return {
-    directness: DIRECTNESS_SCORE[artifact.directness],
-    currency: CURRENCY_SCORE[artifact.currency],
+    directness: DIRECTNESS_SCORE[directness as Exclude<DirectnessCode, "D6">],
+    currency: CURRENCY_SCORE[(pair?.currency ?? artifact.currency) as CurrencyCode],
     artifact_type: artifactTypeRelevance(artifact.artifact_type, decision.decision_type),
-    open_contradiction: artifact.touches_open_contradiction ? CONTRADICTION_BONUS : 0,
-    open_task: artifact.answers_open_task ? OPEN_TASK_BONUS : 0,
+    open_contradiction: (pair?.touches_open_contradiction ?? artifact.touches_open_contradiction)
+      ? CONTRADICTION_BONUS
+      : 0,
+    open_task: (pair?.answers_open_task ?? artifact.answers_open_task) ? OPEN_TASK_BONUS : 0,
     capture_status: CAPTURE_SCORE[artifact.capture_status],
   };
 }
 
 /** The total score = sum of the admissible-axis contributions (SIG-UI-027a/b). */
-export function scoreArtifact(artifact: EvidenceArtifact, decision: DecisionPoint): number {
-  const b = scoreBreakdown(artifact, decision);
+export function scoreArtifact(
+  artifact: EvidenceArtifact,
+  decision: DecisionPoint,
+  pair?: SubjectScore,
+): number {
+  const b = scoreBreakdown(artifact, decision, pair);
   return b.directness + b.currency + b.artifact_type + b.open_contradiction + b.open_task + b.capture_status;
 }
 
@@ -324,31 +507,60 @@ export interface RankedArtifact {
   breakdown: ScoreBreakdown;
   /** Whether the artifact is contested (touches an open contradiction) — SIG-UI-008. */
   contested: boolean;
+  /**
+   * P37.30 (K7 §5.7): the subjects through which the artifact bears on the
+   * decision — every scoped (artifact, subject) pair that admitted it. The
+   * score names exactly what it measures: `matched_subject` is the pair the
+   * score was computed over.
+   */
+  scored_subjects: string[];
+  matched_subject: string;
 }
 
 /**
- * Rank the admissible evidence artifacts for a decision point (SIG-UI-027a). D6
- * artifacts are excluded (§10.5); the rest are sorted by score descending, ties
- * broken by `artifact_id` so the ranking is deterministic. Every artifact is passed
- * through `assertNeutralInputs` first, so a smuggled forbidden signal fails loudly
- * (SIG-UI-027b).
+ * Rank the admissible evidence artifacts for a decision point (SIG-UI-027a).
+ * P37.30 (K7 §5.7, F-485): the list is SUBJECT-SCOPED — only artifacts
+ * bearing on the decision's subject (or its one-hop neighbourhood, via the
+ * export's `subject_neighbours` map) rank, each scored on the best matching
+ * (artifact, subject) pair — never the national unscoped list the pre-repair
+ * code produced. D6 is excluded (§10.5); ties break by `artifact_id` so the
+ * ranking is deterministic. Every emitted score passes `assertFiniteScore` —
+ * a non-finite score fails the build, never silently zero.
  */
 export function recommendEvidence(
   artifacts: readonly EvidenceArtifact[],
   decision: DecisionPoint,
+  neighbours: Record<string, readonly string[]> = {},
 ): RankedArtifact[] {
-  return artifacts
-    .filter((a) => {
-      assertNeutralInputs(a as unknown as Record<string, unknown>);
-      return isAdmissible(a);
-    })
-    .map((artifact) => ({
+  const scope = subjectScope(decision, neighbours);
+  const ranked: RankedArtifact[] = [];
+  for (const artifact of artifacts) {
+    assertNeutralInputs(artifact as unknown as Record<string, unknown>);
+    const matches = matchingScores(artifact, scope);
+    if (!isAdmissible(artifact) && !artifact.subject_scores) continue;
+    if (matches.length === 0) continue;
+    // The score is computed over the strongest matching pair — D then C, ties
+    // lexical — and the entry names every subject the artifact bears through.
+    const best = [...matches].sort(
+      (x, y) =>
+        DIRECTNESS_ORD[x.directness] - DIRECTNESS_ORD[y.directness] ||
+        CURRENCY_ORD[x.currency] - CURRENCY_ORD[y.currency] ||
+        scoreSubject(x).localeCompare(scoreSubject(y)),
+    )[0]!;
+    const score = scoreArtifact(artifact, decision, best);
+    assertFiniteScore(score, artifact.artifact_id);
+    ranked.push({
       artifact,
-      score: scoreArtifact(artifact, decision),
-      breakdown: scoreBreakdown(artifact, decision),
-      contested: artifact.touches_open_contradiction,
-    }))
-    .sort((a, b) => b.score - a.score || a.artifact.artifact_id.localeCompare(b.artifact.artifact_id));
+      score,
+      breakdown: scoreBreakdown(artifact, decision, best),
+      contested: best.touches_open_contradiction ?? artifact.touches_open_contradiction,
+      scored_subjects: [...new Set(matches.map(scoreSubject))].sort(),
+      matched_subject: scoreSubject(best),
+    });
+  }
+  return ranked.sort(
+    (a, b) => b.score - a.score || a.artifact.artifact_id.localeCompare(b.artifact.artifact_id),
+  );
 }
 
 // --- SIG-UI-027c: the exportable citation list -------------------------------

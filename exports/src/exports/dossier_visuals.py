@@ -44,6 +44,7 @@ import time
 from collections.abc import Mapping, Sequence
 from typing import Any
 
+from . import dossier_networks as _dn
 from . import figures as _fig
 from . import static_map as _sm
 from .figures.model import FigureKitError, spec_from_dict
@@ -201,6 +202,18 @@ def build_dossier_visuals(
     placement_results: Sequence[Any] = (),
     sites_href_prefix: str = "/dossier/",
     coverage_verdicts: Mapping[str, str] | None = None,
+    # P37.28 (K6 VIZ-01b): the network-figure inputs — absent, every
+    # dossier's ``networks[]`` stays empty (the slot's typed not-emitted
+    # state; the doc contract is unchanged).
+    labels: Any = None,
+    claim_rows: Sequence[Sequence[Any]] = (),
+    value_claims: Sequence[Any] = (),
+    relevance: Mapping[str, str] | None = None,
+    relevance_fields: Mapping[str, Mapping[str, Any]] | None = None,
+    ancestors: Mapping[str, tuple[str, ...]] | None = None,
+    source_names: Mapping[str, str] | None = None,
+    lineage: Mapping[str, str] | None = None,
+    as_of: Any = None,
 ) -> dict[str, Any]:
     """Emit every dossier's visuals bundle — the one entry point.
 
@@ -216,9 +229,33 @@ def build_dossier_visuals(
 
     docs: dict[str, dict[str, Any]] = {}
     figures_twin: dict[str, list[dict[str, Any]]] = {}
+    figures_k5: dict[str, list[dict[str, Any]]] = {}
     standalone: dict[str, str] = {}
     coverage_entries: dict[str, dict[str, Any]] = {}
     locator_parents: dict[str, Any] = {}
+
+    # P37.28 (K6 VIZ-01b): the once-per-export family graphs the per-dossier
+    # figures slice — the SAME claim sets and the same collectors'
+    # semantics as the national overviews, scoped to each dossier's chain.
+    net_prepared = None
+    net_places: dict[str, Any] = {}
+    if labels is not None and ancestors is not None:
+        net_places = {
+            str(jk): _dn._go.PlaceInfo(
+                name=str(ki.name or jk),
+                slug_path=str(ki.slug_path or ""),
+                level=str(ki.level or ""),
+            )
+            for jk, ki in keyed.keys.items()
+        }
+        net_prepared = _dn.prepare(
+            labels,
+            claim_rows=claim_rows,
+            value_claims=value_claims,
+            relevance=relevance or {},
+            relevance_fields=relevance_fields or {},
+            places=net_places,
+        )
 
     for jkey in sorted(pages):
         info = keyed.keys[jkey]
@@ -326,7 +363,28 @@ def build_dossier_visuals(
             },
             "map": map_block,
             "locator": locator,
-            "networks": [],
+            # P37.28 (K6 VIZ-01b): the four network figures — drawn
+            # bipartite SVGs (wide + narrow) or the typed absence, one
+            # entry per family, never a missing slot.
+            "networks": (
+                _dn.entries_for(
+                    jkey,
+                    info,
+                    net_prepared,
+                    labels=labels,
+                    ancestors=ancestors or {},
+                    places=net_places,
+                    pages=frozenset(pages),
+                    slug_of=lambda k: keyed.keys[k].slug_path,
+                    lineage=lineage or {},
+                    as_of=as_of,
+                    source_names=source_names or {},
+                    release=release,
+                    lexicon=lexicon,
+                )
+                if net_prepared is not None
+                else []
+            ),
             "timeline_items": 0,
         }
         docs[jkey] = doc
@@ -366,6 +424,35 @@ def build_dossier_visuals(
             },
         }
         figures_twin[jkey] = [twin_row]
+        # The network-figure twin rows — metadata + agent-drafted caption +
+        # links, never geometry (K6 §9.2's figures[] contract).
+        for _net in doc["networks"]:
+            if _net.get("status") != "drawn":
+                continue
+            figures_twin[jkey].append(
+                {
+                    "figure_id": _net["figure_id"],
+                    "kind": "network",
+                    "caption": (
+                        f"{_net['title']} in {info.name}. "
+                        f"{_net['edges_drawn']} recorded relationships between "
+                        f"{_net['anchors_drawn']} placed and "
+                        f"{_net['counterparties_drawn']} counterparties, drawn "
+                        f"as a static figure — every node links, every edge "
+                        f"carries its date or 'undated'."
+                    ),
+                    "caption_drafted": (
+                        "agent-drafted (K6 §6.1 composition, labelled — VIZ-02 binds the copy)"
+                    ),
+                    "meta": _net["meta"],
+                    "links": {
+                        "overview": f"/graphs/{_net['overview']}/",
+                        "explorer": _net["explore_href"],
+                        "table": _net["table_href"],
+                    },
+                }
+            )
+        figures_k5[jkey] = _dn.figures_k5_rows(doc["networks"])
         if svg_text is not None and info.level in _STANDALONE_LEVELS:
             standalone[jkey] = _fig.standalone_document(svg_text, lexicon)
 
@@ -411,6 +498,7 @@ def build_dossier_visuals(
     return {
         "docs": docs,
         "figures_twin": figures_twin,
+        "figures_k5": figures_k5,
         "standalone": standalone,
         "locator_svg": loc_svg,
         "locator_index": loc_index,

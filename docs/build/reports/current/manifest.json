@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "ea9b869e90c760f954f7462c6b16dcd672b96d87",
+  "input_commit": "853e6cfa7ca81acaf9a7133fd2730a8d5a0b8335",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "1b827e35898845736024ca95443b702eabc6c594177d949a916ac3cfe71a29a0"
+      "sha256": "ce04900db8b486a5db96eaeb2affc6866bedd72dd27b8e92d6dd0f446b6ce026"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -973,24 +973,32 @@
       "sha256": "bbb1da71e62e45b9e2d15a510f82d36ca6bf96c19a1658caa74df1e59f08977b"
     },
     {
+      "path": "docs/adr/ADR-243-sig-activate-in-place-dossier-map-and-deferred-k1-mount.md",
+      "sha256": "cb2344e86e9ad9ff629142b411672848b555720c3acb51602e491d4bc5820711"
+    },
+    {
+      "path": "docs/adr/ADR-244-dated-decision-predicates-meeting-date-and-the-contract-renewal-triple.md",
+      "sha256": "dda67fdfaedf1693d66e171f2cb45a6d2413291a8b7d28c98f79176033225cdb"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "e176397bc16d78f8dd049c8dbef9682ba377c41bccb7a148d705ce797739c563"
+      "sha256": "1a41a7ca82695fdaef056779f5a8223b564439ba6dee390e21524e11d651fe80"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "52147403d3dd5658b216bb577af112fb872b3aca113226a9a2116a346fd496e5"
+      "sha256": "3c08cd4a94099fb4390fbbbfcc42739b85c7106eab9485672ac2455a96e3f60f"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "15592bea5cae633e19936c416b630c39f0ec988193901e5b035dfe42b44d71ba"
+      "sha256": "4ff0b0682a84adc17d9c8bb9a67b424e735bb60bcb9effd9a993d232eefbe6eb"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "fcc437dd5222d3885f076a1e13b180b6636f01d1e4c9cbf5dc7b83e1c6010b65"
+      "sha256": "8728828987a7afeaf55eaed2236ef98c58a67bfd902bbd760be24e9221ba5158"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "3f623d58dd457bfadac6a3cfa36d539c648acf54a928b394f01bd3d7f164e482"
+      "sha256": "ef2d691a430e875b5b941032293d19b31fb9189cd60eba2448fb4f819576052c"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -1074,7 +1082,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "d9a585527a71b5d1ccea7f98078ec0b938de119b252cc2cfa134fdb12d1d218b"
+      "sha256": "b05287f608a9753459152e6646f73317434975bc92c4dd6e51e4fe2f68b786e0"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -2761,8 +2769,28 @@
       "sha256": "1a09110bab814817a51f83fdda288a604de47a3b2c40dc543921d4201d843f4f"
     },
     {
+      "path": "docs/build/runs/P37.27.md",
+      "sha256": "5a3832a9cab1529431955f2f41231e104f2c02ad86c8ff3b5bdbb5aa96120949"
+    },
+    {
+      "path": "docs/build/runs/P37.28.md",
+      "sha256": "0b269b555730bdb44d00803287958e5c6c0ffaee9f26aab33f571e71ecc5cb18"
+    },
+    {
+      "path": "docs/build/runs/P37.29.md",
+      "sha256": "83228b061d3080e8d5ae0a7e149bbbf8b20572223149c55a2093258fa104bdb1"
+    },
+    {
       "path": "docs/build/runs/P37.3.md",
       "sha256": "87a49c12d0ee25cb52b9f635137b95d5871dba74a710ee02ac9bb7c56a8679a6"
+    },
+    {
+      "path": "docs/build/runs/P37.30.md",
+      "sha256": "8e6c42cb6e8a9ef557b3eaffdbf681049a2f89a7563d08207de3451d56f05c27"
+    },
+    {
+      "path": "docs/build/runs/P37.31.md",
+      "sha256": "d2be5f4709cf43fa27b57110f2115bf7337ac5a1d2ddc6c1e35193b1a448a850"
     },
     {
       "path": "docs/build/runs/P37.4a.md",
@@ -4346,7 +4374,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "1ee6cad83f797042d667001f8ba6be0e0f8e286d455c182b3c312ed82e1d015a"
+      "sha256": "268b991e06f85c7016e487ae0d2e8aae756c538f3a1cd2342994d8f0874f344d"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",

@@ -706,3 +706,93 @@
   font-weight: 700;
   text-decoration: underline;
 }
+
+/* P37.27 (GX-09b) — the explorer's second wave: filter panel, search-to-node,
+ *  the sortable node table and the path answer. */
+.sig-explore-filters {
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+  margin: var(--sig-space-2) 0;
+  padding: var(--sig-space-2) var(--sig-space-3);
+}
+.sig-explore-filters > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.sig-explore-filters__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sig-space-3) var(--sig-space-5);
+  padding-top: var(--sig-space-2);
+}
+.sig-explore-filters fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 10rem;
+}
+.sig-explore-filters legend {
+  font-weight: 600;
+  font-size: var(--sig-step--1);
+  padding: 0;
+}
+.sig-explore-filters label {
+  display: block;
+  font-size: var(--sig-step--1);
+}
+.sig-explore-search {
+  margin: var(--sig-space-2) 0;
+}
+.sig-explore-search__results {
+  list-style: none;
+  margin: var(--sig-space-1) 0 0;
+  padding: 0;
+  max-height: 16rem;
+  overflow-y: auto;
+}
+.sig-explore-table {
+  max-width: 100%;
+}
+.sig-explore-table .sig-explore-sort {
+  background: none;
+  border: 0;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+.sig-explore-table .sig-explore-sort:focus-visible {
+  outline: 3px solid var(--sig-link);
+  outline-offset: 1px;
+}
+
+/* P37.29 (K6 VIZ-04 / SIG-UI-127) — the embedded dossier mount: the canvas
+ * sits on top and the In-view list/filters/selection read BELOW it, never
+ * in a side panel (K6 §5.4 — the list is the keyboard + screen-reader path
+ * and is first in DOM order too). */
+.sig-map-app--embedded .sig-map-app__shell {
+  flex-direction: column;
+}
+.sig-map-app--embedded .sig-map-app__canvas {
+  order: -1;
+  min-height: 22rem;
+}
+.sig-map-app--embedded .sig-map-app__panel {
+  position: static;
+  max-height: none;
+}
+.sig-map-embed__heading {
+  font-size: var(--sig-step-0);
+  margin: 0 0 var(--sig-space-1);
+}
+.sig-map-embed__actions {
+  margin: 0 0 var(--sig-space-2);
+  font-size: var(--sig-step--1);
+}
+@media print {
+  .sig-map-app--embedded,
+  .sig-map-embed__heading,
+  .sig-map-embed__actions {
+    display: none !important;
+  }
+}

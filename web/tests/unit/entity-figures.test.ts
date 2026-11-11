@@ -7,12 +7,12 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import type { EntityRelationItem } from "../../src/lib/entity-page";
 import {
   ENTITY_PAGE_TWIN_CONTRACT_FIXTURE,
   ENTITY_PAGE_TWIN_FIXTURE,
   ENTITY_PAGE_TWIN_POLICY_FIXTURE,
-  type EntityRelationItem,
-} from "../../src/lib/entity-page";
+} from "../../src/lib/entity-page-fixtures";
 import { mergeEntityTwins } from "../../src/lib/entity-pages";
 import {
   assertInlineSvgSafe,

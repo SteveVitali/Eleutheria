@@ -395,8 +395,12 @@ describe("surface × facet conformance (SIG-UI-060)", () => {
       expect.arrayContaining(["sort", "at", "hops"]),
     );
     const graph = checkSurfaceConformance("graph", present);
-    expect(graph.applied).toEqual(expect.arrayContaining(["release", "focus", "view"]));
-    expect(graph.noticed).toEqual(expect.arrayContaining(["q", "sort", "at", "hops"]));
+    // P37.27 (GX-09b): q/sort/hops are applied on the graph surface now.
+    expect(graph.applied).toEqual(
+      expect.arrayContaining(["release", "focus", "view", "q", "sort", "hops"]),
+    );
+    expect(graph.noticed).toEqual(expect.arrayContaining(["at"]));
+    expect(graph.noticed).not.toContain("q");
   });
 
   it("the notice names unapplied facets in the registry's words", () => {
