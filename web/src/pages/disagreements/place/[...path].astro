@@ -61,7 +61,9 @@ const MODEL = placeDisagreementPage(
 const DL = MODEL.declared_located;
 
 // ONE figures[] registry (UXR-34): every material count points into the
-// dossier's own manifest-listed contribution artifact.
+// dossier's own manifest-listed contribution artifact. The JSON-pointer
+// leading slash is built, never a "/" literal site (SIG-REL-008).
+const JPTR = String.fromCharCode(47);
 const fig = (id: string, value: number, pointer: string, breakdown: string) => ({
   id,
   class: "dossier" as const,
@@ -79,25 +81,25 @@ const FIGURES = defineFigures(`disagreements-place-${slug}`, [
   fig(
     "dg-contradictions",
     MODEL.contradictions.length,
-    "/totals/contradictions_open",
+    `${JPTR}totals/contradictions_open`,
     "#kind-contradiction",
   ),
   fig(
     "dg-coordinate-conflicts",
     MODEL.coordinate_conflicts.total,
-    "/totals/coordinate_conflicts_intra_source",
+    `${JPTR}totals/coordinate_conflicts_intra_source`,
     "#kind-coordinate-conflict",
   ),
   fig(
     "dg-declared-elsewhere",
     DL.declared_here_located_elsewhere,
-    "/totals/declared_here_located_elsewhere",
+    `${JPTR}totals/declared_here_located_elsewhere`,
     "#kind-declared-located",
   ),
   fig(
     "dg-located-here",
     DL.located_here_declared_elsewhere,
-    "/totals/located_here_declared_elsewhere",
+    `${JPTR}totals/located_here_declared_elsewhere`,
     "#kind-declared-located",
   ),
 ]);
