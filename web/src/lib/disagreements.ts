@@ -136,8 +136,9 @@ export interface PlaceDisagreementPage {
   declared_located: PlaceDisagreements;
   /** The dossier's own page route (the sideways "dossier section" link). */
   dossier_href: string | null;
-  /** The dossier's sources explorer (the agreeing/disagreeing ledger). */
-  sources_href: string | null;
+  /** The dossier's sources explorer (the agreeing/disagreeing ledger) —
+   *  always emitted alongside the doc the page renders. */
+  sources_href: string;
 }
 
 /** The hub model — three kinds + the per-place roll-up. */
