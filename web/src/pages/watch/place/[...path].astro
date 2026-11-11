@@ -13,6 +13,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import WatchList from "../../../components/WatchList.astro";
 import WatchCoverage from "../../../components/WatchCoverage.astro";
 import { watchContext } from "../../../lib/watch-context";
+import { watchFeedPath } from "../../../lib/watch-feeds";
 import {
   itemsForPlace,
   pageCount,
@@ -85,4 +86,15 @@ const history = items.filter(
       </a>
     </p>
   )}
+
+  <p data-testid="watch-subscribe">
+    Subscribe to {page.unplaced ? "these items" : name}:{" "}
+    <a href={withBase(watchFeedPath(`place/${page.path}`, "ics"))} data-testid="watch-subscribe-ics">iCal</a>
+    {" · "}
+    <a href={withBase(watchFeedPath(`place/${page.path}`, "xml"))} data-testid="watch-subscribe-rss">RSS</a>
+    {" · "}
+    <a href={withBase(watchFeedPath(`place/${page.path}`, "json"))} data-testid="watch-subscribe-json">JSON Feed</a>
+    {" — exists even with 0 items (see the "}
+    <a href={withBase("watch/feeds/")}>feed directory</a>)
+  </p>
 </BaseLayout>

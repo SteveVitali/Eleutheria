@@ -3,26 +3,43 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// P36.59 (K7 WX-04a): `/watch/feeds/` — the subscription directory: every
-// feed this release emits, plus the how-to for calendar apps, feed readers
-// and RSS-to-email relays. SIG keeps no email list and no accounts — every
-// subscription is a pull feed the reader controls (W-P5). The per-place v2
-// feed set (every dossier place, empty or not — D-K7-5) is the feeds row's
-// surface (WX-04b); this directory lists only what the build emits today,
-// never a planned route.
+// P36.59 (K7 WX-04a) + P37.34 (K7 WX-04b, SIG-WATCH-005/006):
+// `/watch/feeds/` — the subscription directory: every feed this release
+// emits — the `all` feed, every place page's feed (empty or not, D-K7-5),
+// the six kind scopes, the present vendor/technology facets and the OPML
+// bundle — as iCal (.ics), RSS 2.0 (.xml) and JSON Feed 1.1 (.json), plus
+// the how-to for calendar apps, feed readers and RSS-to-email relays. SIG
+// keeps no email list and no accounts — every subscription is a pull feed
+// the reader controls (W-P5). The legacy per-jurisdiction renewal feeds
+// (v1 .ics/.xml, keyed on the derived decision date) still emit and list
+// last, honestly named.
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import EmptyState from "../../../components/EmptyState.astro";
-import { getWatch } from "../../../lib/data";
+import WatchFeedLinks from "../../../components/WatchFeedLinks.astro";
+import { watchContext } from "../../../lib/watch-context";
+import {
+  feedScopes,
+  scopeItems,
+  WATCH_OPML_PATH,
+} from "../../../lib/watch-feeds";
 import {
   itemsForJurisdiction,
   watchICalPath,
   watchJurisdictions,
   watchRssPath,
 } from "../../../lib/watch";
+import { getWatch } from "../../../lib/data";
 import { withBase } from "../../../lib/paths";
 
+const { envelope, pages } = watchContext();
+const scopes = feedScopes(envelope, pages);
+const allScope = scopes.filter((s) => s.scope === "all");
+const placeScopes = scopes.filter((s) => s.scope === "place");
+const kindScopes = scopes.filter((s) => s.scope === "kind");
+const vendorScopes = scopes.filter((s) => s.scope === "vendor");
+const techScopes = scopes.filter((s) => s.scope === "technology");
 const WATCH_ITEMS = getWatch();
 const jurisdictions = watchJurisdictions(WATCH_ITEMS);
+
 ---
 
 <BaseLayout title="Watch feeds" path={withBase("watch/feeds/")}>
@@ -32,33 +49,82 @@ const jurisdictions = watchJurisdictions(WATCH_ITEMS);
     no accounts</strong> and sends nothing. To route a feed to email, use any
     RSS-to-email relay you choose; SIG does not endorse a vendor.
   </p>
+  <p data-copy="WF-01">
+    Every feed exists even when it lists zero items — subscribe now and items
+    appear as SIG records them.
+  </p>
 
-  <h2 id="feeds-heading">Feeds this release emits</h2>
-  {jurisdictions.length === 0 && <EmptyState surface="watchSubscriptions" />}
+  <h2 id="feeds-heading">Every feed this release emits</h2>
+  <p>
+    Three formats per scope: iCal (<code>.ics</code>, for calendar apps), RSS 2.0
+    (<code>.xml</code>, for feed readers) and JSON Feed 1.1 (<code>.json</code>,
+    machine-readable). The <a data-testid="feed-opml" href={withBase(WATCH_OPML_PATH)}>OPML bundle</a>{" "}
+    imports the whole set into a feed reader at once.
+  </p>
   <ul class="sig-feed-list" aria-labelledby="feeds-heading" data-testid="feed-list">
-    {jurisdictions.map((j) => (
-      <li data-testid="feed-row" data-jurisdiction={j}>
-        <strong>{j}</strong> — {itemsForJurisdiction(WATCH_ITEMS, j).length} dated item(s):{" "}
-        <a data-testid="feed-ics" href={withBase(watchICalPath(j).replace(/^\//, ""))}>iCal (.ics)</a>
-        {" · "}
-        <a data-testid="feed-rss" href={withBase(watchRssPath(j).replace(/^\//, ""))}>RSS (.xml)</a>
+    {allScope.map((s) => (
+      <li data-testid="feed-row" data-scope={s.path}>
+        <strong data-copy="WF-02">All upcoming decisions</strong> — {scopeItems(envelope, pages, s.path)?.items.length ?? 0} item(s): <WatchFeedLinks scopePath={s.path} />
+      </li>
+    ))}
+    {placeScopes.map((s) => (
+      <li data-testid="feed-row" data-scope={s.path}>
+        <a href={withBase(s.pagePath)}>{s.title.replace("SIG watch — ", "")}</a>{" "}
+        — {scopeItems(envelope, pages, s.path)?.items.length ?? 0} item(s): <WatchFeedLinks scopePath={s.path} />
+      </li>
+    ))}
+    {kindScopes.map((s) => (
+      <li data-testid="feed-row" data-scope={s.path}>
+        <a href={withBase(s.pagePath)}>{s.title.replace("SIG watch — ", "")}</a>{" "}
+        — {scopeItems(envelope, pages, s.path)?.items.length ?? 0} item(s): <WatchFeedLinks scopePath={s.path} />
+      </li>
+    ))}
+    {vendorScopes.map((s) => (
+      <li data-testid="feed-row" data-scope={s.path}>
+        <a href={withBase(s.pagePath)}>{s.title.replace("SIG watch — ", "")}</a>{" "}
+        — {scopeItems(envelope, pages, s.path)?.items.length ?? 0} item(s): <WatchFeedLinks scopePath={s.path} />
+      </li>
+    ))}
+    {techScopes.map((s) => (
+      <li data-testid="feed-row" data-scope={s.path}>
+        <a href={withBase(s.pagePath)}>{s.title.replace("SIG watch — ", "")}</a>{" "}
+        — {scopeItems(envelope, pages, s.path)?.items.length ?? 0} item(s): <WatchFeedLinks scopePath={s.path} />
       </li>
     ))}
   </ul>
-  <p>
-    These are the renewal-watch subscriptions keyed on each contract's derived
-    decision date. A feed for the full decision calendar — per place, including
-    places with zero items, as iCal/RSS/JSON Feed plus an OPML bundle — ships
-    with the feeds surface (the operator's D-K7-5 answer: every place, so
-    subscribers can come early).
+  <p data-copy="WF-03">
+    An item page's "add to calendar" link downloads a one-event calendar for
+    that decision alone.
   </p>
 
   <h2>How to subscribe</h2>
   <ul>
-    <li><strong>Calendar app</strong> — copy an <code>.ics</code> link into your app's "subscribe to calendar" (or "add by URL") field; the app refreshes it on its own schedule.</li>
-    <li><strong>Feed reader</strong> — paste an <code>.xml</code> link into any RSS reader; new items appear as the release publishes them.</li>
+    <li><strong>Calendar app</strong> — copy an <code>.ics</code> link into your app's "subscribe to calendar" (or "add by URL") field; the app refreshes it on its own schedule. A withdrawn or moved decision is removed from the calendar automatically.</li>
+    <li><strong>Feed reader</strong> — paste an <code>.xml</code> link into any RSS reader, or import the <a href={withBase(WATCH_OPML_PATH)}>OPML bundle</a> to subscribe to every place at once; new items appear as the release publishes them.</li>
     <li><strong>Email</strong> — an RSS-to-email relay you control can mail feed items to you; SIG sends nothing itself.</li>
+    <li><strong>Machine-readable</strong> — the <code>.json</code> form is JSON Feed 1.1 for scripts and automation.</li>
   </ul>
+
+  {jurisdictions.length > 0 && (
+    <>
+      <h2 id="legacy-heading">Renewal-watch subscriptions (contract-only)</h2>
+      <p data-copy="WF-04">
+        These older per-jurisdiction feeds cover contract renewal decisions
+        only, keyed on each contract's derived decision date; the scoped
+        feeds above carry every decision kind.
+      </p>
+      <ul class="sig-feed-list" aria-labelledby="legacy-heading" data-testid="legacy-feed-list">
+        {jurisdictions.map((j) => (
+          <li data-testid="legacy-feed-row" data-jurisdiction={j}>
+            <strong>{j}</strong> — {itemsForJurisdiction(WATCH_ITEMS, j).length} dated item(s):{" "}
+            <a data-testid="legacy-feed-ics" href={withBase(watchICalPath(j).replace(/^\//, ""))}>iCal (.ics)</a>
+            {" · "}
+            <a data-testid="legacy-feed-rss" href={withBase(watchRssPath(j).replace(/^\//, ""))}>RSS (.xml)</a>
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
 
   <p><a href={withBase("watch/")}>Upcoming decisions →</a></p>
 </BaseLayout>
