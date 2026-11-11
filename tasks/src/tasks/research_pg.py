@@ -229,7 +229,7 @@ def _subject_jurisdictions(conn: Any, subject_ids: Iterable[str]) -> dict[str, s
             "SELECT DISTINCT ON (c.subject_id) c.subject_id::text, c.object_entity::text"
             "  FROM claim c"
             "  JOIN entity_identifier ei ON ei.entity_id = c.object_entity"
-            "   AND ei.scheme = 'sig.connector.subject' AND ei.value LIKE 'jurisdiction:%'"
+            "   AND ei.scheme = 'sig.connector.subject' AND ei.value LIKE 'jurisdiction:%%'"
             " WHERE c.subject_id::text = ANY(%s) AND c.object_entity IS NOT NULL"
             "   AND upper_inf(c.sys_period)"
             " ORDER BY c.subject_id, lower(c.sys_period) DESC, c.claim_id DESC",
