@@ -42,8 +42,9 @@ test.describe("/disagreements/ — the hub", () => {
     await expect(declared).toContainText("Harris County");
     // place links resolve
     await expect(page.getByTestId("place-link").first()).toBeVisible();
-    const hubLinks = page.getByRole("link", { name: "Oklahoma" }).first();
-    await expect(hubLinks).toHaveAttribute("href", "/disagreements/place/usa/ok/");
+    await expect(
+      page.getByTestId("place-link").locator('a[href="/disagreements/place/usa/ok/"]').first(),
+    ).toBeVisible();
   });
 });
 

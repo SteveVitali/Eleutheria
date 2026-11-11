@@ -816,17 +816,18 @@ return (
           — the disagreement stays visible on both sides.
         </p>
       )}
-      {/* P37.38 (CX-01, UXR-21): "disagreements for the place" — the link
-          resolves only where a disagreements page was actually emitted (one
-          per sig.dossier-sources/1 doc), never a dead link (R-6). */}
-      {DG_PAGES.has(dossier.slug) && (
-        <p class="sig-table-note" data-testid="dossier-disagreements-link">
-          <a href={withBase(`disagreements/place/${dossier.slug}/`)}>
-            All disagreements for {dossier.display_name ?? dossier.name ?? dossier.jurisdiction} →
-          </a>
-        </p>
-      )}
     </section>
+  )}
+
+  {/* P37.38 (CX-01, UXR-21): "disagreements for the place" — the link
+      resolves only where a disagreements page was actually emitted (one
+      per sig.dossier-sources/1 doc), never a dead link (R-6). */}
+  {DG_PAGES.has(dossier.slug) && (
+    <p class="sig-table-note" data-testid="dossier-disagreements-link">
+      <a href={withBase(`disagreements/place/${dossier.slug}/`)}>
+        All disagreements for {dossier.display_name ?? dossier.name ?? dossier.jurisdiction} →
+      </a>
+    </p>
   )}
 </BaseLayout>
 );})()}
