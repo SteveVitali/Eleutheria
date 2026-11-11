@@ -928,6 +928,11 @@ DECLARED_UNPRODUCED_READ_KEYS: dict[str, str] = {
     # (HG-08: never a live poll). Unbound → the zeroed ledger, the honest
     # "measured nothing yet", not a missing artifact.
     "osm_changeset_feeds": "operator_bound_replay",
+    # P37.36 (TX-12 / SIG-TRANSP-020): ``raw_hrefs`` is the raw-archive's
+    # served digest → distribution-host URL map — produced by the archive
+    # builder (`exports.raw_archive.served_href_map`), never a spine query;
+    # absent → hrefs stay None (a label never implies a route).
+    "raw_hrefs": "raw_archive_index",
 }
 
 
