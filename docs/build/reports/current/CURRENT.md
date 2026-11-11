@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `7381362e579d1e47872c930fdca8431f696339a0` · inputs hashed: 1247 · wall-clock receipt: `receipt.json`
+> input_commit: `24df1a51fbf0a69c3403bc28c2773fd6fd525b01` · inputs hashed: 1247 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -47,7 +47,7 @@
 | P34.39b | three monitoring legs (first-fire wave + `camreg_peel_on`) | `implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true` |
 | P36.2 | D-P36.2-1 | `implement-spec spec=docs/tickets/350_P36.2__rights-flip-decline-batch-and-terms-capture.md live_verification=true` |
 | P34.40 | dark serving-topology roll — L1 `sig-web` digest roll, L2 `/v1/*` URL-map → `sig-api`; halves landed | `implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true` (L1, then L2) |
-| P34.42b | jobs IAM leg (F-272 jobs + `roles/editor` removal); `live`-1 stopped at 88/100; `live`-2 on `live:P35.1a1` poststate | `implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` · `r11/P34.42b-live-2` post-`live:P35.1a1… |
+| P34.42b | jobs IAM leg (F-272 jobs + `roles/editor` removal); `live`-1 stopped at 88/100; `live`-2 on `live:P35.1a1` poststate | `implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` |
 | P34.43 | L1 exec-host + `sig_audit` legs + L2 `sig_recovery` login (SIG-CONF-013); halves landed | `implement-spec spec=docs/tickets/253_P34.43__execution-host-and-least-privilege-db-logins.md live_verification=true` |
 | P34.49 | L1 read-only scan + L2 protective-seal leg (F-406, I7 S1–S9, SIG-PUB-002; ADR-203 deny set) — halves landed | `implement-spec spec=docs/tickets/254_P34.49__part-viii-at-rest-audit.md live_verification=true` (L1 scan, then L2 seal) |
 | P34.44b | L1 `sig-quality-probe` job+trigger + L2 baseline run + `apply-baselines` write | `implement-spec spec=docs/tickets/256_P34.44b__quality-baseline-run-and-nightly-probe.md live_verification=true` |
