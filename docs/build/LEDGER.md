@@ -12,7 +12,7 @@ nextTicket: P37.36
 lastCompleted: P37.35
 blockedOn: (nothing)
 pauseRequested: false
-returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.70,P37.71
+returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.70,P37.71
 manifest: docs/tickets/00_MANIFEST.md
 canonicalSpec: docs/2_canonical_design_spec.md
 memoryRoot: docs/build
@@ -494,6 +494,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | P37.14 | D-P37.14-1 | no gate — reviewed `session` data for seed instruments (never regex) + an exports consumer of `publishable` | a data-review ticket or an export honouring `publishable=false` | a data-review ticket or exports consumer of `publishable` — `ADR-240` revisit trigger (b) |
 | P37.15 | queued leg | GATE-G6 §4 11D OM-20 list (expiry: GATE-ACCEPT-R11); x 03:00-06:30Z + batch-window-day6T00:00Z-day13T12:00Z | `SIG_GCP_PROJECT`+ADC | `implement-spec spec=docs/tickets/437_P37.15__scheduled-parser-canary.md live_verification=true` |
 | P37.20 | D-P37.20-1 | OM-20; x 03:00-06:30Z + day6T00:00Z-day13T12:00Z; verbatim `SIG_BBOX_AUTHOR` | verbatim go + ADC + `SIG_GCP_PROJECT` | implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true |
+| P37.36 | raw-ok archive write leg: raw/<multihash> + raw/index.json over the hosted store (P8 screen, reserialisation as new captures) → mirror/origin push → withdrawal rehearsal | `hosted` archive write + publish; NEVER pre-authorised (OM-20, Part VIII-screened families) — operator explicit verbatim go only; AR-3+AR-2 (x 03:00-06:30Z + AR-3 batch windows); exposure rides P37.65 HG-11 | the operator's verbatim go (SIG_RAWARCHIVE_AUTHOR env-only), ADC + SIG_GCP_PROJECT present; kill switch = R2_MIRROR_RUNBOOK.md | `implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` (archive write + push + rehearsal) |
 
 Sources: OPERATIONAL_READINESS §(f3) + `UNIVERSE_DISPOSED.csv` + plan §9.2/§8.6 + `data/round11_plan.csv`. Non-row homes: 9 ticket + 9 later-phase + 7 decision + 2 already-done. Keying (T5 γ) = LANDED ticket (pre-P36.49 cells archived `reports/memory-repair/`).
 
