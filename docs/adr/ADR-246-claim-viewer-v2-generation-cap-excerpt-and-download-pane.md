@@ -1,6 +1,6 @@
 # ADR-246 — Claim viewer v2: document-genre scope, the download pane, the excerpt gate, and `quotation_permitted` (P37.37)
 
-- Date: 2026-11-12
+- Date: 2026-11-11
 - Status: accepted
 - Ticket: P37.37 (K8 EV-03, manifest row 461 — on `r11/P37.37-claim-viewer-v2`)
 - Base: `r11/P37.36-raw-archive`
