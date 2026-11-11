@@ -36,6 +36,7 @@ import type { StatementRow } from "./provenance-panel";
 import type { DossierSourcesDoc, DossierSourceRow } from "./dossier-sources";
 import type { ClaimView } from "./evidence-viewer";
 import type { EntityLabelRow } from "./entity-page";
+import { getSourcePage } from "./source-page";
 
 // ---------------------------------------------------------------------------
 // Routes (sans leading slash — templates join withBase()).
@@ -234,13 +235,19 @@ export function buildContradictions(
       .map(([claimId, stmt]) => {
         const view = viewByClaim.get(claimId);
         const src = stmt?.source_id ?? null;
+        // The display name resolves through the registry — a bare source id
+        // is never shown (SIG-JUR-D08/SIG-DSRC-D02): statement's own name,
+        // then the source page's registry name, else the named absence.
+        const sourceName =
+          stmt?.source_name ??
+          (src !== null ? (getSourcePage(src)?.row.name ?? null) : null);
         return {
           claim_id: claimId,
           label:
             view !== undefined ? `${view.claim_label} = ${String(view.value)}` : null,
           claim_href: view !== undefined ? `evidence/claim/${view.claim_id}/` : null,
           source_id: src,
-          source_name: stmt?.source_name ?? null,
+          source_name: sourceName,
           source_href:
             src !== null && sourcePageIds.has(src) ? `sources/${src}/` : null,
           observed_at: stmt?.observed_at ?? null,
@@ -281,7 +288,7 @@ export function placeDisagreementPage(
     .filter((s) => s.coordinate_conflicts_intra_source > 0)
     .map((s: DossierSourceRow) => ({
       source_id: s.source_id,
-      name: s.name,
+      name: s.name ?? (getSourcePage(s.source_id)?.row.name ?? s.source_id),
       source_href: s.source_page ? s.source_page.replace(/^\/+/, "") : null,
       records: s.coordinate_conflicts_intra_source,
     }));
