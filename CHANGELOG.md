@@ -24,6 +24,24 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.37 — claim viewer v2 + real capture diff (K8 EV-03, SIG-EVUI-009,
+  SIG-EVUI-004 cited; SIG-UI-028/029 amended; ADR-246):** `evidence.json`
+  generates `claim_views` for every document-genre claim with an
+  `actual_capture` binding (the recorded document classes — datasets and run
+  records stay anchors/statements), capped at a published 20,000 per
+  release; `build.claim_views` carries `cap`/`eligible`/`emitted`/`overflow`
+  and `/evidence/` states it verbatim. The claim-view pane is lane × tier ×
+  Part VIII: a new `download` pane serves raw-ok captures whose bytes the
+  raw archive carries (`served_href_map`); `locator_only`/`metadata_only`
+  panes carry the typed states lanes that forbid bytes; `text_span` fires
+  only where the declared `capture_texts` seam supplies stored text and the
+  recorded locator resolves. A locator always; a recorded excerpt publishes
+  ≤300 chars only where recorded terms permit quotation (new
+  `[redistribution].quotation_permitted` marker, fail-closed). The artifact
+  page's field-by-field diff computes only over real capture pairs'
+  recorded `fields` (predicate → verbatim `raw_value`) — a missing second
+  capture is a typed absence, never a fabricated pair.
+
 - **P37.36 — raw-ok archive lane (J3 TX-12, SIG-TRANSP-020, D-J3-1 [B-19]):**
   `exports/raw_archive.py` — raw captured bytes publish only for `raw-ok`
   sources after the Part VIII byte screen (`raw/<multihash>` objects +
