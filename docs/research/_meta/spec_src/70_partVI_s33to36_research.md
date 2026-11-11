@@ -70,6 +70,16 @@ outline's (OL-12-01…07); the remainder are required additions.
 | 32 | Candidate asset awaiting verification | `CandidateAsset` corroborated, unpromoted | field_mapper |
 | 33 | **Contract amendment chain incomplete** | A contract's terms are contradicted by a later source (extended `end_date`, changed quantity, exercised renewal) with no `amends_contract` child on file | records_requester |
 | 34 | **Sharing snapshot stale** | The newest `configured_access` observation for a deployment exceeds the FAST volatility threshold | records_requester |
+| 35 | **Retention unknown** | A tracked retention predicate's value is absent from the subject's record (routed by the predicate→task table, never substring matching) | records_requester |
+| 36 | **Sharing unknown** | A tracked sharing predicate's value is absent from the subject's record (routed by the predicate→task table) | records_requester |
+
+**Round-11 amendment (K11 RQ-02 / P37.35; recorded 2026-11-11).** Rows 35 and 36 land the two
+types the committed `gap_routing.toml` predicate table declares: `retention_unknown` and
+`sharing_unknown`, the records-obtainable gaps the retired substring router mis-sent to
+`missing_contract`. The catalog enumerates 36. Per-object field gaps are not research tasks
+(D-K11-1, answered "as recommended"): OSM-mappable field gaps aggregate into mapping campaigns
+and registry-only field gaps stay coverage metrics; a per-camera `coverage_hole` row minted
+under the old routing is superseded by disposition, never deleted.
 
 **SIG-TASK-004 (MUST).** Every contradiction detector (§31) MUST map to a task type. Detection
 without a route to resolution is just an alarm.

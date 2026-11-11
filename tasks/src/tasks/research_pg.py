@@ -397,11 +397,7 @@ def _insert_task(conn: Any, task: ResearchTask, *, with_predicates: bool) -> boo
     if with_predicates:
         params.append(list(task.predicate_ids) or None)
     row = conn.execute(
-        "INSERT INTO research_task "
-        + cols
-        + " VALUES ("
-        + placeholders
-        + ") "
+        "INSERT INTO research_task " + cols + " VALUES (" + placeholders + ") "
         "ON CONFLICT (task_type, subject_id) DO NOTHING "
         "RETURNING task_id",
         params,

@@ -463,11 +463,7 @@ def _coverage_candidates(
         per_object = subject is not None and subject_class in peer_types
         routed = routing.get(predicate)
         lane = str(getattr(routed, "lane", "") or "")
-        place = (
-            str(jurisdiction)
-            if jurisdiction is not None
-            else jurisdictions.get(str(subj))
-        )
+        place = str(jurisdiction) if jurisdiction is not None else jurisdictions.get(str(subj))
         if per_object and lane == "campaign":
             out.append(
                 _CoverageRoute(
@@ -712,9 +708,7 @@ def run_detectors(
         # The task records the predicate(s) it seeks (SIG-RQ-005); a dedup
         # merge unions the asserted set in, never a re-guess.
         _preds = facts.get("predicate_ids")
-        pred_ids = tuple(
-            str(p) for p in (_preds if isinstance(_preds, (list, tuple)) else ()) if p
-        )
+        pred_ids = tuple(str(p) for p in (_preds if isinstance(_preds, (list, tuple)) else ()) if p)
         if pred_ids:
             task.predicate_ids = tuple(sorted(set(task.predicate_ids) | set(pred_ids)))
         if task.task_id in seen:

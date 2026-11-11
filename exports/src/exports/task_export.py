@@ -489,6 +489,7 @@ def build_queue(
     lookup = _trigger_lookup(raw)
     peer_types = _peer_entity_types()
     out = QueueBuild()
+    _card_coverage_refs: set[str] = set()  # coverage ids a card member already counts
 
     # -- pass 1: enrich + lane ------------------------------------------------ #
     field_gap_members: list[dict[str, Any]] = []  # (card, coverage row, route)
@@ -510,7 +511,10 @@ def build_queue(
             if pred:
                 predicate_ids = [str(pred)]
             card["trigger"] = {"kind": kind, "ref": ref, "detail": detail}
-        card["predicate_ids"] = predicate_ids
+        # P37.35: the row's recorded predicate_ids win (SIG-RQ-005 — the set
+        # the task seeks); the trigger-resolved predicate is the fallback.
+        stored = card.get("predicate_ids")
+        card["predicate_ids"] = [str(p) for p in stored] if stored else predicate_ids
 
         # recorded state + provenance the detail page's History block reads.
         card["status"] = str(card.get("status") or "generated")
@@ -567,6 +571,13 @@ def build_queue(
             card["place_basis"] = "recorded" if recorded_jur else _UNPLACED
         card["place"] = _place_of(jkey, recorded_jur, keyed)
 
+        # P37.35 (RQ-02): a closed/invalidated or superseded row is not open
+        # work — it leaves every public lane (the row stays on the spine for
+        # history; the campaign/metric gap it named still aggregates below
+        # from the materialized coverage rows themselves).
+        if card["status"] in ("closed", "invalidated") or card.get("disposition") == "superseded":
+            continue
+
         # lane (SIG-RQ-006 / D-K11-1): a per-object coverage field gap follows
         # the routing table — OSM-mappable predicates aggregate into campaigns;
         # registry-only fields stay in coverage metrics, not the queue.
@@ -582,6 +593,7 @@ def build_queue(
             if routed is not None and routed.lane in ("campaign", "metric"):
                 lane = routed.lane
                 field_gap_members.append({"card": card, "coverage": trigger_row, "route": routed})
+                _card_coverage_refs.add(str(trigger_row.get("coverage_id") or ref))
         card["lane"] = lane
         if lane == "metric":
             out.metric_members += 1
@@ -599,6 +611,58 @@ def build_queue(
         sclass = str(member["coverage"].get("subject_class") or "")
         place_key = (card.get("place") or {}).get("key")
         groups.setdefault((place_key, pred, sclass), []).append(member)
+
+    # P37.35 (RQ-02): campaigns aggregate from the materialized coverage rows
+    # themselves — the per-object gap set, independent of which research_task
+    # rows were minted (the superseded per-camera rows stay history). A subject
+    # already carried by a card member is never double-counted.
+    for cov in raw.get("materialized_coverage") or ():
+        if not isinstance(cov, Mapping):
+            continue
+        if str(cov.get("absence_kind") or "") not in ("not_researched", "searched_not_found"):
+            continue
+        sclass = str(cov.get("subject_class") or "")
+        subj = str(cov.get("subject_id") or "")
+        if sclass not in peer_types or not subj:
+            continue
+        if str(cov.get("coverage_id") or "") in _card_coverage_refs:
+            continue  # a card member already counts this gap — never double
+        pred = str(cov.get("predicate_id") or "")
+        routed = routing.get(pred)
+        if routed is None or routed.lane != "campaign":
+            if routed is not None and routed.lane == "metric":
+                out.metric_members += 1
+            continue
+        jur = str(cov.get("jurisdiction_id") or "")
+        jkey = _jkey_of(jur, label_registry, keyed, slug_map)
+        if not jkey:
+            row = label_registry.get(subj)
+            if row is not None and row.place_jkey:
+                jkey = str(row.place_jkey)
+            else:
+                jkey = leaf_by_subject.get(subj)
+        label, url, _sk = _subject_label(subj, label_registry)
+        groups.setdefault((jkey, pred, sclass), []).append(
+            {
+                "coverage": cov,
+                "card": {
+                    "lane": "campaign",
+                    "subject_id": subj,
+                    "subject_label": label,
+                    **({"subject_url": url} if url else {}),
+                    "coverage_id": str(cov.get("coverage_id") or ""),
+                },
+            }
+        )
+    for members in groups.values():
+        seen_subj: set[str] = set()
+        deduped: list[dict[str, Any]] = []
+        for m in members:
+            s = str(m["card"].get("subject_id") or "")
+            if s and s not in seen_subj:
+                seen_subj.add(s)
+                deduped.append(m)
+        members[:] = deduped
 
     campaign_entries: list[dict[str, Any]] = []
     for (place_key, pred, sclass), members in sorted(

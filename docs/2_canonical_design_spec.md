@@ -5351,6 +5351,16 @@ outline's (OL-12-01…07); the remainder are required additions.
 | 32 | Candidate asset awaiting verification | `CandidateAsset` corroborated, unpromoted | field_mapper |
 | 33 | **Contract amendment chain incomplete** | A contract's terms are contradicted by a later source (extended `end_date`, changed quantity, exercised renewal) with no `amends_contract` child on file | records_requester |
 | 34 | **Sharing snapshot stale** | The newest `configured_access` observation for a deployment exceeds the FAST volatility threshold | records_requester |
+| 35 | **Retention unknown** | A tracked retention predicate's value is absent from the subject's record (routed by the predicate→task table, never substring matching) | records_requester |
+| 36 | **Sharing unknown** | A tracked sharing predicate's value is absent from the subject's record (routed by the predicate→task table) | records_requester |
+
+**Round-11 amendment (K11 RQ-02 / P37.35; recorded 2026-11-11).** Rows 35 and 36 land the two
+types the committed `gap_routing.toml` predicate table declares: `retention_unknown` and
+`sharing_unknown`, the records-obtainable gaps the retired substring router mis-sent to
+`missing_contract`. The catalog enumerates 36. Per-object field gaps are not research tasks
+(D-K11-1, answered "as recommended"): OSM-mappable field gaps aggregate into mapping campaigns
+and registry-only field gaps stay coverage metrics; a per-camera `coverage_hole` row minted
+under the old routing is superseded by disposition, never deleted.
 
 **SIG-TASK-004 (MUST).** Every contradiction detector (§31) MUST map to a task type. Detection
 without a route to resolution is just an alarm.
@@ -7452,7 +7462,7 @@ test; rationale templates; `Contradiction`; the workflows of §29.
 ### Phase 10 — Research-task generation
 
 **Acceptance criteria.**
-- [ ] All 34 task types implemented, each with a testable closing condition (the §33.2 catalog enumerates 34: the outline's seven plus the required additions; ADR-040).
+- [ ] All 34 task types implemented, each with a testable closing condition (the §33.2 catalog enumerates 34: the outline's seven plus the required additions; ADR-040). **Round-11 amendment (P37.35; recorded 2026-11-11):** the §33.2 catalog enumerates 36 — rows 35/36 (`retention_unknown`, `sharing_unknown`) landed under K11 RQ-02; the count assertion reads "all 36 task types implemented".
 - [ ] Every contradiction detector maps to a task.
 - [ ] `resolved_no_evidence_exists` writes a `CoverageRecord`.
 - [ ] Tasks auto-invalidate when their detector stops firing.
@@ -10549,6 +10559,7 @@ R10-A6 and every landed ADR body above are unchanged.
 | R11-X1 | Part XII, §56 (new); §0.3 | Round-11 contract extension: SIG-MEM-005…012, SIG-ENG-040…046, SIG-OPS-001…012, SIG-STORE-048, SIG-SEC-007…011, SIG-REL-001…015 and SIG-CONF-001…014 — 62 new ids, append-only, draft → final map in `docs/build/planning/2026-09-30-next-phase/stageB/T1_id_map.csv`; `SIG-OPS-*` opened and the `REL` and `CONF` families registered in §0.3. The transparency and UX families are appended later by their planning rows (§56.8) | plan §6.1–§6.2 (ratified at GATE-P); ADR-146…150, ADR-152…154 |
 | R11-X2 | §56.10 (new); §0.3 | Transparency family: `SIG-TRANSP-001`…`SIG-TRANSP-043` — 43 new ids, append-only, carrying J3 §11 D01–D25 as amended by K9 §10 D26–D34 and K10 §18 D35–D43 (adopted by K13's UXR-A10); draft → final map in `docs/build/reports/plan-11b/TRANSP_id_map.csv`; `TRANSP` registered in §0.3. D26–D43 are written once here — PLAN-11C cites the final ids (§56.8). The K13 UX set itself is still appended by PLAN-11C | plan §6.2 (ratified at GATE-P); row 239 (PLAN-11B); ADR-162 |
 | R11-X3 | §56.11 (new); §0.3 | K13 public-web user-experience family: the UXR-01…38 synthesis and the adopted K0–K14 drafts — 174 new ids, append-only: `SIG-UI-051`…`SIG-UI-156`, `SIG-GEO-014`, `SIG-EXPORT-014`–`015`, and the new prefixes `SIG-SRCH-001`…`014`, `SIG-JUR-001`…`012`, `SIG-DSRC-001`…`009`, `SIG-WATCH-001`…`010`, `SIG-EVUI-001`…`010` and `SIG-RQ-001`…`010` registered in §0.3; draft → final map in `docs/build/reports/plan-11c/K13_id_map.csv`. UXR-A10 and UXR-A13 adopt by citation — SIG-TRANSP-001…043 (§56.10) and SIG-CONF-001/005/011 (§56.7) are written once, there. The five level-unmarked drafts (SIG-GEO-DM10, SIG-UI-D20, SIG-UI-D23, SIG-UI-D33, SIG-SRCH-D14) land as MUST; the basis is recorded in the map and §56.11 | plan §5.6, §6.2 (ratified at GATE-P); row 340 (PLAN-11C) |
+| R11-X4 | §33.2 (rows 35/36 appended); §52 Phase-10 AC | Detector routing + mapping campaigns: `retention_unknown` and `sharing_unknown` join the catalog (36 types) — the two task types `gap_routing.toml` declared catalog-pending at P36.58; the Phase-10 AC count reads "all 36 task types". Per-object field gaps are not research tasks (D-K11-1 "as recommended"): campaign-lane gaps aggregate into mapping campaigns, registry-only gaps stay coverage metrics, and a persisted `coverage_hole` row the new routing replaces is superseded by disposition — append-only, never a delete | D-K11-1 ("as recommended"); K11 RQ-02; row 459 (P37.35); ADR-245 |
 
 ### G.7.2 Waivers adopted by the operator
 
