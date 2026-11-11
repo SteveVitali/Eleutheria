@@ -9,6 +9,7 @@
 // watch build stamp and `pubDate` = `first_seen` (never the decision date).
 import type { APIRoute, GetStaticPaths } from "astro";
 import { watchContext } from "../../../lib/watch-context";
+import { exportBundleStamp } from "../../../lib/data";
 import {
   feedBuiltAt,
   feedScopes,
@@ -21,6 +22,11 @@ const CTX = watchContext();
 const SITE = import.meta.env.SITE ?? "https://surveillancegraph.org";
 
 const abs = (path: string): string => new URL(withBase(path), SITE).toString();
+// SIG-WATCH-006: the envelope's own stamp wins; a bare-array pre-P35.43
+// watch.json (stripped envelope) falls back to the bundle's recorded
+// datapackage `created` — a real artifact stamp, never a wall clock.
+const feedBuiltAtOrBundle = (): string =>
+  feedBuiltAt(CTX.envelope) || exportBundleStamp() || "";
 
 const SCOPES = feedScopes(CTX.envelope, CTX.pages);
 
@@ -36,7 +42,7 @@ export const GET: APIRoute = ({ params }) => {
     selfUrl: abs(`watch/feeds/${scope}.xml`),
     pageUrl: abs(resolved.pagePath),
     items: resolved.items,
-    builtAt: feedBuiltAt(CTX.envelope),
+    builtAt: feedBuiltAtOrBundle(),
     itemUrl: (handle) => abs(`watch/item/${handle}/`),
   });
   return new Response(body, {

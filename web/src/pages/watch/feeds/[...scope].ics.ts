@@ -10,6 +10,7 @@
 // build's generated_at, an empty scope still validates (UTC VTIMEZONE).
 import type { APIRoute, GetStaticPaths } from "astro";
 import { watchContext } from "../../../lib/watch-context";
+import { exportBundleStamp } from "../../../lib/data";
 import {
   feedBuiltAt,
   feedScopes,
@@ -22,6 +23,11 @@ const CTX = watchContext();
 const SITE = import.meta.env.SITE ?? "https://surveillancegraph.org";
 
 const abs = (path: string): string => new URL(withBase(path), SITE).toString();
+// SIG-WATCH-006: the envelope's own stamp wins; a bare-array pre-P35.43
+// watch.json (stripped envelope) falls back to the bundle's recorded
+// datapackage `created` — a real artifact stamp, never a wall clock.
+const feedBuiltAtOrBundle = (): string =>
+  feedBuiltAt(CTX.envelope) || exportBundleStamp() || "";
 
 const SCOPES = feedScopes(CTX.envelope, CTX.pages);
 // The item scopes — `item/<handle>` mints a one-VEVENT calendar per item.
@@ -34,7 +40,7 @@ export const getStaticPaths: GetStaticPaths = () =>
 
 export const GET: APIRoute = ({ params }) => {
   const scope = params.scope ?? "";
-  const builtAt = feedBuiltAt(CTX.envelope);
+  const builtAt = feedBuiltAtOrBundle();
   const itemUrl = (handle: string) => abs(`watch/item/${handle}/`);
   let items;
   let title;

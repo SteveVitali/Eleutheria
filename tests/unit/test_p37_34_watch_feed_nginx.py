@@ -61,7 +61,7 @@ def test_watch_feeds_location_carries_the_feed_types() -> None:
 
 def test_legacy_watch_xml_serves_rss_type() -> None:
     text = _text()
-    assert 'location ~ "^/watch/[^/]+\\\\.xml$"' in text
+    assert 'location ~ "^/watch/[^/]+\\.xml$"' in text
     # json under watch/feeds/ is feed+json — but the lane's own JSON docs
     # (state.json/lane.json/watch.json outside feeds/) keep
     # application/json via the stock mime table.

@@ -544,6 +544,36 @@ function requireArray(parsed: unknown, path: string): unknown[] {
   return parsed;
 }
 
+/**
+ * The bundle's own build stamp — `<dir>/datapackage.json#created`
+ * (P37.34, SIG-WATCH-006). A bare-array `watch.json` (a pre-P35.43 export,
+ * or the national overlay's empty watch feed) reads to a stripped
+ * `sig/watch/2` envelope carrying no `generated_at`/`as_of`; the feeds'
+ * `DTSTAMP`/`lastBuildDate` then take the bundle's recorded build time — a
+ * real artifact stamp, never a wall clock or a fixture constant. `null` in
+ * `fixtures` mode (the committed envelope always carries its own stamp) and
+ * `null` when the bundle records no `created` (the caller fails loud —
+ * a feed timestamp is never fabricated).
+ */
+export function exportBundleStamp(): string | null {
+  const src = dataSource();
+  if (src === "fixtures") return null;
+  const dir = src === "national" ? nationalDir() : exportDir();
+  const path = `${dir}/datapackage.json`;
+  let raw: string;
+  try {
+    raw = readFileSync(path, "utf-8");
+  } catch {
+    return null;
+  }
+  try {
+    const created = (JSON.parse(raw) as { created?: unknown }).created;
+    return typeof created === "string" && created !== "" ? created : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Surface 3 — the map layer's assets (§39.3, `map.ts#MapAsset`). Export: `web/map.json` `.assets`. */
 export function getMapSites(): MapAsset[] {
   if (dataSource() === "national") {
