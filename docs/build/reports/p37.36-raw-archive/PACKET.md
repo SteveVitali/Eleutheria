@@ -16,9 +16,9 @@ HG-11"**.
 The leg is never pre-authorised — it runs only on the operator's explicit
 verbatim go, inside `AR-3 + AR-2`.
 
-The hosted append-only archive write, three legs in order:
+The `hosted` append-only archive write, three legs in order:
 
-1. `sig-exports raw-archive build` — the raw-ok lane over the hosted
+1. `sig-exports raw-archive build` — the raw-ok lane over the `hosted`
    evidence store: `raw/<multihash>` objects + `raw/index.json`
    (`sig.raw-archive-index/1`), raw-ok sources only, after the Part VIII
    byte screen (`evidence.screen.screen_blob` under the committed
