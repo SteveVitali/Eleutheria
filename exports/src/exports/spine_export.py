@@ -3478,6 +3478,15 @@ def _evidence(
     TX-12 archive mints a locator; a label never implies a route the release
     does not carry).
 
+    P37.36 (R11-K13-TX-12 / J3 §6.9, SIG-TRANSP-020): the raw-ok archive
+    lane's resolver — the export input may carry ``raw_hrefs``
+    (``content_digest → distribution-host URL``, minted by
+    :func:`exports.raw_archive.served_href_map` over the served
+    ``raw/index.json`` objects). A capture whose digest the archive serves
+    mints the locator on its ``download_original``/``download_redacted``
+    label; anything else stays ``None`` — a label never implies a route the
+    release does not carry.
+
     P37.30 (R11-K13-WX-05 / K7 §5.7, F-485, SIG-UI-027a): the recommender
     repair — the artifact now carries the score inputs the evidence
     recommender reads, scoped to exactly what they measure: per
@@ -3490,6 +3499,9 @@ def _evidence(
     nowhere — an uncomputable score fails typed, never a silent zero.
     """
     as_of_date = date.fromisoformat(as_of[:10]) if as_of else date.today()
+    # P37.36: the raw-archive's served digest → distribution-host URL map
+    # (absent on an export without a built archive — hrefs stay None).
+    raw_hrefs = raw.get("raw_hrefs") or {}
     scores_by_artifact, neighbours, uncomputable = _subject_scores(raw, as_of_date)
     artifacts: list[dict[str, Any]] = []
     for r in raw.get("evidence_artifacts") or []:
@@ -3536,6 +3548,7 @@ def _evidence(
                     and int(cap.get("byte_size") or 0) > 0
                 ),
                 upstream=upstream,
+                raw_href=(raw_hrefs or {}).get(str(cap.get("content_digest") or "")),
             )
             captures.append(cap)
         scores = scores_by_artifact.get(str(artifact_id)) or []
