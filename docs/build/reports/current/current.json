@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "0c05c321714ad4cb0ae9d3a061675723c8c2054e",
-  "manifest_inputs": 1251,
+  "input_commit": "d3317e9f27405a158a92cf5386c3edf442be4959",
+  "manifest_inputs": 1252,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P37.36",
@@ -26,12 +26,12 @@
     "updatedAt": "2026-11-11T09:25Z"
   },
   "counts": {
-    "obligations": 237,
-    "owed": 153,
-    "open": 150,
+    "obligations": 238,
+    "owed": 154,
+    "open": 151,
     "partial": 3,
     "terminal": 84,
-    "events": 752,
+    "events": 753,
     "transitions": 59,
     "coverage_assessments": 515,
     "coverage_historical_rows": 994,
@@ -12474,6 +12474,57 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P37.36-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P37.36-1:e0",
+      "kind": "V",
+      "owner": "the OM-19 leg-runner — the orchestrator's `r11/P37.36-live-<n>` dispatch or the operator",
+      "landing": "engineering landed (fixture-verified); the archive write leg queued `prepared_not_executed`",
+      "landing_source": "event-head",
+      "backlog_home": "BL-087",
+      "item": "The raw-ok archive write leg on the distribution host: `ops/gcp/raw-archive.sh --apply` — the hosted append-only archive write (`sig-exports raw-archive build` over the hosted evidence store → `raw/<multihash>` objects + `raw/index.json`, raw-ok sources only, after the Part VIII byte screen; P8-5/6/8 captures emit field-allowlist re-serialisations recorded as NEW captures — the original is never served, never mutated) → `sig-exports push` of raw/* to the mirror + the origin (content-hash keys, immutable Cache-Control) → `sig-ops raw-withdrawal rehearse` (delete/purge/tombstone receipt)",
+      "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P37.36-live-<n>` dispatch or the operator · trigger: `implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` once the verbatim go is recorded (`SIG_RAWARCHIVE_AUTHOR`) with ADC + `SIG_GCP_PROJECT` present, inside `AR-3 + AR-2`",
+      "verify": "`raw-archive.sh --verify` reads `raw/index.json` answering 200 on the mirror with the served object count the poststate recorded; the view-original locators on the dossier/artifact surfaces resolve the `raw/<multihash>` objects the index carries; a withdrawal rehearsal answers 410 + tombstone at the web path and 404 at the mirror",
+      "proxy": "the machinery is committed + fixture-verified — `tests/exports/test_raw_archive.py` (16: the lane×P8 verdict table, the screen fail-closed, the re-serialisation as a new capture, the index shape, the href map) + `tests/ops/test_raw_withdrawal.py` (4: delete/purge/tombstone legs, the absent-object record, the non-raw/empty-authority refusals); `raw-archive.sh --check` prints the plan with no ADC and no network (exit 0) and `--apply` refuses exit 42 without the recorded author or inside a freeze/batch window — not exercised against the deployment",
+      "line": 1574,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P37.36",
+          "backlog_home": "BL-087",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/460_P37.36__raw-archive.md",
+            "exports/src/exports/raw_archive.py",
+            "ops/src/ops/raw_withdrawal.py",
+            "ops/gcp/raw-archive.sh",
+            "docs/build/reports/p37.36-raw-archive/packet.json",
+            "docs/build/reports/p37.36-raw-archive/PACKET.md"
+          ],
+          "observed_at": "2026-11-11",
+          "source_commit": "WORKTREE",
+          "reason": "migration anchor appended by P37.36 (row 460) for the row it added — the raw-ok archive write leg (hosted append-only write over the Part VIII byte screen + mirror/origin push + withdrawal rehearsal) queued prepared_not_executed: live_verification=false dispatch + never pre-authorised under OM-20 (archive write touching Part VIII-screened families; the operator's explicit verbatim go has not landed) + no ADC/SIG_GCP_PROJECT; D-J3-1 [B-19] = yes carried verbatim — raw bytes for raw-ok sources only, after the Part VIII byte screen; exposure rides P37.65 HG-11; re-run prompt implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true inside AR-3 + AR-2",
+          "recorded_at": "2026-11-11",
+          "obligation_id": "D-P37.36-1",
+          "event_id": "D-P37.36-1:e0",
+          "landing": "engineering landed (fixture-verified); the archive write leg queued `prepared_not_executed`",
+          "owner": "the OM-19 leg-runner — the orchestrator's `r11/P37.36-live-<n>` dispatch or the operator",
+          "anchor": {
+            "row_line": 1574,
+            "row_sha256": "f4ba48ff646b00f47669773faa63a018924313bd5e8aa1a6982f9a431262a96b",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
     }
   ],
   "return_pass": {
@@ -18038,8 +18089,8 @@
           "label": "historical/csv"
         },
         "SIG-TRANSP-020": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P37.36-1)",
+          "evidence": "exports/src/exports/raw_archive.py;exports/src/exports/release.py;exports/src/exports/spine_export.py;ops/src/ops/raw_withdrawal.py;ops/gcp/raw-archive.sh;docs/build/reports/p37.36-raw-archive/packet.json",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -27386,7 +27437,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "7a9d6e9753bc3e2c21d036b0a5e781efb333d67e5d7495a12e7fd202640714ed",
+  "manifest_sha256": "46c2282e34c163d1550b6f43bcb7ec5b1164d6403e2bbb3ca1721699c8dd6196",
   "current_md": {
     "lines": 159,
     "bytes": 20083,
