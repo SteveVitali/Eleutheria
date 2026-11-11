@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "6008cc04335ace48a1d47e40da2c7b671a7df3df",
+  "input_commit": "836929c6df56172d0a4d2f47143219c51d0bb2a0",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "7f02ce5e6ba6d7237b3d8426ef781449cf68113639c6e996679a5bfb3a873c45"
+      "sha256": "740c7791a04e1e07e7f61610e9699e07d9666eea120c07828fb94159c1ad3c39"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -2810,7 +2810,7 @@
     },
     {
       "path": "docs/build/runs/P37.35.md",
-      "sha256": "6244efd7fa78bfa8ee0a464a901e1d4a6b2a35dc03ec0242863e64a016ab56e8"
+      "sha256": "665d07805de76789a6c219db4e2bc35c37589d22f9e7e9f9f5af0ab0ef629823"
     },
     {
       "path": "docs/build/runs/P37.4a.md",
