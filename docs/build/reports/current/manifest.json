@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "f40b225fb4ec6b2c80e7640cff318f72b102ff87",
+  "input_commit": "6008cc04335ace48a1d47e40da2c7b671a7df3df",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "ce04900db8b486a5db96eaeb2affc6866bedd72dd27b8e92d6dd0f446b6ce026"
+      "sha256": "7f02ce5e6ba6d7237b3d8426ef781449cf68113639c6e996679a5bfb3a873c45"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -981,8 +981,12 @@
       "sha256": "dda67fdfaedf1693d66e171f2cb45a6d2413291a8b7d28c98f79176033225cdb"
     },
     {
+      "path": "docs/adr/ADR-245-detector-routing-predicate-table-and-catalog-rows-35-36.md",
+      "sha256": "4ddcb67e618eed7ce9a2deb8bed63bc7069656472ed7f18b3b7d85b9b0cfa18d"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "1a41a7ca82695fdaef056779f5a8223b564439ba6dee390e21524e11d651fe80"
+      "sha256": "e84ad6cb9d8ad49ee638a045d64ec88558ee74199e8a3fd45877f047d8f92c77"
     },
     {
       "path": "docs/build/BACKLOG.csv",
@@ -2803,6 +2807,10 @@
     {
       "path": "docs/build/runs/P37.34.md",
       "sha256": "cafe305f4729e213acc2857771c8e6fc00d302b455b7279f981b3ab0febc8aa2"
+    },
+    {
+      "path": "docs/build/runs/P37.35.md",
+      "sha256": "6244efd7fa78bfa8ee0a464a901e1d4a6b2a35dc03ec0242863e64a016ab56e8"
     },
     {
       "path": "docs/build/runs/P37.4a.md",
