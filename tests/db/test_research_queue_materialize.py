@@ -343,9 +343,25 @@ def test_contradiction_task_carries_evidenced_jurisdiction(conn) -> None:
         " VALUES(%s,'sig.connector.subject',%s)",
         (jur, "jurisdiction:test-state"),
     )
-    # The evidenced attribution link: the subject's claim's object is the
-    # `jurisdiction:`-keyed entity (claim_value_shape allows object_entity).
-    cur.execute("UPDATE claim SET object_entity=%s WHERE claim_id=%s", (jur, claim))
+    # The evidenced attribution link: an entity_ref claim on the subject whose
+    # object is the `jurisdiction:`-keyed entity (claims are immutable — a NEW
+    # row, never an UPDATE).
+    cur.execute(
+        "INSERT INTO claim(subject_id,predicate_id,object_type,value_kind,"
+        "object_entity,raw_value,observed_at,source_reliability,"
+        "claim_directness,artifact_integrity,asserted_by,assertion_rationale,"
+        "ingest_run_id,rights_id,sensitivity_tier) "
+        "VALUES(%s,%s,'entity_ref','value',%s,'fixture','2026-05-01T00:00:00Z',"
+        "'R1','D1','I1',%s,'fixture',%s,%s,0)",
+        (
+            subject,
+            prereqs["predicate_id"],
+            jur,
+            prereqs["author_id"],
+            prereqs["run_id"],
+            prereqs["rights_id"],
+        ),
+    )
     _seed_materialized_contradiction(
         cur,
         subject=subject,
