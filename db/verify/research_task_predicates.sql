@@ -8,12 +8,18 @@ BEGIN;
 -- Both additive columns exist.
 SELECT predicate_ids, disposition_reason FROM research_task WHERE false;
 
--- The column-scoped UPDATE grant to sig_materialize exists.
-SELECT 1
-  FROM information_schema.role_table_grants
- WHERE grantee = 'sig_materialize'
-   AND table_name = 'research_task'
-   AND privilege_type = 'UPDATE'
- LIMIT 1;
+-- The three event columns are writable by sig_materialize.
+SELECT 1 WHERE has_column_privilege(
+    'sig_materialize', 'public.research_task', 'status', 'UPDATE');
+SELECT 1 WHERE has_column_privilege(
+    'sig_materialize', 'public.research_task', 'disposition', 'UPDATE');
+SELECT 1 WHERE has_column_privilege(
+    'sig_materialize', 'public.research_task', 'disposition_reason', 'UPDATE');
 
-ROLLBACK;
+-- Nothing else widened: no other-column UPDATE, no DELETE.
+SELECT 1 WHERE NOT has_column_privilege(
+    'sig_materialize', 'public.research_task', 'closing_condition', 'UPDATE');
+SELECT 1 WHERE NOT has_table_privilege(
+    'sig_materialize', 'public.research_task', 'DELETE');
+
+COMMIT;
