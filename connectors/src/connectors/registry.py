@@ -203,6 +203,12 @@ class SourceRedistribution:
     packet_limited: bool = False
     #: R-11: a SIG-recorded CC0 label on SIG-authored material only.
     sig_labelled_cc0: bool = False
+    #: P37.37 (D-K8-1 [B-44]): the recorded "source terms permit quotation"
+    #: marker the claim-view excerpt gate reads — ``True`` only where the
+    #: recorded rights evidence says quoting an excerpt is permitted; absent
+    #: = never quoted (fail closed). A recorded terms verdict, never an
+    #: ingestion input.
+    quotation_permitted: bool = False
 
     def registry_version(self) -> str:
         """A content-derived version id for the DB mirror row's PK.
@@ -224,6 +230,7 @@ class SourceRedistribution:
                 "1" if self.review_needed else "0",
                 "1" if self.packet_limited else "0",
                 "1" if self.sig_labelled_cc0 else "0",
+                "1" if self.quotation_permitted else "0",
             )
         )
         return f"sources.toml+{hashlib.sha256(canonical.encode()).hexdigest()[:16]}"
@@ -763,7 +770,8 @@ def _redistribution_from_row(source_id: str, row: dict[str, Any]) -> SourceRedis
         raise ValueError(
             f"source {source_id!r}: redistribution must be a table "
             "{lane, evidence, evidence_uri, decision_authority, review_needed, "
-            "part_viii_class, packet_limited, sig_labelled_cc0} (P35.35)"
+            "part_viii_class, packet_limited, sig_labelled_cc0, "
+            "quotation_permitted} (P35.35, P37.37)"
         )
     known = {
         "lane",
@@ -774,6 +782,7 @@ def _redistribution_from_row(source_id: str, row: dict[str, Any]) -> SourceRedis
         "part_viii_class",
         "packet_limited",
         "sig_labelled_cc0",
+        "quotation_permitted",
     }
     extra = set(raw) - known
     if extra:
@@ -791,6 +800,7 @@ def _redistribution_from_row(source_id: str, row: dict[str, Any]) -> SourceRedis
         part_viii_class=str(raw.get("part_viii_class", "")).strip(),
         packet_limited=bool(raw.get("packet_limited", False)),
         sig_labelled_cc0=bool(raw.get("sig_labelled_cc0", False)),
+        quotation_permitted=bool(raw.get("quotation_permitted", False)),
     )
 
 

@@ -25,6 +25,7 @@ import {
   CONTRACT_CAPTURE,
   DERIVED_ONLY_CLAIM_VIEW,
   DEVICE_COUNT_CLAIM_VIEW,
+  DOWNLOAD_CLAIM_VIEW,
   PORTAL_CAPTURE_AUGUST,
   PORTAL_CAPTURE_JUNE,
   RUN_RECORD_CLAIM_VIEW,
@@ -178,5 +179,64 @@ describe("the document pane is binding state × lane × Part VIII (SIG-EVUI-004)
     };
     delete (noReason.capture as { sealed_reason?: string }).sealed_reason;
     expect(() => assertClaimView(noReason)).toThrow(/SIG-EVUI-004|SIG-UI-030/);
+  });
+
+  it("the download pane requires the raw-ok lane AND a served raw href (P37.37)", () => {
+    // The committed fixture: raw-ok + served href → download is lawful.
+    expect(DOWNLOAD_CLAIM_VIEW.pane?.kind).toBe("download");
+    expect(() => assertClaimView(DOWNLOAD_CLAIM_VIEW)).not.toThrow();
+    // Off the raw-ok lane a download pane is never lawful.
+    const offLane: ClaimView = { ...DOWNLOAD_CLAIM_VIEW, lane: "derived-only" };
+    expect(() => assertClaimView(offLane)).toThrow(/SIG-EVUI-004/);
+    // No served href → never a dead link; locator_only is the honest pane.
+    const noHref: ClaimView = {
+      ...DOWNLOAD_CLAIM_VIEW,
+      capture: { ...DOWNLOAD_CLAIM_VIEW.capture, view_original: { kind: "download_original", label: "Download original", href: null, note: null } },
+    };
+    expect(() => assertClaimView(noHref)).toThrow(/SIG-EVUI-004/);
+    // The same claim under locator_only asserts clean — a label never
+    // implies a route the release does not carry.
+    const locatorForm: ClaimView = { ...noHref, pane: { kind: "locator_only" } };
+    expect(() => assertClaimView(locatorForm)).not.toThrow();
+  });
+
+  it("an unknown lane derives locator_only — bytes never shown on unreviewed rights", () => {
+    const unknownLane: ClaimView = { ...DERIVED_ONLY_CLAIM_VIEW, lane: "unknown" };
+    expect(claimPaneFor(unknownLane).kind).toBe("locator_only");
+  });
+
+  it("a locator may carry no span — a locator always, a span only where resolvable (D-K8-1)", () => {
+    // P37.37: generated locators (page/row/selector…) carry no span; the
+    // locator still renders. A text_span pane without a span IS a failure.
+    expect(DOWNLOAD_CLAIM_VIEW.locator.span).toBeUndefined();
+    const spanlessText: ClaimView = {
+      ...DEVICE_COUNT_CLAIM_VIEW,
+      locator: { kind: "page", description: "page 2" },
+    };
+    expect(() => assertClaimView(spanlessText)).toThrow(/SIG-UI-028/);
+    expect(claimHighlightedDocument(spanlessText)).toBeNull();
+  });
+
+  it("the excerpt cap is enforced — >300 chars fails the build (D-K8-1)", () => {
+    const tooLong: ClaimView = {
+      ...DOWNLOAD_CLAIM_VIEW,
+      excerpt: "x".repeat(301),
+    };
+    expect(() => assertClaimView(tooLong)).toThrow(/SIG-EVUI-004/);
+    const onMetadata: ClaimView = {
+      ...SEALED_CLAIM_VIEW,
+      excerpt: "short",
+    };
+    expect(() => assertClaimView(onMetadata)).toThrow(/SIG-EVUI-004/);
+  });
+
+  it("recorded contradiction/competing ids mark a generated view contested (P37.37)", () => {
+    const withIds: ClaimView = {
+      ...DOWNLOAD_CLAIM_VIEW,
+      contradiction_ids: ["contra-1"],
+      competing_claim_ids: ["claim-other"],
+    };
+    expect(isClaimContested(withIds)).toBe(true);
+    expect(claimContestedMarker(withIds)).not.toBeNull();
   });
 });

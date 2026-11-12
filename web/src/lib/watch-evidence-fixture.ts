@@ -465,13 +465,74 @@ export const RUN_RECORD_CLAIM_VIEW: ClaimView = {
   history: [{ asserted_at: "2026-06-02", event: "asserted", value: 7049, note: "Recorded by the registry ingest run." }],
 };
 
+/**
+ * P37.37 (EV-03 / SIG-EVUI-004): a raw-ok claim whose bytes the raw archive
+ * serves — the `download` pane: locator + hash/time + the view-original link
+ * the archive minted (P37.36's served_href_map), never inline text the
+ * release does not carry. It also demonstrates the D-K8-1 excerpt (≤300
+ * chars, recorded-terms-permitted: the raw-ok lane publishes bytes).
+ */
+export const DOWNLOAD_CLAIM_VIEW: ClaimView = {
+  claim_id: "contract-renewal-term",
+  claim_label: "Contract renewal term",
+  value: "successive one-year terms",
+  capture: {
+    capture_id: "capture:contract-okcpd-alpr-v1",
+    artifact_id: "contract:okcpd-alpr",
+    storage_tier: "public",
+    captured_at: "2026-07-01",
+    content_digest: "sha256:ab12cd34ef56ab12cd34ef56ab12cd34ef56ab12cd34ef56ab12cd34ef56ab12",
+    acquisition_method: "records_request_pdf",
+    byte_size: 412_700,
+    media_type: "application/pdf",
+    capture_classification: "actual",
+    fields: { renewal_term_months: 12 },
+    view_original: {
+      kind: "download_original",
+      label: "Download original",
+      href: "https://files.example.org/raw/sha256:ab12cd34ef56ab12",
+      note: null,
+    },
+  },
+  binding_status: "actual_capture",
+  lane: "raw-ok",
+  pane: { kind: "download" },
+  locator: {
+    kind: "page",
+    description: "Master agreement, page 2, renewal clause",
+  },
+  excerpt:
+    "renews automatically for successive one-year terms unless either party gives written notice not less than ninety (90) days before expiry",
+  subject_id: "contract:okcpd-alpr",
+  extraction_method: "clause extraction (parsing layer L3)",
+  extraction_version: "parser-2026.06",
+  review_status: "curator_reviewed",
+  conflicting_claims: [],
+  history: [
+    { asserted_at: "2026-07-02", event: "asserted", value: "successive one-year terms", note: "From the executed contract." },
+  ],
+};
+
 /** Every claim the evidence viewer statically generates (drives `getStaticPaths`). */
 export const CLAIM_VIEWS: ClaimView[] = [
   DEVICE_COUNT_CLAIM_VIEW,
   SEALED_CLAIM_VIEW,
   DERIVED_ONLY_CLAIM_VIEW,
   RUN_RECORD_CLAIM_VIEW,
+  DOWNLOAD_CLAIM_VIEW,
 ];
+
+/**
+ * P37.37 (SIG-EVUI-009): the fixture's generation disclosure — the shape the
+ * export's `build.claim_views` carries (cap + eligible + emitted + overflow),
+ * matching the committed fixture set so `/evidence/` renders the statement.
+ */
+export const CLAIM_VIEW_STATS = {
+  cap: 20_000,
+  eligible: CLAIM_VIEWS.length,
+  emitted: CLAIM_VIEWS.length,
+  overflow: 0,
+};
 
 // --- Capture diffing (SIG-UI-029, §29.7) -------------------------------------
 

@@ -1046,6 +1046,10 @@ def load_source_registry(path: str | Path | None = None) -> dict[str, dict[str, 
                 "part_viii_class": str(red.get("part_viii_class", "")).strip(),
                 "packet_limited": bool(red.get("packet_limited", False)),
                 "sig_labelled_cc0": bool(red.get("sig_labelled_cc0", False)),
+                # P37.37 (D-K8-1 [B-44]): the recorded "terms permit
+                # quotation" marker the claim-view excerpt gate reads —
+                # absent/false = never quoted (fail closed).
+                "quotation_permitted": bool(red.get("quotation_permitted", False)),
             },
         }
     return out

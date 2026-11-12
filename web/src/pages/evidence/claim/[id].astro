@@ -97,6 +97,32 @@ const panel = panelForClaim(STATEMENTS, view.claim_id, { jsonHref: null });
         </blockquote>
         <figcaption>Highlighted at: {view.locator.description} ({view.locator.kind}).</figcaption>
       </figure>
+    ) : pane.kind === "download" ? (
+      <div class="sig-download" data-testid="download-pane">
+        <h2>Stored copy — download</h2>
+        <p>
+          This claim's source is on the <strong>{view.lane}</strong> lane and the release's
+          raw archive serves the capture's bytes. The supporting location is described:
+        </p>
+        <p><strong>Locator:</strong> {view.locator.description} ({view.locator.kind}).</p>
+        {view.excerpt && <blockquote data-testid="claim-excerpt">{view.excerpt}</blockquote>}
+        <p>
+          Capture digest <code>{view.capture.content_digest}</code>, retrieved{" "}
+          {view.capture.captured_at}.
+        </p>
+        <p>
+          {view.capture.view_original?.href ? (
+            <a href={view.capture.view_original.href} rel="external" data-testid="download-original">
+              {view.capture.view_original.label}
+            </a>
+          ) : (
+            <span data-testid="download-original">{view.capture.view_original?.label ?? "Download original"}</span>
+          )}
+          {view.capture.view_original?.note && (
+            <> <span class="sig-view-original-note">({view.capture.view_original.note})</span></>
+          )}
+        </p>
+      </div>
     ) : pane.kind === "locator_only" ? (
       <div class="sig-locator-only" data-testid="locator-only-pane">
         <h2>Locator — bytes not shown</h2>
@@ -105,6 +131,7 @@ const panel = panelForClaim(STATEMENTS, view.claim_id, { jsonHref: null });
           publish the document bytes. The supporting location is described, not shown:
         </p>
         <p><strong>Locator:</strong> {view.locator.description} ({view.locator.kind}).</p>
+        {view.excerpt && <blockquote data-testid="claim-excerpt">{view.excerpt}</blockquote>}
         <p>
           Capture digest <code>{view.capture.content_digest}</code>, retrieved{" "}
           {view.capture.captured_at}. View at source via the provenance panel below.
@@ -151,6 +178,21 @@ const panel = panelForClaim(STATEMENTS, view.claim_id, { jsonHref: null });
             <strong>{String(c.value)}</strong> — {c.source} ({c.tier}, {c.date}).{" "}
             <a href={dataHref(c.documentUrl)}>document</a>
             {c.differentQuantityNote && <p class="sig-different-quantity">{c.differentQuantityNote}</p>}
+          </li>
+        ))}
+      </ul>
+    ) : contested ? (
+      // P37.37: a generated view carries recorded contradiction/competing
+      // ids — the marker and the ids render; a competing row is never fabricated.
+      <ul class="sig-conflicting" data-testid="conflicting-claims">
+        {(view.competing_claim_ids ?? []).map((cid) => (
+          <li data-testid="conflicting-claim" data-claim-id={cid}>
+            <code>{cid}</code> — a competing claim on the same subject.
+          </li>
+        ))}
+        {(view.contradiction_ids ?? []).map((cid) => (
+          <li data-testid="conflicting-claim" data-claim-id={cid}>
+            Open contradiction <code>{cid}</code> touches this claim.
           </li>
         ))}
       </ul>
