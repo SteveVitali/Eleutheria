@@ -106,6 +106,15 @@ CATALOG_CANDIDATE_CAP = 300
 #: Bounded suggestion vocabulary (K3 §4.2 stage 6).
 SUGGEST_MIN_LEN = 3
 
+#: The search-result export bound (P37.43 / K3 SRCH-08 — "CSV/JSON download
+#: of a result set (≤ 10,000 rows)"): at most this many record rows across
+#: the WHOLE result set, filled in compartment order, every group reporting
+#: its exact matching total so a capped export is always stated.
+EXPORT_ROW_CAP = 10_000
+#: The export's execution budget — a bounded bulk walk under the same
+#: denial barrier, not the interactive 2 s query deadline.
+EXPORT_DEADLINE_SECONDS = 30.0
+
 
 class SearchQueryV2Error(SearchIndexV2Error):
     """A serving-shaped v2 query failure — status + machine code + detail."""
@@ -1277,6 +1286,87 @@ class SearchEngineV2:
                 deadline_seconds=deadline_seconds,
                 _allow_suggest=_allow_suggest,
             )
+        finally:
+            for conn in conns:
+                conn.set_progress_handler(None, 0)
+
+    def export_records(
+        self,
+        params: SearchParamsV2,
+        *,
+        denied: Callable[[tuple], Any] | None = None,
+        deadline_seconds: float = EXPORT_DEADLINE_SECONDS,
+        row_cap: int = EXPORT_ROW_CAP,
+    ) -> dict[str, Any]:
+        """The ≤ ``row_cap`` record export of the same request (P37.43 / K3
+        SRCH-08): the served ``sig.search-results/2`` payload plus an
+        ``export`` block whose per-licence-group ``rows`` enumerate the
+        matched records in the same match-quality order the page walks —
+        denials evaluated per candidate BEFORE emission (a denied row is
+        never exported), collapsed acronym word-hits honoured, and every
+        group's exact matching ``total`` kept beside ``exported`` so a
+        capped set is always stated, never silently trimmed.
+        """
+        deadline = time.monotonic() + max(0.001, deadline_seconds)
+        conns = (
+            [self.catalog]
+            + [c.conn for c in self.compartments]
+            + [c.claim_ref for c in self.compartments if c.claim_ref is not None]
+        )
+        for conn in conns:
+            _progress_deadline(conn, deadline)
+        try:
+            payload = self._search(
+                params,
+                denied=denied,
+                deadline=deadline,
+                deadline_seconds=deadline_seconds,
+                _allow_suggest=True,
+            )
+            # The suggestion re-run resolves the CORRECTED tokens — the
+            # export walk must enumerate the set the page actually shows.
+            tokens = params.q_tokens
+            suggestion = (payload.get("query") or {}).get("suggestion")
+            if suggestion and suggestion.get("corrected"):
+                try:
+                    tokens = normalize_query(str(suggestion["corrected"]))
+                except SearchIndexError:
+                    tokens = params.q_tokens
+            comp_by_id = {c.compartment: c for c in self.compartments}
+            groups: list[dict[str, Any]] = []
+            budget = max(0, int(row_cap))
+            exported_total = 0
+            for g in payload.get("record_groups") or []:
+                comp = comp_by_id[str(g["compartment"])]
+                total = int(g.get("total") or 0)
+                out: dict[str, Any] = {
+                    "compartment": comp.compartment,
+                    "license": comp.license,
+                    "total": total,
+                    "collapsed_reason": g.get("collapsed_reason"),
+                    "exported": 0,
+                    "rows": [],
+                }
+                # A collapsed acronym group keeps its word-hits withheld —
+                # exporting them would hand out the misleading set the page
+                # deliberately does not show (SIG-SRCH-005 region).
+                if not out["collapsed_reason"] and (g.get("results") or g.get("next_cursor")):
+                    if budget > 0:
+                        p2 = replace(params, limit=budget)
+                        rows, _last = self._records_page(comp, p2, tokens, None, denied, deadline)
+                        out["rows"] = rows
+                        out["exported"] = len(rows)
+                        budget -= len(rows)
+                        exported_total += len(rows)
+                out["truncated"] = out["exported"] < total
+                groups.append(out)
+            payload["export"] = {
+                "row_cap": int(row_cap),
+                "exported_records": exported_total,
+                "truncated": any(bool(g["truncated"]) for g in groups),
+                "groups": groups,
+            }
+            return payload
         finally:
             for conn in conns:
                 conn.set_progress_handler(None, 0)

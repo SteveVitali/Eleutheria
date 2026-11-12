@@ -11,6 +11,23 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **P37.43 / R11-K13-SRCH-08 (K3 SRCH-08)** — search result export:
+  `GET /v1/releases/{pub or latest}/search/export?format=csv|json`
+  downloads a result set (≤ 10,000 record rows) as a deterministic zip
+  under the J3 TX download conventions — one folder per licence group
+  carrying `results.csv` (or `results.json`, `sig.search-export-records/1`)
+  beside its `LICENCE.txt` and `ATTRIBUTION.txt`, plus `manifest.json`
+  (`sig.search-export/1`), `README.txt` and `SHA256SUMS`. A licence
+  group's rows never share a file with another group's, and every row
+  carries its licence. The export runs over the same verified
+  `sig.search-results/2` engine as the federated route — same
+  release-pinned resolution, access-time withdrawal barrier (denials are
+  counted into the manifest's scope, never exported), match-quality
+  order, collapsed-acronym posture, cache headers and `SIG_API_SEARCH_V2`
+  dark-ship posture — and the no-JS results page gains "Download these
+  results" links per licence group plus all-groups CSV/JSON.
+  `live_verification=false`.
+
 - **P37.42 / R11-K13-TX-15 (§56.10 SIG-TRANSP-025)** — API parity: `/v1/export`
   now answers the latest activated release's **real catalog** — the
   manifest-pinned `releases/<pub>/data/download_listing.json`

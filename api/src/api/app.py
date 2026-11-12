@@ -355,6 +355,76 @@ def create_app(
                 headers={"Cache-Control": rs2.cache_control(was_latest)},
             )
 
+        # --- /v1/releases/{pub or latest}/search/export — P37.43 (K3 SRCH-08)
+        # CSV/JSON download of a result set (≤ 10,000 rows), per licence
+        # group with licence files (J3 TX download conventions): a
+        # deterministic zip holding one folder per licence compartment —
+        # results.csv|json + LICENCE.txt + ATTRIBUTION.txt — plus
+        # manifest.json (sig.search-export/1) and SHA256SUMS. Never a
+        # mixed-compartment file. Same verified engine, same withdrawal
+        # barrier, same cache contract, same no-query-logging posture.
+        @app.get("/v1/releases/{publication_id}/search/export")
+        def released_search_export_v2(
+            request: Request,
+            publication_id: str,
+            q: str | None = Query(default=None),
+            type: list[str] | None = Query(default=None),
+            kind: str | None = Query(default=None),
+            jurisdiction: str | None = Query(default=None),
+            source: str | None = Query(default=None),
+            technology: str | None = Query(default=None),
+            collection: str | None = Query(default=None),
+            within: str | None = Query(default=None),
+            location: str | None = Query(default=None),
+            expand: str | None = Query(default=None),
+            format: str | None = Query(default=None),
+        ) -> Response:
+            _mark_release_basis(
+                request,
+                publication_id if PUBLICATION_RE.match(publication_id) else None,
+            )
+            rstore: ReleaseSearchV2Store | None = request.app.state.release_search_v2
+            if rstore is None:
+                raise SearchQueryV2Error(
+                    503,
+                    "release_search_v2_unconfigured",
+                    "federated release search is not configured on this service",
+                )
+            fmt = (format or "csv").strip().lower()
+            if fmt not in rs2.EXPORT_FORMATS_V2:
+                raise SearchQueryV2Error(
+                    422,
+                    "unsupported_query",
+                    f"format must be csv or json; got {format!r}",
+                )
+            unknown = sorted(set(request.query_params.keys()) - rs2.KNOWN_EXPORT_PARAMS_V2)
+            params = parse_params_v2(
+                q=q,
+                types=type,
+                kind=kind,
+                jurisdiction=jurisdiction,
+                source=source,
+                technology=technology,
+                collection=collection,
+                within=within,
+                location=location,
+                cursor=None,
+                expand=expand,
+                limit=None,
+                extra=unknown,
+            )
+            result, pub, was_latest = rstore.search_export(publication_id, params)
+            _mark_release_basis(request, pub)
+            body, filename = rs2.render_search_export_v2(result, fmt=fmt, requested=publication_id)
+            return Response(
+                body,
+                media_type="application/zip",
+                headers={
+                    "Cache-Control": rs2.cache_control(was_latest),
+                    "Content-Disposition": f'attachment; filename="{filename}"',
+                },
+            )
+
         @app.exception_handler(SearchQueryV2Error)
         def _search_v2_error(request: Request, exc: SearchQueryV2Error) -> Response:
             _mark_release_basis(request, str(request.path_params.get("publication_id") or ""))
