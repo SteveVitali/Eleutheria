@@ -11,6 +11,29 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **P37.42 / R11-K13-TX-15 (§56.10 SIG-TRANSP-025)** — API parity: `/v1/export`
+  now answers the latest activated release's **real catalog** — the
+  manifest-pinned `releases/<pub>/data/download_listing.json`
+  (`sig.download-listing/1`: every downloadable file with its absolute mirror
+  URL, size, sha256 and licence — the same document `/data/` and
+  `/releases/<pub>/data/` show) — replacing the api-slice `api/export.json`,
+  which keeps answering for a pre-TX-10b release. New read-only
+  release-namespaced routes serve the same api-slice JSON twins from the
+  release registry files, addressed by the publication id in the path (a
+  citation-grade URL): `GET /v1/releases/{pub}/sources` →
+  `r/<pub>/api/sources.json`, `GET /v1/releases/{pub}/sources/{id}` →
+  `r/<pub>/api/sources/<id>.json`, and
+  `GET /v1/releases/{pub}/sources/{id}/runs` →
+  `r/<pub>/api/sources/<id>/runs.json` (`sig.source-runs/1` — the source's
+  execution feed). All fail closed (404 `unknown_publication` /
+  `scope_not_available`, 410 `withdrawn`, 503 `release_artifact_absent` /
+  `release_serving_unconfigured`) with `X-SIG-Basis: release`; a parity test
+  walks the declared `sig.api-slice/1` index and asserts every served body
+  equals the staged file field by field. The `sig-api` roll changing a public
+  route's response is the gated live leg — never pre-authorised under OM-20;
+  queued `prepared_not_executed` pending the operator's explicit verbatim go
+  (`D-P37.42-1`). `live_verification=false`.
+
 - **P37.41 / R11-K13-UX10-4 (§56.10 SIG-TRANSP-042)** — the per-source
   changelog at `/sources/<id>/changelog/` (T1, zero-JS): an append-only
   `sig.source-changelog/1` event log generated from the source's

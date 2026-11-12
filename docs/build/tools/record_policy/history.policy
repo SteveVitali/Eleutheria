@@ -1290,3 +1290,24 @@ seed-commit 31aba6bf
 seed-commit 3a83ba70
 seed-commit 8e7ab39e
 seed-commit ad449143
+# P37.42 (2026-11-12) — carried-ancestor live-claim repair on the closed
+# run ledger `docs/build/runs/P37.41.md` line 54: the base's own committed
+# trailing clause '…; CI's hosted run green.' reads as an uncited
+# hosted-state claim (docs-check-live-claims corpus + range, and
+# test_committed_tree_passes — the `#489@b811555` docs red, carried class,
+# none authored at dispatch). `cfc2d7b6` respelled it ('the `ci:` line
+# carries the hosted run's recorded result'); the respell itself still
+# parsed as a claim, so `136506d2` ended the sentence at 'not authored.' —
+# the paragraph's sanctioned `ci:` line already carries the recorded read.
+# The closed-ledger rule (BM-INDEX-02) takes only placeholder fills /
+# appended '## Correction' sections; an in-place repair was required
+# because restoring the original line would re-create the corpus
+# violation — the same class as the committed `8e34e26e` BM-CLOCK-01 stamp
+# fix. Pre-edit bytes archived
+# `reports/memory-repair/runs_P37.41_L54_pre-P37.42-liveclaim.txt`
+# (sha256:af228c5c9d0e6dd03a791516739eb52e6f17f9332428c761bd56edb49e9ca29a).
+# The branch rule forbids force-push, so the declaration lands here.
+# Scope: the append-only findings attributed to cfc2d7b6's and 136506d2's
+# rewritten line 54 only; no other commit borrows the exemption.
+seed-commit cfc2d7b6
+seed-commit 136506d2

@@ -4,19 +4,19 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `b811555d5a4dbbb85bf377211b461d2d302f1462` · inputs hashed: 1258 · wall-clock receipt: `receipt.json`
+> input_commit: `24416baeccf8a31f6a4309f08a08ecd2485a4544` · inputs hashed: 1259 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.42` · lastCompleted `P37.41`
-- chainTip `r11/P37.41-source-changelog` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-12T07:50Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.43` · lastCompleted `P37.42`
+- chainTip `r11/P37.42-api-parity` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-12T15:41Z`
 
 ## Obligations
 
-- 238 obligations · **154 owed** (151 OPEN, 3 PARTIAL) · 84 terminal
-- 753 events (59 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 239 obligations · **155 owed** (152 OPEN, 3 PARTIAL) · 84 terminal
+- 754 events (59 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 154 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 155 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -109,6 +109,7 @@
 | P37.15 | queued leg | `implement-spec spec=docs/tickets/437_P37.15__scheduled-parser-canary.md live_verification=true` |
 | P37.20 | D-P37.20-1 | implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true |
 | P37.36 | raw-ok archive write leg: raw/<multihash> + raw/index.json over the `hosted` store (P8 screen, reserialisation as new captures) → mirror/origin push → withdrawa… | `implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` (archive write + push + rehearsal) |
+| P37.42 | D-P37.42-1 | implement-spec spec=docs/tickets/466_P37.42__api-parity.md live_verification=true |
 
 ## Known inconsistencies (preserved, never synthesized)
 
@@ -120,16 +121,7 @@
 
 ## Source funnel (recorded baseline, domain-labelled)
 
-| unit | recorded value | domain · date · evidence |
-|---|---|---|
-| discovered | `**339** registered `[sources.*]` + **27** researched candidates` | `implementation · 2026-09-27 · `sources.toml`, `source-candidates.csv`` |
-| reviewed | `rights blocks + disposition artifacts per source (`p293_dispositions.json` valid` | `implementation · 2026-09-27` |
-| permitted | `**236** `ingestion_permitted = true` (of 339)` | `implementation · 2026-09-27 · counted from `sources.toml`` |
-| mapped | `8 accountability sources wired (P31.12/13, shadow diff=0); earlier classes per t` | `fixture+implementation · recorded 2026-09-26` |
-| captured | `OCFL-backed captures behind every landed claim; per-job counts recorded per run ` | `hosted · recorded 2026-09-26 (P31.12/13 run ledgers)` |
-| extracted | `2,074,963 admissible claims on the hosted spine (after P30.2a materialization)` | `hosted · recorded 2026-09-24 (P30.2a run)` |
-| linked | `1,872,344 envelopes → 227,998 resolved sites (from 230,330 obs-level records, de` | `hosted · recorded 2026-09-24/25` |
-| published | `national surface live: export `sig-2026-09-27-ce480ab1` published to `…-sig-publ` | `public · recorded 2026-09-27 (P31.16 publish half)` |
+- `funnel` → see [funnel.md](funnel.md) (complete — 8 rows)
 
 ## Releases (recorded)
 
