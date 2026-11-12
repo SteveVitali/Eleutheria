@@ -571,7 +571,7 @@ def _corpus_section(corpus_doc: Mapping[str, Any], measure: str) -> dict[str, An
         method = (
             "known-answer tests: a declared-mirror twin of each sampled "
             "corpus record is perturbed per class and resolved by the "
-            "production ruleset — the outcome is compared to the declared "
+            "committed ruleset — the outcome is compared to the declared "
             "expectation (modelled perturbations only)"
         )
         return _estimand(
@@ -615,7 +615,7 @@ def _corpus_section(corpus_doc: Mapping[str, Any], measure: str) -> dict[str, An
             "distinct unique ids in one origin namespace (including real "
             "co-located records), incompatible declared technologies, and "
             "far-apart records sharing a normalised ref — resolved by the "
-            "production ruleset"
+            "committed ruleset"
         ),
         population=population,
         rows=rows,

@@ -139,13 +139,18 @@ def render_md(doc: dict) -> str:
     for name, e in doc["estimands"].items():
         lines.append(f"### {name} — {e['state']} (basis {e['basis']})")
         lines.append("")
-        lines.append(f"- estimand: {e['label']}")
-        lines.append(f"- numerator / denominator: {e['numerator']} / {e['denominator']}")
-        lines.append(f"- value: {e['value']}")
-        lines.append(f"- method: {e['method']}")
-        lines.append(f"- population: {e['population']}")
+        # The estimand text is quoted artifact content (the sig.mech-eval/1
+        # record's own strings) — rendered inside a fenced block so no line
+        # reads as a prose claim about production state (SIG-MEM-011).
+        lines.append("```text")
+        lines.append(f"estimand: {e['label']}")
+        lines.append(f"numerator / denominator: {e['numerator']} / {e['denominator']}")
+        lines.append(f"value: {e['value']}")
+        lines.append(f"method: {e['method']}")
+        lines.append(f"population: {e['population']}")
         if e.get("unavailable_reason"):
-            lines.append(f"- unavailable reason: `{e['unavailable_reason']}`")
+            lines.append(f"unavailable_reason: {e['unavailable_reason']}")
+        lines.append("```")
         for row in e.get("rows", []):
             lines.append(f"- `{row}`")
         lines.append("")

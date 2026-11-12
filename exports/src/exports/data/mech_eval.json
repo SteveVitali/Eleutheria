@@ -60,7 +60,7 @@
       "denominator": 275,
       "id": "m4_perturbation",
       "label": "per-class join/no-join outcomes over modelled perturbations of corpus records \u2014 a mechanical census against the declared ruleset contract, never an estimate of real-world precision or recall",
-      "method": "known-answer tests: a declared-mirror twin of each sampled corpus record is perturbed per class and resolved by the production ruleset \u2014 the outcome is compared to the declared expectation (modelled perturbations only)",
+      "method": "known-answer tests: a declared-mirror twin of each sampled corpus record is perturbed per class and resolved by the committed ruleset \u2014 the outcome is compared to the declared expectation (modelled perturbations only)",
       "numerator": 275,
       "population": "the committed real-data regression corpus (tests/rdc/data, sig.rdc-corpus/1 v1): 4 committed licence-safe slices evaluated; 3 restricted-lane slices deferred-unmaterialized",
       "rows": [
@@ -173,7 +173,7 @@
       "denominator": 70,
       "id": "m5_hard_negatives",
       "label": "share of mechanically-declared known-distinct pairs the matcher merges \u2014 a census over the declared negative classes only, never an estimate of real-world precision or recall",
-      "method": "a census over mechanically-declared known-distinct pairs \u2014 distinct unique ids in one origin namespace (including real co-located records), incompatible declared technologies, and far-apart records sharing a normalised ref \u2014 resolved by the production ruleset",
+      "method": "a census over mechanically-declared known-distinct pairs \u2014 distinct unique ids in one origin namespace (including real co-located records), incompatible declared technologies, and far-apart records sharing a normalised ref \u2014 resolved by the committed ruleset",
       "numerator": 0,
       "population": "the committed real-data regression corpus (tests/rdc/data, sig.rdc-corpus/1 v1): 4 committed licence-safe slices evaluated; 3 restricted-lane slices deferred-unmaterialized",
       "rows": [
