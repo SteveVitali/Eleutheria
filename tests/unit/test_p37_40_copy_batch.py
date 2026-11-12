@@ -48,9 +48,9 @@ def _copy_ids() -> set[str]:
         src = page.read_text(encoding="utf-8")
         for attr in re.findall(r'data-copy="([A-Z0-9]+-\d+)"', src):
             ids.add(attr)
-        for attr in re.findall(r'data-copy=\{parts\.batchIds\.(\w+)\}', src):
+        for attr in re.findall(r"data-copy=\{parts\.batchIds\.(\w+)\}", src):
             ids.add(attr)  # resolved below via batchIds maps
-        for m in re.findall(r'batchIds:\s*\{[^}]*\}', src):
+        for m in re.findall(r"batchIds:\s*\{[^}]*\}", src):
             ids.update(re.findall(r'"([A-Z]+-\d+)"', m))
     return ids
 
