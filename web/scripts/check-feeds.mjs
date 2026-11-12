@@ -306,20 +306,26 @@ for (const rel of changesFeeds) {
   else if (rel.endsWith(".opml")) checkChangesOpml(rel, text);
   else if (!rel.endsWith("index.html")) fail(`${rel}: unknown feed file shape`);
 }
-// Coverage: every emitted dossier page (a place page — never the a-z/by/
-// sort/page facets or the sites|sources|downloads|print sub-pages) carries
-// `changes/feeds/place/<path>.atom`; every emitted source page carries
-// `changes/feeds/source/<id>.atom` — empty scopes still feed.
-const NON_PLACE_FIRST = new Set(["a-z", "by", "sort", "page"]);
-const NON_PLACE_LEAF = new Set(["sites", "sources", "downloads", "print"]);
-for (const rel of files.filter((f) => /^dossier\/.+\/index\.html$/.test(f))) {
-  const parts = rel.slice("dossier/".length, -"/index.html".length).split("/");
-  if (NON_PLACE_FIRST.has(parts[0]) || NON_PLACE_LEAF.has(parts[parts.length - 1])) continue;
-  const feed = `changes/feeds/place/${parts.join("/")}.atom`;
-  if (!fileSet.has(feed)) fail(`place ${parts.join("/")} has no change feed ${feed} (SIG-UI-072)`);
+// Coverage: every emitted dossier page carries `changes/feeds/place/<path>.atom`
+// and every emitted source page `changes/feeds/source/<id>.atom` — empty
+// scopes still feed. The dossier/source sets are read from the emitted
+// `.json` twins (a slug-history stub twin carries `"status": 301` — never a
+// place page; facet/sub-pages emit no twin at all).
+for (const rel of files.filter((f) => /^dossier\/.+\.json$/.test(f))) {
+  let doc;
+  try {
+    doc = JSON.parse(read(rel));
+  } catch {
+    continue; // not a dossier twin (index/figure payloads)
+  }
+  if (doc.status === 301) continue; // slug-history stub — never a place page
+  if (typeof doc.slug_path !== "string" && doc.subject === undefined && rel !== "dossier/unplaced.json") continue;
+  const path = rel.slice("dossier/".length, -".json".length);
+  const feed = `changes/feeds/place/${path}.atom`;
+  if (!fileSet.has(feed)) fail(`place ${path} has no change feed ${feed} (SIG-UI-072)`);
 }
-for (const rel of files.filter((f) => /^sources\/[^/]+\/index\.html$/.test(f))) {
-  const id = rel.slice("sources/".length, -"/index.html".length);
+for (const rel of files.filter((f) => /^sources\/[^/]+\/index\.json$/.test(f))) {
+  const id = rel.slice("sources/".length, -"/index.json".length);
   const feed = `changes/feeds/source/${id}.atom`;
   if (!fileSet.has(feed)) fail(`source ${id} has no change feed ${feed} (SIG-UI-072)`);
 }

@@ -4,7 +4,7 @@
   "measured_by": "node web/scripts/check-root-absolute-paths.mjs --write-baseline",
   "rule": "quoted ('\"`') literal starting with '/' + URL-path chars, quote not preceded by '/', over /*-*-/ <!-- --> and //-comment-stripped text in web/src/** .astro/.ts/.tsx/.js/.jsx/.mjs/.mts/.css; allow-listed file+token+count exemptions subtracted",
   "scope": "web/src/**",
-  "plan_baseline": "G3 NEW-6 measured 85 sites / 36 files (0 BASE_URL uses) at 2026-09-30T18:47:42Z on the pre-refactor tree; re-measured at implement time per the P35.65 contract \u2014 the baseline may only shrink (P36.66a's sweep), never grow without a contract amendment",
+  "plan_baseline": "G3 NEW-6 measured 85 sites / 36 files (0 BASE_URL uses) at 2026-09-30T18:47:42Z on the pre-refactor tree; re-measured at implement time per the P35.65 contract — the baseline may only shrink (P36.66a's sweep), never grow without a contract amendment",
   "sites": 26,
   "files": {
     "src/lib/dossier-visuals-fixture.ts": 17,
@@ -15,55 +15,55 @@
       "file": "src/lib/data.ts",
       "token": "/",
       "count": 3,
-      "reason": "endsWith(\"/\")/startsWith(\"/\") boundary checks on export-dir + national-dir overrides \u2014 string-shape guards, not links"
+      "reason": "endsWith(\"/\")/startsWith(\"/\") boundary checks on export-dir + national-dir overrides — string-shape guards, not links"
     },
     {
       "file": "src/lib/data.ts",
       "token": "/corrections/",
       "count": 1,
-      "reason": "P35.45: fixture unplaced-report correction field mirrors the emitted web/unplaced.json route literal \u2014 artifact data, not a link construction"
+      "reason": "P35.45: fixture unplaced-report correction field mirrors the emitted web/unplaced.json route literal — artifact data, not a link construction"
     },
     {
       "file": "src/lib/data.ts",
       "token": "/research-queue/",
       "count": 1,
-      "reason": "P35.45: fixture unplaced-report correction field mirrors the emitted web/unplaced.json route literal \u2014 artifact data, not a link construction"
+      "reason": "P35.45: fixture unplaced-report correction field mirrors the emitted web/unplaced.json route literal — artifact data, not a link construction"
     },
     {
       "file": "src/lib/map-tiles.ts",
       "token": "/",
       "count": 1,
-      "reason": "path.startsWith(\"/\") tile-path shape check \u2014 a guard, not a link"
+      "reason": "path.startsWith(\"/\") tile-path shape check — a guard, not a link"
     },
     {
       "file": "src/lib/tables.ts",
       "token": "/",
       "count": 1,
-      "reason": "basePath.endsWith(\"/\") boundary check \u2014 a guard, not a link"
+      "reason": "basePath.endsWith(\"/\") boundary check — a guard, not a link"
     },
     {
       "file": "src/lib/paths.ts",
       "token": "/",
       "count": 2,
-      "reason": "withBase()'s own BASE_URL root fallback + base leading-slash check \u2014 the helper's internals, not a link"
+      "reason": "withBase()'s own BASE_URL root fallback + base leading-slash check — the helper's internals, not a link"
     },
     {
       "file": "src/lib/paths.ts",
       "token": "/$",
       "count": 2,
-      "reason": "withBase()'s own template-literal joins \u2014 the single construction seam every other site routes through"
+      "reason": "withBase()'s own template-literal joins — the single construction seam every other site routes through"
     },
     {
       "file": "src/lib/figures.ts",
       "token": "/",
       "count": 3,
-      "reason": "P35.37: repoRoot() endsWith(\"/\") join guards + ROOT_POINTER \u2014 string-shape guards and a JSON pointer constant, not links"
+      "reason": "P35.37: repoRoot() endsWith(\"/\") join guards + ROOT_POINTER — string-shape guards and a JSON pointer constant, not links"
     },
     {
       "file": "src/lib/dossier-figures.ts",
       "token": "/$",
       "count": 1,
-      "reason": "P35.37: ptr()'s template-literal join \u2014 a JSON pointer, not a link"
+      "reason": "P35.37: ptr()'s template-literal join — a JSON pointer, not a link"
     },
     {
       "file": "src/lib/dossier-figures.ts",
@@ -93,121 +93,121 @@
       "file": "src/components/HowWeKnowThis.astro",
       "token": "/lifecycle/published/count",
       "count": 1,
-      "reason": "P35.40: figure pointer \u2014 a JSON pointer into transparency/counts.json (the sig.source-counts/1 named-predicate count), not a link"
+      "reason": "P35.40: figure pointer — a JSON pointer into transparency/counts.json (the sig.source-counts/1 named-predicate count), not a link"
     },
     {
       "file": "src/layouts/BaseLayout.astro",
       "token": "/surfaces/site",
       "count": 1,
-      "reason": "P35.37: provenance pointerBase prop default \u2014 a key inside web/analytics/provenance.json, not a link"
+      "reason": "P35.37: provenance pointerBase prop default — a key inside web/analytics/provenance.json, not a link"
     },
     {
       "file": "src/pages/corrections.astro",
       "token": "/surfaces/corrections",
       "count": 1,
-      "reason": "P35.37: provenance pointerBase \u2014 a key inside web/analytics/provenance.json, not a link"
+      "reason": "P35.37: provenance pointerBase — a key inside web/analytics/provenance.json, not a link"
     },
     {
       "file": "src/pages/research-queue/index.astro",
       "token": "/surfaces/research_queue",
       "count": 1,
-      "reason": "P35.37: provenance pointerBase \u2014 a key inside web/analytics/provenance.json, not a link (file moved by P36.61 RQ-03a)"
+      "reason": "P35.37: provenance pointerBase — a key inside web/analytics/provenance.json, not a link (file moved by P36.61 RQ-03a)"
     },
     {
       "file": "src/pages/task/[slug].astro",
       "token": "/surfaces/research_queue",
       "count": 1,
-      "reason": "P35.37: provenance pointerBase \u2014 a key inside web/analytics/provenance.json, not a link (P36.62 RQ-03b)"
+      "reason": "P35.37: provenance pointerBase — a key inside web/analytics/provenance.json, not a link (P36.62 RQ-03b)"
     },
     {
       "file": "src/pages/research-queue/campaign/[handle].astro",
       "token": "/surfaces/research_queue",
       "count": 1,
-      "reason": "P35.37: provenance pointerBase \u2014 a key inside web/analytics/provenance.json, not a link (P36.62 RQ-03b)"
+      "reason": "P35.37: provenance pointerBase — a key inside web/analytics/provenance.json, not a link (P36.62 RQ-03b)"
     },
     {
       "file": "src/pages/dossier/[...path].astro",
       "token": "/surfaces/dossiers/$",
       "count": 1,
-      "reason": "P35.37: provenance pointerBase template \u2014 a key inside web/analytics/provenance.json, not a link (P35.45: retargeted to the canonical slug-path route)"
+      "reason": "P35.37: provenance pointerBase template — a key inside web/analytics/provenance.json, not a link (P35.45: retargeted to the canonical slug-path route)"
     },
     {
       "file": "src/lib/dossier-figures.ts",
       "token": "/",
       "count": 1,
-      "reason": "P35.45: the bare root JSON pointer a per-dossier file's figures resolve (ptr() with index=null) \u2014 a pointer, not a link"
+      "reason": "P35.45: the bare root JSON pointer a per-dossier file's figures resolve (ptr() with index=null) — a pointer, not a link"
     },
     {
       "file": "src/pages/coverage-metrics.astro",
       "token": "/$",
       "count": 1,
-      "reason": "P35.37: figure pointer \"/<i>/value\" \u2014 a JSON pointer into web/coverage.json, not a link"
+      "reason": "P35.37: figure pointer \"/<i>/value\" — a JSON pointer into web/coverage.json, not a link"
     },
     {
       "file": "src/pages/coverage-metrics.astro",
       "token": "/bins/$",
       "count": 1,
-      "reason": "P35.37: figure pointer \"/bins/<i>/recordCount\" \u2014 a JSON pointer into web/analytics/density_bins.json, not a link"
+      "reason": "P35.37: figure pointer \"/bins/<i>/recordCount\" — a JSON pointer into web/analytics/density_bins.json, not a link"
     },
     {
       "file": "src/pages/index.astro",
       "token": "/",
       "count": 1,
-      "reason": "P35.37: a home figure root pointer (\"pointer: \\\"/\\\"\") \u2014 a JSON pointer into a headline artifact, not a link"
+      "reason": "P35.37: a home figure root pointer (\"pointer: \\\"/\\\"\") — a JSON pointer into a headline artifact, not a link"
     },
     {
       "file": "src/pages/index.astro",
       "token": "/$",
       "count": 1,
-      "reason": "P35.37: a home figure pointer (\"/<i>/value\") \u2014 a JSON pointer into a headline artifact, not a link"
+      "reason": "P35.37: a home figure pointer (\"/<i>/value\") — a JSON pointer into a headline artifact, not a link"
     },
     {
       "file": "src/pages/index.astro",
       "token": "/",
       "count": 1,
-      "reason": "P35.37: BaseLayout canonical path prop path=\"/\" \u2014 consumed by new URL(path, site) for the canonical URL, the same construction every page carries"
+      "reason": "P35.37: BaseLayout canonical path prop path=\"/\" — consumed by new URL(path, site) for the canonical URL, the same construction every page carries"
     },
     {
       "file": "src/pages/methodology.astro",
       "token": "/metrics/$",
       "count": 1,
-      "reason": "P35.37: figure pointer \"/metrics/<i>/value\" \u2014 a JSON pointer into web/evaluation.json, not a link"
+      "reason": "P35.37: figure pointer \"/metrics/<i>/value\" — a JSON pointer into web/evaluation.json, not a link"
     },
     {
       "file": "src/pages/sources.astro",
       "token": "/rows/$",
       "count": 1,
-      "reason": "P35.37: figure pointer \"/rows/<i>/rows\" \u2014 a JSON pointer into web/sources.json, not a link"
+      "reason": "P35.37: figure pointer \"/rows/<i>/rows\" — a JSON pointer into web/sources.json, not a link"
     },
     {
       "file": "src/pages/sources.astro",
       "token": "/basis/adopted_sentence",
       "count": 1,
-      "reason": "P35.37: figure pointer \u2014 a JSON pointer into web/terms_disclosure.json, not a link"
+      "reason": "P35.37: figure pointer — a JSON pointer into web/terms_disclosure.json, not a link"
     },
     {
       "file": "src/pages/sources.astro",
       "token": "/sources/$",
       "count": 2,
-      "reason": "P35.37: figure pointers \"/sources/<i>/public_row_count\" + \"/sources/<i>/export_row_count\" \u2014 JSON pointers into web/sources.json, not links"
+      "reason": "P35.37: figure pointers \"/sources/<i>/public_row_count\" + \"/sources/<i>/export_row_count\" — JSON pointers into web/sources.json, not links"
     },
     {
       "file": "src/pages/sources.astro",
       "token": "/universe/count",
       "count": 1,
-      "reason": "P35.40: figure pointer \u2014 a JSON pointer into transparency/counts.json (the sig.source-counts/1 named-predicate count), not a link"
+      "reason": "P35.40: figure pointer — a JSON pointer into transparency/counts.json (the sig.source-counts/1 named-predicate count), not a link"
     },
     {
       "file": "src/pages/sources.astro",
       "token": "/lifecycle/$",
       "count": 1,
-      "reason": "P35.40: figure pointer \"/lifecycle/<state>/count\" \u2014 a JSON pointer into transparency/counts.json, not a link"
+      "reason": "P35.40: figure pointer \"/lifecycle/<state>/count\" — a JSON pointer into transparency/counts.json, not a link"
     },
     {
       "file": "src/pages/sources.astro",
       "token": "/attributes/$",
       "count": 2,
-      "reason": "P35.40: figure pointers \"/attributes/<predicate>/count\" \u2014 JSON pointers into transparency/counts.json, not links"
+      "reason": "P35.40: figure pointers \"/attributes/<predicate>/count\" — JSON pointers into transparency/counts.json, not links"
     },
     {
       "file": "src/lib/dossier-figures.ts",
@@ -255,1189 +255,1195 @@
       "file": "src/lib/dossier-figures.ts",
       "token": "/rollup/count_interval/display",
       "count": 1,
-      "reason": "P35.47: JSON pointer into the keyed dossier artifact's rollup.count_interval (the SIG-CONF-005 interval display) \u2014 a pointer, not a link"
+      "reason": "P35.47: JSON pointer into the keyed dossier artifact's rollup.count_interval (the SIG-CONF-005 interval display) — a pointer, not a link"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/r",
       "count": 1,
-      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
+      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals — match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/dossier/oklahoma-city/print/",
       "count": 1,
-      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
+      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals — match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/s/p-abc123/dossier/x/print/",
       "count": 1,
-      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
+      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals — match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/s/",
       "count": 2,
-      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
+      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals — match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/dossier",
       "count": 2,
-      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
+      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals — match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/dispute/",
       "count": 2,
-      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
+      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals — match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/intake",
       "count": 1,
-      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
+      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals — match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/s/p-abc123/",
       "count": 1,
-      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
+      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals — match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/s/p-abc123/dossier/oklahoma-city/",
       "count": 1,
-      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
+      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals — match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/v",
       "count": 1,
-      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
+      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals — match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/s",
       "count": 2,
-      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
+      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals — match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/",
       "count": 6,
-      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
+      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals — match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/index.html",
       "count": 1,
-      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
+      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals — match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/$",
       "count": 2,
-      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
+      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals — match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/)?.",
       "count": 1,
-      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals \u2014 match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
+      "reason": "P35.50: the page-type registry's route-match patterns and emitted-route normalisation literals — match data and path-shape guards, never emitted navigable links (withBase() does not apply to a pattern table)"
     },
     {
       "file": "src/lib/workspace-state/registry.ts",
       "token": "/map/",
       "count": 1,
-      "reason": "P36.21: sig.workspace-state/2 SURFACE_PATHS registry constant \u2014 the map surface's canonical route id (schema data consumed by the page-type registry, not a template link construction)"
+      "reason": "P36.21: sig.workspace-state/2 SURFACE_PATHS registry constant — the map surface's canonical route id (schema data consumed by the page-type registry, not a template link construction)"
     },
     {
       "file": "src/lib/workspace-state/registry.ts",
       "token": "/explore/",
       "count": 1,
-      "reason": "P37.26 (GX-09a): SURFACE_PATHS registry constant \u2014 the graph surface's canonical route id (the P36.21 interim /network/ seat retargeted by the rename row)"
+      "reason": "P37.26 (GX-09a): SURFACE_PATHS registry constant — the graph surface's canonical route id (the P36.21 interim /network/ seat retargeted by the rename row)"
     },
     {
       "file": "src/lib/workspace-state/registry.ts",
       "token": "/search/",
       "count": 1,
-      "reason": "P36.21: SURFACE_PATHS registry constant \u2014 the search surface's canonical route id"
+      "reason": "P36.21: SURFACE_PATHS registry constant — the search surface's canonical route id"
     },
     {
       "file": "src/lib/workspace-state/state.ts",
       "token": "/",
       "count": 1,
-      "reason": "P36.21: raw.split(\"/\") delimiter in parseViewport \u2014 a string-shape split, not a link"
+      "reason": "P36.21: raw.split(\"/\") delimiter in parseViewport — a string-shape split, not a link"
     },
     {
       "file": "src/lib/workspace-state/cite.ts",
       "token": "/s/$",
       "count": 1,
-      "reason": "P36.21: citeViewHref's /s/<pub> snapshot-prefix template join \u2014 the cite-this-view contract's own minted form (the one construction the contract exists to produce)"
+      "reason": "P36.21: citeViewHref's /s/<pub> snapshot-prefix template join — the cite-this-view contract's own minted form (the one construction the contract exists to produce)"
     },
     {
       "file": "src/lib/errors.ts",
       "token": "/",
       "count": 1,
-      "reason": "P36.22: sig.error-page/1 ROUTES route-id constant \u2014 spec data consumed through withBase() in ErrorState.astro, not a template link construction"
+      "reason": "P36.22: sig.error-page/1 ROUTES route-id constant — spec data consumed through withBase() in ErrorState.astro, not a template link construction"
     },
     {
       "file": "src/lib/errors.ts",
       "token": "/search/",
       "count": 1,
-      "reason": "P36.22: sig.error-page/1 ROUTES route-id constant \u2014 spec data consumed through withBase() in ErrorState.astro, not a template link construction"
+      "reason": "P36.22: sig.error-page/1 ROUTES route-id constant — spec data consumed through withBase() in ErrorState.astro, not a template link construction"
     },
     {
       "file": "src/lib/errors.ts",
       "token": "/status/",
       "count": 1,
-      "reason": "P36.22: sig.error-page/1 ROUTES route-id constant \u2014 spec data consumed through withBase() in ErrorState.astro, not a template link construction"
+      "reason": "P36.22: sig.error-page/1 ROUTES route-id constant — spec data consumed through withBase() in ErrorState.astro, not a template link construction"
     },
     {
       "file": "src/pages/500.astro",
       "token": "/500/",
       "count": 1,
-      "reason": "P36.22: the error page's canonical route id \u2014 the path= prop the head consumes, same class as the sibling 403/404/410 pages' recorded sites"
+      "reason": "P36.22: the error page's canonical route id — the path= prop the head consumes, same class as the sibling 403/404/410 pages' recorded sites"
     },
     {
       "file": "src/internal/component-kit/index.astro",
       "token": "/dossier/",
       "count": 3,
-      "reason": "P36.22: internal component-kit harness fixture href \u2014 card/step/table spec data wrapped by withBase() inside Card.astro/DataTable.astro, never emitted raw"
+      "reason": "P36.22: internal component-kit harness fixture href — card/step/table spec data wrapped by withBase() inside Card.astro/DataTable.astro, never emitted raw"
     },
     {
       "file": "src/internal/component-kit/index.astro",
       "token": "/explore/",
       "count": 3,
-      "reason": "P37.26 (GX-09a): internal component-kit harness fixture href \u2014 card/step/table spec data wrapped by withBase() inside Card.astro/DataTable.astro, never emitted raw (the P36.22 /network/ fixture hrefs retargeted)"
+      "reason": "P37.26 (GX-09a): internal component-kit harness fixture href — card/step/table spec data wrapped by withBase() inside Card.astro/DataTable.astro, never emitted raw (the P36.22 /network/ fixture hrefs retargeted)"
     },
     {
       "file": "src/internal/component-kit/index.astro",
       "token": "/research-queue/",
       "count": 2,
-      "reason": "P36.22: internal component-kit harness fixture href \u2014 card/step/table spec data wrapped by withBase() inside Card.astro/DataTable.astro, never emitted raw"
+      "reason": "P36.22: internal component-kit harness fixture href — card/step/table spec data wrapped by withBase() inside Card.astro/DataTable.astro, never emitted raw"
     },
     {
       "file": "src/internal/component-kit/index.astro",
       "token": "/component-kit/",
       "count": 2,
-      "reason": "P36.22: the harness's own static sortHref self-link \u2014 DataTable wraps it in withBase()"
+      "reason": "P36.22: the harness's own static sortHref self-link — DataTable wraps it in withBase()"
     },
     {
       "file": "src/internal/component-kit/index.astro",
       "token": "/0/value",
       "count": 1,
-      "reason": "P36.22: harness figure JSON pointer into a manifest-listed artifact \u2014 schema data, not a navigable link"
+      "reason": "P36.22: harness figure JSON pointer into a manifest-listed artifact — schema data, not a navigable link"
     },
     {
       "file": "src/internal/component-kit/index.astro",
       "token": "/attributes/site_records/count",
       "count": 1,
-      "reason": "P36.22: harness figure JSON pointer into a manifest-listed artifact \u2014 schema data, not a navigable link"
+      "reason": "P36.22: harness figure JSON pointer into a manifest-listed artifact — schema data, not a navigable link"
     },
     {
       "file": "src/internal/component-kit/index.astro",
       "token": "/component-kit/",
       "count": 1,
-      "reason": "P36.23: kit-B 'Clear filters' fixture action href \u2014 EmptyStateParts spec data wrapped by withBase() inside EmptyState.astro, never emitted raw"
+      "reason": "P36.23: kit-B 'Clear filters' fixture action href — EmptyStateParts spec data wrapped by withBase() inside EmptyState.astro, never emitted raw"
     },
     {
       "file": "src/internal/component-kit/index.astro",
       "token": "/task/example-task-handle/",
       "count": 1,
-      "reason": "P36.23: kit-B absence-chip O4 fixture href \u2014 helpHref spec data wrapped by withBase() inside AbsenceChip.astro, never emitted raw"
+      "reason": "P36.23: kit-B absence-chip O4 fixture href — helpHref spec data wrapped by withBase() inside AbsenceChip.astro, never emitted raw"
     },
     {
       "file": "src/lib/entity-history.ts",
       "token": "/entity/$",
       "count": 2,
-      "reason": "P36.29: resolveEntityRequest canonical-URL template joins \u2014 artifact values (redirect targets), not link constructions"
+      "reason": "P36.29: resolveEntityRequest canonical-URL template joins — artifact values (redirect targets), not link constructions"
     },
     {
       "file": "src/lib/entity-history.ts",
       "token": "/entity/agency/oklahoma-city-emergency-management--b9sdfah/",
       "count": 1,
-      "reason": "P36.29: fixture row target mirrors emitted sig.slug-history/1 bytes \u2014 artifact data, not a link"
+      "reason": "P36.29: fixture row target mirrors emitted sig.slug-history/1 bytes — artifact data, not a link"
     },
     {
       "file": "src/lib/entity-history.ts",
       "token": "/entity/agency/oklahoma-city-police-department--z8t9rv5/",
       "count": 1,
-      "reason": "P36.29: fixture merged-row target mirrors emitted sig.slug-history/1 bytes \u2014 artifact data, not a link"
+      "reason": "P36.29: fixture merged-row target mirrors emitted sig.slug-history/1 bytes — artifact data, not a link"
     },
     {
       "file": "src/lib/entity-history.ts",
       "token": "/entity/agency/okcpd-north-division--sezzp58/",
       "count": 1,
-      "reason": "P36.29: fixture split-row target mirrors emitted sig.slug-history/1 bytes \u2014 artifact data, not a link"
+      "reason": "P36.29: fixture split-row target mirrors emitted sig.slug-history/1 bytes — artifact data, not a link"
     },
     {
       "file": "src/lib/entity-history.ts",
       "token": "/entity/agency/okcpd-south-division--vsht0xe/",
       "count": 1,
-      "reason": "P36.29: fixture split-row target mirrors emitted sig.slug-history/1 bytes \u2014 artifact data, not a link"
+      "reason": "P36.29: fixture split-row target mirrors emitted sig.slug-history/1 bytes — artifact data, not a link"
     },
     {
       "file": "src/lib/basemap.ts",
       "token": "/map/fonts/",
       "count": 1,
-      "reason": "P36.33 (K1 MAP-02 / SIG-UI-100): the same-origin glyph URL template written into the emitted basemap style documents \u2014 artifact data consumed by MapLibre at runtime, not a page-link construction (web/public/map/fonts/ is the committed OFL Noto tree)"
+      "reason": "P36.33 (K1 MAP-02 / SIG-UI-100): the same-origin glyph URL template written into the emitted basemap style documents — artifact data consumed by MapLibre at runtime, not a page-link construction (web/public/map/fonts/ is the committed OFL Noto tree)"
     },
     {
       "file": "src/lib/basemap.ts",
       "token": "/",
       "count": 2,
-      "reason": "P36.33: startsWith(\"/\") same-origin guard + origin + \"/\" join on the tile-origin constant \u2014 string-shape guards, not links"
+      "reason": "P36.33: startsWith(\"/\") same-origin guard + origin + \"/\" join on the tile-origin constant — string-shape guards, not links"
     },
     {
       "file": "src/lib/dossier-grouped-fixture.ts",
       "token": "/dossier/unplaced/",
       "count": 1,
-      "reason": "P36.34: fixture sig.dossier-index/2 unplaced.href mirrors the emitted wire literal \u2014 artifact data, not a link construction"
+      "reason": "P36.34: fixture sig.dossier-index/2 unplaced.href mirrors the emitted wire literal — artifact data, not a link construction"
     },
     {
       "file": "src/pages/dossier/a-z/index.astro",
       "token": "/dossier/a-z/",
       "count": 1,
-      "reason": "P36.34: BaseLayout canonical path prop \u2014 the route's own canonical path"
+      "reason": "P36.34: BaseLayout canonical path prop — the route's own canonical path"
     },
     {
       "file": "src/pages/dossier/a-z/[letter].astro",
       "token": "/dossier/a-z/$",
       "count": 1,
-      "reason": "P36.34: BaseLayout canonical path prop \u2014 the route's own canonical path"
+      "reason": "P36.34: BaseLayout canonical path prop — the route's own canonical path"
     },
     {
       "file": "src/pages/dossier/sort/[key].astro",
       "token": "/dossier/sort/$",
       "count": 1,
-      "reason": "P36.34: BaseLayout canonical path prop \u2014 the route's own canonical path"
+      "reason": "P36.34: BaseLayout canonical path prop — the route's own canonical path"
     },
     {
       "file": "src/pages/dossier/by/[dim]/[value].astro",
       "token": "/dossier/by/$",
       "count": 1,
-      "reason": "P36.34: BaseLayout canonical path prop \u2014 the route's own canonical path"
+      "reason": "P36.34: BaseLayout canonical path prop — the route's own canonical path"
     },
     {
       "file": "src/lib/dossier-index.ts",
       "token": "/",
       "count": 20,
-      "reason": "P36.34: slug-path segment guards (lastIndexOf/includes/slice) \u2014 string-shape checks, not links"
+      "reason": "P36.34: slug-path segment guards (lastIndexOf/includes/slice) — string-shape checks, not links"
     },
     {
       "file": "src/lib/dossier-index.ts",
       "token": "/dossiers/$",
       "count": 4,
-      "reason": "P36.34: JSON-pointer prefixes into web/dossiers/index.json figure specs \u2014 artifact data, not links"
+      "reason": "P36.34: JSON-pointer prefixes into web/dossiers/index.json figure specs — artifact data, not links"
     },
     {
       "file": "src/lib/redirects.ts",
       "token": "/",
       "count": 1,
-      "reason": "P36.35: the ONE redirect generator's conf-template path literals \u2014 `${...}` interpolation + the retired /task/new/ namespace \u2014 serving-config artifact data, never page links"
+      "reason": "P36.35: the ONE redirect generator's conf-template path literals — `${...}` interpolation + the retired /task/new/ namespace — serving-config artifact data, never page links"
     },
     {
       "file": "src/lib/redirects.ts",
       "token": "/dossier/$",
       "count": 1,
-      "reason": "P36.35: the ONE redirect generator's conf-template path literals \u2014 `${...}` interpolation + the retired /task/new/ namespace \u2014 serving-config artifact data, never page links"
+      "reason": "P36.35: the ONE redirect generator's conf-template path literals — `${...}` interpolation + the retired /task/new/ namespace — serving-config artifact data, never page links"
     },
     {
       "file": "src/lib/redirects.ts",
       "token": "/entity/$",
       "count": 1,
-      "reason": "P36.35: the ONE redirect generator's conf-template path literals \u2014 `${...}` interpolation + the retired /task/new/ namespace \u2014 serving-config artifact data, never page links"
+      "reason": "P36.35: the ONE redirect generator's conf-template path literals — `${...}` interpolation + the retired /task/new/ namespace — serving-config artifact data, never page links"
     },
     {
       "file": "src/lib/redirects.ts",
       "token": "/id/$",
       "count": 1,
-      "reason": "P36.35: the ONE redirect generator's conf-template path literals \u2014 `${...}` interpolation + the retired /task/new/ namespace \u2014 serving-config artifact data, never page links"
+      "reason": "P36.35: the ONE redirect generator's conf-template path literals — `${...}` interpolation + the retired /task/new/ namespace — serving-config artifact data, never page links"
     },
     {
       "file": "src/lib/redirects.ts",
       "token": "/task/new/",
       "count": 3,
-      "reason": "P36.35: the ONE redirect generator's conf-template path literals \u2014 `${...}` interpolation + the retired /task/new/ namespace \u2014 serving-config artifact data, never page links"
+      "reason": "P36.35: the ONE redirect generator's conf-template path literals — `${...}` interpolation + the retired /task/new/ namespace — serving-config artifact data, never page links"
     },
     {
       "file": "src/pages/id/[type]/[uuid].astro",
       "token": "/id/$",
       "count": 2,
-      "reason": "P36.35: the /id/<type>/<uuid> stub's own path template literal \u2014 route literal, not a link"
+      "reason": "P36.35: the /id/<type>/<uuid> stub's own path template literal — route literal, not a link"
     },
     {
       "file": "src/lib/corrections.ts",
       "token": "/dossier/$",
       "count": 6,
-      "reason": "P36.35: migration corrections build /dossier/<slug>/ subject_path + display literals from history rows \u2014 artifact data, not links"
+      "reason": "P36.35: migration corrections build /dossier/<slug>/ subject_path + display literals from history rows — artifact data, not links"
     },
     {
       "file": "src/pages/status.astro",
       "token": "/runs/last_7d",
       "count": 1,
-      "reason": "P36.46 repair: figure pointer \u2014 a JSON pointer into status/lane.json (the 7-day run window), not a link"
+      "reason": "P36.46 repair: figure pointer — a JSON pointer into status/lane.json (the 7-day run window), not a link"
     },
     {
       "file": "src/pages/status.astro",
       "token": "/sources_by_freshness",
       "count": 1,
-      "reason": "P36.46 repair: figure pointer \u2014 a JSON pointer into status/lane.json (the per-state freshness partition), not a link"
+      "reason": "P36.46 repair: figure pointer — a JSON pointer into status/lane.json (the per-state freshness partition), not a link"
     },
     {
       "file": "src/pages/status.astro",
       "token": "/robots_disregard/hosts",
       "count": 1,
-      "reason": "P36.46 repair: figure pointer \u2014 a JSON pointer into status/lane.json (robots-disregard host count, D-J3-2), not a link"
+      "reason": "P36.46 repair: figure pointer — a JSON pointer into status/lane.json (robots-disregard host count, D-J3-2), not a link"
     },
     {
       "file": "src/pages/status.astro",
       "token": "/robots_disregard/events",
       "count": 1,
-      "reason": "P36.46 repair: figure pointer \u2014 a JSON pointer into status/lane.json (robots-disregard fetch count, D-J3-2), not a link"
+      "reason": "P36.46 repair: figure pointer — a JSON pointer into status/lane.json (robots-disregard fetch count, D-J3-2), not a link"
     },
     {
       "file": "src/lib/dossier-sources.ts",
       "token": "/provenance_summary",
       "count": 1,
-      "reason": "P36.52: DSRC_PROVENANCE_POINTER_BASE \u2014 the HWKT pointerBase key inside web/dossier_sources/<slug>.json, a JSON pointer not a link"
+      "reason": "P36.52: DSRC_PROVENANCE_POINTER_BASE — the HWKT pointerBase key inside web/dossier_sources/<slug>.json, a JSON pointer not a link"
     },
     {
       "file": "src/lib/dossier-sources.ts",
       "token": "/totals/records",
       "count": 1,
-      "reason": "P36.52: figure pointer \u2014 a JSON pointer into web/dossier_sources/<slug>.json, not a link"
+      "reason": "P36.52: figure pointer — a JSON pointer into web/dossier_sources/<slug>.json, not a link"
     },
     {
       "file": "src/lib/dossier-sources.ts",
       "token": "/totals/claims",
       "count": 1,
-      "reason": "P36.52: figure pointer \u2014 a JSON pointer into web/dossier_sources/<slug>.json, not a link"
+      "reason": "P36.52: figure pointer — a JSON pointer into web/dossier_sources/<slug>.json, not a link"
     },
     {
       "file": "src/lib/dossier-sources.ts",
       "token": "/totals/sources",
       "count": 3,
-      "reason": "P36.52: figure pointers (/totals/sources on dsrc-sources/dsrc-explore/dsrc-rest) \u2014 JSON pointers into web/dossier_sources/<slug>.json, not links"
+      "reason": "P36.52: figure pointers (/totals/sources on dsrc-sources/dsrc-explore/dsrc-rest) — JSON pointers into web/dossier_sources/<slug>.json, not links"
     },
     {
       "file": "src/lib/dossier-sources.ts",
       "token": "/totals/located_by_point",
       "count": 1,
-      "reason": "P36.52: figure pointer \u2014 a JSON pointer into web/dossier_sources/<slug>.json, not a link"
+      "reason": "P36.52: figure pointer — a JSON pointer into web/dossier_sources/<slug>.json, not a link"
     },
     {
       "file": "src/lib/dossier-sources.ts",
       "token": "/totals/coordinate_conflicts_intra_source",
       "count": 1,
-      "reason": "P36.52: figure pointer \u2014 a JSON pointer into web/dossier_sources/<slug>.json, not a link"
+      "reason": "P36.52: figure pointer — a JSON pointer into web/dossier_sources/<slug>.json, not a link"
     },
     {
       "file": "src/lib/dossier-sources.ts",
       "token": "/totals/declared_here_located_elsewhere",
       "count": 1,
-      "reason": "P36.52: figure pointer \u2014 a JSON pointer into web/dossier_sources/<slug>.json, not a link"
+      "reason": "P36.52: figure pointer — a JSON pointer into web/dossier_sources/<slug>.json, not a link"
     },
     {
       "file": "src/lib/dossier-sources.ts",
       "token": "/totals/first_seen_at",
       "count": 1,
-      "reason": "P36.52: figure pointer \u2014 a JSON pointer into web/dossier_sources/<slug>.json, not a link"
+      "reason": "P36.52: figure pointer — a JSON pointer into web/dossier_sources/<slug>.json, not a link"
     },
     {
       "file": "src/lib/dossier-sources.ts",
       "token": "/totals/last_seen_at",
       "count": 1,
-      "reason": "P36.52: figure pointer \u2014 a JSON pointer into web/dossier_sources/<slug>.json, not a link"
+      "reason": "P36.52: figure pointer — a JSON pointer into web/dossier_sources/<slug>.json, not a link"
     },
     {
       "file": "src/lib/dossier-sources.ts",
       "token": "/sources",
       "count": 1,
-      "reason": "P36.52: dsrc-top-sources figure pointer (/sources) \u2014 a JSON pointer into web/dossier_sources/<slug>.json, not a link"
+      "reason": "P36.52: dsrc-top-sources figure pointer (/sources) — a JSON pointer into web/dossier_sources/<slug>.json, not a link"
     },
     {
       "file": "src/lib/dossier-sources-fixture.ts",
       "token": "/sources/$",
       "count": 2,
-      "reason": "P36.52: source_page + runs_page fields of the sig.dossier-sources/1 fixture document \u2014 emitted artifact bytes mirroring release data, not link construction"
+      "reason": "P36.52: source_page + runs_page fields of the sig.dossier-sources/1 fixture document — emitted artifact bytes mirroring release data, not link construction"
     },
     {
       "file": "src/lib/dossier-sources-fixture.ts",
       "token": "/totals/records",
       "count": 1,
-      "reason": "P36.52: fixture figure pointer \u2014 a JSON pointer into the artifact's totals, not a link"
+      "reason": "P36.52: fixture figure pointer — a JSON pointer into the artifact's totals, not a link"
     },
     {
       "file": "src/lib/dossier-sources-fixture.ts",
       "token": "/totals/records_placed",
       "count": 1,
-      "reason": "P36.52: fixture figure pointer \u2014 a JSON pointer into the artifact's totals, not a link"
+      "reason": "P36.52: fixture figure pointer — a JSON pointer into the artifact's totals, not a link"
     },
     {
       "file": "src/lib/dossier-sources-fixture.ts",
       "token": "/totals/claims",
       "count": 1,
-      "reason": "P36.52: fixture figure pointer \u2014 a JSON pointer into the artifact's totals, not a link"
+      "reason": "P36.52: fixture figure pointer — a JSON pointer into the artifact's totals, not a link"
     },
     {
       "file": "src/lib/dossier-sources-fixture.ts",
       "token": "/totals/sources",
       "count": 1,
-      "reason": "P36.52: fixture figure pointer \u2014 a JSON pointer into the artifact's totals, not a link"
+      "reason": "P36.52: fixture figure pointer — a JSON pointer into the artifact's totals, not a link"
     },
     {
       "file": "src/lib/dossier-sources-fixture.ts",
       "token": "/totals/coordinate_conflicts_intra_source",
       "count": 1,
-      "reason": "P36.52: fixture figure pointer \u2014 a JSON pointer into the artifact's totals, not a link"
+      "reason": "P36.52: fixture figure pointer — a JSON pointer into the artifact's totals, not a link"
     },
     {
       "file": "src/lib/dossier-sources-fixture.ts",
       "token": "/totals/declared_here_located_elsewhere",
       "count": 1,
-      "reason": "P36.52: fixture figure pointer \u2014 a JSON pointer into the artifact's totals, not a link"
+      "reason": "P36.52: fixture figure pointer — a JSON pointer into the artifact's totals, not a link"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/dossier",
       "count": 2,
-      "reason": "P36.52: the /dossier/**/sources/** route patterns + the notes' `dossier/**` mention \u2014 the scanner's block-comment strip eats the `/**`/`*/` glob tails leaving a /dossier stub \u2014 pattern data, never a navigable link"
+      "reason": "P36.52: the /dossier/**/sources/** route patterns + the notes' `dossier/**` mention — the scanner's block-comment strip eats the `/**`/`*/` glob tails leaving a /dossier stub — pattern data, never a navigable link"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/dossier/usa/sources/",
       "count": 1,
-      "reason": "P36.52: registry example route \u2014 match data, not a link (withBase() does not apply to the pattern table)"
+      "reason": "P36.52: registry example route — match data, not a link (withBase() does not apply to the pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/dossier/usa/ok/sources/",
       "count": 1,
-      "reason": "P36.52: registry example route \u2014 match data, not a link (withBase() does not apply to the pattern table)"
+      "reason": "P36.52: registry example route — match data, not a link (withBase() does not apply to the pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/dossier/usa/sources/sort/first-seen/",
       "count": 1,
-      "reason": "P36.52: registry example route \u2014 match data, not a link (withBase() does not apply to the pattern table)"
+      "reason": "P36.52: registry example route — match data, not a link (withBase() does not apply to the pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/dossier/usa/sources/sort/name/page/2/",
       "count": 1,
-      "reason": "P36.52: registry example route \u2014 match data, not a link (withBase() does not apply to the pattern table)"
+      "reason": "P36.52: registry example route — match data, not a link (withBase() does not apply to the pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/",
       "count": 2,
-      "reason": "P36.52: the new /dossier/**/sources/** patterns shift the scanner's false `/*`-`*/` comment pairing, surfacing the pre-existing htmlFileToRoute `/` normalisation literals \u2014 path-shape data, not links"
+      "reason": "P36.52: the new /dossier/**/sources/** patterns shift the scanner's false `/*`-`*/` comment pairing, surfacing the pre-existing htmlFileToRoute `/` normalisation literals — path-shape data, not links"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/dossier",
       "count": 1,
-      "reason": "P36.53: the /dossier/**/downloads/ route pattern \u2014 the scanner's whitespace-preserving comment strip eats the `/**`/`*/` glob tail leaving a /dossier stub (same mechanism the P36.52 entry records) \u2014 pattern data, never a navigable link"
+      "reason": "P36.53: the /dossier/**/downloads/ route pattern — the scanner's whitespace-preserving comment strip eats the `/**`/`*/` glob tail leaving a /dossier stub (same mechanism the P36.52 entry records) — pattern data, never a navigable link"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/dossier/usa/downloads/",
       "count": 1,
-      "reason": "P36.53: registry example route \u2014 match data, not a link (withBase() does not apply to the pattern table)"
+      "reason": "P36.53: registry example route — match data, not a link (withBase() does not apply to the pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/dossier/usa/ok/downloads/",
       "count": 1,
-      "reason": "P36.53: registry example route \u2014 match data, not a link (withBase() does not apply to the pattern table)"
+      "reason": "P36.53: registry example route — match data, not a link (withBase() does not apply to the pattern table)"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/dossier/usa/tx/harris-county-48201/downloads/",
       "count": 1,
-      "reason": "P36.53: registry example route \u2014 match data, not a link (withBase() does not apply to the pattern table)"
+      "reason": "P36.53: registry example route — match data, not a link (withBase() does not apply to the pattern table)"
     },
     {
       "file": "src/lib/dossier-sources-fixture.ts",
       "token": "/v1/releases/",
       "count": 1,
-      "reason": "P36.53: the fixture sig.dossier-sources/1 download_recipes.api.endpoint mirrors the emitted artifact's API-path data verbatim \u2014 artifact bytes, not a link construction"
+      "reason": "P36.53: the fixture sig.dossier-sources/1 download_recipes.api.endpoint mirrors the emitted artifact's API-path data verbatim — artifact bytes, not a link construction"
     },
     {
       "file": "src/lib/dossier-visuals-fixture.ts",
       "token": "/dossier/$",
       "count": 2,
-      "reason": "P36.55: fixture sig.dossier-visuals/1 child hrefs + twin sites link mirror the emitted wire literals \u2014 artifact data, not link constructions"
+      "reason": "P36.55: fixture sig.dossier-visuals/1 child hrefs + twin sites link mirror the emitted wire literals — artifact data, not link constructions"
     },
     {
       "file": "src/lib/dossier-visuals.ts",
       "token": "/dossier/$",
       "count": 1,
-      "reason": "P36.55: figMapTwin's sites link mirrors the emitted sig.dossier/2 twin wire literal \u2014 artifact data, not a link"
+      "reason": "P36.55: figMapTwin's sites link mirrors the emitted sig.dossier/2 twin wire literal — artifact data, not a link"
     },
     {
       "file": "src/lib/dossier-visuals.ts",
       "token": "/figures/dossier/$",
       "count": 1,
-      "reason": "P36.55: figMapTwin's download link mirrors the emitted twin wire literal \u2014 artifact data, not a link"
+      "reason": "P36.55: figMapTwin's download link mirrors the emitted twin wire literal — artifact data, not a link"
     },
     {
       "file": "src/pages/dossier/[...path].astro",
       "token": "/",
       "count": 1,
-      "reason": "P36.55: ptrFor's bare-root fallback + `/${ref.index}` template head \u2014 JSON pointers, not links"
+      "reason": "P36.55: ptrFor's bare-root fallback + `/${ref.index}` template head — JSON pointers, not links"
     },
     {
       "file": "src/pages/dossier/[...path].astro",
       "token": "/rollup/records",
       "count": 2,
-      "reason": "P36.55: JSON pointer /rollup/records into the dossier artifact (strip-records + the typed-absence map-total spec) \u2014 a pointer, not a link"
+      "reason": "P36.55: JSON pointer /rollup/records into the dossier artifact (strip-records + the typed-absence map-total spec) — a pointer, not a link"
     },
     {
       "file": "src/pages/dossier/[...path].astro",
       "token": "/children",
       "count": 1,
-      "reason": "P36.55: JSON pointer into the dossier artifact (the strip/map figure specs) \u2014 a pointer, not a link"
+      "reason": "P36.55: JSON pointer into the dossier artifact (the strip/map figure specs) — a pointer, not a link"
     },
     {
       "file": "src/pages/dossier/[...path].astro",
       "token": "/disagreements",
       "count": 1,
-      "reason": "P36.55: JSON pointer into the dossier artifact (the strip/map figure specs) \u2014 a pointer, not a link"
+      "reason": "P36.55: JSON pointer into the dossier artifact (the strip/map figure specs) — a pointer, not a link"
     },
     {
       "file": "src/pages/dossier/[...path].astro",
       "token": "/figures/0/meta/desc/records_drawn",
       "count": 1,
-      "reason": "P36.55: JSON pointer into the dossier artifact (the strip/map figure specs) \u2014 a pointer, not a link"
+      "reason": "P36.55: JSON pointer into the dossier artifact (the strip/map figure specs) — a pointer, not a link"
     },
     {
       "file": "src/pages/dossier/[...path].astro",
       "token": "/figures/0/meta/desc/records_total",
       "count": 1,
-      "reason": "P36.55: JSON pointer into the dossier artifact (the strip/map figure specs) \u2014 a pointer, not a link"
+      "reason": "P36.55: JSON pointer into the dossier artifact (the strip/map figure specs) — a pointer, not a link"
     },
     {
       "file": "src/pages/dossier/[...path].astro",
       "token": "/figures/0/meta/not_drawn",
       "count": 1,
-      "reason": "P36.55: JSON pointer into the dossier artifact (the strip/map figure specs) \u2014 a pointer, not a link"
+      "reason": "P36.55: JSON pointer into the dossier artifact (the strip/map figure specs) — a pointer, not a link"
     },
     {
       "file": "src/pages/dossier/[...path].astro",
       "token": "/$",
       "count": 1,
-      "reason": "P36.55: ptrFor's `/${ref.index}` template head \u2014 a JSON pointer into the dossier artifact, not a link"
+      "reason": "P36.55: ptrFor's `/${ref.index}` template head — a JSON pointer into the dossier artifact, not a link"
     },
     {
       "file": "src/pages/dossier/[...path].astro",
       "token": "/figures/0/meta/desc",
       "count": 1,
-      "reason": "P36.55: JSON pointer into the named artifact (the strip/map/next-decisions figure specs) \u2014 a pointer, not a link"
+      "reason": "P36.55: JSON pointer into the named artifact (the strip/map/next-decisions figure specs) — a pointer, not a link"
     },
     {
       "file": "src/components/dossier/DossierMapFigure.astro",
       "token": "/",
       "count": 1,
-      "reason": "P36.55: the bare-root JSON pointer in the empty-state fallback figure spec \u2014 a pointer, not a link"
+      "reason": "P36.55: the bare-root JSON pointer in the empty-state fallback figure spec — a pointer, not a link"
     },
     {
       "file": "src/pages/about.astro",
       "token": "/about/",
       "count": 1,
-      "reason": "P36.64: the BaseLayout `path` prop \u2014 the page's canonical path declaration for the citation/permalink (same construction every page uses), not a link"
+      "reason": "P36.64: the BaseLayout `path` prop — the page's canonical path declaration for the citation/permalink (same construction every page uses), not a link"
     },
     {
       "file": "src/lib/onboarding.ts",
       "token": "/sections/$",
       "count": 3,
-      "reason": "P36.64: JSON-pointer rests into the dossier artifact (sections[].figures/rows + reconciliation claims) for the golden card's Figure specs \u2014 pointers, not links"
+      "reason": "P36.64: JSON-pointer rests into the dossier artifact (sections[].figures/rows + reconciliation claims) for the golden card's Figure specs — pointers, not links"
     },
     {
       "file": "src/pages/about/how-to-read-a-dossier.astro",
       "token": "/about/how-to-read-a-dossier/",
       "count": 1,
-      "reason": "P36.65: the page's own canonical path declaration passed to BaseLayout's `path` prop \u2014 the same exemption class as src/pages/about.astro's `/about/` literal (a route identity, not a link construction)"
+      "reason": "P36.65: the page's own canonical path declaration passed to BaseLayout's `path` prop — the same exemption class as src/pages/about.astro's `/about/` literal (a route identity, not a link construction)"
     },
     {
       "file": "src/pages/about/editorial-decisions.astro",
       "token": "/about/editorial-decisions/",
       "count": 1,
-      "reason": "P37.7: the page's own canonical path declaration passed to BaseLayout's `path` prop \u2014 the same exemption class as src/pages/about.astro's `/about/` literal (a route identity, not a link construction)"
+      "reason": "P37.7: the page's own canonical path declaration passed to BaseLayout's `path` prop — the same exemption class as src/pages/about.astro's `/about/` literal (a route identity, not a link construction)"
     },
     {
       "file": "src/pages/about/legal-demands.astro",
       "token": "/about/legal-demands/",
       "count": 1,
-      "reason": "P37.8: the page's own canonical path declaration passed to BaseLayout's `path` prop \u2014 the same exemption class as src/pages/about.astro's `/about/` literal (a route identity, not a link construction)"
+      "reason": "P37.8: the page's own canonical path declaration passed to BaseLayout's `path` prop — the same exemption class as src/pages/about.astro's `/about/` literal (a route identity, not a link construction)"
     },
     {
       "file": "src/internal/component-kit/index.astro",
       "token": "/sources/",
       "count": 2,
-      "reason": "P36.22: internal component-kit harness fixture href \u2014 card/step/table spec data wrapped by withBase() inside Card.astro/DataTable.astro, never emitted raw"
+      "reason": "P36.22: internal component-kit harness fixture href — card/step/table spec data wrapped by withBase() inside Card.astro/DataTable.astro, never emitted raw"
     },
     {
       "file": "src/internal/contribution-back.astro",
       "token": "/contribution-back/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/internal/curate/[id].astro",
       "token": "/curate/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/internal/curate/contradictions.astro",
       "token": "/curate/contradictions/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/internal/curate/index.astro",
       "token": "/curate/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/internal/curate/revert.astro",
       "token": "/curate/revert/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/internal/curate/submit.astro",
       "token": "/curate/submit/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/internal/curate/tasks.astro",
       "token": "/curate/tasks/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/internal/releases/index.astro",
       "token": "/releases/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/internal/research-dossier/index.astro",
       "token": "/research-dossier/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/internal/visual-language.astro",
       "token": "/visual-language/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/lib/corrections-methodology-fixture.ts",
       "token": "/dossier/oklahoma-city/",
       "count": 3,
-      "reason": "P36.66a: fixture subject_path mirrors the emitted correction-record route literal \u2014 artifact data feeding the selector permalink, not a link construction"
+      "reason": "P36.66a: fixture subject_path mirrors the emitted correction-record route literal — artifact data feeding the selector permalink, not a link construction"
     },
     {
       "file": "src/lib/corrections-methodology-fixture.ts",
       "token": "/map/",
       "count": 1,
-      "reason": "P36.66a: fixture subject_path mirrors the emitted correction-record route literal \u2014 artifact data feeding the selector permalink, not a link construction"
+      "reason": "P36.66a: fixture subject_path mirrors the emitted correction-record route literal — artifact data feeding the selector permalink, not a link construction"
     },
     {
       "file": "src/lib/corrections.ts",
       "token": "/dispute/",
       "count": 1,
-      "reason": "P36.66a: canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
     },
     {
       "file": "src/lib/corrections.ts",
       "token": "/intake/new",
       "count": 1,
-      "reason": "P36.66a: canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
     },
     {
       "file": "src/lib/corrections.ts",
       "token": "/intake/status",
       "count": 1,
-      "reason": "P36.66a: canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
     },
     {
       "file": "src/lib/dossier-fixture.ts",
       "token": "/v1/claim/osm",
       "count": 1,
-      "reason": "P36.66a: fixture documentUrl mirrors emitted artifact bytes \u2014 artifact data rendered through dataHref() (in-site re-base, /v1/ passes raw), not a link construction"
+      "reason": "P36.66a: fixture documentUrl mirrors emitted artifact bytes — artifact data rendered through dataHref() (in-site re-base, /v1/ passes raw), not a link construction"
     },
     {
       "file": "src/lib/dossier-fixture.ts",
       "token": "/v1/claim/contract",
       "count": 2,
-      "reason": "P36.66a: fixture documentUrl mirrors emitted artifact bytes \u2014 artifact data rendered through dataHref() (in-site re-base, /v1/ passes raw), not a link construction"
+      "reason": "P36.66a: fixture documentUrl mirrors emitted artifact bytes — artifact data rendered through dataHref() (in-site re-base, /v1/ passes raw), not a link construction"
     },
     {
       "file": "src/lib/dossier-fixture.ts",
       "token": "/v1/claim/vendor-default",
       "count": 1,
-      "reason": "P36.66a: fixture documentUrl mirrors emitted artifact bytes \u2014 artifact data rendered through dataHref() (in-site re-base, /v1/ passes raw), not a link construction"
+      "reason": "P36.66a: fixture documentUrl mirrors emitted artifact bytes — artifact data rendered through dataHref() (in-site re-base, /v1/ passes raw), not a link construction"
     },
     {
       "file": "src/lib/dossier-fixture.ts",
       "token": "/map/",
       "count": 2,
-      "reason": "P36.66a: fixture documentUrl mirrors emitted artifact bytes \u2014 artifact data rendered through dataHref() (in-site re-base, /v1/ passes raw), not a link construction"
+      "reason": "P36.66a: fixture documentUrl mirrors emitted artifact bytes — artifact data rendered through dataHref() (in-site re-base, /v1/ passes raw), not a link construction"
     },
     {
       "file": "src/lib/dossier-fixture.ts",
       "token": "/v1/claim/portal",
       "count": 1,
-      "reason": "P36.66a: fixture documentUrl mirrors emitted artifact bytes \u2014 artifact data rendered through dataHref() (in-site re-base, /v1/ passes raw), not a link construction"
+      "reason": "P36.66a: fixture documentUrl mirrors emitted artifact bytes — artifact data rendered through dataHref() (in-site re-base, /v1/ passes raw), not a link construction"
     },
     {
       "file": "src/lib/dossier-fixture.ts",
       "token": "/methodology/",
       "count": 2,
-      "reason": "P36.66a: fixture documentUrl mirrors emitted artifact bytes \u2014 artifact data rendered through dataHref() (in-site re-base, /v1/ passes raw), not a link construction"
+      "reason": "P36.66a: fixture documentUrl mirrors emitted artifact bytes — artifact data rendered through dataHref() (in-site re-base, /v1/ passes raw), not a link construction"
     },
     {
       "file": "src/lib/dossier.ts",
       "token": "/dossier/$",
       "count": 3,
-      "reason": "P36.66a: canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
     },
     {
       "file": "src/lib/empty.ts",
       "token": "/research-queue/",
       "count": 1,
-      "reason": "P36.66a: canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
     },
     {
       "file": "src/lib/empty.ts",
       "token": "/sources/",
       "count": 1,
-      "reason": "P36.66a: canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
     },
     {
       "file": "src/lib/empty.ts",
       "token": "/dossier/",
       "count": 1,
-      "reason": "P36.66a: canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
     },
     {
       "file": "src/lib/empty.ts",
       "token": "/methodology/",
       "count": 1,
-      "reason": "P36.66a: canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
     },
     {
       "file": "src/lib/empty.ts",
       "token": "/evidence/",
       "count": 1,
-      "reason": "P36.66a: canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
     },
     {
       "file": "src/lib/empty.ts",
       "token": "/dispute/",
       "count": 1,
-      "reason": "P36.66a: canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
     },
     {
       "file": "src/lib/evidence-viewer.ts",
       "token": "/evidence/claim/$",
       "count": 1,
-      "reason": "P36.66a: canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
     },
     {
       "file": "src/lib/fixtures.ts",
       "token": "/v1/claim/contract",
       "count": 1,
-      "reason": "P36.66a: fixture documentUrl mirrors emitted artifact bytes \u2014 artifact data rendered through dataHref() (in-site re-base, /v1/ passes raw), not a link construction"
+      "reason": "P36.66a: fixture documentUrl mirrors emitted artifact bytes — artifact data rendered through dataHref() (in-site re-base, /v1/ passes raw), not a link construction"
     },
     {
       "file": "src/lib/fixtures.ts",
       "token": "/v1/claim/portal",
       "count": 1,
-      "reason": "P36.66a: fixture documentUrl mirrors emitted artifact bytes \u2014 artifact data rendered through dataHref() (in-site re-base, /v1/ passes raw), not a link construction"
+      "reason": "P36.66a: fixture documentUrl mirrors emitted artifact bytes — artifact data rendered through dataHref() (in-site re-base, /v1/ passes raw), not a link construction"
     },
     {
       "file": "src/lib/page-types.ts",
       "token": "/sources",
       "count": 1,
-      "reason": "P36.66a: the page-type registry's route-match pattern \u2014 match data, never an emitted link"
+      "reason": "P36.66a: the page-type registry's route-match pattern — match data, never an emitted link"
     },
     {
       "file": "src/lib/paths.ts",
       "token": "/",
       "count": 2,
-      "reason": "P36.66a: the helper's own internals \u2014 rootPath()/dataHref() joins and the OUTSIDE_BASE_PREFIXES exception table, not links"
+      "reason": "P36.66a: the helper's own internals — rootPath()/dataHref() joins and the OUTSIDE_BASE_PREFIXES exception table, not links"
     },
     {
       "file": "src/lib/paths.ts",
       "token": "/r/",
       "count": 1,
-      "reason": "P36.66a: the helper's own internals \u2014 rootPath()/dataHref() joins and the OUTSIDE_BASE_PREFIXES exception table, not links"
+      "reason": "P36.66a: the helper's own internals — rootPath()/dataHref() joins and the OUTSIDE_BASE_PREFIXES exception table, not links"
     },
     {
       "file": "src/lib/paths.ts",
       "token": "/releases/",
       "count": 1,
-      "reason": "P36.66a: the helper's own internals \u2014 rootPath()/dataHref() joins and the OUTSIDE_BASE_PREFIXES exception table, not links"
+      "reason": "P36.66a: the helper's own internals — rootPath()/dataHref() joins and the OUTSIDE_BASE_PREFIXES exception table, not links"
     },
     {
       "file": "src/lib/paths.ts",
       "token": "/v1/",
       "count": 1,
-      "reason": "P36.66a: the helper's own internals \u2014 rootPath()/dataHref() joins and the OUTSIDE_BASE_PREFIXES exception table, not links"
+      "reason": "P36.66a: the helper's own internals — rootPath()/dataHref() joins and the OUTSIDE_BASE_PREFIXES exception table, not links"
     },
     {
       "file": "src/lib/paths.ts",
       "token": "/intake/",
       "count": 1,
-      "reason": "P36.66a: the helper's own internals \u2014 rootPath()/dataHref() joins and the OUTSIDE_BASE_PREFIXES exception table, not links"
+      "reason": "P36.66a: the helper's own internals — rootPath()/dataHref() joins and the OUTSIDE_BASE_PREFIXES exception table, not links"
     },
     {
       "file": "src/lib/research-dossier.ts",
       "token": "/research-dossier/$",
       "count": 2,
-      "reason": "P36.66a: canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
     },
     {
       "file": "src/lib/watch.ts",
       "token": "/watch/",
       "count": 1,
-      "reason": "P36.66a: canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
     },
     {
       "file": "src/lib/watch.ts",
       "token": "/watch/$",
       "count": 2,
-      "reason": "P36.66a: canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
     },
     {
       "file": "src/lib/workspace-state.ts",
       "token": "/search/",
       "count": 1,
-      "reason": "P36.66a: canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
     },
     {
       "file": "src/lib/workspace-state.ts",
       "token": "/map/",
       "count": 1,
-      "reason": "P36.66a: canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
+      "reason": "P36.66a: canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction"
     },
     {
       "file": "src/lib/workspace-state.ts",
       "token": "/explore/",
       "count": 1,
-      "reason": "P37.26 (GX-09a): canonical route-id/path-builder constant \u2014 consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction (the P36.66a /network/ seat retargeted)"
+      "reason": "P37.26 (GX-09a): canonical route-id/path-builder constant — consumers wrap withBase() (in-site) or the literal is the route's own identity, never a link construction (the P36.66a /network/ seat retargeted)"
     },
     {
       "file": "src/pages/403.astro",
       "token": "/403/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/404.astro",
       "token": "/404.html",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/410.astro",
       "token": "/410/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/corrections.astro",
       "token": "/corrections/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/coverage-metrics.astro",
       "token": "/coverage-metrics/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/data-collection.astro",
       "token": "/data-collection/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/dispute.astro",
       "token": "/dispute/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/dossier/index.astro",
       "token": "/dossier/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/editorial-standards.astro",
       "token": "/editorial-standards/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/evidence/index.astro",
       "token": "/evidence/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/index.astro",
       "token": "/source_families",
       "count": 1,
-      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact \u2014 schema data, not a navigable link"
+      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact — schema data, not a navigable link"
     },
     {
       "file": "src/pages/index.astro",
       "token": "/attributes/site_records/count",
       "count": 1,
-      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact \u2014 schema data, not a navigable link"
+      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact — schema data, not a navigable link"
     },
     {
       "file": "src/pages/index.astro",
       "token": "/$",
       "count": 1,
-      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact \u2014 schema data, not a navigable link"
+      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact — schema data, not a navigable link"
     },
     {
       "file": "src/pages/index.astro",
       "token": "/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/map.astro",
       "token": "/map/",
       "count": 2,
-      "reason": "P36.66a: the selector-permalink path literal \u2014 the declared as_of selector form (latest-view namespace), not a snapshot-internal link"
+      "reason": "P36.66a: the selector-permalink path literal — the declared as_of selector form (latest-view namespace), not a snapshot-internal link"
     },
     {
       "file": "src/pages/methodology.astro",
       "token": "/methodology/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/explore/index.astro",
       "token": "/explore/",
       "count": 1,
-      "reason": "P37.26 (GX-09a): the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw (the P36.66a /network/ seat retargeted)"
+      "reason": "P37.26 (GX-09a): the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw (the P36.66a /network/ seat retargeted)"
     },
     {
       "file": "src/pages/search.astro",
       "token": "/search/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/sources.astro",
       "token": "/sources/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/sources/identifier-changed.astro",
       "token": "/sources/identifier-changed/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/status.astro",
       "token": "/runs/last_24h",
       "count": 1,
-      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact \u2014 schema data, not a navigable link"
+      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact — schema data, not a navigable link"
     },
     {
       "file": "src/pages/status.astro",
       "token": "/counts/listed",
       "count": 1,
-      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact \u2014 schema data, not a navigable link"
+      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact — schema data, not a navigable link"
     },
     {
       "file": "src/pages/status.astro",
       "token": "/counts",
       "count": 1,
-      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact \u2014 schema data, not a navigable link"
+      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact — schema data, not a navigable link"
     },
     {
       "file": "src/pages/status.astro",
       "token": "/status/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/status/issues/index.astro",
       "token": "/",
       "count": 4,
-      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact \u2014 schema data, not a navigable link"
+      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact — schema data, not a navigable link"
     },
     {
       "file": "src/pages/status/issues/index.astro",
       "token": "/status/issues/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/status/issues/page/[n].astro",
       "token": "/",
       "count": 1,
-      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact \u2014 schema data, not a navigable link"
+      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact — schema data, not a navigable link"
     },
     {
       "file": "src/pages/status/issues/page/[n].astro",
       "token": "/status/issues/page/$",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/status/sources/index.astro",
       "token": "/counts/listed",
       "count": 1,
-      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact \u2014 schema data, not a navigable link"
+      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact — schema data, not a navigable link"
     },
     {
       "file": "src/pages/status/sources/index.astro",
       "token": "/counts",
       "count": 1,
-      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact \u2014 schema data, not a navigable link"
+      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact — schema data, not a navigable link"
     },
     {
       "file": "src/pages/status/sources/index.astro",
       "token": "/sources/$",
       "count": 1,
-      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact \u2014 schema data, not a navigable link"
+      "reason": "P36.66a: figure/provenance JSON pointer into a manifest-listed artifact — schema data, not a navigable link"
     },
     {
       "file": "src/pages/status/sources/index.astro",
       "token": "/status/sources/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/style-guide.astro",
       "token": "/style-guide/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/pages/terms.astro",
       "token": "/terms/",
       "count": 1,
-      "reason": "P36.66a: the layout canonical path prop \u2014 a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
+      "reason": "P36.66a: the layout canonical path prop — a route id consumed through withBase() inside the layout (canonical/recordPath), never emitted raw"
     },
     {
       "file": "src/lib/graph-overview-fixture.ts",
       "token": "/entity/org/",
       "count": 1,
-      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links — artifact data, never link constructions"
     },
     {
       "file": "src/lib/graph-overview-fixture.ts",
       "token": "/entity/agency/",
       "count": 1,
-      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links — artifact data, never link constructions"
     },
     {
       "file": "src/lib/graph-overview-fixture.ts",
       "token": "/entity/notice/",
       "count": 1,
-      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links — artifact data, never link constructions"
     },
     {
       "file": "src/lib/graph-overview-fixture.ts",
       "token": "/entity/grant/",
       "count": 1,
-      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links — artifact data, never link constructions"
     },
     {
       "file": "src/lib/graph-overview-fixture.ts",
       "token": "/entity/agency/acme-city-police--4g2wm8q/",
       "count": 3,
-      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links — artifact data, never link constructions"
     },
     {
       "file": "src/lib/graph-overview-fixture.ts",
       "token": "/entity/org/vigilant-solutions--7x1k2mn/",
       "count": 1,
-      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links — artifact data, never link constructions"
     },
     {
       "file": "src/lib/graph-overview-fixture.ts",
       "token": "/entity/org/meridian-surveillance--9p3qw7r/",
       "count": 1,
-      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links — artifact data, never link constructions"
     },
     {
       "file": "src/lib/graph-overview-fixture.ts",
       "token": "/entity/agency/us-doj-byrne-jag--2h5k9qz/",
       "count": 1,
-      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links — artifact data, never link constructions"
     },
     {
       "file": "src/lib/graph-overview-fixture.ts",
       "token": "/entity/org/acme-public-works--3r7t1vx/",
       "count": 1,
-      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links — artifact data, never link constructions"
     },
     {
       "file": "src/lib/graph-overview-fixture.ts",
       "token": "/graphs/supply/usa/ok/",
       "count": 1,
-      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links — artifact data, never link constructions"
     },
     {
       "file": "src/lib/graph-overview-fixture.ts",
       "token": "/graphs/operators/usa/ok/",
       "count": 1,
-      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links \u2014 artifact data, never link constructions"
+      "reason": "P37.24 (GX-08a): fixture hrefs mirror the emitted sig.graph-overview/1 root-relative node links — artifact data, never link constructions"
     },
     {
       "file": "src/lib/explore-graph.ts",
       "token": "/",
       "count": 1,
-      "reason": "P37.27 (GX-09b): twinPathHref's endsWith(\"/\") trailing-slash join guard on emitted entity hrefs \u2014 a string-shape guard, not a link"
+      "reason": "P37.27 (GX-09b): twinPathHref's endsWith(\"/\") trailing-slash join guard on emitted entity hrefs — a string-shape guard, not a link"
     },
     {
       "file": "src/lib/explore-graph.ts",
       "token": "/entity/",
       "count": 1,
-      "reason": "P37.27 (GX-09b): isEntityHref's \"/entity/\" route-class prefix guard on emitted hrefs \u2014 a check, not a link (fetch sites re-base through withBase)"
+      "reason": "P37.27 (GX-09b): isEntityHref's \"/entity/\" route-class prefix guard on emitted hrefs — a check, not a link (fetch sites re-base through withBase)"
     },
     {
       "file": "src/lib/dossier-visuals-fixture.ts",
       "token": "/graphs/$",
       "count": 2,
-      "reason": "P37.28: graphHref()'s emitted-route templates \u2014 fixture link data mirroring /graphs/<family>/<slug>/ build routes; the file's role is fixture artifact data (17 sites baselined)"
+      "reason": "P37.28: graphHref()'s emitted-route templates — fixture link data mirroring /graphs/<family>/<slug>/ build routes; the file's role is fixture artifact data (17 sites baselined)"
     },
     {
       "file": "src/components/dossier/NetworkFigureSlot.astro",
       "token": "/figures",
       "count": 1,
-      "reason": "P37.29 fix-forward: the sig-figure region's data-pointer \"/figures\" \u2014 a JSON pointer into web/dossier_sources/<slug>.json (the contribution plan's figures[] feed the figure's counts derive from), not a link"
+      "reason": "P37.29 fix-forward: the sig-figure region's data-pointer \"/figures\" — a JSON pointer into web/dossier_sources/<slug>.json (the contribution plan's figures[] feed the figure's counts derive from), not a link"
     },
     {
       "file": "src/lib/watch-feeds.ts",
       "token": "/",
       "count": 4,
-      "reason": "P37.34 (WX-04b): path-separator literals (scopePath split/join '/') plus the '/>' self-closing tag ends inside the RSS/OPML feed templates \u2014 string shapes, never link constructions; every emitted feed href is minted through withBase() at the page layer"
+      "reason": "P37.34 (WX-04b): path-separator literals (scopePath split/join '/') plus the '/>' self-closing tag ends inside the RSS/OPML feed templates — string shapes, never link constructions; every emitted feed href is minted through withBase() at the page layer"
+    },
+    {
+      "file": "src/lib/changes-feeds.ts",
+      "token": "/",
+      "count": 5,
+      "reason": "P37.40 (CHG-01): the '/>' self-closing tag ends inside the Atom/OPML feed templates — string shapes, never link constructions; every emitted feed href is minted through withBase() at the page layer"
     }
   ]
 }

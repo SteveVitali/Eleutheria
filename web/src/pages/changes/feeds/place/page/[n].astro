@@ -15,6 +15,7 @@ import {
   changeRows,
   changesFeedPath,
   scopeRows,
+  type ChangeFeedScope,
 } from "../../../../../lib/changes";
 import { PLACE_PAGE_SIZE } from "../../../../../lib/changes-feed-page";
 import { withBase } from "../../../../../lib/paths";
@@ -42,7 +43,11 @@ export const getStaticPaths: GetStaticPaths = () => {
   }));
 };
 
-const { n, pages, scopes } = Astro.props;
+const { n, pages, scopes } = Astro.props as {
+  n: number;
+  pages: number;
+  scopes: ChangeFeedScope[];
+};
 const DOC = getReleaseChanges();
 const ROWS = DOC ? changeRows(DOC) : [];
 const ALL = changeFeedScopes([], []);
