@@ -417,6 +417,15 @@ function keyedDossier(row: RegRow): Dossier {
       records_placed_only_here: roll.placed_only_here,
       records_appearing: roll.records,
       conserved: true,
+      // P37.39 (QB-01): the CONF-07b count interval — L3 §5.2 display form
+      // verbatim, over the fixture's own member count (synthetic corpus).
+      count_interval: {
+        records: roll.records,
+        lower: Math.max(roll.records - 2, 0),
+        upper: roll.records,
+        declared_distance_m: 25,
+        display: `${roll.records} camera records · between ${Math.max(roll.records - 2, 0)} and ${roll.records} listed cameras ([why a range?](/quality/#duplicates))`,
+      },
       note: kids.length
         ? "records = records placed only here + the sum of child jurisdictions — conserved by construction."
         : "A leaf dossier: every record appears here is placed only here.",

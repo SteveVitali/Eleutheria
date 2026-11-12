@@ -172,6 +172,9 @@ for (const [jkey, frame] of Object.entries(getJurisdictionFrames())) {
 // props stay under the document bound because only the fixtures build
 // (archives absent) carries them.
 import type { MapRecord } from "../islands/map/model";
+import { getRecordBasisIndex, getMapCountInterval } from "../lib/data";
+const BASIS_INDEX = getRecordBasisIndex();
+const MAP_COUNT_INTERVAL = getMapCountInterval();
 const ISLAND_RECORDS: MapRecord[] =
   TILE_SOURCES.length === 0
     ? [...sitesModel.lists.values()].flatMap((l) =>
@@ -211,6 +214,7 @@ const ISLAND_RECORDS: MapRecord[] =
             listHref: withBase(dossierSitesPath(r.dossierSlug)),
             // P37.19: the record's canonical key + ancestry for the
             // descendants-inclusive `jurisdiction=` facet.
+            basis: BASIS_INDEX.get(r.id) ?? undefined,
             jkey: (() => {
               const a = ASSET_BY_ID.get(r.id);
               return a ? assetJurisdictionKey(a) : null;
@@ -266,6 +270,23 @@ const placeOptionLabel = (d: (typeof placeRows)[number]) =>
     is an opt-in enhancement that loads only when JavaScript runs. The tiles
     are self-hosted static vector archives — no third-party tile CDN is required.
   </p>
+
+  {/* P37.39 (QB-01, SIG-CONF-005): the map's count interval — the L3 §5.2
+      display verbatim ("N camera records · between L and U listed cameras")
+      when the CONF-07b view published one; the honest not_evaluable reason
+      otherwise. Sparse on a pre-P35.47 wire (fixtures mode included). */}
+  {MAP_COUNT_INTERVAL?.display && (
+    <p class="sig-table-note" data-testid="map-count-interval">
+      {MAP_COUNT_INTERVAL.display.replace(/\s*\(\[why a range\?\]\([^)]*\)\)\s*$/, "")}
+      {" — see "}
+      <a href={withBase("quality/#duplicates")}>why a range?</a>
+    </p>
+  )}
+  {MAP_COUNT_INTERVAL?.not_evaluable && !MAP_COUNT_INTERVAL.display && (
+    <p class="sig-table-note" data-testid="map-count-interval">
+      Camera count interval: not evaluable — {MAP_COUNT_INTERVAL.not_evaluable}
+    </p>
+  )}
 
   <ViewSwitch view="map" release={LATEST?.publicationId ?? null} />
 

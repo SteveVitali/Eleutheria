@@ -161,6 +161,20 @@ export interface DossierSourcesProvenance {
   scope?: string;
 }
 
+/** One co-located pair row (`cross_source.colocated[]`, QB-01). */
+export interface ColocatedPair {
+  record: string;
+  site_id?: string | null;
+  linked_record: string;
+  linked_site_id?: string | null;
+  source?: string | null;
+  source_name?: string | null;
+  distance_m?: number | null;
+  reason?: string | null;
+  /** The export's verbatim L3 §5.2 possible-duplicate sentence. */
+  display?: string | null;
+}
+
 export interface DossierSourcesDoc {
   schema: string;
   release: { label: string; publication_id: string | null; as_of_world: string };
@@ -192,12 +206,29 @@ export interface DossierSourcesDoc {
     located_here_declared_elsewhere: number;
     contradictions_open: number;
     cross_source_colocated_candidates?: number | AbsenceToken;
+    /** P35.47 (SIG-CONF-005): the dossier's count interval — `display`
+     *  carries L3 §5.2 verbatim ("N camera records · between L and U
+     *  listed cameras"). Optional — absent on a pre-P35.47 artifact. */
+    count_interval?: {
+      records?: number;
+      lower?: number;
+      upper?: number;
+      declared_distance_m?: number;
+      display?: string;
+      not_evaluable?: string;
+    };
   };
   provenance_summary: DossierSourcesProvenance;
   figures: DossierSourcesFigure[];
   sources: DossierSourceRow[];
   cross_source: {
     colocated_pairs: number | AbsenceToken;
+    /** P37.39 (QB-01, UXR-A06): the bounded co-located pair list — cross-
+     *  source possible-duplicate candidates the CONF-07b view lists
+     *  (never merged; `display` is the verbatim L3 §5.2 sentence). */
+    colocated?: ColocatedPair[];
+    /** Rows past the emitted bound — named, never silently dropped. */
+    colocated_truncated?: number;
     contradictions: { contradiction_id: string }[];
   };
   placement: {
