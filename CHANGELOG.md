@@ -24,6 +24,25 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+### Added
+
+- **P37.33 — the watch lane + cadence (K7 WX-03, D-K7-2 [B-22] = the lane):**
+  the daily `sig-watch-publish` step on the status lane's publish class —
+  `sig-ops watch-publish` emits `watch/{state.json (sig.watch-heartbeat/1),
+  lane.json (sig.watch-lane/1), watch.json, index.html, place/**, item/**,
+  archive/**}` from a `sig/watch/2` payload at the watch clock (two clocks
+  labelled, upper_bound never a "deadline", coverage statement on every
+  place) and pushes `watch/**` through the watch-scoped half of the one
+  publish path (`ops/public_routes_watch.toml` — deletes only lane-owned
+  paths, never `watch/archive/**`, never the web build's facet/history/
+  citations/feed files). Watched agenda tenants move monthly → daily
+  (legistar/primegov/civicclerk/escribe, staggered 05:0x UTC) and sam_gov
+  weekly → twice-weekly (`ops/cadence.toml`; `twice-weekly` joins the
+  freshness nominal vocabulary). The lane job + daily trigger create is
+  the OM-20 named mutation — QUEUED `prepared_not_executed`
+  (`D-P37.33-1`; GATE-G6 §4 named P37.33 verbatim, expiry
+  GATE-ACCEPT-R11; restore point "lane job paused").
+
 - **P37.32 — `contract_expiring` detector + task ↔ item links (K7 WX-06,
   absorbs K11 RQ-06):** the §33.2 catalog's #10 detector now runs in
   `tasks.detect` — a contract subject whose recorded `end_date` falls inside

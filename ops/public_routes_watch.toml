@@ -1,0 +1,22 @@
+# SPDX-License-Identifier: Apache-2.0
+# The watch lane's scoped allow-list (P37.33 / K7 WX-03, D-K7-2 [B-22] = the
+# lane — the G3 §4.4 publish class **status** extended to watch/**). DATA,
+# not code — the only record of what the daily `sig-watch-publish` job may
+# push through the watch-scoped half of the one publish path
+# (ops/src/ops/watch_publish.py). The lane publishes ONLY watch/**: it never
+# touches records, claims, release trees or any route outside watch/, it
+# never deletes under watch/archive/** (append-only, P1–P3), and it never
+# deletes a watch/ path it does not own — the release web build's facet,
+# history, pagination, citations and feed files stay the web build's.
+
+[allowlist]
+top_level = [
+  "watch",    # the watch lane (K7 §7): state.json, lane.json, watch.json,
+              # index.html, place/**, item/**, archive/<date>.json — nothing else
+]
+required = [
+  "watch",
+]
+
+# Denied-route probes stay owned by ops/public_routes.toml's [[denied]] rows —
+# the lane's publish never adds one.
