@@ -20,7 +20,7 @@
 
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { gzipSync } from "node:zlib";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -470,13 +470,25 @@ try {
   mkdirSync(join(outDir, "status", "quality"), { recursive: true });
   const qOut = join(outDir, ".quality-probe");
   mkdirSync(qOut, { recursive: true });
-  execFileSync(
+  // `sig-ops quality run` exits 0/3/4 on pass/partial/fail — every code
+  // means the probe RAN and wrote its records (a `fail` verdict is the
+  // fixture's own GQ-27 content, never a harness error); only a spawn
+  // failure or missing outputs takes the warn path.
+  const probe = spawnSync(
     "uv",
     ["run", "sig-ops", "quality", "run", "--placement", "R",
      "--scan-dir", outDir, "--target", "fixture-export",
      "--out", qOut],
     { stdio: "inherit" },
   );
+  if (
+    probe.error !== undefined ||
+    (probe.status !== 0 && probe.status !== 3 && probe.status !== 4) ||
+    !existsSync(join(qOut, "quality-report.json")) ||
+    !existsSync(join(qOut, "probe-run.json"))
+  ) {
+    throw new Error(`quality probe did not run (status ${probe.status})`);
+  }
   execFileSync(
     "uv",
     ["run", "sig-exports", "quality", "page",

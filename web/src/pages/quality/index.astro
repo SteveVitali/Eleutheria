@@ -125,7 +125,7 @@ const historyLine = page.report
   : "No measured run is bound into this build yet — per-release deltas append here as each release binds its own report.";
 ---
 
-<BaseLayout title="Quality — how sure is SIG?" path="/quality/">
+<BaseLayout title="Quality — how sure is SIG?" path={withBase("quality/")}>
   <InBrief href="#checks-heading">
     SIG checks its own data automatically on every release. Each check below
     says what it tests, on how many records, and how. No person outside the
