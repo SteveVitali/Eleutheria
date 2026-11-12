@@ -635,7 +635,7 @@ def _feed_events(
     for comp in sorted(diff):
         cell = diff[comp]
 
-        def _routing(record_key: str, row: Mapping[str, Any]) -> dict[str, Any]:
+        def _routing(record_key: str, row: Mapping[str, Any], comp: str = comp) -> dict[str, Any]:
             m = meta.get(record_key) or {}
             return {
                 "compartment": comp,
@@ -801,9 +801,7 @@ def release_changes_documents(
         for k in ("added", "removed", "changed", "records", "previous_records")
     }
 
-    events = _feed_events(
-        diff, new_date=new_date, old_date=old_date, digests=digests, meta=meta
-    )
+    events = _feed_events(diff, new_date=new_date, old_date=old_date, digests=digests, meta=meta)
 
     disclosures = [
         "Sources and confidence are never compared per record — the "
