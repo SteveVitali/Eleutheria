@@ -597,8 +597,7 @@ class DossierContributionPlan:
                 # reason when no completed run exists.
                 "colocated_pairs": (
                     self.dedup_colocated.get(acc.key, {}).get("count")
-                    if acc.key in self.dedup_colocated
-                    and "count" in self.dedup_colocated[acc.key]
+                    if acc.key in self.dedup_colocated and "count" in self.dedup_colocated[acc.key]
                     else {
                         "not_evaluable": self.dedup_colocated.get(acc.key, {}).get(
                             "not_evaluable", "no completed camera-site ER run"
@@ -606,9 +605,7 @@ class DossierContributionPlan:
                     }
                 ),
                 "colocated": self.dedup_colocated.get(acc.key, {}).get("pairs", ()),
-                "colocated_truncated": self.dedup_colocated.get(acc.key, {}).get(
-                    "truncated", 0
-                ),
+                "colocated_truncated": self.dedup_colocated.get(acc.key, {}).get("truncated", 0),
                 "contradictions": [{"contradiction_id": cid} for cid in contradictions_list],
             },
             "placement": {
@@ -708,8 +705,7 @@ class DossierContributionPlan:
             ),
             "cross_source_colocated_candidates": (
                 self.dedup_colocated.get(acc.key, {}).get("count")
-                if acc.key in self.dedup_colocated
-                and "count" in self.dedup_colocated[acc.key]
+                if acc.key in self.dedup_colocated and "count" in self.dedup_colocated[acc.key]
                 else {
                     "not_evaluable": self.dedup_colocated.get(acc.key, {}).get(
                         "not_evaluable", "no completed camera-site ER run"

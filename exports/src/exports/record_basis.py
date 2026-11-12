@@ -112,7 +112,10 @@ def location_check_text(
         "null_island",
         "invalid_point",
     ):
-        return f"Location check: {check} — no publishable point; the record is shown, not counted at a point."
+        return (
+            f"Location check: {check} — no publishable point; "
+            "the record is shown, not counted at a point."
+        )
     if check == "no_location_evidence":
         return "Location check: no location evidence is recorded."
     if check in ("name_unmatched", "name_ambiguous"):
@@ -191,7 +194,9 @@ def record_basis(
     lineages_absence = _absence(n_lin) or _absence(n_disp)
     lineages_text = n_disp if isinstance(n_disp, str) else None
     if lineages_text is None and isinstance(n_lin, int) and not isinstance(n_lin, bool):
-        lineages_text = "Listed by 1 source." if n_lin == 1 else f"Seen independently by {n_lin} sources."
+        lineages_text = (
+            "Listed by 1 source." if n_lin == 1 else f"Seen independently by {n_lin} sources."
+        )
     return {
         "schema": SCHEMA,
         "site_id": site if isinstance(site, str) else None,
@@ -205,9 +210,7 @@ def record_basis(
         "lineages": n_lin if isinstance(n_lin, int) and not isinstance(n_lin, bool) else None,
         "lineages_text": lineages_text,
         "lineages_absence": lineages_absence,
-        "location_check": location_check_text(
-            placement_check, jurisdiction_name=jurisdiction_name
-        ),
+        "location_check": location_check_text(placement_check, jurisdiction_name=jurisdiction_name),
         "technology": technology_text(
             technology, technology_status, source_name=technology_source_name
         ),
@@ -226,6 +229,7 @@ def basis_rows(basis: Mapping[str, Any]) -> list[tuple[str, str, Sequence[str]]]
     ``possible duplicate`` / multi-view / corroboration / location check /
     technology / evidence / checked by).
     """
+
     def _displays(entries: Any) -> list[str]:
         out: list[str] = []
         for e in entries or ():
@@ -235,8 +239,8 @@ def basis_rows(basis: Mapping[str, Any]) -> list[tuple[str, str, Sequence[str]]]
         return out
 
     site = basis.get("site_id")
-    site_text = str(site) if isinstance(site, str) else str(
-        basis.get("site_absence") or NOT_RECORDED
+    site_text = (
+        str(site) if isinstance(site, str) else str(basis.get("site_absence") or NOT_RECORDED)
     )
     rows: list[tuple[str, str, Sequence[str]]] = [("Camera site", site_text, ())]
     for label, key, absence_key in (
@@ -255,7 +259,10 @@ def basis_rows(basis: Mapping[str, Any]) -> list[tuple[str, str, Sequence[str]]]
     rows.append(
         (
             "Corroboration",
-            str(basis.get("lineages_text") or f"{NOT_EVALUABLE} — {basis.get('lineages_absence') or NOT_RECORDED}"),
+            str(
+                basis.get("lineages_text")
+                or f"{NOT_EVALUABLE} — {basis.get('lineages_absence') or NOT_RECORDED}"
+            ),
             (),
         )
     )

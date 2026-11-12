@@ -31,8 +31,8 @@ from urllib.parse import quote, urlencode
 from policy.labels import KIND_WORDS, hash4, kind_for
 
 from .provenance_panel import panel_from_statement, panel_html
-from .record_basis import record_basis
 from .published_record import EvidenceRef, PublishedRecord
+from .record_basis import record_basis
 
 
 def _e(v: Any) -> str:
@@ -471,6 +471,7 @@ def record_page(
         for s in record.claim_statements
         if isinstance(s, dict) and s.get("claim_id")
     }
+
     # P37.39 (R11-K13-QB-01, L3 §5.2, SIG-CONF-011): the record's dedup
     # publication block lands inside each claim's provenance panel as the
     # per-record quality basis — the same ``sig.record-basis/1`` block the
@@ -495,8 +496,7 @@ def record_page(
             jurisdiction_name=record.jurisdiction.get("id"),
             technology=record.technology.get("id"),
             technology_status=record.technology.get("basis"),
-            evidence_source_name=(stmt or {}).get("source_name")
-            or (stmt or {}).get("source_id"),
+            evidence_source_name=(stmt or {}).get("source_name") or (stmt or {}).get("source_id"),
             evidence_fetched=((stmt or {}).get("capture") or {}).get("retrieved_at"),
             evidence_copy_kept=copy_kept,
         )
