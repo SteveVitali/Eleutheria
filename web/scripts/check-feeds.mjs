@@ -191,6 +191,46 @@ function checkOpml(rel, text) {
   }
 }
 
+// --- Atom (RFC 4287) — the change feeds (P37.40 / SIG-UI-072) ------------
+function checkAtom(rel, text) {
+  checkXml(rel, text);
+  for (const needle of ['<feed xmlns="http://www.w3.org/2005/Atom">', "<title>", "<id>", "<updated>", 'rel="self"', 'rel="alternate"', "</feed>"]) {
+    if (!text.includes(needle)) fail(`${rel}: missing ${needle}`);
+  }
+  const self = text.match(/<link rel="self"[^>]*href="([^"]+)"/)?.[1];
+  if (!self || !self.endsWith(`/${rel}`)) {
+    fail(`${rel}: link rel=self "${self}" does not name the emitted path /${rel}`);
+  }
+  const fid = text.match(/<id>([^<]+)<\/id>/)?.[1];
+  if (!fid || !fid.endsWith(`/${rel}`)) fail(`${rel}: feed <id> "${fid}" ≠ emitted path /${rel}`);
+  const upd = text.match(/<updated>([^<]+)<\/updated>/)?.[1];
+  if (!upd || Number.isNaN(Date.parse(upd))) fail(`${rel}: unparseable feed <updated> "${upd}"`);
+  const entries = text.split("  <entry>").slice(1);
+  for (const [i, e] of entries.entries()) {
+    for (const tag of ["<title>", "<id>", "<updated>", "<published>", "<category ", "<content ", "</entry>"]) {
+      if (!e.includes(tag)) fail(`${rel}: entry[${i}] missing ${tag}`);
+    }
+    const eid = e.match(/<id>([^<]+)<\/id>/)?.[1] ?? "";
+    if (!eid.startsWith("urn:sig:change:")) fail(`${rel}: entry[${i}] id off-scheme (${eid})`);
+    for (const stamp of [e.match(/<updated>([^<]+)<\/updated>/)?.[1], e.match(/<published>([^<]+)<\/published>/)?.[1]]) {
+      if (!stamp || Number.isNaN(Date.parse(stamp))) fail(`${rel}: entry[${i}] unparseable date "${stamp}"`);
+    }
+  }
+}
+
+function checkChangesOpml(rel, text) {
+  checkXml(rel, text);
+  if (!text.includes('<opml version="2.0"')) fail(`${rel}: not OPML 2.0`);
+  const outlines = [...text.matchAll(/<outline[^>]*xmlUrl="([^"]+)"/g)];
+  if (outlines.length === 0) fail(`${rel}: no outlines`);
+  for (const o of outlines) {
+    const url = o[1];
+    if (!url.endsWith(".atom")) fail(`${rel}: outline xmlUrl not an .atom feed (${url})`);
+    const emitted = url.replace(/^https?:\/\/[^/]+/, "").replace(/^\//, "");
+    if (!fileSet.has(emitted)) fail(`${rel}: outline targets un-emitted feed ${emitted}`);
+  }
+}
+
 // --- run ----------------------------------------------------------------------
 const feedDir = "watch/feeds";
 const emitted = files.filter((f) => f.startsWith(`${feedDir}/`) || f === "watch/feeds.opml");
@@ -250,6 +290,52 @@ if (fileSet.has(dirPage)) {
   }
 }
 
+// --- change feeds (P37.40 / K13 CHG-01, SIG-UI-072) ------------------------
+// `changes/feeds/<scope>.atom` for `all`, every emitted dossier page and
+// every emitted source page + `changes/feeds.opml`; the T0 ceiling applies.
+const changesFeeds = files.filter((f) => f.startsWith("changes/feeds/") || f === "changes/feeds.opml");
+if (!fileSet.has("changes/feeds/all.atom")) {
+  fail("changes/feeds/all.atom missing — the always-emitted change feed");
+}
+for (const rel of changesFeeds) {
+  const text = read(rel);
+  if (Buffer.byteLength(text, "utf-8") > FEED_MAX) {
+    fail(`${rel}: ${Buffer.byteLength(text)} B over the T0 feed ceiling ${FEED_MAX}`);
+  }
+  if (rel.endsWith(".atom")) checkAtom(rel, text);
+  else if (rel.endsWith(".opml")) checkChangesOpml(rel, text);
+  else if (!rel.endsWith("index.html")) fail(`${rel}: unknown feed file shape`);
+}
+// Coverage: every emitted dossier page (a place page — never the a-z/by/
+// sort/page facets or the sites|sources|downloads|print sub-pages) carries
+// `changes/feeds/place/<path>.atom`; every emitted source page carries
+// `changes/feeds/source/<id>.atom` — empty scopes still feed.
+const NON_PLACE_FIRST = new Set(["a-z", "by", "sort", "page"]);
+const NON_PLACE_LEAF = new Set(["sites", "sources", "downloads", "print"]);
+for (const rel of files.filter((f) => /^dossier\/.+\/index\.html$/.test(f))) {
+  const parts = rel.slice("dossier/".length, -"/index.html".length).split("/");
+  if (NON_PLACE_FIRST.has(parts[0]) || NON_PLACE_LEAF.has(parts[parts.length - 1])) continue;
+  const feed = `changes/feeds/place/${parts.join("/")}.atom`;
+  if (!fileSet.has(feed)) fail(`place ${parts.join("/")} has no change feed ${feed} (SIG-UI-072)`);
+}
+for (const rel of files.filter((f) => /^sources\/[^/]+\/index\.html$/.test(f))) {
+  const id = rel.slice("sources/".length, -"/index.html".length);
+  const feed = `changes/feeds/source/${id}.atom`;
+  if (!fileSet.has(feed)) fail(`source ${id} has no change feed ${feed} (SIG-UI-072)`);
+}
+// Link crawl: every change-feed href on /changes/ and the feed index pages
+// resolves to an emitted file (no-JS crawl).
+for (const page of ["changes/index.html", "changes/feeds/index.html"]) {
+  if (!fileSet.has(page)) continue;
+  const html = read(page);
+  const hrefs = [...html.matchAll(/href="(?:\/)?(changes\/feeds\.opml|changes\/feeds\/[^"?#]+)"/g)].map((m) => m[1]);
+  for (const href of hrefs) {
+    if (!fileSet.has(href) && !fileSet.has(`${href}index.html`)) {
+      fail(`${page} links un-emitted ${href}`);
+    }
+  }
+}
+
 if (errors.length) {
   console.error(`check-feeds: ${errors.length} failure(s)`);
   for (const e of errors) console.error(`  ${e}`);
@@ -262,6 +348,7 @@ const counts = {
   opml: emitted.filter((f) => f.endsWith(".opml")).length,
 };
 console.log(
-  `check-feeds: PASS — ${emitted.length} feed files validated ` +
-  `(${counts.ics} .ics, ${counts.xml} .xml, ${counts.json} .json, ${counts.opml} .opml; ≤${FEED_MAX} B)`,
+  `check-feeds: PASS — ${emitted.length} watch feed files validated ` +
+  `(${counts.ics} .ics, ${counts.xml} .xml, ${counts.json} .json, ${counts.opml} .opml) + ` +
+  `${changesFeeds.length} change feed files (≤${FEED_MAX} B)`,
 );

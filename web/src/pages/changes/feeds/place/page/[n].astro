@@ -1,0 +1,81 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P37.40 (R11-K13-CHG-01, SIG-UI-072) — `/changes/feeds/place/page/<n>/` —
+// the paginated place-feed index (K9 §6.1's ≤50-row page rule). Each row
+// links the place's `.atom` feed and its dossier page; every emitted place
+// has a feed even when it lists zero entries (D-K7-5's posture).
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../../../../layouts/BaseLayout.astro";
+import { getDossiers, getUnplacedReport, getReleaseChanges } from "../../../../../lib/data";
+import {
+  changeFeedScopes,
+  changeRows,
+  changesFeedPath,
+  scopeRows,
+} from "../../../../../lib/changes";
+import { PLACE_PAGE_SIZE } from "../../../../../lib/changes-feed-page";
+import { withBase } from "../../../../../lib/paths";
+
+export function placeScopes() {
+  const places = [
+    ...getDossiers().map((d) => ({ path: d.slug, name: d.subject_label ?? d.slug })),
+    ...(getUnplacedReport() !== null && !getDossiers().some((d) => d.slug === "unplaced")
+      ? [{ path: "unplaced", name: "Not yet placed" }]
+      : []),
+  ];
+  return changeFeedScopes(places, []).filter((s) => s.scope === "place");
+}
+
+export const getStaticPaths: GetStaticPaths = () => {
+  const scopes = placeScopes();
+  const pages = Math.max(1, Math.ceil(scopes.length / PLACE_PAGE_SIZE));
+  return Array.from({ length: pages }, (_, i) => ({
+    params: { n: String(i + 1) },
+    props: {
+      n: i + 1,
+      pages,
+      scopes: scopes.slice(i * PLACE_PAGE_SIZE, (i + 1) * PLACE_PAGE_SIZE),
+    },
+  }));
+};
+
+const { n, pages, scopes } = Astro.props;
+const DOC = getReleaseChanges();
+const ROWS = DOC ? changeRows(DOC) : [];
+const ALL = changeFeedScopes([], []);
+const scopeSet = [...ALL, ...scopes];
+---
+
+<BaseLayout
+  title={`Place change feeds — page ${n}`}
+  path={withBase(`changes/feeds/place/page/${n}/`)}
+  crumbs={[
+    { label: "Changes", href: withBase("changes/") },
+    { label: "Feeds", href: withBase("changes/feeds/") },
+    { label: `Places — page ${n}` },
+  ]}
+  lede="One Atom feed per place — a place feed covers the place and its descendants."
+>
+  <table data-testid="place-feed-table">
+    <thead>
+      <tr><th>Place</th><th>Atom feed</th><th>Entries this release</th></tr>
+    </thead>
+    <tbody>
+      {scopes.map((s) => (
+        <tr data-testid="feed-row" data-scope={s.path}>
+          <td><a href={withBase(s.pagePath)}>{s.title.replace(/^SIG changes — /, "")}</a></td>
+          <td><a href={withBase(changesFeedPath(s.path))}>{`${s.path}.atom`}</a></td>
+          <td>{scopeRows(ROWS, scopeSet, s.path)?.length ?? 0}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  <nav aria-label="Place feed pages" data-testid="place-feed-pages">
+    {n > 1 && <a href={withBase(`changes/feeds/place/page/${n - 1}/`)}>← previous</a>}
+    <span> page {n} of {pages} </span>
+    {n < pages && <a href={withBase(`changes/feeds/place/page/${n + 1}/`)}>next →</a>}
+  </nav>
+</BaseLayout>

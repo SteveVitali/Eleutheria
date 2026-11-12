@@ -1,0 +1,290 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P37.40 (R11-K13-CHG-01, J5, SIG-UI-072) — the `/changes/` page: what
+// changed between the latest release and the previous activated release,
+// over the release's own manifest-pinned diff (`sig.release-changes/1` +
+// `sig.release-source-changes/1` + `sig.release-changes-feed/1`). Two
+// classes kept visibly apart — "SIG's records changed" (belief time) and
+// "the source reports a change in the world" (world time) — dated by
+// release activation and world dates, never by version-control dates.
+// T1 zero-JS complete; the Atom feeds are T0 bytes under /changes/feeds/.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EmptyState from "../../components/EmptyState.astro";
+import {
+  getDossiers,
+  getReleaseChanges,
+  getUnplacedReport,
+} from "../../lib/data";
+import { getSourcePageIds } from "../../lib/source-page";
+import { getSourceRows } from "../../lib/data";
+import {
+  changeFeedScopes,
+  changeRows,
+  PAGE_ROW_CAP,
+  rowsForClass,
+  CHANGES_OPML_PATH,
+  changesFeedPath,
+  type ChangeRow,
+} from "../../lib/changes";
+import { rootPath, withBase } from "../../lib/paths";
+import { dossierPath } from "../../lib/dossier";
+
+const DOC = getReleaseChanges();
+const INDEX = DOC?.index ?? null;
+const ROWS = DOC ? changeRows(DOC) : [];
+const WORLD = rowsForClass(ROWS, "world_changed");
+const SIG = rowsForClass(ROWS, "sig_records");
+const BASELINE = INDEX?.baseline === true;
+
+const day = (v: string | null | undefined): string => (v ? v.slice(0, 10) : "not recorded");
+const relLabel = (b: { label: string | null; publication_id: string } | null | undefined) =>
+  b?.label ?? b?.publication_id ?? "not recorded";
+
+// The feed scope set — the same rules the feed emitters mint.
+const placePaths = [
+  ...getDossiers().map((d) => ({ path: d.slug, name: d.subject_label ?? d.slug })),
+  ...(getUnplacedReport() !== null && !getDossiers().some((d) => d.slug === "unplaced")
+    ? [{ path: "unplaced", name: "Not yet placed" }]
+    : []),
+];
+const sourceNames = new Map(getSourceRows().sources.map((s) => [s.source_id, s.name ?? s.source_id]));
+const sourceIds = getSourcePageIds().map((id) => ({ id, name: sourceNames.get(id) ?? id }));
+const SCOPES = changeFeedScopes(placePaths, sourceIds);
+const PUB = INDEX?.release.publication_id ?? null;
+const PREV_PUB = INDEX?.previous?.publication_id ?? null;
+
+const changeBadge = (row: ChangeRow): string =>
+  ({ added: "+", removed: "−", changed: "~" })[row.change] ?? "•";
+
+function rowText(row: ChangeRow): string {
+  const verb =
+    row.kind === "record"
+      ? { added: "added", removed: "removed", changed: "changed" }[row.change] ?? row.change
+      : { added: "added", retired: "retired", newly_failing: "newly failing", lane_changed: "lane changed" }[row.change] ?? row.change;
+  return `${verb} — ${row.label}`;
+}
+---
+
+<BaseLayout
+  title="Changes"
+  path={withBase("changes/")}
+  crumbs={[{ label: "Changes" }]}
+  lede="What changed between the last two releases — SIG's records kept apart from the world the sources report."
+>
+  <p class="sig-lede" data-copy="CHG-01">
+    This page diffs the <strong>latest release</strong> against the
+    <strong>previous activated release</strong> and keeps two kinds of change
+    apart: what <strong>SIG's records</strong> now say differently, and what
+    <strong>the sources report changed in the world</strong>. Dates are the
+    releases' own world and belief dates — never version-control dates.
+  </p>
+
+  {DOC === null ? (
+    <EmptyState
+      parts={{
+        state: "No release diff is bound to this build",
+        missing:
+          "The changes view reads the release's own diff files (transparency/changes/) — a release bound to this build carries none, so no change is asserted.",
+        nearby: "The release catalog and each source page still show what this build knows.",
+        action: { href: "sources/", label: "Browse the sources" },
+        change: "The next activated release carrying a diff turns this page on.",
+        cause: "none_recorded",
+        batchIds: { state: "CHG-02", missing: "CHG-03", nearby: "CHG-04", action: "CHG-05", change: "CHG-06" },
+      }}
+    />
+  ) : (
+    <>
+      <section aria-labelledby="chg-range" data-testid="change-range">
+        <h2 id="chg-range">The release pair</h2>
+        <p data-copy="CHG-07">
+          From <strong>{relLabel(INDEX?.previous)}</strong> to{" "}
+          <strong>{relLabel(INDEX?.release)}</strong>
+          {BASELINE
+            ? " — the baseline release: no previous activated release existed, so every record is recorded as added."
+            : `.`}
+        </p>
+        <dl class="sig-kv" data-testid="change-dates">
+          <div>
+            <dt>World as-of</dt>
+            <dd data-testid="as-of-world">
+              {day(INDEX?.previous?.as_of_world)} → {day(INDEX?.release.as_of_world)}
+            </dd>
+          </div>
+          <div>
+            <dt>Belief as-of</dt>
+            <dd data-testid="as-of-belief">
+              {day(INDEX?.previous?.as_of_belief)} → {day(INDEX?.release.as_of_belief)}
+            </dd>
+          </div>
+          <div>
+            <dt>Records</dt>
+            <dd data-testid="change-totals">
+              +{INDEX?.totals.added} added · −{INDEX?.totals.removed} removed · ~
+              {INDEX?.totals.changed} changed (of {INDEX?.totals.records} records;{" "}
+              {INDEX?.totals.previous_records} before)
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section aria-labelledby="chg-world" data-testid="world-changed">
+        <h2 id="chg-world">The world changed</h2>
+        <p data-copy="CHG-08">
+          What the sources report changed on their own side — a source that
+          stopped publishing, left the universe, or withdrew a record's
+          footing — dated by the releases' world dates.
+        </p>
+        {WORLD.length === 0 ? (
+          <p data-testid="world-empty" data-copy="CHG-09">
+            No world-side change is recorded between these two releases.
+          </p>
+        ) : (
+          <>
+            <ul class="sig-change-list" data-testid="world-list">
+              {WORLD.slice(0, PAGE_ROW_CAP).map((row) => (
+                <li data-testid="world-row" data-key={row.key}>
+                  <span class={`sig-change-badge sig-change-badge--${row.change}`} aria-hidden="true">
+                    {changeBadge(row)}
+                  </span>{" "}
+                  {rowText(row)}
+                  {row.detail ? <> — {row.detail}</> : null}
+                  {row.jurisdiction ? (
+                    <>
+                      {" "}·{" "}
+                      <a href={withBase(row.jurisdiction === "unplaced" ? "dossier/unplaced/" : `dossier/${row.jurisdiction}/`)}>
+                        {row.jurisdiction}
+                      </a>
+                    </>
+                  ) : null}
+                  {row.date ? <> · <time datetime={row.date}>{row.date}</time></> : null}
+                </li>
+              ))}
+            </ul>
+            {WORLD.length > PAGE_ROW_CAP && (
+              <p data-testid="world-more">
+                …and {WORLD.length - PAGE_ROW_CAP} more — the full diff lives in the release's
+                changes files.
+              </p>
+            )}
+          </>
+        )}
+      </section>
+
+      <section aria-labelledby="chg-sig" data-testid="sig-records-changed">
+        <h2 id="chg-sig">SIG's records changed</h2>
+        <p data-copy="CHG-10">
+          What SIG's published records now say differently — records added,
+          removed or whose compared fields changed — dated by release
+          activation (belief time). A record-level change reflects SIG's
+          records; it may be SIG learning, re-resolution or claim re-minting,
+          never automatically a change in the world.
+        </p>
+        {SIG.length === 0 ? (
+          <p data-testid="sig-empty" data-copy="CHG-11">
+            No record-side change is recorded between these two releases.
+          </p>
+        ) : (
+          <>
+            <ul class="sig-change-list" data-testid="sig-list">
+              {SIG.slice(0, PAGE_ROW_CAP).map((row) => (
+                <li data-testid="sig-row" data-key={row.key}>
+                  <span class={`sig-change-badge sig-change-badge--${row.change}`} aria-hidden="true">
+                    {changeBadge(row)}
+                  </span>{" "}
+                  {rowText(row)}
+                  {row.detail ? <> — {row.detail}</> : null}
+                  {row.jurisdiction ? (
+                    <>
+                      {" "}·{" "}
+                      <a href={withBase(row.jurisdiction === "unplaced" ? "dossier/unplaced/" : `dossier/${row.jurisdiction}/`)}>
+                        {row.jurisdiction}
+                      </a>
+                    </>
+                  ) : null}
+                  {row.date ? <> · <time datetime={row.date}>{row.date}</time></> : null}
+                </li>
+              ))}
+            </ul>
+            {SIG.length > PAGE_ROW_CAP && (
+              <p data-testid="sig-more">
+                …and {SIG.length - PAGE_ROW_CAP} more — the full diff lives in the release's
+                changes files.
+              </p>
+            )}
+          </>
+        )}
+        {DOC.feed?.truncated && (
+          <p data-testid="feed-truncated" data-copy="CHG-12">
+            The feed document is capped at {DOC.feed.events.length} of{" "}
+            {DOC.feed.event_count} events — the full record-level diff is the
+            release's parquet set.
+          </p>
+        )}
+      </section>
+
+      {INDEX && Object.keys(INDEX.versions).length > 0 && (
+        <section aria-labelledby="chg-versions" data-testid="versions-diff">
+          <h2 id="chg-versions">Versions</h2>
+          <ul>
+            {Object.entries(INDEX.versions).map(([key, v]) => (
+              <li>
+                <code>{key}</code>: <code>{String(v.previous ?? "—")}</code> →{" "}
+                <code>{String(v.current ?? "—")}</code>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section aria-labelledby="chg-feeds" data-testid="change-feeds">
+        <h2 id="chg-feeds">Subscribe to changes</h2>
+        <p data-copy="CHG-13">
+          Every change also rides an <strong>Atom feed</strong>: one for the
+          whole release diff, one per place (a place feed covers its
+          descendants), and one per source. Feeds exist even when they list
+          zero entries — subscribe early and items arrive with the next
+          release.
+        </p>
+        <ul data-testid="feed-links">
+          <li>
+            <a data-testid="feed-all" href={withBase(changesFeedPath("all"))}>All changes (.atom)</a>
+          </li>
+          <li>
+            <a data-testid="feed-opml" href={withBase(CHANGES_OPML_PATH)}>OPML bundle — the whole feed set</a>
+          </li>
+          <li>
+            <a data-testid="feed-directory" href={withBase("changes/feeds/")}>Browse every place and source feed</a>
+          </li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="chg-method" data-testid="change-method">
+        <h2 id="chg-method">How this diff is made</h2>
+        <ul data-testid="disclosures">
+          {(INDEX?.disclosures ?? []).map((d) => (
+            <li>{d}</li>
+          ))}
+        </ul>
+        <p>
+          The machine-readable diff:{" "}
+          {PUB && (
+            <>
+              <a href={rootPath(`r/${PUB}/transparency/changes/index.json`)}>the changes index</a>{" "}
+              (<code>sig.release-changes/1</code>)
+              {PREV_PUB && (
+                <>
+                  {" "}· previous release: <a href={rootPath(`releases/${PREV_PUB}/CHANGELOG.md`)}>its changelog</a>
+                </>
+              )}
+              {" "}·{" "}
+              <a href={rootPath(`releases/${PUB}/CHANGELOG.md`)}>this release's changelog</a>
+            </>
+          )}
+        </p>
+      </section>
+    </>
+  )}
+</BaseLayout>

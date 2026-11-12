@@ -110,6 +110,10 @@ export const NAV_SECTIONS: NavSection[] = [
       { label: "Evidence", route: "evidence/" },
       { label: "Downloads & API", route: "data/" },
       { label: "Releases & changes", route: "releases/" },
+      // P37.40 (CHG-01): the public changes surface — the `releases/` item
+      // above stays declared for the pipeline-owned index (never a public
+      // web route); this is the route this build emits.
+      { label: "Changes", route: "changes/" },
       { label: "Status", route: "status/" },
     ],
     match: [
