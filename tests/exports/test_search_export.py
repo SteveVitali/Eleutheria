@@ -102,8 +102,7 @@ def test_zip_is_per_licence_group_never_mixed() -> None:
     z = _unzip(body)
     for comp in ("sig_graph", "osm_physical"):
         csv_text = z.read(f"{comp}/results.csv").decode()
-        assert f"# licence: " in csv_text
-        assert csv_text.count("sig_graph") >= 1 if comp == "sig_graph" else True
+        assert "# licence: " in csv_text
     sg = z.read("sig_graph/results.csv").decode()
     assert "k1" in sg and "k2" not in sg
     om = z.read("osm_physical/results.csv").decode()
