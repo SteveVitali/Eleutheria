@@ -56,6 +56,7 @@ import {
   sortedCaptures,
   ENTITY_BROWSE_CAP,
 } from "../../../lib/source-page-b";
+import { getSourceChangelog, baselineSentence, eventSummary } from "../../../lib/source-changelog";
 
 export function getStaticPaths() {
   return getSourcePageIds().map((id) => ({ params: { id }, props: {} }));
@@ -91,12 +92,15 @@ const sourceIssues = m.registryOnly ? [] : issuesForSource(getIssues(), id);
 const pageBCaptures = m.registryOnly ? null : getSourceCaptures(id);
 const pageBVersions = m.registryOnly ? null : getSourceVersions(id);
 const pageBBrowse = m.registryOnly ? null : entityBrowse(getSourceEntities(id));
+const pageBChangelog = m.registryOnly ? null : getSourceChangelog(id);
+const latestChangelogEvents = pageBChangelog === null ? [] : pageBChangelog.events.slice(-10).reverse();
 const subnavHas = {
   runs: !m.registryOnly,
   captures: !m.registryOnly, // the captures route emits for every non-registry source (a zero-capture page states its absence)
   versions: pageBVersions !== null,
   entities: (pageBBrowse?.rows.length ?? 0) > 0,
   dossiers: !m.registryOnly && contributions.length > 0,
+  changelog: !m.registryOnly, // the changelog route emits for every non-registry source (a zero-event page states its absence)
 };
 const latestCaptures = pageBCaptures === null ? [] : sortedCaptures(pageBCaptures).slice(-20).reverse();
 const latestVersionEntry = pageBVersions?.entries?.length ? pageBVersions.entries[pageBVersions.entries.length - 1] : null;
@@ -392,6 +396,36 @@ if (!m.registryOnly) {
       targets: perSourceTargets(id, `sources/${id}/entities/`),
     });
   }
+  if (pageBChangelog !== null) {
+    add({
+      id: "pageb-changelog",
+      class: "per_source",
+      value: pageBChangelog.event_count,
+      artifact: `transparency/sources/${id}/changelog.json`,
+      pointer: `${J}event_count`,
+      definition: "#changelog-heading",
+      href: artifactHref(`transparency/sources/${id}/changelog.json`),
+      breakdown: "#fig-pageb-changelog",
+      targets: perSourceTargets(id, `sources/${id}/changelog/`),
+    });
+    // Each displayed record-count numeral rides inside a <Figure> region
+    // like every other material number on this page (UXR-34).
+    for (const [i, ev] of latestChangelogEvents.entries()) {
+      if (typeof ev.detail?.count !== "number") continue;
+      const docIdx = pageBChangelog.events.length - 1 - i;
+      add({
+        id: `changelog-ev-${i}-count`,
+        class: "per_source",
+        value: ev.detail.count,
+        artifact: `transparency/sources/${id}/changelog.json`,
+        pointer: `${J}events${J}${docIdx}${J}detail${J}count`,
+        definition: "#changelog-heading",
+        href: artifactHref(`transparency/sources/${id}/changelog.json`),
+        breakdown: `#fig-changelog-ev-${i}`,
+        targets: perSourceTargets(id, `sources/${id}/changelog/`),
+      });
+    }
+  }
 }
 
 const FIGURES = defineFigures(`source-${id}`, specs);
@@ -616,6 +650,44 @@ const crumbs = [
         <p data-copy="KI-08">
           The full append-only log is{" "}
           <a href={withBase("status/issues/")}>/status/issues/</a>.
+        </p>
+      </section>
+
+      {/* ===================== Changelog (P37.41 / UX10-4, K10 §15, SIG-TRANSP-042) ===================== */}
+      <section aria-labelledby="changelog-heading" data-testid="changelog-section">
+        <h2 id="changelog-heading" data-copy="SCL-01">Changelog</h2>
+        {pageBChangelog === null || pageBChangelog.event_count === 0 ? (
+          <p data-copy="SCL-02" data-testid="changelog-none">
+            No changelog events are recorded for this source yet — the log is
+            generated from the rights record, run records, release diffs,
+            issues and corrections, each dated by its own record's clock.
+          </p>
+        ) : (
+          <>
+            <p id="fig-pageb-changelog" data-testid="changelog-total">
+              <Figure figure={fig("pageb-changelog")} order="inline">{fmtInt(pageBChangelog.event_count)}</Figure>{" "}
+              recorded events, dated by their own records' clocks — never by
+              version-control dates. {baselineSentence(pageBChangelog.baseline_label)}
+            </p>
+            <ul class="sig-list" data-testid="changelog-latest">
+              {latestChangelogEvents.map((ev, i) => (
+                <li data-testid="changelog-event" id={`fig-changelog-ev-${i}`}>
+                  <time datetime={ev.at}>{ev.at}</time> —{" "}
+                  {typeof ev.detail?.count === "number" ? (
+                    <Figure figure={fig(`changelog-ev-${i}-count`)} order="inline">{eventSummary(ev)}</Figure>
+                  ) : (
+                    eventSummary(ev)
+                  )}{" "}
+                  <span class="mut">(dated by {ev.clock_basis})</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+        <p data-copy="SCL-03">
+          The full append-only log is{" "}
+          <a href={withBase(`sources/${id}/changelog/`)}>the changelog page</a>{" "}
+          (<a href={withBase(`sources/${id}/changelog/index.json`)}>index.json</a>).
         </p>
       </section>
 
@@ -970,6 +1042,11 @@ const crumbs = [
               </dd>
             </>
           )}
+          <dt data-copy="PB-09">Changelog</dt>
+          <dd data-testid="pageb-changelog">
+            <a href={withBase(`sources/${id}/changelog/`)}>the full changelog →</a>{" "}
+            (rights decisions, runs, release diffs, issues and corrections — record-clock dated)
+          </dd>
         </dl>
         {latestCaptures.length > 0 && (
           <p data-copy="PB-07" data-testid="latest-captures-note">
@@ -985,6 +1062,7 @@ const crumbs = [
           {subnavHas.versions && <>{" · "}<a href={withBase(`sources/${id}/versions/index.json`)}>versions/index.json</a></>}
           {subnavHas.entities && <>{" · "}<a href={withBase(`sources/${id}/entities/index.json`)}>entities/index.json</a></>}
           {subnavHas.dossiers && <>{" · "}<a href={withBase(`sources/${id}/dossiers/index.json`)}>dossiers/index.json</a></>}
+          {subnavHas.changelog && <>{" · "}<a href={withBase(`sources/${id}/changelog/index.json`)}>changelog/index.json</a></>}
         </p>
       </section>
     </>

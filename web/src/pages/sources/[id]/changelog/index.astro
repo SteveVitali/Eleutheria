@@ -1,0 +1,165 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P37.41 (UX10-4, K10 §15, SIG-TRANSP-042): `/sources/<id>/changelog/` —
+// the per-source append-only event log generated from the rights record,
+// run records, release diffs, issues and corrections, each event dated by
+// its own record's clock (the basis column) — never by version-control
+// dates. T1, zero-JS; 100 events per page (K9 §6.1).
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import SourceSubnav from "../../../../components/SourceSubnav.astro";
+import SourcePager from "../../../../components/SourcePager.astro";
+import EmptyState from "../../../../components/EmptyState.astro";
+import Figure from "../../../../components/Figure.astro";
+import { artifactHref, defineFigures, perSourceTargets, type FigureSpec } from "../../../../lib/figures";
+import { fmtInt } from "../../../../lib/format";
+import { withBase } from "../../../../lib/paths";
+import { getSourcePage, type SourcePageModel } from "../../../../lib/source-page";
+import { resolveSourceId } from "../../../../lib/alias";
+import {
+  getPageBIds,
+  getSourceVersions,
+  getSourceEntities,
+  pageCount,
+  pageSlice,
+} from "../../../../lib/source-page-b";
+import {
+  getSourceChangelog,
+  baselineSentence,
+  eventSummary,
+} from "../../../../lib/source-changelog";
+
+export function getStaticPaths() {
+  return getPageBIds().map((id) => ({ params: { id } }));
+}
+
+const id = resolveSourceId(String(Astro.params.id ?? "")) ?? "";
+const model = getSourcePage(id);
+if (model === null) throw new Error(`sources/[id]/changelog: no source-page row for "${id}" (SIG-ENG-042)`);
+const m = model as SourcePageModel;
+if (m.registryOnly) throw new Error(`sources/[id]/changelog: registry-only "${id}" must not emit a changelog (S-11)`);
+const row = m.row;
+const doc = getSourceChangelog(id);
+if (doc === null) throw new Error(`sources/[id]/changelog: no changelog doc for "${id}" — the route set drifted`);
+const events = [...doc.events].reverse(); // newest first for display
+const page = 1;
+const pages = pageCount(events.length);
+const slice = pageSlice(events, page);
+const J = String.fromCharCode(47);
+const CART = `transparency/sources/${id}/changelog.json`;
+
+const specs: FigureSpec[] = [
+  {
+    id: "changelog-events", class: "per_source", value: doc.event_count, artifact: CART,
+    pointer: `${J}event_count`, definition: "#changelog-heading", href: artifactHref(CART),
+    breakdown: "#fig-changelog-events", targets: perSourceTargets(id, `sources/${id}/changelog/`),
+  },
+];
+if (pages > 1) {
+  specs.push({
+    id: "changelog-page", class: "per_source", value: doc.event_count, artifact: CART,
+    pointer: `${J}event_count`, definition: "#changelog-heading", href: artifactHref(CART),
+    breakdown: "#fig-changelog-events", targets: perSourceTargets(id, `sources/${id}/changelog/`),
+  });
+}
+const FIGURES = defineFigures(`source-changelog-${id}`, specs);
+const fig = (fid: string) => {
+  const f = FIGURES.find((x) => x.id === fid);
+  if (!f) throw new Error(`source-changelog-${id} figures[]: no figure "${fid}"`);
+  return f;
+};
+const has = {
+  runs: true,
+  captures: true,
+  versions: getSourceVersions(id) !== null,
+  entities: getSourceEntities(id).length > 0,
+  dossiers: (row.contributions ?? []).length > 0,
+  changelog: true,
+};
+const crumbs = [
+  { label: "Sources", href: withBase("sources/") },
+  { label: row.name, href: withBase(`sources/${id}/`) },
+  { label: "Changelog" },
+];
+---
+
+<BaseLayout title={`${row.name} — changelog`} path={withBase(`sources/${id}/changelog/`)} crumbs={crumbs}>
+  <Fragment slot="head">
+    <link rel="alternate" type="application/json" href={withBase(`sources/${id}/changelog/index.json`)} />
+  </Fragment>
+  <SourceSubnav id={id} name={row.name} has={has} current="changelog" />
+  <section aria-labelledby="changelog-heading">
+    <h2 id="changelog-heading" data-copy="SCL-10">Changelog — {row.name}</h2>
+    <p data-copy="SCL-11">
+      The append-only log of recorded change for this source — generated from
+      the rights record, run records, release diffs, issues and corrections.
+      Every date comes from the record's own clock (the basis column), never
+      from version-control dates.
+    </p>
+    <p class="sig-notice" data-testid="changelog-baseline" data-copy="SCL-12">{baselineSentence(doc.baseline_label)}</p>
+    {events.length === 0 ? (
+      <EmptyState
+        parts={{
+          state: "No changelog events are recorded yet",
+          missing: "This source's artifacts record no rights decision, run, release diff, issue or correction event to date.",
+          nearby: "The source page carries everything this release does record.",
+          action: { href: `sources/${id}/`, label: "Back to the source page" },
+          change: "Each recorded decision, run, release diff, issue or correction appends an event.",
+          cause: "none_recorded",
+          batchIds: { state: "SCL-13", missing: "SCL-14", nearby: "SCL-15", action: "SCL-16", change: "SCL-17" },
+        }}
+      />
+    ) : (
+      <>
+        <p id="fig-changelog-events" data-testid="changelog-total">
+          <Figure figure={fig("changelog-events")} order="inline">{fmtInt(doc.event_count)}</Figure>{" "}
+          recorded events, newest first.
+        </p>
+        {pages > 1 && (
+          <SourcePager
+            base={`sources/${id}/changelog`}
+            page={page}
+            pages={pages}
+            first={1}
+            last={slice.length}
+            total={doc.event_count}
+            noun="events"
+            label="Changelog"
+            figure={fig("changelog-page")}
+          />
+        )}
+        <table class="sig-table" data-testid="changelog-table">
+          <thead>
+            <tr>
+              <th scope="col" data-copy="SCL-18">Date</th>
+              <th scope="col" data-copy="SCL-19">Event</th>
+              <th scope="col" data-copy="SCL-20">Dated by</th>
+            </tr>
+          </thead>
+          <tbody>
+            {slice.map((ev) => (
+              <tr data-testid="changelog-event" data-kind={ev.kind}>
+                <td><time datetime={ev.at}>{ev.at}</time></td>
+                <td>
+                  {eventSummary(ev)}
+                  {ev.refs.length > 0 && (
+                    <> {ev.refs.slice(0, 3).map((r) => <code>{r}</code>)}{ev.refs.length > 3 && <span class="mut"> +{ev.refs.length - 3} more</span>}</>
+                  )}
+                </td>
+                <td><code>{ev.clock_basis}</code></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </>
+    )}
+    {doc.disclosures.map((d, i) => <p class="mut" data-copy={i === 0 ? "SCL-23" : "SCL-24"}>{d}</p>)}
+    <p data-copy="SCL-22">
+      The machine twin is <a href={withBase(`sources/${id}/changelog/index.json`)}>index.json</a>;
+      the release's cross-source diff lives on <a href={withBase("changes/")}>/changes/</a>
+      {(() => { const f = `changes/feeds/source/${id}.atom`; return <> and the <a href={withBase(f)}>source change feed</a></>; })()}.
+    </p>
+  </section>
+</BaseLayout>

@@ -66,7 +66,7 @@ const ENTITY_TWIN_RE =
  *  test): the per-source transparency streams — unbounded like the
  *  compartment streams, admitted by pattern (P36.46/P36.47). */
 const TRANSPARENCY_SOURCE_RE =
-  /^transparency\/sources\/[a-z0-9_-]+\/((executions|captures|targets|issues)\.jsonl|(versions|index|entities)\.json)$/;
+  /^transparency\/sources\/[a-z0-9_-]+\/((executions|captures|targets|issues)\.jsonl|(versions|index|entities|changelog)\.json)$/;
 /** Byte-identical to DOSSIER_SOURCES_RE in src/lib/figures.ts (pinned by
  *  test): P36.52's per-dossier sig.dossier-sources/1 artifacts. */
 const DOSSIER_SOURCES_RE = /^web\/dossier_sources\/[a-z0-9-]+(\/[a-z0-9-]+)*\.json$/;
@@ -97,6 +97,7 @@ const SOURCE_ROW_SEGMENTS = new Set([
   "versions",
   "entities",
   "dossiers",
+  "changelog",
 ]);
 const PAGE_CLASSES = [
   { cls: "home", files: ["index.html"] },
