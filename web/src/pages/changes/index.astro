@@ -14,10 +14,12 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import EmptyState from "../../components/EmptyState.astro";
 import {
+  getDossierIndex,
   getDossiers,
   getReleaseChanges,
   getUnplacedReport,
 } from "../../lib/data";
+import { rowName } from "../../lib/dossier-index";
 import { getSourcePageIds } from "../../lib/source-page";
 import { getSourceRows } from "../../lib/data";
 import {
@@ -53,6 +55,12 @@ const placePaths = [
 const sourceNames = new Map(getSourceRows().sources.map((s) => [s.source_id, s.name ?? s.source_id]));
 const sourceIds = getSourcePageIds().map((id) => ({ id, name: sourceNames.get(id) ?? id }));
 const SCOPES = changeFeedScopes(placePaths, sourceIds);
+// Place display: the index row's display name resolves the slug path; a
+// non-emitted path falls back to the path itself rendered as code (never a
+// bare id as prose — SIG-JUR-D08, and never an ungrouped digit run — K14 NEW-8).
+const PLACE_NAME = new Map(
+  getDossierIndex().map((r) => [r.slug_path ?? r.slug, rowName(r)]),
+);
 const PUB = INDEX?.release.publication_id ?? null;
 const PREV_PUB = INDEX?.previous?.publication_id ?? null;
 
@@ -75,11 +83,11 @@ function rowText(row: ChangeRow): string {
   lede="What changed between the last two releases — SIG's records kept apart from the world the sources report."
 >
   <p class="sig-lede" data-copy="CHG-01">
-    This page diffs the <strong>latest release</strong> against the
+    This page diffs the{" "}<strong>latest release</strong> against the{" "}
     <strong>previous activated release</strong> and keeps two kinds of change
-    apart: what <strong>SIG's records</strong> now say differently, and what
-    <strong>the sources report changed in the world</strong>. Dates are the
-    releases' own world and belief dates — never version-control dates.
+    apart: what{" "}<strong>SIG's records</strong> now say differently, and
+    what{" "}<strong>the sources report changed in the world</strong>. Dates are
+    the releases' own world and belief dates — never version-control dates.
   </p>
 
   {DOC === null ? (
@@ -137,6 +145,12 @@ function rowText(row: ChangeRow): string {
           stopped publishing, left the universe, or withdrew a record's
           footing — dated by the releases' world dates.
         </p>
+        {(DOC?.index.sources_state === "not_evaluable" || DOC?.sources?.state === "not_evaluable") && (
+          <p data-testid="sources-not-evaluable" data-copy="CHG-15">
+            The source-lifecycle diff was not evaluable for this release — no
+            source-side change is asserted either way.
+          </p>
+        )}
         {WORLD.length === 0 ? (
           <p data-testid="world-empty" data-copy="CHG-09">
             No world-side change is recorded between these two releases.
@@ -149,13 +163,17 @@ function rowText(row: ChangeRow): string {
                   <span class={`sig-change-badge sig-change-badge--${row.change}`} aria-hidden="true">
                     {changeBadge(row)}
                   </span>{" "}
-                  {rowText(row)}
+                  {row.kind === "source" && row.label === row.key ? (
+                    <>{rowText(row).replace(` — ${row.label}`, "")} — <code>{row.key}</code></>
+                  ) : (
+                    rowText(row)
+                  )}
                   {row.detail ? <> — {row.detail}</> : null}
                   {row.jurisdiction ? (
                     <>
                       {" "}·{" "}
                       <a href={withBase(row.jurisdiction === "unplaced" ? "dossier/unplaced/" : `dossier/${row.jurisdiction}/`)}>
-                        {row.jurisdiction}
+                        {PLACE_NAME.get(row.jurisdiction) ?? <code>{row.jurisdiction}</code>}
                       </a>
                     </>
                   ) : null}
@@ -194,13 +212,17 @@ function rowText(row: ChangeRow): string {
                   <span class={`sig-change-badge sig-change-badge--${row.change}`} aria-hidden="true">
                     {changeBadge(row)}
                   </span>{" "}
-                  {rowText(row)}
+                  {row.kind === "source" && row.label === row.key ? (
+                    <>{rowText(row).replace(` — ${row.label}`, "")} — <code>{row.key}</code></>
+                  ) : (
+                    rowText(row)
+                  )}
                   {row.detail ? <> — {row.detail}</> : null}
                   {row.jurisdiction ? (
                     <>
                       {" "}·{" "}
                       <a href={withBase(row.jurisdiction === "unplaced" ? "dossier/unplaced/" : `dossier/${row.jurisdiction}/`)}>
-                        {row.jurisdiction}
+                        {PLACE_NAME.get(row.jurisdiction) ?? <code>{row.jurisdiction}</code>}
                       </a>
                     </>
                   ) : null}

@@ -66,7 +66,7 @@ const sourceScopes = SCOPES.filter((s) => s.scope === "source");
   <section aria-labelledby="chg-feed-places" data-testid="feed-places-section">
     <h2 id="chg-feed-places">By place</h2>
     <p>
-      One feed per emitted place page — <code>changes/feeds/place/&lt;path&gt;.atom</code>
+      One feed per emitted place page — <code>changes/feeds/place/&lt;path&gt;.atom</code>{" "}
       covering the place and its descendants ({placePaths.length} places over{" "}
       {PLACE_PAGES} {PLACE_PAGES === 1 ? "page" : "pages"}).
     </p>
@@ -89,7 +89,7 @@ const sourceScopes = SCOPES.filter((s) => s.scope === "source");
         {sourceScopes.map((s) => (
           <tr data-testid="feed-row" data-scope={s.path}>
             <td><a href={withBase(s.pagePath)}>{s.title.replace(/^SIG changes — /, "")}</a></td>
-            <td><a href={withBase(changesFeedPath(s.path))}>{`${s.path}.atom`}</a></td>
+            <td><a href={withBase(changesFeedPath(s.path))}><code>{`${s.path}.atom`}</code></a></td>
             <td>{scopeRows(ROWS, SCOPES, s.path)?.length ?? 0}</td>
           </tr>
         ))}

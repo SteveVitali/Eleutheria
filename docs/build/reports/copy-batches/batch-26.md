@@ -37,6 +37,7 @@ captions — is navigational chrome, never a row.
 | CHG-12 | /changes/ | The feed document is capped at {shown} of {total} events — the full record-level diff is the release's parquet set. | 034f587a3a964a4d0212364334c5817792b18d88eee903e099a3af5919a85542 | pending |
 | CHG-13 | /changes/ | Every change also rides an Atom feed: one for the whole release diff, one per place (a place feed covers its descendants), and one per source. Feeds exist even when they list zero entries — subscribe early and items arrive with the next release. | d8cc2b7d4feeaafa071d9f33f2c77fcfbd9c34bd6f7cf2ecdd69aa5dfb17a1ed | pending |
 | CHG-14 | /changes/feeds/ | Subscriptions are pull feeds: add one to a feed reader and it fetches updates at each release — SIG keeps no email list and no accounts. Every feed exists even when it lists zero entries, so a reader can subscribe before the first change lands. | e7e873bebf604d3f5e0fcaea38cd8f1ef67d83030c7d572c8eebc73dfe6c51c8 | pending |
+| CHG-15 | /changes/ | The source-lifecycle diff was not evaluable for this release — no source-side change is asserted either way. | c484f988e2a265afb186a946a91d06656211f2025ca2f124774b6b31d20705f1 | pending |
 
 ## Confirmation log
 

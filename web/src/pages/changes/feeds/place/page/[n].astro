@@ -72,7 +72,7 @@ const scopeSet = [...ALL, ...scopes];
       {scopes.map((s) => (
         <tr data-testid="feed-row" data-scope={s.path}>
           <td><a href={withBase(s.pagePath)}>{s.title.replace(/^SIG changes — /, "")}</a></td>
-          <td><a href={withBase(changesFeedPath(s.path))}>{`${s.path}.atom`}</a></td>
+          <td><a href={withBase(changesFeedPath(s.path))}><code>{`${s.path}.atom`}</code></a></td>
           <td>{scopeRows(ROWS, scopeSet, s.path)?.length ?? 0}</td>
         </tr>
       ))}
