@@ -9,20 +9,14 @@
 // exists even when it lists zero entries (D-K7-5's posture) — a subscriber
 // can come early. T1 zero-JS; the feeds themselves are T0 .atom bytes.
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import { getDossiers, getUnplacedReport, getSourceRows, getReleaseChanges } from "../../../lib/data";
+import { getDossiers, getUnplacedReport, getSourceRows } from "../../../lib/data";
 import { getSourcePageIds } from "../../../lib/source-page";
 import {
-  changeFeedScopes,
-  changeRows,
   changesFeedPath,
-  scopeRows,
   CHANGES_OPML_PATH,
 } from "../../../lib/changes";
 import { withBase } from "../../../lib/paths";
 import { PLACE_PAGE_SIZE } from "../../../lib/changes-feed-page";
-
-const DOC = getReleaseChanges();
-const ROWS = DOC ? changeRows(DOC) : [];
 
 const placePaths = [
   ...getDossiers().map((d) => ({ path: d.slug, name: d.subject_label ?? d.slug })),
@@ -32,9 +26,8 @@ const placePaths = [
 ];
 const sourceNames = new Map(getSourceRows().sources.map((s) => [s.source_id, s.name ?? s.source_id]));
 const sourceIds = getSourcePageIds().map((id) => ({ id, name: sourceNames.get(id) ?? id }));
-const SCOPES = changeFeedScopes(placePaths, sourceIds);
 const PLACE_PAGES = Math.max(1, Math.ceil(placePaths.length / PLACE_PAGE_SIZE));
-const sourceScopes = SCOPES.filter((s) => s.scope === "source");
+const SOURCE_PAGES = Math.max(1, Math.ceil(sourceIds.length / PLACE_PAGE_SIZE));
 ---
 
 <BaseLayout
@@ -81,19 +74,18 @@ const sourceScopes = SCOPES.filter((s) => s.scope === "source");
 
   <section aria-labelledby="chg-feed-sources" data-testid="feed-sources-section">
     <h2 id="chg-feed-sources">By source</h2>
-    <table data-testid="source-feed-table">
-      <thead>
-        <tr><th>Source</th><th>Atom feed</th><th>Entries this release</th></tr>
-      </thead>
-      <tbody>
-        {sourceScopes.map((s) => (
-          <tr data-testid="feed-row" data-scope={s.path}>
-            <td><a href={withBase(s.pagePath)}>{s.title.replace(/^SIG changes — /, "")}</a></td>
-            <td><a href={withBase(changesFeedPath(s.path))}><code>{`${s.path}.atom`}</code></a></td>
-            <td>{scopeRows(ROWS, SCOPES, s.path)?.length ?? 0}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <p>
+      One feed per emitted source page — <code>changes/feeds/source/&lt;id&gt;.atom</code>{" "}
+      carrying the source's registry lifecycle and the records that cite it (
+      {sourceIds.length} sources over {SOURCE_PAGES}{" "}
+      {SOURCE_PAGES === 1 ? "page" : "pages"}).
+    </p>
+    <ol data-testid="source-feed-index">
+      {Array.from({ length: SOURCE_PAGES }, (_, i) => (
+        <li>
+          <a href={withBase(`changes/feeds/source/page/${i + 1}/`)}>Source feeds — page {i + 1}</a>
+        </li>
+      ))}
+    </ol>
   </section>
 </BaseLayout>
