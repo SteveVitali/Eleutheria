@@ -74,6 +74,40 @@ test.describe("graph explorer /explore/ (GX-09a)", () => {
     expect(page.url()).toContain("focus=");
   });
 
+  test("node selection restyles in place — the sigma canvas is never rebuilt", async ({ page }) => {
+    // The graph + WebGL context build once per drawn graph; a selection
+    // only restyles (graphology attributes + sigma.refresh()). A rebuild per
+    // click (sigma.kill() + new Sigma) replaces every canvas in the box —
+    // the context churn the select-node interaction-latency leg would
+    // otherwise only catch as a noisy timing overage.
+    await page.goto("/explore/");
+    const canvasBox = page.getByTestId("explore-canvas");
+    await expect(canvasBox.locator("canvas").first()).toBeAttached();
+    const nodes = page.getByTestId("graph-island-node");
+    await expect(nodes.first()).toBeVisible();
+    await canvasBox.evaluate((box) => {
+      for (const c of box.querySelectorAll("canvas")) c.setAttribute("data-probe-mount", "1");
+    });
+    let target = -1;
+    for (let i = 0; i < (await nodes.count()); i += 1) {
+      if ((await nodes.nth(i).getAttribute("aria-pressed")) === "false") {
+        target = i;
+        break;
+      }
+    }
+    expect(target).toBeGreaterThanOrEqual(0);
+    await nodes.nth(target).click();
+    await expect(nodes.nth(target)).toHaveAttribute("aria-pressed", "true");
+    // Let any (regressed) post-render effect run before reading the box.
+    await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0))));
+    const canvases = await canvasBox.evaluate((box) => {
+      const all = [...box.querySelectorAll("canvas")];
+      return { total: all.length, original: all.filter((c) => c.hasAttribute("data-probe-mount")).length };
+    });
+    expect(canvases.total).toBeGreaterThan(0);
+    expect(canvases.original, "a node selection rebuilt the sigma mount").toBe(canvases.total);
+  });
+
   test("a deep-linked focus selects its node; a missing focus is named", async ({ page }) => {
     await page.goto("/explore/?v=2&view=graph&focus=place:usa-tx");
     await expect(page.getByTestId("explore-island")).toBeVisible();
