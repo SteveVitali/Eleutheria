@@ -1,0 +1,336 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P37.38 (R11-K13-CX-01, K13 §2.2, SIG-UI-071) — `/disagreements/place/
+// <slug-path>/` — one page per emitted `sig.dossier-sources/1` doc, the same
+// route the J3 journey walks ("contested marker → both sides"). The three
+// kinds stay apart on one page: recorded contradictions (both sides,
+// sources, dates), within-source coordinate conflicts (identity defects
+// until CONF-03b re-keys them), declared-vs-located disagreements (the pair
+// visible on both sides). Counts cite the dossier's own contribution
+// artifact — the same numbers the dossier sources explorer shows.
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Figure from "../../../components/Figure.astro";
+import {
+  getDossiers,
+  getDossierSourcesMap,
+  getEntityLabelRows,
+  getEvidence,
+  getStatementIndex,
+} from "../../../lib/data";
+import { getSourcePageIds } from "../../../lib/source-page";
+import {
+  buildContradictions,
+  disagreementAnchor,
+  disagreementPlacePath,
+  DISAGREEMENTS_ROOT,
+  placeDisagreementPage,
+} from "../../../lib/disagreements";
+import { defineFigures, target, ROOT_POINTER } from "../../../lib/figures";
+import { withBase } from "../../../lib/paths";
+
+export const getStaticPaths: GetStaticPaths = () =>
+  [...getDossierSourcesMap().keys()].map((slug) => ({
+    params: { path: slug },
+    props: { slug },
+  }));
+
+const { slug } = Astro.props as { slug: string };
+const DOCS = getDossierSourcesMap();
+const DOC = DOCS.get(slug);
+if (DOC === undefined) {
+  throw new Error(`disagreements place: no sig.dossier-sources/1 doc for "${slug}" (SIG-ENG-042)`);
+}
+const CONTRADICTIONS = buildContradictions(
+  getStatementIndex(),
+  DOCS,
+  getEvidence().claimViews,
+  new Set(getSourcePageIds()),
+  getEntityLabelRows(),
+);
+const MODEL = placeDisagreementPage(
+  slug,
+  DOC,
+  CONTRADICTIONS,
+  DOCS,
+  new Set(getDossiers().map((d) => d.slug)),
+);
+const DL = MODEL.declared_located;
+
+// ONE figures[] registry (UXR-34): every material count points into the
+// dossier's own manifest-listed contribution artifact. The JSON-pointer
+// leading slash is built, never a "/" literal site (SIG-REL-008).
+const JPTR = String.fromCharCode(47);
+const fig = (id: string, value: number, pointer: string, breakdown: string) => ({
+  id,
+  class: "dossier" as const,
+  value,
+  artifact: MODEL.artifact,
+  pointer,
+  definition: "#dg-definitions",
+  href: `artifact/${MODEL.artifact.replace(/\.json$/, "")}`,
+  breakdown,
+  targets: [
+    target("record list", "the dossier sources explorer", { href: MODEL.sources_href }),
+  ],
+});
+const FIGURES = defineFigures(`disagreements-place-${slug}`, [
+  fig(
+    "dg-contradictions",
+    MODEL.contradictions.length,
+    `${JPTR}totals/contradictions_open`,
+    "#kind-contradiction",
+  ),
+  fig(
+    "dg-coordinate-conflicts",
+    MODEL.coordinate_conflicts.total,
+    `${JPTR}totals/coordinate_conflicts_intra_source`,
+    "#kind-coordinate-conflict",
+  ),
+  fig(
+    "dg-declared-elsewhere",
+    DL.declared_here_located_elsewhere,
+    `${JPTR}totals/declared_here_located_elsewhere`,
+    "#kind-declared-located",
+  ),
+  fig(
+    "dg-located-here",
+    DL.located_here_declared_elsewhere,
+    `${JPTR}totals/located_here_declared_elsewhere`,
+    "#kind-declared-located",
+  ),
+]);
+const figs = new Map(FIGURES.map((f) => [f.id, f]));
+// QW-11: <title> must be unique across the site — two emitted docs can share a
+// jurisdiction name (the legacy `oklahoma-city` slug and the geoid
+// `usa/ok/oklahoma-city-4064000` both name "Oklahoma City"), so a collision
+// qualifies the name — the parent place's own name where a parent doc exists,
+// the jurisdiction key where it carries no ≥5-digit run (K14 NEW-8 — a geoid
+// is an identifier, never human-formatted digits in running text).
+const NAME_COLLIDES =
+  [...DOCS.values()].filter(
+    (d) => d.jurisdiction.name === DOC.jurisdiction.name,
+  ).length > 1;
+const PARENT_SLUG = slug.split(JPTR).slice(0, -1).join(JPTR);
+const PARENT_NAME = PARENT_SLUG
+  ? DOCS.get(PARENT_SLUG)?.jurisdiction.name
+  : undefined;
+const QUALIFIED_NAME =
+  PARENT_NAME !== undefined
+    ? `${MODEL.name}, ${PARENT_NAME}`
+    : MODEL.jkey !== null && !/\d{5,}/.test(MODEL.jkey)
+      ? `${MODEL.name} (${MODEL.jkey})`
+      : MODEL.name;
+const TITLE_NAME = NAME_COLLIDES ? QUALIFIED_NAME : MODEL.name;
+const KIND_COUNT =
+  (MODEL.contradictions.length > 0 ? 1 : 0) +
+  (MODEL.coordinate_conflicts.total > 0 ? 1 : 0) +
+  (DL.declared_here_located_elsewhere + DL.located_here_declared_elsewhere > 0 ? 1 : 0);
+---
+
+<BaseLayout
+  title={`Disagreements — ${TITLE_NAME}`}
+  path={withBase(disagreementPlacePath(slug))}
+  crumbs={[
+    { label: "Disagreements", href: withBase(DISAGREEMENTS_ROOT) },
+    { label: MODEL.name },
+  ]}
+  lede={`Recorded disagreements touching ${TITLE_NAME} — kept visible, labelled by kind.`}
+>
+  <p class="sig-lede" data-copy="CX-05">
+    Every disagreement the release records for this place, labelled by kind —
+    contradictions keep both sides; placement disagreements show here and on
+    the counterpart dossier.
+  </p>
+  <p class="sig-dg-links">
+    {MODEL.dossier_href !== null && (
+      <a href={withBase(MODEL.dossier_href)}>The {MODEL.name} dossier</a>
+    )}{" "}
+    <a href={withBase(MODEL.sources_href)}>Where this comes from — sources</a> ·{" "}
+    <a href={withBase(DISAGREEMENTS_ROOT)}>All disagreements</a>
+  </p>
+
+  <section aria-labelledby="kind-contradiction" data-testid="kind-section-contradiction">
+    <h2 id="kind-contradiction">Recorded contradictions</h2>
+    {MODEL.contradictions.length === 0 ? (
+      <p class="sig-dg-absence" data-testid="contradictions-absent" data-copy="CX-06">
+        No recorded contradiction is placed here in this release — none
+        exists to show, not a hidden one.
+      </p>
+    ) : (
+      <>
+        <p class="sig-table-note">
+          <Figure figure={figs.get("dg-contradictions")!} order="inline">
+            {MODEL.contradictions.length}
+          </Figure>{" "}
+          contradiction{MODEL.contradictions.length === 1 ? "" : "s"} — both sides below.
+        </p>
+        <ol class="sig-dg-records">
+          {MODEL.contradictions.map((c) => (
+            <li
+              data-testid="contradiction-record"
+              data-contradiction-id={c.contradiction_id}
+              id={disagreementAnchor(c.contradiction_id)}
+            >
+              <h3 class="sig-dg-record__title">
+                {c.predicates.length > 0 ? c.predicates.join(", ") : "recorded contradiction"}{" "}
+                — <code>{c.contradiction_id}</code>
+              </h3>
+              <ol class="sig-dg-sides" data-testid="contradiction-sides">
+                {c.sides.map((s) => (
+                  <li data-testid="contradiction-side" data-claim-id={s.claim_id}>
+                    {s.label !== null ? <strong>{s.label}</strong> : <code>{s.claim_id}</code>}
+                    {s.statement_published ? (
+                      <span class="sig-dg-side__meta">
+                        {" — "}
+                        {s.source_href !== null ? (
+                          <a href={withBase(s.source_href)}>{s.source_name ?? s.source_id}</a>
+                        ) : (
+                          <span>{s.source_name ?? s.source_id ?? "source not recorded"}</span>
+                        )}
+                        {s.observed_at && <> · observed {s.observed_at.slice(0, 10)}</>}
+                        {s.recorded_at && <> · recorded {s.recorded_at.slice(0, 10)}</>}
+                      </span>
+                    ) : (
+                      <span class="sig-dg-side__meta">
+                        {" — "}statement not published in this release (the record keeps the claim id visible)
+                      </span>
+                    )}
+                    {s.claim_href !== null && <>{" "}<a href={withBase(s.claim_href)}>claim page</a></>}
+                  </li>
+                ))}
+              </ol>
+              {c.entity_hrefs.map((e) => (
+                <p class="sig-dg-links">
+                  subject: <a href={withBase(e.href)}>{e.label ?? e.entity_id}</a>
+                </p>
+              ))}
+            </li>
+          ))}
+        </ol>
+      </>
+    )}
+  </section>
+
+  <section aria-labelledby="kind-coordinate-conflict" data-testid="kind-section-coordinate">
+    <h2 id="kind-coordinate-conflict">Within-source coordinate conflicts</h2>
+    <p data-copy="CX-07">
+      Records the same source locates at conflicting coordinates — labelled
+      identity defects, not a disagreement between sources.
+    </p>
+    {MODEL.coordinate_conflicts.total === 0 ? (
+      <p class="sig-dg-absence" data-testid="coordinate-conflicts-absent" data-copy="CX-08">
+        No within-source coordinate conflicts are recorded for this place.
+      </p>
+    ) : (
+      <>
+        <p class="sig-table-note">
+          <Figure figure={figs.get("dg-coordinate-conflicts")!} order="inline">
+            {MODEL.coordinate_conflicts.total}
+          </Figure>{" "}
+          conflicting record{MODEL.coordinate_conflicts.total === 1 ? "" : "s"}.
+        </p>
+        <table class="sig-table" data-testid="coordinate-conflict-sources">
+          <thead>
+            <tr><th>Source</th><th>Conflicting records</th></tr>
+          </thead>
+          <tbody>
+            {MODEL.coordinate_conflicts.sources.map((s) => (
+              <tr data-testid="coordinate-conflict-source" data-source-id={s.source_id}>
+                <td>
+                  {s.source_href !== null ? (
+                    <a href={withBase(s.source_href)}>{s.name}</a>
+                  ) : (
+                    s.name
+                  )}
+                </td>
+                <td>{s.records}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </>
+    )}
+  </section>
+
+  <section aria-labelledby="kind-declared-located" data-testid="kind-section-declared">
+    <h2 id="kind-declared-located">Declared-vs-located disagreements</h2>
+    {DL.declared_here_located_elsewhere + DL.located_here_declared_elsewhere === 0 ? (
+      <p class="sig-dg-absence" data-testid="declared-located-absent" data-copy="CX-09">
+        No declared-vs-located disagreement is recorded for this place.
+      </p>
+    ) : (
+      <>
+        <p class="sig-table-note" data-testid="declared-located-totals">
+          <Figure figure={figs.get("dg-declared-elsewhere")!} order="inline">
+            {DL.declared_here_located_elsewhere}
+          </Figure>{" "}
+          record{DL.declared_here_located_elsewhere === 1 ? "" : "s"} declared
+          to {MODEL.name} but located elsewhere;{" "}
+          <Figure figure={figs.get("dg-located-here")!} order="inline">
+            {DL.located_here_declared_elsewhere}
+          </Figure>{" "}
+          located here but declared elsewhere — the disagreement stays visible
+          on both sides.
+        </p>
+        {DL.located_elsewhere.length > 0 && (
+          <table class="sig-table" data-testid="declared-here-table">
+            <caption>Declared to {MODEL.name}, located in</caption>
+            <thead>
+              <tr><th>Located in</th><th>Records</th></tr>
+            </thead>
+            <tbody>
+              {DL.located_elsewhere.map((p) => (
+                <tr data-testid="declared-here-row" data-jkey={p.jkey}>
+                  <td>
+                    {p.slug !== null ? (
+                      <a href={withBase(disagreementPlacePath(p.slug))}>{p.name}</a>
+                    ) : (
+                      p.name
+                    )}
+                  </td>
+                  <td>{p.records}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        {DL.declared_elsewhere.length > 0 && (
+          <table class="sig-table" data-testid="located-here-table">
+            <caption>Located in {MODEL.name}, declared to</caption>
+            <thead>
+              <tr><th>Declared to</th><th>Records</th></tr>
+            </thead>
+            <tbody>
+              {DL.declared_elsewhere.map((p) => (
+                <tr data-testid="located-here-row" data-jkey={p.jkey}>
+                  <td>
+                    {p.slug !== null ? (
+                      <a href={withBase(disagreementPlacePath(p.slug))}>{p.name}</a>
+                    ) : (
+                      p.name
+                    )}
+                  </td>
+                  <td>{p.records}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </>
+    )}
+  </section>
+
+  <section aria-labelledby="dg-definitions" data-testid="dg-definitions">
+    <h2 id="dg-definitions">What the counts mean</h2>
+    <p data-copy="CX-15">
+      Every count on this page cites the dossier's own contribution artifact —
+      the same numbers the sources explorer shows. A kind with nothing
+      recorded says so; it is never smoothed into a zero it does not mean.
+    </p>
+  </section>
+  <span hidden data-testid="dg-kind-count">{KIND_COUNT}</span>
+</BaseLayout>

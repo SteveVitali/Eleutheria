@@ -26,3 +26,4 @@ dispatch boundary-confirm
 interruption
 harness-switch
 record-tip confirm
+boundary read

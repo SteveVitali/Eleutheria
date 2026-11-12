@@ -364,6 +364,20 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
       "P36.62 (K11 RQ-03b / SIG-RQ-002/009): the §5.3 task detail pages (every block a value or a named absence) + the `/task/<task_id>/` id-alias stubs that redirect to the current handle; the retired `/task/new/` fixtures stay un-emitted (410 via the include).",
   },
   {
+    patterns: ["/disagreements/**"],
+    type: "T1",
+    owner: "P37.38",
+    contract: "sig.statement/1 + sig.dossier-sources/1",
+    noJsEquivalent: SELF,
+    examples: [
+      "/disagreements/",
+      "/disagreements/place/usa/ok/",
+      "/disagreements/place/usa/ok/oklahoma-city-4064000/",
+    ],
+    notes:
+      "P37.38 (R11-K13-CX-01, SIG-UI-071): the disagreements browser — the hub + one /disagreements/place/<slug>/ page per emitted sig.dossier-sources/1 doc. Three typed kinds kept apart: recorded contradictions (both sides, sources, dates — derived from the sig.statement/1 contradiction ids), within-source coordinate conflicts (identity defects until CONF-03b re-keys them), and declared-vs-located disagreements (visible on both dossier sides). T1 zero-JS complete; counts cite the release's own artifacts, never a parallel count.",
+  },
+  {
     patterns: ["/watch/**"],
     type: "T1",
     owner: "P36.59",

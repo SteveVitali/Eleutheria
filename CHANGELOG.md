@@ -24,6 +24,18 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.38 — disagreements browser (K13 CX-01, SIG-UI-071; UXR-21 draft):**
+  `/disagreements/` hub + `/disagreements/place/<slug>/` pages (one per
+  emitted `sig.dossier-sources/1` doc), T1 zero-JS. Three typed kinds kept
+  apart: recorded contradictions (derived from the `sig.statement/1`
+  contradiction ids — both sides with sources and dates, claim-page links),
+  within-source coordinate conflicts (labelled identity defects until
+  CONF-03b re-keys them), and declared-vs-located disagreements (visible on
+  both dossier sides via the placement counterpart pairs). Counts cite the
+  release's own artifacts, never a parallel count; a kind with nothing
+  recorded renders a typed absence. The dossier page links "All
+  disagreements for <place>" only where a place page was emitted.
+
 - **P37.37 — claim viewer v2 + real capture diff (K8 EV-03, SIG-EVUI-009,
   SIG-EVUI-004 cited; SIG-UI-028/029 amended; ADR-246):** `evidence.json`
   generates `claim_views` for every document-genre claim with an
