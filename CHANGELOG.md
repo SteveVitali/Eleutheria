@@ -11,6 +11,21 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **P37.44 / R11-CONF-09 (SIG-CONF-012; SIG-EVAL-003/006)** — the mechanical
+  evaluation report: `web/mech_eval.json` (`sig.mech-eval/1`), computed at
+  export time from the release's latest completed camera-site ER run, the
+  shared dedup view and the committed `sig.mech-eval-corpus/1` record —
+  M-1 derivation census, M-1b/M-2 sample states with their exact-bound
+  methods, M-3 cross-copy agreement, M-4 perturbation, M-5 hard negatives
+  and M-9 corroboration. Every estimand carries numerator, denominator,
+  method and population (SIG-EVAL-003) scoped to exactly the tiers,
+  populations, source mix, ruleset and window it supports (SIG-EVAL-006);
+  the four human estimands are `unavailable` with named reasons — never
+  substituted — and every mechanical figure is labelled as such, never
+  real-world precision or recall (SIG-CONF-012). On `/methodology/` the
+  report table replaces the P28.1 holdout table; the development-evidence
+  disclosure stays. `live_verification=false`.
+
 - **P37.43 / R11-K13-SRCH-08 (K3 SRCH-08)** — search result export:
   `GET /v1/releases/{pub or latest}/search/export?format=csv|json`
   downloads a result set (≤ 10,000 record rows) as a deterministic zip

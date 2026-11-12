@@ -1,5 +1,5 @@
 {
-  "$comment": "P35.37 (SIG-TRANSP-013, J3 §5.4): the manifest-listed artifact paths a figure's data-artifact may name. In fixtures mode this committed list IS the manifest the pointer check verifies against (the fixture-export harness serialises the same paths into the manifest it writes); in SIG_DATA_SOURCE=export mode the check verifies against the real export manifest and REFUSES any path the manifest does not list. Compartment-keyed row streams (sites/statements/record_claims .jsonl) are matched by a pattern in figures.ts, not enumerated here. Every entry is a build artifact path relative to the export root — never a page route.",
+  "$comment": "P35.37 (SIG-TRANSP-013, J3 \u00a75.4): the manifest-listed artifact paths a figure's data-artifact may name. In fixtures mode this committed list IS the manifest the pointer check verifies against (the fixture-export harness serialises the same paths into the manifest it writes); in SIG_DATA_SOURCE=export mode the check verifies against the real export manifest and REFUSES any path the manifest does not list. Compartment-keyed row streams (sites/statements/record_claims .jsonl) are matched by a pattern in figures.ts, not enumerated here. Every entry is a build artifact path relative to the export root \u2014 never a page route.",
   "schema": "sig.figure-artifact-paths/1",
   "artifacts": [
     "web/dossier_index.json",
@@ -9,6 +9,7 @@
     "web/freshness.json",
     "web/sources.json",
     "web/evaluation.json",
+    "web/mech_eval.json",
     "web/terms_disclosure.json",
     "web/attribution_corrections.json",
     "web/analytics/density_bins.json",
