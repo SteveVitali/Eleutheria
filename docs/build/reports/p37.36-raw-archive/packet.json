@@ -1,0 +1,27 @@
+{
+  "schema": "sig.raw-archive-packet/1",
+  "ticket": "P37.36",
+  "row": 460,
+  "status": "prepared_not_executed",
+  "deferral": "D-P37.36-1",
+  "mutation": {
+    "kind": "hosted append-only archive write + mirror/origin push",
+    "legs": [
+      "sig-exports raw-archive build — raw-ok sources only, after the Part VIII byte screen (raw/<multihash> + raw/index.json; P8-5/6/8 field-allowlist re-serialisations recorded as NEW captures)",
+      "sig-exports push — raw/* objects to the mirror + the origin (content-hash keys, immutable Cache-Control, append-only)",
+      "sig-ops raw-withdrawal rehearse — delete/purge/tombstone receipt"
+    ],
+    "window": "AR-3 + AR-2",
+    "pre_authorised": false,
+    "gate": "IN-TICKET PAUSE (never pre-authorised under OM-20: archive write touching Part VIII-screened families); explicit verbatim go · D-J3-1 [B-19] = yes: raw bytes for raw-ok sources only, after the Part VIII byte screen · append-only write = · exposure rides P37.65 HG-11"
+  },
+  "decisions_carried": {
+    "D-J3-1 [B-19]": "yes: raw bytes for raw-ok sources only, after the Part VIII byte screen"
+  },
+  "runner": "ops/gcp/raw-archive.sh",
+  "builder": "exports/src/exports/raw_archive.py",
+  "rehearsal": "ops/src/ops/raw_withdrawal.py",
+  "rerun": "implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true",
+  "restore_point": "content-hash keys are append-only — a pushed object is never overwritten; the withdrawal rehearsal's delete/purge/tombstone is the recorded rollback shape",
+  "rollback": "withdrawal rehearsal leg: delete the object from mirror + origin, CDN purge by URL, withdrawals.json disposition + 410 tombstone at the web path"
+}
