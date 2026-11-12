@@ -618,12 +618,34 @@ def _feed_events(
     new_date: str | None,
     old_date: str | None,
     digests: Mapping[str, tuple[str | None, str | None]],
+    meta: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
     """The field-level events ``/v1/changes`` serves — record-keyed,
-    ``new_date`` carried so the route's ``since`` filter applies."""
+    ``new_date`` carried so the route's ``since`` filter applies.
+
+    Each event also carries the additive P37.40 (CHG-01) routing fields the
+    per-place and per-source Atom feeds key on — ``jurisdiction`` (the
+    record's display slug path), ``source_ids`` (the claim-anchor +
+    source-ref universe of the compared record doc), ``label``,
+    ``entity_type`` and ``compartment``. They are additive keys over the
+    landed ``sig.release-changes-feed/1`` shape: API consumers ignore what
+    they do not read, and the feed doc's own schema id is unchanged."""
+    meta = meta or {}
     events: list[dict[str, Any]] = []
     for comp in sorted(diff):
         cell = diff[comp]
+
+        def _routing(record_key: str, row: Mapping[str, Any], comp: str = comp) -> dict[str, Any]:
+            m = meta.get(record_key) or {}
+            return {
+                "compartment": comp,
+                "entity_type": row.get("entity_type"),
+                "entity_id": row.get("entity_id"),
+                "label": row.get("label"),
+                "jurisdiction": m.get("jurisdiction"),
+                "source_ids": m.get("source_ids") or [],
+            }
+
         for row in cell["added"]:
             _, nd = digests.get(row["record_key"], (None, None))
             events.append(
@@ -637,6 +659,7 @@ def _feed_events(
                     "new_date": new_date,
                     "old_record_digest": None,
                     "new_record_digest": nd,
+                    **_routing(row["record_key"], row),
                 }
             )
         for row in cell["removed"]:
@@ -653,6 +676,7 @@ def _feed_events(
                     "old_record_digest": od,
                     "new_record_digest": None,
                     "reason": row.get("reason"),
+                    **_routing(row["record_key"], row),
                 }
             )
         for row in cell["changed"]:
@@ -671,6 +695,7 @@ def _feed_events(
                         "new_date": new_date,
                         "old_record_digest": od,
                         "new_record_digest": nd,
+                        **_routing(row["record_key"], row),
                     }
                 )
     return events
@@ -700,13 +725,30 @@ def release_changes_documents(
     sources = diff_sources(prev_sources, cur_sources)
 
     # record-content digests for the feed events (re-read is bounded to the
-    # records the diff actually names)
+    # records the diff actually names); alongside them the P37.40 routing
+    # meta — the record's slug path + source-id set, read from the same
+    # index row / record doc the digest pass already loads.
     digests: dict[str, tuple[str | None, str | None]] = {}
+    meta: dict[str, dict[str, Any]] = {}
     if prev_root is not None and prev_pub is not None:
         prev_index = load_record_index(prev_root, prev_pub)
     else:
         prev_index = {}
     cur_index = load_record_index(cur_root, cur_pub)
+
+    def _meta_for(
+        index: Mapping[str, Mapping[str, Any]],
+        comp: str,
+        key: str,
+        doc: Mapping[str, Any] | None,
+    ) -> dict[str, Any]:
+        row = index.get(comp, {}).get(key, {})
+        return {
+            "jurisdiction": row.get("slug_path") or row.get("jurisdiction"),
+            "label": row.get("label"),
+            "source_ids": sorted(_record_source_ids(doc)),
+        }
+
     for comp, cell in diff.items():
         for row in cell["removed"]:
             doc = (
@@ -718,12 +760,14 @@ def release_changes_documents(
                 _content_digest(doc) if doc else None,
                 None,
             )
+            meta[row["record_key"]] = _meta_for(prev_index, comp, row["record_key"], doc)
         for row in cell["added"]:
             doc = _read_record(cur_root, cur_index.get(comp, {}).get(row["record_key"], {}))
             digests[row["record_key"]] = (
                 None,
                 _content_digest(doc) if doc else None,
             )
+            meta[row["record_key"]] = _meta_for(cur_index, comp, row["record_key"], doc)
         for row in cell["changed"]:
             pdoc = (
                 _read_record(prev_root, prev_index.get(comp, {}).get(row["record_key"], {}))
@@ -735,6 +779,7 @@ def release_changes_documents(
                 _content_digest(pdoc) if pdoc else None,
                 _content_digest(cdoc) if cdoc else None,
             )
+            meta[row["record_key"]] = _meta_for(cur_index, comp, row["record_key"], cdoc)
 
     rel = _release_block(descriptor, cur_pub)
     prev_block = _release_block(prev_descriptor, prev_pub) if prev_pub is not None else None
@@ -756,7 +801,7 @@ def release_changes_documents(
         for k in ("added", "removed", "changed", "records", "previous_records")
     }
 
-    events = _feed_events(diff, new_date=new_date, old_date=old_date, digests=digests)
+    events = _feed_events(diff, new_date=new_date, old_date=old_date, digests=digests, meta=meta)
 
     disclosures = [
         "Sources and confidence are never compared per record — the "

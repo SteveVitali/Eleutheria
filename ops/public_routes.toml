@@ -53,6 +53,7 @@ top_level = [
   "coverage-metrics",
   "artifact",            # /artifact/<export-path>.json — figure-evidence downloads (P35.37)
   "data-collection",     # the crawler contact page (P35.38a, S6c)
+  "changes",             # /changes/** — the changes page + Atom change feeds (P37.40 / R11-K13-CHG-01, SIG-UI-072)
   "data",                # /data/dictionary/ — the generated data dictionary (P35.39, TX-10a)
   "disagreements",       # /disagreements/** — the disagreements browser (P37.38 / R11-K13-CX-01, SIG-UI-071)
   "dispute",
@@ -107,6 +108,7 @@ required = [
   "robots.txt",
   "_astro",
   "_kit",
+  "changes",             # emitted by every build — the page + feeds mint in fixtures mode too (P37.40)
   "corrections",
   "coverage-metrics",
   "artifact",

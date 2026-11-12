@@ -378,6 +378,16 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
       "P37.38 (R11-K13-CX-01, SIG-UI-071): the disagreements browser — the hub + one /disagreements/place/<slug>/ page per emitted sig.dossier-sources/1 doc. Three typed kinds kept apart: recorded contradictions (both sides, sources, dates — derived from the sig.statement/1 contradiction ids), within-source coordinate conflicts (identity defects until CONF-03b re-keys them), and declared-vs-located disagreements (visible on both dossier sides). T1 zero-JS complete; counts cite the release's own artifacts, never a parallel count.",
   },
   {
+    patterns: ["/changes/**"],
+    type: "T1",
+    owner: "P37.40",
+    contract: "sig.release-changes/1",
+    noJsEquivalent: SELF,
+    examples: ["/changes/", "/changes/feeds/", "/changes/feeds/place/page/2/"],
+    notes:
+      "P37.40 (R11-K13-CHG-01, SIG-UI-072): the changes page + feed directory over the release's own diff — 'SIG's records changed' kept apart from 'the source reports a change in the world', dated by release activation and world dates. The feed files themselves (`*.atom`, `changes/feeds.opml`) are the T0 data surface.",
+  },
+  {
     patterns: ["/watch/**"],
     type: "T1",
     owner: "P36.59",

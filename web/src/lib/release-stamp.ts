@@ -164,6 +164,19 @@ function releaseJsonPath(): string | null {
 }
 
 /**
+ * The bound release tree's root — the directory the resolved release.json
+ * sits in, or `null` when no release is bound (P37.40: the release's own
+ * `r/<pub>/transparency/**` artifacts resolve under it). Same resolution
+ * order as the stamp — `SIG_RELEASE_JSON`'s dir, `SIG_RELEASE_DIR`, then
+ * `<exportDir>` when a release.json is staged beside the export bytes.
+ */
+export function releaseRoot(): string | null {
+  const path = releaseJsonPath();
+  if (path === null || !existsSync(path)) return null;
+  return path.replace(/\/[^/]*$/, "");
+}
+
+/**
  * The site's release stamp, or `null` when no release identity is bound —
  * the honest development/interim state, never a fabricated one. In `export`
  * mode a bound-but-malformed `release.json` throws (fail-closed): a stamp

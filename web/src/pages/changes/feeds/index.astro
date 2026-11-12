@@ -1,0 +1,91 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P37.40 (R11-K13-CHG-01, SIG-UI-072) — `/changes/feeds/` — the change-feed
+// directory: the `all` feed, the OPML bundle, every source feed, and the
+// paginated place-feed index (`changes/feeds/place/page/<n>/`). Every feed
+// exists even when it lists zero entries (D-K7-5's posture) — a subscriber
+// can come early. T1 zero-JS; the feeds themselves are T0 .atom bytes.
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getDossiers, getUnplacedReport, getSourceRows } from "../../../lib/data";
+import { getSourcePageIds } from "../../../lib/source-page";
+import {
+  changesFeedPath,
+  CHANGES_OPML_PATH,
+} from "../../../lib/changes";
+import { withBase } from "../../../lib/paths";
+import { PLACE_PAGE_SIZE } from "../../../lib/changes-feed-page";
+
+const placePaths = [
+  ...getDossiers().map((d) => ({ path: d.slug, name: d.subject_label ?? d.slug })),
+  ...(getUnplacedReport() !== null && !getDossiers().some((d) => d.slug === "unplaced")
+    ? [{ path: "unplaced", name: "Not yet placed" }]
+    : []),
+];
+const sourceNames = new Map(getSourceRows().sources.map((s) => [s.source_id, s.name ?? s.source_id]));
+const sourceIds = getSourcePageIds().map((id) => ({ id, name: sourceNames.get(id) ?? id }));
+const PLACE_PAGES = Math.max(1, Math.ceil(placePaths.length / PLACE_PAGE_SIZE));
+const SOURCE_PAGES = Math.max(1, Math.ceil(sourceIds.length / PLACE_PAGE_SIZE));
+---
+
+<BaseLayout
+  title="Change feeds"
+  path={withBase("changes/feeds/")}
+  crumbs={[
+    { label: "Changes", href: withBase("changes/") },
+    { label: "Feeds" },
+  ]}
+  lede="Every Atom feed the changes surface emits — per place, per source, and the whole diff."
+>
+  <p class="sig-lede" data-copy="CHG-14">
+    Subscriptions are <strong>pull feeds</strong>: add one to a feed reader
+    and it fetches updates at each release — SIG keeps no email list and no
+    accounts. Every feed exists even when it lists zero entries, so a reader
+    can subscribe before the first change lands.
+  </p>
+
+  <section aria-labelledby="chg-feed-all" data-testid="feed-all-section">
+    <h2 id="chg-feed-all">The whole diff</h2>
+    <ul>
+      <li data-testid="feed-row" data-scope="all">
+        <a href={withBase(changesFeedPath("all"))}>All changes</a> — the full record + source diff as one Atom feed
+        {" "}· <a data-testid="feed-opml" href={withBase(CHANGES_OPML_PATH)}>OPML bundle</a> (the whole set at once)
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="chg-feed-places" data-testid="feed-places-section">
+    <h2 id="chg-feed-places">By place</h2>
+    <p>
+      One feed per emitted place page — <code>changes/feeds/place/&lt;path&gt;.atom</code>{" "}
+      covering the place and its descendants ({placePaths.length} places over{" "}
+      {PLACE_PAGES} {PLACE_PAGES === 1 ? "page" : "pages"}).
+    </p>
+    <ol data-testid="place-feed-index">
+      {Array.from({ length: PLACE_PAGES }, (_, i) => (
+        <li>
+          <a href={withBase(`changes/feeds/place/page/${i + 1}/`)}>Place feeds — page {i + 1}</a>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section aria-labelledby="chg-feed-sources" data-testid="feed-sources-section">
+    <h2 id="chg-feed-sources">By source</h2>
+    <p>
+      One feed per emitted source page — <code>changes/feeds/source/&lt;id&gt;.atom</code>{" "}
+      carrying the source's registry lifecycle and the records that cite it (
+      {sourceIds.length} sources over {SOURCE_PAGES}{" "}
+      {SOURCE_PAGES === 1 ? "page" : "pages"}).
+    </p>
+    <ol data-testid="source-feed-index">
+      {Array.from({ length: SOURCE_PAGES }, (_, i) => (
+        <li>
+          <a href={withBase(`changes/feeds/source/page/${i + 1}/`)}>Source feeds — page {i + 1}</a>
+        </li>
+      ))}
+    </ol>
+  </section>
+</BaseLayout>

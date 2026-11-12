@@ -1,0 +1,88 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P37.40 (R11-K13-CHG-01, SIG-UI-072) — `/changes/feeds/source/page/<n>/` —
+// the paginated source-feed index (K9 §6.1's ≤50-row page rule — the
+// source universe outgrows one page at export scale). Every emitted source
+// page has a feed even when it lists zero entries (D-K7-5's posture).
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../../../../layouts/BaseLayout.astro";
+import { getReleaseChanges, getSourceRows } from "../../../../../lib/data";
+import { getSourcePageIds } from "../../../../../lib/source-page";
+import {
+  changeFeedScopes,
+  changeRows,
+  changesFeedPath,
+  scopeRows,
+  type ChangeFeedScope,
+} from "../../../../../lib/changes";
+import { PLACE_PAGE_SIZE } from "../../../../../lib/changes-feed-page";
+import { withBase } from "../../../../../lib/paths";
+
+export function sourceScopes() {
+  const sourceNames = new Map(
+    getSourceRows().sources.map((s) => [s.source_id, s.name ?? s.source_id]),
+  );
+  const sources = getSourcePageIds().map((id) => ({
+    id,
+    name: sourceNames.get(id) ?? id,
+  }));
+  return changeFeedScopes([], sources).filter((s) => s.scope === "source");
+}
+
+export const getStaticPaths: GetStaticPaths = () => {
+  const scopes = sourceScopes();
+  const pages = Math.max(1, Math.ceil(scopes.length / PLACE_PAGE_SIZE));
+  return Array.from({ length: pages }, (_, i) => ({
+    params: { n: String(i + 1) },
+    props: {
+      n: i + 1,
+      pages,
+      scopes: scopes.slice(i * PLACE_PAGE_SIZE, (i + 1) * PLACE_PAGE_SIZE),
+    },
+  }));
+};
+
+const { n, pages, scopes } = Astro.props as {
+  n: number;
+  pages: number;
+  scopes: ChangeFeedScope[];
+};
+const DOC = getReleaseChanges();
+const ROWS = DOC ? changeRows(DOC) : [];
+const ALL = changeFeedScopes([], []);
+const scopeSet = [...ALL, ...scopes];
+---
+
+<BaseLayout
+  title={`Source change feeds — page ${n}`}
+  path={withBase(`changes/feeds/source/page/${n}/`)}
+  crumbs={[
+    { label: "Changes", href: withBase("changes/") },
+    { label: "Feeds", href: withBase("changes/feeds/") },
+    { label: `Sources — page ${n}` },
+  ]}
+  lede="One Atom feed per source — the source's registry lifecycle plus the records that cite it."
+>
+  <table data-testid="source-feed-table">
+    <thead>
+      <tr><th>Source</th><th>Atom feed</th><th>Entries this release</th></tr>
+    </thead>
+    <tbody>
+      {scopes.map((s) => (
+        <tr data-testid="feed-row" data-scope={s.path}>
+          <td><a href={withBase(s.pagePath)}>{s.title.replace(/^SIG changes — /, "")}</a></td>
+          <td><a href={withBase(changesFeedPath(s.path))}><code>{`${s.path}.atom`}</code></a></td>
+          <td>{scopeRows(ROWS, scopeSet, s.path)?.length ?? 0}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  <nav aria-label="Source feed pages" data-testid="source-feed-pages">
+    {n > 1 && <a href={withBase(`changes/feeds/source/page/${n - 1}/`)}>← previous</a>}
+    <span> page {n} of {pages} </span>
+    {n < pages && <a href={withBase(`changes/feeds/source/page/${n + 1}/`)}>next →</a>}
+  </nav>
+</BaseLayout>
