@@ -613,12 +613,12 @@
           "R"
         ],
         "population": "published quality/evaluation figures",
-        "statement": "Every published quality or evaluation figure names exactly one basis class with n, population, source-mix digest, ruleset and window; 'human-verified', 'independently reviewed', 'verified' or 'certified' appears only with a B5 completion marker",
+        "statement": "Every published quality or evaluation figure names exactly one basis class with n, population, source-mix digest, ruleset and window; the four human-claim phrases appear only with a B5 completion marker",
         "threshold": "<= 0",
         "unit": "count"
       }
     ],
-    "digest": "6e3d0dbd001e1ab5:6c0e760cb3a91309",
+    "digest": "ac0284f9b0f361c6:6c0e760cb3a91309",
     "schema": "sig.quality-checks/1",
     "version": "1"
   },
@@ -870,7 +870,7 @@
     "registry": {
       "checks_declared": 27,
       "checks_evaluated": 12,
-      "digest": "6e3d0dbd001e1ab5:6c0e760cb3a91309",
+      "digest": "ac0284f9b0f361c6:6c0e760cb3a91309",
       "schema": "sig.quality-checks/1",
       "version": "1"
     },

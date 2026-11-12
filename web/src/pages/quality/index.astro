@@ -188,7 +188,7 @@ const historyLine = page.report
               ) : null}
               {c.mode === "ratchet" ? (
                 <div class="sig-note">
-                  baseline {c.baseline_pending ? "pending" : c.baseline}
+                  baseline {c.baseline_pending ? "pending" : fmtInt(c.baseline ?? 0)}
                   {c.baseline_at ? ` (set ${c.baseline_at})` : ""}
                 </div>
               ) : null}

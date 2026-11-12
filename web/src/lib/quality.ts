@@ -2,6 +2,8 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
+import { fmtInt } from "./format";
+
 /**
  * P37.45 (CONF-12, SIG-CONF-011 + SIG-CONF-001/010, L3 §5.1/§5.4): the public
  * `/quality/` page artifact — `web/quality.json` (`sig.quality-page/1`).
@@ -198,7 +200,7 @@ export function checkState(
     return {
       label:
         declared.mode === "ratchet"
-          ? `being fixed — no worse than ${declared.baseline ?? "baseline pending"} (not evaluated this run)`
+          ? `being fixed — no worse than ${declared.baseline != null ? fmtInt(declared.baseline) : "baseline pending"} (not evaluated this run)`
           : "declared — not evaluated this run",
       tone: declared.mode === "ratchet" ? "ratchet" : "unevaluated",
     };
@@ -207,14 +209,14 @@ export function checkState(
     case "pass":
       return {
         label: outcome.improvement
-          ? `passing — improved on baseline ${outcome.baseline}`
+          ? `passing — improved on baseline ${fmtInt(outcome.baseline ?? 0)}`
           : "passing",
         tone: "pass",
       };
     case "fail":
       return {
         label: outcome.regression
-          ? `failing — regressed past baseline ${outcome.baseline}`
+          ? `failing — regressed past baseline ${fmtInt(outcome.baseline ?? 0)}`
           : "failing",
         tone: "fail",
       };
