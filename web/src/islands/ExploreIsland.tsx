@@ -368,7 +368,20 @@ export default function ExploreIsland({
         .filter((p): p is string => p !== null),
       technologies: state.technology,
     };
-  }, [state, jurisdictionPlaces]);
+    // Keyed on the filter fields only — never the whole `state`: a focus /
+    // sort / q change must not mint a new `filters`, or `filtered` → `scoped`
+    // churn and the sigma mount below rebuilds the graph + WebGL context on
+    // every node selection (the select-node interaction-latency leg).
+  }, [
+    state.kind,
+    state.edge,
+    state.currency,
+    state.dated,
+    state.source,
+    state.jurisdiction,
+    state.technology,
+    jurisdictionPlaces,
+  ]);
   const unresolvedJurisdictions = state.jurisdiction.filter(
     (j) => jurisdictionPlaceFor(j, jurisdictionPlaces) === null,
   );
@@ -378,17 +391,25 @@ export default function ExploreIsland({
   );
   // `hops=` scopes the drawn neighbourhood around the focused node (K13
   // §2.5's 1|2 ring); absent focus it simply has nothing to scope yet.
+  // The focus only scopes the drawing while `hops=` is set — without it a
+  // selection must keep `scoped`'s identity (selection restyles in place,
+  // never a rebuild).
+  const scopeFocus = state.hops !== null ? focusId : null;
   const scoped = useMemo(() => {
     if (filtered === null) return null;
-    if (state.hops !== null && focusId !== null && filtered.nodes.some((n) => n.key === focusId)) {
-      const ring = neighbourhood(filtered.nodes, filtered.edges, focusId, state.hops);
+    if (
+      state.hops !== null &&
+      scopeFocus !== null &&
+      filtered.nodes.some((n) => n.key === scopeFocus)
+    ) {
+      const ring = neighbourhood(filtered.nodes, filtered.edges, scopeFocus, state.hops);
       return {
         nodes: filtered.nodes.filter((n) => ring.has(n.key)),
         edges: filtered.edges.filter((e) => ring.has(e.src) && ring.has(e.dst)),
       };
     }
     return { nodes: filtered.nodes, edges: filtered.edges };
-  }, [filtered, state.hops, focusId]);
+  }, [filtered, state.hops, scopeFocus]);
 
   const nodeByKey = useMemo(
     () => new Map((merged?.nodes ?? []).map((n) => [n.key, n])),

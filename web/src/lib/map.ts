@@ -484,6 +484,21 @@ export interface MapAsset {
   precision: string;
   /** Set when the location itself is a gap (§9.5) — rendered as the hatch. */
   locationAbsence?: AbsenceKind;
+  /** P35.19 (JUR-02b): the placement-check verdict (`placement_check`
+   *  vocabulary, K4 §3.3) — optional on the wire, absent on a pre-placement
+   *  export. */
+  placementCheck?: string | null;
+  /** P35.47 (CONF-07b) + P37.39 (QB-01): the dedup publication fields —
+   *  `site_id`, `copies[]`, `possible_duplicates[]`, `multi_view[]`,
+   *  `n_independent_lineages` + display. Every value is optional and may be
+   *  the honest `{not_recorded|not_evaluable: reason}` object — the basis
+   *  block normalises them, never fabricates. */
+  site_id?: string | { not_recorded?: string } | null;
+  copies?: unknown[] | { not_recorded?: string };
+  possible_duplicates?: unknown[] | { not_recorded?: string };
+  multi_view?: unknown[] | { not_recorded?: string };
+  n_independent_lineages?: number | { not_evaluable?: string };
+  n_independent_lineages_display?: string | { not_evaluable?: string };
 }
 
 /** The facet-band label for an asset's declared technology (P35.15a): the slug

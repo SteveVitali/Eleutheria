@@ -100,6 +100,14 @@ crumbs.push({ label: "Site list" });
     {list.pages > 1 && ` Page 1 of ${list.pages} (rows ${first}–${last}).`}
     {" "}Data as of <time datetime={meta.asOf.as_of_world}>{meta.asOf.as_of_world}</time>.
   </p>
+  {/* P37.39 (QB-01, SIG-CONF-005): the dossier's count interval beside the
+      record count — L3 §5.2 verbatim when the dossier artifact carries it. */}
+  {dossier?.rollup?.count_interval?.display && (
+    <p class="sig-table-note" data-testid="sites-count-interval">
+      {dossier.rollup.count_interval.display.replace(/\s*\(\[why a range\?\]\([^)]*\)\)\s*$/, "")}
+      {" — "}<a href={withBase("glossary/#possible-duplicate")}>why a range?</a>
+    </p>
+  )}
   <SiteListTable list={list} rows={rows} />
   {list.pages > 1 && (
     <nav class="sig-pager" aria-label="Site list pages" data-testid="sites-pager">

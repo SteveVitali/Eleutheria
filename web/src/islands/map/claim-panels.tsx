@@ -20,6 +20,7 @@ import {
   UNAVAILABLE,
 } from "../../lib/provenance-panel";
 import type { ProvenancePanelData, StatementRow } from "../../lib/provenance-panel";
+import { RecordBasisRows } from "../../components/RecordBasisRows";
 
 function Field({ label, children }: { label: string; children: ComponentChildren }): JSX.Element {
   return (
@@ -113,6 +114,9 @@ export function PreactProvenancePanel({
           {panel.dispute_href ? <a href={panel.dispute_href}>Report a correction</a> : UNAVAILABLE}
         </Field>
       </dl>
+      {/* P37.39 (QB-01): the per-record quality basis — the shared row
+          markup every sig.provenance-panel/1 emitter renders (UXR-33). */}
+      {panel.basis !== null && <RecordBasisRows basis={panel.basis} />}
     </details>
   );
 }

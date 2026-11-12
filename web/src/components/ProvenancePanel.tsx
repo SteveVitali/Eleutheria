@@ -37,6 +37,7 @@ import {
   UNAVAILABLE,
 } from "../lib/provenance-panel";
 import type { ProvenancePanelData } from "../lib/provenance-panel";
+import { RecordBasisRows } from "./RecordBasisRows";
 
 interface Props {
   panel: ProvenancePanelData;
@@ -148,6 +149,9 @@ export default function ProvenancePanel({ panel, anchor = true }: Props): JSX.El
           )}
         </Field>
       </dl>
+      {/* P37.39 (QB-01): the per-record quality basis — rendered only when
+          the claim's subject record carries a `sig.record-basis/1` block. */}
+      {panel.basis !== null && <RecordBasisRows basis={panel.basis} />}
     </details>
   );
 }

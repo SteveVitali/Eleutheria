@@ -60,6 +60,38 @@ export const MAP_ASSETS: MapAsset[] = [
     licence: "CC-BY-4.0",
     technology: "private-camera-integration-live-feeds",
     technologyStatus: "resolved",
+    // P37.39 (QB-01): the CONF-07b dedup fields — this record's site carries
+    // a collapsed copy and a listed-never-merged possible duplicate, so the
+    // basis block exercises every lexicon state.
+    site_id: "device:okc-002",
+    copies: [
+      {
+        record: "device:okc-002-copy",
+        source: "oklahoma-camera-registry",
+        source_name: "Oklahoma camera registry",
+        upstream_id: "OKREG-1187",
+        basis: "C1",
+        display:
+          "Also published by Oklahoma camera registry (a copy of the same upstream record, id OKREG-1187, checked automatically).",
+      },
+    ],
+    possible_duplicates: [
+      {
+        record: "device:okc-006",
+        site_id: "device:okc-006",
+        source: "deflock",
+        source_name: "DeFlock ALPR map",
+        distance_m: 18,
+        reason: "inferential proximity",
+        display:
+          "Possible duplicate: DeFlock ALPR map lists a camera 18 m away. SIG has not merged them because it cannot prove they are the same device.",
+      },
+    ],
+    multi_view: [],
+    n_independent_lineages: 2,
+    n_independent_lineages_display:
+      "Seen independently by 2 sources: Oklahoma City ALPR feed, Oklahoma camera registry.",
+    placementCheck: "consistent",
     tier: 1,
     lat: 35.4823,
     lon: -97.5352,

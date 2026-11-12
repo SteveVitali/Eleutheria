@@ -20,7 +20,7 @@ import EpistemicFields from "../../../../components/EpistemicFields.astro";
 import Figure from "../../../../components/Figure.astro";
 import ProvenancePanelShell from "../../../../components/ProvenancePanelShell.astro";
 import SupportGlyph from "../../../../components/SupportGlyph.astro";
-import { getEntityFigures, getEntityLabelRows, getEntityPageTwins, getStatementIndex } from "../../../../lib/data";
+import { getEntityFigures, getEntityLabelRows, getEntityPageTwins, getRecordBasisIndex, getStatementIndex } from "../../../../lib/data";
 import { entityTimeline } from "../../../../lib/entity-figures";
 import { entityIndex } from "../../../../lib/entity-page";
 import type { EntityLabelRow } from "../../../../lib/entity-page";
@@ -110,7 +110,7 @@ const figs = new Map(FIGURES.map((f) => [f.id, f]));
 // exactly one action, with and without JS.
 const STATEMENTS = getStatementIndex();
 const CLAIM_PANELS: Record<string, ProvenancePanelData> = twin
-  ? Object.fromEntries(merged!.claimIds.map((cid) => [cid, panelForClaim(STATEMENTS, cid)]))
+  ? Object.fromEntries(merged!.claimIds.map((cid) => [cid, panelForClaim(STATEMENTS, cid, {}, getRecordBasisIndex())]))
   : {};
 
 // P36.42b (K2 §4.2 rows 7/9/10): the static figure companions — the radial

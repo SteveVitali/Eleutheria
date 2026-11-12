@@ -399,6 +399,12 @@ class DossierContributionPlan:
     #: published site rows vs the interval's upper bound, published as
     #: measured (``<= 1.02`` is the ratchet target; a miss is recorded).
     dedup_inflation: dict[str, dict[str, Any]] = field(default_factory=dict)
+    #: P37.39 (R11-K13-QB-01, UXR-A06 / SIG-DSRC-005's co-located half): the
+    #: dossier's cross-source co-location candidates — measured count +
+    #: bounded pair list from the CONF-07b ``possible_duplicates[]``
+    #: derivation fields (never merged — the reason rides each row). The
+    #: ``{"not_evaluable": ...}`` object when no completed ER run exists.
+    dedup_colocated: dict[str, dict[str, Any]] = field(default_factory=dict)
     #: P37.28 (K6 VIZ-01b): the dossier network figures' ``fig-*`` edge-count
     #: breakdowns by source — emitted by ``dossier_visuals.build_dossier_visuals``
     #: and carried into this doc's ``figures[]`` so the figure ids reconcile
@@ -585,9 +591,21 @@ class DossierContributionPlan:
             "network_figures": list(self.network_figures.get(acc.key, ())),
             "sources": source_docs,
             "cross_source": {
-                "colocated_pairs": {
-                    "not_evaluable": "observation_group not yet exported (DSRC-04)"
-                },
+                # P37.39 (QB-01, UXR-A06): the co-located half now renders
+                # from the CONF-07b derivation fields — a measured pair
+                # count + a bounded row list, or the honest not_evaluable
+                # reason when no completed run exists.
+                "colocated_pairs": (
+                    self.dedup_colocated.get(acc.key, {}).get("count")
+                    if acc.key in self.dedup_colocated and "count" in self.dedup_colocated[acc.key]
+                    else {
+                        "not_evaluable": self.dedup_colocated.get(acc.key, {}).get(
+                            "not_evaluable", "no completed camera-site ER run"
+                        )
+                    }
+                ),
+                "colocated": self.dedup_colocated.get(acc.key, {}).get("pairs", ()),
+                "colocated_truncated": self.dedup_colocated.get(acc.key, {}).get("truncated", 0),
                 "contradictions": [{"contradiction_id": cid} for cid in contradictions_list],
             },
             "placement": {
@@ -685,9 +703,15 @@ class DossierContributionPlan:
             "dossier_inflation_vs_lineage_roots": self.dedup_inflation.get(
                 acc.key, {"published_rows": 0, "not_evaluable": "no interval computed"}
             ),
-            "cross_source_colocated_candidates": {
-                "not_evaluable": "observation_group not yet exported (DSRC-04)"
-            },
+            "cross_source_colocated_candidates": (
+                self.dedup_colocated.get(acc.key, {}).get("count")
+                if acc.key in self.dedup_colocated and "count" in self.dedup_colocated[acc.key]
+                else {
+                    "not_evaluable": self.dedup_colocated.get(acc.key, {}).get(
+                        "not_evaluable", "no completed camera-site ER run"
+                    )
+                }
+            ),
         }
 
     def _figures(
@@ -1049,8 +1073,9 @@ _DEFINITIONS: dict[str, str] = {
         "(partial/quota_reached/failed runs excluded)"
     ),
     "cross_source_colocated_candidates": (
-        "not_evaluable until DSRC-04 publishes observation_group — the "
-        "pairing is deliberately uncomputed"
+        "records from ≥2 sources a camera-site ER run lists as possible "
+        "duplicates — candidates for the same installation, never merged "
+        "(CONF-07b derivation fields; not_evaluable when no run exists)"
     ),
     "series": (
         "monthly first-seen claims, re-sighted claims, and first-seen "
@@ -1502,6 +1527,7 @@ def accumulate_dossier_contributions(
     # missing run yields the honest ``not_evaluable`` block.
     dedup_intervals: dict[str, dict[str, Any]] = {}
     dedup_inflation: dict[str, dict[str, Any]] = {}
+    dedup_colocated: dict[str, dict[str, Any]] = {}
     for key in sorted(dossiers):
         acc = dossiers[key]
         members = set(acc.placed_subjects) or set(acc.subjects)
@@ -1509,12 +1535,57 @@ def accumulate_dossier_contributions(
         dedup_inflation[key] = _dedup.dossier_inflation(
             dedup_view, members, len(emitted_per_key.get(key, ()))
         )
+        # P37.39 (QB-01, UXR-A06 / SIG-DSRC-005's co-located half): the
+        # cross-source co-location candidates — unique possible-duplicate
+        # pairs touching a dossier member, from the dep's own view
+        # (``DedupView.possible`` — never merged; the reason rides the row).
+        # Bounded for emit; ``truncated`` names the dropped tail honestly.
+        if dedup_view is None:
+            dedup_colocated[key] = {
+                "not_evaluable": "no completed camera-site ER run — the "
+                "fields are declared, never fabricated"
+            }
+            continue
+        seen: set[tuple[str, str]] = set()
+        pairs: list[dict[str, Any]] = []
+        for m in sorted(members):
+            site = dedup_view.member_site.get(m)
+            if site is None:
+                continue
+            for e in dedup_view.possible.get(site, ()):
+                other = str(e.get("record") or "")
+                if not other:
+                    continue
+                pair_key: tuple[str, str] = (m, other) if m <= other else (other, m)
+                if pair_key in seen:
+                    continue
+                seen.add(pair_key)
+                pairs.append(
+                    {
+                        "record": m,
+                        "site_id": site,
+                        "linked_record": other,
+                        "linked_site_id": e.get("site_id"),
+                        "source": e.get("source"),
+                        "source_name": e.get("source_name"),
+                        "distance_m": e.get("distance_m"),
+                        "reason": e.get("reason"),
+                        "display": e.get("display"),
+                    }
+                )
+        pairs.sort(key=lambda p: (str(p["record"]), str(p["linked_record"])))
+        dedup_colocated[key] = {
+            "count": len(pairs),
+            "pairs": pairs[:50],
+            "truncated": max(0, len(pairs) - 50),
+        }
     plan_stub.weight_rows = weight_norm
     plan_stub.lineage_by_claim = lineage_by_claim
     plan_stub.as_of_date = as_of_date
     plan_stub.contributions_by_source = contributions
     plan_stub.dedup_intervals = dedup_intervals
     plan_stub.dedup_inflation = dedup_inflation
+    plan_stub.dedup_colocated = dedup_colocated
     return plan_stub
 
 
