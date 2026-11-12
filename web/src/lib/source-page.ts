@@ -474,6 +474,7 @@ export const SOURCE_EXECUTIONS_FIXTURE: Record<string, ExecutionRecord[]> = {
       execution_id: "demo-exec-okc-3",
       source_id: "okc_camera_registry",
       outcome: "ok",
+      connector_version: "0.1.0-demo", // exercises the changelog's connector_version event (P37.41)
       started_at: "2026-10-15T05:00:00Z",
       finished_at: "2026-10-15T05:12:40Z",
       duration_seconds: 760,

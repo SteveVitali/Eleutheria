@@ -145,7 +145,7 @@ const ENTITY_TWIN_RE =
  * enumerate per-source files).
  */
 const TRANSPARENCY_SOURCE_RE =
-  /^transparency\/sources\/[a-z0-9_-]+\/((executions|captures|targets|issues)\.jsonl|(versions|index|entities)\.json)$/;
+  /^transparency\/sources\/[a-z0-9_-]+\/((executions|captures|targets|issues)\.jsonl|(versions|index|entities|changelog)\.json)$/;
 
 /** Byte-identical to DOSSIER_SOURCES_RE in scripts/check-figures.mjs (pinned
  *  by test): P36.52's per-dossier `sig.dossier-sources/1` artifacts —

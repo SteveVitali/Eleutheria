@@ -1,0 +1,122 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P37.41 (UX10-4, K9 §6.1): `/sources/<id>/changelog/page/<n>/` — the
+// changelog's continuation pages (emitted only when a source records more
+// than 100 events). T1, zero-JS.
+import BaseLayout from "../../../../../layouts/BaseLayout.astro";
+import SourceSubnav from "../../../../../components/SourceSubnav.astro";
+import SourcePager from "../../../../../components/SourcePager.astro";
+import { artifactHref, defineFigures, perSourceTargets, type FigureSpec } from "../../../../../lib/figures";
+import { withBase } from "../../../../../lib/paths";
+import { getSourcePage, type SourcePageModel } from "../../../../../lib/source-page";
+import { resolveSourceId } from "../../../../../lib/alias";
+import {
+  getPageBIds,
+  getSourceVersions,
+  getSourceEntities,
+  SUBPAGE_SIZE,
+  pageCount,
+  pageSlice,
+} from "../../../../../lib/source-page-b";
+import { getSourceChangelog, eventSummary } from "../../../../../lib/source-changelog";
+
+export function getStaticPaths() {
+  return getPageBIds().flatMap((id) => {
+    const doc = getSourceChangelog(id);
+    const pages = pageCount(doc?.events.length ?? 0);
+    return Array.from({ length: pages - 1 }, (_, i) => ({ params: { id, n: String(i + 2) } }));
+  });
+}
+
+const id = resolveSourceId(String(Astro.params.id ?? "")) ?? "";
+const page = Number(Astro.params.n);
+const model = getSourcePage(id);
+if (model === null) throw new Error(`sources/[id]/changelog/page: no source-page row for "${id}"`);
+const m = model as SourcePageModel;
+const row = m.row;
+const doc = getSourceChangelog(id);
+if (doc === null) throw new Error(`sources/[id]/changelog/page: no changelog doc for "${id}"`);
+const events = [...doc.events].reverse();
+const pages = pageCount(events.length);
+const slice = pageSlice(events, page);
+const offset = (page - 1) * SUBPAGE_SIZE;
+const has = {
+  runs: true,
+  captures: true,
+  versions: getSourceVersions(id) !== null,
+  entities: getSourceEntities(id).length > 0,
+  dossiers: (row.contributions ?? []).length > 0,
+  changelog: true,
+};
+const J = String.fromCharCode(47);
+const CART = `transparency/sources/${id}/changelog.json`;
+
+const specs: FigureSpec[] = [
+  {
+    id: "changelog-page", class: "per_source", value: doc.event_count, artifact: CART,
+    pointer: `${J}event_count`, definition: "#changelog-heading", href: artifactHref(CART),
+    breakdown: "#fig-changelog-page", targets: perSourceTargets(id, `sources/${id}/changelog/`),
+  },
+];
+const FIGURES = defineFigures(`source-changelog-${id}-p${page}`, specs);
+const fig = (fid: string) => {
+  const f = FIGURES.find((x) => x.id === fid);
+  if (!f) throw new Error(`source-changelog-${id}-p${page} figures[]: no figure "${fid}"`);
+  return f;
+};
+
+const crumbs = [
+  { label: "Sources", href: withBase("sources/") },
+  { label: row.name, href: withBase(`sources/${id}/`) },
+  { label: "Changelog", href: withBase(`sources/${id}/changelog/`) },
+  { label: `Page ${page}` },
+];
+---
+
+<BaseLayout title={`${row.name} — changelog, page ${page}`} path={withBase(`sources/${id}/changelog/page/${page}/`)} crumbs={crumbs}>
+  <SourceSubnav id={id} name={row.name} has={has} current="changelog" />
+  <section aria-labelledby="changelog-heading">
+    <h2 id="changelog-heading">Changelog — {row.name}</h2>
+    <SourcePager
+      base={`sources/${id}/changelog`}
+      page={page}
+      pages={pages}
+      first={offset + 1}
+      last={offset + slice.length}
+      total={doc.event_count}
+      noun="events"
+      label="Changelog"
+      figure={fig("changelog-page")}
+    />
+    <table class="sig-table" data-testid="changelog-table">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Event</th>
+          <th scope="col">Dated by</th>
+        </tr>
+      </thead>
+      <tbody>
+        {slice.map((ev) => (
+          <tr data-testid="changelog-event" data-kind={ev.kind}>
+            <td><time datetime={ev.at}>{ev.at}</time></td>
+            <td>
+              {eventSummary(ev)}
+              {ev.refs.length > 0 && (
+                <> — {ev.refs.slice(0, 3).map((r, i) => <Fragment>{i > 0 && " "}<code>{r}</code></Fragment>)}{ev.refs.length > 3 && <span class="mut"> +{ev.refs.length - 3} more</span>}</>
+              )}
+            </td>
+            <td><code>{ev.clock_basis}</code></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <p>
+      <a href={withBase(`sources/${id}/changelog/`)}>First page</a> · machine twin{" "}
+      <a href={withBase(`sources/${id}/changelog/index.json`)}>index.json</a>
+    </p>
+  </section>
+</BaseLayout>
