@@ -1349,3 +1349,14 @@ seed-commit d54a867e
 # the append-only finding attributed to 458f4af8's rewritten
 # BUILD_INDEX.md line 660 only; no other commit borrows the exemption.
 seed-commit 458f4af8
+
+# P37.44 (row 468) closeout repair 2 — BUILD_INDEX.md line 660's `ci:` cell was
+# rewritten a second time by `0025ea46` (`ca94e3d3` → `f97600ee`, the final
+# closeout head after the seed-commit declaration commit). Same class and
+# same scope as the `458f4af8` declaration above: one-row-per-ticket, an
+# in-place fill of the cell the row carries. Pre-edit bytes archived
+# `reports/memory-repair/BUILD_INDEX_L660_pre-P37.44-ci-final.txt`
+# (sha256:fe2b995f5c4ed8141f9f019f0a84bc1ba48d972d5e8463dea20f962f5c5a53e9).
+# Scope: the append-only finding attributed to 0025ea46's rewritten
+# BUILD_INDEX.md line 660 only; no other commit borrows the exemption.
+seed-commit 0025ea46
