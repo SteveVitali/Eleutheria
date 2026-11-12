@@ -33,6 +33,7 @@
  */
 
 import { withBase } from "./paths";
+import type { RecordBasis } from "./record-basis";
 
 /** The emitted panel-contract schema (`schema` on the contract object). */
 export const PANEL_SCHEMA = "sig.provenance-panel/1";
@@ -200,6 +201,12 @@ export interface ProvenancePanelData {
     api_status: string;
   };
   dispute_href: string | null;
+  /** P37.39 (R11-K13-QB-01, L3 §5.2, SIG-CONF-011): the record's
+   *  quality-basis block — copy / possible-duplicate / corroboration /
+   *  location-check / technology / evidence / checked-by states. `null`
+   *  when the claim's subject record carries no basis block (a pre-P35.47
+   *  export or a non-camera-site subject) — sparse, never fabricated. */
+  basis: RecordBasis | null;
 }
 
 /** Optional link context for `panelFromStatement`. */
@@ -267,6 +274,7 @@ export function panelFromStatement(
   statement: Partial<StatementRow> | null | undefined,
   claimId: string,
   links: PanelLinks = {},
+  basis: RecordBasis | null = null,
 ): ProvenancePanelData {
   const stmt: Partial<StatementRow> = statement ?? {};
   const { state, text: stateText } = bindingStateText(stmt);
@@ -395,15 +403,23 @@ export function panelFromStatement(
     },
     dispute_href:
       links.disputeHref === undefined ? withBase("dispute/") : links.disputeHref,
+    basis,
   };
 }
 
 /** Look a claim up in a `claim_id → sig.statement/1` index and normalise —
- *  the one call every surface makes. */
+ *  the one call every surface makes. `basisIndex` is the optional
+ *  `entity_id → sig.record-basis/1` map (P37.39): when it resolves the
+ *  claim's subject record the panel carries the quality-basis block —
+ *  identical wherever the claim renders (UXR-33). */
 export function panelForClaim(
   index: ReadonlyMap<string, StatementRow>,
   claimId: string,
   links: PanelLinks = {},
+  basisIndex?: ReadonlyMap<string, RecordBasis>,
 ): ProvenancePanelData {
-  return panelFromStatement(index.get(claimId), claimId, links);
+  const stmt = index.get(claimId);
+  const basis =
+    basisIndex && stmt?.entity_id ? (basisIndex.get(stmt.entity_id) ?? null) : null;
+  return panelFromStatement(stmt, claimId, links, basis);
 }

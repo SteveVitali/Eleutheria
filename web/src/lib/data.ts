@@ -44,6 +44,8 @@ import { LEVERAGE_METRIC_FIXTURE, type LeverageMetric } from "./leverage-fixture
 
 // The per-surface contract types (P27.1) the getters below are typed against.
 import type { MapAsset, DensityBin } from "./map";
+import { recordBasis } from "./record-basis";
+import type { DedupFields, RecordBasis } from "./record-basis";
 import type { NetworkNode, NetworkEdge, AccessPath } from "./network";
 import type { FreshnessRow, CoverageMetric } from "./metrics";
 import type { ContractWatchItem } from "./watch";
@@ -1063,6 +1065,82 @@ export function getDossierArtifactRef(slug: string): DossierArtifactRef | null {
  * mode yields the empty map (no release is ever bound to a fixture build →
  * the target is a named absence, never a dead link).
  */
+// --------------------------------------------------------------------------- //
+// P37.39 (R11-K13-QB-01, L3 §5.2, SIG-CONF-011): the per-record quality-basis
+// index — `entity_id → sig.record-basis/1`, normalised once from the CONF-07b
+// derivation fields the compartment `sites.jsonl` rows carry verbatim.
+// Export mode reads the released rows; fixtures mode derives the same index
+// from the committed `map.json`-shaped corpus (the fixture assets carry the
+// dedup fields the export emits — the wire shape is identical).
+// --------------------------------------------------------------------------- //
+
+export function getRecordBasisIndex(): ReadonlyMap<string, RecordBasis> {
+  const out = new Map<string, RecordBasis>();
+  if (dataSource() === "export" || dataSource() === "national") {
+    const root = dataSource() === "national" ? `${nationalDir()}/web` : exportDir();
+    if (!existsSync(root)) return out;
+    for (const entry of readdirSync(root)) {
+      const p = `${root}/${entry}/sites.jsonl`;
+      if (!existsSync(p)) continue;
+      for (const line of readFileSync(p, "utf-8").split("\n")) {
+        const t = line.trim();
+        if (!t) continue;
+        const row = JSON.parse(t) as Record<string, unknown> & { entity_id?: unknown };
+        if (typeof row.entity_id !== "string" || out.has(row.entity_id)) continue;
+        const basis = recordBasis(row as DedupFields, {
+          placementCheck: row["placement_check"] ?? row["placementCheck"],
+          jurisdictionName:
+            typeof row["jurisdiction_slug_path"] === "string"
+              ? (row["jurisdiction_slug_path"] as string)
+              : typeof row["jurisdiction"] === "string"
+                ? (row["jurisdiction"] as string)
+                : null,
+          technology: row["technology"],
+          technologyStatus: row["technology_status"] ?? row["technologyStatus"],
+        });
+        if (basis) out.set(row.entity_id, basis);
+      }
+    }
+    return out;
+  }
+  for (const asset of MAP_ASSETS) {
+    const basis = recordBasis(asset as DedupFields, {
+      placementCheck: asset.placementCheck,
+      jurisdictionName: asset.jurisdiction,
+      technology: asset.technology,
+      technologyStatus: asset.technologyStatus,
+      technologySourceName: asset.sources?.[0],
+    });
+    if (basis) out.set(asset.id, basis);
+  }
+  return out;
+}
+
+/** One record's basis block, or `null` — the sparse absence. */
+export function getRecordBasis(entityId: string): RecordBasis | null {
+  return getRecordBasisIndex().get(entityId) ?? null;
+}
+
+/** The map layer's `count_interval` block (`web/map.json`, CONF-07b) —
+ *  `null` on a pre-P35.47 wire; `{"not_evaluable": reason}` stays honest. */
+export function getMapCountInterval():
+  | { records?: number; lower?: number; upper?: number; declared_distance_m?: number; display?: string; not_evaluable?: string }
+  | null {
+  let doc: Record<string, unknown> | null = null;
+  if (dataSource() === "national") {
+    if (!existsSync(`${nationalDir()}/web/map.json`)) return null;
+    doc = JSON.parse(readFileSync(`${nationalDir()}/web/map.json`, "utf-8")) as Record<string, unknown>;
+  } else if (dataSource() === "export") {
+    doc = readExportArtifact("map.json", (p) => p as Record<string, unknown>);
+  } else {
+    return null;
+  }
+  const ci = doc?.["count_interval"];
+  return ci !== null && typeof ci === "object"
+    ? (ci as { records?: number; lower?: number; upper?: number; declared_distance_m?: number; display?: string; not_evaluable?: string })
+    : null;
+}
+
 export function getJurisdictionCompartments(): Map<string, string> {
   const out = new Map<string, string>();
   if (dataSource() !== "export") return out;
