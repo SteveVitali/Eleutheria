@@ -1,0 +1,167 @@
+{
+  "corpus_id": "rdc",
+  "corpus_version": 1,
+  "estimands": {
+    "m4_perturbation": "per-class join/no-join outcomes over modelled perturbations of corpus records \u2014 a mechanical census against the declared ruleset contract, never an estimate of real-world precision or recall",
+    "m5_hard_negatives": "share of mechanically-declared known-distinct pairs the matcher merges \u2014 a census over the declared negative classes only, never an estimate of real-world precision or recall"
+  },
+  "harness": "ops.rdc_harness (P35.23; deterministic seeds 7/11/13)",
+  "population": "the committed real-data regression corpus (tests/rdc/data, sig.rdc-corpus/1 v1): 4 committed licence-safe slices evaluated; 3 restricted-lane slices deferred-unmaterialized",
+  "schema": "sig.mech-eval-corpus/1",
+  "sections": {
+    "m4_perturbation": {
+      "classes": {
+        "axis_swap": {
+          "examples": [],
+          "expected": "separate",
+          "join_rate": 0.0,
+          "joined": 0,
+          "mismatches": 0,
+          "outcome": "pass",
+          "tested": 25
+        },
+        "co_located_distinct_device": {
+          "examples": [],
+          "expected": "separate",
+          "join_rate": 0.0,
+          "joined": 0,
+          "mismatches": 0,
+          "outcome": "pass",
+          "tested": 25
+        },
+        "dropped_fields": {
+          "examples": [],
+          "expected": "join",
+          "join_rate": 1.0,
+          "joined": 25,
+          "mismatches": 0,
+          "outcome": "pass",
+          "tested": 25
+        },
+        "id_reformat": {
+          "examples": [],
+          "expected": "join",
+          "join_rate": 1.0,
+          "joined": 25,
+          "mismatches": 0,
+          "outcome": "pass",
+          "tested": 25
+        },
+        "jitter_beyond_tolerance": {
+          "examples": [],
+          "expected": "separate",
+          "join_rate": 0.0,
+          "joined": 0,
+          "mismatches": 0,
+          "outcome": "pass",
+          "tested": 25
+        },
+        "jitter_far": {
+          "examples": [],
+          "expected": "separate",
+          "join_rate": 0.0,
+          "joined": 0,
+          "mismatches": 0,
+          "outcome": "pass",
+          "tested": 25
+        },
+        "jitter_within_tolerance": {
+          "examples": [],
+          "expected": "join",
+          "join_rate": 1.0,
+          "joined": 25,
+          "mismatches": 0,
+          "outcome": "pass",
+          "tested": 25
+        },
+        "name_variant": {
+          "examples": [],
+          "expected": "join",
+          "join_rate": 1.0,
+          "joined": 25,
+          "mismatches": 0,
+          "outcome": "pass",
+          "tested": 25
+        },
+        "precision_2dp": {
+          "examples": [],
+          "expected": "separate",
+          "join_rate": 0.0,
+          "joined": 0,
+          "mismatches": 0,
+          "outcome": "pass",
+          "tested": 25
+        },
+        "precision_5dp": {
+          "examples": [],
+          "expected": "join",
+          "join_rate": 1.0,
+          "joined": 25,
+          "mismatches": 0,
+          "outcome": "pass",
+          "tested": 25
+        },
+        "sign_flip": {
+          "examples": [],
+          "expected": "separate",
+          "join_rate": 0.0,
+          "joined": 0,
+          "mismatches": 0,
+          "outcome": "pass",
+          "tested": 25
+        }
+      },
+      "outcome": "pass",
+      "sample_size": 25,
+      "seed": 7,
+      "violations": 0
+    },
+    "m5_hard_negatives": {
+      "classes": {
+        "far_shared_reference": {
+          "assessed": 0,
+          "examples": [],
+          "merge_rate": 0.0,
+          "merged": 0,
+          "outcome": "pass",
+          "tested": 20
+        },
+        "incompatible_technology": {
+          "assessed": 0,
+          "examples": [],
+          "merge_rate": 0.0,
+          "merged": 0,
+          "outcome": "pass",
+          "tested": 20
+        },
+        "unique_distinct_ids_one_namespace": {
+          "assessed": 30,
+          "examples": [],
+          "merge_rate": 0.0,
+          "merged": 0,
+          "outcome": "pass",
+          "tested": 30
+        }
+      },
+      "outcome": "pass",
+      "real_co_located_pairs": 55,
+      "sample_size": 20,
+      "seed": 11,
+      "violations": 0
+    }
+  },
+  "sources": [
+    "camreg_nottingham_gb",
+    "camreg_washington_dc",
+    "eff_atlas_of_surveillance",
+    "usaspending"
+  ],
+  "time_window": {
+    "slice_captured_dates": [
+      "2026-09-15",
+      "2026-09-17",
+      "2026-09-18"
+    ]
+  },
+  "verdict": "pass"
+}

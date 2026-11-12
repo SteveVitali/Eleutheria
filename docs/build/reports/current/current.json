@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "d07613f08aa85ed98d0fb2ffdcfbb4ecdaabc502",
-  "manifest_inputs": 1260,
+  "input_commit": "313deea472c68a0e13add8f666097a36d0a24afe",
+  "manifest_inputs": 1261,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.44",
-    "lastCompleted": "P37.43",
+    "nextTicket": "P37.45",
+    "lastCompleted": "P37.44",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.42,P37.70,P37.71",
@@ -17532,8 +17532,8 @@
           "label": "historical/csv"
         },
         "SIG-EVAL-003": {
-          "verdict": "AT-RISK-INTEGRATION",
-          "evidence": "resolution/src/resolution/evaluator.py:1;resolution/src/resolution/data/eval_confidence.toml:1",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "resolution/src/resolution/evaluator.py:1;exports/src/exports/mech_eval.py:1;exports/src/exports/data/mech_eval.json:1;web/src/pages/methodology.astro:92",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17550,8 +17550,8 @@
           "label": "historical/csv"
         },
         "SIG-EVAL-006": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "exports/src/exports/mech_eval.py:1;exports/src/exports/data/mech_eval.json:1;web/src/pages/methodology.astro:92",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -18024,8 +18024,8 @@
           "label": "historical/csv"
         },
         "SIG-CONF-012": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "exports/src/exports/mech_eval.py:1;exports/src/exports/data/mech_eval.json:1;tests/rdc/data/corpus.toml:1;web/src/pages/methodology.astro:92",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -27504,7 +27504,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "cacabe727c54af7ac9626905e7b249a38479901a6af2e6fd5a5669bcfa184b36",
+  "manifest_sha256": "379c3cc15095b42bd2129ba12f2b6c7b001afabd82402bbc97d7037d640ddb19",
   "current_md": {
     "lines": 152,
     "bytes": 19327,
