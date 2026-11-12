@@ -1333,3 +1333,19 @@ seed-commit 136506d2
 # runs/P37.42.md line 51 and LEDGER.md line 1702 only; no other commit
 # borrows the exemption.
 seed-commit d54a867e
+
+# P37.44 (row 468) closeout repair — BUILD_INDEX.md line 660's `ci:` cell was
+# committed as `**ci: pending**` in `73882bcc` (the build-memory commit made
+# before head-bound CI resolved, per the checkpoint-first convention) and is
+# rewritten in place to `ci: pass #492@ca94e3d3` by `458f4af8`. The
+# append-only rule (BM-INDEX-01) takes only appended rows, but the index is
+# one-row-per-ticket — a second row for 468 would break the contract; the
+# repair is an in-place fill of the placeholder the row was designed to
+# carry (the same class as the committed cfc2d7b6/136506d2 repair pattern).
+# Pre-edit bytes archived
+# `reports/memory-repair/BUILD_INDEX_L660_pre-P37.44-ci.txt`
+# (sha256:c6f4878b0a80a5a8fdf866e6861a17c765b5cbd7e7a4430974a50ea8261d01cd).
+# The branch rule forbids force-push, so the declaration lands here. Scope:
+# the append-only finding attributed to 458f4af8's rewritten
+# BUILD_INDEX.md line 660 only; no other commit borrows the exemption.
+seed-commit 458f4af8
