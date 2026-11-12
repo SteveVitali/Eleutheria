@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `97aae92da9529aef7bebb5fae952be0667228850` · inputs hashed: 1262 · wall-clock receipt: `receipt.json`
+> input_commit: `c715ae4470b56a84e990e4395d7f6b117595a23b` · inputs hashed: 1262 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -104,11 +104,11 @@
 | P37.11 | D-P37.11-1 | `implement-spec spec=docs/tickets/432_P37.11__sam-gov-sweep-resume.md live_verification=true` |
 | P37.12 | D-P37.12-1 | `implement-spec spec=docs/tickets/433_P37.12__keyed-us-511-wiring.md live_verification=true` |
 | P37.70 | D-P37.70-1 | `implement-spec spec=docs/tickets/434_P37.70__keyed-au-traffic-camera-apis.md live_verification=true` |
-| P37.13 | D-P37.13-1 | the next `sig.discovery-sweep/1` run or acq-plan ticket — `discovery-sweep/2026-11-07/candidates.csv` |
+| P37.13 | D-P37.13-1 | the next `sig.discovery-sweep/1` run or acq ticket — `discovery-sweep/2026-11-07/candidates.csv` |
 | P37.14 | D-P37.14-1 | a data-review ticket or exports consumer of `publishable` — `ADR-240` revisit trigger (b) |
 | P37.15 | queued leg | `implement-spec spec=docs/tickets/437_P37.15__scheduled-parser-canary.md live_verification=true` |
 | P37.20 | D-P37.20-1 | implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true |
-| P37.36 | raw-ok archive write leg: raw/<multihash> + raw/index.json over the `hosted` store (P8 screen, reserialisation as new captures) → mirror/origin push → withdrawa… | `implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` (archive write + push + rehearsal) |
+| P37.36 | raw-ok archive write (raw/index.json; P8 screen; new-capture reserialisation) + push + rehearsal | `implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` (archive write + push + rehearsal) |
 | P37.42 | D-P37.42-1 | implement-spec spec=docs/tickets/466_P37.42__api-parity.md live_verification=true |
 
 ## Known inconsistencies (preserved, never synthesized)
