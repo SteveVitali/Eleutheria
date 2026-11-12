@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "313deea472c68a0e13add8f666097a36d0a24afe",
+  "input_commit": "97aae92da9529aef7bebb5fae952be0667228850",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -998,15 +998,15 @@
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "caa09dac31b62bb3f7acf148197afc9aa750860149170aa6ab5905eb68cc437c"
+      "sha256": "269e73e48920bf6dc3780bd601dc1a65827cf9b7568cdaade3f48d9e6e4bfe58"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "eadd0824f17543d812cb21d868471761d25ae5cbb09ce54fec76a338dc22ccb3"
+      "sha256": "86e2789ebd535a0293b1e3206cf88a0e27c58af6d55cfb6d2ccb63c06f41f31c"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "a0921d2f7bd6fc68a13d76bf46496f179dbb29337ef4aa8d57b51da8b7f7d9c6"
+      "sha256": "355476eb27b4aa1328091a97396927263575a7c95ab71d1d65c5187625a4aa40"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -2851,6 +2851,10 @@
     {
       "path": "docs/build/runs/P37.44.md",
       "sha256": "741d742fe6bf9a5eb4884b906a3d16d8fcd3d4b4e65e4edd3aa61e35577294a8"
+    },
+    {
+      "path": "docs/build/runs/P37.45.md",
+      "sha256": "442ef28ce6f6e43dcb26a5e566dcd86435c5b1d85b1f3f35a4aa27875b71823a"
     },
     {
       "path": "docs/build/runs/P37.4a.md",
