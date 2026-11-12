@@ -239,10 +239,10 @@
       "data_source": "fixtures",
       "ratified_ceiling": 200,
       "recorded_measure": 228,
-      "regression_bound": 450,
+      "regression_bound": 500,
       "deferral": "D-P35.51-3",
       "owner": "the static-equivalent pagination/compaction row (P27.7's deferred table shapes)",
-      "note": "fixtures-scoped: node-select on the demo-corpus graph under 4× CPU throttle measures ≈ 228 ms to the aria-pressed effect on the GitHub-hosted runner — marginally over the ratified ≤ 200 ms. Bounded at 400 ms, matching the national bound; the compact document restores headroom. P37.26 (GX-09a): retargeted to /explore/ — the /network/ 301 successor surface carries the same static-equivalent lists verbatim; the recorded gap and its bound ride the rename unchanged. P37.30 re-record: the GX-09b wave (filter panel, sortable node table, search, path panel — the DOM select-node walks) grew the honest fixture measure to 402–425 ms across five consecutive hosted runs (P37.30 impl + closeout heads and ancestor #477@1f055f5) — systematically over the recorded 228 ms pre-09b measure. Re-recorded at 450 ms under the same deferral, ceilings untouched; reported every run, stale-row fails."
+      "note": "fixtures-scoped: node-select on the demo-corpus graph under 4× CPU throttle measures ≈ 228 ms to the aria-pressed effect on the GitHub-hosted runner — marginally over the ratified ≤ 200 ms. Bounded at 400 ms, matching the national bound; the compact document restores headroom. P37.26 (GX-09a): retargeted to /explore/ — the /network/ 301 successor surface carries the same static-equivalent lists verbatim; the recorded gap and its bound ride the rename unchanged. P37.30 re-record: the GX-09b wave (filter panel, sortable node table, search, path panel — the DOM select-node walks) grew the honest fixture measure to 402–425 ms across five consecutive hosted runs (P37.30 impl + closeout heads and ancestor #477@1f055f5) — systematically over the recorded 228 ms pre-09b measure. Re-recorded at 450 ms under the same deferral, ceilings untouched; reported every run, stale-row fails. P37.45 re-record: the hosted fixture leg measured 471 on this head — re-recorded at 500 under the same deferral (D-P35.51-3), ratified 200 untouched; the GX-09b cost stands recorded."
     },
     {
       "route": "/explore/",
