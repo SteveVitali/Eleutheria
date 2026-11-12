@@ -478,13 +478,14 @@ export const PAGE_TYPE_REGISTRY: readonly PageTypeEntry[] = [
     notes: "J3's status lane page (TX-07).",
   },
   {
-    patterns: ["/methodology/", "/coverage-metrics/", "/corrections/"],
+    patterns: ["/methodology/", "/coverage-metrics/", "/corrections/", "/quality/"],
     type: "T1",
     owner: "P35.50",
     contract: "none",
     noJsEquivalent: SELF,
-    examples: ["/methodology/", "/coverage-metrics/", "/corrections/"],
-    notes: "K14's method/coverage/corrections content pages.",
+    examples: ["/methodology/", "/coverage-metrics/", "/corrections/", "/quality/"],
+    notes:
+      "K14's method/coverage/corrections content pages. P37.45 (SIG-CONF-011, CONF-12): /quality/ joins the trust-and-method hub — the release-bound sig.quality-page/1 check table, the who-checked-what basis table and the probe-lane panel; T1 zero-JS complete.",
   },
   {
     patterns: ["/contribution-back/"],

@@ -459,6 +459,58 @@ write(
 // /sources/; the data layer reads `web/terms_disclosure.json` in export mode.
 write("terms_disclosure.json", TERMS_DISCLOSURE_FIXTURE);
 
+// P37.45 (CONF-12, SIG-CONF-011): `web/quality.json` — the sig.quality-page/1
+// artifact the /quality/ page renders from. The REAL placement-R harness
+// (`sig-ops quality run --scan-dir <outDir>`) measures this fixture export's
+// own bytes — the same code the release gate consumes — and `sig-exports
+// quality page` wraps the measured report with the full registry
+// declaration. `status/quality/latest.json` is the probe-run envelope the
+// lane panel reads. uv off PATH → warn (export-mode builds then fail loud).
+try {
+  mkdirSync(join(outDir, "status", "quality"), { recursive: true });
+  const qOut = join(outDir, ".quality-probe");
+  mkdirSync(qOut, { recursive: true });
+  execFileSync(
+    "uv",
+    ["run", "sig-ops", "quality", "run", "--placement", "R",
+     "--scan-dir", outDir, "--target", "fixture-export",
+     "--out", qOut],
+    { stdio: "inherit" },
+  );
+  execFileSync(
+    "uv",
+    ["run", "sig-exports", "quality", "page",
+     "--report", join(qOut, "quality-report.json"),
+     "--target", "fixture-export",
+     "--out", join(webDir, "quality.json")],
+    { stdio: "inherit" },
+  );
+  writtenArtifacts.push({
+    path: "web/quality.json",
+    compartment: "sig_graph",
+    license: "CC-BY-4.0",
+  });
+  const probeRun = JSON.parse(
+    readFileSync(join(qOut, "probe-run.json"), "utf-8"),
+  );
+  writeFileSync(
+    join(outDir, "status", "quality", "latest.json"),
+    JSON.stringify(probeRun, null, 2) + "\n",
+    "utf-8",
+  );
+  writtenArtifacts.push({
+    path: "status/quality/latest.json",
+    compartment: "sig_graph",
+    license: "CC-BY-4.0",
+  });
+} catch {
+  console.warn(
+    "export:fixtures: the quality harness could not run — the bundle ships " +
+      "no web/quality.json (SIG_DATA_SOURCE=export builds will fail loud). " +
+      "Run `uv sync` first.",
+  );
+}
+
 // P36.50 (SIG-TRANSP-014): the downloads listing `web/downloads.json` —
 // emitted at `web/` like the real exporter; the data layer's
 // getDownloadListing reads it there in export mode. When overlaying a real

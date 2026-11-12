@@ -105,7 +105,7 @@ crumbs.push({ label: "Site list" });
   {dossier?.rollup?.count_interval?.display && (
     <p class="sig-table-note" data-testid="sites-count-interval">
       {dossier.rollup.count_interval.display.replace(/\s*\(\[why a range\?\]\([^)]*\)\)\s*$/, "")}
-      {" — "}<a href={withBase("glossary/#possible-duplicate")}>why a range?</a>
+      {" — "}<a href={withBase("quality/#duplicates")}>why a range?</a>
     </p>
   )}
   <SiteListTable list={list} rows={rows} />

@@ -1,0 +1,312 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P37.45 (CONF-12, SIG-CONF-011 + SIG-CONF-001/010, L3 §5.1, Q-L3-5/B-31):
+// the public /quality/ page — "How sure is SIG?" A T1 content page, zero-JS.
+// It renders only from the release artifact `web/quality.json`
+// (sig.quality-page/1): every registered check — failing and ratchet checks
+// shown, never hidden — a "who checked what" basis table whose
+// independent-review row reads "none", a "what we cannot tell you" section,
+// and the verbatim posture "no human check performed" (Q-L3-3 = c).
+// The nightly spine probe's latest run rides as a separate, labelled panel —
+// never mixed with the release-bound report (L3 §5.1).
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Figure from "../../components/Figure.astro";
+import InBrief from "../../components/InBrief.astro";
+import { getQualityPage, getQualityLane, getMechEval } from "../../lib/data";
+import {
+  BASIS_ROWS,
+  NO_HUMAN_CHECK,
+  basisCounts,
+  checkState,
+} from "../../lib/quality";
+import { artifactHref, defineFigures } from "../../lib/figures";
+import { withBase } from "../../lib/paths";
+import { fmtInt } from "../../lib/format";
+
+const page = getQualityPage();
+const lane = getQualityLane();
+const mech = getMechEval();
+const checks = page.registry.checks;
+const outcomes = new Map((page.report?.checks ?? []).map((c) => [c.id, c]));
+const counts = basisCounts(checks);
+const nChecks = checks.length;
+const nMeasured = page.report?.registry.checks_evaluated ?? 0;
+const nPassing = (page.report?.checks ?? []).filter((c) => c.outcome === "pass").length;
+const nRatchet = checks.filter((c) => c.mode === "ratchet").length;
+const nFailing = (page.report?.checks ?? []).filter((c) => c.outcome === "fail").length;
+const nNotEvaluable = (page.report?.checks ?? []).filter(
+  (c) => c.outcome === "not_evaluable",
+).length;
+const m1 = mech.estimands["m1_derivation_census"];
+const m1b = mech.estimands["m1b_id_resolution_sample"];
+const m3 = mech.estimands["m3_cross_copy_agreement"];
+
+const FIGURES = defineFigures("quality", [
+  {
+    id: "checks-declared",
+    class: "headline" as const,
+    value: nChecks,
+    artifact: "web/quality.json",
+    pointer: "/registry/checks",
+    definition: "#checks-heading",
+    href: artifactHref("web/quality.json"),
+    breakdown: "#fig-checks-declared",
+    targets: [],
+  },
+  {
+    id: "checks-passing",
+    class: "headline" as const,
+    value: nPassing,
+    artifact: "web/quality.json",
+    pointer: "/report/checks",
+    definition: "#checks-heading",
+    href: artifactHref("web/quality.json"),
+    breakdown: "#fig-checks-passing",
+    targets: [],
+  },
+  {
+    id: "checks-ratchet",
+    class: "headline" as const,
+    value: nRatchet,
+    artifact: "web/quality.json",
+    pointer: "/registry/checks",
+    definition: "#checks-heading",
+    href: artifactHref("web/quality.json"),
+    breakdown: "#fig-checks-ratchet",
+    targets: [],
+  },
+  {
+    id: "lane-evaluated",
+    class: "headline" as const,
+    value: lane ? lane.checks.length : 0,
+    artifact: "status/quality/latest.json",
+    pointer: "/checks",
+    definition: "#lane-heading",
+    href: artifactHref("status/quality/latest.json"),
+    breakdown: "#fig-lane-evaluated",
+    targets: [],
+  },
+]);
+const fig = (id: string) => {
+  const f = FIGURES.find((x) => x.id === id);
+  if (!f) throw new Error(`quality figures[]: no figure registered as "${id}"`);
+  return f;
+};
+
+const MODE_LABEL: Record<string, string> = {
+  enforce: "enforced",
+  ratchet: "ratchet (being fixed)",
+  report: "report only",
+};
+const PLACEMENT_LABEL: Record<string, string> = {
+  I: "ingest",
+  M: "nightly spine probe",
+  R: "release gate",
+  P: "pull request",
+  S: "scheduled probe",
+};
+const stateOf = (id: string) => checkState(checks.find((c) => c.id === id)!, outcomes.get(id));
+const valFmt = (v: number | null, unit: string) => {
+  if (v === null) return "—";
+  if (unit === "share") return `${(v * 100).toFixed(1)} %`;
+  if (unit === "ratio") return v.toFixed(3).replace(/\.?0+$/, "") || "0";
+  return fmtInt(v);
+};
+// Precomputed copy lines — the data-copy elements render fixed sentences
+// (the batch rows record the template; slots fill from the artifact).
+const runLead = page.report
+  ? `This page shows the release's own quality run — sig.quality-page/1, generated ${page.generated_at}${page.report.target ? ` over ${page.report.target}` : ""}. Overall verdict: ${page.report.summary.overall}${nFailing > 0 ? ` — ${nFailing} failing` : ""}${nNotEvaluable > 0 ? `, ${nNotEvaluable} not evaluable this run` : ""}. Checks the run did not measure carry their declared state. Failing and ratchet checks are shown, never hidden.`
+  : `${page.report_absence} — every registered check is declared below with its mode, threshold and basis. Failing and ratchet checks are shown, never hidden.`;
+const historyLine = page.report
+  ? `This release's run: ${page.report.generated_at}, ${nMeasured} of ${nChecks} checks measured, verdict ${page.report.summary.overall}. Per-release deltas append here as each release binds its own report.`
+  : "No measured run is bound into this build yet — per-release deltas append here as each release binds its own report.";
+---
+
+<BaseLayout title="Quality — how sure is SIG?" path="/quality/">
+  <InBrief href="#checks-heading">
+    SIG checks its own data automatically on every release. Each check below
+    says what it tests, on how many records, and how. No person outside the
+    project has reviewed SIG's data or its matching — {NO_HUMAN_CHECK}.
+  </InBrief>
+  <p data-copy="QL-01" data-testid="quality-brief">
+    SIG checks its own data automatically on every release:{" "}
+    <Figure figure={fig("checks-declared")} order="inline">{nChecks}</Figure>{" "}
+    checks, <Figure figure={fig("checks-passing")} order="inline">{nPassing}</Figure>{" "}
+    passing, <Figure figure={fig("checks-ratchet")} order="inline">{nRatchet}</Figure>{" "}
+    still being fixed. Each check below says what it tests, on how many
+    records, and how. No person outside the project has reviewed SIG's data
+    or its matching. So SIG merges records only when they are copies of the
+    same upstream record, which a program can verify. Where two sources may
+    describe the same camera but SIG cannot prove it, both stay visible,
+    marked "possible duplicate".
+  </p>
+  <p data-copy="QL-02" data-testid="quality-no-human-check">
+    Every figure on this page is a mechanical check's own record —{" "}
+    <strong>{NO_HUMAN_CHECK}</strong>. No check by a person outside the
+    project exists; none is claimed.
+  </p>
+
+  <h2 id="checks-heading" data-copy="QL-03">The checks</h2>
+  <p data-copy="QL-04">
+    {runLead}{" "}
+    <a href={withBase("artifact/web/quality.json")}>sig.quality-page/1</a>.
+  </p>
+  <table class="sig-eval-table" data-testid="quality-checks">
+    <caption>
+      Every registered graph-quality check — what it guards, its mode and
+      basis class, its measured state, and the row fixing its cause.
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">Check</th>
+        <th scope="col">What it guards</th>
+        <th scope="col">Mode · basis</th>
+        <th scope="col">State</th>
+        <th scope="col">Measured</th>
+        <th scope="col">Runs where</th>
+        <th scope="col">Fixed by</th>
+      </tr>
+    </thead>
+    <tbody>
+      {checks.map((c) => {
+        const outcome = outcomes.get(c.id);
+        const state = stateOf(c.id);
+        return (
+          <tr data-testid={`quality-check-${c.id}`} data-check-mode={c.mode} data-check-state={state.tone}>
+            <th scope="row"><code>{c.id}</code></th>
+            <td>
+              {c.statement}
+              <div class="sig-note">Population: {c.population}</div>
+            </td>
+            <td>
+              {MODE_LABEL[c.mode] ?? c.mode} · {c.basis_class}
+              {c.threshold !== "none" ? (
+                <div class="sig-note">threshold {c.threshold}</div>
+              ) : null}
+              {c.mode === "ratchet" ? (
+                <div class="sig-note">
+                  baseline {c.baseline_pending ? "pending" : c.baseline}
+                  {c.baseline_at ? ` (set ${c.baseline_at})` : ""}
+                </div>
+              ) : null}
+            </td>
+            <td data-testid="quality-check-state">{state.label}{outcome?.reason ? (
+              <div class="sig-note">{outcome.reason}</div>
+            ) : null}</td>
+            <td data-testid="quality-check-measured">
+              {outcome ? (
+                <>
+                  {valFmt(outcome.measured, c.unit)}
+                  <div class="sig-note">
+                    {fmtInt(outcome.evaluated)} of {fmtInt(outcome.offered)} evaluated
+                  </div>
+                </>
+              ) : (
+                "not measured"
+              )}
+            </td>
+            <td>{c.placement.map((p) => PLACEMENT_LABEL[p] ?? p).join(", ")}</td>
+            <td>{c.fixing.length ? c.fixing.join(", ") : "—"}</td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+
+  <h2 id="duplicates" data-copy="QL-05">How duplicates are handled</h2>
+  <p data-copy="QL-06">
+    SIG merges records only when they are <em>copies</em> of the same
+    upstream record — a derivation a program can re-verify on every run
+    (the GQ-23 census). Where two sources may describe the same camera but
+    SIG cannot prove it, both stay visible as a{" "}
+    <a href={withBase("glossary/#possible-duplicate")}>possible duplicate</a>{" "}
+    and counts publish as an interval — records and, beside them, the
+    between-lower-and-upper bound of listed cameras.
+  </p>
+  <p data-copy="QL-07">
+    The measured copy layer: {m3.value ?? m3.unavailable_reason} (cross-copy
+    agreement within the declared tolerance); the derivation census:{" "}
+    {m1.value ?? m1.unavailable_reason}; the id-resolution sample:{" "}
+    {m1b.value ?? m1b.unavailable_reason}. These are mechanical measures
+    over the populations the{" "}
+    <a href={withBase("methodology/")}>methodology report</a> names — never
+    real-world precision or recall.
+  </p>
+
+  <h2 id="who-checked" data-copy="QL-08">Who checked what</h2>
+  <table class="sig-eval-table" data-testid="quality-basis">
+    <caption>
+      Every published quality statement carries exactly one basis class —
+      who or what stands behind it. The independent-review row reads none:
+      no person outside the project has reviewed SIG's data.
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">Basis</th>
+        <th scope="col">Checks declared</th>
+        <th scope="col">What it means</th>
+      </tr>
+    </thead>
+    <tbody>
+      {BASIS_ROWS.map((b) => (
+        <tr data-testid={`basis-${b.cls}`}>
+          <th scope="row">{b.cls} — {b.name}</th>
+          <td>{b.cls === "B5" ? "none" : counts[b.cls] ?? 0}</td>
+          <td>{b.wording}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <h2 id="cannot-tell" data-copy="QL-09">What we cannot tell you yet</h2>
+  <ul data-copy="QL-10">
+    <li>Whether a camera physically exists or operates — SIG records claims
+      about cameras, and copies of what upstream sources list.</li>
+    <li>Precision or recall of identity matching across independent
+      sources — that needs independent human labels, which do not exist in
+      this round.</li>
+    <li>Completeness of coverage — "every" or "complete" is never claimed.</li>
+    <li>Candidate recall — the pairs SIG's matcher never proposed are
+      unmeasured.</li>
+    <li>Whether two organisations with similar names are the same — only
+      shared authoritative identifiers auto-link.</li>
+    <li>Any figure a check has not measured — an unevaluated check says so,
+      it is never smoothed over.</li>
+  </ul>
+
+  <h2 id="corrections" data-copy="QL-11">Corrections</h2>
+  <p data-copy="QL-12">
+    Corrections and safety reports arrive by e-mail — the{" "}
+    <a href={withBase("dispute/")}>dispute page</a> states the address and
+    the handling order; the{" "}
+    <a href={withBase("corrections/")}>corrections log</a> publishes every
+    received, confirmed and fixed correction with its dates. SIG promises
+    no response time.
+  </p>
+
+  <h2 id="lane-heading" data-copy="QL-13">The working database, checked nightly</h2>
+  {lane ? (
+    <p data-copy="QL-14" data-testid="quality-lane">
+      The nightly spine probe checks the working database — a different,
+      newer population than the release above, and the two are never mixed.
+      Latest check of the working database (not yet published),{" "}
+      <time datetime={lane.generated_at}>{lane.generated_at}</time>:{" "}
+      <Figure figure={fig("lane-evaluated")} order="inline">
+        {lane.checks.length} checks ran, verdict {lane.overall}
+      </Figure>.
+    </p>
+  ) : (
+    <p data-copy="QL-15" data-testid="quality-lane-absent">
+      No probe read is recorded in this build — the nightly job publishes a
+      fresh copy when it next runs.
+    </p>
+  )}
+
+  <h2 id="history" data-copy="QL-16">History</h2>
+  <p data-copy="QL-17">
+    {historyLine}
+  </p>
+</BaseLayout>
