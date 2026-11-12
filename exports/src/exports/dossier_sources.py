@@ -1556,7 +1556,7 @@ def accumulate_dossier_contributions(
                 other = str(e.get("record") or "")
                 if not other:
                     continue
-                pair_key = tuple(sorted((m, other)))
+                pair_key: tuple[str, str] = (m, other) if m <= other else (other, m)
                 if pair_key in seen:
                     continue
                 seen.add(pair_key)
