@@ -58,6 +58,13 @@ test.describe("/changes/feeds/ directory", () => {
     const rows = page.getByTestId("feed-row");
     expect(await rows.count()).toBeGreaterThan(0);
   });
+  test("the paginated source index resolves and its rows link emitted feeds", async ({ page }) => {
+    await page.goto("/changes/feeds/source/page/1/");
+    const table = page.getByTestId("source-feed-table");
+    await expect(table).toBeVisible();
+    const rows = page.getByTestId("feed-row");
+    expect(await rows.count()).toBeGreaterThan(0);
+  });
 });
 
 test.describe("the Atom feeds (T0 bytes)", () => {
