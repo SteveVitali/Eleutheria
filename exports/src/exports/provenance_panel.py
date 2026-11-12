@@ -32,6 +32,8 @@ from typing import Any
 
 from policy.transparency import NO_UPSTREAM_URL
 
+from . import record_basis as _basis
+
 #: The emitted panel-contract schema (``schema`` key on the contract dict).
 PANEL_SCHEMA = "sig.provenance-panel/1"
 
@@ -124,6 +126,7 @@ def panel_from_statement(
     dispute_href: str = "/dispute/",
     json_href: str | None = None,
     api_href: str | None = None,
+    basis: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Normalise one ``sig.statement/1`` row (or its honest absence) into the
     shared ``sig.provenance-panel/1`` contract every surface renders.
@@ -263,6 +266,13 @@ def panel_from_statement(
             "api_status": UNAVAILABLE if api_href is None else "available",
         },
         "dispute_href": dispute_href,
+        # P37.39 (R11-K13-QB-01, L3 §5.2, SIG-CONF-011's per-record
+        # rendering): the record's quality-basis block — copy /
+        # possible-duplicate / corroboration / location-check / technology /
+        # evidence / checked-by states. ``None`` when the claim's subject
+        # record carries no basis block (a pre-P35.47 export or a
+        # non-camera-site subject) — the sparse field never fabricates one.
+        "basis": dict(basis) if basis is not None else None,
     }
 
 
@@ -355,12 +365,38 @@ def panel_html(panel: Mapping[str, Any], *, anchor: bool = True) -> str:
             _field("Dispute", dispute_html),
         ]
     )
+    basis = panel.get("basis")
+    basis_html = ""
+    if basis is not None:
+        b_rows = "".join(
+            f'<div class="pp-field"><dt>{_e(label)}</dt><dd>{text_html}</dd></div>'
+            for label, text_html in (
+                (
+                    label,
+                    (
+                        "".join(
+                            f'<span class="pp-basis-entry">{_e(d)}</span>'
+                            + ("" if i == len(displays) - 1 else " ")
+                            for i, d in enumerate(displays)
+                        )
+                        if displays
+                        else _e(text)
+                    ),
+                )
+                for label, text, displays in _basis.basis_rows(basis)
+            )
+        )
+        basis_html = (
+            f'<section class="pp-basis" data-basis="record" '
+            f'aria-label="Quality basis"><h3 class="pp-basis-heading">'
+            f"Quality basis</h3><dl>{b_rows}</dl></section>"
+        )
     return (
         f'<details class="provenance-panel" data-provenance-panel '
         f'data-binding-state="{_e(panel.get("binding_status"))}"{anchor_attr}>'
         f"<summary>Provenance — <code>{_e(claim_id)}</code> · "
         f"{_e(panel.get('binding_status'))}</summary>"
-        f"<dl>{rows}</dl></details>"
+        f"<dl>{rows}</dl>{basis_html}</details>"
     )
 
 
