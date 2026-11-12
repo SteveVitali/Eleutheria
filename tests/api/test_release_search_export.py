@@ -234,11 +234,7 @@ def test_exported_rows_match_the_page_rows(client: TestClient, released) -> None
     the same compartments (never a second query path)."""
     _reg, pub = released
     page = client.get(f"/v1/releases/{pub}/search", params={"q": "Site"}).json()
-    page_keys = {
-        h["record_key"]
-        for g in page["record_groups"]
-        for h in g["results"]
-    }
+    page_keys = {h["record_key"] for g in page["record_groups"] for h in g["results"]}
     z = _members(_export(client, pub, q="Site", format="json"))
     exported = set()
     for comp in (COMP, "osm_physical"):

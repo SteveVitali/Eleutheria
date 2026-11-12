@@ -150,9 +150,10 @@ def test_licence_and_attribution_files() -> None:
     assert "src_osm" in att
     assert "/releases/p-" + "a" * 64 + "/data/" in att
     # A LicenseRef / unmapped licence never fabricates an SPDX URL.
-    assert "LicenseRef" in z.read("sig_graph/LICENCE.txt").decode() or "CC-BY-4.0" in z.read(
-        "sig_graph/LICENCE.txt"
-    ).decode()
+    assert (
+        "LicenseRef" in z.read("sig_graph/LICENCE.txt").decode()
+        or "CC-BY-4.0" in z.read("sig_graph/LICENCE.txt").decode()
+    )
 
 
 def test_csv_quoting() -> None:
@@ -164,9 +165,7 @@ def test_csv_quoting() -> None:
     # The whole multi-line cell survives as one quoted field.
     import csv as _csv
 
-    data_rows = [
-        r for r in _csv.reader(io.StringIO(csv_text)) if r and r[0] == "k1"
-    ]
+    data_rows = [r for r in _csv.reader(io.StringIO(csv_text)) if r and r[0] == "k1"]
     assert data_rows[0][3] == 'Name, "quoted"\nand newline'
 
 
