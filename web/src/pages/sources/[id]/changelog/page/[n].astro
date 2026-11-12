@@ -106,7 +106,7 @@ const crumbs = [
             <td>
               {eventSummary(ev)}
               {ev.refs.length > 0 && (
-                <> {ev.refs.slice(0, 3).map((r) => <code>{r}</code>)}{ev.refs.length > 3 && <span class="mut"> +{ev.refs.length - 3} more</span>}</>
+                <> — {ev.refs.slice(0, 3).map((r, i) => <Fragment>{i > 0 && " "}<code>{r}</code></Fragment>)}{ev.refs.length > 3 && <span class="mut"> +{ev.refs.length - 3} more</span>}</>
               )}
             </td>
             <td><code>{ev.clock_basis}</code></td>
