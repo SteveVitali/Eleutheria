@@ -660,35 +660,6 @@ class_ticket = "P37.52"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.legis_pr_pc0489_ley_del]
-disposition = "promote"
-class_ticket = "P37.51"
-
-[sources.legis_pr_pc0560_plan_de]
-disposition = "promote"
-class_ticket = "P37.51"
-
-[sources.legis_pr_rc0740_investigaci_sobre]
-disposition = "promote"
-class_ticket = "P37.51"
-
-[sources.legis_pr_rc0787_resoluci_de]
-disposition = "promote"
-class_ticket = "P37.51"
-
-[sources.legis_pr_rcs0198_resoluci_conjunta]
-disposition = "promote"
-class_ticket = "P37.51"
-
-[sources.legis_pr_rs0604_resoluci_del]
-disposition = "promote"
-class_ticket = "P37.51"
-
-[sources.legis_pr_sistema_nico_de]
-disposition = "promote"
-class_ticket = "P37.51"
-
-
 [sources.policy_chicago_il_oemc_link_your]
 disposition = "promote"
 class_ticket = "P37.53"
@@ -721,10 +692,6 @@ class_ticket = "P37.52"
 disposition = "promote"
 class_ticket = "P37.16a"
 
-[sources.procportal_pr_consulta_del_registro]
-disposition = "promote"
-class_ticket = "P37.51"
-
 [sources.procportal_us_naspo_valuepoint_portfolio]
 disposition = "promote"
 class_ticket = "P37.52"
@@ -740,8 +707,6 @@ class_ticket = "P37.16a"
 [sources.statrep_ca_special_parliament_use]
 disposition = "promote"
 class_ticket = "P37.69a"
-
-
 
 [sources.statrep_fr_cnil_utilisation_de]
 disposition = "promote"
@@ -763,13 +728,7 @@ class_ticket = "P37.69a"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-
-
-
 [sources.statrep_vt_vermont_law_enforcement]
 disposition = "promote"
 class_ticket = "P37.53"
-
-
-
 
