@@ -126,6 +126,35 @@ _ORG_NAME_DUP_SQL = (
     "  GROUP BY 1"
     ") names"
 )
+#: P37.46b: the per-group member list behind _ORG_NAME_DUP_SQL — the report's
+#: after-links measure unions the latest cascade run's same_as edges and
+#: re-counts the name groups still duplicated.
+_ORG_NAME_MEMBERS_SQL = (
+    "SELECT lower(trim(o.cached_canonical_name)) AS n, o.entity_id::text "
+    "FROM organization o WHERE o.cached_canonical_name IS NOT NULL"
+)
+#: The cascade surface the report reads (P37.46b's organization_cascade
+#: change); guarded by to_regclass so a pre-change spine reports honestly.
+_ORG_CASCADE_PRESENT_SQL = (
+    "SELECT to_regclass('public.organization_run') IS NOT NULL "
+    "   AND to_regclass('public.organization_match') IS NOT NULL "
+    "   AND to_regclass('public.organization_execution') IS NOT NULL"
+)
+_ORG_CASCADE_LATEST_SQL = (
+    "SELECT run_key FROM organization_execution "
+    " ORDER BY completed_at DESC, execution_id DESC LIMIT 1"
+)
+_ORG_CASCADE_LATEST_FALLBACK_SQL = (
+    "SELECT run_key FROM organization_run ORDER BY completed_at DESC, run_key DESC LIMIT 1"
+)
+_ORG_CASCADE_EDGES_SQL = (
+    "SELECT left_entity::text, right_entity::text FROM organization_match "
+    "WHERE run_key = %s AND relation_type = 'same_as'"
+)
+_ORG_CASCADE_COUNT_SQL = (
+    "SELECT relation_type, count(*) FROM organization_match "
+    "WHERE run_key = %s GROUP BY relation_type"
+)
 
 
 @dataclass(frozen=True)
@@ -227,9 +256,90 @@ def intake_plan(conn: Any, *, schemes: Sequence[str]) -> dict[str, Any]:
     }
 
 
+def _roots(edges: list[tuple[str, str]], nodes: list[str]) -> dict[str, str]:
+    """Union-find over the latest run's same_as edges (after-links clusters)."""
+    parent = {n: n for n in nodes}
+
+    def find(x: str) -> str:
+        parent.setdefault(x, x)
+        root = x
+        while parent[root] != root:
+            root = parent[root]
+        while parent[x] != root:
+            parent[x], x = root, parent[x]
+        return root
+
+    for a, b in edges:
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[max(ra, rb)] = min(ra, rb)
+    return {n: find(n) for n in parent}
+
+
+def _cascade_block(conn: Any, *, total_orgs: int) -> dict[str, Any] | None:
+    """The latest cascade run's after-links measure (P37.46b, R11-CONF-13 13b).
+
+    ``None`` on a spine without the ``organization_cascade`` tables — the
+    report then carries no cascade keys rather than fabricating them. When a
+    run has completed, the same_as edges union into resolved organisations
+    and the name-duplicate measure is re-counted over resolved roots: the
+    duplicate-agency rate *after* links is the fall the acceptance measures.
+    """
+    if not conn.execute(_ORG_CASCADE_PRESENT_SQL).fetchone()[0]:
+        return None
+    row = (
+        conn.execute(_ORG_CASCADE_LATEST_SQL).fetchone()
+        or conn.execute(_ORG_CASCADE_LATEST_FALLBACK_SQL).fetchone()
+    )
+    if row is None:
+        return {"run_key": None}
+    run_key = str(row[0])
+    edges = [
+        (str(a), str(b)) for a, b in conn.execute(_ORG_CASCADE_EDGES_SQL, (run_key,)).fetchall()
+    ]
+    counts = {
+        str(rel): int(n) for rel, n in conn.execute(_ORG_CASCADE_COUNT_SQL, (run_key,)).fetchall()
+    }
+    org_ids = [
+        str(r[0])
+        for r in conn.execute(
+            "SELECT entity_id::text FROM entity WHERE entity_type = 'organization'"
+        ).fetchall()
+    ]
+    roots = _roots(edges, org_ids)
+    linked = {e for edge in edges for e in edge}
+    resolved = len(set(roots.values()))
+    # The name-duplicate measure re-counted over resolved roots: a name group
+    # stays duplicated only while it still spans >1 resolved cluster.
+    groups: dict[str, set[str]] = {}
+    for name, eid in conn.execute(_ORG_NAME_MEMBERS_SQL).fetchall():
+        groups.setdefault(str(name), set()).add(str(eid))
+    after_dup = sum(1 for members in groups.values() if len({roots[m] for m in members}) > 1)
+    after_rate = (after_dup / len(groups)) if groups else None
+    return {
+        "run_key": run_key,
+        "same_as_pairs": counts.get("same_as", 0),
+        "possibly_same_pairs": counts.get("possibly_same", 0),
+        "linked_organizations": len(linked),
+        "resolved_organizations": resolved,
+        "name_duplicate_groups_after_links": after_dup,
+        "name_duplicate_rate_after_links": after_rate,
+        "rate_fell_after_links": (
+            None
+            if after_rate is None
+            else after_rate < float(str(L2_DUPLICATE_BASELINE["duplicated_share"]))
+        ),
+    }
+
+
 def org_identity_report(conn: Any) -> dict[str, Any]:
     """The ``sig.org-crosswalk-report/1`` measurement (GQ-21's org half; the
-    duplicate-agency rate against the L2 baseline — CP-10 acceptance shape)."""
+    duplicate-agency rate against the L2 baseline — CP-10 acceptance shape).
+
+    P37.46b adds ``cascade``: the latest cascade run's link counts and the
+    name-duplicate rate *after* the run's same_as edges union (the fall the
+    13b acceptance measures) — ``None`` on a spine without the tables.
+    """
     schemes = list(lane_schemes().values())
     total_orgs = int(conn.execute(_ORG_TOTAL_SQL).fetchone()[0])
     lanes = {
@@ -254,6 +364,7 @@ def org_identity_report(conn: Any) -> dict[str, Any]:
             if name_dup_rate is None
             else name_dup_rate < float(str(L2_DUPLICATE_BASELINE["duplicated_share"]))
         ),
+        "cascade": _cascade_block(conn, total_orgs=total_orgs),
     }
 
 
