@@ -171,8 +171,11 @@ def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[st
     # ingestion_permitted=false pending the operator's HG-03 flip
     # (600 → 602; loadable unchanged). P37.13 (SIG-INGEST-041)
     # registered the eight datalib_* LINK roster rows (602 → 610; loadable
-    # unchanged — every row stays ingestion_permitted=false).
-    assert "registered sources: 610" in out
+    # unchanged — every row stays ingestion_permitted=false). P37.46a
+    # (R11-CONF-13) registered census_of_governments + sam_gov_entities for the
+    # crosswalk lanes — every row stays ingestion_permitted=false pending the
+    # operator's HG-03 flips (OP-26; 610 → 612; loadable unchanged).
+    assert "registered sources: 612" in out
     assert "self-checks OK" in out
 
 
@@ -344,7 +347,7 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # loadable are both unchanged.
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 610" in out
+    assert "registered sources: 612" in out
     assert "flip-ready: 2" in out
     assert "flip-ready: census_gazetteer_tiger" in out
     assert "flip-ready: natural_earth_10m" in out
