@@ -93,7 +93,11 @@ def slug(text: str) -> str:
 
 
 def final_paragraph(message: str) -> list[str]:
-    paras = [p for p in re.split(r"\n[ \t]*\n", message.strip()) if p.strip()]
+    # Comment lines are not message content — git's trailer parser ignores
+    # `#`-prefixed lines (the `# Conflicts:` block git appends to a conflicted
+    # merge's message must not swallow a real trailer that precedes it).
+    body = "\n".join(l for l in message.splitlines() if not l.startswith("#"))
+    paras = [p for p in re.split(r"\n[ \t]*\n", body.strip()) if p.strip()]
     if len(paras) < 2:  # a subject line alone has no trailer block
         return []
     lines: list[str] = []
