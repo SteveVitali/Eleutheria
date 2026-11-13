@@ -171,7 +171,7 @@ def test_onbase_meeting_row_index_over_fixture() -> None:
     assert not any("doctype=2" in str(r.get("document")) for r in rows)
     assert not any("DownloadFile" in str(r.get("document")) for r in rows)
     dates = {r["value"] for r in report.claims if r.get("predicate_id") == "meeting_date"}
-    assert "2026-11-17" in dates
+    assert "2026-11-17" in dates  # future-ok: real-world: fixture's captured meeting date
     assert {r["type_name"] for r in rows} >= {"Legislative Committee", "City Council Work Session"}
 
 
@@ -197,7 +197,7 @@ def test_onbase_embedded_search_results_over_fixture() -> None:
         for r in rows
     )
     dates = {r["value"] for r in report.claims if r.get("predicate_id") == "meeting_date"}
-    assert "2027-01-07" in dates
+    assert "2027-01-07" in dates  # future-ok: real-world: fixture's captured meeting date
 
 
 def test_fargo_year_archive_over_fixture() -> None:
