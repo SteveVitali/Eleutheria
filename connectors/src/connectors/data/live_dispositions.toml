@@ -544,10 +544,6 @@ class_ticket = "P37.53"
 disposition = "promote"
 class_ticket = "P37.53"
 
-[sources.camreg_ma_massachusetts_capital]
-disposition = "promote"
-class_ticket = "P37.52"
-
 [sources.camreg_medford_or_drone_deployments_fs]
 disposition = "promote"
 class_ticket = "P37.53"
@@ -644,18 +640,6 @@ class_ticket = "P37.69a"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.grant_il_illinois_gata_csfa]
-disposition = "promote"
-class_ticket = "P37.52"
-
-[sources.grant_ma_massachusetts_law_enforcement]
-disposition = "promote"
-class_ticket = "P37.52"
-
-[sources.grant_oh_ohio_criminal_justice]
-disposition = "promote"
-class_ticket = "P37.52"
-
 [sources.legis_ie_rs_general_scheme]
 disposition = "promote"
 class_ticket = "P37.69a"
@@ -680,25 +664,9 @@ class_ticket = "P37.53"
 disposition = "promote"
 class_ticket = "P37.53"
 
-[sources.procportal_fl_florida_buy_cooperative]
-disposition = "promote"
-class_ticket = "P37.52"
-
-[sources.procportal_ny_northeastern_regional]
-disposition = "promote"
-class_ticket = "P37.52"
-
 [sources.procportal_ok_oklahoma_omes_statewide]
 disposition = "promote"
 class_ticket = "P37.16a"
-
-[sources.procportal_us_naspo_valuepoint_portfolio]
-disposition = "promote"
-class_ticket = "P37.52"
-
-[sources.procportal_wa_wsipc_rfp_24]
-disposition = "promote"
-class_ticket = "P37.52"
 
 [sources.statrep_ca_california_auditor_alpr]
 disposition = "promote"

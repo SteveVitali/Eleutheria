@@ -23,7 +23,7 @@
 
 # The map version, recorded on every `entity_type_decision` row the
 # typed-identity write lands so a later revision can supersede honestly.
-version = "1.2.0"
+version = "1.3.0"
 
 [prefixes."accountability:"]
 entity_type = "accountability_event"
@@ -164,3 +164,7 @@ note = "§11.14 — a SUTRA legislative measure (Puerto Rico Asamblea Legislativ
 [prefixes."ocpr_document:"]
 entity_type = "data_system"
 note = "§11.10 — an OCPR Registro de Contratos publication surface (fiscal-year contract file or a recorded rejection row) enumerated as a pointer (puerto_rico.py, P37.51); a reference artifact, never fetched content."
+
+[prefixes."document_list_document:"]
+entity_type = "data_system"
+note = "§11.10 — a document-list page's enumerated document link or page record (document_list.py, P37.52); a pointer to the publisher's own surface, never fetched content."
