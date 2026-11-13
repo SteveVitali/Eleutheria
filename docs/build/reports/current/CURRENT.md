@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `540122d768fc2cc1ba22018f55c47b2b77fac1cc` · inputs hashed: 1266 · wall-clock receipt: `receipt.json`
+> input_commit: `e75fdf0cc4e628b51ab5899283290670d122b483` · inputs hashed: 1267 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -113,7 +113,11 @@
 
 ## Known inconsistencies (preserved, never synthesized)
 
-- none — every P32.1 baseline conflict is either reconciled by a recorded event interpretation (old values preserved on the anchor) or documented in `reconciliations.json`; anything new would appear here and fail `verify`
+| check | obligation | message |
+|---|---|---|
+| ledger/next-landed | P37.49 | the index runs ahead of CURRENT STATE — landed work recorded for a ticket the ledger still calls next |
+| ledger/index-ahead | P37.49 | BUILD_INDEX row 474 (P37.49) lands after the ledger's lastCompleted P37.48 — index and control state disagree |
+| ledger/next-not-lowest | P37.49 | nextTicket 'P37.49' is not the lowest chain row that has not landed ('P37.50'; superseded-by/deferred/unused and HUMAN rows skipped — V2) |
 
 ## Evidence domains — recorded evidence only
 
@@ -121,16 +125,7 @@
 
 ## Source funnel (recorded baseline, domain-labelled)
 
-| unit | recorded value | domain · date · evidence |
-|---|---|---|
-| discovered | `**339** registered `[sources.*]` + **27** researched candidates` | `implementation · 2026-09-27 · `sources.toml`, `source-candidates.csv`` |
-| reviewed | `rights blocks + disposition artifacts per source (`p293_dispositions.json` valid` | `implementation · 2026-09-27` |
-| permitted | `**236** `ingestion_permitted = true` (of 339)` | `implementation · 2026-09-27 · counted from `sources.toml`` |
-| mapped | `8 accountability sources wired (P31.12/13, shadow diff=0); earlier classes per t` | `fixture+implementation · recorded 2026-09-26` |
-| captured | `OCFL-backed captures behind every landed claim; per-job counts recorded per run ` | `hosted · recorded 2026-09-26 (P31.12/13 run ledgers)` |
-| extracted | `2,074,963 admissible claims on the hosted spine (after P30.2a materialization)` | `hosted · recorded 2026-09-24 (P30.2a run)` |
-| linked | `1,872,344 envelopes → 227,998 resolved sites (from 230,330 obs-level records, de` | `hosted · recorded 2026-09-24/25` |
-| published | `national surface live: export `sig-2026-09-27-ce480ab1` published to `…-sig-publ` | `public · recorded 2026-09-27 (P31.16 publish half)` |
+- `funnel` → see [funnel.md](funnel.md) (complete — 8 rows)
 
 ## Releases (recorded)
 
