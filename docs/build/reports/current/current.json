@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "313deea472c68a0e13add8f666097a36d0a24afe",
-  "manifest_inputs": 1261,
+  "input_commit": "8ec1995569555b5f4ba2494a99d5981ffa239f3c",
+  "manifest_inputs": 1262,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.45",
-    "lastCompleted": "P37.44",
+    "nextTicket": "P37.46a",
+    "lastCompleted": "P37.45",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.42,P37.70,P37.71",
@@ -12778,16 +12778,16 @@
       {
         "key": "P34.38",
         "obligations_cell": "BidNet terms-capture leg (works the E4-R6a answer; rights decision keeps its row-350 home) — now rides row 350's queue",
-        "gates_cell": "queued public GET of bidnetdirect.com/terms under project UA (SIG-INGEST-036, Crawl-delay 5); on `live:P35.38a`; go none (E4-R6a); terms land verbatim in `reports/rights/bidnet_direct.md`",
-        "operator_cell": "nothing — wait `live:P35.38a`; terms decision stays operator's (GATE-G6, S6R-28)",
+        "gates_cell": "queued public GET of bidnetdirect.com/terms under project UA (SIG-INGEST-036); on `live:P35.38a`; go none (E4-R6a); terms land verbatim",
+        "operator_cell": "nothing — wait `live:P35.38a`; terms decision stays operator's (S6R-28)",
         "rerun_cell": "`implement-spec spec=docs/tickets/246_P34.38__sources-pilot-prep-and-registry-rows.md live_verification=true` (BidNet terms; P36.2 line supersedes)",
         "obligations": []
       },
       {
         "key": "P34.39b",
         "obligations_cell": "three monitoring legs (first-fire wave + `camreg_peel_on`)",
-        "gates_cell": "`hosted`, date-bound (§(f3)), read-only — L1 at `2026-10-21T06:09Z` (per-fire AR-4); L2 at `camreg_peel_on` fire `2026-10-29T12:00Z` + `lastAttemptTime` + finished `sig-ingest-camreg-peel-on` execution; L3 after L2; else x42",
-        "operator_cell": "nothing — rec schedule is go (read-only); each routing row a leg emits becomes a DEFERRALS entry",
+        "gates_cell": "`hosted`, date-bound, read-only — L1 at `2026-10-21T06:09Z` (per-fire AR-4); L2 at `camreg_peel_on` fire `2026-10-29T12:00Z` + `lastAttemptTime` + finished execution; L3 after L2; else x42",
+        "operator_cell": "nothing — rec schedule is go; each routing row a leg emits becomes a DEFERRALS entry",
         "rerun_cell": "`implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true`",
         "obligations": []
       },
@@ -12852,16 +12852,16 @@
       {
         "key": "P34.46",
         "obligations_cell": "L2 deploy slot (schema roll + ADR-159 + `sig-api` roll + `/status/` + trigger pause/resume) + L3 48 h soak",
-        "gates_cell": "`hosted`, never pre-auth (PAUSE — ACCESS EXCLUSIVE): L2 verbatim in-ticket go, op present, 14-20Z ≥ 2026-10-14T14:00Z (x weekends + outside-14:00-20:00Z), `live:P34.39a` pass, AR-2 SUCCESSFUL; L3 48h after L2",
-        "operator_cell": "record verbatim in-ticket go (silence ≠ consent) + be present; no `hosted` `sqitch revert`",
+        "gates_cell": "`hosted`, never pre-auth (PAUSE — ACCESS-EXCL): L2 verbatim go, op present, 14-20Z ≥ 2026-10-14T14:00Z (x weekends + outside-14:00-20:00Z), `live:P34.39a` pass, AR-2 SUCCESSFUL; L3 48h after L2",
+        "operator_cell": "record verbatim go (silence ≠ consent) + be present; no `hosted` `sqitch revert`",
         "rerun_cell": "`implement-spec spec=docs/tickets/258_P34.46__round10-schema-allows-and-api-roll.md live_verification=true`",
         "obligations": []
       },
       {
         "key": "P34.47",
         "obligations_cell": "11A sweep + G4 packet leg: read-only crawl + counts + packet; `acceptance-sweep` → `sig.probe-run/1`",
-        "gates_cell": "`hosted`, read-only — `acceptance-sweep --check` x42 until `live:P34.46` L2 (verbatim go, `live:P34.39a` pass, 14-20Z ≥ 2026-10-14T14:00Z + roll-gate); GATE-G4 never presented while a leg is due",
-        "operator_cell": "nothing until `live:P34.46` L2 — read-only; packet presented only when no leg is due",
+        "gates_cell": "`hosted`, read-only — `acceptance-sweep --check` x42 until `live:P34.46` L2 (verbatim go, `live:P34.39a` pass, 14-20Z ≥ 2026-10-14T14:00Z + roll-gate); GATE-G4 not presented while a leg is due",
+        "operator_cell": "nothing until `live:P34.46` L2 — read-only; packet only when no leg is due",
         "rerun_cell": "`implement-spec spec=docs/tickets/259_P34.47__sub-round-11a-acceptance.md live_verification=true` (sweep + packet)",
         "obligations": []
       },
@@ -12869,7 +12869,7 @@
         "key": "P35.57",
         "obligations_cell": "API-roll leg: mount promoted release's registry on `sig-api`, roll, verify `/v1/health`",
         "gates_cell": "`hosted`, never pre-auth (PAUSE — public API bytes): G4§2 verbatim go recorded; needs `live:P34.46` L2, registry mount, promoted release, AR-2 SUCCESSFUL, roll-gate green, AR-3 slot (x weekends + outside-14:00-20:00Z)",
-        "operator_cell": "G4§2 go on record; roll in-slot (mount, roll, `/v1/health` verify); failed health read rolls back",
+        "operator_cell": "G4§2 go on record; roll in-slot + `/v1/health` verify; failed health rolls back",
         "rerun_cell": "`implement-spec spec=docs/tickets/261_P35.57__api-release-parity.md live_verification=true` (mount+roll+verify)",
         "obligations": []
       },
@@ -12877,7 +12877,7 @@
         "key": "P35.5",
         "obligations_cell": "R2-mirror leg: bucket + non-listable CDN, content-hash keys, immutable Cache-Control, $0 egress; limits/kill-switch landed",
         "gates_cell": "`hosted` mirror write; OM-20 conditional — after OP-09 while GATE-G4 OM-20 11B list (P35.5, expires GATE-G5) stands; AR-3+AR-2 14-20Z (x weekends + outside-14:00-20:00Z); R2 creds env-only (HG-09)",
-        "operator_cell": "OP-09 first (DNS_CUTOVER_RUNBOOK.md), then R2 creds env-only (HG-09); kill switch = R2_MIRROR_RUNBOOK.md",
+        "operator_cell": "OP-09 first (DNS_CUTOVER_RUNBOOK.md), then R2 creds (HG-09); kill switch = R2_MIRROR_RUNBOOK.md",
         "rerun_cell": "`implement-spec spec=docs/tickets/262_P35.5__zero-egress-distribution-host.md live_verification=true` (R2 push + origin-enable)",
         "obligations": []
       },
@@ -12892,8 +12892,8 @@
       {
         "key": "P35.1a",
         "obligations_cell": "write leg: reconcile Scheduler from cadence.toml (inert triggers + declared bundle) + `live`-diff; `live-1` stopped OM-18; P34.42b first",
-        "gates_cell": "`hosted` write; OM-20 — GATE-G4 11B list (expires GATE-G5); monthly-export trigger PAUSED until D-P34.6-2's verbatim go; AR-3+AR-2 14:00-20:00Z (x weekends + outside-14:00-20:00Z), operator present; on `live:P34.42b`",
-        "operator_cell": "nothing until `live:P34.42b`; then `P35.1a-live-2` `--apply --paused`; rollback = recorded prestate",
+        "gates_cell": "`hosted` write; OM-20 — GATE-G4 11B list (expires GATE-G5); monthly-export PAUSED until D-P34.6-2's verbatim go; AR-3+AR-2 14:00-20:00Z (x weekends + outside-14:00-20:00Z), operator present; on `live:P34.42b`",
+        "operator_cell": "nothing until `live:P34.42b`; then `P35.1a-live-2` `--apply --paused`; rollback = prestate",
         "rerun_cell": "`implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true`",
         "obligations": []
       },
@@ -12908,8 +12908,8 @@
       {
         "key": "P35.11",
         "obligations_cell": "Wave-A: L1 roll+seed+3-source ingest; L2 `+0` reruns; L3 resume+reconcile; S8 stays ingestion=false pending OP-26",
-        "gates_cell": "`hosted`, never pre-auth (GATE-G4 never-list): 14-20Z (x weekends + outside-14:00-20:00Z, outside 2026-10-19→23) — verbatim ING-GO-A + `wave-a-gate` exit 0, AR-2 + OM-14 prestate, serial, ordered-prefix",
-        "operator_cell": "ING-GO-A verbatim + OP-26 HG-03 flips, AR-2 + OM-14 prestate, `wave-a.sh --apply --leg <L1",
+        "gates_cell": "`hosted`, never pre-auth (GATE-G4 never-list): 14-20Z (x weekends + outside-14:00-20:00Z, outside 2026-10-19→23) — verbatim ING-GO-A + `wave-a-gate` exit 0, AR-2+prestate, serial, ordered-prefix",
+        "operator_cell": "ING-GO-A verbatim + OP-26 flips, AR-2+prestate, `wave-a.sh --apply --leg <L1",
         "rerun_cell": "L2",
         "obligations": []
       },
@@ -13030,8 +13030,8 @@
       {
         "key": "P35.59",
         "obligations_cell": "dark cutover (`web-cutover.sh --apply all`): prestate → staged/v floor import → `conf/0`+carry → `sig-web` roll → `route-compare`",
-        "gates_cell": "`hosted` (x42 — weekday 14:00–20:00Z, never 03:00–06:30Z); pre-auth GATE-G4 §4 (P35.59; expires next GATE, OM-10); needs `live:P35.53` + `live:P34.40` L2",
-        "operator_cell": "nothing until window + both `live` prerequisites; rollback = traffic → prior revision (`sig-web` untouched, D-G3-7)",
+        "gates_cell": "`hosted` (x42 — 14:00–20:00Z weekdays, never 03:00–06:30Z); pre-auth GATE-G4 §4 (P35.59; expires next GATE, OM-10); needs `live:P35.53` + `live:P34.40` L2",
+        "operator_cell": "nothing until window + both prerequisites; rollback = traffic → prior revision (D-G3-7)",
         "rerun_cell": "`SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all` or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_verification=true`",
         "obligations": []
       },
@@ -13232,7 +13232,7 @@
         "key": "P36.72b",
         "obligations_cell": "D-P36.72b-1",
         "gates_cell": "never pre-authorised — HG-11 `signed_readout` under `registry/approvals/` at the GATE-G6 sitting; excluded inside AR-3 windows (expected >= 2026-11-13T12:00Z); needs `SIG_RELEASE_REGISTRY` + ADC/`SIG_GCP_PROJECT` + staged candidate + pinned images",
-        "operator_cell": "the operator's verbatim signed readout at the GATE-G6 sitting — packet `reports/p36.72b-promotion/` landed (never promoted)",
+        "operator_cell": "the operator's verbatim signed readout at GATE-G6 — packet `reports/p36.72b-promotion/` landed",
         "rerun_cell": "`implement-spec spec=docs/tickets/416_P36.72b__core-surfaces-walkthroughs-and-promotion.md live_verification=true`",
         "obligations": [
           "D-P36.72b-1"
@@ -13241,8 +13241,8 @@
       {
         "key": "P36.73",
         "obligations_cell": "11C sweep + G6 packet refresh: read-only promoted crawl + packet re-draft; `acceptance-sweep-11c` → `sig.probe-run/1`",
-        "gates_cell": "`hosted` read-only — `acceptance-sweep-11c` exit 42 before `live:P36.72b` promotes (the promoted release must exist); L2 on the operator's verbatim signed HG-11 readout at the GATE-G6 sitting, never pre-authorised",
-        "operator_cell": "nothing until `live:P36.72b` promotes — read-only; G6 packet presented only when no leg is due",
+        "gates_cell": "`hosted` read-only — `acceptance-sweep-11c` exit 42 before `live:P36.72b` promotes (the promoted release must exist); L2 on the operator's verbatim signed HG-11 readout at GATE-G6, never pre-authorised",
+        "operator_cell": "nothing until `live:P36.72b` promotes — read-only; G6 packet only when no leg is due",
         "rerun_cell": "`implement-spec spec=docs/tickets/419_P36.73__sub-round-11c-acceptance.md live_verification=true`",
         "obligations": []
       },
@@ -13319,9 +13319,9 @@
       {
         "key": "P37.13",
         "obligations_cell": "D-P37.13-1",
-        "gates_cell": "no gate — register-or-drop triage for 23 `candidate-unregistered` Data Library datasets 2026-11-07 sweep recorded (each stays unregistered until a ticket or op dispositions it)",
-        "operator_cell": "the next `sig.discovery-sweep/1` run or the acq ticket — each candidate carries a `registered:`/`new-linked:`/`related:` disposition in next diff",
-        "rerun_cell": "the next `sig.discovery-sweep/1` run or acq-plan ticket — `discovery-sweep/2026-11-07/candidates.csv`",
+        "gates_cell": "no gate — register-or-drop triage for 23 `candidate-unregistered` datasets (2026-11-07 sweep; each stays until dispositioned)",
+        "operator_cell": "the next `sig.discovery-sweep/1` run or acq ticket — each carries `registered:`/`new-linked:`/`related:`",
+        "rerun_cell": "the next `sig.discovery-sweep/1` run or acq ticket — `discovery-sweep/2026-11-07/candidates.csv`",
         "obligations": [
           "D-P37.13-1"
         ]
@@ -13356,8 +13356,8 @@
       },
       {
         "key": "P37.36",
-        "obligations_cell": "raw-ok archive write leg: raw/<multihash> + raw/index.json over the `hosted` store (P8 screen, reserialisation as new captures) → mirror/origin push → withdrawal rehearsal",
-        "gates_cell": "`hosted` archive write + publish; NEVER pre-authorised (OM-20, Part VIII-screened families) — operator explicit verbatim go only; AR-3+AR-2 (x 03:00-06:30Z + AR-3 batch windows); exposure rides P37.65 HG-11",
+        "obligations_cell": "raw-ok archive write (raw/index.json; P8 screen; new-capture reserialisation) + push + rehearsal",
+        "gates_cell": "`hosted` archive write + publish; NEVER pre-authorised (Part VIII families) — verbatim go only; AR-3+AR-2 (x 03:00-06:30Z + AR-3 batch windows); exposure rides P37.65 HG-11",
         "operator_cell": "the operator's verbatim go (SIG_RAWARCHIVE_AUTHOR env-only), ADC + SIG_GCP_PROJECT present; kill switch = R2_MIRROR_RUNBOOK.md",
         "rerun_cell": "`implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` (archive write + push + rehearsal)",
         "obligations": []
@@ -17550,8 +17550,8 @@
           "label": "historical/csv"
         },
         "SIG-EVAL-006": {
-          "verdict": "PARTIAL",
-          "evidence": "exports/src/exports/mech_eval.py:1;exports/src/exports/data/mech_eval.json:1;web/src/pages/methodology.astro:92",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/mech_eval.py:1;exports/src/exports/data/mech_eval.json:1;exports/src/exports/quality.py:1;web/src/pages/methodology.astro:92;web/src/pages/quality/index.astro:1",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -17958,7 +17958,7 @@
           "label": "historical/csv"
         },
         "SIG-CONF-001": {
-          "verdict": "PARTIAL",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
           "evidence": "exports/src/exports/data/quality_checks.toml:1;ops/src/ops/quality.py:1;resolution/src/resolution/evaluator.py:1;resolution/src/resolution/data/camera_site_gold.json:1;docs/build/reports/2026-10-09_honest_evaluation_posture.md:1",
           "assessed": "",
           "label": "historical/csv"
@@ -18018,8 +18018,8 @@
           "label": "historical/csv"
         },
         "SIG-CONF-011": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-R10-PUBLISH-1)",
+          "evidence": "exports/src/exports/quality.py:1;exports/src/exports/data/quality_page.json:1;web/src/pages/quality/index.astro:1;web/src/lib/quality.ts:1;web/src/lib/record-basis.ts:1;web/src/components/RecordBasisRows.tsx:1",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -27504,10 +27504,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "379c3cc15095b42bd2129ba12f2b6c7b001afabd82402bbc97d7037d640ddb19",
+  "manifest_sha256": "035383003c55f95ac09efde16c8c55909f3bd419a78a9a86e8f6db1d25c7af5d",
   "current_md": {
-    "lines": 152,
-    "bytes": 19327,
+    "lines": 161,
+    "bytes": 20413,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
@@ -27516,7 +27516,6 @@
       "coverage-4.md",
       "coverage-5.md",
       "domains.md",
-      "funnel.md",
       "obligations.md"
     ]
   }

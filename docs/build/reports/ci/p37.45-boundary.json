@@ -1,0 +1,66 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 493,
+  "pr": 493,
+  "head_sha": "9b12d254d0fca2fb1d7d672531e4d1fa670663f0",
+  "head_ref": "r11/P37.45-public-quality-page",
+  "base": "r11/P37.44-mech-eval-report",
+  "read_at": "2026-11-13T02:37:22Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [],
+  "stack_stop": "base `r11/P37.32-contract-expiring-detector` is #480, already merged",
+  "stack_digest": "f93c883e7742644d1392bfdfeb727eca45bba6eb76dcc3206e8e6324f594e40c",
+  "local_head": "9b12d254d0fca2fb1d7d672531e4d1fa670663f0",
+  "external": {
+    "read_at": "2026-11-13T02:37:29Z",
+    "since": "2026-11-12",
+    "fetch": "ok",
+    "main_sha": "1acf1141f607c434d329d30f4bc4ebb2cdfa5935",
+    "chain_descends": false,
+    "descends_note": "origin/main 1acf114 is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [
+      {
+        "child": 493,
+        "parent": 492,
+        "ancestor": true
+      },
+      {
+        "child": 492,
+        "parent": 491,
+        "ancestor": true
+      },
+      {
+        "child": 491,
+        "parent": 490,
+        "ancestor": false
+      }
+    ]
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1"
+  ],
+  "reruns": [],
+  "checks": [],
+  "waivers": 5,
+  "polls": 0,
+  "waited_s": 0,
+  "state": "fail",
+  "kind": "stack",
+  "line": "blockedOn: CI stack on #493@9b12d25 (external): #491 does not contain its base #490's head e1e4520 — rebased or retargeted outside the documented procedure",
+  "exit": 3
+}

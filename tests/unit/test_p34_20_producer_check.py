@@ -91,6 +91,11 @@ _DECLARED_EXTERNAL_PRODUCERS = {
     # computes `web/mech_eval.json` — the mechanical evaluation report the
     # /methodology/ eval table renders from.
     "mech_eval": "build_spine_export (web/mech_eval.json, sig.mech-eval/1)",
+    # P37.45 (CONF-12, SIG-CONF-011): `sig-exports quality page` emits
+    # web/quality.json — the sig.quality-page/1 artifact the /quality/
+    # page renders from (a dedicated verb over the measured
+    # sig.quality-report/1, outside the ten surfaces keys).
+    "quality": "sig-exports quality page (web/quality.json, sig.quality-page/1)",
 }
 
 

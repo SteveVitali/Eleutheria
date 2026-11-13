@@ -125,6 +125,9 @@ ASTRO_PAGES = {
     # /research-queue/ rows bind the index file.
     "/research-queue/": "web/src/pages/research-queue/index.astro",
     "/methodology/": "web/src/pages/methodology.astro",
+    # P37.45 (R11-CONF-12): the public quality page's QL-* rows live in
+    # batch-28; this suite binds them the same way.
+    "/quality/": "web/src/pages/quality/index.astro",
     "/404.html": "web/src/pages/404.astro",
     "/403/": "web/src/pages/403.astro",
     "/410/": "web/src/pages/410.astro",

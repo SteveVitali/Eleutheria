@@ -655,6 +655,18 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="write the new registry here instead of in place",
     )
+    qpage = qsub.add_parser(
+        "page",
+        help="P37.45 (SIG-CONF-011): emit the sig.quality-page/1 artifact "
+        "(web/quality.json) — the whole registry declaration plus a bound "
+        "sig.quality-report/1 (or its named absence).",
+    )
+    qpage.add_argument(
+        "--report", default=None, help="a sig.quality-report/1 JSON (omit → report_absence)"
+    )
+    qpage.add_argument("--out", required=True, help="where to write quality.json")
+    qpage.add_argument("--target", default=None, help="what the bound report measured")
+    qpage.add_argument("--generated-at", default=None, help="ISO-UTC stamp (default: now)")
 
     boundaries = subparsers.add_parser(
         "boundaries",
@@ -2393,6 +2405,24 @@ def _run_quality(args: argparse.Namespace) -> int:
                 indent=2,
             )
         )
+        return 0
+    if args.quality_command == "page":
+        report = json.loads(Path(args.report).read_text(encoding="utf-8")) if args.report else None
+        registry = q.load_registry()
+        doc = q.build_quality_page(
+            registry,
+            report,
+            generated_at=args.generated_at,
+            target=args.target,
+        )
+        errors = q.quality_page_lint_errors(doc)
+        if errors:
+            print("sig-exports quality page: " + "; ".join(errors), file=sys.stderr)
+            return 4
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(doc, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        print(f"wrote {out}")
         return 0
     if args.quality_command == "diff":
         try:

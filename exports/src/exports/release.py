@@ -591,6 +591,42 @@ def _v2_descriptor(
             ontology_generated_sha256 if isinstance(ontology_generated_sha256, str) else None
         )
 
+    # P37.45 (SIG-CONF-011, L3 §5.4 REL-01): the descriptor's quality block is
+    # derived from the release's own ``web/quality.json`` artifact when the
+    # caller did not bind one — the §5.4 field set (suite version+digest,
+    # report digest, enforce/ratchet counts, basis counts with B5 = 0, the
+    # source-mix and ruleset digests). An export without the artifact keeps
+    # the block declared-empty (``None``), never fabricated.
+    if graph_quality is None:
+        _q_path = export_dir / "web" / "quality.json"
+        if _q_path.is_file():
+            from . import quality as _q
+
+            _page = _read_json(_q_path)
+            _reg = _q.load_registry()
+            _src_path = export_dir / "web" / "sources.json"
+            _src_digest = (
+                "sha256:" + hashlib.sha256(_src_path.read_bytes()).hexdigest()
+                if _src_path.is_file()
+                else None
+            )
+            _rules_digest = None
+            try:
+                from importlib.resources import files as _ires
+
+                _rules_bytes = (
+                    _ires("resolution").joinpath("data/camera_site_rules.toml").read_bytes()
+                )
+                _rules_digest = "sha256:" + hashlib.sha256(_rules_bytes).hexdigest()
+            except Exception:  # noqa: BLE001 — the digest is honest absence
+                _rules_digest = None
+            graph_quality = _q.descriptor_quality_block(
+                _page,
+                _reg,
+                source_mix_digest=_src_digest,
+                ruleset_digest=_rules_digest,
+            )
+
     descriptor = RI.descriptor_v2_document(
         label=label,
         environment=env,
