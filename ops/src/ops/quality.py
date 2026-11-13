@@ -505,12 +505,36 @@ def eval_gq21(ctx: EvalContext) -> Measurement:
         """,
     )[0]
     total, bound = int(r["deployments"]), int(r["with_operator"])
+    # P37.46a (R11-CONF-13): the second half — operators that are also
+    # procurement buyers. An org entity joins when it is the object of a
+    # camera_operator claim AND of a buyer claim (the crosswalk lanes'
+    # identifier assertions are what let distinct rows share one entity).
+    buyers = _rows(
+        ctx.conn,
+        """
+        SELECT count(DISTINCT op.object_entity) AS joined
+        FROM claim op
+        WHERE op.predicate_id = 'camera_operator'
+          AND op.object_entity IS NOT NULL
+          AND upper_inf(op.sys_period)
+          AND EXISTS (
+              SELECT 1 FROM claim b
+              WHERE b.predicate_id = 'buyer'
+                AND b.object_entity = op.object_entity
+                AND upper_inf(b.sys_period)
+          )
+        """,
+    )[0]
+    joined = int(buyers["joined"])
     return Measurement(
         check_id="GQ-21",
         offered=total,
         evaluated=total,
         measured=(bound / total) if total else None,
-        detail={"deployments_with_operator": bound},
+        detail={
+            "deployments_with_operator": bound,
+            "operators_also_buyers": joined,
+        },
     )
 
 

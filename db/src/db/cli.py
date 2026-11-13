@@ -221,6 +221,40 @@ def build_parser() -> argparse.ArgumentParser:
         help="the sig.editorial-decision/1 id the log entry will carry",
     )
 
+    ci = sub.add_parser(
+        "crosswalk-intake",
+        help="plan or apply the crosswalk-intake identifier assertions "
+        "(P37.46a / R11-CONF-13 13a; SIG-CONF-004 'Also'): one "
+        "entity_identifier row per organisation subject's lane-scheme "
+        "candidate_identifier, asserted_by_claim = the asserting claim — "
+        "INSERT-only, idempotent (+0 on rerun), keyset-resumable",
+    )
+    ci.add_argument("--dsn", required=True, help="PostgreSQL DSN for the spine")
+    ci.add_argument(
+        "--lane",
+        action="append",
+        default=None,
+        help="restrict to one lane id (repeatable; default: all lanes)",
+    )
+    ci.add_argument(
+        "--apply",
+        action="store_true",
+        help="write the entity_identifier rows (default: plan only — "
+        "print the pending counts + the org-identity report)",
+    )
+    ci.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="bound the run to the first N candidate rows (resumable)",
+    )
+    ci.add_argument(
+        "--batch-size",
+        type=int,
+        default=1_000,
+        help="candidate rows scanned per batch (default 1000)",
+    )
+
     bench = sub.add_parser(
         "sink-bench",
         help="time PgClaimSink passes over synthetic OSM-shaped claims: claims/min and "
@@ -469,6 +503,28 @@ def _run_lineage_rematerialize(args: argparse.Namespace) -> int:
     return 0
 
 
+def _run_crosswalk_intake(args: argparse.Namespace) -> int:
+    """Plan or apply the crosswalk-intake identifier assertions (P37.46a)."""
+    import json
+    import sys
+
+    from .crosswalk_intake import run
+
+    try:
+        report = run(
+            args.dsn,
+            lanes=args.lane,
+            apply=args.apply,
+            limit=args.limit,
+            batch_size=args.batch_size,
+        )
+    except ValueError as exc:  # a malformed lane list fails closed
+        print(f"crosswalk-intake: {exc}", file=sys.stderr)
+        return 2
+    print(json.dumps(report, indent=2, sort_keys=True))
+    return 0
+
+
 def _run_purge(args: argparse.Namespace) -> int:
     """Invoke the operator-only purge function (P37.71 / ADR-189)."""
     import json
@@ -507,6 +563,8 @@ def main(argv: list[str] | None = None) -> int:
         return _run_subject_rekey(args)
     if args.command == "lineage-rematerialize":
         return _run_lineage_rematerialize(args)
+    if args.command == "crosswalk-intake":
+        return _run_crosswalk_intake(args)
     if args.command == "sink-bench":
         return _run_sink_bench(args)
     if args.command == "purge":

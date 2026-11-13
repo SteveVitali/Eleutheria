@@ -23,7 +23,7 @@
 
 # The map version, recorded on every `entity_type_decision` row the
 # typed-identity write lands so a later revision can supersede honestly.
-version = "1.1.0"
+version = "1.2.0"
 
 [prefixes."accountability:"]
 entity_type = "accountability_event"
@@ -76,6 +76,10 @@ note = "§11.10 — an Eyes-on-Flock transparency portal is a reference system t
 [prefixes."funding_instrument:"]
 entity_type = "funding_instrument"
 note = "§11.12 — funding-instrument subjects (procurement.py)."
+
+[prefixes."org_crosswalk_entry:"]
+entity_type = "organization"
+note = "§11.2/§14.2 — organisation subjects of the crosswalk-intake lanes `org_crosswalk_entry:<lane>:<key>` (org_crosswalk.py; P37.46a / R11-CONF-13 13a)."
 
 [prefixes."jurisdiction:"]
 entity_type = "jurisdiction"
