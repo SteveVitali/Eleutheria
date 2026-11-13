@@ -1,0 +1,81 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 500,
+  "pr": 500,
+  "head_sha": "8cf75ffce06140dc14f335fecac905a4047c3581",
+  "head_ref": "r11/P37.51-puerto-rico-sutra-ocpr",
+  "base": "r11/P37.50-agenda-platforms-v2",
+  "read_at": "2026-11-13T20:55:48Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [],
+  "stack_stop": "base `r11/P37.32-contract-expiring-detector` is #480, already merged",
+  "stack_digest": "de4b90526c1a9ab48d9c0a23dff8caeca2e73eac7534f4c7a8b737abc1fdb455",
+  "local_head": "8cf75ffce06140dc14f335fecac905a4047c3581",
+  "external": {
+    "read_at": "2026-11-13T20:55:59Z",
+    "since": "2026-11-13",
+    "fetch": "ok",
+    "main_sha": "1acf1141f607c434d329d30f4bc4ebb2cdfa5935",
+    "chain_descends": false,
+    "descends_note": "origin/main 1acf114 is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [
+      {
+        "child": 500,
+        "parent": 499,
+        "ancestor": true
+      },
+      {
+        "child": 499,
+        "parent": 498,
+        "ancestor": true
+      },
+      {
+        "child": 498,
+        "parent": 497,
+        "ancestor": true
+      },
+      {
+        "child": 497,
+        "parent": 496,
+        "ancestor": true
+      },
+      {
+        "child": 496,
+        "parent": 495,
+        "ancestor": true
+      },
+      {
+        "child": 495,
+        "parent": 494,
+        "ancestor": false
+      }
+    ]
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1"
+  ],
+  "reruns": [],
+  "checks": [],
+  "waivers": 5,
+  "polls": 0,
+  "waited_s": 0,
+  "state": "fail",
+  "kind": "stack",
+  "line": "blockedOn: CI stack on #500@8cf75ff (external): #495 does not contain its base #494's head c062c6c — rebased or retargeted outside the documented procedure",
+  "exit": 3
+}
