@@ -180,7 +180,7 @@ url = "https://dam.assets.ohio.gov/image/upload/ocjs.ohio.gov/2026_OCJS_BWC_RFP_
 publisher = "Ohio Department of Public Safety, Office of Criminal Justice Services"
 jurisdiction = "us.state_abbr:OH"
 expect = ["Body-Worn Camera", "Office of Criminal Justice Services"]
-evidence = "I4-C253 / I4-F189 (candidates_I4.csv) — 18pp FY2026 RFP: 'The average award amount for FY2025 was $34,694.52 (ranging from $1,710.71 - $141,709.51)'; 24-month awards 2025-07-01..2027-06-30; local LEAs via unit of local government; no recipient list in the RFP; 200 GET 2026-09-30"
+evidence = "I4-C253 / I4-F189 (candidates_I4.csv) — 18pp FY2026 RFP: 'The average award amount for FY2025 was $34,694.52 (ranging from $1,710.71 - $141,709.51)'; 24-month awards 2025-07-01..2027-06-30; local LEAs via unit of local government; no recipient list in the RFP; 200 GET 2026-09-30"  # future-ok: real-world: the RFP's own served 24-month award window (2025-07-01..2027-06-30)
 [inventory.targets.program]
 ref = "oh-ocjs-bwc-grant"
 program_name = "Ohio Body-Worn Camera Grant Program"

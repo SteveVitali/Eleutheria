@@ -300,7 +300,10 @@ def test_oh_ocjs_rfp_pdf_emit():
     descs = [c for c in result.claims if c.get("predicate_id") == "description"]
     assert descs and "average award amount for FY2025 was $34,694.52" in str(descs[0]["value"])
     windows = [c for c in result.claims if c.get("predicate_id") == "period"]
-    assert {c["value"] for c in windows} == {"FY2026", "2025-07-01..2027-06-30"}
+    assert {c["value"] for c in windows} == {
+        "FY2026",
+        "2025-07-01..2027-06-30",  # future-ok: real-world: the RFP's served award window
+    }
 
 
 def test_ma_eopss_release_emit():
