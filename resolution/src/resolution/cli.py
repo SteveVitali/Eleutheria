@@ -34,6 +34,12 @@ Sub-commands expose the identity substrate (§11.1-11.3, §14):
   gold holdout → auto-write only tiers at/above the published floor → materialize the
   same_as decisions + review proposals append-only (+0 on an unchanged re-run). Prints
   one JSON summary (M, N, dedup ratio, per-tier precision, demotions, alerts).
+* ``org-cascade --dsn … [--role R] [--dry-run]`` — the organisation cascade
+  materializer (P37.46b, R11-CONF-13 13b, SIG-CONF-004): tiers 0–1 auto-link
+  (same_as on an exact shared authoritative identifier or an established
+  registry crosswalk) and tier 2 surfaces 'possibly the same', written as
+  append-only ``organization_match`` records (+0 on an unchanged re-run).
+  Prints one JSON summary (M, same_as/possibly_same counts, resolved orgs).
 * ``identity-triage --dsn … [--apply]`` — the P31.3 duplicate-identifier triage
   (ADR-110): list every ``(scheme, value)`` shared by more than one entity, with its
   evidence and recorded decision (read-only; exit 1 while any pair is undecided).
@@ -480,6 +486,18 @@ def build_parser() -> argparse.ArgumentParser:
         "--dry-run",
         action="store_true",
         help="read + resolve + measure only; write nothing (prints the summary)",
+    )
+    orgc = sub.add_parser(
+        "org-cascade",
+        help="organisation cascade materializer over the PG spine (P37.46b): "
+        "tiers 0-1 same_as auto-link + tier-2 'possibly the same' surface",
+    )
+    orgc.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    orgc.add_argument("--role", default=None, help="optional role to SET ROLE to")
+    orgc.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="read + plan only; write nothing (prints the run summary)",
     )
     triage = sub.add_parser(
         "identity-triage",
@@ -1461,6 +1479,8 @@ def main(argv: list[str] | None = None) -> int:
         return _run_eval(args)
     if args.command == "camera-sites":
         return _run_camera_sites(args)
+    if args.command == "org-cascade":
+        return _run_org_cascade(args)
     if args.command == "identity-triage":
         return _run_identity_triage(args)
     if args.command == "partner-name-audit":
@@ -1659,5 +1679,42 @@ def _run_camera_sites(args: argparse.Namespace) -> int:
         print(json.dumps({**result.summary(), "dry_run": True}, indent=2, default=str))
         return 0
     summary = materialize_camera_sites_from_dsn(args.dsn, role=args.role, progress=_progress)
+    print(json.dumps(summary, indent=2, default=str))
+    return 0
+
+
+def _run_org_cascade(args: argparse.Namespace) -> int:
+    """The organisation cascade materializer (P37.46b, R11-CONF-13 13b)."""
+    import sys
+    import time
+
+    from .org_cascade_pg import (
+        materialize_org_cascade_from_dsn,
+        plan_org_cascade,
+        read_org_candidates,
+        set_role,
+    )
+
+    started = time.monotonic()
+
+    def _progress(stage: str, done: int, inserted: int) -> None:
+        elapsed = time.monotonic() - started
+        print(
+            f"progress: {stage} {done} (inserted {inserted}), {elapsed:.0f}s",
+            file=sys.stderr,
+            flush=True,
+        )
+
+    if args.dry_run:
+        import psycopg
+
+        with psycopg.connect(args.dsn, autocommit=True) as conn:
+            if args.role:
+                set_role(conn, args.role)
+            records = read_org_candidates(conn)
+        result = plan_org_cascade(records)
+        print(json.dumps({**result.summary(), "dry_run": True}, indent=2, default=str))
+        return 0
+    summary = materialize_org_cascade_from_dsn(args.dsn, role=args.role, progress=_progress)
     print(json.dumps(summary, indent=2, default=str))
     return 0
