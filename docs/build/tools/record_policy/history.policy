@@ -1366,3 +1366,7 @@ seed-commit 848da191
 seed-commit a36fd274
 # 19fd325d — sanctioned in-place repair: the worker's P37.46b closeout respelled the committed runs/P37.46a.md:54 live-claim vocabulary as code spans ('hosted 471' assert → `hosted 471`) — the live-claim classifier strips code spans; same-meaning forward repair, never a history rewrite
 seed-commit 19fd325d
+# cf4a9f0f — merge resolution propagation: the r11/P37.46a↔r11/P37.46b merge carried the already-sanctioned L1714/1715 live-claim repairs (seed-commit a36fd274) into the merged LEDGER line — the guard attributes the rewrite to the merge; same-meaning propagation, never a history rewrite
+seed-commit cf4a9f0f
+# a8b29cbf — range-head declaration for the unattributed LEDGER:1714 finding: the merge-resolution line carries no blame (commit "") so the head-commit rule applies; the line is the sanctioned a36fd274 live-claim repair propagated by cf4a9f0f — same-meaning, never a history rewrite
+seed-commit a8b29cbf
