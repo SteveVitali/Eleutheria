@@ -1,0 +1,176 @@
+# SPDX-License-Identifier: Apache-2.0
+# The `puerto_rico` connector's committed target inventory (P37.51 /
+# R11-ACQ-24, I8 §6.2). This table is DATA, not code (SIG-ENG-001 /
+# SIG-INGEST-038): the reviewed Puerto Rico territorial surfaces the I5
+# discovery named — identifiers + provenance only, a row is a URL, a kind, a
+# source and an evidence ref, never content. Every row is a public
+# unauthenticated GET surface on a committed host; all eight sources stay
+# behind `ingestion_permitted=false` — the loader gate REFUSES every live
+# fetch until the operator's OP-26 Wave-D flips under ING-GO-D (HG-03 RB-08
+# `a` territorial public records; the OCPR row additionally S7 `a`).
+#
+# The OCPR search form is a POST + __RequestVerificationToken form and is
+# NEVER submitted (the I5 R3 bound); the committed surface is the landing
+# page's fiscal-year bulk index + its #tblContracts results table shape.
+
+schema = "sig.puerto-rico-targets/1"
+
+[inventory]
+# Derivation provenance: the eight ACQ-24 plan rows
+# (data/acquisition_plan.csv AP-T2-021/-092/-137/-138/-139/-140/-141/-142,
+# candidates I5-C226 / I5-C227 / I5-C228…C233), rights batch RB-08
+# (territorial public records — I7-RB-08 `a`, GL-GATE-07 treats territories
+# as US) with AP-T2-021 additionally S7-flagged (IND-P8).
+source_ref = "docs/build/planning/2026-09-30-next-phase/data/acquisition_plan.csv (AP-T2-021/-092/-137/-138/-139/-140/-141/-142) + data/candidates_consolidated.csv (I5-C226…I5-C233)"
+captured_on = "2026-11-13"
+target_count = 11
+
+# --- OCPR Consulta del Registro de Contratos (ocpr_registry_index) ---------
+
+# procportal_pr_consulta_del_registro — the landing page (I5-C226): the
+# "Contratos Otorgados por Año Fiscal" bulk-download index enumerates as
+# document pointers (the FY file contents are never fetched by this
+# connector — pointer lane); a populated #tblContracts results table, when
+# served, parses to contract records on the registry's own column literals
+# under the S7 contractor screen. Verified live-read 2026-11-13: the page
+# serves (200), the FY index lists 2010-2011…2023-2024 with the recorded
+# "Última actualización 20 dic. 2023" stamp, the search form is POST +
+# __RequestVerificationToken (never submitted — R3) and the Results table
+# ships empty server-side; the 2023-2024 FY link resolves to a recorded 404
+# (the registry's bulk lane is stale — an honest live outcome, never a
+# guessed URL).
+[[inventory.targets]]
+id = "ocpr_consulta_index"
+source = "procportal_pr_consulta_del_registro"
+kind = "ocpr_index"
+adapter = "ocpr_registry_index"
+url = "https://consultacontratos.ocpr.gov.pr/"
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+publisher = "Oficina de la Contralora de Puerto Rico (OCPR)"
+expect = ["tblContracts", "downloadfrequentsearchfiscalyeardocument"]
+evidence = "I5-C226 (candidates_consolidated.csv) — contract registry of all PR government entities; FY bulk links + the served column literals (Núm. Contrato/Contratista/Otorgado en/Vigencia/Cuantía por Pagar/Tipo de Servicio/Entidad/Cancelado/Documento); 200 GET verified 2026-11-13; FY download 404 recorded; robots=not-read"
+
+# --- SUTRA medida detail pages (sutra_measure_page) ------------------------
+# The six I5-C228…C233 surveillance-relevant measures, one committed detail
+# page per gated seat — the page's own type/number/cuatrienio/filing-date/
+# title/events/document-link literals emit `sutra_measure` records.
+
+[[inventory.targets]]
+id = "sutra_medida_pc0489"
+source = "legis_pr_pc0489_ley_del"
+kind = "sutra_detail"
+adapter = "sutra_measure_page"
+url = "https://sutra.oslpr.org/medidas/154899"
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+publisher = "Asamblea Legislativa de Puerto Rico (via SUTRA)"
+expect = ["Cuatrienio", "Título"]
+evidence = "I5-C233 (candidates_consolidated.csv) — PC0489 Ley del Programa de Vigilancia, Prevención y Protección de Menores (electronic supervision as bail condition); filed 2025-04-03"
+
+[[inventory.targets]]
+id = "sutra_medida_pc0560"
+source = "legis_pr_pc0560_plan_de"
+kind = "sutra_detail"
+adapter = "sutra_measure_page"
+url = "https://sutra.oslpr.org/medidas/155376"
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+publisher = "Asamblea Legislativa de Puerto Rico (via SUTRA)"
+expect = ["Cuatrienio", "Título"]
+evidence = "I5-C232 (candidates_consolidated.csv) — PC0560 Plan de Vigilancia de las Costas, Puertos y Aeropuertos; filed 2025-04-28; page verified live-read 2026-11-13 (header + events + SutraFilesGen .doc pointer)"
+
+[[inventory.targets]]
+id = "sutra_medida_rc0740"
+source = "legis_pr_rc0740_investigaci_sobre"
+kind = "sutra_detail"
+adapter = "sutra_measure_page"
+url = "https://sutra.oslpr.org/medidas/161629"
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+publisher = "Asamblea Legislativa de Puerto Rico (via SUTRA)"
+expect = ["Cuatrienio", "Título"]
+evidence = "I5-C230 (candidates_consolidated.csv) — RC0740 investigación sobre cámaras de vigilancia o monitoreo de tránsito en semáforos y el Sistema de Monitoreo de Semáforos; filed 2026-06-29"
+
+[[inventory.targets]]
+id = "sutra_medida_rc0787"
+source = "legis_pr_rc0787_resoluci_de"
+kind = "sutra_detail"
+adapter = "sutra_measure_page"
+url = "https://sutra.oslpr.org/medidas/162075"
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+publisher = "Asamblea Legislativa de Puerto Rico (via SUTRA)"
+expect = ["Cuatrienio", "Título"]
+evidence = "I5-C228 (candidates_consolidated.csv) — RC0787 Comisión de lo Jurídico investigation into facial/biometric/ALPR/AI surveillance systems; filed 2026-09-01; page verified live-read 2026-11-13 (3 events, RC0787.docx pointer)"
+
+[[inventory.targets]]
+id = "sutra_medida_rcs0198"
+source = "legis_pr_rcs0198_resoluci_conjunta"
+kind = "sutra_detail"
+adapter = "sutra_measure_page"
+url = "https://sutra.oslpr.org/medidas/161712"
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+publisher = "Asamblea Legislativa de Puerto Rico (via SUTRA)"
+expect = ["Cuatrienio", "Título"]
+evidence = "I5-C231 (candidates_consolidated.csv) — RCS0198 requisito de cámaras de seguridad (videovigilancia) para licencias de venta de bebidas alcohólicas — a mandated private-camera population; filed 2026-07-14"
+
+[[inventory.targets]]
+id = "sutra_medida_rs0604"
+source = "legis_pr_rs0604_resoluci_del"
+kind = "sutra_detail"
+adapter = "sutra_measure_page"
+url = "https://sutra.oslpr.org/medidas/162235"
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+publisher = "Asamblea Legislativa de Puerto Rico (via SUTRA)"
+expect = ["Cuatrienio", "Título"]
+evidence = "I5-C229 (candidates_consolidated.csv) — RS0604 Senate companion to RC0787 (same surveillance-systems investigation scope); filed 2026-09-18"
+
+# --- SUTRA medidas title-phrase searches (sutra_search) --------------------
+# legis_pr_sistema_nico_de — the channel seat (I5-C227): four committed
+# GET title-phrase queries, one bounded first page each (deeper pages are
+# the cadence job's windowed re-query, recorded not fabricated). The I5
+# live-reads recorded 'cámaras de seguridad' 4, 'tablillas' 5,
+# 'reconocimiento facial' 2, 'vigilancia' 22 records (2026-09-30); the
+# 2026-11-13 review re-verified the shape serving ('vigilancia' → 24,
+# 'tablillas' → 6 — the lane records the served totals, never the
+# candidate's stale ones).
+
+[[inventory.targets]]
+id = "sutra_search_camaras_de_seguridad"
+source = "legis_pr_sistema_nico_de"
+kind = "sutra_index"
+adapter = "sutra_search"
+url = "https://sutra.oslpr.org/medidas?frase_titulo=c%C3%A1maras%20de%20seguridad"
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+publisher = "Asamblea Legislativa de Puerto Rico — Oficina de Servicios Legislativos"
+expect = ["list-none"]
+evidence = "I5-C227 / I5-Q109 (candidates_consolidated.csv) — 'cámaras de seguridad' title-phrase search, 4 records at 2026-09-30 live-read"
+
+[[inventory.targets]]
+id = "sutra_search_reconocimiento_facial"
+source = "legis_pr_sistema_nico_de"
+kind = "sutra_index"
+adapter = "sutra_search"
+url = "https://sutra.oslpr.org/medidas?frase_titulo=reconocimiento%20facial"
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+publisher = "Asamblea Legislativa de Puerto Rico — Oficina de Servicios Legislativos"
+expect = ["list-none"]
+evidence = "I5-C227 / I5-Q111 (candidates_consolidated.csv) — 'reconocimiento facial' title-phrase search, 2 records at 2026-09-30 live-read"
+
+[[inventory.targets]]
+id = "sutra_search_tablillas"
+source = "legis_pr_sistema_nico_de"
+kind = "sutra_index"
+adapter = "sutra_search"
+url = "https://sutra.oslpr.org/medidas?frase_titulo=tablillas"
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+publisher = "Asamblea Legislativa de Puerto Rico — Oficina de Servicios Legislativos"
+expect = ["list-none"]
+evidence = "I5-C227 / I5-Q110 (candidates_consolidated.csv) — 'tablillas' title-phrase search, 5 records at 2026-09-30 live-read, 6 at the 2026-11-13 review (page 1 bounded to 5 shown)"
+
+[[inventory.targets]]
+id = "sutra_search_vigilancia"
+source = "legis_pr_sistema_nico_de"
+kind = "sutra_index"
+adapter = "sutra_search"
+url = "https://sutra.oslpr.org/medidas?frase_titulo=vigilancia"
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+publisher = "Asamblea Legislativa de Puerto Rico — Oficina de Servicios Legislativos"
+expect = ["list-none"]
+evidence = "I5-C227 / I5-Q112 (candidates_consolidated.csv) — 'vigilancia' title-phrase search, 22 records at 2026-09-30 live-read, 24 at the 2026-11-13 review (page 1 bounded to 5 shown)"

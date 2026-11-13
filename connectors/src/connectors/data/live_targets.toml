@@ -2978,3 +2978,34 @@ kind = "federal_dataset_targets"
 
 [camreg_us_nces_school_survey_on_crime]
 kind = "federal_dataset_targets"
+
+# --- P37.51 (ACQ-24): Puerto Rico territorial family -----------------------
+# Eight gated sources — the SUTRA channel seat (four committed title-phrase
+# queries), the six SUTRA measure detail seats and the OCPR contract-
+# registry landing page, all in data/puerto_rico_targets.toml. Rows record
+# the endpoints the operator's OP-26 Wave-D flips will drive; the live gate
+# refuses before any target is read.
+
+[legis_pr_sistema_nico_de]
+kind = "puerto_rico_targets"
+
+[legis_pr_rc0787_resoluci_de]
+kind = "puerto_rico_targets"
+
+[legis_pr_rs0604_resoluci_del]
+kind = "puerto_rico_targets"
+
+[legis_pr_rc0740_investigaci_sobre]
+kind = "puerto_rico_targets"
+
+[legis_pr_rcs0198_resoluci_conjunta]
+kind = "puerto_rico_targets"
+
+[legis_pr_pc0560_plan_de]
+kind = "puerto_rico_targets"
+
+[legis_pr_pc0489_ley_del]
+kind = "puerto_rico_targets"
+
+[procportal_pr_consulta_del_registro]
+kind = "puerto_rico_targets"

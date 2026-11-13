@@ -156,3 +156,11 @@ note = "§11.10 — a published federal dataset file/index document the family e
 [prefixes."federal_register_document:"]
 entity_type = "legal_instrument"
 note = "§11.14 — a Federal Register rule/proposed-rule/notice record is the federal register's own instrument document (federal_datasets.py, P37.49)."
+
+[prefixes."sutra_measure:"]
+entity_type = "legal_instrument"
+note = "§11.14 — a SUTRA legislative measure (Puerto Rico Asamblea Legislativa, /medidas/<id>) is proposed law tracked as legislative business (puerto_rico.py, P37.51); the record is the measure's own surface, never an assertion it is in force."
+
+[prefixes."ocpr_document:"]
+entity_type = "data_system"
+note = "§11.10 — an OCPR Registro de Contratos publication surface (fiscal-year contract file or a recorded rejection row) enumerated as a pointer (puerto_rico.py, P37.51); a reference artifact, never fetched content."
