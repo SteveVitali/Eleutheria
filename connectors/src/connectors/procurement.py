@@ -1419,13 +1419,24 @@ def tenant_targets(platform: str | None = None) -> list[dict[str, Any]]:
     """
     out: list[dict[str, Any]] = []
     for tenant_id, row in agenda_tenants().items():
-        if platform is not None and row.get("platform") != platform:
+        # P37.50 (ACQ-22): a per-city registry source row (``agenda_*``) expands
+        # to the tenant row that binds it via ``source_id``, while the shared
+        # platform contract id keeps filtering by ``platform`` — the same
+        # ``platform``/``source_id`` split the procurement-portal registry uses.
+        if (
+            platform is not None
+            and row.get("platform") != platform
+            and str(row.get("source_id") or "") != platform
+        ):
             continue
         platform_id = str(row.get("platform") or "")
         endpoint = platform_endpoints().get(platform_id, {})
         api_base = str(row.get("api_base") or "").rstrip("/")
-        index_path = str(endpoint.get("index_path", ""))
-        index_query = str(endpoint.get("index_query", "")).strip()
+        # P37.50: a tenant may pin its own reviewed index path/query (the
+        # Fargo year-archive page under the shared html_agenda_archive
+        # contract) — reviewed row data, still never a constructed URL.
+        index_path = str(row.get("index_path") or endpoint.get("index_path", ""))
+        index_query = str(row.get("index_query") or endpoint.get("index_query", "")).strip()
         url = f"{api_base}{index_path}" + (f"?{index_query}" if index_query else "")
         target: dict[str, Any] = {
             "id": tenant_id,
@@ -1435,6 +1446,7 @@ def tenant_targets(platform: str | None = None) -> list[dict[str, Any]]:
             # which is the registry row key (jurisdiction-shaped).
             "tenant": row.get("tenant") or tenant_id,
             "platform": platform_id,
+            "source_id": str(row.get("source_id") or ""),
             "jurisdiction": row.get("jurisdiction"),
             "url": url,
             "api_base": api_base,
@@ -2286,6 +2298,32 @@ class ProcurementConnector(Connector):
             if portal_target.get("kind") == "portal_document":
                 return self._parse_portal_document(ctx, capture, data, portal_target)
             return self._parse_portal_index(ctx, capture, data, portal_target)
+        if ctx.source.id in agenda_platform_sources():
+            # P37.50 (ACQ-22): an agenda-platform tenant index whose reviewed
+            # endpoint declares ``index_genre = "html"`` parses through the
+            # platform's committed markup contract — the same fail-closed
+            # discipline as the BidNet portal index (a contract violation is
+            # ContentDrift, never a silent empty window). JSON-genre indexes
+            # (Legistar/CivicClerk/eScribe/PrimeGov) fall through unchanged.
+            index_target = _agenda_index_target_for(ctx, str(capture.source_uri))
+            if index_target is not None:
+                endpoint = platform_endpoints().get(
+                    str(index_target.get("platform") or ctx.source.id), {}
+                )
+                if str(endpoint.get("index_genre") or "json") != "json":
+                    items = _html_agenda_index_items(
+                        data,
+                        platform=str(index_target.get("platform") or ctx.source.id),
+                        api_base=str(index_target.get("api_base") or ""),
+                        source_id=ctx.source.id,
+                        source_uri=str(capture.source_uri),
+                    )
+                    return {
+                        "kind": "agenda_html_index",
+                        "capture": capture,
+                        "items": items,
+                        "index_target": dict(index_target),
+                    }
         if ctx.source.id == source_ids().get("ted_eu"):
             return self._parse_ted_eu_page(ctx, capture, data)
         if _is_json_media(capture.media_type):
@@ -2793,6 +2831,23 @@ class ProcurementConnector(Connector):
                 }
             )
             return records
+        if parsed["kind"] == "agenda_html_index":
+            # P37.50 (ACQ-22): the parsed HTML index items flow into the SAME
+            # ``agenda_item`` records the JSON index path emits — one raw
+            # record per matter/meeting carrying the tenant context recovered
+            # from the registry. The keyword-slice precision pass is a no-op
+            # on a recency-only contract; it rides along unchanged.
+            tenant = tenant_for_uri(str(parsed["capture"].source_uri))
+            index_target = parsed.get("index_target")
+            precise = _agenda_precise_items(list(parsed["items"]), index_target)
+            return [
+                {
+                    "record_kind": "agenda_item",
+                    "raw": dict(o),
+                    "tenant": dict(tenant) if tenant else None,
+                }
+                for o in precise
+            ]
         payload = parsed["payload"]
         if ctx.source.id in agenda_platform_sources():
             # An agenda-platform tenant index (P26.2): one `agenda_item` raw
@@ -3349,7 +3404,15 @@ class ProcurementConnector(Connector):
         external_id = _agenda_item_id(item)
         type_name = _first_nonempty(
             item,
-            ("MatterTypeName", "type_name", "category", "categoryName", "info", "MeetingType"),
+            (
+                "MatterTypeName",
+                "type_name",
+                "category",
+                "categoryName",
+                "info",
+                "MeetingType",
+                "MeetingTypeName",
+            ),
         )
         title = _first_nonempty(
             item,
@@ -5013,18 +5076,21 @@ def _agenda_index_target_for(ctx: RunContext, uri: str) -> Mapping[str, Any] | N
     then the tenant registry row whose generated index URL the capture's
     ``source_uri`` is exactly — the prefix fallback in :func:`tenant_for_uri`
     is deliberately NOT used here: a document URL under a tenant's api_base is
-    not the index capture.
+    not the index capture. A configured/resolved target wins its own fields but
+    inherits the matching registry row's tenant context (platform, api_base,
+    bounds) — the P26.10 ``_portal_target_for`` rule — so a bare fixture/live
+    target still parses under the reviewed contract (P37.50).
     """
+    registry_target = next(
+        (t for t in tenant_targets(platform=ctx.source.id) if str(t["url"]) == uri), None
+    )
     for candidate in ctx.resolved_targets.values():
         if str(candidate.get("url")) == uri and candidate.get("kind") == "agenda_index":
-            return candidate
+            return {**(dict(registry_target) if registry_target else {}), **dict(candidate)}
     for candidate in ctx.parameters.get("targets", []):
         if str(candidate.get("url")) == uri and candidate.get("kind") == "agenda_index":
-            return candidate
-    for target in tenant_targets(platform=ctx.source.id):
-        if str(target["url"]) == uri:
-            return target
-    return None
+            return {**(dict(registry_target) if registry_target else {}), **dict(candidate)}
+    return registry_target
 
 
 def _agenda_doc_target(ctx: RunContext, uri: str) -> Mapping[str, Any] | None:
@@ -5596,6 +5662,422 @@ def _bidnet_index_items(data: bytes, *, source_id: str, source_uri: str) -> list
             details=raw_text[:200],
         )
     return items
+
+
+# --- agenda-platform HTML index contracts (P37.50 / R11-ACQ-22, I8 §6.2) ----
+#
+# The four reviewed HTML index shapes beside the JSON OData platforms. Each
+# parser is a small state machine over the stdlib HTMLParser (never a regex
+# over markup, same discipline as _BidnetIndexParser) and every emitted item
+# carries only captured fields — the item id, the verbatim title/date
+# literal, the item's own href made absolute, and the type/category label.
+# ``startDateTime`` is the documented normalization of the captured date
+# literal to ISO 8601 so the meeting_date claim mints a typed value; the
+# verbatim literal stays in ``raw_meeting_date`` and ``raw``. P8-3 holds:
+# minutes, attachments and background PDFs are never read as items.
+
+_US_DATE_RE = re.compile(r"(\d{1,2})/(\d{1,2})/(\d{2,4})")
+_MONTH_DATE_RE = re.compile(
+    r"(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+(\d{1,2}),?\s+(\d{4})",
+    re.IGNORECASE,
+)
+_MONTHS = {
+    m: i + 1
+    for i, m in enumerate(
+        ("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
+    )
+}
+
+
+def _iso_from_date_literal(text: str | None) -> str | None:
+    """ISO-8601 date derived from a captured US/month-name date literal, else None."""
+    if not text:
+        return None
+    m = _US_DATE_RE.search(text)
+    if m:
+        month, day, year = (int(p) for p in m.groups())
+        year += 2000 if year < 100 else 0
+        try:
+            return date(year, month, day).isoformat()
+        except ValueError:
+            return None
+    m = _MONTH_DATE_RE.search(text)
+    if m:
+        try:
+            return date(
+                int(m.group(3)), _MONTHS[m.group(1).lower()[:3]], int(m.group(2))
+            ).isoformat()
+        except (ValueError, KeyError):
+            return None
+    return None
+
+
+class _CivicplusIndexParser(HTMLParser):
+    """CivicPlus AgendaCenter index markup contract (P37.50, verified 2026-11-13).
+
+    Each agenda item is ``<tr class="catAgendaRow">`` inside a
+    ``<div id="category-panel-N">`` panel whose ``<h2 aria-controls=…>`` names
+    the meeting category. The row carries ``<strong>`` date text and an
+    ``a[href*="/AgendaCenter/ViewFile/Agenda/"]`` agenda link (the item's own
+    link, never constructed); ``ViewFile/Minutes/`` links are minutes — P8-3
+    keeps them out. ``id="AgendaCenterContent"`` marks the page.
+    """
+
+    def __init__(self, api_base: str) -> None:
+        super().__init__(convert_charrefs=True)
+        self.api_base = api_base
+        self.items: list[dict[str, Any]] = []
+        self.has_marker = False
+        self._category: str | None = None
+        self._in_h2 = False
+        self._row: dict[str, Any] | None = None
+        self._field: str | None = None
+        self._buf: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        attr = dict(attrs)
+        classes = set((attr.get("class") or "").split())
+        if (attr.get("id") or "") == "AgendaCenterContent" or "listing" in classes:
+            self.has_marker = True
+        if tag == "h2" and str(attr.get("aria-controls") or "").startswith("category-panel-"):
+            self._in_h2 = True
+            self._buf = []
+            return
+        if tag == "tr" and "catAgendaRow" in classes:
+            self._row = {"category": self._category}
+            return
+        if self._row is None:
+            return
+        if tag == "strong":
+            self._field, self._buf = "meeting_date", []
+        elif tag == "a":
+            href = str(attr.get("href") or "")
+            if "/AgendaCenter/ViewFile/Agenda/" in href:
+                self._row["url"] = urljoin(self.api_base + "/", href.lstrip("/"))
+                m = re.search(r"_(\d{8}-\d+)", href)
+                if m:
+                    self._row["id"] = m.group(1)
+                self._field, self._buf = "title", []
+
+    def handle_data(self, data: str) -> None:
+        if self._in_h2 or self._field in ("meeting_date", "title"):
+            self._buf.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "h2" and self._in_h2:
+            self._category = " ".join("".join(self._buf).split()) or None
+            self._in_h2 = False
+            return
+        if tag == "tr" and self._row is not None:
+            self.items.append(self._row)
+            self._row = None
+            self._field = None
+            return
+        if self._row is None:
+            return
+        if tag == "strong" and self._field == "meeting_date":
+            self._row["raw_meeting_date"] = " ".join("".join(self._buf).split()) or None
+            self._field, self._buf = None, []
+        elif tag == "a" and self._field == "title":
+            self._row["title"] = " ".join("".join(self._buf).split()) or None
+            self._field, self._buf = None, []
+
+
+class _CivicwebIndexParser(HTMLParser):
+    """iCompass/Diligent CivicWeb MeetingTypeList markup contract (P37.50).
+
+    ``div.meeting-type-list`` holds one ``item-template`` per meeting type:
+    ``a.meeting-type-item-title`` names the type (link ``?type=N``) and each
+    ``a.list-link[href*="MeetingInformation.aspx?Id="]`` is one recent meeting
+    (the type's own public index list — bounded, verified 2026-11-13). The
+    item id is the href's ``Id`` parameter; the link text carries the type
+    name and meeting date verbatim ("… - Nov 12 2026").
+    """
+
+    def __init__(self, api_base: str) -> None:
+        super().__init__(convert_charrefs=True)
+        self.api_base = api_base
+        self.items: list[dict[str, Any]] = []
+        self.has_marker = False
+        self._type: str | None = None
+        self._field: str | None = None
+        self._buf: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        attr = dict(attrs)
+        classes = set((attr.get("class") or "").split())
+        if "meeting-type-list" in classes:
+            self.has_marker = True
+        if tag != "a":
+            return
+        href = str(attr.get("href") or "")
+        if "meeting-type-item-title" in classes:
+            self._field, self._buf = "type", []
+        elif "list-link" in classes and "MeetingInformation.aspx" in href:
+            m = re.search(r"[?&]Id=(\d+)", href)
+            self.items.append(
+                {
+                    "id": m.group(1) if m else None,
+                    "url": urljoin(self.api_base + "/", href.lstrip("/")),
+                    "MeetingTypeName": self._type,
+                }
+            )
+            self._field, self._buf = "title", []
+
+    def handle_data(self, data: str) -> None:
+        if self._field in ("type", "title"):
+            self._buf.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag != "a" or self._field is None:
+            return
+        text = " ".join("".join(self._buf).split()) or None
+        if self._field == "type":
+            self._type = text
+        elif self._field == "title" and self.items:
+            self.items[-1]["title"] = text
+        self._field, self._buf = None, []
+
+
+class _OnbaseIndexParser(HTMLParser):
+    """Hyland OnBase Agenda Online index markup contract (P37.50).
+
+    Two verified server shapes (2026-11-13): (a) server-rendered
+    ``<tr class="meeting-row" data-meeting-id="N">`` rows carrying
+    ``data-sortable-type`` cells (mtgName/mtgType/mtgTime) and the row's own
+    ``Meetings/ViewMeeting?id=N&doctype=1`` agenda link — Frisco + Maricopa;
+    (b) an embedded ``new SearchResults({…,"Meetings":[…]})`` JSON literal —
+    Tampa's hylandcloud build. ``doctype=2`` (minutes) and ``DownloadFile``
+    PDFs are never read as items (P8-3). ``id="meetings-list"`` marks the page.
+    """
+
+    def __init__(self, api_base: str) -> None:
+        super().__init__(convert_charrefs=True)
+        self.api_base = api_base.rstrip("/")
+        self.items: list[dict[str, Any]] = []
+        self.has_marker = False
+        self._row: dict[str, Any] | None = None
+        self._cell: str | None = None
+        self._buf: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        attr = dict(attrs)
+        classes = set((attr.get("class") or "").split())
+        if str(attr.get("id") or "").startswith("meetings-list"):
+            self.has_marker = True
+        if tag == "tr" and "meeting-row" in classes:
+            self._row = {"id": attr.get("data-meeting-id")}
+            return
+        if self._row is None:
+            return
+        if tag == "td" and attr.get("data-sortable-type") in ("mtgName", "mtgType", "mtgTime"):
+            if attr.get("data-sortable-type") == "mtgTime" and attr.get("data-sortable-label"):
+                self._row["raw_meeting_date"] = str(attr["data-sortable-label"])
+            self._cell, self._buf = str(attr["data-sortable-type"]), []
+        elif tag == "a":
+            href = str(attr.get("href") or "")
+            if "Meetings/ViewMeeting" in href and "doctype=1" in href and "url" not in self._row:
+                self._row["url"] = urljoin(self.api_base + "/", href.lstrip("/"))
+
+    def handle_data(self, data: str) -> None:
+        if self._cell:
+            self._buf.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "tr" and self._row is not None:
+            self.items.append(self._row)
+            self._row, self._cell = None, None
+            return
+        if tag == "td" and self._cell and self._row is not None:
+            text = " ".join("".join(self._buf).split()) or None
+            if self._cell == "mtgName":
+                self._row["name"] = text
+            elif self._cell == "mtgType":
+                self._row["MeetingTypeName"] = text
+            elif self._cell == "mtgTime" and text:
+                self._row["raw_meeting_date"] = self._row.get("raw_meeting_date") or text
+            self._cell, self._buf = None, []
+
+
+def _onbase_search_results_items(
+    text: str, api_base: str, meeting_link_template: str
+) -> list[dict[str, Any]] | None:
+    """The embedded ``new SearchResults({…Meetings…})`` meetings (Tampa shape).
+
+    Returns ``None`` when the page carries no reviewed literal. The bounded
+    ``Meetings`` list rides the same item fields the markup rows carry; the
+    agenda link is the reviewed ``meeting_link_template`` on the endpoint row
+    (a recorded template — a link, never a fetch).
+    """
+    marker = 'new SearchResults({"MeetingTypes"'
+    start = text.find(marker)
+    if start < 0:
+        return None
+    brace = text.find("{", start)
+    depth = 0
+    end = brace
+    while end < len(text):
+        if text[end] == "{":
+            depth += 1
+        elif text[end] == "}":
+            depth -= 1
+            if depth == 0:
+                break
+        end += 1
+    try:
+        data = json.loads(text[brace : end + 1])
+    except ValueError:
+        return []
+    items: list[dict[str, Any]] = []
+    for m in data.get("Meetings") or ():
+        if not isinstance(m, Mapping):
+            continue
+        item = dict(m)
+        item.setdefault("id", m.get("ID"))
+        item.setdefault("name", m.get("Name"))
+        item.setdefault("MeetingTypeName", m.get("MeetingTypeName"))
+        if m.get("Time"):
+            item.setdefault("startDateTime", str(m["Time"])[:10])
+        if meeting_link_template and m.get("ID") is not None:
+            item.setdefault(
+                "url",
+                str(meeting_link_template).format(api_base=api_base.rstrip("/"), item_id=m["ID"]),
+            )
+        items.append(item)
+    return items
+
+
+class _AgendaArchiveIndexParser(HTMLParser):
+    """Fargo-style year-archive index contract (P37.50, verified 2026-11-13).
+
+    ``div.tableContainer`` holds the commission's agenda table: each row's
+    first ``td`` carries the meeting-date literal and each agenda link (``a``
+    whose text is a dated "… Agenda" label and whose title attribute repeats
+    the date) is one item. Background/consent and minutes/video links never
+    mint items (P8-3: attachments and minutes stay out).
+    """
+
+    _AGENDA_LINK_RE = re.compile(r"\d{1,2}/\d{1,2}/\d{2,4}\s+.*[Aa]genda")
+
+    def __init__(self, api_base: str) -> None:
+        super().__init__(convert_charrefs=True)
+        self.api_base = api_base
+        self.items: list[dict[str, Any]] = []
+        self.has_marker = False
+        self._link: dict[str, Any] | None = None
+        self._buf: list[str] = []
+        self._row_emitted = False
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        attr = dict(attrs)
+        classes = set((attr.get("class") or "").split())
+        if "tableContainer" in classes:
+            self.has_marker = True
+        if tag == "tr":
+            self._row_emitted = False
+            return
+        if tag != "a" or self._row_emitted:
+            return
+        href = str(attr.get("href") or "")
+        if "download." not in href:
+            return
+        label = str(attr.get("title") or "")
+        self._link = {"url": urljoin("https:", href), "raw_meeting_date": label or None}
+        self._buf = []
+
+    def handle_data(self, data: str) -> None:
+        if self._link is not None:
+            self._buf.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag != "a" or self._link is None:
+            return
+        text = " ".join("".join(self._buf).split())
+        if self._AGENDA_LINK_RE.search(text) and not re.search(
+            r"[Mm]inutes|[Cc]onsent|[Bb]ackground", text
+        ):
+            item = dict(self._link)
+            item["title"] = text
+            stem = item["url"].rstrip("/").rsplit("/", 1)[-1]
+            item["id"] = re.sub(r"\.pdf$", "", stem, flags=re.IGNORECASE) or None
+            item["MeetingTypeName"] = "City Commission"
+            self.items.append(item)
+            self._row_emitted = True
+        self._link, self._buf = None, []
+
+
+def _html_agenda_index_items(
+    data: bytes, *, platform: str, api_base: str, source_id: str, source_uri: str
+) -> list[dict[str, Any]]:
+    """The agenda items a captured HTML tenant index carries (P37.50).
+
+    Fail-closed on the reviewed markup contract — the platform's committed
+    item + page markers decide: a page carrying neither is :class:`ContentDrift`
+    (the markup contract changed or the host answered an interstitial — never
+    read as a silent empty index); a marked page with zero items is the honest
+    ``empty`` outcome. Every emitted item carries only captured fields plus
+    the documented ``startDateTime`` ISO normalization; minutes, attachments
+    and background documents never mint items (P8-3).
+    """
+    text = utf8_text(data)
+    has_marker = False
+    if platform == "onbase_agendaonline":
+        parser = _OnbaseIndexParser(api_base)
+        try:
+            parser.feed(text)
+        except Exception:
+            pass
+        items = [i for i in parser.items if i.get("id")]
+        embedded = _onbase_search_results_items(
+            text,
+            api_base,
+            str(platform_endpoints().get(platform, {}).get("meeting_link_template") or ""),
+        )
+        if embedded is not None:
+            items.extend(embedded)
+            has_marker = True
+        has_marker = has_marker or parser.has_marker
+    elif platform == "civicweb":
+        civicweb = _CivicwebIndexParser(api_base)
+        try:
+            civicweb.feed(text)
+        except Exception:
+            pass
+        items = [i for i in civicweb.items if i.get("id") and i.get("title")]
+        has_marker = civicweb.has_marker
+    elif platform == "html_agenda_archive":
+        archive = _AgendaArchiveIndexParser(api_base)
+        try:
+            archive.feed(text)
+        except Exception:
+            pass
+        items = list(archive.items)
+        has_marker = archive.has_marker
+    else:  # civicplus_agendacenter (and any future HTML agenda contract)
+        civicplus = _CivicplusIndexParser(api_base)
+        try:
+            civicplus.feed(text)
+        except Exception:
+            pass
+        items = [i for i in civicplus.items if i.get("id") and i.get("title")]
+        has_marker = civicplus.has_marker
+    if not items and not has_marker:
+        raise ContentDrift(
+            source_id,
+            f"agenda index {source_uri} carries neither a reviewed {platform} "
+            "item nor the platform's page marker — the index markup contract "
+            "changed, this is not an empty index",
+            details=text[:200],
+        )
+    out: list[dict[str, Any]] = []
+    for item in items:
+        row = dict(item)
+        literal = str(row.get("raw_meeting_date") or "")
+        iso = _iso_from_date_literal(literal) or _iso_from_date_literal(str(row.get("title") or ""))
+        if iso:
+            row["startDateTime"] = iso
+        out.append(row)
+    return out
 
 
 def _stamp(row: dict[str, Any], *, source_id: str) -> dict[str, Any]:

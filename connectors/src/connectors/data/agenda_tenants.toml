@@ -60,10 +60,11 @@
 #     `User-agent: *` / `Disallow: /` (platform-wide, 2026-09-17). They stay
 #     robots refusals; the rows exist so each host's own recorded verdict is
 #     data, never a silent skip.
-registry_version = "2026.09.17-p26.5"
+registry_version = "2026.11.13-p37.50"
 
 # The platforms the discovery probe checks a jurisdiction against, in order. A
 # jurisdiction absent from every one of these becomes a [negatives.*] row.
+# P37.50 (ACQ-22): the agenda-platforms-v2 contracts join the probe set.
 probed_platforms = [
   "legistar",
   "primegov",
@@ -72,6 +73,11 @@ probed_platforms = [
   "escribe",
   "granicus",
   "novusagenda",
+  "civicplus_agendacenter",
+  "civicweb",
+  "onbase_agendaonline",
+  "html_agenda_archive",
+  "agendaplus",
 ]
 
 # --- tenants: jurisdiction -> agenda platform + per-tenant API key -------------
@@ -8056,6 +8062,125 @@ last_verified = 2026-09-17
 enum_source = "platform_probe"
 notes = "P26.5 enumeration: verified live 2026-09-17 — POST pub-woodstock.escribemeetings.com/MeetingsCalendarView.aspx/GetCalendarMeetings returns the real meeting index (a d-keyed item list); robots PetalBot-only or absent."
 
+# --- P37.50 (R11-ACQ-22, I8 §6.2): agenda-platforms-v2 per-city seats ---------
+# Ten generated `agenda_*` registry sources each bind ONE tenant row: `platform`
+# names the shared reviewed HTML contract (procurement_vocab
+# [platform_endpoints.*]) and `source_id` binds the gated registry row — the
+# same platform/source_id split the procurement-portal registry uses. Markup
+# contracts verified 2026-11-13 with the shared politeness UA; every seat stays
+# ingestion_permitted=false pending the operator's OP-26 Wave-D flip.
+
+[tenants.durham_nc]
+jurisdiction = "Durham, NC"
+platform = "civicplus_agendacenter"
+source_id = "agenda_durham_nc_agenda_center"
+tenant = "durhamnc"
+api_base = "https://www.durhamnc.gov"
+verified = false
+last_verified = 2026-11-13
+enum_source = "i5-c125"
+notes = "P37.50 (ACQ-22, plan AP-T2-037 / cand I5-C125): durhamnc.gov/AgendaCenter answers the shared politeness UA a Cloudflare 403 challenge page (2026-11-13) — a recorded challenge outcome per SIG-INGEST-013, never defeated; robots.txt is behind the same challenge (recorded unretrievable). The tenant row registers the seat so the challenge lands as data."
+
+[tenants.hialeah_fl]
+jurisdiction = "Hialeah, FL"
+platform = "civicplus_agendacenter"
+source_id = "agenda_hialeah_fl_agenda_center"
+tenant = "hialeahfl"
+api_base = "https://www.hialeahfl.gov"
+verified = true
+last_verified = 2026-11-13
+enum_source = "i5-c126"
+notes = "P37.50 (ACQ-22, plan AP-T2-038 / cand I5-C126): hialeahfl.gov/AgendaCenter serves the real category-panel index (139 catAgendaRow items incl. City Council, probed 2026-11-13); robots.txt disallows admin/search paths only (Crawl-delay: 10 recorded), /AgendaCenter is not disallowed."
+
+[tenants.bexar_county_tx]
+jurisdiction = "Bexar County, TX"
+platform = "civicplus_agendacenter"
+source_id = "agenda_bexar_county_tx_agenda_center"
+tenant = "bexar"
+api_base = "https://www.bexar.org"
+verified = true
+last_verified = 2026-11-13
+enum_source = "i5-c207"
+notes = "P37.50 (ACQ-22, plan AP-T2-198 / cand I5-C207): bexar.org/AgendaCenter serves the real category-panel index (116 catAgendaRow items incl. Commissioners Court, probed 2026-11-13); robots.txt is the same CivicPlus policy shape (no /AgendaCenter disallow)."
+
+[tenants.savannah_ga]
+jurisdiction = "Savannah, GA"
+platform = "civicplus_agendacenter"
+source_id = "agenda_savannah_ga_2023_05_25"
+tenant = "savannah"
+api_base = "https://www.savannahga.gov"
+verified = true
+last_verified = 2026-11-13
+enum_source = "i9b-c016"
+notes = "P37.50 (ACQ-22, plan AP-T2-061 / cand I9b-C016): the candidate's Agenda Plus host agenda.savannahga.gov has no bounded public index (the app answers every path with a login page; /publishing/ and meeting directories answer 403 — censused below, access_restricted). The SAME jurisdiction's serving council agenda surface is the CivicPlus AgendaCenter at savannahga.gov/AgendaCenter (verified serving, 64 catAgendaRow items, 2026-11-13) — the seat binds there, same publisher + same record class; recorded substitution, never a fabricated index."
+
+[tenants.jersey_city_nj]
+jurisdiction = "Jersey City, NJ"
+platform = "civicweb"
+source_id = "agenda_jersey_city_nj_digital_agenda"
+tenant = "cityofjerseycity"
+api_base = "https://cityofjerseycity.civicweb.net"
+verified = true
+last_verified = 2026-11-13
+enum_source = "i5-c124"
+notes = "P37.50 (ACQ-22, plan AP-T2-036 / cand I5-C124): cityofjerseycity.civicweb.net/Portal/MeetingTypeList.aspx serves the meeting-type index (probed 2026-11-13). robots.txt is `User-agent: *` / `Disallow: /` — a declared posture probed + recorded per RFC 9309 (GL-GATE-08/ADR-088/ADR-222: recorded, never bypassed)."
+
+[tenants.dallas_county_tx]
+jurisdiction = "Dallas County, TX"
+platform = "civicweb"
+source_id = "agenda_tx_dallas_county_commissioners"
+tenant = "dallascounty"
+api_base = "https://dallascounty.civicweb.net"
+verified = true
+last_verified = 2026-11-13
+enum_source = "i5-c205"
+notes = "P37.50 (ACQ-22, plan AP-T2-197 / cand I5-C205): dallascounty.civicweb.net/Portal/MeetingTypeList.aspx serves the Commissioners Court meeting index (probed 2026-11-13); platform-wide robots `Disallow: /` recorded like the Jersey City tenant."
+
+[tenants.frisco_tx]
+jurisdiction = "Frisco, TX"
+platform = "onbase_agendaonline"
+source_id = "agenda_frisco_tx_onbase_agenda_online"
+tenant = "friscotx"
+api_base = "https://agenda.friscotexas.gov/OnBaseAgendaOnline"
+verified = true
+last_verified = 2026-11-13
+enum_source = "i5-c127"
+notes = "P37.50 (ACQ-22, plan AP-T2-039 / cand I5-C127): agenda.friscotexas.gov/OnBaseAgendaOnline/ serves the real meeting-row index (100 meetings across boards incl. City Council, probed 2026-11-13); robots.txt 404 (no policy). The candidate's note stands — the PrimeGov tenant 'friscotexas' registry row may be a stale/secondary surface for this jurisdiction."
+
+[tenants.tampa_fl]
+jurisdiction = "Tampa, FL"
+platform = "onbase_agendaonline"
+source_id = "agenda_tampa_fl_onbase_agenda_online"
+tenant = "tampagov"
+api_base = "https://tampagov.hylandcloud.com/251agendaonline"
+verified = true
+last_verified = 2026-11-13
+enum_source = "i5-c128"
+notes = "P37.50 (ACQ-22, plan AP-T2-040 / cand I5-C128): tampagov.hylandcloud.com/251agendaonline/ serves the OnBase Agenda Online index — the embedded SearchResults JSON literal carries 50 meetings incl. Council Regular (probed 2026-11-13); robots.txt 404 (no policy)."
+
+[tenants.maricopa_county_az]
+jurisdiction = "Maricopa County, AZ"
+platform = "onbase_agendaonline"
+source_id = "agenda_az_maricopa_county_board_of"
+tenant = "mccobagenda"
+api_base = "https://mccobagenda.databankcloud.com/AgendaOnline"
+verified = true
+last_verified = 2026-11-13
+enum_source = "i5-c202"
+notes = "P37.50 (ACQ-22, plan AP-T2-194 / cand I5-C202): mccobagenda.databankcloud.com/AgendaOnline serves the OnBase Agenda Online meeting-row index (Board of Supervisors Executive/Informal/Formal meetings, probed 2026-11-13) — the plan's `new:agendaonline` label is the same Hyland product (its page asserts 'OnBase Agenda Online' verbatim); the candidate's inference resolves confirmed. robots.txt answers 503 — recorded unretrievable, never a gate (ADR-088)."
+
+[tenants.fargo_nd]
+jurisdiction = "Fargo, ND"
+platform = "html_agenda_archive"
+source_id = "agenda_nd_fargo_city_commission_agendas"
+tenant = "fargond"
+api_base = "https://fargond.gov"
+index_path = "/city-government/departments/city-commission/agendas-minutes/2026-agendas"
+verified = true
+last_verified = 2026-11-13
+enum_source = "i5-c042"
+notes = "P37.50 (ACQ-22, plan AP-T2-035 / cand I5-C042): fargond.gov's commission archive is the city CMS's own year-indexed agenda table (dated '… Agenda' download links; background/consent + minutes/video links stay out, P8-3). `index_path` pins the current-year archive — a reviewed bound the row migrates forward as years roll (registry_version bump). robots.txt 404 (no policy)."
+
 # --- discovery negatives: probed, no platform found (SIG-METRIC-002a) ----------
 # Retained, not discarded: each renders to a NO_EVIDENCE_FOUND coverage record so
 # the negative space is queryable once P09.1 lands.
@@ -15472,3 +15597,18 @@ slug = "www"
 host = "www.primegov.com"
 outcome = "non_jurisdiction_host"
 enum_source = "crt"
+
+# P37.50 (ACQ-22, 2026-11-13): the Savannah Agenda Plus host (AgileTech
+# Consulting, agenda.savannahga.gov) has NO bounded public index — every app
+# path answers the login page and /publishing/ + per-meeting directories
+# answer 403; only directly-linked published item pages
+# (/publishing/<meeting-slug>/<item>_<doc>.html, prev/next item nav) serve.
+# Recorded access_restricted — the refusal stands, never bypassed. The
+# jurisdiction's serving agenda surface is the CivicPlus AgendaCenter the
+# savannah_ga tenant row binds instead (I9b-C016's seat).
+[[platform_census]]
+platform = "agendaplus"
+slug = "agenda.savannahga.gov"
+host = "agenda.savannahga.gov"
+outcome = "access_restricted"
+enum_source = "i9b-c016"

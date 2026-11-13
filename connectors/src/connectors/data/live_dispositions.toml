@@ -60,6 +60,10 @@ note = "P26.2 discovery (RAA pattern) — Austrian DSB VidReg video-surveillance
 [sources.boarddocs]
 disposition = "link_only"
 
+[sources.agendaplus]
+disposition = "link_only"
+note = "P37.50 (ACQ-22): login-walled published-item host — censused access_restricted, never a target"
+
 [sources.buyboard]
 disposition = "link_only"
 
@@ -403,46 +407,6 @@ disposition = "link_only"
 # --- P35.6 / R11-ACQ-01 generated dispositions (ticket 266) --------------------
 # One promote row per generated source, naming its recorded class ticket
 # (HG-03 flip still required — never here).
-
-[sources.agenda_az_maricopa_county_board_of]
-disposition = "promote"
-class_ticket = "P37.50"
-
-[sources.agenda_bexar_county_tx_agenda_center]
-disposition = "promote"
-class_ticket = "P37.50"
-
-[sources.agenda_durham_nc_agenda_center]
-disposition = "promote"
-class_ticket = "P37.50"
-
-[sources.agenda_frisco_tx_onbase_agenda_online]
-disposition = "promote"
-class_ticket = "P37.50"
-
-[sources.agenda_hialeah_fl_agenda_center]
-disposition = "promote"
-class_ticket = "P37.50"
-
-[sources.agenda_jersey_city_nj_digital_agenda]
-disposition = "promote"
-class_ticket = "P37.50"
-
-[sources.agenda_nd_fargo_city_commission_agendas]
-disposition = "promote"
-class_ticket = "P37.50"
-
-[sources.agenda_savannah_ga_2023_05_25]
-disposition = "promote"
-class_ticket = "P37.50"
-
-[sources.agenda_tampa_fl_onbase_agenda_online]
-disposition = "promote"
-class_ticket = "P37.50"
-
-[sources.agenda_tx_dallas_county_commissioners]
-disposition = "promote"
-class_ticket = "P37.50"
 
 [sources.agenda_us_agency_fusus_real]
 disposition = "promote"

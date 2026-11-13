@@ -267,6 +267,21 @@ agenda_platforms = [
   "civicclerk",
   "civicplus",
   "escribe",
+  # P37.50 (R11-ACQ-22, I8 §6.2): the agenda-platforms-v2 per-city seats —
+  # each registry source binds ONE tenant row whose `platform` names the
+  # shared reviewed HTML contract below (portal-registry platform/source_id
+  # split). All stay ingestion_permitted=false pending the operator's OP-26
+  # Wave-D flip under ING-GO-D.
+  "agenda_durham_nc_agenda_center",
+  "agenda_hialeah_fl_agenda_center",
+  "agenda_bexar_county_tx_agenda_center",
+  "agenda_savannah_ga_2023_05_25",
+  "agenda_jersey_city_nj_digital_agenda",
+  "agenda_tx_dallas_county_commissioners",
+  "agenda_frisco_tx_onbase_agenda_online",
+  "agenda_tampa_fl_onbase_agenda_online",
+  "agenda_az_maricopa_county_board_of",
+  "agenda_nd_fargo_city_commission_agendas",
 ]
 
 # The procurement-portal registry source ids (P26.10 / SOURCES.9, §22.3-class).
@@ -515,6 +530,56 @@ doc_run_cap      = 300
 # fetches). Canonical order = the item's own StartDate (desc), ID tie-break —
 # the bounded window is a function of the item SET, not server ordering.
 doc_order_fields = ["StartDate"]
+
+# --- Agenda-platforms v2 HTML index endpoints (P37.50 / R11-ACQ-22, I8 §6.2) --
+# Four reviewed shared markup contracts beside the JSON OData platforms,
+# each named by the tenant row's `platform` field while the per-city
+# `source_id` binds the rights/gate row (portal-registry split). All shapes
+# verified 2026-11-13 with the shared politeness UA; P8-3 holds — matter
+# metadata only, no document fan-out (no doc_url_template/doc_link_keys):
+# minutes, attachments and background files are never fetched.
+
+[platform_endpoints.civicplus_agendacenter]
+# CivicPlus AgendaCenter (CivicEngage): `<host>/AgendaCenter` server-renders
+# the category panels; each `tr.catAgendaRow` is one agenda item carrying a
+# `ViewFile/Agenda/_<mmddyyyy>-<docid>` link (verified on hialeahfl.gov,
+# bexar.org, savannahga.gov 2026-11-13). Minutes links stay out (P8-3).
+# durhamnc.gov answers the shared UA a Cloudflare 403 challenge — recorded,
+# never defeated (SIG-INGEST-013).
+index_genre = "html"
+index_path  = "/AgendaCenter"
+
+[platform_endpoints.civicweb]
+# iCompass/Diligent CivicWeb: `<host>/Portal/MeetingTypeList.aspx` server-
+# renders each meeting type's recent-meeting `list-link` rows to
+# `MeetingInformation.aspx?Id=N` (verified on cityofjerseycity + dallascounty
+# 2026-11-13). NOTE: every *.civicweb.net host's robots.txt is
+# `User-agent: *` / `Disallow: /` (platform-wide, probed 2026-11-13) — the
+# verdict is probed + recorded per host under GL-GATE-08/ADR-088/ADR-222,
+# never bypassed.
+index_genre = "html"
+index_path  = "/Portal/MeetingTypeList.aspx"
+
+[platform_endpoints.onbase_agendaonline]
+# Hyland OnBase Agenda Online: two reviewed server shapes — server-rendered
+# `tr.meeting-row[data-meeting-id]` rows (friscotexas.gov + the Maricopa
+# databankcloud host — the plan's `new:agendaonline` label is the same
+# product, its page says 'OnBase Agenda Online' verbatim) and the embedded
+# `new SearchResults({…,"Meetings":[…]})` JSON literal (tampagov.
+# hylandcloud.com/251agendaonline). The meeting's own `Meetings/ViewMeeting`
+# agenda link (doctype=1) is recorded; doctype=2 minutes + DownloadFile
+# PDFs stay out (P8-3).
+index_genre = "html"
+index_path  = "/"
+meeting_link_template = "{api_base}/Meetings/ViewMeeting?id={item_id}&doctype=1"
+
+[platform_endpoints.html_agenda_archive]
+# A city's own year-indexed agenda archive (Fargo's fargond.gov CMS): the
+# tenant row pins its reviewed `index_path` (the current-year archive page)
+# and each dated '… Agenda' download link is one item — background/consent
+# and minutes/video links never mint items (P8-3). The `MeetingTypeName` the
+# archive's own heading asserts rides each item.
+index_genre = "html"
 
 # --- Procurement-portal index endpoints (P26.10 / SOURCES.9) ------------------
 # Each portal tenant row names its platform family + surface facts; the
