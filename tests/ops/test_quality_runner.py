@@ -455,6 +455,7 @@ def test_runner_never_issues_writes() -> None:
             ),
             "WITH src": (["source_id", "total", "bound"], []),
             "FROM entity": (["deployments", "with_operator"], [(0, 0)]),
+            "b.predicate_id = 'buyer'": (["joined"], [(0,)]),
             "camera_operator": (["claim_id", "value_text", "object_entity", "entity_type"], []),
         }
     )

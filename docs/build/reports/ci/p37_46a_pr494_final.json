@@ -1,0 +1,71 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 494,
+  "pr": 494,
+  "head_sha": "4681fa50b42c42ab8e187e32de8b6d933bcb298f",
+  "head_ref": "r11/P37.46a-organisation-crosswalk-intake",
+  "base": "r11/P37.45-public-quality-page",
+  "read_at": "2026-11-13T05:50:29Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [],
+  "stack_stop": "base `r11/P37.32-contract-expiring-detector` is #480, already merged",
+  "stack_digest": "59f5ddf7c03e1daeaf81f01a0cc34dc4f11496dec827bd437ae3da8c1bb0ebe3",
+  "local_head": "4681fa50b42c42ab8e187e32de8b6d933bcb298f",
+  "external": {
+    "read_at": "2026-11-13T05:50:36Z",
+    "since": "2026-11-13",
+    "fetch": "ok",
+    "main_sha": "1acf1141f607c434d329d30f4bc4ebb2cdfa5935",
+    "chain_descends": false,
+    "descends_note": "origin/main 1acf114 is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [
+      {
+        "child": 494,
+        "parent": 493,
+        "ancestor": true
+      },
+      {
+        "child": 493,
+        "parent": 492,
+        "ancestor": true
+      },
+      {
+        "child": 492,
+        "parent": 491,
+        "ancestor": true
+      },
+      {
+        "child": 491,
+        "parent": 490,
+        "ancestor": false
+      }
+    ]
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1"
+  ],
+  "reruns": [],
+  "checks": [],
+  "waivers": 5,
+  "polls": 0,
+  "waited_s": 0,
+  "state": "fail",
+  "kind": "stack",
+  "line": "blockedOn: CI stack on #494@4681fa5 (external): #491 does not contain its base #490's head e1e4520 — rebased or retargeted outside the documented procedure",
+  "exit": 3
+}

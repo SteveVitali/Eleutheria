@@ -1,0 +1,51 @@
+# SPDX-License-Identifier: Apache-2.0
+# P37.46a — the crosswalk-intake lane vocabulary (R11-CONF-13 13a;
+# design L3-confidence-program.md CP-10; SIG-CONF-004 'Also').
+#
+# A lane names one external-identifier scheme the intake apply asserts onto
+# organisation entities: every claim whose persisted candidate_identifier
+# (claim.value_json->>'scheme') is a lane scheme and whose subject entity is
+# an organization gets an `entity_identifier` row with `asserted_by_claim`
+# pointing at that claim — the spine-asserted registry identifier ADR-159's
+# auto-allow census reads as the tier-0 match record.
+#
+# `ad159` names the ADR-159 registry the lane satisfies (ops.dispositions
+# REGISTRIES); `None` lanes are intake material that is not (yet) an
+# approved registry.
+
+version = "sig.crosswalk-lanes/1"
+
+[[lane]]
+id = "ori"
+scheme = "us.fbi.ori"
+registry_label = "FBI ORI9"
+ad159 = ""
+note = "ORI9 identifiers — land via the fbi_cde_agency_registry (permitted) and leaic_crosswalk (un-flipped) lanes. An approved ADR-159 registry in substance; the census names the three registries it trusts."
+
+[[lane]]
+id = "sam_uei"
+scheme = "us.sam.uei"
+registry_label = "SAM UEI"
+ad159 = "sam_uei"
+note = "SAM.gov entity registrations — the sam_gov_entities lane (new registry row, un-flipped pending HG-03)."
+
+[[lane]]
+id = "census_geoid"
+scheme = "us.census.geoid"
+registry_label = "Census of Governments id"
+ad159 = "census_of_governments"
+note = "Census of Governments unit GEOIDs — the census_of_governments lane (new registry row, un-flipped pending HG-03)."
+
+[[lane]]
+id = "wikidata_qid"
+scheme = "wikidata.qid"
+registry_label = "Wikidata QID"
+ad159 = "wikidata_qid"
+note = "Wikidata QIDs — the wikidata_sparql lane (FLIPPED 2026-09-16, GL-GATE-06). Never canonical for US law enforcement (SIG-IDENT-007); asserted where the upstream row carries them."
+
+[[lane]]
+id = "lei"
+scheme = "gleif.lei"
+registry_label = "GLEIF LEI"
+ad159 = ""
+note = "LEI identifiers a lane row carries (SAM entity registrations, Wikidata statements)."

@@ -1,0 +1,85 @@
+# SPDX-License-Identifier: Apache-2.0
+# The `org_crosswalk` connector vocabulary (P37.46a / R11-CONF-13 13a;
+# design L3-confidence-program.md CP-10). Versioned data — never code.
+#
+# The four crosswalk-intake lanes that give organisation identity by
+# construction: UEI/SAM, FBI ORI, Census GEOID and Wikidata QID. Tier-0/1
+# identity material may come only from `ingestion_permitted` sources
+# (HG-03); a lane's registry source decides its own live posture at the
+# loader gate — this connector never overrides it.
+#
+# A lane row is an upstream registry's own assertion of an organisation's
+# external identifiers — the connector emits candidate identifiers and NEVER
+# resolves entities (SIG-INGEST-034). Where one upstream row carries several
+# schemes (a Wikidata entity's ORI/UEI statements, a LEAIC ORI↔FIPS row), the
+# whole set is asserted on the one org subject: that is the "established
+# upstream crosswalk" the cascade's tier 1 reads.
+
+vocab_version = "1"
+
+# The predicate allowlist (SIG-INGEST-033): an org-crosswalk intake emits an
+# organisation identity surface — the registry record itself, its legal name,
+# the jurisdiction it serves, its type, and external identifiers. A
+# deployment, device, or personnel claim is refused at this boundary.
+predicate_allowlist = [
+  "agency_registry_entry",
+  "external_id",
+  "organization_legal_name",
+  "organization_jurisdiction",
+  "organization_ori",
+  "organization_type",
+]
+
+# The registry source ids this connector serves, keyed by lane role (§22.6).
+[sources]
+sam_uei = "sam_gov_entities"
+census_geoid = "census_of_governments"
+wikidata_qid = "wikidata_sparql"
+ori_fips = "leaic_crosswalk"
+
+# [lanes.<lane>] — one row per intake lane.
+#   source       — the registry source id this lane's captures come from
+#   key_field    — the upstream field the org subject is keyed on
+#   scheme       — the candidate-identifier scheme the key field mints
+#   established  — additional (field → scheme) id columns one upstream row
+#                  may carry: an upstream-declared crosswalk (tier-1 material)
+#   class_hint   — the organization_class the cascade reads (fixed per lane,
+#                  or a field name to read it from)
+[lanes.sam_uei]
+source = "sam_gov_entities"
+key_field = "uei"
+scheme = "us.sam.uei"
+name_fields = ["legal_business_name", "entity_name", "name"]
+state_fields = ["state", "physical_address_state"]
+class_hint = "us.org.registered_entity"
+established = { cage = "us.dla.cage", lei = "gleif.lei" }
+
+[lanes.census_geoid]
+source = "census_of_governments"
+key_field = "geoid"
+scheme = "us.census.geoid"
+name_fields = ["name", "unit_name", "government_name"]
+state_fields = ["state", "state_abbr", "stusab"]
+class_hint = "us.gov.unit"
+established = {}
+
+[lanes.wikidata_qid]
+source = "wikidata_sparql"
+key_field = "qid"
+scheme = "wikidata.qid"
+name_fields = ["label", "name", "orgLabel"]
+state_fields = ["state", "state_abbr"]
+class_hint = "us.org.wikidata"
+established = { ori = "us.fbi.ori", uei = "us.sam.uei", geoid = "us.census.geoid", lei = "gleif.lei" }
+
+# LEAIC (ICPSR 35158): the academic ORI↔FIPS↔place crosswalk — each row's
+# ORI is the org's own id and its FIPS/GEOID is the upstream-declared
+# crosswalk (the tier-1 'established crosswalk' material).
+[lanes.ori_fips]
+source = "leaic_crosswalk"
+key_field = "ori"
+scheme = "us.fbi.ori"
+name_fields = ["name", "agency_name", "agency"]
+state_fields = ["state", "state_abbr"]
+class_hint = "us.le.agency"
+established = { geoid = "us.census.geoid", fips = "us.census.geoid", place_fips = "us.census.geoid" }
