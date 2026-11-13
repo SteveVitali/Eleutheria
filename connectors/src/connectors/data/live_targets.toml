@@ -3009,3 +3009,36 @@ kind = "puerto_rico_targets"
 
 [procportal_pr_consulta_del_registro]
 kind = "puerto_rico_targets"
+
+# --- P37.52 (ACQ-25): document-list page family -----------------------------
+# Eight gated sources — the four cooperative contract-document pages
+# (Florida Buy, WSIPC RFP 24-01, NERIC service page, NASPO portfolio), the
+# Illinois GATA CSFA award list, the Massachusetts capital line + award
+# announcement and the Ohio OCJS RFP PDF, all in
+# data/document_list_targets.toml. Rows record the endpoints the operator's
+# OP-26 Wave-D flips will drive; the live gate refuses before any target is
+# read.
+
+[camreg_ma_massachusetts_capital]
+kind = "document_list_targets"
+
+[grant_il_illinois_gata_csfa]
+kind = "document_list_targets"
+
+[grant_ma_massachusetts_law_enforcement]
+kind = "document_list_targets"
+
+[grant_oh_ohio_criminal_justice]
+kind = "document_list_targets"
+
+[procportal_fl_florida_buy_cooperative]
+kind = "document_list_targets"
+
+[procportal_ny_northeastern_regional]
+kind = "document_list_targets"
+
+[procportal_us_naspo_valuepoint_portfolio]
+kind = "document_list_targets"
+
+[procportal_wa_wsipc_rfp_24]
+kind = "document_list_targets"

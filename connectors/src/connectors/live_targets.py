@@ -144,6 +144,16 @@ def live_targets(source_id: str) -> list[dict[str, str]]:
         from .puerto_rico import puerto_rico_targets
 
         return puerto_rico_targets(source_id=source_id)
+    if kind == "document_list_targets":
+        # P37.52 / R11-ACQ-25: the document-list sources' live targets ARE
+        # the committed inventory in data/document_list_targets.toml — the
+        # reviewed co-op contract-document pages, the GATA award list, the
+        # MA capital line + award announcement and the OCJS RFP PDF; every
+        # row stays ingestion_permitted=false pending the operator's OP-26
+        # Wave-D flips under ING-GO-D.
+        from .document_list import document_list_targets
+
+        return document_list_targets(source_id=source_id)
     if kind == "procurement_portal_tenants":
         # A procurement-portal source's live targets ARE its tenant rows in
         # data/procurement_portal_tenants.toml (P26.10): each expands to the

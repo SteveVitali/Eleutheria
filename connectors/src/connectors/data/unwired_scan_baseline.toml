@@ -153,6 +153,16 @@ disposition = "test-surface"
 note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
 
 [[finding]]
+key = "connectors.document_list.DocumentListConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
+
+[[finding]]
+key = "connectors.document_list.forbidden_predicate_genres"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
 key = "connectors.documentcloud.DocumentCloudConnector"
 disposition = "seam:name-registry"
 note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"

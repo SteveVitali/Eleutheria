@@ -1,0 +1,212 @@
+# SPDX-License-Identifier: Apache-2.0
+# The `document_list` connector's committed target inventory (P37.52 /
+# R11-ACQ-25, I8 §6.2). This table is DATA, not code (SIG-ENG-001 /
+# SIG-INGEST-038): the reviewed document-list surfaces the I4/I6/I9b
+# discovery named — identifiers, reviewed field declarations and provenance
+# only; a row is a URL, a kind, a source, an adapter and an evidence ref,
+# never content. Every row is a public unauthenticated surface (https, a
+# committed host); all eight sources stay behind `ingestion_permitted=false`
+# — the loader gate REFUSES every live fetch until the operator's OP-26
+# Wave-D flips under ING-GO-D (HG-03 RB-04 `a`; the WSIPC and NASPO rows
+# additionally RB-07 `a` — facts and citations only, `facts_citations_only`
+# suppresses every verbatim `description` claim).
+#
+# Rows are `id`-sorted — the loader refuses an unsorted inventory
+# (deterministic order required).
+
+schema = "sig.document-list-targets/1"
+
+[inventory]
+# Derivation provenance: the eight ACQ-25 plan rows
+# (data/acquisition_plan.csv AP-T2-042/-043/-058/-063/-076/-089/-130/-131,
+# candidates I9b-C006 / I9b-C070 / I9b-C005 / I9b-C037 / I6-C004 / I4-C252 /
+# I4-C253 / I4-C255), rights batch RB-04 (US agenda/procurement/grant/records
+# documents) with AP-T2-058 + AP-T2-076 on RB-07 (facts + citations only).
+source_ref = "docs/build/planning/2026-09-30-next-phase/data/acquisition_plan.csv (AP-T2-042/-043/-058/-063/-076/-089/-130/-131) + data/candidates_{I4,I6,I9b}.csv"
+captured_on = "2026-11-13"
+target_count = 8
+
+# florida_buy_gaggle_contract — procportal_fl_florida_buy_cooperative: the
+# Florida Buy (PAEC) cooperative Gaggle contract page (I9b-C006 / I9b-F011):
+# the page enumerates its seven contract documents (agenda, award letter,
+# bid documents, interlocal agreement, vendor response, 2024 extension,
+# 2025 renewal) — pointers only, the documents' contents are never fetched
+# (P8-2 no re-hosting).
+[[inventory.targets]]
+id = "florida_buy_gaggle_contract"
+source = "procportal_fl_florida_buy_cooperative"
+kind = "doclist_html"
+adapter = "contract_docs_page"
+url = "https://floridabuy.paec.org/gaggle-net-inc/"
+publisher = "Panhandle Area Educational Consortium (PAEC), Florida Buy"
+jurisdiction = "us.state_abbr:FL"
+link_re = "(?i)\\.(pdf|docx?|xlsx?)(\\?|$)|/(documents?|files?|downloads?)/"
+expect = ["GAGGLE", "Florida Buy"]
+evidence = "I9b-C006 / I9b-F011 (candidates_I9b.csv) — contract page lists 7 linked documents (agenda, award letter, bid documents, interlocal agreement, vendor response, 2024 extension, 2025 renewal); 200 GET 2026-09-30"
+[inventory.targets.contract]
+ref = "florida-buy-gaggle-net-inc"
+title = "GAGGLE.NET, INC. cooperative contract (Florida Buy / PAEC)"
+vendor = "Gaggle.Net, Inc."
+buyer = "Panhandle Area Educational Consortium (Florida Buy)"
+
+# il_gata_csfa_3496_awardlist — grant_il_illinois_gata_csfa: the Illinois GATA
+# CSFA 569-00-3496 AwardList (I4-C252 / I4-F187/F188): the served default-FY
+# table mints one `grant_award` record per row keyed on the award's own id —
+# the grantee column is organisation-shaped by review (units of government);
+# a person-shaped name is a recorded rejection, never a subject.
+[[inventory.targets]]
+id = "il_gata_csfa_3496_awardlist"
+source = "grant_il_illinois_gata_csfa"
+kind = "doclist_html"
+adapter = "award_table"
+url = "https://omb.illinois.gov/PUBLIC/GATA/CSFA/AwardList.aspx?CSFA=3496"
+publisher = "Illinois Law Enforcement Training and Standards Board via Illinois GOMB GATA Catalog of State Financial Assistance"
+jurisdiction = "us.state_abbr:IL"
+expect = ["Award ID", "Grantee Name", "CSFA"]
+evidence = "I4-C252 / I4-F187/F188 (candidates_I4.csv) — AwardList.aspx?CSFA=3496 serves ~176 award rows on the default FY view (177 <tr> incl. header); FY selector 2025-2030 stays the page's own control (never submitted); 200 GET 2026-09-30"
+[inventory.targets.program]
+ref = "il-gata-csfa-3496"
+program_name = "ILETSB Law Enforcement Camera Grant (CSFA 569-00-3496)"
+funder = "Illinois Law Enforcement Training and Standards Board"
+instrument_type = "grant award"
+period = "FY2025"
+[inventory.targets.columns]
+award_id = "Award ID"
+grantee = "Grantee Name"
+start_date = "Start Date"
+end_date = "End Date"
+amount = "Amount"
+
+# ma_capital_line_s027_bwc — camreg_ma_massachusetts_capital: the
+# Massachusetts FY2025-2029 Capital Investment Plan line S027 (I9b-C070 /
+# I9b-F096): the Municipal Body-Worn Camera Grant Program line; the page's
+# per-fiscal-year table rows mint per-FY `grant_award` allocation records on
+# `funding_instrument:` subjects.
+[[inventory.targets]]
+id = "ma_capital_line_s027_bwc"
+source = "camreg_ma_massachusetts_capital"
+kind = "doclist_html"
+adapter = "capital_line"
+url = "https://budget.digital.mass.gov/capital/fy25/beneficiary-agency/public-safety/eo-public-safety-and-security/s027"
+publisher = "Commonwealth of Massachusetts, Executive Office for Administration and Finance (Capital budget)"
+jurisdiction = "us.state_abbr:MA"
+expect = ["S027", "Body-Worn Camera"]
+evidence = "I9b-C070 / I9b-F096 (candidates_I9b.csv) — capital line 'S027 Municipal Body-Worn Camera Grant Program'; 'Grant program to provide municipal police departments with equipment to implement or expand body-worn camera programs'; per-fiscal-year table (bond cap / non-bond); 200 GET 2026-09-30"
+[inventory.targets.program]
+ref = "ma-capital-s027-bwc"
+program_name = "Municipal Body-Worn Camera Grant Program"
+funder = "Commonwealth of Massachusetts, Executive Office for Administration and Finance"
+instrument_type = "capital plan line"
+period = "FY2025-FY2029"
+description_literal = "Grant program to provide municipal police departments with equipment to implement or expand body-worn camera programs"
+
+# ma_eopss_bwc_final_round — grant_ma_massachusetts_law_enforcement: the
+# EOPSS OGR Body-Worn Camera Program final-round announcement (I4-C255 /
+# I4-F192): the release body's recipient list mints one `grant_award` record
+# per listed department (organisation-shaped names only); the programme
+# record carries the served totals. One-time static page.
+[[inventory.targets]]
+id = "ma_eopss_bwc_final_round"
+source = "grant_ma_massachusetts_law_enforcement"
+kind = "doclist_html"
+adapter = "release_awards"
+url = "https://www.mass.gov/news/healey-driscoll-administration-awards-nearly-35-million-for-police-body-worn-cameras"
+publisher = "Commonwealth of Massachusetts, EOPSS Office of Grants and Research"
+jurisdiction = "us.state_abbr:MA"
+expect = ["body-worn camera", "police departments"]
+list_marker = "police departments"
+evidence = "I4-C255 / I4-F192 (candidates_I4.csv) — OGR/EOPSS final-round release: '32 local police departments ... final round of grants'; ~$3.49M; first four years 144 departments / >4,800 cameras / ~$13M since FY22; recipient list in release body; 200 GET 2026-09-30"
+[inventory.targets.program]
+ref = "ma-eopss-bwc-program"
+program_name = "Massachusetts Law Enforcement Body-Worn Camera Program"
+funder = "Commonwealth of Massachusetts, EOPSS Office of Grants and Research"
+instrument_type = "grant programme"
+period = "FY2022-FY2026"
+award_date = "2026-03-03"
+
+# naspo_portfolio_public_safety_video — procportal_us_naspo_valuepoint_portfolio:
+# the NASPO ValuePoint Public Safety / Law Enforcement Video portfolio page
+# (I6-C004 / I6-F014): seven supplier master-agreement pages and the
+# participating-addenda document links enumerate as pointers. RB-07 — facts
+# and citations only.
+[[inventory.targets]]
+id = "naspo_portfolio_public_safety_video"
+source = "procportal_us_naspo_valuepoint_portfolio"
+kind = "doclist_html"
+adapter = "contract_docs_page"
+url = "https://www.naspovaluepoint.org/portfolios/public-safety-law-enforcement-video-products-services-solutions/"
+publisher = "NASPO ValuePoint (lead state: Oklahoma)"
+jurisdiction = "us"
+facts_citations_only = true
+link_re = "(?i)(/(portfolios|suppliers|documents?|files?)/|\\.(pdf|docx?|xlsx?)(\\?|$))"
+expect = ["Public Safety", "Video"]
+evidence = "I6-C004 / I6-F014/F076 (candidates_I6.csv) — portfolio page enumerates 7 supplier master agreements + per-state participating addenda (2023-2028); 200 GET 2026-09-30; terms-of-use page captured for the RB-07 record"
+[inventory.targets.contract]
+ref = "naspo-valuepoint-public-safety-video-2023-2028"
+title = "NASPO ValuePoint Public Safety/Law Enforcement Video Products, Services & Solutions portfolio (2023-2028)"
+buyer = "NASPO ValuePoint"
+
+# neric_gaggle_service_page — procportal_ny_northeastern_regional: the NERIC
+# (Capital Region BOCES) Gaggle service-catalogue page (I9b-C037 / I9b-F056):
+# a regional service offering, not a contract instrument — the page record
+# itself carries the declared vendor/title facts and its document links
+# enumerate as pointers.
+[[inventory.targets]]
+id = "neric_gaggle_service_page"
+source = "procportal_ny_northeastern_regional"
+kind = "doclist_html"
+adapter = "service_page"
+url = "https://neric.org/gaggle/"
+publisher = "NERIC (Capital Region BOCES regional information center, NY)"
+jurisdiction = "us.state_abbr:NY"
+title = "NERIC Gaggle service offering (Capital Region BOCES)"
+vendor = "Gaggle"
+link_re = "(?i)\\.(pdf|docx?|xlsx?)(\\?|$)|/(documents?|files?|downloads?)/"
+expect = ["Gaggle", "NERIC"]
+evidence = "I9b-C037 / I9b-F056 (candidates_I9b.csv) — 'NERIC > Services > Gaggle' regional service offering for K-12 student-safety management; NY districts buy through the BOCES service; 200 GET 2026-09-30"
+
+# oh_ocjs_bwc_rfp_fy2026 — grant_oh_ohio_criminal_justice: the Ohio OCJS
+# FY2026 Body-Worn Camera Grant Program RFP (I4-C253 / I4-F189): the
+# digital-native PDF's text layer verifies the declared markers; the
+# programme record carries the served award-window and award-statistic
+# literals — the RFP serves no recipient list, so no award rows can mint by
+# construction.
+[[inventory.targets]]
+id = "oh_ocjs_bwc_rfp_fy2026"
+source = "grant_oh_ohio_criminal_justice"
+kind = "doclist_pdf"
+adapter = "rfp_pdf"
+url = "https://dam.assets.ohio.gov/image/upload/ocjs.ohio.gov/2026_OCJS_BWC_RFP_FINAL.pdf"
+publisher = "Ohio Department of Public Safety, Office of Criminal Justice Services"
+jurisdiction = "us.state_abbr:OH"
+expect = ["Body-Worn Camera", "Office of Criminal Justice Services"]
+evidence = "I4-C253 / I4-F189 (candidates_I4.csv) — 18pp FY2026 RFP: 'The average award amount for FY2025 was $34,694.52 (ranging from $1,710.71 - $141,709.51)'; 24-month awards 2025-07-01..2027-06-30; local LEAs via unit of local government; no recipient list in the RFP; 200 GET 2026-09-30"  # future-ok: real-world: the RFP's own served 24-month award window (2025-07-01..2027-06-30)
+[inventory.targets.program]
+ref = "oh-ocjs-bwc-grant"
+program_name = "Ohio Body-Worn Camera Grant Program"
+funder = "Ohio Office of Criminal Justice Services"
+instrument_type = "grant solicitation (RFP)"
+period = "FY2026"
+
+# wsipc_rfp_24_01_gaggle — procportal_wa_wsipc_rfp_24: the WSIPC RFP 24-01
+# Student Safety Solutions page (I9b-C005 / I9b-F003): public notice, the
+# RFP, the sample contract, four addenda and the OR/UT/WA publication
+# affidavits enumerate as document pointers. RB-07 — facts and citations
+# only (no verbatim description).
+[[inventory.targets]]
+id = "wsipc_rfp_24_01_gaggle"
+source = "procportal_wa_wsipc_rfp_24"
+kind = "doclist_html"
+adapter = "contract_docs_page"
+url = "https://www.wsipc.org/purchasing/gaggle-24-01"
+publisher = "WSIPC (Washington School Information Processing Cooperative)"
+jurisdiction = "us.state_abbr:WA"
+facts_citations_only = true
+link_re = "(?i)\\.(pdf|docx?|xlsx?)(\\?|$)|/(documents?|files?|downloads?)/"
+expect = ["24-01", "Gaggle"]
+evidence = "I9b-C005 / I9b-F003 (candidates_I9b.csv) — cooperative master RFP 24-01 with public notice, RFP, sample contract, 4 addenda, OR/UT/WA publication affidavits (11 linked PDFs); member-district orders not listed; 200 GET 2026-09-30"
+[inventory.targets.contract]
+ref = "wsipc-rfp-24-01"
+title = "RFP 24-01 Student Safety Solutions — Gaggle cooperative contract (WSIPC)"
+vendor = "Gaggle"
+buyer = "WSIPC"
