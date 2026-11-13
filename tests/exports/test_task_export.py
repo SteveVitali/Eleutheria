@@ -339,3 +339,96 @@ def test_hash_collision_extends() -> None:
     resolve_handle_hashes(entries)
     assert entries[0]["handle"] != entries[1]["handle"]
     assert len(entries[0]["handle"].rsplit("-", 1)[-1]) >= 5
+
+
+# --- P37.32 (K7 WX-06): the task ↔ item link + the contract trigger ---------- #
+
+
+def test_contract_expiring_card_links_the_emitted_watch_item() -> None:
+    """K7 §5.8 — the task links to the item: a `contract_expiring` card on a
+    subject with an emitted watch item carries the item's own handle (never a
+    re-derived one)."""
+    card = _card(
+        task_type="contract_expiring",
+        subject_id="ent-c1",
+        trigger={"kind": "contract", "ref": "wc-end"},
+    )
+    item = {
+        "handle": "W-us-ok-expiry-c200-77cd",
+        "kind": "contract_expiry",
+        "title": "City of Test: contract C-200 ends 2027-01-31",  # future-ok: synthetic: fixture
+        "subjects": ["contract:test:tenant:t1:C-200"],
+    }
+    labels = {
+        "ent-c1": type(
+            "L",
+            (),
+            {
+                "label": "Contract C-200",
+                "url": None,
+                "subject_key": "contract:test:tenant:t1:C-200",
+                "place_jkey": None,
+                "descriptor": None,
+            },
+        )()
+    }
+    out = _build(
+        [card],
+        raw={},
+        label_registry=labels,
+        watch_items_by_subject={"contract:test:tenant:t1:C-200": [item]},
+    )
+    [built] = out.cards
+    assert built["watch_items"] == [
+        {
+            "handle": "W-us-ok-expiry-c200-77cd",
+            "kind": "contract_expiry",
+            "title": item["title"],
+        }
+    ]
+
+
+def test_card_without_a_matching_item_carries_no_watch_items() -> None:
+    out = _build(
+        [_card(task_type="contract_expiring", subject_id="ent-c9")],
+        raw={},
+        watch_items_by_subject={"contract:other:x": [{"handle": "W-x"}]},
+    )
+    assert "watch_items" not in out.cards[0]
+
+
+def test_contract_trigger_resolves_the_firing_end_date_claim() -> None:
+    """The `contract` trigger names the recorded end the task asks about —
+    the claim id IS the trigger ref (SIG-RQ-005's named gap)."""
+    card = _card(
+        task_type="contract_expiring",
+        trigger={"kind": "contract", "ref": "wc-end"},
+    )
+    raw = {
+        "watch_claims": [
+            {
+                "claim_id": "wc-end",
+                "subject_key": "contract:test:t:C-9",
+                "predicate_id": "end_date",
+                "value_text": "2027-01-31",  # future-ok: synthetic: fixture contract end
+                "observed_at": "2026-05-01",
+                "source_id": "src_a",
+            }
+        ]
+    }
+    out = _build([card], raw=raw)
+    detail = out.cards[0]["trigger"]["detail"]
+    assert detail["resolves"] is True
+    assert detail["end_date"] == "2027-01-31"  # future-ok: synthetic: fixture contract end
+    assert detail["predicate_id"] == "end_date"
+    # The K11 title template renders "… contract ending <date>".
+    assert "2027-01-31" in out.cards[0]["title"]  # future-ok: synthetic: fixture contract end
+
+
+def test_unresolvable_contract_trigger_is_the_honest_absence() -> None:
+    card = _card(
+        task_type="contract_expiring",
+        trigger={"kind": "contract", "ref": "wc-missing"},
+    )
+    out = _build([card], raw={"watch_claims": []})
+    assert out.cards[0]["trigger"]["detail"] == {"resolves": False}

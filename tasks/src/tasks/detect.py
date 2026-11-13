@@ -21,6 +21,14 @@ any of it.
 * **Stale sharing edges → renewals (§29.7).** A ``configured_access`` relationship whose newest
   observation exceeds the FAST volatility threshold generates ``sharing_snapshot_stale`` — the
   renewal signal.
+* **Expiring contracts → renewal terms (catalog #10, P37.32 / K7 WX-06).** A contract subject
+  whose recorded ``end_date`` falls within the catalog's firing window and whose renewal terms
+  are NOT on record generates ``contract_expiring`` — the "renewal terms unknown" task the
+  watch's ``contract_expiry`` ``upper_bound`` item pairs with (K7 §5.8). Renewal evidence
+  mirrors the watch producer's certainty split verbatim: a recorded non-renewal
+  (``auto_renews`` false — the end is *stated*) or a derivable auto-renewal
+  (``auto_renews`` + ``notice_window_days`` — the decision date ``_next_decision_date``
+  derives) is a recorded term; everything else is the unknown the task names.
 
 The queue is minted through the real :class:`~tasks.lifecycle.TaskPool`, so the §33
 anti-abuse disciplines apply unchanged: **per-subject rate limiting** (a
@@ -107,6 +115,16 @@ _STALE_ACCESS_KIND = "configured_access"
 #: The FAST-volatility threshold (§29.7): a configured-access snapshot older than this is stale.
 _FAST_THRESHOLD_DAYS = 180
 
+#: Catalog #10's firing window (§33.2): a contract's recorded ``end_date`` within this many
+#: days fires ``contract_expiring`` — the same ``threshold_days`` default the catalog spec's
+#: ``fires`` lambda applies (``tasks.catalog`` keeps 90 as the spec default; the candidate
+#: facts carry it explicitly so the priority derivation reads the same number).
+_CONTRACT_EXPIRY_THRESHOLD_DAYS = 90
+
+#: The trigger kind a ``contract_expiring`` task cites — the contract's firing ``end_date``
+#: claim (the claim row IS the detection; there is no materialized contract row to name).
+_CONTRACT_TRIGGER_KIND = "contract"
+
 #: Catalog task type → the records-request record type (a ``request_templates.toml`` key) whose
 #: proven template + statute the draft uses. Any records-requester/document-reviewer task not
 #: listed falls back to the surveillance-policy template.
@@ -143,6 +161,12 @@ class MaterializedInputs:
     contradictions: Sequence[dict[str, object]] = ()
     coverage: Sequence[dict[str, object]] = ()
     edges: Sequence[dict[str, object]] = ()
+    #: The WX-01 contract subjects — one row per ``contract:*`` subject carrying its
+    #: current ``end_date`` claim plus whatever renewal-term claims are on record
+    #: (``research_pg.read_contract_expiry_inputs``; not a materialization — the spine's
+    #: own current claims, read under the same honest-absence posture). Absent/empty is
+    #: honest: a spine with no dated contracts yields no ``contract_expiring`` tasks.
+    contracts: Sequence[dict[str, object]] = ()
 
 
 @dataclass(frozen=True)
@@ -237,6 +261,7 @@ class DetectorRunSummary:
     contradictions_read: int = 0
     coverage_read: int = 0
     edges_read: int = 0
+    contracts_read: int = 0
     generated: int = 0
     deduplicated: int = 0
     rate_limited: int = 0
@@ -252,6 +277,7 @@ class DetectorRunSummary:
             "contradictions_read": self.contradictions_read,
             "coverage_read": self.coverage_read,
             "edges_read": self.edges_read,
+            "contracts_read": self.contracts_read,
             "generated": self.generated,
             "deduplicated": self.deduplicated,
             "rate_limited": self.rate_limited,
@@ -277,6 +303,15 @@ class DetectorRunResult:
 # --- candidate routing (materialized row → a catalog task) --------------------
 
 
+#: One routed candidate: ``(catalog slug, subject, jurisdiction, trigger kind, trigger ref,
+#: facts)``. The facts dict is what the spec's ``fires``/``priority``/``closes`` predicates
+#: evaluate — a ``priority`` key pins a router-computed priority (the materialized rows),
+#: while the contract candidates carry the real firing facts (``days_to_end_date``,
+#: ``threshold_days``, ``renewal_evidence``) so catalog #10's own ``_expiry_priority``
+#: derives urgency from the signal itself, never a second formula.
+_Candidate = tuple[str, str | None, str | None, str, str, dict[str, object]]
+
+
 def _parse_dt(value: object) -> datetime | None:
     if isinstance(value, datetime):
         return value
@@ -290,8 +325,8 @@ def _parse_dt(value: object) -> datetime | None:
 
 def _contradiction_candidates(
     rows: Iterable[dict[str, object]],
-) -> list[tuple[str, str | None, str | None, str, str, float]]:
-    out: list[tuple[str, str | None, str | None, str, str, float]] = []
+) -> list[_Candidate]:
+    out: list[_Candidate] = []
     for r in rows:
         if str(r.get("status") or "") != _CONTRADICTION_OPEN_STATUS:
             continue
@@ -304,14 +339,14 @@ def _contradiction_candidates(
         if subject is None or cid is None:
             continue
         priority = _SEVERITY_PRIORITY.get(str(r.get("severity") or ""), 0.3)
-        out.append((slug, str(subject), None, "contradiction", str(cid), priority))
+        out.append((slug, str(subject), None, "contradiction", str(cid), {"priority": priority}))
     return out
 
 
 def _coverage_candidates(
     rows: Iterable[dict[str, object]],
-) -> list[tuple[str, str | None, str | None, str, str, float]]:
-    out: list[tuple[str, str | None, str | None, str, str, float]] = []
+) -> list[_Candidate]:
+    out: list[_Candidate] = []
     for r in rows:
         if str(r.get("absence_kind") or "") not in _COVERAGE_GAP_ABSENCE:
             continue
@@ -331,16 +366,14 @@ def _coverage_candidates(
                 str(jurisdiction) if jurisdiction is not None else None,
                 "coverage",
                 str(cid),
-                0.5,
+                {"priority": 0.5},
             )
         )
     return out
 
 
-def _edge_candidates(
-    rows: Iterable[dict[str, object]], *, now: datetime
-) -> list[tuple[str, str | None, str | None, str, str, float]]:
-    out: list[tuple[str, str | None, str | None, str, str, float]] = []
+def _edge_candidates(rows: Iterable[dict[str, object]], *, now: datetime) -> list[_Candidate]:
+    out: list[_Candidate] = []
     for r in rows:
         if str(r.get("access_kind") or "") != _STALE_ACCESS_KIND:
             continue
@@ -354,7 +387,84 @@ def _edge_candidates(
             continue  # snapshot still fresh — not yet a renewal task
         priority = min(1.0, age_days / 365.0)
         out.append(
-            ("sharing_snapshot_stale", str(subject), None, "relationship", str(rid), priority)
+            (
+                "sharing_snapshot_stale",
+                str(subject),
+                None,
+                "relationship",
+                str(rid),
+                {"priority": priority},
+            )
+        )
+    return out
+
+
+def _bool(value: object) -> bool | None:
+    """A claim's recorded boolean — ``True``/``False``/``None`` (absent), never coerced."""
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        folded = value.strip().lower()
+        if folded == "true":
+            return True
+        if folded == "false":
+            return False
+    return None
+
+
+def _contract_renewal_evidence(row: dict[str, object]) -> bool:
+    """Whether the contract's renewal terms are on record — the ONE rule the watch
+    producer applies, verbatim (``exports.watch`` rule 2): a recorded non-renewal
+    (``auto_renews`` false → the end is *stated*, never an ``upper_bound``) or a
+    derivable auto-renewal (``auto_renews`` true + ``notice_window_days`` → the
+    ``renewal_deadline``) means the renewal decision is evidenced and no
+    "renewal terms unknown" task fires. Every other recording — no ``auto_renews``
+    claim at all, or an auto-renewal whose notice window is not on record — leaves
+    the item at ``upper_bound`` and the task open (K7 §5.8)."""
+    auto = _bool(row.get("auto_renews"))
+    if auto is False:
+        return True
+    return auto is True and row.get("notice_window_days") is not None
+
+
+def _contract_candidates(rows: Iterable[dict[str, object]], *, now: datetime) -> list[_Candidate]:
+    """Catalog #10 — ``contract_expiring`` over the WX-01 contract subjects.
+
+    One input row per contract subject (``end_date`` + the renewal-term claims on
+    record). The catalog's fires condition is applied verbatim: ``end_date``
+    within ``threshold_days`` (90) AND no renewal evidence. Each emitted
+    candidate cites the firing ``end_date`` claim (``trigger_kind="contract"``)
+    and carries the spec's real facts so ``_expiry_priority`` ranks nearer
+    expiries first. A contract with no recorded ``end_date`` yields no
+    candidate — the undated case is a coverage question, not this detector's.
+    """
+    today = now.date()
+    out: list[_Candidate] = []
+    for r in rows:
+        subject = r.get("subject_id")
+        end_dt = _parse_dt(r.get("end_date"))
+        claim_id = r.get("end_date_claim_id")
+        if subject is None or end_dt is None or claim_id is None:
+            continue
+        days_to_end = (end_dt.date() - today).days
+        if days_to_end > _CONTRACT_EXPIRY_THRESHOLD_DAYS:
+            continue  # outside the firing window — not yet a renewal task
+        if _contract_renewal_evidence(r):
+            continue  # renewal terms on record — nothing to find
+        jurisdiction = r.get("jurisdiction_id")
+        out.append(
+            (
+                "contract_expiring",
+                str(subject),
+                str(jurisdiction) if jurisdiction is not None else None,
+                _CONTRACT_TRIGGER_KIND,
+                str(claim_id),
+                {
+                    "days_to_end_date": days_to_end,
+                    "threshold_days": _CONTRACT_EXPIRY_THRESHOLD_DAYS,
+                    "renewal_evidence": False,
+                },
+            )
         )
     return out
 
@@ -384,16 +494,18 @@ def run_detectors(
         contradictions_read=len(inputs.contradictions),
         coverage_read=len(inputs.coverage),
         edges_read=len(inputs.edges),
+        contracts_read=len(inputs.contracts),
     )
 
     candidates = (
         _contradiction_candidates(inputs.contradictions)
         + _coverage_candidates(inputs.coverage)
         + _edge_candidates(inputs.edges, now=now)
+        + _contract_candidates(inputs.contracts, now=now)
     )
 
     seen: set[str] = set()
-    for slug, subject_id, jurisdiction_id, trigger_kind, trigger_ref, priority in candidates:
+    for slug, subject_id, jurisdiction_id, trigger_kind, trigger_ref, facts in candidates:
         if slug not in registry:
             summary.unroutable += 1
             continue
@@ -401,7 +513,7 @@ def run_detectors(
         task = pool.generate(
             spec,
             subject_id,
-            facts={"priority": priority},
+            facts=facts,
             now=now,
             jurisdiction_id=jurisdiction_id,
             trigger_kind=trigger_kind,

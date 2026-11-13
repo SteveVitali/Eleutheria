@@ -171,3 +171,97 @@ def test_non_gap_coverage_absence_generates_no_task(conn, absence) -> None:
     )
     summary, _ = materialize_research_queue(conn, now=NOW)
     assert summary.written == 0
+
+
+def _seed_contract(conn, *, subject_key, end_date, auto_renews=None, window=None):
+    """Seed a ``contract:*`` subject with the claims catalog #10 reads.
+
+    Returns ``(subject_id, end_date_claim_id)``. ``auto_renews``/``window`` model
+    the WX-02 dated-decision predicates; ``end_date``/``renewal_options`` are
+    already registry-seeded, the others register as fixture predicates.
+    """
+    from conftest import register_vocab_predicate
+
+    cur = conn.cursor()
+    prereqs = seed_claim_prerequisites(conn)
+    for pred, dtype in (("auto_renews", "boolean"), ("notice_window_days", "integer")):
+        register_vocab_predicate(conn, pred, datatype=dtype)
+    subject = prereqs["subject_id"]
+    cur.execute(
+        "INSERT INTO entity_identifier(entity_id, scheme, value)"
+        " VALUES(%s,'sig.connector.subject',%s)",
+        (subject, subject_key),
+    )
+
+    def _claim(predicate, *, text=None, num=None, boolean=None):
+        # claim_value_shape: a 'value' claim needs value_text (or an object) —
+        # the typed bool/num rides beside its text form, never instead of it.
+        raw = text if text is not None else (str(num) if num is not None else str(boolean))
+        cur.execute(
+            "INSERT INTO claim(subject_id,predicate_id,object_type,value_kind,"
+            "value_text,value_num,value_bool,raw_value,observed_at,source_reliability,"
+            "claim_directness,artifact_integrity,asserted_by,assertion_rationale,"
+            "ingest_run_id,rights_id,sensitivity_tier) "
+            "VALUES(%s,%s,'literal','value',%s,%s,%s,%s,'2026-05-01T00:00:00Z','R1','D1','I1',"
+            "%s,'fixture',%s,%s,0) RETURNING claim_id",
+            (
+                subject,
+                predicate,
+                text if text is not None else raw,
+                num,
+                boolean,
+                raw,
+                prereqs["author_id"],
+                prereqs["run_id"],
+                prereqs["rights_id"],
+            ),
+        )
+        return str(cur.fetchone()[0])
+
+    end_claim = _claim("end_date", text=end_date)
+    if auto_renews is not None:
+        _claim("auto_renews", boolean=auto_renews)
+    if window is not None:
+        _claim("notice_window_days", num=window)
+    return subject, end_claim
+
+
+def test_contract_expiring_materializes_from_contract_claims(conn) -> None:
+    """P37.32 / K7 WX-06 — catalog #10 runs over the WX-01 contract claims."""
+    from tasks.research_pg import read_contract_expiry_inputs
+
+    subject, end_claim = _seed_contract(
+        conn, subject_key="contract:test:tenant:t1:C-200", end_date="2026-11-01"
+    )
+    # A second contract whose renewal terms ARE on record never fires.
+    _seed_contract(
+        conn,
+        subject_key="contract:test:tenant:t1:C-300",
+        end_date="2026-11-15",
+        auto_renews=False,
+    )
+    rows = read_contract_expiry_inputs(conn)
+    assert {r["subject_key"] for r in rows} == {
+        "contract:test:tenant:t1:C-200",
+        "contract:test:tenant:t1:C-300",
+    }
+
+    summary, _ = materialize_research_queue(conn, now=NOW)
+    assert summary.written == 1
+    cur = conn.cursor()
+    got = cur.execute(
+        "SELECT task_type, subject_id::text, trigger_kind, trigger_ref, closing_condition "
+        "FROM research_task"
+    ).fetchall()
+    assert len(got) == 1
+    ttype, subj, tkind, tref, closing = got[0]
+    assert ttype == "contract_expiring"
+    assert subj == str(subject)
+    assert tkind == "contract"  # cites the firing end_date claim (K7 §5.8)
+    assert tref == end_claim
+    assert "renewal" in closing.lower()
+
+    # Idempotent: a re-run over the unchanged spine writes +0 (SIG-TASK-007).
+    summary2, _ = materialize_research_queue(conn, now=NOW)
+    assert summary2.written == 0
+    assert summary2.skipped_existing == 1
