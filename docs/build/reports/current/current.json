@@ -1,8 +1,8 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "9b12d254d0fca2fb1d7d672531e4d1fa670663f0",
-  "manifest_inputs": 1262,
+  "input_commit": "46df498e2e50463aeb0f370239d8a82ed9e4d4b5",
+  "manifest_inputs": 1263,
   "control": {
     "projectStatus": "IN_PROGRESS",
     "nextTicket": "P37.46a",
@@ -26,20 +26,20 @@
     "updatedAt": "2026-11-12T15:41Z"
   },
   "counts": {
-    "obligations": 239,
-    "owed": 155,
-    "open": 152,
+    "obligations": 240,
+    "owed": 156,
+    "open": 153,
     "partial": 3,
     "terminal": 84,
-    "events": 754,
+    "events": 755,
     "transitions": 59,
     "coverage_assessments": 515,
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
     "return_pass_rows": 86,
-    "known_inconsistencies": 0,
-    "conflicted": 0
+    "known_inconsistencies": 26,
+    "conflicted": 26
   },
   "obligations": [
     {
@@ -12574,6 +12574,22 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P37.46a-1",
+      "status": "OPEN",
+      "status_source": "cell (no events)",
+      "kind": "V",
+      "owner": "—",
+      "landing": "—",
+      "landing_source": "event-head",
+      "backlog_home": "—",
+      "item": "The P37.46a named mutation (OM-20, PRE-AUTHORISED — GATE-G6 §4 names row 470 verbatim, \"Approve all 15 (rec.)\" 2026-11-05T15:20Z, expires GATE-ACCEPT-R11): the crosswalk-intake production writes — `sig-db crosswalk-intake --apply` over the four lanes (UEI/SAM, ORI, GEOID, QID) asserting `entity_identifier.asserted_by_claim` on the hosted spine, plus the live fetch of each lane's source once green (`wikidata_sparql` + `fbi_cde_agency_registry` flipped; `census_of_governments` + `sam_gov_entities` + `leaic_crosswalk` await the operator's HG-03 flips, OP-26)",
+      "unblocked_by": "owner: the OM-19 leg-runner or the operator · trigger: `implement-spec spec=docs/tickets/470_P37.46a__organisation-crosswalk-intake.md live_verification=true` inside `AR-3 + AR-2`, after the operator's HG-03 flips for the new registry rows",
+      "verify": "hosted dry-run `sig-db crosswalk-intake --dsn …` prints per-scheme pending counts + the `sig.org-crosswalk-report/1`; `--apply` lands `entity_identifier` rows with `asserted_by_claim` reaching an `ingestion_permitted` source (+0 re-run); each lane's live run lands captures + claims and a +0 shadow re-run",
+      "proxy": "the apply is engineered + fixture-verified on real PG18 (`tests/db/test_crosswalk_intake.py`, 7 tests — provenance insert, +0 idempotence, org-only subjects, dry-run, the L2-baseline report); the connector lanes run replay/shadow diff 0 over committed fixtures (`tests/connectors/test_org_crosswalk.py`, 19 tests); `eval_gq21` measures the buyer-join half",
+      "line": 1585,
+      "events": []
     }
   ],
   "return_pass": {
@@ -27501,21 +27517,232 @@
       }
     ]
   },
-  "known_inconsistencies": [],
-  "incomplete": false,
+  "known_inconsistencies": [
+    {
+      "check": "deferrals/open-vs-passed-gate",
+      "severity": "error",
+      "file": "docs/tickets/DEFERRALS.md",
+      "obligation": "D-P37.46a-1",
+      "evidence": "line 1585",
+      "message": "owed row D-P37.46a-1 references GATE-ACCEPT whose readout says PASSED"
+    },
+    {
+      "check": "ledger/next-landed",
+      "severity": "conflict",
+      "file": "docs/build/LEDGER.md",
+      "obligation": "P37.46a",
+      "evidence": "nextTicket P37.46a already has a BUILD_INDEX row",
+      "message": "the index runs ahead of CURRENT STATE — landed work recorded for a ticket the ledger still calls next"
+    },
+    {
+      "check": "ledger/index-ahead",
+      "severity": "conflict",
+      "file": "docs/build/BUILD_INDEX.md",
+      "obligation": "P37.46a",
+      "evidence": "index row 470 > lastCompleted seq 469",
+      "message": "BUILD_INDEX row 470 (P37.46a) lands after the ledger's lastCompleted P37.45 — index and control state disagree"
+    },
+    {
+      "check": "ledger/next-not-lowest",
+      "severity": "error",
+      "file": "docs/build/LEDGER.md",
+      "obligation": "P37.46a",
+      "evidence": "nextTicket: P37.46a; lowest open row: P37.46b",
+      "message": "nextTicket 'P37.46a' is not the lowest chain row that has not landed ('P37.46b'; superseded-by/deferred/unused and HUMAN rows skipped — V2)"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "schema must be 'obligation-event/1'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "unknown field 'id'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "unknown field 'obligation'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "unknown field 'transition'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "unknown field 'by'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "unknown field 'evidence'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "unknown field 'cites'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "missing field 'schema'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "missing field 'event_id'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "missing field 'obligation_id'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "missing field 'seq'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "missing field 'expected_previous_event'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "missing field 'from_status'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "missing field 'ticket_id'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "missing field 'owner'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "missing field 'landing'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "missing field 'backlog_home'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "missing field 'evidence_refs'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "missing field 'observed_at'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "missing field 'source_commit'"
+    },
+    {
+      "check": "events/malformed",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "?",
+      "evidence": "?",
+      "message": "missing field 'reason'"
+    },
+    {
+      "check": "events/missing-anchor",
+      "severity": "error",
+      "file": "docs/build/reports/obligations/events.jsonl",
+      "obligation": "D-P37.46a-1",
+      "evidence": "DEFERRALS line 1585",
+      "message": "D-P37.46a-1 has no migration anchor — every obligation carries one"
+    }
+  ],
+  "incomplete": true,
   "stale_sources": [],
-  "manifest_sha256": "4f5922778a904afecc5fe9218e77d6b56f41e2e824ec7100a02e5211cb35bff9",
+  "manifest_sha256": "dd2993ff40c180a0f19745063554efc962b146ff3c34b0c4e50649cfa57a12a1",
   "current_md": {
-    "lines": 161,
-    "bytes": 20413,
+    "lines": 173,
+    "bytes": 20074,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
+      "adrs.md",
       "coverage-1.md",
       "coverage-2.md",
       "coverage-3.md",
       "coverage-4.md",
       "coverage-5.md",
       "domains.md",
+      "funnel.md",
       "obligations.md"
     ]
   }
