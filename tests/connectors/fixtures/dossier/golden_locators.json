@@ -91,6 +91,92 @@
       "raw_value": "July 16, 2025"
     }
   ],
+  "anaheim-pd-policy-manual": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 33,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "title",
+      "raw_value": "APD Policy Manual"
+    },
+    {
+      "field": "citation",
+      "locator": {
+        "end": 116,
+        "kind": "byte_range",
+        "start": 108
+      },
+      "predicate": "citation",
+      "raw_value": "427 ALPR"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 106,
+        "kind": "byte_range",
+        "start": 89
+      },
+      "predicate": "technology",
+      "raw_value": "Body Worn Cameras"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 136,
+        "kind": "byte_range",
+        "start": 122
+      },
+      "predicate": "technology",
+      "raw_value": "UAS Operations"
+    }
+  ],
+  "bart-surveillance-index": [
+    {
+      "field": "document",
+      "locator": {
+        "end": 149,
+        "kind": "byte_range",
+        "start": 111
+      },
+      "predicate": "document",
+      "raw_value": "surveillance technology annual reports"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 149,
+        "kind": "byte_range",
+        "start": 111
+      },
+      "predicate": "title",
+      "raw_value": "surveillance technology annual reports"
+    }
+  ],
+  "berkeley-policy-materials-index": [
+    {
+      "field": "document",
+      "locator": {
+        "end": 175,
+        "kind": "byte_range",
+        "start": 143
+      },
+      "predicate": "document",
+      "raw_value": "surveillance technology policies"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 175,
+        "kind": "byte_range",
+        "start": 143
+      },
+      "predicate": "title",
+      "raw_value": "surveillance technology policies"
+    }
+  ],
   "bia-tld-layer-metadata": [
     {
       "field": "title",
@@ -121,6 +207,28 @@
       },
       "predicate": "use_restriction",
       "raw_value": "not intended for legal, survey, engineering or navigation purposes"
+    }
+  ],
+  "boston-annual-surveillance-report-2024": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 62,
+        "kind": "byte_range",
+        "start": 36
+      },
+      "predicate": "title",
+      "raw_value": "Annual Surveillance Report"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 35,
+        "kind": "byte_range",
+        "start": 21
+      },
+      "predicate": "enacting_body",
+      "raw_value": "City of Boston"
     }
   ],
   "bscc-ort-grant-program": [
@@ -203,6 +311,60 @@
       },
       "predicate": "funding_instrument",
       "raw_value": "BSCC ORT"
+    }
+  ],
+  "chicago-oig-shotspotter-evaluation": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 45,
+        "kind": "byte_range",
+        "start": 34
+      },
+      "predicate": "title",
+      "raw_value": "ShotSpotter"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 45,
+        "kind": "byte_range",
+        "start": 34
+      },
+      "predicate": "technology",
+      "raw_value": "ShotSpotter"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 103,
+        "kind": "byte_range",
+        "start": 76
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Office of Inspector General"
+    }
+  ],
+  "cmpd-directives-guide": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 84,
+        "kind": "byte_range",
+        "start": 56
+      },
+      "predicate": "title",
+      "raw_value": "Interactive Directives Guide"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 55,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Charlotte-Mecklenburg Police Department"
     }
   ],
   "davie-ntss-2018-026-cellebrite": [
@@ -342,6 +504,134 @@
       },
       "predicate": "authorization_state",
       "raw_value": "recommends approval"
+    }
+  ],
+  "dhs-fusion-center-roster": [
+    {
+      "field": "document",
+      "locator": {
+        "end": 152,
+        "kind": "byte_range",
+        "start": 130
+      },
+      "predicate": "document",
+      "raw_value": "Primary fusion centers"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 152,
+        "kind": "byte_range",
+        "start": 130
+      },
+      "predicate": "title",
+      "raw_value": "Primary fusion centers"
+    },
+    {
+      "field": "document",
+      "locator": {
+        "end": 270,
+        "kind": "byte_range",
+        "start": 245
+      },
+      "predicate": "document",
+      "raw_value": "Recognized fusion centers"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 270,
+        "kind": "byte_range",
+        "start": 245
+      },
+      "predicate": "title",
+      "raw_value": "Recognized fusion centers"
+    }
+  ],
+  "doj-cops-technology-awards": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 20,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "title",
+      "raw_value": "COPS"
+    },
+    {
+      "field": "grant_funder",
+      "locator": {
+        "end": 106,
+        "kind": "byte_range",
+        "start": 60
+      },
+      "predicate": "funder",
+      "raw_value": "Office of Community Oriented Policing Services"
+    },
+    {
+      "field": "grant_program",
+      "locator": {
+        "end": 20,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "funding_program_name",
+      "raw_value": "COPS"
+    }
+  ],
+  "eff-red-flag-research-index": [
+    {
+      "field": "document",
+      "locator": {
+        "end": 117,
+        "kind": "byte_range",
+        "start": 101
+      },
+      "predicate": "document",
+      "raw_value": "district records"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 117,
+        "kind": "byte_range",
+        "start": 101
+      },
+      "predicate": "title",
+      "raw_value": "district records"
+    }
+  ],
+  "elizabeth-city-axon-fusus-memo": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 65,
+        "kind": "byte_range",
+        "start": 28
+      },
+      "predicate": "title",
+      "raw_value": "AXON Enterprise, Inc. Purchased FUSUS"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 65,
+        "kind": "byte_range",
+        "start": 60
+      },
+      "predicate": "technology",
+      "raw_value": "FUSUS"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 105,
+        "kind": "byte_range",
+        "start": 88
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Police Department"
     }
   ],
   "fl-senate-lfir-s3177": [
@@ -628,6 +918,38 @@
       "raw_value": "19-2025.pdf"
     }
   ],
+  "hpd-alpr-policy": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 27,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "title",
+      "raw_value": "ALPR Policy"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 20,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "technology",
+      "raw_value": "ALPR"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 61,
+        "kind": "byte_range",
+        "start": 35
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Honolulu Police Department"
+    }
+  ],
   "jasper-sc-agenda-cellebrite-2024": [
     {
       "field": "title",
@@ -691,6 +1013,70 @@
       },
       "predicate": "buyer",
       "raw_value": "Jasper County Sheriff"
+    }
+  ],
+  "legvi-bill-34-0142-committee": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 63,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "title",
+      "raw_value": "Committee advances bill for an ALPR data system"
+    },
+    {
+      "field": "citation",
+      "locator": {
+        "end": 114,
+        "kind": "byte_range",
+        "start": 98
+      },
+      "predicate": "citation",
+      "raw_value": "Bill No. 34-0142"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 51,
+        "kind": "byte_range",
+        "start": 47
+      },
+      "predicate": "technology",
+      "raw_value": "ALPR"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 208,
+        "kind": "byte_range",
+        "start": 175
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Legislature of the Virgin Islands"
+    }
+  ],
+  "mcso-policies-index": [
+    {
+      "field": "document",
+      "locator": {
+        "end": 113,
+        "kind": "byte_range",
+        "start": 90
+      },
+      "predicate": "document",
+      "raw_value": "policies and procedures"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 113,
+        "kind": "byte_range",
+        "start": 90
+      },
+      "predicate": "title",
+      "raw_value": "policies and procedures"
     }
   ],
   "nj-oag-bwc-sfy21-guidelines": [
@@ -767,6 +1153,72 @@
       "raw_value": "SFY21"
     }
   ],
+  "norman-pd-policy-manual": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 54,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "title",
+      "raw_value": "Norman Police Department Policy Manual"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 40,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Norman Police Department"
+    }
+  ],
+  "nyc-comptroller-bwc-review": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 88,
+        "kind": "byte_range",
+        "start": 64
+      },
+      "predicate": "title",
+      "raw_value": "body-worn camera program"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 80,
+        "kind": "byte_range",
+        "start": 64
+      },
+      "predicate": "technology",
+      "raw_value": "body-worn camera"
+    }
+  ],
+  "nyc-doi-oig-reports-index": [
+    {
+      "field": "document",
+      "locator": {
+        "end": 126,
+        "kind": "byte_range",
+        "start": 105
+      },
+      "predicate": "document",
+      "raw_value": "2025 oversight report"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 126,
+        "kind": "byte_range",
+        "start": 105
+      },
+      "predicate": "title",
+      "raw_value": "2025 oversight report"
+    }
+  ],
   "ok-dac-jag-lle-program": [
     {
       "field": "title",
@@ -837,6 +1289,38 @@
       },
       "predicate": "disclosure_field_state",
       "raw_value": "award amount"
+    }
+  ],
+  "ok-safe-oklahoma-grant": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 35,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "title",
+      "raw_value": "Safe Oklahoma Grant"
+    },
+    {
+      "field": "grant_funder",
+      "locator": {
+        "end": 73,
+        "kind": "byte_range",
+        "start": 57
+      },
+      "predicate": "funder",
+      "raw_value": "Attorney General"
+    },
+    {
+      "field": "grant_program",
+      "locator": {
+        "end": 35,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "funding_program_name",
+      "raw_value": "Safe Oklahoma Grant"
     }
   ],
   "okc-council-memo-2026-08": [
@@ -992,6 +1476,50 @@
       },
       "predicate": "use_restriction",
       "raw_value": "except when the data is part of an ongoing investigation"
+    }
+  ],
+  "san-jose-algorithm-register": [
+    {
+      "field": "document",
+      "locator": {
+        "end": 118,
+        "kind": "byte_range",
+        "start": 92
+      },
+      "predicate": "document",
+      "raw_value": "algorithm register entries"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 118,
+        "kind": "byte_range",
+        "start": 92
+      },
+      "predicate": "title",
+      "raw_value": "algorithm register entries"
+    }
+  ],
+  "santa-clara-oversight-index": [
+    {
+      "field": "document",
+      "locator": {
+        "end": 149,
+        "kind": "byte_range",
+        "start": 118
+      },
+      "predicate": "document",
+      "raw_value": "surveillance impact assessments"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 149,
+        "kind": "byte_range",
+        "start": 118
+      },
+      "predicate": "title",
+      "raw_value": "surveillance impact assessments"
     }
   ],
   "sd-asr-2025-vigilant": [
@@ -1245,6 +1773,28 @@
       },
       "predicate": "disclosure_field_state",
       "raw_value": "City Date:"
+    }
+  ],
+  "slmpd-fy21-spi-shotspotter-eval": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 36,
+        "kind": "byte_range",
+        "start": 25
+      },
+      "predicate": "title",
+      "raw_value": "ShotSpotter"
+    },
+    {
+      "field": "citation",
+      "locator": {
+        "end": 74,
+        "kind": "byte_range",
+        "start": 62
+      },
+      "predicate": "citation",
+      "raw_value": "Final Report"
     }
   ],
   "tolc-lgds-ast-hearing-notice-2025-11-19": [
@@ -1516,6 +2066,70 @@
       },
       "predicate": "period",
       "raw_value": "FY 2026"
+    }
+  ],
+  "upturn-mass-extraction-index": [
+    {
+      "field": "document",
+      "locator": {
+        "end": 127,
+        "kind": "byte_range",
+        "start": 101
+      },
+      "predicate": "document",
+      "raw_value": "Mass Extraction Appendix C"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 127,
+        "kind": "byte_range",
+        "start": 101
+      },
+      "predicate": "title",
+      "raw_value": "Mass Extraction Appendix C"
+    }
+  ],
+  "wayne-commission-index": [
+    {
+      "field": "document",
+      "locator": {
+        "end": 266,
+        "kind": "byte_range",
+        "start": 253
+      },
+      "predicate": "document",
+      "raw_value": "Public Safety"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 266,
+        "kind": "byte_range",
+        "start": 253
+      },
+      "predicate": "title",
+      "raw_value": "Public Safety"
+    },
+    {
+      "field": "document",
+      "locator": {
+        "end": 155,
+        "kind": "byte_range",
+        "start": 140
+      },
+      "predicate": "document",
+      "raw_value": "Full Commission"
+    },
+    {
+      "field": "title",
+      "locator": {
+        "end": 155,
+        "kind": "byte_range",
+        "start": 140
+      },
+      "predicate": "title",
+      "raw_value": "Full Commission"
     }
   ]
 }

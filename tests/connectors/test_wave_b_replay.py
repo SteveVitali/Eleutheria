@@ -118,12 +118,19 @@ def test_cadence_batches_carry_exactly_the_gated_members() -> None:
 
 def test_probe_source_is_the_only_seatless_row() -> None:
     """The probe rides the documents job but holds no cadence batch seat —
-    like L7's six hosted ccops rows."""
+    like L7's still-unrouted hosted ccops rows. P37.47's A-7 reuse wave gave
+    ccops_boston + ccops_berkeley their batch seats (the schedule slot is
+    infrastructure, never a permission flip — both stay
+    `ingestion_permitted=false`)."""
+    _p37_47_seated = {"ccops_boston", "ccops_berkeley"}
     cadence = tomllib.loads((REPO_ROOT / "ops/cadence.toml").read_text("utf-8"))
     all_members = {m for b in cadence["batches"] for m in b["members"]}
     assert PROBE_SOURCE_ID not in all_members
     for sid in wave_b.LEG_SCOPE["L7"]["hosted"]:
-        assert sid not in all_members
+        if sid in _p37_47_seated:
+            assert sid in all_members, sid
+        else:
+            assert sid not in all_members, sid
 
 
 def test_never_sources_are_never_declared() -> None:

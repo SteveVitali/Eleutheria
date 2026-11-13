@@ -254,3 +254,182 @@ predicate_allowlist = [
   "title", "document", "enacting_body", "citation", "description",
   "technology", "funding_amount", "posted_date", "disclosure_field_state",
 ]
+
+# --- P37.47 / R11-ACQ-19: the Tier-2 reuse wave --------------------------------
+# Twenty gated rows over the shared clause_fields/index_listing handlers —
+# seventeen new registrations plus the three RB-09 flips of existing gated
+# rows. Allowlists are screened per rights batch: the RB-07 ©-only and the
+# curated_index S3 aggregate-only lanes carry document-citation predicates
+# only (facts + citations); the RB-03 policy rows admit institutional
+# clause/technology predicates; the grant rows admit the funding-instrument
+# surface — never a person-name, registrant or deployment predicate. All stay
+# ingestion_permitted=false pending the operator's OP-26 Wave-D flip.
+
+[adapters.legis_vi_legislature_virgin_islands]
+source_id = "legis_vi_legislature_virgin_islands"
+jurisdiction = "us.state_abbr:VI"
+predicate_allowlist = [
+  "title", "document", "citation", "technology", "enacting_body", "description",
+  "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_mi_wayne_county_commission]
+source_id = "ccops_mi_wayne_county_commission"
+jurisdiction = "us.state_abbr:MI"
+predicate_allowlist = [
+  "title", "document", "citation", "description", "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_hi_honolulu_police_department]
+source_id = "ccops_hi_honolulu_police_department"
+jurisdiction = "us.state_abbr:HI"
+predicate_allowlist = [
+  "title", "document", "citation", "technology", "enacting_body", "legal_authority",
+  "written_policy_value", "use_restriction", "retention_period", "description", "posted_date", "disclosure_field_state",
+]
+
+[adapters.statrep_new_york_ny_nyc_doi_oig]
+source_id = "statrep_new_york_ny_nyc_doi_oig"
+jurisdiction = "us.state_abbr:NY"
+predicate_allowlist = [
+  "title", "document", "citation", "description", "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_ny_new_york_nyc_comptroller]
+source_id = "ccops_ny_new_york_nyc_comptroller"
+jurisdiction = "us.state_abbr:NY"
+predicate_allowlist = [
+  "title", "document", "citation", "technology", "enacting_body", "description",
+  "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_nc_charlotte_mecklenburg_police]
+source_id = "ccops_nc_charlotte_mecklenburg_police"
+jurisdiction = "us.state_abbr:NC"
+predicate_allowlist = [
+  "title", "document", "citation", "technology", "enacting_body", "legal_authority",
+  "written_policy_value", "use_restriction", "retention_period", "description", "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_nc_elizabeth_city_police]
+source_id = "ccops_nc_elizabeth_city_police"
+jurisdiction = "us.state_abbr:NC"
+predicate_allowlist = [
+  "title", "document", "citation", "technology", "enacting_body", "description",
+  "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_il_chicago_oig_shotspotter]
+source_id = "ccops_il_chicago_oig_shotspotter"
+jurisdiction = "us.state_abbr:IL"
+predicate_allowlist = [
+  "title", "document", "citation", "technology", "enacting_body", "description",
+  "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_san_francisco_bay_ca]
+source_id = "ccops_san_francisco_bay_ca"
+jurisdiction = "us.state_abbr:CA"
+predicate_allowlist = [
+  "title", "document", "citation", "description", "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_san_jose_ca]
+source_id = "ccops_san_jose_ca"
+jurisdiction = "us.state_abbr:CA"
+predicate_allowlist = [
+  "title", "document", "citation", "description", "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_santa_clara_county_ca]
+source_id = "ccops_santa_clara_county_ca"
+jurisdiction = "us.state_abbr:CA"
+predicate_allowlist = [
+  "title", "document", "citation", "description", "posted_date", "disclosure_field_state",
+]
+
+[adapters.policy_maricopa_county_az_mcso_policies]
+source_id = "policy_maricopa_county_az_mcso_policies"
+jurisdiction = "us.state_abbr:AZ"
+predicate_allowlist = [
+  "title", "document", "citation", "technology", "enacting_body", "legal_authority",
+  "written_policy_value", "use_restriction", "retention_period", "description", "posted_date", "disclosure_field_state",
+]
+
+[adapters.policy_norman_ok_alpr_policy_amendment]
+source_id = "policy_norman_ok_alpr_policy_amendment"
+jurisdiction = "us.state_abbr:OK"
+predicate_allowlist = [
+  "title", "document", "citation", "technology", "enacting_body", "legal_authority",
+  "written_policy_value", "use_restriction", "retention_period", "description", "posted_date", "disclosure_field_state",
+]
+
+[adapters.policy_anaheim_ca_pd_policy_manual]
+source_id = "policy_anaheim_ca_pd_policy_manual"
+jurisdiction = "us.state_abbr:CA"
+predicate_allowlist = [
+  "title", "document", "citation", "technology", "enacting_body", "description",
+  "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_mo_st_louis_fy21_spi_shotspotter]
+source_id = "ccops_mo_st_louis_fy21_spi_shotspotter"
+jurisdiction = "us.state_abbr:MO"
+predicate_allowlist = [
+  "title", "document", "citation", "description", "posted_date", "disclosure_field_state",
+]
+
+[adapters.grant_us_doj_cops_technology]
+source_id = "grant_us_doj_cops_technology"
+jurisdiction = "us.state_abbr:DC"
+predicate_allowlist = [
+  "title", "document", "funder", "recipient", "funding_program_name",
+  "funding_amount", "award_date", "funding_instrument", "description",
+  "technology", "period", "posted_date", "disclosure_field_state",
+]
+
+[adapters.grant_ok_safe_oklahoma_grant]
+source_id = "grant_ok_safe_oklahoma_grant"
+jurisdiction = "us.state_abbr:OK"
+predicate_allowlist = [
+  "title", "document", "funder", "recipient", "funding_program_name",
+  "funding_amount", "award_date", "funding_instrument", "description",
+  "technology", "period", "posted_date", "disclosure_field_state",
+]
+
+[adapters.statrep_us_upturn_mass_extraction_2020]
+source_id = "statrep_us_upturn_mass_extraction_2020"
+jurisdiction = "us.state_abbr:DC"
+predicate_allowlist = [
+  "title", "document", "posted_date", "disclosure_field_state",
+]
+
+[adapters.statrep_tx_ca_nm_ri_fl_il_eff_red_flag]
+source_id = "statrep_tx_ca_nm_ri_fl_il_eff_red_flag"
+jurisdiction = "us.state_abbr:TX"
+predicate_allowlist = [
+  "title", "document", "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_boston]
+source_id = "ccops_boston"
+jurisdiction = "us.state_abbr:MA"
+predicate_allowlist = [
+  "title", "document", "citation", "technology", "enacting_body", "legal_authority",
+  "written_policy_value", "description", "posted_date", "as_of", "disclosure_field_state",
+]
+
+[adapters.ccops_berkeley]
+source_id = "ccops_berkeley"
+jurisdiction = "us.state_abbr:CA"
+predicate_allowlist = [
+  "title", "document", "citation", "technology", "enacting_body", "legal_authority",
+  "written_policy_value", "description", "posted_date", "as_of", "disclosure_field_state",
+]
+
+[adapters.dhs_fusion_centers]
+source_id = "dhs_fusion_centers"
+jurisdiction = "us.state_abbr:DC"
+predicate_allowlist = [
+  "title", "document", "posted_date", "disclosure_field_state",
+]
