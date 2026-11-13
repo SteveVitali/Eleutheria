@@ -2126,6 +2126,25 @@ review_needed = true
 sig_labelled_cc0 = true
 
 
+[sources.agendaplus]
+name = "Agenda Plus (AgileTech)"
+publisher_type = "agenda"
+source_kind = "government_portal"
+homepage_url = "https://agendaplus.org/"
+default_tier = "R2"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Agenda platform (P37.50 / ACQ-22): published item pages serve directly-linked (/publishing/<meeting-slug>/<item>_<doc>.html) but every app path answers the login page and /publishing/ + meeting directories answer 403 — no bounded public index (verified 2026-11-13); the one enumerated host (agenda.savannahga.gov) is recorded in agenda_tenants.toml [[platform_census]] outcome=access_restricted, never bypassed."
+[sources.agendaplus.redistribution]
+lane = "link-only"
+evidence = "sources.toml [sources.agendaplus] (custody LINK, redistributable=-); attribution: nothing published"
+evidence_uri = "docs/build/planning/2026-09-30-next-phase/data/redistribution.csv#agendaplus"
+decision_authority = "D-J3-1 [B-19]"
+part_viii_class = "none-known"
+review_needed = false
+
+
 [sources.nextrequest]
 name = "NextRequest"
 publisher_type = "records-release"
@@ -15133,13 +15152,13 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML index (html_agenda_archive contract)"
 auth_model = "none"
 cadence = "weekly"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-035, cand I5-C042, family 'new:html_agenda_archive', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_fargo_nd_commission_agendas_minutes'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-035, cand I5-C042, family 'new:html_agenda_archive', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_fargo_nd_commission_agendas_minutes'. WIRED P37.50 (ACQ-22): the fargond.gov year-archive table rides the html_agenda_archive contract (tenant fargo_nd pins the 2026 index_path; verified serving 2026-11-13, robots 404)."
 publisher = "City of Fargo, ND"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-ND"
@@ -15161,13 +15180,13 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML index (civicweb contract)"
 auth_model = "none"
 cadence = "weekly"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-036, cand I5-C124, family 'new:civicweb', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_jersey_city_nj_digital_agenda'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-036, cand I5-C124, family 'new:civicweb', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_jersey_city_nj_digital_agenda'. WIRED P37.50 (ACQ-22): the civicweb.net MeetingTypeList index rides the civicweb contract (verified serving 2026-11-13; platform-wide robots `User-agent: *` / `Disallow: /` probed + recorded under GL-GATE-08/ADR-088/ADR-222)."
 publisher = "City of Jersey City, NJ Municipal Council"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NJ"
@@ -15189,13 +15208,13 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML index (civicplus_agendacenter contract)"
 auth_model = "none"
 cadence = "weekly"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-037, cand I5-C125, family 'new:civicplus_agendacenter', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_durham_nc_agenda_center'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-037, cand I5-C125, family 'new:civicplus_agendacenter', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_durham_nc_agenda_center'. WIRED P37.50 (ACQ-22): the durhamnc.gov/AgendaCenter index rides the civicplus_agendacenter contract — the host currently answers the shared UA a Cloudflare 403 challenge (2026-11-13), a recorded outcome, never defeated."
 publisher = "City of Durham, NC"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NC"
@@ -15217,13 +15236,13 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML index (civicplus_agendacenter contract)"
 auth_model = "none"
 cadence = "weekly"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-038, cand I5-C126, family 'new:civicplus_agendacenter', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_hialeah_fl_agenda_center'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-038, cand I5-C126, family 'new:civicplus_agendacenter', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_hialeah_fl_agenda_center'. WIRED P37.50 (ACQ-22): the hialeahfl.gov/AgendaCenter index rides the civicplus_agendacenter contract (verified serving 2026-11-13; robots disallows admin/search only)."
 publisher = "City of Hialeah, FL"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-FL"
@@ -15245,13 +15264,13 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML index (onbase_agendaonline contract)"
 auth_model = "none"
 cadence = "weekly"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-039, cand I5-C127, family 'new:onbase_agendaonline', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_frisco_tx_onbase_agenda_online'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-039, cand I5-C127, family 'new:onbase_agendaonline', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_frisco_tx_onbase_agenda_online'. WIRED P37.50 (ACQ-22): the agenda.friscotexas.gov/OnBaseAgendaOnline meeting-row index rides the onbase_agendaonline contract (verified serving 2026-11-13, robots 404)."
 publisher = "City of Frisco, TX"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-TX"
@@ -15273,13 +15292,13 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML index (onbase_agendaonline contract)"
 auth_model = "none"
 cadence = "weekly"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-040, cand I5-C128, family 'new:onbase_agendaonline', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_tampa_fl_onbase_agenda_online'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-040, cand I5-C128, family 'new:onbase_agendaonline', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_tampa_fl_onbase_agenda_online'. WIRED P37.50 (ACQ-22): the tampagov.hylandcloud.com/251agendaonline index rides the onbase_agendaonline contract via the embedded SearchResults JSON (verified serving 2026-11-13, robots 404)."
 publisher = "City of Tampa, FL"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-FL"
@@ -15587,13 +15606,13 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML index (civicplus_agendacenter contract)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-061, cand I9b-C016, family 'new:agendaplus_html', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_savannah_ga_2023_05_25'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-061, cand I9b-C016, family 'new:agendaplus_html', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_savannah_ga_2023_05_25'. WIRED P37.50 (ACQ-22): the savannahga.gov/AgendaCenter index rides the civicplus_agendacenter contract (verified serving 2026-11-13) — the candidate's agenda.savannahga.gov Agenda Plus host is access_restricted (login wall + /publishing/ 403), censused, and this tenant binds the same jurisdiction's serving AgendaCenter."
 publisher = "City of Savannah, GA (City Council, Agenda Plus)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-GA"
@@ -17601,13 +17620,13 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML index (onbase_agendaonline contract)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-194, cand I5-C202, family 'new:agendaonline', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_maricopa_county_az_supervisors_agenda'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-194, cand I5-C202, family 'new:agendaonline', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_maricopa_county_az_supervisors_agenda'. WIRED P37.50 (ACQ-22): the mccobagenda.databankcloud.com/AgendaOnline meeting-row index rides the onbase_agendaonline contract (verified serving 2026-11-13; robots 503 recorded unretrievable)."
 publisher = "Maricopa County Clerk of the Board (hosted on databankcloud.com)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-AZ"
@@ -17629,13 +17648,13 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML index (civicweb contract)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-197, cand I5-C205, family 'new:civicweb', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_dallas_county_tx_commissioners_court'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-197, cand I5-C205, family 'new:civicweb', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_dallas_county_tx_commissioners_court'. WIRED P37.50 (ACQ-22): the dallascounty.civicweb.net/Portal/MeetingTypeList index rides the civicweb contract (verified serving 2026-11-13; platform-wide robots `Disallow: /` recorded)."
 publisher = "Dallas County Commissioners Court"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-TX"
@@ -17657,13 +17676,13 @@ default_tier = "R4"
 custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-access_method = "HTML page(s) \u2014 registration prepared by ACQ-01; family ticket wires the connector map"
+access_method = "HTML index (civicplus_agendacenter contract)"
 auth_model = "none"
 cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-198, cand I5-C207, family 'new:civicplus_agendacenter', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_bexar_county_tx_agenda_center'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-198, cand I5-C207, family 'new:civicplus_agendacenter', ticket ACQ-22 -> live ACQ-27, class ticket P37.50). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'agenda_bexar_county_tx_agenda_center'. WIRED P37.50 (ACQ-22): the bexar.org/AgendaCenter index rides the civicplus_agendacenter contract (verified serving 2026-11-13; robots disallows admin/search only)."
 publisher = "Bexar County, Texas (via CivicPlus CivicEngage)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-TX"
