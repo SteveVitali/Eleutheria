@@ -179,7 +179,7 @@ export const BASIS_ROWS: readonly { cls: string; name: string; wording: string }
   { cls: "B2", name: "mechanical sample", wording: "checked automatically on a seeded sample" },
   { cls: "B3", name: "agent review", wording: "reviewed by an AI agent — never a person; never gates" },
   { cls: "B4", name: "maintainer check", wording: "checked by SIG's maintainer — not independent; never gates" },
-  { cls: "B5", name: "independent human", wording: "independently reviewed — none performed" },
+  { cls: "B5", name: "independent human", wording: "not independently reviewed — none performed" },
 ];
 
 /** How many registered checks each basis class declares. */
