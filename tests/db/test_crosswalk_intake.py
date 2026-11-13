@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import uuid
 
+from conftest import seed_claim_prerequisites
 from db.crosswalk_intake import (
     L2_DUPLICATE_BASELINE,
     REPORT_SCHEMA,
@@ -14,7 +15,6 @@ from db.crosswalk_intake import (
     lane_schemes,
     org_identity_report,
 )
-from conftest import seed_claim_prerequisites
 
 
 def _org_subject(conn) -> str:
@@ -24,8 +24,7 @@ def _org_subject(conn) -> str:
         (eid,),
     )
     conn.execute(
-        "INSERT INTO organization(entity_id, organization_type)"
-        " VALUES (%s::uuid, 'us.org')",
+        "INSERT INTO organization(entity_id, organization_type) VALUES (%s::uuid, 'us.org')",
         (eid,),
     )
     return eid

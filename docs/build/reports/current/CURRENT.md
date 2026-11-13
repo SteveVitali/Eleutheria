@@ -4,11 +4,11 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `46df498e2e50463aeb0f370239d8a82ed9e4d4b5` · inputs hashed: 1263 · wall-clock receipt: `receipt.json`
+> input_commit: `0a3cc80f780365fc024aa005f2d55e7350db4317` · inputs hashed: 1263 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.46a` · lastCompleted `P37.45`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.46b` · lastCompleted `P37.46a`
 - chainTip `r11/P37.42-api-parity` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-12T15:41Z`
 
 ## Obligations
@@ -113,34 +113,7 @@
 
 ## Known inconsistencies (preserved, never synthesized)
 
-| check | obligation | message |
-|---|---|---|
-| deferrals/open-vs-passed-gate | D-P37.46a-1 | owed row D-P37.46a-1 references GATE-ACCEPT whose readout says PASSED |
-| ledger/next-landed | P37.46a | the index runs ahead of CURRENT STATE — landed work recorded for a ticket the ledger still calls next |
-| ledger/index-ahead | P37.46a | BUILD_INDEX row 470 (P37.46a) lands after the ledger's lastCompleted P37.45 — index and control state disagree |
-| ledger/next-not-lowest | P37.46a | nextTicket 'P37.46a' is not the lowest chain row that has not landed ('P37.46b'; superseded-by/deferred/unused and HUMAN rows skipped — V2) |
-| events/malformed | ? | schema must be 'obligation-event/1' |
-| events/malformed | ? | unknown field 'id' |
-| events/malformed | ? | unknown field 'obligation' |
-| events/malformed | ? | unknown field 'transition' |
-| events/malformed | ? | unknown field 'by' |
-| events/malformed | ? | unknown field 'evidence' |
-| events/malformed | ? | unknown field 'cites' |
-| events/malformed | ? | missing field 'schema' |
-| events/malformed | ? | missing field 'event_id' |
-| events/malformed | ? | missing field 'obligation_id' |
-| events/malformed | ? | missing field 'seq' |
-| events/malformed | ? | missing field 'expected_previous_event' |
-| events/malformed | ? | missing field 'from_status' |
-| events/malformed | ? | missing field 'ticket_id' |
-| events/malformed | ? | missing field 'owner' |
-| events/malformed | ? | missing field 'landing' |
-| events/malformed | ? | missing field 'backlog_home' |
-| events/malformed | ? | missing field 'evidence_refs' |
-| events/malformed | ? | missing field 'observed_at' |
-| events/malformed | ? | missing field 'source_commit' |
-| events/malformed | ? | missing field 'reason' |
-| events/missing-anchor | D-P37.46a-1 | D-P37.46a-1 has no migration anchor — every obligation carries one |
+- none — every P32.1 baseline conflict is either reconciled by a recorded event interpretation (old values preserved on the anchor) or documented in `reconciliations.json`; anything new would appear here and fail `verify`
 
 ## Evidence domains — recorded evidence only
 
@@ -148,7 +121,16 @@
 
 ## Source funnel (recorded baseline, domain-labelled)
 
-- `funnel` → see [funnel.md](funnel.md) (complete — 8 rows)
+| unit | recorded value | domain · date · evidence |
+|---|---|---|
+| discovered | `**339** registered `[sources.*]` + **27** researched candidates` | `implementation · 2026-09-27 · `sources.toml`, `source-candidates.csv`` |
+| reviewed | `rights blocks + disposition artifacts per source (`p293_dispositions.json` valid` | `implementation · 2026-09-27` |
+| permitted | `**236** `ingestion_permitted = true` (of 339)` | `implementation · 2026-09-27 · counted from `sources.toml`` |
+| mapped | `8 accountability sources wired (P31.12/13, shadow diff=0); earlier classes per t` | `fixture+implementation · recorded 2026-09-26` |
+| captured | `OCFL-backed captures behind every landed claim; per-job counts recorded per run ` | `hosted · recorded 2026-09-26 (P31.12/13 run ledgers)` |
+| extracted | `2,074,963 admissible claims on the hosted spine (after P30.2a materialization)` | `hosted · recorded 2026-09-24 (P30.2a run)` |
+| linked | `1,872,344 envelopes → 227,998 resolved sites (from 230,330 obs-level records, de` | `hosted · recorded 2026-09-24/25` |
+| published | `national surface live: export `sig-2026-09-27-ce480ab1` published to `…-sig-publ` | `public · recorded 2026-09-27 (P31.16 publish half)` |
 
 ## Releases (recorded)
 
@@ -161,7 +143,13 @@
 
 ## Governing ADRs
 
-- `adrs` → see [adrs.md](adrs.md) (complete — 5 rows)
+| ADR | scope | file |
+|---|---|---|
+| ADR-073 | build-memory v2 — docs/build/ is the committed memory root; LEDGER.md holds the  | docs/adr/ADR-073-build-memory-committed-under-docs-build-scratch-retired.md |
+| ADR-119 | P30.4 leak-scope policy — governs what a closeout/report may contain (referenced | docs/adr/ADR-119-project-id-leak-check-scoped-to-code-and-config.md |
+| ADR-120 | the Round-10 six-stream program + the memory extension this projection serves (S | docs/adr/ADR-120-six-stream-integrity-investigation-and-memory-extension.md |
+| ADR-125 | evidence-audit/1 + recovery-plan/1 — the offline audit/dry-run contracts the mem | docs/adr/ADR-125-legacy-evidence-audit-and-recovery-plan-contract.md |
+| ADR-126 | obligation-event/1 + coverage-assessment/1 + current-projection/1 + input-manife | docs/adr/ADR-126-obligation-events-and-current-projection.md |
 
 ## Reading this view
 
