@@ -432,6 +432,25 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "statrep_tx_ca_nm_ri_fl_il_eff_red_flag": "dossier_documents",
     "ccops_nc_elizabeth_city_police": "dossier_documents",
     "ccops_il_chicago_oig_shotspotter": "dossier_documents",
+    # P37.48 (ACQ-20): the aggregate lanes — ten gated sources ride `dot_511`
+    # over the merged target registry (Socrata $group payee/programme-area and
+    # enforcement lanes, ArcGIS outStatistics declared-period lanes, and the
+    # state_checkbook_xlsx workbook lane); the new gated camreg_il_chicago_payments
+    # row joins the same map. The two unmapped ACQ-20 seats
+    # (camreg_us_ate_camera_location_and_per, camreg_us_body_worn_camera)
+    # carry recorded findings instead. All stay ingestion_permitted=false
+    # pending the operator's OP-26 Wave-D flips.
+    "camreg_us_socrata_hosted_vendor": "dot_511",
+    "camreg_us_municipal_contract_expenditure": "dot_511",
+    "procportal_tx_texas_dir_cooperative": "dot_511",
+    "camreg_az_mesa_city_of_expenditures": "dot_511",
+    "camreg_de_delaware_checkbook_expenditure": "dot_511",
+    "camreg_nj_new_jersey_yourmoney": "dot_511",
+    "camreg_il_chicago_payments": "dot_511",
+    "camreg_wa_washington_state_open": "dot_511",
+    "camreg_il_chicago_violence_reduction": "dot_511",
+    "camreg_mi_detroit_dpd_shotspotter": "dot_511",
+    "camreg_oakland_ca_shotspotter_2013_2015": "dot_511",
     "ccops_san_francisco_bay_ca": "dossier_documents",
     "ccops_mo_st_louis_fy21_spi_shotspotter": "dossier_documents",
     "ccops_san_jose_ca": "dossier_documents",

@@ -47,9 +47,12 @@ Rules this adapter upholds:
 
 from __future__ import annotations
 
+import io
 import json
 import os
 import re
+import xml.etree.ElementTree as ET
+import zipfile
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -73,7 +76,7 @@ from policy.sensitivity import (
     demote_for_residential_parcel,
     geo_tier_for,
 )
-from resolution.partner_identity import partner_ref_rows
+from resolution.partner_identity import natural_person_signal, partner_ref_rows
 
 from ._data import load_table
 from .api_allowlist import api_allow_entry
@@ -800,27 +803,40 @@ def scan_extents() -> dict[tuple[str, str], tuple[float, float, float, float]]:
 #: already aggregates, ``count_function="verbatim"``);
 #: ``arcgis_outstatistics`` issues a bounded ``outStatistics`` +
 #: ``groupByFieldsForStatistics`` query.
-_AGGREGATE_KINDS = frozenset({"socrata_aggregate", "arcgis_outstatistics"})
+_AGGREGATE_KINDS = frozenset({"socrata_aggregate", "arcgis_outstatistics", "state_checkbook_xlsx"})
 
 #: The closed vocabulary for an aggregate target's ``aggregate_period_kind`` —
 #: how the published period column reads. ``"month"`` truncates a published
-#: datetime column server-side (``date_trunc_ym(<field>)``); ``"verbatim"``
-#: carries the publisher's own period label (``YEAR_MONTH``, ``quarter_name``).
-_PERIOD_KINDS = frozenset({"month", "verbatim"})
+#: datetime column server-side (``date_trunc_ym(<field>)``); ``"year"``
+#: truncates to the calendar year (``date_trunc_ym``→``date_trunc_y``, SoQL
+#: only — ArcGIS has no date-truncating group expression); ``"verbatim"``
+#: carries the publisher's own period label (``YEAR_MONTH``, ``quarter_name``,
+#: ``fiscal_year``, an XLSX ``FY`` column); ``"declared"`` carries NO group
+#: column — the target's committed ``aggregate_period_label`` is the period
+#: and the committed ``where`` bounds the window (a year slice of a layer
+#: whose schema has only a row-level datetime — S4 screened lanes).
+_PERIOD_KINDS = frozenset({"month", "year", "verbatim", "declared"})
 
 #: The closed vocabulary for ``aggregate_count_function``. ``"sum"`` asks the
 #: platform to total the published per-row measure (``sum(<field>)`` /
-#: ``statisticType=sum``); ``"verbatim"`` reads a dataset already published as
-#: an aggregate — the published total IS the count, no server-side grouping.
-#: ArcGIS ``outStatistics`` requires a statistic function, so ``"verbatim"``
-#: is only legal on ``socrata_aggregate``.
-_COUNT_FUNCTIONS = frozenset({"sum", "verbatim"})
+#: ``statisticType=sum``); ``"count"`` totals the published ROWS in each group
+#: (SoQL ``count(*)`` / ArcGIS ``statisticType=count`` — the ShotSpotter and
+#: school-bus lanes count published alert/violation rows, never a sum column);
+#: ``"verbatim"`` reads a dataset already published as an aggregate — the
+#: published total IS the count, no server-side grouping. ArcGIS
+#: ``outStatistics`` requires a statistic function, so ``"verbatim"`` is only
+#: legal on ``socrata_aggregate``.
+_COUNT_FUNCTIONS = frozenset({"sum", "count", "verbatim"})
 
 #: P36.7 (ACQ-11): the aggregate SUBJECT kind is closed vocabulary too —
 #: ``camera_site`` mints an ATE camera subject; ``programme_area`` mints a
 #: programme-area aggregate subject (the DC rebate table's PSA groups)
 #: that is explicitly NOT a camera, a geometry, or a registrant.
-_SUBJECT_KINDS = frozenset({"camera_site", "programme_area"})
+#: P37.48 (ACQ-20): ``payee`` mints a payee aggregate subject — the published
+#: vendor/payee bucket of a payments or contract-spend table (S7: an
+#: organisation payee only — a natural-person-shaped group row fails closed
+#: and never mints a subject).
+_SUBJECT_KINDS = frozenset({"camera_site", "programme_area", "payee"})
 
 #: Declared field names land verbatim inside the SoQL ``$select``/``$group``
 #: and ArcGIS ``outStatistics`` query text — a bare column identifier only,
@@ -865,6 +881,17 @@ class AggregateSpec:
     measure: str
     discriminator_field: str | None
     subject_kind: str = "camera_site"
+    #: P37.48 (ACQ-20): ``period_label`` is the committed period a
+    #: ``period_kind="declared"`` target stamps (its ``where`` bounds the
+    #: window — a year slice of a layer with only a row-level datetime);
+    #: ``currency`` is the declared currency a ``payee`` spend claim stamps
+    #: (committed registry data, e.g. ``USD``); ``payee_allowlist`` is the
+    #: reviewed list of payee-name substrings a ``payee`` subject may emit
+    #: under — a group row outside it is rejected (the S7 screen; required
+    #: on ``state_checkbook_xlsx`` where no server-side ``$where`` exists).
+    period_label: str | None = None
+    currency: str | None = None
+    payee_allowlist: tuple[str, ...] = ()
 
     @property
     def count_field(self) -> str:
@@ -914,11 +941,44 @@ def assert_target_aggregate(row: Mapping[str, Any]) -> AggregateSpec | None:
             "statisticType — a pre-aggregated ArcGIS table aggregates via "
             "'sum' (or registers as an arcgis_query lane)"
         )
-    if kind == "arcgis_outstatistics" and period_kind != "verbatim":
+    if kind == "state_checkbook_xlsx" and count_function == "verbatim":
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r}: 'verbatim' grouping is a "
+            "server-side contract — the workbook lane groups published rows "
+            "itself ('sum' or 'count')"
+        )
+    if kind == "arcgis_outstatistics" and period_kind not in ("verbatim", "declared"):
         raise AggregateSpecNotDeclared(
             f"registry target {target_id!r}: ArcGIS "
             "groupByFieldsForStatistics groups verbatim columns only — the "
-            "period expression is the column itself"
+            "period expression is the column itself (a 'declared' period "
+            "carries no group column; 'month'/'year' truncation is SoQL-only)"
+        )
+    if kind == "state_checkbook_xlsx" and period_kind not in ("verbatim", "declared"):
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r}: the workbook lane reads a "
+            "published period column verbatim ('verbatim') or stamps the "
+            "committed label ('declared') — no server-side truncation exists"
+        )
+    period_label = str(row.get("aggregate_period_label") or "").strip() or None
+    period_field_declared = str(row.get("aggregate_period_field") or "").strip()
+    if period_kind == "declared":
+        if not period_label:
+            raise AggregateSpecNotDeclared(
+                f"registry target {target_id!r} declares period_kind='declared' "
+                "with no 'aggregate_period_label' — the committed period text "
+                "is the period (its 'where' bounds the window)"
+            )
+        if period_field_declared:
+            raise AggregateSpecNotDeclared(
+                f"registry target {target_id!r} declares period_kind='declared' "
+                f"AND aggregate_period_field={period_field_declared!r} — a "
+                "declared period carries no group column"
+            )
+    elif period_label:
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r} declares aggregate_period_label "
+            "on a grouped period_kind — the label exists only for 'declared'"
         )
     measure = str(row.get("aggregate_measure") or "").strip()
     if not measure:
@@ -971,9 +1031,54 @@ def assert_target_aggregate(row: Mapping[str, Any]) -> AggregateSpec | None:
             f"registry target {target_id!r} declares aggregate_subject_kind="
             f"{subject_kind!r}, which is not a member ({sorted(_SUBJECT_KINDS)})"
         )
+    # P37.48 (ACQ-20): the declared currency + payee allowlist a payee lane
+    # stamps/enforces. The allowlist is REQUIRED on the workbook lane (no
+    # server-side `$where` exists to bound the capture) and may be declared
+    # on any payee target as a second screen behind the query filter; it is
+    # meaningless off a payee subject.
+    currency = str(row.get("aggregate_currency") or "").strip() or None
+    allowlist_raw = row.get("payee_allowlist")
+    if allowlist_raw is None:
+        payee_allowlist: tuple[str, ...] = ()
+    elif isinstance(allowlist_raw, str):
+        payee_allowlist = tuple(s.strip() for s in allowlist_raw.split(";") if s.strip())
+    elif isinstance(allowlist_raw, (list, tuple)):
+        payee_allowlist = tuple(str(s).strip() for s in allowlist_raw if str(s).strip())
+    else:
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r} declares payee_allowlist="
+            f"{allowlist_raw!r} — a list (or ;-joined string) of reviewed "
+            "payee-name substrings"
+        )
+    if payee_allowlist and subject_kind != "payee":
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r} declares a payee_allowlist on "
+            f"subject_kind={subject_kind!r} — the allowlist screens payee "
+            "subjects only"
+        )
+    if kind == "state_checkbook_xlsx" and subject_kind != "payee":
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r}: the workbook lane emits payee "
+            "aggregates only (S7) — declare aggregate_subject_kind='payee'"
+        )
+    if kind == "state_checkbook_xlsx" and not payee_allowlist:
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r}: the workbook lane carries every "
+            "published payee row — the committed payee_allowlist is the only "
+            "S7 screen and may not be empty"
+        )
+    if subject_kind == "payee" and len(count_fields) > 1:
+        raise AggregateSpecNotDeclared(
+            f"registry target {target_id!r}: a payee lane carries ONE spend "
+            "measure — multi-measure slices are a programme-area shape"
+        )
     return AggregateSpec(
         subject_field=_aggregate_field(row, "aggregate_subject_field", target_id),
-        period_field=_aggregate_field(row, "aggregate_period_field", target_id),
+        period_field=(
+            _aggregate_field(row, "aggregate_period_field", target_id)
+            if period_kind != "declared"
+            else ""
+        ),
         period_kind=period_kind,
         count_fields=count_fields,
         count_function=count_function,
@@ -984,7 +1089,58 @@ def assert_target_aggregate(row: Mapping[str, Any]) -> AggregateSpec | None:
             else None
         ),
         subject_kind=subject_kind,
+        period_label=period_label,
+        currency=currency,
+        payee_allowlist=payee_allowlist,
     )
+
+
+def _normalize_payee(name: str) -> str:
+    """The normalised payee key — collapsed whitespace + uppercase (P37.48)."""
+    return " ".join(str(name).split()).upper()
+
+
+def _xlsx_rows(data: bytes) -> Iterable[dict[str, str]]:
+    """Stream ``{header: value}`` dicts out of an XLSX workbook (stdlib only).
+
+    Reads ``xl/sharedStrings.xml`` and the first worksheet with
+    ``xml.etree`` iterparse — enough for the flat single-table state
+    checkbook workbooks (P37.48); inline-string and missing cells are
+    tolerated, formulas and styles are never evaluated.
+    """
+    ns = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
+    with zipfile.ZipFile(io.BytesIO(data)) as zf:
+        strings: list[str] = []
+        for _event, elem in ET.iterparse(zf.open("xl/sharedStrings.xml"), events=("end",)):
+            if elem.tag == ns + "si":
+                strings.append("".join(t.text or "" for t in elem.iter(ns + "t")))
+                elem.clear()
+        sheet_names = [n for n in zf.namelist() if re.fullmatch(r"xl/worksheets/sheet\d+\.xml", n)]
+        if not sheet_names:
+            return
+        sheet = zf.open(sorted(sheet_names)[0])
+        header: list[str] = []
+        for _event, elem in ET.iterparse(sheet, events=("end",)):
+            if elem.tag != ns + "row":
+                continue
+            values: list[str] = []
+            for cell in elem.iter(ns + "c"):
+                if cell.get("t") == "inlineStr":
+                    values.append("".join(t.text or "" for t in cell.iter(ns + "t")))
+                    continue
+                node = cell.find(ns + "v")
+                if node is None or node.text is None:
+                    values.append("")
+                elif cell.get("t") == "s":
+                    idx = int(node.text)
+                    values.append(strings[idx] if idx < len(strings) else "")
+                else:
+                    values.append(node.text)
+            if not header:
+                header = [v.strip() for v in values]
+            else:
+                yield {h: v for h, v in zip(header, values, strict=False) if h}
+            elem.clear()
 
 
 def _aggregate_field_value(target_id: Any, key: str, value: str) -> str:
@@ -1179,25 +1335,34 @@ def _socrata_aggregate_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
     resource_url = str(row["layer_url"]).rstrip("/")
     observed = int(row.get("observed_count") or 0)
     pages = max(1, -(-observed // _SOCRATA_PAGE_SIZE))
-    period_expr = (
-        f"date_trunc_ym({spec.period_field})" if spec.period_kind == "month" else spec.period_field
-    )
-    select_parts = [
-        f"{spec.subject_field} AS subject",
-        f"{period_expr} AS period",
-    ]
+    # P37.48 (ACQ-20): ``year`` truncates to the calendar year
+    # (``date_trunc_y``); ``declared`` emits NO period column — the target's
+    # committed ``aggregate_period_label`` is the period.
+    period_expr = ""
+    if spec.period_kind == "month":
+        period_expr = f"date_trunc_ym({spec.period_field})"
+    elif spec.period_kind == "year":
+        period_expr = f"date_trunc_y({spec.period_field})"
+    elif spec.period_kind == "verbatim":
+        period_expr = spec.period_field
+    select_parts = [f"{spec.subject_field} AS subject"]
+    if period_expr:
+        select_parts.append(f"{period_expr} AS period")
     # P36.7 (ACQ-11): a multi-measure slice aliases each count column
     # ``count_<field>``; a single-measure slice keeps the canonical
-    # ``count`` alias (P36.6 shape unchanged).
+    # ``count`` alias (P36.6 shape unchanged). P37.48: ``count`` totals the
+    # published ROWS of the group — ``count(*)``, the alert/violation lanes.
     if spec.count_function == "verbatim":
         select_parts.append(f"{spec.count_field} AS count")
+    elif spec.count_function == "count":
+        select_parts.append("count(*) AS count")
     elif len(spec.count_fields) == 1:
         select_parts.append(f"{spec.count_function}({spec.count_field}) AS count")
     else:
         select_parts.extend(
             f"{spec.count_function}({field}) AS count_{field}" for field in spec.count_fields
         )
-    order_parts = [spec.subject_field, period_expr]
+    order_parts = [spec.subject_field] + ([period_expr] if period_expr else [])
     if spec.discriminator_field is not None:
         select_parts.append(f"{spec.discriminator_field} AS discriminator")
         order_parts.append(spec.discriminator_field)
@@ -1245,7 +1410,12 @@ def _arcgis_outstatistics_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
     observed = int(row.get("observed_count") or 0)
     page_size = min(_ARCGIS_PAGE_SIZE, max(1, int(row.get("page_size") or _ARCGIS_PAGE_SIZE)))
     pages = max(1, -(-observed // page_size))
-    group_fields = [spec.subject_field, spec.period_field]
+    # P37.48 (ACQ-20): a ``declared`` period carries no group column — the
+    # committed ``where`` bounds the window (a year slice of a layer whose
+    # schema holds only a row-level datetime — Detroit's S4 lane).
+    group_fields = [spec.subject_field]
+    if spec.period_kind != "declared":
+        group_fields.append(spec.period_field)
     if spec.discriminator_field is not None:
         group_fields.append(spec.discriminator_field)
     # P36.7 (ACQ-11): a multi-measure slice emits one statistic per
@@ -1279,6 +1449,19 @@ def _arcgis_outstatistics_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
             {"url": f"{layer_url}/query?{urlencode(params)}", "page": page, "page_count": pages}
         )
     return out
+
+
+def _checkbook_xlsx_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Expand one ``state_checkbook_xlsx`` row — the workbook IS the capture.
+
+    A state open-checkbook publishes one XLSX file per period (WA's fiscal.wa.gov
+    biennium workbooks); there is no server-side group or page — the download is
+    the single capture, and ``parse`` streams it into the declared vendor ×
+    period groups (P37.48 / ACQ-20, S7: only the committed ``payee_allowlist``
+    buckets ever become group rows).
+    """
+    assert_target_aggregate(row)
+    return [{"url": str(row["layer_url"]).rstrip("/"), "page": 0, "page_count": 1}]
 
 
 # --- the keyed 511 JSON API kinds (P37.12 / D-SOURCES.7-2, OP-13) --------------
@@ -1495,6 +1678,9 @@ def expand_registry_rows(
         # and ArcGIS outStatistics queries emitting enforcement_count rows.
         "socrata_aggregate": _socrata_aggregate_pages,
         "arcgis_outstatistics": _arcgis_outstatistics_pages,
+        # P37.48 (ACQ-20): the workbook checkbook lane — one download, parsed
+        # into the declared vendor × period groups (S7 allowlist applies).
+        "state_checkbook_xlsx": _checkbook_xlsx_pages,
         # P37.12 (D-SOURCES.7-2): the keyed 511 JSON API lanes — declared
         # contract, single declared page each, credential env-resolved at
         # fetch time (never in the registry, never in a recorded URL).
@@ -1612,6 +1798,9 @@ def expand_registry_rows(
                     "measure": aggregate.measure,
                     "discriminator_field": aggregate.discriminator_field,
                     "subject_kind": aggregate.subject_kind,
+                    "period_label": aggregate.period_label,
+                    "currency": aggregate.currency,
+                    "payee_allowlist": list(aggregate.payee_allowlist),
                 }
             for key, value in declared_fields.items():
                 target[key] = value
@@ -2662,7 +2851,7 @@ class CameraRegistryEntry:
 
 
 #: The operator predicate whose text claims gain an entity-ref claim (P31.5).
-_PARTNER_PREDICATES = frozenset({"camera_operator"})
+_PARTNER_PREDICATES = frozenset({"camera_operator", "vendor", "buyer"})
 
 
 @register
@@ -2742,6 +2931,10 @@ class Dot511Connector(Connector):
             # JSON row array — the rows just carry the grouped subject/period/
             # count aliases the committed $select produces.
             return self._parse_socrata(ctx, capture, data, target)
+        if kind == "state_checkbook_xlsx":
+            # P37.48 (ACQ-20): the workbook lane — the capture IS the XLSX file;
+            # parse streams it into vendor × period group rows.
+            return self._parse_checkbook_xlsx(ctx, capture, data, target)
         if kind == "iteris_511_rows":
             return self._parse_iteris_511(ctx, capture, data)
         if kind == "ohgo_511_cameras":
@@ -2848,6 +3041,70 @@ class Dot511Connector(Connector):
                 ),
             )
         return {"kind": "socrata_rows", "payload": {"rows": doc}, "capture": capture}
+
+    def _parse_checkbook_xlsx(
+        self, ctx: RunContext, capture: CaptureRef, data: bytes, target: Mapping[str, Any]
+    ) -> dict[str, Any]:
+        """Stream a captured checkbook workbook into vendor × period group rows.
+
+        The workbook lane (P37.48 / ACQ-20, S7) groups the published payment
+        rows CLIENT-SIDE — the capture is the whole workbook, but only the
+        committed ``payee_allowlist`` buckets become group rows; every other
+        payee (the natural-person reimbursements the file also carries) is
+        dropped in transit and never materialised. A non-workbook body, a
+        missing declared column, or a non-numeric amount is
+        :class:`ContentDrift` — the lane fails loud, never emits a guessed
+        group.
+        """
+        spec_map = target.get("aggregate")
+        if not isinstance(spec_map, Mapping):
+            raise ContentDrift(
+                ctx.source.id,
+                "a checkbook_xlsx capture arrived from a non-aggregate target",
+            )
+        subject_field = str(spec_map["subject_field"])
+        count_field = str(spec_map["count_field"])
+        period_field = str(spec_map.get("period_field") or "")
+        allowlist = tuple(_normalize_payee(s) for s in (spec_map.get("payee_allowlist") or ()))
+        try:
+            groups: dict[tuple[str, str], tuple[str, float]] = {}
+            for row in _xlsx_rows(data):
+                vendor = _normalize_payee(str(row.get(subject_field) or ""))
+                if not vendor or not any(term in vendor for term in allowlist):
+                    # S7: a payee outside the reviewed allowlist is dropped in
+                    # transit — never a group row, never a claim.
+                    continue
+                period = (
+                    str(row.get(period_field) or "").strip()
+                    if period_field
+                    else str(spec_map.get("period_label") or "")
+                )
+                try:
+                    amount = float(str(row.get(count_field) or ""))
+                except (TypeError, ValueError):
+                    raise ContentDrift(
+                        ctx.source.id,
+                        f"checkbook row amount {row.get(count_field)!r} is not a number",
+                    ) from None
+                key = (vendor, period)
+                label, total = groups.get(key, (str(row.get(subject_field) or "").strip(), 0.0))
+                groups[key] = (label, total + amount)
+        except zipfile.BadZipFile as exc:
+            raise ContentDrift(
+                ctx.source.id,
+                "checkbook capture is not a readable XLSX workbook",
+                details=f"{len(data)} bytes ({exc.__class__.__name__})",
+            ) from exc
+        rows = [
+            {
+                "subject": label,
+                "period": period,
+                "count": total,
+                "discriminator": None,
+            }
+            for (_vendor, period), (label, total) in sorted(groups.items())
+        ]
+        return {"kind": "checkbook_xlsx", "payload": {"rows": rows}, "capture": capture}
 
     def _parse_iteris_511(
         self, ctx: RunContext, capture: CaptureRef, data: bytes
@@ -3056,6 +3313,7 @@ class Dot511Connector(Connector):
         out: list[Mapping[str, Any]] = []
         _ROW_ARRAY_KINDS = (
             "socrata_rows",
+            "checkbook_xlsx",
             "iteris_511_rows",
             "ohgo_511_cameras",
             # P37.70 (D-SOURCES.8-2): the keyed AU GeoJSON lanes — each `rows`
@@ -3095,12 +3353,9 @@ class Dot511Connector(Connector):
                     # P36.7 (ACQ-11): a `programme_area` subject mints a
                     # `programme_aggregate` record — the rebate table's
                     # PSA groups are programme rows, never camera sites.
-                    aggregate_record_kind = (
-                        "programme_aggregate"
-                        if str((target.get("aggregate") or {}).get("subject_kind") or "")
-                        == "programme_area"
-                        else "enforcement_aggregate"
-                    )
+                    # P37.48 (ACQ-20): a `payee` subject mints a
+                    # `payee_aggregate` record.
+                    aggregate_record_kind = _aggregate_record_kind(target)
                     out.append(
                         {
                             "record_kind": aggregate_record_kind,
@@ -3162,12 +3417,7 @@ class Dot511Connector(Connector):
             # `programme_aggregate` record — the rebate table's PSA groups
             # are programme rows, never camera sites.
             if is_aggregate:
-                aggregate_kind = (
-                    "programme_aggregate"
-                    if str((target.get("aggregate") or {}).get("subject_kind") or "")
-                    == "programme_area"
-                    else "enforcement_aggregate"
-                )
+                aggregate_kind = _aggregate_record_kind(target)
             else:
                 aggregate_kind = "camera_feature"
             out.append(
@@ -3214,7 +3464,11 @@ class Dot511Connector(Connector):
         minted_keys: list[str] = []
         for raw in raw_claims:
             target: Mapping[str, Any] = raw.get("target") or {}
-            if raw.get("record_kind") in ("enforcement_aggregate", "programme_aggregate"):
+            if raw.get("record_kind") in (
+                "enforcement_aggregate",
+                "programme_aggregate",
+                "payee_aggregate",
+            ):
                 # P36.6 (ACQ-10): a site-period aggregate row emits its
                 # subject identity + the enforcement_count claim; a row
                 # missing its subject/period/count fails closed, recorded.
@@ -3297,6 +3551,8 @@ _EXTRACTION_METHODS = {
     "socrata_rows": "socrata_rows_json",
     "socrata_aggregate": "socrata_rows_json",
     "arcgis_outstatistics": "arcgis_feature_json",
+    # P37.48 (ACQ-20): the workbook checkbook lane.
+    "state_checkbook_xlsx": "checkbook_xlsx",
     # P37.12 (D-SOURCES.7-2): the keyed 511 JSON API lanes.
     "iteris_511_rows": "iteris_511_rows_json",
     "ohgo_511_cameras": "ohgo_511_result_json",
@@ -3569,6 +3825,15 @@ def _entry_from_raw(
     )
 
 
+def _aggregate_record_kind(target: Mapping[str, Any]) -> str:
+    """The raw aggregate record kind a target's subject class mints (P37.48)."""
+    subject_kind = str((target.get("aggregate") or {}).get("subject_kind") or "")
+    return {
+        "payee": "payee_aggregate",
+        "programme_area": "programme_aggregate",
+    }.get(subject_kind, "enforcement_aggregate")
+
+
 def _aggregate_claim_rows(
     source_id: str, raw: Mapping[str, Any], target: Mapping[str, Any]
 ) -> list[dict[str, Any]]:
@@ -3602,7 +3867,7 @@ def _aggregate_claim_rows(
     try:
         spec = AggregateSpec(
             subject_field=str(spec_map["subject_field"]),
-            period_field=str(spec_map["period_field"]),
+            period_field=str(spec_map.get("period_field") or ""),
             period_kind=str(spec_map["period_kind"]),
             count_fields=(
                 tuple(str(f) for f in spec_map["count_fields"])
@@ -3617,6 +3882,9 @@ def _aggregate_claim_rows(
                 else None
             ),
             subject_kind=str(spec_map.get("subject_kind") or "camera_site"),
+            period_label=(str(spec_map["period_label"]) if spec_map.get("period_label") else None),
+            currency=(str(spec_map["currency"]) if spec_map.get("currency") else None),
+            payee_allowlist=tuple(str(s) for s in (spec_map.get("payee_allowlist") or ())),
         )
     except KeyError as exc:
         raise CoordinateRejected(
@@ -3636,7 +3904,7 @@ def _aggregate_claim_rows(
         }
         series = fields.get(spec.discriminator_field) if spec.discriminator_field else None
     else:
-        # socrata_aggregate rows carry the canonical $select aliases.
+        # socrata_aggregate + checkbook_xlsx rows carry the canonical aliases.
         subject = fields.get("subject")
         period = fields.get("period")
         count_by_field = {
@@ -3649,15 +3917,20 @@ def _aggregate_claim_rows(
         raise CoordinateRejected(
             "missing", "aggregate row carries no subject key (group column empty)"
         )
-    period_text = str(period or "").strip()
+    # P37.48 (ACQ-20): a `declared` period carries no group column — the
+    # committed label IS the period (the `where` window is its evidence).
+    period_text = str(period or spec.period_label or "").strip()
     if not period_text:
         raise CoordinateRejected(
             "missing", "aggregate row carries no period label (group column empty)"
         )
-    counts: dict[str, int] = {}
+    counts: dict[str, int | float] = {}
     for field, count in count_by_field.items():
         try:
-            counts[field] = int(float(str(count)))
+            # P37.48: a payee spend keeps its cents; a count lane stays int.
+            counts[field] = (
+                float(str(count)) if spec.subject_kind == "payee" else int(float(str(count)))
+            )
         except (TypeError, ValueError):
             raise CoordinateRejected(
                 "malformed", f"aggregate count for {field} {count!r} is not a number"
@@ -3670,8 +3943,33 @@ def _aggregate_claim_rows(
     license_spdx = str(target.get("license_spdx") or "")
     # P36.7 (ACQ-11): a `programme_area` subject mints a `programme_area:`
     # aggregate subject — the published area bucket the operator groups its
-    # programme counts by, never a camera site.
-    if spec.subject_kind == "programme_area":
+    # programme counts by, never a camera site. P37.48 (ACQ-20): a `payee`
+    # subject mints a `payee:` aggregate subject — the published vendor/payee
+    # bucket of a payments table. S7 screens BOTH ways: a committed
+    # `payee_allowlist` row outside its members is rejected, and a
+    # natural-person-shaped group key never mints a subject (extraction-time
+    # redaction — the allowlist is the primary screen, the person-shape check
+    # the fail-closed second gate).
+    if spec.subject_kind == "payee":
+        if spec.payee_allowlist and not any(
+            term in _normalize_payee(subject_text)
+            for term in (_normalize_payee(s) for s in spec.payee_allowlist)
+        ):
+            raise CoordinateRejected(
+                "payee_not_allowlisted",
+                "payee group row is outside the committed payee_allowlist (S7)",
+            )
+        if natural_person_signal(subject_text) is not None:
+            raise CoordinateRejected(
+                "person_shaped_payee",
+                "payee group key is natural-person-shaped — S7 extraction-time "
+                "redaction drops it (never a subject)",
+            )
+        subject_id = f"payee:{source_id}:{target_id}:{subject_text}"
+        entity_predicate = "payee"
+        entity_record_kind = "payee"
+        count_predicate = "payment_total"
+    elif spec.subject_kind == "programme_area":
         subject_id = f"programme_area:{source_id}:{target_id}:{subject_text}"
         entity_predicate = "programme_area"
         entity_record_kind = "programme_area"
@@ -3725,7 +4023,34 @@ def _aggregate_claim_rows(
         source_id=source_id,
         license_spdx=license_spdx,
     )
-    if spec.subject_kind == "programme_area":
+    if spec.subject_kind == "payee":
+        # P37.48 (ACQ-20): the payee emit — the published vendor/payee bucket
+        # carries its identity (entity + external_id), the vendor claim the
+        # partner machinery twins into an org entity-ref, the register's
+        # publisher provenance, and the spend totals. No technology claim: a
+        # payments bucket is a procurement record, never a device class.
+        rows = [
+            entity_row,
+            _claim("external_id", subject_text, subject_text),
+            _claim(
+                "vendor",
+                subject_text,
+                subject_text,
+                candidate={"scheme": "checkbook.payee_name", "value": subject_text},
+            ),
+            _claim("published_by", agency, agency),
+        ]
+        buyer = str(target.get("buyer") or "").strip()
+        if buyer:
+            rows.append(
+                _claim(
+                    "buyer",
+                    buyer,
+                    buyer,
+                    candidate={"scheme": "checkbook.buyer_name", "value": buyer},
+                )
+            )
+    elif spec.subject_kind == "programme_area":
         # P36.7 (ACQ-11): the programme-area emit — the published area bucket
         # carries its identity, the register's publisher provenance, and the
         # programme's declared technology; a programme subject is never a
@@ -3780,6 +4105,8 @@ def _aggregate_claim_rows(
             count_claim["series"] = series_text
         count_claim["aggregate_subject_field"] = spec.subject_field
         count_claim["aggregate_count_field"] = field
+        if spec.currency:
+            count_claim["currency"] = spec.currency
         rows.append(count_claim)
     return rows
 
@@ -3796,9 +4123,10 @@ def _rejection_row(
     # P36.7 (ACQ-11): a `programme_aggregate` row's rejection mints a
     # `programme_area:` subject — a programme row that fails closed is never
     # dressed in a camera subject id or predicate.
-    entity_predicate = (
-        "programme_area" if raw.get("record_kind") == "programme_aggregate" else "traffic_camera"
-    )
+    entity_predicate = {
+        "programme_aggregate": "programme_area",
+        "payee_aggregate": "payee",
+    }.get(str(raw.get("record_kind") or ""), "traffic_camera")
     return _stamp(
         {
             "record_kind": "camera_record_rejected",

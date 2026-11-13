@@ -2880,3 +2880,44 @@ listings = [
   { label_contains = "Primary", url_contains = "fusion-center" },
   { label_contains = "Recognized", url_contains = "fusion-center" },
 ]
+
+
+# --- P37.48 (ACQ-20): aggregate lanes ---------------------------------------
+# Ten gated sources carrying vendor x period payee aggregates (S7), district/
+# beat x month ShotSpotter alert aggregates (S4), and the WA biennium
+# workbooks; the Montgomery school-bus lane joins camreg_montgomery_md_ate's
+# existing row above. Rows record the endpoints the operator's OP-26 Wave-D
+# flips will drive; the live gate refuses before any target is read.
+
+[camreg_us_socrata_hosted_vendor]
+kind = "dot_511_targets"
+
+[camreg_us_municipal_contract_expenditure]
+kind = "dot_511_targets"
+
+[procportal_tx_texas_dir_cooperative]
+kind = "dot_511_targets"
+
+[camreg_az_mesa_city_of_expenditures]
+kind = "dot_511_targets"
+
+[camreg_de_delaware_checkbook_expenditure]
+kind = "dot_511_targets"
+
+[camreg_nj_new_jersey_yourmoney]
+kind = "dot_511_targets"
+
+[camreg_il_chicago_payments]
+kind = "dot_511_targets"
+
+[camreg_wa_washington_state_open]
+kind = "dot_511_targets"
+
+[camreg_il_chicago_violence_reduction]
+kind = "dot_511_targets"
+
+[camreg_mi_detroit_dpd_shotspotter]
+kind = "dot_511_targets"
+
+[camreg_oakland_ca_shotspotter_2013_2015]
+kind = "dot_511_targets"

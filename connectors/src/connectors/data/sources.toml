@@ -14470,7 +14470,7 @@ cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-001, cand I3-C076, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'procportal_us_contract_expenditure_registers'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-001, cand I3-C076, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-04 US agenda/procurement/grant/records documents); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'procportal_us_contract_expenditure_registers'. P37.48 (ACQ-20) wired the connector map: 1 Cook County awarded-contracts aggregate target under the dot_511 aggregate lanes; the row stays ingestion_permitted=false \u2014 the operator's OP-26 Wave-D flips are the only route to a live run."
 publisher = "Multiple US cities/counties (Socrata)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US"
@@ -14526,7 +14526,7 @@ cadence = "monthly"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-005, cand I6-C007, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-04)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'procportal_tx_texas_dir_cooperative'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-005, cand I6-C007, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-04)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'procportal_tx_texas_dir_cooperative'. P37.48 (ACQ-20) wired the connector map: 2 vendor x fiscal_year VSR aggregate targets under the dot_511 aggregate lanes; the row stays ingestion_permitted=false \u2014 the operator's OP-26 Wave-D flips are the only route to a live run."
 publisher = "Texas Department of Information Resources (via data.texas.gov / Socrata)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-TX"
@@ -14669,7 +14669,7 @@ cadence = "monthly"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-013, cand I3-C078, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-04)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'procportal_mesa_az_expenditures_payments_flo'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-013, cand I3-C078, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-04)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'procportal_mesa_az_expenditures_payments_flo'. P37.48 (ACQ-20) wired the connector map: 1 city-expenditures vendor x fiscal_year target under the dot_511 aggregate lanes; the row stays ingestion_permitted=false \u2014 the operator's OP-26 Wave-D flips are the only route to a live run."
 publisher = "City of Mesa, AZ (Socrata)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-AZ"
@@ -14699,7 +14699,7 @@ cadence = "daily"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-014, cand I4-C164, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-06b)); rights UNDETERMINED \u2014 licence lead 'ODbL-1.0 (osm_physical compartment)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_us_socrata_hosted_vendor'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-014, cand I4-C164, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-06b)); rights UNDETERMINED \u2014 licence lead 'ODbL-1.0 (osm_physical compartment)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_us_socrata_hosted_vendor'. P37.48 (ACQ-20) wired the connector map: 11 vendor-payments aggregate targets (vendor x period payment_total) under the dot_511 aggregate lanes; the row stays ingestion_permitted=false \u2014 the operator's OP-26 Wave-D flips are the only route to a live run."
 publisher = "multiple state and local governments (via Socrata/Tyler Data & Insights)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US"
@@ -14728,7 +14728,7 @@ cadence = "quarterly"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-015, cand I4-C171, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 US agency GIS/open-data layers); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_nj_new_jersey_yourmoney'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-015, cand I4-C171, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-01 US agency GIS/open-data layers); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_nj_new_jersey_yourmoney'. P37.48 (ACQ-20) wired the connector map: 1 YourMoney vendor x fiscal_year target under the dot_511 aggregate lanes; the row stays ingestion_permitted=false \u2014 the operator's OP-26 Wave-D flips are the only route to a live run."
 publisher = "State of New Jersey, Treasury - Division of Purchase and Property (via Socrata)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-NJ"
@@ -14900,7 +14900,7 @@ cadence = "unknown (declare on first capture)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-022, cand I6-C008,I4-C219,I4-C170, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-06)); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (public-domain metadata/statement \u2192 CC0-1.0, P26.10 procportal_nyc_ny pattern)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'procportal_de_delaware_checkbook_expenditure'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-022, cand I6-C008,I4-C219,I4-C170, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-06)); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (public-domain metadata/statement \u2192 CC0-1.0, P26.10 procportal_nyc_ny pattern)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'procportal_de_delaware_checkbook_expenditure'. P37.48 (ACQ-20) wired the connector map: 1 checkbook vendor x fiscal_year target under the dot_511 aggregate lanes; the row stays ingestion_permitted=false \u2014 the operator's OP-26 Wave-D flips are the only route to a live run."
 publisher = "State of Delaware, Department of Finance, Division of Accounting (via data.delaware.gov)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-DE"
@@ -15081,7 +15081,7 @@ cadence = "monthly"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-033, cand I4-C156, family 'new:state_checkbook_xlsx', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-01)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'opendata_wa_washington_open_checkbook'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-033, cand I4-C156, family 'new:state_checkbook_xlsx', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-01)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'opendata_wa_washington_open_checkbook'. P37.48 (ACQ-20) wired the connector map: 7 biennium workbook payee targets (state_checkbook_xlsx) under the dot_511 aggregate lanes; the row stays ingestion_permitted=false \u2014 the operator's OP-26 Wave-D flips are the only route to a live run."
 publisher = "Washington State Legislature LEAP Committee + Office of Financial Management"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-WA"
@@ -15478,7 +15478,7 @@ cadence = "daily"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-050, cand I5-C102, family 'new:arcgis_aggregate_stats', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-01)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_detroit_mi_dpd_shotspotter_incident'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-050, cand I5-C102, family 'new:arcgis_aggregate_stats', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-01)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_detroit_mi_dpd_shotspotter_incident'. P37.48 (ACQ-20) wired the connector map: 4 council_district x declared-year outStatistics targets under the dot_511 aggregate lanes; the row stays ingestion_permitted=false \u2014 the operator's OP-26 Wave-D flips are the only route to a live run."
 publisher = "City of Detroit / Detroit Police Department (via ArcGIS Online, data.detroitmi.gov)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-MI"
@@ -15895,7 +15895,7 @@ cadence = "on-change (irregular upstream)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-088, cand I4-C050, family 'dot_511(socrata_rows)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-06)); rights UNDETERMINED \u2014 licence lead 'NOASSERTION (verbatim licence metadata; confirm SPDX)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'opendata_us_ate_camera_location'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-088, cand I4-C050, family 'dot_511(socrata_rows)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-06)); rights UNDETERMINED \u2014 licence lead 'NOASSERTION (verbatim licence metadata; confirm SPDX)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'opendata_us_ate_camera_location'. P37.48 (ACQ-20) finding: the I4-C050 channel's aggregate members are dispositioned \u2014 the Montgomery school-bus lane landed under camreg_montgomery_md_ate (this ticket), the DC/Chicago/Montgomery ATE aggregates landed under P36.6/P36.7, and the plate-level/citation members stay Part-VIII blocked (metadata-only rows stand). The channel carries no new target and stays unmapped pending a future review."
 publisher = "multiple US cities/counties (via Socrata and ArcGIS Online)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US"
@@ -15952,7 +15952,7 @@ cadence = "once (static; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-090, cand I4-C276, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-05 US federal works); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (US federal work, 17 U.S.C. \u00a7105; usaspending/fema_hsgp precedent)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_us_body_worn_camera'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-090, cand I4-C276, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (RB-05 US federal works); rights UNDETERMINED \u2014 licence lead 'CC0-1.0 (US federal work, 17 U.S.C. \u00a7105; usaspending/fema_hsgp precedent)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_us_body_worn_camera'. P37.48 (ACQ-20) finding (2026-11-13): host priv-data.ojp.usdoj.gov does not resolve (DNS NXDOMAIN, curl: could not resolve host) \u2014 the BWC resource index is unreachable at registration; no target registered. The row stays unmapped; a future review re-checks reachability."
 publisher = "U.S. DOJ Office of Justice Programs (Socrata domain priv-data.ojp.usdoj.gov)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US"
@@ -16720,7 +16720,7 @@ cadence = "once (static; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-158, cand I4-C307,I4-C318,I4-C319,I4-C320,I4-C321,I4-C322, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-06)); rights UNDETERMINED \u2014 licence lead 'CC0-1.0' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_oakland_ca_shotspotter_2013_2015'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-158, cand I4-C307,I4-C318,I4-C319,I4-C320,I4-C321,I4-C322, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-06)); rights UNDETERMINED \u2014 licence lead 'CC0-1.0' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_oakland_ca_shotspotter_2013_2015'. P37.48 (ACQ-20) wired the connector map: 5 beat x month ShotSpotter aggregate targets under the dot_511 aggregate lanes; the row stays ingestion_permitted=false \u2014 the operator's OP-26 Wave-D flips are the only route to a live run."
 publisher = "City of Oakland (attribution: Oakland Police Department)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-CA"
@@ -17476,6 +17476,37 @@ evidence = "no J4 redistribution-matrix row recorded for this registry source (r
 review_needed = true
 
 
+[sources.camreg_il_chicago_payments]
+name = "Payments"
+one_time_load = false
+source_kind = "government_portal"
+homepage_url = "https://data.cityofchicago.org/d/s4vu-giwb"
+default_tier = "R1"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "Socrata SODA/SoQL \u2014 wired P37.48 (ACQ-20) via the dot_511 aggregate lane"
+auth_model = "none"
+cadence = "monthly@r11-tier2 batch (assigned at ticket, P37.48)"
+ingestion_permitted = false
+reliability_provisional = true
+verified = false
+notes = "P37.48 (ACQ-20) registered row (plan AP-T2-071, cand I4-C165, family 'extend:dot_511(socrata SoQL aggregate)'): the City of Chicago Payments register (s4vu-giwb), probed 2026-11-13 to carry Axon/Cellebrite/Flock payees by SoQL aggregate. S7 screened lane \u2014 the vendor-name allowlist in the committed where bounds the capture; aggregate-only emits. STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-02)); licence 'See Terms of Use' rides the LicenseRef-PublicRecord-FactualCompilation GL-GATE-07 lead (same Chicago basis as camreg_chicago_il)."
+publisher = "City of Chicago, Department of Finance (Socrata)"
+jurisdiction_scheme = "iso.3166_2"
+jurisdiction = "US-IL"
+jurisdiction_place = "Chicago"
+volatility_class = "SLOW"
+volatility_basis = "ADR-104(e): camera_registry emit surface \u2014 dominant declared predicate class SLOW (\u00a728.3 observed-rate recalibration; P35.20b)"
+[sources.camreg_il_chicago_payments.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+[sources.camreg_il_chicago_payments.redistribution]
+lane = "unknown"
+evidence = "no J4 redistribution-matrix row recorded for this registry source; undeclared \u2014 the fail-closed default stands"
+review_needed = true
+
+
 [sources.camreg_il_chicago_violence_reduction]
 name = "Violence Reduction - Shotspotter Alerts - Historical"
 one_time_load = true
@@ -17491,7 +17522,7 @@ cadence = "once (static; no recurrence, SIG-INGEST-025b)"
 ingestion_permitted = false
 reliability_provisional = true
 verified = false
-notes = "R11-ACQ-01 generated row (plan AP-T2-190, cand I4-C084, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-01)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_chicago_il_violence_reduction_shotspo'."
+notes = "R11-ACQ-01 generated row (plan AP-T2-190, cand I4-C084, family 'extend:dot_511(socrata SoQL aggregate)', ticket ACQ-20 -> live ACQ-27, class ticket P37.48). STAYS GATED: ingestion_permitted=false pending the operator's HG-03 line (IND-P8 (RB-01)); rights UNDETERMINED \u2014 licence lead 'LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)' is seed evidence for the family ticket's rights review, not a resolved record. Proposed id 'camreg_chicago_il_violence_reduction_shotspo'. P37.48 (ACQ-20) wired the connector map: 1 district x month ShotSpotter aggregate target under the dot_511 aggregate lanes; the row stays ingestion_permitted=false \u2014 the operator's OP-26 Wave-D flips are the only route to a live run."
 publisher = "City of Chicago, Chicago Police Department (Socrata)"
 jurisdiction_scheme = "iso.3166_2"
 jurisdiction = "US-IL"

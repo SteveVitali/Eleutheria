@@ -175,7 +175,11 @@ def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[st
     # (R11-CONF-13) registered census_of_governments + sam_gov_entities for the
     # crosswalk lanes — every row stays ingestion_permitted=false pending the
     # operator's HG-03 flips (OP-26; 610 → 612; loadable unchanged).
-    assert "registered sources: 612" in out
+    # P37.48 (R11-ACQ-20) registered camreg_il_chicago_payments — the
+    # Chicago Payments S7 payee-aggregate lane — ingestion_permitted=false
+    # pending the operator's OP-26 Wave-D flip (612 → 613; loadable
+    # unchanged).
+    assert "registered sources: 613" in out
     assert "self-checks OK" in out
 
 
@@ -347,7 +351,7 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # loadable are both unchanged.
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 612" in out
+    assert "registered sources: 613" in out
     assert "flip-ready: 2" in out
     assert "flip-ready: census_gazetteer_tiger" in out
     assert "flip-ready: natural_earth_10m" in out
