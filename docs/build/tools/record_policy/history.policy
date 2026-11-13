@@ -1362,3 +1362,5 @@ seed-commit 458f4af8
 seed-commit 0025ea46
 # 848da191 — sanctioned in-place repair: the committed runs/P37.45.md line-25 segment ('hosted 471 measured') tripped the live-claim assert/negate classifier; rewritten forward to 'the CI runner measured 471 — recorded, never a production claim' — a same-meaning repair, never a history rewrite
 seed-commit 848da191
+# a36fd274 — sanctioned in-place repair: committed LEDGER L1714/1715 segments ('live-claim lint' assert; 'production materializer' assert) tripped the live-claim assert/negate classifier; repaired forward in place ('live_claims' = the tool's name, 'never executed here' negate) — same-meaning repairs, never a history rewrite
+seed-commit a36fd274
