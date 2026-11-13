@@ -8,9 +8,9 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P37.47
-lastCompleted: P37.46b
-blockedOn: CI stack on #495@a0442c4 (external): #491 does not contain its base #490's head e1e4520 (carried ancestors verbatim, none authored here)
+nextTicket: P37.48
+lastCompleted: P37.47
+blockedOn: CI stack on #496@a7c6624 (external): #495 does not contain its base #494's head c062c6c — rebased or retargeted outside the documented procedure (carried ancestors verbatim, none authored here)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.42,P37.70,P37.71
 manifest: docs/tickets/00_MANIFEST.md
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P37.46b-organisation-cascade-materializer
+chainTip: r11/P37.47-tier-2-reuse-wave
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-13T06:15Z
+updatedAt: 2026-11-13T10:55Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1717,3 +1717,5 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-13 — P37.46b post-closeout record — head `a0442c4a` · PR #495 vs `r11/P37.46a-organisation-crosswalk-intake` · `ci: pending head-bound read` (`ci_boundary.py --no-wait` 2026-11-13, `reports/ci/p37_46b_pr495.json`) · `blockedOn` carried ancestors verbatim: `CI stack on #495@a0442c4 (external): #491 does not contain its base #490's head e1e4520` — stack finding, none authored here · coverage stamped (SIG-CONF-004 stays PARTIAL → routed BL-085, machinery + tests + note append) · deferrals +1/−0 (`D-P37.46b-1` OPEN) · local-suite note: `tests/unit/test_p34_18_aliases.py` 2 reds — pre-existing local artifact (gitignored handle list present in this worktree; the tests skip when absent as in CI; no failing file touched here) · `check_live_claims corpus` — 2 violations, both pre-existing on HEAD `854e572e` verbatim (LEDGER:1714 `live-claim` / LEDGER:1715 `production` in P37.46a committed lines — append-only, not editable here; the P37.46a.md:54 `'hosted 471'` segment repaired forward by code-span; none authored by this row) · `main` untouched · next → P37.47
 - 2026-11-13 — P37.46b post-closeout record — head `1f020b79` 5/5 green head-bound (`ci: pass #495@1f020b7`, run 43391684820, read ~09:13Z: docs 2m11s · security 37s · composed 4m22s · python 15m30s · web 57m32s; `reports/ci/p37_46b_pr495_final.json`) · `blockedOn` carried ancestors verbatim: `CI stack on #495@1f020b7 (external): #494 does not contain its base #493's head 755c7a5` — stack finding, none authored here; the stack's own link holds (#495 contains #494's head `0ff73ed3` via merge `cf4a9f0f`) · repair arc forward (detail `runs/P37.46b.md`): `a36fd274` committed `live-claim` repairs + seed-commit declarations · `cf4a9f0f` stack merge (base tip `0ff73ed3`, merge never rebase) · `a8b29cbf` `check_trailers` comment-line false-negative repair + `seed-commit` chain · `545ca68d` LEDGER:1714 restored to base bytes (unattributed finding evaporated) · `1f020b79` projection regen · deferrals +1/−0 (`D-P37.46b-1` OPEN — named mutation `prepared_not_executed`) · `main` untouched · next → P37.47
 - 2026-11-13 — dispatch boundary-confirm — P37.46b's green read recorded (`ci: pass #495@1f020b7`, run 43391684820; closeout head `8e572c9e`); `blockedOn` carried ancestors verbatim (#494 vs #493's head 755c7a5 — external stack finding, none authored here); chainTip `r11/P37.46b-organisation-cascade-materializer` · nextTicket P37.47 (row 472 — tier-2 reuse wave; `live_verification=false`; gate `HG-03 lines executed by the operator (OP-26) · answers B-11/A-7/B-33/B-39` carried verbatim; deps P36.4+P36.8 landed) — fresh implement-spec sub-agent on `r11/P37.47-tier-2-reuse-wave` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-13 — P37.47 done — row 472 `Kind: ticket` — tier-2 reuse wave (`R11-ACQ-19` / I8 §6.2; `live_verification=false`; not OM-20; no `live` legs ran (leg runs: 0); no production mutations): the 32 ACQ-19 seats wired behind the gate on existing families — 10 pinned camera-layer targets over `dot_511` (observed counts + out_fields + verification-first/S2 screens recorded; WVPA broken-geometry + publisher-identity caveats verbatim) and 20 `dossier_documents` rows (2 curated_index citation-only lanes + the 3 RB-09 flips — dhs_fusion_centers roster rides index_listing, recorded deviation from advisory `reuse:accountability`) · runner +28, adapters +22, dispositions −30 exactly-once, cadence +3 · all 30 `ingestion_permitted=false` and refused at the loader gate (OP-26 Wave-D flips operator-only) · pytest +11 + dossier sweeps green; validate/cadence OK · `main` untouched · next → P37.48 · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-13 — P37.47 post-closeout record — head `a7c66240` · PR #496 vs `r11/P37.46b-organisation-cascade-materializer` · `ci: pending head-bound read` (`ci_boundary.py --no-wait` 2026-11-13, `reports/ci/p37_47_pr496.json`) · `blockedOn` carried ancestor verbatim: `CI stack on #496@a7c6624 (external): #495 does not contain its base #494's head c062c6c — rebased or retargeted outside the documented procedure` — stack finding, none authored here · coverage +0 (no §56 Owner row; no verdicts stamped) · deferrals +0/−0 · `main` untouched · next → P37.48 · harness: devin-desktop/swe-2-high/subagent
