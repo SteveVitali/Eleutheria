@@ -188,12 +188,20 @@ def test_the_discovery_channel_carries_no_registry_row() -> None:
 
 def test_the_six_existing_ccops_rows_are_untouched() -> None:
     # BL-054: the six already-registered-not-permitted CCOPS rows are named
-    # on the Wave-B flip list — never edited, never routed, never flipped.
+    # on the Wave-B flip list — never edited, never flipped. P37.47's A-7
+    # batch-wide reuse wave routed ccops_boston + ccops_berkeley to
+    # dossier_documents (mapping is code, never a permission — the flip
+    # stays the operator's OP-26 act) and gave those two cadence seats;
+    # the other four stay unrouted and seatless.
+    _p37_47_routed = {"ccops_boston", "ccops_berkeley"}
     for source_id in _EXISTING_CCOPS_ROWS:
         rec = get(source_id)
         assert rec.source_kind is SourceKind.GOVERNMENT_MANDATED_DISCLOSURE, source_id
         assert rec.ingestion_permitted is False, source_id
-        assert source_id not in CONNECTOR_FOR_SOURCE, source_id
+        if source_id in _p37_47_routed:
+            assert CONNECTOR_FOR_SOURCE[source_id] == "dossier_documents", source_id
+        else:
+            assert source_id not in CONNECTOR_FOR_SOURCE, source_id
 
 
 def test_every_source_is_refused_for_a_live_run() -> None:
