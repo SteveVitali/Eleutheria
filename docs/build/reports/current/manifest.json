@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "4681fa50b42c42ab8e187e32de8b6d933bcb298f",
+  "input_commit": "a0442c4a93a0cb44bac4c578a800c501f1c2425f",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -998,15 +998,15 @@
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "277e09d4d794bad7ead88c601e55c85db30cfcefea70ab5ca9362ec6a4172fa3"
+      "sha256": "5c4ce66644aa9d70f29d8713f5fe6a293dfe501f2d2c65a3eaa4839886c7cc0f"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "c26b8808d2874dbfc9b06c4eb02a0597309d7a2e1efd9dc5122eab4ca51431f8"
+      "sha256": "97f2992723d9b40d3cda68fc9818303043fb78ebc6740b578ecd32a204234903"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "bb3225dad186ab2be7cee3cfd5dd0532142269aca1ab4331f5fce79dc3511413"
+      "sha256": "99ef5d2644e86909635a9d9a2775bba2b7b458a341e5201ca4e53c50ec876b6a"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -1090,7 +1090,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "a0d7eb22d2d5bbd198f6cc3dc04825b77222e6ce7edc03b489020488a23f4f92"
+      "sha256": "01c3fa6b25ff3815bdabe58a772da8b38b160efe060609b3f07a026442e475b9"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -2861,6 +2861,10 @@
       "sha256": "4620b427d4f029dfc29bf1398eeaea9371374e623f6fc80425f47b8412e54306"
     },
     {
+      "path": "docs/build/runs/P37.46b.md",
+      "sha256": "94e8b3b1eeee137ca91c85dd234317dfd5a46ca2b5bf08cf43194ea888a0852b"
+    },
+    {
       "path": "docs/build/runs/P37.4a.md",
       "sha256": "64053e44929c64ce0a196b3ddedb386e4fff6b1a38924f0e5289c0b8623d8142"
     },
@@ -4442,7 +4446,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "23e3c478f9b1340a81c49a97a2ce3c11f72c9d7f986868937b4a9d6212d3eae8"
+      "sha256": "7b61661ae99a80576b53e88ab5a276bf11ed30a2dadc599d7a2026c741e3352a"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",
