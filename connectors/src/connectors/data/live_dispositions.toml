@@ -77,14 +77,6 @@ disposition = "mirror"
 disposition = "reference"
 note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Baltimore 2020 ordinance)"
 
-[sources.ccops_berkeley]
-disposition = "reference"
-note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Berkeley Ord. 7592)"
-
-[sources.ccops_boston]
-disposition = "reference"
-note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Boston 2021 ordinance)"
-
 [sources.ccops_davis]
 disposition = "reference"
 note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Davis CA)"
@@ -155,9 +147,6 @@ note = "P26.2 discovery — public agency bid portal (records/procurement surfac
 [sources.denmark_politi_cctv]
 disposition = "reference"
 note = "P26.2 discovery (RAA pattern) — Danish national police official CCTV camera map"
-
-[sources.dhs_fusion_centers]
-disposition = "reference"
 
 [sources.drivers_against_flock]
 disposition = "link_only"
@@ -499,10 +488,6 @@ class_ticket = "P37.48"
 disposition = "promote"
 class_ticket = "P37.53"
 
-[sources.camreg_ca_monterey_park_flock_camera]
-disposition = "promote"
-class_ticket = "P37.47"
-
 [sources.camreg_de_delaware_checkbook_expenditure]
 disposition = "promote"
 class_ticket = "P37.48"
@@ -518,10 +503,6 @@ class_ticket = "P37.69a"
 [sources.camreg_eu_eea_data_europa_search_api]
 disposition = "promote"
 class_ticket = "P37.69a"
-
-[sources.camreg_fl_broward_county_us_palm_beach]
-disposition = "promote"
-class_ticket = "P37.47"
 
 [sources.camreg_fr_92_grand_paris_seine_ouest_vid]
 disposition = "promote"
@@ -603,10 +584,6 @@ class_ticket = "P37.48"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.camreg_jeffersonville_in_flock]
-disposition = "promote"
-class_ticket = "P37.47"
-
 [sources.camreg_la_east_baton_rouge_parish_flock]
 disposition = "promote"
 class_ticket = "P37.53"
@@ -631,10 +608,6 @@ class_ticket = "P37.48"
 disposition = "promote"
 class_ticket = "P37.48"
 
-[sources.camreg_nv_las_vegas_us_clark_county]
-disposition = "promote"
-class_ticket = "P37.47"
-
 [sources.camreg_oakland_ca_shotspotter_2013_2015]
 disposition = "promote"
 class_ticket = "P37.48"
@@ -646,10 +619,6 @@ class_ticket = "P37.53"
 [sources.camreg_pt_11_lisboa_sistema_de]
 disposition = "promote"
 class_ticket = "P37.69a"
-
-[sources.camreg_santa_fe_nm_park_cameras]
-disposition = "promote"
-class_ticket = "P37.47"
 
 [sources.camreg_si_048_ko_evje_videonadzor_na]
 disposition = "promote"
@@ -711,14 +680,6 @@ class_ticket = "P37.16a"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.ccops_hi_honolulu_police_department]
-disposition = "promote"
-class_ticket = "P37.47"
-
-[sources.ccops_il_chicago_oig_shotspotter]
-disposition = "promote"
-class_ticket = "P37.47"
-
 [sources.ccops_iso_au_privacy_commissioner]
 disposition = "promote"
 class_ticket = "P37.69a"
@@ -727,29 +688,9 @@ class_ticket = "P37.69a"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.ccops_mi_wayne_county_commission]
-disposition = "promote"
-class_ticket = "P37.47"
-
 [sources.ccops_mn_dayton_police_department]
 disposition = "promote"
 class_ticket = "P37.53"
-
-[sources.ccops_mo_st_louis_fy21_spi_shotspotter]
-disposition = "promote"
-class_ticket = "P37.47"
-
-[sources.ccops_nc_charlotte_mecklenburg_police]
-disposition = "promote"
-class_ticket = "P37.47"
-
-[sources.ccops_nc_elizabeth_city_police]
-disposition = "promote"
-class_ticket = "P37.47"
-
-[sources.ccops_ny_new_york_nyc_comptroller]
-disposition = "promote"
-class_ticket = "P37.47"
 
 [sources.ccops_oh_cincinnati_police_department]
 disposition = "promote"
@@ -771,18 +712,6 @@ class_ticket = "P37.53"
 disposition = "promote"
 class_ticket = "P37.16a"
 
-[sources.ccops_san_francisco_bay_ca]
-disposition = "promote"
-class_ticket = "P37.47"
-
-[sources.ccops_san_jose_ca]
-disposition = "promote"
-class_ticket = "P37.47"
-
-[sources.ccops_santa_clara_county_ca]
-disposition = "promote"
-class_ticket = "P37.47"
-
 [sources.ccops_si_085_novo_mesto_evidenca_o]
 disposition = "promote"
 class_ticket = "P37.69a"
@@ -790,18 +719,6 @@ class_ticket = "P37.69a"
 [sources.dot_511_gb]
 disposition = "promote"
 class_ticket = "P37.69a"
-
-[sources.dot_511_id]
-disposition = "promote"
-class_ticket = "P37.47"
-
-[sources.dot_511_nm]
-disposition = "promote"
-class_ticket = "P37.47"
-
-[sources.dot_511_nv]
-disposition = "promote"
-class_ticket = "P37.47"
 
 [sources.grant_il_illinois_gata_csfa]
 disposition = "promote"
@@ -814,14 +731,6 @@ class_ticket = "P37.52"
 [sources.grant_oh_ohio_criminal_justice]
 disposition = "promote"
 class_ticket = "P37.52"
-
-[sources.grant_ok_safe_oklahoma_grant]
-disposition = "promote"
-class_ticket = "P37.47"
-
-[sources.grant_us_doj_cops_technology]
-disposition = "promote"
-class_ticket = "P37.47"
 
 [sources.legis_ie_rs_general_scheme]
 disposition = "promote"
@@ -860,14 +769,6 @@ class_ticket = "P37.51"
 disposition = "promote"
 class_ticket = "P37.49"
 
-[sources.legis_vi_legislature_virgin_islands]
-disposition = "promote"
-class_ticket = "P37.47"
-
-[sources.policy_anaheim_ca_pd_policy_manual]
-disposition = "promote"
-class_ticket = "P37.47"
-
 [sources.policy_chicago_il_oemc_link_your]
 disposition = "promote"
 class_ticket = "P37.53"
@@ -875,14 +776,6 @@ class_ticket = "P37.53"
 [sources.policy_lafayette_in_camera_registration]
 disposition = "promote"
 class_ticket = "P37.53"
-
-[sources.policy_maricopa_county_az_mcso_policies]
-disposition = "promote"
-class_ticket = "P37.47"
-
-[sources.policy_norman_ok_alpr_policy_amendment]
-disposition = "promote"
-class_ticket = "P37.47"
 
 [sources.policy_ok_oklahoma_dac_uved]
 disposition = "promote"
@@ -957,14 +850,6 @@ class_ticket = "P37.69a"
 
 
 
-[sources.statrep_new_york_ny_nyc_doi_oig]
-disposition = "promote"
-class_ticket = "P37.47"
-
-[sources.statrep_tx_ca_nm_ri_fl_il_eff_red_flag]
-disposition = "promote"
-class_ticket = "P37.47"
-
 [sources.statrep_tx_south_padre_island_faa]
 disposition = "promote"
 class_ticket = "P37.49"
@@ -989,10 +874,6 @@ class_ticket = "P37.49"
 [sources.statrep_us_ice_287_participating]
 disposition = "promote"
 class_ticket = "P37.49"
-
-[sources.statrep_us_upturn_mass_extraction_2020]
-disposition = "promote"
-class_ticket = "P37.47"
 
 [sources.statrep_us_wiretap_summary_tables]
 disposition = "promote"
