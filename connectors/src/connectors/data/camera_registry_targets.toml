@@ -7267,7 +7267,7 @@ aggregate_period_label = "2026"
 aggregate_count_field = "incident_id"
 aggregate_count_function = "count"
 aggregate_measure = "alerts"
-where = "called_at >= DATE '2026-01-01' AND called_at < DATE '2027-01-01'"
+where = "called_at >= DATE '2026-01-01' AND called_at < DATE '2027-01-01'"  # future-ok: real-world: the declared-2026 window's exclusive end bound
 agency = "City of Detroit / Detroit Police Department (via ArcGIS Online, data.detroitmi.gov)"
 state = "US-MI"
 jurisdiction_scheme = "iso.3166_2"
