@@ -91,7 +91,16 @@
 # per-view image URL arrays), `Links`/`Href` (per-row link objects carrying
 # page/stream URLs). Values are recorded-excluded by name, never emitted.
 # Additive only.
-vocab_version = "2026.11.07"
+# 2026.11.13 (P37.48 / R11-ACQ-20): the aggregate lanes gain `payee` (the
+# published vendor/payee bucket subject assertion — an organisation payee,
+# never a natural person: the committed `payee_allowlist` + the
+# person-shape gate are the S7 screen) and `payment_total` (the published
+# vendor × period spend total — decimal, carrying period/currency/measure);
+# `vendor`, `buyer` and `published_by` join for the payee emit's party and
+# provenance claims (registered predicates.yaml members). `payee` rows are
+# aggregate-only by construction — no per-payment, per-person or per-invoice
+# surface is ever emitted. Additive only.
+vocab_version = "2026.11.13"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `dot_511` connector may write ONLY the camera-registry surface — a
@@ -150,6 +159,17 @@ predicate_allowlist = [
   # per-registrant/location record). Both registered predicates.yaml members.
   "programme_area",
   "programme_count",
+  # P37.48 (ACQ-20): `payee` — the published vendor/payee bucket subject
+  # assertion (an organisation payee only); `payment_total` — the published
+  # vendor × period spend total ({period, currency, measure} beside the
+  # decimal value); `vendor`/`buyer` — the payee lane's party claims
+  # (entity-ref candidates, never resolutions); `published_by` — the
+  # register's publisher provenance. All registered predicates.yaml members.
+  "payee",
+  "payment_total",
+  "vendor",
+  "buyer",
+  "published_by",
 ]
 
 # Predicate GENRES this connector MUST NOT write (scope-creep guard): the

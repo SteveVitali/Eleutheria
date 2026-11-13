@@ -1,0 +1,22 @@
+{
+ "features": [
+  {
+   "attributes": {
+    "council_district": "District 1",
+    "count": 4123
+   }
+  },
+  {
+   "attributes": {
+    "council_district": "District 2",
+    "count": 3901
+   }
+  },
+  {
+   "attributes": {
+    "council_district": "District 3",
+    "count": 2877
+   }
+  }
+ ]
+}

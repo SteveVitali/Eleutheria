@@ -480,17 +480,9 @@ class_ticket = "P37.69a"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.camreg_az_mesa_city_of_expenditures]
-disposition = "promote"
-class_ticket = "P37.48"
-
 [sources.camreg_bloomington_il_drone_flights]
 disposition = "promote"
 class_ticket = "P37.53"
-
-[sources.camreg_de_delaware_checkbook_expenditure]
-disposition = "promote"
-class_ticket = "P37.48"
 
 [sources.camreg_detroit_mi_project_green_light]
 disposition = "promote"
@@ -576,10 +568,6 @@ class_ticket = "P37.69a"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.camreg_il_chicago_violence_reduction]
-disposition = "promote"
-class_ticket = "P37.48"
-
 [sources.camreg_it_me_messina_videosorveglianza]
 disposition = "promote"
 class_ticket = "P37.69a"
@@ -599,18 +587,6 @@ class_ticket = "P37.52"
 [sources.camreg_medford_or_drone_deployments_fs]
 disposition = "promote"
 class_ticket = "P37.53"
-
-[sources.camreg_mi_detroit_dpd_shotspotter]
-disposition = "promote"
-class_ticket = "P37.48"
-
-[sources.camreg_nj_new_jersey_yourmoney]
-disposition = "promote"
-class_ticket = "P37.48"
-
-[sources.camreg_oakland_ca_shotspotter_2013_2015]
-disposition = "promote"
-class_ticket = "P37.48"
 
 [sources.camreg_peoria_il_drone_usage]
 disposition = "promote"
@@ -644,21 +620,9 @@ class_ticket = "P37.48"
 disposition = "promote"
 class_ticket = "P37.48"
 
-[sources.camreg_us_municipal_contract_expenditure]
-disposition = "promote"
-class_ticket = "P37.48"
-
 [sources.camreg_us_nces_school_survey_on_crime]
 disposition = "promote"
 class_ticket = "P37.49"
-
-[sources.camreg_us_socrata_hosted_vendor]
-disposition = "promote"
-class_ticket = "P37.48"
-
-[sources.camreg_wa_washington_state_open]
-disposition = "promote"
-class_ticket = "P37.48"
 
 [sources.ccops_ca_calistoga_police_department]
 disposition = "promote"
@@ -804,10 +768,6 @@ class_ticket = "P37.16a"
 [sources.procportal_pr_consulta_del_registro]
 disposition = "promote"
 class_ticket = "P37.51"
-
-[sources.procportal_tx_texas_dir_cooperative]
-disposition = "promote"
-class_ticket = "P37.48"
 
 [sources.procportal_us_naspo_valuepoint_portfolio]
 disposition = "promote"
