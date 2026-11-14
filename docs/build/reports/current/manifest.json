@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "8c15a3d519ffc64a71130efda8732ecd700f62b3",
+  "input_commit": "037530f491bcc97769dd133e1aa67f7e278b3991",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -1006,11 +1006,11 @@
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "92fc66102005332656db94ed717b11eaf09fb09f8994f4ffa8af030d7153251a"
+      "sha256": "51d9e7b65418bc8740733372dc1c622bee29b7b6528d7f22998df75ec68e3240"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "ed5d3420e30a8a5a47b3692f25cbb5cbe0a89ace91bf8806c6bb7babedb6a8e4"
+      "sha256": "674841dd8f08feb4732b3830bff54c27a30e2bdea822345089382687ceb313e8"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -2918,7 +2918,7 @@
     },
     {
       "path": "docs/build/runs/P37.57a.md",
-      "sha256": "87592aa0f00226ef6c22271799d065abd608603f07356d5f601210ade858627b"
+      "sha256": "f2382dc5ffe22cce104c52fa796c8bee43254cd8604a76f73fd697f7d7afd4b5"
     },
     {
       "path": "docs/build/runs/P37.5a.md",
