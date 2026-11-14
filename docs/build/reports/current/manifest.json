@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "1f16f9ce3b1d143ec499503f11e626c3e0b21e59",
+  "input_commit": "27b015167df212994581134e4eaa17f71ad1e864",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
