@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "2cd0f2a70d8b27a4fdca97bf65057969c06eb0f0",
+  "input_commit": "a4625c0ceeab195135f8995b85de62446dc8927e",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -2922,7 +2922,7 @@
     },
     {
       "path": "docs/build/runs/P37.57b.md",
-      "sha256": "b7dea7f34498a4aaffc3289f71e0094bab6667d0b08fd0ef3a24d61d5fec574f"
+      "sha256": "4c8fbf932a8a95c4a9f8797a6c00f3cd324986b11aaa062fd87b3d14bf92cb05"
     },
     {
       "path": "docs/build/runs/P37.5a.md",
