@@ -4,12 +4,12 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `1617ddd28d4c336e313db5055c8eae6b6938fd41` · inputs hashed: 1274 · wall-clock receipt: `receipt.json`
+> input_commit: `56d0e2a3ad5bbc6ce6f8c7a2b010a2c2a8c3d030` · inputs hashed: 1275 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.55` · lastCompleted `P37.54`
-- chainTip `r11/P37.54-wave-d-activation` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-14T05:58Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.56` · lastCompleted `P37.55`
+- chainTip `r11/P37.55-archival-deposits` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-14T09:41Z`
 
 ## Obligations
 
@@ -110,7 +110,8 @@
 | P37.20 | D-P37.20-1 | implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true |
 | P37.36 | raw-ok archive write (raw/index.json; P8 screen; new-capture reserialisation) + push + rehearsal | `implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` (archive write + push + rehearsal) |
 | P37.42 | D-P37.42-1 | implement-spec spec=docs/tickets/466_P37.42__api-parity.md live_verification=true |
-| P37.54 | Wave-D L0→L11 (open → ACQ-19…26 family days → S6 extras day → materialize+delta+resume); the 8 dossier seats, `doj_ctas_awards` + tribal S8 lane never | … |
+| P37.54 | Wave-D L0→L11 (open → ACQ-19…26 family days → S6 extras day → materialize+delta+resume); dossier seats + never-sources excluded | … |
+| P37.55 | queued archival legs (obligation rides P21.5, T5 γ) | `implement-spec spec=docs/tickets/482_P37.55__archival-deposits.md live_verification=true` |
 
 ## Known inconsistencies (preserved, never synthesized)
 

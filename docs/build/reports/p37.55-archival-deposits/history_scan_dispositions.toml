@@ -1,0 +1,199 @@
+# SPDX-License-Identifier: Apache-2.0
+# P37.55 (Q-E2-23 [B-6] = a): the reviewed disposition of each class the
+# public-history scan (`scripts/ci/history_scan.py`, schema sig.history-scan/1)
+# found in retained history. `exempt` = a reviewed false positive; `disclosed`
+# = accepted-and-disclosed (the A-0.4 / P34.18 retained-history pattern —
+# recorded here, never hidden). Matchers name literal sha256s, path globs,
+# token sha256s, or domains — never the matched bytes. An entry matching no
+# finding is stale and fails the report (the file can never drift silently).
+schema = "sig.history-scan-dispositions/1"
+run = "P37.55"
+decision = "Q-E2-23 [B-6] = a — scan the public history for secrets and restricted data first, then submit"
+
+# ── secrets ────────────────────────────────────────────────────────────────
+
+# sha256("AKIA" + "IOSFODNN7EXAMPLE") — AWS's own documented documentation
+# example key, seeded in test fixtures; never a live credential.
+[[disposition]]
+id = "aws-doc-example-key"
+disposition = "exempt"
+justification = "AWS's published documentation example access-key, present in test fixtures and historical test data only — a documented non-credential shape, never a live key."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+literal_sha256 = "1a5d44a2dca19669d72edf4c4f1c27c4c1ca4b4408fbb17f6ce4ad452d78ddb3"
+
+# sha256 of the historical Google Maps browser key captured in
+# tests/connectors/fixtures/procportal/bonfire_portal_shell.html. A Google Maps
+# browser key is intentionally public-in-page by design (it ships to every
+# visitor of the page it was scraped from), and the tip already carries the
+# REDACTED placeholder — the hit is retained *history* only.
+[[disposition]]
+id = "google-maps-browser-key-retained-history"
+disposition = "disclosed"
+justification = "A Google Maps browser key — public-in-page by Google's design — captured in a scraped fixture; the tip already redacts it (REDACTED-google-maps-api-key-test-fixture), so the finding is retained history only."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+literal_sha256 = "147b10158e2bf55753046d6e7606fa093af3d6ebbdc9acafdf7b2610f9bf55df"
+
+# Fixture literals — listed BEFORE the domain buckets so the fixture label
+# wins over a `.gov` suffix (first-match wins).
+[[disposition]]
+id = "fixture-literal-officer-city-gov"
+disposition = "exempt"
+justification = "A synthetic e-mail literal in tests/unit/test_policy_transparency.py — fixture shape, not a contact."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+token_sha256 = "f9c13bc97b2cb707f61847110fa56302032f9e3493f2533c19707ae72c84e877"
+
+# ── public-source-contact e-mail domains ──────────────────────────────────
+# Addresses at public agencies, advocacy groups, vendors, and community
+# projects, captured verbatim in source pages, registries, catalog sweeps,
+# and connector data — public contact points recorded as *data*, not personal
+# material the project controls. Shared mail hosts (gmail.com, proton.me,
+# pm.me) are deliberately NOT domain-disposed — a blanket host rule could hide
+# a future personal address; each such token is matched by digest below.
+[[disposition]]
+id = "public-contact-gov-edu-tlds"
+disposition = "disclosed"
+justification = "Agency staff/alias addresses at government and education TLDs, captured verbatim in public source data, catalogs, and docs — public contact points."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+domain_suffixes = [".gov", ".gov.uk", ".govt.nz", ".gc.ca", ".edu", ".edu.au", ".mil"]
+
+[[disposition]]
+id = "public-contact-org-domains"
+disposition = "disclosed"
+justification = "Public organisational contact addresses — advocacy groups (EFF, EPIC, RCFP, Lucy Parsons Labs, DeFlock community projects, Eyes Off/Eyes On Flock, Stop Spying, MuckRock, OpenStates, OSM), civic tech and vendors captured in source data and the catalog sweep. Public contact points recorded as data."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+domains = [
+  "eff.org", "epic.org", "rcfp.org", "lucyparsonslabs.com", "paec.org",
+  "stopspying.org", "stopflock.com", "eyesoffindiana.org", "eyesonflock.com",
+  "haveibeenflocked.com", "deflocktheusa.com", "kansas.watch", "muckrock.com",
+  "openstates.org", "openstreetmap.org", "nycppf.org", "wwf.org", "pir.org",
+  "bidnet.com", "eunasolutions.com", "flocksafety.com", "fusus.com",
+  "locateitall.com", "squarespace.com", "technopolice.fr", "documentcloud.org",
+  "jub.com", "tcrsd.org", "mssma.us", "amfems.org", "nemo.org.bz", "scgov.net",
+  "apram.pt", "eagle.co.nz", "esrichina.hk", "esriindonesia.co",
+  "identity.digital", "spacex.com", "cognition.ai",
+  # government contact points on non-.gov TLDs / truncated captures
+  "cdph.ca", "ottawa.ca", "stalbert.ca", "dot.state.fl", "dublin.oh",
+  "ph.lacounty", "health.in", "cityofchesapeake.net",
+]
+
+# ── individual e-mail tokens (shared hosts / fixtures / oddities) ─────────
+
+# The operator's own address, written verbatim by the operator into OP-25
+# gate-signing key material and build memory records — the operator's own
+# words in the operator's own records (the OM verbatim rules bind agent text,
+# never the operator's). Two case-folded spellings both occur in history.
+[[disposition]]
+id = "operator-own-address-a"
+disposition = "disclosed"
+justification = "The operator's own address, committed verbatim by the operator in OP-25 signing material and build memory — the operator's own words, the same retained-history pattern as A-0.4."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+token_sha256 = "a66184e5dc08da90ab03c98e654cf5010909bb9b30147ecb1ead0f5c3900f4d8"
+
+[[disposition]]
+id = "operator-own-address-b"
+disposition = "disclosed"
+justification = "Case-folded spelling of the operator's own address — same basis as operator-own-address-a."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+token_sha256 = "75eb20acaa4fc0b48a98b5a0216d5382309e6e282d6a536c421d704743457676"
+
+# Public community-source contact addresses on shared mail hosts — DeFlock
+# chapter contacts and the ALPR-watch project contact, captured in source
+# data. Each is per-token, never a host-wide rule.
+[[disposition]]
+id = "community-source-contact-deflockthevalley"
+disposition = "disclosed"
+justification = "A public DeFlock chapter contact address captured in source data — a public contact point."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+token_sha256 = "6117f00a6d4ba2f66a59624b9ab985754dd2c644e6bc91c015ea8e18e693a0df"
+
+[[disposition]]
+id = "community-source-contact-alprwatch"
+disposition = "disclosed"
+justification = "The ALPR-watch project's public contact address captured in source data — a public contact point."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+token_sha256 = "5bb49f9de8ced9b7591d16ab9f4657eb8fe7f128e4c90f25c4df7e84ad96c4da"
+
+[[disposition]]
+id = "community-source-contact-deflockbhm"
+disposition = "disclosed"
+justification = "A public DeFlock chapter contact address captured in source data — a public contact point."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+token_sha256 = "19ee43a344217d4c791f7e9876dd8a4d68135f9a69690eae9a3b8ce3ae3facdc"
+
+[[disposition]]
+id = "community-source-contact-deflockoly"
+disposition = "disclosed"
+justification = "A public DeFlock chapter contact address captured in source data — a public contact point."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+token_sha256 = "bcca2990d4a5940af4e983f9e6f0d19237bcd7b8efb5b52bf13c9f9971b4e8db"
+
+[[disposition]]
+id = "community-source-contact-deflocktucson"
+disposition = "disclosed"
+justification = "A public DeFlock chapter contact address captured in source data — a public contact point."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+token_sha256 = "941b61b154e38e0b18333e3fc35a613aa7907d913f25a3378d5b797e0ee2177d"
+
+[[disposition]]
+id = "community-source-contact-deflockatlanta"
+disposition = "disclosed"
+justification = "A public DeFlock chapter contact address captured in source data — a public contact point (a case-variant mail-host domain)."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+token_sha256 = "70de40123632d24dfc110675b175189cf25d7b362eceb1c110f9ca9cbf22876d"
+
+# A registry-recorded public contact address for a tracked source (the
+# catalog sweep reports), captured verbatim from the source's own public
+# material.
+[[disposition]]
+id = "source-contact-catalog-sweep"
+disposition = "disclosed"
+justification = "A source's recorded public contact address in the catalog sweep reports — captured verbatim from the source's own public material."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+token_sha256 = "1ce02b99bd6c421f48c3b312fdd7c3d7096f932fd92a0e227d3b11e58a4c6531"
+
+# Fixture / data-quality literals.
+[[disposition]]
+id = "fixture-literal-a-b-co"
+disposition = "exempt"
+justification = "A synthetic e-mail literal in tests/unit/test_policy_transparency.py — fixture shape, not a contact."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+token_sha256 = "80305c9bb1bb2480e03894350e0a8a366dcbdeb302e69e0817aa0743abd77054"
+
+[[disposition]]
+id = "package-author-metadata"
+disposition = "disclosed"
+justification = "An npm package author's public identity string inside package-lock.json metadata — public metadata captured verbatim."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+token_sha256 = "b0373516d594ddd199b25c3655332b354837e065c5cc232f5043189897900ca7"
+
+[[disposition]]
+id = "captured-truncated-domain-a"
+disposition = "disclosed"
+justification = "A truncated-domain address captured verbatim in source data (the source page itself carried the malformed form) — data-quality literal, disclosed."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+token_sha256 = "68ad4a91d00076bd3d1d4c13ad98defc45c406d0c0c0edbb5e440172a70ebf37"
+
+[[disposition]]
+id = "captured-truncated-domain-b"
+disposition = "disclosed"
+justification = "A truncated-domain address captured verbatim in source data (the source page itself carried the malformed form) — data-quality literal, disclosed."
+decided_by = "agent-analysis P37.55 — confirm in the verbatim go"
+[disposition.match]
+token_sha256 = "b6b0f6d94f5e87669a82fb099ef1523ba4625dfba67525bd5bb9d4070e77b878"
