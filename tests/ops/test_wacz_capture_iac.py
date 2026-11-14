@@ -87,7 +87,7 @@ def test_apply_refuses_inside_the_window_band_and_without_author() -> None:
     # outside the band but no recorded author → refuses (OM-20 scope discipline)
     proc = _run(
         ["--apply", "jobs"],
-        {"SIG_WACZ_NOW": "2026-11-14T15:30:00Z", "SIG_GCP_PROJECT": "p"},
+        {"SIG_WACZ_NOW": "2026-11-14T15:30:00Z", "SIG_GCP_PROJECT": "p"},  # future-ok: synthetic: a fixed test-clock "now" outside the capture band
     )
     assert proc.returncode == 2
     assert "SIG_WACZ_AUTHOR" in (proc.stdout + proc.stderr)
@@ -103,7 +103,7 @@ def test_apply_meeting_a_surprise_arg_shape_stops_om18(tmp_path: Path) -> None:
     proc = _run(
         ["--apply", "jobs"],
         {
-            "SIG_WACZ_NOW": "2026-11-14T15:30:00Z",
+            "SIG_WACZ_NOW": "2026-11-14T15:30:00Z",  # future-ok: synthetic: a fixed test-clock "now" outside the capture band
             "SIG_WACZ_AUTHOR": "steve",
             "SIG_GCP_PROJECT": "p",
             "PATH": f"{tmp_path}:{os.environ.get('PATH', '')}",
