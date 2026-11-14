@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "e1b2fd5b1d82df0be9846c0fc2229b7c1693bc4a",
-  "manifest_inputs": 1277,
+  "input_commit": "d5f92947938e61a76f19eead3e9f3d28e5b98256",
+  "manifest_inputs": 1278,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.57a",
-    "lastCompleted": "P37.56",
+    "nextTicket": "P37.57b",
+    "lastCompleted": "P37.57a",
     "blockedOn": "CI stack on",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.42,P37.54,P37.55,P37.56,P37.70,P37.71",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.56-wacz-capture-html-sources",
+    "chainTip": "r11/P37.57a-projection-rebuild-ci",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-14T12:37Z"
+    "updatedAt": "2026-11-14T16:50Z"
   },
   "counts": {
     "obligations": 246,
@@ -27868,10 +27868,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "82fcc03a9fc3f0f02c73169082eeb22b7f770b38f2480e704f46a83fa6f0ddd4",
+  "manifest_sha256": "8c542dbef4798f4ce5a19dc5c2f14e72d0ab77a09abb83230f5fd3248107d255",
   "current_md": {
     "lines": 155,
-    "bytes": 19679,
+    "bytes": 19677,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
