@@ -73,6 +73,7 @@ from . import flock_portal as flock_portal  # noqa: E402,F401
 from . import flock_portal_probe as flock_portal_probe  # noqa: E402,F401
 from . import france_belgium as france_belgium  # noqa: E402,F401
 from . import government_mandated_disclosure as government_mandated_disclosure  # noqa: E402,F401
+from . import ogc_wfs as ogc_wfs  # noqa: E402,F401
 from . import ok_statute as ok_statute  # noqa: E402,F401
 from . import okc_procurement as okc_procurement  # noqa: E402,F401
 from . import okcpd_policy as okcpd_policy  # noqa: E402,F401
