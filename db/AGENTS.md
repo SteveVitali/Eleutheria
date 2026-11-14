@@ -18,6 +18,7 @@ the full narrative.
 | `db/src/db/typed_identity.py` | ~n/a | the append-only `entity_type_decision` writer correcting pre-P35.14b mistyped subjects — dry-run by default, `+0` on rerun, never `UPDATE`/`DELETE` |
 | `db/src/db/assertion.py` · `occurrences.py` · `dispositions.py` · `intake_apply.py` · `recovery_apply.py` | ~n/a | the Round-10 write surfaces — `sig.assertion/1` typed claims (ADR-121), eligible-occurrence selection (ADR-123), publication dispositions (ADR-124), reviewed-correction application (ADR-136), bounded recovery apply (ADR-141) — all insert-only |
 | `db/src/db/sink_bench.py` | ~240 | `sig-db sink-bench` — claims/min + round trips per claim for a sink pass |
+| `db/src/db/graph_audit.py` | ~n/a | `sig-db graph-audit` — the read-only whole-graph TI-6/TI-7 audit (§9.6; ADR-025's deferred nightly job) |
 | `db/src/db/analytics.py` | ~640 | DuckDB analytics commands over parquet (a separate engine) |
 | `db/sqitch.plan` | — | the ordered sqitch migration plan (deploy/revert/verify per change) |
 
