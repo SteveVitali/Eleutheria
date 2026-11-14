@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "65a35b922bd5d4d727120c4583d09a207ee5a260",
-  "manifest_inputs": 1270,
+  "input_commit": "c61b827e970da58c3eb3fb850ec2ffc60c8213a6",
+  "manifest_inputs": 1271,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.53",
-    "lastCompleted": "P37.52",
+    "nextTicket": "P37.69a",
+    "lastCompleted": "P37.53",
     "blockedOn": "CI stack on",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.42,P37.70,P37.71",
@@ -26,12 +26,12 @@
     "updatedAt": "2026-11-13T10:55Z"
   },
   "counts": {
-    "obligations": 241,
-    "owed": 157,
-    "open": 154,
+    "obligations": 243,
+    "owed": 159,
+    "open": 156,
     "partial": 3,
     "terminal": 84,
-    "events": 756,
+    "events": 758,
     "transitions": 59,
     "coverage_assessments": 515,
     "coverage_historical_rows": 994,
@@ -12670,6 +12670,102 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        }
+      ]
+    },
+    {
+      "id": "D-P37.53-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P37.53-1:e0",
+      "kind": "F",
+      "owner": "the next acquisition-class ticket that picks up the family enumerations",
+      "landing": "engineering landed (fixture-verified); the family seats recorded enumerated, never fetch targets",
+      "landing_source": "event-head",
+      "backlog_home": "BL-087",
+      "item": "Per-member registration of the three family-umbrella seats — `camreg_us_agency_published_flock` (I3-C001, the 26-member hub-search Flock-layer enumeration), `camreg_us_agency_drone_flight` (I4-C016, the multi-agency police-drone FeatureServer enumeration) and `policy_us_private_camera_registry` (I9a-C001, the municipal private-camera-registry page family): each member layer/page carries its own candidate id and needs its own registration review, target declaration and gated source row before the S1 screened lane or the dossier clause_fields lane can serve it",
+      "unblocked_by": "owner: the next acquisition-class ticket that picks up the family enumerations (a follow-on ACQ-class review, or per-member tickets as the operator routes them) · trigger: that ticket's dispatch; each member's own candidate record in the rights packet supplies the registration inputs",
+      "verify": "every member gains its own `[[targets]]` or dossier `live_targets.toml` row + `sources.toml` row left `ingestion_permitted=false` with its own promote/enumerated disposition; the umbrella `[[enumerated]]` rows list the member seats; `sig-connectors validate` green; the umbrella promote dispositions retire as the members register",
+      "proxy": "the umbrella rows are committed as `[[enumerated]]` family seats (never fetch targets) with `status = \"family_umbrella_deferred\"` + the deferral cited verbatim in `notes`; their `promote` dispositions stand in `live_dispositions.toml` naming `P37.53`; the mapped members run replay/shadow diff 0 over committed fixtures (`tests/connectors/test_p37_53_s1_programme_lane.py`, 36 tests)",
+      "line": 1597,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P37.53",
+          "backlog_home": "BL-087",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/478_P37.53__programme-level-lane.md",
+            "connectors/src/connectors/data/camera_registry_targets.toml",
+            "connectors/src/connectors/data/sources.toml",
+            "connectors/src/connectors/data/live_dispositions.toml"
+          ],
+          "observed_at": "2026-11-14",
+          "reason": "migration anchor appended by P37.53 (row 478) for the row it added — per-member registration of the three family-umbrella seats (camreg_us_agency_published_flock I3-C001, camreg_us_agency_drone_flight I4-C016, policy_us_private_camera_registry I9a-C001): the umbrella rows are enumerations, not fetchable surfaces, so they are committed as [[enumerated]] family seats with promote dispositions standing; each member's own registration review defers to the next acquisition-class ticket",
+          "source_commit": "WORKTREE",
+          "obligation_id": "D-P37.53-1",
+          "event_id": "D-P37.53-1:e0",
+          "landing": "engineering landed (fixture-verified); the family seats recorded enumerated, never fetch targets",
+          "owner": "the next acquisition-class ticket that picks up the family enumerations",
+          "anchor": {
+            "row_line": 1597,
+            "row_sha256": "14ab9ec44f1afb02f4700518cc99e6df3a780a186503b4c811f0da401b2a539b",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-11-14"
+        }
+      ]
+    },
+    {
+      "id": "D-P37.53-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P37.53-2:e0",
+      "kind": "F",
+      "owner": "the connector/registration ticket that runs the published-schema preflight",
+      "landing": "engineering landed (fixture-verified); whole-layer counts only, bucketing queued",
+      "landing_source": "event-head",
+      "backlog_home": "BL-087",
+      "item": "Agency-by-month drone flight counts for the three police-drone-log seats (`camreg_bloomington_il_drone_flights`, `camreg_peoria_il_drone_usage`, `camreg_medford_or_drone_deployments_fs`): the S1 count_only lane today emits the published layer total as ONE `programme_count`; the design's finer `programme_count` bucketing (published flight counts by agency × month) waits on the published schema preflight that names the layer's agency and period fields",
+      "unblocked_by": "owner: the connector/registration ticket that runs the published-schema preflight over the three layers (after the operator's OP-26 Wave-D flips make a live `?f=json` metadata read lawful, or over a committed schema fixture captured then) · trigger: that ticket's dispatch once any of the three seats is green or its schema fixture lands",
+      "verify": "each drone seat's target gains a reviewed bucketing declaration (period field + measure) validating against the closed vocabulary; a fixture run emits per-month `programme_count` rows on the `programme_area:` subject with zero row-level geometry; shadow diff 0 on rerun",
+      "proxy": "the count_only lane is committed + fixture-verified — the three seats emit the published totals only; the field-name requirement and the deferral are recorded verbatim in each target's `notes`",
+      "line": 1598,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P37.53",
+          "backlog_home": "BL-087",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/478_P37.53__programme-level-lane.md",
+            "connectors/src/connectors/data/camera_registry_targets.toml"
+          ],
+          "observed_at": "2026-11-14",
+          "reason": "migration anchor appended by P37.53 (row 478) for the row it added — agency-by-month drone flight counts for the three police-drone-log seats (Bloomington, Peoria, Medford): the S1 count_only lane emits the published layer total today; the finer programme_count bucketing waits on the published schema preflight naming each layer's agency and period fields (declaring them blind would fail closed)",
+          "source_commit": "WORKTREE",
+          "obligation_id": "D-P37.53-2",
+          "event_id": "D-P37.53-2:e0",
+          "landing": "engineering landed (fixture-verified); whole-layer counts only, bucketing queued",
+          "owner": "the connector/registration ticket that runs the published-schema preflight",
+          "anchor": {
+            "row_line": 1598,
+            "row_sha256": "8ec35de136981faf004f3632bb01ef4d2a0c6509128b0935b1084702fd4924e5",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-11-14"
         }
       ]
     }
@@ -27602,10 +27698,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "535c999d1ee4d59e5df0d61745496dcbaf86b8ca368a7ed7abf21d3af5b5e320",
+  "manifest_sha256": "1e25e0a6caebc94e8e700182e6aec3ea69a2ecfcc4220afb72c35348e3a26656",
   "current_md": {
     "lines": 161,
-    "bytes": 20421,
+    "bytes": 20422,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
