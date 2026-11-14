@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "17c62a116250cdfdc88eba3346d7a060c98a45cc",
-  "manifest_inputs": 1271,
+  "input_commit": "1f16f9ce3b1d143ec499503f11e626c3e0b21e59",
+  "manifest_inputs": 1272,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.69a",
-    "lastCompleted": "P37.53",
+    "nextTicket": "P37.69b",
+    "lastCompleted": "P37.69a",
     "blockedOn": "CI stack on",
     "pauseRequested": "false",
     "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.42,P37.70,P37.71",
@@ -17,21 +17,21 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.52-document-list-pages",
+    "chainTip": "r11/P37.69a-international-open-data-portals",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-13T10:55Z"
+    "updatedAt": "2026-11-14T02:45Z"
   },
   "counts": {
-    "obligations": 243,
-    "owed": 159,
-    "open": 156,
+    "obligations": 245,
+    "owed": 161,
+    "open": 158,
     "partial": 3,
     "terminal": 84,
-    "events": 758,
+    "events": 760,
     "transitions": 59,
     "coverage_assessments": 515,
     "coverage_historical_rows": 994,
@@ -12761,6 +12761,104 @@
           "anchor": {
             "row_line": 1598,
             "row_sha256": "8ec35de136981faf004f3632bb01ef4d2a0c6509128b0935b1084702fd4924e5",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-11-14"
+        }
+      ]
+    },
+    {
+      "id": "D-P37.69a-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P37.69a-1:e0",
+      "kind": "F",
+      "owner": "the next acquisition-class ticket that picks up the recorded lane",
+      "landing": "engineering landed (fixture-verified); the seats recorded enumerated, never fetch targets",
+      "landing_source": "event-head",
+      "backlog_home": "BL-087",
+      "item": "Concrete endpoint preflights for the seven seats whose evidenced URL is a dataset LANDING page or a truncated record rather than the file/layer/slug the label lane would read: `camreg_au_tas_emergency_closed_circuit` (I5-C331 — the committed data.gov.au slug truncates mid-token `…-cctv-cov`), `camreg_es_md_madrid_c_maras_de` (I5-C349 — the datos.madrid.es XLSX resource URL), `camreg_au_tas_hobar_security_camera` + `camreg_au_wa_perth_security_cameras` (I5-C328/I5-C330 — the FeatureServer `layer_url` the `arcgis_query` label names; committed rows evidence dataset pages only, so their `[[targets]]` rows moved to `[[enumerated]]`), `camreg_au_vic_geelong_closed_circuit` (I5-C327 — the ODS records dataset-id), `camreg_au_vic_ballarat_cctv_cameras` (I5-C326 — the CSV/GeoJSON resource URL), `camreg_pt_11_lisboa_sistema_de` (I5-C356 — the dados.gov.pt GeoJSON resource URL) and `camreg_au_qld_towns_cctv_camera_register` (I5-C325 — the register PDF edition)",
+      "unblocked_by": "owner: P37.69b (ACQ-23b — the sibling family row) or the next acquisition-class ticket dispatched after the operator's OP-26 Wave-D flips make a live metadata read lawful · trigger: that ticket's dispatch, or the flip-window census the operator runs with ING-GO-D",
+      "verify": "each seat's `[[enumerated]]` row gains a committed concrete endpoint and graduates to `[[targets]]` under the file/layer lane that matches the URL's wire shape; the fixture suite grows a replay for the new lane; shadow diff 0 on rerun",
+      "proxy": "every seat is registered + gated today: the wired lanes (package_show/dossier) mint dataset records + resource pointers — the endpoints arrive as pointers on first serve anyway; the enumerated rows cite this deferral verbatim in `notes`; `sig-connectors validate` green",
+      "line": 1609,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P37.69a",
+          "backlog_home": "BL-087",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/479_P37.69a__international-open-data-portals.md",
+            "connectors/src/connectors/data/open_data_portals_targets.toml",
+            "connectors/src/connectors/data/open_data_files_targets.toml",
+            "connectors/src/connectors/data/camera_registry_targets.toml"
+          ],
+          "observed_at": "2026-11-14",
+          "reason": "migration anchor appended by P37.69a (row 479) for the row it added — concrete endpoint preflights for the seven seats whose evidenced URL is a dataset landing page or truncated record rather than the file/layer/slug the label lane would read (tas-emergency slug, madrid xlsx, hobart+perth FeatureServer layers, geelong ODS dataset-id, ballarat csv, lisboa geojson, townsville pdf): each seat wires on the lane its committed URL serves and the concrete endpoint lands via reviewed preflight or the flip-window census",
+          "source_commit": "WORKTREE",
+          "obligation_id": "D-P37.69a-1",
+          "event_id": "D-P37.69a-1:e0",
+          "landing": "engineering landed (fixture-verified); the seats recorded enumerated, never fetch targets",
+          "owner": "the next acquisition-class ticket that picks up the recorded lane",
+          "anchor": {
+            "row_line": 1609,
+            "row_sha256": "6b43749a0c240cd5cf092495ca28d57269adaad6ca92df94332b260583ee7157",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          },
+          "recorded_at": "2026-11-14"
+        }
+      ]
+    },
+    {
+      "id": "D-P37.69a-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P37.69a-2:e0",
+      "kind": "F",
+      "owner": "the next acquisition-class ticket that picks up the recorded lane",
+      "landing": "engineering landed (fixture-verified register-level read); per-entry enumeration deferred",
+      "landing_source": "event-head",
+      "backlog_home": "BL-087",
+      "item": "Per-entry enumeration of the ICO enforcement register (`statrep_gb_enforcement_action`, I5-C307): the seat's committed wire emits register-level institutional facts only (existence + issuing office via `clause_fields`); the review's `new:html_list` lane — a reviewed HTML-listing adapter enumerating each published enforcement entry — is not built, and the register's surveillance-relevant keyword filter was never declared",
+      "unblocked_by": "owner: the next acquisition-class ticket that adds the `html_list`/`index_listing` adapter variant for this register (or a dedicated ICO seat review) · trigger: that ticket's dispatch once the adapter lands or the operator's flip-window review commissions it",
+      "verify": "the seat's `live_targets.toml` block gains a reviewed `index_listing`-shape target (or a dedicated adapter row) with the declared surveillance-relevance filter; a fixture run emits one document pointer per served entry with zero entries fetched beyond the index; ContentDrift on a missing reviewed marker",
+      "proxy": "the register-level read is committed + fixture-verified today (institutional facts only); the seat note names this deferral verbatim",
+      "line": 1610,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "kind": "migration",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P37.69a",
+          "backlog_home": "BL-087",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/tickets/479_P37.69a__international-open-data-portals.md",
+            "connectors/src/connectors/data/open_data_portals_targets.toml",
+            "connectors/src/connectors/data/open_data_files_targets.toml",
+            "connectors/src/connectors/data/camera_registry_targets.toml"
+          ],
+          "observed_at": "2026-11-14",
+          "reason": "migration anchor appended by P37.69a (row 479) for the row it added — per-entry enumeration of the ICO enforcement register (statrep_gb_enforcement_action I5-C307): the seat emits register-level institutional facts only; the reviewed html_list listing adapter + declared surveillance-relevance filter defers to the next acquisition-class ticket",
+          "source_commit": "WORKTREE",
+          "obligation_id": "D-P37.69a-2",
+          "event_id": "D-P37.69a-2:e0",
+          "landing": "engineering landed (fixture-verified register-level read); per-entry enumeration deferred",
+          "owner": "the next acquisition-class ticket that picks up the recorded lane",
+          "anchor": {
+            "row_line": 1610,
+            "row_sha256": "5dffe39f19691f40beea555d1b2d24cf09db49b500c40972393e26cadb6756fc",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -27698,10 +27796,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "a926bb27a8069a29d1983871fa7c92f8cfef8d62e4680fa0cf193000c255acf9",
+  "manifest_sha256": "8362990b390a1a76e3c0f408a7f507497efb4addaa9ca7df1e535b09016792dc",
   "current_md": {
     "lines": 161,
-    "bytes": 20422,
+    "bytes": 20480,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
@@ -27710,7 +27808,8 @@
       "coverage-4.md",
       "coverage-5.md",
       "domains.md",
-      "obligations.md"
+      "obligations-1.md",
+      "obligations-2.md"
     ]
   }
 }
