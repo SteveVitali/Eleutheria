@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `3baec788dfb98c9dab78b869cd8a40cbde887408` · inputs hashed: 1274 · wall-clock receipt: `receipt.json`
+> input_commit: `6a1d4b509dd729c7c1a443c96a7746772706ceb8` · inputs hashed: 1274 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -110,7 +110,7 @@
 | P37.20 | D-P37.20-1 | implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true |
 | P37.36 | raw-ok archive write (raw/index.json; P8 screen; new-capture reserialisation) + push + rehearsal | `implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` (archive write + push + rehearsal) |
 | P37.42 | D-P37.42-1 | implement-spec spec=docs/tickets/466_P37.42__api-parity.md live_verification=true |
-| P37.54 | Wave-D L0→L11 (open → the ACQ-19…26 family days → the S6 extras day → materialize+delta+resume); the eight dossier seats, `doj_ctas_awards` + the tribal S8 lane… | … |
+| P37.54 | Wave-D L0→L11 (open → ACQ-19…26 family days → S6 extras day → materialize+delta+resume); the 8 dossier seats, `doj_ctas_awards` + tribal S8 lane never | … |
 
 ## Known inconsistencies (preserved, never synthesized)
 
