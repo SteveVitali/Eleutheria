@@ -189,6 +189,23 @@ DOSSIER_SOURCES = (
     "ccops_boston",
     "ccops_berkeley",
     "dhs_fusion_centers",
+    # P37.53 / R11-ACQ-26 (I7-S1 `a`): the S1 programme-level lane's ten
+    # document seats — eight private-camera-registry programme pages
+    # (camera-registration-portal existence + publisher + technology facts
+    # only, NEVER registrant content), the Vermont statutory UAS-use report
+    # and the Elizabeth-City Fusus/RTCC council presentation. All stay
+    # ingestion_permitted=false pending the operator's OP-26 Wave-D flip
+    # under ING-GO-D.
+    "statrep_vt_vermont_law_enforcement",
+    "agenda_us_agency_fusus_real",
+    "policy_chicago_il_oemc_link_your",
+    "ccops_oh_cincinnati_police_department",
+    "policy_lafayette_in_camera_registration",
+    "policy_zionsville_in_camera_registry",
+    "ccops_ri_narragansett_police_camera",
+    "ccops_ca_calistoga_police_department",
+    "ccops_ca_pinole_police_department",
+    "ccops_mn_dayton_police_department",
 )
 
 

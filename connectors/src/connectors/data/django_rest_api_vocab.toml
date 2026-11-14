@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# P37.53 (ACQ-26, I7-S1 `a`) — the `django_rest_api` connector's screened-count
+# vocabulary. The lane reads a Django REST Framework list envelope
+# ({"count": N, "results": […]} fetched under a declared `page_size=1`) and
+# emits programme facts ONLY: the `programme_area` subject assertion, the
+# `programme_count` published total (period + measure), `technology` typing,
+# `camera_registry_publisher` provenance and `external_id`. No device,
+# geometry, registrant, name or below-programme predicate is admitted by
+# construction.
+
+schema = "sig.django-rest-api-vocab/1"
+vocab_version = "2026.11.06.1"
+
+default_sensitivity_class = "C1"
+
+predicate_allowlist = [
+  "programme_area",
+  "programme_count",
+  "technology",
+  "camera_registry_publisher",
+  "external_id",
+]
