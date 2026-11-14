@@ -761,3 +761,84 @@ def test_scheduled_ingest_without_a_uri_keeps_the_runner_call_unchanged() -> Non
     row = S.scheduled_ingest("okcpd_policy", runner=runner)
     assert "run_record_uri" not in seen  # older runners never see a new kwarg
     assert row.ingest_run_id == ""  # no run id reported → honest empty
+
+
+# --- P37.56 / BL-026: the --wacz scheduled path -----------------------------------
+
+
+class _WaczCapture:
+    def __init__(self, digest: str, wacz_digest: str | None = None) -> None:
+        self.digest = digest
+        self.wacz_digest = wacz_digest
+
+
+def test_scheduled_ingest_wacz_forwards_the_flag_and_binds_each_wacz() -> None:
+    seen: dict[str, object] = {}
+
+    def runner(source: str, **kw: object) -> _Report:
+        seen.update(kw)
+        report = _Report(1)
+        report.captures = [_WaczCapture("cap1", "waczA"), _WaczCapture("cap2")]
+        return report
+
+    row = S.scheduled_ingest("ccops_seattle", runner=runner, wacz=True)
+    # the flag rides to the gated runner; the row records enablement + the
+    # per-capture availability binding (cap2 produced no WACZ → absent).
+    assert seen["wacz"] is True
+    assert row.wacz is True and row.wacz_captures == {"cap1": "waczA"}
+    assert "1 WACZ capture(s)" in row.detail
+    j = row.as_json()
+    assert j["wacz"] is True and j["wacz_captures"] == {"cap1": "waczA"}
+
+
+def test_scheduled_ingest_wacz_disabled_forwards_nothing_and_records_off() -> None:
+    seen: dict[str, object] = {}
+
+    def runner(source: str, **kw: object) -> _Report:
+        seen.update(kw)
+        return _Report(1)
+
+    row = S.scheduled_ingest("ok_statute", runner=runner)
+    assert "wacz" not in seen  # never forwarded when unset — back-compat kwargs
+    assert row.wacz is False and row.wacz_captures == {}
+    j = row.as_json()
+    assert j["wacz"] is False and j["wacz_captures"] == {}
+    assert "WACZ" not in row.detail  # absent-vs-empty: only a wacz run logs a count
+
+
+def test_cadence_parses_the_wacz_declaration_on_sources_and_batches() -> None:
+    doc = {
+        "sources": [
+            {
+                "id": "html_x",
+                "cadence": "monthly",
+                "cron": "0 0 1 * *",
+                "job": "sig-ingest-html-x",
+                "scheduler": "sig-sched-html-x",
+                "wacz": True,
+            },
+            {
+                "id": "plain_y",
+                "cadence": "monthly",
+                "cron": "0 0 1 * *",
+                "job": "sig-ingest-plain-y",
+                "scheduler": "sig-sched-plain-y",
+            },
+        ],
+        "batches": [
+            {
+                "id": "html-batch",
+                "cadence": "monthly",
+                "cron": "0 0 1 * *",
+                "job": "sig-ingest-html-batch",
+                "scheduler": "sig-sched-html-batch",
+                "members": ["a"],
+                "wacz": True,
+            }
+        ],
+    }
+    cfg = S.parse_cadence_doc(doc)
+    by_id = {s.source: s for s in cfg.sources}
+    assert by_id["html_x"].wacz is True
+    assert by_id["plain_y"].wacz is False  # absent defaults off
+    assert cfg.batches[0].wacz is True
