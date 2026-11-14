@@ -3042,3 +3042,253 @@ kind = "document_list_targets"
 
 [procportal_wa_wsipc_rfp_24]
 kind = "document_list_targets"
+
+# --- P37.53 (ACQ-26, I7-S1 `a`): the S1 programme-level lane -------------------
+# Twenty gated seats. Nine camera-layer sources ride `dot_511` over the
+# merged target registry's `arcgis_s1` rows — `operator_screen` fetches the
+# committed agency-operator rows only (server-side `IN` screen; OBJECTID +
+# geometry out_fields, never a private-operator value) and ONE
+# returnCountOnly page collapses the complement to a `programme_count` on a
+# `programme_area:` subject; `count_only` serves registrant-class layers
+# (Project Green Light, the unresolved-CCSO Flock layer, the three
+# police-drone flight logs) whole — the published total IS the claim, no row
+# bytes captured. Ten document seats ride `dossier_documents` clause_fields
+# emitting programme-surface facts only (portal existence, title,
+# technology, enacting body, posting date — never registrant content). The
+# Eye-on-Surveillance seat rides `django_rest_api`'s screened count page.
+# Every row stays ingestion_permitted=false; leg B is the operator's OP-26
+# Wave-D act, not this file's.
+
+[camreg_detroit_mi_project_green_light]
+kind = "dot_511_targets"
+
+[camreg_ga_savannah_flock_camera]
+kind = "dot_511_targets"
+
+[camreg_la_east_baton_rouge_parish_flock]
+kind = "dot_511_targets"
+
+[camreg_ga_flock_cameras_asof]
+kind = "dot_511_targets"
+
+[camreg_gastonia_nc_flock_condor_cameras]
+kind = "dot_511_targets"
+
+[camreg_ga_brookhaven_flock_camera]
+kind = "dot_511_targets"
+
+[camreg_bloomington_il_drone_flights]
+kind = "dot_511_targets"
+
+[camreg_peoria_il_drone_usage]
+kind = "dot_511_targets"
+
+[camreg_medford_or_drone_deployments_fs]
+kind = "dot_511_targets"
+
+[camreg_la_new_orleans_eye_on]
+kind = "django_rest_api_targets"
+
+# Vermont DPS — the 20 V.S.A. § 4624(b) annual law-enforcement UAS-use
+# legislative report (2023). Statutory-report facts: the report's existence,
+# its covered technology, the reporting period and the enacting agency —
+# never a per-flight or per-agency registrant row.
+[statrep_vt_vermont_law_enforcement]
+kind = "dossier_documents"
+
+[[statrep_vt_vermont_law_enforcement.targets]]
+id = "vt-dps-uas-report-2023"
+doc_id = "vt-dps-uas-report-2023"
+url = "https://legislature.vermont.gov/assets/Legislative-Reports/2023-DPS-UAS-Legislative-Report.pdf"
+kind = "clause_fields"
+subject_id = "sig:document:vt-dps-uas-report-2023"
+document_genre = "official_statement"
+review_note = "The § 4624(b) annual UAS-use report Vermont DPS forwards to the legislature — existence + covered technology + reporting period are institutional facts; the per-agency flight rows inside are registrant-class and never extracted (S1)."
+fields = [
+  { field = "title", literal = "Unmanned Aircraft Systems", value = "Vermont Law Enforcement Unmanned Aircraft Systems Use Report 2023" },
+  { field = "citation", literal = "20 V.S.A.", value = "20 V.S.A. § 4624" },
+  { field = "technology", literal = "unmanned aircraft", value = "unmanned aircraft systems" },
+  { field = "enacting_body", literal = "Department of Public Safety", value = "Vermont Department of Public Safety" },
+  { field = "report_period", literal = "2023", value = "calendar year 2023" },
+]
+
+# The Elizabeth City, NC Fusus / real-time-crime-centre council review deck
+# (I9a-C038 member seat — the deck the Enlace Latino NC mirror hosts). The
+# programme's existence, vendor technology and council are institutional
+# facts; the deck's operational detail is never asserted beyond the reviewed
+# fields.
+[agenda_us_agency_fusus_real]
+kind = "dossier_documents"
+
+[[agenda_us_agency_fusus_real.targets]]
+id = "elizabeth-city-fusus-review"
+doc_id = "elizabeth-city-fusus-review"
+url = "https://enlacelatinonc.org/wp-content/uploads/2026/04/Review-with-Council-.pdf"
+kind = "clause_fields"
+subject_id = "sig:document:elizabeth-city-nc-fusus-review"
+document_genre = "agenda_document"
+review_note = "The FAM-PREG-FUSUS member seat (Elizabeth City NC): a council review presentation for the Fusus real-time-crime-centre deployment — programme existence + vendor technology are institutional facts; registrant/integration detail is never extracted (S1)."
+fields = [
+  { field = "title", literal = "Fusus", value = "Fusus Real-Time Crime Centre Review" },
+  { field = "technology", literal = "real-time crime", value = "real-time crime centre platform" },
+  { field = "enacting_body", literal = "Elizabeth City", value = "City of Elizabeth City" },
+]
+
+# Chicago OEMC — the Link Your Cameras / Private Sector Camera Initiative
+# page. The portal's existence + the operating office are programme facts;
+# registrant systems and locations are never ingested (S1).
+[policy_chicago_il_oemc_link_your]
+kind = "dossier_documents"
+
+[[policy_chicago_il_oemc_link_your.targets]]
+id = "chicago-oemc-link-your-cameras"
+doc_id = "chicago-oemc-link-your-cameras"
+url = "https://www.chicago.gov/city/en/depts/oem/provdrs/tech/svcs/link_your_cameras.html"
+kind = "clause_fields"
+subject_id = "sig:deployment:chicago-il-oemc-camera-registry"
+document_genre = "camera_registry"
+review_note = "The OEMC Private Sector Camera Initiative page (I3-C089): the page IS the public opt-in camera-integration surface — `camera_registration_portal` carries the existence fact; the participating-organisation names stay text, and registrant content is out of scope by construction (S1)."
+fields = [
+  { field = "title", literal = "Link Your Cameras", value = "Link Your Cameras — Private Sector Camera Initiative" },
+  { field = "registration_portal", literal = "Private Sector Camera Initiative", value = true },
+  { field = "technology", literal = "camera", value = "private-camera-integration" },
+  { field = "enacting_body", literal = "Office of Emergency Management and Communications", value = "City of Chicago Office of Emergency Management and Communications" },
+]
+
+# Cincinnati PD — the voluntary community camera registry launch page
+# (I9a-C021, Axon Fusus registry mode). Programme-surface facts only.
+[ccops_oh_cincinnati_police_department]
+kind = "dossier_documents"
+
+[[ccops_oh_cincinnati_police_department.targets]]
+id = "cincinnati-community-camera-registry"
+doc_id = "cincinnati-community-camera-registry"
+url = "https://www.cincinnati-oh.gov/police/news/cpd-launches-voluntary-community-camera-registry/"
+kind = "clause_fields"
+subject_id = "sig:deployment:cincinnati-oh-pd-camera-registry"
+document_genre = "camera_registry"
+review_note = "The CPD voluntary community camera registry launch (I9a-C021 — the Axon Fusus registry mode; the registrant list is confidential/C3, never ingested): the portal's existence, the operating department and the posting date are the reviewed facts (S1)."
+fields = [
+  { field = "title", literal = "Voluntary Community Camera Registry", value = "CPD Launches Voluntary Community Camera Registry" },
+  { field = "registration_portal", literal = "camera registry", value = true },
+  { field = "technology", literal = "Fusus", value = "private-camera-registry" },
+  { field = "enacting_body", literal = "Cincinnati Police Department", value = "Cincinnati Police Department" },
+  { field = "posted_date", literal = "2025", value = "2025-01-27" },
+]
+
+# Lafayette PD — the CityProtect camera registration page (I9a-C004,
+# Motorola CityProtect registry mode).
+[policy_lafayette_in_camera_registration]
+kind = "dossier_documents"
+
+[[policy_lafayette_in_camera_registration.targets]]
+id = "lafayette-camera-registration"
+doc_id = "lafayette-camera-registration"
+url = "https://www.lafayette.in.gov/2043/Camera-Registration"
+kind = "clause_fields"
+subject_id = "sig:deployment:lafayette-in-pd-camera-registry"
+document_genre = "camera_registry"
+review_note = "The LPD camera-registration page (I9a-C004 — CityProtect/CrimeReports registry, window-sticker programme): the portal's existence and the operating department are the reviewed facts; registrant content is never ingested (S1)."
+fields = [
+  { field = "title", literal = "Camera Registration", value = "Camera Registration" },
+  { field = "registration_portal", literal = "camera registration", value = true },
+  { field = "technology", literal = "security camera", value = "private-camera-registry" },
+  { field = "enacting_body", literal = "Lafayette Police Department", value = "Lafayette Police Department" },
+]
+
+# Zionsville PD — the Polaris CameraKit registry page (I9a-C005).
+[policy_zionsville_in_camera_registry]
+kind = "dossier_documents"
+
+[[policy_zionsville_in_camera_registry.targets]]
+id = "zionsville-camera-registry"
+doc_id = "zionsville-camera-registry"
+url = "https://www.zionsville-in.gov/762/Camera-Registry"
+kind = "clause_fields"
+subject_id = "sig:deployment:zionsville-in-pd-camera-registry"
+document_genre = "camera_registry"
+review_note = "The ZPD camera-registry page (I9a-C005 — Polaris CameraKit; the page states law enforcement has no camera access and footage is requested from the owner — per-incident-request mode): the portal's existence and the operating department are the reviewed facts (S1)."
+fields = [
+  { field = "title", literal = "Camera Registry", value = "Camera Registry" },
+  { field = "registration_portal", literal = "camera registry", value = true },
+  { field = "technology", literal = "security camera", value = "private-camera-registry" },
+  { field = "enacting_body", literal = "Zionsville Police Department", value = "Zionsville Police Department" },
+]
+
+# Narragansett PD — the Polaris CameraKit registry page (I9a-C006; a
+# DocumentCenter PDF on the published page).
+[ccops_ri_narragansett_police_camera]
+kind = "dossier_documents"
+
+[[ccops_ri_narragansett_police_camera.targets]]
+id = "narragansett-camera-registry"
+doc_id = "narragansett-camera-registry"
+url = "https://www.narragansettri.gov/DocumentCenter/View/17317"
+kind = "clause_fields"
+subject_id = "sig:deployment:narragansett-ri-pd-camera-registry"
+document_genre = "camera_registry"
+review_note = "The NPD Polaris camera-registry page (I9a-C006 — first T06 evidence for RI): the portal's existence and the operating department are the reviewed facts; registrant content is never ingested (S1)."
+fields = [
+  { field = "title", literal = "Camera Registry", value = "Police Camera Registry" },
+  { field = "registration_portal", literal = "camera registry", value = true },
+  { field = "technology", literal = "security camera", value = "private-camera-registry" },
+  { field = "enacting_body", literal = "Narragansett Police Department", value = "Narragansett Police Department" },
+]
+
+# Calistoga PD — the Voluntary Security Camera Registry page (I9a-C007;
+# also the FAM-PREG-PAGES family's recorded member URL).
+[ccops_ca_calistoga_police_department]
+kind = "dossier_documents"
+
+[[ccops_ca_calistoga_police_department.targets]]
+id = "calistoga-security-camera-registry"
+doc_id = "calistoga-security-camera-registry"
+url = "https://www.calistogaca.gov/Services/Police/Police-and-Public-Safety-Updates/Voluntary-Security-Camera-Registry"
+kind = "clause_fields"
+subject_id = "sig:deployment:calistoga-ca-pd-camera-registry"
+document_genre = "camera_registry"
+review_note = "The CPD voluntary security-camera registry page (I9a-C007 — a confidential list of homes and businesses; own form): the portal's existence and the operating department are the reviewed facts; the registrant list is never ingested (S1)."
+fields = [
+  { field = "title", literal = "Voluntary Security Camera Registry", value = "Voluntary Security Camera Registry" },
+  { field = "registration_portal", literal = "camera registry", value = true },
+  { field = "technology", literal = "security camera", value = "private-camera-registry" },
+  { field = "enacting_body", literal = "Calistoga Police Department", value = "Calistoga Police Department" },
+]
+
+# Pinole PD — the Security Camera Registry page (I9a-C008).
+[ccops_ca_pinole_police_department]
+kind = "dossier_documents"
+
+[[ccops_ca_pinole_police_department.targets]]
+id = "pinole-security-camera-registry"
+doc_id = "pinole-security-camera-registry"
+url = "https://www.pinole.gov/services/security-camera-registry/"
+kind = "clause_fields"
+subject_id = "sig:deployment:pinole-ca-pd-camera-registry"
+document_genre = "camera_registry"
+review_note = "The PPD security-camera registry page (I9a-C008 — the registry officers use to locate cameras near incidents; voluntary): the portal's existence and the operating department are the reviewed facts (S1)."
+fields = [
+  { field = "title", literal = "Security Camera Registry", value = "Security Camera Registry" },
+  { field = "registration_portal", literal = "camera registry", value = true },
+  { field = "technology", literal = "security camera", value = "private-camera-registry" },
+  { field = "enacting_body", literal = "Pinole Police Department", value = "Pinole Police Department" },
+]
+
+# Dayton (MN) PD — the Resident Camera Registry page (I9a-C009).
+[ccops_mn_dayton_police_department]
+kind = "dossier_documents"
+
+[[ccops_mn_dayton_police_department.targets]]
+id = "dayton-resident-camera-registry"
+doc_id = "dayton-resident-camera-registry"
+url = "https://www.daytonmn.gov/departments/police/resident_camera_registry.php"
+kind = "clause_fields"
+subject_id = "sig:deployment:dayton-mn-pd-camera-registry"
+document_genre = "camera_registry"
+review_note = "The DPD resident camera-registry page (I9a-C009 — information accessible only by authorized personnel): the portal's existence and the operating department are the reviewed facts (S1)."
+fields = [
+  { field = "title", literal = "Resident Camera Registry", value = "Resident Camera Registry" },
+  { field = "registration_portal", literal = "camera registry", value = true },
+  { field = "technology", literal = "security camera", value = "private-camera-registry" },
+  { field = "enacting_body", literal = "Dayton Police Department", value = "Dayton Police Department" },
+]

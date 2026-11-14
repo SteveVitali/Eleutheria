@@ -144,6 +144,15 @@ def live_targets(source_id: str) -> list[dict[str, str]]:
         from .puerto_rico import puerto_rico_targets
 
         return puerto_rico_targets(source_id=source_id)
+    if kind == "django_rest_api_targets":
+        # P37.53 / R11-ACQ-26: the Eye-on-Surveillance seat's live targets ARE
+        # the committed inventory in data/django_rest_api_targets.toml — the
+        # bounded `page_size=1` DRF count page, never new discovery; the row
+        # stays ingestion_permitted=false pending the operator's OP-26
+        # Wave-D flip under ING-GO-D.
+        from .django_rest_api import drf_targets
+
+        return drf_targets(source_id=source_id)
     if kind == "document_list_targets":
         # P37.52 / R11-ACQ-25: the document-list sources' live targets ARE
         # the committed inventory in data/document_list_targets.toml — the

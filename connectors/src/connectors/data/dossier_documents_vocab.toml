@@ -433,3 +433,81 @@ jurisdiction = "us.state_abbr:DC"
 predicate_allowlist = [
   "title", "document", "posted_date", "disclosure_field_state",
 ]
+
+# --- P37.53 / R11-ACQ-26 (I7-S1 `a`) — the S1 programme-level document seats ---
+# Eight private-camera-registry programme pages + two oversight/agenda
+# documents. The registry seats emit programme-surface facts ONLY —
+# `camera_registration_portal` existence, `title`, `technology`,
+# `enacting_body`, `posted_date` — never registrant content (names,
+# addresses, row-level records, locations; S1 by construction). All stay
+# ingestion_permitted=false pending the operator's OP-26 Wave-D flip.
+
+[adapters.statrep_vt_vermont_law_enforcement]
+source_id = "statrep_vt_vermont_law_enforcement"
+jurisdiction = "us.state_abbr:VT"
+predicate_allowlist = [
+  "title", "citation", "technology", "enacting_body", "period", "posted_date", "disclosure_field_state",
+]
+
+[adapters.agenda_us_agency_fusus_real]
+source_id = "agenda_us_agency_fusus_real"
+jurisdiction = "us.state_abbr:NC"
+predicate_allowlist = [
+  "title", "technology", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.policy_chicago_il_oemc_link_your]
+source_id = "policy_chicago_il_oemc_link_your"
+jurisdiction = "us.state_abbr:IL"
+predicate_allowlist = [
+  "title", "technology", "camera_registration_portal", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_oh_cincinnati_police_department]
+source_id = "ccops_oh_cincinnati_police_department"
+jurisdiction = "us.state_abbr:OH"
+predicate_allowlist = [
+  "title", "technology", "camera_registration_portal", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.policy_lafayette_in_camera_registration]
+source_id = "policy_lafayette_in_camera_registration"
+jurisdiction = "us.state_abbr:IN"
+predicate_allowlist = [
+  "title", "technology", "camera_registration_portal", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.policy_zionsville_in_camera_registry]
+source_id = "policy_zionsville_in_camera_registry"
+jurisdiction = "us.state_abbr:IN"
+predicate_allowlist = [
+  "title", "technology", "camera_registration_portal", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_ri_narragansett_police_camera]
+source_id = "ccops_ri_narragansett_police_camera"
+jurisdiction = "us.state_abbr:RI"
+predicate_allowlist = [
+  "title", "technology", "camera_registration_portal", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_ca_calistoga_police_department]
+source_id = "ccops_ca_calistoga_police_department"
+jurisdiction = "us.state_abbr:CA"
+predicate_allowlist = [
+  "title", "technology", "camera_registration_portal", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_ca_pinole_police_department]
+source_id = "ccops_ca_pinole_police_department"
+jurisdiction = "us.state_abbr:CA"
+predicate_allowlist = [
+  "title", "technology", "camera_registration_portal", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_mn_dayton_police_department]
+source_id = "ccops_mn_dayton_police_department"
+jurisdiction = "us.state_abbr:MN"
+predicate_allowlist = [
+  "title", "technology", "camera_registration_portal", "enacting_body", "posted_date", "disclosure_field_state",
+]
