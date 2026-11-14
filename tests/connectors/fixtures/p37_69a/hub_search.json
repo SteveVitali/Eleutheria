@@ -1,0 +1,9 @@
+{
+  "result": {
+    "count": 2,
+    "results": [
+      {"id": "ds-eu-001", "name": "example-commune-cameras", "title": {"en": "Example commune camera register"}},
+      {"id": "ds-eu-002", "name": "example-region-video", "title": {"en": "Example region video protection"}}
+    ]
+  }
+}

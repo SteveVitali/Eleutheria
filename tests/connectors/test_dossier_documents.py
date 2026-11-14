@@ -157,6 +157,30 @@ FIXTURE_FOR_DOC: dict[str, tuple[str, str]] = {
     ),
     "pinole-security-camera-registry": ("p37_53_pinole_registry.html", "text/html"),
     "dayton-resident-camera-registry": ("p37_53_dayton_registry.html", "text/html"),
+    # P37.69a / R11-ACQ-23a (I7 N1–N21 `a`): the international open-data
+    # family's twelve document rows — dataset landing pages, regulator
+    # guidance, oversight reports and the ICO register's register-level
+    # read. All stand-ins (fixtures/dossier/p37_69a_*.html — synthetic
+    # reconstructions, never fetched captures; see
+    # fixtures/p37_69a/SOURCES.md).
+    "barnet-traffic-cctv-contract-dataset": ("p37_69a_barnet_contract.html", "text/html"),
+    "north-somerset-cctv-dataset": ("p37_69a_north_somerset.html", "text/html"),
+    "oaic-cctv-guidance": ("p37_69a_oaic.html", "text/html"),
+    "opc-parliament-use-report": ("p37_69a_opc_ca.html", "text/html"),
+    "garante-trento-videosorveglianza": ("p37_69a_trento.html", "text/html"),
+    "sevenoaks-cctv-annual-report": ("p37_69a_sevenoaks.html", "text/html"),
+    "scottish-retrospective-facial-search-review": (
+        "p37_69a_scottish_review.html",
+        "text/html",
+    ),
+    "oireachtas-garda-recording-devices-briefing": (
+        "p37_69a_oireachtas.html",
+        "text/html",
+    ),
+    "uk-atrs-public-safety": ("p37_69a_atrs.html", "text/html"),
+    "ico-enforcement-register": ("p37_69a_ico.html", "text/html"),
+    "lisboa-bairro-alto-videovigilancia-dataset": ("p37_69a_lisboa.html", "text/html"),
+    "madrid-camaras-videovigilancia-dataset": ("p37_69a_madrid.html", "text/html"),
 }
 
 
@@ -323,8 +347,14 @@ def test_bounded_protocols_and_adapters() -> None:
         config = adapter_config(source_id)
         # Jurisdiction anchors are scoped keys: `us.state_abbr:` for the pilot
         # families, `US-TRIBAL:` for the P35.11 screened-lane sources (the
-        # geography frame's tribal key space).
-        assert re.match(r"^(us\.state_abbr|US-TRIBAL):", str(config["jurisdiction"])), source_id
+        # geography frame's tribal key space), and the ISO 3166 key spaces
+        # for the P37.69a non-US seats (iso.3166_2 subdivisions /
+        # iso.3166_1_alpha2 country-level publishers — the same schemes
+        # dot_511's registry rows declare).
+        assert re.match(
+            r"^(us\.state_abbr|US-TRIBAL|iso\.3166_2|iso\.3166_1_alpha2):",
+            str(config["jurisdiction"]),
+        ), source_id
         allowlist = predicate_allowlist(source_id)
         assert allowlist
         unknown = allowlist - ontology

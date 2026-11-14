@@ -802,6 +802,50 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "procportal_davie_fl_purchasing": "dossier_documents",
     "procportal_forsyth_nc_purchasing": "dossier_documents",
     "legis_gu_governor": "dossier_documents",
+    # P37.69a (R11-ACQ-23a, I7 N1–N21 `a`): the international open-data
+    # portal family — CKAN package_search/package_show seats, the ODS
+    # explore-records seats, the data.europa.eu hub-search seat, the
+    # committed CSV/GeoJSON file seats, the reused dossier clause_fields
+    # seats and the CNIL accountability seat. Every row stays
+    # `ingestion_permitted=false`; the flips are the operator's act under
+    # ING-GO-D (OP-26). `camreg_au_tas_emergency_closed_circuit` and the
+    # file/layer URLs not yet committed stay enumerated
+    # (D-P37.69a-1) — no seat maps to a connector it cannot serve.
+    "dot_511_gb": "ckan_package_search",
+    "camreg_au_ckan_package_search": "ckan_package_search",
+    "camreg_gb_eng_mansf_cctv_cameras": "ckan_package_search",
+    "camreg_gb_eng_brist_cctv_cameras": "ckan_package_search",
+    "camreg_gb_sct_edinburgh_public_cctv": "ckan_package_search",
+    "camreg_au_nsw_sydney_street_safety": "ckan_package_search",
+    "camreg_au_tas_hobar_security_camera": "ckan_package_search",
+    "camreg_au_wa_perth_security_cameras": "ckan_package_search",
+    "camreg_au_qld_towns_cctv_camera_register": "ckan_package_search",
+    "camreg_au_vic_ballarat_cctv_cameras": "ckan_package_search",
+    "camreg_au_vic_geelong_closed_circuit": "ckan_package_search",
+    "camreg_ie_d_dublin_traffic_poles_with": "ckan_package_search",
+    "camreg_it_me_messina_videosorveglianza": "ckan_package_search",
+    "camreg_si_048_ko_evje_videonadzor_na": "ckan_package_search",
+    "ccops_si_085_novo_mesto_evidenca_o": "ckan_package_search",
+    "camreg_ua_18_korosten": "ckan_package_search",
+    "camreg_gb_eng_leice_cctv_cameras": "opendatasoft_explore",
+    "camreg_fr_92_grand_paris_seine_ouest_vid": "opendatasoft_explore",
+    "camreg_eu_eea_data_europa_search_api": "dataeuropa_hub_search",
+    "camreg_gb_eng_barnet_cctv_camera": "csv_file",
+    "camreg_gb_eng_barnet_cctv_traffic": "csv_file",
+    "camreg_gb_eng_traff_trafford_cctv": "geojson_file",
+    "ccops_gb_eng_barnet_traffic_cctv": "dossier_documents",
+    "camreg_gb_eng_north_cctv_cameras": "dossier_documents",
+    "ccops_iso_au_privacy_commissioner": "dossier_documents",
+    "statrep_ca_special_parliament_use": "dossier_documents",
+    "ccops_it_tn_trento_provvedimento_dell_11": "dossier_documents",
+    "statrep_gb_eng_seven_cctv_june_2026": "dossier_documents",
+    "statrep_gb_sct_joint_assurance_review": "dossier_documents",
+    "legis_ie_rs_general_scheme": "dossier_documents",
+    "statrep_gb_uk_algorithmic_transparency": "dossier_documents",
+    "statrep_gb_enforcement_action": "dossier_documents",
+    "camreg_pt_11_lisboa_sistema_de": "dossier_documents",
+    "camreg_es_md_madrid_c_maras_de": "dossier_documents",
+    "statrep_fr_cnil_utilisation_de": "accountability",
 }
 
 

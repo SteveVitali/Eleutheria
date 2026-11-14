@@ -762,11 +762,14 @@ def render_markdown(projection: dict) -> tuple[str, dict[str, str]]:
         # stable `obligations.md` path preserves per-row blame provenance;
         # nothing is dropped either way and CURRENT.md's own 250-line /
         # 20 KiB orient bound is unchanged. The bound stays generous
-        # headroom (160 rows ≈ 2.7 years at the current deferral rate) —
+        # headroom — raised to 240 rows after the Round-11 deferral rate
+        # outpaced the original ~2.7-year estimate (P37.69a: row 161 would
+        # have spilled verbatim pre-activation verify-cells onto a re-blamed
+        # path — the artifact the bound exists to prevent).
         # when it genuinely fills, the multi-page decision lands with a
         # carried-provenance mechanism, not silently.
         if name == "obligations":
-            chunk = 160
+            chunk = 240
         body = dict(sections)[name]
         if body[0].startswith("|"):
             header, rows = body[:2], body[2:]
