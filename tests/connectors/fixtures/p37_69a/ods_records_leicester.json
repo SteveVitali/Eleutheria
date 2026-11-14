@@ -1,0 +1,7 @@
+{
+  "total_count": 2,
+  "results": [
+    {"asset_id": "EX-0001", "location": "Example Street North", "geo_point_2d": {"lon": -1.13, "lat": 52.63}},
+    {"asset_id": "EX-0002", "location": "Example Street South", "geo_point_2d": {"lon": -1.14, "lat": 52.64}}
+  ]
+}

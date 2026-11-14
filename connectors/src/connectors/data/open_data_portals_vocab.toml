@@ -1,0 +1,63 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned open-data-portals vocabulary (P37.69a / R11-ACQ-23a, I8 §6.2 —
+# the international open-data portal family). This table is DATA, not code
+# (SIG-ENG-001): the three connectors' shared predicate allowlist, forbidden
+# predicate genres, committed portal host set and the default sensitivity
+# class are data rows reviewed on their own. Changes after P37.69a are
+# VERSIONED MIGRATIONS — bump `vocab_version` and add the change, never
+# silently rewrite a row (SIG-INGEST-017).
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first
+# [table] header — otherwise TOML nests it under that table.
+
+schema = "sig.open-data-portals-vocab/1"
+
+# The family's own vocabulary version, stamped onto every emitted row (§20).
+vocab_version = "2026.11.14"
+
+# The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033):
+# the portal connectors may write ONLY dataset-catalogue and
+# document-pointer predicates — the served package's own literals plus the
+# reviewed per-seat declarations. A person name, a deployment assertion, an
+# operator inference, or any device field is a schema error on this lane
+# (camera rows are the file/ODS lanes' business under their own contract).
+predicate_allowlist = [
+  "portal_index",
+  "external_id",
+  "title",
+  "document",
+  "published_by",
+  "jurisdiction",
+  "technology",
+  "as_of",
+]
+
+# Predicate genres this family must never emit (belt-and-suspenders beside
+# the allowlist — a belt that fails closed on an edit adding a forbidden
+# genre member to the allowlist).
+forbidden_predicate_genres = [
+  "person_identifier",
+  "person_contact",
+  "person_role",
+  "camera_operator",
+  "deployment_status",
+]
+
+# The committed portal host set — a served or configured URL off this set is
+# a review error, never silently allowed.
+hosts = [
+  "data.gov.uk",
+  "data.gov.au",
+  "data.gov.ie",
+  "dati.comune.messina.it",
+  "podatki.gov.si",
+  "dados.gov.pt",
+  "data.gov.ua",
+  "data.europa.eu",
+  "data.leicester.gov.uk",
+  "data.seineouest.fr",
+]
+
+# Operator-published camera registries: the reviewed default class is C1
+# (§43.3 — publisher-open data, point coordinates republish exactly).
+default_sensitivity_class = "C1"

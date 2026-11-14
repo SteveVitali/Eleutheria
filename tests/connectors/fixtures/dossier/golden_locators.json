@@ -133,6 +133,38 @@
       "raw_value": "UAS Operations"
     }
   ],
+  "barnet-traffic-cctv-contract-dataset": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 53,
+        "kind": "byte_range",
+        "start": 32
+      },
+      "predicate": "title",
+      "raw_value": "Traffic CCTV contract"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 97,
+        "kind": "byte_range",
+        "start": 73
+      },
+      "predicate": "enacting_body",
+      "raw_value": "London Borough of Barnet"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 44,
+        "kind": "byte_range",
+        "start": 40
+      },
+      "predicate": "technology",
+      "raw_value": "CCTV"
+    }
+  ],
   "bart-surveillance-index": [
     {
       "field": "document",
@@ -983,6 +1015,38 @@
       "raw_value": "February 15, 2024"
     }
   ],
+  "garante-trento-videosorveglianza": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 63,
+        "kind": "byte_range",
+        "start": 46
+      },
+      "predicate": "title",
+      "raw_value": "videosorveglianza"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 119,
+        "kind": "byte_range",
+        "start": 75
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Garante per la protezione dei dati personali"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 63,
+        "kind": "byte_range",
+        "start": 46
+      },
+      "predicate": "technology",
+      "raw_value": "videosorveglianza"
+    }
+  ],
   "guam-governor-bill-132-35-signing": [
     {
       "field": "title",
@@ -1160,6 +1224,28 @@
       "raw_value": "Honolulu Police Department"
     }
   ],
+  "ico-enforcement-register": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 50,
+        "kind": "byte_range",
+        "start": 32
+      },
+      "predicate": "title",
+      "raw_value": "Enforcement action"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 96,
+        "kind": "byte_range",
+        "start": 63
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Information Commissioner's Office"
+    }
+  ],
   "jasper-sc-agenda-cellebrite-2024": [
     {
       "field": "title",
@@ -1307,6 +1393,70 @@
       },
       "predicate": "enacting_body",
       "raw_value": "Legislature of the Virgin Islands"
+    }
+  ],
+  "lisboa-bairro-alto-videovigilancia-dataset": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 59,
+        "kind": "byte_range",
+        "start": 43
+      },
+      "predicate": "title",
+      "raw_value": "videovigil\u00e2ncia"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 113,
+        "kind": "byte_range",
+        "start": 86
+      },
+      "predicate": "enacting_body",
+      "raw_value": "C\u00e2mara Municipal de Lisboa"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 59,
+        "kind": "byte_range",
+        "start": 43
+      },
+      "predicate": "technology",
+      "raw_value": "videovigil\u00e2ncia"
+    }
+  ],
+  "madrid-camaras-videovigilancia-dataset": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 59,
+        "kind": "byte_range",
+        "start": 44
+      },
+      "predicate": "title",
+      "raw_value": "videovigilancia"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 93,
+        "kind": "byte_range",
+        "start": 71
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Ayuntamiento de Madrid"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 59,
+        "kind": "byte_range",
+        "start": 44
+      },
+      "predicate": "technology",
+      "raw_value": "videovigilancia"
     }
   ],
   "mcso-policies-index": [
@@ -1469,6 +1619,38 @@
       "raw_value": "Norman Police Department"
     }
   ],
+  "north-somerset-cctv-dataset": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 36,
+        "kind": "byte_range",
+        "start": 32
+      },
+      "predicate": "title",
+      "raw_value": "CCTV"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 77,
+        "kind": "byte_range",
+        "start": 55
+      },
+      "predicate": "enacting_body",
+      "raw_value": "North Somerset Council"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 36,
+        "kind": "byte_range",
+        "start": 32
+      },
+      "predicate": "technology",
+      "raw_value": "CCTV"
+    }
+  ],
   "nyc-comptroller-bwc-review": [
     {
       "field": "title",
@@ -1511,6 +1693,70 @@
       },
       "predicate": "title",
       "raw_value": "2025 oversight report"
+    }
+  ],
+  "oaic-cctv-guidance": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 36,
+        "kind": "byte_range",
+        "start": 32
+      },
+      "predicate": "title",
+      "raw_value": "CCTV"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 107,
+        "kind": "byte_range",
+        "start": 58
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Office of the Australian Information Commissioner"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 36,
+        "kind": "byte_range",
+        "start": 32
+      },
+      "predicate": "technology",
+      "raw_value": "CCTV"
+    }
+  ],
+  "oireachtas-garda-recording-devices-briefing": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 67,
+        "kind": "byte_range",
+        "start": 50
+      },
+      "predicate": "title",
+      "raw_value": "Recording Devices"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 125,
+        "kind": "byte_range",
+        "start": 107
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Oireachtas Library"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 202,
+        "kind": "byte_range",
+        "start": 185
+      },
+      "predicate": "technology",
+      "raw_value": "recording devices"
     }
   ],
   "ok-dac-jag-lle-program": [
@@ -1772,6 +2018,38 @@
       "raw_value": "except when the data is part of an ongoing investigation"
     }
   ],
+  "opc-parliament-use-report": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 52,
+        "kind": "byte_range",
+        "start": 32
+      },
+      "predicate": "title",
+      "raw_value": "Privacy Commissioner"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 116,
+        "kind": "byte_range",
+        "start": 72
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Office of the Privacy Commissioner of Canada"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 154,
+        "kind": "byte_range",
+        "start": 136
+      },
+      "predicate": "technology",
+      "raw_value": "video surveillance"
+    }
+  ],
   "pinole-security-camera-registry": [
     {
       "field": "title",
@@ -1856,6 +2134,38 @@
       },
       "predicate": "title",
       "raw_value": "surveillance impact assessments"
+    }
+  ],
+  "scottish-retrospective-facial-search-review": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 199,
+        "kind": "byte_range",
+        "start": 172
+      },
+      "predicate": "title",
+      "raw_value": "retrospective facial search"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 131,
+        "kind": "byte_range",
+        "start": 99
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Scottish Biometrics Commissioner"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 199,
+        "kind": "byte_range",
+        "start": 186
+      },
+      "predicate": "technology",
+      "raw_value": "facial search"
     }
   ],
   "sd-asr-2025-vigilant": [
@@ -2109,6 +2419,48 @@
       },
       "predicate": "disclosure_field_state",
       "raw_value": "City Date:"
+    }
+  ],
+  "sevenoaks-cctv-annual-report": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 36,
+        "kind": "byte_range",
+        "start": 32
+      },
+      "predicate": "title",
+      "raw_value": "CCTV"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 85,
+        "kind": "byte_range",
+        "start": 59
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Sevenoaks District Council"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 36,
+        "kind": "byte_range",
+        "start": 32
+      },
+      "predicate": "technology",
+      "raw_value": "CCTV"
+    },
+    {
+      "field": "report_period",
+      "locator": {
+        "end": 136,
+        "kind": "byte_range",
+        "start": 132
+      },
+      "predicate": "period",
+      "raw_value": "2025"
     }
   ],
   "slmpd-fy21-spi-shotspotter-eval": [
@@ -2402,6 +2754,28 @@
       },
       "predicate": "period",
       "raw_value": "FY 2026"
+    }
+  ],
+  "uk-atrs-public-safety": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 56,
+        "kind": "byte_range",
+        "start": 32
+      },
+      "predicate": "title",
+      "raw_value": "Algorithmic Transparency"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 137,
+        "kind": "byte_range",
+        "start": 88
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Department for Science, Innovation and Technology"
     }
   ],
   "upturn-mass-extraction-index": [

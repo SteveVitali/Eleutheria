@@ -3292,3 +3292,340 @@ fields = [
   { field = "technology", literal = "security camera", value = "private-camera-registry" },
   { field = "enacting_body", literal = "Dayton Police Department", value = "Dayton Police Department" },
 ]
+
+# =============================================================================
+# P37.69a (R11-ACQ-23a, I7 N1–N21 `a`) — the international open-data portal
+# family. Every seat stays `ingestion_permitted=false`; leg B (the first real
+# wire) is the operator's act under ING-GO-D (OP-26). The portal/file seats
+# expand from their committed inventories (open_data_portals_targets.toml /
+# open_data_files_targets.toml); the dossier seats declare reviewed
+# clause_fields here; the CNIL seat is a targeted oversight_report lookup.
+# `camreg_au_tas_emergency_closed_circuit` stays enumerated (D-P37.69a-1) —
+# its dataset slug truncates mid-token in the committed record.
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# The CKAN lane — package_search (2) + package_show (14).
+# ---------------------------------------------------------------------------
+[dot_511_gb]
+kind = "open_data_portals_targets"
+
+[camreg_au_ckan_package_search]
+kind = "open_data_portals_targets"
+
+[camreg_gb_eng_mansf_cctv_cameras]
+kind = "open_data_portals_targets"
+
+[camreg_gb_eng_brist_cctv_cameras]
+kind = "open_data_portals_targets"
+
+[camreg_gb_sct_edinburgh_public_cctv]
+kind = "open_data_portals_targets"
+
+[camreg_au_nsw_sydney_street_safety]
+kind = "open_data_portals_targets"
+
+[camreg_au_tas_hobar_security_camera]
+kind = "open_data_portals_targets"
+
+[camreg_au_wa_perth_security_cameras]
+kind = "open_data_portals_targets"
+
+[camreg_au_qld_towns_cctv_camera_register]
+kind = "open_data_portals_targets"
+
+[camreg_au_vic_ballarat_cctv_cameras]
+kind = "open_data_portals_targets"
+
+[camreg_au_vic_geelong_closed_circuit]
+kind = "open_data_portals_targets"
+
+[camreg_ie_d_dublin_traffic_poles_with]
+kind = "open_data_portals_targets"
+
+[camreg_it_me_messina_videosorveglianza]
+kind = "open_data_portals_targets"
+
+[camreg_si_048_ko_evje_videonadzor_na]
+kind = "open_data_portals_targets"
+
+[ccops_si_085_novo_mesto_evidenca_o]
+kind = "open_data_portals_targets"
+
+[camreg_ua_18_korosten]
+kind = "open_data_portals_targets"
+
+# ---------------------------------------------------------------------------
+# The ODS records lane (2) + the data.europa.eu hub-search seat (1).
+# ---------------------------------------------------------------------------
+[camreg_gb_eng_leice_cctv_cameras]
+kind = "open_data_portals_targets"
+
+[camreg_fr_92_grand_paris_seine_ouest_vid]
+kind = "open_data_portals_targets"
+
+[camreg_eu_eea_data_europa_search_api]
+kind = "open_data_portals_targets"
+
+# ---------------------------------------------------------------------------
+# The committed-file lane — Barnet's two CSV registers + Trafford's GeoJSON.
+# ---------------------------------------------------------------------------
+[camreg_gb_eng_barnet_cctv_camera]
+kind = "open_data_files_targets"
+
+[camreg_gb_eng_barnet_cctv_traffic]
+kind = "open_data_files_targets"
+
+[camreg_gb_eng_traff_trafford_cctv]
+kind = "open_data_files_targets"
+
+# ---------------------------------------------------------------------------
+# The reused dossier `clause_fields` seats (12) — dataset pages, guidance
+# and oversight PDFs; institutional facts only, never per-device or
+# person-shaped content (Part VIII).
+# ---------------------------------------------------------------------------
+
+# Barnet's Traffic CCTV contract — the data.gov.uk dataset landing page
+# (I5-C319). The contract metadata is the reviewed fact; the contract PDF
+# edition's URL lands under D-P37.69a-1's preflight review.
+[ccops_gb_eng_barnet_traffic_cctv]
+kind = "dossier_documents"
+
+[[ccops_gb_eng_barnet_traffic_cctv.targets]]
+id = "barnet-traffic-cctv-contract-dataset"
+doc_id = "barnet-traffic-cctv-contract-dataset"
+url = "https://www.data.gov.uk/dataset/d3de4aa1-800d-453f-a039-4df7e49ca7a6/traffic-cctv-contract"
+kind = "clause_fields"
+subject_id = "sig:document:barnet-traffic-cctv-contract"
+document_genre = "official_statement"
+review_note = "The Barnet traffic-CCTV contract dataset page on data.gov.uk (I5-C319): the dataset's existence, publisher and licence are the reviewed facts — the contract document itself lands under D-P37.69a-1's preflight review."
+fields = [
+  { field = "title", literal = "Traffic CCTV contract", value = "Traffic CCTV contract" },
+  { field = "enacting_body", literal = "London Borough of Barnet", value = "London Borough of Barnet" },
+  { field = "technology", literal = "CCTV", value = "fixed-camera-cctv" },
+]
+
+# North Somerset CCTV — the n-somerset.gov.uk open-data page (I5-C313,
+# explicit open licence family).
+[camreg_gb_eng_north_cctv_cameras]
+kind = "dossier_documents"
+
+[[camreg_gb_eng_north_cctv_cameras.targets]]
+id = "north-somerset-cctv-dataset"
+doc_id = "north-somerset-cctv-dataset"
+url = "https://n-somerset.gov.uk"
+kind = "clause_fields"
+subject_id = "sig:document:north-somerset-cctv-open-data"
+document_genre = "official_statement"
+review_note = "The North Somerset CCTV open-data page (I5-C313): the dataset's existence and the publishing council are the reviewed facts; device rows land on the file lane under D-P37.69a-1's preflight review."
+fields = [
+  { field = "title", literal = "CCTV", value = "CCTV camera locations" },
+  { field = "enacting_body", literal = "North Somerset Council", value = "North Somerset Council" },
+  { field = "technology", literal = "CCTV", value = "fixed-camera-cctv" },
+]
+
+# OAIC — the Australian privacy commissioner's CCTV guidance (I5-C305).
+[ccops_iso_au_privacy_commissioner]
+kind = "dossier_documents"
+
+[[ccops_iso_au_privacy_commissioner.targets]]
+id = "oaic-cctv-guidance"
+doc_id = "oaic-cctv-guidance"
+url = "https://www.oaic.gov.au"
+kind = "clause_fields"
+subject_id = "sig:document:oaic-cctv-guidance"
+document_genre = "official_statement"
+review_note = "The OAIC CCTV/surveillance guidance page (I5-C305): the guidance's existence, issuing office and covered technology are institutional facts."
+fields = [
+  { field = "title", literal = "CCTV", value = "CCTV guidance" },
+  { field = "enacting_body", literal = "Office of the Australian Information Commissioner", value = "Office of the Australian Information Commissioner" },
+  { field = "technology", literal = "CCTV", value = "fixed-camera-cctv" },
+]
+
+# Canadian OPC — the Parliament-use surveillance report (I5-C304).
+[statrep_ca_special_parliament_use]
+kind = "dossier_documents"
+
+[[statrep_ca_special_parliament_use.targets]]
+id = "opc-parliament-use-report"
+doc_id = "opc-parliament-use-report"
+url = "https://www.priv.gc.ca"
+kind = "clause_fields"
+subject_id = "sig:document:opc-parliament-use-report"
+document_genre = "official_statement"
+review_note = "The Office of the Privacy Commissioner of Canada report page (I5-C304): the report's existence and issuing office are institutional facts — the seat's activation additionally waits on the operator's C6 answer (IND-TERMS)."
+fields = [
+  { field = "title", literal = "Privacy Commissioner", value = "Privacy Commissioner report" },
+  { field = "enacting_body", literal = "Office of the Privacy Commissioner of Canada", value = "Office of the Privacy Commissioner of Canada" },
+  { field = "technology", literal = "video surveillance", value = "fixed-camera-cctv" },
+]
+
+# Garante — the Trento videosorveglianza provvedimento (I5-C347).
+[ccops_it_tn_trento_provvedimento_dell_11]
+kind = "dossier_documents"
+
+[[ccops_it_tn_trento_provvedimento_dell_11.targets]]
+id = "garante-trento-videosorveglianza"
+doc_id = "garante-trento-videosorveglianza"
+url = "https://www.garanteprivacy.it"
+kind = "clause_fields"
+subject_id = "sig:document:garante-trento-videosorveglianza"
+document_genre = "official_statement"
+review_note = "The Garante provvedimento on Trento's videosorveglianza (I5-C347): the decision's existence, issuing authority and covered technology are institutional facts."
+fields = [
+  { field = "title", literal = "videosorveglianza", value = "Provvedimento videosorveglianza Trento" },
+  { field = "enacting_body", literal = "Garante per la protezione dei dati personali", value = "Garante per la protezione dei dati personali" },
+  { field = "technology", literal = "videosorveglianza", value = "fixed-camera-cctv" },
+]
+
+# Sevenoaks — the CCTV annual report PDF (I5-C344).
+[statrep_gb_eng_seven_cctv_june_2026]
+kind = "dossier_documents"
+
+[[statrep_gb_eng_seven_cctv_june_2026.targets]]
+id = "sevenoaks-cctv-annual-report"
+doc_id = "sevenoaks-cctv-annual-report"
+url = "https://www.sevenoaks.gov.uk"
+kind = "clause_fields"
+subject_id = "sig:document:sevenoaks-cctv-annual-report"
+document_genre = "official_statement"
+review_note = "The Sevenoaks CCTV annual report PDF (I5-C344): the report's existence, publishing council and covered period are institutional facts."
+fields = [
+  { field = "title", literal = "CCTV", value = "CCTV Annual Report" },
+  { field = "enacting_body", literal = "Sevenoaks District Council", value = "Sevenoaks District Council" },
+  { field = "technology", literal = "CCTV", value = "fixed-camera-cctv" },
+  { field = "report_period", literal = "2025", value = "2025-2026 reporting year" },
+]
+
+# Scottish Biometrics Commissioner — the joint assurance review of
+# retrospective facial search PDF (I5-C303).
+[statrep_gb_sct_joint_assurance_review]
+kind = "dossier_documents"
+
+[[statrep_gb_sct_joint_assurance_review.targets]]
+id = "scottish-retrospective-facial-search-review"
+doc_id = "scottish-retrospective-facial-search-review"
+url = "https://biometricscommissioner.scot/media/4talu0vq/joint-assurance-review-retrospective-facial-search.pdf"
+kind = "clause_fields"
+subject_id = "sig:document:scottish-retrospective-facial-search-review"
+document_genre = "official_statement"
+review_note = "The joint assurance review of retrospective facial search (I5-C303): the review's existence, commissioning offices and covered technology are institutional facts."
+fields = [
+  { field = "title", literal = "retrospective facial search", value = "Joint Assurance Review — Retrospective Facial Search" },
+  { field = "enacting_body", literal = "Scottish Biometrics Commissioner", value = "Scottish Biometrics Commissioner" },
+  { field = "technology", literal = "facial search", value = "facial recognition" },
+]
+
+# Oireachtas — the Garda recording-devices briefing paper PDF (I5-C306).
+[legis_ie_rs_general_scheme]
+kind = "dossier_documents"
+
+[[legis_ie_rs_general_scheme.targets]]
+id = "oireachtas-garda-recording-devices-briefing"
+doc_id = "oireachtas-garda-recording-devices-briefing"
+url = "https://data.oireachtas.ie/ie/oireachtas/libraryResearch/2025/2025-08-18_briefing-paper-garda-siochana-recording-devices-amendment-bill_en.pdf"
+kind = "clause_fields"
+subject_id = "sig:document:oireachtas-garda-recording-devices-briefing"
+document_genre = "official_statement"
+review_note = "The Oireachtas Library & Research briefing paper on the Garda Síochána (Recording Devices) (Amendment) Bill (I5-C306): the paper's existence, publishing service and covered technology are institutional facts."
+fields = [
+  { field = "title", literal = "Recording Devices", value = "Garda Síochána (Recording Devices) (Amendment) Bill briefing" },
+  { field = "enacting_body", literal = "Oireachtas Library", value = "Oireachtas Library & Research Service" },
+  { field = "technology", literal = "recording devices", value = "body-worn camera" },
+]
+
+# GOV.UK — the Algorithmic Transparency Records public-safety subset page
+# (SRC-026).
+[statrep_gb_uk_algorithmic_transparency]
+kind = "dossier_documents"
+
+[[statrep_gb_uk_algorithmic_transparency.targets]]
+id = "uk-atrs-public-safety"
+doc_id = "uk-atrs-public-safety"
+url = "https://www.gov.uk"
+kind = "clause_fields"
+subject_id = "sig:document:uk-atrs-public-safety"
+document_genre = "official_statement"
+review_note = "The UK Algorithmic Transparency Recording Standard hub page (SRC-026 — the public-safety records subset): the register's existence and owning department are institutional facts."
+fields = [
+  { field = "title", literal = "Algorithmic Transparency", value = "Algorithmic Transparency Recording Standard" },
+  { field = "enacting_body", literal = "Department for Science, Innovation and Technology", value = "Department for Science, Innovation and Technology" },
+]
+
+# ICO — the enforcement-action register page (I5-C307; the `new:html_list`
+# lane's register-level read — per-entry enumeration is D-P37.69a-2).
+[statrep_gb_enforcement_action]
+kind = "dossier_documents"
+
+[[statrep_gb_enforcement_action.targets]]
+id = "ico-enforcement-register"
+doc_id = "ico-enforcement-register"
+url = "https://ico.org.uk/action-weve-taken/enforcement/"
+kind = "clause_fields"
+subject_id = "sig:document:ico-enforcement-register"
+document_genre = "official_statement"
+review_note = "The ICO enforcement-action register page (I5-C307): the register's existence and issuing office are institutional facts; per-entry enumeration is the reviewed `html_list` lane tracked by D-P37.69a-2."
+fields = [
+  { field = "title", literal = "Enforcement action", value = "Enforcement action register" },
+  { field = "enacting_body", literal = "Information Commissioner's Office", value = "Information Commissioner's Office" },
+]
+
+# dados.gov.pt — the Lisboa Bairro Alto videovigilância dataset page
+# (I5-C356; udata portal — the GeoJSON resource URL is D-P37.69a-1).
+[camreg_pt_11_lisboa_sistema_de]
+kind = "dossier_documents"
+
+[[camreg_pt_11_lisboa_sistema_de.targets]]
+id = "lisboa-bairro-alto-videovigilancia-dataset"
+doc_id = "lisboa-bairro-alto-videovigilancia-dataset"
+url = "https://dados.gov.pt/datasets/sistema-de-videovigilancia-bairro-alto"
+kind = "clause_fields"
+subject_id = "sig:document:lisboa-bairro-alto-videovigilancia-dataset"
+document_genre = "official_statement"
+review_note = "The dados.gov.pt dataset page for the Bairro Alto videovigilância system (I5-C356): the dataset's existence and publishing municipality are the reviewed facts — the GeoJSON resource URL lands under D-P37.69a-1."
+fields = [
+  { field = "title", literal = "videovigilância", value = "Sistema de videovigilância — Bairro Alto" },
+  { field = "enacting_body", literal = "Câmara Municipal de Lisboa", value = "Câmara Municipal de Lisboa" },
+  { field = "technology", literal = "videovigilância", value = "fixed-camera-cctv" },
+]
+
+# datos.madrid.es — the cámaras de videovigilancia dataset page (I5-C349;
+# the XLSX resource URL is D-P37.69a-1).
+[camreg_es_md_madrid_c_maras_de]
+kind = "dossier_documents"
+
+[[camreg_es_md_madrid_c_maras_de.targets]]
+id = "madrid-camaras-videovigilancia-dataset"
+doc_id = "madrid-camaras-videovigilancia-dataset"
+url = "https://datos.madrid.es/dataset/300429-0-camaras-videovigilancia"
+kind = "clause_fields"
+subject_id = "sig:document:madrid-camaras-videovigilancia-dataset"
+document_genre = "official_statement"
+review_note = "The datos.madrid.es dataset page for the videovigilancia camera register (I5-C349): the dataset's existence and publishing municipality are the reviewed facts — the XLSX resource URL lands under D-P37.69a-1."
+fields = [
+  { field = "title", literal = "videovigilancia", value = "Cámaras de videovigilancia" },
+  { field = "enacting_body", literal = "Ayuntamiento de Madrid", value = "Ayuntamiento de Madrid" },
+  { field = "technology", literal = "videovigilancia", value = "fixed-camera-cctv" },
+]
+
+# ---------------------------------------------------------------------------
+# The CNIL accountability seat — ONE targeted oversight_report lookup
+# (I9b-C103): the BriefCam mise-en-demeure decision page. Never a crawl.
+# ---------------------------------------------------------------------------
+[statrep_fr_cnil_utilisation_de]
+kind = "oversight_report"
+
+[[statrep_fr_cnil_utilisation_de.targets]]
+id = "cnil-briefcam-mise-en-demeure"
+url = "https://cnil.fr/fr/utilisation-briefcam-logiciels-analyse-video-par-etat-communes-la-cnil-prononce-plusieurs-mises-en-demeure"
+kind = "oversight_report"
+external_id = "cnil-briefcam-mise-en-demeure-2026"
+title = "Utilisation de BriefCam et autres logiciels d'analyse vidéo par les communes : la CNIL prononce plusieurs mises en demeure"
+literals = [ "BriefCam", "mises en demeure", "vidéosurveillance" ]
+epistemic_status = "confirmed"
+event_type = "regulatory_action"
+event_date = "2026-10-15"
+organizations = [ "Commission nationale de l'informatique et des libertés" ]
+technologies = [ "video analysis", "CCTV" ]
+source_class = "primary_record"
+review_note = "The CNIL BriefCam enforcement decision (I9b-C103 — the regulator's own published decision page): existence, issuing authority and covered technology are institutional facts; the named communes' detail stays on the document, never per-entity claims."

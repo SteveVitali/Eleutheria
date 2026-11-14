@@ -206,6 +206,26 @@ DOSSIER_SOURCES = (
     "ccops_ca_calistoga_police_department",
     "ccops_ca_pinole_police_department",
     "ccops_mn_dayton_police_department",
+    # P37.69a / R11-ACQ-23a (I7 N1–N21 `a`): the international open-data
+    # family's twelve document seats — dataset landing pages (Barnet
+    # contract, North Somerset, Lisboa, Madrid), regulator guidance and
+    # oversight reports (OAIC, OPC, Garante/Trento, Sevenoaks, the
+    # Scottish facial-search review, the Oireachtas briefing, UK ATRS)
+    # and the ICO enforcement register's register-level read. All stay
+    # ingestion_permitted=false pending the operator's OP-26 Wave-D flip
+    # under ING-GO-D.
+    "ccops_gb_eng_barnet_traffic_cctv",
+    "camreg_gb_eng_north_cctv_cameras",
+    "ccops_iso_au_privacy_commissioner",
+    "statrep_ca_special_parliament_use",
+    "ccops_it_tn_trento_provvedimento_dell_11",
+    "statrep_gb_eng_seven_cctv_june_2026",
+    "statrep_gb_sct_joint_assurance_review",
+    "legis_ie_rs_general_scheme",
+    "statrep_gb_uk_algorithmic_transparency",
+    "statrep_gb_enforcement_action",
+    "camreg_pt_11_lisboa_sistema_de",
+    "camreg_es_md_madrid_c_maras_de",
 )
 
 

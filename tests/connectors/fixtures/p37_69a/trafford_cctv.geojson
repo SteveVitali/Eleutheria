@@ -1,0 +1,9 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-2.35, 53.44]},
+     "properties": {"id": "TR-001", "location": "Example Road"}},
+    {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-2.36, 53.45]},
+     "properties": {"id": "TR-002", "location": "Example Lane"}}
+  ]
+}
