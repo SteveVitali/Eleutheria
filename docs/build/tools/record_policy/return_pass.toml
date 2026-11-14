@@ -1750,3 +1750,29 @@ rerun_cell = '''implement-spec spec=docs/tickets/466_P37.42__api-parity.md live_
   excluded = ["x 03:00-06:30Z", "AR-3 batch windows"]
   go = '''verbatim-go: the operator's explicit verbatim go (never pre-authorised, OM-20)'''
   rerun = '''implement-spec spec=docs/tickets/466_P37.42__api-parity.md live_verification=true'''
+[[row]]
+key = "P37.54"
+kind = "leg"
+obligations = []
+obligations_cell = '''Wave-D L0→L11 (open → the ACQ-19…26 family days → the S6 extras day → materialize+delta+resume); the eight dossier seats, `doj_ctas_awards` + the tribal S8 lane never'''
+gates_cell = '''`hosted`, never pre-auth; excl. outside-14:00-20:00Z, outside 2026-11-23→12-04 / 2026-12-14→12-18, the AR-3 freeze 12-06→12-13, the 2026-12-15 release-cut day, materialize/G2 slot; verbatim ING-GO-D (GATE-G6 `b91f8e58`) + `wave-d-gate` per leg'''
+operator_cell = '''OP-26 flips (HG-03 — the complete `WAVE_D_FLIP_LIST` set, 146 flag rows) + `date -u`; `wave-d.sh --apply --leg L0|…|L11 --inputs <json>` (no-go→42); second-window sources ship in the 2027-01-15 cadence cut'''
+rerun_cell = '''`implement-spec spec=docs/tickets/481_P37.54__wave-d-activation.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P37.54-window-1-live-legs"
+  obligations = []
+  earliest = '''2026-11-23 — Wave-D window 1 opens; first admissible slot: a window-1 day in-band with the verbatim ING-GO-D recorded, AR-2 `SUCCESSFUL`, OM-14 pre-state + `cadence --check` green; legs run ordered L0→L11, one family per day, the day's OP-26 flips recorded executed'''
+  excluded = ["outside-14:00-20:00Z", "outside 2026-11-23→12-04 / 2026-12-14→12-18", "the AR-3 freeze 12-06→12-13", "materialize/G2 slot"]
+  go = '''verbatim-go: ING-GO-D (the GATE-G6 GATE DECISIONS 2026-11-05T15:20Z recording on `b91f8e58`, byte-exact — a re-entry re-collects it verbatim) + `sig-ops wave-d-gate --inputs <json>` admit go (exit 0) on fresh recorded inputs — the ordered prefix green or held-reported and `flips.L*` recorded'''
+  rerun = '''implement-spec spec=docs/tickets/481_P37.54__wave-d-activation.md live_verification=true'''
+  live_dependants = ["P37.66"]
+
+  [[row.legs]]
+  id = "P37.54-window-2-live-legs"
+  obligations = []
+  earliest = '''2026-12-14 — Wave-D window 2 opens; the held legs' make-up window (a leg held in window 1 runs here, reported, never silently skipped) + the closing leg L11 if it lands here; the release-cut day inside the window is excluded'''
+  excluded = ["outside-14:00-20:00Z", "outside 2026-11-23→12-04 / 2026-12-14→12-18", "the 2026-12-15 release-cut day", "materialize/G2 slot"]
+  go = '''verbatim-go: the same gate — ING-GO-D in force (byte-exact), the ordered prefix green or held-reported, `flips.L*` recorded, `sig-ops wave-d-gate` admit go (exit 0)'''
+  rerun = '''implement-spec spec=docs/tickets/481_P37.54__wave-d-activation.md live_verification=true'''
+  live_dependants = ["P37.66"]

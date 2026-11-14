@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "15ed4744612e7f2dd109ad1a655023085d878d8f",
-  "manifest_inputs": 1273,
+  "input_commit": "21ceb1b045e3e7ea877d0635ea4610ce46a39945",
+  "manifest_inputs": 1274,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.54",
-    "lastCompleted": "P37.69b",
+    "nextTicket": "P37.55",
+    "lastCompleted": "P37.54",
     "blockedOn": "CI stack on",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.42,P37.70,P37.71",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.42,P37.54,P37.70,P37.71",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.69b-ogc-wfs-family",
+    "chainTip": "r11/P37.54-wave-d-activation",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-14T02:45Z"
+    "updatedAt": "2026-11-14T05:58Z"
   },
   "counts": {
     "obligations": 246,
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 86,
+    "return_pass_rows": 87,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -13711,6 +13711,14 @@
         "obligations": [
           "D-P37.42-1"
         ]
+      },
+      {
+        "key": "P37.54",
+        "obligations_cell": "Wave-D L0→L11 (open → the ACQ-19…26 family days → the S6 extras day → materialize+delta+resume); the eight dossier seats, `doj_ctas_awards` + the tribal S8 lane never",
+        "gates_cell": "`hosted`, never pre-auth; excl. outside-14:00-20:00Z, outside 2026-11-23→12-04 / 2026-12-14→12-18, the AR-3 freeze 12-06→12-13, the 2026-12-15 release-cut day, materialize/G2 slot; verbatim ING-GO-D (GATE-G6 `b91f8e58`) + `wave-d-gate` per leg",
+        "operator_cell": "OP-26 flips (HG-03 — the complete `WAVE_D_FLIP_LIST` set, 146 flag rows) + `date -u`; `wave-d.sh --apply --leg L0",
+        "rerun_cell": "…",
+        "obligations": []
       }
     ]
   },
@@ -27844,10 +27852,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "713689ce4ecf23695fb102994c53f31710d5c10e08c8d264e43752a6a100a99c",
+  "manifest_sha256": "5aa7b5b92f77561a71dded22a905bc18d3a68a691550274955c59390de1f380d",
   "current_md": {
-    "lines": 161,
-    "bytes": 20418,
+    "lines": 153,
+    "bytes": 19451,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
@@ -27856,6 +27864,7 @@
       "coverage-4.md",
       "coverage-5.md",
       "domains.md",
+      "funnel.md",
       "obligations.md"
     ]
   }

@@ -8,11 +8,11 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P37.54
-lastCompleted: P37.69b
+nextTicket: P37.55
+lastCompleted: P37.54
 blockedOn: CI stack on #504@83c6341 (external): #495 does not contain its base #494's head c062c6c — rebased or retargeted outside the documented procedure (carried ancestors verbatim, none authored here)
 pauseRequested: false
-returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.42,P37.70,P37.71
+returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.42,P37.54,P37.70,P37.71
 manifest: docs/tickets/00_MANIFEST.md
 canonicalSpec: docs/2_canonical_design_spec.md
 memoryRoot: docs/build
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P37.69b-ogc-wfs-family
+chainTip: r11/P37.54-wave-d-activation
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-14T02:45Z
+updatedAt: 2026-11-14T05:58Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -496,6 +496,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | P37.20 | D-P37.20-1 | OM-20; x 03:00-06:30Z + day6T00:00Z-day13T12:00Z; verbatim `SIG_BBOX_AUTHOR` | verbatim go + ADC + `SIG_GCP_PROJECT` | implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true |
 | P37.36 | raw-ok archive write (raw/index.json; P8 screen; new-capture reserialisation) + push + rehearsal | `hosted` archive write + publish; NEVER pre-authorised (Part VIII families) — verbatim go only; AR-3+AR-2 (x 03:00-06:30Z + AR-3 batch windows); exposure rides P37.65 HG-11 | the operator's verbatim go (SIG_RAWARCHIVE_AUTHOR env-only), ADC + SIG_GCP_PROJECT present; kill switch = R2_MIRROR_RUNBOOK.md | `implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` (archive write + push + rehearsal) |
 | P37.42 | D-P37.42-1 | OM-20 never-list (an API roll that changes a public route's response); the operator's explicit verbatim go — never pre-authorised; AR-3 + AR-2 (x 03:00-06:30Z + AR-3 batch windows) | the operator's explicit verbatim go + ADC + `SIG_GCP_PROJECT` | implement-spec spec=docs/tickets/466_P37.42__api-parity.md live_verification=true |
+| P37.54 | Wave-D L0→L11 (open → the ACQ-19…26 family days → the S6 extras day → materialize+delta+resume); the eight dossier seats, `doj_ctas_awards` + the tribal S8 lane never | `hosted`, never pre-auth; excl. outside-14:00-20:00Z, outside 2026-11-23→12-04 / 2026-12-14→12-18, the AR-3 freeze 12-06→12-13, the 2026-12-15 release-cut day, materialize/G2 slot; verbatim ING-GO-D (GATE-G6 `b91f8e58`) + `wave-d-gate` per leg | OP-26 flips (HG-03 — the complete `WAVE_D_FLIP_LIST` set, 146 flag rows) + `date -u`; `wave-d.sh --apply --leg L0|…|L11 --inputs <json>` (no-go→42); second-window sources ship in the 2027-01-15 cadence cut | `implement-spec spec=docs/tickets/481_P37.54__wave-d-activation.md live_verification=true` |
 
 Sources: OPERATIONAL_READINESS §(f3) + `UNIVERSE_DISPOSED.csv` + plan §9.2/§8.6 + `data/round11_plan.csv`. Non-row homes: 9 ticket + 9 later-phase + 7 decision + 2 already-done. Keying (T5 γ) = LANDED ticket (pre-P36.49 cells archived `reports/memory-repair/`).
 
@@ -1750,3 +1751,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-14 — P37.69b post-closeout record — head `83c63418` · PR #504 vs `r11/P37.69a-international-open-data-portals` · `ci: pending head-bound read` (`ci_boundary.py --no-wait` 2026-11-14, `reports/ci/p37_69b_pr504.json`, exit 3) · `blockedOn` carried ancestors verbatim: `CI stack on #504@83c6341 (external): #495 does not contain its base #494's head c062c6c — rebased or retargeted outside the documented procedure` — external stack finding, none authored here · coverage +0 (no §56 Owner row; no verdicts stamped) · deferrals +1/−0 (`D-P37.69b-1` Ipswich endpoint preflight) · local-suite note: `test_secrets.py::test_gcp_project_id_is_env_resolved_not_committed` fails closed locally (SIG_GCP_PROJECT unset — OP-07 env-gated, pre-existing local-only; 1,915 passed otherwise in tests/connectors) · `main` untouched · next → P37.54 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-14 — P37.69b post-closeout record — head `37e6c5fb` 5/5 green head-bound (`ci: pass #504@37e6c5f`, run 43558025321, read ~05:39Z: security 32s · docs 2m16s · composed 4m41s · python 30m01s · web 56m08s; `reports/ci/p37_69b_pr504_final.json`) · `blockedOn` carried ancestors verbatim: `CI stack on #504@37e6c5f (external): #495 does not contain its base #494's head c062c6c — rebased or retargeted outside the documented procedure` — external stack finding, none authored here · repair arc: `63fef483` close-time `date -u` correction (memory_guard R1), `37e6c5fb` projection regen · deferrals +1/−0 (`D-P37.69b-1` Ipswich endpoint preflight; `D-P37.69a-1`/`-2` stay OPEN — owner-named, not discharged) · `main` untouched · next → P37.54
 - 2026-11-14 — dispatch boundary-confirm — P37.69b's green read recorded (`ci: pass #504@37e6c5f`, run 43558025321; closeout head `15ed4744`); `blockedOn` carried ancestors verbatim (#495 vs #494's head c062c6c — external stack finding, none authored here); chainTip `r11/P37.69b-ogc-wfs-family` · nextTicket P37.54 (row 481 — Wave D activation; `live_verification=false` engineering dispatch — the 2 live legs run as the `live_verification=true` re-run inside windows 11-23→12-04 / 12-14→12-18 under the operator's OP-26 flips + ING-GO-D verbatim (GATE-G6 `b91f8e58`) + HG-11 — never executed here; all 13 deps landed) — fresh implement-spec sub-agent on `r11/P37.54-wave-d-activation` · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-14 — P37.54 done — row 481 `Kind: ticket` — Wave D activation (`R11-ACQ-27` / I8 §7.2–7.8 + OM-19/OM-20; `live_verification=false` engineering dispatch; not OM-20 — 13 deps landed; no live legs; no flips/fetches/HG-11 ticks/operator acts): `ops/src/ops/wave_d.py` `sig.wave-d-gate/1` + `sig.wave-d-plan/1` — recorded-input gate (byte-exact ING-GO-D GATE-G6 `b91f8e58` · windows `2026-11-23→12-04` + `2026-12-14→12-18` 14:00–20:00Z · 12-15 cut day refused · ordered days/held-reports/pacing · exact scope + never-sources incl. the 8 dossier seats + `doj_ctas_awards` + tribal S8 · per-leg flips+confirmation · serialization · L0/family/L11 close criteria) + 467-step plan (296 mutations) · `ops/gcp/wave-d.sh` (`--check` plan-only exit 0; `--apply` gated refusal→42) · CLI `wave-d-plan`/`wave-d-gate` 0/42/2 · `WAVE_D_FLIP_LIST.md` 146 flag rows (140 batch + 6 seatless) + 8 dossier context rows — all `ingestion_permitted=false` · `WAVE_D_RUNBOOK.md` · tests +36 green · RETURN PASS `P37.54` `kind=leg` +2 `[[row.legs]]` (one per window, `live: P37.66`) · `return_pass.py check` green (246 obligations/162 owed/87 rows) · projection regen fresh · ruff/format clean · `main` untouched · next → P37.55 · harness: devin-desktop/swe-2-high/subagent

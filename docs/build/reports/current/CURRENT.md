@@ -4,12 +4,12 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `15ed4744612e7f2dd109ad1a655023085d878d8f` · inputs hashed: 1273 · wall-clock receipt: `receipt.json`
+> input_commit: `21ceb1b045e3e7ea877d0635ea4610ce46a39945` · inputs hashed: 1274 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.54` · lastCompleted `P37.69b`
-- chainTip `r11/P37.69b-ogc-wfs-family` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-14T02:45Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.55` · lastCompleted `P37.54`
+- chainTip `r11/P37.54-wave-d-activation` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-14T05:58Z`
 
 ## Obligations
 
@@ -110,6 +110,7 @@
 | P37.20 | D-P37.20-1 | implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox-api.md live_verification=true |
 | P37.36 | raw-ok archive write (raw/index.json; P8 screen; new-capture reserialisation) + push + rehearsal | `implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` (archive write + push + rehearsal) |
 | P37.42 | D-P37.42-1 | implement-spec spec=docs/tickets/466_P37.42__api-parity.md live_verification=true |
+| P37.54 | Wave-D L0→L11 (open → the ACQ-19…26 family days → the S6 extras day → materialize+delta+resume); the eight dossier seats, `doj_ctas_awards` + the tribal S8 lane… | … |
 
 ## Known inconsistencies (preserved, never synthesized)
 
@@ -121,16 +122,7 @@
 
 ## Source funnel (recorded baseline, domain-labelled)
 
-| unit | recorded value | domain · date · evidence |
-|---|---|---|
-| discovered | `**339** registered `[sources.*]` + **27** researched candidates` | `implementation · 2026-09-27 · `sources.toml`, `source-candidates.csv`` |
-| reviewed | `rights blocks + disposition artifacts per source (`p293_dispositions.json` valid` | `implementation · 2026-09-27` |
-| permitted | `**236** `ingestion_permitted = true` (of 339)` | `implementation · 2026-09-27 · counted from `sources.toml`` |
-| mapped | `8 accountability sources wired (P31.12/13, shadow diff=0); earlier classes per t` | `fixture+implementation · recorded 2026-09-26` |
-| captured | `OCFL-backed captures behind every landed claim; per-job counts recorded per run ` | `hosted · recorded 2026-09-26 (P31.12/13 run ledgers)` |
-| extracted | `2,074,963 admissible claims on the hosted spine (after P30.2a materialization)` | `hosted · recorded 2026-09-24 (P30.2a run)` |
-| linked | `1,872,344 envelopes → 227,998 resolved sites (from 230,330 obs-level records, de` | `hosted · recorded 2026-09-24/25` |
-| published | `national surface live: export `sig-2026-09-27-ce480ab1` published to `…-sig-publ` | `public · recorded 2026-09-27 (P31.16 publish half)` |
+- `funnel` → see [funnel.md](funnel.md) (complete — 8 rows)
 
 ## Releases (recorded)
 
