@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC RECONSTRUCTION (P37.69b) — a GeoServer-shaped WFS 2.0
+     FeatureCollection for `community:cctv_cameras` (I5-C312). The gml:pos
+     pair reads lat-lon under the served EPSG:4326 srsName. Coordinates are
+     invented points inside the published jurisdiction, never fetched
+     records; see SOURCES.md. -->
+<wfs:FeatureCollection numberMatched="3" numberReturned="3"
+  xmlns:wfs="http://www.opengis.net/wfs/2.0"
+  xmlns:gml="http://www.opengis.net/gml/3.2"
+  xmlns:community="https://maps.runnymede.gov.uk/geoserver/community">
+  <wfs:member>
+    <community:cctv_cameras gml:id="cctv_cameras.1">
+      <community:the_geom>
+        <gml:Point srsName="urn:ogc:def:crs:EPSG::4326">
+          <gml:pos>51.3910 -0.5401</gml:pos>
+        </gml:Point>
+      </community:the_geom>
+      <community:location>Addlestone town centre</community:location>
+      <community:status>active</community:status>
+    </community:cctv_cameras>
+  </wfs:member>
+  <wfs:member>
+    <community:cctv_cameras gml:id="cctv_cameras.2">
+      <community:the_geom>
+        <gml:Point srsName="urn:ogc:def:crs:EPSG::4326">
+          <gml:pos>51.3690 -0.5023</gml:pos>
+        </gml:Point>
+      </community:the_geom>
+      <community:location>Chertsey centre</community:location>
+      <community:status>active</community:status>
+    </community:cctv_cameras>
+  </wfs:member>
+  <wfs:member>
+    <community:cctv_cameras gml:id="cctv_cameras.3">
+      <community:the_geom>
+        <gml:Point srsName="urn:ogc:def:crs:EPSG::4326">
+          <gml:pos>51.4321 -0.5178</gml:pos>
+        </gml:Point>
+      </community:the_geom>
+      <community:location>Virginia Water parade</community:location>
+      <community:status>active</community:status>
+    </community:cctv_cameras>
+  </wfs:member>
+</wfs:FeatureCollection>

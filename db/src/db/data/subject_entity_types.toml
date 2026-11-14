@@ -23,7 +23,7 @@
 
 # The map version, recorded on every `entity_type_decision` row the
 # typed-identity write lands so a later revision can supersede honestly.
-version = "1.5.0"
+version = "1.6.0"
 
 [prefixes."accountability:"]
 entity_type = "accountability_event"
@@ -183,4 +183,8 @@ note = "§11.10 — an open-data dataset's enumerated resource pointer (open_dat
 
 [prefixes."open_data_index:"]
 entity_type = "data_system"
-note = "§11.10 — an open-data search lane's served result-count record (open_data_portals.py package_search/hub_search, P37.69a); a bounded enumeration outcome, never a fabricated complete census."
+note = "§11.10 — an open-data search lane's served result-count record (open_data_portals.py package_search/hub_search, P37.69a; the ogc_wfs.py GetFeature page's numberMatched/numberReturned record, P37.69b); a bounded enumeration outcome, never a fabricated complete census."
+
+[prefixes."ogc_service:"]
+entity_type = "data_system"
+note = "§11.10 — an OGC service's capabilities record (ogc_wfs.py, P37.69b): the served WFS version + feature-type names + declared seat metadata, minted from the capabilities document itself; a service-level fact anchor, never fetched feature content."

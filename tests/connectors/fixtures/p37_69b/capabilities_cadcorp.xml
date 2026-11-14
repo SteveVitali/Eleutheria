@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC RECONSTRUCTION (P37.69b) — a Cadcorp-shaped WFS 2.0
+     GetCapabilities document for the I5-C321 seat
+     (`…/WFS/wfs.exe`, typename `ns:cctv_cameras` in the committed record).
+     Never a fetched capture; see SOURCES.md. -->
+<wfs:WFS_Capabilities version="2.0.0"
+  xmlns:wfs="http://www.opengis.net/wfs/2.0"
+  xmlns:ows="http://www.opengis.net/ows/1.1"
+  xmlns:gml="http://www.opengis.net/gml/3.2"
+  xmlns:ns="https://clacks.cloud.cadcorp.com/WFS">
+  <ows:ServiceIdentification>
+    <ows:Title>Clackmannanshire WFS</ows:Title>
+    <ows:ServiceType>WFS</ows:ServiceType>
+    <ows:ServiceTypeVersion>2.0.0</ows:ServiceTypeVersion>
+  </ows:ServiceIdentification>
+  <FeatureTypeList xmlns="http://www.opengis.net/wfs/2.0">
+    <FeatureType>
+      <Name>ns:cctv_cameras</Name>
+      <Title>CCTV Cameras</Title>
+      <DefaultCRS>urn:ogc:def:crs:EPSG::4326</DefaultCRS>
+    </FeatureType>
+  </FeatureTypeList>
+</wfs:WFS_Capabilities>
