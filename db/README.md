@@ -100,6 +100,47 @@ For the artifact projections "rebuild" *is* re-running the export command:
 their determinism is covered by canonical serialization and the export-path
 tests (`tests/db/test_spine_export_over_seeded_spine.py`, `tests/exports/`).
 
+## Whole-graph temporal-invariant audits (TI-6/TI-7, §9.6)
+
+`db.invariants` enforces TI-1..TI-8 as pipeline data-quality checks over the
+batch a writer is about to assert (SIG-TIME-013, ADR-025). TI-6 and TI-7 are
+batch checks, so they see only the batch handed to them — ADR-025 records that
+**a full-graph audit remains a separate nightly job**. `db.graph_audit` is
+that job, and `sig-db graph-audit` is its command (read-only; exit 0 clean,
+exit 3 on any violation):
+
+```bash
+uv run sig-db graph-audit --dsn "postgresql://…/sig"
+```
+
+* **TI-6** — for the declared mutually-exclusive predicate groups (§13.4's
+  four lifecycle tracks, one group per track — orthogonal tracks co-hold by
+  design, SIG-ONTO-061), the audit joins the whole `resolution` table against
+  itself and reports every same-subject pair inside a group whose
+  `valid_period`s overlap **and** whose `sys_period`s overlap — i.e. some
+  belief instant held two mutually exclusive resolved states. This
+  independently re-verifies `resolution_no_overlap` (which guards only the
+  live view, `WHERE upper_inf(sys_period)`) and extends it across all of
+  belief time — the sanctioned close-then-supersede succession has disjoint
+  `sys_period`s and is legal by construction.
+* **TI-7** — the audit walks every declared supersedes/succession pointer
+  surface (`claim.revises_claim`/`retraction_of`, `entity_role.supersedes`,
+  `relationship.supersedes`, `publication_disposition.supersedes`, the
+  `human_eval_*` supersession columns,
+  `evidence_artifact.supersedes_artifact_id`, the forward `superseded_by`
+  links on `extraction`/`technology`/`vocab_predicate`, and the
+  acyclic-and-terminating lineage chains `entity.merged_into` and
+  `evidence_capture.parent_capture_id`) and reports every cycle and every
+  pointer that runs off the graph.
+* **Drift guard** — the surface registry is a declaration: the audit
+  re-derives the live schema's self-referencing foreign keys from
+  `pg_catalog` and reports any self-FK the registry does not name as an
+  un-audited surface, so a schema change cannot silently widen the
+  supersedes surface. `tests/db/test_whole_graph_audits.py` is the CI leg —
+  it proves the audit reports 0 violations over the seeded materialized
+  spine and fails loud on injected TI-6 coexistence and TI-7
+  cycle/dangling shapes.
+
 ## Testing
 
 The claim-spine behaviour (append-only — with the single recorded exception of

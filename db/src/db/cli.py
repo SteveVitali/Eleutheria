@@ -255,6 +255,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="candidate rows scanned per batch (default 1000)",
     )
 
+    ga = sub.add_parser(
+        "graph-audit",
+        help="the whole-graph TI-6/TI-7 audit (P37.57b / ADR-025's deferred "
+        "nightly job): read-only — re-verifies that no two resolutions inside a "
+        "declared mutually-exclusive predicate group ever coexisted with "
+        "overlapping valid intervals, and that every declared "
+        "supersedes/succession chain is acyclic and terminates. Exit 0 clean, "
+        "exit 3 on violations or an un-audited schema self-FK",
+    )
+    ga.add_argument("--dsn", required=True, help="PostgreSQL DSN for the spine")
+
     bench = sub.add_parser(
         "sink-bench",
         help="time PgClaimSink passes over synthetic OSM-shaped claims: claims/min and "
@@ -525,6 +536,17 @@ def _run_crosswalk_intake(args: argparse.Namespace) -> int:
     return 0
 
 
+def _run_graph_audit(args: argparse.Namespace) -> int:
+    """The whole-graph TI-6/TI-7 audit (P37.57b) — read-only, exit 3 on red."""
+    import json
+
+    from .graph_audit import run
+
+    report = run(args.dsn)
+    print(json.dumps(report, indent=2, sort_keys=True, default=str))
+    return 0 if report["ok"] else 3
+
+
 def _run_purge(args: argparse.Namespace) -> int:
     """Invoke the operator-only purge function (P37.71 / ADR-189)."""
     import json
@@ -565,6 +587,8 @@ def main(argv: list[str] | None = None) -> int:
         return _run_lineage_rematerialize(args)
     if args.command == "crosswalk-intake":
         return _run_crosswalk_intake(args)
+    if args.command == "graph-audit":
+        return _run_graph_audit(args)
     if args.command == "sink-bench":
         return _run_sink_bench(args)
     if args.command == "purge":
