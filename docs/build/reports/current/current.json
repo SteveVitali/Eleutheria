@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer cutover deferral is D-R10-MEMORY-2 — D-R10-MEMORY-1's option-C successor leg, landed per its disposition)",
-  "input_commit": "1617ddd28d4c336e313db5055c8eae6b6938fd41",
-  "manifest_inputs": 1274,
+  "input_commit": "eb85abbe31f00cf5229afb94847badd60e5d92bb",
+  "manifest_inputs": 1275,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P37.55",
-    "lastCompleted": "P37.54",
+    "nextTicket": "P37.56",
+    "lastCompleted": "P37.55",
     "blockedOn": "CI stack on",
     "pauseRequested": "false",
-    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.42,P37.54,P37.70,P37.71",
+    "returnPass": "P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.42,P37.54,P37.55,P37.70,P37.71",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P37.54-wave-d-activation",
+    "chainTip": "r11/P37.55-archival-deposits",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-11-14T05:58Z"
+    "updatedAt": "2026-11-14T09:31Z"
   },
   "counts": {
     "obligations": 246,
@@ -37,7 +37,7 @@
     "coverage_historical_rows": 994,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
-    "return_pass_rows": 87,
+    "return_pass_rows": 88,
     "known_inconsistencies": 0,
     "conflicted": 0
   },
@@ -13714,10 +13714,18 @@
       },
       {
         "key": "P37.54",
-        "obligations_cell": "Wave-D L0→L11 (open → ACQ-19…26 family days → S6 extras day → materialize+delta+resume); the 8 dossier seats, `doj_ctas_awards` + tribal S8 lane never",
+        "obligations_cell": "Wave-D L0→L11 (open → ACQ-19…26 family days → S6 extras day → materialize+delta+resume); dossier seats + never-sources excluded",
         "gates_cell": "`hosted`, never pre-auth; excl. outside-14:00-20:00Z, outside 2026-11-23→12-04 / 2026-12-14→12-18, the AR-3 freeze 12-06→12-13, the 2026-12-15 release-cut day, materialize/G2 slot; verbatim ING-GO-D (GATE-G6 `b91f8e58`) + `wave-d-gate` per leg",
         "operator_cell": "OP-26 flips (HG-03 — the `WAVE_D_FLIP_LIST` set, 146 flag rows) + `date -u`; `wave-d.sh --apply --leg L0",
         "rerun_cell": "…",
+        "obligations": []
+      },
+      {
+        "key": "P37.55",
+        "obligations_cell": "queued archival legs (obligation rides P21.5, T5 γ)",
+        "gates_cell": "external archival request (no person contacted); in-ticket pause, never pre-auth (OM-20); verbatim go per leg",
+        "operator_cell": "verbatim go per leg: `sig-ops swh-save --now --scan-report <report>`; OP-19 `deposit-package` publish → DOIs in `DEPOSITS.md`",
+        "rerun_cell": "`implement-spec spec=docs/tickets/482_P37.55__archival-deposits.md live_verification=true`",
         "obligations": []
       }
     ]
@@ -27852,10 +27860,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "73b57dc8abe3668e3aac158413feddf24156d056702d633f4a5a0f80b8d32ff3",
+  "manifest_sha256": "a313f9e336f0278bd595b1269bf6e94266978b2c3e7f462523983cdf512a2880",
   "current_md": {
-    "lines": 153,
-    "bytes": 19438,
+    "lines": 154,
+    "bytes": 19574,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

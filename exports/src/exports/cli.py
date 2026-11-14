@@ -187,7 +187,15 @@ def build_parser() -> argparse.ArgumentParser:
         "--sandbox",
         action="store_true",
         help="Target sandbox.zenodo.org (a REAL sandbox deposit unless --dry-run); needs "
-        "SIG_ZENODO_SANDBOX_TOKEN. Without --sandbox the deposit is always offline (dry-run).",
+        "SIG_ZENODO_SANDBOX_TOKEN. Without --sandbox/--production the deposit is "
+        "always offline (dry-run).",
+    )
+    deposit.add_argument(
+        "--production",
+        action="store_true",
+        help="Target zenodo.org (a REAL production deposit — irreversible); needs "
+        "SIG_ZENODO_TOKEN and is an operator action only (OP-19 / HG-07 / OM-20 — "
+        "never pre-authorised). Conflicts with --sandbox.",
     )
     deposit.add_argument(
         "--dry-run",
@@ -198,6 +206,24 @@ def build_parser() -> argparse.ArgumentParser:
         "--deposits-md",
         default="docs/build/reports/DEPOSITS.md",
         help="The append-only deposit ledger to record the DOIs in.",
+    )
+
+    package = subparsers.add_parser(
+        "deposit-package",
+        help="Assemble the Zenodo production deposit package — openly licensed "
+        "compartments only (P37.55, D-J3-9; the manual publish is OP-19).",
+    )
+    package.add_argument("--in", dest="in_dir", required=True, help="A built export directory.")
+    package.add_argument(
+        "--out",
+        dest="out_dir",
+        required=True,
+        help="The package directory to write (filtered manifest + digests + descriptor).",
+    )
+    package.add_argument(
+        "--report",
+        default=None,
+        help="Write the sig.deposit-package/1 accounting JSON here.",
     )
 
     tiles = subparsers.add_parser(
@@ -1354,14 +1380,19 @@ def _run_build_from_spine(
     return 0
 
 
-def _run_deposit(in_dir: str, sandbox: bool, dry_run: bool, deposits_md: str) -> int:
+def _run_deposit(
+    in_dir: str, sandbox: bool, production: bool, dry_run: bool, deposits_md: str
+) -> int:
     """Deposit a built export to Zenodo (SIG-EXPORT-002).
 
-    - no ``--sandbox`` → always an offline dry-run (FakeZenodoTransport, production-shaped
-      DOIs) — production deposit is an operator-only action, out of scope here.
+    - no ``--sandbox``/``--production`` → always an offline dry-run
+      (FakeZenodoTransport, production-shaped DOIs).
     - ``--sandbox --dry-run`` → offline dry-run with the sandbox (``10.5072``) prefix.
     - ``--sandbox`` (no ``--dry-run``) → a REAL sandbox deposit; needs
       ``SIG_ZENODO_SANDBOX_TOKEN`` — absent, exit 4 (``gate pending: HG-07``), write nothing.
+    - ``--production`` (no ``--dry-run``) → a REAL production deposit — irreversible,
+      an operator action only (OP-19 / HG-07 / OM-20); needs ``SIG_ZENODO_TOKEN``
+      — absent, exit 4 (``gate pending: OP-19``), write nothing.
     """
     import datetime
 
@@ -1375,15 +1406,35 @@ def _run_deposit(in_dir: str, sandbox: bool, dry_run: bool, deposits_md: str) ->
         deposit_export_dir,
     )
 
-    live_sandbox = sandbox and not dry_run
-    token = os.environ.get("SIG_ZENODO_SANDBOX_TOKEN")
-    if live_sandbox and not token:
+    if sandbox and production:
         print(
-            "sig-exports deposit: gate pending: HG-07 — SIG_ZENODO_SANDBOX_TOKEN not set; "
-            "no Zenodo account credential available. Wrote nothing.",
+            "sig-exports deposit: --sandbox and --production are mutually exclusive.",
             file=sys.stderr,
         )
-        return 4
+        return 2
+
+    live_sandbox = sandbox and not dry_run
+    live_production = production and not dry_run
+    token = None
+    if live_sandbox:
+        token = os.environ.get("SIG_ZENODO_SANDBOX_TOKEN")
+        if not token:
+            print(
+                "sig-exports deposit: gate pending: HG-07 — SIG_ZENODO_SANDBOX_TOKEN not set; "
+                "no Zenodo account credential available. Wrote nothing.",
+                file=sys.stderr,
+            )
+            return 4
+    if live_production:
+        token = os.environ.get("SIG_ZENODO_TOKEN")
+        if not token:
+            print(
+                "sig-exports deposit: gate pending: OP-19 — SIG_ZENODO_TOKEN not set; "
+                "the production deposit is an operator action (HG-07, OM-20 — "
+                "never pre-authorised). Wrote nothing.",
+                file=sys.stderr,
+            )
+            return 4
 
     extra: dict[str, bytes] = {}
     for extra_name in ("CITATION.cff", "sbom.cdx.json"):
@@ -1400,6 +1451,10 @@ def _run_deposit(in_dir: str, sandbox: bool, dry_run: bool, deposits_md: str) ->
         assert token is not None
         transport = ZenodoHttpTransport(token=token, sandbox=True)
         environment = "sandbox"
+    elif live_production:
+        assert token is not None
+        transport = ZenodoHttpTransport(token=token, sandbox=False)
+        environment = "production"
     else:
         prefix = ZENODO_SANDBOX_PREFIX if sandbox else ZENODO_PRODUCTION_PREFIX
         transport = FakeZenodoTransport(prefix=prefix)
@@ -1440,6 +1495,31 @@ def _run_deposit(in_dir: str, sandbox: bool, dry_run: bool, deposits_md: str) ->
         )
         + "\n"
     )
+    return 0
+
+
+def _run_deposit_package(in_dir: str, out_dir: str, report_path: str | None) -> int:
+    """Assemble the Zenodo production deposit package (P37.55, D-J3-9).
+
+    Offline, deterministic modulo file order: the package is bytes on disk —
+    the manual publish is the operator's (OP-19).
+    """
+    import datetime
+
+    from .deposit_package import DepositPackageError, build_deposit_package
+
+    generated_at = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    try:
+        report = build_deposit_package(in_dir, out_dir, generated_at=generated_at)
+    except DepositPackageError as exc:
+        print(f"sig-exports deposit-package: refused — {exc}", file=sys.stderr)
+        return 2
+    doc = report.as_json()
+    if report_path:
+        os.makedirs(os.path.dirname(report_path) or ".", exist_ok=True)
+        with open(report_path, "w", encoding="utf-8") as fh:
+            fh.write(json.dumps(doc, indent=2, sort_keys=True) + "\n")
+    sys.stdout.write(json.dumps(doc, indent=2, sort_keys=True) + "\n")
     return 0
 
 
@@ -1866,7 +1946,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "dossier-portfolio":
         return _run_dossier_portfolio(args.packet, args.out)
     if args.command == "deposit":
-        return _run_deposit(args.in_dir, args.sandbox, args.dry_run, args.deposits_md)
+        return _run_deposit(
+            args.in_dir, args.sandbox, args.production, args.dry_run, args.deposits_md
+        )
+    if args.command == "deposit-package":
+        return _run_deposit_package(args.in_dir, args.out_dir, args.report)
     if args.command == "tiles":
         return _run_tiles(args)
     if args.command == "torrent":
