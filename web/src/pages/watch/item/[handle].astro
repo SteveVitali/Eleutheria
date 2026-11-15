@@ -32,6 +32,7 @@ import type { WatchItemV2 } from "../../../lib/watch-v2";
 import { panelForClaim } from "../../../lib/provenance-panel";
 import ProvenancePanelShell from "../../../components/ProvenancePanelShell.astro";
 import { withBase } from "../../../lib/paths";
+import { watchItemFeedPath } from "../../../lib/watch-feeds";
 
 export function getStaticPaths() {
   const { envelope } = watchContext();
@@ -277,6 +278,11 @@ const placeDisplay = item.place?.key ? (names.get(item.place.key) ?? placePage?.
         </a>
       </p>
     )}
+    <p>
+      <a href={withBase(watchItemFeedPath(item.handle))} data-testid="item-ics" download>
+        Add this decision to your calendar (.ics)
+      </a>
+    </p>
     <p><a href={withBase("watch/feeds/")}>Subscribe to the watch feeds →</a></p>
   </article>
 </BaseLayout>

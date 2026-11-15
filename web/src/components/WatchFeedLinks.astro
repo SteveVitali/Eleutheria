@@ -1,0 +1,18 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P37.34 (K7 WX-04b, SIG-WATCH-005): the iCal · RSS · JSON Feed link trio a
+// scope's row renders — every feed link resolves to an emitted route.
+import { watchFeedPath } from "../lib/watch-feeds";
+import { withBase } from "../lib/paths";
+
+const { scopePath } = Astro.props as { scopePath: string };
+---
+
+<a data-testid="feed-ics" href={withBase(watchFeedPath(scopePath, "ics"))}>iCal</a>
+{" · "}
+<a data-testid="feed-rss" href={withBase(watchFeedPath(scopePath, "xml"))}>RSS</a>
+{" · "}
+<a data-testid="feed-json" href={withBase(watchFeedPath(scopePath, "json"))}>JSON Feed</a>
