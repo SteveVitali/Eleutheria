@@ -68,6 +68,14 @@ import { MAP_CITIES_FIXTURE, MAP_PLACE_FRAMES_FIXTURE } from "./map-places-fixtu
 import type { PlaceCitiesDoc, PlaceFrame } from "./map-places-fixture";
 import { RELEASE_CATALOG_FIXTURE } from "./releases-fixture";
 import type { ReleaseCatalog } from "./releases";
+import { CHANGES_FIXTURE } from "./changes-fixture";
+import {
+  validateChangesFeed,
+  validateChangesIndex,
+  validateSourceChanges,
+  type ReleaseChangesDoc,
+} from "./changes";
+import { getReleaseStamp, releaseRoot } from "./release-stamp";
 import type { MapSite, GraphNode, GraphEdge, EntityFixture, AsOfEcho } from "./fixtures";
 import { AS_OF, RULESET_VERSION } from "./fixtures";
 // P34.19 (F-337/F-403): the committed publication-withdrawal list + the
@@ -1821,6 +1829,38 @@ export function getGraphOverviewFile(id: string, file: string): string | null {
  * empty catalog (no release was ever built from this export), never a
  * fabricated entry.
  */
+/**
+ * P37.40 (R11-K13-CHG-01, SIG-UI-072): the bound release's own changes
+ * documents — `r/<pub>/transparency/changes/{index,sources,changes}.json`
+ * read from the resolved release tree (the same seam the release stamp
+ * binds through). Fixtures mode serves the committed demonstration doc.
+ * `null` when no release is bound (the honest interim) or the release
+ * predates TX-14's changes tree (a typed absence, never a fabricated
+ * diff); a bound-but-malformed doc throws — fail closed.
+ */
+export function getReleaseChanges(): ReleaseChangesDoc | null {
+  if (dataSource() !== "export") return CHANGES_FIXTURE;
+  const root = releaseRoot();
+  const stamp = getReleaseStamp();
+  if (root === null || stamp === null) return null;
+  const dir = `${root}/r/${stamp.publicationId}/transparency/changes`;
+  const indexPath = `${dir}/index.json`;
+  if (!existsSync(indexPath)) return null;
+  const index = validateChangesIndex(
+    JSON.parse(readFileSync(indexPath, "utf-8")),
+    indexPath,
+  );
+  const sourcesPath = `${dir}/sources.json`;
+  const sources = existsSync(sourcesPath)
+    ? validateSourceChanges(JSON.parse(readFileSync(sourcesPath, "utf-8")), sourcesPath)
+    : null;
+  const feedPath = `${dir}/changes.json`;
+  const feed = existsSync(feedPath)
+    ? validateChangesFeed(JSON.parse(readFileSync(feedPath, "utf-8")), feedPath)
+    : null;
+  return { index, sources, feed };
+}
+
 export function getReleaseCatalog(): ReleaseCatalog {
   if (dataSource() !== "export") return RELEASE_CATALOG_FIXTURE;
   const path = `${exportDir()}/web/releases.json`;

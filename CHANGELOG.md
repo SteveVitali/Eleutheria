@@ -9,6 +9,28 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- **P37.40 / R11-K13-CHG-01 (SIG-UI-072)** — the `/changes/` page and the
+  change feeds: the T1 zero-JS page diffs the latest release against the
+  previous activated release over the release's own manifest-pinned
+  `sig.release-changes/1` + `sig.release-source-changes/1` +
+  `sig.release-changes-feed/1` documents, separating "SIG's records
+  changed" (belief time) from "the source reports a change in the world"
+  (world time) and dating by release activation and world dates, never by
+  version-control dates. Atom (RFC 4287) feeds mint at
+  `changes/feeds/all.atom`, `changes/feeds/place/<slug-path>.atom` (a place
+  feed covers its descendants) and `changes/feeds/source/<id>.atom` for
+  every emitted place/source page — empty scopes still emit — plus
+  `changes/feeds.opml` and the paginated `/changes/feeds/` directory.
+  `sig.release-changes-feed/1` events gain the additive routing fields
+  `compartment`/`entity_type`/`entity_id`/`label`/`jurisdiction`/
+  `source_ids`; `check-feeds.mjs` validates the set and its coverage in
+  `npm run check`; `ops/public_routes.toml` allow-lists `changes` and
+  `ops/web/nginx.conf` serves the feed types (`application/atom+xml`,
+  `text/x-opml`, `max-age=3600`). Per-entity feeds stay deferred until
+  page counts are measured (the plan row's own deferral).
+
 Post-`0.1.0` changes land here first, each entry naming its ticket and
 requirement ids (G3 §9.4, SIG-REL-014). At each tag the heading becomes
 `## [0.N.0] — tagged by the operator (see git show v0.N.0)` — the tag object

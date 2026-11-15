@@ -281,3 +281,26 @@ def test_source_diff_classes_from_source_rows() -> None:
     ]
     absent = RC.diff_sources(None, cur)
     assert absent["state"] == "not_evaluable" and absent["added"] == []
+
+
+def test_feed_events_carry_p37_40_routing_fields(tmp_path: Path) -> None:
+    """P37.40 (CHG-01, SIG-UI-072): every feed event carries the additive
+    routing fields the place/source Atom feeds key on — compartment,
+    entity_type, entity_id, label, jurisdiction, source_ids."""
+    _, b2 = _two_releases(tmp_path)
+    feed = json.loads(
+        (tmp_path / "r2" / f"r/{b2.publication_id}/transparency/changes/changes.json").read_text()
+    )
+    assert feed["schema"] == RC.CHANGES_FEED_SCHEMA
+    assert feed["events"], "the two-release fixture diff mints events"
+    for e in feed["events"]:
+        assert e["compartment"] in ("sig_graph", "osm_physical")
+        assert e["entity_type"]
+        assert e["entity_id"]
+        assert "jurisdiction" in e
+        assert isinstance(e["source_ids"], list)
+        assert "label" in e
+    added = [e for e in feed["events"] if e["change_type"] == "added"]
+    assert added and all(e["source_ids"] for e in added)
+    removed = [e for e in feed["events"] if e["change_type"] == "removed"]
+    assert removed and all(e["reason"] in RC.REMOVED_REASONS for e in removed)

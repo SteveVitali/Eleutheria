@@ -1288,3 +1288,5 @@ seed-commit 31aba6bf
 # Scope: the append-only findings attributed to 3a83ba70's rewritten lines
 # only; no other commit borrows the exemption.
 seed-commit 3a83ba70
+seed-commit 8e7ab39e
+seed-commit ad449143
