@@ -24,6 +24,25 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.39 — quality basis, copies and possible duplicates on UX surfaces
+  (K13 QB-01, L3 §5.2; SIG-CONF-011 per-record rendering, SIG-DSRC-005
+  co-located half; cites UXR-A06):** the `sig.record-basis/1` contract —
+  copy / possible-duplicate / multi-view / corroboration / location-check /
+  technology / evidence / checked-by states — renders inside
+  `<ProvenancePanel>` on the /r/ record pages and every Astro surface
+  (entity, claim-viewer, explore, watch-item panels), in the `/map/`
+  selection panel (full block on fixtures-mode records; the interim
+  `st`-derived corroboration wording on tile props), and on K5's
+  agree/disagree views: `sig.dossier-sources/1` `cross_source` now emits
+  measured co-located pair counts + a bounded row list from the CONF-07b
+  `possible_duplicates[]` view (never `observation_group`-gated
+  `not_evaluable`), rendered on `/dossier/**/sources/` and as the fourth
+  kind on `/disagreements/` + `/disagreements/place/**`. The count-interval
+  form ("N camera records · between L and U listed cameras") lands beside
+  the record counts on the sources explorer, the per-dossier sites lists
+  and `/map/` (export wire). Lexicon `identity.COPY` /
+  `identity.POSSIBLE_DUPLICATE` labels are read through `lexiconState`.
+
 - **P37.38 — disagreements browser (K13 CX-01, SIG-UI-071; UXR-21 draft):**
   `/disagreements/` hub + `/disagreements/place/<slug>/` pages (one per
   emitted `sig.dossier-sources/1` doc), T1 zero-JS. Three typed kinds kept

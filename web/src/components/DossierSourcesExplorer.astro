@@ -138,6 +138,14 @@ const showmapTarget = getLatestReleaseTarget();
     <div><dt><a href="#dsrc-def-records">Records</a></dt><dd><Figure figure={fig("dsrc-records")} order="inline">{fmtInt(doc.totals.records)}</Figure></dd></div>
     <div><dt><a href="#dsrc-def-claims">Claims</a></dt><dd><Figure figure={fig("dsrc-claims")} order="inline">{fmtInt(doc.totals.claims)}</Figure></dd></div>
     <div><dt><a href="#dsrc-def-sources">Sources</a></dt><dd><Figure figure={fig("dsrc-sources")} order="inline">{fmtInt(doc.totals.sources)}</Figure></dd></div>
+    {/* P37.39 (QB-01): the count interval beside the record total — L3 §5.2
+        verbatim when the artifact carries it; the honest reason otherwise. */}
+    {doc.totals.count_interval?.display && (
+      <div data-testid="dsrc-count-interval"><dt>Listed cameras</dt><dd>{doc.totals.count_interval.display.replace(/\s*\(\[why a range\?\]\([^)]*\)\)\s*$/, "")} — <a href={withBase("glossary/#possible-duplicate")}>why a range?</a></dd></div>
+    )}
+    {doc.totals.count_interval?.not_evaluable && !doc.totals.count_interval.display && (
+      <div data-testid="dsrc-count-interval"><dt>Listed cameras</dt><dd>not_evaluable — {doc.totals.count_interval.not_evaluable}</dd></div>
+    )}
     <div><dt><a href="#dsrc-def-located">Located by point</a></dt><dd><Figure figure={fig("dsrc-records-placed")} order="inline">{fmtInt(doc.totals.located_by_point)}</Figure></dd></div>
     <div><dt>First seen by SIG</dt><dd>{fmtDate(doc.totals.first_seen_at) || "not_recorded"}</dd></div>
     <div><dt>Last seen by SIG</dt><dd>{fmtDate(doc.totals.last_seen_at) || "not_recorded"}</dd></div>
@@ -406,8 +414,32 @@ const showmapTarget = getLatestReleaseTarget();
           : "none recorded"}
       </dd>
       <dt>Co-located records from different sources</dt>
-      <dd>{typeof doc.cross_source.colocated_pairs === "number" ? fmtInt(doc.cross_source.colocated_pairs) : <>not_evaluable — {absenceReason(doc.cross_source.colocated_pairs)}</>}</dd>
+      <dd data-testid="dsrc-colocated">{typeof doc.cross_source.colocated_pairs === "number" ? fmtInt(doc.cross_source.colocated_pairs) : <>not_evaluable — {absenceReason(doc.cross_source.colocated_pairs)}</>}</dd>
     </dl>
+    {/* P37.39 (QB-01, UXR-A06): the co-located pairs the CONF-07b view
+        lists — possible duplicates across sources, never merged; each row
+        shows the export's verbatim L3 §5.2 sentence. */}
+    {(doc.cross_source.colocated?.length ?? 0) > 0 && (
+      <details class="sig-colocated" data-testid="dsrc-colocated-pairs">
+        <summary>
+          Possible duplicates — {doc.cross_source.colocated!.length}
+          {doc.cross_source.colocated_truncated ? ` shown of ${doc.cross_source.colocated!.length + doc.cross_source.colocated_truncated}` : ""}
+          {" "}candidate{doc.cross_source.colocated!.length === 1 ? "" : "s"} (never merged)
+        </summary>
+        <ul class="sig-colocated-list">
+          {doc.cross_source.colocated!.map((p) => (
+            <li data-record={p.record}>
+              {p.display ?? `Possible duplicate: ${p.source_name ?? p.source ?? "another source"} lists a camera ${p.distance_m ?? "?"} m away.`}
+            </li>
+          ))}
+        </ul>
+        {doc.cross_source.colocated_truncated ? (
+          <p class="sig-table-note">
+            {doc.cross_source.colocated_truncated} further pair{doc.cross_source.colocated_truncated === 1 ? "" : "s"} recorded — the list is bounded here; the JSON twin carries the full set.
+          </p>
+        ) : null}
+      </details>
+    )}
     {(doc.placement.declared_here_located_elsewhere.length > 0 ||
       doc.placement.declared_elsewhere_located_here.length > 0) && (
       <table class="sig-table" data-testid="dsrc-placement-pairs">

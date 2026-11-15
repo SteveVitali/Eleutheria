@@ -17,6 +17,7 @@
  */
 
 import type {
+  ColocatedPair,
   DossierSourceRow,
   DossierSourcesDoc,
   SourceSeriesPoint,
@@ -167,6 +168,9 @@ interface DocOpts {
   contradictions?: string[];
   runsFile?: boolean;
   compartments?: string[];
+  /** P37.39 (QB-01): measured co-located pair rows — omit for the honest
+   *  not_evaluable state. */
+  colocated?: ColocatedPair[];
 }
 
 function doc(slug: string, o: DocOpts): DossierSourcesDoc {
@@ -246,8 +250,18 @@ function doc(slug: string, o: DocOpts): DossierSourcesDoc {
       declared_here_located_elsewhere: (o.locatedElsewherePairs ?? []).reduce((n, p) => n + p.records, 0),
       located_here_declared_elsewhere: (o.declaredElsewherePairs ?? []).reduce((n, p) => n + p.records, 0),
       contradictions_open: (o.contradictions ?? []).length,
-      cross_source_colocated_candidates: {
-        not_evaluable: "observation_group not yet exported (DSRC-04)",
+      // P37.39 (QB-01): measured when the doc carries `colocated` rows,
+      // else the honest not_evaluable — mirrors the CONF-07b emit.
+      cross_source_colocated_candidates: o.colocated
+        ? o.colocated.length
+        : { not_evaluable: "no completed camera-site ER run" },
+      // P37.39 (QB-01): the count interval — L3 §5.2 display verbatim.
+      count_interval: {
+        records,
+        lower: Math.max(records - 2, 0),
+        upper: records,
+        declared_distance_m: 25,
+        display: `${records} camera records · between ${Math.max(records - 2, 0)} and ${records} listed cameras ([why a range?](/quality/#duplicates))`,
       },
     },
     provenance_summary: {
@@ -263,7 +277,11 @@ function doc(slug: string, o: DocOpts): DossierSourcesDoc {
     figures,
     sources,
     cross_source: {
-      colocated_pairs: { not_evaluable: "observation_group not yet exported (DSRC-04)" },
+      colocated_pairs: o.colocated
+        ? o.colocated.length
+        : { not_evaluable: "no completed camera-site ER run" },
+      colocated: o.colocated ?? [],
+      colocated_truncated: 0,
       contradictions: (o.contradictions ?? []).map((id) => ({ contradiction_id: id })),
     },
     placement: {
@@ -466,6 +484,35 @@ function docs(): Record<string, DossierSourcesDoc> {
     sources: [
       src("okc_camera_registry", { records: 38, claims: 120, share: 0.8444, name: "OKC camera registry", publisher: "Oklahoma City municipal data portal (demonstration entry)", publisher_type: "government portal", spdx: "LicenseRef-PublicRecord-FactualCompilation" }),
       src("okc_council_minutes", { records: 7, claims: 21, share: 0.1556, name: "OKC council minutes", publisher_type: "document index" }),
+    ],
+    // P37.39 (QB-01): two cross-source possible-duplicate candidates —
+    // listed, never merged; the display sentences are the export's own
+    // L3 §5.2 verbatim form.
+    colocated: [
+      {
+        record: "device:okc-002",
+        site_id: "device:okc-002",
+        linked_record: "device:okc-006",
+        linked_site_id: "device:okc-006",
+        source: "deflock",
+        source_name: "DeFlock ALPR map",
+        distance_m: 18,
+        reason: "inferential proximity",
+        display:
+          "Possible duplicate: DeFlock ALPR map lists a camera 18 m away. SIG has not merged them because it cannot prove they are the same device.",
+      },
+      {
+        record: "device:okc-006",
+        site_id: "device:okc-006",
+        linked_record: "device:okc-002",
+        linked_site_id: "device:okc-002",
+        source: "okc_camera_registry",
+        source_name: "OKC camera registry",
+        distance_m: 18,
+        reason: "inferential proximity",
+        display:
+          "Possible duplicate: OKC camera registry lists a camera 18 m away. SIG has not merged them because it cannot prove they are the same device.",
+      },
     ],
   });
   out["usa/ok/norman-city-4055000"] = doc("usa/ok/norman-city-4055000", {

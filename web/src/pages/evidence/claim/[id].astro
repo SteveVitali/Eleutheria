@@ -27,6 +27,7 @@ import type { ClaimView } from "../../../lib/evidence-viewer";
 import { getEvidence, getCaptureDiff, getStatementIndex } from "../../../lib/data";
 import { withBase, dataHref } from "../../../lib/paths";
 import { panelForClaim } from "../../../lib/provenance-panel";
+import { getRecordBasisIndex } from "../../../lib/data";
 // P36.23 (UXK14-3b, SIG-UI-083): the page mounts the panel's Astro shell —
 // the same one renderer + the shell stylesheet.
 import ProvenancePanelShell from "../../../components/ProvenancePanelShell.astro";
@@ -60,7 +61,7 @@ const diff = showDiff && DIFF_CAPTURES ? diffCaptures(DIFF_CAPTURES[0], DIFF_CAP
 // every surface renders. This page is the claim's canonical anchor surface:
 // the panel carries `id="claim-<id>"` so `#claim-<id>` resolves here.
 const STATEMENTS = getStatementIndex();
-const panel = panelForClaim(STATEMENTS, view.claim_id, { jsonHref: null });
+const panel = panelForClaim(STATEMENTS, view.claim_id, { jsonHref: null }, getRecordBasisIndex());
 ---
 
 <BaseLayout title={`Evidence — ${view.claim_label}`} path={withBase(`evidence/claim/${view.claim_id}/`)}>

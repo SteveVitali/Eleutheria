@@ -30,6 +30,7 @@ import {
 } from "../../../lib/watch-v2";
 import type { WatchItemV2 } from "../../../lib/watch-v2";
 import { panelForClaim } from "../../../lib/provenance-panel";
+import { getRecordBasisIndex } from "../../../lib/data";
 import ProvenancePanelShell from "../../../components/ProvenancePanelShell.astro";
 import { withBase } from "../../../lib/paths";
 import { watchItemFeedPath } from "../../../lib/watch-feeds";
@@ -203,7 +204,7 @@ const placeDisplay = item.place?.key ? (names.get(item.place.key) ?? placePage?.
             {/* The shared provenance panel for the claim — the same
                 sig.provenance-panel/1 every surface renders; a claim with no
                 statement row renders its named-absence state. */}
-            <ProvenancePanelShell panel={panelForClaim(STATEMENTS, e.claim_id, { jsonHref: null })} />
+            <ProvenancePanelShell panel={panelForClaim(STATEMENTS, e.claim_id, { jsonHref: null }, getRecordBasisIndex())} />
           </li>
         );
       })}

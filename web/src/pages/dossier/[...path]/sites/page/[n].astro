@@ -76,6 +76,13 @@ const crumbs: Crumb[] = [
     {list.noPoint} with no published point.
     {" "}Data as of <time datetime={meta.asOf.as_of_world}>{meta.asOf.as_of_world}</time>.
   </p>
+  {/* P37.39 (QB-01): the dossier's count interval — L3 §5.2 verbatim. */}
+  {dossier?.rollup?.count_interval?.display && (
+    <p class="sig-table-note" data-testid="sites-count-interval">
+      {dossier.rollup.count_interval.display.replace(/\s*\(\[why a range\?\]\([^)]*\)\)\s*$/, "")}
+      {" — "}<a href={withBase("glossary/#possible-duplicate")}>why a range?</a>
+    </p>
+  )}
   <SiteListTable list={list} rows={rows} />
   <nav class="sig-pager" aria-label="Site list pages" data-testid="sites-pager">
     <a href={withBase(dossierSitesPagePath(list.slug, page - 1))}>‹ Previous page</a>{" "}

@@ -32,6 +32,7 @@ from policy.labels import KIND_WORDS, hash4, kind_for
 
 from .provenance_panel import panel_from_statement, panel_html
 from .published_record import EvidenceRef, PublishedRecord
+from .record_basis import record_basis
 
 
 def _e(v: Any) -> str:
@@ -470,6 +471,36 @@ def record_page(
         for s in record.claim_statements
         if isinstance(s, dict) and s.get("claim_id")
     }
+
+    # P37.39 (R11-K13-QB-01, L3 §5.2, SIG-CONF-011): the record's dedup
+    # publication block lands inside each claim's provenance panel as the
+    # per-record quality basis — the same ``sig.record-basis/1`` block the
+    # web surfaces render. The location-check rides the record's own
+    # placement verdict; the evidence line fills per claim from its
+    # statement's binding. A pre-P35.47 ``dedup: None`` stays absent,
+    # never fabricated.
+    def _panel_basis(stmt: Mapping[str, Any] | None) -> dict[str, Any] | None:
+        if record.dedup is None:
+            return None
+        binding = str((stmt or {}).get("binding_status") or "")
+        copy_kept = (
+            True
+            if binding in ("actual_capture", "replayed")
+            else False
+            if binding in ("document_only", "legacy_synthetic")
+            else None
+        )
+        return record_basis(
+            record.dedup,
+            placement_check=record.jurisdiction.get("check"),
+            jurisdiction_name=record.jurisdiction.get("id"),
+            technology=record.technology.get("id"),
+            technology_status=record.technology.get("basis"),
+            evidence_source_name=(stmt or {}).get("source_name") or (stmt or {}).get("source_id"),
+            evidence_fetched=((stmt or {}).get("capture") or {}).get("retrieved_at"),
+            evidence_copy_kept=copy_kept,
+        )
+
     panels_html = "".join(
         panel_html(
             panel_from_statement(
@@ -478,6 +509,7 @@ def record_page(
                 source_href="/sources/",
                 dispute_href=_report_this_record_href(record),
                 json_href=record.json_href,
+                basis=_panel_basis(stmt_by_claim.get(a.claim_id)),
             )
         )
         for a in record.claim_anchors

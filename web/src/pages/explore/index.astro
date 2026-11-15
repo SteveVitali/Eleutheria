@@ -43,6 +43,7 @@ import {
   getNetwork,
   getNetworkFocusEntityId,
   getLatestReleaseTarget,
+  getRecordBasisIndex,
   getStatementIndex,
   capRows,
 } from "../../lib/data";
@@ -157,7 +158,7 @@ const PAGE_CLAIM_IDS = [
   ]),
 ].sort();
 const CLAIM_PANELS: Record<string, ProvenancePanelData> = Object.fromEntries(
-  PAGE_CLAIM_IDS.map((cid) => [cid, panelForClaim(STATEMENTS, cid)]),
+  PAGE_CLAIM_IDS.map((cid) => [cid, panelForClaim(STATEMENTS, cid, {}, getRecordBasisIndex())]),
 );
 ---
 

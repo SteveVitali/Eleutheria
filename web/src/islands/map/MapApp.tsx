@@ -2453,6 +2453,39 @@ export default function MapApp(props: MapAppProps): JSX.Element {
                     <div className="pp-field"><dt>Last seen</dt><dd data-testid="selection-last-seen">{selection.lastSeen ?? "Not recorded"}</dd></div>
                     <div className="pp-field"><dt>Precision</dt><dd data-testid="selection-precision">{selection.precision}</dd></div>
                     <div className="pp-field"><dt>Status</dt><dd data-testid="selection-status">{selection.statusText}</dd></div>
+                    {/* P37.39 (QB-01): the quality-basis rows — the record's
+                        sig.record-basis/1 block where the payload carries it,
+                        else the interim st-derived corroboration wording. */}
+                    {selection.basis?.corroborationText && (
+                      <div className="pp-field" data-testid="selection-corroboration">
+                        <dt>Corroboration</dt>
+                        <dd>{selection.basis.corroborationText}</dd>
+                      </div>
+                    )}
+                    {selection.basis?.recordBasis && (
+                      <div className="pp-field" data-testid="selection-basis">
+                        <dt>Quality basis</dt>
+                        <dd>
+                          {[
+                            selection.basis.recordBasis.copies.length > 0
+                              ? `${selection.basis.recordBasis.copies.length} copy ${selection.basis.recordBasis.copies.length === 1 ? "record" : "records"}`
+                              : null,
+                            selection.basis.recordBasis.possible_duplicates.length > 0
+                              ? `possible duplicate: ${selection.basis.recordBasis.possible_duplicates.length} candidate${selection.basis.recordBasis.possible_duplicates.length === 1 ? "" : "s"}`
+                              : null,
+                            selection.basis.recordBasis.multi_view.length > 0
+                              ? `${selection.basis.recordBasis.multi_view.length} multi-view`
+                              : null,
+                          ]
+                            .filter((s): s is string => s !== null)
+                            .join(" · ") || "no copies or possible duplicates recorded"}
+                          {selection.basis.recordBasis.copies.concat(
+                            selection.basis.recordBasis.possible_duplicates,
+                            selection.basis.recordBasis.multi_view,
+                          ).map((e) => e.display ? ` ${e.display}` : "").join("")}
+                        </dd>
+                      </div>
+                    )}
                   </dl>
                   <p className="sig-map-app__actions">
                     {selection.recordHref && (

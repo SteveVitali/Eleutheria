@@ -33,7 +33,7 @@
  */
 
 import type { StatementRow } from "./provenance-panel";
-import type { DossierSourcesDoc, DossierSourceRow } from "./dossier-sources";
+import type { ColocatedPair, DossierSourcesDoc, DossierSourceRow } from "./dossier-sources";
 import type { ClaimView } from "./evidence-viewer";
 import type { EntityLabelRow } from "./entity-page";
 import { getSourcePage } from "./source-page";
@@ -61,6 +61,10 @@ export const DISAGREEMENT_KINDS = [
   "contradiction",
   "coordinate_conflict",
   "declared_vs_located",
+  /** P37.39 (QB-01, UXR-A06 / SIG-DSRC-005's co-located half): cross-source
+   *  co-located records — possible duplicates, never merged, rendered from
+   *  the CONF-07b derivation fields. */
+  "co_located",
 ] as const;
 export type DisagreementKind = (typeof DISAGREEMENT_KINDS)[number];
 
@@ -140,6 +144,14 @@ export interface PlaceDisagreementPage {
   /** The dossier's sources explorer (the agreeing/disagreeing ledger) —
    *  always emitted alongside the doc the page renders. */
   sources_href: string;
+  /** P37.39 (QB-01): the co-located half — measured pair count, bounded
+   *  row list, honest absence reason when not evaluable. */
+  co_located: {
+    count: number | null;
+    not_evaluable: string | null;
+    pairs: ColocatedPair[];
+    truncated: number;
+  };
 }
 
 /** The hub model — three kinds + the per-place roll-up. */
@@ -154,6 +166,8 @@ export interface DisagreementsIndex {
     declared_here: number;
     located_here: number;
   }[];
+  /** P37.39 (QB-01): places carrying ≥1 co-located candidate pair. */
+  co_located_places: { slug: string; name: string; records: number }[];
   /** Place-page routes emitted (every emitted dossier-sources doc). */
   place_slugs: string[];
 }
@@ -313,6 +327,19 @@ export function placeDisagreementPage(
     },
     dossier_href: dossierSlugs.has(slug) ? `dossier/${slug}/` : null,
     sources_href: `dossier/${slug}/sources/`,
+    co_located: {
+      count:
+        typeof doc.cross_source.colocated_pairs === "number"
+          ? doc.cross_source.colocated_pairs
+          : null,
+      not_evaluable:
+        typeof doc.cross_source.colocated_pairs === "number"
+          ? null
+          : ((doc.cross_source.colocated_pairs as { not_evaluable?: string } | undefined)
+              ?.not_evaluable ?? "not evaluable in this release"),
+      pairs: doc.cross_source.colocated ?? [],
+      truncated: doc.cross_source.colocated_truncated ?? 0,
+    },
   };
 }
 
@@ -350,10 +377,23 @@ export function disagreementsIndex(
         b.declared_here + b.located_here - (a.declared_here + a.located_here) ||
         a.slug.localeCompare(b.slug),
     );
+  const co_located_places = [...docs.entries()]
+    .filter(
+      ([, doc]) =>
+        typeof doc.cross_source.colocated_pairs === "number" &&
+        doc.cross_source.colocated_pairs > 0,
+    )
+    .map(([slug, doc]) => ({
+      slug,
+      name: doc.jurisdiction.name,
+      records: doc.cross_source.colocated_pairs as number,
+    }))
+    .sort((a, b) => b.records - a.records || a.slug.localeCompare(b.slug));
   return {
     contradictions,
     coordinate_places,
     declared_located_places,
+    co_located_places,
     place_slugs: [...docs.keys()].sort(),
   };
 }

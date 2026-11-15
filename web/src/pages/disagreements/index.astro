@@ -40,7 +40,8 @@ const CONTRADICTIONS = INDEX.contradictions;
 const KIND_COUNT =
   (CONTRADICTIONS.length > 0 ? 1 : 0) +
   (INDEX.coordinate_places.length > 0 ? 1 : 0) +
-  (INDEX.declared_located_places.length > 0 ? 1 : 0);
+  (INDEX.declared_located_places.length > 0 ? 1 : 0) +
+  (INDEX.co_located_places.length > 0 ? 1 : 0);
 ---
 
 <BaseLayout
@@ -56,7 +57,7 @@ const KIND_COUNT =
   </p>
 
   <section aria-labelledby="dg-kinds" data-testid="disagreement-kinds">
-    <h2 id="dg-kinds">Three kinds of disagreement</h2>
+    <h2 id="dg-kinds">Four kinds of disagreement</h2>
     <dl class="sig-kv" data-testid="disagreement-kind-list">
       <div>
         <dt data-kind="contradiction">Recorded contradictions</dt>
@@ -72,6 +73,12 @@ const KIND_COUNT =
         <dt data-kind="declared_vs_located">Declared-vs-located disagreements</dt>
         <dd data-testid="kind-count-declared_vs_located">
           {INDEX.declared_located_places.length} {INDEX.declared_located_places.length === 1 ? "place" : "places"}
+        </dd>
+      </div>
+      <div>
+        <dt data-kind="co_located">Co-located records from different sources</dt>
+        <dd data-testid="kind-count-co_located">
+          {INDEX.co_located_places.length} {INDEX.co_located_places.length === 1 ? "place" : "places"}
         </dd>
       </div>
     </dl>
@@ -222,6 +229,31 @@ const KIND_COUNT =
               <td><a href={withBase(disagreementPlacePath(p.slug))}>{p.name}</a></td>
               <td>{p.declared_here}</td>
               <td>{p.located_here}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+  </section>
+
+  {/* P37.39 (QB-01): the co-located kind — possible duplicates across
+      sources, never merged. */}
+  <section aria-labelledby="dg-colocated" data-testid="co-located-places">
+    <h2 id="dg-colocated">Co-located records from different sources</h2>
+    {INDEX.co_located_places.length === 0 ? (
+      <p class="sig-dg-absence" data-testid="colocated-none" data-copy="QB-08">
+        No cross-source co-located candidates are recorded in this release — or the run that lists them has not completed.
+      </p>
+    ) : (
+      <table class="sig-table">
+        <thead>
+          <tr><th>Place</th><th>Possible duplicate pairs</th></tr>
+        </thead>
+        <tbody>
+          {INDEX.co_located_places.map((p) => (
+            <tr data-testid="colocated-place-row">
+              <td><a href={withBase(disagreementPlacePath(p.slug))}>{p.name}</a></td>
+              <td>{p.records}</td>
             </tr>
           ))}
         </tbody>

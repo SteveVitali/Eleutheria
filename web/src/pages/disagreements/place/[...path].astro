@@ -128,7 +128,8 @@ const TITLE_NAME = NAME_COLLIDES ? QUALIFIED_NAME : MODEL.name;
 const KIND_COUNT =
   (MODEL.contradictions.length > 0 ? 1 : 0) +
   (MODEL.coordinate_conflicts.total > 0 ? 1 : 0) +
-  (DL.declared_here_located_elsewhere + DL.located_here_declared_elsewhere > 0 ? 1 : 0);
+  (DL.declared_here_located_elsewhere + DL.located_here_declared_elsewhere > 0 ? 1 : 0) +
+  ((MODEL.co_located.count ?? 0) > 0 ? 1 : 0);
 ---
 
 <BaseLayout
@@ -319,6 +320,41 @@ const KIND_COUNT =
               ))}
             </tbody>
           </table>
+        )}
+      </>
+    )}
+  </section>
+
+  {/* P37.39 (QB-01, UXR-A06 / SIG-DSRC-005's co-located half): records from
+      ≥2 sources the CONF-07b run lists as possible duplicates — candidates
+      for the same installation, never merged; the verbatim L3 §5.2 sentence
+      rides each row. */}
+  <section aria-labelledby="kind-co-located" data-testid="kind-section-co-located">
+    <h2 id="kind-co-located">Co-located records from different sources</h2>
+    {MODEL.co_located.count === null ? (
+      <p class="sig-dg-absence" data-testid="co-located-absent" data-copy="QB-05">
+        Co-located candidates are not evaluable for this place — {MODEL.co_located.not_evaluable}.
+      </p>
+    ) : MODEL.co_located.count === 0 ? (
+      <p class="sig-dg-absence" data-testid="co-located-none" data-copy="QB-06">
+        No cross-source co-located candidates are recorded for this place — records stay as listed, never merged.
+      </p>
+    ) : (
+      <>
+        <p class="sig-table-note" data-testid="co-located-totals" data-copy="QB-07">
+          {MODEL.co_located.count} possible duplicate pair{MODEL.co_located.count === 1 ? "" : "s"} recorded — candidates for the same installation across sources; they are shown, never merged.
+        </p>
+        <ul class="sig-colocated-list" data-testid="co-located-pairs">
+          {MODEL.co_located.pairs.map((p) => (
+            <li data-record={p.record}>
+              {p.display ?? `Possible duplicate: ${p.source_name ?? p.source ?? "another source"} lists a camera ${p.distance_m ?? "?"} m away.`}
+            </li>
+          ))}
+        </ul>
+        {MODEL.co_located.truncated > 0 && (
+          <p class="sig-table-note" data-testid="co-located-truncated">
+            {MODEL.co_located.truncated} further pair{MODEL.co_located.truncated === 1 ? "" : "s"} recorded — the page list is bounded; the dossier's contribution artifact carries the full set.
+          </p>
         )}
       </>
     )}

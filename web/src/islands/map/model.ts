@@ -26,6 +26,7 @@
  */
 
 import { NATIONAL_ZOOM_MAX } from "../../lib/map";
+import type { RecordBasis } from "../../lib/record-basis";
 
 // ---------------------------------------------------------------- records //
 
@@ -113,6 +114,10 @@ export interface MapRecord {
    */
   jkey?: string | null;
   chain?: string[];
+  /** P37.39 (QB-01): the record's `sig.record-basis/1` block — carried on the
+   *  fixtures-mode payload and derivable for a tile prop's `st` status;
+   *  `undefined` renders the sparse absence, never a fabricated basis. */
+  basis?: RecordBasis;
 }
 
 // ------------------------------------------------------------ tile props //
@@ -171,6 +176,21 @@ export interface SelectionPanelModel {
   disputeHref: string | null;
   /** Where the selection was resolved (in view = true; honest "not in view" = false). */
   located: boolean;
+  /** P37.39 (QB-01): the selection's quality-basis rows — the record's
+   *  `sig.record-basis/1` block where the payload carries one, else the
+   *  tile-status interim corroboration wording; `null` renders no section. */
+  basis?: SelectionBasis | null;
+}
+
+/** The selection panel's projected basis — the fields the tile contract can
+ *  carry plus the full block where the record payload supplies one. */
+export interface SelectionBasis {
+  /** Verbatim L3 §5.2 lineage/interim corroboration text. */
+  corroborationText: string | null;
+  /** The full basis block (fixtures-mode records / a carried payload). */
+  recordBasis: RecordBasis | null;
+  /** True when only the interim `st`-derived wording is available. */
+  interimOnly: boolean;
 }
 
 /** "Operator not stated by any source" — K1 §4.5's verbatim honest wording. */
@@ -201,6 +221,13 @@ export function selectionFromRecord(
     recordPageHref: extras.recordPageHref ?? null,
     disputeHref: extras.disputeHref ?? null,
     located: true,
+    basis: rec.basis
+      ? {
+          corroborationText: rec.basis.lineages_text,
+          recordBasis: rec.basis,
+          interimOnly: false,
+        }
+      : null,
   };
 }
 
@@ -251,6 +278,19 @@ export function selectionFromTileProps(
     recordPageHref: ctx.recordPageHref ?? null,
     disputeHref: ctx.disputeHref ?? null,
     located: true,
+    // P37.39 (QB-01): the tile contract carries the `st` status class only —
+    // the interim corroboration wording is all it can honestly show; the
+    // full basis lives on the released record (UXR-14 / SIG-UI-064).
+    basis: {
+      corroborationText:
+        status === "corroborated"
+          ? "2+ source records; republications not yet collapsed"
+          : status === "single-source"
+            ? "One source record"
+            : null,
+      recordBasis: null,
+      interimOnly: true,
+    },
   };
 }
 
