@@ -125,6 +125,7 @@ const has = {
   versions: true,
   entities: getSourceEntities(id).length > 0,
   dossiers: (row.contributions ?? []).length > 0,
+  changelog: true,
 };
 const crumbs = [
   { label: "Sources", href: withBase("sources/") },

@@ -45,6 +45,10 @@ export interface WithdrawalEntry {
   disposition?: string;
   kind?: string;
   note?: string;
+  /** The withdrawal decision's own recorded date (the table carries it;
+   *  the P37.41 source changelog dates its withdrawal event by it —
+   *  a record clock, never a version-control date). */
+  recorded_at?: string;
 }
 
 interface WithdrawalsTable {

@@ -16,6 +16,7 @@ import {
   sortedCaptures,
 } from "../../../lib/source-page-b";
 import { issuesForSource, getIssues } from "../../../lib/issues";
+import { getSourceChangelog } from "../../../lib/source-changelog";
 
 export const getStaticPaths: GetStaticPaths = () =>
   getSourcePageIds().map((id) => ({ params: { id } }));
@@ -42,7 +43,9 @@ export const GET: APIRoute = ({ params }) => {
         versions: versions !== null ? `sources/${id}/versions/` : null,
         entities: entities.length > 0 ? `sources/${id}/entities/` : null,
         dossiers: (model.row.contributions ?? []).length > 0 ? `sources/${id}/dossiers/` : null,
+        changelog: `sources/${id}/changelog/`,
       };
+  const changelog = model.registryOnly ? null : getSourceChangelog(id);
   return new Response(
     JSON.stringify(
       {
@@ -57,6 +60,14 @@ export const GET: APIRoute = ({ params }) => {
           : { entry_count: versions.entry_count, latest: versions.entries[versions.entries.length - 1] ?? null },
         contributions: model.row.contributions ?? [],
         open_issues: openIssues.length,
+        changelog:
+          changelog === null
+            ? null
+            : {
+                event_count: changelog.event_count,
+                baseline_label: changelog.baseline_label,
+                latest: changelog.events.slice(-10),
+              },
         links,
       },
       null,

@@ -19,9 +19,10 @@ interface Props {
     versions: boolean;
     entities: boolean;
     dossiers: boolean;
+    changelog: boolean;
   };
   /** The current sub-route (marked aria-current). */
-  current?: "source" | "runs" | "captures" | "changes" | "versions" | "entities" | "dossiers";
+  current?: "source" | "runs" | "captures" | "changes" | "versions" | "entities" | "dossiers" | "changelog";
 }
 
 const { id, name, has, current = "source" } = Astro.props;
@@ -36,6 +37,7 @@ const items: { key: NonNullable<Props["current"]>; label: string; href: string }
   ...(has.versions ? [{ key: "versions" as const, label: "versions", href: `sources/${id}/versions/` }] : []),
   ...(has.entities ? [{ key: "entities" as const, label: "entities", href: `sources/${id}/entities/` }] : []),
   ...(has.dossiers ? [{ key: "dossiers" as const, label: "dossier contribution", href: `sources/${id}/dossiers/` }] : []),
+  ...(has.changelog ? [{ key: "changelog" as const, label: "changelog", href: `sources/${id}/changelog/` }] : []),
 ];
 ---
 

@@ -11,6 +11,20 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **P37.41 / R11-K13-UX10-4 (§56.10 SIG-TRANSP-042)** — the per-source
+  changelog at `/sources/<id>/changelog/` (T1, zero-JS): an append-only
+  `sig.source-changelog/1` event log generated from the source's
+  rights-review record (`decided_at`), run records (`finished_at` — first
+  ingest and connector-version changes), the versions index and TX-14
+  release diffs (release activation — lifecycle moves and the per-source
+  record-diff slice), the issues log (`opened_at`/`closed_at`), and the
+  corrections and withdrawals records (their own recorded dates) — every
+  event naming its `clock_basis`, never a version-control date. The source
+  page gains a "Changelog" section (the last ten events plus the baseline
+  wording "History before `<label>`: rights decisions and run records
+  only."), the sub-navigation gains the route, and `index.json` twins
+  carry the doc; registry-only (S-11) sources emit none.
+
 - **P37.40 / R11-K13-CHG-01 (SIG-UI-072)** — the `/changes/` page and the
   change feeds: the T1 zero-JS page diffs the latest release against the
   previous activated release over the release's own manifest-pinned

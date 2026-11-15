@@ -67,6 +67,7 @@ const has = {
   versions: getSourceVersions(id) !== null,
   entities: getSourceEntities(id).length > 0,
   dossiers: (row.contributions ?? []).length > 0,
+  changelog: true,
 };
 ---
 
