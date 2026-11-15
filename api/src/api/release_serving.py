@@ -14,7 +14,14 @@ machine-readable JSON twins of its site-visible answers under
 ``r/<pub>/api/`` (manifest-pinned, immutable bytes, like every other release
 artifact):
 
-    /v1/export                ->  r/<pub>/api/export.json
+    /v1/export                ->  releases/<pub>/data/download_listing.json
+                                  (P37.42 / TX-15, J3 §6.10: the REAL catalog —
+                                  the sig.download-listing/1 document /data/
+                                  and /releases/<pub>/data/ render, built from
+                                  catalog_entry.json + the integrity manifest
+                                  with absolute mirror URLs, sizes, sha256 and
+                                  licences; the pre-TX-10b api-slice
+                                  api/export.json answers for older releases)
     /v1/changes               ->  r/<pub>/transparency/changes/changes.json
                                   (P36.67 / TX-14: the sig.release-changes/1
                                   diff's own feed doc — J3 §8.4's "/v1/changes
@@ -28,7 +35,14 @@ artifact):
 levels (``jurisdiction:okc`` -> ``api/dossier/jurisdiction/okc.json``); every
 segment must match ``[A-Za-z0-9._-]+`` and may never be ``.`` or ``..``, so no
 scope can escape the release's ``api/`` directory. ``/v1/releases/**`` answers
-from the registry's own files (``latest.json``, the catalog, the descriptor).
+from the registry's own files (``latest.json``, the catalog, the descriptor);
+the release-namespaced source routes (P37.42 / TX-15, J3 §6.10) serve the same
+api-slice twins addressed by the publication id in the path — a citation-grade
+URL, never the mutable latest pointer:
+
+    /v1/releases/<pub>/sources           ->  r/<pub>/api/sources.json
+    /v1/releases/<pub>/sources/<id>      ->  r/<pub>/api/sources/<id>.json
+    /v1/releases/<pub>/sources/<id>/runs ->  r/<pub>/api/sources/<id>/runs.json
 
 ``r/<pub>/api/index.json`` (schema ``sig.api-slice/1``) is the emitter's
 declaration of the complete slice — the V7 promotion preflight
@@ -69,6 +83,12 @@ from .release_search import PUBLICATION_RE
 
 #: The api-slice index schema the release emitter declares.
 API_SLICE_SCHEMA = "sig.api-slice/1"
+
+#: The release-relative path suffix of the download catalog ``/v1/export``
+#: serves first (P37.42 / TX-15, J3 §6.10): ``releases/<pub>/data/
+#: download_listing.json`` — the ``sig.download-listing/1`` document P36.50
+#: binds into the release (the same bytes ``/data/`` renders).
+DOWNLOAD_LISTING_REL_SUFFIX = "data/download_listing.json"
 
 #: One path segment of an API-slice file name — never ``/``, ``.`` or ``..``.
 _SEGMENT_RE = re.compile(r"^[A-Za-z0-9._-]+$")
@@ -385,6 +405,32 @@ class ReleaseServingStore:
             rel = api_path(pub, "changes")
         return self._serve_document(
             pub, rel, ident, absent_status, absent_code, "the release changes"
+        )
+
+    def export_catalog_document(
+        self,
+        requested_pub: str | None,
+        *,
+        absent_status: int = 503,
+        absent_code: str = "release_artifact_absent",
+    ) -> tuple[dict[str, Any], ReleaseIdentity]:
+        """P37.42 (TX-15, SIG-TRANSP-025, J3 §6.10): ``/v1/export`` answers the
+        release's real download catalog — the manifest-pinned
+        ``releases/<pub>/data/download_listing.json`` (``sig.download-listing/1``,
+        P36.50 / TX-10b): every downloadable file with its absolute mirror URL,
+        byte size, sha256 and licence — the same document ``/data/`` and
+        ``/releases/<pub>/data/`` show, derived from the release's catalog
+        entry + integrity manifest at build time. A pre-TX-10b release carries
+        no listing; its older api-slice ``api/export.json`` (when emitted +
+        pinned) keeps answering; absent either way → the typed absence, never
+        a stub index."""
+        pub = self.resolve_publication(requested_pub)
+        ident = self.identity(pub)
+        rel = f"releases/{pub}/{DOWNLOAD_LISTING_REL_SUFFIX}"
+        if not (self.staged / rel).is_file():
+            rel = api_path(pub, "export")
+        return self._serve_document(
+            pub, rel, ident, absent_status, absent_code, "the release catalog"
         )
 
     def _serve_document(

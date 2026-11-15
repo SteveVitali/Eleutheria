@@ -691,6 +691,11 @@ def build_router() -> APIRouter:
         )
 
     # --- /export (index) — release-backed (P35.57); P14.2 builds the bytes ----
+    # P37.42 (TX-15, SIG-TRANSP-025, J3 §6.10): the release-backed answer is the
+    # REAL catalog — the release's own sig.download-listing/1 (mirror URLs,
+    # sizes, sha256, licences) — never the hard-coded index. A pre-TX-10b
+    # release falls back to its pinned api/export.json; only a service with no
+    # release registry configured serves the live-spine stub below.
     @router.get(
         "/export",
         response_model=ExportIndexResponse,
@@ -703,16 +708,12 @@ def build_router() -> APIRouter:
         asof: AsOfContext = Depends(as_of_dependency),
         tier: AccessTier = Depends(tier_dependency),
     ) -> Any:
-        served = _release_document(
-            request,
-            "export",
-            None,
-            release,
-            absent_status=503,
-            absent_code="release_artifact_absent",
-        )
-        if served is not None:
-            return served
+        serving = _release_serving(request)
+        if serving is not None:
+            _mark_release(request)
+            payload, identity = serving.export_catalog_document(release)
+            _mark_release(request, identity)
+            return JSONResponse(payload)
         asof.apply_cache(response)
         return ExportIndexResponse(
             exports=[
@@ -884,6 +885,78 @@ def build_router() -> APIRouter:
         serving = _require_release_serving(request)
         _mark_release(request)
         payload, identity = serving.release_document(publication_id)
+        _mark_release(request, identity)
+        return JSONResponse(payload)
+
+    # --- /releases/{pub}/sources — the release-namespaced source routes ------
+    # (P37.42 / TX-15, SIG-TRANSP-025, J3 §6.10): the same api-slice JSON twins
+    # /v1/sources serves, addressed by the publication id in the path — a
+    # citation-grade URL naming the pinned release, never the mutable latest
+    # pointer. The runs twin (api/sources/<id>/runs.json, sig.source-runs/1) is
+    # the source's execution feed — the same rows the site's
+    # /sources/<id>/runs/index.json emits.
+    @router.get(
+        "/releases/{publication_id}/sources",
+        description=RELEASE_BACKED_DESCRIPTION,
+    )
+    def release_sources_index(
+        publication_id: str,
+        request: Request,
+        tier: AccessTier = Depends(tier_dependency),
+    ) -> JSONResponse:
+        serving = _require_release_serving(request)
+        _mark_release(request)
+        payload, identity = serving.api_document(
+            publication_id,
+            "sources",
+            None,
+            absent_status=503,
+            absent_code="release_artifact_absent",
+        )
+        _mark_release(request, identity)
+        return JSONResponse(payload)
+
+    @router.get(
+        "/releases/{publication_id}/sources/{source_id}",
+        description=RELEASE_BACKED_DESCRIPTION,
+    )
+    def release_source(
+        publication_id: str,
+        source_id: str,
+        request: Request,
+        tier: AccessTier = Depends(tier_dependency),
+    ) -> JSONResponse:
+        serving = _require_release_serving(request)
+        _mark_release(request)
+        payload, identity = serving.api_document(
+            publication_id,
+            "sources",
+            source_id,
+            absent_status=404,
+            absent_code="scope_not_available",
+        )
+        _mark_release(request, identity)
+        return JSONResponse(payload)
+
+    @router.get(
+        "/releases/{publication_id}/sources/{source_id}/runs",
+        description=RELEASE_BACKED_DESCRIPTION,
+    )
+    def release_source_runs(
+        publication_id: str,
+        source_id: str,
+        request: Request,
+        tier: AccessTier = Depends(tier_dependency),
+    ) -> JSONResponse:
+        serving = _require_release_serving(request)
+        _mark_release(request)
+        payload, identity = serving.api_document(
+            publication_id,
+            "sources",
+            f"{source_id}:runs",
+            absent_status=404,
+            absent_code="scope_not_available",
+        )
         _mark_release(request, identity)
         return JSONResponse(payload)
 

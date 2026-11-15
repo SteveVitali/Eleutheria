@@ -1733,3 +1733,20 @@ rerun_cell = '''`implement-spec spec=docs/tickets/460_P37.36__raw-archive.md liv
   go = '''verbatim-go: operator explicit verbatim go (never pre-authorised, OM-20) — SIG_RAWARCHIVE_AUTHOR'''
   rerun = '''implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true'''
   live_dependants = ["P37.65a", "P37.65b"]
+
+[[row]]
+key = "P37.42"
+kind = "leg"
+obligations = ["D-P37.42-1"]
+obligations_cell = '''D-P37.42-1'''
+gates_cell = '''OM-20 never-list (an API roll that changes a public route's response); the operator's explicit verbatim go — never pre-authorised; AR-3 + AR-2 (x 03:00-06:30Z + AR-3 batch windows)'''
+operator_cell = '''the operator's explicit verbatim go + ADC + `SIG_GCP_PROJECT`'''
+rerun_cell = '''implement-spec spec=docs/tickets/466_P37.42__api-parity.md live_verification=true'''
+
+  [[row.legs]]
+  id = "P37.42-api-roll"
+  obligations = ["D-P37.42-1"]
+  earliest = '''the operator's explicit verbatim go — never pre-authorised (OM-20); inside AR-3 + AR-2'''
+  excluded = ["x 03:00-06:30Z", "AR-3 batch windows"]
+  go = '''verbatim-go: the operator's explicit verbatim go (never pre-authorised, OM-20)'''
+  rerun = '''implement-spec spec=docs/tickets/466_P37.42__api-parity.md live_verification=true'''

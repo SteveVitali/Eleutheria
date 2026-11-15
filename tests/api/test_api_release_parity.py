@@ -246,6 +246,15 @@ def test_export_and_changes_and_sources(release_client: TestClient) -> None:
     r = release_client.get("/v1/export")
     assert r.status_code == 200
     assert r.headers["x-sig-basis"] == "release"
+    # P37.42 (TX-15, J3 §6.10): /v1/export answers the release's real
+    # catalog — the sig.download-listing/1 document (mirror URLs, sizes,
+    # sha256, licences) — preferring it over the api-slice export.json.
+    assert r.json()["schema"] == "sig.download-listing/1"
+    assert r.json()["files"][0]["sha256"]
+    # A pre-TX-10b release (B has no data/download_listing.json) keeps its
+    # pinned api-slice export.json answering.
+    r = release_client.get(f"/v1/export?release={PUB_B}")
+    assert r.status_code == 200
     assert r.json()["exports"][0]["name"] == "entities"
 
     r = release_client.get("/v1/changes")
@@ -293,7 +302,10 @@ def test_missing_singleton_artifact_is_honest_503(
     release_client: TestClient, registry: Path
 ) -> None:
     """A family file the release should carry but does not is a servability
-    defect (V7's target), never a placeholder."""
+    defect (V7's target), never a placeholder. P37.42: /v1/export prefers
+    releases/<pub>/data/download_listing.json — both candidates must be
+    absent for the typed 503."""
+    (registry / "staged" / f"releases/{PUB_A}/data/download_listing.json").unlink()
     (registry / "staged" / f"r/{PUB_A}/api/export.json").unlink()
     r = release_client.get("/v1/export")
     assert r.status_code == 503
