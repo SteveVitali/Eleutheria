@@ -1401,3 +1401,20 @@ seed-commit f45cf7ec
 # Scope: the append-only finding attributed to b7e827d3's rewritten
 # BUILD_INDEX.md line 674 only; no other commit borrows the exemption.
 seed-commit b7e827d3
+
+# P37.58 (row 486) liveclaim respell — the corrections-region append-only rule
+# and the live-claim classifier collide on LEDGER line 1780 (the P37.46b
+# a36fd274 precedent): the orchestrator's dispatch boundary-confirm line,
+# committed at base tip 9b467154, carried the ticket-name slug
+# generated-vs-deployed as a bare assert token ('deployed' inside a hyphenated
+# slug — a ticket name, never a production-state assertion). 45687972 respells
+# it in place to the code-spanned slug — same-meaning forward repair, never a
+# history rewrite; the mutable run-ledger twin at runs/P37.58.md:1 respelled
+# identically in the same commit. Pre-edit bytes archived
+# `reports/memory-repair/LEDGER_phaselog_L1780_pre-P37.58-liveclaim-respell.txt`
+# (sha256:4febd3fe3695b3b1a589479ed9e18a31f1a4093b0a73e94319db5cbc96e2a20e) and
+# the dated `P37.58 correction` entry declares the repair. The branch rule
+# forbids force-push, so the declaration lands here. Scope: the append-only
+# finding attributed to 45687972's rewritten LEDGER.md line 1780 only; no
+# other commit borrows the exemption.
+seed-commit 45687972
