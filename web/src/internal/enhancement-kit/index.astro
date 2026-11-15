@@ -107,6 +107,59 @@ const ROWS = [
       </tbody>
     </table>
   </sig-table>
+
+  <h2>A list with declared sort keys (P37.61)</h2>
+  <p>
+    The same element upgrades a top-level <code>&lt;ol&gt;</code> — columns are the
+    declared <code>data-sort-*</code> keys plus each item's full text; sorting
+    uses the toolbar "Sort by" menu. <code>param-prefix</code> namespaces the
+    params so this fixture co-mounts beside the table above.
+  </p>
+  <sig-table
+    filter
+    facets="kind"
+    sort="title weight"
+    download="kit-fixture-list"
+    label="Harness fixture list"
+    item-label="Entry"
+    param-prefix="lst."
+  >
+    <ol class="sig-list" data-testid="kit-list">
+      <li data-testid="kit-list-item" data-facet-kind="alpha" data-sort-title="Amber gate" data-sort-weight="9">Amber gate — the first fixture entry (9)</li>
+      <li data-testid="kit-list-item" data-facet-kind="beta" data-sort-title="Bridle loop" data-sort-weight="3">Bridle loop — the second fixture entry (3)</li>
+      <li data-testid="kit-list-item" data-facet-kind="alpha" data-sort-title="Cinder post" data-sort-weight="7">Cinder post — the third fixture entry (7)</li>
+    </ol>
+  </sig-table>
+
+  <h2>A table whose headers already link (P37.61)</h2>
+  <p>
+    Header cells that carry server-side sort links keep them — the kit adds
+    its sort affordance as a toolbar "Sort by" menu instead of nesting a
+    control inside the anchors.
+  </p>
+  <sig-table
+    filter
+    download="kit-fixture-linked"
+    label="Harness linked-header table"
+    param-prefix="lnk."
+  >
+    <table class="sig-table" data-testid="kit-linked-table" aria-label="Harness linked-header table">
+      <thead>
+        <tr>
+          <th scope="col" data-col="name"><a href={withBase("enhancement-kit/?sort=name")}>Name</a></th>
+          <th scope="col" data-col="rows"><a href={withBase("enhancement-kit/?sort=rows")}>Rows</a></th>
+        </tr>
+      </thead>
+      <tbody>
+        {ROWS.map((r) => (
+          <tr data-testid="kit-linked-row">
+            <td><code>{r.name}</code></td>
+            <td>{r.rows}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </sig-table>
   <script is:inline type="module" src={withBase("_kit/sig-table.js")}></script>
 
   <h2>A disclosure</h2>

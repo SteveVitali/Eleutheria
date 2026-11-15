@@ -39,6 +39,9 @@ const vendorIds = (item.vendor ?? []).map((v) => v.label);
 const techIds = (item.technology ?? []).map((t) => t.label);
 ---
 
+{/* P37.61 (ENH-01): `data-facet-*`/`data-sort-*` restate the item's own
+    rendered fields so the `<sig-table>` list mount filters/orders the same
+    values the reader sees — never a second vocabulary. */}
 <li
   class="sig-watch-item"
   data-testid="watch-item"
@@ -47,6 +50,15 @@ const techIds = (item.technology ?? []).map((t) => t.label);
   data-certainty={item.date_certainty}
   data-status={item.status ?? "upcoming"}
   data-contested={item.contested ? "true" : "false"}
+  data-facet-kind={item.kind}
+  data-facet-certainty={item.date_certainty}
+  data-facet-status={item.status ?? "upcoming"}
+  data-facet-technology={techIds.length > 0 ? techIds.join("|") : "not_recorded"}
+  data-facet-vendor={vendorIds.length > 0 ? vendorIds.join("|") : "not_recorded"}
+  data-facet-contested={item.contested ? "true" : "false"}
+  data-sort-date={item.date}
+  data-sort-place={placeName ?? "Not yet placed"}
+  data-sort-title={item.title}
 >
   <a class="sig-watch-item__title" href={withBase(watchItemHref(item.handle))}>{item.title}</a>{" "}
   {item.contested && <ContestedMarker compact />}

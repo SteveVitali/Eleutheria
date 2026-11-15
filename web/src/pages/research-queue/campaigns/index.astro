@@ -11,6 +11,7 @@ import EmptyState from "../../../components/EmptyState.astro";
 import { pageCount, pageSlice, queueCampaignsHref } from "../../../lib/queue-hub";
 import { getQueueCampaigns } from "../../../lib/data";
 import { withBase } from "../../../lib/paths";
+import KitTable from "../../../components/KitTable.astro";
 
 const CAMPAIGNS = getQueueCampaigns();
 const shown = pageSlice(CAMPAIGNS, 1);
@@ -24,9 +25,19 @@ const total = pageCount(CAMPAIGNS.length);
     <a href={withBase("research-queue/")}>Back to the queue hub</a>
   </p>
   {CAMPAIGNS.length === 0 && <EmptyState surface="researchQueue" />}
+  <KitTable
+    filter
+    facets="place subject-class"
+    sort="place"
+    download="sig-queue-campaigns"
+    label="Queue campaigns"
+    itemLabel="Campaign"
+    paramPrefix="cmp."
+  >
   <ol class="sig-campaigns">
     {shown.map((c) => <QueueCampaignCard campaign={c} />)}
   </ol>
+  </KitTable>
   {total > 1 && (
     <p class="sig-queue-pagination" data-testid="queue-pagination">
       Page 1 of {total} — <a href={withBase(queueCampaignsHref(2))}>next page →</a>

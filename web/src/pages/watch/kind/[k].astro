@@ -18,6 +18,7 @@ import {
   type WatchKind,
 } from "../../../lib/watch-v2";
 import { withBase } from "../../../lib/paths";
+import KitTable from "../../../components/KitTable.astro";
 
 export function getStaticPaths() {
   const { envelope } = watchContext();
@@ -39,9 +40,18 @@ const total = pageCount(items.length);
   <p>
     Upcoming decisions of kind <strong>{WATCH_KIND_LABELS[k]}</strong> ({items.length}).
   </p>
+  <KitTable
+    filter
+    facets="kind certainty status technology vendor contested"
+    sort="date place title"
+    download="sig-watch-items"
+    label="Watch items"
+    itemLabel="Item"
+  >
   <ol class="sig-watch-list">
     {shown.map((item) => <WatchList item={item} pages={pages} />)}
   </ol>
+  </KitTable>
   {total > 1 && (
     <p class="sig-watch-pagination">
       Page 1 of {total} — <a href={withBase(`watch/kind/${k}/page/2/`)}>next page →</a>

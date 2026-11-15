@@ -16,6 +16,7 @@ import { formatBytes } from "../../../../lib/downloads";
 import { withBase } from "../../../../lib/paths";
 import { getSourcePage, type SourcePageModel } from "../../../../lib/source-page";
 import { resolveSourceId } from "../../../../lib/alias";
+import KitTable from "../../../../components/KitTable.astro";
 import {
   getPageBIds,
   getSourceVersions,
@@ -172,6 +173,15 @@ const entryLabel = (e: (typeof entries)[number]): string =>
     <h2 id="fig-version-entries" data-copy="VB-05">
       Release versions (<Figure figure={fig("version-entries")} order="inline">{fmtInt(doc.entry_count)}</Figure>)
     </h2>
+    {/* P37.61 (ENH-01): the T1 kit mount — filter/facet/columns/CSV over
+        the complete versions table. */}
+    <KitTable
+      filter
+      columns
+      facets="state changed"
+      download="sig-source-versions"
+      label={`Source versions — ${id}`}
+    >
     <table class="sig-table" data-testid="versions-table">
       <thead>
         <tr>
@@ -182,7 +192,12 @@ const entryLabel = (e: (typeof entries)[number]): string =>
       </thead>
       <tbody>
         {entries.map((e, i) => (
-          <tr data-testid="version-row" id={`fig-entry-${i}`}>
+          <tr
+            data-testid="version-row"
+            id={`fig-entry-${i}`}
+            data-facet-state={e.state}
+            data-facet-changed={e.changed === null || e.changed === undefined ? "not_evaluated" : e.changed ? "yes" : "no"}
+          >
             <td>{entryLabel(e)}</td>
             <td>{e.release.as_of_world ?? "not recorded"}</td>
             <td data-testid="version-state">
@@ -239,6 +254,7 @@ const entryLabel = (e: (typeof entries)[number]): string =>
         ))}
       </tbody>
     </table>
+    </KitTable>
     <p data-copy="VB-06">
       Capture-level versions live on the{" "}
       <a href={withBase(`sources/${id}/captures/changes/`)}>changes list</a>;

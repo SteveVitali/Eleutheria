@@ -27,6 +27,7 @@ import {
   watchVendorHref,
 } from "../../lib/watch-v2";
 import { withBase } from "../../lib/paths";
+import KitTable from "../../components/KitTable.astro";
 
 const { envelope, pages, names } = watchContext();
 const items = listItems(envelope);
@@ -54,9 +55,18 @@ const checked = coverage?.last_checked ?? envelope.generated_at ?? envelope.as_o
 
   <h2 id="upcoming-heading">Upcoming decisions ({items.length})</h2>
   {items.length === 0 && <EmptyState surface="watch" />}
+  <KitTable
+    filter
+    facets="kind certainty status technology vendor contested"
+    sort="date place title"
+    download="sig-watch-items"
+    label="Watch items"
+    itemLabel="Item"
+  >
   <ol class="sig-watch-list" aria-labelledby="upcoming-heading">
     {shown.map((item) => <WatchList item={item} pages={pages} />)}
   </ol>
+  </KitTable>
   {morePages > 0 && (
     <p class="sig-watch-pagination" data-testid="watch-pagination">
       Showing {shown.length} of {items.length} —{" "}

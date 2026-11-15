@@ -22,6 +22,7 @@ import {
   pageSlice,
 } from "../../../../../lib/source-page-b";
 import { getSourceChangelog, eventSummary } from "../../../../../lib/source-changelog";
+import KitTable from "../../../../../components/KitTable.astro";
 
 export function getStaticPaths() {
   return getPageBIds().flatMap((id) => {
@@ -91,6 +92,12 @@ const crumbs = [
       label="Changelog"
       figure={fig("changelog-page")}
     />
+    <KitTable
+      filter
+      facets="kind basis"
+      download="sig-source-changelog"
+      label={`Source changelog — ${id}`}
+    >
     <table class="sig-table" data-testid="changelog-table">
       <thead>
         <tr>
@@ -101,7 +108,7 @@ const crumbs = [
       </thead>
       <tbody>
         {slice.map((ev) => (
-          <tr data-testid="changelog-event" data-kind={ev.kind}>
+          <tr data-testid="changelog-event" data-kind={ev.kind} data-facet-kind={ev.kind} data-facet-basis={ev.clock_basis}>
             <td><time datetime={ev.at}>{ev.at}</time></td>
             <td>
               {eventSummary(ev)}
@@ -114,6 +121,7 @@ const crumbs = [
         ))}
       </tbody>
     </table>
+    </KitTable>
     <p>
       <a href={withBase(`sources/${id}/changelog/`)}>First page</a> · machine twin{" "}
       <a href={withBase(`sources/${id}/changelog/index.json`)}>index.json</a>

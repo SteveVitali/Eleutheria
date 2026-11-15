@@ -17,11 +17,17 @@ const SOURCES = "/sources/";
 const HARNESS = "/enhancement-kit/";
 
 test.describe("<sig-table> on the sources table", () => {
+  // P37.61 (ENH-01): /sources/ now mounts two sig-tables — the licences
+  // table (these tests, `source-row` rows, bare params) and the main K9
+  // sources table (`source-table-row` rows, `src.` param prefix). Scope
+  // every locator to the licences mount.
+  const licencesMount = (page: import("@playwright/test").Page) =>
+    page.locator("sig-table:has([data-testid='source-row'])");
   test("text filtering hides non-matching rows and writes the q param", async ({
     page,
   }) => {
     await page.goto(SOURCES);
-    const table = page.locator("sig-table");
+    const table = licencesMount(page);
     const all = page.getByTestId("source-row");
     const total = await all.count();
     expect(total).toBeGreaterThan(1);
@@ -44,7 +50,7 @@ test.describe("<sig-table> on the sources table", () => {
     const firstCell = () =>
       page.locator('[data-testid="source-row"] td').first();
     await expect(firstCell()).toContainText("demo-municipal-portal");
-    const sort = page.getByRole("button", { name: /^Source/ });
+    const sort = licencesMount(page).getByRole("button", { name: /^Source/ });
     await sort.click();
     await expect(firstCell()).toContainText("demo-municipal-portal");
     // P36.48: /sources/ now carries two tables — scope to the licence
@@ -66,7 +72,7 @@ test.describe("<sig-table> on the sources table", () => {
     page,
   }) => {
     await page.goto(SOURCES);
-    const table = page.locator("sig-table");
+    const table = licencesMount(page);
     const creditMenu = table.locator("details", {
       hasText: "Filter by credit",
     });
@@ -92,7 +98,7 @@ test.describe("<sig-table> on the sources table", () => {
     await expect(visible).toHaveCount(1);
     await expect(visible).toContainText("demo-records-request");
     await expect(
-      page.locator("sig-table").getByRole("searchbox"),
+      licencesMount(page).getByRole("searchbox"),
     ).toHaveValue("records");
   });
 
@@ -100,7 +106,7 @@ test.describe("<sig-table> on the sources table", () => {
     page,
   }) => {
     await page.goto(SOURCES);
-    const table = page.locator("sig-table");
+    const table = licencesMount(page);
     await table.getByRole("searchbox", { name: /filter rows/i }).fill("portal");
     const [download] = await Promise.all([
       page.waitForEvent("download"),

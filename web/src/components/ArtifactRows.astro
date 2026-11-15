@@ -23,6 +23,7 @@ import { ARTIFACT_COPY, artifactTypeLabel, RUN_RECORD_LABEL } from "../lib/evide
 import { NOT_RECORDED } from "../lib/provenance-panel";
 import type { EvidenceArtifact } from "../lib/recommender";
 import { withBase } from "../lib/paths";
+import KitTable from "./KitTable.astro";
 
 interface Props {
   artifacts: EvidenceArtifact[];
@@ -32,6 +33,19 @@ interface Props {
 const { artifacts, handles, testid = "evidence-artifact-row" } = Astro.props;
 ---
 
+{/* P37.61 (ENH-01, K8 EV-02's "enhanced" list as a T1 kit use): the
+    `<sig-table>` list mount — filter/facet/sort/CSV over the same rows.
+    `param-prefix` keeps the state namespaced if a second mount ever joins
+    a page. */}
+<KitTable
+  filter
+  facets="lane state type source status"
+  sort="title source captured"
+  download="sig-evidence-artifacts"
+  label="Evidence artifacts"
+  itemLabel="Artifact"
+  paramPrefix="ev."
+>
 <ul class="sig-artifact-rows">
   {artifacts.map((a) => {
     const handle = handles.get(a.artifact_id);
@@ -40,6 +54,8 @@ const { artifacts, handles, testid = "evidence-artifact-row" } = Astro.props;
     const state = artifactState(a);
     const up = artifactUpstream(a);
     return (
+      // P37.61 (ENH-01): `data-facet-*`/`data-sort-*` restate the row's own
+      // fields — the kit chips/order the same values the row renders.
       <li
         class="sig-artifact-row"
         data-testid={testid}
@@ -47,6 +63,14 @@ const { artifacts, handles, testid = "evidence-artifact-row" } = Astro.props;
         data-state={state}
         data-run-record={state === "legacy_synthetic" ? "true" : "false"}
         data-lane={a.lane ?? NOT_RECORDED}
+        data-facet-lane={a.lane ?? NOT_RECORDED}
+        data-facet-state={state}
+        data-facet-type={a.artifact_type}
+        data-facet-source={a.source_name ?? a.source}
+        data-facet-status={a.capture_status}
+        data-sort-title={artifactTitle(a)}
+        data-sort-source={a.source_name ?? a.source}
+        data-sort-captured={latest?.retrieved_at ?? ""}
       >
         <p class="sig-artifact-row__title">
           <a href={withBase(artifactHref(handle!))} data-testid="artifact-link">{artifactTitle(a)}</a>
@@ -67,3 +91,4 @@ const { artifacts, handles, testid = "evidence-artifact-row" } = Astro.props;
     );
   })}
 </ul>
+</KitTable>

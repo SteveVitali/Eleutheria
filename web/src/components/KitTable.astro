@@ -1,0 +1,57 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P37.61 (ENH-01 / C-19 rollout, ADR-224/ADR-249): mounts the allow-listed
+// `<sig-table>` module around slotted server markup — either a `<table>`
+// (thead columns) or top-level `ol`/`ul` lists (declared `data-sort-<key>`
+// values + item text). Page-local admission: the `<script>` tag names the
+// allow-listed `t1-module-entries.json` entry verbatim beside the mount —
+// T1 routes only. With JS off, or if the module fails to load, the slotted
+// markup is the complete canonical view.
+import { withBase } from "../lib/paths";
+
+interface Props {
+  /** free-text filter field */
+  filter?: boolean;
+  /** space-separated `data-facet-<dim>` names on the rows */
+  facets?: string;
+  /** list mode: space-separated `data-sort-<key>` names on the items */
+  sort?: string;
+  /** table mode only: column chooser */
+  columns?: boolean;
+  /** CSV download filename stem */
+  download?: string;
+  /** `# view:` label in the CSV provenance preamble */
+  label?: string;
+  /** list mode: label of the trailing full-text column (default "Item") */
+  itemLabel?: string;
+  /** namespaces all URL params (`src.q`, `iss.sort`, …) when a page mounts
+   *  more than one `<sig-table>` */
+  paramPrefix?: string;
+}
+
+const {
+  filter = false,
+  facets,
+  sort,
+  columns = false,
+  download,
+  label,
+  itemLabel,
+  paramPrefix,
+} = Astro.props;
+---
+
+<sig-table
+  {...(filter ? { filter: "" } : {})}
+  {...(columns ? { columns: "" } : {})}
+  facets={facets}
+  sort={sort}
+  download={download}
+  label={label}
+  item-label={itemLabel}
+  param-prefix={paramPrefix}
+><slot /></sig-table>
+<script is:inline type="module" src={withBase("_kit/sig-table.js")}></script>

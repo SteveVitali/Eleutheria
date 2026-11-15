@@ -9,6 +9,7 @@
 // the A–Z jump list and the table itself via the shared row component.
 // No-JS by construction (SIG-UI-037): every sort and filter is a link.
 import DataTable, { type TableColumn } from "./DataTable.astro";
+import KitTable from "./KitTable.astro";
 import SourceTableRow from "./SourceTableRow.astro";
 import type { FigureSpec } from "../lib/figures";
 import {
@@ -172,22 +173,33 @@ for (const row of sorted) {
     </nav>
   )}
 
-  <DataTable
-    label={caption ?? `Sources — ${VIEWS[activeView].label}`}
-    caption={caption}
-    columns={cols}
-    density="compact"
-    testid="sources-table-grid"
+  {/* P37.61 (ENH-01, C-19): the T1 kit mount — in-page filter/facet/sort
+      upgrades over the same server rows; `param-prefix` keeps this view's
+      URL state clear of the licences table that co-mounts on /sources/. */}
+  <KitTable
+    filter
+    facets="status lane freshness class publisher-type licence"
+    download={`sig-sources-${view}`}
+    label={`Sources — ${VIEWS[activeView].label}`}
+    paramPrefix="src."
   >
-    <tbody>
-      {sorted.map((row) => (
-        <SourceTableRow
-          row={row}
-          view={view}
-          figs={figMap.get(row.sourceId) ?? {}}
-          azId={azAnchors?.get(row.sourceId)}
-        />
-      ))}
-    </tbody>
-  </DataTable>
+    <DataTable
+      label={caption ?? `Sources — ${VIEWS[activeView].label}`}
+      caption={caption}
+      columns={cols}
+      density="compact"
+      testid="sources-table-grid"
+    >
+      <tbody>
+        {sorted.map((row) => (
+          <SourceTableRow
+            row={row}
+            view={view}
+            figs={figMap.get(row.sourceId) ?? {}}
+            azId={azAnchors?.get(row.sourceId)}
+          />
+        ))}
+      </tbody>
+    </DataTable>
+  </KitTable>
 </div>

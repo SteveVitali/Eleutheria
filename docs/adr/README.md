@@ -252,6 +252,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-246](ADR-246-claim-viewer-v2-generation-cap-excerpt-and-download-pane.md) | Claim viewer v2: document-genre scope, the download pane, the excerpt gate, and `quotation_permitted` (P37.37) | P37.37 (K8 EV-03, manifest row 461 — on `r11/P37.37-claim-viewer-v2`) | accepted |
 | [ADR-247](ADR-247-wacz-capture-for-html-document-jobs.md) | WACZ capture for the HTML-document jobs: a deterministic packager default, the `wacz` cadence declaration, and the named job set (P37.56) | P37.56 (R11-TRANS-02, BL-026 — on `r11/P37.56-wacz-capture-html-sources`) | accepted |
 | [ADR-248](ADR-248-sqitch-ddl-is-the-authoritative-physical-schema-and-the-generated-sql-is-documentation-only.md) | Sqitch DDL is the authoritative physical schema; the generated `sig.sql` is documentation only (P37.58) | P37.58 (R11-DEBT-02, BL-049 — manifest row 486 — on `r11/P37.58-schema-conformance`) | accepted |
+| [ADR-249](ADR-249-sig-table-list-mode-param-prefixes-and-toolbar-sort-for-the-t1-rollout.md) | `<sig-table>` list mode, `param-prefix` namespacing, and the toolbar "Sort by" menu for the T1 rollout (P37.61) | P37.61 (R11-K13-ENH-01, manifest row 489 — on `r11/P37.61-t1-table-filter`) | accepted |
 
 ## Notes
 

@@ -12,6 +12,8 @@ import {
   facetValues,
   groupIndex,
   indexFigureSpecs,
+  indexRowFacet,
+  indexRowSortValue,
   isKeyedIndexRow,
   publicationRegime,
   rowName,
@@ -95,6 +97,26 @@ describe("sort / facet / A–Z (SIG-JUR-011)", () => {
         expect(facetIndex(rows, dim, v).length).toBeGreaterThan(0);
       }
     }
+  });
+
+  it("restates the same facet + sort vocabulary for the T1 kit markup (P37.61)", () => {
+    // `indexRowFacet`/`indexRowSortValue` feed the `data-facet-*`/`data-sort-*`
+    // attributes the `<sig-table>` list mount reads — they must be the same
+    // values the GET facet/sort routes mint, never a second vocabulary.
+    for (const dim of ["level", "single-source", "evidence-type"] as const) {
+      for (const r of rows) {
+        const v = indexRowFacet(r, dim);
+        if (v === null) continue;
+        expect(facetIndex(rows, dim, v).map((x) => x.jkey ?? x.slug)).toContain(r.jkey ?? r.slug);
+      }
+    }
+    const okc = rows.find((r) => r.jkey === "us.census.geoid.place:4064000")!;
+    expect(indexRowFacet(okc, "single-source")).toBe("yes");
+    expect(indexRowSortValue(okc, "records")).toBe(String(okc.records));
+    expect(indexRowSortValue(okc, "name")).toBe(rowName(okc).toLowerCase());
+    // an unvalued field sorts absence-last, never invents a "0"
+    const bare = rows.find((r) => r.sources === undefined);
+    if (bare) expect(indexRowFacet(bare, "single-source")).toBeNull();
   });
 
   it("covers every row under exactly one letter", () => {

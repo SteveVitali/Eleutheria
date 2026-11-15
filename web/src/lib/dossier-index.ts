@@ -173,6 +173,22 @@ export function facetValues(rows: readonly DossierIndexRow[], dim: IndexFacetDim
   return [...new Set(rows.filter((r) => facetMatch(r, dim) !== null).map((r) => facetMatch(r, dim)!))].sort();
 }
 
+/** The facet value `row` belongs to under `dim`, or null. Exported for the
+ *  P37.61 (ENH-01) T1 kit markup — `DossierIndexRow` restates the same
+ *  vocabulary as `data-facet-<dim>` attributes so the in-page facet chips
+ *  and the `/dossier/by/<dim>/<value>/` routes can never drift. */
+export function indexRowFacet(row: DossierIndexRow, dim: IndexFacetDim): string | null {
+  return facetMatch(row, dim);
+}
+
+/** The comparison key for one sort dimension as a string — the same
+ *  vocabulary `sortMetric` feeds the GET sort routes, restated for the
+ *  kit's `data-sort-<key>` attributes (P37.61, ENH-01). */
+export function indexRowSortValue(row: DossierIndexRow, key: IndexSortKey): string {
+  const v = sortMetric(row, key);
+  return typeof v === "number" ? String(v) : v;
+}
+
 /** The facet value `row` belongs to under `dim`, or null. */
 function facetMatch(row: DossierIndexRow, dim: IndexFacetDim): string | null {
   switch (dim) {
