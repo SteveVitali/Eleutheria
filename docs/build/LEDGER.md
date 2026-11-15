@@ -10,7 +10,7 @@
 projectStatus: IN_PROGRESS
 nextTicket: P37.60
 lastCompleted: P37.59
-blockedOn: CI stack on #510@58aa7a5 (external): #495 does not contain its base #494's head c062c6c — rebased or retargeted outside the documented procedure (carried ancestors verbatim, none authored here)
+blockedOn: CI stack on #511@ec4cfd0 (external): #495 does not contain its base #494's head c062c6c — rebased or retargeted outside the documented procedure (carried ancestors verbatim, none authored here)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.42,P37.54,P37.55,P37.56,P37.59,P37.70,P37.71
 manifest: docs/tickets/00_MANIFEST.md
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P37.58-schema-conformance
+chainTip: r11/P37.59-intake-operation-dark
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-15T02:24Z
+updatedAt: 2026-11-15T09:14Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1786,3 +1786,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-15 — dispatch boundary-confirm — P37.58's green read recorded (`ci: pass #510@58aa7a5`, run 43662973389; verdict head `7d5fba15` + tip `edff5be0` each 5/5 — same code tree; flake arc PMTILES-REPLAY-1 + LH-LCP-DISPUTE-1 recorded in `flake_log.csv`, no threshold change); `blockedOn` carried ancestors verbatim (#495 vs #494's head c062c6c — external stack finding, none authored here); chainTip `r11/P37.58-schema-conformance` · nextTicket P37.59 (row 487 — intake operation D-P32.16-1 dark-until-exposure; `live_verification=false` engineering dispatch — OM-20 row whose named mutation (dark intake-service deploy, loopback only) IS named in GATE-G6's §4 verbatim-approved list (expiry next GATE) — the deploy executes only in the `live_verification=true` re-run under `dark service only; AR-3 + AR-2`; B-8 'Email, no time promises' — intake stays e-mail-only and dark, live exposure leg not run, re-homed on announcement + operator opens intake; deps P34.40/P34.37/P34.42b landed) — fresh implement-spec sub-agent on `r11/P37.59-intake-operation-dark` · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-11-15 — P37.59 done — row 487 `Kind: ticket` — intake operation D-P32.16-1 dark-until-exposure (B-8 e-mail-only posture; `live_verification=false`; OM-20 named in GATE-G6 §4 verbatim — every `live` leg `prepared_not_executed`; no `production` mutations): `ops/src/ops/intake_operation.py` — single committed declaration of the dark `sig-intake` (`sig-intake-rt`, `sig-api` serving digest, internal ingress, no unauthenticated, 0/2, `SIG_INTAKE_ENABLED=1`, 3 secret mounts, `SIG_INTAKE_OPERATIONAL` never) · `ops/gcp/intake-roll.sh` — windowed `prestate→sa→secrets→log-exclusions→deploy→poststate→verify→rollback`, no-ADC `--check`, absent service `UNREAD`, apply queues 42 · `db_logins.py`/`db-logins.sh` — `sig_intake_receiver_login`+`sig_intake_reviewer_login` least-privilege catalog legs, passwords to Secret Manager only (HG-09) · `iam_identities.toml` — `sig-intake-rt` + cloudsql.client + 3 secretAccessor · RUNBOOK §15 + 4 register rows, packet §12/§13 · D-P37.59-1 OPEN + `:e0` anchor (BL-087); D-P32.16-1/D-R10-PUBLISH-1 stay OPEN · `[intake].operational=false` + `/intake/*` disabled stand · focused 92/92 green · orient-budget repair — RETURN PASS cells compacted (archive `reports/memory-repair/return_pass_cells_pre-P37.59-orient.toml`), region byte-identical · `main` untouched · next → P37.60 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-15 — P37.59 correction — `3ad706e9`'s row-487 `ci:`-cell fill used an unscoped replace that also rewrote rows 461–463's identical `ci: pending` cells — restored to base bytes verbatim; pre-edit bytes archived `reports/memory-repair/BUILD_INDEX_L653-655_pre-P37.59-ci-note-restore.txt` sha256:8f75003cb39cce6b0f162a9a48b56d4a80f924c9919a30a9a8b285701f118816; `seed-commit` declared in `record_policy/history.policy` (the P37.58 `45687972` precedent) · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-15 — P37.59 post-closeout record — head `ec4cfd0e` · `ci: pass #511@ec4cfd0` (5/5 head-bound run 43690975907: security 29s · docs 3m4s · composed 3m37s · python 20m4s · web 59m24s after the same-head rerun; `reports/ci/p37_59_pr511_final.json`, read 09:11Z) · `blockedOn` carried ancestors verbatim: `CI stack on #511@ec4cfd0 (external): #495 does not contain its base #494's head c062c6c — rebased or retargeted outside the documented procedure` — external stack finding, none authored here · flake arc: attempt-1 `web` red at 24m27s — `LH-LCP-ENTITY-1` (national Lighthouse `/entity/index.html` `largest-contentful-paint` `maxNumericValue` 1507.31 > 1500, all three runs 1514.2/1507.3/1514.3 — the `RUNNER-FLAKE-5` `/entity/` class; zero `web/` changes in the diff, records-only delta) → same-head rerun per B-15 cleared it, `flake_log.csv` rows appended, no threshold touched · repair arc: `3ad706e9` row-487 `ci:`-cell replace also rewrote rows 461–463 → `2a23f95f` restore + `ec4cfd0e` `seed-commit` · chainTip → `r11/P37.59-intake-operation-dark` (open) · `main` untouched · next → P37.60 · harness: devin-desktop/swe-2-high/subagent
