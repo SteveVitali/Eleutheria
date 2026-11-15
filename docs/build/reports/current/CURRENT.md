@@ -4,7 +4,7 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `ec1950274f322d14f37ea8c1653c5352ea617508` · inputs hashed: 1285 · wall-clock receipt: `receipt.json`
+> input_commit: `39e2bc01e3b31e6615287b03b60b8ba949dac3bd` · inputs hashed: 1285 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
@@ -117,7 +117,11 @@
 
 ## Known inconsistencies (preserved, never synthesized)
 
-- none — every P32.1 baseline conflict is either reconciled by a recorded event interpretation (old values preserved on the anchor) or documented in `reconciliations.json`; anything new would appear here and fail `verify`
+| check | obligation | message |
+|---|---|---|
+| ledger/next-landed | P37.61 | the index runs ahead of CURRENT STATE — landed work recorded for a ticket the ledger still calls next |
+| ledger/index-ahead | P37.61 | BUILD_INDEX row 489 (P37.61) lands after the ledger's lastCompleted P37.60 — index and control state disagree |
+| ledger/next-not-lowest | P37.61 | nextTicket 'P37.61' is not the lowest chain row that has not landed ('P37.62'; superseded-by/deferred/unused and HUMAN rows skipped — V2) |
 
 ## Evidence domains — recorded evidence only
 
