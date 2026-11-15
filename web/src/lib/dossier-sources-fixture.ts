@@ -390,7 +390,7 @@ function docs(): Record<string, DossierSourcesDoc> {
     level: "country",
     sources: usaSources(),
     locatedElsewherePairs: [{ jkey: "us.census.geoid.county:48201", records: 41 }],
-    contradictions: ["ctr-demo-001"],
+    contradictions: ["contra:device-count-42-38"],
     runsFile: true,
     compartments: ["public_record", "osm_physical"],
   });
@@ -401,7 +401,7 @@ function docs(): Record<string, DossierSourcesDoc> {
     chain: ["iso3166-1:US"],
     runsFile: true,
     locatedElsewherePairs: [{ jkey: "us.census.geoid.county:48201", records: 12 }],
-    contradictions: ["ctr-demo-001"],
+    contradictions: ["contra:device-count-42-38"],
     sources: [
       src("okc_camera_registry", {
         records: 38,
@@ -412,7 +412,6 @@ function docs(): Record<string, DossierSourcesDoc> {
         publisher_type: "government portal",
         spdx: "LicenseRef-PublicRecord-FactualCompilation",
         attribution: "Oklahoma City municipal portal (demonstration entry)",
-        contradictions: ["ctr-demo-001"],
         series: MONTHS_2,
       }),
       src("okc_council_minutes", {
@@ -441,6 +440,7 @@ function docs(): Record<string, DossierSourcesDoc> {
         publisher_type: "government portal",
         conflicts: 3,
         declaredElsewhere: 12,
+        contradictions: ["contra:device-count-42-38"],
         series: MONTHS_2,
       }),
     ],
@@ -551,6 +551,7 @@ function docs(): Record<string, DossierSourcesDoc> {
     jkey: "us-ok-oklahoma-city",
     name: "Oklahoma City",
     level: null,
+    contradictions: ["contra:device-count-42-38"],
     sources: [
       src("okc_camera_registry", { records: 38, claims: 120, share: 0.7600, name: "OKC camera registry", publisher: "Oklahoma City municipal data portal (demonstration entry)", publisher_type: "government portal", spdx: "LicenseRef-PublicRecord-FactualCompilation" }),
       src("okc_council_minutes", { records: 8, claims: 24, share: 0.1600, name: "OKC council minutes", publisher_type: "document index" }),

@@ -54,6 +54,7 @@ top_level = [
   "artifact",            # /artifact/<export-path>.json — figure-evidence downloads (P35.37)
   "data-collection",     # the crawler contact page (P35.38a, S6c)
   "data",                # /data/dictionary/ — the generated data dictionary (P35.39, TX-10a)
+  "disagreements",       # /disagreements/** — the disagreements browser (P37.38 / R11-K13-CX-01, SIG-UI-071)
   "dispute",
   "dossier",
   "editorial-standards",
@@ -110,6 +111,7 @@ required = [
   "coverage-metrics",
   "artifact",
   "data-collection",
+  "disagreements",       # emitted by every build — the hub + per-dossier-doc place pages ship in fixtures mode too (P37.38)
   "dispute",
   "dossier",
   "editorial-standards",

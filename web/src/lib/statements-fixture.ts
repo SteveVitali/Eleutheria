@@ -77,11 +77,62 @@ const DEVICE_COUNT_STATEMENT: StatementRow = {
   },
   contradictions: {
     contradiction_ids: ["contra:device-count-42-38"],
-    competing_claim_ids: ["portal"],
+    competing_claim_ids: ["portal-device-count"],
   },
   rights: {
     spdx: "CC-BY-4.0",
     attribution: "Oklahoma City procurement records",
+    compartment: "sig_graph",
+  },
+};
+
+/** The other side of `contra:device-count-42-38` (P37.38 / CX-01): the
+ *  derived portal feed's 38-count claim — a `document_only`-absent row whose
+ *  claim view (`portal-device-count`, value 38) IS published, so the
+ *  disagreements browser shows both sides resolved. */
+const PORTAL_STATEMENT: StatementRow = {
+  schema: "sig.statement/1",
+  claim_id: "portal-device-count",
+  entity_id: "deployment:okcpd-alpr",
+  predicate_id: "active_device_count",
+  observed_at: "2026-08-01",
+  source_id: "demo_permitted_portal",
+  value: "not_published",
+  binding_status: "legacy_synthetic",
+  lane: "derived-only",
+  capture: null,
+  upstream: {
+    status: "host_only",
+    url: null,
+    host: "portal.example.org",
+    path_sha256: "c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2",
+  },
+  view_original: { kind: "view_at_source", label: "View at source", href: null, note: null },
+  extraction: {
+    method: "selector extraction (parsing layer L2)",
+    extractor_name: "parsing",
+    extractor_version: "parser-2026.07",
+    review_status: "unreviewed",
+  },
+  epistemics: {
+    directness: "D3",
+    reliability: "W2",
+    integrity: "I2",
+    review_status: "unreviewed",
+  },
+  recorded: { run_id: "run:portal-derived-2026-08-02", at: "2026-08-02T06:00:00Z" },
+  supersession: {
+    revises_claim: null,
+    retraction_of: null,
+    prior_recorded_at: null,
+  },
+  contradictions: {
+    contradiction_ids: ["contra:device-count-42-38"],
+    competing_claim_ids: ["active-device-count"],
+  },
+  rights: {
+    spdx: "CC-BY-4.0",
+    attribution: "Demo permitted portal (fixture)",
     compartment: "sig_graph",
   },
 };
@@ -587,6 +638,7 @@ const ORDINANCE_EFFECTIVE_STATEMENT: StatementRow = {
  *  `not_recorded` panel — honest absence, exercised on every surface. */
 export const STATEMENT_FIXTURES: StatementRow[] = [
   DEVICE_COUNT_STATEMENT,
+  PORTAL_STATEMENT,
   ROSTER_STATEMENT,
   MOU_STATEMENT,
   SCREENSHOT_STATEMENT,

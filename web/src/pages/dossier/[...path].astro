@@ -33,7 +33,7 @@ import Figure from "../../components/Figure.astro";
 import { applyPublicationPolicy, dossierLang, dossierJsonPath, dossierPath, dossierPrintPath, sectionTitlesFor, validateDossier, sectionIsEmpty, SECTION_ACTION_BLOCKS, NO_RECORD_IN_SIG, unplacedPath } from "../../lib/dossier";
 import type { Dossier } from "../../lib/dossier";
 import type { Crumb, PageAction } from "../../lib/nav";
-import { getDossierArtifactRef, getDossierIndex, getDossiers, getDossierProvenance, getDossierSources, getJurisdictionCompartments, getJurisdictionKeyMap, getLatestReleaseTarget, getSlugHistory, getUnplacedReport, getWatch, getWatchV2 } from "../../lib/data";
+import { getDossierArtifactRef, getDossierIndex, getDossiers, getDossierProvenance, getDossierSources, getDossierSourcesMap, getJurisdictionCompartments, getJurisdictionKeyMap, getLatestReleaseTarget, getSlugHistory, getUnplacedReport, getWatch, getWatchV2 } from "../../lib/data";
 import WhereThisComesFrom from "../../components/WhereThisComesFrom.astro";
 // P36.55 (VIZ-02, SIG-UI-069): the ONE dossier template — the v2 blocks in
 // SIG-UI-010 order: header strip, At a glance with Figure 1 + locator and
@@ -440,6 +440,9 @@ const combinesList = jurisdiction.combines ? jurisdiction.combines.join(" and ")
 // resolve inside the artifact itself, never under `/surfaces/site`); the
 // analytics row is the back-compat fallback.
 const dsrcDoc = getDossierSources(dossier.slug);
+// P37.38 (CX-01): the emitted /disagreements/place/<slug>/ set — a link to a
+// disagreements page renders only where one was emitted (R-6, never a 404).
+const DG_PAGES = new Set(getDossierSourcesMap().keys());
 const dsrcProvenance = dsrcDoc ? dossierSourcesProvenance(dsrcDoc) : undefined;
 const provenance = dsrcProvenance ?? getDossierProvenance(dossier.slug);
 const sourcePageIds = new Set(getSourcePageIds());
@@ -814,6 +817,17 @@ return (
         </p>
       )}
     </section>
+  )}
+
+  {/* P37.38 (CX-01, UXR-21): "disagreements for the place" — the link
+      resolves only where a disagreements page was actually emitted (one
+      per sig.dossier-sources/1 doc), never a dead link (R-6). */}
+  {DG_PAGES.has(dossier.slug) && (
+    <p class="sig-table-note" data-testid="dossier-disagreements-link">
+      <a href={withBase(`disagreements/place/${dossier.slug}/`)}>
+        All disagreements for {dossier.display_name ?? dossier.name ?? dossier.jurisdiction} →
+      </a>
+    </p>
   )}
 </BaseLayout>
 );})()}

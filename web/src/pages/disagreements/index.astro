@@ -1,0 +1,244 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P37.38 (R11-K13-CX-01, K13 §2.2/§4.2, SIG-UI-071) — the `/disagreements/` hub.
+// Two evidenced claims that disagree stay VISIBLE, never silently reconciled
+// (§3.1): this surface lists every published contradiction record with both
+// sides, sources and dates — kept apart from within-source coordinate
+// conflicts (labelled the identity defects they are until CONF-03b re-keys
+// them) and declared-vs-located disagreements. Counts come from the release's
+// own artifacts (sig.statement/1 streams + sig.dossier-sources/1 docs), never
+// a parallel count.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EmptyState from "../../components/EmptyState.astro";
+import {
+  getDossierSourcesMap,
+  getEntityLabelRows,
+  getEvidence,
+  getStatementIndex,
+} from "../../lib/data";
+import { getSourcePageIds } from "../../lib/source-page";
+import {
+  disagreementAnchor,
+  disagreementPlacePath,
+  disagreementsIndex,
+} from "../../lib/disagreements";
+import { dossierPath } from "../../lib/dossier";
+import { withBase } from "../../lib/paths";
+
+const DOCS = getDossierSourcesMap();
+const INDEX = disagreementsIndex(
+  getStatementIndex(),
+  DOCS,
+  getEvidence().claimViews,
+  new Set(getSourcePageIds()),
+  getEntityLabelRows(),
+);
+const CONTRADICTIONS = INDEX.contradictions;
+const KIND_COUNT =
+  (CONTRADICTIONS.length > 0 ? 1 : 0) +
+  (INDEX.coordinate_places.length > 0 ? 1 : 0) +
+  (INDEX.declared_located_places.length > 0 ? 1 : 0);
+---
+
+<BaseLayout
+  title="Disagreements"
+  path={withBase("disagreements/")}
+  crumbs={[{ label: "Disagreements" }]}
+  lede="Where the record disagrees with itself — kept visible, never silently reconciled."
+>
+  <p class="sig-lede" data-copy="CX-01">
+    Where the record disagrees with itself, SIG keeps every side visible —
+    this browser lists each disagreement the release records, labelled by
+    kind, never silently reconciled.
+  </p>
+
+  <section aria-labelledby="dg-kinds" data-testid="disagreement-kinds">
+    <h2 id="dg-kinds">Three kinds of disagreement</h2>
+    <dl class="sig-kv" data-testid="disagreement-kind-list">
+      <div>
+        <dt data-kind="contradiction">Recorded contradictions</dt>
+        <dd data-testid="kind-count-contradiction">{CONTRADICTIONS.length}</dd>
+      </div>
+      <div>
+        <dt data-kind="coordinate_conflict">Within-source coordinate conflicts</dt>
+        <dd data-testid="kind-count-coordinate_conflict">
+          {INDEX.coordinate_places.length} {INDEX.coordinate_places.length === 1 ? "place" : "places"}
+        </dd>
+      </div>
+      <div>
+        <dt data-kind="declared_vs_located">Declared-vs-located disagreements</dt>
+        <dd data-testid="kind-count-declared_vs_located">
+          {INDEX.declared_located_places.length} {INDEX.declared_located_places.length === 1 ? "place" : "places"}
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section aria-labelledby="dg-contradictions" data-testid="contradiction-records">
+    <h2 id="dg-contradictions">Recorded contradictions</h2>
+    <p data-copy="CX-02">
+      Two claims that disagree about the same subject, each with its source
+      and dates. The record keeps both sides; it does not pick a winner.
+    </p>
+    {CONTRADICTIONS.length === 0 ? (
+      <EmptyState
+        parts={{
+          state: "No recorded contradictions in this release",
+          missing:
+            "No materialized contradiction record is published in this release — none exists to show, not a hidden one.",
+          nearby: "The declared-vs-located and coordinate-conflict sections below still list the disagreements placement records.",
+          action: { href: "evidence/", label: "Browse the evidence" },
+          change: "A contradiction appears here once a release materializes one.",
+          cause: "none_recorded",
+          batchIds: { state: "CX-10", missing: "CX-11", nearby: "CX-12", action: "CX-13", change: "CX-14" },
+        }}
+      />
+    ) : (
+      <ol class="sig-dg-records">
+        {CONTRADICTIONS.map((c) => (
+          <li
+            data-testid="contradiction-record"
+            data-contradiction-id={c.contradiction_id}
+            id={disagreementAnchor(c.contradiction_id)}
+          >
+            <h3 class="sig-dg-record__title">
+              {c.predicates.length > 0
+                ? c.predicates.join(", ")
+                : "recorded contradiction"}{" "}
+              — <code>{c.contradiction_id}</code>
+            </h3>
+            <ol class="sig-dg-sides" data-testid="contradiction-sides">
+              {c.sides.map((s) => (
+                <li data-testid="contradiction-side" data-claim-id={s.claim_id}>
+                  {s.label !== null ? <strong>{s.label}</strong> : <code>{s.claim_id}</code>}
+                  {s.statement_published ? (
+                    <span class="sig-dg-side__meta">
+                      {" — "}
+                      {s.source_href !== null ? (
+                        <a href={withBase(s.source_href)}>{s.source_name ?? s.source_id}</a>
+                      ) : (
+                        <span>{s.source_name ?? s.source_id ?? "source not recorded"}</span>
+                      )}
+                      {s.observed_at && <> · observed {s.observed_at.slice(0, 10)}</>}
+                      {s.recorded_at && <> · recorded {s.recorded_at.slice(0, 10)}</>}
+                    </span>
+                  ) : (
+                    <span class="sig-dg-side__meta">
+                      {" — "}statement not published in this release (the record keeps the claim id visible)
+                    </span>
+                  )}
+                  {s.claim_href !== null && (
+                    <>{" "}<a href={withBase(s.claim_href)}>claim page</a></>
+                  )}
+                </li>
+              ))}
+            </ol>
+            {c.sides.length < 2 && (
+              <p class="sig-dg-absence" data-testid="contradiction-partial">
+                Only one side of this record publishes in this release — the
+                disagreement is still recorded, not smoothed.
+              </p>
+            )}
+            <p class="sig-dg-links">
+              {c.place_slugs.length > 0 ? (
+                <>
+                  Places:{" "}
+                  {c.place_slugs.map((slug, i) => (
+                    <>
+                      {i > 0 && " · "}
+                      <a href={withBase(disagreementPlacePath(slug))}>{slug}</a>
+                    </>
+                  ))}
+                </>
+              ) : (
+                <span data-testid="contradiction-no-place">No place link is recorded for this record.</span>
+              )}
+              {c.entity_hrefs.map((e) => (
+                <>
+                  {" "}
+                  · subject: <a href={withBase(e.href)}>{e.label ?? e.entity_id}</a>
+                </>
+              ))}
+            </p>
+          </li>
+        ))}
+      </ol>
+    )}
+  </section>
+
+  <section aria-labelledby="dg-coord" data-testid="coordinate-conflicts">
+    <h2 id="dg-coord">Within-source coordinate conflicts</h2>
+    <p data-copy="CX-03">
+      Records one source locates at conflicting coordinates — identity
+      defects SIG keeps labelled until the subject re-keying lands, never
+      treated as a contradiction between sources.
+    </p>
+    {INDEX.coordinate_places.length === 0 ? (
+      <p class="sig-dg-absence" data-testid="coordinate-conflicts-absent">
+        No within-source coordinate conflicts are recorded in this release.
+      </p>
+    ) : (
+      <table class="sig-table" data-testid="coordinate-conflict-table">
+        <thead>
+          <tr><th>Place</th><th>Conflicting records</th></tr>
+        </thead>
+        <tbody>
+          {INDEX.coordinate_places.map((p) => (
+            <tr data-testid="coordinate-conflict-row" data-slug={p.slug}>
+              <td><a href={withBase(disagreementPlacePath(p.slug))}>{p.name}</a></td>
+              <td>{p.records}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+  </section>
+
+  <section aria-labelledby="dg-declared" data-testid="declared-located">
+    <h2 id="dg-declared">Declared-vs-located disagreements</h2>
+    <p data-copy="CX-04">
+      Records a source declares to one jurisdiction but locates in another —
+      shown on both sides: the declaring dossier and the locating dossier.
+    </p>
+    {INDEX.declared_located_places.length === 0 ? (
+      <p class="sig-dg-absence" data-testid="declared-located-absent">
+        No declared-vs-located disagreements are recorded in this release.
+      </p>
+    ) : (
+      <table class="sig-table" data-testid="declared-located-table">
+        <thead>
+          <tr>
+            <th>Place</th>
+            <th>Declared here, located elsewhere</th>
+            <th>Located here, declared elsewhere</th>
+          </tr>
+        </thead>
+        <tbody>
+          {INDEX.declared_located_places.map((p) => (
+            <tr data-testid="declared-located-row" data-slug={p.slug}>
+              <td><a href={withBase(disagreementPlacePath(p.slug))}>{p.name}</a></td>
+              <td>{p.declared_here}</td>
+              <td>{p.located_here}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+  </section>
+
+  <section aria-labelledby="dg-places" data-testid="disagreement-places">
+    <h2 id="dg-places">Disagreements by place</h2>
+    <ul>
+      {INDEX.place_slugs.map((slug) => (
+        <li data-testid="place-link" data-slug={slug}>
+          <a href={withBase(disagreementPlacePath(slug))}>{DOCS.get(slug)?.jurisdiction.name ?? slug}</a>
+          {" — "}<a href={withBase(dossierPath(slug))}>dossier</a>
+        </li>
+      ))}
+    </ul>
+  </section>
+  <span hidden data-testid="dg-kind-count">{KIND_COUNT}</span>
+</BaseLayout>
