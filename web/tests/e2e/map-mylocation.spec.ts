@@ -115,6 +115,11 @@ test.describe("my-location pan control (P37.72)", () => {
       });
     });
     await ready(page);
+    // The island's own first settled viewport write (refreshList's 300 ms
+    // debounce after load → `at=` via replaceState, SIG-UI-103) can land
+    // after `data-drawn` latches. Baseline only once it has, so the
+    // comparison below isolates the denial path from the load-time write.
+    await expect(page).toHaveURL(/[?&]at=\d+(%2F|\/)/, { timeout: 15_000 });
     const urlBefore = page.url();
     await page.getByTestId("my-location").click();
     const note = page.getByTestId("my-location-note");
