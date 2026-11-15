@@ -108,7 +108,10 @@ test.describe("the sources explorer = its sig.dossier-sources/1 twin (SIG-DSRC-D
       const pagePath = twinPath.slice(0, -"index.json".length);
       const html = await (await request.get(pagePath)).text();
       for (const s of doc.sources) {
-        const row = new RegExp(`<tr data-source-id="${s.source_id}">([\\s\\S]*?)</tr>`).exec(html);
+        // P37.61: the T1 mount adds `data-facet-*` row attributes after the
+        // id — the row identity contract is `data-source-id` first, the rest
+        // is enhancement metadata, so tolerate attributes before `>`.
+        const row = new RegExp(`<tr data-source-id="${s.source_id}"[^>]*>([\\s\\S]*?)</tr>`).exec(html);
         if (!row) {
           // a paginated explorer carries later pages — absence is honest only
           // when the doc itself does not publish the row (never silent: the

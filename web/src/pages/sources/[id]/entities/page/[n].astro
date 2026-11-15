@@ -24,6 +24,7 @@ import {
   ENTITY_BROWSE_CAP,
 } from "../../../../../lib/source-page-b";
 import { fmtInt } from "../../../../../lib/format";
+import KitTable from "../../../../../components/KitTable.astro";
 
 export function getStaticPaths() {
   return getPageBIds().flatMap((id) => {
@@ -84,13 +85,20 @@ const crumbs = [
       </Figure>
     </p>
     <SourcePager base={`sources/${id}/entities`} page={page} pages={browse.pages} first={offset + 1} last={offset + slice.length} total={browse.rows.length} noun="entities" label="Entities" figure={fig("entities-page")} />
+    <KitTable
+      filter
+      columns
+      facets="type"
+      download="sig-source-entities"
+      label={`Source entities — ${id}`}
+    >
     <table class="sig-table" data-testid="entities-table">
       <thead>
         <tr><th scope="col">Entity</th><th scope="col">Type</th><th scope="col">Jurisdiction</th><th scope="col">First seen</th><th scope="col">Last seen</th><th scope="col">Record</th></tr>
       </thead>
       <tbody>
         {slice.map((e) => (
-          <tr data-testid="entity-row" data-entity-id={e.entity_id}>
+          <tr data-testid="entity-row" data-entity-id={e.entity_id} data-facet-type={e.entity_type}>
             <td>{e.label}</td><td>{e.entity_type}</td><td>{e.jurisdiction ?? "not recorded"}</td>
             <td>{e.first_seen ?? "not recorded"}</td><td>{e.last_seen ?? "not recorded"}</td>
             <td>{e.record_href !== null ? <a href={recordHref(e.record_href)!}>record →</a> : "record link pending"}</td>
@@ -98,6 +106,7 @@ const crumbs = [
         ))}
       </tbody>
     </table>
+    </KitTable>
     <p><a href={withBase(`sources/${id}/entities/`)}>First page</a> · <a href={withBase(`sources/${id}/entities/index.json`)}>index.json</a></p>
   </section>
 </BaseLayout>

@@ -24,6 +24,7 @@ import {
 } from "../../../lib/watch-v2";
 import type { WatchPlacePage } from "../../../lib/watch-v2";
 import { withBase } from "../../../lib/paths";
+import KitTable from "../../../components/KitTable.astro";
 
 export function getStaticPaths() {
   const { envelope, pages } = watchContext();
@@ -66,9 +67,18 @@ const history = items.filter(
   {items.length > 0 && (
     <>
       <h2 id="place-heading">Decisions for {name} ({items.length})</h2>
+      <KitTable
+        filter
+        facets="kind certainty status technology vendor contested"
+        sort="date place title"
+        download="sig-watch-items"
+        label="Watch items"
+        itemLabel="Item"
+      >
       <ol class="sig-watch-list" aria-labelledby="place-heading">
         {shown.map((item) => <WatchList item={item} pages={pages} />)}
       </ol>
+      </KitTable>
       {total > 1 && (
         <p class="sig-watch-pagination" data-testid="watch-pagination">
           Page {n} of {total} —

@@ -22,6 +22,7 @@ import {
   getResearchQueue,
 } from "../../../lib/data";
 import { withBase } from "../../../lib/paths";
+import KitTable from "../../../components/KitTable.astro";
 
 export function getStaticPaths() {
   return QUEUE_SORTS.filter((k) => k !== "priority").map((k) => ({
@@ -44,9 +45,19 @@ const total = pageCount(items.length);
     Open research tasks, {SORT_LABELS[k].toLowerCase()} ({items.length}).{" "}
     <a href={withBase("research-queue/")}>Back to the queue hub</a>
   </p>
+  <KitTable
+    filter
+    facets="type role effort place scope claimed status"
+    sort="title place effort"
+    download="sig-research-queue"
+    label="Research queue"
+    itemLabel="Task"
+    paramPrefix="rq."
+  >
   <ol class="sig-queue">
     {shown.map((card) => <QueueCard card={card} claims={CLAIMS} asOf={AS_OF} />)}
   </ol>
+  </KitTable>
   {total > 1 && (
     <p class="sig-queue-pagination" data-testid="queue-pagination">
       Page 1 of {total} — <a href={withBase(queueSortHref(k, 2))}>next page →</a>

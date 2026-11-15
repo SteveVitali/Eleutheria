@@ -2043,6 +2043,13 @@ sig-typeahead {
   display: contents;
 }
 
+/* P37.61 (ENH-01): `hidden` must always win — a component that sets its own
+ * display (e.g. `.sig-dossier-index__item`'s flex) otherwise beats the UA
+ * `[hidden]` rule and the kit's filtered-row hiding silently fails. */
+[hidden] {
+  display: none !important;
+}
+
 .sig-kit-bar {
   display: flex;
   flex-wrap: wrap;

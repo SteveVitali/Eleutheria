@@ -26,6 +26,10 @@ export interface TableRowModel {
   cells: string[];
   /** Facet dimension → the values this row carries (`data-facet-<dim>`). */
   facets: Record<string, string[]>;
+  /** Facet dimension → value → human label (`data-facet-label-<dim>`,
+   *  `|`-joined in the same order as the row's values). Values stay the
+   *  URL/filter keys; labels only dress the chips. */
+  facetLabels?: Record<string, Record<string, string>>;
   /** Licence ids the row's data is filed under (`data-licence`, `|`-joined). */
   licences: string[];
   /** Optional compartment name (`data-compartment`) for licence lines. */

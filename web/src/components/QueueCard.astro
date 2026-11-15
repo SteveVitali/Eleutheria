@@ -61,6 +61,17 @@ const evidDate = evidenceDateOf(card);
   data-assignee={card.assignee_class}
   data-effort={card.effort_estimate}
   data-claimed={claim.claimed ? "true" : "false"}
+  data-facet-type={card.task_type}
+  data-facet-role={card.assignee_class}
+  data-facet-effort={card.effort_estimate}
+  data-facet-place={slug}
+  data-facet-label-place={placeName}
+  data-facet-scope={card.geographic_scope}
+  data-facet-claimed={claim.claimed ? "true" : "false"}
+  data-facet-status={card.status ?? "generated"}
+  data-sort-title={card.title ?? card.subject_label ?? ""}
+  data-sort-place={placeName}
+  data-sort-effort={card.effort_estimate}
 >
   <h3>
     {card.handle ? (

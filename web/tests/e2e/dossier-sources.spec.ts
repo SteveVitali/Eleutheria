@@ -7,6 +7,9 @@
 // routes; usa/ok = run_level_only + parity row; SIG-DSRC-001…006/008/009).
 
 import { expect, test } from "@playwright/test";
+import t1ModuleEntries from "./t1-module-entries.json" with { type: "json" };
+
+const T1_MODULE_ENTRIES = new Set<string>(t1ModuleEntries.entries);
 
 test.describe("Where this comes from (dossier block)", () => {
   test("every dossier renders the block with totals + top sources + explorer link", async ({ page }) => {
@@ -43,8 +46,19 @@ test.describe("the sources explorer", () => {
     // P36.53 (DSRC-03): usa materialises per-compartment slices
     await expect(page.getByTestId("dsrc-downloads")).toContainText("statements.jsonl.gz");
     await expect(page.getByTestId("dsrc-downloads")).toContainText("ATTRIBUTION.txt");
-    // zero <script> inside the explorer article (T1, SIG-DSRC-006)
-    expect(await page.locator("article.sig-dsrc script").count()).toBe(0);
+    // The explorer ships only allow-listed /_kit/ module entries (T1,
+    // SIG-DSRC-006; P37.61 mounts <sig-table> on the contribution table —
+    // the static markup is the complete no-JS view).
+    const scripts = await page.$$eval("article.sig-dsrc script", (els) =>
+      els.map((el) => ({ src: el.getAttribute("src"), type: el.getAttribute("type") })),
+    );
+    for (const s of scripts) {
+      expect(s.type, `script ${s.src ?? "(inline)"} must be type=module`).toBe("module");
+      expect(
+        s.src !== null && T1_MODULE_ENTRIES.has(s.src),
+        `script ${s.src ?? "(inline)"} is not an allow-listed /_kit/ entry`,
+      ).toBe(true);
+    }
   });
 
   test("a sort route renders a differently-ordered table", async ({ page }) => {

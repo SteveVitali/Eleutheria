@@ -25,6 +25,7 @@ import {
   getResearchQueue,
 } from "../../../../../lib/data";
 import { withBase } from "../../../../../lib/paths";
+import KitTable from "../../../../../components/KitTable.astro";
 
 export function getStaticPaths() {
   const out: { params: { r: string; k: string }; props: { r: string; k: QueueSort } }[] = [];
@@ -50,9 +51,19 @@ const total = pageCount(items.length);
     {roleLabel(r)} — {SORT_LABELS[k].toLowerCase()} ({items.length}).{" "}
     <a href={withBase(`research-queue/role/${r}/`)}>Back to {roleLabel(r)}</a>
   </p>
+  <KitTable
+    filter
+    facets="type role effort place scope claimed status"
+    sort="title place effort"
+    download="sig-research-queue"
+    label="Research queue"
+    itemLabel="Task"
+    paramPrefix="rq."
+  >
   <ol class="sig-queue">
     {shown.map((card) => <QueueCard card={card} claims={CLAIMS} asOf={AS_OF} />)}
   </ol>
+  </KitTable>
   {total > 1 && (
     <p class="sig-queue-pagination">
       Page 1 of {total} — <a href={withBase(queueRoleHref(r, k, 2))}>next page →</a>

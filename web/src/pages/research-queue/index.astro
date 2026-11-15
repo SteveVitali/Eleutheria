@@ -37,6 +37,7 @@ import {
 } from "../../lib/data";
 import { draftBundleFiles, draftBundleLinks, placeDraftBundles } from "../../lib/records-drafts";
 import { withBase } from "../../lib/paths";
+import KitTable from "../../components/KitTable.astro";
 
 const CARDS = getResearchQueue();
 // P36.63 (RQ-04, SIG-RQ-007/010): the per-place draft bundles this build emits.
@@ -120,9 +121,19 @@ const lanes = META.lanes ?? {};
       </>
     ))}
   </p>
+  <KitTable
+    filter
+    facets="type role effort place scope claimed status"
+    sort="title place effort"
+    download="sig-research-queue"
+    label="Research queue"
+    itemLabel="Task"
+    paramPrefix="rq."
+  >
   <ol class="sig-queue" aria-labelledby="queue-heading">
     {shown.map((card) => <QueueCard card={card} claims={CLAIMS} asOf={AS_OF} />)}
   </ol>
+  </KitTable>
   {pages > 1 && (
     <p class="sig-queue-pagination" data-testid="queue-pagination">
       Showing {shown.length} of {ordered.length} —{" "}
@@ -142,9 +153,19 @@ const lanes = META.lanes ?? {};
     </p>
   )}
   {CAMPAIGNS.length > 0 && (
+    <KitTable
+      filter
+      facets="place subject-class"
+      sort="place"
+      download="sig-queue-campaigns"
+      label="Queue campaigns"
+      itemLabel="Campaign"
+      paramPrefix="cmp."
+    >
     <ol class="sig-campaigns" aria-labelledby="campaigns-heading">
       {CAMPAIGNS.slice(0, 5).map((c) => <QueueCampaignCard campaign={c} />)}
     </ol>
+    </KitTable>
   )}
   {CAMPAIGNS.length > 5 && (
     <p><a href={withBase(queueCampaignsHref())} data-testid="campaigns-link">All campaigns ({CAMPAIGNS.length}) →</a></p>

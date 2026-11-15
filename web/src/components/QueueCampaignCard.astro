@@ -29,6 +29,10 @@ const sample = (campaign.members ?? []).slice(0, 5);
   data-predicate={campaign.predicate_id}
   data-subject-class={campaign.subject_class}
   data-place={slug}
+  data-facet-place={slug}
+  data-facet-label-place={placeName}
+  data-facet-subject-class={campaign.subject_class}
+  data-sort-place={placeName}
 >
   <h3 data-testid="campaign-title">
     <a href={withBase(`research-queue/campaign/${campaign.handle}/`)} data-testid="campaign-link">

@@ -17,6 +17,7 @@ import { fmtInt } from "../../../../lib/format";
 import { withBase } from "../../../../lib/paths";
 import { getSourcePage, type SourcePageModel } from "../../../../lib/source-page";
 import { resolveSourceId } from "../../../../lib/alias";
+import KitTable from "../../../../components/KitTable.astro";
 import {
   getPageBIds,
   getSourceVersions,
@@ -90,6 +91,14 @@ const crumbs = [
     {browse.pages > 1 && (
       <SourcePager base={`sources/${id}/entities`} page={page} pages={browse.pages} first={1} last={slice.length} total={browse.rows.length} noun="entities" label="Entities" figure={fig("entities-page")} />
     )}
+    {/* P37.61 (ENH-01): the T1 kit mount — filter/facet/columns/CSV. */}
+    <KitTable
+      filter
+      columns
+      facets="type"
+      download="sig-source-entities"
+      label={`Source entities — ${id}`}
+    >
     <table class="sig-table" data-testid="entities-table">
       <thead>
         <tr>
@@ -99,7 +108,7 @@ const crumbs = [
       </thead>
       <tbody>
         {slice.map((e) => (
-          <tr data-testid="entity-row" data-entity-id={e.entity_id}>
+          <tr data-testid="entity-row" data-entity-id={e.entity_id} data-facet-type={e.entity_type}>
             <td>{e.label}</td>
             <td>{e.entity_type}</td>
             <td>{e.jurisdiction ?? "not recorded"}</td>
@@ -110,6 +119,7 @@ const crumbs = [
         ))}
       </tbody>
     </table>
+    </KitTable>
     <p data-copy="EB-03">
       No per-claim pages publish (J3 G-10); the per-source statements slice is on{" "}
       <a href={withBase(`sources/${id}/versions/`)}>versions</a>. Machine twin:{" "}

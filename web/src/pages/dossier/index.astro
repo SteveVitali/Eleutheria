@@ -17,6 +17,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import EmptyState from "../../components/EmptyState.astro";
 import DossierIndexRow from "../../components/DossierIndexRow.astro";
+import KitTable from "../../components/KitTable.astro";
 import Figure from "../../components/Figure.astro";
 import { getDossierIndex, getIndexSprite, getUnplacedIndexEntry } from "../../lib/data";
 import type { DossierIndexRow as IndexRowType } from "../../lib/data";
@@ -177,6 +178,18 @@ const placeOptionLabel = (d: IndexRowType) =>
     <p class="sig-jurisdiction-unmapped" data-testid="dossier-index-unmapped" data-copy="JD-04">A jurisdiction code SIG has not yet named is on this page — flag it in the <a href={withBase("research-queue/")}>research queue</a>.</p>
   )}
 
+  {/* P37.61 (ENH-01, K4 JUR-04's enhanced index filter as a T1 kit use):
+      one `<sig-table>` in list mode across the three group sections — the
+      in-page filter/facet/sort/CSV upgrades the same `li` rows the GET
+      `/dossier/by/` + `/dossier/sort/` routes mint. */}
+  <KitTable
+    filter
+    facets="level single-source evidence-type"
+    sort="name records sources freshness"
+    download="sig-dossier-index"
+    label="Dossier index"
+    itemLabel="Dossier"
+  >
   {groups.unitedStates && (
     <section aria-labelledby="group-us" data-testid="group-united-states">
       <h2 id="group-us">United States</h2>
@@ -220,6 +233,7 @@ const placeOptionLabel = (d: IndexRowType) =>
       </ul>
     </section>
   )}
+  </KitTable>
 
   {/* The unplaced sibling — a data-quality report, never a jurisdiction
       (K4 §5.2; excluded from the count above). */}
