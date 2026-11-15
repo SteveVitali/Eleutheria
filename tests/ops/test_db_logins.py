@@ -24,6 +24,8 @@ from ops.db_logins import (
     QUEUED,
     ROLES,
     SIG_AUDIT,
+    SIG_INTAKE_RECEIVER_LOGIN,
+    SIG_INTAKE_REVIEWER_LOGIN,
     SIG_RECOVERY_LOGIN,
     apply_role,
     resolve_role,
@@ -102,9 +104,65 @@ def test_resolve_role_is_a_closed_map() -> None:
     assert resolve_role("sig_audit") is SIG_AUDIT
     assert resolve_role("sig_recovery") is SIG_RECOVERY_LOGIN
     assert resolve_role("sig_recovery_login") is SIG_RECOVERY_LOGIN
-    for bad in ("postgres", "sig_materialize", "sig_read_public", ""):
+    assert resolve_role("sig_intake_receiver") is SIG_INTAKE_RECEIVER_LOGIN
+    assert resolve_role("sig_intake_receiver_login") is SIG_INTAKE_RECEIVER_LOGIN
+    assert resolve_role("sig_intake_reviewer") is SIG_INTAKE_REVIEWER_LOGIN
+    assert resolve_role("sig_intake_reviewer_login") is SIG_INTAKE_REVIEWER_LOGIN
+    for bad in ("postgres", "sig_materialize", "sig_read_public", "sig_intake_bridge", ""):
         with pytest.raises(ValueError):
             resolve_role(bad)
+
+
+def test_intake_logins_join_the_nologin_groups_catalog_only() -> None:
+    """P37.59: the two intake credentials are members of the P32.16 NOLOGIN
+    groups, catalog-only (never a table grant), and queue while the group is
+    absent (requires_roles)."""
+    recv = SIG_INTAKE_RECEIVER_LOGIN
+    assert recv.name == "sig_intake_receiver_login"
+    stmts = "\n".join(recv.statements)
+    assert "CREATE ROLE sig_intake_receiver_login LOGIN" in stmts
+    assert "GRANT sig_intake_receiver TO sig_intake_receiver_login" in stmts
+    assert "GRANT sig_intake_receiver " in stmts  # the group, not the login
+    assert recv.requires_roles == ("sig_intake_receiver",)
+    assert recv.memberships == ("sig_intake_receiver",)
+    assert recv.connection_limit == 4
+    assert recv.secret_name == "sig-intake-receiver-password"
+    assert recv.consumer_sa == "sig-intake-rt"
+    assert recv.password_env == "SIG_INTAKE_RECEIVER_PASSWORD"
+    assert recv.select_tables == ("intake.report_public",)
+    for probe in recv.write_refusal_probes:
+        assert probe.lstrip().split()[0] in {"INSERT", "UPDATE", "DELETE", "CREATE", "DROP"}
+    # Canonical writes are among the refused probes.
+    assert any("claim" in p for p in recv.write_refusal_probes)
+
+    rev = SIG_INTAKE_REVIEWER_LOGIN
+    assert rev.name == "sig_intake_reviewer_login"
+    rstmts = "\n".join(rev.statements)
+    assert "CREATE ROLE sig_intake_reviewer_login LOGIN" in rstmts
+    assert "GRANT sig_intake_reviewer TO sig_intake_reviewer_login" in rstmts
+    assert rev.requires_roles == ("sig_intake_reviewer",)
+    assert rev.memberships == ("sig_intake_reviewer",)
+    assert rev.connection_limit == 2
+    assert rev.secret_name == "sig-intake-reviewer-password"
+    assert rev.consumer_sa == "operator"  # the loopback path, never an SA
+    assert set(rev.select_tables) == {
+        "intake.report",
+        "intake.reporter_contact",
+        "intake.receipt",
+        "intake.event",
+    }
+    # The reviewer cannot mint a report — the refusal probes include one.
+    assert any("INSERT INTO intake.report" in p for p in rev.write_refusal_probes)
+
+
+def test_intake_apply_queues_without_the_intake_groups() -> None:
+    conn = _FakeConn(existing={"sig_read_public"})
+    assert apply_role(conn, SIG_INTAKE_RECEIVER_LOGIN, dry_run=False) == QUEUED
+    assert apply_role(conn, SIG_INTAKE_REVIEWER_LOGIN, dry_run=False) == QUEUED
+    assert not any(s.startswith("CREATE ROLE") for s in conn.ran)
+    conn2 = _FakeConn(existing={"sig_intake_receiver", "sig_intake_reviewer"})
+    assert apply_role(conn2, SIG_INTAKE_RECEIVER_LOGIN, dry_run=False) == 0
+    assert "CREATE ROLE sig_intake_receiver_login" in "\n".join(conn2.ran)
 
 
 def test_apply_queues_when_the_group_role_is_absent() -> None:

@@ -101,7 +101,13 @@ of the application; the deployment proves the rest:
 
 - **DB logins**: create the receiver login, `GRANT sig_intake_receiver TO
   <login>`; reviewer login → `GRANT sig_intake_reviewer`. (The roles are
-  NOLOGIN groups by design.)
+  NOLOGIN groups by design.) P37.59 lands the named machinery for exactly
+  this — `ops/gcp/db-logins.sh --role sig_intake_receiver|sig_intake_reviewer`
+  over the `sig_intake_receiver_login` / `sig_intake_reviewer_login`
+  catalog-only declarations (generated passwords to Secret Manager only,
+  HG-09/ADR-202; `apply` queues with exit 42 while a group is absent) — and
+  every leg stays `prepared_not_executed`: the create/apply/verify runs are
+  the operator's, never this ticket's dispatch.
 - **Infra log retention**: load balancer / proxy / monitoring / platform
   logs may hold IP+UA outside app control. Enumerate them, pin retention,
   and record the exclusions before claiming "no durable network
@@ -164,3 +170,63 @@ claim to solve in-app.
   every public mention keeps that sentence.
 - `D-R10-PUBLISH-1` remains **OPEN**; engineering readiness (tests green,
   schema deployed) is *not* public-exposure authorization.
+
+## 12. Intake is e-mail-first (Q-27/OD-08 [B-8])
+
+The operator answered [B-8] *"Email, no time promises"*: corrections today
+go to the operator's mailbox, and the receiver — even once deployed —
+changes no public promise. The rules that answer carries into every
+surface:
+
+- Public copy directs reports to e-mail and may state the receiver is
+  **built, not operating**; it may **never** promise anonymity (§7's honest
+  line stands) and **never** promise a response time, an SLA, or even that
+  a report will be read — `[intake].staffed` is `false` and no rotation
+  exists to promise from.
+- The dark deploy (§13) does not relax any of this: a service that answers
+  `503 receiver_not_operating` is not an intake channel, and no page may
+  link, form-post, or otherwise point at it.
+- The e-mail path itself carries no packet-grade guarantees — it is the
+  operator's mailbox, not the receiver's schema, and public copy must not
+  borrow the receiver's "no durable identifiers" properties for it.
+
+## 13. The dark deployment posture (P37.59)
+
+The named mutation of P37.59 — *the dark intake-service deploy (receiver
+not operating; loopback only, no exposure)* — is staged in
+`ops/gcp/intake-roll.sh` (`--check`/`--apply`/`--verify`, windowed AR-3 +
+AR-2, prepared_not_executed under `live_verification=false`). Its declared
+shape, single-sourced in `ops/src/ops/intake_operation.py`
+(`sig-ops intake-op plan`):
+
+- `sig-intake` runs the **same serving image digest as `sig-api`** (read
+  back at apply time — deploy-by-digest, ADR-111) under the dedicated
+  least-privilege runtime identity `sig-intake-rt` (Cloud SQL client +
+  accessor on the three mounted secrets only).
+- `SIG_INTAKE_ENABLED=1` mounts the surface so it answers the honest
+  `503 receiver_not_operating`; `SIG_INTAKE_OPERATIONAL` is **never** set —
+  the env gate's armed side stays the exposure path's act, not a deploy
+  flag.
+- `--no-allow-unauthenticated` + `--ingress internal` admit only
+  GCP-internal paths; the `/intake/*` URL-map rule in `ops/lb_routes.toml`
+  stays `enabled = false` and the `sig-intake-backend` backend's logging is
+  declared **off** for whenever it may exist — never this row.
+- The `_Default` log sink carries the exclusion
+  `sig-intake-request-logs`, scoped by `log_id` to the Cloud Run
+  **requests** stream alone — the platform-side IP+UA carrier (§7's
+  infra-side exclusion, declared). Application stdout/stderr — receipt ids
+  only — stays logged.
+- Secrets are Secret Manager mounts (`sig-intake-receiver-password`,
+  `sig-intake-form-secret`, `sig-intake-abuse-secret`); a missing declared
+  name **queues** the leg (exit 42) — the shape is applied whole or not at
+  all.
+- Recorded disclosures the "no durable network identifiers" claim needs
+  outside app control: the monthly full-database `gcloud sql export`
+  (`ops/gcp/logical-export.sh`, private `pg/monthly/*`, 100-day object
+  lifecycle) and the instance's automated backups/PITR carry the intake
+  schema under their own retention — §8's schedule applies to live rows;
+  the honest text says **bounded copies, never "no copies"**.
+
+Until the §1 gate is green and the operator runs the apply, the service
+does not exist; the verify leg reads absent → `not_evaluable`, and no
+record claims otherwise.

@@ -1,0 +1,22 @@
+{
+  "apiVersion": "serving.knative.dev/v1",
+  "kind": "Service",
+  "metadata": {"name": "sig-intake"},
+  "spec": {
+    "template": {
+      "metadata": {"name": "sig-intake-00003-xqa"},
+      "spec": {
+        "serviceAccountName": "12345-compute@developer.gserviceaccount.com",
+        "containers": [
+          {
+            "image": "us-central1-docker.pkg.dev/sig-test-project/sig/sig-api@sha256:40a47da8cccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          }
+        ]
+      }
+    }
+  },
+  "status": {
+    "latestReadyRevisionName": "sig-intake-00003-xqa",
+    "url": "https://sig-intake-aaaaaaaaaa-uc.a.run.app"
+  }
+}

@@ -55,6 +55,7 @@ SHELL_SCRIPTS = [
     "partner-name-audit.sh",
     "rate-limit-enforcement.sh",
     "search-v2-roll.sh",
+    "intake-roll.sh",
 ]
 EXECUTABLE_SCRIPTS = [
     "provision.sh",
@@ -83,6 +84,7 @@ EXECUTABLE_SCRIPTS = [
     "rate-limit-enforcement.sh",
     "search-v2-roll.sh",
     "parser-canary.sh",
+    "intake-roll.sh",
 ]
 
 
@@ -119,6 +121,10 @@ def test_check_dry_run_is_green_without_adc(script: str) -> None:
         # `now` outside every declared window so the plan path runs
         # deterministically at any wall-clock time.
         env["SIG_SEARCHV2_NOW"] = "2026-10-20T12:00:00Z"
+    if script == "intake-roll.sh":
+        # Same AR-3 window-guard seam — the dark deploy's legs carry the
+        # daily freeze + batch windows; pin `now` outside all of them.
+        env["SIG_INTAKE_NOW"] = "2026-10-20T12:00:00Z"
     proc = subprocess.run(
         ["bash", str(GCP_DIR / script), "--check"],
         capture_output=True,

@@ -378,6 +378,10 @@ is their creation, which is not a rotation; `unknown` is the honest cell.
 | `sig-audit-password` | operator | `sig-quality-probe-rt` | `unknown` | P34.43 DB-login credential (HG-09/ADR-202): stdin version-add, next quality-probe execution |
 | `sig-recovery-password` | operator | `sig-quality-probe-rt` | `unknown` | as `sig-audit-password` |
 | `sig-er-rerun-password` | operator | `sig-quality-probe-rt` | `unknown` | the OM-20 write-capable credential — its use legs stay human-run by pre-authorization, rotate the same way |
+| `sig-intake-receiver-password` | operator | `sig-intake-rt` | `unknown` | P37.59 DB-login credential (HG-09/ADR-202): created by `ops/gcp/db-logins.sh --role sig_intake_receiver apply credential` (still `prepared_not_executed`); stdin version-add, next `sig-intake` revision mounts it as `SIG_INTAKE_DB_PASSWORD` |
+| `sig-intake-reviewer-password` | operator | `operator` | `unknown` | P37.59 DB-login credential: the loopback curation + intake-purge path's login — a human-held consumer, never a runtime accessor; same stdin version-add form |
+| `sig-intake-form-secret` | operator | `sig-intake-rt` | `unknown` | P37.59 operating-gate secret: mounted on `sig-intake` as `SIG_INTAKE_FORM_SECRET`; operator-provisioned (D-P32.16-1), the leg queues while absent |
+| `sig-intake-abuse-secret` | operator | `sig-intake-rt` | `unknown` | as `sig-intake-form-secret` — mounted as `SIG_INTAKE_ABUSE_SECRET` |
 
 Owners are `operator` throughout because every row's ultimate holder is the
 operator (the upstream-issued keys sit on operator-held upstream accounts).
@@ -738,6 +742,55 @@ The emitted decision entry
 records the category and date, never the content. A claim any recorded
 decision references is refused (suppress instead, SIG-GOV-007); a claim and
 its correction purge together only when the go names both.
+
+## 15. Intake moderation (the dark receiver)
+
+*Labels: the deploy leg is `human/operator-only` and stays
+`prepared_not_executed` (P37.59 engineering only landed the leg); the
+`--check` plans are engineered/local, offline.*
+
+Q-27/OD-08 [B-8] answered *"Email, no time promises"*: intake is
+e-mail-only — public copy directs corrections to the operator's mailbox and
+makes **no** anonymity or response-time promise. The receiver service
+(`sig-intake`) deploys **dark**: `SIG_INTAKE_ENABLED=1` mounts the surface
+so it answers the honest `503 receiver_not_operating`;
+`SIG_INTAKE_OPERATIONAL` is never set by the deploy (accepting reports is
+the exposure path's act — `[intake].operational`, a named owner, and a
+staffed rotation are all operator prerequisites, D-P32.16-1). Ingress is
+`internal` with `--no-allow-unauthenticated`; the `/intake/*` URL-map rule
+stays `enabled = false` — nothing off the GCP internal path reaches it.
+
+The committed declaration prints offline:
+
+```bash
+uv run python -m ops intake-op plan
+```
+
+The windowed leg runner (check = plan-only, no ADC; the apply stays the
+operator's re-run under P37.59's `live_verification=true` prompt):
+
+```bash
+bash ops/gcp/intake-roll.sh --check
+bash ops/gcp/intake-roll.sh --check deploy
+```
+
+The two least-privilege DB logins the packet's §7 names (catalog-only;
+`apply` queues — exit 42 — while the `sig_intake_receiver` /
+`sig_intake_reviewer` NOLOGIN groups are absent):
+
+```bash
+bash ops/gcp/db-logins.sh --check apply --role sig_intake_receiver
+bash ops/gcp/db-logins.sh --check apply --role sig_intake_reviewer
+```
+
+Moderation itself, once an operator opens intake, is a separate
+loopback-only process (`sig-api serve-intake`'s sibling surface on
+localhost); it is never deployed as a service and never bound off
+loopback. The receiver keeps only allowlisted fields, the receipt/token
+digests, and the append-only event log — no IPs, no user-agents, no
+status tokens, no upload bodies. The `_Default`-sink exclusion drops the
+Cloud Run *request* stream (the platform-side IP+UA carrier); app
+stdout/stderr — receipt ids only — stays logged.
 
 ## Verifying this runbook
 

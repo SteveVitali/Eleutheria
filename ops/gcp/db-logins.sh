@@ -34,6 +34,15 @@
 # statements live in db/deploy/audit_login.sql so a hosted spine the leg ran
 # early on converges at P34.46's deploy.
 #
+# P37.59 (G2 step 6 / ACT-23, D-P32.16-1) adds the two intake credentials the
+# operating packet §7 names — `--role sig_intake_receiver` (membership in the
+# sig_intake_receiver NOLOGIN group; the sig-intake service's login) and
+# `--role sig_intake_reviewer` (membership in sig_intake_reviewer; the
+# loopback moderation path's login). The intake groups ship in the
+# intake_storage deploy; `apply` queues (exit 42) while either is absent.
+# Every intake leg stays prepared_not_executed — its re-run prompt is
+# P37.59's live_verification=true dispatch.
+#
 #   ./db-logins.sh --check [action]            # (default) plan-only: NO ADC,
 #                                              # NO network, NO proxy.
 #   ./db-logins.sh --apply <action> [--role r] # windowed + operator ADC.
@@ -88,7 +97,7 @@ case "${1:-}" in
     shift || true
     ;;
 esac
-# Remaining args: [--role <sig_audit|sig_recovery>] [state-dir]
+# Remaining args: [--role <sig_audit|sig_recovery|sig_materialize_login|sig_intake_receiver|sig_intake_reviewer>] [state-dir]
 while [ $# -gt 0 ]; do
   case "$1" in
     --role) ROLE="${2:?--role needs a value}"; shift 2 ;;
@@ -105,13 +114,26 @@ case "${ROLE}" in
                           ROLE_NAME="${SIG_DB_ROLE_RECOVERY}"; SECRET="${SIG_SECRET_RECOVERY_PASSWORD}"; PASSWORD_ENV="SIG_RECOVERY_PASSWORD" ;;
   sig_materialize_login|sig_er_rerun)
                           ROLE_NAME="${SIG_DB_ROLE_MATERIALIZE_LOGIN}"; SECRET="${SIG_SECRET_ER_RERUN_PASSWORD}"; PASSWORD_ENV="SIG_ER_RERUN_PASSWORD" ;;
-  *) _log "usage: --role sig_audit|sig_recovery|sig_materialize_login" >&2; exit 64 ;;
+  sig_intake_receiver|sig_intake_receiver_login)
+                          # P37.59 (G2 step 6 / ACT-23): the receiver service's
+                          # credential — member of sig_intake_receiver; the
+                          # leg stays prepared_not_executed (D-P32.16-1).
+                          ROLE_NAME="${SIG_DB_ROLE_INTAKE_RECEIVER}"; SECRET="${SIG_SECRET_INTAKE_RECEIVER_PASSWORD}"; PASSWORD_ENV="SIG_INTAKE_RECEIVER_PASSWORD" ;;
+  sig_intake_reviewer|sig_intake_reviewer_login)
+                          # P37.59: the loopback moderation surface's
+                          # credential — member of sig_intake_reviewer.
+                          ROLE_NAME="${SIG_DB_ROLE_INTAKE_REVIEWER}"; SECRET="${SIG_SECRET_INTAKE_REVIEWER_PASSWORD}"; PASSWORD_ENV="SIG_INTAKE_REVIEWER_PASSWORD" ;;
+  *) _log "usage: --role sig_audit|sig_recovery|sig_materialize_login|sig_intake_receiver|sig_intake_reviewer" >&2; exit 64 ;;
 esac
 
 _repo="$(cd "${_here}/../.." && pwd)"
 : "${SIG_PROXY_PORT:=5433}"
 
 RERUN='implement-spec spec=docs/tickets/253_P34.43__execution-host-and-least-privilege-db-logins.md live_verification=true'
+case "${ROLE_NAME}" in
+  sig_intake_receiver_login|sig_intake_reviewer_login)
+    RERUN='implement-spec spec=docs/tickets/487_P37.59__intake-operation-dark.md live_verification=true' ;;
+esac
 
 _sigops() {
   (cd "${_repo}" && uv run --quiet sig-ops "$@")
@@ -410,7 +432,7 @@ case "${ACTION}" in
     do_apply
     do_credential
     do_verify ;;
-  *) _log "usage: $(basename "$0") [--check|--apply|--verify] [--role sig_audit|sig_recovery] [prestate|backup|apply|credential|verify|rollback|all] [state-dir]" >&2; exit 64 ;;
+  *) _log "usage: $(basename "$0") [--check|--apply|--verify] [--role sig_audit|sig_recovery|sig_materialize_login|sig_intake_receiver|sig_intake_reviewer] [prestate|backup|apply|credential|verify|rollback|all] [state-dir]" >&2; exit 64 ;;
 esac
 
 if [ "${SIG_GCP_MODE}" = "check" ]; then

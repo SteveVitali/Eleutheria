@@ -66,6 +66,16 @@ id = "sig-alerts-rt"
 display_name = "sig-alerts runtime"
 purpose = "the alert receiver's own identity — no project roles; accessor on its own sig-alert-webhook-token only (the service mounts it as env SIG_ALERT_WEBHOOK_TOKEN — the live leg-1 finding; D-P34.42a-1 option (a), operator-approved 2026-10-14)"
 
+# P37.59 (G2 step 6 / ACT-23, AR-8): the dark sig-intake receiver's own
+# identity — Cloud SQL client + accessor on the three service-mounted intake
+# secrets only; the receiver's writer guard + role isolation do the rest.
+# Created by the leg's `sa` action (ops/gcp/intake-roll.sh), which stays
+# prepared_not_executed until the live_verification=true re-run.
+[[service_account]]
+id = "sig-intake-rt"
+display_name = "sig-intake runtime"
+purpose = "the dark correction receiver's own identity (P37.59) — Cloud SQL client + accessor on sig-intake-receiver-password + the two gate secrets; nothing else (never public: --no-allow-unauthenticated, internal ingress)"
+
 # --- the job-class runtime identities (P34.42b) --------------------------------
 # One SA per workload CLASS (G1-01); the job→class map is derived from
 # ops/cadence.toml plus the explicit `jobs` lists below — every one of the 98
@@ -176,6 +186,12 @@ role = "roles/cloudsql.client"
 # sig_recovery_login sessions ride the Cloud SQL Auth socket.
 [[project_role]]
 service_account = "sig-quality-probe-rt"
+role = "roles/cloudsql.client"
+
+# P37.59: the receiver's Cloud SQL connector client — its DSN rides the
+# /cloudsql socket; the writer guard + NOLOGIN-group grants bound the rest.
+[[project_role]]
+service_account = "sig-intake-rt"
 role = "roles/cloudsql.client"
 
 # --- bucket-level bindings (bucket names are the -suffixed derived names) -----
@@ -302,6 +318,12 @@ service_account = "sig-web-rt"
 [[service]]
 name = "sig-alerts"
 service_account = "sig-alerts-rt"
+
+# P37.59: the dark receiver — declared now so the service→identity map is
+# single-sourced; the service exists only after the queued deploy leg.
+[[service]]
+name = "sig-intake"
+service_account = "sig-intake-rt"
 
 # --- the job → class map (P34.42b) ---------------------------------------------
 # Membership is RESOLVED against ops/cadence.toml: `sources`/`batches`/`probes`
@@ -543,3 +565,26 @@ consumers = ["sig-quality-probe-rt"]
 [[secret]]
 name = "sig-er-rerun-password"
 consumers = ["sig-quality-probe-rt"]
+
+# P37.59 (D-P32.16-1 / HG-09): the dark receiver's Secret Manager names —
+# declared, no version until the operator provisions them (stdin
+# version-add, never a file). sig-intake-rt mounts all three service-side
+# ones as env (SIG_INTAKE_DB_PASSWORD / SIG_INTAKE_FORM_SECRET /
+# SIG_INTAKE_ABUSE_SECRET); the reviewer password's only reader is the
+# operator's loopback curation + intake-purge path (symbolic `operator`,
+# never an SA binding).
+[[secret]]
+name = "sig-intake-receiver-password"
+consumers = ["sig-intake-rt"]
+
+[[secret]]
+name = "sig-intake-reviewer-password"
+consumers = ["operator"]
+
+[[secret]]
+name = "sig-intake-form-secret"
+consumers = ["sig-intake-rt"]
+
+[[secret]]
+name = "sig-intake-abuse-secret"
+consumers = ["sig-intake-rt"]
