@@ -2857,6 +2857,18 @@ def _route_targets(staged: Path) -> Iterator[tuple[str, str, str, str]]:
                 stub_dir.relative_to(staged).as_posix().rstrip("/"),
                 "page",
             )
+    # P37.36 (TX-12 / SIG-TRANSP-020): a raw-archive object staged under
+    # ``raw/<multihash>`` is a denyable file route — a ``release_artifact``
+    # disposition naming ``raw/<multihash>`` deletes the object from the
+    # staged web origin and takes its route with the 410 tombstone (J3 §9.2:
+    # delete + purge + tombstone; the mirror/origin object delete is the
+    # rehearsal's leg, never a rewrite of the immutable tree).
+    raw_root = staged / "raw"
+    if raw_root.is_dir():
+        for obj in sorted(raw_root.iterdir()):
+            if obj.is_file() and obj.name != "index.json":
+                rel = obj.relative_to(staged).as_posix()
+                yield ("release_artifact", rel, rel, "file")
 
 
 # --------------------------------------------------------------------------- #
@@ -3116,6 +3128,11 @@ def apply_withdrawals(
             continue
         eff = _eff(kind, tid)
         if eff is None:
+            continue
+        # P37.36: a ``raw/<multihash>`` object deny is the file route only —
+        # it is not a publication id, so the release namespaces below do
+        # not apply (``_route_targets`` already denied ``raw/<digest>``).
+        if tid.startswith("raw/"):
             continue
         for base in (f"r/{tid}", f"releases/{tid}", f"s/{tid}", f"v/{tid}"):
             for path in staged.glob(f"{base}/**/*"):

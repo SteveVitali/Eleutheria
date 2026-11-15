@@ -1716,3 +1716,20 @@ rerun_cell = '''implement-spec spec=docs/tickets/444_P37.20__release-pinned-bbox
   excluded = ["03:00-06:30Z", "day6T00:00Z-day13T12:00Z"]
   go = '''verbatim-go: `SIG_BBOX_AUTHOR`'''
   rerun = '''none'''
+[[row]]
+key = "P37.36"
+kind = "leg"
+obligations = []
+obligations_cell = '''raw-ok archive write leg: raw/<multihash> + raw/index.json over the `hosted` store (P8 screen, reserialisation as new captures) → mirror/origin push → withdrawal rehearsal'''
+gates_cell = '''`hosted` archive write + publish; NEVER pre-authorised (OM-20, Part VIII-screened families) — operator explicit verbatim go only; AR-3+AR-2 (x 03:00-06:30Z + AR-3 batch windows); exposure rides P37.65 HG-11'''
+operator_cell = '''the operator's verbatim go (SIG_RAWARCHIVE_AUTHOR env-only), ADC + SIG_GCP_PROJECT present; kill switch = R2_MIRROR_RUNBOOK.md'''
+rerun_cell = '''`implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` (archive write + push + rehearsal)'''
+
+  [[row.legs]]
+  id = "P37.36-archive-write"
+  obligations = []
+  earliest = '''the operator's explicit verbatim go — never pre-authorised (OM-20); inside AR-3 + AR-2'''
+  excluded = ["x 03:00-06:30Z", "AR-3 batch windows"]
+  go = '''verbatim-go: operator explicit verbatim go (never pre-authorised, OM-20) — SIG_RAWARCHIVE_AUTHOR'''
+  rerun = '''implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true'''
+  live_dependants = ["P37.65a", "P37.65b"]

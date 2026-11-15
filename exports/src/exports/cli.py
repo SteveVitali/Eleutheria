@@ -332,6 +332,26 @@ def build_parser() -> argparse.ArgumentParser:
         help="Egress provider for the SIG-EXPORT-008 gate (default cloudflare-r2, zero-egress).",
     )
 
+    raw_arch = subparsers.add_parser(
+        "raw-archive",
+        help="P37.36 (TX-12 / SIG-TRANSP-020): the raw-ok archive lane — "
+        "build raw/<multihash> objects + raw/index.json for raw-ok sources "
+        "after the Part VIII byte screen.",
+    )
+    rasub = raw_arch.add_subparsers(dest="verb", required=True)
+    rab = rasub.add_parser("build", help="Build the raw archive over a capture set.")
+    rab.add_argument("--captures", required=True, help="JSONL of capture rows.")
+    rab.add_argument("--lanes", required=True, help="JSON map source_id → {lane, part_viii_class}.")
+    rab.add_argument(
+        "--bytes", dest="bytes_dir", required=True, help="Directory of digest-named byte objects."
+    )
+    rab.add_argument(
+        "--declaration",
+        default=None,
+        help="sig.at-rest-audit-decl/1 TOML (default ops/at_rest_audit.toml).",
+    )
+    rab.add_argument("-o", "--out", required=True, help="Output dir for raw/ + raw/index.json.")
+
     release = subparsers.add_parser(
         "release",
         help="P32.13 (SIG-FIND-001/002): immutable release namespaces, record "
@@ -1714,6 +1734,56 @@ def main(argv: list[str] | None = None) -> int:
             if report["failures"]:
                 return 3
             return 0 if report["signed"] else 4
+
+    if args.command == "raw-archive":
+        if args.verb == "build":
+            import json as _j
+            import tomllib as _t
+            from pathlib import Path as _P
+
+            from evidence.screen import declaration_from_table
+
+            from .raw_archive import build_archive
+
+            captures = [
+                _j.loads(line)
+                for line in _P(args.captures).read_text().splitlines()
+                if line.strip()
+            ]
+            lanes = _j.loads(_P(args.lanes).read_text())
+            decl_path = (
+                _P(args.declaration)
+                if args.declaration
+                else _P(__file__).resolve().parents[3] / "ops" / "at_rest_audit.toml"
+            )
+            decl = declaration_from_table(_t.loads(decl_path.read_text()), source=str(decl_path))
+            bdir = _P(args.bytes_dir)
+
+            def _read(digest: str) -> bytes | None:
+                for name in (digest, f"{digest}.bin"):
+                    p = bdir / name
+                    if p.is_file():
+                        return p.read_bytes()
+                return None
+
+            result = build_archive(
+                captures,
+                lanes=lanes,
+                read_bytes=_read,
+                decl=decl,
+                out_dir=args.out,
+            )
+            print(
+                _j.dumps(
+                    {
+                        "objects": len(result.entries),
+                        "skipped": len(result.skipped),
+                        "reserialisations": len(result.reserialisations),
+                    },
+                    sort_keys=True,
+                )
+            )
+            return 0
 
     if args.command == "build":
         if args.from_spine:
