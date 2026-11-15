@@ -35,7 +35,7 @@ Run from repo root with `npm --prefix web run <script>` (or from `web/` with `np
 | `npm --prefix web run check:perf` | build + `check:lhci` + `lhci autorun` (fixtures-mode Lighthouse budgets, generated `web/lighthouserc.json`) |
 | `npm --prefix web run check:perf:national` | the national-fixture budget leg (`scripts/ci/national_budget_leg.sh all`): deterministic synthetic corpus → `SIG_DATA_SOURCE=national` build → wire budget suite → national Lighthouse → the SIG-UI-152 visual grid → the operator gallery |
 | `npm --prefix web run check:visual` | the visual-regression leg only (`national_budget_leg.sh visual`): every template × {light,dark} × {1440,390,320} over the national build, canvases masked (P37.60, SIG-UI-152) |
-| `npm --prefix web run test:visual` / `:update` | the visual grid against the current `dist/` (playwright.visual.config.ts; the spec fails loud unless `dist/page-types.json` records `dataSource: "national"`) |
+| `npm --prefix web run test:visual` / `:update` | the visual grid against the current `dist/` (playwright.visual.config.ts; the spec fails loud unless the emitted page-types manifest in `dist/` records `dataSource: "national"`) |
 | `npm --prefix web run gallery:visual` | regenerate the operator gallery under `docs/build/logs/visual-gallery/` (gitignored, never published; sign-off stays the operator's) |
 | `npm --prefix web run dev` / `build` / `preview` | astro dev server / static build / preview |
 
