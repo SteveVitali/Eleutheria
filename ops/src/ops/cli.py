@@ -1837,6 +1837,39 @@ def build_parser() -> argparse.ArgumentParser:
         "--bucket", default=None, help="destination bucket (default: SIG_STATUS_BUCKET)"
     )
 
+    # P37.33 (K7 WX-03, D-K7-2 [B-22] = the lane): the watch lane — emit the
+    # watch/** file set from a sig/watch/2 payload, or emit + push watch/**
+    # through the watch-scoped publish leg (the OM-20 job create is
+    # ops/gcp/watch-publish.sh's, not this verb's).
+    wpub = sub.add_parser(
+        "watch-publish",
+        help="P37.33 (D-K7-2): the daily watch lane — emit "
+        "watch/{state.json,lane.json,watch.json,index.html,place/**,item/**,archive/**} "
+        "from a sig/watch/2 payload at the watch clock (exit 0 ok, 2 refusal, "
+        "42 queued on --apply without the hosted env)",
+    )
+    wpub.add_argument(
+        "--watch", required=True, help="sig/watch/2 payload (exports.watch.build_watch_payload)"
+    )
+    wpub.add_argument(
+        "--release",
+        default=None,
+        help="release.json for the release/as-of label (absent → not_recorded)",
+    )
+    wpub.add_argument(
+        "--lane-time", required=True, help="the lane's watch-checked time (ISO-8601 UTC)"
+    )
+    wpub.add_argument("--out", required=True, help="output directory (watch/** written under it)")
+    wpub.add_argument(
+        "--apply",
+        action="store_true",
+        help="also push watch/** through the scoped publish leg — needs "
+        "SIG_WATCH_BUCKET; without it the leg queues (exit 42)",
+    )
+    wpub.add_argument(
+        "--bucket", default=None, help="destination bucket (default: SIG_WATCH_BUCKET)"
+    )
+
     # P36.44 (REL-07, SIG-REL-011 + SIG-OPS-008; D-G3-4 [B-9] = yes): the
     # release cadence evaluator — the shared drift half the status lane
     # names. `sig-sched-release-cut` invokes this verb (the OM-20 job create
@@ -6544,6 +6577,10 @@ def main(argv: list[str] | None = None) -> int:
         from .status_publish import run_status_publish
 
         return run_status_publish(args)
+    if args.command == "watch-publish":
+        from .watch_publish import run_watch_publish
+
+        return run_watch_publish(args)
     if args.command == "release-cadence":
         from .release_cadence import run_release_cadence
 

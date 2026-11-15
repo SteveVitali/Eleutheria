@@ -1,0 +1,12 @@
+{
+  "schema": "sig.live-leg-packet/1",
+  "ticket": "P37.33",
+  "status": "prepared_not_executed",
+  "named_mutation": "the watch-lane job's scheduled production run (sig-watch-publish job + sig-sched-watch-publish daily trigger + invoker binding; cadence.toml maintenance row enabled in the same commit)",
+  "decision": "D-K7-2 [B-22] = the lane",
+  "authorisation": "GATE-G6 \u00a74 2026-11-05T15:20Z names P37.33 verbatim (\"Approve all 15 (rec.)\"); expires GATE-ACCEPT-R11",
+  "window": "AR-3 + AR-2",
+  "restore_point": "lane job paused \u2014 pause sig-sched-watch-publish, then delete sig-watch-publish (definition removal)",
+  "rerun": "implement-spec spec=docs/tickets/457_P37.33__watch-lane-and-cadence.md live_verification=true",
+  "driver": "ops/gcp/watch-publish.sh --apply"
+}

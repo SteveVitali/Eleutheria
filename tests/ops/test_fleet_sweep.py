@@ -39,7 +39,7 @@ CRONS = [
     ("sig-sched-eyes-on-flock", "0 5 * * 0", "0 5 23 * 0"),
     ("sig-sched-openstates", "0 5 * * 2", "0 5 2 * 2"),
     ("sig-sched-congress-gov", "0 5 3 * *", "0 5 3 * 2"),
-    ("sig-sched-sam-gov", "0 5 * * 1", "0 5 1 * 1"),
+    ("sig-sched-sam-gov", "0 5 * * 1,4", "0 5 1 * 1"),
 ]
 MANUAL = ["sig-export", "sig-materialize", "sig-replay-ingest"]
 
