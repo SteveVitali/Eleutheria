@@ -92,8 +92,9 @@ async function settle(page: Page, path: string): Promise<void> {
  * Measure a set of captured responses: fetch each unique URL's body (the
  * captured response's own body first — a 206 partial stays partial, which is
  * the honest wire byte for data archives — falling back to a fresh GET for
- * cache/redirect bodies Playwright cannot replay) and compress locally for
- * the documented gzip + brotli baselines.
+ * cache/redirect bodies Playwright cannot replay, sent with the original
+ * request's Range header so a partial stays partial on that path too) and
+ * compress locally for the documented gzip + brotli baselines.
  */
 async function measureResponses(
   request: APIRequestContext,
@@ -116,7 +117,14 @@ async function measureResponses(
     }
     if (body === null) {
       try {
-        const fresh = await request.get(c.url);
+        // Replay the request's own byte range: a range read whose body the
+        // browser no longer holds (a tile request the map cancelled mid-body —
+        // net::ERR_ABORTED after its 206 headers) is re-read as the SAME
+        // partial. A Range-less GET would measure the whole archive (147 MB at
+        // national scale) — bytes the page never asked for — and brotli it
+        // synchronously for minutes, past the test timeout.
+        const range = c.response.request().headers()["range"];
+        const fresh = await request.get(c.url, range ? { headers: { range } } : {});
         if (fresh.ok()) body = await fresh.body();
       } catch {
         body = null;
