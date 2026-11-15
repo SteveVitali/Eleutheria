@@ -454,3 +454,79 @@ def test_contract_tasks_dedup_on_subject() -> None:
         now=NOW,
     )
     assert len(res.queue) == 1
+
+
+# --- P37.35 (K11 RQ-02 / D-K11-1): routing table, lanes, predicate_ids, jurisdiction
+
+
+def _field_gap(cid: str, subject: str, predicate: str, *, absence: str = "not_researched") -> dict:
+    return {
+        "coverage_id": cid,
+        "subject_id": subject,
+        "subject_class": "deployment",  # a §32.1 peer-class entity type
+        "jurisdiction_id": None,
+        "predicate_id": predicate,
+        "absence_kind": absence,
+    }
+
+
+def test_routed_predicates_mint_the_new_catalog_types() -> None:
+    res = run_detectors(
+        MaterializedInputs(
+            coverage=[
+                _field_gap("cov1", "s1", "configured_retention_days"),
+                _field_gap("cov2", "s2", "configured_sharing_partner"),
+                _field_gap("cov3", "s3", "seller"),  # procurement → missing_contract
+            ]
+        ),
+        now=NOW,
+    )
+    by = res.summary.by_task_type
+    assert by == {
+        "retention_unknown": 1,
+        "sharing_unknown": 1,
+        "missing_contract": 1,
+    }
+    for task in res.queue:
+        assert task.predicate_ids  # the task records the predicate it seeks
+
+
+def test_campaign_lane_gaps_aggregate_never_task() -> None:
+    res = run_detectors(
+        MaterializedInputs(
+            coverage=[
+                _field_gap("cov1", "cam1", "brand"),
+                _field_gap("cov2", "cam2", "brand"),
+                _field_gap("cov3", "cam3", "camera_latitude"),  # metric lane
+            ]
+        ),
+        now=NOW,
+    )
+    assert res.queue == []  # D-K11-1: no per-object research tasks
+    assert res.summary.campaign_members == 2
+    assert res.summary.metric_only_members == 1
+    assert len(res.campaigns) == 1
+    camp = res.campaigns[0]
+    assert camp.predicate_id == "brand" and camp.subject_class == "deployment"
+    assert camp.member_subjects == ("cam1", "cam2")
+    assert set(res.field_gap_refs) == {"cov1", "cov2", "cov3"}
+
+
+def test_untracked_predicate_keeps_the_fallback() -> None:
+    res = run_detectors(
+        MaterializedInputs(coverage=[_field_gap("cov1", "s1", "procurement_contract")]),
+        now=NOW,
+    )
+    assert res.summary.by_task_type == {"missing_contract": 1}
+
+
+def test_attributed_jurisdiction_reaches_contradiction_and_edge_tasks() -> None:
+    res = run_detectors(
+        MaterializedInputs(
+            contradictions=[_contradiction("c1", "s1", "value_disagreement")],
+            edges=[_edge("r1", "s2", valid_from="2025-01-01T00:00:00+00:00")],
+            jurisdictions={"s1": "jur-e1", "s2": "jur-e2"},
+        ),
+        now=NOW,
+    )
+    assert sorted(t.jurisdiction_id for t in res.queue) == ["jur-e1", "jur-e2"]

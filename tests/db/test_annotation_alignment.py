@@ -183,6 +183,12 @@ PAIRS: list[Pair] = [
             "(tasks.lifecycle.ResearchTask / tasks.research_pg), not reconcile.model.ResearchTask",
             "trigger_ref": "P29.2 trigger citation, nullable; sourced by the detector run "
             "(tasks.lifecycle.ResearchTask / tasks.research_pg), not reconcile.model.ResearchTask",
+            "predicate_ids": "P37.35 RQ-02 predicate set, nullable; sourced by the detector "
+            "run (tasks.lifecycle.ResearchTask.predicate_ids / tasks.research_pg), "
+            "not reconcile.model.ResearchTask",
+            "disposition_reason": "P37.35 RQ-02 supersede reason, nullable; set by the "
+            "detector run's supersede-by-disposition apply (tasks.research_pg), "
+            "not reconcile.model.ResearchTask",
         },
     ),
     Pair(

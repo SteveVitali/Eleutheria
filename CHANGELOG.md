@@ -24,6 +24,18 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Added
 
+- **P37.35 — detector routing + mapping campaigns (K11 RQ-02, SIG-RQ-005/006,
+  D-K11-1):** coverage gaps route through the committed `gap_routing.toml`
+  predicate→task table (retired substring match); catalog rows 35/36 land
+  `retention_unknown`/`sharing_unknown`; `research_task.predicate_ids` records
+  the predicate(s) a task seeks (additive sqitch `research_task_predicates`);
+  contradiction/stale candidates mint their attributed jurisdiction; per-object
+  field gaps aggregate into mapping campaigns from the materialized coverage
+  rows (never individual research tasks), registry-only fields stay coverage
+  metrics; persisted per-camera `coverage_hole` rows supersede by disposition —
+  append-only, never a delete — and closed/superseded rows leave the public
+  queue lanes.
+
 ### Added
 
 - **P37.34 — watch feeds v2 (K7 WX-04b, SIG-WATCH-005, SIG-WATCH-006):** the

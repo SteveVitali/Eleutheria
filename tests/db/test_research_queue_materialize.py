@@ -265,3 +265,112 @@ def test_contract_expiring_materializes_from_contract_claims(conn) -> None:
     summary2, _ = materialize_research_queue(conn, now=NOW)
     assert summary2.written == 0
     assert summary2.skipped_existing == 1
+
+
+# --- P37.35 (K11 RQ-02 / D-K11-1): predicate_ids, jurisdiction, supersede ---
+
+
+def test_predicate_ids_and_routed_types_persist(conn) -> None:
+    """RQ-02: a routed coverage gap writes `predicate_ids`; retention/sharing
+    predicates mint the new catalog types — never missing_contract."""
+    cur = conn.cursor()
+    prereqs = seed_claim_prerequisites(conn)
+    subject = prereqs["subject_id"]
+    from conftest import register_vocab_predicate
+
+    for pred in ("configured_retention_days", "configured_sharing_partner"):
+        register_vocab_predicate(conn, pred)
+        _seed_materialized_coverage(cur, subject=subject, predicate=pred, digest=f"p3735-{pred}")
+
+    summary, _ = materialize_research_queue(conn, now=NOW)
+    assert summary.written == 2
+    rows = cur.execute(
+        "SELECT task_type, predicate_ids FROM research_task ORDER BY task_type"
+    ).fetchall()
+    assert rows == [
+        ("retention_unknown", ["configured_retention_days"]),
+        ("sharing_unknown", ["configured_sharing_partner"]),
+    ]
+
+
+def test_campaign_lane_gap_mints_no_task_and_supersedes_coverage_hole(conn) -> None:
+    """RQ-02: a per-object `brand` gap (campaign lane) mints no research task —
+    it aggregates — and a persisted coverage_hole row citing it supersedes by
+    disposition (append-only: the row stays, status/disposition recorded)."""
+    cur = conn.cursor()
+    prereqs = seed_claim_prerequisites(conn)
+    subject = prereqs["subject_id"]
+    from conftest import register_vocab_predicate
+
+    register_vocab_predicate(conn, "brand")
+    cov_id = _seed_materialized_coverage(
+        cur, subject=subject, predicate="brand", digest="p3735-brand"
+    )
+    # The legacy per-camera row the new routing replaces (pre-RQ-02 mint).
+    cur.execute(
+        "INSERT INTO research_task"
+        "(task_type, subject_id, jurisdiction_id, priority, status, closing_condition,"
+        " detector_version, trigger_kind, trigger_ref) "
+        "VALUES('coverage_hole', %s, NULL, 0.5, 'generated', 'test', 'v0', 'coverage', %s)",
+        (subject, cov_id),
+    )
+
+    summary, _ = materialize_research_queue(conn, now=NOW)
+    assert summary.written == 0  # campaign lane — no task
+    assert summary.superseded == 1
+    row = cur.execute(
+        "SELECT status, disposition, disposition_reason FROM research_task"
+        " WHERE task_type='coverage_hole'"
+    ).fetchone()
+    assert row[0] == "closed" and row[1] == "superseded" and "routing" in row[2]
+    # Idempotent: a re-run supersedes +0 — the closed row is terminal.
+    summary2, _ = materialize_research_queue(conn, now=NOW)
+    assert summary2.superseded == 0
+
+
+def test_contradiction_task_carries_evidenced_jurisdiction(conn) -> None:
+    """RQ-02 / K11 RC-4: a contradiction task mints the subject's evidenced
+    `jurisdiction:`-linked attribution — never None when attributable."""
+    cur = conn.cursor()
+    prereqs = seed_claim_prerequisites(conn)
+    subject = prereqs["subject_id"]
+    claim = insert_claim(conn, prereqs, value_text="30")
+    # A `jurisdiction:`-keyed entity the subject's claim links to.
+    cur.execute("INSERT INTO entity(entity_type) VALUES('jurisdiction') RETURNING entity_id")
+    jur = str(cur.fetchone()[0])
+    cur.execute(
+        "INSERT INTO entity_identifier(entity_id, scheme, value)"
+        " VALUES(%s,'sig.connector.subject',%s)",
+        (jur, "jurisdiction:test-state"),
+    )
+    # The evidenced attribution link: an entity_ref claim on the subject whose
+    # object is the `jurisdiction:`-keyed entity (claims are immutable — a NEW
+    # row, never an UPDATE).
+    cur.execute(
+        "INSERT INTO claim(subject_id,predicate_id,object_type,value_kind,"
+        "object_entity,raw_value,observed_at,source_reliability,"
+        "claim_directness,artifact_integrity,asserted_by,assertion_rationale,"
+        "ingest_run_id,rights_id,sensitivity_tier) "
+        "VALUES(%s,%s,'entity_ref','value',%s,'fixture','2026-05-01T00:00:00Z',"
+        "'R1','D1','I1',%s,'fixture',%s,%s,0)",
+        (
+            subject,
+            prereqs["predicate_id"],
+            jur,
+            prereqs["author_id"],
+            prereqs["run_id"],
+            prereqs["rights_id"],
+        ),
+    )
+    _seed_materialized_contradiction(
+        cur,
+        subject=subject,
+        predicate=prereqs["predicate_id"],
+        claim_ids=[claim],
+        ctype="value_disagreement",
+        digest="p3735-jur",
+    )
+    summary, _ = materialize_research_queue(conn, now=NOW)
+    assert summary.written == 1
+    row = cur.execute("SELECT jurisdiction_id::text FROM research_task").fetchone()
+    assert row[0] == jur

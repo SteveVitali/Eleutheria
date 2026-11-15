@@ -313,7 +313,7 @@ test; rationale templates; `Contradiction`; the workflows of §29.
 ### Phase 10 — Research-task generation
 
 **Acceptance criteria.**
-- [ ] All 34 task types implemented, each with a testable closing condition (the §33.2 catalog enumerates 34: the outline's seven plus the required additions; ADR-040).
+- [ ] All 34 task types implemented, each with a testable closing condition (the §33.2 catalog enumerates 34: the outline's seven plus the required additions; ADR-040). **Round-11 amendment (P37.35; recorded 2026-11-11):** the §33.2 catalog enumerates 36 — rows 35/36 (`retention_unknown`, `sharing_unknown`) landed under K11 RQ-02; the count assertion reads "all 36 task types implemented".
 - [ ] Every contradiction detector maps to a task.
 - [ ] `resolved_no_evidence_exists` writes a `CoverageRecord`.
 - [ ] Tasks auto-invalidate when their detector stops firing.

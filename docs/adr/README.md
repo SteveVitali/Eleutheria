@@ -248,6 +248,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-242](ADR-242-explore-graph-explorer-preact-sigma-runtime-and-network-301.md) | The `/explore/` T2 graph explorer: Preact + sigma runtime, react retirement, and the `/network/` 301 | P37.26 (Round 11 / P37, row 450; SIG-UI-119, SIG-UI-120, SIG-UI-121) | accepted |
 | [ADR-243](ADR-243-sig-activate-in-place-dossier-map-and-deferred-k1-mount.md) | `<sig-activate>`: the sixth kit element and the dossier's deferred K1 mount (P37.29) | P37.29 (K6 VIZ-04, manifest row 453 — on `r11/P37.29-in-place-map-on-dossiers`) | accepted |
 | [ADR-244](ADR-244-dated-decision-predicates-meeting-date-and-the-contract-renewal-triple.md) | Dated decision predicates: `meeting_date` and the Contract renewal triple (P37.31) | P37.31 (K7 WX-02, manifest row 455 — on | accepted |
+| [ADR-245](ADR-245-detector-routing-predicate-table-and-catalog-rows-35-36.md) | Detector routing by the predicate table; catalog rows 35/36; `predicate_ids` + supersede-by-disposition (P37.35) | P37.35 (K11 RQ-02, manifest row 459 — on `r11/P37.35-detector-routing`) | accepted |
 
 ## Notes
 

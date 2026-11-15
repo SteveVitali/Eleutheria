@@ -16,56 +16,54 @@
 #   subject | jurisdiction. `template` names the §36 request-template family a
 #   records-obtainable route drafts from.
 #
-# `route` values may name the RQ-02 catalog-pending types (`retention_unknown`,
-#   `sharing_unknown`) — declared so the detector rewiring lands as data review
-#   there, never a silent route. Today those gaps are recorded as the legacy
-#   substring-driven types; the card names the real predicate regardless.
+# `route` names the asserted task type — the detector (P37.35) mints it
+#   verbatim; `retention_unknown`/`sharing_unknown` are §33.2 rows 35/36.
 #
 # Changes after this declaration are VERSIONED (§20): bump `version`.
 
-version = "1.0.0"
+version = "1.1.0"
 
 # --- agency/records-obtainable gaps → the research lane ------------------------
 
 [[route]]
 predicate = "configured_retention_days"
 lane = "research"
-route = "retention_unknown"        # catalog-pending (RQ-02); today: missing_contract
+route = "retention_unknown"        # §33.2 #35 (P37.35)
 template = "surveillance_policy"
 grain = "subject"
 
 [[route]]
 predicate = "retention_period"
 lane = "research"
-route = "retention_unknown"        # catalog-pending (RQ-02); today: missing_contract
+route = "retention_unknown"        # §33.2 #35 (P37.35)
 template = "surveillance_policy"
 grain = "subject"
 
 [[route]]
 predicate = "configured_sharing_partner"
 lane = "research"
-route = "sharing_unknown"          # catalog-pending (RQ-02); today: missing_contract
+route = "sharing_unknown"          # §33.2 #35 (P37.35)
 template = "data_sharing_agreement"
 grain = "subject"
 
 [[route]]
 predicate = "sharing_partner_degree"
 lane = "research"
-route = "sharing_unknown"          # catalog-pending (RQ-02); today: missing_contract
+route = "sharing_unknown"          # §33.2 #35 (P37.35)
 template = "data_sharing_agreement"
 grain = "subject"
 
 [[route]]
 predicate = "pooled_lookup_participation"
 lane = "research"
-route = "sharing_unknown"          # catalog-pending (RQ-02); today: missing_contract
+route = "sharing_unknown"          # §33.2 #35 (P37.35)
 template = "data_sharing_agreement"
 grain = "subject"
 
 [[route]]
 predicate = "sharing_restriction"
 lane = "research"
-route = "sharing_unknown"          # catalog-pending (RQ-02); today: missing_contract
+route = "sharing_unknown"          # §33.2 #35 (P37.35)
 template = "data_sharing_agreement"
 grain = "subject"
 
@@ -314,7 +312,7 @@ grain = "subject"
 [[route]]
 predicate = "portal_stated_prohibited_use"
 lane = "research"
-route = "retention_unknown"        # policy-document gap; catalog-pending (RQ-02)
+route = "retention_unknown"        # policy-document gap; §33.2 #35 (P37.35)
 template = "surveillance_policy"
 grain = "subject"
 

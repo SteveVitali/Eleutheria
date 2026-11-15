@@ -32,6 +32,7 @@ the summary/artifact; nothing here transmits one.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
@@ -103,6 +104,17 @@ CLOSING_CONDITION_TEXT: dict[str, str] = {
         "window, or a recorded non-renewal), or the recorded end date passes the "
         "firing window"
     ),
+    # P37.35 (K11 RQ-02, SIG-RQ-005): the routing table's two new types name
+    # the subject's own gap — subject-grain wording (RC-6), never "the
+    # jurisdiction".
+    "retention_unknown": (
+        "the subject's retention period or retention policy is evidenced on the "
+        "record, OR a CoverageRecord records the searched absence"
+    ),
+    "sharing_unknown": (
+        "the subject's data-sharing record (partners, degree or restrictions) is "
+        "evidenced on the record, OR a CoverageRecord records the searched absence"
+    ),
 }
 _GENERIC_CLOSING_CONDITION = (
     "the generating detector no longer fires for the subject — the evidence resolving the gap "
@@ -119,6 +131,11 @@ class ResearchQueueSummary:
     written: int = 0
     skipped_existing: int = 0
     skipped_no_entity: int = 0
+    #: P37.35 (K11 RQ-02): persisted rows superseded by disposition — the
+    #: per-camera ``coverage_hole`` rows the campaign/metric lanes replace,
+    #: plus mis-routed rows the new predicate table re-mints (append-only,
+    #: never a delete).
+    superseded: int = 0
     records_request_drafts: int = 0
     records_requests_sent: int = 0  # always 0 — sending is operator-gated (never auto)
 
@@ -128,6 +145,7 @@ class ResearchQueueSummary:
             "written": self.written,
             "skipped_existing": self.skipped_existing,
             "skipped_no_entity": self.skipped_no_entity,
+            "superseded": self.superseded,
             "records_request_drafts": self.records_request_drafts,
             "records_requests_sent": self.records_requests_sent,
             "detector": self.detector,
@@ -165,12 +183,61 @@ def read_materialized_inputs(conn: Any, *, role: str | None = None) -> Materiali
         except Exception:  # noqa: BLE001 - a schema-shape mismatch is honest absence
             return []
 
-    return MaterializedInputs(
+    inputs = MaterializedInputs(
         contradictions=_read("contradiction", read_materialized_contradictions),
         coverage=_read("coverage_record", read_materialized_coverage),
         edges=_read("relationship", read_materialized_edges),
         contracts=read_contract_expiry_inputs(conn),
     )
+    # P37.35 (K11 RC-4): the subject → attributed-jurisdiction map — the
+    # materialized rows carry none, so the task layer resolves the subject's
+    # evidenced jurisdiction link (a `jurisdiction:`-keyed object entity).
+    subjects = {
+        str(r[k])
+        for rows, k in (
+            (inputs.contradictions, "subject_id"),
+            (inputs.coverage, "subject_id"),
+            (inputs.edges, "from_entity"),
+            (inputs.contracts, "subject_id"),
+        )
+        for r in rows
+        if r.get(k)
+    }
+    return MaterializedInputs(
+        contradictions=inputs.contradictions,
+        coverage=inputs.coverage,
+        edges=inputs.edges,
+        contracts=inputs.contracts,
+        jurisdictions=_subject_jurisdictions(conn, subjects),
+    )
+
+
+def _subject_jurisdictions(conn: Any, subject_ids: Iterable[str]) -> dict[str, str]:
+    """subject_id → the attributed jurisdiction entity (P37.35 / K11 §4.3).
+
+    The evidenced link: a currently-valid claim on the subject whose
+    ``object_entity`` is a ``jurisdiction:``-keyed entity — the newest such
+    claim wins (``lower(sys_period) DESC``). A subject with no evidenced link
+    yields no entry — the task mints unplaced (K4), never a guessed place.
+    A schema mismatch degrades to ``{}`` — honest absence.
+    """
+    ids = sorted(s for s in subject_ids if s)
+    if not ids:
+        return {}
+    try:
+        rows = conn.execute(
+            "SELECT DISTINCT ON (c.subject_id) c.subject_id::text, c.object_entity::text"
+            "  FROM claim c"
+            "  JOIN entity_identifier ei ON ei.entity_id = c.object_entity"
+            "   AND ei.scheme = 'sig.connector.subject' AND ei.value LIKE 'jurisdiction:%%'"
+            " WHERE c.subject_id::text = ANY(%s) AND c.object_entity IS NOT NULL"
+            "   AND upper_inf(c.sys_period)"
+            " ORDER BY c.subject_id, lower(c.sys_period) DESC, c.claim_id DESC",
+            (ids,),
+        ).fetchall()
+    except Exception:  # noqa: BLE001 - a schema-shape mismatch is honest absence
+        return {}
+    return {str(s): str(j) for s, j in rows}
 
 
 #: The contract predicates catalog #10 reads — the WX-01 contract surface:
@@ -289,28 +356,125 @@ def _make_resolver(conn: Any, *, jurisdiction_key: str | None) -> Any:
     return resolver
 
 
-def _insert_task(conn: Any, task: ResearchTask) -> bool:
-    """INSERT one queued task, append-only + deduped. Returns True iff a row was written."""
-    closing = CLOSING_CONDITION_TEXT.get(task.task_type, _GENERIC_CLOSING_CONDITION)
+def _has_column(conn: Any, table: str, column: str) -> bool:
+    """True iff ``table.column`` exists (the additive RQ-02 change may not be
+    deployed on an older spine — honest degrade, never a crash)."""
     row = conn.execute(
-        "INSERT INTO research_task "
-        "  (task_type, subject_id, jurisdiction_id, priority, status, closing_condition, "
-        "   detector_version, trigger_kind, trigger_ref) "
-        "VALUES (%s, %s, %s, %s, 'generated', %s, %s, %s, %s) "
-        "ON CONFLICT (task_type, subject_id) DO NOTHING "
-        "RETURNING task_id",
-        (
-            task.task_type,
-            task.subject_id,
-            task.jurisdiction_id,
-            task.priority,
-            closing,
-            task.detector_version,
-            task.trigger_kind,
-            task.trigger_ref,
-        ),
+        "SELECT 1 FROM information_schema.columns "
+        " WHERE table_name = %s AND column_name = %s LIMIT 1",
+        (table, column),
     ).fetchone()
     return bool(row)
+
+
+def _insert_task(conn: Any, task: ResearchTask, *, with_predicates: bool) -> bool:
+    """INSERT one queued task, append-only + deduped. Returns True iff a row was written.
+
+    ``predicate_ids`` (the additive RQ-02 column) records the predicate(s) the
+    task seeks (SIG-RQ-005); on a spine without the column the insert falls
+    back to the pre-change column set — the task still lands.
+    """
+    closing = CLOSING_CONDITION_TEXT.get(task.task_type, _GENERIC_CLOSING_CONDITION)
+    cols = (
+        "  (task_type, subject_id, jurisdiction_id, priority, status, closing_condition, "
+        "   detector_version, trigger_kind, trigger_ref"
+        + (", predicate_ids" if with_predicates else "")
+        + ")"
+    )
+    placeholders = "%s, %s, %s, %s, 'generated', %s, %s, %s, %s" + (
+        ", %s" if with_predicates else ""
+    )
+    params: list[Any] = [
+        task.task_type,
+        task.subject_id,
+        task.jurisdiction_id,
+        task.priority,
+        closing,
+        task.detector_version,
+        task.trigger_kind,
+        task.trigger_ref,
+    ]
+    if with_predicates:
+        params.append(list(task.predicate_ids) or None)
+    row = conn.execute(
+        "INSERT INTO research_task " + cols + " VALUES (" + placeholders + ") "
+        "ON CONFLICT (task_type, subject_id) DO NOTHING "
+        "RETURNING task_id",
+        params,
+    ).fetchone()
+    return bool(row)
+
+
+#: The supersession reason stamped on legacy rows the RQ-02 routing replaces
+#: (K11 §4.1: append-only — a `superseded` disposition with a reason, never a
+#: delete).
+_FIELD_GAP_REASON = (
+    "per-object field gap now routed by the predicate routing table "
+    "(gap_routing.toml / D-K11-1): campaign-lane gaps present as mapping "
+    "campaigns, registry-only gaps as coverage metrics — never individual "
+    "coverage_hole research tasks"
+)
+_REROUTED_REASON = (
+    "coverage gap re-minted under the explicit predicate routing table "
+    "(gap_routing.toml / SIG-RQ-005) — this row's task type was the retired "
+    "substring router's answer, the new task mints under the asserted type"
+)
+
+#: The `research_task` statuses a persisted row may still be superseded from —
+#: an already-closed/invalidated row is terminal and never rewritten.
+_OPEN_TASK_STATUSES = (
+    "generated",
+    "triaged",
+    "claimed",
+    "in_progress",
+    "submitted",
+    "verified",
+    "reopened",
+)
+
+
+def _supersede_rerouted_tasks(
+    conn: Any,
+    *,
+    field_gap_refs: Iterable[str],
+    rerouted_refs: dict[str, str],
+) -> int:
+    """Supersede persisted per-camera rows the RQ-02 routing replaces.
+
+    Two append-only dispositions (the `research_task_predicates` change's
+    column-scoped ``UPDATE`` grant — an EVENT surface, never a delete):
+    every open ``coverage_hole`` row citing a campaign/metric-routed
+    coverage record, and every open row citing a research-lane coverage
+    record whose recorded ``task_type`` is not the table's asserted route.
+    A row already superseded/closed is never touched twice (+0 idempotent).
+    Returns the count superseded; 0 on an older spine lacking the columns.
+    """
+    if not (_has_column(conn, "research_task", "disposition_reason")):
+        return 0
+    refs = sorted(set(field_gap_refs))
+    superseded = 0
+    if refs:
+        rows = conn.execute(
+            "UPDATE research_task"
+            "   SET status = 'closed', disposition = 'superseded', disposition_reason = %s"
+            " WHERE task_type = 'coverage_hole' AND trigger_kind = 'coverage'"
+            "   AND trigger_ref = ANY(%s) AND status = ANY(%s)"
+            "   AND disposition IS NULL"
+            " RETURNING task_id",
+            (_FIELD_GAP_REASON, refs, list(_OPEN_TASK_STATUSES)),
+        ).fetchall()
+        superseded += len(rows)
+    for ref, slug in sorted(rerouted_refs.items()):
+        rows = conn.execute(
+            "UPDATE research_task"
+            "   SET status = 'closed', disposition = 'superseded', disposition_reason = %s"
+            " WHERE trigger_kind = 'coverage' AND trigger_ref = %s"
+            "   AND task_type <> %s AND status = ANY(%s) AND disposition IS NULL"
+            " RETURNING task_id",
+            (_REROUTED_REASON, ref, slug, list(_OPEN_TASK_STATUSES)),
+        ).fetchall()
+        superseded += len(rows)
+    return superseded
 
 
 def materialize_research_queue(
@@ -343,11 +507,17 @@ def materialize_research_queue(
         generated=result.summary.generated,
         records_request_drafts=len(result.drafts),
     )
+    summary.superseded = _supersede_rerouted_tasks(
+        conn,
+        field_gap_refs=result.field_gap_refs,
+        rerouted_refs=result.rerouted_refs,
+    )
+    with_predicates = _has_column(conn, "research_task", "predicate_ids")
     for task in result.queue:
         if not _entity_exists(conn, task.subject_id):
             summary.skipped_no_entity += 1
             continue
-        if _insert_task(conn, task):
+        if _insert_task(conn, task, with_predicates=with_predicates):
             summary.written += 1
         else:
             summary.skipped_existing += 1
