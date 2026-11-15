@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "70e968e874cfedc6097169ea1dd9a1dc1709afb6",
+  "input_commit": "9b467154b0a4d7fd2c3ff16db9af41ddad7f2ef2",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "57c87e20c6a000631db145d120602dfe505dd5c5ada16817abd6f9309e16ca26"
+      "sha256": "4f14c90d3f7e8bb2910dd69bc0d1bca81d84e02ba7a195c46c3eac31b48406d0"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -993,12 +993,16 @@
       "sha256": "d2eb2e729c297a8cbf6ea33d9b47f5cf1e9cd135bfe7510ad6baf106b67b4a90"
     },
     {
+      "path": "docs/adr/ADR-248-sqitch-ddl-is-the-authoritative-physical-schema-and-the-generated-sql-is-documentation-only.md",
+      "sha256": "a282a1ad9ee41ab6943548d8d565e8b44322fedcbf1205d878e87e1ed710dea1"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "7b777bcf15a274074ce710c8996cf2b7e660a13e937898bcef13dd637385948f"
+      "sha256": "258475235f98aee659be9394c05fd82854cacbf3c14102cbf4713b38c77aad83"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "71831cc90f86b2e8aef292377d4cbb2c9c41d4c4794a40358c55526f4085e5c2"
+      "sha256": "1ad37a20b6bdf6692ef5227b45a9d26e86dce4bc3cd9a94ee92b8d0ed696a9f0"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -1006,11 +1010,11 @@
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "4a336289e9357a48a264d05ee16a22f736237d3082dcbad7f8a1f702826a9e4c"
+      "sha256": "10632f8f79685006e00b2050d570cc4cef426bfb863e068f020ee787fe6c0697"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "221e989dceb0b653eeec08ce19d3bad6a1b8fe7de78a21cb74ee809d0215ba39"
+      "sha256": "288fb43cc5ff41bf474feefdfb0bf9e768832eec1318e96f8ea90047fe1f4090"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -2923,6 +2927,10 @@
     {
       "path": "docs/build/runs/P37.57b.md",
       "sha256": "037afaf2b7b082843f2203b6fec81595b178b3383c86ebcda32fa688826946cd"
+    },
+    {
+      "path": "docs/build/runs/P37.58.md",
+      "sha256": "6636415d5cc4de859022ddf1011eba9023918ced047a40cd2bd6634737d09dd0"
     },
     {
       "path": "docs/build/runs/P37.5a.md",

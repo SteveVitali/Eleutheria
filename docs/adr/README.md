@@ -251,6 +251,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-245](ADR-245-detector-routing-predicate-table-and-catalog-rows-35-36.md) | Detector routing by the predicate table; catalog rows 35/36; `predicate_ids` + supersede-by-disposition (P37.35) | P37.35 (K11 RQ-02, manifest row 459 — on `r11/P37.35-detector-routing`) | accepted |
 | [ADR-246](ADR-246-claim-viewer-v2-generation-cap-excerpt-and-download-pane.md) | Claim viewer v2: document-genre scope, the download pane, the excerpt gate, and `quotation_permitted` (P37.37) | P37.37 (K8 EV-03, manifest row 461 — on `r11/P37.37-claim-viewer-v2`) | accepted |
 | [ADR-247](ADR-247-wacz-capture-for-html-document-jobs.md) | WACZ capture for the HTML-document jobs: a deterministic packager default, the `wacz` cadence declaration, and the named job set (P37.56) | P37.56 (R11-TRANS-02, BL-026 — on `r11/P37.56-wacz-capture-html-sources`) | accepted |
+| [ADR-248](ADR-248-sqitch-ddl-is-the-authoritative-physical-schema-and-the-generated-sql-is-documentation-only.md) | Sqitch DDL is the authoritative physical schema; the generated `sig.sql` is documentation only (P37.58) | P37.58 (R11-DEBT-02, BL-049 — manifest row 486 — on `r11/P37.58-schema-conformance`) | accepted |
 
 ## Notes
 
