@@ -68,7 +68,13 @@ for (const f of baselines) {
 if (existsSync(RESULTS)) {
   for (const dir of readdirSync(RESULTS)) {
     const d = join(RESULTS, dir);
-    for (const f of readdirSync(d)) {
+    let files;
+    try {
+      files = readdirSync(d);
+    } catch {
+      continue; // .last-run.json and other non-directory entries
+    }
+    for (const f of files) {
       const m = f.match(/^(.+)--(light|dark)-(1440|390|320)-(actual|diff)\.png$/);
       if (!m) continue;
       const [, group, theme, vp, kind] = m;

@@ -128,11 +128,11 @@
     },
     "component-kit--dark-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "component-kit--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "component-kit--light-1440.png": {
       "ticket": "P37.60",
@@ -140,11 +140,11 @@
     },
     "component-kit--light-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "component-kit--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "contribution-back--dark-1440.png": {
       "ticket": "P37.60",
@@ -156,7 +156,7 @@
     },
     "contribution-back--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "contribution-back--light-1440.png": {
       "ticket": "P37.60",
@@ -168,7 +168,7 @@
     },
     "contribution-back--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "corrections--dark-1440.png": {
       "ticket": "P37.60",
@@ -300,7 +300,7 @@
     },
     "curate-revert--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "curate-revert--light-1440.png": {
       "ticket": "P37.60",
@@ -316,7 +316,7 @@
     },
     "curate-submit--dark-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "curate-submit--dark-320.png": {
       "ticket": "P37.60",
@@ -328,7 +328,7 @@
     },
     "curate-submit--light-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "curate-submit--light-320.png": {
       "ticket": "P37.60",
@@ -344,11 +344,11 @@
     },
     "curate-tasks--dark-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "curate-tasks--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "curate-tasks--light-1440.png": {
       "ticket": "P37.60",
@@ -356,15 +356,15 @@
     },
     "curate-tasks--light-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "curate-tasks--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-api--dark-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-api--dark-320.png": {
       "ticket": "P37.60",
@@ -372,11 +372,11 @@
     },
     "data-api--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-api--light-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-api--light-320.png": {
       "ticket": "P37.60",
@@ -384,7 +384,7 @@
     },
     "data-api--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-collection--dark-1440.png": {
       "ticket": "P37.60",
@@ -396,7 +396,7 @@
     },
     "data-collection--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-collection--light-1440.png": {
       "ticket": "P37.60",
@@ -408,55 +408,55 @@
     },
     "data-collection--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-dictionary--dark-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-dictionary--dark-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-dictionary--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-dictionary--light-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-dictionary--light-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-dictionary--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-index--dark-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-index--dark-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-index--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-index--light-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-index--light-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "data-index--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "disagreements-index--dark-1440.png": {
       "ticket": "P37.60",
@@ -628,27 +628,27 @@
     },
     "dossier-downloads--dark-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "dossier-downloads--dark-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "dossier-downloads--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "dossier-downloads--light-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "dossier-downloads--light-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "dossier-downloads--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "dossier-index--dark-1440.png": {
       "ticket": "P37.60",
@@ -680,7 +680,7 @@
     },
     "dossier-locality--dark-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "dossier-locality--dark-390.png": {
       "ticket": "P37.60",
@@ -692,7 +692,7 @@
     },
     "dossier-locality--light-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "dossier-locality--light-390.png": {
       "ticket": "P37.60",
@@ -796,7 +796,7 @@
     },
     "enhancement-kit--dark-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "enhancement-kit--dark-320.png": {
       "ticket": "P37.60",
@@ -868,7 +868,7 @@
     },
     "entity-print--dark-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "entity-print--dark-320.png": {
       "ticket": "P37.60",
@@ -876,11 +876,11 @@
     },
     "entity-print--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "entity-print--light-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "entity-print--light-320.png": {
       "ticket": "P37.60",
@@ -888,7 +888,7 @@
     },
     "entity-print--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "entity-type--dark-1440.png": {
       "ticket": "P37.60",
@@ -1016,7 +1016,7 @@
     },
     "evidence-artifact--dark-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "evidence-artifact--dark-390.png": {
       "ticket": "P37.60",
@@ -1060,27 +1060,27 @@
     },
     "evidence-diff--dark-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "evidence-diff--dark-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "evidence-diff--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "evidence-diff--light-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "evidence-diff--light-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "evidence-diff--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "evidence-facet--dark-1440.png": {
       "ticket": "P37.60",
@@ -1156,7 +1156,7 @@
     },
     "explore--dark-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "explore--dark-320.png": {
       "ticket": "P37.60",
@@ -1164,11 +1164,11 @@
     },
     "explore--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "explore--light-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "explore--light-320.png": {
       "ticket": "P37.60",
@@ -1176,7 +1176,7 @@
     },
     "explore--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "glossary--dark-1440.png": {
       "ticket": "P37.60",
@@ -1304,11 +1304,11 @@
     },
     "map--dark-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "map--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "map--light-1440.png": {
       "ticket": "P37.60",
@@ -1316,11 +1316,11 @@
     },
     "map--light-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "map--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "methodology--dark-1440.png": {
       "ticket": "P37.60",
@@ -1372,27 +1372,27 @@
     },
     "releases--dark-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "releases--dark-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "releases--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "releases--light-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "releases--light-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "releases--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "research-dossier--dark-1440.png": {
       "ticket": "P37.60",
@@ -1448,11 +1448,11 @@
     },
     "research-queue-campaign--dark-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "research-queue-campaign--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "research-queue-campaign--light-1440.png": {
       "ticket": "P37.60",
@@ -1460,11 +1460,11 @@
     },
     "research-queue-campaign--light-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "research-queue-campaign--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "research-queue-campaigns--dark-1440.png": {
       "ticket": "P37.60",
@@ -1472,11 +1472,11 @@
     },
     "research-queue-campaigns--dark-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "research-queue-campaigns--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "research-queue-campaigns--light-1440.png": {
       "ticket": "P37.60",
@@ -1488,7 +1488,7 @@
     },
     "research-queue-campaigns--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "research-queue-index--dark-1440.png": {
       "ticket": "P37.60",
@@ -1572,7 +1572,7 @@
     },
     "research-queue-type--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "research-queue-type--light-1440.png": {
       "ticket": "P37.60",
@@ -1584,35 +1584,35 @@
     },
     "research-queue-type--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "search--dark-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "search--dark-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "search--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "search--light-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "search--light-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "search--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "source-capture-changes--dark-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "source-capture-changes--dark-320.png": {
       "ticket": "P37.60",
@@ -1620,11 +1620,11 @@
     },
     "source-capture-changes--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "source-capture-changes--light-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "source-capture-changes--light-320.png": {
       "ticket": "P37.60",
@@ -1632,11 +1632,11 @@
     },
     "source-capture-changes--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "source-captures--dark-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "source-captures--dark-320.png": {
       "ticket": "P37.60",
@@ -1648,7 +1648,7 @@
     },
     "source-captures--light-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "source-captures--light-320.png": {
       "ticket": "P37.60",
@@ -1660,7 +1660,7 @@
     },
     "source-changelog--dark-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "source-changelog--dark-320.png": {
       "ticket": "P37.60",
@@ -1672,7 +1672,7 @@
     },
     "source-changelog--light-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "source-changelog--light-320.png": {
       "ticket": "P37.60",
@@ -1780,7 +1780,7 @@
     },
     "source-versions--dark-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "source-versions--dark-320.png": {
       "ticket": "P37.60",
@@ -1792,7 +1792,7 @@
     },
     "source-versions--light-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "source-versions--light-320.png": {
       "ticket": "P37.60",
@@ -2024,7 +2024,7 @@
     },
     "task--dark-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "task--dark-390.png": {
       "ticket": "P37.60",
@@ -2036,7 +2036,7 @@
     },
     "task--light-320.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "task--light-390.png": {
       "ticket": "P37.60",
@@ -2068,7 +2068,7 @@
     },
     "visual-language--dark-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "visual-language--dark-320.png": {
       "ticket": "P37.60",
@@ -2076,11 +2076,11 @@
     },
     "visual-language--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "visual-language--light-1440.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "visual-language--light-320.png": {
       "ticket": "P37.60",
@@ -2088,7 +2088,7 @@
     },
     "visual-language--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "watch-facet--dark-1440.png": {
       "ticket": "P37.60",
@@ -2124,7 +2124,7 @@
     },
     "watch-feeds--dark-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "watch-feeds--light-1440.png": {
       "ticket": "P37.60",
@@ -2136,7 +2136,7 @@
     },
     "watch-feeds--light-390.png": {
       "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "watch-history--dark-1440.png": {
       "ticket": "P37.60",
