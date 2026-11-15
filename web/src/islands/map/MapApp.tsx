@@ -57,6 +57,7 @@ import {
   workspaceHref2,
 } from "../../lib/workspace-state/index";
 import { citeViewHref, CITE_VIEW_UNBOUND } from "../../lib/workspace-state/cite";
+import { easeOrJumpTo, fitBoundsOrJump } from "../../lib/motion";
 import { withBase } from "../../lib/paths";
 import { useMapWorkspace } from "./workspace";
 import {
@@ -671,7 +672,8 @@ export default function MapApp(props: MapAppProps): JSX.Element {
         ),
       );
       if (!merged) return false;
-      map.fitBounds(
+      fitBoundsOrJump(
+        map,
         [
           [merged[0], merged[1]],
           [merged[2], merged[3]],
@@ -722,7 +724,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
       if (typeof entry.lat === "number" && typeof entry.lon === "number") {
         const map = mapRef.current;
         const z = Math.max(map?.getZoom() ?? 10, 10);
-        map?.easeTo({ center: [entry.lon, entry.lat], zoom: z });
+        if (map) easeOrJumpTo(map, { center: [entry.lon, entry.lat], zoom: z });
         update({ at: { z: Math.round(z), lat: entry.lat, lon: entry.lon } });
         setPlaceChoice(null);
       }
@@ -755,7 +757,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
       const z = Math.max(map.getZoom(), 10);
       const d = viewportDecimals(z);
       const r = (v: number) => Math.round(v * 10 ** d) / 10 ** d;
-      map.easeTo({ center: [coords.lon, coords.lat], zoom: z });
+      easeOrJumpTo(map, { center: [coords.lon, coords.lat], zoom: z });
       update({
         at: { z: Math.round(z), lat: r(coords.lat), lon: r(coords.lon) },
       });
@@ -1615,7 +1617,8 @@ export default function MapApp(props: MapAppProps): JSX.Element {
         setGeoPending(false);
         const map = mapRef.current;
         if (!map) return;
-        map.easeTo(
+        easeOrJumpTo(
+          map,
           myLocationTarget(pos.coords.longitude, pos.coords.latitude, map.getZoom()),
         );
       },
@@ -2177,18 +2180,21 @@ export default function MapApp(props: MapAppProps): JSX.Element {
                           className="sig-map-app__row-main"
                           onClick={() => {
                             if (row.bbox) {
-                              mapRef.current?.fitBounds(
-                                [
-                                  [row.bbox[0], row.bbox[1]],
-                                  [row.bbox[2], row.bbox[3]],
-                                ],
-                                { padding: 40 },
-                              );
+                              if (mapRef.current)
+                                fitBoundsOrJump(
+                                  mapRef.current,
+                                  [
+                                    [row.bbox[0], row.bbox[1]],
+                                    [row.bbox[2], row.bbox[3]],
+                                  ],
+                                  { padding: 40 },
+                                );
                             } else if (row.frame) {
-                              mapRef.current?.easeTo({
-                                center: [row.frame.lon, row.frame.lat],
-                                zoom: row.frame.zoom,
-                              });
+                              if (mapRef.current)
+                                easeOrJumpTo(mapRef.current, {
+                                  center: [row.frame.lon, row.frame.lat],
+                                  zoom: row.frame.zoom,
+                                });
                             }
                           }}
                         >

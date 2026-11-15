@@ -1,0 +1,2238 @@
+{
+  "$comment": "sig.visual-baselines/1 — P37.60 (SIG-UI-152, DR-K14-18): the baseline provenance ledger. Every committed snapshot under tests/visual/visual.spec.ts-snapshots/ MUST appear here with the ticket that authorised it ('a baseline change MUST cite its ticket'). tests/unit/visual-templates.test.ts fails on a png without a row, a row without a png (unless 'pending'), and any ticket not matching P\\d+\\.\\d+.",
+  "schema": "sig.visual-baselines/1",
+  "baselines": {
+    "about--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about-editorial-decisions--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about-editorial-decisions--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about-editorial-decisions--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about-editorial-decisions--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about-editorial-decisions--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about-editorial-decisions--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about-legal-demands--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about-legal-demands--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about-legal-demands--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about-legal-demands--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about-legal-demands--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "about-legal-demands--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "changes-feeds--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "changes-feeds--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "changes-feeds--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "changes-feeds--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "changes-feeds--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "changes-feeds--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "changes-index--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "changes-index--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "changes-index--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "changes-index--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "changes-index--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "changes-index--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "component-kit--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "component-kit--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "component-kit--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "component-kit--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "component-kit--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "component-kit--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "contribution-back--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "contribution-back--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "contribution-back--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "contribution-back--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "contribution-back--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "contribution-back--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "corrections--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "corrections--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "corrections--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "corrections--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "corrections--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "corrections--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "coverage-metrics--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "coverage-metrics--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "coverage-metrics--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "coverage-metrics--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "coverage-metrics--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "coverage-metrics--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-contradictions--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-contradictions--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-contradictions--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-contradictions--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-contradictions--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-contradictions--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-detail--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-detail--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-detail--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-detail--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-detail--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-detail--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-index--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-index--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-index--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-index--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-index--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-index--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-revert--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-revert--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-revert--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-revert--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-revert--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-revert--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-submit--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-submit--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-submit--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-submit--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-submit--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-submit--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-tasks--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-tasks--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-tasks--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-tasks--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-tasks--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "curate-tasks--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-api--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-api--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-api--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-api--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-api--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-api--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-collection--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-collection--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-collection--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-collection--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-collection--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-collection--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-dictionary--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-dictionary--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-dictionary--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-dictionary--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-dictionary--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-dictionary--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-index--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-index--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-index--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-index--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-index--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "data-index--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "disagreements-index--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "disagreements-index--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "disagreements-index--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "disagreements-index--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "disagreements-index--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "disagreements-index--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "disagreements-place--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "disagreements-place--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "disagreements-place--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "disagreements-place--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "disagreements-place--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "disagreements-place--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dispute--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dispute--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dispute--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dispute--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dispute--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dispute--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-admin1--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-admin1--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-admin1--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-admin1--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-admin1--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-admin1--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-az--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-az--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-az--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-az--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-az--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-az--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-by--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-by--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-by--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-by--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-by--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-by--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-country--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-country--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-country--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-country--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-country--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-country--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-downloads--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-downloads--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-downloads--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-downloads--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-downloads--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-downloads--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-index--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-index--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-index--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-index--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-index--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-index--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-locality--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-locality--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-locality--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-locality--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-locality--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-locality--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-print--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-print--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-print--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-print--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-print--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-print--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-sort--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-sort--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-sort--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-sort--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-sort--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-sort--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-sources--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-sources--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-sources--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-sources--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-sources--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "dossier-sources--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "editorial-standards--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "editorial-standards--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "editorial-standards--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "editorial-standards--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "editorial-standards--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "editorial-standards--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "enhancement-kit--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "enhancement-kit--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "enhancement-kit--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "enhancement-kit--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "enhancement-kit--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "enhancement-kit--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-detail--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-detail--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-detail--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-detail--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-detail--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-detail--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-index--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-index--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-index--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-index--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-index--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-index--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-print--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-print--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-print--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-print--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-print--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-print--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-type--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-type--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-type--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-type--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-type--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "entity-type--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-403--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-403--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-403--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-403--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-403--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-403--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-404--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-404--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-404--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-404--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-404--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-404--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-410--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-410--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-410--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-410--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-410--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-410--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-500--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-500--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-500--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-500--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-500--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "error-500--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-artifact--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-artifact--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-artifact--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-artifact--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-artifact--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-artifact--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-claim--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-claim--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-claim--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-claim--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-claim--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-claim--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-diff--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-diff--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-diff--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-diff--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-diff--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-diff--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-facet--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-facet--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-facet--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-facet--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-facet--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-facet--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-index--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-index--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-index--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-index--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-index--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-index--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-stub--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-stub--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-stub--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-stub--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-stub--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "evidence-stub--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "explore--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "explore--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "explore--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "explore--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "explore--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "explore--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "glossary--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "glossary--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "glossary--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "glossary--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "glossary--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "glossary--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "graphs-index--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "graphs-index--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "graphs-index--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "graphs-index--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "graphs-index--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "graphs-index--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "graphs-overview--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "graphs-overview--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "graphs-overview--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "graphs-overview--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "graphs-overview--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "graphs-overview--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "home--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "home--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "home--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "home--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "home--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "home--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "id-stub--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "id-stub--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "id-stub--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "id-stub--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "id-stub--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "id-stub--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "map--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "map--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "map--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "map--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "map--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "map--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "methodology--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "methodology--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "methodology--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "methodology--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "methodology--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "methodology--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "quality--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "quality--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "quality--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "quality--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "quality--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "quality--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "releases--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "releases--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "releases--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "releases--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "releases--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "releases--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-dossier--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-dossier--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-dossier--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-dossier--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-dossier--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-dossier--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-dossier-index--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-dossier-index--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-dossier-index--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-dossier-index--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-dossier-index--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-dossier-index--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-campaign--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-campaign--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-campaign--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-campaign--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-campaign--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-campaign--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-campaigns--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-campaigns--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-campaigns--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-campaigns--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-campaigns--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-campaigns--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-index--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-index--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-index--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-index--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-index--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-index--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-place--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-place--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-place--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-place--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-place--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-place--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-role--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-role--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-role--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-role--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-role--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-role--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-type--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-type--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-type--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-type--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-type--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "research-queue-type--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "search--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "search--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "search--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "search--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "search--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "search--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-capture-changes--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-capture-changes--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-capture-changes--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-capture-changes--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-capture-changes--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-capture-changes--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-captures--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-captures--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-captures--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-captures--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-captures--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-captures--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-changelog--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-changelog--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-changelog--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-changelog--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-changelog--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-changelog--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-dossiers--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-dossiers--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-dossiers--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-dossiers--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-dossiers--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-dossiers--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-entities--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-entities--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-entities--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-entities--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-entities--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-entities--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-page--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-page--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-page--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-page--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-page--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-page--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-runs--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-runs--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-runs--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-runs--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-runs--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-runs--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-versions--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-versions--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-versions--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-versions--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-versions--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "source-versions--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-by--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-by--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-by--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-by--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-by--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-by--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-identifier-changed--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-identifier-changed--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-identifier-changed--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-identifier-changed--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-identifier-changed--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-identifier-changed--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-index--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-index--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-index--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-index--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-index--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-index--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-rights--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-rights--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-rights--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-rights--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-rights--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-rights--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-runs--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-runs--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-runs--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-runs--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-runs--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "sources-runs--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status-issues--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status-issues--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status-issues--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status-issues--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status-issues--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status-issues--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status-sources--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status-sources--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status-sources--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status-sources--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status-sources--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "status-sources--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "style-guide--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "style-guide--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "style-guide--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "style-guide--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "style-guide--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "style-guide--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "task--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "task--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "task--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "task--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "task--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "task--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "terms--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "terms--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "terms--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "terms--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "terms--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "terms--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "visual-language--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "visual-language--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "visual-language--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "visual-language--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "visual-language--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "visual-language--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-facet--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-facet--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-facet--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-facet--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-facet--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-facet--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-feeds--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-feeds--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-feeds--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-feeds--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-feeds--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-feeds--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-history--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-history--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-history--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-history--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-history--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-history--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-index--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-index--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-index--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-index--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-index--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-index--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-item--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-item--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-item--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-item--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-item--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-item--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-place--dark-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-place--dark-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-place--dark-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-place--light-1440.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-place--light-320.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    },
+    "watch-place--light-390.png": {
+      "ticket": "P37.60",
+      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+    }
+  }
+}

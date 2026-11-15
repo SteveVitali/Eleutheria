@@ -623,6 +623,46 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: bash scripts/ci/national_budget_leg.sh lighthouse
 
+      # --- P37.60 (SIG-UI-152, DR-K14-18; K14 §9): the visual-regression grid.
+      # Every template group's representative × {light, dark} × {1440, 390,
+      # 320} over the national build the legs above just produced — canvases
+      # masked (GPU rasterisation is not cross-runner deterministic, R-9),
+      # committed baselines judged at maxDiffPixelRatio 0.01, every baseline
+      # change citing its ticket (tests/visual/baselines.json). The same
+      # command file runs it locally via `npm run check:visual`.
+      - name: Visual regression grid (national build; template × theme × viewport)
+        working-directory: ${{ github.workspace }}
+        run: bash scripts/ci/national_budget_leg.sh visual
+
+      # First-run / drift recovery: the actuals the grid wrote are the
+      # linux-canonical renders — uploaded so an authorised adoption (web/
+      # scripts/visual-adopt-baselines.mjs --ticket …) can commit them with
+      # the ticket cited (SIG-UI-152). Never auto-adopted.
+      - name: Upload visual grid actuals (baseline adoption source)
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: visual-grid-actuals
+          path: web/test-results/
+          if-no-files-found: warn
+
+      # The operator gallery is prepared alongside the run — the self-contained
+      # baseline/actual/diff review page under docs/build/logs/ (the gitignored
+      # subtree, never published; K14 §7's "beautiful" sign-off stays the
+      # operator's — prepared_not_executed). Uploaded as a CI artifact so the
+      # operator can review without a local checkout.
+      - name: Operator visual gallery (prepared_not_executed)
+        if: ${{ !cancelled() }}
+        working-directory: ${{ github.workspace }}
+        run: bash scripts/ci/national_budget_leg.sh gallery
+      - name: Upload the operator gallery artifact
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: visual-gallery
+          path: docs/build/logs/visual-gallery/
+          if-no-files-found: warn
+
       # --- P35.52 (sig.map-tiles/2, ADR-156, F-104/F-414; K1 §15 NEW-5): ----
       # the tile verifier leg. The retention contract can't be proven by the
       # mocked-argv tests alone — the PINNED tippecanoe (the same pin

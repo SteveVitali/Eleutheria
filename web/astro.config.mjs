@@ -463,13 +463,43 @@ function sigRedirects() {
 // manifest every e2e/axe sweep iterates instead of a hand-maintained list. It
 // runs LAST so it sees the complete emitted tree (the injected internal routes,
 // the flat 403/410 copies and every generated page alike).
+//
+// P37.60 (UXK14-10, SIG-UI-152): the hook also captures `astro:routes:resolved`
+// so every emitted route records its `component` — the page module behind it —
+// and the manifest records the `SIG_DATA_SOURCE` it was built under. The
+// visual-regression grid derives its template list from `component` (fail-closed:
+// an emitted page no resolved route claims fails the build exactly like an
+// unclassified route) and refuses to compare on anything but the synthetic
+// national fixture (no real names, K0 §4.12.6).
 function sigPageTypes() {
+  /** @type {{ patternRegex: RegExp, entrypoint: string }[] | undefined} */
+  let resolved;
   return {
     name: "sig-page-types",
     hooks: {
+      "astro:routes:resolved": ({ routes }) => {
+        if (process.env.SIG_DEBUG_ROUTES) {
+          const r = routes.find((x) => x.pattern === "/about");
+          console.log("SIG_DEBUG about route:", r && {
+            pattern: r.pattern,
+            regexType: typeof r.patternRegex,
+            ctor: r.patternRegex && r.patternRegex.constructor && r.patternRegex.constructor.name,
+            src: String(r.patternRegex),
+            testAbout: r.patternRegex && r.patternRegex.test ? r.patternRegex.test("/about") : "n/a",
+            testAboutSlash: r.patternRegex && r.patternRegex.test ? r.patternRegex.test("/about/") : "n/a",
+          });
+        }
+        // The hook reports prerendered and on-demand routes in separate
+        // batches — accumulate so the emitted-page table keeps both.
+        resolved = (resolved ?? []).concat(
+          routes
+            .filter((r) => r.patternRegex instanceof RegExp && typeof r.entrypoint === "string")
+            .map((r) => ({ patternRegex: r.patternRegex, entrypoint: r.entrypoint })),
+        );
+      },
       "astro:build:done": ({ dir }) => {
         const distDir = fileURLToPath(dir);
-        const { routes, errors } = classifyDist(distDir);
+        const { routes, errors } = classifyDist(distDir, resolved);
         if (errors.length > 0) {
           throw new Error(
             `page-type registry: ${errors.length} unclassifiable route(s)\n  ${errors.join("\n  ")}`,
@@ -492,7 +522,10 @@ function sigPageTypes() {
             t0Tightened += 1;
           }
         }
-        writeManifest(distDir, buildManifest(routes));
+        writeManifest(
+          distDir,
+          buildManifest(routes, process.env.SIG_DATA_SOURCE || "fixtures"),
+        );
         console.log(
           `sig-page-types: ${routes.length} route(s) classified, ${t0Tightened} T0 meta CSP(s) tightened`,
         );

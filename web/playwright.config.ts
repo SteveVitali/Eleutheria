@@ -6,11 +6,17 @@ import { defineConfig, devices } from "@playwright/test";
 
 // The e2e/a11y suite runs against the BUILT static site served by `astro preview`
 // (not the dev server), so it exercises exactly the archivable HTML that ships.
-// Two projects:
+// Four projects:
 //   - "chromium": JavaScript enabled — runs axe (SIG-UI-037 WCAG 2.2 AA) and the
 //     render-path assertions.
 //   - "no-js": JavaScript DISABLED — proves core content is usable without JS
 //     (SIG-UI-037). Since the shell ships zero client JS, both must behave the same.
+//   - "dark": prefers-color-scheme dark (P37.60, DR-K14-13 / SIG-UI-147) —
+//     every template representative, axe in dark, print forces light.
+//   - "reduced-motion": prefers-reduced-motion reduce (P37.60, DR-K14-15 /
+//     SIG-UI-149) — zero-duration sweep plus post-interaction T2 checks.
+// The visual-regression grid (SIG-UI-152) lives in playwright.visual.config.ts
+// — it runs a different build (SIG_DATA_SOURCE=national).
 const PORT = 4321;
 
 export default defineConfig({
@@ -27,12 +33,25 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
-      testIgnore: /\.nojs\.spec\.ts$/,
+      testIgnore: [/\.nojs\.spec\.ts$/, /dark\.spec\.ts$/, /reduced-motion\.spec\.ts$/],
     },
     {
       name: "no-js",
       use: { ...devices["Desktop Chrome"], javaScriptEnabled: false },
       testMatch: /\.nojs\.spec\.ts$/,
+    },
+    {
+      name: "dark",
+      use: { ...devices["Desktop Chrome"], colorScheme: "dark" },
+      testMatch: /dark\.spec\.ts$/,
+    },
+    {
+      name: "reduced-motion",
+      use: {
+        ...devices["Desktop Chrome"],
+        contextOptions: { reducedMotion: "reduce" },
+      },
+      testMatch: /reduced-motion\.spec\.ts$/,
     },
   ],
   webServer: {
