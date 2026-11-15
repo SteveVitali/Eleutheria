@@ -133,6 +133,7 @@ from . import (
     source_licences,
     task_export,
 )
+from . import claim_views as _claim_views
 from . import column_registry as CR
 from . import compartments as C
 from . import placement as _placement
@@ -520,6 +521,52 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "   AND {CAPTURE_SEAL_GATE}"
         " ORDER BY ce.claim_id, ce.capture_id",
     ),
+    # P37.37 (R11-K13-EV-03 / K8 EV-03, SIG-EVUI-005/009): the claim-view and
+    # capture-diff producer — every publishable claim bound to a REAL capture
+    # (``ce.binding_status = 'actual_capture'`` AND the capture recorded
+    # ``actual`` — a synthetic run record is never diffed or viewed, SIG-EVUI-005),
+    # carrying the recorded locator + excerpt (D-K8-1's ≤300-char gate), the
+    # claim's own fields (predicate/raw value/subject/review), the capture's
+    # metadata + redaction identity (P8-5/6/8 re-serialisations render the
+    # redacted derivative, never the parent), and the artifact's genre (the
+    # document-genre scope of D-K8-2). Same eligibility join as
+    # ``claim_binding_detail`` — shared artifact gate, capture-seal gate,
+    # publishable-claim gate and effective rights — plus the claim table join
+    # for the fields the viewer shows (``{EFFECTIVE}`` supplies
+    # ``latest_decision``/``claim_source``). Guarded on ``claim_evidence``
+    # like its siblings: a pre-P32.2 spine degrades to [] — honest absence.
+    "claim_view_bindings": (
+        "claim_evidence",
+        "{EFFECTIVE}SELECT ce.claim_id::text, ce.capture_id::text, ec.artifact_id::text, ce.role,"
+        "       ce.binding_status, ce.bound_at::text, ce.locator::text, ce.excerpt,"
+        "       ce.extractor_version,"
+        "       ec.retrieved_at::text, ec.content_digest, ec.byte_size, ec.media_type,"
+        "       ec.storage_tier, ec.capture_classification, ec.retrieved_by_run_id::text,"
+        "       ec.redaction_applied, ec.redaction_method, ec.redaction_version,"
+        "       ea.artifact_type, ea.title, ea.url, ea.source_id, ea.acquisition_method,"
+        "       c.subject_id::text, c.predicate_id, c.raw_value, c.observed_at::text,"
+        "       c.review_status,"
+        "       ex.method, ex.extractor_name, ex.extractor_version, ex.review_status"
+        "  FROM claim_evidence ce"
+        "  JOIN evidence_capture ec ON ce.capture_id = ec.capture_id"
+        "  JOIN evidence_artifact ea ON ec.artifact_id = ea.artifact_id"
+        "  JOIN claim c ON c.claim_id = ce.claim_id"
+        "  LEFT JOIN extraction ex ON ex.extraction_id = ce.extraction_id"
+        "  LEFT JOIN claim_source cs ON cs.claim_id = c.claim_id"
+        "  LEFT JOIN latest_decision ld"
+        "         ON ld.source_id = cs.source_id AND ld.prior_rights_id = c.rights_id"
+        "  JOIN rights_record rr ON rr.rights_id = COALESCE(ld.rights_id, c.rights_id)"
+        " WHERE ea.sensitivity_tier = 0"
+        "   AND c.sensitivity_tier = 0"
+        "   AND upper_inf(c.sys_period)"
+        "   AND ce.binding_status = 'actual_capture'"
+        "   AND ec.capture_classification = 'actual'"
+        "   AND rr.redistributable = 'yes'"
+        "   AND {PUB_CLAIM_GATE}"
+        "   AND {PUB_ARTIFACT_GATE}"
+        "   AND {CAPTURE_SEAL_GATE}"
+        " ORDER BY ce.claim_id, ce.capture_id",
+    ),
     # P37.30 (R11-K13-WX-05 / K7 §5.7, F-485, SIG-UI-027a): the recommender's
     # score inputs — every publishable claim bound to an eligible artifact,
     # with the epistemic axes the per-(artifact, subject) D/C derivation needs
@@ -856,6 +903,11 @@ def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, A
         # same fail-closed assert, same rule).
         detail = raw.get("claim_binding_detail") or []
         raw["claim_binding_detail"] = [r for r in detail if str(r[1]) not in sealed_ids]
+        # P37.37: the claim-view read carries the same capture key in position
+        # 1 — a sealed capture loses its claim-view binding row here too (the
+        # same fail-closed assert, same rule).
+        cvb = raw.get("claim_view_bindings") or []
+        raw["claim_view_bindings"] = [r for r in cvb if str(r[1]) not in sealed_ids]
         raw["sealed_bindings_suppressed"] = [(0,)]
         if _table_present(cur, "claim_evidence"):
             try:
@@ -933,6 +985,13 @@ DECLARED_UNPRODUCED_READ_KEYS: dict[str, str] = {
     # builder (`exports.raw_archive.served_href_map`), never a spine query;
     # absent → hrefs stay None (a label never implies a route).
     "raw_hrefs": "raw_archive_index",
+    # P37.37 (EV-03 / SIG-EVUI-004): ``capture_texts`` is the stored-text map
+    # the claim viewer's ``text_span`` pane reads (``content_digest → text``)
+    # — produced by a capture-text extraction lane outside the spine queries,
+    # never a fabricated document; absent → the pane falls to the lane's
+    # download/locator form (a pane never implies bytes the release does
+    # not carry).
+    "capture_texts": "capture_text_lane",
 }
 
 
@@ -1956,11 +2015,18 @@ def _claim_lane_map(
         recorded_lane = str(red.get("lane") or "").strip()
         p8 = str(red.get("part_viii_class") or "").strip() or None
         entry = lane_by_source.get(str(sid))
+        # P37.37 (D-K8-1 [B-44]): the recorded ``quotation_permitted`` terms
+        # marker rides the lane entry — the claim-view excerpt gate reads it.
+        if bool(red.get("quotation_permitted")):
+            if entry is not None:
+                entry["quotation_permitted"] = True
         if entry is None:
             lane_by_source[str(sid)] = {
                 "decision": _registry_lane_decision(reg),
                 "p8": p8,
             }
+            if bool(red.get("quotation_permitted")):
+                lane_by_source[str(sid)]["quotation_permitted"] = True
             continue
         if p8 and not entry.get("p8"):
             entry["p8"] = p8
@@ -3507,6 +3573,14 @@ def _evidence(
     # P37.36: the raw-archive's served digest → distribution-host URL map
     # (absent on an export without a built archive — hrefs stay None).
     raw_hrefs = raw.get("raw_hrefs") or {}
+    # P37.37 (R11-K13-EV-03 / K8 EV-03, SIG-EVUI-005/009): the claim-view
+    # generator — one view per document-genre claim with an
+    # ``actual_capture`` binding under the published cap, and the per-capture
+    # ``fields`` map (recorded predicate → raw-value) the §4.4 field-by-field
+    # diff computes over. Real captures only — never a fixture pair.
+    claim_view_rows, claim_view_stats, _cap_field_maps = _claim_views.claim_views(
+        raw, lane_by_source=lane_by_source
+    )
     scores_by_artifact, neighbours, uncomputable = _subject_scores(raw, as_of_date)
     artifacts: list[dict[str, Any]] = []
     for r in raw.get("evidence_artifacts") or []:
@@ -3545,6 +3619,9 @@ def _evidence(
             if not isinstance(c, Mapping):
                 continue
             cap = {str(k): v for k, v in dict(c).items()}
+            _cap_id = str(cap.get("capture_id") or "")
+            if _cap_id in _cap_field_maps:
+                cap["fields"] = _cap_field_maps[_cap_id]
             cap["view_original"] = _stmt.capture_view_original(
                 lane=lane,
                 part_viii_class=str(p8) if p8 else None,
@@ -3620,7 +3697,9 @@ def _evidence(
         artifacts.append(artifact)
     return {
         "artifacts": artifacts,
-        "claim_views": [],
+        # P37.37: generated views — document-genre claims with an
+        # ``actual_capture`` binding under the published cap (SIG-EVUI-009).
+        "claim_views": claim_view_rows,
         # The one-hop contract/agency neighbourhood (K7 §5.7): canonical
         # subject key/entity-id → the subjects one claim-hop links it to. The
         # recommender's scope is the decision's subjects PLUS this map.
@@ -3628,6 +3707,9 @@ def _evidence(
             k: sorted(v["key"] | v["id"]) for k, v in sorted(neighbours.items())
         },
         "build": {
+            # SIG-EVUI-009: the published cap + overflow count /evidence/
+            # states verbatim.
+            "claim_views": claim_view_stats,
             "recommender_scores": {
                 "pairs_emitted": sum(len(v) for v in scores_by_artifact.values()),
                 "pairs_uncomputable": sum(uncomputable.values()),
@@ -3642,7 +3724,7 @@ def _evidence(
                     "cannot be computed is counted here and emitted nowhere — "
                     "an uncomputable score fails typed, never silently zero."
                 ),
-            }
+            },
         },
     }
 

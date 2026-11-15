@@ -178,6 +178,7 @@ import {
   EVIDENCE_ARTIFACTS,
   EVIDENCE_SUBJECT_NEIGHBOURS,
   CLAIM_VIEWS,
+  CLAIM_VIEW_STATS,
   DIFF_CAPTURES,
 } from "./watch-evidence-fixture";
 import {
@@ -756,6 +757,13 @@ export interface EvidenceData {
   artifacts: EvidenceArtifact[];
   claimViews: ClaimView[];
   /**
+   * P37.37 (EV-03 / SIG-EVUI-009): the emitted `build.claim_views` disclosure
+   * — the published generation cap, the eligible count and the overflow the
+   * `/evidence/` hub states verbatim. `null` on a pre-P37.37 export (a
+   * typed absence, never a guessed cap).
+   */
+  claimViewsStats: { cap: number; eligible: number; emitted: number; overflow: number } | null;
+  /**
    * P37.30 (K7 §5.7): the one-hop contract/agency neighbourhood map the
    * export emits — canonical subject key/id → the subjects one bound-claim
    * hop links it to. Empty on fixtures and pre-repair exports.
@@ -791,6 +799,7 @@ export function getEvidence(): EvidenceData {
       artifacts: EVIDENCE_ARTIFACTS,
       claimViews: CLAIM_VIEWS,
       subjectNeighbours: EVIDENCE_SUBJECT_NEIGHBOURS,
+      claimViewsStats: CLAIM_VIEW_STATS,
     };
   }
   return readExportArtifact("evidence.json", (parsed, path) => {
@@ -798,6 +807,7 @@ export function getEvidence(): EvidenceData {
       artifacts?: unknown;
       claim_views?: unknown;
       subject_neighbours?: unknown;
+      build?: { claim_views?: unknown };
     };
     if (!Array.isArray(o?.artifacts)) {
       throw new Error(`${path}: expected an object with an "artifacts" array`);
@@ -810,12 +820,31 @@ export function getEvidence(): EvidenceData {
         neighbours[k] = Array.isArray(v) ? v.map(String) : [];
       }
     }
+    // P37.37 (SIG-EVUI-009): the cap disclosure — read only when the export
+    // recorded it; absent = typed absence (the hub says "cap not recorded"),
+    // malformed = loud, never a guessed number.
+    const cv = o.build?.claim_views;
+    let claimViewsStats: EvidenceData["claimViewsStats"] = null;
+    if (cv !== undefined) {
+      const s = cv as Record<string, unknown>;
+      const nums = ["cap", "eligible", "emitted", "overflow"].map((k) => s[k]);
+      if (!nums.every((n) => typeof n === "number" && Number.isFinite(n) && n >= 0)) {
+        throw new Error(`${path}#build.claim_views: cap/eligible/emitted/overflow must be non-negative numbers`);
+      }
+      claimViewsStats = {
+        cap: s.cap as number,
+        eligible: s.eligible as number,
+        emitted: s.emitted as number,
+        overflow: s.overflow as number,
+      };
+    }
     return {
       artifacts,
       claimViews: dropWithdrawn(
         (Array.isArray(o.claim_views) ? o.claim_views : []) as ClaimView[],
       ),
       subjectNeighbours: neighbours,
+      claimViewsStats,
     };
   });
 }

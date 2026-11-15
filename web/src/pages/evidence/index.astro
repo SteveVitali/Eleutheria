@@ -38,7 +38,7 @@ import { withBase } from "../../lib/paths";
 
 // The evidence claim-views + published artifacts flow through the single data
 // seam (ADR-066): fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
-const { artifacts, claimViews: CLAIM_VIEWS } = getEvidence();
+const { artifacts, claimViews: CLAIM_VIEWS, claimViewsStats: CV_STATS } = getEvidence();
 const handles = artifactHandles(artifacts);
 const sorted = [...artifacts].sort(byArtifactIndex);
 const shown = pageSlice(sorted, 1);
@@ -117,11 +117,30 @@ const allRunRecords = roll.artifacts > 0 && roll.runRecords === roll.artifacts;
 
   <h2 id="claim-views-heading">Claim evidence views ({CLAIM_VIEWS.length})</h2>
   <p>
-    The full evidence view shows the document with the supporting span highlighted at its
-    locator, the extraction method and version, the review status, the conflicting claims,
-    the capture date and digest, the acquisition method, and the full claim history. Sealed
-    captures are shown metadata-only, with an explanation of why the bytes are withheld.
+    The full evidence view shows the claim's supporting location by binding state and
+    disclosure lane: the document with the span highlighted where the lane permits bytes,
+    the locator and digest with a download or view-at-source link where it does not, and a
+    metadata-only representation where the bytes are withheld. It also shows the extraction
+    method and version, the review status, the conflicting claims, the capture date and
+    digest, the acquisition method, and the full claim history.
   </p>
+  {/* SIG-EVUI-009 (P37.37 / D-K8-2 [B-22]): the published generation cap and
+      the overflow count are stated verbatim — never a smoothed number. */}
+  {CV_STATS !== null ? (
+    <p data-testid="claim-view-cap">
+      Claim evidence views are generated for every document-genre claim bound to a stored
+      capture, up to a cap of <strong>{CV_STATS.cap.toLocaleString("en-US")}</strong> per
+      release: <strong data-testid="claim-view-emitted">{CV_STATS.emitted}</strong> emitted
+      of <strong data-testid="claim-view-eligible">{CV_STATS.eligible}</strong> eligible
+      {CV_STATS.overflow > 0 && (
+        <> — <strong data-testid="claim-view-overflow">{CV_STATS.overflow}</strong> eligible
+        views were not generated because the cap was reached</>
+      )}
+      .
+    </p>
+  ) : (
+    <p data-testid="claim-view-cap">The claim-view generation cap is not recorded in this release.</p>
+  )}
   {CLAIM_VIEWS.length === 0 && <EmptyState surface="evidenceIndex" />}
   <ul class="sig-evidence-index">
     {CLAIM_VIEWS.map((view) => (

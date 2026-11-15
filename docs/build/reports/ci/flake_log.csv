@@ -86,3 +86,12 @@ date,pr,head_sha,check,flake_id,run_id,attempt,outcome
 2026-11-10T12:26:47Z,478,173ff48edee3564a0e37b29e9e75303583af15ab,web,EXPLORE-SELECT-LATENCY-1 (same-head rerun per B-15 one-attempt bound — fixtures leg 407 vs bound 400, identical spec),42809185702,2,failure
 2026-11-10T13:26:33Z,478,173ff48edee3564a0e37b29e9e75303583af15ab,web,EXPLORE-SELECT-LATENCY-1 (same-head rerun attempt 3 — fixtures leg passed; the NATIONAL leg measured 882 vs bound 800, the same red the P37.29 ancestor head measured at 811 on run 42804623604 ~1.5h earlier; the bound tracks runner speed under 4x CPU throttle, not code — adjudicated environmental/carried, recorded verbatim never a smoothed ceiling),42809185702,3,failure
 2026-11-10T13:52:49Z,478,173ff48edee3564a0e37b29e9e75303583af15ab,web,EXPLORE-SELECT-LATENCY-1 (same-head rerun attempt 4 — fixtures leg 402 vs bound 400, a 0.5% overage; four same-head attempts measured 425/407/402 (fixtures bound 400) and 882 (national bound 800), the ancestor head measured 811 — the bound sits at the runner's own latency; adjudicated environmental/carried, recorded verbatim never a smoothed ceiling),42809185702,4,failure
+2026-11-11T14:58,485,531f6f54,web,APT-DNS-1 (azure.archive.ubuntu.com / security.ubuntu.com font-package fetch — runner DNS),43041807861,1,failure
+2026-11-11T15:25,485,531f6f54,web,APT-DNS-1 (azure.archive.ubuntu.com / security.ubuntu.com font-package fetch — runner DNS),43041807861,2,failure
+2026-11-11T15:41,485,531f6f54,web,APT-DNS-1 (azure.archive.ubuntu.com / security.ubuntu.com font-package fetch — runner DNS),43041807861,3,failure
+2026-11-11T15:55,485,531f6f54,web,APT-DNS-1 (azure.archive.ubuntu.com / security.ubuntu.com font-package fetch — runner DNS),43041807861,4,failure
+2026-11-11T16:09,485,531f6f54,web,APT-DNS-1 (azure.archive.ubuntu.com / security.ubuntu.com font-package fetch — runner DNS),43041807861,5,failure
+2026-11-11T16:24,485,531f6f54,web,APT-DNS-1 (azure.archive.ubuntu.com / security.ubuntu.com font-package fetch — runner DNS),43041807861,6,failure
+2026-11-11T16:39,485,531f6f54,web,APT-DNS-1 (azure.archive.ubuntu.com / security.ubuntu.com font-package fetch — runner DNS),43041807861,7,failure
+2026-11-11T16:53,485,531f6f54,web,APT-DNS-1 (azure.archive.ubuntu.com / security.ubuntu.com font-package fetch — runner DNS),43041807861,8,failure
+2026-11-11T19:06,485,e22bf632,web,EXPLORE-SELECT-LATENCY-1 (post-action interactionLatencyMs 992 > regression bound 900 — environmental runner latency, 496 passed/1 failed),43076080619,1,failure
