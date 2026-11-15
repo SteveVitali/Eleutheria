@@ -11,6 +11,18 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **P37.58 / R11-DEBT-02 (SIG-STORE-045 cited; BL-049)** — generated-vs-deployed
+  schema conformance: ADR-248 records `db/sqitch.plan` +
+  `db/deploy|revert|verify` as the sole authority for the deployed physical
+  schema and the LinkML-generated `ontology/generated/sql/sig.sql` as
+  documentation only, qualifying SIG-STORE-045's "generated is authoritative"
+  clause (the ontology stays the logical authority, ADR-007). The generated
+  artifact now self-declares the posture in a generator-written
+  `GENERATED DOCUMENTATION` header, and
+  `tests/unit/test_schema_conformance.py` pins the rule — zero deploy-surface
+  references, a complete plan script set, no physical machinery in the
+  generated surface. `live_verification=false`.
+
 - **P37.45 / R11-CONF-12 (SIG-CONF-011; SIG-CONF-001/010)** — the public
   `/quality/` page: a T1 zero-JS content page rendered only from the new
   release artifact `web/quality.json` (`sig.quality-page/1`) — the whole
