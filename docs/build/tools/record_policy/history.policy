@@ -1435,3 +1435,14 @@ seed-commit 3ad706e9
 # as 45687972/458f4af8 — restoring, never rewriting history). Scope: the
 # append-only findings attributed to 2a23f95f's rewritten lines only.
 seed-commit 2a23f95f
+# e3a9d285 — P37.61 (row 489) records-repair: the first push's commits
+# (39e2bc01 + 862b2117) missed the OM-01 Harness trailer and the CHANGELOG
+# gate; remote rules decline force-push and branch-delete, so the corrected
+# tree re-pushed under the ticket-named branch and PR #513 was superseded
+# by #514. e3a9d285 respells BUILD_INDEX line 681's branch/PR cells in
+# place (the row was authored seconds earlier on the same un-landed branch)
+# — restoring-record-class repair, never history rewrite; pre-edit bytes
+# archived `reports/memory-repair/BUILD_INDEX_L681_pre-P37.61-pr514-retarget.txt`
+# (sha256 recorded in the commit message). Scope: the append-only findings
+# attributed to e3a9d285's rewritten BUILD_INDEX line only.
+seed-commit e3a9d285
