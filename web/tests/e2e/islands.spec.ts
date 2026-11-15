@@ -65,6 +65,10 @@ test.describe("interactive explore island (AC1)", () => {
     await expect(page.getByTestId("graph-island-centrality")).toHaveCount(0);
     // Selecting a different node re-focuses (aria-pressed moves to it).
     const nodes = page.getByTestId("graph-island-node");
+    // The island mounts before its overview graph document loads (the
+    // explore-loading state) — wait for the first node row before counting,
+    // never read the still-loading table (same latch as explore.spec.ts).
+    await expect(nodes.first()).toBeVisible();
     const count = await nodes.count();
     expect(count).toBeGreaterThan(1);
     // Find a node that is not currently focused and click it.
