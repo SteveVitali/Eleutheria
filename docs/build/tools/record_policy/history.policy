@@ -1446,3 +1446,13 @@ seed-commit 2a23f95f
 # (sha256 recorded in the commit message). Scope: the append-only findings
 # attributed to e3a9d285's rewritten BUILD_INDEX line only.
 seed-commit e3a9d285
+# 59f76cd6 — P37.61 records-repair 2: respells the kind slots of LEDGER PHASE
+# LOG lines 1798–1799 (appended seconds earlier on the same un-landed branch)
+# from the undeclared 'records repair'/'ledger-budget repair' to 'correction'
+# (V4 vocabulary; a correction owes no ci: field), and advances CURRENT STATE
+# nextTicket P37.61→P37.62 (the row-489 landing). Restoring-record-class
+# repair, never history rewrite; pre-edit bytes archived
+# `reports/memory-repair/LEDGER_phaselog_L1798-1799_pre-P37.61-kind-respell.txt`
+# (sha256 in the commit message). Scope: the append-only findings attributed
+# to 59f76cd6's rewritten LEDGER lines only.
+seed-commit 59f76cd6
