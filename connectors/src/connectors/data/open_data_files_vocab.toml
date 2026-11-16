@@ -1,0 +1,51 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned open-data-file vocabulary (P37.69a / R11-ACQ-23a — the CSV /
+# GeoJSON / XLSX committed-file reader family). DATA, not code (SIG-ENG-001):
+# the connectors' predicate allowlist, forbidden predicate genres, committed
+# host set and the default sensitivity class are reviewed rows. Changes are
+# VERSIONED MIGRATIONS — bump `vocab_version`, never silently rewrite.
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first
+# [table] header.
+
+schema = "sig.open-data-files-vocab/1"
+
+vocab_version = "2026.11.14"
+
+# The hard schema gate (SIG-INGEST-033): the file readers' OWN emit writes
+# only dataset-anchor + pointer predicates (the camera rows themselves ride
+# `dot_511`'s shared CameraRegistryEntry emit under its own allowlist —
+# stamped vocab_version is that shared emit's; this table's version stamps
+# the dataset-anchor rows minted here).
+predicate_allowlist = [
+  "portal_index",
+  "external_id",
+  "title",
+  "document",
+  "published_by",
+  "jurisdiction",
+  "technology",
+  "as_of",
+]
+
+forbidden_predicate_genres = [
+  "person_identifier",
+  "person_contact",
+  "person_role",
+  "camera_operator",
+  "deployment_status",
+]
+
+# The committed file host set — a served or configured URL off this set is a
+# review error, never silently allowed.
+hosts = [
+  "open.barnet.gov.uk",
+  "www.trafforddatalab.io",
+  "trafforddatalab.io",
+  "datos.madrid.es",
+  "data.gov.ua",
+]
+
+# Operator-published camera registers: the reviewed default class is C1
+# (§43.3 — publisher-open data, point coordinates republish exactly).
+default_sensitivity_class = "C1"

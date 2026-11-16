@@ -1,0 +1,118 @@
+# SPDX-License-Identifier: Apache-2.0
+# The committed open-data-file inventory (P37.69a / R11-ACQ-23a —
+# `sig.open-data-files-targets/1`). Every row is reviewed data: the URL is the
+# committed record's literal file URL, `declared_fields` is the reviewed
+# column contract (a renamed or dropped column is ContentDrift — never a
+# guessed position), `expected_markers` the reviewed literals the served
+# content must carry, and `max_rows` the declared bound. The `[[enumerated]]`
+# table records seats whose concrete file URL is NOT yet committed —
+# registry rows, never targets (D-P37.69a-1).
+#
+# HEADER NOTE: the Barnet/Trafford header literals below are pinned against
+# the committed synthetic fixtures and the review notes; the operator's
+# first-wire review re-pins them against the served sheet — a mismatch fails
+# closed by design, never silently remaps.
+
+schema = "sig.open-data-files-targets/1"
+inventory_version = "2026.11.14"
+
+[[targets]]
+id = "p37_69a_csv_barnet_cctv"
+connector = "csv_file"
+source_id = "camreg_gb_eng_barnet_cctv_camera"
+kind = "csv"
+url = "https://open.barnet.gov.uk/download/2l0g2/cw5/Community%20Safety%20CCTV%20Locations%20-%20July%202025.csv"
+title = "Community Safety CCTV Locations"
+dataset_name = "community-safety-cctv-locations"
+dataset_license_id = "uk-ogl"
+publisher = "London Borough of Barnet"
+jurisdiction = "GB-ENG"
+state = "GB-ENG"
+technology = "fixed-camera-cctv"
+license_spdx = "OGL-UK-3.0"
+sensitivity_class = "C1"
+axis_order = "lat-lon"
+lat_field = "Latitude"
+lon_field = "Longitude"
+name_field = "Location"
+ref_field = "Camera Ref"
+declared_fields = ["Camera Ref", "Location", "Latitude", "Longitude"]
+expected_markers = ["Latitude", "Longitude"]
+max_rows = 1000
+
+[[targets]]
+id = "p37_69a_csv_barnet_traffic"
+connector = "csv_file"
+source_id = "camreg_gb_eng_barnet_cctv_traffic"
+kind = "csv"
+url = "https://open.barnet.gov.uk/download/2g112/wwt/MTC%20locations%20for%20website%20v12.06.csv"
+title = "Moving Traffic Contravention camera locations"
+dataset_name = "mtc-locations-for-website"
+dataset_license_id = "uk-ogl"
+publisher = "London Borough of Barnet"
+jurisdiction = "GB-ENG"
+state = "GB-ENG"
+technology = "fixed-camera-cctv"
+license_spdx = "OGL-UK-3.0"
+sensitivity_class = "C1"
+axis_order = "lat-lon"
+lat_field = "Latitude"
+lon_field = "Longitude"
+name_field = "Location"
+ref_field = "Ref"
+declared_fields = ["Ref", "Location", "Latitude", "Longitude"]
+expected_markers = ["Latitude", "Longitude"]
+max_rows = 1000
+
+[[targets]]
+id = "p37_69a_geojson_trafford"
+connector = "geojson_file"
+source_id = "camreg_gb_eng_traff_trafford_cctv"
+kind = "geojson"
+url = "https://www.trafforddatalab.io/council_open_data/assets/cctv/trafford_cctv_cameras.geojson"
+title = "Trafford CCTV cameras"
+dataset_name = "trafford-cctv-cameras"
+dataset_license_id = "cc-by"
+publisher = "Trafford Council"
+jurisdiction = "GB-ENG"
+state = "GB-ENG"
+technology = "fixed-camera-cctv"
+license_spdx = "CC-BY-4.0"
+sensitivity_class = "C1"
+ref_field = "id"
+name_field = "location"
+declared_fields = ["id", "location"]
+max_rows = 1000
+
+# ------------------------------------------------------------- enumerated rows
+# Seats whose concrete file URL is NOT yet committed — registry records,
+# never targets. Each row names the gap D-P37.69a-1 tracks; a row gains a
+# [[targets]] row only after the reviewed URL lands in the committed record.
+
+[[enumerated]]
+id = "p37_69a_enum_madrid_xlsx"
+source_id = "camreg_es_md_madrid_c_maras_de"
+candidate_url = "https://datos.madrid.es/dataset/300429-0-camaras-videovigilancia"
+status = "endpoint_preflight_deferred"
+notes = "ACQ-23a I5-C349. The committed record evidences the datos.madrid.es dataset LANDING page (the seat's dossier lane serves it) but not the XLSX resource's own URL — a reviewed one-request preflight or the flip-window census lands it."
+
+[[enumerated]]
+id = "p37_69a_enum_ballarat_csv"
+source_id = "camreg_au_vic_ballarat_cctv_cameras"
+candidate_url = "https://data.gov.au/data/dataset/ballarat-cctv-cameras"
+status = "endpoint_preflight_deferred"
+notes = "ACQ-23a I5-C326. The seat wires on the CKAN package record (its resources mint as pointers); the concrete CSV/GeoJSON resource URL is served there but not separately committed — the flip-window census or a reviewed package_show replay lands the file lane."
+
+[[enumerated]]
+id = "p37_69a_enum_lisboa_geojson"
+source_id = "camreg_pt_11_lisboa_sistema_de"
+candidate_url = "https://dados.gov.pt/datasets/sistema-de-videovigilancia-bairro-alto"
+status = "endpoint_preflight_deferred"
+notes = "ACQ-23a I5-C356. The committed record evidences the dados.gov.pt dataset page (the seat's dossier lane serves it) but not the GeoJSON resource's own URL — dados.gov.pt is a udata portal, not CKAN; the file URL lands under the same preflight review."
+
+[[enumerated]]
+id = "p37_69a_enum_townsville_pdf"
+source_id = "camreg_au_qld_towns_cctv_camera_register"
+candidate_url = "https://data.gov.au/data/dataset/cctv-camera-register"
+status = "endpoint_preflight_deferred"
+notes = "ACQ-23a I5-C325. The seat wires on the CKAN package record; the register PDF edition the dossier lane would read is served as a resource URL, not separately committed — lands under the same preflight review."

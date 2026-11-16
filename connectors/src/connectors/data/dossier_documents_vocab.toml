@@ -511,3 +511,96 @@ jurisdiction = "us.state_abbr:MN"
 predicate_allowlist = [
   "title", "technology", "camera_registration_portal", "enacting_body", "posted_date", "disclosure_field_state",
 ]
+
+# ---------------------------------------------------------------------------
+# P37.69a / R11-ACQ-23a (I7 N1–N21 `a`) — the international open-data
+# family's twelve document seats. Dataset pages, guidance and oversight
+# PDFs: institutional facts only (existence, publisher, technology,
+# period) — never per-device or person-shaped content. All stay
+# ingestion_permitted=false pending the operator's OP-26 Wave-D flip
+# under ING-GO-D.
+# ---------------------------------------------------------------------------
+
+[adapters.ccops_gb_eng_barnet_traffic_cctv]
+source_id = "ccops_gb_eng_barnet_traffic_cctv"
+jurisdiction = "iso.3166_2:GB-ENG"
+predicate_allowlist = [
+  "title", "document", "technology", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.camreg_gb_eng_north_cctv_cameras]
+source_id = "camreg_gb_eng_north_cctv_cameras"
+jurisdiction = "iso.3166_2:GB-ENG"
+predicate_allowlist = [
+  "title", "document", "technology", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_iso_au_privacy_commissioner]
+source_id = "ccops_iso_au_privacy_commissioner"
+jurisdiction = "iso.3166_1_alpha2:AU"
+predicate_allowlist = [
+  "title", "document", "technology", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.statrep_ca_special_parliament_use]
+source_id = "statrep_ca_special_parliament_use"
+jurisdiction = "iso.3166_1_alpha2:CA"
+predicate_allowlist = [
+  "title", "document", "technology", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.ccops_it_tn_trento_provvedimento_dell_11]
+source_id = "ccops_it_tn_trento_provvedimento_dell_11"
+jurisdiction = "iso.3166_2:IT-TN"
+predicate_allowlist = [
+  "title", "document", "technology", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.statrep_gb_eng_seven_cctv_june_2026]
+source_id = "statrep_gb_eng_seven_cctv_june_2026"
+jurisdiction = "iso.3166_2:GB-ENG"
+predicate_allowlist = [
+  "title", "document", "technology", "enacting_body", "period", "posted_date", "disclosure_field_state",
+]
+
+[adapters.statrep_gb_sct_joint_assurance_review]
+source_id = "statrep_gb_sct_joint_assurance_review"
+jurisdiction = "iso.3166_2:GB-SCT"
+predicate_allowlist = [
+  "title", "document", "technology", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.legis_ie_rs_general_scheme]
+source_id = "legis_ie_rs_general_scheme"
+jurisdiction = "iso.3166_1_alpha2:IE"
+predicate_allowlist = [
+  "title", "document", "technology", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.statrep_gb_uk_algorithmic_transparency]
+source_id = "statrep_gb_uk_algorithmic_transparency"
+jurisdiction = "iso.3166_2:GB-ENG"
+predicate_allowlist = [
+  "title", "document", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.statrep_gb_enforcement_action]
+source_id = "statrep_gb_enforcement_action"
+jurisdiction = "iso.3166_2:GB-ENG"
+predicate_allowlist = [
+  "title", "document", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.camreg_pt_11_lisboa_sistema_de]
+source_id = "camreg_pt_11_lisboa_sistema_de"
+jurisdiction = "iso.3166_2:PT-11"
+predicate_allowlist = [
+  "title", "document", "technology", "enacting_body", "posted_date", "disclosure_field_state",
+]
+
+[adapters.camreg_es_md_madrid_c_maras_de]
+source_id = "camreg_es_md_madrid_c_maras_de"
+jurisdiction = "iso.3166_2:ES-MD"
+predicate_allowlist = [
+  "title", "document", "technology", "enacting_body", "posted_date", "disclosure_field_state",
+]

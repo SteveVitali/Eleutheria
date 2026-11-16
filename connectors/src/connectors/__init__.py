@@ -76,6 +76,8 @@ from . import government_mandated_disclosure as government_mandated_disclosure  
 from . import ok_statute as ok_statute  # noqa: E402,F401
 from . import okc_procurement as okc_procurement  # noqa: E402,F401
 from . import okcpd_policy as okcpd_policy  # noqa: E402,F401
+from . import open_data_files as open_data_files  # noqa: E402,F401
+from . import open_data_portals as open_data_portals  # noqa: E402,F401
 from . import osm as osm  # noqa: E402,F401
 from . import pathways as pathways  # noqa: E402,F401
 from . import procurement as procurement  # noqa: E402,F401

@@ -5367,37 +5367,27 @@ verified = 2026-09-30
 enum_source = "r11-acq-01:AP-T2-100"
 notes = "P37.53 (ACQ-26) disposition (plan AP-T2-100, cand I4-C016, source camreg_us_agency_drone_flight): a FAMILY umbrella row — the hub-search item is a multi-agency enumeration, not a FeatureServer layer, so no /query or returnCountOnly lane can serve it; the concrete drone-log seats (I4-C017 Bloomington, I4-C018 Peoria, I4-C019 Medford) carry the S1 count lane in this batch. The family's per-member registration defers to D-P37.53-1. Row moved [[targets]] → [[enumerated]] (never a fetch target). licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
 
-[[targets]]
+[[enumerated]]
 id = "security_camera"
-axis_order = "lon-lat"
-source_id = "camreg_au_tas_hobar_security_camera"
-kind = "arcgis_query"
 platform = "arcgis"
 url = "https://data.gov.au/data/dataset/security-camera"
-layer_url = "https://data.gov.au/data/dataset/security-camera"
 agency = "City of Hobart"
 state = "AU-TAS"
-jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+status = "endpoint_preflight_deferred"
 enum_source = "r11-acq-01:AP-T2-112"
-notes = "ACQ-01 generated target (plan AP-T2-112, cand I5-C328). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-OperatorAccepted-DBRight (GL-GATE-07 non-US)."
+notes = "P37.69a (ACQ-23a) disposition (plan AP-T2-112, cand I5-C328): the committed record evidences the data.gov.au dataset LANDING page, not a FeatureServer layer — the label's `arcgis_query` lane has no concrete layer_url to serve, so this row moves [[targets]] → [[enumerated]] (never a fetch target). The seat itself wires on the CKAN package_show lane (open_data_portals_targets.toml) — the dataset record mints, its resources mint as pointers; the concrete FeatureServer URL lands under D-P37.69a-1's preflight review. licence lead LicenseRef-OperatorAccepted-DBRight (GL-GATE-07 non-US)."
 jurisdiction_place = "Hobart"
 technology = "fixed-camera-cctv"
 
-[[targets]]
+[[enumerated]]
 id = "security_cameras"
-axis_order = "lon-lat"
-source_id = "camreg_au_wa_perth_security_cameras"
-kind = "arcgis_query"
 platform = "arcgis"
 url = "https://data.gov.au/data/dataset/perth-security-cameras"
-layer_url = "https://data.gov.au/data/dataset/perth-security-cameras"
 agency = "City of Perth"
 state = "AU-WA"
-jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+status = "endpoint_preflight_deferred"
 enum_source = "r11-acq-01:AP-T2-113"
-notes = "ACQ-01 generated target (plan AP-T2-113, cand I5-C330). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead CC-BY-4.0."
+notes = "P37.69a (ACQ-23a) disposition (plan AP-T2-113, cand I5-C330): the committed record evidences the data.gov.au dataset LANDING page, not a FeatureServer layer — the label's `arcgis_query` lane has no concrete layer_url to serve, so this row moves [[targets]] → [[enumerated]] (never a fetch target). The seat itself wires on the CKAN package_show lane (open_data_portals_targets.toml); the concrete FeatureServer URL lands under D-P37.69a-1's preflight review. licence lead CC-BY-4.0."
 jurisdiction_place = "Perth"
 technology = "fixed-camera-cctv"
 

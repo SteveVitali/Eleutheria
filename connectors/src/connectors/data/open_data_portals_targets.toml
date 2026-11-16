@@ -1,0 +1,334 @@
+# SPDX-License-Identifier: Apache-2.0
+# The committed open-data-portals inventory (P37.69a / R11-ACQ-23a —
+# `sig.open-data-portals-targets/1`). Every row is reviewed data: the API
+# base is derived ONLY from the committed candidate record's URL (a portal's
+# standard CKAN mount is recorded in the seat notes), the declared query or
+# dataset id is the seat's own literal, and the bound (`rows`/`limit`) is the
+# reviewed page size. A row never invents an endpoint; the `[[enumerated]]`
+# table records seats whose concrete endpoint is evidenced but NOT yet
+# committed (D-P37.69a-1).
+#
+# KINDS:
+#   package_search — ONE bounded `package_search?q=<query>&rows=<rows>` page;
+#                    emits open_data_index + per-package dataset records.
+#   package_show   — ONE `package_show?id=<dataset_id>` record; emits the
+#                    dataset record + resource pointers (never fetched, P8-2).
+#   ods_records    — ONE ODS v2 `…/datasets/<id>/records?limit=<n>` page;
+#                    emits traffic_camera rows via the shared emit.
+#   hub_search     — ONE reviewed POST to the data.europa.eu hub search API.
+
+schema = "sig.open-data-portals-targets/1"
+inventory_version = "2026.11.14"
+
+# ---------------------------------------------------------------- search lanes
+
+[[targets]]
+id = "p37_69a_ckan_search_uk"
+connector = "ckan_package_search"
+source_id = "dot_511_gb"
+kind = "package_search"
+api_base = "https://data.gov.uk/api/action"
+query = "CCTV"
+rows = 10
+jurisdiction = "GB"
+state = "GB-ENG"
+publisher = "data.gov.uk"
+technology = "fixed-camera-cctv"
+jurisdiction_scheme = "iso.3166_1_alpha2"
+license_spdx = "OGL-UK-3.0"
+dataset_license_id = "uk-ogl"
+
+[[targets]]
+id = "p37_69a_ckan_search_au"
+connector = "ckan_package_search"
+source_id = "camreg_au_ckan_package_search"
+kind = "package_search"
+api_base = "https://data.gov.au/data/api/3/action"
+query = "CCTV"
+rows = 10
+jurisdiction = "AU"
+state = "AU"
+publisher = "data.gov.au"
+technology = "fixed-camera-cctv"
+jurisdiction_scheme = "iso.3166_1_alpha2"
+license_spdx = "CC-BY-4.0"
+dataset_license_id = "cc-by"
+
+# --------------------------------------------------------- package_show seats
+
+[[targets]]
+id = "p37_69a_pkgshow_mansfield"
+connector = "ckan_package_search"
+source_id = "camreg_gb_eng_mansf_cctv_cameras"
+kind = "package_show"
+api_base = "https://data.gov.uk/api/action"
+dataset_id = "b75c985c-bb66-4085-a4e3-60d069240b71"
+jurisdiction = "GB-ENG"
+state = "GB-ENG"
+publisher = "Mansfield District Council"
+technology = "fixed-camera-cctv"
+license_spdx = "OGL-UK-3.0"
+dataset_license_id = "uk-ogl"
+
+[[targets]]
+id = "p37_69a_pkgshow_bristol"
+connector = "ckan_package_search"
+source_id = "camreg_gb_eng_brist_cctv_cameras"
+kind = "package_show"
+api_base = "https://data.gov.uk/api/action"
+dataset_id = "aff7bbd3-cd55-4cb9-bf0a-32ed1ae15a04"
+jurisdiction = "GB-ENG"
+state = "GB-ENG"
+publisher = "Bristol City Council"
+technology = "fixed-camera-cctv"
+license_spdx = "OGL-UK-3.0"
+dataset_license_id = "uk-ogl"
+
+[[targets]]
+id = "p37_69a_pkgshow_edinburgh"
+connector = "ckan_package_search"
+source_id = "camreg_gb_sct_edinburgh_public_cctv"
+kind = "package_show"
+api_base = "https://data.gov.uk/api/action"
+dataset_id = "f55abded-3503-44b6-a120-a90ddd3a38bb"
+jurisdiction = "GB-SCT"
+state = "GB-SCT"
+publisher = "City of Edinburgh Council"
+technology = "fixed-camera-cctv"
+license_spdx = "OGL-UK-3.0"
+dataset_license_id = "uk-ogl"
+
+[[targets]]
+id = "p37_69a_pkgshow_sydney"
+connector = "ckan_package_search"
+source_id = "camreg_au_nsw_sydney_street_safety"
+kind = "package_show"
+api_base = "https://data.gov.au/data/api/3/action"
+dataset_id = "nsw-5-cityofsydney-street-safety-cameras"
+jurisdiction = "AU-NSW"
+state = "AU-NSW"
+publisher = "City of Sydney"
+technology = "fixed-camera-cctv"
+license_spdx = "CC-BY-4.0"
+dataset_license_id = "cc-by"
+
+[[targets]]
+id = "p37_69a_pkgshow_hobart"
+connector = "ckan_package_search"
+source_id = "camreg_au_tas_hobar_security_camera"
+kind = "package_show"
+api_base = "https://data.gov.au/data/api/3/action"
+dataset_id = "security-camera"
+jurisdiction = "AU-TAS"
+state = "AU-TAS"
+publisher = "Hobart City Council"
+technology = "fixed-camera-cctv"
+license_spdx = "CC-BY-4.0"
+dataset_license_id = "cc-by"
+
+[[targets]]
+id = "p37_69a_pkgshow_perth"
+connector = "ckan_package_search"
+source_id = "camreg_au_wa_perth_security_cameras"
+kind = "package_show"
+api_base = "https://data.gov.au/data/api/3/action"
+dataset_id = "perth-security-cameras"
+jurisdiction = "AU-WA"
+state = "AU-WA"
+publisher = "City of Perth"
+technology = "fixed-camera-cctv"
+license_spdx = "CC-BY-4.0"
+dataset_license_id = "cc-by"
+
+[[targets]]
+id = "p37_69a_pkgshow_townsville"
+connector = "ckan_package_search"
+source_id = "camreg_au_qld_towns_cctv_camera_register"
+kind = "package_show"
+api_base = "https://data.gov.au/data/api/3/action"
+dataset_id = "cctv-camera-register"
+jurisdiction = "AU-QLD"
+state = "AU-QLD"
+publisher = "Townsville City Council"
+technology = "fixed-camera-cctv"
+license_spdx = "CC-BY-4.0"
+dataset_license_id = "cc-by"
+
+[[targets]]
+id = "p37_69a_pkgshow_ballarat"
+connector = "ckan_package_search"
+source_id = "camreg_au_vic_ballarat_cctv_cameras"
+kind = "package_show"
+api_base = "https://data.gov.au/data/api/3/action"
+dataset_id = "ballarat-cctv-cameras"
+jurisdiction = "AU-VIC"
+state = "AU-VIC"
+publisher = "City of Ballarat"
+technology = "fixed-camera-cctv"
+license_spdx = "CC-BY-4.0"
+dataset_license_id = "cc-by"
+
+[[targets]]
+id = "p37_69a_pkgshow_geelong"
+connector = "ckan_package_search"
+source_id = "camreg_au_vic_geelong_closed_circuit"
+kind = "package_show"
+api_base = "https://data.gov.au/data/api/3/action"
+dataset_id = "closed-circuit-television-cctv-location"
+jurisdiction = "AU-VIC"
+state = "AU-VIC"
+publisher = "City of Greater Geelong"
+technology = "fixed-camera-cctv"
+license_spdx = "CC-BY-4.0"
+dataset_license_id = "cc-by"
+
+[[targets]]
+id = "p37_69a_pkgshow_dublin"
+connector = "ckan_package_search"
+source_id = "camreg_ie_d_dublin_traffic_poles_with"
+kind = "package_show"
+api_base = "https://data.gov.ie/api/3/action"
+dataset_id = "dublin-city-council-traffic-poles-with-cctv"
+jurisdiction = "IE-D"
+state = "IE-D"
+publisher = "Dublin City Council"
+technology = "fixed-camera-cctv"
+license_spdx = "CC-BY-4.0"
+dataset_license_id = "cc-by"
+
+[[targets]]
+id = "p37_69a_pkgshow_messina"
+connector = "ckan_package_search"
+source_id = "camreg_it_me_messina_videosorveglianza"
+kind = "package_show"
+api_base = "https://dati.comune.messina.it/api/3/action"
+dataset_id = "deb447d8-72ab-463e-817b-2ed88604462a"
+jurisdiction = "IT-ME"
+state = "IT-ME"
+publisher = "Comune di Messina"
+technology = "fixed-camera-cctv"
+license_spdx = "CC-BY-4.0"
+dataset_license_id = "cc-by"
+
+[[targets]]
+id = "p37_69a_pkgshow_kocevje"
+connector = "ckan_package_search"
+source_id = "camreg_si_048_ko_evje_videonadzor_na"
+kind = "package_show"
+api_base = "https://podatki.gov.si/api/3/action"
+dataset_id = "videonadzor-na-javnih-povrsinah-na-obmocju-obcine-kocevje"
+jurisdiction = "SI"
+state = "SI"
+publisher = "Občina Kočevje"
+technology = "fixed-camera-cctv"
+jurisdiction_scheme = "iso.3166_1_alpha2"
+license_spdx = "CC-BY-4.0"
+dataset_license_id = "cc-by"
+
+[[targets]]
+id = "p37_69a_pkgshow_novo_mesto"
+connector = "ckan_package_search"
+source_id = "ccops_si_085_novo_mesto_evidenca_o"
+kind = "package_show"
+api_base = "https://podatki.gov.si/api/3/action"
+dataset_id = "evidenca-o-lokacijah-videonadzornih-kamer-na-obmocju-obcine-novo-mesto"
+jurisdiction = "SI"
+state = "SI"
+publisher = "Občina Novo mesto"
+technology = "fixed-camera-cctv"
+jurisdiction_scheme = "iso.3166_1_alpha2"
+license_spdx = "CC-BY-4.0"
+dataset_license_id = "cc-by"
+
+[[targets]]
+id = "p37_69a_pkgshow_korosten"
+connector = "ckan_package_search"
+source_id = "camreg_ua_18_korosten"
+kind = "package_show"
+api_base = "https://data.gov.ua/api/3/action"
+dataset_id = "6d3308bb-1d7a-4f1e-a1e9-fcc3654e84cd"
+jurisdiction = "UA-18"
+state = "UA-18"
+publisher = "Коростенська міська рада"
+technology = "fixed-camera-cctv"
+license_spdx = "CC-BY-4.0"
+dataset_license_id = "cc-by"
+
+# ------------------------------------------------------------ ODS seats
+
+[[targets]]
+id = "p37_69a_ods_leicester"
+connector = "opendatasoft_explore"
+source_id = "camreg_gb_eng_leice_cctv_cameras"
+kind = "ods_records"
+portal_base = "https://data.leicester.gov.uk"
+dataset_id = "cctv-cameras"
+limit = 100
+max_rows = 200
+jurisdiction = "GB-ENG"
+state = "GB-ENG"
+publisher = "Leicester City Council"
+technology = "fixed-camera-cctv"
+license_spdx = "OGL-UK-3.0"
+dataset_license_id = "uk-ogl"
+sensitivity_class = "C1"
+ref_field = "asset_id"
+name_field = "location"
+title = "CCTV Cameras"
+
+[[targets]]
+id = "p37_69a_ods_seine_ouest"
+connector = "opendatasoft_explore"
+source_id = "camreg_fr_92_grand_paris_seine_ouest_vid"
+kind = "ods_records"
+portal_base = "https://data.seineouest.fr"
+dataset_id = "videoprotection"
+limit = 100
+max_rows = 200
+jurisdiction = "FR-92"
+state = "FR-92"
+publisher = "Grand Paris Seine Ouest"
+technology = "fixed-camera-cctv"
+license_spdx = "LO-2.0"
+dataset_license_id = "etalab-2.0"
+sensitivity_class = "C1"
+ref_field = "id"
+name_field = "adresse"
+title = "Vidéoprotection"
+
+# ------------------------------------------------------- data.europa.eu seat
+
+[[targets]]
+id = "p37_69a_hub_search_eu"
+connector = "dataeuropa_hub_search"
+source_id = "camreg_eu_eea_data_europa_search_api"
+kind = "hub_search"
+search_url = "https://data.europa.eu/api/hub/search/search"
+post_body = { query = "CCTV", filter = "dataset", limit = 10, page = 0 }
+jurisdiction = "EU"
+state = "EU"
+publisher = "Publications Office of the European Union"
+technology = "fixed-camera-cctv"
+jurisdiction_scheme = "iso.3166_1_alpha2"
+license_spdx = "CC-BY-4.0"
+dataset_license_id = "cc-by"
+
+# ------------------------------------------------------------- enumerated rows
+# Seats whose family seat is registered but whose concrete endpoint is NOT
+# yet committed — registry records, never targets. D-P37.69a-1 tracks the
+# missing URL preflights; a row here gains a [[targets]] row only after the
+# reviewed endpoint lands in the committed record.
+
+[[enumerated]]
+id = "p37_69a_enum_geelong_ods"
+source_id = "camreg_au_vic_geelong_closed_circuit"
+candidate_url = "https://data.gov.au/data/dataset/closed-circuit-television-cctv-location"
+status = "endpoint_preflight_deferred"
+notes = "ACQ-23a I5-C327. The seat wires on the CKAN package record; the label's `opendatasoft_dataset` lane (a Geelong-hosted ODS records endpoint) is evidenced only by the package's resource list — the concrete dataset id lands under the same preflight review as the other uncommitted URLs."
+
+[[enumerated]]
+id = "p37_69a_enum_tas_emergency"
+source_id = "camreg_au_tas_emergency_closed_circuit"
+candidate_url = "https://data.gov.au/data/dataset/emergency-services-closed-circuit-television-camera-cctv-cov"
+status = "endpoint_preflight_deferred"
+notes = "ACQ-23a I5-C331. The committed record's dataset slug truncates mid-token (`…-cctv-cov`); the full `package_show` id needs a reviewed one-request preflight or the operator's flip-window census. The seat stays registered and gated; it wires the moment its literal lands."

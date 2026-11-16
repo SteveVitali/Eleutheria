@@ -408,77 +408,9 @@ disposition = "link_only"
 # One promote row per generated source, naming its recorded class ticket
 # (HG-03 flip still required — never here).
 
-[sources.camreg_au_ckan_package_search]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_au_nsw_sydney_street_safety]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_au_qld_towns_cctv_camera_register]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_au_tas_emergency_closed_circuit]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_au_tas_hobar_security_camera]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_au_vic_ballarat_cctv_cameras]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_au_vic_geelong_closed_circuit]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_au_wa_perth_security_cameras]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_es_md_madrid_c_maras_de]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_eu_eea_data_europa_search_api]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_fr_92_grand_paris_seine_ouest_vid]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_gb_eng_barnet_cctv_camera]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_gb_eng_barnet_cctv_traffic]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_gb_eng_brist_cctv_cameras]
-disposition = "promote"
-class_ticket = "P37.69a"
-
 [sources.camreg_gb_eng_ipswich_cctv_camera]
 disposition = "promote"
 class_ticket = "P37.69b"
-
-[sources.camreg_gb_eng_leice_cctv_cameras]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_gb_eng_mansf_cctv_cameras]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_gb_eng_north_cctv_cameras]
-disposition = "promote"
-class_ticket = "P37.69a"
 
 [sources.camreg_gb_eng_runny_cctv_cameras]
 disposition = "promote"
@@ -488,37 +420,9 @@ class_ticket = "P37.69b"
 disposition = "promote"
 class_ticket = "P37.69b"
 
-[sources.camreg_gb_eng_traff_trafford_cctv]
-disposition = "promote"
-class_ticket = "P37.69a"
-
 [sources.camreg_gb_sct_clackmannanshire_cctv]
 disposition = "promote"
 class_ticket = "P37.69b"
-
-[sources.camreg_gb_sct_edinburgh_public_cctv]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_ie_d_dublin_traffic_poles_with]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_it_me_messina_videosorveglianza]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_pt_11_lisboa_sistema_de]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_si_048_ko_evje_videonadzor_na]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.camreg_ua_18_korosten]
-disposition = "promote"
-class_ticket = "P37.69a"
 
 [sources.camreg_us_agency_drone_flight]
 disposition = "promote"
@@ -544,18 +448,6 @@ class_ticket = "P37.16a"
 disposition = "promote"
 class_ticket = "P37.16a"
 
-[sources.ccops_gb_eng_barnet_traffic_cctv]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.ccops_iso_au_privacy_commissioner]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.ccops_it_tn_trento_provvedimento_dell_11]
-disposition = "promote"
-class_ticket = "P37.69a"
-
 [sources.ccops_ok_oklahoma_city_okc_flock_council]
 disposition = "promote"
 class_ticket = "P37.16a"
@@ -567,18 +459,6 @@ class_ticket = "P37.16a"
 [sources.ccops_san_diego_ca]
 disposition = "promote"
 class_ticket = "P37.16a"
-
-[sources.ccops_si_085_novo_mesto_evidenca_o]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.dot_511_gb]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.legis_ie_rs_general_scheme]
-disposition = "promote"
-class_ticket = "P37.69a"
 
 [sources.policy_ok_oklahoma_dac_uved]
 disposition = "promote"
@@ -596,27 +476,12 @@ class_ticket = "P37.16a"
 disposition = "promote"
 class_ticket = "P37.16a"
 
-[sources.statrep_ca_special_parliament_use]
+# P37.69a (R11-ACQ-23a): the ONE ACQ-23a seat that is NOT connector-mapped —
+# its committed data.gov.au dataset slug truncates mid-token, so its
+# package_show lane defers to D-P37.69a-1's endpoint preflight. The seat
+# stays registered + gated; the promote row stands until the lane wires
+# (P25.6 exactly-once: mapped sources carry no row, unmapped seats carry
+# exactly one).
+[sources.camreg_au_tas_emergency_closed_circuit]
 disposition = "promote"
 class_ticket = "P37.69a"
-
-[sources.statrep_fr_cnil_utilisation_de]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.statrep_gb_enforcement_action]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.statrep_gb_eng_seven_cctv_june_2026]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.statrep_gb_sct_joint_assurance_review]
-disposition = "promote"
-class_ticket = "P37.69a"
-
-[sources.statrep_gb_uk_algorithmic_transparency]
-disposition = "promote"
-class_ticket = "P37.69a"
-

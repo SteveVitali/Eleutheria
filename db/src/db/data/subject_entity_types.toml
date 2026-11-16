@@ -23,7 +23,7 @@
 
 # The map version, recorded on every `entity_type_decision` row the
 # typed-identity write lands so a later revision can supersede honestly.
-version = "1.4.0"
+version = "1.5.0"
 
 [prefixes."accountability:"]
 entity_type = "accountability_event"
@@ -172,3 +172,15 @@ note = "§11.10 — a document-list page's enumerated document link or page reco
 [prefixes."programme_area:"]
 entity_type = "usage_aggregate"
 note = "§11.16 — the published area/programme bucket of an aggregate count lane (dot_511.py aggregate subject_kind `programme_area`, ADR-208/P36.7; the S1 screened lane's programme subjects, P37.53): a programme bucket is an aggregate usage record, never a deployment or a camera site. Carried-map repair: the prefix was minted since P36.7 but never mapped — every aggregate-lane claim would have quarantined `unknown_subject_scheme` on a live flip."
+
+[prefixes."open_data_dataset:"]
+entity_type = "data_system"
+note = "§11.10 — an international open-data catalogue's served dataset record (open_data_portals.py CKAN/ODS/hub lanes and open_data_files.py file anchors, P37.69a); a reference artifact minted from the portal's own metadata, never fetched file content."
+
+[prefixes."open_data_resource:"]
+entity_type = "data_system"
+note = "§11.10 — an open-data dataset's enumerated resource pointer (open_data_portals.py, P37.69a); the served URL + format, never the resource bytes (P8-2)."
+
+[prefixes."open_data_index:"]
+entity_type = "data_system"
+note = "§11.10 — an open-data search lane's served result-count record (open_data_portals.py package_search/hub_search, P37.69a); a bounded enumeration outcome, never a fabricated complete census."

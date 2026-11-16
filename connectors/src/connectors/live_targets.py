@@ -163,6 +163,26 @@ def live_targets(source_id: str) -> list[dict[str, str]]:
         from .document_list import document_list_targets
 
         return document_list_targets(source_id=source_id)
+    if kind == "open_data_portals_targets":
+        # P37.69a / R11-ACQ-23a: the international open-data portal seats'
+        # live targets ARE the committed inventory in
+        # data/open_data_portals_targets.toml — the bounded CKAN
+        # package_search/package_show rows, the ODS records rows and the
+        # data.europa.eu hub-search POST; every row stays
+        # ingestion_permitted=false pending the operator's OP-26 Wave-D
+        # flips under ING-GO-D (HG-03 N1–N21 `a`).
+        from .open_data_portals import portal_targets
+
+        return portal_targets(source_id=source_id)
+    if kind == "open_data_files_targets":
+        # P37.69a / R11-ACQ-23a: the committed-file seats' live targets ARE
+        # the committed inventory in data/open_data_files_targets.toml —
+        # the reviewed CSV/GeoJSON/XLSX file URLs; every row stays
+        # ingestion_permitted=false pending the operator's OP-26 Wave-D
+        # flips under ING-GO-D (HG-03 N1–N21 `a`).
+        from .open_data_files import expanded_targets
+
+        return expanded_targets(source_id=source_id)
     if kind == "procurement_portal_tenants":
         # A procurement-portal source's live targets ARE its tenant rows in
         # data/procurement_portal_tenants.toml (P26.10): each expands to the

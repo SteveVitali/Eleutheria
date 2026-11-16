@@ -285,6 +285,51 @@ disposition = "test-surface"
 note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
 
 [[finding]]
+key = "connectors.open_data_files.CsvFileConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021); the P37.69a CSV seats map to it in CONNECTOR_FOR_SOURCE"
+
+[[finding]]
+key = "connectors.open_data_files.GeojsonFileConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021); the P37.69a GeoJSON seat maps to it in CONNECTOR_FOR_SOURCE"
+
+[[finding]]
+key = "connectors.open_data_files.XlsxFileConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021); no P37.69a seat wires to it yet — the two evidenced XLSX seats ride other lanes pending their committed file URLs (D-P37.69a-1), so it is wired machinery held ready for the reviewed XLSX rows"
+
+[[finding]]
+key = "connectors.open_data_files.enumerated_rows"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.open_data_files.vocab_version"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
+key = "connectors.open_data_portals.CkanPackageSearchConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021); the P37.69a CKAN seats map to it in CONNECTOR_FOR_SOURCE"
+
+[[finding]]
+key = "connectors.open_data_portals.DataeuropaHubSearchConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021); the P37.69a data.europa.eu seat maps to it in CONNECTOR_FOR_SOURCE"
+
+[[finding]]
+key = "connectors.open_data_portals.OpendatasoftExploreConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021); the P37.69a ODS seats map to it in CONNECTOR_FOR_SOURCE"
+
+[[finding]]
+key = "connectors.open_data_portals.enumerated_rows"
+disposition = "test-surface"
+note = "committed-data accessor the suite reads directly; production reads it through the module's own flow"
+
+[[finding]]
 key = "connectors.osm.OSMConnector"
 disposition = "seam:name-registry"
 note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"

@@ -212,6 +212,10 @@ sources = [
   "dhs_oig_reports",
   "dhs_fusion_center_assessments",
   "uk_surveillance_camera_commissioner",
+  # P37.69a / R11-ACQ-23a — the CNIL BriefCam decision (I9b-C103): one
+  # targeted lookup, never a crawl. Stays ingestion_permitted=false pending
+  # the operator's OP-26 Wave-D flip under ING-GO-D (N-line `a`).
+  "statrep_fr_cnil_utilisation_de",
 ]
 
 # The five artifacts the Accountability Atlas publishes, ALL of which MUST be

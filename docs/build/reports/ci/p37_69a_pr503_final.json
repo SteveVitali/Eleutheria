@@ -1,0 +1,96 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 503,
+  "pr": 503,
+  "head_sha": "c48d67eea6195292fc5122251ee31d622b9eb956",
+  "head_ref": "r11/P37.69a-international-open-data-portals",
+  "base": "r11/P37.53-programme-level-lane",
+  "read_at": "2026-11-14T04:18:00Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [],
+  "stack_stop": "base `r11/P37.32-contract-expiring-detector` is #480, already merged",
+  "stack_digest": "dc11ef82f57b50163219209af4ca60f046661274c1b952270f032ec930922626",
+  "local_head": "c48d67eea6195292fc5122251ee31d622b9eb956",
+  "external": {
+    "read_at": "2026-11-14T04:18:11Z",
+    "since": "2026-11-14",
+    "fetch": "ok",
+    "main_sha": "1acf1141f607c434d329d30f4bc4ebb2cdfa5935",
+    "chain_descends": false,
+    "descends_note": "origin/main 1acf114 is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [
+      {
+        "child": 503,
+        "parent": 502,
+        "ancestor": true
+      },
+      {
+        "child": 502,
+        "parent": 501,
+        "ancestor": true
+      },
+      {
+        "child": 501,
+        "parent": 500,
+        "ancestor": true
+      },
+      {
+        "child": 500,
+        "parent": 499,
+        "ancestor": true
+      },
+      {
+        "child": 499,
+        "parent": 498,
+        "ancestor": true
+      },
+      {
+        "child": 498,
+        "parent": 497,
+        "ancestor": true
+      },
+      {
+        "child": 497,
+        "parent": 496,
+        "ancestor": true
+      },
+      {
+        "child": 496,
+        "parent": 495,
+        "ancestor": true
+      },
+      {
+        "child": 495,
+        "parent": 494,
+        "ancestor": false
+      }
+    ]
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1"
+  ],
+  "reruns": [],
+  "checks": [],
+  "waivers": 5,
+  "polls": 0,
+  "waited_s": 0,
+  "state": "fail",
+  "kind": "stack",
+  "line": "blockedOn: CI stack on #503@c48d67e (external): #495 does not contain its base #494's head c062c6c — rebased or retargeted outside the documented procedure",
+  "exit": 3
+}

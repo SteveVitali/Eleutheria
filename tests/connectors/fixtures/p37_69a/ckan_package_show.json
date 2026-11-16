@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "result": {
+    "name": "example-city-cctv-cameras",
+    "title": "Example City CCTV camera register",
+    "organization": {"name": "example-city", "title": "Example City Council"},
+    "license_id": "cc-by",
+    "license_title": "Creative Commons Attribution",
+    "metadata_modified": "2025-07-20T14:00:00.000000",
+    "author_email": "opendata@example-city.example",
+    "resources": [
+      {"id": "res-1", "name": "Camera register (CSV)", "format": "CSV", "url": "https://data.example-city.example/cameras.csv"},
+      {"id": "res-2", "name": "Camera register (XLSX)", "format": "XLSX", "url": "https://data.example-city.example/cameras.xlsx"}
+    ]
+  }
+}

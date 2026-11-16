@@ -1,0 +1,41 @@
+{
+  "success": true,
+  "result": {
+    "count": 3,
+    "results": [
+      {
+        "name": "example-town-cctv-locations",
+        "title": "Example Town CCTV locations",
+        "organization": {"name": "example-town-council", "title": "Example Town Council"},
+        "license_id": "uk-ogl",
+        "license_title": "Open Government Licence",
+        "metadata_modified": "2025-06-01T10:00:00.000000",
+        "author": "J. Bloggs",
+        "maintainer_email": "data@example-town.gov.uk",
+        "resources": [
+          {"id": "r1", "name": "CCTV locations CSV", "format": "CSV", "url": "https://example-town.gov.uk/open/cctv.csv"},
+          {"id": "r2", "name": "CCTV locations GeoJSON", "format": "GeoJSON", "url": "https://example-town.gov.uk/open/cctv.geojson"}
+        ]
+      },
+      {
+        "name": "example-shire-public-space-cameras",
+        "title": "Example Shire public-space cameras",
+        "organization": {"name": "example-shire", "title": "Example Shire Council"},
+        "license_id": "uk-ogl",
+        "license_title": "Open Government Licence",
+        "metadata_modified": "2025-05-12T09:30:00.000000",
+        "resources": [
+          {"id": "r3", "name": "Cameras API", "format": "API", "url": "https://example-shire.gov.uk/api/cameras"}
+        ]
+      },
+      {
+        "name": "example-borough-cctv-policy",
+        "title": "Example Borough CCTV policy register",
+        "organization": {"name": "example-borough", "title": "Example Borough Council"},
+        "license_id": "uk-ogl",
+        "license_title": "Open Government Licence",
+        "resources": []
+      }
+    ]
+  }
+}
