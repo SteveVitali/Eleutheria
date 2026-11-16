@@ -1,0 +1,172 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned `document_list` connector vocabulary (P37.52 / R11-ACQ-25,
+# I8 §6.2 — the document-list page family). This table is DATA, not code
+# (SIG-ENG-001): the connector's predicate allowlist, its forbidden predicate
+# genres, the per-adapter field declarations, the committed host set and the
+# person-level column screen are data rows reviewed on their own. Changes
+# after P37.52 are VERSIONED MIGRATIONS — bump `vocab_version` and add the
+# change, never silently rewrite a row (SIG-INGEST-017).
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first
+# [table] header — otherwise TOML nests it under that table. The [adapters.*]
+# tables therefore come last.
+
+schema = "sig.document-list-vocab/1"
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.11.13"
+
+# The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033):
+# the `document_list` connector may write ONLY the contract, funding-
+# instrument/grant-award and document-pointer predicates below — the page's
+# own served literals plus the reviewed per-seat declarations. Writing
+# anything else — a person name, a deployment assertion, a guessed technology
+# slug, a sharing edge — is a schema error.
+predicate_allowlist = [
+  "external_id",
+  "title",
+  "document",
+  "published_by",
+  "citation",
+  "country",
+  "jurisdiction",
+  "contract",
+  "contract_number",
+  "vendor",
+  "buyer",
+  "products",
+  "description",
+  "funding_instrument",
+  "instrument_type",
+  "funder",
+  "recipient",
+  "funding_program_name",
+  "program_name",
+  "funding_amount",
+  "award_date",
+  "period",
+  "posted_date",
+  "as_of",
+  "amount",
+  "currency",
+  "start_date",
+  "end_date",
+]
+
+# Predicate GENRES the connector MUST NOT write (scope-creep guard): a
+# document-list page enumerates cooperative contract documents and grant
+# award rows — never a deployment, a camera device, a sharing edge, a person,
+# a per-encounter row or a payee-level payment (an award is never a
+# deployment; procured ≠ deployed; the OH/Mass recipients are units of
+# government, never persons).
+forbidden_predicate_genres = [
+  "configured_access_edge",
+  "configured_sharing_partner",
+  "sharing_partner",
+  "observed_use_edge",
+  "deployment_exists",
+  "camera_latitude",
+  "camera_longitude",
+  "enforcement_count",
+  "usage_count",
+  "payee",
+  "payment_total",
+  "person",
+  "seller",
+  "in_use_without_policy_count",
+]
+
+# The person-level column-name tokens the tabular screen refuses on a served
+# table header (Part VIII / §0.7 — schema vocabulary, never values). The
+# adapters emit only the declared column-map cells, so a served table that
+# also CARRIES a person-level column is refused wholesale rather than
+# partially redacted: the tokens below are the reviewed person-level markers.
+forbidden_field_tokens = [
+  "judge",
+  "officer",
+  "plate",
+  "victim",
+  "arrestee",
+  "defendant",
+  "inmate",
+  "ssn",
+  "date_of_birth",
+  "dob",
+  "driver",
+  "passenger",
+  "traveler",
+  "detainee",
+  "suspect",
+  "contact",
+  "phone",
+  "email",
+]
+
+# The committed https host set every target URL must resolve onto — the
+# publishers' own public hosts only. Any target URL off this set refuses
+# before egress (fail-closed).
+hosts = [
+  "floridabuy.paec.org",
+  "www.wsipc.org",
+  "neric.org",
+  "www.naspovaluepoint.org",
+  "budget.digital.mass.gov",
+  "omb.illinois.gov",
+  "dam.assets.ohio.gov",
+  "www.mass.gov",
+]
+
+# --- [adapters.*] — the small per-seat adapters --------------------------------
+# Each adapter declares the target kind it reads; per-seat review data lives
+# on the TARGET rows (data/document_list_targets.toml) — a seat's contract
+# block, programme declaration, column literals and expect markers are
+# committed reviewed data, never scraped guesses.
+
+# contract_docs_page — a cooperative contract-document index page (Florida
+# Buy, WSIPC, NASPO): the page's document links enumerate as
+# `document_list_document` pointers (contents never fetched — P8-2), and the
+# target's declared `contract` block mints ONE `contract:` record on the
+# reviewed cooperative reference (facts + citations only on the RB-07 seats —
+# no verbatim `description` claim).
+[adapters.contract_docs_page]
+kind = "doclist_html"
+
+# service_page — a cooperative service-catalogue page carrying no contract
+# instrument (NERIC's Gaggle service page): the page itself mints one
+# `document_list_document` page record with the declared title/vendor facts
+# (a service offering is evidence, never an executed contract), and the
+# page's document links enumerate as pointers.
+[adapters.service_page]
+kind = "doclist_html"
+
+# award_table — an HTML award-list table (Illinois GATA CSFA AwardList):
+# each served row mints one `grant_award` record on a `funding_instrument:`
+# subject keyed by the award's own id; the grantee must be organisation-
+# shaped (units of government — a person-shaped grantee is a recorded
+# rejection, never a minted subject). The declared column literals are the
+# publisher's own header cells.
+[adapters.award_table]
+kind = "doclist_html"
+
+# capital_line — a capital-plan line page (Massachusetts FY2025-2029 line
+# S027): the programme record mints on a `funding_instrument:` subject; each
+# served fiscal-year table row mints a per-FY `grant_award` allocation row
+# (plan-level allocations, never agency recipients).
+[adapters.capital_line]
+kind = "doclist_html"
+
+# rfp_pdf — a published grant solicitation PDF (Ohio OCJS BWC RFP): the
+# digital-native text layer is located per page; the programme record mints
+# on a `funding_instrument:` subject with the declared programme facts and
+# the served award-window/statistic literals — never a recipient row the
+# document does not serve.
+[adapters.rfp_pdf]
+kind = "doclist_pdf"
+
+# release_awards — an award-announcement page serving a recipient list in
+# its body (Massachusetts EOPSS OGR BWC programme): each listed recipient
+# mints a `grant_award` record (organisation-shaped names only — a person-
+# shaped entry is a recorded rejection); the programme record mints on a
+# `funding_instrument:` subject with the served totals.
+[adapters.release_awards]
+kind = "doclist_html"

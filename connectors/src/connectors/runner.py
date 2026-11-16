@@ -272,6 +272,28 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "legis_pr_rs0604_resoluci_del": "puerto_rico",
     "legis_pr_sistema_nico_de": "puerto_rico",
     "procportal_pr_consulta_del_registro": "puerto_rico",
+    # P37.52 (R11-ACQ-25, I8 §6.2): the document-list page family — an
+    # index-page -> PDF/HTML enumerator for public pages with no platform:
+    # the four cooperative contract-document seats (Florida Buy/PAEC, WSIPC
+    # RFP 24-01, NERIC's Gaggle service page, the NASPO ValuePoint
+    # portfolio), the Illinois GATA CSFA award list, the Massachusetts
+    # capital-plan BWC line, the Ohio OCJS BWC RFP (the family's one
+    # doclist_pdf target) and the Massachusetts EOPSS award announcement.
+    # It emits contract / grant_award records — an award or contract fact is
+    # never a deployment; linked documents enumerate as pointers, never
+    # fetched content (P8-2). All eight stay `ingestion_permitted=false`
+    # (HG-03 RB-04 `a`; WSIPC + NASPO additionally RB-07 `a` — facts and
+    # citations only) pending the operator's OP-26 Wave-D flips under
+    # ING-GO-D; replay/shadow run over committed fixtures in
+    # `tests/connectors/fixtures/p37_52/`.
+    "camreg_ma_massachusetts_capital": "document_list",
+    "grant_il_illinois_gata_csfa": "document_list",
+    "grant_ma_massachusetts_law_enforcement": "document_list",
+    "grant_oh_ohio_criminal_justice": "document_list",
+    "procportal_fl_florida_buy_cooperative": "document_list",
+    "procportal_ny_northeastern_regional": "document_list",
+    "procportal_us_naspo_valuepoint_portfolio": "document_list",
+    "procportal_wa_wsipc_rfp_24": "document_list",
     "sam_gov": "procurement",
     "courtlistener_recap": "accountability",
     # P36.77 / R11-ACQ-32: the DocumentCloud/MuckRock released-materials
