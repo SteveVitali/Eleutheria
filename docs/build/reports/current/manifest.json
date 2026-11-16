@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "864c3b63b2462f11cc98b92e8b254260558af64a",
+  "input_commit": "ceb1bfbf10b1f441726777afd2548773208afaa8",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -1010,7 +1010,7 @@
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "a7abdfeb5a182dfcf172974821c5e94d806af8f19bac79fc54932519a12c7e2f"
+      "sha256": "e7d1afb2dc893f110d56b9e413de735309cd4246ad296c1ec03b9e3539857945"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -1018,7 +1018,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "5c366f5c8497fa47dac74f3aef40813bb80f5c5763a74b757c4574fd096f78d4"
+      "sha256": "bc5bf51cdfc237b0b4a640caf99b31562274d5ee520735bfe2985cc7d134ae6c"
     },
     {
       "path": "docs/build/planning/2026-09-30-next-phase/data/round11_plan.csv",
@@ -1083,6 +1083,10 @@
     {
       "path": "docs/build/readouts/HUMAN-H5.md",
       "sha256": "34cf9d404bfdc33d58d962512ae9287a98ffd59f7d2668ba40500f5e14b286c1"
+    },
+    {
+      "path": "docs/build/readouts/RULINGS-2026-11-15.md",
+      "sha256": "18fe44779acff1cfa20ed960c8c04756fe20554ebda3231244e73225a7788318"
     },
     {
       "path": "docs/build/readouts/_GATE_TEMPLATE.md",
@@ -2961,6 +2965,10 @@
       "sha256": "ce4a87ce2131606dbf87200ade94a0178120cbf6513fa788b3c81ddc6e657f54"
     },
     {
+      "path": "docs/build/runs/P37.61a.md",
+      "sha256": "7f7cb0fdd74fd622bc46933455401ded25ae31270a419cc18355e16f4c6cf1fd"
+    },
+    {
       "path": "docs/build/runs/P37.69a.md",
       "sha256": "fe0011a2d1b7288cef88a6b727a9fa01d9031e9f276c744091b89f3c4e3f5445"
     },
@@ -3110,7 +3118,7 @@
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
-      "sha256": "c34d28c4d567c73e3fe3f2d695e957ced20911977be3342ae4f85c35aca8d0ba"
+      "sha256": "2540cfb782b3042fe0f23b475dd93a85c0794337d8e5cd915fcd633664d18b2c"
     },
     {
       "path": "docs/tickets/161_P32.1__baseline-and-memory-audit.md",
@@ -4445,6 +4453,26 @@
       "sha256": "a72e2b7683ffef6701bc42a1dae927eb87d0dcd5d17c388b3072c106b26ee29d"
     },
     {
+      "path": "docs/tickets/489a_P37.61a__republish-harm-removal.md",
+      "sha256": "2d55d7d8e0deec83a21a8c0e00c66690e8fa33afe392f2a66d6a5edd82089181"
+    },
+    {
+      "path": "docs/tickets/489b_P37.61b__privacy-redaction-restore.md",
+      "sha256": "656edc9ba7b032de47b252b1bc7c44730cbe5036b0e77616e8e3b123b9941d3f"
+    },
+    {
+      "path": "docs/tickets/489c_P37.61c__projection-out-of-commit-path.md",
+      "sha256": "7eae5c655389f11f2b10fa942c76374ac7ef9d85420c8cffa4d6641930a959b8"
+    },
+    {
+      "path": "docs/tickets/489d_P37.61d__live-claims-rescope.md",
+      "sha256": "b597d71b92e5e3b1fcee88ce1f9ef0ce0c73e45b630dec6f9cb6fe672fed877b"
+    },
+    {
+      "path": "docs/tickets/489e_P37.61e__byte-budgets-to-warnings.md",
+      "sha256": "2d1ce1504a4bc7123fe40f2b33f5511b06b83dc954f70f99742a3fbc0c07ec43"
+    },
+    {
       "path": "docs/tickets/490_P37.62__contribution-path-wiring.md",
       "sha256": "b9588e3089d7eeedbfecb4125a6a21d0d74d2cd36adb4c737929c2a5dbca9e54"
     },
@@ -4530,7 +4558,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "68a9b65f00c03b708578128b5adea9810dd478f9a3e52884695c3a8d74dc86f8"
+      "sha256": "985463ede72c387109e0e7719998130dec564dd28dd90aafd3cbd79b2a2ec861"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",

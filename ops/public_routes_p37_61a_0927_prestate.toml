@@ -1,0 +1,105 @@
+# SPDX-License-Identifier: Apache-2.0
+# The P37.61a PRE-STATE allow-list profile (RULING H-1, fallback path) —
+# DATA, not code. Admits exactly the FULL captured 2026-09-27 tree: used ONLY
+# by the publish-web restore alternative —
+#   `sig-ops publish-web --dist <pre-copy download>
+#      --allowlist ops/public_routes_p37_61a_0927_prestate.toml --apply`
+# — and only when the captured tree passes the pre-sync gates
+# (`assert_public_tree_content`, `assert_publish_set_secret_free`,
+# `check_publishable_copy`, `assert_attribution_complete`). On the 09-27
+# capture it does NOT (the `task/new/**` objects carry `demo_` path segments
+# — the internal-marker sweep refuses), so the named scripted rollback is
+# `ops/gcp/sig-web-restore.sh`, and the restore's expected outcome on this
+# path is the recorded post-restore denied-route probe REFUSAL (the restored
+# tree serves `/visual-language/` and `/task/new/` again — the probes fail,
+# proving the restore reverted the publish). That refusal IS the proof, not
+# a defect — the restore leg then completes by re-running the P37.61a
+# publish (or is superseded by the operator's full republish).
+#
+# `required` = exactly the captured tree's emitted top-level set.
+
+[allowlist]
+top_level = [
+  "_astro",
+  "contribution-back",
+  "corrections",
+  "coverage-metrics",
+  "data-freshness",
+  "dispute",
+  "dossier",
+  "editorial-standards",
+  "evidence",
+  "index.html",
+  "map",
+  "methodology",
+  "network",
+  "research-queue",
+  "robots.txt",
+  "search",
+  "style-guide",
+  "task",
+  "tiles",
+  "visual-language",
+  "watch",
+  ".sig-release.json",   # the publish's own release record (written each run)
+]
+
+required = [
+  "_astro",
+  "contribution-back",
+  "corrections",
+  "coverage-metrics",
+  "data-freshness",
+  "dispute",
+  "dossier",
+  "editorial-standards",
+  "evidence",
+  "index.html",
+  "map",
+  "methodology",
+  "network",
+  "research-queue",
+  "robots.txt",
+  "search",
+  "style-guide",
+  "task",
+  "tiles",
+  "visual-language",
+  "watch",
+]
+
+# Same denied set as the publish profile — mirrored verbatim from the
+# canonical allow-list. (On the restore path the post-sync probes are
+# EXPECTED to fail on the denied routes the restored tree serves — the
+# recorded proof the revert happened.)
+[[denied]]
+path = "/curate/"
+note = "authenticated curation shell (ADR-068) — internal, never public"
+
+[[denied]]
+path = "/curate/submit/"
+note = "the curation submit surface — the route the hand rsync leaked"
+
+[[denied]]
+path = "/task/new/"
+note = "retired by P34.12 (K11 §5.5 / RQ-00) — the whole prefix is refused, not just demo_* slugs"
+
+[[denied]]
+path = "/task/new/demo_roundtrip/"
+note = "one demo page canary — demo_* task slugs are never publishable"
+
+[[denied]]
+path = "/releases/"
+note = "not approved; the release pipeline owns /releases/index.html (G2 0b)"
+
+[[denied]]
+path = "/research-dossier/"
+note = "not approved"
+
+[[denied]]
+path = "/intake/"
+note = "the correction-intake receiver is non-operational — never a public route"
+
+[[denied]]
+path = "/visual-language/"
+note = "withdrawn (A-0.3 = b): fixture facts never public — RULING H-1 item 1"

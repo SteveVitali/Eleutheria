@@ -1,0 +1,124 @@
+{
+  "checks": {
+    "absence": {
+      "count": 8,
+      "failed": 2,
+      "probes": [
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-apex-curate",
+          "ok": true,
+          "url": "https://surveillancegraph.org/curate/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-apex-curate-submit",
+          "ok": true,
+          "url": "https://surveillancegraph.org/curate/submit/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-apex-demo-task",
+          "ok": true,
+          "url": "https://surveillancegraph.org/task/new/demo_roundtrip/"
+        },
+        {
+          "detail": "present (HTTP 403)",
+          "name": "absent-apex-task-new",
+          "ok": false,
+          "url": "https://surveillancegraph.org/task/new/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-apex-releases",
+          "ok": true,
+          "url": "https://surveillancegraph.org/releases/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-apex-research-dossier",
+          "ok": true,
+          "url": "https://surveillancegraph.org/research-dossier/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-apex-intake",
+          "ok": true,
+          "url": "https://surveillancegraph.org/intake/"
+        },
+        {
+          "detail": "present (HTTP 200)",
+          "name": "absent-apex-visual-language",
+          "ok": false,
+          "url": "https://surveillancegraph.org/visual-language/"
+        }
+      ],
+      "unresolved": [
+        "absent-web-curate",
+        "absent-web-curate-submit",
+        "absent-web-demo-task",
+        "absent-web-task-new",
+        "absent-web-releases",
+        "absent-web-research-dossier",
+        "absent-web-intake",
+        "absent-web-visual-language",
+        "absent-bucket-curate",
+        "absent-bucket-curate-submit",
+        "absent-bucket-demo-task",
+        "absent-bucket-task-new",
+        "absent-bucket-releases",
+        "absent-bucket-research-dossier",
+        "absent-bucket-intake",
+        "absent-bucket-visual-language",
+        "absent-api-release-unpromoted"
+      ],
+      "verdict": "fail"
+    },
+    "attribution_sample": {
+      "reason": "no --public-dir given",
+      "verdict": "skipped"
+    },
+    "handle_crawl": {
+      "repo_and_trees": {
+        "files_with_hits": {
+          "functional": 11,
+          "other": 0,
+          "retained": 6
+        },
+        "handles_checked": 32,
+        "hits": {
+          "functional": 434,
+          "other": 0,
+          "retained": 32
+        },
+        "verdict": "fail"
+      },
+      "sig_public_listing": {
+        "handle_hits": 0,
+        "objects": 150
+      },
+      "verdict": "fail"
+    },
+    "tile_sample": {
+      "count": 1,
+      "failed": 0,
+      "probes": [
+        {
+          "ok": true,
+          "status": 206,
+          "url": "https://surveillancegraph.org/tiles/sig_graph-sites.pmtiles"
+        }
+      ],
+      "verdict": "pass"
+    }
+  },
+  "generated_at": "2026-11-16T09:42:48Z",
+  "overall": "fail",
+  "probe": "route-allowlist",
+  "release": {
+    "built_at": "2026-11-16T01:59:34+00:00",
+    "release_id": "web-20261116T015934Z-1b90a07e"
+  },
+  "subject": {},
+  "version": "sig.probe-run/1"
+}

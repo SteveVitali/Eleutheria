@@ -599,7 +599,7 @@ def manifest_rows(manifest: str) -> list[dict]:
         out.append(
             {
                 "seq": cells[0],
-                "seq_num": int(cells[0].rstrip("a")),
+                "seq_num": int(re.sub(r"[a-z]+$", "", cells[0])),
                 "file": fname,
                 "ticket": tid,
                 "line": i,

@@ -1,0 +1,110 @@
+# SPDX-License-Identifier: Apache-2.0
+# The P37.61a allow-list profile (RULING H-1, fallback path) — DATA, not code.
+# A NEW sibling profile passed via `--allowlist` to `sig-ops publish-web` for
+# the minimal-delta republish of the captured 2026-09-27 served tree as
+# transformed by `ops.republish_transform` — precedent:
+# `public_routes_status.toml` / `public_routes_watch.toml`. The canonical
+# `ops/public_routes.toml` is NEVER edited for this publish: editing it would
+# weaken the gate for every later publish; this profile admits exactly the
+# transformed 09-27 route set — required engineering, not a loosened gate.
+# Every gate still runs against it: `assert_allowlisted_tree` (top_level +
+# required ⊆ emitted set), `assert_public_tree_content`, the copy gate, the
+# secret scan, and the cadence-owned denied-route probes (`ops/cadence.toml`
+# `http-absent` rows — a profile can never weaken them).
+#
+# The served 09-27 tree lacks the canonical profile's `required` entries
+# (data-collection, sources, status, search/… emitted by current source), so
+# the canonical profile cannot match this intentionally-published tree —
+# `required` here is exactly the transformed tree's emitted top-level set
+# (never empty; `load_allowlist` validates required ⊆ top_level).
+#
+# Relative to the captured tree the transform removes: `visual-language/`
+# (RULING H-1 item 1 — absent → 404) and `task/` (every served task object
+# lives under the denied `/task/new/` prefix — swept whole-object).
+
+[allowlist]
+top_level = [
+  "_astro",
+  "contribution-back",
+  "corrections",
+  "coverage-metrics",
+  "data-freshness",
+  "dispute",
+  "dossier",
+  "editorial-standards",
+  "evidence",
+  "index.html",
+  "map",
+  "methodology",
+  "network",
+  "research-queue",
+  "robots.txt",
+  "search",
+  "style-guide",
+  "tiles",
+  "watch",
+  ".sig-release.json",   # the publish's own release record (written each run)
+]
+
+# Exactly the transformed tree's emitted top-level set — every entry MUST be
+# emitted by the transform output or the publish refuses (the "a route the
+# allow-list requires that a broken build silently dropped" half of the
+# check). `.sig-release.json` is deliberately NOT here: the publish writes it
+# into the tree AFTER this assertion.
+required = [
+  "_astro",
+  "contribution-back",
+  "corrections",
+  "coverage-metrics",
+  "data-freshness",
+  "dispute",
+  "dossier",
+  "editorial-standards",
+  "evidence",
+  "index.html",
+  "map",
+  "methodology",
+  "network",
+  "research-queue",
+  "robots.txt",
+  "search",
+  "style-guide",
+  "tiles",
+  "watch",
+]
+
+# The denied set of THIS publish — mirrors the canonical profile's
+# [[denied]] rows verbatim (the transform sweeps every object under these
+# prefixes; the post-sync proof is cadence-owned `http-absent` targets that
+# no profile can weaken).
+[[denied]]
+path = "/curate/"
+note = "authenticated curation shell (ADR-068) — internal, never public"
+
+[[denied]]
+path = "/curate/submit/"
+note = "the curation submit surface — the route the hand rsync leaked"
+
+[[denied]]
+path = "/task/new/"
+note = "retired by P34.12 (K11 §5.5 / RQ-00): the fixture intake pages claimed a task 'has been generated' when nothing had been — the whole prefix is refused, not just demo_* slugs"
+
+[[denied]]
+path = "/task/new/demo_roundtrip/"
+note = "one demo page canary — demo_* task slugs are never publishable"
+
+[[denied]]
+path = "/releases/"
+note = "not approved; the release pipeline owns /releases/index.html (G2 0b)"
+
+[[denied]]
+path = "/research-dossier/"
+note = "not approved"
+
+[[denied]]
+path = "/intake/"
+note = "the correction-intake receiver is non-operational — never a public route"
+
+[[denied]]
+path = "/visual-language/"
+note = "withdrawn (A-0.3 = b): fixture facts never public — RULING H-1 item 1, removed by this publish"

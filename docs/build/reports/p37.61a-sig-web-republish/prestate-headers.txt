@@ -1,0 +1,110 @@
+=== date -u ===
+Mon Nov 16 01:54:35 UTC 2026
+=== HEAD https://surveillancegraph.org/ ===
+HTTP/2 200 
+content-type: text/html; charset=utf-8
+last-modified: Sun, 27 Sep 2026 01:33:43 GMT
+vary: Accept-Encoding
+etag: "6ab87277-14f54"
+cache-control: public, max-age=0, must-revalidate
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+=== HEAD https://surveillancegraph.org/visual-language/ ===
+HTTP/2 200 
+content-type: text/html; charset=utf-8
+last-modified: Sun, 27 Sep 2026 01:33:43 GMT
+vary: Accept-Encoding
+etag: "6ab87277-4c80"
+cache-control: public, max-age=0, must-revalidate
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+=== HEAD https://surveillancegraph.org/editorial-standards/ ===
+HTTP/2 200 
+content-type: text/html; charset=utf-8
+last-modified: Sun, 27 Sep 2026 01:33:42 GMT
+vary: Accept-Encoding
+etag: "6ab87276-2617"
+cache-control: public, max-age=0, must-revalidate
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+=== HEAD https://surveillancegraph.org/dispute/ ===
+HTTP/2 200 
+content-type: text/html; charset=utf-8
+last-modified: Sun, 27 Sep 2026 01:33:42 GMT
+vary: Accept-Encoding
+etag: "6ab87276-1e66"
+cache-control: public, max-age=0, must-revalidate
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+=== HEAD https://surveillancegraph.org/task/new/ ===
+HTTP/2 403 
+content-type: text/html; charset=utf-8
+cache-control: public, max-age=0, must-revalidate
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+x-cloud-trace-context: 5fa6d54a7439a9ca0ea67299121b4870
+content-length: 146
+date: Mon, 16 Nov 2026 01:54:36 GMT
+=== HEAD https://surveillancegraph.org/task/new/demo_roundtrip/ ===
+HTTP/2 404 
+content-type: text/html; charset=utf-8
+cache-control: public, max-age=0, must-revalidate
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+x-cloud-trace-context: f26e77733722044c8650dc8bab439545
+content-length: 146
+date: Mon, 16 Nov 2026 01:54:36 GMT
+=== HEAD https://surveillancegraph.org/curate/ ===
+HTTP/2 404 
+content-type: text/html; charset=utf-8
+cache-control: public, max-age=0, must-revalidate
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+x-cloud-trace-context: ab4a8a8c36c76d1e19f99b172804aa56
+content-length: 146
+date: Mon, 16 Nov 2026 01:54:37 GMT
+=== HEAD https://surveillancegraph.org/releases/ ===
+HTTP/2 404 
+content-type: text/html; charset=utf-8
+cache-control: public, max-age=0, must-revalidate
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+x-cloud-trace-context: 11246f2ce8abb678e1a4d97494f00cc4
+content-length: 146
+date: Mon, 16 Nov 2026 01:54:37 GMT
+=== HEAD https://surveillancegraph.org/intake/ ===
+HTTP/2 404 
+content-type: text/html; charset=utf-8
+cache-control: public, max-age=0, must-revalidate
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+x-cloud-trace-context: e708da8f5f11cd51668bca36f64e6877
+content-length: 146
+date: Mon, 16 Nov 2026 01:54:37 GMT
+=== HEAD https://surveillancegraph.org/research-dossier/ ===
+HTTP/2 404 
+content-type: text/html; charset=utf-8
+cache-control: public, max-age=0, must-revalidate
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+x-cloud-trace-context: f00e14a51733f99d1025d691990e8b50
+content-length: 146
+date: Mon, 16 Nov 2026 01:54:38 GMT
+=== HEAD https://surveillancegraph.org/map/ ===
+HTTP/2 200 
+content-type: text/html; charset=utf-8
+last-modified: Sun, 27 Sep 2026 01:33:42 GMT
+vary: Accept-Encoding
+etag: "6ab87276-34cee5"
+cache-control: public, max-age=0, must-revalidate
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+=== HEAD https://surveillancegraph.org/dossier/al/ ===
+HTTP/2 200 
+content-type: text/html; charset=utf-8
+last-modified: Sun, 27 Sep 2026 01:33:42 GMT
+vary: Accept-Encoding
+etag: "6ab87276-2b8a"
+cache-control: public, max-age=0, must-revalidate
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
