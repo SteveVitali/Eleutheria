@@ -10,7 +10,7 @@
 projectStatus: IN_PROGRESS
 nextTicket: P37.61b
 lastCompleted: P37.61a
-blockedOn: CI stack on #514@aac74a4 (external): #514 does not contain its base #512's head 8182380 — rebased or retargeted outside the documented procedure (carried ancestors verbatim, none authored here)
+blockedOn:
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.42,P37.54,P37.55,P37.56,P37.59,P37.70,P37.71
 manifest: docs/tickets/00_MANIFEST.md
@@ -20,13 +20,13 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P37.61a-republish-harm-removal-v2
+chainTip: r11/P37.61a-republish-harm-removal-v3
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
 round: 11
 harness: devin-desktop/swe-2-high/subagent
-updatedAt: 2026-11-16T01:29Z
+updatedAt: 2026-11-16T17:58Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -1812,3 +1812,4 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-16 — P37.61a post-closeout record — head `87df5485` (post-apply records commit, rebased onto operator merge `1d63dd63`) · PR #516 vs `r11/P37.61-t1-table-and-filter-enhancements` · v1 branch + #515 superseded (orchestrator insert `1b90a07e` untrailered; v2 replay `1f13945c` restores `Harness: devin-desktop/swe-2-high/orchestrator`, byte-identical tree) · `ci: pass #516@1d63dd6` (run 43812835979, merge-head read; tip-bound read on the records head follows — the 87df5485 run was superseded — security 35s · docs 1m46s · composed 3m40s · python 23m40s · web 1h3m7s — all 5 legs head-bound green pre-apply) · `main` untouched · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-16 — P37.61a orchestrator repair — folded the worker's unpushed closeout `15d3989a` onto the operator's `main` merge `1d63dd63` (interactive rebase left mid-conflict at interruption; resolved by projection regen on the merged inputs) → `87df5485` pushed fast-forward, no force-push, `main` untouched · lint repair: the APPLY entry's kind + `**` markup and the closeout entry's `closeout record` kind were outside record_policy/phase_log_kinds.txt — retagged `done` + `post-closeout record`, payloads carried verbatim, pre-edit bytes archived at `reports/memory-repair/LEDGER_phaselog_L1811-1812_pre-P37.61a-kind-repair.txt` · ci cell corrected: the worker's read cited run 43812835979 against `0ebab8f7`; that run is on `1d63dd63` — the head-bound read on `87df5485` is run 43887516648 (in flight) · `blockedOn` carried verbatim — the #514-vs-#512 finding is moot (#514 merged `f7373cb8`); field refresh deferred to the head-bound post-closeout record · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-11-16 — P37.61a orchestrator repair + PR supersede — OM-01 trailer repair: my four closeout-repair commits on v2 (`1e02af25` `a0faef9e` `e8a7f6c4` `995e66cd`) carried no `Harness:` trailer; force-push declined by repo rule → the commits were replayed trailered (byte-identical tree, `git filter-branch` message-only) onto `r11/P37.61a-republish-harm-removal-v3` → **PR #517 supersedes #516** (closed with pointer; v1→v2 precedent) · the seed-commit declaration repoints to the rewritten repair sha `f4c5766c` · records updated: runs/P37.61a.md, pr/P37.61a.md, BUILD_INDEX row 489a PR cell `#516`→`#517` (in-place cell repair, pre-edit bytes archived `reports/memory-repair/BUILD_INDEX_L682_pre-P37.61a-pr-supersede.txt`); the committed LEDGER entries' `#516` reads stay verbatim — a supersede is history, not a rewrite · the head-bound `ci:` read lands on the v3 head in the post-closeout record · ci: pass #516@1d63dd6 (run 43812835979, the verified in-branch read at record time) · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-16 — P37.61a post-closeout record — head `1b310b7a` · PR #517 vs `main` · `ci: pass #517@1b310b7` (run 43898992581 — security 32s · docs 2m32s · composed 4m31s · python 20m33s · web 1h2m54s attempt-2; attempt-1's `map — /map/` dark-1440 visual cell failed on a 96179-px (0.08) screenshot diff — zero `web/` bytes differ vs merge head `1d63dd63` whose own web leg greened at run 43812835979, so the head's diff cannot touch the route: adjudicated env-flake `VISUAL-MAP-DARK-1` (unlisted), the one same-head rerun per B-15, rerun-requested + success rows in `reports/ci/flake_log.csv`) · `blockedOn` cleared — the carried #514-vs-#512 ancestry finding is moot (#514 merged `f7373cb8`, verified ancestor of HEAD; ci-boundary `descends:yes merges:23 open-other:0`, `reports/ci/p37_61a_pr517.json`) · `chainTip` corrected → `r11/P37.61a-republish-harm-removal-v3` (the trailer-replay branch #517 rides; the v2 name lingered from before the replay) · projection regen after records · `main` untouched · next → P37.61b · harness: devin-desktop/swe-2-high/orchestrator
