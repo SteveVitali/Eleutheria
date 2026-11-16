@@ -1115,6 +1115,40 @@ def build_parser() -> argparse.ArgumentParser:
     )
     wcp.add_argument("--json", action="store_true", help="emit the JSON record")
 
+    wdg = sub.add_parser(
+        "wave-d-gate",
+        help="P37.54 (R11-ACQ-27, I8 §7.2–7.8; OM-19/OM-20): the Wave-D leg "
+        "go/no-go — judges a recorded inputs JSON (action admit|close, "
+        "the verbatim ING-GO-D answer recorded at GATE-G6 b91f8e58, the "
+        "two-window instant 11-23→12-04 / 12-14→12-18 minus the 12-15 "
+        "cut day, the L0…L11 order + family-day pacing, the declared "
+        "run set + per-family OP-26 flips, the exclusions, serialisation, "
+        "L0 prestate/backup and the leg-close evidence — +0 re-runs, "
+        "materialize/next-fires/cadence-state resume) and emits "
+        "sig.wave-d-gate/1; exit 0 = go, exit 42 = no-go (the leg refuses "
+        "and queues), exit 2 = usage",
+    )
+    wdg.add_argument(
+        "--inputs",
+        required=True,
+        help="the recorded inputs JSON (see ops/src/ops/wave_d.py for the shape)",
+    )
+    wdg.add_argument(
+        "--out",
+        dest="out",
+        default=None,
+        help="also write the verdict JSON here",
+    )
+
+    wdp = sub.add_parser(
+        "wave-d-plan",
+        help="P37.54 (R11-ACQ-27): the deterministic Wave-D step plan "
+        "(L0 opening → L1–L9 Tier-2 family days → L10 S6 extras → L11 "
+        "materialize/coverage/resume) → sig.wave-d-plan/1; plan-only "
+        "output, never a mutation",
+    )
+    wdp.add_argument("--json", action="store_true", help="emit the JSON record")
+
     acsw = sub.add_parser(
         "acceptance-sweep",
         help="P34.47 (plan §5.1/§13.1): the 11A live-read acceptance sweep "
@@ -6739,6 +6773,16 @@ def main(argv: list[str] | None = None) -> int:
         from . import wave_c
 
         return wave_c.plan_main(["--json"] if args.json else [])
+    if args.command == "wave-d-gate":
+        from . import wave_d
+
+        return wave_d.gate_main(
+            ["--inputs", args.inputs] + (["--out", args.out] if args.out else [])
+        )
+    if args.command == "wave-d-plan":
+        from . import wave_d
+
+        return wave_d.plan_main(["--json"] if args.json else [])
     if args.command == "acceptance-sweep":
         from . import acceptance
 

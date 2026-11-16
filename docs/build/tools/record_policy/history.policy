@@ -1370,3 +1370,18 @@ seed-commit 19fd325d
 seed-commit cf4a9f0f
 # a8b29cbf — range-head declaration for the unattributed LEDGER:1714 finding: the merge-resolution line carries no blame (commit "") so the head-commit rule applies; the line is the sanctioned a36fd274 live-claim repair propagated by cf4a9f0f — same-meaning, never a history rewrite
 seed-commit a8b29cbf
+# P37.54 (row 481) closeout repair — BUILD_INDEX.md line 673's `ci:` cell was
+# committed as `ci:` recorded at closeout` in `522eb002` (the build-memory
+# commit made before the PR existed, per the checkpoint-first convention) and
+# is rewritten in place to `ci: pending head-bound read` (#505;
+# `reports/ci/p37_54_pr505.json`; carried external `blockedOn`) by `f45cf7ec`.
+# The append-only rule (BM-INDEX-01) takes only appended rows, but the index is
+# one-row-per-ticket — a second row for 481 would break the contract; the
+# repair is an in-place fill of the placeholder the row was designed to carry
+# (the same class as the committed 458f4af8/0025ea46 repair pattern).
+# Pre-edit bytes archived
+# `reports/memory-repair/BUILD_INDEX_L673_pre-P37.54-ci.txt`
+# (sha256:9da1837447efba34763faf377072a84e09914c66d29fd910a86364531ad4eb72).
+# Scope: the append-only finding attributed to f45cf7ec's rewritten
+# BUILD_INDEX.md line 673 only; no other commit borrows the exemption.
+seed-commit f45cf7ec
