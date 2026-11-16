@@ -79,9 +79,12 @@ posture stands: the old strings remain in git history):
   (`catalog_sweep_2026-09-18*.json`, `catalog_sweep_2026-09-26_retry.json`,
   `p2616_dispositions.json`).
 - The pre-edit bytes of every inherited line are archived under
-  `docs/build/reports/memory-repair/` (`*_pre-P37.61b-handle-scrub.txt`),
-  and the correction commit is declared `seed-commit` in
-  `record_policy/history.policy` per the sanctioned memory-repair path.
+  `docs/build/reports/memory-repair/` (`*_pre-P37.61b-handle-scrub.txt`)
+  with listed handles redacted to sha256 digests plus per-line original
+  digests for audit — plaintext handles never commit; the true bytes
+  remain in git history per OD-20 — and the correction commit is declared
+  `seed-commit` in `record_policy/history.policy` per the sanctioned
+  memory-repair path.
 - The **reappearance guard** (`docs/build/tools/redaction_guard.py`,
   `sig.redaction-guard/1`, wired into `.github/workflows/ci.yml`) is now
   fail-closed on any sha256-listed handle in *any* tracked file — retained

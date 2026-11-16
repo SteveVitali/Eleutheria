@@ -1,2 +1,7 @@
-  (`camreg_nurnazihah`, `camreg_olsson`, `camreg_nyc_jgrayson_ny`,
-  `camreg_nyc_weltia_ny`) — **all 17 members ran**.
+# sig.memory-repair-archive — pre-edit bytes with listed handles redacted to sha256 digests
+# (plaintext handles never commit: RULING E-1 / ADR-178; the true bytes remain in git
+# history per OD-20 accept-and-disclose).
+# source: docs/build/pr/P34.39a-live-1.md line(s) 48,49
+# original-line-sha256: eee3245150525c7d5b88177d117ca8f40b4c7b46a592bc4ad5fe4b106c8bbfbc 209821452cdf13b320dc351e1911e081233531cbce29668799fdde4d00835d1c
+  (`sha256:ae415fa4c0e6751437a6be7b7d30726e00ec9e278d4f23a774e6e7552a1b99f4`, `sha256:0dd5975e8239565d74b03ee71d6d3ba27199e745ed9dcf4d502f89c1c56c5679`, `sha256:cede6d2064991ae90ed0a28f5b6688ada6674a447f3a2108428409b22edd13a2`,
+  `sha256:c363573bd564f23078ae8343eee8d525a7950e8475f3fea6c3122dfdbfa09267`) — **all 17 members ran**.
