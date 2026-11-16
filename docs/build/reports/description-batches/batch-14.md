@@ -32,15 +32,15 @@ no confirmed row here. An unconfirmed source publishes
 | D14-14 | ccops_st_louis_mo | `City of St. Louis: Police Department Surveillance Technology Reports (Ordinance 71842, Executive Order 78)` — a government mandated disclosure source published by `Metropolitan St. Louis Police Department / City of St. Louis, MO`. | e02fb4c22ed5abbaa4f5483daff16ab4e17e99b028310b76f3d615efdf4a009e | pending |
 | D14-15 | census_gazetteer_tiger | `Census Gazetteer / TIGER` — a government portal source. | 42842eead67fb5979a149903841de19a1e42c6aefd44e2090d0c8ccd9cd55e01 | pending |
 | D14-16 | census_geocoder | `Census Geocoder` — a government portal source. | 73fbdb213051147d7df9f7d7773a5992f776aca9e00445a1d9ccef20ff5d118c | pending |
-| D14-17 | civicclerk | `CivicClerk` — a government portal source. | 807a07a75d4a6fe3b3fa079873cf47b53babb0af983ab1db7ad30774076d966c | pending |
-| D14-18 | civicplus | `CivicPlus` — a government portal source. | f440d5378d660f3996f6bfa1a95de18ca15648d51d10ab9bf9890d5af6d85cbf | pending |
-| D14-19 | congress_gov | `Congress.gov API (Library of Congress)` — a government portal source. | de314fe6b67ecf516631ae8167c90498098328ef97d9c3a23b741cf5a03892fa | pending |
-| D14-20 | courtlistener_recap | `CourtListener / RECAP` — a court system source. | d37705b7d1693bb6df9e9796eca610031658392e51c8ade6f91d947a90bdb271 | pending |
-| D14-21 | datalib_aaron_swartz_day | `Aaron Swartz Day Police Surveillance Project (crowdsourced public-records campaign corpus)` — a community source published by `Aaron Swartz Day and International Hackathon`. | e3c7a56be10728129ebe88c714778e7444c89190e09babd97f0f162a5a9a253d | pending |
-| D14-22 | datalib_atlas_border_communities | `Atlas of Surveillance: Border Communities (EFF — surveillance in the 23 US counties on the Mexico border)` — an upstream project source published by `Electronic Frontier Foundation`. | b7d9a9178a311032ff155554a8acfbbe60a8453775c034c019354102fccb8f55 | pending |
-| D14-23 | datalib_clearview_ai_table | `Clearview AI Table (BuzzFeed News — entities whose employees ran Clearview facial-recognition searches)` — a news publisher source published by `BuzzFeed News`. | bd384a1807b6de1a17bd6576935787c093da2547a74ceb2b2caadababfc12526 | pending |
-| D14-24 | datalib_federally_funded_bwc | `Federally Funded Body-Worn Cameras (EFF-compiled — DOJ/BJA grant-recipient agencies)` — an upstream project source published by `Electronic Frontier Foundation (upstream: US DOJ Bureau of Justice Assistance)`. | 56148884aa20f316ab9e6f0ab8a5e83f83669e01954894f6ca3d5f41039c413b | pending |
-| D14-25 | datalib_mediajustice_em_map | `Electronic Monitoring Hotspot Map (MediaJustice Challenging E-Carceration project)` — an upstream project source published by `MediaJustice`. | 5394e9909ff52e7ec25148e812ed3f9858b8ff46961bf9dc22a574b709c48b6d | pending |
+| D14-17 | census_of_governments | `Census of Governments` — a government portal source. | 38bb6efc9afbd6e9f4f985fad55f63dbe46663437dc4c45afd0cf9d77880bbc3 | pending |
+| D14-18 | civicclerk | `CivicClerk` — a government portal source. | 807a07a75d4a6fe3b3fa079873cf47b53babb0af983ab1db7ad30774076d966c | pending |
+| D14-19 | civicplus | `CivicPlus` — a government portal source. | f440d5378d660f3996f6bfa1a95de18ca15648d51d10ab9bf9890d5af6d85cbf | pending |
+| D14-20 | congress_gov | `Congress.gov API (Library of Congress)` — a government portal source. | de314fe6b67ecf516631ae8167c90498098328ef97d9c3a23b741cf5a03892fa | pending |
+| D14-21 | courtlistener_recap | `CourtListener / RECAP` — a court system source. | d37705b7d1693bb6df9e9796eca610031658392e51c8ade6f91d947a90bdb271 | pending |
+| D14-22 | datalib_aaron_swartz_day | `Aaron Swartz Day Police Surveillance Project (crowdsourced public-records campaign corpus)` — a community source published by `Aaron Swartz Day and International Hackathon`. | e3c7a56be10728129ebe88c714778e7444c89190e09babd97f0f162a5a9a253d | pending |
+| D14-23 | datalib_atlas_border_communities | `Atlas of Surveillance: Border Communities (EFF — surveillance in the 23 US counties on the Mexico border)` — an upstream project source published by `Electronic Frontier Foundation`. | b7d9a9178a311032ff155554a8acfbbe60a8453775c034c019354102fccb8f55 | pending |
+| D14-24 | datalib_clearview_ai_table | `Clearview AI Table (BuzzFeed News — entities whose employees ran Clearview facial-recognition searches)` — a news publisher source published by `BuzzFeed News`. | bd384a1807b6de1a17bd6576935787c093da2547a74ceb2b2caadababfc12526 | pending |
+| D14-25 | datalib_federally_funded_bwc | `Federally Funded Body-Worn Cameras (EFF-compiled — DOJ/BJA grant-recipient agencies)` — an upstream project source published by `Electronic Frontier Foundation (upstream: US DOJ Bureau of Justice Assistance)`. | 56148884aa20f316ab9e6f0ab8a5e83f83669e01954894f6ca3d5f41039c413b | pending |
 
 ## Confirmation log
 

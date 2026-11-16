@@ -1,0 +1,5 @@
+{"_note": "P37.46a committed fixture — SAM entity-registration extract shape; never fetched live.",
+ "entities": [
+   {"uei": "ZK12AB34CD56", "legal_business_name": "Flock Group Inc", "state": "GA", "cage": "1ABC2"},
+   {"uei": "QM98YZ76WX54", "legal_business_name": "Motorola Solutions Inc", "state": "IL", "lei": "549300LJ9XAMPLE0001"}
+ ]}

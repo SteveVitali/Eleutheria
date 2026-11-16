@@ -276,8 +276,9 @@ disposition = "link_only"
 [sources.la_quadrature_du_net]
 disposition = "link_only"
 
-[sources.leaic_crosswalk]
-disposition = "mirror"
+# P37.46a (R11-CONF-13): leaic_crosswalk's live path is the org_crosswalk
+# connector (CONNECTOR_FOR_SOURCE) — the mirror disposition is superseded by
+# the connector lane; the row is removed, the comment keeps the record.
 
 [sources.monahan_grounding_the_flock]
 disposition = "link_only"
@@ -390,8 +391,9 @@ disposition = "link_only"
 [sources.wigle]
 disposition = "link_only"
 
-[sources.wikidata_sparql]
-disposition = "reference"
+# P37.46a (R11-CONF-13): wikidata_sparql's live path is the org_crosswalk
+# connector (CONNECTOR_FOR_SOURCE) — the reference disposition is superseded
+# by the connector lane; the row is removed, the comment keeps the record.
 
 [sources.wired_shotspotter_leak]
 disposition = "link_only"

@@ -1,0 +1,6 @@
+{"_note": "P37.46a committed fixture — Wikidata SPARQL-shaped org results; never fetched live.",
+ "results": {"bindings": [
+   {"qid": {"value": "Q4915"}, "label": {"value": "Oklahoma City Police Department"}, "state": {"value": "OK"}, "ori": {"value": "OK0261100"}},
+   {"qid": {"value": "Q1000"}, "label": {"value": "Tulsa Police Department"}, "state": {"value": "OK"}},
+   {"qid": {"value": "Q2000"}, "label": {"value": "Jane Q Public dba JQP Consulting"}, "uei": {"value": "ABCD1234EFGH"}}
+ ]}}

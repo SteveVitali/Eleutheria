@@ -247,6 +247,17 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "sourcewell": "cooperative",
     "omnia_partners": "cooperative",
     "eyes_on_flock": "flock_portal",
+    # P37.46a / R11-CONF-13 13a (design CP-10): the organisation-identity
+    # crosswalk lanes — one `org_crosswalk` connector serving the closed lane
+    # set in data/org_crosswalk_vocab.toml. `wikidata_sparql` rides its
+    # existing FLIPPED row (GL-GATE-06); `leaic_crosswalk` stays UNDETERMINED;
+    # `census_of_governments` + `sam_gov_entities` are NEW registry rows kept
+    # ingestion_permitted=false — the flips are the operator's HG-03 act
+    # (OP-26). Replay/shadow run over committed fixtures only.
+    "wikidata_sparql": "org_crosswalk",
+    "leaic_crosswalk": "org_crosswalk",
+    "census_of_governments": "org_crosswalk",
+    "sam_gov_entities": "org_crosswalk",
     # P36.74 (WV-10/ADR-188): the Flock transparency-portal probe connector —
     # one bounded GET per committed known portal, stops on any challenge, and
     # emits sig.probe-run/1 per run. The source row stays

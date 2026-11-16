@@ -2310,6 +2310,45 @@ part_viii_class = "none-known"
 review_needed = false
 
 
+[sources.census_of_governments]
+name = "Census of Governments"
+publisher_type = "gov-open-data"
+source_kind = "government_portal"
+homepage_url = "https://www.census.gov/programs-surveys/cog.html"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "bulk_file_download"
+notes = "Government-unit GEOID ↔ name registry; organisation-identity substrate (§14.2, P37.46a / R11-CONF-13 13a, design CP-10). One of ADR-159's three approved registries for the flagged-organisation auto-allow. UNDETERMINED pending terms review — a NEW registry source under the P37.46a gate cell: the ingestion_permitted flip is the operator's HG-03 act (OP-26), never agent-performed; this row pauses for it. Replay/shadow run over committed fixtures only."
+[sources.census_of_governments.redistribution]
+lane = "unknown"
+evidence = "sources.toml [sources.census_of_governments] (custody REFERENCE, redistributable=-); attribution: nothing published"
+decision_authority = "D-J3-1 [B-19]"
+part_viii_class = "none-known"
+review_needed = true
+
+
+[sources.sam_gov_entities]
+name = "SAM.gov entity registrations"
+publisher_type = "procurement"
+source_kind = "government_portal"
+homepage_url = "https://sam.gov/content/entity-registration"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "bulk_file_download"
+auth_model = "entity extracts / keyed entity API ($SIG_SAM_GOV_KEY, HG-09 — auth, not the rights basis)"
+notes = "UEI ↔ legal-name entity registry; organisation-identity substrate (§14.2, P37.46a / R11-CONF-13 13a). One of ADR-159's three approved registries for the flagged-organisation auto-allow. The entity-registration extract surface is DISTINCT from the flipped `sam_gov` row's reviewed opportunities-API scope, so it takes its own line: UNDETERMINED pending terms review — the ingestion_permitted flip is the operator's HG-03 act (OP-26), never agent-performed. Replay/shadow run over committed fixtures only."
+[sources.sam_gov_entities.redistribution]
+lane = "unknown"
+evidence = "sources.toml [sources.sam_gov_entities] (custody REFERENCE, redistributable=-); attribution: nothing published"
+decision_authority = "D-J3-1 [B-19]"
+part_viii_class = "none-known"
+review_needed = true
+
+
 [sources.leaic_crosswalk]
 name = "LEAIC crosswalk (ICPSR study 35158)"
 publisher_type = "academic"
