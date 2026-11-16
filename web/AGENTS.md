@@ -18,6 +18,9 @@ Nearest-file-wins: this file adds to the root `AGENTS.md`.
 | `web/src/islands/` | ~n/a | the three public Preact islands (`MapIsland`, `ExploreIsland`, `SearchIsland`), each `client:only` over a preserved no-JS fallback (SIG-UI-050, ADR-097); Preact is the only island runtime since P37.26/ADR-242 (`check-runtime-deps.mjs` fails the build on any react byte) |
 | `web/src/lib/data.ts` | ~n/a | the data layer: `SIG_DATA_SOURCE=fixtures\|export\|national` switch |
 | `web/scripts/check-licenses.mjs` | ~n/a | the OSI-only dependency licence gate |
+| `web/playwright.visual.config.ts` | ~70 | the SIG-UI-152 visual grid: six projects ({light,dark} × {1440,390,320}) shooting `tests/visual/visual.spec.ts`, committed baselines under `tests/visual/visual.spec.ts-snapshots/` cited in `tests/visual/baselines.json` (`sig.visual-baselines/1`); template coverage is derived — `tests/visual/templates.ts` claims every page module the build's manifest emits a `component` for (P37.60) |
+| `web/scripts/visual-gallery.mjs` | ~n/a | the operator gallery generator → `docs/build/logs/visual-gallery/` (baseline/actual/diff review page; gitignored, never published; K14 §7 sign-off stays human) |
+| `web/scripts/visual-adopt-baselines.mjs` | ~n/a | the sanctioned baseline-adoption path: `--ticket Pxx.yy` copies CI actuals into the snapshots dir and cites the ticket in `baselines.json` — the ticket flag is required, never defaulted |
 
 ## Build & Test
 
@@ -28,9 +31,12 @@ Run from repo root with `npm --prefix web run <script>` (or from `web/` with `np
 | `npm --prefix web run check` | the package gate: `typecheck` → `test:unit` → `build` → `check:licenses` → `test:e2e` |
 | `npm --prefix web run typecheck` | `astro check` |
 | `npm --prefix web run test:unit` | `vitest run` |
-| `npm --prefix web run test:e2e` | `playwright test` (chromium + no-JS; axe WCAG 2.2 AA) |
+| `npm --prefix web run test:e2e` | `playwright test` (chromium + no-JS + dark + reduced-motion projects; axe WCAG 2.2 AA) |
 | `npm --prefix web run check:perf` | build + `check:lhci` + `lhci autorun` (fixtures-mode Lighthouse budgets, generated `web/lighthouserc.json`) |
-| `npm --prefix web run check:perf:national` | the national-fixture budget leg (`scripts/ci/national_budget_leg.sh all`): deterministic synthetic corpus → `SIG_DATA_SOURCE=national` build → wire budget suite → national Lighthouse |
+| `npm --prefix web run check:perf:national` | the national-fixture budget leg (`scripts/ci/national_budget_leg.sh all`): deterministic synthetic corpus → `SIG_DATA_SOURCE=national` build → wire budget suite → national Lighthouse → the SIG-UI-152 visual grid → the operator gallery |
+| `npm --prefix web run check:visual` | the visual-regression leg only (`national_budget_leg.sh visual`): every template × {light,dark} × {1440,390,320} over the national build, canvases masked (P37.60, SIG-UI-152) |
+| `npm --prefix web run test:visual` / `:update` | the visual grid against the current `dist/` (playwright.visual.config.ts; the spec fails loud unless the emitted page-types manifest in `dist/` records `dataSource: "national"`) |
+| `npm --prefix web run gallery:visual` | regenerate the operator gallery under `docs/build/logs/visual-gallery/` (gitignored, never published; sign-off stays the operator's) |
 | `npm --prefix web run dev` / `build` / `preview` | astro dev server / static build / preview |
 
 ## Code Conventions

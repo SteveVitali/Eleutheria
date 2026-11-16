@@ -888,10 +888,27 @@ export interface ManifestRoute {
   contract: string;
   chrome: string;
   internal: boolean;
+  /**
+   * P37.60 (UXK14-10, SIG-UI-152): the source page module that rendered the
+   * route, normalised to a `src/`-relative path (`pages/dossier/[...path].astro`,
+   * `internal/curate/[id].astro`). The visual-regression grid keys on this — a
+   * template IS the page module, so a new `.astro` template lands in the sweep
+   * by resolution, never by a hand-maintained list. `"unresolved"` marks a
+   * manifest produced without the resolved-route table (unit-test fixtures) or
+   * a route no resolved route claimed — a build error when the resolver ran.
+   */
+  component: string;
 }
 
 export interface PageTypesManifest {
   schema: "sig.page-types-manifest/1";
+  /**
+   * P37.60: the `SIG_DATA_SOURCE` the build ran under (`fixtures` | `export` |
+   * `national`). The visual-regression suite is only lawful on the synthetic
+   * national fixture (no real names, K0 §4.12.6) — the spec asserts this field
+   * rather than trusting the environment it was launched with.
+   */
+  dataSource: string;
   routes: ManifestRoute[];
 }
 
@@ -906,11 +923,56 @@ export function chromeOf(html: string): string {
 }
 
 /**
+ * One resolved route as `astro:routes:resolved` reports it — the route's match
+ * expression plus the page module it renders (P37.60). Captured once per build
+ * by the integration hook and handed to `classifyDist` so every emitted route
+ * is traced back to the template that produced it.
+ */
+export interface ResolvedRouteComponent {
+  patternRegex: RegExp;
+  entrypoint: string;
+}
+
+/** Normalise an `entrypoint` to the `src/`-relative component id (`pages/…`/`internal/…`). */
+export function componentId(entrypoint: string): string {
+  const norm = entrypoint.split(sep).join("/");
+  const at = norm.lastIndexOf("/src/");
+  const rel = at === -1 ? norm : norm.slice(at + "/src/".length);
+  return rel.startsWith("src/") ? rel.slice("src/".length) : rel;
+}
+
+/**
+ * The pathname candidates a built route may match a resolved route under.
+ * Astro's match expressions anchor on the trailing-slash form
+ * (`/^\/about\/$/` for `/about`), so candidates keep it: `/x/` → `/x/` and
+ * `/x`; the flat copies share their directory twin's module (`/403.html` →
+ * `/403.html`, `/403/`, `/403`).
+ */
+function componentCandidates(path: string): string[] {
+  const out = [path];
+  const bare = path.replace(/\/+$/, "") || "/";
+  if (bare !== path) out.push(bare);
+  if (bare.endsWith(".html")) {
+    const stem = bare.slice(0, -".html".length);
+    out.push(`${stem}/`, stem);
+  }
+  return out;
+}
+
+/**
  * Walk `dist` for `*.html` files and classify every built route. Returns the manifest
  * rows plus every failure (unclassified or doubly-classified) — the hook turns
  * a non-empty `errors` into a build failure.
+ *
+ * P37.60 (SIG-UI-152): when `resolved` (the `astro:routes:resolved` table) is
+ * given, each row also records its `component` — the page module behind the
+ * route. An emitted `.html` no resolved route claims is a build error, exactly
+ * like an unclassified route (fail-closed, K0 NEW-4).
  */
-export function classifyDist(distDir: string): ClassifiedDist {
+export function classifyDist(
+  distDir: string,
+  resolved?: readonly ResolvedRouteComponent[],
+): ClassifiedDist {
   const routes: ManifestRoute[] = [];
   const errors: string[] = [];
   for (const path of discoverBuiltRoutes(distDir)) {
@@ -924,6 +986,19 @@ export function classifyDist(distDir: string): ClassifiedDist {
         );
       }
       continue;
+    }
+    let component = "unresolved";
+    if (resolved !== undefined) {
+      const match = componentCandidates(path)
+        .map((candidate) => resolved.find((r) => r.patternRegex.test(candidate)))
+        .find((r) => r !== undefined);
+      if (match === undefined) {
+        errors.push(
+          `unresolved component ${path} — no resolved route claims it; the visual-regression grid cannot name its template`,
+        );
+        continue;
+      }
+      component = componentId(match.entrypoint);
     }
     const rel = path.endsWith(".html")
       ? path.replace(/^\//, "")
@@ -939,6 +1014,7 @@ export function classifyDist(distDir: string): ClassifiedDist {
       contract: result.entry.contract,
       chrome: chromeOf(html),
       internal: result.entry.internal === true,
+      component,
     });
   }
   routes.sort((a, b) => a.path.localeCompare(b.path));
@@ -946,9 +1022,13 @@ export function classifyDist(distDir: string): ClassifiedDist {
 }
 
 /** The manifest the sweeps read — deterministic (no clock, no absolute paths). */
-export function buildManifest(routes: readonly ManifestRoute[]): PageTypesManifest {
+export function buildManifest(
+  routes: readonly ManifestRoute[],
+  dataSource = "fixtures",
+): PageTypesManifest {
   return {
     schema: "sig.page-types-manifest/1",
+    dataSource,
     routes: [...routes].sort((a, b) => a.path.localeCompare(b.path)),
   };
 }

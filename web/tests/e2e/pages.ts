@@ -31,10 +31,16 @@ export interface DiscoveredRoute {
   contract: string;
   chrome: string;
   internal: boolean;
+  /** P37.60: the `src/`-relative page module that rendered the route (the
+   *  visual-regression template unit — `"unresolved"` on pre-P37.60 manifests). */
+  component: string;
 }
 
 interface PageTypesManifest {
   schema: string;
+  /** P37.60: the `SIG_DATA_SOURCE` the build ran under — the visual suite
+   *  asserts `national` (the synthetic fixture, K0 §4.12.6) before comparing. */
+  dataSource?: string;
   routes: DiscoveredRoute[];
 }
 
@@ -62,6 +68,11 @@ const MANIFEST = loadManifest();
 
 /** Every built HTML route, classified — the sweep source of truth. */
 export const DISCOVERED_ROUTES: readonly DiscoveredRoute[] = MANIFEST.routes;
+
+/** The `SIG_DATA_SOURCE` this build ran under (`fixtures` | `export` |
+ *  `national`; `"unknown"` on pre-P37.60 manifests — the visual suite fails
+ *  loudly on anything but `national`). */
+export const DATA_SOURCE: string = MANIFEST.dataSource ?? "unknown";
 
 const pathsOf = (pred: (r: DiscoveredRoute) => boolean): string[] =>
   DISCOVERED_ROUTES.filter(pred).map((r) => r.path);

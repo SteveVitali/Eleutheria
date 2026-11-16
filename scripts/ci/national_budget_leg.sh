@@ -27,6 +27,14 @@
 #   lighthouse `lhci autorun --config=./lighthouserc.national.json` — the
 #              generated national twin's assertMatrix (ratified ceilings warn,
 #              recorded regression bounds error).
+#   visual     P37.60 (SIG-UI-152, DR-K14-18): the visual-regression grid —
+#              playwright.visual.config.ts, every template × {light,dark} ×
+#              {1440,390,320} over THIS national build, canvases masked.
+#              Requires the national dist (the `build` leg above); the spec's
+#              data-source guard fails loud on a fixtures build.
+#   gallery    P37.60: the operator gallery generator — a self-contained
+#              baseline/actual/diff review page under docs/build/logs/
+#              (gitignored, never published; sign-off is the operator's).
 #   all        every subcommand in CI order.
 #
 # Working dir for the fixture is the repo's web/national/ (gitignored); the
@@ -64,19 +72,39 @@ lighthouse() {
     npx --no-install lhci autorun --config=./lighthouserc.national.json
 }
 
+visual() {
+    cd "$ROOT/web"
+    # Guarantee the dist is a national build before the grid shoots it — the
+    # spec's data-source guard fails loud on anything else, so a stale
+    # fixtures dist can never write a wrong-named baseline.
+    if [ ! -f dist/page-types.json ] || ! grep -q '"dataSource"[[:space:]]*:[[:space:]]*"national"' dist/page-types.json; then
+        build
+    fi
+    npx playwright test --config=playwright.visual.config.ts
+}
+
+gallery() {
+    cd "$ROOT/web"
+    node scripts/visual-gallery.mjs
+}
+
 case "$sub" in
     fixture) fixture ;;
     build) build ;;
     budgets) budgets ;;
     lighthouse) lighthouse ;;
+    visual) visual ;;
+    gallery) gallery ;;
     all)
         fixture
         build
         budgets
         lighthouse
+        visual
+        gallery
         ;;
     *)
-        echo "usage: $0 {fixture|build|budgets|lighthouse|all}" >&2
+        echo "usage: $0 {fixture|build|budgets|lighthouse|visual|gallery|all}" >&2
         exit 2
         ;;
 esac

@@ -702,6 +702,18 @@
   padding: 0;
   list-style: none;
 }
+.sig-explore-picker__btn {
+  /* P37.60 (DR-K14-13): paint the control with the token surfaces — an
+   * unstyled <button> takes the UA buttonface (a mid grey under dark
+   * color-scheme) and the muted count loses AA. */
+  font: inherit;
+  color: var(--sig-ink);
+  background: var(--sig-surface-2);
+  border: var(--sig-border-thin) solid var(--sig-rule);
+  border-radius: var(--sig-radius-1);
+  padding: var(--sig-space-1) var(--sig-space-2);
+  cursor: pointer;
+}
 .sig-explore-picker__btn[aria-pressed="true"] {
   font-weight: 700;
   text-decoration: underline;

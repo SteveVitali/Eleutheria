@@ -1462,6 +1462,18 @@
       "token": "/checks",
       "count": 1,
       "reason": "P37.45: JSON pointer into status/quality/latest.json's checks array — a figure-citation coordinate, never a link"
+    },
+    {
+      "file": "src/lib/page-types.ts",
+      "token": "/",
+      "count": 2,
+      "reason": "P37.60 (SIG-UI-152): componentId()'s sep→'/' normalisation join and barePath()'s bare-root fallback — path-shape guards, never links"
+    },
+    {
+      "file": "src/lib/page-types.ts",
+      "token": "/src/",
+      "count": 2,
+      "reason": "P37.60 (SIG-UI-152): componentId()'s lastIndexOf+slice '/src/' marker — filesystem entrypoint→src-relative slicing, never a link"
     }
   ]
 }

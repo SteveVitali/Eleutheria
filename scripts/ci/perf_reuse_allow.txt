@@ -50,3 +50,13 @@ web/tests/unit/map-app-model.test.ts	// P37.72 (D-K1-7, SIG-GOV-017 analysis doc
 # P37.19: the cities fixture's header comment cites the committed rights
 # packet path for provenance — comment-only, never a rights-data read.
 web/src/lib/map-places-fixture.ts	* boundary pack (`natural_earth_10m`, `docs/build/reports/rights/
+# P37.60: the operator gallery writes only into the gitignored
+# docs/build/logs/visual-gallery/ scratch dir — the committed path
+# references name its OWN output target (never published, operator-only
+# review material), not a records read.
+web/AGENTS.md	| `web/scripts/visual-gallery.mjs` | ~n/a | the operator gallery generator → `docs/build/logs/visual-gallery/` (baseline/actual/diff review page; gitignored, never published; K14 §7 sign-off stays human) |
+web/AGENTS.md	| `npm --prefix web run gallery:visual` | regenerate the operator gallery under `docs/build/logs/visual-gallery/` (gitignored, never published; sign-off stays the operator's) |
+web/scripts/visual-gallery.mjs	// the latest actual and diff — under docs/build/logs/visual-gallery/.
+web/scripts/visual-gallery.mjs	// The output is OPERATOR-ONLY review material: docs/build/logs/ is the one
+web/scripts/visual-gallery.mjs	const DEFAULT_OUT = join(REPO, "docs/build/logs/visual-gallery");
+web/scripts/visual-gallery.mjs	Generated ${stamp} by web/scripts/visual-gallery.mjs under docs/build/logs/

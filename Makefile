@@ -145,6 +145,11 @@ check-national-budgets:
 	bash scripts/ci/national_budget_leg.sh build
 	bash scripts/ci/national_budget_leg.sh budgets
 	bash scripts/ci/national_budget_leg.sh lighthouse
+	@# P37.60 (SIG-UI-152): the same two legs ci.yml's web job runs after the
+	@# national Lighthouse — the visual grid over THIS national build, then
+	@# the operator gallery into docs/build/logs/ (gitignored, never published).
+	bash scripts/ci/national_budget_leg.sh visual
+	bash scripts/ci/national_budget_leg.sh gallery
 
 ## P35.52 (sig.map-tiles/2, ADR-156, F-104/F-414; K1 §15 NEW-5): the tile
 ## verifier leg, locally — the same commands ci.yml's web job runs. The pinned
