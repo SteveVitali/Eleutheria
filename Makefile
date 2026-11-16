@@ -17,7 +17,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-par test-db test-sqitch-roundtrip check ci-local check-export-mode check-national-budgets check-tile-verify lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-live-claims docs-check-runbook docs-check-trailers docs-check-gate-signatures security-scan scan-secrets scan-licenses audit-deps
+.PHONY: sync lint format-check typecheck test test-par test-db test-sqitch-roundtrip check ci-local check-export-mode check-national-budgets check-tile-verify lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-live-claims docs-check-runbook docs-check-trailers docs-check-gate-signatures docs-check-redaction security-scan scan-secrets scan-licenses audit-deps
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -191,7 +191,7 @@ verify-gen: gen
 ## Round 11 (SEED-02b; B4 G7 item 1): docs-check also runs the build-memory
 ## history guard, the spec-source checker and the coverage-matrix checker — all
 ## stdlib python3, so the uv-less CI `docs` job runs them too.
-docs-check: docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-live-claims docs-check-runbook
+docs-check: docs-check-repo docs-check-agent docs-check-build-memory docs-check-memory docs-check-spec docs-check-matrix docs-check-ledger docs-check-audit docs-check-projection docs-check-returnpass docs-check-planning docs-check-adr docs-check-round-close docs-check-live-claims docs-check-runbook docs-check-redaction
 
 ## Human-facing docs freshness check (P22.1): the vendored refresh-repo-docs
 ## detector over the in-scope doc corpus (README/CONTRIBUTING/CHANGELOG/docs).
@@ -334,6 +334,16 @@ docs-check-live-claims:
 ## Exits 1 violations / 2 usage / 3 vacuous (SIG-ENG-042).
 docs-check-runbook:
 	python3 docs/build/tools/check_runbook.py
+
+## Redaction reappearance guard (P37.61b; RULING E-1; ADR-178 / SIG-PUB-002):
+## fail-closed on any sha256-listed personal handle in a tracked file or path
+## (retained prefixes included), an `item_owner` key anywhere, or an
+## `owner`/`item_owner` key inside the declared ArcGIS-sweep file set. Digest
+## comparison only — counts + paths, never the strings; the committed policy
+## carries sha256 digests, the plaintext list stays gitignored. Stdlib
+## python3 — the uv-less CI `docs` job runs it. Exits 1 violations / 2 error.
+docs-check-redaction:
+	python3 docs/build/tools/redaction_guard.py --json docs/build/logs/redaction-guard.json
 
 ## OM-01 commit-trailer check (SEED-02b; plan §3.3, A-21): every commit of
 ## CHANGE_RANGE carries a recognised harness trailer or is an operator commit.

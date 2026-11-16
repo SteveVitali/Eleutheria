@@ -1,0 +1,8 @@
+# sig.memory-repair-archive — pre-edit bytes with listed handles redacted to sha256 digests
+# (plaintext handles never commit: RULING E-1 / ADR-178; the true bytes remain in git
+# history per OD-20 accept-and-disclose).
+# source: docs/build/reports/p34.39a-osm-replay-read-back/README.md line(s) 29,30,31
+# original-line-sha256: 233ddb90598a31fe3905833512f5cad6131fdd57b350fe909580e0a1b73d3c40 e82d38a5651590be14f1b060417c0c0d133234b7ec102b2c5725ce5e0d664116 162e00aae7cd9998190687573f1f92838c7484ad5cab4b65d79ce7461de2ee87
+  ADR-178 renamed (`camreg_und_018` → `sha256:ae415fa4c0e6751437a6be7b7d30726e00ec9e278d4f23a774e6e7552a1b99f4`,
+  `camreg_und_019` → `sha256:0dd5975e8239565d74b03ee71d6d3ba27199e745ed9dcf4d502f89c1c56c5679`, `camreg_us_ny_001` →
+  `sha256:cede6d2064991ae90ed0a28f5b6688ada6674a447f3a2108428409b22edd13a2`, `camreg_us_ny_002` → `sha256:c363573bd564f23078ae8343eee8d525a7950e8475f3fea6c3122dfdbfa09267`) each

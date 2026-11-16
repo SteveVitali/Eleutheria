@@ -106,6 +106,16 @@ jobs:
       - name: Round-close record checks (check_round_close.py)
         run: python3 docs/build/tools/check_round_close.py check
 
+      # P37.61b (RULING E-1; ADR-178 / SIG-PUB-002): the fail-closed redaction
+      # reappearance guard — closes the retained-prefix blind spot the
+      # informational handle_crawl_check.py keeps. Fails on any sha256-listed
+      # handle in tracked files (retained prefixes included), an item_owner
+      # key anywhere, or an owner/item_owner field inside the declared
+      # ArcGIS-sweep file set. Digest-only comparison — prints counts and
+      # paths, never the strings.
+      - name: Redaction reappearance guard (redaction_guard.py)
+        run: python3 docs/build/tools/redaction_guard.py --json docs/build/logs/redaction-guard.json
+
       # P35.3 (B4 G10, SIG-MEM-011): the live-claim binding — corpus mode runs
       # inside `make docs-check` (docs-check-live-claims); named here for the
       # same visibility reason as the ledger/round-close steps above.

@@ -1,0 +1,6 @@
+# sig.memory-repair-archive — pre-edit bytes with listed handles redacted to sha256 digests
+# (plaintext handles never commit: RULING E-1 / ADR-178; the true bytes remain in git
+# history per OD-20 accept-and-disclose).
+# source: docs/build/runs/P34.39a.md line(s) 348
+# original-line-sha256: 81e38184147ffee43fc96265e73b845c0d2e356a03dd6d1c23b430720e2eec79
+| 8 | all 17 member run rows | **fail — artifact** | the tool counts rows per *configured* id; P34.18/ADR-178 renamed four members and their rows exist under the deployed ids (each exactly one row, all `ok`): `camreg_und_018` → `sha256:ae415fa4c0e6751437a6be7b7d30726e00ec9e278d4f23a774e6e7552a1b99f4` (5,430 claims, 5.8 s), `camreg_und_019` → `sha256:0dd5975e8239565d74b03ee71d6d3ba27199e745ed9dcf4d502f89c1c56c5679` (6,085, 4.0 s), `camreg_us_ny_001` → `sha256:cede6d2064991ae90ed0a28f5b6688ada6674a447f3a2108428409b22edd13a2` (1,737, 2.6 s), `camreg_us_ny_002` → `sha256:c363573bd564f23078ae8343eee8d525a7950e8475f3fea6c3122dfdbfa09267` (1,935, 2.8 s); the other 13 members have one row each → **all 17 ran** |

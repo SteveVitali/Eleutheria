@@ -26,9 +26,9 @@ by `sig-ops scheduled-readback` — read-only, clock-guarded (AR-4/AR-5 of
   **Verdict `fail` → `deferral-row`** — eleven of thirteen criteria pass; the
   two recorded fails are tooling artifacts, not production failures:
   `member-run-rows` counts by configured id, and the four members P34.18/
-  ADR-178 renamed (`camreg_und_018` → `camreg_nurnazihah`,
-  `camreg_und_019` → `camreg_olsson`, `camreg_us_ny_001` →
-  `camreg_nyc_jgrayson_ny`, `camreg_us_ny_002` → `camreg_nyc_weltia_ny`) each
+  ADR-178 renamed (`camreg_und_018` → the pre-rekey
+  handle, `camreg_und_019` → the pre-rekey handle, `camreg_us_ny_001` →
+  the pre-rekey handle, `camreg_us_ny_002` → the pre-rekey handle — ids re-keyed in this record as-of P37.61b / RULING E-1) each
   wrote exactly one `outcome: ok` run row under their deployed ids — all 17
   members ran; `sql-no-restart` read the uptime series' DELTA points as a
   gauge (every 60 s point reads 60 s — continuously up, no restart). The

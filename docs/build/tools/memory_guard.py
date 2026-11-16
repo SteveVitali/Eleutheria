@@ -2937,7 +2937,14 @@ class Judge:
                     f"line {unfilled[0][0]}: '{unfilled[0][1][:60]}') — a .jsonl record file only "
                     "appends; a mid-file line may change only to fill a declared placeholder "
                     "(BM-HIST-01)",
-                    self.c.head_commit.short if self.c.mode == "first-parent" else "",
+                    # Attribute the break to the commit that removed the first
+                    # un-filled line — the sanctioned memory-repair path
+                    # (archived bytes + `seed-commit` declaration) can then
+                    # cover a verifier-backed mid-line .jsonl repair exactly
+                    # like every other append-only finding (P37.61b: the
+                    # RULING E-1 events.jsonl handle scrub). Falls back to the
+                    # first-parent head / "" when no remover is blameable.
+                    self.c.commit_of_removed(path, unfilled[0][1]),
                 )
         for hl, _, text in recs.added:
             for key, cls in (
