@@ -45,7 +45,7 @@ import os
 import re
 import shutil
 import tomllib
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Protocol
 
@@ -750,6 +750,52 @@ def is_protected_object(name: str) -> bool:
     return name in PROTECTED_NAMES or any(name.startswith(p) for p in PROTECTED_PREFIXES)
 
 
+#: Lane-exclusive objects the site sync NEVER deletes and NEVER overwrites
+#: (P37.61a). The status and watch lanes publish into the same ``-sig-web``
+#: bucket through their own scoped paths (``SIG_STATUS_BUCKET`` /
+#: ``SIG_WATCH_BUCKET`` in ``ops/gcp/{status,watch}-publish.sh``) on their own
+#: cadence — a site publish must leave their heartbeats, per-source snapshots
+#: and append-only archives alone, in BOTH directions: a delete would retire
+#: lane bytes the site build simply does not emit, and a put could overwrite a
+#: lane object freshened between the pre-state capture and the apply.
+LANE_OBJECT_NAMES: frozenset[str] = frozenset(
+    {
+        "status/state.json",  # the sig.status-heartbeat/1 state (P36.43)
+        "status/lane.json",  # the lane descriptor (P36.43)
+        "watch/state.json",  # the sig.watch-heartbeat/1 state (P37.33)
+        "watch/lane.json",  # the lane descriptor (P37.33)
+        "watch/watch.json",  # the watch doc (P37.33)
+    }
+)
+LANE_OBJECT_PREFIXES: tuple[str, ...] = (
+    "status/sources/",  # the per-source status snapshots (P36.43)
+    "status/archive/",  # the append-only dated archive (P36.43)
+    "watch/archive/",  # the append-only dated archive (P37.33)
+)
+
+
+def is_lane_object(name: str) -> bool:
+    """True iff bucket object ``name`` belongs to a lane-exclusive namespace.
+
+    Only the lane-owned names and prefixes count — shared namespaces the site
+    build also emits (``watch/place/**``, ``watch/item/**``, ``status/index.html``,
+    ``watch/index.html``) are deliberately NOT lane objects: treating them as
+    protected would freeze the site's own writes to those routes.
+    """
+    return name in LANE_OBJECT_NAMES or any(
+        name.startswith(prefix) for prefix in LANE_OBJECT_PREFIXES
+    )
+
+
+def lane_keep_set(remote_names: Iterable[str]) -> frozenset[str]:
+    """The lane keep-set for one publish — DERIVED from the pre-state remote
+    listing (only the lane-exclusive objects the listing actually shows; a
+    listing with none makes the guard a no-op). Never asserted a priori: if
+    the lane jobs have never run (``D-P36.43-1`` / ``D-P37.33-1`` are OPEN
+    ``prepared_not_executed``) the set is empty and nothing changes hands."""
+    return frozenset(name for name in remote_names if is_lane_object(name))
+
+
 @dataclass(frozen=True)
 class PublicAllowlist:
     """The parsed ``ops/public_routes.toml``.
@@ -1123,7 +1169,11 @@ class SyncPlan:
     namespaces already excluded, so ``deletes`` can NEVER name a byte under
     ``r/``, ``releases/``, ``entity/``, ``conf/`` or the release-pipeline root
     objects (``protected_kept`` records exactly those skips for the audit
-    trail). ``remote`` is None when the destination listing was not read (a
+    trail). ``lane_kept`` records the lane-exclusive remote objects the
+    keep-set held back from the delete plan, and ``put_skipped`` the local
+    lane-exclusive files whose upload the write-time keep-guard skipped (a
+    freshened lane object is never overwritten by captured bytes — P37.61a).
+    ``remote_known`` is False when the destination listing was not read (a
     dry-run without a bucket handle cannot compute deletions — reported, never
     assumed empty).
     """
@@ -1132,26 +1182,40 @@ class SyncPlan:
     deletes: tuple[str, ...]
     protected_kept: tuple[str, ...]
     remote_known: bool
+    lane_kept: tuple[str, ...] = ()
+    put_skipped: tuple[str, ...] = ()
 
 
-def plan_site_sync(local_names: Iterable[str], remote_names: Iterable[str] | None) -> SyncPlan:
+def plan_site_sync(
+    local_names: Iterable[str],
+    remote_names: Iterable[str] | None,
+    *,
+    keep: Iterable[str] = (),
+) -> SyncPlan:
     """Compute the site sync: upload every local object; delete remote objects
-    the local tree no longer carries — EXCEPT the protected release namespaces,
-    which the site sync may never touch (the report records them as
-    ``protected_kept`` so the skip is audited, not silent)."""
+    the local tree no longer carries — EXCEPT the protected release namespaces
+    and the keep-set, which the site sync may never touch (the report records
+    both skips — ``protected_kept`` and ``lane_kept`` — so they are audited,
+    not silent)."""
     local = sorted(set(local_names))
     deletes: tuple[str, ...] = ()
     kept: tuple[str, ...] = ()
+    lane_kept: tuple[str, ...] = ()
     if remote_names is not None:
         remote = set(remote_names)
+        keep_names = set(keep)
         extras = remote - set(local)
-        deletes = tuple(sorted(n for n in extras if not is_protected_object(n)))
+        deletes = tuple(
+            sorted(n for n in extras if not is_protected_object(n) and n not in keep_names)
+        )
         kept = tuple(sorted(n for n in remote if is_protected_object(n)))
+        lane_kept = tuple(sorted(n for n in remote if n in keep_names))
     return SyncPlan(
         uploads=tuple(local),
         deletes=deletes,
         protected_kept=kept,
         remote_known=remote_names is not None,
+        lane_kept=lane_kept,
     )
 
 
@@ -1161,22 +1225,30 @@ def sync_tree(
     *,
     delete_extras: bool,
     plan: SyncPlan | None = None,
+    keep: Iterable[str] = (),
 ) -> SyncPlan:
     """The ONE repository-owned sync primitive (SIG-OPS-004 — replaces every
     hand-typed ``gcloud storage rsync``).
 
-    Uploads every file under ``src`` (content-typed by suffix). Deletion happens
-    ONLY when ``delete_extras`` — the site tree — and only the remote extras the
-    plan computed; the release-tree and public-export legs call this with
+    Uploads every file under ``src`` (content-typed by suffix) EXCEPT files
+    whose object name is in the keep-set — the write-time keep-guard skips a
+    put that would overwrite a lane-exclusive remote object with captured
+    bytes, the put-half of the lane protection (P37.61a). Deletion happens
+    ONLY when ``delete_extras`` — the site tree — and only the remote extras
+    the plan computed; the release-tree and public-export legs call this with
     ``delete_extras=False`` (append-only — a publish never deletes a release or
     compartment byte). Deletion is double-guarded: the plan never lists a
-    protected name, and :func:`is_protected_object` re-checks every delete at
-    the write so a plan bug cannot delete a release tree either.
+    protected or kept name, and :func:`is_protected_object` /
+    :func:`is_lane_object` re-check every delete at the write so a plan bug
+    cannot delete a release tree or a lane object either.
     """
     local_names = [p.relative_to(src).as_posix() for p in _iter_files(src)]
+    keep_names = frozenset(keep)
     if plan is None:
         if delete_extras:
-            plan = plan_site_sync(local_names, bucket.list_objects(""))
+            remote = bucket.list_objects("")
+            keep_names |= lane_keep_set(remote)
+            plan = plan_site_sync(local_names, remote, keep=keep_names)
         else:
             plan = SyncPlan(
                 uploads=tuple(sorted(local_names)),
@@ -1184,17 +1256,25 @@ def sync_tree(
                 protected_kept=(),
                 remote_known=False,
             )
+    keep_names |= frozenset(plan.lane_kept)
+    put_skipped: list[str] = []
     for path in _iter_files(src):
         rel = path.relative_to(src).as_posix()
+        if rel in keep_names:
+            put_skipped.append(rel)
+            continue
         bucket.put_object(rel, path.read_bytes(), content_type=_content_type(path))
     if delete_extras:
         for name in plan.deletes:
-            if is_protected_object(name):  # belt-and-suspenders on the plan
+            if is_protected_object(name) or is_lane_object(name) or name in keep_names:
                 raise PublishError(
-                    f"sync plan would delete protected object {name!r} — refusing "
-                    "(the site sync can never touch the release namespaces)"
+                    f"sync plan would delete protected or lane-kept object {name!r} — "
+                    "refusing (the site sync can never touch the release "
+                    "namespaces or the lanes' exclusive objects)"
                 )
             bucket.delete_object(name)
+    if put_skipped:
+        plan = replace(plan, put_skipped=tuple(sorted(put_skipped)))
     return plan
 
 
@@ -1234,6 +1314,8 @@ class PublishWebResult:
             f"{len(self.site_plan.deletes)} deletes"
             + ("" if self.site_plan.remote_known else " (remote unlisted — deletes uncomputed)"),
             f"  protected remote objects kept: {len(self.site_plan.protected_kept)}",
+            f"  lane-exclusive objects kept: {len(self.site_plan.lane_kept)} "
+            f"(put-skipped uploads: {len(self.site_plan.put_skipped)})",
         ]
         if self.serving_layout is not None:
             if self.serving_layout.get("_unevaluated"):
@@ -1403,7 +1485,12 @@ def run_publish_web(
     remote_names: list[str] | None = None
     if bucket is not None:
         remote_names = bucket.list_objects("")
-    site_plan = plan_site_sync(local_names, remote_names)
+    # P37.61a: the lane keep-set — derived from the remote listing (never
+    # asserted), covering BOTH the delete plan and the write-time put-skip so a
+    # status/watch object freshened between capture and apply is never deleted
+    # nor overwritten by a site publish.
+    site_keep = lane_keep_set(remote_names) if remote_names is not None else frozenset()
+    site_plan = plan_site_sync(local_names, remote_names, keep=site_keep)
     release_plan: SyncPlan | None = None
     export_plan: SyncPlan | None = None
 
@@ -1430,7 +1517,7 @@ def run_publish_web(
                 "post-sync verification is mandatory: no absence-probe callable "
                 "was provided (the CLI wires it from ops/cadence.toml)"
             )
-        site_plan = sync_tree(bucket, dist, delete_extras=True, plan=site_plan)
+        site_plan = sync_tree(bucket, dist, delete_extras=True, plan=site_plan, keep=site_keep)
         if release_tree is not None:
             release_plan = sync_tree(bucket, release_tree, delete_extras=False)
         if export_tree is not None:
@@ -1511,6 +1598,10 @@ __all__ = [
     "assert_public_tree_content",
     "assert_release_tree",
     "is_protected_object",
+    "is_lane_object",
+    "lane_keep_set",
+    "LANE_OBJECT_NAMES",
+    "LANE_OBJECT_PREFIXES",
     "load_allowlist",
     "plan_site_sync",
     "run_publish_web",
