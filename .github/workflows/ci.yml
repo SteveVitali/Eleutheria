@@ -66,6 +66,27 @@ jobs:
         with:
           fetch-depth: 0 # the detectors classify missing refs via git history; the history guards need it
 
+      # P34.9 (B4 V9; amended by ADR-250 / RULING E-2): the current-state
+      # projection is no longer committed — it is generated into a temp dir and
+      # verified there. Generation failure, a known inconsistency, an
+      # obligation landing naming no chain/BACKLOG row, or an uncovered input
+      # is red; "committed output drifted" can no longer fire. First in the
+      # job so it always runs — the artifact below stays populated even when a
+      # later leg reds. Also inside `make docs-check` (docs-check-projection)
+      # for local parity. PROJ_OUT points the leg at runner.temp so the
+      # output uploads below.
+      - name: Current-state projection (temp-dir generate + verify)
+        run: make docs-check-projection PROJ_OUT="${{ runner.temp }}/current-projection"
+      # The generated view stays reviewable per run without a checkout — an
+      # artifact, never a commit (ADR-250).
+      - name: Upload the current-state projection artifact
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: current-state-projection
+          path: ${{ runner.temp }}/current-projection/
+          if-no-files-found: warn
+
       - name: Documentation freshness (both detectors)
         run: make docs-check
 
@@ -82,13 +103,6 @@ jobs:
       # vacuous (exit 3, red). Named explicitly for the same visibility reason.
       - name: Ledger-contract gate (ledger_contract.py)
         run: python3 docs/build/tools/ledger_contract.py check --json docs/build/logs/ledger-contract.json
-
-      # P34.9 (B4 V9): the committed current-state projection is verified
-      # against its recorded input digests — drift, a known inconsistency, or an
-      # obligation landing naming no chain/BACKLOG row is red. Also inside
-      # `make docs-check` (docs-check-projection); explicit for visibility.
-      - name: Current-state projection verify (current_projection.py)
-        run: python3 docs/build/tools/current_projection.py verify
 
       # P34.29 (B3 §3.13 item 4, V6): the RETURN PASS generated region —
       # `### RETURN PASS — current` must equal `return_pass.py generate`

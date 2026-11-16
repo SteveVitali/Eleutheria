@@ -71,7 +71,9 @@ def evaluated(source: str):
 
 def test_policy_loads_and_classifies() -> None:
     assert POLICY.classify("docs/build/LEDGER.md") == "living"
-    assert POLICY.classify("docs/build/reports/current/CURRENT.md") == "living"
+    # a reports/ glob seat — reports/current/ left the committed tree under
+    # ADR-250 (generated on demand); reports/obligations/ stays living
+    assert POLICY.classify("docs/build/reports/obligations/events.jsonl") == "living"
     # living wins over the frozen reports/* umbrella
     assert POLICY.classify("docs/build/reports/LEDGER_DEFERRALS.md") == "living"
     assert POLICY.classify("docs/build/reports/x/y.md") == "frozen"

@@ -15,16 +15,19 @@ directory does not restate it. Established by **P19.1** (ADR-058); migrated to t
 memory here.
 
 - `LEDGER.md` — the machine-state file (`orchestrate-build` / `drive-build.sh` parse it).
-- `BUILD_INDEX.md` — one row per landed chain row (rows 1-489a as of P37.61a, 2026-11-16).
+- `BUILD_INDEX.md` — one row per landed chain row (rows 1-489b as of P37.61b, 2026-11-16).
 - `runs/<ID>.md` — the `implement-spec` run ledger for each ticket; `pr/<ID>.md` — its PR body.
 - `readouts/GATE-G<k>.md` — gate readouts (append-only); `planning/` — re-planning rounds.
-- `tools/`, `fixtures/`, `reports/` — committed; `logs/` — the one gitignored subtree.
+- `tools/`, `fixtures/`, `reports/` — committed; `logs/` is the gitignored subtree, and
+  `reports/current/` is gitignored scratch (the on-demand projection output — ADR-250).
 - `reports/` — the project-specific reports the build produced (capstone verification, backlog themes,
   jurisdiction/rights/curation/infra reports, and the functional `okc/`, `live_runs/`, `rights/`
   subtrees the connectors reference by path); `reports/obligations/` holds the append-only
-  obligation-event + coverage-assessment ledgers (ADR-126), and `reports/current/` the deterministic
-  advisory current-state projection (`current_projection.py` — regenerate at closeout, never
-  hand-edit; `verify` fails on stale inputs).
+  obligation-event + coverage-assessment ledgers (ADR-126). The deterministic advisory
+  current-state projection (`current_projection.py`) is generated on demand — never committed
+  (ADR-250 / RULING E-2): `generate --out <tmp>` for a local view (a bare `generate` writes
+  gitignored scratch under `reports/current/`); CI runs `generate && verify` into a temp dir and
+  uploads the output as a workflow artifact.
 
 Everything here is a **historical record**: corrected by a new entry, never by editing an old one.
 Run `bash scripts/docs/check-build-memory.sh .` (or the skill's `check-build-memory.sh`) to validate.

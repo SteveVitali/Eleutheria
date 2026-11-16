@@ -670,10 +670,25 @@ def test_ci_docs_job_names_the_new_gates() -> None:
     docs_job = text.split("  docs:", 1)[1].split("\n  python:", 1)[0]
     assert "make docs-check" in docs_job
     assert "ledger_contract.py check" in docs_job
-    assert "current_projection.py verify" in docs_job
-    assert "|| true" not in docs_job.split(
-        "current_projection.py verify", 1
-    )[0].rsplit("run:", 1)[-1]
+    # ADR-250 / RULING E-2: the projection leg is `generate --out <tmp> &&
+    # verify --out <tmp>` — via `make docs-check-projection` with PROJ_OUT
+    # bound to runner.temp — never against the committed path, which no
+    # longer exists. The invariant is the same: generation errors,
+    # inconsistencies, bad landing refs, uncovered inputs, and budget
+    # violations are red; only committed-output drift can no longer fire.
+    assert "docs-check-projection" in docs_job
+    proj_line = next(
+        ln
+        for ln in docs_job.splitlines()
+        if ln.strip().startswith("run:") and "docs-check-projection" in ln
+    )
+    assert "|| true" not in proj_line
+    assert "runner.temp" in proj_line
+    assert "docs/build/reports/current" not in docs_job
+    # The generated output leaves the runner as a workflow artifact, never
+    # a commit.
+    assert "upload-artifact" in docs_job
+    assert "current-state-projection" in docs_job
 
 
 def test_new_gate_files_exist() -> None:

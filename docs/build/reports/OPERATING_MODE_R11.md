@@ -72,7 +72,8 @@
 
 - **Orient, ≤ 48 KiB in all.** (O1) the LEDGER head: `sed -n '1,/^## OPEN FINDINGS/p' docs/build/LEDGER.md` (≤ 12 KiB;
   CURRENT STATE inside it, ≤ 3 KiB); (O3) `### RETURN PASS — current`; (O4) `python3 docs/build/tools/current_projection.py
-  verify` and `docs/build/reports/current/CURRENT.md`; (O5) the last three PHASE LOG entries (`tail -n 3
+  generate --out "$(mktemp -d)" && python3 docs/build/tools/current_projection.py verify --out <that dir>` and the
+  generated `CURRENT.md` inside it (ADR-250 / RULING E-2 — the output is never committed); (O5) the last three PHASE LOG entries (`tail -n 3
   docs/build/LEDGER.md` — the Round-11 PHASE LOG is the file's last region and every entry is one line); (O6) the next
   row's manifest line (`grep -F "_<nextTicket>__" docs/tickets/00_MANIFEST.md`) and its contract header. Never read
   LEDGER, DEFERRALS or BUILD_INDEX whole; workers still load their contract and the DEFERRALS rows it scopes. A head
@@ -316,8 +317,9 @@ Adapted from H2's paste block to the files that exist (the required set is `reco
   moment), and the ADR index is regenerated with `adr-index.sh`. Copy for operator confirmation goes in
   `docs/build/reports/copy-batches/batch-<NN>.md` (two digits, from 01; created by the first ticket that needs one).
   When `UNIVERSE_DISPOSED.csv` or `data/round11_plan.csv` change, re-run `python3 docs/build/tools/later_register.py`
-  and commit its output in the same change. Regenerate `docs/build/reports/current/` with `current_projection.py
-  generate` at each closeout.
+  and commit its output in the same change. The current-state projection is generated on demand, never committed
+  (ADR-250 / RULING E-2): `current_projection.py generate --out <tmp>` when a view is needed — no regen belongs in a
+  closeout.
 
 ## 11. Skill loading (B6 §5.3 — conditional)
 

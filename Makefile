@@ -265,14 +265,22 @@ docs-check-audit:
 	  --json docs/build/logs/audit-current-state.json \
 	  --md-out docs/build/logs/audit-current-state.md
 
-## Current-state projection freshness (P34.1/P34.9; B4 V9): `verify` recomputes
-## the recorded input digests, regenerates the payload in-memory, and fails on
-## drift, a known inconsistency, or an obligation landing naming no manifest
-## chain row / BACKLOG row. The obligation-event ledger (P34.7/P34.8) is checked
-## first — the projection must never render over a broken chain.
+## Current-state projection leg (P34.1/P34.9; B4 V9 — amended by ADR-250 /
+## RULING E-2): the output is no longer committed, so the leg generates into a
+## temp dir and verifies there — generation failure, a known inconsistency, an
+## obligation landing naming no manifest chain row / BACKLOG row, or an
+## uncovered input is red; "committed output drifted" can no longer fire. The
+## docs job passes PROJ_OUT=${{ runner.temp }}/current-projection so the
+## generated output uploads as a workflow artifact; the default is mktemp -d.
+## The obligation-event ledger (P34.7/P34.8) is checked first — the projection
+## must never render over a broken chain.
+PROJ_OUT ?=
 docs-check-projection:
 	python3 docs/build/tools/obligation_events.py check
-	python3 docs/build/tools/current_projection.py verify
+	@out="$(PROJ_OUT)"; [ -n "$$out" ] || out="$$(mktemp -d)"; \
+	python3 docs/build/tools/current_projection.py generate --out "$$out" && \
+	python3 docs/build/tools/current_projection.py verify --out "$$out"; \
+	rc=$$?; if [ -z "$(PROJ_OUT)" ]; then rm -rf "$$out"; fi; exit $$rc
 
 ## RETURN PASS generated-region check (P34.29; B3 §3.13 item 4, V6): the LEDGER
 ## `### RETURN PASS — current` table must equal `return_pass.py generate`

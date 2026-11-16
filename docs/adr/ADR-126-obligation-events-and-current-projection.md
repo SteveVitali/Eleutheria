@@ -151,3 +151,10 @@ transitions (F-26), anchored at 10-21 (B1 NEW-7; F3 §5.1). **Answer:** row P34.
 - **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** Per plan §7 row 148, ADR-148 (build memory v2.1)
   splits D-R10-MEMORY-1 (B3 option C) and supersedes this ADR's statements about the P32.8 cutover; the
   obligation-event and projection design stands. The body above is unchanged (SIG-ENG-003).
+- **Status:** Amended by ADR-250 (2026-11-16) — the projection output is no longer committed; CI generates + verifies into a temp dir (RULING E-2)
+- **Status note (2026-11-16, Round 11 / P37.61c, RULING E-2):** ADR-250 amends this ADR's committed-output
+  posture — `current_projection.py generate` output is generated on demand (`--out <tmp>`; the
+  `docs/build/reports/current/` path is gitignored scratch) and CI runs `generate && verify` into a temp
+  dir, so "committed output drifted" is no longer a gate while every semantic check stands. The
+  obligation-event and coverage-assessment ledgers under `reports/obligations/` stay committed inputs.
+  The body above is unchanged (SIG-ENG-003).

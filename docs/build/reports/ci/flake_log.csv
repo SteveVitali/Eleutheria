@@ -115,3 +115,5 @@ date,pr,head_sha,check,flake_id,run_id,attempt,outcome
 2026-11-16T16:38Z,517,1b310b7a,web,VISUAL-MAP-DARK-1 (unlisted — "map — /map/ [dark-1440] visual cell: 96179 px (0.08) screenshot diff on a records-only head; zero web/ bytes differ vs merge head 1d63dd63 whose own web leg greened at run 43812835979 — the head's diff cannot touch the route, adjudicated env-flake"),43898992581,1,failure
 2026-11-16T16:53Z,517,1b310b7a,web,VISUAL-MAP-DARK-1 (same-head rerun per B-15 one-attempt bound — orchestrator-requested gh run rerun --job; unlisted failure, outside the tool's auto-rerun pattern set),43898992581,2,rerun-requested
 2026-11-16T17:56Z,517,1b310b7a,web,VISUAL-MAP-DARK-1,43898992581,2,success
+2026-11-16T19:27:08Z,518,db25c3d70f746c486997c3ee54fc14556700111f,python,PY-STUB-1,43934351690,1,failure
+2026-11-16T19:27:08Z,518,db25c3d70f746c486997c3ee54fc14556700111f,python,PY-STUB-1,43934351690,2,rerun-requested
