@@ -2473,3 +2473,410 @@ kind = "dot_511_targets"
 
 [camreg_nsw_live_au]
 kind = "dot_511_targets"
+
+# --- P37.47 / R11-ACQ-19: the Tier-2 reuse wave --------------------------------
+# Eight gated camera-layer sources on the `dot_511` connector (reviewed target
+# rows live in dot_511_targets.toml / camera_registry_targets.toml); twenty
+# gated document rows on `dossier_documents` (reviewed clause_fields /
+# index_listing rows). Sources stay ingestion_permitted=false — these are the
+# reviewed target registry rows the fixture runs replay over, not a live-fetch
+# authorisation; the operator's OP-26 Wave-D flip under ING-GO-D is the only
+# route to live.
+
+[dot_511_nm]
+kind = "dot_511_targets"
+
+[dot_511_nv]
+kind = "dot_511_targets"
+
+[dot_511_id]
+kind = "dot_511_targets"
+
+[camreg_jeffersonville_in_flock]
+kind = "dot_511_targets"
+
+[camreg_ca_monterey_park_flock_camera]
+kind = "dot_511_targets"
+
+[camreg_santa_fe_nm_park_cameras]
+kind = "dot_511_targets"
+
+[camreg_fl_broward_county_us_palm_beach]
+kind = "dot_511_targets"
+
+[camreg_nv_las_vegas_us_clark_county]
+kind = "dot_511_targets"
+
+# US Virgin Islands Legislature — the committee action notice for Bill 34-0142
+# (ALPR data system): institutional bill-stage facts + citation only.
+[legis_vi_legislature_virgin_islands]
+kind = "dossier_documents"
+
+[[legis_vi_legislature_virgin_islands.targets]]
+id = "legvi-bill-34-0142-committee"
+doc_id = "legvi-bill-34-0142-committee"
+url = "https://legvi.org/committee-advances-bill-to-provide-automatic-license-plate-reader-data-system"
+kind = "clause_fields"
+subject_id = "sig:policy:usvi-leg-34-0142"
+document_genre = "official_statement"
+review_note = "Committee action notice (official_statement): the bill number, the committee's advancement vote and the covered technology are institutional facts/citations — never a claim the measure is enacted law (proposed, never a §11.14 LegalInstrument)."
+fields = [
+  { field = "title", literal = "Committee advances bill for an ALPR data system", value = "Committee advances bill for an ALPR data system" },
+  { field = "citation", literal = "Bill No. 34-0142", value = "Bill No. 34-0142" },
+  { field = "technology", literal = "ALPR", value = "ALPR data system" },
+  { field = "enacting_body", literal = "Legislature of the Virgin Islands", value = "Legislature of the Virgin Islands" },
+]
+
+# Wayne County Commission — committee meeting pages index: the listed
+# committee links are document-existence citations only.
+[ccops_mi_wayne_county_commission]
+kind = "dossier_documents"
+
+[[ccops_mi_wayne_county_commission.targets]]
+id = "wayne-commission-index"
+doc_id = "wayne-commission-index"
+url = "https://www.waynecountymi.gov/Government/Elected-Officials/Commission"
+kind = "index_listing"
+subject_id = "sig:accountability:wayne-county-mi-commission"
+document_genre = "portal_document"
+listings = [
+  { label_contains = "Public Safety", url_contains = "Public-Safety" },
+  { label_contains = "Full Commission", url_contains = "Full-Commission" },
+]
+
+# Honolulu PD — the published ALPR policy page: the policy's existence and
+# its reviewed clause facts (RB-03 posture under the C6-conditional IND-TERMS line).
+[ccops_hi_honolulu_police_department]
+kind = "dossier_documents"
+
+[[ccops_hi_honolulu_police_department.targets]]
+id = "hpd-alpr-policy"
+doc_id = "hpd-alpr-policy"
+url = "https://www.honolulupd.org/policy/policy-automated-license-plate-reader/"
+kind = "clause_fields"
+subject_id = "sig:policy:honolulu-hi-pd-alpr"
+document_genre = "official_statement"
+review_note = "HPD publishes policies as individual pages under honolulupd.org/policy/ — the ALPR policy's existence + its stated technology are institutional facts; clause contents stay bounded to the reviewed fields."
+fields = [
+  { field = "title", literal = "ALPR Policy", value = "HPD ALPR Policy" },
+  { field = "technology", literal = "ALPR", value = "ALPR systems" },
+  { field = "enacting_body", literal = "Honolulu Police Department", value = "Honolulu Police Department" },
+]
+
+# NYC DOI OIG-NYPD — the oversight reports page: the listed report links are
+# existence citations (institutional, RB-03).
+[statrep_new_york_ny_nyc_doi_oig]
+kind = "dossier_documents"
+
+[[statrep_new_york_ny_nyc_doi_oig.targets]]
+id = "nyc-doi-oig-reports-index"
+doc_id = "nyc-doi-oig-reports-index"
+url = "https://www.nyc.gov/site/doi/oignypd/web/report.page"
+kind = "index_listing"
+subject_id = "sig:accountability:nyc-doi-oig"
+document_genre = "portal_document"
+listings = [
+  { label_contains = "report", url_contains = "report" },
+]
+
+# Upturn Mass Extraction (2020) — the report page's published links
+# (Appendix C agency table): S3 aggregate-only — document citations, never
+# per-agency rows (the table itself is not extracted).
+[statrep_us_upturn_mass_extraction_2020]
+kind = "dossier_documents"
+
+[[statrep_us_upturn_mass_extraction_2020.targets]]
+id = "upturn-mass-extraction-index"
+doc_id = "upturn-mass-extraction-index"
+url = "https://www.upturn.org/work/mass-extraction/"
+kind = "index_listing"
+subject_id = "sig:index:upturn-mass-extraction-2020"
+document_genre = "portal_document"
+listings = [
+  { label_contains = "Mass Extraction", url_contains = "mass-extraction" },
+]
+
+# NYC Comptroller — the BWC programme review page (institutional citations).
+[ccops_ny_new_york_nyc_comptroller]
+kind = "dossier_documents"
+
+[[ccops_ny_new_york_nyc_comptroller.targets]]
+id = "nyc-comptroller-bwc-review"
+doc_id = "nyc-comptroller-bwc-review"
+url = "https://comptroller.nyc.gov/reports/review-of-the-new-york-city-police-departments-body-worn-camera-program/"
+kind = "clause_fields"
+subject_id = "sig:accountability:nyc-comptroller-bwc-review"
+document_genre = "official_statement"
+review_note = "The Comptroller's published review page: the report's title and its covered technology are institutional citations — the audit's findings are never asserted beyond the reviewed fields."
+fields = [
+  { field = "title", literal = "body-worn camera program", value = "Review of the New York City Police Department's Body-Worn Camera Program" },
+  { field = "technology", literal = "body-worn camera", value = "body worn cameras" },
+]
+
+# Anaheim PD policy manual (Lexipol) — RB-07: facts + citations only.
+[policy_anaheim_ca_pd_policy_manual]
+kind = "dossier_documents"
+
+[[policy_anaheim_ca_pd_policy_manual.targets]]
+id = "anaheim-pd-policy-manual"
+doc_id = "anaheim-pd-policy-manual"
+url = "https://www.anaheim.net/DocumentCenter/View/29459/APD-Policy-Manual"
+kind = "clause_fields"
+subject_id = "sig:policy:anaheim-ca-pd-manual"
+document_genre = "official_statement"
+review_note = "RB-07 ©-only lane — the manual's existence, its table-of-contents section titles and its covered technologies are facts + citations; no clause text is republished (DerivedFacts-Citations posture)."
+fields = [
+  { field = "title", literal = "APD Policy Manual", value = "Anaheim Police Department Policy Manual" },
+  { field = "citation", literal = "427 ALPR", value = "§427 ALPR" },
+  { field = "technology", literal = "Body Worn Cameras", value = "body worn cameras" },
+  { field = "technology", literal = "UAS Operations", value = "unmanned aircraft systems" },
+]
+
+# Charlotte-Mecklenburg PD — compiled directives PDF (institutional).
+[ccops_nc_charlotte_mecklenburg_police]
+kind = "dossier_documents"
+
+[[ccops_nc_charlotte_mecklenburg_police.targets]]
+id = "cmpd-directives-guide"
+doc_id = "cmpd-directives-guide"
+url = "https://www.charlottenc.gov/files/assets/police/documents/directives/cmpddirectives.pdf"
+kind = "clause_fields"
+subject_id = "sig:policy:charlotte-nc-cmpd-directives"
+document_genre = "official_statement"
+review_note = "The compiled directives guide: the manual's existence + publishing body are institutional facts."
+fields = [
+  { field = "title", literal = "Interactive Directives Guide", value = "Charlotte-Mecklenburg Police Department Interactive Directives Guide" },
+  { field = "enacting_body", literal = "Charlotte-Mecklenburg Police Department", value = "Charlotte-Mecklenburg Police Department" },
+]
+
+# US DOJ COPS — the technology/equipment award documents lane (CC0 federal work).
+[grant_us_doj_cops_technology]
+kind = "dossier_documents"
+
+[[grant_us_doj_cops_technology.targets]]
+id = "doj-cops-technology-awards"
+doc_id = "doj-cops-technology-awards"
+url = "https://cops.usdoj.gov/node/449"
+kind = "clause_fields"
+subject_id = "funding_instrument:us-doj-cops-technology"
+document_genre = "portal_document"
+review_note = "The COPS office's published award documentation: funder + programme are institutional facts — an award never asserts a deployment."
+fields = [
+  { field = "title", literal = "COPS", value = "DOJ COPS technology and equipment awards" },
+  { field = "grant_funder", literal = "Office of Community Oriented Policing Services", value = "U.S. Department of Justice — Office of Community Oriented Policing Services" },
+  { field = "grant_program", literal = "COPS", value = "COPS technology and equipment grant program" },
+]
+
+# Oklahoma AG — the Safe Oklahoma grant programme page (RB-04).
+[grant_ok_safe_oklahoma_grant]
+kind = "dossier_documents"
+
+[[grant_ok_safe_oklahoma_grant.targets]]
+id = "ok-safe-oklahoma-grant"
+doc_id = "ok-safe-oklahoma-grant"
+url = "https://www.oklahoma.gov/oag/resources/grants/safe-oklahoma-grant.html"
+kind = "clause_fields"
+subject_id = "funding_instrument:ok-safe-oklahoma-grant"
+document_genre = "portal_document"
+review_note = "The Safe Oklahoma grant programme page: funder + programme existence are institutional facts — eligible-category facts never assert an award or a deployment."
+fields = [
+  { field = "title", literal = "Safe Oklahoma Grant", value = "Safe Oklahoma Grant program" },
+  { field = "grant_funder", literal = "Attorney General", value = "Oklahoma Office of the Attorney General" },
+  { field = "grant_program", literal = "Safe Oklahoma Grant", value = "Safe Oklahoma Grant program" },
+]
+
+# EFF Red Flag Machine — the GoGuardian records research index: S3
+# aggregate-only; the listed district record links are citations only.
+[statrep_tx_ca_nm_ri_fl_il_eff_red_flag]
+kind = "dossier_documents"
+
+[[statrep_tx_ca_nm_ri_fl_il_eff_red_flag.targets]]
+id = "eff-red-flag-research-index"
+doc_id = "eff-red-flag-research-index"
+url = "https://redflagmachine.com/research/"
+kind = "index_listing"
+subject_id = "sig:index:eff-red-flag-machine"
+document_genre = "portal_document"
+listings = [
+  { label_contains = "records", url_contains = "records" },
+]
+
+# Elizabeth City PD — the AXON/FUSUS memorandum PDF (institutional citation).
+[ccops_nc_elizabeth_city_police]
+kind = "dossier_documents"
+
+[[ccops_nc_elizabeth_city_police.targets]]
+id = "elizabeth-city-axon-fusus-memo"
+doc_id = "elizabeth-city-axon-fusus-memo"
+url = "https://elizabethcitync.gov/vertical/sites/%7B81CF1C17-216A-4959-BE57-0B405379B891%7D/uploads/Memorandum_AXON_Enterprise_Inc._Purchased_FUSUS_10-14-24.pdf"
+kind = "clause_fields"
+subject_id = "sig:policy:elizabeth-city-nc-fusus-memo"
+document_genre = "official_statement"
+review_note = "The published memorandum: its existence, date and stated subject are institutional facts — a purchase memorandum never asserts a deployment."
+fields = [
+  { field = "title", literal = "AXON Enterprise, Inc. Purchased FUSUS", value = "Memorandum — AXON Enterprise, Inc. Purchased FUSUS" },
+  { field = "technology", literal = "FUSUS", value = "FUSUS camera integration" },
+  { field = "enacting_body", literal = "Police Department", value = "Elizabeth City Police Department" },
+]
+
+# Chicago OIG — the ShotSpotter evaluation page (institutional citations).
+[ccops_il_chicago_oig_shotspotter]
+kind = "dossier_documents"
+
+[[ccops_il_chicago_oig_shotspotter.targets]]
+id = "chicago-oig-shotspotter-evaluation"
+doc_id = "chicago-oig-shotspotter-evaluation"
+url = "https://igchicago.org/2021/08/24/oig-finds-that-shotspotter-alerts-rarely-lead-to-evidence-of-a-gun-related-crime-and-that-presence-of-the-technology-changes-police-behavior/"
+kind = "clause_fields"
+subject_id = "sig:accountability:chicago-il-oig-shotspotter"
+document_genre = "official_statement"
+review_note = "The OIG's published evaluation page: the report's existence, title and covered technology are institutional citations — findings are never asserted beyond the reviewed fields."
+fields = [
+  { field = "title", literal = "ShotSpotter", value = "OIG evaluation of ShotSpotter alerts" },
+  { field = "technology", literal = "ShotSpotter", value = "acoustic gunshot detection" },
+  { field = "enacting_body", literal = "Office of Inspector General", value = "City of Chicago Office of Inspector General" },
+]
+
+# BART — the surveillance reports/policies index (RB-03).
+[ccops_san_francisco_bay_ca]
+kind = "dossier_documents"
+
+[[ccops_san_francisco_bay_ca.targets]]
+id = "bart-surveillance-index"
+doc_id = "bart-surveillance-index"
+url = "https://www.bart.gov/about/reports/surveillance"
+kind = "index_listing"
+subject_id = "sig:accountability:bart-surveillance-reports"
+document_genre = "portal_document"
+listings = [
+  { label_contains = "surveillance", url_contains = "surveillance" },
+]
+
+# SIUE/SLMPD — the FY21 SPI ShotSpotter evaluation PDF (RB-07 citations).
+[ccops_mo_st_louis_fy21_spi_shotspotter]
+kind = "dossier_documents"
+
+[[ccops_mo_st_louis_fy21_spi_shotspotter.targets]]
+id = "slmpd-fy21-spi-shotspotter-eval"
+doc_id = "slmpd-fy21-spi-shotspotter-eval"
+url = "https://www.siue.edu/ccsvp/pdf/SPIShotSpotterSLMPD2026.pdf"
+kind = "clause_fields"
+subject_id = "sig:accountability:st-louis-mo-spi-shotspotter-fy21"
+document_genre = "official_statement"
+review_note = "RB-07 ©-only lane — the evaluation's existence, title and covered technology are facts + citations only."
+fields = [
+  { field = "title", literal = "ShotSpotter", value = "FY21 SPI ShotSpotter Expansion Evaluation — Final Report" },
+  { field = "citation", literal = "Final Report", value = "FY21 SPI ShotSpotter Expansion Evaluation Final Report" },
+]
+
+# San José — the digital-privacy algorithm register index (RB-03).
+[ccops_san_jose_ca]
+kind = "dossier_documents"
+
+[[ccops_san_jose_ca.targets]]
+id = "san-jose-algorithm-register"
+doc_id = "san-jose-algorithm-register"
+url = "https://www.sanjoseca.gov/your-government/departments-offices/information-technology/digital-privacy/ai-reviews-algorithm-register"
+kind = "index_listing"
+subject_id = "sig:accountability:san-jose-ca-algorithm-register"
+document_genre = "portal_document"
+listings = [
+  { label_contains = "register", url_contains = "register" },
+]
+
+# Santa Clara County — the privacy/oversight page index (RB-03).
+[ccops_santa_clara_county_ca]
+kind = "dossier_documents"
+
+[[ccops_santa_clara_county_ca.targets]]
+id = "santa-clara-oversight-index"
+doc_id = "santa-clara-oversight-index"
+url = "https://privacy.santaclaracounty.gov/balancing-privacy-impacts-effective-oversight"
+kind = "index_listing"
+subject_id = "sig:accountability:santa-clara-county-oversight"
+document_genre = "portal_document"
+listings = [
+  { label_contains = "surveillance", url_contains = "surveillance" },
+]
+
+# Maricopa County Sheriff's Office — the policies index (RB-03).
+[policy_maricopa_county_az_mcso_policies]
+kind = "dossier_documents"
+
+[[policy_maricopa_county_az_mcso_policies.targets]]
+id = "mcso-policies-index"
+doc_id = "mcso-policies-index"
+url = "https://www.mcso.org/Policy/policies"
+kind = "index_listing"
+subject_id = "sig:policy:maricopa-county-az-mcso-policies"
+document_genre = "portal_document"
+listings = [
+  { label_contains = "policies", url_contains = "policies" },
+]
+
+# Norman PD — the ALPR policy manual PDF (RB-03).
+[policy_norman_ok_alpr_policy_amendment]
+kind = "dossier_documents"
+
+[[policy_norman_ok_alpr_policy_amendment.targets]]
+id = "norman-pd-policy-manual"
+doc_id = "norman-pd-policy-manual"
+url = "https://www.normanok.gov/sites/default/files/documents/2024-02/release_20240131_t162605_norman_police_department_policy_manual.pdf"
+kind = "clause_fields"
+subject_id = "sig:policy:norman-ok-pd-manual"
+document_genre = "official_statement"
+review_note = "The published policy manual release: its existence + publishing body are institutional facts."
+fields = [
+  { field = "title", literal = "Norman Police Department Policy Manual", value = "Norman Police Department Policy Manual" },
+  { field = "enacting_body", literal = "Norman Police Department", value = "Norman Police Department" },
+]
+
+# --- RB-09 flips of existing gated rows (ACQ-19; the operator's OP-26 line) ---
+
+# CCOPS Boston — the 2024 annual surveillance report PDF (institutional).
+[ccops_boston]
+kind = "dossier_documents"
+
+[[ccops_boston.targets]]
+id = "boston-annual-surveillance-report-2024"
+doc_id = "boston-annual-surveillance-report-2024"
+url = "https://www.boston.gov/sites/default/files/file/2025/07/2024%20City%20of%20Boston%20Annual%20Surveillance%20Report.pdf"
+kind = "clause_fields"
+subject_id = "sig:accountability:boston-ma-annual-surveillance-report"
+document_genre = "official_statement"
+review_note = "Boston 2021 surveillance-oversight ordinance disclosures: the annual report's existence + covered technology surface are institutional facts."
+fields = [
+  { field = "title", literal = "Annual Surveillance Report", value = "2024 City of Boston Annual Surveillance Report" },
+  { field = "enacting_body", literal = "City of Boston", value = "City of Boston" },
+]
+
+# CCOPS Berkeley — the police policy/training materials index (institutional).
+[ccops_berkeley]
+kind = "dossier_documents"
+
+[[ccops_berkeley.targets]]
+id = "berkeley-policy-materials-index"
+doc_id = "berkeley-policy-materials-index"
+url = "https://berkeleyca.gov/safety-health/police/policy-training-materials"
+kind = "index_listing"
+subject_id = "sig:accountability:berkeley-ca-policy-materials"
+document_genre = "portal_document"
+listings = [
+  { label_contains = "surveillance", url_contains = "surveillance" },
+]
+
+# DHS fusion centers — the authoritative roster page (80 centres; RG1 flip).
+[dhs_fusion_centers]
+kind = "dossier_documents"
+
+[[dhs_fusion_centers.targets]]
+id = "dhs-fusion-center-roster"
+doc_id = "dhs-fusion-center-roster"
+url = "https://www.dhs.gov/fusion-center-locations-and-contact-information"
+kind = "index_listing"
+subject_id = "sig:identity:dhs-fusion-centers-roster"
+document_genre = "portal_document"
+listings = [
+  { label_contains = "Primary", url_contains = "fusion-center" },
+  { label_contains = "Recognized", url_contains = "fusion-center" },
+]

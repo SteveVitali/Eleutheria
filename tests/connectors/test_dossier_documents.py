@@ -108,6 +108,33 @@ FIXTURE_FOR_DOC: dict[str, tuple[str, str]] = {
     "davie-ntss-2018-026-cellebrite": ("davie_ntss_2018_026.pdf", "application/pdf"),
     "forsyth-rfp2449-rtic": ("forsyth_rfp2449.pdf", "application/pdf"),
     "guam-governor-bill-132-35-signing": ("guam_governor_bill_132_35.html", "text/html"),
+    # P37.47 / R11-ACQ-19: the Tier-2 reuse wave — twenty-two reviewed
+    # document rows (seventeen new registrations, two curated_index
+    # aggregate-only lanes, three RB-09 flips). All stand-ins
+    # (fixtures/dossier/p37_47_*.html — synthetic reconstructions, never
+    # fetched captures; see fixtures/p37_47/SOURCES.md).
+    "legvi-bill-34-0142-committee": ("p37_47_legvi_bill.html", "text/html"),
+    "wayne-commission-index": ("p37_47_wayne_commission.html", "text/html"),
+    "hpd-alpr-policy": ("p37_47_hpd_alpr_policy.html", "text/html"),
+    "nyc-doi-oig-reports-index": ("p37_47_nyc_doi_reports.html", "text/html"),
+    "upturn-mass-extraction-index": ("p37_47_upturn_index.html", "text/html"),
+    "nyc-comptroller-bwc-review": ("p37_47_nyc_comptroller_bwc.html", "text/html"),
+    "anaheim-pd-policy-manual": ("p37_47_anaheim_manual.html", "text/html"),
+    "cmpd-directives-guide": ("p37_47_cmpd_directives.html", "text/html"),
+    "doj-cops-technology-awards": ("p37_47_doj_cops.html", "text/html"),
+    "ok-safe-oklahoma-grant": ("p37_47_ok_safe_grant.html", "text/html"),
+    "eff-red-flag-research-index": ("p37_47_eff_red_flag.html", "text/html"),
+    "elizabeth-city-axon-fusus-memo": ("p37_47_elizabeth_memo.html", "text/html"),
+    "chicago-oig-shotspotter-evaluation": ("p37_47_chicago_oig.html", "text/html"),
+    "bart-surveillance-index": ("p37_47_bart_index.html", "text/html"),
+    "slmpd-fy21-spi-shotspotter-eval": ("p37_47_slmpd_eval.html", "text/html"),
+    "san-jose-algorithm-register": ("p37_47_san_jose_register.html", "text/html"),
+    "santa-clara-oversight-index": ("p37_47_santa_clara_index.html", "text/html"),
+    "mcso-policies-index": ("p37_47_mcso_policies.html", "text/html"),
+    "norman-pd-policy-manual": ("p37_47_norman_manual.html", "text/html"),
+    "boston-annual-surveillance-report-2024": ("p37_47_boston_asr.html", "text/html"),
+    "berkeley-policy-materials-index": ("p37_47_berkeley_index.html", "text/html"),
+    "dhs-fusion-center-roster": ("p37_47_dhs_fusion_roster.html", "text/html"),
 }
 
 

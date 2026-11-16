@@ -401,6 +401,46 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     # The gated row stays refused by the loader until the operator's OP-26
     # Wave-B flip under ING-GO-B.
     "camreg_dc_ovsjg_camera_rebate": "dot_511",
+    # P37.47 (ACQ-19): the Tier-2 reuse wave — eight gated camera-layer
+    # sources ride `dot_511` over the merged target registry (the WVPA
+    # layer-23 + Bellevue speed-safety targets ride the already-mapped
+    # dot_511_wv / camreg_bellevue_wa rows); the twenty gated document
+    # rows ride `dossier_documents` over the reviewed clause_fields /
+    # index_listing handlers — incl. the three RB-09 flips of existing
+    # gated rows (ccops_boston / ccops_berkeley / dhs_fusion_centers —
+    # a roster page rides index_listing, not an oversight-report lookup).
+    # All stay ingestion_permitted=false pending the operator's OP-26
+    # Wave-D flip under ING-GO-D.
+    "dot_511_nm": "dot_511",
+    "dot_511_nv": "dot_511",
+    "dot_511_id": "dot_511",
+    "camreg_jeffersonville_in_flock": "dot_511",
+    "camreg_ca_monterey_park_flock_camera": "dot_511",
+    "camreg_santa_fe_nm_park_cameras": "dot_511",
+    "camreg_fl_broward_county_us_palm_beach": "dot_511",
+    "camreg_nv_las_vegas_us_clark_county": "dot_511",
+    "legis_vi_legislature_virgin_islands": "dossier_documents",
+    "ccops_mi_wayne_county_commission": "dossier_documents",
+    "ccops_hi_honolulu_police_department": "dossier_documents",
+    "statrep_new_york_ny_nyc_doi_oig": "dossier_documents",
+    "statrep_us_upturn_mass_extraction_2020": "dossier_documents",
+    "ccops_ny_new_york_nyc_comptroller": "dossier_documents",
+    "policy_anaheim_ca_pd_policy_manual": "dossier_documents",
+    "ccops_nc_charlotte_mecklenburg_police": "dossier_documents",
+    "grant_us_doj_cops_technology": "dossier_documents",
+    "grant_ok_safe_oklahoma_grant": "dossier_documents",
+    "statrep_tx_ca_nm_ri_fl_il_eff_red_flag": "dossier_documents",
+    "ccops_nc_elizabeth_city_police": "dossier_documents",
+    "ccops_il_chicago_oig_shotspotter": "dossier_documents",
+    "ccops_san_francisco_bay_ca": "dossier_documents",
+    "ccops_mo_st_louis_fy21_spi_shotspotter": "dossier_documents",
+    "ccops_san_jose_ca": "dossier_documents",
+    "ccops_santa_clara_county_ca": "dossier_documents",
+    "policy_maricopa_county_az_mcso_policies": "dossier_documents",
+    "policy_norman_ok_alpr_policy_amendment": "dossier_documents",
+    "ccops_boston": "dossier_documents",
+    "ccops_berkeley": "dossier_documents",
+    "dhs_fusion_centers": "dossier_documents",
     # P26.9 (SOURCES.8): municipal / transit / non-US camera registries — one
     # source row per publisher; all route through the `dot_511` connector over
     # the merged target registry (data/camera_registry_targets.toml). Gated

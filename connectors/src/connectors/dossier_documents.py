@@ -162,6 +162,33 @@ DOSSIER_SOURCES = (
     "procportal_davie_fl_purchasing",
     "procportal_forsyth_nc_purchasing",
     "legis_gu_governor",
+    # P37.47 / R11-ACQ-19 — the Tier-2 reuse wave: seventeen gated
+    # document rows plus the three RB-09 flips of existing gated rows
+    # (ccops_boston, ccops_berkeley, dhs_fusion_centers). All stay
+    # ingestion_permitted=false pending the operator's OP-26 Wave-D
+    # flip under ING-GO-D.
+    "legis_vi_legislature_virgin_islands",
+    "ccops_mi_wayne_county_commission",
+    "ccops_hi_honolulu_police_department",
+    "statrep_new_york_ny_nyc_doi_oig",
+    "statrep_us_upturn_mass_extraction_2020",
+    "ccops_ny_new_york_nyc_comptroller",
+    "policy_anaheim_ca_pd_policy_manual",
+    "ccops_nc_charlotte_mecklenburg_police",
+    "grant_us_doj_cops_technology",
+    "grant_ok_safe_oklahoma_grant",
+    "statrep_tx_ca_nm_ri_fl_il_eff_red_flag",
+    "ccops_nc_elizabeth_city_police",
+    "ccops_il_chicago_oig_shotspotter",
+    "ccops_san_francisco_bay_ca",
+    "ccops_mo_st_louis_fy21_spi_shotspotter",
+    "ccops_san_jose_ca",
+    "ccops_santa_clara_county_ca",
+    "policy_maricopa_county_az_mcso_policies",
+    "policy_norman_ok_alpr_policy_amendment",
+    "ccops_boston",
+    "ccops_berkeley",
+    "dhs_fusion_centers",
 )
 
 

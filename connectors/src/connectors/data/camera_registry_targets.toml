@@ -5018,9 +5018,16 @@ layer_url = "https://services.arcgis.com/NuZplX0yD9b0Mx90/arcgis/rest/services/f
 agency = "City of Jeffersonville, IN (staff account, via ArcGIS Online)"
 state = "US-IN"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 60
+observed_fields = "OBJECTID"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["OBJECTID"]
+verified = 2026-09-30
+operator = "City of Jeffersonville"
+rights_note = "No licence text located — the ArcGIS Online item's licenseInfo + accessInformation fields are empty (the I3 candidate record's terms check). Rights batch RB-01 `a` (GL-GATE-07 US) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-D flip under ING-GO-D."
 enum_source = "r11-acq-01:AP-T2-008"
-notes = "ACQ-01 generated target (plan AP-T2-008, cand I3-C016). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+notes = "P37.47 (ACQ-19) registration review (plan AP-T2-008, cand I3-C016 — a verification-first row). The count was NOT read in the planning evidence — observed_count=60 is the plan estimate; a layer outgrowing its pages fails loud on exceededTransferLimit. OWNER-ORG CHECK RECORDED: the layer publishes under a city staff account on the Jeffersonville ArcGIS Online org — the publisher identity is recorded as the City of Jeffersonville pending the operator's Wave-D rights review (I7 NEW-5 org check), never asserted as resolved here. Static layer (last edit 2026-01-21 per the candidate record). The Flock locations are ALPR-fixed."
 jurisdiction_place = "Jeffersonville"
 technology = "alpr-fixed"
 
@@ -5035,9 +5042,16 @@ layer_url = "https://services9.arcgis.com/ivAMP6vRMPA12GAA/arcgis/rest/services/
 agency = "City of Monterey Park, CA (two city-staff accounts; org name not set)"
 state = "US-CA"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 60
+observed_fields = "OBJECTID"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["OBJECTID"]
+verified = 2026-09-30
+operator = "City of Monterey Park"
+rights_note = "No licence text located — the ArcGIS Online item's licenseInfo field is empty (the I3 candidate record's terms check). Rights batch RB-01 `a` (GL-GATE-07 US) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-D flip under ING-GO-D."
 enum_source = "r11-acq-01:AP-T2-009"
-notes = "ACQ-01 generated target (plan AP-T2-009, cand I3-C021). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+notes = "P37.47 (ACQ-19) registration review (plan AP-T2-009, cand I3-C021 — a verification-first row). The count was NOT read in the planning evidence — observed_count=60 is the plan estimate. OWNER-ORG CHECK RECORDED: the layer publishes under two city-staff accounts and the hosting ArcGIS Online org carries no org name (the candidate record's flag) — the publisher identity is recorded as the City of Monterey Park pending the operator's Wave-D rights review, never asserted as resolved here. The Flock camera locations are ALPR-fixed."
 jurisdiction_place = "Monterey Park"
 technology = "alpr-fixed"
 
@@ -5052,9 +5066,16 @@ layer_url = "https://services7.arcgis.com/p0Gk2nDbPs7KEqSZ/arcgis/rest/services/
 agency = "City of Santa Fe, NM Parks (layer published by WSP consultant account Jay.puckett_wsp5)"
 state = "US-NM"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 12
+observed_fields = "OBJECTID"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["OBJECTID"]
+verified = 2026-09-30
+operator = "City of Santa Fe"
+rights_note = "No licence text located (the I5 candidate record's terms check). Rights batch RB-01 `a` (GL-GATE-07 US) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-D flip under ING-GO-D."
 enum_source = "r11-acq-01:AP-T2-019"
-notes = "ACQ-01 generated target (plan AP-T2-019, cand I5-C040). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+notes = "P37.47 (ACQ-19) registration review (plan AP-T2-019, cand I5-C040 — a verification-first row). count=12 park-camera points via returnCountOnly (live-read, the I5 candidate record). OWNER-ORG CHECK RECORDED: the layer publishes under a WSP consultant account (Jay.puckett_wsp5), NOT a city org account — the publishing-identity caveat is recorded verbatim; the City of Santa Fe programme authority resolves at the operator's Wave-D rights review, never asserted here. Municipal park CCTV — fixed-camera-cctv."
 jurisdiction_place = "Santa Fe"
 technology = "fixed-camera-cctv"
 
@@ -5086,9 +5107,16 @@ layer_url = "https://services1.arcgis.com/O1JpcwDW8sjYuddV/arcgis/rest/services/
 agency = "Florida Department of Transportation, District 4 (via ArcGIS Online)"
 state = "US-FL"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 60
+observed_fields = "OBJECTID"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["OBJECTID"]
+verified = 2026-09-30
+operator = "Florida Department of Transportation, District 4"
+rights_note = "No licence text located (the I3 candidate record's terms check). Rights batch RB-01 `a` (GL-GATE-07 US, IND-P8 flag — Part VIII S2 screen) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-D flip under ING-GO-D."
 enum_source = "r11-acq-01:AP-T2-025"
-notes = "ACQ-01 generated target (plan AP-T2-025, cand I3-C004). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+notes = "P37.47 (ACQ-19) registration review (plan AP-T2-025, cand I3-C004 — the S2 screened lane). The FDOT District-4 right-of-way camera survey is a Survey123 form layer whose published schema carries operator-identifier fields (the candidate record's part_viii flag). The S2 screen is implemented as the minimal out_fields allowlist (OBJECTID + geometry only): survey-submitter / operator-identifier fields are never requested, never emitted (Part VIII P8-5). The count was NOT read — observed_count=60 is the plan estimate. District-4 coverage spans Broward/Palm Beach/Martin/St. Lucie/Indian River counties (jurisdiction_place verbatim). ALPR-fixed."
 jurisdiction_place = "Broward County;US-FL:Palm Beach County;US-FL:Martin County;US-FL:St. Lucie County;US-FL:Indian River County"
 technology = "alpr-fixed"
 
@@ -5165,16 +5193,23 @@ axis_order = "lon-lat"
 source_id = "camreg_bellevue_wa"
 kind = "arcgis_query"
 platform = "arcgis"
-url = "https://services1.arcgis.com/EYzEZbDhXZjURPbP/arcgis/rest/services/Speed_Safety_Cameras/FeatureServer"
-layer_url = "https://services1.arcgis.com/EYzEZbDhXZjURPbP/arcgis/rest/services/Speed_Safety_Cameras/FeatureServer"
+url = "https://services1.arcgis.com/EYzEZbDhXZjURPbP/arcgis/rest/services/Speed_Safety_Cameras/FeatureServer/0"
+layer_url = "https://services1.arcgis.com/EYzEZbDhXZjURPbP/arcgis/rest/services/Speed_Safety_Cameras/FeatureServer/0"
 agency = "City of Bellevue, WA (ArcGIS Online, owner <staff account id redacted>)"
 state = "US-WA"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 60
+observed_fields = "OBJECTID"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["OBJECTID"]
+verified = 2026-09-30
+operator = "City of Bellevue"
+rights_note = "Rides the gated `camreg_bellevue_wa` row — IND-TERMS flag tied to the E4 R4d Bellevue camera-registry terms; the C6-conditional lane opens only after the operator's C6/RB line reads `a` and the OP-26 Wave-D flip lands (ING-GO-D). No separate source row: the target shares the existing gated registration."
 enum_source = "r11-acq-01:AP-T2-030"
-notes = "ACQ-01 generated target (plan AP-T2-030, cand I4-C063). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+notes = "P37.47 (ACQ-19) registration review (plan AP-T2-030, cand I4-C063 — the C6-conditional Bellevue speed-safety lane). The layer JSON was not fetched in the planning evidence — observed_count=60 is the plan estimate and layer 0 is the pinned lane (a root URL resolves to its first layer at capture; drift is recorded, never guessed). Speed-safety cameras → ate-speed. This target RIDES the existing gated camreg_bellevue_wa source (IND-TERMS, E4 R4d terms tie): the operator's C6 answer + OP-26 flip is the only route to live."
 jurisdiction_place = "Bellevue"
-technology = "fixed-camera-unspecified"
+technology = "ate-speed"
 
 [[targets]]
 id = "flock_camera_locations_sep_2023_city_of_brookhaven_ga"
@@ -5221,9 +5256,16 @@ layer_url = "https://services2.arcgis.com/MLoS3Qx4BXmDoTIY/arcgis/rest/services/
 agency = "Clark County (NV) GIS Management Office (via ArcGIS Online), mapping LVMPD equipment on municipal ROW facilities"
 state = "US-NV"
 jurisdiction_scheme = "iso.3166_2"
-observed_count = 0
+observed_count = 95
+observed_fields = "OBJECTID"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+out_fields = ["OBJECTID"]
+verified = 2026-09-30
+operator = "Clark County, Nevada — GIS Management Office"
+rights_note = "No licence text located (the I5 candidate record's terms check). Rights batch RB-01 `a` (GL-GATE-07 US, IND-P8 flag — Part VIII S2 screen) is the approved basis; the source row stays gated pending the operator's OP-26 Wave-D flip under ING-GO-D."
 enum_source = "r11-acq-01:AP-T2-052"
-notes = "ACQ-01 generated target (plan AP-T2-052, cand I5-C104). observed_count/out_fields/object_id_field pinned at the family ticket's registration review; licence lead LicenseRef-PublicRecord-FactualCompilation (GL-GATE-07 US)."
+notes = "P37.47 (ACQ-19) registration review (plan AP-T2-052, cand I5-C104 — the S2 screened lane). The Clark County service publishes LVMPD equipment on municipal ROW facilities as the METROCAMS (~95 sites) + SHOTSPOTTER (~100 points) layers — observed_count=95 is the Metrocam lane this target pins (live-read, the I5 candidate record); the acoustic ShotSpotter lane carries no camera claim and stays out of this row's emit (a recorded non-target, the layer index resolves at first capture). The S2 screen is the minimal out_fields allowlist (OBJECTID + geometry only): the schema's operator-identifier fields (the candidate record's part_viii flag) are never requested, never emitted (Part VIII P8-5). layer_url pins FeatureServer/0 — the service root's first layer."
 jurisdiction_place = "Las Vegas;US-NV:Clark County"
 technology = "fixed-camera-cctv"
 
