@@ -533,6 +533,38 @@ def test_deleted_protected_record_attributes_to_deleting_commit(repo: Path) -> N
     assert rc2 == 0, out2
 
 
+def test_jsonl_prefix_find_attributes_to_removing_commit(repo: Path) -> None:
+    """A mid-line .jsonl edit's `prefix` break attributes to the commit that removed the
+    first un-filled line — the sanctioned memory-repair path (archived bytes +
+    `seed-commit` declaration) can then cover a verifier-backed in-place .jsonl repair
+    exactly like every other append-only finding (P37.61b / RULING E-1)."""
+    ev = "docs/build/reports/obligations/events.jsonl"
+    land = commit(repo)  # landed base: the file's byte prefix is frozen from here
+    # in-place repair of the second line — the removed line is blameable to this commit
+    lines = (repo / ev).read_text(encoding="utf-8").splitlines(keepends=True)
+    lines[1] = (
+        '{"id":2,"recorded_at":"2026-09-21T10:00:00Z","note":"repaired in place '
+        '(as-of T9 sanction)"}\n'
+    )
+    (repo / ev).write_text("".join(lines), encoding="utf-8")
+    repairer = commit(repo, msg="in-place jsonl repair")
+    rc, doc, _ = run_guard(repo, "all", "--range", f"{land}..HEAD")
+    hits = [
+        f
+        for c in doc["checks"]
+        for f in c["violations"]
+        if (f["check"], f["rule"], f["path"]) == ("append-only", "prefix", ev)
+    ]
+    assert rc == 1 and hits, doc
+    assert all(f["commit"][:8] == repairer[:8] for f in hits), hits
+    # declared → sanctioned (the same exemption a verifier-backed correction borrows)
+    with (repo / "docs/build/tools/record_policy/history.policy").open("a") as fh:
+        fh.write(f"\nseed-commit {repairer[:8]}\n")
+    commit(repo, msg="declare the sanctioned repair")
+    rc2, doc2, out2 = run_guard(repo, "all", "--range", f"{land}..HEAD")
+    assert rc2 == 0, out2
+
+
 def test_gate_decisions_top_insertion_307161ee_shape(repo: Path) -> None:
     replace(
         repo,

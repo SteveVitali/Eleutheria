@@ -1491,3 +1491,25 @@ seed-commit 169f03fd
 # (43804403390). In-place line repairs under the sanctioned path;
 # pre-edit bytes archived alongside the earlier repairs.
 seed-commit 51bb02fb
+
+# ── P37.61b privacy redaction restore (row 489b; RULING E-1, 2026-11-16) ──────
+# e3efcac5 is the sanctioned in-place privacy repair: commit 15085e0a
+# reintroduced four of the gitignored listed personal handles into six
+# retained-prefix records — DEFERRALS rows D-P31.4-1 (L511) and D-P34.39a-1
+# (L1272), run ledger runs/P34.39a.md L348, PR body pr/P34.39a-live-1.md
+# L48–49, read-back README reports/p34.39a-osm-replay-read-back L29–31, and
+# the append-only obligations events.jsonl L650 — and the informational
+# crawl check's retained-prefix class let the reintroduction pass green.
+# RULING E-1 (GATE DECISIONS 2026-11-15; readouts/RULINGS-2026-11-15.md)
+# authorises the HEAD-level scrub: the deployed-id mentions are replaced
+# with non-identifying "pre-rekey handle" references (writing the neutral
+# ids there would falsify the records — deployed ids stay pre-rekey while
+# D-P34.18-1's L2 is unrun) plus `as-of P37.61b / RULING E-1` markers.
+# Pre-edit bytes archived verbatim under docs/build/reports/memory-repair/
+# (*_pre-P37.61b-handle-scrub.txt), the dated correction section lands in
+# docs/governance/identifier-rekey-note.md, and the reappearance guard
+# (docs/build/tools/redaction_guard.py, sig.redaction-guard/1) now fails
+# closed on any sha256-listed handle in any tracked file — the same
+# mechanism as a58fa2fa/d130b54d above. Scope: the append-only findings
+# attributed to e3efcac5 only; no other commit borrows the exemption.
+seed-commit e3efcac5
