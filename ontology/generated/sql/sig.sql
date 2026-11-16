@@ -1,3 +1,7 @@
+-- GENERATED DOCUMENTATION — ontology/generated/sql/sig.sql
+-- Logical DDL generated from the LinkML ontology (ontology/src/ontology/schema; ADR-007).
+-- DOCUMENTATION ONLY (ADR-248): the deployed physical schema is the sqitch
+-- chain — db/sqitch.plan + db/deploy|revert|verify. Never deploy this file.
 -- # Abstract Class: Entity Description: Abstract base — every entity has identity (§3.1 defining standard).
 --     * Slot: id Description: The entity's stable minted identity (L2 identity only, §8.2).
 -- # Class: Jurisdiction Description: [NEW] A first-class jurisdiction with a self-referential hierarchy, a pluggable national code system, and temporally-versioned geometry (§11.1, SIG-ONTO-010/011).

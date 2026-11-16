@@ -140,10 +140,21 @@ def _relativize_repo_paths(text: str) -> str:
     return text.replace(abs_schema, rel_schema)
 
 
+# Preamble written above the generated logical DDL so the artifact declares its
+# own posture wherever it is read (ADR-248): `db/sqitch.plan` is the deployed
+# physical schema's sole authority; this file is documentation only.
+_SQL_DOC_HEADER = """\
+-- GENERATED DOCUMENTATION — ontology/generated/sql/sig.sql
+-- Logical DDL generated from the LinkML ontology (ontology/src/ontology/schema; ADR-007).
+-- DOCUMENTATION ONLY (ADR-248): the deployed physical schema is the sqitch
+-- chain — db/sqitch.plan + db/deploy|revert|verify. Never deploy this file.
+"""
+
+
 def _gen_sql(schema: str) -> str:
     from linkml.generators.sqltablegen import SQLTableGenerator
 
-    return _sort_index_runs(SQLTableGenerator(schema).generate_ddl())
+    return _SQL_DOC_HEADER + _sort_index_runs(SQLTableGenerator(schema).generate_ddl())
 
 
 def _sort_index_runs(sql: str) -> str:
