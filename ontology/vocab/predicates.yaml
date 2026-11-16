@@ -9697,3 +9697,84 @@ predicates:
     subscription: D6
     recommendation: D6
   object_kind: literal
+- predicate_id: payee
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    A published payee/vendor aggregate subject assertion — the register's own
+    row for one grouping column of a payments or contract-spend aggregate
+    table (a checkbook's vendor bucket). The subject is the published
+    organisation payee the operator groups its spend totals by — never a
+    natural person (a person-shaped group row fails closed; S7
+    extraction-time redaction), never a per-payment, invoice or
+    natural-person record (P37.48 / R11-ACQ-20).
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payee
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P37.48 assessment: camera_registry D1 (the register's own group row is its
+  # own fact); connector_run D3; all other genres D6.
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D1
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
+  object_kind: literal
+- predicate_id: payment_total
+  vocab_version: 1.0.0
+  value_datatype: decimal
+  cardinality: multi
+  definition: >-
+    The published aggregate money total a payee/vendor bucket receives or is
+    awarded over a declared period — the operator-published sum of payment or
+    contract-award rows grouped payee × period. A claim carries its `period`,
+    `currency` and `measure` fields beside the decimal value. Aggregate rows
+    only: never a per-payment, invoice, person or natural-person payee
+    record (P37.48 / R11-ACQ-20, S7) — the spend-total admission is distinct
+    from the row-level checkbook surfaces Part VIII prohibits.
+  skos_concept_iri: https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payment_total
+  volatility_class: VOLATILE
+  half_life: 6mo
+  resolution_strategy: interval_union
+  # P37.48 assessment: camera_registry D2 (the operator-published aggregate);
+  # connector_run D3; contract D4 (an aggregate total, not the contract
+  # itself); all other genres D6.
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D2
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D4
+    official_statement: D6
+    template: D6
+    subscription: D6
+    recommendation: D6
+  object_kind: literal

@@ -1775,6 +1775,26 @@
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/parent_cooperative_contract> <https://ontology.surveillancegraph.org/schema/resolutionStrategy> "authoritative_source_wins" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/parent_cooperative_contract> <https://ontology.surveillancegraph.org/schema/valueDatatype> "string" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/parent_cooperative_contract> <https://ontology.surveillancegraph.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payee> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payee> <http://www.w3.org/2004/02/skos/core#definition> "A published payee/vendor aggregate subject assertion — the register's own row for one grouping column of a payments or contract-spend aggregate table (a checkbook's vendor bucket). The subject is the published organisation payee the operator groups its spend totals by — never a natural person (a person-shaped group row fails closed; S7 extraction-time redaction), never a per-payment, invoice or natural-person record (P37.48 / R11-ACQ-20)." .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payee> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0> .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payee> <http://www.w3.org/2004/02/skos/core#prefLabel> "payee"@en .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payee> <https://ontology.surveillancegraph.org/schema/cardinality> "single" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payee> <https://ontology.surveillancegraph.org/schema/halfLife> "infinite" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payee> <https://ontology.surveillancegraph.org/schema/objectKind> "literal" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payee> <https://ontology.surveillancegraph.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payee> <https://ontology.surveillancegraph.org/schema/valueDatatype> "string" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payee> <https://ontology.surveillancegraph.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payment_total> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payment_total> <http://www.w3.org/2004/02/skos/core#definition> "The published aggregate money total a payee/vendor bucket receives or is awarded over a declared period — the operator-published sum of payment or contract-award rows grouped payee × period. A claim carries its `period`, `currency` and `measure` fields beside the decimal value. Aggregate rows only: never a per-payment, invoice, person or natural-person payee record (P37.48 / R11-ACQ-20, S7) — the spend-total admission is distinct from the row-level checkbook surfaces Part VIII prohibits." .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payment_total> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0> .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payment_total> <http://www.w3.org/2004/02/skos/core#prefLabel> "payment_total"@en .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payment_total> <https://ontology.surveillancegraph.org/schema/cardinality> "multi" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payment_total> <https://ontology.surveillancegraph.org/schema/halfLife> "6mo" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payment_total> <https://ontology.surveillancegraph.org/schema/objectKind> "literal" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payment_total> <https://ontology.surveillancegraph.org/schema/resolutionStrategy> "interval_union" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payment_total> <https://ontology.surveillancegraph.org/schema/valueDatatype> "decimal" .
+<https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/payment_total> <https://ontology.surveillancegraph.org/schema/volatilityClass> "VOLATILE" .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/period> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/period> <http://www.w3.org/2004/02/skos/core#definition> "Period of performance a funding instrument or award states (§11.12)." .
 <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0/period> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.surveillancegraph.org/vocab/predicate/1.0.0> .
