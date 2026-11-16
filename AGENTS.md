@@ -187,7 +187,7 @@ The Round-10 extension (ADR-120 → ADR-126/127) adds two advisory surfaces unde
 `obligations/` holds the append-only `obligation-event/1` + `coverage-assessment/1` ledgers
 (the `obligation_events` tool under `docs/build/tools/`; a DEFERRALS compatibility cell's leading
 token is derived from the event chain, never "last token wins"), and the deterministic
-**current-state projection** (`CURRENT.md`/`current.json` + spill pages) is generated **on demand**
+**current-state projection** (a manifest, the current view + spill pages) is generated **on demand**
 by the `current_projection` tool — `generate --out <tmp>` for a local view, or
 `generate --out docs/build/reports/current/` (gitignored scratch since ADR-250 / RULING E-2);
 the CI `docs` job regenerates into a temp dir and runs `verify` there — `verify` still fails on

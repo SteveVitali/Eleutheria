@@ -97,7 +97,10 @@ def test_build_memory_section_names_supersession_chain() -> None:
     for token in ("ADR-073", "ADR-126", "ADR-127"):
         assert token in root, f"build-memory ADR {token} missing from root guidance"
     assert "obligation-event/1" in root and "coverage-assessment/1" in root
-    assert "current-state projection" in root and "reports/current" in root or "CURRENT.md" in root
+    # ADR-250 / RULING E-2: the guidance must still name the advisory projection
+    # surface, and must describe it as on-demand output that is never committed.
+    assert "current-state projection" in root and "reports/current" in root
+    assert "on demand" in root and "never committed" in root
     # The projection is advisory — the LEDGER/DEFERRALS stay authoritative.
     assert "control" in root and "authorit" in root
 
