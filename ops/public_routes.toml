@@ -68,6 +68,7 @@ top_level = [
   "redirects.conf",      # the ONE generated redirect include (P36.35 / SIG-UI-058) — a serving-config artifact the publish path carries into conf/
   "map",
   "methodology",
+  "quality",             # /quality/ — the public quality page (P37.45 / CONF-12, SIG-CONF-011)
   "explore",             # /explore/ — the T2 graph explorer (P37.26 / K2 GX-09a; supersedes /network/)
   "research-queue",
   "search",
@@ -124,6 +125,7 @@ required = [
   "graphs",              # ditto — the T1 overview pages emit in fixtures mode too
   "map",
   "methodology",
+  "quality",             # emitted by every build — the quality page mints in fixtures mode too (P37.45)
   "explore",             # /explore/ — the T2 graph explorer (P37.26 / K2 GX-09a; supersedes /network/)
   "research-queue",
   "search",

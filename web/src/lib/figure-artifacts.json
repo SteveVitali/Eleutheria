@@ -27,6 +27,8 @@
     "web/dossiers/index.json",
     "web/unplaced.json",
     "web/jurisdiction_key_map.json",
-    "web/jurisdiction_slug_history.json"
+    "web/jurisdiction_slug_history.json",
+    "web/quality.json",
+    "status/quality/latest.json"
   ]
 }

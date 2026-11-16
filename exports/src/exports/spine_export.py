@@ -138,6 +138,9 @@ from . import claim_views as _claim_views
 from . import column_registry as CR
 from . import compartments as C
 from . import placement as _placement
+from . import (
+    quality as _quality,
+)
 from . import statements as _stmt
 from .audit import _LATEST_DECISION_CTE
 from .bundle import Bundle, build_bundle
@@ -5770,6 +5773,7 @@ def build_spine_export(
     previous_entity_history: Sequence[Mapping[str, Any]] | None = None,
     download_signing: bool = False,
     mirror_registry_path: Path | None = None,
+    quality_report: Mapping[str, Any] | None = None,
 ) -> SpineExport:
     """Assemble the national :class:`SpineExport` (pure — no database).
 
@@ -7125,6 +7129,29 @@ def build_spine_export(
     web_licenses[mech_path] = _SIG_SPDX
     web_compartments[mech_path] = _WEB_COMPARTMENT
     web_schemas[mech_path] = mech_eval.SCHEMA
+
+    # ``web/quality.json`` — the ``sig.quality-page/1`` public-quality
+    # artifact (P37.45 / CONF-12, SIG-CONF-011 + SIG-CONF-001/010): the
+    # whole registry declaration (every check, failing and ratchet
+    # included — Q-L3-5) plus the measured ``sig.quality-report/1`` when
+    # the caller binds one; ``None`` records its named absence. The page
+    # renders only this artifact. SIG's own analytical expression →
+    # CC-BY-4.0.
+    _q_registry = _quality.load_registry()
+    quality_page_doc = _quality.build_quality_page(
+        _q_registry,
+        quality_report,
+        generated_at=generated_at,
+        target=f"export {dataset.as_of or generated_at[:10]}",
+    )
+    _q_lint = _quality.quality_page_lint_errors(quality_page_doc)
+    if _q_lint:
+        raise ValueError("sig.quality-page/1 failed its own lint: " + "; ".join(_q_lint))
+    quality_path = f"{_WEB_DIR}/quality.json"
+    web_artifacts[quality_path] = _web_bytes(quality_page_doc)
+    web_licenses[quality_path] = _SIG_SPDX
+    web_compartments[quality_path] = _WEB_COMPARTMENT
+    web_schemas[quality_path] = _quality.PAGE_SCHEMA
 
     # P36.50 (R11-K13-TX-10b, J3 §6.2/§6.7 — SIG-TRANSP-014/015): per-bundle
     # ATTRIBUTION.txt/LICENCE.txt + the per-source slices (the K9 C-8

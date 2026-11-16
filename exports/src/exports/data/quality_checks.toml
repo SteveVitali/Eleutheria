@@ -422,7 +422,7 @@ note = "unmeasured; P placement rides the real-data regression corpus (CONF-08/P
 
 [[check]]
 id = "GQ-27"
-statement = "Every published quality or evaluation figure names exactly one basis class with n, population, source-mix digest, ruleset and window; 'human-verified', 'independently reviewed', 'verified' or 'certified' appears only with a B5 completion marker"
+statement = "Every published quality or evaluation figure names exactly one basis class with n, population, source-mix digest, ruleset and window; the four human-claim phrases appear only with a B5 completion marker"
 population = "published quality/evaluation figures"
 placement = ["R", "P"]
 mode = "enforce"

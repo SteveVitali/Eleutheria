@@ -11,6 +11,22 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **P37.45 / R11-CONF-12 (SIG-CONF-011; SIG-CONF-001/010)** — the public
+  `/quality/` page: a T1 zero-JS content page rendered only from the new
+  release artifact `web/quality.json` (`sig.quality-page/1`) — the whole
+  check-registry declaration (every registered check, failing and ratchet
+  checks shown, never hidden — Q-L3-5) plus the bound
+  `sig.quality-report/1` or its named absence. Sections: the checks table
+  with per-check state, "how duplicates are handled" (`/quality/#duplicates`
+  — the "why a range?" links now land here), the who-checked-what basis
+  table (independent-review row reads `none`), a "what we cannot tell you"
+  list, corrections/history, and the nightly-probe status panel labelled
+  "latest check of the working database (not yet published)". The page
+  states "no human check performed" verbatim (Q-L3-3 = c). The release
+  descriptor gains the L3 §5.4 `graph_quality` block derived from the
+  artifact. `sig-exports quality page` emits the artifact;
+  `ops/public_routes.toml` registers the route. `live_verification=false`.
+
 - **P37.44 / R11-CONF-09 (SIG-CONF-012; SIG-EVAL-003/006)** — the mechanical
   evaluation report: `web/mech_eval.json` (`sig.mech-eval/1`), computed at
   export time from the release's latest completed camera-site ER run, the

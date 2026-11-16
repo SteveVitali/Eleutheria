@@ -141,7 +141,7 @@ const showmapTarget = getLatestReleaseTarget();
     {/* P37.39 (QB-01): the count interval beside the record total — L3 §5.2
         verbatim when the artifact carries it; the honest reason otherwise. */}
     {doc.totals.count_interval?.display && (
-      <div data-testid="dsrc-count-interval"><dt>Listed cameras</dt><dd>{doc.totals.count_interval.display.replace(/\s*\(\[why a range\?\]\([^)]*\)\)\s*$/, "")} — <a href={withBase("glossary/#possible-duplicate")}>why a range?</a></dd></div>
+      <div data-testid="dsrc-count-interval"><dt>Listed cameras</dt><dd>{doc.totals.count_interval.display.replace(/\s*\(\[why a range\?\]\([^)]*\)\)\s*$/, "")} — <a href={withBase("quality/#duplicates")}>why a range?</a></dd></div>
     )}
     {doc.totals.count_interval?.not_evaluable && !doc.totals.count_interval.display && (
       <div data-testid="dsrc-count-interval"><dt>Listed cameras</dt><dd>not_evaluable — {doc.totals.count_interval.not_evaluable}</dd></div>

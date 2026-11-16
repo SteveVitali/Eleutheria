@@ -1,0 +1,909 @@
+{
+  "generated_at": "2026-10-15T12:00:00Z",
+  "registry": {
+    "checks": [
+      {
+        "baseline": 6.0,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.14a",
+          "P35.14b"
+        ],
+        "from": "INV-01",
+        "id": "GQ-01",
+        "mode": "ratchet",
+        "note": "L1 NEW-2: 6 predicates unregistered",
+        "placement": [
+          "I",
+          "P"
+        ],
+        "population": "claims emitted in the target run / current claims",
+        "statement": "Every emitted predicate, genre and enum is in the generated registry; unregistered values are quarantined",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": null,
+        "baseline_at": null,
+        "baseline_pending": true,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.22"
+        ],
+        "from": "INV-02",
+        "id": "GQ-02",
+        "mode": "ratchet",
+        "note": "fails (L1 probe 1); replay needs the capture-replay seam (P34.44b job)",
+        "placement": [
+          "M",
+          "P"
+        ],
+        "population": "connector replay runs (one rotating source per night)",
+        "statement": "Replaying a connector with rows re-ordered, re-paged or unchanged inserts 0 claims and mints no new ER run",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": 0.175,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B2",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.22"
+        ],
+        "from": "INV-03, C4",
+        "id": "GQ-03",
+        "mode": "ratchet",
+        "note": "L2 M08: 17.5 %; large-table check \u2014 TABLESAMPLE \u2026 REPEATABLE, disclosed as a block-sampled estimate (L2 \u00a75)",
+        "placement": [
+          "M"
+        ],
+        "population": "current claims",
+        "statement": "Exact current repeats of (subject, predicate, value, source) are at most 1 % of current claims",
+        "threshold": "<= 0.01",
+        "unit": "share"
+      },
+      {
+        "baseline": 5278.0,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.24"
+        ],
+        "from": "INV-04, C1",
+        "id": "GQ-04",
+        "mode": "ratchet",
+        "note": "L2 M07: 5,278 colliding subjects",
+        "placement": [
+          "I"
+        ],
+        "population": "upstream rows per capture",
+        "statement": "Within one capture, one subject key maps to exactly one upstream row; the key field is pinned per target",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": null,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.24"
+        ],
+        "from": "INV-05",
+        "id": "GQ-05",
+        "mode": "report",
+        "note": "unmeasured (L1 NEW-11); warn band > 0.1 %; needs two runs per source",
+        "placement": [
+          "M"
+        ],
+        "population": "per-source subjects with a published point",
+        "statement": "Key stability: share of a source's subjects whose latest point moved > 0.0005 degrees since the previous run",
+        "threshold": "<= 0.005",
+        "unit": "share"
+      },
+      {
+        "baseline": 180036.0,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.14a",
+          "P35.14b",
+          "P35.15a",
+          "P35.15b"
+        ],
+        "from": "INV-06, C6",
+        "id": "GQ-06",
+        "mode": "ratchet",
+        "note": "L2 M21/M22: 10,238 entities + 180,036 subjects mistyped (subject count is the placeholder baseline); type fix is PKG-11, technology PKG-07",
+        "placement": [
+          "I",
+          "R"
+        ],
+        "population": "entities, subjects and exported rows",
+        "statement": "Entity type agrees with the subject scheme; every camera target declares a technology; exports carry it; nothing is typed traffic_camera unless its target says so",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": 172588.0,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.26"
+        ],
+        "from": "C7 (SIG-ONTO-028)",
+        "id": "GQ-07",
+        "mode": "ratchet",
+        "note": "L2 M23: 172,588 (74.2 %) publisher-as-operator",
+        "placement": [
+          "I",
+          "M"
+        ],
+        "population": "current camera_operator claims",
+        "statement": "camera_operator is an agency entity or the explicit literal 'unknown'; publisher strings are blocklisted",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": 2807.0,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.16",
+          "P35.19"
+        ],
+        "from": "INV-07, C2, DR-C3-05",
+        "id": "GQ-08",
+        "mode": "ratchet",
+        "note": "L2 M16\u2013M18: 2,807 outside; 562 swaps; 14 null; 5 flips. The null/swap/flip half turns enforce once V9 lands (REL-04b \u2192 P35.58, after PKG-06b adds withholding); the R placement consumes V9 rather than re-implementing it",
+        "placement": [
+          "R",
+          "S"
+        ],
+        "population": "published points",
+        "statement": "0 published points at (0,0); 0 axis swaps or sign flips; 0 points more than 2 km outside the claimed polygon without a disclosed conflict",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": null,
+        "baseline_at": null,
+        "baseline_pending": true,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.17",
+          "P35.18"
+        ],
+        "from": "INV-08, DR-C3-11",
+        "id": "GQ-09",
+        "mode": "ratchet",
+        "note": "fails (I1 NEW-1; L2 M19: 153,050 assignable points); K4 JUR-02 also cited",
+        "placement": [
+          "R"
+        ],
+        "population": "dossier keys and published points",
+        "statement": "Dossier keys are (scheme, code); no bucket mixes schemes; 'unresolved' is not a jurisdiction; polygon-assigned points carry their basis",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": 2.25,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.47"
+        ],
+        "from": "INV-09, C3a, DR-C3-10",
+        "id": "GQ-10",
+        "mode": "ratchet",
+        "note": "L2 M06/M13: dossier inflation up to 2.25x, n_sources = 1 on 100 %; consumed by V15 (P35.58)",
+        "placement": [
+          "R"
+        ],
+        "population": "published site rows vs lineage roots",
+        "statement": "Duplicate accounting: published site rows equal records after derivation-collapse; every point with two or more lineages within 25 m is collapsed or listed as a possible duplicate; the count interval is published; same-layer co-located distinct records are classed multi-view, not duplicates",
+        "threshold": "<= 1.02",
+        "unit": "ratio"
+      },
+      {
+        "baseline": 11.0,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B2",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.25"
+        ],
+        "from": "C3b (SIG-EPIS-029)",
+        "id": "GQ-11",
+        "mode": "ratchet",
+        "note": "L2 section 2.1: at least 11 inferred lineages, 0 declared; a new source with an undeclared overlap is held from publication",
+        "placement": [
+          "I",
+          "M"
+        ],
+        "population": "source-layer pairs",
+        "statement": "Undeclared copying: any layer pair with more than 50 % of the smaller layer within 1 m and no declared lineage",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": null,
+        "baseline_at": null,
+        "baseline_pending": true,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.25"
+        ],
+        "from": "INV-10 (SIG-RECON-018)",
+        "id": "GQ-12",
+        "mode": "ratchet",
+        "note": "fails (L1 NEW-4); needs the lineage/independence-class seam (CONF-04)",
+        "placement": [
+          "M"
+        ],
+        "population": "current resolutions",
+        "statement": "No resolution counts more than one independence class from one source or lineage; a class is never a claim id",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": 19121.0,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.27"
+        ],
+        "from": "C5",
+        "id": "GQ-13",
+        "mode": "ratchet",
+        "note": "L2 M14: 0 of 19,121 contested",
+        "placement": [
+          "M"
+        ],
+        "population": "current resolutions with two or more distinct considered values",
+        "statement": "Contradiction recall: every current resolution with two or more considered values beyond the predicate's tolerance is contested or carries dissent",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": null,
+        "baseline_at": null,
+        "baseline_pending": true,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.29",
+          "P35.30"
+        ],
+        "from": "INV-11",
+        "id": "GQ-14",
+        "mode": "ratchet",
+        "note": "L2 M28: 131/131 network nodes UUID-labelled, 82.8 % of sites unlabeled \u2014 two populations, baseline pending",
+        "placement": [
+          "R"
+        ],
+        "population": "published map/network/search nodes and site rows",
+        "statement": "No map, network or search node is labelled by its UUID when a label exists; unlabeled sites are at most 5 % or carry a derived label",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": null,
+        "baseline_at": null,
+        "baseline_pending": true,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.26",
+          "P35.30",
+          "P35.20a",
+          "P35.20b"
+        ],
+        "from": "INV-12, C9, DR-C3-07",
+        "id": "GQ-15",
+        "mode": "ratchet",
+        "note": "L2 M30/M37: 98.8 % of edges undated; 178/178 freshness 'ok' \u2014 baseline pending",
+        "placement": [
+          "I",
+          "M",
+          "R"
+        ],
+        "population": "published and live edges",
+        "statement": "Every published edge has observed or valid time (or an explicit 'undated'), currency and source; 0 edges starting 1970-01-01; 0 live duplicate edges per (from, to, kind); freshness says 'not evaluable', not 'ok'",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": null,
+        "baseline_at": null,
+        "baseline_pending": true,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.20a",
+          "P35.20b"
+        ],
+        "from": "INV-13, DR-C3-04",
+        "id": "GQ-16",
+        "mode": "ratchet",
+        "note": "fails (C3 NEW-5); the R placement consumes V6",
+        "placement": [
+          "R"
+        ],
+        "population": "published coverage metrics",
+        "statement": "One resolved: the coverage numerator is a subset of the denominator by join; dossier, map and coverage agree",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": 66768.0,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P34.21a",
+          "P34.21b"
+        ],
+        "from": "INV-14, C10, DR-C3-09",
+        "id": "GQ-17",
+        "mode": "ratchet",
+        "note": "L2 M35: 66,138 empty + 630 SIG-credited (summed for the placeholder baseline); R consumes V8; S runs the same mechanical scan on the served release",
+        "placement": [
+          "R",
+          "S"
+        ],
+        "population": "exported rows",
+        "statement": "Each exported row's attribution equals its registry source's; 0 empty where required; 0 upstream rows credited to SIG",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": 0.0,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "higher_is_better",
+        "fixing": [
+          "P35.61"
+        ],
+        "from": "INV-16, C8",
+        "id": "GQ-18",
+        "mode": "ratchet",
+        "note": "L2 M33: 0 of 2,782,187 bound; flips to the full requirement at the G2 activation (also J3 TX-08)",
+        "placement": [
+          "M",
+          "R"
+        ],
+        "population": "current claims per source",
+        "statement": "Share of current claims bound to a byte-bearing capture with a locator, per source \u2014 non-decreasing, and 100 % for every source re-run after activation",
+        "threshold": ">= 1",
+        "unit": "share"
+      },
+      {
+        "baseline": null,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.32",
+          "P35.34"
+        ],
+        "from": "C11 (SIG-CONF-009)",
+        "id": "GQ-19",
+        "mode": "report",
+        "note": "Surrey -13 %, ACT -4.2 % (L2 M40); the P35.34 telemetry writer records the sig.upstream-reconciliation/1 pairs and eval_gq19 measures the unexplained share \u2014 stays report mode (enforcement promotion is CONF-01's); zero recorded pairs is not_evaluable, never a pass",
+        "placement": [
+          "I"
+        ],
+        "population": "target runs",
+        "statement": "Upstream count reconciliation per target per run: SIG subjects against the upstream's own count taken at fetch",
+        "threshold": "<= 0.01",
+        "unit": "share"
+      },
+      {
+        "baseline": null,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "higher_is_better",
+        "fixing": [],
+        "from": "C12",
+        "id": "GQ-20",
+        "mode": "enforce",
+        "note": "seeded enforce (L2 M11: retention 1.000); the R placement consumes V14 \u2014 nothing to fix",
+        "placement": [
+          "R"
+        ],
+        "population": "candidate vs previous release",
+        "statement": "Release diff: id retention at least 99.9 %; every per-dossier delta beyond 5 % is explained; the top-N changes are listed; per-check deltas carried",
+        "threshold": ">= 0.999",
+        "unit": "share"
+      },
+      {
+        "baseline": null,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "higher_is_better",
+        "fixing": [],
+        "from": "INV-17",
+        "id": "GQ-21",
+        "mode": "report",
+        "note": "about 0 (L1 NEW-12); report-only \u2014 no floor yet",
+        "placement": [
+          "M"
+        ],
+        "population": "deployment entities / operator entities",
+        "statement": "Accountability join rate: deployments with an operator entity; operators that are also procurement buyers",
+        "threshold": "none",
+        "unit": "share"
+      },
+      {
+        "baseline": null,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B3",
+        "direction": "higher_is_better",
+        "fixing": [],
+        "from": "C13",
+        "id": "GQ-22",
+        "mode": "report",
+        "note": "B3 (agent-labelled) evidence NEVER gates \u2014 report forever (SIG-CONF-003); warn band only; 0 of 9 (L2 M44)",
+        "placement": [
+          "S"
+        ],
+        "population": "the weekly rotating sample of procurement/agenda/grant records",
+        "statement": "Topical relevance precision of procurement, agenda and grant records that reach graph views",
+        "threshold": ">= 0.9",
+        "unit": "share"
+      },
+      {
+        "baseline": null,
+        "baseline_at": null,
+        "baseline_pending": true,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.46"
+        ],
+        "from": "new (replaces INV-15 for copy tiers)",
+        "id": "GQ-23",
+        "mode": "ratchet",
+        "note": "n/a \u2014 collapse tiers do not exist yet; any failure demotes that lineage's collapse tier on the next run and alerts; flips to enforce in CONF-07a (P35.46)",
+        "placement": [
+          "M"
+        ],
+        "population": "collapse decisions (C1/C2)",
+        "statement": "Derivation census: 100 % of C1 collapses carry the same id in the declared namespace, unique in both captures, with coordinates within the measured copy tolerance; 100 % of C2 collapses are bijective within a documented lineage whose measured overlap is at least 0.9",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": null,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P34.45"
+        ],
+        "from": "new (INV-15 successor)",
+        "id": "GQ-24",
+        "mode": "enforce",
+        "note": "P34.45 (v3-interim): evaluated population = the LATEST completed run's inferential-tier decisions (append-only spine \u2014 superseded runs' inferential auto_writes are detected and disclosed, never re-judged); expected to pass after the v3-interim ER re-run",
+        "placement": [
+          "M",
+          "R"
+        ],
+        "population": "auto-write match decisions",
+        "statement": "Inferential auto-write lock: 0 auto-written same-device decisions in any identity-inference tier (3g across independent lineages, 1g without a namespace, 4g, 5g) while no B5 evaluation certifies that tier; the rules digest is checked",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": null,
+        "baseline_at": null,
+        "baseline_pending": true,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.46"
+        ],
+        "from": "new",
+        "id": "GQ-25",
+        "mode": "ratchet",
+        "note": "unmeasured; flips to enforce in CONF-07a (P35.46)",
+        "placement": [
+          "M"
+        ],
+        "population": "collapses and clusters",
+        "statement": "Origin distinctness: no collapse or cluster contains two records that one origin publisher lists as distinct (distinct pinned, unique ids in one namespace)",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": null,
+        "baseline_at": null,
+        "baseline_pending": true,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P35.23"
+        ],
+        "from": "new",
+        "id": "GQ-26",
+        "mode": "ratchet",
+        "note": "unmeasured; P placement rides the real-data regression corpus (CONF-08/P35.23); flips to enforce there",
+        "placement": [
+          "M",
+          "P"
+        ],
+        "population": "ER re-runs over the corpus",
+        "statement": "Metamorphic ER invariants: input order and page size do not change clusters; removing a declared mirror does not change the distinct-record count; a re-run adds +0",
+        "threshold": "<= 0",
+        "unit": "count"
+      },
+      {
+        "baseline": null,
+        "baseline_at": null,
+        "baseline_pending": false,
+        "baseline_run": null,
+        "basis_class": "B1",
+        "direction": "lower_is_better",
+        "fixing": [
+          "P34.17",
+          "P34.45"
+        ],
+        "from": "DR-C3-03; B4 G10 claim markers; SIG-EVAL-006",
+        "id": "GQ-27",
+        "mode": "enforce",
+        "note": "fails (F-06, F-108); the R placement consumes V13 and the P placement scans build output; flips coordinated with H-4 (P34.17)/CONF-02 (P34.45)",
+        "placement": [
+          "P",
+          "R"
+        ],
+        "population": "published quality/evaluation figures",
+        "statement": "Every published quality or evaluation figure names exactly one basis class with n, population, source-mix digest, ruleset and window; the four human-claim phrases appear only with a B5 completion marker",
+        "threshold": "<= 0",
+        "unit": "count"
+      }
+    ],
+    "digest": "ac0284f9b0f361c6:6c0e760cb3a91309",
+    "schema": "sig.quality-checks/1",
+    "version": "1"
+  },
+  "report": {
+    "checks": [
+      {
+        "alert_band_breach": false,
+        "baseline": 180036.0,
+        "baseline_pending": false,
+        "basis_class": "B1",
+        "detail": {},
+        "direction": "lower_is_better",
+        "evaluated": 0,
+        "id": "GQ-06",
+        "improvement": false,
+        "measured": null,
+        "mode": "ratchet",
+        "offered": 0,
+        "outcome": "not_evaluable",
+        "reason": "the subject/entity typing census lands with PKG-11/PKG-07 (P35.14/P35.15)",
+        "regression": false,
+        "threshold": "<= 0"
+      },
+      {
+        "alert_band_breach": false,
+        "baseline": 2807.0,
+        "baseline_pending": false,
+        "basis_class": "B1",
+        "detail": {},
+        "direction": "lower_is_better",
+        "evaluated": 0,
+        "id": "GQ-08",
+        "improvement": false,
+        "measured": null,
+        "mode": "ratchet",
+        "offered": 0,
+        "outcome": "not_evaluable",
+        "reason": "the R placement consumes the release-verify V9 point checks (REL-04b / P35.58, after PKG-06b)",
+        "regression": false,
+        "threshold": "<= 0"
+      },
+      {
+        "alert_band_breach": false,
+        "baseline": null,
+        "baseline_pending": true,
+        "basis_class": "B1",
+        "detail": {},
+        "direction": "lower_is_better",
+        "evaluated": 0,
+        "id": "GQ-09",
+        "improvement": false,
+        "measured": null,
+        "mode": "ratchet",
+        "offered": 0,
+        "outcome": "not_evaluable",
+        "reason": "the dossier-key scheme split lands with PKG-06a (P35.17/P35.18)",
+        "regression": false,
+        "threshold": "<= 0"
+      },
+      {
+        "alert_band_breach": false,
+        "baseline": 2.25,
+        "baseline_pending": false,
+        "basis_class": "B1",
+        "detail": {
+          "per_dossier_ratios": {
+            "web/dossiers/oklahoma-city-ok.json": 1.0
+          },
+          "rows_missing_dedup_fields": 0,
+          "rows_with_copies": 1,
+          "rows_with_multi_view": 1,
+          "rows_with_possible_duplicates": 1,
+          "site_rows": 2,
+          "skipped_not_evaluable": [],
+          "worst_dossier": "web/dossiers/oklahoma-city-ok.json"
+        },
+        "direction": "lower_is_better",
+        "evaluated": 1,
+        "id": "GQ-10",
+        "improvement": true,
+        "measured": 1.0,
+        "mode": "ratchet",
+        "offered": 1,
+        "outcome": "pass",
+        "reason": "1 improves on baseline 2.25",
+        "regression": false,
+        "threshold": "<= 1.02"
+      },
+      {
+        "alert_band_breach": false,
+        "baseline": null,
+        "baseline_pending": true,
+        "basis_class": "B1",
+        "detail": {
+          "unlabeled": 0,
+          "uuid_labels": 0
+        },
+        "direction": "lower_is_better",
+        "evaluated": 2,
+        "id": "GQ-14",
+        "improvement": false,
+        "measured": 0,
+        "mode": "ratchet",
+        "offered": 2,
+        "outcome": "unbaselined",
+        "reason": "baseline pending \u2014 recorded, does not gate (set by P34.44b)",
+        "regression": false,
+        "threshold": "<= 0"
+      },
+      {
+        "alert_band_breach": false,
+        "baseline": null,
+        "baseline_pending": true,
+        "basis_class": "B1",
+        "detail": {},
+        "direction": "lower_is_better",
+        "evaluated": 0,
+        "id": "GQ-15",
+        "improvement": false,
+        "measured": null,
+        "mode": "ratchet",
+        "offered": 0,
+        "outcome": "not_evaluable",
+        "reason": "no spine connection",
+        "regression": false,
+        "threshold": "<= 0"
+      },
+      {
+        "alert_band_breach": false,
+        "baseline": null,
+        "baseline_pending": true,
+        "basis_class": "B1",
+        "detail": {},
+        "direction": "lower_is_better",
+        "evaluated": 0,
+        "id": "GQ-16",
+        "improvement": false,
+        "measured": null,
+        "mode": "ratchet",
+        "offered": 0,
+        "outcome": "not_evaluable",
+        "reason": "the one-resolved join consumes the V6 coverage check (P35.20a/b)",
+        "regression": false,
+        "threshold": "<= 0"
+      },
+      {
+        "alert_band_breach": false,
+        "baseline": 66768.0,
+        "baseline_pending": false,
+        "basis_class": "B1",
+        "detail": {},
+        "direction": "lower_is_better",
+        "evaluated": 0,
+        "id": "GQ-17",
+        "improvement": false,
+        "measured": null,
+        "mode": "ratchet",
+        "offered": 0,
+        "outcome": "not_evaluable",
+        "reason": "the R placement consumes the V8 attribution check (P34.21a/b)",
+        "regression": false,
+        "threshold": "<= 0"
+      },
+      {
+        "alert_band_breach": false,
+        "baseline": 0.0,
+        "baseline_pending": false,
+        "basis_class": "B1",
+        "detail": {},
+        "direction": "higher_is_better",
+        "evaluated": 0,
+        "id": "GQ-18",
+        "improvement": false,
+        "measured": null,
+        "mode": "ratchet",
+        "offered": 0,
+        "outcome": "not_evaluable",
+        "reason": "no spine connection",
+        "regression": false,
+        "threshold": ">= 1"
+      },
+      {
+        "alert_band_breach": false,
+        "baseline": null,
+        "baseline_pending": false,
+        "basis_class": "B1",
+        "detail": {},
+        "direction": "higher_is_better",
+        "evaluated": 0,
+        "id": "GQ-20",
+        "improvement": false,
+        "measured": null,
+        "mode": "enforce",
+        "offered": 0,
+        "outcome": "not_evaluable",
+        "reason": "the release diff consumes the V14 diff (P35.58)",
+        "regression": false,
+        "threshold": ">= 0.999"
+      },
+      {
+        "alert_band_breach": false,
+        "baseline": null,
+        "baseline_pending": false,
+        "basis_class": "B1",
+        "detail": {},
+        "direction": "lower_is_better",
+        "evaluated": 0,
+        "id": "GQ-24",
+        "improvement": false,
+        "measured": null,
+        "mode": "enforce",
+        "offered": 0,
+        "outcome": "not_evaluable",
+        "reason": "no spine connection",
+        "regression": false,
+        "threshold": "<= 0"
+      },
+      {
+        "alert_band_breach": false,
+        "baseline": null,
+        "baseline_pending": false,
+        "basis_class": "B1",
+        "detail": {
+          "violation_count": 6,
+          "violations": [
+            "scan-quality-page-corpus/web/dossiers/oklahoma-city-ok.json: quality figure without a basis class",
+            "scan-quality-page-corpus/web/dossiers/oklahoma-city-ok.json: quality figure missing context ['n', 'population', 'ruleset', 'source_mix_digest', 'window']",
+            "scan-quality-page-corpus/web/mech_eval.json: claim phrase without a B5 marker",
+            "scan-quality-page-corpus/web/mech_eval.json: claim phrase without a B5 marker",
+            "scan-quality-page-corpus/web/mech_eval.json: claim phrase without a B5 marker",
+            "scan-quality-page-corpus/web/mech_eval.json: claim phrase without a B5 marker"
+          ]
+        },
+        "direction": "lower_is_better",
+        "evaluated": 3,
+        "id": "GQ-27",
+        "improvement": false,
+        "measured": 6,
+        "mode": "enforce",
+        "offered": 3,
+        "outcome": "fail",
+        "reason": "6 violates threshold <= 0",
+        "regression": false,
+        "threshold": "<= 0"
+      }
+    ],
+    "generated_at": "2026-10-15T12:00:00+00:00",
+    "placement": "R",
+    "registry": {
+      "checks_declared": 27,
+      "checks_evaluated": 12,
+      "digest": "ac0284f9b0f361c6:6c0e760cb3a91309",
+      "schema": "sig.quality-checks/1",
+      "version": "1"
+    },
+    "summary": {
+      "class_s_trigger": false,
+      "enforce_failures": [
+        "GQ-27"
+      ],
+      "not_evaluable": [
+        "GQ-06",
+        "GQ-08",
+        "GQ-09",
+        "GQ-15",
+        "GQ-16",
+        "GQ-17",
+        "GQ-18",
+        "GQ-20",
+        "GQ-24"
+      ],
+      "overall": "fail",
+      "ratchet_regressions": [],
+      "unbaselined": [
+        "GQ-14"
+      ]
+    },
+    "target": "fixture quality-page corpus",
+    "totals": {
+      "evaluated": 6,
+      "offered": 6
+    },
+    "version": "sig.quality-report/1"
+  },
+  "report_absence": null,
+  "schema": "sig.quality-page/1",
+  "target": "fixture quality-page corpus"
+}

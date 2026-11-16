@@ -41,7 +41,7 @@ import hashlib
 import json
 import re
 import tomllib
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -1054,3 +1054,180 @@ def apply_baselines(
             + "\n".join(f"  {v.check_id}.{v.field}: {v.message}" for v in violations)
         )
     return new_text if new_text.endswith("\n") else new_text + "\n"
+
+
+# ---------------------------------------------------------------------------
+# The public quality page artifact — ``sig.quality-page/1`` (P37.45,
+# SIG-CONF-011 + SIG-CONF-001/010, L3 §5.1/§5.4).
+#
+# ``web/quality.json`` is the ONE artifact ``/quality/`` renders from: the
+# whole registry declaration (every registered check — a ``sig.quality-report/1``
+# only ever names the checks its placement evaluated, so the page needs the
+# registry to show all 27 with their declared state) plus the measured report
+# when a run is bound. A check no run measured carries its registry truth
+# (mode / threshold / baseline / basis / fixing row) and a state the page
+# names honestly — never a fabricated outcome.
+# ---------------------------------------------------------------------------
+
+PAGE_SCHEMA: Final = "sig.quality-page/1"
+
+#: The honest sentence the artifact records when no measured run is bound —
+#: the report arrives at release-gate time (placement R), never earlier.
+REPORT_ABSENT = (
+    "no measured quality-report run is bound into this artifact — the "
+    "release gate's placement-R run and the nightly spine probe carry the "
+    "measured states; every check below is declared by the registry"
+)
+
+
+def _check_declared(check: QualityCheck) -> dict[str, Any]:
+    """The registry-declared view of one check (SIG-CONF-006's field set)."""
+    return {
+        "id": check.check_id,
+        "statement": check.statement,
+        "population": check.population,
+        "placement": sorted(check.placement),
+        "mode": check.mode,
+        "direction": check.direction,
+        "threshold": str(check.threshold),
+        "baseline": check.baseline,
+        "baseline_pending": check.baseline_pending,
+        "baseline_run": check.baseline_run or None,
+        "baseline_at": check.baseline_at or None,
+        "unit": check.unit,
+        "basis_class": check.basis_class,
+        "fixing": list(check.fixing),
+        "from": check.source_ids,
+        "note": check.note or None,
+    }
+
+
+def build_quality_page(
+    registry: CheckRegistry,
+    report: Mapping[str, Any] | None,
+    *,
+    generated_at: datetime | str | None = None,
+    target: str | None = None,
+) -> dict[str, Any]:
+    """Emit the ``sig.quality-page/1`` document.
+
+    ``registry`` is the loaded check registry (the declaration is serialised
+    verbatim — never a paraphrase); ``report`` is the measured
+    ``sig.quality-report/1`` this release was gated on, or ``None`` when no
+    run is bound yet (``report_absence`` then names why). ``target`` names
+    what the bound report measured (a release dir, a spine label) — it rides
+    beside the registry digest, never instead of it.
+    """
+    if isinstance(generated_at, datetime):
+        generated = generated_at.isoformat()
+    elif generated_at:
+        generated = str(generated_at)
+    else:
+        generated = datetime.now(UTC).isoformat()
+    if report is not None and report.get("version") != REPORT_VERSION:
+        raise RegistryError(
+            f"build_quality_page: report version {report.get('version')!r} "
+            f"!= {REPORT_VERSION} — the page carries a measured report or null"
+        )
+    return {
+        "schema": PAGE_SCHEMA,
+        "generated_at": generated,
+        "target": target,
+        "registry": {
+            "schema": SCHEMA,
+            "version": registry.version,
+            "digest": registry.digest,
+            "checks": [_check_declared(c) for c in registry.checks],
+        },
+        "report": dict(report) if report is not None else None,
+        "report_absence": None if report is not None else REPORT_ABSENT,
+    }
+
+
+def quality_page_lint_errors(doc: Mapping[str, Any]) -> list[str]:
+    """Refuse a page artifact that drops the SIG-CONF-011 contract: every
+    registered check declared (failing and ratchet checks may never be
+    dropped — Q-L3-5), and any bound report is a real
+    ``sig.quality-report/1`` whose check ids all resolve in the registry."""
+    errors: list[str] = []
+    if doc.get("schema") != PAGE_SCHEMA:
+        errors.append(f"schema {doc.get('schema')!r} != {PAGE_SCHEMA!r}")
+        return errors
+    reg = doc.get("registry")
+    if not isinstance(reg, dict):
+        errors.append("registry block absent — the page must declare every check")
+        return errors
+    if reg.get("schema") != SCHEMA:
+        errors.append(f"registry.schema {reg.get('schema')!r} != {SCHEMA!r}")
+    checks = reg.get("checks")
+    if not isinstance(checks, list) or not checks:
+        errors.append(
+            "registry.checks absent or empty — every registered "
+            "check must be declared (failing and ratchet included)"
+        )
+        checks = []
+    seen: set[str] = set()
+    for i, c in enumerate(checks):
+        if not isinstance(c, dict):
+            errors.append(f"check[{i}] not a table")
+            continue
+        cid = str(c.get("id") or "")
+        if not CHECK_ID_RE.match(cid):
+            errors.append(f"check[{i}]: id {cid!r} is not GQ-nn")
+        if cid in seen:
+            errors.append(f"check[{i}]: duplicate id {cid}")
+        seen.add(cid)
+        for field_name in ("statement", "population", "mode", "basis_class", "unit"):
+            if not str(c.get(field_name) or "").strip():
+                errors.append(f"check[{i}] {cid}: {field_name} absent")
+        if str(c.get("mode") or "") == "ratchet" and not (
+            c.get("baseline_pending") or c.get("baseline") is not None
+        ):
+            errors.append(f"check[{i}] {cid}: ratchet check carries no baseline")
+    report = doc.get("report")
+    if report is None:
+        if not doc.get("report_absence"):
+            errors.append("report null without report_absence — the absence is named, never silent")
+    else:
+        if not isinstance(report, dict) or report.get("version") != REPORT_VERSION:
+            errors.append(f"report is not a {REPORT_VERSION} record")
+        else:
+            for row in report.get("checks") or []:
+                if str(row.get("id") or "") not in seen:
+                    errors.append(f"report names unregistered check {row.get('id')!r}")
+            if doc.get("report_absence"):
+                errors.append("report bound and report_absence set — exactly one")
+    return errors
+
+
+def descriptor_quality_block(
+    page: Mapping[str, Any] | None,
+    registry: CheckRegistry,
+    *,
+    source_mix_digest: str | None,
+    ruleset_digest: str | None,
+) -> dict[str, Any]:
+    """The ``sig.publication-descriptor/2`` ``graph_quality`` block (L3 §5.4,
+    REL-01's quality binding): suite version+digest, the bound report's
+    digest, enforce/ratchet counts, per-basis-class counts (B5 always 0 —
+    no independent-human evidence exists), and the source-mix/ruleset
+    digests the block scopes to."""
+    report = (page or {}).get("report") if isinstance(page, Mapping) else None
+    report_digest = (
+        "sha256:" + hashlib.sha256(json.dumps(report, sort_keys=True).encode("utf-8")).hexdigest()
+        if isinstance(report, dict)
+        else None
+    )
+    summary = (report or {}).get("summary") or {}
+    basis_counts = {b: 0 for b in sorted(BASIS_CLASSES)}
+    for c in registry.checks:
+        basis_counts[c.basis_class] = basis_counts.get(c.basis_class, 0) + 1
+    return {
+        "suite": {"schema": SCHEMA, "version": registry.version, "digest": registry.digest},
+        "report_digest": report_digest,
+        "enforce_failures": list(summary.get("enforce_failures") or []),
+        "ratchet_regressions": list(summary.get("ratchet_regressions") or []),
+        "basis_counts": basis_counts,
+        "source_mix_digest": source_mix_digest,
+        "ruleset_digest": ruleset_digest,
+    }
