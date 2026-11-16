@@ -1,0 +1,8 @@
+sig-web-restore DRY-RUN: gs://zeta-medley-508121-u7-sig-web/ <- gs://zeta-medley-508121-u7-sig-restricted/rollback/sig-web-pre-P37.61a-2026-11-16/zeta-medley-508121-u7-sig-web/
+  uploads:            289
+  deletes:            0 (bounded: absent from pre-copy, unprotected, non-lane)
+  protected kept:     0
+  lane kept:          0 deletes-skipped, 0 put-skipped
+  planned deletes:
+  planned put-skips (lane):
+dry-run: nothing written; re-run with --apply to restore.
