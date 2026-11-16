@@ -1,0 +1,23 @@
+  ! absent-probe target 'absent-web-curate' skipped — URL not resolvable (that origin's absence goes unproven this run)
+  ! absent-probe target 'absent-web-curate-submit' skipped — URL not resolvable (that origin's absence goes unproven this run)
+  ! absent-probe target 'absent-web-demo-task' skipped — URL not resolvable (that origin's absence goes unproven this run)
+  ! absent-probe target 'absent-web-task-new' skipped — URL not resolvable (that origin's absence goes unproven this run)
+  ! absent-probe target 'absent-web-releases' skipped — URL not resolvable (that origin's absence goes unproven this run)
+  ! absent-probe target 'absent-web-research-dossier' skipped — URL not resolvable (that origin's absence goes unproven this run)
+  ! absent-probe target 'absent-web-intake' skipped — URL not resolvable (that origin's absence goes unproven this run)
+  ! absent-probe target 'absent-web-visual-language' skipped — URL not resolvable (that origin's absence goes unproven this run)
+  ! absent-probe target 'absent-bucket-curate' skipped — URL not resolvable (that origin's absence goes unproven this run)
+  ! absent-probe target 'absent-bucket-curate-submit' skipped — URL not resolvable (that origin's absence goes unproven this run)
+  ! absent-probe target 'absent-bucket-demo-task' skipped — URL not resolvable (that origin's absence goes unproven this run)
+  ! absent-probe target 'absent-bucket-task-new' skipped — URL not resolvable (that origin's absence goes unproven this run)
+  ! absent-probe target 'absent-bucket-releases' skipped — URL not resolvable (that origin's absence goes unproven this run)
+  ! absent-probe target 'absent-bucket-research-dossier' skipped — URL not resolvable (that origin's absence goes unproven this run)
+  ! absent-probe target 'absent-bucket-intake' skipped — URL not resolvable (that origin's absence goes unproven this run)
+  ! absent-probe target 'absent-bucket-visual-language' skipped — URL not resolvable (that origin's absence goes unproven this run)
+  ! absent-probe target 'absent-api-release-unpromoted' skipped — URL not resolvable (that origin's absence goes unproven this run)
+publish-web APPLIED: /private/tmp/p37_61a/dist
+  release record: /private/tmp/p37_61a/dist/.sig-release.json (release_id=web-20261116T100058Z-0ebab8f7, commit=0ebab8f71317fee04a36c263e25c96d59c0e5c63, digest=sha256:1d9d931fc60adf18318dfa520517675ce3b3529abe915974895b8f856c19b06c)
+  site sync: 211 uploads, 79 deletes
+  protected remote objects kept: 0
+  lane-exclusive objects kept: 0 (put-skipped uploads: 0)
+  absence probes: 8/8 denied routes confirmed absent (HTTP 404) on the public origins

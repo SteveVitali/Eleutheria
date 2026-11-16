@@ -8,8 +8,8 @@
 <!-- values ≤256 B/line (BM-LEDGER-02/08; folded → memory-repair/legend_L8.txt e8951683) -->
 ```
 projectStatus: IN_PROGRESS
-nextTicket: P37.61a
-lastCompleted: P37.61
+nextTicket: P37.61b
+lastCompleted: P37.61a
 blockedOn: CI stack on #514@aac74a4 (external): #514 does not contain its base #512's head 8182380 — rebased or retargeted outside the documented procedure (carried ancestors verbatim, none authored here)
 pauseRequested: false
 returnPass: P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b,P34.45,P34.46,P34.47,P34.49,P34.50,P35.1a,P35.1a1,P35.1b,P35.1c,P35.2,P35.5,P35.11,P35.14a,P35.14b,P35.15a,P35.15b,P35.16,P35.17,P35.21,P35.23,P35.24,P35.25,P35.26,P35.41,P35.53,P35.57,P35.59,P35.61,P35.62,P35.63,P35.64,P35.67,P36.2,P36.12,P36.13,P36.33,P36.38,P36.43,P36.44,P36.46,P36.71,P36.72b,P36.73,P36.75,P36.76,P36.77,P36.78,P36.79,P37.2,P37.3,P37.4a,P37.4b,P37.11,P37.12,P37.13,P37.14,P37.15,P37.20,P37.36,P37.42,P37.54,P37.55,P37.56,P37.59,P37.70,P37.71
@@ -20,7 +20,7 @@ dispatchTarget: subagent
 buildWorktree: /Users/stevenvitali/Eleutheria
 buildBranchBase: devin/p33-8-agent-docs-refresh
 pinnedBaseSha: b051732c
-chainTip: r11/P37.61-t1-table-and-filter-enhancements
+chainTip: r11/P37.61a-republish-harm-removal-v2
 benchmarkSet: N/A
 autonomy: checkpoint
 mergePolicy: OPERATOR
@@ -1808,3 +1808,5 @@ Index of the 170 dated PHASE LOG entries of Rounds 1–10 as they stand at `<PRE
 - 2026-11-16 — P37.61 post-closeout record — head `aac74a43` (records-tip — `178ecf57`+`aac74a43` are records-only on green `fa029ef9`) · `ci: pass #514@aac74a4` (run 43779565350 — security 31s · docs 2m8s · composed 4m16s · python 19m30s · web 1h2m47s; no flake legs this head) · `blockedOn` carried verbatim, refreshed: `CI stack on #514@aac74a4 (external): #514 does not contain its base #512's head 8182380 — rebased or retargeted outside the documented procedure` — the prior #511-vs-#510 finding cleared externally: the operator's stack-carry merges folded each base up the chain (#511 tip → `9a2b5350`, #512 tip → `81823807`, all still OPEN); #514's head predates the carry so the moved base head is not in its ancestry and the PR reports CONFLICTING — external, operator-owned integration, none authored here · `reports/ci/p37_61_pr514.json` regenerated head-bound · CURRENT STATE blockedOn refreshed · projection regen after records · `main` untouched · next → P37.62 · harness: devin-desktop/swe-2-high/subagent
 - 2026-11-15 — inserted rows 489a–489e under RULINGS H-1 + E-1..E-4 (verbatim in readouts/RULINGS-2026-11-15.md; decompose-spec mode=extend, Phase-4 reviewed) — P37.61a republish-harm-removal (H-1 — the three 09-30-audit items stop serving today; publish leg pre-authorised; in-ticket path-confirm pause only) · P37.61b privacy-redaction-restore (E-1) · P37.61c projection-out-of-commit-path (E-2) · P37.61d live-claims-rescope (E-3) · P37.61e byte-budgets-to-warnings (E-4) — after P37.61, before P37.62; G10 binds E-2/E-3/E-4 · harness: devin-desktop/swe-2-high/orchestrator
 - 2026-11-15 — blockedOn rechecked per the intervention — the carried #495-vs-#494 finding was stale (resolved: #495 contains #494's 8ae3a4eb, merge-base verified 22:49Z); the field's current text names the accurate finding (#514 lacks base #512's 8182380, CONFLICTING — external, operator-owned) — left standing · harness: devin-desktop/swe-2-high/orchestrator
+- 2026-11-16 — **P37.61a APPLY (RULING H-1 pre-authorised mutation)** — `sig-ops publish-web --apply` at 10:00:58Z (post-blackout window) over the transformed 2026-09-27 captured tree: `release_id=web-20261116T100058Z-0ebab8f7`, `211 uploads / 79 deletes`, remote 289→211 objects (78 `task/new/**` + `visual-language/index.html` deleted; `.sig-release.json` added) — post-verify 10:09Z: `/visual-language/` + `/task/new/` 404 apex+run.app; `/editorial-standards/` honest holding notice (`Not yet performed.`); `/dispute/` honest e-mail wording; 0 promise/agency-fab hits — **the three 09-30-audit items no longer serve** · rollback source `sig-restricted/rollback/sig-web-pre-P37.61a-2026-11-16/` (289-obj byte mirror; versioning off) + `sig-web-restore.sh` bounded path · `SIG_DISPUTE_EMAIL` provided: no · `D-P34.17-1` stays OPEN (fallback ≠ the L2 republish) · harness: devin-desktop/swe-2-high/subagent
+- 2026-11-16 — P37.61a closeout record — head TBD (post-apply records commit) · PR #516 vs `r11/P37.61-t1-table-and-filter-enhancements` · v1 branch + #515 superseded (orchestrator insert `1b90a07e` untrailered; v2 replay `1f13945c` restores `Harness: devin-desktop/swe-2-high/orchestrator`, byte-identical tree) · `ci: pass #516@0ebab8f7` (run 43812835979 — security 35s · docs 1m46s · composed 3m40s · python 23m40s · web 1h3m7s — all 5 legs head-bound green pre-apply) · `main` untouched · harness: devin-desktop/swe-2-high/subagent

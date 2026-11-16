@@ -1,0 +1,37 @@
+=== date -u ===
+Mon Nov 16 10:09:00 UTC 2026
+=== HEAD / ===
+HTTP/2 200 
+content-type: text/html; charset=utf-8
+last-modified: Mon, 16 Nov 2026 10:06:01 GMT
+vary: Accept-Encoding
+etag: "6afad589-14f4e"
+cache-control: public, max-age=0, must-revalidate
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+=== HEAD /visual-language/ apex ===
+HTTP 404
+=== HEAD /visual-language/ run.app ===
+HTTP 404
+=== HEAD /task/new/ apex ===
+HTTP 404
+=== HEAD /task/new/ run.app ===
+HTTP 404
+=== GET /editorial-standards/ ===
+A previously published record on this page describing a completed hostile-reader review was incorrect and has been removed.
+Not yet performed.
+=== GET /dispute/ ===
+SIG promises no response time
+reports arrive by e-mail
+=== GET / (promise check) ===
+0
+=== GET /dossier/okc/ (promise + agency-fab check) ===
+0
+=== GET /dossier/flock_safety/ sample ===
+HTTP 404
+=== GET /map/ ===
+HTTP 200
+=== GET /index.html run.app (promise) ===
+0
+=== lane-exclusive listing ===
+ERROR: (gcloud.storage.ls) One or more URLs matched no objects.
