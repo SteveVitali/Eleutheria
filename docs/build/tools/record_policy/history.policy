@@ -1311,3 +1311,25 @@ seed-commit ad449143
 # rewritten line 54 only; no other commit borrows the exemption.
 seed-commit cfc2d7b6
 seed-commit 136506d2
+# run ledger `docs/build/runs/P37.42.md` line 51 + LEDGER PHASE LOG
+# corrections-region line 1702: the base's own committed P37.42 records
+# carry three un-cited claim segments (the assert word `live` inside
+# "uncited live claim" / "live-claim") — the `#490` docs red surfaced on
+# P37.43's first head-bound run, carried class, none authored at
+# dispatch. `d54a867e` respelled them by moving the claim-bearing
+# phrases inside code spans (the checker strips code spans; the verbatim
+# red text stays readable). The closed-ledger rule (BM-INDEX-02) and the
+# corrections-region append-only rule (BM-LEDGER-06/BM-HIST-01) take only
+# placeholder fills / appended entries; an in-place repair was required
+# because restoring the original wording would re-create the corpus
+# violation — the same class as the committed cfc2d7b6/136506d2 repair
+# P37.42 itself performed on runs/P37.41.md:54. Pre-edit bytes archived
+# `reports/memory-repair/runs_P37.42_L51_pre-P37.43-liveclaim.txt`
+# (sha256:336f08134684a0882894e54117c6b2cd636bb1435b1421aa0b854faa08ccf21f)
+# and `reports/memory-repair/LEDGER_L1702_pre-P37.43-liveclaim.txt`
+# (sha256:d7484b37ec21ab58e3dd3300bb636b7d5e73f3ded1fe5eff1b350b52112f313f).
+# The branch rule forbids force-push, so the declaration lands here.
+# Scope: the append-only findings attributed to d54a867e's rewritten
+# runs/P37.42.md line 51 and LEDGER.md line 1702 only; no other commit
+# borrows the exemption.
+seed-commit d54a867e

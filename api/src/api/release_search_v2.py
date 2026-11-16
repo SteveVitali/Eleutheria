@@ -98,6 +98,14 @@ KNOWN_PARAMS_V2 = frozenset(
     }
 )
 
+#: Query parameters the export route recognizes — the search set minus the
+#: two paging params (an export is the whole bounded set, never a page).
+KNOWN_EXPORT_PARAMS_V2 = KNOWN_PARAMS_V2 - {"cursor", "limit"}
+
+#: The export serializations — ``csv`` or ``json`` member rows inside the
+#: per-licence-group zip (P37.43 / K3 SRCH-08).
+EXPORT_FORMATS_V2 = ("csv", "json")
+
 #: The posture env (OM-20 dark-ship): ``off`` (default — the route is not
 #: mounted at all, identical public response to before the code landed) ·
 #: ``on`` (the federated route serves). The deploy flip sets it; code
@@ -413,6 +421,43 @@ class ReleaseSearchV2Store:
             )
         return result, pub, was_latest
 
+    def search_export(
+        self, requested: str, params: SearchParamsV2
+    ) -> tuple[dict[str, Any], str, bool]:
+        """The ≤ 10,000-row record export payload (P37.43 / K3 SRCH-08) →
+        (payload, pub, was_latest). The same publication resolution, the
+        same withdrawal barrier and the same engine LRU as ``search`` —
+        the export enumerates what the page shows, never a second path."""
+        pub, was_latest = self.resolve(requested)
+        access = route_access(
+            self.registry_root, f"releases/{pub}/search/{CATALOG_V2_DESCRIPTOR_FILE}"
+        )
+        if not access.get("permitted"):
+            tomb = access.get("tombstone") or {}
+            raise SearchQueryV2Error(
+                410,
+                "withdrawn",
+                "withdrawn under the current publication-disposition policy",
+                extra={"tombstone": tomb},
+            )
+        engine = self._engine_for(pub)
+        denied_entities, denied_claims = self._denied_targets()
+        denied_records = self._denied_records(engine, denied_claims) if denied_claims else {}
+
+        def denied(row: tuple) -> str | None:
+            reason = denied_entities.get(row[1])
+            if reason is not None:
+                return reason
+            return denied_records.get(row[0])
+
+        has_denies = bool(denied_entities or denied_records)
+        with self._lock:
+            payload = engine.export_records(
+                params,
+                denied=denied if has_denies else None,
+            )
+        return payload, pub, was_latest
+
     def readiness(self) -> dict[str, Any]:
         with self._lock:
             return {"open_engines": len(self._engines)}
@@ -480,11 +525,28 @@ def cache_control(was_latest: bool) -> str:
     return CACHE_LATEST if was_latest else CACHE_IMMUTABLE
 
 
+def render_search_export_v2(
+    result: Mapping[str, Any],
+    *,
+    fmt: str,
+    requested: str,
+) -> tuple[bytes, str]:
+    """The per-licence-group export zip (P37.43 / K3 SRCH-08) → (bytes,
+    filename) — the J3 download conventions (LICENCE/ATTRIBUTION/
+    SHA256SUMS per bundle) over the same verified export payload."""
+    from exports import search_export as sexp
+
+    return sexp.search_export_zip(result, fmt=fmt, requested=requested)
+
+
 __all__ = [
+    "EXPORT_FORMATS_V2",
+    "KNOWN_EXPORT_PARAMS_V2",
     "KNOWN_PARAMS_V2",
     "ReleaseSearchV2Store",
     "cache_control",
     "render_search_error_html_v2",
+    "render_search_export_v2",
     "render_search_html_v2",
     "search_v2_posture",
     "wants_html_v2",

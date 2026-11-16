@@ -35,6 +35,10 @@ from .release_pages import _e, _layout, release_stamp_view
 #: class the reader asked for.
 SEARCH_PATH_V2 = "/v1/releases/{publication_id}/search"
 
+#: The export route (P37.43 / K3 SRCH-08) — same params, ``format=csv|json``
+#: answers a per-licence-group zip instead of a page.
+SEARCH_EXPORT_PATH_V2 = "/v1/releases/{publication_id}/search/export"
+
 #: Registry-order emission list for the search subset of
 #: ``sig.workspace-state/2`` (mirror of ``workspace-state/registry.ts``
 #: WORKSPACE_PARAMS — ``v`` and ``view`` mint first, the rest follow the
@@ -267,6 +271,45 @@ def _empty_block(result: Mapping[str, Any], action: str, params: Mapping[str, An
     )
 
 
+def _export_block(result: Mapping[str, Any], params: Mapping[str, Any], requested: str) -> str:
+    """ "Download these results" (P37.43 / K3 SRCH-08, Datasette [Q087]) —
+    per-licence-group zips under the J3 download conventions: every
+    licence group with matches links its own ``collection=``-scoped CSV
+    and JSON exports, the whole-set links follow. The cursor is dropped —
+    an export is the bounded result set, never the current page."""
+    groups = [g for g in (result.get("record_groups") or []) if g.get("total")]
+    action = SEARCH_EXPORT_PATH_V2.format(publication_id=requested)
+    items: list[str] = []
+    for g in groups:
+        comp = str(g["compartment"])
+        csv_href = _href(
+            action, params, drop=("cursor",), extra={"collection": comp, "format": "csv"}
+        )
+        json_href = _href(
+            action, params, drop=("cursor",), extra={"collection": comp, "format": "json"}
+        )
+        items.append(
+            f"<li><code>{_e(comp)}</code> ({_e(g.get('license'))}, "
+            f"{_e(g.get('total'))} records match) — "
+            f'<a href="{_e(csv_href)}">CSV</a> · <a href="{_e(json_href)}">JSON</a></li>'
+        )
+    all_csv = _href(action, params, drop=("cursor", "collection"), extra={"format": "csv"})
+    all_json = _href(action, params, drop=("cursor", "collection"), extra={"format": "json"})
+    group_list = f"<ul>{''.join(items)}</ul>" if items else ""
+    return (
+        '<section aria-labelledby="export-h"><h2 id="export-h">Download these results</h2>'
+        f"{group_list}"
+        "<p>Every export is a zip of the matching record rows (at most "
+        "10,000): one folder per licence group carrying its results file, "
+        "LICENCE.txt and ATTRIBUTION.txt — a licence group's rows never "
+        "share a file with another group's. Typed results (places, "
+        "sources, technologies, documents) are links, not exportable "
+        "rows.</p>"
+        f'<p>All licence groups — <a href="{_e(all_csv)}">CSV</a> · '
+        f'<a href="{_e(all_json)}">JSON</a></p></section>'
+    )
+
+
 def _facet_block(result: Mapping[str, Any], action: str, params: Mapping[str, Any]) -> str:
     """Facet GET links with counts (K3 §6.1) — each value narrows the same
     query; the selected value stays linkable per ADR-134's rule."""
@@ -363,7 +406,14 @@ def search_results_page_v2(
         f'<p class="mut">{_e(INTERIM_CITE_SEARCH_TEXT)}</p></section>'
     )
 
-    parts: list[str] = [strip, form, sug_html, cite_html, _facet_block(result, action, params)]
+    parts: list[str] = [
+        strip,
+        form,
+        sug_html,
+        cite_html,
+        _export_block(result, params, requested),
+        _facet_block(result, action, params),
+    ]
 
     # Top matches — identifier, alias and exact-name cards (K3 §6.1).
     top = result.get("top") or []
