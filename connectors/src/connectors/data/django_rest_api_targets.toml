@@ -1,0 +1,36 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# P37.53 (ACQ-26, I7-S1 `a`) — the `django_rest_api` connector's committed
+# inventory. One seat: Eye on Surveillance's New Orleans surveillance-map API
+# (I3-C070) — a crowdsourced/admin-reviewed private-camera + ALPR registry
+# (the candidate record's Part VIII flags: residential-intersection,
+# private-registrant-location). The seat emits programme facts ONLY: the
+# published row count (`page_size=1` — the single minimal page the declared
+# contract allows; the `results` row's field NAMES are screened F-330 and
+# its values dropped in transit, never materialised).
+#
+# Declared contract: the list endpoint answers the Django REST Framework
+# paginated envelope `{"count": <int>, "results": [ … ]}` — the plan cell's
+# recorded "check API terms first" caveat rides the operator's RB-07 review;
+# the committed row's licence lead is LicenseRef-DerivedFacts-Citations
+# (facts + citations only — the ©-only precedent path).
+
+schema = "sig.django-rest-api-targets/1"
+
+[[targets]]
+id = "eye_on_surveillance_nola_cameras"
+source_id = "camreg_la_new_orleans_eye_on"
+endpoint_url = "https://map.eyeonsurveillance.org/api/cameras/"
+page_param = "page"
+page_size_param = "page_size"
+programme_label = "eye_on_surveillance_new_orleans_camera_map"
+period_label = "all published rows at capture"
+measure = "published_camera_rows"
+technology = "camera-fixed-cctv"
+agency = "Eye on Surveillance (New Orleans NGO)"
+state = "LA"
+jurisdiction_scheme = "us.state_abbr"
+jurisdiction_place = "New Orleans"
+notes = "P37.53 (ACQ-26) registration review (plan AP-T2-188, cand I3-C070): the Django REST list endpoint serves programme facts only — the published row count, never a registrant row. The endpoint path is the candidate record's documented API seat; a drifted envelope fails closed (ContentDrift), never a guessed shape."

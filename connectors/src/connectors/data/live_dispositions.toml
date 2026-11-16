@@ -408,10 +408,6 @@ disposition = "link_only"
 # One promote row per generated source, naming its recorded class ticket
 # (HG-03 flip still required — never here).
 
-[sources.agenda_us_agency_fusus_real]
-disposition = "promote"
-class_ticket = "P37.53"
-
 [sources.camreg_au_ckan_package_search]
 disposition = "promote"
 class_ticket = "P37.69a"
@@ -444,14 +440,6 @@ class_ticket = "P37.69a"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.camreg_bloomington_il_drone_flights]
-disposition = "promote"
-class_ticket = "P37.53"
-
-[sources.camreg_detroit_mi_project_green_light]
-disposition = "promote"
-class_ticket = "P37.53"
-
 [sources.camreg_es_md_madrid_c_maras_de]
 disposition = "promote"
 class_ticket = "P37.69a"
@@ -463,22 +451,6 @@ class_ticket = "P37.69a"
 [sources.camreg_fr_92_grand_paris_seine_ouest_vid]
 disposition = "promote"
 class_ticket = "P37.69a"
-
-[sources.camreg_ga_brookhaven_flock_camera]
-disposition = "promote"
-class_ticket = "P37.53"
-
-[sources.camreg_ga_flock_cameras_asof]
-disposition = "promote"
-class_ticket = "P37.53"
-
-[sources.camreg_ga_savannah_flock_camera]
-disposition = "promote"
-class_ticket = "P37.53"
-
-[sources.camreg_gastonia_nc_flock_condor_cameras]
-disposition = "promote"
-class_ticket = "P37.53"
 
 [sources.camreg_gb_eng_barnet_cctv_camera]
 disposition = "promote"
@@ -536,22 +508,6 @@ class_ticket = "P37.69a"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.camreg_la_east_baton_rouge_parish_flock]
-disposition = "promote"
-class_ticket = "P37.53"
-
-[sources.camreg_la_new_orleans_eye_on]
-disposition = "promote"
-class_ticket = "P37.53"
-
-[sources.camreg_medford_or_drone_deployments_fs]
-disposition = "promote"
-class_ticket = "P37.53"
-
-[sources.camreg_peoria_il_drone_usage]
-disposition = "promote"
-class_ticket = "P37.53"
-
 [sources.camreg_pt_11_lisboa_sistema_de]
 disposition = "promote"
 class_ticket = "P37.69a"
@@ -580,14 +536,6 @@ class_ticket = "P37.48"
 disposition = "promote"
 class_ticket = "P37.48"
 
-[sources.ccops_ca_calistoga_police_department]
-disposition = "promote"
-class_ticket = "P37.53"
-
-[sources.ccops_ca_pinole_police_department]
-disposition = "promote"
-class_ticket = "P37.53"
-
 [sources.ccops_ca_san_diego_privacy_advisory]
 disposition = "promote"
 class_ticket = "P37.16a"
@@ -608,14 +556,6 @@ class_ticket = "P37.69a"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.ccops_mn_dayton_police_department]
-disposition = "promote"
-class_ticket = "P37.53"
-
-[sources.ccops_oh_cincinnati_police_department]
-disposition = "promote"
-class_ticket = "P37.53"
-
 [sources.ccops_ok_oklahoma_city_okc_flock_council]
 disposition = "promote"
 class_ticket = "P37.16a"
@@ -623,10 +563,6 @@ class_ticket = "P37.16a"
 [sources.ccops_ok_tulsa_flock_policies]
 disposition = "promote"
 class_ticket = "P37.16a"
-
-[sources.ccops_ri_narragansett_police_camera]
-disposition = "promote"
-class_ticket = "P37.53"
 
 [sources.ccops_san_diego_ca]
 disposition = "promote"
@@ -644,23 +580,11 @@ class_ticket = "P37.69a"
 disposition = "promote"
 class_ticket = "P37.69a"
 
-[sources.policy_chicago_il_oemc_link_your]
-disposition = "promote"
-class_ticket = "P37.53"
-
-[sources.policy_lafayette_in_camera_registration]
-disposition = "promote"
-class_ticket = "P37.53"
-
 [sources.policy_ok_oklahoma_dac_uved]
 disposition = "promote"
 class_ticket = "P37.16a"
 
 [sources.policy_us_private_camera_registry]
-disposition = "promote"
-class_ticket = "P37.53"
-
-[sources.policy_zionsville_in_camera_registry]
 disposition = "promote"
 class_ticket = "P37.53"
 
@@ -695,8 +619,4 @@ class_ticket = "P37.69a"
 [sources.statrep_gb_uk_algorithmic_transparency]
 disposition = "promote"
 class_ticket = "P37.69a"
-
-[sources.statrep_vt_vermont_law_enforcement]
-disposition = "promote"
-class_ticket = "P37.53"
 

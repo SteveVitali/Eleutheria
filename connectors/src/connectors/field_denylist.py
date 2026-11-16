@@ -111,7 +111,7 @@ def field_violations(fields: Iterable[str]) -> list[str]:
 #: identically (an aggregate declaration naming a plate/registrant column is
 #: the same refusal).
 DENYLIST_KINDS: frozenset[str] = frozenset(
-    {"arcgis_query", "socrata_rows", "socrata_aggregate", "arcgis_outstatistics"}
+    {"arcgis_query", "socrata_rows", "socrata_aggregate", "arcgis_outstatistics", "arcgis_s1"}
 )
 DENYLIST_PLATFORMS: frozenset[str] = frozenset({"arcgis", "socrata"})
 
@@ -136,6 +136,10 @@ def _row_fields(row: Mapping[str, Any]) -> list[str]:
         "aggregate_discriminator_field",
         "camera_ref_field",
         "deployment_date_field",
+        # P37.53 (ACQ-26): the S1 screen's declared operator column is a
+        # published field name like any other — a denied name there is the
+        # same registration refusal.
+        "s1_operator_field",
     ):
         value = str(row.get(key) or "").strip()
         if value:

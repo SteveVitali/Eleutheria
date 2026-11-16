@@ -135,6 +135,28 @@ FIXTURE_FOR_DOC: dict[str, tuple[str, str]] = {
     "boston-annual-surveillance-report-2024": ("p37_47_boston_asr.html", "text/html"),
     "berkeley-policy-materials-index": ("p37_47_berkeley_index.html", "text/html"),
     "dhs-fusion-center-roster": ("p37_47_dhs_fusion_roster.html", "text/html"),
+    # P37.53 / R11-ACQ-26 (I7-S1 `a`): the S1 programme-level lane's ten
+    # document rows — eight private-camera-registry programme pages (portal
+    # existence + publisher + technology facts only), the Vermont statutory
+    # UAS-use report and the Elizabeth-City Fusus council review deck. All
+    # stand-ins (fixtures/dossier/p37_53_*.html — synthetic reconstructions,
+    # never fetched captures; see fixtures/p37_53/SOURCES.md).
+    "vt-dps-uas-report-2023": ("p37_53_vt_uas_report.html", "text/html"),
+    "elizabeth-city-fusus-review": ("p37_53_elizabeth_fusus.html", "text/html"),
+    "chicago-oemc-link-your-cameras": ("p37_53_chicago_link.html", "text/html"),
+    "cincinnati-community-camera-registry": (
+        "p37_53_cincinnati_registry.html",
+        "text/html",
+    ),
+    "lafayette-camera-registration": ("p37_53_lafayette_registration.html", "text/html"),
+    "zionsville-camera-registry": ("p37_53_zionsville_registry.html", "text/html"),
+    "narragansett-camera-registry": ("p37_53_narragansett_registry.html", "text/html"),
+    "calistoga-security-camera-registry": (
+        "p37_53_calistoga_registry.html",
+        "text/html",
+    ),
+    "pinole-security-camera-registry": ("p37_53_pinole_registry.html", "text/html"),
+    "dayton-resident-camera-registry": ("p37_53_dayton_registry.html", "text/html"),
 }
 
 

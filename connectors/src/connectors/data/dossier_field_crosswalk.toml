@@ -474,3 +474,21 @@ applicability = "the reviewed execution state of the instrument on the captured 
 required = false
 status = "needs_amendment"
 amendment = "scoped vocab proposal (dossier-field-crosswalk/1, 2026-10): add predicate `instrument_execution_state` over a closed ExecutionState enum {verified_executed, partially_signed, unsigned_template, not_visually_verified}; value is a reviewer assessment, never an inferred state. Owner: the next schema/vocab ticket that consumes this field."
+
+# --- programme-surface facts (P37.53 / R11-ACQ-26, I7-S1 `a`) -----------------
+# The S1 screened lane's private-camera-registry pages assert the programme
+# surface's EXISTENCE only — a page proving the agency operates a public
+# opt-in camera-registration/integration surface. The `camera_registration_portal`
+# predicate (P36.76 / R11-ACQ-31) carries the programme fact; registrant
+# content (names, addresses, row-level records, locations) is out of scope
+# by construction — the field's reviewed literal is the page's own
+# programme-surface statement, never a registrant datum.
+
+[fields.registration_portal]
+slug = "access.subscription"
+predicate = "camera_registration_portal"
+dossier_field = "q4"
+valid_time = "none"
+applicability = "the page's own statement that the publisher operates a public opt-in camera-registration/integration surface — a programme-surface existence fact, never registrant content (S1: no registrant names, addresses, rows or locations)"
+required = false
+status = "mapped"

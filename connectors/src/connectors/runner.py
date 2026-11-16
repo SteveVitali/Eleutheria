@@ -528,6 +528,37 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "ccops_santa_clara_county_ca": "dossier_documents",
     "policy_maricopa_county_az_mcso_policies": "dossier_documents",
     "policy_norman_ok_alpr_policy_amendment": "dossier_documents",
+    # P37.53 (ACQ-26, I7-S1 `a`): the S1 programme-level lane — nine gated
+    # camera-layer sources ride `dot_511` over the merged target registry's
+    # `arcgis_s1` rows (operator_screen keeps agency-operated rows only and
+    # collapses the rest to a published count; count_only serves
+    # registrant-class layers — Project Green Light and the police-drone
+    # flight logs — whole). Eleven document seats ride `dossier_documents`
+    # `clause_fields` emitting programme facts only; the two hub-search
+    # family rows stay unmapped recorded `[[enumerated]]` dispositions
+    # (D-P37.53-1/-2), and `camreg_la_new_orleans_eye_on` rides the
+    # `django_rest_api` connector's screened count lane. All stay
+    # ingestion_permitted=false pending the operator's OP-26 Wave-D flips.
+    "camreg_detroit_mi_project_green_light": "dot_511",
+    "camreg_ga_savannah_flock_camera": "dot_511",
+    "camreg_la_east_baton_rouge_parish_flock": "dot_511",
+    "camreg_ga_flock_cameras_asof": "dot_511",
+    "camreg_gastonia_nc_flock_condor_cameras": "dot_511",
+    "camreg_ga_brookhaven_flock_camera": "dot_511",
+    "camreg_bloomington_il_drone_flights": "dot_511",
+    "camreg_peoria_il_drone_usage": "dot_511",
+    "camreg_medford_or_drone_deployments_fs": "dot_511",
+    "statrep_vt_vermont_law_enforcement": "dossier_documents",
+    "agenda_us_agency_fusus_real": "dossier_documents",
+    "ccops_oh_cincinnati_police_department": "dossier_documents",
+    "ccops_ca_calistoga_police_department": "dossier_documents",
+    "ccops_ri_narragansett_police_camera": "dossier_documents",
+    "ccops_ca_pinole_police_department": "dossier_documents",
+    "ccops_mn_dayton_police_department": "dossier_documents",
+    "policy_lafayette_in_camera_registration": "dossier_documents",
+    "policy_zionsville_in_camera_registry": "dossier_documents",
+    "policy_chicago_il_oemc_link_your": "dossier_documents",
+    "camreg_la_new_orleans_eye_on": "django_rest_api",
     "ccops_boston": "dossier_documents",
     "ccops_berkeley": "dossier_documents",
     "dhs_fusion_centers": "dossier_documents",

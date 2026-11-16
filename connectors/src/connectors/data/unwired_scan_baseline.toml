@@ -168,6 +168,11 @@ disposition = "seam:name-registry"
 note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"
 
 [[finding]]
+key = "connectors.django_rest_api.DjangoRestApiConnector"
+disposition = "seam:name-registry"
+note = "registered connector — resolved by name via get_connector (SIG-INGEST-021); the P37.53 screened-count lane maps to it in CONNECTOR_FOR_SOURCE"
+
+[[finding]]
 key = "connectors.dot_511.Dot511Connector"
 disposition = "seam:name-registry"
 note = "registered connector — resolved by name via get_connector (SIG-INGEST-021)"

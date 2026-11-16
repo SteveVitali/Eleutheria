@@ -313,6 +313,90 @@
       "raw_value": "BSCC ORT"
     }
   ],
+  "calistoga-security-camera-registry": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 50,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "title",
+      "raw_value": "Voluntary Security Camera Registry"
+    },
+    {
+      "field": "registration_portal",
+      "locator": {
+        "end": 50,
+        "kind": "byte_range",
+        "start": 35
+      },
+      "predicate": "camera_registration_portal",
+      "raw_value": "camera registry"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 197,
+        "kind": "byte_range",
+        "start": 182
+      },
+      "predicate": "technology",
+      "raw_value": "security camera"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 89,
+        "kind": "byte_range",
+        "start": 62
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Calistoga Police Department"
+    }
+  ],
+  "chicago-oemc-link-your-cameras": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 33,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "title",
+      "raw_value": "Link Your Cameras"
+    },
+    {
+      "field": "registration_portal",
+      "locator": {
+        "end": 77,
+        "kind": "byte_range",
+        "start": 45
+      },
+      "predicate": "camera_registration_portal",
+      "raw_value": "Private Sector Camera Initiative"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 150,
+        "kind": "byte_range",
+        "start": 144
+      },
+      "predicate": "technology",
+      "raw_value": "camera"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 217,
+        "kind": "byte_range",
+        "start": 168
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Office of Emergency Management and Communications"
+    }
+  ],
   "chicago-oig-shotspotter-evaluation": [
     {
       "field": "title",
@@ -343,6 +427,58 @@
       },
       "predicate": "enacting_body",
       "raw_value": "Office of Inspector General"
+    }
+  ],
+  "cincinnati-community-camera-registry": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 64,
+        "kind": "byte_range",
+        "start": 29
+      },
+      "predicate": "title",
+      "raw_value": "Voluntary Community Camera Registry"
+    },
+    {
+      "field": "registration_portal",
+      "locator": {
+        "end": 165,
+        "kind": "byte_range",
+        "start": 150
+      },
+      "predicate": "camera_registration_portal",
+      "raw_value": "camera registry"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 183,
+        "kind": "byte_range",
+        "start": 178
+      },
+      "predicate": "technology",
+      "raw_value": "Fusus"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 129,
+        "kind": "byte_range",
+        "start": 101
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Cincinnati Police Department"
+    },
+    {
+      "field": "posted_date",
+      "locator": {
+        "end": 95,
+        "kind": "byte_range",
+        "start": 91
+      },
+      "predicate": "posted_date",
+      "raw_value": "2025"
     }
   ],
   "cmpd-directives-guide": [
@@ -430,6 +566,48 @@
       },
       "predicate": "authorization_state",
       "raw_value": "Notice of Intent to Award"
+    }
+  ],
+  "dayton-resident-camera-registry": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 40,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "title",
+      "raw_value": "Resident Camera Registry"
+    },
+    {
+      "field": "registration_portal",
+      "locator": {
+        "end": 40,
+        "kind": "byte_range",
+        "start": 25
+      },
+      "predicate": "camera_registration_portal",
+      "raw_value": "camera registry"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 134,
+        "kind": "byte_range",
+        "start": 119
+      },
+      "predicate": "technology",
+      "raw_value": "security camera"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 76,
+        "kind": "byte_range",
+        "start": 52
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Dayton Police Department"
     }
   ],
   "des-moines-communication-26-235": [
@@ -632,6 +810,38 @@
       },
       "predicate": "enacting_body",
       "raw_value": "Police Department"
+    }
+  ],
+  "elizabeth-city-fusus-review": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 21,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "title",
+      "raw_value": "Fusus"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 138,
+        "kind": "byte_range",
+        "start": 123
+      },
+      "predicate": "technology",
+      "raw_value": "real-time crime"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 81,
+        "kind": "byte_range",
+        "start": 67
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Elizabeth City"
     }
   ],
   "fl-senate-lfir-s3177": [
@@ -1015,6 +1225,48 @@
       "raw_value": "Jasper County Sheriff"
     }
   ],
+  "lafayette-camera-registration": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 35,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "title",
+      "raw_value": "Camera Registration"
+    },
+    {
+      "field": "registration_portal",
+      "locator": {
+        "end": 94,
+        "kind": "byte_range",
+        "start": 75
+      },
+      "predicate": "camera_registration_portal",
+      "raw_value": "camera registration"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 165,
+        "kind": "byte_range",
+        "start": 150
+      },
+      "predicate": "technology",
+      "raw_value": "security camera"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 74,
+        "kind": "byte_range",
+        "start": 47
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Lafayette Police Department"
+    }
+  ],
   "legvi-bill-34-0142-committee": [
     {
       "field": "title",
@@ -1077,6 +1329,48 @@
       },
       "predicate": "title",
       "raw_value": "policies and procedures"
+    }
+  ],
+  "narragansett-camera-registry": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 38,
+        "kind": "byte_range",
+        "start": 23
+      },
+      "predicate": "title",
+      "raw_value": "Camera Registry"
+    },
+    {
+      "field": "registration_portal",
+      "locator": {
+        "end": 96,
+        "kind": "byte_range",
+        "start": 81
+      },
+      "predicate": "camera_registration_portal",
+      "raw_value": "camera registry"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 199,
+        "kind": "byte_range",
+        "start": 184
+      },
+      "predicate": "technology",
+      "raw_value": "security camera"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 80,
+        "kind": "byte_range",
+        "start": 50
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Narragansett Police Department"
     }
   ],
   "nj-oag-bwc-sfy21-guidelines": [
@@ -1476,6 +1770,48 @@
       },
       "predicate": "use_restriction",
       "raw_value": "except when the data is part of an ongoing investigation"
+    }
+  ],
+  "pinole-security-camera-registry": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 40,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "title",
+      "raw_value": "Security Camera Registry"
+    },
+    {
+      "field": "registration_portal",
+      "locator": {
+        "end": 141,
+        "kind": "byte_range",
+        "start": 126
+      },
+      "predicate": "camera_registration_portal",
+      "raw_value": "camera registry"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 132,
+        "kind": "byte_range",
+        "start": 117
+      },
+      "predicate": "technology",
+      "raw_value": "security camera"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 76,
+        "kind": "byte_range",
+        "start": 52
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Pinole Police Department"
     }
   ],
   "san-jose-algorithm-register": [
@@ -2090,6 +2426,58 @@
       "raw_value": "Mass Extraction Appendix C"
     }
   ],
+  "vt-dps-uas-report-2023": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 65,
+        "kind": "byte_range",
+        "start": 40
+      },
+      "predicate": "title",
+      "raw_value": "Unmanned Aircraft Systems"
+    },
+    {
+      "field": "citation",
+      "locator": {
+        "end": 120,
+        "kind": "byte_range",
+        "start": 111
+      },
+      "predicate": "citation",
+      "raw_value": "20 V.S.A."
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 276,
+        "kind": "byte_range",
+        "start": 259
+      },
+      "predicate": "technology",
+      "raw_value": "unmanned aircraft"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 175,
+        "kind": "byte_range",
+        "start": 148
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Department of Public Safety"
+    },
+    {
+      "field": "report_period",
+      "locator": {
+        "end": 81,
+        "kind": "byte_range",
+        "start": 77
+      },
+      "predicate": "period",
+      "raw_value": "2023"
+    }
+  ],
   "wayne-commission-index": [
     {
       "field": "document",
@@ -2130,6 +2518,48 @@
       },
       "predicate": "title",
       "raw_value": "Full Commission"
+    }
+  ],
+  "zionsville-camera-registry": [
+    {
+      "field": "title",
+      "locator": {
+        "end": 31,
+        "kind": "byte_range",
+        "start": 16
+      },
+      "predicate": "title",
+      "raw_value": "Camera Registry"
+    },
+    {
+      "field": "registration_portal",
+      "locator": {
+        "end": 87,
+        "kind": "byte_range",
+        "start": 72
+      },
+      "predicate": "camera_registration_portal",
+      "raw_value": "camera registry"
+    },
+    {
+      "field": "technology",
+      "locator": {
+        "end": 167,
+        "kind": "byte_range",
+        "start": 152
+      },
+      "predicate": "technology",
+      "raw_value": "security camera"
+    },
+    {
+      "field": "enacting_body",
+      "locator": {
+        "end": 71,
+        "kind": "byte_range",
+        "start": 43
+      },
+      "predicate": "enacting_body",
+      "raw_value": "Zionsville Police Department"
     }
   ]
 }

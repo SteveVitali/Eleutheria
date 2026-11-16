@@ -843,6 +843,157 @@ _SUBJECT_KINDS = frozenset({"camera_site", "programme_area", "payee"})
 #: never an expression or quoted literal smuggled through the registry row.
 _FIELD_NAME_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 
+#: P37.53 (ACQ-26, I7-S1 `a` — the screened lane): the ``arcgis_s1`` target
+#: kind serves the S1 programme-level lanes — Flock/PCAM layers that mix
+#: agency-operated and private-operator rows, and layers whose EVERY row is
+#: a registrant-class row (Project Green Light, police-drone flight logs).
+#: ``operator_screen`` declares the published operator column plus the
+#: committed agency-operator values: the feature fetch asks the service for
+#: the AGENCY rows only (a ``where <field> IN (…)`` screen at the server, so
+#: no private-operator value, name or coordinate ever lands in a capture),
+#: and ONE ``returnCountOnly`` page over the complement collapses the
+#: private-operator rows to the published count the publisher serves.
+#: ``count_only`` serves registrant-class layers whole — a single
+#: ``returnCountOnly`` page; the published total IS the claim and no row
+#: bytes are ever captured. Both modes mint ``programme_area:`` aggregate
+#: subjects and ``programme_count`` claims only — never a device, geometry,
+#: registrant, name or below-programme count.
+_S1_KIND = "arcgis_s1"
+_S1_MODES = frozenset({"operator_screen", "count_only"})
+
+
+class S1SpecNotDeclared(Exception):
+    """A registry defect: a malformed ``arcgis_s1`` target declaration.
+
+    Deliberately NOT a per-record rejection: an S1 target without a complete,
+    well-formed ``s1_*`` declaration is a broken registry row — the run fails
+    loudly rather than inventing a screen the publisher never declared
+    (P37.53 / ACQ-26, I7-S1 `a`).
+    """
+
+
+@dataclass(frozen=True)
+class S1Spec:
+    """The validated S1 screen declaration carried by an ``arcgis_s1`` row.
+
+    ``mode`` is the screened shape (``operator_screen`` | ``count_only``);
+    ``operator_field`` names the published column the agency screen reads
+    (operator_screen only); ``agency_values`` are the committed
+    agency-operator values the screen admits verbatim (operator_screen only —
+    the private-operator value list is deliberately NEVER declared or
+    captured); ``measure`` is the claim's declared unit for the screened
+    count (``private_operator_rows``, ``published_registrant_rows``,
+    ``published_flight_rows``); ``period_label`` is the committed period
+    text the count claim stamps; ``programme_label`` is the committed
+    subject text the ``programme_area:`` mint uses.
+    """
+
+    mode: str
+    operator_field: str | None
+    agency_values: tuple[str, ...]
+    measure: str
+    period_label: str
+    programme_label: str
+
+
+def assert_target_s1(row: Mapping[str, Any]) -> S1Spec | None:
+    """The target row's validated :class:`S1Spec`, or ``None``.
+
+    Non-``arcgis_s1`` kinds return ``None``; ``s1_*`` members on any other
+    kind are a registry defect. An ``arcgis_s1`` row without a complete
+    declaration — or whose mode/field/measure falls outside the closed
+    vocabulary — fails closed, never a guessed screen.
+    """
+    kind = str(row.get("kind") or "").strip()
+    target_id = row.get("id")
+    if kind != _S1_KIND:
+        stray = sorted(k for k in row if str(k).startswith("s1_"))
+        if stray:
+            raise S1SpecNotDeclared(
+                f"registry target {target_id!r} declares S1 members {stray} on "
+                f"kind {kind!r} — s1_* declarations belong to kind "
+                f"{_S1_KIND!r} only (fail closed)"
+            )
+        return None
+    mode = str(row.get("s1_mode") or "").strip()
+    if mode not in _S1_MODES:
+        raise S1SpecNotDeclared(
+            f"registry target {target_id!r} declares s1_mode={mode!r}, which "
+            f"is not a member ({sorted(_S1_MODES)})"
+        )
+    if str(row.get("where") or "").strip():
+        raise S1SpecNotDeclared(
+            f"registry target {target_id!r} declares a `where` alongside the "
+            "S1 lane — the lane composes its screen internally; a hand-written "
+            "where is never committed (fail closed)"
+        )
+    measure = str(row.get("s1_measure") or "").strip()
+    if not _FIELD_NAME_RE.fullmatch(measure):
+        raise S1SpecNotDeclared(
+            f"registry target {target_id!r} declares s1_measure={measure!r} — "
+            "the count measure is a bare slug, never an expression"
+        )
+    period_label = str(row.get("s1_period_label") or "").strip()
+    if not period_label:
+        raise S1SpecNotDeclared(
+            f"registry target {target_id!r} declares no s1_period_label — the "
+            "committed period text the count claim stamps is required"
+        )
+    programme_label = str(row.get("s1_programme_label") or "").strip()
+    if not programme_label or "\n" in programme_label or "\r" in programme_label:
+        raise S1SpecNotDeclared(
+            f"registry target {target_id!r} declares no usable "
+            "s1_programme_label — the committed programme subject text the "
+            "programme_area mint uses is required"
+        )
+    operator_field = str(row.get("s1_operator_field") or "").strip()
+    agency_values = tuple(
+        str(v).strip() for v in (row.get("s1_agency_values") or ()) if str(v).strip()
+    )
+    if mode == "operator_screen":
+        if not _FIELD_NAME_RE.fullmatch(operator_field):
+            raise S1SpecNotDeclared(
+                f"registry target {target_id!r} declares s1_operator_field="
+                f"{operator_field!r} — the screen column is a bare published "
+                "column identifier, never an expression"
+            )
+        if not agency_values:
+            raise S1SpecNotDeclared(
+                f"registry target {target_id!r} declares no s1_agency_values — "
+                "the committed agency-operator values the screen admits are "
+                "required (the private-operator list is never declared)"
+            )
+        for value in agency_values:
+            if any(ch in value for ch in ("\n", "\r")):
+                raise S1SpecNotDeclared(
+                    f"registry target {target_id!r} declares a control "
+                    "character inside s1_agency_values — the operator literal "
+                    "is verbatim text, never an expression"
+                )
+        if not _row_out_fields(row):
+            raise S1SpecNotDeclared(
+                f"registry target {target_id!r} declares no out_fields — the "
+                "agency-row capture allowlist is required on an "
+                "operator_screen target (P8-5)"
+            )
+    else:
+        # count_only: the screen vocabulary stays empty — a declared operator
+        # column or agency value on a registrant-class layer is a defect.
+        if operator_field or agency_values:
+            raise S1SpecNotDeclared(
+                f"registry target {target_id!r} declares s1_operator_field/"
+                "s1_agency_values on a count_only target — the screen "
+                "vocabulary belongs to operator_screen only (fail closed)"
+            )
+    return S1Spec(
+        mode=mode,
+        operator_field=operator_field or None,
+        agency_values=agency_values,
+        measure=measure,
+        period_label=period_label,
+        programme_label=programme_label,
+    )
+
 
 class AggregateSpecNotDeclared(Exception):
     """A registry defect: a malformed aggregate-target declaration.
@@ -1164,6 +1315,12 @@ def target_aggregate_violations() -> list[str]:
             assert_target_aggregate(row)
         except AggregateSpecNotDeclared as exc:
             violations.append(f"{label}: {exc}")
+        try:
+            # P37.53 (ACQ-26): the S1 screen declarations validate under the
+            # same gate.
+            assert_target_s1(row)
+        except S1SpecNotDeclared as exc:
+            violations.append(f"{label}: {exc}")
     return violations
 
 
@@ -1279,6 +1436,77 @@ def _arcgis_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
         out.append(
             {"url": f"{layer_url}/query?{urlencode(params)}", "page": page, "page_count": pages}
         )
+    return out
+
+
+def _arcgis_s1_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Expand one ``arcgis_s1`` row into its screened pages (P37.53 / ACQ-26).
+
+    ``operator_screen``: the feature pages ask the service for the committed
+    agency-operator rows only — ``where <field> IN (…)`` — so the raw
+    captures hold agency rows and nothing else; one extra
+    ``returnCountOnly`` page over the complement
+    (``NOT(<field> IN (…)) OR <field> IS NULL``) serves the published
+    private-operator count. The private-operator value list is never
+    declared, fetched or captured — the screen is server-side. ``count_only``:
+    one ``returnCountOnly`` page; the published total is the only captured
+    fact. Every page carries a ``page_role`` (``features`` | ``count``) the
+    parse path routes on.
+    """
+    spec = assert_target_s1(row)
+    assert spec is not None  # arcgis_s1 rows always validate to a spec
+    layer_url = str(row["layer_url"]).rstrip("/")
+    oid_field = str(row.get("object_id_field") or "OBJECTID")
+    page_size = min(_ARCGIS_PAGE_SIZE, max(1, int(row.get("page_size") or _ARCGIS_PAGE_SIZE)))
+    params_base = {"outSR": "4326", "f": "json"}
+    out: list[dict[str, Any]] = []
+
+    def _count_page(where: str, page: int, page_count: int) -> dict[str, Any]:
+        params = {**params_base, "where": where, "returnCountOnly": "true"}
+        return {
+            "url": f"{layer_url}/query?{urlencode(params)}",
+            "page": page,
+            "page_count": page_count,
+            "page_role": "count",
+        }
+
+    if spec.mode == "operator_screen":
+        quoted = ",".join("'" + str(v).replace("'", "''") + "'" for v in spec.agency_values)
+        agency_where = f"{spec.operator_field} IN ({quoted})"
+        # The complement is EVERY row the agency screen does not admit —
+        # private-operator rows AND operator-null rows collapse to the
+        # published count together.
+        screen_where = f"NOT({agency_where}) OR {spec.operator_field} IS NULL"
+        observed = int(row.get("observed_count") or 0)
+        pages = max(1, -(-observed // page_size))
+        names = list(_row_out_fields(row))
+        if oid_field not in names:
+            names.append(oid_field)
+        for page in range(pages):
+            params = {
+                **params_base,
+                "where": agency_where,
+                "outFields": ",".join(names),
+                "returnGeometry": "true",
+                "orderByFields": oid_field,
+                "resultRecordCount": page_size,
+                "resultOffset": page * page_size,
+            }
+            out.append(
+                {
+                    "url": f"{layer_url}/query?{urlencode(params)}",
+                    "page": page,
+                    # The feature pages count among THEMSELVES — the count
+                    # page is not a feature page, so the last-planned-page
+                    # exceededTransferLimit check still fires exactly on the
+                    # final agency page (page == pages - 1).
+                    "page_count": pages,
+                    "page_role": "features",
+                }
+            )
+        out.append(_count_page(screen_where, pages, pages + 1))
+    else:
+        out.append(_count_page("1=1", 0, 1))
     return out
 
 
@@ -1691,6 +1919,10 @@ def expand_registry_rows(
         # at fetch time (never in the registry, never in a recorded URL).
         "qldtraffic_geojson": _qldtraffic_geojson_pages,
         "nsw_live_geojson": _nsw_live_geojson_pages,
+        # P37.53 (ACQ-26, I7-S1 `a`): the S1 screened lane — operator_screen
+        # feature pages + a returnCountOnly complement page, or a single
+        # returnCountOnly page for registrant-class layers.
+        "arcgis_s1": _arcgis_s1_pages,
     }
     out: list[dict[str, Any]] = []
     for row in rows:
@@ -1717,7 +1949,7 @@ def expand_registry_rows(
         if rpm is None:
             entry = api_allow_entry(str(row["layer_url"]))
             rpm = entry.rate_limit_per_min if entry is not None else None
-        if rpm is None and kind in ("arcgis_query", "arcgis_outstatistics"):
+        if rpm is None and kind in ("arcgis_query", "arcgis_outstatistics", "arcgis_s1"):
             # An ArcGIS layer on a host the allowlist does not name still runs
             # at the reviewed 10/min ArcGIS budget (I8 NEW-3), never unbounded.
             rpm = _ARCGIS_REVIEWED_RPM
@@ -1749,6 +1981,10 @@ def expand_registry_rows(
         # at expansion — a broken declaration is a registry defect, never a
         # guessed emit.
         aggregate = assert_target_aggregate(row)
+        # P37.53 (ACQ-26): the S1 screen declaration is validated at
+        # expansion too — a malformed s1_* declaration is a registry defect,
+        # never a guessed screen.
+        s1 = assert_target_s1(row)
         # P37.12 (D-SOURCES.7-2): a keyed target's ``api_key_env`` env-var
         # NAME is validated fail-closed here — a missing declaration or a
         # non-name value (a possible key literal) is a registry defect.
@@ -1802,6 +2038,32 @@ def expand_registry_rows(
                     "currency": aggregate.currency,
                     "payee_allowlist": list(aggregate.payee_allowlist),
                 }
+            if s1 is not None:
+                page_role = str(page.get("page_role") or "features")
+                target["page_role"] = page_role
+                target["s1"] = {
+                    "mode": s1.mode,
+                    "measure": s1.measure,
+                    "period_label": s1.period_label,
+                    "programme_label": s1.programme_label,
+                }
+                if page_role == "count":
+                    # P37.53 (ACQ-26): the count page rides the existing
+                    # `programme_area` emit — a synthesized aggregate spec so
+                    # `_aggregate_claim_rows` mints `programme_area:` +
+                    # `programme_count` exactly the way a published group row
+                    # would; the period is the committed label (`declared`).
+                    target["aggregate"] = {
+                        "subject_field": "subject",
+                        "period_field": "period",
+                        "period_kind": "declared",
+                        "count_fields": ["count"],
+                        "count_function": "count",
+                        "measure": s1.measure,
+                        "discriminator_field": None,
+                        "subject_kind": "programme_area",
+                        "period_label": s1.period_label,
+                    }
             for key, value in declared_fields.items():
                 target[key] = value
             if api_key_env:
@@ -2941,6 +3203,10 @@ class Dot511Connector(Connector):
             return self._parse_ohgo_511(ctx, capture, data)
         if kind in ("qldtraffic_geojson", "nsw_live_geojson"):
             return self._parse_geojson_cameras(ctx, capture, data, kind=kind)
+        if kind == "arcgis_s1" and str(target.get("page_role") or "") == "count":
+            # P37.53 (ACQ-26): the screened lane's returnCountOnly page — a
+            # `{"count": N}` envelope, never a row set.
+            return self._parse_s1_count(ctx, capture, data)
         try:
             doc = json.loads(data)
         except (ValueError, TypeError) as exc:
@@ -2991,6 +3257,62 @@ class Dot511Connector(Connector):
                     ),
                 )
         return {"kind": "arcgis_feature_query", "payload": doc, "capture": capture}
+
+    def _parse_s1_count(self, ctx: RunContext, capture: CaptureRef, data: bytes) -> dict[str, Any]:
+        """Structure a captured ``arcgis_s1`` returnCountOnly page (P37.53).
+
+        The declared contract is the ArcGIS ``returnCountOnly=true``
+        envelope — ``{"count": <int>}`` and NOTHING else. An error envelope,
+        a non-JSON body, a payload carrying a ``features`` member (the
+        service served rows where the lane asked for a count — the S1
+        screen's whole point is that no registrant/row bytes are read), a
+        missing ``count``, or a non-integer/negative count is
+        :class:`ContentDrift` — recorded loud, never an opaque crash and
+        never a guessed total.
+        """
+        try:
+            doc = json.loads(data)
+        except (ValueError, TypeError) as exc:
+            head = data[:64] if isinstance(data, (bytes, bytearray)) else str(data)[:64]
+            raise ContentDrift(
+                ctx.source.id,
+                "ArcGIS returnCountOnly page returned non-JSON content (HTML error / WAF page)",
+                details=f"{len(data)} bytes; starts {head!r} ({exc.__class__.__name__})",
+            ) from exc
+        if not isinstance(doc, Mapping):
+            raise ContentDrift(
+                ctx.source.id,
+                "ArcGIS returnCountOnly payload is not an object",
+                details=f"got {type(doc).__name__}",
+            )
+        if isinstance(doc.get("error"), Mapping):
+            err = doc["error"]
+            raise ContentDrift(
+                ctx.source.id,
+                "ArcGIS returnCountOnly page returned an error envelope",
+                details=f"code={err.get('code')} message={str(err.get('message'))[:120]!r}",
+            )
+        if doc.get("features") is not None:
+            raise ContentDrift(
+                ctx.source.id,
+                "ArcGIS returnCountOnly page carried a 'features' member — the "
+                "service served rows where the S1 lane asked for a count only",
+                details=f"top-level keys: {sorted(doc)}",
+            )
+        try:
+            count = int(str(doc["count"]))
+        except (KeyError, TypeError, ValueError):
+            raise ContentDrift(
+                ctx.source.id,
+                "ArcGIS returnCountOnly payload lacks an integer 'count'",
+                details=f"top-level keys: {sorted(doc)}",
+            ) from None
+        if count < 0:
+            raise ContentDrift(
+                ctx.source.id,
+                f"ArcGIS returnCountOnly payload carries a negative count {count}",
+            )
+        return {"kind": "s1_count_page", "payload": {"count": count}, "capture": capture}
 
     def _parse_socrata(
         self, ctx: RunContext, capture: CaptureRef, data: bytes, target: Mapping[str, Any]
@@ -3323,6 +3645,29 @@ class Dot511Connector(Connector):
             "nsw_live_geojson",
         )
         _GEOJSON_KINDS = ("qldtraffic_geojson", "nsw_live_geojson")
+        if parsed.get("kind") == "s1_count_page":
+            # P37.53 (ACQ-26): the screened count page materialises ONE
+            # `programme_aggregate` record — the committed programme label as
+            # subject, the committed period label as period, the published
+            # total as count. No feature rows exist on this page.
+            s1 = target.get("s1") or {}
+            out.append(
+                {
+                    "record_kind": "programme_aggregate",
+                    "feature_index": 0,
+                    "fields": {
+                        "subject": str(s1.get("programme_label") or ""),
+                        "period": str(s1.get("period_label") or ""),
+                        "count": int(doc["count"]),
+                    },
+                    "excluded_fields": [],
+                    "geometry": None,
+                    "source_uri": capture.source_uri,
+                    "retrieved_at": retrieved.isoformat(),
+                    "target": dict(target),
+                }
+            )
+            return out
         if parsed.get("kind") in _ROW_ARRAY_KINDS:
             rows = doc["rows"]
             is_geojson = str(parsed.get("kind") or "") in _GEOJSON_KINDS
@@ -3559,6 +3904,9 @@ _EXTRACTION_METHODS = {
     # P37.70 (D-SOURCES.8-2): the keyed AU traffic-camera GeoJSON lanes.
     "qldtraffic_geojson": "geojson_feature_collection",
     "nsw_live_geojson": "geojson_feature_collection",
+    # P37.53 (ACQ-26): the S1 screened lane — feature pages are ordinary
+    # ArcGIS attribute rows; the count page is a returnCountOnly envelope.
+    "arcgis_s1": "arcgis_count_json",
 }
 
 
@@ -3574,12 +3922,20 @@ def _resolve_target(ctx: RunContext, source_uri: str) -> dict[str, Any]:
     """
     targets = list(ctx.parameters.get("targets", []))
     matched: Mapping[str, Any] = {}
+    # P37.53 (ACQ-26): the exact-URL pass runs for EVERY target before the
+    # layer_url prefix fallback — an `arcgis_s1` count page's URL shares the
+    # feature pages' layer_url prefix, and a prefix-first match would resolve
+    # the count page to a feature page (page_role lost, drift recorded where
+    # the screened contract holds).
     for t in targets:
-        if str(t.get("url")) == source_uri or (
-            str(t.get("layer_url")) and source_uri.startswith(str(t["layer_url"]))
-        ):
+        if str(t.get("url")) == source_uri:
             matched = t
             break
+    if not matched:
+        for t in targets:
+            if str(t.get("layer_url")) and source_uri.startswith(str(t["layer_url"])):
+                matched = t
+                break
     registry = registry_row(ctx.source.id, str(matched.get("id") or ""))
     if not registry and not matched:
         registry = registry_row(ctx.source.id)
@@ -4230,6 +4586,8 @@ __all__ = [
     "Dot511Connector",
     "GeometryKindNotDeclared",
     "PredicateNotAllowed",
+    "S1Spec",
+    "S1SpecNotDeclared",
     "StatusDispositionNotDeclared",
     "TechnologyNotDeclared",
     "area_geometry",
@@ -4237,6 +4595,7 @@ __all__ = [
     "assert_target_aggregate",
     "assert_target_coordinate_precision",
     "assert_target_geometry_kind",
+    "assert_target_s1",
     "assert_target_status_disposition",
     "assert_target_technology",
     "canary_findings",
