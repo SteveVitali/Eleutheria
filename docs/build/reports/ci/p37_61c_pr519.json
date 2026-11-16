@@ -1,0 +1,344 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 519,
+  "pr": 519,
+  "head_sha": "f983374eeb9b331e2b2329a15aef082559a96ba0",
+  "head_ref": "r11/P37.61c-projection-out-of-commit-path",
+  "base": "main",
+  "read_at": "2026-11-16T23:35:29Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [
+    {
+      "pr": 519,
+      "head_ref": "r11/P37.61c-projection-out-of-commit-path",
+      "head_sha": "f983374eeb9b331e2b2329a15aef082559a96ba0",
+      "base": "main",
+      "pr_state": "MERGED",
+      "is_draft": false,
+      "mergeable": "UNKNOWN",
+      "state": "fail",
+      "detail": "#519 is merged"
+    }
+  ],
+  "stack_stop": "base `main` is outside the `r11/` scope — the Round-10 stack (#141–#190) is never read (B-15)",
+  "stack_digest": "d285d9b638462860ad71a6ad42c6b3e612bd180e948206c97950c3e2a4b920aa",
+  "local_head": "f983374eeb9b331e2b2329a15aef082559a96ba0",
+  "external": {
+    "read_at": "2026-11-16T23:35:30Z",
+    "since": "2026-11-16",
+    "fetch": "ok",
+    "main_sha": "3f05f8bbf1fbb141d3a3e38b9cb1c57d46677350",
+    "chain_descends": false,
+    "descends_note": "origin/main 3f05f8b is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [],
+    "merged_since": [
+      {
+        "number": 519,
+        "head_ref": "r11/P37.61c-projection-out-of-commit-path",
+        "head_sha": "f983374eeb9b331e2b2329a15aef082559a96ba0",
+        "base": "main",
+        "merged_at": "2026-11-16T23:27:53Z",
+        "on_stack": true
+      },
+      {
+        "number": 518,
+        "head_ref": "r11/P37.61b-privacy-redaction-restore",
+        "head_sha": "fc900074c8f2587d9547b70b53d7faf81638c9c1",
+        "base": "main",
+        "merged_at": "2026-11-16T20:42:01Z",
+        "on_stack": true
+      },
+      {
+        "number": 517,
+        "head_ref": "r11/P37.61a-republish-harm-removal-v3",
+        "head_sha": "1b310b7a3714fb8ff7e6a8e6dd6fbc8817d140b5",
+        "base": "main",
+        "merged_at": "2026-11-16T17:57:59Z",
+        "on_stack": true
+      },
+      {
+        "number": 514,
+        "head_ref": "r11/P37.61-t1-table-and-filter-enhancements",
+        "head_sha": "e09668feba36c0abb8c89f73e720affddb0d7fe5",
+        "base": "main",
+        "merged_at": "2026-11-16T05:49:52Z",
+        "on_stack": true
+      },
+      {
+        "number": 512,
+        "head_ref": "r11/P37.60-visual-regression-gallery",
+        "head_sha": "81823807734fa5c1fa4b73dfb87a033eeb8a99ad",
+        "base": "main",
+        "merged_at": "2026-11-16T02:52:34Z",
+        "on_stack": true
+      },
+      {
+        "number": 511,
+        "head_ref": "r11/P37.59-intake-operation-dark",
+        "head_sha": "9a2b5350df029c74080271b5451d948f5308db7d",
+        "base": "main",
+        "merged_at": "2026-11-16T02:52:24Z",
+        "on_stack": true
+      },
+      {
+        "number": 510,
+        "head_ref": "r11/P37.58-schema-conformance",
+        "head_sha": "d15374ddc911fd2d006b003fe41ba00525040362",
+        "base": "main",
+        "merged_at": "2026-11-16T02:52:16Z",
+        "on_stack": true
+      },
+      {
+        "number": 509,
+        "head_ref": "r11/P37.57b-whole-graph-audits",
+        "head_sha": "b7b44cda1cc4e39d2d40fe5b27135c2058148dd7",
+        "base": "main",
+        "merged_at": "2026-11-16T02:52:07Z",
+        "on_stack": true
+      },
+      {
+        "number": 508,
+        "head_ref": "r11/P37.57a-projection-rebuild-ci",
+        "head_sha": "126034e90ec1e19bed8ae4893578ecb4df4dc47e",
+        "base": "main",
+        "merged_at": "2026-11-16T02:51:57Z",
+        "on_stack": true
+      },
+      {
+        "number": 507,
+        "head_ref": "r11/P37.56-wacz-capture-html-sources",
+        "head_sha": "4dfebadc21e527c1fcc3aa84e3e46241d43e1b6c",
+        "base": "main",
+        "merged_at": "2026-11-16T02:51:48Z",
+        "on_stack": true
+      },
+      {
+        "number": 506,
+        "head_ref": "r11/P37.55-archival-deposits",
+        "head_sha": "a29ebfbb0076f763f223cef998bc12d3f25c8759",
+        "base": "main",
+        "merged_at": "2026-11-16T02:51:40Z",
+        "on_stack": true
+      },
+      {
+        "number": 505,
+        "head_ref": "r11/P37.54-wave-d-activation",
+        "head_sha": "a28869bdeaed953d866084d0b8f2d58baa0e5550",
+        "base": "main",
+        "merged_at": "2026-11-16T02:51:31Z",
+        "on_stack": true
+      },
+      {
+        "number": 504,
+        "head_ref": "r11/P37.69b-ogc-wfs-family",
+        "head_sha": "53eee13642b2d644916046176be852a635a8eb6a",
+        "base": "main",
+        "merged_at": "2026-11-16T02:51:22Z",
+        "on_stack": true
+      },
+      {
+        "number": 503,
+        "head_ref": "r11/P37.69a-international-open-data-portals",
+        "head_sha": "ebdac1cf6928e4d135845aac59f098a87b9c1f76",
+        "base": "main",
+        "merged_at": "2026-11-16T02:51:13Z",
+        "on_stack": true
+      },
+      {
+        "number": 502,
+        "head_ref": "r11/P37.53-programme-level-lane",
+        "head_sha": "4cfda1bfb1a369f64ab75048d321acb2c0682017",
+        "base": "main",
+        "merged_at": "2026-11-16T02:51:05Z",
+        "on_stack": true
+      },
+      {
+        "number": 501,
+        "head_ref": "r11/P37.52-document-list-pages",
+        "head_sha": "88ba6e83a04011cd21af30dad44c43589b992b90",
+        "base": "main",
+        "merged_at": "2026-11-16T02:50:56Z",
+        "on_stack": true
+      },
+      {
+        "number": 500,
+        "head_ref": "r11/P37.51-puerto-rico-sutra-ocpr",
+        "head_sha": "8aeadaa1d8eb61332980a35205d5ef74e1028e4a",
+        "base": "main",
+        "merged_at": "2026-11-16T02:50:47Z",
+        "on_stack": true
+      },
+      {
+        "number": 499,
+        "head_ref": "r11/P37.50-agenda-platforms-v2",
+        "head_sha": "c90219849509fda8f7bc56763c789475a611f11f",
+        "base": "main",
+        "merged_at": "2026-11-16T02:50:38Z",
+        "on_stack": true
+      },
+      {
+        "number": 498,
+        "head_ref": "r11/P37.49-federal-datasets-family",
+        "head_sha": "da8fc6fc39eed66292745d684f3fd7614be53367",
+        "base": "main",
+        "merged_at": "2026-11-16T02:50:31Z",
+        "on_stack": true
+      },
+      {
+        "number": 497,
+        "head_ref": "r11/P37.48-aggregate-lanes",
+        "head_sha": "24bbbb21555d4df73b9fb38677371b61bb3acd31",
+        "base": "main",
+        "merged_at": "2026-11-16T02:50:22Z",
+        "on_stack": true
+      },
+      {
+        "number": 496,
+        "head_ref": "r11/P37.47-tier-2-reuse-wave",
+        "head_sha": "acb6f1f09a201bc3eb4485a11a2d39ad42b4e72f",
+        "base": "main",
+        "merged_at": "2026-11-16T02:50:12Z",
+        "on_stack": true
+      },
+      {
+        "number": 495,
+        "head_ref": "r11/P37.46b-organisation-cascade-materializer",
+        "head_sha": "28364ff64c7a67cf0dbade338b68a986d33e4dae",
+        "base": "main",
+        "merged_at": "2026-11-16T02:50:03Z",
+        "on_stack": true
+      },
+      {
+        "number": 494,
+        "head_ref": "r11/P37.46a-organisation-crosswalk-intake",
+        "head_sha": "8ae3a4eb9c93c81b3ea60ddfc7774736ac3ae363",
+        "base": "main",
+        "merged_at": "2026-11-16T02:47:23Z",
+        "on_stack": true
+      },
+      {
+        "number": 493,
+        "head_ref": "r11/P37.45-public-quality-page",
+        "head_sha": "71e0c3f396a3911d3a5459f6547ea6165c9ec722",
+        "base": "main",
+        "merged_at": "2026-11-16T02:47:14Z",
+        "on_stack": true
+      },
+      {
+        "number": 492,
+        "head_ref": "r11/P37.44-mech-eval-report",
+        "head_sha": "ccbce85aa97e5d99d7e14dc027db0d351be97e4f",
+        "base": "main",
+        "merged_at": "2026-11-16T02:47:04Z",
+        "on_stack": true
+      },
+      {
+        "number": 491,
+        "head_ref": "r11/P37.43-search-result-export",
+        "head_sha": "e9a4e4e247060528fdaf7caf46db7b2dbb822aa3",
+        "base": "main",
+        "merged_at": "2026-11-16T00:37:17Z",
+        "on_stack": true
+      }
+    ],
+    "open_off_chain": []
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1"
+  ],
+  "reruns": [],
+  "checks": [
+    {
+      "pr": 519,
+      "name": "python",
+      "required": true,
+      "check_run_id": 133662813727,
+      "run_id": "43970934546",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-16T22:32:20Z",
+      "completed_at": "2026-11-16T22:52:00Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/43970934546/job/133662813727",
+      "waived": false
+    },
+    {
+      "pr": 519,
+      "name": "docs",
+      "required": true,
+      "check_run_id": 133662813353,
+      "run_id": "43970934546",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-16T22:32:20Z",
+      "completed_at": "2026-11-16T22:36:20Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/43970934546/job/133662813353",
+      "waived": false
+    },
+    {
+      "pr": 519,
+      "name": "composed",
+      "required": true,
+      "check_run_id": 133662814077,
+      "run_id": "43970934546",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-16T22:32:20Z",
+      "completed_at": "2026-11-16T22:35:54Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/43970934546/job/133662814077",
+      "waived": false
+    },
+    {
+      "pr": 519,
+      "name": "security",
+      "required": true,
+      "check_run_id": 133662813888,
+      "run_id": "43970934546",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-16T22:32:21Z",
+      "completed_at": "2026-11-16T22:33:05Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/43970934546/job/133662813888",
+      "waived": false
+    },
+    {
+      "pr": 519,
+      "name": "web",
+      "required": true,
+      "check_run_id": 133662813782,
+      "run_id": "43970934546",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-16T22:32:20Z",
+      "completed_at": "2026-11-16T23:27:06Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/43970934546/job/133662813782",
+      "waived": false
+    }
+  ],
+  "waivers": 5,
+  "polls": 1,
+  "waited_s": 0.0,
+  "state": "fail",
+  "kind": "stack",
+  "line": "blockedOn: CI stack on #519@f983374 (-): #519 is merged",
+  "exit": 3
+}
