@@ -87,6 +87,10 @@ _DECLARED_EXTERNAL_PRODUCERS = {
     # web/evaluation.json — the sig.resolution-eval/1 record (outside the ten
     # `surfaces` keys, written beside them like terms_disclosure).
     "evaluation": "build_spine_export (web/evaluation.json, sig.resolution-eval/1)",
+    # P37.44 (CONF-09, SIG-EVAL-003/006 + SIG-CONF-012): `build_spine_export`
+    # computes `web/mech_eval.json` — the mechanical evaluation report the
+    # /methodology/ eval table renders from.
+    "mech_eval": "build_spine_export (web/mech_eval.json, sig.mech-eval/1)",
 }
 
 

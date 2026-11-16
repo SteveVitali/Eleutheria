@@ -443,6 +443,18 @@ write(
     ),
   ),
 );
+// P37.44 (CONF-09): `web/mech_eval.json` — the sig.mech-eval/1 mechanical
+// evaluation report the /methodology/ eval table renders from; the data layer
+// reads it verbatim in export mode.
+write(
+  "mech_eval.json",
+  JSON.parse(
+    readFileSync(
+      join(REPO_ROOT, "exports", "src", "exports", "data", "mech_eval.json"),
+      "utf-8",
+    ),
+  ),
+);
 // The express-terms disclosure (sig.terms-disclosure/1) — a figure artifact on
 // /sources/; the data layer reads `web/terms_disclosure.json` in export mode.
 write("terms_disclosure.json", TERMS_DISCLOSURE_FIXTURE);

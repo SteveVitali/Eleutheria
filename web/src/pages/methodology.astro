@@ -12,23 +12,38 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Figure from "../components/Figure.astro";
 import InBrief from "../components/InBrief.astro";
 import Term from "../components/Term.astro";
-import { getResolutionEval } from "../lib/data";
+import { getMechEval, getResolutionEval } from "../lib/data";
 // P35.37 (SIG-TRANSP-013, DR-C3-03): the eval is a published release artifact —
 // the data layer's single seam (canonical record in fixtures mode,
 // `web/evaluation.json` in export mode), never a hard-coded constant — and
 // each rendered metric is an evaluation-class <Figure> pointing into it.
+// P37.44 (CONF-09): the P28.1 metric table is REPLACED by the mechanical
+// evaluation report (`web/mech_eval.json`, sig.mech-eval/1) — mechanical
+// measures only, every estimand carrying numerator, denominator, method and
+// population (SIG-EVAL-003/006, SIG-CONF-012).
 import { artifactHref, defineFigures, evaluationTargets } from "../lib/figures";
 import { withBase } from "../lib/paths";
 
 const eval_ = getResolutionEval();
-const FIGURES = defineFigures("methodology", eval_.metrics.map((m, i) => ({
+const mech = getMechEval();
+const MEASURE_ORDER = [
+  "m1_derivation_census",
+  "m1b_id_resolution_sample",
+  "m2_fidelity_sample",
+  "m3_cross_copy_agreement",
+  "m4_perturbation",
+  "m5_hard_negatives",
+  "m9_corroboration",
+] as const;
+const MEASURES = MEASURE_ORDER.map((id) => mech.estimands[id]!);
+const FIGURES = defineFigures("methodology", MEASURES.map((m, i) => ({
   id: `eval-${i}`,
   class: "evaluation" as const,
-  value: m.value,
-  artifact: "web/evaluation.json",
-  pointer: `/metrics/${i}/value`,
+  value: m.value ?? m.state,
+  artifact: "web/mech_eval.json",
+  pointer: m.state === "measured" ? `/estimands/${m.id}/value` : `/estimands/${m.id}/state`,
   definition: "#resolution-eval",
-  href: artifactHref("web/evaluation.json"),
+  href: artifactHref("web/mech_eval.json"),
   breakdown: `#fig-eval-${i}`,
   targets: evaluationTargets(),
 })));
@@ -122,21 +137,60 @@ const FIGURES = defineFigures("methodology", eval_.metrics.map((m, i) => ({
       <strong>{eval_.disclosure}</strong>
     </p>
   )}
-  <ul class="sig-eval" data-testid="resolution-eval">
-    {eval_.metrics.map((m, i) => (
-      <li class="sig-eval-metric" data-testid="resolution-eval-metric">
-        <Figure figure={FIGURES[i]!} order="inline" testid="resolution-eval-figure">
-          <span class="sig-eval-metric__label">{m.label}</span>{" "}
-          <span class="sig-eval-metric__value"><strong>{m.value}</strong></span>{" "}
-          <span class="sig-eval-metric__against">{m.against}</span>
-        </Figure>
-      </li>
-    ))}
-  </ul>
+  {/* P37.44 (CONF-09): the mechanical evaluation report replaces the P28.1
+      holdout table. Human estimands are unavailable — the report says so —
+      and every mechanical measure carries numerator, denominator, method and
+      population (SIG-EVAL-003) scoped to exactly the tiers, populations,
+      source mix, ruleset and window it supports (SIG-EVAL-006). */}
+  <p data-testid="mech-eval-disclosure">{mech.disclosure}</p>
+  <table class="sig-eval-table" data-testid="mech-eval">
+    <caption>
+      Mechanical evaluation measures — each row names its estimand, its basis
+      class, what it measured (numerator of denominator), how, and the exact
+      population it speaks for.
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">Measure</th>
+        <th scope="col">State</th>
+        <th scope="col">Result</th>
+        <th scope="col">Method</th>
+        <th scope="col">Population</th>
+      </tr>
+    </thead>
+    <tbody>
+      {MEASURES.map((m, i) => (
+        <tr data-testid="mech-eval-metric">
+          <th scope="row">
+            <Figure figure={FIGURES[i]!} order="inline" testid="mech-eval-figure">
+              <span class="sig-eval-metric__label">{m.label}</span>
+            </Figure>
+          </th>
+          <td>{m.state}</td>
+          <td>
+            <strong>{m.value ?? m.unavailable_reason}</strong>
+            {m.numerator !== null && m.denominator !== null && (
+              <span class="sig-eval-metric__against"> ({m.numerator} of {m.denominator})</span>
+            )}
+          </td>
+          <td>{m.method ?? "—"}</td>
+          <td>{m.population}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  <p data-testid="mech-eval-human">
+    Human evaluation is <strong>unavailable</strong>: no independent person has
+    labelled SIG's data ({Object.values(mech.human_estimands).filter((e) => e.state === "unavailable").length}{" "}
+    of {Object.keys(mech.human_estimands).length} estimands record
+    "unavailable"), and mechanical measures are never substituted for it —
+    nor presented as real-world precision or recall.
+  </p>
   <p data-copy="M-43 M-21">
-    These measure <em>SIG's method</em>, on the named holdout each row names —
+    These measure <em>SIG's method</em>, on the named population each row names —
     never a device population and never a capture–recapture estimate. The full
-    report and its generator are committed with the build.
+    report (<a href={withBase("artifact/web/mech_eval.json")}>sig.mech-eval/1</a>)
+    and its generator are committed with the build.
   </p>
   <p data-copy="M-30">
     The SIG-authored data SIG offers upstream to OpenStreetMap is dual-licensed

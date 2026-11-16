@@ -231,25 +231,30 @@ test.describe("methodology, data-freshness, coverage-metrics (SIG-UI-034, §32.4
     page,
   }) => {
     await page.goto("/methodology/");
-    // SIG measures its own method: the holdout metrics render.
-    const metrics = page.getByTestId("resolution-eval-metric");
-    await expect(metrics.first()).toBeVisible();
-    await expect(page.getByTestId("resolution-eval")).toContainText("0.714"); // Cohen's κ
-    await expect(page.getByTestId("resolution-eval")).toContainText("0.976"); // B-cubed F1
+    // P37.44 (CONF-09): the mechanical evaluation report replaces the P28.1
+    // holdout table — every estimand carries numerator, denominator, method
+    // and population; human estimands are honestly unavailable.
+    const metrics = page.getByTestId("mech-eval-metric");
+    await expect(metrics).toHaveCount(7);
+    const table = page.getByTestId("mech-eval");
+    await expect(table).toContainText("never an estimate of real-world precision or recall");
+    await expect(table).toContainText("Population");
+    // The corpus measures are genuinely measured; the spine measures record
+    // their honest state — never a fabricated figure.
+    await expect(table).toContainText("of 275 matched the known answer"); // M-4 perturbation
+    await expect(table).toContainText("0 of 70 known-distinct pairs merged"); // M-5
+    await expect(page.getByTestId("mech-eval-human")).toContainText("unavailable");
     // P34.17 / R1.4: the disclosure is honest development evidence — no person
     // labelled the sets — never a "human-verified" claim or a P/R/F1 1.000 row.
     await expect(page.getByTestId("resolution-eval-provisional")).toContainText("Development evidence only");
-    await expect(page.getByTestId("resolution-eval")).not.toContainText("human-verified");
-    await expect(page.getByTestId("resolution-eval")).not.toContainText("R 1.000");
+    await expect(table).not.toContainText("human-verified");
+    await expect(table).not.toContainText("R 1.000");
     // P30.2b (ADR-105): the unit is defined — a resolved site is a cluster of records of the
     // same physical device, N of M; a value decision is never counted as one.
     const definition = page.getByTestId("resolved-site-definition");
     await expect(definition).toContainText("same physical device");
     await expect(definition).toContainText("N resolved sites from M observation-level");
     await expect(definition).toContainText("is never counted as a resolved site");
-    // …and the camera-site rules' measured holdout precision + the missed κ bar are published.
-    await expect(page.getByTestId("resolution-eval")).toContainText("0.986"); // tier 3g
-    await expect(page.getByTestId("resolution-eval")).toContainText("suggester only");
   });
 });
 

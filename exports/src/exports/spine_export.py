@@ -129,6 +129,7 @@ from . import (
     entity_page,
     graph_overview,
     lifecycle_timeline,
+    mech_eval,
     provo,
     source_licences,
     task_export,
@@ -7092,6 +7093,38 @@ def build_spine_export(
     web_licenses[eval_path] = _SIG_SPDX
     web_compartments[eval_path] = _WEB_COMPARTMENT
     web_schemas[eval_path] = "sig.resolution-eval/1"
+
+    # ``web/mech_eval.json`` — the ``sig.mech-eval/1`` mechanical evaluation
+    # report (P37.44 / CONF-09, SIG-EVAL-003 + SIG-EVAL-006 + SIG-CONF-012):
+    # computed at export time from THIS release's latest completed camera-site
+    # ER run + shared dedup view + the committed corpus record — so the
+    # published estimands name this release's populations, source mix, ruleset
+    # and window. With no completed run every spine measure reports
+    # ``unavailable`` with the honest reason — never a fabricated figure.
+    from resolution.camera_sites import CameraSiteRules as _CSR
+
+    _mech_corpus = json.loads(
+        (Path(__file__).resolve().parent / "data" / "mech_eval_corpus.json").read_text()
+    )
+    _mech_rules = _CSR.from_data()
+    mech_eval_doc = mech_eval.build_mech_eval(
+        runs=m_site_runs,
+        dedup_view=dedup_view,
+        member_records=member_records,
+        corpus_doc=_mech_corpus,
+        source_names=source_names,
+        ruleset_version=str(_mech_rules.version),
+        copy_tolerance_m=float(_mech_rules.copy_tolerance_m),
+        as_of=dataset.as_of or generated_at[:10],
+    )
+    _lint = mech_eval.mech_eval_lint_errors(mech_eval_doc)
+    if _lint:
+        raise ValueError("sig.mech-eval/1 failed its own lint: " + "; ".join(_lint))
+    mech_path = f"{_WEB_DIR}/mech_eval.json"
+    web_artifacts[mech_path] = _web_bytes(mech_eval_doc)
+    web_licenses[mech_path] = _SIG_SPDX
+    web_compartments[mech_path] = _WEB_COMPARTMENT
+    web_schemas[mech_path] = mech_eval.SCHEMA
 
     # P36.50 (R11-K13-TX-10b, J3 §6.2/§6.7 — SIG-TRANSP-014/015): per-bundle
     # ATTRIBUTION.txt/LICENCE.txt + the per-source slices (the K9 C-8

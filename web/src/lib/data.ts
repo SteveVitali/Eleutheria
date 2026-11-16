@@ -103,6 +103,7 @@ import {
 import { getSourceCaptures, getSourceEntities, getSourceVersions } from "./source-page-b";
 import { getStatusLane } from "./status-lane";
 import { isResolutionEval, type ResolutionEval } from "./resolution-eval";
+import { isMechEval, type MechEval } from "./mech-eval";
 import { STATEMENT_FIXTURES } from "./statements-fixture";
 import type { StatementRow } from "./provenance-panel";
 import { isDataDictionary, type DataDictionary } from "./dictionary";
@@ -2929,6 +2930,40 @@ export function getResolutionEval(): ResolutionEval {
   });
 }
 
+// --------------------------------------------------------------------------- //
+// P37.44 (CONF-09, SIG-EVAL-003/006 + SIG-CONF-012): the mechanical evaluation
+// report — a published release artifact computed at export time from the
+// release's latest camera-site ER run, dedup view and the committed corpus
+// record. Same seam pattern as the resolution eval:
+//
+//   - `fixtures` mode — the canonical committed `sig.mech-eval/1` record
+//     (`exports/src/exports/data/mech_eval.json`), read through the same
+//     validator.
+//   - `export` mode — `<exportDir>/web/mech_eval.json`, the artifact the
+//     exporter emits; a missing file fails LOUD.
+// --------------------------------------------------------------------------- //
+
+/** The canonical committed mechanical-eval record. */
+export const MECH_EVAL_RECORD_PATH = "exports/src/exports/data/mech_eval.json";
+
+export function getMechEval(): MechEval {
+  if (dataSource() !== "export") {
+    const parsed: unknown = JSON.parse(
+      readFileSync(`${repoRoot()}${MECH_EVAL_RECORD_PATH}`, "utf-8"),
+    );
+    if (!isMechEval(parsed)) {
+      throw new Error(`${MECH_EVAL_RECORD_PATH}: not a valid sig.mech-eval/1 record`);
+    }
+    return parsed;
+  }
+  return readExportArtifact("mech_eval.json", (parsed, path) => {
+    if (!isMechEval(parsed)) {
+      throw new Error(`${path}: not a valid sig.mech-eval/1 artifact`);
+    }
+    return parsed;
+  });
+}
+
 /**
  * P35.37: the bytes the `/artifact/<export-path>` route serves — the
  * "downloadable file" / release-artifact link target every figure carries. In
@@ -2959,6 +2994,10 @@ export function getReleaseArtifactPayload(artifactPath: string): unknown | null 
       return getFreshnessRecords();
     case "web/evaluation.json":
       return getResolutionEval();
+    // P37.44: the mechanical evaluation report — the release artifact the
+    // /methodology/ eval table renders from.
+    case "web/mech_eval.json":
+      return getMechEval();
     case "web/terms_disclosure.json":
       return getTermsDisclosure();
     // P36.43: the status lane document — the figure target for every

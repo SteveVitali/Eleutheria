@@ -87,7 +87,7 @@
 | W-06 | /watch/ | Every entry carries a link recording this build's belief-time and as-of date. | 55f3675771347a5a8416cc3bed899ba9702829f59931e09ee056356311c6d9d5 | pending |
 | W-07 | /watch/ | Download as plain text. | 1b51de3bc5d1eeacf112592bff8f86acbd83b9afde7a8346c39eebbc86c93e35 | pending |
 | M-20 | /methodology/ | These measure SIG's method, on a named, frozen holdout — never a device population and never a capture–recapture estimate. | 8678905637863ed3c22e0c24776fcb72ba57961c1fda64a7c81a21c0669f3993 | pending |
-| M-21 | /methodology/ | The full report and its generator are committed with the build. | c1c1e7fb983206e35f8078a07937dfb5915acef2d64a22ff0effd817c54a5579 | pending |
+| M-21 | /methodology/ | The full report (sig.mech-eval/1) and its generator are committed with the build. | 3dd810d8ec44d031c40e7f4cc57c0dae633ea71533ddbb69f6e5403927fcf25f | pending |
 | M-30 | /methodology/ | The SIG-authored data SIG offers upstream to OpenStreetMap is dual-licensed CC0-1.0 for that purpose. | 5032db231128673a97f3099e5cd127deb44d4f27e85c7dfc3cd39ae182e58e60 | pending |
 | T-01 | /task/new/ | Return to the dossier index. | b6568bcc2bb151c7ea20087dd140f32c33da21817b4d766bdfab785337334558 | pending |
 | DF-01 | lib/dossier-fixture.ts | A 'shares data with' edge to the Oklahoma County Sheriff is recorded but contested; the full partner list is not established. | f76a7cf92d0e8cf50ba3ad1eb447d0a7023f7e1337a7a3785c50f64c2bfc9ea3 | pending |
@@ -276,7 +276,7 @@
 | M-40 | /methodology/ | Matching quality: development evidence only. | 97290b55142bb53f7e4e1af9cbc635a133dadd3a173767b57f8680086affacca | pending |
 | M-41 | /methodology/ | The label sets these rules were tuned on were produced by an AI model and by agents; no person labelled them. | f7d32e9341729e35a0e63aeee305e767b1c4ab42c9b22236d258a1bc4e0f689a | pending |
 | M-42 | /methodology/ | SIG is changing the merge rules so that only copies of one upstream record are merged. | d69beb3b08230a1c108736aba5673ef7143d71b78335517c587d530f463f641e | pending |
-| M-43 | /methodology/ | These measure SIG's method, on the named holdout each row names — never a device population and never a capture–recapture estimate. | ec9d8d6633d887f551a108296b4ae567bec7f58977990e57653b6677742f2e48 | pending |
+| M-43 | /methodology/ | These measure SIG's method, on the named population each row names — never a device population and never a capture–recapture estimate. | 18094cc020df22f67a95e4c6d9a647cdd58337a576bc853ec0713c76b6634389 | pending |
 | MB-01 | /methodology/ | Published on the maintainer's own rights and publication decisions. | efee2089e2fa2a2532d5ce21a55acab761a8829be02ac7ed579e6b8aa194201f | pending |
 | MB-02 | /methodology/ | No lawyer's written opinion has been obtained; nothing here states that this publication has been cleared by counsel. | f62f9e984c0d6d7b7a6f5065cef480d666a8da59b2a73e15c762dbf347333b4f | pending |
 | RS-01 | component/BaseLayout | This site shows release {releaseId}, data as of {asOfWorld}. | 19d18b7a3ff034f1779796c385b2e4f3c22a8b870929c2a39242bc163e02cb7f | pending |
