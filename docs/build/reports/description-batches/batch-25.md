@@ -16,19 +16,20 @@ no confirmed row here. An unconfirmed source publishes
 
 | id | source | text | sha256 | status |
 |---|---|---|---|---|
-| D25-01 | statrep_wa_wtsc_ate | `Washington automated safety enforcement reports (RCW 46.63.220(6)) — WTSC statewide report + municipal annual reports` — a government mandated disclosure source published by `Washington Traffic Safety Commission (with University of Washington), municipal reports filed by the ~29 operating jurisdictions`. | f0fbf90cc1c2e7f8c37789c11b82a27225873f1e9fe7edddf177a953418f0aed | pending |
-| D25-02 | surveillance_under_surveillance | `Surveillance under Surveillance` — a community source. | b2f945ef71934ee1da08cb38765a9ff84d13f799443bbdce727b651233756b4e | pending |
-| D25-03 | swagit | `Swagit — municipal meeting video/agenda portals` — a government portal source. | 8069b7eee3c48b412a7b91e64a80977d49c79ba0e076ad1dccd9d3d6765e8e4a | pending |
-| D25-04 | technocarte_update | `Technocarte update` — an upstream project source. | 2d6e7193441ca385dc4b538d6b64c329ff715d04bdf9a444844f78a6b2ad58ad | pending |
-| D25-05 | technopolice | `Technopolice` — an upstream project source. | 2e3f85b5fb7dad1f56594a6cc1930cfcab243d5cd84eda214b0f18c9f4d16e6a | pending |
-| D25-06 | technopolice_forum | `Technopolice mapping discussion` — an upstream project source. | 73220f435b86717e0c160bab47897c739d734b31815afb249c8360c64a59d225 | pending |
-| D25-07 | ted_eu | `TED — Tenders Electronic Daily (EU OJ S procurement notices)` — a government portal source. | 75935d6f13930e04a4ec05056f4126f7365a5a64c45d3d53a8bf6f4310e42c48 | pending |
-| D25-08 | tips_usa | `TIPS` — a government portal source. | 811f1f59532e70975e351fb690e27de6a9d01afdf0556dcba332cb2e0b427523 | pending |
-| D25-09 | uk_surveillance_camera_commissioner | `UK Biometrics & Surveillance Camera Commissioner — Surveillance Camera Code of Practice compliance & oversight` — a government portal source. | 8f5e39877fb41153f390eb0780a0a5021b9fa2cdd9b39630459fffc2adf65dd2 | pending |
-| D25-10 | usaspending | `USAspending` — a government portal source. | cdadc87f686bbab30fcc64a5f945a26c1e863e99496e0119794aa8ccc321b148 | pending |
-| D25-11 | wigle | `WiGLE` — a commercial source. | 340e94bb0c78b43ebb7e4fcfcb46eb71d3a2f26460532c4578bfe952d854b52d | pending |
-| D25-12 | wikidata_sparql | `Wikidata SPARQL` — an upstream project source. | a71fa24b5fb56b95ee15d49f0df019dcb71ee0ae73e850787bfa2a2856cc2b72 | pending |
-| D25-13 | wired_shotspotter_leak | `WIRED ShotSpotter sensor leak` — a news publisher source. | 9885eee4e10afb4992e55cccbe69b43a81a2230e77ba965d01fb850b6f74a96f | pending |
+| D25-01 | statrep_wa_watech_frt | `Facial Recognition · WaTech (Technology Services Board posting of FR Notices of Intent and Accountability Reports, ch. 4` — a government mandated disclosure source published by `Washington Technology Solutions (WaTech) / Technology Services Board, State of Washington`. | 54e067d283b1a2b5a4be90b4e6ab985e8c347e4590f09068b4bfd3f651078681 | pending |
+| D25-02 | statrep_wa_wtsc_ate | `Washington automated safety enforcement reports (RCW 46.63.220(6)) — WTSC statewide report + municipal annual reports` — a government mandated disclosure source published by `Washington Traffic Safety Commission (with University of Washington), municipal reports filed by the ~29 operating jurisdictions`. | f0fbf90cc1c2e7f8c37789c11b82a27225873f1e9fe7edddf177a953418f0aed | pending |
+| D25-03 | surveillance_under_surveillance | `Surveillance under Surveillance` — a community source. | b2f945ef71934ee1da08cb38765a9ff84d13f799443bbdce727b651233756b4e | pending |
+| D25-04 | swagit | `Swagit — municipal meeting video/agenda portals` — a government portal source. | 8069b7eee3c48b412a7b91e64a80977d49c79ba0e076ad1dccd9d3d6765e8e4a | pending |
+| D25-05 | technocarte_update | `Technocarte update` — an upstream project source. | 2d6e7193441ca385dc4b538d6b64c329ff715d04bdf9a444844f78a6b2ad58ad | pending |
+| D25-06 | technopolice | `Technopolice` — an upstream project source. | 2e3f85b5fb7dad1f56594a6cc1930cfcab243d5cd84eda214b0f18c9f4d16e6a | pending |
+| D25-07 | technopolice_forum | `Technopolice mapping discussion` — an upstream project source. | 73220f435b86717e0c160bab47897c739d734b31815afb249c8360c64a59d225 | pending |
+| D25-08 | ted_eu | `TED — Tenders Electronic Daily (EU OJ S procurement notices)` — a government portal source. | 75935d6f13930e04a4ec05056f4126f7365a5a64c45d3d53a8bf6f4310e42c48 | pending |
+| D25-09 | tips_usa | `TIPS` — a government portal source. | 811f1f59532e70975e351fb690e27de6a9d01afdf0556dcba332cb2e0b427523 | pending |
+| D25-10 | uk_surveillance_camera_commissioner | `UK Biometrics & Surveillance Camera Commissioner — Surveillance Camera Code of Practice compliance & oversight` — a government portal source. | 8f5e39877fb41153f390eb0780a0a5021b9fa2cdd9b39630459fffc2adf65dd2 | pending |
+| D25-11 | usaspending | `USAspending` — a government portal source. | cdadc87f686bbab30fcc64a5f945a26c1e863e99496e0119794aa8ccc321b148 | pending |
+| D25-12 | wigle | `WiGLE` — a commercial source. | 340e94bb0c78b43ebb7e4fcfcb46eb71d3a2f26460532c4578bfe952d854b52d | pending |
+| D25-13 | wikidata_sparql | `Wikidata SPARQL` — an upstream project source. | a71fa24b5fb56b95ee15d49f0df019dcb71ee0ae73e850787bfa2a2856cc2b72 | pending |
+| D25-14 | wired_shotspotter_leak | `WIRED ShotSpotter sensor leak` — a news publisher source. | 9885eee4e10afb4992e55cccbe69b43a81a2230e77ba965d01fb850b6f74a96f | pending |
 
 ## Confirmation log
 

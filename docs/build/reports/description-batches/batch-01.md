@@ -33,14 +33,14 @@ no confirmed row here. An unconfirmed source publishes
 | D01-15 | agenda_tampa_fl_onbase_agenda_online | `Tampa City Council OnBase Agenda Online` — a government portal source published by `City of Tampa, FL`. | e65f87e3168cc23d538cf170dbd3c01cec2c6d4be2382850cb2571754120d186 | pending |
 | D01-16 | agenda_tx_dallas_county_commissioners | `Dallas County Commissioners Court — Court Agenda / Agendas and Actions (CivicWeb portal)` — a government portal source published by `Dallas County Commissioners Court`. | 9ead5f04f0383ba1024136e474582299367e1ed197caec8f0c9a26bf43e8edc2 | pending |
 | D01-17 | agenda_us_agency_fusus_real | `Agency Fusus / real-time crime centre deployment memos, council presentations and launch notices (Axon Fusus customers) ` — a government portal source published by `Municipal police departments and councils (many), this member hosted by Enlace Latino NC`. | 331d8edb7fb9ff652e4ebd0d48722e8355b8dfedb324384189beea483968ef70 | pending |
-| D01-18 | alpr_abuse_library | `ALPR Abuse Library` — an upstream project source. | 6b4aea825986d43ff4291e429fd2aeec2326beed6d213c3afdcf45814704768e | pending |
-| D01-19 | alpr_accountability_atlas | `ALPR Accountability Atlas` — an upstream project source. | 417a8d26ef509b9dde244093d23e1ac755b61558306a45b217cbd903a4b55517 | pending |
-| D01-20 | alpr_watch | `ALPR Watch` — an upstream project source. | 9a5901c6a7b41877984f9d8ed13b08a1f04b6aff11e9e09db066fa0228915ebe | pending |
-| D01-21 | alpr_watch_code | `ALPR Watch code (GitLab)` — an upstream project source. | 1be631bc2ce15e7c50e00062f81c8dadbc7e2c255c0407cc47d41cebe1a9d7e4 | pending |
-| D01-22 | alpr_watch_dashboard | `ALPR Watch FOIA dashboard (Superset)` — an upstream project source. | 6fb03907eeb8a1cdabe029997d4ecac074ced604a29efbe0cbc2715fae0aae7d | pending |
-| D01-23 | alpr_watch_foia_method | `ALPR Watch Flock FOIA method` — an upstream project source. | e8c87ed07cf17ac0998771e0548295fb7d1f39f4cb248625d66d88d4f3bd5a1a | pending |
-| D01-24 | amsterdam_camerakaart | `Amsterdam cameraregister — municipal camera map open data` — a government portal source. | 93a2ba21d858befd3c194c6c7e45d0db9485451c662c76df00599c317b4731a8 | pending |
-| D01-25 | aspi_mapping_chinas_tech_giants | `Mapping China's Tech Giants (ASPI)` — an academic source. | 1253544de3febff373d35d3bcf35a5e727252bda4f9e1e21497385f72fa5ca39 | pending |
+| D01-18 | agendaplus | `Agenda Plus (AgileTech)` — a government portal source. | b4f165972fa8ffd4bc31bac6d217f14d53bc5b4dfafb0b5ca9e44583fb52b288 | pending |
+| D01-19 | alpr_abuse_library | `ALPR Abuse Library` — an upstream project source. | 6b4aea825986d43ff4291e429fd2aeec2326beed6d213c3afdcf45814704768e | pending |
+| D01-20 | alpr_accountability_atlas | `ALPR Accountability Atlas` — an upstream project source. | 417a8d26ef509b9dde244093d23e1ac755b61558306a45b217cbd903a4b55517 | pending |
+| D01-21 | alpr_watch | `ALPR Watch` — an upstream project source. | 9a5901c6a7b41877984f9d8ed13b08a1f04b6aff11e9e09db066fa0228915ebe | pending |
+| D01-22 | alpr_watch_code | `ALPR Watch code (GitLab)` — an upstream project source. | 1be631bc2ce15e7c50e00062f81c8dadbc7e2c255c0407cc47d41cebe1a9d7e4 | pending |
+| D01-23 | alpr_watch_dashboard | `ALPR Watch FOIA dashboard (Superset)` — an upstream project source. | 6fb03907eeb8a1cdabe029997d4ecac074ced604a29efbe0cbc2715fae0aae7d | pending |
+| D01-24 | alpr_watch_foia_method | `ALPR Watch Flock FOIA method` — an upstream project source. | e8c87ed07cf17ac0998771e0548295fb7d1f39f4cb248625d66d88d4f3bd5a1a | pending |
+| D01-25 | amsterdam_camerakaart | `Amsterdam cameraregister — municipal camera map open data` — a government portal source. | 93a2ba21d858befd3c194c6c7e45d0db9485451c662c76df00599c317b4731a8 | pending |
 
 ## Confirmation log
 

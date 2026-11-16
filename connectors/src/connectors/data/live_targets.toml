@@ -377,6 +377,31 @@ kind = "agenda_tenants"
 [escribe]
 kind = "agenda_tenants"
 
+# P37.50 (R11-ACQ-22, I8 §6.2): the agenda-platforms-v2 per-city seats — each
+# expands to its bound tenant row's reviewed HTML index (the platform/
+# source_id split; the refusal/challenge is the recorded outcome). All stay
+# ingestion_permitted=false pending the operator's OP-26 Wave-D flip.
+[agenda_durham_nc_agenda_center]
+kind = "agenda_tenants"
+[agenda_hialeah_fl_agenda_center]
+kind = "agenda_tenants"
+[agenda_bexar_county_tx_agenda_center]
+kind = "agenda_tenants"
+[agenda_savannah_ga_2023_05_25]
+kind = "agenda_tenants"
+[agenda_jersey_city_nj_digital_agenda]
+kind = "agenda_tenants"
+[agenda_tx_dallas_county_commissioners]
+kind = "agenda_tenants"
+[agenda_frisco_tx_onbase_agenda_online]
+kind = "agenda_tenants"
+[agenda_tampa_fl_onbase_agenda_online]
+kind = "agenda_tenants"
+[agenda_az_maricopa_county_board_of]
+kind = "agenda_tenants"
+[agenda_nd_fargo_city_commission_agendas]
+kind = "agenda_tenants"
+
 # Eyes on Flock — the documented public CC-BY-SA-4.0 JSON API (flipped
 # 2026-09-16 under GL-GATE-06). The host currently answers programmatic egress
 # with a Cloudflare challenge — a recorded disappearance, never defeated

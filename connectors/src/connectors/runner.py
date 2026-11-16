@@ -239,6 +239,21 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     # tenant's public calendar page itself calls the bounded JSON webmethod the
     # registry row names (MeetingsCalendarView.aspx/GetCalendarMeetings).
     "escribe": "procurement",
+    # P37.50 (R11-ACQ-22, I8 §6.2): the agenda-platforms-v2 per-city seats —
+    # each binds one agenda_tenants.toml row whose `platform` names the shared
+    # reviewed HTML index contract (civicplus_agendacenter / civicweb /
+    # onbase_agendaonline / html_agenda_archive) and whose `source_id` is this
+    # gated registry row (the portal-registry platform/source_id split).
+    "agenda_durham_nc_agenda_center": "procurement",
+    "agenda_hialeah_fl_agenda_center": "procurement",
+    "agenda_bexar_county_tx_agenda_center": "procurement",
+    "agenda_savannah_ga_2023_05_25": "procurement",
+    "agenda_jersey_city_nj_digital_agenda": "procurement",
+    "agenda_tx_dallas_county_commissioners": "procurement",
+    "agenda_frisco_tx_onbase_agenda_online": "procurement",
+    "agenda_tampa_fl_onbase_agenda_online": "procurement",
+    "agenda_az_maricopa_county_board_of": "procurement",
+    "agenda_nd_fargo_city_commission_agendas": "procurement",
     "sam_gov": "procurement",
     "courtlistener_recap": "accountability",
     # P36.77 / R11-ACQ-32: the DocumentCloud/MuckRock released-materials
